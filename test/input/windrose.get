@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=windrose&time=2014-02-14 HTTP/1.0

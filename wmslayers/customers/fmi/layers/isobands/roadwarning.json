@@ -1,0 +1,108 @@
+[
+        {
+	    "qid": "roadwarning_11_inf",
+            "lolimit": 10.5,
+	    "attributes":
+	    {
+		"class": "Roadwarning_alijaahtynyt"
+	    }
+        },
+        {
+	    "qid": "roadwarning_10_11",
+            "lolimit": 9.5,
+            "hilimit": 10.5,
+	    "attributes":
+	    {
+		"class": "Roadwarning_vesisade_jaiselle"
+	    }
+        },
+        {
+	    "qid": "roadwarning_9_10",
+            "lolimit": 8.5,
+            "hilimit": 9.5,
+	    "attributes":
+	    {
+		"class": "Roadwarning_rantaa_jaiselle"
+	    }
+        },
+        {
+	    "qid": "roadwarning_8_9",
+            "lolimit": 7.5,
+            "hilimit": 8.5,
+	    "attributes":
+	    {
+		"class": "Roadwarning_nopea_muutos"
+	    }
+        },
+        {
+	    "qid": "roadwarning_7_8",
+            "lolimit": 6.5,
+            "hilimit": 7.5,
+	    "attributes":
+	    {
+		"class": "Roadwarning_runsas_lumisade"
+	    }
+        },
+        {
+	    "qid": "roadwarning_6_7",
+            "lolimit": 5.5,
+            "hilimit": 6.5,
+	    "attributes":
+	    {
+		"class": "Roadwarning_lumipyry"
+	    }
+        },
+        {
+	    "qid": "roadwarning_5_6",
+            "lolimit": 4.5,
+            "hilimit": 5.5,
+	    "attributes":
+	    {
+		"class": "Roadwarning_tuulivaroitus"
+	    }
+        },
+        {
+	    "qid": "roadwarning_4_5",
+            "lolimit": 3.5,
+            "hilimit": 4.5,
+	    "attributes":
+	    {
+		"class": "Roadwarning_pakkasliukkaus"
+	    }
+        },
+        {
+	    "qid": "roadwarning_3_4",
+            "lolimit": 2.5,
+            "hilimit": 3.5,
+	    "attributes":
+	    {
+		"class": "Roadwarning_luminen_tienpinta"
+	    }
+        },
+        {
+	    "qid": "roadwarning_2_3",
+            "lolimit": 1.5,
+            "hilimit": 2.5,
+	    "attributes":
+	    {
+		"class": "Roadwarning_jaatyy"
+	    }
+        },
+        {
+	    "qid": "roadwarning_1_2",
+            "lolimit": 0.5,
+            "hilimit": 1.5,
+	    "attributes":
+	    {
+		"class": "Roadwarning_kuuraantuu"
+	    }
+        },
+        {
+	    "qid": "roadwarning_0_1",
+            "hilimit": 0.5,
+	    "attributes":
+	    {
+		"class": "Roadwarning_ei_varoitusta"
+	    }
+        }
+]

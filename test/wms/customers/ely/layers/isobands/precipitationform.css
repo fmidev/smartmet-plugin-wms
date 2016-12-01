@@ -1,0 +1,7 @@
+.Drizzle		{ stroke:none; fill: rgb(20,170,180) }
+.Rain			{ stroke:none; fill: rgb(20,170,180) }
+.Sleet			{ stroke:none; fill: rgb(210,60,135) }
+.Snow			{ stroke:none; fill: rgb(237,237,237) }
+.FreezingDrizzle	{ stroke:none; fill: rgb(255,0,0) }
+.FreezingRain		{ stroke:none; fill: rgb(255,0,0) }
+.Hail			{ display: none }

@@ -1,0 +1,130 @@
+{
+    "language": "en",
+    "title": "Text Demo Product",
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "attributes":
+    {
+	"filter": "url(#shadow)"
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+		{
+		    "qid": "clip",
+		    "tag": "clipPath",
+		    "attributes":
+		    {
+			"id": "myclip"
+		    },
+		    "layers": [
+			{
+			    "tag": "circle",
+			    "attributes":
+			    {
+				"id": "mycircle",
+				"cx": "250",
+				"cy": "250",
+				"r": "250",
+				"fill": "black"
+			    }
+			}
+		    ]
+		},
+                {
+		    "qid": "group",
+		    "tag": "g",
+		    "attributes":
+		    {
+			"clip-path": "url(#myclip)"
+		    },
+		    "layers": [
+			{
+			    "layer_type": "isoband",
+			    "qid": "l1",
+			    "isobands": "json:isobands/temperature.json",
+			    "css": "isobands/temperature.css",
+			    "parameter": "Temperature",
+			    "attributes":
+			    {
+				"id": "temperature_isobands"
+			    }
+			},
+			{
+			    "qid": "l2",
+			    "layer_type": "isoline",
+			    "isolines": "json:isolines/temperature.json",
+			    "css": "isolines/temperature.css",
+			    "parameter": "Temperature",
+			    "attributes":
+			    {
+				"id": "temperature_isolines",
+				"class": "Temperature"
+			    }
+			}
+                    ]
+		},
+		{
+		    "tag": "use",
+		    "attributes":
+		    {
+			"xlink:href": "#mycircle",
+			"stroke": "black",
+			"fill": "none"
+		    }
+		},
+		{
+		    "tag": "text",
+		    "cdata":
+		    {
+			"en": "Hello World!",
+			"fi": "Moro maailma!"
+		    },
+		    "attributes":
+		    {
+			"x": "250",
+			"y": "350",
+			"font-family": "Verdana",
+			"font-weight": "bold",
+			"font-size": "45",
+			"fill": "yellow",
+			"stroke": "black",
+			"text-anchor": "middle",
+			"filter": "url(#shadow)"
+		    }
+		},
+		{
+		    "layer_type": "translation",
+		    "translations":
+		    {
+			"en": "Hello World!",
+			"fi": "Moro maailma!"
+		    },
+		    "attributes":
+		    {
+			"x": "250",
+			"y": "250",
+			"font-family": "Verdana",
+			"font-weight": "bold",
+			"font-size": "55",
+			"fill": "yellow",
+			"stroke": "black",
+			"text-anchor": "middle",
+			"filter": "url(#shadow)"
+		    }
+		}
+
+            ]
+        }
+    ]
+}

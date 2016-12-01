@@ -1,0 +1,153 @@
+{
+    "width": 1030,
+    "height": 520,
+    "title": "Smoothened data on the right",
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1",
+		"transform": "translate(10,10)"
+	    },
+            "layers": [
+                {
+		    "qid": "b1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+		    "css": "isolines/temperature.css",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"id": "view1_temperature_isobands"
+		    }
+                },
+                {
+		    "qid": "l1",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/temperature.json",
+		    "css": "isolines/temperature.css",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"id": "view1_temperature_isolines",
+			"class": "Temperature"
+		    }
+                },
+		{
+                    "qid": "p1",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/pressure.json",
+                    "css": "isolines/pressure.css",
+                    "parameter": "Pressure",
+                    "attributes":
+                    {
+                        "id": "view1_pressure_isolines",
+                        "class": "Pressure"
+                    }
+                },
+		{
+		    "qid": "t1",
+		    "layer_type": "time",
+		    "timestamp": "validtime",
+		    "timezone": "Europe/Helsinki",
+		    "format": "%Y-%m-%d %H:%M",
+		    "x": -20,
+		    "y": 20,
+		    "attributes":
+		    {
+			"text-anchor": "end",
+			"font-family": "Verdana",
+			"font-weight": "bold",
+			"font-size": 14
+		    }
+		}
+            ]
+        },
+        {
+	    "qid": "v2",
+	    "attributes":
+	    {
+		"id": "view2",
+		"class": "View2",
+		"transform": "translate(520,10)"
+	    },
+            "layers": [
+                {
+		    "qid": "b2",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css",
+                    "parameter": "Temperature",
+		    "smoother":
+		    {
+			"size": 2,
+			"degree": 2
+		    },
+		    "attributes":
+		    {
+			"id": "view2_temperature_isobands"
+		    }
+                },
+                {
+		    "qid": "l2",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/temperature.json",
+                    "css": "isolines/temperature.css",
+                    "parameter": "Temperature",
+		    "smoother":
+		    {
+			"size": 2,
+			"degree": 2
+		    },
+		    "attributes":
+		    {
+			"id": "view2_temperature_isolines",
+			"class": "Temperature"
+		    }
+                },
+		{
+                    "qid": "p2",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/pressure.json",
+                    "css": "isolines/pressure.css",
+                    "parameter": "Pressure",
+		    "smoother":
+		    {
+			"size": 2,
+			"degree": 2
+		    },
+                    "attributes":
+                    {
+                        "id": "view2_pressure_isolines",
+                        "class": "Pressure"
+                    }
+                },
+		{
+		    "qid": "t2",
+		    "layer_type": "time",
+		    "timestamp": "validtime",
+		    "timezone": "Europe/Helsinki",
+		    "format": "%Y-%m-%d %H:%M",
+		    "x": -20,
+		    "y": 20,
+		    "attributes":
+		    {
+			"text-anchor": "end",
+			"font-family": "Verdana",
+			"font-weight": "bold",
+			"font-size": 14
+		    }
+		}
+
+            ]
+        }
+    ]
+}

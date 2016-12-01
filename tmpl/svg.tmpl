@@ -1,0 +1,55 @@
+<svg
+ <-TMPL_if defined(width)> width="<TMPL_var width>"</TMPL_if>
+ <-TMPL_if defined(height)> height="<TMPL_var height>"</TMPL_if> xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<TMPL_if defined(title)><title><TMPL_var title></title></TMPL_if>
+<defs>
+<style type="text/css"><![CDATA[
+<TMPL_foreach styles as style> <TMPL_var style.__key__> {
+ <-TMPL_foreach style.__value__ as setting> <TMPL_var setting.__key__>:<TMPL_var setting.__value__>;</TMPL_foreach> }
+<-/TMPL_foreach>
+<TMPL_foreach css as inc><TMPL_var inc></TMPL_foreach>
+ ]]>
+</style>
+<TMPL_foreach includes as inc><TMPL_var inc></TMPL_foreach>
+
+<-TMPL_foreach paths as path>
+<path id="<TMPL_var path.__key__>" d="<TMPL_var path.__value__>"/>
+<-/TMPL_foreach>
+
+<-TMPL_foreach layers as layer>
+<-TMPL_if (size(layer.start)>0)>
+<TMPL_var layer.start><TMPL_foreach layer.attributes as attribute> <TMPL_var attribute.__key__>="<TMPL_var attribute.__value__>"</TMPL_foreach>>
+<-/TMPL_if>
+<-TMPL_if defined(layer.cdata)><TMPL_var layer.cdata></TMPL_if>
+<-TMPL_foreach layer.tags as tag>
+ <TMPL_var tag.start><TMPL_foreach tag.attributes as attribute> <TMPL_var attribute.__key__>="<TMPL_var attribute.__value__>"</TMPL_foreach><TMPL_var tag.end>
+<-/TMPL_foreach>
+<-TMPL_var layer.end>
+<-/TMPL_foreach>
+
+</defs>
+
+<TMPL_var start>
+ <-TMPL_foreach attributes as attribute> <TMPL_var attribute.__key__>="<TMPL_var attribute.__value__>"
+ <-/TMPL_foreach>>
+
+ <-TMPL_foreach views as view>
+ <TMPL_var view.start><TMPL_foreach view.attributes as attribute> <TMPL_var attribute.__key__>="<TMPL_var attribute.__value__>"
+ <-/TMPL_foreach>>
+
+  <-TMPL_foreach layers as layer>
+  <-TMPL_if (size(layer.start)>0)>
+  <TMPL_var layer.start><TMPL_foreach layer.attributes as attribute> <TMPL_var attribute.__key__>="<TMPL_var attribute.__value__>"</TMPL_foreach>>
+  <-/TMPL_if>
+  <-TMPL_if defined(layer.cdata)><TMPL_var layer.cdata></TMPL_if>
+  <-TMPL_foreach layer.tags as tag>
+   <TMPL_var tag.start><TMPL_foreach tag.attributes as attribute> <TMPL_var attribute.__key__>="<TMPL_var attribute.__value__>"</TMPL_foreach><TMPL_var tag.end>
+  <-/TMPL_foreach>
+  <-TMPL_if defined(layer.cdata)><-TMPL_var layer.end><TMPL_else>
+  <TMPL_var layer.end></TMPL_if>
+ <-/TMPL_foreach>
+ <TMPL_var view.end>
+ <-/TMPL_foreach>
+<TMPL_var end>
+
+</svg>

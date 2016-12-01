@@ -1,0 +1,19 @@
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>Monitoring</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+
+ ]]>
+</style>
+
+
+</defs>
+
+<g>
+ <g id="view1">
+  <text x="250" y="250">Monitor successfull</text>
+ </g>
+</g>
+
+</svg>

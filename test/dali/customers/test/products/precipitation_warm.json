@@ -1,0 +1,90 @@
+{
+    "title": "Demo product",
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+		{
+		    "qid": "background",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "rgb(0,75,140)"
+		    }
+		},
+		{
+		    "qid": "europe",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "esri",
+			"table": "europe_country_wgs84"
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country",
+			"fill": "rgb(120,120,0)"
+		    }
+		},
+		{
+		    "qid": "l1",
+		    "layer_type": "isoband",
+		    "isobands": "json:isobands/precipitation.json",
+		    "css": "isobands/precipitation.css",
+		    "parameter": "Precipitation1h",
+		    "attributes":
+		    {
+			"id": "precipitation_isobands"
+		    }
+		},
+		{
+		    "qid": "l2",
+		    "layer_type": "isoline",
+		    "isolines": "json:isolines/precipitation.json",
+		    "css": "isolines/precipitation.css",
+		    "parameter": "Precipitation1h",
+		    "attributes":
+		    {
+			"id": "precipitation_isolines",
+			"class": "Precipitation"
+		    }
+		},
+		{
+		    "qid": "l3",
+		    "layer_type": "symbol",
+		    "symbols": "json:symbols/precipitationform.json",
+		    "parameter": "PrecipitationForm",
+		    "positions":
+		    {
+			"x": 5,
+			"y": 5,
+			"dx": 20,
+			"dy": 20,
+			"ddx": 5,
+			"intersect":
+			{
+			    "parameter": "Temperature",
+			    "lolimit": 14
+			}
+		    },
+		    "attributes":
+		    {
+			"id": "precipitation_form",
+			"class": "PrecipitationForm"
+		    }
+		}
+            ]
+        }
+    ]
+}

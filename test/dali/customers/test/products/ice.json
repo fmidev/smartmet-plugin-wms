@@ -1,0 +1,83 @@
+{
+    "title": "Ice Demo",
+    "time": "2014-02-14",
+    "projection":
+    {
+	"crs": "EPSG:2393",	// YKJ
+	"bboxcrs": "WGS84",
+	"xsize": 800,
+	"ysize": 800,
+	"cx": 21.8,
+	"cy": 61,
+	"resolution": 1.4
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+		{
+		    "qid": "sea",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "white"
+		    }
+		},
+                {
+		    "qid": "l1",
+                    "layer_type": "postgis",
+		    "pgname": "icemap",
+		    "schema": "icemap",
+		    "table": "publish_seaice",
+		    "time_column": "publicationdate",
+		    "time_truncate": "day",
+		    "geometry_column": "geom",
+		    "css": "ice/ice.css",
+		    "filters": "json:ice/ice.json",
+		    "attributes":
+		    {
+			"id": "iceareas"
+		    }
+                },
+		{
+		    "qid": "l2",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "esri",
+			"table": "europe_country_wgs84",
+			"lines": true,
+			"minarea": 5
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country_lines",
+			"fill": "none",
+			"stroke": "#222",
+			"stroke-width": "0.7px"
+		    }
+		},
+		{
+		    "qid": "time",
+		    "layer_type": "time",	
+		    "timestamp": "validtime",
+                    "timezone": "Europe/Helsinki",
+                    "format": "%Y-%m-%d",
+		    "x": -10,
+		    "y": -20,
+		    "attributes":
+		    {
+			"text-anchor": "end",
+			"font-family": "Verdana",
+			"font-weight": "bold",
+			"font-size": 14
+		    }
+		}
+            ]
+        }
+    ]
+}

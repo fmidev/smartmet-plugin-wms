@@ -1,0 +1,37 @@
+{
+    "title": "Brash ice barrier",
+    "abstract": "Brash ice barrier",
+    "projection": {},
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // sohjovyö
+		    "qid": "jmdbrr",
+		    "layer_type": "icemap",
+		    "layer_subtype": "symbol",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "jmdbpt",
+		    "symbol": "jmdbrr",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+ 			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}

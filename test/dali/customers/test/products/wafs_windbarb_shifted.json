@@ -1,0 +1,86 @@
+{
+    "title": "Wind demo from U- and V-components",
+    "producer": "wafs",
+    "projection": {
+        "xsize": 1025,
+        "ysize": 712,
+        "crs": "+proj=laea +lat_0=60 +lon_0=20 +units=m +ellps=WGS84",
+        "bboxcrs": "EPSG:4326",
+        "cy": 53,
+        "cx": 5,
+        "resolution": 6
+    },
+    "views": [
+        {
+            "layers": [
+                {
+                    "qid": "map",
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "vmap",
+                        "table": "world_country2009_wgs84",
+                        "lines": true
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#222",
+                        "stroke-width": "0.3px"
+                    }
+                },
+                {
+                    "qid": "graticule",
+                    "layer_type": "symbol",
+                    "symbol": "dot",
+                    "css": "symbols\/dot.css",
+                    "positions": {
+                        "layout": "graticule",
+                        "size": 10,
+                        "step": 1
+                    }
+                },
+                {
+                    "qid": "wind",
+                    "layer_type": "arrow",
+                    "arrows": "json:arrows\/windbarb.json",
+                    "multiplier": 1.94384449244,
+                    "css": "arrows\/windbarb.css",
+                    "southflop": true,
+                    "scale": 1.0,
+                    "u": "WindUMS",
+                    "v": "WindVMS",
+                    "attributes": {
+                        "id": "wind_arrows"
+                    },
+                    "positions": {
+                        "x": 5,
+                        "y": 5,
+                        "dx": 50,
+                        "dy": 50,
+                        "ddx": 25
+                    }
+                },
+                {
+                    "qid": "numbers",
+                    "layer_type": "number",
+                    "css": "numbers\/integers.css",
+                    "parameter": "Temperature",
+                    "attributes": {
+                        "class": "Number"
+                    },
+                    "label": "json:numbers\/integers.json",
+                    "positions": {
+                        "x": 5,
+                        "y": 5,
+                        "dx": 50,
+                        "dy": 50,
+                        "ddx": 25,
+                        "directionoffset": 10,
+                        "rotate": -45,
+                        "u": "WindUMS",
+                        "v": "WindVMS"
+                    }
+                }
+            ]
+        }
+    ]
+}

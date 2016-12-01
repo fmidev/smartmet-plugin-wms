@@ -1,0 +1,11 @@
+{
+    "producer": "MyProducer",
+    "parameter": "MyParameter",
+    "time": "20121221T000000",
+    "level": 1023,
+    "css_class": "MyClass",
+    "interpolation": "linear",
+    "contours": [
+
+    ]
+}

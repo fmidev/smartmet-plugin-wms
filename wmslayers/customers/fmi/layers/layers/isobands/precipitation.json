@@ -1,0 +1,65 @@
+[
+        {
+	    "qid": "precipitation_10_inf",
+            "lolimit": 10,
+            "hilimit": 999,
+	    "attributes":
+	    {
+		"class": "Precipitation_10_inf"
+	    }
+        },
+        {
+	    "qid": "precipitation_5_10",
+            "lolimit": 5,
+            "hilimit": 10,
+	    "attributes":
+	    {
+		"class": "Precipitation_5_10"
+	    }
+        },
+        {
+	    "qid": "precipitation_2_5",
+            "lolimit": 2,
+            "hilimit": 5,
+	    "attributes":
+	    {
+		"class": "Precipitation_2_5"
+	    }
+        },
+        {
+	    "qid": "precipitation_1_2",
+            "lolimit": 1,
+            "hilimit": 2,
+	    "attributes":
+	    {
+		"class": "Precipitation_1_2"
+	    }
+        },
+        {
+	    "qid": "precipitation_05_1",
+            "lolimit": 0.5,
+            "hilimit": 1,
+	    "attributes":
+	    {
+		"class": "Precipitation_05_1"
+	    }
+        },
+        {
+	    "qid": "precipitation_02_05",
+            "lolimit": 0.2,
+            "hilimit": 0.5,
+	    "attributes":
+	    {
+		"class": "Precipitation_02_05"
+	    }
+        },
+        {
+	    "qid": "precipitation_01_02",
+            "lolimit": 0.1,
+            "hilimit": 0.2,
+	    "attributes":
+	    {
+		"class": "Precipitation_01_02"
+	    }
+        }
+]

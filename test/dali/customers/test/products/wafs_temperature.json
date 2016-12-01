@@ -1,0 +1,63 @@
+{
+    "title": "WAFS",
+    "producer": "wafs",
+    "refs": {
+        "myprojection": {
+            "xsize": 1025,
+            "ysize": 712,
+            "crs": "+proj=laea +lat_0=60 +lon_0=20 +units=m +ellps=WGS84",
+            "bboxcrs": "EPSG:4326",
+            "cy": 53,
+            "cx": 5,
+            "resolution": 6
+        }
+    },
+    "projection": "ref:refs.myprojection",
+    "views": [
+        {
+            "qid": "v1-",
+            "attributes": {
+                "id": "view1"
+            },
+            "layers": [
+                {
+                    "qid": "sea",
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "white"
+                    }
+                },
+                {
+                    "qid": "europe",
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "vmap",
+                        "table": "world_country2009_wgs84"
+                    },
+                    "attributes": {
+                        "stroke": "black",
+                        "fill": "none"
+                    }
+                },
+                {
+                    "qid": "temperature",
+                    "layer_type": "number",
+                    "css": "numbers\/integers.css",
+                    "parameter": "Temperature",
+                    "level": 500,
+                    "attributes": {
+                        "class": "Number"
+                    },
+                    "label": "json:numbers\/integers.json",
+                    "positions": {
+                        "x": 20,
+                        "y": 18,
+                        "dx": 30,
+                        "dy": 30,
+                        "ddx": 15
+                    }
+                }
+            ]
+        }
+    ]
+}

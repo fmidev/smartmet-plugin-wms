@@ -1,0 +1,53 @@
+{
+    "title": "Wind demo from U- and V-components",
+    "producer": "wafs",
+    "projection": {
+        "xsize": 1025,
+        "ysize": 712,
+        "crs": "+proj=laea +lat_0=60 +lon_0=20 +units=m +ellps=WGS84",
+        "bboxcrs": "EPSG:4326",
+        "cy": 53,
+        "cx": 5,
+        "resolution": 6
+    },
+    "views": [
+        {
+            "layers": [
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "vmap",
+                        "table": "world_country2009_wgs84",
+                        "lines": true
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#222",
+                        "stroke-width": "0.3px"
+                    }
+                },
+                {
+                    "qid": "l3",
+                    "layer_type": "arrow",
+                    "arrows": "json:arrows\/windbarb.json",
+                    "multiplier": 1.94384449244,
+                    "css": "arrows\/windbarb.css",
+                    "southflop": true,
+                    "scale": 1.0,
+                    "u": "WindUMS",
+                    "v": "WindVMS",
+                    "attributes": {
+                        "id": "wind_arrows"
+                    },
+                    "positions": {
+                        "x": 5,
+                        "y": 5,
+                        "dx": 20,
+                        "dy": 20,
+                        "ddx": 10
+                    }
+                }
+            ]
+        }
+    ]
+}

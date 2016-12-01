@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  width="1030px" height="520px" viewBox="0 0 1030 520">
+<title>Twin Template template</title>
+<defs>
+<style type="text/css"><![CDATA[
+<TMPL_foreach styles as style>
+ <TMPL_var style.id> <TMPL_var style.value>
+<-/TMPL_foreach>
+ ]]>
+</style>
+
+<TMPL_foreach includes as inc><TMPL_var inc></TMPL_foreach>
+
+<-TMPL_foreach layers as layer>
+<-TMPL_if (size(layer.start)>0)>
+<TMPL_var layer.start><TMPL_foreach layer.attributes as attribute> <TMPL_var attribute.__key__>="<TMPL_var attribute.__value__>"</TMPL_foreach>>
+<-/TMPL_if>
+<-TMPL_if defined(layer.cdata)><TMPL_var layer.cdata></TMPL_if>
+<-TMPL_foreach layer.tags as tag>
+ <TMPL_var tag.start><TMPL_foreach tag.attributes as attribute> <TMPL_var attribute.__key__>="<TMPL_var attribute.__value__>"</TMPL_foreach><TMPL_var tag.end>
+<-/TMPL_foreach>
+<TMPL_var layer.end>
+<-/TMPL_foreach>
+
+<-TMPL_foreach paths as path>
+<path id="<TMPL_var path.__key__>" d="<TMPL_var path.__value__>"/>
+<-/TMPL_foreach>
+
+</defs>
+
+<g
+ <-TMPL_if defined(svg_id)> id="<TMPL_var svg_id>"</TMPL_if>
+ <-TMPL_if defined(css_class)> class="<TMPL_var css_class>"</TMPL_if>
+ <-TMPL_if defined(css_style)> style="<TMPL_var css_style>"</TMPL_if>>
+
+ <-TMPL_foreach views as view>
+ <g
+  <-TMPL_if defined(view.svg_id)> id="<TMPL_var svg_id>"</TMPL_if>
+  <-TMPL_if defined(view.css_class)> class="<TMPL_var css_class>"</TMPL_if>
+  <-TMPL_if defined(view.css_style)> style="<TMPL_var css_style>"</TMPL_if>
+  <-TMPL_if defined(view.transform)> transform="<TMPL_var transform>"</TMPL_if>
+  <-TMPL_if defined(view.filter)> filter="<TMPL_var filter>"</TMPL_if>>
+  <rect x="0" y="0" width="500" height="500" stroke="black" fill="none"/>
+  <-TMPL_foreach layers as layer>
+  <g
+   <-TMPL_if defined(layer.svg_id)> id="<TMPL_var svg_id>"</TMPL_if>
+   <-TMPL_if defined(layer.css_class)> class="<TMPL_var css_class>"</TMPL_if>
+   <-TMPL_if defined(layer.css_style)> style="<TMPL_var css_style>"</TMPL_if>
+   <-TMPL_if defined(layer.transform)> transform="<TMPL_var transform>"</TMPL_if>
+   <-TMPL_if defined(layer.filter)> filter="<TMPL_var filter>"</TMPL_if>>
+
+   <-TMPL_foreach uses as use>
+   <use xlink:href="#<TMPL_var svg_id>"
+     <-TMPL_if defined(use.css_class)> class="<TMPL_var css_class>"</TMPL_if>
+     <-TMPL_if defined(use.css_style)> style="<TMPL_var css_style>"</TMPL_if>/>
+   <-/TMPL_foreach>
+  <TMPL_var layer.end>
+ <-/TMPL_foreach>
+ <TMPL_var view.end>
+<-/TMPL_foreach>
+</g>
+</svg>

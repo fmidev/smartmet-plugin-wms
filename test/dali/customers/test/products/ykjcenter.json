@@ -1,0 +1,82 @@
+{
+    "width": 500,
+    "height": 500,
+    "title": "YKJ Demo",
+    "producer": "pal_skandinavia",
+
+    "views": [
+        {
+	    "projection":
+	    {
+		"xsize": 480,
+		"ysize": 480,
+		"crs": "EPSG:2393",
+		"bboxcrs": "EPSG:4326",
+		"cx": 25,
+		"cy": 65,
+		"resolution": 2
+	    },
+
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1",
+		"transform": "translate(10,10)"
+	    },
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+                    "css": "isobands/temperature.css",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"id": "temperature_isobands"
+		    }
+                },
+                {
+		    "qid": "l2",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/temperature.json",
+                    "css": "isolines/temperature.css",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"id": "temperature_isolines",
+			"class": "Temperature"
+		    }
+                },
+                {
+		    "qid": "l3",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/pressure.json",
+                    "css": "isolines/pressure.css",
+                    "parameter": "Pressure",
+		    "attributes":
+		    {
+			"id": "pressure_isolines",
+			"class": "Pressure"
+		    }
+                },
+		{
+		    "qid": "mymap",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"lines": true,
+			"schema": "esri",
+			"table": "finland_country_wgs84"
+		    },
+		    "attributes":
+		    {
+			"id": "finland_country",
+			"stroke": "#333",
+			"stroke-width": "0.5px",
+			"fill": "none"
+		    }
+		}
+            ]
+        }
+    ]
+}

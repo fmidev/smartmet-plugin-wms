@@ -1,0 +1,52 @@
+{
+    "title": "Ice thickness",
+    "abstract": "Ice thickness (cm)",
+    "projection": {},
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // jään paksuus
+		    "qid": "ice_thickness",
+		    "layer_type": "icemap",
+		    "layer_subtype": "ice_thickness_label",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "seaiceannotation",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+ 		    "labeltext_column" : "textstring",
+ 		    "fontname_column" : "fontname",
+ 		    "fontsize_column" : "fontsize",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "textstring IS NOT NULL and length(textstring) > 0",
+			    "attributes":
+			    {
+				"class": "IceThicknessLegend"
+			    },
+ 			    "text_attributes":
+			    {
+// here you can override text attributes read from database
+//				"font-family": "Times",
+//				"font-size": "28"
+//				"font-style": "normal",
+//				"font-weight": "normal"
+			    }
+ 			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}

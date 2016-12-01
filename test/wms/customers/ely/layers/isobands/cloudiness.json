@@ -1,0 +1,74 @@
+[
+        {
+	    "qid": "cloudiness_8",
+            "lolimit": 88.888,
+	    "attributes":
+	    {
+		"class": "Cloudiness_8"
+	    }
+        },
+        {
+	    "qid": "cloudiness_7",
+            "lolimit": 77.777,
+            "hilimit": 88.888,
+	    "attributes":
+	    {
+		"class": "Cloudiness_7"
+	    }
+        },
+        {
+	    "qid": "cloudiness_6",
+            "lolimit": 66.666,
+            "hilimit": 77.777,
+	    "attributes":
+	    {
+		"class": "Cloudiness_6"
+	    }
+        },
+        {
+	    "qid": "cloudiness_5",
+            "lolimit": 55.555,
+            "hilimit": 66.666,
+	    "attributes":
+	    {
+		"class": "Cloudiness_5"
+	    }
+        },
+        {
+	    "qid": "cloudiness_4",
+            "lolimit": 44.444,
+            "hilimit": 55.555,
+	    "attributes":
+	    {
+		"class": "Cloudiness_4"
+	    }
+        },
+        {
+	    "qid": "cloudiness_3",
+            "lolimit": 33.333,
+            "hilimit": 44.444,
+	    "attributes":
+	    {
+		"class": "Cloudiness_3"
+	    }
+        },
+        {
+	    "qid": "cloudiness_2",
+            "lolimit": 22.222,
+            "hilimit": 33.333,
+	    "attributes":
+	    {
+		"class": "Cloudiness_2"
+	    }
+        },
+        {
+	    "qid": "cloudiness_1",
+            "lolimit": 11.111,
+            "hilimit": 22.222,
+	    "attributes":
+	    {
+		"class": "Cloudiness_1"
+	    }
+        }
+]
+

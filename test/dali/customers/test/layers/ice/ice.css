@@ -1,0 +1,12 @@
+.Land			{ stroke: none; fill: rgb(246,246,246) }
+.Border			{ stroke: black; stroke-width: 0.3px; fill: none }
+.OpenWater		{ stroke: black; stroke-width: 0.5px; fill: rgb(150,200,255) }
+.VeryOpenIce		{ stroke: black; stroke-width: 0.5px; fill: rgb(140,255,160) }
+.OpenIce		{ stroke: black; stroke-width: 0.5px; fill: rgb(255,255,0) }
+.CloseIce		{ stroke: black; stroke-width: 0.5px; fill: rgb(255,125,7) }
+.NewIce			{ stroke: black; stroke-width: 0.5px; fill: rgb(255,175,255) }
+.VeryCloseIce		{ stroke: black; stroke-width: 0.5px; fill: rgb(255,0,0) }
+.LevelIce		{ stroke: black; stroke-width: 0.5px; fill: rgb(255,100,255) }
+.ConsolidatedIce	{ stroke: black; stroke-width: 0.5px; fill: rgb(145,0,0) }
+.RottenIce		{ stroke: black; stroke-width: 0.5px; fill: rgb(100,115,160) }
+.FastIce		{ stroke: black; stroke-width: 0.5px; fill: rgb(150,150,150) }

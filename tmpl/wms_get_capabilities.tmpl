@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WMS_Capabilities version="<TMPL_var version_string>" 
+		  xmlns="http://www.opengis.net/wms" 
+		  xmlns:sld="http://www.opengis.net/sld" 
+		  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		  xmlns:ms="http://mapserver.gis.umn.edu/mapserver" 
+		  xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" 
+		  xmlns:inspire_vs="http://inspire.ec.europa.eu/schemas/inspire_vs/1.0" 
+		  xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd  http://www.opengis.net/sld http://schemas.opengis.net/sld/1.1.0/sld_capabilities.xsd  http://inspire.ec.europa.eu/schemas/inspire_vs/1.0  http://inspire.ec.europa.eu/schemas/inspire_vs/1.0/inspire_vs.xsd">
+<Service>
+  <Name>WMS</Name>
+  <Title>Finnish Meteorological Institute Web Map Service</Title>
+  <Abstract>Finnish Meteorological Institute's Web Map Service</Abstract>
+  <KeywordList>
+      <Keyword>Weather</Keyword>
+      <Keyword>Forecast</Keyword>
+      <Keyword>Hirlam</Keyword>
+      <Keyword> </Keyword>
+  </KeywordList>
+  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://en.ilmatieteenlaitos.fi/open-data"/>
+  <ContactInformation>
+    <ContactPersonPrimary>
+      <ContactPerson>Roope Tervo</ContactPerson>
+      <ContactOrganization>Finnish Meteorological Institute (FMI)</ContactOrganization>
+    </ContactPersonPrimary>
+      <ContactPosition>Customer Services</ContactPosition>
+    <ContactAddress>
+        <AddressType>postal</AddressType>
+        <Address>PL 503</Address>
+        <City>Helsinki</City>
+        <StateOrProvince>Uusimaa</StateOrProvince>
+        <PostCode>00101</PostCode>
+        <Country>Finland</Country>
+    </ContactAddress>
+      <ContactVoiceTelephone>+358 29 539 1000</ContactVoiceTelephone>
+      <ContactFacsimileTelephone>+358 29 539 2303</ContactFacsimileTelephone>
+  </ContactInformation>
+  <Fees>
+   The use of this service and the returned data is limited. Contract with FMI is required for any kind of use.
+  </Fees>
+  <AccessConstraints>
+    The use of this service and the returned data is limited. Contract with FMI is required for any kind of use.
+  </AccessConstraints>
+</Service>
+
+<Capability>
+  <Request>
+    <GetCapabilities>
+      <Format>text/xml</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" 
+			       xlink:type="simple" 
+			       xlink:href="<TMPL_var getmap_uri>" />
+	  </Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" 
+			       xlink:type="simple" 
+				xlink:href="<TMPL_var getmap_uri>" />
+	  </Post>
+        </HTTP>
+      </DCPType>
+    </GetCapabilities>
+    <GetMap>
+      <Format>image/svg+xml</Format>
+      <Format>image/png</Format>
+      <DCPType>
+        <HTTP>
+          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="<TMPL_var getmap_uri>"/></Get>
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="<TMPL_var getmap_uri>"/></Post>
+        </HTTP>
+      </DCPType>
+    </GetMap>
+  </Request>
+  <Exception>
+    <Format>XML</Format>
+  </Exception>
+
+  <TMPL_if defined(inspire_extended_capabilities)>
+    <inspire_vs:ExtendedCapabilities>
+      <inspire_common:MetadataUrl xsi:type="inspire_common:resourceLocatorType">
+	<inspire_common:URL>
+http://catalog.fmi.fi/geonetwork/srv/en/csw?SERVICE=CSW&amp;VERSION=2.0.2&amp;REQUEST=GetRecordById&amp;ID=1234dfc1-4c08-4491-8ca0-b8ea2941c24a&amp;outputSchema=http://www.isotc211.org/2005/gmd&amp;elementSetName=full
+	</inspire_common:URL>
+	<inspire_common:MediaType>application/vnd.ogc.csw.GetRecordByIdResponse_xml</inspire_common:MediaType>
+      </inspire_common:MetadataUrl>
+      <inspire_common:SupportedLanguages xsi:type="inspire_common:supportedLanguagesType">
+	<inspire_common:DefaultLanguage>
+	  <inspire_common:Language><TMPL_var inspire_default_language></inspire_common:Language>
+	</inspire_common:DefaultLanguage>
+	<inspire_common:SupportedLanguage>
+	  <inspire_common:Language><TMPL_var inspire_supported_language></inspire_common:Language>
+	</inspire_common:SupportedLanguage>
+      </inspire_common:SupportedLanguages>
+      <inspire_common:ResponseLanguage>
+	<inspire_common:Language><TMPL_var inspire_response_language></inspire_common:Language>
+      </inspire_common:ResponseLanguage>
+    </inspire_vs:ExtendedCapabilities>
+  </TMPL_if>
+
+ <Layer>
+  <Title>Finnish Meteorological Institute Web Map Service</Title>
+  <Abstract></Abstract>
+  <TMPL_if defined(wms_layers)><TMPL_var wms_layers></TMPL_if>
+ </Layer>
+</Capability>
+</WMS_Capabilities>

@@ -1,0 +1,37 @@
+{
+    "title": "Ridged or hummocked ice",
+    "abstract": "Ridged or hummocked ice",
+    "projection": {},
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // ahtautunut tai röykkiöitynyt jää
+		    "qid": "icerdg",
+		    "layer_type": "icemap",
+		    "layer_subtype": "symbol",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "icerdg",
+		    "symbol": "icerdg",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+ 			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}

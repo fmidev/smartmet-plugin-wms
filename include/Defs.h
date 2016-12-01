@@ -1,0 +1,45 @@
+// ======================================================================
+/*!
+ * \brief SVG header section details
+ */
+// ======================================================================
+
+#pragma once
+
+#include "Layers.h"
+#include "Properties.h"
+#include "Styles.h"
+#include <map>
+#include <string>
+#include <vector>
+
+namespace SmartMet
+{
+namespace Plugin
+{
+namespace Dali
+{
+class Config;
+class State;
+
+class Defs : public Properties
+{
+ public:
+  void init(const Json::Value& theJson,
+            const State& theState,
+            const Config& theConfig,
+            const Properties& theParent);
+
+  void generate(CTPP::CDT& theGlobals, State& theState);
+  std::size_t hash_value(const State& theState) const;
+
+  std::string qid;
+  Styles styles;
+  Layers layers;
+
+ private:
+};  // class Defs
+
+}  // namespace Dali
+}  // namespace Plugin
+}  // namespace SmartMet

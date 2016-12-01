@@ -1,0 +1,82 @@
+[
+    {
+	"qid": "wind_32_inf",
+	"lolimit": 32,
+	"attributes":
+	{
+	    "class": "Wind_32_inf"
+	}
+    },
+    {
+	"qid": "wind_26_32",
+	"lolimit": 26,
+	"hilimit": 32,
+	"attributes":
+	{
+	    "class": "Wind_26_32"
+	}
+    },
+    {
+	"qid": "wind_21_26",
+	"lolimit": 21,
+	"hilimit": 26,
+	"attributes":
+	{
+	    "class": "Wind_21_26"
+	}
+    },
+    {
+	"qid": "wind_17_21",
+	"lolimit": 17,
+	"hilimit": 21,
+	"attributes":
+	{
+	    "class": "Wind_17_21"
+	}
+    },
+    {
+	"qid": "wind_14_17",
+	"lolimit": 14,
+	"hilimit": 17,
+	"attributes":
+	{
+	    "class": "Wind_14_17"
+	}
+    },
+    {
+	"qid": "wind_10_14",
+	"lolimit": 10,
+	"hilimit": 14,
+	"attributes":
+	{
+	    "class": "Wind_10_14"
+	}
+    },
+    {
+	"qid": "wind_7_10",
+	"lolimit": 7,
+	"hilimit": 10,
+	"attributes":
+	{
+	    "class": "Wind_7_10"
+	}
+    },
+    {
+	"qid": "wind_5_7",
+	"lolimit": 5,
+	"hilimit": 7,
+	"attributes":
+	{
+	    "class": "Wind_5_7"
+	}
+    },
+    {
+	"qid": "wind_3_5",
+	"lolimit": 3,
+	"hilimit": 5,
+	"attributes":
+	{
+	    "class": "Wind_3_5"
+	}
+    }
+]

@@ -1,0 +1,141 @@
+{
+    "width": 1030,
+    "height": 520,
+    "title": "Demo landscaping",
+    "producer": "ecmwf_maailma_pinta",
+    "projection":
+    {
+	"qid": "proj",
+	"crs": "EPSG:3035",	// LAEA
+	"bboxcrs": "WGS84",
+	"xsize": 500,
+	"ysize": 500,
+	"resolution": 1
+    },
+    "views": [
+	{
+	    "layers": [
+		{
+		    "tag": "rect",
+		    "attributes":
+		    {
+			"width": "100%",
+			"height": "100%",
+			"fill": "white"
+		    }
+		}
+	    ]
+	},
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1",
+		"transform": "translate(10,10)"
+	    },
+            "layers": [
+                {
+		    "qid": "b1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+		    "css": "isolines/temperature.css",
+                    "parameter": "Temperature.raw",
+		    "sampling":
+		    {
+			"resolution": 15
+		    },
+		    "attributes":
+		    {
+			"shape-rendering": "crispEdges"
+		    }
+                },
+		{
+		    "qid": "land1",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "esri",
+			"table": "europe_country_wgs84"
+		    },
+		    "attributes":
+		    {
+			"fill": "none",
+			"stroke": "#222",
+			"stroke-width": "0.3px"
+		    }
+		},
+		{
+		    "qid": "water1",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "esri",
+			"table": "europe_mjwater_eureffin"
+		    },
+		    "attributes":
+		    {
+			"fill": "none",
+			"stroke": "blue",
+			"stroke-width": "0.2px"
+		    }
+		}
+	    ]
+        },
+        {
+	    "qid": "v2",
+	    "attributes":
+	    {
+		"id": "view2",
+		"class": "View2",
+		"transform": "translate(520,10)"
+	    },
+            "layers": [
+                {
+		    "qid": "b2",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css",
+                    "parameter": "Temperature",
+		    "sampling":
+		    {
+			"relativeresolution": 2
+		    },
+		    "attributes":
+		    {
+			"shape-rendering": "crispEdges"
+		    }
+                },
+		{
+		    "qid": "land2",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "esri",
+			"table": "europe_country_wgs84"
+		    },
+		    "attributes":
+		    {
+			"fill": "none",
+			"stroke": "#222",
+			"stroke-width": "0.3px"
+		    }
+		},
+		{
+		    "qid": "water2",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "esri",
+			"table": "europe_mjwater_eureffin"
+		    },
+		    "attributes":
+		    {
+			"fill": "none",
+			"stroke": "blue",
+			"stroke-width": "0.2px"
+		    }
+		}
+            ]
+        }
+    ]
+}

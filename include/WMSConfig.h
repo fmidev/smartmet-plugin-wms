@@ -1,0 +1,148 @@
+// ======================================================================
+/*!
+ * \brief Configuration file API for WMS
+ */
+// ======================================================================
+
+#pragma once
+
+#include "Config.h"
+#include "WMS.h"
+#include "WMSLayer.h"
+
+#include <engines/gis/Engine.h>
+#include <engines/querydata/Engine.h>
+#include <spine/FileCache.h>
+#include <spine/Thread.h>
+
+#include <libconfig.h++>
+#include <boost/utility.hpp>
+#include <boost/optional.hpp>
+#include <set>
+#include <vector>
+#include <map>
+#include <string>
+
+namespace SmartMet
+{
+namespace Engine
+{
+namespace Authentication
+{
+class Engine;
+}
+}
+
+namespace Plugin
+{
+namespace WMS
+{
+// For getCapabilities caching
+class WMSLayerProxy
+{
+ public:
+  WMSLayerProxy(SmartMet::Engine::Gis::Engine* gisEngine, SharedWMSLayer theLayer)
+      : itsGisEngine(gisEngine), itsLayer(theLayer)
+  {
+    itsCapabilitiesXML = itsLayer->generateGetCapabilities(*itsGisEngine);
+  }
+
+  SharedWMSLayer getLayer() const { return itsLayer; }
+  std::string getCapabilities() const { return itsCapabilitiesXML; }
+  void update()
+  {
+    itsLayer->updateLayerMetaData();
+    itsCapabilitiesXML = itsLayer->generateGetCapabilities(*itsGisEngine);
+  }
+
+ private:
+  SmartMet::Engine::Gis::Engine* itsGisEngine;
+  SharedWMSLayer itsLayer;
+  std::string layerName;
+  std::string itsCapabilitiesXML;
+};
+
+class WMSConfig
+{
+ public:
+  WMSConfig() = delete;
+  WMSConfig(const SmartMet::Plugin::Dali::Config& daliConfig,
+            const SmartMet::Spine::FileCache& theFileCache,
+            SmartMet::Engine::Querydata::Engine* qEngine,
+            SmartMet::Engine::Authentication::Engine* authEngine,
+            SmartMet::Engine::Gis::Engine* gisEngine);
+
+  std::string getCapabilities(const boost::optional<std::string>& apikey,
+                              bool authenticate = true) const;
+  std::string layerCustomer(const std::string& theLayerName) const;
+  const std::set<std::string>& supportedMapFormats() const;
+  const std::set<std::string>& supportedWMSVersions() const;
+  bool isValidMapFormat(const std::string& theMapFormat) const;
+  bool isValidVersion(const std::string& theVersion) const;
+  bool isValidLayer(const std::string& theLayer) const;
+  bool isValidStyle(const std::string& theLayer, const std::string& theStyle) const;
+  bool isValidCRS(const std::string& theLayer, const std::string& theCRS) const;
+
+  bool validateGetMapAuthorization(const SmartMet::Spine::HTTP::Request& theRequest) const;
+
+  bool isValidTime(const std::string& theLayer,
+                   const boost::posix_time::ptime& theTime,
+                   const SmartMet::Engine::Querydata::Engine& theQEngine) const;
+  bool isTemporal(const std::string& theLayer) const;
+  bool currentValue(const std::string& theLayer) const;
+  boost::posix_time::ptime mostCurrentTime(const std::string& theLayer) const;
+  std::string jsonText(const std::string& theLayerName) const;
+
+  bool inspireExtensionSupported() const;
+  const std::string& inspireExtensionDefaultLanguage() const;
+  const std::string& inspireExtensionSupportedLanguage() const;
+  const std::string& inspireExtensionResponseLanguage() const;
+
+  void shutdown();
+
+ private:
+  const SmartMet::Plugin::Dali::Config& itsDaliConfig;
+  const SmartMet::Spine::FileCache& itsFileCache;
+
+  // Engines for GetCapabilities
+  SmartMet::Engine::Querydata::Engine* itsQEngine = nullptr;
+  SmartMet::Engine::Gis::Engine* itsGisEngine = nullptr;
+  // For GetCapabilities and GetMap Authentication
+  SmartMet::Engine::Authentication::Engine* itsAuthEngine = nullptr;
+
+  // supported map formats
+  std::set<std::string> itsSupportedMapFormats;
+  // supported wms versions
+  std::set<std::string> itsSupportedWMSVersions;
+
+  bool itsInspireExtensionSupported = false;
+  std::string itsInspireExtensionDefaultLanguage;
+  std::string itsInspireExtensionSupportedLanguage;
+  std::string itsInspireExtensionResponseLanguage;
+
+  // Valid WMS layers (name -> layer proxy)
+  std::map<std::string, WMSLayerProxy> itsLayers;
+
+  std::unique_ptr<boost::thread> itsGetCapabilitiesThread;
+
+  void capabilitiesUpdateLoop();
+
+  void updateLayerMetaData();
+
+  // For locking purposes
+  bool isValidLayerImpl(const std::string& theLayer) const;
+
+  friend class WMSLayerFactory;
+
+  mutable SmartMet::Spine::MutexType itsGetCapabilitiesMutex;
+
+  bool itsShutdownRequested;
+  int itsActiveThreadCount;
+
+};  // class WMSConfig
+
+}  // namespace WMS
+}  // namespace Plugin
+}  // namespace SmartMet
+
+// ======================================================================

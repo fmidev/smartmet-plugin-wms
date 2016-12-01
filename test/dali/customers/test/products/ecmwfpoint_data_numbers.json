@@ -1,0 +1,38 @@
+{
+  "title": "ECMWF point temperatures at data points",
+  "producer": "ecmwf_maailma_piste",
+  "projection":
+    {
+	"crs": "EPSG:4326",
+	"x1": -180,
+	"y1": -90,
+	"x2": 180,
+	"y2": 90,
+	"xsize": 1440,
+	"ysize": 720
+  },
+  "views": [
+    {
+      "qid": "v1",
+      "attributes": {
+        "id": "view1"
+      },
+      "layers": [
+        {
+          "qid": "l2",
+          "layer_type": "number",
+          "css": "numbers/integers.css",
+          "parameter": "Temperature",
+          "attributes": {
+            "class": "Number",
+            "id": "t2m_numbers"
+          },
+          "label": "json:numbers/integers.json",
+          "positions": {
+	      "layout": "data"
+          }
+        }
+      ]
+    }
+  ]
+}

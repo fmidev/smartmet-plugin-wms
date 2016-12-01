@@ -1,0 +1,46 @@
+{
+    "width": 1030,
+    "height": 520,
+    "title": "Demo two views side by side",
+    "producer": "pal_skandinavia",
+    "views": [
+        {
+	    "qid": "v1",
+            "layers": [
+                {
+		    "qid": "b1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+                    "parameter": "Temperature"
+                },
+                {
+		    "qid": "l1",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/temperature.json",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"class": "Temperature",
+			"fill": "none",
+			"stroke": "#999",
+			"stroke-width": "0.4px"
+		    }
+                }
+            ],
+	    "repeat":
+	    {
+		"time_offset": [ 0, 1440 ],
+		"attributes": [
+		    {
+			"id": "view1",
+			"transform": "translate(10,10)"
+		    },
+		    {
+			"id": "view2",
+			"transform": "translate(520,10)"
+		    }
+		]
+	    }
+        }
+    ]
+}

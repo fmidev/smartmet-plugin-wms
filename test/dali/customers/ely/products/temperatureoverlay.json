@@ -1,0 +1,76 @@
+{
+    "title": "Temperature Overlay",
+    "refs":
+    {
+	"myprojection": "json:maps/finlandprojection.json"
+    },
+    "defs":
+    {
+	"styles":
+	{
+	    ".Label":
+	    {
+		"font": "Arial",
+		"font-size": 9
+	    },
+	    ".Units":
+	    {
+		"font": "Arial",
+		"font-size": 14
+	    }
+	},
+	"layers": [
+	    {
+		"tag": "symbol",
+		"attributes":
+		{
+		    "id": "rect"
+		},
+		"layers": [
+		    {
+			"tag": "rect",
+			"attributes":
+			{
+			    "width": "14",
+			    "height": "9"
+			}
+		    }
+		]
+	    }
+	]
+    },
+    "projection": "ref:refs.myprojection",
+    "views": [
+        {
+	    "qid": "v1-",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+	    "json:paths/legendmask.json",
+                {
+                    "qid": "num-",
+                    "layer_type": "number",
+                    "css": "numbers/numbers.css",
+                    "parameter": "Temperature",
+                    "attributes":
+                    {
+                        "class": "Number",
+			"mask" : "url(#legendmask)"
+                    },
+                    "label": "json:numbers/integers.json",
+                    "positions":
+                    {
+                        "x": 20,
+                        "y": 18,
+                        "dx": 30,
+                        "dy": 30,
+                        "ddx": 15
+                    }
+                }
+	    ]
+	}
+
+    ]
+}

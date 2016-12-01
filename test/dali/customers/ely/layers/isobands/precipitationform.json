@@ -1,0 +1,59 @@
+[
+    // drizzle=0, rain=1, sleet=2, snow=3, freezingdrizzle=4, freezingrain=5, hail=6
+    {
+        "lolimit": 6,
+        "hilimit": 6,
+	"attributes":
+	{
+	    "class": "Hail"
+	}
+    },
+    {
+        "lolimit": 5,
+        "hilimit": 5,
+	"attributes":
+	{
+	    "class": "FreezingRain"
+	}
+    },
+    {
+        "lolimit": 4,
+        "hilimit": 4,
+	"attributes":
+	{
+	    "class": "FreezingDrizzle"
+	}
+    },
+    {
+        "lolimit": 3,
+        "hilimit": 3,
+	"attributes":
+	{
+	    "class": "Snow"
+	}
+    },
+    {
+        "lolimit": 2,
+        "hilimit": 2,
+	"attributes":
+	{
+	    "class": "Sleet"
+	}
+    },
+    {
+        "lolimit": 1,
+        "hilimit": 1,
+	"attributes":
+	{
+	    "class": "Rain"
+	}
+    },
+    {
+        "lolimit": 0,
+        "hilimit": 0,
+	"attributes":
+	{
+	    "class": "Drizzle"
+	}
+    }
+]

@@ -1,0 +1,93 @@
+// ======================================================================
+/*!
+ * \brief An individual layer in a view
+ *
+ * Characteristics:
+ *
+ *  - unique projection with specific bounding box forced by view
+ *  - may override layer/global producer and time
+ */
+// ======================================================================
+
+#pragma once
+
+#include "Attributes.h"
+#include "Layers.h"
+#include "Properties.h"
+#include <json/json.h>
+#include <boost/optional.hpp>
+#include <set>
+#include <string>
+#include <vector>
+
+namespace CTPP
+{
+class CDT;
+}
+
+namespace SmartMet
+{
+namespace Spine
+{
+class Parameter;
+}
+namespace Plugin
+{
+namespace Dali
+{
+class Config;
+class Defs;
+class Plugin;
+class State;
+class View;
+
+class Layer : public Properties
+{
+ public:
+  virtual ~Layer() {}
+  using Properties::init;
+  virtual void init(const Json::Value& theJson,
+                    const State& theState,
+                    const Config& theConfig,
+                    const Properties& theProperties);
+
+  virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) = 0;
+
+  // Base provides a reasonable default!
+  virtual std::size_t hash_value(const State& theState) const;
+
+  // Does the layer satisfy resolution etc constraints?
+  bool validLayer(const State& theState) const;
+
+  // Get the model data
+  SmartMet::Engine::Querydata::Q getModel(const State& theState) const;
+
+  // Layer specific settings
+  std::string qid;
+
+  // Resolution range
+  boost::optional<double> minresolution;
+  boost::optional<double> maxresolution;
+
+  // Allowed and disallowed formats
+  std::set<std::string> enable;
+  std::set<std::string> disable;
+
+  // External style sheet
+  boost::optional<std::string> css;
+
+  // SVG attributes (id, class, style, transform, filter...)
+  Attributes attributes;
+
+  // Inner layers
+  Layers layers;
+
+ private:
+  bool validResolution() const;
+  bool validType(const std::string& theType) const;
+
+};  // class Layer
+
+}  // namespace Dali
+}  // namespace Plugin
+}  // namespace SmartMet

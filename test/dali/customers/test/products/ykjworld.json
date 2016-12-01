@@ -1,0 +1,52 @@
+{
+    "title": "YKJ with global EC data",
+    "producer": "ecmwf_maailma_pinta",
+
+    "projection":
+    {
+	"xsize": 500,
+	"ysize": 500,
+	"crs": "EPSG:2393",
+	"bboxcrs": "WGS84",
+	"cx": 25,
+	"cy": 60,
+	"resolution": 15
+    },
+    
+    "views": [
+        {
+	    "qid": "v1",
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+                    "css": "isobands/temperature.css",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"id": "temperature_isobands"
+		    }
+                },
+		{
+		    "qid": "mymap",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"lines": true,
+			"schema": "esri",
+			"minarea": 50,
+			"table": "europe_country_wgs84"
+		    },
+		    "attributes":
+		    {
+			"id": "europe",
+			"stroke": "#333",
+			"stroke-width": "0.5px",
+			"fill": "none"
+		    }
+		}
+            ]
+        }
+    ]
+}

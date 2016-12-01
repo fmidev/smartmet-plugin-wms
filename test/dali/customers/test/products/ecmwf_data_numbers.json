@@ -1,0 +1,48 @@
+{
+  "title": "ECMWF temperatures at data points",
+  "producer": "ecmwf_maailma_pinta",
+  "projection":
+    {
+	"crs": "EPSG:2393",
+	"bboxcrs": "EPSG:4326",
+	"cx": 25,
+	"cy": 60,
+	"resolution": 1,
+	"xsize": 500,
+	"ysize": 500
+  },
+  "views": [
+    {
+      "qid": "v1",
+      "attributes": {
+        "id": "view1"
+      },
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "isobands": "json:isobands/temperature.json",
+          "css": "isobands/temperature.css",
+          "parameter": "Temperature",
+          "attributes": {
+            "id": "t2m_isobands"
+          }
+        },
+        {
+          "qid": "l2",
+          "layer_type": "number",
+          "css": "numbers/integers.css",
+          "parameter": "Temperature",
+          "attributes": {
+            "class": "Number",
+            "id": "t2m_numbers"
+          },
+          "label": "json:numbers/integers.json",
+          "positions": {
+	      "layout": "data"
+          }
+        }
+      ]
+    }
+  ]
+}

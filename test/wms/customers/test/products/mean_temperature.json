@@ -1,0 +1,47 @@
+{
+    "title": "Mean temperature",
+    "abstract": "Sea surface mean temperature (1971-2000)",
+    "projection": {},
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // keskilämpötila
+		    "qid": "mean_temperature",
+		    "layer_type": "icemap",
+		    "layer_subtype": "mean_temperature",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "watermeantemp",
+		    "geometry_column" : "geom",
+		    "labeltext_column" : "o_DD_o_MM_o", // DD and MM are replaced in the query with requested day and month
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"class": "MeanTemperature"
+			    },
+			    "text_attributes":
+			    {
+				"font-family": "Arial",
+				"font-size": "10",
+				"dx": "-5"
+			    }
+			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}
+

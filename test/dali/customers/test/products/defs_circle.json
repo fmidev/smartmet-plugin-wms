@@ -1,0 +1,168 @@
+{
+    "title": "Circled Demo Product",
+    "producer": "pal_skandinavia",
+
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+
+    "defs":
+    {
+	"styles":
+	{
+	    ".Temperature":
+	    {
+		"fill": "none",
+		"stroke": "#999",
+		"stroke-width": "0.4px"
+	    }
+	},
+	"layers":
+	[
+	    {
+		"tag": "filter",
+		"attributes":
+		{
+		    "id": "myshadow"
+		},
+		"layers":
+		[
+		    {
+			"tag": "feOffset",
+			"attributes":
+			{
+			    "in": "SourceAlpha",
+			    "result": "offsetted",
+			    "dx": "3",
+			    "dy": "5"
+			}
+		    },
+		    {
+			"tag": "feGaussianBlur",
+			"attributes":
+			{
+			    "in": "offsetted",
+			    "result": "blurred",
+			    "stdDeviation": "4"
+			}
+		    },
+		    {
+			"tag": "feBlend",
+			"attributes":
+			{
+			    "in": "SourceGraphic",
+			    "in2": "blurred",
+			    "mode": "normal"
+			}
+		    }
+		]
+	    },
+	    {
+		"qid": "circle",
+		"tag": "circle",
+		"attributes":
+		{
+		    "id": "mycircle",
+		    "cx": "250",
+		    "cy": "250",
+		    "r": "240"
+		}
+	    },
+	    {
+		"tag": "clipPath",
+		"attributes":
+		{
+		    "id": "myclip"
+		},
+		"layers":
+		[
+		    {
+			"tag": "use",
+			"attributes":
+			{
+			    "xlink:href": "#mycircle"
+			}
+		    }
+		]
+	    },
+	    {
+		"qid": "text",
+		"tag": "text",
+		"cdata": "Hello World!",
+		"attributes":
+		{
+		    "id": "mytext"
+		}
+	    }
+	]
+    },
+
+    "attributes":
+    {
+	"filter": "url(#myshadow)"
+    },
+
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1",
+		"clip-path": "url(#myclip)"
+	    },
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"id": "temperature_isobands"
+		    }
+                },
+                {
+		    "qid": "l2",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/temperature.json",
+		    "css": "isolines/temperature.css",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"id": "temperature_isolines",
+			"class": "Temperature"
+		    }
+                },
+		{
+		    "tag": "use",
+		    "attributes":
+		    {
+			"xlink:href": "#mycircle",
+			"stroke": "black",
+			"fill": "none"
+		    }
+		},
+		{
+		    "tag": "use",
+		    "attributes":
+		    {
+			"xlink:href": "#mytext",
+			"x": "250",
+			"y": "250",
+			"font-family": "Verdana",
+			"font-weight": "bold",
+			"font-size": "55",
+			"fill": "yellow",
+			"stroke": "black",
+			"text-anchor": "middle",
+			"filter": "url(#myshadow)"
+		    }
+		}
+            ]
+        }
+    ]
+}

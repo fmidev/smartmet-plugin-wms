@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=precipitation_warm&time=200808050300 HTTP/1.0

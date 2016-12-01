@@ -1,0 +1,266 @@
+// ======================================================================
+
+#include "Attributes.h"
+#include "Config.h"
+#include "Hash.h"
+#include "State.h"
+#include <ctpp2/CDT.hpp>
+#include <spine/Exception.h>
+#include <spine/HTTP.h>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/foreach.hpp>
+
+namespace SmartMet
+{
+namespace Plugin
+{
+namespace Dali
+{
+// ----------------------------------------------------------------------
+/*!
+ * \brief Initialize attributes from JSON
+ *
+ * Note: We allow JSON values to be integers and doubles, but
+ *       convert them directly to strings since that is how
+ *       we are going to represent them when printing SVG
+ *       attributes. This feature allows the user to put
+ *       attributes in a natural form into the attributes without
+ *       bothering with unnecessary quotes.
+ */
+// ----------------------------------------------------------------------
+
+void Attributes::init(const Json::Value& theJson, const Config& theConfig)
+{
+  try
+  {
+    // Allowed since it makes JSON self documenting
+    if (theJson.isNull())
+      return;
+
+    if (!theJson.isObject())
+      throw SmartMet::Spine::Exception(BCP,
+                                       "Attributes JSON is not a JSON object (name-value pairs)");
+
+    // Iterate trhough all the members
+
+    const auto members = theJson.getMemberNames();
+    BOOST_FOREACH (const auto& name, members)
+    {
+      const Json::Value& json = theJson[name];
+
+      switch (json.type())
+      {
+        case Json::nullValue:
+          break;
+        case Json::intValue:
+        {
+          attributes[name] = Fmi::to_string(json.asInt());
+          break;
+        }
+        case Json::uintValue:
+        {
+          attributes[name] = Fmi::to_string(json.asUInt());
+          break;
+        }
+        case Json::realValue:
+        {
+          attributes[name] = Fmi::to_string(json.asDouble());
+          break;
+        }
+        case Json::stringValue:
+        case Json::booleanValue:
+        {
+          attributes[name] = json.asString();
+          break;
+        }
+        case Json::arrayValue:
+        {
+          throw SmartMet::Spine::Exception(BCP, "Arrays are not allowed as an Attribute value");
+        }
+        case Json::objectValue:
+        {
+          throw SmartMet::Spine::Exception(BCP, "Maps are not allowed as an Attribute value");
+        }
+      }
+    }
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the attributes to the CDT
+ *
+ * Note: Both librsvg and WebKit fail to obey presentation attributes
+ *       if a class-attribute is used. Both do work if both class
+ *       and style is used. Hence we collect all presentation attributes
+ *       into a single style so that a class can be defined simultaneously.
+ *
+ * Note: We disallow using the style attribute directly since we wish
+ *       to reserve the keyword for selecting the product style.
+ *       Hence we know the attributes should not contain a style tag.
+     *
+     * Note: We allow qid in the input, but disable it in the output
+ */
+// ----------------------------------------------------------------------
+
+void Attributes::generate(CTPP::CDT& theLocals, State& theState) const
+{
+  try
+  {
+    const auto& regular_attributes = theState.getConfig().regularAttributes();
+    const auto& presentation_attributes = theState.getConfig().presentationAttributes();
+
+    CTPP::CDT attrs = CTPP::CDT(CTPP::CDT::HASH_VAL);
+
+    // Collect presentation attributes into a single style attribute
+    std::map<std::string, std::string> style;
+
+    BOOST_FOREACH (const auto& attribute, attributes)
+    {
+      const auto& name = attribute.first;
+      const auto& value = attribute.second;
+
+      // Validate attribute name
+
+      bool is_regular = (regular_attributes.find(name) != regular_attributes.end());
+      bool is_presentation =
+          (!is_regular && (presentation_attributes.find(name) != presentation_attributes.end()));
+      bool is_valid = ((name == "qid") | is_presentation | is_regular);
+
+      if (!is_valid)
+        throw SmartMet::Spine::Exception(BCP, "Illegal SVG attribute name '" + name + "'");
+
+      // Make sure the ID is unique
+      if (name == "id")
+        theState.requireId(value);
+
+      // Handle the attribute
+
+      if (is_regular)
+        attrs[name] = value;
+      else if (is_presentation)
+        style[name] = value;
+    }
+
+    // Now add a style attribute if necessary
+
+    if (!style.empty())
+    {
+      std::string text;
+      BOOST_FOREACH (const auto& name_value, style)
+      {
+        if (!text.empty())
+          text += "; ";
+        text += name_value.first + ':' + name_value.second;
+      }
+      attrs["style"] = text;
+    }
+
+    // There may be pre-existing attributes, so we merge instead of assigning
+    theLocals["attributes"].MergeCDT(attrs);
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Hash value
+ */
+// ----------------------------------------------------------------------
+
+std::size_t Attributes::hash_value(const State& theState) const
+{
+  try
+  {
+    std::size_t hash = Dali::hash_value(attributes);
+
+    // Special attributes. See also State::addAttributes
+
+    auto iri = getLocalIri("filter");
+    if (iri)
+      boost::hash_combine(hash, theState.getFilterHash(*iri));
+
+    iri = getLocalIri("marker");
+    if (iri)
+      boost::hash_combine(hash, theState.getMarkerHash(*iri));
+
+    iri = getLocalIri("marker-start");
+    if (iri)
+      boost::hash_combine(hash, theState.getMarkerHash(*iri));
+
+    iri = getLocalIri("marker-mid");
+    if (iri)
+      boost::hash_combine(hash, theState.getMarkerHash(*iri));
+
+    iri = getLocalIri("marker-end");
+    if (iri)
+      boost::hash_combine(hash, theState.getMarkerHash(*iri));
+
+    iri = getLocalIri("pattern");
+    if (iri)
+      boost::hash_combine(hash, theState.getPatternHash(*iri));
+
+    iri = getLocalIri("linearGradient");
+    if (iri)
+      boost::hash_combine(hash, theState.getGradientHash(*iri));
+
+    iri = getLocalIri("radialGradient");
+    if (iri)
+      boost::hash_combine(hash, theState.getGradientHash(*iri));
+
+    return hash;
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Extract named attribute local IRI if there is one
+ */
+// ----------------------------------------------------------------------
+
+boost::optional<std::string> Attributes::getLocalIri(const std::string& theName) const
+{
+  try
+  {
+    boost::optional<std::string> ret;
+
+    // return empty value if there is no such attribute
+
+    const auto& att = attributes.find(theName);
+    if (att == attributes.end())
+    {
+      return ret;
+    }
+
+    // return empty value if the value does not look like a local IRI
+
+    const auto& value = att->second;
+    if (value.empty() || value.substr(0, 5) != "url(#" || value[value.size() - 1] != ')')
+    {
+      return ret;
+    }
+
+    // Return the local name
+    ret = value.substr(5, value.size() - 6);
+    return ret;
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+}  // namespace Dali
+}  // namespace Plugin
+}  // namespace SmartMet

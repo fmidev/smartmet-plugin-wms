@@ -1,0 +1,52 @@
+{
+    "title": "Temperature isotherm labels",
+    "abstract": "Temperature isotherm labels",
+    "projection": {},
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // lämpötilakäyrien labelit
+		    "qid": "temperature_isotherm_labels",
+		    "layer_type": "icemap",
+		    "layer_subtype": "temperature_isotherm_label",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "sstannotations",
+		    "time_column" : "publicationdate",	
+		    "geometry_column" : "geom",
+		    "labeltext_column" : "textstring",
+		    "fontname_column" : "fontname",
+		    "fontsize_column" : "fontsize",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "textstring IS NOT NULL and length(textstring) > 0",
+			    "attributes":
+			    {
+				"class": "TemperatureIsolineLabel"
+			    },
+			    "text_attributes":
+			    {
+				"font-family": "Arial",
+				"font-size": "18",
+				"font-style": "normal",
+				"font-weight": "normal",
+				"text-anchor": "start"
+			    }
+			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}

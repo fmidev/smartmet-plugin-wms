@@ -1,0 +1,7 @@
+{
+    "isoline": false,
+    "lolimit": 100,
+    "hilimit": 200,
+    "svg_id": "MyID",
+    "css_class": "MyClass"
+}

@@ -1,0 +1,8 @@
+{
+    "dx": 0,
+    "dy": 3,
+    // "format": "%3.f%\u0025",
+    "precision": 0,
+    "suffix": "\u0025",
+    "missing": "-"
+}

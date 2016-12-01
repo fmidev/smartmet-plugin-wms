@@ -1,0 +1,26 @@
+{
+    "width": 500,
+    "height": 500,
+    "title": "Monitoring",
+    "views": [
+        {
+            "qid": "v1-",
+            "attributes":
+            {
+                "id": "view1"
+            },
+            "layers": [
+            {
+            "layer_type" : "tag",
+            "tag" : "text",     
+            "cdata" : "Monitor successfull",
+            "attributes" :
+            {
+            "x" : 250,
+            "y" : 250
+            }
+            }
+            ]
+        }
+    ]
+}

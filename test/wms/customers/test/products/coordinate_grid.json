@@ -1,0 +1,38 @@
+{
+    "title": "Coordinate grid",
+    "abstract": "Coordinate grid",
+    "projection": {},
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // koordinaattiruudukko
+		    "qid": "coordinate_grid",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "coordinate_grid",
+		    "geometry_column" : "geom",
+            	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"class": "CoordinateLine"
+			    }
+			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}

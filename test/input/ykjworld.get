@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=ykjworld&time=201503131200 HTTP/1.0

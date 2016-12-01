@@ -1,0 +1,32 @@
+[
+        {
+	    "value": 0,
+	    "symbol": "drizzle"
+        },
+        {
+	    "value": 1,
+	    "symbol": "rain"
+        },
+        {
+	    "value": 2,
+	    "symbol": "sleet"
+        },
+        {
+	    "value": 3,
+	    "symbol": "snow"
+        },
+        {
+	    "value": 4,
+	    "symbol": "freezingdrizzle"
+        },
+        {
+	    "value": 5,
+	    "symbol": "freezingrain"
+        },
+        {
+	    "value": 6,
+	    "symbol": "hail"
+        }
+]
+
+

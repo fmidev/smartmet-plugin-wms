@@ -1,0 +1,40 @@
+{
+    "title": "Temperature isotherm",
+    "abstract": "Temperature isotherm",
+    "projection": {},
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // lämpötilakäyrät
+		    "qid": "temperature_isotherm",
+		    "layer_type": "icemap",
+		    "layer_subtype": "temperature_isotherm",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "sst",
+		    "time_column" : "publicationdate",	
+		    "geometry_column" : "geom",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"class": "TemperatureIsoline"
+			    }
+			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}

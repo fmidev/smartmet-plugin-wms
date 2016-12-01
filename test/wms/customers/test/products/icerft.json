@@ -1,0 +1,37 @@
+{
+    "title": "Rafted ice",
+    "abstract": "Rafted ice",
+    "projection": {},
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // päällekkäin ajautunut jää
+		    "qid": "rafted_ice",
+		    "layer_type": "icemap",
+		    "layer_subtype": "symbol",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "icerft",
+		    "symbol": "icerft",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+ 			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}

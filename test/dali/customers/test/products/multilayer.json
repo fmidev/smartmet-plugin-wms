@@ -1,0 +1,42 @@
+{
+    "width": 1030,
+    "height": 520,
+    "title": "Demo two views side by side",
+    "producer": "pal_skandinavia",
+    "views": [
+        {
+	    "qid": "v1",
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoline",
+                    "json": "isolines/temperature",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"class": "Temperature",
+			"fill": "none",
+			"stroke": "#999",
+			"stroke-width": "0.4px"
+		    },
+		    "repeat":
+		    {
+			"time_offset": [ 0,60,120,180,240,300,360,420,480,540 ],
+			"attributes": [
+			    { "stroke": "#000" },
+			    { "stroke": "#111" },
+			    { "stroke": "#222" },
+			    { "stroke": "#333" },
+			    { "stroke": "#444" },
+			    { "stroke": "#555" },
+			    { "stroke": "#666" },
+			    { "stroke": "#777" },
+			    { "stroke": "#888" },
+			    { "stroke": "#999" }
+			]
+		    }
+                }
+            ]
+        }
+    ]
+}

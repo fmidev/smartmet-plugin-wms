@@ -1,0 +1,118 @@
+[
+        {
+            "qid": "seadirection_35_40",
+            "lolimit": 3.5,
+            "hilimit": 4.0,
+	    "attributes":
+	    {
+		"class": "SeaDirection_35_40"
+	    }
+        },
+        {
+            "qid": "seadirection_30_35",
+            "lolimit": 3.0,
+            "hilimit": 3.5,
+	    "attributes":
+	    {
+		"class": "SeaDirection_30_35"
+	    }
+        },
+        {
+            "qid": "seadirection_25_30",
+            "lolimit": 2.5,
+            "hilimit": 3.0,
+	    "attributes":
+	    {
+		"class": "SeaDirection_25_30"
+	    }
+        },
+        {
+            "qid": "seadirection_20_25",
+            "lolimit": 2.0,
+            "hilimit": 2.5,
+	    "attributes":
+	    {
+		"class": "SeaDirection_20_25"
+	    }
+        },
+        {
+            "qid": "seadirection_17_20",
+            "lolimit": 1.7,
+            "hilimit": 2.0,
+	    "attributes":
+	    {
+		"class": "SeaDirection_17_20"
+	    }
+        },
+        {
+            "qid": "seadirection_15_17",
+            "lolimit": 1.5,
+            "hilimit": 1.7,
+	    "attributes":
+	    {
+		"class": "SeaDirection_15_17"
+	    }
+        },
+        {
+            "qid": "seadirection_12_15",
+            "lolimit": 1.2,
+            "hilimit": 1.5,
+	    "attributes":
+	    {
+		"class": "SeaDirection_12_15"
+	    }
+        },
+        {
+            "qid": "seadirection_10_12",
+            "lolimit": 1.0,
+            "hilimit": 1.2,
+	    "attributes":
+	    {
+		"class": "SeaDirection_10_12"
+	    }
+        },
+        {
+            "qid": "seadirection_07_10",
+            "lolimit": 0.7,
+            "hilimit": 1.0,
+	    "attributes":
+	    {
+		"class": "SeaDirection_07_10"
+	    }
+        },
+        {
+            "qid": "seadirection_05_07",
+            "lolimit": 0.5,
+            "hilimit": 0.7,
+	    "attributes":
+	    {
+		"class": "SeaDirection_05_07"
+	    }
+        },
+        {
+            "qid": "seadirection_02_05",
+            "lolimit": 0.2,
+            "hilimit": 0.5,
+	    "attributes":
+	    {
+		"class": "SeaDirection_02_05"
+	    }
+        },
+        {
+            "qid": "seadirection_01_02",
+            "lolimit": 0.1,
+            "hilimit": 0.2,
+	    "attributes":
+	    {
+		"class": "SeaDirection_01_02"
+	    }
+        },
+        {
+            "qid": "seadirection_00_01",
+            "hilimit": 0.1,
+	    "attributes":
+	    {
+		"class": "SeaDirection_00_01"
+	    }
+        }
+]

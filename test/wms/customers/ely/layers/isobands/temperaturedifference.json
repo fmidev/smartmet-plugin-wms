@@ -1,0 +1,100 @@
+[
+        {
+	    "qid": "tdiff_10_inf",
+            "lolimit": 10,
+	    "attributes":
+	    {
+		"class": "Tdiff_10_inf"
+	    }
+        },
+        {
+	    "qid": "tdiff_6_10",
+            "lolimit": 6,
+            "hilimit": 10,
+	    "attributes":
+	    {
+		"class": "Tdiff_6_10"
+	    }
+        },
+        {
+	    "qid": "tdiff_4_6",
+            "lolimit": 4,
+            "hilimit": 6,
+	    "attributes":
+	    {
+		"class": "Tdiff_4_6"
+	    }
+        },
+        {
+	    "qid": "tdiff_2_4",
+            "lolimit": 2,
+            "hilimit": 4,
+	    "attributes":
+	    {
+		"class": "Tdiff_2_4"
+	    }
+        },
+        {
+	    "qid": "tdiff_1_2",
+            "lolimit": 1,
+            "hilimit": 2,
+	    "attributes":
+	    {
+		"class": "Tdiff_1_2"
+	    }
+        },
+        {
+	    "qid": "tdiff_0_1",
+            "lolimit": 0,
+            "hilimit": 1,
+	    "attributes":
+	    {
+		"class": "Tdiff_0_1"
+	    }
+        },
+        {
+	    "qid": "tdiff_1_0",
+            "lolimit": -1,
+            "hilimit": 0,
+	    "attributes":
+	    {
+		"class": "Tdiff_1_0"
+	    }
+        },
+        {
+	    "qid": "tdiff_2_1",
+            "lolimit": -2,
+            "hilimit": -1,
+	    "attributes":
+	    {
+		"class": "Tdiff_2_1"
+	    }
+        },
+        {
+	    "qid": "tdiff_4_2",
+            "lolimit": -4,
+            "hilimit": -2,
+	    "attributes":
+	    {
+		"class": "Tdiff_4_2"
+	    }
+        },
+        {
+	    "qid": "tdiff_6_4",
+            "lolimit": -6,
+            "hilimit": -4,
+	    "attributes":
+	    {
+		"class": "Tdiff_6_4"
+	    }
+        },
+        {
+	    "qid": "tdiff_inf_6",
+            "hilimit": -6,
+	    "attributes":
+	    {
+		"class": "Tdiff_inf_50"
+	    }
+        }
+]
+

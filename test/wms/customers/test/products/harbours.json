@@ -1,0 +1,48 @@
+{
+    "title": "Harbours",
+    "abstract": "Harbours",
+    "projection": {},
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // satamat
+		    "qid": "harbours",
+		    "layer_type": "icemap",
+		    "layer_subtype": "named_location",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "harbours",
+		    "symbol": "harbour",
+		    "geometry_column" : "geom",
+		    "firstname_column" : "text1",
+		    "secondname_column" : "text2",
+		    "labelposition_column" : "label_location",
+              	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+ 			    "attributes":
+			    {
+				"font-family": "Times",
+				"font-size": "10",
+				"font-style": "normal",
+				"font-weight": "normal",
+ 				"text-anchor": "start"
+			    }
+ 			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}
+

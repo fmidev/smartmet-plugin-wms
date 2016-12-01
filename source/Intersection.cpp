@@ -1,0 +1,294 @@
+//======================================================================
+
+#include "Intersection.h"
+#include "Config.h"
+#include "Hash.h"
+#include "Projection.h"
+#include "State.h"
+#include <gis/Box.h>
+#include <gis/OGR.h>
+#include <spine/Json.h>
+#include <spine/ParameterFactory.h>
+#include <engines/contour/Engine.h>
+#include <engines/contour/Interpolation.h>
+#include <boost/foreach.hpp>
+
+namespace SmartMet
+{
+namespace Plugin
+{
+namespace Dali
+{
+// ----------------------------------------------------------------------
+/*!
+ * \brief Initialize from JSON
+ */
+// ----------------------------------------------------------------------
+
+void Intersection::init(const Json::Value& theJson, const Config& theConfig)
+{
+  try
+  {
+    if (!theJson.isObject())
+      throw SmartMet::Spine::Exception(BCP, "Intersection JSON is not a JSON map");
+
+    // Extract member values
+
+    Json::Value nulljson;
+
+    auto json = theJson.get("lolimit", nulljson);
+    if (!json.isNull())
+      lolimit = json.asDouble();
+
+    json = theJson.get("hilimit", nulljson);
+    if (!json.isNull())
+      hilimit = json.asDouble();
+
+    json = theJson.get("level", nulljson);
+    if (!json.isNull())
+      level = json.asDouble();
+
+    json = theJson.get("producer", nulljson);
+    if (!json.isNull())
+      producer = json.asString();
+
+    json = theJson.get("parameter", nulljson);
+    if (!json.isNull())
+      parameter = json.asString();
+
+    json = theJson.get("interpolation", nulljson);
+    if (!json.isNull())
+      interpolation = json.asString();
+
+    json = theJson.get("smoother", nulljson);
+    if (!json.isNull())
+      smoother.init(json, theConfig);
+
+    json = theJson.get("multiplier", nulljson);
+    if (!json.isNull())
+      multiplier = json.asDouble();
+
+    json = theJson.get("offset", nulljson);
+    if (!json.isNull())
+      offset = json.asDouble();
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Intersect the given polygon
+ */
+// ----------------------------------------------------------------------
+
+OGRGeometryPtr Intersection::intersect(OGRGeometryPtr theGeometry) const
+{
+  try
+  {
+    // If no parameter is set, there is nothing to intersect
+    if (!parameter)
+      return theGeometry;
+
+    // Otherwise if the input is null, return null
+    if (!theGeometry || theGeometry->IsEmpty())
+      return {};
+
+    // Do the intersection
+
+    if (!isoband || isoband->IsEmpty())
+      return {};
+
+    return OGRGeometryPtr(theGeometry->Intersection(isoband.get()));
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Test whether the given point is inside the polygon
+ *
+ * The coordinate CRS is assumed to be the same as in the isoband
+ */
+// ----------------------------------------------------------------------
+
+bool Intersection::inside(double theX, double theY) const
+{
+  try
+  {
+    // If no parameter is set, everything is in
+    if (!parameter)
+      return true;
+
+    if (!isoband || isoband->IsEmpty())
+      return false;
+
+    return Fmi::OGR::inside(*isoband, theX, theY);
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Initialize the intersecting polygon
+ */
+// ----------------------------------------------------------------------
+
+void Intersection::init(SmartMet::Engine::Querydata::Q q,
+                        const Projection& theProjection,
+                        const boost::posix_time::ptime& theTime,
+                        const State& theState)
+{
+  try
+  {
+    // Quick exit if done already
+    if (isoband)
+      return;
+
+    // If no parameter is set, no intersections will be calculated
+    if (!parameter)
+      return;
+
+    auto param = SmartMet::Spine::ParameterFactory::instance().parse(*parameter);
+
+    // Establish the data
+    if (producer)
+      q = theState.get(*producer);
+
+    // Establish the level
+
+    if (level)
+    {
+      bool match = false;
+      for (q->resetLevel(); !match && q->nextLevel();)
+        match = (q->levelValue() == *level);
+      if (!match)
+        throw SmartMet::Spine::Exception(
+            BCP, "Level value " + Fmi::to_string(*level) + " is not available");
+    }
+
+    // Establish the projection from the geometry to be clipped
+
+    auto crs = theProjection.getCRS();
+    const auto& box = theProjection.getBox();
+
+    // Calculate the isoband
+
+    const auto& contourer = theState.getContourEngine();
+
+    std::vector<SmartMet::Engine::Contour::Range> limits;
+    SmartMet::Engine::Contour::Range range(lolimit, hilimit);
+    limits.push_back(range);
+    SmartMet::Engine::Contour::Options options(param, theTime, limits);
+
+    if (multiplier || offset)
+      options.transformation(multiplier ? *multiplier : 1.0, offset ? *offset : 0.0);
+
+    options.filter_size = smoother.size;
+    options.filter_degree = smoother.degree;
+
+    if (interpolation == "linear")
+      options.interpolation = SmartMet::Engine::Contour::Linear;
+    else if (interpolation == "nearest")
+      options.interpolation = SmartMet::Engine::Contour::Nearest;
+    else if (interpolation == "discrete")
+      options.interpolation = SmartMet::Engine::Contour::Discrete;
+    else if (interpolation == "loglinear")
+      options.interpolation = SmartMet::Engine::Contour::LogLinear;
+    else
+      throw SmartMet::Spine::Exception(
+          BCP, "Unknown isoband interpolation method '" + interpolation + "'");
+
+    std::size_t qhash = SmartMet::Engine::Querydata::hash_value(q);
+    auto valueshash = qhash;
+    boost::hash_combine(valueshash, options.data_hash_value());
+    std::string wkt = q->area().WKT();
+
+    // Select the data
+
+    if (!q->param(options.parameter.number()))
+    {
+      throw SmartMet::Spine::Exception(BCP,
+                                       "Parameter '" + options.parameter.name() + "' unavailable.");
+    }
+
+    if (!q->firstLevel())
+    {
+      throw SmartMet::Spine::Exception(BCP, "Unable to set first level in querydata.");
+    }
+
+    // Select the level.
+    if (options.level)
+    {
+      if (!q->selectLevel(*options.level))
+      {
+        throw SmartMet::Spine::Exception(BCP,
+                                         "Level value " +
+                                             boost::lexical_cast<std::string>(*options.level) +
+                                             " is not available.");
+      }
+    }
+
+    const auto& qEngine = theState.getQEngine();
+    auto matrix = qEngine.getValues(q, valueshash, options.time);
+    OGRSpatialReference* sr = nullptr;
+    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, sr);
+    std::vector<OGRGeometryPtr> isobands =
+        contourer.contour(qhash, wkt, *matrix, coords, options, sr);
+    isoband = *(isobands.begin());
+
+    if (!isoband || isoband->IsEmpty())
+      return;
+
+    // Clip the contour with the bounding box for extra speed later on
+
+    isoband.reset(Fmi::OGR::polyclip(*isoband, box));
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Hash value for the object
+ */
+// ----------------------------------------------------------------------
+
+std::size_t Intersection::hash_value(const State& theState) const
+{
+  try
+  {
+    std::size_t hash = 0;
+
+    if (producer)
+      boost::hash_combine(hash, SmartMet::Engine::Querydata::hash_value(theState.get(*producer)));
+
+    boost::hash_combine(hash, Dali::hash_value(lolimit));
+    boost::hash_combine(hash, Dali::hash_value(hilimit));
+    boost::hash_combine(hash, Dali::hash_value(level));
+    boost::hash_combine(hash, Dali::hash_value(producer));
+    boost::hash_combine(hash, Dali::hash_value(parameter));
+    boost::hash_combine(hash, Dali::hash_value(interpolation));
+    boost::hash_combine(hash, Dali::hash_value(multiplier));
+    boost::hash_combine(hash, Dali::hash_value(offset));
+    return hash;
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+}  // namespace Dali
+}  // namespace Plugin
+}  // namespace SmartMet

@@ -1,0 +1,67 @@
+{
+    "title": "Demo shadow",
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+                    "css": "isobands/temperature.css",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"id": "temperature_isobands"
+		    }
+                },
+		{
+		    "qid": "l2",
+		    "tag": "g",
+		    "attributes":
+		    {
+			"filter": "url(#shadow)",
+			"id": "isoline_group"
+		    },
+		    "layers": [
+			{
+			    "qid": "l3-",
+			    "layer_type": "isoline",
+			    "isolines": "json:isolines/temperature.json",
+			    "css": "isolines/temperature.css",
+			    "parameter": "Temperature",
+			    "attributes":
+			    {
+				"id": "temperature_isolines",
+				"class": "Temperature"
+			    }
+			},
+			{
+			    "qid": "l4",
+			    "layer_type": "isoline",
+			    "isolines": "json:isolines/pressure.json",
+			    "css": "isolines/pressure.css",
+			    "parameter": "Pressure",
+			    "attributes":
+			    {
+				"id": "pressure_isolines",
+				"class": "Pressure"
+			    }
+			}
+		    ]
+		}
+            ]
+        }
+    ]
+}

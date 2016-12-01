@@ -1,0 +1,93 @@
+[
+        {
+	    "qid": "precipitation_5_inf",
+            "lolimit": 5,
+	    "attributes":
+	    {
+		"class": "Precipitation_5_inf"
+	    }
+        },
+        {
+	    "qid": "precipitation_4_5",
+            "lolimit": 4,
+            "hilimit": 5,
+	    "attributes":
+	    {
+		"class": "Precipitation_4_5"
+	    }
+        },
+        {
+	    "qid": "precipitation_3_4",
+            "lolimit": 3,
+            "hilimit": 4,
+	    "attributes":
+	    {
+		"class": "Precipitation_3_4"
+	    }
+        },
+        {
+	    "qid": "precipitation_2_3",
+            "lolimit": 2,
+            "hilimit": 3,
+	    "attributes":
+	    {
+		"class": "Precipitation_2_3"
+	    }
+        },
+        {
+	    "qid": "precipitation_15_2",
+            "lolimit": 1.5,
+            "hilimit": 2,
+	    "attributes":
+	    {
+		"class": "Precipitation_15_2"
+	    }
+        },
+        {
+	    "qid": "precipitation_1_15",
+            "lolimit": 1,
+            "hilimit": 1.5,
+	    "attributes":
+	    {
+		"class": "Precipitation_1_15"
+	    }
+        },
+        {
+	    "qid": "precipitation_05_1",
+            "lolimit": 0.5,
+            "hilimit": 1,
+	    "attributes":
+	    {
+		"class": "Precipitation_05_1"
+	    }
+        },
+        {
+	    "qid": "precipitation_02_05",
+            "lolimit": 0.2,
+            "hilimit": 0.5,
+	    "attributes":
+	    {
+		"class": "Precipitation_02_05"
+	    }
+        },
+        {
+	    "qid": "precipitation_01_02",
+            "lolimit": 0.1,
+            "hilimit": 0.2,
+	    "attributes":
+	    {
+		"class": "Precipitation_01_02"
+	    }
+        },
+        {
+	    // Smallest precipitation in newbase is 0.0151199575323507
+	    // See NFmiWeatherAndCloudiness::PrecipitationScaleV7(unsigned long)
+	    "qid": "precipitation_001_01",
+            "lolimit": 0.01,
+            "hilimit": 0.1,
+	    "attributes":
+	    {
+		"class": "Precipitation_001_01"
+	    }
+        }
+]

@@ -1,0 +1,8 @@
+{
+    "dx": 0,
+    "dy": 3,
+    // "format": "%.1f",
+    "precision": 1,
+    "locale": "fi_FI.UTF-8",
+    "missing": "-"
+}

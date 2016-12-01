@@ -1,0 +1,65 @@
+{
+    "title": "Frost inside Finland only",
+    "producer": "ground",
+    "language": "fi",
+    "refs":
+    {
+	"finland":
+	{
+	    "schema": "esri",
+	    "table": "finland_country_wgs84",
+	    "minarea": 100,
+	    "mindistance": 1
+	}
+    },
+    "projection":
+    {
+	"crs": "EPSG:4326",
+	"xsize": 1200,
+	"ysize": 1200,
+	"x1": 9,
+	"y1": 57,
+	"x2": 34,
+	"y2": 66.5
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/frost.json",
+		    "css": "isobands/frost.css",
+                    "parameter": "FrostProbability",
+		    "inside": "ref:refs.finland",
+		    "attributes":
+		    {
+			"id": "frost_isobands"
+		    }
+		},
+		{
+		    "qid": "l4",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "esri",
+			"table": "europe_country_wgs84",
+			"minarea": 100
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country_lines",
+			"fill": "none",
+			"stroke": "#222",
+			"stroke-width": "0.3px"
+		    }
+		}
+            ]
+        }
+    ]
+}

@@ -1,0 +1,8 @@
+.frostprobability_20_30  { stroke: none; fill: rgb(109,227,48); }
+.frostprobability_30_40 { stroke: none; fill: rgb(234,244,66); }
+.frostprobability_40_50    { stroke: none; fill: rgb(255,225,0); }
+.frostprobability_50_60    { stroke: none; fill: rgb(255,192,1); }
+.frostprobability_60_70    { stroke: none; fill: rgb(255,156,1); }
+.frostprobability_70_80   { stroke: none; fill: rgb(255,121,1); }
+.frostprobability_80_90   { stroke: none; fill: rgb(255,85,1); }
+.frostprobability_90_inf   { stroke: none; fill: rgb(239,9,9); }        

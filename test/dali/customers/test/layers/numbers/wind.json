@@ -1,0 +1,65 @@
+[
+        {
+            "lolimit": 3,
+            "hilimit": 5,
+	    "attributes":
+	    {
+		"class": "ModerateWindNumber_3_5"
+	    }
+        },
+        {
+            "lolimit": 5,
+            "hilimit": 7,
+	    "attributes":
+	    {
+		"class": "ModerateWindNumber_5_7"
+	    }
+        },
+        {
+            "lolimit": 7,
+            "hilimit": 10,
+	    "attributes":
+	    {
+		"class": "FreshWindNumber_7_10"
+	    }
+        },
+        {
+            "lolimit": 10,
+            "hilimit": 14,
+	    "attributes":
+	    {
+		"class": "FreshWindNumber_10_14"
+	    }
+        },
+        {
+            "lolimit": 14,
+            "hilimit": 17,
+	    "attributes":
+	    {
+		"class": "HardWindNumber_14_17"
+	    }
+        },
+        {
+            "lolimit": 17,
+            "hilimit": 21,
+	    "attributes":
+	    {
+		"class": "HardWindNumber_17_21"
+	    }
+        },
+        {
+            "lolimit": 21,
+            "hilimit": 26,
+	    "attributes":
+	    {
+		"class": "StormWindNumber_21_26"
+	    }
+        },
+        {
+            "lolimit": 32,
+	    "attributes":
+	    {
+		"class": "GaleWindNumber_32_inf"
+	    }
+        }		    
+]

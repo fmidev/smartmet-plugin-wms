@@ -1,0 +1,234 @@
+{
+    "title": "ELY map",
+    "refs":
+    {
+	"myprojection":
+	{
+	    "xsize": 300,
+	    "ysize": 550,
+	    "crs": "EPSG:2393",	// YKJ
+	    "bboxcrs": "EPSG:4326",	// WGS84
+	    // the following were obtained by trial and error from Foreca images
+	    "cy": 64.8,
+	    "cx": 25.4,
+	    "resolution": 2.5
+	}
+    },
+    "projection": "ref:refs.myprojection",
+    "defs":
+    {
+        "styles":
+	{
+	    ".City":
+	    {
+		"fill": "rgb(192,0,0)",
+		"stroke": "rgb(0,0,0)",
+		"stroke-width": 0.5
+	    },
+	    ".BigCity":
+	    {
+		"fill": "rgb(255,0,0)",
+		"stroke": "rgb(0,0,0)",
+		"stroke-width": 0.5
+	    },
+	    ".Alandcity":
+	    {
+		"fill": "rgb(255,0,0)",
+		"stroke": "rgb(0,0,0)",
+		"stroke-width": 0.5
+	    }
+	},
+	"layers": [
+	    {
+		"layer_type": "isoband",
+		"parameter": "Precipitation1h",
+		"isobands": [
+		    {
+			"qid": "precipitation_any",
+			"lolimit": 0.01
+		    }
+		]
+	    },
+	    {
+		"tag": "clipPath",
+		"attributes":
+		{
+		    "id": "precipitationclip"
+		},
+		"layers": [
+		    {
+			"tag": "use",
+			"attributes":
+			{
+			    "xlink:href": "#precipitation_any"
+			}
+		    }
+		]
+	    }
+	]
+    },
+    "views": [
+        {
+	    "qid": "v1-",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+		{
+		    "qid": "sea",
+		    "layer_type": "background",
+		    "css": "maps/map.css",
+		    "attributes":
+		    {
+			"class": "Sea"
+		    }
+		},
+// This is not good:
+// a) coastlines should be in a separate shape and be drawn with narrow lines
+// b) borders should be available as polylines and be drawn with a proper style
+
+		{
+		    "qid": "borders",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"lines": true,
+			"schema": "esri",
+			"table": "europe_country_wgs84"
+		    },
+		    "attributes":
+		    {
+			"class": "Borders"
+		    }
+		},
+		{
+		    "qid": "europe",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "esri",
+			"table": "europe_country_wgs84"
+		    },
+		    "attributes":
+		    {
+			"class": "Europe"
+		    }
+		},
+		{
+		    "qid": "finland",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "esri",
+			"table": "finland_country_wgs84"
+		    },
+		    "attributes":
+		    {
+			"class": "Finland"
+		    }
+		},
+		{
+		    "qid": "lakes",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "esri",
+			"table": "europe_mjwater_eureffin",
+			"where": "name<>'Ladozhskoye Ozero' and cntryname<>'Finland'"
+		    },
+		    "attributes":
+		    {
+			"class": "Lake"
+		    }
+		},
+		{
+		    "qid": "laatokka",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "esri",
+			"table": "europe_mjwater_eureffin",
+			"where": "name='Ladozhskoye Ozero'"
+		    },
+		    "attributes":
+		    {
+			"class": "Sea"
+		    }
+		},
+		{
+		    "qid": "finland-lakes",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "esri",
+			"table": "finland_major_lakes_wgs84"
+		    },
+		    "attributes":
+		    {
+			"class": "Lake"
+		    }
+		},
+		{
+		    "qid": "finland-roads",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "esri",
+			"table": "europe_roads_eureffin",
+			"where": "cntryname='Finland'"
+		    },
+		    "attributes":
+		    {
+			"class": "Road"
+		    }
+		},
+		{
+		    "layer_type": "isoband",
+		    "isobands": "json:isobands/precipitation.json",
+		    "css": "isobands/precipitation.css",
+		    "parameter": "Precipitation1h"
+		},
+		{
+		    "tag": "use",
+		    "attributes":
+		    {
+			"fill": "none",
+			"stroke": "black",
+			"stroke-width": "0.2",
+			"stroke-opacity": "0.8",
+			"xlink:href": "#borders",
+			"clip-path": "url(#precipitationclip)"
+		    }
+		},
+		{
+		    "layer_type": "location",
+		    "keyword": "municipalities_fi",
+		    "countries": "fi",
+		    "mindistance": 10,
+		    //  "symbol": "city"
+		    "symbols":
+		    {
+			"default":
+			[
+				{
+					"hilimit": 10000,
+					"symbol": "city"
+				},
+				{
+					"lolimit": 10000,
+					"symbol": "bigcity"
+				}
+			],
+			"ADM2":
+			[
+				{
+					"symbol": "alandcity"
+				}
+			]
+		    }
+		}
+            ]
+        }
+    ]
+}

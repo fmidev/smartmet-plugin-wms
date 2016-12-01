@@ -1,0 +1,37 @@
+{
+    "title": "Ice drift",
+    "abstract": "Ice drift",
+    "projection": {},
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // jään liikesuunta
+		    "qid": "icedft",
+		    "layer_type": "icemap",
+		    "layer_subtype": "symbol",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "icedft",
+		    "symbol": "icedft",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+ 			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}

@@ -1,0 +1,92 @@
+#!/usr/bin/php -q
+<?php
+$scale = 0.6;
+$spot_size = 4;
+$barb_length = $scale*14;
+$barb_angle = 30 / 180.0 * 3.14159265358979323;
+$barb_gap = 6;
+$flag_gap = 2*$scale*$barb_gap;
+$stem_length = $scale*(5*$barb_gap + 6);
+$flop = -1;
+for($knots = 0; $knots <= 250; ++$knots)
+{
+    $name = barbname($knots);
+    if($knots != 0 && $knots != 1 && ($knots % 5 != 0))
+        continue;
+    echo "Creating $name from $knots...\n";
+    $svg = "OK";
+    if($knots == 0)
+    {
+        $svg = <<<EOT
+<symbol id="$name">
+ <circle cx="0" cy="0" r="$spot_size" class="BarbLine"/>
+</symbol>
+EOT;
+    }
+    else if($knots <= 2)
+    {
+        $svg = <<<EOT
+<symbol id="$name">
+ <line x1="0" y1="0" x2="0" y2="$stem_length" class="BarbLine"/>
+</symbol>
+EOT;
+    }
+    else if($knots <= 7)
+    {
+        $y1 = $stem_length - $scale * $barb_gap;
+        $x2 = $flop * 0.5*$barb_length*cos($barb_angle);
+        $y2 = $y1 + 0.5*$barb_length*sin($barb_angle);
+        $svg = <<<EOT
+<symbol id="$name">
+ <line x1="0" y1="0" x2="0" y2="$stem_length" class="BarbLine"/>
+ <line x1="0" y1="$y1" x2="$x2" y2="$y2" class="BarbLine"/>
+</symbol>
+EOT;
+    }
+    else
+    {
+        $flags = floor($knots/50);
+        $fullbarbs = floor(($knots - 50*$flags)/10);
+        $halfbarbs = floor(($knots - 50*$flags  - 10*$fullbarbs)/5);
+        $length = $stem_length + $flags * $flag_gap;
+        if($flags > 0)
+            $length += $barb_gap;
+        echo "$flags $fullbarbs $halfbarbs\n";
+        $svg = "<symbol id=\"$name\">\n";
+        $svg .= " <line x1=\"0\" y1=\"0\" x2=\"0\" y2=\"$length\" class=\"BarbLine\"/>\n";
+        for($i=0; $i<$fullbarbs; $i++)
+        {
+            $y1 = $stem_length - $i * $scale * $barb_gap;
+            $x2 = $flop * $barb_length*cos($barb_angle);
+            $y2 = $y1 + $barb_length*sin($barb_angle);
+            $svg .= " <line x1=\"0\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" class=\"BarbLine\"/>\n";
+        }
+        for($i=0; $i<$halfbarbs; $i++)
+        {
+            $y1 = $stem_length - ($fullbarbs+$i) * $scale * $barb_gap;
+            $x2 = $flop * 0.5 * $barb_length*cos($barb_angle);
+            $y2 = $y1 + 0.5 * $barb_length*sin($barb_angle);
+            $svg .= " <line x1=\"0\" y1=\"$y1\" x2=\"$x2\" y2=\"$y2\" class=\"BarbLine\"/>\n";
+        }
+        for($i=0; $i<$flags; $i++)
+        {
+            $y1 = $stem_length + $i* $flag_gap + $scale * $barb_gap;
+            $x2 = $flop * $barb_length*cos($barb_angle);
+            $y2 = $y1 + $barb_length*sin($barb_angle);
+            $y3 = $y1 + $flag_gap;
+            $svg .= " <polygon points=\"0,$y1 $x2,$y2 0,$y3\" class=\"BarbFill\"/>\n";
+        }
+         
+        $svg .= "</symbol>\n";
+    }
+    file_put_contents($name,$svg);
+}
+function barbname($knots)
+{
+    if($knots == 0)
+        return "windbarb_0";
+    else if($knots <= 2)
+        return "windbarb_1";
+    else
+        return "windbarb_" . (5*floor(($knots+2)/5));   // 2-->0, 3-->5
+}

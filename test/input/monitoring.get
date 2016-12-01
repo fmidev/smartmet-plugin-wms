@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=monitoring HTTP/1.0

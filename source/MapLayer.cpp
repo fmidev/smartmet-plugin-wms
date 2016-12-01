@@ -1,0 +1,200 @@
+//======================================================================
+
+#include "MapLayer.h"
+#include "Config.h"
+#include "Hash.h"
+#include "Layer.h"
+#include "State.h"
+#include <spine/Exception.h>
+#include <engines/gis/Engine.h>
+#include <gis/Types.h>
+#include <gis/Box.h>
+#include <gis/OGR.h>
+#include <ctpp2/CDT.hpp>
+#include <boost/foreach.hpp>
+
+// TODO:
+#include <boost/timer/timer.hpp>
+
+namespace SmartMet
+{
+namespace Plugin
+{
+namespace Dali
+{
+// ----------------------------------------------------------------------
+/*!
+ * \brief Initialize from JSON
+ */
+// ----------------------------------------------------------------------
+
+void MapLayer::init(const Json::Value& theJson,
+                    const State& theState,
+                    const Config& theConfig,
+                    const Properties& theProperties)
+{
+  try
+  {
+    if (!theJson.isObject())
+      throw SmartMet::Spine::Exception(BCP, "Map JSON is not a JSON object");
+
+    Layer::init(theJson, theState, theConfig, theProperties);
+
+    // Extract all members
+
+    Json::Value nulljson;
+
+    auto json = theJson.get("map", nulljson);
+    if (!json.isNull())
+      map.init(json, theConfig);
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate the layer details into the template hash
+ */
+// ----------------------------------------------------------------------
+
+void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+{
+  try
+  {
+    if (!validLayer(theState))
+      return;
+
+    std::string report = "MapLayer::generate finished in %t sec CPU, %w sec real\n";
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    if (theState.useTimer())
+      timer.reset(new boost::timer::auto_cpu_timer(2, report));
+
+    // Get projection details
+
+    bool has_data_proj = (projection.crs && *projection.crs == "data");
+
+    // Update projection from querydata if necessary
+    if (has_data_proj)
+    {
+      // Establish the data
+      auto q = getModel(theState);
+      projection.update(q);
+    }
+
+    auto crs = projection.getCRS();
+    const Fmi::Box& box = projection.getBox();
+
+    // Fetch the shape in our projection
+
+    OGRGeometryPtr geom;
+
+    const auto& gis = theState.getGisEngine();
+    {
+      std::string report = "getShape finished in %t sec CPU, %w sec real\n";
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      if (theState.useTimer())
+        mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
+      geom = gis.getShape(crs.get(), map.options);
+
+      if (!geom)
+      {
+        std::string msg =
+            "Requested map data is empty: '" + map.options.schema + '.' + map.options.table + "'";
+        if (map.options.minarea)
+          msg += " Is the minarea limit too large?";
+
+        throw SmartMet::Spine::Exception(BCP, msg);
+      }
+    }
+
+    // Clip it
+
+    {
+      std::string report = "polyclip finished in %t sec CPU, %w sec real\n";
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      if (theState.useTimer())
+        mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
+      if (map.lines)
+        geom.reset(Fmi::OGR::lineclip(*geom, box));  // fast and hence not cached in gisengine
+      else
+        geom.reset(Fmi::OGR::polyclip(*geom, box));  // fast and hence not cached in gisengine
+    }
+
+    // We might zoom in so close that some geometry becomes invisible - just don't generate anything
+    if (!geom)
+      return;
+
+    // Store the path with unique ID
+    std::string iri = qid;
+    {
+      std::string report = "exportToSvg finished in %t sec CPU, %w sec real\n";
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      if (theState.useTimer())
+        mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
+      theGlobals["paths"][iri] = Fmi::OGR::exportToSvg(*geom, box, 1);
+    }
+
+    // Do not produce a use-statement for empty data or in the header
+    if (!geom->IsEmpty() && !theState.inDefs())
+    {
+      // Update the globals
+
+      if (css)
+      {
+        std::string name = theState.getCustomer() + "/" + *css;
+        theGlobals["css"][name] = theState.getStyle(*css);
+      }
+
+      // The output consists of a use tag only. We could output a group
+      // only without any tags, but the output is nicer looking this way
+
+      CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
+      group_cdt["start"] = "";
+      group_cdt["end"] = "";
+      group_cdt["attributes"] = CTPP::CDT(CTPP::CDT::HASH_VAL);
+
+      // Add the SVG use element
+      CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+      tag_cdt["start"] = "<use";
+      tag_cdt["end"] = "/>";
+      // Add attributes to the tag
+      theState.addAttributes(theGlobals, tag_cdt, attributes);
+      tag_cdt["attributes"]["xlink:href"] = "#" + iri;
+      // Tag to group
+      group_cdt["tags"].PushBack(tag_cdt);
+      // Group to layers
+      theLayersCdt.PushBack(group_cdt);
+    }
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Hash value
+ */
+// ----------------------------------------------------------------------
+
+std::size_t MapLayer::hash_value(const State& theState) const
+{
+  try
+  {
+    auto hash = Layer::hash_value(theState);
+    boost::hash_combine(hash, Dali::hash_value(map, theState));
+    return hash;
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+}  // namespace Dali
+}  // namespace Plugin
+}  // namespace SmartMet

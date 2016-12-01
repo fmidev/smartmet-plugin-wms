@@ -1,0 +1,155 @@
+<symbol id="weather_1_II_53">
+<desc>HeavySnowfall</desc>
+<g transform="translate(-30,-30)">
+<g>
+	<g>
+		<g>
+			<path fill="#6698BE" stroke="#AFCCD9" stroke-width="0.6408" d="M41.785,17.311c-1.083,0-2.128,0.17-3.12,0.47
+				c-1.268-4.986-5.617-8.666-10.808-8.666c-5.327,0-9.775,3.877-10.908,9.066C10.805,18.222,5.833,23.42,5.833,29.825
+				c0,6.437,5.011,11.652,11.197,11.652c3.309,0,6.687-1.341,8.738-3.72c2.034,2.878,4.21,4.279,7.905,4.279
+				c2.214,0,4.204-0.872,5.684-2.263c0.568,0.308,1.935,0.805,3.062,0.818c6.185,0.081,10.562-5.196,10.562-11.628
+				C52.979,22.531,47.968,17.311,41.785,17.311z"/>
+		</g>
+		<g>
+			<path fill="#6698BE" stroke="#5A789F" stroke-width="0.9139" d="M40.91,17.955c-1.012,0-1.99,0.153-2.92,0.429
+				c-1.184-4.547-5.249-7.899-10.097-7.899c-4.978,0-9.138,3.533-10.192,8.261c-5.746,0.041-10.39,4.779-10.39,10.619
+				c0,5.867,4.682,10.625,10.46,10.625c3.094,0,6.13-1.485,8.046-3.652c1.904,2.621,4.057,4.16,7.513,4.16
+				c2.067,0,3.926-0.792,5.309-2.062c0.532,0.28,1.809,0.732,2.862,0.746c5.776,0.073,9.866-4.735,9.866-10.598
+				C51.367,22.713,46.686,17.955,40.91,17.955z"/>
+		</g>
+		<g>
+			<path fill="#96C8E1" stroke="#78AAD2" stroke-width="0.7217" d="M40.208,18.912c-0.936,0-1.837,0.136-2.695,0.378
+				c-1.091-4.021-4.783-7.267-9.255-7.409c-5.272-0.167-8.604,3.794-9.579,7.978c-5.299,0.033-9.462,3.98-9.462,9.146
+				c0,5.188,3.833,9.383,9.162,9.383c2.855,0,5.83-1.414,7.598-3.332c1.755,2.321,4.054,3.793,7.238,3.793
+				c1.907,0,3.621-0.7,4.897-1.823c0.488,0.248,1.667,0.648,2.64,0.662c5.33,0.065,9.101-4.189,9.101-9.374
+				C49.853,23.12,45.536,18.912,40.208,18.912z"/>
+		</g>
+		<g>
+			
+				<radialGradient id="weather_1_II_53_gradient1" cx="26.7339" cy="21.1902" r="17.7245" gradientTransform="matrix(-0.0183 1.0492 -1.5208 -0.0275 56.9538 -7.4897)" gradientUnits="userSpaceOnUse">
+				<stop  offset="0.1394" style="stop-color:#FFFFFF"/>
+				<stop  offset="0.3017" style="stop-color:#F5FAFD"/>
+				<stop  offset="0.576" style="stop-color:#DBEDF7"/>
+				<stop  offset="0.927" style="stop-color:#B0D9EE"/>
+				<stop  offset="1" style="stop-color:#A6D4EC"/>
+			</radialGradient>
+			<path fill="url(#weather_1_II_53_gradient1)" d="M39.633,20.036c-0.876,0-1.893,0.019-2.701,0.232c-0.828-4.007-3.457-7.084-8.92-7.084
+				c-4.316,0-7.131,3.301-8.32,7.535c-6.019,0.213-9.004,3.61-9.004,8.225c0,4.634,2.947,8.309,7.954,8.279
+				c2.096-0.014,5.008-0.964,7.376-3.307c1.257,1.525,3.83,3.783,6.825,3.814c2.417,0.025,3.432-1.138,4.635-2.139
+				c0.458,0.222,1.565,0.554,2.482,0.587c5.981,0.226,8.975-3.631,8.552-8.37C48.101,23.187,44.64,20.036,39.633,20.036z"/>
+		</g>
+	</g>
+	<g>
+		<g>
+			<path fill="#BBE3FF" d="M10.554,29.866c-0.779-6.348,3.649-9.067,8.759-9.248c1.042-3.591,3.873-7.409,8.645-7.585
+				c2.257-0.083,4.165,0.555,5.543,1.641l-0.975-0.535c0,0-2.017-0.96-4.48-0.696c-4.961,0.532-7.48,4.404-8.272,7.576l-0.218,0.121
+				c-3.949-0.38-10.545,2.669-8.397,10.855L10.554,29.866z"/>
+		</g>
+	</g>
+</g>
+<ellipse opacity="0.51" fill="#FFFFFF" cx="37.577" cy="40.226" rx="14.692" ry="10.187"/>
+<g>
+	<g>
+		<g>
+			<defs>
+				<path id="weather_1_II_53_clip1" d="M50.147,40.228c0,3.898-3.158,7.059-7.061,7.059c-3.898,0-7.064-3.16-7.064-7.059
+					c0-3.9,3.166-7.063,7.064-7.063C46.989,33.166,50.147,36.328,50.147,40.228z"/>
+			</defs>
+			<clipPath id="weather_1_II_53_clip2">
+				<use xlink:href="#weather_1_II_53_clip1"  overflow="visible"/>
+			</clipPath>
+			<rect x="35.518" y="47.144" clip-path="url(#weather_1_II_53_clip2)" fill="#FFFFFF" width="15.135" height="0.646"/>
+			<rect x="35.518" y="45.988" clip-path="url(#weather_1_II_53_clip2)" fill="#FFFFFF" width="15.135" height="1.156"/>
+			<rect x="35.518" y="44.84" clip-path="url(#weather_1_II_53_clip2)" fill="#FCFEFF" width="15.135" height="1.148"/>
+			<rect x="35.518" y="43.683" clip-path="url(#weather_1_II_53_clip2)" fill="#F8FCFF" width="15.135" height="1.156"/>
+			<rect x="35.518" y="42.535" clip-path="url(#weather_1_II_53_clip2)" fill="#F2FAFE" width="15.135" height="1.148"/>
+			<rect x="35.518" y="41.377" clip-path="url(#weather_1_II_53_clip2)" fill="#EAF7FE" width="15.135" height="1.158"/>
+			<rect x="35.518" y="40.228" clip-path="url(#weather_1_II_53_clip2)" fill="#DEF2FD" width="15.135" height="1.148"/>
+			<rect x="35.518" y="39.07" clip-path="url(#weather_1_II_53_clip2)" fill="#CFEDFC" width="15.135" height="1.158"/>
+			<rect x="35.518" y="37.92" clip-path="url(#weather_1_II_53_clip2)" fill="#BBE6FB" width="15.135" height="1.15"/>
+			<rect x="35.518" y="36.765" clip-path="url(#weather_1_II_53_clip2)" fill="#A1DEF9" width="15.135" height="1.154"/>
+			<rect x="35.518" y="35.615" clip-path="url(#weather_1_II_53_clip2)" fill="#80D4F7" width="15.135" height="1.15"/>
+			<rect x="35.518" y="34.461" clip-path="url(#weather_1_II_53_clip2)" fill="#50C9F5" width="15.135" height="1.154"/>
+			<rect x="35.518" y="33.31" clip-path="url(#weather_1_II_53_clip2)" fill="#00BEF3" width="15.135" height="1.15"/>
+			<rect x="35.518" y="32.659" clip-path="url(#weather_1_II_53_clip2)" fill="#00B3F0" width="15.135" height="0.651"/>
+		</g>
+		<g>
+			<path fill="#231F20" d="M45.534,41.146l4.252,2.18l-1.221,2.492l-4.092-2.391l0.025,4.428l-2.846-0.01l0.131-4.52l-3.668,2.393
+				l-1.52-2.686l3.807-2.07l-3.924-2.086l1.416-2.471l3.945,2.508l-0.16-4.697h2.793l-0.055,4.539l3.752-2.449
+				c1.5,2.525,1.602,2.66,1.602,2.66L45.534,41.146z"/>
+			<path fill="#FFFFFF" d="M43.85,39.685l3.695-2.27c0.09,0.123,0.326,0.508,0.709,1.164l-3.891,2.287l3.891,2.242l-0.709,1.213
+				l-3.854-2.289v4.516h-1.387v-4.516l-3.83,2.289l-0.658-1.213l3.85-2.242l-3.85-2.287l0.658-1.164l3.83,2.246v-4.531l1.545,0.023"
+				/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<g>
+			<defs>
+				<circle id="weather_1_II_53_clip3" cx="38.12" cy="29.712" r="7.063"/>
+			</defs>
+			<clipPath id="weather_1_II_53_clip4">
+				<use xlink:href="#weather_1_II_53_clip3"  overflow="visible"/>
+			</clipPath>
+			<rect x="30.551" y="36.628" clip-path="url(#weather_1_II_53_clip4)" fill="#FFFFFF" width="15.135" height="0.646"/>
+			<rect x="30.551" y="35.471" clip-path="url(#weather_1_II_53_clip4)" fill="#FFFFFF" width="15.135" height="1.156"/>
+			<rect x="30.551" y="34.323" clip-path="url(#weather_1_II_53_clip4)" fill="#FCFEFF" width="15.135" height="1.148"/>
+			<rect x="30.551" y="33.167" clip-path="url(#weather_1_II_53_clip4)" fill="#F8FCFF" width="15.135" height="1.156"/>
+			<rect x="30.551" y="32.016" clip-path="url(#weather_1_II_53_clip4)" fill="#F2FAFE" width="15.135" height="1.15"/>
+			<rect x="30.551" y="30.86" clip-path="url(#weather_1_II_53_clip4)" fill="#EAF7FE" width="15.135" height="1.156"/>
+			<rect x="30.551" y="29.712" clip-path="url(#weather_1_II_53_clip4)" fill="#DEF2FD" width="15.135" height="1.148"/>
+			<rect x="30.551" y="28.553" clip-path="url(#weather_1_II_53_clip4)" fill="#CFEDFC" width="15.135" height="1.158"/>
+			<rect x="30.551" y="27.403" clip-path="url(#weather_1_II_53_clip4)" fill="#BBE6FB" width="15.135" height="1.15"/>
+			<rect x="30.551" y="26.247" clip-path="url(#weather_1_II_53_clip4)" fill="#A1DEF9" width="15.135" height="1.156"/>
+			<rect x="30.551" y="25.098" clip-path="url(#weather_1_II_53_clip4)" fill="#80D4F7" width="15.135" height="1.148"/>
+			<rect x="30.551" y="23.944" clip-path="url(#weather_1_II_53_clip4)" fill="#50C9F5" width="15.135" height="1.154"/>
+			<rect x="30.551" y="22.794" clip-path="url(#weather_1_II_53_clip4)" fill="#00BEF3" width="15.135" height="1.15"/>
+			<rect x="30.551" y="22.143" clip-path="url(#weather_1_II_53_clip4)" fill="#00B3F0" width="15.135" height="0.65"/>
+		</g>
+		<g>
+			<path fill="#231F20" d="M40.569,30.63l4.25,2.18L43.6,35.3l-4.092-2.391l0.025,4.43l-2.848-0.012l0.131-4.518l-3.667,2.393
+				l-1.521-2.686l3.807-2.07L31.51,28.36l1.417-2.471l3.944,2.506L36.713,23.7h2.795l-0.057,4.539l3.754-2.451
+				c1.5,2.527,1.6,2.662,1.6,2.662L40.569,30.63z"/>
+			<path fill="#FFFFFF" d="M38.883,29.167l3.695-2.268c0.09,0.123,0.324,0.508,0.709,1.164l-3.891,2.287l3.891,2.242l-0.709,1.213
+				l-3.854-2.289v4.516h-1.389v-4.516l-3.828,2.289l-0.658-1.213l3.85-2.242l-3.85-2.287l0.658-1.164l3.828,2.246v-4.531
+				l1.547,0.023"/>
+		</g>
+	</g>
+</g>
+<g>
+	<g>
+		<g>
+			<defs>
+				<circle id="weather_1_II_53_clip5" cx="31.511" cy="42.19" r="7.062"/>
+			</defs>
+			<clipPath id="weather_1_II_53_clip6">
+				<use xlink:href="#weather_1_II_53_clip5"  overflow="visible"/>
+			</clipPath>
+			<rect x="23.943" y="49.106" clip-path="url(#weather_1_II_53_clip6)" fill="#FFFFFF" width="15.136" height="0.65"/>
+			<rect x="23.943" y="47.954" clip-path="url(#weather_1_II_53_clip6)" fill="#FFFFFF" width="15.136" height="1.152"/>
+			<rect x="23.943" y="46.802" clip-path="url(#weather_1_II_53_clip6)" fill="#FCFEFF" width="15.136" height="1.152"/>
+			<rect x="23.943" y="45.647" clip-path="url(#weather_1_II_53_clip6)" fill="#F8FCFF" width="15.136" height="1.154"/>
+			<rect x="23.943" y="44.497" clip-path="url(#weather_1_II_53_clip6)" fill="#F2FAFE" width="15.136" height="1.15"/>
+			<rect x="23.943" y="43.342" clip-path="url(#weather_1_II_53_clip6)" fill="#EAF7FE" width="15.136" height="1.155"/>
+			<rect x="23.943" y="42.19" clip-path="url(#weather_1_II_53_clip6)" fill="#DEF2FD" width="15.136" height="1.151"/>
+			<rect x="23.943" y="41.036" clip-path="url(#weather_1_II_53_clip6)" fill="#CFEDFC" width="15.136" height="1.154"/>
+			<rect x="23.943" y="39.882" clip-path="url(#weather_1_II_53_clip6)" fill="#BBE6FB" width="15.136" height="1.154"/>
+			<rect x="23.943" y="38.729" clip-path="url(#weather_1_II_53_clip6)" fill="#A1DEF9" width="15.136" height="1.152"/>
+			<rect x="23.943" y="37.578" clip-path="url(#weather_1_II_53_clip6)" fill="#80D4F7" width="15.136" height="1.151"/>
+			<rect x="23.943" y="36.427" clip-path="url(#weather_1_II_53_clip6)" fill="#50C9F5" width="15.136" height="1.151"/>
+			<rect x="23.943" y="35.272" clip-path="url(#weather_1_II_53_clip6)" fill="#00BEF3" width="15.136" height="1.154"/>
+			<rect x="23.943" y="34.624" clip-path="url(#weather_1_II_53_clip6)" fill="#00B3F0" width="15.136" height="0.648"/>
+		</g>
+		<g>
+			<path fill="#231F20" d="M33.961,43.11l4.252,2.18l-1.223,2.49l-4.092-2.389l0.025,4.43l-2.846-0.014l0.133-4.518l-3.67,2.391
+				l-1.521-2.686l3.808-2.067l-3.925-2.089l1.417-2.467l3.945,2.506l-0.16-4.699h2.793l-0.055,4.539l3.752-2.447
+				c1.502,2.523,1.602,2.661,1.602,2.661L33.961,43.11z"/>
+			<path fill="#FFFFFF" d="M32.276,41.646l3.695-2.267c0.09,0.121,0.326,0.51,0.711,1.166l-3.893,2.286l3.893,2.239l-0.711,1.213
+				l-3.854-2.287v4.518h-1.387v-4.518l-3.828,2.287l-0.66-1.213l3.85-2.239l-3.85-2.286l0.66-1.166l3.828,2.244v-4.53l1.545,0.022"
+				/>
+		</g>
+	</g>
+</g>
+</g>
+</symbol>

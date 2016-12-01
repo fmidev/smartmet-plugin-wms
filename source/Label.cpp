@@ -1,0 +1,177 @@
+#include "Label.h"
+#include "Config.h"
+#include "Hash.h"
+#include <spine/Exception.h>
+#include <boost/foreach.hpp>
+#include <boost/format.hpp>
+#include <boost/locale.hpp>
+#include <cmath>
+#include <iomanip>
+#include <stdexcept>
+
+namespace SmartMet
+{
+namespace Plugin
+{
+namespace Dali
+{
+// ----------------------------------------------------------------------
+/*!
+ * \brief Set the locale
+ *
+ * Generating a locale is slow, hence locale and formatter are data members
+ */
+// ----------------------------------------------------------------------
+
+void Label::setLocale(const std::string& theLocale)
+{
+  try
+  {
+    if (!theLocale.empty())
+    {
+      boost::locale::generator gen;
+      formatter->imbue(gen(theLocale.c_str()));
+    }
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Format the value
+ */
+// ----------------------------------------------------------------------
+
+std::string Label::print(double theValue) const
+{
+  try
+  {
+    // TODO: querydata should return NaN for kFloatMissing
+
+    if (theValue == 32700 || !std::isfinite(theValue))
+      return missing;
+
+    double value = multiplier * theValue + offset;
+
+    formatter->str("");
+
+    if (plusprefix.empty() && minusprefix.empty())
+    {
+      // Standard case has no sign manipulations
+      *formatter << std::fixed << std::setprecision(precision) << value;
+      std::string ret = formatter->str();
+      if (ret == "-0")
+        ret = "0";
+      return prefix + ret + suffix;
+    }
+    else
+    {
+      // Handle special sign selections
+      *formatter << std::fixed << std::setprecision(precision) << std::abs(value);
+      std::string ret = formatter->str();
+      if (value < 0)
+        return prefix + minusprefix + ret + suffix;
+      else
+        return prefix + plusprefix + ret + suffix;
+    }
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Initialize from JSON
+ */
+// ----------------------------------------------------------------------
+
+void Label::init(const Json::Value& theJson, const Config& theConfig)
+{
+  try
+  {
+    if (!theJson.isObject())
+      throw SmartMet::Spine::Exception(BCP, "JSON is not a JSON object");
+
+    // Iterate through all the members
+
+    const auto members = theJson.getMemberNames();
+    BOOST_FOREACH (const auto& name, members)
+    {
+      const Json::Value& json = theJson[name];
+
+      if (name == "dx")
+        dx = json.asInt();
+      else if (name == "dy")
+        dy = json.asInt();
+      else if (name == "multiplier")
+        multiplier = json.asDouble();
+      else if (name == "offset")
+        offset = json.asDouble();
+      else if (name == "format")
+      {
+        format = json.asString();
+        std::cerr
+            << "Warning: label.format does not work properly in RHEL6, use label.precision instead"
+            << std::endl;
+      }
+      else if (name == "missing")
+        missing = json.asString();
+      else if (name == "locale")
+        this->setLocale(json.asString());
+      else if (name == "precision")
+        precision = json.asInt();
+      else if (name == "prefix")
+        prefix = json.asString();
+      else if (name == "suffix")
+        suffix = json.asString();
+      else if (name == "plusprefix")
+        plusprefix = json.asString();
+      else if (name == "minusprefix")
+        minusprefix = json.asString();
+      else
+        throw SmartMet::Spine::Exception(BCP, "Unknown setting '" + name + "'!");
+    }
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Hash value
+ */
+// ----------------------------------------------------------------------
+
+std::size_t Label::hash_value(const State& theState) const
+{
+  try
+  {
+    auto hash = Dali::hash_value(dx);
+    boost::hash_combine(hash, Dali::hash_value(dy));
+    boost::hash_combine(hash, Dali::hash_value(multiplier));
+    boost::hash_combine(hash, Dali::hash_value(offset));
+    boost::hash_combine(hash, Dali::hash_value(format));
+    boost::hash_combine(hash, Dali::hash_value(missing));
+    boost::hash_combine(hash, Dali::hash_value(precision));
+    boost::hash_combine(hash, Dali::hash_value(prefix));
+    boost::hash_combine(hash, Dali::hash_value(suffix));
+    boost::hash_combine(hash, Dali::hash_value(plusprefix));
+    boost::hash_combine(hash, Dali::hash_value(minusprefix));
+    return hash;
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+}  // namespace Dali
+}  // namespace Plugin
+}  // namespace SmartMet

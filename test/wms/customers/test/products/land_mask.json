@@ -1,0 +1,38 @@
+{
+    "title": "Landmask",
+    "abstract": "Landmask",
+    "projection": {},
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // maa-aluemaski
+		    "qid": "icemap_landmask",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "landmask",
+		    "geometry_column" : "geom",
+           	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"class": "IceMapLandMask"
+			    }
+			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}

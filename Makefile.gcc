@@ -1,0 +1,228 @@
+SUBNAME = dali
+LIB = brainstorm-$(SUBNAME)
+INCDIR = smartmet/brainstorm/plugins/$(SUBNAME)
+
+MAINFLAGS = -std=c++0x -MD -fPIC -rdynamic -Wall -W -Wno-unused-parameter
+
+EXTRAFLAGS = \
+	-Wcast-align \
+	-Wcast-qual \
+	-Winline \
+	-Wno-multichar \
+	-Wno-pmf-conversions \
+	-Woverloaded-virtual  \
+	-Wpointer-arith \
+	-Wredundant-decls \
+	-Wwrite-strings \
+	-Wconversion \
+	-Wsign-promo \
+
+RELEASEFLAGS = -Wuninitialized
+
+# Note:  -Weffc++ was bugged, use only with v3.2 or later
+# Note:  -Wold-style-cast is OK in Fedora, not in RHEL6
+# Ditto: -Wunreachable-code
+
+DIFFICULTFLAGS = \
+	-Weffc++ \
+	-Wunreachable-code \
+	-Wshadow \
+	-Wold-style-cast \
+	-ansi -pedantic
+
+
+CC = g++
+ARFLAGS = -r
+DEFINES = -DUNIX -D_REENTRANT -DTHOR_USE_CPLUSPLUS11
+
+# Default compile options
+
+CFLAGS = $(DEFINES) -O2 -g -DNDEBUG $(MAINFLAGS) $(RELEASEFLAGS) -Werror
+
+# Special mode compile options
+
+CFLAGS_DEBUG = $(DEFINES) -O0 -g $(MAINFLAGS) $(EXTRAFLAGS) -Werror
+
+CFLAGS_PROFILE = $(DEFINES) -O2 -g -pg -DNDEBUG $(MAINFLAGS) $(RELEASEFLAGS) -Werror
+
+# Installation directories
+
+processor := $(shell uname -p)
+
+ifeq ($(origin PREFIX), undefined)
+  PREFIX = /usr
+else
+  PREFIX = $(PREFIX)
+endif
+
+ifeq ($(processor), x86_64)
+  libdir = $(PREFIX)/lib64
+else
+  libdir = $(PREFIX)/lib
+endif
+
+bindir = $(PREFIX)/bin
+includedir = $(PREFIX)/include
+datadir = $(PREFIX)/share/brainstorm
+enginedir = $(datadir)/brainstorm/engines
+plugindir = $(datadir)/brainstorm/plugins
+tmpldir = $(datadir)/brainstorm/dali
+objdir = obj
+
+INCLUDES = -I$(includedir) \
+	-I$(includedir)/smartmet
+
+LIBS = -L$(libdir) \
+	-lsmartmet_brainstorm-spine \
+	-lsmartmet_newbase \
+	-lsmartmet_macgyver \
+	-lctpp2 \
+	-lthor -lfl -ly \
+	-lboost_date_time-mt \
+	-lboost_thread-mt \
+	-lboost_iostreams-mt \
+	-lboost_filesystem-mt \
+	-lboost_system-mt \
+	-lbz2 -lz
+
+# rpm variables
+
+rpmsourcedir = /tmp/$(shell whoami)/rpmbuild
+
+rpmerr = "There's no spec file ($(LIB).spec). RPM wasn't created. Please make a spec file or copy and rename it into $(LIB).spec"
+
+rpmversion := $(shell grep "^Version:" $(LIB).spec  | cut -d\  -f 2 | tr . _)
+rpmrelease := $(shell grep "^Release:" $(LIB).spec  | cut -d\  -f 2 | tr . _)
+
+# Templates
+
+TEMPLATES = $(wildcard tmpl/*.tmpl)
+BYTECODES = $(TEMPLATES:%.tmpl=%.c2t)
+
+# What to install
+
+LIBFILE = $(SUBNAME).so
+
+# How to install
+
+INSTALL_PROG = install -p -m 775
+INSTALL_DATA = install -p -m 664
+
+# Compile option overrides
+
+ifneq (,$(findstring debug,$(MAKECMDGOALS)))
+  CFLAGS = $(CFLAGS_DEBUG)
+endif
+
+ifneq (,$(findstring profile,$(MAKECMDGOALS)))
+  CFLAGS = $(CFLAGS_PROFILE)
+endif
+
+# Compilation directories
+
+vpath %.cpp source
+vpath %.h include
+vpath %.o $(objdir)
+
+# Main programs to be compiled
+
+MAINSRCS     = $(patsubst main/%,%,$(wildcard main/*.cpp))
+MAINPROGS    = $(MAINSRCS:%.cpp=%)
+MAINOBJS     = $(MAINSRCS:%.cpp=%.o)
+MAINOBJFILES = $(MAINOBJS:%.o=obj/%.o)
+
+# The files to be compiled
+
+SRCS = $(patsubst source/%,%,$(wildcard source/*.cpp))
+HDRS = $(patsubst include/%,%,$(wildcard include/*.h))
+OBJS = $(SRCS:%.cpp=%.o)
+
+OBJFILES = $(OBJS:%.o=obj/%.o)
+INCLUDES := -Iinclude $(INCLUDES)
+
+.PHONY: test rpm
+
+# The rules
+
+all: objdir $(MAINPROGS) $(LIBFILE) $(BYTECODES)
+debug: all
+release: all
+profile: all
+
+configtest:
+	@echo Validating cnf/dali.conf
+	@cfgvalidate -v cnf/dali.conf
+	@if [ -e /usr/bin/jsonlint ]; then \
+	  echo Validating json files ; \
+	  for json in product/*/*.json; \
+	  do echo " -> $$json"; \
+	  jsonlint -q $$json; \
+	done; \
+	fi
+
+$(LIBFILE): $(OBJS) Makefile
+	$(CC) -shared $(CFLAGS) -o $(LIBFILE) $(OBJFILES) $(LIBS)
+
+# The horror.. the horror... - Colonel Kurtz
+$(MAINPROGS): % : main/%.cpp $(LIBFILE) Makefile
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ main/$@.cpp $(LIBS) ./dali.so /usr/share/brainstorm/engines/qengine.so  /usr/share/brainstorm/engines/contour.so
+
+clean:
+	rm -f $(LIBFILE) $(MAINPROGS) $(OBJFILES) $(MAINOBJFILES) *~ */*~ */*/*~ tmpl/*.c2t
+	rm -f *.d $(objdir)/*.d
+	rm -rf $(objdir)
+
+install:
+	@mkdir -p $(plugindir)
+	$(INSTALL_DATA) $(LIBFILE) $(plugindir)/$(LIBFILE)
+	@mkdir -p $(tmpldir)
+	@list=`ls -1 tmpl/*.c2t`; \
+	echo $(INSTALL_DATA) $$list $(tmpldir)/; \
+        $(INSTALL_DATA) $$list $(tmpl)/
+
+test:	configtest
+	cd test && make test
+
+html::
+	mkdir -p /data/local/html/lib/$(LIB)
+	doxygen $(LIB).dox
+
+objdir:
+	@mkdir -p $(objdir)
+
+rpm: clean
+	if [ -e $(LIB).spec ]; \
+	then \
+	  smartspecupdate $(LIB).spec ; \
+	  mkdir -p $(rpmsourcedir) ; \
+	  tar -C ../ -cf $(rpmsourcedir)/smartmet-$(LIB).tar $(SUBNAME) ; \
+	  gzip -f $(rpmsourcedir)/smartmet-$(LIB).tar ; \
+	  TAR_OPTIONS=--wildcards rpmbuild -v -ta $(rpmsourcedir)/smartmet-$(LIB).tar.gz ; \
+	  rm -f $(rpmsourcedir)/smartmet-$(LIB).tar.gz ; \
+	else \
+	  echo $(rpmerr); \
+	fi;
+
+tag:
+	cvs -f tag 'smartmet_$(LIB)_$(rpmversion)-$(rpmrelease)' .
+
+headertest:
+	@echo "Checking self-sufficiency of each header:"
+	@echo
+	@for hdr in $(HDRS); do \
+	echo $$hdr; \
+	echo "#include \"$$hdr\"" > /tmp/$(LIB).cpp; \
+	echo "int main() { return 0; }" >> /tmp/$(LIB).cpp; \
+	$(CC) $(CFLAGS) $(INCLUDES) -o /dev/null /tmp/$(LIB).cpp $(LIBS); \
+	done
+
+.SUFFIXES: $(SUFFIXES) .cpp
+
+.cpp.o:
+	$(CC) $(CFLAGS) $(INCLUDES) -c -o $(objdir)/$@ $<
+
+%.c2t:	%.tmpl
+	ctpp2c $< $@
+
+-include *.d obj/*.d
+

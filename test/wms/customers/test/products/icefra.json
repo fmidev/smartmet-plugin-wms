@@ -1,0 +1,39 @@
+{
+    "title": "Fracture",
+    "abstract": "Fracture",
+    "projection": {},
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // repeämä
+		    "qid": "fracture",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "i_fral",
+		    "time_column" : "publicationdate",	
+		    "geometry_column" : "geom",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"class": "Fracture"
+			    }
+			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}

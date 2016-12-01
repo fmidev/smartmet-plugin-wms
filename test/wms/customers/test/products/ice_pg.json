@@ -1,0 +1,110 @@
+{
+    "title": "Ice map",
+    "projection":
+    {
+        "crs": "EPSG:2393",     // YKJ
+	"bboxcrs": "EPSG:4326",
+        "xsize": 800,
+	"ysize": 800, 
+	"resolution": 1.75,
+        "cx": 19,
+        "cy": 60
+    },
+    "views": 
+    [
+        {
+	    "qid": "v1-",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+		{
+		    "qid": "icemap1",
+		    "layer_type": "postgis",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "publish_seaice",
+		    "time_column" : "publicationdate",	
+		    "time_truncate": "day",
+		    "geometry_column" : "geom",
+             	    "css": "ice/ice.css",
+		    "filters" :
+		    [
+			{
+			    "where": "type=1",
+			    "attributes":
+			    {
+				"class": "OpenWater"
+			    }
+			},
+			{
+			    "where": "type=2",
+			    "attributes":
+			    {
+				"class": "VeryOpenIce"
+			    }
+			},
+			{
+			    "where": "type=3",
+			    "attributes":
+			    {
+				"class": "OpenIce"
+			    }
+			},
+			{
+			    "where": "type=4",
+			    "attributes":
+			    {
+				"class": "CloseIce"
+			    }
+			},
+			{
+			    "where": "type=9",
+			    "attributes":
+			    {
+				"class": "NewIce"
+			    }
+			},
+			{
+			    "where": "type=5",
+			    "attributes":
+			    {
+				"class": "VeryCloseIce"
+			    }
+			},
+			{
+			    "where": "type=7",
+			    "attributes":
+			    {
+				"class": "LevelIce"
+			    }
+			},
+			{
+			    "where": "type=6",
+			    "attributes":
+			    {
+				"class": "ConsolidatedIce"
+			    }
+			},
+			{
+			    "where": "type=10",
+			    "attributes":
+			    {
+				"class": "RottenFastIce"
+			    }
+			},
+			{
+			    "where": "type=8",
+			    "attributes":
+			    {
+				"class": "FastIce"
+			    }
+			}
+ 		    ]
+ 		}
+	    ]
+	}
+    ]
+}
+

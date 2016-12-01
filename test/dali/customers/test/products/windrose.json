@@ -1,0 +1,305 @@
+{
+    "title": "Wind roses",
+    // "time": "2014-02-14",
+    "projection":
+    {
+	"crs": "EPSG:2393",	// YKJ
+	"bboxcrs": "WGS84",
+	"xsize": 800, "ysize": 800, "resolution": 1.75,
+	"cx": 19,
+	"cy": 60
+    },
+    "defs":
+    {
+	"layers":
+	[
+	    {
+		"tag": "symbol",
+		"attributes":
+		{
+		    "id": "box"
+		},
+		"layers":
+		[
+		    {
+			"tag": "rect",
+			"attributes":
+			{
+			    "width": 20,
+			    "height": 16
+			}
+		    }
+		]
+	    }
+	]
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+	    "layers": [
+		{
+		    "qid": "sea",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "white"
+		    }
+		},
+		{
+		    "qid": "l3",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"lines": true,
+			"schema": "esri",
+			"table": "europe_country_wgs84"
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country_line",
+			"fill": "none",
+			"stroke": "black",
+			"stroke-width": "0.2px"
+		    }
+		},
+		{
+		    "qid": "time",
+		    "layer_type": "time",	
+		    "timestamp": "validtime",
+		    "timezone": "Europe/Helsinki",
+		    "format": "%Y-%m-%d",
+		    "x": 20,
+		    "y": 20,
+		    "attributes":
+		    {
+			"text-anchor": "start",
+			"font-family": "Verdana",
+			"font-weight": "bold",
+			"font-size": 14
+		    }
+		},
+		{
+		    "layer_type": "windrose",
+		    "css": "windrose/windrose.css",
+		    "timezone": "UTC",
+		    "starttimeoffset": -11,	// 13-13 UTC
+		    "endtimeoffset": 13,	// Default is 0-24 UTC
+		    "windrose":
+		    {
+			"minpercentage": 3,
+			"radius": 20,
+			"sectors": 8,
+			"symbol": "windrose",
+			"attributes":
+			{
+			    "class": "WindRose"
+			},
+			"connector":
+			{
+			    "startoffset": 2,	// note: station radius = 3
+			    "endoffset": 20,	// note: rose circle = 20
+			    "attributes":
+			    {
+				"class": "RoseConnector"
+			    }
+			},
+			"parameter": "max_t(WindSpeed)",
+			"limits":
+			[
+			    {
+				"hilimit": 8,
+				"attributes":
+				{
+				    "class": "LightWind"
+				}
+			    },
+			    {
+				"lolimit": 8,
+				"hilimit": 14,
+				"attributes":
+				{
+				    "class": "ModerateWind"
+				}
+			    },
+			    {
+				"lolimit": 14,
+				"attributes":
+				{
+				    "class": "HeavyWind"
+				}
+			    }
+			]
+		    },
+		    "observations":
+		    [
+			{
+			    "parameter": "mean_t(T)",	// keskilämpötila
+			    "label":
+			    {
+				"dx": 25,		// siirtymä tuuliruusun keskipisteestä
+				"dy": 16,
+				"suffix": " &#176;C"
+			    },
+			    "attributes":
+			    {
+				"class": "RoseTemperature"
+			    }
+			},
+			{
+			    "parameter": "mean_t(ws_10min)",	// keskituuli
+			    "label":
+			    {
+				"dx": 25,		// siirtymä tuuliruusun keskipisteestä
+				"dy": 3,
+				"suffix": " m/s"
+			    },
+			    "attributes":
+			    {
+				"class": "RoseMeanWind"
+			    }
+			},
+			{
+			    "parameter": "max_t(ws_10min)",	// maksimituuli
+			    "label":
+			    {
+				"dx": 25,		// siirtymä tuuliruusun keskipisteestä
+				"dy": -10,
+				"suffix": " m/s"
+			    },
+			    "attributes":
+			    {
+				"class": "RoseMaxWind"
+			    }
+			}
+		    ],
+		    "stations":
+		    [
+			// Rödkallen (Storön)
+			// Holmön (Järnäs)
+			// Brämön (Kuggören)
+			// Landsort (Stavnäs)
+			// Utklippan (Ölands södra udde)
+			// Ristna
+			{
+			    "fmisid": 100908,
+			    "longitude": 23,
+			    "latitude": 61,
+			    "symbol": "station",
+			    "attributes":
+			    {
+				"class": "StationMarker"
+			    },
+			    "title":
+			    {
+				"text": "Utö",
+				"dx": -10,
+				"dy": -26,
+				"attributes":
+				{
+				    "class": "StationName"
+				}
+			    }
+			},
+			{
+			    "fmisid": 101022,
+			    "longitude": 26.1,
+			    "latitude": 61.2,
+			    "symbol": "station",
+			    "attributes":
+			    {
+				"class": "StationMarker"
+			    },
+			    "title":		// optionaalinen otsikko
+			    {
+				"text": "Kalbådagrund",
+				"dx": -20,
+				"dy": -26,
+				"attributes":
+				{
+				    "class": "StationName"
+				}
+			    }
+			},
+			{
+			    "fmisid": 101481,
+			    "longitude": 23,
+			    "latitude": 62.5,
+			    "symbol": "station",
+			    "attributes":
+			    {
+				"class": "StationMarker"
+			    },
+			    "title":
+			    {
+				"text": "Strömmingsbådan",
+				"dx": -20,
+				"dy": -26,
+				"attributes":
+				{
+				    "class": "StationName"
+				}
+			    }
+			},
+			{
+			    "fmisid": 101673,
+			    "longitude": 25.3,
+			    "latitude": 63.8,
+			    "symbol": "station",
+			    "attributes":
+			    {
+				"class": "StationMarker"
+			    },
+			    "title":
+			    {
+				"text": "Ulkokalla",
+				"dx": -20,
+				"dy": -26,
+				"attributes":
+				{
+				    "class": "StationName"
+				}
+			    }
+			},
+			{
+			    "fmisid": 101783,
+			    "longitude": 27,
+			    "latitude": 65.5,
+			    "symbol": "station",
+			    "attributes":
+			    {
+				"class": "StationMarker"
+			    },
+			    "title":
+			    {
+				"text": "Kemi I",
+				"dx": -15,
+				"dy": -26,
+				"attributes":
+				{
+				    "class": "StationName"
+				}
+			    }
+			}
+		    ]
+		},
+		{
+		    "layer_type": "symbol",
+		    "symbol": "windroselegend",
+		    "positions":
+		    {
+			"x": 95,
+			"y": 290,
+			"dx": 99999,
+			"dy": 99999
+		    }
+		}
+
+	    ]
+	}
+    ]
+}

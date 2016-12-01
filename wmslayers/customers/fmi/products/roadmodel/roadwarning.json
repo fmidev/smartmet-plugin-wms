@@ -1,0 +1,51 @@
+{
+    "title": "Road Warning",
+    "abstract" : "Road warning isobands from FMI Scandinavia road model",
+    "producer" : "roadmodel_skandinavia_pinta",
+    "projection": {},
+    "views": [
+        {
+	    "qid": "v1-",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+                {
+                    "tag": "clipPath", //This for land mask
+                    "attributes":
+                    {
+                        "id": "borderclip"
+                    },
+                    "layers": [
+			{
+			    "qid": "europe",
+			    "layer_type": "map",
+			    "map":
+			    {
+				"schema": "esri",
+				"table": "europe_country_wgs84"
+			    },
+			    "attributes":
+			    {
+				"fill" : "none"
+			    }
+                        }
+                    ]
+                },
+		{
+		    "layer_type": "isoband",
+		    "isobands": "json:isobands/roadwarning.json",
+		    "css": "isobands/roadwarning.css",
+		    "parameter": "RoadWarning",
+		    "interpolation" : "discrete",
+		    "attributes":
+		    {
+			"clip-path" : "url(#borderclip)"
+		    }
+
+		}
+            ]
+        }
+    ]
+}

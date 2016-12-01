@@ -1,0 +1,82 @@
+[
+    {
+	"qid": "ice_5",
+	"concentration": 5,
+	"attributes":
+	{
+	    "class": "OpenWater"
+	}
+    },
+    {
+	"qid": "ice_10_30",
+	"concentration": [10,20,30],
+	"attributes":
+	{
+	    "class": "VeryOpenIce"
+	}
+    },
+    {
+	"qid": "ice_40_60",
+	"concentration": [40,50,60],
+	"attributes":
+	{
+	    "class": "OpenIce"
+	}
+    },
+    {
+	"qid": "ice_70_80",
+	"concentration": [70,80],
+	"attributes":
+	{
+	    "class": "CloseIce"
+	}
+    },
+    {
+	"qid": "ice_71",
+	"concentration": 71,
+	"attributes":
+	{
+	    "class": "NewIce"
+	}
+    },
+    {
+	"qid": "ice_90_95",
+	"concentration": [90,95],
+	"attributes":
+	{
+	    "class": "VeryCloseIce"
+	}
+    },
+    {
+	"qid": "ice_91",
+	"concentration": 91,
+	"attributes":
+	{
+	    "class": "LevelIce"
+	}
+    },
+    {
+	"qid": "ice_98",
+	"concentration": 98,
+	"attributes":
+	{
+	    "class": "ConsolidatedIce"
+	}
+    },
+    {
+	"qid": "ice_99",
+	"concentration": 99,
+	"attributes":
+	{
+	    "class": "RottenIce"
+	}
+    },
+    {
+	"qid": "ice_100",
+	"concentration": 100,
+	"attributes":
+	{
+	    "class": "FastIce"
+	}
+    }
+]

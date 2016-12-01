@@ -1,0 +1,49 @@
+{
+    "title": "Lighthouses",
+    "abstract": "Lighthouses",
+    "projection": {},
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // majakat
+		    "qid": "lighthouses",
+		    "layer_type": "icemap",
+		    "layer_subtype": "named_location",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "lighthouses",
+		    "symbol": "lighthouse",
+		    "geometry_column" : "geom",
+		    "firstname_column" : "namnavaid1",
+		    "secondname_column" : "namnavaid2",
+		    "labelposition_column" : "label_location",
+		    "angle_column" : "angle",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"font-family": "Arial",
+				"font-size": "10",
+				"font-style": "normal",
+				"font-weight": "normal",
+				"text-anchor": "start"
+			    }
+ 			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}
+

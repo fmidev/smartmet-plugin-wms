@@ -1,0 +1,59 @@
+{
+  "title": "Aviation Numbers",
+  "producer": "ecmwf_maailma_pinta",
+  "projection": {
+    "crs": "EPSG:4326",
+      "x1" : -15,
+      "y1" : 62.5,
+      "x2" : 37.5,
+      "y2" : 75,
+      "xsize": 500,
+      "ysize": 500
+  },
+  "views": [
+    {
+      "qid": "v1",
+      "attributes": {
+        "id": "view1"
+      },
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "isobands": "json:isobands/temperature.json",
+          "css": "isobands/temperature.css",
+          "parameter": "Temperature",
+          "attributes": {
+            "id": "t2m_isobands"
+          }
+        },
+        {
+          "qid": "l2",
+          "layer_type": "number",
+          "css": "numbers/integers.css",
+          "parameter": "Temperature",
+          "attributes": {
+            "class": "Number",
+            "id": "t2m_numbers"
+          },
+          "label":
+	    {
+		"dx": 0,
+		"dy": 3,
+		"precision": 0,
+		"missing": "-",
+		"plusprefix": "+",
+		"minusprefix": ""
+	    },
+          "positions": {
+            "x": 15,
+            "y": 15,
+            "dx": 20,
+            "dy": 20,
+            "ddx": 10
+          }
+        }
+      ]
+    }
+  ]
+}

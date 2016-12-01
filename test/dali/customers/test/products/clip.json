@@ -1,0 +1,89 @@
+{
+    "title": "Circled Demo Product",
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "attributes":
+    {
+	"filter": "url(#shadow)"
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+		{
+		    "qid": "clip",
+		    "tag": "clipPath",
+		    "attributes":
+		    {
+			"id": "mycircle"
+		    },
+		    "layers": [
+			{
+			    "tag": "circle",
+			    "attributes":
+			    {
+				"cx": "250",
+				"cy": "250",
+				"r": "250",
+				"fill": "black"
+			    }
+			}
+		    ]
+		},
+                {
+		    "qid": "group",
+		    "tag": "g",
+		    "attributes":
+		    {
+			"clip-path": "url(#mycircle)"
+		    },
+		    "layers": [
+			{
+			    "qid": "l1",
+			    "layer_type": "isoband",
+			    "isobands": "json:isobands/temperature.json",
+			    "css": "isobands/temperature.css",
+			    "parameter": "Temperature",
+			    "attributes":
+			    {
+				"id": "temperature_isobands"
+			    }
+			},
+			{
+			    "qid": "l2",
+			    "layer_type": "isoline",
+			    "isolines": "json:isolines/temperature.json",
+			    "css": "isolines/temperature.css",
+			    "parameter": "Temperature",
+			    "attributes":
+			    {
+				"id": "temperature_isolines",
+				"class": "Temperature"
+			    }
+			}
+                    ]
+		},
+		{
+		    "tag": "circle",
+		    "attributes":
+		    {
+			"cx": "250",
+			"cy": "250",
+			"r": "250",
+			"stroke": "black",
+			"fill": "none"
+		    }
+		}
+            ]
+        }
+    ]
+}

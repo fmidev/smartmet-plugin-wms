@@ -1,0 +1,30 @@
+[
+        {
+	    "qid": "precipitation_01",
+	    "value": 0.1
+        },
+        {
+	    "qid": "precipitation_02",
+            "value": 0.2
+        },
+        {
+	    "qid": "precipitation_05",
+            "value": 0.5
+        },
+        {
+	    "qid": "precipitation_1",
+            "value": 1
+        },
+        {
+	    "qid": "precipitation_2",
+            "value": 2
+        },
+        {
+	    "qid": "precipitation_5",
+            "value": 5
+        },
+        {
+	    "qid": "precipitation_10",
+            "value": 10
+        }
+]
