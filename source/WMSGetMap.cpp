@@ -89,7 +89,7 @@ void check_getmap_request_options(const SmartMet::Spine::HTTP::Request& theHTTPR
     if (!theHTTPRequest.getParameter("STYLES"))
     {
       SmartMet::Spine::Exception exception(BCP,
-                                           "STYLE-option must be defined, even if it is empty");
+                                           "STYLES-option must be defined, even if it is empty");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED);
       throw exception;
     }
