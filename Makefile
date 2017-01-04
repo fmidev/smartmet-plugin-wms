@@ -95,10 +95,10 @@ INCLUDES = -I$(includedir) \
 
 LIBS = -L$(libdir) \
 	-lsmartmet-spine \
-	-lsmartmet_newbase \
-	-lsmartmet_macgyver \
-	-lsmartmet_gis \
-	-lsmartmet_giza \
+	-lsmartmet-newbase \
+	-lsmartmet-macgyver \
+	-lsmartmet-gis \
+	-lsmartmet-giza \
 	`pkg-config --libs librsvg-2.0` \
 	`pkg-config --libs cairo` \
 	`pkg-config --libs jsoncpp` \

@@ -73,9 +73,9 @@ INCLUDES = -I$(includedir) \
 	-I$(includedir)/smartmet
 
 LIBS = -L$(libdir) \
-	-lsmartmet_brainstorm-spine \
-	-lsmartmet_newbase \
-	-lsmartmet_macgyver \
+	-lsmartmet-brainstorm-spine \
+	-lsmartmet-newbase \
+	-lsmartmet-macgyver \
 	-lctpp2 \
 	-lthor -lfl -ly \
 	-lboost_date_time-mt \

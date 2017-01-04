@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 16.11.30
+Version: 17.1.4
 Release: 1%{?dist}.fmi
 License: FMI
 Group: SmartMet/Plugins
@@ -11,14 +11,14 @@ Source0: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
-BuildRequires: libsmartmet-giza-devel >= 15.8.27
-BuildRequires: libsmartmet-macgyver >= 16.9.30
-BuildRequires: smartmet-library-spine-devel >= 16.11.29
-BuildRequires: smartmet-engine-gis-devel >= 16.11.30
-BuildRequires: smartmet-engine-geonames-devel >= 16.11.30
-BuildRequires: smartmet-engine-querydata-devel >= 16.11.30
-BuildRequires: smartmet-engine-contour-devel >= 16.11.30
-BuildRequires: libsmartmet-gis-devel >= 16.5.25
+BuildRequires: smartmet-library-giza-devel >= 16.12.21
+BuildRequires: smartmet-library-macgyver >= 16.12.20
+BuildRequires: smartmet-library-spine-devel >= 17.1.4
+BuildRequires: smartmet-engine-gis-devel >= 17.1.4
+BuildRequires: smartmet-engine-geonames-devel >= 17.1.4
+BuildRequires: smartmet-engine-querydata-devel >= 17.1.4
+BuildRequires: smartmet-engine-contour-devel >= 17.1.4
+BuildRequires: smartmet-library-gis-devel >= 16.12.20
 BuildRequires: cppformat-devel
 BuildRequires: ctpp2 >= 2.8.2
 BuildRequires: jsoncpp-devel
@@ -31,15 +31,15 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.2
 Requires: libconfig
 Requires: librsvg2 >= 2.40.6
-Requires: libsmartmet-gis >= 16.5.25
-Requires: libsmartmet-macgyver >= 16.9.30
-Requires: libsmartmet-giza >= 15.8.27
-Requires: smartmet-engine-querydata >= 16.11.30
-Requires: smartmet-engine-contour >= 16.11.30
-Requires: smartmet-engine-gis >= 16.11.30
-Requires: smartmet-engine-geonames >= 16.11.30
-Requires: smartmet-server >= 16.11.30
-Requires: smartmet-library-spine >= 16.11.29
+Requires: smartmet-library-gis >= 16.12.20
+Requires: smartmet-library-macgyver >= 16.12.20
+Requires: smartmet-library-giza >= 16.12.21
+Requires: smartmet-engine-querydata >= 17.1.4
+Requires: smartmet-engine-contour >= 17.1.4
+Requires: smartmet-engine-gis >= 17.1.4
+Requires: smartmet-engine-geonames >= 17.1.4
+Requires: smartmet-server >= 17.1.4
+Requires: smartmet-library-spine >= 17.1.4
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -75,6 +75,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Jan  4 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.1.4-1.fmi
+- Changed to use renamed SmartMet base libraries
+
 * Wed Nov 30 2016 Mika Heiskanen <mika.heiskanen@fmi.fi> - 16.11.30-1.fmi
 - Using test databases in test configuration
 - No installation for configuration

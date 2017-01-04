@@ -23,8 +23,8 @@ INCLUDES = \
 	`pkg-config --cflags jsoncpp`
 
 LIBS = 	-lsmartmet-spine  \
-	-lsmartmet_newbase \
-	-lsmartmet_giza \
+	-lsmartmet-newbase \
+	-lsmartmet-giza \
 	`pkg-config --libs libconfig++` \
 	`pkg-config --libs jsoncpp` \
 	-lctpp2 \
