@@ -138,7 +138,6 @@ objdir:
 rpm: clean
 	if [ -e $(LIB).spec ]; \
 	then \
-	  smartspecupdate $(LIB).spec ; \
 	  mkdir -p $(rpmsourcedir) ; \
 	  tar -C ../ -cf $(rpmsourcedir)/smartmet-$(LIB).tar $(SUBNAME) ; \
 	  gzip -f $(rpmsourcedir)/smartmet-$(LIB).tar ; \
