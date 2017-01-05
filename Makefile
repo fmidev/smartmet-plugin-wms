@@ -158,8 +158,7 @@ release: all
 profile: all
 
 configtest:
-	@echo Validating test/cnf/wms.conf
-	@cfgvalidate -v test/cnf/wms.conf
+	@if [ -x "$$(command -v cfgvalidate)" ]; then cfgvalidate -v test/cnf/wms.conf; fi
 
 jsontest:
 	@if [ -e /usr/bin/json_verify ]; then \
