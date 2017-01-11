@@ -1,1 +1,1 @@
-GET /wms?service=wms&request=GetMap&version=1.3.0&layers=test:icemap_areas&styles=&crs=EPSG:4326&bbox=55,9,66.5,34&width=800&height=700&format=image/svg%2Bxml&time=20120227162200 HTTP/1.0
+GET /wms?service=wms&request=GetMap&version=1.3.0&layers=test:icemap_areas&styles=&crs=EPSG:4326&bbox=55,9,66.5,34&width=800&height=700&format=image/svg%2Bxml&time=20120227142200 HTTP/1.0

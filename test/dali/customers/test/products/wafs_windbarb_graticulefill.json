@@ -17,8 +17,8 @@
                     "qid": "map",
                     "layer_type": "map",
                     "map": {
-                        "schema": "vmap",
-                        "table": "world_country2009_wgs84",
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
                         "lines": true
                     },
                     "attributes": {

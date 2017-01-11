@@ -6,7 +6,7 @@
 	{
 	    "xsize": 300,
 	    "ysize": 550,
-	    "crs": "EPSG:2393",	// YKJ
+	    "crs": "EPSG:4326",	// WGS84
 	    "bboxcrs": "EPSG:4326",	// WGS84
 	    // the following were obtained by trial and error from Foreca images
 	    "cy": 64.8,
@@ -94,8 +94,8 @@
 		    "map":
 		    {
 			"lines": true,
-			"schema": "esri",
-			"table": "europe_country_wgs84"
+			"schema": "natural_earth",
+			"table": "admin_0_countries"
 		    },
 		    "attributes":
 		    {
@@ -107,8 +107,9 @@
 		    "layer_type": "map",
 		    "map":
 		    {
-			"schema": "esri",
-			"table": "europe_country_wgs84"
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"where": "iso_a2 NOT IN ('FI','AX')"
 		    },
 		    "attributes":
 		    {
@@ -120,67 +121,13 @@
 		    "layer_type": "map",
 		    "map":
 		    {
-			"schema": "esri",
-			"table": "finland_country_wgs84"
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"where": "iso_a2 IN ('FI','AX')"
 		    },
 		    "attributes":
 		    {
 			"class": "Finland"
-		    }
-		},
-		{
-		    "qid": "lakes",
-		    "layer_type": "map",
-		    "map":
-		    {
-			"schema": "esri",
-			"table": "europe_mjwater_eureffin",
-			"where": "name<>'Ladozhskoye Ozero' and cntryname<>'Finland'"
-		    },
-		    "attributes":
-		    {
-			"class": "Lake"
-		    }
-		},
-		{
-		    "qid": "laatokka",
-		    "layer_type": "map",
-		    "map":
-		    {
-			"schema": "esri",
-			"table": "europe_mjwater_eureffin",
-			"where": "name='Ladozhskoye Ozero'"
-		    },
-		    "attributes":
-		    {
-			"class": "Sea"
-		    }
-		},
-		{
-		    "qid": "finland-lakes",
-		    "layer_type": "map",
-		    "map":
-		    {
-			"schema": "esri",
-			"table": "finland_major_lakes_wgs84"
-		    },
-		    "attributes":
-		    {
-			"class": "Lake"
-		    }
-		},
-		{
-		    "qid": "finland-roads",
-		    "layer_type": "map",
-		    "map":
-		    {
-			"schema": "esri",
-			"table": "europe_roads_eureffin",
-			"where": "cntryname='Finland'"
-		    },
-		    "attributes":
-		    {
-			"class": "Road"
 		    }
 		},
 		{

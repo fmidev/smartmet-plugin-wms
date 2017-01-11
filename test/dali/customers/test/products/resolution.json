@@ -9,7 +9,7 @@
 	    {
 	        "xsize": 500,
             	"ysize": 500,
-	        "crs": "EPSG:2393", // YKJ
+	        "crs": "EPSG:4326", // WGS84
 		"bboxcrs": "EPSG:4326",     // WGS84
 		"cy": 64.8,
 		"cx": 25.4,
@@ -28,8 +28,8 @@
 		    "minresolution": 2,
                     "map":
                     {
-                        "schema": "esri",
-                        "table": "europe_country_wgs84"
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries"
                     },
                     "attributes":
                     {
@@ -44,8 +44,8 @@
 		    "maxresolution": 2,
                     "map":
                     {
-                        "schema": "esri",
-                        "table": "europe_country_wgs84",
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
 			"minarea": 50
                     },
                     "attributes":
@@ -62,7 +62,7 @@
 	    {
 	        "xsize": 500,
             	"ysize": 500,
-	        "crs": "EPSG:2393", // YKJ
+	        "crs": "EPSG:4326", // WGS84
 		"bboxcrs": "EPSG:4326",     // WGS84
 		"cy": 64.8,
 		"cx": 25.4,
@@ -82,8 +82,8 @@
 		    "minresolution": 2,
                     "map":
                     {
-                        "schema": "esri",
-                        "table": "europe_country_wgs84"
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries"
                     },
                     "attributes":
                     {
@@ -98,8 +98,8 @@
 		    "maxresolution": 2,
                     "map":
                     {
-                        "schema": "esri",
-                        "table": "europe_country_wgs84",
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
 			"minarea": 50
                     },
                     "attributes":

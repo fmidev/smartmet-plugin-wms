@@ -6,8 +6,9 @@
     {
 	"finland":
 	{
-	    "schema": "esri",
-	    "table": "finland_country_wgs84",
+	    "schema": "natural_earth",
+	    "table": "admin_0_countries",
+	    "where": "iso_a2 IN ('FI','AX')",
 	    "minarea": 100,
 	    "mindistance": 1
 	}
@@ -60,8 +61,8 @@
 		    "layer_type": "map",
 		    "map":
 		    {
-			"schema": "esri",
-			"table": "europe_country_wgs84",
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
 			"minarea": 100
 		    },
 		    "attributes":
