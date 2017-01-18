@@ -102,6 +102,7 @@ LIBS = -L$(libdir) \
 	`pkg-config --libs librsvg-2.0` \
 	`pkg-config --libs cairo` \
 	`pkg-config --libs jsoncpp` \
+	-lfmt \
 	-lctpp2 \
 	-lboost_date_time \
 	-lboost_thread \

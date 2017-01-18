@@ -14,7 +14,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/join.hpp>
 
-#include <cppformat/format.h>
+#include <fmt/format.h>
 
 #include <gdal/ogr_spatialref.h>
 

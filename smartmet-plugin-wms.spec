@@ -2,7 +2,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.1.5
+Version: 17.1.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -19,14 +19,14 @@ BuildRequires: smartmet-engine-geonames-devel >= 17.1.4
 BuildRequires: smartmet-engine-querydata-devel >= 17.1.4
 BuildRequires: smartmet-engine-contour-devel >= 17.1.4
 BuildRequires: smartmet-library-gis-devel >= 16.12.20
-BuildRequires: cppformat-devel
+BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.2
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
 BuildRequires: librsvg2-devel >= 2.40.6
 BuildRequires: cairo-devel
 Requires: cairo
-Requires: cppformat
+Requires: fmt
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.2
 Requires: libconfig
@@ -75,6 +75,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Jan 18 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.1.18-1.fmi
+- Upgrade from cppformat-library to fmt
+
 * Thu Jan  5 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.1.5-1.fmi
 - Fixed WMS plugin to report that STYLES parameter is missing, not STYLE
 

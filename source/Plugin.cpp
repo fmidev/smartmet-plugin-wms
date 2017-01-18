@@ -34,7 +34,7 @@
 #include <boost/utility.hpp>
 #include <boost/filesystem/operations.hpp>
 
-#include <cppformat/format.h>
+#include <fmt/format.h>
 
 #include <stdexcept>
 

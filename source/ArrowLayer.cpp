@@ -19,7 +19,7 @@
 #include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
 #include <boost/math/constants/constants.hpp>
-#include <cppformat/format.h>  // cppformat
+#include <fmt/format.h>
 #include <iomanip>
 
 // TODO:
