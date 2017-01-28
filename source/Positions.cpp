@@ -498,9 +498,9 @@ Positions::Points Positions::getDataPoints(SmartMet::Engine::Querydata::Q theQ,
 
     Points points;
 
-    auto latlons = theQ->latLonCache();
+    auto shared_latlons = theQ->latLonCache();
 
-    for (const auto& latlon : latlons)
+    for (const auto& latlon : *shared_latlons)
     {
       // Convert latlon to world coordinate
 
