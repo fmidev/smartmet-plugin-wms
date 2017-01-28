@@ -1,7 +1,0 @@
-{
-            "xsize": 600,
-            "ysize": 600,
-            "crs": "EPSG:2393", // YKJ
-            "bboxcrs": "EPSG:4326",     // WGS84
-            "resolution": 0.5
-}
