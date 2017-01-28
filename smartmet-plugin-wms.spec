@@ -12,13 +12,13 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 16.12.21
-BuildRequires: smartmet-library-macgyver >= 16.12.20
-BuildRequires: smartmet-library-spine-devel >= 17.1.4
+BuildRequires: smartmet-library-macgyver >= 17.1.18
+BuildRequires: smartmet-library-spine-devel >= 17.1.24
 BuildRequires: smartmet-engine-gis-devel >= 17.1.4
-BuildRequires: smartmet-engine-geonames-devel >= 17.1.4
-BuildRequires: smartmet-engine-querydata-devel >= 17.1.4
-BuildRequires: smartmet-engine-contour-devel >= 17.1.4
-BuildRequires: smartmet-library-gis-devel >= 16.12.20
+BuildRequires: smartmet-engine-geonames-devel >= 17.1.27
+BuildRequires: smartmet-engine-querydata-devel >= 17.1.26
+BuildRequires: smartmet-engine-contour-devel >= 17.1.19
+BuildRequires: smartmet-library-gis-devel >= 17.1.18
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.2
 BuildRequires: jsoncpp-devel
@@ -31,15 +31,15 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.2
 Requires: libconfig
 Requires: librsvg2 >= 2.40.6
-Requires: smartmet-library-gis >= 16.12.20
-Requires: smartmet-library-macgyver >= 16.12.20
+Requires: smartmet-library-gis >= 17.1.18
+Requires: smartmet-library-macgyver >= 17.1.18
 Requires: smartmet-library-giza >= 16.12.21
-Requires: smartmet-engine-querydata >= 17.1.4
-Requires: smartmet-engine-contour >= 17.1.4
+Requires: smartmet-engine-querydata >= 17.1.26
+Requires: smartmet-engine-contour >= 17.1.19
 Requires: smartmet-engine-gis >= 17.1.4
-Requires: smartmet-engine-geonames >= 17.1.4
-Requires: smartmet-server >= 17.1.4
-Requires: smartmet-library-spine >= 17.1.4
+Requires: smartmet-engine-geonames >= 17.1.27
+Requires: smartmet-server >= 17.1.25
+Requires: smartmet-library-spine >= 17.1.24
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
