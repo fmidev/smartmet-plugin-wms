@@ -4,6 +4,7 @@
 
 #include <spine/Exception.h>
 #include <spine/Json.h>
+#include <spine/FmiApiKey.h>
 #include <engines/authentication/Engine.h>
 
 #include <macgyver/String.h>
@@ -204,20 +205,11 @@ bool WMSConfig::validateGetMapAuthorization(const SmartMet::Spine::HTTP::Request
   {
     // Existence of layers must be guaranteed before calling this function
     std::string layerstring = *(theRequest.getParameter("LAYERS"));
-    std::string apikey;
 
-    // Try Get-parameter first
-    auto apikey_param = theRequest.getParameter("fmi-apikey");
-    if (!apikey_param)
-    {
-      auto apikey_header = theRequest.getHeader("fmi-apikey");
-      if (!apikey_header)
-        return true;
-      else
-        apikey = *apikey_header;
-    }
-    else
-      apikey = *apikey_param;
+    // Get apikey
+    auto apikey = SmartMet::Spine::FmiApiKey::getFmiApiKey(theRequest);
+    if (!apikey)
+      return true;
 
     std::vector<std::string> layers;
     boost::algorithm::split(layers, layerstring, boost::algorithm::is_any_of(","));
@@ -226,7 +218,7 @@ bool WMSConfig::validateGetMapAuthorization(const SmartMet::Spine::HTTP::Request
       return true;
 
     // All layers must match in order to grant access
-    return itsAuthEngine->authorize(apikey, layers, "wms");
+    return itsAuthEngine->authorize(*apikey, layers, "wms");
   }
   catch (...)
   {

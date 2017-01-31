@@ -13,6 +13,7 @@
 
 #include <spine/Exception.h>
 #include <spine/Convenience.h>
+#include <spine/FmiApiKey.h>
 
 namespace SmartMet
 {
@@ -51,16 +52,16 @@ std::string WMSGetCapabilities::resolveGetMapURI(
       if (host == "data.fmi.fi" || host == "wms.fmi.fi")  // These should be configurable
       {
         // These hosts need apikey in order to work
-        auto apikey_header = theRequest.getHeader("fmi-apikey");
+        auto apikey = SmartMet::Spine::FmiApiKey::getFmiApiKey(theRequest);
 
-        if (!apikey_header)
+        if (!apikey)
         {
           // No apikey? We'll make do without.
           return "http://" + host + "/wms";
         }
         else
         {
-          return "http://" + host + "/fmi-apikey/" + *apikey_header + "/wms";
+          return "http://" + host + "/fmi-apikey/" + *apikey + "/wms";
         }
       }
       else
@@ -87,15 +88,7 @@ std::string WMSGetCapabilities::response(const SmartMet::Spine::HTTP::Request& t
     hash["version_string"] = boost::algorithm::join(theConfig.supportedWMSVersions(), ", ");
 
     // Deduce apikey for layer filtering
-    boost::optional<std::string> apikey;
-    auto query_apikey = theRequest.getParameter("fmi-apikey");
-    if (!query_apikey)
-    {
-      auto header_apikey = theRequest.getHeader("fmi-apikey");
-      apikey = header_apikey;
-    }
-    else
-      apikey = query_apikey;
+    auto apikey = SmartMet::Spine::FmiApiKey::getFmiApiKey(theRequest);
 
     std::string configuredLayers = theConfig.getCapabilities(apikey);
 
