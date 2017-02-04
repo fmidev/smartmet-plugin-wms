@@ -31,14 +31,14 @@ Config::Config(const string& configfile)
       itsDefaultModel("pal_skandinavia"),
       itsDefaultLanguage("en"),
       itsTemplateDirectory("/etc/smartmet/plugins/dali/templates"),
-      itsRootDirectory("/smartmet/share/brainstorm/dali"),
+      itsRootDirectory(""),
       itsFilesystemCacheDirectory("/var/smartmet/imagecache"),
       itsMaxMemoryCacheSize(104857600)  // 100 MB
       ,
       itsMaxFilesystemCacheSize(209715200)  // 200 MB
       ,
       itsWmsUrl("/wms"),
-      itsWmsRootDirectory("/smartmet/share/brainstorm/wms"),
+      itsWmsRootDirectory(),
       itsRegularAttributes(),
       itsPresentationAttributes(),
       itsQuiet(false),
@@ -52,6 +52,14 @@ Config::Config(const string& configfile)
     try
     {
       itsConfig.readFile(configfile.c_str());
+
+      // required parameters
+      std::string root = itsConfig.lookup("root");
+      std::string wmsroot = itsConfig.lookup("wms.root");
+      itsRootDirectory = root;
+      itsWmsRootDirectory = wmsroot;
+
+      // optional parameters
       itsConfig.lookupValue("url", itsDefaultUrl);
       itsConfig.lookupValue("model", itsDefaultModel);
       itsConfig.lookupValue("language", itsDefaultLanguage);
@@ -59,14 +67,12 @@ Config::Config(const string& configfile)
       itsConfig.lookupValue("template", itsDefaultTemplate);
       itsConfig.lookupValue("templatedir", itsTemplateDirectory);
       itsConfig.lookupValue("customer", itsDefaultCustomer);
-      itsConfig.lookupValue("root", itsRootDirectory);
 
       itsConfig.lookupValue("cache.memory_bytes", itsMaxMemoryCacheSize);
       itsConfig.lookupValue("cache.filesystem_bytes", itsMaxFilesystemCacheSize);
       itsConfig.lookupValue("cache.directory", itsFilesystemCacheDirectory);
 
       itsConfig.lookupValue("wms.url", itsWmsUrl);
-      itsConfig.lookupValue("wms.root", itsWmsRootDirectory);
       itsConfig.lookupValue("wms.versions", itsWmsVersions);
       itsConfig.lookupValue("wms.mapformats", itsWmsMapFormats);
       itsConfig.lookupValue("wms.quiet", itsQuiet);
