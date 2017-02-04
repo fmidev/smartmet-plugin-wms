@@ -49,7 +49,9 @@ class Config : private boost::noncopyable
 
   const libconfig::Config& getConfig() const { return itsConfig; }
   bool quiet() const;
+#ifndef WITHOUT_AUHTENTICATION
   bool authenticate() const;
+#endif
 
  private:
   libconfig::Config itsConfig;
@@ -76,7 +78,9 @@ class Config : private boost::noncopyable
   std::set<std::string> itsPresentationAttributes;
 
   bool itsQuiet;
+#ifndef WITHOUT_AUHTENTICATION
   bool itsAuthenticate;
+#endif
 };  // class Config
 
 }  // namespace Dali

@@ -25,6 +25,7 @@
 
 namespace SmartMet
 {
+#ifndef WITHOUT_AUTHENTICATION
 namespace Engine
 {
 namespace Authentication
@@ -32,6 +33,7 @@ namespace Authentication
 class Engine;
 }
 }
+#endif
 
 namespace Plugin
 {
@@ -69,11 +71,18 @@ class WMSConfig
   WMSConfig(const SmartMet::Plugin::Dali::Config& daliConfig,
             const SmartMet::Spine::FileCache& theFileCache,
             SmartMet::Engine::Querydata::Engine* qEngine,
+#ifndef WITHOUT_AUTHENTICATION
             SmartMet::Engine::Authentication::Engine* authEngine,
+#endif
             SmartMet::Engine::Gis::Engine* gisEngine);
 
+#ifndef WITHOUT_AUTHENTICATION
   std::string getCapabilities(const boost::optional<std::string>& apikey,
                               bool authenticate = true) const;
+#else
+  std::string getCapabilities(const boost::optional<std::string>& apikey) const;
+#endif
+
   std::string layerCustomer(const std::string& theLayerName) const;
   const std::set<std::string>& supportedMapFormats() const;
   const std::set<std::string>& supportedWMSVersions() const;
@@ -83,7 +92,9 @@ class WMSConfig
   bool isValidStyle(const std::string& theLayer, const std::string& theStyle) const;
   bool isValidCRS(const std::string& theLayer, const std::string& theCRS) const;
 
+#ifndef WITHOUT_AUTHENTICATION
   bool validateGetMapAuthorization(const SmartMet::Spine::HTTP::Request& theRequest) const;
+#endif
 
   bool isValidTime(const std::string& theLayer,
                    const boost::posix_time::ptime& theTime,
@@ -107,8 +118,11 @@ class WMSConfig
   // Engines for GetCapabilities
   SmartMet::Engine::Querydata::Engine* itsQEngine = nullptr;
   SmartMet::Engine::Gis::Engine* itsGisEngine = nullptr;
+
+#ifndef WITHOUT_AUTHENTICATION
   // For GetCapabilities and GetMap Authentication
   SmartMet::Engine::Authentication::Engine* itsAuthEngine = nullptr;
+#endif
 
   // supported map formats
   std::set<std::string> itsSupportedMapFormats;

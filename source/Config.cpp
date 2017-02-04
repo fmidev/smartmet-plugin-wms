@@ -41,8 +41,12 @@ Config::Config(const string& configfile)
       itsWmsRootDirectory(),
       itsRegularAttributes(),
       itsPresentationAttributes(),
+#ifndef WITHOUT_AUHTENTICATION
       itsQuiet(false),
       itsAuthenticate(true)
+#else
+      itsQuiet(false)
+#endif
 {
   try
   {
@@ -77,7 +81,9 @@ Config::Config(const string& configfile)
       itsConfig.lookupValue("wms.mapformats", itsWmsMapFormats);
       itsConfig.lookupValue("wms.quiet", itsQuiet);
 
+#ifndef WITHOUT_AUHTENTICATION
       itsConfig.lookupValue("authenticate", itsAuthenticate);
+#endif
 
       // Store array of SVG attribute names into a set for looking up valid names
       {
@@ -92,6 +98,7 @@ Config::Config(const string& configfile)
         for (int i = 0; i < attributes.getLength(); ++i)
           itsRegularAttributes.insert(attributes[i]);
       }
+
       {
         const auto& attributes = itsConfig.lookup("presentation_attributes");
         if (!attributes.isArray())
@@ -219,10 +226,13 @@ bool Config::quiet() const
 {
   return itsQuiet;
 }
+
+#ifndef WITHOUT_AUHTENTICATION
 bool Config::authenticate() const
 {
   return itsAuthenticate;
 }
+#endif
 
 }  // namespace Dali
 }  // namespace Plugin

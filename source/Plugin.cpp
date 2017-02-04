@@ -16,7 +16,9 @@
 #include <spine/Exception.h>
 #include <spine/Json.h>
 
+#ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
+#endif
 
 #include <macgyver/AnsiEscapeCodes.h>
 
@@ -528,6 +530,7 @@ void Plugin::init()
     // TODO: ObsEngine should do it by itself
     itsObsEngine->setGeonames(itsGeoEngine);
 
+#ifndef WITHOUT_AUTHENTICATION
     /* Auth */
     if (itsConfig.authenticate())
     {
@@ -548,6 +551,9 @@ void Plugin::init()
       itsWMSConfig.reset(
           new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, nullptr, itsGisEngine));
     }
+#else
+    itsWMSConfig.reset(new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, itsGisEngine));
+#endif
 
     itsWMSGetCapabilities.reset(
         new WMS::WMSGetCapabilities(itsConfig.templateDirectory() + "/wms_get_capabilities.c2t"));
@@ -1155,8 +1161,10 @@ WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
         return WMSQueryStatus::OK;
       }
 
-      // This request is a GetMap request
-      // Validate authorizations
+// This request is a GetMap request
+// Validate authorizations
+
+#ifndef WITHOUT_AUTHENTICATION
       bool has_access = false;
       if (itsConfig.authenticate())
         has_access = itsWMSConfig->validateGetMapAuthorization(thisRequest);
@@ -1169,6 +1177,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
         theResponse.setStatus(SmartMet::Spine::HTTP::Status::forbidden, true);
         return WMSQueryStatus::FORBIDDEN;
       }
+#endif
 
       WMS::WMSGetMap wmsGetMapRequest(*itsWMSConfig);
       wmsGetMapRequest.parseHTTPRequest(*itsQEngine, thisRequest);

@@ -1,3 +1,4 @@
+%bcond_without authentication
 %define DIRNAME wms
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
@@ -13,10 +14,13 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 16.12.21
 BuildRequires: smartmet-library-macgyver >= 17.1.18
-BuildRequires: smartmet-library-spine-devel >= 17.2.1
+BuildRequires: smartmet-library-spine-devel >= 17.2.3
+%if %{with authentication}
+BuildRequires: smartmet-engine-authentication-devel >= 17.1.5
+%endif
 BuildRequires: smartmet-engine-gis-devel >= 17.1.4
-BuildRequires: smartmet-engine-geonames-devel >= 17.1.27
-BuildRequires: smartmet-engine-querydata-devel >= 17.1.26
+BuildRequires: smartmet-engine-geonames-devel >= 17.2.3
+BuildRequires: smartmet-engine-querydata-devel >= 17.2.3
 BuildRequires: smartmet-engine-contour-devel >= 17.1.31
 BuildRequires: smartmet-library-gis-devel >= 17.1.18
 BuildRequires: fmt-devel
@@ -34,12 +38,15 @@ Requires: librsvg2 >= 2.40.6
 Requires: smartmet-library-gis >= 17.1.18
 Requires: smartmet-library-macgyver >= 17.1.18
 Requires: smartmet-library-giza >= 16.12.21
-Requires: smartmet-engine-querydata >= 17.1.26
+%if %{with authentication}
+Requires: smartmet-engine-authentication >= 17.1.5
+%endif
+Requires: smartmet-engine-querydata >= 17.2.3
 Requires: smartmet-engine-contour >= 17.1.31
 Requires: smartmet-engine-gis >= 17.1.4
-Requires: smartmet-engine-geonames >= 17.1.27
+Requires: smartmet-engine-geonames >= 17.2.3
 Requires: smartmet-server >= 17.1.25
-Requires: smartmet-library-spine >= 17.2.1
+Requires: smartmet-library-spine >= 17.2.3
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -59,7 +66,7 @@ rm -rf $RPM_BUILD_ROOT
 %setup -q -n plugins/%{SPECNAME}
  
 %build -q -n plugins/%{SPECNAME}
-make %{_smp_mflags}
+make %{_smp_mflags} %{?!with_authentication:CFLAGS=-DWITHOUT_AUTHENTICATION}
 
 %install
 %makeinstall

@@ -5,7 +5,10 @@
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/FmiApiKey.h>
+
+#ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
+#endif
 
 #include <macgyver/String.h>
 
@@ -97,13 +100,17 @@ bool looks_valid_filename(const std::string& name)
 WMSConfig::WMSConfig(const SmartMet::Plugin::Dali::Config& daliConfig,
                      const SmartMet::Spine::FileCache& theFileCache,
                      SmartMet::Engine::Querydata::Engine* qEngine,
+#ifndef WITHOUT_AUTHENTICATION
                      SmartMet::Engine::Authentication::Engine* authEngine,
+#endif
                      SmartMet::Engine::Gis::Engine* gisEngine)
     : itsDaliConfig(daliConfig),
       itsFileCache(theFileCache),
       itsQEngine(qEngine),
       itsGisEngine(gisEngine),
+#ifndef WITHOUT_AUTHENTICATION
       itsAuthEngine(authEngine),
+#endif
       itsShutdownRequested(false),
       itsActiveThreadCount(0)
 
@@ -199,6 +206,7 @@ void WMSConfig::capabilitiesUpdateLoop()
   }
 }
 
+#ifndef WITHOUT_AUTHENTICATION
 bool WMSConfig::validateGetMapAuthorization(const SmartMet::Spine::HTTP::Request& theRequest) const
 {
   try
@@ -225,6 +233,7 @@ bool WMSConfig::validateGetMapAuthorization(const SmartMet::Spine::HTTP::Request
     throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
+#endif
 
 void WMSConfig::updateLayerMetaData()
 {
@@ -325,8 +334,12 @@ void WMSConfig::updateLayerMetaData()
   }
 }
 
+#ifndef WITHOUT_AUTHENTICATION
 std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
                                        bool authenticate) const
+#else
+std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apikey) const
+#endif
 {
   try
   {
@@ -351,6 +364,7 @@ std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apike
       for (const auto& iter_pair : itsLayers)
       {
         const std::string layer_name = iter_pair.first;
+#ifndef WITHOUT_AUTHENTICATION
         if (authenticate == true)
         {
           if (itsAuthEngine->authorize(theKey, layer_name, wmsService))
@@ -358,6 +372,9 @@ std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apike
             resultCapabilities += iter_pair.second.getCapabilities();
           }
         }
+#else
+        resultCapabilities += iter_pair.second.getCapabilities();
+#endif
       }
     }
 

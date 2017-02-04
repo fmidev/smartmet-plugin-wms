@@ -205,7 +205,7 @@ rpm: clean
 	then \
 	  mkdir -p $(rpmsourcedir) ; \
 	  tar -czvf $(rpmsourcedir)/$(SPEC).tar.gz --transform "s,^,plugins/$(SPEC)/," * ; \
-	  rpmbuild -ta $(rpmsourcedir)/$(SPEC).tar.gz ; \
+	  rpmbuild $(RPMBUILD) -ta $(rpmsourcedir)/$(SPEC).tar.gz ; \
 	  rm -f $(rpmsourcedir)/$(SPEC).tar.gz ; \
 	else \
 	  echo $(rpmerr); \
