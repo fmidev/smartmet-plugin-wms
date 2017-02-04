@@ -112,15 +112,6 @@ LIBS = -L$(libdir) \
 	-lboost_system \
 	-lbz2 -lz
 
-# rpm variables
-
-rpmsourcedir = /tmp/$(shell whoami)/rpmbuild
-
-rpmerr = "There's no spec file ($(SPEC).spec). RPM wasn't created. Please make a spec file or copy and rename it into $(SPEC).spec"
-
-rpmversion := $(shell grep "^Version:" $(SPEC).spec  | cut -d\  -f 2 | tr . _)
-rpmrelease := $(shell grep "^Release:" $(SPEC).spec  | cut -d\  -f 2 | tr . _)
-
 # Templates
 
 TEMPLATES = $(wildcard tmpl/*.tmpl)
@@ -203,12 +194,11 @@ objdir:
 rpm: clean
 	@if [ -e $(SPEC).spec ]; \
 	then \
-	  mkdir -p $(rpmsourcedir) ; \
-	  tar -czvf $(rpmsourcedir)/$(SPEC).tar.gz --transform "s,^,plugins/$(SPEC)/," * ; \
-	  rpmbuild $(RPMBUILD) -ta $(rpmsourcedir)/$(SPEC).tar.gz ; \
-	  rm -f $(rpmsourcedir)/$(SPEC).tar.gz ; \
+	  tar -czvf $(SPEC).tar.gz --transform "s,^,plugins/$(SPEC)/," * ; \
+	  rpmbuild $(RPMBUILD) -ta $(SPEC).tar.gz ; \
+	  rm -f $(SPEC).tar.gz ; \
 	else \
-	  echo $(rpmerr); \
+	  echo $(SPEC).spec missing; \
 	fi;
 
 .SUFFIXES: $(SUFFIXES) .cpp
