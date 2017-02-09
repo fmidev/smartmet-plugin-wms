@@ -128,17 +128,17 @@ INSTALL_DATA = install -p -m 664
 
 # Compilation directories
 
-vpath %.cpp source
-vpath %.h include
+vpath %.cpp $(SUBNAME)
+vpath %.h $(SUBNAME)
 vpath %.o $(objdir)
 
 # The files to be compiled
 
-SRCS = $(patsubst source/%,%,$(wildcard source/*.cpp))
-HDRS = $(patsubst include/%,%,$(wildcard include/*.h))
+SRCS = $(patsubst $(SUBNAME)/%,%,$(wildcard $(SUBNAME)/*.cpp))
+HDRS = $(patsubst $(SUBNAME)/%,%,$(wildcard $(SUBNAME)/*.h))
 OBJS = $(patsubst %.cpp, obj/%.o, $(notdir $(SRCS)))
 
-INCLUDES := -Iinclude $(INCLUDES)
+INCLUDES := -I$(SUBNAME) $(INCLUDES)
 
 .PHONY: test rpm jsontest
 
@@ -173,7 +173,7 @@ clean:
 	@find . -name '.#*' -exec rm -f {} ';'
 
 format:
-	clang-format -i -style=file include/*.h source/*.cpp test/*.cpp
+	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp test/*.cpp
 
 install:
 	@mkdir -p $(plugindir)
@@ -194,7 +194,7 @@ objdir:
 rpm: clean
 	@if [ -e $(SPEC).spec ]; \
 	then \
-	  tar -czvf $(SPEC).tar.gz --transform "s,^,plugins/$(SPEC)/," * ; \
+	  tar -czvf $(SPEC).tar.gz --transform "s,^,$(SPEC)/," * ; \
 	  rpmbuild $(RPMBUILD) -ta $(SPEC).tar.gz ; \
 	  rm -f $(SPEC).tar.gz ; \
 	else \
@@ -209,8 +209,6 @@ obj/%.o : %.cpp
 %.c2t:	%.tmpl
 	ctpp2c $< $@
 
-ifneq ($(wildcard obj/*.d),)
 -include $(wildcard obj/*.d)
-endif
 
 

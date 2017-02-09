@@ -14,7 +14,7 @@ CC = g++
 CFLAGS = -DUNIX -O0 -g $(MAINFLAGS)
 
 INCLUDES = \
-	-I../include \
+	-I../wms \
 	-I/usr/include/smartmet \
 	-I/usr/include/mysql \
 	-I/usr/include/oracle/11.2/client64 \
