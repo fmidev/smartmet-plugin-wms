@@ -3,7 +3,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.2.4
+Version: 17.2.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,8 +20,8 @@ BuildRequires: smartmet-engine-authentication-devel >= 17.1.5
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 17.1.4
 BuildRequires: smartmet-engine-geonames-devel >= 17.2.3
-BuildRequires: smartmet-engine-querydata-devel >= 17.2.3
-BuildRequires: smartmet-engine-contour-devel >= 17.1.31
+BuildRequires: smartmet-engine-querydata-devel >= 17.2.11
+BuildRequires: smartmet-engine-contour-devel >= 17.2.11
 BuildRequires: smartmet-library-gis-devel >= 17.1.18
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.2
@@ -41,8 +41,8 @@ Requires: smartmet-library-giza >= 16.12.21
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 17.1.5
 %endif
-Requires: smartmet-engine-querydata >= 17.2.3
-Requires: smartmet-engine-contour >= 17.1.31
+Requires: smartmet-engine-querydata >= 17.2.11
+Requires: smartmet-engine-contour >= 17.2.11
 Requires: smartmet-engine-gis >= 17.1.4
 Requires: smartmet-engine-geonames >= 17.2.3
 Requires: smartmet-server >= 17.1.25
@@ -82,6 +82,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Sat Feb 11 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.2.11-1.fmi
+- Repackaged due to newbase API change
+
 * Sat Feb  4 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.2.4-1.fmi
 - root and wms.root are now required settings
 
