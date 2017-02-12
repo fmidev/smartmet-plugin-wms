@@ -165,12 +165,12 @@ $(LIBFILE): $(OBJS) Makefile
 	$(CXX) $(CFLAGS) -shared -rdynamic -o $(LIBFILE) $(OBJS) $(LIBS)
 
 clean:
-	@rm -f $(LIBFILE)
-	@rm -rf $(objdir)
-	@find . -name '*~' -exec rm -f {} ';'
-	@find . -name '*.c2t' -exec rm -f {} ';'
-	@find . -name '*.d' -exec rm -f {} ';'
-	@find . -name '.#*' -exec rm -f {} ';'
+	rm -f $(LIBFILE)
+	rm -rf $(objdir)
+	find . -name '*~' -exec rm -f {} ';'
+	find . -name '*.c2t' -exec rm -f {} ';'
+	find . -name '*.d' -exec rm -f {} ';'
+	find . -name '.#*' -exec rm -f {} ';'
 
 format:
 	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp test/*.cpp
