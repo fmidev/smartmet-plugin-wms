@@ -380,6 +380,9 @@ void WindRoseLayer::init(const Json::Value& theJson,
 
 void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
 {
+  if (theState.getConfig().obsEngineDisabled())
+    throw std::runtime_error("Cannot use WindRoseLayer when the observation engine is disabled");
+
   try
   {
     if (theState.inDefs())

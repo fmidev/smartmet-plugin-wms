@@ -482,6 +482,9 @@ void Plugin::init()
 
     // CONTOUR
 
+    if (itsShutdownRequested)
+      return;
+
     auto engine = itsReactor->getSingleton("Contour", NULL);
     if (!engine)
       throw SmartMet::Spine::Exception(BCP, "Contour engine unavailable");
@@ -491,6 +494,9 @@ void Plugin::init()
 
     // GIS
 
+    if (itsShutdownRequested)
+      return;
+
     engine = itsReactor->getSingleton("Gis", NULL);
     if (!engine)
       throw SmartMet::Spine::Exception(BCP, "Gis engine unavailable");
@@ -499,6 +505,9 @@ void Plugin::init()
       return;
 
     // QUERYDATA
+
+    if (itsShutdownRequested)
+      return;
 
     engine = itsReactor->getSingleton("Querydata", NULL);
     if (!engine)
@@ -516,24 +525,30 @@ void Plugin::init()
     if (itsShutdownRequested)
       return;
 
-// OBSERVATION
+    // OBSERVATION
+
+    if (itsShutdownRequested)
+      return;
 
 #ifndef WITHOUT_OBSERVATION
-    engine = itsReactor->getSingleton("Observation", NULL);
-    if (!engine)
-      throw SmartMet::Spine::Exception(BCP, "Observation engine unavailable");
-    itsObsEngine = reinterpret_cast<Engine::Observation::Engine *>(engine);
+    if (!itsConfig.obsEngineDisabled())
+    {
+      engine = itsReactor->getSingleton("Observation", NULL);
+      if (!engine)
+        throw SmartMet::Spine::Exception(BCP, "Observation engine unavailable");
+      itsObsEngine = reinterpret_cast<Engine::Observation::Engine *>(engine);
 
-    // TODO: Should not be done this way, figure out a better way
-    itsObsEngine->setGeonames(itsGeoEngine);
-
+      // TODO: Should not be done this way, figure out a better way
+      itsObsEngine->setGeonames(itsGeoEngine);
+    }
 #endif
 
     if (itsShutdownRequested)
       return;
 
 #ifndef WITHOUT_AUTHENTICATION
-    /* Auth */
+
+    // AUTHENTICATION
     if (itsConfig.authenticate())
     {
       engine = itsReactor->getSingleton("Authentication", NULL);
@@ -541,34 +556,31 @@ void Plugin::init()
         throw SmartMet::Spine::Exception(BCP, "Authentication unavailable");
       Engine::Authentication::Engine *authEngine =
           reinterpret_cast<Engine::Authentication::Engine *>(engine);
-      if (itsShutdownRequested)
-        return;
 
       // WMS configurations
       itsWMSConfig.reset(
           new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, authEngine, itsGisEngine));
     }
-    else
-    {
-      itsWMSConfig.reset(
-          new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, nullptr, itsGisEngine));
-    }
+
 #else
     itsWMSConfig.reset(new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, itsGisEngine));
 #endif
 
+    if (itsShutdownRequested)
+      return;
+
     itsWMSGetCapabilities.reset(
         new WMS::WMSGetCapabilities(itsConfig.templateDirectory() + "/wms_get_capabilities.c2t"));
 
-    /* Register handler */
+    // Register dali content handler
 
-    // dali content handler
     if (!itsReactor->addContentHandler(this,
                                        itsConfig.defaultUrl(),
                                        boost::bind(&Plugin::callRequestHandler, this, _1, _2, _3)))
       throw SmartMet::Spine::Exception(BCP, "Failed to register Dali content handler");
 
-    // WMS content handler
+    // Register WMS content handler
+
     if (!itsReactor->addContentHandler(
             this, itsConfig.wmsUrl(), boost::bind(&Plugin::callRequestHandler, this, _1, _2, _3)))
       throw SmartMet::Spine::Exception(BCP, "Failed to register WMS content handler");

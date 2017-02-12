@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.2.11
+Version: 17.2.12
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -88,6 +88,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Sun Feb 12 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.2.12-1.fmi
+- Added obsengine_disabled option with default = false
+- Added possibility to package the plugin without the observation engine
+
 * Sat Feb 11 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.2.11-1.fmi
 - Repackaged due to newbase API change
 

@@ -24,29 +24,6 @@ namespace Dali
 // ----------------------------------------------------------------------
 
 Config::Config(const string& configfile)
-    : itsConfig(),
-      itsDefaultUrl("/dali"),
-      itsDefaultTemplate("svg"),
-      itsDefaultCustomer("fmi"),
-      itsDefaultModel("pal_skandinavia"),
-      itsDefaultLanguage("en"),
-      itsTemplateDirectory("/etc/smartmet/plugins/dali/templates"),
-      itsRootDirectory(""),
-      itsFilesystemCacheDirectory("/var/smartmet/imagecache"),
-      itsMaxMemoryCacheSize(104857600)  // 100 MB
-      ,
-      itsMaxFilesystemCacheSize(209715200)  // 200 MB
-      ,
-      itsWmsUrl("/wms"),
-      itsWmsRootDirectory(),
-      itsRegularAttributes(),
-      itsPresentationAttributes(),
-#ifndef WITHOUT_AUHTENTICATION
-      itsQuiet(false),
-      itsAuthenticate(true)
-#else
-      itsQuiet(false)
-#endif
 {
   try
   {
@@ -83,6 +60,10 @@ Config::Config(const string& configfile)
 
 #ifndef WITHOUT_AUHTENTICATION
       itsConfig.lookupValue("authenticate", itsAuthenticate);
+#endif
+
+#ifndef WITHOUT_OBSERVATION
+      itsConfig.lookupValue("obsengine_disabled", itsObsEngineDisabled);
 #endif
 
       // Store array of SVG attribute names into a set for looking up valid names

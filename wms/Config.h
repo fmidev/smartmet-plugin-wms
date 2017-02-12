@@ -53,23 +53,27 @@ class Config : private boost::noncopyable
   bool authenticate() const;
 #endif
 
+#ifndef WITHOUT_OBSERVATION
+  bool obsEngineDisabled() const { return itsObsEngineDisabled; }
+#endif
+
  private:
   libconfig::Config itsConfig;
-  std::string itsDefaultUrl;
-  std::string itsDefaultTemplate;
-  std::string itsDefaultCustomer;
-  std::string itsDefaultModel;
-  std::string itsDefaultLanguage;
+  std::string itsDefaultUrl = "/dali";
+  std::string itsDefaultTemplate = "svg";
+  std::string itsDefaultCustomer = "fmi";
+  std::string itsDefaultModel = "pal_skandinavia";
+  std::string itsDefaultLanguage = "en";
 
-  std::string itsTemplateDirectory;
+  std::string itsTemplateDirectory = "/etc/smartmet/plugins/dali/templates";
   std::string itsRootDirectory;
 
-  std::string itsFilesystemCacheDirectory;
+  std::string itsFilesystemCacheDirectory = "/var/smartmet/imagecache";
 
-  unsigned long long itsMaxMemoryCacheSize;
-  unsigned long long itsMaxFilesystemCacheSize;
+  unsigned long long itsMaxMemoryCacheSize = 104857600;      // 100 MB
+  unsigned long long itsMaxFilesystemCacheSize = 209715200;  // 200 MB
 
-  std::string itsWmsUrl;
+  std::string itsWmsUrl = "/wms";
   std::string itsWmsRootDirectory;
   std::string itsWmsVersions;
   std::string itsWmsMapFormats;
@@ -77,10 +81,16 @@ class Config : private boost::noncopyable
   std::set<std::string> itsRegularAttributes;
   std::set<std::string> itsPresentationAttributes;
 
-  bool itsQuiet;
+  bool itsQuiet = false;
+
 #ifndef WITHOUT_AUHTENTICATION
-  bool itsAuthenticate;
+  bool itsAuthenticate = true;
 #endif
+
+#ifndef WITHOUT_OBSERVATION
+  bool itsObsEngineDisabled = false;
+#endif
+
 };  // class Config
 
 }  // namespace Dali
