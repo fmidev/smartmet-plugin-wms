@@ -440,7 +440,9 @@ Plugin::Plugin(SmartMet::Spine::Reactor *theReactor, const char *theConfig)
       itsContourEngine(NULL),
       itsGisEngine(NULL),
       itsGeoEngine(NULL),
+#ifndef WITHOUT_OBSERVATION
       itsObsEngine(NULL),
+#endif
       itsTemplateFactory(),
       itsImageCache(),
       itsWMSConfig(),
@@ -472,17 +474,13 @@ void Plugin::init()
 {
   try
   {
-    /* Glib */
-
-    // This has been deprecated since RHEL6 and does nothing after GLib 2.36
-    // g_type_init();
-
     // Imagecache
+
     itsImageCache.reset(new ImageCache(itsConfig.maxMemoryCacheSize(),
                                        itsConfig.maxFilesystemCacheSize(),
                                        itsConfig.filesystemCacheDirectory()));
 
-    /* Contour */
+    // CONTOUR
 
     auto engine = itsReactor->getSingleton("Contour", NULL);
     if (!engine)
@@ -491,7 +489,7 @@ void Plugin::init()
     if (itsShutdownRequested)
       return;
 
-    /* GIS */
+    // GIS
 
     engine = itsReactor->getSingleton("Gis", NULL);
     if (!engine)
@@ -500,7 +498,7 @@ void Plugin::init()
     if (itsShutdownRequested)
       return;
 
-    /* QEngine */
+    // QUERYDATA
 
     engine = itsReactor->getSingleton("Querydata", NULL);
     if (!engine)
@@ -509,7 +507,7 @@ void Plugin::init()
     if (itsShutdownRequested)
       return;
 
-    /* GEO */
+    // GEONAMES
 
     engine = itsReactor->getSingleton("Geonames", NULL);
     if (!engine)
@@ -518,17 +516,21 @@ void Plugin::init()
     if (itsShutdownRequested)
       return;
 
-    /* OBS */
+// OBSERVATION
 
+#ifndef WITHOUT_OBSERVATION
     engine = itsReactor->getSingleton("Observation", NULL);
     if (!engine)
       throw SmartMet::Spine::Exception(BCP, "Observation engine unavailable");
     itsObsEngine = reinterpret_cast<Engine::Observation::Engine *>(engine);
+
+    // TODO: Should not be done this way, figure out a better way
+    itsObsEngine->setGeonames(itsGeoEngine);
+
+#endif
+
     if (itsShutdownRequested)
       return;
-
-    // TODO: ObsEngine should do it by itself
-    itsObsEngine->setGeonames(itsGeoEngine);
 
 #ifndef WITHOUT_AUTHENTICATION
     /* Auth */

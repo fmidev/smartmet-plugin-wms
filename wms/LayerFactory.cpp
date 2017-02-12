@@ -6,7 +6,6 @@
 #include "PostGISLayer.h"
 #include "IsolineLayer.h"
 #include "IsobandLayer.h"
-// #include "IsothermLayer.h"
 #include "LegendLayer.h"
 #include "LocationLayer.h"
 #include "MapLayer.h"
@@ -53,7 +52,6 @@ Layer* create(const Json::Value& theJson)
       return new IsobandLayer;
     else if (name == "isoline")
       return new IsolineLayer;
-    //		else if(name == "isotherm")		return new IsothermLayer;
     else if (name == "legend")
       return new LegendLayer;
     else if (name == "location")
@@ -70,8 +68,10 @@ Layer* create(const Json::Value& theJson)
       return new TimeLayer;
     else if (name == "translation")
       return new TranslationLayer;
+#ifndef WITHOUT_OBSERVATION
     else if (name == "windrose")
       return new WindRoseLayer;
+#endif
     else if (name == "icemap")
       return new IceMapLayer;
     else

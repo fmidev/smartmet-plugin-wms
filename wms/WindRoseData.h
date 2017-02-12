@@ -6,6 +6,8 @@
 
 #pragma once
 
+#ifndef WITHOUT_OBSERVATION
+
 #include <vector>
 
 namespace SmartMet
@@ -32,3 +34,5 @@ struct WindRoseData
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet
+
+#endif  // WITHOUT_OBSERVATION

@@ -1,4 +1,5 @@
 %bcond_without authentication
+%bcond_without observation
 %define DIRNAME wms
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
@@ -17,6 +18,9 @@ BuildRequires: smartmet-library-macgyver >= 17.1.18
 BuildRequires: smartmet-library-spine-devel >= 17.2.3
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.1.5
+%endif
+%if %{with authentication}
+BuildRequires: smartmet-engine-observation-devel >= 17.1.5
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 17.1.4
 BuildRequires: smartmet-engine-geonames-devel >= 17.2.3
@@ -66,7 +70,9 @@ rm -rf $RPM_BUILD_ROOT
 %setup -q -n %{SPECNAME}
  
 %build -q -n %{SPECNAME}
-make %{_smp_mflags} %{?!with_authentication:CFLAGS=-DWITHOUT_AUTHENTICATION}
+make %{_smp_mflags} \
+     %{?!with_authentication:CFLAGS=-DWITHOUT_AUTHENTICATION} \
+     %{?!with_observation:CFLAGS=-DWITHOUT_OBSERVATION}
 
 %install
 %makeinstall

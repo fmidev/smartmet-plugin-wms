@@ -6,6 +6,8 @@
 
 #pragma once
 
+#ifndef WITHOUT_OBSERVATION
+
 #include "Observation.h"
 #include <vector>
 
@@ -34,3 +36,5 @@ class Observations
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet
+
+#endif  // WITHOUT_OBSERVATION

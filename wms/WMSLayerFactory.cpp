@@ -17,9 +17,11 @@ namespace WMS
 {
 enum class WMSLayerType
 {
-  PostGISLayer,      // PostGIS layer
-  QueryDataLayer,    // Querydata layer
+  PostGISLayer,    // PostGIS layer
+  QueryDataLayer,  // Querydata layer
+#ifndef WITHOUT_OBSERVATION
   ObservationLayer,  // Observation layer
+#endif
   NotWMSLayer
 };
 
@@ -27,7 +29,9 @@ static std::set<std::string> querydata_layers = {"arrow", "isoband", "isoline", 
 
 static std::set<std::string> postgis_layers = {"postgis", "icemap"};
 
+#ifndef WITHOUT_OBSERVATION
 static std::set<std::string> observation_layers = {"windrose"};
+#endif
 
 WMSLayerType getWMSLayerType(const Json::Value& layer)
 {
@@ -53,7 +57,9 @@ WMSLayerType getWMSLayerType(const Json::Value& layer)
       return WMSLayerType::QueryDataLayer;
     }
 
-    // TODO!!! Handle ObservationLayer
+#ifndef WITHOUT_OBSERVATION
+// TODO!!! Handle ObservationLayer
+#endif
 
     // No identified special layers, this is not a WMSLayer;
     return WMSLayerType::NotWMSLayer;
@@ -78,9 +84,11 @@ std::string getWMSLayerTypeAsString(WMSLayerType layerType)
       case WMSLayerType::QueryDataLayer:
         ret = "QueryDataLayer";
         break;
+#ifndef WITHOUT_OBSERVATION
       case WMSLayerType::ObservationLayer:
         ret = "ObservationLayer";
         break;
+#endif
       default:
         ret = "NotWMSLayer";
         break;
@@ -219,7 +227,9 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         break;
       }
 
-      // TODO!!! Handle ObservationLayer
+#ifndef WITHOUT_OBSERVATION
+// TODO!!! Handle ObservationLayer
+#endif
 
       default:  // we should never en up here since determineLayerType should always return a valid
                 // layer type

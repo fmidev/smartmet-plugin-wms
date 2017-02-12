@@ -1,3 +1,5 @@
+#ifndef WITHOUT_OBSERVATION
+
 #include "Observations.h"
 #include "Config.h"
 #include "Hash.h"
@@ -49,3 +51,5 @@ std::size_t Observations::hash_value(const State& theState) const
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet
+
+#endif  // WITHOUT_OBSERVATION

@@ -17,7 +17,9 @@
 #include <engines/contour/Engine.h>
 #include <engines/geonames/Engine.h>
 #include <engines/gis/Engine.h>
+#ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
+#endif
 
 #include <spine/SmartMetPlugin.h>
 #include <spine/HTTP.h>
@@ -63,7 +65,9 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   const SmartMet::Engine::Contour::Engine& getContourEngine() const { return *itsContourEngine; }
   const SmartMet::Engine::Gis::Engine& getGisEngine() const { return *itsGisEngine; }
   const SmartMet::Engine::Geonames::Engine& getGeoEngine() const { return *itsGeoEngine; }
+#ifndef WITHOUT_OBSERVATION
   SmartMet::Engine::Observation::Engine& getObsEngine() const { return *itsObsEngine; }
+#endif
   // Plugin specific public API:
 
   const Config& getConfig() const;
@@ -138,7 +142,9 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   SmartMet::Engine::Contour::Engine* itsContourEngine;
   SmartMet::Engine::Gis::Engine* itsGisEngine;
   SmartMet::Engine::Geonames::Engine* itsGeoEngine;
+#ifndef WITHOUT_OBSERVATION
   SmartMet::Engine::Observation::Engine* itsObsEngine;
+#endif
 
   // Cache templates
   TemplateFactory itsTemplateFactory;

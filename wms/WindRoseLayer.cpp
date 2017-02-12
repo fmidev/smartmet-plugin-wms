@@ -1,4 +1,4 @@
-//======================================================================
+#ifndef WITHOUT_OBSERVATION
 
 #include "WindRoseLayer.h"
 #include "Config.h"
@@ -804,3 +804,5 @@ std::size_t WindRoseLayer::hash_value(const State& theState) const
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet
+
+#endif  // WITHOUT_OBSERVATION

@@ -6,6 +6,8 @@
 
 #pragma once
 
+#ifndef WITHOUT_OBSERVATION
+
 #include "Layer.h"
 #include "Observations.h"
 #include "WindRose.h"
@@ -53,3 +55,5 @@ class WindRoseLayer : public Layer
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet
+
+#endif  // WITHOUT_OBSERVATION
