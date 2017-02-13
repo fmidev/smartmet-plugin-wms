@@ -1,1 +1,0 @@
-GET /wms?service=WMS&request=GetCapabilities HTTP/1.0
