@@ -11,6 +11,9 @@
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 #include <engines/gis/Engine.h>
+#ifndef WITHOUT_OBSERVATION
+#include <engines/observation/Engine.h>
+#endif
 #include <gis/Types.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
@@ -25,19 +28,29 @@
 // TODO:
 #include <boost/timer/timer.hpp>
 
+const double pi = boost::math::constants::pi<double>();
+
+namespace SmartMet
+{
+namespace Plugin
+{
+namespace Dali
+{
 // ----------------------------------------------------------------------
 /*!
  * \brief Calculate direction of north on paper coordinates
  */
 // ----------------------------------------------------------------------
 
-double paper_north(const NFmiArea& theArea, const NFmiPoint& theLatLon)
+double paper_north(const SmartMet::Engine::Querydata::Q& theQ, const NFmiPoint& theLatLon)
 {
+  if (!theQ)
+    return 0;
+
   try
   {
-    const NFmiPoint origo = theArea.ToXY(theLatLon);
+    const NFmiPoint origo = theQ->area().ToXY(theLatLon);
 
-    const double pi = 3.141592658979323;
     const double latstep = 0.001;  // degrees to north
 
     const double lat = theLatLon.Y() + latstep;
@@ -46,22 +59,263 @@ double paper_north(const NFmiArea& theArea, const NFmiPoint& theLatLon)
     if (lat > 90)
       return 0;
 
-    const NFmiPoint north = theArea.ToXY(NFmiPoint(theLatLon.X(), lat));
+    const NFmiPoint north = theQ->area().ToXY(NFmiPoint(theLatLon.X(), lat));
     const float alpha = static_cast<float>(atan2(origo.X() - north.X(), origo.Y() - north.Y()));
     return alpha * 180 / pi;
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception(BCP, "ArrowLayer failed to calculate paper north", NULL);
   }
 }
 
-namespace SmartMet
+// ----------------------------------------------------------------------
+/*!
+ * \brief Holder for data values
+ */
+// ----------------------------------------------------------------------
+
+struct PointValue
 {
-namespace Plugin
+  Positions::Point point;
+  double direction;
+  double speed;
+};
+
+using PointValues = std::vector<PointValue>;
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Forecast reader
+ */
+// ----------------------------------------------------------------------
+
+PointValues read_forecasts(const Positions::Points& points,
+                           SmartMet::Engine::Querydata::Q q,
+                           const NFmiMetTime& met_time,
+                           const boost::optional<std::string>& direction,
+                           const boost::optional<std::string>& speed,
+                           const boost::optional<std::string>& u,
+                           const boost::optional<std::string>& v)
 {
-namespace Dali
+  boost::optional<SmartMet::Spine::Parameter> dirparam, speedparam, uparam, vparam;
+
+  if (direction)
+    dirparam = SmartMet::Spine::ParameterFactory::instance().parse(*direction);
+  if (speed)
+    speedparam = SmartMet::Spine::ParameterFactory::instance().parse(*speed);
+  if (u)
+    uparam = SmartMet::Spine::ParameterFactory::instance().parse(*u);
+  if (v)
+    vparam = SmartMet::Spine::ParameterFactory::instance().parse(*v);
+
+  if (direction && !speed)
+    speedparam = SmartMet::Spine::ParameterFactory::instance().parse("WindSpeedMS");
+
+  if (speedparam && !q->param(speedparam->number()))
+    throw SmartMet::Spine::Exception(
+        BCP, "Parameter " + speedparam->name() + " not available in the arrow layer querydata");
+
+  if (dirparam && !q->param(dirparam->number()))
+    throw SmartMet::Spine::Exception(
+        BCP, "Parameter " + dirparam->name() + " not available in the arrow layer querydata");
+
+  if (uparam && !q->param(uparam->number()))
+    throw SmartMet::Spine::Exception(
+        BCP, "Parameter " + uparam->name() + " not available in the arrow layer querydata");
+
+  if (vparam && !q->param(vparam->number()))
+    throw SmartMet::Spine::Exception(
+        BCP, "Parameter " + vparam->name() + " not available in the arrow layer querydata");
+
+  PointValues pointvalues;
+
+  for (const auto& point : points)
+  {
+    // Arrow direction and speed
+    double wdir = kFloatMissing;
+    double wspd = 0;
+
+    if (uparam && vparam)
+    {
+      q->param(uparam->number());
+      double uspd = q->interpolate(point.latlon, met_time, 180);  // TODO: magic constant
+      q->param(vparam->number());
+      double vspd = q->interpolate(point.latlon, met_time, 180);  // TODO: magic constant
+      if (uspd != kFloatMissing && vspd != kFloatMissing)
+      {
+        wspd = sqrt(uspd * uspd + vspd * vspd);
+        if (uspd != 0 || vspd != 0)
+          wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+      }
+    }
+    else
+    {
+      q->param(dirparam->number());
+      wdir = q->interpolate(point.latlon, met_time, 180);  // TODO: magic constant
+      if (speedparam)
+      {
+        q->param(speedparam->number());
+        wspd = q->interpolate(point.latlon, met_time, 180);  // TODO: magic constant
+      }
+    }
+
+    // Skip points with invalid values
+    if (wdir == kFloatMissing || wspd == kFloatMissing)
+      continue;
+
+    PointValue value{point, wdir, wspd};
+    pointvalues.push_back(value);
+  }
+
+  return pointvalues;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Observation reader
+ */
+// ----------------------------------------------------------------------
+
+#ifndef WITHOUT_OBSERVATION
+PointValues read_observations(State& state,
+                              const Positions::Points& points,
+                              const SmartMet::Engine::Querydata::Producer& producer,
+                              const boost::shared_ptr<OGRSpatialReference>& crs,
+                              const Positions& positions,
+                              const Fmi::Box& box,
+                              const boost::posix_time::ptime& valid_time,
+                              double maxdistance,
+                              const boost::optional<std::string>& direction,
+                              const boost::optional<std::string>& speed,
+                              const boost::optional<std::string>& u,
+                              const boost::optional<std::string>& v)
 {
+  Engine::Observation::Settings settings;
+  settings.starttime = valid_time;
+  settings.endtime = valid_time;
+  settings.starttimeGiven = true;
+  settings.stationtype = producer;
+  settings.timezone = "UTC";
+  settings.numberofstations = 1;              // get only the nearest station for each coordinate
+  settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
+
+  // Get actual station coordinates plus the actual observation
+  auto& obsengine = state.getObsEngine();
+  settings.parameters.push_back(obsengine.makeParameter("stationlon"));
+  settings.parameters.push_back(obsengine.makeParameter("stationlat"));
+
+  bool use_uv_components = (u && v);
+
+  if (use_uv_components)
+  {
+    settings.parameters.push_back(obsengine.makeParameter(*u));
+    settings.parameters.push_back(obsengine.makeParameter(*v));
+  }
+  else
+  {
+    settings.parameters.push_back(obsengine.makeParameter(*direction));
+    if (speed)
+      settings.parameters.push_back(obsengine.makeParameter(*speed));
+    else
+      settings.parameters.push_back(obsengine.makeParameter("WindSpeedMS"));
+  }
+
+  // ObsEngine takes a rather strange vector of coordinates as input...
+
+  using Coordinate = std::map<std::string, double>;
+  settings.coordinates.reserve(points.size());
+  for (const auto& point : points)
+  {
+    Coordinate coordinate{std::make_pair("lon", point.latlon.X()),
+                          std::make_pair("lat", point.latlon.Y())};
+    settings.coordinates.push_back(coordinate);
+  }
+
+  Spine::ValueFormatterParam valueformatterparam;
+  Spine::ValueFormatter valueformatter(valueformatterparam);
+
+  auto result = obsengine.values(settings, valueformatter);
+
+  // Build the expected output container for building the SVG
+
+  if (!result)
+    return {};
+
+  const auto& values = *result;
+  if (values.empty())
+    return {};
+
+  PointValues pointvalues;
+
+  std::unique_ptr<OGRSpatialReference> obscrs(new OGRSpatialReference);
+  OGRErr err = obscrs->SetFromUserInput("WGS84");
+  if (err != OGRERR_NONE)
+    throw SmartMet::Spine::Exception(BCP, "GDAL does not understand WGS84");
+
+  // Create the coordinate transformation from image world coordinates
+  // to querydata world coordinates
+
+  std::unique_ptr<OGRCoordinateTransformation> transformation(
+      OGRCreateCoordinateTransformation(crs.get(), obscrs.get()));
+  if (!transformation)
+    throw SmartMet::Spine::Exception(
+        BCP, "Failed to create the needed coordinate transformation when drawing wind arrows");
+
+  for (std::size_t row = 0; row < values[0].size(); ++row)
+  {
+    double lon = boost::get<double>(values.at(0).at(row).value);
+    double lat = boost::get<double>(values.at(1).at(row).value);
+
+    double wdir = kFloatMissing;
+    double wspd = kFloatMissing;
+    if (use_uv_components)
+    {
+      double uspd = boost::get<double>(values.at(2).at(row).value);
+      double vspd = boost::get<double>(values.at(3).at(row).value);
+
+      if (uspd != kFloatMissing && vspd != kFloatMissing)
+      {
+        wspd = sqrt(uspd * uspd + vspd * vspd);
+        if (uspd != 0 || vspd != 0)
+          wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+      }
+    }
+    else
+    {
+      wdir = boost::get<double>(values.at(2).at(row).value);
+      wspd = boost::get<double>(values.at(3).at(row).value);
+    }
+
+    // Convert latlon to world coordinate if needed
+
+    double x = lon;
+    double y = lat;
+
+    if (!crs->IsGeographic())
+      if (!transformation->Transform(1, &x, &y))
+        continue;
+
+    // To pixel coordinate
+    box.transform(x, y);
+
+    // Skip if not inside desired area
+    if (x >= 0 && x < box.width() && y >= 0 && y < box.height())
+    {
+      if (positions.inside(lon, lat))
+      {
+        int xpos = x;
+        int ypos = y;
+        Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
+        PointValue value{point, wdir, wspd};
+        pointvalues.push_back(value);
+      }
+    }
+  }
+  return pointvalues;
+}
+#endif
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize from JSON
@@ -116,6 +370,10 @@ void ArrowLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       positions.init(json, theConfig);
 
+    json = theJson.get("maxdistance", nulljson);
+    if (!json.isNull())
+      maxdistance = json.asDouble();
+
     json = theJson.get("multiplier", nulljson);
     if (!json.isNull())
       multiplier = json.asDouble();
@@ -164,7 +422,9 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
           BCP, "Must define arrow with 'symbol' or 'arrows' to define the symbol for arrows");
 
     // Establish the data
-    auto q = getModel(theState);
+
+    bool use_observations = isObservation(theState);
+    SmartMet::Engine::Querydata::Q q = getModel(theState);
 
     // Establish the valid time
 
@@ -182,6 +442,9 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
     if (level)
     {
+      if (use_observations)
+        throw std::runtime_error("Cannot set level value for observations in NumberLayer");
+
       bool match = false;
       for (q->resetLevel(); !match && q->nextLevel();)
         match = (q->levelValue() == *level);
@@ -197,39 +460,11 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();
 
-    // Get the data projection
-
-    std::unique_ptr<OGRSpatialReference> qcrs(new OGRSpatialReference);
-    OGRErr err = qcrs->SetFromUserInput(q->area().WKT().c_str());
-    if (err != OGRERR_NONE)
-      throw SmartMet::Spine::Exception(BCP,
-                                       "GDAL does not understand this FMI WKT: " + q->area().WKT());
-
-    // Create the coordinate transformation from image world coordinates
-    // to querydata world coordinates
-
-    std::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(crs.get(), qcrs.get()));
-    if (!transformation)
-      throw SmartMet::Spine::Exception(
-          BCP, "Failed to create the needed coordinate transformation when drawing wind arrows");
-
     // Initialize inside/outside shapes and intersection isobands
 
     positions.init(q, projection, valid_time, theState);
 
     // The parameters. TODO: Allow metaparameters, needs better Q API
-
-    boost::optional<SmartMet::Spine::Parameter> dirparam, speedparam, uparam, vparam;
-
-    if (direction)
-      dirparam = SmartMet::Spine::ParameterFactory::instance().parse(*direction);
-    if (speed)
-      speedparam = SmartMet::Spine::ParameterFactory::instance().parse(*speed);
-    if (u)
-      uparam = SmartMet::Spine::ParameterFactory::instance().parse(*u);
-    if (v)
-      vparam = SmartMet::Spine::ParameterFactory::instance().parse(*v);
 
     if ((u && (direction || speed)) || (v && (direction || speed)))
       throw SmartMet::Spine::Exception(
@@ -237,25 +472,6 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
     if ((u && !v) || (v && !u))
       throw SmartMet::Spine::Exception(BCP, "ArrowLayer must define both U- and V-components");
-
-    if (direction && !speed)
-      speedparam = SmartMet::Spine::ParameterFactory::instance().parse("WindSpeedMS");
-
-    if (speed && !q->param(speedparam->number()))
-      throw SmartMet::Spine::Exception(
-          BCP, "Parameter " + speedparam->name() + " not available in the arrow layer querydata");
-
-    if (dirparam && !q->param(dirparam->number()))
-      throw SmartMet::Spine::Exception(
-          BCP, "Parameter " + dirparam->name() + " not available in the arrow layer querydata");
-
-    if (uparam && !q->param(uparam->number()))
-      throw SmartMet::Spine::Exception(
-          BCP, "Parameter " + uparam->name() + " not available in the arrow layer querydata");
-
-    if (vparam && !q->param(vparam->number()))
-      throw SmartMet::Spine::Exception(
-          BCP, "Parameter " + vparam->name() + " not available in the arrow layer querydata");
 
     // Update the globals
 
@@ -278,44 +494,39 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
     auto points = positions.getPoints(q, crs, box);
 
-    const double pi = boost::math::constants::pi<double>();
+    // Establish the relevant numbers
 
-    for (const auto& point : points)
+    PointValues pointvalues;
+
+    if (!use_observations)
+      pointvalues = read_forecasts(points, q, met_time, direction, speed, u, v);
+#ifndef WITHOUT_OBSERVATION
+    else
+      pointvalues = read_observations(theState,
+                                      points,
+                                      *producer,
+                                      crs,
+                                      positions,
+                                      box,
+                                      valid_time,
+                                      maxdistance,
+                                      direction,
+                                      speed,
+                                      u,
+                                      v);
+#endif
+
+    // Render the collected values
+
+    for (const auto& pointvalue : pointvalues)
     {
+      const auto& point = pointvalue.point;
+
       // Select arrow based on speed or U- and V-components, if available
       bool check_speeds = (!arrows.empty() && (speed || (u && v)));
 
-      // Arrow direction and speed
-      double wdir = kFloatMissing;
-      double wspd = 0;
-
-      if (uparam && vparam)
-      {
-        q->param(uparam->number());
-        double uspd = q->interpolate(point.latlon, met_time, 180);  // TODO: magic constant
-        q->param(vparam->number());
-        double vspd = q->interpolate(point.latlon, met_time, 180);  // TODO: magic constant
-        if (uspd != kFloatMissing && vspd != kFloatMissing)
-        {
-          wspd = sqrt(uspd * uspd + vspd * vspd);
-          if (uspd != 0 || vspd != 0)
-            wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
-        }
-      }
-      else
-      {
-        q->param(dirparam->number());
-        wdir = q->interpolate(point.latlon, met_time, 180);  // TODO: magic constant
-        if (speedparam)
-        {
-          q->param(speedparam->number());
-          wspd = q->interpolate(point.latlon, met_time, 180);  // TODO: magic constant
-        }
-      }
-
-      // Skip points with invalid values
-      if (wdir == kFloatMissing || wspd == kFloatMissing)
-        continue;
+      double wdir = pointvalue.direction;
+      double wspd = pointvalue.speed;
 
       // Unit transformation
       double xmultiplier = (multiplier ? *multiplier : 1.0);
@@ -323,7 +534,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       wspd = xmultiplier * wspd + xoffset;
 
       // Where is north?
-      double north = paper_north(q->area(), point.latlon);
+      double north = paper_north(q, point.latlon);
       double rotate = fmod(wdir + 180 - north, 360);
 
       CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
@@ -412,8 +623,14 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
 {
   try
   {
+    // Disable caching of observation layers
+    if (isObservation(theState))
+      return 0;
+
     auto hash = Layer::hash_value(theState);
-    boost::hash_combine(hash, SmartMet::Engine::Querydata::hash_value(getModel(theState)));
+    auto q = getModel(theState);
+    if (q)
+      boost::hash_combine(hash, SmartMet::Engine::Querydata::hash_value(q));
     boost::hash_combine(hash, Dali::hash_value(direction));
     boost::hash_combine(hash, Dali::hash_value(speed));
     boost::hash_combine(hash, Dali::hash_value(u));
@@ -425,6 +642,7 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(scale));
     boost::hash_combine(hash, Dali::hash_value(southflop));
     boost::hash_combine(hash, Dali::hash_value(positions, theState));
+    boost::hash_combine(hash, Dali::hash_value(maxdistance));
     boost::hash_combine(hash, Dali::hash_value(arrows, theState));
     return hash;
   }

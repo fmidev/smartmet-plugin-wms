@@ -52,6 +52,9 @@ class ArrowLayer : public Layer
   // Arrow position generator
   Positions positions;
 
+  // Station distance limit in kilometers
+  double maxdistance = 5;
+
   // The speed parameter and the ranges to be styled separately
   std::vector<AttributeSelection> arrows;
 

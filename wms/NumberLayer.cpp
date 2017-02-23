@@ -432,7 +432,8 @@ std::size_t NumberLayer::hash_value(const State& theState) const
 
     auto hash = Layer::hash_value(theState);
     auto q = getModel(theState);
-    boost::hash_combine(hash, SmartMet::Engine::Querydata::hash_value(q));
+    if (q)
+      boost::hash_combine(hash, SmartMet::Engine::Querydata::hash_value(q));
     boost::hash_combine(hash, Dali::hash_value(producer));
     boost::hash_combine(hash, Dali::hash_value(parameter));
     boost::hash_combine(hash, Dali::hash_value(level));
