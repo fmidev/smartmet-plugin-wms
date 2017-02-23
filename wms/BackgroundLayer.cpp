@@ -49,6 +49,7 @@ void BackgroundLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, S
       return;
 
     // Establish the data in case it is needed for the size
+
     auto q = getModel(theState);
 
     // Get projection details

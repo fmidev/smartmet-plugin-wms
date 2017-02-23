@@ -163,6 +163,10 @@ void Intersection::init(SmartMet::Engine::Querydata::Q q,
     if (producer)
       q = theState.get(*producer);
 
+    // This can happen when we use observations
+    if (!q)
+      return;
+
     // Establish the level
 
     if (level)

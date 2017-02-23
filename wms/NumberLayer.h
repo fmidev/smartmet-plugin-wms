@@ -42,8 +42,15 @@ class NumberLayer : public Layer
   // Grid coordinate settings
   Positions positions;
 
+  // Station distance limit in kilometers
+  double maxdistance = 5;
+
   // Label settings
   Label label;
+
+  // default symbol
+  boost::optional<std::string> symbol;
+  boost::optional<double> scale;
 
   std::vector<AttributeSelection> numbers;
 

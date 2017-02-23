@@ -8,6 +8,9 @@
 #include "View.h"
 #include "LayerFactory.h"
 #include "Layer.h"
+#ifndef WITHOUT_OBSERVATION
+#include <engines/observation/Engine.h>
+#endif
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
 #include <spine/Json.h>
@@ -99,7 +102,31 @@ bool Layer::validLayer(const State& theState) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Return true if the producer refers to observations
+ */
+// ----------------------------------------------------------------------
+
+bool Layer::isObservation(const State& theState) const
+{
+  std::string model = (producer ? *producer : theState.getConfig().defaultModel());
+
+#ifdef WITHOUT_OBSERVATION
+  return false;
+#else
+  if (theState.getConfig().obsEngineDisabled())
+    return false;
+
+  auto observers = theState.getObsEngine().getValidStationTypes();
+  return (observers.find(model) != observers.end());
+#endif
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Get the model data
+ *
+ * Note: It is not an error to request a model when the producer
+ * refers to observations, we'll simply return an empty model instead.
  */
 // ----------------------------------------------------------------------
 
@@ -107,12 +134,15 @@ SmartMet::Engine::Querydata::Q Layer::getModel(const State& theState) const
 {
   try
   {
+    if (isObservation(theState))
+      return {};
+
     std::string model = (producer ? *producer : theState.getConfig().defaultModel());
     return theState.get(model);
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception(BCP, "Failed to get required model data!", NULL);
   }
 }
 

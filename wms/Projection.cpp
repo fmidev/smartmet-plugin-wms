@@ -211,6 +211,9 @@ std::size_t Projection::hash_value(const State& theState) const
 
 void Projection::update(const SmartMet::Engine::Querydata::Q& theQ)
 {
+  if (!theQ)
+    return;
+
   try
   {
     if (crs && *crs == "data")

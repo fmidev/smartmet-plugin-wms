@@ -56,6 +56,8 @@ class Positions
                    boost::shared_ptr<OGRSpatialReference> theCRS,
                    const Fmi::Box& theBox) const;
 
+  bool inside(double theX, double theY) const;
+
   // Layout algorithm
   Layout layout = Layout::Grid;
 
@@ -123,8 +125,6 @@ class Positions
   Points getLatLonPoints(SmartMet::Engine::Querydata::Q theQ,
                          boost::shared_ptr<OGRSpatialReference> theCRS,
                          const Fmi::Box& theBox) const;
-
-  bool inside(double theX, double theY) const;
 
   OGRGeometryPtr inshape;
   OGRGeometryPtr outshape;
