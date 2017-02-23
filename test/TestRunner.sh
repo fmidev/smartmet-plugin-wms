@@ -43,7 +43,7 @@ while true; do
     if [[ "$line" == "OK" ]]; then
 	break
     elif [[ "$line" != "" ]]; then
-	echo $line
+	echo "$line"
     fi
 done
 
@@ -56,7 +56,7 @@ nfailures=0
 for f in input/*.get; do
     request_name=$(basename $f)
     name=$(basename $(basename $request_name .get) .post)
-    echo $request_name >&3
+    echo "$request_name" >&3
 
     result=failures/$request_name
     expected=output/$request_name
@@ -94,7 +94,7 @@ for f in input/*.get; do
 
     # Print extra messages collected during the test after the actual comparison
     if [[ ! -z "$extralines" ]]; then
-	echo -e $extralines
+	echo -e "$extralines"
     fi
 
 done
