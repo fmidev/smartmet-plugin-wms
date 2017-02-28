@@ -1,6 +1,5 @@
 //======================================================================
 
-#include <prettyprint.hpp>
 #include <spine/TimeSeriesOutput.h>
 
 #include "NumberLayer.h"
@@ -134,7 +133,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     // Establish the data
 
     bool use_observations = isObservation(theState);
-    SmartMet::Engine::Querydata::Q q = getModel(theState);
+    auto q = getModel(theState);
 
     // Establish the parameter
 

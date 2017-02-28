@@ -90,26 +90,23 @@ using PointValues = std::vector<PointValue>;
  */
 // ----------------------------------------------------------------------
 
-PointValues read_forecasts(const Positions::Points& points,
+PointValues read_forecasts(const ArrowLayer& layer,
+                           const Positions::Points& points,
                            SmartMet::Engine::Querydata::Q q,
-                           const NFmiMetTime& met_time,
-                           const boost::optional<std::string>& direction,
-                           const boost::optional<std::string>& speed,
-                           const boost::optional<std::string>& u,
-                           const boost::optional<std::string>& v)
+                           const NFmiMetTime& met_time)
 {
   boost::optional<SmartMet::Spine::Parameter> dirparam, speedparam, uparam, vparam;
 
-  if (direction)
-    dirparam = SmartMet::Spine::ParameterFactory::instance().parse(*direction);
-  if (speed)
-    speedparam = SmartMet::Spine::ParameterFactory::instance().parse(*speed);
-  if (u)
-    uparam = SmartMet::Spine::ParameterFactory::instance().parse(*u);
-  if (v)
-    vparam = SmartMet::Spine::ParameterFactory::instance().parse(*v);
+  if (layer.direction)
+    dirparam = SmartMet::Spine::ParameterFactory::instance().parse(*layer.direction);
+  if (layer.speed)
+    speedparam = SmartMet::Spine::ParameterFactory::instance().parse(*layer.speed);
+  if (layer.u)
+    uparam = SmartMet::Spine::ParameterFactory::instance().parse(*layer.u);
+  if (layer.v)
+    vparam = SmartMet::Spine::ParameterFactory::instance().parse(*layer.v);
 
-  if (direction && !speed)
+  if (layer.direction && !layer.speed)
     speedparam = SmartMet::Spine::ParameterFactory::instance().parse("WindSpeedMS");
 
   if (speedparam && !q->param(speedparam->number()))
@@ -178,45 +175,39 @@ PointValues read_forecasts(const Positions::Points& points,
 // ----------------------------------------------------------------------
 
 #ifndef WITHOUT_OBSERVATION
-PointValues read_observations(State& state,
+PointValues read_observations(const ArrowLayer& layer,
+                              State& state,
                               const Positions::Points& points,
-                              const SmartMet::Engine::Querydata::Producer& producer,
                               const boost::shared_ptr<OGRSpatialReference>& crs,
-                              const Positions& positions,
                               const Fmi::Box& box,
-                              const boost::posix_time::ptime& valid_time,
-                              double maxdistance,
-                              const boost::optional<std::string>& direction,
-                              const boost::optional<std::string>& speed,
-                              const boost::optional<std::string>& u,
-                              const boost::optional<std::string>& v)
+                              const boost::posix_time::ptime& valid_time)
 {
   Engine::Observation::Settings settings;
   settings.starttime = valid_time;
   settings.endtime = valid_time;
   settings.starttimeGiven = true;
-  settings.stationtype = producer;
+  settings.stationtype = *layer.producer;
   settings.timezone = "UTC";
-  settings.numberofstations = 1;              // get only the nearest station for each coordinate
-  settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
+  settings.numberofstations = 1;
+  settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
 
   // Get actual station coordinates plus the actual observation
   auto& obsengine = state.getObsEngine();
   settings.parameters.push_back(obsengine.makeParameter("stationlon"));
   settings.parameters.push_back(obsengine.makeParameter("stationlat"));
 
-  bool use_uv_components = (u && v);
+  bool use_uv_components = (layer.u && layer.v);
 
   if (use_uv_components)
   {
-    settings.parameters.push_back(obsengine.makeParameter(*u));
-    settings.parameters.push_back(obsengine.makeParameter(*v));
+    settings.parameters.push_back(obsengine.makeParameter(*layer.u));
+    settings.parameters.push_back(obsengine.makeParameter(*layer.v));
   }
   else
   {
-    settings.parameters.push_back(obsengine.makeParameter(*direction));
-    if (speed)
-      settings.parameters.push_back(obsengine.makeParameter(*speed));
+    settings.parameters.push_back(obsengine.makeParameter(*layer.direction));
+    if (layer.speed)
+      settings.parameters.push_back(obsengine.makeParameter(*layer.speed));
     else
       settings.parameters.push_back(obsengine.makeParameter("WindSpeedMS"));
   }
@@ -246,15 +237,13 @@ PointValues read_observations(State& state,
   if (values.empty())
     return {};
 
-  PointValues pointvalues;
+  // Create the coordinate transformation from image world coordinates
+  // to WGS84 coordinates
 
   std::unique_ptr<OGRSpatialReference> obscrs(new OGRSpatialReference);
   OGRErr err = obscrs->SetFromUserInput("WGS84");
   if (err != OGRERR_NONE)
     throw SmartMet::Spine::Exception(BCP, "GDAL does not understand WGS84");
-
-  // Create the coordinate transformation from image world coordinates
-  // to querydata world coordinates
 
   std::unique_ptr<OGRCoordinateTransformation> transformation(
       OGRCreateCoordinateTransformation(crs.get(), obscrs.get()));
@@ -262,6 +251,7 @@ PointValues read_observations(State& state,
     throw SmartMet::Spine::Exception(
         BCP, "Failed to create the needed coordinate transformation when drawing wind arrows");
 
+  PointValues pointvalues;
   for (std::size_t row = 0; row < values[0].size(); ++row)
   {
     double lon = boost::get<double>(values.at(0).at(row).value);
@@ -302,7 +292,7 @@ PointValues read_observations(State& state,
     // Skip if not inside desired area
     if (x >= 0 && x < box.width() && y >= 0 && y < box.height())
     {
-      if (positions.inside(lon, lat))
+      if (layer.positions.inside(lon, lat))
       {
         int xpos = x;
         int ypos = y;
@@ -499,21 +489,10 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     PointValues pointvalues;
 
     if (!use_observations)
-      pointvalues = read_forecasts(points, q, met_time, direction, speed, u, v);
+      pointvalues = read_forecasts(*this, points, q, met_time);
 #ifndef WITHOUT_OBSERVATION
     else
-      pointvalues = read_observations(theState,
-                                      points,
-                                      *producer,
-                                      crs,
-                                      positions,
-                                      box,
-                                      valid_time,
-                                      maxdistance,
-                                      direction,
-                                      speed,
-                                      u,
-                                      v);
+      pointvalues = read_observations(*this, theState, points, crs, box, valid_time);
 #endif
 
     // Render the collected values

@@ -47,6 +47,14 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
     if (!json.isNull())
       time_offset = json.asInt();
 
+    json = theJson.get("interval_start", nulljson);
+    if (!json.isNull())
+      interval_start = json.asInt();
+
+    json = theJson.get("interval_end", nulljson);
+    if (!json.isNull())
+      interval_end = json.asInt();
+
     json = theJson.get("projection", nulljson);
     if (!json.isNull())
       projection.init(json, theState, theConfig);
@@ -132,12 +140,15 @@ std::size_t Properties::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(producer));
     boost::hash_combine(hash, Dali::hash_value(time));
     boost::hash_combine(hash, Dali::hash_value(time_offset));
+    boost::hash_combine(hash, Dali::hash_value(interval_start));
+    boost::hash_combine(hash, Dali::hash_value(interval_end));
     boost::hash_combine(hash, Dali::hash_value(projection, theState));
     return hash;
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception(
+        BCP, "Failed to calculate hash value for layer properties!", NULL);
   }
 }
 

@@ -38,6 +38,9 @@ class SymbolLayer : public Layer
 
   Positions positions;
 
+  // Station distance limit in kilometers
+  double maxdistance = 5;
+
   // the name of the default symbol
   boost::optional<std::string> symbol;
   boost::optional<double> scale;
@@ -45,7 +48,6 @@ class SymbolLayer : public Layer
   // The parameter values or ranges to be styled separately
   std::vector<AttributeSelection> symbols;
 
- private:
 };  // class SymbolLayer
 
 }  // namespace Dali

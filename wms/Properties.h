@@ -33,8 +33,19 @@ struct Properties
 
   boost::optional<std::string> language;
   boost::optional<std::string> producer;
+
+  // Wanted time T = time + time_offset
   boost::optional<boost::posix_time::ptime> time;
-  boost::optional<int> time_offset;
+  boost::optional<int> time_offset;  // minutes
+
+  // Unless we want an interval, for example for lightning data, then we use
+  // interval T-interval_start ... T+interval_end. Also, some observations
+  // come at irregular intervals. An interval can be used to select the
+  // latest observation available, if any.
+
+  boost::optional<int> interval_start;  // minutes
+  boost::optional<int> interval_end;    // minutes
+
   Projection projection;
 };
 
