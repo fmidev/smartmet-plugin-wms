@@ -209,6 +209,10 @@ void WMSConfig::capabilitiesUpdateLoop()
 #ifndef WITHOUT_AUTHENTICATION
 bool WMSConfig::validateGetMapAuthorization(const SmartMet::Spine::HTTP::Request& theRequest) const
 {
+  // Everything ok if authentication is disabled
+  if (!itsAuthEngine)
+    return true;
+
   try
   {
     // Existence of layers must be guaranteed before calling this function
@@ -367,7 +371,7 @@ std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apike
 #ifndef WITHOUT_AUTHENTICATION
         if (authenticate == true)
         {
-          if (itsAuthEngine->authorize(theKey, layer_name, wmsService))
+          if (itsAuthEngine && itsAuthEngine->authorize(theKey, layer_name, wmsService))
           {
             resultCapabilities += iter_pair.second.getCapabilities();
           }

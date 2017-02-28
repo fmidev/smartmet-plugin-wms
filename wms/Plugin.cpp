@@ -561,6 +561,9 @@ void Plugin::init()
       itsWMSConfig.reset(
           new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, authEngine, itsGisEngine));
     }
+    else
+      itsWMSConfig.reset(
+          new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, nullptr, itsGisEngine));
 
 #else
     itsWMSConfig.reset(new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, itsGisEngine));
