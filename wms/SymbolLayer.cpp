@@ -249,7 +249,7 @@ PointValues read_observations(const SymbolLayer& layer,
     PointValues pointvalues;
     for (std::size_t row = 0; row < values[0].size(); ++row)
     {
-      const auto t = values.at(0).at(row).time;
+      const auto& t = values.at(0).at(row).time;
       double lon = boost::get<double>(values.at(0).at(row).value);
       double lat = boost::get<double>(values.at(1).at(row).value);
       double value = kFloatMissing;
