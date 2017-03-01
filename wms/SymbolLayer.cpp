@@ -63,54 +63,61 @@ PointValues read_forecasts(const SymbolLayer& layer,
                            Engine::Querydata::Q q,
                            const boost::posix_time::ptime& valid_time)
 {
-  PointValues pointvalues;
-
-  // querydata API for value() sucks
-
-  boost::optional<Spine::Parameter> param;
-  if (layer.parameter)
-    param = Spine::ParameterFactory::instance().parse(*layer.parameter);
-
-  boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-  boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
-  boost::local_time::local_date_time localdatetime(valid_time, utc);
-
-  for (const auto& point : points)
+  try
   {
-    if (layer.symbols.empty())
-    {
-      PointValue value{point, kFloatMissing};
-      pointvalues.push_back(value);
-    }
-    else
-    {
-      Spine::Location loc(point.latlon.X(), point.latlon.Y());
-      NFmiPoint dummy;
+    PointValues pointvalues;
 
-      // Q API SUCKS!!
-      Engine::Querydata::ParameterOptions options(*param,
-                                                  "",
-                                                  loc,
-                                                  "",
-                                                  "",
-                                                  *timeformatter,
-                                                  "",
-                                                  "",
-                                                  std::locale::classic(),
-                                                  "",
-                                                  false,
-                                                  NFmiPoint(),
-                                                  dummy);
+    // querydata API for value() sucks
 
-      auto result = q->value(options, localdatetime);
-      if (boost::get<double>(&result))
+    boost::optional<Spine::Parameter> param;
+    if (layer.parameter)
+      param = Spine::ParameterFactory::instance().parse(*layer.parameter);
+
+    boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+    boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
+    boost::local_time::local_date_time localdatetime(valid_time, utc);
+
+    for (const auto& point : points)
+    {
+      if (layer.symbols.empty())
       {
-        PointValue value{point, *boost::get<double>(&result)};
+        PointValue value{point, kFloatMissing};
         pointvalues.push_back(value);
       }
+      else
+      {
+        Spine::Location loc(point.latlon.X(), point.latlon.Y());
+        NFmiPoint dummy;
+
+        // Q API SUCKS!!
+        Engine::Querydata::ParameterOptions options(*param,
+                                                    "",
+                                                    loc,
+                                                    "",
+                                                    "",
+                                                    *timeformatter,
+                                                    "",
+                                                    "",
+                                                    std::locale::classic(),
+                                                    "",
+                                                    false,
+                                                    NFmiPoint(),
+                                                    dummy);
+
+        auto result = q->value(options, localdatetime);
+        if (boost::get<double>(&result))
+        {
+          PointValue value{point, *boost::get<double>(&result)};
+          pointvalues.push_back(value);
+        }
+      }
     }
+    return pointvalues;
   }
-  return pointvalues;
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -128,145 +135,188 @@ PointValues read_observations(const SymbolLayer& layer,
                               const Fmi::Box& box,
                               const boost::posix_time::ptime& valid_time)
 {
-  Engine::Observation::Settings settings;
-  settings.allplaces = false;
-  settings.stationtype = *layer.producer;
-  settings.latest = false;
-  settings.timezone = "UTC";
-  settings.numberofstations = 1;
-
-  // settings.timestep = ?;
-
-  settings.starttimeGiven = true;
-
-  settings.starttime = valid_time;
-  if (layer.interval_start)
-    settings.starttime -= boost::posix_time::minutes(*layer.interval_start);
-
-  settings.endtime = valid_time;
-  if (layer.interval_end)
-    settings.endtime += boost::posix_time::minutes(*layer.interval_end);
-
-  /*
-   * Note:
-   *
-   * producer=flash
-   *   - read all observations
-   *   - read also latitude and longitude
-   * producer=other
-   *   - read latest observation from interval (not needed if starttime==endtime)
-   *   - read also stationlon and stationlat
-   *
-   * Note: obsengine does not support fetcing the latest
-   *       observation from a fixed interval.
-   */
-
-  auto& obsengine = state.getObsEngine();
-  if (*layer.producer == "flash")
+  try
   {
-    settings.parameters.push_back(obsengine.makeParameter("longitude"));
-    settings.parameters.push_back(obsengine.makeParameter("latitude"));
-  }
-  else
-  {
-    settings.parameters.push_back(obsengine.makeParameter("stationlon"));
-    settings.parameters.push_back(obsengine.makeParameter("stationlat"));
-  }
+    Engine::Observation::Settings settings;
+    settings.allplaces = false;
+    settings.stationtype = *layer.producer;
+    settings.latest = false;
+    settings.timezone = "UTC";
+    settings.numberofstations = 1;
 
-  if (layer.parameter)
-    settings.parameters.push_back(obsengine.makeParameter(*layer.parameter));
+    // settings.timestep = ?;
 
-  // Coordinates or bounding box
+    settings.starttimeGiven = true;
 
-  if (*layer.producer == "flash")
-  {
-    // TODO. Calculate these
-    settings.boundingBox["minx"] = 10;
-    settings.boundingBox["miny"] = 50;
-    settings.boundingBox["maxx"] = 50;
-    settings.boundingBox["maxy"] = 80;
-  }
-  else
-  {
-    // ObsEngine takes a rather strange vector of coordinates as input...
+    settings.starttime = valid_time;
+    if (layer.interval_start)
+      settings.starttime -= boost::posix_time::minutes(*layer.interval_start);
 
-    using Coordinate = std::map<std::string, double>;
-    settings.coordinates.reserve(points.size());
-    for (const auto& point : points)
+    settings.endtime = valid_time;
+    if (layer.interval_end)
+      settings.endtime += boost::posix_time::minutes(*layer.interval_end);
+
+    /*
+     * Note:
+     *
+     * producer=flash
+     *   - read all observations
+     *   - read also latitude and longitude
+     * producer=other
+     *   - read latest observation from interval (not needed if starttime==endtime)
+     *   - read also stationlon and stationlat
+     *
+     * Note: obsengine does not support fetcing the latest
+     *       observation from a fixed interval.
+     */
+
+    auto& obsengine = state.getObsEngine();
+    if (*layer.producer == "flash")
     {
-      Coordinate coordinate{std::make_pair("lon", point.latlon.X()),
-                            std::make_pair("lat", point.latlon.Y())};
-      settings.coordinates.push_back(coordinate);
+      settings.parameters.push_back(obsengine.makeParameter("longitude"));
+      settings.parameters.push_back(obsengine.makeParameter("latitude"));
     }
-  }
-
-  Spine::ValueFormatterParam valueformatterparam;
-  Spine::ValueFormatter valueformatter(valueformatterparam);
-
-  auto result = obsengine.values(settings, valueformatter);
-
-  // Build the pointvalues
-
-  if (!result)
-    return {};
-
-  const auto& values = *result;
-  if (values.empty())
-    return {};
-
-  // Create the coordinate transformation from image world coordinates
-  // to WGS84 coordinates
-
-  std::unique_ptr<OGRSpatialReference> obscrs(new OGRSpatialReference);
-  OGRErr err = obscrs->SetFromUserInput("WGS84");
-  if (err != OGRERR_NONE)
-    throw SmartMet::Spine::Exception(BCP, "GDAL does not understand WGS84");
-
-  std::unique_ptr<OGRCoordinateTransformation> transformation(
-      OGRCreateCoordinateTransformation(crs.get(), obscrs.get()));
-  if (!transformation)
-    throw SmartMet::Spine::Exception(
-        BCP, "Failed to create the needed coordinate transformation when drawing symbols");
-
-  // TODO: Accept only the latest observation unless producer==flash
-
-  PointValues pointvalues;
-  for (std::size_t row = 0; row < values[0].size(); ++row)
-  {
-    double lon = boost::get<double>(values.at(0).at(row).value);
-    double lat = boost::get<double>(values.at(1).at(row).value);
-    double value = kFloatMissing;
-    if (layer.parameter)
-      value = boost::get<double>(values.at(2).at(row).value);
-
-    std::cout << lon << "\t" << lat << "\t" << value << std::endl;
-
-    // Convert latlon to world coordinate if needed
-
-    double x = lon;
-    double y = lat;
-
-    if (!crs->IsGeographic())
-      if (!transformation->Transform(1, &x, &y))
-        continue;
-
-    // To pixel coordinate
-    box.transform(x, y);
-
-    // Skip if not inside desired area
-    if (x >= 0 && x < box.width() && y >= 0 && y < box.height())
+    else
     {
-      if (layer.positions.inside(lon, lat))
+      settings.parameters.push_back(obsengine.makeParameter("stationlon"));
+      settings.parameters.push_back(obsengine.makeParameter("stationlat"));
+      settings.parameters.push_back(obsengine.makeParameter("fmisid"));
+    }
+
+    if (layer.parameter)
+      settings.parameters.push_back(obsengine.makeParameter(*layer.parameter));
+
+    // TODO: Add new layout=data to Positions
+
+    // Coordinates or bounding box
+
+    if (*layer.producer == "flash")
+    {
+      // TODO. Calculate these
+      settings.boundingBox["minx"] = 10;
+      settings.boundingBox["miny"] = 50;
+      settings.boundingBox["maxx"] = 50;
+      settings.boundingBox["maxy"] = 80;
+    }
+    else
+    {
+      // ObsEngine takes a rather strange vector of coordinates as input...
+
+      using Coordinate = std::map<std::string, double>;
+      settings.coordinates.reserve(points.size());
+      for (const auto& point : points)
       {
-        int xpos = x;
-        int ypos = y;
-        Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-        pointvalues.push_back(PointValue{point, value});
+        Coordinate coordinate{std::make_pair("lon", point.latlon.X()),
+                              std::make_pair("lat", point.latlon.Y())};
+        settings.coordinates.push_back(coordinate);
       }
     }
-  }
 
-  return pointvalues;
+    Spine::ValueFormatterParam valueformatterparam;
+    Spine::ValueFormatter valueformatter(valueformatterparam);
+
+    auto result = obsengine.values(settings, valueformatter);
+
+    // Build the pointvalues
+
+    if (!result)
+      return {};
+
+    const auto& values = *result;
+    if (values.empty())
+      return {};
+
+    // Create the coordinate transformation from image world coordinates
+    // to WGS84 coordinates
+
+    std::unique_ptr<OGRSpatialReference> obscrs(new OGRSpatialReference);
+    OGRErr err = obscrs->SetFromUserInput("WGS84");
+    if (err != OGRERR_NONE)
+      throw SmartMet::Spine::Exception(BCP, "GDAL does not understand WGS84");
+
+    std::unique_ptr<OGRCoordinateTransformation> transformation(
+        OGRCreateCoordinateTransformation(crs.get(), obscrs.get()));
+    if (!transformation)
+      throw SmartMet::Spine::Exception(
+          BCP, "Failed to create the needed coordinate transformation when drawing symbols");
+
+    // We accept only the newest observation for each interval (except for flashes)
+    // obsengine returns the data sorted by fmisid and by time
+
+    std::string previous_fmisid;
+    boost::posix_time::ptime previous_time;
+
+    PointValues pointvalues;
+    for (std::size_t row = 0; row < values[0].size(); ++row)
+    {
+      const auto t = values.at(0).at(row).time;
+      double lon = boost::get<double>(values.at(0).at(row).value);
+      double lat = boost::get<double>(values.at(1).at(row).value);
+      double value = kFloatMissing;
+      std::string fmisid;
+
+      if (*layer.producer == "flash")
+      {
+        if (layer.parameter)
+          value = boost::get<double>(values.at(2).at(row).value);
+      }
+      else
+      {
+        fmisid = boost::get<std::string>(values.at(2).at(row).value);
+        if (layer.parameter)
+          value = boost::get<double>(values.at(3).at(row).value);
+      }
+
+      // std::cout << fmisid << "\t" << t << "\t" << lon << "\t" << lat << "\t" << value <<
+      // std::endl;
+
+      // Convert latlon to world coordinate if needed
+
+      double x = lon;
+      double y = lat;
+
+      if (!crs->IsGeographic())
+        if (!transformation->Transform(1, &x, &y))
+          continue;
+
+      // To pixel coordinate
+      box.transform(x, y);
+
+      // Skip if not inside desired area
+      if (x >= 0 && x < box.width() && y >= 0 && y < box.height())
+      {
+        if (layer.positions.inside(lon, lat))
+        {
+          int xpos = x;
+          int ypos = y;
+
+          // Keep only the latest value for each coordinate
+
+          bool replace_previous = (!pointvalues.empty() && *layer.producer != "flash" &&
+                                   fmisid == previous_fmisid && t.utc_time() > previous_time);
+
+          if (replace_previous)
+            pointvalues.back().value = value;
+          else
+          {
+            Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
+            PointValue pv{point, value};
+            pointvalues.push_back(pv);
+          }
+
+          previous_time = t.utc_time();
+          previous_fmisid = fmisid;
+        }
+      }
+    }
+
+    return pointvalues;
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(
+        BCP, "SymbolLayer failed to read observations from the database", NULL);
+  }
 }
 #endif
 
@@ -506,9 +556,15 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
 {
   try
   {
-    auto hash = Layer::hash_value(theState);
+    // Disable caching of observation layers
+    if (isObservation(theState))
+      return 0;
 
-    boost::hash_combine(hash, SmartMet::Engine::Querydata::hash_value(getModel(theState)));
+    auto hash = Layer::hash_value(theState);
+    auto q = getModel(theState);
+    if (q)
+      boost::hash_combine(hash, SmartMet::Engine::Querydata::hash_value(q));
+
     boost::hash_combine(hash, Dali::hash_value(parameter));
     boost::hash_combine(hash, Dali::hash_value(level));
     boost::hash_combine(hash, Dali::hash_value(positions, theState));

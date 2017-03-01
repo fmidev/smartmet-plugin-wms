@@ -71,6 +71,9 @@ void AttributeSelection::init(const Json::Value& theJson, const Config& theConfi
         symbol = json.asString();
       else if (name == "attributes")
         attributes.init(json, theConfig);
+      else if (name == "qid")
+      {  // ignored so that f.ex. SymbolLayer may reuse Isobands
+      }
       else
         throw SmartMet::Spine::Exception(
             BCP, "Attribute selection does not have a setting named '" + name + "'");

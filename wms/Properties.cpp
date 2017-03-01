@@ -115,6 +115,18 @@ void Properties::init(const Json::Value& theJson,
     else
       time_offset = json.asInt();
 
+    json = theJson.get("interval_start", nulljson);
+    if (json.isNull())
+      interval_start = theProperties.interval_start;
+    else
+      interval_start = json.asInt();
+
+    json = theJson.get("interval_end", nulljson);
+    if (json.isNull())
+      interval_end = theProperties.interval_end;
+    else
+      interval_end = json.asInt();
+
     projection = theProperties.projection;
     json = theJson.get("projection", nulljson);
     if (!json.isNull())
