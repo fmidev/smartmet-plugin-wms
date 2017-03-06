@@ -122,6 +122,64 @@ bool Intersections::inside(double theX, double theY) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Test if the given values satisfy the set limits
+ *
+ * Note: We ignore the producer setting on purpose. Checking values
+ * against another producer is not supported.
+ */
+// ----------------------------------------------------------------------
+
+bool Intersections::inside(const IntersectValues& theValues) const
+{
+  for (const auto& isection : intersections)
+  {
+    if (isection.parameter)
+    {
+      const auto& iter = theValues.find(*isection.parameter);
+      if (iter != theValues.end())
+      {
+        // There is a value for the parameter, check it against the limits
+        double value = iter->second;
+
+        if (isection.multiplier)
+          value *= *isection.multiplier;
+        if (isection.offset)
+          value += *isection.offset;
+
+        if (isection.value && *isection.value != value)
+          return false;
+        if (isection.lolimit && *isection.lolimit > value)
+          return false;
+        if (isection.hilimit && *isection.hilimit < value)
+          return false;
+      }
+    }
+  }
+  return true;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get all parameter names used in the intersections
+ */
+// ----------------------------------------------------------------------
+
+std::vector<std::string> Intersections::parameters() const
+{
+  std::set<std::string> params;
+
+  for (const auto& intersection : intersections)
+  {
+    if (intersection.parameter)
+      params.insert(*intersection.parameter);
+  }
+
+  std::vector<std::string> result(params.begin(), params.end());
+  return result;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value = combined hash from all layers
  */
 // ----------------------------------------------------------------------

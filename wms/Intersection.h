@@ -44,6 +44,7 @@ class Intersection
 
   boost::optional<double> lolimit;
   boost::optional<double> hilimit;
+  boost::optional<double> value;  // special case used for observations
 
   boost::optional<double> level;
   boost::optional<std::string> producer;

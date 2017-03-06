@@ -44,6 +44,10 @@ void Intersection::init(const Json::Value& theJson, const Config& theConfig)
     if (!json.isNull())
       hilimit = json.asDouble();
 
+    json = theJson.get("value", nulljson);
+    if (!json.isNull())
+      value = json.asDouble();
+
     json = theJson.get("level", nulljson);
     if (!json.isNull())
       level = json.asDouble();
@@ -279,6 +283,7 @@ std::size_t Intersection::hash_value(const State& theState) const
 
     boost::hash_combine(hash, Dali::hash_value(lolimit));
     boost::hash_combine(hash, Dali::hash_value(hilimit));
+    boost::hash_combine(hash, Dali::hash_value(value));
     boost::hash_combine(hash, Dali::hash_value(level));
     boost::hash_combine(hash, Dali::hash_value(producer));
     boost::hash_combine(hash, Dali::hash_value(parameter));

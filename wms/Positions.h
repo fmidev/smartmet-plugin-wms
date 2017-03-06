@@ -24,17 +24,17 @@ class Config;
 
 class Positions
 {
+ public:
   enum class Layout
   {
     Grid,           // evenly spaced points
-    Data,           // points in querydata
+    Data,           // points in querydata, all stations or all flashes
     Graticule,      // points in a graticule
     GraticuleFill,  // points in a graticule and graticule cells
     Keyword,        // points listed in the database for a keyword
     LatLon          // explicitly listed latlon coordinates
   };
 
- public:
   struct Point
   {
     int x;
@@ -42,7 +42,7 @@ class Positions
     NFmiPoint latlon;
     Point(int theX, int theY, const NFmiPoint& theLatLon) : x(theX), y(theY), latlon(theLatLon) {}
   };
-  typedef std::vector<Point> Points;
+  using Points = std::vector<Point>;
 
   void init(const Json::Value& theJson, const Config& theConfig);
   virtual std::size_t hash_value(const State& theState) const;
@@ -57,6 +57,7 @@ class Positions
                    const Fmi::Box& theBox) const;
 
   bool inside(double theX, double theY) const;
+  bool inside(double theX, double theY, const Intersections::IntersectValues& theValues) const;
 
   // Layout algorithm
   Layout layout = Layout::Grid;

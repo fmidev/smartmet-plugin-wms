@@ -317,7 +317,8 @@ void Positions::init(SmartMet::Engine::Querydata::Q q,
         outshape.reset(Fmi::OGR::polyclip(*outshape, theProjection.getBox()));
     }
 
-    intersections.init(q, theProjection, theTime, theState);
+    if (q)
+      intersections.init(q, theProjection, theTime, theState);
   }
   catch (...)
   {
@@ -470,6 +471,12 @@ Positions::Points Positions::getDataPoints(SmartMet::Engine::Querydata::Q theQ,
                                            boost::shared_ptr<OGRSpatialReference> theCRS,
                                            const Fmi::Box& theBox) const
 {
+  // Cannot generate any points without any querydata. If layout=data,
+  // the layers will handle stations and flashes by themselves.
+
+  if (!theQ)
+    return {};
+
   try
   {
     // Get the data projection
@@ -1002,6 +1009,32 @@ bool Positions::inside(double theX, double theY) const
       return false;
 
     return intersections.inside(theX, theY);
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Test if the given point is to be rendered or filtered out
+ */
+// ----------------------------------------------------------------------
+
+bool Positions::inside(double theX,
+                       double theY,
+                       const Intersections::IntersectValues& theValues) const
+{
+  try
+  {
+    if (outshape && Fmi::OGR::inside(*outshape, theX, theY))
+      return false;
+
+    if (inshape && !Fmi::OGR::inside(*inshape, theX, theY))
+      return false;
+
+    return intersections.inside(theValues);
   }
   catch (...)
   {

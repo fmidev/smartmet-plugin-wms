@@ -21,6 +21,9 @@ class Config;
 class Intersections
 {
  public:
+  // parameter name --> value
+  using IntersectValues = std::map<std::string, double>;
+
   void init(const Json::Value& theJson, const Config& theConfig);
 
   void init(SmartMet::Engine::Querydata::Q q,
@@ -32,6 +35,9 @@ class Intersections
 
   OGRGeometryPtr intersect(OGRGeometryPtr geom) const;
   bool inside(double theX, double theY) const;
+  bool inside(const IntersectValues& theValues) const;
+
+  std::vector<std::string> parameters() const;
 
  private:
   std::list<Intersection> intersections;
