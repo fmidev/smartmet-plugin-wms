@@ -1,0 +1,76 @@
+{
+    "title": "Flash observations as coloured circles",
+    "producer": "flash",
+    "interval_start": 30,
+    "interval_end": 30,
+    "projection":
+    {
+	"crs": "EPSG:4326",
+	"cx" : 25,
+	"cy" : 65,
+	"resolution" : 3,
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+	    "layers":
+	    [
+		{
+		    "qid": "sea",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "white"
+		    }
+		},
+		{
+                    "qid": "l1",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 100
+                    },
+                    "attributes":
+                    {
+                        "id": "europe_country_lines",
+                        "fill": "none",
+                        "stroke": "#222",
+                        "stroke-width": "0.3px"
+                    }
+                },
+		{
+		    "qid": "l2",
+		    "layer_type": "symbol",
+		    "parameter": "peak_current",
+		    "css": "symbols/flash.css",
+		    "symbols": "json:symbols/flash.json",
+		    "scale": 0.75,
+		    "attributes":
+		    {
+			"class": "FlashMarker"
+		    },
+		    "positions":
+		    {
+			"layout" : "data",
+			"intersect":
+			[
+			    {
+				"parameter": "multiplicity",
+				"lolimit": 1
+			    }
+			]
+		    }
+		}
+	    ]
+	}
+    ]
+}

@@ -36,7 +36,7 @@ class SymbolLayer : public Layer
   boost::optional<std::string> parameter;
   boost::optional<double> level;
 
-  Positions positions;
+  boost::optional<Positions> positions;
 
   // Station distance limit in kilometers
   double maxdistance = 5;

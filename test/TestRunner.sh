@@ -73,6 +73,7 @@ for f in input/*.get; do
 	if [[ "$line" == "DONE" ]]; then
 	    break
 	else
+	    # echo $line
 	    if [[ -z $extralines ]]; then
 		extralines="\t${line}"
 	    else

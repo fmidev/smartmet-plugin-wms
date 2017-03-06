@@ -3,6 +3,7 @@
 #include "SymbolLayer.h"
 #include "Config.h"
 #include "Hash.h"
+#include "Intersections.h"
 #include "Iri.h"
 #include "Layer.h"
 #include "Select.h"
@@ -54,18 +55,51 @@ using PointValues = std::vector<PointValue>;
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Extract numeric TimeSeries value
+ */
+// ----------------------------------------------------------------------
+
+double get_double(const Spine::TimeSeries::Value& value)
+{
+  if (const double* dvalue = boost::get<double>(&value))
+    return *dvalue;
+
+  if (const int* ivalue = boost::get<int>(&value))
+    return *ivalue;
+
+  // None, std::string, LonLat and local_date_time not accepted. See spine/TimeSeries.h
+
+  throw Spine::Exception(BCP, "Failed to convert observation engine value to a number!", NULL);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Extract numeric TimeSeries value
+ */
+// ----------------------------------------------------------------------
+
+double get_double(const Spine::TimeSeries::TimedValue& timedvalue)
+{
+  return get_double(timedvalue.value);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Forecast reader
  */
 // ----------------------------------------------------------------------
 
 PointValues read_forecasts(const SymbolLayer& layer,
-                           const Positions::Points& points,
                            Engine::Querydata::Q q,
+                           const boost::shared_ptr<OGRSpatialReference>& crs,
+                           const Fmi::Box& box,
                            const boost::posix_time::ptime& valid_time)
 {
   try
   {
-    PointValues pointvalues;
+    // Generate the coordinates for the symbols
+
+    auto points = layer.positions->getPoints(q, crs, box);
 
     // querydata API for value() sucks
 
@@ -77,6 +111,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
     boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
     boost::local_time::local_date_time localdatetime(valid_time, utc);
 
+    PointValues pointvalues;
     for (const auto& point : points)
     {
       if (layer.symbols.empty())
@@ -129,9 +164,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
 #ifndef WITHOUT_OBSERVATION
 PointValues read_observations(const SymbolLayer& layer,
                               State& state,
-                              const Positions::Points& points,
                               const boost::shared_ptr<OGRSpatialReference>& crs,
-                              const Positions& positions,
                               const Fmi::Box& box,
                               const boost::posix_time::ptime& valid_time)
 {
@@ -186,7 +219,15 @@ PointValues read_observations(const SymbolLayer& layer,
     if (layer.parameter)
       settings.parameters.push_back(obsengine.makeParameter(*layer.parameter));
 
-    // TODO: Add new layout=data to Positions
+    // Request intersection parameters too - if any
+    auto iparams = layer.positions->intersections.parameters();
+    for (const auto& extraparam : iparams)
+      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+
+    // Generate the coordinates for the symbols
+
+    Engine::Querydata::Q q;
+    auto points = layer.positions->getPoints(q, crs, box);
 
     // Coordinates or bounding box
 
@@ -250,25 +291,39 @@ PointValues read_observations(const SymbolLayer& layer,
     for (std::size_t row = 0; row < values[0].size(); ++row)
     {
       const auto& t = values.at(0).at(row).time;
-      double lon = boost::get<double>(values.at(0).at(row).value);
-      double lat = boost::get<double>(values.at(1).at(row).value);
+      double lon = get_double(values.at(0).at(row));
+      double lat = get_double(values.at(1).at(row));
       double value = kFloatMissing;
       std::string fmisid;
+      int firstextraparam;  // which column holds the first extra parameter
 
       if (*layer.producer == "flash")
       {
         if (layer.parameter)
-          value = boost::get<double>(values.at(2).at(row).value);
+          value = get_double(values.at(2).at(row));
+        firstextraparam = 3;
       }
       else
       {
         fmisid = boost::get<std::string>(values.at(2).at(row).value);
         if (layer.parameter)
-          value = boost::get<double>(values.at(3).at(row).value);
+          value = get_double(values.at(3).at(row));
+        firstextraparam = 4;
       }
 
-      // std::cout << fmisid << "\t" << t << "\t" << lon << "\t" << lat << "\t" << value <<
-      // std::endl;
+      // Collect extra values used for filtering the input
+
+      Intersections::IntersectValues ivalues;
+
+      for (std::size_t i = 0; i < iparams.size(); i++)
+        ivalues[iparams.at(i)] = get_double(values.at(firstextraparam + i).at(row));
+
+#if 0
+      std::cout << fmisid << "\t" << t << "\t" << lon << "\t" << lat << "\t" << value;
+      for (std::size_t i = 0; i < iparams.size(); i++)
+        std::cout << "\t" << iparams.at(i) << "=" << ivalues.at(iparams.at(i));
+      std::cout << std::endl;
+#endif
 
       // Convert latlon to world coordinate if needed
 
@@ -283,31 +338,32 @@ PointValues read_observations(const SymbolLayer& layer,
       box.transform(x, y);
 
       // Skip if not inside desired area
-      if (x >= 0 && x < box.width() && y >= 0 && y < box.height())
+      if (x < 0 || x >= box.width() || y < 0 || y >= box.height())
+        continue;
+
+      // Skip if not inside/outside desired shapes or limits of other parameters
+      if (!layer.positions->inside(lon, lat, ivalues))
+        continue;
+
+      int xpos = x;
+      int ypos = y;
+
+      // Keep only the latest value for each coordinate
+
+      bool replace_previous = ((*layer.producer != "flash") && !pointvalues.empty() &&
+                               (fmisid == previous_fmisid) && (t.utc_time() > previous_time));
+
+      if (replace_previous)
+        pointvalues.back().value = value;
+      else
       {
-        if (layer.positions.inside(lon, lat))
-        {
-          int xpos = x;
-          int ypos = y;
-
-          // Keep only the latest value for each coordinate
-
-          bool replace_previous = (!pointvalues.empty() && *layer.producer != "flash" &&
-                                   fmisid == previous_fmisid && t.utc_time() > previous_time);
-
-          if (replace_previous)
-            pointvalues.back().value = value;
-          else
-          {
-            Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-            PointValue pv{point, value};
-            pointvalues.push_back(pv);
-          }
-
-          previous_time = t.utc_time();
-          previous_fmisid = fmisid;
-        }
+        Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
+        PointValue pv{point, value};
+        pointvalues.push_back(pv);
       }
+
+      previous_time = t.utc_time();
+      previous_fmisid = fmisid;
     }
 
     return pointvalues;
@@ -352,7 +408,10 @@ void SymbolLayer::init(const Json::Value& theJson,
 
     json = theJson.get("positions", nulljson);
     if (!json.isNull())
-      positions.init(json, theConfig);
+    {
+      positions = Positions{};
+      positions->init(json, theConfig);
+    }
 
     json = theJson.get("maxdistance", nulljson);
     if (!json.isNull())
@@ -412,6 +471,15 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     bool use_observations = isObservation(theState);
     auto q = getModel(theState);
 
+    // Make sure position generation is initialized
+
+    if (!positions)
+    {
+      positions = Positions{};
+      if (use_observations)
+        positions->layout = Positions::Layout::Data;
+    }
+
     // Establish the valid time
 
     if (!time)
@@ -461,11 +529,7 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions.init(q, projection, valid_time, theState);
-
-    // Generate the coordinates for the symbols
-
-    auto points = positions.getPoints(q, crs, box);
+    positions->init(q, projection, valid_time, theState);
 
     // Establish the numbers to draw. At this point we know that if
     // use_observations is true, obsengine is not disabled.
@@ -473,13 +537,11 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     PointValues pointvalues;
 
     if (!use_observations)
-      pointvalues = read_forecasts(*this, points, q, valid_time);
+      pointvalues = read_forecasts(*this, q, crs, box, valid_time);
 #ifndef WITHOUT_OBSERVATION
     else
-      pointvalues = read_observations(*this, theState, points, crs, positions, box, valid_time);
+      pointvalues = read_observations(*this, theState, crs, box, valid_time);
 #endif
-
-    // longitude, latitude, multiplicity, peak_current, cloud_indicator, ellipse_major
 
     // Begin a G-group, put arrows into it as tags
 

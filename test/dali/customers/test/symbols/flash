@@ -1,0 +1,4 @@
+<symbol id="flash">
+ <desc>Simple flash marker</desc>
+ <circle cx="0" cy="0" r="3" stroke="black" stroke-width="0.5"/>
+</symbol>
