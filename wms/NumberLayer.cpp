@@ -9,6 +9,8 @@
 #include "Layer.h"
 #include "Select.h"
 #include "State.h"
+#include "ValueTools.h"
+
 #include <spine/Exception.h>
 #include <spine/ParameterFactory.h>
 #include <spine/Json.h>
@@ -238,6 +240,12 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       settings.parameters.push_back(obsengine.makeParameter("stationlat"));
       settings.parameters.push_back(obsengine.makeParameter(*parameter));
 
+      // Request intersection parameters too - if any
+      const int firstextraparam = settings.parameters.size();
+      auto iparams = positions.intersections.parameters();
+      for (const auto& extraparam : iparams)
+        settings.parameters.push_back(obsengine.makeParameter(extraparam));
+
       // ObsEngine takes a rather strange vector of coordinates as input...
 
       using Coordinate = std::map<std::string, double>;
@@ -289,6 +297,20 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
             double lat = boost::get<double>(values.at(1).at(row).value);
             double val = boost::get<double>(values.at(2).at(row).value);
 
+            // Collect extra values used for filtering the input
+
+            Intersections::IntersectValues ivalues;
+
+            for (std::size_t i = 0; i < iparams.size(); i++)
+              ivalues[iparams.at(i)] = get_double(values.at(firstextraparam + i).at(row));
+
+#if 0
+			std::cout << fmisid << "\t" << t << "\t" << lon << "\t" << lat << "\t" << value;
+			for (std::size_t i = 0; i < iparams.size(); i++)
+			  std::cout << "\t" << iparams.at(i) << "=" << ivalues.at(iparams.at(i));
+			std::cout << std::endl;
+#endif
+
             // Convert latlon to world coordinate if needed
 
             double x = lon;
@@ -304,7 +326,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
             // Skip if not inside desired area
             if (x >= 0 && x < box.width() && y >= 0 && y < box.height())
             {
-              if (positions.inside(lon, lat))
+              if (positions.inside(lon, lat, ivalues))
               {
                 int xpos = x;
                 int ypos = y;

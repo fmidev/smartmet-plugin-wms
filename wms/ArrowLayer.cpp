@@ -7,6 +7,8 @@
 #include "Layer.h"
 #include "Select.h"
 #include "State.h"
+#include "ValueTools.h"
+
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
@@ -14,11 +16,13 @@
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
+
 #include <gis/Types.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <newbase/NFmiArea.h>
 #include <newbase/NFmiPoint.h>
+
 #include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
 #include <boost/math/constants/constants.hpp>
@@ -214,6 +218,12 @@ PointValues read_observations(const ArrowLayer& layer,
       settings.parameters.push_back(obsengine.makeParameter("WindSpeedMS"));
   }
 
+  // Request intersection parameters too - if any
+  const int firstextraparam = settings.parameters.size();
+  auto iparams = layer.positions.intersections.parameters();
+  for (const auto& extraparam : iparams)
+    settings.parameters.push_back(obsengine.makeParameter(extraparam));
+
   // ObsEngine takes a rather strange vector of coordinates as input...
 
   using Coordinate = std::map<std::string, double>;
@@ -279,6 +289,20 @@ PointValues read_observations(const ArrowLayer& layer,
       wspd = boost::get<double>(values.at(3).at(row).value);
     }
 
+    // Collect extra values used for filtering the input
+
+    Intersections::IntersectValues ivalues;
+
+    for (std::size_t i = 0; i < iparams.size(); i++)
+      ivalues[iparams.at(i)] = get_double(values.at(firstextraparam + i).at(row));
+
+#if 0
+	std::cout << fmisid << "\t" << t << "\t" << lon << "\t" << lat << "\t" << value;
+	for (std::size_t i = 0; i < iparams.size(); i++)
+	  std::cout << "\t" << iparams.at(i) << "=" << ivalues.at(iparams.at(i));
+	std::cout << std::endl;
+#endif
+
     // Convert latlon to world coordinate if needed
 
     double x = lon;
@@ -294,7 +318,7 @@ PointValues read_observations(const ArrowLayer& layer,
     // Skip if not inside desired area
     if (x >= 0 && x < box.width() && y >= 0 && y < box.height())
     {
-      if (layer.positions.inside(lon, lat))
+      if (layer.positions.inside(lon, lat, ivalues))
       {
         int xpos = x;
         int ypos = y;
