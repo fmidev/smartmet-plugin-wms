@@ -1,4 +1,5 @@
 //======================================================================
+#include <prettyprint.hpp>
 
 #include "ArrowLayer.h"
 #include "Config.h"
@@ -13,6 +14,7 @@
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 #include <engines/gis/Engine.h>
+#include <engines/querydata/Q.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
@@ -46,7 +48,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-double paper_north(const SmartMet::Engine::Querydata::Q& theQ, const NFmiPoint& theLatLon)
+double paper_north(const Engine::Querydata::Q& theQ, const NFmiPoint& theLatLon)
 {
   if (!theQ)
     return 0;
@@ -69,7 +71,7 @@ double paper_north(const SmartMet::Engine::Querydata::Q& theQ, const NFmiPoint& 
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "ArrowLayer failed to calculate paper north", NULL);
+    throw Spine::Exception(BCP, "ArrowLayer failed to calculate paper north", NULL);
   }
 }
 
@@ -95,41 +97,46 @@ using PointValues = std::vector<PointValue>;
 // ----------------------------------------------------------------------
 
 PointValues read_forecasts(const ArrowLayer& layer,
-                           const Positions::Points& points,
-                           SmartMet::Engine::Querydata::Q q,
+                           Engine::Querydata::Q q,
+                           const boost::shared_ptr<OGRSpatialReference>& crs,
+                           const Fmi::Box& box,
                            const boost::posix_time::time_period& time_period)
 {
   NFmiMetTime met_time = time_period.begin();
 
-  boost::optional<SmartMet::Spine::Parameter> dirparam, speedparam, uparam, vparam;
+  boost::optional<Spine::Parameter> dirparam, speedparam, uparam, vparam;
 
   if (layer.direction)
-    dirparam = SmartMet::Spine::ParameterFactory::instance().parse(*layer.direction);
+    dirparam = Spine::ParameterFactory::instance().parse(*layer.direction);
   if (layer.speed)
-    speedparam = SmartMet::Spine::ParameterFactory::instance().parse(*layer.speed);
+    speedparam = Spine::ParameterFactory::instance().parse(*layer.speed);
   if (layer.u)
-    uparam = SmartMet::Spine::ParameterFactory::instance().parse(*layer.u);
+    uparam = Spine::ParameterFactory::instance().parse(*layer.u);
   if (layer.v)
-    vparam = SmartMet::Spine::ParameterFactory::instance().parse(*layer.v);
+    vparam = Spine::ParameterFactory::instance().parse(*layer.v);
 
   if (layer.direction && !layer.speed)
-    speedparam = SmartMet::Spine::ParameterFactory::instance().parse("WindSpeedMS");
+    speedparam = Spine::ParameterFactory::instance().parse("WindSpeedMS");
 
   if (speedparam && !q->param(speedparam->number()))
-    throw SmartMet::Spine::Exception(
+    throw Spine::Exception(
         BCP, "Parameter " + speedparam->name() + " not available in the arrow layer querydata");
 
   if (dirparam && !q->param(dirparam->number()))
-    throw SmartMet::Spine::Exception(
+    throw Spine::Exception(
         BCP, "Parameter " + dirparam->name() + " not available in the arrow layer querydata");
 
   if (uparam && !q->param(uparam->number()))
-    throw SmartMet::Spine::Exception(
+    throw Spine::Exception(
         BCP, "Parameter " + uparam->name() + " not available in the arrow layer querydata");
 
   if (vparam && !q->param(vparam->number()))
-    throw SmartMet::Spine::Exception(
+    throw Spine::Exception(
         BCP, "Parameter " + vparam->name() + " not available in the arrow layer querydata");
+
+  // Generate the coordinates for the arrows
+
+  auto points = layer.positions->getPoints(q, crs, box);
 
   PointValues pointvalues;
 
@@ -183,7 +190,6 @@ PointValues read_forecasts(const ArrowLayer& layer,
 #ifndef WITHOUT_OBSERVATION
 PointValues read_observations(const ArrowLayer& layer,
                               State& state,
-                              const Positions::Points& points,
                               const boost::shared_ptr<OGRSpatialReference>& crs,
                               const Fmi::Box& box,
                               const boost::posix_time::time_period& valid_time_period)
@@ -201,6 +207,7 @@ PointValues read_observations(const ArrowLayer& layer,
   auto& obsengine = state.getObsEngine();
   settings.parameters.push_back(obsengine.makeParameter("stationlon"));
   settings.parameters.push_back(obsengine.makeParameter("stationlat"));
+  settings.parameters.push_back(obsengine.makeParameter("fmisid"));
 
   bool use_uv_components = (layer.u && layer.v);
 
@@ -220,19 +227,34 @@ PointValues read_observations(const ArrowLayer& layer,
 
   // Request intersection parameters too - if any
   const int firstextraparam = settings.parameters.size();
-  auto iparams = layer.positions.intersections.parameters();
+  auto iparams = layer.positions->intersections.parameters();
+
   for (const auto& extraparam : iparams)
     settings.parameters.push_back(obsengine.makeParameter(extraparam));
 
   // ObsEngine takes a rather strange vector of coordinates as input...
 
-  using Coordinate = std::map<std::string, double>;
-  settings.coordinates.reserve(points.size());
-  for (const auto& point : points)
+  if (layer.positions->layout == Positions::Layout::Data || *layer.producer == "flash")
   {
-    Coordinate coordinate{std::make_pair("lon", point.latlon.X()),
-                          std::make_pair("lat", point.latlon.Y())};
-    settings.coordinates.push_back(coordinate);
+    // TODO. Calculate these
+    settings.boundingBox["minx"] = 10;
+    settings.boundingBox["miny"] = 50;
+    settings.boundingBox["maxx"] = 50;
+    settings.boundingBox["maxy"] = 80;
+  }
+  else
+  {
+    Engine::Querydata::Q q;
+    auto points = layer.positions->getPoints(q, crs, box);
+
+    using Coordinate = std::map<std::string, double>;
+    settings.coordinates.reserve(points.size());
+    for (const auto& point : points)
+    {
+      Coordinate coordinate{std::make_pair("lon", point.latlon.X()),
+                            std::make_pair("lat", point.latlon.Y())};
+      settings.coordinates.push_back(coordinate);
+    }
   }
 
   Spine::ValueFormatterParam valueformatterparam;
@@ -255,26 +277,36 @@ PointValues read_observations(const ArrowLayer& layer,
   std::unique_ptr<OGRSpatialReference> obscrs(new OGRSpatialReference);
   OGRErr err = obscrs->SetFromUserInput("WGS84");
   if (err != OGRERR_NONE)
-    throw SmartMet::Spine::Exception(BCP, "GDAL does not understand WGS84");
+    throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
   std::unique_ptr<OGRCoordinateTransformation> transformation(
       OGRCreateCoordinateTransformation(crs.get(), obscrs.get()));
   if (!transformation)
-    throw SmartMet::Spine::Exception(
+    throw Spine::Exception(
         BCP, "Failed to create the needed coordinate transformation when drawing wind arrows");
+
+  std::string previous_fmisid;
+  boost::posix_time::ptime previous_time;
 
   PointValues pointvalues;
   for (std::size_t row = 0; row < values[0].size(); ++row)
   {
-    double lon = boost::get<double>(values.at(0).at(row).value);
-    double lat = boost::get<double>(values.at(1).at(row).value);
+    const auto& t = values.at(0).at(row).time;
+    double lon = get_double(values.at(0).at(row));
+    double lat = get_double(values.at(1).at(row));
+    std::string fmisid = boost::get<std::string>(values.at(2).at(2).value);
 
     double wdir = kFloatMissing;
     double wspd = kFloatMissing;
-    if (use_uv_components)
+    if (!use_uv_components)
     {
-      double uspd = boost::get<double>(values.at(2).at(row).value);
-      double vspd = boost::get<double>(values.at(3).at(row).value);
+      wdir = get_double(values.at(3).at(row));
+      wspd = get_double(values.at(4).at(row));
+    }
+    else
+    {
+      double uspd = get_double(values.at(3).at(row));
+      double vspd = get_double(values.at(4).at(row));
 
       if (uspd != kFloatMissing && vspd != kFloatMissing)
       {
@@ -282,11 +314,6 @@ PointValues read_observations(const ArrowLayer& layer,
         if (uspd != 0 || vspd != 0)
           wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
       }
-    }
-    else
-    {
-      wdir = boost::get<double>(values.at(2).at(row).value);
-      wspd = boost::get<double>(values.at(3).at(row).value);
     }
 
     // Collect extra values used for filtering the input
@@ -297,10 +324,10 @@ PointValues read_observations(const ArrowLayer& layer,
       ivalues[iparams.at(i)] = get_double(values.at(firstextraparam + i).at(row));
 
 #if 0
-	std::cout << fmisid << "\t" << t << "\t" << lon << "\t" << lat << "\t" << value;
-	for (std::size_t i = 0; i < iparams.size(); i++)
-	  std::cout << "\t" << iparams.at(i) << "=" << ivalues.at(iparams.at(i));
-	std::cout << std::endl;
+    std::cout << fmisid << "\t" << t << "\t" << lon << "\t" << lat << "\t" << wspd << "," << wdir;
+    for (std::size_t i = 0; i < iparams.size(); i++)
+      std::cout << "\t" << iparams.at(i) << "=" << ivalues.at(iparams.at(i));
+    std::cout << std::endl;
 #endif
 
     // Convert latlon to world coordinate if needed
@@ -318,15 +345,32 @@ PointValues read_observations(const ArrowLayer& layer,
     // Skip if not inside desired area
     if (x >= 0 && x < box.width() && y >= 0 && y < box.height())
     {
-      if (layer.positions.inside(lon, lat, ivalues))
+      if (layer.positions->inside(lon, lat, ivalues))
       {
-        int xpos = x;
-        int ypos = y;
-        Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-        PointValue value{point, wdir, wspd};
-        pointvalues.push_back(value);
+        // Keep only the latest value for each coordinate
+
+        bool replace_previous = ((*layer.producer != "flash") && !pointvalues.empty() &&
+                                 (fmisid == previous_fmisid) && (t.utc_time() > previous_time));
+
+        if (replace_previous)
+        {
+          pointvalues.back().direction = wdir;
+          pointvalues.back().speed = wspd;
+        }
+        else
+        {
+          int xpos = x;
+          int ypos = y;
+
+          Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
+          PointValue pv{point, wdir, wspd};
+          pointvalues.push_back(pv);
+        }
       }
     }
+
+    previous_time = t.utc_time();
+    previous_fmisid = fmisid;
   }
   return pointvalues;
 }
@@ -346,7 +390,7 @@ void ArrowLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Arrow-layer JSON is not a JSON object");
+      throw Spine::Exception(BCP, "Arrow-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -384,7 +428,10 @@ void ArrowLayer::init(const Json::Value& theJson,
 
     json = theJson.get("positions", nulljson);
     if (!json.isNull())
-      positions.init(json, theConfig);
+    {
+      positions = Positions{};
+      positions->init(json, theConfig);
+    }
 
     json = theJson.get("maxdistance", nulljson);
     if (!json.isNull())
@@ -400,11 +447,11 @@ void ArrowLayer::init(const Json::Value& theJson,
 
     json = theJson.get("arrows", nulljson);
     if (!json.isNull())
-      SmartMet::Spine::JSON::extract_array("arrows", arrows, json, theConfig);
+      Spine::JSON::extract_array("arrows", arrows, json, theConfig);
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -419,7 +466,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
   try
   {
     if (theState.inDefs())
-      throw SmartMet::Spine::Exception(BCP, "ArrowLayer cannot be used in the Defs-section");
+      throw Spine::Exception(BCP, "ArrowLayer cannot be used in the Defs-section");
 
     if (!validLayer(theState))
       return;
@@ -434,13 +481,22 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     // A symbol must be defined either globally or for speed ranges
 
     if (!symbol && arrows.empty())
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP, "Must define arrow with 'symbol' or 'arrows' to define the symbol for arrows");
 
     // Establish the data
 
     bool use_observations = isObservation(theState);
-    SmartMet::Engine::Querydata::Q q = getModel(theState);
+    Engine::Querydata::Q q = getModel(theState);
+
+    // Make sure position generation is initialized
+
+    if (!positions)
+    {
+      positions = Positions{};
+      if (use_observations)
+        positions->layout = Positions::Layout::Data;
+    }
 
     // Establish the valid time
 
@@ -457,8 +513,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       for (q->resetLevel(); !match && q->nextLevel();)
         match = (q->levelValue() == *level);
       if (!match)
-        throw SmartMet::Spine::Exception(
-            BCP, "Level value " + Fmi::to_string(*level) + " is not available");
+        throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available");
     }
 
     // Get projection details
@@ -470,16 +525,16 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions.init(q, projection, valid_time_period.begin(), theState);
+    positions->init(q, projection, valid_time_period.begin(), theState);
 
     // The parameters. TODO: Allow metaparameters, needs better Q API
 
     if ((u && (direction || speed)) || (v && (direction || speed)))
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP, "ArrowLayer cannot define direction, speed and u- and v-components simultaneously");
 
     if ((u && !v) || (v && !u))
-      throw SmartMet::Spine::Exception(BCP, "ArrowLayer must define both U- and V-components");
+      throw Spine::Exception(BCP, "ArrowLayer must define both U- and V-components");
 
     // Update the globals
 
@@ -498,19 +553,15 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     // Add layer attributes to the group, not to the arrows
     theState.addAttributes(theGlobals, group_cdt, attributes);
 
-    // Generate the coordinates for the arrows
-
-    auto points = positions.getPoints(q, crs, box);
-
     // Establish the relevant numbers
 
     PointValues pointvalues;
 
     if (!use_observations)
-      pointvalues = read_forecasts(*this, points, q, valid_time_period);
+      pointvalues = read_forecasts(*this, q, crs, box, valid_time_period);
 #ifndef WITHOUT_OBSERVATION
     else
-      pointvalues = read_observations(*this, theState, points, crs, box, valid_time_period);
+      pointvalues = read_observations(*this, theState, crs, box, valid_time_period);
 #endif
 
     // Render the collected values
@@ -606,7 +657,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -627,7 +678,7 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
     auto hash = Layer::hash_value(theState);
     auto q = getModel(theState);
     if (q)
-      boost::hash_combine(hash, SmartMet::Engine::Querydata::hash_value(q));
+      boost::hash_combine(hash, Engine::Querydata::hash_value(q));
     boost::hash_combine(hash, Dali::hash_value(direction));
     boost::hash_combine(hash, Dali::hash_value(speed));
     boost::hash_combine(hash, Dali::hash_value(u));
@@ -645,7 +696,7 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

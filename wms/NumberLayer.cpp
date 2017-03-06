@@ -81,7 +81,10 @@ void NumberLayer::init(const Json::Value& theJson,
 
     json = theJson.get("positions", nulljson);
     if (!json.isNull())
-      positions.init(json, theConfig);
+    {
+      positions = Positions{};
+      positions->init(json, theConfig);
+    }
 
     json = theJson.get("maxdistance", nulljson);
     if (!json.isNull())
@@ -137,6 +140,15 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     bool use_observations = isObservation(theState);
     auto q = getModel(theState);
 
+    // Make sure position generation is initialized
+
+    if (!positions)
+    {
+      positions = Positions{};
+      if (use_observations)
+        positions->layout = Positions::Layout::Data;
+    }
+
     // Establish the parameter
 
     if (!parameter)
@@ -174,7 +186,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions.init(q, projection, valid_time_period.begin(), theState);
+    positions->init(q, projection, valid_time_period.begin(), theState);
 
     // Update the globals
 
@@ -191,7 +203,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Generate the coordinates for the numbers
 
-    auto points = positions.getPoints(q, crs, box);
+    auto points = positions->getPoints(q, crs, box);
 
     // The parameters. This *must* be done after the call to positions generation
 
@@ -238,23 +250,38 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       auto& obsengine = theState.getObsEngine();
       settings.parameters.push_back(obsengine.makeParameter("stationlon"));
       settings.parameters.push_back(obsengine.makeParameter("stationlat"));
+      settings.parameters.push_back(obsengine.makeParameter("fmisid"));
       settings.parameters.push_back(obsengine.makeParameter(*parameter));
 
       // Request intersection parameters too - if any
       const int firstextraparam = settings.parameters.size();
-      auto iparams = positions.intersections.parameters();
+      auto iparams = positions->intersections.parameters();
       for (const auto& extraparam : iparams)
         settings.parameters.push_back(obsengine.makeParameter(extraparam));
 
       // ObsEngine takes a rather strange vector of coordinates as input...
 
-      using Coordinate = std::map<std::string, double>;
-      settings.coordinates.reserve(points.size());
-      for (const auto& point : points)
+      if (positions->layout == Positions::Layout::Data || *producer == "flash")
       {
-        Coordinate coordinate{std::make_pair("lon", point.latlon.X()),
-                              std::make_pair("lat", point.latlon.Y())};
-        settings.coordinates.push_back(coordinate);
+        // TODO. Calculate these
+        settings.boundingBox["minx"] = 10;
+        settings.boundingBox["miny"] = 50;
+        settings.boundingBox["maxx"] = 50;
+        settings.boundingBox["maxy"] = 80;
+      }
+      else
+      {
+        Engine::Querydata::Q q;
+        auto points = positions->getPoints(q, crs, box);
+
+        using Coordinate = std::map<std::string, double>;
+        settings.coordinates.reserve(points.size());
+        for (const auto& point : points)
+        {
+          Coordinate coordinate{std::make_pair("lon", point.latlon.X()),
+                                std::make_pair("lat", point.latlon.Y())};
+          settings.coordinates.push_back(coordinate);
+        }
       }
 
       Spine::ValueFormatterParam valueformatterparam;
@@ -289,13 +316,17 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
                 "generating station positions");
 
           // TODO: Should refactor this using Positions methods
-          // TODO: Should avoid getting the same stations twice??
+
+          std::string previous_fmisid;
+          boost::posix_time::ptime previous_time;
 
           for (std::size_t row = 0; row < values[0].size(); ++row)
           {
-            double lon = boost::get<double>(values.at(0).at(row).value);
-            double lat = boost::get<double>(values.at(1).at(row).value);
-            double val = boost::get<double>(values.at(2).at(row).value);
+            const auto& t = values.at(0).at(row).time;
+            double lon = get_double(values.at(0).at(row));
+            double lat = get_double(values.at(1).at(row));
+            std::string fmisid = boost::get<std::string>(values.at(2).at(row).value);
+            double value = get_double(values.at(3).at(row));
 
             // Collect extra values used for filtering the input
 
@@ -305,10 +336,10 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
               ivalues[iparams.at(i)] = get_double(values.at(firstextraparam + i).at(row));
 
 #if 0
-			std::cout << fmisid << "\t" << t << "\t" << lon << "\t" << lat << "\t" << value;
-			for (std::size_t i = 0; i < iparams.size(); i++)
-			  std::cout << "\t" << iparams.at(i) << "=" << ivalues.at(iparams.at(i));
-			std::cout << std::endl;
+            std::cout << fmisid << "\t" << t << "\t" << lon << "\t" << lat << "\t" << value;
+            for (std::size_t i = 0; i < iparams.size(); i++)
+              std::cout << "\t" << iparams.at(i) << "=" << ivalues.at(iparams.at(i));
+            std::cout << std::endl;
 #endif
 
             // Convert latlon to world coordinate if needed
@@ -326,13 +357,28 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
             // Skip if not inside desired area
             if (x >= 0 && x < box.width() && y >= 0 && y < box.height())
             {
-              if (positions.inside(lon, lat, ivalues))
+              if (positions->inside(lon, lat, ivalues))
               {
                 int xpos = x;
                 int ypos = y;
-                Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-                PointValue value{point, val};
-                pointvalues.push_back(value);
+
+                // Keep only the latest value for each coordinate
+
+                bool replace_previous =
+                    ((*producer != "flash") && !pointvalues.empty() &&
+                     (fmisid == previous_fmisid) && (t.utc_time() > previous_time));
+
+                if (replace_previous)
+                  pointvalues.back().value = value;
+                else
+                {
+                  Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
+                  PointValue pv{point, value};
+                  pointvalues.push_back(pv);
+                }
+
+                previous_time = t.utc_time();
+                previous_fmisid = fmisid;
               }
             }
           }

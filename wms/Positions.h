@@ -56,6 +56,7 @@ class Positions
                    boost::shared_ptr<OGRSpatialReference> theCRS,
                    const Fmi::Box& theBox) const;
 
+  bool insideShapes(double theX, double theY) const;
   bool inside(double theX, double theY) const;
   bool inside(double theX, double theY, const Intersections::IntersectValues& theValues) const;
 

@@ -1,5 +1,6 @@
 #include "ValueTools.h"
 #include <spine/Exception.h>
+#include <newbase/NFmiGlobals.h>
 
 namespace SmartMet
 {
@@ -20,6 +21,9 @@ double get_double(const Spine::TimeSeries::Value& value)
 
   if (const int* ivalue = boost::get<int>(&value))
     return *ivalue;
+
+  if (boost::get<Spine::TimeSeries::None>(&value))
+    return kFloatMissing;
 
   // None, std::string, LonLat and local_date_time not accepted. See spine/TimeSeries.h
 

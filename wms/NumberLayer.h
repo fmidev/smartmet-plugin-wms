@@ -40,7 +40,7 @@ class NumberLayer : public Layer
   boost::optional<double> offset;
 
   // Grid coordinate settings
-  Positions positions;
+  boost::optional<Positions> positions;
 
   // Station distance limit in kilometers
   double maxdistance = 5;

@@ -418,6 +418,7 @@ Positions::Points Positions::getGridPoints(SmartMet::Engine::Querydata::Q theQ,
     // // this initial stagger will be cancelled in the first iteration
     xstart += deltaxx;
 
+    // TODO: Must alter these if there is a margin
     const int height = theBox.height();
     const int width = theBox.width();
 
@@ -439,7 +440,7 @@ Positions::Points Positions::getGridPoints(SmartMet::Engine::Querydata::Q theQ,
 
         // Skip if the coordinate is outside the desired shapes
 
-        if (!inside(xcoord, ycoord))
+        if (!insideShapes(xcoord, ycoord))
           continue;
 
         // Convert world coordinate to latlon, skipping points which cannot be handled
@@ -527,12 +528,9 @@ Positions::Points Positions::getDataPoints(SmartMet::Engine::Querydata::Q theQ,
       if (dy)
         ycoord += *dy;
 
-      if (xcoord >= 0 && xcoord < theBox.width() && ycoord >= 0 && ycoord < theBox.height())
-      {
-        // Skip if not inside desired shapes
-        if (inside(latlon.X(), latlon.Y()))
-          points.emplace_back(Point(xcoord, ycoord, latlon));
-      }
+      // Skip if not inside desired shapes
+      if (insideShapes(latlon.X(), latlon.Y()))
+        points.emplace_back(Point(xcoord, ycoord, latlon));
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
@@ -599,12 +597,9 @@ Positions::Points Positions::getGraticulePoints(SmartMet::Engine::Querydata::Q t
           if (dy)
             ycoord += *dy;
 
-          // Skip if not inside desired area
-          if (xcoord >= 0 && xcoord < theBox.width() && ycoord >= 0 && ycoord < theBox.height())
-          {
-            if (inside(lon, lat))
-              points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat)));
-          }
+          // Skip if not inside desired shapes
+          if (insideShapes(lon, lat))
+            points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat)));
         }
         // Handle the poles only once
         if (lat == -90 || lat == 90)
@@ -736,11 +731,8 @@ Positions::Points Positions::getGraticuleFillPoints(SmartMet::Engine::Querydata:
             newy += *dy;
 
           // Skip if not inside desired area
-          if (newx >= 0 && newx < theBox.width() && newy >= 0 && newy < theBox.height())
-          {
-            if (inside(newlon, newlat))
-              points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
-          }
+          if (insideShapes(newlon, newlat))
+            points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
         }
 
         // Bottom edge
@@ -760,12 +752,9 @@ Positions::Points Positions::getGraticuleFillPoints(SmartMet::Engine::Querydata:
           if (dy)
             newy += *dy;
 
-          // Skip if not inside desired area
-          if (newx >= 0 && newx < theBox.width() && newy >= 0 && newy < theBox.height())
-          {
-            if (inside(newlon, newlat))
-              points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
-          }
+          // Skip if not inside desired shapes
+          if (insideShapes(newlon, newlat))
+            points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
 
           // Handle the south pole only once
           if (newlat == -90)
@@ -792,11 +781,8 @@ Positions::Points Positions::getGraticuleFillPoints(SmartMet::Engine::Querydata:
               newy += *dy;
 
             // Skip if not inside desired area
-            if (newx >= 0 && newx < theBox.width() && newy >= 0 && newy < theBox.height())
-            {
-              if (inside(newlon, newlat))
-                points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
-            }
+            if (insideShapes(newlon, newlat))
+              points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
           }
       }
 
@@ -814,11 +800,8 @@ Positions::Points Positions::getGraticuleFillPoints(SmartMet::Engine::Querydata:
         newy += *dy;
 
       // Skip if not inside desired area
-      if (newx >= 0 && newx < theBox.width() && newy >= 0 && newy < theBox.height())
-      {
-        if (inside(newlon, newlat))
-          points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
-      }
+      if (insideShapes(newlon, newlat))
+        points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
@@ -895,12 +878,9 @@ Positions::Points Positions::getKeywordPoints(SmartMet::Engine::Querydata::Q the
       if (dy)
         ycoord += *dy;
 
-      // Skip if not inside desired area
-      if (xcoord >= 0 && xcoord < theBox.width() && ycoord >= 0 && ycoord < theBox.height())
-      {
-        if (inside(lon, lat))
-          points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat)));
-      }
+      // Skip if not inside desired shapes
+      if (insideShapes(lon, lat))
+        points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat)));
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
@@ -975,11 +955,8 @@ Positions::Points Positions::getLatLonPoints(SmartMet::Engine::Querydata::Q theQ
         ycoord += *dy;
 
       // Skip if not inside desired area
-      if (xcoord >= 0 && xcoord < theBox.width() && ycoord >= 0 && ycoord < theBox.height())
-      {
-        if (inside(lon, lat))
-          points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat)));
-      }
+      if (insideShapes(lon, lat))
+        points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat)));
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
@@ -998,7 +975,7 @@ Positions::Points Positions::getLatLonPoints(SmartMet::Engine::Querydata::Q theQ
  */
 // ----------------------------------------------------------------------
 
-bool Positions::inside(double theX, double theY) const
+bool Positions::insideShapes(double theX, double theY) const
 {
   try
   {
@@ -1008,7 +985,25 @@ bool Positions::inside(double theX, double theY) const
     if (inshape && !Fmi::OGR::inside(*inshape, theX, theY))
       return false;
 
-    return intersections.inside(theX, theY);
+    return true;
+  }
+  catch (...)
+  {
+    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Test if the given point is to be rendered
+ */
+// ----------------------------------------------------------------------
+
+bool Positions::inside(double theX, double theY) const
+{
+  try
+  {
+    return insideShapes(theX, theY) && intersections.inside(theX, theY);
   }
   catch (...)
   {

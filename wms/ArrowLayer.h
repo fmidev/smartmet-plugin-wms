@@ -50,7 +50,7 @@ class ArrowLayer : public Layer
   bool southflop;
 
   // Arrow position generator
-  Positions positions;
+  boost::optional<Positions> positions;
 
   // Station distance limit in kilometers
   double maxdistance = 5;
