@@ -29,6 +29,9 @@ struct Properties
             const Config& theConfig,
             const Properties& theProperties);
 
+  boost::posix_time::ptime getValidTime() const;
+  boost::posix_time::time_period getValidTimePeriod() const;
+
   std::size_t hash_value(const State& theState) const;
 
   boost::optional<std::string> language;

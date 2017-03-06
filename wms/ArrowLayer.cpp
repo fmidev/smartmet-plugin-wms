@@ -93,8 +93,10 @@ using PointValues = std::vector<PointValue>;
 PointValues read_forecasts(const ArrowLayer& layer,
                            const Positions::Points& points,
                            SmartMet::Engine::Querydata::Q q,
-                           const NFmiMetTime& met_time)
+                           const boost::posix_time::time_period& time_period)
 {
+  NFmiMetTime met_time = time_period.begin();
+
   boost::optional<SmartMet::Spine::Parameter> dirparam, speedparam, uparam, vparam;
 
   if (layer.direction)
@@ -180,11 +182,11 @@ PointValues read_observations(const ArrowLayer& layer,
                               const Positions::Points& points,
                               const boost::shared_ptr<OGRSpatialReference>& crs,
                               const Fmi::Box& box,
-                              const boost::posix_time::ptime& valid_time)
+                              const boost::posix_time::time_period& valid_time_period)
 {
   Engine::Observation::Settings settings;
-  settings.starttime = valid_time;
-  settings.endtime = valid_time;
+  settings.starttime = valid_time_period.begin();
+  settings.endtime = valid_time_period.end();
   settings.starttimeGiven = true;
   settings.stationtype = *layer.producer;
   settings.timezone = "UTC";
@@ -418,15 +420,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
     // Establish the valid time
 
-    if (!time)
-      throw SmartMet::Spine::Exception(BCP, "Time has not been set for arrow-layer");
-
-    auto valid_time = *time;
-    if (time_offset)
-      valid_time += boost::posix_time::minutes(*time_offset);
-
-    // Do the conversion just ones, not in every call to interpolate...
-    NFmiMetTime met_time = valid_time;
+    auto valid_time_period = getValidTimePeriod();
 
     // Establish the level
 
@@ -452,7 +446,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions.init(q, projection, valid_time, theState);
+    positions.init(q, projection, valid_time_period.begin(), theState);
 
     // The parameters. TODO: Allow metaparameters, needs better Q API
 
@@ -489,10 +483,10 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     PointValues pointvalues;
 
     if (!use_observations)
-      pointvalues = read_forecasts(*this, points, q, met_time);
+      pointvalues = read_forecasts(*this, points, q, valid_time_period);
 #ifndef WITHOUT_OBSERVATION
     else
-      pointvalues = read_observations(*this, theState, points, crs, box, valid_time);
+      pointvalues = read_observations(*this, theState, points, crs, box, valid_time_period);
 #endif
 
     // Render the collected values

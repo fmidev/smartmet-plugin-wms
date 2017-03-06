@@ -427,13 +427,9 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     // Establish the time range
 
-    if (!time)
-      throw SmartMet::Spine::Exception(BCP, "Time has not been set for WindRoseLayer");
+    auto valid_time = getValidTime();
 
-    auto valid_time = *time;
-    if (time_offset)
-      valid_time += boost::posix_time::minutes(*time_offset);
-
+    // TODO: use interval_start and interval_end instead
     auto starttime = valid_time + boost::posix_time::hours(starttimeoffset);
     auto endtime = valid_time + boost::posix_time::hours(endtimeoffset);
 

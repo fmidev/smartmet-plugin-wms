@@ -142,15 +142,10 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Establish the valid time
 
-    if (!time)
-      throw SmartMet::Spine::Exception(BCP, "Time has not been set for isoband-layer");
-
-    auto valid_time = *time;
-    if (time_offset)
-      valid_time += boost::posix_time::minutes(*time_offset);
+    auto valid_time_period = getValidTimePeriod();
 
     // Do this conversion just once for speed:
-    NFmiMetTime met_time = valid_time;
+    NFmiMetTime met_time = valid_time_period.begin();
 
     // Establish the level
 
@@ -177,7 +172,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions.init(q, projection, valid_time, theState);
+    positions.init(q, projection, valid_time_period.begin(), theState);
 
     // Update the globals
 
@@ -229,8 +224,8 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     else
     {
       Engine::Observation::Settings settings;
-      settings.starttime = valid_time;
-      settings.endtime = valid_time;
+      settings.starttime = valid_time_period.begin();
+      settings.endtime = valid_time_period.end();
       settings.starttimeGiven = true;
       settings.stationtype = *producer;
       settings.timezone = "UTC";
@@ -259,11 +254,15 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
       auto result = obsengine.values(settings, valueformatter);
 
+      // TODO: Support flashes
+      // TODO: Pick only the last observation
+
       // Store values for SVG generation
 
       if (result)
       {
         const auto& values = *result;
+
         if (!values.empty())
         {
           // Station WGS84 coordinates

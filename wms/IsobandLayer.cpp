@@ -133,12 +133,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     // Establish the valid time
 
-    if (!time)
-      throw SmartMet::Spine::Exception(BCP, "Time has not been set for isoband-layer!");
-
-    auto valid_time = *time;
-    if (time_offset)
-      valid_time += boost::posix_time::minutes(*time_offset);
+    auto valid_time = getValidTime();
 
     // Establish the level
 

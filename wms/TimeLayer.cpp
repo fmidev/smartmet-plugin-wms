@@ -96,12 +96,7 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
 
     // Establish the valid time
 
-    if (!time)
-      throw SmartMet::Spine::Exception(BCP, "Time has not been set for time-layer");
-
-    auto valid_time = *time;
-    if (time_offset)
-      valid_time += boost::posix_time::minutes(*time_offset);
+    auto valid_time = getValidTime();
 
     // Update the globals
 

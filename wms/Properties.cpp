@@ -140,6 +140,48 @@ void Properties::init(const Json::Value& theJson,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Establish the time for the layer
+ *
+ * This method is not used by layers which require no specific time.
+ * The layers which do require one call this and get an exception if
+ * no time has been specified.
+ */
+// ----------------------------------------------------------------------
+
+boost::posix_time::ptime Properties::getValidTime() const
+{
+  if (!time)
+    throw SmartMet::Spine::Exception(BCP, "Time has not been set for all layers");
+
+  auto valid_time = *time;
+  if (time_offset)
+    valid_time += boost::posix_time::minutes(*time_offset);
+
+  return valid_time;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Establish the time period for the layer
+ */
+// ----------------------------------------------------------------------
+
+boost::posix_time::time_period Properties::getValidTimePeriod() const
+{
+  auto tstart = getValidTime();
+  auto tend = tstart;
+
+  if (interval_start)
+    tstart -= boost::posix_time::minutes(*interval_start);
+
+  if (interval_end)
+    tend += boost::posix_time::minutes(*interval_end);
+
+  return {tstart, tend};
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value
  */
 // ----------------------------------------------------------------------

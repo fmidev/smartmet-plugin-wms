@@ -230,27 +230,6 @@ bool Layer::validType(const std::string& theType) const
       return SmartMet::Spine::ParameterFactory::instance().parse(*parameter);
     }
 
-    // ----------------------------------------------------------------------
-    /*!
-     * \brief Establish the time for the layer
-     *
-     * This method is not used by layers which require no specific time.
-     * The layers which do require one call this and get an exception if
-     * no time has been specified.
-     */
-    // ----------------------------------------------------------------------
-
-    boost::posix_time::ptime Layer::getValidTime() const
-    {
-      if(!time)
-		throw SmartMet::Spine::Exception(BCP,"Time has not been set for all layers");
-
-      auto valid_time = *time;
-      if(time_offset)
-		valid_time += boost::posix_time::minutes(*time_offset);
-
-      return valid_time;
-    }
 #endif
 
 // ----------------------------------------------------------------------

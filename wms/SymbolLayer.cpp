@@ -93,7 +93,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
                            Engine::Querydata::Q q,
                            const boost::shared_ptr<OGRSpatialReference>& crs,
                            const Fmi::Box& box,
-                           const boost::posix_time::ptime& valid_time)
+                           const boost::posix_time::time_period& valid_time_period)
 {
   try
   {
@@ -109,7 +109,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
 
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
-    boost::local_time::local_date_time localdatetime(valid_time, utc);
+    boost::local_time::local_date_time localdatetime(valid_time_period.begin(), utc);
 
     PointValues pointvalues;
     for (const auto& point : points)
@@ -166,7 +166,7 @@ PointValues read_observations(const SymbolLayer& layer,
                               State& state,
                               const boost::shared_ptr<OGRSpatialReference>& crs,
                               const Fmi::Box& box,
-                              const boost::posix_time::ptime& valid_time)
+                              const boost::posix_time::time_period& valid_time_period)
 {
   try
   {
@@ -181,13 +181,8 @@ PointValues read_observations(const SymbolLayer& layer,
 
     settings.starttimeGiven = true;
 
-    settings.starttime = valid_time;
-    if (layer.interval_start)
-      settings.starttime -= boost::posix_time::minutes(*layer.interval_start);
-
-    settings.endtime = valid_time;
-    if (layer.interval_end)
-      settings.endtime += boost::posix_time::minutes(*layer.interval_end);
+    settings.starttime = valid_time_period.begin();
+    settings.endtime = valid_time_period.end();
 
     /*
      * Note:
@@ -482,12 +477,7 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Establish the valid time
 
-    if (!time)
-      throw SmartMet::Spine::Exception(BCP, "Time has not been set for symbol-layer");
-
-    auto valid_time = *time;
-    if (time_offset)
-      valid_time += boost::posix_time::minutes(*time_offset);
+    auto valid_time_period = getValidTimePeriod();
 
     // Establish the level
 
@@ -529,7 +519,7 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(q, projection, valid_time, theState);
+    positions->init(q, projection, valid_time_period.begin(), theState);
 
     // Establish the numbers to draw. At this point we know that if
     // use_observations is true, obsengine is not disabled.
@@ -537,10 +527,10 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     PointValues pointvalues;
 
     if (!use_observations)
-      pointvalues = read_forecasts(*this, q, crs, box, valid_time);
+      pointvalues = read_forecasts(*this, q, crs, box, valid_time_period);
 #ifndef WITHOUT_OBSERVATION
     else
-      pointvalues = read_observations(*this, theState, crs, box, valid_time);
+      pointvalues = read_observations(*this, theState, crs, box, valid_time_period);
 #endif
 
     // Begin a G-group, put arrows into it as tags
