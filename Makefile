@@ -32,7 +32,6 @@ FLAGS_RELEASE = -Wuninitialized
 DIFFICULTFLAGS = \
 	-Weffc++ \
 	-Wunreachable-code \
-	-Wshadow \
 	-Wconversion \
 	-Wold-style-cast \
 	-ansi -pedantic
