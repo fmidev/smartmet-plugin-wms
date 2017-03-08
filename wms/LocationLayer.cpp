@@ -190,6 +190,10 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     if (locations.empty())
       throw SmartMet::Spine::Exception(BCP, "No locations found for keyword '" + keyword + "'");
 
+    // Clip if necessary
+
+    addClipRect(theLayersCdt, theGlobals, box, theState);
+
     // Begin a G-group, put arrows into it as tags
 
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
@@ -217,10 +221,9 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       double y = lat;
       transformation->Transform(1, &x, &y);
 
-      // Skip locations outside the image. TODO: We know the symbol might extend inside,
-      // and this may cause problems when tiling.
+      // Skip locations outside the image.
 
-      if (box.position(x, y) == Fmi::Box::Outside)
+      if (!inside(box, x, y))
         continue;
 
       box.transform(x, y);

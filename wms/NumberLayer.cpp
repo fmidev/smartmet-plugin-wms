@@ -229,9 +229,12 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
       for (const auto& point : points)
       {
-        PointValue value{point,
-                         q->interpolate(point.latlon, met_time, 180)};  // TODO: magic constant
-        pointvalues.push_back(value);
+        if (inside(box, point.x, point.y))
+        {
+          PointValue value{point,
+                           q->interpolate(point.latlon, met_time, 180)};  // TODO: magic constant
+          pointvalues.push_back(value);
+        }
       }
     }
 #ifndef WITHOUT_OBSERVATION
@@ -271,7 +274,6 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       }
       else
       {
-        Engine::Querydata::Q q;
         auto points = positions->getPoints(q, crs, box);
 
         using Coordinate = std::map<std::string, double>;
@@ -355,37 +357,38 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
             box.transform(x, y);
 
             // Skip if not inside desired area
-            if (x >= 0 && x < box.width() && y >= 0 && y < box.height())
+            if (inside(box, x, y) && positions->inside(lon, lat, ivalues))
             {
-              if (positions->inside(lon, lat, ivalues))
+              int xpos = x;
+              int ypos = y;
+
+              // Keep only the latest value for each coordinate
+
+              bool replace_previous =
+                  ((*producer != "flash") && !pointvalues.empty() && (fmisid == previous_fmisid) &&
+                   (t.utc_time() > previous_time));
+
+              if (replace_previous)
+                pointvalues.back().value = value;
+              else
               {
-                int xpos = x;
-                int ypos = y;
-
-                // Keep only the latest value for each coordinate
-
-                bool replace_previous =
-                    ((*producer != "flash") && !pointvalues.empty() &&
-                     (fmisid == previous_fmisid) && (t.utc_time() > previous_time));
-
-                if (replace_previous)
-                  pointvalues.back().value = value;
-                else
-                {
-                  Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-                  PointValue pv{point, value};
-                  pointvalues.push_back(pv);
-                }
-
-                previous_time = t.utc_time();
-                previous_fmisid = fmisid;
+                Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
+                PointValue pv{point, value};
+                pointvalues.push_back(pv);
               }
+
+              previous_time = t.utc_time();
+              previous_fmisid = fmisid;
             }
           }
         }
       }
     }
 #endif
+
+    // Clip if necessary
+
+    addClipRect(theLayersCdt, theGlobals, box, theState);
 
     // Generate numbers as text layers inside <g>..</g>
     // Tags do not work, they do not have cdata enabled in the

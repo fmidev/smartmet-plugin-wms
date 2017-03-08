@@ -404,6 +404,10 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       theGlobals["css"][name] = theState.getStyle(*(css));
     }
 
+    // Clip if necessary
+
+    addClipRect(theLayersCdt, theGlobals, projection.getBox(), theState);
+
     SmartMet::Engine::Gis::MapOptions mapOptions;
     mapOptions.pgname = pgname;
     mapOptions.schema = schema;

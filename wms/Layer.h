@@ -25,6 +25,11 @@ namespace CTPP
 class CDT;
 }
 
+namespace Fmi
+{
+class Box;
+}
+
 namespace SmartMet
 {
 namespace Spine
@@ -64,6 +69,16 @@ class Layer : public Properties
 
   // Get the model data
   SmartMet::Engine::Querydata::Q getModel(const State& theState) const;
+
+  // Generate clipPath to the output if needed
+  void addClipRect(CTPP::CDT& theCdt,
+                   CTPP::CDT& theGlobals,
+                   const Fmi::Box& theBox,
+                   State& theState);
+
+  // Generate bounding box for clipping paths and testing point insidedness
+
+  Fmi::Box getClipBox(const Fmi::Box& theBox) const;
 
   // Layer specific settings
   std::string qid;

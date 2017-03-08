@@ -307,14 +307,17 @@ void Positions::init(SmartMet::Engine::Querydata::Q q,
         throw SmartMet::Spine::Exception(BCP,
                                          "Positions received empty inside-shape from database!");
 
-      inshape.reset(Fmi::OGR::polyclip(*inshape, theProjection.getBox()));
+      // This does not obey layer margins, hence we disable this speed optimization
+      // inshape.reset(Fmi::OGR::polyclip(*inshape, theProjection.getBox()));
     }
 
     if (outsidemap)
     {
       outshape = gis.getShape(theProjection.getCRS().get(), outsidemap->options);
-      if (outshape)
-        outshape.reset(Fmi::OGR::polyclip(*outshape, theProjection.getBox()));
+
+      // This does not obey layer margings, hence we disable this speed optimization
+      // if (outshape)
+      // outshape.reset(Fmi::OGR::polyclip(*outshape, theProjection.getBox()));
     }
 
     if (q)

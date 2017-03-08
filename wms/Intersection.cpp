@@ -186,7 +186,6 @@ void Intersection::init(SmartMet::Engine::Querydata::Q q,
     // Establish the projection from the geometry to be clipped
 
     auto crs = theProjection.getCRS();
-    const auto& box = theProjection.getBox();
 
     // Calculate the isoband
 
@@ -256,9 +255,11 @@ void Intersection::init(SmartMet::Engine::Querydata::Q q,
     if (!isoband || isoband->IsEmpty())
       return;
 
-    // Clip the contour with the bounding box for extra speed later on
+    // This does not obey layer margin settings, hence this is disabled:
 
-    isoband.reset(Fmi::OGR::polyclip(*isoband, box));
+    // Clip the contour with the bounding box for extra speed later on.
+    // const auto& box = theProjection.getBox();
+    // isoband.reset(Fmi::OGR::polyclip(*isoband, box));
   }
   catch (...)
   {

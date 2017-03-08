@@ -150,6 +150,9 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();
 
+    // And the box needed for clipping
+    const auto clipbox = getClipBox(box);
+
     // Sample to higher resolution if necessary
 
     auto sampleresolution = sampling.getResolution(projection);
@@ -182,6 +185,10 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       theGlobals["css"][name] = theState.getStyle(*css);
     }
 
+    // Clip if necessary
+
+    addClipRect(theLayersCdt, theGlobals, box, theState);
+
     // Generate isolines as use tags statements inside <g>..</g>
 
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
@@ -204,12 +211,13 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       if (!inshape)
         throw SmartMet::Spine::Exception(BCP,
                                          "IsolineLayer received empty inside-shape from database");
+      inshape.reset(Fmi::OGR::lineclip(*inshape, clipbox));
     }
     if (outside)
     {
       outshape = gis.getShape(crs.get(), outside->options);
       if (outshape)
-        outshape.reset(Fmi::OGR::lineclip(*outshape, box));
+        outshape.reset(Fmi::OGR::lineclip(*outshape, clipbox));
     }
 
     // Logical operations with isobands are initialized before hand
@@ -284,7 +292,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       OGRGeometryPtr geom = geoms[i];
       if (geom && !geom->IsEmpty())
       {
-        OGRGeometryPtr geom2(Fmi::OGR::lineclip(*geom, box));
+        OGRGeometryPtr geom2(Fmi::OGR::lineclip(*geom, clipbox));
         const Isoline& isoline = isolines[i];
 
         // Do intersections if so requested

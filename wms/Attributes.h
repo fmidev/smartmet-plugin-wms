@@ -30,6 +30,7 @@ class Attributes
 {
  public:
   void init(const Json::Value& theJson, const Config& theConfig);
+  void add(const std::string& theName, const std::string& theValue);
 
   void generate(CTPP::CDT& theLocals, State& theState) const;
   std::size_t hash_value(const State& theState) const;

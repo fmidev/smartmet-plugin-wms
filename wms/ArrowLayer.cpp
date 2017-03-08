@@ -142,6 +142,9 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
   for (const auto& point : points)
   {
+    if (!layer.inside(box, point.x, point.y))
+      continue;
+
     // Arrow direction and speed
     double wdir = kFloatMissing;
     double wspd = 0;
@@ -343,29 +346,26 @@ PointValues read_observations(const ArrowLayer& layer,
     box.transform(x, y);
 
     // Skip if not inside desired area
-    if (x >= 0 && x < box.width() && y >= 0 && y < box.height())
+    if (layer.inside(box, x, y) && layer.positions->inside(lon, lat, ivalues))
     {
-      if (layer.positions->inside(lon, lat, ivalues))
+      // Keep only the latest value for each coordinate
+
+      bool replace_previous = ((*layer.producer != "flash") && !pointvalues.empty() &&
+                               (fmisid == previous_fmisid) && (t.utc_time() > previous_time));
+
+      if (replace_previous)
       {
-        // Keep only the latest value for each coordinate
+        pointvalues.back().direction = wdir;
+        pointvalues.back().speed = wspd;
+      }
+      else
+      {
+        int xpos = x;
+        int ypos = y;
 
-        bool replace_previous = ((*layer.producer != "flash") && !pointvalues.empty() &&
-                                 (fmisid == previous_fmisid) && (t.utc_time() > previous_time));
-
-        if (replace_previous)
-        {
-          pointvalues.back().direction = wdir;
-          pointvalues.back().speed = wspd;
-        }
-        else
-        {
-          int xpos = x;
-          int ypos = y;
-
-          Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-          PointValue pv{point, wdir, wspd};
-          pointvalues.push_back(pv);
-        }
+        Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
+        PointValue pv{point, wdir, wspd};
+        pointvalues.push_back(pv);
       }
     }
 
@@ -543,6 +543,10 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       std::string name = theState.getCustomer() + "/" + *css;
       theGlobals["css"][name] = theState.getStyle(*css);
     }
+
+    // Clip if necessary
+
+    addClipRect(theLayersCdt, theGlobals, box, theState);
 
     // Begin a G-group, put arrows into it as tags
 

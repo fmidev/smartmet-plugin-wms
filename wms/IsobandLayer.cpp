@@ -154,6 +154,9 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();
 
+    // And the box needed for clipping
+    const auto clipbox = getClipBox(box);
+
 #if 0
         char * txt;
         crs->exportToWkt(&txt);
@@ -189,25 +192,6 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
                     *landdata);
     }
 
-    // Update the globals
-
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
-
-    // Generate isobands as use tags statements inside <g>..</g>
-
-    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
-    if (!theState.inDefs())
-    {
-      group_cdt["start"] = "<g";
-      group_cdt["end"] = "</g>";
-      // Add attributes to the group, not the isobands
-      theState.addAttributes(theGlobals, group_cdt, attributes);
-    }
-
     // Logical operations with maps require shapes
 
     const auto& gis = theState.getGisEngine();
@@ -219,13 +203,13 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       if (!inshape)
         throw SmartMet::Spine::Exception(BCP, "Received empty inside-shape from database!");
 
-      inshape.reset(Fmi::OGR::polyclip(*inshape, box));
+      inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
     }
     if (outside)
     {
       outshape = gis.getShape(crs.get(), outside->options);
       if (outshape)
-        outshape.reset(Fmi::OGR::polyclip(*outshape, box));
+        outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
     }
 
     // Logical operations with isobands are initialized before hand
@@ -305,12 +289,35 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, sr);
     std::vector<OGRGeometryPtr> geoms = contourer.contour(qhash, wkt, *matrix, coords, options, sr);
 
+    // Update the globals
+
+    if (css)
+    {
+      std::string name = theState.getCustomer() + "/" + *css;
+      theGlobals["css"][name] = theState.getStyle(*css);
+    }
+
+    // Clip if necessary
+
+    addClipRect(theLayersCdt, theGlobals, box, theState);
+
+    // Generate isobands as use tags statements inside <g>..</g>
+
+    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
+    if (!theState.inDefs())
+    {
+      group_cdt["start"] = "<g";
+      group_cdt["end"] = "</g>";
+      // Add attributes to the group, not the isobands
+      theState.addAttributes(theGlobals, group_cdt, attributes);
+    }
+
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
       OGRGeometryPtr geom = geoms[i];
       if (geom && !geom->IsEmpty())
       {
-        OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, box));
+        OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, clipbox));
         const Isoband& isoband = isobands[i];
 
         // Do intersections if so requested

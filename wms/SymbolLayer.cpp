@@ -85,6 +85,9 @@ PointValues read_forecasts(const SymbolLayer& layer,
     PointValues pointvalues;
     for (const auto& point : points)
     {
+      if (!layer.inside(box, point.x, point.y))
+        continue;
+
       if (layer.symbols.empty())
       {
         PointValue value{point, kFloatMissing};
@@ -304,7 +307,7 @@ PointValues read_observations(const SymbolLayer& layer,
       box.transform(x, y);
 
       // Skip if not inside desired area
-      if (x < 0 || x >= box.width() || y < 0 || y >= box.height())
+      if (!layer.inside(box, x, y))
         continue;
 
       // Skip if not inside/outside desired shapes or limits of other parameters
@@ -503,6 +506,10 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     else
       pointvalues = read_observations(*this, theState, crs, box, valid_time_period);
 #endif
+
+    // Clip if necessary
+
+    addClipRect(theLayersCdt, theGlobals, box, theState);
 
     // Begin a G-group, put arrows into it as tags
 

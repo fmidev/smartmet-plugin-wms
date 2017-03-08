@@ -18,15 +18,26 @@ namespace Dali
 {
 // ----------------------------------------------------------------------
 /*!
- * \brief Initialize attributes from JSON
- *
- * Note: We allow JSON values to be integers and doubles, but
- *       convert them directly to strings since that is how
- *       we are going to represent them when printing SVG
- *       attributes. This feature allows the user to put
- *       attributes in a natural form into the attributes without
- *       bothering with unnecessary quotes.
+ * \brief Add an attribute
  */
+// ----------------------------------------------------------------------
+
+void Attributes::add(const std::string& theName, const std::string& theValue)
+{
+  attributes[theName] = theValue;
+}
+
+// ----------------------------------------------------------------------
+/*!
+* \brief Initialize attributes from JSON
+*
+* Note: We allow JSON values to be integers and doubles, but
+*       convert them directly to strings since that is how
+*       we are going to represent them when printing SVG
+*       attributes. This feature allows the user to put
+*       attributes in a natural form into the attributes without
+*       bothering with unnecessary quotes.
+*/
 // ----------------------------------------------------------------------
 
 void Attributes::init(const Json::Value& theJson, const Config& theConfig)
@@ -121,29 +132,29 @@ void Attributes::generate(CTPP::CDT& theLocals, State& theState) const
 
     BOOST_FOREACH (const auto& attribute, attributes)
     {
-      const auto& name = attribute.first;
-      const auto& value = attribute.second;
+      const auto& attr_name = attribute.first;
+      const auto& attr_value = attribute.second;
 
       // Validate attribute name
 
-      bool is_regular = (regular_attributes.find(name) != regular_attributes.end());
-      bool is_presentation =
-          (!is_regular && (presentation_attributes.find(name) != presentation_attributes.end()));
-      bool is_valid = ((name == "qid") | is_presentation | is_regular);
+      bool is_regular = (regular_attributes.find(attr_name) != regular_attributes.end());
+      bool is_presentation = (!is_regular && (presentation_attributes.find(attr_name) !=
+                                              presentation_attributes.end()));
+      bool is_valid = ((attr_name == "qid") | is_presentation | is_regular);
 
       if (!is_valid)
-        throw SmartMet::Spine::Exception(BCP, "Illegal SVG attribute name '" + name + "'");
+        throw SmartMet::Spine::Exception(BCP, "Illegal SVG attribute name '" + attr_name + "'");
 
       // Make sure the ID is unique
-      if (name == "id")
-        theState.requireId(value);
+      if (attr_name == "id")
+        theState.requireId(attr_value);
 
       // Handle the attribute
 
       if (is_regular)
-        attrs[name] = value;
+        attrs[attr_name] = attr_value;
       else if (is_presentation)
-        style[name] = value;
+        style[attr_name] = attr_value;
     }
 
     // Now add a style attribute if necessary

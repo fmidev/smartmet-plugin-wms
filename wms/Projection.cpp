@@ -96,6 +96,7 @@ void Projection::init(const Json::Value& theJson, const State& theState, const C
       if (!loc)
         throw SmartMet::Spine::Exception(
             BCP, "Unable to find coordinates for geoid '" + Fmi::to_string(id) + "'");
+      latlon_center = true;
       cx = loc->longitude;
       cy = loc->latitude;
     }
@@ -110,6 +111,8 @@ void Projection::init(const Json::Value& theJson, const State& theState, const C
       if (!loc)
         throw SmartMet::Spine::Exception(BCP,
                                          "Unable to find coordinates for location '" + name + "'");
+
+      latlon_center = true;
       cx = loc->longitude;
       cy = loc->latitude;
     }
@@ -417,11 +420,15 @@ void Projection::prepareCRS() const
 
       double CX = *cx, CY = *cy;
 
-      if (bboxcrs && *crs != *bboxcrs)
+      if (latlon_center || (bboxcrs && *crs != *bboxcrs))
       {
-        // Reproject center coordinates from bboxcrs to crs
+        // Reproject center coordinates from latlon/bboxcrs to crs
         OGRSpatialReference ogr_crs2;
-        err = ogr_crs2.SetFromUserInput(bboxcrs->c_str());
+        if (latlon_center)
+          err = ogr_crs2.SetFromUserInput("WGS84");
+        else
+          err = ogr_crs2.SetFromUserInput(bboxcrs->c_str());
+
         if (err != OGRERR_NONE)
           throw SmartMet::Spine::Exception(BCP, "Unknown CRS: '" + *bboxcrs + "'");
 

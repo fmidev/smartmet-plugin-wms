@@ -5,7 +5,9 @@
 // ----------------------------------------------------------------------
 
 #pragma once
+
 #include "Projection.h"
+#include <gis/Box.h>
 #include <boost/optional.hpp>
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <string>
@@ -31,6 +33,7 @@ struct Properties
 
   boost::posix_time::ptime getValidTime() const;
   boost::posix_time::time_period getValidTimePeriod() const;
+  bool inside(const Fmi::Box& theBox, double theX, double theY) const;
 
   std::size_t hash_value(const State& theState) const;
 
@@ -41,15 +44,18 @@ struct Properties
   boost::optional<boost::posix_time::ptime> time;
   boost::optional<int> time_offset;  // minutes
 
-  // Unless we want an interval, for example for lightning data, then we use
-  // interval T-interval_start ... T+interval_end. Also, some observations
-  // come at irregular intervals. An interval can be used to select the
-  // latest observation available, if any.
+  // An interval can be used to select the latest observation available, if any, or for example all
+  // lightning observations. For forecasts the interval settings are meaningless.
 
   boost::optional<int> interval_start;  // minutes
   boost::optional<int> interval_end;    // minutes
 
   Projection projection;
+
+  // Clipping margins
+  int xmargin = 0;
+  int ymargin = 0;
+  bool clip = false;
 };
 
 }  // namespace Dali

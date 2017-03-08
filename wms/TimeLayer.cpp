@@ -119,8 +119,6 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
 
     if (x || y)
     {
-      // Establish the data to make sure the projection bbox is OK
-      auto q = getModel(theState);
       projection.update(q);
       const auto& box = projection.getBox();
 

@@ -87,6 +87,9 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     auto crs = projection.getCRS();
     const Fmi::Box& box = projection.getBox();
 
+    // And the box needed for clipping
+    const auto clipbox = getClipBox(box);
+
     // Fetch the shape in our projection
 
     OGRGeometryPtr geom;
@@ -118,9 +121,9 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       if (theState.useTimer())
         mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
       if (map.lines)
-        geom.reset(Fmi::OGR::lineclip(*geom, box));  // fast and hence not cached in gisengine
+        geom.reset(Fmi::OGR::lineclip(*geom, clipbox));  // fast and hence not cached in gisengine
       else
-        geom.reset(Fmi::OGR::polyclip(*geom, box));  // fast and hence not cached in gisengine
+        geom.reset(Fmi::OGR::polyclip(*geom, clipbox));  // fast and hence not cached in gisengine
     }
 
     // We might zoom in so close that some geometry becomes invisible - just don't generate anything
@@ -147,6 +150,10 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
         std::string name = theState.getCustomer() + "/" + *css;
         theGlobals["css"][name] = theState.getStyle(*css);
       }
+
+      // Clip if necessary
+
+      addClipRect(theLayersCdt, theGlobals, box, theState);
 
       // The output consists of a use tag only. We could output a group
       // only without any tags, but the output is nicer looking this way

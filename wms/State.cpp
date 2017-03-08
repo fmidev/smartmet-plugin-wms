@@ -525,6 +525,19 @@ std::size_t State::getGradientHash(const std::string& theName) const
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate a new unique ID valid for SVG
+ */
+//----------------------------------------------------------------------
+
+std::string State::generateUniqueId() const
+{
+  std::string ret = "generated_id_";
+  ret += Fmi::to_string(itsNextId++);
+  return ret;
+}
+
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet

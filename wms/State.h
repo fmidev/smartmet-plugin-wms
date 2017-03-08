@@ -45,10 +45,12 @@ namespace Gis
 {
 class Engine;
 }
+#ifndef WITHOUT_OBSERVATION
 namespace Observation
 {
 class Engine;
 }
+#endif
 }
 
 namespace Plugin
@@ -72,7 +74,9 @@ class State
   const SmartMet::Engine::Contour::Engine& getContourEngine() const;
   const SmartMet::Engine::Gis::Engine& getGisEngine() const;
   const SmartMet::Engine::Geonames::Engine& getGeoEngine() const;
+#ifndef WITHOUT_OBSERVATION
   SmartMet::Engine::Observation::Engine& getObsEngine() const;
+#endif
 
   // Give access to configuration variables
   const Config& getConfig() const;
@@ -130,6 +134,11 @@ class State
   // Establish WMS / regular mode
   void useWms(bool flag) { itUsesWms = flag; }
   bool useWms() const { return itUsesWms; }
+  // Generate an unique ID when a readable cannot be generated based on some
+  // existing ID.
+
+  std::string generateUniqueId() const;
+
  private:
   const Plugin& itsPlugin;
   mutable std::map<SmartMet::Engine::Querydata::Producer, SmartMet::Engine::Querydata::Q> itsQCache;
@@ -139,6 +148,9 @@ class State
 
   // Names which have already been used as unique IDs in the SVG
   mutable std::set<std::string> itsUsedIds;
+
+  // Next ID to be used
+  mutable std::size_t itsNextId = 0;
 
   // Are we in the Defs section?
   bool itsInDefs;

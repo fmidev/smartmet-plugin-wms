@@ -41,7 +41,7 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
       time = parse_time(Fmi::to_string(tmp));
     }
     else if (!json.isNull())
-      throw SmartMet::Spine::Exception(BCP, "Failed to parse time setting: '" + json.asString());
+      throw Spine::Exception(BCP, "Failed to parse time setting: '" + json.asString());
 
     json = theJson.get("time_offset", nulljson);
     if (!json.isNull())
@@ -58,10 +58,31 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
     json = theJson.get("projection", nulljson);
     if (!json.isNull())
       projection.init(json, theState, theConfig);
+
+    json = theJson.get("margin", nulljson);
+    if (!json.isNull())
+    {
+      xmargin = json.asInt();
+      ymargin = xmargin;
+    }
+    else
+    {
+      json = theJson.get("xmargin", nulljson);
+      if (!json.isNull())
+        xmargin = json.asInt();
+
+      json = theJson.get("ymargin", nulljson);
+      if (!json.isNull())
+        xmargin = json.asInt();
+    }
+
+    json = theJson.get("clip", nulljson);
+    if (!json.isNull())
+      clip = json.asBool();
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -107,7 +128,7 @@ void Properties::init(const Json::Value& theJson,
     else if (json.isNull())
       time = theProperties.time;
     else
-      throw SmartMet::Spine::Exception(BCP, "Failed to parse time setting: '" + json.asString());
+      throw Spine::Exception(BCP, "Failed to parse time setting: '" + json.asString());
 
     json = theJson.get("time_offset", nulljson);
     if (json.isNull())
@@ -131,10 +152,40 @@ void Properties::init(const Json::Value& theJson,
     json = theJson.get("projection", nulljson);
     if (!json.isNull())
       projection.init(json, theState, theConfig);
+
+    // Propagating margins is a bit more complicated. Here
+    // a single margin setting overrides xmargin and ymargin.
+
+    json = theJson.get("margin", nulljson);
+    if (!json.isNull())
+    {
+      xmargin = json.asInt();
+      ymargin = json.asInt();
+    }
+    else
+    {
+      json = theJson.get("xmargin", nulljson);
+      if (json.isNull())
+        xmargin = theProperties.xmargin;
+      else
+        xmargin = json.asInt();
+
+      json = theJson.get("ymargin", nulljson);
+      if (json.isNull())
+        ymargin = theProperties.ymargin;
+      else
+        ymargin = json.asInt();
+    }
+
+    json = theJson.get("clip", nulljson);
+    if (json.isNull())
+      clip = theProperties.clip;
+    else
+      clip = json.asBool();
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -151,7 +202,7 @@ void Properties::init(const Json::Value& theJson,
 boost::posix_time::ptime Properties::getValidTime() const
 {
   if (!time)
-    throw SmartMet::Spine::Exception(BCP, "Time has not been set for all layers");
+    throw Spine::Exception(BCP, "Time has not been set for all layers");
 
   auto valid_time = *time;
   if (time_offset)
@@ -182,6 +233,18 @@ boost::posix_time::time_period Properties::getValidTimePeriod() const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Test whether the given pixel coordinate is within pixel box bounds
+ */
+// ----------------------------------------------------------------------
+
+bool Properties::inside(const Fmi::Box& theBox, double theX, double theY) const
+{
+  return ((theX >= -xmargin) && (theX <= theBox.width() + xmargin) && (theY >= -ymargin) &&
+          (theY <= theBox.height() + ymargin));
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value
  */
 // ----------------------------------------------------------------------
@@ -196,13 +259,15 @@ std::size_t Properties::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(time_offset));
     boost::hash_combine(hash, Dali::hash_value(interval_start));
     boost::hash_combine(hash, Dali::hash_value(interval_end));
+    boost::hash_combine(hash, Dali::hash_value(xmargin));
+    boost::hash_combine(hash, Dali::hash_value(ymargin));
+    boost::hash_combine(hash, Dali::hash_value(clip));
     boost::hash_combine(hash, Dali::hash_value(projection, theState));
     return hash;
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(
-        BCP, "Failed to calculate hash value for layer properties!", NULL);
+    throw Spine::Exception(BCP, "Failed to calculate hash value for layer properties!", NULL);
   }
 }
 

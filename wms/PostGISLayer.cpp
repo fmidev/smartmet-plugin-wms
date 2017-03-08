@@ -48,6 +48,14 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       theGlobals["css"][name] = theState.getStyle(*css);
     }
 
+    // Clip if necessary
+
+    const auto& box = projection.getBox();
+    addClipRect(theLayersCdt, theGlobals, box, theState);
+
+    // And the box needed for clipping
+    const auto clipbox = getClipBox(box);
+
     // Generate areas as use tag statements inside <g>..</g>
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
     if (!theState.inDefs())
@@ -78,9 +86,7 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
       if (geom && !geom->IsEmpty())
       {
-        const Fmi::Box& box = projection.getBox();
-
-        OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, box));
+        OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, clipbox));
 
         if (geom2 && !geom2->IsEmpty())
         {

@@ -109,6 +109,9 @@ class Projection
   mutable NFmiPoint itsBottomLeft;
   mutable NFmiPoint itsTopRight;
 
+  // Was the center set using geoid or name?
+  bool latlon_center = false;
+
 };  // class Projection
 
 }  // namespace Dali

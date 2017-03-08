@@ -26,6 +26,7 @@
 
 #include <json/json.h>
 #include <json/reader.h>
+#include <json/writer.h>
 
 #include <ctpp2/CDT.hpp>
 
@@ -691,7 +692,7 @@ int Plugin::getRequiredAPIVersion() const
 Product Plugin::getProduct(const SmartMet::Spine::HTTP::Request &theRequest,
                            const State &theState,
                            const std::string &theName,
-                           bool theDebugFlag) const
+                           bool print_json) const
 {
   try
   {
@@ -743,9 +744,12 @@ Product Plugin::getProduct(const SmartMet::Spine::HTTP::Request &theRequest,
 
     // Debugging
 
-    if (theDebugFlag)
+    if (print_json)
+    {
+      Json::StyledWriter writer;
       std::cout << "Expanded " << theName << " SmartMet::Spine::JSON:" << std::endl
-                << json << std::endl;
+                << writer.write(json) << std::endl;
+    }
 
     // And initialize the product specs from the JSON
 
@@ -1246,7 +1250,11 @@ WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
 
       // Debugging
       if (print_json)
-        std::cout << "Expanded SmartMet::Spine::JSON:" << std::endl << json << std::endl;
+      {
+        Json::StyledWriter writer;
+        std::cout << "Expanded SmartMet::Spine::JSON:" << std::endl
+                  << writer.write(json) << std::endl;
+      }
 
       // And initialize the product specs from the JSON
       product.init(json, state, itsConfig);

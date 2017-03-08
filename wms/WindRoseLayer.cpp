@@ -435,6 +435,10 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     auto rosedata = getObservations(theState, starttime, endtime);
 
+    // Clip if necessary
+
+    addClipRect(theLayersCdt, theGlobals, box, theState);
+
     // Generate wind roses inside a <g>...</g>
 
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);

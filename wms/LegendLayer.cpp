@@ -302,9 +302,9 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       // First the symbol
 
       {
-        CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
-        group_cdt["start"] = "";
-        group_cdt["end"] = "";
+        CTPP::CDT inner_group_cdt(CTPP::CDT::HASH_VAL);
+        inner_group_cdt["start"] = "";
+        inner_group_cdt["end"] = "";
 
         CTPP::CDT symbol_cdt(CTPP::CDT::HASH_VAL);
         symbol_cdt["start"] = "<use";
@@ -330,9 +330,9 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
         symbol_cdt["attributes"]["xlink:href"] = "#" + IRI;
 
-        group_cdt["tags"].PushBack(symbol_cdt);
+        inner_group_cdt["tags"].PushBack(symbol_cdt);
 
-        theLayersCdt.PushBack(group_cdt);
+        theLayersCdt.PushBack(inner_group_cdt);
       }
 
       // Then the text
