@@ -337,24 +337,25 @@ void Positions::init(SmartMet::Engine::Querydata::Q q,
 
 Positions::Points Positions::getPoints(SmartMet::Engine::Querydata::Q theQ,
                                        boost::shared_ptr<OGRSpatialReference> theCRS,
-                                       const Fmi::Box& theBox) const
+                                       const Fmi::Box& theBox,
+                                       bool forecastMode) const
 {
   try
   {
     switch (layout)
     {
       case Layout::Grid:
-        return getGridPoints(theQ, theCRS, theBox);
+        return getGridPoints(theQ, theCRS, theBox, forecastMode);
       case Layout::Data:
-        return getDataPoints(theQ, theCRS, theBox);
+        return getDataPoints(theQ, theCRS, theBox, forecastMode);
       case Layout::Graticule:
-        return getGraticulePoints(theQ, theCRS, theBox);
+        return getGraticulePoints(theQ, theCRS, theBox, forecastMode);
       case Layout::GraticuleFill:
-        return getGraticuleFillPoints(theQ, theCRS, theBox);
+        return getGraticuleFillPoints(theQ, theCRS, theBox, forecastMode);
       case Layout::Keyword:
-        return getKeywordPoints(theQ, theCRS, theBox);
+        return getKeywordPoints(theQ, theCRS, theBox, forecastMode);
       case Layout::LatLon:
-        return getLatLonPoints(theQ, theCRS, theBox);
+        return getLatLonPoints(theQ, theCRS, theBox, forecastMode);
     }
     // Dummy to prevent g++ from complaining
     return Points();
@@ -373,7 +374,8 @@ Positions::Points Positions::getPoints(SmartMet::Engine::Querydata::Q theQ,
 
 Positions::Points Positions::getGridPoints(SmartMet::Engine::Querydata::Q theQ,
                                            boost::shared_ptr<OGRSpatialReference> theCRS,
-                                           const Fmi::Box& theBox) const
+                                           const Fmi::Box& theBox,
+                                           bool forecastMode) const
 {
   try
   {
@@ -384,8 +386,7 @@ Positions::Points Positions::getGridPoints(SmartMet::Engine::Querydata::Q theQ,
     if (err != OGRERR_NONE)
       throw SmartMet::Spine::Exception(BCP, "GDAL does not understand WGS84!");
 
-    // Create the coordinate transformation from image world coordinates
-    // to lat lon
+    // Create the coordinate transformation from image world coordinates to latlon
 
     std::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(theCRS.get(), wgs84.get()));
@@ -443,7 +444,7 @@ Positions::Points Positions::getGridPoints(SmartMet::Engine::Querydata::Q theQ,
 
         // Skip if the coordinate is outside the desired shapes
 
-        if (!insideShapes(xcoord, ycoord))
+        if (!inside(xcoord, ycoord, forecastMode))
           continue;
 
         // Convert world coordinate to latlon, skipping points which cannot be handled
@@ -473,7 +474,8 @@ Positions::Points Positions::getGridPoints(SmartMet::Engine::Querydata::Q theQ,
 
 Positions::Points Positions::getDataPoints(SmartMet::Engine::Querydata::Q theQ,
                                            boost::shared_ptr<OGRSpatialReference> theCRS,
-                                           const Fmi::Box& theBox) const
+                                           const Fmi::Box& theBox,
+                                           bool forecastMode) const
 {
   // Cannot generate any points without any querydata. If layout=data,
   // the layers will handle stations and flashes by themselves.
@@ -532,7 +534,7 @@ Positions::Points Positions::getDataPoints(SmartMet::Engine::Querydata::Q theQ,
         ycoord += *dy;
 
       // Skip if not inside desired shapes
-      if (insideShapes(latlon.X(), latlon.Y()))
+      if (inside(latlon.X(), latlon.Y(), forecastMode))
         points.emplace_back(Point(xcoord, ycoord, latlon));
     }
 
@@ -554,7 +556,8 @@ Positions::Points Positions::getDataPoints(SmartMet::Engine::Querydata::Q theQ,
 
 Positions::Points Positions::getGraticulePoints(SmartMet::Engine::Querydata::Q theQ,
                                                 boost::shared_ptr<OGRSpatialReference> theCRS,
-                                                const Fmi::Box& theBox) const
+                                                const Fmi::Box& theBox,
+                                                bool forecastMode) const
 {
   try
   {
@@ -600,8 +603,8 @@ Positions::Points Positions::getGraticulePoints(SmartMet::Engine::Querydata::Q t
           if (dy)
             ycoord += *dy;
 
-          // Skip if not inside desired shapes
-          if (insideShapes(lon, lat))
+          // Skip if not inside desired areas
+          if (inside(lon, lat, forecastMode))
             points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat)));
         }
         // Handle the poles only once
@@ -628,7 +631,8 @@ Positions::Points Positions::getGraticulePoints(SmartMet::Engine::Querydata::Q t
 
 Positions::Points Positions::getGraticuleFillPoints(SmartMet::Engine::Querydata::Q theQ,
                                                     boost::shared_ptr<OGRSpatialReference> theCRS,
-                                                    const Fmi::Box& theBox) const
+                                                    const Fmi::Box& theBox,
+                                                    bool forecastMode) const
 {
   try
   {
@@ -733,8 +737,8 @@ Positions::Points Positions::getGraticuleFillPoints(SmartMet::Engine::Querydata:
           if (dy)
             newy += *dy;
 
-          // Skip if not inside desired area
-          if (insideShapes(newlon, newlat))
+          // Skip if not inside desired areas
+          if (inside(newlon, newlat, forecastMode))
             points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
         }
 
@@ -756,7 +760,7 @@ Positions::Points Positions::getGraticuleFillPoints(SmartMet::Engine::Querydata:
             newy += *dy;
 
           // Skip if not inside desired shapes
-          if (insideShapes(newlon, newlat))
+          if (inside(newlon, newlat, forecastMode))
             points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
 
           // Handle the south pole only once
@@ -784,7 +788,7 @@ Positions::Points Positions::getGraticuleFillPoints(SmartMet::Engine::Querydata:
               newy += *dy;
 
             // Skip if not inside desired area
-            if (insideShapes(newlon, newlat))
+            if (inside(newlon, newlat, forecastMode))
               points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
           }
       }
@@ -802,8 +806,8 @@ Positions::Points Positions::getGraticuleFillPoints(SmartMet::Engine::Querydata:
       if (dy)
         newy += *dy;
 
-      // Skip if not inside desired area
-      if (insideShapes(newlon, newlat))
+      // Skip if not inside desired areas
+      if (inside(newlon, newlat, forecastMode))
         points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
     }
 
@@ -825,7 +829,8 @@ Positions::Points Positions::getGraticuleFillPoints(SmartMet::Engine::Querydata:
 
 Positions::Points Positions::getKeywordPoints(SmartMet::Engine::Querydata::Q theQ,
                                               boost::shared_ptr<OGRSpatialReference> theCRS,
-                                              const Fmi::Box& theBox) const
+                                              const Fmi::Box& theBox,
+                                              bool forecastMode) const
 {
   try
   {
@@ -881,8 +886,8 @@ Positions::Points Positions::getKeywordPoints(SmartMet::Engine::Querydata::Q the
       if (dy)
         ycoord += *dy;
 
-      // Skip if not inside desired shapes
-      if (insideShapes(lon, lat))
+      // Skip if not inside desired areas
+      if (inside(lon, lat, forecastMode))
         points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat)));
     }
 
@@ -904,7 +909,8 @@ Positions::Points Positions::getKeywordPoints(SmartMet::Engine::Querydata::Q the
 
 Positions::Points Positions::getLatLonPoints(SmartMet::Engine::Querydata::Q theQ,
                                              boost::shared_ptr<OGRSpatialReference> theCRS,
-                                             const Fmi::Box& theBox) const
+                                             const Fmi::Box& theBox,
+                                             bool forecastMode) const
 {
   try
   {
@@ -957,8 +963,8 @@ Positions::Points Positions::getLatLonPoints(SmartMet::Engine::Querydata::Q theQ
       if (dy)
         ycoord += *dy;
 
-      // Skip if not inside desired area
-      if (insideShapes(lon, lat))
+      // Skip if not inside desired areas
+      if (inside(lon, lat, forecastMode))
         points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat)));
     }
 
@@ -1002,11 +1008,17 @@ bool Positions::insideShapes(double theX, double theY) const
  */
 // ----------------------------------------------------------------------
 
-bool Positions::inside(double theX, double theY) const
+bool Positions::inside(double theX, double theY, bool forecastMode) const
 {
   try
   {
-    return insideShapes(theX, theY) && intersections.inside(theX, theY);
+    if (!insideShapes(theX, theY))
+      return false;
+
+    if (!forecastMode)
+      return true;
+
+    return intersections.inside(theX, theY);
   }
   catch (...)
   {

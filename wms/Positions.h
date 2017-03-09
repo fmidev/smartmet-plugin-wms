@@ -54,10 +54,12 @@ class Positions
 
   Points getPoints(SmartMet::Engine::Querydata::Q theQ,
                    boost::shared_ptr<OGRSpatialReference> theCRS,
-                   const Fmi::Box& theBox) const;
+                   const Fmi::Box& theBox,
+                   bool forecastMode) const;
+
+  bool inside(double theX, double theY, bool forecastMode) const;
 
   bool insideShapes(double theX, double theY) const;
-  bool inside(double theX, double theY) const;
   bool inside(double theX, double theY, const Intersections::IntersectValues& theValues) const;
 
   // Layout algorithm
@@ -106,27 +108,33 @@ class Positions
  private:
   Points getGridPoints(SmartMet::Engine::Querydata::Q theQ,
                        boost::shared_ptr<OGRSpatialReference> theCRS,
-                       const Fmi::Box& theBox) const;
+                       const Fmi::Box& theBox,
+                       bool forecastMode) const;
 
   Points getDataPoints(SmartMet::Engine::Querydata::Q theQ,
                        boost::shared_ptr<OGRSpatialReference> theCRS,
-                       const Fmi::Box& theBox) const;
+                       const Fmi::Box& theBox,
+                       bool forecastMode) const;
 
   Points getGraticulePoints(SmartMet::Engine::Querydata::Q theQ,
                             boost::shared_ptr<OGRSpatialReference> theCRS,
-                            const Fmi::Box& theBox) const;
+                            const Fmi::Box& theBox,
+                            bool forecastMode) const;
 
   Points getGraticuleFillPoints(SmartMet::Engine::Querydata::Q theQ,
                                 boost::shared_ptr<OGRSpatialReference> theCRS,
-                                const Fmi::Box& theBox) const;
+                                const Fmi::Box& theBox,
+                                bool forecastMode) const;
 
   Points getKeywordPoints(SmartMet::Engine::Querydata::Q theQ,
                           boost::shared_ptr<OGRSpatialReference> theCRS,
-                          const Fmi::Box& theBox) const;
+                          const Fmi::Box& theBox,
+                          bool forecastMode) const;
 
   Points getLatLonPoints(SmartMet::Engine::Querydata::Q theQ,
                          boost::shared_ptr<OGRSpatialReference> theCRS,
-                         const Fmi::Box& theBox) const;
+                         const Fmi::Box& theBox,
+                         bool forecastMode) const;
 
   OGRGeometryPtr inshape;
   OGRGeometryPtr outshape;

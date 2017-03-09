@@ -70,7 +70,8 @@ PointValues read_forecasts(const SymbolLayer& layer,
   {
     // Generate the coordinates for the symbols
 
-    auto points = layer.positions->getPoints(q, crs, box);
+    const bool forecast_mode = true;
+    auto points = layer.positions->getPoints(q, crs, box, forecast_mode);
 
     // querydata API for value() sucks
 
@@ -196,7 +197,8 @@ PointValues read_observations(const SymbolLayer& layer,
     // Generate the coordinates for the symbols
 
     Engine::Querydata::Q q;
-    auto points = layer.positions->getPoints(q, crs, box);
+    const bool forecast_mode = false;
+    auto points = layer.positions->getPoints(q, crs, box, forecast_mode);
 
     // Coordinates or bounding box
 

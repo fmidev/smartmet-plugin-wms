@@ -211,13 +211,13 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       if (!inshape)
         throw SmartMet::Spine::Exception(BCP,
                                          "IsolineLayer received empty inside-shape from database");
-      inshape.reset(Fmi::OGR::lineclip(*inshape, clipbox));
+      inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
     }
     if (outside)
     {
       outshape = gis.getShape(crs.get(), outside->options);
       if (outshape)
-        outshape.reset(Fmi::OGR::lineclip(*outshape, clipbox));
+        outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
     }
 
     // Logical operations with isobands are initialized before hand

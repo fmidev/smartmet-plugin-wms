@@ -136,7 +136,8 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
   // Generate the coordinates for the arrows
 
-  auto points = layer.positions->getPoints(q, crs, box);
+  const bool forecast_mode = true;
+  auto points = layer.positions->getPoints(q, crs, box, forecast_mode);
 
   PointValues pointvalues;
 
@@ -250,7 +251,8 @@ PointValues read_observations(const ArrowLayer& layer,
   else
   {
     Engine::Querydata::Q q;
-    auto points = layer.positions->getPoints(q, crs, box);
+    const bool forecast_mode = false;
+    auto points = layer.positions->getPoints(q, crs, box, forecast_mode);
 
     using Coordinate = std::map<std::string, double>;
     settings.coordinates.reserve(points.size());

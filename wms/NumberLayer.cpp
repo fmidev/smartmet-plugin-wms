@@ -203,7 +203,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Generate the coordinates for the numbers
 
-    auto points = positions->getPoints(q, crs, box);
+    auto points = positions->getPoints(q, crs, box, !use_observations);
 
     // The parameters. This *must* be done after the call to positions generation
 
@@ -275,8 +275,6 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       }
       else
       {
-        auto points = positions->getPoints(q, crs, box);
-
         using Coordinate = std::map<std::string, double>;
         settings.coordinates.reserve(points.size());
         for (const auto& point : points)
