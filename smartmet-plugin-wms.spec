@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.2.12
+Version: 17.3.9
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -14,13 +14,13 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 16.12.21
-BuildRequires: smartmet-library-macgyver >= 17.1.18
-BuildRequires: smartmet-library-spine-devel >= 17.2.3
+BuildRequires: smartmet-library-macgyver >= 17.2.22
+BuildRequires: smartmet-library-spine-devel >= 17.2.22
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.1.5
 %endif
 %if %{with authentication}
-BuildRequires: smartmet-engine-observation-devel >= 17.1.5
+BuildRequires: smartmet-engine-observation-devel >= 17.2.18
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 17.1.4
 BuildRequires: smartmet-engine-geonames-devel >= 17.2.3
@@ -40,7 +40,7 @@ Requires: ctpp2 >= 2.8.2
 Requires: libconfig
 Requires: librsvg2 >= 2.40.6
 Requires: smartmet-library-gis >= 17.1.18
-Requires: smartmet-library-macgyver >= 17.1.18
+Requires: smartmet-library-macgyver >= 17.2.22
 Requires: smartmet-library-giza >= 16.12.21
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 17.1.5
@@ -49,8 +49,8 @@ Requires: smartmet-engine-querydata >= 17.2.11
 Requires: smartmet-engine-contour >= 17.2.11
 Requires: smartmet-engine-gis >= 17.1.4
 Requires: smartmet-engine-geonames >= 17.2.3
-Requires: smartmet-server >= 17.1.25
-Requires: smartmet-library-spine >= 17.2.3
+Requires: smartmet-server >= 17.2.16
+Requires: smartmet-library-spine >= 17.2.22
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -88,6 +88,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Mar  9 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.3.9-1.fmi
+- Added support for observations
+- Added support for margins
+- Added support for adding a clipping path to layers
+- Fixed isoline clipping by shapes
+- Added support for filtering observations by other observations
+
 * Sun Feb 12 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.2.12-1.fmi
 - Added obsengine_disabled option with default = false
 - Added possibility to package the plugin without the observation engine
