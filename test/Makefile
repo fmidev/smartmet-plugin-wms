@@ -39,9 +39,10 @@ LIBS = 	-lsmartmet-spine  \
 
 all: $(PROG)
 clean:
-	rm -f $(PROG) *~ Plugintest
+	rm -f $(PROG) *~ Plugintest failures/*
 
 test: $(PROG)
+	@rm -f failures/*
 	@./TestRunner.sh
 	@rm -f wms-access-log
 
