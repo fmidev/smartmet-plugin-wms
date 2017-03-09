@@ -16,6 +16,7 @@
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 #include <gis/Box.h>
+#include <gis/OGR.h>
 #include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
 #include <stdexcept>
@@ -293,6 +294,134 @@ Fmi::Box Layer::getClipBox(const Fmi::Box& theBox) const
   // only for projecting to pixel coordinates.
 
   return Fmi::Box{xmin - dx, ymin - dy, xmax + dx, ymax + dy, w, h};
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate bounding box for fetching latlon based data
+ *
+ * 1. expand current box by the margins
+ * 2. sample the box boundaries
+ * 3. project the sampled coordinates to WGS84
+ * 4. establish the WGS84 bounding box from the projected coordinates
+ *
+ * Note: Projecting individual coordinates may fail. We project
+ * one coordinate at a time to make sure we get the bounding box for
+ * whatever is valid. In fact, simply expanding the box by the margins
+ * may have resulted in world coordinates which are not valid. However,
+ * by sampling the boundary sufficiently well such problems can be ignored.
+ *
+ */
+// ----------------------------------------------------------------------
+
+std::map<std::string, double> Layer::getClipBoundingBox(
+    const Fmi::Box& theBox, const boost::shared_ptr<OGRSpatialReference>& theCRS) const
+{
+  // Expand world coordinates by the margin settings
+  const auto clipbox = getClipBox(theBox);
+
+  // Observations are in WGS84 coordinates
+
+  std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+  OGRErr err = wgs84->SetFromUserInput("WGS84");
+  if (err != OGRERR_NONE)
+    throw Spine::Exception(BCP, "GDAL does not understand WGS84");
+
+  // Create the transformation from image world coordinates to WGS84 coordinates
+  std::unique_ptr<OGRCoordinateTransformation> transformation(
+      OGRCreateCoordinateTransformation(theCRS.get(), wgs84.get()));
+  if (!transformation)
+    throw Spine::Exception(
+        BCP, "Failed to create the needed coordinate transformation when drawing wind arrows");
+
+  // Establish the number of samples along each edge. We wish to sample at roughly 5 pixel
+  // intervals.
+
+  const int npixels = 5;
+  const int minsamples = 2;
+  const int w = theBox.width() + 2 * xmargin;
+  const int h = theBox.height() + 2 * ymargin;
+
+  // If the CRS is geographic we need only the corners
+
+  int wsamples = minsamples;
+  int hsamples = minsamples;
+
+  // Otherwise we need to sample the edges
+  if (!theCRS->IsGeographic())
+  {
+    wsamples = std::max(wsamples, w / npixels);
+    hsamples = std::max(hsamples, h / npixels);
+  }
+
+  // Sample the edges in world coordinates
+  std::vector<double> x;
+  std::vector<double> y;
+
+  // Bottom edge
+  for (int i = 0; i < wsamples; i++)
+  {
+    x.push_back(clipbox.xmin() + (clipbox.xmax() - clipbox.xmin()) * i / (wsamples - 1));
+    y.push_back(clipbox.ymin());
+  }
+
+  // Top edge
+  for (int i = 0; i < wsamples; i++)
+  {
+    x.push_back(clipbox.xmin() + (clipbox.xmax() - clipbox.xmin()) * i / (wsamples - 1));
+    y.push_back(clipbox.ymax());
+  }
+
+  // Left edge
+  for (int i = 0; i < hsamples; i++)
+  {
+    x.push_back(clipbox.xmin());
+    y.push_back(clipbox.ymin() + (clipbox.ymax() - clipbox.ymin()) * i / (hsamples - 1));
+  }
+
+  // Right edge
+  for (int i = 0; i < hsamples; i++)
+  {
+    x.push_back(clipbox.xmax());
+    y.push_back(clipbox.ymin() + (clipbox.ymax() - clipbox.ymin()) * i / (hsamples - 1));
+  }
+
+  // Project one at a time and extract the latlon bounding box
+  double minlat = 0;
+  double minlon = 0;
+  double maxlat = 0;
+  double maxlon = 0;
+
+  bool uninitialized = true;
+
+  for (std::size_t i = 0; i < x.size(); i++)
+  {
+    if (!theCRS->IsGeographic())
+      if (!transformation->Transform(1, &x[i], &y[i]))
+        continue;
+
+    minlon = (uninitialized ? x[i] : std::min(minlon, x[i]));
+    maxlon = (uninitialized ? x[i] : std::max(minlon, x[i]));
+    minlat = (uninitialized ? y[i] : std::min(minlat, y[i]));
+    maxlat = (uninitialized ? y[i] : std::max(minlat, y[i]));
+
+    uninitialized = false;
+  }
+
+  // Return empty bounding box if unable to establish bounding box. In some cases
+  // the projection tiling is valid, and we do not wish to error. Example: projections
+  // which show the earth as a sphere, but the tiles are empty at the corners.
+
+  if (uninitialized)
+    return {};
+
+  // Build the result in the form wanted by obsengine
+  std::map<std::string, double> ret;
+  ret["minx"] = minlon;
+  ret["maxx"] = maxlon;
+  ret["miny"] = minlat;
+  ret["maxy"] = maxlat;
+  return ret;
 }
 
 // ----------------------------------------------------------------------

@@ -266,11 +266,12 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
       if (positions->layout == Positions::Layout::Data || *producer == "flash")
       {
+        settings.boundingBox = getClipBoundingBox(box, crs);
         // TODO. Calculate these
-        settings.boundingBox["minx"] = 10;
-        settings.boundingBox["miny"] = 50;
-        settings.boundingBox["maxx"] = 50;
-        settings.boundingBox["maxy"] = 80;
+        // settings.boundingBox["minx"] = 10;
+        // settings.boundingBox["miny"] = 50;
+        // settings.boundingBox["maxx"] = 50;
+        // settings.boundingBox["maxy"] = 80;
       }
       else
       {
@@ -290,9 +291,6 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       Spine::ValueFormatter valueformatter(valueformatterparam);
 
       auto result = obsengine.values(settings, valueformatter);
-
-      // TODO: Support flashes
-      // TODO: Pick only the last observation
 
       // Store values for SVG generation
 

@@ -200,13 +200,15 @@ PointValues read_observations(const SymbolLayer& layer,
 
     // Coordinates or bounding box
 
-    if (*layer.producer == "flash")
+    if (layer.positions->layout == Positions::Layout::Data || *layer.producer == "flash")
     {
+      settings.boundingBox = layer.getClipBoundingBox(box, crs);
+
       // TODO. Calculate these
-      settings.boundingBox["minx"] = 10;
-      settings.boundingBox["miny"] = 50;
-      settings.boundingBox["maxx"] = 50;
-      settings.boundingBox["maxy"] = 80;
+      // settings.boundingBox["minx"] = 10;
+      // settings.boundingBox["miny"] = 50;
+      // settings.boundingBox["maxx"] = 50;
+      // settings.boundingBox["maxy"] = 80;
     }
     else
     {
