@@ -199,6 +199,7 @@
    <use transform="translate(679,631)" xlink:href="#dot"/>
    <use transform="translate(825,621)" xlink:href="#dot"/>
    <use transform="translate(969,590)" xlink:href="#dot"/>
+   <use transform="translate(0,342)" xlink:href="#dot"/>
    <use transform="translate(10,352)" xlink:href="#dot"/>
    <use transform="translate(20,362)" xlink:href="#dot"/>
    <use transform="translate(31,372)" xlink:href="#dot"/>
@@ -542,6 +543,7 @@
    <use transform="translate(774,256)" xlink:href="#dot"/>
    <use transform="translate(867,234)" xlink:href="#dot"/>
    <use transform="translate(956,199)" xlink:href="#dot"/>
+   <use transform="translate(196,0)" xlink:href="#dot"/>
    <use transform="translate(202,6)" xlink:href="#dot"/>
    <use transform="translate(207,14)" xlink:href="#dot"/>
    <use transform="translate(212,21)" xlink:href="#dot"/>
@@ -807,7 +809,9 @@
    <use transform="translate(679,22)" xlink:href="#dot"/>
    <use transform="translate(736,17)" xlink:href="#dot"/>
    <use transform="translate(793,4)" xlink:href="#dot"/>
+   <use transform="translate(624,0)" xlink:href="#dot"/>
    <use transform="translate(679,3)" xlink:href="#dot"/>
+   <use transform="translate(733,0)" xlink:href="#dot"/>
   </g>
   <g id="wind_arrows">
    <use transform="translate(5 5) rotate(46)" xlink:href="#windbarb_65"/>
@@ -1121,14 +1125,6 @@
   </g>
   <g class="Number">
   
-  <text x="5" y="-1">-56</text>
-  <text x="54" y="-1">-59</text>
-  <text x="104" y="-1">-62</text>
-  <text x="154" y="-1">-67</text>
-  <text x="206" y="-1">-69</text>
-  <text x="257" y="-1">-72</text>
-  <text x="309" y="0">-75</text>
-  <text x="362" y="2">-77</text>
   <text x="413" y="3">-78</text>
   <text x="464" y="4">-79</text>
   <text x="514" y="8">-80</text>
@@ -1136,12 +1132,6 @@
   <text x="614" y="10">-77</text>
   <text x="664" y="9">-76</text>
   <text x="713" y="3">-75</text>
-  <text x="752" y="-1">-75</text>
-  <text x="804" y="-1">-75</text>
-  <text x="855" y="-1">-75</text>
-  <text x="907" y="-1">-75</text>
-  <text x="959" y="-1">-76</text>
-  <text x="1010" y="0">-76</text>
   <text x="31" y="48">-57</text>
   <text x="80" y="48">-60</text>
   <text x="130" y="48">-62</text>
