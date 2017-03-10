@@ -13,11 +13,7 @@
 <TMPL_foreach includes as inc><TMPL_var inc></TMPL_foreach>
 
 <-TMPL_foreach paths as path>
-<path id="<TMPL_var path.iri>"
-<-TMPL_if defined(path.lolimit)> lolimit="<TMPL_var path.lolimit>"</TMPL_if>
-<-TMPL_if defined(path.hilimit)> hilimit="<TMPL_var path.hilimit>"</TMPL_if>
-<-TMPL_if defined(path.value)> value="<TMPL_var path.value>"</TMPL_if>
-d="<TMPL_var path.data>"/>
+<path id="<TMPL_var path.iri>" d="<TMPL_var path.data>"/>
 <-/TMPL_foreach>
 
 <-TMPL_foreach layers as layer>
