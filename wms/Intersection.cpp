@@ -30,7 +30,7 @@ void Intersection::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Intersection JSON is not a JSON map");
+      throw Spine::Exception(BCP, "Intersection JSON is not a JSON map");
 
     // Extract member values
 
@@ -78,7 +78,7 @@ void Intersection::init(const Json::Value& theJson, const Config& theConfig)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -109,7 +109,7 @@ OGRGeometryPtr Intersection::intersect(OGRGeometryPtr theGeometry) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -136,7 +136,7 @@ bool Intersection::inside(double theX, double theY) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -146,7 +146,7 @@ bool Intersection::inside(double theX, double theY) const
  */
 // ----------------------------------------------------------------------
 
-void Intersection::init(SmartMet::Engine::Querydata::Q q,
+void Intersection::init(Engine::Querydata::Q q,
                         const Projection& theProjection,
                         const boost::posix_time::ptime& theTime,
                         const State& theState)
@@ -161,7 +161,7 @@ void Intersection::init(SmartMet::Engine::Querydata::Q q,
     if (!parameter)
       return;
 
-    auto param = SmartMet::Spine::ParameterFactory::instance().parse(*parameter);
+    auto param = Spine::ParameterFactory::instance().parse(*parameter);
 
     // Establish the data
     if (producer)
@@ -179,8 +179,7 @@ void Intersection::init(SmartMet::Engine::Querydata::Q q,
       for (q->resetLevel(); !match && q->nextLevel();)
         match = (q->levelValue() == *level);
       if (!match)
-        throw SmartMet::Spine::Exception(
-            BCP, "Level value " + Fmi::to_string(*level) + " is not available");
+        throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available");
     }
 
     // Establish the projection from the geometry to be clipped
@@ -191,10 +190,10 @@ void Intersection::init(SmartMet::Engine::Querydata::Q q,
 
     const auto& contourer = theState.getContourEngine();
 
-    std::vector<SmartMet::Engine::Contour::Range> limits;
-    SmartMet::Engine::Contour::Range range(lolimit, hilimit);
+    std::vector<Engine::Contour::Range> limits;
+    Engine::Contour::Range range(lolimit, hilimit);
     limits.push_back(range);
-    SmartMet::Engine::Contour::Options options(param, theTime, limits);
+    Engine::Contour::Options options(param, theTime, limits);
 
     if (multiplier || offset)
       options.transformation(multiplier ? *multiplier : 1.0, offset ? *offset : 0.0);
@@ -203,18 +202,17 @@ void Intersection::init(SmartMet::Engine::Querydata::Q q,
     options.filter_degree = smoother.degree;
 
     if (interpolation == "linear")
-      options.interpolation = SmartMet::Engine::Contour::Linear;
+      options.interpolation = Engine::Contour::Linear;
     else if (interpolation == "nearest")
-      options.interpolation = SmartMet::Engine::Contour::Nearest;
+      options.interpolation = Engine::Contour::Nearest;
     else if (interpolation == "discrete")
-      options.interpolation = SmartMet::Engine::Contour::Discrete;
+      options.interpolation = Engine::Contour::Discrete;
     else if (interpolation == "loglinear")
-      options.interpolation = SmartMet::Engine::Contour::LogLinear;
+      options.interpolation = Engine::Contour::LogLinear;
     else
-      throw SmartMet::Spine::Exception(
-          BCP, "Unknown isoband interpolation method '" + interpolation + "'");
+      throw Spine::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'");
 
-    std::size_t qhash = SmartMet::Engine::Querydata::hash_value(q);
+    std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;
     boost::hash_combine(valueshash, options.data_hash_value());
     std::string wkt = q->area().WKT();
@@ -223,13 +221,12 @@ void Intersection::init(SmartMet::Engine::Querydata::Q q,
 
     if (!q->param(options.parameter.number()))
     {
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Parameter '" + options.parameter.name() + "' unavailable.");
+      throw Spine::Exception(BCP, "Parameter '" + options.parameter.name() + "' unavailable.");
     }
 
     if (!q->firstLevel())
     {
-      throw SmartMet::Spine::Exception(BCP, "Unable to set first level in querydata.");
+      throw Spine::Exception(BCP, "Unable to set first level in querydata.");
     }
 
     // Select the level.
@@ -237,10 +234,9 @@ void Intersection::init(SmartMet::Engine::Querydata::Q q,
     {
       if (!q->selectLevel(*options.level))
       {
-        throw SmartMet::Spine::Exception(BCP,
-                                         "Level value " +
-                                             boost::lexical_cast<std::string>(*options.level) +
-                                             " is not available.");
+        throw Spine::Exception(BCP,
+                               "Level value " + boost::lexical_cast<std::string>(*options.level) +
+                                   " is not available.");
       }
     }
 
@@ -263,7 +259,7 @@ void Intersection::init(SmartMet::Engine::Querydata::Q q,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -280,7 +276,7 @@ std::size_t Intersection::hash_value(const State& theState) const
     std::size_t hash = 0;
 
     if (producer)
-      boost::hash_combine(hash, SmartMet::Engine::Querydata::hash_value(theState.get(*producer)));
+      boost::hash_combine(hash, Engine::Querydata::hash_value(theState.get(*producer)));
 
     boost::hash_combine(hash, Dali::hash_value(lolimit));
     boost::hash_combine(hash, Dali::hash_value(hilimit));
@@ -295,7 +291,7 @@ std::size_t Intersection::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

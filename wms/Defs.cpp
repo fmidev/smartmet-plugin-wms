@@ -38,7 +38,7 @@ void Defs::init(const Json::Value& theJson,
       return;
 
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Defs JSON is not a JSON object (name-value pairs)");
+      throw Spine::Exception(BCP, "Defs JSON is not a JSON object (name-value pairs)");
 
     // Extract member values
 
@@ -58,7 +58,7 @@ void Defs::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -80,7 +80,7 @@ void Defs::generate(CTPP::CDT& theGlobals, State& theState)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -101,7 +101,7 @@ std::size_t Defs::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

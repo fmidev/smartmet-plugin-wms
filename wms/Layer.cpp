@@ -58,11 +58,11 @@ void Layer::init(const Json::Value& theJson,
 
     json = theJson.get("enable", nulljson);
     if (!json.isNull())
-      SmartMet::Spine::JSON::extract_set("enable", enable, json);
+      Spine::JSON::extract_set("enable", enable, json);
 
     json = theJson.get("disable", nulljson);
     if (!json.isNull())
-      SmartMet::Spine::JSON::extract_set("disable", disable, json);
+      Spine::JSON::extract_set("disable", disable, json);
 
     json = theJson.get("css", nulljson);
     if (!json.isNull())
@@ -78,7 +78,7 @@ void Layer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -98,7 +98,7 @@ bool Layer::validLayer(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -132,7 +132,7 @@ bool Layer::isObservation(const State& theState) const
  */
 // ----------------------------------------------------------------------
 
-SmartMet::Engine::Querydata::Q Layer::getModel(const State& theState) const
+Engine::Querydata::Q Layer::getModel(const State& theState) const
 {
   try
   {
@@ -144,7 +144,7 @@ SmartMet::Engine::Querydata::Q Layer::getModel(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Failed to get required model data!", NULL);
+    throw Spine::Exception(BCP, "Failed to get required model data!", NULL);
   }
 }
 
@@ -163,7 +163,7 @@ bool Layer::validResolution() const
       return true;
 
     if (!projection.resolution)
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP,
           "Projection resolution has not been specified, cannot use min/maxresolution settings");
 
@@ -179,7 +179,7 @@ bool Layer::validResolution() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -197,8 +197,8 @@ bool Layer::validType(const std::string& theType) const
   try
   {
     if (!enable.empty() && !disable.empty())
-      throw SmartMet::Spine::Exception(
-          BCP, "Setting disable and enable image formats simultaneously is an error");
+      throw Spine::Exception(BCP,
+                             "Setting disable and enable image formats simultaneously is an error");
 
     if (!disable.empty())
       return disable.find(theType) == disable.end();
@@ -210,7 +210,7 @@ bool Layer::validType(const std::string& theType) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -438,8 +438,8 @@ std::map<std::string, double> Layer::getClipBoundingBox(
 Parameter Layer::getParameter() const
 {
   if(!parameter)
-	throw SmartMet::Spine::Exception(BCP,"Parameter has not been set for all layers");
-  return SmartMet::Spine::ParameterFactory::instance().parse(*parameter);
+	throw Spine::Exception(BCP,"Parameter has not been set for all layers");
+  return Spine::ParameterFactory::instance().parse(*parameter);
 }
 
 #endif
@@ -467,7 +467,7 @@ std::size_t Layer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

@@ -2,6 +2,7 @@
 
 #include "MapLayer.h"
 #include "Config.h"
+#include "Geometry.h"
 #include "Hash.h"
 #include "Layer.h"
 #include "State.h"
@@ -36,7 +37,7 @@ void MapLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Map JSON is not a JSON object");
+      throw Spine::Exception(BCP, "Map JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -50,7 +51,7 @@ void MapLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -109,7 +110,7 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
         if (map.options.minarea)
           msg += " Is the minarea limit too large?";
 
-        throw SmartMet::Spine::Exception(BCP, msg);
+        throw Spine::Exception(BCP, msg);
       }
     }
 
@@ -133,11 +134,17 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     // Store the path with unique ID
     std::string iri = qid;
     {
-      std::string report = "exportToSvg finished in %t sec CPU, %w sec real\n";
+      std::string report = "Generating coordinate data finished in %t sec CPU, %w sec real\n";
       std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
         mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
-      theGlobals["paths"][iri] = Fmi::OGR::exportToSvg(*geom, box, 1);
+
+      CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
+      map_cdt["iri"] = iri;
+      map_cdt["type"] = Geometry::name(*geom, theState.getType());
+      map_cdt["layertype"] = "map";
+      map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs);
+      theGlobals["paths"][iri] = map_cdt;
     }
 
     // Do not produce a use-statement for empty data or in the header
@@ -178,7 +185,7 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -198,7 +205,7 @@ std::size_t MapLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

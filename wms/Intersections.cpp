@@ -38,11 +38,11 @@ void Intersections::init(const Json::Value& theJson, const Config& theConfig)
       intersections.push_back(intersection);
     }
     else
-      throw SmartMet::Spine::Exception(BCP, "Intersections must be a JSON array or a JSON map");
+      throw Spine::Exception(BCP, "Intersections must be a JSON array or a JSON map");
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -52,7 +52,7 @@ void Intersections::init(const Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-void Intersections::init(SmartMet::Engine::Querydata::Q q,
+void Intersections::init(Engine::Querydata::Q q,
                          const Projection& theProjection,
                          const boost::posix_time::ptime& theTime,
                          const State& theState)
@@ -66,7 +66,7 @@ void Intersections::init(SmartMet::Engine::Querydata::Q q,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -88,7 +88,7 @@ OGRGeometryPtr Intersections::intersect(OGRGeometryPtr geom) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -116,7 +116,7 @@ bool Intersections::inside(double theX, double theY) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -192,7 +192,7 @@ std::size_t Intersections::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

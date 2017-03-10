@@ -24,7 +24,7 @@ void Views::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isArray())
-      throw SmartMet::Spine::Exception(BCP, "Views setting must be an array");
+      throw Spine::Exception(BCP, "Views setting must be an array");
 
     for (unsigned int i = 0; i < theJson.size(); i++)
     {
@@ -36,7 +36,7 @@ void Views::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -59,7 +59,7 @@ void Views::generate(CTPP::CDT& theGlobals, State& theState)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -77,7 +77,7 @@ std::size_t Views::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

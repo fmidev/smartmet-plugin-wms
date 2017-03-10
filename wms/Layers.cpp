@@ -27,7 +27,7 @@ void Layers::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isArray())
-      throw SmartMet::Spine::Exception(BCP, "Layers JSON is not a JSON array");
+      throw Spine::Exception(BCP, "Layers JSON is not a JSON array");
 
     for (unsigned int i = 0; i < theJson.size(); i++)
     {
@@ -39,7 +39,7 @@ void Layers::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -63,7 +63,7 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -81,7 +81,7 @@ std::size_t Layers::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

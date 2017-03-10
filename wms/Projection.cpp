@@ -33,8 +33,7 @@ void Projection::init(const Json::Value& theJson, const State& theState, const C
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Projection JSON is not a JSON object (name-value pairs)");
+      throw Spine::Exception(BCP, "Projection JSON is not a JSON object (name-value pairs)");
 
     // Extract all the members
 
@@ -94,8 +93,8 @@ void Projection::init(const Json::Value& theJson, const State& theState, const C
       int id = json.asInt();
       auto loc = engine.idSearch(id, "fi");
       if (!loc)
-        throw SmartMet::Spine::Exception(
-            BCP, "Unable to find coordinates for geoid '" + Fmi::to_string(id) + "'");
+        throw Spine::Exception(BCP,
+                               "Unable to find coordinates for geoid '" + Fmi::to_string(id) + "'");
       latlon_center = true;
       cx = loc->longitude;
       cy = loc->latitude;
@@ -109,8 +108,7 @@ void Projection::init(const Json::Value& theJson, const State& theState, const C
       std::string name = json.asString();
       auto loc = engine.nameSearch(name, "fi");
       if (!loc)
-        throw SmartMet::Spine::Exception(BCP,
-                                         "Unable to find coordinates for location '" + name + "'");
+        throw Spine::Exception(BCP, "Unable to find coordinates for location '" + name + "'");
 
       latlon_center = true;
       cx = loc->longitude;
@@ -126,7 +124,7 @@ void Projection::init(const Json::Value& theJson, const State& theState, const C
       std::vector<std::string> parts;
       boost::algorithm::split(parts, bbox, boost::algorithm::is_any_of(","));
       if (parts.size() != 4)
-        throw SmartMet::Spine::Exception(BCP, "bbox should contain 4 comma separated doubles");
+        throw Spine::Exception(BCP, "bbox should contain 4 comma separated doubles");
 
       // for example in EPSG:4326 order of coordinates is changed in WMS
       // for more info: https://trac.osgeo.org/gdal/wiki/rfc20_srs_axes
@@ -173,7 +171,7 @@ void Projection::init(const Json::Value& theJson, const State& theState, const C
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -202,7 +200,7 @@ std::size_t Projection::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -212,7 +210,7 @@ std::size_t Projection::hash_value(const State& theState) const
  */
 // ----------------------------------------------------------------------
 
-void Projection::update(const SmartMet::Engine::Querydata::Q& theQ)
+void Projection::update(const Engine::Querydata::Q& theQ)
 {
   if (!theQ)
     return;
@@ -241,7 +239,7 @@ void Projection::update(const SmartMet::Engine::Querydata::Q& theQ)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -260,7 +258,7 @@ boost::shared_ptr<OGRSpatialReference> Projection::getCRS() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -279,7 +277,7 @@ const Fmi::Box& Projection::getBox() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -298,10 +296,10 @@ void Projection::prepareCRS() const
       return;
 
     if (!crs)
-      throw SmartMet::Spine::Exception(BCP, "CRS not set, unable to create projection");
+      throw Spine::Exception(BCP, "CRS not set, unable to create projection");
 
     if (!xsize && !ysize)
-      throw SmartMet::Spine::Exception(BCP, "CRS xsize and ysize are both missing");
+      throw Spine::Exception(BCP, "CRS xsize and ysize are both missing");
 
     // Are subdefinitions complete?
     bool full_rect_bbox = (x1 && y1 && x2 && y2);
@@ -313,39 +311,37 @@ void Projection::prepareCRS() const
 
     // Disallow partial definitions
     if (partial_rect_bbox)
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Partial CRS bounding box given: x1,y2,x2,y2 are needed");
+      throw Spine::Exception(BCP, "Partial CRS bounding box given: x1,y2,x2,y2 are needed");
     if (partial_center_bbox)
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Partial CRS bounding box given: x1,y2,x2,y2 are needed");
+      throw Spine::Exception(BCP, "Partial CRS bounding box given: x1,y2,x2,y2 are needed");
 
     // bbox definition missing completely?
     if (!full_rect_bbox && !full_center_bbox)
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP, "CRS bounding box missing: x1,y2,x2,y2 or cx,cy,resolution are needed");
 
 // two conflicting definitions is OK, since we create the corners from centered bbox
 #if 0
         if(full_rect_bbox && full_center_bbox)
-      throw SmartMet::Spine::Exception(BCP,"CRS bounding box overdefined: use only x1,y2,x2,y2 or cx,cy,resolution");
+      throw Spine::Exception(BCP,"CRS bounding box overdefined: use only x1,y2,x2,y2 or cx,cy,resolution");
 #endif
 
     // must give both width and height if centered bbox is given
     if (!full_rect_bbox && full_center_bbox && (!xsize || !ysize))
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP, "CRS xsize and ysize are required when a centered bounding box is used");
 
     // Create the CRS
     ogr_crs = boost::make_shared<OGRSpatialReference>();
     OGRErr err = ogr_crs->SetFromUserInput(crs->c_str());
     if (err != OGRERR_NONE)
-      throw SmartMet::Spine::Exception(BCP, "Unknown CRS: '" + *crs + "'");
+      throw Spine::Exception(BCP, "Unknown CRS: '" + *crs + "'");
 
     if (xsize && *xsize <= 0)
-      throw SmartMet::Spine::Exception(BCP, "Projection xsize must be positive");
+      throw Spine::Exception(BCP, "Projection xsize must be positive");
 
     if (ysize && *ysize <= 0)
-      throw SmartMet::Spine::Exception(BCP, "Projection ysize must be positive");
+      throw Spine::Exception(BCP, "Projection ysize must be positive");
 
     // World XY bounding box will be calculated during the process
 
@@ -368,7 +364,7 @@ void Projection::prepareCRS() const
         OGRSpatialReference ogr_crs2;
         err = ogr_crs2.SetFromUserInput(bboxcrs->c_str());
         if (err != OGRERR_NONE)
-          throw SmartMet::Spine::Exception(BCP, "Unknown CRS: '" + *bboxcrs + "'");
+          throw Spine::Exception(BCP, "Unknown CRS: '" + *bboxcrs + "'");
 
         boost::shared_ptr<OGRCoordinateTransformation> transformation(
             OGRCreateCoordinateTransformation(&ogr_crs2, ogr_crs.get()));
@@ -377,7 +373,7 @@ void Projection::prepareCRS() const
       }
 
       if (XMIN == XMAX || YMIN == YMAX)
-        throw SmartMet::Spine::Exception(BCP, "Bounding box size is zero!");
+        throw Spine::Exception(BCP, "Bounding box size is zero!");
 
       if (!xsize)
       {
@@ -415,8 +411,8 @@ void Projection::prepareCRS() const
     {
       // centered bounding box
       if (!xsize || !ysize)
-        throw SmartMet::Spine::Exception(
-            BCP, "xsize and ysize are required when a centered bounding box is used");
+        throw Spine::Exception(BCP,
+                               "xsize and ysize are required when a centered bounding box is used");
 
       double CX = *cx, CY = *cy;
 
@@ -430,7 +426,7 @@ void Projection::prepareCRS() const
           err = ogr_crs2.SetFromUserInput(bboxcrs->c_str());
 
         if (err != OGRERR_NONE)
-          throw SmartMet::Spine::Exception(BCP, "Unknown CRS: '" + *bboxcrs + "'");
+          throw Spine::Exception(BCP, "Unknown CRS: '" + *bboxcrs + "'");
 
         boost::shared_ptr<OGRCoordinateTransformation> transformation(
             OGRCreateCoordinateTransformation(&ogr_crs2, ogr_crs.get()));
@@ -473,7 +469,7 @@ void Projection::prepareCRS() const
     err = fmi.SetFromUserInput(fmiwkt);
 
     if (err != OGRERR_NONE)
-      throw SmartMet::Spine::Exception(BCP, "Unable to parse FMI WKT in Dali::Projection");
+      throw Spine::Exception(BCP, "Unable to parse FMI WKT in Dali::Projection");
 
     boost::shared_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(ogr_crs.get(), &fmi));
@@ -488,7 +484,7 @@ void Projection::prepareCRS() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

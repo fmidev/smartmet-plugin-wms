@@ -37,8 +37,7 @@ void Station::init(const Json::Value& theJson, const Config& theConfig)
     // Initialize with more details
 
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Station JSON must be an integer (fmisid) or a JSON hash");
+      throw Spine::Exception(BCP, "Station JSON must be an integer (fmisid) or a JSON hash");
 
     // Iterate through all the members
 
@@ -69,13 +68,12 @@ void Station::init(const Json::Value& theJson, const Config& theConfig)
         title->init(json, theConfig);
       }
       else
-        throw SmartMet::Spine::Exception(BCP,
-                                         "Station does not have a setting named '" + name + "'");
+        throw Spine::Exception(BCP, "Station does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -100,7 +98,7 @@ std::size_t Station::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

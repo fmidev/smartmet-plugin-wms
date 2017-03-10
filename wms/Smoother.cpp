@@ -22,7 +22,7 @@ void Smoother::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Smoother JSON is not a JSON object");
+      throw Spine::Exception(BCP, "Smoother JSON is not a JSON object");
 
     // Iterate through all the members
 
@@ -36,13 +36,12 @@ void Smoother::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "degree")
         degree = boost::numeric_cast<std::size_t>(json.asInt());
       else
-        throw SmartMet::Spine::Exception(BCP,
-                                         "Smoother does not have a setting named '" + name + "'");
+        throw Spine::Exception(BCP, "Smoother does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -62,7 +61,7 @@ std::size_t Smoother::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

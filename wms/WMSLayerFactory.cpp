@@ -66,7 +66,7 @@ WMSLayerType getWMSLayerType(const Json::Value& layer)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -98,7 +98,7 @@ std::string getWMSLayerTypeAsString(WMSLayerType layerType)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -115,7 +115,7 @@ WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
     // otherwise it is WMSLayerType::QueryDataLayer
     if (views.isNull())
     {
-      throw SmartMet::Spine::Exception(BCP, "No views in WMS layer definition");
+      throw Spine::Exception(BCP, "No views in WMS layer definition");
     }
     else
     {
@@ -124,7 +124,7 @@ WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
       Json::Value layers = view.get("layers", nulljson);
       if (layers.isNull())
       {
-        throw SmartMet::Spine::Exception(BCP, "No layers in WMS layer definition");
+        throw Spine::Exception(BCP, "No layers in WMS layer definition");
       }
       else
       {
@@ -160,14 +160,13 @@ WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
         // This is currently an error, WMS layer must contain some spatio-temporal data
 
         // Misconfigured layer is this
-        throw SmartMet::Spine::Exception(BCP,
-                                         "No valid Dali layer definitions in WMS layer definition");
+        throw Spine::Exception(BCP, "No valid Dali layer definitions in WMS layer definition");
       }
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -181,7 +180,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     std::string content;
     std::ifstream in(theFileName.c_str());
     if (!in)
-      throw SmartMet::Spine::Exception(BCP, "Failed to open '" + theFileName + "' for reading!");
+      throw Spine::Exception(BCP, "Failed to open '" + theFileName + "' for reading!");
 
     content.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
 
@@ -191,16 +190,16 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     if (!parsingSuccessful)
     {
       // report to the user the failure
-      throw SmartMet::Spine::Exception(BCP, reader.getFormattedErrorMessages());
+      throw Spine::Exception(BCP, reader.getFormattedErrorMessages());
     }
 
     const bool use_wms = true;
-    SmartMet::Spine::JSON::preprocess(
+    Spine::JSON::preprocess(
         root,
         theWMSConfig.itsDaliConfig.rootDirectory(use_wms),
         theWMSConfig.itsDaliConfig.rootDirectory(use_wms) + "/customers/" + theCustomer + "/layers",
         theWMSConfig.itsFileCache);
-    SmartMet::Spine::JSON::dereference(root);
+    Spine::JSON::dereference(root);
 
     SharedWMSLayer layer;
     Json::Value parsedLayer;
@@ -233,7 +232,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 
       default:  // we should never en up here since determineLayerType should always return a valid
                 // layer type
-        throw SmartMet::Spine::Exception(BCP, "WMS Layer enum not handled in WMSLayerFactory.");
+        throw Spine::Exception(BCP, "WMS Layer enum not handled in WMSLayerFactory.");
     };
 
     layer->updateLayerMetaData();
@@ -265,7 +264,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

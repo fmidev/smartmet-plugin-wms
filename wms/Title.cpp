@@ -31,7 +31,7 @@ void Title::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Title JSON must be a JSON hash");
+      throw Spine::Exception(BCP, "Title JSON must be a JSON hash");
 
     // Iterate through all the members
 
@@ -51,12 +51,12 @@ void Title::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "attributes")
         attributes.init(json, theConfig);
       else
-        throw SmartMet::Spine::Exception(BCP, "Title object has no field named '" + name + "'");
+        throw Spine::Exception(BCP, "Title object has no field named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -79,7 +79,7 @@ std::size_t Title::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -97,7 +97,7 @@ const std::string& Title::translate(const std::string& theLanguage) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -115,7 +115,7 @@ const std::string& Title::translate(const boost::optional<std::string>& theLangu
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

@@ -23,7 +23,7 @@ void Sampling::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Sampling JSON is not map");
+      throw Spine::Exception(BCP, "Sampling JSON is not map");
 
     // Iterate through all the members
 
@@ -41,13 +41,12 @@ void Sampling::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "relativeresolution")
         relativeresolution = json.asDouble();
       else
-        throw SmartMet::Spine::Exception(BCP,
-                                         "Sampling does not have a setting named '" + name + "'");
+        throw Spine::Exception(BCP, "Sampling does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -68,7 +67,7 @@ boost::optional<double> Sampling::getResolution(const Projection& theProjection)
     // No resolution provided? Error
 
     if (!theProjection.resolution)
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP, "Cannot request sampling of data without a projection with a resolution available");
 
     // Not in valid range --> no resolution
@@ -97,7 +96,7 @@ boost::optional<double> Sampling::getResolution(const Projection& theProjection)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -121,7 +120,7 @@ std::size_t Sampling::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

@@ -93,17 +93,17 @@ bool looks_valid_filename(const std::string& name)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
-WMSConfig::WMSConfig(const SmartMet::Plugin::Dali::Config& daliConfig,
-                     const SmartMet::Spine::FileCache& theFileCache,
-                     SmartMet::Engine::Querydata::Engine* qEngine,
+WMSConfig::WMSConfig(const Plugin::Dali::Config& daliConfig,
+                     const Spine::FileCache& theFileCache,
+                     Engine::Querydata::Engine* qEngine,
 #ifndef WITHOUT_AUTHENTICATION
-                     SmartMet::Engine::Authentication::Engine* authEngine,
+                     Engine::Authentication::Engine* authEngine,
 #endif
-                     SmartMet::Engine::Gis::Engine* gisEngine)
+                     Engine::Gis::Engine* gisEngine)
     : itsDaliConfig(daliConfig),
       itsFileCache(theFileCache),
       itsQEngine(qEngine),
@@ -151,7 +151,7 @@ WMSConfig::WMSConfig(const SmartMet::Plugin::Dali::Config& daliConfig,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -173,7 +173,7 @@ void WMSConfig::shutdown()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -194,7 +194,7 @@ void WMSConfig::capabilitiesUpdateLoop()
       }
       catch (...)
       {
-        SmartMet::Spine::Exception exception(BCP, "Could not update capabilities!", NULL);
+        Spine::Exception exception(BCP, "Could not update capabilities!", NULL);
         std::cout << exception.getStackTrace();
       }
     }
@@ -202,12 +202,12 @@ void WMSConfig::capabilitiesUpdateLoop()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
 #ifndef WITHOUT_AUTHENTICATION
-bool WMSConfig::validateGetMapAuthorization(const SmartMet::Spine::HTTP::Request& theRequest) const
+bool WMSConfig::validateGetMapAuthorization(const Spine::HTTP::Request& theRequest) const
 {
   // Everything ok if authentication is disabled
   if (!itsAuthEngine)
@@ -219,7 +219,7 @@ bool WMSConfig::validateGetMapAuthorization(const SmartMet::Spine::HTTP::Request
     std::string layerstring = *(theRequest.getParameter("LAYERS"));
 
     // Get apikey
-    auto apikey = SmartMet::Spine::FmiApiKey::getFmiApiKey(theRequest);
+    auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
     if (!apikey)
       return true;
 
@@ -234,7 +234,7 @@ bool WMSConfig::validateGetMapAuthorization(const SmartMet::Spine::HTTP::Request
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 #endif
@@ -295,8 +295,7 @@ void WMSConfig::updateLayerMetaData()
                   catch (...)
                   {
                     // Ignore and report failed product definitions
-                    SmartMet::Spine::Exception exception(
-                        BCP, "Failed to parse configuration!", NULL);
+                    Spine::Exception exception(BCP, "Failed to parse configuration!", NULL);
                     exception.addParameter("Path", itr2->path().c_str());
                     std::cout << exception.getStackTrace();
                     continue;
@@ -306,7 +305,7 @@ void WMSConfig::updateLayerMetaData()
             }
             catch (...)
             {
-              SmartMet::Spine::Exception exception(
+              Spine::Exception exception(
                   BCP,
                   "Lost " + std::string(itr2->path().c_str()) + " while scanning the filesystem!",
                   NULL);
@@ -319,7 +318,7 @@ void WMSConfig::updateLayerMetaData()
       }
       catch (...)
       {
-        SmartMet::Spine::Exception exception(
+        Spine::Exception exception(
             BCP,
             "Lost " + std::string(itr->path().c_str()) + " while scanning the filesystem!",
             NULL);
@@ -328,13 +327,13 @@ void WMSConfig::updateLayerMetaData()
       }
     }
 
-    SmartMet::Spine::WriteLock theLock(itsGetCapabilitiesMutex);
+    Spine::WriteLock theLock(itsGetCapabilitiesMutex);
 
     std::swap(itsLayers, newProxies);
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -347,7 +346,7 @@ std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apike
 {
   try
   {
-    SmartMet::Spine::ReadLock theLock(itsGetCapabilitiesMutex);
+    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
 
     std::string wmsService = "wms";  // Make this an include or something
 
@@ -386,7 +385,7 @@ std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apike
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -394,7 +393,7 @@ std::string WMSConfig::layerCustomer(const std::string& theLayerName) const
 {
   try
   {
-    SmartMet::Spine::ReadLock theLock(itsGetCapabilitiesMutex);
+    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
 
     auto it = itsLayers.find(theLayerName);
     if (it == itsLayers.end())
@@ -404,7 +403,7 @@ std::string WMSConfig::layerCustomer(const std::string& theLayerName) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -424,7 +423,7 @@ bool WMSConfig::isValidMapFormat(const std::string& theMapFormat) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -436,7 +435,7 @@ bool WMSConfig::isValidVersion(const std::string& theVersion) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -444,13 +443,13 @@ bool WMSConfig::isValidLayer(const std::string& theLayer) const
 {
   try
   {
-    SmartMet::Spine::ReadLock theLock(itsGetCapabilitiesMutex);
+    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
 
     return isValidLayerImpl(theLayer);
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -458,7 +457,7 @@ bool WMSConfig::isValidStyle(const std::string& theLayer, const std::string& the
 {
   try
   {
-    SmartMet::Spine::ReadLock theLock(itsGetCapabilitiesMutex);
+    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
 
     if (isValidLayerImpl(theLayer) == false)
       return false;
@@ -473,7 +472,7 @@ bool WMSConfig::isValidStyle(const std::string& theLayer, const std::string& the
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -481,7 +480,7 @@ bool WMSConfig::isValidCRS(const std::string& theLayer, const std::string& theCR
 {
   try
   {
-    SmartMet::Spine::ReadLock theLock(itsGetCapabilitiesMutex);
+    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
 
     if (isValidLayerImpl(theLayer) == false)
       return false;
@@ -492,17 +491,17 @@ bool WMSConfig::isValidCRS(const std::string& theLayer, const std::string& theCR
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
 bool WMSConfig::isValidTime(const std::string& theLayer,
                             const boost::posix_time::ptime& theTime,
-                            const SmartMet::Engine::Querydata::Engine& theQEngine) const
+                            const Engine::Querydata::Engine& theQEngine) const
 {
   try
   {
-    SmartMet::Spine::ReadLock theLock(itsGetCapabilitiesMutex);
+    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
 
     if (isValidLayerImpl(theLayer) == false)
       return false;
@@ -513,7 +512,7 @@ bool WMSConfig::isValidTime(const std::string& theLayer,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -521,7 +520,7 @@ bool WMSConfig::isTemporal(const std::string& theLayer) const
 {
   try
   {
-    SmartMet::Spine::ReadLock theLock(itsGetCapabilitiesMutex);
+    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
 
     if (isValidLayerImpl(theLayer) == false)
       return false;
@@ -532,7 +531,7 @@ bool WMSConfig::isTemporal(const std::string& theLayer) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -540,7 +539,7 @@ bool WMSConfig::currentValue(const std::string& theLayer) const
 {
   try
   {
-    SmartMet::Spine::ReadLock theLock(itsGetCapabilitiesMutex);
+    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
 
     if (isValidLayerImpl(theLayer) == false)
       return false;
@@ -551,7 +550,7 @@ bool WMSConfig::currentValue(const std::string& theLayer) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -559,7 +558,7 @@ boost::posix_time::ptime WMSConfig::mostCurrentTime(const std::string& theLayer)
 {
   try
   {
-    SmartMet::Spine::ReadLock theLock(itsGetCapabilitiesMutex);
+    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
 
     if (isValidLayerImpl(theLayer) == false)
       return boost::posix_time::not_a_date_time;
@@ -570,7 +569,7 @@ boost::posix_time::ptime WMSConfig::mostCurrentTime(const std::string& theLayer)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -578,7 +577,7 @@ std::string WMSConfig::jsonText(const std::string& theLayerName) const
 {
   try
   {
-    SmartMet::Spine::ReadLock theLock(itsGetCapabilitiesMutex);
+    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
 
     if (itsLayers.find(theLayerName) == itsLayers.end())
       return "";
@@ -587,7 +586,7 @@ std::string WMSConfig::jsonText(const std::string& theLayerName) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -599,7 +598,7 @@ bool WMSConfig::isValidLayerImpl(const std::string& theLayer) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

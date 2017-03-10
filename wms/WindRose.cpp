@@ -23,7 +23,7 @@ void WindRose::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "WindRose JSON is not a JSON hash");
+      throw Spine::Exception(BCP, "WindRose JSON is not a JSON hash");
 
     // Iterate through all the members
 
@@ -47,15 +47,14 @@ void WindRose::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "parameter")
         parameter = json.asString();
       else if (name == "limits")
-        SmartMet::Spine::JSON::extract_array("limits", limits, json, theConfig);
+        Spine::JSON::extract_array("limits", limits, json, theConfig);
       else
-        throw SmartMet::Spine::Exception(BCP,
-                                         "WindRose does not have a setting named '" + name + "'");
+        throw Spine::Exception(BCP, "WindRose does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -81,7 +80,7 @@ std::size_t WindRose::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

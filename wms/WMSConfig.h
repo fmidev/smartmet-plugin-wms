@@ -43,7 +43,7 @@ namespace WMS
 class WMSLayerProxy
 {
  public:
-  WMSLayerProxy(SmartMet::Engine::Gis::Engine* gisEngine, SharedWMSLayer theLayer)
+  WMSLayerProxy(Engine::Gis::Engine* gisEngine, SharedWMSLayer theLayer)
       : itsGisEngine(gisEngine), itsLayer(theLayer)
   {
     itsCapabilitiesXML = itsLayer->generateGetCapabilities(*itsGisEngine);
@@ -58,7 +58,7 @@ class WMSLayerProxy
   }
 
  private:
-  SmartMet::Engine::Gis::Engine* itsGisEngine;
+  Engine::Gis::Engine* itsGisEngine;
   SharedWMSLayer itsLayer;
   std::string layerName;
   std::string itsCapabilitiesXML;
@@ -68,13 +68,13 @@ class WMSConfig
 {
  public:
   WMSConfig() = delete;
-  WMSConfig(const SmartMet::Plugin::Dali::Config& daliConfig,
-            const SmartMet::Spine::FileCache& theFileCache,
-            SmartMet::Engine::Querydata::Engine* qEngine,
+  WMSConfig(const Plugin::Dali::Config& daliConfig,
+            const Spine::FileCache& theFileCache,
+            Engine::Querydata::Engine* qEngine,
 #ifndef WITHOUT_AUTHENTICATION
-            SmartMet::Engine::Authentication::Engine* authEngine,
+            Engine::Authentication::Engine* authEngine,
 #endif
-            SmartMet::Engine::Gis::Engine* gisEngine);
+            Engine::Gis::Engine* gisEngine);
 
 #ifndef WITHOUT_AUTHENTICATION
   std::string getCapabilities(const boost::optional<std::string>& apikey,
@@ -93,12 +93,12 @@ class WMSConfig
   bool isValidCRS(const std::string& theLayer, const std::string& theCRS) const;
 
 #ifndef WITHOUT_AUTHENTICATION
-  bool validateGetMapAuthorization(const SmartMet::Spine::HTTP::Request& theRequest) const;
+  bool validateGetMapAuthorization(const Spine::HTTP::Request& theRequest) const;
 #endif
 
   bool isValidTime(const std::string& theLayer,
                    const boost::posix_time::ptime& theTime,
-                   const SmartMet::Engine::Querydata::Engine& theQEngine) const;
+                   const Engine::Querydata::Engine& theQEngine) const;
   bool isTemporal(const std::string& theLayer) const;
   bool currentValue(const std::string& theLayer) const;
   boost::posix_time::ptime mostCurrentTime(const std::string& theLayer) const;
@@ -112,16 +112,16 @@ class WMSConfig
   void shutdown();
 
  private:
-  const SmartMet::Plugin::Dali::Config& itsDaliConfig;
-  const SmartMet::Spine::FileCache& itsFileCache;
+  const Plugin::Dali::Config& itsDaliConfig;
+  const Spine::FileCache& itsFileCache;
 
   // Engines for GetCapabilities
-  SmartMet::Engine::Querydata::Engine* itsQEngine = nullptr;
-  SmartMet::Engine::Gis::Engine* itsGisEngine = nullptr;
+  Engine::Querydata::Engine* itsQEngine = nullptr;
+  Engine::Gis::Engine* itsGisEngine = nullptr;
 
 #ifndef WITHOUT_AUTHENTICATION
   // For GetCapabilities and GetMap Authentication
-  SmartMet::Engine::Authentication::Engine* itsAuthEngine = nullptr;
+  Engine::Authentication::Engine* itsAuthEngine = nullptr;
 #endif
 
   // supported map formats
@@ -148,7 +148,7 @@ class WMSConfig
 
   friend class WMSLayerFactory;
 
-  mutable SmartMet::Spine::MutexType itsGetCapabilitiesMutex;
+  mutable Spine::MutexType itsGetCapabilitiesMutex;
 
   bool itsShutdownRequested;
   int itsActiveThreadCount;

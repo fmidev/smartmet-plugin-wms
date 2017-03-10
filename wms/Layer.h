@@ -68,7 +68,7 @@ class Layer : public Properties
   bool isObservation(const State& theState) const;
 
   // Get the model data
-  SmartMet::Engine::Querydata::Q getModel(const State& theState) const;
+  Engine::Querydata::Q getModel(const State& theState) const;
 
   // Generate clipPath to the output if needed
   void addClipRect(CTPP::CDT& theCdt,

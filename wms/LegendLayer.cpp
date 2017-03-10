@@ -10,6 +10,7 @@
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <ctpp2/CDT.hpp>
+#include <fmt/format.h>
 #include <boost/foreach.hpp>
 
 // TODO:
@@ -31,32 +32,24 @@ namespace Dali
 
 std::string pretty(double num, const char* format)
 {
-  try
+  if (strcmp(format, "%.0f") == 0)
+    return fmt::sprintf("%d", static_cast<long>(round(num)));
+
+  std::string ret = fmt::sprintf(format, num);
+  std::size_t pos = ret.size();
+  while (pos > 0 && ret[--pos] == '0')
   {
-    if (strcmp(format, "%.0f") == 0)
-      return Fmi::to_string(static_cast<int>(round(num)));
-
-    char buffer[100];
-
-    char* begin = &buffer[0];
-    char* end = begin + sprintf(buffer, format, num);
-
-    while (end > begin && *--end == '0')
-      ;
-
-    if (*end == '.' || *end == ',')
-      --end;
-
-    std::string ret(begin, ++end);
-    if (ret != "-0")
-      return ret;
-    else
-      return "0";
   }
-  catch (...)
-  {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
-  }
+
+  if (ret[pos] != ',' && ret[pos] != '.')
+    return ret;
+
+  ret.resize(pos);
+
+  if (ret != "-0")
+    return ret;
+  else
+    return "0";
 }
 
 // ----------------------------------------------------------------------
@@ -76,7 +69,7 @@ std::string legend_text(double theValue, const LegendLabels& theLabels)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -123,11 +116,11 @@ std::string legend_text(const Isoband& theIsoband, const LegendLabels& theLabels
       }
     }
     else
-      throw SmartMet::Spine::Exception(BCP, "Unknown legend label type '" + theLabels.type + "'");
+      throw Spine::Exception(BCP, "Unknown legend label type '" + theLabels.type + "'");
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -164,7 +157,7 @@ std::string legend_text(const Isoband& theIsoband,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -182,7 +175,7 @@ void LegendLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Symbol-layer JSON is not a JSON object");
+      throw Spine::Exception(BCP, "Symbol-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -216,11 +209,11 @@ void LegendLayer::init(const Json::Value& theJson,
 
     json = theJson.get("isobands", nulljson);
     if (!json.isNull())
-      SmartMet::Spine::JSON::extract_array("isobands", isobands, json, theConfig);
+      Spine::JSON::extract_array("isobands", isobands, json, theConfig);
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -258,8 +251,7 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     // A symbol must be defined
 
     if (!symbols.symbol)
-      throw SmartMet::Spine::Exception(
-          BCP, "Must define default symbol with 'symbol' in a legend-layer");
+      throw Spine::Exception(BCP, "Must define default symbol with 'symbol' in a legend-layer");
 
     // Update the globals
 
@@ -367,7 +359,7 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -393,7 +385,7 @@ std::size_t LegendLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

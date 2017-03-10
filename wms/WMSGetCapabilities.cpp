@@ -30,12 +30,11 @@ WMSGetCapabilities::WMSGetCapabilities(const std::string& theTemplatePath)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
-std::string WMSGetCapabilities::resolveGetMapURI(
-    const SmartMet::Spine::HTTP::Request& theRequest) const
+std::string WMSGetCapabilities::resolveGetMapURI(const Spine::HTTP::Request& theRequest) const
 {
   try
   {
@@ -52,7 +51,7 @@ std::string WMSGetCapabilities::resolveGetMapURI(
       if (host == "data.fmi.fi" || host == "wms.fmi.fi")  // These should be configurable
       {
         // These hosts need apikey in order to work
-        auto apikey = SmartMet::Spine::FmiApiKey::getFmiApiKey(theRequest);
+        auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
 
         if (!apikey)
         {
@@ -73,12 +72,12 @@ std::string WMSGetCapabilities::resolveGetMapURI(
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
-std::string WMSGetCapabilities::response(const SmartMet::Spine::HTTP::Request& theRequest,
-                                         const SmartMet::Engine::Querydata::Engine& theQEngine,
+std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
+                                         const Engine::Querydata::Engine& theQEngine,
                                          const WMSConfig& theConfig) const
 {
   try
@@ -88,7 +87,7 @@ std::string WMSGetCapabilities::response(const SmartMet::Spine::HTTP::Request& t
     hash["version_string"] = boost::algorithm::join(theConfig.supportedWMSVersions(), ", ");
 
     // Deduce apikey for layer filtering
-    auto apikey = SmartMet::Spine::FmiApiKey::getFmiApiKey(theRequest);
+    auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
 
     std::string configuredLayers = theConfig.getCapabilities(apikey);
 
@@ -113,7 +112,7 @@ std::string WMSGetCapabilities::response(const SmartMet::Spine::HTTP::Request& t
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

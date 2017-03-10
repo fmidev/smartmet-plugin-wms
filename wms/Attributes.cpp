@@ -49,8 +49,7 @@ void Attributes::init(const Json::Value& theJson, const Config& theConfig)
       return;
 
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Attributes JSON is not a JSON object (name-value pairs)");
+      throw Spine::Exception(BCP, "Attributes JSON is not a JSON object (name-value pairs)");
 
     // Iterate trhough all the members
 
@@ -86,18 +85,18 @@ void Attributes::init(const Json::Value& theJson, const Config& theConfig)
         }
         case Json::arrayValue:
         {
-          throw SmartMet::Spine::Exception(BCP, "Arrays are not allowed as an Attribute value");
+          throw Spine::Exception(BCP, "Arrays are not allowed as an Attribute value");
         }
         case Json::objectValue:
         {
-          throw SmartMet::Spine::Exception(BCP, "Maps are not allowed as an Attribute value");
+          throw Spine::Exception(BCP, "Maps are not allowed as an Attribute value");
         }
       }
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -143,7 +142,7 @@ void Attributes::generate(CTPP::CDT& theLocals, State& theState) const
       bool is_valid = ((attr_name == "qid") | is_presentation | is_regular);
 
       if (!is_valid)
-        throw SmartMet::Spine::Exception(BCP, "Illegal SVG attribute name '" + attr_name + "'");
+        throw Spine::Exception(BCP, "Illegal SVG attribute name '" + attr_name + "'");
 
       // Make sure the ID is unique
       if (attr_name == "id")
@@ -176,7 +175,7 @@ void Attributes::generate(CTPP::CDT& theLocals, State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -230,7 +229,7 @@ std::size_t Attributes::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -268,7 +267,7 @@ boost::optional<std::string> Attributes::getLocalIri(const std::string& theName)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

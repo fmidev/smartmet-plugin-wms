@@ -35,7 +35,7 @@ void Label::setLocale(const std::string& theLocale)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -80,7 +80,7 @@ std::string Label::print(double theValue) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -95,7 +95,7 @@ void Label::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "JSON is not a JSON object");
+      throw Spine::Exception(BCP, "JSON is not a JSON object");
 
     // Iterate through all the members
 
@@ -134,12 +134,12 @@ void Label::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "minusprefix")
         minusprefix = json.asString();
       else
-        throw SmartMet::Spine::Exception(BCP, "Unknown setting '" + name + "'!");
+        throw Spine::Exception(BCP, "Unknown setting '" + name + "'!");
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -168,7 +168,7 @@ std::size_t Label::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

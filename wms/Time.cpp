@@ -31,7 +31,7 @@ boost::posix_time::ptime parse_time(const std::string& theTime)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

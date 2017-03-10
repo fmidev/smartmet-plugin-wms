@@ -25,7 +25,7 @@ void Styles::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Styles JSON must be a JSON object (name-value pairs)");
+      throw Spine::Exception(BCP, "Styles JSON must be a JSON object (name-value pairs)");
 
     // Iterate through all the members
 
@@ -35,7 +35,7 @@ void Styles::init(const Json::Value& theJson, const Config& theConfig)
       const Json::Value& class_json = theJson[class_name];
 
       if (!class_json.isObject())
-        throw SmartMet::Spine::Exception(
+        throw Spine::Exception(
             BCP,
             "Invalid object type in defs.styles initialization, expecting name-value pairs for CSS "
             "class '" +
@@ -73,11 +73,11 @@ void Styles::init(const Json::Value& theJson, const Config& theConfig)
           }
           case Json::arrayValue:
           {
-            throw SmartMet::Spine::Exception(BCP, "JSON arrays are not allowed in styles");
+            throw Spine::Exception(BCP, "JSON arrays are not allowed in styles");
           }
           case Json::objectValue:
           {
-            throw SmartMet::Spine::Exception(BCP, "JSON hashes are not allowed in styles");
+            throw Spine::Exception(BCP, "JSON hashes are not allowed in styles");
           }
         }
       }
@@ -85,7 +85,7 @@ void Styles::init(const Json::Value& theJson, const Config& theConfig)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -112,7 +112,7 @@ void Styles::generate(CTPP::CDT& theGlobals, State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -130,7 +130,7 @@ std::size_t Styles::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

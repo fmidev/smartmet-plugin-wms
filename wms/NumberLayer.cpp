@@ -53,7 +53,7 @@ void NumberLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Number-layer JSON is not a JSON object");
+      throw Spine::Exception(BCP, "Number-layer JSON is not a JSON object");
 
     // Iterate through all the members
 
@@ -104,11 +104,11 @@ void NumberLayer::init(const Json::Value& theJson,
 
     json = theJson.get("numbers", nulljson);
     if (!json.isNull())
-      SmartMet::Spine::JSON::extract_array("numbers", numbers, json, theConfig);
+      Spine::JSON::extract_array("numbers", numbers, json, theConfig);
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -123,7 +123,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   try
   {
     if (theState.inDefs())
-      throw SmartMet::Spine::Exception(BCP, "NumberLayer cannot be used in the Defs-section");
+      throw Spine::Exception(BCP, "NumberLayer cannot be used in the Defs-section");
 
     if (!validLayer(theState))
       return;
@@ -152,7 +152,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     // Establish the parameter
 
     if (!parameter)
-      throw SmartMet::Spine::Exception(BCP, "Parameter not set for number-layer");
+      throw Spine::Exception(BCP, "Parameter not set for number-layer");
 
     // Establish the valid time
 
@@ -173,8 +173,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         match = (q->levelValue() == *level);
 
       if (!match)
-        throw SmartMet::Spine::Exception(
-            BCP, "Level value " + Fmi::to_string(*level) + " is not available");
+        throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available");
     }
 
     // Get projection details
@@ -207,7 +206,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // The parameters. This *must* be done after the call to positions generation
 
-    auto param = SmartMet::Spine::ParameterFactory::instance().parse(*parameter);
+    auto param = Spine::ParameterFactory::instance().parse(*parameter);
 
     // Establish the numbers to draw. At this point we know that if
     // use_observations is true, obsengine is not disabled.
@@ -224,7 +223,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     if (!use_observations)
     {
       if (!q->param(param.number()))
-        throw SmartMet::Spine::Exception(
+        throw Spine::Exception(
             BCP, "Parameter " + param.name() + " not available in the number layer querydata");
 
       for (const auto& point : points)
@@ -303,15 +302,14 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
           OGRErr err = wgs84->SetFromUserInput("WGS84");
 
           if (err != OGRERR_NONE)
-            throw SmartMet::Spine::Exception(BCP, "GDAL does not understand WKT 'WGS84'!");
+            throw Spine::Exception(BCP, "GDAL does not understand WKT 'WGS84'!");
 
           std::unique_ptr<OGRCoordinateTransformation> transformation(
               OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
           if (!transformation)
-            throw SmartMet::Spine::Exception(
-                BCP,
-                "Failed to create the needed coordinate transformation for "
-                "generating station positions");
+            throw Spine::Exception(BCP,
+                                   "Failed to create the needed coordinate transformation for "
+                                   "generating station positions");
 
           // TODO: Should refactor this using Positions methods
 
@@ -477,7 +475,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Failed to generate NumberLayer", NULL);
+    throw Spine::Exception(BCP, "Failed to generate NumberLayer", NULL);
   }
 }
 
@@ -498,7 +496,7 @@ std::size_t NumberLayer::hash_value(const State& theState) const
     auto hash = Layer::hash_value(theState);
     auto q = getModel(theState);
     if (q)
-      boost::hash_combine(hash, SmartMet::Engine::Querydata::hash_value(q));
+      boost::hash_combine(hash, Engine::Querydata::hash_value(q));
     boost::hash_combine(hash, Dali::hash_value(parameter));
     boost::hash_combine(hash, Dali::hash_value(level));
     boost::hash_combine(hash, Dali::hash_value(multiplier));
@@ -513,7 +511,7 @@ std::size_t NumberLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Calculating hash_value for the layer failed!", NULL);
+    throw Spine::Exception(BCP, "Calculating hash_value for the layer failed!", NULL);
   }
 }
 

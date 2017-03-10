@@ -37,7 +37,7 @@ void TimeLayer::init(const Json::Value& theJson,
     now = boost::posix_time::second_clock::universal_time();
 
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Time-layer JSON is not a JSON object");
+      throw Spine::Exception(BCP, "Time-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -67,7 +67,7 @@ void TimeLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -148,8 +148,7 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
       ltime = boost::local_time::local_date_time(now, tz);
     }
     else
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Unknown time-option in time-layer: '" + *timestamp + "'");
+      throw Spine::Exception(BCP, "Unknown time-option in time-layer: '" + *timestamp + "'");
 
     std::ostringstream msg;
     std::string fmt = (format ? *format : "%Y-%m-%d %H:%M");
@@ -164,7 +163,7 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -179,7 +178,7 @@ std::size_t TimeLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    boost::hash_combine(hash, SmartMet::Engine::Querydata::hash_value(getModel(theState)));
+    boost::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
     boost::hash_combine(hash, Dali::hash_value(timezone));
     boost::hash_combine(hash, Dali::hash_value(timestamp));
     boost::hash_combine(hash, Dali::hash_value(format));
@@ -197,7 +196,7 @@ std::size_t TimeLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

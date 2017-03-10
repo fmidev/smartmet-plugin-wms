@@ -40,7 +40,7 @@ std::string enclose_with_quotes(const std::string& param)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -51,7 +51,7 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
     // valid fromat is 0xFFFFFF
     if (hex_string.size() != 8)
     {
-      SmartMet::Spine::Exception exception(BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!");
+      Spine::Exception exception(BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       throw exception;
     }
@@ -69,8 +69,7 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
     }
     catch (...)
     {
-      SmartMet::Spine::Exception exception(
-          BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!", NULL);
+      Spine::Exception exception(BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!", NULL);
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       throw exception;
     }
@@ -79,18 +78,16 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
-WMSRequestType wmsRequestType(const SmartMet::Spine::HTTP::Request& theHTTPRequest)
+WMSRequestType wmsRequestType(const Spine::HTTP::Request& theHTTPRequest)
 {
   try
   {
-    std::string service =
-        SmartMet::Spine::optional_string(theHTTPRequest.getParameter("service"), "");
-    std::string request =
-        SmartMet::Spine::optional_string(theHTTPRequest.getParameter("request"), "");
+    std::string service = Spine::optional_string(theHTTPRequest.getParameter("service"), "");
+    std::string request = Spine::optional_string(theHTTPRequest.getParameter("request"), "");
 
     if (request == WMS_GET_CAPABILITIES && boost::iequals(service, WMS_SERVICE))
       return WMSRequestType::GET_CAPABILITIES;
@@ -103,7 +100,7 @@ WMSRequestType wmsRequestType(const SmartMet::Spine::HTTP::Request& theHTTPReque
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -113,8 +110,7 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
   {
     if (periodString.empty() || periodString.at(0) != 'P' || designatorCharPos == 0)
     {
-      SmartMet::Spine::Exception exception(
-          BCP, "Cannot parse resolution string '" + periodString + "'!");
+      Spine::Exception exception(BCP, "Cannot parse resolution string '" + periodString + "'!");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
       throw exception;
     }
@@ -129,7 +125,7 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
 
     if ((designatorCharPos - pos) == 1)
     {
-      SmartMet::Spine::Exception exception(BCP, "Invalid dimension value '" + periodString + "'!");
+      Spine::Exception exception(BCP, "Invalid dimension value '" + periodString + "'!");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
       throw exception;
     }
@@ -144,8 +140,7 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
     }
     catch (boost::bad_lexical_cast const&)
     {
-      SmartMet::Spine::Exception exception(
-          BCP, "Invalid dimension value '" + periodString + "'!", NULL);
+      Spine::Exception exception(BCP, "Invalid dimension value '" + periodString + "'!", NULL);
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
       throw exception;
     }
@@ -154,7 +149,7 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -175,11 +170,11 @@ unsigned int resolution_in_minutes(const std::string resolution)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
-std::ostream& operator<<(std::ostream& ost, const SmartMet::Spine::HTTP::Request& theHTTPRequest)
+std::ostream& operator<<(std::ostream& ost, const Spine::HTTP::Request& theHTTPRequest)
 {
   try
   {
@@ -251,7 +246,7 @@ std::ostream& operator<<(std::ostream& ost, const SmartMet::Spine::HTTP::Request
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

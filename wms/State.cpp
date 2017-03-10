@@ -47,7 +47,7 @@ State::State(const Plugin& thePlugin)
  */
 // ----------------------------------------------------------------------
 
-const SmartMet::Engine::Contour::Engine& State::getContourEngine() const
+const Engine::Contour::Engine& State::getContourEngine() const
 {
   try
   {
@@ -55,7 +55,7 @@ const SmartMet::Engine::Contour::Engine& State::getContourEngine() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -65,7 +65,7 @@ const SmartMet::Engine::Contour::Engine& State::getContourEngine() const
  */
 // ----------------------------------------------------------------------
 
-const SmartMet::Engine::Querydata::Engine& State::getQEngine() const
+const Engine::Querydata::Engine& State::getQEngine() const
 {
   try
   {
@@ -73,7 +73,7 @@ const SmartMet::Engine::Querydata::Engine& State::getQEngine() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -83,7 +83,7 @@ const SmartMet::Engine::Querydata::Engine& State::getQEngine() const
  */
 // ----------------------------------------------------------------------
 
-const SmartMet::Engine::Gis::Engine& State::getGisEngine() const
+const Engine::Gis::Engine& State::getGisEngine() const
 {
   try
   {
@@ -91,7 +91,7 @@ const SmartMet::Engine::Gis::Engine& State::getGisEngine() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -101,7 +101,7 @@ const SmartMet::Engine::Gis::Engine& State::getGisEngine() const
  */
 // ----------------------------------------------------------------------
 
-const SmartMet::Engine::Geonames::Engine& State::getGeoEngine() const
+const Engine::Geonames::Engine& State::getGeoEngine() const
 {
   try
   {
@@ -109,7 +109,7 @@ const SmartMet::Engine::Geonames::Engine& State::getGeoEngine() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -120,7 +120,7 @@ const SmartMet::Engine::Geonames::Engine& State::getGeoEngine() const
 // ----------------------------------------------------------------------
 
 #ifndef WITHOUT_OBSERVATION
-SmartMet::Engine::Observation::Engine& State::getObsEngine() const
+Engine::Observation::Engine& State::getObsEngine() const
 {
   try
   {
@@ -128,7 +128,7 @@ SmartMet::Engine::Observation::Engine& State::getObsEngine() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 #endif
@@ -147,7 +147,7 @@ const Config& State::getConfig() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -165,8 +165,7 @@ const Config& State::getConfig() const
  */
 // ----------------------------------------------------------------------
 
-SmartMet::Engine::Querydata::Q State::get(
-    const SmartMet::Engine::Querydata::Producer& theProducer) const
+Engine::Querydata::Q State::get(const Engine::Querydata::Producer& theProducer) const
 {
   try
   {
@@ -185,7 +184,7 @@ SmartMet::Engine::Querydata::Q State::get(
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -200,11 +199,11 @@ void State::requireId(const std::string& theID)
   try
   {
     if (!addId(theID))
-      throw SmartMet::Spine::Exception(BCP, ("ID '" + theID + "' is defined more than once"));
+      throw Spine::Exception(BCP, ("ID '" + theID + "' is defined more than once"));
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -226,7 +225,7 @@ bool State::addId(const std::string& theID) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -244,7 +243,7 @@ void State::addAttributes(CTPP::CDT& theGlobals, const Attributes& theAttributes
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -323,7 +322,7 @@ void State::addAttributes(CTPP::CDT& theGlobals,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -341,7 +340,7 @@ std::string State::getStyle(const std::string& theCSS) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -359,7 +358,7 @@ std::string State::getSymbol(const std::string& theName) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -377,7 +376,7 @@ std::size_t State::getSymbolHash(const std::string& theName) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -395,7 +394,7 @@ std::string State::getFilter(const std::string& theName) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -413,7 +412,7 @@ std::size_t State::getFilterHash(const std::string& theName) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -431,7 +430,7 @@ std::string State::getPattern(const std::string& theName) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -449,7 +448,7 @@ std::size_t State::getPatternHash(const std::string& theName) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -467,7 +466,7 @@ std::string State::getMarker(const std::string& theName) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -485,7 +484,7 @@ std::size_t State::getMarkerHash(const std::string& theName) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -503,7 +502,7 @@ std::string State::getGradient(const std::string& theName) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -521,7 +520,7 @@ std::size_t State::getGradientHash(const std::string& theName) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

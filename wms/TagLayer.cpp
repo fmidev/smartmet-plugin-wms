@@ -26,7 +26,7 @@ void TagLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Symbol-layer JSON is not a JSON object");
+      throw Spine::Exception(BCP, "Symbol-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -44,7 +44,7 @@ void TagLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -59,7 +59,7 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
   try
   {
     if (!tag || tag->empty())
-      throw SmartMet::Spine::Exception(BCP, "TagLayer tag must be defined and be non-empty");
+      throw Spine::Exception(BCP, "TagLayer tag must be defined and be non-empty");
 
     if (!validLayer(theState))
       return;
@@ -135,7 +135,7 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -156,7 +156,7 @@ std::size_t TagLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

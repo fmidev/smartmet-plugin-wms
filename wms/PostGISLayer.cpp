@@ -1,4 +1,6 @@
 #include "PostGISLayer.h"
+
+#include "Geometry.h"
 #include "State.h"
 
 #include <ctpp2/CDT.hpp>
@@ -24,7 +26,7 @@ void PostGISLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -37,7 +39,7 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     // Get projection details
     if (!projection.crs)
-      throw SmartMet::Spine::Exception(BCP, "PostGISLayer projection not set");
+      throw Spine::Exception(BCP, "PostGISLayer projection not set");
 
     auto crs = projection.getCRS();
 
@@ -66,7 +68,7 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       theState.addAttributes(theGlobals, group_cdt, attributes);
     }
 
-    SmartMet::Engine::Gis::MapOptions mapOptions;
+    Engine::Gis::MapOptions mapOptions;
     mapOptions.pgname = pgname;
     mapOptions.schema = schema;
     mapOptions.table = table;
@@ -92,7 +94,14 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         {
           // Store the path with unique ID
           std::string iri = (qid + std::to_string(mapid++));
-          theGlobals["paths"][iri] = Fmi::OGR::exportToSvg(*geom2, box, 1);
+
+          CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
+          map_cdt["iri"] = iri;
+          map_cdt["type"] = Geometry::name(*geom2, theState.getType());
+          map_cdt["layertype"] = "postgis";
+          map_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs);
+
+          theGlobals["paths"][iri] = map_cdt;
 
           if (!theState.inDefs())
           {
@@ -112,7 +121,7 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -124,7 +133,7 @@ std::size_t PostGISLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

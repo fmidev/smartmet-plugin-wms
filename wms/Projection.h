@@ -92,7 +92,7 @@ class Projection
 
   // Update with querydata if necessary
 
-  void update(const SmartMet::Engine::Querydata::Q& theQ);
+  void update(const Engine::Querydata::Q& theQ);
 
   boost::shared_ptr<OGRSpatialReference> getCRS() const;
   const Fmi::Box& getBox() const;

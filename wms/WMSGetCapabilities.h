@@ -23,14 +23,14 @@ class WMSGetCapabilities
   WMSGetCapabilities(const std::string& theTemplatePath);
 
   // response to GetCapabilities request
-  std::string response(const SmartMet::Spine::HTTP::Request& theRequest,
-                       const SmartMet::Engine::Querydata::Engine& theQEngine,
+  std::string response(const Spine::HTTP::Request& theRequest,
+                       const Engine::Querydata::Engine& theQEngine,
                        const WMSConfig& theConfig) const;
 
  private:
   Dali::SharedFormatter itsResponseFormatter;
 
-  std::string resolveGetMapURI(const SmartMet::Spine::HTTP::Request& theRequest) const;
+  std::string resolveGetMapURI(const Spine::HTTP::Request& theRequest) const;
 };
 
 }  // namespace WMS

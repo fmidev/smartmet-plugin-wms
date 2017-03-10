@@ -2,6 +2,7 @@
 
 #include "IsobandLayer.h"
 #include "Config.h"
+#include "Geometry.h"
 #include "Hash.h"
 #include "Isoband.h"
 #include "Layer.h"
@@ -40,7 +41,7 @@ void IsobandLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "JSON is not a JSON object");
+      throw Spine::Exception(BCP, "JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -58,7 +59,7 @@ void IsobandLayer::init(const Json::Value& theJson,
 
     json = theJson.get("isobands", nulljson);
     if (!json.isNull())
-      SmartMet::Spine::JSON::extract_array("isobands", isobands, json, theConfig);
+      Spine::JSON::extract_array("isobands", isobands, json, theConfig);
 
     json = theJson.get("interpolation", nulljson);
     if (!json.isNull())
@@ -100,7 +101,7 @@ void IsobandLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -128,8 +129,8 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     // Establish the parameter
 
     if (!parameter)
-      throw SmartMet::Spine::Exception(BCP, "Parameter not set for isoband-layer!");
-    auto param = SmartMet::Spine::ParameterFactory::instance().parse(*parameter);
+      throw Spine::Exception(BCP, "Parameter not set for isoband-layer!");
+    auto param = Spine::ParameterFactory::instance().parse(*parameter);
 
     // Establish the valid time
 
@@ -143,8 +144,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       for (q->resetLevel(); !match && q->nextLevel();)
         match = (q->levelValue() == *level);
       if (!match)
-        throw SmartMet::Spine::Exception(
-            BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
+        throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
     }
 
     // Get projection details
@@ -156,13 +156,6 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     // And the box needed for clipping
     const auto clipbox = getClipBox(box);
-
-#if 0
-        char * txt;
-        crs->exportToWkt(&txt);
-        std::cout << txt << std::endl;
-        delete txt;
-#endif
 
     // Sample to higher resolution if necessary
 
@@ -177,8 +170,8 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       auto demdata = theState.getGeoEngine().dem();
       auto landdata = theState.getGeoEngine().landCover();
       if (!demdata || !landdata)
-        throw SmartMet::Spine::Exception(
-            BCP, "Resampling data requires DEM and land cover data to be available!");
+        throw Spine::Exception(BCP,
+                               "Resampling data requires DEM and land cover data to be available!");
 
       q = q->sample(param,
                     valid_time,
@@ -201,7 +194,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     {
       inshape = gis.getShape(crs.get(), inside->options);
       if (!inshape)
-        throw SmartMet::Spine::Exception(BCP, "Received empty inside-shape from database!");
+        throw Spine::Exception(BCP, "Received empty inside-shape from database!");
 
       inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
     }
@@ -217,16 +210,16 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     // Calculate the isobands and store them into the template engine
 
-    std::vector<SmartMet::Engine::Contour::Range> limits;
+    std::vector<Engine::Contour::Range> limits;
     const auto& contourer = theState.getContourEngine();
     BOOST_FOREACH (const Isoband& isoband, isobands)
     {
       if (isoband.qid.empty())
-        throw SmartMet::Spine::Exception(BCP, "All isobands must have a non-empty QID!");
-      limits.push_back(SmartMet::Engine::Contour::Range(isoband.lolimit, isoband.hilimit));
+        throw Spine::Exception(BCP, "All isobands must have a non-empty QID!");
+      limits.push_back(Engine::Contour::Range(isoband.lolimit, isoband.hilimit));
     }
 
-    SmartMet::Engine::Contour::Options options(param, valid_time, limits);
+    Engine::Contour::Options options(param, valid_time, limits);
 
     if (multiplier || offset)
       options.transformation(multiplier ? *multiplier : 1.0, offset ? *offset : 0.0);
@@ -235,21 +228,20 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     options.filter_degree = smoother.degree;
 
     if (interpolation == "linear")
-      options.interpolation = SmartMet::Engine::Contour::Linear;
+      options.interpolation = Engine::Contour::Linear;
     else if (interpolation == "nearest")
-      options.interpolation = SmartMet::Engine::Contour::Nearest;
+      options.interpolation = Engine::Contour::Nearest;
     else if (interpolation == "discrete")
-      options.interpolation = SmartMet::Engine::Contour::Discrete;
+      options.interpolation = Engine::Contour::Discrete;
     else if (interpolation == "loglinear")
-      options.interpolation = SmartMet::Engine::Contour::LogLinear;
+      options.interpolation = Engine::Contour::LogLinear;
     else
-      throw SmartMet::Spine::Exception(
-          BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
+      throw Spine::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
 
     // Do the actual contouring, either full grid or just
     // a sampled section
 
-    std::size_t qhash = SmartMet::Engine::Querydata::hash_value(q);
+    std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;
     boost::hash_combine(valueshash, options.data_hash_value());
     std::string wkt = q->area().WKT();
@@ -258,13 +250,12 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     if (!q->param(options.parameter.number()))
     {
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Parameter '" + options.parameter.name() + "' unavailable!");
+      throw Spine::Exception(BCP, "Parameter '" + options.parameter.name() + "' unavailable!");
     }
 
     if (!q->firstLevel())
     {
-      throw SmartMet::Spine::Exception(BCP, "Unable to set first level in querydata.");
+      throw Spine::Exception(BCP, "Unable to set first level in querydata.");
     }
 
     // Select the level.
@@ -272,10 +263,9 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     {
       if (!q->selectLevel(*options.level))
       {
-        throw SmartMet::Spine::Exception(BCP,
-                                         "Level value " +
-                                             boost::lexical_cast<std::string>(*options.level) +
-                                             " is not available!");
+        throw Spine::Exception(BCP,
+                               "Level value " + boost::lexical_cast<std::string>(*options.level) +
+                                   " is not available!");
       }
     }
 
@@ -336,7 +326,20 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         {
           // Store the path with unique ID
           std::string iri = qid + (qid.empty() ? "" : ".") + isoband.qid;
-          theGlobals["paths"][iri] = Fmi::OGR::exportToSvg(*geom2, box, 1);
+
+          CTPP::CDT isoband_cdt(CTPP::CDT::HASH_VAL);
+          isoband_cdt["iri"] = iri;
+          isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
+          isoband_cdt["parameter"] = *parameter;
+          isoband_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs);
+          isoband_cdt["type"] = Geometry::name(*geom2, theState.getType());
+          isoband_cdt["layertype"] = "isoband";
+          if (isoband.lolimit)
+            isoband_cdt["lolimit"] = *isoband.lolimit;
+          if (isoband.hilimit)
+            isoband_cdt["hilimit"] = *isoband.hilimit;
+
+          theGlobals["paths"][iri] = isoband_cdt;
 
           if (!theState.inDefs())
           {
@@ -356,7 +359,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -372,7 +375,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
   {
     auto hash = Layer::hash_value(theState);
 
-    boost::hash_combine(hash, SmartMet::Engine::Querydata::hash_value(getModel(theState)));
+    boost::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
     boost::hash_combine(hash, Dali::hash_value(parameter));
     boost::hash_combine(hash, Dali::hash_value(level));
     boost::hash_combine(hash, Dali::hash_value(isobands, theState));
@@ -388,7 +391,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

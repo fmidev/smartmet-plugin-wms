@@ -10,20 +10,19 @@ namespace Plugin
 {
 namespace WMS
 {
-WMSPostGISLayer::WMSPostGISLayer(const SmartMet::Engine::Gis::Engine* gisengine,
-                                 const Json::Value& json)
+WMSPostGISLayer::WMSPostGISLayer(const Engine::Gis::Engine* gisengine, const Json::Value& json)
     : itsGisEngine(gisengine), hasTemporalDimension(false)
 {
   try
   {
     if (json["pgname"].isNull())
-      throw SmartMet::Spine::Exception(BCP, "'pgname' must be defined for postgis layer");
+      throw Spine::Exception(BCP, "'pgname' must be defined for postgis layer");
     if (json["schema"].isNull())
-      throw SmartMet::Spine::Exception(BCP, "'schema' must be defined for postgis layer");
+      throw Spine::Exception(BCP, "'schema' must be defined for postgis layer");
     if (json["table"].isNull())
-      throw SmartMet::Spine::Exception(BCP, "'table' must be defined for postgis layer");
+      throw Spine::Exception(BCP, "'table' must be defined for postgis layer");
     if (json["geometry_column"].isNull())
-      throw SmartMet::Spine::Exception(BCP, "'geometry_column' must be defined for postgis layer");
+      throw Spine::Exception(BCP, "'geometry_column' must be defined for postgis layer");
 
     mdq_options.pgname = json["pgname"].asString();
     mdq_options.schema = json["schema"].asString();
@@ -39,7 +38,7 @@ WMSPostGISLayer::WMSPostGISLayer(const SmartMet::Engine::Gis::Engine* gisengine,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -47,7 +46,7 @@ void WMSPostGISLayer::updateLayerMetaData()
 {
   try
   {
-    SmartMet::Engine::Gis::MetaData metadata;
+    Engine::Gis::MetaData metadata;
 
     try
     {
@@ -57,7 +56,7 @@ void WMSPostGISLayer::updateLayerMetaData()
     {
       if (!quiet)
       {
-        SmartMet::Spine::Exception exception(BCP, "WMS layer metadata update failure!", NULL);
+        Spine::Exception exception(BCP, "WMS layer metadata update failure!", NULL);
         exception.addParameter("Layer name", getName());
         std::cout << exception.getStackTrace();
 
@@ -100,7 +99,7 @@ void WMSPostGISLayer::updateLayerMetaData()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

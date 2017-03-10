@@ -29,7 +29,7 @@ struct tag_get_map_request_options
 {
   std::vector<tag_map_info> map_info_vector;
 
-  SmartMet::Spine::BoundingBox bbox;  // contains crs
+  Spine::BoundingBox bbox;  // contains crs
   std::string format;
   std::string version;
   // optional
@@ -53,8 +53,8 @@ class WMSGetMap
  public:
   WMSGetMap(const WMSConfig& theConfig);
 
-  void parseHTTPRequest(const SmartMet::Engine::Querydata::Engine& theQEngine,
-                        SmartMet::Spine::HTTP::Request& theRequest);
+  void parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
+                        Spine::HTTP::Request& theRequest);
   std::string jsonText() const;
 
  private:

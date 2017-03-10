@@ -26,7 +26,7 @@ void Product::init(const Json::Value& theJson, const State& theState, const Conf
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Product JSON is not a JSON object (name-value pairs)");
+      throw Spine::Exception(BCP, "Product JSON is not a JSON object (name-value pairs)");
 
     // Extract all members
 
@@ -34,13 +34,12 @@ void Product::init(const Json::Value& theJson, const State& theState, const Conf
     Properties::init(theJson, theState, theConfig);
 
     auto json = theJson.get("svg_tmpl", nulljson);
-    if (json.isNull())
-      svg_tmpl = theConfig.defaultTemplate();
-    else
+    if (!json.isNull())
       svg_tmpl = json.asString();
 
-    json = theJson.get("type", "svg");
-    type = json.asString();
+    json = theJson.get("type", nulljson);
+    if (!json.isNull())
+      type = json.asString();
 
     json = theJson.get("width", nulljson);
     if (!json.isNull())
@@ -78,11 +77,11 @@ void Product::init(const Json::Value& theJson, const State& theState, const Conf
 
     // The reverse is not allowed
     if (!width || !height)
-      throw SmartMet::Spine::Exception(BCP, "SVG width or height is undefined");
+      throw Spine::Exception(BCP, "SVG width or height is undefined");
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Product init failed!", NULL);
+    throw Spine::Exception(BCP, "Product init failed!", NULL);
   }
 }
 
@@ -134,7 +133,7 @@ void Product::generate(CTPP::CDT& theGlobals, State& theState)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -161,7 +160,7 @@ std::size_t Product::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

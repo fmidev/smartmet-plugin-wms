@@ -22,7 +22,7 @@ bool AttributeSelection::matches(double theValue) const
   try
   {
     if (value && (lolimit || hilimit))
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP, "Attribute depends both on a single value and upper and/or lower limit");
 
     if (value)
@@ -37,7 +37,7 @@ bool AttributeSelection::matches(double theValue) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -52,7 +52,7 @@ void AttributeSelection::init(const Json::Value& theJson, const Config& theConfi
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Arrows JSON is not a JSON object");
+      throw Spine::Exception(BCP, "Arrows JSON is not a JSON object");
 
     // Iterate through all the members
 
@@ -75,13 +75,13 @@ void AttributeSelection::init(const Json::Value& theJson, const Config& theConfi
       {  // ignored so that f.ex. SymbolLayer may reuse Isobands
       }
       else
-        throw SmartMet::Spine::Exception(
-            BCP, "Attribute selection does not have a setting named '" + name + "'");
+        throw Spine::Exception(BCP,
+                               "Attribute selection does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -104,7 +104,7 @@ std::size_t AttributeSelection::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

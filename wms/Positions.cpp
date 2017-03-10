@@ -28,7 +28,7 @@ double length(double x1, double y1, double x2, double y2)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -67,7 +67,7 @@ bool overlaps(const Fmi::Box& theBox,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -80,7 +80,7 @@ bool overlaps(const Fmi::Box& theBox,
 // ----------------------------------------------------------------------
 
 void apply_direction_offsets(Positions::Points& thePoints,
-                             SmartMet::Engine::Querydata::Q theQ,
+                             Engine::Querydata::Q theQ,
                              const boost::posix_time::ptime& theTime,
                              int theOffset,
                              int theRotation,
@@ -99,9 +99,9 @@ void apply_direction_offsets(Positions::Points& thePoints,
 
     if (!theDirection.empty())
     {
-      auto param = SmartMet::Spine::ParameterFactory::instance().parse(theDirection);
+      auto param = Spine::ParameterFactory::instance().parse(theDirection);
       if (!q.param(param.number()))
-        throw SmartMet::Spine::Exception(
+        throw Spine::Exception(
             BCP, "Parameter '" + theDirection + "' is not available for position selection!");
 
       for (auto& point : thePoints)
@@ -116,15 +116,15 @@ void apply_direction_offsets(Positions::Points& thePoints,
     }
     else
     {
-      auto uparam = SmartMet::Spine::ParameterFactory::instance().parse(theU);
+      auto uparam = Spine::ParameterFactory::instance().parse(theU);
       if (!q.param(uparam.number()))
-        throw SmartMet::Spine::Exception(
-            BCP, "Parameter '" + theU + "' is not available for position selection!");
+        throw Spine::Exception(BCP,
+                               "Parameter '" + theU + "' is not available for position selection!");
 
-      auto vparam = SmartMet::Spine::ParameterFactory::instance().parse(theV);
+      auto vparam = Spine::ParameterFactory::instance().parse(theV);
       if (!q.param(vparam.number()))
-        throw SmartMet::Spine::Exception(
-            BCP, "Parameter '" + theV + "' is not available for position selection!");
+        throw Spine::Exception(BCP,
+                               "Parameter '" + theV + "' is not available for position selection!");
 
       for (auto& point : thePoints)
       {
@@ -143,7 +143,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -158,7 +158,7 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Positions JSON is not a JSON object!");
+      throw Spine::Exception(BCP, "Positions JSON is not a JSON object!");
 
     // Iterate through all the members
 
@@ -183,8 +183,7 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
         else if (tmp == "latlon")
           layout = Layout::LatLon;
         else
-          throw SmartMet::Spine::Exception(BCP,
-                                           "Unknown layout type for positions: '" + tmp + "'!");
+          throw Spine::Exception(BCP, "Unknown layout type for positions: '" + tmp + "'!");
       }
 
       else if (name == "x")
@@ -237,43 +236,40 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
         intersections.init(json, theConfig);
 
       else
-        throw SmartMet::Spine::Exception(BCP,
-                                         "Positions does not have a setting named '" + name + "'!");
+        throw Spine::Exception(BCP, "Positions does not have a setting named '" + name + "'!");
     }
 
     if (size <= 0)
-      throw SmartMet::Spine::Exception(BCP, "Positions size-setting must be nonnegative!");
+      throw Spine::Exception(BCP, "Positions size-setting must be nonnegative!");
 
     if (step <= 0)
-      throw SmartMet::Spine::Exception(BCP, "Positions step-setting must be nonnegative!");
+      throw Spine::Exception(BCP, "Positions step-setting must be nonnegative!");
 
     if (step > size)
-      throw SmartMet::Spine::Exception(
-          BCP, "Positions step-setting must be smaller than the size-setting!");
+      throw Spine::Exception(BCP, "Positions step-setting must be smaller than the size-setting!");
 
     if (180 % step != 0)
-      throw SmartMet::Spine::Exception(BCP, "Positions step-size must divide 180 degrees evenly");
+      throw Spine::Exception(BCP, "Positions step-size must divide 180 degrees evenly");
 
     // we cannot allow stuff like 1e-6, that'll generate a huge amounts of points
     if (mindistance < 2)
-      throw SmartMet::Spine::Exception(
-          BCP, "Minimum distance between positions must be at least 2 pixels!");
+      throw Spine::Exception(BCP, "Minimum distance between positions must be at least 2 pixels!");
 
     if (!direction.empty() && (!u.empty() || !v.empty()))
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP, "Cannot specify position offsets using both direction and the u- and v-components!");
 
     if ((!u.empty() && v.empty()) || (!v.empty() && u.empty()))
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP, "Cannot specify only one of u- and v-components for position offsets!");
 
     if (directionoffset != 0 && direction.empty() && u.empty() && v.empty())
-      throw SmartMet::Spine::Exception(
-          BCP, "Must specify direction parameter for direction offset of positions!");
+      throw Spine::Exception(BCP,
+                             "Must specify direction parameter for direction offset of positions!");
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -283,7 +279,7 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-void Positions::init(SmartMet::Engine::Querydata::Q q,
+void Positions::init(Engine::Querydata::Q q,
                      const Projection& theProjection,
                      const boost::posix_time::ptime& theTime,
                      const State& theState)
@@ -304,8 +300,7 @@ void Positions::init(SmartMet::Engine::Querydata::Q q,
     {
       inshape = gis.getShape(theProjection.getCRS().get(), insidemap->options);
       if (!inshape)
-        throw SmartMet::Spine::Exception(BCP,
-                                         "Positions received empty inside-shape from database!");
+        throw Spine::Exception(BCP, "Positions received empty inside-shape from database!");
 
       // This does not obey layer margins, hence we disable this speed optimization
       // inshape.reset(Fmi::OGR::polyclip(*inshape, theProjection.getBox()));
@@ -325,7 +320,7 @@ void Positions::init(SmartMet::Engine::Querydata::Q q,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -335,7 +330,7 @@ void Positions::init(SmartMet::Engine::Querydata::Q q,
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getPoints(SmartMet::Engine::Querydata::Q theQ,
+Positions::Points Positions::getPoints(Engine::Querydata::Q theQ,
                                        boost::shared_ptr<OGRSpatialReference> theCRS,
                                        const Fmi::Box& theBox,
                                        bool forecastMode) const
@@ -362,7 +357,7 @@ Positions::Points Positions::getPoints(SmartMet::Engine::Querydata::Q theQ,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -372,7 +367,7 @@ Positions::Points Positions::getPoints(SmartMet::Engine::Querydata::Q theQ,
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getGridPoints(SmartMet::Engine::Querydata::Q theQ,
+Positions::Points Positions::getGridPoints(Engine::Querydata::Q theQ,
                                            boost::shared_ptr<OGRSpatialReference> theCRS,
                                            const Fmi::Box& theBox,
                                            bool forecastMode) const
@@ -384,25 +379,23 @@ Positions::Points Positions::getGridPoints(SmartMet::Engine::Querydata::Q theQ,
     std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
     OGRErr err = wgs84->SetFromUserInput("WGS84");
     if (err != OGRERR_NONE)
-      throw SmartMet::Spine::Exception(BCP, "GDAL does not understand WGS84!");
+      throw Spine::Exception(BCP, "GDAL does not understand WGS84!");
 
     // Create the coordinate transformation from image world coordinates to latlon
 
     std::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(theCRS.get(), wgs84.get()));
     if (!transformation)
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP, "Failed to create the needed coordinate transformation for position generation!");
 
     // Use defaults for this layout if nothing is specified
 
     if (!!dx && *dx <= 0)
-      throw SmartMet::Spine::Exception(
-          BCP, "Positions dx-setting must be nonnegative for grid-layouts!");
+      throw Spine::Exception(BCP, "Positions dx-setting must be nonnegative for grid-layouts!");
 
     if (!!dy && *dy <= 0)
-      throw SmartMet::Spine::Exception(
-          BCP, "Positions dy-setting must be nonnegative for grid-layouts!");
+      throw Spine::Exception(BCP, "Positions dy-setting must be nonnegative for grid-layouts!");
 
     int xstart = (!!x ? *x : 5);
     int ystart = (!!y ? *y : 5);
@@ -412,8 +405,7 @@ Positions::Points Positions::getGridPoints(SmartMet::Engine::Querydata::Q theQ,
 
     // Sanity check
     if (deltaxx >= deltax)
-      throw SmartMet::Spine::Exception(
-          BCP, "ddx must be smaller than dx when generating a grid layout!");
+      throw Spine::Exception(BCP, "ddx must be smaller than dx when generating a grid layout!");
 
     // Generate the grid coordinates
 
@@ -462,7 +454,7 @@ Positions::Points Positions::getGridPoints(SmartMet::Engine::Querydata::Q theQ,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -472,7 +464,7 @@ Positions::Points Positions::getGridPoints(SmartMet::Engine::Querydata::Q theQ,
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getDataPoints(SmartMet::Engine::Querydata::Q theQ,
+Positions::Points Positions::getDataPoints(Engine::Querydata::Q theQ,
                                            boost::shared_ptr<OGRSpatialReference> theCRS,
                                            const Fmi::Box& theBox,
                                            bool forecastMode) const
@@ -495,8 +487,7 @@ Positions::Points Positions::getDataPoints(SmartMet::Engine::Querydata::Q theQ,
       err = qcrs->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw SmartMet::Spine::Exception(
-          BCP, "GDAL does not understand this FMI WKT: " + theQ->area().WKT());
+      throw Spine::Exception(BCP, "GDAL does not understand this FMI WKT: " + theQ->area().WKT());
 
     // Create the coordinate transformation from image world coordinates
     // to querydata world coordinates
@@ -504,7 +495,7 @@ Positions::Points Positions::getDataPoints(SmartMet::Engine::Querydata::Q theQ,
     std::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(theCRS.get(), qcrs.get()));
     if (!transformation)
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP, "Failed to create the needed coordinate transformation for generating positions!");
 
     // Generate the grid coordinates
@@ -544,7 +535,7 @@ Positions::Points Positions::getDataPoints(SmartMet::Engine::Querydata::Q theQ,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -554,7 +545,7 @@ Positions::Points Positions::getDataPoints(SmartMet::Engine::Querydata::Q theQ,
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getGraticulePoints(SmartMet::Engine::Querydata::Q theQ,
+Positions::Points Positions::getGraticulePoints(Engine::Querydata::Q theQ,
                                                 boost::shared_ptr<OGRSpatialReference> theCRS,
                                                 const Fmi::Box& theBox,
                                                 bool forecastMode) const
@@ -567,17 +558,16 @@ Positions::Points Positions::getGraticulePoints(SmartMet::Engine::Querydata::Q t
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw SmartMet::Spine::Exception(BCP,
-                                       "GDAL does not understand this WKT: " + theQ->area().WKT());
+      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
     std::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
     if (!transformation)
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Failed to create the needed coordinate transformation for "
-                                       "generating graticule positions");
+      throw Spine::Exception(BCP,
+                             "Failed to create the needed coordinate transformation for "
+                             "generating graticule positions");
 
     // Generate the graticule coordinates.
 
@@ -618,7 +608,7 @@ Positions::Points Positions::getGraticulePoints(SmartMet::Engine::Querydata::Q t
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -629,7 +619,7 @@ Positions::Points Positions::getGraticulePoints(SmartMet::Engine::Querydata::Q t
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getGraticuleFillPoints(SmartMet::Engine::Querydata::Q theQ,
+Positions::Points Positions::getGraticuleFillPoints(Engine::Querydata::Q theQ,
                                                     boost::shared_ptr<OGRSpatialReference> theCRS,
                                                     const Fmi::Box& theBox,
                                                     bool forecastMode) const
@@ -642,17 +632,16 @@ Positions::Points Positions::getGraticuleFillPoints(SmartMet::Engine::Querydata:
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw SmartMet::Spine::Exception(BCP,
-                                       "GDAL does not understand this WKT: " + theQ->area().WKT());
+      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
     std::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
     if (!transformation)
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Failed to create the needed coordinate transformation for "
-                                       "generating graticule positions!");
+      throw Spine::Exception(BCP,
+                             "Failed to create the needed coordinate transformation for "
+                             "generating graticule positions!");
 
     // Generate the graticule coordinates. Algorithm:
     //
@@ -817,7 +806,7 @@ Positions::Points Positions::getGraticuleFillPoints(SmartMet::Engine::Querydata:
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -827,7 +816,7 @@ Positions::Points Positions::getGraticuleFillPoints(SmartMet::Engine::Querydata:
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getKeywordPoints(SmartMet::Engine::Querydata::Q theQ,
+Positions::Points Positions::getKeywordPoints(Engine::Querydata::Q theQ,
                                               boost::shared_ptr<OGRSpatialReference> theCRS,
                                               const Fmi::Box& theBox,
                                               bool forecastMode) const
@@ -837,7 +826,7 @@ Positions::Points Positions::getKeywordPoints(SmartMet::Engine::Querydata::Q the
     // Read the keyword
 
     if (keyword.empty())
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP, "No keyword given when trying to use a keyword for location definitions!");
 
     Locus::QueryOptions options;
@@ -849,17 +838,16 @@ Positions::Points Positions::getKeywordPoints(SmartMet::Engine::Querydata::Q the
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw SmartMet::Spine::Exception(BCP,
-                                       "GDAL does not understand this WKT: " + theQ->area().WKT());
+      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
     std::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
     if (!transformation)
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Failed to create the needed coordinate transformation for "
-                                       "generating graticule positions!");
+      throw Spine::Exception(BCP,
+                             "Failed to create the needed coordinate transformation for "
+                             "generating graticule positions!");
 
     // Generate the graticule coordinates.
 
@@ -897,7 +885,7 @@ Positions::Points Positions::getKeywordPoints(SmartMet::Engine::Querydata::Q the
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -907,7 +895,7 @@ Positions::Points Positions::getKeywordPoints(SmartMet::Engine::Querydata::Q the
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getLatLonPoints(SmartMet::Engine::Querydata::Q theQ,
+Positions::Points Positions::getLatLonPoints(Engine::Querydata::Q theQ,
                                              boost::shared_ptr<OGRSpatialReference> theCRS,
                                              const Fmi::Box& theBox,
                                              bool forecastMode) const
@@ -925,17 +913,16 @@ Positions::Points Positions::getLatLonPoints(SmartMet::Engine::Querydata::Q theQ
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw SmartMet::Spine::Exception(BCP,
-                                       "GDAL does not understand this WKT: " + theQ->area().WKT());
+      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
     std::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
     if (!transformation)
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Failed to create the needed coordinate transformation for "
-                                       "generating graticule positions!");
+      throw Spine::Exception(BCP,
+                             "Failed to create the needed coordinate transformation for "
+                             "generating graticule positions!");
 
     // Generate the graticule coordinates.
 
@@ -944,7 +931,7 @@ Positions::Points Positions::getLatLonPoints(SmartMet::Engine::Querydata::Q theQ
     {
       // keyword location latlon
       if (!location.longitude || !location.latitude)
-        throw SmartMet::Spine::Exception(BCP, "Incomplete location in the locations list!");
+        throw Spine::Exception(BCP, "Incomplete location in the locations list!");
 
       double lon = *location.longitude;
       double lat = *location.latitude;
@@ -974,7 +961,7 @@ Positions::Points Positions::getLatLonPoints(SmartMet::Engine::Querydata::Q theQ
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -998,7 +985,7 @@ bool Positions::insideShapes(double theX, double theY) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -1022,7 +1009,7 @@ bool Positions::inside(double theX, double theY, bool forecastMode) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -1048,7 +1035,7 @@ bool Positions::inside(double theX,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -1093,7 +1080,7 @@ std::size_t Positions::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

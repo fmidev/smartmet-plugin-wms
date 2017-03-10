@@ -32,7 +32,7 @@ void LegendLabels::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Legend-layer labels JSON must be a map");
+      throw Spine::Exception(BCP, "Legend-layer labels JSON must be a map");
 
     // Iterate through all the members
 
@@ -56,8 +56,7 @@ void LegendLabels::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "conversions")
       {
         if (!json.isObject())
-          throw SmartMet::Spine::Exception(BCP,
-                                           "legend-layer conversions setting in a must be a map");
+          throw Spine::Exception(BCP, "legend-layer conversions setting in a must be a map");
         const auto members = json.getMemberNames();
         BOOST_FOREACH (const auto& name, members)
         {
@@ -71,25 +70,25 @@ void LegendLabels::init(const Json::Value& theJson, const Config& theConfig)
             {
               const Json::Value& lang_json = label_json[lang];
               if (!lang_json.isString())
-                throw SmartMet::Spine::Exception(
+                throw Spine::Exception(
                     BCP,
                     "Legend layer conversion '" + name + "' value for a language must be a string");
               conversions[lang + ":" + name] = lang_json.asString();
             }
           }
           else
-            throw SmartMet::Spine::Exception(
+            throw Spine::Exception(
                 BCP, "Legend layer conversion '" + name + "' value must be a string or a map");
         }
       }
       else
-        throw SmartMet::Spine::Exception(
-            BCP, "Legend-layer labels do not have a setting named '" + name + "'");
+        throw Spine::Exception(BCP,
+                               "Legend-layer labels do not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -114,7 +113,7 @@ std::size_t LegendLabels::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

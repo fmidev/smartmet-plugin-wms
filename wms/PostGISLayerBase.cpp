@@ -25,7 +25,7 @@ void PostGISLayerBase::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "PostGIS JSON is not a JSON object");
+      throw Spine::Exception(BCP, "PostGIS JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -35,19 +35,19 @@ void PostGISLayerBase::init(const Json::Value& theJson,
     if (!json.isNull())
       this->pgname = json.asString();
     else
-      throw SmartMet::Spine::Exception(BCP, "'pgname' must be defined for postgis layer");
+      throw Spine::Exception(BCP, "'pgname' must be defined for postgis layer");
 
     json = theJson.get("schema", nulljson);
     if (!json.isNull())
       this->schema = json.asString();
     else
-      throw SmartMet::Spine::Exception(BCP, "'schema' must be defined for postgis layer");
+      throw Spine::Exception(BCP, "'schema' must be defined for postgis layer");
 
     json = theJson.get("table", nulljson);
     if (!json.isNull())
       this->table = json.asString();
     else
-      throw SmartMet::Spine::Exception(BCP, "'table' must be defined for postgis layer");
+      throw Spine::Exception(BCP, "'table' must be defined for postgis layer");
 
     json = theJson.get("time_column", nulljson);
     if (!json.isNull())
@@ -67,8 +67,7 @@ void PostGISLayerBase::init(const Json::Value& theJson,
         if (time_truncate != "minute" && time_truncate != "hour" && time_truncate != "day" &&
             time_truncate != "week" && time_truncate != "month" && time_truncate != "year")
         {
-          throw SmartMet::Spine::Exception(
-              BCP, "Invalid value for time truncation: '" + time_truncate + "'");
+          throw Spine::Exception(BCP, "Invalid value for time truncation: '" + time_truncate + "'");
         }
 
         std::string trunc = "DATE_TRUNC('" + time_truncate + "',";
@@ -84,11 +83,11 @@ void PostGISLayerBase::init(const Json::Value& theJson,
     // filter for query, each filter generates one PostGIS query
     json = theJson.get("filters", nulljson);
     if (!json.isNull())
-      SmartMet::Spine::JSON::extract_array("filters", this->filters, json, theConfig);
+      Spine::JSON::extract_array("filters", this->filters, json, theConfig);
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -108,7 +107,7 @@ std::size_t PostGISLayerBase::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -120,7 +119,7 @@ std::size_t PostGISLayerBase::hash_value(const State& theState) const
 
 OGRGeometryPtr PostGISLayerBase::getShape(const State& theState,
                                           OGRSpatialReference* theSR,
-                                          SmartMet::Engine::Gis::MapOptions& theMapOptions) const
+                                          Engine::Gis::MapOptions& theMapOptions) const
 {
   try
   {
@@ -136,7 +135,7 @@ OGRGeometryPtr PostGISLayerBase::getShape(const State& theState,
         if (theMapOptions.minarea)
           msg += " Is the minarea limit too large?";
 
-        throw SmartMet::Spine::Exception(BCP, msg);
+        throw Spine::Exception(BCP, msg);
       }
     }
 
@@ -144,7 +143,7 @@ OGRGeometryPtr PostGISLayerBase::getShape(const State& theState,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -156,7 +155,7 @@ OGRGeometryPtr PostGISLayerBase::getShape(const State& theState,
 
 Fmi::Features PostGISLayerBase::getFeatures(const State& theState,
                                             OGRSpatialReference* theSR,
-                                            SmartMet::Engine::Gis::MapOptions& theMapOptions) const
+                                            Engine::Gis::MapOptions& theMapOptions) const
 {
   try
   {
@@ -173,7 +172,7 @@ Fmi::Features PostGISLayerBase::getFeatures(const State& theState,
         if (theMapOptions.minarea)
           msg += " Is the minarea limit too large?";
 
-        throw SmartMet::Spine::Exception(BCP, msg);
+        throw Spine::Exception(BCP, msg);
       }
     }
 
@@ -181,7 +180,7 @@ Fmi::Features PostGISLayerBase::getFeatures(const State& theState,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

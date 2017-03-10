@@ -49,7 +49,7 @@ void LocationLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Location-layer JSON is not a JSON object");
+      throw Spine::Exception(BCP, "Location-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -67,7 +67,7 @@ void LocationLayer::init(const Json::Value& theJson,
 
     json = theJson.get("countries", nulljson);
     if (!json.isNull())
-      SmartMet::Spine::JSON::extract_set("countries", countries, json);
+      Spine::JSON::extract_set("countries", countries, json);
 
     json = theJson.get("symbol", nulljson);
     if (!json.isNull())
@@ -80,7 +80,7 @@ void LocationLayer::init(const Json::Value& theJson,
       {
         // Just a default selection is given
         std::vector<AttributeSelection> selection;
-        SmartMet::Spine::JSON::extract_array("symbols", selection, json, theConfig);
+        Spine::JSON::extract_array("symbols", selection, json, theConfig);
         symbols["default"] = selection;
       }
       else if (json.isObject())
@@ -90,23 +90,23 @@ void LocationLayer::init(const Json::Value& theJson,
         {
           const Json::Value& innerjson = json[feature];
           if (!innerjson.isArray())
-            throw SmartMet::Spine::Exception(
+            throw Spine::Exception(
                 BCP,
                 "LocationLayer symbols setting does not contain a hash of JSON arrays for each "
                 "feature");
           std::vector<AttributeSelection> selection;
-          SmartMet::Spine::JSON::extract_array("symbols", selection, innerjson, theConfig);
+          Spine::JSON::extract_array("symbols", selection, innerjson, theConfig);
           symbols[feature] = selection;
         }
       }
       else
-        throw SmartMet::Spine::Exception(
-            BCP, "LocationLayer symbols setting must be an array or a JSON hash");
+        throw Spine::Exception(BCP,
+                               "LocationLayer symbols setting must be an array or a JSON hash");
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -121,7 +121,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
   try
   {
     if (theState.inDefs())
-      throw SmartMet::Spine::Exception(BCP, "LocationLayer cannot be used in the Defs-section");
+      throw Spine::Exception(BCP, "LocationLayer cannot be used in the Defs-section");
 
     if (!validLayer(theState))
       return;
@@ -136,12 +136,12 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // A keyword must be defined
 
     if (keyword.empty())
-      throw SmartMet::Spine::Exception(BCP, "No keyword specified for location-layer");
+      throw Spine::Exception(BCP, "No keyword specified for location-layer");
 
     // A symbol must be defined either globally or for values
 
     if (!symbol && symbols.empty())
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP,
           "Must define default symbol with 'symbol' or several 'symbols' for specific values in a "
           "location-layer");
@@ -160,14 +160,14 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     std::unique_ptr<OGRSpatialReference> geocrs(new OGRSpatialReference);
     OGRErr err = geocrs->SetFromUserInput("WGS84");
     if (err != OGRERR_NONE)
-      throw SmartMet::Spine::Exception(BCP, "GDAL does not understand this crs 'WGS84'");
+      throw Spine::Exception(BCP, "GDAL does not understand this crs 'WGS84'");
 
     // Create the coordinate transformation from geonames coordinates to image coordinates
 
     std::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(geocrs.get(), crs.get()));
     if (!transformation)
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP, "Failed to create the needed coordinate transformation when drawing locations");
 
     // Update the globals
@@ -188,7 +188,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     engine.sort(locations);
 
     if (locations.empty())
-      throw SmartMet::Spine::Exception(BCP, "No locations found for keyword '" + keyword + "'");
+      throw Spine::Exception(BCP, "No locations found for keyword '" + keyword + "'");
 
     // Clip if necessary
 
@@ -293,7 +293,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -326,7 +326,7 @@ std::size_t LocationLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

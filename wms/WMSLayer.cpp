@@ -51,7 +51,7 @@ bool WMSLayer::isValidCRS(const std::string& theCRS) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -66,7 +66,7 @@ bool WMSLayer::isValidStyle(const std::string& theStyle) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -81,7 +81,7 @@ bool WMSLayer::isValidTime(const boost::posix_time::ptime& theTime) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -94,7 +94,7 @@ bool WMSLayer::currentValue() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -106,7 +106,7 @@ boost::posix_time::ptime WMSLayer::mostCurrentTime() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -122,7 +122,7 @@ std::string WMSLayer::info() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -160,11 +160,11 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
-std::string WMSLayer::generateGetCapabilities(const SmartMet::Engine::Gis::Engine& gisengine)
+std::string WMSLayer::generateGetCapabilities(const Engine::Gis::Engine& gisengine)
 {
   try
   {
@@ -218,18 +218,17 @@ std::string WMSLayer::generateGetCapabilities(const SmartMet::Engine::Gis::Engin
       OGRErr err = oTargetSRS.importFromEPSGA(targetEPSGNumber);
 
       if (err != OGRERR_NONE)
-        throw SmartMet::Spine::Exception(BCP, "Unknown CRS: '" + crs + "'");
+        throw Spine::Exception(BCP, "Unknown CRS: '" + crs + "'");
 
       boost::shared_ptr<OGRCoordinateTransformation> poCT(
           OGRCreateCoordinateTransformation(&oSourceSRS, &oTargetSRS));
 
       if (poCT == NULL)
-        throw SmartMet::Spine::Exception(BCP,
-                                         "OGRCreateCoordinateTransformation function call failed");
+        throw Spine::Exception(BCP, "OGRCreateCoordinateTransformation function call failed");
 
       // Intersect with target EPSG bounding box
 
-      SmartMet::Engine::Gis::BBox epsg_box = gisengine.getBBox(targetEPSGNumber);
+      Engine::Gis::BBox epsg_box = gisengine.getBBox(targetEPSGNumber);
       x1 = std::max(epsg_box.west, x1);
       x2 = std::min(epsg_box.east, x2);
       y1 = std::max(epsg_box.south, y1);
@@ -293,7 +292,7 @@ std::string WMSLayer::generateGetCapabilities(const SmartMet::Engine::Gis::Engin
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

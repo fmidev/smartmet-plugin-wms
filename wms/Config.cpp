@@ -66,12 +66,33 @@ Config::Config(const string& configfile)
       itsConfig.lookupValue("obsengine_disabled", itsObsEngineDisabled);
 #endif
 
+      // Default templates for various types
+
+      {
+        const auto& templates = itsConfig.lookup("templates");
+        if (!templates.isGroup())
+        {
+          Spine::Exception exception(BCP, "Configuration error!", NULL);
+          exception.addParameter("Configuration file", configfile);
+          exception.addDetail("Configured value of 'templates' must be a group");
+          throw exception;
+        }
+
+        for (int i = 0; i < templates.getLength(); ++i)
+        {
+          const auto& setting = templates[i];
+          std::string name = setting.getName();
+          std::string value = setting;
+          itsDefaultTemplates[name] = value;
+        }
+      }
+
       // Store array of SVG attribute names into a set for looking up valid names
       {
         const auto& attributes = itsConfig.lookup("regular_attributes");
         if (!attributes.isArray())
         {
-          SmartMet::Spine::Exception exception(BCP, "Configuration error!", NULL);
+          Spine::Exception exception(BCP, "Configuration error!", NULL);
           exception.addParameter("Configuration file", configfile);
           exception.addDetail("Configured value of 'regular_attributes' must be an array");
           throw exception;
@@ -84,7 +105,7 @@ Config::Config(const string& configfile)
         const auto& attributes = itsConfig.lookup("presentation_attributes");
         if (!attributes.isArray())
         {
-          SmartMet::Spine::Exception exception(BCP, "Configuration error!", NULL);
+          Spine::Exception exception(BCP, "Configuration error!", NULL);
           exception.addParameter("Configuration file", configfile);
           exception.addDetail("Configured value of 'presentation_attributes' must be an array");
           throw exception;
@@ -96,27 +117,27 @@ Config::Config(const string& configfile)
     }
     catch (libconfig::ParseException& e)
     {
-      SmartMet::Spine::Exception exception(BCP, "Configuration error!", NULL);
+      Spine::Exception exception(BCP, "Configuration error!", NULL);
       exception.addParameter("Configuration file", configfile);
       exception.addParameter("Line", Fmi::to_string(e.getLine()));
       throw exception;
     }
     catch (libconfig::ConfigException&)
     {
-      SmartMet::Spine::Exception exception(BCP, "Configuration error!", NULL);
+      Spine::Exception exception(BCP, "Configuration error!", NULL);
       exception.addParameter("Configuration file", configfile);
       throw exception;
     }
     catch (...)
     {
-      SmartMet::Spine::Exception exception(BCP, "Configuration error!", NULL);
+      Spine::Exception exception(BCP, "Configuration error!", NULL);
       exception.addParameter("Configuration file", configfile);
       throw exception;
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Configuration failed!", NULL);
+    throw Spine::Exception(BCP, "Configuration failed!", NULL);
   }
 }
 
@@ -179,8 +200,22 @@ bool Config::isValidAttribute(const std::string& theName) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
+}
+
+std::string Config::defaultTemplate(const std::string& theType) const
+{
+  auto pos = itsDefaultTemplates.find(theType);
+  if (pos != itsDefaultTemplates.end())
+    return pos->second;
+
+  pos = itsDefaultTemplates.find("default");
+  if (pos != itsDefaultTemplates.end())
+    return pos->second;
+
+  // Backward compatibility in case the settings are missing
+  return "svg";
 }
 
 const std::string& Config::wmsUrl() const

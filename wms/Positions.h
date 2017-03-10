@@ -47,12 +47,12 @@ class Positions
   void init(const Json::Value& theJson, const Config& theConfig);
   virtual std::size_t hash_value(const State& theState) const;
 
-  void init(SmartMet::Engine::Querydata::Q q,
+  void init(Engine::Querydata::Q q,
             const Projection& theProjection,
             const boost::posix_time::ptime& theTime,
             const State& theState);
 
-  Points getPoints(SmartMet::Engine::Querydata::Q theQ,
+  Points getPoints(Engine::Querydata::Q theQ,
                    boost::shared_ptr<OGRSpatialReference> theCRS,
                    const Fmi::Box& theBox,
                    bool forecastMode) const;
@@ -106,32 +106,32 @@ class Positions
   Intersections intersections;
 
  private:
-  Points getGridPoints(SmartMet::Engine::Querydata::Q theQ,
+  Points getGridPoints(Engine::Querydata::Q theQ,
                        boost::shared_ptr<OGRSpatialReference> theCRS,
                        const Fmi::Box& theBox,
                        bool forecastMode) const;
 
-  Points getDataPoints(SmartMet::Engine::Querydata::Q theQ,
+  Points getDataPoints(Engine::Querydata::Q theQ,
                        boost::shared_ptr<OGRSpatialReference> theCRS,
                        const Fmi::Box& theBox,
                        bool forecastMode) const;
 
-  Points getGraticulePoints(SmartMet::Engine::Querydata::Q theQ,
+  Points getGraticulePoints(Engine::Querydata::Q theQ,
                             boost::shared_ptr<OGRSpatialReference> theCRS,
                             const Fmi::Box& theBox,
                             bool forecastMode) const;
 
-  Points getGraticuleFillPoints(SmartMet::Engine::Querydata::Q theQ,
+  Points getGraticuleFillPoints(Engine::Querydata::Q theQ,
                                 boost::shared_ptr<OGRSpatialReference> theCRS,
                                 const Fmi::Box& theBox,
                                 bool forecastMode) const;
 
-  Points getKeywordPoints(SmartMet::Engine::Querydata::Q theQ,
+  Points getKeywordPoints(Engine::Querydata::Q theQ,
                           boost::shared_ptr<OGRSpatialReference> theCRS,
                           const Fmi::Box& theBox,
                           bool forecastMode) const;
 
-  Points getLatLonPoints(SmartMet::Engine::Querydata::Q theQ,
+  Points getLatLonPoints(Engine::Querydata::Q theQ,
                          boost::shared_ptr<OGRSpatialReference> theCRS,
                          const Fmi::Box& theBox,
                          bool forecastMode) const;
@@ -142,7 +142,7 @@ class Positions
 
   // not part of the UI - not involved in the hash
   boost::posix_time::ptime time;
-  const SmartMet::Engine::Geonames::Engine* geonames;
+  const Engine::Geonames::Engine* geonames;
 
 };  // class Positions
 

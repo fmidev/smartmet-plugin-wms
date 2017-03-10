@@ -47,11 +47,11 @@ class PostGISLayerBase : public Layer
 
   OGRGeometryPtr getShape(const State& theState,
                           OGRSpatialReference* theSR,
-                          SmartMet::Engine::Gis::MapOptions& theMapOptions) const;
+                          Engine::Gis::MapOptions& theMapOptions) const;
 
   Fmi::Features getFeatures(const State& theState,
                             OGRSpatialReference* theSR,
-                            SmartMet::Engine::Gis::MapOptions& theMapOptions) const;
+                            Engine::Gis::MapOptions& theMapOptions) const;
 
 };  // class PostGISLayer
 

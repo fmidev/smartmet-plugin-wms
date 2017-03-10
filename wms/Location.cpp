@@ -32,7 +32,7 @@ void Location::init(const Json::Value& theJson, const Config& theConfig)
     // Initialize with more details
 
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Location JSON must be a JSON hash");
+      throw Spine::Exception(BCP, "Location JSON must be a JSON hash");
 
     // Iterate through all the members
 
@@ -46,13 +46,12 @@ void Location::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "latitude")
         latitude = json.asDouble();
       else
-        throw SmartMet::Spine::Exception(BCP,
-                                         "Location does not have a setting named '" + name + "'");
+        throw Spine::Exception(BCP, "Location does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -72,7 +71,7 @@ std::size_t Location::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

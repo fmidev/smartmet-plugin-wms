@@ -14,14 +14,14 @@ void WMSQueryDataLayer::updateLayerMetaData()
     auto q = itsQEngine->get(itsProducer);
 
     // bounding box from metadata
-    SmartMet::Engine::Querydata::MetaData metaData(q->metaData());
+    Engine::Querydata::MetaData metaData(q->metaData());
     geographicBoundingBox.xMin = std::min(metaData.ullon, metaData.bllon);
     geographicBoundingBox.xMax = std::max(metaData.urlon, metaData.brlon);
     geographicBoundingBox.yMin = std::min(metaData.bllat, metaData.brlat);
     geographicBoundingBox.yMax = std::max(metaData.ullat, metaData.urlat);
 
     // time dimension is sniffed from querydata
-    boost::shared_ptr<SmartMet::Engine::Querydata::ValidTimeList> validtimes = q->validTimes();
+    boost::shared_ptr<Engine::Querydata::ValidTimeList> validtimes = q->validTimes();
 
     if (even_timesteps(*validtimes))
     {
@@ -43,7 +43,7 @@ void WMSQueryDataLayer::updateLayerMetaData()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

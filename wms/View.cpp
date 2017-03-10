@@ -36,7 +36,7 @@ void View::init(const Json::Value& theJson,
       return;
 
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "View JSON is not a JSON object (name-value pairs)");
+      throw Spine::Exception(BCP, "View JSON is not a JSON object (name-value pairs)");
 
     Properties::init(theJson, theState, theConfig, theProperties);
 
@@ -58,7 +58,7 @@ void View::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -84,7 +84,7 @@ void View::generate(CTPP::CDT& theGlobals, CTPP::CDT& theViewCdt, State& theStat
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -109,7 +109,7 @@ std::size_t View::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

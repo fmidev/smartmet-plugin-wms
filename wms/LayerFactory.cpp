@@ -38,7 +38,7 @@ Layer* create(const Json::Value& theJson)
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Layer JSON must be an object");
+      throw Spine::Exception(BCP, "Layer JSON must be an object");
 
     auto name = theJson.get("layer_type", "tag").asString();
 
@@ -75,11 +75,11 @@ Layer* create(const Json::Value& theJson)
     else if (name == "icemap")
       return new IceMapLayer;
     else
-      throw SmartMet::Spine::Exception(BCP, "Unknown layer type '" + name + "'");
+      throw Spine::Exception(BCP, "Unknown layer type '" + name + "'");
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 }  // namespace LayerFactory

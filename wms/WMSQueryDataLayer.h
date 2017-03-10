@@ -24,14 +24,14 @@ namespace WMS
 class WMSQueryDataLayer : public WMSLayer
 {
  private:
-  const SmartMet::Engine::Querydata::Engine* itsQEngine;
+  const Engine::Querydata::Engine* itsQEngine;
   const std::string itsProducer;
 
  protected:
   virtual void updateLayerMetaData();
 
  public:
-  WMSQueryDataLayer(const SmartMet::Engine::Querydata::Engine* qe, const std::string& producer)
+  WMSQueryDataLayer(const Engine::Querydata::Engine* qe, const std::string& producer)
       : itsQEngine(qe), itsProducer(producer)
   {
   }

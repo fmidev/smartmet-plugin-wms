@@ -2,6 +2,7 @@
 
 #include "IsolineLayer.h"
 #include "Config.h"
+#include "Geometry.h"
 #include "Hash.h"
 #include "Isoline.h"
 #include "Layer.h"
@@ -38,7 +39,7 @@ void IsolineLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Isoline-layer JSON is not a JSON object");
+      throw Spine::Exception(BCP, "Isoline-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -56,7 +57,7 @@ void IsolineLayer::init(const Json::Value& theJson,
 
     json = theJson.get("isolines", nulljson);
     if (!json.isNull())
-      SmartMet::Spine::JSON::extract_array("isolines", isolines, json, theConfig);
+      Spine::JSON::extract_array("isolines", isolines, json, theConfig);
 
     json = theJson.get("smoother", nulljson);
     if (!json.isNull())
@@ -94,7 +95,7 @@ void IsolineLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -122,9 +123,9 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     // Establish the desired direction parameter
 
     if (!parameter)
-      throw SmartMet::Spine::Exception(BCP, "Parameter not set for isoline-layer");
+      throw Spine::Exception(BCP, "Parameter not set for isoline-layer");
 
-    auto param = SmartMet::Spine::ParameterFactory::instance().parse(*parameter);
+    auto param = Spine::ParameterFactory::instance().parse(*parameter);
 
     // Establish the valid time
 
@@ -139,8 +140,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         match = (q->levelValue() == *level);
 
       if (!match)
-        throw SmartMet::Spine::Exception(
-            BCP, "Level value " + Fmi::to_string(*level) + " is not available");
+        throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available");
     }
 
     // Get projection details
@@ -161,7 +161,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       auto demdata = theState.getGeoEngine().dem();
       auto landdata = theState.getGeoEngine().landCover();
       if (!demdata || !landdata)
-        throw SmartMet::Spine::Exception(
+        throw Spine::Exception(
             BCP,
             "Resampling data in IsolineLayer requires DEM and land cover data to be available");
 
@@ -209,8 +209,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     {
       inshape = gis.getShape(crs.get(), inside->options);
       if (!inshape)
-        throw SmartMet::Spine::Exception(BCP,
-                                         "IsolineLayer received empty inside-shape from database");
+        throw Spine::Exception(BCP, "IsolineLayer received empty inside-shape from database");
       inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
     }
     if (outside)
@@ -231,11 +230,11 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     BOOST_FOREACH (const Isoline& isoline, isolines)
     {
       if (isoline.qid.empty())
-        throw SmartMet::Spine::Exception(BCP, "All isolines must have a non-empty QID");
+        throw Spine::Exception(BCP, "All isolines must have a non-empty QID");
 
       isoline_values.push_back(isoline.value);
     }
-    SmartMet::Engine::Contour::Options options(param, valid_time, isoline_values);
+    Engine::Contour::Options options(param, valid_time, isoline_values);
 
     if (multiplier || offset)
       options.transformation(multiplier ? *multiplier : 1.0, offset ? *offset : 0.0);
@@ -246,7 +245,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     // Do the actual contouring, either full grid or just
     // a sampled section
 
-    std::size_t qhash = SmartMet::Engine::Querydata::hash_value(q);
+    std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;
     boost::hash_combine(valueshash, options.data_hash_value());
 
@@ -256,13 +255,12 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     if (!q->param(options.parameter.number()))
     {
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Parameter '" + options.parameter.name() + "' unavailable.");
+      throw Spine::Exception(BCP, "Parameter '" + options.parameter.name() + "' unavailable.");
     }
 
     if (!q->firstLevel())
     {
-      throw SmartMet::Spine::Exception(BCP, "Unable to set first level in querydata.");
+      throw Spine::Exception(BCP, "Unable to set first level in querydata.");
     }
 
     // Select the level.
@@ -270,10 +268,9 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     {
       if (!q->selectLevel(*options.level))
       {
-        throw SmartMet::Spine::Exception(BCP,
-                                         "Level value " +
-                                             boost::lexical_cast<std::string>(*options.level) +
-                                             " is not available.");
+        throw Spine::Exception(BCP,
+                               "Level value " + boost::lexical_cast<std::string>(*options.level) +
+                                   " is not available.");
       }
     }
 
@@ -311,7 +308,17 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         {
           // Store the path with unique QID
           std::string iri = qid + (qid.empty() ? "" : ".") + isoline.qid;
-          theGlobals["paths"][iri] = Fmi::OGR::exportToSvg(*geom2, box, 1);
+
+          CTPP::CDT isoline_cdt(CTPP::CDT::HASH_VAL);
+          isoline_cdt["iri"] = iri;
+          isoline_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
+          isoline_cdt["parameter"] = *parameter;
+          isoline_cdt["type"] = Geometry::name(*geom2, theState.getType());
+          isoline_cdt["layertype"] = "isoline";
+          isoline_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs);
+          isoline_cdt["value"] = isoline.value;
+
+          theGlobals["paths"][iri] = isoline_cdt;
 
           if (!theState.inDefs())
           {
@@ -331,7 +338,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -346,7 +353,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    boost::hash_combine(hash, SmartMet::Engine::Querydata::hash_value(getModel(theState)));
+    boost::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
     boost::hash_combine(hash, Dali::hash_value(parameter));
     boost::hash_combine(hash, Dali::hash_value(level));
     boost::hash_combine(hash, Dali::hash_value(isolines, theState));
@@ -361,7 +368,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

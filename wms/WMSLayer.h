@@ -44,7 +44,7 @@ class WMSLayer
   std::string title;
   std::string abstract;
   std::set<std::string> keywords;
-  SmartMet::Spine::BoundingBox geographicBoundingBox;
+  Spine::BoundingBox geographicBoundingBox;
   std::set<std::string> crs;
   std::set<std::string> styles;
   boost::shared_ptr<WMSTimeDimension> timeDimension;  // Optional, may be empty for non-temporal
@@ -74,7 +74,7 @@ class WMSLayer
   boost::posix_time::ptime mostCurrentTime() const;  // returns the most current valid time for the
                                                      // layer
 
-  std::string generateGetCapabilities(const SmartMet::Engine::Gis::Engine& gisengine);
+  std::string generateGetCapabilities(const Engine::Gis::Engine& gisengine);
 
   // Update layer metadata for GetCapabilities (time,spatial dimensions)
   virtual void updateLayerMetaData() = 0;

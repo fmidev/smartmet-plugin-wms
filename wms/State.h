@@ -70,12 +70,12 @@ class State
   State(const Plugin& thePlugin);
 
   // Get the engines
-  const SmartMet::Engine::Querydata::Engine& getQEngine() const;
-  const SmartMet::Engine::Contour::Engine& getContourEngine() const;
-  const SmartMet::Engine::Gis::Engine& getGisEngine() const;
-  const SmartMet::Engine::Geonames::Engine& getGeoEngine() const;
+  const Engine::Querydata::Engine& getQEngine() const;
+  const Engine::Contour::Engine& getContourEngine() const;
+  const Engine::Gis::Engine& getGisEngine() const;
+  const Engine::Geonames::Engine& getGeoEngine() const;
 #ifndef WITHOUT_OBSERVATION
-  SmartMet::Engine::Observation::Engine& getObsEngine() const;
+  Engine::Observation::Engine& getObsEngine() const;
 #endif
 
   // Give access to configuration variables
@@ -88,11 +88,11 @@ class State
   const std::string& getType() const { return itsType; }
   void setType(const std::string& theType) { itsType = theType; }
   // Get Q to be used in the current product
-  SmartMet::Engine::Querydata::Q get(
-      const SmartMet::Engine::Querydata::Producer& theProducer) const;
+  Engine::Querydata::Q get(const Engine::Querydata::Producer& theProducer) const;
 
   // Require given ID to be free, and mark it used if it is free
   void requireId(const std::string& theID);
+
   // If given ID has not been used, mark it used now
   bool addId(const std::string& theID) const;
 
@@ -141,7 +141,7 @@ class State
 
  private:
   const Plugin& itsPlugin;
-  mutable std::map<SmartMet::Engine::Querydata::Producer, SmartMet::Engine::Querydata::Q> itsQCache;
+  mutable std::map<Engine::Querydata::Producer, Engine::Querydata::Q> itsQCache;
 
   // Names which have already been used for styling
   mutable std::map<std::string, std::string> itsUsedStyles;

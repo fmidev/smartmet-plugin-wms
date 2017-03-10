@@ -27,7 +27,7 @@ class Map
   std::size_t hash_value(const State& theState) const;
 
   bool lines = false;
-  SmartMet::Engine::Gis::MapOptions options;
+  Engine::Gis::MapOptions options;
 
  private:
 };  // class Map

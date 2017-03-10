@@ -22,7 +22,7 @@ void Map::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Map JSON is not map");
+      throw Spine::Exception(BCP, "Map JSON is not map");
 
     // Iterate through all the members
 
@@ -46,12 +46,12 @@ void Map::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "minarea")
         options.minarea = json.asDouble();
       else
-        throw SmartMet::Spine::Exception(BCP, "Map does not have a setting named '" + name + "'");
+        throw Spine::Exception(BCP, "Map does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -78,7 +78,7 @@ std::size_t Map::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

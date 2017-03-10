@@ -23,7 +23,7 @@
 #define WMS_OPERATION_NOT_SUPPORTED "OperationNotSupported"
 #define WMS_VOID_EXCEPTION_CODE "InvalidExceptionCode"
 
-#if 0  // ### REPLACED BY SmartMet::Spine::Exception
+#if 0  // ### REPLACED BY Spine::Exception
 
 namespace SmartMet
 {

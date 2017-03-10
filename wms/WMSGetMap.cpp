@@ -61,10 +61,10 @@ std::string demimetype(const std::string& theMimeType)
   if (theMimeType == "image/svg+xml")
     return "svg";
 
-  throw SmartMet::Spine::Exception(BCP, "Unknown mime type requested: '" + theMimeType + "'");
+  throw Spine::Exception(BCP, "Unknown mime type requested: '" + theMimeType + "'");
 }
 
-void check_getmap_request_options(const SmartMet::Spine::HTTP::Request& theHTTPRequest)
+void check_getmap_request_options(const Spine::HTTP::Request& theHTTPRequest)
 {
   try
   {
@@ -73,78 +73,76 @@ void check_getmap_request_options(const SmartMet::Spine::HTTP::Request& theHTTPR
 
     if (!theHTTPRequest.getParameter("VERSION"))
     {
-      SmartMet::Spine::Exception exception(BCP, "Version not defined");
+      Spine::Exception exception(BCP, "Version not defined");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       throw exception;
     }
 
     if (!theHTTPRequest.getParameter("LAYERS"))
     {
-      SmartMet::Spine::Exception exception(BCP,
-                                           "At least one layer must be defined in GetMap request");
+      Spine::Exception exception(BCP, "At least one layer must be defined in GetMap request");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
       throw exception;
     }
 
     if (!theHTTPRequest.getParameter("STYLES"))
     {
-      SmartMet::Spine::Exception exception(BCP,
-                                           "STYLES-option must be defined, even if it is empty");
+      Spine::Exception exception(BCP, "STYLES-option must be defined, even if it is empty");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED);
       throw exception;
     }
 
     if (!theHTTPRequest.getParameter("CRS"))
     {
-      SmartMet::Spine::Exception exception(BCP, "CRS-option has not been defined");
+      Spine::Exception exception(BCP, "CRS-option has not been defined");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       throw exception;
     }
 
     if (!theHTTPRequest.getParameter("BBOX"))
     {
-      SmartMet::Spine::Exception exception(BCP, "BBOX-option has not been defined");
+      Spine::Exception exception(BCP, "BBOX-option has not been defined");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
       throw exception;
     }
 
     if (!theHTTPRequest.getParameter("WIDTH"))
     {
-      SmartMet::Spine::Exception exception(BCP, "WIDTH-option has not been defined");
+      Spine::Exception exception(BCP, "WIDTH-option has not been defined");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
       throw exception;
     }
 
     if (!theHTTPRequest.getParameter("HEIGHT"))
     {
-      SmartMet::Spine::Exception exception(BCP, "HEIGHT-option has not been defined");
+      Spine::Exception exception(BCP, "HEIGHT-option has not been defined");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
       throw exception;
     }
 
     if (!theHTTPRequest.getParameter("FORMAT"))
     {
-      SmartMet::Spine::Exception exception(BCP, "FORMAT-option has not been defined");
+      Spine::Exception exception(BCP, "FORMAT-option has not been defined");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       throw exception;
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
 void validate_options(const tag_get_map_request_options& options,
                       const WMSConfig& itsConfig,
-                      const SmartMet::Engine::Querydata::Engine& querydata)
+                      const Engine::Querydata::Engine& querydata)
 {
   try
   {
     // check the requested version number
     if (!itsConfig.isValidVersion(options.version))
     {
-      SmartMet::Spine::Exception exception(BCP, "The requested version is not supported!");
+      Spine::Exception exception(BCP, "The requested version is not supported!");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED);
       exception.addParameter("Requested version", options.version);
       exception.addParameter("Supported versions",
@@ -161,7 +159,7 @@ void validate_options(const tag_get_map_request_options& options,
       // check that layer is valid (as defined in GetCapabilities response)
       if (!itsConfig.isValidLayer(layer))
       {
-        SmartMet::Spine::Exception exception(BCP, "The requested layer is not supported!");
+        Spine::Exception exception(BCP, "The requested layer is not supported!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
         exception.addParameter("Requested layer", layer);
         throw exception;
@@ -170,8 +168,8 @@ void validate_options(const tag_get_map_request_options& options,
       // check that style is valid (as defined in GetCapabilities response)
       if (!itsConfig.isValidStyle(layer, style))
       {
-        SmartMet::Spine::Exception exception(
-            BCP, "The requested style is not supported by the current layer!");
+        Spine::Exception exception(BCP,
+                                   "The requested style is not supported by the current layer!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED);
         exception.addParameter("Requested style", style);
         exception.addParameter("Requested layer", layer);
@@ -181,8 +179,7 @@ void validate_options(const tag_get_map_request_options& options,
       // check that CRS is valid (as defined in GetCapabilities response)
       if (!itsConfig.isValidCRS(layer, options.bbox.crs))
       {
-        SmartMet::Spine::Exception exception(
-            BCP, "The requested CRS is not supported by the current layer!");
+        Spine::Exception exception(BCP, "The requested CRS is not supported by the current layer!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_CRS);
         exception.addParameter("Requested CRS", options.bbox.crs);
         exception.addParameter("Requested layer", layer);
@@ -194,7 +191,7 @@ void validate_options(const tag_get_map_request_options& options,
       {
         if (!itsConfig.isValidTime(layer, timestamp, querydata))
         {
-          SmartMet::Spine::Exception exception(BCP, "Invalid time requested!");
+          Spine::Exception exception(BCP, "Invalid time requested!");
           exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
           exception.addParameter("Requested time", Fmi::to_iso_string(timestamp));
           exception.addParameter("Requested layer", layer);
@@ -206,7 +203,7 @@ void validate_options(const tag_get_map_request_options& options,
     // check format
     if (!itsConfig.isValidMapFormat(options.format))
     {
-      SmartMet::Spine::Exception exception(BCP, "The requested map format is not supported!");
+      Spine::Exception exception(BCP, "The requested map format is not supported!");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_FORMAT);
       exception.addParameter("Requested map format", options.format);
       exception.addParameter("Supported map formats",
@@ -217,7 +214,7 @@ void validate_options(const tag_get_map_request_options& options,
     // check bbox
     if (options.bbox.xMin > options.bbox.xMax || options.bbox.yMin > options.bbox.yMax)
     {
-      SmartMet::Spine::Exception exception(BCP, "Invalid BBOX definition!");
+      Spine::Exception exception(BCP, "Invalid BBOX definition!");
       exception.addDetail(
           "'xMin' must be smaller than 'xMax' and 'yMin' must be smaller than 'yMax'.");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
@@ -230,7 +227,7 @@ void validate_options(const tag_get_map_request_options& options,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -253,7 +250,7 @@ boost::posix_time::ptime parse_time(const std::string& time)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -268,7 +265,7 @@ void parse_interval_with_resolution(const std::string time_str,
 
     if (parts.size() != 3)
     {
-      SmartMet::Spine::Exception exception(BCP, "Invalid time interval!");
+      Spine::Exception exception(BCP, "Invalid time interval!");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
       exception.addParameter("Time interval", time_str);
       throw exception;
@@ -284,7 +281,7 @@ void parse_interval_with_resolution(const std::string time_str,
 
     if (endTime < startTime)
     {
-      SmartMet::Spine::Exception exception(BCP, "Invalid time interval!");
+      Spine::Exception exception(BCP, "Invalid time interval!");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
       exception.addParameter("Time interval", time_str);
       throw exception;
@@ -305,7 +302,7 @@ void parse_interval_with_resolution(const std::string time_str,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -314,12 +311,12 @@ void parse_interval_with_resolution(const std::string time_str,
 WMSGetMap::WMSGetMap(const WMSConfig& theConfig) : itsConfig(theConfig)
 {
 }
-void WMSGetMap::parseHTTPRequest(const SmartMet::Engine::Querydata::Engine& theQEngine,
-                                 SmartMet::Spine::HTTP::Request& theRequest)
+void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
+                                 Spine::HTTP::Request& theRequest)
 {
   try
   {
-    itsParameters.debug = SmartMet::Spine::optional_bool(theRequest.getParameter("debug"), false);
+    itsParameters.debug = Spine::optional_bool(theRequest.getParameter("debug"), false);
 
     // check all mandatory options
     check_getmap_request_options(theRequest);
@@ -336,7 +333,7 @@ void WMSGetMap::parseHTTPRequest(const SmartMet::Engine::Querydata::Engine& theQ
     {
       if (!itsConfig.isValidLayer(layers[i]))
       {
-        SmartMet::Spine::Exception exception(BCP, "The requested layer is not supported!");
+        Spine::Exception exception(BCP, "The requested layer is not supported!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
         exception.addParameter("Layere", layers[i]);
         throw exception;
@@ -354,7 +351,7 @@ void WMSGetMap::parseHTTPRequest(const SmartMet::Engine::Querydata::Engine& theQ
     // so if styles has been defined there must be equal amount of layers
     if (styles.size() != layers.size())
     {
-      SmartMet::Spine::Exception exception(BCP, "LAYERS and STYLES amount mismatch");
+      Spine::Exception exception(BCP, "LAYERS and STYLES amount mismatch");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       exception.addParameter("Layers", std::to_string(layers.size()));
       exception.addParameter("Styles", std::to_string(styles.size()));
@@ -369,7 +366,7 @@ void WMSGetMap::parseHTTPRequest(const SmartMet::Engine::Querydata::Engine& theQ
     }
     catch (...)
     {
-      SmartMet::Spine::Exception exception(BCP, "Invalid width / height value!", NULL);
+      Spine::Exception exception(BCP, "Invalid width / height value!", NULL);
       exception.addDetail("The WIDTH and HEIGHT options must be valid integer numbers!");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       throw exception;
@@ -381,7 +378,7 @@ void WMSGetMap::parseHTTPRequest(const SmartMet::Engine::Querydata::Engine& theQ
 
       if (!itsConfig.isValidLayer(layerName))
       {
-        SmartMet::Spine::Exception exception(BCP, "The requested layer is not supported!");
+        Spine::Exception exception(BCP, "The requested layer is not supported!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
         exception.addParameter("Requested layer", layerName);
         throw exception;
@@ -395,17 +392,17 @@ void WMSGetMap::parseHTTPRequest(const SmartMet::Engine::Querydata::Engine& theQ
     std::string crs = *(theRequest.getParameter("CRS"));
     std::string bbox = *(theRequest.getParameter("BBOX"));
 
-    itsParameters.bbox = SmartMet::Spine::BoundingBox(bbox + "," + crs);
+    itsParameters.bbox = Spine::BoundingBox(bbox + "," + crs);
 
     itsParameters.format = *(theRequest.getParameter("FORMAT"));
 
     CaseInsensitiveComparator cicomp;
 
     std::string transparent_str(
-        SmartMet::Spine::optional_string(theRequest.getParameter("TRANSPARENT"), "FALSE"));
+        Spine::optional_string(theRequest.getParameter("TRANSPARENT"), "FALSE"));
     if (false == cicomp(transparent_str, "true") && false == cicomp(transparent_str, "false"))
     {
-      SmartMet::Spine::Exception exception(BCP, "Invalid value for the TRANSPARENT option!");
+      Spine::Exception exception(BCP, "Invalid value for the TRANSPARENT option!");
       exception.addDetail("The TRANSPARENT option must have value 'TRUE' or 'FALSE'");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       throw exception;
@@ -414,8 +411,7 @@ void WMSGetMap::parseHTTPRequest(const SmartMet::Engine::Querydata::Engine& theQ
     itsParameters.transparent = transparent_str == "TRUE";
 
     // store  BGCOLOR option
-    std::string bgcolor_str =
-        SmartMet::Spine::optional_string(theRequest.getParameter("BGCOLOR"), "");
+    std::string bgcolor_str = Spine::optional_string(theRequest.getParameter("BGCOLOR"), "");
     if (!bgcolor_str.empty())
     {
       rgb_color bgcol = hex_string_to_rgb(bgcolor_str);
@@ -434,8 +430,7 @@ void WMSGetMap::parseHTTPRequest(const SmartMet::Engine::Querydata::Engine& theQ
 
     if (theRequest.getParameter("TIME"))
     {
-      std::string time_str =
-          SmartMet::Spine::optional_string(theRequest.getParameter("TIME"), "current");
+      std::string time_str = Spine::optional_string(theRequest.getParameter("TIME"), "current");
 
       if (true == cicomp(time_str, "current"))
       {
@@ -475,7 +470,7 @@ void WMSGetMap::parseHTTPRequest(const SmartMet::Engine::Querydata::Engine& theQ
       }
       else
       {
-        SmartMet::Spine::Exception exception(BCP, "Invalid TIME option value!");
+        Spine::Exception exception(BCP, "Invalid TIME option value!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
         exception.addParameter("Time value", time_str);
         throw exception;
@@ -511,8 +506,7 @@ void WMSGetMap::parseHTTPRequest(const SmartMet::Engine::Querydata::Engine& theQ
     theRequest.addParameter("customer", itsConfig.layerCustomer(layerName));
 
     // resolve current time (most recent) for the layer
-    std::string time_str =
-        SmartMet::Spine::optional_string(theRequest.getParameter("TIME"), "current");
+    std::string time_str = Spine::optional_string(theRequest.getParameter("TIME"), "current");
     if (true == cicomp(time_str, "current"))
     {
       if (!itsConfig.isTemporal(layerName))
@@ -523,8 +517,7 @@ void WMSGetMap::parseHTTPRequest(const SmartMet::Engine::Querydata::Engine& theQ
       {
         if (false == itsConfig.currentValue(layerName))
         {
-          SmartMet::Spine::Exception exception(BCP,
-                                               "Invalid TIME option value for the current layer!");
+          Spine::Exception exception(BCP, "Invalid TIME option value for the current layer!");
           exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
           exception.addParameter("Time value", time_str);
           exception.addParameter("Layer", layerName);
@@ -545,7 +538,7 @@ void WMSGetMap::parseHTTPRequest(const SmartMet::Engine::Querydata::Engine& theQ
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -559,7 +552,7 @@ std::string WMSGetMap::jsonText() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

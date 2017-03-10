@@ -126,7 +126,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -246,12 +246,12 @@ PointValues read_observations(const SymbolLayer& layer,
     std::unique_ptr<OGRSpatialReference> obscrs(new OGRSpatialReference);
     OGRErr err = obscrs->SetFromUserInput("WGS84");
     if (err != OGRERR_NONE)
-      throw SmartMet::Spine::Exception(BCP, "GDAL does not understand WGS84");
+      throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
     std::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(crs.get(), obscrs.get()));
     if (!transformation)
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP, "Failed to create the needed coordinate transformation when drawing symbols");
 
     // We accept only the newest observation for each interval (except for flashes)
@@ -343,8 +343,7 @@ PointValues read_observations(const SymbolLayer& layer,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(
-        BCP, "SymbolLayer failed to read observations from the database", NULL);
+    throw Spine::Exception(BCP, "SymbolLayer failed to read observations from the database", NULL);
   }
 }
 #endif
@@ -400,11 +399,11 @@ void SymbolLayer::init(const Json::Value& theJson,
 
     json = theJson.get("symbols", nulljson);
     if (!json.isNull())
-      SmartMet::Spine::JSON::extract_array("symbols", symbols, json, theConfig);
+      Spine::JSON::extract_array("symbols", symbols, json, theConfig);
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -419,7 +418,7 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   try
   {
     if (theState.inDefs())
-      throw SmartMet::Spine::Exception(BCP, "SymbolLayer cannot be used in the Defs-section");
+      throw Spine::Exception(BCP, "SymbolLayer cannot be used in the Defs-section");
 
     if (!validLayer(theState))
       return;
@@ -434,7 +433,7 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     // A symbol must be defined either globally or for values
 
     if (!symbol && symbols.empty())
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP,
           "Must define default symbol with 'symbol' or several 'symbols' for specific values in a "
           "symbol-layer");
@@ -468,8 +467,7 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       for (q->resetLevel(); !match && q->nextLevel();)
         match = (q->levelValue() == *level);
       if (!match)
-        throw SmartMet::Spine::Exception(
-            BCP, "Level value " + Fmi::to_string(*level) + " is not available");
+        throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available");
     }
 
     // Get projection details
@@ -483,7 +481,7 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     if (!symbols.empty())
     {
       if (!parameter)
-        throw SmartMet::Spine::Exception(
+        throw Spine::Exception(
             BCP, "Parameter not set for SymbolLayer even though multiple symbols are in use");
     }
 
@@ -576,7 +574,7 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -597,7 +595,7 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
     auto hash = Layer::hash_value(theState);
     auto q = getModel(theState);
     if (q)
-      boost::hash_combine(hash, SmartMet::Engine::Querydata::hash_value(q));
+      boost::hash_combine(hash, Engine::Querydata::hash_value(q));
 
     boost::hash_combine(hash, Dali::hash_value(parameter));
     boost::hash_combine(hash, Dali::hash_value(level));
@@ -610,7 +608,7 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

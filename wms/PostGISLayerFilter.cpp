@@ -23,7 +23,7 @@ void PostGISLayerFilter::init(const Json::Value& theJson, const Config& theConfi
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "JSON is not a JSON object!");
+      throw Spine::Exception(BCP, "JSON is not a JSON object!");
 
     // Iterate through all the members
 
@@ -39,12 +39,12 @@ void PostGISLayerFilter::init(const Json::Value& theJson, const Config& theConfi
       else if (name == "text_attributes")
         text_attributes.init(json, theConfig);
       else
-        throw SmartMet::Spine::Exception(BCP, "Unknown setting '" + name + "'!");
+        throw Spine::Exception(BCP, "Unknown setting '" + name + "'!");
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Layer init failed!", NULL);
+    throw Spine::Exception(BCP, "Layer init failed!", NULL);
   }
 }
 
@@ -64,7 +64,7 @@ std::size_t PostGISLayerFilter::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

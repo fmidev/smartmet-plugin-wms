@@ -16,7 +16,7 @@ void WMSTimeDimension::addTimestep(const boost::posix_time::ptime& timestep)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -28,7 +28,7 @@ void WMSTimeDimension::removeTimestep(const boost::posix_time::ptime& timestep)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -49,7 +49,7 @@ bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) cons
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -103,7 +103,7 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -125,7 +125,7 @@ std::string StepTimeDimension::getCapabilities() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -142,7 +142,7 @@ IntervalTimeDimension::IntervalTimeDimension(const boost::posix_time::ptime& beg
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -172,7 +172,7 @@ std::string IntervalTimeDimension::getCapabilities() const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -193,7 +193,7 @@ std::ostream& operator<<(std::ostream& ost, const StepTimeDimension& timeDimensi
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -209,7 +209,7 @@ std::ostream& operator<<(std::ostream& ost, const IntervalTimeDimension& timeDim
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

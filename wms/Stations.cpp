@@ -21,11 +21,11 @@ void Stations::init(const Json::Value& theJson, const Config& theConfig)
 {
   try
   {
-    SmartMet::Spine::JSON::extract_array("stations", stations, theJson, theConfig);
+    Spine::JSON::extract_array("stations", stations, theJson, theConfig);
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -43,7 +43,7 @@ std::size_t Stations::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

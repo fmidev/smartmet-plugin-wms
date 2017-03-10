@@ -2,6 +2,7 @@
 
 #include "IceMapLayer.h"
 #include "Config.h"
+#include "Geometry.h"
 #include "Hash.h"
 #include "Layer.h"
 #include "State.h"
@@ -264,7 +265,7 @@ void IceMapLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "PostGIS JSON is not a JSON object");
+      throw Spine::Exception(BCP, "PostGIS JSON is not a JSON object");
 
     PostGISLayerBase::init(theJson, theState, theConfig, theProperties);
 
@@ -334,7 +335,7 @@ void IceMapLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -408,7 +409,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     addClipRect(theLayersCdt, theGlobals, projection.getBox(), theState);
 
-    SmartMet::Engine::Gis::MapOptions mapOptions;
+    Engine::Gis::MapOptions mapOptions;
     mapOptions.pgname = pgname;
     mapOptions.schema = schema;
     mapOptions.table = table;
@@ -474,7 +475,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -495,7 +496,7 @@ std::string IceMapLayer::getParameterValue(const std::string& theKey) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -516,7 +517,7 @@ std::size_t IceMapLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -996,13 +997,18 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
   if (!theResultItem.geom || theResultItem.geom->IsEmpty())
     return;
 
-  const Fmi::Box& box = projection.getBox();
-
-  std::string svg_string(Fmi::OGR::exportToSvg(*theResultItem.geom, box, 1));
+  const auto box = projection.getBox();
+  const auto crs = projection.getCRS();
 
   // Store the path with unique ID
   std::string iri = (qid + Fmi::to_string(theMapId++));
-  theGlobals["paths"][iri] = svg_string;
+
+  CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
+  map_cdt["iri"] = iri;
+  map_cdt["type"] = Geometry::name(*theResultItem.geom, theState.getType());
+  map_cdt["layertype"] = "icemap";
+  map_cdt["data"] = Geometry::toString(*theResultItem.geom, theState.getType(), box, crs);
+  theGlobals["paths"][iri] = map_cdt;
 
   // add pattern on geometry
   if (itsParameters.find("pattern") != itsParameters.end())

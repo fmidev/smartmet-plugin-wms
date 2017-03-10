@@ -1,4 +1,4 @@
-#if 0  // ### REPLACED BY SmartMet::Spine::Exception
+#if 0  // ### REPLACED BY Spine::Exception
 
 #include <WMSException.h>
 #include <boost/algorithm/string.hpp>

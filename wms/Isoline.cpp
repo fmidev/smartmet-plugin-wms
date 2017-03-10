@@ -22,7 +22,7 @@ void Isoline::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "Isoline JSON is not a JSON object");
+      throw Spine::Exception(BCP, "Isoline JSON is not a JSON object");
 
     // Iterate through all the members
 
@@ -38,13 +38,12 @@ void Isoline::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "attributes")
         attributes.init(json, theConfig);
       else
-        throw SmartMet::Spine::Exception(BCP,
-                                         "Isoline does not have a setting named '" + name + "'");
+        throw Spine::Exception(BCP, "Isoline does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -65,7 +64,7 @@ std::size_t Isoline::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

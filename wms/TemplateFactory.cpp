@@ -22,7 +22,7 @@ SharedFormatter TemplateFactory::get(const boost::filesystem::path& theFilename)
   try
   {
     if (theFilename.empty())
-      throw SmartMet::Spine::Exception(BCP, "TemplateFactory: Cannot use empty templates");
+      throw Spine::Exception(BCP, "TemplateFactory: Cannot use empty templates");
 
     TemplateMap* tmap = itsTemplates.get();
 
@@ -55,7 +55,7 @@ SharedFormatter TemplateFactory::get(const boost::filesystem::path& theFilename)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

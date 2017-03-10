@@ -83,64 +83,63 @@ namespace Dali
      */
 // ----------------------------------------------------------------------
 
-void Dali::Plugin::daliQuery(SmartMet::Spine::Reactor &theReactor,
-                             const SmartMet::Spine::HTTP::Request &theRequest,
-                             SmartMet::Spine::HTTP::Response &theResponse)
+void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
+                             const Spine::HTTP::Request &theRequest,
+                             Spine::HTTP::Response &theResponse)
 {
   try
   {
-    // Trivial error checks done first for speed
-
-    std::string type = SmartMet::Spine::optional_string(theRequest.getParameter("type"), "svg");
-
-    if (!boost::iequals(type, "xml") && !boost::iequals(type, "svg") &&
-        !boost::iequals(type, "png") && !boost::iequals(type, "pdf") && !boost::iequals(type, "ps"))
-    {
-      throw SmartMet::Spine::Exception(BCP, "Invalid 'type' value '" + type + "'!");
-    }
-
-    int width = SmartMet::Spine::optional_int(theRequest.getParameter("width"), 1000);
+    int width = Spine::optional_int(theRequest.getParameter("width"), 1000);
     if (width < 20 || width > 10000)
     {
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Invalid 'width' value '" + std::to_string(width) + "'!");
+      throw Spine::Exception(BCP, "Invalid 'width' value '" + std::to_string(width) + "'!");
     }
 
-    int height = SmartMet::Spine::optional_int(theRequest.getParameter("height"), 1000);
+    int height = Spine::optional_int(theRequest.getParameter("height"), 1000);
     if (height < 20 || height > 10000)
     {
-      throw SmartMet::Spine::Exception(BCP,
-                                       "Invalid 'height' value '" + std::to_string(height) + "'!");
+      throw Spine::Exception(BCP, "Invalid 'height' value '" + std::to_string(height) + "'!");
     }
 
     // Establish debugging related variables
 
-    const bool print_hash =
-        SmartMet::Spine::optional_bool(theRequest.getParameter("printhash"), false);
+    const bool print_hash = Spine::optional_bool(theRequest.getParameter("printhash"), false);
 
-    const bool print_json =
-        SmartMet::Spine::optional_bool(theRequest.getParameter("printjson"), false);
+    const bool print_json = Spine::optional_bool(theRequest.getParameter("printjson"), false);
 
-    const bool usetimer = SmartMet::Spine::optional_bool(theRequest.getParameter("timer"), false);
+    const bool usetimer = Spine::optional_bool(theRequest.getParameter("timer"), false);
 
     // Storage for re-usable stuff during product generation
     State state(*this);
-    state.useTimer(SmartMet::Spine::optional_bool(theRequest.getParameter("timer"), false));
+    state.useTimer(Spine::optional_bool(theRequest.getParameter("timer"), false));
     state.useWms(false);
 
     // Define the customer and image format
 
-    state.setCustomer(SmartMet::Spine::optional_string(theRequest.getParameter("customer"),
-                                                       itsConfig.defaultCustomer()));
+    state.setCustomer(
+        Spine::optional_string(theRequest.getParameter("customer"), itsConfig.defaultCustomer()));
 
     if (state.getCustomer().empty())
-      throw SmartMet::Spine::Exception(BCP, "Customer setting is empty");
+      throw Spine::Exception(BCP, "Customer setting is empty");
 
     // Get the product configuration
 
-    std::string product_name = SmartMet::Spine::required_string(
+    std::string product_name = Spine::required_string(
         theRequest.getParameter("product"), "Product configuration option 'product' not given");
     auto product = getProduct(theRequest, state, product_name, print_json);
+
+    // Trivial error checks done first for speed
+
+    if (product.type.empty())
+      product.type = "svg";
+
+    if (!boost::iequals(product.type, "xml") && !boost::iequals(product.type, "svg") &&
+        !boost::iequals(product.type, "png") && !boost::iequals(product.type, "pdf") &&
+        !boost::iequals(product.type, "ps") && !boost::iequals(product.type, "geojson"))
+
+    {
+      throw Spine::Exception(BCP, "Invalid 'type' value '" + product.type + "'!");
+    }
 
     // Image format can no longer be changed by anything, provide the info to layers
     state.setType(product.type);
@@ -176,8 +175,7 @@ void Dali::Plugin::daliQuery(SmartMet::Spine::Reactor &theReactor,
     // Get the product template
 
     if (!product.svg_tmpl)
-      throw SmartMet::Spine::Exception(
-          BCP, "No SVG template defined for product '" + product_name + "'");
+      product.svg_tmpl = itsConfig.defaultTemplate(product.type);
 
     auto tmpl = getTemplate(*product.svg_tmpl);
 
@@ -208,14 +206,14 @@ void Dali::Plugin::daliQuery(SmartMet::Spine::Reactor &theReactor,
     }
     catch (CTPP::CTPPException &e)
     {
-      SmartMet::Spine::Exception exception(BCP, "Template processing error!", NULL);
+      Spine::Exception exception(BCP, "Template processing error!", NULL);
       exception.addParameter("Template", *product.svg_tmpl);
       exception.addParameter("Product", product_name);
       throw exception;
     }
     catch (...)
     {
-      SmartMet::Spine::Exception exception(BCP, "Template processing error!", NULL);
+      Spine::Exception exception(BCP, "Template processing error!", NULL);
       exception.addParameter("Template", *product.svg_tmpl);
       exception.addParameter("Product", product_name);
       throw exception;
@@ -231,7 +229,7 @@ void Dali::Plugin::daliQuery(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Query failed!", NULL);
+    throw Spine::Exception(BCP, "Query failed!", NULL);
   }
 }
 
@@ -243,8 +241,8 @@ void Dali::Plugin::daliQuery(SmartMet::Spine::Reactor &theReactor,
 
 void Plugin::formatResponse(const std::string &theSvg,
                             const std::string &theType,
-                            const SmartMet::Spine::HTTP::Request &theRequest,
-                            SmartMet::Spine::HTTP::Response &theResponse,
+                            const Spine::HTTP::Request &theRequest,
+                            Spine::HTTP::Response &theResponse,
                             bool usetimer,
                             std::size_t theHash)
 {
@@ -252,7 +250,7 @@ void Plugin::formatResponse(const std::string &theSvg,
   {
     theResponse.setHeader("Content-Type", mimeType(theType));
 
-    if (theType == "xml" || theType == "svg" || theType == "image/svg+xml")
+    if (theType == "xml" || theType == "svg" || theType == "image/svg+xml" || theType == "geojson")
     {
       // Set string content as-is
       if (theSvg.empty())
@@ -281,8 +279,7 @@ void Plugin::formatResponse(const std::string &theSvg,
       else if (theType == "ps")
         buffer.reset(new std::string(Giza::Svg::tops(theSvg)));
       else
-        throw SmartMet::Spine::Exception(BCP,
-                                         "Cannot convert SVG to unknown format '" + theType + "'");
+        throw Spine::Exception(BCP, "Cannot convert SVG to unknown format '" + theType + "'");
 
       if (theHash != 0)
       {
@@ -300,7 +297,7 @@ void Plugin::formatResponse(const std::string &theSvg,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Response format failed!", NULL);
+    throw Spine::Exception(BCP, "Response format failed!", NULL);
   }
 }
 
@@ -325,12 +322,14 @@ std::string Plugin::mimeType(const std::string &theType) const
       return "application/pdf";
     if (theType == "ps")
       return "application/postscript";
+    if (theType == "geojson")
+      return "application/geo+json";
 
-    throw SmartMet::Spine::Exception(BCP, "Unknown image format '" + theType + "'");
+    throw Spine::Exception(BCP, "Unknown image format '" + theType + "'");
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -340,13 +339,13 @@ std::string Plugin::mimeType(const std::string &theType) const
      */
 // ----------------------------------------------------------------------
 
-void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
-                            const SmartMet::Spine::HTTP::Request &theRequest,
-                            SmartMet::Spine::HTTP::Response &theResponse)
+void Plugin::requestHandler(Spine::Reactor &theReactor,
+                            const Spine::HTTP::Request &theRequest,
+                            Spine::HTTP::Response &theResponse)
 {
   try
   {
-    const bool isdebug = SmartMet::Spine::optional_bool(theRequest.getParameter("debug"), false);
+    const bool isdebug = Spine::optional_bool(theRequest.getParameter("debug"), false);
 
     // WMS: if WMS exception is thrown or capabilities requested, the format must be xml in response
     // no matter what format-option was given in request
@@ -363,19 +362,19 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
         switch (status)
         {
           case WMSQueryStatus::FORBIDDEN:
-            theResponse.setStatus(SmartMet::Spine::HTTP::Status::forbidden, true);
+            theResponse.setStatus(Spine::HTTP::Status::forbidden, true);
             break;
           case WMSQueryStatus::OK:
           case WMSQueryStatus::EXCEPTION:
           default:
-            theResponse.setStatus(SmartMet::Spine::HTTP::Status::ok);
+            theResponse.setStatus(Spine::HTTP::Status::ok);
             break;
         }
       }
       else
       {
         daliQuery(theReactor, theRequest, theResponse);
-        theResponse.setStatus(SmartMet::Spine::HTTP::Status::ok);
+        theResponse.setStatus(Spine::HTTP::Status::ok);
       }
 
       // Adding headers
@@ -395,7 +394,7 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
     {
       // Catching all exceptions
 
-      SmartMet::Spine::Exception exception(BCP, "Request processing exception!", NULL);
+      Spine::Exception exception(BCP, "Request processing exception!", NULL);
       exception.addParameter("URI", theRequest.getURI());
 
       std::cerr << exception.getStackTrace();
@@ -405,11 +404,11 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
         // Delivering the exception information as HTTP content
         std::string fullMessage = exception.getHtmlStackTrace();
         theResponse.setContent(fullMessage);
-        theResponse.setStatus(SmartMet::Spine::HTTP::Status::ok);
+        theResponse.setStatus(Spine::HTTP::Status::ok);
       }
       else
       {
-        theResponse.setStatus(SmartMet::Spine::HTTP::Status::bad_request);
+        theResponse.setStatus(Spine::HTTP::Status::bad_request);
       }
 
       // Adding the first exception information into the response header
@@ -422,7 +421,7 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -432,7 +431,7 @@ void Plugin::requestHandler(SmartMet::Spine::Reactor &theReactor,
      */
 // ----------------------------------------------------------------------
 
-Plugin::Plugin(SmartMet::Spine::Reactor *theReactor, const char *theConfig)
+Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
     : SmartMetPlugin(),
       itsModuleName("WMS"),
       itsConfig(theConfig),
@@ -461,7 +460,7 @@ Plugin::Plugin(SmartMet::Spine::Reactor *theReactor, const char *theConfig)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -488,7 +487,7 @@ void Plugin::init()
 
     auto engine = itsReactor->getSingleton("Contour", NULL);
     if (!engine)
-      throw SmartMet::Spine::Exception(BCP, "Contour engine unavailable");
+      throw Spine::Exception(BCP, "Contour engine unavailable");
     itsContourEngine = reinterpret_cast<Engine::Contour::Engine *>(engine);
     if (itsShutdownRequested)
       return;
@@ -500,7 +499,7 @@ void Plugin::init()
 
     engine = itsReactor->getSingleton("Gis", NULL);
     if (!engine)
-      throw SmartMet::Spine::Exception(BCP, "Gis engine unavailable");
+      throw Spine::Exception(BCP, "Gis engine unavailable");
     itsGisEngine = reinterpret_cast<Engine::Gis::Engine *>(engine);
     if (itsShutdownRequested)
       return;
@@ -512,7 +511,7 @@ void Plugin::init()
 
     engine = itsReactor->getSingleton("Querydata", NULL);
     if (!engine)
-      throw SmartMet::Spine::Exception(BCP, "Querydata engine unavailable");
+      throw Spine::Exception(BCP, "Querydata engine unavailable");
     itsQEngine = reinterpret_cast<Engine::Querydata::Engine *>(engine);
     if (itsShutdownRequested)
       return;
@@ -521,7 +520,7 @@ void Plugin::init()
 
     engine = itsReactor->getSingleton("Geonames", NULL);
     if (!engine)
-      throw SmartMet::Spine::Exception(BCP, "Geonames engine unavailable");
+      throw Spine::Exception(BCP, "Geonames engine unavailable");
     itsGeoEngine = reinterpret_cast<Engine::Geonames::Engine *>(engine);
     if (itsShutdownRequested)
       return;
@@ -536,7 +535,7 @@ void Plugin::init()
     {
       engine = itsReactor->getSingleton("Observation", NULL);
       if (!engine)
-        throw SmartMet::Spine::Exception(BCP, "Observation engine unavailable");
+        throw Spine::Exception(BCP, "Observation engine unavailable");
       itsObsEngine = reinterpret_cast<Engine::Observation::Engine *>(engine);
 
       // TODO: Should not be done this way, figure out a better way
@@ -554,7 +553,7 @@ void Plugin::init()
     {
       engine = itsReactor->getSingleton("Authentication", NULL);
       if (!engine)
-        throw SmartMet::Spine::Exception(BCP, "Authentication unavailable");
+        throw Spine::Exception(BCP, "Authentication unavailable");
       Engine::Authentication::Engine *authEngine =
           reinterpret_cast<Engine::Authentication::Engine *>(engine);
 
@@ -581,17 +580,17 @@ void Plugin::init()
     if (!itsReactor->addContentHandler(this,
                                        itsConfig.defaultUrl(),
                                        boost::bind(&Plugin::callRequestHandler, this, _1, _2, _3)))
-      throw SmartMet::Spine::Exception(BCP, "Failed to register Dali content handler");
+      throw Spine::Exception(BCP, "Failed to register Dali content handler");
 
     // Register WMS content handler
 
     if (!itsReactor->addContentHandler(
             this, itsConfig.wmsUrl(), boost::bind(&Plugin::callRequestHandler, this, _1, _2, _3)))
-      throw SmartMet::Spine::Exception(BCP, "Failed to register WMS content handler");
+      throw Spine::Exception(BCP, "Failed to register WMS content handler");
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Init failed!", NULL);
+    throw Spine::Exception(BCP, "Init failed!", NULL);
   }
 }
 
@@ -615,7 +614,7 @@ void Plugin::shutdown()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -625,7 +624,7 @@ void Plugin::shutdown()
      */
 // ----------------------------------------------------------------------
 
-bool Plugin::queryIsFast(const SmartMet::Spine::HTTP::Request &theRequest) const
+bool Plugin::queryIsFast(const Spine::HTTP::Request &theRequest) const
 {
   try
   {
@@ -637,7 +636,7 @@ bool Plugin::queryIsFast(const SmartMet::Spine::HTTP::Request &theRequest) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -659,7 +658,7 @@ Plugin::~Plugin()
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -689,7 +688,7 @@ int Plugin::getRequiredAPIVersion() const
      */
 // ----------------------------------------------------------------------
 
-Product Plugin::getProduct(const SmartMet::Spine::HTTP::Request &theRequest,
+Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
                            const State &theState,
                            const std::string &theName,
                            bool print_json) const
@@ -705,7 +704,7 @@ Product Plugin::getProduct(const SmartMet::Spine::HTTP::Request &theRequest,
 
     if (!boost::filesystem::exists(product_path))
     {
-      SmartMet::Spine::Exception exception(BCP, "Product file not found!");
+      Spine::Exception exception(BCP, "Product file not found!");
       exception.addParameter("File", product_path);
       throw exception;
     }
@@ -719,7 +718,7 @@ Product Plugin::getProduct(const SmartMet::Spine::HTTP::Request &theRequest,
 
     if (!json_ok)
     {
-      SmartMet::Spine::Exception exception(BCP, "Product parsing failed!");
+      Spine::Exception exception(BCP, "Product parsing failed!");
       std::string msg = reader.getFormattedErrorMessages();
       std::replace(msg.begin(), msg.end(), '\n', ' ');
       exception.addDetail(msg);
@@ -731,23 +730,23 @@ Product Plugin::getProduct(const SmartMet::Spine::HTTP::Request &theRequest,
 
     std::string layers_root = customer_root + "/layers/";
 
-    SmartMet::Spine::JSON::preprocess(
+    Spine::JSON::preprocess(
         json, itsConfig.rootDirectory(theState.useWms()), layers_root, itsFileCache);
 
     // Expand paths
 
-    SmartMet::Spine::JSON::dereference(json);
+    Spine::JSON::dereference(json);
 
     // Modify as requested
 
-    SmartMet::Spine::JSON::expand(json, theRequest.getParameterMap());
+    Spine::JSON::expand(json, theRequest.getParameterMap());
 
     // Debugging
 
     if (print_json)
     {
       Json::StyledWriter writer;
-      std::cout << "Expanded " << theName << " SmartMet::Spine::JSON:" << std::endl
+      std::cout << "Expanded " << theName << " Spine::JSON:" << std::endl
                 << writer.write(json) << std::endl;
     }
 
@@ -760,7 +759,7 @@ Product Plugin::getProduct(const SmartMet::Spine::HTTP::Request &theRequest,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -786,7 +785,7 @@ std::string Plugin::getStyle(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -806,7 +805,7 @@ SharedFormatter Plugin::getTemplate(const std::string &theName) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -830,7 +829,7 @@ std::string Plugin::getFilter(const std::string &theName, bool theWmsFlag) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -854,7 +853,7 @@ std::size_t Plugin::getFilterHash(const std::string &theName, bool theWmsFlag) c
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -880,7 +879,7 @@ std::string Plugin::getMarker(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -906,7 +905,7 @@ std::size_t Plugin::getMarkerHash(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -932,7 +931,7 @@ std::string Plugin::getSymbol(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -958,7 +957,7 @@ std::size_t Plugin::getSymbolHash(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -984,7 +983,7 @@ std::string Plugin::getPattern(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -1010,7 +1009,7 @@ std::size_t Plugin::getPatternHash(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -1036,7 +1035,7 @@ std::string Plugin::getGradient(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -1062,7 +1061,7 @@ std::size_t Plugin::getGradientHash(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -1082,7 +1081,7 @@ const Config &Plugin::getConfig() const
      */
 // ----------------------------------------------------------------------
 
-std::string Dali::Plugin::parseWMSException(SmartMet::Spine::Exception &wmsException) const
+std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException) const
 {
   try
   {
@@ -1090,8 +1089,7 @@ std::string Dali::Plugin::parseWMSException(SmartMet::Spine::Exception &wmsExcep
 
     CTPP::CDT hash;
 
-    const SmartMet::Spine::Exception *e =
-        wmsException.getExceptionByParameterName(WMS_EXCEPTION_CODE);
+    const Spine::Exception *e = wmsException.getExceptionByParameterName(WMS_EXCEPTION_CODE);
 
     std::string exceptionCode;
     std::string exceptionText;
@@ -1120,7 +1118,7 @@ std::string Dali::Plugin::parseWMSException(SmartMet::Spine::Exception &wmsExcep
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -1130,9 +1128,9 @@ std::string Dali::Plugin::parseWMSException(SmartMet::Spine::Exception &wmsExcep
      */
 // ----------------------------------------------------------------------
 
-WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
-                                      const SmartMet::Spine::HTTP::Request &theRequest,
-                                      SmartMet::Spine::HTTP::Response &theResponse)
+WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
+                                      const Spine::HTTP::Request &theRequest,
+                                      Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -1143,12 +1141,12 @@ WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
 
     // Establish debugging related variables
 
-    bool print_hash = SmartMet::Spine::optional_bool(thisRequest.getParameter("printhash"), false);
+    bool print_hash = Spine::optional_bool(thisRequest.getParameter("printhash"), false);
 
-    bool print_json = SmartMet::Spine::optional_bool(thisRequest.getParameter("printjson"), false);
+    bool print_json = Spine::optional_bool(thisRequest.getParameter("printjson"), false);
 
     State state(*this);
-    state.useTimer(SmartMet::Spine::optional_bool(thisRequest.getParameter("timer"), false));
+    state.useTimer(Spine::optional_bool(thisRequest.getParameter("timer"), false));
     state.useWms(true);
 
     Product product;
@@ -1159,7 +1157,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
 
       if (requestType == WMS::WMSRequestType::NOT_A_WMS_REQUEST)
       {
-        SmartMet::Spine::Exception exception(BCP, "Not a WMS request!");
+        Spine::Exception exception(BCP, "Not a WMS request!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
         auto msg = parseWMSException(exception);
         formatResponse(msg, "xml", thisRequest, theResponse, state.useTimer());
@@ -1175,7 +1173,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
 
       if (requestType == WMS::WMSRequestType::GET_FEATURE_INFO)
       {
-        SmartMet::Spine::Exception exception(BCP, "GetFeatureInfo not supported!");
+        Spine::Exception exception(BCP, "GetFeatureInfo not supported!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED);
         auto msg = parseWMSException(exception);
         formatResponse(msg, "xml", thisRequest, theResponse, state.useTimer());
@@ -1195,7 +1193,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
       if (!has_access)
       {
         // Send 403 FORBIDDEN
-        theResponse.setStatus(SmartMet::Spine::HTTP::Status::forbidden, true);
+        theResponse.setStatus(Spine::HTTP::Status::forbidden, true);
         return WMSQueryStatus::FORBIDDEN;
       }
 #endif
@@ -1204,13 +1202,13 @@ WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
       wmsGetMapRequest.parseHTTPRequest(*itsQEngine, thisRequest);
 
       // Define the customer
-      std::string customer = SmartMet::Spine::optional_string(thisRequest.getParameter("customer"),
-                                                              itsConfig.defaultCustomer());
+      std::string customer =
+          Spine::optional_string(thisRequest.getParameter("customer"), itsConfig.defaultCustomer());
       state.setCustomer(customer);
 
       if (state.getCustomer().empty())
       {
-        SmartMet::Spine::Exception exception(BCP, "Customer setting is empty!");
+        Spine::Exception exception(BCP, "Customer setting is empty!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
         auto msg = parseWMSException(exception);
         formatResponse(msg, "xml", thisRequest, theResponse, state.useTimer());
@@ -1228,12 +1226,12 @@ WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
         bool json_ok = reader.parse(json_text, json);
 
         if (!json_ok)
-          throw SmartMet::Spine::Exception(
-              BCP, "Failed to parse json: " + reader.getFormattedErrorMessages());
+          throw Spine::Exception(BCP,
+                                 "Failed to parse json: " + reader.getFormattedErrorMessages());
       }
       catch (...)
       {
-        SmartMet::Spine::Exception exception(BCP, "JSON parsing error!", NULL);
+        Spine::Exception exception(BCP, "JSON parsing error!", NULL);
         exception.addParameter("Text", json_text);
         throw exception;
       }
@@ -1243,17 +1241,16 @@ WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
 
       std::string layers_root = customer_root + "/layers/";
 
-      SmartMet::Spine::JSON::preprocess(
+      Spine::JSON::preprocess(
           json, itsConfig.rootDirectory(state.useWms()), layers_root, itsFileCache);
-      SmartMet::Spine::JSON::dereference(json);
-      SmartMet::Spine::JSON::expand(json, thisRequest.getParameterMap());
+      Spine::JSON::dereference(json);
+      Spine::JSON::expand(json, thisRequest.getParameterMap());
 
       // Debugging
       if (print_json)
       {
         Json::StyledWriter writer;
-        std::cout << "Expanded SmartMet::Spine::JSON:" << std::endl
-                  << writer.write(json) << std::endl;
+        std::cout << "Expanded Spine::JSON:" << std::endl << writer.write(json) << std::endl;
       }
 
       // And initialize the product specs from the JSON
@@ -1269,7 +1266,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
     }
     catch (...)
     {
-      SmartMet::Spine::Exception exception(BCP, "Operation failed!", NULL);
+      Spine::Exception exception(BCP, "Operation failed!", NULL);
       if (exception.getExceptionByParameterName(WMS_EXCEPTION_CODE) == NULL)
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       auto msg = parseWMSException(exception);
@@ -1313,7 +1310,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
     }
 
     if (!product.svg_tmpl)
-      throw SmartMet::Spine::Exception(BCP, "No SVG template defined");
+      throw Spine::Exception(BCP, "No SVG template defined");
 
     auto tmpl = getTemplate(*product.svg_tmpl);
 
@@ -1334,7 +1331,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
     }
     catch (...)
     {
-      SmartMet::Spine::Exception exception(
+      Spine::Exception exception(
           BCP, "Error in processing the template '" + *product.svg_tmpl + "'!", NULL);
       if (exception.getExceptionByParameterName(WMS_EXCEPTION_CODE) == NULL)
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
@@ -1352,7 +1349,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(SmartMet::Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

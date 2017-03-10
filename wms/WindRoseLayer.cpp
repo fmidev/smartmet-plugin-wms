@@ -39,7 +39,7 @@ struct value_printer : public boost::static_visitor<std::string>
 {
   std::string operator()(const std::string& str) const { return str; }
   std::string operator()(double value) const { return Fmi::to_string(value); }
-  std::string operator()(const SmartMet::Spine::TimeSeries::LonLat& lonlat) const
+  std::string operator()(const Spine::TimeSeries::LonLat& lonlat) const
   {
     return Fmi::to_string(lonlat.lon) + ',' + Fmi::to_string(lonlat.lat);
   }
@@ -53,9 +53,9 @@ struct value_printer : public boost::static_visitor<std::string>
  */
 // ----------------------------------------------------------------------
 
-bool is_rose_data_valid(const SmartMet::Spine::TimeSeries::TimeSeries& directions,
-                        const SmartMet::Spine::TimeSeries::TimeSeries& speeds,
-                        const SmartMet::Spine::TimeSeries::TimeSeries& temperatures)
+bool is_rose_data_valid(const Spine::TimeSeries::TimeSeries& directions,
+                        const Spine::TimeSeries::TimeSeries& speeds,
+                        const Spine::TimeSeries::TimeSeries& temperatures)
 {
   try
   {
@@ -66,8 +66,7 @@ bool is_rose_data_valid(const SmartMet::Spine::TimeSeries::TimeSeries& direction
     // Safety check, the sizes should really be always equal
 
     if (directions.size() != speeds.size() || speeds.size() != temperatures.size())
-      throw SmartMet::Spine::Exception(
-          BCP, "Internal failure in wind rose observations, data size mismatch");
+      throw Spine::Exception(BCP, "Internal failure in wind rose observations, data size mismatch");
 
     bool first = true;
     boost::posix_time::ptime previous_valid_time;
@@ -103,7 +102,7 @@ bool is_rose_data_valid(const SmartMet::Spine::TimeSeries::TimeSeries& direction
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -113,7 +112,7 @@ bool is_rose_data_valid(const SmartMet::Spine::TimeSeries::TimeSeries& direction
  */
 // ----------------------------------------------------------------------
 
-double mean(const SmartMet::Spine::TimeSeries::TimeSeries& tseries)
+double mean(const Spine::TimeSeries::TimeSeries& tseries)
 {
   try
   {
@@ -135,7 +134,7 @@ double mean(const SmartMet::Spine::TimeSeries::TimeSeries& tseries)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -145,7 +144,7 @@ double mean(const SmartMet::Spine::TimeSeries::TimeSeries& tseries)
  */
 // ----------------------------------------------------------------------
 
-double max(const SmartMet::Spine::TimeSeries::TimeSeries& tseries)
+double max(const Spine::TimeSeries::TimeSeries& tseries)
 {
   try
   {
@@ -170,7 +169,7 @@ double max(const SmartMet::Spine::TimeSeries::TimeSeries& tseries)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -192,7 +191,7 @@ int rose_sector(int sectors, double direction)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -210,7 +209,7 @@ double sector_start_angle(int sector, int sectors)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -228,7 +227,7 @@ double sector_end_angle(int sector, int sectors)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -238,8 +237,8 @@ double sector_end_angle(int sector, int sectors)
  */
 // ----------------------------------------------------------------------
 
-std::vector<double> calculate_rose_distribution(
-    const SmartMet::Spine::TimeSeries::TimeSeries& directions, int sectors)
+std::vector<double> calculate_rose_distribution(const Spine::TimeSeries::TimeSeries& directions,
+                                                int sectors)
 {
   try
   {
@@ -269,7 +268,7 @@ std::vector<double> calculate_rose_distribution(
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -279,8 +278,8 @@ std::vector<double> calculate_rose_distribution(
  */
 // ----------------------------------------------------------------------
 
-std::vector<double> calculate_rose_maxima(const SmartMet::Spine::TimeSeries::TimeSeries& directions,
-                                          const SmartMet::Spine::TimeSeries::TimeSeries& speeds,
+std::vector<double> calculate_rose_maxima(const Spine::TimeSeries::TimeSeries& directions,
+                                          const Spine::TimeSeries::TimeSeries& speeds,
                                           int sectors)
 {
   try
@@ -302,7 +301,7 @@ std::vector<double> calculate_rose_maxima(const SmartMet::Spine::TimeSeries::Tim
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -320,7 +319,7 @@ void WindRoseLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw SmartMet::Spine::Exception(BCP, "WindRose-layer JSON is not a JSON hash");
+      throw Spine::Exception(BCP, "WindRose-layer JSON is not a JSON hash");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -354,7 +353,7 @@ void WindRoseLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -386,7 +385,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
   try
   {
     if (theState.inDefs())
-      throw SmartMet::Spine::Exception(BCP, "WindRoseLayer cannot be used in the defs section");
+      throw Spine::Exception(BCP, "WindRoseLayer cannot be used in the defs section");
 
     if (!validLayer(theState))
       return;
@@ -414,13 +413,12 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
     OGRErr err = wgs84->SetFromUserInput("WGS84");
     if (err != OGRERR_NONE)
-      throw SmartMet::Spine::Exception(BCP,
-                                       "WindRoseLayer failed to generate WGS84 spatial reference");
+      throw Spine::Exception(BCP, "WindRoseLayer failed to generate WGS84 spatial reference");
 
     std::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
     if (!transformation)
-      throw SmartMet::Spine::Exception(
+      throw Spine::Exception(
           BCP,
           "WindRoseLayer failed to create the coordinate transformation from WGS84 to world "
           "coordinates");
@@ -455,7 +453,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     {
       // Currently we require the station to have a fmisid
       if (!station.fmisid)
-        throw SmartMet::Spine::Exception(BCP, "WindRose station fmisid missing");
+        throw Spine::Exception(BCP, "WindRose station fmisid missing");
 
       // Find the observations for the station
       auto it = rosedata.find(*station.fmisid);
@@ -664,7 +662,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
           else if (observation.parameter == "max_t(ws_10min)")
             value = wdata.max_wind;
           else
-            throw SmartMet::Spine::Exception(
+            throw Spine::Exception(
                 BCP, "Unknown WindRoseLayer parameter '" + observation.parameter + "'");
 
           CTPP::CDT obs_cdt(CTPP::CDT::HASH_VAL);
@@ -690,7 +688,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -708,7 +706,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
   try
   {
     // Oracle settings
-    SmartMet::Engine::Observation::Settings settings;
+    Engine::Observation::Settings settings;
 
     settings.starttime = theStartTime;
     settings.endtime = theEndTime;
@@ -723,8 +721,8 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
     settings.parameters.push_back(observation.makeParameter("stationlongitude"));
     settings.parameters.push_back(observation.makeParameter("stationlatitude"));
 
-    SmartMet::Spine::ValueFormatterParam valueformatterparam;
-    SmartMet::Spine::ValueFormatter valueformatter(valueformatterparam);
+    Spine::ValueFormatterParam valueformatterparam;
+    Spine::ValueFormatter valueformatter(valueformatterparam);
 
     std::map<int, WindRoseData> result;
 
@@ -732,7 +730,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
     {
       settings.fmisids.clear();
       if (!station.fmisid)
-        throw SmartMet::Spine::Exception(BCP, "Station fmisid is required for wind roses");
+        throw Spine::Exception(BCP, "Station fmisid is required for wind roses");
 
       settings.fmisids.push_back(*station.fmisid);
 
@@ -775,7 +773,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 
@@ -800,7 +798,7 @@ std::size_t WindRoseLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
 

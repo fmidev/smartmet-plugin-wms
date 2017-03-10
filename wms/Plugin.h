@@ -48,31 +48,31 @@ enum class WMSQueryStatus
   FORBIDDEN
 };
 
-using ImageCache = SmartMet::Spine::SmartMetCache;
+using ImageCache = Spine::SmartMetCache;
 
 class Plugin : public SmartMetPlugin, private boost::noncopyable
 {
  public:
-  Plugin(SmartMet::Spine::Reactor* theReactor, const char* theConfig);
+  Plugin(Spine::Reactor* theReactor, const char* theConfig);
   virtual ~Plugin();
 
   const std::string& getPluginName() const;
   int getRequiredAPIVersion() const;
-  bool queryIsFast(const SmartMet::Spine::HTTP::Request& theRequest) const;
+  bool queryIsFast(const Spine::HTTP::Request& theRequest) const;
 
   // Get the engines
-  const SmartMet::Engine::Querydata::Engine& getQEngine() const { return *itsQEngine; }
-  const SmartMet::Engine::Contour::Engine& getContourEngine() const { return *itsContourEngine; }
-  const SmartMet::Engine::Gis::Engine& getGisEngine() const { return *itsGisEngine; }
-  const SmartMet::Engine::Geonames::Engine& getGeoEngine() const { return *itsGeoEngine; }
+  const Engine::Querydata::Engine& getQEngine() const { return *itsQEngine; }
+  const Engine::Contour::Engine& getContourEngine() const { return *itsContourEngine; }
+  const Engine::Gis::Engine& getGisEngine() const { return *itsGisEngine; }
+  const Engine::Geonames::Engine& getGeoEngine() const { return *itsGeoEngine; }
 #ifndef WITHOUT_OBSERVATION
-  SmartMet::Engine::Observation::Engine& getObsEngine() const { return *itsObsEngine; }
+  Engine::Observation::Engine& getObsEngine() const { return *itsObsEngine; }
 #endif
   // Plugin specific public API:
 
   const Config& getConfig() const;
   SharedFormatter getTemplate(const std::string& theName) const;
-  Product getProduct(const SmartMet::Spine::HTTP::Request& theRequest,
+  Product getProduct(const Spine::HTTP::Request& theRequest,
                      const State& theState,
                      const std::string& theName,
                      bool theDebugFlag) const;
@@ -109,48 +109,48 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
  protected:
   void init();
   void shutdown();
-  void requestHandler(SmartMet::Spine::Reactor& theReactor,
-                      const SmartMet::Spine::HTTP::Request& theRequest,
-                      SmartMet::Spine::HTTP::Response& theResponse);
+  void requestHandler(Spine::Reactor& theReactor,
+                      const Spine::HTTP::Request& theRequest,
+                      Spine::HTTP::Response& theResponse);
 
  private:
   Plugin();
 
-  void daliQuery(SmartMet::Spine::Reactor& theReactor,
-                 const SmartMet::Spine::HTTP::Request& req,
-                 SmartMet::Spine::HTTP::Response& response);
-  WMSQueryStatus wmsQuery(SmartMet::Spine::Reactor& theReactor,
-                          const SmartMet::Spine::HTTP::Request& req,
-                          SmartMet::Spine::HTTP::Response& response);
+  void daliQuery(Spine::Reactor& theReactor,
+                 const Spine::HTTP::Request& req,
+                 Spine::HTTP::Response& response);
+  WMSQueryStatus wmsQuery(Spine::Reactor& theReactor,
+                          const Spine::HTTP::Request& req,
+                          Spine::HTTP::Response& response);
   void formatResponse(const std::string& theSvg,
                       const std::string& theFormat,
-                      const SmartMet::Spine::HTTP::Request& theRequest,
-                      SmartMet::Spine::HTTP::Response& theResponse,
+                      const Spine::HTTP::Request& theRequest,
+                      Spine::HTTP::Response& theResponse,
                       bool usetimer,
                       std::size_t theHash = 0);
   std::string mimeType(const std::string& theFormat) const;
 
-  std::string parseWMSException(SmartMet::Spine::Exception& wmsException) const;
+  std::string parseWMSException(Spine::Exception& wmsException) const;
 
   // Plugin configuration
   const std::string itsModuleName;
   Config itsConfig;
 
   // Cache server and engine instances
-  SmartMet::Spine::Reactor* itsReactor;
-  SmartMet::Engine::Querydata::Engine* itsQEngine;
-  SmartMet::Engine::Contour::Engine* itsContourEngine;
-  SmartMet::Engine::Gis::Engine* itsGisEngine;
-  SmartMet::Engine::Geonames::Engine* itsGeoEngine;
+  Spine::Reactor* itsReactor;
+  Engine::Querydata::Engine* itsQEngine;
+  Engine::Contour::Engine* itsContourEngine;
+  Engine::Gis::Engine* itsGisEngine;
+  Engine::Geonames::Engine* itsGeoEngine;
 #ifndef WITHOUT_OBSERVATION
-  SmartMet::Engine::Observation::Engine* itsObsEngine;
+  Engine::Observation::Engine* itsObsEngine;
 #endif
 
   // Cache templates
   TemplateFactory itsTemplateFactory;
 
   // Cache files
-  mutable SmartMet::Spine::FileCache itsFileCache;
+  mutable Spine::FileCache itsFileCache;
 
   // Cache results
   mutable std::unique_ptr<ImageCache> itsImageCache;

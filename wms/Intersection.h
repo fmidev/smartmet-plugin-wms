@@ -27,7 +27,7 @@ class Intersection
  public:
   void init(const Json::Value& theJson, const Config& theConfig);
 
-  void init(SmartMet::Engine::Querydata::Q q,
+  void init(Engine::Querydata::Q q,
             const Projection& theProjection,
             const boost::posix_time::ptime& theTime,
             const State& theState);

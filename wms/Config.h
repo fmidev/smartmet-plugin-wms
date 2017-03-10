@@ -8,6 +8,7 @@
 
 #include <libconfig.h++>
 #include <boost/utility.hpp>
+#include <map>
 #include <set>
 #include <string>
 
@@ -49,6 +50,9 @@ class Config : private boost::noncopyable
 
   const libconfig::Config& getConfig() const { return itsConfig; }
   bool quiet() const;
+
+  std::string defaultTemplate(const std::string& theType) const;
+
 #ifndef WITHOUT_AUHTENTICATION
   bool authenticate() const;
 #endif
@@ -80,6 +84,8 @@ class Config : private boost::noncopyable
 
   std::set<std::string> itsRegularAttributes;
   std::set<std::string> itsPresentationAttributes;
+
+  std::map<std::string, std::string> itsDefaultTemplates;  // data type to template name
 
   bool itsQuiet = false;
 
