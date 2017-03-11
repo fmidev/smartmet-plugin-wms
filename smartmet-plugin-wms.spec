@@ -89,7 +89,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Upcoming
-- Added GeoJSON output
+- Added GeoJSON support
+- Added KML support
 
 * Thu Mar  9 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.3.9-1.fmi
 - Added support for observations

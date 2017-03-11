@@ -114,6 +114,43 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Export the coordinates to KML format
+ */
+// ----------------------------------------------------------------------
+
+std::string toKML(const OGRGeometry& theGeom,
+                  const Fmi::Box& theBox,
+                  boost::shared_ptr<OGRSpatialReference> theSRS)
+{
+  // Reproject to WGS84. TODO: Optimize if theSRS == WGS84.
+
+  std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+  OGRErr err = wgs84->SetFromUserInput("WGS84");
+  if (err != OGRERR_NONE)
+    throw Spine::Exception(BCP, "GDAL does not understand WGS84");
+
+  std::unique_ptr<OGRCoordinateTransformation> transformation(
+      OGRCreateCoordinateTransformation(theSRS.get(), wgs84.get()));
+  if (!transformation)
+    throw Spine::Exception(BCP, "Failed to create the coordinate transformation for producing KML");
+
+  // Reproject a clone
+  std::unique_ptr<OGRGeometry> geom(theGeom.clone());
+  err = geom->transform(transformation.get());
+  if (err != OGRERR_NONE)
+    throw Spine::Exception(BCP, "Failed to project geometry to WGS84 KML");
+
+  char* tmp = geom->exportToKML();
+  std::string ret = tmp;
+  OGRFree(tmp);
+
+  // Extract the coordinates
+
+  return ret;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Export the coordinates to the given format
  */
 // ----------------------------------------------------------------------
@@ -125,6 +162,9 @@ std::string toString(const OGRGeometry& theGeom,
 {
   if (theType == "geojson")
     return toGeoJSON(theGeom, theBox, theSRS);
+
+  if (theType == "kml")
+    return toKML(theGeom, theBox, theSRS);
 
   // Default is SVG-style
   const int precision = 1;

@@ -135,7 +135,8 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
 
     if (!boost::iequals(product.type, "xml") && !boost::iequals(product.type, "svg") &&
         !boost::iequals(product.type, "png") && !boost::iequals(product.type, "pdf") &&
-        !boost::iequals(product.type, "ps") && !boost::iequals(product.type, "geojson"))
+        !boost::iequals(product.type, "ps") && !boost::iequals(product.type, "geojson") &&
+        !boost::iequals(product.type, "kml"))
 
     {
       throw Spine::Exception(BCP, "Invalid 'type' value '" + product.type + "'!");
@@ -250,7 +251,8 @@ void Plugin::formatResponse(const std::string &theSvg,
   {
     theResponse.setHeader("Content-Type", mimeType(theType));
 
-    if (theType == "xml" || theType == "svg" || theType == "image/svg+xml" || theType == "geojson")
+    if (theType == "xml" || theType == "svg" || theType == "image/svg+xml" ||
+        theType == "geojson" || theType == "kml")
     {
       // Set string content as-is
       if (theSvg.empty())
@@ -309,28 +311,22 @@ void Plugin::formatResponse(const std::string &theSvg,
 
 std::string Plugin::mimeType(const std::string &theType) const
 {
-  try
-  {
-    // These should be enumerations!!!
-    if (theType == "xml")
-      return "text/xml; charset=UTF-8";
-    if (theType == "svg")
-      return "image/svg+xml; charset=UTF-8";
-    if (theType == "png")
-      return "image/png";
-    if (theType == "pdf")
-      return "application/pdf";
-    if (theType == "ps")
-      return "application/postscript";
-    if (theType == "geojson")
-      return "application/geo+json";
+  if (theType == "xml")
+    return "text/xml; charset=UTF-8";
+  if (theType == "svg")
+    return "image/svg+xml; charset=UTF-8";
+  if (theType == "png")
+    return "image/png";
+  if (theType == "pdf")
+    return "application/pdf";
+  if (theType == "ps")
+    return "application/postscript";
+  if (theType == "geojson")
+    return "application/geo+json";
+  if (theType == "kml")
+    return "application/vnd.google-earth.kml+xml";
 
-    throw Spine::Exception(BCP, "Unknown image format '" + theType + "'");
-  }
-  catch (...)
-  {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
-  }
+  throw Spine::Exception(BCP, "Unknown image format '" + theType + "'");
 }
 
 // ----------------------------------------------------------------------
