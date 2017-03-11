@@ -1,6 +1,4 @@
 //======================================================================
-#include <prettyprint.hpp>
-
 #include "ArrowLayer.h"
 #include "Config.h"
 #include "Hash.h"
