@@ -1310,7 +1310,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
     }
 
     if (!product.svg_tmpl)
-      throw Spine::Exception(BCP, "No SVG template defined");
+      product.svg_tmpl = itsConfig.defaultTemplate(product.type);
 
     auto tmpl = getTemplate(*product.svg_tmpl);
 
