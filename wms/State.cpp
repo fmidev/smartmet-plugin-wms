@@ -2,9 +2,11 @@
 
 #include "State.h"
 #include "Plugin.h"
+#include <spine/Exception.h>
+#include <macgyver/String.h>
+
 #include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
-#include <spine/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
