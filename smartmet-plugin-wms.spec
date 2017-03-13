@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.3.9
+Version: 17.3.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,7 +20,7 @@ BuildRequires: smartmet-library-spine-devel >= 17.2.22
 BuildRequires: smartmet-engine-authentication-devel >= 17.1.5
 %endif
 %if %{with authentication}
-BuildRequires: smartmet-engine-observation-devel >= 17.2.18
+BuildRequires: smartmet-engine-observation-devel >= 17.3.11
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 17.1.4
 BuildRequires: smartmet-engine-geonames-devel >= 17.2.3
@@ -88,7 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-* Upcoming
+* Mon Mar 13 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.3.13-1.fmi
 - Added GeoJSON support
 - Added KML support
 
