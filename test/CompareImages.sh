@@ -46,15 +46,17 @@ DIFFERENCE_PNG="failures/${NAME}_difference.png"
 # Handle XML failures
 
 if [[ "$MIME" == "application/xml" ]]; then
-    cmp --quiet $RESULT $EXPECTED
-    if [[ $? -ne 0 ]]; then
-	echo "FAIL: XML failures differ: $RESULT <> $EXPECTED"
-	exit 1
-    else
-	echo "OK"
-	rm -f $RESULT
-	exit 0
-    fi
+   echo "FAIL: XML output differs: $RESULT <> $EXPECTED"
+   exit 1
+fi
+
+# Handle text/plain failures
+
+if [[ "$MIME" == "text/plain" ]]; then
+    echo "FAIL: text output differs: $RESULT <> $EXPECTED"
+    echo diff $EXPECTED $RESULT
+    diff $EXPECTED $RESULT
+    exit 1
 fi
 
 
