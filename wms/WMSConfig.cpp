@@ -10,7 +10,7 @@
 #include <engines/authentication/Engine.h>
 #endif
 
-#include <macgyver/String.h>
+#include <macgyver/StringConversion.h>
 
 #include <boost/foreach.hpp>
 #include <boost/algorithm/string/join.hpp>

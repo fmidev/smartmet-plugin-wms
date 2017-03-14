@@ -3,7 +3,7 @@
 #include "Layer.h"
 #include "State.h"
 #include <gis/Box.h>
-#include <macgyver/String.h>
+#include <macgyver/StringConversion.h>
 #include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
 #include <spine/Exception.h>

@@ -4,7 +4,7 @@
 
 #include "TemplateFactory.h"
 
-#include <macgyver/String.h>
+#include <macgyver/StringConversion.h>
 
 #include <boost/range/adaptors.hpp>
 #include <boost/range/algorithm.hpp>

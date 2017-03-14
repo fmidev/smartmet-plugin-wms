@@ -8,7 +8,7 @@
 #include "State.h"
 #include <spine/Json.h>
 #include <spine/Exception.h>
-#include <macgyver/String.h>
+#include <macgyver/StringConversion.h>
 #include <gis/Host.h>
 #include <gis/PostGIS.h>
 #include <gis/Box.h>

@@ -6,7 +6,7 @@
 #include <spine/Exception.h>
 
 #include <macgyver/TimeParser.h>
-#include <macgyver/String.h>
+#include <macgyver/StringConversion.h>
 
 #include <boost/foreach.hpp>
 #include <boost/property_tree/xml_parser.hpp>

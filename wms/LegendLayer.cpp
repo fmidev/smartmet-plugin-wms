@@ -6,7 +6,7 @@
 #include "Iri.h"
 #include "Layer.h"
 #include "State.h"
-#include <macgyver/String.h>
+#include <macgyver/StringConversion.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <ctpp2/CDT.hpp>

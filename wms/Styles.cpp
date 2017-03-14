@@ -3,7 +3,7 @@
 #include "Hash.h"
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
-#include <macgyver/String.h>
+#include <macgyver/StringConversion.h>
 #include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
 #include <stdexcept>
