@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 17.3.15
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -15,18 +15,18 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 16.12.21
 BuildRequires: smartmet-library-macgyver >= 17.3.14
-BuildRequires: smartmet-library-spine-devel >= 17.3.14
+BuildRequires: smartmet-library-spine-devel >= 17.3.15
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 17.3.14
+BuildRequires: smartmet-engine-authentication-devel >= 17.3.15
 %endif
 %if %{with authentication}
-BuildRequires: smartmet-engine-observation-devel >= 17.3.14
+BuildRequires: smartmet-engine-observation-devel >= 17.3.15
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 17.3.14
-BuildRequires: smartmet-engine-geonames-devel >= 17.3.14
-BuildRequires: smartmet-engine-querydata-devel >= 17.3.14
-BuildRequires: smartmet-engine-contour-devel >= 17.2.11
-BuildRequires: smartmet-library-gis-devel >= 17.1.18
+BuildRequires: smartmet-engine-gis-devel >= 17.3.15
+BuildRequires: smartmet-engine-geonames-devel >= 17.3.15
+BuildRequires: smartmet-engine-querydata-devel >= 17.3.15
+BuildRequires: smartmet-engine-contour-devel >= 17.3.15
+BuildRequires: smartmet-library-gis-devel >= 17.3.14
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.2
 BuildRequires: jsoncpp-devel
@@ -39,18 +39,18 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.2
 Requires: libconfig
 Requires: librsvg2 >= 2.40.6
-Requires: smartmet-library-gis >= 17.1.18
+Requires: smartmet-library-gis >= 17.3.14
 Requires: smartmet-library-macgyver >= 17.3.14
 Requires: smartmet-library-giza >= 16.12.21
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 17.3.14
+Requires: smartmet-engine-authentication >= 17.3.15
 %endif
-Requires: smartmet-engine-querydata >= 17.3.14
-Requires: smartmet-engine-contour >= 17.2.11
-Requires: smartmet-engine-gis >= 17.3.14
-Requires: smartmet-engine-geonames >= 17.3.14
-Requires: smartmet-server >= 17.3.14
-Requires: smartmet-library-spine >= 17.3.14
+Requires: smartmet-engine-querydata >= 17.3.15
+Requires: smartmet-engine-contour >= 17.3.15
+Requires: smartmet-engine-gis >= 17.3.15
+Requires: smartmet-engine-geonames >= 17.3.15
+Requires: smartmet-server >= 17.3.15
+Requires: smartmet-library-spine >= 17.3.15
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -88,6 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Mar 15 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.3.15-2.fmi
+- Recompiled since Spine::Exception changed
+
 * Wed Mar 15 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.3.15-1.fmi
 - Crash fix: added anonymous namespaces to protect similarly named structs
 

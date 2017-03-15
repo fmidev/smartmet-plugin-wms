@@ -195,7 +195,10 @@ void WMSConfig::capabilitiesUpdateLoop()
       catch (...)
       {
         Spine::Exception exception(BCP, "Could not update capabilities!", NULL);
-        std::cout << exception.getStackTrace();
+        if (!exception.stackTraceDisabled())
+          std::cerr << exception.getStackTrace();
+        else if (!exception.loggingDisabled())
+          std::cerr << "Error: " << exception.what() << std::endl;
       }
     }
     itsActiveThreadCount--;
@@ -297,7 +300,10 @@ void WMSConfig::updateLayerMetaData()
                     // Ignore and report failed product definitions
                     Spine::Exception exception(BCP, "Failed to parse configuration!", NULL);
                     exception.addParameter("Path", itr2->path().c_str());
-                    std::cout << exception.getStackTrace();
+                    if (!exception.stackTraceDisabled())
+                      std::cerr << exception.getStackTrace();
+                    else if (!exception.loggingDisabled())
+                      std::cerr << "Error: " << exception.what() << std::endl;
                     continue;
                   }
                 }
@@ -310,8 +316,10 @@ void WMSConfig::updateLayerMetaData()
                   "Lost " + std::string(itr2->path().c_str()) + " while scanning the filesystem!",
                   NULL);
               exception.addParameter("Path", itr2->path().c_str());
-              std::cout << exception.getStackTrace();
-              ;
+              if (!exception.stackTraceDisabled())
+                std::cerr << exception.getStackTrace();
+              else if (!exception.loggingDisabled())
+                std::cerr << "Error: " << exception.what() << std::endl;
             }
           }
         }
@@ -323,7 +331,10 @@ void WMSConfig::updateLayerMetaData()
             "Lost " + std::string(itr->path().c_str()) + " while scanning the filesystem!",
             NULL);
         exception.addParameter("Path", itr->path().c_str());
-        std::cout << exception.getStackTrace();
+        if (!exception.stackTraceDisabled())
+          std::cerr << exception.getStackTrace();
+        else if (!exception.loggingDisabled())
+          std::cerr << "Error: " << exception.what() << std::endl;
       }
     }
 
