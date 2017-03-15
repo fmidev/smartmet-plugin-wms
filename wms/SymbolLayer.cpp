@@ -46,6 +46,8 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
 struct PointValue
 {
   Positions::Point point;
@@ -53,6 +55,7 @@ struct PointValue
 };
 
 using PointValues = std::vector<PointValue>;
+}
 
 // ----------------------------------------------------------------------
 /*!

@@ -79,6 +79,8 @@ double paper_north(const Engine::Querydata::Q& theQ, const NFmiPoint& theLatLon)
  */
 // ----------------------------------------------------------------------
 
+namespace
+{
 struct PointValue
 {
   Positions::Point point;
@@ -87,6 +89,7 @@ struct PointValue
 };
 
 using PointValues = std::vector<PointValue>;
+}
 
 // ----------------------------------------------------------------------
 /*!
