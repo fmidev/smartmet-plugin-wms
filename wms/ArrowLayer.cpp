@@ -116,9 +116,6 @@ PointValues read_forecasts(const ArrowLayer& layer,
   if (layer.v)
     vparam = Spine::ParameterFactory::instance().parse(*layer.v);
 
-  if (layer.direction && !layer.speed)
-    speedparam = Spine::ParameterFactory::instance().parse("WindSpeedMS");
-
   if (speedparam && !q->param(speedparam->number()))
     throw Spine::Exception(
         BCP, "Parameter " + speedparam->name() + " not available in the arrow layer querydata");
