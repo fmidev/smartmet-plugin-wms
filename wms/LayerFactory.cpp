@@ -15,6 +15,7 @@
 #include "TimeLayer.h"
 #include "TranslationLayer.h"
 #include "WindRoseLayer.h"
+#include "WKTLayer.h"
 #include "IceMapLayer.h"
 #include <stdexcept>
 #include <spine/Exception.h>
@@ -68,6 +69,8 @@ Layer* create(const Json::Value& theJson)
       return new TimeLayer;
     else if (name == "translation")
       return new TranslationLayer;
+    else if (name == "wkt")
+      return new WKTLayer;
 #ifndef WITHOUT_OBSERVATION
     else if (name == "windrose")
       return new WindRoseLayer;
