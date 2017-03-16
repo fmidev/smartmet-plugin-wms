@@ -9,7 +9,7 @@
 	"bboxcrs": "WGS84",
 	"cx": 25,
 	"cy": 60,
-	"resolution": 15
+	"resolution": 10
     },
     
     "views": [
@@ -36,14 +36,40 @@
 		},
 		{
 		    "layer_type": "wkt",
-		    "qid": "mywkt",
+		    "qid": "test1",
+		    // non segmented box around Finland
 		    "wkt": "POLYGON((30 60, 30 70, 20 70, 20 60, 30 60))",
-		    "resolution": 10,
+		    "attributes":
+		    {
+			"fill": "none",
+			"stroke": "black",
+			"stroke-width": 1
+		    }
+		},
+		{
+		    "layer_type": "wkt",
+		    "qid": "test2",
+		    // a bit bigger box with segmentation to 100 km resolution
+		    "wkt": "POLYGON((40 50, 40 75, 10 75, 10 50, 40 50))",
+		    "resolution": 100,
 		    "attributes":
 		    {
 			"fill": "none",
 			"stroke": "red",
-			"stroke-width": 2
+			"stroke-width": 1
+		    }
+		},
+		{
+		    "layer_type": "wkt",
+		    "qid": "test3",
+		    // biggest box with segmentation to 20 pixel resolution
+		    "wkt": "POLYGON((50 40, 50 80, 0 80, 0 40, 50 40))",
+		    "relativeresolution": 20,
+		    "attributes":
+		    {
+			"fill": "none",
+			"stroke": "green",
+			"stroke-width": 1
 		    }
 		}
             ]

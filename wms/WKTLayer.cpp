@@ -88,11 +88,11 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     // Create the shape
 
-    OGRSpatialReference* wgs84(new OGRSpatialReference);
+    OGRSpatialReference* wgs84 = new OGRSpatialReference;
     wgs84->SetFromUserInput("WGS84");
 
     char* cwkt = const_cast<char*>(wkt.c_str());
-    OGRGeometry* ogeom;
+    OGRGeometry* ogeom = nullptr;
     OGRErr err = OGRGeometryFactory::createFromWkt(&cwkt, wgs84, &ogeom);
 
     if (err != OGRERR_NONE)
@@ -105,23 +105,30 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     // Resample to get more accuracy if so requested
 
-    if (resolution)
+    if (resolution || relativeresolution)
     {
-    }
+      if (!projection.resolution)
+        throw Spine::Exception(BCP,
+                               "Cannot segmentize WKT layer if projection resolution is not known");
 
-    if (relativeresolution)
-    {
+      double res = 0;
+      if (resolution)
+        res = *resolution;
+      else
+        res = (*projection.resolution) * (*relativeresolution);
+
+      // Convert resolution in km to resolution in degrees (approximation only)
+
+      double pi = boost::math::constants::pi<double>();
+      double circumference = 2 * pi * 6371.220;  // km
+      double delta = 360 * res / circumference;  // part of the earth circumference in
+
+      geom->segmentize(delta);
     }
 
     // Establish coordinate transformation from WGS84 to image
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(crs.get(), wgs84));
-
-    if (!transformation)
-      throw Spine::Exception(BCP, "Failed to create the needed coordinate transformation for WKT!");
-
-    err = geom->transform(transformation.get());
+    err = geom->transformTo(crs.get());
     if (err != OGRERR_NONE)
       throw Spine::Exception(BCP, "Failed to project the WKT to image coordinates");
 
