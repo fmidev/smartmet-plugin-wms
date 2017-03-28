@@ -14,7 +14,6 @@
 #include <spine/Exception.h>
 #include <spine/ParameterFactory.h>
 #include <spine/Json.h>
-#include <spine/ValueFormatter.h>
 #include <engines/gis/Engine.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
@@ -284,10 +283,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         }
       }
 
-      Spine::ValueFormatterParam valueformatterparam;
-      Spine::ValueFormatter valueformatter(valueformatterparam);
-
-      auto result = obsengine.values(settings, valueformatter);
+      auto result = obsengine.values(settings);
 
       // Store values for SVG generation
 

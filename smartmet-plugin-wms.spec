@@ -15,6 +15,7 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 16.12.21
 BuildRequires: smartmet-library-macgyver >= 17.3.14
+BuildRequires: smartmet-library-delfoi >= 17.3.28
 BuildRequires: smartmet-library-spine-devel >= 17.3.16
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.3.15
@@ -41,6 +42,7 @@ Requires: libconfig
 Requires: librsvg2 >= 2.40.6
 Requires: smartmet-library-gis >= 17.3.14
 Requires: smartmet-library-macgyver >= 17.3.14
+Requires: smartmet-library-delfoi >= 17.3.28
 Requires: smartmet-library-giza >= 16.12.21
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 17.3.15
@@ -88,6 +90,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Upcoming
+- Modifications due to observation engine API changes:
+redundant parameter in values-function removed,
+redundant Engine's Interface base class removed
+
 * Thu Mar 16 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.3.16-1.fmi
 - Added WKTLayer
 

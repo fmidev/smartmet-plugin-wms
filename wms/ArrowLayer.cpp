@@ -262,10 +262,7 @@ PointValues read_observations(const ArrowLayer& layer,
     }
   }
 
-  Spine::ValueFormatterParam valueformatterparam;
-  Spine::ValueFormatter valueformatter(valueformatterparam);
-
-  auto result = obsengine.values(settings, valueformatter);
+  auto result = obsengine.values(settings);
 
   // Build the expected output container for building the SVG
 
