@@ -1,9 +1,9 @@
 #include "PostGISLayerBase.h"
 #include "Hash.h"
 
+#include <engines/gis/Engine.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
-#include <engines/gis/Engine.h>
 
 namespace SmartMet
 {
@@ -52,6 +52,10 @@ void PostGISLayerBase::init(const Json::Value& theJson,
     json = theJson.get("time_column", nulljson);
     if (!json.isNull())
       time_column = json.asString();
+
+    json = theJson.get("lines", nulljson);
+    if (!json.isNull())
+      lines = json.asBool();
 
     // If following does not pass, time_condition will be empty
     if (time_column && time)

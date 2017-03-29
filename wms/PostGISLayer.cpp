@@ -5,9 +5,9 @@
 
 #include <ctpp2/CDT.hpp>
 
-#include <spine/Exception.h>
 #include <engines/gis/MapOptions.h>
 #include <gis/OGR.h>
+#include <spine/Exception.h>
 
 namespace SmartMet
 {
@@ -88,18 +88,21 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
       if (geom && !geom->IsEmpty())
       {
-        OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, clipbox));
+        if (isLines())
+          geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
+        else
+          geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
 
-        if (geom2 && !geom2->IsEmpty())
+        if (geom && !geom->IsEmpty())
         {
           // Store the path with unique ID
           std::string iri = (qid + std::to_string(mapid++));
 
           CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
           map_cdt["iri"] = iri;
-          map_cdt["type"] = Geometry::name(*geom2, theState.getType());
+          map_cdt["type"] = Geometry::name(*geom, theState.getType());
           map_cdt["layertype"] = "postgis";
-          map_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs);
+          map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs);
           theState.addPresentationAttributes(map_cdt, css, attributes);
           theGlobals["paths"][iri] = map_cdt;
 
