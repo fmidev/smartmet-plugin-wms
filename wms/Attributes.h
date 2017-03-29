@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <json/json.h>
 #include <boost/optional.hpp>
+#include <json/json.h>
 #include <map>
 #include <set>
 #include <string>
@@ -48,6 +48,8 @@ class Attributes
 
     return attributes.at(theName);
   }
+
+  boost::optional<std::string> remove(const std::string& theName);
 
  private:
   std::map<std::string, std::string> attributes;

@@ -1,0 +1,74 @@
+[
+        {
+            "lolimit": 3,
+            "hilimit": 5,
+	    "attributes":
+	    {
+		"class": "ModerateWindArrow_3_5",
+		"scale": 0.6
+	    }
+        },
+        {
+            "lolimit": 5,
+            "hilimit": 7,
+	    "attributes":
+	    {
+		"class": "ModerateWindArrow_5_7",
+		"scale": 0.8
+	    }
+        },
+        {
+            "lolimit": 7,
+            "hilimit": 10,
+	    "attributes":
+	    {
+		"class": "FreshWindArrow_7_10",
+		"scale": 1.0
+	    }
+        },
+        {
+            "lolimit": 10,
+            "hilimit": 14,
+	    "attributes":
+	    {
+		"class": "FreshWindArrow_10_14",
+		"scale": 1.2
+	    }
+        },
+        {
+            "lolimit": 14,
+            "hilimit": 17,
+	    "attributes":
+	    {
+		"class": "HardWindArrow_14_17",
+		"scale": 1.4
+	    }
+        },
+        {
+            "lolimit": 17,
+            "hilimit": 21,
+	    "attributes":
+	    {
+		"class": "HardWindArrow_17_21",
+		"scale": 1.6
+	    }
+        },
+        {
+            "lolimit": 21,
+            "hilimit": 26,
+	    "attributes":
+	    {
+		"class": "StormWindArrow_21_26",
+		"scale": 1.8
+	    }
+        },
+        {
+            "lolimit": 32,
+	    "attributes":
+	    {
+		"class": "GaleWindArrow_32_inf",
+		"scale": 2.0
+	    }
+        }		    
+]
+

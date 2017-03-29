@@ -43,6 +43,17 @@ bool AttributeSelection::matches(double theValue) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Remove and return an attribute
+ */
+// ----------------------------------------------------------------------
+
+boost::optional<std::string> AttributeSelection::remove(const std::string& theName)
+{
+  return attributes.remove(theName);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Initialize from JSON
  */
 // ----------------------------------------------------------------------

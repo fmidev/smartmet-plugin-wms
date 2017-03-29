@@ -541,6 +541,9 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       if (symbol)
         iri = *symbol;
 
+      // librsvg cannot handle scale + transform, must move former into latter
+      boost::optional<double> rescale;
+
       if (!symbols.empty())
       {
         auto selection = Select::attribute(symbols, pointvalue.value);
@@ -548,6 +551,11 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         {
           if (selection->symbol)
             iri = *selection->symbol;
+
+          auto scaleattr = selection->attributes.remove("scale");
+          if (scaleattr)
+            rescale = Fmi::stod(*scaleattr);
+
           theState.addAttributes(theGlobals, tag_cdt, selection->attributes);
         }
       }
@@ -563,8 +571,10 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         tag_cdt["attributes"]["xlink:href"] = "#" + IRI;
 
         std::string tmp = fmt::sprintf("translate(%d,%d)", point.x, point.y);
-        if (scale)
-          tmp += fmt::sprintf(" scale(%g)", *scale);
+
+        double newscale = (scale ? *scale : 1.0) * (rescale ? *rescale : 1.0);
+        if (newscale != 1.0)
+          tmp += fmt::sprintf(" scale(%g)", newscale);
 
         tag_cdt["attributes"]["transform"] = tmp;
 

@@ -1,0 +1,135 @@
+{
+  "title": "Wind demo",
+  "producer": "pal_skandinavia",
+  "projection": {
+    "crs": "data",
+    "xsize": 500,
+    "ysize": 500
+  },
+  "views": [
+    {
+      "qid": "v1",
+      "attributes": {
+        "id": "view1"
+      },
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "isobands": "json:isobands/wind.json",
+          "css": "isobands/wind.css",
+          "parameter": "WindSpeedMS",
+          "attributes": {
+            "id": "wind_isobands"
+          }
+        },
+        {
+          "qid": "l2",
+          "layer_type": "isoline",
+          "isolines": "json:isolines/wind.json",
+          "css": "isolines/wind.css",
+          "parameter": "WindSpeedMS",
+          "attributes": {
+            "id": "wind_isolines",
+            "class": "Wind"
+          }
+        },
+        {
+          "qid": "l3",
+          "layer_type": "arrow",
+          "arrows": "json:arrows/wind_scaled.json",
+          "css": "arrows/windarrow.css",
+          "direction": "WindDirection",
+          "speed": "WindSpeedMS",
+          "symbol": "windarrow",
+          "attributes": {
+            "id": "wind_arrows"
+          },
+          "positions": {
+            "x": 5,
+            "y": 5,
+            "dx": 20,
+            "dy": 20,
+            "ddx": 10
+          }
+        },
+        {
+          "qid": "l4",
+          "layer_type": "symbol",
+          "symbol": "dot",
+          "css": "symbols/dot.css",
+          "parameter": "WindSpeedMS",
+          "attributes": {
+            "class": "Dot",
+            "id": "wind_markers"
+          },
+          "positions": {
+            "x": 15,
+            "y": 15,
+            "dx": 20,
+            "dy": 20,
+            "ddx": 10
+          }
+        },
+        {
+          "qid": "l5",
+          "layer_type": "number",
+          "css": "numbers/integers.css",
+          "parameter": "WindSpeedMS",
+          "attributes": {
+            "class": "Number",
+            "id": "wind_numbers"
+          },
+          "label": "json:numbers/integers.json",
+	  // "positions": "ref:views.layers[3].positions"
+          "positions": {
+            "x": 15,
+            "y": 15,
+            "dx": 20,
+            "dy": 20,
+            "ddx": 10
+          }
+        },
+        {
+          "qid": "l6",
+          "tag": "g",
+          "attributes": {
+            "filter": "url(#shadow)"
+          },
+          "layers": [
+            {
+              "qid": "l6",
+              "tag": "rect",
+              "attributes": {
+                "x": 330,
+                "y": 3,
+                "width": 155,
+                "height": 25,
+                "rx": 8,
+                "ry": 8,
+                "fill": "white",
+                "stroke": "black",
+                "stroke-width": "0.6"
+              }
+            },
+            {
+              "qid": "l7",
+              "layer_type": "time",
+              "timestamp": "validtime",
+              "timezone": "Europe/Helsinki",
+	      "format": "%Y-%m-%d %H:%M",
+	      "x": -20,
+	      "y": 20,
+              "attributes": {
+                "text-anchor": "end",
+                "font-family": "Verdana",
+                "font-weight": "bold",
+                "font-size": 14
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

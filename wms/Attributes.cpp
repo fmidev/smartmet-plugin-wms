@@ -333,6 +333,23 @@ boost::optional<std::string> Attributes::getLocalIri(const std::string& theName)
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Remove and return an attribute
+ */
+// ----------------------------------------------------------------------
+
+boost::optional<std::string> Attributes::remove(const std::string& theName)
+{
+  auto pos = attributes.find(theName);
+  if (pos == attributes.end())
+    return {};
+
+  std::string value = pos->second;
+  attributes.erase(pos);
+  return value;
+}
+
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet
