@@ -33,6 +33,9 @@ class Attributes
   void add(const std::string& theName, const std::string& theValue);
 
   void generate(CTPP::CDT& theLocals, State& theState) const;
+  void generatePresentation(CTPP::CDT& theLayer,
+                            State& theState,
+                            const std::string& theCSS = {}) const;
   std::size_t hash_value(const State& theState) const;
 
   boost::optional<std::string> getLocalIri(const std::string& theName) const;

@@ -26,6 +26,9 @@
       "time": "<TMPL_var path.time>"</TMPL_if>
       <-TMPL_if defined(path.iri)>,
       "iri": "<TMPL_var path.iri>"</TMPL_if>
+      <-TMPL_foreach path.presentation as presentation>,
+      "<TMPL_var presentation.__key__>": "<TMPL_var presentation.__value__>"
+      <-/TMPL_foreach>
     }
    }
 <-/TMPL_foreach>

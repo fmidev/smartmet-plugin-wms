@@ -318,6 +318,8 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           isoline_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs);
           isoline_cdt["value"] = isoline.value;
 
+          theState.addPresentationAttributes(isoline_cdt, css, attributes, isoline.attributes);
+
           theGlobals["paths"][iri] = isoline_cdt;
 
           if (!theState.inDefs())

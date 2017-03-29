@@ -339,6 +339,8 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           if (isoband.hilimit)
             isoband_cdt["hilimit"] = *isoband.hilimit;
 
+          theState.addPresentationAttributes(isoband_cdt, css, attributes, isoband.attributes);
+
           theGlobals["paths"][iri] = isoband_cdt;
 
           if (!theState.inDefs())

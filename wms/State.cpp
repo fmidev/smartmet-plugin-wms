@@ -2,11 +2,11 @@
 
 #include "State.h"
 #include "Plugin.h"
-#include <spine/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <spine/Exception.h>
 
-#include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
+#include <ctpp2/CDT.hpp>
 #include <stdexcept>
 
 namespace SmartMet
@@ -321,6 +321,62 @@ void State::addAttributes(CTPP::CDT& theGlobals,
     iri = theAttributes.getLocalIri("radialGradient");
     if (iri && addId(*iri))
       theGlobals["includes"][*iri] = itsPlugin.getGradient(itsCustomer, *iri, itUsesWms);
+  }
+  catch (...)
+  {
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add presentation attributes to the CDT
+ */
+// ----------------------------------------------------------------------
+
+void State::addPresentationAttributes(CTPP::CDT& theLayer,
+                                      const boost::optional<std::string>& theCSS,
+                                      const Attributes& theAttributes)
+{
+  try
+  {
+    if (theCSS)
+      theAttributes.generatePresentation(theLayer, *this, getStyle(*theCSS));
+    else
+      theAttributes.generatePresentation(theLayer, *this);
+  }
+  catch (...)
+  {
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add presentation attributes to the CDT
+ */
+// ----------------------------------------------------------------------
+
+void State::addPresentationAttributes(CTPP::CDT& theLayer,
+                                      const boost::optional<std::string>& theCSS,
+                                      const Attributes& theLayerAttributes,
+                                      const Attributes& theObjectAttributes)
+{
+  try
+  {
+    // Note: Object attributes override layer attributes
+    if (theCSS)
+    {
+      const auto css = getStyle(*theCSS);
+      theLayerAttributes.generatePresentation(theLayer, *this, css);
+      theObjectAttributes.generatePresentation(theLayer, *this, css);
+    }
+    else
+    {
+      theLayerAttributes.generatePresentation(theLayer, *this);
+      theObjectAttributes.generatePresentation(theLayer, *this);
+    }
   }
   catch (...)
   {

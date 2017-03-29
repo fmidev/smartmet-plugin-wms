@@ -18,9 +18,9 @@
 #pragma once
 
 #include "Attributes.h"
-#include <engines/querydata/Q.h>
-#include <engines/geonames/Engine.h>
 #include <boost/optional.hpp>
+#include <engines/geonames/Engine.h>
+#include <engines/querydata/Q.h>
 #include <map>
 #include <set>
 
@@ -124,19 +124,31 @@ class State
 
   void addAttributes(CTPP::CDT& theGlobals, CTPP::CDT& theLocals, const Attributes& theAttributes);
 
+  // Add presentation attributes
+
+  void addPresentationAttributes(CTPP::CDT& theLayer,
+                                 const boost::optional<std::string>& theCSS,
+                                 const Attributes& theAttributes);
+
+  void addPresentationAttributes(CTPP::CDT& theLayer,
+                                 const boost::optional<std::string>& theCSS,
+                                 const Attributes& theLayerAttributes,
+                                 const Attributes& theObjectAttributes);
+
   // Generation stage
 
   void inDefs(bool flag) { itsInDefs = flag; }
   bool inDefs() const { return itsInDefs; }
+
   // Timer for performance measurements
   void useTimer(bool flag) { itUsesTimer = flag; }
   bool useTimer() const { return itUsesTimer; }
+
   // Establish WMS / regular mode
   void useWms(bool flag) { itUsesWms = flag; }
   bool useWms() const { return itUsesWms; }
-  // Generate an unique ID when a readable cannot be generated based on some
-  // existing ID.
 
+  // Generate an unique ID when one cannot be generated from a qid
   std::string generateUniqueId() const;
 
  private:

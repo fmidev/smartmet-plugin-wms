@@ -144,6 +144,9 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       map_cdt["type"] = Geometry::name(*geom, theState.getType());
       map_cdt["layertype"] = "map";
       map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs);
+
+      theState.addPresentationAttributes(map_cdt, css, attributes);
+
       theGlobals["paths"][iri] = map_cdt;
     }
 

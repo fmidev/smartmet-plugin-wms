@@ -4,11 +4,12 @@
 #include "Config.h"
 #include "Hash.h"
 #include "State.h"
+#include "StyleSheet.h"
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/foreach.hpp>
 #include <ctpp2/CDT.hpp>
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
-#include <boost/algorithm/string/predicate.hpp>
-#include <boost/foreach.hpp>
 
 namespace SmartMet
 {
@@ -172,6 +173,67 @@ void Attributes::generate(CTPP::CDT& theLocals, State& theState) const
 
     // There may be pre-existing attributes, so we merge instead of assigning
     theLocals["attributes"].MergeCDT(attrs);
+  }
+  catch (...)
+  {
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Add the presentation attributes to the CDT, including picking them from the CSS
+ */
+// ----------------------------------------------------------------------
+
+void Attributes::generatePresentation(CTPP::CDT& theLocals,
+                                      State& theState,
+                                      const std::string& theCSS) const
+{
+  try
+  {
+    // Collect presentation attributes into a single map
+    std::map<std::string, std::string> style;
+
+    // Extract CSS class definitions first
+    const auto classiter = attributes.find("class");
+    if (classiter != attributes.end())
+    {
+      auto selector = "." + classiter->second;
+      StyleSheet ss;
+      ss.add(theCSS);
+      style = ss.declarations(selector);
+    }
+
+    // Override with element specific attributes
+
+    const auto& regular_attributes = theState.getConfig().regularAttributes();
+    const auto& presentation_attributes = theState.getConfig().presentationAttributes();
+
+    for (const auto& attribute : attributes)
+    {
+      const auto& attr_name = attribute.first;
+      const auto& attr_value = attribute.second;
+
+      // Validate attribute name
+
+      bool is_regular = (regular_attributes.find(attr_name) != regular_attributes.end());
+      bool is_presentation = (!is_regular && (presentation_attributes.find(attr_name) !=
+                                              presentation_attributes.end()));
+      bool is_valid = ((attr_name == "qid") | is_presentation | is_regular);
+
+      if (!is_valid)
+        throw Spine::Exception(BCP, "Illegal SVG attribute name '" + attr_name + "'");
+
+      // Handle the attribute
+
+      style[attr_name] = attr_value;
+    }
+
+    // And output final set of styles
+
+    for (const auto& name_value : style)
+      theLocals["presentation"][name_value.first] = name_value.second;
   }
   catch (...)
   {
