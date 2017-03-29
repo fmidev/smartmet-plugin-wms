@@ -48,9 +48,9 @@
 
 <g>
  <g id="view1">
-   <rect fill="white" height="800" width="800"/>
+   <rect height="800" style="fill:white" width="800"/>
   
-   <use fill="none" id="europe_country_line" style="stroke:black; stroke-width:0.2px" xlink:href="#l3"/>
+   <use id="europe_country_line" style="fill:none; stroke:black; stroke-width:0.2px" xlink:href="#l3"/>
   
   <text font-family="Verdana" font-size="14" font-weight="bold" style="text-anchor:start" x="20" y="20">2014-02-14</text>
   <g>

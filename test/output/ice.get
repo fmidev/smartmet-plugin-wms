@@ -34,7 +34,7 @@
 
 <g>
  <g id="view1">
-   <rect fill="white" height="800" width="800"/>
+   <rect height="800" style="fill:white" width="800"/>
   
   <g id="iceareas">
    <use class="OpenWater" xlink:href="#l11"/>
@@ -47,7 +47,7 @@
    <use class="ConsolidatedIce" xlink:href="#l18"/>
    <use class="FastIce" xlink:href="#l19"/>
   </g>
-   <use fill="none" id="europe_country_lines" style="stroke:#222; stroke-width:0.7px" xlink:href="#l2"/>
+   <use id="europe_country_lines" style="fill:none; stroke:#222; stroke-width:0.7px" xlink:href="#l2"/>
   
   <text font-family="Verdana" font-size="14" font-weight="bold" style="text-anchor:end" x="790" y="780">2012-02-27</text>
  </g>

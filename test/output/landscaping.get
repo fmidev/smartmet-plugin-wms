@@ -72,7 +72,7 @@
 
 <g>
  <g>
-   <rect fill="white" height="100%" width="100%"/>
+   <rect height="100%" style="fill:white" width="100%"/>
   
  </g>
  <g id="view1" transform="translate(10,10)">
@@ -80,7 +80,7 @@
    <use class="Temperature_2_4" xlink:href="#b1.temperature_2_4"/>
    <use class="Temperature_1_2" xlink:href="#b1.temperature_1_2"/>
   </g>
-   <use fill="none" style="stroke:#222; stroke-width:0.3px" xlink:href="#land1"/>
+   <use style="fill:none; stroke:#222; stroke-width:0.3px" xlink:href="#land1"/>
   
  </g>
  <g class="View2" id="view2" transform="translate(520,10)">
@@ -90,7 +90,7 @@
    <use class="Temperature_1_2" xlink:href="#b2.temperature_1_2"/>
    <use class="Temperature_0_1" xlink:href="#b2.temperature_0_1"/>
   </g>
-   <use fill="none" style="stroke:#222; stroke-width:0.3px" xlink:href="#land2"/>
+   <use style="fill:none; stroke:#222; stroke-width:0.3px" xlink:href="#land2"/>
   
  </g>
 </g>

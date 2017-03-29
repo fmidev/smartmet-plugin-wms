@@ -78,7 +78,7 @@
    <use xlink:href="#l2.wind_17"/>
    <use xlink:href="#l2.wind_21"/>
   </g>
-  <g fill="none" id="wind_arrows" style="stroke:black; stroke-width:0.2px">
+  <g id="wind_arrows" style="fill:none; stroke:black; stroke-width:0.2px">
    <use transform="translate(5 5) rotate(209)" xlink:href="#windarrow"/>
    <use transform="translate(25 5) rotate(202)" xlink:href="#windarrow"/>
    <use transform="translate(45 5) rotate(181)" xlink:href="#windarrow"/>
@@ -1962,7 +1962,7 @@
   </g>
   <g style="filter:url(#shadow)">
   
-   <rect fill="white" height="25" rx="8" ry="8" style="stroke:black; stroke-width:0.6" width="155" x="330" y="3"/>
+   <rect height="25" rx="8" ry="8" style="fill:white; stroke:black; stroke-width:0.6" width="155" x="330" y="3"/>
   
   <text font-family="Verdana" font-size="14" font-weight="bold" style="text-anchor:end" x="480" y="20">2008-08-05 06:00</text>
   </g>

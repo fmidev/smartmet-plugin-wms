@@ -94,7 +94,7 @@
  <g id="view1">
   <clipPath id="myclip">
   
-   <circle cx="250" cy="250" fill="black" id="mycircle" r="250"/>
+   <circle cx="250" cy="250" id="mycircle" r="250" style="fill:black"/>
   
   </clipPath>
   <g style="clip-path:url(#myclip)">
@@ -127,10 +127,10 @@
    <use xlink:href="#l2.temperature_p18"/>
   </g>
   </g>
-   <use fill="none" style="stroke:black" xlink:href="#mycircle"/>
+   <use style="fill:none; stroke:black" xlink:href="#mycircle"/>
   
-  <text fill="yellow" font-family="Verdana" font-size="45" font-weight="bold" style="filter:url(#shadow); stroke:black; text-anchor:middle" x="250" y="350">Hello World!</text>
-  <text fill="yellow" font-family="Verdana" font-size="55" font-weight="bold" style="filter:url(#shadow); stroke:black; text-anchor:middle" x="250" y="250">Hello World!</text>
+  <text font-family="Verdana" font-size="45" font-weight="bold" style="fill:yellow; filter:url(#shadow); stroke:black; text-anchor:middle" x="250" y="350">Hello World!</text>
+  <text font-family="Verdana" font-size="55" font-weight="bold" style="fill:yellow; filter:url(#shadow); stroke:black; text-anchor:middle" x="250" y="250">Hello World!</text>
  </g>
 </g>
 

@@ -37,9 +37,9 @@
 
 <g>
  <g id="view1">
-   <rect fill="white" height="500" width="500"/>
+   <rect height="500" style="fill:white" width="500"/>
   
-   <use fill="none" id="europe_country_lines" style="stroke:#222; stroke-width:0.3px" xlink:href="#l1"/>
+   <use id="europe_country_lines" style="fill:none; stroke:#222; stroke-width:0.3px" xlink:href="#l1"/>
   
   <g id="wind_arrows">
    <use transform="translate(268 424) rotate(148)" xlink:href="#windbarb_10"/>

@@ -122,7 +122,7 @@
 
 <g>
  <g>
-   <use fill="none" style="stroke:#222; stroke-width:0.3px" xlink:href="#map"/>
+   <use style="fill:none; stroke:#222; stroke-width:0.3px" xlink:href="#map"/>
   
   <g>
    <use transform="translate(2,708)" xlink:href="#dot"/>
