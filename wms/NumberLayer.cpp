@@ -284,10 +284,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         }
       }
 
-      Spine::ValueFormatterParam valueformatterparam;
-      Spine::ValueFormatter valueformatter(valueformatterparam);
-
-      auto result = obsengine.values(settings, valueformatter);
+      auto result = obsengine.values(settings);
 
       // Store values for SVG generation
 

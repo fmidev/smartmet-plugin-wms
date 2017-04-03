@@ -14,6 +14,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 16.12.21
+BuildRequires: smartmet-library-delfoi >= 17.3.28
 BuildRequires: smartmet-library-macgyver >= 17.3.16
 BuildRequires: smartmet-library-spine-devel >= 17.3.16
 %if %{with authentication}
@@ -40,6 +41,7 @@ Requires: ctpp2 >= 2.8.2
 Requires: libconfig
 Requires: librsvg2 >= 2.40.6
 Requires: smartmet-library-gis >= 17.3.14
+Requires: smartmet-library-delfoi >= 17.3.28
 Requires: smartmet-library-macgyver >= 17.3.16
 Requires: smartmet-library-giza >= 16.12.21
 %if %{with authentication}
@@ -88,6 +90,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Upcoming
+- Modifications due to observation engine API changes:
+redundant parameter in values-function removed,
+redundant Engine's Interface base class removed
+
 * Mon Apr  3 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.4.3-1.fmi
 - Added CORS headers to all responses
 

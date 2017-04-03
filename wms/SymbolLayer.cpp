@@ -229,10 +229,7 @@ PointValues read_observations(const SymbolLayer& layer,
       }
     }
 
-    Spine::ValueFormatterParam valueformatterparam;
-    Spine::ValueFormatter valueformatter(valueformatterparam);
-
-    auto result = obsengine.values(settings, valueformatter);
+    auto result = obsengine.values(settings);
 
     // Build the pointvalues
 
