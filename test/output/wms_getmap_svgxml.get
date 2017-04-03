@@ -72,7 +72,7 @@
    <use class="Precipitation_01_02" xlink:href="#precipitation_01_02"/>
    <use class="Precipitation_001_01" xlink:href="#precipitation_001_01"/>
   </g>
-   <use fill="none" style="clip-path:url(#precipitationclip); stroke:black; stroke-opacity:0.8; stroke-width:0.2" xlink:href="#borders"/>
+   <use style="clip-path:url(#precipitationclip); fill:none; stroke:black; stroke-opacity:0.8; stroke-width:0.2" xlink:href="#borders"/>
   
   <g>
    <use x="140" xlink:href="#bigcity" y="451"/>

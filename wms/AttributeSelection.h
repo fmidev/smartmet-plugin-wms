@@ -7,8 +7,8 @@
 #pragma once
 
 #include "Attributes.h"
-#include <json/json.h>
 #include <boost/optional.hpp>
+#include <json/json.h>
 #include <string>
 
 namespace SmartMet
@@ -32,6 +32,7 @@ class AttributeSelection
   Attributes attributes;
 
   bool matches(double theValue) const;
+  boost::optional<std::string> remove(const std::string& theName);
 
  private:
 };  // class AttributeSelection

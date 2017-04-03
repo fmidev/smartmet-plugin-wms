@@ -14,11 +14,11 @@
 
 <g>
  <g id="view1" transform="translate(10,10)">
-   <use fill="none" style="stroke:rgb(255,0,0); stroke-width:0.1" xlink:href="#europe1b"/>
+   <use style="fill:none; stroke:rgb(255,0,0); stroke-width:0.1" xlink:href="#europe1b"/>
   
  </g>
  <g class="View2" id="view2" transform="translate(520,10)">
-   <use fill="none" style="stroke:rgb(0,0,0); stroke-width:0.1" xlink:href="#europe2a"/>
+   <use style="fill:none; stroke:rgb(0,0,0); stroke-width:0.1" xlink:href="#europe2a"/>
   
  </g>
 </g>

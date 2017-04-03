@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <json/json.h>
 #include <boost/optional.hpp>
+#include <json/json.h>
 #include <map>
 #include <set>
 #include <string>
@@ -33,6 +33,9 @@ class Attributes
   void add(const std::string& theName, const std::string& theValue);
 
   void generate(CTPP::CDT& theLocals, State& theState) const;
+  void generatePresentation(CTPP::CDT& theLayer,
+                            State& theState,
+                            const std::string& theCSS = {}) const;
   std::size_t hash_value(const State& theState) const;
 
   boost::optional<std::string> getLocalIri(const std::string& theName) const;
@@ -45,6 +48,8 @@ class Attributes
 
     return attributes.at(theName);
   }
+
+  boost::optional<std::string> remove(const std::string& theName);
 
  private:
   std::map<std::string, std::string> attributes;

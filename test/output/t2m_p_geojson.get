@@ -16,7 +16,11 @@
       "hilimit": 1,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l1.temperature_0_1"
+      "iri": "l1.temperature_0_1",
+      "class": "Temperature_0_1",
+      "fill": "rgb(5,179,138)",
+      "id": "temperature_isobands",
+      "stroke": "none"
     }
    },
    {
@@ -33,7 +37,11 @@
       "hilimit": 12,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l1.temperature_10_12"
+      "iri": "l1.temperature_10_12",
+      "class": "Temperature_10_12",
+      "fill": "rgb(255,234,128)",
+      "id": "temperature_isobands",
+      "stroke": "none"
     }
    },
    {
@@ -50,7 +58,11 @@
       "hilimit": 14,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l1.temperature_12_14"
+      "iri": "l1.temperature_12_14",
+      "class": "Temperature_12_14",
+      "fill": "rgb(247,212,35)",
+      "id": "temperature_isobands",
+      "stroke": "none"
     }
    },
    {
@@ -67,7 +79,11 @@
       "hilimit": 16,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l1.temperature_14_16"
+      "iri": "l1.temperature_14_16",
+      "class": "Temperature_14_16",
+      "fill": "rgb(245,180,0)",
+      "id": "temperature_isobands",
+      "stroke": "none"
     }
    },
    {
@@ -84,7 +100,11 @@
       "hilimit": 18,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l1.temperature_16_18"
+      "iri": "l1.temperature_16_18",
+      "class": "Temperature_16_18",
+      "fill": "rgb(242,149,0)",
+      "id": "temperature_isobands",
+      "stroke": "none"
     }
    },
    {
@@ -101,7 +121,11 @@
       "hilimit": 20,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l1.temperature_18_20"
+      "iri": "l1.temperature_18_20",
+      "class": "Temperature_18_20",
+      "fill": "rgb(240,116,0)",
+      "id": "temperature_isobands",
+      "stroke": "none"
     }
    },
    {
@@ -118,7 +142,11 @@
       "hilimit": 0,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l1.temperature_1_0"
+      "iri": "l1.temperature_1_0",
+      "class": "Temperature_1_0",
+      "fill": "rgb(212,255,255)",
+      "id": "temperature_isobands",
+      "stroke": "none"
     }
    },
    {
@@ -135,7 +163,11 @@
       "hilimit": 2,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l1.temperature_1_2"
+      "iri": "l1.temperature_1_2",
+      "class": "Temperature_1_2",
+      "fill": "rgb(2,212,149)",
+      "id": "temperature_isobands",
+      "stroke": "none"
     }
    },
    {
@@ -152,7 +184,11 @@
       "hilimit": 4,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l1.temperature_2_4"
+      "iri": "l1.temperature_2_4",
+      "class": "Temperature_2_4",
+      "fill": "rgb(138,237,187)",
+      "id": "temperature_isobands",
+      "stroke": "none"
     }
    },
    {
@@ -169,7 +205,11 @@
       "hilimit": 6,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l1.temperature_4_6"
+      "iri": "l1.temperature_4_6",
+      "class": "Temperature_4_6",
+      "fill": "rgb(204,255,208)",
+      "id": "temperature_isobands",
+      "stroke": "none"
     }
    },
    {
@@ -186,7 +226,11 @@
       "hilimit": 8,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l1.temperature_6_8"
+      "iri": "l1.temperature_6_8",
+      "class": "Temperature_6_8",
+      "fill": "rgb(235,252,207)",
+      "id": "temperature_isobands",
+      "stroke": "none"
     }
    },
    {
@@ -203,7 +247,11 @@
       "hilimit": 10,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l1.temperature_8_10"
+      "iri": "l1.temperature_8_10",
+      "class": "Temperature_8_10",
+      "fill": "rgb(235,255,122)",
+      "id": "temperature_isobands",
+      "stroke": "none"
     }
    },
    {
@@ -219,7 +267,12 @@
       "value": 0,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l2.temperature_0"
+      "iri": "l2.temperature_0",
+      "class": "Temperature",
+      "fill": "none",
+      "id": "temperature_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -235,7 +288,12 @@
       "value": 1,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l2.temperature_p1"
+      "iri": "l2.temperature_p1",
+      "class": "Temperature",
+      "fill": "none",
+      "id": "temperature_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -251,7 +309,12 @@
       "value": 10,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l2.temperature_p10"
+      "iri": "l2.temperature_p10",
+      "class": "Temperature",
+      "fill": "none",
+      "id": "temperature_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -267,7 +330,12 @@
       "value": 12,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l2.temperature_p12"
+      "iri": "l2.temperature_p12",
+      "class": "Temperature",
+      "fill": "none",
+      "id": "temperature_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -283,7 +351,12 @@
       "value": 14,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l2.temperature_p14"
+      "iri": "l2.temperature_p14",
+      "class": "Temperature",
+      "fill": "none",
+      "id": "temperature_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -299,7 +372,12 @@
       "value": 16,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l2.temperature_p16"
+      "iri": "l2.temperature_p16",
+      "class": "Temperature",
+      "fill": "none",
+      "id": "temperature_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -315,7 +393,12 @@
       "value": 18,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l2.temperature_p18"
+      "iri": "l2.temperature_p18",
+      "class": "Temperature",
+      "fill": "none",
+      "id": "temperature_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -331,7 +414,12 @@
       "value": 2,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l2.temperature_p2"
+      "iri": "l2.temperature_p2",
+      "class": "Temperature",
+      "fill": "none",
+      "id": "temperature_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -347,7 +435,12 @@
       "value": 4,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l2.temperature_p4"
+      "iri": "l2.temperature_p4",
+      "class": "Temperature",
+      "fill": "none",
+      "id": "temperature_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -363,7 +456,12 @@
       "value": 6,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l2.temperature_p6"
+      "iri": "l2.temperature_p6",
+      "class": "Temperature",
+      "fill": "none",
+      "id": "temperature_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -379,7 +477,12 @@
       "value": 8,
       "parameter": "Temperature",
       "time": "2008-08-05T03:00:00",
-      "iri": "l2.temperature_p8"
+      "iri": "l2.temperature_p8",
+      "class": "Temperature",
+      "fill": "none",
+      "id": "temperature_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -395,7 +498,12 @@
       "value": 1000,
       "parameter": "Pressure",
       "time": "2008-08-05T03:00:00",
-      "iri": "l3.pressure_1000"
+      "iri": "l3.pressure_1000",
+      "class": "Pressure",
+      "fill": "none",
+      "id": "pressure_isolines",
+      "stroke": "#333",
+      "stroke-width": "1.5px"
     }
    },
    {
@@ -411,7 +519,12 @@
       "value": 1005,
       "parameter": "Pressure",
       "time": "2008-08-05T03:00:00",
-      "iri": "l3.pressure_1005"
+      "iri": "l3.pressure_1005",
+      "class": "Pressure",
+      "fill": "none",
+      "id": "pressure_isolines",
+      "stroke": "#333",
+      "stroke-width": "1.5px"
     }
    },
    {
@@ -427,7 +540,12 @@
       "value": 1010,
       "parameter": "Pressure",
       "time": "2008-08-05T03:00:00",
-      "iri": "l3.pressure_1010"
+      "iri": "l3.pressure_1010",
+      "class": "Pressure",
+      "fill": "none",
+      "id": "pressure_isolines",
+      "stroke": "#333",
+      "stroke-width": "1.5px"
     }
    },
    {
@@ -443,7 +561,12 @@
       "value": 1015,
       "parameter": "Pressure",
       "time": "2008-08-05T03:00:00",
-      "iri": "l3.pressure_1015"
+      "iri": "l3.pressure_1015",
+      "class": "Pressure",
+      "fill": "none",
+      "id": "pressure_isolines",
+      "stroke": "#333",
+      "stroke-width": "1.5px"
     }
    },
    {
@@ -459,7 +582,12 @@
       "value": 1020,
       "parameter": "Pressure",
       "time": "2008-08-05T03:00:00",
-      "iri": "l3.pressure_1020"
+      "iri": "l3.pressure_1020",
+      "class": "Pressure",
+      "fill": "none",
+      "id": "pressure_isolines",
+      "stroke": "#333",
+      "stroke-width": "1.5px"
     }
    },
    {
@@ -475,7 +603,12 @@
       "value": 985,
       "parameter": "Pressure",
       "time": "2008-08-05T03:00:00",
-      "iri": "l3.pressure_985"
+      "iri": "l3.pressure_985",
+      "class": "Pressure",
+      "fill": "none",
+      "id": "pressure_isolines",
+      "stroke": "#333",
+      "stroke-width": "1.5px"
     }
    },
    {
@@ -491,7 +624,12 @@
       "value": 990,
       "parameter": "Pressure",
       "time": "2008-08-05T03:00:00",
-      "iri": "l3.pressure_990"
+      "iri": "l3.pressure_990",
+      "class": "Pressure",
+      "fill": "none",
+      "id": "pressure_isolines",
+      "stroke": "#333",
+      "stroke-width": "1.5px"
     }
    },
    {
@@ -507,7 +645,12 @@
       "value": 995,
       "parameter": "Pressure",
       "time": "2008-08-05T03:00:00",
-      "iri": "l3.pressure_995"
+      "iri": "l3.pressure_995",
+      "class": "Pressure",
+      "fill": "none",
+      "id": "pressure_isolines",
+      "stroke": "#333",
+      "stroke-width": "1.5px"
     }
    },
    {
@@ -520,7 +663,11 @@
     "properties":
     {
       "layertype": "map",
-      "iri": "l4"
+      "iri": "l4",
+      "fill": "none",
+      "id": "europe_country_lines",
+      "stroke": "#222",
+      "stroke-width": "0.3px"
     }
    }
  ]

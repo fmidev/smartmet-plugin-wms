@@ -31,7 +31,7 @@
 
 <g>
  <g>
-   <use fill="none" style="stroke:#222; stroke-width:0.3px" xlink:href="#"/>
+   <use style="fill:none; stroke:#222; stroke-width:0.3px" xlink:href="#"/>
   
   <g id="wind_arrows">
    <use class="GaleWindArrow_32_inf" transform="translate(5 5) rotate(46)" xlink:href="#windarrow"/>

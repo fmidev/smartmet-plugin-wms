@@ -107,7 +107,7 @@
    <use xlink:href="#l2.temperature_p12"/>
    <use xlink:href="#l2.temperature_p14"/>
   </g>
-   <use fill="none" id="europe_country_lines" style="stroke:#222; stroke-width:0.3px" xlink:href="#l4"/>
+   <use id="europe_country_lines" style="fill:none; stroke:#222; stroke-width:0.3px" xlink:href="#l4"/>
   
  </g>
 </g>

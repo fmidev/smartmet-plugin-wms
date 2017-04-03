@@ -741,21 +741,21 @@
 
 <g>
  <g id="view1">
-   <rect fill="rgb(0,75,140)" height="500" width="500"/>
+   <rect height="500" style="fill:rgb(0,75,140)" width="500"/>
   
-   <use fill="rgb(120,120,0)" id="europe_country" xlink:href="#europe"/>
+   <use id="europe_country" style="fill:rgb(120,120,0)" xlink:href="#europe"/>
   
-   <use fill="rgb(120,130,33)" id="finland_country" xlink:href="#finland"/>
+   <use id="finland_country" style="fill:rgb(120,130,33)" xlink:href="#finland"/>
   
   <g id="precipitation_isobands">
-   <use fill="rgb(255,80,60)" style="stroke:none" xlink:href="#l1.precipitation_5_10"/>
-   <use fill="rgb(255,205,20)" style="stroke:none" xlink:href="#l1.precipitation_2_5"/>
-   <use fill="rgb(240,240,20)" style="stroke:none" xlink:href="#l1.precipitation_1_2"/>
-   <use fill="rgb(140,230,20)" style="stroke:none" xlink:href="#l1.precipitation_05_1"/>
-   <use fill="rgb(5,205,170)" style="stroke:none" xlink:href="#l1.precipitation_02_05"/>
-   <use fill="rgb(10,155,255)" style="stroke:none" xlink:href="#l1.precipitation_01_02"/>
+   <use style="fill:rgb(255,80,60); stroke:none" xlink:href="#l1.precipitation_5_10"/>
+   <use style="fill:rgb(255,205,20); stroke:none" xlink:href="#l1.precipitation_2_5"/>
+   <use style="fill:rgb(240,240,20); stroke:none" xlink:href="#l1.precipitation_1_2"/>
+   <use style="fill:rgb(140,230,20); stroke:none" xlink:href="#l1.precipitation_05_1"/>
+   <use style="fill:rgb(5,205,170); stroke:none" xlink:href="#l1.precipitation_02_05"/>
+   <use style="fill:rgb(10,155,255); stroke:none" xlink:href="#l1.precipitation_01_02"/>
   </g>
-   <use fill="none" id="europe_country_lines" style="stroke:#222; stroke-width:0.3px" xlink:href="#europe_lines"/>
+   <use id="europe_country_lines" style="fill:none; stroke:#222; stroke-width:0.3px" xlink:href="#europe_lines"/>
   
   <g class="Weather" id="weather">
    <use class="LightRain" transform="translate(30,30) scale(0.75)" xlink:href="#weather_1_II_31"/>

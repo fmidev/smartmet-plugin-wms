@@ -124,9 +124,9 @@
    <use xlink:href="#l2.temperature_p16"/>
    <use xlink:href="#l2.temperature_p18"/>
   </g>
-   <use fill="none" style="stroke:black" xlink:href="#mycircle"/>
+   <use style="fill:none; stroke:black" xlink:href="#mycircle"/>
   
-   <use fill="yellow" font-family="Verdana" font-size="55" font-weight="bold" style="filter:url(#myshadow); stroke:black; text-anchor:middle" x="250" xlink:href="#mytext" y="250"/>
+   <use font-family="Verdana" font-size="55" font-weight="bold" style="fill:yellow; filter:url(#myshadow); stroke:black; text-anchor:middle" x="250" xlink:href="#mytext" y="250"/>
   
  </g>
 </g>

@@ -12,8 +12,8 @@
 
 #include <boost/optional.hpp>
 
-#include <gis/Types.h>
 #include <engines/gis/MapOptions.h>
+#include <gis/Types.h>
 
 namespace SmartMet
 {
@@ -37,7 +37,10 @@ class PostGISLayerBase : public Layer
 
   virtual std::size_t hash_value(const State& theState) const;
 
+  bool isLines() const { return lines; }
+
  protected:
+  bool lines = false;  // polygon clipping by default
   std::string pgname;
   std::string schema;
   std::string table;

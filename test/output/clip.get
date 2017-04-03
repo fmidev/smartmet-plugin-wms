@@ -94,7 +94,7 @@
  <g id="view1">
   <clipPath id="mycircle">
   
-   <circle cx="250" cy="250" fill="black" r="250"/>
+   <circle cx="250" cy="250" r="250" style="fill:black"/>
   
   </clipPath>
   <g style="clip-path:url(#mycircle)">
@@ -127,7 +127,7 @@
    <use xlink:href="#l2.temperature_p18"/>
   </g>
   </g>
-   <circle cx="250" cy="250" fill="none" r="250" style="stroke:black"/>
+   <circle cx="250" cy="250" r="250" style="fill:none; stroke:black"/>
   
  </g>
 </g>

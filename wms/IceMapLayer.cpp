@@ -1008,6 +1008,7 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
   map_cdt["type"] = Geometry::name(*theResultItem.geom, theState.getType());
   map_cdt["layertype"] = "icemap";
   map_cdt["data"] = Geometry::toString(*theResultItem.geom, theState.getType(), box, crs);
+  theState.addPresentationAttributes(map_cdt, css, attributes);
   theGlobals["paths"][iri] = map_cdt;
 
   // add pattern on geometry

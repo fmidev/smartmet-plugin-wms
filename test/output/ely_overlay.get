@@ -19,13 +19,13 @@
  <g id="view1">
   <mask id="legendmask">
   
-   <rect fill="white" height="100%" width="100%"/>
+   <rect height="100%" style="fill:white" width="100%"/>
   
-   <rect fill="black" height="420px" width="50px"/>
+   <rect height="420px" style="fill:black" width="50px"/>
   
-   <rect fill="black" height="90px" width="100px"/>
+   <rect height="90px" style="fill:black" width="100px"/>
   
-   <rect fill="black" height="30px" transform="translate(350 570)" width="250px"/>
+   <rect height="30px" style="fill:black" transform="translate(350 570)" width="250px"/>
   
   </mask>
   <g class="Number" style="mask:url(#legendmask)">

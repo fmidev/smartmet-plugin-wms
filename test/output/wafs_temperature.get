@@ -14,9 +14,9 @@
 
 <g>
  <g id="view1">
-   <rect fill="white" height="712" width="1025"/>
+   <rect height="712" style="fill:white" width="1025"/>
   
-   <use fill="none" style="stroke:black" xlink:href="#europe"/>
+   <use style="fill:none; stroke:black" xlink:href="#europe"/>
   
   <g class="Number">
   

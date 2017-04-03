@@ -1184,7 +1184,7 @@
    <rect height="30" width="20"/>
   
   </symbol>
-   <rect fill="white" height="510" style="stroke:black; stroke-width:1px" width="410" x="30" y="30"/>
+   <rect height="510" style="fill:white; stroke:black; stroke-width:1px" width="410" x="30" y="30"/>
   
    <use class="IceFree" x="40" xlink:href="#legend1box" y="40"/>
   

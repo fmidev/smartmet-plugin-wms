@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.3.16
+Version: 17.4.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -14,14 +14,14 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 16.12.21
-BuildRequires: smartmet-library-macgyver >= 17.3.14
 BuildRequires: smartmet-library-delfoi >= 17.3.28
+BuildRequires: smartmet-library-macgyver >= 17.3.16
 BuildRequires: smartmet-library-spine-devel >= 17.3.16
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.3.15
 %endif
 %if %{with authentication}
-BuildRequires: smartmet-engine-observation-devel >= 17.3.15
+BuildRequires: smartmet-engine-observation-devel >= 17.3.26
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 17.3.15
 BuildRequires: smartmet-engine-geonames-devel >= 17.3.15
@@ -41,8 +41,8 @@ Requires: ctpp2 >= 2.8.2
 Requires: libconfig
 Requires: librsvg2 >= 2.40.6
 Requires: smartmet-library-gis >= 17.3.14
-Requires: smartmet-library-macgyver >= 17.3.14
 Requires: smartmet-library-delfoi >= 17.3.28
+Requires: smartmet-library-macgyver >= 17.3.16
 Requires: smartmet-library-giza >= 16.12.21
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 17.3.15
@@ -94,6 +94,18 @@ rm -rf $RPM_BUILD_ROOT
 - Modifications due to observation engine API changes:
 redundant parameter in values-function removed,
 redundant Engine's Interface base class removed
+
+* Mon Apr  3 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.4.3-1.fmi
+- Added CORS headers to all responses
+
+* Wed Mar 29 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.3.29-3.fmi
+- Added a lines-setting to PostGISLayer to enable polyline-type clipping
+
+* Wed Mar 29 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.3.29-2.fmi
+- scale attribute is now appended into transform attributes in number, symbol and arrow layers
+
+* Wed Mar 29 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.3.29-1.fmi
+- KML and GeoJSON output now includes presentation attributes
 
 * Thu Mar 16 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.3.16-1.fmi
 - Added WKTLayer

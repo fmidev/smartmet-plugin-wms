@@ -116,7 +116,7 @@
    <use xlink:href="#l3.pressure_1010"/>
    <use xlink:href="#l3.pressure_1015"/>
   </g>
-   <use fill="none" id="finland_country" style="stroke:#333; stroke-width:0.5px" xlink:href="#mymap"/>
+   <use id="finland_country" style="fill:none; stroke:#333; stroke-width:0.5px" xlink:href="#mymap"/>
   
  </g>
 </g>

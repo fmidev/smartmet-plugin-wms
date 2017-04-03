@@ -8,24 +8,24 @@
 #include "State.h"
 #include "ValueTools.h"
 
+#include <engines/gis/Engine.h>
+#include <engines/querydata/Q.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
-#include <engines/gis/Engine.h>
-#include <engines/querydata/Q.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
 
-#include <gis/Types.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
+#include <gis/Types.h>
 #include <newbase/NFmiArea.h>
 #include <newbase/NFmiPoint.h>
 
-#include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
 #include <boost/math/constants/constants.hpp>
+#include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
 #include <iomanip>
 
@@ -592,6 +592,10 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       tag_cdt["start"] = "<use";
       tag_cdt["end"] = "/>";
 
+      // librsvg cannot handle scale + transform, must move former into latter
+
+      boost::optional<double> rescale;
+
       // Determine the symbol to be used
       std::string iri;
 
@@ -609,6 +613,11 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
             iri = *selection->symbol;
           else if (symbol)
             iri = *symbol;
+
+          auto scaleattr = selection->attributes.remove("scale");
+          if (scaleattr)
+            rescale = Fmi::stod(*scaleattr);
+
           theState.addAttributes(theGlobals, tag_cdt, selection->attributes);
         }
       }
@@ -629,6 +638,12 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
         double yscale = (scale ? *scale : 1.0);
         double xscale = (flop ? -yscale : yscale);
+
+        if (rescale)
+        {
+          xscale *= *rescale;
+          yscale *= *rescale;
+        }
 
         if (xscale == 1 && yscale == 1)
           transform = fmt::sprintf("translate(%d %d) rotate(%d)",

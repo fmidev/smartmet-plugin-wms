@@ -2,29 +2,30 @@
 
 #include <spine/TimeSeriesOutput.h>
 
-#include "NumberLayer.h"
 #include "Config.h"
 #include "Hash.h"
 #include "Iri.h"
 #include "Layer.h"
+#include "NumberLayer.h"
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
 
-#include <spine/Exception.h>
-#include <spine/ParameterFactory.h>
-#include <spine/Json.h>
 #include <engines/gis/Engine.h>
+#include <spine/Exception.h>
+#include <spine/Json.h>
+#include <spine/ParameterFactory.h>
+#include <spine/ValueFormatter.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
-#include <gis/Types.h>
+#include <boost/foreach.hpp>
+#include <ctpp2/CDT.hpp>
 #include <gis/Box.h>
 #include <gis/OGR.h>
+#include <gis/Types.h>
 #include <newbase/NFmiArea.h>
 #include <newbase/NFmiPoint.h>
-#include <ctpp2/CDT.hpp>
-#include <boost/foreach.hpp>
 #include <iomanip>
 
 #include <fmt/format.h>
@@ -415,6 +416,15 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       if (selection && selection->symbol)
         iri = *selection->symbol;
 
+      // librsvg cannot handle scale + transform, must move former into latter
+      boost::optional<double> rescale;
+      if (selection)
+      {
+        auto scaleattr = selection->attributes.remove("scale");
+        if (scaleattr)
+          rescale = Fmi::stod(*scaleattr);
+      }
+
       if (!iri.empty())
       {
         std::string IRI = Iri::normalize(iri);
@@ -426,8 +436,10 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         tag_cdt["attributes"]["xlink:href"] = "#" + IRI;
 
         std::string tmp = fmt::sprintf("translate(%d,%d)", point.x, point.y);
-        if (scale)
-          tmp += fmt::sprintf(" scale(%g)", *scale);
+
+        double newscale = (scale ? *scale : 1.0) * (rescale ? *rescale : 1.0);
+        if (newscale != 1.0)
+          tmp += fmt::sprintf(" scale(%g)", newscale);
 
         tag_cdt["attributes"]["transform"] = tmp;
 
@@ -457,6 +469,10 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         text_cdt["cdata"] = txt;
 
         auto selection = Select::attribute(numbers, value);
+
+        if (selection)
+          selection->attributes.remove("scale");
+
         if (selection)
           theState.addAttributes(theGlobals, text_cdt, selection->attributes);
 

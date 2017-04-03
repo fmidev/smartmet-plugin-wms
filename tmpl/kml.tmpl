@@ -21,6 +21,9 @@
   <-TMPL_if defined(path.value)>
   <Data name="value"><value><TMPL_var path.value></value></Data>
   <-/TMPL_if>
+  <-TMPL_foreach path.presentation as presentation>,
+  <Data name="<TMPL_var presentation.__key__>"><value><TMPL_var presentation.__value__></value></Data>
+  <-/TMPL_foreach>
  </ExtendedData>
  <TMPL_var path.data>
 </Placemark>
