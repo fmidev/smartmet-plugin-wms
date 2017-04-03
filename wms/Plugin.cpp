@@ -10,11 +10,10 @@
 #include "WMSConfig.h"
 #include "WMSGetMap.h"
 
-#include <spine/Exception.h>
 #include <spine/Convenience.h>
-#include <spine/SmartMet.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
+#include <spine/SmartMet.h>
 
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
@@ -31,11 +30,11 @@
 #include <ctpp2/CDT.hpp>
 
 #include <boost/date_time/posix_time/time_formatters.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <boost/foreach.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/timer/timer.hpp>
 #include <boost/utility.hpp>
-#include <boost/filesystem/operations.hpp>
 
 #include <fmt/format.h>
 
@@ -343,6 +342,8 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
   {
     const bool isdebug = Spine::optional_bool(theRequest.getParameter("debug"), false);
 
+    theResponse.setHeader("Access-Control-Allow-Origin", "*");
+
     // WMS: if WMS exception is thrown or capabilities requested, the format must be xml in response
     // no matter what format-option was given in request
     try
@@ -384,7 +385,6 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       theResponse.setHeader("Cache-Control", cachecontrol);
       theResponse.setHeader("Expires", expiration);
       theResponse.setHeader("Last-Modified", modification);
-      theResponse.setHeader("Access-Control-Allow-Origin", "*");
     }
     catch (...)
     {
