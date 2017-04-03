@@ -14,7 +14,6 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 16.12.21
-BuildRequires: smartmet-library-delfoi >= 17.4.3
 BuildRequires: smartmet-library-macgyver >= 17.3.16
 BuildRequires: smartmet-library-spine-devel >= 17.3.16
 %if %{with authentication}
@@ -41,7 +40,6 @@ Requires: ctpp2 >= 2.8.2
 Requires: libconfig
 Requires: librsvg2 >= 2.40.6
 Requires: smartmet-library-gis >= 17.3.14
-Requires: smartmet-library-delfoi >= 17.4.3
 Requires: smartmet-library-macgyver >= 17.3.16
 Requires: smartmet-library-giza >= 16.12.21
 %if %{with authentication}
