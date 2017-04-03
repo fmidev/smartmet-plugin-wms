@@ -44,13 +44,13 @@ namespace
 {
 // ----------------------------------------------------------------------
 /*!
-   * \brief Validate name for inclusion
-   *
-   * A valid name does not lead upwards in a path if inserted into
-   * a path. If the name looks valid, we return it so that we do not
-   * have to use if statements when this check is done. If the name
-   * does not look valid, we throw.
-   */
+ * \brief Validate name for inclusion
+ *
+ * A valid name does not lead upwards in a path if inserted into
+ * a path. If the name looks valid, we return it so that we do not
+ * have to use if statements when this check is done. If the name
+ * does not look valid, we throw.
+ */
 // ----------------------------------------------------------------------
 
 const std::string &check_attack(const std::string &theName)
@@ -78,8 +78,8 @@ namespace Dali
 {
 // ----------------------------------------------------------------------
 /*!
-     * \brief Perform a Dali query
-     */
+ * \brief Perform a Dali query
+ */
 // ----------------------------------------------------------------------
 
 void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
@@ -235,8 +235,8 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Convert the SVG to the response object
-     */
+ * \brief Convert the SVG to the response object
+ */
 // ----------------------------------------------------------------------
 
 void Plugin::formatResponse(const std::string &theSvg,
@@ -304,8 +304,8 @@ void Plugin::formatResponse(const std::string &theSvg,
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Establish the mime type for the product
-     */
+ * \brief Establish the mime type for the product
+ */
 // ----------------------------------------------------------------------
 
 std::string Plugin::mimeType(const std::string &theType) const
@@ -330,8 +330,8 @@ std::string Plugin::mimeType(const std::string &theType) const
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Main content handler
-     */
+ * \brief Main content handler
+ */
 // ----------------------------------------------------------------------
 
 void Plugin::requestHandler(Spine::Reactor &theReactor,
@@ -465,8 +465,8 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Initialize in a separate thread due to PostGIS slowness
-     */
+ * \brief Initialize in a separate thread due to PostGIS slowness
+ */
 // ----------------------------------------------------------------------
 
 void Plugin::init()
@@ -619,8 +619,8 @@ void Plugin::shutdown()
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Server thread pool determination
-     */
+ * \brief Server thread pool determination
+ */
 // ----------------------------------------------------------------------
 
 bool Plugin::queryIsFast(const Spine::HTTP::Request &theRequest) const
@@ -641,8 +641,8 @@ bool Plugin::queryIsFast(const Spine::HTTP::Request &theRequest) const
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Destructor
-     */
+ * \brief Destructor
+ */
 // ----------------------------------------------------------------------
 
 Plugin::~Plugin()
@@ -663,8 +663,8 @@ Plugin::~Plugin()
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Return the plugin name
-     */
+ * \brief Return the plugin name
+ */
 // ----------------------------------------------------------------------
 
 const std::string &Plugin::getPluginName() const
@@ -673,8 +673,8 @@ const std::string &Plugin::getPluginName() const
 }
 // ----------------------------------------------------------------------
 /*!
-     * \brief Return the required version
-     */
+ * \brief Return the required version
+ */
 // ----------------------------------------------------------------------
 
 int Plugin::getRequiredAPIVersion() const
@@ -683,8 +683,8 @@ int Plugin::getRequiredAPIVersion() const
 }
 // ----------------------------------------------------------------------
 /*!
-     * \brief Get product definition from the plugin cache
-     */
+ * \brief Get product definition from the plugin cache
+ */
 // ----------------------------------------------------------------------
 
 Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
@@ -764,8 +764,8 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Get CSS contents from the internal cache
-     */
+ * \brief Get CSS contents from the internal cache
+ */
 // ----------------------------------------------------------------------
 
 std::string Plugin::getStyle(const std::string &theCustomer,
@@ -790,8 +790,8 @@ std::string Plugin::getStyle(const std::string &theCustomer,
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Get template from the plugin cache
-     */
+ * \brief Get template from the plugin cache
+ */
 // ----------------------------------------------------------------------
 
 SharedFormatter Plugin::getTemplate(const std::string &theName) const
@@ -810,8 +810,8 @@ SharedFormatter Plugin::getTemplate(const std::string &theName) const
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Get Filter contents from the internal cache
-     */
+ * \brief Get Filter contents from the internal cache
+ */
 // ----------------------------------------------------------------------
 
 std::string Plugin::getFilter(const std::string &theName, bool theWmsFlag) const
@@ -834,8 +834,8 @@ std::string Plugin::getFilter(const std::string &theName, bool theWmsFlag) const
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Get Filter hash
-     */
+ * \brief Get Filter hash
+ */
 // ----------------------------------------------------------------------
 
 std::size_t Plugin::getFilterHash(const std::string &theName, bool theWmsFlag) const
@@ -858,8 +858,8 @@ std::size_t Plugin::getFilterHash(const std::string &theName, bool theWmsFlag) c
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Get marker contents from the internal cache
-     */
+ * \brief Get marker contents from the internal cache
+ */
 // ----------------------------------------------------------------------
 
 std::string Plugin::getMarker(const std::string &theCustomer,
@@ -884,8 +884,8 @@ std::string Plugin::getMarker(const std::string &theCustomer,
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Get marker hash
-     */
+ * \brief Get marker hash
+ */
 // ----------------------------------------------------------------------
 
 std::size_t Plugin::getMarkerHash(const std::string &theCustomer,
@@ -910,8 +910,8 @@ std::size_t Plugin::getMarkerHash(const std::string &theCustomer,
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Get Symbol contents from the internal cache
-     */
+ * \brief Get Symbol contents from the internal cache
+ */
 // ----------------------------------------------------------------------
 
 std::string Plugin::getSymbol(const std::string &theCustomer,
@@ -936,8 +936,8 @@ std::string Plugin::getSymbol(const std::string &theCustomer,
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Get Symbol hash
-     */
+ * \brief Get Symbol hash
+ */
 // ----------------------------------------------------------------------
 
 std::size_t Plugin::getSymbolHash(const std::string &theCustomer,
@@ -962,8 +962,8 @@ std::size_t Plugin::getSymbolHash(const std::string &theCustomer,
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Get Pattern contents from the internal cache
-     */
+ * \brief Get Pattern contents from the internal cache
+ */
 // ----------------------------------------------------------------------
 
 std::string Plugin::getPattern(const std::string &theCustomer,
@@ -988,8 +988,8 @@ std::string Plugin::getPattern(const std::string &theCustomer,
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Get Pattern hash
-     */
+ * \brief Get Pattern hash
+ */
 // ----------------------------------------------------------------------
 
 std::size_t Plugin::getPatternHash(const std::string &theCustomer,
@@ -1014,8 +1014,8 @@ std::size_t Plugin::getPatternHash(const std::string &theCustomer,
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Get Gradient contents from the internal cache
-     */
+ * \brief Get Gradient contents from the internal cache
+ */
 // ----------------------------------------------------------------------
 
 std::string Plugin::getGradient(const std::string &theCustomer,
@@ -1040,8 +1040,8 @@ std::string Plugin::getGradient(const std::string &theCustomer,
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Get Gradient hash
-     */
+ * \brief Get Gradient hash
+ */
 // ----------------------------------------------------------------------
 
 std::size_t Plugin::getGradientHash(const std::string &theCustomer,
@@ -1066,8 +1066,8 @@ std::size_t Plugin::getGradientHash(const std::string &theCustomer,
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Get the configuration object - layers need to know defaults
-     */
+ * \brief Get the configuration object - layers need to know defaults
+ */
 // ----------------------------------------------------------------------
 
 const Config &Plugin::getConfig() const
@@ -1076,8 +1076,8 @@ const Config &Plugin::getConfig() const
 }
 // ----------------------------------------------------------------------
 /*!
-     * \brief Parses WMS exception
-     */
+ * \brief Parses WMS exception
+ */
 // ----------------------------------------------------------------------
 
 std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException) const
@@ -1123,8 +1123,8 @@ std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException) cons
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Perform a WMS query
-     */
+ * \brief Perform a WMS query
+ */
 // ----------------------------------------------------------------------
 
 WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
