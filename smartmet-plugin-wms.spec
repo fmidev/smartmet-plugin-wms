@@ -76,7 +76,6 @@ make %{_smp_mflags} \
 
 %install
 %makeinstall
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/smartmet/plugins/wms/tmpl
 
 %clean
 rm -rf $RPM_BUILD_ROOT

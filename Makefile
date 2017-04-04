@@ -179,7 +179,6 @@ install:
 	$(INSTALL_PROG) $(LIBFILE) $(plugindir)/$(LIBFILE)
 	@mkdir -p $(confdir)
 	@mkdir -p $(confdir)/tmpl
-	@mkdir -p $(confdir)/wms
 	@list=`ls -1 tmpl/*.c2t`; \
 	echo $(INSTALL_DATA) $$list "$(confdir)/tmpl"; \
         $(INSTALL_DATA) $$list "$(confdir)/tmpl";
