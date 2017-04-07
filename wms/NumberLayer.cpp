@@ -257,6 +257,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
       // Request intersection parameters too - if any
       const int firstextraparam = settings.parameters.size();
+
       auto iparams = positions->intersections.parameters();
       for (const auto& extraparam : iparams)
         settings.parameters.push_back(obsengine.makeParameter(extraparam));

@@ -194,6 +194,10 @@ PointValues read_observations(const SymbolLayer& layer,
 
     // Request intersection parameters too - if any
     auto iparams = layer.positions->intersections.parameters();
+
+    int firstextraparam =
+        settings.parameters.size();  // which column holds the first extra parameter
+
     for (const auto& extraparam : iparams)
       settings.parameters.push_back(obsengine.makeParameter(extraparam));
 
@@ -268,20 +272,17 @@ PointValues read_observations(const SymbolLayer& layer,
       double lat = get_double(values.at(1).at(row));
       double value = kFloatMissing;
       std::string fmisid;
-      int firstextraparam;  // which column holds the first extra parameter
 
       if (*layer.producer == "flash")
       {
         if (layer.parameter)
           value = get_double(values.at(2).at(row));
-        firstextraparam = 3;
       }
       else
       {
         fmisid = boost::get<std::string>(values.at(2).at(row).value);
         if (layer.parameter)
           value = get_double(values.at(3).at(row));
-        firstextraparam = 4;
       }
 
       // Collect extra values used for filtering the input
