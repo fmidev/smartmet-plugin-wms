@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.4.3
+Version: 17.4.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -87,6 +87,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Fri Apr  7 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.4.7-1.fmi
+- Bug fix to symbol layer, required obs. parameter names was counted incorrectly
+
 * Mon Apr  3 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.4.3-1.fmi
 - Added CORS headers to all responses
 - Modifications due to observation engine API changes:
