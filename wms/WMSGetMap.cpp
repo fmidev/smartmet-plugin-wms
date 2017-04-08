@@ -1,21 +1,21 @@
+#include "WMSGetMap.h"
 #include "WMS.h"
 #include "WMSException.h"
-#include "WMSGetMap.h"
 
 #include "TemplateFactory.h"
 
 #include <macgyver/StringConversion.h>
 
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/foreach.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 #include <boost/range/adaptors.hpp>
 #include <boost/range/algorithm.hpp>
-#include <boost/algorithm/string/erase.hpp>
-#include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/xml_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/foreach.hpp>
 
-#include <spine/Exception.h>
 #include <spine/Convenience.h>
+#include <spine/Exception.h>
 
 namespace SmartMet
 {
@@ -73,58 +73,50 @@ void check_getmap_request_options(const Spine::HTTP::Request& theHTTPRequest)
 
     if (!theHTTPRequest.getParameter("VERSION"))
     {
-      Spine::Exception exception(BCP, "Version not defined");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      throw exception;
+      throw Spine::Exception(BCP, "Version not defined")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
     if (!theHTTPRequest.getParameter("LAYERS"))
     {
-      Spine::Exception exception(BCP, "At least one layer must be defined in GetMap request");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
-      throw exception;
+      throw Spine::Exception(BCP, "At least one layer must be defined in GetMap request")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
     }
 
     if (!theHTTPRequest.getParameter("STYLES"))
     {
-      Spine::Exception exception(BCP, "STYLES-option must be defined, even if it is empty");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED);
-      throw exception;
+      throw Spine::Exception(BCP, "STYLES-option must be defined, even if it is empty")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED);
     }
 
     if (!theHTTPRequest.getParameter("CRS"))
     {
-      Spine::Exception exception(BCP, "CRS-option has not been defined");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      throw exception;
+      throw Spine::Exception(BCP, "CRS-option has not been defined")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
     if (!theHTTPRequest.getParameter("BBOX"))
     {
-      Spine::Exception exception(BCP, "BBOX-option has not been defined");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
-      throw exception;
+      throw Spine::Exception(BCP, "BBOX-option has not been defined")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
     }
 
     if (!theHTTPRequest.getParameter("WIDTH"))
     {
-      Spine::Exception exception(BCP, "WIDTH-option has not been defined");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
-      throw exception;
+      throw Spine::Exception(BCP, "WIDTH-option has not been defined")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
     }
 
     if (!theHTTPRequest.getParameter("HEIGHT"))
     {
-      Spine::Exception exception(BCP, "HEIGHT-option has not been defined");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
-      throw exception;
+      throw Spine::Exception(BCP, "HEIGHT-option has not been defined")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
     }
 
     if (!theHTTPRequest.getParameter("FORMAT"))
     {
-      Spine::Exception exception(BCP, "FORMAT-option has not been defined");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      throw exception;
+      throw Spine::Exception(BCP, "FORMAT-option has not been defined")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
   }
   catch (...)
@@ -142,12 +134,11 @@ void validate_options(const tag_get_map_request_options& options,
     // check the requested version number
     if (!itsConfig.isValidVersion(options.version))
     {
-      Spine::Exception exception(BCP, "The requested version is not supported!");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED);
-      exception.addParameter("Requested version", options.version);
-      exception.addParameter("Supported versions",
-                             boost::algorithm::join(itsConfig.supportedWMSVersions(), "','"));
-      throw exception;
+      throw Spine::Exception(BCP, "The requested version is not supported!")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED)
+          .addParameter("Requested version", options.version)
+          .addParameter("Supported versions",
+                        boost::algorithm::join(itsConfig.supportedWMSVersions(), "','"));
     }
 
     // check whether the requested layers, styles, CRS are valid
@@ -159,31 +150,27 @@ void validate_options(const tag_get_map_request_options& options,
       // check that layer is valid (as defined in GetCapabilities response)
       if (!itsConfig.isValidLayer(layer))
       {
-        Spine::Exception exception(BCP, "The requested layer is not supported!");
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
-        exception.addParameter("Requested layer", layer);
-        throw exception;
+        throw Spine::Exception(BCP, "The requested layer is not supported!")
+            .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED)
+            .addParameter("Requested layer", layer);
       }
 
       // check that style is valid (as defined in GetCapabilities response)
       if (!itsConfig.isValidStyle(layer, style))
       {
-        Spine::Exception exception(BCP,
-                                   "The requested style is not supported by the current layer!");
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED);
-        exception.addParameter("Requested style", style);
-        exception.addParameter("Requested layer", layer);
-        throw exception;
+        throw Spine::Exception(BCP, "The requested style is not supported by the current layer!")
+            .addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED)
+            .addParameter("Requested style", style)
+            .addParameter("Requested layer", layer);
       }
 
       // check that CRS is valid (as defined in GetCapabilities response)
       if (!itsConfig.isValidCRS(layer, options.bbox.crs))
       {
-        Spine::Exception exception(BCP, "The requested CRS is not supported by the current layer!");
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_CRS);
-        exception.addParameter("Requested CRS", options.bbox.crs);
-        exception.addParameter("Requested layer", layer);
-        throw exception;
+        throw Spine::Exception(BCP, "The requested CRS is not supported by the current layer!")
+            .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_CRS)
+            .addParameter("Requested CRS", options.bbox.crs)
+            .addParameter("Requested layer", layer);
       }
 
       // check that given timesteps are valid
@@ -191,11 +178,10 @@ void validate_options(const tag_get_map_request_options& options,
       {
         if (!itsConfig.isValidTime(layer, timestamp, querydata))
         {
-          Spine::Exception exception(BCP, "Invalid time requested!");
-          exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
-          exception.addParameter("Requested time", Fmi::to_iso_string(timestamp));
-          exception.addParameter("Requested layer", layer);
-          throw exception;
+          throw Spine::Exception(BCP, "Invalid time requested!")
+              .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
+              .addParameter("Requested time", Fmi::to_iso_string(timestamp))
+              .addParameter("Requested layer", layer);
         }
       }
     }
@@ -203,26 +189,23 @@ void validate_options(const tag_get_map_request_options& options,
     // check format
     if (!itsConfig.isValidMapFormat(options.format))
     {
-      Spine::Exception exception(BCP, "The requested map format is not supported!");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_FORMAT);
-      exception.addParameter("Requested map format", options.format);
-      exception.addParameter("Supported map formats",
-                             boost::algorithm::join(itsConfig.supportedMapFormats(), "','"));
-      throw exception;
+      throw Spine::Exception(BCP, "The requested map format is not supported!")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_FORMAT)
+          .addParameter("Requested map format", options.format)
+          .addParameter("Supported map formats",
+                        boost::algorithm::join(itsConfig.supportedMapFormats(), "','"));
     }
 
     // check bbox
     if (options.bbox.xMin > options.bbox.xMax || options.bbox.yMin > options.bbox.yMax)
     {
-      Spine::Exception exception(BCP, "Invalid BBOX definition!");
-      exception.addDetail(
-          "'xMin' must be smaller than 'xMax' and 'yMin' must be smaller than 'yMax'.");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
-      exception.addParameter("xMin", std::to_string(options.bbox.xMin));
-      exception.addParameter("yMin", std::to_string(options.bbox.yMin));
-      exception.addParameter("xMax", std::to_string(options.bbox.xMax));
-      exception.addParameter("yMax", std::to_string(options.bbox.yMax));
-      throw exception;
+      throw Spine::Exception(BCP, "Invalid BBOX definition!")
+          .addDetail("'xMin' must be smaller than 'xMax' and 'yMin' must be smaller than 'yMax'.")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
+          .addParameter("xMin", std::to_string(options.bbox.xMin))
+          .addParameter("yMin", std::to_string(options.bbox.yMin))
+          .addParameter("xMax", std::to_string(options.bbox.xMax))
+          .addParameter("yMax", std::to_string(options.bbox.yMax));
     }
   }
   catch (...)

@@ -206,17 +206,15 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
     }
     catch (CTPP::CTPPException &e)
     {
-      Spine::Exception exception(BCP, "Template processing error!", NULL);
-      exception.addParameter("Template", *product.svg_tmpl);
-      exception.addParameter("Product", product_name);
-      throw exception;
+      throw Spine::Exception(BCP, "Template processing error!", NULL)
+          .addParameter("Template", *product.svg_tmpl)
+          .addParameter("Product", product_name);
     }
     catch (...)
     {
-      Spine::Exception exception(BCP, "Template processing error!", NULL);
-      exception.addParameter("Template", *product.svg_tmpl);
-      exception.addParameter("Product", product_name);
-      throw exception;
+      throw Spine::Exception(BCP, "Template processing error!", NULL)
+          .addParameter("Template", *product.svg_tmpl)
+          .addParameter("Product", product_name);
     }
 
     // Set the response content and mime type
@@ -699,9 +697,7 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
 
     if (!boost::filesystem::exists(product_path))
     {
-      Spine::Exception exception(BCP, "Product file not found!");
-      exception.addParameter("File", product_path);
-      throw exception;
+      throw Spine::Exception(BCP, "Product file not found!").addParameter("File", product_path);
     }
 
     // Read the JSON
@@ -713,12 +709,11 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
 
     if (!json_ok)
     {
-      Spine::Exception exception(BCP, "Product parsing failed!");
       std::string msg = reader.getFormattedErrorMessages();
       std::replace(msg.begin(), msg.end(), '\n', ' ');
-      exception.addDetail(msg);
-      exception.addParameter("Product", product_path);
-      throw exception;
+      throw Spine::Exception(BCP, "Product parsing failed!")
+          .addDetail(msg)
+          .addParameter("Product", product_path);
     }
 
     // Expand the JSON
