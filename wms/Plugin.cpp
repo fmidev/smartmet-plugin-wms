@@ -392,11 +392,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
       Spine::Exception exception(BCP, "Request processing exception!", NULL);
       exception.addParameter("URI", theRequest.getURI());
-
-      if (!exception.stackTraceDisabled())
-        std::cerr << exception.getStackTrace();
-      else
-        std::cerr << "Error: " << exception.what() << std::endl;
+      exception.printError();
 
       if (isdebug)
       {

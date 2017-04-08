@@ -3,8 +3,8 @@
 #include "WMSLayerFactory.h"
 
 #include <spine/Exception.h>
-#include <spine/Json.h>
 #include <spine/FmiApiKey.h>
+#include <spine/Json.h>
 
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
@@ -12,16 +12,16 @@
 
 #include <macgyver/StringConversion.h>
 
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/join.hpp>
-#include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem/operations.hpp>
+#include <boost/algorithm/string/split.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/foreach.hpp>
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
-#include <stdexcept>
 #include <algorithm>
+#include <stdexcept>
 
 #include <gdal/ogr_spatialref.h>
 
@@ -195,10 +195,7 @@ void WMSConfig::capabilitiesUpdateLoop()
       catch (...)
       {
         Spine::Exception exception(BCP, "Could not update capabilities!", NULL);
-        if (!exception.stackTraceDisabled())
-          std::cerr << exception.getStackTrace();
-        else if (!exception.loggingDisabled())
-          std::cerr << "Error: " << exception.what() << std::endl;
+        exception.printError();
       }
     }
     itsActiveThreadCount--;
@@ -300,10 +297,7 @@ void WMSConfig::updateLayerMetaData()
                     // Ignore and report failed product definitions
                     Spine::Exception exception(BCP, "Failed to parse configuration!", NULL);
                     exception.addParameter("Path", itr2->path().c_str());
-                    if (!exception.stackTraceDisabled())
-                      std::cerr << exception.getStackTrace();
-                    else if (!exception.loggingDisabled())
-                      std::cerr << "Error: " << exception.what() << std::endl;
+                    exception.printError();
                     continue;
                   }
                 }
@@ -316,10 +310,7 @@ void WMSConfig::updateLayerMetaData()
                   "Lost " + std::string(itr2->path().c_str()) + " while scanning the filesystem!",
                   NULL);
               exception.addParameter("Path", itr2->path().c_str());
-              if (!exception.stackTraceDisabled())
-                std::cerr << exception.getStackTrace();
-              else if (!exception.loggingDisabled())
-                std::cerr << "Error: " << exception.what() << std::endl;
+              exception.printError();
             }
           }
         }
@@ -331,10 +322,7 @@ void WMSConfig::updateLayerMetaData()
             "Lost " + std::string(itr->path().c_str()) + " while scanning the filesystem!",
             NULL);
         exception.addParameter("Path", itr->path().c_str());
-        if (!exception.stackTraceDisabled())
-          std::cerr << exception.getStackTrace();
-        else if (!exception.loggingDisabled())
-          std::cerr << "Error: " << exception.what() << std::endl;
+        exception.printError();
       }
     }
 

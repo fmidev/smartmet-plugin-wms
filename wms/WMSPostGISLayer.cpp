@@ -58,14 +58,7 @@ void WMSPostGISLayer::updateLayerMetaData()
       {
         Spine::Exception exception(BCP, "WMS layer metadata update failure!", NULL);
         exception.addParameter("Layer name", getName());
-        if (!exception.stackTraceDisabled())
-          std::cerr << exception.getStackTrace();
-        else if (!exception.loggingDisabled())
-          std::cerr << "Error: " << exception.what() << std::endl;
-
-        // std::cout << "WMS layer metadata update failure for layer '" + getName() + "' -> " +
-        // e.what()
-        //          << std::endl;
+        exception.printError();
       }
       return;
     }
