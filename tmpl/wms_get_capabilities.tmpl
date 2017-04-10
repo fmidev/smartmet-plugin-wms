@@ -9,37 +9,36 @@
 		  xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd  http://www.opengis.net/sld http://schemas.opengis.net/sld/1.1.0/sld_capabilities.xsd  http://inspire.ec.europa.eu/schemas/inspire_vs/1.0  http://inspire.ec.europa.eu/schemas/inspire_vs/1.0/inspire_vs.xsd">
 <Service>
   <Name>WMS</Name>
-  <Title>Finnish Meteorological Institute Web Map Service</Title>
-  <Abstract>Finnish Meteorological Institute's Web Map Service</Abstract>
+  <Title><TMPL_var title></Title>
+  <Abstract><TMPL_var abstract></Abstract>
   <KeywordList>
-      <Keyword>Weather</Keyword>
-      <Keyword>Forecast</Keyword>
-      <Keyword>Hirlam</Keyword>
-      <Keyword> </Keyword>
+    <TMPL_foreach keywords as keyword>
+      <Keyword><TMPL_var keyword></Keyword>
+    </TMPL_foreach>
   </KeywordList>
-  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://en.ilmatieteenlaitos.fi/open-data"/>
+  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="<TMPL_var online_resource>"/>
   <ContactInformation>
     <ContactPersonPrimary>
-      <ContactPerson>Roope Tervo</ContactPerson>
-      <ContactOrganization>Finnish Meteorological Institute (FMI)</ContactOrganization>
+      <ContactPerson><TMPL_var contact_person></ContactPerson>
+      <ContactOrganization><TMPL_var organization></ContactOrganization>
     </ContactPersonPrimary>
-      <ContactPosition>Customer Services</ContactPosition>
+      <ContactPosition><TMPL_var contact_position></ContactPosition>
     <ContactAddress>
-        <AddressType>postal</AddressType>
-        <Address>PL 503</Address>
-        <City>Helsinki</City>
-        <StateOrProvince>Uusimaa</StateOrProvince>
-        <PostCode>00101</PostCode>
-        <Country>Finland</Country>
+        <AddressType><TMPL_var contact_address_type></AddressType>
+        <Address><TMPL_var contact_address></Address>
+        <City><TMPL_var contact_address_city></City>
+        <StateOrProvince><TMPL_var contact_address_province></StateOrProvince>
+        <PostCode><TMPL_var contact_address_post_code></PostCode>
+        <Country><TMPL_var contact_address_country></Country>
     </ContactAddress>
-      <ContactVoiceTelephone>+358 29 539 1000</ContactVoiceTelephone>
-      <ContactFacsimileTelephone>+358 29 539 2303</ContactFacsimileTelephone>
+      <ContactVoiceTelephone><TMPL_var telephone_number></ContactVoiceTelephone>
+      <ContactFacsimileTelephone><TMPL_var facimile_number></ContactFacsimileTelephone>
   </ContactInformation>
   <Fees>
-   The use of this service and the returned data is limited. Contract with FMI is required for any kind of use.
+   <TMPL_var fees_notice>
   </Fees>
   <AccessConstraints>
-    The use of this service and the returned data is limited. Contract with FMI is required for any kind of use.
+    <TMPL_var access_constraints_notice>
   </AccessConstraints>
 </Service>
 
@@ -98,7 +97,7 @@ http://catalog.fmi.fi/geonetwork/srv/en/csw?SERVICE=CSW&amp;VERSION=2.0.2&amp;RE
   </TMPL_if>
 
  <Layer>
-  <Title>Finnish Meteorological Institute Web Map Service</Title>
+  <Title><TMPL_var layers_title></Title>
   <Abstract></Abstract>
   <TMPL_if defined(wms_layers)><TMPL_var wms_layers></TMPL_if>
  </Layer>

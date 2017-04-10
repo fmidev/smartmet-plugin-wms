@@ -15,13 +15,13 @@
 #include <spine/FileCache.h>
 #include <spine/Thread.h>
 
-#include <libconfig.h++>
-#include <boost/utility.hpp>
 #include <boost/optional.hpp>
-#include <set>
-#include <vector>
+#include <boost/utility.hpp>
+#include <libconfig.h++>
 #include <map>
+#include <set>
 #include <string>
+#include <vector>
 
 namespace SmartMet
 {
@@ -105,9 +105,7 @@ class WMSConfig
   std::string jsonText(const std::string& theLayerName) const;
 
   bool inspireExtensionSupported() const;
-  const std::string& inspireExtensionDefaultLanguage() const;
-  const std::string& inspireExtensionSupportedLanguage() const;
-  const std::string& inspireExtensionResponseLanguage() const;
+  const std::map<std::string, std::string>& getCapabilitiesResponseVariables() const;
 
   void shutdown();
 
@@ -130,9 +128,8 @@ class WMSConfig
   std::set<std::string> itsSupportedWMSVersions;
 
   bool itsInspireExtensionSupported = false;
-  std::string itsInspireExtensionDefaultLanguage;
-  std::string itsInspireExtensionSupportedLanguage;
-  std::string itsInspireExtensionResponseLanguage;
+
+  std::map<std::string, std::string> itsGetCapabilitiesResponseVariables;
 
   // Valid WMS layers (name -> layer proxy)
   std::map<std::string, WMSLayerProxy> itsLayers;
