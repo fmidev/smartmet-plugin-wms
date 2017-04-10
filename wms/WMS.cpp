@@ -1,12 +1,12 @@
 #include "WMS.h"
 #include "WMSException.h"
 
-#include <spine/Exception.h>
-#include <spine/Convenience.h>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
 #include <boost/foreach.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include <boost/tokenizer.hpp>
+#include <spine/Convenience.h>
+#include <spine/Exception.h>
 
 #define WMS_SERVICE "WMS"
 #define WMS_GET_CAPABILITIES "GetCapabilities"
@@ -51,9 +51,8 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
     // valid fromat is 0xFFFFFF
     if (hex_string.size() != 8)
     {
-      Spine::Exception exception(BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      throw exception;
+      throw Spine::Exception(BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
     int red = 255;
@@ -69,9 +68,8 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
     }
     catch (...)
     {
-      Spine::Exception exception(BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!", NULL);
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      throw exception;
+      throw Spine::Exception(BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!", NULL)
+          .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
     return rgb_color(red, green, blue);
@@ -125,9 +123,8 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
 
     if ((designatorCharPos - pos) == 1)
     {
-      Spine::Exception exception(BCP, "Invalid dimension value '" + periodString + "'!");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
-      throw exception;
+      throw Spine::Exception(BCP, "Invalid dimension value '" + periodString + "'!")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
     }
 
     std::string numberStr(periodString.substr(pos + 1, designatorCharPos - pos - 1));
@@ -140,9 +137,8 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
     }
     catch (boost::bad_lexical_cast const&)
     {
-      Spine::Exception exception(BCP, "Invalid dimension value '" + periodString + "'!", NULL);
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
-      throw exception;
+      throw Spine::Exception(BCP, "Invalid dimension value '" + periodString + "'!", NULL)
+          .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
     }
 
     return retval;
