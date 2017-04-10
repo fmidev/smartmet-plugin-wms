@@ -5,8 +5,8 @@
 #include <smartmet/spine/Reactor.h>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/foreach.hpp>
 
 #include <algorithm>
 #include <fstream>
@@ -104,92 +104,99 @@ namespace MyTest
 {
 void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
 {
-  options.parseConfig();
-  SmartMet::Spine::Reactor reactor(options);
-  prelude(reactor);
-
-  std::cout << "OK" << std::endl;
-
-  std::string command;
-  while (getline(std::cin, command))
+  try
   {
-    if (command == "quit")
-      break;
+    options.parseConfig();
+    SmartMet::Spine::Reactor reactor(options);
+    prelude(reactor);
 
-    using std::cout;
-    using std::endl;
-    using std::string;
-    using boost::filesystem::path;
+    std::cout << "OK" << std::endl;
 
-    path inputfile("input");
-    inputfile /= command;
-
-    bool ok = true;
-
-    string input = get_file_contents(inputfile);
-
-    // emacs keeps messing up the newlines, easier to make sure
-    // the ending is correct this way, but do NOT touch POST queries
-
-    if (boost::algorithm::ends_with(inputfile.string(), ".get"))
+    std::string command;
+    while (getline(std::cin, command))
     {
-      boost::algorithm::trim(input);
-      input += "\r\n\r\n";
-    }
+      if (command == "quit")
+        break;
 
-    auto query = SmartMet::Spine::HTTP::parseRequest(input);
+      using std::cout;
+      using std::endl;
+      using std::string;
+      using boost::filesystem::path;
 
-    path resultfile = path("failures") / command;
-    boost::filesystem::create_directories(resultfile.parent_path());
+      path inputfile("input");
+      inputfile /= command;
 
-    if (query.first == SmartMet::Spine::HTTP::ParsingStatus::COMPLETE)
-    {
-      try
+      bool ok = true;
+
+      string input = get_file_contents(inputfile);
+
+      // emacs keeps messing up the newlines, easier to make sure
+      // the ending is correct this way, but do NOT touch POST queries
+
+      if (boost::algorithm::ends_with(inputfile.string(), ".get"))
       {
-        SmartMet::Spine::HTTP::Response response;
+        boost::algorithm::trim(input);
+        input += "\r\n\r\n";
+      }
 
-        auto view = reactor.getHandlerView(*query.second);
-        if (!view)
+      auto query = SmartMet::Spine::HTTP::parseRequest(input);
+
+      path resultfile = path("failures") / command;
+      boost::filesystem::create_directories(resultfile.parent_path());
+
+      if (query.first == SmartMet::Spine::HTTP::ParsingStatus::COMPLETE)
+      {
+        try
+        {
+          SmartMet::Spine::HTTP::Response response;
+
+          auto view = reactor.getHandlerView(*query.second);
+          if (!view)
+          {
+            ok = false;
+            cout << "FAILED TO HANDLE REQUEST STRING" << endl;
+          }
+          else
+          {
+            view->handle(reactor, *query.second, response);
+
+            string result = get_full_response(response);
+
+            if (ok)
+              put_file_contents(resultfile, result);
+          }
+        }
+        catch (std::exception& e)
         {
           ok = false;
-          cout << "FAILED TO HANDLE REQUEST STRING" << endl;
+          cout << "EXCEPTION: " << e.what() << endl;
         }
-        else
+        catch (...)
         {
-          view->handle(reactor, *query.second, response);
-
-          string result = get_full_response(response);
-
-          if (ok)
-            put_file_contents(resultfile, result);
+          ok = false;
+          cout << "UNKNOWN EXCEPTION" << endl;
         }
       }
-      catch (std::exception& e)
+      else if (query.first == SmartMet::Spine::HTTP::ParsingStatus::FAILED)
       {
         ok = false;
-        cout << "EXCEPTION: " << e.what() << endl;
+        cout << "FAILED TO PARSE REQUEST STRING" << endl;
       }
-      catch (...)
+      else
       {
         ok = false;
-        cout << "UNKNOWN EXCEPTION" << endl;
+        cout << "PARSED REQUEST ONLY PARTIALLY" << endl;
       }
-    }
-    else if (query.first == SmartMet::Spine::HTTP::ParsingStatus::FAILED)
-    {
-      ok = false;
-      cout << "FAILED TO PARSE REQUEST STRING" << endl;
-    }
-    else
-    {
-      ok = false;
-      cout << "PARSED REQUEST ONLY PARTIALLY" << endl;
-    }
 
-    if (!ok)
-      put_file_contents(resultfile, "");
+      if (!ok)
+        put_file_contents(resultfile, "");
 
-    cout << "DONE" << endl;
+      cout << "DONE" << endl;
+    }
+  }
+  catch (...)
+  {
+    throw Spine::Exception(BCP, "Failed to run the tests");
   }
 }
 
@@ -210,7 +217,7 @@ void prelude(SmartMet::Spine::Reactor& reactor)
             << "===================" << std::endl;
 }
 
-int main()
+int main() try
 {
   SmartMet::Spine::Options options;
   options.quiet = true;
@@ -220,4 +227,10 @@ int main()
   SmartMet::MyTest::test(options, prelude);
 
   return 0;
+}
+catch (...)
+{
+  SmartMet::Spine::Exception ex(BCP, "Failed to run the tests");
+  ex.printError();
+  return 1;
 }
