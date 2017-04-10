@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<-TMPL_foreach paths as path>
+<Placemark>
+ <ExtendedData>
+  <-TMPL_if defined(path.layertype)>
+  <Data name="layertype"><value><TMPL_var path.layertype></value></Data>
+  <-/TMPL_if>
+  <-TMPL_if defined(path.parameter)>
+  <Data name="parameter"><value><TMPL_var path.parameter></value></Data>
+  <-/TMPL_if>
+  <-TMPL_if defined(path.time)>
+  <Data name="time"><value><TMPL_var path.time></value></Data>
+  <-/TMPL_if>
+  <-TMPL_if defined(path.lolimit)>
+  <Data name="lolimit"><value><TMPL_var path.lolimit></value></Data>
+  <-/TMPL_if>
+  <-TMPL_if defined(path.hilimit)>
+  <Data name="hilimit"><value><TMPL_var path.hilimit></value></Data>
+  <-/TMPL_if>
+  <-TMPL_if defined(path.value)>
+  <Data name="value"><value><TMPL_var path.value></value></Data>
+  <-/TMPL_if>
+ </ExtendedData>
+ <TMPL_var path.data>
+</Placemark>
+<-/TMPL_foreach>
+</kml>
