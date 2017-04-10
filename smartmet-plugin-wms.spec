@@ -19,7 +19,7 @@ BuildRequires: smartmet-library-spine-devel >= 17.4.8
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.4.8
 %endif
-%if %{with authentication}
+%if %{with observation}
 BuildRequires: smartmet-engine-observation-devel >= 17.4.7
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 17.3.15
