@@ -162,7 +162,7 @@ WMSConfig::WMSConfig(const Plugin::Dali::Config& daliConfig,
     itsGetCapabilitiesResponseVariables.insert(make_pair("contact_address_post_code", ""));
     itsGetCapabilitiesResponseVariables.insert(make_pair("contact_address_country", ""));
     itsGetCapabilitiesResponseVariables.insert(make_pair("telephone_number", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("facimile_number", ""));
+    itsGetCapabilitiesResponseVariables.insert(make_pair("facsimile_number", ""));
     itsGetCapabilitiesResponseVariables.insert(make_pair("fees", ""));
     itsGetCapabilitiesResponseVariables.insert(make_pair("access_constraints", ""));
     itsGetCapabilitiesResponseVariables.insert(make_pair("layers_title", ""));
@@ -208,8 +208,9 @@ WMSConfig::WMSConfig(const Plugin::Dali::Config& daliConfig,
     daliConfig.getConfig().lookupValue(
         "wms.get_capabilities_response.contact_info.telephone_number",
         itsGetCapabilitiesResponseVariables["telephone_number"]);
-    daliConfig.getConfig().lookupValue("wms.get_capabilities_response.contact_info.facimile_number",
-                                       itsGetCapabilitiesResponseVariables["facimile_number"]);
+    daliConfig.getConfig().lookupValue(
+        "wms.get_capabilities_response.contact_info.facsimile_number",
+        itsGetCapabilitiesResponseVariables["facsimile_number"]);
 
     // Do first layer scan
     updateLayerMetaData();
