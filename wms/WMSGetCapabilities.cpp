@@ -119,7 +119,7 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     hash["contact_address_post_code"] = responseVariables.at("contact_address_post_code");
     hash["contact_address_country"] = responseVariables.at("contact_address_country");
     hash["telephone_number"] = responseVariables.at("telephone_number");
-    hash["facimile_number"] = responseVariables.at("facimile_number");
+    hash["facsimile_number"] = responseVariables.at("facsimile_number");
     hash["fees"] = responseVariables.at("fees");
     hash["access_constraints"] = responseVariables.at("access_constraints");
     hash["layers_title"] = responseVariables.at("layers_title");
