@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 17.4.10
-Release: 1%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -19,7 +19,7 @@ BuildRequires: smartmet-library-spine-devel >= 17.4.8
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.4.8
 %endif
-%if %{with authentication}
+%if %{with observation}
 BuildRequires: smartmet-engine-observation-devel >= 17.4.7
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 17.3.15
@@ -87,8 +87,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-* Mon Apr 10 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.4.10-1.fmi
+
+* Mon Apr 10 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.4.10-3.fmi
 - Hardcoded values in GetCapabilities-response template file removed and moved into configuration file
+
+* Mon Apr 10 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.4.10-2.fmi
+- Added rawkml and rawgeojson templates which omit presentation attributes
+
+* Mon Apr 10 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.4.10-1.fmi
+- Added detection of global data that needs wraparound when contouring
 
 * Sat Apr  8 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.4.8-1.fmi
 - Simplified error handling

@@ -1,0 +1,33 @@
+{
+ "type": "FeatureCollection",
+ "features":
+ [
+<-TMPL_foreach paths as path>
+<-TMPL_if !path.__first__>,</TMPL_if>
+   {
+    "type": "Feature",
+    "geometry":
+    {
+      "type": "<TMPL_var path.type>",
+      "coordinates": "<TMPL_var path.data>"
+    },
+    "properties":
+    {
+      "layertype": "<TMPL_var path.layertype>"
+      <-TMPL_if defined(path.lolimit)>,
+      "lolimit": <TMPL_var path.lolimit></TMPL_if>
+      <-TMPL_if defined(path.hilimit)>,
+      "hilimit": <TMPL_var path.hilimit></TMPL_if>
+      <-TMPL_if defined(path.value)>,
+      "value": <TMPL_var path.value></TMPL_if>
+      <-TMPL_if defined(path.parameter)>,
+      "parameter": "<TMPL_var path.parameter>"</TMPL_if>
+      <-TMPL_if defined(path.time)>,
+      "time": "<TMPL_var path.time>"</TMPL_if>
+      <-TMPL_if defined(path.iri)>,
+      "iri": "<TMPL_var path.iri>"</TMPL_if>
+    }
+   }
+<-/TMPL_foreach>
+ ]
+}

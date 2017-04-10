@@ -7,14 +7,14 @@
 #include "Isoline.h"
 #include "Layer.h"
 #include "State.h"
-#include <gis/OGR.h>
+#include <boost/foreach.hpp>
 #include <ctpp2/CDT.hpp>
-#include <spine/Json.h>
-#include <spine/ParameterFactory.h>
 #include <engines/contour/Engine.h>
 #include <engines/gis/Engine.h>
 #include <gis/Box.h>
-#include <boost/foreach.hpp>
+#include <gis/OGR.h>
+#include <spine/Json.h>
+#include <spine/ParameterFactory.h>
 
 // TODO:
 #include <boost/timer/timer.hpp>
@@ -282,7 +282,8 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       sr = crs.get();
 
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, sr);
-    std::vector<OGRGeometryPtr> geoms = contourer.contour(qhash, wkt, *matrix, coords, options, sr);
+    std::vector<OGRGeometryPtr> geoms =
+        contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), sr);
 
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
