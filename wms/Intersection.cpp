@@ -5,13 +5,13 @@
 #include "Hash.h"
 #include "Projection.h"
 #include "State.h"
+#include <boost/foreach.hpp>
+#include <engines/contour/Engine.h>
+#include <engines/contour/Interpolation.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
-#include <engines/contour/Engine.h>
-#include <engines/contour/Interpolation.h>
-#include <boost/foreach.hpp>
 
 namespace SmartMet
 {
@@ -245,7 +245,7 @@ void Intersection::init(Engine::Querydata::Q q,
     OGRSpatialReference* sr = nullptr;
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, sr);
     std::vector<OGRGeometryPtr> isobands =
-        contourer.contour(qhash, wkt, *matrix, coords, options, sr);
+        contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), sr);
     isoband = *(isobands.begin());
 
     if (!isoband || isoband->IsEmpty())
