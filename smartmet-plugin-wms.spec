@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.4.10
-Release: 3%{?dist}.fmi
+Version: 17.4.11
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -87,6 +87,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+
+* Tue Apr 11 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.4.11-1.fmi
+- Variable name in template file corrcted
 
 * Mon Apr 10 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.4.10-3.fmi
 - Hardcoded values in GetCapabilities-response template file removed and moved into configuration file
