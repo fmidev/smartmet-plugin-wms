@@ -89,7 +89,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 
 * Tue Apr 11 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.4.11-1.fmi
-- Variable name in template file corrcted
+- Variable name in template file corrected
 
 * Mon Apr 10 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.4.10-3.fmi
 - Hardcoded values in GetCapabilities-response template file removed and moved into configuration file
