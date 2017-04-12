@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.4.11
+Version: 17.4.12
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -14,18 +14,18 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 16.12.21
-BuildRequires: smartmet-library-macgyver >= 17.3.16
-BuildRequires: smartmet-library-spine-devel >= 17.4.8
+BuildRequires: smartmet-library-macgyver >= 17.4.10
+BuildRequires: smartmet-library-spine-devel >= 17.4.10
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.4.8
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 17.4.7
+BuildRequires: smartmet-engine-observation-devel >= 17.4.10
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 17.3.15
+BuildRequires: smartmet-engine-gis-devel >= 17.4.11
 BuildRequires: smartmet-engine-geonames-devel >= 17.3.15
-BuildRequires: smartmet-engine-querydata-devel >= 17.4.8
-BuildRequires: smartmet-engine-contour-devel >= 17.3.15
+BuildRequires: smartmet-engine-querydata-devel >= 17.4.10
+BuildRequires: smartmet-engine-contour-devel >= 17.4.10
 BuildRequires: smartmet-library-gis-devel >= 17.3.14
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.2
@@ -40,17 +40,17 @@ Requires: ctpp2 >= 2.8.2
 Requires: libconfig
 Requires: librsvg2 >= 2.40.6
 Requires: smartmet-library-gis >= 17.3.14
-Requires: smartmet-library-macgyver >= 17.3.16
+Requires: smartmet-library-macgyver >= 17.4.10
 Requires: smartmet-library-giza >= 16.12.21
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 17.4.8
 %endif
-Requires: smartmet-engine-querydata >= 17.4.8
-Requires: smartmet-engine-contour >= 17.3.15
-Requires: smartmet-engine-gis >= 17.3.15
+Requires: smartmet-engine-querydata >= 17.4.10
+Requires: smartmet-engine-contour >= 17.4.10
+Requires: smartmet-engine-gis >= 17.4.11
 Requires: smartmet-engine-geonames >= 17.3.15
-Requires: smartmet-server >= 17.4.7
-Requires: smartmet-library-spine >= 17.4.8
+Requires: smartmet-server >= 17.4.8
+Requires: smartmet-library-spine >= 17.4.10
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -87,6 +87,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Apr 12 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.4.12-1.fmi
+- Bug fix: if crs=data, use geographic bounding box for latlon projections
 
 * Tue Apr 11 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.4.11-1.fmi
 - Variable name in template file corrected

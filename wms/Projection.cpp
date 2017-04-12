@@ -3,16 +3,16 @@
 #include "Projection.h"
 #include "Config.h"
 #include "Hash.h"
-#include <spine/Exception.h>
-#include <spine/HTTP.h>
-#include <gis/Box.h>
-#include <gdal/ogr_geometry.h>
-#include <gdal/ogr_spatialref.h>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/foreach.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <gdal/ogr_geometry.h>
+#include <gdal/ogr_spatialref.h>
+#include <gis/Box.h>
+#include <spine/Exception.h>
+#include <spine/HTTP.h>
 #include <cmath>
 #include <stdexcept>
 
@@ -225,12 +225,25 @@ void Projection::update(const Engine::Querydata::Q& theQ)
 
       if (no_bbox)
       {
-        auto world1 = theQ->area().XYToWorldXY(theQ->area().BottomLeft());
-        auto world2 = theQ->area().XYToWorldXY(theQ->area().TopRight());
-        x1 = world1.X();
-        y1 = world1.Y();
-        x2 = world2.X();
-        y2 = world2.Y();
+        if (theQ->area().ClassName() == std::string("NFmiLatLonArea") ||
+            theQ->area().ClassName() == std::string("NFmiRotatedLatlLonArea"))
+        {
+          auto bottomleft = theQ->area().BottomLeftLatLon();
+          auto topright = theQ->area().TopRightLatLon();
+          x1 = bottomleft.X();
+          y1 = bottomleft.Y();
+          x2 = topright.X();
+          y2 = topright.Y();
+        }
+        else
+        {
+          auto world1 = theQ->area().XYToWorldXY(theQ->area().BottomLeft());
+          auto world2 = theQ->area().XYToWorldXY(theQ->area().TopRight());
+          x1 = world1.X();
+          y1 = world1.Y();
+          x2 = world2.X();
+          y2 = world2.Y();
+        }
       }
 
       ogr_crs.reset();
