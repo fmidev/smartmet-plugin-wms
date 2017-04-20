@@ -11,6 +11,7 @@
 #include "WMSLayer.h"
 
 #include <engines/gis/Engine.h>
+#include <engines/observation/Engine.h>
 #include <engines/querydata/Engine.h>
 #include <spine/FileCache.h>
 #include <spine/Thread.h>
@@ -74,6 +75,9 @@ class WMSConfig
 #ifndef WITHOUT_AUTHENTICATION
             Engine::Authentication::Engine* authEngine,
 #endif
+#ifndef WITHOUT_OBSERVATION
+            Engine::Observation::Engine* obsEngine,
+#endif
             Engine::Gis::Engine* gisEngine);
 
 #ifndef WITHOUT_AUTHENTICATION
@@ -121,6 +125,9 @@ class WMSConfig
   // For GetCapabilities and GetMap Authentication
   Engine::Authentication::Engine* itsAuthEngine = nullptr;
 #endif
+#ifndef WITHOUT_OBSERVATION
+  Engine::Observation::Engine* itsObsEngine = nullptr;
+#endif
 
   // supported map formats
   std::set<std::string> itsSupportedMapFormats;
@@ -140,6 +147,9 @@ class WMSConfig
 
   void updateLayerMetaData();
 
+#ifndef WITHOUT_OBSERVATION
+  std::set<std::string> getObservationProducers() const;
+#endif
   // For locking purposes
   bool isValidLayerImpl(const std::string& theLayer) const;
 

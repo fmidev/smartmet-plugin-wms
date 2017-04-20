@@ -14,8 +14,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <spine/Exception.h>
 
-#include <set>
 #include <list>
+#include <set>
 
 namespace SmartMet
 {
@@ -31,15 +31,16 @@ class WMSTimeDimension
 
   void removeTimestep(const boost::posix_time::ptime& timestep);
 
-  bool isValidTime(const boost::posix_time::ptime& theTime) const;
+  virtual bool isValidTime(const boost::posix_time::ptime& theTime) const;
 
-  boost::posix_time::ptime mostCurrentTime() const;
+  virtual boost::posix_time::ptime mostCurrentTime() const;
 
   std::set<boost::posix_time::ptime> getTimeSteps() const;
 
   virtual std::string getCapabilities() const = 0;
 
   bool currentValue() { return current; }
+
  protected:
   bool current;
   std::set<boost::posix_time::ptime> itsTimesteps;
@@ -77,6 +78,8 @@ class IntervalTimeDimension : public WMSTimeDimension
   tag_interval getInterval() const;
 
   virtual std::string getCapabilities() const;
+  virtual boost::posix_time::ptime mostCurrentTime() const;
+  virtual bool isValidTime(const boost::posix_time::ptime& theTime) const;
 
  private:
   tag_interval itsInterval;

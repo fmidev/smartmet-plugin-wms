@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include "WMSLayer.h"
 #include "WMSConfig.h"
+#include "WMSLayer.h"
 
 #include <engines/querydata/Engine.h>
 #include <spine/Json.h>

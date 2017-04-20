@@ -134,16 +134,16 @@ IntervalTimeDimension::IntervalTimeDimension(const boost::posix_time::ptime& beg
                                              const boost::posix_time::time_duration& step)
     : itsInterval(begin, end, step)
 {
-  try
-  {
-    for (auto timestep = itsInterval.startTime; timestep <= itsInterval.endTime;
-         timestep = timestep + itsInterval.resolution)
-      itsTimesteps.insert(timestep);
-  }
-  catch (...)
-  {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
-  }
+}
+
+boost::posix_time::ptime IntervalTimeDimension::mostCurrentTime() const
+{
+  return itsInterval.endTime;
+}
+
+bool IntervalTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) const
+{
+  return (theTime >= itsInterval.startTime && theTime <= itsInterval.endTime);
 }
 
 IntervalTimeDimension::tag_interval IntervalTimeDimension::getInterval() const

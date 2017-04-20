@@ -106,8 +106,18 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
       hash["inspire_response_language"] = responseVariables.at("response_language");
     }
 
+    if (theConfig.supportedMapFormats().size() > 0)
+    {
+      unsigned int index = 0;
+      for (auto mapformat : theConfig.supportedMapFormats())
+      {
+        hash["mapformats"][index++] = mapformat;
+      }
+    }
+
     hash["title"] = responseVariables.at("title");
-    hash["abstract"] = responseVariables.at("abstract");
+    if (!responseVariables.at("abstract").empty())
+      hash["abstract"] = responseVariables.at("abstract");
     hash["online_resource"] = responseVariables.at("online_resource");
     hash["contact_person"] = responseVariables.at("contact_person");
     hash["organization"] = responseVariables.at("organization");
@@ -120,18 +130,22 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     hash["contact_address_country"] = responseVariables.at("contact_address_country");
     hash["telephone_number"] = responseVariables.at("telephone_number");
     hash["facsimile_number"] = responseVariables.at("facsimile_number");
-    hash["fees"] = responseVariables.at("fees");
-    hash["access_constraints"] = responseVariables.at("access_constraints");
+    if (!responseVariables.at("fees").empty())
+      hash["fees"] = responseVariables.at("fees");
+    if (!responseVariables.at("access_constraints").empty())
+      hash["access_constraints"] = responseVariables.at("access_constraints");
     hash["layers_title"] = responseVariables.at("layers_title");
 
-    std::vector<std::string> keywords;
-    boost::algorithm::split(keywords,
-                            responseVariables.at("keywords"),
-                            boost::is_any_of(","),
-                            boost::token_compress_on);
-    for (unsigned int i = 0; i < keywords.size(); i++)
-      hash["keywords"][i] = keywords[i];
-
+    if (!responseVariables.at("keywords").empty())
+    {
+      std::vector<std::string> keywords;
+      boost::algorithm::split(keywords,
+                              responseVariables.at("keywords"),
+                              boost::is_any_of(","),
+                              boost::token_compress_on);
+      for (unsigned int i = 0; i < keywords.size(); i++)
+        hash["keywords"][i] = keywords[i];
+    }
     std::stringstream tmpl_ss;
     std::stringstream logstream;
 
