@@ -10,12 +10,16 @@
 <Service>
   <Name>WMS</Name>
   <Title><TMPL_var title></Title>
+  <TMPL_if defined(abstract)>
   <Abstract><TMPL_var abstract></Abstract>
+  </TMPL_if>
+  <TMPL_if defined(keywords)>
   <KeywordList>
     <TMPL_foreach keywords as keyword>
       <Keyword><TMPL_var keyword></Keyword>
     </TMPL_foreach>
   </KeywordList>
+  </TMPL_if>
   <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="<TMPL_var online_resource>"/>
   <ContactInformation>
     <ContactPersonPrimary>
@@ -34,12 +38,16 @@
       <ContactVoiceTelephone><TMPL_var telephone_number></ContactVoiceTelephone>
       <ContactFacsimileTelephone><TMPL_var facsimile_number></ContactFacsimileTelephone>
   </ContactInformation>
+  <TMPL_if defined(fees)>
   <Fees>
    <TMPL_var fees>
   </Fees>
+  </TMPL_if>
+  <TMPL_if defined(access_constraints)>
   <AccessConstraints>
     <TMPL_var access_constraints>
   </AccessConstraints>
+  </TMPL_if>
 </Service>
 
 <Capability>
@@ -60,8 +68,11 @@
       </DCPType>
     </GetCapabilities>
     <GetMap>
-      <Format>image/svg+xml</Format>
-      <Format>image/png</Format>
+  <TMPL_if defined(mapformats)>
+    <TMPL_foreach mapformats as mapformat>
+      <Format><TMPL_var mapformat></Format>
+    </TMPL_foreach>
+  </TMPL_if>
       <DCPType>
         <HTTP>
           <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="<TMPL_var getmap_uri>"/></Get>

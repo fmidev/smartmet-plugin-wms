@@ -103,6 +103,9 @@ WMSConfig::WMSConfig(const Plugin::Dali::Config& daliConfig,
 #ifndef WITHOUT_AUTHENTICATION
                      Engine::Authentication::Engine* authEngine,
 #endif
+#ifndef WITHOUT_OBSERVATION
+                     Engine::Observation::Engine* obsEngine,
+#endif
                      Engine::Gis::Engine* gisEngine)
     : itsDaliConfig(daliConfig),
       itsFileCache(theFileCache),
@@ -111,16 +114,15 @@ WMSConfig::WMSConfig(const Plugin::Dali::Config& daliConfig,
 #ifndef WITHOUT_AUTHENTICATION
       itsAuthEngine(authEngine),
 #endif
+#ifndef WITHOUT_OBSERVATION
+      itsObsEngine(obsEngine),
+#endif
       itsShutdownRequested(false),
       itsActiveThreadCount(0)
 
 {
   try
   {
-    itsSupportedWMSVersions.insert("1.3.0");
-    itsSupportedMapFormats.insert("image/svg+xml");
-    itsSupportedMapFormats.insert("image/png");
-
     std::string wmsVersions;
     std::string wmsMapFormats;
     daliConfig.getConfig().lookupValue("wms.versions", wmsVersions);
@@ -680,6 +682,16 @@ const std::map<std::string, std::string>& WMSConfig::getCapabilitiesResponseVari
 {
   return itsGetCapabilitiesResponseVariables;
 }
+
+#ifndef WITHOUT_OBSERVATION
+std::set<std::string> WMSConfig::getObservationProducers() const
+{
+  if (itsObsEngine)
+    return itsObsEngine->getValidStationTypes();
+
+  return std::set<std::string>();
+}
+#endif
 
 }  // namespace WMS
 }  // namespace Plugin

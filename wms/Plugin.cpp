@@ -550,16 +550,33 @@ void Plugin::init()
       Engine::Authentication::Engine *authEngine =
           reinterpret_cast<Engine::Authentication::Engine *>(engine);
 
-      // WMS configurations
+// WMS configurations
+#ifndef WITHOUT_OBSERVATION
+      itsWMSConfig.reset(new WMS::WMSConfig(
+          itsConfig, itsFileCache, itsQEngine, authEngine, itsObsEngine, itsGisEngine));
+#else
       itsWMSConfig.reset(
           new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, authEngine, itsGisEngine));
+#endif
     }
     else
+    {
+#ifndef WITHOUT_OBSERVATION
+      itsWMSConfig.reset(new WMS::WMSConfig(
+          itsConfig, itsFileCache, itsQEngine, nullptr, itsObsEngine, itsGisEngine));
+#else
       itsWMSConfig.reset(
           new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, nullptr, itsGisEngine));
+#endif
+    }
 
 #else
+#ifndef WITHOUT_OBSERVATION
+    itsWMSConfig.reset(
+        new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, itsObsEngine, itsGisEngine));
+#else
     itsWMSConfig.reset(new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, itsGisEngine));
+#endif
 #endif
 
     if (itsShutdownRequested)

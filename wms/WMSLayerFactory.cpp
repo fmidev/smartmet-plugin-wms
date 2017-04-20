@@ -1,8 +1,10 @@
 #include "WMSLayerFactory.h"
 
-#include "WMSQueryDataLayer.h"
 #include "WMSPostGISLayer.h"
-
+#include "WMSQueryDataLayer.h"
+#ifndef WITHOUT_OBSERVATION
+#include "WMSObservationLayer.h"
+#endif
 #include <engines/querydata/Engine.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
@@ -29,10 +31,6 @@ static std::set<std::string> querydata_layers = {"arrow", "isoband", "isoline", 
 
 static std::set<std::string> postgis_layers = {"postgis", "icemap"};
 
-#ifndef WITHOUT_OBSERVATION
-static std::set<std::string> observation_layers = {"windrose"};
-#endif
-
 WMSLayerType getWMSLayerType(const Json::Value& layer)
 {
   try
@@ -56,10 +54,6 @@ WMSLayerType getWMSLayerType(const Json::Value& layer)
     {
       return WMSLayerType::QueryDataLayer;
     }
-
-#ifndef WITHOUT_OBSERVATION
-// TODO!!! Handle ObservationLayer
-#endif
 
     // No identified special layers, this is not a WMSLayer;
     return WMSLayerType::NotWMSLayer;
@@ -179,6 +173,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
   {
     std::string content;
     std::ifstream in(theFileName.c_str());
+
     if (!in)
       throw Spine::Exception(BCP, "Failed to open '" + theFileName + "' for reading!");
 
@@ -203,7 +198,20 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 
     SharedWMSLayer layer;
     Json::Value parsedLayer;
-    WMSLayerType layerType = determineProductType(root, parsedLayer);
+    WMSLayerType layerType = WMSLayerType::NotWMSLayer;
+
+    // producer timestep given in root level
+    std::string producer = root["producer"].asString();
+    std::string timestep = root["timestep"].asString();
+
+    std::set<std::string> obsProducers = theWMSConfig.getObservationProducers();
+
+    // observation layer is reasoned from producer,
+    // other layers from layer type as defined in product file
+    if (obsProducers.find(producer) != obsProducers.end())
+      layerType = WMSLayerType::ObservationLayer;
+    else
+      layerType = determineProductType(root, parsedLayer);
 
     boost::filesystem::path p(theFileName);
 
@@ -216,20 +224,24 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
       }
       case WMSLayerType::QueryDataLayer:
       {
-        // producer given in root level
-        std::string producer = root["producer"].asString();
         // if no producer defined, let's use default producer
         if (producer.empty())
           producer = theWMSConfig.itsDaliConfig.defaultModel();
-
         layer = boost::make_shared<WMSQueryDataLayer>(theWMSConfig.itsQEngine, producer);
         break;
       }
-
+      case WMSLayerType::ObservationLayer:
+      {
 #ifndef WITHOUT_OBSERVATION
-// TODO!!! Handle ObservationLayer
+        if (timestep.empty())
+          timestep = "-1";
+        // timestep -1 indicates that no timestep is given in product-file
+        // in that case timestep is read from obsengine configuration file (default value is 1min)
+        layer = boost::make_shared<WMSObservationLayer>(
+            theWMSConfig.itsObsEngine, producer, std::stoi(timestep));
 #endif
-
+        break;
+      }
       default:  // we should never en up here since determineLayerType should always return a valid
                 // layer type
         throw Spine::Exception(BCP, "WMS Layer enum not handled in WMSLayerFactory.");
