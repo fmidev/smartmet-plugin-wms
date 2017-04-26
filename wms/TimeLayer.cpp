@@ -5,12 +5,12 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "State.h"
-#include <gis/Box.h>
-#include <ctpp2/CDT.hpp>
-#include <spine/Exception.h>
-#include <boost/foreach.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/local_time/local_time.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/foreach.hpp>
+#include <ctpp2/CDT.hpp>
+#include <gis/Box.h>
+#include <spine/Exception.h>
 // TODO:
 #include <boost/timer/timer.hpp>
 
@@ -141,6 +141,8 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
     }
     else if (*timestamp == "origintime")
     {
+      if (!q)
+        throw Spine::Exception(BCP, "Origintime not avaible for TimeLayer");
       ltime = boost::local_time::local_date_time(q->originTime(), tz);
     }
     else if (*timestamp == "wallclock" || *timestamp == "now")

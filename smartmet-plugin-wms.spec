@@ -87,6 +87,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Upcoming
+- Prevent crash if TimeLayer origintime is desired when no querydata has been specified
+
 * Mon Apr 24 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.4.24-1.fmi
 - Fixed GeoJSON templates to omit quotes around the coordinates
 
