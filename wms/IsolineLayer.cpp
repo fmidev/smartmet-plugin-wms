@@ -165,6 +165,8 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
             BCP,
             "Resampling data in IsolineLayer requires DEM and land cover data to be available");
 
+      has_data_proj = true;  // no need to reproject anymore
+
       q = q->sample(param,
                     valid_time,
                     *crs,

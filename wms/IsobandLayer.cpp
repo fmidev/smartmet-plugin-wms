@@ -173,6 +173,8 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         throw Spine::Exception(BCP,
                                "Resampling data requires DEM and land cover data to be available!");
 
+      has_data_proj = true;  // no need to reproject anymore
+
       q = q->sample(param,
                     valid_time,
                     *crs,

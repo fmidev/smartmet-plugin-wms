@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.4.24
+Version: 17.4.28
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -14,18 +14,18 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 16.12.21
-BuildRequires: smartmet-library-macgyver >= 17.4.10
-BuildRequires: smartmet-library-spine-devel >= 17.4.10
+BuildRequires: smartmet-library-macgyver >= 17.4.19
+BuildRequires: smartmet-library-spine-devel >= 17.4.27
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.4.8
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 17.4.10
+BuildRequires: smartmet-engine-observation-devel >= 17.4.20
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 17.4.11
-BuildRequires: smartmet-engine-geonames-devel >= 17.3.15
-BuildRequires: smartmet-engine-querydata-devel >= 17.4.10
-BuildRequires: smartmet-engine-contour-devel >= 17.4.10
+BuildRequires: smartmet-engine-geonames-devel >= 17.4.25
+BuildRequires: smartmet-engine-querydata-devel >= 17.4.19
+BuildRequires: smartmet-engine-contour-devel >= 17.4.25
 BuildRequires: smartmet-library-gis-devel >= 17.3.14
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.2
@@ -40,17 +40,17 @@ Requires: ctpp2 >= 2.8.2
 Requires: libconfig
 Requires: librsvg2 >= 2.40.6
 Requires: smartmet-library-gis >= 17.3.14
-Requires: smartmet-library-macgyver >= 17.4.10
+Requires: smartmet-library-macgyver >= 17.4.19
 Requires: smartmet-library-giza >= 16.12.21
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 17.4.8
 %endif
-Requires: smartmet-engine-querydata >= 17.4.10
-Requires: smartmet-engine-contour >= 17.4.10
+Requires: smartmet-engine-querydata >= 17.4.19
+Requires: smartmet-engine-contour >= 17.4.25
 Requires: smartmet-engine-gis >= 17.4.11
-Requires: smartmet-engine-geonames >= 17.3.15
+Requires: smartmet-engine-geonames >= 17.4.25
 Requires: smartmet-server >= 17.4.8
-Requires: smartmet-library-spine >= 17.4.10
+Requires: smartmet-library-spine >= 17.4.27
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -87,7 +87,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-* Upcoming
+* Fri Apr 28 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.4.28-1.fmi
+- Avoid reprojections once sampling has been done
 - Prevent crash if TimeLayer origintime is desired when no querydata has been specified
 
 * Mon Apr 24 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.4.24-1.fmi
