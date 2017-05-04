@@ -48,7 +48,7 @@ std::string WMSGetCapabilities::resolveGetMapURI(const Spine::HTTP::Request& the
     else
     {
       // http/https scheme selection based on 'X-Forwarded-Proto' header
-      auto host_protocol = theRequest.getHeader("X-Forwarded-Proto");
+      auto host_protocol = theRequest.getProtocol();
       std::string protocol((host_protocol ? *host_protocol : "http") + "://");
 
       std::string host = *host_header;
@@ -123,7 +123,7 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     if (!responseVariables.at("abstract").empty())
       hash["abstract"] = responseVariables.at("abstract");
     // http/https scheme selection based on 'X-Forwarded-Proto' header
-    auto host_protocol = theRequest.getHeader("X-Forwarded-Proto");
+    auto host_protocol = theRequest.getProtocol();
     std::string protocol(host_protocol ? *host_protocol : "" /*"http"*/);
     if (!protocol.empty())
       protocol += "://";
