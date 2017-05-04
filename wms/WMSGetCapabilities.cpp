@@ -47,6 +47,10 @@ std::string WMSGetCapabilities::resolveGetMapURI(const Spine::HTTP::Request& the
     }
     else
     {
+      // http/https scheme selection based on 'X-Forwarded-Proto' header
+      auto host_protocol = theRequest.getHeader("X-Forwarded-Proto");
+      std::string protocol((host_protocol ? *host_protocol : "http") + "://");
+
       std::string host = *host_header;
       if (host == "data.fmi.fi" || host == "wms.fmi.fi")  // These should be configurable
       {
@@ -56,17 +60,17 @@ std::string WMSGetCapabilities::resolveGetMapURI(const Spine::HTTP::Request& the
         if (!apikey)
         {
           // No apikey? We'll make do without.
-          return "http://" + host + "/wms";
+          return protocol + host + "/wms";
         }
         else
         {
-          return "http://" + host + "/fmi-apikey/" + *apikey + "/wms";
+          return protocol + host + "/fmi-apikey/" + *apikey + "/wms";
         }
       }
       else
       {
         // No apikey needed
-        return "http://" + host + "/wms";
+        return protocol + host + "/wms";
       }
     }
   }
@@ -118,7 +122,24 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     hash["title"] = responseVariables.at("title");
     if (!responseVariables.at("abstract").empty())
       hash["abstract"] = responseVariables.at("abstract");
-    hash["online_resource"] = responseVariables.at("online_resource");
+    // http/https scheme selection based on 'X-Forwarded-Proto' header
+    auto host_protocol = theRequest.getHeader("X-Forwarded-Proto");
+    std::string protocol(host_protocol ? *host_protocol : "" /*"http"*/);
+    if (!protocol.empty())
+      protocol += "://";
+    std::string online_resource = responseVariables.at("online_resource");
+    if (!protocol.empty() && !online_resource.empty())
+    {
+      if (boost::find_first(online_resource, "http://"))
+      {
+        boost::algorithm::replace_first(online_resource, "http://", protocol);
+      }
+      else if (boost::find_first(online_resource, "https://"))
+      {
+        boost::algorithm::replace_first(online_resource, "https://", protocol);
+      }
+    }
+    hash["online_resource"] = online_resource;
     hash["contact_person"] = responseVariables.at("contact_person");
     hash["organization"] = responseVariables.at("organization");
     hash["contact_position"] = responseVariables.at("contact_position");

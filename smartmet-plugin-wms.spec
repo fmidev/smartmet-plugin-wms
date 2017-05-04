@@ -87,6 +87,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Upcoming
+- http/https scheme selection based on X-Forwarded-Proto header; STU-5084
+
 * Fri Apr 28 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.4.28-1.fmi
 - Avoid reprojections once sampling has been done
 - Prevent crash if TimeLayer origintime is desired when no querydata has been specified
