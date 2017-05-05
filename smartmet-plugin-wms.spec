@@ -15,7 +15,7 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 16.12.21
 BuildRequires: smartmet-library-macgyver >= 17.4.19
-BuildRequires: smartmet-library-spine-devel >= 17.4.27
+BuildRequires: smartmet-library-spine-devel >= 1
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.4.8
 %endif
@@ -50,7 +50,7 @@ Requires: smartmet-engine-contour >= 17.4.25
 Requires: smartmet-engine-gis >= 17.4.11
 Requires: smartmet-engine-geonames >= 17.4.25
 Requires: smartmet-server >= 17.4.8
-Requires: smartmet-library-spine >= 17.4.27
+Requires: smartmet-library-spine >= 1
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -88,6 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Upcoming
+- http/https scheme selection based on X-Forwarded-Proto header; STU-5084
 - GetMap and GetCapabilities keywords are now case insensitive
 
 * Fri Apr 28 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.4.28-1.fmi
