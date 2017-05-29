@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 17.5.29
-Release: 2%{?dist}.fmi
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -87,9 +87,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-* Mon May  29 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.5.29-2.fmi
-- Added test case for GetCapabilities message (BRAINSTORM-895)
-
 * Mon May  29 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.5.29-1.fmi
 - LegendURL support added to GetCapabilities response (BRAINSTORM-895)
 - GetCapabilities response message made more configurable (BRAINSTORM-870)
