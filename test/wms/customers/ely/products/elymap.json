@@ -1,4 +1,32 @@
 {
+	"styles":
+
+	[
+		{
+		   "name": "raster",
+		   "title": "Default raster",
+	           "abstract": "A sample style that draws a raster, good for displaying imagery",
+		   "legend_url":
+		   {
+			"width":20,
+			"height":20,
+			"format":"image/png",
+			"online_resource":"xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:type=\"simple\" xlink:href=\"http://d.geosrv.fmi.fi:8080/geoserver/ows?service=WMS&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=Radar%3Askandinavia_rr_eureffin\""
+		   }
+		},
+		{
+		   "name": "raster2",
+		   "title": "Raster2",
+	           "abstract": "A sample style2 that draws a raster, good for displaying imagery",
+		   "legend_url":
+		   {
+			"width":30,
+			"height":30,
+			"format":"image/png",
+			"online_resource":"xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:type=\"simple\" xlink:href=\"http://d.geosrv.fmi.fi:8080/geoserver/ows?service=WMS&amp;request=GetLegendGraphic&amp;format=image%2Fpng&amp;width=20&amp;height=20&amp;layer=Radar%3Askandinavia_rr_eureffin\""
+		   }
+		}
+	],
     "title": "ELY map",
     "refs":
     {
