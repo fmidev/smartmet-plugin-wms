@@ -253,10 +253,52 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     layer->quiet = theWMSConfig.itsDaliConfig.quiet();
     layer->name = theNamespace + ":" + p.stem().string();
     layer->title = root["title"].asString();
-    ;
     layer->abstract = root["abstract"].asString();
     layer->productFile = theFileName;
     layer->customer = theCustomer;
+
+    // read styles
+    Json::Value nulljson;
+    auto json = root.get("styles", nulljson);
+    if (!json.isNull())
+    {
+      if (!json.isArray())
+        throw Spine::Exception(BCP, "WMSLayer style settings must be an array");
+
+      WMSLayerStyle layerStyle;
+
+      for (unsigned int i = 0; i < json.size(); i++)
+      {
+        const Json::Value& style_json = json[i];
+        auto json_value = style_json.get("name", nulljson);
+        if (!json_value.isNull())
+          layerStyle.name = json_value.asString();
+        json_value = style_json.get("title", nulljson);
+        if (!json_value.isNull())
+          layerStyle.title = json_value.asString();
+        json_value = style_json.get("abstract", nulljson);
+        if (!json_value.isNull())
+          layerStyle.abstract = json_value.asString();
+
+        auto legend_url_json = style_json.get("legend_url", nulljson);
+        if (!legend_url_json.isNull())
+        {
+          json_value = legend_url_json.get("width", nulljson);
+          if (!json_value.isNull())
+            layerStyle.legend_url.width = json_value.asInt();
+          json_value = legend_url_json.get("height", nulljson);
+          if (!json_value.isNull())
+            layerStyle.legend_url.height = json_value.asInt();
+          json_value = legend_url_json.get("format", nulljson);
+          if (!json_value.isNull())
+            layerStyle.legend_url.format = json_value.asString();
+          json_value = legend_url_json.get("online_resource", nulljson);
+          if (!json_value.isNull())
+            layerStyle.legend_url.online_resource = json_value.asString();
+        }
+        layer->styles.push_back(layerStyle);
+      }
+    }
 
     // always supported CRS
     layer->crs.insert("EPSG:2393");  // YKJ

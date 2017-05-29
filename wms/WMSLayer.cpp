@@ -1,18 +1,18 @@
-#include "WMS.h"
 #include "WMSLayer.h"
+#include "WMS.h"
 #include "WMSException.h"
 
 #include <engines/gis/Engine.h>
 #include <spine/Exception.h>
 
-#include <macgyver/TimeParser.h>
 #include <macgyver/StringConversion.h>
+#include <macgyver/TimeParser.h>
 
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/split.hpp>
 #include <boost/foreach.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/join.hpp>
 
 #include <fmt/format.h>
 
@@ -59,8 +59,9 @@ bool WMSLayer::isValidStyle(const std::string& theStyle) const
 {
   try
   {
-    if (styles.find(theStyle) != styles.end())
-      return true;
+    for (auto style : styles)
+      if (style.name == theStyle)
+        return true;
 
     return false;
   }
@@ -142,8 +143,12 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
         << "eastBoundLongitude=" << layer.geographicBoundingBox.xMax << " "
         << "northBoundLatitude=" << layer.geographicBoundingBox.yMax << std::endl
         << "crs: " << boost::algorithm::join(layer.crs, " ") << std::endl
-        << "styles: " << boost::algorithm::join(layer.styles, " ") << std::endl
-        << "customer: " << layer.customer << std::endl;
+        << "styles: ";
+    for (auto style : layer.styles)
+      ost << style.name << " ";
+    if (layer.styles.size() > 0)
+      ost << " " << std::endl;
+    ost << "customer: " << layer.customer << std::endl;
 
     if (layer.timeDimension)
     {
@@ -276,13 +281,17 @@ std::string WMSLayer::generateGetCapabilities(const Engine::Gis::Engine& gisengi
 
     ss += bbox_ss;
 
+    // add layer styles
+    for (auto style : styles)
+      ss += style.toXML();
+
     if (timeDimension)
     {
       // then bounding boxes of these CRS
       ss += "   <Dimension name=\"time\" units=" + enclose_with_quotes("ISO8601") +
-            "  multipleValues=" + enclose_with_quotes("0") + "  nearestValue=" +
-            enclose_with_quotes("0") + "  current=" +
-            enclose_with_quotes(timeDimension->currentValue() ? "1" : "0") + ">" +
+            "  multipleValues=" + enclose_with_quotes("0") +
+            "  nearestValue=" + enclose_with_quotes("0") +
+            "  current=" + enclose_with_quotes(timeDimension->currentValue() ? "1" : "0") + ">" +
             timeDimension->getCapabilities() + "</Dimension>" + "\n";
     }
 

@@ -11,15 +11,16 @@
 
 #pragma once
 
+#include "WMSLayerStyle.h"
 #include "WMSTimeDimension.h"
 
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/local_time/local_time.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <spine/Value.h>
 
-#include <set>
 #include <list>
 #include <map>
+#include <set>
 
 namespace SmartMet
 {
@@ -46,7 +47,7 @@ class WMSLayer
   std::set<std::string> keywords;
   Spine::BoundingBox geographicBoundingBox;
   std::set<std::string> crs;
-  std::set<std::string> styles;
+  std::vector<WMSLayerStyle> styles;
   boost::shared_ptr<WMSTimeDimension> timeDimension;  // Optional, may be empty for non-temporal
                                                       // postgis layers
   std::string customer;

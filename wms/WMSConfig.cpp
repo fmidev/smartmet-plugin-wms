@@ -123,31 +123,38 @@ WMSConfig::WMSConfig(const Plugin::Dali::Config& daliConfig,
 {
   try
   {
+    const libconfig::Config& config = daliConfig.getConfig();
+
     std::string wmsVersions;
     std::string wmsMapFormats;
-    daliConfig.getConfig().lookupValue("wms.versions", wmsVersions);
-    daliConfig.getConfig().lookupValue("wms.mapformats", wmsMapFormats);
+    config.lookupValue("wms.versions", wmsVersions);
+    config.lookupValue("wms.mapformats", wmsMapFormats);
 
     boost::algorithm::split(
         itsSupportedMapFormats, wmsMapFormats, boost::algorithm::is_any_of(","));
     boost::algorithm::split(itsSupportedWMSVersions, wmsVersions, boost::algorithm::is_any_of(","));
 
-    if (daliConfig.getConfig().exists("wms.get_capabilities_response.inspire_extension"))
+    if (config.exists("wms.get_capabilities_response.inspire_extension"))
     {
       // inspire extension is supported if wms.inspire_extension configuration exists
       itsInspireExtensionSupported = true;
       itsGetCapabilitiesResponseVariables.insert(make_pair("default_language", ""));
       itsGetCapabilitiesResponseVariables.insert(make_pair("supported_language", ""));
       itsGetCapabilitiesResponseVariables.insert(make_pair("response_language", ""));
-      daliConfig.getConfig().lookupValue(
-          "wms.get_capabilities_response.inspire_extension.default_language",
-          itsGetCapabilitiesResponseVariables["default_language"]);
-      daliConfig.getConfig().lookupValue(
-          "wms.get_capabilities_response.inspire_extension.supported_language",
-          itsGetCapabilitiesResponseVariables["supported_language"]);
-      daliConfig.getConfig().lookupValue(
-          "wms.get_capabilities_response.inspire_extension.response_language",
-          itsGetCapabilitiesResponseVariables["response_language"]);
+      itsGetCapabilitiesResponseVariables.insert(
+          make_pair("metadata_url",
+                    "http://catalog.fmi.fi/geonetwork/srv/en/"
+                    "csw?SERVICE=CSW&amp;VERSION=2.0.2&amp;REQUEST=GetRecordById&amp;ID=1234dfc1-"
+                    "4c08-4491-8ca0-b8ea2941c24a&amp;outputSchema=http://www.isotc211.org/2005/"
+                    "gmd&amp;elementSetName=full"));
+      config.lookupValue("wms.get_capabilities_response.inspire_extension.default_language",
+                         itsGetCapabilitiesResponseVariables["default_language"]);
+      config.lookupValue("wms.get_capabilities_response.inspire_extension.supported_language",
+                         itsGetCapabilitiesResponseVariables["supported_language"]);
+      config.lookupValue("wms.get_capabilities_response.inspire_extension.response_language",
+                         itsGetCapabilitiesResponseVariables["response_language"]);
+      config.lookupValue("wms.get_capabilities_response.inspire_extension.metadata_url",
+                         itsGetCapabilitiesResponseVariables["metadata_url"]);
     }
 
     itsGetCapabilitiesResponseVariables.insert(make_pair("title", ""));
@@ -169,50 +176,88 @@ WMSConfig::WMSConfig(const Plugin::Dali::Config& daliConfig,
     itsGetCapabilitiesResponseVariables.insert(make_pair("access_constraints", ""));
     itsGetCapabilitiesResponseVariables.insert(make_pair("layers_title", ""));
 
-    daliConfig.getConfig().lookupValue("wms.get_capabilities_response.keywords",
-                                       itsGetCapabilitiesResponseVariables["keywords"]);
-    daliConfig.getConfig().lookupValue("wms.get_capabilities_response.title",
-                                       itsGetCapabilitiesResponseVariables["title"]);
-    daliConfig.getConfig().lookupValue("wms.get_capabilities_response.abstract",
-                                       itsGetCapabilitiesResponseVariables["abstract"]);
-    daliConfig.getConfig().lookupValue("wms.get_capabilities_response.online_resource",
-                                       itsGetCapabilitiesResponseVariables["online_resource"]);
-    daliConfig.getConfig().lookupValue("wms.get_capabilities_response.fees",
-                                       itsGetCapabilitiesResponseVariables["fees"]);
-    daliConfig.getConfig().lookupValue("wms.get_capabilities_response.access_constraints",
-                                       itsGetCapabilitiesResponseVariables["access_constraints"]);
-    daliConfig.getConfig().lookupValue("wms.get_capabilities_response.layers_title",
-                                       itsGetCapabilitiesResponseVariables["layers_title"]);
-    daliConfig.getConfig().lookupValue("wms.get_capabilities_response.contact_info.contact_person",
-                                       itsGetCapabilitiesResponseVariables["contact_person"]);
-    daliConfig.getConfig().lookupValue("wms.get_capabilities_response.contact_info.organization",
-                                       itsGetCapabilitiesResponseVariables["organization"]);
-    daliConfig.getConfig().lookupValue(
-        "wms.get_capabilities_response.contact_info.contact_position",
-        itsGetCapabilitiesResponseVariables["contact_position"]);
+    config.lookupValue("wms.get_capabilities_response.keywords",
+                       itsGetCapabilitiesResponseVariables["keywords"]);
+    config.lookupValue("wms.get_capabilities_response.title",
+                       itsGetCapabilitiesResponseVariables["title"]);
+    config.lookupValue("wms.get_capabilities_response.abstract",
+                       itsGetCapabilitiesResponseVariables["abstract"]);
+    config.lookupValue("wms.get_capabilities_response.online_resource",
+                       itsGetCapabilitiesResponseVariables["online_resource"]);
+    config.lookupValue("wms.get_capabilities_response.fees",
+                       itsGetCapabilitiesResponseVariables["fees"]);
+    config.lookupValue("wms.get_capabilities_response.access_constraints",
+                       itsGetCapabilitiesResponseVariables["access_constraints"]);
+    config.lookupValue("wms.get_capabilities_response.layers_title",
+                       itsGetCapabilitiesResponseVariables["layers_title"]);
+    config.lookupValue("wms.get_capabilities_response.contact_info.contact_person",
+                       itsGetCapabilitiesResponseVariables["contact_person"]);
+    config.lookupValue("wms.get_capabilities_response.contact_info.organization",
+                       itsGetCapabilitiesResponseVariables["organization"]);
+    config.lookupValue("wms.get_capabilities_response.contact_info.contact_position",
+                       itsGetCapabilitiesResponseVariables["contact_position"]);
 
-    daliConfig.getConfig().lookupValue("wms.get_capabilities_response.contact_info.address_type",
-                                       itsGetCapabilitiesResponseVariables["contact_address_type"]);
-    daliConfig.getConfig().lookupValue("wms.get_capabilities_response.contact_info.address",
-                                       itsGetCapabilitiesResponseVariables["contact_address"]);
-    daliConfig.getConfig().lookupValue("wms.get_capabilities_response.contact_info.city",
-                                       itsGetCapabilitiesResponseVariables["contact_address_city"]);
-    daliConfig.getConfig().lookupValue(
-        "wms.get_capabilities_response.contact_info.state_or_province",
-        itsGetCapabilitiesResponseVariables["contact_address_province"]);
+    config.lookupValue("wms.get_capabilities_response.contact_info.address_type",
+                       itsGetCapabilitiesResponseVariables["contact_address_type"]);
+    config.lookupValue("wms.get_capabilities_response.contact_info.address",
+                       itsGetCapabilitiesResponseVariables["contact_address"]);
+    config.lookupValue("wms.get_capabilities_response.contact_info.city",
+                       itsGetCapabilitiesResponseVariables["contact_address_city"]);
+    config.lookupValue("wms.get_capabilities_response.contact_info.state_or_province",
+                       itsGetCapabilitiesResponseVariables["contact_address_province"]);
 
-    daliConfig.getConfig().lookupValue(
-        "wms.get_capabilities_response.contact_info.post_code",
-        itsGetCapabilitiesResponseVariables["contact_address_post_code"]);
-    daliConfig.getConfig().lookupValue(
-        "wms.get_capabilities_response.contact_info.country",
-        itsGetCapabilitiesResponseVariables["contact_address_country"]);
-    daliConfig.getConfig().lookupValue(
-        "wms.get_capabilities_response.contact_info.telephone_number",
-        itsGetCapabilitiesResponseVariables["telephone_number"]);
-    daliConfig.getConfig().lookupValue(
-        "wms.get_capabilities_response.contact_info.facsimile_number",
-        itsGetCapabilitiesResponseVariables["facsimile_number"]);
+    config.lookupValue("wms.get_capabilities_response.contact_info.post_code",
+                       itsGetCapabilitiesResponseVariables["contact_address_post_code"]);
+    config.lookupValue("wms.get_capabilities_response.contact_info.country",
+                       itsGetCapabilitiesResponseVariables["contact_address_country"]);
+    config.lookupValue("wms.get_capabilities_response.contact_info.telephone_number",
+                       itsGetCapabilitiesResponseVariables["telephone_number"]);
+    config.lookupValue("wms.get_capabilities_response.contact_info.facsimile_number",
+                       itsGetCapabilitiesResponseVariables["facsimile_number"]);
+
+    // read headers
+    itsGetCapabilitiesResponseVariables.insert(make_pair("header", ""));
+    if (config.exists("wms.get_capabilities_response.headers"))
+    {
+      libconfig::Setting& groups = config.lookup("wms.get_capabilities_response.headers");
+      for (int i = 0; i < groups.getLength(); i++)
+      {
+        std::string name;
+        std::string value;
+        config.lookupValue(Fmi::to_string("wms.get_capabilities_response.headers.[%d].name", i),
+                           name);
+        config.lookupValue(Fmi::to_string("wms.get_capabilities_response.headers.[%d].value", i),
+                           value);
+
+        itsGetCapabilitiesResponseVariables["headers"] += name;
+        itsGetCapabilitiesResponseVariables["headers"] += "=\"";
+        itsGetCapabilitiesResponseVariables["headers"] += value;
+        itsGetCapabilitiesResponseVariables["headers"] += "\"";
+        if (i < groups.getLength() - 1)
+          itsGetCapabilitiesResponseVariables["headers"] += " \n";
+      }
+    }
+    else
+    {
+      // default values
+      itsGetCapabilitiesResponseVariables["headers"] += "xmlns=\"http://www.opengis.net/wms\" \n";
+      itsGetCapabilitiesResponseVariables["headers"] +=
+          "xmlns:sld=\"http://www.opengis.net/sld\" \n";
+      itsGetCapabilitiesResponseVariables["headers"] +=
+          "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n";
+      itsGetCapabilitiesResponseVariables["headers"] +=
+          "xmlns:ms=\"http://mapserver.gis.umn.edu/mapserver\" \n";
+      itsGetCapabilitiesResponseVariables["headers"] +=
+          "xmlns:inspire_common=\"http://inspire.ec.europa.eu/schemas/common/1.0\" \n";
+      itsGetCapabilitiesResponseVariables["headers"] +=
+          "xmlns:inspire_vs=\"http://inspire.ec.europa.eu/schemas/inspire_vs/1.0\" \n";
+      itsGetCapabilitiesResponseVariables["headers"] +=
+          "xsi:schemaLocation=\"http://www.opengis.net/wms "
+          "http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd  http://www.opengis.net/sld "
+          "http://schemas.opengis.net/sld/1.1.0/sld_capabilities.xsd  "
+          "http://inspire.ec.europa.eu/schemas/inspire_vs/1.0 "
+          "http://inspire.ec.europa.eu/schemas/inspire_vs/1.0/inspire_vs.xsd\"";
+    }
 
     // Do first layer scan
     updateLayerMetaData();

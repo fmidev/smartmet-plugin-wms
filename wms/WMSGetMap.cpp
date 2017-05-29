@@ -158,7 +158,7 @@ void validate_options(const tag_get_map_request_options& options,
       // check that style is valid (as defined in GetCapabilities response)
       if (!itsConfig.isValidStyle(layer, style))
       {
-        throw Spine::Exception(BCP, "The requested style is not supported by the current layer!")
+        throw Spine::Exception(BCP, "The style is not supported by the requested layer!")
             .addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED)
             .addParameter("Requested style", style)
             .addParameter("Requested layer", layer);
@@ -167,7 +167,7 @@ void validate_options(const tag_get_map_request_options& options,
       // check that CRS is valid (as defined in GetCapabilities response)
       if (!itsConfig.isValidCRS(layer, options.bbox.crs))
       {
-        throw Spine::Exception(BCP, "The requested CRS is not supported by the current layer!")
+        throw Spine::Exception(BCP, "The CRS is not supported by the requested layer!")
             .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_CRS)
             .addParameter("Requested CRS", options.bbox.crs)
             .addParameter("Requested layer", layer);
