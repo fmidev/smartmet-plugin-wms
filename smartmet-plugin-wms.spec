@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.5.5
+Version: 17.5.29
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -87,6 +87,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Mon May  29 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.5.29-1.fmi
+- LegendURL support added to GetCapabilities response (BRAINSTORM-895)
+- GetCapabilities response message made more configurable (BRAINSTORM-870)
+
 * Fri May  5 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.5.5-1.fmi
 - http/https scheme selection based on X-Forwarded-Proto header; STU-5084
 - GetMap and GetCapabilities keywords are now case insensitive

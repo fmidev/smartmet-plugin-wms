@@ -92,6 +92,8 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
         theConfig.getCapabilitiesResponseVariables();
 
     hash["version_string"] = boost::algorithm::join(theConfig.supportedWMSVersions(), ", ");
+    if (!responseVariables.at("headers").empty())
+      hash["headers"] = responseVariables.at("headers");
 
     // Deduce apikey for layer filtering
     auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
@@ -108,6 +110,7 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
       hash["inspire_default_language"] = responseVariables.at("default_language");
       hash["inspire_supported_language"] = responseVariables.at("supported_language");
       hash["inspire_response_language"] = responseVariables.at("response_language");
+      hash["inspire_metadata_url"] = responseVariables.at("metadata_url");
     }
 
     if (theConfig.supportedMapFormats().size() > 0)
