@@ -733,6 +733,10 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
           .addParameter("Product", product_path);
     }
 
+    // Replace references (json: and ref:) from query string options
+
+    Spine::JSON::replaceReferences(json, theRequest.getParameterMap());
+
     // Expand the JSON
 
     std::string layers_root = customer_root + "/layers/";
@@ -744,7 +748,7 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
 
     Spine::JSON::dereference(json);
 
-    // Modify as requested
+    // Modify variables as requested (not reference substitutions)
 
     Spine::JSON::expand(json, theRequest.getParameterMap());
 
