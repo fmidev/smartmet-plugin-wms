@@ -4,21 +4,21 @@
 #include "Config.h"
 #include "Defs.h"
 #include "Hash.h"
+#include "Layer.h"
+#include "LayerFactory.h"
 #include "State.h"
 #include "View.h"
-#include "LayerFactory.h"
-#include "Layer.h"
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
+#include <boost/foreach.hpp>
+#include <ctpp2/CDT.hpp>
+#include <gis/Box.h>
+#include <gis/OGR.h>
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
-#include <gis/Box.h>
-#include <gis/OGR.h>
-#include <ctpp2/CDT.hpp>
-#include <boost/foreach.hpp>
 #include <stdexcept>
 
 namespace SmartMet
@@ -75,6 +75,10 @@ void Layer::init(const Json::Value& theJson,
     json = theJson.get("layers", nulljson);
     if (!json.isNull())
       layers.init(json, theState, theConfig, *this);
+
+    json = theJson.get("layer_type", nulljson);
+    if (!json.isNull())
+      type = json.asString();
   }
   catch (...)
   {

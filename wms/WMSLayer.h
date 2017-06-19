@@ -16,6 +16,7 @@
 
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <spine/Json.h>
 #include <spine/Value.h>
 
 #include <list>
@@ -36,6 +37,8 @@ namespace Plugin
 {
 namespace WMS
 {
+typedef std::vector<std::map<std::string, std::string> > LegendGraphicInfo;
+
 class WMSLayer
 {
  protected:
@@ -52,6 +55,8 @@ class WMSLayer
                                                       // postgis layers
   std::string customer;
   std::string productFile;  // dali product
+  bool hidden;              // if this is true, dont show in GetCapabilities response
+  LegendGraphicInfo legendGraphicInfo;
 
   friend class WMSLayerFactory;
   friend std::ostream& operator<<(std::ostream&, const WMSLayer&);
@@ -59,9 +64,14 @@ class WMSLayer
  public:
   WMSLayer();
 
+  void addStyles(const Json::Value& root, const std::string& layerName);
+  void addStyle(const std::string& layerName);
+  bool isHidden() const { return hidden; }
   std::string getCustomer() const;
   std::string getName() const;
   std::string getDaliProductFile() const { return productFile; }
+  std::vector<std::string> getLegendGraphic(const std::string& templateDirectory) const;
+
   std::string getTitle() const { return title; }
   std::string getAbstract() const { return abstract; }
   const std::set<std::string>& getSupportedCRS() const { return crs; }

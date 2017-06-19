@@ -12,6 +12,7 @@
 #define WMS_GET_CAPABILITIES "GetCapabilities"
 #define WMS_GET_FEATURE_INFO "GetFeatureInfo"
 #define WMS_GET_MAP "GetMap"
+#define WMS_GET_LEGEND_GRAPHIC "GetLegendGraphic"
 
 using namespace std;
 using namespace boost;
@@ -91,6 +92,8 @@ WMSRequestType wmsRequestType(const Spine::HTTP::Request& theHTTPRequest)
       return WMSRequestType::GET_CAPABILITIES;
     else if (boost::iequals(request, WMS_GET_MAP))
       return WMSRequestType::GET_MAP;
+    else if (boost::iequals(request, WMS_GET_LEGEND_GRAPHIC))
+      return WMSRequestType::GET_LEGEND_GRAPHIC;
     else if (boost::iequals(request, WMS_GET_FEATURE_INFO))
       return WMSRequestType::GET_FEATURE_INFO;
 
@@ -235,6 +238,57 @@ std::ostream& operator<<(std::ostream& ost, const Spine::HTTP::Request& theHTTPR
       ost << "ELEVATION = " << (theHTTPRequest.getParameter("elevation")
                                     ? *(theHTTPRequest.getParameter("elevation"))
                                     : "")
+          << std::endl;
+    }
+    else if (wmsRequest == "GetLegendGraphic")
+    {
+      ost << "LAYER = "
+          << (theHTTPRequest.getParameter("layer") ? *(theHTTPRequest.getParameter("layer")) : "")
+          << std::endl;
+      ost << "STYLE = "
+          << (theHTTPRequest.getParameter("style") ? *(theHTTPRequest.getParameter("style")) : "")
+          << std::endl;
+      ost << "REMOTE_OWS_TYPE = " << (theHTTPRequest.getParameter("remote_ows_type")
+                                          ? *(theHTTPRequest.getParameter("remote_ows_type"))
+                                          : "")
+          << std::endl;
+      ost << "REMOTE_OWS_URL = " << (theHTTPRequest.getParameter("remote_ows_url")
+                                         ? *(theHTTPRequest.getParameter("remote_ows_url"))
+                                         : "")
+          << std::endl;
+      ost << "FEATURETYPE = " << (theHTTPRequest.getParameter("featuretype")
+                                      ? *(theHTTPRequest.getParameter("featuretype"))
+                                      : "")
+          << std::endl;
+      ost << "COVERAGE = " << (theHTTPRequest.getParameter("coverage")
+                                   ? *(theHTTPRequest.getParameter("coverage"))
+                                   : "")
+          << std::endl;
+      ost << "RULE = "
+          << (theHTTPRequest.getParameter("rule") ? *(theHTTPRequest.getParameter("rule")) : "")
+          << std::endl;
+      ost << "SCALE = "
+          << (theHTTPRequest.getParameter("scale") ? *(theHTTPRequest.getParameter("scale")) : "")
+          << std::endl;
+      ost << "SLD = "
+          << (theHTTPRequest.getParameter("sld") ? *(theHTTPRequest.getParameter("sld")) : "")
+          << std::endl;
+      ost << "FORMAT = "
+          << (theHTTPRequest.getParameter("format") ? *(theHTTPRequest.getParameter("format")) : "")
+          << std::endl;
+      ost << "WIDTH = "
+          << (theHTTPRequest.getParameter("width") ? *(theHTTPRequest.getParameter("width")) : "")
+          << std::endl;
+      ost << "HEIGHT = "
+          << (theHTTPRequest.getParameter("height") ? *(theHTTPRequest.getParameter("height")) : "")
+          << std::endl;
+      ost << "EXCEPIONS = " << (theHTTPRequest.getParameter("exceptions")
+                                    ? *(theHTTPRequest.getParameter("exceptions"))
+                                    : "")
+          << std::endl;
+      ost << "SLD_VERSION = " << (theHTTPRequest.getParameter("sld_version")
+                                      ? *(theHTTPRequest.getParameter("sld_version"))
+                                      : "")
           << std::endl;
     }
 

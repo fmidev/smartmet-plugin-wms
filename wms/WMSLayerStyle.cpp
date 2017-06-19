@@ -27,25 +27,26 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayerStyle& layerStyle)
 std::string WMSLayerStyle::toXML()
 {
   std::string ret;
-
+  /*
   if (name.size() == 0)
     throw Spine::Exception(BCP, "WMS layer style must have a name!", NULL);
   if (title.size() == 0)
     throw Spine::Exception(BCP, "WMS layer style must have a title!", NULL);
-
+  */
   try
   {
-    std::string errMsg;
     ret += "<Style>\n";
-    ret += "<Name>";
-    ret += name;
-    ret += "</Name>\n";
-    ret += "<Title>";
-    ret += title;
-    ret += "</Title>\n";
-    ret += "<Abstract>";
-    ret += abstract;
-    ret += "</Abstract>\n";
+    /*
+ret += "<Name>";
+ret += name;
+ret += "</Name>\n";
+ret += "<Title>";
+ret += title;
+ret += "</Title>\n";
+ret += "<Abstract>";
+ret += abstract;
+ret += "</Abstract>\n";
+    */
     ret += "<LegendURL width=\"";
     ret += Fmi::to_string(legend_url.width);
     ret += "\" height=\"";

@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <json/json.h>
 #include <boost/shared_ptr.hpp>
+#include <json/json.h>
 #include <list>
 
 namespace CTPP
@@ -44,7 +44,7 @@ class Layers
   std::size_t hash_value(const State& theState) const;
 
   bool empty() const { return layers.empty(); }
- private:
+
   std::list<boost::shared_ptr<Layer> > layers;
 };
 

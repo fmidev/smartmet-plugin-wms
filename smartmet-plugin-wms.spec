@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.5.31
+Version: 17.6.19
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -87,6 +87,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Mon Jun 19 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.6.19-1.fmi
+- Handling of GetLegendGraphic message added (BRAINSTORM-895)
+- testcases updated
+
 * Wed May 31 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.5.31-1.fmi
 - JSON references and includes can now be replaced from query strings
 
