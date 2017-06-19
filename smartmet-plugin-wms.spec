@@ -88,7 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Jun 19 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.6.19-1.fmi
-- Handling of GetLegendGraphic message added
+- Handling of GetLegendGraphic message added (BRAINSTORM-895)
 - testcases updated
 
 * Mon May  29 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.5.29-1.fmi
