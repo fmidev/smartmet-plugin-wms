@@ -150,6 +150,10 @@ WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
           }
         }
 
+        Json::Value hidden = jsonRoot.get("hidden", nulljson);
+        if (!hidden.isNull() && hidden.asBool())
+          return WMSLayerType::QueryDataLayer;
+
         // If we are here, the most significant encountered layer is a NotWMSLayer.
         // This is currently an error, WMS layer must contain some spatio-temporal data
 
@@ -257,48 +261,67 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     layer->productFile = theFileName;
     layer->customer = theCustomer;
 
-    // read styles
     Json::Value nulljson;
-    auto json = root.get("styles", nulljson);
+    auto json = root.get("hidden", nulljson);
+    if (!json.isNull())
+      layer->hidden = json.asBool();
+
+    // handle styles
+
+    // 1) read "legend_url_layer"-parameter and use it to generate styles entry
+    json = root.get("legend_url_layer", nulljson);
     if (!json.isNull())
     {
-      if (!json.isArray())
-        throw Spine::Exception(BCP, "WMSLayer style settings must be an array");
-
-      WMSLayerStyle layerStyle;
-
-      for (unsigned int i = 0; i < json.size(); i++)
+      std::string legendURLLayer = json.asString();
+      layer->addStyle(legendURLLayer);
+    }
+    if (layer->styles.size() == 0)
+    {
+      // 2) read styles vector from configuration and generate layer styles
+      json = root.get("styles", nulljson);
+      if (!json.isNull())
       {
-        const Json::Value& style_json = json[i];
-        auto json_value = style_json.get("name", nulljson);
-        if (!json_value.isNull())
-          layerStyle.name = json_value.asString();
-        json_value = style_json.get("title", nulljson);
-        if (!json_value.isNull())
-          layerStyle.title = json_value.asString();
-        json_value = style_json.get("abstract", nulljson);
-        if (!json_value.isNull())
-          layerStyle.abstract = json_value.asString();
+        if (!json.isArray())
+          throw Spine::Exception(BCP, "WMSLayer style settings must be an array");
 
-        auto legend_url_json = style_json.get("legend_url", nulljson);
-        if (!legend_url_json.isNull())
+        WMSLayerStyle layerStyle;
+
+        for (unsigned int i = 0; i < json.size(); i++)
         {
-          json_value = legend_url_json.get("width", nulljson);
+          const Json::Value& style_json = json[i];
+          auto json_value = style_json.get("name", nulljson);
           if (!json_value.isNull())
-            layerStyle.legend_url.width = json_value.asInt();
-          json_value = legend_url_json.get("height", nulljson);
+            layerStyle.name = json_value.asString();
+          json_value = style_json.get("title", nulljson);
           if (!json_value.isNull())
-            layerStyle.legend_url.height = json_value.asInt();
-          json_value = legend_url_json.get("format", nulljson);
+            layerStyle.title = json_value.asString();
+          json_value = style_json.get("abstract", nulljson);
           if (!json_value.isNull())
-            layerStyle.legend_url.format = json_value.asString();
-          json_value = legend_url_json.get("online_resource", nulljson);
-          if (!json_value.isNull())
-            layerStyle.legend_url.online_resource = json_value.asString();
+            layerStyle.abstract = json_value.asString();
+
+          auto legend_url_json = style_json.get("legend_url", nulljson);
+          if (!legend_url_json.isNull())
+          {
+            json_value = legend_url_json.get("width", nulljson);
+            if (!json_value.isNull())
+              layerStyle.legend_url.width = json_value.asInt();
+            json_value = legend_url_json.get("height", nulljson);
+            if (!json_value.isNull())
+              layerStyle.legend_url.height = json_value.asInt();
+            json_value = legend_url_json.get("format", nulljson);
+            if (!json_value.isNull())
+              layerStyle.legend_url.format = json_value.asString();
+            json_value = legend_url_json.get("online_resource", nulljson);
+            if (!json_value.isNull())
+              layerStyle.legend_url.online_resource = json_value.asString();
+          }
+          layer->styles.push_back(layerStyle);
         }
-        layer->styles.push_back(layerStyle);
       }
     }
+    // 3) generate layer styles automatically from configuration
+    if (layer->styles.size() == 0)
+      layer->addStyles(root, layer->name);
 
     // always supported CRS
     layer->crs.insert("EPSG:2393");  // YKJ

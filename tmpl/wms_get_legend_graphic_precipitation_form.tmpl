@@ -1,0 +1,82 @@
+{
+    "layer_type": "legend",
+    "x": 30,
+    "y": 30,
+    "dx": 0,
+    "dy": 0,
+    "symbols":
+    {
+	"symbol": ""
+    },
+     "layers" : [
+        {
+            "tag": "text",
+            "cdata": "Precipitaton form",
+            "attributes":
+            {
+                "x": <TMPL_var header_xpos>,
+                "y": <TMPL_var header_ypos>
+            }
+        },
+        {
+            "layer_type": "symbol",
+            "symbol": "rain",
+            "positions":
+            {
+	        "x": <TMPL_var rain_symbol_xpos>,
+                "y": <TMPL_var rain_symbol_ypos>,
+                "dx": 99999,
+                "dy": 99999
+            }
+        },
+	{
+            "tag": "text",
+            "cdata": "rain",
+            "attributes":
+            {
+	        "x": <TMPL_var rain_text_xpos>,
+                "y": <TMPL_var rain_text_ypos>
+            }
+        },
+        {
+            "layer_type": "symbol",
+            "symbol": "drizzle",
+            "positions":
+            {
+	        "x": <TMPL_var drizzle_symbol_xpos>,
+                "y": <TMPL_var drizzle_symbol_ypos>,
+                "dx": 99999,
+                "dy": 99999
+            }
+        },
+	{
+            "tag": "text",
+            "cdata": "drizzle",
+            "attributes":
+            {
+	        "x": <TMPL_var drizzle_text_xpos>,
+                "y": <TMPL_var drizzle_text_ypos>
+            }
+        },
+        {
+            "layer_type": "symbol",
+            "symbol": "snow",
+            "positions":
+            {
+	        "x": <TMPL_var snow_symbol_xpos>,
+                "y": <TMPL_var snow_symbol_ypos>,
+                "dx": 99999,
+                "dy": 99999
+            }
+        },
+	{
+            "tag": "text",
+            "cdata": "snow",
+            "attributes":
+            {
+	        "x": <TMPL_var snow_text_xpos>,
+                "y": <TMPL_var snow_text_ypos>
+            }
+        }
+    ]
+}

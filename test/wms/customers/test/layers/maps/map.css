@@ -1,0 +1,6 @@
+.Finland	{ stroke: none; fill: rgb(230,238,166) }
+.Europe		{ stroke: none; fill: rgb(198,198,198) }
+.Lake		{ stroke: none; fill: rgb(122,190,242) }
+.Sea		{ stroke: none; fill: rgb(190,230,255) }
+.Borders	{ fill: none; stroke: black; stroke-width: 0.5 }
+.Road		{ fill: none; stroke: rgb(150,150,150); stroke-width: 0.6 }

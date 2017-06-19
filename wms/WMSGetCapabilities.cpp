@@ -98,7 +98,14 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     // Deduce apikey for layer filtering
     auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
 
-    std::string configuredLayers = theConfig.getCapabilities(apikey);
+    auto host_header = theRequest.getHeader("Host");
+    if (!host_header)
+    {
+      // This should never happen, host header is mandatory in HTTP 1.1
+      host_header = "http://brainstormgw.fmi.fi/wms";
+    }
+
+    std::string configuredLayers = theConfig.getCapabilities(apikey, *host_header);
 
     hash["wms_layers"] = configuredLayers;
 

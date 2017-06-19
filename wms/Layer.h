@@ -14,8 +14,8 @@
 #include "Attributes.h"
 #include "Layers.h"
 #include "Properties.h"
-#include <json/json.h>
 #include <boost/optional.hpp>
+#include <json/json.h>
 #include <set>
 #include <string>
 #include <vector>
@@ -103,6 +103,8 @@ class Layer : public Properties
 
   // Inner layers
   Layers layers;
+
+  boost::optional<std::string> type;
 
  private:
   bool validResolution() const;
