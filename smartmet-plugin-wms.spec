@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 17.6.19
-Release: 2%{?dist}.fmi
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -15,17 +15,17 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 16.12.21
 BuildRequires: smartmet-library-macgyver >= 17.4.19
-BuildRequires: smartmet-library-spine-devel >= 17.5.5
+BuildRequires: smartmet-library-spine-devel >= 17.5.31
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.4.8
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 17.4.20
+BuildRequires: smartmet-engine-observation-devel >= 17.5.29
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 17.4.11
-BuildRequires: smartmet-engine-geonames-devel >= 17.4.25
-BuildRequires: smartmet-engine-querydata-devel >= 17.4.19
-BuildRequires: smartmet-engine-contour-devel >= 17.4.25
+BuildRequires: smartmet-engine-geonames-devel >= 17.5.24
+BuildRequires: smartmet-engine-querydata-devel >= 17.5.24
+BuildRequires: smartmet-engine-contour-devel >= 17.5.30
 BuildRequires: smartmet-library-gis-devel >= 17.3.14
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.2
@@ -45,12 +45,12 @@ Requires: smartmet-library-giza >= 16.12.21
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 17.4.8
 %endif
-Requires: smartmet-engine-querydata >= 17.4.19
-Requires: smartmet-engine-contour >= 17.4.25
+Requires: smartmet-engine-querydata >= 17.5.24
+Requires: smartmet-engine-contour >= 17.5.30
 Requires: smartmet-engine-gis >= 17.4.11
-Requires: smartmet-engine-geonames >= 17.4.25
+Requires: smartmet-engine-geonames >= 17.5.24
 Requires: smartmet-server >= 17.4.8
-Requires: smartmet-library-spine >= 17.5.5
+Requires: smartmet-library-spine >= 17.5.31
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -87,12 +87,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-* Mon Jun 19 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.6.19-2.fmi
-- Fixed GetCapabilities-response
-
 * Mon Jun 19 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.6.19-1.fmi
 - Handling of GetLegendGraphic message added (BRAINSTORM-895)
 - testcases updated
+
+* Wed May 31 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.5.31-1.fmi
+- JSON references and includes can now be replaced from query strings
 
 * Mon May  29 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.5.29-1.fmi
 - LegendURL support added to GetCapabilities response (BRAINSTORM-895)
