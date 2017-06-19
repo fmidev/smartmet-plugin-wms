@@ -141,7 +141,7 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
 <Style>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
-<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://http://brainstormgw.fmi.fi/wms/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=ely:elymap&amp;style=&amp;format=image%2Fpng"/>
+<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=ely:elymap&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
    <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
@@ -173,7 +173,7 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
 <Style>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
-<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://http://brainstormgw.fmi.fi/wms/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=ely:wmsmap&amp;style=&amp;format=image%2Fpng"/>
+<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=ely:wmsmap&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
    <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
@@ -219,7 +219,7 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
 <Style>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
-<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://http://brainstormgw.fmi.fi/wms/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:flobrg&amp;style=&amp;format=image%2Fpng"/>
+<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:flobrg&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
  </Layer>
@@ -328,7 +328,7 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
 <Style>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
-<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://http://brainstormgw.fmi.fi/wms/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icedft&amp;style=&amp;format=image%2Fpng"/>
+<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icedft&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
  </Layer>
@@ -360,7 +360,7 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
 <Style>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
-<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://http://brainstormgw.fmi.fi/wms/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icefra_zone&amp;style=&amp;format=image%2Fpng"/>
+<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icefra_zone&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
  </Layer>
@@ -430,7 +430,7 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
 <Style>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
-<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://http://brainstormgw.fmi.fi/wms/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icemap_new&amp;style=&amp;format=image%2Fpng"/>
+<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icemap_new&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
    <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2012-02-27T14:22:00Z</Dimension>
@@ -463,7 +463,7 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
 <Style>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
-<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://http://brainstormgw.fmi.fi/wms/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icerdg&amp;style=&amp;format=image%2Fpng"/>
+<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icerdg&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
  </Layer>
@@ -482,7 +482,7 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
 <Style>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
-<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://http://brainstormgw.fmi.fi/wms/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icerft&amp;style=&amp;format=image%2Fpng"/>
+<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icerft&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
  </Layer>
@@ -501,7 +501,7 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
 <Style>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
-<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://http://brainstormgw.fmi.fi/wms/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:jmdbrr&amp;style=&amp;format=image%2Fpng"/>
+<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:jmdbrr&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
  </Layer>
@@ -583,7 +583,7 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
 <Style>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
-<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://http://brainstormgw.fmi.fi/wms/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:precipitation&amp;style=&amp;format=image%2Fpng"/>
+<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:precipitation&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
    <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
@@ -615,7 +615,7 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
 <Style>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
-<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://http://brainstormgw.fmi.fi/wms/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:t2m_p&amp;style=&amp;format=image%2Fpng"/>
+<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:t2m_p&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
    <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
@@ -673,7 +673,7 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
 <Style>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
-<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://http://brainstormgw.fmi.fi/wms/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:wind_legend&amp;style=&amp;format=image%2Fpng"/>
+<OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:wind_legend&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
    <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>

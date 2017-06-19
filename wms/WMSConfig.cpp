@@ -556,7 +556,6 @@ std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apike
       {
         resultCapabilities += iter_pair.second.getCapabilities();
       }
-      boost::replace_all(resultCapabilities, "__hostname__", host);
     }
     else
     {
@@ -578,6 +577,14 @@ std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apike
 #endif
       }
     }
+    std::string hostString = host;
+    if (hostString.length() >= 4)
+    {
+      std::string hostEnd = hostString.substr(hostString.length() - 4);
+      if (hostEnd == "/wms")
+        hostString = hostString.substr(0, hostString.length() - 4);
+    }
+    boost::replace_all(resultCapabilities, "__hostname__", hostString);
 
     return resultCapabilities;
   }

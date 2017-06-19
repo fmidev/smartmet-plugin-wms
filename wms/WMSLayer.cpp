@@ -143,8 +143,8 @@ void WMSLayer::addStyle(const std::string& layerName)
   layerStyle.legend_url.format = "image/png";
   layerStyle.legend_url.online_resource =
       "xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:type=\"simple\" "
-      "xlink:href=\"http://__hostname__/"
-      "wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&"
+      "xlink:href=\"__hostname__/wms?"
+      "service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&"
       "amp;"
       "layer=";
   layerStyle.legend_url.online_resource += layerName;
