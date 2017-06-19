@@ -1,4 +1,9 @@
 #include "WMSConfig.h"
+#include "Layer.h"
+#include "LayerFactory.h"
+#include "Product.h"
+#include "State.h"
+#include "View.h"
 #include "WMSException.h"
 #include "WMSLayerFactory.h"
 
@@ -26,6 +31,7 @@
 #include <gdal/ogr_spatialref.h>
 
 using namespace std;
+using namespace SmartMet::Plugin::Dali;
 
 namespace
 {
@@ -65,7 +71,80 @@ std::string makeLayerNamespace(const std::string& customer,
     throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
+
+// if legend layer exixts use it directly
+// otherwise generate legend from configuration
+bool prepareLegendGraphic(Product& product)
+{
+  std::list<boost::shared_ptr<View> >& views = product.views.views;
+  unsigned int i = 0;
+  boost::shared_ptr<Layer> legendLayer = nullptr;
+
+  bool legendLayerFound = false;
+  for (std::list<boost::shared_ptr<View> >::iterator it = views.begin(); it != views.end(); ++it)
+  {
+    boost::shared_ptr<View> view = *it;
+
+    std::list<boost::shared_ptr<Layer> > layers = view->layers.layers;
+
+    unsigned int j = 0;
+    for (std::list<boost::shared_ptr<Layer> >::iterator it2 = layers.begin(); it2 != layers.end();
+         ++it2)
+    {
+      boost::shared_ptr<Layer> layer = *it2;
+      std::list<boost::shared_ptr<Layer> > sublayers = layer->layers.layers;
+
+      if (layer->type)
+      {
+        if (*layer->type == "legend")
+        {
+          legendLayer = layer;
+          legendLayerFound = true;
+          break;
+        }
+      }
+      j++;
+
+      unsigned int k = 0;
+      for (std::list<boost::shared_ptr<Layer> >::iterator it3 = sublayers.begin();
+           it3 != sublayers.end();
+           ++it3)
+      {
+        boost::shared_ptr<Layer> sublayer = *it3;
+        std::list<boost::shared_ptr<Layer> > sublayers2 = sublayer->layers.layers;
+        k++;
+      }
+    }
+    if (legendLayerFound)
+      break;
+    i++;
+  }
+
+  if (legendLayer)
+  {
+    // legend layer found use it
+    std::list<boost::shared_ptr<View> >::iterator it = views.begin();
+    it++;
+    views.erase(it, views.end());
+
+    boost::shared_ptr<View> view = *(views.begin());
+    std::list<boost::shared_ptr<Layer> >& layers = view->layers.layers;
+
+    layers.erase(layers.begin(), layers.end());
+    layers.push_back(legendLayer);
+    return true;
+  }
+  // delete all layers and generate legend layer from configuration
+  std::list<boost::shared_ptr<View> >::iterator it = views.begin();
+  it++;
+  views.erase(it, views.end());
+  boost::shared_ptr<View> view = *(views.begin());
+  std::list<boost::shared_ptr<Layer> >& layers = view->layers.layers;
+  layers.erase(layers.begin(), layers.end());
+  return false;
 }
+
+}  // anonymous namespace
 
 namespace SmartMet
 {
@@ -97,7 +176,7 @@ bool looks_valid_filename(const std::string& name)
   }
 }
 
-WMSConfig::WMSConfig(const Plugin::Dali::Config& daliConfig,
+WMSConfig::WMSConfig(const Config& daliConfig,
                      const Spine::FileCache& theFileCache,
                      Engine::Querydata::Engine* qEngine,
 #ifndef WITHOUT_AUTHENTICATION
@@ -455,9 +534,11 @@ void WMSConfig::updateLayerMetaData()
 
 #ifndef WITHOUT_AUTHENTICATION
 std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
+                                       const std::string& host,
                                        bool authenticate) const
 #else
-std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apikey) const
+std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
+                                       const std::string& host) const
 #endif
 {
   try
@@ -475,6 +556,7 @@ std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apike
       {
         resultCapabilities += iter_pair.second.getCapabilities();
       }
+      boost::replace_all(resultCapabilities, "__hostname__", host);
     }
     else
     {
@@ -555,13 +637,14 @@ bool WMSConfig::isValidVersion(const std::string& theVersion) const
   }
 }
 
-bool WMSConfig::isValidLayer(const std::string& theLayer) const
+bool WMSConfig::isValidLayer(const std::string& theLayer,
+                             bool theAcceptHiddenLayerFlag /*= false*/) const
 {
   try
   {
     Spine::ReadLock theLock(itsGetCapabilitiesMutex);
 
-    return isValidLayerImpl(theLayer);
+    return isValidLayerImpl(theLayer, theAcceptHiddenLayerFlag);
   }
   catch (...)
   {
@@ -706,10 +789,55 @@ std::string WMSConfig::jsonText(const std::string& theLayerName) const
   }
 }
 
-bool WMSConfig::isValidLayerImpl(const std::string& theLayer) const
+std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerName) const
+{
+  std::vector<Json::Value> ret;
+
+  std::vector<std::string> legendLayers =
+      itsLayers.at(layerName).getLayer()->getLegendGraphic(itsDaliConfig.templateDirectory());
+  std::string customer = layerName.substr(0, layerName.find(":"));
+
+  for (auto legendLayer : legendLayers)
+  {
+    Json::Value json;
+    Json::Reader reader;
+    bool json_ok = reader.parse(legendLayer, json);
+    if (!json_ok)
+    {
+      std::string msg = reader.getFormattedErrorMessages();
+      std::replace(msg.begin(), msg.end(), '\n', ' ');
+      throw Spine::Exception(BCP, "Legend template file parsing failed!").addDetail(msg);
+    }
+
+    const bool use_wms = true;
+    Spine::JSON::preprocess(
+        json,
+        itsDaliConfig.rootDirectory(use_wms),
+        itsDaliConfig.rootDirectory(use_wms) + "/customers/" + customer + "/layers",
+        itsFileCache);
+
+    Spine::JSON::dereference(json);
+
+    ret.push_back(json);
+  }
+
+  return ret;
+}
+
+bool WMSConfig::isValidLayerImpl(const std::string& theLayer,
+                                 bool theAcceptHiddenLayerFlag /*= false*/) const
 {
   try
   {
+    if (itsLayers.find(theLayer) != itsLayers.end())
+    {
+      if (theAcceptHiddenLayerFlag)
+        return true;
+
+      WMSLayerProxy lp = itsLayers.at(theLayer);
+      return !(lp.getLayer()->isHidden());
+    }
+
     return (itsLayers.find(theLayer) != itsLayers.end());
   }
   catch (...)
@@ -737,6 +865,44 @@ std::set<std::string> WMSConfig::getObservationProducers() const
   return std::set<std::string>();
 }
 #endif
+
+void WMSConfig::getLegendGraphic(const std::string& theLayerName,
+                                 Product& theProduct,
+                                 const State& theState) const
+{
+  if (prepareLegendGraphic(theProduct))
+    return;
+
+  std::vector<Json::Value> legendLayers = getLegendGraphic(theLayerName);
+  Json::Value nulljson;
+
+  boost::shared_ptr<View> view = *(theProduct.views.views.begin());
+  for (auto legendL : legendLayers)
+  {
+    boost::shared_ptr<Layer> legendLayer(LayerFactory::create(legendL));
+    legendLayer->init(legendL, theState, itsDaliConfig, theProduct);
+    view->layers.layers.push_back(legendLayer);
+
+    // add defs
+    auto defs = legendL.get("defs", nulljson);
+    if (!defs.isNull())
+    {
+      auto defLayers = defs.get("layers", nulljson);
+      if (!defLayers.isNull())
+      {
+        for (auto defLayerJson : defLayers)
+        {
+          if (!defLayerJson.isNull())
+          {
+            boost::shared_ptr<Layer> defLayer(LayerFactory::create(defLayerJson));
+            defLayer->init(defLayerJson, theState, itsDaliConfig, theProduct);
+            theProduct.defs.layers.layers.push_back(defLayer);
+          }
+        }
+      }
+    }
+  }
+}
 
 }  // namespace WMS
 }  // namespace Plugin

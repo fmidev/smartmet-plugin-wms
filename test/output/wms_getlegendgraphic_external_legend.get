@@ -1,0 +1,58 @@
+<svg width="1000" height="1000" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<defs>
+<style type="text/css"><![CDATA[
+
+.ModerateWind_3_5	{ stroke:none; fill: rgb(0,229,255) }
+.ModerateWind_5_7	{ stroke:none; fill: rgb(0,195,255) }
+.FreshWind_7_10		{ stroke:none; fill: rgb(0,110,255) }
+.FreshWind_10_14	{ stroke:none; fill: rgb(0,26,255) }
+.HardWind_14_17		{ stroke:none; fill: rgb(212,0,255) }
+.HardWind_17_21		{ stroke:none; fill: rgb(179,0,149) }
+.StormWind_21_26	{ stroke:none; fill: rgb(255,0,0) }
+.GaleWind_32_inf	{ stroke:none; fill: rgb(255,170,0) }
+
+ ]]>
+</style>
+
+<symbol id="rect">
+ <rect height="9" width="14"/>
+</symbol>
+
+</defs>
+
+<g>
+ <g id="view1">
+  <g class="Label" id="windlegend">
+  
+   <use class="GaleWind_32_inf" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="40"/>
+  
+  <text x="60" y="40">&gt; 32</text>
+   <use class="StormWind_21_26" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="49"/>
+  
+  <text x="60" y="49">21–26</text>
+   <use class="HardWind_17_21" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="58"/>
+  
+  <text x="60" y="58">17–21</text>
+   <use class="HardWind_14_17" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="67"/>
+  
+  <text x="60" y="67">14–17</text>
+   <use class="FreshWind_10_14" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="76"/>
+  
+  <text x="60" y="76">10–14</text>
+   <use class="FreshWind_7_10" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="85"/>
+  
+  <text x="60" y="85">7–10</text>
+   <use class="ModerateWind_5_7" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="94"/>
+  
+  <text x="60" y="94">5–7</text>
+   <use class="ModerateWind_3_5" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="103"/>
+  
+  <text x="60" y="103">3–5</text>
+  <text class="Units" x="20" y="13">Wind speed</text>
+  <text class="Units" x="30" y="30">m/s</text>
+  </g>
+ </g>
+</g>
+
+</svg>

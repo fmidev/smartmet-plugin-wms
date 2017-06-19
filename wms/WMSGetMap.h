@@ -58,10 +58,6 @@ class WMSGetMap
   std::string jsonText() const;
 
  private:
-  std::string parseLayers(const tag_map_info& mapInfo,
-                          unsigned int& viewNbr,
-                          unsigned int& layerNbr) const;
-
   tag_get_map_request_options itsParameters;
 
   const WMSConfig& itsConfig;

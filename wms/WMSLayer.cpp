@@ -1,4 +1,5 @@
 #include "WMSLayer.h"
+#include "TemplateFactory.h"
 #include "WMS.h"
 #include "WMSException.h"
 
@@ -24,14 +25,277 @@ namespace Plugin
 {
 namespace WMS
 {
+namespace
+{
+LegendGraphicInfo handle_json_layers(Json::Value layersJson)
+{
+  LegendGraphicInfo ret;
+  Json::Value nulljson;
+
+  for (unsigned int i = 0; i < layersJson.size(); i++)
+  {
+    const Json::Value& layerJson = layersJson[i];
+    if (!layerJson.isNull())
+    {
+      std::map<std::string, std::string> lgParameters;
+      auto layerTypeJson = layerJson.get("layer_type", nulljson);
+      if (!layerTypeJson.isNull())
+      {
+        std::string layerTypeString = layerTypeJson.asString();
+        std::string parameterName;
+        auto json = layerJson.get("parameter", nulljson);
+        if (!json.isNull())
+          parameterName = json.asString();
+        lgParameters.insert(make_pair("parameter_name", parameterName));
+
+        if (layerTypeString == "icemap")
+        {
+          json = layerJson.get("layer_subtype", nulljson);
+
+          if (!json.isNull())
+            layerTypeString = json.asString();
+        }
+
+        if (layerTypeString != "isoband" && layerTypeString != "isoline" &&
+            layerTypeString != "symbol")
+          continue;
+
+        lgParameters.insert(make_pair("layer_type", layerTypeString));
+
+        json = layerJson.get("isobands", nulljson);
+        if (!json.isNull())
+          lgParameters.insert(make_pair("isobands", json.toStyledString()));
+        json = layerJson.get("isolines", nulljson);
+        if (!json.isNull())
+          lgParameters.insert(make_pair("isolines", json.toStyledString()));
+        json = layerJson.get("css", nulljson);
+        if (!json.isNull())
+          lgParameters.insert(make_pair("css", json.asString()));
+        json = layerJson.get("symbol", nulljson);
+        if (!json.isNull())
+          lgParameters.insert(make_pair("symbol", json.asString()));
+        json = layerJson.get("attributes", nulljson);
+        if (!json.isNull())
+        {
+          json = json.get("class", nulljson);
+          if (!json.isNull())
+            lgParameters.insert(make_pair("class", json.asString()));
+        }
+        ret.push_back(lgParameters);
+      }
+    }
+    auto layersJson = layerJson.get("layers", nulljson);
+    if (!layersJson.isNull() && layersJson.isArray())
+    {
+      LegendGraphicInfo recursiveRet = handle_json_layers(layersJson);
+      ret.insert(ret.end(), recursiveRet.begin(), recursiveRet.end());
+    }
+  }
+  return ret;
+}
+
+}  // anonymous namespace
+
 // Remember to run updateLayerMetaData before using the layer!
-WMSLayer::WMSLayer()
+WMSLayer::WMSLayer() : hidden(false)
 {
   geographicBoundingBox.xMin = 0.0;
   geographicBoundingBox.xMax = 0.0;
   geographicBoundingBox.yMin = 0.0;
   geographicBoundingBox.yMax = 0.0;
 }
+
+void WMSLayer::addStyles(const Json::Value& root, const std::string& layerName)
+{
+  //  std::cout << "LAYERNAME: " << layerName << std::endl;
+
+  Json::Value nulljson;
+
+  auto viewsJson = root.get("views", nulljson);
+  if (!viewsJson.isNull() && viewsJson.isArray())
+  {
+    for (unsigned int i = 0; i < viewsJson.size(); i++)
+    {
+      auto viewJson = viewsJson[i];
+      auto layersJson = viewJson.get("layers", nulljson);
+      if (!layersJson.isNull() && layersJson.isArray())
+      {
+        LegendGraphicInfo lgi = handle_json_layers(layersJson);
+
+        if (lgi.size() > 0)
+          legendGraphicInfo.insert(legendGraphicInfo.end(), lgi.begin(), lgi.end());
+      }
+    }
+  }
+
+  if (!legendGraphicInfo.empty())
+    addStyle(layerName);
+}
+
+void WMSLayer::addStyle(const std::string& layerName)
+{
+  WMSLayerStyle layerStyle;
+  layerStyle.name = "";
+  layerStyle.title = "";
+  layerStyle.abstract = "";
+  layerStyle.legend_url.width = 200;
+  layerStyle.legend_url.height = 200;
+  layerStyle.legend_url.format = "image/png";
+  layerStyle.legend_url.online_resource =
+      "xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:type=\"simple\" "
+      "xlink:href=\"http://__hostname__/"
+      "wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&"
+      "amp;"
+      "layer=";
+  layerStyle.legend_url.online_resource += layerName;
+  layerStyle.legend_url.online_resource += "&amp;style=&amp;format=image%2Fpng\"";
+  styles.push_back(layerStyle);
+}
+
+std::vector<std::string> WMSLayer::getLegendGraphic(const std::string& templateDirectory) const
+{
+  std::vector<std::string> ret;
+  unsigned int xpos = 20;
+  unsigned int ypos = 20;
+  unsigned int symbol_xpos = 0;  // set later
+  unsigned int symbol_ypos = 0;
+  bool firstSymbol = true;
+  unsigned int symbolGroupIndex = 0;
+
+  struct hash_item
+  {
+    std::string templateFile;
+    CTPP::CDT hash;
+  };
+  std::vector<hash_item> legendGraphicHashVector;
+
+  hash_item symbolGroupHashItem;
+  symbolGroupHashItem.templateFile = templateDirectory + "/wms_get_legend_graphic_symbol.c2t";
+  for (auto lgi : legendGraphicInfo)
+  {
+    // lgi["layer_type"]];
+    std::string layerType = lgi["layer_type"];
+    std::string parameterName = lgi["parameter_name"];
+
+    //    std::cout << "LAYER TYPE: " << layerType << std::endl;
+    if (layerType == "symbol")
+    {
+      if (parameterName == "PrecipitationForm")
+      {
+        hash_item hi;
+        hi.hash["header_xpos"] = xpos;
+        hi.hash["header_ypos"] = ypos;
+        hi.hash["rain_symbol_xpos"] = xpos + 20;
+        hi.hash["rain_symbol_ypos"] = ypos + 15;
+        hi.hash["rain_text_xpos"] = xpos + 30;
+        hi.hash["rain_text_ypos"] = ypos + 20;
+        hi.hash["drizzle_symbol_xpos"] = xpos + 20;
+        hi.hash["drizzle_symbol_ypos"] = ypos + 35;
+        hi.hash["drizzle_text_xpos"] = xpos + 30;
+        hi.hash["drizzle_text_ypos"] = ypos + 40;
+        hi.hash["snow_symbol_xpos"] = xpos + 20;
+        hi.hash["snow_symbol_ypos"] = ypos + 55;
+        hi.hash["snow_text_xpos"] = xpos + 30;
+        hi.hash["snow_text_ypos"] = ypos + 60;
+        hi.templateFile = (templateDirectory + "/wms_get_legend_graphic_precipitation_form.c2t");
+        legendGraphicHashVector.push_back(hi);
+        xpos += 150;
+      }
+      else
+      {
+        // template handling: all symnbols to the same group
+        if (firstSymbol)
+        {
+          symbolGroupHashItem.hash["symbol_group_header"] = lgi["parameter_name"];
+          symbolGroupHashItem.hash["header_xpos"] = xpos;
+          symbolGroupHashItem.hash["header_ypos"] = ypos;
+          symbolGroupHashItem.hash["symbol_group"] = CTPP::CDT(CTPP::CDT::ARRAY_VAL);
+          firstSymbol = false;
+          symbol_xpos = xpos + 20;
+          symbol_ypos = ypos + 50;
+          xpos += 150;
+        }
+        CTPP::CDT& symbolHash = symbolGroupHashItem.hash["symbol_group"][symbolGroupIndex];
+        symbolHash["name"] = lgi["symbol"];
+        symbolHash["xpos"] = symbol_xpos;
+        symbolHash["ypos"] = symbol_ypos;
+        symbolHash["text"] = lgi["symbol"];
+        symbolHash["text_xpos"] = symbol_xpos + 20;
+        symbolHash["text_ypos"] = symbol_ypos + 15;
+        symbol_ypos += 20;
+        symbolGroupIndex++;
+      }
+    }
+    else if (layerType == "isoband")
+    {
+      hash_item hi;
+      hi.templateFile = templateDirectory + "/wms_get_legend_graphic_isoband.c2t";
+      hi.hash["isoband_json"] = lgi["isobands"];
+      hi.hash["isoband_css"] = lgi["css"];
+      hi.hash["isoband_text_xpos"] = xpos;
+      hi.hash["isoband_text_ypos"] = ypos;
+      hi.hash["isoband_unit_xpos"] = xpos + 10;
+      hi.hash["isoband_unit_ypos"] = ypos + 20;
+      hi.hash["isoband_header"] = parameterName;
+      hi.hash["isoband_id"] = (parameterName + "_label");
+
+      if (parameterName == "Precipitation1h")
+      {
+        hi.hash["isoband_unit"] = "mm/h";
+      }
+      else if (parameterName == "Temperature")
+      {
+        hi.hash["isoband_unit"] = "celcius";
+      }
+      else if (parameterName == "WindSpeedMS")
+      {
+        hi.hash["isoband_unit"] = "m/s";
+      }
+      else
+      {
+        hi.hash["isoband_unit"] = "";
+      }
+      legendGraphicHashVector.push_back(hi);
+      xpos += 150;
+    }
+    else if (layerType == "isoline")
+    {
+      hash_item hi;
+      hi.templateFile = templateDirectory + "/wms_get_legend_graphic_isoline.c2t";
+      hi.hash["isoline_header"] = parameterName + " isoline";
+      hi.hash["isoline_css"] = lgi["css"];
+      hi.hash["isoline_class"] = lgi["class"];
+      hi.hash["isoline_text_xpos"] = xpos;
+      hi.hash["isoline_text_ypos"] = ypos;
+      hi.hash["isoline_symbol_xpos"] = xpos + 10;
+      hi.hash["isoline_symbol_ypos"] = ypos + 20;
+      hi.hash["isoline_symbol_id"] = (parameterName + "_isoline");
+      legendGraphicHashVector.push_back(hi);
+      xpos += 150;
+    }
+  }
+
+  if (symbolGroupIndex > 0)
+    legendGraphicHashVector.push_back(symbolGroupHashItem);
+
+  Dali::TemplateFactory templateFactory;
+  for (auto item : legendGraphicHashVector)
+  {
+    Dali::SharedFormatter formatter = templateFactory.get(item.templateFile);
+    std::stringstream tmpl_ss;
+    std::stringstream logstream;
+    formatter->process(item.hash, tmpl_ss, logstream);
+    /*
+std::cout << "processed template: " << item.templateFile << std::endl
+          << legendGraphicHashVector.size() << "," << std::endl
+          << tmpl_ss.str() << std::endl;
+    */
+    ret.push_back(tmpl_ss.str());
+  }
+
+  return ret;
+}
+
 std::string WMSLayer::getName() const
 {
   return name;
@@ -173,6 +437,9 @@ std::string WMSLayer::generateGetCapabilities(const Engine::Gis::Engine& gisengi
 {
   try
   {
+    if (hidden)
+      return "";
+
     std::string ss = std::string(" <Layer queryable=") +
                      enclose_with_quotes(queryable ? "1" : "0") + " opaque=\"1\">" + "\n" +
                      "   <Name>" + name + "</Name>" + "\n" + "   <Title>" + title + "</Title>" +

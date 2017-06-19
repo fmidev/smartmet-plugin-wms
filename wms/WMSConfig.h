@@ -38,6 +38,11 @@ class Engine;
 
 namespace Plugin
 {
+namespace Dali
+{
+class Product;
+class State;
+}
 namespace WMS
 {
 // For getCapabilities caching
@@ -82,9 +87,11 @@ class WMSConfig
 
 #ifndef WITHOUT_AUTHENTICATION
   std::string getCapabilities(const boost::optional<std::string>& apikey,
+                              const std::string& host,
                               bool authenticate = true) const;
 #else
-  std::string getCapabilities(const boost::optional<std::string>& apikey) const;
+  std::string getCapabilities(const boost::optional<std::string>& apikey,
+                              const std::string& host) const;
 #endif
 
   std::string layerCustomer(const std::string& theLayerName) const;
@@ -92,7 +99,7 @@ class WMSConfig
   const std::set<std::string>& supportedWMSVersions() const;
   bool isValidMapFormat(const std::string& theMapFormat) const;
   bool isValidVersion(const std::string& theVersion) const;
-  bool isValidLayer(const std::string& theLayer) const;
+  bool isValidLayer(const std::string& theLayer, bool theAcceptHiddenLayerFlag = false) const;
   bool isValidStyle(const std::string& theLayer, const std::string& theStyle) const;
   bool isValidCRS(const std::string& theLayer, const std::string& theCRS) const;
 
@@ -107,11 +114,16 @@ class WMSConfig
   bool currentValue(const std::string& theLayer) const;
   boost::posix_time::ptime mostCurrentTime(const std::string& theLayer) const;
   std::string jsonText(const std::string& theLayerName) const;
+  std::vector<Json::Value> getLegendGraphic(const std::string& theLayerName) const;
 
   bool inspireExtensionSupported() const;
   const std::map<std::string, std::string>& getCapabilitiesResponseVariables() const;
 
   void shutdown();
+
+  void getLegendGraphic(const std::string& theLayerName,
+                        Dali::Product& theProduct,
+                        const Dali::State& theState) const;
 
  private:
   const Plugin::Dali::Config& itsDaliConfig;
@@ -151,7 +163,7 @@ class WMSConfig
   std::set<std::string> getObservationProducers() const;
 #endif
   // For locking purposes
-  bool isValidLayerImpl(const std::string& theLayer) const;
+  bool isValidLayerImpl(const std::string& theLayer, bool theAcceptHiddenLayerFlag = false) const;
 
   friend class WMSLayerFactory;
 
@@ -160,6 +172,7 @@ class WMSConfig
   bool itsShutdownRequested;
   int itsActiveThreadCount;
 
+  std::map<std::string, Json::Value> itsLegendGraphicLayers;
 };  // class WMSConfig
 
 }  // namespace WMS
