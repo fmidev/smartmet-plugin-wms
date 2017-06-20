@@ -5,8 +5,8 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.6.19
-Release: 2%{?dist}.fmi
+Version: 17.6.20
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -88,6 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+
+* Tue Jun 20 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.6.10-1.fmi
+- Use layer customer instead of default customer in wms-query
 
 * Mon Jun 19 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.6.19-2.fmi
 - Fixed GetCapabilities-response

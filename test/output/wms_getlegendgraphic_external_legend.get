@@ -27,28 +27,28 @@
   
    <use class="GaleWind_32_inf" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="40"/>
   
-  <text x="60" y="40">&gt; 32</text>
+  <text x="48" y="49">&gt; 32</text>
    <use class="StormWind_21_26" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="49"/>
   
-  <text x="60" y="49">21–26</text>
+  <text x="48" y="58">21-26</text>
    <use class="HardWind_17_21" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="58"/>
   
-  <text x="60" y="58">17–21</text>
+  <text x="48" y="67">17-21</text>
    <use class="HardWind_14_17" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="67"/>
   
-  <text x="60" y="67">14–17</text>
+  <text x="48" y="76">14-17</text>
    <use class="FreshWind_10_14" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="76"/>
   
-  <text x="60" y="76">10–14</text>
+  <text x="48" y="85">10-14</text>
    <use class="FreshWind_7_10" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="85"/>
   
-  <text x="60" y="85">7–10</text>
+  <text x="48" y="94">7-10</text>
    <use class="ModerateWind_5_7" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="94"/>
   
-  <text x="60" y="94">5–7</text>
+  <text x="48" y="103">5-7</text>
    <use class="ModerateWind_3_5" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="103"/>
   
-  <text x="60" y="103">3–5</text>
+  <text x="48" y="112">3-5</text>
   <text class="Units" x="20" y="13">Wind speed</text>
   <text class="Units" x="30" y="30">m/s</text>
   </g>
