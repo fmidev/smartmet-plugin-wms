@@ -213,6 +213,7 @@
    <use class="Temperature_2_1" transform="translate(397,201) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_1_0" transform="translate(238,193) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_0_1" transform="translate(215,184) scale(0.75)" xlink:href="#circle"/>
+   <use class="Temperature_1_0" transform="translate(277,192) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_1_0" transform="translate(273,194) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_2_1" transform="translate(304,162) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_1_0" transform="translate(283,191) scale(0.75)" xlink:href="#circle"/>
@@ -221,7 +222,6 @@
    <use class="Temperature_4_3" transform="translate(324,175) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_1_0" transform="translate(373,182) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_2_1" transform="translate(390,169) scale(0.75)" xlink:href="#circle"/>
-   <use class="Temperature_3_2" transform="translate(205,140) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_6_5" transform="translate(217,136) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_4_3" transform="translate(220,139) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_2_1" transform="translate(224,138) scale(0.75)" xlink:href="#circle"/>
@@ -247,6 +247,7 @@
    <use class="Temperature_4_3" transform="translate(360,107) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_4_3" transform="translate(380,80) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_4_6" transform="translate(256,412) scale(0.75)" xlink:href="#circle"/>
+   <use class="Temperature_3_2" transform="translate(205,140) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_1_0" transform="translate(342,279) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_3_2" transform="translate(317,73) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_4_3" transform="translate(342,99) scale(0.75)" xlink:href="#circle"/>
