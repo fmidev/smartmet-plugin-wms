@@ -11,9 +11,9 @@
 
 #pragma once
 
-#include <spine/HTTP.h>
 #include <boost/shared_ptr.hpp>
 #include <macgyver/TemplateFormatterMT.h>
+#include <spine/HTTP.h>
 
 namespace SmartMet
 {
@@ -25,6 +25,7 @@ enum class WMSRequestType
 {
   GET_CAPABILITIES,
   GET_MAP,
+  GET_LEGEND_GRAPHIC,
   GET_FEATURE_INFO,
   NOT_A_WMS_REQUEST
 };

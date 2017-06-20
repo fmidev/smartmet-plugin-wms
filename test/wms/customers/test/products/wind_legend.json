@@ -1,0 +1,95 @@
+{
+    "language": "fi",
+    "hidden": true,
+    "projection":
+    {
+    },
+    "defs":
+    {
+	"layers": [
+	    {
+		"tag": "symbol",
+		"attributes":
+		{
+		    "id": "rect"
+		},
+		"layers": [
+		    {
+			"tag": "rect",
+			"attributes":
+			{
+			    "width": "14",
+			    "height": "9"
+			}
+		    }
+		]
+	    }
+	]
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+		{
+		    "layer_type": "legend",
+		    "x": 30,
+		    "y": 40,
+		    "dx": 0,
+		    "dy": 9,
+		    "isobands": "json:isobands/wind.json",
+		    "symbols":
+		    {
+			"css": "isobands/wind.css",
+			"symbol": "rect",
+			"attributes":
+			{
+			    "stroke": "black",
+			    "stroke-width": "0.5"
+			}
+		    },
+		    "attributes":
+		    {
+			"id": "windlegend",
+			"class": "Label"
+		    },
+		    "labels":
+		    {
+			"separator": "-",	// en dash = " \u2013 "
+			"dx": 18,
+			"dy": 9,
+			"conversions":
+			{
+			    "32": "&#62; 32"
+			}
+		    },
+		    "layers": [
+			{
+			    "tag": "text",
+			    "cdata": "Wind speed",
+			    "attributes":
+			    {
+				"x": 20,
+				"y": 13,
+				"class": "Units"
+			    }
+			},
+			{
+			    "tag": "text",
+			    "cdata": "m/s",
+			    "attributes":
+			    {
+				"x": 30,
+				"y": 30,
+				"class": "Units"
+			    }
+			}
+		    ]
+		}
+            ]
+        }
+    ]
+}

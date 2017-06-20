@@ -8,6 +8,7 @@
 #include "Product.h"
 #include "State.h"
 #include "WMSConfig.h"
+#include "WMSGetLegendGraphic.h"
 #include "WMSGetMap.h"
 
 #include <spine/Convenience.h>
@@ -1138,7 +1139,6 @@ std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException) cons
  * \brief Perform a WMS query
  */
 // ----------------------------------------------------------------------
-
 WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
                                       const Spine::HTTP::Request &theRequest,
                                       Spine::HTTP::Response &theResponse)
@@ -1191,42 +1191,38 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
         return WMSQueryStatus::OK;
       }
 
+      std::string json_text;
+      if (requestType == WMS::WMSRequestType::GET_MAP)
+      {
+        WMS::WMSGetMap wmsGetMapRequest(*itsWMSConfig);
+
 // This request is a GetMap request
 // Validate authorizations
 
 #ifndef WITHOUT_AUTHENTICATION
-      bool has_access = false;
-      if (itsConfig.authenticate())
-        has_access = itsWMSConfig->validateGetMapAuthorization(thisRequest);
-      else
-        has_access = true;
+        bool has_access = false;
+        if (itsConfig.authenticate())
+          has_access = itsWMSConfig->validateGetMapAuthorization(thisRequest);
+        else
+          has_access = true;
 
-      if (!has_access)
-      {
-        // Send 403 FORBIDDEN
-        theResponse.setStatus(Spine::HTTP::Status::forbidden, true);
-        return WMSQueryStatus::FORBIDDEN;
-      }
+        if (!has_access)
+        {
+          // Send 403 FORBIDDEN
+          theResponse.setStatus(Spine::HTTP::Status::forbidden, true);
+          return WMSQueryStatus::FORBIDDEN;
+        }
 #endif
+        wmsGetMapRequest.parseHTTPRequest(*itsQEngine, thisRequest);
 
-      WMS::WMSGetMap wmsGetMapRequest(*itsWMSConfig);
-      wmsGetMapRequest.parseHTTPRequest(*itsQEngine, thisRequest);
-
-      // Define the customer
-      std::string customer =
-          Spine::optional_string(thisRequest.getParameter("customer"), itsConfig.defaultCustomer());
-      state.setCustomer(customer);
-
-      if (state.getCustomer().empty())
-      {
-        Spine::Exception exception(BCP, "Customer setting is empty!");
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-        auto msg = parseWMSException(exception);
-        formatResponse(msg, "xml", thisRequest, theResponse, state.useTimer());
-        return WMSQueryStatus::EXCEPTION;
+        json_text = wmsGetMapRequest.jsonText();
       }
-
-      std::string json_text = wmsGetMapRequest.jsonText();
+      else if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
+      {
+        WMS::WMSGetLegendGraphic wmsGetLegendGraphic(*itsWMSConfig);
+        wmsGetLegendGraphic.parseHTTPRequest(*itsQEngine, thisRequest);
+        json_text = wmsGetLegendGraphic.jsonText();
+      }
 
       Json::Value json;
 
@@ -1247,6 +1243,20 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
         throw exception;
       }
 
+      // Define the customer
+      std::string customer =
+          Spine::optional_string(thisRequest.getParameter("customer"), itsConfig.defaultCustomer());
+      state.setCustomer(customer);
+
+      if (state.getCustomer().empty())
+      {
+        Spine::Exception exception(BCP, "Customer setting is empty!");
+        exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+        auto msg = parseWMSException(exception);
+        formatResponse(msg, "xml", thisRequest, theResponse, state.useTimer());
+        return WMSQueryStatus::EXCEPTION;
+      }
+
       std::string customer_root =
           (itsConfig.rootDirectory(state.useWms()) + "/customers/" + customer);
 
@@ -1254,10 +1264,13 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
 
       Spine::JSON::preprocess(
           json, itsConfig.rootDirectory(state.useWms()), layers_root, itsFileCache);
+
       Spine::JSON::dereference(json);
+
       Spine::JSON::expand(json, thisRequest.getParameterMap());
 
       // Debugging
+
       if (print_json)
       {
         Json::StyledWriter writer;
@@ -1266,14 +1279,12 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
 
       // And initialize the product specs from the JSON
       product.init(json, state, itsConfig);
-      /*
-    }
-    catch (WMS::WMSException &e)
-    {
-      auto msg = parseWMSException(e);
-      formatResponse(msg, "xml", thisRequest, theResponse, state.useTimer());
-      return WMSQueryStatus::EXCEPTION;
-    */
+
+      if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
+      {
+        std::string layerName = *(theRequest.getParameter("LAYER"));
+        itsWMSConfig->getLegendGraphic(layerName, product, state);
+      }
     }
     catch (...)
     {

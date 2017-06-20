@@ -7,9 +7,9 @@
 #pragma once
 
 #include "View.h"
+#include <boost/shared_ptr.hpp>
 #include <json/json.h>
 #include <list>
-#include <boost/shared_ptr.hpp>
 
 namespace CTPP
 {
@@ -41,7 +41,6 @@ class Views
 
   std::size_t hash_value(const State& theState) const;
 
- private:
   std::list<boost::shared_ptr<View> > views;
 };
 
