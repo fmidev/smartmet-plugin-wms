@@ -88,8 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-
-* Tue Jun 20 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.6.10-1.fmi
+* Tue Jun 20 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.6.20-1.fmi
 - Use layer customer instead of default customer in wms-query
 
 * Mon Jun 19 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.6.19-2.fmi
