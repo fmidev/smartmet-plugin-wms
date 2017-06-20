@@ -734,6 +734,10 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
           .addParameter("Product", product_path);
     }
 
+    // Replace references (json: and ref:) from query string options
+
+    Spine::JSON::replaceReferences(json, theRequest.getParameterMap());
+
     // Expand the JSON
 
     std::string layers_root = customer_root + "/layers/";
@@ -745,7 +749,7 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
 
     Spine::JSON::dereference(json);
 
-    // Modify as requested
+    // Modify variables as requested (not reference substitutions)
 
     Spine::JSON::expand(json, theRequest.getParameterMap());
 
@@ -1187,19 +1191,6 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
         return WMSQueryStatus::OK;
       }
 
-      // Define the customer
-      std::string customer =
-          Spine::optional_string(thisRequest.getParameter("customer"), itsConfig.defaultCustomer());
-      state.setCustomer(customer);
-      if (state.getCustomer().empty())
-      {
-        Spine::Exception exception(BCP, "Customer setting is empty!");
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-        auto msg = parseWMSException(exception);
-        formatResponse(msg, "xml", thisRequest, theResponse, state.useTimer());
-        return WMSQueryStatus::EXCEPTION;
-      }
-
       std::string json_text;
       if (requestType == WMS::WMSRequestType::GET_MAP)
       {
@@ -1250,6 +1241,20 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
         Spine::Exception exception(BCP, "JSON parsing error!", NULL);
         exception.addParameter("Text", json_text);
         throw exception;
+      }
+
+      // Define the customer
+      std::string customer =
+          Spine::optional_string(thisRequest.getParameter("customer"), itsConfig.defaultCustomer());
+      state.setCustomer(customer);
+
+      if (state.getCustomer().empty())
+      {
+        Spine::Exception exception(BCP, "Customer setting is empty!");
+        exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+        auto msg = parseWMSException(exception);
+        formatResponse(msg, "xml", thisRequest, theResponse, state.useTimer());
+        return WMSQueryStatus::EXCEPTION;
       }
 
       std::string customer_root =
