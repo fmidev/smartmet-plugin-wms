@@ -27,7 +27,7 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
   <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://en.ilmatieteenlaitos.fi/open-data"/>
   <ContactInformation>
     <ContactPersonPrimary>
-      <ContactPerson></ContactPerson>
+      <ContactPerson>Roope Tervo</ContactPerson>
       <ContactOrganization>Finnish Meteorological Institute (FMI)</ContactOrganization>
     </ContactPersonPrimary>
       <ContactPosition>Customer service</ContactPosition>
