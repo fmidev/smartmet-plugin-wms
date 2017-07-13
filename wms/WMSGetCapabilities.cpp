@@ -161,6 +161,7 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     hash["contact_address_country"] = responseVariables.at("contact_address_country");
     hash["telephone_number"] = responseVariables.at("telephone_number");
     hash["facsimile_number"] = responseVariables.at("facsimile_number");
+    hash["electronic_mail_address"] = responseVariables.at("electronic_mail_address");
     if (!responseVariables.at("fees").empty())
       hash["fees"] = responseVariables.at("fees");
     if (!responseVariables.at("access_constraints").empty())

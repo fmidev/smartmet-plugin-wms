@@ -251,6 +251,7 @@ WMSConfig::WMSConfig(const Config& daliConfig,
     itsGetCapabilitiesResponseVariables.insert(make_pair("contact_address_country", ""));
     itsGetCapabilitiesResponseVariables.insert(make_pair("telephone_number", ""));
     itsGetCapabilitiesResponseVariables.insert(make_pair("facsimile_number", ""));
+    itsGetCapabilitiesResponseVariables.insert(make_pair("electronic_mail_address", ""));
     itsGetCapabilitiesResponseVariables.insert(make_pair("fees", ""));
     itsGetCapabilitiesResponseVariables.insert(make_pair("access_constraints", ""));
     itsGetCapabilitiesResponseVariables.insert(make_pair("layers_title", ""));
@@ -293,6 +294,8 @@ WMSConfig::WMSConfig(const Config& daliConfig,
                        itsGetCapabilitiesResponseVariables["telephone_number"]);
     config.lookupValue("wms.get_capabilities_response.contact_info.facsimile_number",
                        itsGetCapabilitiesResponseVariables["facsimile_number"]);
+    config.lookupValue("wms.get_capabilities_response.contact_info.electronic_mail_address",
+                       itsGetCapabilitiesResponseVariables["electronic_mail_address"]);
 
     // read headers
     itsGetCapabilitiesResponseVariables.insert(make_pair("header", ""));

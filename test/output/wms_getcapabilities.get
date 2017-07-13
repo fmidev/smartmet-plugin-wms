@@ -41,6 +41,7 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
     </ContactAddress>
       <ContactVoiceTelephone>+358 29 539 1000</ContactVoiceTelephone>
       <ContactFacsimileTelephone>+358 29 539 2303</ContactFacsimileTelephone>
+      <ContactElectronicMailAddress>roope.tervo@fmi.fi</ContactElectronicMailAddress>
   </ContactInformation>
   
   <Fees>

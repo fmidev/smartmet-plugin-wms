@@ -88,6 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Upcoming
+- Added electronic_mail_address GetCapabilities configuration variable
+
 * Tue Jun 20 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.6.20-1.fmi
 - Use layer customer instead of default customer in wms-query
 
