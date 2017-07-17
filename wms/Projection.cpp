@@ -324,9 +324,9 @@ void Projection::prepareCRS() const
 
     // Disallow partial definitions
     if (partial_rect_bbox)
-      throw Spine::Exception(BCP, "Partial CRS bounding box given: x1,y2,x2,y2 are needed");
+      throw Spine::Exception(BCP, "Partial CRS bounding box given: x1,y1,x2,y2 are needed");
     if (partial_center_bbox)
-      throw Spine::Exception(BCP, "Partial CRS bounding box given: x1,y2,x2,y2 are needed");
+      throw Spine::Exception(BCP, "Partial CRS bounding box given: cx,cy,resolution are needed");
 
     // bbox definition missing completely?
     if (!full_rect_bbox && !full_center_bbox)
