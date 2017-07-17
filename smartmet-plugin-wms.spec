@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.6.20
+Version: 17.7.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -88,8 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-* Upcoming
+* Mon Jul 17 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.7.17-1.fmi
 - Added electronic_mail_address GetCapabilities configuration variable
+- Fixed GetCapabilities Style section to validate - name and title are obligatory
 
 * Tue Jun 20 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.6.20-1.fmi
 - Use layer customer instead of default customer in wms-query

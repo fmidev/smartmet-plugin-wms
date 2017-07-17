@@ -135,9 +135,6 @@ void WMSLayer::addStyles(const Json::Value& root, const std::string& layerName)
 void WMSLayer::addStyle(const std::string& layerName)
 {
   WMSLayerStyle layerStyle;
-  layerStyle.name = "";
-  layerStyle.title = "";
-  layerStyle.abstract = "";
   layerStyle.legend_url.width = 200;
   layerStyle.legend_url.height = 200;
   layerStyle.legend_url.format = "image/png";
@@ -548,10 +545,6 @@ std::string WMSLayer::generateGetCapabilities(const Engine::Gis::Engine& gisengi
 
     ss += bbox_ss;
 
-    // add layer styles
-    for (auto style : styles)
-      ss += style.toXML();
-
     if (timeDimension)
     {
       // then bounding boxes of these CRS
@@ -561,6 +554,10 @@ std::string WMSLayer::generateGetCapabilities(const Engine::Gis::Engine& gisengi
             "  current=" + enclose_with_quotes(timeDimension->currentValue() ? "1" : "0") + ">" +
             timeDimension->getCapabilities() + "</Dimension>" + "\n";
     }
+
+    // add layer styles
+    for (auto style : styles)
+      ss += style.toXML();
 
     ss += " </Layer>\n";
 

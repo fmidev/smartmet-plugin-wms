@@ -139,13 +139,15 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
    <BoundingBox CRS="EPSG:3067" minx="43547.789322" miny="6549298.622001" maxx="674306.988933" maxy="7782478.683829" />
    <BoundingBox CRS="EPSG:3857" minx="-1012863.355219" miny="6674532.798473" maxx="5454655.048870" maxy="11134125.235151" />
    <BoundingBox CRS="EPSG:4258" minx="51.300000" miny="-9.098706" maxx="70.200000" maxy="49.000000" />
+   <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
 <Style>
+<Name>Default</Name>
+<Title>Default style</Title>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
 <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=ely:elymap&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
-   <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
  </Layer>
  <Layer queryable="0" opaque="1">
    <Name>ely:wmsmap</Name>
@@ -171,13 +173,15 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
    <BoundingBox CRS="EPSG:3067" minx="43547.789322" miny="6549298.622001" maxx="674306.988933" maxy="7782478.683829" />
    <BoundingBox CRS="EPSG:3857" minx="-1012863.355219" miny="6674532.798473" maxx="5454655.048870" maxy="11134125.235151" />
    <BoundingBox CRS="EPSG:4258" minx="51.300000" miny="-9.098706" maxx="70.200000" maxy="49.000000" />
+   <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
 <Style>
+<Name>Default</Name>
+<Title>Default style</Title>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
 <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=ely:wmsmap&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
-   <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
  </Layer>
  <Layer queryable="0" opaque="1">
    <Name>test:coordinate_grid</Name>
@@ -218,6 +222,8 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
    </EX_GeographicBoundingBox>
    <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0" />
 <Style>
+<Name>Default</Name>
+<Title>Default style</Title>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
 <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:flobrg&amp;style=&amp;format=image%2Fpng"/>
@@ -327,6 +333,8 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
    </EX_GeographicBoundingBox>
    <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0" />
 <Style>
+<Name>Default</Name>
+<Title>Default style</Title>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
 <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icedft&amp;style=&amp;format=image%2Fpng"/>
@@ -359,6 +367,8 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
    </EX_GeographicBoundingBox>
    <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0" />
 <Style>
+<Name>Default</Name>
+<Title>Default style</Title>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
 <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icefra_zone&amp;style=&amp;format=image%2Fpng"/>
@@ -428,13 +438,15 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
    <BoundingBox CRS="EPSG:3067" minx="43547.789322" miny="6549298.622001" maxx="654126.981008" maxy="7320177.459702" />
    <BoundingBox CRS="EPSG:3857" minx="1006990.540607" miny="7045145.240838" maxx="3383283.135894" maxy="9867272.332157" />
    <BoundingBox CRS="EPSG:4258" minx="53.334675" miny="9.045950" maxx="65.964996" maxy="30.392550" />
+   <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2012-02-27T14:22:00Z</Dimension>
 <Style>
+<Name>Default</Name>
+<Title>Default style</Title>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
 <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icemap_new&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
-   <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2012-02-27T14:22:00Z</Dimension>
  </Layer>
  <Layer queryable="0" opaque="1">
    <Name>test:iceprs</Name>
@@ -462,6 +474,8 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
    </EX_GeographicBoundingBox>
    <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0" />
 <Style>
+<Name>Default</Name>
+<Title>Default style</Title>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
 <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icerdg&amp;style=&amp;format=image%2Fpng"/>
@@ -481,6 +495,8 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
    </EX_GeographicBoundingBox>
    <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0" />
 <Style>
+<Name>Default</Name>
+<Title>Default style</Title>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
 <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:icerft&amp;style=&amp;format=image%2Fpng"/>
@@ -500,6 +516,8 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
    </EX_GeographicBoundingBox>
    <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0" />
 <Style>
+<Name>Default</Name>
+<Title>Default style</Title>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
 <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:jmdbrr&amp;style=&amp;format=image%2Fpng"/>
@@ -581,13 +599,15 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
    <BoundingBox CRS="EPSG:3067" minx="43547.789322" miny="6549298.622001" maxx="674306.988933" maxy="7782478.683829" />
    <BoundingBox CRS="EPSG:3857" minx="-1012863.355219" miny="6674532.798473" maxx="5454655.048870" maxy="11134125.235151" />
    <BoundingBox CRS="EPSG:4258" minx="51.300000" miny="-9.098706" maxx="70.200000" maxy="49.000000" />
+   <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
 <Style>
+<Name>Default</Name>
+<Title>Default style</Title>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
 <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:precipitation&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
-   <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
  </Layer>
  <Layer queryable="0" opaque="1">
    <Name>test:t2m_p</Name>
@@ -613,13 +633,15 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
    <BoundingBox CRS="EPSG:3067" minx="43547.789322" miny="6549298.622001" maxx="674306.988933" maxy="7782478.683829" />
    <BoundingBox CRS="EPSG:3857" minx="-1012863.355219" miny="6674532.798473" maxx="5454655.048870" maxy="11134125.235151" />
    <BoundingBox CRS="EPSG:4258" minx="51.300000" miny="-9.098706" maxx="70.200000" maxy="49.000000" />
+   <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
 <Style>
+<Name>Default</Name>
+<Title>Default style</Title>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
 <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:t2m_p&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
-   <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
  </Layer>
  <Layer queryable="0" opaque="1">
    <Name>test:temperature_isotherm</Name>
@@ -671,13 +693,15 @@ xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.
    <BoundingBox CRS="EPSG:3067" minx="43547.789322" miny="6549298.622001" maxx="674306.988933" maxy="7782478.683829" />
    <BoundingBox CRS="EPSG:3857" minx="-1012863.355219" miny="6674532.798473" maxx="5454655.048870" maxy="11134125.235151" />
    <BoundingBox CRS="EPSG:4258" minx="51.300000" miny="-9.098706" maxx="70.200000" maxy="49.000000" />
+   <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
 <Style>
+<Name>Default</Name>
+<Title>Default style</Title>
 <LegendURL width="200" height="200">
 <Format>image/png</Format>
 <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://brainstormgw.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;layer=test:wind_legend&amp;style=&amp;format=image%2Fpng"/>
 </LegendURL>
 </Style>
-   <Dimension name="time" units="ISO8601"  multipleValues="0"  nearestValue="0"  current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
  </Layer>
 
  </Layer>

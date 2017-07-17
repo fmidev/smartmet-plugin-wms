@@ -28,6 +28,8 @@ struct LegendURL
 };
 struct WMSLayerStyle
 {
+  WMSLayerStyle() : name("Default"), title("Default style") {}
+
   std::string name;
   std::string title;
   std::string abstract;
