@@ -24,50 +24,64 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayerStyle& layerStyle)
   return ost;
 }
 
-std::string WMSLayerStyle::toXML()
+CTPP::CDT WMSLayerStyle::getCapabilities() const
 {
-  std::string ret;
-
   try
   {
+    CTPP::CDT style(CTPP::CDT::HASH_VAL);
+
+    // Style name, title and abstract
+
     if (name.empty())
       throw Spine::Exception(BCP, "WMS layer style must have a name!", NULL);
     if (title.empty())
       throw Spine::Exception(BCP, "WMS layer style must have a title!", NULL);
 
-    ret += "<Style>\n";
-    ret += "<Name>";
-    ret += name;
-    ret += "</Name>\n";
-    ret += "<Title>";
-    ret += title;
-    ret += "</Title>\n";
+    style["name"] = name;
+    style["title"] = title;
+
     if (!abstract.empty())
+      style["abstract"] = abstract;
+
+    // Style legend URL
+
+    CTPP::CDT style_legend_url_list(CTPP::CDT::ARRAY_VAL);
+
+    CTPP::CDT style_legend_url(CTPP::CDT::HASH_VAL);
+    style_legend_url["width"] = legend_url.width;
+    style_legend_url["height"] = legend_url.height;
+    style_legend_url["format"] = legend_url.format;
+    style_legend_url["online_resource"] = legend_url.online_resource;
+    style_legend_url_list.PushBack(style_legend_url);
+
+    style["legend_url"] = style_legend_url_list;
+
+    // Style sheet
+
+    if (false)  // NOT IMPLEMENTED
     {
-      ret += "<Abstract>";
-      ret += abstract;
-      ret += "</Abstract>\n";
+      CTPP::CDT style_style_sheet_url(CTPP::CDT::HASH_VAL);
+      style_style_sheet_url["format"] = "css";
+      style_style_sheet_url["online_resource"] = "http://www.www.wwws/style.css";
+      style["style_sheet_url"] = style_style_sheet_url;
     }
-    ret += "<LegendURL width=\"";
-    ret += Fmi::to_string(legend_url.width);
-    ret += "\" height=\"";
-    ret += Fmi::to_string(legend_url.height);
-    ret += "\">\n";
-    ret += "<Format>";
-    ret += legend_url.format;
-    ret += "</Format>\n";
-    ret += "<OnlineResource ";
-    ret += legend_url.online_resource;
-    ret += "/>\n";
-    ret += "</LegendURL>\n";
-    ret += "</Style>\n";
+
+    // Style URL
+
+    if (false)  // NOT IMPLEMENTED
+    {
+      CTPP::CDT style_style_url(CTPP::CDT::HASH_VAL);
+      style_style_url["format"] = "css";
+      style_style_url["online_resource"] = "http://www.www.wwws/style.css";
+      style["style_url"] = style_style_url;
+    }
+
+    return style;
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to convert WMSLayerStyle to XML!", NULL);
+    throw Spine::Exception(BCP, "Failed to convert WMSLayerStyle to template output format", NULL);
   }
-
-  return ret;
 }
 
 }  // namespace WMS

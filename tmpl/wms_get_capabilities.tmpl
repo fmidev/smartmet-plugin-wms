@@ -1,109 +1,383 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<WMS_Capabilities version="<TMPL_var version_string>" 
-		   <TMPL_if defined(headers)><TMPL_var headers></TMPL_if>>
+<TMPL_comment>
+This template is a direct translation of the schema at
+
+   http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd
+
+CamelCase XML names have corresponding lower_case variable names
+in the CTPP2 hash.
+
+The code does not necessarily generate values for variables which are
+optional in the schema. However, some optional variables have
+obligatory components which the code has to generate if the optional
+variable is defined.
+
+Sometimes a string value has obligatory attributes. In such instances
+the value itself will be stored in "variable.value". If there are
+no attributes, the value will be stored in "variable".
+
+</TMPL_comment><?xml version="1.0" encoding="UTF-8"?>
+<WMS_Capabilities version="<TMPL_var version>"<TMPL_if defined(headers)> <TMPL_var headers><-/TMPL_if->>
 <Service>
   <Name>WMS</Name>
-  <Title><TMPL_var title></Title>
-  <TMPL_if defined(abstract)>
-  <Abstract><TMPL_var abstract></Abstract>
-  </TMPL_if>
-  <TMPL_if defined(keywords)>
-  <KeywordList>
-    <TMPL_foreach keywords as keyword>
-      <Keyword><TMPL_var keyword></Keyword>
-    </TMPL_foreach>
-  </KeywordList>
-  </TMPL_if>
-  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="<TMPL_var online_resource>"/>
-  <ContactInformation>
-    <ContactPersonPrimary>
-      <ContactPerson><TMPL_var contact_person></ContactPerson>
-      <ContactOrganization><TMPL_var organization></ContactOrganization>
-    </ContactPersonPrimary>
-      <ContactPosition><TMPL_var contact_position></ContactPosition>
-    <ContactAddress>
-        <AddressType><TMPL_var contact_address_type></AddressType>
-        <Address><TMPL_var contact_address></Address>
-        <City><TMPL_var contact_address_city></City>
-        <StateOrProvince><TMPL_var contact_address_province></StateOrProvince>
-        <PostCode><TMPL_var contact_address_post_code></PostCode>
-        <Country><TMPL_var contact_address_country></Country>
-    </ContactAddress>
-      <ContactVoiceTelephone><TMPL_var telephone_number></ContactVoiceTelephone>
-      <ContactFacsimileTelephone><TMPL_var facsimile_number></ContactFacsimileTelephone>
-      <ContactElectronicMailAddress><TMPL_var electronic_mail_address></ContactElectronicMailAddress>
-  </ContactInformation>
-  <TMPL_if defined(fees)>
-  <Fees>
-   <TMPL_var fees>
-  </Fees>
-  </TMPL_if>
-  <TMPL_if defined(access_constraints)>
-  <AccessConstraints>
-    <TMPL_var access_constraints>
-  </AccessConstraints>
-  </TMPL_if>
-</Service>
+  <Title><TMPL_var service.title></Title>
 
+  <-TMPL_if defined(service.abstract)>
+  <Abstract><TMPL_var service.abstract></Abstract>
+  <-/TMPL_if->
+
+  <-TMPL_if defined(service.keywords)>
+  <KeywordList>
+    <-TMPL_foreach service.keywords as keyword>
+      <Keyword><TMPL_var keyword></Keyword>
+    <-/TMPL_foreach>
+  </KeywordList>
+  </TMPL_if->
+
+  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="<TMPL_var service.online_resource>"/>
+
+  <-TMPL_if defined(service.contact_information)>
+  <ContactInformation>
+
+    <-TMPL_if defined(service.contact_information.contact_person_primary)>
+    <ContactPersonPrimary>
+      <ContactPerson><TMPL_var service.contact_information.contact_person_primary.contact_person></ContactPerson>
+      <ContactOrganization><TMPL_var service.contact_information.contact_person_primary.contact_organization></ContactOrganization>
+    </ContactPersonPrimary>
+    <-/TMPL_if>
+
+    <-TMPL_if defined(service.contact_information.contact_position)>
+    <ContactPosition><TMPL_var service.contact_information.contact_position></ContactPosition>
+    <-/TMPL_if->
+
+    <-TMPL_if defined(service.contact_information.contact_address)>
+    <ContactAddress>
+      <AddressType>    <-TMPL_var service.contact_information.contact_address.address_type->     </AddressType>
+      <Address>        <-TMPL_var service.contact_information.contact_address.address->          </Address>
+      <City>           <-TMPL_var service.contact_information.contact_address.city->             </City>
+      <StateOrProvince><-TMPL_var service.contact_information.contact_address.state_or_province-></StateOrProvince>
+      <PostCode>       <-TMPL_var service.contact_information.contact_address.post_code->        </PostCode>
+      <Country>        <-TMPL_var service.contact_information.contact_address.country->          </Country>
+    </ContactAddress>
+    <-/TMPL_if->
+
+    <-TMPL_if defined(service.contact_information.contact_voice_telephone)>
+    <ContactVoiceTelephone><TMPL_var service.contact_information.contact_voice_telephone></ContactVoiceTelephone>
+    <-/TMPL_if->
+
+    <-TMPL_if defined(service.contact_information.contact_facsimile_telephone)>
+    <ContactFacsimileTelephone><TMPL_var service.contact_information.contact_facsimile_telephone></ContactFacsimileTelephone>
+    <-/TMPL_if->
+
+    <-TMPL_if defined(service.contact_information.contact_electronic_mail_address)>
+    <ContactElectronicMailAddress><TMPL_var service.contact_information.contact_electronic_mail_address></ContactElectronicMailAddress>
+    <-/TMPL_if>
+  </ContactInformation>
+  <-/TMPL_if->
+
+  <-TMPL_if defined(service.fees)>
+  <Fees><TMPL_var service.fees></Fees>
+  <-/TMPL_if->
+
+  <-TMPL_if defined(service.access_constraints)>
+  <AccessConstraints><TMPL_var service.access_constraints></AccessConstraints>
+  <-/TMPL_if->
+
+  <-TMPL_if defined(service.layer_limit)>
+  <LayerLimit><TMPL_var service.layer_limit></LayerLimit>
+  <-/TMPL_if->
+
+  <-TMPL_if defined(service.max_width)>
+  <MaxWidth><TMPL_var service.max_width></MaxWidth>
+  <-/TMPL_if->
+
+  <-TMPL_if defined(service.max_height)>
+  <MaxHeight><TMPL_var service.max_height></MaxHeight>
+  <-/TMPL_if>
+</Service>
 <Capability>
   <Request>
     <GetCapabilities>
-      <Format>text/xml</Format>
+      <-TMPL_foreach capability.request.getcapabilities.format as format>
+      <Format><TMPL_var format></Format>
+      <-/TMPL_foreach->
+      <-TMPL_foreach capability.request.getcapabilities.dcptype as dcptype>
       <DCPType>
         <HTTP>
-          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" 
-			       xlink:type="simple" 
-			       xlink:href="<TMPL_var getmap_uri>" />
-	  </Get>
-          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" 
-			       xlink:type="simple" 
-				xlink:href="<TMPL_var getmap_uri>" />
-	  </Post>
+          <Get>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
+                            xlink:type="simple"
+                            xlink:href="<TMPL_var dcptype.http.get.online_resource>"/>
+          </Get>
+          <TMPL_if defined(dcptype.http.post)->
+          <Post>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
+                            xlink:type="simple"
+                            xlink:href="<TMPL_var dcptype.http.post.online_resource>"/>
+          </Post>
+          <-/TMPL_if>
         </HTTP>
       </DCPType>
+      <-/TMPL_foreach>
     </GetCapabilities>
     <GetMap>
-  <TMPL_if defined(mapformats)>
-    <TMPL_foreach mapformats as mapformat>
-      <Format><TMPL_var mapformat></Format>
-    </TMPL_foreach>
-  </TMPL_if>
+      <-TMPL_foreach capability.request.getmap.format as format>
+      <Format><TMPL_var format></Format>
+      <-/TMPL_foreach->
+      <-TMPL_foreach capability.request.getmap.dcptype as dcptype>
       <DCPType>
         <HTTP>
-          <Get><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="<TMPL_var getmap_uri>"/></Get>
-          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="<TMPL_var getmap_uri>"/></Post>
+          <Get>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
+                            xlink:type="simple"
+                            xlink:href="<TMPL_var dcptype.http.get.online_resource>"/>
+          </Get>
+          <TMPL_if defined(dcptype.http.post)->
+          <Post>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
+                            xlink:type="simple"
+                            xlink:href="<TMPL_var dcptype.http.post.online_resource>"/>
+          </Post>
+          <-/TMPL_if>
         </HTTP>
       </DCPType>
+      <-/TMPL_foreach>
     </GetMap>
+
+    <-TMPL_if defined(capability.request.getfeatureinfo)->
+    <GetFeatureInfo>
+      <-TMPL_foreach capability.request.getfeatureinfo.format as format>
+      <Format><TMPL_var format></Format>
+      </TMPL_foreach>
+      <TMPL_foreach capability.request.getfeatureinfo.dcptype as dcptype>
+      <DCPType>
+        <HTTP>
+          <Get>
+            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
+                            xlink:type="simple"
+                            xlink:href="<TMPL_var dcptype.http.get.online_resource>"/>
+          </Get>
+          <TMPL_if defined(dcptype.http.post)->
+          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
+                                xlink:type="simple"
+                                xlink:href="<TMPL_var dcptype.http.post.online_resource>"/>
+          </Post>
+          <-/TMPL_if>
+        </HTTP>
+      </DCPType>
+      <-/TMPL_foreach>
+    </GetFeatureInfo>
+    <-/TMPL_if>
   </Request>
   <Exception>
-    <Format>XML</Format>
+    <-TMPL_foreach capability.exception as exception>
+    <Format><TMPL_var exception></Format>
+    <-/TMPL_foreach>
   </Exception>
 
-  <TMPL_if defined(inspire_extended_capabilities)>
-    <inspire_vs:ExtendedCapabilities>
-      <inspire_common:MetadataUrl xsi:type="inspire_common:resourceLocatorType">
-	<inspire_common:URL><TMPL_var inspire_metadata_url></inspire_common:URL>
-	<inspire_common:MediaType>application/vnd.ogc.csw.GetRecordByIdResponse_xml</inspire_common:MediaType>
-      </inspire_common:MetadataUrl>
-      <inspire_common:SupportedLanguages xsi:type="inspire_common:supportedLanguagesType">
-	<inspire_common:DefaultLanguage>
-	  <inspire_common:Language><TMPL_var inspire_default_language></inspire_common:Language>
-	</inspire_common:DefaultLanguage>
-	<inspire_common:SupportedLanguage>
-	  <inspire_common:Language><TMPL_var inspire_supported_language></inspire_common:Language>
-	</inspire_common:SupportedLanguage>
-      </inspire_common:SupportedLanguages>
-      <inspire_common:ResponseLanguage>
-	<inspire_common:Language><TMPL_var inspire_response_language></inspire_common:Language>
-      </inspire_common:ResponseLanguage>
-    </inspire_vs:ExtendedCapabilities>
-  </TMPL_if>
+  <-TMPL_comment>Insipire extensions to the standard WMS schema. Unfortunately xmllint cannot validate this :/</TMPL_comment>
 
- <Layer>
-  <Title><TMPL_var layers_title></Title>
-  <Abstract></Abstract>
-  <TMPL_if defined(wms_layers)><TMPL_var wms_layers></TMPL_if>
- </Layer>
+  <-TMPL_if defined(capability.extended_capabilities.inspire)>
+  <inspire_vs:ExtendedCapabilities>
+    <inspire_common:MetadataUrl xsi:type="inspire_common:resourceLocatorType">
+      <inspire_common:URL><TMPL_var capability.extended_capabilities.inspire.metadata_url></inspire_common:URL>
+      <inspire_common:MediaType>application/vnd.ogc.csw.GetRecordByIdResponse_xml</inspire_common:MediaType>
+    </inspire_common:MetadataUrl>
+    <inspire_common:SupportedLanguages xsi:type="inspire_common:supportedLanguagesType">
+      <inspire_common:DefaultLanguage>
+      <inspire_common:Language><TMPL_var capability.extended_capabilities.inspire.default_language></inspire_common:Language>
+    </inspire_common:DefaultLanguage>
+    <inspire_common:SupportedLanguage>
+      <inspire_common:Language><TMPL_var capability.extended_capabilities.inspire.supported_language></inspire_common:Language>
+      </inspire_common:SupportedLanguage>
+    </inspire_common:SupportedLanguages>
+    <inspire_common:ResponseLanguage>
+      <inspire_common:Language><TMPL_var capability.extended_capabilities.inspire.response_language></inspire_common:Language>
+    </inspire_common:ResponseLanguage>
+  </inspire_vs:ExtendedCapabilities>
+  <-/TMPL_if->
+
+  <-TMPL_comment>We use one master layer to group all layers. See section 7.2.4.5 in the standard </TMPL_comment>
+  <Layer
+      <-TMPL_comment> Global default attributes for all layers </TMPL_comment>
+      <-TMPL_if defined(capability.master_layer.queryable)   > queryable="  <-TMPL_var capability.master_layer.queryable>"   <-/TMPL_if->
+      <-TMPL_if defined(capability.master_layer.cascaded)    > cascaded="   <-TMPL_var capability.master_layer.cascaded>"    <-/TMPL_if->
+      <-TMPL_if defined(capability.master_layer.opaque)      > opaque="     <-TMPL_var capability.master_layer.opaque>"      <-/TMPL_if->
+      <-TMPL_if defined(capability.master_layer.no_subsets)  > noSubsets="  <-TMPL_var capability.master_layer.no_subsets>"  <-/TMPL_if->
+      <-TMPL_if defined(capability.master_layer.fixed_width) > fixedWidth=" <-TMPL_var capability.master_layer.fixed_width>" <-/TMPL_if->
+      <-TMPL_if defined(capability.master_layer.fixed_height)> fixedHeight="<-TMPL_var capability.master_layer.fixed_height>"<-/TMPL_if->>
+    <Title><TMPL_var capability.master_layer.title></Title>
+    <-TMPL_if defined(capability.master_layer.abstract)><TMPL_var capability.master_layer.abstract></TMPL_if>
+
+    <-TMPL_foreach capability.layer as layer>
+    <Layer
+      <-TMPL_comment> The following settings override the master settings set above </TMPL_comment>
+      <-TMPL_if defined(layer.queryable)   > queryable="  <-TMPL_var layer.queryable>"   <-/TMPL_if->
+      <-TMPL_if defined(layer.cascaded)    > cascaded="   <-TMPL_var layer.cascaded>"    <-/TMPL_if->
+      <-TMPL_if defined(layer.opaque)      > opaque="     <-TMPL_var layer.opaque>"      <-/TMPL_if->
+      <-TMPL_if defined(layer.no_subsets)  > noSubsets="  <-TMPL_var layer.no_subsets>"  <-/TMPL_if->
+      <-TMPL_if defined(layer.fixed_width) > fixedWidth=" <-TMPL_var layer.fixed_width>" <-/TMPL_if->
+      <-TMPL_if defined(layer.fixed_height)> fixedHeight="<-TMPL_var layer.fixed_height>"<-/TMPL_if->>
+      <-TMPL_if defined(layer.name)>
+      <Name><TMPL_var layer.name></Name>
+      <-/TMPL_if>
+      <Title><TMPL_var layer.title></Title>
+
+      <-TMPL_if defined(layer.abstract)>
+      <Abstract><TMPL_var layer.abstract></Abstract>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.keyword)>
+      <KeywordList>
+      <-TMPL_foreach layer.keyword as keyword>
+        <Keyword><TMPL_var keyword></Keyword>
+      <-/TMPL_foreach>
+      </KeywordList>
+      <-/TMPL_if>
+
+      <-TMPL_if defined(layer.crs)->
+      <-TMPL_foreach layer.crs as crs>
+      <CRS><TMPL_var crs></CRS>
+      <-/TMPL_foreach>
+      <-/TMPL_if>
+
+      <-TMPL_if defined(layer.ex_geographic_bounding_box)>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude><TMPL_var layer.ex_geographic_bounding_box.west_bound_longitude></westBoundLongitude>
+        <eastBoundLongitude><TMPL_var layer.ex_geographic_bounding_box.east_bound_longitude></eastBoundLongitude>
+        <southBoundLatitude><TMPL_var layer.ex_geographic_bounding_box.south_bound_latitude></southBoundLatitude>
+        <northBoundLatitude><TMPL_var layer.ex_geographic_bounding_box.north_bound_latitude></northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.bounding_box)->
+      <TMPL_foreach layer.bounding_box as bounding_box>
+      <BoundingBox CRS="<TMPL_var bounding_box.crs>"
+                   <-TMPL_if 1> minx="<TMPL_var bounding_box.minx>"</TMPL_if>
+                   <-TMPL_if 1> miny="<TMPL_var bounding_box.miny>"</TMPL_if>
+                   <-TMPL_if 1> maxx="<TMPL_var bounding_box.maxx>"</TMPL_if>
+                   <-TMPL_if 1> maxy="<TMPL_var bounding_box.maxy>"</TMPL_if>
+                   <-TMPL_if defined(bounding_box.resx)> resx="<TMPL_var bounding_box.resx>"<-/TMPL_if->
+                   <-TMPL_if defined(bounding_box.resy)> resx="<TMPL_var bounding_box.resy>"<-/TMPL_if->/>
+      <-/TMPL_foreach>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.dimension)->
+      <-TMPL_foreach layer.dimension as dimension>
+      <Dimension name="<TMPL_var dimension.name>" units="<TMPL_var dimension.units>"
+        <-TMPL_if defined(dimension.unit_symbol)    > unitSymbol="    <-TMPL_var dimension.unit_symbol>"    <-/TMPL_if->
+        <-TMPL_if defined(dimension.default)        > default="       <-TMPL_var dimension.default>"        <-/TMPL_if->
+        <-TMPL_if defined(dimension.multiple_values)> multipleValues="<-TMPL_var dimension.multiple_values>"<-/TMPL_if->
+        <-TMPL_if defined(dimension.nearest_values) > nearestValues=" <-TMPL_var dimension.nearest_values>" <-/TMPL_if->
+        <-TMPL_if defined(dimension.current)        > current="       <-TMPL_var dimension.current>"        <-/TMPL_if->>
+      <-TMPL_var dimension.value->
+      </Dimension>
+      </TMPL_foreach>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.attribution)->
+      <Attribution>
+        <TMPL_if defined(layer.attribution.title)><Title><TMPL_var layer.attribution.title><-/TMPL_if->
+        <TMPL_if defined(layer.attribution.online_resource)><Title><TMPL_var layer.attribution.online_resource><-/TMPL_if->
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var layer.attribution.online_resource>"/>
+        <TMPL_if defined(layer.attribution.logo_url)>
+        <LogoURL
+          <-TMPL_if defined(layer.attribution.logo_url.width) > width=" <-TMPL_var layer.attribution.logo_url.width>" <-/TMPL_if->
+          <-TMPL_if defined(layer.attribution.logo_url.height)> height="<-TMPL_var layer.attribution.logo_url.height>"<-/TMPL_if->>
+          <Format><TMPL_var layer.attribution.logo_url.format></Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var layer.attribution.logo_url.online_resource>"/>
+        </LogoURL>
+        <-/TMPL_if->
+      </Attribution>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.authority_url)->
+      <-TMPL_foreach layer.authority_url as authority_url>
+      <AuthorityURL name="<TMPL_var authority_url.name>">
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var authority_url.online_resource>"/>
+      </AuthorityURL>
+      </TMPL_foreach>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.identifier)->
+      <-TMPL_foreach layer.identifier as identifier>
+      <Identifier authority="<TMPL_var identifier.authority>">
+       <-TMPL_var identifier.value->
+      </Identifier>
+      </TMPL_foreach>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.metadata_url)->
+      <-TMPL_foreach layer.metadata_url as metadata_url>
+      <MetadataURL type="<TMPL_var metadata_url.type>">
+        <Format><TMPL_var metadata_url.format></Format>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var metadata_url.online_resource>"/>
+      </MetadataURL>
+      </TMPL_foreach>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.data_url)->
+      <-TMPL_foreach layer.data_url as data_url>
+      <DataURL type="<TMPL_var data_url.type>">
+        <Format><TMPL_var data_url.format></Format>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var data_url.online_resource>"/>
+      </DataURL>
+      </TMPL_foreach>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.feature_list_url)->
+      <-TMPL_foreach layer.feature_list_url as feature_list_url>
+      <FeatureListURL type="<TMPL_var feature_list_url.type>">
+        <Format><TMPL_var feature_list_url.format></Format>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var feature_list_url.online_resource>"/>
+      </FeatureListURL>
+      </TMPL_foreach>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.style)->
+      <-TMPL_foreach layer.style as style->
+      <Style>
+        <Name><TMPL_var style.name></Name>
+        <Title><TMPL_var style.title></Title>
+
+        <-TMPL_if defined(style.abstract)><Abstract><TMPL_var style.abstract></Abstract><-/TMPL_if>
+
+        <-TMPL_if defined(style.legend_url)->
+        <-TMPL_foreach style.legend_url as legend_url>
+        <LegendURL
+          <-TMPL_if defined(legend_url.width) > width=" <-TMPL_var legend_url.width>" <-/TMPL_if->
+          <-TMPL_if defined(legend_url.height)> height="<-TMPL_var legend_url.height>"<-/TMPL_if->>
+          <Format><TMPL_var legend_url.format></Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var legend_url.online_resource>"/>
+        </LegendURL>
+        <-/TMPL_foreach->
+        <-/TMPL_if->
+
+        <-TMPL_if defined(style.style_sheet_url)->
+        <StyleSheetURL>
+          <Format><TMPL_var style.style_sheet_url.format></Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var style.style_sheet_url.online_resource>"/>
+        </StyleSheetURL>
+        <-/TMPL_if->
+
+        <-TMPL_if defined(style.style_url)->
+        <StyleURL>
+          <Format><TMPL_var style.style_url.format></Format>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var style.style_url.online_resource>"/>
+        </StyleURL>
+        <-/TMPL_if>
+      </Style>
+      <-/TMPL_foreach->
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.min_scale_denominator)->
+      <MinScaleDenominator><TMPL_var layer.min_scale_denominator></MinScaleDenominator>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.max_scale_denominator)->
+      <MaxScaleDenominator><TMPL_var layer.min_scale_denominator></MaxScaleDenominator>
+      <-/TMPL_if>
+    </Layer>
+    <-/TMPL_foreach>
+  </Layer>
 </Capability>
 </WMS_Capabilities>

@@ -1110,6 +1110,9 @@ std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException) cons
     {
       exceptionCode = e->getParameterValue(WMS_EXCEPTION_CODE);
       exceptionText = e->getWhat();
+
+      // If debugging obscure WMS exceptions one may wish to use this instead:
+      // exceptionText = e->getStackTrace();
     }
     else
     {

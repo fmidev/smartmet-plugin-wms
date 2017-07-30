@@ -253,18 +253,74 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 
     layer->updateLayerMetaData();
 
-    layer->queryable = false;
-    layer->quiet = theWMSConfig.itsDaliConfig.quiet();
-    layer->name = theNamespace + ":" + p.stem().string();
-    layer->title = root["title"].asString();
-    layer->abstract = root["abstract"].asString();
-    layer->productFile = theFileName;
-    layer->customer = theCustomer;
+    // WMS GetCapability settings
 
     Json::Value nulljson;
+
+    // for hiding the layer from GetCapabilities queries for example if the layer is not public
     auto json = root.get("hidden", nulljson);
     if (!json.isNull())
       layer->hidden = json.asBool();
+
+    json = root.get("name", nulljson);
+    if (!json.isNull())
+      layer->name = json.asString();
+    else
+      layer->name = theNamespace + ":" + p.stem().string();
+
+    json = root.get("title", nulljson);
+    if (!json.isNull())
+      layer->title = json.asString();
+
+    json = root.get("abstract", nulljson);
+    if (!json.isNull())
+      layer->abstract = json.asString();
+
+    json = root.get("opaque", nulljson);
+    if (!json.isNull())
+      layer->opaque = json.asBool();
+
+    json = root.get("queryable", nulljson);
+    if (!json.isNull())
+      layer->queryable = json.asBool();
+
+    json = root.get("cascaded", nulljson);
+    if (!json.isNull())
+      layer->cascaded = json.asBool();
+
+    json = root.get("no_subsets", nulljson);
+    if (!json.isNull())
+      layer->no_subsets = json.asBool();
+
+    json = root.get("fixed_width", nulljson);
+    if (!json.isNull())
+      layer->fixed_width = json.asInt();
+
+    json = root.get("fixed_height", nulljson);
+    if (!json.isNull())
+      layer->fixed_height = json.asInt();
+
+    json = root.get("keyword", nulljson);
+    if (!json.isNull())
+    {
+      layer->keywords = std::set<std::string>();
+      if (json.isString())
+        layer->keywords->insert(json.asString());
+      else if (json.isArray())
+      {
+        for (unsigned int i = 0; i < json.size(); i++)
+          layer->keywords->insert(json[i].asString());
+      }
+      else
+        throw Spine::Exception(
+            BCP, p.string() + " keyword value must be an array of strings or a string");
+    }
+
+    // Other variables
+
+    layer->quiet = theWMSConfig.itsDaliConfig.quiet();
+    layer->productFile = theFileName;
+    layer->customer = theCustomer;
 
     // handle styles
 

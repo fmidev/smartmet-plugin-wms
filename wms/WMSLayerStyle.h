@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include <ctpp2/CDT.hpp>
 #include <string>
 
 namespace SmartMet
@@ -26,6 +27,7 @@ struct LegendURL
   std::string format;
   std::string online_resource;
 };
+
 struct WMSLayerStyle
 {
   WMSLayerStyle() : name("Default"), title("Default style") {}
@@ -34,7 +36,7 @@ struct WMSLayerStyle
   std::string title;
   std::string abstract;
   LegendURL legend_url;
-  std::string toXML();
+  CTPP::CDT getCapabilities() const;
 };
 
 std::ostream& operator<<(std::ostream& ost, const WMSLayerStyle& layerStyle);

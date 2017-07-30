@@ -153,8 +153,8 @@ namespace Plugin
 namespace WMS
 {
 /*
-     * We must not try to read backup files since they may not be in a valid state
-     */
+ * We must not try to read backup files since they may not be in a valid state
+ */
 
 bool looks_valid_filename(const std::string& name)
 {
@@ -174,6 +174,110 @@ bool looks_valid_filename(const std::string& name)
   {
     throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
+}
+
+/*
+ * libconfig aggregates cannot be converted directly to CTPP counterparts,
+ * but it can be done for scalars.
+ */
+
+void set_scalar(CTPP::CDT& tmpl,
+                const libconfig::Config& config,
+                const std::string& path,
+                const std::string& variable)
+{
+  const auto& value = config.lookup(path);
+
+  switch (value.getType())
+  {
+    case libconfig::Setting::Type::TypeInt:
+    case libconfig::Setting::Type::TypeBoolean:
+      tmpl[variable] = static_cast<int>(value);
+      break;
+    case libconfig::Setting::Type::TypeInt64:
+      tmpl[variable] = static_cast<long>(value);
+      break;
+    case libconfig::Setting::Type::TypeFloat:
+      tmpl[variable] = static_cast<double>(value);
+      break;
+    case libconfig::Setting::Type::TypeString:
+      tmpl[variable] = value.c_str();
+      break;
+
+    case libconfig::Setting::Type::TypeArray:
+    case libconfig::Setting::Type::TypeList:
+    case libconfig::Setting::Type::TypeGroup:
+    case libconfig::Setting::Type::TypeNone:
+      throw Spine::Exception(BCP, path + " value must be a scalar");
+  }
+}
+
+void set_mandatory(CTPP::CDT& tmpl,
+                   const libconfig::Config& config,
+                   const std::string& prefix,
+                   const std::string& variable)
+{
+  std::string path = prefix + "." + variable;
+  set_scalar(tmpl, config, path, variable);
+}
+
+void set_optional(CTPP::CDT& tmpl,
+                  const libconfig::Config& config,
+                  const std::string& prefix,
+                  const std::string& variable)
+{
+  std::string path = prefix + "." + variable;
+  if (!config.exists(path))
+    return;
+  set_scalar(tmpl, config, path, variable);
+}
+
+CTPP::CDT get_request(const libconfig::Config& config,
+                      const std::string& prefix,
+                      const std::string& variable)
+{
+  CTPP::CDT request(CTPP::CDT::HASH_VAL);
+
+  const std::string path = prefix + "." + variable;
+
+  const auto& formats = config.lookup(path + ".format");
+  if (!formats.isArray())
+    throw Spine::Exception(BCP, path + ".format  must be an array");
+
+  CTPP::CDT format_list(CTPP::CDT::ARRAY_VAL);
+  for (int i = 0; i < formats.getLength(); i++)
+    format_list.PushBack(formats[i].c_str());
+  request["format"] = format_list;
+
+  const auto& dcptypes = config.lookup(path + ".dcptype");
+  if (dcptypes.isArray())
+    throw Spine::Exception(BCP, path + ".dcptype must be an array");
+  CTPP::CDT dcptype_list(CTPP::CDT::ARRAY_VAL);
+
+  for (int i = 0; i < dcptypes.getLength(); i++)
+  {
+    const auto& dcptype_http = dcptypes[i]["http"];
+
+    CTPP::CDT http(CTPP::CDT::HASH_VAL);
+    CTPP::CDT get(CTPP::CDT::HASH_VAL);
+
+    get["online_resource"] = dcptype_http["get"]["online_resource"].c_str();
+    http["get"] = get;
+
+    if (dcptype_http.exists("post"))
+    {
+      CTPP::CDT post(CTPP::CDT::HASH_VAL);
+      post["online_resource"] = dcptype_http["post"]["online_resource"].c_str();
+      http["post"] = post;
+    }
+
+    CTPP::CDT dcptype_element(CTPP::CDT::HASH_VAL);
+    dcptype_element["http"] = http;
+    dcptype_list.PushBack(dcptype_element);
+  }
+  request["dcptype"] = dcptype_list;
+
+  return request;
 }
 
 WMSConfig::WMSConfig(const Config& daliConfig,
@@ -204,142 +308,192 @@ WMSConfig::WMSConfig(const Config& daliConfig,
   {
     const libconfig::Config& config = daliConfig.getConfig();
 
-    std::string wmsVersions;
-    std::string wmsMapFormats;
-    config.lookupValue("wms.versions", wmsVersions);
-    config.lookupValue("wms.mapformats", wmsMapFormats);
+    // TODO
+
+    std::string wmsMapFormats = config.lookup("wms.map_formats").c_str();
 
     boost::algorithm::split(
         itsSupportedMapFormats, wmsMapFormats, boost::algorithm::is_any_of(","));
+
+    std::string wmsVersions = config.lookup("wms.supported_versions").c_str();
     boost::algorithm::split(itsSupportedWMSVersions, wmsVersions, boost::algorithm::is_any_of(","));
 
-    if (config.exists("wms.get_capabilities_response.inspire_extension"))
+    // Extract capabilities into a CTTP hash
+
+    CTPP::CDT capabilities(CTPP::CDT::HASH_VAL);
+
+    set_mandatory(capabilities, config, "wms.get_capabilities", "version");
+    set_optional(capabilities, config, "wms.get_capabilities", "headers");
+
+    // Service part of capabilities
+
+    CTPP::CDT service(CTPP::CDT::HASH_VAL);
+
+    set_mandatory(service, config, "wms.get_capabilities.service", "title");
+    set_optional(service, config, "wms.get_capabilities.service", "abstract");
+
+    if (config.exists("wms.get_capabilities.service.keywords"))
     {
-      // inspire extension is supported if wms.inspire_extension configuration exists
-      itsInspireExtensionSupported = true;
-      itsGetCapabilitiesResponseVariables.insert(make_pair("default_language", ""));
-      itsGetCapabilitiesResponseVariables.insert(make_pair("supported_language", ""));
-      itsGetCapabilitiesResponseVariables.insert(make_pair("response_language", ""));
-      itsGetCapabilitiesResponseVariables.insert(
-          make_pair("metadata_url",
-                    "http://catalog.fmi.fi/geonetwork/srv/en/"
-                    "csw?SERVICE=CSW&amp;VERSION=2.0.2&amp;REQUEST=GetRecordById&amp;ID=1234dfc1-"
-                    "4c08-4491-8ca0-b8ea2941c24a&amp;outputSchema=http://www.isotc211.org/2005/"
-                    "gmd&amp;elementSetName=full"));
-      config.lookupValue("wms.get_capabilities_response.inspire_extension.default_language",
-                         itsGetCapabilitiesResponseVariables["default_language"]);
-      config.lookupValue("wms.get_capabilities_response.inspire_extension.supported_language",
-                         itsGetCapabilitiesResponseVariables["supported_language"]);
-      config.lookupValue("wms.get_capabilities_response.inspire_extension.response_language",
-                         itsGetCapabilitiesResponseVariables["response_language"]);
-      config.lookupValue("wms.get_capabilities_response.inspire_extension.metadata_url",
-                         itsGetCapabilitiesResponseVariables["metadata_url"]);
+      CTPP::CDT keywords(CTPP::CDT::ARRAY_VAL);
+
+      const auto& settings = config.lookup("wms.get_capabilities.service.keywords");
+
+      if (!settings.isArray())
+        throw Spine::Exception(BCP, "wms.get_capabilities.service.keywords must be an array");
+
+      for (int i = 0; i < settings.getLength(); i++)
+        keywords.PushBack(settings[i].c_str());
+
+      service["keywords"] = keywords;
     }
 
-    itsGetCapabilitiesResponseVariables.insert(make_pair("title", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("abstract", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("keywords", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("online_resource", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("contact_person", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("organization", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("contact_position", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("contact_address_type", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("contact_address", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("contact_address_city", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("contact_address_province", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("contact_address_post_code", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("contact_address_country", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("telephone_number", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("facsimile_number", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("electronic_mail_address", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("fees", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("access_constraints", ""));
-    itsGetCapabilitiesResponseVariables.insert(make_pair("layers_title", ""));
+    set_mandatory(service, config, "wms.get_capabilities.service", "online_resource");
 
-    config.lookupValue("wms.get_capabilities_response.keywords",
-                       itsGetCapabilitiesResponseVariables["keywords"]);
-    config.lookupValue("wms.get_capabilities_response.title",
-                       itsGetCapabilitiesResponseVariables["title"]);
-    config.lookupValue("wms.get_capabilities_response.abstract",
-                       itsGetCapabilitiesResponseVariables["abstract"]);
-    config.lookupValue("wms.get_capabilities_response.online_resource",
-                       itsGetCapabilitiesResponseVariables["online_resource"]);
-    config.lookupValue("wms.get_capabilities_response.fees",
-                       itsGetCapabilitiesResponseVariables["fees"]);
-    config.lookupValue("wms.get_capabilities_response.access_constraints",
-                       itsGetCapabilitiesResponseVariables["access_constraints"]);
-    config.lookupValue("wms.get_capabilities_response.layers_title",
-                       itsGetCapabilitiesResponseVariables["layers_title"]);
-    config.lookupValue("wms.get_capabilities_response.contact_info.contact_person",
-                       itsGetCapabilitiesResponseVariables["contact_person"]);
-    config.lookupValue("wms.get_capabilities_response.contact_info.organization",
-                       itsGetCapabilitiesResponseVariables["organization"]);
-    config.lookupValue("wms.get_capabilities_response.contact_info.contact_position",
-                       itsGetCapabilitiesResponseVariables["contact_position"]);
-
-    config.lookupValue("wms.get_capabilities_response.contact_info.address_type",
-                       itsGetCapabilitiesResponseVariables["contact_address_type"]);
-    config.lookupValue("wms.get_capabilities_response.contact_info.address",
-                       itsGetCapabilitiesResponseVariables["contact_address"]);
-    config.lookupValue("wms.get_capabilities_response.contact_info.city",
-                       itsGetCapabilitiesResponseVariables["contact_address_city"]);
-    config.lookupValue("wms.get_capabilities_response.contact_info.state_or_province",
-                       itsGetCapabilitiesResponseVariables["contact_address_province"]);
-
-    config.lookupValue("wms.get_capabilities_response.contact_info.post_code",
-                       itsGetCapabilitiesResponseVariables["contact_address_post_code"]);
-    config.lookupValue("wms.get_capabilities_response.contact_info.country",
-                       itsGetCapabilitiesResponseVariables["contact_address_country"]);
-    config.lookupValue("wms.get_capabilities_response.contact_info.telephone_number",
-                       itsGetCapabilitiesResponseVariables["telephone_number"]);
-    config.lookupValue("wms.get_capabilities_response.contact_info.facsimile_number",
-                       itsGetCapabilitiesResponseVariables["facsimile_number"]);
-    config.lookupValue("wms.get_capabilities_response.contact_info.electronic_mail_address",
-                       itsGetCapabilitiesResponseVariables["electronic_mail_address"]);
-
-    // read headers
-    itsGetCapabilitiesResponseVariables.insert(make_pair("header", ""));
-    if (config.exists("wms.get_capabilities_response.headers"))
+    if (config.exists("wms.get_capabilities.service.contact_information"))
     {
-      libconfig::Setting& groups = config.lookup("wms.get_capabilities_response.headers");
-      for (int i = 0; i < groups.getLength(); i++)
+      CTPP::CDT contact_information(CTPP::CDT::HASH_VAL);
+
+      if (config.exists("wms.get_capabilities.service.contact_information.contact_person_primary"))
       {
-        std::string name;
-        std::string value;
-        config.lookupValue(Fmi::to_string("wms.get_capabilities_response.headers.[%d].name", i),
-                           name);
-        config.lookupValue(Fmi::to_string("wms.get_capabilities_response.headers.[%d].value", i),
-                           value);
-
-        itsGetCapabilitiesResponseVariables["headers"] += name;
-        itsGetCapabilitiesResponseVariables["headers"] += "=\"";
-        itsGetCapabilitiesResponseVariables["headers"] += value;
-        itsGetCapabilitiesResponseVariables["headers"] += "\"";
-        if (i < groups.getLength() - 1)
-          itsGetCapabilitiesResponseVariables["headers"] += " \n";
+        CTPP::CDT contact_person_primary(CTPP::CDT::HASH_VAL);
+        set_mandatory(contact_person_primary,
+                      config,
+                      "wms.get_capabilities.service.contact_information.contact_person_primary",
+                      "contact_person");
+        set_mandatory(contact_person_primary,
+                      config,
+                      "wms.get_capabilities.service.contact_information.contact_person_primary",
+                      "contact_organization");
+        contact_information["contact_person_primary"] = contact_person_primary;
       }
+
+      set_optional(contact_information,
+                   config,
+                   "wms.get_capabilities.service.contact_information",
+                   "contact_position");
+
+      if (config.exists("wms.get_capabilities.service.contact_information.contact_address"))
+      {
+        CTPP::CDT contact_address(CTPP::CDT::HASH_VAL);
+        set_mandatory(contact_address,
+                      config,
+                      "wms.get_capabilities.service.contact_information.contact_address",
+                      "address_type");
+        set_mandatory(contact_address,
+                      config,
+                      "wms.get_capabilities.service.contact_information.contact_address",
+                      "address");
+        set_mandatory(contact_address,
+                      config,
+                      "wms.get_capabilities.service.contact_information.contact_address",
+                      "city");
+        set_mandatory(contact_address,
+                      config,
+                      "wms.get_capabilities.service.contact_information.contact_address",
+                      "state_or_province");
+        set_mandatory(contact_address,
+                      config,
+                      "wms.get_capabilities.service.contact_information.contact_address",
+                      "post_code");
+        set_mandatory(contact_address,
+                      config,
+                      "wms.get_capabilities.service.contact_information.contact_address",
+                      "country");
+        contact_information["contact_address"] = contact_address;
+      }
+
+      set_optional(contact_information,
+                   config,
+                   "wms.get_capabilities.service.contact_information",
+                   "contact_voice_telephone");
+      set_optional(contact_information,
+                   config,
+                   "wms.get_capabilities.service.contact_information",
+                   "contact_facsimile_telephone");
+      set_optional(contact_information,
+                   config,
+                   "wms.get_capabilities.service.contact_information",
+                   "contact_electronic_mail_address");
+
+      service["contact_information"] = contact_information;
     }
-    else
+
+    set_optional(service, config, "wms.get_capabilities.service", "fees");
+    set_optional(service, config, "wms.get_capabilities.service", "access_constraints");
+    set_optional(service, config, "wms.get_capabilities.service", "layer_limit");
+    set_optional(service, config, "wms.get_capabilities.service", "max_width");
+    set_optional(service, config, "wms.get_capabilities.service", "max_height");
+
+    capabilities["service"] = service;
+
+    // Capability part
+
+    CTPP::CDT capability(CTPP::CDT::HASH_VAL);
+
+    // Request subpart
+
+    CTPP::CDT request(CTPP::CDT::HASH_VAL);
+
+    // Two obligatory parts and one optional one
+    request["getcapabilities"] =
+        get_request(config, "wms.get_capabilities.capability.request", "getcapabilities");
+    request["getmap"] = get_request(config, "wms.get_capabilities.capability.request", "getmap");
+
+    if (config.exists("wms.get_capabilities.capability.request.getfeatureinfo"))
+      request["getfeatureinfo"] =
+          get_request(config, "wms.get_capabilities.capability.request", "getfeatureinfo");
+
+    capability["request"] = request;
+
+    // Exceptions
+
+    const auto& exceptions = config.lookup("wms.get_capabilities.capability.exception");
+    if (!exceptions.isArray())
+      throw Spine::Exception(BCP, "wms.get_capabilities.capability.exception must be an array");
+    CTPP::CDT exception_list(CTPP::CDT::ARRAY_VAL);
+    for (int i = 0; i < exceptions.getLength(); i++)
+      exception_list.PushBack(exceptions[i].c_str());
+    capability["exception"] = exception_list;
+
+    // Extensions
+
+    if (config.exists("wms.get_capabilities.capability.extended_capabilities.inspire"))
     {
-      // default values
-      itsGetCapabilitiesResponseVariables["headers"] += "xmlns=\"http://www.opengis.net/wms\" \n";
-      itsGetCapabilitiesResponseVariables["headers"] +=
-          "xmlns:sld=\"http://www.opengis.net/sld\" \n";
-      itsGetCapabilitiesResponseVariables["headers"] +=
-          "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n";
-      itsGetCapabilitiesResponseVariables["headers"] +=
-          "xmlns:ms=\"http://mapserver.gis.umn.edu/mapserver\" \n";
-      itsGetCapabilitiesResponseVariables["headers"] +=
-          "xmlns:inspire_common=\"http://inspire.ec.europa.eu/schemas/common/1.0\" \n";
-      itsGetCapabilitiesResponseVariables["headers"] +=
-          "xmlns:inspire_vs=\"http://inspire.ec.europa.eu/schemas/inspire_vs/1.0\" \n";
-      itsGetCapabilitiesResponseVariables["headers"] +=
-          "xsi:schemaLocation=\"http://www.opengis.net/wms "
-          "http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd  http://www.opengis.net/sld "
-          "http://schemas.opengis.net/sld/1.1.0/sld_capabilities.xsd  "
-          "http://inspire.ec.europa.eu/schemas/inspire_vs/1.0 "
-          "http://inspire.ec.europa.eu/schemas/inspire_vs/1.0/inspire_vs.xsd\"";
+      CTPP::CDT extended_capabilities(CTPP::CDT::HASH_VAL);
+      CTPP::CDT inspire(CTPP::CDT::HASH_VAL);
+
+      const std::string prefix = "wms.get_capabilities.capability.extended_capabilities.inspire";
+      set_mandatory(inspire, config, prefix, "metadata_url");
+      set_mandatory(inspire, config, prefix, "default_language");
+      set_mandatory(inspire, config, prefix, "supported_language");
+      set_mandatory(inspire, config, prefix, "response_language");
+      extended_capabilities["inspire"] = inspire;
+      capability["extended_capabilities"] = extended_capabilities;
     }
+
+    // The master layer settings
+
+    CTPP::CDT master_layer(CTPP::CDT::HASH_VAL);
+    set_mandatory(master_layer, config, "wms.get_capabilities.capability.master_layer", "title");
+    set_optional(master_layer, config, "wms.get_capabilities.capability.master_layer", "abstract");
+    set_optional(master_layer, config, "wms.get_capabilities.capability.master_layer", "queryable");
+    set_optional(master_layer, config, "wms.get_capabilities.capability.master_layer", "opaque");
+    set_optional(master_layer, config, "wms.get_capabilities.capability.master_layer", "cascaded");
+    set_optional(
+        master_layer, config, "wms.get_capabilities.capability.master_layer", "no_subsets");
+    set_optional(
+        master_layer, config, "wms.get_capabilities.capability.master_layer", "fixed_width");
+    set_optional(
+        master_layer, config, "wms.get_capabilities.capability.master_layer", "fixed_height");
+    capability["master_layer"] = master_layer;
+
+    // Finished the first part of the response, the capability layers will be added later
+
+    capabilities["capability"] = capability;
+
+    // This concludes all preset GetCapabilities settings
+
+    itsGetCapabilities = capabilities;
 
     // Do first layer scan
     updateLayerMetaData();
@@ -347,6 +501,19 @@ WMSConfig::WMSConfig(const Config& daliConfig,
     // Begin the update loop
     itsGetCapabilitiesThread.reset(
         new boost::thread(boost::bind(&WMSConfig::capabilitiesUpdateLoop, this)));
+  }
+  catch (const libconfig::SettingNotFoundException& e)
+  {
+    throw Spine::Exception(BCP, "Setting not found").addParameter("Setting path", e.getPath());
+  }
+  catch (libconfig::ParseException& e)
+  {
+    throw Spine::Exception(BCP, "WMS Configuration error!", NULL)
+        .addParameter("Line", Fmi::to_string(e.getLine()));
+  }
+  catch (libconfig::ConfigException&)
+  {
+    throw Spine::Exception(BCP, "WMS Configuration error!", NULL);
   }
   catch (...)
   {
@@ -442,12 +609,6 @@ void WMSConfig::updateLayerMetaData()
 {
   try
   {
-    // These should probably be in constructor
-    boost::algorithm::split(
-        itsSupportedMapFormats, itsDaliConfig.wmsMapFormats(), boost::algorithm::is_any_of(","));
-    boost::algorithm::split(
-        itsSupportedWMSVersions, itsDaliConfig.wmsVersions(), boost::algorithm::is_any_of(","));
-
     std::map<std::string, WMSLayerProxy> newProxies;
 
     const bool use_wms = true;
@@ -535,59 +696,38 @@ void WMSConfig::updateLayerMetaData()
   }
 }
 
+CTPP::CDT itsGetCapabilitiesLayerAttributes;
+
 #ifndef WITHOUT_AUTHENTICATION
-std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
-                                       const std::string& host,
-                                       bool authenticate) const
+CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
+                                     bool authenticate) const
 #else
-std::string WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
-                                       const std::string& host) const
+CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey) const;
 #endif
 {
   try
   {
     Spine::ReadLock theLock(itsGetCapabilitiesMutex);
 
-    std::string wmsService = "wms";  // Make this an include or something
+    // Return array of individual layer capabilities
+    CTPP::CDT resultCapabilities(CTPP::CDT::ARRAY_VAL);
 
-    std::string resultCapabilities;
+    const std::string wmsService = "wms";
 
-    if (!apikey)
+    for (const auto& iter_pair : itsLayers)
     {
-      // No apikey given, access is granted to everything
-      for (const auto& iter_pair : itsLayers)
-      {
-        resultCapabilities += iter_pair.second.getCapabilities();
-      }
-    }
-    else
-    {
-      std::string theKey = *apikey;
-
-      for (const auto& iter_pair : itsLayers)
-      {
-        const std::string layer_name = iter_pair.first;
 #ifndef WITHOUT_AUTHENTICATION
-        if (authenticate == true)
-        {
-          if (itsAuthEngine && itsAuthEngine->authorize(theKey, layer_name, wmsService))
-          {
-            resultCapabilities += iter_pair.second.getCapabilities();
-          }
-        }
-#else
-        resultCapabilities += iter_pair.second.getCapabilities();
+      const auto& layer_name = iter_pair.first;
+      // If authentication is requested, skip the layer if authentication fails
+      if (apikey && authenticate)
+        if (!itsAuthEngine | !itsAuthEngine->authorize(*apikey, layer_name, wmsService))
+          continue;
 #endif
-      }
+      // Note: hidden layers return an empty optional CDT
+      const auto& cdt = iter_pair.second.getCapabilities();
+      if (cdt)
+        resultCapabilities.PushBack(*cdt);
     }
-    std::string hostString = host;
-    if (hostString.length() >= 4)
-    {
-      std::string hostEnd = hostString.substr(hostString.length() - 4);
-      if (hostEnd == "/wms")
-        hostString = hostString.substr(0, hostString.length() - 4);
-    }
-    boost::replace_all(resultCapabilities, "__hostname__", hostString);
 
     return resultCapabilities;
   }
@@ -861,9 +1001,9 @@ bool WMSConfig::inspireExtensionSupported() const
   return itsInspireExtensionSupported;
 }
 
-const std::map<std::string, std::string>& WMSConfig::getCapabilitiesResponseVariables() const
+const CTPP::CDT& WMSConfig::getCapabilitiesResponseVariables() const
 {
-  return itsGetCapabilitiesResponseVariables;
+  return itsGetCapabilities;
 }
 
 #ifndef WITHOUT_OBSERVATION

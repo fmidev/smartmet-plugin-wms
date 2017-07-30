@@ -1,4 +1,15 @@
 {
+  // GetCapability test variables
+  "abstract": "Test abstract",
+  "opaque": false,
+  "queryable": true,
+  "cascaded": true,
+  "no_subsets": true,
+  "fixed_width": 1234,
+  "fixed_height": 4321,
+  "keyword": ["foo", "bar"],
+
+  // Normal settings
   "title": "Wind demo",
   "producer": "pal_skandinavia",
   "legend_url_layer": "test:wind_legend",

@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <libconfig.h++>
 #include <boost/utility.hpp>
+#include <libconfig.h++>
 #include <map>
 #include <set>
 #include <string>
@@ -37,13 +37,10 @@ class Config : private boost::noncopyable
   bool isValidAttribute(const std::string& theName) const;
 
   const std::string& wmsUrl() const;
-  const std::string& wmsVersions() const;
-  const std::string& wmsMapFormats() const;
 
   const std::string& rootDirectory(bool theWmsMode) const;
 
   unsigned long long maxMemoryCacheSize() const;
-
   unsigned long long maxFilesystemCacheSize() const;
 
   const std::string& filesystemCacheDirectory() const;
@@ -79,8 +76,6 @@ class Config : private boost::noncopyable
 
   std::string itsWmsUrl = "/wms";
   std::string itsWmsRootDirectory;
-  std::string itsWmsVersions;
-  std::string itsWmsMapFormats;
 
   std::set<std::string> itsRegularAttributes;
   std::set<std::string> itsPresentationAttributes;

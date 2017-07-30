@@ -16,6 +16,7 @@
 
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <ctpp2/CDT.hpp>
 #include <spine/Json.h>
 #include <spine/Value.h>
 
@@ -42,12 +43,22 @@ typedef std::vector<std::map<std::string, std::string> > LegendGraphicInfo;
 class WMSLayer
 {
  protected:
-  bool queryable;
   bool quiet = true;
+
+  // GetCapabilities settings
   std::string name;
-  std::string title;
-  std::string abstract;
-  std::set<std::string> keywords;
+  boost::optional<std::string> title;
+  boost::optional<std::string> abstract;
+  boost::optional<std::set<std::string> > keywords;
+  boost::optional<int> opaque;  // Note: optional<bool> is error prone
+  boost::optional<int> queryable;
+  boost::optional<int> cascaded;
+  boost::optional<int> no_subsets;
+  boost::optional<int> fixed_width;
+  boost::optional<int> fixed_height;
+
+  bool hidden = false;  // if this is true, dont show in GetCapabilities response
+
   Spine::BoundingBox geographicBoundingBox;
   std::set<std::string> crs;
   std::vector<WMSLayerStyle> styles;
@@ -55,7 +66,6 @@ class WMSLayer
                                                       // postgis layers
   std::string customer;
   std::string productFile;  // dali product
-  bool hidden;              // if this is true, dont show in GetCapabilities response
   LegendGraphicInfo legendGraphicInfo;
 
   friend class WMSLayerFactory;
@@ -67,15 +77,12 @@ class WMSLayer
   void addStyles(const Json::Value& root, const std::string& layerName);
   void addStyle(const std::string& layerName);
   bool isHidden() const { return hidden; }
-  std::string getCustomer() const;
-  std::string getName() const;
-  std::string getDaliProductFile() const { return productFile; }
+  const std::string& getName() const { return name; }
+  const std::string& getCustomer() const { return customer; }
+  const std::string& getDaliProductFile() const { return productFile; }
   std::vector<std::string> getLegendGraphic(const std::string& templateDirectory) const;
 
-  std::string getTitle() const { return title; }
-  std::string getAbstract() const { return abstract; }
   const std::set<std::string>& getSupportedCRS() const { return crs; }
-  bool isQueryable() const { return queryable; }
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;
   bool isValidTime(const boost::posix_time::ptime& theTime) const;
@@ -85,7 +92,8 @@ class WMSLayer
   boost::posix_time::ptime mostCurrentTime() const;  // returns the most current valid time for the
                                                      // layer
 
-  std::string generateGetCapabilities(const Engine::Gis::Engine& gisengine);
+  // Empty for hidden layers
+  boost::optional<CTPP::CDT> generateGetCapabilities(const Engine::Gis::Engine& gisengine);
 
   // Update layer metadata for GetCapabilities (time,spatial dimensions)
   virtual void updateLayerMetaData() = 0;

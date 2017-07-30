@@ -88,6 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Upcoming
+- Rewrote GetCapabilities template and respective code to cover the full XML schema with matching names
+
 * Mon Jul 17 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.7.17-2.fmi
 - Fixed error messages for partial projection descriptions
 

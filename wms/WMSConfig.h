@@ -9,6 +9,7 @@
 #include "Config.h"
 #include "WMS.h"
 #include "WMSLayer.h"
+#include "WMSLayerProxy.h"
 
 #include <engines/gis/Engine.h>
 #include <engines/observation/Engine.h>
@@ -18,6 +19,7 @@
 
 #include <boost/optional.hpp>
 #include <boost/utility.hpp>
+#include <ctpp2/CDT.hpp>
 #include <libconfig.h++>
 #include <map>
 #include <set>
@@ -45,31 +47,6 @@ class State;
 }
 namespace WMS
 {
-// For getCapabilities caching
-class WMSLayerProxy
-{
- public:
-  WMSLayerProxy(Engine::Gis::Engine* gisEngine, SharedWMSLayer theLayer)
-      : itsGisEngine(gisEngine), itsLayer(theLayer)
-  {
-    itsCapabilitiesXML = itsLayer->generateGetCapabilities(*itsGisEngine);
-  }
-
-  SharedWMSLayer getLayer() const { return itsLayer; }
-  std::string getCapabilities() const { return itsCapabilitiesXML; }
-  void update()
-  {
-    itsLayer->updateLayerMetaData();
-    itsCapabilitiesXML = itsLayer->generateGetCapabilities(*itsGisEngine);
-  }
-
- private:
-  Engine::Gis::Engine* itsGisEngine;
-  SharedWMSLayer itsLayer;
-  std::string layerName;
-  std::string itsCapabilitiesXML;
-};
-
 class WMSConfig
 {
  public:
@@ -86,12 +63,10 @@ class WMSConfig
             Engine::Gis::Engine* gisEngine);
 
 #ifndef WITHOUT_AUTHENTICATION
-  std::string getCapabilities(const boost::optional<std::string>& apikey,
-                              const std::string& host,
-                              bool authenticate = true) const;
+  CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
+                            bool authenticate = true) const;
 #else
-  std::string getCapabilities(const boost::optional<std::string>& apikey,
-                              const std::string& host) const;
+  CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey) const;
 #endif
 
   std::string layerCustomer(const std::string& theLayerName) const;
@@ -117,7 +92,7 @@ class WMSConfig
   std::vector<Json::Value> getLegendGraphic(const std::string& theLayerName) const;
 
   bool inspireExtensionSupported() const;
-  const std::map<std::string, std::string>& getCapabilitiesResponseVariables() const;
+  const CTPP::CDT& getCapabilitiesResponseVariables() const;
 
   void shutdown();
 
@@ -148,7 +123,7 @@ class WMSConfig
 
   bool itsInspireExtensionSupported = false;
 
-  std::map<std::string, std::string> itsGetCapabilitiesResponseVariables;
+  CTPP::CDT itsGetCapabilities;
 
   // Valid WMS layers (name -> layer proxy)
   std::map<std::string, WMSLayerProxy> itsLayers;

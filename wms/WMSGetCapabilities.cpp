@@ -11,6 +11,8 @@
 #include <boost/shared_ptr.hpp>
 #include <algorithm>
 
+#include <ctpp2/CTPP2Logger.hpp>  // logging level defines
+
 #include <spine/Convenience.h>
 #include <spine/Exception.h>
 #include <spine/FmiApiKey.h>
@@ -43,7 +45,7 @@ std::string WMSGetCapabilities::resolveGetMapURI(const Spine::HTTP::Request& the
     if (!host_header)
     {
       // This should never happen, host header is mandatory in HTTP 1.1
-      return "http://brainstormgw.fmi.fi/wms";
+      return "http://smartmet.fmi.fi/wms";
     }
     else
     {
@@ -80,114 +82,124 @@ std::string WMSGetCapabilities::resolveGetMapURI(const Spine::HTTP::Request& the
   }
 }
 
+/*
+ * Patch protocol for HTTP/GET or HTTP/POST online resources
+ */
+
+void patch_protocol(CTPP::CDT& dcptype,
+                    const std::string& protocol,
+                    const std::string& method,
+                    const std::string& newprotocol)
+{
+  if (dcptype.Exists(protocol))
+  {
+    auto& resource = dcptype.At(protocol).At(method).At("online_resource");
+    std::string url = resource.GetString();
+
+    if (boost::find_first(url, "http://"))
+      boost::algorithm::replace_first(url, "http://", newprotocol);
+    else if (boost::find_first(url, "https://"))
+      boost::algorithm::replace_first(url, "https://", newprotocol);
+
+    resource.At("online_resource") = url;
+  }
+}
+
+/*
+ * Patch online_resource settings for a specific request type
+ */
+
+void patch_protocols(CTPP::CDT& dcptypes, const std::string& newprotocol)
+{
+  for (std::size_t i = 0; i < dcptypes.Size(); i++)
+  {
+    patch_protocol(dcptypes[i], "http", "get", newprotocol);
+    patch_protocol(dcptypes[i], "http", "post", newprotocol);
+  }
+}
+
 std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
                                          const Engine::Querydata::Engine& theQEngine,
                                          const WMSConfig& theConfig) const
 {
   try
   {
-    CTPP::CDT hash;
-
-    const std::map<std::string, std::string>& responseVariables =
-        theConfig.getCapabilitiesResponseVariables();
-
-    hash["version_string"] = boost::algorithm::join(theConfig.supportedWMSVersions(), ", ");
-    if (!responseVariables.at("headers").empty())
-      hash["headers"] = responseVariables.at("headers");
-
     // Deduce apikey for layer filtering
     auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
 
-    auto host_header = theRequest.getHeader("Host");
-    if (!host_header)
-    {
-      // This should never happen, host header is mandatory in HTTP 1.1
-      host_header = "http://brainstormgw.fmi.fi/wms";
-    }
+    // Note: we make a new copy since we add new information to the fixed response
+    CTPP::CDT hash = theConfig.getCapabilitiesResponseVariables();
+    CTPP::CDT configuredLayers = theConfig.getCapabilities(apikey);
 
-    std::string configuredLayers = theConfig.getCapabilities(apikey, *host_header);
+    hash.At("capability")["layer"] = configuredLayers;
 
-    hash["wms_layers"] = configuredLayers;
-
-    hash["getmap_uri"] = resolveGetMapURI(theRequest);
-
-    if (theConfig.inspireExtensionSupported())
-    {
-      hash["inspire_extended_capabilities"] = 1;
-      hash["inspire_default_language"] = responseVariables.at("default_language");
-      hash["inspire_supported_language"] = responseVariables.at("supported_language");
-      hash["inspire_response_language"] = responseVariables.at("response_language");
-      hash["inspire_metadata_url"] = responseVariables.at("metadata_url");
-    }
-
-    if (theConfig.supportedMapFormats().size() > 0)
-    {
-      unsigned int index = 0;
-      for (auto mapformat : theConfig.supportedMapFormats())
-      {
-        hash["mapformats"][index++] = mapformat;
-      }
-    }
-
-    hash["title"] = responseVariables.at("title");
-    if (!responseVariables.at("abstract").empty())
-      hash["abstract"] = responseVariables.at("abstract");
     // http/https scheme selection based on 'X-Forwarded-Proto' header
     auto host_protocol = theRequest.getProtocol();
     std::string protocol(host_protocol ? *host_protocol : "" /*"http"*/);
     if (!protocol.empty())
       protocol += "://";
-    std::string online_resource = responseVariables.at("online_resource");
-    if (!protocol.empty() && !online_resource.empty())
-    {
-      if (boost::find_first(online_resource, "http://"))
-      {
-        boost::algorithm::replace_first(online_resource, "http://", protocol);
-      }
-      else if (boost::find_first(online_resource, "https://"))
-      {
-        boost::algorithm::replace_first(online_resource, "https://", protocol);
-      }
-    }
-    hash["online_resource"] = online_resource;
-    hash["contact_person"] = responseVariables.at("contact_person");
-    hash["organization"] = responseVariables.at("organization");
-    hash["contact_position"] = responseVariables.at("contact_position");
-    hash["contact_address_type"] = responseVariables.at("contact_address_type");
-    hash["contact_address"] = responseVariables.at("contact_address");
-    hash["contact_address_city"] = responseVariables.at("contact_address_city");
-    hash["contact_address_province"] = responseVariables.at("contact_address_province");
-    hash["contact_address_post_code"] = responseVariables.at("contact_address_post_code");
-    hash["contact_address_country"] = responseVariables.at("contact_address_country");
-    hash["telephone_number"] = responseVariables.at("telephone_number");
-    hash["facsimile_number"] = responseVariables.at("facsimile_number");
-    hash["electronic_mail_address"] = responseVariables.at("electronic_mail_address");
-    if (!responseVariables.at("fees").empty())
-      hash["fees"] = responseVariables.at("fees");
-    if (!responseVariables.at("access_constraints").empty())
-      hash["access_constraints"] = responseVariables.at("access_constraints");
-    hash["layers_title"] = responseVariables.at("layers_title");
 
-    if (!responseVariables.at("keywords").empty())
+    if (!protocol.empty())
     {
-      std::vector<std::string> keywords;
-      boost::algorithm::split(keywords,
-                              responseVariables.at("keywords"),
-                              boost::is_any_of(","),
-                              boost::token_compress_on);
-      for (unsigned int i = 0; i < keywords.size(); i++)
-        hash["keywords"][i] = keywords[i];
+      patch_protocols(hash.At("capability").At("request").At("getcapabilities").At("dcptype"),
+                      protocol);
+      patch_protocols(hash.At("capability").At("request").At("getmap").At("dcptype"), protocol);
+      if (hash.At("capability").At("request").Exists("getfeatureinfo"))
+        patch_protocols(hash.At("capability").At("request").At("getfeatureinfo").At("dcptype"),
+                        protocol);
     }
-    std::stringstream tmpl_ss;
+
+    std::stringstream outstream;
     std::stringstream logstream;
+    try
+    {
+      itsResponseFormatter->process(hash, outstream, logstream);
+      // itsResponseFormatter->process(hash, outstream, logstream, CTPP2_LOG_DEBUG);
+    }
+    catch (std::exception& e)
+    {
+      // std::cerr << "Finished part:\n" << outstream.str() << std::endl;
+      throw Spine::Exception(BCP, "CTPP formatter failed", nullptr)
+          .addParameter("what", e.what())
+          .addParameter("log", logstream.str());
+    }
+    catch (...)
+    {
+      // std::cerr << "Finished part:\n" << outstream.str() << std::endl;
+      throw Spine::Exception(BCP, "CTPP formatter failed", nullptr)
+          .addParameter("log", logstream.str());
+    }
 
-    itsResponseFormatter->process(hash, tmpl_ss, logstream);
+    // Finish up with host name replacements
 
-    return tmpl_ss.str();
+    std::string ret = outstream.str();
+
+    auto host_header = theRequest.getHeader("Host");
+    if (!host_header)
+    {
+      // This should never happen, host header is mandatory in HTTP 1.1
+      host_header = "http://smartmet.fmi.fi/wms";
+    }
+
+    auto hostString = *host_header;
+    if (hostString.length() >= 4)
+    {
+      std::string hostEnd = hostString.substr(hostString.length() - 4);
+      if (hostEnd == "/wms")
+        hostString = hostString.substr(0, hostString.length() - 4);
+    }
+    boost::replace_all(ret, "__hostname__", hostString);
+
+    return ret;
+  }
+
+  catch (std::exception& e)
+  {
+    throw Spine::Exception(BCP, e.what());
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "WMSGetCapabilities::response() failed!");
   }
 }
 

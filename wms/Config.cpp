@@ -5,8 +5,8 @@
 // ======================================================================
 
 #include "Config.h"
-#include <spine/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <spine/Exception.h>
 #include <stdexcept>
 
 using namespace std;
@@ -25,119 +25,112 @@ namespace Dali
 
 Config::Config(const string& configfile)
 {
+  if (configfile.empty())
+    return;
+
   try
   {
-    if (configfile.empty())
-      return;
+    itsConfig.readFile(configfile.c_str());
 
-    try
-    {
-      itsConfig.readFile(configfile.c_str());
+    // required parameters
+    std::string root = itsConfig.lookup("root");
+    std::string wmsroot = itsConfig.lookup("wms.root");
+    itsRootDirectory = root;
+    itsWmsRootDirectory = wmsroot;
 
-      // required parameters
-      std::string root = itsConfig.lookup("root");
-      std::string wmsroot = itsConfig.lookup("wms.root");
-      itsRootDirectory = root;
-      itsWmsRootDirectory = wmsroot;
+    // optional parameters
+    itsConfig.lookupValue("url", itsDefaultUrl);
+    itsConfig.lookupValue("model", itsDefaultModel);
+    itsConfig.lookupValue("language", itsDefaultLanguage);
 
-      // optional parameters
-      itsConfig.lookupValue("url", itsDefaultUrl);
-      itsConfig.lookupValue("model", itsDefaultModel);
-      itsConfig.lookupValue("language", itsDefaultLanguage);
+    itsConfig.lookupValue("template", itsDefaultTemplate);
+    itsConfig.lookupValue("templatedir", itsTemplateDirectory);
+    itsConfig.lookupValue("customer", itsDefaultCustomer);
 
-      itsConfig.lookupValue("template", itsDefaultTemplate);
-      itsConfig.lookupValue("templatedir", itsTemplateDirectory);
-      itsConfig.lookupValue("customer", itsDefaultCustomer);
+    itsConfig.lookupValue("cache.memory_bytes", itsMaxMemoryCacheSize);
+    itsConfig.lookupValue("cache.filesystem_bytes", itsMaxFilesystemCacheSize);
+    itsConfig.lookupValue("cache.directory", itsFilesystemCacheDirectory);
 
-      itsConfig.lookupValue("cache.memory_bytes", itsMaxMemoryCacheSize);
-      itsConfig.lookupValue("cache.filesystem_bytes", itsMaxFilesystemCacheSize);
-      itsConfig.lookupValue("cache.directory", itsFilesystemCacheDirectory);
-
-      itsConfig.lookupValue("wms.url", itsWmsUrl);
-      itsConfig.lookupValue("wms.versions", itsWmsVersions);
-      itsConfig.lookupValue("wms.mapformats", itsWmsMapFormats);
-      itsConfig.lookupValue("wms.quiet", itsQuiet);
+    itsConfig.lookupValue("wms.url", itsWmsUrl);
+    itsConfig.lookupValue("wms.quiet", itsQuiet);
 
 #ifndef WITHOUT_AUHTENTICATION
-      itsConfig.lookupValue("authenticate", itsAuthenticate);
+    itsConfig.lookupValue("authenticate", itsAuthenticate);
 #endif
 
 #ifndef WITHOUT_OBSERVATION
-      itsConfig.lookupValue("obsengine_disabled", itsObsEngineDisabled);
+    itsConfig.lookupValue("obsengine_disabled", itsObsEngineDisabled);
 #endif
 
-      // Default templates for various types
+    // Default templates for various types
 
+    {
+      const auto& templates = itsConfig.lookup("templates");
+      if (!templates.isGroup())
       {
-        const auto& templates = itsConfig.lookup("templates");
-        if (!templates.isGroup())
-        {
-          Spine::Exception exception(BCP, "Configuration error!", NULL);
-          exception.addParameter("Configuration file", configfile);
-          exception.addDetail("Configured value of 'templates' must be a group");
-          throw exception;
-        }
-
-        for (int i = 0; i < templates.getLength(); ++i)
-        {
-          const auto& setting = templates[i];
-          std::string name = setting.getName();
-          std::string value = setting;
-          itsDefaultTemplates[name] = value;
-        }
+        Spine::Exception exception(BCP, "Configuration error!", NULL);
+        exception.addParameter("Configuration file", configfile);
+        exception.addDetail("Configured value of 'templates' must be a group");
+        throw exception;
       }
 
-      // Store array of SVG attribute names into a set for looking up valid names
+      for (int i = 0; i < templates.getLength(); ++i)
       {
-        const auto& attributes = itsConfig.lookup("regular_attributes");
-        if (!attributes.isArray())
-        {
-          Spine::Exception exception(BCP, "Configuration error!", NULL);
-          exception.addParameter("Configuration file", configfile);
-          exception.addDetail("Configured value of 'regular_attributes' must be an array");
-          throw exception;
-        }
-        for (int i = 0; i < attributes.getLength(); ++i)
-          itsRegularAttributes.insert(attributes[i]);
-      }
-
-      {
-        const auto& attributes = itsConfig.lookup("presentation_attributes");
-        if (!attributes.isArray())
-        {
-          Spine::Exception exception(BCP, "Configuration error!", NULL);
-          exception.addParameter("Configuration file", configfile);
-          exception.addDetail("Configured value of 'presentation_attributes' must be an array");
-          throw exception;
-        }
-
-        for (int i = 0; i < attributes.getLength(); ++i)
-          itsPresentationAttributes.insert(attributes[i]);
+        const auto& setting = templates[i];
+        std::string name = setting.getName();
+        std::string value = setting;
+        itsDefaultTemplates[name] = value;
       }
     }
-    catch (libconfig::ParseException& e)
+
+    // Store array of SVG attribute names into a set for looking up valid names
     {
-      Spine::Exception exception(BCP, "Configuration error!", NULL);
-      exception.addParameter("Configuration file", configfile);
-      exception.addParameter("Line", Fmi::to_string(e.getLine()));
-      throw exception;
+      const auto& attributes = itsConfig.lookup("regular_attributes");
+      if (!attributes.isArray())
+      {
+        Spine::Exception exception(BCP, "Configuration error!", NULL);
+        exception.addParameter("Configuration file", configfile);
+        exception.addDetail("Configured value of 'regular_attributes' must be an array");
+        throw exception;
+      }
+      for (int i = 0; i < attributes.getLength(); ++i)
+        itsRegularAttributes.insert(attributes[i]);
     }
-    catch (libconfig::ConfigException&)
+
     {
-      Spine::Exception exception(BCP, "Configuration error!", NULL);
-      exception.addParameter("Configuration file", configfile);
-      throw exception;
+      const auto& attributes = itsConfig.lookup("presentation_attributes");
+      if (!attributes.isArray())
+      {
+        Spine::Exception exception(BCP, "Configuration error!", NULL);
+        exception.addParameter("Configuration file", configfile);
+        exception.addDetail("Configured value of 'presentation_attributes' must be an array");
+        throw exception;
+      }
+
+      for (int i = 0; i < attributes.getLength(); ++i)
+        itsPresentationAttributes.insert(attributes[i]);
     }
-    catch (...)
-    {
-      Spine::Exception exception(BCP, "Configuration error!", NULL);
-      exception.addParameter("Configuration file", configfile);
-      throw exception;
-    }
+  }
+
+  catch (const libconfig::SettingNotFoundException& e)
+  {
+    throw Spine::Exception(BCP, "Setting not found").addParameter("Setting path", e.getPath());
+  }
+  catch (libconfig::ParseException& e)
+  {
+    throw Spine::Exception(BCP, "Configuration error!", NULL)
+        .addParameter("Configuration file", configfile)
+        .addParameter("Line", Fmi::to_string(e.getLine()));
+  }
+  catch (libconfig::ConfigException&)
+  {
+    throw Spine::Exception(BCP, "Configuration error!", NULL)
+        .addParameter("Configuration file", configfile);
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Configuration failed!", NULL);
+    throw Spine::Exception(BCP, "Configuration error!", NULL)
+        .addParameter("Configuration file", configfile);
   }
 }
 
@@ -221,14 +214,6 @@ std::string Config::defaultTemplate(const std::string& theType) const
 const std::string& Config::wmsUrl() const
 {
   return itsWmsUrl;
-}
-const std::string& Config::wmsVersions() const
-{
-  return itsWmsVersions;
-}
-const std::string& Config::wmsMapFormats() const
-{
-  return itsWmsMapFormats;
 }
 unsigned long long Config::maxMemoryCacheSize() const
 {

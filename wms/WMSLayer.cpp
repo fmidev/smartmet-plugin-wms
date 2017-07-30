@@ -138,14 +138,14 @@ void WMSLayer::addStyle(const std::string& layerName)
   layerStyle.legend_url.width = 200;
   layerStyle.legend_url.height = 200;
   layerStyle.legend_url.format = "image/png";
+
   layerStyle.legend_url.online_resource =
-      "xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:type=\"simple\" "
-      "xlink:href=\"__hostname__/wms?"
-      "service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&"
-      "amp;"
-      "layer=";
-  layerStyle.legend_url.online_resource += layerName;
-  layerStyle.legend_url.online_resource += "&amp;style=&amp;format=image%2Fpng\"";
+      std::string(
+          "__hostname__/wms"
+          "?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;"
+          "style=&amp;format=image%2Fpng&amp;layer=") +
+      layerName;
+
   styles.push_back(layerStyle);
 }
 
@@ -293,14 +293,6 @@ std::cout << "processed template: " << item.templateFile << std::endl
   return ret;
 }
 
-std::string WMSLayer::getName() const
-{
-  return name;
-}
-std::string WMSLayer::getCustomer() const
-{
-  return customer;
-}
 bool WMSLayer::isValidCRS(const std::string& theCRS) const
 {
   try
@@ -388,37 +380,49 @@ std::string WMSLayer::info() const
   }
 }
 
+std::ostream& operator<<(std::ostream& ost, const boost::optional<int>& var)
+{
+  if (!var)
+    ost << "-";
+  else
+    ost << *var;
+  return ost;
+}
+
 std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
 {
   try
   {
+    const std::string missing = "-";
     ost << "********** "
-        << "name: " << layer.name << " **********" << std::endl
-        << "title: " << layer.title << std::endl
-        << "abstract: " << layer.abstract << std::endl
-        << "queryable: " << (layer.queryable ? "true" : "false") << std::endl
-        << "keywords: " << boost::algorithm::join(layer.keywords, " ") << std::endl
-        << "geographicBoundingBox: " << std::endl
+        << "name: " << layer.name << " **********"
+        << "\n"
+        << "title: " << layer.title << "\n"
+        << "abstract: " << layer.abstract << "\n"
+        << "keywords: "
+        << (!layer.keywords ? missing : boost::algorithm::join(*layer.keywords, " ")) << "\n"
+        << "opaque: " << layer.opaque << "\n"
+        << "queryable: " << layer.queryable << "\n"
+        << "cascaded: " << layer.cascaded << "\n"
+        << "no_subsets: " << layer.no_subsets << "\n"
+        << "fixed_width: " << layer.fixed_width << "\n"
+        << "fixed_height:" << layer.fixed_height << "\n"
+        << "geographicBoundingBox: \n"
         << " westBoundLongitude=" << layer.geographicBoundingBox.xMin << " "
         << "southBoundLatitude=" << layer.geographicBoundingBox.yMin << " "
         << "eastBoundLongitude=" << layer.geographicBoundingBox.xMax << " "
-        << "northBoundLatitude=" << layer.geographicBoundingBox.yMax << std::endl
-        << "crs: " << boost::algorithm::join(layer.crs, " ") << std::endl
+        << "northBoundLatitude=" << layer.geographicBoundingBox.yMax << "\n"
+        << "crs: " << boost::algorithm::join(layer.crs, " ") << "\n"
         << "styles: ";
     for (auto style : layer.styles)
       ost << style.name << " ";
     if (layer.styles.size() > 0)
-      ost << " " << std::endl;
-    ost << "customer: " << layer.customer << std::endl;
+      ost << " \ncustomer: " << layer.customer << "\n";
 
     if (layer.timeDimension)
-    {
       ost << "timeDimension: " << layer.timeDimension;
-    }
     else
-    {
-      ost << "timeDimension: Empty";
-    }
+      ost << "timeDimension: -";
 
     ost << "*******************************" << std::endl;
 
@@ -430,138 +434,264 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
   }
 }
 
-std::string WMSLayer::generateGetCapabilities(const Engine::Gis::Engine& gisengine)
+boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::Engine& gisengine)
 {
   try
   {
     if (hidden)
-      return "";
+      return {};
 
-    std::string ss = std::string(" <Layer queryable=") +
-                     enclose_with_quotes(queryable ? "1" : "0") + " opaque=\"1\">" + "\n" +
-                     "   <Name>" + name + "</Name>" + "\n" + "   <Title>" + title + "</Title>" +
-                     "\n" + "   <Abstract>" + abstract + "</Abstract>" + "\n";
+    CTPP::CDT layer(CTPP::CDT::HASH_VAL);
 
-    std::vector<std::string> supportedCRS;
+    // Layer name, title and abstract
 
-    double lonMin = geographicBoundingBox.xMin;
-    double lonMax = geographicBoundingBox.xMax;
-    double latMin = geographicBoundingBox.yMin;
-    double latMax = geographicBoundingBox.yMax;
+    if (!name.empty())
+      layer["name"] = name;
+    if (title)
+      layer["title"] = *title;
+    if (abstract)
+      layer["abstract"] = *abstract;
+    if (opaque)
+      layer["opaque"] = *opaque;
+    if (queryable)
+      layer["queryable"] = *queryable;
+    if (cascaded)
+      layer["cascaded"] = *cascaded;
+    if (no_subsets)
+      layer["no_subsets"] = *no_subsets;
+    if (fixed_width)
+      layer["fixed_width"] = *fixed_width;
+    if (fixed_height)
+      layer["fixed_height"] = *fixed_height;
 
-    // EX_GeographicBoundingBox
-    std::string bbox_ss =
-        std::string("   <EX_GeographicBoundingBox>") + "\n" + "\t<westBoundLongitude>" +
-        Fmi::to_string(lonMin) + "</westBoundLongitude>" + "\n" + "\t<eastBoundLongitude>" +
-        Fmi::to_string(lonMax) + "</eastBoundLongitude>" + "\n" + "\t<southBoundLatitude>" +
-        Fmi::to_string(latMin) + "</southBoundLatitude>" + "\n" + "\t<northBoundLatitude>" +
-        Fmi::to_string(latMax) + "</northBoundLatitude>" + "\n" + "   </EX_GeographicBoundingBox>" +
-        "\n";
-
-    bbox_ss += "   <BoundingBox CRS=" + enclose_with_quotes("EPSG:4326");
-    bbox_ss += " minx=\"" + Fmi::to_string(latMin) + "\"";
-    bbox_ss += " miny=\"" + Fmi::to_string(lonMin) + "\"";
-    bbox_ss += " maxx=\"" + Fmi::to_string(latMax) + "\"";
-    bbox_ss += " maxy=\"" + Fmi::to_string(lonMax) + "\"";
-    bbox_ss += " />\n";
-
-    // crs bounding boxes
-    // convert lon/lat-coordinated to crs coordinates
-    for (std::set<std::string>::const_iterator iter = crs.begin(); iter != crs.end(); iter++)
+    if (keywords)
     {
-      std::string crs(*iter);
-
-      if (crs == "EPSG:4326")
-      {
-        supportedCRS.push_back(crs);
-        continue;
-      }
-
-      OGRSpatialReference oSourceSRS, oTargetSRS;
-
-      double x1(lonMin), y1(latMin), x2(lonMax), y2(latMax);
-
-      oSourceSRS.importFromEPSGA(4326);
-
-      int targetEPSGNumber = stoi(iter->substr(5));
-      OGRErr err = oTargetSRS.importFromEPSGA(targetEPSGNumber);
-
-      if (err != OGRERR_NONE)
-        throw Spine::Exception(BCP, "Unknown CRS: '" + crs + "'");
-
-      boost::shared_ptr<OGRCoordinateTransformation> poCT(
-          OGRCreateCoordinateTransformation(&oSourceSRS, &oTargetSRS));
-
-      if (poCT == NULL)
-        throw Spine::Exception(BCP, "OGRCreateCoordinateTransformation function call failed");
-
-      // Intersect with target EPSG bounding box
-
-      Engine::Gis::BBox epsg_box = gisengine.getBBox(targetEPSGNumber);
-      x1 = std::max(epsg_box.west, x1);
-      x2 = std::min(epsg_box.east, x2);
-      y1 = std::max(epsg_box.south, y1);
-      y2 = std::min(epsg_box.north, y2);
-
-      if (x1 >= x2 || y1 >= y2)
-      {
-        // Non-overlapping bbox
-        continue;
-      }
-
-      bool ok = (poCT->Transform(1, &x1, &y1) && poCT->Transform(1, &x2, &y2));
-      if (!ok)
-      {
-        // Corner transformations failed
-        continue;
-      }
-
-      supportedCRS.push_back(crs);
-
-      bbox_ss += "   <BoundingBox CRS=" + enclose_with_quotes(crs);
-
-      // check if coordinate ordering must be changed
-      if (oTargetSRS.EPSGTreatsAsLatLong())
-      {
-        bbox_ss += " minx=\"" + fmt::sprintf("%f", y1) + "\"";
-        bbox_ss += " miny=\"" + fmt::sprintf("%f", x1) + "\"";
-        bbox_ss += " maxx=\"" + fmt::sprintf("%f", y2) + "\"";
-        bbox_ss += " maxy=\"" + fmt::sprintf("%f", x2) + "\"";
-      }
-      else
-      {
-        bbox_ss += " minx=\"" + fmt::sprintf("%f", x1) + "\"";
-        bbox_ss += " miny=\"" + fmt::sprintf("%f", y1) + "\"";
-        bbox_ss += " maxx=\"" + fmt::sprintf("%f", x2) + "\"";
-        bbox_ss += " maxy=\"" + fmt::sprintf("%f", y2) + "\"";
-      }
-
-      bbox_ss += " />\n";
+      CTPP::CDT keys(CTPP::CDT::ARRAY_VAL);
+      for (const auto& key : *keywords)
+        keys.PushBack(key);
+      layer["keyword"] = keys;
     }
 
-    // first insert list of supported CRS
-    BOOST_FOREACH (const std::string& crs, supportedCRS)
-      ss += "   <CRS>" + crs + "</CRS>\n";
+    // Layer geographic bounding boxes
 
-    ss += bbox_ss;
+    CTPP::CDT layer_bbox(CTPP::CDT::HASH_VAL);
+    layer_bbox["west_bound_longitude"] = geographicBoundingBox.xMin;
+    layer_bbox["east_bound_longitude"] = geographicBoundingBox.xMax;
+    layer_bbox["south_bound_latitude"] = geographicBoundingBox.yMin;
+    layer_bbox["north_bound_latitude"] = geographicBoundingBox.yMax;
+    layer["ex_geographic_bounding_box"] = layer_bbox;
+
+    // Layer CRS list and their bounding boxes
+
+    if (!crs.empty())
+    {
+      CTPP::CDT layer_crs_list(CTPP::CDT::ARRAY_VAL);
+      CTPP::CDT layer_bbox_list(CTPP::CDT::ARRAY_VAL);
+
+      for (const auto& crs_name : crs)
+      {
+        CTPP::CDT layer_bbox(CTPP::CDT::HASH_VAL);
+
+        layer_bbox["crs"] = crs_name;
+
+        if (crs_name == "EPSG:4326")
+        {
+          layer_crs_list.PushBack(crs_name);
+          layer_bbox["minx"] = geographicBoundingBox.xMin;
+          layer_bbox["miny"] = geographicBoundingBox.yMin;
+          layer_bbox["maxx"] = geographicBoundingBox.xMax;
+          layer_bbox["maxy"] = geographicBoundingBox.yMax;
+          layer_bbox_list.PushBack(layer_bbox);
+        }
+        else
+        {
+          // Calculate CRS bbox from latlon bbox
+          OGRSpatialReference srs;
+          srs.importFromEPSGA(4326);
+
+          int target_epsg_number = stoi(crs_name.substr(5));
+          OGRSpatialReference target;
+          auto err = target.importFromEPSGA(target_epsg_number);
+          if (err != OGRERR_NONE)
+            throw Spine::Exception(BCP, "Unknown CRS: ' " + crs_name + "'");
+
+          boost::shared_ptr<OGRCoordinateTransformation> transformation(
+              OGRCreateCoordinateTransformation(&srs, &target));
+
+          if (transformation == nullptr)
+            throw Spine::Exception(BCP, "OGRCreateCoordinateTransformation function call failed");
+
+          // Intersect with target EPSG bounding box (latlon)
+
+          Engine::Gis::BBox epsg_box = gisengine.getBBox(target_epsg_number);
+          auto x1 = std::max(epsg_box.west, geographicBoundingBox.xMin);
+          auto x2 = std::min(epsg_box.east, geographicBoundingBox.xMax);
+          auto y1 = std::max(epsg_box.south, geographicBoundingBox.yMin);
+          auto y2 = std::min(epsg_box.north, geographicBoundingBox.yMax);
+
+          // Produce bbox only if there is overlap
+
+          if (x1 < x2 && y1 < y2)
+          {
+            bool ok =
+                (transformation->Transform(1, &x1, &y1) && transformation->Transform(1, &x2, &y2));
+
+            // Produce bbox only if projection succeeds
+
+            if (ok)
+            {
+              // Acceptable CRS
+              layer_crs_list.PushBack(crs_name);
+
+              // Use proper coordinate ordering for the EPSG
+              if (target.EPSGTreatsAsLatLong())
+              {
+                std::swap(x1, y1);
+                std::swap(x2, y2);
+              }
+              layer_bbox["minx"] = x1;
+              layer_bbox["miny"] = y1;
+              layer_bbox["maxx"] = x2;
+              layer_bbox["maxy"] = y2;
+              layer_bbox_list.PushBack(layer_bbox);
+            }
+          }
+        }
+      }
+
+      layer["crs"] = layer_crs_list;
+      layer["bounding_box"] = layer_bbox_list;
+    }
+
+    // Layer dimensions
 
     if (timeDimension)
     {
-      // then bounding boxes of these CRS
-      ss += "   <Dimension name=\"time\" units=" + enclose_with_quotes("ISO8601") +
-            "  multipleValues=" + enclose_with_quotes("0") +
-            "  nearestValue=" + enclose_with_quotes("0") +
-            "  current=" + enclose_with_quotes(timeDimension->currentValue() ? "1" : "0") + ">" +
-            timeDimension->getCapabilities() + "</Dimension>" + "\n";
+      CTPP::CDT layer_dimension_list(CTPP::CDT::ARRAY_VAL);
+      CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
+      layer_dimension["name"] = "time";
+      layer_dimension["units"] = "ISO8601";
+      layer_dimension["multiple_values"] = 0;
+      layer_dimension["nearest_value"] = 0;
+      layer_dimension["current"] = (timeDimension->currentValue() ? 1 : 0);
+
+      layer_dimension["value"] = timeDimension->getCapabilities();  // a string
+
+      // TODO: Do we need these?
+      // layer_dimension["unit_symbol"] = ???
+      // layer_dimension["default"] = ???
+
+      layer_dimension_list.PushBack(layer_dimension);
+      layer["dimension"] = layer_dimension_list;
     }
 
-    // add layer styles
-    for (auto style : styles)
-      ss += style.toXML();
+    // Layer attribution
 
-    ss += " </Layer>\n";
+    if (false)
+    {
+      CTPP::CDT layer_attribution(CTPP::CDT::HASH_VAL);
+      layer_attribution["title"] = "";
+      layer_attribution["online_resource"] = "http://www.www.www";
+      CTPP::CDT layer_attribution_logo_url(CTPP::CDT::HASH_VAL);
+      layer_attribution_logo_url["width"] = 0;
+      layer_attribution_logo_url["height"] = 0;
+      layer_attribution_logo_url["format"] = "png";
+      layer_attribution_logo_url["online_resource"] = "http://www.www.www/logo.png";
+      layer_attribution["logo_url"] = layer_attribution_logo_url;
+      layer["attribution"] = layer_attribution;
+    }
 
-    return ss;
+    // Layer authority URL
+
+    if (false)  // NOT IMPLEMENTED
+    {
+      CTPP::CDT layer_authority_url_list(CTPP::CDT::ARRAY_VAL);
+
+      CTPP::CDT layer_authority_url(CTPP::CDT::HASH_VAL);
+      layer_authority_url["name"] = "FMI";
+      layer_authority_url["online_resource"] = "http://www.www.www";
+      layer_authority_url_list.PushBack(layer_authority_url);
+
+      // Insert more authorities here if desired
+
+      layer["authority_url"] = layer_authority_url_list;
+    }
+
+    // Layer identifier
+
+    if (false)  // NOT IMPLEMENTED
+    {
+      CTPP::CDT layer_identifier_list(CTPP::CDT::ARRAY_VAL);
+
+      CTPP::CDT layer_identifier(CTPP::CDT::HASH_VAL);
+      layer_identifier["authority"] = "FMI";
+      layer_identifier["value"] = "foo bar";
+      layer_identifier_list.PushBack(layer_identifier);
+
+      // Insert more identifiers here if desired
+
+      layer["identifier"] = layer_identifier_list;
+    }
+
+    // Layer metadata URL
+
+    if (false)  // NOT IMPLEMENTED
+    {
+      CTPP::CDT layer_metadata_url_list(CTPP::CDT::ARRAY_VAL);
+
+      CTPP::CDT layer_metadata_url(CTPP::CDT::HASH_VAL);
+      layer_metadata_url["type"] = "XML";
+      layer_metadata_url["format"] = "XML";
+      layer_metadata_url["online_resource"] = "http://www.www.www";
+      layer_metadata_url_list.PushBack(layer_metadata_url);
+
+      // Insert more metadata sources here if desired
+
+      layer["metadata_url"] = layer_metadata_url_list;
+    }
+
+    // Layer data URL
+
+    if (false)  // NOT IMPLEMENTED
+    {
+      CTPP::CDT layer_data_url_list(CTPP::CDT::ARRAY_VAL);
+
+      CTPP::CDT layer_data_url(CTPP::CDT::HASH_VAL);
+      layer_data_url["type"] = "XML";
+      layer_data_url["format"] = "XML";
+      layer_data_url["online_resource"] = "http://www.www.www";
+      layer_data_url_list.PushBack(layer_data_url);
+
+      // Insert more data sources here if desired
+
+      layer["data_url"] = layer_data_url_list;
+    }
+
+    // Layer styles
+    if (!styles.empty())
+    {
+      CTPP::CDT layer_style_list(CTPP::CDT::ARRAY_VAL);
+      for (const auto& style : styles)
+      {
+        layer_style_list.PushBack(style.getCapabilities());
+      }
+      if (layer_style_list.Size() > 0)
+        layer["style"] = layer_style_list;
+    }
+
+    // Layer scale denominators
+
+    if (false)  // NOT IMPLEMENTED
+    {
+      layer["min_scale_denominator"] = 1;
+    }
+
+    if (false)  // NOT IMPLEMENTED
+    {
+      layer["max_scale_denominator"] = 1;
+    }
+
+    return layer;
   }
   catch (...)
   {
