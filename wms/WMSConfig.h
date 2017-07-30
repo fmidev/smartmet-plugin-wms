@@ -64,9 +64,11 @@ class WMSConfig
 
 #ifndef WITHOUT_AUTHENTICATION
   CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
+                            const boost::optional<std::string>& wms_namespace,
                             bool authenticate = true) const;
 #else
-  CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey) const;
+  CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
+                            const boost::optional<std::string>& wms_namespace) const;
 #endif
 
   std::string layerCustomer(const std::string& theLayerName) const;

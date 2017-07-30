@@ -126,10 +126,11 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
   {
     // Deduce apikey for layer filtering
     auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
+    auto wms_namespace = theRequest.getParameter("namespace");
 
     // Note: we make a new copy since we add new information to the fixed response
     CTPP::CDT hash = theConfig.getCapabilitiesResponseVariables();
-    CTPP::CDT configuredLayers = theConfig.getCapabilities(apikey);
+    CTPP::CDT configuredLayers = theConfig.getCapabilities(apikey, wms_namespace);
 
     hash.At("capability")["layer"] = configuredLayers;
 

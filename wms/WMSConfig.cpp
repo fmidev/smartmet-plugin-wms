@@ -700,9 +700,11 @@ CTPP::CDT itsGetCapabilitiesLayerAttributes;
 
 #ifndef WITHOUT_AUTHENTICATION
 CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
+                                     const boost::optional<std::string>& wms_namespace,
                                      bool authenticate) const
 #else
-CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey) const;
+CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
+                                     const boost::optional<std::string>& wms_namespace) const;
 #endif
 {
   try
@@ -726,7 +728,20 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey)
       // Note: hidden layers return an empty optional CDT
       const auto& cdt = iter_pair.second.getCapabilities();
       if (cdt)
-        resultCapabilities.PushBack(*cdt);
+      {
+        if (!wms_namespace)
+          resultCapabilities.PushBack(*cdt);
+        else
+        {
+          // Return capability only if the namespace matches
+          if (cdt->Exists("name"))
+          {
+            std::string name = (*cdt)["name"].GetString();
+            if (boost::algorithm::istarts_with(name, *wms_namespace + ":"))
+              resultCapabilities.PushBack(*cdt);
+          }
+        }
+      }
     }
 
     return resultCapabilities;
