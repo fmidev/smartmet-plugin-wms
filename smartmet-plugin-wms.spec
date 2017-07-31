@@ -5,8 +5,8 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.7.17
-Release: 2%{?dist}.fmi
+Version: 17.7.31
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -14,9 +14,9 @@ Source0: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
-BuildRequires: smartmet-library-giza-devel >= 16.12.21
-BuildRequires: smartmet-library-macgyver >= 17.4.19
-BuildRequires: smartmet-library-spine-devel >= 17.5.31
+BuildRequires: smartmet-library-giza-devel >= 17.7.12
+BuildRequires: smartmet-library-macgyver >= 17.7.29
+BuildRequires: smartmet-library-spine-devel >= 17.7.10
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.4.8
 %endif
@@ -29,7 +29,7 @@ BuildRequires: smartmet-engine-querydata-devel >= 17.5.24
 BuildRequires: smartmet-engine-contour-devel >= 17.5.30
 BuildRequires: smartmet-library-gis-devel >= 17.3.14
 BuildRequires: fmt-devel
-BuildRequires: ctpp2 >= 2.8.2
+BuildRequires: ctpp2 >= 2.8.5
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
 BuildRequires: librsvg2-devel >= 2.40.6
@@ -37,12 +37,12 @@ BuildRequires: cairo-devel
 Requires: cairo
 Requires: fmt
 Requires: jsoncpp
-Requires: ctpp2 >= 2.8.2
+Requires: ctpp2 >= 2.8.5
 Requires: libconfig
 Requires: librsvg2 >= 2.40.6
 Requires: smartmet-library-gis >= 17.3.14
-Requires: smartmet-library-macgyver >= 17.4.19
-Requires: smartmet-library-giza >= 16.12.21
+Requires: smartmet-library-macgyver >= 17.7.29
+Requires: smartmet-library-giza >= 17.7.12
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 17.4.8
 %endif
@@ -51,7 +51,7 @@ Requires: smartmet-engine-contour >= 17.5.30
 Requires: smartmet-engine-gis >= 17.4.11
 Requires: smartmet-engine-geonames >= 17.5.24
 Requires: smartmet-server >= 17.4.8
-Requires: smartmet-library-spine >= 17.5.31
+Requires: smartmet-library-spine >= 17.7.10
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -88,7 +88,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-* Upcoming
+* Mon Jul 31 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.7.31-1.fmi
 - Rewrote GetCapabilities template and respective code to cover the full XML schema with matching names
 - Added namespace attribute to WMS GetCapabilities queries
 
