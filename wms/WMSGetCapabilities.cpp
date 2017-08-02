@@ -176,10 +176,11 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     std::string ret = outstream.str();
 
     auto host_header = theRequest.getHeader("Host");
+
     if (!host_header)
     {
       // This should never happen, host header is mandatory in HTTP 1.1
-      host_header = "http://smartmet.fmi.fi/wms";
+      host_header = "smartmet.fmi.fi/wms";
     }
 
     auto hostString = *host_header;
@@ -189,6 +190,7 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
       if (hostEnd == "/wms")
         hostString = hostString.substr(0, hostString.length() - 4);
     }
+
     boost::replace_all(ret, "__hostname__", hostString);
 
     return ret;
