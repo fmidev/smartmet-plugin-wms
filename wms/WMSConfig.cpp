@@ -307,6 +307,182 @@ CTPP::CDT get_request(const libconfig::Config& config,
   return request;
 }
 
+CTPP::CDT get_capabilities(const libconfig::Config& config)
+{
+  // Extract capabilities into a CTTP hash
+
+  CTPP::CDT capabilities(CTPP::CDT::HASH_VAL);
+
+  set_mandatory(capabilities, config, "wms.get_capabilities", "version");
+  set_optional(capabilities, config, "wms.get_capabilities", "headers");
+
+  // Service part of capabilities
+
+  CTPP::CDT service(CTPP::CDT::HASH_VAL);
+
+  set_mandatory(service, config, "wms.get_capabilities.service", "title");
+  set_optional(service, config, "wms.get_capabilities.service", "abstract");
+
+  if (config.exists("wms.get_capabilities.service.keywords"))
+  {
+    CTPP::CDT keywords(CTPP::CDT::ARRAY_VAL);
+
+    const auto& settings = config.lookup("wms.get_capabilities.service.keywords");
+
+    if (!settings.isArray())
+      throw Spine::Exception(BCP, "wms.get_capabilities.service.keywords must be an array");
+
+    for (int i = 0; i < settings.getLength(); i++)
+      keywords.PushBack(settings[i].c_str());
+
+    service["keywords"] = keywords;
+  }
+
+  set_mandatory(service, config, "wms.get_capabilities.service", "online_resource");
+
+  if (config.exists("wms.get_capabilities.service.contact_information"))
+  {
+    CTPP::CDT contact_information(CTPP::CDT::HASH_VAL);
+
+    if (config.exists("wms.get_capabilities.service.contact_information.contact_person_primary"))
+    {
+      CTPP::CDT contact_person_primary(CTPP::CDT::HASH_VAL);
+      set_mandatory(contact_person_primary,
+                    config,
+                    "wms.get_capabilities.service.contact_information.contact_person_primary",
+                    "contact_person");
+      set_mandatory(contact_person_primary,
+                    config,
+                    "wms.get_capabilities.service.contact_information.contact_person_primary",
+                    "contact_organization");
+      contact_information["contact_person_primary"] = contact_person_primary;
+    }
+
+    set_optional(contact_information,
+                 config,
+                 "wms.get_capabilities.service.contact_information",
+                 "contact_position");
+
+    if (config.exists("wms.get_capabilities.service.contact_information.contact_address"))
+    {
+      CTPP::CDT contact_address(CTPP::CDT::HASH_VAL);
+      set_mandatory(contact_address,
+                    config,
+                    "wms.get_capabilities.service.contact_information.contact_address",
+                    "address_type");
+      set_mandatory(contact_address,
+                    config,
+                    "wms.get_capabilities.service.contact_information.contact_address",
+                    "address");
+      set_mandatory(contact_address,
+                    config,
+                    "wms.get_capabilities.service.contact_information.contact_address",
+                    "city");
+      set_mandatory(contact_address,
+                    config,
+                    "wms.get_capabilities.service.contact_information.contact_address",
+                    "state_or_province");
+      set_mandatory(contact_address,
+                    config,
+                    "wms.get_capabilities.service.contact_information.contact_address",
+                    "post_code");
+      set_mandatory(contact_address,
+                    config,
+                    "wms.get_capabilities.service.contact_information.contact_address",
+                    "country");
+      contact_information["contact_address"] = contact_address;
+    }
+
+    set_optional(contact_information,
+                 config,
+                 "wms.get_capabilities.service.contact_information",
+                 "contact_voice_telephone");
+    set_optional(contact_information,
+                 config,
+                 "wms.get_capabilities.service.contact_information",
+                 "contact_facsimile_telephone");
+    set_optional(contact_information,
+                 config,
+                 "wms.get_capabilities.service.contact_information",
+                 "contact_electronic_mail_address");
+
+    service["contact_information"] = contact_information;
+  }
+
+  set_optional(service, config, "wms.get_capabilities.service", "fees");
+  set_optional(service, config, "wms.get_capabilities.service", "access_constraints");
+  set_optional(service, config, "wms.get_capabilities.service", "layer_limit");
+  set_optional(service, config, "wms.get_capabilities.service", "max_width");
+  set_optional(service, config, "wms.get_capabilities.service", "max_height");
+
+  capabilities["service"] = service;
+
+  // Capability part
+
+  CTPP::CDT capability(CTPP::CDT::HASH_VAL);
+
+  // Request subpart
+
+  CTPP::CDT request(CTPP::CDT::HASH_VAL);
+
+  // Two obligatory parts and one optional one
+  request["getcapabilities"] =
+      get_request(config, "wms.get_capabilities.capability.request", "getcapabilities");
+  request["getmap"] = get_request(config, "wms.get_capabilities.capability.request", "getmap");
+
+  if (config.exists("wms.get_capabilities.capability.request.getfeatureinfo"))
+    request["getfeatureinfo"] =
+        get_request(config, "wms.get_capabilities.capability.request", "getfeatureinfo");
+
+  capability["request"] = request;
+
+  // Exceptions
+
+  const auto& exceptions = config.lookup("wms.get_capabilities.capability.exception");
+  if (!exceptions.isArray())
+    throw Spine::Exception(BCP, "wms.get_capabilities.capability.exception must be an array");
+  CTPP::CDT exception_list(CTPP::CDT::ARRAY_VAL);
+  for (int i = 0; i < exceptions.getLength(); i++)
+    exception_list.PushBack(exceptions[i].c_str());
+  capability["exception"] = exception_list;
+
+  // Extensions
+
+  if (config.exists("wms.get_capabilities.capability.extended_capabilities.inspire"))
+  {
+    CTPP::CDT extended_capabilities(CTPP::CDT::HASH_VAL);
+    CTPP::CDT inspire(CTPP::CDT::HASH_VAL);
+
+    const std::string prefix = "wms.get_capabilities.capability.extended_capabilities.inspire";
+    set_mandatory(inspire, config, prefix, "metadata_url");
+    set_mandatory(inspire, config, prefix, "default_language");
+    set_mandatory(inspire, config, prefix, "supported_language");
+    set_mandatory(inspire, config, prefix, "response_language");
+    extended_capabilities["inspire"] = inspire;
+    capability["extended_capabilities"] = extended_capabilities;
+  }
+
+  // The master layer settings
+
+  CTPP::CDT master_layer(CTPP::CDT::HASH_VAL);
+  set_mandatory(master_layer, config, "wms.get_capabilities.capability.master_layer", "title");
+  set_optional(master_layer, config, "wms.get_capabilities.capability.master_layer", "abstract");
+  set_optional(master_layer, config, "wms.get_capabilities.capability.master_layer", "queryable");
+  set_optional(master_layer, config, "wms.get_capabilities.capability.master_layer", "opaque");
+  set_optional(master_layer, config, "wms.get_capabilities.capability.master_layer", "cascaded");
+  set_optional(master_layer, config, "wms.get_capabilities.capability.master_layer", "no_subsets");
+  set_optional(master_layer, config, "wms.get_capabilities.capability.master_layer", "fixed_width");
+  set_optional(
+      master_layer, config, "wms.get_capabilities.capability.master_layer", "fixed_height");
+  capability["master_layer"] = master_layer;
+
+  // Finished the first part of the response, the capability layers will be added later
+
+  capabilities["capability"] = capability;
+
+  return capabilities;
+}
+
 WMSConfig::WMSConfig(const Config& daliConfig,
                      const Spine::FileCache& theFileCache,
                      Engine::Querydata::Engine* qEngine,
@@ -335,8 +511,6 @@ WMSConfig::WMSConfig(const Config& daliConfig,
   {
     const libconfig::Config& config = daliConfig.getConfig();
 
-    // TODO
-
     std::string wmsMapFormats = config.lookup("wms.map_formats").c_str();
 
     boost::algorithm::split(
@@ -345,182 +519,9 @@ WMSConfig::WMSConfig(const Config& daliConfig,
     std::string wmsVersions = config.lookup("wms.supported_versions").c_str();
     boost::algorithm::split(itsSupportedWMSVersions, wmsVersions, boost::algorithm::is_any_of(","));
 
-    // Extract capabilities into a CTTP hash
+    // Parse GetCapability settings once to make sure the config file is valid
 
-    CTPP::CDT capabilities(CTPP::CDT::HASH_VAL);
-
-    set_mandatory(capabilities, config, "wms.get_capabilities", "version");
-    set_optional(capabilities, config, "wms.get_capabilities", "headers");
-
-    // Service part of capabilities
-
-    CTPP::CDT service(CTPP::CDT::HASH_VAL);
-
-    set_mandatory(service, config, "wms.get_capabilities.service", "title");
-    set_optional(service, config, "wms.get_capabilities.service", "abstract");
-
-    if (config.exists("wms.get_capabilities.service.keywords"))
-    {
-      CTPP::CDT keywords(CTPP::CDT::ARRAY_VAL);
-
-      const auto& settings = config.lookup("wms.get_capabilities.service.keywords");
-
-      if (!settings.isArray())
-        throw Spine::Exception(BCP, "wms.get_capabilities.service.keywords must be an array");
-
-      for (int i = 0; i < settings.getLength(); i++)
-        keywords.PushBack(settings[i].c_str());
-
-      service["keywords"] = keywords;
-    }
-
-    set_mandatory(service, config, "wms.get_capabilities.service", "online_resource");
-
-    if (config.exists("wms.get_capabilities.service.contact_information"))
-    {
-      CTPP::CDT contact_information(CTPP::CDT::HASH_VAL);
-
-      if (config.exists("wms.get_capabilities.service.contact_information.contact_person_primary"))
-      {
-        CTPP::CDT contact_person_primary(CTPP::CDT::HASH_VAL);
-        set_mandatory(contact_person_primary,
-                      config,
-                      "wms.get_capabilities.service.contact_information.contact_person_primary",
-                      "contact_person");
-        set_mandatory(contact_person_primary,
-                      config,
-                      "wms.get_capabilities.service.contact_information.contact_person_primary",
-                      "contact_organization");
-        contact_information["contact_person_primary"] = contact_person_primary;
-      }
-
-      set_optional(contact_information,
-                   config,
-                   "wms.get_capabilities.service.contact_information",
-                   "contact_position");
-
-      if (config.exists("wms.get_capabilities.service.contact_information.contact_address"))
-      {
-        CTPP::CDT contact_address(CTPP::CDT::HASH_VAL);
-        set_mandatory(contact_address,
-                      config,
-                      "wms.get_capabilities.service.contact_information.contact_address",
-                      "address_type");
-        set_mandatory(contact_address,
-                      config,
-                      "wms.get_capabilities.service.contact_information.contact_address",
-                      "address");
-        set_mandatory(contact_address,
-                      config,
-                      "wms.get_capabilities.service.contact_information.contact_address",
-                      "city");
-        set_mandatory(contact_address,
-                      config,
-                      "wms.get_capabilities.service.contact_information.contact_address",
-                      "state_or_province");
-        set_mandatory(contact_address,
-                      config,
-                      "wms.get_capabilities.service.contact_information.contact_address",
-                      "post_code");
-        set_mandatory(contact_address,
-                      config,
-                      "wms.get_capabilities.service.contact_information.contact_address",
-                      "country");
-        contact_information["contact_address"] = contact_address;
-      }
-
-      set_optional(contact_information,
-                   config,
-                   "wms.get_capabilities.service.contact_information",
-                   "contact_voice_telephone");
-      set_optional(contact_information,
-                   config,
-                   "wms.get_capabilities.service.contact_information",
-                   "contact_facsimile_telephone");
-      set_optional(contact_information,
-                   config,
-                   "wms.get_capabilities.service.contact_information",
-                   "contact_electronic_mail_address");
-
-      service["contact_information"] = contact_information;
-    }
-
-    set_optional(service, config, "wms.get_capabilities.service", "fees");
-    set_optional(service, config, "wms.get_capabilities.service", "access_constraints");
-    set_optional(service, config, "wms.get_capabilities.service", "layer_limit");
-    set_optional(service, config, "wms.get_capabilities.service", "max_width");
-    set_optional(service, config, "wms.get_capabilities.service", "max_height");
-
-    capabilities["service"] = service;
-
-    // Capability part
-
-    CTPP::CDT capability(CTPP::CDT::HASH_VAL);
-
-    // Request subpart
-
-    CTPP::CDT request(CTPP::CDT::HASH_VAL);
-
-    // Two obligatory parts and one optional one
-    request["getcapabilities"] =
-        get_request(config, "wms.get_capabilities.capability.request", "getcapabilities");
-    request["getmap"] = get_request(config, "wms.get_capabilities.capability.request", "getmap");
-
-    if (config.exists("wms.get_capabilities.capability.request.getfeatureinfo"))
-      request["getfeatureinfo"] =
-          get_request(config, "wms.get_capabilities.capability.request", "getfeatureinfo");
-
-    capability["request"] = request;
-
-    // Exceptions
-
-    const auto& exceptions = config.lookup("wms.get_capabilities.capability.exception");
-    if (!exceptions.isArray())
-      throw Spine::Exception(BCP, "wms.get_capabilities.capability.exception must be an array");
-    CTPP::CDT exception_list(CTPP::CDT::ARRAY_VAL);
-    for (int i = 0; i < exceptions.getLength(); i++)
-      exception_list.PushBack(exceptions[i].c_str());
-    capability["exception"] = exception_list;
-
-    // Extensions
-
-    if (config.exists("wms.get_capabilities.capability.extended_capabilities.inspire"))
-    {
-      CTPP::CDT extended_capabilities(CTPP::CDT::HASH_VAL);
-      CTPP::CDT inspire(CTPP::CDT::HASH_VAL);
-
-      const std::string prefix = "wms.get_capabilities.capability.extended_capabilities.inspire";
-      set_mandatory(inspire, config, prefix, "metadata_url");
-      set_mandatory(inspire, config, prefix, "default_language");
-      set_mandatory(inspire, config, prefix, "supported_language");
-      set_mandatory(inspire, config, prefix, "response_language");
-      extended_capabilities["inspire"] = inspire;
-      capability["extended_capabilities"] = extended_capabilities;
-    }
-
-    // The master layer settings
-
-    CTPP::CDT master_layer(CTPP::CDT::HASH_VAL);
-    set_mandatory(master_layer, config, "wms.get_capabilities.capability.master_layer", "title");
-    set_optional(master_layer, config, "wms.get_capabilities.capability.master_layer", "abstract");
-    set_optional(master_layer, config, "wms.get_capabilities.capability.master_layer", "queryable");
-    set_optional(master_layer, config, "wms.get_capabilities.capability.master_layer", "opaque");
-    set_optional(master_layer, config, "wms.get_capabilities.capability.master_layer", "cascaded");
-    set_optional(
-        master_layer, config, "wms.get_capabilities.capability.master_layer", "no_subsets");
-    set_optional(
-        master_layer, config, "wms.get_capabilities.capability.master_layer", "fixed_width");
-    set_optional(
-        master_layer, config, "wms.get_capabilities.capability.master_layer", "fixed_height");
-    capability["master_layer"] = master_layer;
-
-    // Finished the first part of the response, the capability layers will be added later
-
-    capabilities["capability"] = capability;
-
-    // This concludes all preset GetCapabilities settings
-
-    itsGetCapabilities = capabilities;
+    get_capabilities(config);
 
     // Do first layer scan
     updateLayerMetaData();
@@ -636,7 +637,8 @@ void WMSConfig::updateLayerMetaData()
 {
   try
   {
-    std::map<std::string, WMSLayerProxy> newProxies;
+    // New shared pointer which will be atomically set into production
+    boost::shared_ptr<LayerMap> newProxies(boost::make_shared<LayerMap>());
 
     const bool use_wms = true;
     std::string customerdir(itsDaliConfig.rootDirectory(use_wms) + "/customers");
@@ -677,7 +679,7 @@ void WMSConfig::updateLayerMetaData()
                         itr2->path().string(), theNamespace, customername, *this));
 
                     WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
-                    newProxies.insert(make_pair(fullLayername, newProxy));
+                    newProxies->insert(make_pair(fullLayername, newProxy));
                   }
                   catch (...)
                   {
@@ -713,17 +715,13 @@ void WMSConfig::updateLayerMetaData()
       }
     }
 
-    Spine::WriteLock theLock(itsGetCapabilitiesMutex);
-
-    std::swap(itsLayers, newProxies);
+    boost::atomic_store(&itsLayers, newProxies);
   }
   catch (...)
   {
     throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
-
-CTPP::CDT itsGetCapabilitiesLayerAttributes;
 
 #ifndef WITHOUT_AUTHENTICATION
 CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
@@ -736,14 +734,15 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
 {
   try
   {
-    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
-
     // Return array of individual layer capabilities
-    CTPP::CDT resultCapabilities(CTPP::CDT::ARRAY_VAL);
+    CTPP::CDT layersCapabilities(CTPP::CDT::ARRAY_VAL);
 
     const std::string wmsService = "wms";
 
-    for (const auto& iter_pair : itsLayers)
+    // Atomic copy of layer data
+    auto my_layers = boost::atomic_load(&itsLayers);
+
+    for (const auto& iter_pair : *my_layers)
     {
 #ifndef WITHOUT_AUTHENTICATION
       const auto& layer_name = iter_pair.first;
@@ -752,14 +751,16 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
         if (!itsAuthEngine | !itsAuthEngine->authorize(*apikey, layer_name, wmsService))
           continue;
 #endif
-      // Note: must take copy here for thready safety.
-      const auto cdt = iter_pair.second.getCapabilities();
+
+      auto cdt = iter_pair.second.getCapabilities();
 
       // Note: The the shared_ptr is empty for hidden layers.
       if (cdt)
       {
         if (!wms_namespace)
-          resultCapabilities.PushBack(*cdt);
+        {
+          layersCapabilities.PushBack(*cdt);
+        }
         else
         {
           // Return capability only if the namespace matches
@@ -767,13 +768,13 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
           {
             std::string name = (*cdt)["name"].GetString();
             if (match_namespace_pattern(name, *wms_namespace))
-              resultCapabilities.PushBack(*cdt);
+              layersCapabilities.PushBack(*cdt);
           }
         }
       }
     }
 
-    return resultCapabilities;
+    return layersCapabilities;
   }
   catch (...)
   {
@@ -785,10 +786,10 @@ std::string WMSConfig::layerCustomer(const std::string& theLayerName) const
 {
   try
   {
-    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
+    auto my_layers = boost::atomic_load(&itsLayers);
 
-    auto it = itsLayers.find(theLayerName);
-    if (it == itsLayers.end())
+    auto it = my_layers->find(theLayerName);
+    if (it == my_layers->end())
       return "";  // Should we throw an error!?
 
     return it->second.getLayer()->getCustomer();
@@ -836,8 +837,6 @@ bool WMSConfig::isValidLayer(const std::string& theLayer,
 {
   try
   {
-    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
-
     return isValidLayerImpl(theLayer, theAcceptHiddenLayerFlag);
   }
   catch (...)
@@ -850,8 +849,6 @@ bool WMSConfig::isValidStyle(const std::string& theLayer, const std::string& the
 {
   try
   {
-    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
-
     if (isValidLayerImpl(theLayer) == false)
       return false;
 
@@ -859,7 +856,9 @@ bool WMSConfig::isValidStyle(const std::string& theLayer, const std::string& the
     if (theStyle.empty())
       return true;
 
-    SharedWMSLayer layer = itsLayers.at(theLayer).getLayer();
+    auto my_layers = boost::atomic_load(&itsLayers);
+
+    SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
     return layer->isValidStyle(theStyle);
   }
@@ -873,12 +872,11 @@ bool WMSConfig::isValidCRS(const std::string& theLayer, const std::string& theCR
 {
   try
   {
-    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
-
     if (isValidLayerImpl(theLayer) == false)
       return false;
 
-    SharedWMSLayer layer = itsLayers.at(theLayer).getLayer();
+    auto my_layers = boost::atomic_load(&itsLayers);
+    SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
     return layer->isValidCRS(theCRS);
   }
@@ -894,12 +892,11 @@ bool WMSConfig::isValidTime(const std::string& theLayer,
 {
   try
   {
-    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
-
     if (isValidLayerImpl(theLayer) == false)
       return false;
 
-    SharedWMSLayer layer = itsLayers.at(theLayer).getLayer();
+    auto my_layers = boost::atomic_load(&itsLayers);
+    SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
     return layer->isValidTime(theTime);
   }
@@ -913,12 +910,11 @@ bool WMSConfig::isTemporal(const std::string& theLayer) const
 {
   try
   {
-    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
-
     if (isValidLayerImpl(theLayer) == false)
       return false;
 
-    SharedWMSLayer layer = itsLayers.at(theLayer).getLayer();
+    auto my_layers = boost::atomic_load(&itsLayers);
+    SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
     return layer->isTemporal();
   }
@@ -932,12 +928,11 @@ bool WMSConfig::currentValue(const std::string& theLayer) const
 {
   try
   {
-    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
-
     if (isValidLayerImpl(theLayer) == false)
       return false;
 
-    SharedWMSLayer layer = itsLayers.at(theLayer).getLayer();
+    auto my_layers = boost::atomic_load(&itsLayers);
+    SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
     return layer->currentValue();
   }
@@ -951,12 +946,11 @@ boost::posix_time::ptime WMSConfig::mostCurrentTime(const std::string& theLayer)
 {
   try
   {
-    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
-
     if (isValidLayerImpl(theLayer) == false)
       return boost::posix_time::not_a_date_time;
 
-    SharedWMSLayer layer = itsLayers.at(theLayer).getLayer();
+    auto my_layers = boost::atomic_load(&itsLayers);
+    SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
     return layer->mostCurrentTime();
   }
@@ -970,12 +964,11 @@ std::string WMSConfig::jsonText(const std::string& theLayerName) const
 {
   try
   {
-    Spine::ReadLock theLock(itsGetCapabilitiesMutex);
-
-    if (itsLayers.find(theLayerName) == itsLayers.end())
+    auto my_layers = boost::atomic_load(&itsLayers);
+    if (my_layers->find(theLayerName) == my_layers->end())
       return "";
 
-    return itsFileCache.get(itsLayers.at(theLayerName).getLayer()->getDaliProductFile());
+    return itsFileCache.get(my_layers->at(theLayerName).getLayer()->getDaliProductFile());
   }
   catch (...)
   {
@@ -987,8 +980,10 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
 {
   std::vector<Json::Value> ret;
 
+  auto my_layers = boost::atomic_load(&itsLayers);
+
   std::vector<std::string> legendLayers =
-      itsLayers.at(layerName).getLayer()->getLegendGraphic(itsDaliConfig.templateDirectory());
+      my_layers->at(layerName).getLayer()->getLegendGraphic(itsDaliConfig.templateDirectory());
   std::string customer = layerName.substr(0, layerName.find(":"));
 
   for (auto legendLayer : legendLayers)
@@ -1023,16 +1018,17 @@ bool WMSConfig::isValidLayerImpl(const std::string& theLayer,
 {
   try
   {
-    if (itsLayers.find(theLayer) != itsLayers.end())
+    auto my_layers = boost::atomic_load(&itsLayers);
+    if (my_layers->find(theLayer) != my_layers->end())
     {
       if (theAcceptHiddenLayerFlag)
         return true;
 
-      WMSLayerProxy lp = itsLayers.at(theLayer);
+      WMSLayerProxy lp = my_layers->at(theLayer);
       return !(lp.getLayer()->isHidden());
     }
 
-    return (itsLayers.find(theLayer) != itsLayers.end());
+    return (my_layers->find(theLayer) != my_layers->end());
   }
   catch (...)
   {
@@ -1045,9 +1041,9 @@ bool WMSConfig::inspireExtensionSupported() const
   return itsInspireExtensionSupported;
 }
 
-const CTPP::CDT& WMSConfig::getCapabilitiesResponseVariables() const
+CTPP::CDT WMSConfig::getCapabilitiesResponseVariables() const
 {
-  return itsGetCapabilities;
+  return get_capabilities(itsDaliConfig.getConfig());
 }
 
 #ifndef WITHOUT_OBSERVATION

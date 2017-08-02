@@ -94,7 +94,7 @@ class WMSConfig
   std::vector<Json::Value> getLegendGraphic(const std::string& theLayerName) const;
 
   bool inspireExtensionSupported() const;
-  const CTPP::CDT& getCapabilitiesResponseVariables() const;
+  CTPP::CDT getCapabilitiesResponseVariables() const;
 
   void shutdown();
 
@@ -125,15 +125,15 @@ class WMSConfig
 
   bool itsInspireExtensionSupported = false;
 
-  CTPP::CDT itsGetCapabilities;
+  // Valid WMS layers (name -> layer proxy). This must be a shared pointer
+  // and must be used via atomic_load and atomic_store, since CTPP::CDT is not thread safe.
 
-  // Valid WMS layers (name -> layer proxy)
-  std::map<std::string, WMSLayerProxy> itsLayers;
+  using LayerMap = std::map<std::string, WMSLayerProxy>;
+  boost::shared_ptr<LayerMap> itsLayers;
 
   std::unique_ptr<boost::thread> itsGetCapabilitiesThread;
 
   void capabilitiesUpdateLoop();
-
   void updateLayerMetaData();
 
 #ifndef WITHOUT_OBSERVATION
@@ -143,8 +143,6 @@ class WMSConfig
   bool isValidLayerImpl(const std::string& theLayer, bool theAcceptHiddenLayerFlag = false) const;
 
   friend class WMSLayerFactory;
-
-  mutable Spine::MutexType itsGetCapabilitiesMutex;
 
   bool itsShutdownRequested;
   int itsActiveThreadCount;
