@@ -16,6 +16,7 @@
 
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/shared_ptr.hpp>
 #include <ctpp2/CDT.hpp>
 #include <spine/Json.h>
 #include <spine/Value.h>
@@ -93,7 +94,7 @@ class WMSLayer
                                                      // layer
 
   // Empty for hidden layers
-  boost::optional<CTPP::CDT> generateGetCapabilities(const Engine::Gis::Engine& gisengine);
+  boost::shared_ptr<CTPP::CDT> generateGetCapabilities(const Engine::Gis::Engine& gisengine);
 
   // Update layer metadata for GetCapabilities (time,spatial dimensions)
   virtual void updateLayerMetaData() = 0;

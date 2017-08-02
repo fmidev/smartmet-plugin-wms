@@ -13,6 +13,7 @@
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 
 #include <fmt/format.h>
@@ -434,14 +435,15 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
   }
 }
 
-boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::Engine& gisengine)
+boost::shared_ptr<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::Engine& gisengine)
 {
   try
   {
     if (hidden)
       return {};
 
-    CTPP::CDT layer(CTPP::CDT::HASH_VAL);
+    auto result = boost::make_shared<CTPP::CDT>(CTPP::CDT::HASH_VAL);
+    auto& layer = *result;
 
     // Layer name, title and abstract
 
@@ -691,7 +693,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
       layer["max_scale_denominator"] = 1;
     }
 
-    return layer;
+    return result;
   }
   catch (...)
   {

@@ -7,6 +7,7 @@
 #pragma once
 
 #include "WMSLayer.h"
+#include <boost/shared_ptr.hpp>
 #include <ctpp2/CDT.hpp>
 #include <string>
 
@@ -24,7 +25,11 @@ namespace Plugin
 {
 namespace WMS
 {
-// For getCapabilities caching
+// For getCapabilities caching. Note that all returned objects must be copies for
+// thread safety reasons - there is a loop which updates layer proxies on the
+// background and individual proxies may be destroyed.
+
+//
 class WMSLayerProxy
 {
  public:
@@ -35,19 +40,18 @@ class WMSLayerProxy
   }
 
   SharedWMSLayer getLayer() const { return itsLayer; }
-  const boost::optional<CTPP::CDT>& getCapabilities() const { return itsCapabilities; }
+  boost::shared_ptr<CTPP::CDT> getCapabilities() const { return itsCapabilities; }
 
   void update()
   {
     itsLayer->updateLayerMetaData();
-    itsCapabilities = CTPP::CDT(CTPP::CDT::HASH_VAL);
     itsCapabilities = itsLayer->generateGetCapabilities(*itsGisEngine);
   }
 
  private:
   const Engine::Gis::Engine* itsGisEngine;
   SharedWMSLayer itsLayer;
-  boost::optional<CTPP::CDT> itsCapabilities;
+  boost::shared_ptr<CTPP::CDT> itsCapabilities;  // empty implies hidden layer
 };
 
 }  // namespace WMS

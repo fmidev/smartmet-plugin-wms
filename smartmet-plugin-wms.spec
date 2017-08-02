@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.7.31
+Version: 17.8.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -29,7 +29,7 @@ BuildRequires: smartmet-engine-querydata-devel >= 17.5.24
 BuildRequires: smartmet-engine-contour-devel >= 17.5.30
 BuildRequires: smartmet-library-gis-devel >= 17.3.14
 BuildRequires: fmt-devel
-BuildRequires: ctpp2 >= 2.8.5
+BuildRequires: ctpp2 >= 2.8.2
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
 BuildRequires: librsvg2-devel >= 2.40.6
@@ -37,7 +37,7 @@ BuildRequires: cairo-devel
 Requires: cairo
 Requires: fmt
 Requires: jsoncpp
-Requires: ctpp2 >= 2.8.5
+Requires: ctpp2 >= 2.8.2
 Requires: libconfig
 Requires: librsvg2 >= 2.40.6
 Requires: smartmet-library-gis >= 17.3.14
@@ -88,6 +88,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Aug  1 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.1-1.fmi
+- CTPP2 downgrade forced recompile
+- Changed to using a shared pointer instead of optional for CTPP::CDT objects
+
 * Mon Jul 31 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.7.31-1.fmi
 - Rewrote GetCapabilities template and respective code to cover the full XML schema with matching names
 - Added namespace attribute to WMS GetCapabilities queries

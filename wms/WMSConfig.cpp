@@ -23,6 +23,8 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/foreach.hpp>
+#include <boost/regex.hpp>
+
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
 #include <algorithm>
@@ -35,6 +37,31 @@ using namespace SmartMet::Plugin::Dali;
 
 namespace
 {
+/*
+ * namespace patterns look like "/..../"
+ */
+
+bool looks_like_pattern(const std::string& pattern)
+{
+  using namespace boost::algorithm;
+  return (starts_with(pattern, "/") && ends_with(pattern, "/"));
+}
+
+/*
+ * Apply namespace filtering as in GeoServer with regex extension
+ */
+
+bool match_namespace_pattern(const std::string& name, const std::string& pattern)
+{
+  if (!looks_like_pattern(pattern))
+    return boost::algorithm::istarts_with(name, pattern + ":");
+
+  // Strip surrounding slashes first
+  const std::string re_str = pattern.substr(1, pattern.size() - 2);
+  const boost::regex re(re_str, boost::regex::icase);
+  return boost::regex_search(name, re);
+}
+
 std::string makeLayerNamespace(const std::string& customer,
                                const std::string& productRoot,
                                const std::string& fileDir)
@@ -725,8 +752,10 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
         if (!itsAuthEngine | !itsAuthEngine->authorize(*apikey, layer_name, wmsService))
           continue;
 #endif
-      // Note: hidden layers return an empty optional CDT
-      const auto& cdt = iter_pair.second.getCapabilities();
+      // Note: must take copy here for thready safety.
+      const auto cdt = iter_pair.second.getCapabilities();
+
+      // Note: The the shared_ptr is empty for hidden layers.
       if (cdt)
       {
         if (!wms_namespace)
@@ -737,7 +766,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
           if (cdt->Exists("name"))
           {
             std::string name = (*cdt)["name"].GetString();
-            if (boost::algorithm::istarts_with(name, *wms_namespace + ":"))
+            if (match_namespace_pattern(name, *wms_namespace))
               resultCapabilities.PushBack(*cdt);
           }
         }
