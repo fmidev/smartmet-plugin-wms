@@ -754,7 +754,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
 
       auto cdt = iter_pair.second.getCapabilities();
 
-      // Note: The the shared_ptr is empty for hidden layers.
+      // Note: The boost::optional is empty for hidden layers.
       if (cdt)
       {
         if (!wms_namespace)

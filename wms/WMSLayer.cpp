@@ -435,15 +435,14 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
   }
 }
 
-boost::shared_ptr<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::Engine& gisengine)
+boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::Engine& gisengine)
 {
   try
   {
     if (hidden)
       return {};
 
-    auto result = boost::make_shared<CTPP::CDT>(CTPP::CDT::HASH_VAL);
-    auto& layer = *result;
+    CTPP::CDT layer(CTPP::CDT::HASH_VAL);
 
     // Layer name, title and abstract
 
@@ -693,7 +692,7 @@ boost::shared_ptr<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis
       layer["max_scale_denominator"] = 1;
     }
 
-    return result;
+    return layer;
   }
   catch (...)
   {

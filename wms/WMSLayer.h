@@ -94,7 +94,7 @@ class WMSLayer
                                                      // layer
 
   // Empty for hidden layers
-  boost::shared_ptr<CTPP::CDT> generateGetCapabilities(const Engine::Gis::Engine& gisengine);
+  boost::optional<CTPP::CDT> generateGetCapabilities(const Engine::Gis::Engine& gisengine);
 
   // Update layer metadata for GetCapabilities (time,spatial dimensions)
   virtual void updateLayerMetaData() = 0;
