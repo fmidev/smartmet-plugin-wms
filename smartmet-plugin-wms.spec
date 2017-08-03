@@ -6,7 +6,7 @@ Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
 Version: 17.8.3
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -16,7 +16,7 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 17.7.12
 BuildRequires: smartmet-library-macgyver >= 17.7.29
-BuildRequires: smartmet-library-spine-devel >= 17.7.10
+BuildRequires: smartmet-library-spine-devel >= 17.8.3
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.4.8
 %endif
@@ -51,7 +51,7 @@ Requires: smartmet-engine-contour >= 17.5.30
 Requires: smartmet-engine-gis >= 17.4.11
 Requires: smartmet-engine-geonames >= 17.5.24
 Requires: smartmet-server >= 17.4.8
-Requires: smartmet-library-spine >= 17.7.10
+Requires: smartmet-library-spine >= 17.8.3
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -88,6 +88,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Aug  3 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.3-2.fmi
+- urlencode layer names. In particular ':' should be encoded.
+
 * Thu Aug  3 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.3-1.fmi
 - Do not cache CTPP::CDT objects at all, it is not thread safe
 
