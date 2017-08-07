@@ -729,7 +729,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
                                      bool authenticate) const
 #else
 CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
-                                     const boost::optional<std::string>& wms_namespace) const;
+                                     const boost::optional<std::string>& wms_namespace) const
 #endif
 {
   try
