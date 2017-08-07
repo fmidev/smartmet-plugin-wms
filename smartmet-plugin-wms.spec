@@ -5,8 +5,8 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.8.3
-Release: 2%{?dist}.fmi
+Version: 17.8.7
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -90,6 +90,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Mon Aug  7 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.7-1.fmi
+- WMS exceptions are now more detailed if the debug option is set
+- Rewrote WMS error messages to be more detailed
+
 * Thu Aug  3 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.3-2.fmi
 - urlencode layer names. In particular ':' should be encoded.
 

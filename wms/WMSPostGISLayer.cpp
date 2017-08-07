@@ -38,7 +38,7 @@ WMSPostGISLayer::WMSPostGISLayer(const Engine::Gis::Engine* gisengine, const Jso
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Failed to initializa PostGIS layer!", NULL);
   }
 }
 
@@ -95,7 +95,7 @@ void WMSPostGISLayer::updateLayerMetaData()
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Failed to update PostGIS layer metadata!", NULL);
   }
 }
 

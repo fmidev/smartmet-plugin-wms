@@ -305,7 +305,7 @@ bool WMSLayer::isValidCRS(const std::string& theCRS) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Validating CRS failed!", NULL);
   }
 }
 
@@ -321,7 +321,7 @@ bool WMSLayer::isValidStyle(const std::string& theStyle) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Validating style failed!", NULL);
   }
 }
 
@@ -336,7 +336,7 @@ bool WMSLayer::isValidTime(const boost::posix_time::ptime& theTime) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Validating time failed!", NULL);
   }
 }
 
@@ -349,7 +349,7 @@ bool WMSLayer::currentValue() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Validating current time failed!", NULL);
   }
 }
 
@@ -361,7 +361,7 @@ boost::posix_time::ptime WMSLayer::mostCurrentTime() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Validating most current time!", NULL);
   }
 }
 
@@ -377,7 +377,7 @@ std::string WMSLayer::info() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "WMS info operation failed!", NULL);
   }
 }
 
@@ -431,7 +431,7 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Printing the request failed!", NULL);
   }
 }
 
@@ -696,7 +696,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Failed to generate capabilities for the layer!", NULL);
   }
 }
 

@@ -41,7 +41,7 @@ std::string enclose_with_quotes(const std::string& param)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Enclosing string with quotes failed!", NULL);
   }
 }
 
@@ -77,7 +77,7 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Converting hex string to RGB failed!", NULL);
   }
 }
 
@@ -101,7 +101,7 @@ WMSRequestType wmsRequestType(const Spine::HTTP::Request& theHTTPRequest)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Extracting MWS request type failed!", NULL);
   }
 }
 
@@ -148,7 +148,7 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Parsing resolution failed!", NULL);
   }
 }
 
@@ -169,7 +169,7 @@ unsigned int resolution_in_minutes(const std::string resolution)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Extracting resolution in minutes failed!", NULL);
   }
 }
 
@@ -296,7 +296,7 @@ std::ostream& operator<<(std::ostream& ost, const Spine::HTTP::Request& theHTTPR
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Printing WMS request failed!", NULL);
   }
 }
 

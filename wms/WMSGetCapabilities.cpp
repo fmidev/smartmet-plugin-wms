@@ -32,7 +32,7 @@ WMSGetCapabilities::WMSGetCapabilities(const std::string& theTemplatePath)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Initializing WMS repsonse template failed!", NULL);
   }
 }
 
@@ -78,7 +78,7 @@ std::string WMSGetCapabilities::resolveGetMapURI(const Spine::HTTP::Request& the
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Resolving GetMap URI failed!", NULL);
   }
 }
 
@@ -101,7 +101,7 @@ void patch_protocol(CTPP::CDT& dcptype,
     else if (boost::find_first(url, "https://"))
       boost::algorithm::replace_first(url, "https://", newprotocol);
 
-    resource.At("online_resource") = url;
+    resource = url;
   }
 }
 
@@ -124,15 +124,48 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
 {
   try
   {
-    // Deduce apikey for layer filtering
-    auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
-    auto wms_namespace = theRequest.getParameter("namespace");
+    CTPP::CDT hash;
+    try
+    {
+      hash = theConfig.getCapabilitiesResponseVariables();
+    }
+    catch (...)
+    {
+      throw Spine::Exception(BCP, "Failed to extract capabilities from configuration file");
+    }
 
-    // Note: we make a new copy since we add new information to the fixed response
-    CTPP::CDT hash = theConfig.getCapabilitiesResponseVariables();
-    CTPP::CDT configuredLayers = theConfig.getCapabilities(apikey, wms_namespace);
+    boost::optional<std::string> apikey;
+    try
+    {
+      // Deduce apikey for layer filtering
+      apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
+    }
+    catch (...)
+    {
+      throw Spine::Exception(BCP, "Failed to get apikey from the query");
+    }
 
-    hash.At("capability")["layer"] = configuredLayers;
+    CTPP::CDT configuredLayers;
+    try
+    {
+      auto wms_namespace = theRequest.getParameter("namespace");
+      configuredLayers = theConfig.getCapabilities(apikey, wms_namespace);
+    }
+    catch (...)
+    {
+      throw Spine::Exception(BCP, "Failed to get capabilities from configured layers");
+    }
+
+    if (!hash.Exists("capability"))
+      throw Spine::Exception(BCP, "WMS generated has does not contain a capability section!");
+    try
+    {
+      hash.At("capability")["layer"] = configuredLayers;
+    }
+    catch (...)
+    {
+      throw Spine::Exception(BCP, "Setting configured layers to output hash failed");
+    }
 
     // http/https scheme selection based on 'X-Forwarded-Proto' header
     auto host_protocol = theRequest.getProtocol();
@@ -142,12 +175,19 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
 
     if (!protocol.empty())
     {
-      patch_protocols(hash.At("capability").At("request").At("getcapabilities").At("dcptype"),
-                      protocol);
-      patch_protocols(hash.At("capability").At("request").At("getmap").At("dcptype"), protocol);
-      if (hash.At("capability").At("request").Exists("getfeatureinfo"))
-        patch_protocols(hash.At("capability").At("request").At("getfeatureinfo").At("dcptype"),
+      try
+      {
+        patch_protocols(hash.At("capability").At("request").At("getcapabilities").At("dcptype"),
                         protocol);
+        patch_protocols(hash.At("capability").At("request").At("getmap").At("dcptype"), protocol);
+        if (hash.At("capability").At("request").Exists("getfeatureinfo"))
+          patch_protocols(hash.At("capability").At("request").At("getfeatureinfo").At("dcptype"),
+                          protocol);
+      }
+      catch (...)
+      {
+        throw Spine::Exception(BCP, "Patching protocol failed").addParameter("protocol", protocol);
+      }
     }
 
     std::stringstream outstream;
@@ -159,47 +199,45 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     }
     catch (std::exception& e)
     {
-      // std::cerr << "Finished part:\n" << outstream.str() << std::endl;
-      throw Spine::Exception(BCP, "CTPP formatter failed", nullptr)
+      throw Spine::Exception(BCP, "CTPP formatter failed")
           .addParameter("what", e.what())
           .addParameter("log", logstream.str());
     }
     catch (...)
     {
-      // std::cerr << "Finished part:\n" << outstream.str() << std::endl;
-      throw Spine::Exception(BCP, "CTPP formatter failed", nullptr)
-          .addParameter("log", logstream.str());
+      throw Spine::Exception(BCP, "CTPP formatter failed").addParameter("log", logstream.str());
     }
 
     // Finish up with host name replacements
 
-    std::string ret = outstream.str();
-
     auto host_header = theRequest.getHeader("Host");
-
-    if (!host_header)
+    try
     {
-      // This should never happen, host header is mandatory in HTTP 1.1
-      host_header = "smartmet.fmi.fi/wms";
-    }
+      std::string ret = outstream.str();
 
-    auto hostString = *host_header;
-    if (hostString.length() >= 4)
+      if (!host_header)
+      {
+        // This should never happen, host header is mandatory in HTTP 1.1
+        host_header = "smartmet.fmi.fi/wms";
+      }
+
+      auto hostString = *host_header;
+      if (hostString.length() >= 4)
+      {
+        std::string hostEnd = hostString.substr(hostString.length() - 4);
+        if (hostEnd == "/wms")
+          hostString = hostString.substr(0, hostString.length() - 4);
+      }
+
+      boost::replace_all(ret, "__hostname__", hostString);
+      return ret;
+    }
+    catch (...)
     {
-      std::string hostEnd = hostString.substr(hostString.length() - 4);
-      if (hostEnd == "/wms")
-        hostString = hostString.substr(0, hostString.length() - 4);
+      throw Spine::Exception(BCP, "Fixing host name failed").addParameter("host", *host_header);
     }
-
-    boost::replace_all(ret, "__hostname__", hostString);
-
-    return ret;
   }
 
-  catch (std::exception& e)
-  {
-    throw Spine::Exception(BCP, e.what());
-  }
   catch (...)
   {
     throw Spine::Exception(BCP, "WMSGetCapabilities::response() failed!");

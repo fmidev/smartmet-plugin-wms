@@ -121,7 +121,7 @@ void check_getmap_request_options(const Spine::HTTP::Request& theHTTPRequest)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "GetMap request options did not validate!", NULL);
   }
 }
 
@@ -210,7 +210,7 @@ void validate_options(const tag_get_map_request_options& options,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "GetMap options did not validate!", NULL);
   }
 }
 
@@ -233,7 +233,7 @@ boost::posix_time::ptime parse_time(const std::string& time)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Parsing GetMap time failed!", NULL);
   }
 }
 
@@ -285,7 +285,7 @@ void parse_interval_with_resolution(const std::string time_str,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Parsing GetMap time interval failed!", NULL);
   }
 }
 
@@ -521,7 +521,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Failed to complete GetMap request!", NULL);
   }
 }
 
@@ -535,7 +535,7 @@ std::string WMSGetMap::jsonText() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Extracting GetMap JSON failed!", NULL);
   }
 }
 

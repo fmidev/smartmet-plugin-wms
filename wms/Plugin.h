@@ -13,19 +13,19 @@
 #include "WMSException.h"
 #include "WMSGetCapabilities.h"
 
-#include <engines/querydata/Engine.h>
 #include <engines/contour/Engine.h>
 #include <engines/geonames/Engine.h>
 #include <engines/gis/Engine.h>
+#include <engines/querydata/Engine.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
 
-#include <spine/SmartMetPlugin.h>
-#include <spine/HTTP.h>
 #include <spine/FileCache.h>
+#include <spine/HTTP.h>
 #include <spine/Reactor.h>
 #include <spine/SmartMetCache.h>
+#include <spine/SmartMetPlugin.h>
 
 namespace SmartMet
 {
@@ -130,7 +130,7 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                       std::size_t theHash = 0);
   std::string mimeType(const std::string& theFormat) const;
 
-  std::string parseWMSException(Spine::Exception& wmsException) const;
+  std::string parseWMSException(Spine::Exception& wmsException, bool isdebug) const;
 
   // Plugin configuration
   const std::string itsModuleName;

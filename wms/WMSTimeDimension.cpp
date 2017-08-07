@@ -16,7 +16,7 @@ void WMSTimeDimension::addTimestep(const boost::posix_time::ptime& timestep)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Failed to add time step!", NULL);
   }
 }
 
@@ -28,7 +28,7 @@ void WMSTimeDimension::removeTimestep(const boost::posix_time::ptime& timestep)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Failed to remove time step!", NULL);
   }
 }
 
@@ -49,7 +49,7 @@ bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) cons
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Failed to validate time!", NULL);
   }
 }
 
@@ -103,7 +103,7 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Failed to establish most current time!", NULL);
   }
 }
 
@@ -125,7 +125,7 @@ std::string StepTimeDimension::getCapabilities() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Failed to extract time dimension capabilities!", NULL);
   }
 }
 
@@ -172,7 +172,7 @@ std::string IntervalTimeDimension::getCapabilities() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Failed to generate time dimension capabilities!", NULL);
   }
 }
 
@@ -193,7 +193,7 @@ std::ostream& operator<<(std::ostream& ost, const StepTimeDimension& timeDimensi
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Failed to print step time dimension data!", NULL);
   }
 }
 
@@ -209,7 +209,7 @@ std::ostream& operator<<(std::ostream& ost, const IntervalTimeDimension& timeDim
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Failed to print time dimension data!", NULL);
   }
 }
 

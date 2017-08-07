@@ -95,7 +95,7 @@ std::string makeLayerNamespace(const std::string& customer,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception(BCP, "Making layer namespace failed!", NULL);
   }
 }
 
@@ -199,7 +199,7 @@ bool looks_valid_filename(const std::string& name)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Filename validation failed!", NULL);
   }
 }
 
@@ -545,7 +545,7 @@ WMSConfig::WMSConfig(const Config& daliConfig,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "WMS Configuration initialization failed!", NULL);
   }
 }
 
@@ -567,7 +567,7 @@ void WMSConfig::shutdown()
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Starting shutdown failed!", NULL);
   }
 }
 
@@ -596,7 +596,7 @@ void WMSConfig::capabilitiesUpdateLoop()
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Capabilities update failed!", NULL);
   }
 }
 
@@ -628,7 +628,7 @@ bool WMSConfig::validateGetMapAuthorization(const Spine::HTTP::Request& theReque
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "GetMap authorization failed!", NULL);
   }
 }
 #endif
@@ -719,7 +719,7 @@ void WMSConfig::updateLayerMetaData()
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Layer metadata update failed!", NULL);
   }
 }
 
@@ -778,7 +778,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "GetCapabilities failed!", NULL);
   }
 }
 
@@ -796,7 +796,7 @@ std::string WMSConfig::layerCustomer(const std::string& theLayerName) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Extracting customer for layer failed!", NULL);
   }
 }
 
@@ -816,7 +816,7 @@ bool WMSConfig::isValidMapFormat(const std::string& theMapFormat) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Checking valid MapFormat failed!", NULL);
   }
 }
 
@@ -828,7 +828,7 @@ bool WMSConfig::isValidVersion(const std::string& theVersion) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Checking WMS version failed!", NULL);
   }
 }
 
@@ -841,7 +841,7 @@ bool WMSConfig::isValidLayer(const std::string& theLayer,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Checking layer validity failed!", NULL);
   }
 }
 
@@ -864,7 +864,7 @@ bool WMSConfig::isValidStyle(const std::string& theLayer, const std::string& the
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Checking style validity failed!", NULL);
   }
 }
 
@@ -882,7 +882,7 @@ bool WMSConfig::isValidCRS(const std::string& theLayer, const std::string& theCR
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Checking CRS validity failed!", NULL);
   }
 }
 
@@ -902,7 +902,7 @@ bool WMSConfig::isValidTime(const std::string& theLayer,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Checking time validity failed!", NULL);
   }
 }
 
@@ -920,7 +920,7 @@ bool WMSConfig::isTemporal(const std::string& theLayer) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Checking whether layer is temporal failed!", NULL);
   }
 }
 
@@ -938,7 +938,7 @@ bool WMSConfig::currentValue(const std::string& theLayer) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Getting current value for layer failed!", NULL);
   }
 }
 
@@ -956,7 +956,7 @@ boost::posix_time::ptime WMSConfig::mostCurrentTime(const std::string& theLayer)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Getting most current time failed!", NULL);
   }
 }
 
@@ -972,7 +972,7 @@ std::string WMSConfig::jsonText(const std::string& theLayerName) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Getting layer JSON text failed!", NULL);
   }
 }
 
@@ -1032,7 +1032,7 @@ bool WMSConfig::isValidLayerImpl(const std::string& theLayer,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception(BCP, "Checking layer validity failed!", NULL);
   }
 }
 
