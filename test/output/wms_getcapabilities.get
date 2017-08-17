@@ -97,6 +97,11 @@
     <Layer>
       <Name>ely:elymap</Name>
       <Title>ELY map</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
       <CRS>EPSG:2393</CRS>
       <CRS>EPSG:3035</CRS>
       <CRS>EPSG:3047</CRS>
@@ -110,12 +115,17 @@
         <southBoundLatitude>51.3</southBoundLatitude>
         <northBoundLatitude>70.2</northBoundLatitude>
       </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:83" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:84" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="2839795.20579" miny="-4122392.27109" maxx="6072771.72073" maxy="-2236476.33626"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="2839795.20579" miny="-4122392.27109" maxx="5065920.73653" maxy="-1361234.12874"/>
       <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3674549.99025" maxy="7785726.69718"/>
       <BoundingBox CRS="EPSG:3035" minx="3006482.43753" miny="3305514.91803" maxx="5414779.1693" maxy="5471009.25708"/>
       <BoundingBox CRS="EPSG:3047" minx="330890.119264" miny="6615141.39345" maxx="613375.780227" maxy="7790970.34752"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7893223" miny="6549298.622" maxx="674306.988933" maxy="7782478.68383"/>
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
-      <BoundingBox CRS="EPSG:4258" minx="51.3" miny="-9.09870632718" maxx="70.2" maxy="49"/>
+      <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
@@ -130,6 +140,11 @@
     <Layer>
       <Name>ely:wmsmap</Name>
       <Title>ELY map</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
       <CRS>EPSG:2393</CRS>
       <CRS>EPSG:3035</CRS>
       <CRS>EPSG:3047</CRS>
@@ -143,12 +158,17 @@
         <southBoundLatitude>51.3</southBoundLatitude>
         <northBoundLatitude>70.2</northBoundLatitude>
       </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:83" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:84" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="2839795.20579" miny="-4122392.27109" maxx="6072771.72073" maxy="-2236476.33626"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="2839795.20579" miny="-4122392.27109" maxx="5065920.73653" maxy="-1361234.12874"/>
       <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3674549.99025" maxy="7785726.69718"/>
       <BoundingBox CRS="EPSG:3035" minx="3006482.43753" miny="3305514.91803" maxx="5414779.1693" maxy="5471009.25708"/>
       <BoundingBox CRS="EPSG:3047" minx="330890.119264" miny="6615141.39345" maxx="613375.780227" maxy="7790970.34752"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7893223" miny="6549298.622" maxx="674306.988933" maxy="7782478.68383"/>
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
-      <BoundingBox CRS="EPSG:4258" minx="51.3" miny="-9.09870632718" maxx="70.2" maxy="49"/>
+      <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
@@ -210,6 +230,11 @@
       <Name>test:harbours</Name>
       <Title>Harbours</Title>
       <Abstract>Harbours</Abstract>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
       <CRS>EPSG:2393</CRS>
       <CRS>EPSG:3035</CRS>
       <CRS>EPSG:3047</CRS>
@@ -223,12 +248,17 @@
         <southBoundLatitude>53.374206543</southBoundLatitude>
         <northBoundLatitude>65.8965911865</northBoundLatitude>
       </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="9.41340351105" miny="53.374206543" maxx="30.380197525" maxy="65.8965911865"/>
+      <BoundingBox CRS="CRS:83" minx="9.41340351105" miny="53.374206543" maxx="30.380197525" maxy="65.8965911865"/>
+      <BoundingBox CRS="CRS:84" minx="9.41340351105" miny="53.374206543" maxx="30.380197525" maxy="65.8965911865"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="4143545.97343" miny="-3881710.34724" maxx="5224030.50082" maxy="-2940867.14454"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="4143545.97343" miny="-3881710.34724" maxx="4783648.8504" maxy="-2189660.05966"/>
       <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3654210.89023" maxy="7315590.17939"/>
       <BoundingBox CRS="EPSG:3035" minx="4281955.55371" miny="3363074.37339" maxx="5241316.89556" maxy="4890235.52579"/>
       <BoundingBox CRS="EPSG:3047" minx="330890.119264" miny="6615141.39345" maxx="636669.179943" maxy="7311650.90434"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7893223" miny="6549298.622" maxx="653976.959065" maxy="7312531.45238"/>
       <BoundingBox CRS="EPSG:3857" minx="1047895.28548" miny="7052518.20512" maxx="3381908.11868" maxy="9848601.19788"/>
-      <BoundingBox CRS="EPSG:4258" minx="53.374206543" miny="9.41340351105" maxx="65.8965911865" maxy="30.380197525"/>
+      <BoundingBox CRS="EPSG:4258" minx="9.41340351105" miny="53.374206543" maxx="30.380197525" maxy="65.8965911865"/>
       <BoundingBox CRS="EPSG:4326" minx="9.41340351105" miny="53.374206543" maxx="30.380197525" maxy="65.8965911865"/>
     </Layer>
     <Layer>
@@ -352,6 +382,11 @@
       <Name>test:icemap_areas</Name>
       <Title>Ice map</Title>
       <Abstract>Ice map polygons</Abstract>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
       <CRS>EPSG:2393</CRS>
       <CRS>EPSG:3035</CRS>
       <CRS>EPSG:3047</CRS>
@@ -365,12 +400,17 @@
         <southBoundLatitude>53.3346748352</southBoundLatitude>
         <northBoundLatitude>65.9649963379</northBoundLatitude>
       </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="9.04594993591" miny="53.3346748352" maxx="30.3925495148" maxy="65.9649963379"/>
+      <BoundingBox CRS="CRS:83" minx="9.04594993591" miny="53.3346748352" maxx="30.3925495148" maxy="65.9649963379"/>
+      <BoundingBox CRS="CRS:84" minx="9.04594993591" miny="53.3346748352" maxx="30.3925495148" maxy="65.9649963379"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="4119353.97848" miny="-3890252.16321" maxx="5224664.4614" maxy="-2940495.40473"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="4119353.97848" miny="-3890252.16321" maxx="4780367.28021" maxy="-2182983.5241"/>
       <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3654360.99281" maxy="7323239.2663"/>
       <BoundingBox CRS="EPSG:3035" minx="4257440.32078" miny="3358935.20125" maxx="5239458.99686" maxy="4897644.90832"/>
       <BoundingBox CRS="EPSG:3047" minx="330890.119264" miny="6615141.39345" maxx="636304.669843" maxy="7319268.49067"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7893223" miny="6549298.622" maxx="654126.981008" maxy="7320177.4597"/>
       <BoundingBox CRS="EPSG:3857" minx="1006990.54061" miny="7045145.24084" maxx="3383283.13589" maxy="9867272.33216"/>
-      <BoundingBox CRS="EPSG:4258" minx="53.3346748352" miny="9.04594993591" maxx="65.9649963379" maxy="30.3925495148"/>
+      <BoundingBox CRS="EPSG:4258" minx="9.04594993591" miny="53.3346748352" maxx="30.3925495148" maxy="65.9649963379"/>
       <BoundingBox CRS="EPSG:4326" minx="9.04594993591" miny="53.3346748352" maxx="30.3925495148" maxy="65.9649963379"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
       
@@ -392,6 +432,11 @@
       <Name>test:icemap_new</Name>
       <Title>Ice map</Title>
       <Abstract>Ice map polygons</Abstract>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
       <CRS>EPSG:2393</CRS>
       <CRS>EPSG:3035</CRS>
       <CRS>EPSG:3047</CRS>
@@ -405,12 +450,17 @@
         <southBoundLatitude>53.3346748352</southBoundLatitude>
         <northBoundLatitude>65.9649963379</northBoundLatitude>
       </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="9.04594993591" miny="53.3346748352" maxx="30.3925495148" maxy="65.9649963379"/>
+      <BoundingBox CRS="CRS:83" minx="9.04594993591" miny="53.3346748352" maxx="30.3925495148" maxy="65.9649963379"/>
+      <BoundingBox CRS="CRS:84" minx="9.04594993591" miny="53.3346748352" maxx="30.3925495148" maxy="65.9649963379"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="4119353.97848" miny="-3890252.16321" maxx="5224664.4614" maxy="-2940495.40473"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="4119353.97848" miny="-3890252.16321" maxx="4780367.28021" maxy="-2182983.5241"/>
       <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3654360.99281" maxy="7323239.2663"/>
       <BoundingBox CRS="EPSG:3035" minx="4257440.32078" miny="3358935.20125" maxx="5239458.99686" maxy="4897644.90832"/>
       <BoundingBox CRS="EPSG:3047" minx="330890.119264" miny="6615141.39345" maxx="636304.669843" maxy="7319268.49067"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7893223" miny="6549298.622" maxx="654126.981008" maxy="7320177.4597"/>
       <BoundingBox CRS="EPSG:3857" minx="1006990.54061" miny="7045145.24084" maxx="3383283.13589" maxy="9867272.33216"/>
-      <BoundingBox CRS="EPSG:4258" minx="53.3346748352" miny="9.04594993591" maxx="65.9649963379" maxy="30.3925495148"/>
+      <BoundingBox CRS="EPSG:4258" minx="9.04594993591" miny="53.3346748352" maxx="30.3925495148" maxy="65.9649963379"/>
       <BoundingBox CRS="EPSG:4326" minx="9.04594993591" miny="53.3346748352" maxx="30.3925495148" maxy="65.9649963379"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
@@ -512,6 +562,11 @@
       <Name>test:lighthouses</Name>
       <Title>Lighthouses</Title>
       <Abstract>Lighthouses</Abstract>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
       <CRS>EPSG:2393</CRS>
       <CRS>EPSG:3035</CRS>
       <CRS>EPSG:3047</CRS>
@@ -525,12 +580,17 @@
         <southBoundLatitude>54.1520118713</southBoundLatitude>
         <northBoundLatitude>65.5762786865</northBoundLatitude>
       </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="9.0779800415" miny="54.1520118713" maxx="29.8056049347" maxy="65.5762786865"/>
+      <BoundingBox CRS="CRS:83" minx="9.0779800415" miny="54.1520118713" maxx="29.8056049347" maxy="65.5762786865"/>
+      <BoundingBox CRS="CRS:84" minx="9.0779800415" miny="54.1520118713" maxx="29.8056049347" maxy="65.5762786865"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="4106715.55689" miny="-3797195.93274" maxx="5194451.71985" maxy="-2958008.46833"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="4106715.55689" miny="-3797195.93274" maxx="4778906.74097" maxy="-2232590.59297"/>
       <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3629635.84773" maxy="7278611.78281"/>
       <BoundingBox CRS="EPSG:3035" minx="4260747.12671" miny="3449857.2847" maxx="5227117.57711" maxy="4848683.0554"/>
       <BoundingBox CRS="EPSG:3047" minx="330890.119264" miny="6615141.39345" maxx="629411.91136" maxy="7275567.87731"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7893223" miny="6549298.622" maxx="629411.91136" maxy="7275567.87731"/>
       <BoundingBox CRS="EPSG:3857" minx="1010556.11565" miny="7198998.24971" maxx="3317944.76412" maxy="9761829.43716"/>
-      <BoundingBox CRS="EPSG:4258" minx="54.1520118713" miny="9.0779800415" maxx="65.5762786865" maxy="29.8056049347"/>
+      <BoundingBox CRS="EPSG:4258" minx="9.0779800415" miny="54.1520118713" maxx="29.8056049347" maxy="65.5762786865"/>
       <BoundingBox CRS="EPSG:4326" minx="9.0779800415" miny="54.1520118713" maxx="29.8056049347" maxy="65.5762786865"/>
     </Layer>
     <Layer>
@@ -549,6 +609,11 @@
     <Layer>
       <Name>test:precipitation</Name>
       <Title>Demo product</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
       <CRS>EPSG:2393</CRS>
       <CRS>EPSG:3035</CRS>
       <CRS>EPSG:3047</CRS>
@@ -562,12 +627,17 @@
         <southBoundLatitude>51.3</southBoundLatitude>
         <northBoundLatitude>70.2</northBoundLatitude>
       </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:83" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:84" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="2839795.20579" miny="-4122392.27109" maxx="6072771.72073" maxy="-2236476.33626"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="2839795.20579" miny="-4122392.27109" maxx="5065920.73653" maxy="-1361234.12874"/>
       <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3674549.99025" maxy="7785726.69718"/>
       <BoundingBox CRS="EPSG:3035" minx="3006482.43753" miny="3305514.91803" maxx="5414779.1693" maxy="5471009.25708"/>
       <BoundingBox CRS="EPSG:3047" minx="330890.119264" miny="6615141.39345" maxx="613375.780227" maxy="7790970.34752"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7893223" miny="6549298.622" maxx="674306.988933" maxy="7782478.68383"/>
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
-      <BoundingBox CRS="EPSG:4258" minx="51.3" miny="-9.09870632718" maxx="70.2" maxy="49"/>
+      <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
@@ -582,6 +652,11 @@
     <Layer>
       <Name>test:t2m_p</Name>
       <Title>Demo product</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
       <CRS>EPSG:2393</CRS>
       <CRS>EPSG:3035</CRS>
       <CRS>EPSG:3047</CRS>
@@ -595,12 +670,17 @@
         <southBoundLatitude>51.3</southBoundLatitude>
         <northBoundLatitude>70.2</northBoundLatitude>
       </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:83" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:84" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="2839795.20579" miny="-4122392.27109" maxx="6072771.72073" maxy="-2236476.33626"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="2839795.20579" miny="-4122392.27109" maxx="5065920.73653" maxy="-1361234.12874"/>
       <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3674549.99025" maxy="7785726.69718"/>
       <BoundingBox CRS="EPSG:3035" minx="3006482.43753" miny="3305514.91803" maxx="5414779.1693" maxy="5471009.25708"/>
       <BoundingBox CRS="EPSG:3047" minx="330890.119264" miny="6615141.39345" maxx="613375.780227" maxy="7790970.34752"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7893223" miny="6549298.622" maxx="674306.988933" maxy="7782478.68383"/>
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
-      <BoundingBox CRS="EPSG:4258" minx="51.3" miny="-9.09870632718" maxx="70.2" maxy="49"/>
+      <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
@@ -646,6 +726,11 @@
         <Keyword>bar</Keyword>
         <Keyword>foo</Keyword>
       </KeywordList>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
       <CRS>EPSG:2393</CRS>
       <CRS>EPSG:3035</CRS>
       <CRS>EPSG:3047</CRS>
@@ -659,12 +744,17 @@
         <southBoundLatitude>51.3</southBoundLatitude>
         <northBoundLatitude>70.2</northBoundLatitude>
       </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:83" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:84" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="2839795.20579" miny="-4122392.27109" maxx="6072771.72073" maxy="-2236476.33626"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="2839795.20579" miny="-4122392.27109" maxx="5065920.73653" maxy="-1361234.12874"/>
       <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3674549.99025" maxy="7785726.69718"/>
       <BoundingBox CRS="EPSG:3035" minx="3006482.43753" miny="3305514.91803" maxx="5414779.1693" maxy="5471009.25708"/>
       <BoundingBox CRS="EPSG:3047" minx="330890.119264" miny="6615141.39345" maxx="613375.780227" maxy="7790970.34752"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7893223" miny="6549298.622" maxx="674306.988933" maxy="7782478.68383"/>
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
-      <BoundingBox CRS="EPSG:4258" minx="51.3" miny="-9.09870632718" maxx="70.2" maxy="49"/>
+      <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>

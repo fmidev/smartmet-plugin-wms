@@ -28,7 +28,9 @@
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
 #include <algorithm>
+#include <map>
 #include <stdexcept>
+#include <string>
 
 #include <gdal/ogr_spatialref.h>
 
@@ -483,6 +485,75 @@ CTPP::CDT get_capabilities(const libconfig::Config& config)
   return capabilities;
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Extract supported EPSG and CRS references from the configuration
+ */
+// ----------------------------------------------------------------------
+
+void WMSConfig::parse_references()
+{
+  // EPSG settings is an array of integers, whose name shall be EPSG:<int>
+
+  const libconfig::Config& config = itsDaliConfig.getConfig();
+
+  const auto& epsg_settings = config.lookup("wms.supported_references.epsg");
+
+  if (!epsg_settings.isArray())
+    throw Spine::Exception(BCP, "wms.supported_references.epsg must be an array of integers");
+
+  for (int i = 0; i < epsg_settings.getLength(); i++)
+  {
+    int num = epsg_settings[i];
+    std::string name = "EPSG:" + Fmi::to_string(num);
+    itsSupportedWMSReferences[name] = name;
+
+    Engine::Gis::BBox bbox = itsGisEngine->getBBox(num);
+    itsWMSBBoxes.insert(std::make_pair(name, bbox));
+  }
+
+  // CRS settings is an array of id,proj,bbox tuples, whose name shall be CRS:<id>
+
+  const auto& crs_settings = config.lookup("wms.supported_references.crs");
+
+  if (!crs_settings.isList())
+    throw Spine::Exception(BCP, "wms.supported_references.crs must be a list");
+
+  for (int i = 0; i < crs_settings.getLength(); i++)
+  {
+    const auto& group = crs_settings[i];
+
+    if (!group.isGroup())
+      throw Spine::Exception(BCP, "wms.supported_references.crs must be a list of groups");
+
+    std::string id = group["id"];
+    std::string proj = group["proj"];
+    std::string name = "CRS:" + id;
+
+    itsSupportedWMSReferences[name] = proj;
+
+    const auto& bbox = group["bbox"];
+    if (!bbox.isArray())
+      throw Spine::Exception(BCP, "wms.supported_references.crs bboxes must be arrays");
+
+    if (bbox.getLength() != 4)
+      throw Spine::Exception(BCP, "wms.supported_references.crs bboxes must have 4 elements");
+
+    double west = bbox[0];
+    double east = bbox[1];
+    double south = bbox[2];
+    double north = bbox[3];
+
+    itsWMSBBoxes.insert(std::make_pair(name, Engine::Gis::BBox(west, east, south, north)));
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Initialize a WMS configuration
+ */
+// ----------------------------------------------------------------------
+
 WMSConfig::WMSConfig(const Config& daliConfig,
                      const Spine::FileCache& theFileCache,
                      Engine::Querydata::Engine* qEngine,
@@ -518,6 +589,8 @@ WMSConfig::WMSConfig(const Config& daliConfig,
 
     std::string wmsVersions = config.lookup("wms.supported_versions").c_str();
     boost::algorithm::split(itsSupportedWMSVersions, wmsVersions, boost::algorithm::is_any_of(","));
+
+    parse_references();
 
     // Parse GetCapability settings once to make sure the config file is valid
 
@@ -808,6 +881,17 @@ const std::set<std::string>& WMSConfig::supportedWMSVersions() const
 {
   return itsSupportedWMSVersions;
 }
+
+const std::map<std::string, std::string>& WMSConfig::supportedWMSReferences() const
+{
+  return itsSupportedWMSReferences;
+}
+
+const std::map<std::string, Engine::Gis::BBox>& WMSConfig::WMSBBoxes() const
+{
+  return itsWMSBBoxes;
+}
+
 bool WMSConfig::isValidMapFormat(const std::string& theMapFormat) const
 {
   try

@@ -74,6 +74,8 @@ class WMSConfig
   std::string layerCustomer(const std::string& theLayerName) const;
   const std::set<std::string>& supportedMapFormats() const;
   const std::set<std::string>& supportedWMSVersions() const;
+  const std::map<std::string, std::string>& supportedWMSReferences() const;
+  const std::map<std::string, Engine::Gis::BBox>& WMSBBoxes() const;
   bool isValidMapFormat(const std::string& theMapFormat) const;
   bool isValidVersion(const std::string& theVersion) const;
   bool isValidLayer(const std::string& theLayer, bool theAcceptHiddenLayerFlag = false) const;
@@ -103,6 +105,8 @@ class WMSConfig
                         const Dali::State& theState) const;
 
  private:
+  void parse_references();
+
   const Plugin::Dali::Config& itsDaliConfig;
   const Spine::FileCache& itsFileCache;
 
@@ -122,6 +126,10 @@ class WMSConfig
   std::set<std::string> itsSupportedMapFormats;
   // supported wms versions
   std::set<std::string> itsSupportedWMSVersions;
+  // supported wms epsg references. Map from name to GDAL definition
+  std::map<std::string, std::string> itsSupportedWMSReferences;
+  // the bounding boxes for all spatial references
+  std::map<std::string, Engine::Gis::BBox> itsWMSBBoxes;
 
   bool itsInspireExtensionSupported = false;
 

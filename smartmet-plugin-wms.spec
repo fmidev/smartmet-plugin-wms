@@ -90,6 +90,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Upcoming
+- Supported spatial references are now listed in the configuration file
+- Added CRS:84, CRS:27, CRS:83 support
+- Added local references CRS::SmartMetScandinavia and CRS:SmartMetEurope
+
 * Mon Aug  7 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.7-1.fmi
 - WMS exceptions are now more detailed if the debug option is set
 - Rewrote WMS error messages to be more detailed

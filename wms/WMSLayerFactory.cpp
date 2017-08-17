@@ -331,6 +331,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
       std::string legendURLLayer = json.asString();
       layer->addStyle(legendURLLayer);
     }
+
     if (layer->styles.size() == 0)
     {
       // 2) read styles vector from configuration and generate layer styles
@@ -375,23 +376,21 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         }
       }
     }
+
     // 3) generate layer styles automatically from configuration
     if (layer->styles.size() == 0)
       layer->addStyles(root, layer->name);
 
-    // always supported CRS
-    layer->crs.insert("EPSG:2393");  // YKJ
-    layer->crs.insert("EPSG:3035");  // ETRS89 / ETRS-LAEA
-    layer->crs.insert("EPSG:3047");  // ETRS-TM35 (Recommended for Finland)
-    layer->crs.insert("EPSG:3067");  // ETRS-TM35FIN
-    layer->crs.insert("EPSG:3857");  // Web-Mercator
-    layer->crs.insert("EPSG:4258");  // ETRS89 (for Europe instead of WGS84)
-    layer->crs.insert("EPSG:4326");  // WGS84
+    // Spatial references supported by default, if applicable
+    layer->crs = theWMSConfig.supportedWMSReferences();
+    layer->crs_bbox = theWMSConfig.WMSBBoxes();
+
+    // And extra references supported by the layer itself
 
     Json::Value projection = root["projection"];
     std::string mapcrs = projection["crs"].asString();
     if (mapcrs.substr(0, 5) == "EPSG:")  // accept only CRS from EPSG namespace
-      layer->crs.insert(mapcrs);
+      layer->crs.insert(std::make_pair(mapcrs, mapcrs));
 
     return layer;
   }

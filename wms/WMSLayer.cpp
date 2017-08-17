@@ -413,8 +413,10 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
         << "southBoundLatitude=" << layer.geographicBoundingBox.yMin << " "
         << "eastBoundLongitude=" << layer.geographicBoundingBox.xMax << " "
         << "northBoundLatitude=" << layer.geographicBoundingBox.yMax << "\n"
-        << "crs: " << boost::algorithm::join(layer.crs, " ") << "\n"
-        << "styles: ";
+        << "crs:";
+    for (auto c : layer.crs)
+      ost << c.first << "=" << c.second << " ";
+    ost << "styles:";
     for (auto style : layer.styles)
       ost << style.name << " ";
     if (layer.styles.size() > 0)
@@ -484,20 +486,27 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
 
     // Layer CRS list and their bounding boxes
 
+    // Calculate CRS bbox from latlon bbox
+    OGRSpatialReference srs;
+    srs.importFromEPSGA(4326);
+
     if (!crs.empty())
     {
       CTPP::CDT layer_crs_list(CTPP::CDT::ARRAY_VAL);
       CTPP::CDT layer_bbox_list(CTPP::CDT::ARRAY_VAL);
 
-      for (const auto& crs_name : crs)
+      for (const auto& id_decl : crs)
       {
         CTPP::CDT layer_bbox(CTPP::CDT::HASH_VAL);
 
-        layer_bbox["crs"] = crs_name;
+        const auto& id = id_decl.first;
+        const auto& decl = id_decl.second;
 
-        if (crs_name == "EPSG:4326")
+        layer_bbox["crs"] = id;
+
+        if (id == "EPSG:4326")
         {
-          layer_crs_list.PushBack(crs_name);
+          layer_crs_list.PushBack(id);
           layer_bbox["minx"] = geographicBoundingBox.xMin;
           layer_bbox["miny"] = geographicBoundingBox.yMin;
           layer_bbox["maxx"] = geographicBoundingBox.xMax;
@@ -506,15 +515,10 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
         }
         else
         {
-          // Calculate CRS bbox from latlon bbox
-          OGRSpatialReference srs;
-          srs.importFromEPSGA(4326);
-
-          int target_epsg_number = stoi(crs_name.substr(5));
           OGRSpatialReference target;
-          auto err = target.importFromEPSGA(target_epsg_number);
+          auto err = target.SetFromUserInput(decl.c_str());
           if (err != OGRERR_NONE)
-            throw Spine::Exception(BCP, "Unknown CRS: ' " + crs_name + "'");
+            throw Spine::Exception(BCP, "Unknown spatial reference declaration: '" + decl + "'");
 
           boost::shared_ptr<OGRCoordinateTransformation> transformation(
               OGRCreateCoordinateTransformation(&srs, &target));
@@ -522,13 +526,13 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
           if (transformation == nullptr)
             throw Spine::Exception(BCP, "OGRCreateCoordinateTransformation function call failed");
 
-          // Intersect with target EPSG bounding box (latlon)
+          // Intersect with target EPSG bounding box (latlon) if it is available
 
-          Engine::Gis::BBox epsg_box = gisengine.getBBox(target_epsg_number);
-          auto x1 = std::max(epsg_box.west, geographicBoundingBox.xMin);
-          auto x2 = std::min(epsg_box.east, geographicBoundingBox.xMax);
-          auto y1 = std::max(epsg_box.south, geographicBoundingBox.yMin);
-          auto y2 = std::min(epsg_box.north, geographicBoundingBox.yMax);
+          Engine::Gis::BBox epsg_box = crs_bbox.at(id);
+          auto x1 = std::max(geographicBoundingBox.xMin, epsg_box.west);
+          auto x2 = std::min(geographicBoundingBox.xMax, epsg_box.east);
+          auto y1 = std::max(geographicBoundingBox.yMin, epsg_box.south);
+          auto y2 = std::min(geographicBoundingBox.yMax, epsg_box.north);
 
           // Produce bbox only if there is overlap
 
@@ -542,7 +546,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
             if (ok)
             {
               // Acceptable CRS
-              layer_crs_list.PushBack(crs_name);
+              layer_crs_list.PushBack(id);
 
               // Use proper coordinate ordering for the EPSG
               if (target.EPSGTreatsAsLatLong())

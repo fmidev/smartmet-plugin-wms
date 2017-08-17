@@ -131,7 +131,8 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     }
     catch (...)
     {
-      throw Spine::Exception(BCP, "Failed to extract capabilities from configuration file");
+      throw Spine::Exception(
+          BCP, "Failed to extract capabilities from configuration file", nullptr);
     }
 
     boost::optional<std::string> apikey;
@@ -142,7 +143,7 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     }
     catch (...)
     {
-      throw Spine::Exception(BCP, "Failed to get apikey from the query");
+      throw Spine::Exception(BCP, "Failed to get apikey from the query", nullptr);
     }
 
     CTPP::CDT configuredLayers;
@@ -153,7 +154,7 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     }
     catch (...)
     {
-      throw Spine::Exception(BCP, "Failed to get capabilities from configured layers");
+      throw Spine::Exception(BCP, "Failed to get capabilities from configured layers", nullptr);
     }
 
     if (!hash.Exists("capability"))
@@ -164,7 +165,7 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     }
     catch (...)
     {
-      throw Spine::Exception(BCP, "Setting configured layers to output hash failed");
+      throw Spine::Exception(BCP, "Setting configured layers to output hash failed", nullptr);
     }
 
     // http/https scheme selection based on 'X-Forwarded-Proto' header
@@ -186,7 +187,8 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
       }
       catch (...)
       {
-        throw Spine::Exception(BCP, "Patching protocol failed").addParameter("protocol", protocol);
+        throw Spine::Exception(BCP, "Patching protocol failed", nullptr)
+            .addParameter("protocol", protocol);
       }
     }
 
@@ -205,7 +207,8 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     }
     catch (...)
     {
-      throw Spine::Exception(BCP, "CTPP formatter failed").addParameter("log", logstream.str());
+      throw Spine::Exception(BCP, "CTPP formatter failed", nullptr)
+          .addParameter("log", logstream.str());
     }
 
     // Finish up with host name replacements
@@ -234,13 +237,14 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     }
     catch (...)
     {
-      throw Spine::Exception(BCP, "Fixing host name failed").addParameter("host", *host_header);
+      throw Spine::Exception(BCP, "Fixing host name failed", nullptr)
+          .addParameter("host", *host_header);
     }
   }
 
   catch (...)
   {
-    throw Spine::Exception(BCP, "WMSGetCapabilities::response() failed!");
+    throw Spine::Exception(BCP, "WMSGetCapabilities::response() failed!", nullptr);
   }
 }
 
