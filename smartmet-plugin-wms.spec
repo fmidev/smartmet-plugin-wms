@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.8.7
+Version: 17.8.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -90,7 +90,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-* Upcoming
+* Fri Aug 18 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.18-1.fmi
+- Plain ETag response code to frontend is now 204 no content
 - Supported spatial references are now listed in the configuration file
 - Added CRS:84, CRS:27, CRS:83 support
 - Added local references CRS::SmartMetScandinavia and CRS:SmartMetEurope

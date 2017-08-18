@@ -154,6 +154,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
     {
       theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setHeader("Content-Type", mimeType(product.type));
+      theResponse.setStatus(Spine::HTTP::Status::no_content);
       return;
     }
 
@@ -354,7 +355,10 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       if (theRequest.getResource() == "/wms")
       {
         WMSQueryStatus status;
-        status = wmsQuery(theReactor, theRequest, theResponse);
+
+        theResponse.setStatus(Spine::HTTP::Status::ok);
+
+        status = wmsQuery(theReactor, theRequest, theResponse);  // may modify HTTP status
         switch (status)
         {
           case WMSQueryStatus::FORBIDDEN:
@@ -363,14 +367,13 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
           case WMSQueryStatus::OK:
           case WMSQueryStatus::EXCEPTION:
           default:
-            theResponse.setStatus(Spine::HTTP::Status::ok);
             break;
         }
       }
       else
       {
-        daliQuery(theReactor, theRequest, theResponse);
         theResponse.setStatus(Spine::HTTP::Status::ok);
+        daliQuery(theReactor, theRequest, theResponse);
       }
 
       // Adding headers
@@ -1313,6 +1316,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
     {
       theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setHeader("Content-Type", mimeType(product.type));
+      theResponse.setStatus(Spine::HTTP::Status::no_content);
       return WMSQueryStatus::OK;
     }
 
