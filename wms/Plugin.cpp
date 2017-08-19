@@ -662,18 +662,11 @@ bool Plugin::queryIsFast(const Spine::HTTP::Request &theRequest) const
 
 Plugin::~Plugin()
 {
-  try
-  {
-    if (itsImageCache != NULL)
-      itsImageCache->shutdown();
+  if (itsImageCache != nullptr)
+    itsImageCache->shutdown();
 
-    if (itsWMSConfig != NULL)
-      itsWMSConfig->shutdown();
-  }
-  catch (...)
-  {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
-  }
+  if (itsWMSConfig != nullptr)
+    itsWMSConfig->shutdown();
 }
 
 // ----------------------------------------------------------------------
