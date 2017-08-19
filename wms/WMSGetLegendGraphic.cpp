@@ -150,6 +150,9 @@ void validate_options(const get_legend_graphic_request_options& options,
   }
 }
 
+#if 0
+// Not currently needed
+
 // if iso-string contains fractions of seconds remove them
 // so that Fmi::TimeParser knows how to parse
 boost::posix_time::ptime parse_time(const std::string& time)
@@ -224,6 +227,8 @@ void parse_interval_with_resolution(const std::string time_str,
     throw Spine::Exception(BCP, "Parsing time interval failed!", NULL);
   }
 }
+#endif
+
 }  // anonymous namespace
 
 WMSGetLegendGraphic::WMSGetLegendGraphic(const WMSConfig& theConfig) : itsConfig(theConfig)
