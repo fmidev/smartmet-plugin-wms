@@ -1060,17 +1060,22 @@ std::string WMSConfig::jsonText(const std::string& theLayerName) const
   }
 }
 
-std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerName) const
+std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerName,
+                                                     std::size_t& width,
+                                                     std::size_t& height) const
 {
   std::vector<Json::Value> ret;
 
   auto my_layers = boost::atomic_load(&itsLayers);
 
-  std::vector<std::string> legendLayers =
+  LegendGraphicResult result =
       my_layers->at(layerName).getLayer()->getLegendGraphic(itsDaliConfig.templateDirectory());
+  width = result.width;
+  height = result.height;
+
   std::string customer = layerName.substr(0, layerName.find(":"));
 
-  for (auto legendLayer : legendLayers)
+  for (auto legendLayer : result.legendLayers)
   {
     Json::Value json;
     Json::Reader reader;
@@ -1147,7 +1152,12 @@ void WMSConfig::getLegendGraphic(const std::string& theLayerName,
   if (prepareLegendGraphic(theProduct))
     return;
 
-  std::vector<Json::Value> legendLayers = getLegendGraphic(theLayerName);
+  std::size_t width = 100;
+  std::size_t height = 100;
+  std::vector<Json::Value> legendLayers = getLegendGraphic(theLayerName, width, height);
+  theProduct.width = width;
+  theProduct.height = height;
+
   Json::Value nulljson;
 
   boost::shared_ptr<View> view = *(theProduct.views.views.begin());

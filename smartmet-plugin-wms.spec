@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.8.21
+Version: 17.8.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -90,6 +90,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Aug 24 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.8.24-1.fmi
+- Size of returned map for GetLegendGraphic request is calculated automatically (fixed size was used before).
+When WIDTH, HEIGHT request parameters are present they override automatically calculated values. 
+
 * Mon Aug 21 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.21-1.fmi
 - Fixed observation arrows and symbols to work for non geographic references
 

@@ -45,6 +45,7 @@ LegendGraphicInfo handle_json_layers(Json::Value layersJson)
         std::string layerTypeString = layerTypeJson.asString();
         std::string parameterName;
         auto json = layerJson.get("parameter", nulljson);
+
         if (!json.isNull())
           parameterName = json.asString();
         lgParameters.insert(make_pair("parameter_name", parameterName));
@@ -82,9 +83,11 @@ LegendGraphicInfo handle_json_layers(Json::Value layersJson)
           if (!json.isNull())
             lgParameters.insert(make_pair("class", json.asString()));
         }
+
         ret.push_back(lgParameters);
       }
     }
+
     auto layersJson = layerJson.get("layers", nulljson);
     if (!layersJson.isNull() && layersJson.isArray())
     {
@@ -92,7 +95,41 @@ LegendGraphicInfo handle_json_layers(Json::Value layersJson)
       ret.insert(ret.end(), recursiveRet.begin(), recursiveRet.end());
     }
   }
+
   return ret;
+}
+
+unsigned int isoband_label_height(const std::string& j)
+{
+  Json::Value json;
+  Json::Reader reader;
+  bool json_ok = reader.parse(j, json);
+
+  if (!json_ok)
+  {
+    std::string msg = reader.getFormattedErrorMessages();
+    std::replace(msg.begin(), msg.end(), '\n', ' ');
+    throw Spine::Exception(BCP, "Legend template file parsing failed!").addDetail(msg);
+  }
+
+  unsigned int numberOfIsobands = 0;
+  unsigned int dy = 0;
+  unsigned int yOffset = 0;
+  Json::Value nulljson;
+
+  auto jsonItem = json.get("isobands", nulljson);
+  if (!jsonItem.isNull() && jsonItem.isArray())
+  {
+    numberOfIsobands = jsonItem.size();
+    jsonItem = json.get("dy", nulljson);
+    if (!jsonItem.isNull())
+      dy = jsonItem.asInt();
+    jsonItem = json.get("y", nulljson);
+    if (!jsonItem.isNull())
+      yOffset = jsonItem.asInt();
+  }
+
+  return (yOffset + (numberOfIsobands * dy) + 20);
 }
 
 }  // anonymous namespace
@@ -108,8 +145,6 @@ WMSLayer::WMSLayer() : hidden(false)
 
 void WMSLayer::addStyles(const Json::Value& root, const std::string& layerName)
 {
-  //  std::cout << "LAYERNAME: " << layerName << std::endl;
-
   Json::Value nulljson;
 
   auto viewsJson = root.get("views", nulljson);
@@ -150,9 +185,11 @@ void WMSLayer::addStyle(const std::string& layerName)
   styles.push_back(layerStyle);
 }
 
-std::vector<std::string> WMSLayer::getLegendGraphic(const std::string& templateDirectory) const
+LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& templateDirectory) const
 {
-  std::vector<std::string> ret;
+  LegendGraphicResult ret;
+  ret.height = 20;
+  ret.width = 150;
   unsigned int xpos = 20;
   unsigned int ypos = 20;
   unsigned int symbol_xpos = 0;  // set later
@@ -171,11 +208,9 @@ std::vector<std::string> WMSLayer::getLegendGraphic(const std::string& templateD
   symbolGroupHashItem.templateFile = templateDirectory + "/wms_get_legend_graphic_symbol.c2t";
   for (auto lgi : legendGraphicInfo)
   {
-    // lgi["layer_type"]];
     std::string layerType = lgi["layer_type"];
     std::string parameterName = lgi["parameter_name"];
 
-    //    std::cout << "LAYER TYPE: " << layerType << std::endl;
     if (layerType == "symbol")
     {
       if (parameterName == "PrecipitationForm")
@@ -198,6 +233,7 @@ std::vector<std::string> WMSLayer::getLegendGraphic(const std::string& templateD
         hi.templateFile = (templateDirectory + "/wms_get_legend_graphic_precipitation_form.c2t");
         legendGraphicHashVector.push_back(hi);
         xpos += 150;
+        ret.height = 90;
       }
       else
       {
@@ -222,6 +258,7 @@ std::vector<std::string> WMSLayer::getLegendGraphic(const std::string& templateD
         symbolHash["text_ypos"] = symbol_ypos + 15;
         symbol_ypos += 20;
         symbolGroupIndex++;
+        ret.height = symbol_ypos + 20;
       }
     }
     else if (layerType == "isoband")
@@ -270,25 +307,29 @@ std::vector<std::string> WMSLayer::getLegendGraphic(const std::string& templateD
       hi.hash["isoline_symbol_id"] = (parameterName + "_isoline");
       legendGraphicHashVector.push_back(hi);
       xpos += 150;
+      ret.height = ypos + 40;
     }
   }
+
+  ret.width = xpos;
 
   if (symbolGroupIndex > 0)
     legendGraphicHashVector.push_back(symbolGroupHashItem);
 
   Dali::TemplateFactory templateFactory;
+  unsigned int labelHeight = 0;
   for (auto item : legendGraphicHashVector)
   {
     Dali::SharedFormatter formatter = templateFactory.get(item.templateFile);
     std::stringstream tmpl_ss;
     std::stringstream logstream;
     formatter->process(item.hash, tmpl_ss, logstream);
-    /*
-std::cout << "processed template: " << item.templateFile << std::endl
-          << legendGraphicHashVector.size() << "," << std::endl
-          << tmpl_ss.str() << std::endl;
-    */
-    ret.push_back(tmpl_ss.str());
+
+    labelHeight = isoband_label_height(tmpl_ss.str());
+    if (labelHeight > ret.height)
+      ret.height = labelHeight;
+
+    ret.legendLayers.push_back(tmpl_ss.str());
   }
 
   return ret;

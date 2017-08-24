@@ -93,7 +93,9 @@ class WMSConfig
   bool currentValue(const std::string& theLayer) const;
   boost::posix_time::ptime mostCurrentTime(const std::string& theLayer) const;
   std::string jsonText(const std::string& theLayerName) const;
-  std::vector<Json::Value> getLegendGraphic(const std::string& theLayerName) const;
+  std::vector<Json::Value> getLegendGraphic(const std::string& theLayerName,
+                                            std::size_t& width,
+                                            std::size_t& height) const;
 
   bool inspireExtensionSupported() const;
   CTPP::CDT getCapabilitiesResponseVariables() const;
