@@ -233,6 +233,8 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
       }
 
       boost::replace_all(ret, "__hostname__", hostString);
+      apikey = (apikey ? ("/fmi-apikey/" + *apikey) : "");
+      boost::replace_all(ret, "__apikey__", *apikey);
       return ret;
     }
     catch (...)
