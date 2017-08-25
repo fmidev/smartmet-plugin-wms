@@ -142,7 +142,7 @@ void WMSLayer::addStyle(const std::string& layerName)
 
   layerStyle.legend_url.online_resource =
       std::string(
-          "http://__hostname__/wms"
+          "http://__hostname____apikey__/wms"
           "?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;"
           "style=&amp;format=image%2Fpng&amp;layer=") +
       Spine::HTTP::urlencode(layerName);
