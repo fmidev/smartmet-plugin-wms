@@ -389,7 +389,9 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 
     Json::Value projection = root["projection"];
     std::string mapcrs = projection["crs"].asString();
-    if (mapcrs.substr(0, 5) == "EPSG:")  // accept only CRS from EPSG namespace
+
+    // Validate namespace
+    if (mapcrs.substr(0, 5) == "EPSG:" || mapcrs.substr(0, 4) == "CRS:")
       layer->crs.insert(std::make_pair(mapcrs, mapcrs));
 
     return layer;
