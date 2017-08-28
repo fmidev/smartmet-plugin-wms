@@ -12,15 +12,16 @@
 #include "WindRose.h"
 #include <engines/observation/Engine.h>
 #include <engines/observation/Settings.h>
+#include <gis/Box.h>
+#include <macgyver/StringConversion.h>
+#include <macgyver/TimeParser.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/TimeSeries.h>
-#include <gis/Box.h>
-#include <macgyver/TimeParser.h>
 
-#include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
 #include <boost/math/constants/constants.hpp>
+#include <ctpp2/CDT.hpp>
 #include <gdal/ogr_spatialref.h>
 
 #include <algorithm>
@@ -36,14 +37,8 @@ namespace Dali
 {
 struct value_printer : public boost::static_visitor<std::string>
 {
-  std::string operator()(const std::string& str) const
-  {
-    return str;
-  }
-  std::string operator()(double value) const
-  {
-    return Fmi::to_string(value);
-  }
+  std::string operator()(const std::string& str) const { return str; }
+  std::string operator()(double value) const { return Fmi::to_string(value); }
   std::string operator()(const Spine::TimeSeries::LonLat& lonlat) const
   {
     return Fmi::to_string(lonlat.lon) + ',' + Fmi::to_string(lonlat.lat);
@@ -51,7 +46,7 @@ struct value_printer : public boost::static_visitor<std::string>
 
   std::string operator()(const boost::local_time::local_date_time& t) const
   {
-    return to_string(t);
+    return Fmi::to_iso_string(t.local_time());
   }
 };
 
@@ -126,7 +121,7 @@ double mean(const Spine::TimeSeries::TimeSeries& tseries)
   {
     double sum = 0;
     int count = 0;
-    BOOST_FOREACH(const auto & tv, tseries)
+    BOOST_FOREACH (const auto& tv, tseries)
     {
       const double* value = boost::get<double>(&tv.value);
       if (value && *value != kFloatMissing)
@@ -158,7 +153,7 @@ double max(const Spine::TimeSeries::TimeSeries& tseries)
   {
     double res = 0;
     bool valid = false;
-    BOOST_FOREACH(const auto & tv, tseries)
+    BOOST_FOREACH (const auto& tv, tseries)
     {
       const double* value = boost::get<double>(&tv.value);
       if (value && *value != kFloatMissing)
@@ -255,7 +250,7 @@ std::vector<double> calculate_rose_distribution(const Spine::TimeSeries::TimeSer
 
     std::vector<double> result(sectors, 0);
 
-    BOOST_FOREACH(const auto & tv, directions)
+    BOOST_FOREACH (const auto& tv, directions)
     {
       const double* value = boost::get<double>(&tv.value);
 
@@ -457,7 +452,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // Collect the text layers separately
     std::list<CTPP::CDT> text_layers;
 
-    BOOST_FOREACH(const auto & station, stations.stations)
+    BOOST_FOREACH (const auto& station, stations.stations)
     {
       // Currently we require the station to have a fmisid
       if (!station.fmisid)
@@ -660,7 +655,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
       if (wdata.valid)
       {
-        BOOST_FOREACH(const auto & observation, observations.observations)
+        BOOST_FOREACH (const auto& observation, observations.observations)
         {
           double value = 0;
           if (observation.parameter == "mean_t(T)")
@@ -688,8 +683,8 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     }
 
     theLayersCdt.PushBack(group_cdt);
-    BOOST_FOREACH(const auto & cdt, text_layers)
-    theLayersCdt.PushBack(cdt);
+    BOOST_FOREACH (const auto& cdt, text_layers)
+      theLayersCdt.PushBack(cdt);
 
     // Close the grouping
     theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n  </g>");
@@ -731,7 +726,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
 
     std::map<int, WindRoseData> result;
 
-    BOOST_FOREACH(const auto & station, stations.stations)
+    BOOST_FOREACH (const auto& station, stations.stations)
     {
       settings.fmisids.clear();
       if (!station.fmisid)
