@@ -952,6 +952,18 @@ bool WMSConfig::isValidStyle(const std::string& theLayer, const std::string& the
   }
 }
 
+const std::string& WMSConfig::getCRSDefinition(const std::string& theCRS) const
+{
+  try
+  {
+    return itsSupportedWMSReferences.at(theCRS);
+  }
+  catch (...)
+  {
+    throw Spine::Exception(BCP, "GDAL defintion for CRS not available!", NULL);
+  }
+}
+
 bool WMSConfig::isValidCRS(const std::string& theLayer, const std::string& theCRS) const
 {
   try

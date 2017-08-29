@@ -372,7 +372,10 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       itsParameters.map_info_vector.push_back(tag_map_info(layerName, layerStyle));
     }
 
-    std::string crs = *(theRequest.getParameter("CRS"));
+    std::string crs = *(theRequest.getParameter("CRS"));  // desired CRS name
+
+    std::string crs_decl = itsConfig.getCRSDefinition(crs);  // respective string for GDAL
+
     std::string bbox = *(theRequest.getParameter("BBOX"));
 
     itsParameters.bbox = Spine::BoundingBox(bbox + "," + crs);
@@ -482,7 +485,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     theRequest.addParameter("projection.bbox", bbox);
     theRequest.addParameter("projection.xsize", Fmi::to_string(itsParameters.width));
     theRequest.addParameter("projection.ysize", Fmi::to_string(itsParameters.height));
-    theRequest.addParameter("projection.crs", crs);
+    theRequest.addParameter("projection.crs", crs_decl);
 
     // Bounding box should always be defined using the main crs
 

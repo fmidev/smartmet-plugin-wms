@@ -76,6 +76,7 @@ class WMSConfig
   const std::set<std::string>& supportedWMSVersions() const;
   const std::map<std::string, std::string>& supportedWMSReferences() const;
   const std::map<std::string, Engine::Gis::BBox>& WMSBBoxes() const;
+  const std::string& getCRSDefinition(const std::string& theCRS) const;
   bool isValidMapFormat(const std::string& theMapFormat) const;
   bool isValidVersion(const std::string& theVersion) const;
   bool isValidLayer(const std::string& theLayer, bool theAcceptHiddenLayerFlag = false) const;
