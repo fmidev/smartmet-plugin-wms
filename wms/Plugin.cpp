@@ -1285,6 +1285,22 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
       {
         std::string layerName = *(theRequest.getParameter("LAYER"));
         itsWMSConfig->getLegendGraphic(layerName, product, state);
+        // getLegendGraphic-function sets width and height, but if width & height is given in
+        // request override values
+        std::string xsize = Fmi::to_string(*product.width);
+        std::string ysize = Fmi::to_string(*product.height);
+        if (theRequest.getParameter("WIDTH"))
+        {
+          xsize = *(thisRequest.getParameter("projection.xsize"));
+          product.width = Fmi::stoi(xsize);
+        }
+        if (theRequest.getParameter("HEIGHT"))
+        {
+          ysize = *(thisRequest.getParameter("projection.ysize"));
+          product.height = Fmi::stoi(ysize);
+        }
+        thisRequest.setParameter("projection.xsize", xsize);
+        thisRequest.setParameter("projection.ysize", ysize);
       }
     }
     catch (...)

@@ -43,6 +43,13 @@ namespace WMS
 {
 typedef std::vector<std::map<std::string, std::string> > LegendGraphicInfo;
 
+struct LegendGraphicResult
+{
+  std::size_t width;
+  std::size_t height;
+  std::vector<std::string> legendLayers;
+};
+
 class WMSLayer
 {
  protected:
@@ -85,7 +92,7 @@ class WMSLayer
   const std::string& getName() const { return name; }
   const std::string& getCustomer() const { return customer; }
   const std::string& getDaliProductFile() const { return productFile; }
-  std::vector<std::string> getLegendGraphic(const std::string& templateDirectory) const;
+  LegendGraphicResult getLegendGraphic(const std::string& templateDirectory) const;
 
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;
