@@ -37,7 +37,6 @@ DIFFICULTFLAGS = \
 	-ansi -pedantic
 
 
-CXX = g++
 ARFLAGS = -r
 DEFINES = -DUNIX -D_REENTRANT
 

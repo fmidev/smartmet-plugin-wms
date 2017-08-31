@@ -1,5 +1,4 @@
 //======================================================================
-
 #include "SymbolLayer.h"
 #include "Config.h"
 #include "Hash.h"
@@ -212,12 +211,6 @@ PointValues read_observations(const SymbolLayer& layer,
     if (layer.positions->layout == Positions::Layout::Data || *layer.producer == "flash")
     {
       settings.boundingBox = layer.getClipBoundingBox(box, crs);
-
-      // TODO. Calculate these
-      // settings.boundingBox["minx"] = 10;
-      // settings.boundingBox["miny"] = 50;
-      // settings.boundingBox["maxx"] = 50;
-      // settings.boundingBox["maxy"] = 80;
     }
     else
     {
@@ -253,7 +246,7 @@ PointValues read_observations(const SymbolLayer& layer,
       throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
     std::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(crs.get(), obscrs.get()));
+        OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
     if (!transformation)
       throw Spine::Exception(
           BCP, "Failed to create the needed coordinate transformation when drawing symbols");
@@ -265,6 +258,7 @@ PointValues read_observations(const SymbolLayer& layer,
     boost::posix_time::ptime previous_time;
 
     PointValues pointvalues;
+
     for (std::size_t row = 0; row < values[0].size(); ++row)
     {
       const auto& t = values.at(0).at(row).time;

@@ -14,6 +14,8 @@
 #include "WMSLayerStyle.h"
 #include "WMSTimeDimension.h"
 
+#include <engines/gis/BBox.h>
+
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/shared_ptr.hpp>
@@ -41,6 +43,13 @@ namespace WMS
 {
 typedef std::vector<std::map<std::string, std::string> > LegendGraphicInfo;
 
+struct LegendGraphicResult
+{
+  std::size_t width;
+  std::size_t height;
+  std::vector<std::string> legendLayers;
+};
+
 class WMSLayer
 {
  protected:
@@ -61,7 +70,9 @@ class WMSLayer
   bool hidden = false;  // if this is true, dont show in GetCapabilities response
 
   Spine::BoundingBox geographicBoundingBox;
-  std::set<std::string> crs;
+  std::map<std::string, std::string> crs;             // id to GDAL definition
+  std::map<std::string, Engine::Gis::BBox> crs_bbox;  // id to bounding box mapping
+
   std::vector<WMSLayerStyle> styles;
   boost::shared_ptr<WMSTimeDimension> timeDimension;  // Optional, may be empty for non-temporal
                                                       // postgis layers
@@ -81,9 +92,8 @@ class WMSLayer
   const std::string& getName() const { return name; }
   const std::string& getCustomer() const { return customer; }
   const std::string& getDaliProductFile() const { return productFile; }
-  std::vector<std::string> getLegendGraphic(const std::string& templateDirectory) const;
+  LegendGraphicResult getLegendGraphic(const std::string& templateDirectory) const;
 
-  const std::set<std::string>& getSupportedCRS() const { return crs; }
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;
   bool isValidTime(const boost::posix_time::ptime& theTime) const;

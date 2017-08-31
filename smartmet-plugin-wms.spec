@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.8.7
+Version: 17.8.31
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -16,20 +16,20 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
-BuildRequires: smartmet-library-giza-devel >= 17.7.12
-BuildRequires: smartmet-library-macgyver >= 17.7.29
-BuildRequires: smartmet-library-spine-devel >= 17.8.3
+BuildRequires: smartmet-library-giza-devel >= 17.8.28
+BuildRequires: smartmet-library-macgyver >= 17.8.28
+BuildRequires: smartmet-library-spine-devel >= 17.8.28
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 17.4.8
+BuildRequires: smartmet-engine-authentication-devel >= 17.8.28
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 17.5.29
+BuildRequires: smartmet-engine-observation-devel >= 17.8.28
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 17.4.11
-BuildRequires: smartmet-engine-geonames-devel >= 17.5.24
-BuildRequires: smartmet-engine-querydata-devel >= 17.5.24
-BuildRequires: smartmet-engine-contour-devel >= 17.5.30
-BuildRequires: smartmet-library-gis-devel >= 17.3.14
+BuildRequires: smartmet-engine-gis-devel >= 17.8.28
+BuildRequires: smartmet-engine-geonames-devel >= 17.8.28
+BuildRequires: smartmet-engine-querydata-devel >= 17.8.28
+BuildRequires: smartmet-engine-contour-devel >= 17.8.28
+BuildRequires: smartmet-library-gis-devel >= 17.8.28
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.2
 BuildRequires: jsoncpp-devel
@@ -42,18 +42,18 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.2
 Requires: libconfig
 Requires: librsvg2 >= 2.40.6
-Requires: smartmet-library-gis >= 17.3.14
-Requires: smartmet-library-macgyver >= 17.7.29
-Requires: smartmet-library-giza >= 17.7.12
+Requires: smartmet-library-gis >= 17.8.28
+Requires: smartmet-library-macgyver >= 17.8.28
+Requires: smartmet-library-giza >= 17.8.28
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 17.4.8
+Requires: smartmet-engine-authentication >= 17.8.28
 %endif
-Requires: smartmet-engine-querydata >= 17.5.24
-Requires: smartmet-engine-contour >= 17.5.30
-Requires: smartmet-engine-gis >= 17.4.11
-Requires: smartmet-engine-geonames >= 17.5.24
-Requires: smartmet-server >= 17.4.8
-Requires: smartmet-library-spine >= 17.8.3
+Requires: smartmet-engine-querydata >= 17.8.28
+Requires: smartmet-engine-contour >= 17.8.28
+Requires: smartmet-engine-gis >= 17.8.28
+Requires: smartmet-engine-geonames >= 17.8.28
+Requires: smartmet-server >= 17.8.28
+Requires: smartmet-library-spine >= 17.8.28
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -90,6 +90,25 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Aug 31 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.31-1.fmi
+- Fixed handling of invalid CRS requests to return the correct WMS exception report
+
+* Tue Aug 29 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.8.29-1.fmi
+- Size of returned map for GetLegendGraphic request is calculated automatically (fixed size was used before).
+  When WIDTH, HEIGHT request parameters are present they override automatically calculated values. 
+
+* Mon Aug 28 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.28-1.fmi
+- Upgrade to boost 1.65
+
+* Mon Aug 21 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.21-1.fmi
+- Fixed observation arrows and symbols to work for non geographic references
+
+* Fri Aug 18 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.18-1.fmi
+- Plain ETag response code to frontend is now 204 no content
+- Supported spatial references are now listed in the configuration file
+- Added CRS:84, CRS:27, CRS:83 support
+- Added local references CRS::SmartMetScandinavia and CRS:SmartMetEurope
+
 * Mon Aug  7 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.7-1.fmi
 - WMS exceptions are now more detailed if the debug option is set
 - Rewrote WMS error messages to be more detailed

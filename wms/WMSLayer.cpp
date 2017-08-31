@@ -45,6 +45,7 @@ LegendGraphicInfo handle_json_layers(Json::Value layersJson)
         std::string layerTypeString = layerTypeJson.asString();
         std::string parameterName;
         auto json = layerJson.get("parameter", nulljson);
+
         if (!json.isNull())
           parameterName = json.asString();
         lgParameters.insert(make_pair("parameter_name", parameterName));
@@ -82,9 +83,11 @@ LegendGraphicInfo handle_json_layers(Json::Value layersJson)
           if (!json.isNull())
             lgParameters.insert(make_pair("class", json.asString()));
         }
+
         ret.push_back(lgParameters);
       }
     }
+
     auto layersJson = layerJson.get("layers", nulljson);
     if (!layersJson.isNull() && layersJson.isArray())
     {
@@ -92,7 +95,41 @@ LegendGraphicInfo handle_json_layers(Json::Value layersJson)
       ret.insert(ret.end(), recursiveRet.begin(), recursiveRet.end());
     }
   }
+
   return ret;
+}
+
+unsigned int isoband_label_height(const std::string& j)
+{
+  Json::Value json;
+  Json::Reader reader;
+  bool json_ok = reader.parse(j, json);
+
+  if (!json_ok)
+  {
+    std::string msg = reader.getFormattedErrorMessages();
+    std::replace(msg.begin(), msg.end(), '\n', ' ');
+    throw Spine::Exception(BCP, "Legend template file parsing failed!").addDetail(msg);
+  }
+
+  unsigned int numberOfIsobands = 0;
+  unsigned int dy = 0;
+  unsigned int yOffset = 0;
+  Json::Value nulljson;
+
+  auto jsonItem = json.get("isobands", nulljson);
+  if (!jsonItem.isNull() && jsonItem.isArray())
+  {
+    numberOfIsobands = jsonItem.size();
+    jsonItem = json.get("dy", nulljson);
+    if (!jsonItem.isNull())
+      dy = jsonItem.asInt();
+    jsonItem = json.get("y", nulljson);
+    if (!jsonItem.isNull())
+      yOffset = jsonItem.asInt();
+  }
+
+  return (yOffset + (numberOfIsobands * dy) + 20);
 }
 
 }  // anonymous namespace
@@ -108,8 +145,6 @@ WMSLayer::WMSLayer() : hidden(false)
 
 void WMSLayer::addStyles(const Json::Value& root, const std::string& layerName)
 {
-  //  std::cout << "LAYERNAME: " << layerName << std::endl;
-
   Json::Value nulljson;
 
   auto viewsJson = root.get("views", nulljson);
@@ -150,9 +185,11 @@ void WMSLayer::addStyle(const std::string& layerName)
   styles.push_back(layerStyle);
 }
 
-std::vector<std::string> WMSLayer::getLegendGraphic(const std::string& templateDirectory) const
+LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& templateDirectory) const
 {
-  std::vector<std::string> ret;
+  LegendGraphicResult ret;
+  ret.height = 20;
+  ret.width = 150;
   unsigned int xpos = 20;
   unsigned int ypos = 20;
   unsigned int symbol_xpos = 0;  // set later
@@ -171,11 +208,9 @@ std::vector<std::string> WMSLayer::getLegendGraphic(const std::string& templateD
   symbolGroupHashItem.templateFile = templateDirectory + "/wms_get_legend_graphic_symbol.c2t";
   for (auto lgi : legendGraphicInfo)
   {
-    // lgi["layer_type"]];
     std::string layerType = lgi["layer_type"];
     std::string parameterName = lgi["parameter_name"];
 
-    //    std::cout << "LAYER TYPE: " << layerType << std::endl;
     if (layerType == "symbol")
     {
       if (parameterName == "PrecipitationForm")
@@ -198,6 +233,7 @@ std::vector<std::string> WMSLayer::getLegendGraphic(const std::string& templateD
         hi.templateFile = (templateDirectory + "/wms_get_legend_graphic_precipitation_form.c2t");
         legendGraphicHashVector.push_back(hi);
         xpos += 150;
+        ret.height = 90;
       }
       else
       {
@@ -222,6 +258,7 @@ std::vector<std::string> WMSLayer::getLegendGraphic(const std::string& templateD
         symbolHash["text_ypos"] = symbol_ypos + 15;
         symbol_ypos += 20;
         symbolGroupIndex++;
+        ret.height = symbol_ypos + 20;
       }
     }
     else if (layerType == "isoband")
@@ -270,25 +307,29 @@ std::vector<std::string> WMSLayer::getLegendGraphic(const std::string& templateD
       hi.hash["isoline_symbol_id"] = (parameterName + "_isoline");
       legendGraphicHashVector.push_back(hi);
       xpos += 150;
+      ret.height = ypos + 40;
     }
   }
+
+  ret.width = xpos;
 
   if (symbolGroupIndex > 0)
     legendGraphicHashVector.push_back(symbolGroupHashItem);
 
   Dali::TemplateFactory templateFactory;
+  unsigned int labelHeight = 0;
   for (auto item : legendGraphicHashVector)
   {
     Dali::SharedFormatter formatter = templateFactory.get(item.templateFile);
     std::stringstream tmpl_ss;
     std::stringstream logstream;
     formatter->process(item.hash, tmpl_ss, logstream);
-    /*
-std::cout << "processed template: " << item.templateFile << std::endl
-          << legendGraphicHashVector.size() << "," << std::endl
-          << tmpl_ss.str() << std::endl;
-    */
-    ret.push_back(tmpl_ss.str());
+
+    labelHeight = isoband_label_height(tmpl_ss.str());
+    if (labelHeight > ret.height)
+      ret.height = labelHeight;
+
+    ret.legendLayers.push_back(tmpl_ss.str());
   }
 
   return ret;
@@ -413,8 +454,10 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
         << "southBoundLatitude=" << layer.geographicBoundingBox.yMin << " "
         << "eastBoundLongitude=" << layer.geographicBoundingBox.xMax << " "
         << "northBoundLatitude=" << layer.geographicBoundingBox.yMax << "\n"
-        << "crs: " << boost::algorithm::join(layer.crs, " ") << "\n"
-        << "styles: ";
+        << "crs:";
+    for (auto c : layer.crs)
+      ost << c.first << "=" << c.second << " ";
+    ost << "styles:";
     for (auto style : layer.styles)
       ost << style.name << " ";
     if (layer.styles.size() > 0)
@@ -484,20 +527,27 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
 
     // Layer CRS list and their bounding boxes
 
+    // Calculate CRS bbox from latlon bbox
+    OGRSpatialReference srs;
+    srs.importFromEPSGA(4326);
+
     if (!crs.empty())
     {
       CTPP::CDT layer_crs_list(CTPP::CDT::ARRAY_VAL);
       CTPP::CDT layer_bbox_list(CTPP::CDT::ARRAY_VAL);
 
-      for (const auto& crs_name : crs)
+      for (const auto& id_decl : crs)
       {
         CTPP::CDT layer_bbox(CTPP::CDT::HASH_VAL);
 
-        layer_bbox["crs"] = crs_name;
+        const auto& id = id_decl.first;
+        const auto& decl = id_decl.second;
 
-        if (crs_name == "EPSG:4326")
+        layer_bbox["crs"] = id;
+
+        if (id == "EPSG:4326")
         {
-          layer_crs_list.PushBack(crs_name);
+          layer_crs_list.PushBack(id);
           layer_bbox["minx"] = geographicBoundingBox.xMin;
           layer_bbox["miny"] = geographicBoundingBox.yMin;
           layer_bbox["maxx"] = geographicBoundingBox.xMax;
@@ -506,15 +556,10 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
         }
         else
         {
-          // Calculate CRS bbox from latlon bbox
-          OGRSpatialReference srs;
-          srs.importFromEPSGA(4326);
-
-          int target_epsg_number = stoi(crs_name.substr(5));
           OGRSpatialReference target;
-          auto err = target.importFromEPSGA(target_epsg_number);
+          auto err = target.SetFromUserInput(decl.c_str());
           if (err != OGRERR_NONE)
-            throw Spine::Exception(BCP, "Unknown CRS: ' " + crs_name + "'");
+            throw Spine::Exception(BCP, "Unknown spatial reference declaration: '" + decl + "'");
 
           boost::shared_ptr<OGRCoordinateTransformation> transformation(
               OGRCreateCoordinateTransformation(&srs, &target));
@@ -522,13 +567,13 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
           if (transformation == nullptr)
             throw Spine::Exception(BCP, "OGRCreateCoordinateTransformation function call failed");
 
-          // Intersect with target EPSG bounding box (latlon)
+          // Intersect with target EPSG bounding box (latlon) if it is available
 
-          Engine::Gis::BBox epsg_box = gisengine.getBBox(target_epsg_number);
-          auto x1 = std::max(epsg_box.west, geographicBoundingBox.xMin);
-          auto x2 = std::min(epsg_box.east, geographicBoundingBox.xMax);
-          auto y1 = std::max(epsg_box.south, geographicBoundingBox.yMin);
-          auto y2 = std::min(epsg_box.north, geographicBoundingBox.yMax);
+          Engine::Gis::BBox epsg_box = crs_bbox.at(id);
+          auto x1 = std::max(geographicBoundingBox.xMin, epsg_box.west);
+          auto x2 = std::min(geographicBoundingBox.xMax, epsg_box.east);
+          auto y1 = std::max(geographicBoundingBox.yMin, epsg_box.south);
+          auto y2 = std::min(geographicBoundingBox.yMax, epsg_box.north);
 
           // Produce bbox only if there is overlap
 
@@ -542,7 +587,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
             if (ok)
             {
               // Acceptable CRS
-              layer_crs_list.PushBack(crs_name);
+              layer_crs_list.PushBack(id);
 
               // Use proper coordinate ordering for the EPSG
               if (target.EPSGTreatsAsLatLong())

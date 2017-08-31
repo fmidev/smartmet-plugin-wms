@@ -133,7 +133,7 @@
         <Title>Default style</Title>
         <LegendURL width="200" height="200">
           <Format>image/png</Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=ely%3Aelymap"/>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=ely%3Aelymap"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -176,7 +176,7 @@
         <Title>Default style</Title>
         <LegendURL width="200" height="200">
           <Format>image/png</Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=ely%3Awmsmap"/>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=ely%3Awmsmap"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -222,7 +222,7 @@
         <Title>Default style</Title>
         <LegendURL width="200" height="200">
           <Format>image/png</Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Aflobrg"/>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Aflobrg"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -341,7 +341,7 @@
         <Title>Default style</Title>
         <LegendURL width="200" height="200">
           <Format>image/png</Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Aicedft"/>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Aicedft"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -374,7 +374,7 @@
         <Title>Default style</Title>
         <LegendURL width="200" height="200">
           <Format>image/png</Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Aicefra_zone"/>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Aicefra_zone"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -468,7 +468,7 @@
         <Title>Default style</Title>
         <LegendURL width="200" height="200">
           <Format>image/png</Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Aicemap_new"/>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Aicemap_new"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -501,7 +501,7 @@
         <Title>Default style</Title>
         <LegendURL width="200" height="200">
           <Format>image/png</Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Aicerdg"/>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Aicerdg"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -521,7 +521,7 @@
         <Title>Default style</Title>
         <LegendURL width="200" height="200">
           <Format>image/png</Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Aicerft"/>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Aicerft"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -541,7 +541,7 @@
         <Title>Default style</Title>
         <LegendURL width="200" height="200">
           <Format>image/png</Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Ajmdbrr"/>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Ajmdbrr"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -645,7 +645,7 @@
         <Title>Default style</Title>
         <LegendURL width="200" height="200">
           <Format>image/png</Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation"/>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -688,7 +688,7 @@
         <Title>Default style</Title>
         <LegendURL width="200" height="200">
           <Format>image/png</Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3At2m_p"/>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3At2m_p"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -762,7 +762,7 @@
         <Title>Default style</Title>
         <LegendURL width="200" height="200">
           <Format>image/png</Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Awind_legend"/>
+          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Awind_legend"/>
         </LegendURL>
       </Style>
     </Layer>

@@ -6,16 +6,16 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "State.h"
-#include <spine/Json.h>
-#include <spine/Exception.h>
-#include <macgyver/StringConversion.h>
-#include <gis/Host.h>
-#include <gis/PostGIS.h>
-#include <gis/Box.h>
-#include <gis/OGR.h>
-#include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
 #include <boost/timer/timer.hpp>
+#include <ctpp2/CDT.hpp>
+#include <gis/Box.h>
+#include <gis/Host.h>
+#include <gis/OGR.h>
+#include <gis/PostGIS.h>
+#include <macgyver/StringConversion.h>
+#include <spine/Exception.h>
+#include <spine/Json.h>
 #include <cairo.h>
 
 namespace SmartMet
@@ -228,27 +228,6 @@ std::string convertText(const std::string& theText)
   return ret;
 }
 
-bool operator==(const Fmi::Feature& f1, const Fmi::Feature& f2)
-{
-  if ((!f1.geom && f2.geom) || (f1.geom && !f2.geom))
-    return false;
-
-  if (f1.geom && f2.geom && !f1.geom->Equals(f2.geom.get()))
-    return false;
-
-  return (f1.attributes == f2.attributes);
-}
-
-bool operator==(const Fmi::FeaturePtr& f1, const Fmi::FeaturePtr& f2)
-{
-  if (!f1 && !f2)
-    return true;
-
-  if ((!f1 && f2) || (f1 && !f2))
-    return false;
-
-  return (*f1 == *f2);
-}
 }  // anonymous namespace
 
 // ----------------------------------------------------------------------

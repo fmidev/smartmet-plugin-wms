@@ -154,6 +154,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
     {
       theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setHeader("Content-Type", mimeType(product.type));
+      theResponse.setStatus(Spine::HTTP::Status::no_content);
       return;
     }
 
@@ -354,7 +355,10 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       if (theRequest.getResource() == "/wms")
       {
         WMSQueryStatus status;
-        status = wmsQuery(theReactor, theRequest, theResponse);
+
+        theResponse.setStatus(Spine::HTTP::Status::ok);
+
+        status = wmsQuery(theReactor, theRequest, theResponse);  // may modify HTTP status
         switch (status)
         {
           case WMSQueryStatus::FORBIDDEN:
@@ -363,14 +367,13 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
           case WMSQueryStatus::OK:
           case WMSQueryStatus::EXCEPTION:
           default:
-            theResponse.setStatus(Spine::HTTP::Status::ok);
             break;
         }
       }
       else
       {
-        daliQuery(theReactor, theRequest, theResponse);
         theResponse.setStatus(Spine::HTTP::Status::ok);
+        daliQuery(theReactor, theRequest, theResponse);
       }
 
       // Adding headers
@@ -659,18 +662,11 @@ bool Plugin::queryIsFast(const Spine::HTTP::Request &theRequest) const
 
 Plugin::~Plugin()
 {
-  try
-  {
-    if (itsImageCache != NULL)
-      itsImageCache->shutdown();
+  if (itsImageCache != nullptr)
+    itsImageCache->shutdown();
 
-    if (itsWMSConfig != NULL)
-      itsWMSConfig->shutdown();
-  }
-  catch (...)
-  {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
-  }
+  if (itsWMSConfig != nullptr)
+    itsWMSConfig->shutdown();
 }
 
 // ----------------------------------------------------------------------
@@ -1289,6 +1285,22 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
       {
         std::string layerName = *(theRequest.getParameter("LAYER"));
         itsWMSConfig->getLegendGraphic(layerName, product, state);
+        // getLegendGraphic-function sets width and height, but if width & height is given in
+        // request override values
+        std::string xsize = Fmi::to_string(*product.width);
+        std::string ysize = Fmi::to_string(*product.height);
+        if (theRequest.getParameter("WIDTH"))
+        {
+          xsize = *(thisRequest.getParameter("projection.xsize"));
+          product.width = Fmi::stoi(xsize);
+        }
+        if (theRequest.getParameter("HEIGHT"))
+        {
+          ysize = *(thisRequest.getParameter("projection.ysize"));
+          product.height = Fmi::stoi(ysize);
+        }
+        thisRequest.setParameter("projection.xsize", xsize);
+        thisRequest.setParameter("projection.ysize", ysize);
       }
     }
     catch (...)
@@ -1313,6 +1325,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
     {
       theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setHeader("Content-Type", mimeType(product.type));
+      theResponse.setStatus(Spine::HTTP::Status::no_content);
       return WMSQueryStatus::OK;
     }
 

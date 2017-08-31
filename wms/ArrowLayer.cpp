@@ -282,7 +282,7 @@ PointValues read_observations(const ArrowLayer& layer,
     throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
   std::unique_ptr<OGRCoordinateTransformation> transformation(
-      OGRCreateCoordinateTransformation(crs.get(), obscrs.get()));
+      OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
   if (!transformation)
     throw Spine::Exception(
         BCP, "Failed to create the needed coordinate transformation when drawing wind arrows");
