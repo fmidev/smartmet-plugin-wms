@@ -90,6 +90,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Upcoming
+- Using request's host and apikey when generating online resource urls for GetCapabilities response
+
 * Thu Aug 31 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.31-1.fmi
 - Fixed handling of invalid CRS requests to return the correct WMS exception report
 
