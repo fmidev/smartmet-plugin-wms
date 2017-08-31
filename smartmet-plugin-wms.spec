@@ -93,6 +93,10 @@ rm -rf $RPM_BUILD_ROOT
 * Thu Aug 31 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.31-1.fmi
 - Fixed handling of invalid CRS requests to return the correct WMS exception report
 
+* Tue Aug 29 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.8.29-1.fmi
+- Size of returned map for GetLegendGraphic request is calculated automatically (fixed size was used before).
+  When WIDTH, HEIGHT request parameters are present they override automatically calculated values. 
+
 * Mon Aug 28 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.8.28-1.fmi
 - Upgrade to boost 1.65
 

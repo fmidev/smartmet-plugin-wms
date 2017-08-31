@@ -251,8 +251,8 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
 
     itsParameters.layer = layerName;
     itsParameters.style = styleName;
-    itsParameters.width = 1000;  // default values
-    itsParameters.height = 1000;
+    itsParameters.width = 500;
+    itsParameters.height = 500;
     itsParameters.format = *(theRequest.getParameter("FORMAT"));
     itsParameters.version = *(theRequest.getParameter("VERSION"));
     itsParameters.sld_version = *(theRequest.getParameter("SLD_VERSION"));
