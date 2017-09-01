@@ -170,7 +170,7 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
 
     // http/https scheme selection based on 'X-Forwarded-Proto' header
     auto host_protocol = theRequest.getProtocol();
-    std::string protocol(host_protocol ? *host_protocol : "" /*"http"*/);
+    std::string protocol(host_protocol ? *host_protocol : "http");
     if (!protocol.empty())
       protocol += "://";
 
