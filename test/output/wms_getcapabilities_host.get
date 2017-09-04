@@ -43,12 +43,12 @@
           <Get>
             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
                             xlink:type="simple"
-                            xlink:href="http://smartmet.fmi.fi/wms"/>
+                            xlink:href="http://test.fmi.fi/wms"/>
           </Get>
           <Post>
             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
                             xlink:type="simple"
-                            xlink:href="http://smartmet.fmi.fi/wms"/>
+                            xlink:href="http://test.fmi.fi/wms"/>
           </Post>
         </HTTP>
       </DCPType>
@@ -61,12 +61,12 @@
           <Get>
             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
                             xlink:type="simple"
-                            xlink:href="http://smartmet.fmi.fi/wms"/>
+                            xlink:href="http://test.fmi.fi/wms"/>
           </Get>
           <Post>
             <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
                             xlink:type="simple"
-                            xlink:href="http://smartmet.fmi.fi/wms"/>
+                            xlink:href="http://test.fmi.fi/wms"/>
           </Post>
         </HTTP>
       </DCPType>
