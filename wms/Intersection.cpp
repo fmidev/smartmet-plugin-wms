@@ -242,10 +242,9 @@ void Intersection::init(Engine::Querydata::Q q,
 
     const auto& qEngine = theState.getQEngine();
     auto matrix = qEngine.getValues(q, valueshash, options.time);
-    OGRSpatialReference* sr = nullptr;
-    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, sr);
+    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs.get());
     std::vector<OGRGeometryPtr> isobands =
-        contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), sr);
+        contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), crs.get());
     isoband = *(isobands.begin());
 
     if (!isoband || isoband->IsEmpty())

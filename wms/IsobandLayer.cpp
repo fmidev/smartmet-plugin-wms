@@ -322,6 +322,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           geom2.reset(geom2->Difference(outshape.get()));
 
         // Intersect with data too
+
         geom2 = intersections.intersect(geom2);
 
         // Finally produce output if we still have something left

@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.9.4
+Version: 17.9.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -90,6 +90,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Sep  7 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.7-1.fmi
+- Fixed polygon intersections to use the requested spatial references
+
 * Mon Sep  4 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.4-1.fmi
 - Using request's host and apikey when generating online resource urls for GetCapabilities response
 
