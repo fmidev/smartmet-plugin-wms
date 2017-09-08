@@ -62,7 +62,6 @@
 		    }
 		},
 		{
-		    "qid": "time",
 		    "layer_type": "time",	
 		    "timestamp": "validtime",
                     "timezone": "Europe/Helsinki",
