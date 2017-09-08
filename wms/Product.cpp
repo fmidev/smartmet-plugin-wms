@@ -4,10 +4,10 @@
 #include "Config.h"
 #include "Hash.h"
 #include "State.h"
+#include <boost/foreach.hpp>
+#include <ctpp2/CDT.hpp>
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
-#include <ctpp2/CDT.hpp>
-#include <boost/foreach.hpp>
 
 namespace SmartMet
 {
@@ -75,9 +75,11 @@ void Product::init(const Json::Value& theJson, const State& theState, const Conf
     if (!height && projection.ysize)
       height = projection.ysize;
 
-    // The reverse is not allowed
+#if 0
+    // WMS layers may not define either directly, since the desired size is given in the query string
     if (!width || !height)
       throw Spine::Exception(BCP, "SVG width or height is undefined");
+#endif
   }
   catch (...)
   {
