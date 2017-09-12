@@ -467,7 +467,6 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Get projection details
 
-    // bool has_data_proj = (projection.crs && *projection.crs == "data");
     projection.update(q);
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();

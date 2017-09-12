@@ -42,12 +42,12 @@ clean:
 	rm -f $(PROG) *~ Plugintest failures/*
 
 test: $(PROG)
+	rm -f failures/*
+	./TestRunner.sh
 	@if [ -e output/wms_getcapabilities.get ]; then \
 	   echo Validating output/wms_getcapabilities.get; \
 	   cat output/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
 	fi
-	rm -f failures/*
-	./TestRunner.sh
 	@rm -f wms-access-log
 	@if [ -e failures/wms_getcapabilities.get ]; then \
 	   echo Validating failures/wms_getcapabilities.get; \

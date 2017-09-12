@@ -6,14 +6,14 @@
 #include "Layer.h"
 #include "Select.h"
 #include "State.h"
+#include <boost/foreach.hpp>
+#include <ctpp2/CDT.hpp>
 #include <engines/geonames/Engine.h>
+#include <gdal/ogr_spatialref.h>
+#include <gis/Box.h>
+#include <macgyver/NearTree.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
-#include <macgyver/NearTree.h>
-#include <gis/Box.h>
-#include <gdal/ogr_spatialref.h>
-#include <ctpp2/CDT.hpp>
-#include <boost/foreach.hpp>
 
 // TODO:
 #include <boost/timer/timer.hpp>
@@ -26,6 +26,7 @@ class XY
   XY(double theX, double theY) : itsX(theX), itsY(theY) {}
   double x() const { return itsX; }
   double y() const { return itsY; }
+
  private:
   double itsX;
   double itsY;
@@ -150,7 +151,6 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     auto q = getModel(theState);
 
     // Get projection details
-    // bool has_data_proj = (projection.crs && *projection.crs == "data");
     projection.update(q);
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();

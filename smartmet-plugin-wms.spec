@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.9.8
+Version: 17.9.12
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -27,9 +27,9 @@ BuildRequires: smartmet-engine-observation-devel >= 17.8.28
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 17.8.28
 BuildRequires: smartmet-engine-geonames-devel >= 17.8.29
-BuildRequires: smartmet-engine-querydata-devel >= 17.8.28
-BuildRequires: smartmet-engine-contour-devel >= 17.8.28
-BuildRequires: smartmet-library-gis-devel >= 17.8.28
+BuildRequires: smartmet-engine-querydata-devel >= 17.9.12
+BuildRequires: smartmet-engine-contour-devel >= 17.9.12
+BuildRequires: smartmet-library-gis-devel >= 17.9.12
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.5
 BuildRequires: jsoncpp-devel
@@ -42,14 +42,14 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
 Requires: librsvg2 >= 2.40.6
-Requires: smartmet-library-gis >= 17.8.28
+Requires: smartmet-library-gis >= 17.9.12
 Requires: smartmet-library-macgyver >= 17.8.28
 Requires: smartmet-library-giza >= 17.8.28
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 17.8.28
 %endif
-Requires: smartmet-engine-querydata >= 17.8.28
-Requires: smartmet-engine-contour >= 17.8.28
+Requires: smartmet-engine-querydata >= 17.9.12
+Requires: smartmet-engine-contour >= 17.9.12
 Requires: smartmet-engine-gis >= 17.8.28
 Requires: smartmet-engine-geonames >= 17.8.29
 Requires: smartmet-server >= 17.8.28
@@ -90,6 +90,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Sep 12 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.12-1.fmi
+- Using new contouring API which does not care if crs=data is used.
+
 * Fri Sep  8 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.8-1.fmi
 - Allow projection settings to be missing in WMS product configuration files
 - Improved query string handling via fixes to Spine

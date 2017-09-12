@@ -145,7 +145,6 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     // Get projection details
 
-    bool has_data_proj = (projection.crs && *projection.crs == "data");
     projection.update(q);
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();
@@ -164,8 +163,6 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         throw Spine::Exception(
             BCP,
             "Resampling data in IsolineLayer requires DEM and land cover data to be available");
-
-      has_data_proj = true;  // no need to reproject anymore
 
       q = q->sample(param,
                     valid_time,
@@ -279,13 +276,9 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     const auto& qEngine = theState.getQEngine();
     auto matrix = qEngine.getValues(q, valueshash, options.time);
 
-    OGRSpatialReference* sr = nullptr;
-    if (!has_data_proj)
-      sr = crs.get();
-
-    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, sr);
+    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs.get());
     std::vector<OGRGeometryPtr> geoms =
-        contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), sr);
+        contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), crs.get());
 
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
