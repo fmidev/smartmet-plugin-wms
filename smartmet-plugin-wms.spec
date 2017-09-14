@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.9.12
+Version: 17.9.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -90,6 +90,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Sep 14 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.9.14-1.fmi
+- Added configurability for GetLegendGraphic-response:
+Parameter name, unit and layout of output document can be configured (see. BRAINSTORM-922)
+
 * Tue Sep 12 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.12-1.fmi
 - Using new contouring API which does not care if crs=data is used.
 

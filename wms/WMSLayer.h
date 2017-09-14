@@ -12,6 +12,7 @@
 #pragma once
 
 #include "WMSLayerStyle.h"
+#include "WMSLegendGraphicSettings.h"
 #include "WMSTimeDimension.h"
 
 #include <engines/gis/BBox.h>
@@ -79,6 +80,7 @@ class WMSLayer
   std::string customer;
   std::string productFile;  // dali product
   LegendGraphicInfo legendGraphicInfo;
+  WMSLegendGraphicSettings legendGraphicSettings;
 
   friend class WMSLayerFactory;
   friend std::ostream& operator<<(std::ostream&, const WMSLayer&);
@@ -92,7 +94,8 @@ class WMSLayer
   const std::string& getName() const { return name; }
   const std::string& getCustomer() const { return customer; }
   const std::string& getDaliProductFile() const { return productFile; }
-  LegendGraphicResult getLegendGraphic(const std::string& templateDirectory) const;
+  LegendGraphicResult getLegendGraphic(const std::string& templateDirectory,
+                                       const WMSLegendGraphicSettings& settings) const;
 
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;
