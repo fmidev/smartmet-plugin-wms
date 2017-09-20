@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.9.12
+Version: 17.9.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -90,6 +90,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Sep 20 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.20-1.fmi
+- Output lolimit and hilimit to geojson even if +-inf
+
 * Tue Sep 12 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.12-1.fmi
 - Using new contouring API which does not care if crs=data is used.
 

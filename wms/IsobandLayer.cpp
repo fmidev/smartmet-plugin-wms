@@ -17,6 +17,7 @@
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
+#include <limits>
 
 // TODO:
 #include <boost/timer/timer.hpp>
@@ -331,10 +332,27 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           isoband_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs);
           isoband_cdt["type"] = Geometry::name(*geom2, theState.getType());
           isoband_cdt["layertype"] = "isoband";
-          if (isoband.lolimit)
-            isoband_cdt["lolimit"] = *isoband.lolimit;
-          if (isoband.hilimit)
-            isoband_cdt["hilimit"] = *isoband.hilimit;
+
+          // Missing bands are marked with NaN limits
+          if (!isoband.lolimit && !isoband.hilimit)
+          {
+            isoband_cdt["lolimit"] = "NaN";
+            isoband_cdt["hilimit"] = "NaN";
+          }
+          else
+          {
+            // lolimit is a finite value or -Inf
+            if (isoband.lolimit)
+              isoband_cdt["lolimit"] = *isoband.lolimit;
+            else
+              isoband_cdt["lolimit"] = "-Infinity";
+
+            // hilimit is a finite value  or +Inf
+            if (isoband.hilimit)
+              isoband_cdt["hilimit"] = *isoband.hilimit;
+            else
+              isoband_cdt["hilimit"] = "+Infinity";
+          }
 
           theState.addPresentationAttributes(isoband_cdt, css, attributes, isoband.attributes);
 
