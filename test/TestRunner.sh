@@ -2,7 +2,7 @@
 
 # Delete old results
 
-rm -rf failures
+rm -f failures/*
 
 # Start the test handler with named pipes
 
