@@ -92,6 +92,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 
 * Mon Sep 25 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.9.25-1.fmi
+- Encode lolimit and hilimit with null in GeoJSON, infinities are not valid in JSON
 - Added configurability for GetLegendGraphic-response: Parameter name, unit and layout of output document can be configured (BRAINSTORM-922)
 
 * Wed Sep 20 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.20-1.fmi

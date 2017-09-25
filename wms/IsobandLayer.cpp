@@ -333,26 +333,16 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           isoband_cdt["type"] = Geometry::name(*geom2, theState.getType());
           isoband_cdt["layertype"] = "isoband";
 
-          // Missing bands are marked with NaN limits
-          if (!isoband.lolimit && !isoband.hilimit)
-          {
-            isoband_cdt["lolimit"] = "NaN";
-            isoband_cdt["hilimit"] = "NaN";
-          }
+          // Use null to indicate unset values in GeoJSON
+          if (isoband.lolimit)
+            isoband_cdt["lolimit"] = *isoband.lolimit;
           else
-          {
-            // lolimit is a finite value or -Inf
-            if (isoband.lolimit)
-              isoband_cdt["lolimit"] = *isoband.lolimit;
-            else
-              isoband_cdt["lolimit"] = "-Infinity";
+            isoband_cdt["lolimit"] = "null";
 
-            // hilimit is a finite value  or +Inf
-            if (isoband.hilimit)
-              isoband_cdt["hilimit"] = *isoband.hilimit;
-            else
-              isoband_cdt["hilimit"] = "+Infinity";
-          }
+          if (isoband.hilimit)
+            isoband_cdt["hilimit"] = *isoband.hilimit;
+          else
+            isoband_cdt["hilimit"] = "null";
 
           theState.addPresentationAttributes(isoband_cdt, css, attributes, isoband.attributes);
 
