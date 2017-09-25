@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.9.20
+Version: 17.9.25
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -90,6 +90,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+
+* Mon Sep 25 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.9.25-1.fmi
+- Added configurability for GetLegendGraphic-response: Parameter name, unit and layout of output document can be configured (BRAINSTORM-922)
+
 * Wed Sep 20 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.20-1.fmi
 - Output lolimit and hilimit to geojson even if +-inf
 

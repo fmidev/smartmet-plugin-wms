@@ -10,6 +10,7 @@
 #include "WMS.h"
 #include "WMSLayer.h"
 #include "WMSLayerProxy.h"
+#include "WMSLegendGraphicSettings.h"
 
 #include <engines/gis/Engine.h>
 #include <engines/observation/Engine.h>
@@ -159,6 +160,8 @@ class WMSConfig
   int itsActiveThreadCount;
 
   std::map<std::string, Json::Value> itsLegendGraphicLayers;
+  // configuration info for legend (parameter names, units, legend size)
+  WMSLegendGraphicSettings itsLegendGraphicSettings;
 };  // class WMSConfig
 
 }  // namespace WMS

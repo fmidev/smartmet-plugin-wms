@@ -575,8 +575,8 @@ WMSConfig::WMSConfig(const Config& daliConfig,
       itsObsEngine(obsEngine),
 #endif
       itsShutdownRequested(false),
-      itsActiveThreadCount(0)
-
+      itsActiveThreadCount(0),
+      itsLegendGraphicSettings(daliConfig.getConfig())
 {
   try
   {
@@ -1080,8 +1080,8 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
 
   auto my_layers = boost::atomic_load(&itsLayers);
 
-  LegendGraphicResult result =
-      my_layers->at(layerName).getLayer()->getLegendGraphic(itsDaliConfig.templateDirectory());
+  LegendGraphicResult result = my_layers->at(layerName).getLayer()->getLegendGraphic(
+      itsDaliConfig.templateDirectory(), itsLegendGraphicSettings);
   width = result.width;
   height = result.height;
 

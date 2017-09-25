@@ -99,6 +99,88 @@ LegendGraphicInfo handle_json_layers(Json::Value layersJson)
   return ret;
 }
 
+void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettings& settings)
+{
+  Json::Value nulljson;
+
+  auto json = root.get("defs", nulljson);
+
+  if (json.isNull())
+    return;
+
+  auto legendGraphicJson = json.get("get_legend_graphic", nulljson);
+
+  if (legendGraphicJson.isNull())
+    return;
+
+  auto parametersJson = legendGraphicJson.get("parameters", nulljson);
+
+  // parameters
+  for (unsigned int i = 0; i < parametersJson.size(); i++)
+  {
+    auto parameterJson = parametersJson[i];
+
+    std::string data_name;
+    std::string name;
+    std::string unit;
+
+    json = parameterJson.get("data_name", nulljson);
+    if (!json.isNull())
+      data_name = json.asString();
+    json = parameterJson.get("name", nulljson);
+    if (!json.isNull())
+      name = json.asString();
+    json = parameterJson.get("unit", nulljson);
+    if (!json.isNull())
+      unit = json.asString();
+
+    if (!data_name.empty())
+    {
+      std::vector<std::string> param_names;
+      boost::algorithm::split(param_names, data_name, boost::algorithm::is_any_of(","));
+
+      for (const auto& param_name : param_names)
+      {
+        settings.parameters.insert(std::make_pair(param_name, LegendGraphicParameter(name, unit)));
+      }
+    }
+  }
+
+  // layout
+  auto layoutJson = legendGraphicJson.get("layout", nulljson);
+
+  if (json.isNull())
+    return;
+
+  json = layoutJson.get("param_name_xoffset", nulljson);
+  if (!json.isNull())
+    settings.layout.param_name_xoffset = json.asInt();
+  json = layoutJson.get("param_name_yoffset", nulljson);
+  if (!json.isNull())
+    settings.layout.param_name_yoffset = json.asInt();
+  json = layoutJson.get("param_unit_xoffset", nulljson);
+  if (!json.isNull())
+    settings.layout.param_unit_xoffset = json.asInt();
+  json = layoutJson.get("param_unit_yoffset", nulljson);
+  if (!json.isNull())
+    settings.layout.param_unit_yoffset = json.asInt();
+  json = layoutJson.get("symbol_group_x_padding", nulljson);
+  if (!json.isNull())
+    settings.layout.symbol_group_x_padding = json.asInt();
+  json = layoutJson.get("symbol_group_y_padding", nulljson);
+  if (!json.isNull())
+    settings.layout.symbol_group_y_padding = json.asInt();
+  json = layoutJson.get("legend_xoffset", nulljson);
+  if (!json.isNull())
+    settings.layout.legend_xoffset = json.asInt();
+  json = layoutJson.get("legend_yoffset", nulljson);
+  if (!json.isNull())
+    settings.layout.legend_yoffset = json.asInt();
+  json = layoutJson.get("legend_width", nulljson);
+  if (!json.isNull())
+    settings.layout.legend_width = json.asInt();
+}
+
 unsigned int isoband_label_height(const std::string& j)
 {
   Json::Value json;
@@ -165,7 +247,10 @@ void WMSLayer::addStyles(const Json::Value& root, const std::string& layerName)
   }
 
   if (!legendGraphicInfo.empty())
+  {
+    get_legend_graphic_settings(root, legendGraphicSettings);
     addStyle(layerName);
+  }
 }
 
 void WMSLayer::addStyle(const std::string& layerName)
@@ -185,17 +270,46 @@ void WMSLayer::addStyle(const std::string& layerName)
   styles.push_back(layerStyle);
 }
 
-LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& templateDirectory) const
+LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& templateDirectory,
+                                               const WMSLegendGraphicSettings& settings) const
 {
   LegendGraphicResult ret;
   ret.height = 20;
   ret.width = 150;
-  unsigned int xpos = 20;
-  unsigned int ypos = 20;
-  unsigned int symbol_xpos = 0;  // set later
+  unsigned int xpos = 0;
+  unsigned int ypos = 0;
+  unsigned int symbolGroupIndex = 0;
+  unsigned int symbol_xpos = 0;
   unsigned int symbol_ypos = 0;
   bool firstSymbol = true;
-  unsigned int symbolGroupIndex = 0;
+
+  // settings from wms configuration file
+  WMSLegendGraphicSettings actualSettings = settings;
+
+  // settings from layer file (product file) will overwrite wms configuration file settings
+  for (const auto& pair : legendGraphicSettings.parameters)
+    actualSettings.parameters[pair.first] = pair.second;
+
+  if (legendGraphicSettings.layout.param_name_xoffset)
+    actualSettings.layout.param_name_xoffset = legendGraphicSettings.layout.param_name_xoffset;
+  if (legendGraphicSettings.layout.param_name_yoffset)
+    actualSettings.layout.param_name_yoffset = legendGraphicSettings.layout.param_name_yoffset;
+  if (legendGraphicSettings.layout.param_unit_xoffset)
+    actualSettings.layout.param_unit_xoffset = legendGraphicSettings.layout.param_unit_xoffset;
+  if (legendGraphicSettings.layout.param_unit_yoffset)
+    actualSettings.layout.param_unit_yoffset = legendGraphicSettings.layout.param_unit_yoffset;
+  if (legendGraphicSettings.layout.symbol_group_x_padding)
+    actualSettings.layout.symbol_group_x_padding =
+        legendGraphicSettings.layout.symbol_group_x_padding;
+  if (legendGraphicSettings.layout.symbol_group_y_padding)
+    actualSettings.layout.symbol_group_y_padding =
+        legendGraphicSettings.layout.symbol_group_y_padding;
+  if (legendGraphicSettings.layout.legend_xoffset)
+    actualSettings.layout.legend_xoffset = legendGraphicSettings.layout.legend_xoffset;
+  if (legendGraphicSettings.layout.legend_yoffset)
+    actualSettings.layout.legend_yoffset = legendGraphicSettings.layout.legend_yoffset;
+  if (legendGraphicSettings.layout.legend_width)
+    actualSettings.layout.legend_width = legendGraphicSettings.layout.legend_width;
 
   struct hash_item
   {
@@ -206,34 +320,59 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& templateDirect
 
   hash_item symbolGroupHashItem;
   symbolGroupHashItem.templateFile = templateDirectory + "/wms_get_legend_graphic_symbol.c2t";
+
+  std::set<std::string> processedParameters;
+
   for (auto lgi : legendGraphicInfo)
   {
     std::string layerType = lgi["layer_type"];
     std::string parameterName = lgi["parameter_name"];
+
+    // do not process same parameter+layertype multiple times, except for symbols (symbol group)
+    if (processedParameters.find(parameterName + layerType) != processedParameters.end() &&
+        layerType.compare("symbol") != 0)
+      continue;
+
+    const LegendGraphicParameter* parameterSettings = nullptr;
+    if (actualSettings.parameters.find(parameterName) != actualSettings.parameters.end())
+      parameterSettings = &(actualSettings.parameters.at(parameterName));
+
+    std::string legendHeader = (parameterSettings ? parameterSettings->name : parameterName);
 
     if (layerType == "symbol")
     {
       if (parameterName == "PrecipitationForm")
       {
         hash_item hi;
-        hi.hash["header_xpos"] = xpos;
-        hi.hash["header_ypos"] = ypos;
-        hi.hash["rain_symbol_xpos"] = xpos + 20;
-        hi.hash["rain_symbol_ypos"] = ypos + 15;
-        hi.hash["rain_text_xpos"] = xpos + 30;
-        hi.hash["rain_text_ypos"] = ypos + 20;
-        hi.hash["drizzle_symbol_xpos"] = xpos + 20;
-        hi.hash["drizzle_symbol_ypos"] = ypos + 35;
-        hi.hash["drizzle_text_xpos"] = xpos + 30;
-        hi.hash["drizzle_text_ypos"] = ypos + 40;
-        hi.hash["snow_symbol_xpos"] = xpos + 20;
-        hi.hash["snow_symbol_ypos"] = ypos + 55;
-        hi.hash["snow_text_xpos"] = xpos + 30;
-        hi.hash["snow_text_ypos"] = ypos + 60;
+        hi.hash["precipitation_form_header"] = legendHeader;
+        hi.hash["header_xpos"] = xpos + 20;
+        hi.hash["header_ypos"] = ypos + 20;
+        hi.hash["rain_symbol_xpos"] = xpos + *actualSettings.layout.legend_xoffset;
+        hi.hash["rain_symbol_ypos"] = ypos + *actualSettings.layout.legend_yoffset;
+        hi.hash["rain_text_xpos"] = xpos + *actualSettings.layout.param_name_xoffset +
+                                    *actualSettings.layout.symbol_group_x_padding;
+        hi.hash["rain_text_ypos"] = ypos + *actualSettings.layout.legend_yoffset;
+        hi.hash["drizzle_symbol_xpos"] = xpos + *actualSettings.layout.legend_xoffset;
+        hi.hash["drizzle_symbol_ypos"] = ypos + *actualSettings.layout.legend_yoffset +
+                                         *actualSettings.layout.symbol_group_y_padding;
+        hi.hash["drizzle_text_xpos"] = xpos + *actualSettings.layout.param_name_xoffset +
+                                       *actualSettings.layout.symbol_group_x_padding;
+        hi.hash["drizzle_text_ypos"] = ypos + *actualSettings.layout.legend_yoffset +
+                                       *actualSettings.layout.symbol_group_y_padding;
+        hi.hash["snow_symbol_xpos"] = xpos + *actualSettings.layout.legend_xoffset;
+        hi.hash["snow_symbol_ypos"] = ypos + *actualSettings.layout.legend_yoffset +
+                                      (*actualSettings.layout.symbol_group_y_padding * 2);
+        hi.hash["snow_text_xpos"] = xpos + *actualSettings.layout.param_name_xoffset +
+                                    *actualSettings.layout.symbol_group_x_padding;
+        hi.hash["snow_text_ypos"] = ypos + *actualSettings.layout.legend_yoffset +
+                                    (*actualSettings.layout.symbol_group_y_padding * 2);
+
         hi.templateFile = (templateDirectory + "/wms_get_legend_graphic_precipitation_form.c2t");
         legendGraphicHashVector.push_back(hi);
-        xpos += 150;
-        ret.height = 90;
+        xpos += *actualSettings.layout.legend_width;
+        ret.height = ypos + *actualSettings.layout.legend_yoffset +
+                     (*actualSettings.layout.symbol_group_y_padding * 2) +
+                     *actualSettings.layout.symbol_group_y_padding;
       }
       else
       {
@@ -245,20 +384,20 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& templateDirect
           symbolGroupHashItem.hash["header_ypos"] = ypos;
           symbolGroupHashItem.hash["symbol_group"] = CTPP::CDT(CTPP::CDT::ARRAY_VAL);
           firstSymbol = false;
-          symbol_xpos = xpos + 20;
-          symbol_ypos = ypos + 50;
-          xpos += 150;
+          symbol_xpos = xpos + *actualSettings.layout.legend_xoffset;
+          symbol_ypos = ypos + *actualSettings.layout.legend_yoffset;
+          xpos += *actualSettings.layout.legend_width;
         }
         CTPP::CDT& symbolHash = symbolGroupHashItem.hash["symbol_group"][symbolGroupIndex];
         symbolHash["name"] = lgi["symbol"];
         symbolHash["xpos"] = symbol_xpos;
         symbolHash["ypos"] = symbol_ypos;
         symbolHash["text"] = lgi["symbol"];
-        symbolHash["text_xpos"] = symbol_xpos + 20;
-        symbolHash["text_ypos"] = symbol_ypos + 15;
-        symbol_ypos += 20;
+        symbolHash["text_xpos"] = symbol_xpos + *actualSettings.layout.symbol_group_x_padding;
+        symbolHash["text_ypos"] = symbol_ypos + 10;
+        symbol_ypos += *actualSettings.layout.symbol_group_y_padding;
         symbolGroupIndex++;
-        ret.height = symbol_ypos + 20;
+        ret.height = symbol_ypos + *actualSettings.layout.symbol_group_y_padding;
       }
     }
     else if (layerType == "isoband")
@@ -267,48 +406,37 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& templateDirect
       hi.templateFile = templateDirectory + "/wms_get_legend_graphic_isoband.c2t";
       hi.hash["isoband_json"] = lgi["isobands"];
       hi.hash["isoband_css"] = lgi["css"];
-      hi.hash["isoband_text_xpos"] = xpos;
-      hi.hash["isoband_text_ypos"] = ypos;
-      hi.hash["isoband_unit_xpos"] = xpos + 10;
-      hi.hash["isoband_unit_ypos"] = ypos + 20;
-      hi.hash["isoband_header"] = parameterName;
+      hi.hash["isoband_text_xpos"] = xpos + *actualSettings.layout.param_name_xoffset;
+      hi.hash["isoband_text_ypos"] = ypos + *actualSettings.layout.param_name_yoffset;
+      hi.hash["isoband_unit_xpos"] = xpos + *actualSettings.layout.param_unit_xoffset;
+      hi.hash["isoband_unit_ypos"] = ypos + *actualSettings.layout.param_unit_yoffset;
+      hi.hash["isoband_symbol_xpos"] = xpos + *actualSettings.layout.legend_xoffset;
+      hi.hash["isoband_symbol_ypos"] = ypos + *actualSettings.layout.legend_yoffset;
+      hi.hash["isoband_header"] = legendHeader;
       hi.hash["isoband_id"] = (parameterName + "_label");
+      hi.hash["isoband_unit"] = (parameterSettings ? parameterSettings->unit : "");
 
-      if (parameterName == "Precipitation1h")
-      {
-        hi.hash["isoband_unit"] = "mm/h";
-      }
-      else if (parameterName == "Temperature")
-      {
-        hi.hash["isoband_unit"] = "celcius";
-      }
-      else if (parameterName == "WindSpeedMS")
-      {
-        hi.hash["isoband_unit"] = "m/s";
-      }
-      else
-      {
-        hi.hash["isoband_unit"] = "";
-      }
       legendGraphicHashVector.push_back(hi);
-      xpos += 150;
+      xpos += *actualSettings.layout.legend_width;
     }
     else if (layerType == "isoline")
     {
       hash_item hi;
       hi.templateFile = templateDirectory + "/wms_get_legend_graphic_isoline.c2t";
-      hi.hash["isoline_header"] = parameterName + " isoline";
+      hi.hash["isoline_header"] = legendHeader + " isoline";
       hi.hash["isoline_css"] = lgi["css"];
       hi.hash["isoline_class"] = lgi["class"];
-      hi.hash["isoline_text_xpos"] = xpos;
-      hi.hash["isoline_text_ypos"] = ypos;
-      hi.hash["isoline_symbol_xpos"] = xpos + 10;
-      hi.hash["isoline_symbol_ypos"] = ypos + 20;
+      hi.hash["isoline_text_xpos"] = xpos + *actualSettings.layout.param_name_xoffset;
+      hi.hash["isoline_text_ypos"] = ypos + *actualSettings.layout.param_name_yoffset;
+      hi.hash["isoline_symbol_xpos"] = xpos + *actualSettings.layout.legend_xoffset;
+      hi.hash["isoline_symbol_ypos"] = ypos + *actualSettings.layout.legend_yoffset - 5;
       hi.hash["isoline_symbol_id"] = (parameterName + "_isoline");
       legendGraphicHashVector.push_back(hi);
-      xpos += 150;
-      ret.height = ypos + 40;
+      xpos += *actualSettings.layout.legend_width;
+      ret.height = ypos + (*actualSettings.layout.legend_yoffset * 2);
     }
+
+    processedParameters.insert(parameterName + layerType);
   }
 
   ret.width = xpos;

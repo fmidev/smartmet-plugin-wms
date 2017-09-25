@@ -1,0 +1,169 @@
+{
+    "title": "Demo product",
+    "producer": "pal_skandinavia",
+    "defs":
+    {
+	"get_legend_graphic":
+	{
+            "parameters": [
+		{
+		    "data_name": "PrecipitationForm",
+		    "name": "sateen olomuoto"
+		},
+		{
+		    "data_name": "Precipitation1h",
+		    "name": "sateen intensiteetti",
+		    "unit": "mm/h" 
+		}
+	    ],
+	    "layout":
+	    {
+		"param_name_xoffset": 20,
+		"param_name_yoffset": 20,
+		"param_unit_xoffset": 30,
+		"param_unit_yoffset": 40,
+		"symbol_group_x_padding": 30,
+		"symbol_group_y_padding": 40,
+		"legend_xoffset": 30,
+		"legend_yoffset": 100,
+		"legend_width": 150
+	    }
+	}	
+    },
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+		{
+		    "qid": "background",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "rgb(0,75,140)"
+		    }
+		},
+		{
+		    "qid": "europe",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"where": "iso_a2 NOT IN ('FI','AX')"
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country",
+			"fill": "rgb(120,120,0)"
+		    }
+		},
+		{
+		    "qid": "finland",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"where": "iso_a2 IN ('FI','AX')"
+		    },
+		    "attributes":
+		    {
+			"id": "finland_country",
+			"fill": "rgb(120,130,33)"
+		    }
+		},
+                {
+		    "qid": "vv1",
+		    "tag": "g",
+		    "attributes":
+		    {
+			"filter": "url(#shadow)",
+			"id": "precipitation_group"
+		    },
+		    "layers": [
+			{
+			    "qid": "l1",
+			    "layer_type": "isoband",
+			    "isobands": "json:isobands/precipitation.json",
+			    "css": "isobands/precipitation.css",
+			    "parameter": "Precipitation1h",
+			    "attributes":
+			    {
+				"id": "precipitation_isobands"
+			    }
+			},
+			{
+			    "qid": "l2",
+			    "layer_type": "isoline",
+			    "isolines": "json:isolines/precipitation.json",
+			    "css": "isolines/precipitation.css",
+			    "parameter": "Precipitation1h",
+			    "attributes":
+			    {
+				"id": "precipitation_isolines",
+				"class": "Precipitation"
+			    }
+			},
+			{
+			    "qid": "l3",
+			    "layer_type": "symbol",
+			    "symbols": "json:symbols/precipitationform.json",
+			    "parameter": "PrecipitationForm",
+			    "positions":
+			    {
+				"x": 5,
+				"y": 5,
+				"dx": 20,
+				"dy": 20,
+				"ddx": 5
+			    },
+			    "attributes":
+			    {
+				"id": "precipitation_form",
+				"class": "PrecipitationForm"
+			    }
+			}
+		    ]
+                },
+		{
+		    "qid": "europe_lines",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries"
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country_lines",
+			"fill": "none",
+			"stroke": "#222",
+			"stroke-width": "0.3px"
+		    }
+		},
+                {
+		    "qid": "l4",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/pressure.json",
+                    "css": "isolines/pressure.css",
+                    "parameter": "Pressure",
+		    "attributes":
+		    {
+			"id": "pressure_isolines",
+			"class": "Pressure"
+		    }
+                }
+            ]
+        }
+    ]
+}
