@@ -5,8 +5,8 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.9.25
-Release: 2%{?dist}.fmi
+Version: 17.9.27
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -18,17 +18,17 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 17.8.28
 BuildRequires: smartmet-library-macgyver >= 17.8.28
-BuildRequires: smartmet-library-spine-devel >= 17.9.8
+BuildRequires: smartmet-library-spine-devel >= 17.9.13
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 17.8.28
+BuildRequires: smartmet-engine-authentication-devel >= 17.9.13
 %endif
 %if %{with observation}
 BuildRequires: smartmet-engine-observation-devel >= 17.8.28
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 17.8.28
 BuildRequires: smartmet-engine-geonames-devel >= 17.8.29
-BuildRequires: smartmet-engine-querydata-devel >= 17.9.12
-BuildRequires: smartmet-engine-contour-devel >= 17.9.12
+BuildRequires: smartmet-engine-querydata-devel >= 17.9.20
+BuildRequires: smartmet-engine-contour-devel >= 17.9.20
 BuildRequires: smartmet-library-gis-devel >= 17.9.12
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.5
@@ -46,14 +46,14 @@ Requires: smartmet-library-gis >= 17.9.12
 Requires: smartmet-library-macgyver >= 17.8.28
 Requires: smartmet-library-giza >= 17.8.28
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 17.8.28
+Requires: smartmet-engine-authentication >= 17.9.13
 %endif
-Requires: smartmet-engine-querydata >= 17.9.12
-Requires: smartmet-engine-contour >= 17.9.12
+Requires: smartmet-engine-querydata >= 17.9.20
+Requires: smartmet-engine-contour >= 17.9.20
 Requires: smartmet-engine-gis >= 17.8.28
 Requires: smartmet-engine-geonames >= 17.8.29
 Requires: smartmet-server >= 17.8.28
-Requires: smartmet-library-spine >= 17.9.8
+Requires: smartmet-library-spine >= 17.9.13
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -90,6 +90,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Sep 27 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.27-1.fmi
+- Changed variable name obsengine_disable to observation_disabled as in Timeseries-plugin
+
 * Mon Sep 25 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.25-2.fmi
 - Allow any time in WMS requests inside the range of times listed in GetCapabilities
 
