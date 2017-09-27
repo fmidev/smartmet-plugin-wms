@@ -412,6 +412,7 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& templateDirect
       hi.hash["isoband_unit_ypos"] = ypos + *actualSettings.layout.param_unit_yoffset;
       hi.hash["isoband_symbol_xpos"] = xpos + *actualSettings.layout.legend_xoffset;
       hi.hash["isoband_symbol_ypos"] = ypos + *actualSettings.layout.legend_yoffset;
+      hi.hash["isoband_symbol_id"] = (parameterName + "_isoband");
       hi.hash["isoband_header"] = legendHeader;
       hi.hash["isoband_id"] = (parameterName + "_label");
       hi.hash["isoband_unit"] = (parameterSettings ? parameterSettings->unit : "");

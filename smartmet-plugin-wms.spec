@@ -6,7 +6,7 @@ Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
 Version: 17.9.27
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -90,6 +90,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Sep 27 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.27-2.fmi
+- Fixed GetLegendGraphic to use unique IDs in case there are two or more isoband layers
+
 * Wed Sep 27 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.27-1.fmi
 - Changed variable name obsengine_disable to observation_disabled as in Timeseries-plugin
 
