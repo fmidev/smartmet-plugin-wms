@@ -4,7 +4,6 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-
 Version: 17.9.27
 Release: 2%{?dist}.fmi
 License: MIT
@@ -17,8 +16,9 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 17.8.28
-BuildRequires: smartmet-library-macgyver >= 17.8.28
+BuildRequires: smartmet-library-macgyver-devel >= 17.8.28
 BuildRequires: smartmet-library-spine-devel >= 17.9.13
+BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.9.13
 %endif
@@ -34,14 +34,13 @@ BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.5
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
-BuildRequires: librsvg2-devel >= 2.40.6
 BuildRequires: cairo-devel
+BuildRequires: bzip2-devel
 Requires: cairo
 Requires: fmt
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
-Requires: librsvg2 >= 2.40.6
 Requires: smartmet-library-gis >= 17.9.12
 Requires: smartmet-library-macgyver >= 17.8.28
 Requires: smartmet-library-giza >= 17.8.28
