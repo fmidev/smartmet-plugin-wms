@@ -1,0 +1,3 @@
+<pattern id="fast_ice" patternUnits="userSpaceOnUse" width="20" height="20">
+<path d="M-1,1 l2,-2 M0,20 l20,-20 M19,21 l18,-18" style="stroke:black; stroke-width:0.8"/>
+ </pattern>

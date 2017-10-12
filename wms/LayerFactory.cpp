@@ -3,22 +3,23 @@
 #include "LayerFactory.h"
 #include "ArrowLayer.h"
 #include "BackgroundLayer.h"
-#include "PostGISLayer.h"
-#include "IsolineLayer.h"
+#include "FrameLayer.h"
+#include "IceMapLayer.h"
 #include "IsobandLayer.h"
+#include "IsolineLayer.h"
 #include "LegendLayer.h"
 #include "LocationLayer.h"
 #include "MapLayer.h"
 #include "NumberLayer.h"
+#include "PostGISLayer.h"
 #include "SymbolLayer.h"
 #include "TagLayer.h"
 #include "TimeLayer.h"
 #include "TranslationLayer.h"
-#include "WindRoseLayer.h"
 #include "WKTLayer.h"
-#include "IceMapLayer.h"
-#include <stdexcept>
+#include "WindRoseLayer.h"
 #include <spine/Exception.h>
+#include <stdexcept>
 
 namespace SmartMet
 {
@@ -77,6 +78,8 @@ Layer* create(const Json::Value& theJson)
 #endif
     else if (name == "icemap")
       return new IceMapLayer;
+    else if (name == "frame")
+      return new FrameLayer;
     else
       throw Spine::Exception(BCP, "Unknown layer type '" + name + "'");
   }

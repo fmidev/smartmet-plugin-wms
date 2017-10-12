@@ -1,0 +1,1554 @@
+<svg width="1800" height="2500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>Legend</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+
+ ]]>
+</style>
+<pattern id="hexagon" patternUnits="userSpaceOnUse" width="28" height="49">
+<rect width="28" height="49" fill="#FFF"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="49" viewBox="0 0 2849"><g fill-rule="evenodd"><g id="hexagons" fill="#D3D3D3" fill-rule="nonzero"><path d="M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z"/></g></g></svg>
+ </pattern>
+
+<path id="frame" d="M-75 2352.9 -75 0 1875 0 1875 2352.9ZM75 2205.9 1725 2205.9 1725 294.1 75 294.1Z"/>
+
+</defs>
+
+<g>
+ <g id="view1">
+  <g style="fill:url(#hexagon)">
+   <use style="fill:url(#hexagon)" xlink:href="#frame"/>
+  </g>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="2191.18" y2="2191.18">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="2191.18" y2="2191.18">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="2176.47" y2="2176.47">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="2176.47" y2="2176.47">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="2161.76" y2="2161.76">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="2161.76" y2="2161.76">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="2147.06" y2="2147.06">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="2147.06" y2="2147.06">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="85" y1="2132.35" y2="2132.35">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1715" y1="2132.35" y2="2132.35">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="2117.65" y2="2117.65">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="2117.65" y2="2117.65">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="2102.94" y2="2102.94">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="2102.94" y2="2102.94">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="2088.24" y2="2088.24">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="2088.24" y2="2088.24">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="2073.53" y2="2073.53">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="2073.53" y2="2073.53">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="90" y1="2058.82" y2="2058.82">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1710" y1="2058.82" y2="2058.82">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="95" y="2065">54°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1683" y="2065">54°</text>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="2044.12" y2="2044.12">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="2044.12" y2="2044.12">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="2029.41" y2="2029.41">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="2029.41" y2="2029.41">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="2014.71" y2="2014.71">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="2014.71" y2="2014.71">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="2000" y2="2000">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="2000" y2="2000">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="85" y1="1985.29" y2="1985.29">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1715" y1="1985.29" y2="1985.29">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1970.59" y2="1970.59">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1970.59" y2="1970.59">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1955.88" y2="1955.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1955.88" y2="1955.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1941.18" y2="1941.18">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1941.18" y2="1941.18">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1926.47" y2="1926.47">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1926.47" y2="1926.47">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="90" y1="1911.76" y2="1911.76">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1710" y1="1911.76" y2="1911.76">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="95" y="1918">55°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1683" y="1918">55°</text>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1897.06" y2="1897.06">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1897.06" y2="1897.06">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1882.35" y2="1882.35">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1882.35" y2="1882.35">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1867.65" y2="1867.65">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1867.65" y2="1867.65">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1852.94" y2="1852.94">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1852.94" y2="1852.94">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="85" y1="1838.24" y2="1838.24">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1715" y1="1838.24" y2="1838.24">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1823.53" y2="1823.53">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1823.53" y2="1823.53">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1808.82" y2="1808.82">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1808.82" y2="1808.82">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1794.12" y2="1794.12">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1794.12" y2="1794.12">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1779.41" y2="1779.41">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1779.41" y2="1779.41">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="90" y1="1764.71" y2="1764.71">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1710" y1="1764.71" y2="1764.71">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="95" y="1771">56°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1683" y="1771">56°</text>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1750" y2="1750">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1750" y2="1750">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1735.29" y2="1735.29">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1735.29" y2="1735.29">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1720.59" y2="1720.59">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1720.59" y2="1720.59">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1705.88" y2="1705.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1705.88" y2="1705.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="85" y1="1691.18" y2="1691.18">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1715" y1="1691.18" y2="1691.18">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1676.47" y2="1676.47">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1676.47" y2="1676.47">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1661.76" y2="1661.76">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1661.76" y2="1661.76">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1647.06" y2="1647.06">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1647.06" y2="1647.06">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1632.35" y2="1632.35">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1632.35" y2="1632.35">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="90" y1="1617.65" y2="1617.65">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1710" y1="1617.65" y2="1617.65">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="95" y="1624">57°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1683" y="1624">57°</text>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1602.94" y2="1602.94">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1602.94" y2="1602.94">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1588.24" y2="1588.24">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1588.24" y2="1588.24">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1573.53" y2="1573.53">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1573.53" y2="1573.53">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1558.82" y2="1558.82">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1558.82" y2="1558.82">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="85" y1="1544.12" y2="1544.12">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1715" y1="1544.12" y2="1544.12">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1529.41" y2="1529.41">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1529.41" y2="1529.41">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1514.71" y2="1514.71">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1514.71" y2="1514.71">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1500" y2="1500">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1500" y2="1500">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1485.29" y2="1485.29">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1485.29" y2="1485.29">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="90" y1="1470.59" y2="1470.59">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1710" y1="1470.59" y2="1470.59">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="95" y="1477">58°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1683" y="1477">58°</text>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1455.88" y2="1455.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1455.88" y2="1455.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1441.18" y2="1441.18">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1441.18" y2="1441.18">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1426.47" y2="1426.47">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1426.47" y2="1426.47">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1411.76" y2="1411.76">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1411.76" y2="1411.76">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="85" y1="1397.06" y2="1397.06">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1715" y1="1397.06" y2="1397.06">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1382.35" y2="1382.35">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1382.35" y2="1382.35">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1367.65" y2="1367.65">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1367.65" y2="1367.65">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1352.94" y2="1352.94">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1352.94" y2="1352.94">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1338.24" y2="1338.24">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1338.24" y2="1338.24">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="90" y1="1323.53" y2="1323.53">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1710" y1="1323.53" y2="1323.53">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="95" y="1330">59°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1683" y="1330">59°</text>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1308.82" y2="1308.82">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1308.82" y2="1308.82">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1294.12" y2="1294.12">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1294.12" y2="1294.12">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1279.41" y2="1279.41">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1279.41" y2="1279.41">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1264.71" y2="1264.71">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1264.71" y2="1264.71">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="85" y1="1250" y2="1250">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1715" y1="1250" y2="1250">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1235.29" y2="1235.29">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1235.29" y2="1235.29">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1220.59" y2="1220.59">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1220.59" y2="1220.59">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1205.88" y2="1205.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1205.88" y2="1205.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1191.18" y2="1191.18">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1191.18" y2="1191.18">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="90" y1="1176.47" y2="1176.47">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1710" y1="1176.47" y2="1176.47">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="95" y="1182">60°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1683" y="1182">60°</text>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1161.76" y2="1161.76">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1161.76" y2="1161.76">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1147.06" y2="1147.06">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1147.06" y2="1147.06">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1132.35" y2="1132.35">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1132.35" y2="1132.35">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1117.65" y2="1117.65">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1117.65" y2="1117.65">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="85" y1="1102.94" y2="1102.94">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1715" y1="1102.94" y2="1102.94">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1088.24" y2="1088.24">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1088.24" y2="1088.24">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1073.53" y2="1073.53">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1073.53" y2="1073.53">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1058.82" y2="1058.82">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1058.82" y2="1058.82">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1044.12" y2="1044.12">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1044.12" y2="1044.12">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="90" y1="1029.41" y2="1029.41">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1710" y1="1029.41" y2="1029.41">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="95" y="1035">61°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1683" y="1035">61°</text>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1014.71" y2="1014.71">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1014.71" y2="1014.71">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="1000" y2="1000">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="1000" y2="1000">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="985.294" y2="985.294">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="985.294" y2="985.294">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="970.588" y2="970.588">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="970.588" y2="970.588">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="85" y1="955.882" y2="955.882">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1715" y1="955.882" y2="955.882">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="941.176" y2="941.176">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="941.176" y2="941.176">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="926.471" y2="926.471">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="926.471" y2="926.471">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="911.765" y2="911.765">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="911.765" y2="911.765">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="897.059" y2="897.059">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="897.059" y2="897.059">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="90" y1="882.353" y2="882.353">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1710" y1="882.353" y2="882.353">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="95" y="888">62°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1683" y="888">62°</text>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="867.647" y2="867.647">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="867.647" y2="867.647">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="852.941" y2="852.941">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="852.941" y2="852.941">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="838.235" y2="838.235">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="838.235" y2="838.235">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="823.529" y2="823.529">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="823.529" y2="823.529">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="85" y1="808.824" y2="808.824">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1715" y1="808.824" y2="808.824">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="794.118" y2="794.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="794.118" y2="794.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="779.412" y2="779.412">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="779.412" y2="779.412">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="764.706" y2="764.706">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="764.706" y2="764.706">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="750" y2="750">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="750" y2="750">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="90" y1="735.294" y2="735.294">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1710" y1="735.294" y2="735.294">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="95" y="741">63°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1683" y="741">63°</text>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="720.588" y2="720.588">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="720.588" y2="720.588">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="705.882" y2="705.882">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="705.882" y2="705.882">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="691.176" y2="691.176">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="691.176" y2="691.176">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="676.471" y2="676.471">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="676.471" y2="676.471">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="85" y1="661.765" y2="661.765">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1715" y1="661.765" y2="661.765">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="647.059" y2="647.059">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="647.059" y2="647.059">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="632.353" y2="632.353">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="632.353" y2="632.353">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="617.647" y2="617.647">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="617.647" y2="617.647">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="602.941" y2="602.941">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="602.941" y2="602.941">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="90" y1="588.235" y2="588.235">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1710" y1="588.235" y2="588.235">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="95" y="594">64°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1683" y="594">64°</text>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="573.529" y2="573.529">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="573.529" y2="573.529">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="558.824" y2="558.824">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="558.824" y2="558.824">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="544.118" y2="544.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="544.118" y2="544.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="529.412" y2="529.412">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="529.412" y2="529.412">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="85" y1="514.706" y2="514.706">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1715" y1="514.706" y2="514.706">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="500" y2="500">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="500" y2="500">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="485.294" y2="485.294">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="485.294" y2="485.294">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="470.588" y2="470.588">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="470.588" y2="470.588">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="455.882" y2="455.882">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="455.882" y2="455.882">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="90" y1="441.176" y2="441.176">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1710" y1="441.176" y2="441.176">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="95" y="447">65°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1683" y="447">65°</text>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="426.471" y2="426.471">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="426.471" y2="426.471">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="411.765" y2="411.765">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="411.765" y2="411.765">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="397.059" y2="397.059">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="397.059" y2="397.059">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="382.353" y2="382.353">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="382.353" y2="382.353">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="85" y1="367.647" y2="367.647">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1715" y1="367.647" y2="367.647">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="352.941" y2="352.941">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="352.941" y2="352.941">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="338.235" y2="338.235">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="338.235" y2="338.235">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="323.529" y2="323.529">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="323.529" y2="323.529">
+  </line>
+  <line stroke="black" stroke-width="2" x1="75" x2="80" y1="308.824" y2="308.824">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="308.824" y2="308.824">
+  </line>
+  <line stroke="black" stroke-width="2" x1="82.5" x2="82.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="82.5" x2="82.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="90" x2="90" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="90" x2="90" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="97.5" x2="97.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="97.5" x2="97.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="105" x2="105" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="105" x2="105" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="112.5" x2="112.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="112.5" x2="112.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="112.5" x2="112.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="112.5" x2="112.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="120" x2="120" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="120" x2="120" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="127.5" x2="127.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="127.5" x2="127.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="135" x2="135" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="135" x2="135" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="142.5" x2="142.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="142.5" x2="142.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="150" x2="150" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="150" x2="150" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="150" x2="150" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="150" x2="150" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="142" y="326">10°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="142" y="2186">10°</text>
+  <line stroke="black" stroke-width="2" x1="157.5" x2="157.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="157.5" x2="157.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="165" x2="165" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="165" x2="165" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="172.5" x2="172.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="172.5" x2="172.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="180" x2="180" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="180" x2="180" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="187.5" x2="187.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="187.5" x2="187.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="187.5" x2="187.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="187.5" x2="187.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="195" x2="195" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="195" x2="195" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="202.5" x2="202.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="202.5" x2="202.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="210" x2="210" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="210" x2="210" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="217.5" x2="217.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="217.5" x2="217.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="225" x2="225" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="225" x2="225" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="225" x2="225" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="225" x2="225" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="217" y="325">11°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="217" y="2186">11°</text>
+  <line stroke="black" stroke-width="2" x1="232.5" x2="232.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="232.5" x2="232.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="240" x2="240" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="240" x2="240" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="247.5" x2="247.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="247.5" x2="247.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="255" x2="255" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="255" x2="255" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="262.5" x2="262.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="262.5" x2="262.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="262.5" x2="262.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="262.5" x2="262.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="270" x2="270" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="270" x2="270" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="277.5" x2="277.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="277.5" x2="277.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="285" x2="285" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="285" x2="285" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="292.5" x2="292.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="292.5" x2="292.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="300" x2="300" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="300" x2="300" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="300" x2="300" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="300" x2="300" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="292" y="325">12°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="292" y="2186">12°</text>
+  <line stroke="black" stroke-width="2" x1="307.5" x2="307.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="307.5" x2="307.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="315" x2="315" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="315" x2="315" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="322.5" x2="322.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="322.5" x2="322.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="330" x2="330" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="330" x2="330" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="337.5" x2="337.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="337.5" x2="337.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="337.5" x2="337.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="337.5" x2="337.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="345" x2="345" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="345" x2="345" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="352.5" x2="352.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="352.5" x2="352.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="360" x2="360" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="360" x2="360" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="367.5" x2="367.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="367.5" x2="367.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="375" x2="375" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="375" x2="375" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="375" x2="375" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="375" x2="375" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="367" y="326">13°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="367" y="2186">13°</text>
+  <line stroke="black" stroke-width="2" x1="382.5" x2="382.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="382.5" x2="382.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="390" x2="390" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="390" x2="390" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="397.5" x2="397.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="397.5" x2="397.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="405" x2="405" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="405" x2="405" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="412.5" x2="412.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="412.5" x2="412.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="412.5" x2="412.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="412.5" x2="412.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="420" x2="420" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="420" x2="420" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="427.5" x2="427.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="427.5" x2="427.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="435" x2="435" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="435" x2="435" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="442.5" x2="442.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="442.5" x2="442.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="450" x2="450" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="450" x2="450" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="450" x2="450" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="450" x2="450" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="442" y="325">14°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="442" y="2186">14°</text>
+  <line stroke="black" stroke-width="2" x1="457.5" x2="457.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="457.5" x2="457.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="465" x2="465" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="465" x2="465" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="472.5" x2="472.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="472.5" x2="472.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="480" x2="480" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="480" x2="480" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="487.5" x2="487.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="487.5" x2="487.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="487.5" x2="487.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="487.5" x2="487.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="495" x2="495" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="495" x2="495" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="502.5" x2="502.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="502.5" x2="502.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="510" x2="510" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="510" x2="510" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="517.5" x2="517.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="517.5" x2="517.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="525" x2="525" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="525" x2="525" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="525" x2="525" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="525" x2="525" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="517" y="326">15°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="517" y="2186">15°</text>
+  <line stroke="black" stroke-width="2" x1="532.5" x2="532.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="532.5" x2="532.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="540" x2="540" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="540" x2="540" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="547.5" x2="547.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="547.5" x2="547.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="555" x2="555" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="555" x2="555" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="562.5" x2="562.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="562.5" x2="562.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="562.5" x2="562.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="562.5" x2="562.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="570" x2="570" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="570" x2="570" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="577.5" x2="577.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="577.5" x2="577.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="585" x2="585" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="585" x2="585" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="592.5" x2="592.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="592.5" x2="592.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="600" x2="600" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="600" x2="600" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="600" x2="600" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="600" x2="600" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="592" y="326">16°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="592" y="2186">16°</text>
+  <line stroke="black" stroke-width="2" x1="607.5" x2="607.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="607.5" x2="607.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="615" x2="615" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="615" x2="615" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="622.5" x2="622.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="622.5" x2="622.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="630" x2="630" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="630" x2="630" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="637.5" x2="637.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="637.5" x2="637.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="637.5" x2="637.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="637.5" x2="637.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="645" x2="645" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="645" x2="645" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="652.5" x2="652.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="652.5" x2="652.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="660" x2="660" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="660" x2="660" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="667.5" x2="667.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="667.5" x2="667.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="675" x2="675" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="675" x2="675" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="675" x2="675" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="675" x2="675" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="667" y="325">17°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="667" y="2186">17°</text>
+  <line stroke="black" stroke-width="2" x1="682.5" x2="682.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="682.5" x2="682.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="690" x2="690" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="690" x2="690" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="697.5" x2="697.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="697.5" x2="697.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="705" x2="705" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="705" x2="705" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="712.5" x2="712.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="712.5" x2="712.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="712.5" x2="712.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="712.5" x2="712.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="720" x2="720" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="720" x2="720" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="727.5" x2="727.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="727.5" x2="727.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="735" x2="735" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="735" x2="735" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="742.5" x2="742.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="742.5" x2="742.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="750" x2="750" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="750" x2="750" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="742" y="326">18°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="742" y="2186">18°</text>
+  <line stroke="black" stroke-width="2" x1="757.5" x2="757.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="757.5" x2="757.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="765" x2="765" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="765" x2="765" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="772.5" x2="772.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="772.5" x2="772.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="780" x2="780" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="780" x2="780" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="787.5" x2="787.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="787.5" x2="787.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="795" x2="795" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="795" x2="795" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="802.5" x2="802.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="802.5" x2="802.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="810" x2="810" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="810" x2="810" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="817.5" x2="817.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="817.5" x2="817.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="825" x2="825" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="825" x2="825" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="817" y="326">19°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="817" y="2186">19°</text>
+  <line stroke="black" stroke-width="2" x1="832.5" x2="832.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="832.5" x2="832.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="840" x2="840" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="840" x2="840" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="847.5" x2="847.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="847.5" x2="847.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="855" x2="855" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="855" x2="855" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="862.5" x2="862.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="862.5" x2="862.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="870" x2="870" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="870" x2="870" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="877.5" x2="877.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="877.5" x2="877.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="885" x2="885" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="885" x2="885" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="892.5" x2="892.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="892.5" x2="892.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="900" x2="900" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="900" x2="900" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="892" y="326">20°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="892" y="2186">20°</text>
+  <line stroke="black" stroke-width="2" x1="907.5" x2="907.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="907.5" x2="907.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="915" x2="915" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="915" x2="915" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="922.5" x2="922.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="922.5" x2="922.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="930" x2="930" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="930" x2="930" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="937.5" x2="937.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="937.5" x2="937.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="945" x2="945" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="945" x2="945" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="952.5" x2="952.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="952.5" x2="952.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="960" x2="960" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="960" x2="960" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="967.5" x2="967.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="967.5" x2="967.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="975" x2="975" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="975" x2="975" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="967" y="325">21°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="967" y="2186">21°</text>
+  <line stroke="black" stroke-width="2" x1="982.5" x2="982.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="982.5" x2="982.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="990" x2="990" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="990" x2="990" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="997.5" x2="997.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="997.5" x2="997.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1005" x2="1005" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1005" x2="1005" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1012.5" x2="1012.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1012.5" x2="1012.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1020" x2="1020" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1020" x2="1020" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1027.5" x2="1027.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1027.5" x2="1027.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1035" x2="1035" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1035" x2="1035" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1042.5" x2="1042.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1042.5" x2="1042.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1050" x2="1050" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1050" x2="1050" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1042" y="325">22°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1042" y="2186">22°</text>
+  <line stroke="black" stroke-width="2" x1="1057.5" x2="1057.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1057.5" x2="1057.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1065" x2="1065" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1065" x2="1065" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1072.5" x2="1072.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1072.5" x2="1072.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1080" x2="1080" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1080" x2="1080" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1087.5" x2="1087.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1087.5" x2="1087.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1095" x2="1095" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1095" x2="1095" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1102.5" x2="1102.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1102.5" x2="1102.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1110" x2="1110" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1110" x2="1110" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1117.5" x2="1117.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1117.5" x2="1117.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1125" x2="1125" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1125" x2="1125" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1117" y="326">23°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1117" y="2186">23°</text>
+  <line stroke="black" stroke-width="2" x1="1132.5" x2="1132.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1132.5" x2="1132.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1140" x2="1140" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1140" x2="1140" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1147.5" x2="1147.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1147.5" x2="1147.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1155" x2="1155" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1155" x2="1155" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1162.5" x2="1162.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1162.5" x2="1162.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1170" x2="1170" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1170" x2="1170" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1177.5" x2="1177.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1177.5" x2="1177.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1185" x2="1185" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1185" x2="1185" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1192.5" x2="1192.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1192.5" x2="1192.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1200" x2="1200" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1200" x2="1200" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1192" y="325">24°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1192" y="2186">24°</text>
+  <line stroke="black" stroke-width="2" x1="1207.5" x2="1207.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1207.5" x2="1207.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1215" x2="1215" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1215" x2="1215" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1222.5" x2="1222.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1222.5" x2="1222.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1230" x2="1230" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1230" x2="1230" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1237.5" x2="1237.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1237.5" x2="1237.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1245" x2="1245" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1245" x2="1245" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1252.5" x2="1252.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1252.5" x2="1252.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1260" x2="1260" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1260" x2="1260" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1267.5" x2="1267.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1267.5" x2="1267.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1275" x2="1275" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1275" x2="1275" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1267" y="326">25°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1267" y="2186">25°</text>
+  <line stroke="black" stroke-width="2" x1="1282.5" x2="1282.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1282.5" x2="1282.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1290" x2="1290" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1290" x2="1290" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1297.5" x2="1297.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1297.5" x2="1297.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1305" x2="1305" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1305" x2="1305" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1312.5" x2="1312.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1312.5" x2="1312.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1320" x2="1320" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1320" x2="1320" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1327.5" x2="1327.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1327.5" x2="1327.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1335" x2="1335" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1335" x2="1335" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1342.5" x2="1342.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1342.5" x2="1342.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1350" x2="1350" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1350" x2="1350" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1342" y="326">26°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1342" y="2186">26°</text>
+  <line stroke="black" stroke-width="2" x1="1357.5" x2="1357.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1357.5" x2="1357.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1365" x2="1365" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1365" x2="1365" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1372.5" x2="1372.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1372.5" x2="1372.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1380" x2="1380" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1380" x2="1380" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1387.5" x2="1387.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1387.5" x2="1387.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1395" x2="1395" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1395" x2="1395" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1402.5" x2="1402.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1402.5" x2="1402.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1410" x2="1410" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1410" x2="1410" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1417.5" x2="1417.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1417.5" x2="1417.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1425" x2="1425" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1425" x2="1425" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1417" y="325">27°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1417" y="2186">27°</text>
+  <line stroke="black" stroke-width="2" x1="1432.5" x2="1432.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1432.5" x2="1432.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1440" x2="1440" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1440" x2="1440" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1447.5" x2="1447.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1447.5" x2="1447.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1455" x2="1455" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1455" x2="1455" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1462.5" x2="1462.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1462.5" x2="1462.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1470" x2="1470" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1470" x2="1470" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1477.5" x2="1477.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1477.5" x2="1477.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1485" x2="1485" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1485" x2="1485" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1492.5" x2="1492.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1492.5" x2="1492.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1500" x2="1500" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1500" x2="1500" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1492" y="326">28°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1492" y="2186">28°</text>
+  <line stroke="black" stroke-width="2" x1="1507.5" x2="1507.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1507.5" x2="1507.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1515" x2="1515" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1515" x2="1515" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1522.5" x2="1522.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1522.5" x2="1522.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1530" x2="1530" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1530" x2="1530" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1537.5" x2="1537.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1537.5" x2="1537.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1545" x2="1545" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1545" x2="1545" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1552.5" x2="1552.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1552.5" x2="1552.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1560" x2="1560" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1560" x2="1560" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1567.5" x2="1567.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1567.5" x2="1567.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1575" x2="1575" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1575" x2="1575" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1567" y="326">29°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1567" y="2186">29°</text>
+  <line stroke="black" stroke-width="2" x1="1582.5" x2="1582.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1582.5" x2="1582.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1590" x2="1590" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1590" x2="1590" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1597.5" x2="1597.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1597.5" x2="1597.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1605" x2="1605" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1605" x2="1605" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1612.5" x2="1612.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1612.5" x2="1612.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1620" x2="1620" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1620" x2="1620" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1627.5" x2="1627.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1627.5" x2="1627.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1635" x2="1635" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1635" x2="1635" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1642.5" x2="1642.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1642.5" x2="1642.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1650" x2="1650" y1="294.118" y2="309.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1650" x2="1650" y1="2205.88" y2="2190.88">
+  </line>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1642" y="326">30°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1642" y="2186">30°</text>
+  <line stroke="black" stroke-width="2" x1="1657.5" x2="1657.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1657.5" x2="1657.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1665" x2="1665" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1665" x2="1665" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1672.5" x2="1672.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1672.5" x2="1672.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1680" x2="1680" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1680" x2="1680" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1687.5" x2="1687.5" y1="294.118" y2="304.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1687.5" x2="1687.5" y1="2205.88" y2="2195.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1695" x2="1695" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1695" x2="1695" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1702.5" x2="1702.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1702.5" x2="1702.5" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1710" x2="1710" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1710" x2="1710" y1="2205.88" y2="2200.88">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1717.5" x2="1717.5" y1="294.118" y2="299.118">
+  </line>
+  <line stroke="black" stroke-width="2" x1="1717.5" x2="1717.5" y1="2205.88" y2="2200.88">
+  </line>
+  <text font-family="Arial" font-size="38" font-weight="normal" style="fill:#18447e; text-anchor:middle" x="900" xml:space="preserve" y="147.059">Frame with inner and outer border
+   scale is inside inner border</text>
+ </g>
+</g>
+
+</svg>

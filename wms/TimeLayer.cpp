@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "Hash.h"
 #include "Layer.h"
+#include "LonLatToXYTransformation.h"
 #include "State.h"
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -57,13 +58,29 @@ void TimeLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       format = json.asString();
 
-    json = theJson.get("x", nulljson);
-    if (!json.isNull())
-      x = json.asInt();
+    auto longitudeJson = theJson.get("longitude", nulljson);
+    auto latitudeJson = theJson.get("latitude", nulljson);
+    if (!longitudeJson.isNull() && !latitudeJson.isNull())
+    {
+      double longitude = longitudeJson.asDouble();
+      double latitude = latitudeJson.asDouble();
+      double xCoord = 0;
+      double yCoord = 0;
+      LonLatToXYTransformation transformation(projection);
+      transformation.transform(longitude, latitude, xCoord, yCoord);
+      x = xCoord;
+      y = yCoord;
+    }
+    else
+    {
+      json = theJson.get("x", nulljson);
+      if (!json.isNull())
+        x = json.asInt();
 
-    json = theJson.get("y", nulljson);
-    if (!json.isNull())
-      y = json.asInt();
+      json = theJson.get("y", nulljson);
+      if (!json.isNull())
+        y = json.asInt();
+    }
   }
   catch (...)
   {
@@ -186,6 +203,8 @@ std::size_t TimeLayer::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(format));
     boost::hash_combine(hash, Dali::hash_value(x));
     boost::hash_combine(hash, Dali::hash_value(y));
+    boost::hash_combine(hash, Dali::hash_value(longitude));
+    boost::hash_combine(hash, Dali::hash_value(latitude));
 
     // TODO: The timestamp to be drawn may depend on the wall clock - must include it
     // in the hash. A better solution would be to format the timestamp and

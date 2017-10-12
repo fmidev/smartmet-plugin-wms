@@ -1,10 +1,11 @@
 #include "TagLayer.h"
 #include "Hash.h"
 #include "Layer.h"
+#include "LonLatToXYTransformation.h"
 #include "State.h"
-#include <spine/Exception.h>
-#include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
+#include <ctpp2/CDT.hpp>
+#include <spine/Exception.h>
 
 namespace SmartMet
 {
@@ -64,6 +65,21 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     if (!validLayer(theState))
       return;
 
+    // longitude & latitude
+    std::string longitude = attributes.value("longitude");
+    std::string latitude = attributes.value("latitude");
+    if (!longitude.empty() && !latitude.empty())
+    {
+      double xCoord = 0;
+      double yCoord = 0;
+      LonLatToXYTransformation transformation(projection);
+      transformation.transform(Fmi::stod(longitude), Fmi::stod(latitude), xCoord, yCoord);
+      attributes.add("x", Fmi::to_string(xCoord));
+      attributes.add("y", Fmi::to_string(yCoord));
+      attributes.remove("latitude");
+      attributes.remove("longitude");
+    }
+
     // Update the globals
 
     if (css)
@@ -101,6 +117,27 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     else
     {
       // The tag is a composite
+      // Update coordinates of sublayers
+      if (!longitude.empty() && !latitude.empty())
+      {
+        for (auto layer : layers.layers)
+        {
+          std::string x = layer->attributes.value("x");
+          std::string y = layer->attributes.value("y");
+          if (!x.empty() && !y.empty())
+          {
+            double xCoord = 0;
+            double yCoord = 0;
+            LonLatToXYTransformation transformation(projection);
+            transformation.transform(Fmi::stod(longitude), Fmi::stod(latitude), xCoord, yCoord);
+            xCoord += Fmi::stod(x);
+            yCoord += Fmi::stod(y);
+            layer->attributes.add("x", Fmi::to_string(xCoord));
+            layer->attributes.add("y", Fmi::to_string(yCoord));
+          }
+        }
+      }
+
       CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
       group_cdt["start"] = "<" + *tag;
       group_cdt["end"] = "";

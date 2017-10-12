@@ -10,8 +10,8 @@
 #include "PostGISLayerBase.h"
 #include "PostGISLayerFilter.h"
 
-#include <gis/Types.h>
 #include <engines/gis/MapOptions.h>
+#include <gis/Types.h>
 
 namespace SmartMet
 {
@@ -48,6 +48,7 @@ class IceMapLayer : public PostGISLayerBase
                            CTPP::CDT& theLayersCdt,
                            CTPP::CDT& theGroupCdt,
                            State& theState) const;
+
   void handleLabel(const Fmi::Feature& theResultItem,
                    const PostGISLayerFilter& theFilter,
                    CTPP::CDT& theGlobals,
@@ -71,6 +72,7 @@ class IceMapLayer : public PostGISLayerBase
                        CTPP::CDT& theLayersCdt,
                        CTPP::CDT& theGroupCdt,
                        State& theState) const;
+
   void handleGeometry(const Fmi::Feature& theResultItem,
                       const PostGISLayerFilter& theFilter,
                       unsigned int& theMapId,

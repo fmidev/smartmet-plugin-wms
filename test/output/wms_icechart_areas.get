@@ -4,32 +4,43 @@
 <style type="text/css"><![CDATA[
 
 .LegendText		{ stroke: none; fill: black; text-anchor: start; font-family: Verdana; font-size: 14 }
-.SmallLegendText	{ stroke: none; fill: black; text-anchor: start; font-family: Arial; font-size: 8 }
+.SmallLegendText	{ stroke: none; text-anchor: start; font-family: Arial; font-size: 12 }
 .Land			{ stroke: none; fill: rgb(246,246,246) }
 .Border			{ stroke: black; stroke-width: 0.3px; fill: none }
-.OpenWater		{ stroke: black; stroke-width: 0.5px; fill: rgb(150,200,255) }
-.VeryOpenIce		{ stroke: black; stroke-width: 0.5px; fill: rgb(140,255,160) }
-.OpenIce		{ stroke: black; stroke-width: 0.5px; fill: rgb(255,255,0) }
-.CloseIce		{ stroke: black; stroke-width: 0.5px; fill: rgb(255,125,7) }
-.NewIce			{ stroke: black; stroke-width: 0.5px; fill: rgb(255,175,255) }
-.VeryCloseIce		{ stroke: black; stroke-width: 0.5px; fill: rgb(255,0,0) }
-.LevelIce		{ stroke: black; stroke-width: 0.5px; fill: rgb(255,100,255) }
-.ConsolidatedIce	{ stroke: black; stroke-width: 0.5px; fill: rgb(145,0,0) }
-.RottenFastIce		{ stroke: black; stroke-width: 0.5px; fill: rgb(100,115,160) }
-.FastIce		{ stroke: black; stroke-width: 0.5px; fill: rgb(150,150,150) }
+.OpenWater		{ stroke: black; stroke-width: 0.2; fill: rgb(150,200,255) }
+.VeryOpenIce		{ stroke: black; stroke-width: 0.2; fill: rgb(140,255,160) }
+.OpenIce		{ stroke: black; stroke-width: 0.2; fill: rgb(255,255,0) }
+.CloseIce		{ stroke: black; stroke-width: 0.2; fill: rgb(255,125,7) }
+.NewIce			{ stroke: black; stroke-width: 0.2; fill: rgb(255,175,255) }
+.VeryCloseIce		{ stroke: black; stroke-width: 0.2; fill: rgb(255,0,0) }
+.LevelIce		{ stroke: black; stroke-width: 0.2; fill: rgb(255,100,255) }
+.ConsolidatedIce	{ stroke: black; stroke-width: 0.2; fill: rgb(145,0,0) }
+.RottenFastIce		{ stroke: black; stroke-width: 0.2; fill: rgb(100,115,160) }
+.FastIce		{ stroke: black; stroke-width: 0.2; fill: rgb(150,150,150) }
+.IceFree		{ stroke: black; stroke-width: 0.2; fill: rgb(255,255,255) }
 
-.IceFree		{ stroke: black; stroke-width: 0.5px; fill: rgb(255,255,255) }
+
+.MapFrame  { fill: white; stroke: black; stroke-width: 0.5; }
+.MapFrameWhite  { fill: white; stroke: black; stroke-width: 0.5; }
+.TrafficRestrictionsTableFrame  { fill: rgb(150,200,255); stroke: black; stroke-width: 0.7; opacity: 0.9; }
+.IcemapHeaderText	{ fill: black; font-family: Helvetica; font-size: 48 }
 .IceThicknessLegend       { stroke: black; stroke-width: 0.5px; fill: rgb(255,255,255) }
 .TemperatureIsoline    { fill: none; stroke: black; stroke-width: 0.7; opacity: 0.8; }
 .MeanTemperature        { stroke: black; stroke-width: 1.0px; fill: rgb(255,255,255) }
-.TemperatureIsolineLabel    { stroke: white; stroke-width: 0.1px; fill: white }
-.IceMapLandMask	       { stroke: black; fill: lightgray; stroke-width: 0.7 }
+.TemperatureIsolineLabel    { stroke: none; stroke-width: 0.0px; fill: white }
+.IceMapLandMask	       { stroke: rgb(110,110,110); fill: rgb(225,225,225); stroke-width: 0.2 }
+.IceMapLandMask2	{ stroke: black; fill: none; stroke-width: 0.7 }
 .Harbour	        { fill: none; stroke: black; stroke-width: 0.5 }
 .IceBreakerLegend        { stroke: black; stroke-width: 1.0px; fill: white }
-.CoordinateLine        { stroke: black; stroke-width: 0.2; }
-.Fracture              { fill: none; stroke: black; stroke-width: 8; stroke-dasharray: 0.75,10; opacity: 0.8; }
+.CoordinateLine        { stroke: black; stroke-width: 0.5; }
+.FractureTick         { fill: none; stroke: black; stroke-width: 5; stroke-dasharray: 1,10; opacity: 1.0; }
+.FractureLine          { fill: none; stroke: black; stroke-width: 1.0; }
 .IceEdge               { fill: none; stroke: black; stroke-width: 1.0; }
 .EstimatedIceEdge      { fill: none; stroke-dasharray: 5,5; stroke: black; stroke-width: 1.0; }
+.NordStreamReference    { fill:none; stroke: rgb(128,0,128); stroke-width: 1.5; }
+.NordStreamOption    { fill:none; stroke: rgb(128,0,128); stroke-dasharray: 10,3; stroke-width: 1.5; }
+.NordStreamBlock     { stroke: black; stroke-width: 0.5px; fill: rgb(255,255,255); opacity: 0.8; }
+.NordStreamBlockMarker     {  fill:none; stroke:  rgb(128,0,128); stroke-width: 1.5 }
 
 .StationMarker		{ fill: none; stroke: black; stroke-width: 0.2px }
 .StationName		{ fill: black; font-family: Verdana; font-size: 11; text-decoration: underline }
@@ -42,6 +53,7 @@
 .RoseMeanWind		{ fill: black; font-family: Verdana; font-size: 10; font-weight: bold; letter-spacing: -0.03em }
 .RoseMaxWind		{ fill: black; font-family: Verdana; font-size: 10 }
 .RoseLegendText		{ stroke: none; fill: black; text-anchor: end; font-family: Verdana; font-size: 10 }
+
  ]]>
 </style>
 <symbol id="estimated_ice_edge">
@@ -105,8 +117,9 @@
 </symbol>
 <symbol id="icerdg">
 <svg xmlns="http://www.w3.org/2000/svg" width="5mm" height="2.5mm" viewBox="0 0 5 2.5">
-    <polyline points="0,2.3 5,2.3" stroke="black" stroke-width="0.4"/>
-    <polygon  points="0,1.8 1.25,0 2.5,1.8 3.75,0 5,1.8"/>
+    <!--polyline points="0,2.3 5,2.3" stroke="black" stroke-width="0.4"/-->
+    <!--polygon  points="0,1.8 1.25,0 2.5,1.8 3.75,0 5,1.8"/-->
+    <polygon points="0,2.2 1.25,0 2.5,2.2 3.75,0 5,2.2"/>
 </svg>
 </symbol>
 <symbol id="icerft">

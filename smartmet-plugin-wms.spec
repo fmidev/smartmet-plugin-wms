@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 
-Version: 17.9.14
+Version: 17.10.12
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -90,6 +90,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Oct 12 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.10.12-1.fmi
+- Icemap-related changes:
+- changes are based on two Agile Jira-issues: VANADIS-376,COICESERV-36 
+- new layer, FrameLayer, added for a frame (and scale) around the map
+- WMS now supports application/pdf-documents
+- longitude, latitude attribute added to TagLayer, TimeLayer to express location on map
+- new icemap-products, patterns, symbols, filters added
+
 * Thu Sep 14 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.9.14-1.fmi
 - Added configurability for GetLegendGraphic-response:
 Parameter name, unit and layout of output document can be configured (see. BRAINSTORM-922)
