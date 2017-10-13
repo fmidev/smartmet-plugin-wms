@@ -56,6 +56,7 @@
     <GetMap>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
+      <Format>application/pdf</Format>
       <DCPType>
         <HTTP>
           <Get>
