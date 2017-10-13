@@ -17,6 +17,7 @@
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
+#include <limits>
 
 // TODO:
 #include <boost/timer/timer.hpp>
@@ -331,10 +332,17 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           isoband_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs);
           isoband_cdt["type"] = Geometry::name(*geom2, theState.getType());
           isoband_cdt["layertype"] = "isoband";
+
+          // Use null to indicate unset values in GeoJSON
           if (isoband.lolimit)
             isoband_cdt["lolimit"] = *isoband.lolimit;
+          else
+            isoband_cdt["lolimit"] = "null";
+
           if (isoband.hilimit)
             isoband_cdt["hilimit"] = *isoband.hilimit;
+          else
+            isoband_cdt["hilimit"] = "null";
 
           theState.addPresentationAttributes(isoband_cdt, css, attributes, isoband.attributes);
 

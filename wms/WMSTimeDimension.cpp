@@ -34,6 +34,15 @@ void WMSTimeDimension::removeTimestep(const boost::posix_time::ptime& timestep)
 
 bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) const
 {
+  // Allow any time within the range
+
+  if (itsTimesteps.empty())
+    return false;
+
+  return (theTime >= *itsTimesteps.cbegin() && theTime <= *itsTimesteps.crbegin());
+
+#if 0
+  // Allow only listed times
   try
   {
     auto res = itsTimesteps.find(theTime);
@@ -51,6 +60,7 @@ bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) cons
   {
     throw Spine::Exception(BCP, "Failed to validate time!", NULL);
   }
+#endif
 }
 
 std::set<boost::posix_time::ptime> WMSTimeDimension::getTimeSteps() const

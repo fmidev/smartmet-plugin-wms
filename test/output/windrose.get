@@ -61,9 +61,9 @@
    <line class="RoseConnector" x1="192" x2="269" y1="412" y2="348"/>
    <use class="StationMarker" x="435" xlink:href="#station" y="401"/>
    <use class="WindRose" x="463" xlink:href="#windrose" y="324"/>
-   <path class="ModerateWind" d="M463 324 480.691,331.328 A 19.1485 19.1485 0,0,1 470.328,341.691Z"/>
+   <path class="ModerateWind" d="M463 324 480.644,331.308 A 19.0973 19.0973 0,0,1 470.308,341.644Z"/>
    <path class="LightWind" d="M463 324 470.654,342.478 A 20 20 0,0,1 455.346,342.478Z"/>
-   <path class="LightWind" d="M463 324 460.449,330.159 A 6.66667 6.66667 0,0,1 456.841,326.551Z"/>
+   <path class="LightWind" d="M463 324 460.375,330.338 A 6.85994 6.85994 0,0,1 456.662,326.625Z"/>
    <line class="RoseConnector" x1="435" x2="456" y1="399" y2="342"/>
    <use class="StationMarker" x="155" xlink:href="#station" y="211"/>
    <use class="WindRose" x="285" xlink:href="#windrose" y="241"/>

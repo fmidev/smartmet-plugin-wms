@@ -59,7 +59,7 @@ Config::Config(const string& configfile)
 #endif
 
 #ifndef WITHOUT_OBSERVATION
-    itsConfig.lookupValue("obsengine_disabled", itsObsEngineDisabled);
+    itsConfig.lookupValue("observation_disabled", itsObsEngineDisabled);
 #endif
 
     // Default templates for various types

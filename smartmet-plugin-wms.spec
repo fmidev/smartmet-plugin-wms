@@ -4,7 +4,6 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-
 Version: 17.10.12
 Release: 1%{?dist}.fmi
 License: MIT
@@ -17,43 +16,43 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 17.8.28
-BuildRequires: smartmet-library-macgyver >= 17.8.28
-BuildRequires: smartmet-library-spine-devel >= 17.9.8
+BuildRequires: smartmet-library-macgyver-devel >= 17.8.28
+BuildRequires: smartmet-library-spine-devel >= 17.9.13
+BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 17.8.28
+BuildRequires: smartmet-engine-authentication-devel >= 17.9.13
 %endif
 %if %{with observation}
 BuildRequires: smartmet-engine-observation-devel >= 17.8.28
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 17.8.28
 BuildRequires: smartmet-engine-geonames-devel >= 17.8.29
-BuildRequires: smartmet-engine-querydata-devel >= 17.9.12
-BuildRequires: smartmet-engine-contour-devel >= 17.9.12
+BuildRequires: smartmet-engine-querydata-devel >= 17.9.20
+BuildRequires: smartmet-engine-contour-devel >= 17.9.20
 BuildRequires: smartmet-library-gis-devel >= 17.9.12
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.5
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
-BuildRequires: librsvg2-devel >= 2.40.6
 BuildRequires: cairo-devel
+BuildRequires: bzip2-devel
 Requires: cairo
 Requires: fmt
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
-Requires: librsvg2 >= 2.40.6
 Requires: smartmet-library-gis >= 17.9.12
 Requires: smartmet-library-macgyver >= 17.8.28
 Requires: smartmet-library-giza >= 17.8.28
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 17.8.28
+Requires: smartmet-engine-authentication >= 17.9.13
 %endif
-Requires: smartmet-engine-querydata >= 17.9.12
-Requires: smartmet-engine-contour >= 17.9.12
+Requires: smartmet-engine-querydata >= 17.9.20
+Requires: smartmet-engine-contour >= 17.9.20
 Requires: smartmet-engine-gis >= 17.8.28
 Requires: smartmet-engine-geonames >= 17.8.29
 Requires: smartmet-server >= 17.8.28
-Requires: smartmet-library-spine >= 17.9.8
+Requires: smartmet-library-spine >= 17.9.13
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -97,6 +96,22 @@ rm -rf $RPM_BUILD_ROOT
 - WMS now supports application/pdf-documents
 - longitude, latitude attribute added to TagLayer, TimeLayer to express location on map
 - new icemap-products, patterns, symbols, filters added
+
+* Wed Sep 27 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.27-2.fmi
+- Fixed GetLegendGraphic to use unique IDs in case there are two or more isoband layers
+
+* Wed Sep 27 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.27-1.fmi
+- Changed variable name obsengine_disable to observation_disabled as in Timeseries-plugin
+
+* Mon Sep 25 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.25-2.fmi
+- Allow any time in WMS requests inside the range of times listed in GetCapabilities
+
+* Mon Sep 25 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.9.25-1.fmi
+- Encode lolimit and hilimit with null in GeoJSON, infinities are not valid in JSON
+- Added configurability for GetLegendGraphic-response: Parameter name, unit and layout of output document can be configured (BRAINSTORM-922)
+
+* Wed Sep 20 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.20-1.fmi
+- Output lolimit and hilimit to geojson even if +-inf
 
 * Thu Sep 14 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.9.14-1.fmi
 - Added configurability for GetLegendGraphic-response:
