@@ -1,0 +1,105 @@
+{
+    "title": "Legend",
+    "abstract": "Icemap legend",
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // maa-aluemaski
+		    "qid": "icemap_landmask",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "landmask",
+		    "geometry_column" : "geom",
+           	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"class": "IceMapLandMask"
+			    }
+			}
+		    ]
+		},
+		{ // koordinaattiruudukko: ladataan suoraan kannasta
+		    "qid": "coordinate_grid",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "coordinate_grid",
+		    "geometry_column" : "geom",
+            	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"class": "CoordinateLine"
+			    }
+			}
+		    ]
+		},
+		{ // kartan merkkien selitykset
+		    "qid": "legend_layer",
+		    "tag": "g",
+             	    "css": "ice/icemap.css",
+		    "layers": "json:ice/icemap_legend_fmi.json",
+		    "attributes":
+		    {
+			"longitude": "9.5",
+			"latitude": "66.2"
+		    }
+		},
+		{ // frame
+		    "qid": "frame",
+		    "layer_type": "frame",
+		    "dimension":
+		    {
+			"inner_border": "9 53, 31 66.5",
+			"outer_border": "6 50, 34 69"
+		    },
+		    "scale":
+		    {
+			"small_tic_step": 0.1, // degrees
+			"small_tic_length": 5, // pixels
+			"intermediate_tic_step": 0.5,
+			"intermediate_tic_length": 10, // pixels
+			"long_tic_step": 1.0,
+			"long_tic_length": 15, // pixels
+			"tic_position": "outside", // inside frame,outside frame
+			"label_position": "outside", // 
+			"label_step": 1.0
+		    },
+             	    "css": "ice/icemap.css",
+		    "attributes":
+		    {
+			"fill": "white",
+			"stroke": "black",
+			"stroke-width": "0.5"
+		    },
+		    "scale_attributes":
+		    {
+			"stroke": "black",
+			"stroke-width": 2.0,
+			"font-family": "Arial",
+			"font-size": "14",
+			"font-style": "normal",
+			"font-weight": "normal",
+			"text-anchor": "start"
+		    }
+		}
+	    ]
+	}
+    ]
+}
+

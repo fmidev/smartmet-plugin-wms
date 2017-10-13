@@ -37,6 +37,8 @@ class TimeLayer : public Layer
   // This may be negative and can override attributes:
   boost::optional<int> x;
   boost::optional<int> y;
+  boost::optional<int> longitude;  // longitude, latitude take precedence over x, y
+  boost::optional<int> latitude;
 
  private:
   boost::posix_time::ptime now;

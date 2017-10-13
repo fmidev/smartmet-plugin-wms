@@ -1,0 +1,694 @@
+{
+    "title": "Ice Chart",
+    "abstract": "Bay of Bothnia Ice Chart",
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // jääalueet
+		    "qid": "icemap_areas",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "seaice",
+		    "time_column" : "publicationdate",	
+		    "geometry_column" : "geom",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "type=1",
+			    "attributes":
+			    {
+				"class": "OpenWater"
+			    }
+			},
+			{
+			    "where": "type=2",
+			    "attributes":
+			    {
+				"class": "VeryOpenIce"
+			    }
+			},
+			{
+			    "where": "type=3",
+			    "attributes":
+			    {
+				"class": "OpenIce"
+			    }
+			},
+			{
+			    "where": "type=4",
+			    "attributes":
+			    {
+				"class": "CloseIce"
+			    }
+			},
+			{
+			    "where": "type=9",
+			    "attributes":
+			    {
+				"class": "NewIce"
+			    }
+			},
+			{
+			    "where": "type=5",
+			    "attributes":
+			    {
+				"class": "VeryCloseIce"
+			    }
+			},
+			{
+			    "where": "type=7",
+			    "attributes":
+			    {
+				"class": "LevelIce"
+			    }
+			},
+			{
+			    "where": "type=6",
+			    "attributes":
+			    {
+				"class": "ConsolidatedIce"
+			    }
+			},
+			{
+			    "where": "type=10",
+			    "attributes":
+			    {
+				"class": "RottenFastIce"
+			    }
+			},
+			{
+			    "where": "type=8",
+			    "attributes":
+			    {
+				"class": "FastIce"
+			    }
+			},
+			{
+			    "where": "type=0",
+			    "attributes":
+			    {
+				"class": "IceFree"
+			    }
+			}
+		    ]
+		},
+		{ // jään reuna
+		    "qid": "ice_edge",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "icelne",
+		    "time_column" : "publicationdate",	
+		    "geometry_column" : "geom",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"class": "IceEdge"
+			    }
+			}
+		    ]
+		},
+		{ // arvioitu jään reuna
+		    "qid": "ice_edge",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "estimatediceedgesymbol",
+		    "time_column" : "publicationdate",	
+		    "geometry_column" : "geom",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"class": "EstimatedIceEdge"
+			    }
+			}
+		    ]
+		},
+		{ // lämpötilakäyrät
+		    "qid": "temperature_isotherm",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "sst",
+		    "time_column" : "publicationdate",	
+		    "geometry_column" : "geom",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"class": "TemperatureIsoline"
+			    }
+			}
+		    ]
+		},
+		{ // maa-aluemaski
+		    "qid": "icemap_landmask",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "landmask",
+		    "geometry_column" : "geom",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"class": "IceMapLandMask"
+			    }
+			}
+		    ]
+		},
+		{ // koordinaattiruudukko: ladataan suoraan kannasta
+		    "qid": "coordinate_grid",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "coordinate_grid",
+		    "geometry_column" : "geom",
+            	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"class": "CoordinateLine"
+			    }
+			}
+		    ]
+		},
+		{ // lämpötilakäyrien labelit
+		    "qid": "temperature_isotherm_labels",
+		    "layer_type": "icemap",
+		    "layer_subtype": "temperature_isotherm_label",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "sstannotations",
+		    "time_column" : "publicationdate",	
+		    "geometry_column" : "geom",
+		    "labeltext_column" : "textstring",
+		    "fontname_column" : "fontname",
+		    "fontsize_column" : "fontsize",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "textstring IS NOT NULL and length(textstring) > 0",
+			    "attributes":
+			    {
+				"class": "TemperatureIsolineLabel"
+			    },
+			    "text_attributes":
+			    {
+				"font-family": "Arial",
+				"font-size": "18",
+				"font-style": "normal",
+				"font-weight": "normal",
+				"text-anchor": "start"
+			    }
+
+			}
+		    ]
+		},
+		{ // päällekkäin ajautunut jää
+		    "qid": "rafted_ice",
+		    "layer_type": "icemap",
+		    "layer_subtype": "symbol",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "icerft",
+		    "symbol": "icerft",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+ 			}
+		    ]
+		},
+		{ // ahtojää- tai röykkiölautta
+		    "qid": "flbrg",
+		    "layer_type": "icemap",
+		    "layer_subtype": "symbol",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "flobrg",
+		    "symbol": "flobrg",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+ 			}
+		    ]
+		},
+		{ // ahtautunut tai röykkiöitynyt jää
+		    "qid": "icerdg",
+		    "layer_type": "icemap",
+		    "layer_subtype": "symbol",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "icerdg",
+		    "symbol": "icerdg",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+ 			}
+		    ]
+		},
+		{ // sohjovyö
+		    "qid": "jmdbrr",
+		    "layer_type": "icemap",
+		    "layer_subtype": "symbol",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "jmdbpt",
+		    "symbol": "jmdbrr",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+ 			}
+		    ]
+		},
+		{ // repeämävyöhyke
+		    "qid": "farcture_zone",
+		    "layer_type": "icemap",
+		    "layer_subtype": "symbol",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "icefra",
+		    "symbol": "icefra_zone",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+ 			}
+		    ]
+		},
+		{ // repeämä
+		    "qid": "fracture",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "i_fral",
+		    "time_column" : "publicationdate",	
+		    "geometry_column" : "geom",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [
+			{
+			    "attributes":
+			    {
+				"class": "FractureTick"
+			    }
+			},
+			{
+			    "attributes":
+			    {
+				"class": "FractureLine"
+			    }
+			}
+		    ]
+		},
+		{ // jään liikesuunta
+		    "qid": "icedft",
+		    "layer_type": "icemap",
+		    "layer_subtype": "symbol",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "icedft",
+		    "symbol": "icedft",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+ 			}
+		    ]
+		},
+		{ // puristus
+		    "qid": "icecom",
+		    "layer_type": "icemap",
+		    "layer_subtype": "degree_of_pressure",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "icecom",
+		    "symbol": "icecom",
+		    "geometry_column" : "geom",
+		    "labeltext_column" : "iceprs",
+		    "time_column" : "publicationdate",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+ 			    "attributes":
+			    {
+			    },
+			    "text_attributes":
+			    {
+				"font-family": "Arial", // override database font
+				"font-size": "10",
+				"dx": "-9",
+				"dy": "13",
+				"font-style": "normal",
+				"font-weight": "normal",
+				"text-anchor": "start"
+			    }
+			}
+		    ]
+		},
+		{ // pääkaupunkisatamat
+		    "qid": "capital_harbours",
+		    "layer_type": "icemap",
+		    "layer_subtype": "named_location",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "harbours",
+		    "symbol": "harbour_capital",
+		    "geometry_column" : "geom",
+		    "firstname_column" : "text1",
+		    "secondname_column" : "text2",
+		    "nameposition_column" : "label_location",
+              	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "symbol_code=0",
+ 			    "attributes":
+			    {
+				"font-family": "Times",
+				"font-size": "10",
+				"font-style": "normal",
+				"font-weight": "normal",
+ 				"text-anchor": "start"
+			    }
+ 			}
+		    ]
+		},
+		{ // normaalit satamat
+		    "qid": "normal_harbours",
+		    "layer_type": "icemap",
+		    "layer_subtype": "named_location",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "harbours",
+		    "symbol": "harbour",
+		    "geometry_column" : "geom",
+		    "firstname_column" : "text1",
+		    "secondname_column" : "text2",
+		    "nameposition_column" : "label_location",
+              	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "symbol_code=1",
+ 			    "attributes":
+			    {
+				"font-family": "Times",
+				"font-size": "10",
+				"font-style": "normal",
+				"font-weight": "normal",
+ 				"text-anchor": "start"
+			    }
+ 			}
+		    ]
+		},
+		{ // pienet satamat
+		    "qid": "small_harbours",
+		    "layer_type": "icemap",
+		    "layer_subtype": "named_location",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "harbours",
+		    "symbol": "harbour_small",
+		    "geometry_column" : "geom",
+		    "firstname_column" : "text1",
+		    "secondname_column" : "text2",
+		    "nameposition_column" : "label_location",
+              	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "symbol_code=3",
+ 			    "attributes":
+			    {
+				"font-family": "Times",
+				"font-size": "10",
+				"font-style": "normal",
+				"font-weight": "normal",
+ 				"text-anchor": "start"
+			    }
+ 			}
+		    ]
+		},
+		{ // majakat
+		    "qid": "lighthouses",
+		    "layer_type": "icemap",
+		    "layer_subtype": "named_location",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "lighthouses",
+		    "symbol": "lighthouse",
+		    "geometry_column" : "geom",
+		    "firstname_column" : "namnavaid1",
+		    "secondname_column" : "namnavaid2",
+		    "nameposition_column" : "label_location",
+		    "angle_column" : "angle",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"font-family": "Arial",
+				"font-size": "10",
+				"font-style": "normal",
+				"font-weight": "normal",
+				"text-anchor": "start"
+			    }
+ 			}
+		    ]
+		},
+		{ // jään paksuuslaatikon yhdysviiva
+		    "qid": "ice_thickness_leader",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "annotationleaders",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+              	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "ref_classname='SeaiceAnnotation' and shape_length > 0",
+			    "attributes":
+			    {
+				"class": "TemperatureIsoline"
+			    }
+  			}
+		    ]
+		},
+		{ // jään paksuus
+		    "qid": "ice_thickness",
+		    "layer_type": "icemap",
+		    "layer_subtype": "ice_thickness_label",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "seaiceannotation",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+		    "labeltext_column" : "textstring",
+		    "fontname_column" : "fontname",
+		    "fontsize_column" : "fontsize",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "textstring IS NOT NULL and length(textstring) > 0",
+			    "attributes":
+			    {
+				"class": "IceThicknessLegend"
+			    },
+ 			    "text_attributes":
+			    {
+				"font-family": "Arial",
+				"font-size": "36",
+				"font-style": "normal",
+				"font-weight": "normal"
+			    }
+ 			}
+		    ]
+		},
+		{ // jäänmurtajat
+		    "qid": "ice_breakers",
+		    "layer_type": "icemap",
+		    "layer_subtype": "ice_breaker_label",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "icebreakers",
+		    "time_column" : "publicationdate",	
+		    "geometry_column" : "geom",
+		    "labeltext_column" : "textstring",
+		    "fontname_column" : "fontname",
+		    "fontsize_column" : "fontsize",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "textstring IS NOT NULL and length(textstring) > 0",
+			    "text_attributes":
+			    {
+				"font-family": "Arial", // override database font
+				"font-size": "36",
+				"font-style": "normal",
+				"font-weight": "normal",
+				"text-anchor": "start",
+				"filter": "url(#whiteoutline)"
+			    }
+			}
+		    ]
+		},
+		{ // frame
+		    "qid": "table",
+		    "layer_type": "frame",
+		    "dimension":
+		    {
+			"inner_border": "17.5 62.9, 26.5 66.1",
+			"outer_border": "6 50, 34 69"
+		    },
+		    "scale":
+		    {
+			"intermediate_tic_step": 0.166667,
+			"intermediate_tic_length": 10, // pixels
+			"long_tic_step": 1.0,
+			"long_tic_length": 15, // pixels
+			"tic_position": "outside", // inside frame,outside frame
+			"label_position": "outside", // 
+			"label_step": 1.0
+		    },
+             	    "css": "ice/icemap.css",
+		    "frame_attributes":
+		    {
+			"class": "MapFrameWhite"
+		    },
+		    "scale_attributes":
+		    {
+			"stroke": "black",
+			"stroke-width": 1.0,
+			"font-family": "Arial",
+			"font-size": "14",
+			"font-style": "normal",
+			"font-weight": "normal",
+			"text-anchor": "start"
+		    }
+		},
+		{
+		    "gid": "icemap_title",
+		    "layer_type": "tag",
+		    "tag": "text",
+		    "cdata": "Jääkartta\n  Iskarta\nIce Chart",
+		    "attributes":
+		    {
+			"longitude": "15.7",
+			"latitude": "65.75",
+			"font-family": "Arial",
+			"font-weight": "normal",
+			"font-size": "36",
+			"text-anchor": "middle",
+			"xml:space": "preserve"
+		    }
+		},
+		{
+		    "qid": "fmi_logo",
+		    "layer_type": "symbol",
+		    "symbol": "fmi_logo",
+                    "positions": {
+                        "layout": "latlon",
+                        "locations": [
+                            {
+                                "longitude": 15.1,
+                                "latitude": 66.1
+                            }
+			]
+		    }
+		},
+		{
+		    "qid": "timestamp",
+		    "layer_type": "time",
+		    "timestamp": "validtime",
+		    "timezone": "Europe/Helsinki",
+		    "format": "%d.%m.%Y",
+		    "longitude": 15.7,
+		    "latitude": 65.32,
+		    "attributes": {
+			"text-anchor": "middle",
+			"font-family": "Arial",
+			"font-weight": "normal",
+			"font-size": "36"
+			}
+		},
+		{
+		    "gid": "icemap_footer",
+		    "layer_type": "tag",
+		    "tag": "text",
+		    "cdata": "Analysis made by FMI and SMHI",
+		    "attributes":
+		    {
+			"longitude": "17.5",
+			"latitude": "62.7",
+			"font-family": "Arial",
+			"font-weight": "normal",
+			"font-size": "12",
+			"text-anchor": "left"
+		    }
+		},
+		{
+		    "gid": "icemap_copyright",
+		    "layer_type": "tag",
+		    "tag": "text",
+		    "cdata": "© Copyright: Finnish Meteorological Institute",
+		    "attributes":
+		    {
+			"longitude": "26.5",
+			"latitude": "62.7",
+			"font-family": "Arial",
+			"font-weight": "normal",
+			"font-size": "12",
+			"text-anchor": "end"
+		    }
+		}
+	    ]
+	}
+    ]
+}
+

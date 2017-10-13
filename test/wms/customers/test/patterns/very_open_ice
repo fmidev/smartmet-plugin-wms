@@ -1,0 +1,4 @@
+<pattern id="very_open_ice" patternUnits="userSpaceOnUse" width="40" height="40">
+<circle cx="10" cy="10" r="3" stroke="black" stroke-width="1" fill="none"/>
+<circle cx="30" cy="30" r="3" stroke="black" stroke-width="1" fill="none"/>
+</pattern>

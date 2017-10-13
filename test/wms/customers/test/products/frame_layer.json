@@ -1,0 +1,74 @@
+{
+    "title": "Legend",
+    "abstract": "Icemap legend",
+    "defs":
+    {
+    },
+    "views": 
+    [
+        {
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": 
+	    [
+		{ // frame
+		    "qid": "frame",
+		    "layer_type": "frame",
+		    "pattern": "hexagon",
+		    "dimension":
+		    {
+			"inner_border": "9 53, 31 66",
+			"outer_border": "7 52, 33 68"
+		    },
+		    "scale":
+		    {
+			"small_tic_step": 0.1, // degrees
+			"small_tic_length": 5, // pixels
+			"intermediate_tic_step": 0.5,
+			"intermediate_tic_length": 10, // pixels
+			"long_tic_step": 1.0,
+			"long_tic_length": 15, // pixels
+			"tic_position": "inside", // inside frame,outside frame
+			"label_position": "inside", // 
+			"label_step": 1.0
+		    },
+             	    "css": "ice/icemap.css",
+		    "attributes":
+		    {
+			"fill": "url(#hexagon)"			
+		    },
+		    "scale_attributes":
+		    {
+			"stroke": "black",
+			"stroke-width": 2.0,
+			"font-family": "Arial",
+			"font-size": "14",
+			"font-style": "normal",
+			"font-weight": "normal",
+			"text-anchor": "start"
+		    }
+		},
+		{
+		    "gid": "title_on_frame",
+		    "layer_type": "tag",
+		    "tag": "text",
+		    "cdata": "Frame with inner and outer border\n   scale is inside inner border",
+		    "attributes":
+		    {
+			"longitude": "20",
+			"latitude": "67",
+			"font-family": "Arial",
+			"font-weight": "normal",
+			"font-size": "38",
+			"fill": "#18447e",
+			"text-anchor": "middle",
+			"xml:space": "preserve"
+		    }
+		}
+	    ]
+	}
+    ]
+}
+

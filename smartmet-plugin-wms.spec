@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.9.27
-Release: 2%{?dist}.fmi
+Version: 17.10.12
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -89,6 +89,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Oct 12 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.10.12-1.fmi
+- Icemap-related changes:
+- changes are based on two Agile Jira-issues: VANADIS-376,COICESERV-36 
+- new layer, FrameLayer, added for a frame (and scale) around the map
+- WMS now supports application/pdf-documents
+- longitude, latitude attribute added to TagLayer, TimeLayer to express location on map
+- new icemap-products, patterns, symbols, filters added
+
 * Wed Sep 27 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.27-2.fmi
 - Fixed GetLegendGraphic to use unique IDs in case there are two or more isoband layers
 
@@ -104,6 +112,10 @@ rm -rf $RPM_BUILD_ROOT
 
 * Wed Sep 20 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.20-1.fmi
 - Output lolimit and hilimit to geojson even if +-inf
+
+* Thu Sep 14 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.9.14-1.fmi
+- Added configurability for GetLegendGraphic-response:
+Parameter name, unit and layout of output document can be configured (see. BRAINSTORM-922)
 
 * Tue Sep 12 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.9.12-1.fmi
 - Using new contouring API which does not care if crs=data is used.

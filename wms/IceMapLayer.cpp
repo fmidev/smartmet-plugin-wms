@@ -2,10 +2,11 @@
 
 #include "IceMapLayer.h"
 #include "Config.h"
-#include "Geometry.h"
 #include "Hash.h"
 #include "Layer.h"
+#include "LonLatToXYTransformation.h"
 #include "State.h"
+#include "TextUtility.h"
 #include <boost/foreach.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
@@ -16,7 +17,7 @@
 #include <macgyver/StringConversion.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
-#include <cairo.h>
+#include <algorithm>
 
 namespace SmartMet
 {
@@ -24,46 +25,16 @@ namespace Plugin
 {
 namespace Dali
 {
-struct text_dimension_t
+namespace
 {
-  unsigned int width;
-  unsigned int height;
-};
-
-struct text_style_t
-{
-  std::string fontname;
-  std::string fontsize;
-  std::string fontstyle;
-  std::string fontweight;
-  std::string textanchor;
-
-  text_style_t()
-      : fontname("Arial"),
-        fontsize("10"),
-        fontstyle("normal"),
-        fontweight("normal"),
-        textanchor("start")
-  {
-  }
-  text_style_t(const text_style_t& s)
-      : fontname(s.fontname),
-        fontsize(s.fontsize),
-        fontstyle(s.fontstyle),
-        fontweight(s.fontweight),
-        textanchor(s.textanchor)
-  {
-  }
-};
-
 typedef boost::shared_ptr<OGRSpatialReference> OGRSpatialReferencePtr;
 typedef std::unique_ptr<OGRCoordinateTransformation> OGRCoordinateTransformationPtr;
 
-namespace
-{
 const char* const attribute_columns[] = {"firstname_column",
                                          "secondname_column",
                                          "nameposition_column",
+                                         "text_column",
+                                         "textposition_column",
                                          "angle_column",
                                          "labeltext_column",
                                          "fontname_column",
@@ -140,78 +111,6 @@ std::vector<std::string> getAttributeColumns(const std::map<std::string, std::st
   return column_name_vector;
 }
 
-OGRCoordinateTransformationPtr getTransformation(OGRSpatialReferencePtr sr)
-{
-  // Get the geonames projection
-
-  std::unique_ptr<OGRSpatialReference> geocrs(new OGRSpatialReference);
-  OGRErr err = geocrs->SetFromUserInput("WGS84");
-  if (err != OGRERR_NONE)
-    throw std::runtime_error("GDAL does not understand this crs 'WGS84'");
-
-  // Create the coordinate transformation from geonames coordinates to image coordinates
-
-  OGRCoordinateTransformationPtr transformation(
-      OGRCreateCoordinateTransformation(geocrs.get(), sr.get()));
-  if (!transformation)
-    throw std::runtime_error(
-        "Failed to create the needed coordinate transformation when drawing locations");
-
-  return transformation;
-}
-
-text_dimension_t getTextDimension(const std::string& text,  // Text
-                                  const text_style_t& text_style)
-{
-  cairo_font_slant_t cairo_fontstyle =
-      (text_style.fontstyle == "normal"
-           ? CAIRO_FONT_SLANT_NORMAL
-           : (text_style.fontstyle == "italic" ? CAIRO_FONT_SLANT_ITALIC
-                                               : CAIRO_FONT_SLANT_OBLIQUE));
-  cairo_font_weight_t cairo_fontsweight =
-      (text_style.fontweight == "normal" ? CAIRO_FONT_WEIGHT_NORMAL : CAIRO_FONT_WEIGHT_BOLD);
-
-  // cairo surface to get font mectrics
-  cairo_surface_t* cs = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 1, 1);
-  cairo_t* cr = cairo_create(cs);
-  cairo_surface_destroy(cs);
-
-  cairo_select_font_face(cr, text_style.fontname.c_str(), cairo_fontstyle, cairo_fontsweight);
-  cairo_set_font_size(cr, Fmi::stoi(text_style.fontsize));
-
-  cairo_text_extents_t extents;
-  cairo_text_extents(cr, text.c_str(), &extents);
-
-  text_dimension_t ret;
-
-  ret.width = static_cast<unsigned int>(ceil(std::max(extents.width, extents.x_advance)));
-  ret.height = static_cast<unsigned int>(ceil(extents.height));
-
-  return ret;
-}
-
-text_style_t getTextStyle(const Attributes& theAttributes, const text_style_t& default_values)
-{
-  text_style_t ret(default_values);
-
-  if (!theAttributes.value("font-family").empty())
-    ret.fontname = theAttributes.value("font-family");
-
-  if (!theAttributes.value("font-size").empty())
-    ret.fontsize = theAttributes.value("font-size");
-
-  if (!theAttributes.value("font-style").empty())
-    ret.fontstyle = theAttributes.value("font-style");
-
-  if (!theAttributes.value("font-weight").empty())
-    ret.fontweight = theAttributes.value("font-weight");
-
-  if (!theAttributes.value("text-anchor").empty())
-    ret.textanchor = theAttributes.value("text-anchor");
-
-  return ret;
-}
-
 std::string convertText(const std::string& theText)
 {
   std::string ret(theText);  // original text is returned by default
@@ -277,6 +176,21 @@ void IceMapLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       itsParameters.insert(make_pair("nameposition_column", json.asString()));
 
+    // column name of text
+    json = theJson.get("text_column", nulljson);
+    if (!json.isNull())
+      itsParameters.insert(make_pair("text_column", json.asString()));
+
+    // text for the text field
+    json = theJson.get("field_value", nulljson);
+    if (!json.isNull())
+      itsParameters.insert(make_pair("field_value", json.asString()));
+
+    // text position
+    json = theJson.get("textposition_column", nulljson);
+    if (!json.isNull())
+      itsParameters.insert(make_pair("textposition_column", json.asString()));
+
     // angle column
     json = theJson.get("angle_column", nulljson);
     if (!json.isNull())
@@ -307,6 +221,16 @@ void IceMapLayer::init(const Json::Value& theJson,
     json = theJson.get("fontsize_column", nulljson);
     if (!json.isNull())
       itsParameters.insert(make_pair("fontsize_column", json.asString()));
+
+    // longitude, latitude
+    json = theJson.get("longitude", nulljson);
+    if (!json.isNull())
+      itsParameters.insert(make_pair("longitude", json.asString()));
+
+    // longitude, latitude
+    json = theJson.get("latitude", nulljson);
+    if (!json.isNull())
+      itsParameters.insert(make_pair("latitude", json.asString()));
 
     // if time missing set current time
     if (!time)
@@ -376,7 +300,6 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       theGlobals["includes"]["lighthouse"] = theState.getSymbol("lighthouse");
 
     auto crs = projection.getCRS();
-
     // Update the globals
     if (css)
     {
@@ -408,8 +331,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     OGRSpatialReferencePtr projectionSR = projection.getCRS();
     OGRSpatialReference defaultSR;
     defaultSR.importFromEPSG(3395);  // if sr is missing use this one
-
-    unsigned int mapid(1);  // id to concatenate to iri to make it unique
+    unsigned int mapid(1);           // id to concatenate to iri to make it unique
     // Get the polygons and store them into the template engine
     BOOST_FOREACH (const PostGISLayerFilter& filter, filters)
     {
@@ -443,7 +365,6 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
             result_item->geom->assignSpatialReference(&defaultSR);
             result_item->geom->transformTo(projectionSR.get());
           }
-
           handleResultItem(
               *result_item, filter, mapid, theGlobals, theLayersCdt, theGroupCdt, theState);
         }
@@ -502,9 +423,7 @@ std::size_t IceMapLayer::hash_value(const State& theState) const
 
 void IceMapLayer::handleSymbol(const Fmi::Feature& theResultItem, CTPP::CDT& theGroupCdt) const
 {
-  const Fmi::Box& box = projection.getBox();
-  OGRSpatialReferencePtr sr = projection.getCRS();
-  OGRCoordinateTransformationPtr transformation(getTransformation(sr));
+  auto transformation = LonLatToXYTransformation(projection);
 
   std::string iri(getParameterValue("symbol"));
 
@@ -517,9 +436,7 @@ void IceMapLayer::handleSymbol(const Fmi::Feature& theResultItem, CTPP::CDT& the
     double lon = ((envelope.MinX + envelope.MaxX) / 2);
     double lat = ((envelope.MinY + envelope.MaxY) / 2);
 
-    transformation->Transform(1, &lon, &lat);
-
-    box.transform(lon, lat);
+    transformation.transform(lon, lat);
 
     lon -= 15;
     lat -= 5;
@@ -542,19 +459,16 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
                                       CTPP::CDT& theGroupCdt,
                                       State& theState) const
 {
-  const Fmi::Box& box = projection.getBox();
-  OGRSpatialReferencePtr sr = projection.getCRS();
-  OGRCoordinateTransformationPtr transformation(getTransformation(sr));
+  auto transformation = LonLatToXYTransformation(projection);
 
   if (theResultItem.geom && !theResultItem.geom->IsEmpty())
   {
     const OGRPoint* point = static_cast<const OGRPoint*>(theResultItem.geom.get());
+
     double lon(point->getX());
     double lat(point->getY());
 
-    transformation->Transform(1, &lon, &lat);
-
-    box.transform(lon, lat);
+    transformation.transform(lon, lat);
 
     // Start generating the hash
     CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
@@ -568,11 +482,10 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
       if (theState.addId(iri))
         theGlobals["includes"][iri] = theState.getSymbol(iri);
       tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-      tag_cdt["attributes"]["x"] = Fmi::to_string(std::round(lon - 6));
-      tag_cdt["attributes"]["y"] = Fmi::to_string(std::round(lat - 6));
+      tag_cdt["attributes"]["x"] = Fmi::to_string(lon);
+      tag_cdt["attributes"]["y"] = Fmi::to_string(lat);
       theGroupCdt["tags"].PushBack(tag_cdt);
     }
-
     // first name second name
     std::string first_name;
     std::string second_name;
@@ -581,10 +494,12 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
       first_name =
           boost::apply_visitor(PostGISAttributeToString(),
                                theResultItem.attributes.at(itsParameters.at("firstname_column")));
+
     if (itsParameters.find("secondname_column") != itsParameters.end())
       second_name =
           boost::apply_visitor(PostGISAttributeToString(),
                                theResultItem.attributes.at(itsParameters.at("secondname_column")));
+
     if (itsParameters.find("nameposition_column") != itsParameters.end())
       name_position = boost::apply_visitor(
           PostGISAttributeToString(),
@@ -597,9 +512,15 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
     // we may add arrow beside the name
     std::string arrow_angle;
     if (itsParameters.find("angle_column") != itsParameters.end())
-      arrow_angle =
-          boost::apply_visitor(PostGISAttributeToString(),
-                               theResultItem.attributes.at(itsParameters.at("angle_column")));
+    {
+      std::string angle_column = itsParameters.at("angle_column");
+      if (theResultItem.attributes.find(angle_column) != theResultItem.attributes.end())
+      {
+        arrow_angle =
+            boost::apply_visitor(PostGISAttributeToString(),
+                                 theResultItem.attributes.at(itsParameters.at("angle_column")));
+      }
+    }
 
     boost::algorithm::trim(arrow_angle);
 
@@ -631,12 +552,6 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
   if (attribute_columns.empty())
     return;
 
-  OGREnvelope envelope;
-  theResultItem.geom->getEnvelope(&envelope);
-
-  double xpos = (envelope.MinX);
-  double ypos = (envelope.MinY);
-
   std::string label_text("");
   text_style_t text_style;
 
@@ -649,6 +564,9 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
   if (theResultItem.attributes.find(labeltext_column) != theResultItem.attributes.end())
     label_text = boost::apply_visitor(PostGISAttributeToString(),
                                       theResultItem.attributes.at(labeltext_column));
+
+  boost::replace_all(label_text, "<", "&#60;");
+  boost::replace_all(label_text, ">", "&#62;");
 
   if (itsParameters.find("fontname_column") != itsParameters.end())
     fontname_column = itsParameters.at("fontname_column");
@@ -668,56 +586,62 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
 
   text_style = getTextStyle(theFilter.text_attributes, text_style);
 
-  OGRSpatialReferencePtr sr = projection.getCRS();
-  OGRCoordinateTransformationPtr transformation(getTransformation(sr));
-  const Fmi::Box& box = projection.getBox();
-
-  transformation->Transform(1, &xpos, &ypos);
-
-  box.transform(xpos, ypos);
+  std::string::iterator startIter = label_text.begin();
+  std::string::iterator endIter = label_text.begin();
+  std::vector<std::string> rows;
+  while (endIter != label_text.end())
+  {
+    endIter = std::find(startIter, label_text.end(), '\n');
+    rows.push_back(std::string(startIter, endIter));
+    startIter = endIter;
+    if (startIter != label_text.end())
+      startIter++;
+  }
 
   text_dimension_t text_dimension = getTextDimension(label_text, text_style);
 
-  boost::replace_all(label_text, "<", "&#60;");
-  boost::replace_all(label_text, ">", "&#62;");
+  OGREnvelope envelope;
+  theResultItem.geom->getEnvelope(&envelope);
+
+  double xpos = envelope.MinX;
+  double ypos = envelope.MaxY;
+
+  auto transformation = LonLatToXYTransformation(projection);
+
+  transformation.transform(xpos, ypos);
+
+  ypos += (text_dimension.height + 5);
 
   // background rectangle
   if (!theFilter.attributes.empty())
   {
+    text_dimension_t rectangleDimension = getTextDimension(rows, text_style);
+
     CTPP::CDT background_rect_cdt(CTPP::CDT::HASH_VAL);
     background_rect_cdt["start"] = "<rect";
     background_rect_cdt["end"] = "</rect>";
-    background_rect_cdt["attributes"]["width"] = Fmi::to_string(text_dimension.width + 5);
-    background_rect_cdt["attributes"]["height"] = Fmi::to_string(text_dimension.height + 5);
-    background_rect_cdt["attributes"]["x"] = Fmi::to_string(xpos);
-    background_rect_cdt["attributes"]["y"] = Fmi::to_string(ypos - (text_dimension.height * 2.0));
+    background_rect_cdt["attributes"]["width"] =
+        Fmi::to_string(rectangleDimension.width + (rectangleDimension.width * 0.1));
+    background_rect_cdt["attributes"]["height"] =
+        Fmi::to_string(rectangleDimension.height + (rectangleDimension.height * 0.1));
+    background_rect_cdt["attributes"]["x"] = Fmi::to_string(xpos - 2);
+    background_rect_cdt["attributes"]["y"] = Fmi::to_string(ypos - (text_dimension.height + 2));
     theState.addAttributes(theGlobals, background_rect_cdt, theFilter.attributes);
     theLayersCdt.PushBack(background_rect_cdt);
   }
 
-  // label text
-  CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
-  text_cdt["start"] = "<text";
-  text_cdt["end"] = "</text>";
-  text_cdt["cdata"] =
-      convertText(label_text);  // original text may be converted to some other at this point
-  text_cdt["attributes"]["x"] = Fmi::to_string(xpos + 2);
-  text_cdt["attributes"]["y"] = Fmi::to_string(ypos - (text_dimension.height) + 2);
-
-  if (theFilter.text_attributes.empty())
-  {
-    text_cdt["attributes"]["font-family"] = text_style.fontname;
-    text_cdt["attributes"]["font-size"] = text_style.fontsize;
-    text_cdt["attributes"]["font-style"] = text_style.fontstyle;
-    text_cdt["attributes"]["font-weight"] = text_style.fontweight;
-    text_cdt["attributes"]["text-anchor"] = text_style.textanchor;
-  }
+  Attributes text_attributes;
+  if (!theFilter.text_attributes.empty())
+    text_attributes = theFilter.text_attributes;
   else
   {
-    theState.addAttributes(theGlobals, text_cdt, theFilter.text_attributes);
+    text_attributes.add("font-family", text_style.fontname);
+    text_attributes.add("font-size", text_style.fontsize);
+    text_attributes.add("font-style", text_style.fontweight);
+    text_attributes.add("font-weight", text_style.fontweight);
+    text_attributes.add("text-anchor", text_style.textanchor);
   }
-
-  theLayersCdt.PushBack(text_cdt);
+  addTextField(xpos, ypos, rows, text_attributes, theGlobals, theLayersCdt, theState);
 }
 
 void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
@@ -748,11 +672,8 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
   double xpos = point->getX();
   double ypos = point->getY();
 
-  OGRSpatialReferencePtr sr = projection.getCRS();
-  OGRCoordinateTransformationPtr transformation(getTransformation(sr));
-  const Fmi::Box& box = projection.getBox();
-  transformation->Transform(1, &xpos, &ypos);
-  box.transform(xpos, ypos);
+  auto transformation = LonLatToXYTransformation(projection);
+  transformation.transform(xpos, ypos);
 
   // background ellipse
   CTPP::CDT background_ellipse_cdt(CTPP::CDT::HASH_VAL);
@@ -839,13 +760,13 @@ void IceMapLayer::addLocationName(double theXPos,
     case 1:  // oikea
     {
       x_coord = theXPos + 5;
-      y_coord_first = theYPos - (y_offset * 0.53);
-      y_coord_second = theYPos + (y_offset * 0.53);
+      y_coord_first = theYPos - (y_offset * 0.53) + 2;
+      y_coord_second = theYPos + (y_offset * 0.53) + 2;
 
       if (first_name.empty())
-        y_coord_second = theYPos + (text_dimension_first.height * 0.1);
+        y_coord_second = theYPos + (text_dimension_first.height * 0.3);
       if (second_name.empty())
-        y_coord_first = theYPos + (text_dimension_first.height * 0.1);
+        y_coord_first = theYPos + (text_dimension_first.height * 0.3);
     }
     break;
     case 2:  // ylä
@@ -861,8 +782,8 @@ void IceMapLayer::addLocationName(double theXPos,
     case 3:  // ala
     {
       x_coord = theXPos - (x_offset * 0.5);
-      y_coord_first = theYPos + 2.0 + y_offset;
-      y_coord_second = theYPos + 2.0 + (y_offset * 2.0);
+      y_coord_first = theYPos + (y_offset * 1.6);
+      y_coord_second = y_coord_first + y_offset;
 
       if (first_name.empty())
         y_coord_second = y_coord_first;

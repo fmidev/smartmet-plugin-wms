@@ -1,0 +1,233 @@
+[
+		{
+		    "qid": "open_water",
+		    "layer_type": "icemap",
+		    "pattern": "open_water",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "seaice",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "type = 1",
+			    "attributes":
+			    {
+				"stroke": "black",
+				"stroke-width": 0.2,
+				"fill": "url(#open_water)"
+			    }
+			}
+		    ]
+		},
+		{
+		    "qid": "very_open_ice",
+		    "layer_type": "icemap",
+		    "pattern": "very_open_ice",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "seaice",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+
+			    "where": "type = 2",
+			    "attributes":
+			    {
+				"stroke": "black",
+				"stroke-width": 0.2,
+				"fill": "url(#very_open_ice)"
+			    }
+			}
+		    ]
+		},
+		{
+		    "qid": "open_ice",
+		    "layer_type": "icemap",
+		    "pattern": "open_ice",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "seaice",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "type = 3",
+			    "attributes":
+			    {
+				"stroke": "black",
+				"stroke-width": 0.2,
+				"fill": "url(#open_ice)"
+			    }
+			}
+		    ]
+		},
+		{
+		    "qid": "close_ice",
+		    "layer_type": "icemap",
+		    "pattern": "close_ice",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "seaice",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "type = 4",
+			    "attributes":
+			    {
+				"stroke": "black",
+				"stroke-width": 0.2,
+				"fill": "url(#close_ice)"
+			    }
+			}
+		    ]
+		},
+		{
+		    "qid": "very_close_ice",
+		    "layer_type": "icemap",
+		    "pattern": "very_close_ice",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "seaice",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "type = 5",
+			    "attributes":
+			    {
+				"stroke": "black",
+				"stroke-width": 0.2,
+				"fill": "url(#very_close_ice)"
+			    }
+			}
+		    ]
+		},
+		{
+		    "qid": "consolidated_ice",
+		    "layer_type": "icemap",
+		    "pattern": "very_close_ice",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "seaice",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "type = 6",
+			    "attributes":
+			    {
+				"stroke": "black",
+				"stroke-width": 0.2,
+				"fill": "url(#very_close_ice)"
+			    }
+			}
+		    ]
+		},
+		{
+		    "qid": "grey_ice",
+		    "layer_type": "icemap",
+		    "pattern": "grey_ice",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "seaice",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "type = 7",
+			    "attributes":
+			    {
+				"stroke": "black",
+				"stroke-width": 0.2,
+				"fill": "url(#grey_ice)"
+			    }
+			}
+		    ]
+		},
+		{
+		    "qid": "fast_ice",
+		    "layer_type": "icemap",
+		    "pattern": "fast_ice",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "seaice",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "type = 8",
+			    "attributes":
+			    {
+				"stroke": "black",
+				"stroke-width": 0.2,
+				"fill": "url(#fast_ice)"
+			    }
+			}
+		    ]
+		},
+		{
+		    "qid": "new_ice",
+		    "layer_type": "icemap",
+		    "pattern": "new_ice",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "seaice",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "type = 9",
+			    "attributes":
+			    {
+				"stroke": "black",
+				"stroke-width": 0.2,
+				"fill": "url(#new_ice)"
+			    }
+			}
+		    ]
+		},
+		{
+		    "qid": "rotten_fast_ice",
+		    "layer_type": "icemap",
+		    "pattern": "rotten_fast_ice",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "seaice",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "type = 10",
+			    "attributes":
+			    {
+				"stroke": "black",
+				"stroke-width": 0.2,
+				"fill": "url(#rotten_fast_ice)"
+			    }
+			}
+		    ]
+		}
+]

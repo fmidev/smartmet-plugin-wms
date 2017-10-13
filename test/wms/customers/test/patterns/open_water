@@ -1,0 +1,4 @@
+<pattern id="open_water" patternUnits="userSpaceOnUse" width="32" height="32">
+<circle cx="8" cy="8" r="1" stroke="black" stroke-width="1" fill="black"/>
+<circle cx="24" cy="24" r="1" stroke="black" stroke-width="1" fill="black"/>
+</pattern>
