@@ -97,6 +97,52 @@ std::string getWMSLayerTypeAsString(WMSLayerType layerType)
   }
 }
 
+WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
+{
+  WMSLayerType layer_type = WMSLayerType::NotWMSLayer;
+  Json::Value nulljson;
+
+  for (const auto& layer : layers)
+  {
+    if (!layer.isNull())
+    {
+      Json::Value sublayers = layer.get("layers", nulljson);
+      // if sublayers exists examine them
+      if (!sublayers.isNull())
+      {
+        layer_type = findLayerType(sublayers, layerRef);
+        if (layer_type != WMSLayerType::NotWMSLayer)
+          return layer_type;
+      }
+    }
+
+    // Match first layer which defines "layer_type" - directive
+    // Layer can have auxiliary layers (such as taglayers) for clipping and such
+    if (layer.isNull() || layer["layer_type"].isNull())
+    {
+      // This is auxiliary layer, does not count
+      continue;
+    }
+    else
+    {
+      layer_type = getWMSLayerType(layer);
+
+      if (layer_type == WMSLayerType::NotWMSLayer)
+      {
+        // NotWMSLayer means we should proceed to find a more significant layer
+        continue;
+      }
+      else
+      {
+        layerRef = layer;
+        return layer_type;
+      }
+    }
+  }
+
+  return layer_type;
+}
+
 // This function deduces the WMS product type. In case of several layer definitions in the product
 // the most significant is chosen
 WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
@@ -123,33 +169,9 @@ WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
       }
       else
       {
-        WMSLayerType layer_type;  // The resolved layer type
-
-        for (const auto& layer : layers)
-        {
-          // Match first layer which defines "layer_type" - directive
-          // Layer can have auxiliary layers (such as taglayers) for clipping and such
-          if (layer.isNull() || layer["layer_type"].isNull())
-          {
-            // This is auxiliary layer, does not count
-            continue;
-          }
-          else
-          {
-            layer_type = getWMSLayerType(layer);
-
-            if (layer_type == WMSLayerType::NotWMSLayer)
-            {
-              // NotWMSLayer means we should proceed to find a more significant layer
-              continue;
-            }
-            else
-            {
-              layerRef = layer;
-              return layer_type;
-            }
-          }
-        }
+        WMSLayerType layer_type = findLayerType(layers, layerRef);  // The resolved layer type
+        if (layer_type != WMSLayerType::NotWMSLayer)
+          return layer_type;
 
         Json::Value hidden = jsonRoot.get("hidden", nulljson);
         if (!hidden.isNull() && hidden.asBool())

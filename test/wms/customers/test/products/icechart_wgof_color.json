@@ -597,7 +597,7 @@
 			"label_step": 1.0
 		    },
              	    "css": "ice/icemap.css",
-		    "frame_attributes":
+		    "attributes":
 		    {
 			"class": "MapFrameWhite"
 		    },

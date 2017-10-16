@@ -1,6 +1,6 @@
 {
     "title": "Ice Chart",
-    "abstract": "Western Gulf of Finland Ice Chart",
+    "abstract": "Western Gulf of Finland Ice Chart (black and white)",
     "defs":
     {
     },
@@ -516,7 +516,7 @@
 			"label_step": 1.0
 		    },
              	    "css": "ice/icemap.css",
-		    "frame_attributes":
+		    "attributes":
 		    {
 			"class": "MapFrameWhite"
 		    },
