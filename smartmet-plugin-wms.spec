@@ -92,6 +92,7 @@ rm -rf $RPM_BUILD_ROOT
 * Mon Oct 16 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.10.16-1.fmi
 - product files updated
 - handling of sublayers of PostGISLayer corrected
+- GetCapabilities geographic bounding box longitudes are now forced to range -180...180
 
 * Thu Oct 12 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.10.12-1.fmi
 - Icemap-related changes:

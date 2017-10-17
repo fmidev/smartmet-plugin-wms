@@ -28,6 +28,28 @@ namespace WMS
 {
 namespace
 {
+// wms.longitude must be in range [-180...180] inclusive
+double clamp_longitude(double lon)
+{
+  lon = fmod(lon, 360);
+  if (lon < -180)
+    lon += 360;
+  else if (lon > 180)
+    lon -= 360;
+  return lon;
+}
+
+// wms.latitude must be in range [-90...90] inclusive
+double clamp_latitude(double lat)
+{
+  lat = fmod(lat, 180);
+  if (lat < -90)
+    lat += 180;
+  else if (lat > 90)
+    lat -= 180;
+  return lat;
+}
+
 LegendGraphicInfo handle_json_layers(Json::Value layersJson)
 {
   LegendGraphicInfo ret;
@@ -648,10 +670,10 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
     // Layer geographic bounding boxes
 
     CTPP::CDT layer_bbox(CTPP::CDT::HASH_VAL);
-    layer_bbox["west_bound_longitude"] = geographicBoundingBox.xMin;
-    layer_bbox["east_bound_longitude"] = geographicBoundingBox.xMax;
-    layer_bbox["south_bound_latitude"] = geographicBoundingBox.yMin;
-    layer_bbox["north_bound_latitude"] = geographicBoundingBox.yMax;
+    layer_bbox["west_bound_longitude"] = clamp_longitude(geographicBoundingBox.xMin);
+    layer_bbox["east_bound_longitude"] = clamp_longitude(geographicBoundingBox.xMax);
+    layer_bbox["south_bound_latitude"] = clamp_latitude(geographicBoundingBox.yMin);
+    layer_bbox["north_bound_latitude"] = clamp_latitude(geographicBoundingBox.yMax);
     layer["ex_geographic_bounding_box"] = layer_bbox;
 
     // Layer CRS list and their bounding boxes
