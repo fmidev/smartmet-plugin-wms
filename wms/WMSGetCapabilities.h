@@ -1,12 +1,12 @@
 #pragma once
 
-#include <string>
 #include <map>
 #include <set>
+#include <string>
 
 #include <engines/querydata/Engine.h>
-#include <spine/Value.h>
 #include <spine/HTTP.h>
+#include <spine/Value.h>
 
 #include "TemplateFactory.h"
 #include "WMSConfig.h"

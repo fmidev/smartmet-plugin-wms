@@ -1,10 +1,10 @@
 #include "Label.h"
 #include "Config.h"
 #include "Hash.h"
-#include <spine/Exception.h>
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include <boost/locale.hpp>
+#include <spine/Exception.h>
 #include <cmath>
 #include <iomanip>
 #include <stdexcept>

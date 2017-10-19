@@ -3,9 +3,9 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "State.h"
-#include <spine/Exception.h>
-#include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
+#include <ctpp2/CDT.hpp>
+#include <spine/Exception.h>
 
 #include <gis/OGR.h>
 #include <gis/Types.h>
@@ -147,6 +147,8 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     std::string iri = qid;
     if (iri.empty())
       iri = theState.generateUniqueId();
+    else if (!theState.addId(iri))
+      throw Spine::Exception(BCP, "Non-unique ID assigned to WKT layer").addParameter("ID", iri);
 
     CTPP::CDT wkt_cdt(CTPP::CDT::HASH_VAL);
     wkt_cdt["iri"] = iri;

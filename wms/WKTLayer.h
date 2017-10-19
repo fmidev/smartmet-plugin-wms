@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "Layer.h"
 #include "Attributes.h"
+#include "Layer.h"
 #include "Text.h"
 #include <boost/optional.hpp>
 #include <string>

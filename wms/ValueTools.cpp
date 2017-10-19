@@ -1,6 +1,6 @@
 #include "ValueTools.h"
-#include <spine/Exception.h>
 #include <newbase/NFmiGlobals.h>
+#include <spine/Exception.h>
 
 namespace SmartMet
 {

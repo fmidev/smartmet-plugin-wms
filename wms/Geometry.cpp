@@ -1,6 +1,6 @@
 #include "Geometry.h"
-#include <spine/Exception.h>
 #include <gdal/ogr_spatialref.h>
+#include <spine/Exception.h>
 
 namespace SmartMet
 {

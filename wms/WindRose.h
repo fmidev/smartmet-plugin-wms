@@ -6,11 +6,11 @@
 
 #pragma once
 
-#include "Attributes.h"
 #include "AttributeSelection.h"
+#include "Attributes.h"
 #include "Connector.h"
-#include <json/json.h>
 #include <boost/optional.hpp>
+#include <json/json.h>
 #include <string>
 #include <vector>
 

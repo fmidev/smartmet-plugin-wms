@@ -35,9 +35,9 @@
 
 #pragma once
 
+#include <boost/optional.hpp>
 #include <engines/querydata/Q.h>
 #include <json/json.h>
-#include <boost/optional.hpp>
 #include <string>
 
 class OGRSpatialReference;
@@ -100,6 +100,7 @@ class Projection
   // User is responsible for calling getCRS or getBox first
   const NFmiPoint& bottomLeftLatLon() const { return itsBottomLeft; }
   const NFmiPoint& topRightLatLon() const { return itsTopRight; }
+
  private:
   // Cached results
   void prepareCRS() const;

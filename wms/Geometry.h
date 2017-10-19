@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <gis/OGR.h>
 #include <boost/shared_ptr.hpp>
+#include <gis/OGR.h>
 #include <string>
 
 class OGRSpatialReference;

@@ -325,6 +325,10 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           // Store the path with unique ID
           std::string iri = qid + (qid.empty() ? "" : ".") + isoband.qid;
 
+          if (!theState.addId(iri))
+            throw Spine::Exception(BCP, "Non-unique ID assigned to isoband")
+                .addParameter("ID", iri);
+
           CTPP::CDT isoband_cdt(CTPP::CDT::HASH_VAL);
           isoband_cdt["iri"] = iri;
           isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);

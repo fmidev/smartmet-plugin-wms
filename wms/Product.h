@@ -11,10 +11,10 @@
 #include "Projection.h"
 #include "Properties.h"
 #include "Views.h"
-#include <json/json.h>
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/time_serialize.hpp>
 #include <boost/optional.hpp>
+#include <json/json.h>
 #include <string>
 #include <vector>
 

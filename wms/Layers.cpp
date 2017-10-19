@@ -2,10 +2,10 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "LayerFactory.h"
-#include <spine/Exception.h>
-#include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
 #include <boost/functional/hash.hpp>
+#include <ctpp2/CDT.hpp>
+#include <spine/Exception.h>
 
 namespace SmartMet
 {

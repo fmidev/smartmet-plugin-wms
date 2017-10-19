@@ -8,10 +8,10 @@
 #include "Intersections.h"
 #include "Locations.h"
 #include "Map.h"
+#include <boost/optional.hpp>
 #include <engines/geonames/Engine.h>
 #include <gis/Box.h>
 #include <json/json.h>
-#include <boost/optional.hpp>
 #include <cstddef>
 
 namespace SmartMet

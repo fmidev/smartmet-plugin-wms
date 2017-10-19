@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "Layer.h"
 #include "Isoband.h"
+#include "Layer.h"
 #include "LegendLabels.h"
 #include "LegendSymbols.h"
 #include <boost/optional.hpp>

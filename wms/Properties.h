@@ -7,9 +7,9 @@
 #pragma once
 
 #include "Projection.h"
-#include <gis/Box.h>
-#include <boost/optional.hpp>
 #include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/optional.hpp>
+#include <gis/Box.h>
 #include <string>
 
 namespace SmartMet

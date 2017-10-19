@@ -10,9 +10,9 @@
 
 #include "Layer.h"
 #include "Observations.h"
+#include "Stations.h"
 #include "WindRose.h"
 #include "WindRoseData.h"
-#include "Stations.h"
 #include <map>
 
 namespace SmartMet

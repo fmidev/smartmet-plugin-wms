@@ -305,6 +305,10 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           // Store the path with unique QID
           std::string iri = qid + (qid.empty() ? "" : ".") + isoline.qid;
 
+          if (!theState.addId(iri))
+            throw Spine::Exception(BCP, "Non-unique ID assigned to isoline")
+                .addParameter("ID", iri);
+
           CTPP::CDT isoline_cdt(CTPP::CDT::HASH_VAL);
           isoline_cdt["iri"] = iri;
           isoline_cdt["time"] = Fmi::to_iso_extended_string(valid_time);

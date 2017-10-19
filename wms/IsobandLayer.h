@@ -7,8 +7,8 @@
 #pragma once
 
 #include "Intersections.h"
-#include "Layer.h"
 #include "Isoband.h"
+#include "Layer.h"
 #include "Map.h"
 #include "Sampling.h"
 #include "Smoother.h"
