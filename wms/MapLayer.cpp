@@ -154,7 +154,7 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     }
 
     // Do not produce a use-statement for empty data or in the header
-    if (!geom->IsEmpty() && !theState.inDefs())
+    if (!geom->IsEmpty())
     {
       // Update the globals
 

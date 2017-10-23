@@ -122,9 +122,6 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 {
   try
   {
-    if (theState.inDefs())
-      throw Spine::Exception(BCP, "NumberLayer cannot be used in the Defs-section");
-
     if (!validLayer(theState))
       return;
 

@@ -191,13 +191,10 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     // Generate isolines as use tags statements inside <g>..</g>
 
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
-    if (!theState.inDefs())
-    {
-      group_cdt["start"] = "<g";
-      group_cdt["end"] = "</g>";
-      // Add attributes to the group, not the isobands
-      theState.addAttributes(theGlobals, group_cdt, attributes);
-    }
+    group_cdt["start"] = "<g";
+    group_cdt["end"] = "</g>";
+    // Add attributes to the group, not the isobands
+    theState.addAttributes(theGlobals, group_cdt, attributes);
 
     // Logical operations with maps require shapes
 
@@ -322,16 +319,13 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
           theGlobals["paths"][iri] = isoline_cdt;
 
-          if (!theState.inDefs())
-          {
-            // Add the SVG use element
-            CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-            tag_cdt["start"] = "<use";
-            tag_cdt["end"] = "/>";
-            theState.addAttributes(theGlobals, tag_cdt, isoline.attributes);
-            tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-            group_cdt["tags"].PushBack(tag_cdt);
-          }
+          // Add the SVG use element
+          CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+          tag_cdt["start"] = "<use";
+          tag_cdt["end"] = "/>";
+          theState.addAttributes(theGlobals, tag_cdt, isoline.attributes);
+          tag_cdt["attributes"]["xlink:href"] = "#" + iri;
+          group_cdt["tags"].PushBack(tag_cdt);
         }
       }
     }

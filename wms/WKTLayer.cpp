@@ -158,29 +158,26 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     theGlobals["paths"][iri] = wkt_cdt;
 
-    if (!theState.inDefs())
-    {
-      addClipRect(theLayersCdt, theGlobals, box, theState);
+    addClipRect(theLayersCdt, theGlobals, box, theState);
 
-      // The output consists of a rect tag only. We could output a group
-      // only without any tags, but the output is nicer looking this way
+    // The output consists of a rect tag only. We could output a group
+    // only without any tags, but the output is nicer looking this way
 
-      CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
-      group_cdt["start"] = "";
-      group_cdt["end"] = "";
-      group_cdt["attributes"] = CTPP::CDT(CTPP::CDT::HASH_VAL);
+    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
+    group_cdt["start"] = "";
+    group_cdt["end"] = "";
+    group_cdt["attributes"] = CTPP::CDT(CTPP::CDT::HASH_VAL);
 
-      // Add the SVG use element for the path data
+    // Add the SVG use element for the path data
 
-      CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-      tag_cdt["start"] = "<use";
-      tag_cdt["end"] = "/>";
-      theState.addAttributes(theGlobals, tag_cdt, attributes);
-      tag_cdt["attributes"]["xlink:href"] = "#" + iri;
+    CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+    tag_cdt["start"] = "<use";
+    tag_cdt["end"] = "/>";
+    theState.addAttributes(theGlobals, tag_cdt, attributes);
+    tag_cdt["attributes"]["xlink:href"] = "#" + iri;
 
-      group_cdt["tags"].PushBack(tag_cdt);
-      theLayersCdt.PushBack(group_cdt);
-    }
+    group_cdt["tags"].PushBack(tag_cdt);
+    theLayersCdt.PushBack(group_cdt);
   }
   catch (...)
   {

@@ -121,9 +121,6 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 {
   try
   {
-    if (theState.inDefs())
-      throw Spine::Exception(BCP, "LocationLayer cannot be used in the Defs-section");
-
     if (!validLayer(theState))
       return;
 

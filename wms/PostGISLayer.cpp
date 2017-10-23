@@ -60,13 +60,10 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     // Generate areas as use tag statements inside <g>..</g>
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
-    if (!theState.inDefs())
-    {
-      group_cdt["start"] = "<g";
-      group_cdt["end"] = "</g>";
-      // Add attributes to the group, not the areas
-      theState.addAttributes(theGlobals, group_cdt, attributes);
-    }
+    group_cdt["start"] = "<g";
+    group_cdt["end"] = "</g>";
+    // Add attributes to the group, not the areas
+    theState.addAttributes(theGlobals, group_cdt, attributes);
 
     Engine::Gis::MapOptions mapOptions;
     mapOptions.pgname = pgname;
@@ -106,16 +103,13 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           theState.addPresentationAttributes(map_cdt, css, attributes);
           theGlobals["paths"][iri] = map_cdt;
 
-          if (!theState.inDefs())
-          {
-            // Add the SVG use element
-            CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-            tag_cdt["start"] = "<use";
-            tag_cdt["end"] = "/>";
-            theState.addAttributes(theGlobals, tag_cdt, filter.attributes);
-            tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-            group_cdt["tags"].PushBack(tag_cdt);
-          }
+          // Add the SVG use element
+          CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+          tag_cdt["start"] = "<use";
+          tag_cdt["end"] = "/>";
+          theState.addAttributes(theGlobals, tag_cdt, filter.attributes);
+          tag_cdt["attributes"]["xlink:href"] = "#" + iri;
+          group_cdt["tags"].PushBack(tag_cdt);
         }
       }
     }
