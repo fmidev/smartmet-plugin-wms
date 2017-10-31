@@ -29,7 +29,7 @@ BuildRequires: smartmet-engine-gis-devel >= 17.8.28
 BuildRequires: smartmet-engine-geonames-devel >= 17.8.29
 BuildRequires: smartmet-engine-querydata-devel >= 17.9.20
 BuildRequires: smartmet-engine-contour-devel >= 17.9.20
-BuildRequires: smartmet-library-gis-devel >= 17.9.12
+BuildRequires: smartmet-library-gis-devel >= 17.10.31
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.5
 BuildRequires: jsoncpp-devel
@@ -41,7 +41,7 @@ Requires: fmt
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
-Requires: smartmet-library-gis >= 17.9.12
+Requires: smartmet-library-gis >= 17.10.31
 Requires: smartmet-library-macgyver >= 17.8.28
 Requires: smartmet-library-giza >= 17.8.28
 %if %{with authentication}
