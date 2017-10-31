@@ -11,9 +11,7 @@
 
 #pragma once
 
-#include "WMSLayer.h"
-
-#include <engines/querydata/Engine.h>
+#include "WMSConfig.h"
 
 namespace SmartMet
 {
@@ -31,8 +29,8 @@ class WMSQueryDataLayer : public WMSLayer
   virtual void updateLayerMetaData();
 
  public:
-  WMSQueryDataLayer(const Engine::Querydata::Engine* qe, const std::string& producer)
-      : itsQEngine(qe), itsProducer(producer)
+  WMSQueryDataLayer(const WMSConfig& config, const std::string& producer)
+      : WMSLayer(config), itsQEngine(config.qEngine()), itsProducer(producer)
   {
   }
 };

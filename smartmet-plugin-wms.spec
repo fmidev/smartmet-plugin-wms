@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.10.16
+Version: 17.10.31
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -89,6 +89,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Oct 31 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.10.31-1.fmi
+- icemap product files updated
+- traffic restrictions table implemented
+- BRAINSTORM-976: metadata query interval made configurable. Additionally 
+if PostGISLayer is of type icemap, the existence of new icemaps can be checked 
+from database before metadata is updated
+
 * Mon Oct 16 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.10.16-1.fmi
 - product files updated
 - handling of sublayers of PostGISLayer corrected

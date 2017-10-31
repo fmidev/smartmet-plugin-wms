@@ -12,8 +12,7 @@
 
 #pragma once
 
-#include "WMSLayer.h"
-#include <engines/gis/Engine.h>
+#include "WMSConfig.h"
 
 #include <spine/Json.h>
 
@@ -32,9 +31,10 @@ class WMSPostGISLayer : public WMSLayer
 
  protected:
   virtual void updateLayerMetaData();
+  virtual bool mustUpdateLayerMetaData();
 
  public:
-  WMSPostGISLayer(const Engine::Gis::Engine* gisengine, const Json::Value& json);
+  WMSPostGISLayer(const WMSConfig& config, const Json::Value& json);
 };
 
 }  // namespace WMS

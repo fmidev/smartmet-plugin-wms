@@ -23,6 +23,7 @@ void WMSObservationLayer::updateLayerMetaData()
                                   metaData.period.end(),
                                   boost::posix_time::minutes(metaData.timestep)));
     timeDimension = std::move(newTimeDimension);
+    metadataTimestamp = boost::posix_time::second_clock::universal_time();
   }
   catch (...)
   {

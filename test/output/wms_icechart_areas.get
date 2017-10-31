@@ -20,10 +20,7 @@
 .IceFree		{ stroke: black; stroke-width: 0.2; fill: rgb(255,255,255) }
 
 
-.MapFrame  { fill: white; stroke: black; stroke-width: 0.5; }
 .MapFrameWhite  { fill: white; stroke: black; stroke-width: 0.5; }
-.TrafficRestrictionsTableFrame  { fill: rgb(150,200,255); stroke: black; stroke-width: 0.7; opacity: 0.9; }
-.IcemapHeaderText	{ fill: black; font-family: Helvetica; font-size: 48 }
 .IceThicknessLegend       { stroke: black; stroke-width: 0.5px; fill: rgb(255,255,255) }
 .TemperatureIsoline    { fill: none; stroke: black; stroke-width: 0.7; opacity: 0.8; }
 .MeanTemperature        { stroke: black; stroke-width: 1.0px; fill: rgb(255,255,255) }

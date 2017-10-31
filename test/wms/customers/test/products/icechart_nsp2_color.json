@@ -122,41 +122,6 @@
 			}
 		    ]
 		},
-		{ // maa-aluemaski
-		    "qid": "icemap_landmask",
-		    "layer_type": "icemap",
-		    "pgname": "icemap",
-		    "schema" : "icemap_static",
-		    "table" : "landmask",
-		    "geometry_column" : "geom",
-		    "filters" :		    
-		    [			
-			{
-			    "attributes":
-			    {
-				"class": "IceMapLandMask"
-			    }
-			}
-		    ]
-		},
-		{ // koordinaattiruudukko: ladataan suoraan kannasta
-		    "qid": "coordinate_grid",
-		    "layer_type": "icemap",
-		    "pgname": "icemap",
-		    "schema" : "icemap_static",
-		    "table" : "coordinate_grid",
-		    "geometry_column" : "geom",
-            	    "css": "ice/icemap.css",
-		    "filters" :		    
-		    [			
-			{
-			    "attributes":
-			    {
-				"class": "CoordinateLine"
-			    }
-			}
-		    ]
-		},
 		{ // arvioitu jään reuna
 		    "qid": "ice_edge",
 		    "layer_type": "icemap",
@@ -191,6 +156,41 @@
 			    "attributes":
 			    {
 				"class": "TemperatureIsoline"
+			    }
+			}
+		    ]
+		},
+		{ // maa-aluemaski
+		    "qid": "icemap_landmask",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "landmask",
+		    "geometry_column" : "geom",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"class": "IceMapLandMask"
+			    }
+			}
+		    ]
+		},
+		{ // koordinaattiruudukko: ladataan suoraan kannasta
+		    "qid": "coordinate_grid",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap_static",
+		    "table" : "coordinate_grid",
+		    "geometry_column" : "geom",
+            	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"class": "CoordinateLine"
 			    }
 			}
 		    ]

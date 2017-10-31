@@ -39,6 +39,7 @@ using namespace SmartMet::Plugin::Dali;
 
 namespace
 {
+#define DEFAULT_METADATA_UPDATE_INTERVAL 5  // 5 sec
 /*
  * namespace patterns look like "/..../"
  */
@@ -653,7 +654,7 @@ void WMSConfig::capabilitiesUpdateLoop()
     {
       try
       {
-        for (int i = 0; (!itsShutdownRequested && i < 5); i++)
+        for (int i = 0; (!itsShutdownRequested && i < DEFAULT_METADATA_UPDATE_INTERVAL); i++)
           boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
         if (!itsShutdownRequested)
@@ -751,8 +752,36 @@ void WMSConfig::updateLayerMetaData()
                     SharedWMSLayer wmsLayer(WMSLayerFactory::createWMSLayer(
                         itr2->path().string(), theNamespace, customername, *this));
 
-                    WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
-                    newProxies->insert(make_pair(fullLayername, newProxy));
+                    bool mustUpdate = true;
+                    if (itsLayers && itsLayers->find(fullLayername) != itsLayers->end())
+                    {
+                      WMSLayerProxy oldProxy = itsLayers->at(fullLayername);
+                      SharedWMSLayer oldLayer = oldProxy.getLayer();
+                      boost::posix_time::ptime timestamp = oldLayer->metaDataUpdateTime();
+                      bool metadataUpdateIntervalExpired = true;
+                      if (!timestamp.is_not_a_date_time())
+                      {
+                        boost::posix_time::time_duration diff =
+                            (boost::posix_time::second_clock::universal_time() - timestamp);
+                        unsigned int diff_seconds =
+                            ((diff.hours() * 60 * 60) + (diff.minutes() * 60) + diff.seconds());
+                        metadataUpdateIntervalExpired =
+                            diff_seconds >= oldLayer->metaDataUpdateInterval();
+                      }
+                      // check if metadata need to be updated
+                      // for example for icemaps it is not necessary so often
+                      mustUpdate =
+                          (metadataUpdateIntervalExpired && oldLayer->mustUpdateLayerMetaData());
+
+                      if (!mustUpdate)
+                        newProxies->insert(make_pair(fullLayername, oldProxy));
+                    }
+
+                    if (mustUpdate)
+                    {
+                      WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
+                      newProxies->insert(make_pair(fullLayername, newProxy));
+                    }
                   }
                   catch (...)
                   {

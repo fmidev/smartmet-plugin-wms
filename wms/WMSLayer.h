@@ -42,6 +42,7 @@ namespace Plugin
 {
 namespace WMS
 {
+class WMSConfig;
 typedef std::vector<std::map<std::string, std::string> > LegendGraphicInfo;
 
 struct LegendGraphicResult
@@ -68,7 +69,10 @@ class WMSLayer
   boost::optional<int> fixed_width;
   boost::optional<int> fixed_height;
 
+  const WMSConfig& wmsConfig;
   bool hidden = false;  // if this is true, dont show in GetCapabilities response
+  boost::posix_time::ptime metadataTimestamp;
+  unsigned int metadataUpdateInterval;
 
   Spine::BoundingBox geographicBoundingBox;
   std::map<std::string, std::string> crs;             // id to GDAL definition
@@ -86,7 +90,7 @@ class WMSLayer
   friend std::ostream& operator<<(std::ostream&, const WMSLayer&);
 
  public:
-  WMSLayer();
+  WMSLayer(const WMSConfig& config);
 
   void addStyles(const Json::Value& root, const std::string& layerName);
   void addStyle(const std::string& layerName);
@@ -103,8 +107,9 @@ class WMSLayer
   bool isTemporal() const { return timeDimension != nullptr; }
   bool currentValue() const;  // returns true if current value can be queried from layer
                               // (time=current)
-  boost::posix_time::ptime mostCurrentTime() const;  // returns the most current valid time for the
-                                                     // layer
+
+  // returns the most current valid time for the layer
+  boost::posix_time::ptime mostCurrentTime() const;
 
   // Empty for hidden layers
   boost::optional<CTPP::CDT> generateGetCapabilities(const Engine::Gis::Engine& gisengine);
@@ -114,6 +119,13 @@ class WMSLayer
 
   // Debugging info
   virtual std::string info() const;
+
+  // returns timestamp when metadata was previous time updated
+  boost::posix_time::ptime metaDataUpdateTime() const { return metadataTimestamp; };
+  // inherited layers can override this to determine weather metadata must be updated
+  virtual bool mustUpdateLayerMetaData() { return true; }
+  // by default interval is 5 seconds, but for some layers it could be longer
+  unsigned int metaDataUpdateInterval() const { return metadataUpdateInterval; }
 };
 
 typedef boost::shared_ptr<WMSLayer> SharedWMSLayer;

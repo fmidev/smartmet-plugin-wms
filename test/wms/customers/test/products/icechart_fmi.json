@@ -642,7 +642,7 @@
 		    }
 		},
 		{ // kartan merkkien selitykset
-		    "qid": "legend_layer",
+		    "qid": "legend_layer_icemap",
 		    "tag": "g",
              	    "css": "ice/icemap.css",
 		    "layers": "json:ice/icemap_legend_fmi.json",
@@ -650,6 +650,20 @@
 		    {
 			"longitude": "9.5",
 			"latitude": "66.2"
+		    }
+		},
+		{ // ice-egg legend
+		    "qid": "legend_layer_ice_egg",
+		    "layer_type": "symbol",
+		    "symbol": "ice_egg",
+                    "positions": {
+                        "layout": "latlon",
+                        "locations": [
+                            {
+                                "longitude": 15.5,
+                                "latitude": 66.2
+                            }
+			]
 		    }
 		},
 		{
