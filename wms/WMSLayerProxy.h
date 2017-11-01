@@ -40,8 +40,6 @@ class WMSLayerProxy
     return itsLayer->generateGetCapabilities(*itsGisEngine);
   }
 
-  void update() { itsLayer->updateLayerMetaData(); }
-
  private:
   const Engine::Gis::Engine* itsGisEngine;
   SharedWMSLayer itsLayer;

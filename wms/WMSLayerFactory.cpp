@@ -246,7 +246,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     {
       case WMSLayerType::PostGISLayer:
       {
-        layer = boost::make_shared<WMSPostGISLayer>(theWMSConfig.itsGisEngine, parsedLayer);
+        layer = boost::make_shared<WMSPostGISLayer>(theWMSConfig, parsedLayer);
         break;
       }
       case WMSLayerType::QueryDataLayer:
@@ -254,7 +254,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         // if no producer defined, let's use default producer
         if (producer.empty())
           producer = theWMSConfig.itsDaliConfig.defaultModel();
-        layer = boost::make_shared<WMSQueryDataLayer>(theWMSConfig.itsQEngine, producer);
+        layer = boost::make_shared<WMSQueryDataLayer>(theWMSConfig, producer);
         break;
       }
       case WMSLayerType::ObservationLayer:
@@ -264,8 +264,8 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
           timestep = "-1";
         // timestep -1 indicates that no timestep is given in product-file
         // in that case timestep is read from obsengine configuration file (default value is 1min)
-        layer = boost::make_shared<WMSObservationLayer>(
-            theWMSConfig.itsObsEngine, producer, std::stoi(timestep));
+        layer =
+            boost::make_shared<WMSObservationLayer>(theWMSConfig, producer, std::stoi(timestep));
 #endif
         break;
       }

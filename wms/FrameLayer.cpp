@@ -297,7 +297,7 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt)
   latMax = ceil(latMax);
 
   text_style_t labelStyle;
-  labelStyle.fontname = itsScaleAttributes.value("font-family");
+  labelStyle.fontfamily = itsScaleAttributes.value("font-family");
   labelStyle.fontsize = itsScaleAttributes.value("font-size");
   labelStyle.fontstyle = itsScaleAttributes.value("font-style");
   labelStyle.fontweight = itsScaleAttributes.value("font-weight");

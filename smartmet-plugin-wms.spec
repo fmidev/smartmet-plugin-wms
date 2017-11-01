@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.10.23
+Version: 17.10.31
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -29,7 +29,7 @@ BuildRequires: smartmet-engine-gis-devel >= 17.8.28
 BuildRequires: smartmet-engine-geonames-devel >= 17.8.29
 BuildRequires: smartmet-engine-querydata-devel >= 17.9.20
 BuildRequires: smartmet-engine-contour-devel >= 17.9.20
-BuildRequires: smartmet-library-gis-devel >= 17.9.12
+BuildRequires: smartmet-library-gis-devel >= 17.10.31
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.5
 BuildRequires: jsoncpp-devel
@@ -41,7 +41,7 @@ Requires: fmt
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
-Requires: smartmet-library-gis >= 17.9.12
+Requires: smartmet-library-gis >= 17.10.31
 Requires: smartmet-library-macgyver >= 17.8.28
 Requires: smartmet-library-giza >= 17.8.28
 %if %{with authentication}
@@ -89,6 +89,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Oct 31 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.10.31-1.fmi
+- icemap product files updated
+- traffic restrictions table implemented
+- BRAINSTORM-976: metadata query interval made configurable. Additionally 
+if PostGISLayer is of type icemap, the existence of new icemaps can be checked 
+from database before metadata is updated
+
 * Mon Oct 23 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.10.23-1.fmi
 - Allow placing more layer data into the defs-section to enable more sharing
 

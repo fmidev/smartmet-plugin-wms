@@ -24,7 +24,7 @@ text_dimension_t getTextDimension(const std::string& text, const text_style_t& t
   cairo_t* cr = cairo_create(cs);
   cairo_surface_destroy(cs);
 
-  cairo_select_font_face(cr, textStyle.fontname.c_str(), cairo_fontstyle, cairo_fontsweight);
+  cairo_select_font_face(cr, textStyle.fontfamily.c_str(), cairo_fontstyle, cairo_fontsweight);
   cairo_set_font_size(cr, Fmi::stoi(textStyle.fontsize));
 
   cairo_text_extents_t extents;
@@ -59,7 +59,7 @@ text_style_t getTextStyle(const Attributes& attributes, const text_style_t& defa
   text_style_t ret(defaultValues);
 
   if (!attributes.value("font-family").empty())
-    ret.fontname = attributes.value("font-family");
+    ret.fontfamily = attributes.value("font-family");
 
   if (!attributes.value("font-size").empty())
     ret.fontsize = attributes.value("font-size");
@@ -94,6 +94,52 @@ void addTextField(double xPos,
   double xCoord = xPos;
   double yCoord = yPos;
   double rowHeight = textDimension.height / rows.size();
+
+  for (unsigned int i = 0; i < rows.size(); i++)
+  {
+    yCoord = (yPos + (i * rowHeight));
+
+    const std::string& row = rows[i];
+    CTPP::CDT textCdt(CTPP::CDT::HASH_VAL);
+    textCdt["start"] = "<text";
+    textCdt["end"] = "</text>";
+    textCdt["cdata"] = row;
+    textCdt["attributes"]["x"] = Fmi::to_string(std::round(xCoord));
+    textCdt["attributes"]["y"] = Fmi::to_string(std::round(yCoord));
+    textCdt["attributes"]["xml:space"] = "preserve";
+    state.addAttributes(globals, textCdt, attributes);
+    layersCdt.PushBack(textCdt);
+  }
+}
+
+void addTextField(double xPos,
+                  double yPos,
+                  double fieldWidth,
+                  const std::vector<std::string>& rows,
+                  const Attributes& attributes,
+                  CTPP::CDT& globals,
+                  CTPP::CDT& layersCdt,
+                  State& state)
+{
+  if (rows.empty())
+    return;
+
+  text_style_t textStyle = getTextStyle(attributes, text_style_t());
+  // initialize dimension
+  text_dimension_t textDimension = getTextDimension(rows, textStyle);
+
+  double xCoord = xPos;
+  double yCoord = yPos;
+  double rowHeight = textDimension.height / rows.size();
+
+  //"text-anchor": "start"
+  std::string textAnchor = attributes.value("text-anchor");
+  if (textAnchor.compare("middle") == 0)
+    xCoord += (fieldWidth / 2.0);
+  else if (textAnchor.compare("end") == 0)
+    xCoord += (fieldWidth - 3.0);
+  else
+    xCoord += 3.0;
 
   for (unsigned int i = 0; i < rows.size(); i++)
   {

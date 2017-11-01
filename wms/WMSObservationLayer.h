@@ -11,9 +11,7 @@
 
 #pragma once
 
-#include "WMSLayer.h"
-
-#include <engines/observation/Engine.h>
+#include "WMSConfig.h"
 
 namespace SmartMet
 {
@@ -32,10 +30,11 @@ class WMSObservationLayer : public WMSLayer
   virtual void updateLayerMetaData();
 
  public:
-  WMSObservationLayer(const Engine::Observation::Engine* obs,
-                      const std::string& producer,
-                      int timestep)
-      : itsObsEngine(obs), itsProducer(producer), itsTimestep(timestep)
+  WMSObservationLayer(const WMSConfig& config, const std::string& producer, int timestep)
+      : WMSLayer(config),
+        itsObsEngine(config.obsEngine()),
+        itsProducer(producer),
+        itsTimestep(timestep)
   {
   }
 };

@@ -40,6 +40,7 @@ void WMSQueryDataLayer::updateLayerMetaData()
         newTimeDimension->addTimestep(tim);
       timeDimension = std::move(newTimeDimension);
     }
+    metadataTimestamp = boost::posix_time::second_clock::universal_time();
   }
   catch (...)
   {

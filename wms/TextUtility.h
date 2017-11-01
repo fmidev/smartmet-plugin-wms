@@ -22,14 +22,14 @@ struct text_dimension_t
 
 struct text_style_t
 {
-  std::string fontname;
+  std::string fontfamily;
   std::string fontsize;
   std::string fontstyle;
   std::string fontweight;
   std::string textanchor;
 
   text_style_t()
-      : fontname("Arial"),
+      : fontfamily("Arial"),
         fontsize("10"),
         fontstyle("normal"),
         fontweight("normal"),
@@ -37,7 +37,7 @@ struct text_style_t
   {
   }
   text_style_t(const text_style_t& s)
-      : fontname(s.fontname),
+      : fontfamily(s.fontfamily),
         fontsize(s.fontsize),
         fontstyle(s.fontstyle),
         fontweight(s.fontweight),
@@ -51,6 +51,14 @@ text_dimension_t getTextDimension(const std::vector<std::string>& rows,
 text_style_t getTextStyle(const Attributes& attributes, const text_style_t& defaultValues);
 void addTextField(double xPos,
                   double yPos,
+                  const std::vector<std::string>& rows,
+                  const Attributes& attributes,
+                  CTPP::CDT& globals,
+                  CTPP::CDT& layersCdt,
+                  State& state);
+void addTextField(double xPos,
+                  double yPos,
+                  double fieldWidth,
                   const std::vector<std::string>& rows,
                   const Attributes& attributes,
                   CTPP::CDT& globals,

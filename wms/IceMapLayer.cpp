@@ -6,6 +6,7 @@
 #include "Layer.h"
 #include "LonLatToXYTransformation.h"
 #include "State.h"
+#include "TextTable.h"
 #include "TextUtility.h"
 #include <boost/foreach.hpp>
 #include <boost/timer/timer.hpp>
@@ -46,6 +47,10 @@ class PostGISAttributeToString : public boost::static_visitor<std::string>
  public:
   std::string operator()(int i) const { return Fmi::to_string(i); }
   std::string operator()(double d) const { return Fmi::to_string(d); }
+  std::string operator()(boost::posix_time::ptime t) const
+  {
+    return boost::posix_time::to_iso_string(t);
+  }
   std::string operator()(const std::string& str) const
   {
     std::string ret(str);
@@ -123,6 +128,20 @@ std::string convertText(const std::string& theText)
     ret = "3";
   else if (theText == "No Pressure")
     ret = "0";
+
+  return ret;
+}
+
+Json::Value getJsonValue(const std::string& param_name,
+                         const std::map<std::string, std::string> parameters)
+{
+  Json::Value ret;
+  if (parameters.find(param_name) != parameters.end())
+  {
+    Json::Reader reader;
+    std::string str = parameters.at(param_name);
+    reader.parse(str.c_str(), ret);
+  }
 
   return ret;
 }
@@ -235,6 +254,20 @@ void IceMapLayer::init(const Json::Value& theJson,
     // if time missing set current time
     if (!time)
       time = boost::posix_time::second_clock::universal_time();
+
+    // table attributes
+    json = theJson.get("table_attributes", nulljson);
+    if (!json.isNull())
+    {
+      itsParameters.insert(make_pair("table_attributes", json.toStyledString()));
+    }
+
+    // table data
+    json = theJson.get("table_data", nulljson);
+    if (!json.isNull())
+    {
+      itsParameters.insert(make_pair("table_data", json.toStyledString()));
+    }
   }
   catch (...)
   {
@@ -571,8 +604,8 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
   if (itsParameters.find("fontname_column") != itsParameters.end())
     fontname_column = itsParameters.at("fontname_column");
   if (theResultItem.attributes.find(labeltext_column) != theResultItem.attributes.end())
-    text_style.fontname = boost::apply_visitor(PostGISAttributeToString(),
-                                               theResultItem.attributes.at(fontname_column));
+    text_style.fontfamily = boost::apply_visitor(PostGISAttributeToString(),
+                                                 theResultItem.attributes.at(fontname_column));
 
   if (itsParameters.find("fontsize_column") != itsParameters.end())
     fontname_column = itsParameters.at("fontsize_column");
@@ -635,7 +668,7 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
     text_attributes = theFilter.text_attributes;
   else
   {
-    text_attributes.add("font-family", text_style.fontname);
+    text_attributes.add("font-family", text_style.fontfamily);
     text_attributes.add("font-size", text_style.fontsize);
     text_attributes.add("font-style", text_style.fontweight);
     text_attributes.add("font-weight", text_style.fontweight);
@@ -699,6 +732,30 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
   text_cdt["attributes"]["y"] = Fmi::to_string(ypos);
 
   theLayersCdt.PushBack(text_cdt);
+}
+
+void IceMapLayer::handleTrafficRestrictions(const Fmi::Feature& theResultItem,
+                                            const PostGISLayerFilter& theFilter,
+                                            CTPP::CDT& theGlobals,
+                                            CTPP::CDT& theLayersCdt,
+                                            State& theState) const
+{
+  double xpos = Fmi::stod(itsParameters.at("longitude"));
+  double ypos = Fmi::stod(itsParameters.at("latitude"));
+  auto transformation = LonLatToXYTransformation(projection);
+  transformation.transform(xpos, ypos);
+
+  auto jsonTableAttributes = getJsonValue("table_attributes", itsParameters);
+
+  TextTable mapTable(jsonTableAttributes, xpos, ypos);
+
+  auto tableDataJson = getJsonValue("table_data", itsParameters);
+
+  // add content from configuration file
+  mapTable.addContent(tableDataJson);
+
+  mapTable.makeTable(
+      theFilter.attributes, theFilter.text_attributes, theGlobals, theLayersCdt, theState);
 }
 
 // Pekko Ilvessalo 20151106: Labelin sijainti
@@ -957,6 +1014,10 @@ void IceMapLayer::handleResultItem(const Fmi::Feature& theResultItem,
   else if (layer_subtype == "mean_temperature")
   {
     handleMeanTemperature(theResultItem, theFilter, theGlobals, theLayersCdt, theState);
+  }
+  else if (layer_subtype == "traffic_restrictions")
+  {
+    handleTrafficRestrictions(theResultItem, theFilter, theGlobals, theLayersCdt, theState);
   }
   else if (layer_subtype == "degree_of_pressure")
   {

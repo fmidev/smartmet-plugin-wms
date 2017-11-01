@@ -1,4 +1,5 @@
 #include "WMSPostGISLayer.h"
+#include "WMSConfig.h"
 #include <spine/Exception.h>
 
 #include <gis/Host.h>
@@ -10,11 +11,14 @@ namespace Plugin
 {
 namespace WMS
 {
-WMSPostGISLayer::WMSPostGISLayer(const Engine::Gis::Engine* gisengine, const Json::Value& json)
-    : itsGisEngine(gisengine), hasTemporalDimension(false)
+WMSPostGISLayer::WMSPostGISLayer(const WMSConfig& config, const Json::Value& json)
+    : WMSLayer(config), itsGisEngine(config.gisEngine()), hasTemporalDimension(false)
 {
   try
   {
+    wmsConfig.getLibconfig().lookupValue("wms.get_capabilities.postgis_layer.update_interval",
+                                         metadataUpdateInterval);
+
     if (json["pgname"].isNull())
       throw Spine::Exception(BCP, "'pgname' must be defined for postgis layer");
     if (json["schema"].isNull())
@@ -42,6 +46,59 @@ WMSPostGISLayer::WMSPostGISLayer(const Engine::Gis::Engine* gisengine, const Jso
   }
 }
 
+bool WMSPostGISLayer::mustUpdateLayerMetaData()
+{
+  try
+  {
+    const libconfig::Config& config = wmsConfig.getLibconfig();
+
+    // if 'wms.postgis_metadata_update' section does not exist -> update metadata every time
+    if (!config.exists("wms.get_capabilities.postgis_layer"))
+      return true;
+
+    std::string pgname, schema, table, field, where;
+    config.lookupValue("wms.get_capabilities.postgis_layer.pgname", pgname);
+    config.lookupValue("wms.get_capabilities.postgis_layer.schema", schema);
+    config.lookupValue("wms.get_capabilities.postgis_layer.table", table);
+    config.lookupValue("wms.get_capabilities.postgis_layer.field", field);
+    config.lookupValue("wms.get_capabilities.postgis_layer.where", where);
+
+    // if 'pgname' and 'schema' does not mach or fields are empty -> dont contimue
+    if (mdq_options.pgname != pgname || mdq_options.schema != schema || table.empty() ||
+        field.empty() || where.empty())
+      return true;
+
+    Engine::Gis::MapOptions moptions;
+    moptions.pgname = mdq_options.pgname;
+    moptions.schema = mdq_options.schema;
+    moptions.table = table;
+    moptions.fieldnames.insert(field);
+    moptions.where = where;
+    OGRSpatialReference* sr = nullptr;
+
+    boost::posix_time::ptime mostCurrentTimestamp = mostCurrentTime();
+    // fetch the latest publicationdate of icemap
+    Fmi::Features features = itsGisEngine->getFeatures(sr, moptions);
+    if (!features.empty())
+    {
+      Fmi::FeaturePtr feature = features[0];
+      boost::posix_time::ptime timestamp =
+          boost::get<boost::posix_time::ptime>(feature->attributes[field]);
+      // if the timestamp is older or the same as previous time, there is no need to update metadata
+      if (!timestamp.is_not_a_date_time() && !mostCurrentTimestamp.is_not_a_date_time() &&
+          mostCurrentTimestamp <= timestamp)
+        return false;
+    }
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Spine::Exception(
+        BCP, "WMSPostGISLayer::mustUpdateLayerMetaData() function call failed!", nullptr);
+  }
+}
+
 void WMSPostGISLayer::updateLayerMetaData()
 {
   try
@@ -57,7 +114,7 @@ void WMSPostGISLayer::updateLayerMetaData()
       if (!quiet)
       {
         Spine::Exception exception(BCP, "WMS layer metadata update failure!", NULL);
-        exception.addParameter("Layer name", getName());
+        exception.addParameter("Layer name", name);
         exception.printError();
       }
       return;
@@ -92,6 +149,8 @@ void WMSPostGISLayer::updateLayerMetaData()
     }
     else
       timeDimension = nullptr;
+
+    metadataTimestamp = boost::posix_time::second_clock::universal_time();
   }
   catch (...)
   {

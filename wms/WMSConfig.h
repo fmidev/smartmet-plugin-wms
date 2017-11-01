@@ -108,6 +108,13 @@ class WMSConfig
                         Dali::Product& theProduct,
                         const Dali::State& theState) const;
 
+  const libconfig::Config& getLibconfig() const { return itsDaliConfig.getConfig(); }
+  const Engine::Querydata::Engine* qEngine() const { return itsQEngine; }
+  const Engine::Gis::Engine* gisEngine() const { return itsGisEngine; }
+#ifndef WITHOUT_OBSERVATION
+  const Engine::Observation::Engine* obsEngine() const { return itsObsEngine; }
+#endif
+
  private:
   void parse_references();
 

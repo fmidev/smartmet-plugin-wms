@@ -1,6 +1,7 @@
 #include "WMSLayer.h"
 #include "TemplateFactory.h"
 #include "WMS.h"
+#include "WMSConfig.h"
 #include "WMSException.h"
 
 #include <engines/gis/Engine.h>
@@ -239,8 +240,15 @@ unsigned int isoband_label_height(const std::string& j)
 }  // anonymous namespace
 
 // Remember to run updateLayerMetaData before using the layer!
-WMSLayer::WMSLayer() : hidden(false)
+WMSLayer::WMSLayer(const WMSConfig& config)
+    : wmsConfig(config),
+      hidden(false),
+      metadataTimestamp(boost::posix_time::not_a_date_time),
+      metadataUpdateInterval(5)
 {
+  wmsConfig.getLibconfig().lookupValue("wms.get_capabilities.update_interval",
+                                       metadataUpdateInterval);
+
   geographicBoundingBox.xMin = 0.0;
   geographicBoundingBox.xMax = 0.0;
   geographicBoundingBox.yMin = 0.0;
@@ -639,7 +647,6 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
     CTPP::CDT layer(CTPP::CDT::HASH_VAL);
 
     // Layer name, title and abstract
-
     if (!name.empty())
       layer["name"] = name;
     if (title)

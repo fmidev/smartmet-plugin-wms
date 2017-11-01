@@ -99,7 +99,7 @@
  </g>
 </symbol>
 
-<symbol id="get_legend_graphic_rect">
+<symbol id="Precipitation1h_isoband">
  <rect height="9" width="14"/>
 </symbol>
 <symbol id="Precipitation1h_isoline">
@@ -115,25 +115,25 @@
  <g id="view1">
   <g>
   
-   <use style="fill:rgb(213,26,13); stroke:none" x="30" xlink:href="#get_legend_graphic_rect" y="100"/>
+   <use style="fill:rgb(213,26,13); stroke:none" x="30" xlink:href="#Precipitation1h_isoband" y="100"/>
   
   <text x="48" y="109">&gt; 10</text>
-   <use style="fill:rgb(255,80,60); stroke:none" x="30" xlink:href="#get_legend_graphic_rect" y="109"/>
+   <use style="fill:rgb(255,80,60); stroke:none" x="30" xlink:href="#Precipitation1h_isoband" y="109"/>
   
   <text x="48" y="118">5-10</text>
-   <use style="fill:rgb(255,205,20); stroke:none" x="30" xlink:href="#get_legend_graphic_rect" y="118"/>
+   <use style="fill:rgb(255,205,20); stroke:none" x="30" xlink:href="#Precipitation1h_isoband" y="118"/>
   
   <text x="48" y="127">2-5</text>
-   <use style="fill:rgb(240,240,20); stroke:none" x="30" xlink:href="#get_legend_graphic_rect" y="127"/>
+   <use style="fill:rgb(240,240,20); stroke:none" x="30" xlink:href="#Precipitation1h_isoband" y="127"/>
   
   <text x="48" y="136">1-2</text>
-   <use style="fill:rgb(140,230,20); stroke:none" x="30" xlink:href="#get_legend_graphic_rect" y="136"/>
+   <use style="fill:rgb(140,230,20); stroke:none" x="30" xlink:href="#Precipitation1h_isoband" y="136"/>
   
   <text x="48" y="145">0.5-1</text>
-   <use style="fill:rgb(5,205,170); stroke:none" x="30" xlink:href="#get_legend_graphic_rect" y="145"/>
+   <use style="fill:rgb(5,205,170); stroke:none" x="30" xlink:href="#Precipitation1h_isoband" y="145"/>
   
   <text x="48" y="154">0.2-0.5</text>
-   <use style="fill:rgb(10,155,255); stroke:none" x="30" xlink:href="#get_legend_graphic_rect" y="154"/>
+   <use style="fill:rgb(10,155,255); stroke:none" x="30" xlink:href="#Precipitation1h_isoband" y="154"/>
   
   <text x="48" y="163">0.1-0.2</text>
   <text class="Units" x="20" y="20">sateen intensiteetti</text>
