@@ -6,13 +6,13 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "State.h"
-#include <spine/Exception.h>
+#include <boost/foreach.hpp>
+#include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
-#include <gis/Types.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
-#include <ctpp2/CDT.hpp>
-#include <boost/foreach.hpp>
+#include <gis/Types.h>
+#include <spine/Exception.h>
 
 // TODO:
 #include <boost/timer/timer.hpp>
@@ -131,8 +131,11 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     if (!geom)
       return;
 
-    // Store the path with unique ID
+    // Store the path. Note that we allow duplicate IDs since multiple views may
+    // refer to the same map.
+
     std::string iri = qid;
+
     {
       std::string report = "Generating coordinate data finished in %t sec CPU, %w sec real\n";
       std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
@@ -151,7 +154,7 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     }
 
     // Do not produce a use-statement for empty data or in the header
-    if (!geom->IsEmpty() && !theState.inDefs())
+    if (!geom->IsEmpty())
     {
       // Update the globals
 

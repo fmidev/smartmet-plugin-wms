@@ -291,13 +291,10 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     // Generate isobands as use tags statements inside <g>..</g>
 
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
-    if (!theState.inDefs())
-    {
-      group_cdt["start"] = "<g";
-      group_cdt["end"] = "</g>";
-      // Add attributes to the group, not the isobands
-      theState.addAttributes(theGlobals, group_cdt, attributes);
-    }
+    group_cdt["start"] = "<g";
+    group_cdt["end"] = "</g>";
+    // Add attributes to the group, not the isobands
+    theState.addAttributes(theGlobals, group_cdt, attributes);
 
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
@@ -325,6 +322,10 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           // Store the path with unique ID
           std::string iri = qid + (qid.empty() ? "" : ".") + isoband.qid;
 
+          if (!theState.addId(iri))
+            throw Spine::Exception(BCP, "Non-unique ID assigned to isoband")
+                .addParameter("ID", iri);
+
           CTPP::CDT isoband_cdt(CTPP::CDT::HASH_VAL);
           isoband_cdt["iri"] = iri;
           isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
@@ -348,16 +349,13 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
           theGlobals["paths"][iri] = isoband_cdt;
 
-          if (!theState.inDefs())
-          {
-            // Add the SVG use element
-            CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-            tag_cdt["start"] = "<use";
-            tag_cdt["end"] = "/>";
-            theState.addAttributes(theGlobals, tag_cdt, isoband.attributes);
-            tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-            group_cdt["tags"].PushBack(tag_cdt);
-          }
+          // Add the SVG use element
+          CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+          tag_cdt["start"] = "<use";
+          tag_cdt["end"] = "/>";
+          theState.addAttributes(theGlobals, tag_cdt, isoband.attributes);
+          tag_cdt["attributes"]["xlink:href"] = "#" + iri;
+          group_cdt["tags"].PushBack(tag_cdt);
         }
       }
     }

@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include "Layer.h"
 #include "AttributeSelection.h"
+#include "Layer.h"
 #include <vector>
 
 namespace SmartMet

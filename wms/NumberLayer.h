@@ -6,10 +6,10 @@
 
 #pragma once
 
-#include "Label.h"
-#include "Positions.h"
-#include "Layer.h"
 #include "AttributeSelection.h"
+#include "Label.h"
+#include "Layer.h"
+#include "Positions.h"
 #include <vector>
 
 namespace SmartMet

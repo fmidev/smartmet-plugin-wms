@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "Positions.h"
-#include "Layer.h"
 #include "AttributeSelection.h"
+#include "Layer.h"
+#include "Positions.h"
 #include <vector>
 
 namespace SmartMet

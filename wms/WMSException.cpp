@@ -1,8 +1,8 @@
 #if 0  // ### REPLACED BY Spine::Exception
 
-#include <WMSException.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <WMSException.h>
 
 namespace SmartMet
 {

@@ -1,9 +1,9 @@
 #include "WindRose.h"
 #include "Config.h"
 #include "Hash.h"
+#include <boost/foreach.hpp>
 #include <spine/Exception.h>
 #include <spine/Json.h>
-#include <boost/foreach.hpp>
 #include <stdexcept>
 
 namespace SmartMet

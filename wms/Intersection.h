@@ -7,10 +7,10 @@
 #pragma once
 
 #include "Smoother.h"
+#include <boost/optional.hpp>
 #include <engines/gis/Engine.h>
 #include <engines/querydata/Engine.h>
 #include <json/json.h>
-#include <boost/optional.hpp>
 #include <string>
 
 namespace SmartMet

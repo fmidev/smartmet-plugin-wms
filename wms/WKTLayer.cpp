@@ -3,9 +3,9 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "State.h"
-#include <spine/Exception.h>
-#include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
+#include <ctpp2/CDT.hpp>
+#include <spine/Exception.h>
 
 #include <gis/OGR.h>
 #include <gis/Types.h>
@@ -147,6 +147,8 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     std::string iri = qid;
     if (iri.empty())
       iri = theState.generateUniqueId();
+    else if (!theState.addId(iri))
+      throw Spine::Exception(BCP, "Non-unique ID assigned to WKT layer").addParameter("ID", iri);
 
     CTPP::CDT wkt_cdt(CTPP::CDT::HASH_VAL);
     wkt_cdt["iri"] = iri;
@@ -156,29 +158,26 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     theGlobals["paths"][iri] = wkt_cdt;
 
-    if (!theState.inDefs())
-    {
-      addClipRect(theLayersCdt, theGlobals, box, theState);
+    addClipRect(theLayersCdt, theGlobals, box, theState);
 
-      // The output consists of a rect tag only. We could output a group
-      // only without any tags, but the output is nicer looking this way
+    // The output consists of a rect tag only. We could output a group
+    // only without any tags, but the output is nicer looking this way
 
-      CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
-      group_cdt["start"] = "";
-      group_cdt["end"] = "";
-      group_cdt["attributes"] = CTPP::CDT(CTPP::CDT::HASH_VAL);
+    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
+    group_cdt["start"] = "";
+    group_cdt["end"] = "";
+    group_cdt["attributes"] = CTPP::CDT(CTPP::CDT::HASH_VAL);
 
-      // Add the SVG use element for the path data
+    // Add the SVG use element for the path data
 
-      CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
-      tag_cdt["start"] = "<use";
-      tag_cdt["end"] = "/>";
-      theState.addAttributes(theGlobals, tag_cdt, attributes);
-      tag_cdt["attributes"]["xlink:href"] = "#" + iri;
+    CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+    tag_cdt["start"] = "<use";
+    tag_cdt["end"] = "/>";
+    theState.addAttributes(theGlobals, tag_cdt, attributes);
+    tag_cdt["attributes"]["xlink:href"] = "#" + iri;
 
-      group_cdt["tags"].PushBack(tag_cdt);
-      theLayersCdt.PushBack(group_cdt);
-    }
+    group_cdt["tags"].PushBack(tag_cdt);
+    theLayersCdt.PushBack(group_cdt);
   }
   catch (...)
   {

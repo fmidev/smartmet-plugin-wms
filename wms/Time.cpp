@@ -1,7 +1,7 @@
 #include "Time.h"
 
-#include <spine/Exception.h>
 #include <macgyver/TimeParser.h>
+#include <spine/Exception.h>
 
 namespace SmartMet
 {

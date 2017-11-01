@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Intersections.h"
-#include "Layer.h"
 #include "Isoline.h"
+#include "Layer.h"
 #include "Map.h"
 #include "Sampling.h"
 #include "Smoother.h"

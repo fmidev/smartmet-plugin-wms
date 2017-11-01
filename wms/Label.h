@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <json/json.h>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
+#include <json/json.h>
 #include <sstream>
 #include <string>
 

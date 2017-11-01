@@ -2,10 +2,10 @@
 #include "Config.h"
 #include "Layer.h"
 #include "State.h"
+#include <boost/foreach.hpp>
+#include <ctpp2/CDT.hpp>
 #include <gis/Box.h>
 #include <macgyver/StringConversion.h>
-#include <ctpp2/CDT.hpp>
-#include <boost/foreach.hpp>
 #include <spine/Exception.h>
 
 namespace SmartMet

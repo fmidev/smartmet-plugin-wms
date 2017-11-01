@@ -4,10 +4,10 @@
 #include "Config.h"
 #include "Hash.h"
 #include "State.h"
-#include <spine/HTTP.h>
-#include <spine/Exception.h>
-#include <ctpp2/CDT.hpp>
 #include <boost/foreach.hpp>
+#include <ctpp2/CDT.hpp>
+#include <spine/Exception.h>
+#include <spine/HTTP.h>
 
 // TODO:
 #include <boost/timer/timer.hpp>

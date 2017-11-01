@@ -2,10 +2,10 @@
 #include "Config.h"
 #include "Hash.h"
 #include "Projection.h"
-#include <spine/ParameterFactory.h>
-#include <spine/Exception.h>
-#include <gis/OGR.h>
 #include <boost/foreach.hpp>
+#include <gis/OGR.h>
+#include <spine/Exception.h>
+#include <spine/ParameterFactory.h>
 #include <stdexcept>
 
 namespace SmartMet

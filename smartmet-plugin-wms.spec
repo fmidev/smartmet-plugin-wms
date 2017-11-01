@@ -96,6 +96,15 @@ rm -rf $RPM_BUILD_ROOT
 if PostGISLayer is of type icemap, the existence of new icemaps can be checked 
 from database before metadata is updated
 
+* Mon Oct 23 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.10.23-1.fmi
+- Allow placing more layer data into the defs-section to enable more sharing
+
+* Thu Oct 19 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.10.19-1.fmi
+- Added checks against duplicate qid-values.
+
+* Tue Oct 17 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.10.16-2.fmi
+- Allow application/pdf requests
+
 * Mon Oct 16 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.10.16-1.fmi
 - product files updated
 - handling of sublayers of PostGISLayer corrected

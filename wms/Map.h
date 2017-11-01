@@ -6,9 +6,9 @@
 
 #pragma once
 
+#include <boost/optional.hpp>
 #include <engines/gis/MapOptions.h>
 #include <json/json.h>
-#include <boost/optional.hpp>
 #include <string>
 
 namespace SmartMet
