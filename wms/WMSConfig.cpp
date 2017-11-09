@@ -771,7 +771,7 @@ void WMSConfig::updateLayerMetaData()
                       // check if metadata need to be updated
                       // for example for icemaps it is not necessary so often
                       mustUpdate =
-                          (metadataUpdateIntervalExpired && oldLayer->mustUpdateLayerMetaData());
+                          (metadataUpdateIntervalExpired || oldLayer->mustUpdateLayerMetaData());
 
                       if (!mustUpdate)
                         newProxies->insert(make_pair(fullLayername, oldProxy));
