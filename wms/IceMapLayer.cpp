@@ -200,11 +200,6 @@ void IceMapLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       itsParameters.insert(make_pair("text_column", json.asString()));
 
-    // text for the text field
-    json = theJson.get("field_value", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("field_value", json.asString()));
-
     // text position
     json = theJson.get("textposition_column", nulljson);
     if (!json.isNull())
@@ -483,6 +478,40 @@ void IceMapLayer::handleSymbol(const Fmi::Feature& theResultItem, CTPP::CDT& the
     tag_cdt["attributes"]["y"] = Fmi::to_string(std::round(lat));
     theGroupCdt["tags"].PushBack(tag_cdt);
   }
+}
+
+void IceMapLayer::handleTextField(const Fmi::Feature& theResultItem,
+                                  const PostGISLayerFilter& theFilter,
+                                  CTPP::CDT& theGlobals,
+                                  CTPP::CDT& theLayersCdt,
+                                  CTPP::CDT& theGroupCdt,
+                                  State& theState) const
+{
+  // text field
+  std::string text;
+
+  if (itsParameters.find("text_column") != itsParameters.end())
+  {
+    std::string text_column = itsParameters.at("text_column");
+
+    if (theResultItem.attributes.find(text_column) != theResultItem.attributes.end())
+      text = boost::apply_visitor(PostGISAttributeToString(),
+                                  theResultItem.attributes.at(text_column));
+  }
+  else
+  {
+    throw Spine::Exception(BCP, "Error: text_column must be defined for PostGIS-based text field!");
+  }
+
+  std::vector<std::string> rows;
+  boost::algorithm::split(rows, text, boost::algorithm::is_any_of("#"));
+
+  double xpos = Fmi::stod(itsParameters.at("longitude"));
+  double ypos = Fmi::stod(itsParameters.at("latitude"));
+  auto transformation = LonLatToXYTransformation(projection);
+  transformation.transform(xpos, ypos);
+
+  addTextField(xpos, ypos, rows, theFilter.attributes, theGlobals, theLayersCdt, theState);
 }
 
 void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
@@ -1010,6 +1039,10 @@ void IceMapLayer::handleResultItem(const Fmi::Feature& theResultItem,
   else if (layer_subtype == "named_location")
   {
     handleNamedLocation(theResultItem, theFilter, theGlobals, theLayersCdt, theGroupCdt, theState);
+  }
+  else if (layer_subtype == "text_field")
+  {
+    handleTextField(theResultItem, theFilter, theGlobals, theLayersCdt, theGroupCdt, theState);
   }
   else if (layer_subtype == "mean_temperature")
   {

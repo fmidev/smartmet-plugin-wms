@@ -7,6 +7,7 @@
 #include "WMSException.h"
 #include "WMSLayerFactory.h"
 
+#include <spine/Convenience.h>
 #include <spine/Exception.h>
 #include <spine/FmiApiKey.h>
 #include <spine/Json.h>
@@ -748,17 +749,34 @@ void WMSConfig::updateLayerMetaData()
                       customername, productdir, itr2->path().parent_path().string());
                   try
                   {
+                    std::string pathName = itr2->path().string();
                     std::string fullLayername(theNamespace + ":" + layername);
-                    SharedWMSLayer wmsLayer(WMSLayerFactory::createWMSLayer(
-                        itr2->path().string(), theNamespace, customername, *this));
 
+                    // Check for modified product files here
+                    std::time_t modtime = boost::filesystem::last_write_time(pathName);
+                    if (itsProductFileModificationTime.find(pathName) ==
+                        itsProductFileModificationTime.end())
+                      itsProductFileModificationTime.insert(make_pair(pathName, modtime));
+                    else
+                    {
+                      std::time_t previousModtime = itsProductFileModificationTime.at(pathName);
+                      if (modtime != 0 && modtime != previousModtime)
+                      {
+                        // Product file is reloaded when the map is next time requested
+                        itsProductFileModificationTime[pathName] = modtime;
+                        std::string fileModifiedMsg =
+                            Spine::log_time_str() + " File " + pathName + " modified, reloading it";
+                        std::cout << fileModifiedMsg << std::endl;
+                      }
+                    }
                     bool mustUpdate = true;
                     if (itsLayers && itsLayers->find(fullLayername) != itsLayers->end())
                     {
                       WMSLayerProxy oldProxy = itsLayers->at(fullLayername);
                       SharedWMSLayer oldLayer = oldProxy.getLayer();
                       boost::posix_time::ptime timestamp = oldLayer->metaDataUpdateTime();
-                      bool metadataUpdateIntervalExpired = true;
+
+                      bool metadataUpdateIntervalExpired = false;
                       if (!timestamp.is_not_a_date_time())
                       {
                         boost::posix_time::time_duration diff =
@@ -768,6 +786,7 @@ void WMSConfig::updateLayerMetaData()
                         metadataUpdateIntervalExpired =
                             diff_seconds >= oldLayer->metaDataUpdateInterval();
                       }
+
                       // check if metadata need to be updated
                       // for example for icemaps it is not necessary so often
                       mustUpdate =
@@ -779,6 +798,8 @@ void WMSConfig::updateLayerMetaData()
 
                     if (mustUpdate)
                     {
+                      SharedWMSLayer wmsLayer(WMSLayerFactory::createWMSLayer(
+                          pathName, theNamespace, customername, *this));
                       WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
                       newProxies->insert(make_pair(fullLayername, newProxy));
                     }
@@ -1109,12 +1130,15 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
 
   auto my_layers = boost::atomic_load(&itsLayers);
 
+  std::string customer = layerName.substr(0, layerName.find(":"));
+
+  std::string legendDirectory =
+      itsDaliConfig.rootDirectory(true) + "/customers/" + customer + "/legends";
+
   LegendGraphicResult result = my_layers->at(layerName).getLayer()->getLegendGraphic(
-      itsDaliConfig.templateDirectory(), itsLegendGraphicSettings);
+      legendDirectory, itsLegendGraphicSettings);
   width = result.width;
   height = result.height;
-
-  std::string customer = layerName.substr(0, layerName.find(":"));
 
   for (auto legendLayer : result.legendLayers)
   {

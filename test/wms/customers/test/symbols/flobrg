@@ -1,7 +1,11 @@
 <symbol id="flobrg">
-<svg xmlns="http://www.w3.org/2000/svg" width="5mm" height="5mm" viewBox="0 0 5 5">
-    <polygon points="0.3,4.8 2.5,0.4 4.7,4.8" fill="none" stroke="black" stroke-width="0.4"/>
-    <polyline points="2.5,0.4 3.6,2.6 1.4,2.6"></polyline>
-    <polyline points="0,2.7 5,2.7" stroke="black" stroke-width="0.4"></polyline>
+<svg xml:space="preserve" width="4.5mm" height="4.5mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 1000 1000">
+ <g id="Layer_x0020_1">
+  <path style="fill:none;fill-rule:nonzero;stroke:black;stroke-width:20" d="M0 1000l0 0 500 -870 500 870 0 0 -1000 0zm0 0m250 -435m500 0m250 435m-500 0"/>
+  <line style="fill:none;stroke:black;stroke-width:20" x1="0" y1="545" x2="1000" y2= "560" />
+  <polygon style="fill:black;stroke:#2B2A29;stroke-width:20" points="259,549 745,556 500,130 "/>
+  <polygon style="fill:white;stroke:#2B2A29;stroke-width:20" points="745,556 259,549 0,1000 1000,1000 "/>
+ </g>
 </svg>
 </symbol>

@@ -6,7 +6,7 @@
 		"tag": "symbol",
 		"attributes":
 		{
-		    "id": "<TMPL_var isoband_symbol_id>"
+		    "id": "isoband_symbol_id" // will be replaced in the code
 		},
 		"layers": [
 		    {
@@ -22,15 +22,15 @@
 	]
     },
     "layer_type": "legend",
-    "x": <TMPL_var isoband_symbol_xpos>,
-    "y": <TMPL_var isoband_symbol_ypos>,
+    "x": 99999, // will be replaced in the code
+    "y": 99999, // will be replaced in the code
     "dx": 0,
     "dy": 9,
-    "isobands": <TMPL_var isoband_json>,
+    "isobands": "isoband_color_scale", // will be replaced in the code
     "symbols":
     {
-	"css": "<TMPL_var isoband_css>",
-	"symbol": "<TMPL_var isoband_symbol_id>",
+	"css": "isoband_css", // will be replaced in the code
+	"symbol": "isoband_symbol_id",  // will be replaced in the code
 	"attributes":
 	{
 	    "stroke": "black",
@@ -51,21 +51,21 @@
      [
         {
 	    "tag": "text",
-	    "cdata": "<TMPL_var isoband_header>",
+	    "cdata": "isoband_header", // will be replaced in the code
 	    "attributes":
 	    {
-		"x": <TMPL_var isoband_text_xpos>,
-		"y": <TMPL_var isoband_text_ypos>,
+		"x": 99999,  // will be replaced in the code
+		"y": 99999,  // will be replaced in the code
 		"class": "Units"
 	    }
 	},
 	{
 	    "tag": "text",
-	    "cdata": "<TMPL_var isoband_unit>",
+	    "cdata": "isoband_unit",
 	    "attributes":
 	    {
-		"x": <TMPL_var isoband_unit_xpos>,
-		"y": <TMPL_var isoband_unit_ypos>,
+		"x": 99999,  // will be replaced in the code
+		"y": 99999,  // will be replaced in the code
 		"class": "Units"
 	    }
 	}

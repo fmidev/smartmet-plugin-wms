@@ -297,7 +297,7 @@
 		    ]
 		},
 		{ // repeämävyöhyke
-		    "qid": "farcture_zone",
+		    "qid": "fracture_zone",
 		    "layer_type": "icemap",
 		    "layer_subtype": "symbol",
 		    "pgname": "icemap",
@@ -573,7 +573,7 @@
 				"font-style": "normal",
 				"font-weight": "normal",
 				"text-anchor": "start",
-				"filter": "url(#whiteoutline)"
+				"filter": "url(#lightyellowoutline_thick)"
 			    }
 			}
 		    ]
@@ -604,7 +604,7 @@
 		    "scale_attributes":
 		    {
 			"stroke": "black",
-			"stroke-width": 1.0,
+			"stroke-width": 0.5,
 			"font-family": "Arial",
 			"font-size": "14",
 			"font-style": "normal",

@@ -47,8 +47,8 @@ typedef std::vector<std::map<std::string, std::string> > LegendGraphicInfo;
 
 struct LegendGraphicResult
 {
-  std::size_t width;
-  std::size_t height;
+  unsigned int width;
+  unsigned int height;
   std::vector<std::string> legendLayers;
 };
 
@@ -98,7 +98,7 @@ class WMSLayer
   const std::string& getName() const { return name; }
   const std::string& getCustomer() const { return customer; }
   const std::string& getDaliProductFile() const { return productFile; }
-  LegendGraphicResult getLegendGraphic(const std::string& templateDirectory,
+  LegendGraphicResult getLegendGraphic(const std::string& legendDirectory,
                                        const WMSLegendGraphicSettings& settings) const;
 
   bool isValidCRS(const std::string& theCRS) const;
@@ -126,6 +126,8 @@ class WMSLayer
   virtual bool mustUpdateLayerMetaData() { return true; }
   // by default interval is 5 seconds, but for some layers it could be longer
   unsigned int metaDataUpdateInterval() const { return metadataUpdateInterval; }
+  // read json file
+  static Json::Value readJsonFile(const std::string theFileName);
 };
 
 typedef boost::shared_ptr<WMSLayer> SharedWMSLayer;

@@ -22,9 +22,9 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
   layout.param_unit_xoffset = 30;
   layout.param_unit_yoffset = 40;
   layout.legend_xoffset = 30;
-  layout.legend_yoffset = 50;
+  layout.legend_yoffset = 40;
   layout.symbol_group_x_padding = 30;
-  layout.symbol_group_y_padding = 25;
+  layout.symbol_group_y_padding = 30;
   layout.legend_width = 150;
   layout.output_document_width = 500;
   layout.output_document_height = 500;

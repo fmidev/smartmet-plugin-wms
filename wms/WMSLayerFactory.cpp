@@ -198,22 +198,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 {
   try
   {
-    std::string content;
-    std::ifstream in(theFileName.c_str());
-
-    if (!in)
-      throw Spine::Exception(BCP, "Failed to open '" + theFileName + "' for reading!");
-
-    content.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
-
-    Json::Value root;
-    Json::Reader reader;
-    bool parsingSuccessful = reader.parse(content, root);
-    if (!parsingSuccessful)
-    {
-      // report to the user the failure
-      throw Spine::Exception(BCP, reader.getFormattedErrorMessages());
-    }
+    Json::Value root = WMSLayer::readJsonFile(theFileName);
 
     const bool use_wms = true;
     Spine::JSON::preprocess(

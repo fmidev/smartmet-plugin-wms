@@ -600,7 +600,7 @@
 				"font-style": "normal",
 				"font-weight": "normal",
 				"text-anchor": "start",
-				"filter": "url(#whiteoutline)"
+				"filter": "url(#lightyellowoutline)"
 			    }
 			}
 		    ]
@@ -633,7 +633,7 @@
 		    "scale_attributes":
 		    {
 			"stroke": "black",
-			"stroke-width": 2.0,
+			"stroke-width": 0.5,
 			"font-family": "Arial",
 			"font-size": "14",
 			"font-style": "normal",
@@ -710,6 +710,32 @@
 			"font-weight": "normal",
 			"font-size": "36"
 			}
+		},
+		{ // icemap number
+		    "qid": "icemap_number",
+		    "layer_type": "icemap",
+		    "layer_subtype": "text_field",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "map_number",
+                    "longitude": 20,
+                    "latitude": 67.4,
+		    "text_column" : "chartnumber",
+		    "time_column" : "publicationdate",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"font-family": "Arial",
+				"font-size": "28",
+				"font-style": "normal",
+				"font-weight": "normal",
+				"text-anchor": "middle"
+			    }
+			}
+		    ]
 		},
 		{
 		    "gid": "liikennerajoitus_fi",

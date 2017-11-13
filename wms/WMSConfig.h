@@ -108,7 +108,8 @@ class WMSConfig
                         Dali::Product& theProduct,
                         const Dali::State& theState) const;
 
-  const libconfig::Config& getLibconfig() const { return itsDaliConfig.getConfig(); }
+  const Spine::FileCache& getFileCache() const { return itsFileCache; }
+  const Plugin::Dali::Config& getDaliConfig() const { return itsDaliConfig; }
   const Engine::Querydata::Engine* qEngine() const { return itsQEngine; }
   const Engine::Gis::Engine* gisEngine() const { return itsGisEngine; }
 #ifndef WITHOUT_OBSERVATION
@@ -169,6 +170,8 @@ class WMSConfig
   std::map<std::string, Json::Value> itsLegendGraphicLayers;
   // configuration info for legend (parameter names, units, legend size)
   WMSLegendGraphicSettings itsLegendGraphicSettings;
+  // Keep track of product file modification times and report if time is changed
+  std::map<std::string, std::time_t> itsProductFileModificationTime;
 };  // class WMSConfig
 
 }  // namespace WMS

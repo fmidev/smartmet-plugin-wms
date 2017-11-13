@@ -523,7 +523,7 @@
 		    "scale_attributes":
 		    {
 			"stroke": "black",
-			"stroke-width": 1.0,
+			"stroke-width": 0.5,
 			"font-family": "Arial",
 			"font-size": "14",
 			"font-style": "normal",
