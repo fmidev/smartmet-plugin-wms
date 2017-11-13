@@ -1,8 +1,8 @@
 <symbol id="icerft">
-<svg  xmlns="http://www.w3.org/2000/svg" width="5mm" height="2.5mm"  viewBox="0 0 5 2.5">
-<polyline points="0,1.5 1,1.5 1,0.2 2,0.2 2,1.5 3,1.5 3,0.2 4,0.2 4,1.5 5,1.5" 
-              fill="none" 
-              stroke="black" 
-              stroke-width="0.4"/>
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="7mm" height="7mm" version="1.1"
+viewBox="0 0 500 500">
+ <g id="Layer_x0020_1">
+  <polyline style= "fill:none;stroke:black;stroke-width:30"  points="-3,334 79,334 79,184 199,184 199,334 279,334 279,184 399,184 399,334 499,334"/>
+ </g>
 </svg>
 </symbol>

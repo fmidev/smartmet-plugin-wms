@@ -22,12 +22,24 @@ namespace Plugin
 {
 namespace WMS
 {
+struct PostGISMetaDataSettings
+{
+  bool found = false;
+  unsigned int update_interval = 5;
+  std::string pgname;
+  std::string schema;
+  std::string table;
+  std::string field;
+  std::string where;
+};
+
 class WMSPostGISLayer : public WMSLayer
 {
  private:
   const Engine::Gis::Engine* itsGisEngine;
   Engine::Gis::MetaDataQueryOptions mdq_options;
   bool hasTemporalDimension;
+  PostGISMetaDataSettings itsMetaDataSettings;
 
  protected:
   virtual void updateLayerMetaData();

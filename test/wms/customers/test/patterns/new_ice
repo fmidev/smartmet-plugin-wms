@@ -1,6 +1,6 @@
-<pattern id="new_ice" patternUnits="userSpaceOnUse" width="24" height="24">
+1<pattern id="new_ice" patternUnits="userSpaceOnUse" width="24" height="24">
 <g transform="translate(8,8) scale(0.025)"
-fill="gray" stroke="none">
+fill="black" stroke="none">
 <path d="M0 0 c-3 -8 -1 -35 5 -59 19 -75 10 -83 -43 -36 -53 47 -78 53
 -78 16 0 -21 7 -27 55 -40 30 -9 57 -21 60 -26 4 -5 5 -9 3 -9 -2 0 -28 -9
 -58 -19 -42 -13 -56 -23 -58 -40 -6 -40 26 -36 76 10 54 50 63 42 42 -39 -9
@@ -10,7 +10,7 @@ fill="gray" stroke="none">
 64 -10 16 -42 12 -49 -6z"/>
 </g>
 <g transform="translate(16,16) scale(0.025)"
-fill="gray" stroke="none">
+fill="black" stroke="none">
 <path d="M0 0 c-3 -8 -1 -35 5 -59 19 -75 10 -83 -43 -36 -53 47 -78 53
 -78 16 0 -21 7 -27 55 -40 30 -9 57 -21 60 -26 4 -5 5 -9 3 -9 -2 0 -28 -9
 -58 -19 -42 -13 -56 -23 -58 -40 -6 -40 26 -36 76 10 54 50 63 42 42 -39 -9

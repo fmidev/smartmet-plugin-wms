@@ -1,7 +1,10 @@
 <symbol id="icerdg">
-<svg xmlns="http://www.w3.org/2000/svg" width="5mm" height="2.5mm" viewBox="0 0 5 2.5">
-    <!--polyline points="0,2.3 5,2.3" stroke="black" stroke-width="0.4"/-->
-    <!--polygon  points="0,1.8 1.25,0 2.5,1.8 3.75,0 5,1.8"/-->
-    <polygon points="0,2.2 1.25,0 2.5,2.2 3.75,0 5,2.2"/>
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="6mm" height="6mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 420 1000 1000"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <g id="Layer_x0020_1">
+  <polygon style="fill:black;stroke:black;stroke-width:20" points="270,439 400,714 530,989 270,989 10,989 140,714"/>
+  <polygon style="fill:black;stroke:black;stroke-width:20" points="730,440 860,715 990,990 730,990 470,990 600,715"/>
+ </g>
 </svg>
 </symbol>

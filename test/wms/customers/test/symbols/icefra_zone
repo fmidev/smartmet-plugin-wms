@@ -1,8 +1,10 @@
 <symbol id="icefra_zone">
-<svg xmlns="http://www.w3.org/2000/svg" width="5mm" height="2.5mm" viewBox="0 0 5 2.5">
-    <polyline points="0.2,2.3 3,0.4 2,2.1 4.8,0.2" 
-              fill="none" stroke="black" 
-              stroke-width="0.4" 
-              stroke-linejoin="miter"/>
+<svg xml:space="preserve" width="6mm" height="6mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 1000 1000">
+ <g id="Layer_x0020_1">
+   <line style="stroke:black;stroke-width:50;stroke-linecap:round;fill:none" x1="553" y1="312" x2="25" y2= "834" />
+   <line style="stroke:black;stroke-width:50;stroke-linecap:round;fill:none" x1="553" y1="317" x2="447" y2= "683" />
+   <line style="stroke:black;stroke-width:50;stroke-linecap:round;fill:none" x1="975" y1="166" x2="447" y2= "688" />
+ </g>
 </svg>
 </symbol>

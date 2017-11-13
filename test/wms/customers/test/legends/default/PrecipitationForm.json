@@ -1,7 +1,7 @@
 {
     "layer_type": "legend",
-    "x": 30,
-    "y": 30,
+    "x": 99999,  // will be replaced in the code
+    "y": 99999,  // will be replaced in the code
     "dx": 0,
     "dy": 0,
     "symbols":
@@ -11,11 +11,11 @@
      "layers" : [
         {
             "tag": "text",
-            "cdata": "<TMPL_var precipitation_form_header>",
+            "cdata": "precipitation_form_header", // will be replaced in the code
             "attributes":
             {
-                "x": <TMPL_var header_xpos>,
-                "y": <TMPL_var header_ypos>
+                "x": 99999,  // will be replaced in the code
+                "y": 99999  // will be replaced in the code
             }
         },
         {
@@ -23,8 +23,8 @@
             "symbol": "rain",
             "positions":
             {
-	        "x": <TMPL_var rain_symbol_xpos>,
-                "y": <TMPL_var rain_symbol_ypos>,
+	        "x":  99999,  // will be replaced in the code
+                "y":  99999,  // will be replaced in the code
                 "dx": 99999,
                 "dy": 99999
             }
@@ -34,8 +34,8 @@
             "cdata": "rain",
             "attributes":
             {
-	        "x": <TMPL_var rain_text_xpos>,
-                "y": <TMPL_var rain_text_ypos>
+	        "x":  99999,  // will be replaced in the code
+                "y":  99999  // will be replaced in the code
             }
         },
         {
@@ -43,8 +43,8 @@
             "symbol": "drizzle",
             "positions":
             {
-	        "x": <TMPL_var drizzle_symbol_xpos>,
-                "y": <TMPL_var drizzle_symbol_ypos>,
+	        "x":  99999,  // will be replaced in the code
+                "y":  99999,  // will be replaced in the code
                 "dx": 99999,
                 "dy": 99999
             }
@@ -54,8 +54,8 @@
             "cdata": "drizzle",
             "attributes":
             {
-	        "x": <TMPL_var drizzle_text_xpos>,
-                "y": <TMPL_var drizzle_text_ypos>
+	        "x":  99999,  // will be replaced in the code
+                "y":  99999  // will be replaced in the code
             }
         },
         {
@@ -63,8 +63,8 @@
             "symbol": "snow",
             "positions":
             {
-	        "x": <TMPL_var snow_symbol_xpos>,
-                "y": <TMPL_var snow_symbol_ypos>,
+	        "x":  99999,  // will be replaced in the code
+                "y":  99999,  // will be replaced in the code
                 "dx": 99999,
                 "dy": 99999
             }
@@ -74,8 +74,8 @@
             "cdata": "snow",
             "attributes":
             {
-	        "x": <TMPL_var snow_text_xpos>,
-                "y": <TMPL_var snow_text_ypos>
+	        "x":  99999,  // will be replaced in the code
+                "y":  99999  // will be replaced in the code
             }
         }
     ]

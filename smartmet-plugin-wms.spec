@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.11.9
+Version: 17.11.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -89,6 +89,13 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Nov 13 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.11.13-1.fmi
+- BRAINSTORM-959: GetLegendGrapgic doesnt use ctpp2-templates any more
+- BRAINSTORM-980: WMS-plugin reports to standard output when it notices that product-file has been modified
+- PostGIS metadata query interval can now be schema-specific: 'postgis-layer' entry in configuration file can be a list
+- Handling of text-field added to IceMapLayer
+- Added map number to icemap
+
 * Thu Nov 9 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.11.9-1.fmi
 - Fixed metadata update interval bug
 

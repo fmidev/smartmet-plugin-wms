@@ -42,6 +42,12 @@ class IceMapLayer : public PostGISLayerBase
   std::map<std::string, std::string> itsParameters;
 
   void handleSymbol(const Fmi::Feature& theResultItem, CTPP::CDT& theGroupCdt) const;
+  void handleTextField(const Fmi::Feature& theResultItem,
+                       const PostGISLayerFilter& theFilter,
+                       CTPP::CDT& theGlobals,
+                       CTPP::CDT& theLayersCdt,
+                       CTPP::CDT& theGroupCdt,
+                       State& theState) const;
   void handleNamedLocation(const Fmi::Feature& theResultItem,
                            const PostGISLayerFilter& theFilter,
                            CTPP::CDT& theGlobals,
