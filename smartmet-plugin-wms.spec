@@ -89,7 +89,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-* Thu Nov 13 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.11.13-1.fmi
+* Tue Nov 13 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.11.13-1.fmi
 - BRAINSTORM-959: GetLegendGraphic doesnt use ctpp2-templates any more
 - BRAINSTORM-980: WMS-plugin reports to standard output when it notices that product-file has been modified
 - Product files, symbols, filters, patterns updated
