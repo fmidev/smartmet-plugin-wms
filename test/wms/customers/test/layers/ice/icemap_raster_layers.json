@@ -95,7 +95,7 @@
 		{
 		    "qid": "very_close_ice",
 		    "layer_type": "icemap",
-		    "pattern": "very_close_ice",
+		    "pattern": "new_ice",
 		    "pgname": "icemap",
 		    "schema" : "icemap",
 		    "table" : "seaice",
@@ -118,7 +118,7 @@
 		{
 		    "qid": "consolidated_ice",
 		    "layer_type": "icemap",
-		    "pattern": "very_close_ice",
+		    "pattern": "consolidated_ice",
 		    "pgname": "icemap",
 		    "schema" : "icemap",
 		    "table" : "seaice",
@@ -133,7 +133,7 @@
 			    {
 				"stroke": "black",
 				"stroke-width": 0.2,
-				"fill": "url(#very_close_ice)"
+				"fill": "url(#consolidated_ice)"
 			    }
 			}
 		    ]

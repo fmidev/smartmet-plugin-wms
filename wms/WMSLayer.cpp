@@ -83,8 +83,8 @@ Json::Value process_symbol_group_json(const Json::Value& jsonTemplate,
     std::string legendHeader = "";
     std::string symbolName = lgi.at("symbol");
 
-    // skip two icemap-related symbols (they are not map symbols)
-    if (symbolName == "fmi_logo" || symbolName == "ice_egg")
+    // some symbols need not to be shown in legend graphis, for exmaple logos
+    if (lgs.symbolsToIgnore.find(symbolName) != lgs.symbolsToIgnore.end())
       continue;
 
     // handling individual symbols

@@ -1,5 +1,5 @@
 .LegendText		{ stroke: none; fill: black; text-anchor: start; font-family: Verdana; font-size: 14 }
-.SmallLegendText	{ stroke: none; text-anchor: start; font-family: Arial; font-size: 12 }
+.SmallLegendText	{ stroke: none; text-anchor: start; font-family: Arial; font-size: 10 }
 .Land			{ stroke: none; fill: rgb(246,246,246) }
 .Border			{ stroke: black; stroke-width: 0.3px; fill: none }
 .OpenWater		{ stroke: black; stroke-width: 0.2; fill: rgb(150,200,255) }

@@ -294,6 +294,8 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     if (theState.addId("spearhead"))
       theGlobals["includes"]["marker"] = theState.getMarker("spearhead");
+    if (theState.addId("strips_and_patches"))
+      theGlobals["includes"]["marker"] = theState.getSymbol("strips_and_patches");
     if (theState.addId("jmdbrr"))
       theGlobals["includes"]["jmdbrr"] = theState.getSymbol("jmdbrr");
     if (theState.addId("icelea"))
@@ -326,6 +328,27 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       theGlobals["includes"]["ice_thickness"] = theState.getSymbol("ice_thickness");
     if (theState.addId("lighthouse"))
       theGlobals["includes"]["lighthouse"] = theState.getSymbol("lighthouse");
+
+    if (theState.addId("close_ice"))
+      theGlobals["includes"]["close_ice"] = theState.getPattern("close_ice");
+    if (theState.addId("conslidated_ice"))
+      theGlobals["includes"]["consolidated_ice"] = theState.getPattern("consolidated_ice");
+    if (theState.addId("fast_ice"))
+      theGlobals["includes"]["fast_ice"] = theState.getPattern("fast_ice");
+    if (theState.addId("grey_ice"))
+      theGlobals["includes"]["grey_ice"] = theState.getPattern("grey_ice");
+    if (theState.addId("new_ice"))
+      theGlobals["includes"]["new_ice"] = theState.getPattern("new_ice");
+    if (theState.addId("open_ice"))
+      theGlobals["includes"]["open_ice"] = theState.getPattern("open_ice");
+    if (theState.addId("open_water"))
+      theGlobals["includes"]["open_water"] = theState.getPattern("open_water");
+    if (theState.addId("rotten_fast_ice"))
+      theGlobals["includes"]["rotten_fast_ice"] = theState.getPattern("rotten_fast_ice");
+    if (theState.addId("very_close_ice"))
+      theGlobals["includes"]["very_close_ice"] = theState.getPattern("very_close_ice");
+    if (theState.addId("very_open_ice"))
+      theGlobals["includes"]["very_open_ice"] = theState.getPattern("very_open_ice");
 
     auto crs = projection.getCRS();
     // Update the globals
@@ -674,24 +697,6 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
 
   ypos += (text_dimension.height + 5);
 
-  // background rectangle
-  if (!theFilter.attributes.empty())
-  {
-    text_dimension_t rectangleDimension = getTextDimension(rows, text_style);
-
-    CTPP::CDT background_rect_cdt(CTPP::CDT::HASH_VAL);
-    background_rect_cdt["start"] = "<rect";
-    background_rect_cdt["end"] = "</rect>";
-    background_rect_cdt["attributes"]["width"] =
-        Fmi::to_string(rectangleDimension.width + (rectangleDimension.width * 0.1));
-    background_rect_cdt["attributes"]["height"] =
-        Fmi::to_string(rectangleDimension.height + (rectangleDimension.height * 0.1));
-    background_rect_cdt["attributes"]["x"] = Fmi::to_string(xpos - 2);
-    background_rect_cdt["attributes"]["y"] = Fmi::to_string(ypos - (text_dimension.height + 2));
-    theState.addAttributes(theGlobals, background_rect_cdt, theFilter.attributes);
-    theLayersCdt.PushBack(background_rect_cdt);
-  }
-
   Attributes text_attributes;
   if (!theFilter.text_attributes.empty())
     text_attributes = theFilter.text_attributes;
@@ -703,6 +708,28 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
     text_attributes.add("font-weight", text_style.fontweight);
     text_attributes.add("text-anchor", text_style.textanchor);
   }
+
+  // background rectangle
+  if (!theFilter.attributes.empty())
+  {
+    std::string dxValue = text_attributes.value("dx");
+    std::string dyValue = text_attributes.value("dy");
+    int dx = (!dxValue.empty() ? Fmi::stoi(dxValue) : 0);
+    int dy = (!dyValue.empty() ? Fmi::stoi(dyValue) : 0);
+
+    text_dimension_t rectangleDimension = getTextDimension(rows, text_style);
+
+    CTPP::CDT background_rect_cdt(CTPP::CDT::HASH_VAL);
+    background_rect_cdt["start"] = "<rect";
+    background_rect_cdt["end"] = "</rect>";
+    background_rect_cdt["attributes"]["width"] = Fmi::to_string(rectangleDimension.width);
+    background_rect_cdt["attributes"]["height"] = Fmi::to_string(rectangleDimension.height);
+    background_rect_cdt["attributes"]["x"] = Fmi::to_string(xpos + dx);
+    background_rect_cdt["attributes"]["y"] = Fmi::to_string(ypos - text_dimension.height + dy);
+    theState.addAttributes(theGlobals, background_rect_cdt, theFilter.attributes);
+    theLayersCdt.PushBack(background_rect_cdt);
+  }
+
   addTextField(xpos, ypos, rows, text_attributes, theGlobals, theLayersCdt, theState);
 }
 

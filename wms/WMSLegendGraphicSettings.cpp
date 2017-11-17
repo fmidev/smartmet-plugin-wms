@@ -34,6 +34,13 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
     const auto& legend_graphic_config = config.lookup("wms.get_legend_graphic");
     if (legend_graphic_config.isGroup())
     {
+      // symbols to ignore
+      if (config.exists("wms.get_legend_graphic.symbols_to_ignore"))
+      {
+        std::string symbolNames = config.lookup("wms.get_legend_graphic.symbols_to_ignore");
+        boost::algorithm::split(symbolsToIgnore, symbolNames, boost::algorithm::is_any_of(","));
+      }
+
       if (config.exists("wms.get_legend_graphic.parameters"))
       {
         // parameter_settings
