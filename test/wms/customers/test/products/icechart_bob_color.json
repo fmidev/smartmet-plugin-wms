@@ -219,10 +219,12 @@
 			    "text_attributes":
 			    {
 				"font-family": "Arial",
-				"font-size": "36",
+				"font-size": "28",
 				"font-style": "normal",
 				"font-weight": "normal",
-				"text-anchor": "start"
+				"text-anchor": "start",
+				"dx": 10,
+				"dy": 5
 			    }
 
 			}

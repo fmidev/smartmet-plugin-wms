@@ -13,95 +13,14 @@
 	    },
             "layers": 
 	    [
-		{ // jääalueet
-		    "qid": "icemap_areas",
-		    "layer_type": "icemap",
-		    "pgname": "icemap",
-		    "schema" : "icemap",
-		    "table" : "seaice",
-		    "time_column" : "publicationdate",	
-		    "geometry_column" : "geom",
+		{ // jääalueet mustavalkoisena rasterina
+		    "qid": "icemap_bw_areas",
+		    "tag": "g",
              	    "css": "ice/icemap.css",
-		    "filters" :		    
-		    [			
-			{
-			    "where": "type=1",
-			    "attributes":
-			    {
-				"class": "OpenWater"
-			    }
-			},
-			{
-			    "where": "type=2",
-			    "attributes":
-			    {
-				"class": "VeryOpenIce"
-			    }
-			},
-			{
-			    "where": "type=3",
-			    "attributes":
-			    {
-				"class": "OpenIce"
-			    }
-			},
-			{
-			    "where": "type=4",
-			    "attributes":
-			    {
-				"class": "CloseIce"
-			    }
-			},
-			{
-			    "where": "type=9",
-			    "attributes":
-			    {
-				"class": "NewIce"
-			    }
-			},
-			{
-			    "where": "type=5",
-			    "attributes":
-			    {
-				"class": "VeryCloseIce"
-			    }
-			},
-			{
-			    "where": "type=7",
-			    "attributes":
-			    {
-				"class": "LevelIce"
-			    }
-			},
-			{
-			    "where": "type=6",
-			    "attributes":
-			    {
-				"class": "ConsolidatedIce"
-			    }
-			},
-			{
-			    "where": "type=10",
-			    "attributes":
-			    {
-				"class": "RottenFastIce"
-			    }
-			},
-			{
-			    "where": "type=8",
-			    "attributes":
-			    {
-				"class": "FastIce"
-			    }
-			},
-			{
-			    "where": "type=0",
-			    "attributes":
-			    {
-				"class": "IceFree"
-			    }
-			}
-		    ]
+		    "layers": "json:ice/icemap_raster_layers.json",
+		    "attributes":
+		    {
+		    }
 		},
 		{ // jään reuna
 		    "qid": "ice_edge",
@@ -600,7 +519,7 @@
 				"font-style": "normal",
 				"font-weight": "normal",
 				"text-anchor": "start",
-				"filter": "url(#lightyellowoutline)"
+				"filter": "url(#whiteoutline)"
 			    }
 			}
 		    ]
@@ -615,14 +534,14 @@
 		    },
 		    "scale":
 		    {
-			"small_tic_step": 0.1, // degrees
+			"small_tic_step": 0.166667, // degrees
 			"small_tic_length": 5, // pixels
-			"intermediate_tic_step": 0.5,
-			"intermediate_tic_length": 10, // pixels
+			"intermediate_tic_step": 0.1667,
+			"intermediate_tic_length": 4, // pixels
 			"long_tic_step": 1.0,
-			"long_tic_length": 15, // pixels
-			"tic_position": "outside", // inside frame,outside frame
-			"label_position": "outside", // 
+			"long_tic_length": 7, // pixels
+			"tic_position": "inside", // inside frame,outside frame
+			"label_position": "inside", // 
 			"label_step": 1.0
 		    },
              	    "css": "ice/icemap.css",
@@ -645,39 +564,41 @@
 		    "qid": "legend_layer_icemap",
 		    "tag": "g",
              	    "css": "ice/icemap.css",
-		    "layers": "json:ice/icemap_legend_fmi.json",
+		    "layers": "json:ice/icemap_legend_fmi_smhi_vertical_bw.json",
 		    "attributes":
 		    {
-			"longitude": "9.5",
-			"latitude": "66.2"
-		    }
-		},
-		{ // ice-egg legend
-		    "qid": "legend_layer_ice_egg",
-		    "layer_type": "symbol",
-		    "symbol": "ice_egg",
-                    "positions": {
-                        "layout": "latlon",
-                        "locations": [
-                            {
-                                "longitude": 15.5,
-                                "latitude": 66.2
-                            }
-			]
+			"longitude": "9.0",
+			"latitude": "66.5"
 		    }
 		},
 		{
-		    "gid": "icemap_title",
+		    "gid": "icemap_title_en",
 		    "layer_type": "tag",
 		    "tag": "text",
-		    "cdata": "Jääkartta   Iskarta  Ice Chart",
+		    "cdata": "ICE CHART",
 		    "attributes":
 		    {
-			"longitude": "20",
-			"latitude": "68",
+			"longitude": 19.5,
+			"latitude": 67.1,
+			"font-family": "Arial",
+			"font-weight": "bold",
+			"font-size": "38",
+			"text-anchor": "middle",
+			"xml:space": "preserve"
+		    }
+		},
+		{
+		    "gid": "icemap_title_sv_fi",
+		    "layer_type": "tag",
+		    "tag": "text",
+		    "cdata": "Iskarta - Jääkartta",
+		    "attributes":
+		    {
+			"longitude": 19.5,
+			"latitude": 66.8,
 			"font-family": "Arial",
 			"font-weight": "normal",
-			"font-size": "36",
+			"font-size": "38",
 			"text-anchor": "middle",
 			"xml:space": "preserve"
 		    }
@@ -691,7 +612,21 @@
                         "locations": [
                             {
                                 "longitude": 9.0,
-                                "latitude": 68.0
+                                "latitude": 67.40
+                            }
+			]
+		    }
+		},
+		{
+		    "qid": "smhi_logo",
+		    "layer_type": "symbol",
+		    "symbol": "smhi_logo",
+                    "positions": {
+                        "layout": "latlon",
+                        "locations": [
+                            {
+                                "longitude": 9.0,
+                                "latitude": 67.3
                             }
 			]
 		    }
@@ -701,14 +636,14 @@
 		    "layer_type": "time",
 		    "timestamp": "validtime",
 		    "timezone": "Europe/Helsinki",
-		    "format": "%d.%m.%Y",
-		    "longitude": 20,
-		    "latitude": 67.7,
+		    "format": "%Y-%m-%d",
+		    "longitude": 27.85,
+		    "latitude": 67.0,
 		    "attributes": {
-			"text-anchor": "middle",
+			"text-anchor": "begin",
 			"font-family": "Arial",
 			"font-weight": "normal",
-			"font-size": "36"
+			"font-size": "32"
 			}
 		},
 		{ // icemap number
@@ -718,8 +653,8 @@
 		    "pgname": "icemap",
 		    "schema" : "icemap",
 		    "table" : "map_number",
-                    "longitude": 20,
-                    "latitude": 67.4,
+                    "longitude": 27.85,
+                    "latitude": 66.7,
 		    "text_column" : "chartnumber",
 		    "time_column" : "publicationdate",
              	    "css": "ice/icemap.css",
@@ -729,61 +664,13 @@
 			    "attributes":
 			    {
 				"font-family": "Arial",
-				"font-size": "28",
+				"font-size": "32",
 				"font-style": "normal",
 				"font-weight": "normal",
-				"text-anchor": "middle"
+				"text-anchor": "begin"
 			    }
 			}
 		    ]
-		},
-		{
-		    "gid": "liikennerajoitus_fi",
-		    "layer_type": "tag",
-		    "tag": "text",
-		    "cdata": "Aluksen, joka on matkalla Pohjanlahden satamaan, jossa on voimassa liikennerajoitus, on ylittäessään\nleveysasteen 60°00’N tehtävä talviliikenneohjeen mukainen ilmoitus ICE INFO:lle VHF-kanavalla 78 tai\npuhelimitse +46 31 699 100.\nReittijakojärjestelmä Merenkurkussa on tilapäisesti poissa käytöstä jääolojen takia 18. helmikuuta alkaen.",
-		    "attributes":
-		    {
-			"longitude": "9.0",
-			"latitude": "52.6",
-			"font-family": "Arial",
-			"font-weight": "normal",
-			"font-size": "10",
-			"text-anchor": "start",
-			"xml:space": "preserve"
-		    }
-		},
-		{
-		    "gid": "liikennerajoitus_sv",
-		    "layer_type": "tag",
-		    "tag": "text",
-		    "cdata": "Fartyg destinerade till hamnar med trafikrestriktion i Bottniska viken ska, vid passage av latituden 60°00´N,\nrapportera enligt instruktionerna för vintersjöfarten till ICE INFO på VHF-kanal 78 eller per telefon +46 31\n699 100.\nTrafiksepareringssystemet i Kvarken är tillfälligt ur bruk på grund av isförhållandena från och med den 18 februari.",
-		    "attributes":
-		    {
-			"longitude": "16.5",
-			"latitude": "52.6",
-			"font-family": "Arial",
-			"font-weight": "normal",
-			"font-size": "10",
-			"text-anchor": "start",
-			"xml:space": "preserve"
-		    }
-		},
-		{
-		    "gid": "liikennerajoitus_en",
-		    "layer_type": "tag",
-		    "tag": "text",
-		    "cdata": "Vessels bound for Gulf of Bothnia ports in which traffic restrictions apply shall, when passing the latitude\n60°00’N, report their nationality, name, port of destination, ETA and speed to ICE INFO on VHF channel 78.\nThis report can also be given directly by phone +46 31 699 100.\nThe traffic separation scheme in the Quark is temporarily out of use due to\\n ice conditions from 18th February.",
-		    "attributes":
-		    {
-			"longitude": "24.0",
-			"latitude": "52.6",
-			"font-family": "Arial",
-			"font-weight": "normal",
-			"font-size": "10",
-			"text-anchor": "start",
-			"xml:space": "preserve"
-		    }
 		}
 	    ]
 	}

@@ -222,7 +222,9 @@
 				"font-size": "26",
 				"font-style": "normal",
 				"font-weight": "normal",
-				"text-anchor": "start"
+				"text-anchor": "start",
+				"dx": 5,
+				"dy": 5
 			    }
 
 			}
@@ -683,11 +685,11 @@
 		    "qid": "legend_layer",
 		    "tag": "g",
              	    "css": "ice/icemap.css",
-		    "layers": "json:ice/icemap_legend_fmi_horizontal.json",
+		    "layers": "json:ice/icemap_legend_fmi_horizontal_color.json",
 		    "attributes":
 		    {
 			"longitude": "26.167",
-			"latitude": "58.90"
+			"latitude": "59.0"
 		    }
 		},
 		{

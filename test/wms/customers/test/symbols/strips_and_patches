@@ -1,5 +1,5 @@
 <symbol id="strips_and_patches">
-<svg xml:space="preserve" width="10mm" height="10mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+<svg xml:space="preserve" width="6mm" height="6mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
 viewBox="0 0 1000 1000">
  <g id="Layer_x0020_1">
   <path style="fill:none;stroke:black;stroke-width:50" d="M360 667c-360,145 -475,-356 -119,-381 175,22 209,110 266,222l54 106c48,95 122,98 198,100 376,-52 217,-572 -138,-379"/>

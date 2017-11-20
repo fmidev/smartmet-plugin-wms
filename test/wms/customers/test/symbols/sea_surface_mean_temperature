@@ -1,5 +1,5 @@
 <symbol id="sea_surface_mean_temperature">
  <ellipse cx="16" cy="12" rx="15" ry="10"
   style="fill:white;stroke:black;stroke-width:1" />
- <text x="5" y="15" fill="black" font="Arial" font-size="12">2,1°</text>
+ <text x="5" y="15" fill="black" font-family="Arial" font-size="12">2,1°</text>
 </symbol>

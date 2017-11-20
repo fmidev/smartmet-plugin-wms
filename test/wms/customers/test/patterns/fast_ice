@@ -1,3 +1,6 @@
-<pattern id="fast_ice" patternUnits="userSpaceOnUse" width="20" height="20">
-<path d="M-1,1 l2,-2 M0,20 l20,-20 M19,21 l18,-18" style="stroke:black; stroke-width:0.8"/>
- </pattern>
+<!--pattern id="fast_ice" patternUnits="userSpaceOnUse" width="10" height="10">
+<path d="M-1,1 l2,-2 M0,10 l10,-10 M9,11 l2,-2" style="stroke:black; stroke-width:0.7"/>
+</pattern-->
+<pattern id="fast_ice" patternUnits="userSpaceOnUse" width="8" height="8">
+<path d="M-1,1 l2,-2 M0,8 l8,-8 M7,9 l2,-2" style="stroke:black; stroke-width:0.7"/>
+</pattern>

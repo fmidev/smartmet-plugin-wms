@@ -1,0 +1,1151 @@
+[
+     {
+	"tag": "symbol",
+	"attributes":
+	{
+	    "id": "legendbox_fmi_smhi_vertical_color"
+	},
+	"layers":
+	[
+	    {
+		"tag": "rect",
+		"attributes":
+		{
+		    "width": 30,
+		    "height": 30
+		}
+	    }
+	]
+    },
+    {
+	"tag": "rect",
+	"attributes":
+	{
+	    "x": 0,
+	    "y": 0,
+	    "width": 220,
+	    "height": 50,
+	    "stroke": "black",
+	    "stroke-width": "1px",
+	    "fill": "white"
+	}
+    },
+    {
+	"tag": "rect",
+	"attributes":
+	{
+	    "x": 220,
+	    "y": 0,
+	    "width": 235,
+	    "height": 50,
+	    "stroke": "black",
+	    "stroke-width": "1px",
+	    "fill": "white"
+	}
+    },
+    {
+	"tag": "rect",
+	"attributes":
+	{
+	    "x": 0,
+	    "y": 50,
+	    "width": 220,
+	    "height": 440,
+	    "stroke": "black",
+	    "stroke-width": "1px",
+	    "fill": "white"
+	}
+    },
+    {
+	"tag": "rect",
+	"attributes":
+	{
+	    "x": 220,
+	    "y": 50,
+	    "width": 235,
+	    "height": 440,
+	    "stroke": "black",
+	    "stroke-width": "1px",
+	    "fill": "white"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Ice type\nIstyp\nJäätyyppi",
+	"attributes":
+	{
+	    "x": 40,
+	    "y": 15,
+	    "font-family": "Arial",
+	    "font-size": "12",
+	    "font-style": "normal",
+	    "font-weight": "bold",
+	    "text-anchor": "start",
+	    "xml:space": "preserve"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Concentration\nKoncentration\nPeittävyys",
+	"attributes":
+	{
+	    "x": 215,
+	    "y": 15,
+	    "font-family": "Arial",
+	    "font-size": "12",
+	    "font-style": "normal",
+	    "font-weight": "bold",
+	    "text-anchor": "end",
+	    "xml:space": "preserve"
+	} 
+    },
+   {
+	"tag": "text",
+	"cdata": "Symbols\nSymboler\nMerkinnät",
+	"attributes":
+	{
+	    "x": 255,
+	    "y": 15,
+	    "font-family": "Arial",
+	    "font-size": "12",
+	    "font-style": "normal",
+	    "font-weight": "bold",
+	    "text-anchor": "start",
+	    "xml:space": "preserve"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 10,
+	    "y": 60,
+	    "xlink:href": "#legendbox_fmi_smhi_vertical_color",
+	    "class": "IceFree"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Ice free",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 70,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Isfritt",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 80,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Jäätön",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 90,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "-",
+	"attributes":
+	{
+	    "x": 175,
+	    "y": 80,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 10,
+	    "y": 95,
+	    "xlink:href": "#legendbox_fmi_smhi_vertical_color",
+	    "class": "NewIce"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "New Ice (&lt; 5 cm)",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 105,
+	    "class": "SmallLegendText"
+	} 
+    },
+   {
+	"tag": "text",
+	"cdata": "Nyis (&lt; 5 cm)",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 115,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Uusi jää (&lt; 5 cm)",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 125,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "7 - 10/10",
+	"attributes":
+	{
+	    "x": 175,
+	    "y": 115,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 10,
+	    "y": 130,
+	    "xlink:href": "#legendbox_fmi_smhi_vertical_color",
+	    "class": "LevelIce"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Nilas, grey ice (5-15 cm)",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 140,
+	    "class": "SmallLegendText"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Tunn jämn is (5-15 cm)",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 150,
+	    "class": "SmallLegendText"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Ohut tasainen jää (5-15 cm)",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 160,
+	    "class": "SmallLegendText"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "9 - 10/10",
+	"attributes":
+	{
+	    "x": 175,
+	    "y": 150,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 10,
+	    "y": 165,
+	    "xlink:href": "#legendbox_fmi_smhi_vertical_color",
+	    "class": "FastIce"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Fast ice",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 175,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Fastis",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 185,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Kiintojää",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 195,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "10/10",
+	"attributes":
+	{
+	    "x": 175,
+	    "y": 185,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 10,
+	    "y": 200,
+	    "xlink:href": "#legendbox_fmi_smhi_vertical_color",
+	    "class": "RottenFastIce"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Rotten fast ice",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 210,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Rutten fastis",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 220,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Hauras kiintojää",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 230,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "-",
+	"attributes":
+	{
+	    "x": 175,
+	    "y": 220,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 10,
+	    "y": 235,
+	    "xlink:href": "#legendbox_fmi_smhi_vertical_color",
+	    "class": "OpenWater"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Open water",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 245,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Öppet vatten",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 255,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Avovesi",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 265,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "&lt; 1/10",
+	"attributes":
+	{
+	    "x": 175,
+	    "y": 255,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 10,
+	    "y": 270,
+	    "xlink:href": "#legendbox_fmi_smhi_vertical_color",
+	    "class": "VeryOpenIce"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Very open ice",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 280,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Mycket spridd drivis",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 290,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Hyvin harva ajojää",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 300,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "1 - 3/10",
+	"attributes":
+	{
+	    "x": 175,
+	    "y": 290,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 10,
+	    "y": 305,
+	    "xlink:href": "#legendbox_fmi_smhi_vertical_color",
+	    "class": "OpenIce"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Open ice",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 315,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Spridd drivis",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 325,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Harva ajojää",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 335,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "4 - 6/10",
+	"attributes":
+	{
+	    "x": 175,
+	    "y": 325,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 10,
+	    "y": 340,
+	    "xlink:href": "#legendbox_fmi_smhi_vertical_color",
+	    "class": "CloseIce"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Close ice",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 350,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Tät drivis",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 360,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Tiheä ajojää",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 370,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "7 - 8/10",
+	"attributes":
+	{
+	    "x": 175,
+	    "y": 360,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 10,
+	    "y": 375,
+	    "xlink:href": "#legendbox_fmi_smhi_vertical_color",
+	    "class": "VeryCloseIce"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Very close ice",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 385,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Mycket tät drivis",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 395,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Hyvin tiheä ajojää",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 405,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "9 - 9+/10",
+	"attributes":
+	{
+	    "x": 175,
+	    "y": 395,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 10,
+	    "y": 410,
+	    "xlink:href": "#legendbox_fmi_smhi_vertical_color",
+	    "class": "ConsolidatedIce"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Consolidated ice",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 420,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Sammanfrusen drivis",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 430,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Yhteenjäätynyt ajojää",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 440,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "10/10",
+	"attributes":
+	{
+	    "x": 175,
+	    "y": 430,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 10,
+	    "y": 450,
+	    "xlink:href": "#ice_thickness"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Ice thickness",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 455,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Istjocklek",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 465,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Jään paksuus (cm)",
+	"attributes":
+	{
+	    "x": 50,
+	    "y": 475,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 230,
+	    "y": 70,
+	    "xlink:href": "#jmdbrr"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Jammed brash barrier",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 70,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Stampisvall",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 80,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Sohjovyö",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 90,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 230,
+	    "y": 105,
+	    "xlink:href": "#icerft"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Rafted ice",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 105,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Hopskjuten is",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 115,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Päällekkäin ajautunut jää",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 125,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 230,
+	    "y": 140,
+	    "xlink:href": "#icerdg"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Ridged or hummocked ice",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 140,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Vallar eller upptornad is",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 150,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Ahtautunut tai röykkiöitynyt jää",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 160,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 230,
+	    "y": 175,
+	    "xlink:href": "#strips_and_patches"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Strips and patches",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 175,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Strängar av drivis",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 185,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Ajojäänauhoja",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 195,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 230,
+	    "y": 210,
+	    "xlink:href": "#flobrg"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Floebit, floeberg",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 210,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Isbumling",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 220,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Ahtojää- tai röykkiölautta",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 230,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 230,
+	    "y": 245,
+	    "xlink:href": "#icefra"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Fracture",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 245,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Spricka",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 255,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Repeämä",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 265,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 230,
+	    "y": 280,
+	    "xlink:href": "#icefra_zone"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Fracture zone",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 280,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Område med sprickor",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 290,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Repeämävyöhyke",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 300,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 230,
+	    "y": 315,
+	    "xlink:href": "#estimated_ice_edge"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Estimated ice edge",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 315,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Uppskattad iskant",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 325,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Arvioitu jään reuna",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 335,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "ATLE*",
+	"attributes":
+	{
+	    "x": 225,
+	    "y": 360,
+	    "font-family": "Arial",
+	    "font-size": "16",
+	    "font-style": "normal",
+	    "font-weight": "normal",
+	    "text-anchor": "start",
+	    "filter": "url(#lightyellowoutline)"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Icebreaker (* coordinating)",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 350,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Isbrytare (* coordinerande)",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 360,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Jäänmurtaja (* koordinaattori)",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 370,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 230,
+	    "y": 385,
+	    "xlink:href": "#watertemperature_isotherm"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Watertemperature isothrem (C°)",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 385,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Vattentemperatur isotherm (C°)",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 395,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Veden lämpötilan tasa-arvokäyrä (C°)",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 405,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 230,
+	    "y": 410,
+	    "xlink:href": "#sea_surface_mean_temperature"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Mean water temperature",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 420,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Ytvattnets medeltemperatur",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 430,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Meriveden pintalämpötilan keskiarvo",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 440,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "(1971-2000)",
+	"attributes":
+	{
+	    "x": 280,
+	    "y": 450,
+	    "class": "SmallLegendText"
+	} 
+    }
+]

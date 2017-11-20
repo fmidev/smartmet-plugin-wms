@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.11.14
+Version: 17.11.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -89,6 +89,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Fri Nov 17 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.11.17-1.fmi
+- New 'wms.get_legend_graphic.symbols_to_ignore' parameter added to configuration file: you can define 
+list of symbols that are not shown in GetLegendGraphic-response (e.g. fmi_logo)
+- New and modified product files, legend layers, patterns, symbols. Some product and layer files renamed
+
 * Tue Nov 14 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.11.14-1.fmi
 - BRAINSTORM-959: GetLegendGraphic doesnt use ctpp2-templates any more
 - BRAINSTORM-980: WMS-plugin reports to standard output when it notices that product-file has been modified
