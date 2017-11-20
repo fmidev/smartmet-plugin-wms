@@ -222,7 +222,8 @@
 				"font-size": "28",
 				"font-style": "normal",
 				"font-weight": "normal",
-				"text-anchor": "start"
+				"text-anchor": "start",
+				"dx": 5
 			    }
 
 			}

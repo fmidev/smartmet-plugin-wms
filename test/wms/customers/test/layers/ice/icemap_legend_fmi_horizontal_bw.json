@@ -3,7 +3,7 @@
 	"tag": "symbol",
 	"attributes":
 	{
-	    "id": "legend1box"
+	    "id": "legendbox_fmi_horizontal_bw"
 	},
 	"layers":
 	[
@@ -11,8 +11,10 @@
 		"tag": "rect",
 		"attributes":
 		{
-		    "width": 20,
-		    "height": 15
+		    "width": 30,
+		    "height": 30,
+		    "stroke": "black",
+		    "stroke-width": "0.5px"
 		}
 	    }
 	]
@@ -23,8 +25,8 @@
 	{
 	    "x": 0,
 	    "y": 0,
-	    "width": 500,
-	    "height": 260,
+	    "width": 505,
+	    "height": 325,
 	    "stroke": "black",
 	    "stroke-width": "1px",
 	    "fill": "white"
@@ -36,7 +38,7 @@
 	{
 	    "x": 10,
 	    "y": 10,
-	    "xlink:href": "#legend1box",
+	    "xlink:href": "#legendbox_fmi_horizontal_bw",
 	    "class": "IceFree"
 	}
     },
@@ -45,8 +47,8 @@
 	"cdata": "Ice free",
 	"attributes":
 	{
-	    "x": 40,
-	    "y": 20,
+	    "x": 45,
+	    "y": 30,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -55,9 +57,9 @@
 	"attributes":
 	{
 	    "x": 10,
-	    "y": 35,
-	    "xlink:href": "#legend1box",
-	    "class": "NewIce"
+	    "y": 50,
+	    "xlink:href": "#legendbox_fmi_horizontal_bw",
+	    "fill": "url(#new_ice)"
 	}
     },
     {
@@ -65,8 +67,8 @@
 	"cdata": "New ice (7-10/10)",
 	"attributes":
 	{
-	    "x": 40,
-	    "y": 45,
+	    "x": 45,
+	    "y": 70,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -75,9 +77,9 @@
 	"attributes":
 	{
 	    "x": 10,
-	    "y": 60,
-	    "xlink:href": "#legend1box",
-	    "class": "LevelIce"
+	    "y": 90,
+	    "xlink:href": "#legendbox_fmi_horizontal_bw",
+	    "fill": "url(#grey_ice)"
 	}
     },
     {
@@ -85,8 +87,8 @@
 	"cdata": "Nilas, grey ice (9-10/10)",
 	"attributes":
 	{
-	    "x": 40,
-	    "y": 70,
+	    "x": 44,
+	    "y": 110,
 	    "class": "SmallLegendText"
 	}
     },
@@ -95,9 +97,9 @@
 	"attributes":
 	{
 	    "x": 10,
-	    "y": 85,
-	    "xlink:href": "#legend1box",
-	    "class": "VeryCloseIce"
+	    "y": 130,
+	    "xlink:href": "#legendbox_fmi_horizontal_bw",
+            "fill": "url(#very_close_ice)"
 	}
     },
     {
@@ -105,8 +107,8 @@
 	"cdata": "Very close ice (9-9+/10)",
 	"attributes":
 	{
-	    "x": 40,
-	    "y": 95,
+	    "x": 45,
+	    "y": 150,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -115,7 +117,7 @@
 	"attributes":
 	{
 	    "x": 10,
-	    "y": 110,
+	    "y": 175,
 	    "xlink:href": "#ice_edge"
 	}
     },
@@ -125,7 +127,7 @@
 	"attributes":
 	{
 	    "x": 50,
-	    "y": 118,
+	    "y": 185,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -134,7 +136,7 @@
 	"attributes":
 	{
 	    "x": 12,
-	    "y": 135,
+	    "y": 205,
 	    "xlink:href": "#estimated_ice_edge"
 	}
     },
@@ -144,7 +146,7 @@
 	"attributes":
 	{
 	    "x": 50,
-	    "y": 143,
+	    "y": 210,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -154,7 +156,7 @@
 	"attributes":
 	{
 	    "x": 50,
-	    "y": 155,
+	    "y": 220,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -163,7 +165,7 @@
 	"attributes":
 	{
 	    "x": 10,
-	    "y": 165,
+	    "y": 232,
 	    "xlink:href": "#ice_thickness"
 	}
     },
@@ -173,7 +175,7 @@
 	"attributes":
 	{
 	    "x": 50,
-	    "y": 177,
+	    "y": 245,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -182,7 +184,7 @@
 	"attributes":
 	{
 	    "x": 10,
-	    "y": 190,
+	    "y": 260,
 	    "xlink:href": "#watertemperature_isotherm"
 	}
     },
@@ -192,7 +194,7 @@
 	"attributes":
 	{
 	    "x": 50,
-	    "y": 200,
+	    "y": 265,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -202,7 +204,7 @@
 	"attributes":
 	{
 	    "x": 50,
-	    "y": 212,
+	    "y": 275,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -212,7 +214,7 @@
 	"attributes":
 	{
 	    "x": 20,
-	    "y": 250,
+	    "y": 315,
 	    "font-family": "Arial",
 	    "font-size": "18",
 	    "font-style": "normal",
@@ -221,11 +223,11 @@
     },
     {
 	"tag": "text",
-	"cdata": "Coordinating icebraker",
+	"cdata": "Coordinating icebreaker",
 	"attributes":
 	{
 	    "x": 40,
-	    "y": 245,
+	    "y": 310,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -235,8 +237,8 @@
 	{
 	    "x": 180,
 	    "y": 10,
-	    "xlink:href": "#legend1box",
-	    "class": "FastIce"
+	    "xlink:href": "#legendbox_fmi_horizontal_bw",
+	    "fill": "url(#fast_ice)"
 	}
     },
     {
@@ -244,8 +246,8 @@
 	"cdata": "Fast ice",
 	"attributes":
 	{
-	    "x": 210,
-	    "y": 20,
+	    "x": 215,
+	    "y": 30,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -254,9 +256,9 @@
 	"attributes":
 	{
 	    "x": 180,
-	    "y": 35,
-	    "xlink:href": "#legend1box",
-	    "class": "RottenFastIce"
+	    "y": 50,
+	    "xlink:href": "#legendbox_fmi_horizontal_bw",
+	    "fill": "url(#rotten_fast_ice)"
 	}
     },
     {
@@ -264,27 +266,7 @@
 	"cdata": "Rotten fast ice",
 	"attributes":
 	{
-	    "x": 210,
-	    "y": 45,
-	    "class": "SmallLegendText"
-	} 
-    },
-    {
-	"tag": "use",
-	"attributes":
-	{
-	    "x": 180,
-	    "y": 60,
-	    "xlink:href": "#legend1box",
-	    "class": "OpenWater"
-	}
-    },
-    {
-	"tag": "text",
-	"cdata": "Open water (&lt;1/10)",
-	"attributes":
-	{
-	    "x": 210,
+	    "x": 215,
 	    "y": 70,
 	    "class": "SmallLegendText"
 	} 
@@ -294,18 +276,18 @@
 	"attributes":
 	{
 	    "x": 180,
-	    "y": 85,
-	    "xlink:href": "#legend1box",
-	    "class": "ConsolidatedIce"
+	    "y": 90,
+	    "xlink:href": "#legendbox_fmi_horizontal_bw",
+            "fill": "url(#open_water)"
 	}
     },
     {
 	"tag": "text",
-	"cdata": "Consolidated or compact floating ice (10/10)",
+	"cdata": "Open water (&lt;1/10)",
 	"attributes":
 	{
-	    "x": 210,
-	    "y": 95,
+	    "x": 215,
+	    "y": 110,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -314,7 +296,27 @@
 	"attributes":
 	{
 	    "x": 180,
-	    "y": 102,
+	    "y": 130,
+	    "xlink:href": "#legendbox_fmi_horizontal_bw",
+            "fill": "url(#consolidated_ice)"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Consolidated or compact floating ice (10/10)",
+	"attributes":
+	{
+	    "x": 215,
+	    "y": 150,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 180,
+	    "y": 170,
 	    "xlink:href": "#icerft"
 	}
     },
@@ -323,8 +325,8 @@
 	"cdata": "Rafted ice",
 	"attributes":
 	{
-	    "x": 210,
-	    "y": 120,
+	    "x": 215,
+	    "y": 185,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -332,8 +334,8 @@
 	"tag": "use",
 	"attributes":
 	{
-	    "x": 180,
-	    "y": 135,
+	    "x": 185,
+	    "y": 205,
 	    "xlink:href": "#jmdbrr"
 	}
     },
@@ -342,8 +344,8 @@
 	"cdata": "Brash ice barrier",
 	"attributes":
 	{
-	    "x": 210,
-	    "y": 145,
+	    "x": 215,
+	    "y": 215,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -352,7 +354,7 @@
 	"attributes":
 	{
 	    "x": 180,
-	    "y": 160,
+	    "y": 230,
 	    "xlink:href": "#icefra_zone"
 	}
     },
@@ -361,8 +363,8 @@
 	"cdata": "Fracture zone",
 	"attributes":
 	{
-	    "x": 210,
-	    "y": 170,
+	    "x": 215,
+	    "y": 245,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -370,8 +372,8 @@
 	"tag": "use",
 	"attributes":
 	{
-	    "x": 180,
-	    "y": 185,
+	    "x": 185,
+	    "y": 265,
 	    "xlink:href": "#icedft"
 	}
     },
@@ -380,8 +382,8 @@
 	"cdata": "Ice drift",
 	"attributes":
 	{
-	    "x": 210,
-	    "y": 195,
+	    "x": 215,
+	    "y": 275,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -389,8 +391,8 @@
 	"tag": "use",
 	"attributes":
 	{
-	    "x": 175,
-	    "y": 230,
+	    "x": 180,
+	    "y": 295,
 	    "xlink:href": "#sea_surface_mean_temperature"
 	}
     },
@@ -399,7 +401,124 @@
 	"cdata": "Sea surface mean temperature (1971-2000)",
 	"attributes":
 	{
-	    "x": 210,
+	    "x": 215,
+	    "y": 310,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 325,
+	    "y": 10,
+	    "xlink:href": "#legendbox_fmi_horizontal_bw",
+            "fill": "url(#very_open_ice)"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Very open ice (1-3/10)",
+	"attributes":
+	{
+	    "x": 360,
+	    "y": 30,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 325,
+	    "y": 50,
+	    "xlink:href": "#legendbox_fmi_horizontal_bw",
+            "fill": "url(#open_ice)"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Open ice (4-6/10)",
+	"attributes":
+	{
+	    "x": 360,
+	    "y": 70,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 325,
+	    "y": 90,
+	    "xlink:href": "#legendbox_fmi_horizontal_bw",
+            "fill": "url(#close_ice)"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Close ice (7-8/10)",
+	"attributes":
+	{
+	    "x": 360,
+	    "y": 110,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 320,
+	    "y": 175,
+	    "xlink:href": "#icerdg"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Ridged or hummocked ice",
+	"attributes":
+	{
+	    "x": 355,
+	    "y": 185,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 320,
+	    "y": 205,
+	    "xlink:href": "#flobrg"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Floebit, floeberg",
+	"attributes":
+	{
+	    "x": 355,
+	    "y": 215,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 315,
+	    "y": 230,
+	    "xlink:href": "#icefra"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Fracture",
+	"attributes":
+	{
+	    "x": 355,
 	    "y": 245,
 	    "class": "SmallLegendText"
 	} 
@@ -409,124 +528,7 @@
 	"attributes":
 	{
 	    "x": 320,
-	    "y": 10,
-	    "xlink:href": "#legend1box",
-	    "class": "VeryOpenIce"
-	}
-    },
-    {
-	"tag": "text",
-	"cdata": "Very open ice (1-3/10)",
-	"attributes":
-	{
-	    "x": 350,
-	    "y": 20,
-	    "class": "SmallLegendText"
-	} 
-    },
-    {
-	"tag": "use",
-	"attributes":
-	{
-	    "x": 320,
-	    "y": 35,
-	    "xlink:href": "#legend1box",
-	    "class": "OpenIce"
-	}
-    },
-    {
-	"tag": "text",
-	"cdata": "Open ice (4-6/10)",
-	"attributes":
-	{
-	    "x": 350,
-	    "y": 45,
-	    "class": "SmallLegendText"
-	} 
-    },
-    {
-	"tag": "use",
-	"attributes":
-	{
-	    "x": 320,
-	    "y": 60,
-	    "xlink:href": "#legend1box",
-	    "class": "CloseIce"
-	}
-    },
-    {
-	"tag": "text",
-	"cdata": "Close ice (7-8/10)",
-	"attributes":
-	{
-	    "x": 350,
-	    "y": 70,
-	    "class": "SmallLegendText"
-	} 
-    },
-    {
-	"tag": "use",
-	"attributes":
-	{
-	    "x": 320,
-	    "y": 112,
-	    "xlink:href": "#icerdg"
-	}
-    },
-    {
-	"tag": "text",
-	"cdata": "Ridged or hummocked ice",
-	"attributes":
-	{
-	    "x": 350,
-	    "y": 120,
-	    "class": "SmallLegendText"
-	} 
-    },
-    {
-	"tag": "use",
-	"attributes":
-	{
-	    "x": 320,
-	    "y": 135,
-	    "xlink:href": "#flobrg"
-	}
-    },
-    {
-	"tag": "text",
-	"cdata": "Floebit, floeberg",
-	"attributes":
-	{
-	    "x": 350,
-	    "y": 145,
-	    "class": "SmallLegendText"
-	} 
-    },
-    {
-	"tag": "use",
-	"attributes":
-	{
-	    "x": 320,
-	    "y": 160,
-	    "xlink:href": "#icefra"
-	}
-    },
-    {
-	"tag": "text",
-	"cdata": "Fracture",
-	"attributes":
-	{
-	    "x": 360,
-	    "y": 175,
-	    "class": "SmallLegendText"
-	} 
-    },
-    {
-	"tag": "use",
-	"attributes":
-	{
-	    "x": 320,
-	    "y": 195,
+	    "y": 265,
 	    "xlink:href": "#icecom"
 	}
     },
@@ -536,17 +538,17 @@
 	"attributes":
 	{
 	    "x": 328,
-	    "y": 203,
+	    "y": 273,
 	    "class": "LegendText"
 	} 
     },
    {
 	"tag": "text",
-	"cdata": "Ice pressure)",
+	"cdata": "Ice pressure",
 	"attributes":
 	{
-	    "x": 360,
-	    "y": 200,
+	    "x": 355,
+	    "y": 270,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -555,8 +557,8 @@
 	"cdata": "n = degree of",
 	"attributes":
 	{
-	    "x": 360,
-	    "y": 212,
+	    "x": 355,
+	    "y": 280,
 	    "class": "SmallLegendText"
 	} 
     },   
@@ -565,8 +567,8 @@
 	"cdata": "pressure (1-3)",
 	"attributes":
 	{
-	    "x": 360,
-	    "y": 224,
+	    "x": 355,
+	    "y": 290,
 	    "class": "SmallLegendText"
 	} 
     }

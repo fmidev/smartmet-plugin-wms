@@ -31,41 +31,12 @@
 			}
 		    ]
 		},
-		{ // koordinaattiruudukko: ladataan suoraan kannasta
-		    "qid": "coordinate_grid",
-		    "layer_type": "icemap",
-		    "pgname": "icemap",
-		    "schema" : "icemap_static",
-		    "table" : "coordinate_grid",
-		    "geometry_column" : "geom",
-            	    "css": "ice/icemap.css",
-		    "filters" :		    
-		    [			
-			{
-			    "attributes":
-			    {
-				"class": "CoordinateLine"
-			    }
-			}
-		    ]
-		},
-		{ // kartan merkkien selitykset
-		    "qid": "legend_layer",
-		    "tag": "g",
-             	    "css": "ice/icemap.css",
-		    "layers": "json:ice/icemap_legend_fmi.json",
-		    "attributes":
-		    {
-			"longitude": "9.5",
-			"latitude": "66.2"
-		    }
-		},
 		{ // frame
 		    "qid": "frame",
 		    "layer_type": "frame",
 		    "dimension":
 		    {
-			"inner_border": "9 53, 31 66.5",
+			"inner_border": "9 53, 31 67.0",
 			"outer_border": "6 50, 34 69"
 		    },
 		    "scale":
@@ -96,6 +67,72 @@
 			"font-style": "normal",
 			"font-weight": "normal",
 			"text-anchor": "start"
+		    }
+		},
+		{ // kartan merkkien selitykset vaakataso värillinen
+		    "qid": "legend_layer_horizontal_color",
+		    "tag": "g",
+             	    "css": "ice/icemap.css",
+		    "layers": "json:ice/icemap_legend_fmi_horizontal_color.json",
+		    "attributes":
+		    {
+			"longitude": "9.5",
+			"latitude": "66.8"
+		    }
+		},
+		{ // kartan merkkien selitykset vaakataso mustavalkoinen
+		    "qid": "legend_layer_horizontal_bw",
+		    "tag": "g",
+             	    "css": "ice/icemap.css",
+		    "layers": "json:ice/icemap_legend_fmi_horizontal_bw.json",
+		    "attributes":
+		    {
+			"longitude": "16.5",
+			"latitude": "66.8"
+		    }
+		},
+		{ // kartan merkkien selitykset pystytaso värillinen fmi
+		    "qid": "legend_layer_fmi_vertical_color",
+		    "tag": "g",
+             	    "css": "ice/icemap.css",
+		    "layers": "json:ice/icemap_legend_fmi_vertical_color.json",
+		    "attributes":
+		    {
+			"longitude": "9.5",
+			"latitude": "64.0"
+		    }
+		},
+		{ // kartan merkkien selitykset pystytaso mustavalkoinen fmi
+		    "qid": "legend_layer_fmi_vertical_bw",
+		    "tag": "g",
+             	    "css": "ice/icemap.css",
+		    "layers": "json:ice/icemap_legend_fmi_vertical_bw.json",
+		    "attributes":
+		    {
+			"longitude": "16.5",
+			"latitude": "64.0"
+		    }
+		},
+		{ // kartan merkkien selitykset pystytaso värillinen fmi&smhi
+		    "qid": "legend_layer_fmi_smhi_vertical_color",
+		    "tag": "g",
+             	    "css": "ice/icemap.css",
+		    "layers": "json:ice/icemap_legend_fmi_smhi_vertical_color.json",
+		    "attributes":
+		    {
+			"longitude": "9.5",
+			"latitude": "60.0"
+		    }
+		},
+		{ // kartan merkkien selitykset pystytaso mustavalkoinen fmi&smhi
+		    "qid": "legend_layer_fmi_smhi_vertical_bw",
+		    "tag": "g",
+             	    "css": "ice/icemap.css",
+		    "layers": "json:ice/icemap_legend_fmi_smhi_vertical_bw.json",
+		    "attributes":
+		    {
+			"longitude": "16.5",
+			"latitude": "60.0"
 		    }
 		}
 	    ]

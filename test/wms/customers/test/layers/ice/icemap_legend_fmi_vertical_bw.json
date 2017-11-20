@@ -3,7 +3,7 @@
 	"tag": "symbol",
 	"attributes":
 	{
-	    "id": "legend1box"
+	    "id": "legendbox_fmi_vertical_bw"
 	},
 	"layers":
 	[
@@ -11,8 +11,10 @@
 		"tag": "rect",
 		"attributes":
 		{
-		    "width": 20,
-		    "height": 30
+		    "width": 24,
+		    "height": 30,
+		    "stroke": "black",
+		    "stroke-width": "0.5px"
 		}
 	    }
 	]
@@ -36,7 +38,7 @@
 	{
 	    "x": 10,
 	    "y": 10,
-	    "xlink:href": "#legend1box",
+	    "xlink:href": "#legendbox_fmi_vertical_bw",
 	    "class": "IceFree"
 	}
     },
@@ -76,8 +78,8 @@
 	{
 	    "x": 10,
 	    "y": 45,
-	    "xlink:href": "#legend1box",
-	    "class": "NewIce"
+	    "xlink:href": "#legendbox_fmi_vertical_bw",
+	    "fill": "url(#new_ice)"
 	}
     },
     {
@@ -116,8 +118,8 @@
 	{
 	    "x": 10,
 	    "y": 80,
-	    "xlink:href": "#legend1box",
-	    "class": "LevelIce"
+	    "xlink:href": "#legendbox_fmi_vertical_bw",
+	    "fill": "url(#grey_ice)"
 	}
     },
     {
@@ -156,8 +158,8 @@
 	{
 	    "x": 10,
 	    "y": 115,
-	    "xlink:href": "#legend1box",
-	    "class": "FastIce"
+	    "xlink:href": "#legendbox_fmi_vertical_bw",
+	    "fill": "url(#fast_ice)"
 	}
     },
     {
@@ -196,8 +198,8 @@
 	{
 	    "x": 10,
 	    "y": 150,
-	    "xlink:href": "#legend1box",
-	    "class": "RottenFastIce"
+	    "xlink:href": "#legendbox_fmi_vertical_bw",
+	    "fill": "url(#rotten_fast_ice)"
 	}
     },
     {
@@ -232,12 +234,13 @@
     },
     {
 	"tag": "use",
+        "css": "ice/icemap.css",
 	"attributes":
 	{
 	    "x": 10,
 	    "y": 185,
-	    "xlink:href": "#legend1box",
-	    "class": "OpenWater"
+	    "xlink:href": "#legendbox_fmi_vertical_bw",
+            "fill": "url(#open_water)"
 	}
     },
     {
@@ -272,12 +275,13 @@
     },
     {
 	"tag": "use",
+        "css": "ice/icemap.css",
 	"attributes":
 	{
 	    "x": 10,
 	    "y": 220,
-	    "xlink:href": "#legend1box",
-	    "class": "VeryOpenIce"
+	    "xlink:href": "#legendbox_fmi_vertical_bw",
+            "fill": "url(#very_open_ice)"
 	}
     },
     {
@@ -316,8 +320,8 @@
 	{
 	    "x": 10,
 	    "y": 255,
-	    "xlink:href": "#legend1box",
-	    "class": "OpenIce"
+	    "xlink:href": "#legendbox_fmi_vertical_bw",
+            "fill": "url(#open_ice)"
 	}
     },
     {
@@ -356,8 +360,8 @@
 	{
 	    "x": 10,
 	    "y": 290,
-	    "xlink:href": "#legend1box",
-	    "class": "CloseIce"
+	    "xlink:href": "#legendbox_fmi_vertical_bw",
+            "fill": "url(#close_ice)"
 	}
     },
     {
@@ -396,8 +400,8 @@
 	{
 	    "x": 10,
 	    "y": 325,
-	    "xlink:href": "#legend1box",
-	    "class": "VeryCloseIce"
+	    "xlink:href": "#legendbox_fmi_vertical_bw",
+            "fill": "url(#very_close_ice)"
 	}
     },
     {
@@ -436,8 +440,8 @@
 	{
 	    "x": 10,
 	    "y": 360,
-	    "xlink:href": "#legend1box",
-	    "class": "ConsolidatedIce"
+	    "xlink:href": "#legendbox_fmi_vertical_bw",
+            "fill": "url(#very_close_ice)"
 	}
     },
     {

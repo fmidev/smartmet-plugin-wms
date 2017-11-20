@@ -9,6 +9,7 @@
 #include <boost/optional.hpp>
 #include <libconfig.h++>
 #include <map>
+#include <set>
 
 namespace SmartMet
 {
@@ -49,6 +50,7 @@ class WMSLegendGraphicSettings
 
   LegendGraphicLayout layout;
   std::map<std::string, LegendGraphicParameter> parameters;
+  std::set<std::string> symbolsToIgnore;
 };
 
 }  // namespace WMS
