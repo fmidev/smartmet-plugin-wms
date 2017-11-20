@@ -17,7 +17,7 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 17.10.12
 BuildRequires: smartmet-library-macgyver-devel >= 17.8.28
-BuildRequires: smartmet-library-spine-devel >= 17.11.1
+BuildRequires: smartmet-library-spine-devel >= 17.11.2
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.9.13
@@ -52,7 +52,7 @@ Requires: smartmet-engine-contour >= 17.11.1
 Requires: smartmet-engine-gis >= 17.11.1
 Requires: smartmet-engine-geonames >= 17.11.1
 Requires: smartmet-server >= 17.8.28
-Requires: smartmet-library-spine >= 17.11.1
+Requires: smartmet-library-spine >= 17.11.2
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -94,7 +94,7 @@ rm -rf $RPM_BUILD_ROOT
 list of symbols that are not shown in GetLegendGraphic-response (e.g. fmi_logo)
 - New and modified product files, legend layers, patterns, symbols. Some product and layer files renamed
 
-* Thu Nov 13 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.11.13-1.fmi
+* Tue Nov 14 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.11.14-1.fmi
 - BRAINSTORM-959: GetLegendGraphic doesnt use ctpp2-templates any more
 - BRAINSTORM-980: WMS-plugin reports to standard output when it notices that product-file has been modified
 - Product files, symbols, filters, patterns updated
