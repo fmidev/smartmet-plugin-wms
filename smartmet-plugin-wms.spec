@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.11.17
+Version: 17.11.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -17,7 +17,7 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 17.10.12
 BuildRequires: smartmet-library-macgyver-devel >= 17.8.28
-BuildRequires: smartmet-library-spine-devel >= 17.11.2
+BuildRequires: smartmet-library-spine-devel >= 17.11.13
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.9.13
@@ -29,7 +29,7 @@ BuildRequires: smartmet-engine-gis-devel >= 17.11.1
 BuildRequires: smartmet-engine-geonames-devel >= 17.11.1
 BuildRequires: smartmet-engine-querydata-devel >= 17.10.24
 BuildRequires: smartmet-engine-contour-devel >= 17.11.1
-BuildRequires: smartmet-library-gis-devel >= 17.10.31
+BuildRequires: smartmet-library-gis-devel >= 17.11.22
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.5
 BuildRequires: jsoncpp-devel
@@ -41,7 +41,7 @@ Requires: fmt
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
-Requires: smartmet-library-gis >= 17.10.31
+Requires: smartmet-library-gis >= 17.11.22
 Requires: smartmet-library-macgyver >= 17.8.28
 Requires: smartmet-library-giza >= 17.10.12
 %if %{with authentication}
@@ -51,8 +51,8 @@ Requires: smartmet-engine-querydata >= 17.10.24
 Requires: smartmet-engine-contour >= 17.11.1
 Requires: smartmet-engine-gis >= 17.11.1
 Requires: smartmet-engine-geonames >= 17.11.1
-Requires: smartmet-server >= 17.8.28
-Requires: smartmet-library-spine >= 17.11.2
+Requires: smartmet-server >= 17.11.10
+Requires: smartmet-library-spine >= 17.11.13
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -89,6 +89,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Nov 22 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.11.22-1.fmi
+- Fixed GeoJSON winding rule to be CCW for shells and CW for holes
+
 * Fri Nov 17 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.11.17-1.fmi
 - New 'wms.get_legend_graphic.symbols_to_ignore' parameter added to configuration file: you can define 
 list of symbols that are not shown in GetLegendGraphic-response (e.g. fmi_logo)

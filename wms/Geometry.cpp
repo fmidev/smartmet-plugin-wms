@@ -97,7 +97,10 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
   if (err != OGRERR_NONE)
     throw Spine::Exception(BCP, "Failed to project geometry to WGS84 GeoJSON");
 
-  char* tmp = geom->exportToJson();
+  // Fix winding rule to be CCW for shells
+  std::unique_ptr<OGRGeometry> geom2(Fmi::OGR::reverseWindingOrder(*geom));
+
+  char* tmp = geom2->exportToJson();
   std::string ret = tmp;
   OGRFree(tmp);
 
