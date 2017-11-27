@@ -17,7 +17,7 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 17.10.12
 BuildRequires: smartmet-library-macgyver-devel >= 17.8.28
-BuildRequires: smartmet-library-spine-devel >= 17.11.13
+BuildRequires: smartmet-library-spine-devel >= 17.11.23
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.9.13
@@ -52,7 +52,7 @@ Requires: smartmet-engine-contour >= 17.11.1
 Requires: smartmet-engine-gis >= 17.11.1
 Requires: smartmet-engine-geonames >= 17.11.1
 Requires: smartmet-server >= 17.11.10
-Requires: smartmet-library-spine >= 17.11.13
+Requires: smartmet-library-spine >= 17.11.23
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
