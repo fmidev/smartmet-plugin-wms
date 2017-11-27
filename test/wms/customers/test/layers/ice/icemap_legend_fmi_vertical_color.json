@@ -475,7 +475,7 @@
 	"attributes":
 	{
 	    "x": 10,
-	    "y": 395,
+	    "y": 410,
 	    "xlink:href": "#ice_edge"
 	}
     },
@@ -514,7 +514,7 @@
 	"attributes":
 	{
 	    "x": 10,
-	    "y": 430,
+	    "y": 440,
 	    "xlink:href": "#estimated_ice_edge"
 	}
     },
@@ -1022,7 +1022,7 @@
     },
     {
 	"tag": "text",
-	"cdata": "Coordinating icebraker",
+	"cdata": "Coordinating icebreaker",
 	"attributes":
 	{
 	    "x": 230,

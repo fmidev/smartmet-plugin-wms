@@ -1,5 +1,26 @@
 [
 		{
+		    "qid": "ice_free",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "seaice",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "type = 0",
+			    "attributes":
+			    {
+				
+				"class": "IceFree"
+			    }
+			}
+		    ]
+		},
+		{
 		    "qid": "open_water",
 		    "layer_type": "icemap",
 		    "pattern": "open_water",

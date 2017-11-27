@@ -30,6 +30,58 @@
 			    }
 			}
 		    ]
+		},
+		{ // jäämunan yhdysviiva
+		    "qid": "ice_egg_leader",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "annotationleaders",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+              	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "ref_classname='IceEggAnnotation' and shape_length > 0",
+			    "attributes":
+			    {
+				"class": "TemperatureIsoline"
+			    }
+  			}
+		    ]
+		},
+		{ // jäämuna
+		    "qid": "ice_egg",
+		    "layer_type": "icemap",
+		    "layer_subtype": "ice_egg",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "iceeggannotation",
+		    "time_column" : "publicationdate",	
+		    "geometry_column" : "geom",
+		    "additional_columns": "textstring",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"fill": "white",
+				"stroke-width": 0.8,
+				"stroke": "black"
+			    },
+			    "text_attributes":
+			    {
+				"font-family": "Arial",
+				"font-size": "12",
+				"font-style": "normal",
+				"font-weight": "normal",
+				"text-anchor": "middle",
+				"dy": -4.8
+			    }
+			}
+		    ]
 		}
 	    ]
 	}

@@ -40,7 +40,7 @@ const char* const attribute_columns[] = {"firstname_column",
                                          "labeltext_column",
                                          "fontname_column",
                                          "fontsize_column",
-                                         "time_column"};
+                                         "textstring"};
 
 class PostGISAttributeToString : public boost::static_visitor<std::string>
 {
@@ -263,6 +263,19 @@ void IceMapLayer::init(const Json::Value& theJson,
     {
       itsParameters.insert(make_pair("table_data", json.toStyledString()));
     }
+
+    // additional columns
+    json = theJson.get("additional_columns", nulljson);
+    if (!json.isNull())
+    {
+      std::string cols = json.asString();
+      std::vector<std::string> columns;
+      boost::algorithm::split(columns, cols, boost::algorithm::is_any_of(","));
+      for (auto col : columns)
+      {
+        itsParameters.insert(make_pair(col, col));
+      }
+    }
   }
   catch (...)
   {
@@ -295,7 +308,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     if (theState.addId("spearhead"))
       theGlobals["includes"]["marker"] = theState.getMarker("spearhead");
     if (theState.addId("strips_and_patches"))
-      theGlobals["includes"]["marker"] = theState.getSymbol("strips_and_patches");
+      theGlobals["includes"]["strips_and_patches"] = theState.getSymbol("strips_and_patches");
     if (theState.addId("jmdbrr"))
       theGlobals["includes"]["jmdbrr"] = theState.getSymbol("jmdbrr");
     if (theState.addId("icelea"))
@@ -671,17 +684,8 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
 
   text_style = getTextStyle(theFilter.text_attributes, text_style);
 
-  std::string::iterator startIter = label_text.begin();
-  std::string::iterator endIter = label_text.begin();
   std::vector<std::string> rows;
-  while (endIter != label_text.end())
-  {
-    endIter = std::find(startIter, label_text.end(), '\n');
-    rows.push_back(std::string(startIter, endIter));
-    startIter = endIter;
-    if (startIter != label_text.end())
-      startIter++;
-  }
+  boost::algorithm::split(rows, label_text, boost::algorithm::is_any_of("\n"));
 
   text_dimension_t text_dimension = getTextDimension(label_text, text_style);
 
@@ -812,6 +816,100 @@ void IceMapLayer::handleTrafficRestrictions(const Fmi::Feature& theResultItem,
 
   mapTable.makeTable(
       theFilter.attributes, theFilter.text_attributes, theGlobals, theLayersCdt, theState);
+}
+
+void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
+                               const PostGISLayerFilter& theFilter,
+                               unsigned int& theMapId,
+                               CTPP::CDT& theGlobals,
+                               CTPP::CDT& theGroupCdt,
+                               CTPP::CDT& theLayersCdt,
+                               State& theState) const
+{
+  if (!theResultItem.geom || theResultItem.geom->IsEmpty())
+    return;
+
+  // We get bounding box from database, but need to show an egg
+  OGREnvelope envelope;
+  theResultItem.geom->getEnvelope(&envelope);
+  double xLeft = envelope.MinX;
+  double yBottom = envelope.MinY;
+  double xRight = envelope.MaxX;
+  double yTop = envelope.MaxY;
+
+  double xMiddle = fabs(xLeft + xRight) * 0.5;
+  double yMiddle = fabs(yBottom + yTop) * 0.5;
+  double rx = fabs(xRight - xLeft) * 0.45;
+  double ry = fabs(yTop - yBottom) * 0.5;
+
+  // Ellipse points
+  Fmi::OGR::CoordinatePoints points;
+  // x = x0 + a*cos t;
+  // y = y0 + b*sin t;
+  double firstY = DBL_MIN;
+  double previousY = DBL_MAX;
+  for (double i = 0; i < 10.0; i += 0.05)
+  {
+    double x = xMiddle + rx * cos(i);
+    double y = yMiddle + ry * sin(i);
+    if (i == 0)
+      firstY = y;
+    else if (previousY < firstY && y >= firstY)
+      break;
+    points.push_back(std::pair<double, double>(x, y));
+    previousY = y;
+  }
+  // In polygon last point is same as first one
+  OGRGeometryCollection collection;
+  points.push_back(points.front());
+
+  OGRSpatialReference* sr = theResultItem.geom->getSpatialReference();
+  int epsgNumber = sr->GetEPSGGeogCS();
+  OGRGeometry* ellipse = Fmi::OGR::constructGeometry(points, wkbPolygon, epsgNumber);
+
+  // Horizontal lines of ice egg
+  double firstHorizontalY = yBottom + (fabs(yTop - yBottom) * (1.7 / 5.0));
+  double secondHorizontalY = yBottom + (fabs(yTop - yBottom) * (2.8 / 5.0));
+  double thirdHorizontalY = yBottom + (fabs(yTop - yBottom) * (3.8 / 5.0));
+
+  points.clear();
+  points.push_back(std::pair<double, double>(xLeft, firstHorizontalY));
+  points.push_back(std::pair<double, double>(xRight, firstHorizontalY));
+  OGRGeometry* line1 = Fmi::OGR::constructGeometry(points, wkbLineString, epsgNumber);
+  collection.addGeometry(line1);
+  points.clear();
+  points.push_back(std::pair<double, double>(xLeft, secondHorizontalY));
+  points.push_back(std::pair<double, double>(xRight, secondHorizontalY));
+  OGRGeometry* line2 = Fmi::OGR::constructGeometry(points, wkbLineString, epsgNumber);
+  collection.addGeometry(line2);
+  points.clear();
+  points.push_back(std::pair<double, double>(xLeft, thirdHorizontalY));
+  points.push_back(std::pair<double, double>(xRight, thirdHorizontalY));
+  OGRGeometry* line3 = Fmi::OGR::constructGeometry(points, wkbLineString, epsgNumber);
+  collection.addGeometry(line3);
+  OGRGeometry* horizontalLines = collection.Intersection(ellipse);
+  collection.empty();
+  collection.addGeometry(ellipse);
+  collection.addGeometry(horizontalLines);
+  Fmi::Feature feat;
+  feat.geom.reset(collection.clone());
+  handleGeometry(feat, theFilter, theMapId, theGlobals, theGroupCdt, theState);
+
+  // Then add the content to the egg
+  std::string egg_text;
+  if (theResultItem.attributes.find("textstring") != theResultItem.attributes.end())
+    egg_text =
+        boost::apply_visitor(PostGISAttributeToString(), theResultItem.attributes.at("textstring"));
+
+  std::vector<std::string> rows;
+  boost::algorithm::split(rows, egg_text, boost::algorithm::is_any_of("\n"));
+
+  double xpos = xMiddle;
+  double ypos = thirdHorizontalY;
+  auto transformation = LonLatToXYTransformation(projection);
+  transformation.transform(xpos, ypos);
+
+  addTextField(xpos, ypos, rows, theFilter.text_attributes, theGlobals, theLayersCdt, theState);
 }
 
 // Pekko Ilvessalo 20151106: Labelin sijainti
@@ -1083,6 +1181,11 @@ void IceMapLayer::handleResultItem(const Fmi::Feature& theResultItem,
   {
     handleSymbol(theResultItem, theGroupCdt);
     handleLabel(theResultItem, theFilter, theGlobals, theLayersCdt, theState);
+  }
+  else if (layer_subtype == "ice_egg")
+  {
+    handleIceEgg(
+        theResultItem, theFilter, theMapId, theGlobals, theGroupCdt, theLayersCdt, theState);
   }
   else
   {

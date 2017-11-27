@@ -73,6 +73,14 @@ class IceMapLayer : public PostGISLayerBase
                                  CTPP::CDT& theLayersCdt,
                                  State& theState) const;
 
+  void handleIceEgg(const Fmi::Feature& theResultItem,
+                    const PostGISLayerFilter& theFilter,
+                    unsigned int& theMapId,
+                    CTPP::CDT& theGlobals,
+                    CTPP::CDT& theGroupCdt,
+                    CTPP::CDT& theLayersCdt,
+                    State& theState) const;
+
   void addLocationName(double theXPos,
                        double theYPos,
                        const std::string& theFirstName,

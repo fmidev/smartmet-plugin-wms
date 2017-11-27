@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.11.22
+Version: 17.11.27
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -89,6 +89,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Mon Nov 27 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.11.27-1.fmi
+- Ice egg layer functionality added
+- Symbol layer for 'strips and patches' added into product files
+- Typos corrected, legend layout fine-tuned
+
 * Wed Nov 22 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.11.22-1.fmi
 - Fixed GeoJSON winding rule to be CCW for shells and CW for holes
 

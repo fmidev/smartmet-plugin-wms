@@ -23,7 +23,7 @@
 	{
 	    "x": 0,
 	    "y": 0,
-	    "width": 220,
+	    "width": 250,
 	    "height": 50,
 	    "stroke": "black",
 	    "stroke-width": "1px",
@@ -34,9 +34,9 @@
 	"tag": "rect",
 	"attributes":
 	{
-	    "x": 220,
+	    "x": 250,
 	    "y": 0,
-	    "width": 235,
+	    "width": 270,
 	    "height": 50,
 	    "stroke": "black",
 	    "stroke-width": "1px",
@@ -49,8 +49,8 @@
 	{
 	    "x": 0,
 	    "y": 50,
-	    "width": 220,
-	    "height": 440,
+	    "width": 250,
+	    "height": 450,
 	    "stroke": "black",
 	    "stroke-width": "1px",
 	    "fill": "white"
@@ -60,10 +60,10 @@
 	"tag": "rect",
 	"attributes":
 	{
-	    "x": 220,
+	    "x": 250,
 	    "y": 50,
-	    "width": 235,
-	    "height": 440,
+	    "width": 270,
+	    "height": 450,
 	    "stroke": "black",
 	    "stroke-width": "1px",
 	    "fill": "white"
@@ -89,7 +89,7 @@
 	"cdata": "Concentration\nKoncentration\nPeittävyys",
 	"attributes":
 	{
-	    "x": 215,
+	    "x": 245,
 	    "y": 15,
 	    "font-family": "Arial",
 	    "font-size": "12",
@@ -104,7 +104,7 @@
 	"cdata": "Symbols\nSymboler\nMerkinnät",
 	"attributes":
 	{
-	    "x": 255,
+	    "x": 285,
 	    "y": 15,
 	    "font-family": "Arial",
 	    "font-size": "12",
@@ -159,7 +159,7 @@
 	"cdata": "-",
 	"attributes":
 	{
-	    "x": 175,
+	    "x": 195,
 	    "y": 80,
 	    "class": "SmallLegendText"
 	} 
@@ -209,7 +209,7 @@
 	"cdata": "7 - 10/10",
 	"attributes":
 	{
-	    "x": 175,
+	    "x": 195,
 	    "y": 115,
 	    "class": "SmallLegendText"
 	} 
@@ -259,7 +259,7 @@
 	"cdata": "9 - 10/10",
 	"attributes":
 	{
-	    "x": 175,
+	    "x": 195,
 	    "y": 150,
 	    "class": "SmallLegendText"
 	} 
@@ -309,7 +309,7 @@
 	"cdata": "10/10",
 	"attributes":
 	{
-	    "x": 175,
+	    "x": 195,
 	    "y": 185,
 	    "class": "SmallLegendText"
 	} 
@@ -359,7 +359,7 @@
 	"cdata": "-",
 	"attributes":
 	{
-	    "x": 175,
+	    "x": 195,
 	    "y": 220,
 	    "class": "SmallLegendText"
 	} 
@@ -409,7 +409,7 @@
 	"cdata": "&lt; 1/10",
 	"attributes":
 	{
-	    "x": 175,
+	    "x": 195,
 	    "y": 255,
 	    "class": "SmallLegendText"
 	} 
@@ -459,7 +459,7 @@
 	"cdata": "1 - 3/10",
 	"attributes":
 	{
-	    "x": 175,
+	    "x": 195,
 	    "y": 290,
 	    "class": "SmallLegendText"
 	} 
@@ -509,7 +509,7 @@
 	"cdata": "4 - 6/10",
 	"attributes":
 	{
-	    "x": 175,
+	    "x": 195,
 	    "y": 325,
 	    "class": "SmallLegendText"
 	} 
@@ -559,7 +559,7 @@
 	"cdata": "7 - 8/10",
 	"attributes":
 	{
-	    "x": 175,
+	    "x": 195,
 	    "y": 360,
 	    "class": "SmallLegendText"
 	} 
@@ -609,7 +609,7 @@
 	"cdata": "9 - 9+/10",
 	"attributes":
 	{
-	    "x": 175,
+	    "x": 195,
 	    "y": 395,
 	    "class": "SmallLegendText"
 	} 
@@ -659,7 +659,7 @@
 	"cdata": "10/10",
 	"attributes":
 	{
-	    "x": 175,
+	    "x": 195,
 	    "y": 430,
 	    "class": "SmallLegendText"
 	} 
@@ -707,7 +707,7 @@
 	"tag": "use",
 	"attributes":
 	{
-	    "x": 230,
+	    "x": 270,
 	    "y": 70,
 	    "xlink:href": "#jmdbrr"
 	}
@@ -717,7 +717,7 @@
 	"cdata": "Jammed brash barrier",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 70,
 	    "class": "SmallLegendText"
 	} 
@@ -727,7 +727,7 @@
 	"cdata": "Stampisvall",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 80,
 	    "class": "SmallLegendText"
 	} 
@@ -737,7 +737,7 @@
 	"cdata": "Sohjovyö",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 90,
 	    "class": "SmallLegendText"
 	} 
@@ -746,7 +746,7 @@
 	"tag": "use",
 	"attributes":
 	{
-	    "x": 230,
+	    "x": 270,
 	    "y": 105,
 	    "xlink:href": "#icerft"
 	}
@@ -756,7 +756,7 @@
 	"cdata": "Rafted ice",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 105,
 	    "class": "SmallLegendText"
 	} 
@@ -766,7 +766,7 @@
 	"cdata": "Hopskjuten is",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 115,
 	    "class": "SmallLegendText"
 	} 
@@ -776,7 +776,7 @@
 	"cdata": "Päällekkäin ajautunut jää",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 125,
 	    "class": "SmallLegendText"
 	} 
@@ -785,7 +785,7 @@
 	"tag": "use",
 	"attributes":
 	{
-	    "x": 230,
+	    "x": 270,
 	    "y": 140,
 	    "xlink:href": "#icerdg"
 	}
@@ -795,7 +795,7 @@
 	"cdata": "Ridged or hummocked ice",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 140,
 	    "class": "SmallLegendText"
 	} 
@@ -805,7 +805,7 @@
 	"cdata": "Vallar eller upptornad is",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 150,
 	    "class": "SmallLegendText"
 	} 
@@ -815,7 +815,7 @@
 	"cdata": "Ahtautunut tai röykkiöitynyt jää",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 160,
 	    "class": "SmallLegendText"
 	} 
@@ -824,7 +824,7 @@
 	"tag": "use",
 	"attributes":
 	{
-	    "x": 230,
+	    "x": 270,
 	    "y": 175,
 	    "xlink:href": "#strips_and_patches"
 	}
@@ -834,7 +834,7 @@
 	"cdata": "Strips and patches",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 175,
 	    "class": "SmallLegendText"
 	} 
@@ -844,7 +844,7 @@
 	"cdata": "Strängar av drivis",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 185,
 	    "class": "SmallLegendText"
 	} 
@@ -854,7 +854,7 @@
 	"cdata": "Ajojäänauhoja",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 195,
 	    "class": "SmallLegendText"
 	} 
@@ -863,7 +863,7 @@
 	"tag": "use",
 	"attributes":
 	{
-	    "x": 230,
+	    "x": 270,
 	    "y": 210,
 	    "xlink:href": "#flobrg"
 	}
@@ -873,7 +873,7 @@
 	"cdata": "Floebit, floeberg",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 210,
 	    "class": "SmallLegendText"
 	} 
@@ -883,7 +883,7 @@
 	"cdata": "Isbumling",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 220,
 	    "class": "SmallLegendText"
 	} 
@@ -893,7 +893,7 @@
 	"cdata": "Ahtojää- tai röykkiölautta",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 230,
 	    "class": "SmallLegendText"
 	} 
@@ -902,7 +902,7 @@
 	"tag": "use",
 	"attributes":
 	{
-	    "x": 230,
+	    "x": 270,
 	    "y": 245,
 	    "xlink:href": "#icefra"
 	}
@@ -912,7 +912,7 @@
 	"cdata": "Fracture",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 245,
 	    "class": "SmallLegendText"
 	} 
@@ -922,7 +922,7 @@
 	"cdata": "Spricka",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 255,
 	    "class": "SmallLegendText"
 	} 
@@ -932,7 +932,7 @@
 	"cdata": "Repeämä",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 265,
 	    "class": "SmallLegendText"
 	} 
@@ -941,7 +941,7 @@
 	"tag": "use",
 	"attributes":
 	{
-	    "x": 230,
+	    "x": 270,
 	    "y": 280,
 	    "xlink:href": "#icefra_zone"
 	}
@@ -951,7 +951,7 @@
 	"cdata": "Fracture zone",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 280,
 	    "class": "SmallLegendText"
 	} 
@@ -961,7 +961,7 @@
 	"cdata": "Område med sprickor",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 290,
 	    "class": "SmallLegendText"
 	} 
@@ -971,7 +971,7 @@
 	"cdata": "Repeämävyöhyke",
 	"attributes":
 	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 300,
 	    "class": "SmallLegendText"
 	} 
@@ -980,8 +980,47 @@
 	"tag": "use",
 	"attributes":
 	{
-	    "x": 230,
+	    "x": 270,
 	    "y": 315,
+	    "xlink:href": "#ice_edge"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Ice edge or -boudary",
+	"attributes":
+	{
+	    "x": 320,
+	    "y": 315,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Iskant eller isgräns",
+	"attributes":
+	{
+	    "x": 320,
+	    "y": 325,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Jään reuna tai raja",
+	"attributes":
+	{
+	    "x": 320,
+	    "y": 335,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 270,
+	    "y": 350,
 	    "xlink:href": "#estimated_ice_edge"
 	}
     },
@@ -990,8 +1029,8 @@
 	"cdata": "Estimated ice edge",
 	"attributes":
 	{
-	    "x": 280,
-	    "y": 315,
+	    "x": 320,
+	    "y": 350,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -1000,8 +1039,8 @@
 	"cdata": "Uppskattad iskant",
 	"attributes":
 	{
-	    "x": 280,
-	    "y": 325,
+	    "x": 320,
+	    "y": 360,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -1010,8 +1049,8 @@
 	"cdata": "Arvioitu jään reuna",
 	"attributes":
 	{
-	    "x": 280,
-	    "y": 335,
+	    "x": 320,
+	    "y": 370,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -1020,8 +1059,8 @@
 	"cdata": "ATLE*",
 	"attributes":
 	{
-	    "x": 225,
-	    "y": 360,
+	    "x": 260,
+	    "y": 395,
 	    "font-family": "Arial",
 	    "font-size": "16",
 	    "font-style": "normal",
@@ -1035,8 +1074,8 @@
 	"cdata": "Icebreaker (* coordinating)",
 	"attributes":
 	{
-	    "x": 280,
-	    "y": 350,
+	    "x": 320,
+	    "y": 385,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -1045,8 +1084,8 @@
 	"cdata": "Isbrytare (* coordinerande)",
 	"attributes":
 	{
-	    "x": 280,
-	    "y": 360,
+	    "x": 320,
+	    "y": 395,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -1055,46 +1094,7 @@
 	"cdata": "Jäänmurtaja (* koordinaattori)",
 	"attributes":
 	{
-	    "x": 280,
-	    "y": 370,
-	    "class": "SmallLegendText"
-	} 
-    },
-    {
-	"tag": "use",
-	"attributes":
-	{
-	    "x": 230,
-	    "y": 385,
-	    "xlink:href": "#watertemperature_isotherm"
-	}
-    },
-    {
-	"tag": "text",
-	"cdata": "Watertemperature isothrem (C°)",
-	"attributes":
-	{
-	    "x": 280,
-	    "y": 385,
-	    "class": "SmallLegendText"
-	} 
-    },
-    {
-	"tag": "text",
-	"cdata": "Vattentemperatur isotherm (C°)",
-	"attributes":
-	{
-	    "x": 280,
-	    "y": 395,
-	    "class": "SmallLegendText"
-	} 
-    },
-    {
-	"tag": "text",
-	"cdata": "Veden lämpötilan tasa-arvokäyrä (C°)",
-	"attributes":
-	{
-	    "x": 280,
+	    "x": 320,
 	    "y": 405,
 	    "class": "SmallLegendText"
 	} 
@@ -1103,8 +1103,47 @@
 	"tag": "use",
 	"attributes":
 	{
-	    "x": 230,
-	    "y": 410,
+	    "x": 270,
+	    "y": 415,
+	    "xlink:href": "#watertemperature_isotherm"
+	}
+    },
+    {
+	"tag": "text",
+	"cdata": "Watertemperature isothrem (C°)",
+	"attributes":
+	{
+	    "x": 320,
+	    "y": 420,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Vattentemperatur isotherm (C°)",
+	"attributes":
+	{
+	    "x": 320,
+	    "y": 430,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "text",
+	"cdata": "Veden lämpötilan tasa-arvokäyrä (C°)",
+	"attributes":
+	{
+	    "x": 320,
+	    "y": 440,
+	    "class": "SmallLegendText"
+	} 
+    },
+    {
+	"tag": "use",
+	"attributes":
+	{
+	    "x": 270,
+	    "y": 450,
 	    "xlink:href": "#sea_surface_mean_temperature"
 	}
     },
@@ -1113,8 +1152,8 @@
 	"cdata": "Mean water temperature",
 	"attributes":
 	{
-	    "x": 280,
-	    "y": 420,
+	    "x": 320,
+	    "y": 455,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -1123,8 +1162,8 @@
 	"cdata": "Ytvattnets medeltemperatur",
 	"attributes":
 	{
-	    "x": 280,
-	    "y": 430,
+	    "x": 320,
+	    "y": 465,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -1133,8 +1172,8 @@
 	"cdata": "Meriveden pintalämpötilan keskiarvo",
 	"attributes":
 	{
-	    "x": 280,
-	    "y": 440,
+	    "x": 320,
+	    "y": 475,
 	    "class": "SmallLegendText"
 	} 
     },
@@ -1143,8 +1182,8 @@
 	"cdata": "(1971-2000)",
 	"attributes":
 	{
-	    "x": 280,
-	    "y": 450,
+	    "x": 320,
+	    "y": 485,
 	    "class": "SmallLegendText"
 	} 
     }

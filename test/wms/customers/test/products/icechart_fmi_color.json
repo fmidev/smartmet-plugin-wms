@@ -386,6 +386,23 @@
 			}
 		    ]
 		},
+		{ // ajojäänauhoja
+		    "qid": "strips_and_patches",
+		    "layer_type": "icemap",
+		    "layer_subtype": "symbol",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "strptc",
+		    "symbol": "strips_and_patches",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+ 			}
+		    ]
+		},
 		{ // keskilämpötila
 		    "qid": "mean_temperature",
 		    "layer_type": "icemap",
@@ -605,6 +622,58 @@
 			}
 		    ]
 		},
+		{ // jäämunan yhdysviiva
+		    "qid": "ice_egg_leader",
+		    "layer_type": "icemap",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "annotationleaders",
+		    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",	
+              	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "where": "ref_classname='IceEggAnnotation' and shape_length > 0",
+			    "attributes":
+			    {
+				"class": "TemperatureIsoline"
+			    }
+  			}
+		    ]
+		},
+		{ // jäämuna
+		    "qid": "ice_egg",
+		    "layer_type": "icemap",
+		    "layer_subtype": "ice_egg",
+		    "pgname": "icemap",
+		    "schema" : "icemap",
+		    "table" : "iceeggannotation",
+		    "time_column" : "publicationdate",	
+		    "geometry_column" : "geom",
+		    "additional_columns": "textstring",
+             	    "css": "ice/icemap.css",
+		    "filters" :		    
+		    [			
+			{
+			    "attributes":
+			    {
+				"fill": "white",
+				"stroke-width": 0.8,
+				"stroke": "black"
+			    },
+			    "text_attributes":
+			    {
+				"font-family": "Arial",
+				"font-size": "12",
+				"font-style": "normal",
+				"font-weight": "normal",
+				"text-anchor": "middle",
+				"dy": -4.8
+			    }
+			}
+		    ]
+		},
 		{ // frame
 		    "qid": "frame",
 		    "layer_type": "frame",
@@ -737,6 +806,176 @@
 			}
 		    ]
 		},
+		{ // traffic restrictions table                                                                                              
+                    "qid": "traffic_restrictions_table",
+                    "layer_type": "icemap",
+                    "layer_subtype": "traffic_restrictions",
+                    "pgname": "icemap",
+                    "schema" : "icemap",
+                    "table" : "seaice",
+                    "geometry_column" : "geom",
+		    "time_column" : "publicationdate",
+                    "longitude" : "23.5",
+                    "latitude" : "63.0",
+                    "css": "ice/icemap.css",
+		    "table_attributes":
+		    {
+			"title":
+			{
+			    "frame":
+			    {
+//				"fill": "#4286F4",
+				"fill": "white",
+				"stroke": "black",
+				"stroke-width": "0.5"
+			    },
+			    "text":
+			    {
+                            "font-family": "Arial",
+                            "font-size": "14",
+                            "font-style": "normal",
+                            "font-weight": "bold",
+                            "text-anchor": "middle"
+			    }
+  			},
+			"footer":
+			{
+ 			    "frame":
+			    {
+//				"fill": "#42f4b3",
+				"fill": "white",
+				"stroke": "black",
+				"stroke-width": "0.5"
+			    },
+			    "text":
+			    {
+				"font-family": "Arial",
+				"font-size": "12",
+				"font-style": "normal",
+				"font-weight": "normal",
+				"fill": "black",
+				"text-anchor": "start"
+			    }
+			},
+			"header":
+			{
+			    "frame":
+			    {
+//				"fill": "#87CEEB",
+				"fill": "white",
+				"stroke": "black",
+				"stroke-width": "0.5"
+			    },
+			    "text":
+			    [
+				{
+				    "font-family": "Arial",
+				    "font-size": "12",
+				    "font-style": "normal",
+				    "font-weight": "bold",
+				    "text-anchor": "start"
+				},
+				{
+				    "font-family": "Arial",
+				    "font-size": "12",
+				    "font-style": "normal",
+				    "font-weight": "bold",
+				    "text-anchor": "middle"
+				}
+			    ]
+			},
+			"columns":
+			{
+ 			    "frame":
+			    {
+//				"fill": "#E6E6FA",
+				"fill": "white",
+				"stroke": "black",
+				"stroke-width": "0.5"
+			    },
+			    "text":
+			    [
+				{
+				    "font-family": "Arial",
+				    "font-size": "12",
+				    "font-style": "normal",
+				    "font-weight": "normal",
+				    "text-anchor": "start"
+				},
+				{
+				    "font-family": "Arial",
+				    "font-size": "12",
+				    "font-style": "normal",
+				    "font-weight": "normal",
+				    "text-anchor": "middle"
+				}
+			    ]
+			}
+		    },
+		    "table_data":
+		    {
+			"title": "Liikennerajoitukset - Trafikbegränsningar - Restrictions to Navigation\nSuomi - Finand",
+			"header":
+			    {
+				"column0": "Satama\nHamn\nHarbour",
+				"column1": "Jääluokka\nIsklass\nIce Class",
+				"column2": "Minimikantavuus\nMinimidräktighet\nMinimum tonnage",
+				"column3": "Voimaantulopäivä\nDatum for ikraftträdande\nFirst day of validity"
+			    },
+			"data":
+			[
+			    {
+				"column0": "Tornio, Kemi, Oulu",
+				"column1": "IA",
+				"column2": "4000",
+				"column3": "8.2.2017"
+			    },
+			    {
+				"column0": "Raahe",
+				"column1": "IA",
+				"column2": "2000",
+				"column3": "22.2.2017"
+			    },
+			    {
+				"column0": "Kalajoki",
+				"column1": "IA",
+				"column2": "2000",
+				"column3": "28.2.2017"
+			    },
+			    {
+				"column0": "Vaasa",
+				"column1": "IA, IB",
+				"column2": "2000",
+				"column3": "15.2.2017"
+			    },
+			    {
+				"column0": "Loviisa, Kotka, Hamina",
+				"column1": "IA, IB\nIC, II",
+				"column2": "2000\n3000",
+				"column3": "11.2.2017"
+			    }
+			],
+			"footer": "Saimaan kanava on suljettu liikenteeltä tammikuun 15. päivänä.\nSaima kanal är stängd för trafik den 15 januari.\nThe Saimaa Canal is closed for traffic 15th of January."
+
+		    },		    
+                    "filters" :
+                    [
+                        {
+                            "attributes":
+                            {
+                                "class": "MapFrameWhite"
+                            },
+                            "text_attributes":
+                            {
+                                "font-family": "Arial",
+                                "font-size": "14",
+                                "font-style": "normal",
+                                "font-weight": "normal",
+                                "text-anchor": "start"
+                            }
+                        }
+                    ]
+                },
 		{
 		    "gid": "liikennerajoitus_fi",
 		    "layer_type": "tag",
