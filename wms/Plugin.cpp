@@ -69,7 +69,7 @@ const std::string &check_attack(const std::string &theName)
     throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
   }
 }
-}
+}  // namespace
 
 namespace SmartMet
 {
@@ -84,6 +84,7 @@ namespace Dali
 // ----------------------------------------------------------------------
 
 void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
+                             State &theState,
                              const Spine::HTTP::Request &theRequest,
                              Spine::HTTP::Response &theResponse)
 {
@@ -109,24 +110,19 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
 
     const bool usetimer = Spine::optional_bool(theRequest.getParameter("timer"), false);
 
-    // Storage for re-usable stuff during product generation
-    State state(*this);
-    state.useTimer(Spine::optional_bool(theRequest.getParameter("timer"), false));
-    state.useWms(false);
-
     // Define the customer and image format
 
-    state.setCustomer(
+    theState.setCustomer(
         Spine::optional_string(theRequest.getParameter("customer"), itsConfig.defaultCustomer()));
 
-    if (state.getCustomer().empty())
+    if (theState.getCustomer().empty())
       throw Spine::Exception(BCP, "Customer setting is empty");
 
     // Get the product configuration
 
     std::string product_name = Spine::required_string(
         theRequest.getParameter("product"), "Product configuration option 'product' not given");
-    auto product = getProduct(theRequest, state, product_name, print_json);
+    auto product = getProduct(theRequest, theState, product_name, print_json);
 
     // Trivial error checks done first for speed
 
@@ -143,11 +139,11 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
     }
 
     // Image format can no longer be changed by anything, provide the info to layers
-    state.setType(product.type);
+    theState.setType(product.type);
 
     // Calculate hash for the product
 
-    auto product_hash = product.hash_value(state);
+    auto product_hash = product.hash_value(theState);
 
     // If request was ETag request, respond accordingly
     if (theRequest.getHeader("X-Request-ETag"))
@@ -186,14 +182,15 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
     {
       std::string report = "Product::generate finished in %t sec CPU, %w sec real\n";
       std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
-      if (state.useTimer())
+      if (theState.useTimer())
         mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
-      product.generate(hash, state);
+      product.generate(hash, theState);
     }
 
     if (print_hash)
     {
-      std::cout << "Generated CDT for " << state.getCustomer() << " " << product_name << std::endl
+      std::cout << "Generated CDT for " << theState.getCustomer() << " " << product_name
+                << std::endl
                 << hash.RecursiveDump() << std::endl;
     }
 
@@ -202,7 +199,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
       std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
-      if (state.useTimer())
+      if (theState.useTimer())
         mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
       tmpl->process(hash, output, log);
     }
@@ -348,17 +345,20 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
     // no matter what format-option was given in request
     try
     {
+      State state(*this);
+      state.useTimer(Spine::optional_bool(theRequest.getParameter("timer"), false));
+
       using boost::posix_time::ptime;
-      const int expires_seconds = 60;
-      ptime t_now = boost::posix_time::second_clock::universal_time();
 
       if (theRequest.getResource() == "/wms")
       {
+        state.useWms(true);
+
         WMSQueryStatus status;
 
         theResponse.setStatus(Spine::HTTP::Status::ok);
 
-        status = wmsQuery(theReactor, theRequest, theResponse);  // may modify HTTP status
+        status = wmsQuery(theReactor, state, theRequest, theResponse);  // may modify HTTP status
         switch (status)
         {
           case WMSQueryStatus::FORBIDDEN:
@@ -372,21 +372,29 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       }
       else
       {
+        state.useWms(false);
+
         theResponse.setStatus(Spine::HTTP::Status::ok);
-        daliQuery(theReactor, theRequest, theResponse);
+        daliQuery(theReactor, state, theRequest, theResponse);
       }
 
       // Adding headers
 
-      ptime t_expires = t_now + boost::posix_time::seconds(expires_seconds);
       boost::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
-      std::string cachecontrol = "public, max-age=" + Fmi::to_string(expires_seconds);
-      std::string expiration = tformat->format(t_expires);
-      std::string modification = tformat->format(t_now);
 
-      theResponse.setHeader("Cache-Control", cachecontrol);
-      theResponse.setHeader("Expires", expiration);
-      theResponse.setHeader("Last-Modified", modification);
+      const ptime t_now = boost::posix_time::second_clock::universal_time();
+      theResponse.setHeader("Last-Modified", tformat->format(t_now));
+
+      const auto &expires = state.getExpirationTime();
+      if (!expires)
+      {
+        auto tmp = t_now + boost::posix_time::hours(1);
+        theResponse.setHeader("Expires", tformat->format(tmp));
+      }
+      else
+      {
+        theResponse.setHeader("Expires", tformat->format(*expires));
+      }
     }
     catch (...)
     {
@@ -424,8 +432,8 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
 // ----------------------------------------------------------------------
 /*!
-     * \brief Plugin constructor
-     */
+ * \brief Plugin constructor
+ */
 // ----------------------------------------------------------------------
 
 Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
@@ -1139,6 +1147,7 @@ std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException, bool
  */
 // ----------------------------------------------------------------------
 WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
+                                      State &theState,
                                       const Spine::HTTP::Request &theRequest,
                                       Spine::HTTP::Response &theResponse)
 {
@@ -1157,10 +1166,6 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
 
     bool isdebug = Spine::optional_bool(thisRequest.getParameter("debug"), false);
 
-    State state(*this);
-    state.useTimer(Spine::optional_bool(thisRequest.getParameter("timer"), false));
-    state.useWms(true);
-
     Product product;
 
     try
@@ -1172,14 +1177,14 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
         Spine::Exception exception(BCP, "Not a WMS request!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
         auto msg = parseWMSException(exception, isdebug);
-        formatResponse(msg, "xml", thisRequest, theResponse, state.useTimer());
+        formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
         return WMSQueryStatus::EXCEPTION;
       }
 
       if (requestType == WMS::WMSRequestType::GET_CAPABILITIES)
       {
         auto msg = itsWMSGetCapabilities->response(thisRequest, *itsQEngine, *itsWMSConfig);
-        formatResponse(msg, "xml", thisRequest, theResponse, state.useTimer());
+        formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
         return WMSQueryStatus::OK;
       }
 
@@ -1188,7 +1193,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
         Spine::Exception exception(BCP, "GetFeatureInfo not supported!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED);
         auto msg = parseWMSException(exception, isdebug);
-        formatResponse(msg, "xml", thisRequest, theResponse, state.useTimer());
+        formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
         return WMSQueryStatus::OK;
       }
 
@@ -1197,8 +1202,8 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
       {
         WMS::WMSGetMap wmsGetMapRequest(*itsWMSConfig);
 
-// This request is a GetMap request
-// Validate authorizations
+        // This request is a GetMap request
+        // Validate authorizations
 
 #ifndef WITHOUT_AUTHENTICATION
         bool has_access = false;
@@ -1247,24 +1252,24 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
       // Define the customer
       std::string customer =
           Spine::optional_string(thisRequest.getParameter("customer"), itsConfig.defaultCustomer());
-      state.setCustomer(customer);
+      theState.setCustomer(customer);
 
-      if (state.getCustomer().empty())
+      if (theState.getCustomer().empty())
       {
         Spine::Exception exception(BCP, "Customer setting is empty!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
         auto msg = parseWMSException(exception, isdebug);
-        formatResponse(msg, "xml", thisRequest, theResponse, state.useTimer());
+        formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
         return WMSQueryStatus::EXCEPTION;
       }
 
       std::string customer_root =
-          (itsConfig.rootDirectory(state.useWms()) + "/customers/" + customer);
+          (itsConfig.rootDirectory(theState.useWms()) + "/customers/" + customer);
 
       std::string layers_root = customer_root + "/layers/";
 
       Spine::JSON::preprocess(
-          json, itsConfig.rootDirectory(state.useWms()), layers_root, itsFileCache);
+          json, itsConfig.rootDirectory(theState.useWms()), layers_root, itsFileCache);
 
       Spine::JSON::dereference(json);
 
@@ -1279,12 +1284,12 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
       }
 
       // And initialize the product specs from the JSON
-      product.init(json, state, itsConfig);
+      product.init(json, theState, itsConfig);
 
       if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
       {
         std::string layerName = *(theRequest.getParameter("LAYER"));
-        itsWMSConfig->getLegendGraphic(layerName, product, state);
+        itsWMSConfig->getLegendGraphic(layerName, product, theState);
         // getLegendGraphic-function sets width and height, but if width & height is given in
         // request override values
         std::string xsize = Fmi::to_string(*product.width);
@@ -1309,16 +1314,16 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
       if (exception.getExceptionByParameterName(WMS_EXCEPTION_CODE) == NULL)
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       auto msg = parseWMSException(exception, isdebug);
-      formatResponse(msg, "xml", thisRequest, theResponse, state.useTimer());
+      formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
       return WMSQueryStatus::EXCEPTION;
     }
 
     // Format can no longer be changed by anything, provide the info to layers
-    state.setType(product.type);
+    theState.setType(product.type);
 
     // Calculate hash for the product
 
-    auto product_hash = product.hash_value(state);
+    auto product_hash = product.hash_value(theState);
 
     // If request was ETag request, respond accordingly
     if (thisRequest.getHeader("X-Request-ETag"))
@@ -1357,7 +1362,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
     // Build the response CDT
     CTPP::CDT hash(CTPP::CDT::HASH_VAL);
 
-    product.generate(hash, state);
+    product.generate(hash, theState);
 
     // Build the template
     std::ostringstream output, log;
@@ -1365,7 +1370,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
       std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
-      if (state.useTimer())
+      if (theState.useTimer())
         mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
       tmpl->process(hash, output, log);
     }
@@ -1376,7 +1381,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
       if (exception.getExceptionByParameterName(WMS_EXCEPTION_CODE) == NULL)
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       auto msg = parseWMSException(exception, isdebug);
-      formatResponse(msg, "xml", thisRequest, theResponse, state.useTimer());
+      formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
       return WMSQueryStatus::EXCEPTION;
     }
 
@@ -1384,7 +1389,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
       std::cout << "Generated CDT:" << std::endl << hash.RecursiveDump() << std::endl;
 
     formatResponse(
-        output.str(), product.type, thisRequest, theResponse, state.useTimer(), product_hash);
+        output.str(), product.type, thisRequest, theResponse, theState.useTimer(), product_hash);
     return WMSQueryStatus::OK;
   }
   catch (...)

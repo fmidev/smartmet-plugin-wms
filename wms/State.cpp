@@ -163,7 +163,8 @@ const Config& State::getConfig() const
  * we use the same data all the time.
  *
  * If a specific origin time is requested, there is no need to
- * use a cache.
+ * use a cache, but expiration time estimation would have to
+ * be updated.
  */
 // ----------------------------------------------------------------------
 
@@ -178,6 +179,9 @@ Engine::Querydata::Q State::get(const Engine::Querydata::Producer& theProducer) 
 
     // Get the data from the engine
     auto q = itsPlugin.getQEngine().get(theProducer);
+
+    // Update estimated expiration time for the product
+    updateExpirationTime(q->expirationTime());
 
     // Cache the obtained data and return it. The cache is
     // request specific, no need for mutexes here.
@@ -593,6 +597,34 @@ std::string State::generateUniqueId() const
   std::string ret = "generated_id_";
   ret += Fmi::to_string(itsNextId++);
   return ret;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get the estimated expiration time
+ */
+// ----------------------------------------------------------------------
+
+const boost::optional<boost::posix_time::ptime>& State::getExpirationTime() const
+{
+  return itsExpirationTime;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Update the estimated expiration time if necessary
+ *
+ * The final expiration time is the one estimated to be first in the
+ * future out of all the data used in the layers of the product.
+ */
+// ----------------------------------------------------------------------
+
+void State::updateExpirationTime(const boost::posix_time::ptime& theTime) const
+{
+  if (!itsExpirationTime)
+    itsExpirationTime = theTime;
+  else
+    itsExpirationTime = std::min(*itsExpirationTime, theTime);
 }
 
 }  // namespace Dali

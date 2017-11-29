@@ -51,7 +51,7 @@ namespace Observation
 class Engine;
 }
 #endif
-}
+}  // namespace Engine
 
 namespace Plugin
 {
@@ -151,6 +151,10 @@ class State
   // Generate an unique ID when one cannot be generated from a qid
   std::string generateUniqueId() const;
 
+  // Get expiration time
+  const boost::optional<boost::posix_time::ptime>& getExpirationTime() const;
+  void updateExpirationTime(const boost::posix_time::ptime& theTime) const;
+
  private:
   const Plugin& itsPlugin;
   mutable std::map<Engine::Querydata::Producer, Engine::Querydata::Q> itsQCache;
@@ -163,6 +167,9 @@ class State
 
   // Next ID to be used
   mutable std::size_t itsNextId = 0;
+
+  // Estimated expiration time
+  mutable boost::optional<boost::posix_time::ptime> itsExpirationTime;
 
   // Are we in the Defs section?
   bool itsInDefs;

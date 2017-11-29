@@ -117,9 +117,11 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   Plugin();
 
   void daliQuery(Spine::Reactor& theReactor,
+                 State& theState,
                  const Spine::HTTP::Request& req,
                  Spine::HTTP::Response& response);
   WMSQueryStatus wmsQuery(Spine::Reactor& theReactor,
+                          State& theState,
                           const Spine::HTTP::Request& req,
                           Spine::HTTP::Response& response);
   void formatResponse(const std::string& theSvg,

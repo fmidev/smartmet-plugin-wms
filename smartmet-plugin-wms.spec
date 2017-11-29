@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.11.27
+Version: 17.11.29
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -16,7 +16,7 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 17.10.12
-BuildRequires: smartmet-library-macgyver-devel >= 17.8.28
+BuildRequires: smartmet-library-macgyver-devel >= 17.11.27
 BuildRequires: smartmet-library-spine-devel >= 17.11.23
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
@@ -27,7 +27,7 @@ BuildRequires: smartmet-engine-observation-devel >= 17.10.23
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 17.11.1
 BuildRequires: smartmet-engine-geonames-devel >= 17.11.1
-BuildRequires: smartmet-engine-querydata-devel >= 17.10.24
+BuildRequires: smartmet-engine-querydata-devel >= 17.11.28
 BuildRequires: smartmet-engine-contour-devel >= 17.11.1
 BuildRequires: smartmet-library-gis-devel >= 17.11.22
 BuildRequires: fmt-devel
@@ -42,12 +42,12 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
 Requires: smartmet-library-gis >= 17.11.22
-Requires: smartmet-library-macgyver >= 17.8.28
+Requires: smartmet-library-macgyver >= 17.11.27
 Requires: smartmet-library-giza >= 17.10.12
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 17.9.13
 %endif
-Requires: smartmet-engine-querydata >= 17.10.24
+Requires: smartmet-engine-querydata >= 17.11.28
 Requires: smartmet-engine-contour >= 17.11.1
 Requires: smartmet-engine-gis >= 17.11.1
 Requires: smartmet-engine-geonames >= 17.11.1
@@ -89,6 +89,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Nov 29 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.11.29-1.fmi
+- Improved expiration time estimates for layers using querydata
+
 * Mon Nov 27 2017 Anssi Reponen <anssi.reponen@fmi.fi> - 17.11.27-1.fmi
 - Ice egg layer functionality added
 - Symbol layer for 'strips and patches' added into product files
