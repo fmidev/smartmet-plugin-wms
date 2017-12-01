@@ -151,6 +151,14 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
       theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setHeader("Content-Type", mimeType(product.type));
       theResponse.setStatus(Spine::HTTP::Status::no_content);
+
+      // Add updated expiration time if available
+      const auto &expires = theState.getExpirationTime();
+      if (expires)
+      {
+        boost::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
+        theResponse.setHeader("Expires", tformat->format(*expires));
+      }
       return;
     }
 
