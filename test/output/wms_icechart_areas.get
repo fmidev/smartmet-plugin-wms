@@ -4,7 +4,7 @@
 <style type="text/css"><![CDATA[
 
 .LegendText		{ stroke: none; fill: black; text-anchor: start; font-family: Verdana; font-size: 14 }
-.SmallLegendText	{ stroke: none; text-anchor: start; font-family: Arial; font-size: 12 }
+.SmallLegendText	{ stroke: none; text-anchor: start; font-family: Arial; font-size: 10 }
 .Land			{ stroke: none; fill: rgb(246,246,246) }
 .Border			{ stroke: black; stroke-width: 0.3px; fill: none }
 .OpenWater		{ stroke: black; stroke-width: 0.2; fill: rgb(150,200,255) }
@@ -53,24 +53,45 @@
 
  ]]>
 </style>
+<pattern id="close_ice" patternUnits="userSpaceOnUse" width="5" height="5">
+<line x1="0" y1="0" x2="100" y2="0" stroke="black" stroke-width="0.7" />
+ </pattern>
+<pattern id="consolidated_ice" patternUnits="userSpaceOnUse" width="5" height="5">
+<line x1="0" y1="0" x2="50" y2="0" stroke="black" stroke-width="0.7"/>
+<line x1="0" y1="0" x2="0" y2="50" stroke="black" stroke-width="0.7"/>
+</pattern>
+
 <symbol id="estimated_ice_edge">
 <g fill="none" stroke="black" stroke-width="2">
     <path stroke-dasharray="5,5,10,5" d="M0 5 L35 5" />
 </g>
 </symbol>
+<!--pattern id="fast_ice" patternUnits="userSpaceOnUse" width="10" height="10">
+<path d="M-1,1 l2,-2 M0,10 l10,-10 M9,11 l2,-2" style="stroke:black; stroke-width:0.7"/>
+</pattern-->
+<pattern id="fast_ice" patternUnits="userSpaceOnUse" width="8" height="8">
+<path d="M-1,1 l2,-2 M0,8 l8,-8 M7,9 l2,-2" style="stroke:black; stroke-width:0.7"/>
+</pattern>
 <symbol id="flobrg">
-<svg xmlns="http://www.w3.org/2000/svg" width="5mm" height="5mm" viewBox="0 0 5 5">
-    <polygon points="0.3,4.8 2.5,0.4 4.7,4.8" fill="none" stroke="black" stroke-width="0.4"/>
-    <polyline points="2.5,0.4 3.6,2.6 1.4,2.6"></polyline>
-    <polyline points="0,2.7 5,2.7" stroke="black" stroke-width="0.4"></polyline>
+<svg xml:space="preserve" width="4.5mm" height="4.5mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 1000 1000">
+ <g id="Layer_x0020_1">
+  <path style="fill:none;fill-rule:nonzero;stroke:black;stroke-width:20" d="M0 1000l0 0 500 -870 500 870 0 0 -1000 0zm0 0m250 -435m500 0m250 435m-500 0"/>
+  <line style="fill:none;stroke:black;stroke-width:20" x1="0" y1="545" x2="1000" y2= "560" />
+  <polygon style="fill:black;stroke:#2B2A29;stroke-width:20" points="259,549 745,556 500,130 "/>
+  <polygon style="fill:white;stroke:#2B2A29;stroke-width:20" points="745,556 259,549 0,1000 1000,1000 "/>
+ </g>
 </svg>
 </symbol>
+<pattern id="grey_ice" patternUnits="userSpaceOnUse" width="10" height="10">
+<line x1="0" y1="3" x2="100" y2="3" stroke="black" stroke-width="0.7"/>
+</pattern>
 <symbol id="ice_edge">
 <line x1="1" y1="5" x2="32" y2="5" style="stroke:black;stroke-width:2"/>
 </symbol>
 <symbol id="ice_thickness">
 <rect x="1" y="1" width="35" height="15" stroke="black" fill="white" />
-<text x="2" y="14" fill="black" font="Verdana" font-size="12">10-20</text>
+<text x="3" y="12" fill="black" font-family="Arial" font-size="12">20-40</text>
 </symbol>
 <symbol id="icecom">
 <svg xmlns="http://www.w3.org/2000/svg" width="7mm" height="2.5mm" viewBox="0 0 7 2.5">
@@ -99,11 +120,13 @@
   <path fill="none" stroke="black" stroke-width="8" stroke-dasharray="1,19" d="M2 19 L35 5Z" />
 </symbol>
 <symbol id="icefra_zone">
-<svg xmlns="http://www.w3.org/2000/svg" width="5mm" height="2.5mm" viewBox="0 0 5 2.5">
-    <polyline points="0.2,2.3 3,0.4 2,2.1 4.8,0.2" 
-              fill="none" stroke="black" 
-              stroke-width="0.4" 
-              stroke-linejoin="miter"/>
+<svg xml:space="preserve" width="6mm" height="6mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 1000 1000">
+ <g id="Layer_x0020_1">
+   <line style="stroke:black;stroke-width:50;stroke-linecap:round;fill:none" x1="553" y1="312" x2="25" y2= "834" />
+   <line style="stroke:black;stroke-width:50;stroke-linecap:round;fill:none" x1="553" y1="317" x2="447" y2= "683" />
+   <line style="stroke:black;stroke-width:50;stroke-linecap:round;fill:none" x1="975" y1="166" x2="447" y2= "688" />
+ </g>
 </svg>
 </symbol>
 <symbol id="icelea">
@@ -113,24 +136,29 @@
 </svg>
 </symbol>
 <symbol id="icerdg">
-<svg xmlns="http://www.w3.org/2000/svg" width="5mm" height="2.5mm" viewBox="0 0 5 2.5">
-    <!--polyline points="0,2.3 5,2.3" stroke="black" stroke-width="0.4"/-->
-    <!--polygon  points="0,1.8 1.25,0 2.5,1.8 3.75,0 5,1.8"/-->
-    <polygon points="0,2.2 1.25,0 2.5,2.2 3.75,0 5,2.2"/>
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="6mm" height="6mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 420 1000 1000"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <g id="Layer_x0020_1">
+  <polygon style="fill:black;stroke:black;stroke-width:20" points="270,439 400,714 530,989 270,989 10,989 140,714"/>
+  <polygon style="fill:black;stroke:black;stroke-width:20" points="730,440 860,715 990,990 730,990 470,990 600,715"/>
+ </g>
 </svg>
 </symbol>
 <symbol id="icerft">
-<svg  xmlns="http://www.w3.org/2000/svg" width="5mm" height="2.5mm"  viewBox="0 0 5 2.5">
-<polyline points="0,1.5 1,1.5 1,0.2 2,0.2 2,1.5 3,1.5 3,0.2 4,0.2 4,1.5 5,1.5" 
-              fill="none" 
-              stroke="black" 
-              stroke-width="0.4"/>
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="7mm" height="7mm" version="1.1"
+viewBox="0 0 500 500">
+ <g id="Layer_x0020_1">
+  <polyline style= "fill:none;stroke:black;stroke-width:30"  points="-3,334 79,334 79,184 199,184 199,334 279,334 279,184 399,184 399,334 499,334"/>
+ </g>
 </svg>
 </symbol>
 <symbol id="jmdbrr">
-<svg xmlns="http://www.w3.org/2000/svg" width="5mm" height="2.5mm" viewBox="0 0 5 2.5">
-    <polyline points="0,2.3 5,2.3" stroke="black" stroke-width="0.4"/>
-    <polygon points="0,0 1.25,2.1 2.5,0 3.75,2.1 5,0"/>
+<svg xml:space="preserve" width="5mm" height="5mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 1000 1000">
+ <g id="Layer_x0020_1">
+  <polygon style="fill:black" points="502,1000 498,1000 150,0 850,0 "/>
+ </g>
 </svg>
 </symbol>
 <symbol id="lighthouse">
@@ -139,11 +167,49 @@
 <marker id="spearhead" markerWidth="9" markerHeight="9" viewBox="0 0 10 10" orient="auto" refX="1" refY="5">
  <path d="M 0 0 L 10 5 L 0 10 z" />
 </marker>
+<pattern id="new_ice" patternUnits="userSpaceOnUse" width="15" height="15">
+<svg version="1.0" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 20 20">
+<g transform="translate(2.000000,10.000000) rotate(45) scale(0.40000,-0.40000)" fill="#000000" stroke="none">
+<path d="M23.091,18.561c-0.37,0.644-1.042,1-1.734,1c-0.339,0-0.683-0.086-0.998-0.268l-5.982-3.455v6.91c0,1.104-0.896,2-2,2 c-1.104,0-2-0.896-2-2v-6.911l-5.985,3.456c-0.315,0.182-0.659,0.268-0.998,0.268c-0.691,0-1.364-0.356-1.734-1 c-0.552-0.957-0.225-2.18,0.732-2.73l5.983-3.456L2.39,8.919C1.433,8.366,1.106,7.145,1.658,6.188 C2.21,5.231,3.434,4.903,4.39,5.456l5.984,3.455V2c0-1.104,0.896-2,2-2c1.104,0,2,0.896,2,2v6.91l5.982-3.455 c0.956-0.553,2.183-0.225,2.732,0.732c0.552,0.957,0.225,2.18-0.732,2.731l-5.981,3.456l5.982,3.455 C23.314,16.381,23.643,17.604,23.091,18.561z"/>
+</g>
+</svg>
+</pattern>
+<pattern id="open_ice" patternUnits="userSpaceOnUse" width="16" height="16">
+<line x1="4" y1="1" x2="4" y2="7" stroke="black" stroke-width="0.7"/>
+<line x1="12" y1="8" x2="12" y2="15" stroke="black" stroke-width="0.7"/>
+</pattern>
+<pattern id="open_water" patternUnits="userSpaceOnUse" width="16" height="16">
+<circle cx="4" cy="4" r="0.8" stroke="black" stroke-width="1" fill="black"/>
+<circle cx="12" cy="12" r="0.8" stroke="black" stroke-width="1" fill="black"/>
+</pattern>
+
+<!--pattern id="rotten_fast_ice" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(90 0 0)">
+<path d="M-1,1 l2,-2 M0,10 l10,-10 M9,11 l2,-2" style="stroke:black; stroke-width:0.7"/>
+</pattern-->
+<pattern id="rotten_fast_ice" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(90 0 0)">
+<path d="M-1,1 l2,-2 M0,8 l8,-8 M7,9 l2,-2" style="stroke:black; stroke-width:0.7"/>
+</pattern>
 <symbol id="sea_surface_mean_temperature">
  <ellipse cx="16" cy="12" rx="15" ry="10"
   style="fill:white;stroke:black;stroke-width:1" />
- <text x="5" y="15" fill="black" font="Arial" font-size="12">2,1°</text>
+ <text x="5" y="15" fill="black" font-family="Arial" font-size="12">2,1°</text>
 </symbol>
+<symbol id="strips_and_patches">
+<svg xml:space="preserve" width="6mm" height="6mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 1000 1000">
+ <g id="Layer_x0020_1">
+  <path style="fill:none;stroke:black;stroke-width:50" d="M360 667c-360,145 -475,-356 -119,-381 175,22 209,110 266,222l54 106c48,95 122,98 198,100 376,-52 217,-572 -138,-379"/>
+ </g>
+</svg>
+</symbol>
+<pattern id="very_close_ice" patternUnits="userSpaceOnUse" width="10" height="10">
+<line x1="0" y1="0" x2="50" y2="0" stroke="black" stroke-width="0.7"/>
+<line x1="0" y1="0" x2="0" y2="50" stroke="black" stroke-width="0.7"/>
+</pattern>
+<pattern id="very_open_ice" patternUnits="userSpaceOnUse" width="16" height="16">
+<circle cx="4" cy="4" r="2.0" stroke="black" stroke-width="0.7" fill="none"/>
+<circle cx="12" cy="12" r="2.0" stroke="black" stroke-width="0.7" fill="none"/>
+</pattern>
 <symbol id="watertemperature_isotherm">
 <line x1="1" y1="7" x2="10" y2="7" style="stroke:black;stroke-width:1"/>
  <text x="10" y="10" fill="black" font="Arial" font-size="12">2°</text>
