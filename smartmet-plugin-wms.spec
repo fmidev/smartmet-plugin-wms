@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.12.1
+Version: 17.12.12
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -17,7 +17,7 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 17.10.12
 BuildRequires: smartmet-library-macgyver-devel >= 17.11.27
-BuildRequires: smartmet-library-spine-devel >= 17.11.23
+BuildRequires: smartmet-library-spine-devel >= 17.11.30
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 17.9.13
@@ -25,9 +25,9 @@ BuildRequires: smartmet-engine-authentication-devel >= 17.9.13
 %if %{with observation}
 BuildRequires: smartmet-engine-observation-devel >= 17.10.23
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 17.11.1
+BuildRequires: smartmet-engine-gis-devel >= 17.11.30
 BuildRequires: smartmet-engine-geonames-devel >= 17.11.1
-BuildRequires: smartmet-engine-querydata-devel >= 17.11.28
+BuildRequires: smartmet-engine-querydata-devel >= 17.12.11
 BuildRequires: smartmet-engine-contour-devel >= 17.11.1
 BuildRequires: smartmet-library-gis-devel >= 17.11.22
 BuildRequires: fmt-devel
@@ -47,12 +47,12 @@ Requires: smartmet-library-giza >= 17.10.12
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 17.9.13
 %endif
-Requires: smartmet-engine-querydata >= 17.11.28
+Requires: smartmet-engine-querydata >= 17.12.11
 Requires: smartmet-engine-contour >= 17.11.1
-Requires: smartmet-engine-gis >= 17.11.1
+Requires: smartmet-engine-gis >= 17.11.30
 Requires: smartmet-engine-geonames >= 17.11.1
 Requires: smartmet-server >= 17.11.10
-Requires: smartmet-library-spine >= 17.11.23
+Requires: smartmet-library-spine >= 17.11.30
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -89,6 +89,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Dec 12 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.12.12-1.fmi
+- Fixed code to allow both double and string fmisids
+
 * Fri Dec  1 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.12.1-1.fmi
 - Return updated expiration times for etag responses (BRAINSTORM-1000)
 

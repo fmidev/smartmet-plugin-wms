@@ -11,6 +11,9 @@
 #include "State.h"
 #include "ValueTools.h"
 
+#pragma warning("Remove TimeSeriesOutput.h")
+#include <spine/TimeSeriesOutput.h>
+
 #include <engines/gis/Engine.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
@@ -307,15 +310,18 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
           // TODO: Should refactor this using Positions methods
 
-          std::string previous_fmisid;
+          int previous_fmisid = -1;
           boost::posix_time::ptime previous_time;
 
-          for (std::size_t row = 0; row < values[0].size(); ++row)
+          std::cout << "TimeSeries = " << values << std::endl;
+
+          const auto nrows = values[0].size();
+          for (std::size_t row = 0; row < nrows; ++row)
           {
             const auto& t = values.at(0).at(row).time;
             double lon = get_double(values.at(0).at(row));
             double lat = get_double(values.at(1).at(row));
-            std::string fmisid = boost::get<std::string>(values.at(2).at(row).value);
+            int fmisid = get_fmisid(values.at(2).at(row));
             double value = get_double(values.at(3).at(row));
 
             // Collect extra values used for filtering the input

@@ -89,7 +89,7 @@ struct PointValue
 };
 
 using PointValues = std::vector<PointValue>;
-}
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -287,7 +287,7 @@ PointValues read_observations(const ArrowLayer& layer,
     throw Spine::Exception(
         BCP, "Failed to create the needed coordinate transformation when drawing wind arrows");
 
-  std::string previous_fmisid;
+  int previous_fmisid = -1;
   boost::posix_time::ptime previous_time;
 
   PointValues pointvalues;
@@ -296,7 +296,7 @@ PointValues read_observations(const ArrowLayer& layer,
     const auto& t = values.at(0).at(row).time;
     double lon = get_double(values.at(0).at(row));
     double lat = get_double(values.at(1).at(row));
-    std::string fmisid = boost::get<std::string>(values.at(2).at(2).value);
+    int fmisid = get_fmisid(values.at(2).at(row));
 
     double wdir = kFloatMissing;
     double wspd = kFloatMissing;
