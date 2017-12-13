@@ -313,8 +313,6 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
           int previous_fmisid = -1;
           boost::posix_time::ptime previous_time;
 
-          std::cout << "TimeSeries = " << values << std::endl;
-
           const auto nrows = values[0].size();
           for (std::size_t row = 0; row < nrows; ++row)
           {

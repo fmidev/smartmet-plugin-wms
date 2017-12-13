@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 17.12.12
+Version: 17.12.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -89,6 +89,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Dec 13 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.12.13-1.fmi
+- Removed forgotten debugging code from NumberLayer
+
 * Tue Dec 12 2017 Mika Heiskanen <mika.heiskanen@fmi.fi> - 17.12.12-1.fmi
 - Fixed code to allow both double and string fmisids
 
