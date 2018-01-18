@@ -28,7 +28,7 @@ enum class WMSLayerType
 };
 
 static std::set<std::string> querydata_layers = {
-    "arrow", "isoband", "isoline", "number", "symbol", "tag"};
+    "arrow", "isoband", "isoline", "map", "number", "symbol", "tag"};
 
 static std::set<std::string> postgis_layers = {"postgis", "icemap"};
 
@@ -410,6 +410,6 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
   }
 }
 
-}  // namespace Dali
+}  // namespace WMS
 }  // namespace Plugin
 }  // namespace SmartMet
