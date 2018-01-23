@@ -1,0 +1,86 @@
+{
+    "title": "TimeLayer test",
+    "producer": "pal_skandinavia",
+    "language": "fi",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"text-anchor": "end",
+		"font-family": "Verdana",
+		"font-weight": "bold",
+		"font-size": 14
+	    },
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"id": "temperature_isobands"
+		    }
+                },
+		{
+		    "layer_type": "time",	
+		    "timestamp": "validtime",
+                    "timezone": "Europe/Helsinki",
+                    "format": "Validtime: %Y-%m-%d %H:%M",
+		    "x": -20,
+		    "y": 20
+		},
+		{
+		    "layer_type": "time",	
+		    "timestamp": "origintime",
+                    "timezone": "Europe/Helsinki",
+                    "format": "Origintime: %Y-%m-%d %H:%M",
+		    "x": -20,
+		    "y": 40
+		},
+		{
+		    "layer_type": "time",	
+		    "timestamp": "time_offset",
+		    "prefix": "Offset: ",
+                    "format": "%+%H:%M",
+		    "x": -20,
+		    "y": 60
+		},
+		{
+		    "layer_type": "time",	
+		    "timestamp": "leadtime",
+		    "prefix": "Lead time: ",
+                    "format": "%+%H:%M",
+		    "x": -20,
+		    "y": 80
+		},
+		{
+		    "layer_type": "time",	
+		    "timestamp": "leadhour",
+		    "prefix": "Lead hour: ",
+                    "format": "%+%H:%M",
+		    "x": -20,
+		    "y": 100
+		},
+		{
+		    "layer_type": "time",	
+		    "timestamp": ["-24h","validtime"],
+                    "timezone": "UTC",
+		    "prefix": "Range test: ",
+                    "format": ["%m-%d %H:%M - ", "%m-%d %H:%M"],
+		    "suffix": " UTC",
+		    "x": -20,
+		    "y": 120
+		}
+	    ]
+        }
+    ]
+}
