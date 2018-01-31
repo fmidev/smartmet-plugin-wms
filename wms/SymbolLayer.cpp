@@ -54,7 +54,7 @@ struct PointValue
 };
 
 using PointValues = std::vector<PointValue>;
-}
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -254,7 +254,7 @@ PointValues read_observations(const SymbolLayer& layer,
     // We accept only the newest observation for each interval (except for flashes)
     // obsengine returns the data sorted by fmisid and by time
 
-    std::string previous_fmisid;
+    int previous_fmisid = -1;
     boost::posix_time::ptime previous_time;
 
     PointValues pointvalues;
@@ -265,7 +265,7 @@ PointValues read_observations(const SymbolLayer& layer,
       double lon = get_double(values.at(0).at(row));
       double lat = get_double(values.at(1).at(row));
       double value = kFloatMissing;
-      std::string fmisid;
+      int fmisid = -1;
 
       if (*layer.producer == "flash")
       {
@@ -274,7 +274,7 @@ PointValues read_observations(const SymbolLayer& layer,
       }
       else
       {
-        fmisid = boost::get<std::string>(values.at(2).at(row).value);
+        fmisid = get_fmisid(values.at(2).at(row));
         if (layer.parameter)
           value = get_double(values.at(3).at(row));
       }

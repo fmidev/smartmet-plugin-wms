@@ -12,6 +12,7 @@
 #include <ctpp2/CDT.hpp>
 #include <gis/Box.h>
 #include <spine/Exception.h>
+#include <spine/Json.h>
 // TODO:
 #include <boost/timer/timer.hpp>
 
@@ -50,13 +51,37 @@ void TimeLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       timezone = json.asString();
 
+    json = theJson.get("prefix", nulljson);
+    if (!json.isNull())
+      prefix = json.asString();
+
+    json = theJson.get("suffix", nulljson);
+    if (!json.isNull())
+      suffix = json.asString();
+
     json = theJson.get("timestamp", nulljson);
     if (!json.isNull())
-      timestamp = json.asString();
+    {
+      if (json.isArray())
+      {
+        for (unsigned int i = 0; i < json.size(); i++)
+          timestamp.push_back(json[i].asString());
+      }
+      else
+        timestamp.push_back(json.asString());
+    }
 
     json = theJson.get("format", nulljson);
     if (!json.isNull())
-      format = json.asString();
+    {
+      if (json.isArray())
+      {
+        for (unsigned int i = 0; i < json.size(); i++)
+          format.push_back(json[i].asString());
+      }
+      else
+        format.push_back(json.asString());
+    }
 
     auto longitudeJson = theJson.get("longitude", nulljson);
     auto latitudeJson = theJson.get("latitude", nulljson);
@@ -84,7 +109,7 @@ void TimeLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -150,39 +175,110 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
     auto tz =
         theState.getGeoEngine().getTimeZones().time_zone_from_string(timezone ? *timezone : "UTC");
 
-    boost::local_time::local_date_time ltime(boost::posix_time::not_a_date_time);
+    // Verify input timestamps and formats
 
-    if (!timestamp || *timestamp == "validtime")
-    {
-      ltime = boost::local_time::local_date_time(valid_time, tz);
-    }
-    else if (*timestamp == "origintime")
-    {
-      if (!q)
-        throw Spine::Exception(BCP, "Origintime not avaible for TimeLayer");
-      ltime = boost::local_time::local_date_time(q->originTime(), tz);
-    }
-    else if (*timestamp == "wallclock" || *timestamp == "now")
-    {
-      ltime = boost::local_time::local_date_time(now, tz);
-    }
-    else
-      throw Spine::Exception(BCP, "Unknown time-option in time-layer: '" + *timestamp + "'");
+    if (timestamp.empty())
+      throw Spine::Exception(BCP, "No timestamps or durations specified");
+    if (format.empty())
+      format.push_back("%Y-%m-%d %H:%M");
 
+    if (timestamp.size() != format.size())
+      throw Spine::Exception(BCP,
+                             "TimeLayer timestamp and format arrays should be of the same size");
+
+    // Create the output
     std::ostringstream msg;
-    std::string fmt = (format ? *format : "%Y-%m-%d %H:%M");
+    msg << prefix;
 
-    auto* facet = new boost::posix_time::time_facet(fmt.c_str());
-    msg.imbue(std::locale(msg.getloc(), facet));
-    msg << ltime.local_time();
+    for (auto i = 0ul; i < timestamp.size(); i++)
+    {
+      auto name = timestamp[i];
+      auto fmt = format[i];
+
+      if (name.empty())
+        throw Spine::Exception(BCP, "TimeLayer timestamp setting cannot be an empty string");
+      if (fmt.empty())
+        throw Spine::Exception(BCP, "TimeLayer format setting cannot be an empty string");
+
+      boost::optional<boost::local_time::local_date_time> loctime;
+      boost::optional<boost::posix_time::time_duration> duration;
+
+      if (name == "validtime")
+      {
+        loctime = boost::local_time::local_date_time(valid_time, tz);
+      }
+      else if (name == "origintime")
+      {
+        if (!q)
+          throw Spine::Exception(BCP, "Origintime not avaible for TimeLayer");
+        loctime = boost::local_time::local_date_time(q->originTime(), tz);
+      }
+      else if (name == "wallclock" || name == "now")
+      {
+        loctime = boost::local_time::local_date_time(now, tz);
+      }
+      else if (name == "starttime")
+      {
+        auto tmp = boost::local_time::local_date_time(valid_time, tz);
+        if (interval_start)
+          tmp -= boost::posix_time::minutes(*interval_start);
+        loctime = tmp;
+      }
+      else if (name == "endtime")
+      {
+        auto tmp = boost::local_time::local_date_time(valid_time, tz);
+        if (interval_end)
+          tmp += boost::posix_time::minutes(*interval_end);
+        loctime = tmp;
+      }
+      else if (name == "leadtime")
+      {
+        if (!q)
+          throw Spine::Exception(BCP, "Origintime not avaible for TimeLayer");
+        duration = valid_time - q->originTime();
+      }
+      else if (name == "leadhour")
+      {
+        if (!q)
+          throw Spine::Exception(BCP, "Origintime not avaible for TimeLayer");
+        boost::posix_time::ptime ot = q->originTime();
+        duration =
+            valid_time - ot + ot.time_of_day() - boost::posix_time::hours(ot.time_of_day().hours());
+      }
+      else if (name == "time_offset")
+      {
+        duration = boost::posix_time::minutes(time_offset ? *time_offset : 0);
+      }
+      else if (name == "interval_start")
+      {
+        duration = boost::posix_time::minutes(interval_start ? *interval_start : 0);
+      }
+      else if (name == "interval_end")
+      {
+        duration = boost::posix_time::minutes(interval_end ? *interval_end : 0);
+      }
+      else
+      {
+        loctime = boost::local_time::local_date_time(valid_time, tz) +
+                  Fmi::TimeParser::parse_duration(name);
+      }
+
+      auto* facet = new boost::posix_time::time_facet(fmt.c_str());
+      msg.imbue(std::locale(msg.getloc(), facet));
+
+      if (loctime)
+        msg << loctime->local_time();
+      else
+        msg << *duration;
+    }
+    msg << suffix;
 
     text_cdt["cdata"] = msg.str();
-
     theLayersCdt.PushBack(text_cdt);
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -199,6 +295,8 @@ std::size_t TimeLayer::hash_value(const State& theState) const
     auto hash = Layer::hash_value(theState);
     boost::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
     boost::hash_combine(hash, Dali::hash_value(timezone));
+    boost::hash_combine(hash, Dali::hash_value(prefix));
+    boost::hash_combine(hash, Dali::hash_value(suffix));
     boost::hash_combine(hash, Dali::hash_value(timestamp));
     boost::hash_combine(hash, Dali::hash_value(format));
     boost::hash_combine(hash, Dali::hash_value(x));
@@ -210,14 +308,17 @@ std::size_t TimeLayer::hash_value(const State& theState) const
     // in the hash. A better solution would be to format the timestamp and
     // then calculate the hash.
 
-    if (timestamp && (*timestamp == "wallclock" || *timestamp == "now"))
-      boost::hash_combine(hash, Dali::hash_value(now));
+    for (const auto& name : timestamp)
+    {
+      if (name == "wallclock" || name == "now")
+        boost::hash_combine(hash, Dali::hash_value(now));
+    }
 
     return hash;
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

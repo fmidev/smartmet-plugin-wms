@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=timelayer&time=200808051200 HTTP/1.0

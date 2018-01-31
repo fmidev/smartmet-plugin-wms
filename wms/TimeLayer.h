@@ -7,6 +7,8 @@
 #pragma once
 
 #include "Layer.h"
+#include <string>
+#include <vector>
 
 namespace SmartMet
 {
@@ -31,8 +33,12 @@ class TimeLayer : public Layer
   virtual std::size_t hash_value(const State& theState) const;
 
   boost::optional<std::string> timezone;
-  boost::optional<std::string> timestamp;
-  boost::optional<std::string> format;
+
+  std::vector<std::string> timestamp;  // these two should be of equal size
+  std::vector<std::string> format;
+
+  std::string prefix;  // These are usually needed only for time duration formatting
+  std::string suffix;
 
   // This may be negative and can override attributes:
   boost::optional<int> x;

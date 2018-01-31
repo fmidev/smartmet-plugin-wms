@@ -28,7 +28,7 @@ enum class WMSLayerType
 };
 
 static std::set<std::string> querydata_layers = {
-    "arrow", "isoband", "isoline", "number", "symbol", "tag"};
+    "arrow", "isoband", "isoline", "map", "number", "symbol", "tag"};
 
 static std::set<std::string> postgis_layers = {"postgis", "icemap"};
 
@@ -259,6 +259,15 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         throw Spine::Exception(BCP, "WMS Layer enum not handled in WMSLayerFactory.");
     };
 
+    // Generic variables. The quiet flag must be set before
+    // updateLayerMetaData is called.
+
+    layer->quiet = theWMSConfig.itsDaliConfig.quiet();
+    layer->productFile = theFileName;
+    layer->customer = theCustomer;
+
+    // Update metadata from DB etc
+    
     layer->updateLayerMetaData();
 
     // WMS GetCapability settings
@@ -323,12 +332,6 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         throw Spine::Exception(
             BCP, p.string() + " keyword value must be an array of strings or a string");
     }
-
-    // Other variables
-
-    layer->quiet = theWMSConfig.itsDaliConfig.quiet();
-    layer->productFile = theFileName;
-    layer->customer = theCustomer;
 
     // handle styles
 
@@ -410,6 +413,6 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
   }
 }
 
-}  // namespace Dali
+}  // namespace WMS
 }  // namespace Plugin
 }  // namespace SmartMet
