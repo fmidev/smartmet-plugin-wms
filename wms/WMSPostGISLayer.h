@@ -46,6 +46,7 @@ class WMSPostGISLayer : public WMSLayer
   virtual bool mustUpdateLayerMetaData();
 
  public:
+  WMSPostGISLayer() = delete;
   WMSPostGISLayer(const WMSConfig& config, const Json::Value& json);
 };
 
