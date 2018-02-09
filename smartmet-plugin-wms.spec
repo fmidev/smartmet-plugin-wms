@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.1.31
+Version: 18.2.9
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -16,20 +16,20 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 17.10.12
-BuildRequires: smartmet-library-macgyver-devel >= 17.11.27
-BuildRequires: smartmet-library-spine-devel >= 17.11.30
+BuildRequires: smartmet-library-macgyver-devel >= 18.2.9
+BuildRequires: smartmet-library-spine-devel >= 18.2.9
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 17.9.13
+BuildRequires: smartmet-engine-authentication-devel >= 18.2.9
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 17.10.23
+BuildRequires: smartmet-engine-observation-devel >= 18.2.9
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 17.11.30
-BuildRequires: smartmet-engine-geonames-devel >= 17.11.1
-BuildRequires: smartmet-engine-querydata-devel >= 17.12.11
-BuildRequires: smartmet-engine-contour-devel >= 17.11.1
-BuildRequires: smartmet-library-gis-devel >= 17.11.22
+BuildRequires: smartmet-engine-gis-devel >= 18.2.9
+BuildRequires: smartmet-engine-geonames-devel >= 18.2.9
+BuildRequires: smartmet-engine-querydata-devel >= 18.2.9
+BuildRequires: smartmet-engine-contour-devel >= 18.2.9
+BuildRequires: smartmet-library-gis-devel >= 18.2.8
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.5
 BuildRequires: jsoncpp-devel
@@ -41,18 +41,18 @@ Requires: fmt
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
-Requires: smartmet-library-gis >= 17.11.22
-Requires: smartmet-library-macgyver >= 17.11.27
+Requires: smartmet-library-gis >= 18.2.8
+Requires: smartmet-library-macgyver >= 18.2.9
 Requires: smartmet-library-giza >= 17.10.12
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 17.9.13
+Requires: smartmet-engine-authentication >= 18.2.9
 %endif
-Requires: smartmet-engine-querydata >= 17.12.11
-Requires: smartmet-engine-contour >= 17.11.1
-Requires: smartmet-engine-gis >= 17.11.30
-Requires: smartmet-engine-geonames >= 17.11.1
+Requires: smartmet-engine-querydata >= 18.2.9
+Requires: smartmet-engine-contour >= 18.2.9
+Requires: smartmet-engine-gis >= 18.2.9
+Requires: smartmet-engine-geonames >= 18.2.9
 Requires: smartmet-server >= 17.11.10
-Requires: smartmet-library-spine >= 17.11.30
+Requires: smartmet-library-spine >= 18.2.9
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -89,6 +89,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Fri Feb  9 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.2.9-1.fmi
+- Repackaged due to TimeZones API change
+
 * Wed Jan 31 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.1.31-1.fmi
 - Fixed wms.quiet option to work
 
