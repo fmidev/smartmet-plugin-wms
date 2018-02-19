@@ -1253,6 +1253,11 @@ void WMSConfig::getLegendGraphic(const std::string& theLayerName,
   }
 }
 
+const WMSLegendGraphicSettings WMSConfig::getLegendGraphicSettings()
+{
+  return itsLegendGraphicSettings;
+}
+
 }  // namespace WMS
 }  // namespace Plugin
 }  // namespace SmartMet

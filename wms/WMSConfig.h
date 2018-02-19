@@ -36,7 +36,7 @@ namespace Authentication
 {
 class Engine;
 }
-}
+}  // namespace Engine
 #endif
 
 namespace Plugin
@@ -45,7 +45,7 @@ namespace Dali
 {
 class Product;
 class State;
-}
+}  // namespace Dali
 namespace WMS
 {
 class WMSConfig
@@ -115,6 +115,8 @@ class WMSConfig
 #ifndef WITHOUT_OBSERVATION
   const Engine::Observation::Engine* obsEngine() const { return itsObsEngine; }
 #endif
+
+  const WMSLegendGraphicSettings getLegendGraphicSettings();
 
  private:
   void parse_references();
