@@ -449,12 +449,12 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
       itsModuleName("WMS"),
       itsConfig(theConfig),
       itsReactor(theReactor),
-      itsQEngine(NULL),
-      itsContourEngine(NULL),
-      itsGisEngine(NULL),
-      itsGeoEngine(NULL),
+      itsQEngine(nullptr),
+      itsContourEngine(nullptr),
+      itsGisEngine(nullptr),
+      itsGeoEngine(nullptr),
 #ifndef WITHOUT_OBSERVATION
-      itsObsEngine(NULL),
+      itsObsEngine(nullptr),
 #endif
       itsTemplateFactory(),
       itsImageCache(),
@@ -600,7 +600,12 @@ void Plugin::init()
 #endif
 
     if (itsShutdownRequested)
-      return;
+      itsWMSConfig->shutdown();
+
+    itsWMSConfig->init();  // heavy initializations
+
+    if (itsShutdownRequested)
+      itsWMSConfig->shutdown();
 
     itsWMSGetCapabilities.reset(
         new WMS::WMSGetCapabilities(itsConfig.templateDirectory() + "/wms_get_capabilities.c2t"));
@@ -634,13 +639,14 @@ void Plugin::shutdown()
 {
   try
   {
-    std::cout << "  -- Shutdown requested (dali)\n";
+    std::cout << "  -- Shutdown requested (dali)\n" << std::flush;
 
-    if (itsImageCache != NULL)
+    if (itsImageCache != nullptr)
       itsImageCache->shutdown();
 
-    if (itsWMSConfig != NULL)
-      itsWMSConfig->shutdown();
+    std::cout << " -- Calling wmsconfig shutdown\n" << std::flush;
+    if (itsWMSConfig != nullptr)
+      itsWMSConfig->shutdown();  // will wait for threads to finish
   }
   catch (...)
   {
