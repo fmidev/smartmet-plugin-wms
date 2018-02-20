@@ -651,11 +651,9 @@ void WMSConfig::shutdown()
 {
   try
   {
-    std::cout << "WMSConfig::shutdown called\n" << std::flush;
     if (itsShutdownRequested)
       return;
 
-    std::cout << "  -- Shutdown requested (WMSConfig)\n";
     itsShutdownRequested = true;
     itsShutdownCondition.notify_all();
 

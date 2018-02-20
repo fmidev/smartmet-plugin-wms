@@ -644,7 +644,6 @@ void Plugin::shutdown()
     if (itsImageCache != nullptr)
       itsImageCache->shutdown();
 
-    std::cout << " -- Calling wmsconfig shutdown\n" << std::flush;
     if (itsWMSConfig != nullptr)
       itsWMSConfig->shutdown();  // will wait for threads to finish
   }
