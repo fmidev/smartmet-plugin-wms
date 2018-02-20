@@ -175,10 +175,11 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
     auto tz =
         theState.getGeoEngine().getTimeZones().time_zone_from_string(timezone ? *timezone : "UTC");
 
-    // Verify input timestamps and formats
+    // Set defaults and validate input.
 
     if (timestamp.empty())
-      throw Spine::Exception(BCP, "No timestamps or durations specified");
+      timestamp.push_back("validtime");
+
     if (format.empty())
       format.push_back("%Y-%m-%d %H:%M");
 

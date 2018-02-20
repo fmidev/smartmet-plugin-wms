@@ -53,6 +53,7 @@ using ImageCache = Spine::SmartMetCache;
 class Plugin : public SmartMetPlugin, private boost::noncopyable
 {
  public:
+  Plugin() = delete;
   Plugin(Spine::Reactor* theReactor, const char* theConfig);
   virtual ~Plugin();
 
@@ -106,15 +107,12 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                               const std::string& theName,
                               bool theWmsFlag) const;
 
- protected:
+ private:
   void init();
   void shutdown();
   void requestHandler(Spine::Reactor& theReactor,
                       const Spine::HTTP::Request& theRequest,
                       Spine::HTTP::Response& theResponse);
-
- private:
-  Plugin();
 
   void daliQuery(Spine::Reactor& theReactor,
                  State& theState,

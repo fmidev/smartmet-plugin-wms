@@ -40,7 +40,6 @@ using namespace SmartMet::Plugin::Dali;
 
 namespace
 {
-#define DEFAULT_METADATA_UPDATE_INTERVAL 5  // 5 sec
 /*
  * namespace patterns look like "/..../"
  */
@@ -553,6 +552,8 @@ void WMSConfig::parse_references()
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize a WMS configuration
+ *
+ * Note: heavy tasks are performed in init() to enable quicker shutdowns
  */
 // ----------------------------------------------------------------------
 
@@ -576,8 +577,8 @@ WMSConfig::WMSConfig(const Config& daliConfig,
 #ifndef WITHOUT_OBSERVATION
       itsObsEngine(obsEngine),
 #endif
-      itsShutdownRequested(false),
       itsActiveThreadCount(0),
+      itsShutdownRequested(false),
       itsLegendGraphicSettings(daliConfig.getConfig())
 {
   try
@@ -591,19 +592,10 @@ WMSConfig::WMSConfig(const Config& daliConfig,
 
     std::string wmsVersions = config.lookup("wms.supported_versions").c_str();
     boost::algorithm::split(itsSupportedWMSVersions, wmsVersions, boost::algorithm::is_any_of(","));
-
     parse_references();
 
     // Parse GetCapability settings once to make sure the config file is valid
-
     get_capabilities(config);
-
-    // Do first layer scan
-    updateLayerMetaData();
-
-    // Begin the update loop
-    itsGetCapabilitiesThread.reset(
-        new boost::thread(boost::bind(&WMSConfig::capabilitiesUpdateLoop, this)));
   }
   catch (const libconfig::SettingNotFoundException& e)
   {
@@ -626,6 +618,31 @@ WMSConfig::WMSConfig(const Config& daliConfig,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Heavy initializations are done outside the constructor
+ *
+ * The idea is to do a fast construction so that shutdown requests can
+ * be passed faster to the class.
+ */
+// ----------------------------------------------------------------------
+
+void WMSConfig::init()
+{
+  if (itsShutdownRequested)
+    return;
+
+  // Do first layer scan
+  updateLayerMetaData();
+
+  if (itsShutdownRequested)
+    return;
+
+  // Begin the update loop
+  itsGetCapabilitiesThread.reset(
+      new boost::thread(boost::bind(&WMSConfig::capabilitiesUpdateLoop, this)));
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Shutdown
  */
 // ----------------------------------------------------------------------
@@ -634,8 +651,11 @@ void WMSConfig::shutdown()
 {
   try
   {
-    std::cout << "  -- Shutdown requested (WMSConfig)\n";
+    if (itsShutdownRequested)
+      return;
+
     itsShutdownRequested = true;
+    itsShutdownCondition.notify_all();
 
     while (itsActiveThreadCount > 0)
       boost::this_thread::sleep(boost::posix_time::milliseconds(100));
@@ -650,13 +670,20 @@ void WMSConfig::capabilitiesUpdateLoop()
 {
   try
   {
-    itsActiveThreadCount++;
+    ++itsActiveThreadCount;
     while (!itsShutdownRequested)
     {
       try
       {
-        for (int i = 0; (!itsShutdownRequested && i < DEFAULT_METADATA_UPDATE_INTERVAL); i++)
-          boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        // update capabilities every 5 seconds
+        boost::system_time timeout = boost::get_system_time() + boost::posix_time::seconds(5);
+
+        boost::unique_lock<boost::mutex> lock(itsShutdownMutex);
+        while (!itsShutdownRequested)
+        {
+          if (!itsShutdownCondition.timed_wait(lock, timeout))
+            break;  // timeout
+        }
 
         if (!itsShutdownRequested)
           updateLayerMetaData();
@@ -667,7 +694,7 @@ void WMSConfig::capabilitiesUpdateLoop()
         exception.printError();
       }
     }
-    itsActiveThreadCount--;
+    --itsActiveThreadCount;
   }
   catch (...)
   {
@@ -721,6 +748,9 @@ void WMSConfig::updateLayerMetaData()
     boost::filesystem::directory_iterator end_itr;
     for (boost::filesystem::directory_iterator itr(customerdir); itr != end_itr; ++itr)
     {
+      if (itsShutdownRequested)
+        return;
+
       try
       {
         if (is_directory(itr->status()))
@@ -735,6 +765,9 @@ void WMSConfig::updateLayerMetaData()
                itr2 != end_prod_itr;
                ++itr2)
           {
+            if (itsShutdownRequested)
+              return;
+
             try
             {
               if (is_regular_file(itr2->status()))

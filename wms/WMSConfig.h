@@ -36,7 +36,7 @@ namespace Authentication
 {
 class Engine;
 }
-}
+}  // namespace Engine
 #endif
 
 namespace Plugin
@@ -45,7 +45,7 @@ namespace Dali
 {
 class Product;
 class State;
-}
+}  // namespace Dali
 namespace WMS
 {
 class WMSConfig
@@ -71,6 +71,8 @@ class WMSConfig
   CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
                             const boost::optional<std::string>& wms_namespace) const;
 #endif
+
+  void init();
 
   std::string layerCustomer(const std::string& theLayerName) const;
   const std::set<std::string>& supportedMapFormats() const;
@@ -164,8 +166,12 @@ class WMSConfig
 
   friend class WMSLayerFactory;
 
-  bool itsShutdownRequested;
-  int itsActiveThreadCount;
+  // Shutdown variables
+
+  boost::atomic<int> itsActiveThreadCount;
+  boost::atomic<bool> itsShutdownRequested;
+  boost::mutex itsShutdownMutex;
+  boost::condition_variable itsShutdownCondition;
 
   std::map<std::string, Json::Value> itsLegendGraphicLayers;
   // configuration info for legend (parameter names, units, legend size)
