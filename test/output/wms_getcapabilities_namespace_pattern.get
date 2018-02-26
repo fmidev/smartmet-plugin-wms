@@ -99,27 +99,71 @@
       <Name>test:mean_temperature</Name>
       <Title>Mean temperature</Title>
       <Abstract>Sea surface mean temperature (1971-2000)</Abstract>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
       <CRS>EPSG:4326</CRS>
       <EX_GeographicBoundingBox>
-        <westBoundLongitude>0</westBoundLongitude>
-        <eastBoundLongitude>0</eastBoundLongitude>
-        <southBoundLatitude>0</southBoundLatitude>
-        <northBoundLatitude>0</northBoundLatitude>
+        <westBoundLongitude>11.3001098633</westBoundLongitude>
+        <eastBoundLongitude>26.3001098633</eastBoundLongitude>
+        <southBoundLatitude>54.1500854492</southBoundLatitude>
+        <northBoundLatitude>65.0001220703</northBoundLatitude>
       </EX_GeographicBoundingBox>
-      <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/>
+      <BoundingBox CRS="CRS:27" minx="11.3001098633" miny="54.1500854492" maxx="26.3001098633" maxy="65.0001220703"/>
+      <BoundingBox CRS="CRS:83" minx="11.3001098633" miny="54.1500854492" maxx="26.3001098633" maxy="65.0001220703"/>
+      <BoundingBox CRS="CRS:84" minx="11.3001098633" miny="54.1500854492" maxx="26.3001098633" maxy="65.0001220703"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="87256.4209033" miny="-3844726.29036" maxx="956820.213493" maxy="-3272046.66022"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-581698.914143" miny="-3801468.17743" maxx="289229.899046" maxy="-2619765.59641"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3467154.57005" maxy="7211668.32659"/>
+      <BoundingBox CRS="EPSG:3035" minx="4405961.86131" miny="3450022.30882" maxx="5086775.90071" maxy="4744790.64153"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119264" miny="6615141.39345" maxx="466996.19624" maxy="7208650.88022"/>
+      <BoundingBox CRS="EPSG:3067" minx="43547.7893223" miny="6549298.622" maxx="466996.19624" maxy="7208650.88022"/>
+      <BoundingBox CRS="EPSG:3857" minx="1257922.47589" miny="7198632.07847" maxx="2927714.83779" maxy="9608403.66386"/>
+      <BoundingBox CRS="EPSG:4258" minx="11.3001098633" miny="54.1500854492" maxx="26.3001098633" maxy="65.0001220703"/>
+      <BoundingBox CRS="EPSG:4326" minx="11.3001098633" miny="54.1500854492" maxx="26.3001098633" maxy="65.0001220703"/>
     </Layer>
     <Layer>
       <Name>test:temperature_isotherm</Name>
       <Title>Temperature isotherm</Title>
       <Abstract>Temperature isotherm</Abstract>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
       <CRS>EPSG:4326</CRS>
       <EX_GeographicBoundingBox>
-        <westBoundLongitude>0</westBoundLongitude>
-        <eastBoundLongitude>0</eastBoundLongitude>
-        <southBoundLatitude>0</southBoundLatitude>
-        <northBoundLatitude>0</northBoundLatitude>
+        <westBoundLongitude>9.02344115211</westBoundLongitude>
+        <eastBoundLongitude>22.4499560953</eastBoundLongitude>
+        <southBoundLatitude>54.1173189013</southBoundLatitude>
+        <northBoundLatitude>62.9455216043</northBoundLatitude>
       </EX_GeographicBoundingBox>
-      <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/>
+      <BoundingBox CRS="CRS:27" minx="9.02344115211" miny="54.1173189013" maxx="22.4499560953" maxy="62.9455216043"/>
+      <BoundingBox CRS="CRS:83" minx="9.02344115211" miny="54.1173189013" maxx="22.4499560953" maxy="62.9455216043"/>
+      <BoundingBox CRS="CRS:84" minx="9.02344115211" miny="54.1173189013" maxx="22.4499560953" maxy="62.9455216043"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="-65607.8659724" miny="-3848912.7592" maxx="734951.645596" maxy="-3328909.78343"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-732967.821702" miny="-3779046.43956" maxx="122266.065592" maxy="-2857626.51544"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3269319.77287" maxy="6990614.83127"/>
+      <BoundingBox CRS="EPSG:3035" minx="4257130.37505" miny="3446043.58572" maxx="4952147.76661" maxy="4483138.7725"/>
+      <BoundingBox CRS="EPSG:3067" minx="43547.7893223" miny="6549298.622" maxx="269241.641266" maxy="6987685.49922"/>
+      <BoundingBox CRS="EPSG:3857" minx="1004484.87426" miny="7192406.47349" maxx="2499117.68086" maxy="9086905.12844"/>
+      <BoundingBox CRS="EPSG:4258" minx="9.02344115211" miny="54.1173189013" maxx="22.4499560953" maxy="62.9455216043"/>
+      <BoundingBox CRS="EPSG:4326" minx="9.02344115211" miny="54.1173189013" maxx="22.4499560953" maxy="62.9455216043"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      
     </Layer>
     <Layer>
       <Name>test:temperature_isotherm_labels</Name>

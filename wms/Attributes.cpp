@@ -30,15 +30,15 @@ void Attributes::add(const std::string& theName, const std::string& theValue)
 
 // ----------------------------------------------------------------------
 /*!
-* \brief Initialize attributes from JSON
-*
-* Note: We allow JSON values to be integers and doubles, but
-*       convert them directly to strings since that is how
-*       we are going to represent them when printing SVG
-*       attributes. This feature allows the user to put
-*       attributes in a natural form into the attributes without
-*       bothering with unnecessary quotes.
-*/
+ * \brief Initialize attributes from JSON
+ *
+ * Note: We allow JSON values to be integers and doubles, but
+ *       convert them directly to strings since that is how
+ *       we are going to represent them when printing SVG
+ *       attributes. This feature allows the user to put
+ *       attributes in a natural form into the attributes without
+ *       bothering with unnecessary quotes.
+ */
 // ----------------------------------------------------------------------
 
 void Attributes::init(const Json::Value& theJson, const Config& theConfig)
@@ -113,8 +113,8 @@ void Attributes::init(const Json::Value& theJson, const Config& theConfig)
  * Note: We disallow using the style attribute directly since we wish
  *       to reserve the keyword for selecting the product style.
  *       Hence we know the attributes should not contain a style tag.
-     *
-     * Note: We allow qid in the input, but disable it in the output
+ *
+ * Note: We allow qid in the input, but disable it in the output
  */
 // ----------------------------------------------------------------------
 
@@ -275,7 +275,7 @@ std::size_t Attributes::hash_value(const State& theState) const
     if (iri)
       boost::hash_combine(hash, theState.getMarkerHash(*iri));
 
-    iri = getLocalIri("pattern");
+    iri = getLocalIri("fill");
     if (iri)
       boost::hash_combine(hash, theState.getPatternHash(*iri));
 

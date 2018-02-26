@@ -314,7 +314,7 @@ void State::addAttributes(CTPP::CDT& theGlobals,
     if (iri && addId(*iri))
       theGlobals["includes"][*iri] = itsPlugin.getMarker(itsCustomer, *iri, itUsesWms);
 
-    iri = theAttributes.getLocalIri("pattern");
+    iri = theAttributes.getLocalIri("fill");
     if (iri && addId(*iri))
       theGlobals["includes"][*iri] = itsPlugin.getPattern(itsCustomer, *iri, itUsesWms);
 

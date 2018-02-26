@@ -9,3 +9,4 @@ obj/
 *.pb.h
 *.pb.cpp
 *.c2t
+compile_commands.json
