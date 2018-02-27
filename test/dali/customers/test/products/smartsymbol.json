@@ -1,0 +1,121 @@
+{
+    "title": "SmartSymbol test",
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+		{
+		    "qid": "background",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "rgb(0,75,140)"
+		    }
+		},
+		{
+		    "qid": "europe",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"where": "iso_a2 NOT IN ('FI','AX')"
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country",
+			"fill": "rgb(120,120,0)"
+		    }
+		},
+		{
+		    "qid": "finland",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"where": "iso_a2 IN ('FI','AX')"
+		    },
+		    "attributes":
+		    {
+			"id": "finland_country",
+			"fill": "rgb(120,130,33)"
+		    }
+		},
+		{
+		    "qid": "l1",
+		    "layer_type": "isoband",
+		    "isobands": "json:isobands/precipitation.json",
+		    "css": "isobands/precipitation.css",
+		    "parameter": "Precipitation1h",
+		    "attributes":
+		    {
+			"id": "precipitation_isobands"
+		    }
+		},
+		{
+		    "qid": "europe_lines",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries"
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country_lines",
+			"fill": "none",
+			"stroke": "#222",
+			"stroke-width": "0.3px"
+		    }
+		},
+		{
+		    "qid": "l2",
+		    "layer_type": "symbol",
+		    "css": "symbols/smartsymbol.css",
+		    "symbols": "json:symbols/smartsymbol.json",
+		    "parameter": "smartsymbol",
+		    "scale": 1,
+		    "positions":
+		    {
+			"x": 30,
+			"y": 30,
+			"dx": 50,
+			"dy": 50,
+			"ddx": 25
+		    },
+		    "attributes":
+		    {
+			"id": "weather",
+			"class": "Weather"
+		    }
+		},
+		{
+		    "qid": "l2",
+		    "layer_type": "symbol",
+		    "css": "symbols/dot.css",
+		    "symbol": "dot",
+		    "positions":
+		    {
+			"x": 30,
+			"y": 30,
+			"dx": 50,
+			"dy": 50,
+			"ddx": 25
+		    }
+		}
+            ]
+        }
+    ]
+}

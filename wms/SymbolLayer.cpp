@@ -86,6 +86,9 @@ PointValues read_forecasts(const SymbolLayer& layer,
     boost::local_time::local_date_time localdatetime(valid_time_period.begin(), utc);
 
     PointValues pointvalues;
+    auto mylocale = std::locale::classic();
+    NFmiPoint dummy;
+
     for (const auto& point : points)
     {
       if (!layer.inside(box, point.x, point.y))
@@ -93,34 +96,32 @@ PointValues read_forecasts(const SymbolLayer& layer,
 
       if (layer.symbols.empty())
       {
-        PointValue value{point, kFloatMissing};
-        pointvalues.push_back(value);
+        PointValue missingvalue{point, kFloatMissing};
+        pointvalues.push_back(missingvalue);
       }
       else
       {
         Spine::Location loc(point.latlon.X(), point.latlon.Y());
-        NFmiPoint dummy;
 
         // Q API SUCKS!!
-        Engine::Querydata::ParameterOptions options(*param,
-                                                    "",
-                                                    loc,
-                                                    "",
-                                                    "",
-                                                    *timeformatter,
-                                                    "",
-                                                    "",
-                                                    std::locale::classic(),
-                                                    "",
-                                                    false,
-                                                    NFmiPoint(),
-                                                    dummy);
+        Engine::Querydata::ParameterOptions options(
+            *param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
 
         auto result = q->value(options, localdatetime);
         if (boost::get<double>(&result))
         {
-          PointValue value{point, *boost::get<double>(&result)};
-          pointvalues.push_back(value);
+          double tmp = *boost::get<double>(&result);
+          pointvalues.push_back(PointValue{point, tmp});
+        }
+        else if (boost::get<int>(&result))
+        {
+          double tmp = *boost::get<int>(&result);
+          pointvalues.push_back(PointValue{point, tmp});
+        }
+        else
+        {
+          PointValue missingvalue{point, kFloatMissing};
+          pointvalues.push_back(missingvalue);
         }
       }
     }
