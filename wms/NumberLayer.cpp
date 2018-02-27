@@ -221,17 +221,39 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     if (!use_observations)
     {
-      if (!q->param(param.number()))
-        throw Spine::Exception(
-            BCP, "Parameter " + param.name() + " not available in the number layer querydata");
+      boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+      boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
+      boost::local_time::local_date_time localdatetime(met_time, utc);
+
+      auto mylocale = std::locale::classic();
+      NFmiPoint dummy;
 
       for (const auto& point : points)
       {
         if (inside(box, point.x, point.y))
         {
-          PointValue value{point,
-                           q->interpolate(point.latlon, met_time, 180)};  // TODO: magic constant
-          pointvalues.push_back(value);
+          Spine::Location loc(point.latlon.X(), point.latlon.Y());
+
+          // Q API SUCKS!!
+          Engine::Querydata::ParameterOptions options(
+              param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
+
+          auto result = q->value(options, localdatetime);
+          if (boost::get<double>(&result))
+          {
+            double tmp = *boost::get<double>(&result);
+            pointvalues.push_back(PointValue{point, tmp});
+          }
+          else if (boost::get<int>(&result))
+          {
+            double tmp = *boost::get<int>(&result);
+            pointvalues.push_back(PointValue{point, tmp});
+          }
+          else
+          {
+            PointValue missingvalue{point, kFloatMissing};
+            pointvalues.push_back(missingvalue);
+          }
         }
       }
     }

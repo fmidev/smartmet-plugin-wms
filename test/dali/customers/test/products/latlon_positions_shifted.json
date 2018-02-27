@@ -47,11 +47,15 @@
                             },
                             {
                                 "longitude": 18, // Tukholma
-                                "latitude": 59
+                                "latitude": 59,
+				"dx": 5, // move to sea
+				"dy": 5
                             },
                             {
                                 "longitude": 2, // Barcelona
-                                "latitude": 41
+                                "latitude": 41,
+				"dx": 10, // move to sea
+				"dy": 10
                             },
                             {
                                 "longitude": 12, // Rooma
@@ -59,7 +63,8 @@
                             },
                             {
                                 "longitude": -9, // Lissabon
-                                "latitude": 38
+                                "latitude": 38,
+				"dx": -20 // move to sea
                             }
                         ]
                     }

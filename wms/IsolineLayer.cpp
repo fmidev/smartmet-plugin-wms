@@ -249,15 +249,8 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     // Select the data
 
-    if (!q->param(options.parameter.number()))
-    {
-      throw Spine::Exception(BCP, "Parameter '" + options.parameter.name() + "' unavailable.");
-    }
-
     if (!q->firstLevel())
-    {
       throw Spine::Exception(BCP, "Unable to set first level in querydata.");
-    }
 
     // Select the level.
     if (options.level)
@@ -271,7 +264,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     }
 
     const auto& qEngine = theState.getQEngine();
-    auto matrix = qEngine.getValues(q, valueshash, options.time);
+    auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
 
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs.get());
     std::vector<OGRGeometryPtr> geoms =
