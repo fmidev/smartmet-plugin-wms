@@ -37,7 +37,7 @@ void Location::init(const Json::Value& theJson, const Config& theConfig)
     // Iterate through all the members
 
     const auto members = theJson.getMemberNames();
-    BOOST_FOREACH (const auto& name, members)
+    for (const auto& name : members)
     {
       const Json::Value& json = theJson[name];
 
@@ -45,13 +45,17 @@ void Location::init(const Json::Value& theJson, const Config& theConfig)
         longitude = json.asDouble();
       else if (name == "latitude")
         latitude = json.asDouble();
+      else if (name == "dx")
+        dx = json.asInt();
+      else if (name == "dy")
+        dy = json.asInt();
       else
         throw Spine::Exception(BCP, "Location does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -67,11 +71,13 @@ std::size_t Location::hash_value(const State& theState) const
   {
     auto hash = Dali::hash_value(longitude);
     boost::hash_combine(hash, Dali::hash_value(latitude));
+    boost::hash_combine(hash, Dali::hash_value(dx));
+    boost::hash_combine(hash, Dali::hash_value(dy));
     return hash;
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

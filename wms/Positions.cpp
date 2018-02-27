@@ -945,10 +945,18 @@ Positions::Points Positions::getLatLonPoints(Engine::Querydata::Q theQ,
       // to pixel coordinate
       theBox.transform(xcoord, ycoord);
 
+      // Global position adjustment
       if (dx)
         xcoord += *dx;
       if (dy)
         ycoord += *dy;
+
+      // Individual adjustments
+      if (location.dx)
+        xcoord += *location.dx;
+
+      if (location.dy)
+        ycoord += *location.dy;
 
       // Skip if not inside desired areas
       if (inside(lon, lat, forecastMode))

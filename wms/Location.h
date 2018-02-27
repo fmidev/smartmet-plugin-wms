@@ -28,6 +28,10 @@ class Location
   boost::optional<double> longitude;
   boost::optional<double> latitude;
 
+  // Optional position shifts
+  boost::optional<int> dx;
+  boost::optional<int> dy;
+
 };  // class Location
 
 }  // namespace Dali
