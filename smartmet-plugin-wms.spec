@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.2.28
+Version: 18.3.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -89,6 +89,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Mar  1 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.3.1-1.fmi
+- GetLegend expiration time is now configurable
+
 * Wed Feb 28 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.2.28-1.fmi
 - Added station layout
 - Modified Positions to return dx,dy adjustments to objects attached to individual coordinates
