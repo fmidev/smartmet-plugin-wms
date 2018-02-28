@@ -1,0 +1,92 @@
+{
+    "title": "Temperature at fmisid stations",
+    "producer": "opendata",
+    "projection":
+    {
+	"crs": "EPSG:4326",
+	"cx" : 25,
+	"cy" : 65,
+	"resolution" : 3,
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+	    "layers":
+	    [
+		{
+		    "qid": "sea",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "white"
+		    }
+		},
+		{
+                    "qid": "l1",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 100
+                    },
+                    "attributes":
+                    {
+                        "id": "europe_country_lines",
+                        "fill": "none",
+                        "stroke": "#222",
+                        "stroke-width": "0.3px"
+                    }
+                },
+		{
+		    "qid": "l2",
+		    "layer_type": "number",
+		    "css": "numbers/integers.css",
+		    "parameter": "Temperature",
+		    "label":
+		    {
+			"dx": 5,
+			"dy": 5,
+			"missing": "-"
+		    },
+		    "attributes":
+		    {
+			"class": "Number"
+		    },
+		    "symbol": "dot",
+		    "positions":
+		    {
+			"layout": "station",
+			"stations":
+			[
+			    {
+				// Utsjoki
+				"fmisid": 102035,
+				"dx": -12
+			    },
+			    102016, 101932, 101873, 101675, 101726,
+			    100949, 101256, 101339, 101651, 101237,
+			    101124,
+			    {
+				// Helsinki
+				"fmisid": 100971,
+				"dx": -5,
+				"dy": -10
+			    },
+			    102019, 100953, 102052, 100917, 101152,
+			    101636, 101799, 101254, 101914, 101064,
+			    101959, 101826, 101485, 101421
+			]
+		    }
+		}
+	    ]
+	}
+    ]
+}

@@ -27,13 +27,17 @@ class Station
   std::size_t hash_value(const State& theState) const;
 
   boost::optional<int> fmisid;
-  // boost::optional<int> lpnn;
-  // boost::optional<int> wmo;
+  boost::optional<int> lpnn;
+  boost::optional<int> wmo;
+  boost::optional<int> geoid;
   boost::optional<double> longitude;
   boost::optional<double> latitude;
   boost::optional<std::string> symbol;
   Attributes attributes;
   boost::optional<Title> title;
+
+  boost::optional<int> dx;
+  boost::optional<int> dy;
 
 };  // class Station
 

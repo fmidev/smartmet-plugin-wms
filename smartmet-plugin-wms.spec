@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.2.27
-Release: 2%{?dist}.fmi
+Version: 18.2.28
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -89,6 +89,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Feb 28 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.2.28-1.fmi
+- Added station layout
+- Modified Positions to return dx,dy adjustments to objects attached to individual coordinates
+- Support station layout for numbers, symbols and arrows
+
 * Tue Feb 27 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.2.27-2.fmi
 - Individual latlon locations can now be shifted with dx/dy attributes
 

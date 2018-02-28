@@ -190,188 +190,509 @@ PointValues read_forecasts(const ArrowLayer& layer,
 // ----------------------------------------------------------------------
 
 #ifndef WITHOUT_OBSERVATION
+
+PointValues read_all_observations(const ArrowLayer& layer,
+                                  State& state,
+                                  const boost::shared_ptr<OGRSpatialReference>& crs,
+                                  const Fmi::Box& box,
+                                  const boost::posix_time::time_period& valid_time_period,
+                                  OGRCoordinateTransformation& transformation)
+{
+  try
+  {
+    Engine::Observation::Settings settings;
+    settings.allplaces = false;
+    settings.stationtype = *layer.producer;
+    settings.latest = true;
+    settings.timezone = "UTC";
+    settings.numberofstations = 1;
+    settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
+
+    // settings.timestep = ?;
+
+    settings.starttimeGiven = true;
+
+    settings.starttime = valid_time_period.begin();
+    settings.endtime = valid_time_period.end();
+
+    auto& obsengine = state.getObsEngine();
+    settings.parameters.push_back(obsengine.makeParameter("stationlon"));
+    settings.parameters.push_back(obsengine.makeParameter("stationlat"));
+
+    bool use_uv_components = (layer.u && layer.v);
+
+    if (use_uv_components)
+    {
+      settings.parameters.push_back(obsengine.makeParameter(*layer.u));
+      settings.parameters.push_back(obsengine.makeParameter(*layer.v));
+    }
+    else
+    {
+      settings.parameters.push_back(obsengine.makeParameter(*layer.direction));
+      if (layer.speed)
+        settings.parameters.push_back(obsengine.makeParameter(*layer.speed));
+      else
+        settings.parameters.push_back(obsengine.makeParameter("WindSpeedMS"));
+    }
+
+    // Request intersection parameters too - if any
+    auto iparams = layer.positions->intersections.parameters();
+
+    int firstextraparam =
+        settings.parameters.size();  // which column holds the first extra parameter
+
+    for (const auto& extraparam : iparams)
+      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+
+    // Coordinates or bounding box
+
+    settings.boundingBox = layer.getClipBoundingBox(box, crs);
+
+    auto result = obsengine.values(settings);
+
+    // Build the pointvalues
+
+    if (!result)
+      return {};
+
+    const auto& values = *result;
+    if (values.empty())
+      return {};
+
+    // We accept only the newest observation for each interval
+    // obsengine returns the data sorted by fmisid and by time
+
+    PointValues pointvalues;
+
+    for (std::size_t row = 0; row < values[0].size(); ++row)
+    {
+      double lon = get_double(values.at(0).at(row));
+      double lat = get_double(values.at(1).at(row));
+
+      double wdir = kFloatMissing;
+      double wspd = kFloatMissing;
+      if (!use_uv_components)
+      {
+        wdir = get_double(values.at(2).at(row));
+        wspd = get_double(values.at(3).at(row));
+      }
+      else
+      {
+        double uspd = get_double(values.at(2).at(row));
+        double vspd = get_double(values.at(3).at(row));
+
+        if (uspd != kFloatMissing && vspd != kFloatMissing)
+        {
+          wspd = sqrt(uspd * uspd + vspd * vspd);
+          if (uspd != 0 || vspd != 0)
+            wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+        }
+      }
+
+      // Collect extra values used for filtering the input
+
+      Intersections::IntersectValues ivalues;
+
+      for (std::size_t i = 0; i < iparams.size(); i++)
+        ivalues[iparams.at(i)] = get_double(values.at(firstextraparam + i).at(row));
+
+      // Convert latlon to world coordinate if needed
+
+      double x = lon;
+      double y = lat;
+
+      if (!crs->IsGeographic())
+        if (!transformation.Transform(1, &x, &y))
+          continue;
+
+      // To pixel coordinate
+      box.transform(x, y);
+
+      // Skip if not inside desired area
+      if (!layer.inside(box, x, y))
+        continue;
+
+      // Skip if not inside/outside desired shapes or limits of other parameters
+      if (!layer.positions->inside(lon, lat, ivalues))
+        continue;
+
+      int xpos = x;
+      int ypos = y;
+
+      Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
+      PointValue pv{point, wdir, wspd};
+      pointvalues.push_back(pv);
+    }
+
+    return pointvalues;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
+  }
+}
+
+PointValues read_station_observations(const ArrowLayer& layer,
+                                      State& state,
+                                      const boost::shared_ptr<OGRSpatialReference>& crs,
+                                      const Fmi::Box& box,
+                                      const boost::posix_time::time_period& valid_time_period,
+                                      OGRCoordinateTransformation& transformation)
+{
+  try
+  {
+    using Coordinate = std::map<std::string, double>;
+
+    Engine::Observation::Settings settings;
+    settings.allplaces = false;
+    settings.stationtype = *layer.producer;
+    settings.latest = true;
+    settings.timezone = "UTC";
+    settings.numberofstations = 1;
+    settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
+
+    // settings.timestep = ?;
+
+    settings.starttimeGiven = true;
+
+    settings.starttime = valid_time_period.begin();
+    settings.endtime = valid_time_period.end();
+
+    auto& obsengine = state.getObsEngine();
+    settings.parameters.push_back(obsengine.makeParameter("stationlon"));
+    settings.parameters.push_back(obsengine.makeParameter("stationlat"));
+
+    bool use_uv_components = (layer.u && layer.v);
+
+    if (use_uv_components)
+    {
+      settings.parameters.push_back(obsengine.makeParameter(*layer.u));
+      settings.parameters.push_back(obsengine.makeParameter(*layer.v));
+    }
+    else
+    {
+      settings.parameters.push_back(obsengine.makeParameter(*layer.direction));
+      if (layer.speed)
+        settings.parameters.push_back(obsengine.makeParameter(*layer.speed));
+      else
+        settings.parameters.push_back(obsengine.makeParameter("WindSpeedMS"));
+    }
+
+    // Request intersection parameters too - if any
+    auto iparams = layer.positions->intersections.parameters();
+
+    int firstextraparam =
+        settings.parameters.size();  // which column holds the first extra parameter
+
+    for (const auto& extraparam : iparams)
+      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+
+    if (!layer.positions)
+      throw Spine::Exception(BCP, "Positions not defined for station-layout of numbers");
+
+    // We must read the stations one at a time to preserve dx,dy values
+    PointValues pointvalues;
+
+    for (const auto& station : layer.positions->stations.stations)
+    {
+      // Copy Oracle settings
+      auto opts = settings;
+
+      // Use an unique ID first if specified, ignoring the coordinates even if set
+      if (station.fmisid)
+        opts.fmisids.push_back(*station.fmisid);
+      else if (station.wmo)
+        opts.wmos.push_back(*station.wmo);
+      else if (station.lpnn)
+        opts.lpnns.push_back(*station.lpnn);
+      else if (station.geoid)
+        opts.geoids.push_back(*station.geoid);
+      else if (station.longitude && station.latitude)
+      {
+        Coordinate coordinate{std::make_pair("lon", *station.longitude),
+                              std::make_pair("lat", *station.latitude)};
+        opts.coordinates.push_back(coordinate);
+      }
+      else
+        throw Spine::Exception(BCP, "Station ID or coordinate missing");
+
+      auto result = obsengine.values(opts);
+
+      if (!result || result->empty() || (*result)[0].empty())
+        continue;
+
+      const auto& values = *result;
+
+      // We accept only the newest observation for each interval
+      // obsengine returns the data sorted by fmisid and by time
+
+      const int row = 0;
+
+      double lon = get_double(values.at(0).at(row));
+      double lat = get_double(values.at(1).at(row));
+
+      double wdir = kFloatMissing;
+      double wspd = kFloatMissing;
+      if (!use_uv_components)
+      {
+        wdir = get_double(values.at(2).at(row));
+        wspd = get_double(values.at(3).at(row));
+      }
+      else
+      {
+        double uspd = get_double(values.at(2).at(row));
+        double vspd = get_double(values.at(3).at(row));
+
+        if (uspd != kFloatMissing && vspd != kFloatMissing)
+        {
+          wspd = sqrt(uspd * uspd + vspd * vspd);
+          if (uspd != 0 || vspd != 0)
+            wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+        }
+      }
+
+      // Collect extra values used for filtering the input
+
+      Intersections::IntersectValues ivalues;
+
+      for (std::size_t i = 0; i < iparams.size(); i++)
+        ivalues[iparams.at(i)] = get_double(values.at(firstextraparam + i).at(row));
+
+      // Convert latlon to world coordinate if needed
+
+      double x = lon;
+      double y = lat;
+
+      if (!crs->IsGeographic())
+        if (!transformation.Transform(1, &x, &y))
+          continue;
+
+      // To pixel coordinate
+      box.transform(x, y);
+
+      // Skip if not inside desired area
+      if (!layer.inside(box, x, y))
+        continue;
+
+      // Skip if not inside/outside desired shapes or limits of other parameters
+      if (!layer.positions->inside(lon, lat, ivalues))
+        continue;
+
+      int xpos = x;
+      int ypos = y;
+
+      int deltax = (station.dx ? *station.dx : 0);
+      int deltay = (station.dy ? *station.dy : 0);
+
+      Positions::Point point{xpos, ypos, NFmiPoint(lon, lat), deltax, deltay};
+      PointValue pv{point, wdir, wspd};
+      pointvalues.push_back(pv);
+    }
+
+    return pointvalues;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
+  }
+}
+
+PointValues read_latlon_observations(const ArrowLayer& layer,
+                                     State& state,
+                                     const boost::shared_ptr<OGRSpatialReference>& crs,
+                                     const Fmi::Box& box,
+                                     const boost::posix_time::time_period& valid_time_period,
+                                     OGRCoordinateTransformation& transformation,
+                                     const Positions::Points& points)
+{
+  try
+  {
+    using Coordinate = std::map<std::string, double>;
+
+    Engine::Observation::Settings settings;
+    settings.allplaces = false;
+    settings.stationtype = *layer.producer;
+    settings.timezone = "UTC";
+    settings.numberofstations = 1;                    // we need only the nearest station
+    settings.latest = true;                           // we need only the newest observation
+    settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
+
+    settings.starttimeGiven = true;
+
+    settings.starttime = valid_time_period.begin();
+    settings.endtime = valid_time_period.end();
+
+    auto& obsengine = state.getObsEngine();
+    settings.parameters.push_back(obsengine.makeParameter("stationlon"));
+    settings.parameters.push_back(obsengine.makeParameter("stationlat"));
+    settings.parameters.push_back(obsengine.makeParameter("fmisid"));
+
+    bool use_uv_components = (layer.u && layer.v);
+
+    if (use_uv_components)
+    {
+      settings.parameters.push_back(obsengine.makeParameter(*layer.u));
+      settings.parameters.push_back(obsengine.makeParameter(*layer.v));
+    }
+    else
+    {
+      settings.parameters.push_back(obsengine.makeParameter(*layer.direction));
+      if (layer.speed)
+        settings.parameters.push_back(obsengine.makeParameter(*layer.speed));
+      else
+        settings.parameters.push_back(obsengine.makeParameter("WindSpeedMS"));
+    }
+
+    // Request intersection parameters too - if any
+    auto iparams = layer.positions->intersections.parameters();
+
+    int firstextraparam =
+        settings.parameters.size();  // which column holds the first extra parameter
+
+    for (const auto& extraparam : iparams)
+      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+
+    // Process the points one at a time so that we can assign dx,dy values to them
+
+    PointValues pointvalues;
+
+    // We do not use the same station twice
+    std::set<int> used_fmisids;
+
+    for (const auto& point : points)
+    {
+      // Copy common Oracle settings
+      auto opts = settings;
+
+      Coordinate coordinate{std::make_pair("lon", point.latlon.X()),
+                            std::make_pair("lat", point.latlon.Y())};
+
+      opts.coordinates.push_back(coordinate);
+      auto result = obsengine.values(opts);
+
+      if (!result || result->empty() || (*result)[0].empty())
+        continue;
+
+      const auto& values = *result;
+
+      // We accept only the newest observation for each interval
+      // obsengine returns the data sorted by fmisid and by time
+
+      const int row = 0;
+
+      double lon = get_double(values.at(0).at(row));
+      double lat = get_double(values.at(1).at(row));
+      int fmisid = get_fmisid(values.at(2).at(row));
+
+      if (used_fmisids.find(fmisid) != used_fmisids.end())
+        continue;
+      used_fmisids.insert(fmisid);
+
+      double wdir = kFloatMissing;
+      double wspd = kFloatMissing;
+      if (!use_uv_components)
+      {
+        wdir = get_double(values.at(3).at(row));
+        wspd = get_double(values.at(4).at(row));
+      }
+      else
+      {
+        double uspd = get_double(values.at(3).at(row));
+        double vspd = get_double(values.at(4).at(row));
+
+        if (uspd != kFloatMissing && vspd != kFloatMissing)
+        {
+          wspd = sqrt(uspd * uspd + vspd * vspd);
+          if (uspd != 0 || vspd != 0)
+            wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+        }
+      }
+
+      // Collect extra values used for filtering the input
+
+      Intersections::IntersectValues ivalues;
+
+      for (std::size_t i = 0; i < iparams.size(); i++)
+        ivalues[iparams.at(i)] = get_double(values.at(firstextraparam + i).at(row));
+
+      // Convert latlon to world coordinate if needed
+
+      double x = lon;
+      double y = lat;
+
+      if (!crs->IsGeographic())
+        if (!transformation.Transform(1, &x, &y))
+          continue;
+
+      // To pixel coordinate
+      box.transform(x, y);
+
+      // Skip if not inside desired area
+      if (!layer.inside(box, x, y))
+        continue;
+
+      // Skip if not inside/outside desired shapes or limits of other parameters
+      if (!layer.positions->inside(lon, lat, ivalues))
+        continue;
+
+      int xpos = x;
+      int ypos = y;
+
+      Positions::Point pp{xpos, ypos, NFmiPoint(lon, lat), point.dx, point.dy};
+      PointValue pv{pp, wdir, wspd};
+      pointvalues.push_back(pv);
+    }
+
+    return pointvalues;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
+  }
+}
+
 PointValues read_observations(const ArrowLayer& layer,
                               State& state,
                               const boost::shared_ptr<OGRSpatialReference>& crs,
                               const Fmi::Box& box,
                               const boost::posix_time::time_period& valid_time_period)
 {
-  Engine::Observation::Settings settings;
-  settings.starttime = valid_time_period.begin();
-  settings.endtime = valid_time_period.end();
-  settings.starttimeGiven = true;
-  settings.stationtype = *layer.producer;
-  settings.timezone = "UTC";
-  settings.numberofstations = 1;
-  settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
-
-  // Get actual station coordinates plus the actual observation
-  auto& obsengine = state.getObsEngine();
-  settings.parameters.push_back(obsengine.makeParameter("stationlon"));
-  settings.parameters.push_back(obsengine.makeParameter("stationlat"));
-  settings.parameters.push_back(obsengine.makeParameter("fmisid"));
-
-  bool use_uv_components = (layer.u && layer.v);
-
-  if (use_uv_components)
+  try
   {
-    settings.parameters.push_back(obsengine.makeParameter(*layer.u));
-    settings.parameters.push_back(obsengine.makeParameter(*layer.v));
-  }
-  else
-  {
-    settings.parameters.push_back(obsengine.makeParameter(*layer.direction));
-    if (layer.speed)
-      settings.parameters.push_back(obsengine.makeParameter(*layer.speed));
-    else
-      settings.parameters.push_back(obsengine.makeParameter("WindSpeedMS"));
-  }
+    // Create the coordinate transformation from image world coordinates
+    // to WGS84 coordinates
 
-  // Request intersection parameters too - if any
-  const int firstextraparam = settings.parameters.size();
-  auto iparams = layer.positions->intersections.parameters();
+    std::unique_ptr<OGRSpatialReference> obscrs(new OGRSpatialReference);
+    OGRErr err = obscrs->SetFromUserInput("WGS84");
+    if (err != OGRERR_NONE)
+      throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
-  for (const auto& extraparam : iparams)
-    settings.parameters.push_back(obsengine.makeParameter(extraparam));
+    std::unique_ptr<OGRCoordinateTransformation> transformation(
+        OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
+    if (!transformation)
+      throw Spine::Exception(
+          BCP, "Failed to create the needed coordinate transformation when drawing arrows");
 
-  // ObsEngine takes a rather strange vector of coordinates as input...
+    if (*layer.producer == "flash")
+      throw Spine::Exception(BCP, "Cannot use producer flash in ArrowLayer");
 
-  if (layer.positions->layout == Positions::Layout::Data || *layer.producer == "flash")
-  {
-    settings.boundingBox = layer.getClipBoundingBox(box, crs);
+    if (layer.positions->layout == Positions::Layout::Station)
+      return read_station_observations(layer, state, crs, box, valid_time_period, *transformation);
 
-    // TODO. Calculate these
-    // settings.boundingBox["minx"] = 10;
-    // settings.boundingBox["miny"] = 50;
-    // settings.boundingBox["maxx"] = 50;
-    // settings.boundingBox["maxy"] = 80;
-  }
-  else
-  {
     Engine::Querydata::Q q;
     const bool forecast_mode = false;
     auto points = layer.positions->getPoints(q, crs, box, forecast_mode);
 
-    using Coordinate = std::map<std::string, double>;
-    settings.coordinates.reserve(points.size());
-    for (const auto& point : points)
-    {
-      Coordinate coordinate{std::make_pair("lon", point.latlon.X()),
-                            std::make_pair("lat", point.latlon.Y())};
-      settings.coordinates.push_back(coordinate);
-    }
+    if (!points.empty())
+      return read_latlon_observations(
+          layer, state, crs, box, valid_time_period, *transformation, points);
+
+    return read_all_observations(layer, state, crs, box, valid_time_period, *transformation);
   }
-
-  auto result = obsengine.values(settings);
-
-  // Build the expected output container for building the SVG
-
-  if (!result)
-    return {};
-
-  const auto& values = *result;
-  if (values.empty())
-    return {};
-
-  // Create the coordinate transformation from image world coordinates
-  // to WGS84 coordinates
-
-  std::unique_ptr<OGRSpatialReference> obscrs(new OGRSpatialReference);
-  OGRErr err = obscrs->SetFromUserInput("WGS84");
-  if (err != OGRERR_NONE)
-    throw Spine::Exception(BCP, "GDAL does not understand WGS84");
-
-  std::unique_ptr<OGRCoordinateTransformation> transformation(
-      OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
-  if (!transformation)
-    throw Spine::Exception(
-        BCP, "Failed to create the needed coordinate transformation when drawing wind arrows");
-
-  int previous_fmisid = -1;
-  boost::posix_time::ptime previous_time;
-
-  PointValues pointvalues;
-  for (std::size_t row = 0; row < values[0].size(); ++row)
+  catch (...)
   {
-    const auto& t = values.at(0).at(row).time;
-    double lon = get_double(values.at(0).at(row));
-    double lat = get_double(values.at(1).at(row));
-    int fmisid = get_fmisid(values.at(2).at(row));
-
-    double wdir = kFloatMissing;
-    double wspd = kFloatMissing;
-    if (!use_uv_components)
-    {
-      wdir = get_double(values.at(3).at(row));
-      wspd = get_double(values.at(4).at(row));
-    }
-    else
-    {
-      double uspd = get_double(values.at(3).at(row));
-      double vspd = get_double(values.at(4).at(row));
-
-      if (uspd != kFloatMissing && vspd != kFloatMissing)
-      {
-        wspd = sqrt(uspd * uspd + vspd * vspd);
-        if (uspd != 0 || vspd != 0)
-          wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
-      }
-    }
-
-    // Collect extra values used for filtering the input
-
-    Intersections::IntersectValues ivalues;
-
-    for (std::size_t i = 0; i < iparams.size(); i++)
-      ivalues[iparams.at(i)] = get_double(values.at(firstextraparam + i).at(row));
-
-#if 0
-    std::cout << fmisid << "\t" << t << "\t" << lon << "\t" << lat << "\t" << wspd << "," << wdir;
-    for (std::size_t i = 0; i < iparams.size(); i++)
-      std::cout << "\t" << iparams.at(i) << "=" << ivalues.at(iparams.at(i));
-    std::cout << std::endl;
-#endif
-
-    // Convert latlon to world coordinate if needed
-
-    double x = lon;
-    double y = lat;
-
-    if (!crs->IsGeographic())
-      if (!transformation->Transform(1, &x, &y))
-        continue;
-
-    // To pixel coordinate
-    box.transform(x, y);
-
-    // Skip if not inside desired area
-    if (layer.inside(box, x, y) && layer.positions->inside(lon, lat, ivalues))
-    {
-      // Keep only the latest value for each coordinate
-
-      bool replace_previous = ((*layer.producer != "flash") && !pointvalues.empty() &&
-                               (fmisid == previous_fmisid) && (t.utc_time() > previous_time));
-
-      if (replace_previous)
-      {
-        pointvalues.back().direction = wdir;
-        pointvalues.back().speed = wspd;
-      }
-      else
-      {
-        int xpos = x;
-        int ypos = y;
-
-        Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-        PointValue pv{point, wdir, wspd};
-        pointvalues.push_back(pv);
-      }
-    }
-
-    previous_time = t.utc_time();
-    previous_fmisid = fmisid;
+    throw Spine::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
   }
-  return pointvalues;
 }
 #endif
 
@@ -431,6 +752,14 @@ void ArrowLayer::init(const Json::Value& theJson,
       positions = Positions{};
       positions->init(json, theConfig);
     }
+
+    json = theJson.get("dx", nulljson);
+    if (!json.isNull())
+      dx = json.asInt();
+
+    json = theJson.get("dy", nulljson);
+    if (!json.isNull())
+      dy = json.asInt();
 
     json = theJson.get("maxdistance", nulljson);
     if (!json.isNull())
@@ -641,21 +970,22 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
           yscale *= *rescale;
         }
 
+        int x = point.x + point.dx + (dx ? *dx : 0);
+        int y = point.y + point.dy + (dy ? *dy : 0);
+
         if (xscale == 1 && yscale == 1)
-          transform = fmt::sprintf("translate(%d %d) rotate(%d)",
-                                   point.x,
-                                   point.y,
-                                   static_cast<int>(std::round(rotate)));
+          transform = fmt::sprintf(
+              "translate(%d %d) rotate(%d)", x, y, static_cast<int>(std::round(rotate)));
         else if (xscale == yscale)
           transform = fmt::sprintf("translate(%d %d) rotate(%d) scale(%g)",
-                                   point.x,
-                                   point.y,
+                                   x,
+                                   y,
                                    static_cast<int>(std::round(rotate)),
                                    xscale);
         else
           transform = fmt::sprintf("translate(%d %d) rotate(%d) scale(%g %g)",
-                                   point.x,
-                                   point.y,
+                                   x,
+                                   y,
                                    static_cast<int>(std::round(rotate)),
                                    xscale,
                                    yscale);
@@ -704,6 +1034,8 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(scale));
     boost::hash_combine(hash, Dali::hash_value(southflop));
     boost::hash_combine(hash, Dali::hash_value(positions, theState));
+    boost::hash_combine(hash, Dali::hash_value(dx));
+    boost::hash_combine(hash, Dali::hash_value(dy));
     boost::hash_combine(hash, Dali::hash_value(maxdistance));
     boost::hash_combine(hash, Dali::hash_value(arrows, theState));
     return hash;

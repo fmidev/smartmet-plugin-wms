@@ -96,7 +96,7 @@ std::string get_full_response(SmartMet::Spine::HTTP::Response& response)
 
   return result;
 }
-}
+}  // namespace
 
 namespace SmartMet
 {
@@ -118,10 +118,10 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
       if (command == "quit")
         break;
 
+      using boost::filesystem::path;
       using std::cout;
       using std::endl;
       using std::string;
-      using boost::filesystem::path;
 
       path inputfile("input");
       inputfile /= command;

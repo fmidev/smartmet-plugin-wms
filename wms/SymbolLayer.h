@@ -45,6 +45,10 @@ class SymbolLayer : public Layer
   boost::optional<std::string> symbol;
   boost::optional<double> scale;
 
+  // optional adjustment for all symbols
+  boost::optional<int> dx;
+  boost::optional<int> dy;
+
   // The parameter values or ranges to be styled separately
   std::vector<AttributeSelection> symbols;
 
