@@ -51,7 +51,7 @@ class WMSLegendGraphicSettings
   LegendGraphicLayout layout;
   std::map<std::string, LegendGraphicParameter> parameters;
   std::set<std::string> symbolsToIgnore;
-  long expires;
+  int expires;
 };
 
 }  // namespace WMS
