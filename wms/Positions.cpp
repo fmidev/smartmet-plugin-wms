@@ -1042,28 +1042,39 @@ Positions::Points Positions::getStationPoints(Engine::Querydata::Q theQ,
     for (const auto& station : stations.stations)
     {
       Locus::QueryOptions options;
+      options.SetFeatures("SYNOP");
       Spine::LocationList places;
 
-      std::string name;
-      std::string lang;
       if (station.fmisid)
       {
         options.SetLanguage("fmisid");
         places = geonames->nameSearch(options, Fmi::to_string(*station.fmisid));
+        if (places.empty())
+          std::cerr << Spine::log_time_str() << " WMS could not find fmisid " << *station.fmisid
+                    << std::endl;
       }
       else if (station.wmo)
       {
         options.SetLanguage("wmo");
         places = geonames->nameSearch(options, Fmi::to_string(*station.wmo));
+        if (places.empty())
+          std::cerr << Spine::log_time_str() << " WMS could not find wmo " << *station.wmo
+                    << std::endl;
       }
       else if (station.lpnn)
       {
         options.SetLanguage("lpnn");
         places = geonames->nameSearch(options, Fmi::to_string(*station.lpnn));
+        if (places.empty())
+          std::cerr << Spine::log_time_str() << " WMS could not find lpnn " << *station.lpnn
+                    << std::endl;
       }
       else if (station.geoid)
       {
         places = geonames->idSearch(options, *station.geoid);
+        if (places.empty())
+          std::cerr << Spine::log_time_str() << " WMS could not find geoid " << *station.geoid
+                    << std::endl;
       }
       else if (station.longitude || station.latitude)
       {
@@ -1074,11 +1085,7 @@ Positions::Points Positions::getStationPoints(Engine::Querydata::Q theQ,
         throw Spine::Exception(BCP, "Station ID not set in the configuration");
 
       if (places.empty())
-      {
-        std::cerr << Spine::log_time_str() << " WMS could not find station " << name << " of type "
-                  << lang << std::endl;
         continue;
-      }
 
       // We'll just use the first station instead of checking for duplicates,
       // which should never exist anyway
