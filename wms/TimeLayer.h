@@ -36,6 +36,7 @@ class TimeLayer : public Layer
 
   std::vector<std::string> timestamp;  // these two should be of equal size
   std::vector<std::string> format;
+  std::string formatter = "boost";
 
   std::string prefix;  // These are usually needed only for time duration formatting
   std::string suffix;
