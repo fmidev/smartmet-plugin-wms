@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=opendata_temperature_fmisid&time=20170214T1500 HTTP/1.0

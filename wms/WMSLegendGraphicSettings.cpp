@@ -28,6 +28,7 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
   layout.legend_width = 150;
   layout.output_document_width = 500;
   layout.output_document_height = 500;
+  expires = -1;  // No caching
 
   if (config.exists("wms.get_legend_graphic"))
   {
@@ -40,6 +41,10 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
         std::string symbolNames = config.lookup("wms.get_legend_graphic.symbols_to_ignore");
         boost::algorithm::split(symbolsToIgnore, symbolNames, boost::algorithm::is_any_of(","));
       }
+
+      // Control cache expiration
+      if (config.exists("wms.get_legend_graphic.expire"))
+        expires = config.lookup("wms.get_legend_graphic.expire");
 
       if (config.exists("wms.get_legend_graphic.parameters"))
       {

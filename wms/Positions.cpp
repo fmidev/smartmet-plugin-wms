@@ -4,6 +4,7 @@
 #include "Projection.h"
 #include <boost/foreach.hpp>
 #include <gis/OGR.h>
+#include <spine/Convenience.h>
 #include <spine/Exception.h>
 #include <spine/ParameterFactory.h>
 #include <stdexcept>
@@ -28,7 +29,7 @@ double length(double x1, double y1, double x2, double y2)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -67,7 +68,7 @@ bool overlaps(const Fmi::Box& theBox,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -143,7 +144,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -182,6 +183,8 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
           layout = Layout::Keyword;
         else if (tmp == "latlon")
           layout = Layout::LatLon;
+        else if (tmp == "station")
+          layout = Layout::Station;
         else
           throw Spine::Exception(BCP, "Unknown layout type for positions: '" + tmp + "'!");
       }
@@ -221,6 +224,9 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
 
       else if (name == "locations")
         locations.init(json, theConfig);
+
+      else if (name == "stations")
+        stations.init(json, theConfig);
 
       else if (name == "outside")
       {
@@ -269,7 +275,7 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -320,7 +326,7 @@ void Positions::init(Engine::Querydata::Q q,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -351,13 +357,15 @@ Positions::Points Positions::getPoints(Engine::Querydata::Q theQ,
         return getKeywordPoints(theQ, theCRS, theBox, forecastMode);
       case Layout::LatLon:
         return getLatLonPoints(theQ, theCRS, theBox, forecastMode);
+      case Layout::Station:
+        return getStationPoints(theQ, theCRS, theBox, forecastMode);
     }
     // Dummy to prevent g++ from complaining
     return Points();
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -454,7 +462,7 @@ Positions::Points Positions::getGridPoints(Engine::Querydata::Q theQ,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -519,14 +527,16 @@ Positions::Points Positions::getDataPoints(Engine::Querydata::Q theQ,
       double ycoord = xy.Y();
       theBox.transform(xcoord, ycoord);
 
+      int deltax = 0;
       if (dx)
-        xcoord += *dx;
+        deltax += *dx;
+      int deltay = 0;
       if (dy)
-        ycoord += *dy;
+        deltay += *dy;
 
       // Skip if not inside desired shapes
       if (inside(latlon.X(), latlon.Y(), forecastMode))
-        points.emplace_back(Point(xcoord, ycoord, latlon));
+        points.emplace_back(Point(xcoord, ycoord, latlon, deltax, deltay));
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
@@ -535,7 +545,7 @@ Positions::Points Positions::getDataPoints(Engine::Querydata::Q theQ,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -588,14 +598,17 @@ Positions::Points Positions::getGraticulePoints(Engine::Querydata::Q theQ,
           // to pixel coordinate
           theBox.transform(xcoord, ycoord);
 
+          int deltax = 0;
           if (dx)
-            xcoord += *dx;
+            deltax += *dx;
+
+          int deltay = 0;
           if (dy)
-            ycoord += *dy;
+            deltay += *dy;
 
           // Skip if not inside desired areas
           if (inside(lon, lat, forecastMode))
-            points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat)));
+            points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat), deltax, deltay));
         }
         // Handle the poles only once
         if (lat == -90 || lat == 90)
@@ -608,7 +621,7 @@ Positions::Points Positions::getGraticulePoints(Engine::Querydata::Q theQ,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -721,14 +734,16 @@ Positions::Points Positions::getGraticuleFillPoints(Engine::Querydata::Q theQ,
             continue;
           theBox.transform(newx, newy);
 
+          int deltax = 0;
           if (dx)
-            newx += *dx;
+            deltax += *dx;
+          int deltay = 0;
           if (dy)
-            newy += *dy;
+            deltay += *dy;
 
           // Skip if not inside desired areas
           if (inside(newlon, newlat, forecastMode))
-            points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
+            points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
         }
 
         // Bottom edge
@@ -743,14 +758,16 @@ Positions::Points Positions::getGraticuleFillPoints(Engine::Querydata::Q theQ,
             continue;
           theBox.transform(newx, newy);
 
+          int deltax = 0;
           if (dx)
-            newx += *dx;
+            deltax += *dx;
+          int deltay = 0;
           if (dy)
-            newy += *dy;
+            deltay += *dy;
 
           // Skip if not inside desired shapes
           if (inside(newlon, newlat, forecastMode))
-            points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
+            points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
 
           // Handle the south pole only once
           if (newlat == -90)
@@ -771,14 +788,16 @@ Positions::Points Positions::getGraticuleFillPoints(Engine::Querydata::Q theQ,
               continue;
             theBox.transform(newx, newy);
 
+            int deltax = 0;
             if (dx)
-              newx += *dx;
+              deltax += *dx;
+            int deltay = 0;
             if (dy)
-              newy += *dy;
+              deltay += *dy;
 
             // Skip if not inside desired area
             if (inside(newlon, newlat, forecastMode))
-              points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
+              points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
           }
       }
 
@@ -790,14 +809,16 @@ Positions::Points Positions::getGraticuleFillPoints(Engine::Querydata::Q theQ,
 
     if (!transformation->Transform(1, &newx, &newy))
     {
+      int deltax = 0;
       if (dx)
-        newx += *dx;
+        deltax += *dx;
+      int deltay = 0;
       if (dy)
-        newy += *dy;
+        deltay += *dy;
 
       // Skip if not inside desired areas
       if (inside(newlon, newlat, forecastMode))
-        points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat)));
+        points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
@@ -806,7 +827,7 @@ Positions::Points Positions::getGraticuleFillPoints(Engine::Querydata::Q theQ,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -847,9 +868,7 @@ Positions::Points Positions::getKeywordPoints(Engine::Querydata::Q theQ,
     if (!transformation)
       throw Spine::Exception(BCP,
                              "Failed to create the needed coordinate transformation for "
-                             "generating graticule positions!");
-
-    // Generate the graticule coordinates.
+                             "generating keyword positions!");
 
     Points points;
 
@@ -869,14 +888,16 @@ Positions::Points Positions::getKeywordPoints(Engine::Querydata::Q theQ,
       // to pixel coordinate
       theBox.transform(xcoord, ycoord);
 
+      int deltax = 0;
       if (dx)
-        xcoord += *dx;
+        deltax += *dx;
+      int deltay = 0;
       if (dy)
-        ycoord += *dy;
+        deltay += *dy;
 
       // Skip if not inside desired areas
       if (inside(lon, lat, forecastMode))
-        points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat)));
+        points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat), deltax, deltay));
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
@@ -885,7 +906,7 @@ Positions::Points Positions::getKeywordPoints(Engine::Querydata::Q theQ,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -922,9 +943,7 @@ Positions::Points Positions::getLatLonPoints(Engine::Querydata::Q theQ,
     if (!transformation)
       throw Spine::Exception(BCP,
                              "Failed to create the needed coordinate transformation for "
-                             "generating graticule positions!");
-
-    // Generate the graticule coordinates.
+                             "generating latlon positions!");
 
     // This loop order makes it easier to handle the poles only once
     for (const auto& location : locations.locations)
@@ -946,21 +965,24 @@ Positions::Points Positions::getLatLonPoints(Engine::Querydata::Q theQ,
       theBox.transform(xcoord, ycoord);
 
       // Global position adjustment
+      int deltax = 0;
       if (dx)
-        xcoord += *dx;
+        deltax += *dx;
+
+      int deltay = 0;
       if (dy)
-        ycoord += *dy;
+        deltay = *dy;
 
       // Individual adjustments
       if (location.dx)
-        xcoord += *location.dx;
+        deltax += *location.dx;
 
       if (location.dy)
-        ycoord += *location.dy;
+        deltay += *location.dy;
 
       // Skip if not inside desired areas
       if (inside(lon, lat, forecastMode))
-        points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat)));
+        points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat), deltax, deltay));
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
@@ -969,7 +991,148 @@ Positions::Points Positions::getLatLonPoints(Engine::Querydata::Q theQ,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate station locations
+ */
+// ----------------------------------------------------------------------
+
+Positions::Points Positions::getStationPoints(Engine::Querydata::Q theQ,
+                                              boost::shared_ptr<OGRSpatialReference> theCRS,
+                                              const Fmi::Box& theBox,
+                                              bool forecastMode) const
+{
+  try
+  {
+    Points points;
+
+    // We pass the station numbers directly to obsengine
+
+    if (!forecastMode)
+      return points;
+
+    if (stations.empty())
+      return points;
+
+    // Station coordinates are in WGS84
+
+    std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+    OGRErr err = wgs84->SetFromUserInput("WGS84");
+
+    if (err != OGRERR_NONE)
+      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+
+    // Create the coordinate transformation from WGS84 to projection coordinates
+
+    std::unique_ptr<OGRCoordinateTransformation> transformation(
+        OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
+    if (!transformation)
+      throw Spine::Exception(BCP,
+                             "Failed to create the needed coordinate transformation for "
+                             "generating station positions!");
+
+    Locus::QueryOptions options;
+    auto locations = geonames->keywordSearch(options, keyword);
+
+    // This loop order makes it easier to handle the poles only once
+    for (const auto& station : stations.stations)
+    {
+      Locus::QueryOptions options;
+      options.SetFeatures("SYNOP");
+      Spine::LocationList places;
+
+      if (station.fmisid)
+      {
+        options.SetLanguage("fmisid");
+        places = geonames->nameSearch(options, Fmi::to_string(*station.fmisid));
+        if (places.empty())
+          std::cerr << Spine::log_time_str() << " WMS could not find fmisid " << *station.fmisid
+                    << std::endl;
+      }
+      else if (station.wmo)
+      {
+        options.SetLanguage("wmo");
+        places = geonames->nameSearch(options, Fmi::to_string(*station.wmo));
+        if (places.empty())
+          std::cerr << Spine::log_time_str() << " WMS could not find wmo " << *station.wmo
+                    << std::endl;
+      }
+      else if (station.lpnn)
+      {
+        options.SetLanguage("lpnn");
+        places = geonames->nameSearch(options, Fmi::to_string(*station.lpnn));
+        if (places.empty())
+          std::cerr << Spine::log_time_str() << " WMS could not find lpnn " << *station.lpnn
+                    << std::endl;
+      }
+      else if (station.geoid)
+      {
+        places = geonames->idSearch(options, *station.geoid);
+        if (places.empty())
+          std::cerr << Spine::log_time_str() << " WMS could not find geoid " << *station.geoid
+                    << std::endl;
+      }
+      else if (station.longitude || station.latitude)
+      {
+        throw Spine::Exception(
+            BCP, "Use latlon instead of station layout for forecast data when listing coordinates");
+      }
+      else
+        throw Spine::Exception(BCP, "Station ID not set in the configuration");
+
+      if (places.empty())
+        continue;
+
+      // We'll just use the first station instead of checking for duplicates,
+      // which should never exist anyway
+
+      auto location = *places.front();
+
+      double lon = location.longitude;
+      double lat = location.latitude;
+
+      // To world coordinate
+      double xcoord = lon;
+      double ycoord = lat;
+      if (!transformation->Transform(1, &xcoord, &ycoord))
+        continue;
+
+      // to pixel coordinate
+      theBox.transform(xcoord, ycoord);
+
+      // Global position adjustment
+      int deltax = 0;
+
+      if (dx)
+        deltax += *dx;
+
+      int deltay = 0;
+      if (dy)
+        deltay += *dy;
+
+      // Individual adjustments
+      if (station.dx)
+        deltax += *station.dx;
+
+      if (station.dy)
+        deltay += *station.dy;
+
+      // Skip if not inside desired areas
+      if (inside(lon, lat, forecastMode))
+        points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat), deltax, deltay));
+    }
+
+    apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
+
+    return points;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -993,7 +1156,7 @@ bool Positions::insideShapes(double theX, double theY) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1017,7 +1180,7 @@ bool Positions::inside(double theX, double theY, bool forecastMode) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1043,7 +1206,7 @@ bool Positions::inside(double theX,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1074,6 +1237,7 @@ std::size_t Positions::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(keyword));
 
     boost::hash_combine(hash, Dali::hash_value(locations, theState));
+    boost::hash_combine(hash, Dali::hash_value(stations, theState));
 
     boost::hash_combine(hash, Dali::hash_value(directionoffset));
     boost::hash_combine(hash, Dali::hash_value(rotate));
@@ -1088,7 +1252,7 @@ std::size_t Positions::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

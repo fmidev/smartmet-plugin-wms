@@ -71,6 +71,14 @@ void TimeLayer::init(const Json::Value& theJson,
         timestamp.push_back(json.asString());
     }
 
+    json = theJson.get("formatter", nulljson);
+    if (!json.isNull())
+    {
+      formatter = json.asString();
+      if (formatter != "boost" && formatter != "strftime")
+        throw Spine::Exception(BCP, "Unknown time formatter '" + formatter + "'");
+    }
+
     json = theJson.get("format", nulljson);
     if (!json.isNull())
     {
@@ -264,13 +272,26 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
                   Fmi::TimeParser::parse_duration(name);
       }
 
-      auto* facet = new boost::posix_time::time_facet(fmt.c_str());
-      msg.imbue(std::locale(msg.getloc(), facet));
+      // durations are always formatted with boost
+      if (!loctime || formatter == "boost")
+      {
+        auto* facet = new boost::posix_time::time_facet(fmt.c_str());
+        msg.imbue(std::locale(msg.getloc(), facet));
 
-      if (loctime)
-        msg << loctime->local_time();
+        if (loctime)
+          msg << loctime->local_time();
+        else
+          msg << *duration;
+      }
+      else if (formatter == "strftime")
+      {
+        auto timeinfo = to_tm(loctime->local_time());
+        char buffer[100];
+        strftime(buffer, 100, fmt.c_str(), &timeinfo);
+        msg << buffer;
+      }
       else
-        msg << *duration;
+        throw Spine::Exception(BCP, "Unknown time formatter '" + formatter + "'");
     }
     msg << suffix;
 
@@ -300,6 +321,7 @@ std::size_t TimeLayer::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(suffix));
     boost::hash_combine(hash, Dali::hash_value(timestamp));
     boost::hash_combine(hash, Dali::hash_value(format));
+    boost::hash_combine(hash, Dali::hash_value(formatter));
     boost::hash_combine(hash, Dali::hash_value(x));
     boost::hash_combine(hash, Dali::hash_value(y));
     boost::hash_combine(hash, Dali::hash_value(longitude));

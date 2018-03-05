@@ -46,11 +46,12 @@ class WMSLegendGraphicSettings
 {
  public:
   WMSLegendGraphicSettings(const libconfig::Config& config);
-  WMSLegendGraphicSettings() {}
+  WMSLegendGraphicSettings() : expires(-1) {}
 
   LegendGraphicLayout layout;
   std::map<std::string, LegendGraphicParameter> parameters;
   std::set<std::string> symbolsToIgnore;
+  int expires;
 };
 
 }  // namespace WMS

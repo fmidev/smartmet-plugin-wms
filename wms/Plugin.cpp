@@ -1241,6 +1241,12 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
         WMS::WMSGetLegendGraphic wmsGetLegendGraphic(*itsWMSConfig);
         wmsGetLegendGraphic.parseHTTPRequest(*itsQEngine, thisRequest);
         json_text = wmsGetLegendGraphic.jsonText();
+        if (itsWMSConfig->getLegendGraphicSettings().expires > 0)
+        {
+          auto tmp = boost::posix_time::second_clock::universal_time() +
+                     boost::posix_time::seconds(itsWMSConfig->getLegendGraphicSettings().expires);
+          theState.updateExpirationTime(tmp);
+        }
       }
 
       Json::Value json;

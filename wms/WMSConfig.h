@@ -118,6 +118,8 @@ class WMSConfig
   const Engine::Observation::Engine* obsEngine() const { return itsObsEngine; }
 #endif
 
+  const WMSLegendGraphicSettings getLegendGraphicSettings();
+
  private:
   void parse_references();
 

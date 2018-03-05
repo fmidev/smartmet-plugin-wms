@@ -30,6 +30,8 @@
 			"id": "temperature_isobands"
 		    }
                 },
+
+		// boost formatting
 		{
 		    "layer_type": "time",	
 		    "timestamp": "validtime",
@@ -79,8 +81,66 @@
 		    "suffix": " UTC",
 		    "x": -20,
 		    "y": 120
+		},
+
+		// strftime formatting
+		{
+		    "layer_type": "time",
+		    "formatter": "strftime",
+		    "timestamp": "validtime",
+                    "timezone": "Europe/Helsinki",
+                    "format": "Validtime: %Y-%-m-%-d %-H:%M",
+		    "x": -20,
+		    "y": 220
+		},
+		{
+		    "layer_type": "time",
+		    "formatter": "strftime",
+		    "timestamp": "origintime",
+                    "timezone": "Europe/Helsinki",
+                    "format": "Origintime: %Y-%-m-%-d %-H:%M",
+		    "x": -20,
+		    "y": 240
+		},
+		{
+		    "layer_type": "time",
+		    "formatter": "strftime",
+		    "timestamp": "time_offset",
+		    "prefix": "Offset: ",
+                    "format": "%+%H:%M",
+		    "x": -20,
+		    "y": 260
+		},
+		{
+		    "layer_type": "time",
+		    "formatter": "strftime",
+		    "timestamp": "leadtime",
+		    "prefix": "Lead time: ",
+                    "format": "%+%H:%M",
+		    "x": -20,
+		    "y": 280
+		},
+		{
+		    "layer_type": "time",
+		    "formatter": "strftime",
+		    "timestamp": "leadhour",
+		    "prefix": "Lead hour: ",
+                    "format": "%+%H:%M",
+		    "x": -20,
+		    "y": 300
+		},
+		{
+		    "layer_type": "time",
+		    "formatter": "strftime",
+		    "timestamp": ["-24h","validtime"],
+                    "timezone": "UTC",
+		    "prefix": "Range test: ",
+                    "format": ["%-m-%-d %-H:%M - ", "%-m-%-d %-H:%M"],
+		    "suffix": " UTC",
+		    "x": -20,
+		    "y": 320
 		}
-	    ]
+]
         }
     ]
 }

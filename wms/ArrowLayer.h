@@ -51,6 +51,8 @@ class ArrowLayer : public Layer
 
   // Arrow position generator
   boost::optional<Positions> positions;
+  boost::optional<int> dx;
+  boost::optional<int> dy;
 
   // Station distance limit in kilometers
   double maxdistance = 5;

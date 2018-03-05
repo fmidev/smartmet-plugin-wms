@@ -8,6 +8,7 @@
 #include "Intersections.h"
 #include "Locations.h"
 #include "Map.h"
+#include "Stations.h"
 #include <boost/optional.hpp>
 #include <engines/geonames/Engine.h>
 #include <gis/Box.h>
@@ -32,7 +33,8 @@ class Positions
     Graticule,      // points in a graticule
     GraticuleFill,  // points in a graticule and graticule cells
     Keyword,        // points listed in the database for a keyword
-    LatLon          // explicitly listed latlon coordinates
+    LatLon,         // explicitly listed latlon coordinates
+    Station         // explicitly listed stations
   };
 
   struct Point
@@ -40,7 +42,13 @@ class Positions
     int x;
     int y;
     NFmiPoint latlon;
+    int dx = 0;  // point specific adjustment for associated data such as numbers
+    int dy = 0;
     Point(int theX, int theY, const NFmiPoint& theLatLon) : x(theX), y(theY), latlon(theLatLon) {}
+    Point(int theX, int theY, const NFmiPoint& theLatLon, int theDX, int theDY)
+        : x(theX), y(theY), latlon(theLatLon), dx(theDX), dy(theDY)
+    {
+    }
   };
   using Points = std::vector<Point>;
 
@@ -91,6 +99,9 @@ class Positions
   // LatLon layout settings:
   Locations locations;
 
+  // Station layout settings
+  Stations stations;
+
   // Common settings for all algorithms:
 
   // Optional directional adjustments
@@ -135,6 +146,11 @@ class Positions
                          boost::shared_ptr<OGRSpatialReference> theCRS,
                          const Fmi::Box& theBox,
                          bool forecastMode) const;
+
+  Points getStationPoints(Engine::Querydata::Q theQ,
+                          boost::shared_ptr<OGRSpatialReference> theCRS,
+                          const Fmi::Box& theBox,
+                          bool forecastMode) const;
 
   OGRGeometryPtr inshape;
   OGRGeometryPtr outshape;
