@@ -1,0 +1,18 @@
+[
+        {
+	    "qid": "t2m_warm",
+            "lolimit": 10,
+	    "attributes":
+	    {
+		"fill": "url(#warm)"
+	    }
+        },
+        {
+	    "qid": "t2m_cold",
+            "hilimit": 10,
+	    "attributes":
+	    {
+		"fill": "url(#cold)"
+	    }
+        }
+]

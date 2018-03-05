@@ -1,0 +1,4 @@
+<pattern id="cold" patternUnits="userSpaceOnUse" width="16" height="16">
+<line x1="4" y1="1" x2="4" y2="7" class="ColdPattern"/>
+<line x1="12" y1="8" x2="12" y2="15" class="ColdPattern"/>
+</pattern>

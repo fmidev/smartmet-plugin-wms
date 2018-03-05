@@ -1,0 +1,4 @@
+<pattern id="warm" patternUnits="userSpaceOnUse" width="16" height="16">
+<circle cx="4" cy="4" r="1.5" class="WarmPattern"/>
+<circle cx="12" cy="12" r="1.5" class="WarmPattern"/>
+</pattern>
