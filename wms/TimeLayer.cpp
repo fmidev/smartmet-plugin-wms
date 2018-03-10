@@ -10,6 +10,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/foreach.hpp>
 #include <ctpp2/CDT.hpp>
+#include <fmt/time.h>
 #include <gis/Box.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
@@ -75,7 +76,7 @@ void TimeLayer::init(const Json::Value& theJson,
     if (!json.isNull())
     {
       formatter = json.asString();
-      if (formatter != "boost" && formatter != "strftime")
+      if (formatter != "boost" && formatter != "strftime" && formatter != "fmt")
         throw Spine::Exception(BCP, "Unknown time formatter '" + formatter + "'");
     }
 
@@ -275,23 +276,49 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
       // durations are always formatted with boost
       if (!loctime || formatter == "boost")
       {
-        auto* facet = new boost::posix_time::time_facet(fmt.c_str());
-        msg.imbue(std::locale(msg.getloc(), facet));
+        try
+        {
+          auto* facet = new boost::posix_time::time_facet(fmt.c_str());
+          msg.imbue(std::locale(msg.getloc(), facet));
 
-        if (loctime)
-          msg << loctime->local_time();
-        else
-          msg << *duration;
+          if (loctime)
+            msg << loctime->local_time();
+          else
+            msg << *duration;
+        }
+        catch (...)
+        {
+          throw Spine::Exception::Trace(BCP, "Failed to format time with Boost")
+              .addParameter("format", "'" + fmt + "'");
+        }
       }
       else if (formatter == "strftime")
       {
         auto timeinfo = to_tm(loctime->local_time());
         char buffer[100];
-        strftime(buffer, 100, fmt.c_str(), &timeinfo);
+        if (!strftime(buffer, 100, fmt.c_str(), &timeinfo))
+        {
+          throw Spine::Exception(BCP, "Failed to format a non-empty time string with strftime")
+              .addParameter("format", "'" + fmt + "'");
+        }
         msg << buffer;
       }
+      else if (formatter == "fmt")
+      {
+        try
+        {
+          auto timeinfo = to_tm(loctime->local_time());
+          msg << fmt::format(fmt, timeinfo);
+        }
+        catch (...)
+        {
+          throw Spine::Exception::Trace(BCP, "Failed to format time with fmt")
+              .addParameter("format", "'" + fmt + "'");
+        }
+      }
+
       else
-        throw Spine::Exception(BCP, "Unknown time formatter '" + formatter + "'");
+        throw Spine::Exception(BCP, "Unknown TimeLayer time formatter '" + formatter + "'");
     }
     msg << suffix;
 

@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.3.9
+Version: 18.3.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -89,6 +89,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Sat Mar 10 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.3.10-1.fmi
+- Added support for formatting times in TimeLayer by libfmt
+
 * Fri Mar  9 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.3.9-1.fmi
 - Use macgyver time to string conversions to avoid locale locks
 
