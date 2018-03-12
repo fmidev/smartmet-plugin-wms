@@ -1,6 +1,6 @@
 #include "WMSTimeDimension.h"
-
 #include <boost/algorithm/string/join.hpp>
+#include <macgyver/StringConversion.h>
 
 namespace SmartMet
 {
@@ -128,7 +128,7 @@ std::string StepTimeDimension::getCapabilities() const
 
     for (auto& step : itsTimesteps)
     {
-      ret.push_back(to_iso_extended_string(step) + "Z");
+      ret.push_back(Fmi::to_iso_extended_string(step) + "Z");
     }
 
     return boost::algorithm::join(ret, ", ");
@@ -167,8 +167,8 @@ std::string IntervalTimeDimension::getCapabilities() const
   {
     std::ostringstream os;
 
-    os << to_iso_extended_string(itsInterval.startTime) << "Z/"
-       << to_iso_extended_string(itsInterval.endTime) << "Z/PT";
+    os << Fmi::to_iso_extended_string(itsInterval.startTime) << "Z/"
+       << Fmi::to_iso_extended_string(itsInterval.endTime) << "Z/PT";
     if (itsInterval.resolution.hours() == 0 && itsInterval.resolution.minutes() <= 60)
       os << itsInterval.resolution.minutes() << "M";
     else

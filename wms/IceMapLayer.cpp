@@ -47,10 +47,7 @@ class PostGISAttributeToString : public boost::static_visitor<std::string>
  public:
   std::string operator()(int i) const { return Fmi::to_string(i); }
   std::string operator()(double d) const { return Fmi::to_string(d); }
-  std::string operator()(boost::posix_time::ptime t) const
-  {
-    return boost::posix_time::to_iso_string(t);
-  }
+  std::string operator()(boost::posix_time::ptime t) const { return Fmi::to_iso_string(t); }
   std::string operator()(const std::string& str) const
   {
     std::string ret(str);
