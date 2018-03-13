@@ -51,6 +51,8 @@ Config::Config(const string& configfile)
     itsConfig.lookupValue("cache.filesystem_bytes", itsMaxFilesystemCacheSize);
     itsConfig.lookupValue("cache.directory", itsFilesystemCacheDirectory);
 
+    itsConfig.lookupValue("heatmap.max_points", itsMaxHeatmapPoints);
+
     itsConfig.lookupValue("wms.url", itsWmsUrl);
     itsConfig.lookupValue("wms.quiet", itsQuiet);
 
@@ -226,6 +228,11 @@ unsigned long long Config::maxFilesystemCacheSize() const
 bool Config::quiet() const
 {
   return itsQuiet;
+}
+
+unsigned Config::maxHeatmapPoints() const
+{
+  return itsMaxHeatmapPoints;
 }
 
 #ifndef WITHOUT_AUHTENTICATION

@@ -108,7 +108,8 @@ LIBS = -L$(libdir) \
 	-lboost_iostreams \
 	-lboost_filesystem \
 	-lboost_system \
-	-lbz2 -lz
+	-lbz2 -lz \
+	-lheatmap
 
 # Templates
 
