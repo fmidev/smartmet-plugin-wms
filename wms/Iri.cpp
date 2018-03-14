@@ -21,6 +21,10 @@ namespace Iri
 
 std::string normalize(const std::string& thePath)
 {
+  // If it starts with data:, it is embedded data
+  if (thePath.substr(0, 5) == "data:")
+    return thePath;
+  // Otherwise / should be replaced
   return boost::algorithm::replace_all_copy(thePath, "/", "_");
 }
 
