@@ -826,7 +826,7 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
   if (!theResultItem.geom || theResultItem.geom->IsEmpty())
     return;
 
-  // We get bounding box from database, but need to show an egg
+  // We get bounding box from database, but need to show egg-shaped ellipse
   OGREnvelope envelope;
   theResultItem.geom->getEnvelope(&envelope);
   double xLeft = envelope.MinX;
@@ -864,10 +864,11 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
   int epsgNumber = sr->GetEPSGGeogCS();
   OGRGeometry* ellipse = Fmi::OGR::constructGeometry(points, wkbPolygon, epsgNumber);
 
-  // Horizontal lines of ice egg
-  double firstHorizontalY = yBottom + (fabs(yTop - yBottom) * (1.7 / 5.0));
-  double secondHorizontalY = yBottom + (fabs(yTop - yBottom) * (2.8 / 5.0));
-  double thirdHorizontalY = yBottom + (fabs(yTop - yBottom) * (3.8 / 5.0));
+  // Horizontal lines of iceegg
+  double firstHorizontalY = yBottom + (fabs(yTop - yBottom) * 0.34);
+  double secondHorizontalY = yBottom + (fabs(yTop - yBottom) * 0.55);
+  double thirdHorizontalY = yBottom + (fabs(yTop - yBottom) * 0.76);
+  double zeroHorizontalY = yBottom + (fabs(yTop - yBottom) * 0.13);
 
   points.clear();
   points.push_back(std::pair<double, double>(xLeft, firstHorizontalY));
@@ -900,13 +901,40 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
 
   std::vector<std::string> rows;
   boost::algorithm::split(rows, egg_text, boost::algorithm::is_any_of("\n"));
+  // Remove leadinf and trailing spaces
+  std::for_each(
+      rows.begin(), rows.end(), boost::bind(&boost::trim<std::string>, _1, std::locale()));
+  for (std::string& r : rows)
+    if (r.size() > 0 && r.back() == '+')
+      r.insert(0, " ");
 
-  double xpos = xMiddle;
-  double ypos = thirdHorizontalY;
+  text_style_t text_style;
+  text_style = getTextStyle(theFilter.text_attributes, text_style);
+  text_dimension_t text_dimension = getTextDimension("1234567890", text_style);
   auto transformation = LonLatToXYTransformation(projection);
-  transformation.transform(xpos, ypos);
 
-  addTextField(xpos, ypos, rows, theFilter.text_attributes, theGlobals, theLayersCdt, theState);
+  // Add row by row to get more precise y-position inside the egg
+  for (unsigned int i = 0; i < rows.size(); i++)
+  {
+    const std::string& r = rows[i];
+    if (r.size() == 0)
+      continue;
+    std::vector<std::string> rows2;
+    rows2.push_back(r);
+    double ypos = 0.0;
+    double xpos = xMiddle;
+    if (i == 0)
+      ypos = thirdHorizontalY;
+    else if (i == 1)
+      ypos = secondHorizontalY;
+    else if (i == 2)
+      ypos = firstHorizontalY;
+    else
+      ypos = zeroHorizontalY;
+    transformation.transform(xpos, ypos);
+    ypos += (text_dimension.height / 10.0);
+    addTextField(xpos, ypos, rows2, theFilter.text_attributes, theGlobals, theLayersCdt, theState);
+  }
 }
 
 // Pekko Ilvessalo 20151106: Labelin sijainti
