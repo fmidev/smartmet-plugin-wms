@@ -1,0 +1,65 @@
+[
+    {
+        "attributes": {
+            "class": "FlashCount_20_30"
+        },
+        "hilimit": 30,
+        "lolimit": 20,
+        "qid": "FlashCount_20_30"
+    },
+    {
+        "attributes": {
+            "class": "FlashCount_30_40"
+        },
+        "hilimit": 40,
+        "lolimit": 30,
+        "qid": "FlashCount_30_40"
+    },
+    {
+        "attributes": {
+            "class": "FlashCount_40_50"
+        },
+        "hilimit": 50,
+        "lolimit": 40,
+        "qid": "FlashCount_40_50"
+    },
+    {
+        "attributes": {
+            "class": "FlashCount_50_60"
+        },
+        "hilimit": 60,
+        "lolimit": 50,
+        "qid": "FlashCount_50_60"
+    },
+    {
+        "attributes": {
+            "class": "FlashCount_60_70"
+        },
+        "hilimit": 70,
+        "lolimit": 60,
+        "qid": "FlashCount_60_70"
+    },
+    {
+        "attributes": {
+            "class": "FlashCount_70_80"
+        },
+        "hilimit": 80,
+        "lolimit": 70,
+        "qid": "FlashCount_70_80"
+    },
+    {
+        "attributes": {
+            "class": "FlashCount_80_90"
+        },
+        "hilimit": 90,
+        "lolimit": 80,
+        "qid": "FlashCount_80_90"
+    },
+    {
+        "attributes": {
+            "class": "FlashCount_90"
+        },
+        "lolimit": 90,
+        "qid": "FlashCount_90"
+    }
+]
