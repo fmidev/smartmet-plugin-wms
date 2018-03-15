@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.4.18
+Version: 18.4.23
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -90,6 +90,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Mon Apr 23 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.4.23-1.fmi
+- Fixed LegendGraphics bugs: BRAINSTORM-1129, BRAINSTORM-1134
+
 * Wed Apr 18 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.4.18-1.fmi
 - Added XMLESCAPE calls for GetCapabilities titles, abstracts etc
 
