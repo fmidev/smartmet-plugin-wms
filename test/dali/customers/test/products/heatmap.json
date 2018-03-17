@@ -1,0 +1,60 @@
+{
+    "title" : "Flashes",
+    "abstract" : "Flashes",
+    "interval_start": 30,
+    "interval_end": 30,
+    "projection":
+    {
+	"crs": "EPSG:4326",
+	"cx" : 25,
+	"cy" : 65,
+        "resolution" : 5,
+	"xsize": 500,
+	"ysize": 500
+    },
+    "producer": "flash",
+    "views": [{
+        "layers": [
+         {
+             "layer_type": "background",
+             "attributes":
+             {
+               "fill": "white"
+             }
+         },
+         {
+            "qid": "l",
+            "layer_type": "isoband",
+            "parameter": "peak_current",
+            "isobands": "json:isobands/heatmap.json",
+            "css": "isobands/heatmap.css",
+            "attributes": {
+                "shape-rendering": "crispEdges"
+            },
+            "heatmap" : {
+                "resolution" : 20,
+                "radius" : 20,
+                "kernel" : "exp",
+                "deviation" : 10.0
+            }
+          },
+          {
+            "qid": "l1",
+            "layer_type": "map",
+            "map":
+            {
+              "schema": "natural_earth",
+              "table": "admin_0_countries",
+              "minarea": 100
+            },
+            "attributes":
+            {
+              "id": "europe_country_lines",
+              "fill": "none",
+              "stroke": "#222",
+              "stroke-width": "0.3px"
+            }
+          }
+        ]
+    }]
+}

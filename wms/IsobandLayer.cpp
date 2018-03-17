@@ -19,6 +19,16 @@
 #include <spine/ParameterFactory.h>
 #include <limits>
 
+#include "ValueTools.h"
+#include <engines/observation/Engine.h>
+#include <engines/observation/Settings.h>
+#include <engines/querydata/Model.h>
+#include <macgyver/StringConversion.h>
+#include <newbase/NFmiGdalArea.h>
+#include <newbase/NFmiQueryData.h>
+#include <newbase/NFmiQueryDataUtil.h>
+#include <newbase/NFmiTimeList.h>
+
 // TODO:
 #include <boost/timer/timer.hpp>
 
@@ -99,6 +109,10 @@ void IsobandLayer::init(const Json::Value& theJson,
     json = theJson.get("intersect", nulljson);
     if (!json.isNull())
       intersections.init(json, theConfig);
+
+    json = theJson.get("heatmap", nulljson);
+    if (!json.isNull())
+      heatmap.init(json, theConfig);
   }
   catch (...)
   {
@@ -111,6 +125,186 @@ void IsobandLayer::init(const Json::Value& theJson,
  * \brief Generate the layer details into the template hash
  */
 // ----------------------------------------------------------------------
+
+boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
+    const Spine::Parameter& theParameter, const boost::posix_time::ptime& theTime, State& theState)
+{
+  try
+  {
+    if (*producer != "flash")
+      throw Spine::Exception(BCP, "Heatmap requires flash data!");
+
+    auto valid_time_period = getValidTimePeriod();
+    auto crs = projection.getCRS();
+    const auto& box = projection.getBox();
+
+    Engine::Observation::Settings settings;
+    settings.starttime = valid_time_period.begin();
+    settings.endtime = valid_time_period.end();
+    settings.starttimeGiven = true;
+    settings.stationtype = *producer;
+    settings.timezone = "UTC";
+
+    // Get actual data (flash coordinates plus parameter column values)
+    auto& obsengine = theState.getObsEngine();
+    settings.parameters.push_back(obsengine.makeParameter("longitude"));
+    settings.parameters.push_back(obsengine.makeParameter("latitude"));
+    settings.parameters.push_back(obsengine.makeParameter(*parameter));
+
+    settings.boundingBox = getClipBoundingBox(box, crs);
+
+    auto result = obsengine.values(settings);
+
+    // Establish new projection and the required grid size of the desired resolution
+
+    auto newarea = boost::make_shared<NFmiGdalArea>(
+        "FMI", *crs, box.xmin(), box.ymin(), box.xmax(), box.ymax());
+    double datawidth = newarea->WorldXYWidth() / 1000.0;  // view extent in kilometers
+    double dataheight = newarea->WorldXYHeight() / 1000.0;
+    int width = static_cast<int>(datawidth / *heatmap.resolution);
+    int height = static_cast<int>(dataheight / *heatmap.resolution);
+
+    if ((width * height) > (int)heatmap.max_points)
+      throw Spine::Exception(
+          BCP,
+          (std::string("Heatmap too big (") + Fmi::to_string(width * height) + " points, max " +
+           Fmi::to_string(heatmap.max_points) + "), increase resolution"));
+
+    // Must use at least two grid points, value 1 would cause a segmentation fault in here
+
+    width = std::max(width, 2);
+    height = std::max(height, 2);
+
+    NFmiGrid grid(newarea.get(), width, height);
+    std::unique_ptr<heatmap_t, void (*)(heatmap_t*)> hm(NULL, heatmap_free);
+    unsigned radius;
+
+    if (result)
+    {
+      const auto& values = *result;
+
+      if (!values.empty())
+      {
+        // Station WGS84 coordinates
+        std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+        OGRErr err = wgs84->SetFromUserInput("WGS84");
+
+        if (err != OGRERR_NONE)
+          throw Spine::Exception(BCP, "GDAL does not understand WKT 'WGS84'!");
+
+        std::unique_ptr<OGRCoordinateTransformation> transformation(
+            OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
+        if (!transformation)
+          throw Spine::Exception(BCP,
+                                 "Failed to create the needed coordinate transformation for "
+                                 "generating station positions");
+
+        const auto nrows = values[0].size();
+
+        hm.reset(heatmap_new(width, height));
+        if (!hm)
+          throw Spine::Exception(BCP, "Heatmap allocation failed");
+
+        radius = round(*heatmap.radius / *heatmap.resolution);
+        if (radius == 0)
+          radius = 1;
+
+        auto hms = heatmap.getStamp(radius);
+        if (!hms)
+          throw Spine::Exception(BCP, "Heatmap stamp generation failed");
+
+        for (std::size_t row = 0; row < nrows; ++row)
+        {
+          double lon = get_double(values.at(0).at(row));
+          double lat = get_double(values.at(1).at(row));
+
+          // The parameter value could be used to add weighted points
+          //
+          // double value = get_double(values.at(2).at(row));
+
+          // Convert latlon to world coordinate if needed
+
+          double x = lon;
+          double y = lat;
+
+          if (!crs->IsGeographic())
+            if (!transformation->Transform(1, &x, &y))
+              continue;
+
+          // To pixel coordinate
+          box.transform(x, y);
+
+          // Skip if not inside desired area
+          if (Properties::inside(box, x, y))
+          {
+            NFmiPoint gridPoint = grid.LatLonToGrid(lon, lat);
+            heatmap_add_point_with_stamp(hm.get(), gridPoint.X(), gridPoint.Y(), hms.get());
+          }
+        }
+      }
+    }
+
+    // Establish the new descriptors
+
+    NFmiLevelBag lbag;
+    lbag.AddLevel(NFmiLevel(kFmiAnyLevelType, 0));
+
+    NFmiVPlaceDescriptor vdesc(lbag);
+
+    NFmiParamBag pbag;
+    pbag.Add(NFmiParam(1));
+    NFmiParamDescriptor pdesc(pbag);
+
+    NFmiTimeList tlist;
+    tlist.Add(new NFmiMetTime(theTime));
+    NFmiTimeDescriptor tdesc(theTime, tlist);
+
+    NFmiHPlaceDescriptor hdesc(grid);
+
+    // Then create the new querydata
+
+    NFmiFastQueryInfo info(pdesc, tdesc, hdesc, vdesc);
+    boost::shared_ptr<NFmiQueryData> data(NFmiQueryDataUtil::CreateEmptyData(info));
+    if (data.get() == 0)
+      throw Spine::Exception(BCP, "Failed to create heatmap");
+
+    NFmiFastQueryInfo dstinfo(data.get());
+    dstinfo.First();
+
+    if (result)
+    {
+      float* v = hm->buf;
+
+      for (dstinfo.ResetLocation(); dstinfo.NextLocation();)
+        dstinfo.FloatValue(*v++);
+    }
+
+    // Return the new Q but with a new hash value
+
+    std::size_t hash = 0;
+    boost::hash_combine(hash, theParameter);
+    boost::hash_combine(hash, to_simple_string(valid_time_period.begin()));
+    boost::hash_combine(hash, to_simple_string(valid_time_period.end()));
+    boost::hash_combine(hash, box.xmin());
+    boost::hash_combine(hash, box.ymin());
+    boost::hash_combine(hash, box.xmax());
+    boost::hash_combine(hash, box.ymax());
+    boost::hash_combine(hash, Dali::hash_value(heatmap, theState));
+    boost::hash_combine(hash, radius);
+
+    char* tmp;
+    crs->exportToWkt(&tmp);
+    boost::hash_combine(hash, tmp);
+    OGRFree(tmp);
+
+    auto model = boost::make_shared<Engine::Querydata::Model>(data, hash);
+    return boost::make_shared<Engine::Querydata::QImpl>(model);
+  }
+  catch (...)
+  {
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
 
 void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
 {
@@ -128,10 +322,14 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     auto q = getModel(theState);
 
     // Establish the parameter
+    //
+    // Heatmap does not use the parameter currently (only flash coordinates)
+    bool allowUnknownParam =
+        (isObservation(theState) && (*producer == "flash") && heatmap.resolution);
 
     if (!parameter)
       throw Spine::Exception(BCP, "Parameter not set for isoband-layer!");
-    auto param = Spine::ParameterFactory::instance().parse(*parameter);
+    auto param = Spine::ParameterFactory::instance().parse(*parameter, allowUnknownParam);
 
     // Establish the valid time
 
@@ -162,6 +360,9 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     auto sampleresolution = sampling.getResolution(projection);
     if (sampleresolution)
     {
+      if (heatmap.resolution)
+        throw Spine::Exception(BCP, "Isoband-layer can't use both sampling and heatmap!");
+
       std::string report2 = "IsobandLayer::resample finished in %t sec CPU, %w sec real\n";
       std::unique_ptr<boost::timer::auto_cpu_timer> timer2;
       if (theState.useTimer())
@@ -184,6 +385,13 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
                     *demdata,
                     *landdata);
     }
+    else if (heatmap.resolution)
+    {
+      q = buildHeatmap(param, valid_time, theState);
+    }
+    else if (isObservation(theState))
+      throw Spine::Exception(
+          BCP, "Can't produce isobandlayer from observation data without heatmap configuration!");
 
     // Logical operations with maps require shapes
 
@@ -247,6 +455,12 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     std::string wkt = q->area().WKT();
 
     // Select the data
+
+    if (heatmap.resolution)
+    {
+      // Heatmap querydata has just 1 fixed parameter (1/pressure)
+      options.parameter = Spine::ParameterFactory::instance().parse("1");
+    }
 
     if (!q->firstLevel())
       throw Spine::Exception(BCP, "Unable to set first level in querydata.");
@@ -373,7 +587,8 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
   {
     auto hash = Layer::hash_value(theState);
 
-    boost::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+    if (!isObservation(theState))
+      boost::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
     boost::hash_combine(hash, Dali::hash_value(parameter));
     boost::hash_combine(hash, Dali::hash_value(level));
     boost::hash_combine(hash, Dali::hash_value(isobands, theState));
@@ -385,6 +600,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(inside, theState));
     boost::hash_combine(hash, Dali::hash_value(sampling, theState));
     boost::hash_combine(hash, Dali::hash_value(intersections, theState));
+    boost::hash_combine(hash, Dali::hash_value(heatmap, theState));
     return hash;
   }
   catch (...)
