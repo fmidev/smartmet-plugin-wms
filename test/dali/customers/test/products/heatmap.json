@@ -8,13 +8,20 @@
 	"crs": "EPSG:4326",
 	"cx" : 25,
 	"cy" : 65,
-        "resolution" : 20,
+        "resolution" : 5,
 	"xsize": 500,
 	"ysize": 500
     },
     "producer": "flash",
     "views": [{
         "layers": [
+         {
+             "layer_type": "background",
+             "attributes":
+             {
+               "fill": "white"
+             }
+         },
          {
             "qid": "l",
             "layer_type": "isoband",
