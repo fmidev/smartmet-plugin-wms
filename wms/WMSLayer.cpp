@@ -280,6 +280,7 @@ Json::Value process_legend_json(const Json::Value& jsonTemplate,
               idJson = Json::Value(legendId);
             }
           }
+
           Json::Value& subLayersJson =
               (layerJson.isMember("layers") ? layerJson["layers"] : nulljson);
           for (unsigned int j = 0; j < subLayersJson.size(); j++)
@@ -289,17 +290,21 @@ Json::Value process_legend_json(const Json::Value& jsonTemplate,
             {
               Json::Value& cssJson =
                   (subLayerJson.isMember("css") ? subLayerJson["css"] : nulljson);
+
               if (!cssJson.isNull())
-                cssJson = Json::Value(lgi.at("css"));
+                cssJson = (lgi.find("css") != lgi.end() ? Json::Value(lgi.at("css")) : nulljson);
 
               Json::Value& attributesJson =
                   (subLayerJson.isMember("attributes") ? subLayerJson["attributes"] : nulljson);
+
               if (!attributesJson.isNull())
               {
                 Json::Value& classJson =
                     (attributesJson.isMember("class") ? attributesJson["class"] : nulljson);
+
                 if (!classJson.isNull())
-                  classJson = Json::Value(lgi.at("class"));
+                  classJson =
+                      (lgi.find("class") != lgi.end() ? Json::Value(lgi.at("class")) : nulljson);
               }
             }
           }
@@ -323,7 +328,7 @@ Json::Value process_legend_json(const Json::Value& jsonTemplate,
     Json::Value& symbolsJson = legendJson["symbols"];
     Json::Value& cssJson = symbolsJson["css"];
     Json::Value& idJson = symbolsJson["symbol"];
-    cssJson = Json::Value(lgi.at("css"));
+    cssJson = (lgi.find("css") != lgi.end() ? Json::Value(lgi.at("css")) : nulljson);
     idJson = Json::Value(legendId);
 
     Json::Value& layersJson = legendJson["layers"];
@@ -374,6 +379,7 @@ Json::Value process_legend_json(const Json::Value& jsonTemplate,
           if (!symbolJson.isNull())
             symbolJson = Json::Value(legendId);
           Json::Value& positionsJson = layerJson["positions"];
+
           if (!positionsJson.isNull())
           {
             Json::Value& xPosJson = positionsJson["x"];

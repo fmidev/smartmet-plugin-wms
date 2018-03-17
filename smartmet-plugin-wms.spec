@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.3.10
+Version: 18.3.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -89,6 +89,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Sat Mar 17 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.3.17-1.fmi
+- Fixed text layout inside iceegg
+- Fixed LegendGraphics parsing when there is no reference to external json/css files in product file
+- Added heatmap support for lightning data
+
 * Sat Mar 10 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.3.10-1.fmi
 - Added support for formatting times in TimeLayer by libfmt
 
