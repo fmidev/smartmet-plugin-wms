@@ -550,9 +550,6 @@ void Plugin::init()
       if (!engine)
         throw Spine::Exception(BCP, "Observation engine unavailable");
       itsObsEngine = reinterpret_cast<Engine::Observation::Engine *>(engine);
-
-      // TODO: Should not be done this way, figure out a better way
-      itsObsEngine->setGeonames(itsGeoEngine);
     }
 #endif
 
