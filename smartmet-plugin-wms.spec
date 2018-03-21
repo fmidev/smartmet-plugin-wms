@@ -36,6 +36,7 @@ BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
 BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
+BuildRequires: heatmap-devel
 Requires: cairo
 Requires: fmt
 Requires: jsoncpp
