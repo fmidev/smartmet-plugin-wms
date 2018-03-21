@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.3.20
+Version: 18.3.21
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -17,7 +17,7 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 18.3.5
 BuildRequires: smartmet-library-macgyver-devel >= 18.2.12
-BuildRequires: smartmet-library-spine-devel >= 18.3.7
+BuildRequires: smartmet-library-spine-devel >= 18.3.21
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.3.20
@@ -52,7 +52,7 @@ Requires: smartmet-engine-contour >= 18.3.20
 Requires: smartmet-engine-gis >= 18.3.20
 Requires: smartmet-engine-geonames >= 18.3.20
 Requires: smartmet-server >= 17.11.10
-Requires: smartmet-library-spine >= 18.3.7
+Requires: smartmet-library-spine >= 18.3.21
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -89,6 +89,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Mar 21 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.3.21-1.fmi
+- SmartMetCache ABI changed
+
 * Tue Mar 20 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.3.20-1.fmi
 - Full recompile of all server plugins
 
