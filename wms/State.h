@@ -100,6 +100,7 @@ class State
   std::string getStyle(const std::string& theCSS) const;
 
   // Fetch symbol contents
+  bool setSymbol(const std::string& theName, const std::string& theValue) const;
   std::string getSymbol(const std::string& theName) const;
   std::size_t getSymbolHash(const std::string& theName) const;
 
@@ -164,6 +165,9 @@ class State
 
   // Names which have already been used as unique IDs in the SVG
   mutable std::set<std::string> itsUsedIds;
+
+  // Symbols we already know of
+  mutable std::map<std::string, std::string> itsSymbols;
 
   // Next ID to be used
   mutable std::size_t itsNextId = 0;

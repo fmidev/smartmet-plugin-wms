@@ -9,6 +9,7 @@
 #include "Layers.h"
 #include "Properties.h"
 #include "Styles.h"
+#include "Symbols.h"
 #include <map>
 #include <string>
 #include <vector>
@@ -36,6 +37,7 @@ class Defs : public Properties
   std::string qid;
   Styles styles;
   Layers layers;
+  Symbols symbols;
 
  private:
 };  // class Defs
