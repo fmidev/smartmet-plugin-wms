@@ -2,11 +2,8 @@
 #include "Config.h"
 #include "Hash.h"
 #include <boost/foreach.hpp>
-#include <ctpp2/CDT.hpp>
-#include <macgyver/StringConversion.h>
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
-#include <stdexcept>
 #include <string>
 
 namespace SmartMet
@@ -56,7 +53,7 @@ void Symbols::init(const Json::Value& theJson, const State& theState)
   {
     throw Spine::Exception(BCP, "Operation failed!", NULL);
   }
-}  // namespace Dali
+}
 
 }  // namespace Dali
 }  // namespace Plugin
