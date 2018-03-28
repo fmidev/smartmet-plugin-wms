@@ -39,11 +39,11 @@ void Symbols::init(const Json::Value& theJson, const State& theState)
                                    name + "'");
 
       std::string value = Spine::HTTP::urldecode(symbol_json.asString());
-      if (value.substr(0, 5) != "data:")
+      if (value.substr(0, 6) != "data:,")
         throw Spine::Exception(BCP,
                                "Only RFC2397 data-URLs supported: URL incorrect '" + value +
                                    "' for symbol '" + name + "'");
-      value = value.substr(5);  // Cut away data:
+      value = value.substr(6);  // Cut away data:,
       if (theState.setSymbol(name, value) == false)
         throw Spine::Exception(BCP, "defs.symbols symbol '" + name + "' defined multiple times");
       symbols[name] = value;
