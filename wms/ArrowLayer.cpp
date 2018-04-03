@@ -773,6 +773,10 @@ void ArrowLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       offset = json.asDouble();
 
+    json = theJson.get("minrotationspeed", nulljson);
+    if (!json.isNull())
+      minrotationspeed = json.asDouble();
+
     json = theJson.get("arrows", nulljson);
     if (!json.isNull())
       Spine::JSON::extract_array("arrows", arrows, json, theConfig);
@@ -913,6 +917,11 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       double north = paper_north(q, point.latlon);
       double rotate = fmod(wdir + 180 - north, 360);
 
+      // Disable rotation for slow wind speeds if a limit is set
+      int nrotate = static_cast<int>(std::round(rotate));
+      if (minrotationspeed && wspd < *minrotationspeed)
+        nrotate = 0;
+
       CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
       tag_cdt["start"] = "<use";
       tag_cdt["end"] = "/>";
@@ -973,22 +982,26 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
         int x = point.x + point.dx + (dx ? *dx : 0);
         int y = point.y + point.dy + (dy ? *dy : 0);
 
-        if (xscale == 1 && yscale == 1)
-          transform = fmt::sprintf(
-              "translate(%d %d) rotate(%d)", x, y, static_cast<int>(std::round(rotate)));
-        else if (xscale == yscale)
-          transform = fmt::sprintf("translate(%d %d) rotate(%d) scale(%g)",
-                                   x,
-                                   y,
-                                   static_cast<int>(std::round(rotate)),
-                                   xscale);
+        if (nrotate == 0)
+        {
+          if (xscale == 1 && yscale == 1)
+            transform = fmt::sprintf("translate(%d %d)", x, y);
+          else if (xscale == yscale)
+            transform = fmt::sprintf("translate(%d %d) scale(%g)", x, y, xscale);
+          else
+            transform = fmt::sprintf("translate(%d %d) scale(%g %g)", x, y, xscale, yscale);
+        }
         else
-          transform = fmt::sprintf("translate(%d %d) rotate(%d) scale(%g %g)",
-                                   x,
-                                   y,
-                                   static_cast<int>(std::round(rotate)),
-                                   xscale,
-                                   yscale);
+        {
+          if (xscale == 1 && yscale == 1)
+            transform = fmt::sprintf("translate(%d %d) rotate(%d)", x, y, nrotate);
+          else if (xscale == yscale)
+            transform =
+                fmt::sprintf("translate(%d %d) rotate(%d) scale(%g)", x, y, nrotate, xscale);
+          else
+            transform = fmt::sprintf(
+                "translate(%d %d) rotate(%d) scale(%g %g)", x, y, nrotate, xscale, yscale);
+        }
 
         tag_cdt["attributes"]["transform"] = transform;
 
@@ -1030,6 +1043,7 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(level));
     boost::hash_combine(hash, Dali::hash_value(multiplier));
     boost::hash_combine(hash, Dali::hash_value(offset));
+    boost::hash_combine(hash, Dali::hash_value(minrotationspeed));
     boost::hash_combine(hash, Dali::hash_symbol(symbol, theState));
     boost::hash_combine(hash, Dali::hash_value(scale));
     boost::hash_combine(hash, Dali::hash_value(southflop));

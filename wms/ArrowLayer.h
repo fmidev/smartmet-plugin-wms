@@ -45,6 +45,7 @@ class ArrowLayer : public Layer
   boost::optional<double> level;
   boost::optional<double> multiplier;
   boost::optional<double> offset;
+  boost::optional<double> minrotationspeed;
   boost::optional<std::string> symbol;
   boost::optional<double> scale;
   bool southflop;
