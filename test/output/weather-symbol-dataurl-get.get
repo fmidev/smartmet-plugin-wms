@@ -44,7 +44,7 @@
  <circle cx="0" cy="0" r="1"/>
 </symbol>
 <symbol id="weather_1_II_1">
- <circle cx="0" cy="0" r="15" stroke="black" fill="yellow" stroke-width="1"/>
+ <circle cx="0" cy="0" r="15" fill="orange" stroke-width="1"/>
 </symbol>
 <symbol id="weather_1_II_2">
 <desc>PartlyCloudy</desc>
