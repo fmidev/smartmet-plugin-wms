@@ -1,1 +1,1 @@
-GET /wms?service=wms&request=GetMap&version=1.3.0&layers=ely:wmsmap&styles=&crs=CRS:SmartMetScandinavia&debug=1&bbox=-1010040,-4051052,1005949,-1814781&width=500&height=500&format=image/svg%2Bxml&time=200808050300 HTTP/1.0
+GET /wms?servicE=wms&requesT=GetMap&versioN=1.3.0&layerS=ely:wmsmap&styleS=&crS=CRS:SmartMetScandinavia&debuG=1&bboX=-1010040,-4051052,1005949,-1814781&widtH=500&heighT=500&formaT=image/svg%2Bxml&timE=200808050300 HTTP/1.0
