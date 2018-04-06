@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=hirlam_wind&time=201804061200 HTTP/1.0

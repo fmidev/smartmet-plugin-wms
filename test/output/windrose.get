@@ -67,7 +67,7 @@
    <line class="RoseConnector" x1="435" x2="456" y1="399" y2="342"/>
    <use class="StationMarker" x="155" xlink:href="#station" y="211"/>
    <use class="WindRose" x="285" xlink:href="#windrose" y="241"/>
-   <path class="ModerateWind" d="M285 241 298.842,246.734 A 14.983 14.983 0,0,1 290.734,254.842Z"/>
+   <path class="ModerateWind" d="M285 241 298.817,246.723 A 14.9551 14.9551 0,0,1 290.723,254.817Z"/>
    <path class="ModerateWind" d="M285 241 292.654,259.478 A 20 20 0,0,1 277.346,259.478Z"/>
    <line class="RoseConnector" x1="156" x2="265" y1="211" y2="236"/>
    <use class="StationMarker" x="311" xlink:href="#station" y="125"/>

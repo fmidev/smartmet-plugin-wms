@@ -42,39 +42,6 @@ namespace Dali
 {
 // ----------------------------------------------------------------------
 /*!
- * \brief Calculate direction of north on paper coordinates
- */
-// ----------------------------------------------------------------------
-
-double paper_north(const Engine::Querydata::Q& theQ, const NFmiPoint& theLatLon)
-{
-  if (!theQ)
-    return 0;
-
-  try
-  {
-    const NFmiPoint origo = theQ->area().ToXY(theLatLon);
-
-    const double latstep = 0.001;  // degrees to north
-
-    const double lat = theLatLon.Y() + latstep;
-
-    // Safety against exceeding the north pole
-    if (lat > 90)
-      return 0;
-
-    const NFmiPoint north = theQ->area().ToXY(NFmiPoint(theLatLon.X(), lat));
-    const float alpha = static_cast<float>(atan2(origo.X() - north.X(), origo.Y() - north.Y()));
-    return alpha * 180 / pi;
-  }
-  catch (...)
-  {
-    throw Spine::Exception(BCP, "ArrowLayer failed to calculate paper north", NULL);
-  }
-}
-
-// ----------------------------------------------------------------------
-/*!
  * \brief Holder for data values
  */
 // ----------------------------------------------------------------------
@@ -132,6 +99,24 @@ PointValues read_forecasts(const ArrowLayer& layer,
     throw Spine::Exception(
         BCP, "Parameter " + vparam->name() + " not available in the arrow layer querydata");
 
+  // We may need to convert relative U/V components to true north
+  std::unique_ptr<OGRCoordinateTransformation> uvtransformation;
+  std::unique_ptr<OGRSpatialReference> wgs84;
+  std::unique_ptr<OGRSpatialReference> qsrs;
+  if (uparam && vparam && q->isRelativeUV())
+  {
+    wgs84.reset(new OGRSpatialReference);
+    OGRErr err = wgs84->SetFromUserInput("WGS84");
+    if (err != OGRERR_NONE)
+      throw Spine::Exception(BCP, "GDAL does not understand WGS84");
+
+    qsrs.reset(new OGRSpatialReference);
+    err = qsrs->SetFromUserInput(q->area().WKT().c_str());
+    if (err != OGRERR_NONE)
+      throw Spine::Exception(BCP, "Failed to establish querydata spatial reference");
+    uvtransformation.reset(OGRCreateCoordinateTransformation(wgs84.get(), qsrs.get()));
+  }
+
   // Generate the coordinates for the arrows
 
   const bool forecast_mode = true;
@@ -158,7 +143,17 @@ PointValues read_forecasts(const ArrowLayer& layer,
       {
         wspd = sqrt(uspd * uspd + vspd * vspd);
         if (uspd != 0 || vspd != 0)
-          wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+        {
+          if (!uvtransformation)
+            wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+          else
+          {
+            auto rot = Fmi::OGR::gridNorth(*uvtransformation, point.latlon.X(), point.latlon.Y());
+            if (!rot)
+              continue;
+            wdir = fmod(180 - *rot + 180 / pi * atan2(uspd, vspd), 360);
+          }
+        }
       }
     }
     else
@@ -896,6 +891,21 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       pointvalues = read_observations(*this, theState, crs, box, valid_time_period);
 #endif
 
+    // Coordinate transformation from WGS84 to output SRS so that we can rotate
+    // winds according to map north
+
+    std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+    OGRErr err = wgs84->SetFromUserInput("WGS84");
+    if (err != OGRERR_NONE)
+      throw Spine::Exception(BCP, "GDAL does not understand WGS84");
+
+    std::unique_ptr<OGRCoordinateTransformation> transformation(
+        OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
+    if (!transformation)
+      throw Spine::Exception(
+          BCP,
+          "Failed to create the needed coordinate transformation when reading wind directions");
+
     // Render the collected values
 
     for (const auto& pointvalue : pointvalues)
@@ -913,9 +923,14 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       double xoffset = (offset ? *offset : 0.0);
       wspd = xmultiplier * wspd + xoffset;
 
-      // Where is north?
-      double north = paper_north(q, point.latlon);
-      double rotate = fmod(wdir + 180 - north, 360);
+      // Apply final rotation to output coordinate system
+      auto fix = Fmi::OGR::gridNorth(*transformation, point.latlon.X(), point.latlon.Y());
+      if (!fix)
+        continue;
+      wdir = fmod(wdir + *fix, 360);
+
+      // North wind blows, rotate 180 degrees
+      double rotate = fmod(wdir + 180, 360);
 
       // Disable rotation for slow wind speeds if a limit is set
       int nrotate = static_cast<int>(std::round(rotate));
