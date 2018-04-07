@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.4.6
+Version: 18.4.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -17,7 +17,7 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 18.3.5
 BuildRequires: smartmet-library-macgyver-devel >= 18.2.12
-BuildRequires: smartmet-library-spine-devel >= 18.3.26
+BuildRequires: smartmet-library-spine-devel >= 18.4.7
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.3.20
@@ -27,7 +27,7 @@ BuildRequires: smartmet-engine-observation-devel >= 18.4.3
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.3.20
 BuildRequires: smartmet-engine-geonames-devel >= 18.3.20
-BuildRequires: smartmet-engine-querydata-devel >= 18.4.3
+BuildRequires: smartmet-engine-querydata-devel >= 18.4.6
 BuildRequires: smartmet-engine-contour-devel >= 18.3.20
 BuildRequires: smartmet-library-gis-devel >= 18.4.6
 BuildRequires: fmt-devel
@@ -48,12 +48,12 @@ Requires: smartmet-library-giza >= 18.3.5
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 18.3.20
 %endif
-Requires: smartmet-engine-querydata >= 18.4.3
+Requires: smartmet-engine-querydata >= 18.4.6
 Requires: smartmet-engine-contour >= 18.3.20
 Requires: smartmet-engine-gis >= 18.3.20
 Requires: smartmet-engine-geonames >= 18.3.20
 Requires: smartmet-server >= 17.11.10
-Requires: smartmet-library-spine >= 18.3.26
+Requires: smartmet-library-spine >= 18.4.7
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -90,6 +90,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Sat Apr  7 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.4.7-1.fmi
+- Added possibility to define symbols to be used via the query string
+
 * Fri Apr  6 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.4.6-1.fmi
 - Fixed wind direction handling in ArrowLayer to use output CRS instead of data CRS
 - ArrowLayer now supports relative_uv setting if drawn from U/V components
