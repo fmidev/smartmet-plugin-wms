@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 18.4.7
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -16,20 +16,20 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: smartmet-library-giza-devel >= 18.3.5
-BuildRequires: smartmet-library-macgyver-devel >= 18.2.12
+BuildRequires: smartmet-library-macgyver-devel >= 18.4.7
 BuildRequires: smartmet-library-spine-devel >= 18.4.7
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 18.3.20
+BuildRequires: smartmet-engine-authentication-devel >= 18.4.7
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 18.4.3
+BuildRequires: smartmet-engine-observation-devel >= 18.4.7
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 18.3.20
-BuildRequires: smartmet-engine-geonames-devel >= 18.3.20
-BuildRequires: smartmet-engine-querydata-devel >= 18.4.6
-BuildRequires: smartmet-engine-contour-devel >= 18.3.20
-BuildRequires: smartmet-library-gis-devel >= 18.4.6
+BuildRequires: smartmet-engine-gis-devel >= 18.4.7
+BuildRequires: smartmet-engine-geonames-devel >= 18.4.7
+BuildRequires: smartmet-engine-querydata-devel >= 18.4.7
+BuildRequires: smartmet-engine-contour-devel >= 18.4.7
+BuildRequires: smartmet-library-gis-devel >= 18.4.7
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.5
 BuildRequires: jsoncpp-devel
@@ -42,17 +42,17 @@ Requires: fmt
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
-Requires: smartmet-library-gis >= 18.4.6
-Requires: smartmet-library-macgyver >= 18.2.12
+Requires: smartmet-library-gis >= 18.4.7
+Requires: smartmet-library-macgyver >= 18.4.7
 Requires: smartmet-library-giza >= 18.3.5
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 18.3.20
+Requires: smartmet-engine-authentication >= 18.4.7
 %endif
-Requires: smartmet-engine-querydata >= 18.4.6
-Requires: smartmet-engine-contour >= 18.3.20
-Requires: smartmet-engine-gis >= 18.3.20
-Requires: smartmet-engine-geonames >= 18.3.20
-Requires: smartmet-server >= 17.11.10
+Requires: smartmet-engine-querydata >= 18.4.7
+Requires: smartmet-engine-contour >= 18.4.7
+Requires: smartmet-engine-gis >= 18.4.7
+Requires: smartmet-engine-geonames >= 18.4.7
+Requires: smartmet-server >= 18.4.7
 Requires: smartmet-library-spine >= 18.4.7
 Requires: boost-date-time
 Requires: boost-filesystem
@@ -90,6 +90,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Sat Apr  7 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.4.7-2.fmi
+- Upgrade to boost 1.66
+
 * Sat Apr  7 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.4.7-1.fmi
 - Added possibility to define symbols to be used via the query string
 
