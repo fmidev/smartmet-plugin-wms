@@ -48,6 +48,6 @@ void WMSQueryDataLayer::updateLayerMetaData()
   }
 }
 
-}  // namespace Dali
+}  // namespace WMS
 }  // namespace Plugin
 }  // namespace SmartMet

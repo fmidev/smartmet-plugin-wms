@@ -7,21 +7,21 @@
 
 namespace
 {
-  static float linearKernel(float d)
-  {
-    return d;
-  }
-
-  static float sqrtKernel(float d)
-  {
-    return sqrtf(d);
-  }
-
-  static float expKernel(float d, double deviation)
-  {
-    return (float) exp(-0.5*sqrtf(d/deviation));
-  }
+static float linearKernel(float d)
+{
+  return d;
 }
+
+static float sqrtKernel(float d)
+{
+  return sqrtf(d);
+}
+
+static float expKernel(float d, double deviation)
+{
+  return (float)exp(-0.5 * sqrtf(d / deviation));
+}
+}  // namespace
 
 namespace SmartMet
 {
@@ -85,7 +85,7 @@ void Heatmap::init(const Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-std::unique_ptr<heatmap_stamp_t, void(*)(heatmap_stamp_t*)> Heatmap::getStamp(unsigned r)
+std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> Heatmap::getStamp(unsigned r)
 {
   try
   {
@@ -103,26 +103,26 @@ std::unique_ptr<heatmap_stamp_t, void(*)(heatmap_stamp_t*)> Heatmap::getStamp(un
       // heatmap_stamp_load makes a copy of the stamp buffer; it must be deleted at return.
 
       unsigned y;
-      unsigned d = 2*r+1;
+      unsigned d = 2 * r + 1;
 
-      float* stamp = (float*) calloc(d*d, sizeof(float));
+      float* stamp = (float*)calloc(d * d, sizeof(float));
 
       if (!stamp)
         throw Spine::Exception(BCP, "Could not allocate memory for heatmap stamp");
       std::unique_ptr<float> up_stamp(stamp);
 
-      for(y = 0 ; y < d ; ++y) {
-        float* line = stamp + y*d;
+      for (y = 0; y < d; ++y)
+      {
+        float* line = stamp + y * d;
         unsigned x;
 
-        for(x = 0 ; x < d ; ++x, ++line) {
-            const float dist = sqrtf((float)((x-r)*(x-r) + (y-r)*(y-r)))/(float)(r+1);
-            const float ds = expKernel(dist, *deviation);
-            /* This doesn't generate optimal assembly, but meh, it's readable. */
-            const float clamped_ds = ds > 1.0f ? 1.0f
-                                   : ds < 0.0f ? 0.0f
-                                   :             ds;
-            *line = 1.0f - clamped_ds;
+        for (x = 0; x < d; ++x, ++line)
+        {
+          const float dist = sqrtf((float)((x - r) * (x - r) + (y - r) * (y - r))) / (float)(r + 1);
+          const float ds = expKernel(dist, *deviation);
+          /* This doesn't generate optimal assembly, but meh, it's readable. */
+          const float clamped_ds = ds > 1.0f ? 1.0f : ds < 0.0f ? 0.0f : ds;
+          *line = 1.0f - clamped_ds;
         }
       }
 
@@ -134,7 +134,7 @@ std::unique_ptr<heatmap_stamp_t, void(*)(heatmap_stamp_t*)> Heatmap::getStamp(un
     if (!hms)
       throw Spine::Exception(BCP, "Heatmap stamp generation failed");
 
-    return std::unique_ptr<heatmap_stamp_t, void(*)(heatmap_stamp_t*)>(hms, heatmap_stamp_free);
+    return std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)>(hms, heatmap_stamp_free);
   }
   catch (...)
   {

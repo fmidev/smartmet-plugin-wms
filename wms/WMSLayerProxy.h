@@ -19,7 +19,7 @@ namespace Gis
 {
 class Engine;
 }
-}
+}  // namespace Engine
 
 namespace Plugin
 {

@@ -82,7 +82,7 @@ OGRGeometryPtr createFrameGeometry(const FrameDimension& inner,
 
   return pFrameGeom;
 }
-}
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!

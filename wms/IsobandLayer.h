@@ -6,13 +6,13 @@
 
 #pragma once
 
+#include "Heatmap.h"
 #include "Intersections.h"
 #include "Isoband.h"
 #include "Layer.h"
 #include "Map.h"
 #include "Sampling.h"
 #include "Smoother.h"
-#include "Heatmap.h"
 #include <vector>
 
 namespace SmartMet
@@ -55,10 +55,9 @@ class IsobandLayer : public Layer
   Heatmap heatmap;
 
  private:
-  boost::shared_ptr<Engine::Querydata::QImpl> buildHeatmap(
-    const Spine::Parameter &theParameter,
-    const boost::posix_time::ptime &theTime,
-    State& theState);
+  boost::shared_ptr<Engine::Querydata::QImpl> buildHeatmap(const Spine::Parameter& theParameter,
+                                                           const boost::posix_time::ptime& theTime,
+                                                           State& theState);
 
 };  // class IsobandLayer
 

@@ -69,7 +69,7 @@ text_dimension_t get_row_dimension(const RowCellInfo& rci)
 
   return ret;
 }
-}
+}  // namespace
 
 text_style_t TableAttributes::titleTextStyle()
 {

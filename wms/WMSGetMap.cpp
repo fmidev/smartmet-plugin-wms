@@ -291,9 +291,7 @@ void parse_interval_with_resolution(const std::string time_str,
 
 }  // anonymous namespace
 
-WMSGetMap::WMSGetMap(const WMSConfig& theConfig) : itsConfig(theConfig)
-{
-}
+WMSGetMap::WMSGetMap(const WMSConfig& theConfig) : itsConfig(theConfig) {}
 void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
                                  Spine::HTTP::Request& theRequest)
 {

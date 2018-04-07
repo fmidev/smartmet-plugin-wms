@@ -17,9 +17,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-Title::Title() : qid(), dx(0), dy(0), attributes(), text()
-{
-}
+Title::Title() : qid(), dx(0), dy(0), attributes(), text() {}
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize from JSON

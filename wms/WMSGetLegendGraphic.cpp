@@ -231,9 +231,7 @@ void parse_interval_with_resolution(const std::string time_str,
 
 }  // anonymous namespace
 
-WMSGetLegendGraphic::WMSGetLegendGraphic(const WMSConfig& theConfig) : itsConfig(theConfig)
-{
-}
+WMSGetLegendGraphic::WMSGetLegendGraphic(const WMSConfig& theConfig) : itsConfig(theConfig) {}
 
 void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
                                            Spine::HTTP::Request& theRequest)

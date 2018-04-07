@@ -267,7 +267,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     layer->customer = theCustomer;
 
     // Update metadata from DB etc
-    
+
     layer->updateLayerMetaData();
 
     // WMS GetCapability settings
