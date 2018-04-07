@@ -765,7 +765,7 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
 
     // Modify variables as requested (not reference substitutions)
 
-    Spine::JSON::expand(json, theRequest.getParameterMap());
+    Spine::JSON::expand(json, theRequest.getParameterMap(), "", false);
 
     // Debugging
 
@@ -1289,7 +1289,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
 
       Spine::JSON::dereference(json);
 
-      Spine::JSON::expand(json, thisRequest.getParameterMap());
+      Spine::JSON::expand(json, thisRequest.getParameterMap(), "", false);
 
       // Debugging
 

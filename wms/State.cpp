@@ -408,6 +408,29 @@ std::string State::getStyle(const std::string& theCSS) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Store symbol SVG to state object, overriding any lower layer data
+ */
+// ----------------------------------------------------------------------
+bool State::setSymbol(const std::string& theName, const std::string& theValue) const
+{
+  try
+  {
+    if (itsSymbols.count(theName) > 0)
+    {
+      itsSymbols[theName] = theValue;
+      return false;  // Overriding symbols already in there
+    }
+    itsSymbols[theName] = theValue;
+    return true;
+  }
+  catch (...)
+  {
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Fetch symbol SVG from the cache
  */
 // ----------------------------------------------------------------------
@@ -416,6 +439,8 @@ std::string State::getSymbol(const std::string& theName) const
 {
   try
   {
+    if (itsSymbols.count(theName) > 0)
+      return itsSymbols[theName];
     return itsPlugin.getSymbol(itsCustomer, theName, itUsesWms);
   }
   catch (...)

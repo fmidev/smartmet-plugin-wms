@@ -1,0 +1,131 @@
+{
+    "title": "Weather symbol test",
+   "defs":
+    {
+        "symbols":
+            {
+                "weather/1_II/1": "data:;base64,PHN5bWJvbCBpZD0id2VhdGhlcl8xX0lJXzEiPgogPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjE1IiBzdHJva2U9ImJsYWNrIiBmaWxsPSJ5ZWxsb3ciIHN0cm9rZS13aWR0aD0iMSIvPgo8L3N5bWJvbD4K",
+		"weather/1_II/yo1": "data:,%3Csymbol%20id%3D%22weather_1_II_yo1%22%3E%0A%20%3Ccircle%20cx%3D%220%22%20cy%3D%220%22%20r%3D%2210%22%20stroke%3D%22black%22%20fill%3D%22pink%22%20stroke-width%3D%221%22%2F%3E%0A%3C%2Fsymbol%3E%0A"
+		
+            }
+    },
+
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+		{
+		    "qid": "background",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "rgb(0,75,140)"
+		    }
+		},
+		{
+		    "qid": "europe",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"where": "iso_a2 NOT IN ('FI','AX')"
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country",
+			"fill": "rgb(120,120,0)"
+		    }
+		},
+		{
+		    "qid": "finland",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"where": "iso_a2 IN ('FI','AX')"
+		    },
+		    "attributes":
+		    {
+			"id": "finland_country",
+			"fill": "rgb(120,130,33)"
+		    }
+		},
+		{
+		    "qid": "l1",
+		    "layer_type": "isoband",
+		    "isobands": "json:isobands/precipitation.json",
+		    "css": "isobands/precipitation.css",
+		    "parameter": "Precipitation1h",
+		    "attributes":
+		    {
+			"id": "precipitation_isobands"
+		    }
+		},
+		{
+		    "qid": "europe_lines",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries"
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country_lines",
+			"fill": "none",
+			"stroke": "#222",
+			"stroke-width": "0.3px"
+		    }
+		},
+		{
+		    "qid": "l2",
+		    "layer_type": "symbol",
+		    "css": "symbols/weather.css",
+		    "symbols": "json:symbols/weather.json",
+		    "parameter": "weathersymbol",
+		    "scale": 0.75,
+		    "positions":
+		    {
+			"x": 30,
+			"y": 30,
+			"dx": 50,
+			"dy": 50,
+			"ddx": 25
+		    },
+		    "attributes":
+		    {
+			"id": "weather",
+			"class": "Weather"
+		    }
+		},
+		{
+		    "qid": "l2",
+		    "layer_type": "symbol",
+		    "css": "symbols/dot.css",
+		    "symbol": "dot",
+		    "positions":
+		    {
+			"x": 30,
+			"y": 30,
+			"dx": 50,
+			"dy": 50,
+			"ddx": 25
+		    }
+		}
+            ]
+        }
+    ]
+}

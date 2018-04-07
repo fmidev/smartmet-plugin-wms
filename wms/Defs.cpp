@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "Hash.h"
 #include "State.h"
+#include "Symbols.h"
 #include <boost/foreach.hpp>
 #include <ctpp2/CDT.hpp>
 #include <spine/Exception.h>
@@ -55,6 +56,10 @@ void Defs::init(const Json::Value& theJson,
     json = theJson.get("layers", nulljson);
     if (!json.isNull())
       layers.init(json, theState, theConfig, *this);
+
+    json = theJson.get("symbols", nulljson);
+    if (!json.isNull())
+      symbols.init(json, theState);
   }
   catch (...)
   {
