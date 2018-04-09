@@ -271,7 +271,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     NFmiFastQueryInfo dstinfo(data.get());
     dstinfo.First();
 
-    if (result)
+    if (result && hm && hm->buf)
     {
       float* v = hm->buf;
 
