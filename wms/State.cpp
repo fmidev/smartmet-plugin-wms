@@ -459,6 +459,8 @@ std::size_t State::getSymbolHash(const std::string& theName) const
 {
   try
   {
+    if (itsSymbols.count(theName) > 0)
+      return boost::hash_value(itsSymbols[theName]);
     return itsPlugin.getSymbolHash(itsCustomer, theName, itUsesWms);
   }
   catch (...)
