@@ -711,8 +711,14 @@ bool WMSConfig::validateGetMapAuthorization(const Spine::HTTP::Request& theReque
 
   try
   {
-    // Existence of layers must be guaranteed before calling this function
-    std::string layerstring = *(theRequest.getParameter("LAYERS"));
+    auto layersopt = theRequest.getParameter("LAYERS");
+    if (!layersopt)
+      return true;
+
+    std::string layerstring = *layersopt;
+
+    if (layerstring.empty())
+      return true;
 
     // Get apikey
     auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
