@@ -91,13 +91,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
     throw Spine::Exception(
         BCP, "Parameter " + dirparam->name() + " not available in the arrow layer querydata");
 
-  if (uparam && !q->param(uparam->number()))
-    throw Spine::Exception(
-        BCP, "Parameter " + uparam->name() + " not available in the arrow layer querydata");
-
-  if (vparam && !q->param(vparam->number()))
-    throw Spine::Exception(
-        BCP, "Parameter " + vparam->name() + " not available in the arrow layer querydata");
+  // WindUMS and WindVMS are metaparameters, cannot check their existence here
 
   // We may need to convert relative U/V components to true north
   std::unique_ptr<OGRCoordinateTransformation> uvtransformation;
@@ -124,6 +118,14 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
   PointValues pointvalues;
 
+  // Q API SUCKS
+  boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+  boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
+  boost::local_time::local_date_time localdatetime(met_time, utc);
+  std::string tmp = "";
+  auto mylocale = std::locale::classic();
+  NFmiPoint dummy;
+
   for (const auto& point : points)
   {
     if (!layer.inside(box, point.x, point.y))
@@ -135,23 +137,57 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
     if (uparam && vparam)
     {
-      q->param(uparam->number());
-      double uspd = q->interpolate(point.latlon, met_time, 180);  // TODO: magic constant
-      q->param(vparam->number());
-      double vspd = q->interpolate(point.latlon, met_time, 180);  // TODO: magic constant
-      if (uspd != kFloatMissing && vspd != kFloatMissing)
+      Spine::Location loc(point.latlon.X(), point.latlon.Y());
+
+      auto up = Engine::Querydata::ParameterOptions(*uparam,
+                                                    tmp,
+                                                    loc,
+                                                    tmp,
+                                                    tmp,
+                                                    *timeformatter,
+                                                    tmp,
+                                                    tmp,
+                                                    mylocale,
+                                                    tmp,
+                                                    false,
+                                                    dummy,
+                                                    dummy);
+      auto uresult = q->value(up, localdatetime);
+
+      auto vp = Engine::Querydata::ParameterOptions(*vparam,
+                                                    tmp,
+                                                    loc,
+                                                    tmp,
+                                                    tmp,
+                                                    *timeformatter,
+                                                    tmp,
+                                                    tmp,
+                                                    mylocale,
+                                                    tmp,
+                                                    false,
+                                                    dummy,
+                                                    dummy);
+      auto vresult = q->value(vp, localdatetime);
+
+      if (boost::get<double>(&uresult) && boost::get<double>(&vresult))
       {
-        wspd = sqrt(uspd * uspd + vspd * vspd);
-        if (uspd != 0 || vspd != 0)
+        auto uspd = *boost::get<double>(&uresult);
+        auto vspd = *boost::get<double>(&vresult);
+
+        if (uspd != kFloatMissing && vspd != kFloatMissing)
         {
-          if (!uvtransformation)
-            wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
-          else
+          wspd = sqrt(uspd * uspd + vspd * vspd);
+          if (uspd != 0 || vspd != 0)
           {
-            auto rot = Fmi::OGR::gridNorth(*uvtransformation, point.latlon.X(), point.latlon.Y());
-            if (!rot)
-              continue;
-            wdir = fmod(180 - *rot + 180 / pi * atan2(uspd, vspd), 360);
+            if (!uvtransformation)
+              wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+            else
+            {
+              auto rot = Fmi::OGR::gridNorth(*uvtransformation, point.latlon.X(), point.latlon.Y());
+              if (!rot)
+                continue;
+              wdir = fmod(180 - *rot + 180 / pi * atan2(uspd, vspd), 360);
+            }
           }
         }
       }

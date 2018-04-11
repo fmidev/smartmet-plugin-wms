@@ -3,6 +3,7 @@
 #include "Hash.h"
 #include "Projection.h"
 #include <boost/foreach.hpp>
+#include <engines/querydata/ParameterOptions.h>
 #include <gis/OGR.h>
 #include <spine/Convenience.h>
 #include <spine/Exception.h>
@@ -23,14 +24,7 @@ namespace Dali
 
 double length(double x1, double y1, double x2, double y2)
 {
-  try
-  {
-    return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-  }
-  catch (...)
-  {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
-  }
+  return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
 
 // ----------------------------------------------------------------------
@@ -118,26 +112,63 @@ void apply_direction_offsets(Positions::Points& thePoints,
     else
     {
       auto uparam = Spine::ParameterFactory::instance().parse(theU);
-      if (!q.param(uparam.number()))
-        throw Spine::Exception(BCP,
-                               "Parameter '" + theU + "' is not available for position selection!");
-
       auto vparam = Spine::ParameterFactory::instance().parse(theV);
-      if (!q.param(vparam.number()))
-        throw Spine::Exception(BCP,
-                               "Parameter '" + theV + "' is not available for position selection!");
+
+      // Q API SUCKS
+      boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+      boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
+      boost::local_time::local_date_time localdatetime(theTime, utc);
+      std::string tmp = "";
+      auto mylocale = std::locale::classic();
+      NFmiPoint dummy;
 
       for (auto& point : thePoints)
       {
-        q.param(uparam.number());
-        double uspd = q.interpolate(point.latlon, theTime, 180);  // TODO: magic constant
-        q.param(vparam.number());
-        double vspd = q.interpolate(point.latlon, theTime, 180);  // TODO: magic constant
-        if (uspd != kFloatMissing && vspd != kFloatMissing && (uspd != 0 || vspd != 0))
+        // Q API SUCKS
+
+        Spine::Location loc(point.latlon.X(), point.latlon.Y());
+
+        auto up = Engine::Querydata::ParameterOptions(uparam,
+                                                      tmp,
+                                                      loc,
+                                                      tmp,
+                                                      tmp,
+                                                      *timeformatter,
+                                                      tmp,
+                                                      tmp,
+                                                      mylocale,
+                                                      tmp,
+                                                      false,
+                                                      dummy,
+                                                      dummy);
+        auto uresult = q.value(up, localdatetime);
+
+        auto vp = Engine::Querydata::ParameterOptions(vparam,
+                                                      tmp,
+                                                      loc,
+                                                      tmp,
+                                                      tmp,
+                                                      *timeformatter,
+                                                      tmp,
+                                                      tmp,
+                                                      mylocale,
+                                                      tmp,
+                                                      false,
+                                                      dummy,
+                                                      dummy);
+        auto vresult = q.value(vp, localdatetime);
+
+        if (boost::get<double>(&uresult) && boost::get<double>(&vresult))
         {
-          double dir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
-          point.x += theOffset * cos((dir + 90 + theRotation) * pi / 180);
-          point.y += theOffset * sin((dir + 90 + theRotation) * pi / 180);
+          auto uspd = *boost::get<double>(&uresult);
+          auto vspd = *boost::get<double>(&vresult);
+
+          if (uspd != kFloatMissing && vspd != kFloatMissing && (uspd != 0 || vspd != 0))
+          {
+            double dir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+            point.x += theOffset * cos((dir + 90 + theRotation) * pi / 180);
+            point.y += theOffset * sin((dir + 90 + theRotation) * pi / 180);
+          }
         }
       }
     }
