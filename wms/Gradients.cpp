@@ -45,7 +45,8 @@ void Gradients::init(const Json::Value& theJson, const State& theState)
                                    "' for gradient '" + name + "'");
       value = value.substr(6);  // Cut away data:,
       if (theState.setGradient(name, value) == false)
-        throw Spine::Exception(BCP, "defs.gradients gradient '" + name + "' defined multiple times");
+        throw Spine::Exception(BCP,
+                               "defs.gradients gradient '" + name + "' defined multiple times");
       gradients[name] = value;
     }
   }
