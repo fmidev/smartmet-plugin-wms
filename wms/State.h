@@ -105,18 +105,22 @@ class State
   std::size_t getSymbolHash(const std::string& theName) const;
 
   // Fetch pattern contents
+  bool setPattern(const std::string& theName, const std::string& theValue) const;
   std::string getPattern(const std::string& theName) const;
   std::size_t getPatternHash(const std::string& theName) const;
 
   // Fetch marker contents
+  bool setMarker(const std::string& theName, const std::string& theValue) const;
   std::string getMarker(const std::string& theName) const;
   std::size_t getMarkerHash(const std::string& theName) const;
 
   // Fetch gradient contents
+  bool setGradient(const std::string& theName, const std::string& theValue) const;
   std::string getGradient(const std::string& theName) const;
   std::size_t getGradientHash(const std::string& theName) const;
 
   // Fetch filter contents
+  bool setFilter(const std::string& theName, const std::string& theValue) const;
   std::string getFilter(const std::string& theName) const;
   std::size_t getFilterHash(const std::string& theName) const;
 
@@ -168,6 +172,14 @@ class State
 
   // Symbols we already know of
   mutable std::map<std::string, std::string> itsSymbols;
+  // Filters we already know of
+  mutable std::map<std::string, std::string> itsFilters;
+  // Markers we already know of
+  mutable std::map<std::string, std::string> itsMarkers;
+  // Patterns we already know of
+  mutable std::map<std::string, std::string> itsPatterns;
+  // Gradients we already know of
+  mutable std::map<std::string, std::string> itsGradients;
 
   // Next ID to be used
   mutable std::size_t itsNextId = 0;

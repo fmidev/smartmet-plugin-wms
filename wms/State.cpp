@@ -38,6 +38,7 @@ State::State(const Plugin& thePlugin)
       itsUsedIds(),
       itsInDefs(false),
       itUsesTimer(false),
+      itUsesWms(false),
       itsCustomer(),
       itsType()
 {
@@ -431,6 +432,98 @@ bool State::setSymbol(const std::string& theName, const std::string& theValue) c
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Store filter SVG to state object, overriding any lower layer data
+ */
+// ----------------------------------------------------------------------
+bool State::setFilter(const std::string& theName, const std::string& theValue) const
+{
+  try
+  {
+    if (itsFilters.count(theName) > 0)
+    {
+      itsFilters[theName] = theValue;
+      return false;  // Overriding filters already in there
+    }
+    itsFilters[theName] = theValue;
+    return true;
+  }
+  catch (...)
+  {
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Store marker SVG to state object, overriding any lower layer data
+ */
+// ----------------------------------------------------------------------
+bool State::setMarker(const std::string& theName, const std::string& theValue) const
+{
+  try
+  {
+    if (itsMarkers.count(theName) > 0)
+    {
+      itsMarkers[theName] = theValue;
+      return false;  // Overriding markers already in there
+    }
+    itsMarkers[theName] = theValue;
+    return true;
+  }
+  catch (...)
+  {
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Store pattern SVG to state object, overriding any lower layer data
+ */
+// ----------------------------------------------------------------------
+bool State::setPattern(const std::string& theName, const std::string& theValue) const
+{
+  try
+  {
+    if (itsPatterns.count(theName) > 0)
+    {
+      itsPatterns[theName] = theValue;
+      return false;  // Overriding patterns already in there
+    }
+    itsPatterns[theName] = theValue;
+    return true;
+  }
+  catch (...)
+  {
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Store gradient SVG to state object, overriding any lower layer data
+ */
+// ----------------------------------------------------------------------
+bool State::setGradient(const std::string& theName, const std::string& theValue) const
+{
+  try
+  {
+    if (itsGradients.count(theName) > 0)
+    {
+      itsGradients[theName] = theValue;
+      return false;  // Overriding gradients already in there
+    }
+    itsGradients[theName] = theValue;
+    return true;
+  }
+  catch (...)
+  {
+    throw Spine::Exception(BCP, "Operation failed!", NULL);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Fetch symbol SVG from the cache
  */
 // ----------------------------------------------------------------------
@@ -479,6 +572,8 @@ std::string State::getFilter(const std::string& theName) const
 {
   try
   {
+    if (itsFilters.count(theName) > 0)
+      return itsFilters[theName];
     return itsPlugin.getFilter(theName, itUsesWms);
   }
   catch (...)
@@ -497,6 +592,8 @@ std::size_t State::getFilterHash(const std::string& theName) const
 {
   try
   {
+    if (itsFilters.count(theName) > 0)
+      return boost::hash_value(itsFilters[theName]);
     return itsPlugin.getFilterHash(theName, itUsesWms);
   }
   catch (...)
@@ -515,6 +612,8 @@ std::string State::getPattern(const std::string& theName) const
 {
   try
   {
+    if (itsPatterns.count(theName) > 0)
+      return itsPatterns[theName];
     return itsPlugin.getPattern(itsCustomer, theName, itUsesWms);
   }
   catch (...)
@@ -533,6 +632,8 @@ std::size_t State::getPatternHash(const std::string& theName) const
 {
   try
   {
+    if (itsPatterns.count(theName) > 0)
+      return boost::hash_value(itsPatterns[theName]);
     return itsPlugin.getPatternHash(itsCustomer, theName, itUsesWms);
   }
   catch (...)
@@ -551,6 +652,8 @@ std::string State::getMarker(const std::string& theName) const
 {
   try
   {
+    if (itsMarkers.count(theName) > 0)
+      return itsMarkers[theName];
     return itsPlugin.getMarker(itsCustomer, theName, itUsesWms);
   }
   catch (...)
@@ -569,6 +672,8 @@ std::size_t State::getMarkerHash(const std::string& theName) const
 {
   try
   {
+    if (itsMarkers.count(theName) > 0)
+      return boost::hash_value(itsMarkers[theName]);
     return itsPlugin.getMarkerHash(itsCustomer, theName, itUsesWms);
   }
   catch (...)
@@ -587,6 +692,8 @@ std::string State::getGradient(const std::string& theName) const
 {
   try
   {
+    if (itsGradients.count(theName) > 0)
+      return itsGradients[theName];
     return itsPlugin.getGradient(itsCustomer, theName, itUsesWms);
   }
   catch (...)
@@ -605,6 +712,8 @@ std::size_t State::getGradientHash(const std::string& theName) const
 {
   try
   {
+    if (itsGradients.count(theName) > 0)
+      return boost::hash_value(itsGradients[theName]);
     return itsPlugin.getGradientHash(itsCustomer, theName, itUsesWms);
   }
   catch (...)

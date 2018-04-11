@@ -6,7 +6,11 @@
 
 #pragma once
 
+#include "Filters.h"
+#include "Gradients.h"
 #include "Layers.h"
+#include "Markers.h"
+#include "Patterns.h"
 #include "Properties.h"
 #include "Styles.h"
 #include "Symbols.h"
@@ -38,6 +42,10 @@ class Defs : public Properties
   Styles styles;
   Layers layers;
   Symbols symbols;
+  Filters filters;
+  Markers markers;
+  Patterns patterns;
+  Gradients gradients;
 
  private:
 };  // class Defs

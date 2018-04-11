@@ -60,6 +60,18 @@ void Defs::init(const Json::Value& theJson,
     json = theJson.get("symbols", nulljson);
     if (!json.isNull())
       symbols.init(json, theState);
+    json = theJson.get("filters", nulljson);
+    if (!json.isNull())
+      filters.init(json, theState);
+    json = theJson.get("markers", nulljson);
+    if (!json.isNull())
+      markers.init(json, theState);
+    json = theJson.get("patterns", nulljson);
+    if (!json.isNull())
+      patterns.init(json, theState);
+    json = theJson.get("gradients", nulljson);
+    if (!json.isNull())
+      gradients.init(json, theState);
   }
   catch (...)
   {
