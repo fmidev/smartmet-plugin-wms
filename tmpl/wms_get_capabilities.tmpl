@@ -19,16 +19,16 @@ no attributes, the value will be stored in "variable".
 <WMS_Capabilities version="<TMPL_var version>"<TMPL_if defined(headers)> <TMPL_var headers><-/TMPL_if->>
 <Service>
   <Name>WMS</Name>
-  <Title><TMPL_var service.title></Title>
+  <Title><TMPL_var XMLESCAPE(service.title)></Title>
 
   <-TMPL_if defined(service.abstract)>
-  <Abstract><TMPL_var service.abstract></Abstract>
+  <Abstract><TMPL_var XMLESCAPE(service.abstract)></Abstract>
   <-/TMPL_if->
 
   <-TMPL_if defined(service.keywords)>
   <KeywordList>
     <-TMPL_foreach service.keywords as keyword>
-      <Keyword><TMPL_var keyword></Keyword>
+      <Keyword><TMPL_var XMLESCAPE(keyword)></Keyword>
     <-/TMPL_foreach>
   </KeywordList>
   </TMPL_if->
@@ -75,11 +75,11 @@ no attributes, the value will be stored in "variable".
   <-/TMPL_if->
 
   <-TMPL_if defined(service.fees)>
-  <Fees><TMPL_var service.fees></Fees>
+  <Fees><TMPL_var XMLESCAPE(service.fees)></Fees>
   <-/TMPL_if->
 
   <-TMPL_if defined(service.access_constraints)>
-  <AccessConstraints><TMPL_var service.access_constraints></AccessConstraints>
+  <AccessConstraints><TMPL_var XMLESCAPE(service.access_constraints)></AccessConstraints>
   <-/TMPL_if->
 
   <-TMPL_if defined(service.layer_limit)>
@@ -218,18 +218,18 @@ no attributes, the value will be stored in "variable".
       <-TMPL_if defined(layer.fixed_width) > fixedWidth=" <-TMPL_var layer.fixed_width>" <-/TMPL_if->
       <-TMPL_if defined(layer.fixed_height)> fixedHeight="<-TMPL_var layer.fixed_height>"<-/TMPL_if->>
       <-TMPL_if defined(layer.name)>
-      <Name><TMPL_var layer.name></Name>
+      <Name><TMPL_var XMLESCAPE(layer.name)></Name>
       <-/TMPL_if>
-      <Title><TMPL_var layer.title></Title>
+      <Title><TMPL_var XMLESCAPE(layer.title)></Title>
 
       <-TMPL_if defined(layer.abstract)>
-      <Abstract><TMPL_var layer.abstract></Abstract>
+      <Abstract><TMPL_var XMLESCAPE(layer.abstract)></Abstract>
       <-/TMPL_if->
 
       <-TMPL_if defined(layer.keyword)>
       <KeywordList>
       <-TMPL_foreach layer.keyword as keyword>
-        <Keyword><TMPL_var keyword></Keyword>
+        <Keyword><TMPL_var XMLESCAPE(keyword)></Keyword>
       <-/TMPL_foreach>
       </KeywordList>
       <-/TMPL_if>
@@ -276,7 +276,7 @@ no attributes, the value will be stored in "variable".
 
       <-TMPL_if defined(layer.attribution)->
       <Attribution>
-        <TMPL_if defined(layer.attribution.title)><Title><TMPL_var layer.attribution.title><-/TMPL_if->
+        <TMPL_if defined(layer.attribution.title)><Title><TMPL_var XMLESCAPE(layer.attribution.title)><-/TMPL_if->
         <TMPL_if defined(layer.attribution.online_resource)><Title><TMPL_var layer.attribution.online_resource><-/TMPL_if->
         <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var layer.attribution.online_resource>"/>
         <TMPL_if defined(layer.attribution.logo_url)>
@@ -300,8 +300,8 @@ no attributes, the value will be stored in "variable".
 
       <-TMPL_if defined(layer.identifier)->
       <-TMPL_foreach layer.identifier as identifier>
-      <Identifier authority="<TMPL_var identifier.authority>">
-       <-TMPL_var identifier.value->
+      <Identifier authority="<TMPL_var XMLESCAPE(identifier.authority)>">
+       <-TMPL_var XMLESCAPE(identifier.value)->
       </Identifier>
       </TMPL_foreach>
       <-/TMPL_if->
@@ -336,8 +336,8 @@ no attributes, the value will be stored in "variable".
       <-TMPL_if defined(layer.style)->
       <-TMPL_foreach layer.style as style->
       <Style>
-        <Name><TMPL_var style.name></Name>
-        <Title><TMPL_var style.title></Title>
+        <Name><TMPL_var XMLESCAPE(style.name)></Name>
+        <Title><TMPL_var XMLESCAPE(style.title)></Title>
 
         <-TMPL_if defined(style.abstract)><Abstract><TMPL_var style.abstract></Abstract><-/TMPL_if>
 
