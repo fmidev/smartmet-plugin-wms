@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "CSSs.h"
 #include "Filters.h"
 #include "Gradients.h"
 #include "Layers.h"
@@ -39,6 +40,7 @@ class Defs : public Properties
   std::size_t hash_value(const State& theState) const;
 
   std::string qid;
+  CSSs csss;
   Styles styles;
   Layers layers;
   Symbols symbols;
