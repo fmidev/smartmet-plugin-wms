@@ -1004,6 +1004,7 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
     {
       Json::Value nulljson;
       auto layersJson = legendJson.get("layers", nulljson);
+
       if (!layersJson.isNull() && layersJson.isArray() &&
           actualSettings.layout.symbol_group_y_padding)
       {
