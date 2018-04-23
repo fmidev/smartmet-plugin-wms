@@ -148,27 +148,6 @@
 		    }
 		}
 	    ]	    
-	},
-	{
-	    "tag": "g",
-	    "attributes":
-	    {
-		"mask": "url(#temperaturelegendmask)"
-	    },
-	    "layers": [
-		{
-		    "qid": "l2",
-		    "layer_type": "isoline",
-		    "isolines": "json:isolines/temperature.json",
-		    "css": "isolines/temperature.css",
-		    "parameter": "Temperature",
-		    "attributes":
-		    {
-			"id": "temperature_isolines",
-			"class": "Temperature"
-		    }
-		}
-	    ]
 	}
     ]
 }

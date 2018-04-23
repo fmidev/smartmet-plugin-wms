@@ -12,6 +12,7 @@
 #pragma once
 
 #include "WMSLayerStyle.h"
+#include "WMSLegendGraphicInfo.h"
 #include "WMSLegendGraphicSettings.h"
 #include "WMSTimeDimension.h"
 
@@ -43,14 +44,6 @@ namespace Plugin
 namespace WMS
 {
 class WMSConfig;
-typedef std::vector<std::map<std::string, std::string> > LegendGraphicInfo;
-
-struct LegendGraphicResult
-{
-  unsigned int width;
-  unsigned int height;
-  std::vector<std::string> legendLayers;
-};
 
 class WMSLayer
 {
@@ -134,6 +127,8 @@ typedef boost::shared_ptr<WMSLayer> SharedWMSLayer;
 typedef std::map<std::string, SharedWMSLayer> SharedWMSLayers;
 
 std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer);
+std::ostream& operator<<(std::ostream& ost, const LegendGraphicInfoItem& lgi);
+std::ostream& operator<<(std::ostream& ost, const LegendGraphicInfo& lgi);
 
 }  // namespace WMS
 }  // namespace Plugin
