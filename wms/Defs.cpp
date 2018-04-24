@@ -98,7 +98,7 @@ void Defs::generate(CTPP::CDT& theGlobals, State& theState)
     layers.generate(theGlobals, theGlobals["layers"], theState);
     if (csss.csss.size() > 0)
       for (auto e : csss.csss)
-        theGlobals["css"][e.first] = e.second;
+        theGlobals["css"][e.first + ".css"] = e.second;
     theState.inDefs(false);
   }
   catch (...)
