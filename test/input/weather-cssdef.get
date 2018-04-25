@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=weather&time=200808050300&defs.css.test%2Fsymbols%2Fdot=data:,.Dot%20%7B%20fill%3A%20yellow%3B%20stroke%3A%20none%20%7D%0A HTTP/1.0

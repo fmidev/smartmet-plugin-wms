@@ -132,6 +132,9 @@ void Product::generate(CTPP::CDT& theGlobals, State& theState)
     theState.addAttributes(theGlobals, attributes);
 
     views.generate(theGlobals, theState);
+    if (defs.csss.csss.size() > 0)
+      for (auto e : defs.csss.csss)
+        theGlobals["css"][e.first + ".css"] = e.second;
   }
   catch (...)
   {
