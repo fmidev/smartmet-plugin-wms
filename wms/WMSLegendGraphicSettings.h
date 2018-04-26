@@ -35,11 +35,12 @@ struct LegendGraphicLayout
   boost::optional<int> param_unit_yoffset;
   boost::optional<int> legend_xoffset;  // legend
   boost::optional<int> legend_yoffset;
-  boost::optional<int> symbol_group_x_padding;  // space between symbols in symbol-group
-  boost::optional<int> symbol_group_y_padding;
-  boost::optional<int> legend_width;  // width of one legend
-  int output_document_width;  // size of non-automatically generated documents, default 500*500
-  int output_document_height;
+  boost::optional<unsigned int> symbol_group_x_padding;  // space between symbols in symbol-group
+  boost::optional<unsigned int> symbol_group_y_padding;
+  boost::optional<unsigned int> legend_width;  // width of one legend
+  unsigned int
+      output_document_width;  // size of non-automatically generated documents, default 500*500
+  unsigned int output_document_height;
 };
 
 class WMSLegendGraphicSettings

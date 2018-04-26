@@ -705,6 +705,31 @@ void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettin
     settings.layout.legend_width = json.asInt();
 }
 
+unsigned int isoband_legend_width(const Json::Value& json, unsigned int def)
+{
+  Json::Value nulljson;
+  auto widthJson = json.get("fixed_width", nulljson);
+  unsigned int ret = def;
+
+  try
+  {
+    if (!widthJson.isNull())
+    {
+      if (widthJson.isConvertibleTo(Json::ValueType::uintValue))
+        ret = widthJson.asUInt();
+      if (widthJson.isConvertibleTo(Json::ValueType::stringValue))
+        ret = Fmi::stoi(widthJson.asString());
+    }
+  }
+  catch (...)
+  {
+    throw Spine::Exception(
+        BCP, "'fixed_width' attribute must be integer: " + widthJson.toStyledString());
+  }
+
+  return ret;
+}
+
 unsigned int isoband_legend_height(const Json::Value& json)
 {
   unsigned int ret = 0;
@@ -755,20 +780,41 @@ std::map<std::string, Json::Value> readLegendDirectory(const std::string& legend
 {
   std::map<std::string, Json::Value> ret;
 
-  std::string legendDirectoryDefault = legendDirectory + "/default";
-
-  boost::filesystem::directory_iterator end_itr;
-  for (boost::filesystem::directory_iterator itr(legendDirectoryDefault); itr != end_itr; ++itr)
+  boost::filesystem::path p(legendDirectory);
+  if (boost::filesystem::exists(p) && boost::filesystem::is_directory(p))
   {
-    if (is_regular_file(itr->status()))
+    boost::filesystem::directory_iterator end_itr;
+    for (boost::filesystem::directory_iterator itr(legendDirectory); itr != end_itr; ++itr)
     {
-      std::string paramname = itr->path().stem().string();
-      Json::Value json = WMSLayer::readJsonFile(itr->path().string());
-      ret.insert(std::make_pair(paramname, json));
+      if (is_regular_file(itr->status()))
+      {
+        std::string paramname = itr->path().stem().string();
+        Json::Value json = WMSLayer::readJsonFile(itr->path().string());
+        ret.insert(std::make_pair(paramname, json));
+      }
     }
   }
 
   return ret;
+}
+
+std::map<std::string, Json::Value> readLegendFiles(const std::string& wmsroot,
+                                                   const std::string& customer)
+{
+  // First read common templates from wmsroot/legends/templates
+  std::map<std::string, Json::Value> legend_templates =
+      readLegendDirectory(wmsroot + "/legends/templates");
+  // Then read customer specific templates from wmsroot/customer/legends/templates
+  std::map<std::string, Json::Value> customer_specific =
+      readLegendDirectory(wmsroot + "/customers/" + customer + "/legends/templates");
+  // Merge and replace common templates with customer specific templates
+  for (auto t : customer_specific)
+    if (legend_templates.find(t.first) == legend_templates.end())
+      legend_templates.insert(std::make_pair(t.first, t.second));
+    else
+      legend_templates[t.first] = t.second;
+
+  return legend_templates;
 }
 
 }  // anonymous namespace
@@ -834,8 +880,7 @@ void WMSLayer::addStyle(const std::string& layerName)
   styles.push_back(layerStyle);
 }
 
-LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& legendDirectory,
-                                               const WMSLegendGraphicSettings& settings) const
+LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& settings) const
 {
   LegendGraphicResult ret;
   ret.height = 20;
@@ -871,8 +916,9 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& legendDirector
   if (legendGraphicSettings.layout.legend_width)
     actualSettings.layout.legend_width = legendGraphicSettings.layout.legend_width;
 
+  std::map<std::string, Json::Value> legends =
+      readLegendFiles(wmsConfig.getDaliConfig().rootDirectory(true), customer);
   std::set<std::string> processedParameters;
-  std::map<std::string, Json::Value> legends = readLegendDirectory(legendDirectory);
   unsigned int uniqueId = 0;
 
   //  symbol_group symbolGroup;
@@ -938,6 +984,7 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& legendDirector
                                           uniqueId++);
 
     unsigned int labelHeight = 0;
+    unsigned int isobandWidth = 0;
     if (layerType == "isoband")
     {
       std::string customerRoot =
@@ -949,6 +996,7 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& legendDirector
                               wmsConfig.getFileCache());
 
       labelHeight = isoband_legend_height(legendJson);
+      isobandWidth = isoband_legend_width(legendJson, *(actualSettings.layout.legend_width));
     }
     else if (layerType == "isoline")
       labelHeight = ypos + (*actualSettings.layout.legend_yoffset * 2);
@@ -956,18 +1004,19 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& legendDirector
     {
       Json::Value nulljson;
       auto layersJson = legendJson.get("layers", nulljson);
-      if (!layersJson.isNull() && layersJson.isArray() && settings.layout.symbol_group_y_padding)
+      if (!layersJson.isNull() && layersJson.isArray() &&
+          actualSettings.layout.symbol_group_y_padding)
       {
         for (auto layerJson : layersJson)
         {
           auto layerTypeJson = layerJson.get("layer_type", nulljson);
           if (!layerTypeJson.isNull())
-            labelHeight += *(settings.layout.symbol_group_y_padding);
+            labelHeight += *(actualSettings.layout.symbol_group_y_padding);
         }
-        if (settings.layout.symbol_group_y_padding)
-          labelHeight += *(settings.layout.symbol_group_y_padding);
-        if (settings.layout.param_name_yoffset)
-          labelHeight += *(settings.layout.param_name_yoffset);
+        if (actualSettings.layout.symbol_group_y_padding)
+          labelHeight += *(actualSettings.layout.symbol_group_y_padding);
+        if (actualSettings.layout.param_name_yoffset)
+          labelHeight += *(actualSettings.layout.param_name_yoffset);
       }
     }
 
@@ -976,7 +1025,9 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& legendDirector
 
     ret.legendLayers.push_back(legendJson.toStyledString());
 
-    xpos += *actualSettings.layout.legend_width;
+    xpos += (*(actualSettings.layout.legend_width) > isobandWidth
+                 ? *(actualSettings.layout.legend_width)
+                 : isobandWidth);
 
     processedParameters.insert(parameterName + layerType);
   }

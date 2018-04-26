@@ -91,8 +91,7 @@ class WMSLayer
   const std::string& getName() const { return name; }
   const std::string& getCustomer() const { return customer; }
   const std::string& getDaliProductFile() const { return productFile; }
-  LegendGraphicResult getLegendGraphic(const std::string& legendDirectory,
-                                       const WMSLegendGraphicSettings& settings) const;
+  LegendGraphicResult getLegendGraphic(const WMSLegendGraphicSettings& settings) const;
 
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;

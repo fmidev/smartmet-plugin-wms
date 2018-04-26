@@ -1,0 +1,140 @@
+{
+    "fixed_width": 500,
+    "defs":
+    {
+	"layers": [
+	    {
+		"tag": "symbol",
+		"attributes":
+		{
+		    "id": "temperature_isoband_rect"
+		},
+		"layers": [
+		    {
+			"tag": "rect",
+			"attributes":
+			{
+			    "width": "54",
+			    "height": "14"
+			}
+		    }
+		]
+	    },
+	    {
+		"tag": "symbol",
+		"attributes":
+		{
+		    "id": "temperature_isoband_uptriangle"
+		},
+		"layers": [
+		    {
+			"tag": "path",
+			"attributes":
+			{
+			    "d": "M0 14,27 0,54 14Z"
+			}
+		    }
+		]
+	    },
+	    {
+		"tag": "symbol",
+		"attributes":
+		{
+		    "id": "temperature_isoband_downtriangle"
+		},
+		"layers": [
+		    {
+			"tag": "path",
+			"attributes":
+			{
+			    "d": "M0 0,27 14,54 0Z"
+			}
+		    }
+		]
+	    }
+	]
+    },
+   "layer_type": "legend",
+    "symbols":
+    {
+        "symbol": ""
+    },
+    "layers": [
+	{
+	    "tag": "text",
+	    "cdata": "Celsius &#176;C",
+	    "attributes":
+	    {
+		"x": 0,  // will be replaced in the code, the original value will be added
+		"y": 0,  // will be replaced in the code, the original value will be added
+		"dx": 20,
+		"dy": 15,
+		"class": "Units"
+	    }
+	},
+	{
+	    "layer_type": "legend",
+	    "x": 10,  // will be replaced in the code, the original value will be added
+	    "y": 20,  // will be replaced in the code, the original value will be added
+	    "dx": 0,
+	    "dy": 19,
+	    "isobands": "json:isobands/temperature.json",
+	    "symbols":
+	    {
+		"css": "isobands/temperature.css",
+		"symbol": "temperature_isoband_rect",
+		"start": "temperature_isoband_uptriangle",
+		"end": "temperature_isoband_downtriangle",
+		"attributes":
+		{
+		    "stroke": "black",
+		    "stroke-width": "0.5"
+		}
+	    },
+	    "labels":
+	    {
+		"type": "lolimit",
+		"separator": "...",	// en dash = " \u2013 "
+		"dx": 60,
+		"dy": 12,
+		"conversions":
+		{
+		    "0": "WATER FREEZES",
+		    "8": "COLD BEER",
+		    "54": "WARM",
+		    "28": "REMEMBER SUNSCREEN",
+		    "-5": "OPTIMAL SKIING TEMPERATURE",
+		    "-30": "BITING COLD",
+		    "38": "&#62; 38",
+		    "-50": "&#60; -50"
+		}
+	    }
+	},
+	{
+	    "tag": "mask",
+	    "attributes":
+	    {
+		"id": "temperaturelegendmask"
+	    },
+	    "layers": [
+		{
+		    "tag": "rect",
+		    "attributes":
+		    {
+			"fill": "white",
+			"width": "100%",
+			"height": "100%"
+		    }
+		},
+		{
+		    "tag": "use",
+		    "attributes":
+		    {
+			"xlink:href": "#temperaturelegend",
+			"filter": "url(#alphadilation)"
+		    }
+		}
+	    ]	    
+	}
+    ]
+}

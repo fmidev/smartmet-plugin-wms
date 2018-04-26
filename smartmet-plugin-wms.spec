@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.4.23
+Version: 18.4.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -90,6 +90,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Apr 26 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.4.26-1.fmi
+- Moved common legend template-directory to wms-root directory (from <customer>-directory)
+
 * Mon Apr 23 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.4.23-1.fmi
 - Fixed LegendGraphics bugs: BRAINSTORM-1129, BRAINSTORM-1134
 
