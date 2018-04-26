@@ -147,9 +147,6 @@ rm -rf $RPM_BUILD_ROOT
 * Wed Apr 25 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.4.25-1.fmi
 - Added possibility to pass CSS via query string
 
-* Mon Apr 23 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.4.23-1.fmi
-- Fixed LegendGraphics bugs: BRAINSTORM-1129, BRAINSTORM-1134
-
 * Wed Apr 18 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.4.18-1.fmi
 - Added XMLESCAPE calls for GetCapabilities titles, abstracts etc
 
