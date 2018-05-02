@@ -174,6 +174,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
       std::cout << "\treturning cached image" << std::endl;
 #endif
       theResponse.setHeader("Content-Type", mimeType(product.type));
+      theResponse.setHeader("X-Backend-Cache", "1");
       theResponse.setContent(obj);
       return;
     }
@@ -226,7 +227,8 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
 
     // Set the response content and mime type
 
-    formatResponse(output.str(), product.type, theRequest, theResponse, usetimer, product_hash);
+    formatResponse(
+        output.str(), product.type, theRequest, theResponse, usetimer, product, product_hash);
 
     // boost auto_cpu_timer does not flush, we need to do it separately
     if (usetimer)
@@ -249,6 +251,7 @@ void Plugin::formatResponse(const std::string &theSvg,
                             const Spine::HTTP::Request &theRequest,
                             Spine::HTTP::Response &theResponse,
                             bool usetimer,
+                            const Product &theProduct,
                             std::size_t theHash)
 {
   try
@@ -279,7 +282,7 @@ void Plugin::formatResponse(const std::string &theSvg,
 
       boost::shared_ptr<std::string> buffer;
       if (theType == "png")
-        buffer.reset(new std::string(Giza::Svg::topng(theSvg)));
+        buffer.reset(new std::string(Giza::Svg::topng(theSvg, theProduct.png.options)));
       else if (theType == "pdf")
         buffer.reset(new std::string(Giza::Svg::topdf(theSvg)));
       else if (theType == "ps")
@@ -1404,8 +1407,13 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
     if (print_hash)
       std::cout << "Generated CDT:" << std::endl << hash.RecursiveDump() << std::endl;
 
-    formatResponse(
-        output.str(), product.type, thisRequest, theResponse, theState.useTimer(), product_hash);
+    formatResponse(output.str(),
+                   product.type,
+                   thisRequest,
+                   theResponse,
+                   theState.useTimer(),
+                   product,
+                   product_hash);
     return WMSQueryStatus::OK;
   }
   catch (...)

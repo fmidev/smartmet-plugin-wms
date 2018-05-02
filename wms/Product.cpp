@@ -65,6 +65,10 @@ void Product::init(const Json::Value& theJson, const State& theState, const Conf
     if (!json.isNull())
       views.init(json, theState, theConfig, *this);
 
+    json = theJson.get("png", nulljson);
+    if (!json.isNull())
+      png.init(json, theConfig);
+
     // refs is also allowed here
 
     // If SVG sizes are missing, take them from the top level projection if possible
@@ -161,6 +165,7 @@ std::size_t Product::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(defs, theState));
     boost::hash_combine(hash, Dali::hash_value(attributes, theState));
     boost::hash_combine(hash, Dali::hash_value(views, theState));
+    boost::hash_combine(hash, Dali::hash_value(png, theState));
     return hash;
   }
   catch (...)

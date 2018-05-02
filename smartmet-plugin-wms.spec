@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.4.18
+Version: 18.5.2
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -16,19 +16,20 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
-BuildRequires: smartmet-library-giza-devel >= 18.3.5
+BuildRequires: rpm-build
+BuildRequires: smartmet-library-giza-devel >= 18.5.2
 BuildRequires: smartmet-library-macgyver-devel >= 18.4.7
-BuildRequires: smartmet-library-spine-devel >= 18.4.7
+BuildRequires: smartmet-library-spine-devel >= 18.5.2
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.4.7
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 18.4.7
+BuildRequires: smartmet-engine-observation-devel >= 18.4.19
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.4.7
 BuildRequires: smartmet-engine-geonames-devel >= 18.4.7
-BuildRequires: smartmet-engine-querydata-devel >= 18.4.7
+BuildRequires: smartmet-engine-querydata-devel >= 18.4.18
 BuildRequires: smartmet-engine-contour-devel >= 18.4.7
 BuildRequires: smartmet-library-gis-devel >= 18.4.7
 BuildRequires: fmt-devel
@@ -45,16 +46,16 @@ Requires: ctpp2 >= 2.8.5
 Requires: libconfig
 Requires: smartmet-library-gis >= 18.4.7
 Requires: smartmet-library-macgyver >= 18.4.7
-Requires: smartmet-library-giza >= 18.3.5
+Requires: smartmet-library-giza >= 18.5.2
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 18.4.7
 %endif
-Requires: smartmet-engine-querydata >= 18.4.7
+Requires: smartmet-engine-querydata >= 18.4.18
 Requires: smartmet-engine-contour >= 18.4.7
 Requires: smartmet-engine-gis >= 18.4.7
 Requires: smartmet-engine-geonames >= 18.4.7
 Requires: smartmet-server >= 18.4.7
-Requires: smartmet-library-spine >= 18.4.7
+Requires: smartmet-library-spine >= 18.5.2
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -91,6 +92,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed May  2 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.5.2-1.fmi
+- Added png settings for controlling color reduction
+
+* Wed Apr 25 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.4.25-1.fmi
+- Added possibility to pass CSS via query string
+
 * Wed Apr 18 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.4.18-1.fmi
 - Added XMLESCAPE calls for GetCapabilities titles, abstracts etc
 
