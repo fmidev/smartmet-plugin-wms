@@ -365,20 +365,48 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       {
         state.useWms(true);
 
-        WMSQueryStatus status;
-
         theResponse.setStatus(Spine::HTTP::Status::ok);
 
-        status = wmsQuery(theReactor, state, theRequest, theResponse);  // may modify HTTP status
-        switch (status)
+        // may modify HTTP status set above
+        try
         {
-          case WMSQueryStatus::FORBIDDEN:
-            theResponse.setStatus(Spine::HTTP::Status::forbidden, true);
-            break;
-          case WMSQueryStatus::OK:
-          case WMSQueryStatus::EXCEPTION:
-          default:
-            break;
+          WMSQueryStatus status = wmsQuery(theReactor, state, theRequest, theResponse);
+
+          switch (status)
+          {
+            case WMSQueryStatus::FORBIDDEN:
+            {
+              theResponse.setStatus(Spine::HTTP::Status::forbidden, true);
+              break;
+            }
+            case WMSQueryStatus::OK:
+            default:
+              break;
+          }
+        }
+
+        catch (const Spine::Exception &wmsException)
+        {
+          // The default for most responses:
+          theResponse.setStatus(Spine::HTTP::Status::bad_request);
+
+          const Spine::Exception *e = wmsException.getExceptionByParameterName(WMS_EXCEPTION_CODE);
+          if (e != nullptr)
+          {
+            // OGC status codes:
+            // OperationNotSupported 501 Not Implemented
+            // MissingParameterValue 400 Bad request
+            // InvalidParameterValue 400 Bad request
+            // VersionNegotiationFailed 400 Bad request
+            // InvalidUpdateSequence 400 Bad request
+            // OptionNotSupported 501 Not Implemented
+            // NoApplicableCode 3xx, 4xx, 5xx Internal Server Error
+
+            std::string exceptionCode = e->getParameterValue(WMS_EXCEPTION_CODE);
+            if (exceptionCode == WMS_LAYER_NOT_QUERYABLE ||
+                exceptionCode == WMS_OPERATION_NOT_SUPPORTED)
+              theResponse.setStatus(Spine::HTTP::Status::not_implemented);
+          }
         }
       }
       else
@@ -396,15 +424,15 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       const ptime t_now = boost::posix_time::second_clock::universal_time();
       theResponse.setHeader("Last-Modified", tformat->format(t_now));
 
-      const auto &expires = state.getExpirationTime();
-      if (!expires)
+      // Send expiration header only if there was no error
+      bool is_error = (static_cast<int>(theResponse.getStatus()) < 300);
+      if (!is_error)
       {
-        auto tmp = t_now + boost::posix_time::hours(1);
-        theResponse.setHeader("Expires", tformat->format(tmp));
-      }
-      else
-      {
-        theResponse.setHeader("Expires", tformat->format(*expires));
+        const auto &expires = state.getExpirationTime();
+        if (!expires)
+          theResponse.setHeader("Expires", tformat->format(t_now + boost::posix_time::hours(1)));
+        else
+          theResponse.setHeader("Expires", tformat->format(*expires));
       }
     }
     catch (...)
@@ -1186,11 +1214,11 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
     {
       if (requestType == WMS::WMSRequestType::NOT_A_WMS_REQUEST)
       {
-        Spine::Exception exception(BCP, "Not a WMS request!");
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-        auto msg = parseWMSException(exception, isdebug);
+        Spine::Exception ex(BCP, "Not a WMS request!");
+        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+        auto msg = parseWMSException(ex, isdebug);
         formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
-        return WMSQueryStatus::EXCEPTION;
+        throw ex;
       }
 
       if (requestType == WMS::WMSRequestType::GET_CAPABILITIES)
@@ -1272,11 +1300,11 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
 
       if (theState.getCustomer().empty())
       {
-        Spine::Exception exception(BCP, "Customer setting is empty!");
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-        auto msg = parseWMSException(exception, isdebug);
+        Spine::Exception ex(BCP, "Customer setting is empty!");
+        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+        auto msg = parseWMSException(ex, isdebug);
         formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
-        return WMSQueryStatus::EXCEPTION;
+        throw ex;
       }
 
       std::string customer_root =
@@ -1326,12 +1354,12 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
     }
     catch (...)
     {
-      Spine::Exception exception(BCP, "Operation failed!", nullptr);
-      if (exception.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      auto msg = parseWMSException(exception, isdebug);
+      Spine::Exception ex(BCP, "Operation failed!", nullptr);
+      if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+      auto msg = parseWMSException(ex, isdebug);
       formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
-      return WMSQueryStatus::EXCEPTION;
+      throw ex;
     }
 
     // Format can no longer be changed by anything, provide the info to layers
@@ -1394,13 +1422,13 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
     }
     catch (...)
     {
-      Spine::Exception exception(
+      Spine::Exception ex(
           BCP, "Error in processing the template '" + *product.svg_tmpl + "'!", nullptr);
-      if (exception.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      auto msg = parseWMSException(exception, isdebug);
+      if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+      auto msg = parseWMSException(ex, isdebug);
       formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
-      return WMSQueryStatus::EXCEPTION;
+      throw ex;
     }
 
     if (print_hash)

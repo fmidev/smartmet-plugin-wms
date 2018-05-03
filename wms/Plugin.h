@@ -12,6 +12,7 @@
 #include "WMSConfig.h"
 #include "WMSException.h"
 #include "WMSGetCapabilities.h"
+#include "WMSQueryStatus.h"
 
 #include <engines/contour/Engine.h>
 #include <engines/geonames/Engine.h>
@@ -39,14 +40,6 @@ namespace Plugin
 namespace Dali
 {
 class Filter;
-
-// To signify various return types of the WMS query
-enum class WMSQueryStatus
-{
-  OK,
-  EXCEPTION,
-  FORBIDDEN
-};
 
 using ImageCache = Spine::SmartMetCache;
 
