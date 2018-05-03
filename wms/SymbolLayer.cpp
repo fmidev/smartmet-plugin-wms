@@ -759,7 +759,6 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       return;
 
     // Time execution
-
     std::string report = "SymbolLayer::generate finished in %t sec CPU, %w sec real\n";
     std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
@@ -775,7 +774,8 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Establish the data
 
-    bool use_observations = isObservation(theState);
+    bool is_legend = theGlobals.Exists("legend");
+    bool use_observations = isObservation(theState) && !is_legend;
     auto q = getModel(theState);
 
     // Make sure position generation is initialized
@@ -789,7 +789,10 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Establish the valid time
 
-    auto valid_time_period = getValidTimePeriod();
+    auto valid_time_period = (!is_legend ? getValidTimePeriod()
+                                         : boost::posix_time::time_period(
+                                               boost::posix_time::second_clock::local_time(),
+                                               boost::posix_time::second_clock::local_time()));
 
     // Establish the level
 

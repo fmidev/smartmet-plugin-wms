@@ -1,19 +1,7 @@
 {
+    "fixed_width": 500,
     "defs":
     {
-	"styles":
-	{
-	    ".Label":
-	    {
-		"font": "Arial",
-		"font-size": 9
-	    },
-	    ".Units":
-	    {
-		"font": "Arial",
-		"font-size": 14
-	    }
-	},
 	"layers": [
 	    {
 		"tag": "symbol",
@@ -26,8 +14,8 @@
 			"tag": "rect",
 			"attributes":
 			{
-			    "width": "14",
-			    "height": "9"
+			    "width": "54",
+			    "height": "14"
 			}
 		    }
 		]
@@ -43,7 +31,7 @@
 			"tag": "path",
 			"attributes":
 			{
-			    "d": "M0 9,7 0,14 9Z"
+			    "d": "M0 14,27 0,54 14Z"
 			}
 		    }
 		]
@@ -59,7 +47,7 @@
 			"tag": "path",
 			"attributes":
 			{
-			    "d": "M0 0,7 9,14 0Z"
+			    "d": "M0 0,27 14,54 0Z"
 			}
 		    }
 		]
@@ -74,10 +62,10 @@
     "layers": [
 	{
 	    "tag": "text",
-	    "cdata": "&#176;C",
+	    "cdata": "Celsius &#176;C",
 	    "attributes":
 	    {
-		"x": 20,  // will be replaced in the code, the original value will be added
+		"x": 0,  // will be replaced in the code, the original value will be added
 		"y": 0,  // will be replaced in the code, the original value will be added
 		"dx": 20,
 		"dy": 15,
@@ -87,9 +75,9 @@
 	{
 	    "layer_type": "legend",
 	    "x": 10,  // will be replaced in the code, the original value will be added
-	    "y": 15,  // will be replaced in the code, the original value will be added
+	    "y": 20,  // will be replaced in the code, the original value will be added
 	    "dx": 0,
-	    "dy": 9,
+	    "dy": 19,
 	    "isobands": "json:isobands/temperature.json",
 	    "symbols":
 	    {
@@ -107,17 +95,16 @@
 	    {
 		"type": "lolimit",
 		"separator": "...",	// en dash = " \u2013 "
-		"dx": 18,
+		"dx": 60,
 		"dy": 12,
 		"conversions":
 		{
-		    "0": "GETTING WARMER",
-		    "14": "WARM",
-		    "30":
-		    {
-			"fi": "KUUMA",
-			"en": "HOT"
-		    },
+		    "0": "WATER FREEZES",
+		    "8": "COLD BEER",
+		    "54": "WARM",
+		    "28": "REMEMBER SUNSCREEN",
+		    "-5": "OPTIMAL SKIING TEMPERATURE",
+		    "-30": "BITING COLD",
 		    "38": "&#62; 38",
 		    "-50": "&#60; -50"
 		}
@@ -148,27 +135,6 @@
 		    }
 		}
 	    ]	    
-	},
-	{
-	    "tag": "g",
-	    "attributes":
-	    {
-		"mask": "url(#temperaturelegendmask)"
-	    },
-	    "layers": [
-		{
-		    "qid": "l2",
-		    "layer_type": "isoline",
-		    "isolines": "json:isolines/temperature.json",
-		    "css": "isolines/temperature.css",
-		    "parameter": "Temperature",
-		    "attributes":
-		    {
-			"id": "temperature_isolines",
-			"class": "Temperature"
-		    }
-		}
-	    ]
 	}
     ]
 }

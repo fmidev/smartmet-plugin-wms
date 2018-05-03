@@ -1180,11 +1180,10 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
     bool isdebug = Spine::optional_bool(thisRequest.getParameter("debug"), false);
 
     Product product;
+    WMS::WMSRequestType requestType(WMS::wmsRequestType(thisRequest));
 
     try
     {
-      WMS::WMSRequestType requestType(WMS::wmsRequestType(thisRequest));
-
       if (requestType == WMS::WMSRequestType::NOT_A_WMS_REQUEST)
       {
         Spine::Exception exception(BCP, "Not a WMS request!");
@@ -1380,6 +1379,8 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
 
     // Build the response CDT
     CTPP::CDT hash(CTPP::CDT::HASH_VAL);
+    if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
+      hash["legend"] = "true";
 
     product.generate(hash, theState);
 

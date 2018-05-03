@@ -1171,11 +1171,10 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
 
   std::string customer = layerName.substr(0, layerName.find(":"));
 
-  std::string legendDirectory =
-      itsDaliConfig.rootDirectory(true) + "/customers/" + customer + "/legends";
+  std::string legendDirectory = itsDaliConfig.rootDirectory(true) + "/customers/legends";
 
-  LegendGraphicResult result = my_layers->at(layerName).getLayer()->getLegendGraphic(
-      legendDirectory, itsLegendGraphicSettings);
+  LegendGraphicResult result =
+      my_layers->at(layerName).getLayer()->getLegendGraphic(itsLegendGraphicSettings);
   width = result.width;
   height = result.height;
 
