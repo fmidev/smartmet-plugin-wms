@@ -212,7 +212,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
         mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
       tmpl->process(hash, output, log);
     }
-    catch (CTPP::CTPPException &e)
+    catch (const CTPP::CTPPException &e)
     {
       throw Spine::Exception::Trace(BCP, "Template processing error!")
           .addParameter("Template", *product.svg_tmpl)

@@ -199,7 +199,7 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
       itsResponseFormatter->process(hash, outstream, logstream);
       // itsResponseFormatter->process(hash, outstream, logstream, CTPP2_LOG_DEBUG);
     }
-    catch (std::exception& e)
+    catch (const std::exception& e)
     {
       throw Spine::Exception(BCP, "CTPP formatter failed")
           .addParameter("what", e.what())

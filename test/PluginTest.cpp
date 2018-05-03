@@ -166,7 +166,7 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
               put_file_contents(resultfile, result);
           }
         }
-        catch (std::exception& e)
+        catch (const std::exception& e)
         {
           ok = false;
           cout << "EXCEPTION: " << e.what() << endl;

@@ -115,13 +115,13 @@ Config::Config(const string& configfile)
   {
     throw Spine::Exception(BCP, "Setting not found").addParameter("Setting path", e.getPath());
   }
-  catch (libconfig::ParseException& e)
+  catch (const libconfig::ParseException& e)
   {
     throw Spine::Exception::Trace(BCP, "Configuration error!")
         .addParameter("Configuration file", configfile)
         .addParameter("Line", Fmi::to_string(e.getLine()));
   }
-  catch (libconfig::ConfigException&)
+  catch (const libconfig::ConfigException&)
   {
     throw Spine::Exception::Trace(BCP, "Configuration error!")
         .addParameter("Configuration file", configfile);

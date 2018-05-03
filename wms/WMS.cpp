@@ -138,7 +138,7 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
     {
       retval = boost::lexical_cast<unsigned int>(numberStr);
     }
-    catch (boost::bad_lexical_cast const&)
+    catch (const boost::bad_lexical_cast&)
     {
       throw Spine::Exception::Trace(BCP, "Invalid dimension value '" + periodString + "'!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
