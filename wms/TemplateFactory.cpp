@@ -28,7 +28,7 @@ SharedFormatter TemplateFactory::get(const boost::filesystem::path& theFilename)
 
     // tmap is thread specific and hence safe to use without locking
 
-    if (tmap == NULL)
+    if (tmap == nullptr)
     {
       tmap = new TemplateMap;
       itsTemplates.reset(tmap);
@@ -55,7 +55,7 @@ SharedFormatter TemplateFactory::get(const boost::filesystem::path& theFilename)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

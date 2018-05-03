@@ -66,7 +66,7 @@ const std::string &check_attack(const std::string &theName)
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception(BCP, "Operation failed!", NULL);
+    throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 }  // namespace
@@ -214,13 +214,13 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
     }
     catch (CTPP::CTPPException &e)
     {
-      throw Spine::Exception(BCP, "Template processing error!", NULL)
+      throw Spine::Exception::Trace(BCP, "Template processing error!")
           .addParameter("Template", *product.svg_tmpl)
           .addParameter("Product", product_name);
     }
     catch (...)
     {
-      throw Spine::Exception(BCP, "Template processing error!", NULL)
+      throw Spine::Exception::Trace(BCP, "Template processing error!")
           .addParameter("Template", *product.svg_tmpl)
           .addParameter("Product", product_name);
     }
@@ -236,7 +236,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Query failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Query failed!");
   }
 }
 
@@ -306,7 +306,7 @@ void Plugin::formatResponse(const std::string &theSvg,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Response format failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Response format failed!");
   }
 }
 
@@ -411,7 +411,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
     {
       // Catching all exceptions
 
-      Spine::Exception exception(BCP, "Request processing exception!", NULL);
+      Spine::Exception exception(BCP, "Request processing exception!", nullptr);
       exception.addParameter("URI", theRequest.getURI());
       exception.printError();
 
@@ -437,7 +437,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -476,7 +476,7 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -501,7 +501,7 @@ void Plugin::init()
     if (itsShutdownRequested)
       return;
 
-    auto engine = itsReactor->getSingleton("Contour", NULL);
+    auto engine = itsReactor->getSingleton("Contour", nullptr);
     if (!engine)
       throw Spine::Exception(BCP, "Contour engine unavailable");
     itsContourEngine = reinterpret_cast<Engine::Contour::Engine *>(engine);
@@ -513,7 +513,7 @@ void Plugin::init()
     if (itsShutdownRequested)
       return;
 
-    engine = itsReactor->getSingleton("Gis", NULL);
+    engine = itsReactor->getSingleton("Gis", nullptr);
     if (!engine)
       throw Spine::Exception(BCP, "Gis engine unavailable");
     itsGisEngine = reinterpret_cast<Engine::Gis::Engine *>(engine);
@@ -525,7 +525,7 @@ void Plugin::init()
     if (itsShutdownRequested)
       return;
 
-    engine = itsReactor->getSingleton("Querydata", NULL);
+    engine = itsReactor->getSingleton("Querydata", nullptr);
     if (!engine)
       throw Spine::Exception(BCP, "Querydata engine unavailable");
     itsQEngine = reinterpret_cast<Engine::Querydata::Engine *>(engine);
@@ -534,7 +534,7 @@ void Plugin::init()
 
     // GEONAMES
 
-    engine = itsReactor->getSingleton("Geonames", NULL);
+    engine = itsReactor->getSingleton("Geonames", nullptr);
     if (!engine)
       throw Spine::Exception(BCP, "Geonames engine unavailable");
     itsGeoEngine = reinterpret_cast<Engine::Geonames::Engine *>(engine);
@@ -549,7 +549,7 @@ void Plugin::init()
 #ifndef WITHOUT_OBSERVATION
     if (!itsConfig.obsEngineDisabled())
     {
-      engine = itsReactor->getSingleton("Observation", NULL);
+      engine = itsReactor->getSingleton("Observation", nullptr);
       if (!engine)
         throw Spine::Exception(BCP, "Observation engine unavailable");
       itsObsEngine = reinterpret_cast<Engine::Observation::Engine *>(engine);
@@ -564,7 +564,7 @@ void Plugin::init()
     // AUTHENTICATION
     if (itsConfig.authenticate())
     {
-      engine = itsReactor->getSingleton("Authentication", NULL);
+      engine = itsReactor->getSingleton("Authentication", nullptr);
       if (!engine)
         throw Spine::Exception(BCP, "Authentication unavailable");
       Engine::Authentication::Engine *authEngine =
@@ -625,7 +625,7 @@ void Plugin::init()
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Init failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Init failed!");
   }
 }
 
@@ -649,7 +649,7 @@ void Plugin::shutdown()
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -671,7 +671,7 @@ bool Plugin::queryIsFast(const Spine::HTTP::Request &theRequest) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -788,7 +788,7 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -814,7 +814,7 @@ std::string Plugin::getStyle(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -834,7 +834,7 @@ SharedFormatter Plugin::getTemplate(const std::string &theName) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -858,7 +858,7 @@ std::string Plugin::getFilter(const std::string &theName, bool theWmsFlag) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -882,7 +882,7 @@ std::size_t Plugin::getFilterHash(const std::string &theName, bool theWmsFlag) c
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -908,7 +908,7 @@ std::string Plugin::getMarker(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -934,7 +934,7 @@ std::size_t Plugin::getMarkerHash(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -960,7 +960,7 @@ std::string Plugin::getSymbol(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -986,7 +986,7 @@ std::size_t Plugin::getSymbolHash(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1012,7 +1012,7 @@ std::string Plugin::getPattern(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1038,7 +1038,7 @@ std::size_t Plugin::getPatternHash(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1064,7 +1064,7 @@ std::string Plugin::getGradient(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1090,7 +1090,7 @@ std::size_t Plugin::getGradientHash(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1123,7 +1123,7 @@ std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException, bool
     std::string exceptionCode;
     std::string exceptionText;
 
-    if (e != NULL)
+    if (e != nullptr)
     {
       exceptionCode = e->getParameterValue(WMS_EXCEPTION_CODE);
       if (!isdebug)
@@ -1150,7 +1150,7 @@ std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException, bool
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1262,9 +1262,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
       }
       catch (...)
       {
-        Spine::Exception exception(BCP, "JSON parsing error!", NULL);
-        exception.addParameter("Text", json_text);
-        throw exception;
+        throw Spine::Exception::Trace(BCP, "JSON parsing error!").addParameter("Text", json_text);
       }
 
       // Define the customer
@@ -1328,8 +1326,8 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
     }
     catch (...)
     {
-      Spine::Exception exception(BCP, "Operation failed!", NULL);
-      if (exception.getExceptionByParameterName(WMS_EXCEPTION_CODE) == NULL)
+      Spine::Exception exception(BCP, "Operation failed!", nullptr);
+      if (exception.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       auto msg = parseWMSException(exception, isdebug);
       formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
@@ -1397,8 +1395,8 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
     catch (...)
     {
       Spine::Exception exception(
-          BCP, "Error in processing the template '" + *product.svg_tmpl + "'!", NULL);
-      if (exception.getExceptionByParameterName(WMS_EXCEPTION_CODE) == NULL)
+          BCP, "Error in processing the template '" + *product.svg_tmpl + "'!", nullptr);
+      if (exception.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       auto msg = parseWMSException(exception, isdebug);
       formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
@@ -1419,7 +1417,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

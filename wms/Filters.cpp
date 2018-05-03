@@ -51,7 +51,7 @@ void Filters::init(const Json::Value& theJson, const State& theState)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

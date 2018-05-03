@@ -27,7 +27,7 @@ void WMSObservationLayer::updateLayerMetaData()
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to update observation layer metadata!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to update observation layer metadata!");
   }
 }
 

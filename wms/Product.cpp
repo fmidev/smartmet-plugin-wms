@@ -87,7 +87,7 @@ void Product::init(const Json::Value& theJson, const State& theState, const Conf
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Product init failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Product init failed!");
   }
 }
 
@@ -142,7 +142,7 @@ void Product::generate(CTPP::CDT& theGlobals, State& theState)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -170,7 +170,7 @@ std::size_t Product::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

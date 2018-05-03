@@ -44,7 +44,7 @@ void PostGISLayerFilter::init(const Json::Value& theJson, const Config& theConfi
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Layer init failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Layer init failed!");
   }
 }
 
@@ -64,7 +64,7 @@ std::size_t PostGISLayerFilter::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

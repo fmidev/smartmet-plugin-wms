@@ -82,7 +82,7 @@ void Layer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -102,7 +102,7 @@ bool Layer::validLayer(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -148,7 +148,7 @@ Engine::Querydata::Q Layer::getModel(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to get required model data!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to get required model data!");
   }
 }
 
@@ -183,7 +183,7 @@ bool Layer::validResolution() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -214,7 +214,7 @@ bool Layer::validType(const std::string& theType) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -471,7 +471,7 @@ std::size_t Layer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

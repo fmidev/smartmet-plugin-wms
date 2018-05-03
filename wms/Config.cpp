@@ -70,10 +70,9 @@ Config::Config(const string& configfile)
       const auto& templates = itsConfig.lookup("templates");
       if (!templates.isGroup())
       {
-        Spine::Exception exception(BCP, "Configuration error!", NULL);
-        exception.addParameter("Configuration file", configfile);
-        exception.addDetail("Configured value of 'templates' must be a group");
-        throw exception;
+        throw Spine::Exception::Trace(BCP, "Configuration error!")
+            .addParameter("Configuration file", configfile)
+            .addDetail("Configured value of 'templates' must be a group");
       }
 
       for (int i = 0; i < templates.getLength(); ++i)
@@ -90,10 +89,9 @@ Config::Config(const string& configfile)
       const auto& attributes = itsConfig.lookup("regular_attributes");
       if (!attributes.isArray())
       {
-        Spine::Exception exception(BCP, "Configuration error!", NULL);
-        exception.addParameter("Configuration file", configfile);
-        exception.addDetail("Configured value of 'regular_attributes' must be an array");
-        throw exception;
+        throw Spine::Exception::Trace(BCP, "Configuration error!")
+            .addParameter("Configuration file", configfile)
+            .addDetail("Configured value of 'regular_attributes' must be an array");
       }
       for (int i = 0; i < attributes.getLength(); ++i)
         itsRegularAttributes.insert(attributes[i]);
@@ -103,10 +101,9 @@ Config::Config(const string& configfile)
       const auto& attributes = itsConfig.lookup("presentation_attributes");
       if (!attributes.isArray())
       {
-        Spine::Exception exception(BCP, "Configuration error!", NULL);
-        exception.addParameter("Configuration file", configfile);
-        exception.addDetail("Configured value of 'presentation_attributes' must be an array");
-        throw exception;
+        throw Spine::Exception::Trace(BCP, "Configuration error!")
+            .addParameter("Configuration file", configfile)
+            .addDetail("Configured value of 'presentation_attributes' must be an array");
       }
 
       for (int i = 0; i < attributes.getLength(); ++i)
@@ -120,18 +117,18 @@ Config::Config(const string& configfile)
   }
   catch (libconfig::ParseException& e)
   {
-    throw Spine::Exception(BCP, "Configuration error!", NULL)
+    throw Spine::Exception::Trace(BCP, "Configuration error!")
         .addParameter("Configuration file", configfile)
         .addParameter("Line", Fmi::to_string(e.getLine()));
   }
   catch (libconfig::ConfigException&)
   {
-    throw Spine::Exception(BCP, "Configuration error!", NULL)
+    throw Spine::Exception::Trace(BCP, "Configuration error!")
         .addParameter("Configuration file", configfile);
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Configuration error!", NULL)
+    throw Spine::Exception::Trace(BCP, "Configuration error!")
         .addParameter("Configuration file", configfile);
   }
 }
@@ -195,7 +192,7 @@ bool Config::isValidAttribute(const std::string& theName) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

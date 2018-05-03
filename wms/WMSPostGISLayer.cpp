@@ -112,7 +112,7 @@ WMSPostGISLayer::WMSPostGISLayer(const WMSConfig& config, const Json::Value& jso
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to initializa PostGIS layer!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to initializa PostGIS layer!");
   }
 }
 
@@ -170,7 +170,7 @@ void WMSPostGISLayer::updateLayerMetaData()
     {
       if (!quiet)
       {
-        Spine::Exception exception(BCP, "WMS layer metadata update failure!", NULL);
+        Spine::Exception exception(BCP, "WMS layer metadata update failure!", nullptr);
         exception.addParameter("Layer name", name);
         exception.printError();
       }
@@ -211,7 +211,7 @@ void WMSPostGISLayer::updateLayerMetaData()
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to update PostGIS layer metadata!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to update PostGIS layer metadata!");
   }
 }
 

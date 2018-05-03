@@ -33,9 +33,9 @@ CTPP::CDT WMSLayerStyle::getCapabilities() const
     // Style name, title and abstract
 
     if (name.empty())
-      throw Spine::Exception(BCP, "WMS layer style must have a name!", NULL);
+      throw Spine::Exception::Trace(BCP, "WMS layer style must have a name!");
     if (title.empty())
-      throw Spine::Exception(BCP, "WMS layer style must have a title!", NULL);
+      throw Spine::Exception::Trace(BCP, "WMS layer style must have a title!");
 
     style["name"] = name;
     style["title"] = title;
@@ -80,7 +80,7 @@ CTPP::CDT WMSLayerStyle::getCapabilities() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to convert WMSLayerStyle to template output format", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to convert WMSLayerStyle to template output format");
   }
 }
 

@@ -16,7 +16,7 @@ void WMSTimeDimension::addTimestep(const boost::posix_time::ptime& timestep)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to add time step!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to add time step!");
   }
 }
 
@@ -28,7 +28,7 @@ void WMSTimeDimension::removeTimestep(const boost::posix_time::ptime& timestep)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to remove time step!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to remove time step!");
   }
 }
 
@@ -58,7 +58,7 @@ bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) cons
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to validate time!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to validate time!");
   }
 #endif
 }
@@ -113,7 +113,7 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to establish most current time!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to establish most current time!");
   }
 }
 
@@ -135,7 +135,7 @@ std::string StepTimeDimension::getCapabilities() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to extract time dimension capabilities!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to extract time dimension capabilities!");
   }
 }
 
@@ -182,7 +182,7 @@ std::string IntervalTimeDimension::getCapabilities() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to generate time dimension capabilities!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to generate time dimension capabilities!");
   }
 }
 
@@ -203,7 +203,7 @@ std::ostream& operator<<(std::ostream& ost, const StepTimeDimension& timeDimensi
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to print step time dimension data!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to print step time dimension data!");
   }
 }
 
@@ -219,7 +219,7 @@ std::ostream& operator<<(std::ostream& ost, const IntervalTimeDimension& timeDim
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to print time dimension data!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to print time dimension data!");
   }
 }
 

@@ -44,7 +44,7 @@ void WMSQueryDataLayer::updateLayerMetaData()
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to update querydata layer metadata!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to update querydata layer metadata!");
   }
 }
 

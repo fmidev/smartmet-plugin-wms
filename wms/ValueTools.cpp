@@ -28,7 +28,7 @@ double get_double(const Spine::TimeSeries::Value& value)
 
   // None, std::string, LonLat and local_date_time not accepted. See spine/TimeSeries.h
 
-  throw Spine::Exception(BCP, "Failed to convert observation engine value to a number!", NULL);
+  throw Spine::Exception::Trace(BCP, "Failed to convert observation engine value to a number!");
 }
 
 // ----------------------------------------------------------------------
@@ -66,7 +66,7 @@ int get_fmisid(const Spine::TimeSeries::Value& value)
 
   // None, LonLat and local_date_time not accepted. See spine/TimeSeries.h
 
-  throw Spine::Exception(BCP, "Failed to convert observation engine value to fmisid!", NULL);
+  throw Spine::Exception::Trace(BCP, "Failed to convert observation engine value to fmisid!");
 }
 
 int get_fmisid(const Spine::TimeSeries::TimedValue& timedvalue)

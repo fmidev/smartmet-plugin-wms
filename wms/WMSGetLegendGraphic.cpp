@@ -97,7 +97,7 @@ void check_getlegendgraphic_request_options(const Spine::HTTP::Request& theHTTPR
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Checking GetLegendGraphic options failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Checking GetLegendGraphic options failed!");
   }
 }
 
@@ -146,7 +146,7 @@ void validate_options(const get_legend_graphic_request_options& options,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "GetLegendGraphic request did not validate!", NULL);
+    throw Spine::Exception::Trace(BCP, "GetLegendGraphic request did not validate!");
   }
 }
 
@@ -172,7 +172,7 @@ boost::posix_time::ptime parse_time(const std::string& time)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Parsing GetLegendGraphic time failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Parsing GetLegendGraphic time failed!");
   }
 }
 
@@ -224,7 +224,7 @@ void parse_interval_with_resolution(const std::string time_str,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Parsing time interval failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Parsing time interval failed!");
   }
 }
 #endif
@@ -315,7 +315,7 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Parsing GetLegendGraphic request failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Parsing GetLegendGraphic request failed!");
   }
 }
 
@@ -327,7 +327,7 @@ std::string WMSGetLegendGraphic::jsonText() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "GetLegendGraphic JSON generation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "GetLegendGraphic JSON generation failed!");
   }
 }
 }  // namespace WMS

@@ -37,7 +37,7 @@ boost::optional<AttributeSelection> attribute(const std::vector<AttributeSelecti
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

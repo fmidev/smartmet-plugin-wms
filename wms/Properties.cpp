@@ -82,7 +82,7 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -185,7 +185,7 @@ void Properties::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -267,7 +267,7 @@ std::size_t Properties::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to calculate hash value for layer properties!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to calculate hash value for layer properties!");
   }
 }
 

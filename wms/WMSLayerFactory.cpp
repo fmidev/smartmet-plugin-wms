@@ -61,7 +61,7 @@ WMSLayerType getWMSLayerType(const Json::Value& layer)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to get WMS layer type!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to get WMS layer type!");
   }
 }
 
@@ -93,7 +93,7 @@ std::string getWMSLayerTypeAsString(WMSLayerType layerType)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to get layer type as string!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to get layer type as string!");
   }
 }
 
@@ -187,7 +187,7 @@ WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to determine layer product type!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to determine layer product type!");
   }
 }
 
@@ -409,7 +409,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to create WMS layer!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to create WMS layer!");
   }
 }
 

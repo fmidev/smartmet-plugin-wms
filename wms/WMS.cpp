@@ -41,7 +41,7 @@ std::string enclose_with_quotes(const std::string& param)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Enclosing string with quotes failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Enclosing string with quotes failed!");
   }
 }
 
@@ -69,7 +69,7 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
     }
     catch (...)
     {
-      throw Spine::Exception(BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!", NULL)
+      throw Spine::Exception::Trace(BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
@@ -77,7 +77,7 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Converting hex string to RGB failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Converting hex string to RGB failed!");
   }
 }
 
@@ -101,7 +101,7 @@ WMSRequestType wmsRequestType(const Spine::HTTP::Request& theHTTPRequest)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Extracting MWS request type failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Extracting MWS request type failed!");
   }
 }
 
@@ -140,7 +140,7 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
     }
     catch (boost::bad_lexical_cast const&)
     {
-      throw Spine::Exception(BCP, "Invalid dimension value '" + periodString + "'!", NULL)
+      throw Spine::Exception::Trace(BCP, "Invalid dimension value '" + periodString + "'!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
     }
 
@@ -148,7 +148,7 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Parsing resolution failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Parsing resolution failed!");
   }
 }
 
@@ -169,7 +169,7 @@ unsigned int resolution_in_minutes(const std::string resolution)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Extracting resolution in minutes failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Extracting resolution in minutes failed!");
   }
 }
 
@@ -304,7 +304,7 @@ std::ostream& operator<<(std::ostream& ost, const Spine::HTTP::Request& theHTTPR
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Printing WMS request failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Printing WMS request failed!");
   }
 }
 

@@ -85,7 +85,7 @@ Layer* create(const Json::Value& theJson)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 }  // namespace LayerFactory

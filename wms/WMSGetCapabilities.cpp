@@ -32,7 +32,7 @@ WMSGetCapabilities::WMSGetCapabilities(const std::string& theTemplatePath)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Initializing WMS repsonse template failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Initializing WMS repsonse template failed!");
   }
 }
 
@@ -78,7 +78,7 @@ std::string WMSGetCapabilities::resolveGetMapURI(const Spine::HTTP::Request& the
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Resolving GetMap URI failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Resolving GetMap URI failed!");
   }
 }
 

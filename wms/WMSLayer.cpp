@@ -1069,7 +1069,7 @@ bool WMSLayer::isValidCRS(const std::string& theCRS) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Validating CRS failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Validating CRS failed!");
   }
 }
 
@@ -1085,7 +1085,7 @@ bool WMSLayer::isValidStyle(const std::string& theStyle) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Validating style failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Validating style failed!");
   }
 }
 
@@ -1100,7 +1100,7 @@ bool WMSLayer::isValidTime(const boost::posix_time::ptime& theTime) const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Validating time failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Validating time failed!");
   }
 }
 
@@ -1113,7 +1113,7 @@ bool WMSLayer::currentValue() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Validating current time failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Validating current time failed!");
   }
 }
 
@@ -1125,7 +1125,7 @@ boost::posix_time::ptime WMSLayer::mostCurrentTime() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Validating most current time!", NULL);
+    throw Spine::Exception::Trace(BCP, "Validating most current time!");
   }
 }
 
@@ -1141,7 +1141,7 @@ std::string WMSLayer::info() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "WMS info operation failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "WMS info operation failed!");
   }
 }
 
@@ -1219,7 +1219,7 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Printing the request failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Printing the request failed!");
   }
 }
 
@@ -1485,7 +1485,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to generate capabilities for the layer!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to generate capabilities for the layer!");
   }
 }
 
@@ -1515,7 +1515,7 @@ Json::Value WMSLayer::readJsonFile(const std::string theFileName)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Error in reading json-file" + theFileName, NULL);
+    throw Spine::Exception::Trace(BCP, "Error in reading json-file" + theFileName);
   }
 }
 

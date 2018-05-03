@@ -121,7 +121,7 @@ void check_getmap_request_options(const Spine::HTTP::Request& theHTTPRequest)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "GetMap request options did not validate!", NULL);
+    throw Spine::Exception::Trace(BCP, "GetMap request options did not validate!");
   }
 }
 
@@ -210,7 +210,7 @@ void validate_options(const tag_get_map_request_options& options,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "GetMap options did not validate!", NULL);
+    throw Spine::Exception::Trace(BCP, "GetMap options did not validate!");
   }
 }
 
@@ -233,7 +233,7 @@ boost::posix_time::ptime parse_time(const std::string& time)
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Parsing GetMap time failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Parsing GetMap time failed!");
   }
 }
 
@@ -285,7 +285,7 @@ void parse_interval_with_resolution(const std::string time_str,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Parsing GetMap time interval failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Parsing GetMap time interval failed!");
   }
 }
 
@@ -347,10 +347,9 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     }
     catch (...)
     {
-      Spine::Exception exception(BCP, "Invalid width / height value!", NULL);
-      exception.addDetail("The WIDTH and HEIGHT options must be valid integer numbers!");
-      exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      throw exception;
+      throw Spine::Exception::Trace(BCP, "Invalid width / height value!")
+          .addDetail("The WIDTH and HEIGHT options must be valid integer numbers!")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
     for (unsigned int i = 0; i < layers.size(); i++)
@@ -525,7 +524,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Failed to complete GetMap request!", NULL);
+    throw Spine::Exception::Trace(BCP, "Failed to complete GetMap request!");
   }
 }
 
@@ -539,7 +538,7 @@ std::string WMSGetMap::jsonText() const
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "Extracting GetMap JSON failed!", NULL);
+    throw Spine::Exception::Trace(BCP, "Extracting GetMap JSON failed!");
   }
 }
 
