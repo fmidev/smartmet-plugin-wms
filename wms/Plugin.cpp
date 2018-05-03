@@ -393,7 +393,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
           const Spine::Exception *e = wmsException.getExceptionByParameterName(WMS_EXCEPTION_CODE);
           if (e != nullptr)
           {
-            // OGC status codes:
+            // Status codes used by OGC and their HTTP response codes:
             // OperationNotSupported 501 Not Implemented
             // MissingParameterValue 400 Bad request
             // InvalidParameterValue 400 Bad request
@@ -403,9 +403,19 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
             // NoApplicableCode 3xx, 4xx, 5xx Internal Server Error
 
             std::string exceptionCode = e->getParameterValue(WMS_EXCEPTION_CODE);
+
+            theResponse.setHeader("X-WMS-Exception", exceptionCode);
+
+            std::string firstMessage = wmsException.what();
+            boost::algorithm::replace_all(firstMessage, "\n", " ");
+            firstMessage = firstMessage.substr(0, 300);
+            theResponse.setHeader("X-WMS-Error", firstMessage.c_str());
+
             if (exceptionCode == WMS_LAYER_NOT_QUERYABLE ||
                 exceptionCode == WMS_OPERATION_NOT_SUPPORTED)
+            {
               theResponse.setStatus(Spine::HTTP::Status::not_implemented);
+            }
           }
         }
       }
