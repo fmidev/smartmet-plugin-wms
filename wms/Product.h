@@ -8,6 +8,7 @@
 
 #include "Attributes.h"
 #include "Defs.h"
+#include "Png.h"
 #include "Projection.h"
 #include "Properties.h"
 #include "Views.h"
@@ -55,6 +56,9 @@ class Product : public Properties
 
   // Views
   Views views;
+
+  // PNG rendering options
+  Png png;
 
  private:
 };  // class Product

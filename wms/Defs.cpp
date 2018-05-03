@@ -72,6 +72,9 @@ void Defs::init(const Json::Value& theJson,
     json = theJson.get("gradients", nulljson);
     if (!json.isNull())
       gradients.init(json, theState);
+    json = theJson.get("css", nulljson);
+    if (!json.isNull())
+      csss.init(json, theState);
   }
   catch (...)
   {

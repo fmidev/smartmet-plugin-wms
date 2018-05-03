@@ -316,7 +316,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       {
         Spine::Exception exception(BCP, "The requested layer is not supported!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
-        exception.addParameter("Layere", layers[i]);
+        exception.addParameter("Layer", layers[i]);
         throw exception;
       }
     }

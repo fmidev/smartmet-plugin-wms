@@ -127,6 +127,7 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                       const Spine::HTTP::Request& theRequest,
                       Spine::HTTP::Response& theResponse,
                       bool usetimer,
+                      const Product& theProduct = Product(),
                       std::size_t theHash = 0);
   std::string mimeType(const std::string& theFormat) const;
 
