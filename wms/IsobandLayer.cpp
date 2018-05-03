@@ -321,6 +321,9 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     // Establish the data
     auto q = getModel(theState);
 
+    if (!(q->isGrid()))
+        throw Spine::Exception(BCP, "Isoband-layer can't use point data!");
+
     // Establish the parameter
     //
     // Heatmap does not use the parameter currently (only flash coordinates)
