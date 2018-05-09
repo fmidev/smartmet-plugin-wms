@@ -15,6 +15,8 @@
 #include <string>
 #include <vector>
 
+static const int testtimeout = 60;  // Seconds a single test is allowed to run
+
 namespace SmartMet
 {
 namespace MyTest
@@ -128,6 +130,7 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
 
       bool ok = true;
 
+      alarm(testtimeout);
       string input = get_file_contents(inputfile);
 
       // emacs keeps messing up the newlines, easier to make sure
@@ -215,6 +218,14 @@ void prelude(SmartMet::Spine::Reactor& reactor)
   std::cout << std::endl
             << "Testing dali plugin" << std::endl
             << "===================" << std::endl;
+}
+
+void alarmhandler()
+{
+  std::cerr << std::endl
+            << "Timeout: Test terminated because " << testtimeout
+            << " seconds have passed. Test stuck in infinite loop?" << std::endl;
+  exit(1);
 }
 
 int main() try
