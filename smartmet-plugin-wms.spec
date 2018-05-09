@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.5.3
-Release: 2%{?dist}.fmi
+Version: 18.5.9
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -19,7 +19,7 @@ BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.5.2
 BuildRequires: smartmet-library-macgyver-devel >= 18.4.7
-BuildRequires: smartmet-library-spine-devel >= 18.5.2
+BuildRequires: smartmet-library-spine-devel >= 18.5.9
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.4.7
@@ -29,8 +29,8 @@ BuildRequires: smartmet-engine-observation-devel >= 18.4.19
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.4.7
 BuildRequires: smartmet-engine-geonames-devel >= 18.4.7
-BuildRequires: smartmet-engine-querydata-devel >= 18.4.18
-BuildRequires: smartmet-engine-contour-devel >= 18.4.7
+BuildRequires: smartmet-engine-querydata-devel >= 18.5.8
+BuildRequires: smartmet-engine-contour-devel >= 18.4.9
 BuildRequires: smartmet-library-gis-devel >= 18.4.7
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.5
@@ -50,12 +50,12 @@ Requires: smartmet-library-giza >= 18.5.2
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 18.4.7
 %endif
-Requires: smartmet-engine-querydata >= 18.4.18
-Requires: smartmet-engine-contour >= 18.4.7
+Requires: smartmet-engine-querydata >= 18.5.8
+Requires: smartmet-engine-contour >= 18.4.9
 Requires: smartmet-engine-gis >= 18.4.7
 Requires: smartmet-engine-geonames >= 18.4.7
-Requires: smartmet-server >= 18.4.7
-Requires: smartmet-library-spine >= 18.5.2
+Requires: smartmet-server >= 18.4.9
+Requires: smartmet-library-spine >= 18.5.9
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed May  9 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.5.9-1.fmi
+- Fixed heatmaps to generate, the point querydata test added earlier broke them
+
 * Thu May  3 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.5.3-2.fmi
 - Error if isobands or isolines are attempted from point querydata
 - Added X-WMS-Exception and X-WMS-Error headers to WMS error responses

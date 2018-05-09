@@ -120,8 +120,8 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     // Establish the data
     auto q = getModel(theState);
 
-    if (!(q->isGrid()))
-        throw Spine::Exception(BCP, "Isoline-layer can't use point data!");
+    if (q && !(q->isGrid()))
+      throw Spine::Exception(BCP, "Isoline-layer can't use point data!");
 
     // Establish the desired direction parameter
 
