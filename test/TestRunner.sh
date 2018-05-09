@@ -57,12 +57,14 @@ function ClosePlugin
     echo "quit" >&3
     sleep 1
     # Let it die forcefully
-    kill $TESTER_PID
+    test -d /proc/$TESTER_PID && kill $TESTER_PID
     # Remove the pipes
     rm -f $in $out
     # reset terminal colour, the plugin init sequence modifies the terminal
     tput sgr0
-    exit
+    # return faulty status for interrupted test runner
+    echo "PluginTest killed because of signal"
+    exit 1
 }
 
 trap ClosePlugin 1 2 3 4 5 6 7 8 11 15
