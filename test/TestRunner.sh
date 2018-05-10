@@ -14,9 +14,40 @@ echo -e "Starting the plugin, please wait a moment until it has been initialized
 rm -f $in $out
 mkfifo $in $out
 
-# Here we force output to be buffered one line at a time so we can display other messages while waiting for an OK
+# Handle quitting this test runner when child process terminates
+export TOP_PID=$$
 
-stdbuf -oL -e0 ./PluginTest < $in > $out 2>$out &
+function testerExit
+{
+    # Remove the pipes
+    rm -f $in $out
+    # reset terminal colour, the plugin init sequence modifies the terminal
+    tput sgr0
+    echo ""
+    echo "PluginTest has shutdown unexpectedly"
+    exit 1
+}
+
+trap testerExit SIGUSR1
+
+# Actually start the plugintest in background
+function pluginTestRun
+{
+    # Here we force output to be buffered one line at a time so we can display other messages while waiting for an OK
+    # We also force the killing of the main test runner
+    stdbuf -oL -e0 ./PluginTest
+    ret=$?
+    if [ "$ret" != "0" ] ; then
+	# Kill this main script, pid is recorded in environment before fork
+	# Use /bin/kill- internal shell kill doesn't work with signames
+	/bin/kill -s SIGUSR1 $TOP_PID
+	exit $ret
+    fi
+    exit 0
+}
+
+pluginTestRun < $in > $out 2>$out &
+export TESTER_PID=$!
 exec 3> $in 4< $out
 
 # Function to request shutdown for the Plugin if a signal has been thrown
@@ -26,15 +57,17 @@ function ClosePlugin
     echo "quit" >&3
     sleep 1
     # Let it die forcefully
-    killall PluginTest
+    test -d /proc/$TESTER_PID && kill $TESTER_PID
     # Remove the pipes
     rm -f $in $out
     # reset terminal colour, the plugin init sequence modifies the terminal
     tput sgr0
-    exit
+    # return faulty status for interrupted test runner
+    echo "PluginTest killed because of signal"
+    exit 1
 }
 
-trap ClosePlugin 1 2 3 4 5 6 7 8 10 11 15
+trap ClosePlugin 1 2 3 4 5 6 7 8 11 15
 
 # Wait for the plugin to start
 
