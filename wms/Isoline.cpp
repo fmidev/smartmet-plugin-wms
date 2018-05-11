@@ -49,6 +49,21 @@ void Isoline::init(const Json::Value& theJson, const Config& theConfig)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Get unique QID for the isoline
+ */
+// ----------------------------------------------------------------------
+
+std::string Isoline::getQid(const State& theState) const
+{
+  if (!qid.empty())
+    return qid;
+
+  generated_qid = theState.makeQid("isoline");
+  return generated_qid;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value
  */
 // ----------------------------------------------------------------------

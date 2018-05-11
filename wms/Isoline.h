@@ -23,6 +23,8 @@ class Isoline
 {
  public:
   Isoline() : value(0) {}
+
+  std::string getQid(const State& theState) const;
   void init(const Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
@@ -34,6 +36,8 @@ class Isoline
   Attributes attributes;
 
  private:
+  mutable std::string generated_qid;
+
 };  // class Isoline
 
 }  // namespace Dali

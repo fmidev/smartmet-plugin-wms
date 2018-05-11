@@ -763,6 +763,21 @@ void State::updateExpirationTime(const boost::posix_time::ptime& theTime) const
     itsExpirationTime = std::min(*itsExpirationTime, theTime);
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return a generated QID for the given prefix
+ *
+ * We simply count the number of times each prefix has been used and
+ * appends the counter to the prefix.
+ */
+// ----------------------------------------------------------------------
+
+std::string State::makeQid(const std::string& thePrefix) const
+{
+  auto num = ++itsQids[thePrefix];
+  return thePrefix + Fmi::to_string(num);
+}
+
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet

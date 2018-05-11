@@ -20,6 +20,8 @@ namespace Dali
 class Isoband
 {
  public:
+  std::string getQid(const State& theState) const;
+
   void init(const Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
@@ -36,6 +38,8 @@ class Isoband
   Attributes attributes;
 
  private:
+  mutable std::string generated_qid;
+
 };  // class Isoband
 
 }  // namespace Dali

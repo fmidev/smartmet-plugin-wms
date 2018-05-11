@@ -96,6 +96,9 @@ class State
   // If given ID has not been used, mark it used now
   bool addId(const std::string& theID) const;
 
+  // Create unique ID for the given prefix
+  std::string makeQid(const std::string& thePrefix) const;
+
   // Fetch CSS contents
   std::string getStyle(const std::string& theCSS) const;
 
@@ -180,6 +183,9 @@ class State
   mutable std::map<std::string, std::string> itsPatterns;
   // Gradients we already know of
   mutable std::map<std::string, std::string> itsGradients;
+
+  // Unique Qids created by us
+  mutable std::map<std::string, std::size_t> itsQids;
 
   // Next ID to be used
   mutable std::size_t itsNextId = 0;

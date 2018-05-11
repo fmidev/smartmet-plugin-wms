@@ -1,0 +1,400 @@
+[
+        {
+            "lolimit": 38,
+	    "attributes":
+	    {
+		"class": "Temperature_38_inf"
+	    }
+        },
+        {
+            "lolimit": 36,
+            "hilimit": 38,
+	    "attributes":
+	    {
+		"class": "Temperature_36_38"
+	    }
+        },
+        {
+            "lolimit": 34,
+            "hilimit": 36,
+	    "attributes":
+	    {
+		"class": "Temperature_34_36"
+	    }
+        },
+        {
+            "lolimit": 32,
+            "hilimit": 34,
+	    "attributes":
+	    {
+		"class": "Temperature_32_34"
+	    }
+        },
+        {
+            "lolimit": 30,
+            "hilimit": 32,
+	    "attributes":
+	    {
+		"class": "Temperature_30_32"
+	    }
+        },
+        {
+            "lolimit": 28,
+            "hilimit": 30,
+	    "attributes":
+	    {
+		"class": "Temperature_28_30"
+	    }
+        },
+        {
+            "lolimit": 26,
+            "hilimit": 28,
+	    "attributes":
+	    {
+		"class": "Temperature_26_28"
+	    }
+        },
+        {
+            "lolimit": 24,
+            "hilimit": 26,
+	    "attributes":
+	    {
+		"class": "Temperature_24_26"
+	    }
+        },
+        {
+            "lolimit": 22,
+            "hilimit": 24,
+	    "attributes":
+	    {
+		"class": "Temperature_22_24"
+	    }
+        },
+        {
+            "lolimit": 20,
+            "hilimit": 22,
+	    "attributes":
+	    {
+		"class": "Temperature_20_22"
+	    }
+        },
+        {
+            "lolimit": 18,
+            "hilimit": 20,
+	    "attributes":
+	    {
+		"class": "Temperature_18_20"
+	    }
+        },
+        {
+            "lolimit": 16,
+            "hilimit": 18,
+	    "attributes":
+	    {
+		"class": "Temperature_16_18"
+	    }
+        },
+        {
+            "lolimit": 14,
+            "hilimit": 16,
+	    "attributes":
+	    {
+		"class": "Temperature_14_16"
+	    }
+        },
+        {
+            "lolimit": 12,
+            "hilimit": 14,
+	    "attributes":
+	    {
+		"class": "Temperature_12_14"
+	    }
+        },
+        {
+            "lolimit": 10,
+            "hilimit": 12,
+	    "attributes":
+	    {
+		"class": "Temperature_10_12"
+	    }
+        },
+        {
+            "lolimit": 8,
+            "hilimit": 10,
+	    "attributes":
+	    {
+		"class": "Temperature_8_10"
+	    }
+        },
+        {
+            "lolimit": 6,
+            "hilimit": 8,
+	    "attributes":
+	    {
+		"class": "Temperature_6_8"
+	    }
+        },
+        {
+            "lolimit": 4,
+            "hilimit": 6,
+	    "attributes":
+	    {
+		"class": "Temperature_4_6"
+	    }
+        },
+        {
+            "lolimit": 2,
+            "hilimit": 4,
+	    "attributes":
+	    {
+		"class": "Temperature_2_4"
+	    }
+        },
+        {
+            "lolimit": 1,
+            "hilimit": 2,
+	    "attributes":
+	    {
+		"class": "Temperature_1_2"
+	    }
+        },
+        {
+            "lolimit": 0,
+            "hilimit": 1,
+	    "attributes":
+	    {
+		"class": "Temperature_0_1"
+	    }
+        },
+        {
+            "lolimit": -1,
+            "hilimit": 0,
+	    "attributes":
+	    {
+		"class": "Temperature_1_0"
+	    }
+        },
+        {
+            "lolimit": -2,
+            "hilimit": -1,
+	    "attributes":
+	    {
+		"class": "Temperature_2_1"
+	    }
+        },
+        {
+            "lolimit": -3,
+            "hilimit": -2,
+	    "attributes":
+	    {
+		"class": "Temperature_3_2"
+	    }
+        },
+        {
+            "lolimit": -4,
+            "hilimit": -3,
+	    "attributes":
+	    {
+		"class": "Temperature_4_3"
+	    }
+        },
+        {
+            "lolimit": -5,
+            "hilimit": -4,
+	    "attributes":
+	    {
+		"class": "Temperature_5_4"
+	    }
+        },
+        {
+            "lolimit": -6,
+            "hilimit": -5,
+	    "attributes":
+	    {
+		"class": "Temperature_6_5"
+	    }
+        },
+        {
+            "lolimit": -8,
+            "hilimit": -6,
+	    "attributes":
+	    {
+		"class": "Temperature_8_6"
+	    }
+        },
+        {
+            "lolimit": -10,
+            "hilimit": -8,
+	    "attributes":
+	    {
+		"class": "Temperature_10_8"
+	    }
+        },
+        {
+            "lolimit": -12,
+            "hilimit": -10,
+	    "attributes":
+	    {
+		"class": "Temperature_12_10"
+	    }
+        },
+        {
+            "lolimit": -14,
+            "hilimit": -12,
+	    "attributes":
+	    {
+		"class": "Temperature_14_12"
+	    }
+        },
+        {
+            "lolimit": -16,
+            "hilimit": -14,
+	    "attributes":
+	    {
+		"class": "Temperature_16_14"
+	    }
+        },
+        {
+            "lolimit": -18,
+            "hilimit": -16,
+	    "attributes":
+	    {
+		"class": "Temperature_18_16"
+	    }
+        },
+        {
+            "lolimit": -20,
+            "hilimit": -18,
+	    "attributes":
+	    {
+		"class": "Temperature_20_18"
+	    }
+        },
+        {
+            "lolimit": -22,
+            "hilimit": -20,
+	    "attributes":
+	    {
+		"class": "Temperature_22_20"
+	    }
+        },
+        {
+            "lolimit": -24,
+            "hilimit": -22,
+	    "attributes":
+	    {
+		"class": "Temperature_24_22"
+	    }
+        },
+        {
+            "lolimit": -26,
+            "hilimit": -24,
+	    "attributes":
+	    {
+		"class": "Temperature_26_24"
+	    }
+        },
+        {
+            "lolimit": -28,
+            "hilimit": -26,
+	    "attributes":
+	    {
+		"class": "Temperature_28_26"
+	    }
+        },
+        {
+            "lolimit": -30,
+            "hilimit": -28,
+	    "attributes":
+	    {
+		"class": "Temperature_30_28"
+	    }
+        },
+        {
+            "lolimit": -32,
+            "hilimit": -30,
+	    "attributes":
+	    {
+		"class": "Temperature_32_30"
+	    }
+        },
+        {
+            "lolimit": -34,
+            "hilimit": -32,
+	    "attributes":
+	    {
+		"class": "Temperature_34_32"
+	    }
+        },
+        {
+            "lolimit": -36,
+            "hilimit": -34,
+	    "attributes":
+	    {
+		"class": "Temperature_36_34"
+	    }
+        },
+        {
+            "lolimit": -38,
+            "hilimit": -36,
+	    "attributes":
+	    {
+		"class": "Temperature_38_36"
+	    }
+        },
+        {
+            "lolimit": -40,
+            "hilimit": -38,
+	    "attributes":
+	    {
+		"class": "Temperature_40_38"
+	    }
+        },
+        {
+            "lolimit": -42,
+            "hilimit": -40,
+	    "attributes":
+	    {
+		"class": "Temperature_42_40"
+	    }
+        },
+        {
+            "lolimit": -44,
+            "hilimit": -42,
+	    "attributes":
+	    {
+		"class": "Temperature_44_42"
+	    }
+        },
+        {
+            "lolimit": -46,
+            "hilimit": -44,
+	    "attributes":
+	    {
+		"class": "Temperature_46_44"
+	    }
+        },
+        {
+            "lolimit": -48,
+            "hilimit": -46,
+	    "attributes":
+	    {
+		"class": "Temperature_48_46"
+	    }
+        },
+        {
+            "lolimit": -50,
+            "hilimit": -48,
+	    "attributes":
+	    {
+		"class": "Temperature_50_48"
+	    }
+        },
+        {
+            "hilimit": -50,
+	    "attributes":
+	    {
+		"class": "Temperature_inf_50"
+	    }
+        }
+]

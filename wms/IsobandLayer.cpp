@@ -423,12 +423,8 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     std::vector<Engine::Contour::Range> limits;
     const auto& contourer = theState.getContourEngine();
-    BOOST_FOREACH (const Isoband& isoband, isobands)
-    {
-      if (isoband.qid.empty())
-        throw Spine::Exception(BCP, "All isobands must have a non-empty QID!");
+    for (const Isoband& isoband : isobands)
       limits.push_back(Engine::Contour::Range(isoband.lolimit, isoband.hilimit));
-    }
 
     Engine::Contour::Options options(param, valid_time, limits);
 
@@ -530,7 +526,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         if (geom2 && !geom2->IsEmpty())
         {
           // Store the path with unique ID
-          std::string iri = qid + (qid.empty() ? "" : ".") + isoband.qid;
+          std::string iri = qid + (qid.empty() ? "" : ".") + isoband.getQid(theState);
 
           if (!theState.addId(iri))
             throw Spine::Exception(BCP, "Non-unique ID assigned to isoband")

@@ -226,13 +226,9 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     // TODO: Clean up Options API to use optionals
     const auto& contourer = theState.getContourEngine();
     std::vector<double> isoline_values;
-    BOOST_FOREACH (const Isoline& isoline, isolines)
-    {
-      if (isoline.qid.empty())
-        throw Spine::Exception(BCP, "All isolines must have a non-empty QID");
-
+    for (const Isoline& isoline : isolines)
       isoline_values.push_back(isoline.value);
-    }
+
     Engine::Contour::Options options(param, valid_time, isoline_values);
 
     if (multiplier || offset)
@@ -296,7 +292,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         if (geom2 && !geom2->IsEmpty())
         {
           // Store the path with unique QID
-          std::string iri = qid + (qid.empty() ? "" : ".") + isoline.qid;
+          std::string iri = qid + (qid.empty() ? "" : ".") + isoline.getQid(theState);
 
           if (!theState.addId(iri))
             throw Spine::Exception(BCP, "Non-unique ID assigned to isoline")

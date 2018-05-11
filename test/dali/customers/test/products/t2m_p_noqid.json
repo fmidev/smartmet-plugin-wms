@@ -1,0 +1,248 @@
+{
+    "title": "Demo product",
+    "producer": "pal_skandinavia",
+    "language": "fi",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "defs":
+    {
+	"styles":
+	{
+	    ".Label":
+	    {
+		"font": "Arial",
+		"font-size": 9
+	    },
+	    ".Units":
+	    {
+		"font": "Arial",
+		"font-size": 14
+	    }
+	},
+	"layers": [
+	    {
+		"tag": "symbol",
+		"attributes":
+		{
+		    "id": "rect"
+		},
+		"layers": [
+		    {
+			"tag": "rect",
+			"attributes":
+			{
+			    "width": "14",
+			    "height": "9"
+			}
+		    }
+		]
+	    },
+	    {
+		"tag": "symbol",
+		"attributes":
+		{
+		    "id": "uptriangle"
+		},
+		"layers": [
+		    {
+			"tag": "path",
+			"attributes":
+			{
+			    "d": "M0 9,7 0,14 9Z"
+			}
+		    }
+		]
+	    },
+	    {
+		"tag": "symbol",
+		"attributes":
+		{
+		    "id": "downtriangle"
+		},
+		"layers": [
+		    {
+			"tag": "path",
+			"attributes":
+			{
+			    "d": "M0 0,7 9,14 0Z"
+			}
+		    }
+		]
+	    }
+	]
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature_noqid.json",
+		    "css": "isobands/temperature.css",
+                    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"id": "temperature_isobands"
+		    }
+                },
+		{
+		    "layer_type": "legend",
+		    "x": 10,
+		    "y": 10,
+		    "dx": 0,
+		    "dy": 9,
+		    "isobands": "json:isobands/temperature_noqid.json",
+		    "symbols":
+		    {
+			"css": "isobands/temperature.css",
+			"symbol": "rect",
+			"start": "uptriangle",
+			"end": "downtriangle",
+			"attributes":
+			{
+			    "stroke": "black",
+			    "stroke-width": "0.5"
+			}
+		    },
+		    "labels":
+		    {
+			"type": "lolimit",
+			"separator": "...",	// en dash = " \u2013 "
+			"dx": 18,
+			"dy": 12,
+			"conversions":
+			{
+			    "0": "GETTING WARMER",
+			    "14": "WARM",
+			    "30":
+			    {
+				"fi": "KUUMA",
+				"en": "HOT"
+			    },
+			    "38": "&#62; 38",
+			    "-50": "&#60; -50"
+			}
+		    },
+		    "attributes":
+		    {
+			"id": "temperaturelegend",
+			"class": "Label"
+		    },
+		    "layers": [
+			{
+			    "tag": "text",
+			    "cdata": "&#176;C",
+			    "attributes":
+			    {
+				"x": 20,
+				"y": 13,
+				"class": "Units"
+			    }
+			}
+		    ]
+		},
+		{
+		    "tag": "mask",
+		    "attributes":
+		    {
+			"id": "temperaturelegendmask"
+		    },
+		    "layers": [
+			{
+			    "tag": "rect",
+			    "attributes":
+			    {
+				"fill": "white",
+				"width": "100%",
+				"height": "100%"
+			    }
+			},
+			{
+			    "tag": "use",
+			    "attributes":
+			    {
+				"xlink:href": "#temperaturelegend",
+				"filter": "url(#alphadilation)"
+			    }
+			}
+		    ]
+		    
+		},
+		{
+		    "tag": "g",
+		    "attributes":
+		    {
+			"mask": "url(#temperaturelegendmask)"
+		    },
+		    "layers": [
+			{
+			    "qid": "l2",
+			    "layer_type": "isoline",
+			    "isolines": "json:isolines/temperature_noqid.json",
+			    "css": "isolines/temperature.css",
+			    "parameter": "Temperature",
+			    "attributes":
+			    {
+				"id": "temperature_isolines",
+				"class": "Temperature"
+			    }
+			},
+			{
+			    "qid": "l3",
+			    "layer_type": "isoline",
+			    "isolines": "json:isolines/pressure_noqid.json",
+			    "css": "isolines/pressure.css",
+			    "parameter": "Pressure",
+			    "attributes":
+			    {
+				"id": "pressure_isolines",
+				"class": "Pressure"
+			    }
+			},
+			{
+			    "qid": "l4",
+			    "layer_type": "map",
+			    "map":
+			    {
+				"schema": "natural_earth",
+				"table": "admin_0_countries",
+				"minarea": 100
+			    },
+			    "attributes":
+			    {
+				"id": "europe_country_lines",
+				"fill": "none",
+				"stroke": "#222",
+				"stroke-width": "0.3px"
+			    }
+			},
+			{
+			    "layer_type": "time",	
+			    "timestamp": "validtime",
+                            "timezone": "Europe/Helsinki",
+                            "format": "%Y-%m-%d %H:%M",
+			    "x": -20,
+			    "y": 20,
+			    "attributes":
+			    {
+			        "text-anchor": "end",
+				"font-family": "Verdana",
+				"font-weight": "bold",
+				"font-size": 14
+			    }
+			}
+		    ]
+		}
+            ]
+        }
+    ]
+}

@@ -51,6 +51,21 @@ void Isoband::init(const Json::Value& theJson, const Config& theConfig)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Get unique QID for the isoband
+ */
+// ----------------------------------------------------------------------
+
+std::string Isoband::getQid(const State& theState) const
+{
+  if (!qid.empty())
+    return qid;
+
+  generated_qid = theState.makeQid("isoband");
+  return generated_qid;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value
  */
 // ----------------------------------------------------------------------

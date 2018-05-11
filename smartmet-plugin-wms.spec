@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.5.9
+Version: 18.5.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,14 +18,14 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.5.2
-BuildRequires: smartmet-library-macgyver-devel >= 18.4.7
-BuildRequires: smartmet-library-spine-devel >= 18.5.9
+BuildRequires: smartmet-library-macgyver-devel >= 18.4.11
+BuildRequires: smartmet-library-spine-devel >= 18.5.11
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.4.7
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 18.4.19
+BuildRequires: smartmet-engine-observation-devel >= 18.5.11
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.4.7
 BuildRequires: smartmet-engine-geonames-devel >= 18.4.7
@@ -45,7 +45,7 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
 Requires: smartmet-library-gis >= 18.4.7
-Requires: smartmet-library-macgyver >= 18.4.7
+Requires: smartmet-library-macgyver >= 18.4.11
 Requires: smartmet-library-giza >= 18.5.2
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 18.4.7
@@ -55,7 +55,7 @@ Requires: smartmet-engine-contour >= 18.4.9
 Requires: smartmet-engine-gis >= 18.4.7
 Requires: smartmet-engine-geonames >= 18.4.7
 Requires: smartmet-server >= 18.4.9
-Requires: smartmet-library-spine >= 18.5.9
+Requires: smartmet-library-spine >= 18.5.11
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Fri May 11 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.5.11-1.fmi
+- Isolines and isobands will now be assigned qid:s automatically if not set
+
 * Wed May  9 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.5.9-1.fmi
 - Fixed heatmaps to generate, the point querydata test added earlier broke them
 
