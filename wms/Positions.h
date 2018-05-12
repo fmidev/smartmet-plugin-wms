@@ -69,6 +69,7 @@ class Positions
 
   bool insideShapes(double theX, double theY) const;
   bool inside(double theX, double theY, const Intersections::IntersectValues& theValues) const;
+  void addMargins(int theXMargin, int theYMargin);
 
   // Layout algorithm
   Layout layout = Layout::Grid;
@@ -115,6 +116,10 @@ class Positions
   boost::optional<Map> outsidemap;
   boost::optional<Map> insidemap;
   Intersections intersections;
+
+  // Extra clipping margins
+  int xmargin = 0;
+  int ymargin = 0;
 
  private:
   Points getGridPoints(Engine::Querydata::Q theQ,

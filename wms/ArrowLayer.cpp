@@ -858,6 +858,9 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
         positions->layout = Positions::Layout::Data;
     }
 
+    // Add layer margins to position generation
+    positions->addMargins(xmargin, ymargin);
+
     // Establish the valid time
 
     auto valid_time_period = getValidTimePeriod();

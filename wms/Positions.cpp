@@ -231,6 +231,11 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "ddx")
         ddx = json.asInt();
 
+      else if (name == "xmargin")
+        xmargin = json.asInt();
+      else if (name == "ymargin")
+        ymargin = json.asInt();
+
       else if (name == "directionoffset")
         directionoffset = json.asInt();
       else if (name == "rotate")
@@ -363,6 +368,18 @@ void Positions::init(Engine::Querydata::Q q,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Add layer margins to position margins
+ */
+// ----------------------------------------------------------------------
+
+void Positions::addMargins(int theXMargin, int theYMargin)
+{
+  xmargin = std::max(xmargin, theXMargin);
+  ymargin = std::max(ymargin, theYMargin);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the locations to be rendered
  */
 // ----------------------------------------------------------------------
@@ -450,21 +467,31 @@ Positions::Points Positions::getGridPoints(Engine::Querydata::Q theQ,
 
     Points points;
 
-    // // this initial stagger will be cancelled in the first iteration
-    xstart += deltaxx;
+    // Cover margins too
+    while (xstart - deltax >= -xmargin)
+      xstart -= deltax;
+    while (ystart - deltay >= -ymargin)
+      ystart -= deltay;
+
+    int row = 0;
 
     // TODO: Must alter these if there is a margin
     const int height = theBox.height();
     const int width = theBox.width();
 
-    for (int ypos = ystart; ypos < height; ypos += deltay)
-    {
-      // Stagger left when possible, the fix back right
-      if (xstart < deltaxx)
-        xstart += deltax;
-      xstart -= deltaxx;
+    // This is for backwards compatibility - original code which did not handle
+    // the margins had a logic error
+    xstart -= deltaxx;
 
-      for (int xpos = xstart; xpos < width; xpos += deltax)
+    for (int ypos = ystart; ypos < height + ymargin; ypos += deltay)
+    {
+      // Stagger every other row
+      if (row++ % 2 == 0)
+        xstart += deltaxx;
+      else
+        xstart -= deltaxx;
+
+      for (int xpos = xstart; xpos < width + xmargin; xpos += deltax)
       {
         // Convert pixel coordinate to world coordinate (or latlon for geographic spatial
         // references)
@@ -1279,6 +1306,10 @@ std::size_t Positions::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(outsidemap, theState));
     boost::hash_combine(hash, Dali::hash_value(insidemap, theState));
     boost::hash_combine(hash, Dali::hash_value(intersections, theState));
+
+    boost::hash_combine(hash, Dali::hash_value(xmargin));
+    boost::hash_combine(hash, Dali::hash_value(ymargin));
+
     return hash;
   }
   catch (...)

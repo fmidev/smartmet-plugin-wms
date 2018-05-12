@@ -767,6 +767,9 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
             Positions::Layout::Data;  // default layout for observations is Data (bbox)
     }
 
+    // Add layer margins to position generation
+    positions->addMargins(xmargin, ymargin);
+
     // Establish the parameter
 
     if (!parameter)
