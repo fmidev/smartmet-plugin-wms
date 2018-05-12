@@ -24,7 +24,7 @@ function testerExit
     # reset terminal colour, the plugin init sequence modifies the terminal
     tput sgr0
     echo ""
-    echo "PluginTest has shutdown unexpectedly"
+    echo "PluginTest has shutdown unexpectedly. A timeout for a single test may have occurred."
     exit 1
 }
 
@@ -142,7 +142,7 @@ rm -f $in $out
 if [[ $nfailures -eq 0 ]]; then
     echo -e "\n*** All $ntests tests passed"
 else
-    echo -e "\n*** $nfailures test(s) out of $ntests failed"
+    echo -e "\n*** $nfailures tests out of $ntests failed"
 fi
 
 exit $nfailures

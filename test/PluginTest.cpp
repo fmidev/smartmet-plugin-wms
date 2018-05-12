@@ -130,7 +130,9 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
 
       bool ok = true;
 
+      // Set timeout for this test
       alarm(testtimeout);
+
       string input = get_file_contents(inputfile);
 
       // emacs keeps messing up the newlines, easier to make sure
@@ -191,6 +193,9 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
         cout << "PARSED REQUEST ONLY PARTIALLY" << endl;
       }
 
+      // Remove timeout for this test
+      alarm(0);
+
       if (!ok)
         put_file_contents(resultfile, "");
 
@@ -220,7 +225,7 @@ void prelude(SmartMet::Spine::Reactor& reactor)
             << "===================" << std::endl;
 }
 
-void alarmhandler()
+void alarmhandler(int signal)
 {
   std::cerr << std::endl
             << "Timeout: Test terminated because " << testtimeout
@@ -235,6 +240,7 @@ int main() try
   options.defaultlogging = false;
   options.configfile = "cnf/reactor.conf";
 
+  signal(SIGALRM, alarmhandler);
   SmartMet::MyTest::test(options, prelude);
 
   return 0;
