@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=natural_earth&time=200808050300&type=svg HTTP/1.0
