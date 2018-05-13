@@ -1,0 +1,402 @@
+[
+    {
+        "hilimit": 2.0,
+        "attributes": {
+            "class": "generic_0"
+        },
+        "lolimit": 0.0,
+        "qid": "generic_0"
+    },
+    {
+        "hilimit": 4.0,
+        "attributes": {
+            "class": "generic_1"
+        },
+        "lolimit": 2.0,
+        "qid": "generic_1"
+    },
+    {
+        "hilimit": 6.0,
+        "attributes": {
+            "class": "generic_2"
+        },
+        "lolimit": 4.0,
+        "qid": "generic_2"
+    },
+    {
+        "hilimit": 8.0,
+        "attributes": {
+            "class": "generic_3"
+        },
+        "lolimit": 6.0,
+        "qid": "generic_3"
+    },
+    {
+        "hilimit": 10.0,
+        "attributes": {
+            "class": "generic_4"
+        },
+        "lolimit": 8.0,
+        "qid": "generic_4"
+    },
+    {
+        "hilimit": 12.0,
+        "attributes": {
+            "class": "generic_5"
+        },
+        "lolimit": 10.0,
+        "qid": "generic_5"
+    },
+    {
+        "hilimit": 14.0,
+        "attributes": {
+            "class": "generic_6"
+        },
+        "lolimit": 12.0,
+        "qid": "generic_6"
+    },
+    {
+        "hilimit": 16.0,
+        "attributes": {
+            "class": "generic_7"
+        },
+        "lolimit": 14.0,
+        "qid": "generic_7"
+    },
+    {
+        "hilimit": 18.0,
+        "attributes": {
+            "class": "generic_8"
+        },
+        "lolimit": 16.0,
+        "qid": "generic_8"
+    },
+    {
+        "hilimit": 20.0,
+        "attributes": {
+            "class": "generic_9"
+        },
+        "lolimit": 18.0,
+        "qid": "generic_9"
+    },
+    {
+        "hilimit": 22.0,
+        "attributes": {
+            "class": "generic_10"
+        },
+        "lolimit": 20.0,
+        "qid": "generic_10"
+    },
+    {
+        "hilimit": 24.0,
+        "attributes": {
+            "class": "generic_11"
+        },
+        "lolimit": 22.0,
+        "qid": "generic_11"
+    },
+    {
+        "hilimit": 26.0,
+        "attributes": {
+            "class": "generic_12"
+        },
+        "lolimit": 24.0,
+        "qid": "generic_12"
+    },
+    {
+        "hilimit": 28.0,
+        "attributes": {
+            "class": "generic_13"
+        },
+        "lolimit": 26.0,
+        "qid": "generic_13"
+    },
+    {
+        "hilimit": 30.0,
+        "attributes": {
+            "class": "generic_14"
+        },
+        "lolimit": 28.0,
+        "qid": "generic_14"
+    },
+    {
+        "hilimit": 32.0,
+        "attributes": {
+            "class": "generic_15"
+        },
+        "lolimit": 30.0,
+        "qid": "generic_15"
+    },
+    {
+        "hilimit": 34.0,
+        "attributes": {
+            "class": "generic_16"
+        },
+        "lolimit": 32.0,
+        "qid": "generic_16"
+    },
+    {
+        "hilimit": 36.0,
+        "attributes": {
+            "class": "generic_17"
+        },
+        "lolimit": 34.0,
+        "qid": "generic_17"
+    },
+    {
+        "hilimit": 38.0,
+        "attributes": {
+            "class": "generic_18"
+        },
+        "lolimit": 36.0,
+        "qid": "generic_18"
+    },
+    {
+        "hilimit": 40.0,
+        "attributes": {
+            "class": "generic_19"
+        },
+        "lolimit": 38.0,
+        "qid": "generic_19"
+    },
+    {
+        "hilimit": 42.0,
+        "attributes": {
+            "class": "generic_20"
+        },
+        "lolimit": 40.0,
+        "qid": "generic_20"
+    },
+    {
+        "hilimit": 44.0,
+        "attributes": {
+            "class": "generic_21"
+        },
+        "lolimit": 42.0,
+        "qid": "generic_21"
+    },
+    {
+        "hilimit": 46.0,
+        "attributes": {
+            "class": "generic_22"
+        },
+        "lolimit": 44.0,
+        "qid": "generic_22"
+    },
+    {
+        "hilimit": 48.0,
+        "attributes": {
+            "class": "generic_23"
+        },
+        "lolimit": 46.0,
+        "qid": "generic_23"
+    },
+    {
+        "hilimit": 50.0,
+        "attributes": {
+            "class": "generic_24"
+        },
+        "lolimit": 48.0,
+        "qid": "generic_24"
+    },
+    {
+        "hilimit": 52.0,
+        "attributes": {
+            "class": "generic_25"
+        },
+        "lolimit": 50.0,
+        "qid": "generic_25"
+    },
+    {
+        "hilimit": 54.0,
+        "attributes": {
+            "class": "generic_26"
+        },
+        "lolimit": 52.0,
+        "qid": "generic_26"
+    },
+    {
+        "hilimit": 56.0,
+        "attributes": {
+            "class": "generic_27"
+        },
+        "lolimit": 54.0,
+        "qid": "generic_27"
+    },
+    {
+        "hilimit": 58.0,
+        "attributes": {
+            "class": "generic_28"
+        },
+        "lolimit": 56.0,
+        "qid": "generic_28"
+    },
+    {
+        "hilimit": 60.0,
+        "attributes": {
+            "class": "generic_29"
+        },
+        "lolimit": 58.0,
+        "qid": "generic_29"
+    },
+    {
+        "hilimit": 62.0,
+        "attributes": {
+            "class": "generic_30"
+        },
+        "lolimit": 60.0,
+        "qid": "generic_30"
+    },
+    {
+        "hilimit": 64.0,
+        "attributes": {
+            "class": "generic_31"
+        },
+        "lolimit": 62.0,
+        "qid": "generic_31"
+    },
+    {
+        "hilimit": 66.0,
+        "attributes": {
+            "class": "generic_32"
+        },
+        "lolimit": 64.0,
+        "qid": "generic_32"
+    },
+    {
+        "hilimit": 68.0,
+        "attributes": {
+            "class": "generic_33"
+        },
+        "lolimit": 66.0,
+        "qid": "generic_33"
+    },
+    {
+        "hilimit": 70.0,
+        "attributes": {
+            "class": "generic_34"
+        },
+        "lolimit": 68.0,
+        "qid": "generic_34"
+    },
+    {
+        "hilimit": 72.0,
+        "attributes": {
+            "class": "generic_35"
+        },
+        "lolimit": 70.0,
+        "qid": "generic_35"
+    },
+    {
+        "hilimit": 74.0,
+        "attributes": {
+            "class": "generic_36"
+        },
+        "lolimit": 72.0,
+        "qid": "generic_36"
+    },
+    {
+        "hilimit": 76.0,
+        "attributes": {
+            "class": "generic_37"
+        },
+        "lolimit": 74.0,
+        "qid": "generic_37"
+    },
+    {
+        "hilimit": 78.0,
+        "attributes": {
+            "class": "generic_38"
+        },
+        "lolimit": 76.0,
+        "qid": "generic_38"
+    },
+    {
+        "hilimit": 80.0,
+        "attributes": {
+            "class": "generic_39"
+        },
+        "lolimit": 78.0,
+        "qid": "generic_39"
+    },
+    {
+        "hilimit": 82.0,
+        "attributes": {
+            "class": "generic_40"
+        },
+        "lolimit": 80.0,
+        "qid": "generic_40"
+    },
+    {
+        "hilimit": 84.0,
+        "attributes": {
+            "class": "generic_41"
+        },
+        "lolimit": 82.0,
+        "qid": "generic_41"
+    },
+    {
+        "hilimit": 86.0,
+        "attributes": {
+            "class": "generic_42"
+        },
+        "lolimit": 84.0,
+        "qid": "generic_42"
+    },
+    {
+        "hilimit": 88.0,
+        "attributes": {
+            "class": "generic_43"
+        },
+        "lolimit": 86.0,
+        "qid": "generic_43"
+    },
+    {
+        "hilimit": 90.0,
+        "attributes": {
+            "class": "generic_44"
+        },
+        "lolimit": 88.0,
+        "qid": "generic_44"
+    },
+    {
+        "hilimit": 92.0,
+        "attributes": {
+            "class": "generic_45"
+        },
+        "lolimit": 90.0,
+        "qid": "generic_45"
+    },
+    {
+        "hilimit": 94.0,
+        "attributes": {
+            "class": "generic_46"
+        },
+        "lolimit": 92.0,
+        "qid": "generic_46"
+    },
+    {
+        "hilimit": 96.0,
+        "attributes": {
+            "class": "generic_47"
+        },
+        "lolimit": 94.0,
+        "qid": "generic_47"
+    },
+    {
+        "hilimit": 98.0,
+        "attributes": {
+            "class": "generic_48"
+        },
+        "lolimit": 96.0,
+        "qid": "generic_48"
+    },
+    {
+        "hilimit": 100.0,
+        "attributes": {
+            "class": "generic_49"
+        },
+        "lolimit": 98.0,
+        "qid": "generic_49"
+    }
+]

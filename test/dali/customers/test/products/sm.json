@@ -1,0 +1,48 @@
+{
+    "producer": "lot",
+    "title": "Test",
+    "projection": {
+	"crs": "EPSG:3857",
+	"x1": 11000000, "y1": 0, "x2": 11250000, "y2": 250000,
+	"xsize": 600,
+	"ysize": 600
+    },
+    "views": [
+        {
+            "layers": [
+                {
+                    "parameter": 11671,
+                    "qid": "sm-isoband",
+                    "attributes": {
+                        "shape-rendering": "crispEdges"
+                    },
+//                    "isobands": "json:isobands/sm.json",
+"isobands":
+[
+    {
+        "attributes": { "fill": "blue" },
+        "hilimit": 45.220,
+        "qid": "lower"
+    }
+],
+                   "css": "isobands/generic.css",
+                    "layer_type": "isoband"
+                }
+// ,
+//                 {
+//                     "layer_type": "map",
+//                     "qid": "borders",
+//                     "map": {
+//                         "table": "admin_0_countries",
+//                         "schema": "natural_earth",
+//                         "lines": 1
+//                     },
+//                     "attributes": {
+//                         "stroke": "black",
+//                         "fill": "none"
+//                     }
+//                 }
+            ]
+        }
+    ]
+}
