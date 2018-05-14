@@ -594,6 +594,8 @@ WMSConfig::WMSConfig(const Config& daliConfig,
     boost::algorithm::split(itsSupportedWMSVersions, wmsVersions, boost::algorithm::is_any_of(","));
     parse_references();
 
+    config.lookupValue("wms.margin", itsMargin);
+
     // Parse GetCapability settings once to make sure the config file is valid
     get_capabilities(config);
   }

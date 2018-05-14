@@ -120,6 +120,8 @@ class WMSConfig
 
   const WMSLegendGraphicSettings getLegendGraphicSettings();
 
+  int getMargin() const { return itsMargin; }
+
  private:
   void parse_references();
 
@@ -180,6 +182,13 @@ class WMSConfig
   WMSLegendGraphicSettings itsLegendGraphicSettings;
   // Keep track of product file modification times and report if time is changed
   std::map<std::string, std::time_t> itsProductFileModificationTime;
+
+  // Default margin for arrows, symbols, numbers etc is 0 pixels for backward
+  // compatibility. This value should be about half of the size of the biggest
+  // symbol in use. Layers using bigger symbols should probably use a layer specific
+  // setting so that processing other layers will not slow down unnecessarily.
+  int itsMargin = 0;
+
 };  // class WMSConfig
 
 }  // namespace WMS

@@ -1317,6 +1317,21 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
         throw ex;
       }
 
+      // Set WMS product defaults before preprocessing starts
+
+      if (itsWMSConfig->getMargin() != 0)
+      {
+        Json::Value nulljson;
+        auto xmargin = json.get("xmargin", nulljson);
+        if (xmargin.isNull())
+          json["xmargin"] = itsWMSConfig->getMargin();
+        auto ymargin = json.get("ymargin", nulljson);
+        if (ymargin.isNull())
+          json["ymargin"] = itsWMSConfig->getMargin();
+      }
+
+      // Preprocess
+
       std::string customer_root =
           (itsConfig.rootDirectory(theState.useWms()) + "/customers/" + customer);
 
