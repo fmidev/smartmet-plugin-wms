@@ -1,0 +1,1 @@
+GET /wms?servicE=wms&requesT=GetMap&versioN=1.3.0&layerS=test:windarrows&styleS=&crS=EPSG:4326&bboX=59,17,71,34&widtH=300&heighT=500&formaT=image/svg%2Bxml&timE=200808050300 HTTP/1.0

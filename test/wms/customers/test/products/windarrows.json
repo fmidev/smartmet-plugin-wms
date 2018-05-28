@@ -1,0 +1,63 @@
+{
+    // GetCapability test variables
+    "abstract": "Test abstract",
+    "opaque": false,
+    "queryable": true,
+    "cascaded": true,
+    "no_subsets": true,
+    "fixed_width": 1234,
+    "fixed_height": 4321,
+    "keyword": ["foo", "bar"],
+    
+    // Normal settings
+    "title": "Wind demo",
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+	    "layers":
+	    [
+		{
+		    "qid": "background",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "rgb(0,75,140)"
+		    }
+		},
+		{
+		    "qid": "l3",
+		    "layer_type": "arrow",
+		    "arrows": "json:arrows/wind.json",
+		    "css": "arrows/windarrow.css",
+		    "direction": "WindDirection",
+		    "speed": "WindSpeedMS",
+		    "symbol": "windarrow",
+		    "attributes":
+		    {
+			"id": "wind_arrows"
+		    },
+		    "positions":
+		    {
+			"x": 0,
+			"y": 0,
+			"dx": 10,
+			"dy": 10,
+			"ddx": 5
+		    }
+		}
+	    ]
+	}
+    ]
+}
