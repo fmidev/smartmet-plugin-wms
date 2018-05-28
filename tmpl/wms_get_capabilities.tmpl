@@ -19,10 +19,10 @@ no attributes, the value will be stored in "variable".
 <WMS_Capabilities version="<TMPL_var version>"<TMPL_if defined(headers)> <TMPL_var headers><-/TMPL_if->>
 <Service>
   <Name>WMS</Name>
-  <Title><TMPL_var XMLESCAPE(service.title)></Title>
+  <Title><TMPL_if defined(service.title)><TMPL_var XMLESCAPE(service.title)></TMPL_if></Title>
 
   <-TMPL_if defined(service.abstract)>
-  <Abstract><TMPL_var XMLESCAPE(service.abstract)></Abstract>
+  <Abstract><TMPL_if defined(service.abstract)><TMPL_var XMLESCAPE(service.abstract)></TMPL_if></Abstract>
   <-/TMPL_if->
 
   <-TMPL_if defined(service.keywords)>
@@ -220,7 +220,7 @@ no attributes, the value will be stored in "variable".
       <-TMPL_if defined(layer.name)>
       <Name><TMPL_var XMLESCAPE(layer.name)></Name>
       <-/TMPL_if>
-      <Title><TMPL_var XMLESCAPE(layer.title)></Title>
+      <Title><TMPL_if defined(layer.title)><TMPL_var XMLESCAPE(layer.title)></TMPL_if></Title>
 
       <-TMPL_if defined(layer.abstract)>
       <Abstract><TMPL_var XMLESCAPE(layer.abstract)></Abstract>
@@ -300,8 +300,8 @@ no attributes, the value will be stored in "variable".
 
       <-TMPL_if defined(layer.identifier)->
       <-TMPL_foreach layer.identifier as identifier>
-      <Identifier authority="<TMPL_var XMLESCAPE(identifier.authority)>">
-       <-TMPL_var XMLESCAPE(identifier.value)->
+      <Identifier<TMPL_if defined(identifier.authority)> authority="<TMPL_var XMLESCAPE(identifier.authority)>"></TMPL_if>
+       <-TMPL_if defined(identifier.value)><-TMPL_var XMLESCAPE(identifier.value)-></TMPL_if->
       </Identifier>
       </TMPL_foreach>
       <-/TMPL_if->
@@ -336,8 +336,8 @@ no attributes, the value will be stored in "variable".
       <-TMPL_if defined(layer.style)->
       <-TMPL_foreach layer.style as style->
       <Style>
-        <Name><TMPL_var XMLESCAPE(style.name)></Name>
-        <Title><TMPL_var XMLESCAPE(style.title)></Title>
+        <Name><TMPL_if defined(style.name)><TMPL_var XMLESCAPE(style.name)></TMPL_if></Name>
+        <Title><TMPL_if defined(style.title)><TMPL_var XMLESCAPE(style.title)></TMPL_if></Title>
 
         <-TMPL_if defined(style.abstract)><Abstract><TMPL_var style.abstract></Abstract><-/TMPL_if>
 
