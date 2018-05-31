@@ -197,6 +197,25 @@ Engine::Querydata::Q State::get(const Engine::Querydata::Producer& theProducer) 
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Get Q with origintime
+ */
+// ----------------------------------------------------------------------
+
+Engine::Querydata::Q State::get(const Engine::Querydata::Producer& theProducer,
+                                const boost::posix_time::ptime& theOriginTime) const
+{
+  try
+  {
+    return itsPlugin.getQEngine().get(theProducer, theOriginTime);
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Require the given ID to be free
  */
 // ----------------------------------------------------------------------

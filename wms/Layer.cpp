@@ -144,7 +144,10 @@ Engine::Querydata::Q Layer::getModel(const State& theState) const
       return {};
 
     std::string model = (producer ? *producer : theState.getConfig().defaultModel());
-    return theState.get(model);
+
+    if (!origintime)
+      return theState.get(model);
+    return theState.get(model, *origintime);
   }
   catch (...)
   {

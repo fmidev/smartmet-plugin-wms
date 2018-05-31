@@ -40,6 +40,9 @@ struct Properties
   boost::optional<std::string> language;
   boost::optional<std::string> producer;
 
+  // Wanted origintime. Use latest if omitted
+  boost::optional<boost::posix_time::ptime> origintime;
+
   // Wanted time T = time + time_offset
   boost::optional<boost::posix_time::ptime> time;
   boost::optional<int> time_offset;  // minutes

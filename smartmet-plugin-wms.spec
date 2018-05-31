@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 18.5.31
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu May 31 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.5.31-3.fmi
+- Added origintime option
+
 * Thu May 31 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.5.31-2.fmi
 - Absolute CSS paths are now relative to WMS root directory
 

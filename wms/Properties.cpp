@@ -31,6 +31,18 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
     json = theJson.get("producer", theConfig.defaultModel());
     producer = json.asString();
 
+    json = theJson.get("origintime", nulljson);
+    if (json.isString())
+      origintime = parse_time(json.asString());
+    else if (json.isUInt64())
+    {
+      // A timestamp may look like an integer in a query string
+      std::size_t tmp = json.asUInt64();
+      origintime = parse_time(Fmi::to_string(tmp));
+    }
+    else if (!json.isNull())
+      throw Spine::Exception(BCP, "Failed to parse origintime setting: '" + json.asString());
+
     json = theJson.get("time", nulljson);
     if (json.isString())
       time = parse_time(json.asString());
@@ -115,6 +127,20 @@ void Properties::init(const Json::Value& theJson,
       producer = theProperties.producer;
     else
       producer = json.asString();
+
+    json = theJson.get("origintime", nulljson);
+    if (json.isString())
+      origintime = parse_time(json.asString());
+    else if (json.isUInt64())
+    {
+      // A timestamp may look like an integer in a query string
+      std::size_t tmp = json.asUInt64();
+      origintime = parse_time(Fmi::to_string(tmp));
+    }
+    else if (json.isNull())
+      origintime = theProperties.origintime;
+    else
+      throw Spine::Exception(BCP, "Failed to parse origintime setting: '" + json.asString());
 
     json = theJson.get("time", nulljson);
     if (json.isString())
@@ -255,6 +281,7 @@ std::size_t Properties::hash_value(const State& theState) const
   {
     auto hash = Dali::hash_value(language);
     boost::hash_combine(hash, Dali::hash_value(producer));
+    boost::hash_combine(hash, Dali::hash_value(origintime));
     boost::hash_combine(hash, Dali::hash_value(time));
     boost::hash_combine(hash, Dali::hash_value(time_offset));
     boost::hash_combine(hash, Dali::hash_value(interval_start));

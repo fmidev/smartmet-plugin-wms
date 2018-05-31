@@ -89,6 +89,8 @@ class State
   void setType(const std::string& theType) { itsType = theType; }
   // Get Q to be used in the current product
   Engine::Querydata::Q get(const Engine::Querydata::Producer& theProducer) const;
+  Engine::Querydata::Q get(const Engine::Querydata::Producer& theProducer,
+                           const boost::posix_time::ptime& theOriginTime) const;
 
   // Require given ID to be free, and mark it used if it is free
   void requireId(const std::string& theID);
