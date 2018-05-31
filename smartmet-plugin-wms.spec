@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.5.28
+Version: 18.5.31
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu May 31 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.5.31-1.fmi
+- Added setting wms.disable_updates to disable capability updates
+- Added setting wms.update_interval with default value 5 seconds
+
 * Mon May 28 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.5.28-1.fmi
 - XMLESCAPE cannot handle undefined strings, added if's to the GetCapabilities template
 

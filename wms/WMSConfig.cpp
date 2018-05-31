@@ -587,6 +587,9 @@ WMSConfig::WMSConfig(const Config& daliConfig,
 
     std::string wmsMapFormats = config.lookup("wms.map_formats").c_str();
 
+    config.lookupValue("wms.disable_updates", itsCapabilityUpdatesDisabled);
+    config.lookupValue("wms.update_interval", itsCapabilityUpdateInterval);
+    
     boost::algorithm::split(
         itsSupportedMapFormats, wmsMapFormats, boost::algorithm::is_any_of(","));
 
@@ -639,8 +642,12 @@ void WMSConfig::init()
     return;
 
   // Begin the update loop
-  itsGetCapabilitiesThread.reset(
-      new boost::thread(boost::bind(&WMSConfig::capabilitiesUpdateLoop, this)));
+
+  if(!itsCapabilityUpdatesDisabled)
+  {
+    itsGetCapabilitiesThread.reset(
+        new boost::thread(boost::bind(&WMSConfig::capabilitiesUpdateLoop, this)));
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -677,8 +684,8 @@ void WMSConfig::capabilitiesUpdateLoop()
     {
       try
       {
-        // update capabilities every 5 seconds
-        boost::system_time timeout = boost::get_system_time() + boost::posix_time::seconds(5);
+        // update capabilities every N seconds
+        boost::system_time timeout = boost::get_system_time() + boost::posix_time::seconds(itsCapabilityUpdateInterval);
 
         boost::unique_lock<boost::mutex> lock(itsShutdownMutex);
         while (!itsShutdownRequested)

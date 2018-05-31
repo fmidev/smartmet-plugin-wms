@@ -149,6 +149,9 @@ class WMSConfig
   // the bounding boxes for all spatial references
   std::map<std::string, Engine::Gis::BBox> itsWMSBBoxes;
 
+  bool itsCapabilityUpdatesDisabled = false;   // disable updates after initial scan?
+  int itsCapabilityUpdateInterval = 5; // scan interval in seconds
+  
   bool itsInspireExtensionSupported = false;
 
   // Valid WMS layers (name -> layer proxy). This must be a shared pointer
