@@ -845,8 +845,17 @@ std::string Plugin::getStyle(const std::string &theCustomer,
     if (theCustomer.empty() || theCSS.empty())
       return "";
 
-    std::string css_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" +
-                            check_attack(theCustomer) + "/layers/" + check_attack(theCSS));
+    std::string css_path;
+    if(theCSS[0] != '/')
+    {
+      css_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" +
+                  check_attack(theCustomer) + "/layers/" + check_attack(theCSS));
+    }
+    else
+    {
+      css_path = itsConfig.rootDirectory(theWmsFlag) + check_attack(theCSS);
+    }
+    
 
     return itsFileCache.get(css_path);
   }
