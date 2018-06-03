@@ -91,7 +91,8 @@ void patch_protocol(CTPP::CDT& dcptype,
                     const std::string& method,
                     const std::string& newprotocol)
 {
-  if (dcptype.Exists(protocol))
+  if (dcptype.Exists(protocol) && dcptype.At(protocol).Exists(method) &&
+      dcptype.At(protocol).At(method).Exists("online_resource"))
   {
     auto& resource = dcptype.At(protocol).At(method).At("online_resource");
     std::string url = resource.GetString();

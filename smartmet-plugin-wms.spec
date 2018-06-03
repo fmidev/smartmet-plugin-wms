@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.5.31
-Release: 3%{?dist}.fmi
+Version: 18.6.3
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -25,7 +25,7 @@ BuildRequires: smartmet-library-giza-devel
 BuildRequires: smartmet-engine-authentication-devel >= 18.4.7
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 18.5.27
+BuildRequires: smartmet-engine-observation-devel >= 18.5.29
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.4.7
 BuildRequires: smartmet-engine-geonames-devel >= 18.4.7
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Sun Jun  3 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.6.3-1.fmi
+- Fixed GetCapabilities not to abort if POST online_resource is undefined and a protocol change is required
+
 * Thu May 31 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.5.31-3.fmi
 - Added origintime option
 
