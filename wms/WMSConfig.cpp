@@ -84,6 +84,13 @@ std::string makeLayerNamespace(const std::string& customer,
 
     do
     {
+      // Safety check needed for some incorrect specifications
+      if(tokens.empty())
+        throw SmartMet::Spine::Exception(BCP, "Failed to generate layer namespace")
+            .addParameter("customer", customer)
+            .addParameter("file directory", fileDir)
+            .addParameter("root directory", productRoot);
+      
       namespace_tokens.push_back(tokens.back());
       tokens.pop_back();
       currentPath = boost::algorithm::join(tokens, "/");

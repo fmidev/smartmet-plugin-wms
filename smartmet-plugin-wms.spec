@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 18.6.6
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -92,7 +92,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-* Tue Jun  5 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.6.6-1.fmi
+* Wed Jun  6 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.6.6-2.fmi
+- Added a safety check to layer namespace generation
+
+* Wed Jun  6 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.6.6-1.fmi
 - Reduced size of GetCapabilities by placing xlink schema in the document namespace
 
 * Sun Jun  3 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.6.3-1.fmi
