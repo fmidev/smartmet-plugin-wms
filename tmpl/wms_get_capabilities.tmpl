@@ -16,7 +16,7 @@ the value itself will be stored in "variable.value". If there are
 no attributes, the value will be stored in "variable".
 
 </TMPL_comment><?xml version="1.0" encoding="UTF-8"?>
-<WMS_Capabilities version="<TMPL_var version>"<TMPL_if defined(headers)> <TMPL_var headers><-/TMPL_if->>
+<WMS_Capabilities version="<TMPL_var version>"<TMPL_if defined(headers)> <TMPL_var headers><-/TMPL_if> xmlns:xlink="http://www.w3.org/1999/xlink">
 <Service>
   <Name>WMS</Name>
   <Title><TMPL_if defined(service.title)><TMPL_var XMLESCAPE(service.title)></TMPL_if></Title>
@@ -33,7 +33,7 @@ no attributes, the value will be stored in "variable".
   </KeywordList>
   </TMPL_if->
 
-  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="<TMPL_var service.online_resource>"/>
+  <OnlineResource xlink:href="<TMPL_var service.online_resource>"/>
 
   <-TMPL_if defined(service.contact_information)>
   <ContactInformation>
@@ -104,14 +104,12 @@ no attributes, the value will be stored in "variable".
       <DCPType>
         <HTTP>
           <Get>
-            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
-                            xlink:type="simple"
+            <OnlineResource xlink:type="simple"
                             xlink:href="__hostname____apikey__/wms"/>
           </Get>
           <TMPL_if defined(dcptype.http.post)->
           <Post>
-            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
-                            xlink:type="simple"
+            <OnlineResource xlink:type="simple"
                             xlink:href="__hostname____apikey__/wms"/>
           </Post>
           <-/TMPL_if>
@@ -127,14 +125,12 @@ no attributes, the value will be stored in "variable".
       <DCPType>
         <HTTP>
           <Get>
-            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
-                            xlink:type="simple"
+            <OnlineResource xlink:type="simple"
                             xlink:href="__hostname____apikey__/wms"/>
           </Get>
           <TMPL_if defined(dcptype.http.post)->
           <Post>
-            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
-                            xlink:type="simple"
+            <OnlineResource xlink:type="simple"
                             xlink:href="__hostname____apikey__/wms"/>
           </Post>
           <-/TMPL_if>
@@ -152,13 +148,11 @@ no attributes, the value will be stored in "variable".
       <DCPType>
         <HTTP>
           <Get>
-            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
-                            xlink:type="simple"
+            <OnlineResource xlink:type="simple"
                             xlink:href="__hostname____apikey__/wms"/>
           </Get>
           <TMPL_if defined(dcptype.http.post)->
-          <Post><OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
-                                xlink:type="simple"
+          <Post><OnlineResource xlink:type="simple"
                                 xlink:href="__hostname____apikey__/wms"/>
           </Post>
           <-/TMPL_if>
@@ -278,13 +272,13 @@ no attributes, the value will be stored in "variable".
       <Attribution>
         <TMPL_if defined(layer.attribution.title)><Title><TMPL_var XMLESCAPE(layer.attribution.title)><-/TMPL_if->
         <TMPL_if defined(layer.attribution.online_resource)><Title><TMPL_var layer.attribution.online_resource><-/TMPL_if->
-        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var layer.attribution.online_resource>"/>
+        <OnlineResource xlink:type="simple" xlink:href="<TMPL_var layer.attribution.online_resource>"/>
         <TMPL_if defined(layer.attribution.logo_url)>
         <LogoURL
           <-TMPL_if defined(layer.attribution.logo_url.width) > width=" <-TMPL_var layer.attribution.logo_url.width>" <-/TMPL_if->
           <-TMPL_if defined(layer.attribution.logo_url.height)> height="<-TMPL_var layer.attribution.logo_url.height>"<-/TMPL_if->>
           <Format><TMPL_var layer.attribution.logo_url.format></Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var layer.attribution.logo_url.online_resource>"/>
+          <OnlineResource xlink:type="simple" xlink:href="<TMPL_var layer.attribution.logo_url.online_resource>"/>
         </LogoURL>
         <-/TMPL_if->
       </Attribution>
@@ -293,7 +287,7 @@ no attributes, the value will be stored in "variable".
       <-TMPL_if defined(layer.authority_url)->
       <-TMPL_foreach layer.authority_url as authority_url>
       <AuthorityURL name="<TMPL_var authority_url.name>">
-        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var authority_url.online_resource>"/>
+        <OnlineResource xlink:type="simple" xlink:href="<TMPL_var authority_url.online_resource>"/>
       </AuthorityURL>
       </TMPL_foreach>
       <-/TMPL_if->
@@ -310,7 +304,7 @@ no attributes, the value will be stored in "variable".
       <-TMPL_foreach layer.metadata_url as metadata_url>
       <MetadataURL type="<TMPL_var metadata_url.type>">
         <Format><TMPL_var metadata_url.format></Format>
-        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var metadata_url.online_resource>"/>
+        <OnlineResource xlink:type="simple" xlink:href="<TMPL_var metadata_url.online_resource>"/>
       </MetadataURL>
       </TMPL_foreach>
       <-/TMPL_if->
@@ -319,7 +313,7 @@ no attributes, the value will be stored in "variable".
       <-TMPL_foreach layer.data_url as data_url>
       <DataURL type="<TMPL_var data_url.type>">
         <Format><TMPL_var data_url.format></Format>
-        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var data_url.online_resource>"/>
+        <OnlineResource xlink:type="simple" xlink:href="<TMPL_var data_url.online_resource>"/>
       </DataURL>
       </TMPL_foreach>
       <-/TMPL_if->
@@ -328,7 +322,7 @@ no attributes, the value will be stored in "variable".
       <-TMPL_foreach layer.feature_list_url as feature_list_url>
       <FeatureListURL type="<TMPL_var feature_list_url.type>">
         <Format><TMPL_var feature_list_url.format></Format>
-        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var feature_list_url.online_resource>"/>
+        <OnlineResource xlink:type="simple" xlink:href="<TMPL_var feature_list_url.online_resource>"/>
       </FeatureListURL>
       </TMPL_foreach>
       <-/TMPL_if->
@@ -347,7 +341,7 @@ no attributes, the value will be stored in "variable".
           <-TMPL_if defined(legend_url.width) > width=" <-TMPL_var legend_url.width>" <-/TMPL_if->
           <-TMPL_if defined(legend_url.height)> height="<-TMPL_var legend_url.height>"<-/TMPL_if->>
           <Format><TMPL_var legend_url.format></Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var legend_url.online_resource>"/>
+          <OnlineResource xlink:type="simple" xlink:href="<TMPL_var legend_url.online_resource>"/>
         </LegendURL>
         <-/TMPL_foreach->
         <-/TMPL_if->
@@ -355,14 +349,14 @@ no attributes, the value will be stored in "variable".
         <-TMPL_if defined(style.style_sheet_url)->
         <StyleSheetURL>
           <Format><TMPL_var style.style_sheet_url.format></Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var style.style_sheet_url.online_resource>"/>
+          <OnlineResource xlink:type="simple" xlink:href="<TMPL_var style.style_sheet_url.online_resource>"/>
         </StyleSheetURL>
         <-/TMPL_if->
 
         <-TMPL_if defined(style.style_url)->
         <StyleURL>
           <Format><TMPL_var style.style_url.format></Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="<TMPL_var style.style_url.online_resource>"/>
+          <OnlineResource xlink:type="simple" xlink:href="<TMPL_var style.style_url.online_resource>"/>
         </StyleURL>
         <-/TMPL_if>
       </Style>

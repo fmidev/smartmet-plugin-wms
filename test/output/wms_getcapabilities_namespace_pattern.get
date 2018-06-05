@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<WMS_Capabilities version="1.3.0" xmlns="http://www.opengis.net/wms" xmlns:sld="http://www.opengis.net/sld" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ms="http://mapserver.gis.umn.edu/mapserver" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_vs="http://inspire.ec.europa.eu/schemas/inspire_vs/1.0" xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd http://www.opengis.net/sld http://schemas.opengis.net/sld/1.1.0/sld_capabilities.xsd http://inspire.ec.europa.eu/schemas/inspire_vs/1.0 http://inspire.ec.europa.eu/schemas/inspire_vs/1.0/inspire_vs.xsd">
+<WMS_Capabilities version="1.3.0" xmlns="http://www.opengis.net/wms" xmlns:sld="http://www.opengis.net/sld" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ms="http://mapserver.gis.umn.edu/mapserver" xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0" xmlns:inspire_vs="http://inspire.ec.europa.eu/schemas/inspire_vs/1.0" xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd http://www.opengis.net/sld http://schemas.opengis.net/sld/1.1.0/sld_capabilities.xsd http://inspire.ec.europa.eu/schemas/inspire_vs/1.0 http://inspire.ec.europa.eu/schemas/inspire_vs/1.0/inspire_vs.xsd" xmlns:xlink="http://www.w3.org/1999/xlink">
 <Service>
   <Name>WMS</Name>
   <Title>Finnish Meteorological Institute Web Map Service</Title>
@@ -9,7 +9,7 @@
       <Keyword>Forecast</Keyword>
       <Keyword>Hirlam</Keyword>
   </KeywordList>
-  <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="https://en.ilmatieteenlaitos.fi/open-data"/>
+  <OnlineResource xlink:href="https://en.ilmatieteenlaitos.fi/open-data"/>
   <ContactInformation>
     <ContactPersonPrimary>
       <ContactPerson>Roope Tervo</ContactPerson>
@@ -41,13 +41,11 @@
       <DCPType>
         <HTTP>
           <Get>
-            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
-                            xlink:type="simple"
+            <OnlineResource xlink:type="simple"
                             xlink:href="http://smartmet.fmi.fi/wms"/>
           </Get>
           <Post>
-            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
-                            xlink:type="simple"
+            <OnlineResource xlink:type="simple"
                             xlink:href="http://smartmet.fmi.fi/wms"/>
           </Post>
         </HTTP>
@@ -60,13 +58,11 @@
       <DCPType>
         <HTTP>
           <Get>
-            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
-                            xlink:type="simple"
+            <OnlineResource xlink:type="simple"
                             xlink:href="http://smartmet.fmi.fi/wms"/>
           </Get>
           <Post>
-            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink"
-                            xlink:type="simple"
+            <OnlineResource xlink:type="simple"
                             xlink:href="http://smartmet.fmi.fi/wms"/>
           </Post>
         </HTTP>
@@ -222,7 +218,7 @@
         <Title>Default style</Title>
         <LegendURL width="200" height="200">
           <Format>image/png</Format>
-          <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Awind_legend"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=&amp;format=image%2Fpng&amp;layer=test%3Awind_legend"/>
         </LegendURL>
       </Style>
     </Layer>

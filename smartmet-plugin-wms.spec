@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.6.3
+Version: 18.6.6
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -19,7 +19,7 @@ BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.5.2
 BuildRequires: smartmet-library-macgyver-devel >= 18.5.23
-BuildRequires: smartmet-library-spine-devel >= 18.5.27
+BuildRequires: smartmet-library-spine-devel >= 18.6.6
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.4.7
@@ -55,7 +55,7 @@ Requires: smartmet-engine-contour >= 18.4.9
 Requires: smartmet-engine-gis >= 18.4.7
 Requires: smartmet-engine-geonames >= 18.4.7
 Requires: smartmet-server >= 18.5.15
-Requires: smartmet-library-spine >= 18.5.27
+Requires: smartmet-library-spine >= 18.6.6
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Jun  5 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.6.6-1.fmi
+- Reduced size of GetCapabilities by placing xlink schema in the document namespace
+
 * Sun Jun  3 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.6.3-1.fmi
 - Fixed GetCapabilities not to abort if POST online_resource is undefined and a protocol change is required
 
