@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.6.6
-Release: 2%{?dist}.fmi
+Version: 18.6.11
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Mon Jun 11 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.6.11-1.fmi
+- Added a safety check against requests with sub minute intervals, which are not supported yet
+
 * Wed Jun  6 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.6.6-2.fmi
 - Added a safety check to layer namespace generation
 

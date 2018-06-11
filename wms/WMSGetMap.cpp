@@ -519,6 +519,8 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     }
     else
     {
+      if (itsParameters.timesteps.empty())
+        throw Spine::Exception(BCP, "Intervals need to be at least one minute long");
       theRequest.addParameter("time", Fmi::to_iso_string(itsParameters.timesteps[0]));
     }
   }
