@@ -25,45 +25,6 @@ namespace WMS
 {
 namespace
 {
-struct CaseInsensitiveComparator : std::binary_function<std::string, std::string, bool>
-{
-  char asciilower(char ch) const
-  {
-    char ret = ch;
-    if (ch >= 'A' && ch <= 'Z')
-      ret = static_cast<char>(ch + ('a' - 'A'));
-    return ret;
-  }
-
-  bool operator()(const std::string& first, const std::string& second) const
-  {
-    std::size_t n = std::min(first.size(), second.size());
-    for (std::size_t i = 0; i < n; i++)
-    {
-      char ch1 = asciilower(first[i]);
-      char ch2 = asciilower(second[i]);
-      if (ch1 != ch2)
-        return false;
-    }
-
-    return (first.size() == second.size());
-  }
-};
-
-std::string demimetype(const std::string& theMimeType)
-{
-  if (theMimeType == "image/png")
-    return "png";
-  if (theMimeType == "application/pdf")
-    return "pdf";
-  if (theMimeType == "application/postscript")
-    return "ps";
-  if (theMimeType == "image/svg+xml")
-    return "svg";
-
-  throw Spine::Exception(BCP, "Unknown mime type requested: '" + theMimeType + "'");
-}
-
 void check_getmap_request_options(const Spine::HTTP::Request& theHTTPRequest)
 {
   try

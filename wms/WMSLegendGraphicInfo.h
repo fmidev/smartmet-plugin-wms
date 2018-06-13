@@ -36,6 +36,7 @@ struct LegendGraphicInfoItem
 };
 
 typedef std::vector<LegendGraphicInfoItem> LegendGraphicInfo;
+typedef std::map<std::string, LegendGraphicInfo> NamedLegendGraphicInfo;
 
 struct LegendGraphicResult
 {

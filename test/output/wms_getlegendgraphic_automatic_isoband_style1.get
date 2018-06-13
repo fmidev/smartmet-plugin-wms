@@ -1,0 +1,448 @@
+<svg width="500" height="1959" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>Demo product</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+.HiResTemperature_inf_50 	{ stroke:none; fill: #69038a }
+.HiResTemperature_50_49 	{ stroke:none; fill: #3c0271 }
+.HiResTemperature_49_48 	{ stroke:none; fill: #551e8a }
+.HiResTemperature_48_47 	{ stroke:none; fill: #633095 }
+.HiResTemperature_47_46 	{ stroke:none; fill: #70429f }
+.HiResTemperature_46_45 	{ stroke:none; fill: #7f55ac }
+.HiResTemperature_45_44 	{ stroke:none; fill: #8c66b6 }
+.HiResTemperature_44_43 	{ stroke:none; fill: #9d7dc2 }
+.HiResTemperature_43_42 	{ stroke:none; fill: #b196d2 }
+.HiResTemperature_42_41 	{ stroke:none; fill: #c0a9de }
+.HiResTemperature_41_40 	{ stroke:none; fill: #cdbbe8 }
+.HiResTemperature_40_39 	{ stroke:none; fill: #daccf3 }
+.HiResTemperature_39_38 	{ stroke:none; fill: #c7c8f9 }
+.HiResTemperature_38_37 	{ stroke:none; fill: #b7b9f3 }
+.HiResTemperature_37_36 	{ stroke:none; fill: #a9aaeb }
+.HiResTemperature_36_35 	{ stroke:none; fill: #9699e2 }
+.HiResTemperature_35_34 	{ stroke:none; fill: #8486d7 }
+.HiResTemperature_34_33 	{ stroke:none; fill: #7073cc }
+.HiResTemperature_33_32 	{ stroke:none; fill: #5d5fc2 }
+.HiResTemperature_32_31 	{ stroke:none; fill: #4749b6 }
+.HiResTemperature_31_30 	{ stroke:none; fill: #2b2da6 }
+.HiResTemperature_30_29 	{ stroke:none; fill: #070a8d }
+.HiResTemperature_29_28 	{ stroke:none; fill: #02337d }
+.HiResTemperature_28_27 	{ stroke:none; fill: #0b3f8d }
+.HiResTemperature_27_26 	{ stroke:none; fill: #1f529e }
+.HiResTemperature_26_25 	{ stroke:none; fill: #3664ab }
+.HiResTemperature_25_24 	{ stroke:none; fill: #4d75b6 }
+.HiResTemperature_24_23 	{ stroke:none; fill: #6386c1 }
+.HiResTemperature_23_22 	{ stroke:none; fill: #a4c9f3 }
+.HiResTemperature_22_21 	{ stroke:none; fill: #87a2d3 }
+.HiResTemperature_21_20 	{ stroke:none; fill: #96b2e0 }
+.HiResTemperature_20_19 	{ stroke:none; fill: #a4c9f3 }
+.HiResTemperature_19_18 	{ stroke:none; fill: #b8e0fa }
+.HiResTemperature_18_17 	{ stroke:none; fill: #a6d3ee }
+.HiResTemperature_17_16 	{ stroke:none; fill: #91c3e2 }
+.HiResTemperature_16_15 	{ stroke:none; fill: #79b4d8 }
+.HiResTemperature_15_14 	{ stroke:none; fill: #68a4ca }
+.HiResTemperature_14_13 	{ stroke:none; fill: #5595c0 }
+.HiResTemperature_13_12 	{ stroke:none; fill: #3f85b3 }
+.HiResTemperature_12_11 	{ stroke:none; fill: #2b76a6 }
+.HiResTemperature_11_10 	{ stroke:none; fill: #17689b }
+.HiResTemperature_10_9 	{ stroke:none; fill: #055990 }
+.HiResTemperature_9_8 	{ stroke:none; fill: #036888 }
+.HiResTemperature_8_7 	{ stroke:none; fill: #017e91 }
+.HiResTemperature_7_6 	{ stroke:none; fill: #0c8c9f }
+.HiResTemperature_6_5 	{ stroke:none; fill: #279eb1 }
+.HiResTemperature_5_4 	{ stroke:none; fill: #3fb4c3 }
+.HiResTemperature_4_3 	{ stroke:none; fill: #63c6d5 }
+.HiResTemperature_3_2 	{ stroke:none; fill: #7fd9e6 }
+.HiResTemperature_2_1 	{ stroke:none; fill: #97e9f4 }
+.HiResTemperature_1_0 	{ stroke:none; fill: #b1f1fa }
+.HiResTemperature_0_1 	{ stroke:none; fill: #28860  }
+.HiResTemperature_1_2 	{ stroke:none; fill: #13a06e }
+.HiResTemperature_2_3 	{ stroke:none; fill: #3db481 }
+.HiResTemperature_3_4 	{ stroke:none; fill: #5ac48a }
+.HiResTemperature_4_5 	{ stroke:none; fill: #72d585 }
+.HiResTemperature_5_6 	{ stroke:none; fill: #88e581 }
+.HiResTemperature_6_7 	{ stroke:none; fill: #92f58a }
+.HiResTemperature_7_8 	{ stroke:none; fill: #acfba7 }
+.HiResTemperature_8_9 	{ stroke:none; fill: #cdfbb0 }
+.HiResTemperature_9_10 	{ stroke:none; fill: #e7fbb0 }
+.HiResTemperature_10_11 	{ stroke:none; fill: #f5fcac }
+.HiResTemperature_11_12 	{ stroke:none; fill: #faf97e }
+.HiResTemperature_12_13 	{ stroke:none; fill: #faf21e }
+.HiResTemperature_13_14 	{ stroke:none; fill: #fbe819 }
+.HiResTemperature_14_15 	{ stroke:none; fill: #f9dc17 }
+.HiResTemperature_15_16 	{ stroke:none; fill: #facf05 }
+.HiResTemperature_16_17 	{ stroke:none; fill: #fac305 }
+.HiResTemperature_17_18 	{ stroke:none; fill: #f4b902 }
+.HiResTemperature_18_19 	{ stroke:none; fill: #f5ac04 }
+.HiResTemperature_19_20 	{ stroke:none; fill: #eea004 }
+.HiResTemperature_20_21 	{ stroke:none; fill: #ee9304 }
+.HiResTemperature_21_22 	{ stroke:none; fill: #e48604 }
+.HiResTemperature_22_23 	{ stroke:none; fill: #e57703 }
+.HiResTemperature_23_24 	{ stroke:none; fill: #e16703 }
+.HiResTemperature_24_25 	{ stroke:none; fill: #dd5703 }
+.HiResTemperature_25_26 	{ stroke:none; fill: #d84703 }
+.HiResTemperature_26_27 	{ stroke:none; fill: #cb3a00 }
+.HiResTemperature_27_28 	{ stroke:none; fill: #bc2f02 }
+.HiResTemperature_28_29 	{ stroke:none; fill: #ad2602 }
+.HiResTemperature_29_30 	{ stroke:none; fill: #9d1d02 }
+.HiResTemperature_30_31 	{ stroke:none; fill: #8f1402 }
+.HiResTemperature_31_32 	{ stroke:none; fill: #7e0a01 }
+.HiResTemperature_32_33 	{ stroke:none; fill: #690101 }
+.HiResTemperature_33_34 	{ stroke:none; fill: #5a0610 }
+.HiResTemperature_34_35 	{ stroke:none; fill: #6c031e }
+.HiResTemperature_35_36 	{ stroke:none; fill: #7f0533 }
+.HiResTemperature_36_37 	{ stroke:none; fill: #8e0639 }
+.HiResTemperature_37_38 	{ stroke:none; fill: #a20842 }
+.HiResTemperature_38_39 	{ stroke:none; fill: #b50849 }
+.HiResTemperature_39_40 	{ stroke:none; fill: #cd0852 }
+.HiResTemperature_40_41 	{ stroke:none; fill: #e10f5e }
+.HiResTemperature_41_42 	{ stroke:none; fill: #f10d63 }
+.HiResTemperature_42_43 	{ stroke:none; fill: #fc337f }
+.HiResTemperature_43_44 	{ stroke:none; fill: #fb4daf }
+.HiResTemperature_44_45 	{ stroke:none; fill: #f62fb7 }
+.HiResTemperature_45_46 	{ stroke:none; fill: #e41da5 }
+.HiResTemperature_46_47 	{ stroke:none; fill: #d00f93 }
+.HiResTemperature_47_48 	{ stroke:none; fill: #ba0581 }
+.HiResTemperature_48_49 	{ stroke:none; fill: #a1026e }
+.HiResTemperature_49_50 	{ stroke:none; fill: #8a025e }
+.HiResTemperature_50_inf 	{ stroke:none; fill: #750158 }
+
+ ]]>
+</style>
+<filter id="alphadilation">
+ <feMorphology in="SourceAlpha" operator="dilate" radius="3"/>
+ <feComposite in="SourceAlpha"/>
+</filter>
+<symbol id="temperature_isoband_rect">
+ <rect height="14" width="54"/>
+</symbol>
+<symbol id="temperature_isoband_uptriangle">
+ <path d="M0 14,27 0,54 14Z"/>
+</symbol>
+<symbol id="temperature_isoband_downtriangle">
+ <path d="M0 0,27 14,54 0Z"/>
+</symbol>
+
+</defs>
+
+<g>
+ <g id="view1">
+  <g>
+  
+  <text class="Units" dx="20" dy="15" x="0" y="0">Celsius &#176;C</text>
+  <g>
+  
+   <use class="HiResTemperature_inf_50" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_uptriangle" y="20"/>
+  
+   <use class="HiResTemperature_49_48" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="39"/>
+  
+  <text x="70" y="51">-49</text>
+   <use class="HiResTemperature_48_47" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="58"/>
+  
+  <text x="70" y="70">-48</text>
+   <use class="HiResTemperature_47_46" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="77"/>
+  
+  <text x="70" y="89">-47</text>
+   <use class="HiResTemperature_46_45" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="96"/>
+  
+  <text x="70" y="108">-46</text>
+   <use class="HiResTemperature_45_44" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="115"/>
+  
+  <text x="70" y="127">-45</text>
+   <use class="HiResTemperature_44_43" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="134"/>
+  
+  <text x="70" y="146">-44</text>
+   <use class="HiResTemperature_43_42" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="153"/>
+  
+  <text x="70" y="165">-43</text>
+   <use class="HiResTemperature_42_41" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="172"/>
+  
+  <text x="70" y="184">-42</text>
+   <use class="HiResTemperature_41_40" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="191"/>
+  
+  <text x="70" y="203">-41</text>
+   <use class="HiResTemperature_40_39" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="210"/>
+  
+  <text x="70" y="222">-40</text>
+   <use class="HiResTemperature_39_38" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="229"/>
+  
+  <text x="70" y="241">-39</text>
+   <use class="HiResTemperature_38_37" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="248"/>
+  
+  <text x="70" y="260">-38</text>
+   <use class="HiResTemperature_37_36" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="267"/>
+  
+  <text x="70" y="279">-37</text>
+   <use class="HiResTemperature_36_35" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="286"/>
+  
+  <text x="70" y="298">-36</text>
+   <use class="HiResTemperature_35_34" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="305"/>
+  
+  <text x="70" y="317">-35</text>
+   <use class="HiResTemperature_34_33" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="324"/>
+  
+  <text x="70" y="336">-34</text>
+   <use class="HiResTemperature_33_32" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="343"/>
+  
+  <text x="70" y="355">-33</text>
+   <use class="HiResTemperature_32_31" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="362"/>
+  
+  <text x="70" y="374">-32</text>
+   <use class="HiResTemperature_31_30" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="381"/>
+  
+  <text x="70" y="393">-31</text>
+   <use class="HiResTemperature_30_29" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="400"/>
+  
+  <text x="70" y="412">BITING COLD</text>
+   <use class="HiResTemperature_29_28" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="419"/>
+  
+  <text x="70" y="431">-29</text>
+   <use class="HiResTemperature_28_27" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="438"/>
+  
+  <text x="70" y="450">-28</text>
+   <use class="HiResTemperature_27_26" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="457"/>
+  
+  <text x="70" y="469">-27</text>
+   <use class="HiResTemperature_26_25" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="476"/>
+  
+  <text x="70" y="488">-26</text>
+   <use class="HiResTemperature_25_24" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="495"/>
+  
+  <text x="70" y="507">-25</text>
+   <use class="HiResTemperature_24_23" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="514"/>
+  
+  <text x="70" y="526">-24</text>
+   <use class="HiResTemperature_23_22" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="533"/>
+  
+  <text x="70" y="545">-23</text>
+   <use class="HiResTemperature_22_21" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="552"/>
+  
+  <text x="70" y="564">-22</text>
+   <use class="HiResTemperature_21_20" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="571"/>
+  
+  <text x="70" y="583">-21</text>
+   <use class="HiResTemperature_20_19" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="590"/>
+  
+  <text x="70" y="602">-20</text>
+   <use class="HiResTemperature_19_18" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="609"/>
+  
+  <text x="70" y="621">-19</text>
+   <use class="HiResTemperature_18_17" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="628"/>
+  
+  <text x="70" y="640">-18</text>
+   <use class="HiResTemperature_17_16" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="647"/>
+  
+  <text x="70" y="659">-17</text>
+   <use class="HiResTemperature_16_15" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="666"/>
+  
+  <text x="70" y="678">-16</text>
+   <use class="HiResTemperature_15_14" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="685"/>
+  
+  <text x="70" y="697">-15</text>
+   <use class="HiResTemperature_14_13" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="704"/>
+  
+  <text x="70" y="716">-14</text>
+   <use class="HiResTemperature_13_12" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="723"/>
+  
+  <text x="70" y="735">-13</text>
+   <use class="HiResTemperature_12_11" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="742"/>
+  
+  <text x="70" y="754">-12</text>
+   <use class="HiResTemperature_11_10" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="761"/>
+  
+  <text x="70" y="773">-11</text>
+   <use class="HiResTemperature_10_9" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="780"/>
+  
+  <text x="70" y="792">-10</text>
+   <use class="HiResTemperature_9_8" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="799"/>
+  
+  <text x="70" y="811">-9</text>
+   <use class="HiResTemperature_8_7" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="818"/>
+  
+  <text x="70" y="830">-8</text>
+   <use class="HiResTemperature_7_6" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="837"/>
+  
+  <text x="70" y="849">-7</text>
+   <use class="HiResTemperature_6_5" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="856"/>
+  
+  <text x="70" y="868">-6</text>
+   <use class="HiResTemperature_5_4" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="875"/>
+  
+  <text x="70" y="887">OPTIMAL SKIING TEMPERATURE</text>
+   <use class="HiResTemperature_4_3" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="894"/>
+  
+  <text x="70" y="906">-4</text>
+   <use class="HiResTemperature_3_2" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="913"/>
+  
+  <text x="70" y="925">-3</text>
+   <use class="HiResTemperature_2_1" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="932"/>
+  
+  <text x="70" y="944">-2</text>
+   <use class="HiResTemperature_1_0" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="951"/>
+  
+  <text x="70" y="963">-1</text>
+   <use class="HiResTemperature_0_1" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="970"/>
+  
+  <text x="70" y="982">WATER FREEZES</text>
+   <use class="HiResTemperature_1_2" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="989"/>
+  
+  <text x="70" y="1001">1</text>
+   <use class="HiResTemperature_2_3" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1008"/>
+  
+  <text x="70" y="1020">2</text>
+   <use class="HiResTemperature_3_4" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1027"/>
+  
+  <text x="70" y="1039">3</text>
+   <use class="HiResTemperature_4_5" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1046"/>
+  
+  <text x="70" y="1058">4</text>
+   <use class="HiResTemperature_5_6" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1065"/>
+  
+  <text x="70" y="1077">5</text>
+   <use class="HiResTemperature_6_7" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1084"/>
+  
+  <text x="70" y="1096">6</text>
+   <use class="HiResTemperature_7_8" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1103"/>
+  
+  <text x="70" y="1115">7</text>
+   <use class="HiResTemperature_8_9" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1122"/>
+  
+  <text x="70" y="1134">COLD BEER</text>
+   <use class="HiResTemperature_9_10" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1141"/>
+  
+  <text x="70" y="1153">9</text>
+   <use class="HiResTemperature_10_11" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1160"/>
+  
+  <text x="70" y="1172">10</text>
+   <use class="HiResTemperature_11_12" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1179"/>
+  
+  <text x="70" y="1191">11</text>
+   <use class="HiResTemperature_12_13" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1198"/>
+  
+  <text x="70" y="1210">12</text>
+   <use class="HiResTemperature_13_14" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1217"/>
+  
+  <text x="70" y="1229">13</text>
+   <use class="HiResTemperature_14_15" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1236"/>
+  
+  <text x="70" y="1248">14</text>
+   <use class="HiResTemperature_15_16" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1255"/>
+  
+  <text x="70" y="1267">15</text>
+   <use class="HiResTemperature_16_17" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1274"/>
+  
+  <text x="70" y="1286">16</text>
+   <use class="HiResTemperature_17_18" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1293"/>
+  
+  <text x="70" y="1305">17</text>
+   <use class="HiResTemperature_18_19" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1312"/>
+  
+  <text x="70" y="1324">18</text>
+   <use class="HiResTemperature_19_20" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1331"/>
+  
+  <text x="70" y="1343">19</text>
+   <use class="HiResTemperature_20_21" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1350"/>
+  
+  <text x="70" y="1362">20</text>
+   <use class="HiResTemperature_21_22" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1369"/>
+  
+  <text x="70" y="1381">21</text>
+   <use class="HiResTemperature_22_23" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1388"/>
+  
+  <text x="70" y="1400">22</text>
+   <use class="HiResTemperature_23_24" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1407"/>
+  
+  <text x="70" y="1419">23</text>
+   <use class="HiResTemperature_24_25" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1426"/>
+  
+  <text x="70" y="1438">24</text>
+   <use class="HiResTemperature_25_26" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1445"/>
+  
+  <text x="70" y="1457">25</text>
+   <use class="HiResTemperature_26_27" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1464"/>
+  
+  <text x="70" y="1476">26</text>
+   <use class="HiResTemperature_27_28" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1483"/>
+  
+  <text x="70" y="1495">27</text>
+   <use class="HiResTemperature_28_29" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1502"/>
+  
+  <text x="70" y="1514">REMEMBER SUNSCREEN</text>
+   <use class="HiResTemperature_29_30" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1521"/>
+  
+  <text x="70" y="1533">29</text>
+   <use class="HiResTemperature_30_31" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1540"/>
+  
+  <text x="70" y="1552">30</text>
+   <use class="HiResTemperature_31_32" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1559"/>
+  
+  <text x="70" y="1571">31</text>
+   <use class="HiResTemperature_32_33" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1578"/>
+  
+  <text x="70" y="1590">32</text>
+   <use class="HiResTemperature_33_34" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1597"/>
+  
+  <text x="70" y="1609">33</text>
+   <use class="HiResTemperature_34_35" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1616"/>
+  
+  <text x="70" y="1628">34</text>
+   <use class="HiResTemperature_35_36" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1635"/>
+  
+  <text x="70" y="1647">35</text>
+   <use class="HiResTemperature_36_37" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1654"/>
+  
+  <text x="70" y="1666">36</text>
+   <use class="HiResTemperature_37_38" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1673"/>
+  
+  <text x="70" y="1685">37</text>
+   <use class="HiResTemperature_38_39" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1692"/>
+  
+  <text x="70" y="1704">&#62; 38</text>
+   <use class="HiResTemperature_39_40" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1711"/>
+  
+  <text x="70" y="1723">39</text>
+   <use class="HiResTemperature_40_41" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1730"/>
+  
+  <text x="70" y="1742">40</text>
+   <use class="HiResTemperature_41_42" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1749"/>
+  
+  <text x="70" y="1761">41</text>
+   <use class="HiResTemperature_42_43" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1768"/>
+  
+  <text x="70" y="1780">42</text>
+   <use class="HiResTemperature_43_44" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1787"/>
+  
+  <text x="70" y="1799">43</text>
+   <use class="HiResTemperature_44_45" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1806"/>
+  
+  <text x="70" y="1818">44</text>
+   <use class="HiResTemperature_45_46" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1825"/>
+  
+  <text x="70" y="1837">45</text>
+   <use class="HiResTemperature_46_47" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1844"/>
+  
+  <text x="70" y="1856">46</text>
+   <use class="HiResTemperature_47_48" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1863"/>
+  
+  <text x="70" y="1875">47</text>
+   <use class="HiResTemperature_48_49" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1882"/>
+  
+  <text x="70" y="1894">48</text>
+   <use class="HiResTemperature_49_50" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1901"/>
+  
+  <text x="70" y="1913">49</text>
+   <use class="HiResTemperature_50_inf" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_downtriangle" y="1920"/>
+  
+  <text x="70" y="1932">50</text>
+  </g>
+  <mask id="isoband_Temperature_0">
+  
+   <rect height="100%" style="fill:white" width="100%"/>
+  
+   <use style="filter:url(#alphadilation)" xlink:href="#temperaturelegend"/>
+  
+  </mask>
+  </g>
+ </g>
+</g>
+
+</svg>

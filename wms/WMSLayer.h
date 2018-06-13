@@ -71,12 +71,13 @@ class WMSLayer
   std::map<std::string, std::string> crs;             // id to GDAL definition
   std::map<std::string, Engine::Gis::BBox> crs_bbox;  // id to bounding box mapping
 
-  std::vector<WMSLayerStyle> styles;
+  std::vector<WMSLayerStyle> itsStyles;
   boost::shared_ptr<WMSTimeDimension> timeDimension;  // Optional, may be empty for non-temporal
                                                       // postgis layers
   std::string customer;
   std::string productFile;  // dali product
-  LegendGraphicInfo legendGraphicInfo;
+  //  LegendGraphicInfo legendGraphicInfo;
+  NamedLegendGraphicInfo itsNamedLegendGraphicInfo;
   WMSLegendGraphicSettings legendGraphicSettings;
 
   friend class WMSLayerFactory;
@@ -85,13 +86,16 @@ class WMSLayer
  public:
   WMSLayer(const WMSConfig& config);
 
-  void addStyles(const Json::Value& root, const std::string& layerName);
-  void addStyle(const std::string& layerName);
+  void addStyle(const Json::Value& root,
+                const std::string& layerName,
+                const WMSLayerStyle& layerStyle);
+  void addStyle(const std::string& layerName, const WMSLayerStyle& layerStyle);
   bool isHidden() const { return hidden; }
   const std::string& getName() const { return name; }
   const std::string& getCustomer() const { return customer; }
   const std::string& getDaliProductFile() const { return productFile; }
-  LegendGraphicResult getLegendGraphic(const WMSLegendGraphicSettings& settings) const;
+  LegendGraphicResult getLegendGraphic(const WMSLegendGraphicSettings& settings,
+                                       const std::string& legendGraphicID) const;
 
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;

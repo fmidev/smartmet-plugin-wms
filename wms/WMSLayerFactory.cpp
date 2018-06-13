@@ -7,7 +7,6 @@
 #endif
 #include <engines/querydata/Engine.h>
 #include <spine/Exception.h>
-#include <spine/Json.h>
 
 #include <set>
 
@@ -32,6 +31,8 @@ static std::set<std::string> querydata_layers = {
 
 static std::set<std::string> postgis_layers = {"postgis", "icemap"};
 
+namespace
+{
 WMSLayerType getWMSLayerType(const Json::Value& layer)
 {
   try
@@ -142,6 +143,7 @@ WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
 
   return layer_type;
 }
+}  // anonymous namespace
 
 // This function deduces the WMS product type. In case of several layer definitions in the product
 // the most significant is chosen
@@ -254,8 +256,8 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 #endif
         break;
       }
-      default:  // we should never en up here since determineLayerType should always return a valid
-                // layer type
+      default:  // we should never end up here since determineLayerType should always return a
+                // valid layer type
         throw Spine::Exception(BCP, "WMS Layer enum not handled in WMSLayerFactory.");
     };
 
@@ -339,18 +341,20 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     json = root.get("legend_url_layer", nulljson);
     if (!json.isNull())
     {
+      WMSLayerStyle layerStyle;
       std::string legendURLLayer = json.asString();
-      layer->addStyle(legendURLLayer);
+      layer->addStyle(legendURLLayer, layerStyle);
     }
 
-    if (layer->styles.size() == 0)
+    if (layer->itsStyles.size() == 0)
     {
+      bool addDefaultStyle = true;
       // 2) read styles vector from configuration and generate layer styles
       json = root.get("styles", nulljson);
       if (!json.isNull())
       {
         if (!json.isArray())
-          throw Spine::Exception(BCP, "WMSLayer style settings must be an array");
+          throw Spine::Exception(BCP, "WMSLayer styles settings must be an array");
 
         WMSLayerStyle layerStyle;
 
@@ -370,6 +374,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
           auto legend_url_json = style_json.get("legend_url", nulljson);
           if (!legend_url_json.isNull())
           {
+            // TODO: chek if this is needed???
             json_value = legend_url_json.get("width", nulljson);
             if (!json_value.isNull())
               layerStyle.legend_url.width = json_value.asInt();
@@ -382,15 +387,34 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
             json_value = legend_url_json.get("online_resource", nulljson);
             if (!json_value.isNull())
               layerStyle.legend_url.online_resource = json_value.asString();
+            layer->itsStyles.push_back(layerStyle);
           }
-          layer->styles.push_back(layerStyle);
+          else
+          {
+            // Modify right style for the product and add getCapabilities Style info
+            Json::Value modifiedLayer = root;
+            useStyle(modifiedLayer, style_json);
+            layer->addStyle(modifiedLayer, layer->name, layerStyle);
+
+            CaseInsensitiveComparator cicomp;
+            if (cicomp(layerStyle.name, "default"))
+              addDefaultStyle = false;
+          }
+        }
+        if (addDefaultStyle)
+        {
+          WMSLayerStyle layerStyle;
+          layer->addStyle(root, layer->name, layerStyle);
         }
       }
     }
 
     // 3) generate layer styles automatically from configuration
-    if (layer->styles.size() == 0)
-      layer->addStyles(root, layer->name);
+    if (layer->itsStyles.size() == 0)
+    {
+      WMSLayerStyle layerStyle;
+      layer->addStyle(root, layer->name, layerStyle);
+    }
 
     // Spatial references supported by default, if applicable
     layer->crs = theWMSConfig.supportedWMSReferences();

@@ -7,6 +7,53 @@
 	"xsize": 500,
 	"ysize": 500
     },
+    "styles":
+	[
+	    {
+		"name": "precipitation_thin_style",
+		"title": "Precipitation thin style",
+		"abstract": "Pressure isolines line width is 1 px",
+		"layers":
+		[
+		    {
+		    "qid": "l1",
+		    "layer_type": "isoband",
+		    "isobands": "json:isobands/precipitation.json",
+		    "css": "isobands/precipitation.css"
+		    },
+		    {
+		    "qid": "l2",
+		    "layer_type": "isoline",
+		    "isolines": "json:isolines/precipitation.json",
+		    "css": "isolines/precipitation.css"
+		    },
+		    {
+  			"qid": "l4",
+			"layer_type": "isoline",
+			"isolines": "json:isolines/pressure.json",
+			"css": "isolines/pressure.css"
+		    }
+		]
+	    },
+	    {
+		"name": "precipitation_thick_style",
+		"title": "Precipitation thick style",
+		"abstract": "Pressure isolines line width is 2 px",
+		"layers":
+		[
+		    {
+			"qid": "l2",
+			"layer_type": "isoline",
+			"css": "isolines/precipitation_thick.css"
+		    },   
+		    {
+  			"qid": "l4",
+			"layer_type": "isoline",
+			"css": "isolines/pressure_dotted_red.css"
+		    }
+		]
+	    }
+	],
     "views": [
         {
 	    "qid": "v1",

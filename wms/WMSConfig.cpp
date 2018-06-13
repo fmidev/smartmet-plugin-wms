@@ -1038,11 +1038,12 @@ bool WMSConfig::isValidStyle(const std::string& theLayer, const std::string& the
 {
   try
   {
-    if (isValidLayerImpl(theLayer) == false)
+    if (isValidLayerImpl(theLayer, true) == false)
       return false;
 
     // empty means default style
-    if (theStyle.empty())
+    CaseInsensitiveComparator cicomp;
+    if (theStyle.empty() || cicomp(theStyle, "default"))
       return true;
 
     auto my_layers = boost::atomic_load(&itsLayers);
@@ -1178,6 +1179,7 @@ std::string WMSConfig::jsonText(const std::string& theLayerName) const
 }
 
 std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerName,
+                                                     const std::string& styleName,
                                                      std::size_t& width,
                                                      std::size_t& height) const
 {
@@ -1189,8 +1191,10 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
 
   std::string legendDirectory = itsDaliConfig.rootDirectory(true) + "/customers/legends";
 
-  LegendGraphicResult result =
-      my_layers->at(layerName).getLayer()->getLegendGraphic(itsLegendGraphicSettings);
+  std::string legendGraphicID = layerName + "::" + styleName;
+
+  LegendGraphicResult result = my_layers->at(layerName).getLayer()->getLegendGraphic(
+      itsLegendGraphicSettings, legendGraphicID);
   width = result.width;
   height = result.height;
 
@@ -1265,6 +1269,7 @@ std::set<std::string> WMSConfig::getObservationProducers() const
 #endif
 
 void WMSConfig::getLegendGraphic(const std::string& theLayerName,
+                                 const std::string& theStyleName,
                                  Product& theProduct,
                                  const State& theState) const
 {
@@ -1273,7 +1278,8 @@ void WMSConfig::getLegendGraphic(const std::string& theLayerName,
 
   std::size_t width = 100;
   std::size_t height = 100;
-  std::vector<Json::Value> legendLayers = getLegendGraphic(theLayerName, width, height);
+  std::vector<Json::Value> legendLayers =
+      getLegendGraphic(theLayerName, theStyleName, width, height);
   theProduct.width = width;
   theProduct.height = height;
 
@@ -1307,7 +1313,7 @@ void WMSConfig::getLegendGraphic(const std::string& theLayerName,
   }
 }
 
-const WMSLegendGraphicSettings WMSConfig::getLegendGraphicSettings()
+const WMSLegendGraphicSettings& WMSConfig::getLegendGraphicSettings() const
 {
   return itsLegendGraphicSettings;
 }

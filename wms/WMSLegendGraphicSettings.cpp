@@ -108,28 +108,6 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
             config.lookup("wms.get_legend_graphic.layout.output_document_height");
     }
   }
-
-  /*
-  std::cout << "layout.param_name_xoffset: " << layout.param_name_xoffset << std::endl;
-  std::cout << "layout.param_name_yoffset: " << layout.param_name_yoffset << std::endl;
-  std::cout << "layout.param_unit_xoffset: " << layout.param_unit_xoffset << std::endl;
-  std::cout << "layout.param_unit_yoffset: " << layout.param_unit_yoffset << std::endl;
-  std::cout << "layout.legend_xoffset: " << layout.legend_xoffset << std::endl;
-  std::cout << "layout.legend_yoffset: " << layout.legend_yoffset << std::endl;
-  std::cout << "layout.symbol_group_x_padding: " << layout.symbol_group_x_padding << std::endl;
-  std::cout << "layout.symbol_group_y_padding: " << layout.symbol_group_y_padding << std::endl;
-  std::cout << "layout.legend_width: " << layout.symbol_group_y_padding << std::endl;
-  std::cout << "layout.output_document_width: " << layout.output_document_width << std::endl;
-  std::cout << "layout.output_document_height: " << layout.output_document_height << std::endl;
-
-  if (!parameters.empty())
-  {
-    std::cout << "parameters: " << std::endl;
-    for (const auto& item : parameters)
-      std::cout << item.first << " -> " << item.second.name << ", " << item.second.unit
-                << std::endl;
-  }
-  */
 }
 }  // namespace WMS
 }  // namespace Plugin
