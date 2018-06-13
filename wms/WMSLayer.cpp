@@ -835,9 +835,17 @@ WMSLayer::WMSLayer(const WMSConfig& config)
   geographicBoundingBox.yMax = 0.0;
 }
 
-void WMSLayer::addStyles(const Json::Value& root, const std::string& layerName)
+void WMSLayer::addStyle(const Json::Value& root,
+                        const std::string& layerName,
+                        const WMSLayerStyle& layerStyle)
 {
   Json::Value nulljson;
+
+  std::string legendGraphicInfoName = layerName + "::" + layerStyle.name;
+  if (itsNamedLegendGraphicInfo.find(legendGraphicInfoName) == itsNamedLegendGraphicInfo.end())
+    itsNamedLegendGraphicInfo.insert(make_pair(legendGraphicInfoName, LegendGraphicInfo()));
+
+  LegendGraphicInfo& legendGraphicInfo = itsNamedLegendGraphicInfo[legendGraphicInfoName];
 
   auto viewsJson = root.get("views", nulljson);
   if (!viewsJson.isNull() && viewsJson.isArray())
@@ -859,30 +867,44 @@ void WMSLayer::addStyles(const Json::Value& root, const std::string& layerName)
   if (!legendGraphicInfo.empty())
   {
     get_legend_graphic_settings(root, legendGraphicSettings);
-    addStyle(layerName);
+    std::string legendGraphicID =
+        layerName + "::" + (layerStyle.name.empty() ? "default" : layerStyle.name);
+    //   WMSLegendGraphicSettings itsLegendGraphicSettings;
+    //	WMSLegendGraphicSettings lgs = wmsConfig.getLegendGraphicSettings();
+    LegendGraphicResult legendGraphicResult =
+        getLegendGraphic(wmsConfig.getLegendGraphicSettings(), legendGraphicID);
+    WMSLayerStyle style = layerStyle;
+    style.legend_url.width = legendGraphicResult.width;
+    style.legend_url.height = legendGraphicResult.height;
+    addStyle(layerName, style);
   }
 }
 
-void WMSLayer::addStyle(const std::string& layerName)
+void WMSLayer::addStyle(const std::string& layerName, const WMSLayerStyle& layerStyle)
 {
-  WMSLayerStyle layerStyle;
-  layerStyle.legend_url.width = 200;
-  layerStyle.legend_url.height = 200;
-  layerStyle.legend_url.format = "image/png";
+  WMSLayerStyle layersStyle(layerStyle);
 
-  layerStyle.legend_url.online_resource =
+  layersStyle.legend_url.online_resource =
       std::string(
           "__hostname____apikey__/wms"
           "?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;"
-          "style=&amp;format=image%2Fpng&amp;layer=") +
+          "style=" +
+          Spine::HTTP::urlencode(layersStyle.name) + "&amp;format=image%2Fpng&amp;layer=") +
       Spine::HTTP::urlencode(layerName);
 
-  styles.push_back(layerStyle);
+  itsStyles.push_back(layersStyle);
 }
 
-LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& settings) const
+LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& settings,
+                                               const std::string& legendGraphicID) const
 {
   LegendGraphicResult ret;
+
+  if (itsNamedLegendGraphicInfo.find(legendGraphicID) == itsNamedLegendGraphicInfo.end())
+    return ret;
+
+  const LegendGraphicInfo& legendGraphicInfo = itsNamedLegendGraphicInfo.at(legendGraphicID);
+
   ret.height = 20;
   ret.width = 150;
   unsigned int xpos = 0;
@@ -1078,7 +1100,7 @@ bool WMSLayer::isValidStyle(const std::string& theStyle) const
 {
   try
   {
-    for (auto style : styles)
+    for (auto style : itsStyles)
       if (style.name == theStyle)
         return true;
 
@@ -1204,9 +1226,9 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
     for (auto c : layer.crs)
       ost << c.first << "=" << c.second << " ";
     ost << "styles:";
-    for (auto style : layer.styles)
+    for (auto style : layer.itsStyles)
       ost << style.name << " ";
-    if (layer.styles.size() > 0)
+    if (layer.itsStyles.size() > 0)
       ost << " \ncustomer: " << layer.customer << "\n";
 
     if (layer.timeDimension)
@@ -1367,11 +1389,6 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
       layer_dimension["current"] = (timeDimension->currentValue() ? 1 : 0);
 
       layer_dimension["value"] = timeDimension->getCapabilities();  // a string
-
-      // TODO: Do we need these?
-      // layer_dimension["unit_symbol"] = ???
-      // layer_dimension["default"] = ???
-
       layer_dimension_list.PushBack(layer_dimension);
       layer["dimension"] = layer_dimension_list;
     }
@@ -1459,10 +1476,10 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
     }
 
     // Layer styles
-    if (!styles.empty())
+    if (!itsStyles.empty())
     {
       CTPP::CDT layer_style_list(CTPP::CDT::ARRAY_VAL);
-      for (const auto& style : styles)
+      for (const auto& style : itsStyles)
       {
         layer_style_list.PushBack(style.getCapabilities());
       }

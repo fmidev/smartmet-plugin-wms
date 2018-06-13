@@ -98,6 +98,7 @@ class WMSConfig
   boost::posix_time::ptime mostCurrentTime(const std::string& theLayer) const;
   std::string jsonText(const std::string& theLayerName) const;
   std::vector<Json::Value> getLegendGraphic(const std::string& theLayerName,
+                                            const std::string& theStyleName,
                                             std::size_t& width,
                                             std::size_t& height) const;
 
@@ -107,6 +108,7 @@ class WMSConfig
   void shutdown();
 
   void getLegendGraphic(const std::string& theLayerName,
+                        const std::string& theStyleName,
                         Dali::Product& theProduct,
                         const Dali::State& theState) const;
 
@@ -118,7 +120,7 @@ class WMSConfig
   const Engine::Observation::Engine* obsEngine() const { return itsObsEngine; }
 #endif
 
-  const WMSLegendGraphicSettings getLegendGraphicSettings();
+  const WMSLegendGraphicSettings& getLegendGraphicSettings() const;
 
   int getMargin() const { return itsMargin; }
 

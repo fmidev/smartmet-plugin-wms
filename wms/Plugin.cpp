@@ -1306,6 +1306,12 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
         if (!json_ok)
           throw Spine::Exception(BCP,
                                  "Failed to parse json: " + reader.getFormattedErrorMessages());
+
+        if (requestType == WMS::WMSRequestType::GET_MAP)
+        {
+          std::string styleName = *(theRequest.getParameter("STYLES"));
+          SmartMet::Plugin::WMS::useStyle(json, styleName);
+        }
       }
       catch (...)
       {
@@ -1367,7 +1373,10 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
       if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
       {
         std::string layerName = *(theRequest.getParameter("LAYER"));
-        itsWMSConfig->getLegendGraphic(layerName, product, theState);
+        std::string styleName = *(theRequest.getParameter("STYLE"));
+        if (styleName.empty())
+          styleName = "default";
+        itsWMSConfig->getLegendGraphic(layerName, styleName, product, theState);
         // getLegendGraphic-function sets width and height, but if width & height is given in
         // request override values
         std::string xsize = Fmi::to_string(*product.width);

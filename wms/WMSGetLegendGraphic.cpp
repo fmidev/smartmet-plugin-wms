@@ -25,45 +25,6 @@ namespace WMS
 {
 namespace
 {
-struct CaseInsensitiveComparator : std::binary_function<std::string, std::string, bool>
-{
-  char asciilower(char ch) const
-  {
-    char ret = ch;
-    if (ch >= 'A' && ch <= 'Z')
-      ret = static_cast<char>(ch + ('a' - 'A'));
-    return ret;
-  }
-
-  bool operator()(const std::string& first, const std::string& second) const
-  {
-    std::size_t n = std::min(first.size(), second.size());
-    for (std::size_t i = 0; i < n; i++)
-    {
-      char ch1 = asciilower(first[i]);
-      char ch2 = asciilower(second[i]);
-      if (ch1 != ch2)
-        return false;
-    }
-
-    return (first.size() == second.size());
-  }
-};
-
-std::string demimetype(const std::string& theMimeType)
-{
-  if (theMimeType == "image/png")
-    return "png";
-  if (theMimeType == "application/pdf")
-    return "pdf";
-  if (theMimeType == "application/postscript")
-    return "ps";
-  if (theMimeType == "image/svg+xml")
-    return "svg";
-
-  throw Spine::Exception(BCP, "Unknown mime type requested: '" + theMimeType + "'");
-}
-
 void check_getlegendgraphic_request_options(const Spine::HTTP::Request& theHTTPRequest)
 {
   try
@@ -122,6 +83,17 @@ void validate_options(const get_legend_graphic_request_options& options,
     {
       throw Spine::Exception(BCP, "The requested layer is not supported!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED)
+          .addParameter("Requested layer", options.layer);
+    }
+
+    // check that style is valid (as defined in GetCapabilities response)
+    if (!itsConfig.isValidStyle(options.layer, options.style))
+    {
+      throw Spine::Exception(BCP,
+                             "The style is not supported by the requested layer!" + options.layer +
+                                 ", " + options.style)
+          .addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED)
+          .addParameter("Requested style", options.style)
           .addParameter("Requested layer", options.layer);
     }
 
@@ -246,6 +218,8 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
     std::string styleName;
     if (theRequest.getParameter("STYLE"))
       styleName = *(theRequest.getParameter("STYLE"));
+    if (styleName.empty())
+      styleName = "default";
 
     itsParameters.layer = layerName;
     itsParameters.style = styleName;

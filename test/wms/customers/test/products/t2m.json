@@ -8,6 +8,51 @@
 	"xsize": 500,
 	"ysize": 500
     },
+    "styles":
+	[
+	    {
+		"name": "temperature_two_degrees",
+		"title": "Temperature isobands every two degrees",
+		"abstract": "Temperature isoband width is two degrees",
+		"layers":
+		[
+		    {
+		    "qid": "l1",
+		    "layer_type": "isoband",
+		    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css"
+		    }
+		]
+	    },
+	    {
+		"name": "temperature_three_degrees",
+		"title": "Temperature isobands every three degrees",
+		"abstract": "Temperature isoband width is three degrees",
+		"layers":
+		[
+		    {
+		    "qid": "l1",
+		    "layer_type": "isoband",
+		    "isobands": "json:isobands/mediumrestemperature.json",
+		    "css": "isobands/mediumrestemperature.css"
+		    }
+		]
+	    },
+	    {
+		"name": "temperature_one_degrees",
+		"title": "Temperature isobands every one degrees",
+		"abstract": "Temperature isoband width is one degrees",
+		"layers":
+		[
+		    {
+		    "qid": "l1",
+		    "layer_type": "isoband",
+		    "isobands": "json:isobands/hirestemperature.json",
+		    "css": "isobands/hirestemperature.css"
+		    }
+		]
+	    }
+	],
     "views": [
         {
 	    "qid": "v1",
@@ -29,10 +74,6 @@
                 },
 		{
 		    "tag": "g",
-		    "attributes":
-		    {
-			"mask": "url(#temperaturelegendmask)"
-		    },
 		    "layers": [
 			{
 			    "qid": "l4",

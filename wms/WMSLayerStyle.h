@@ -22,6 +22,7 @@ namespace WMS
 {
 struct LegendURL
 {
+  LegendURL() : width(200), height(200), format("image/png") {}
   int width;
   int height;
   std::string format;
@@ -30,7 +31,7 @@ struct LegendURL
 
 struct WMSLayerStyle
 {
-  WMSLayerStyle() : name("Default"), title("Default style") {}
+  WMSLayerStyle() : name("default"), title("Default style") {}
 
   std::string name;
   std::string title;
