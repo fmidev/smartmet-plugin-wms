@@ -18,7 +18,7 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.5.2
-BuildRequires: smartmet-library-macgyver-devel >= 18.5.23
+BuildRequires: smartmet-library-macgyver-devel >= 18.6.7
 BuildRequires: smartmet-library-spine-devel >= 18.6.6
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
@@ -45,7 +45,7 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
 Requires: smartmet-library-gis >= 18.4.7
-Requires: smartmet-library-macgyver >= 18.5.23
+Requires: smartmet-library-macgyver >= 18.6.7
 Requires: smartmet-library-giza >= 18.5.2
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 18.4.7
@@ -54,7 +54,7 @@ Requires: smartmet-engine-querydata >= 18.5.23
 Requires: smartmet-engine-contour >= 18.4.9
 Requires: smartmet-engine-gis >= 18.4.7
 Requires: smartmet-engine-geonames >= 18.4.7
-Requires: smartmet-server >= 18.5.15
+Requires: smartmet-server >= 18.6.6
 Requires: smartmet-library-spine >= 18.6.6
 Requires: boost-date-time
 Requires: boost-filesystem
@@ -92,9 +92,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-
 * Wed Jun 13 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.6.13-1.fmi
-- Suport for WMS STYLES added
+- Support for WMS STYLES added
 
 * Mon Jun 11 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.6.11-1.fmi
 - Added a safety check against requests with sub minute intervals, which are not supported yet
