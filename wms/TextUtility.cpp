@@ -22,13 +22,15 @@ text_dimension_t getTextDimension(const std::string& text, const text_style_t& t
   // cairo surface to get font mectrics
   cairo_surface_t* cs = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 1, 1);
   cairo_t* cr = cairo_create(cs);
-  cairo_surface_destroy(cs);
 
   cairo_select_font_face(cr, textStyle.fontfamily.c_str(), cairo_fontstyle, cairo_fontsweight);
   cairo_set_font_size(cr, Fmi::stoi(textStyle.fontsize));
 
   cairo_text_extents_t extents;
   cairo_text_extents(cr, text.c_str(), &extents);
+
+  cairo_surface_destroy(cs);
+  cairo_destroy(cr);
 
   text_dimension_t ret;
 
