@@ -156,16 +156,17 @@ std::size_t Product::hash_value(const State& theState) const
 {
   try
   {
+    // Note: Dali::hash_combine propagates zeros to end result
     auto hash = Dali::hash_value(svg_tmpl);
-    boost::hash_combine(hash, Dali::hash_value(svg_tmpl));
-    boost::hash_combine(hash, Dali::hash_value(type));
-    boost::hash_combine(hash, Dali::hash_value(width));
-    boost::hash_combine(hash, Dali::hash_value(height));
-    boost::hash_combine(hash, Dali::hash_value(title));
-    boost::hash_combine(hash, Dali::hash_value(defs, theState));
-    boost::hash_combine(hash, Dali::hash_value(attributes, theState));
-    boost::hash_combine(hash, Dali::hash_value(views, theState));
-    boost::hash_combine(hash, Dali::hash_value(png, theState));
+    Dali::hash_combine(hash, Dali::hash_value(svg_tmpl));
+    Dali::hash_combine(hash, Dali::hash_value(type));
+    Dali::hash_combine(hash, Dali::hash_value(width));
+    Dali::hash_combine(hash, Dali::hash_value(height));
+    Dali::hash_combine(hash, Dali::hash_value(title));
+    Dali::hash_combine(hash, Dali::hash_value(defs, theState));
+    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Dali::hash_combine(hash, Dali::hash_value(views, theState));
+    Dali::hash_combine(hash, Dali::hash_value(png, theState));
     return hash;
   }
   catch (...)

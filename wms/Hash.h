@@ -19,6 +19,14 @@ namespace Plugin
 {
 namespace Dali
 {
+inline void hash_combine(std::size_t& hash1, std::size_t hash2)
+{
+  if (hash1 == 0 || hash2 == 0)
+    hash1 = 0;
+  else
+    boost::hash_combine(hash1, hash2);
+}
+
 // Times
 inline std::size_t hash_value(const boost::posix_time::ptime& time)
 {
@@ -41,8 +49,9 @@ inline std::size_t hash_value(const boost::optional<T>& obj)
     return boost::hash_value(false);
   else
   {
-    std::size_t hash = boost::hash_value(true);
-    boost::hash_combine(hash, Dali::hash_value(*obj));
+    std::size_t hash = Dali::hash_value(*obj);
+    if (hash != 0)
+      boost::hash_combine(hash, boost::hash_value(true));
     return hash;
   }
 }
@@ -62,8 +71,10 @@ inline std::size_t hash_value(const boost::optional<T>& obj, const State& theSta
     return boost::hash_value(false);
   else
   {
-    std::size_t hash = boost::hash_value(true);
-    boost::hash_combine(hash, obj->hash_value(theState));
+    std::size_t hash = obj->hash_value(theState);
+    if (hash == 0)
+      return 0;
+    boost::hash_combine(hash, boost::hash_value(true));
     return hash;
   }
 }
@@ -76,8 +87,10 @@ inline std::size_t hash_value(const boost::shared_ptr<T>& obj, const State& theS
     return boost::hash_value(false);
   else
   {
-    std::size_t hash = boost::hash_value(true);
-    boost::hash_combine(hash, Dali::hash_value(*obj, theState));
+    std::size_t hash = Dali::hash_value(*obj, theState);
+    if (hash == 0)
+      return 0;
+    boost::hash_combine(hash, boost::hash_value(true));
     return hash;
   }
 }
@@ -88,7 +101,12 @@ inline std::size_t hash_value(const std::vector<T>& objs, const State& theState)
 {
   std::size_t hash = 0;
   for (const auto& obj : objs)
-    boost::hash_combine(hash, Dali::hash_value(obj, theState));
+  {
+    std::size_t subhash = Dali::hash_value(obj, theState);
+    if (subhash == 0)
+      return 0;
+    boost::hash_combine(hash, subhash);
+  }
   return hash;
 }
 
@@ -98,7 +116,12 @@ inline std::size_t hash_value(const std::list<T>& objs, const State& theState)
 {
   std::size_t hash = 0;
   for (const auto& obj : objs)
-    boost::hash_combine(hash, Dali::hash_value(obj, theState));
+  {
+    std::size_t subhash = Dali::hash_value(obj, theState);
+    if (subhash == 0)
+      return 0;
+    boost::hash_combine(hash, subhash);
+  }
   return hash;
 }
 

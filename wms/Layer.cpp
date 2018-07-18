@@ -462,14 +462,14 @@ std::size_t Layer::hash_value(const State& theState) const
   try
   {
     auto hash = Properties::hash_value(theState);
-    boost::hash_combine(hash, Dali::hash_value(qid));
-    boost::hash_combine(hash, Dali::hash_value(minresolution));
-    boost::hash_combine(hash, Dali::hash_value(maxresolution));
-    boost::hash_combine(hash, Dali::hash_value(enable));
-    boost::hash_combine(hash, Dali::hash_value(disable));
-    boost::hash_combine(hash, Dali::hash_css(css, theState));
-    boost::hash_combine(hash, Dali::hash_value(attributes, theState));
-    boost::hash_combine(hash, Dali::hash_value(layers, theState));
+    Dali::hash_combine(hash, Dali::hash_value(qid));
+    Dali::hash_combine(hash, Dali::hash_value(minresolution));
+    Dali::hash_combine(hash, Dali::hash_value(maxresolution));
+    Dali::hash_combine(hash, Dali::hash_value(enable));
+    Dali::hash_combine(hash, Dali::hash_value(disable));
+    Dali::hash_combine(hash, Dali::hash_css(css, theState));
+    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Dali::hash_combine(hash, Dali::hash_value(layers, theState));
     return hash;
   }
   catch (...)
