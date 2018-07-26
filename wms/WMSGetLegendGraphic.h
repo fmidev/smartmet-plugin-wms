@@ -35,7 +35,7 @@ class WMSGetLegendGraphic
   void parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
                         Spine::HTTP::Request& theRequest);
 
-  std::string jsonText() const;
+  Json::Value json() const;
 
  private:
   get_legend_graphic_request_options itsParameters;

@@ -491,13 +491,13 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
   }
 }
 
-std::string WMSGetMap::jsonText() const
+Json::Value WMSGetMap::json() const
 {
   try
   {
     const tag_map_info map_info = itsParameters.map_info_vector.back();
 
-    return itsConfig.jsonText(map_info.name);
+    return itsConfig.json(map_info.name);
   }
   catch (...)
   {

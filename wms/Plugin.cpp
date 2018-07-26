@@ -611,29 +611,29 @@ void Plugin::init()
 // WMS configurations
 #ifndef WITHOUT_OBSERVATION
       itsWMSConfig.reset(new WMS::WMSConfig(
-          itsConfig, itsFileCache, itsQEngine, authEngine, itsObsEngine, itsGisEngine));
+          itsConfig, itsJsonCache, itsQEngine, authEngine, itsObsEngine, itsGisEngine));
 #else
       itsWMSConfig.reset(
-          new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, authEngine, itsGisEngine));
+          new WMS::WMSConfig(itsConfig, itsJsonCache, itsQEngine, authEngine, itsGisEngine));
 #endif
     }
     else
     {
 #ifndef WITHOUT_OBSERVATION
       itsWMSConfig.reset(new WMS::WMSConfig(
-          itsConfig, itsFileCache, itsQEngine, nullptr, itsObsEngine, itsGisEngine));
+          itsConfig, itsJsonCache, itsQEngine, nullptr, itsObsEngine, itsGisEngine));
 #else
       itsWMSConfig.reset(
-          new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, nullptr, itsGisEngine));
+          new WMS::WMSConfig(itsConfig, itsJsonCache, itsQEngine, nullptr, itsGisEngine));
 #endif
     }
 
 #else
 #ifndef WITHOUT_OBSERVATION
     itsWMSConfig.reset(
-        new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, itsObsEngine, itsGisEngine));
+        new WMS::WMSConfig(itsConfig, itsJsonCache, itsQEngine, itsObsEngine, itsGisEngine));
 #else
-    itsWMSConfig.reset(new WMS::WMSConfig(itsConfig, itsFileCache, itsQEngine, itsGisEngine));
+    itsWMSConfig.reset(new WMS::WMSConfig(itsConfig, itsJsonCache, itsQEngine, itsGisEngine));
 #endif
 #endif
 
@@ -798,7 +798,7 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
     std::string layers_root = customer_root + "/layers/";
 
     Spine::JSON::preprocess(
-        json, itsConfig.rootDirectory(theState.useWms()), layers_root, itsFileCache);
+        json, itsConfig.rootDirectory(theState.useWms()), layers_root, itsJsonCache);
 
     // Expand paths
 
@@ -846,16 +846,15 @@ std::string Plugin::getStyle(const std::string &theCustomer,
       return "";
 
     std::string css_path;
-    if(theCSS[0] != '/')
+    if (theCSS[0] != '/')
     {
-      css_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" +
-                  check_attack(theCustomer) + "/layers/" + check_attack(theCSS));
+      css_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + check_attack(theCustomer) +
+                  "/layers/" + check_attack(theCSS));
     }
     else
     {
       css_path = itsConfig.rootDirectory(theWmsFlag) + check_attack(theCSS);
     }
-    
 
     return itsFileCache.get(css_path);
   }
@@ -1256,7 +1255,8 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
         return WMSQueryStatus::OK;
       }
 
-      std::string json_text;
+      Json::Value json;
+
       if (requestType == WMS::WMSRequestType::GET_MAP)
       {
         WMS::WMSGetMap wmsGetMapRequest(*itsWMSConfig);
@@ -1280,13 +1280,13 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
 #endif
         wmsGetMapRequest.parseHTTPRequest(*itsQEngine, thisRequest);
 
-        json_text = wmsGetMapRequest.jsonText();
+        json = wmsGetMapRequest.json();
       }
       else if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
       {
         WMS::WMSGetLegendGraphic wmsGetLegendGraphic(*itsWMSConfig);
         wmsGetLegendGraphic.parseHTTPRequest(*itsQEngine, thisRequest);
-        json_text = wmsGetLegendGraphic.jsonText();
+        json = wmsGetLegendGraphic.json();
         if (itsWMSConfig->getLegendGraphicSettings().expires > 0)
         {
           auto tmp = boost::posix_time::second_clock::universal_time() +
@@ -1295,27 +1295,10 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
         }
       }
 
-      Json::Value json;
-
-      try
+      if (requestType == WMS::WMSRequestType::GET_MAP)
       {
-        // Read the JSON
-        Json::Reader reader;
-        bool json_ok = reader.parse(json_text, json);
-
-        if (!json_ok)
-          throw Spine::Exception(BCP,
-                                 "Failed to parse json: " + reader.getFormattedErrorMessages());
-
-        if (requestType == WMS::WMSRequestType::GET_MAP)
-        {
-          std::string styleName = *(theRequest.getParameter("STYLES"));
-          SmartMet::Plugin::WMS::useStyle(json, styleName);
-        }
-      }
-      catch (...)
-      {
-        throw Spine::Exception::Trace(BCP, "JSON parsing error!").addParameter("Text", json_text);
+        std::string styleName = *(theRequest.getParameter("STYLES"));
+        SmartMet::Plugin::WMS::useStyle(json, styleName);
       }
 
       // Define the customer
@@ -1353,7 +1336,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
       std::string layers_root = customer_root + "/layers/";
 
       Spine::JSON::preprocess(
-          json, itsConfig.rootDirectory(theState.useWms()), layers_root, itsFileCache);
+          json, itsConfig.rootDirectory(theState.useWms()), layers_root, itsJsonCache);
 
       Spine::JSON::dereference(json);
 

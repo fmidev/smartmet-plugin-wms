@@ -293,11 +293,11 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
   }
 }
 
-std::string WMSGetLegendGraphic::jsonText() const
+Json::Value WMSGetLegendGraphic::json() const
 {
   try
   {
-    return itsConfig.jsonText(itsParameters.layer);
+    return itsConfig.json(itsParameters.layer);
   }
   catch (...)
   {

@@ -15,7 +15,7 @@
 #include <engines/gis/Engine.h>
 #include <engines/observation/Engine.h>
 #include <engines/querydata/Engine.h>
-#include <spine/FileCache.h>
+#include <spine/JsonCache.h>
 #include <spine/Thread.h>
 
 #include <boost/optional.hpp>
@@ -53,7 +53,7 @@ class WMSConfig
  public:
   WMSConfig() = delete;
   WMSConfig(const Plugin::Dali::Config& daliConfig,
-            const Spine::FileCache& theFileCache,
+            const Spine::JsonCache& theJsonCache,
             Engine::Querydata::Engine* qEngine,
 #ifndef WITHOUT_AUTHENTICATION
             Engine::Authentication::Engine* authEngine,
@@ -96,7 +96,7 @@ class WMSConfig
   bool isTemporal(const std::string& theLayer) const;
   bool currentValue(const std::string& theLayer) const;
   boost::posix_time::ptime mostCurrentTime(const std::string& theLayer) const;
-  std::string jsonText(const std::string& theLayerName) const;
+  Json::Value json(const std::string& theLayerName) const;
   std::vector<Json::Value> getLegendGraphic(const std::string& theLayerName,
                                             const std::string& theStyleName,
                                             std::size_t& width,
@@ -112,7 +112,7 @@ class WMSConfig
                         Dali::Product& theProduct,
                         const Dali::State& theState) const;
 
-  const Spine::FileCache& getFileCache() const { return itsFileCache; }
+  const Spine::JsonCache& getJsonCache() const { return itsJsonCache; }
   const Plugin::Dali::Config& getDaliConfig() const { return itsDaliConfig; }
   const Engine::Querydata::Engine* qEngine() const { return itsQEngine; }
   const Engine::Gis::Engine* gisEngine() const { return itsGisEngine; }
@@ -128,7 +128,7 @@ class WMSConfig
   void parse_references();
 
   const Plugin::Dali::Config& itsDaliConfig;
-  const Spine::FileCache& itsFileCache;
+  const Spine::JsonCache& itsJsonCache;
 
   // Engines for GetCapabilities
   Engine::Querydata::Engine* itsQEngine = nullptr;
@@ -151,9 +151,9 @@ class WMSConfig
   // the bounding boxes for all spatial references
   std::map<std::string, Engine::Gis::BBox> itsWMSBBoxes;
 
-  bool itsCapabilityUpdatesDisabled = false;   // disable updates after initial scan?
-  int itsCapabilityUpdateInterval = 5; // scan interval in seconds
-  
+  bool itsCapabilityUpdatesDisabled = false;  // disable updates after initial scan?
+  int itsCapabilityUpdateInterval = 5;        // scan interval in seconds
+
   bool itsInspireExtensionSupported = false;
 
   // Valid WMS layers (name -> layer proxy). This must be a shared pointer

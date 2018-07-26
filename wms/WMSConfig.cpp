@@ -85,12 +85,12 @@ std::string makeLayerNamespace(const std::string& customer,
     do
     {
       // Safety check needed for some incorrect specifications
-      if(tokens.empty())
+      if (tokens.empty())
         throw SmartMet::Spine::Exception(BCP, "Failed to generate layer namespace")
             .addParameter("customer", customer)
             .addParameter("file directory", fileDir)
             .addParameter("root directory", productRoot);
-      
+
       namespace_tokens.push_back(tokens.back());
       tokens.pop_back();
       currentPath = boost::algorithm::join(tokens, "/");
@@ -565,7 +565,7 @@ void WMSConfig::parse_references()
 // ----------------------------------------------------------------------
 
 WMSConfig::WMSConfig(const Config& daliConfig,
-                     const Spine::FileCache& theFileCache,
+                     const Spine::JsonCache& theJsonCache,
                      Engine::Querydata::Engine* qEngine,
 #ifndef WITHOUT_AUTHENTICATION
                      Engine::Authentication::Engine* authEngine,
@@ -575,7 +575,7 @@ WMSConfig::WMSConfig(const Config& daliConfig,
 #endif
                      Engine::Gis::Engine* gisEngine)
     : itsDaliConfig(daliConfig),
-      itsFileCache(theFileCache),
+      itsJsonCache(theJsonCache),
       itsQEngine(qEngine),
       itsGisEngine(gisEngine),
 #ifndef WITHOUT_AUTHENTICATION
@@ -596,7 +596,7 @@ WMSConfig::WMSConfig(const Config& daliConfig,
 
     config.lookupValue("wms.disable_updates", itsCapabilityUpdatesDisabled);
     config.lookupValue("wms.update_interval", itsCapabilityUpdateInterval);
-    
+
     boost::algorithm::split(
         itsSupportedMapFormats, wmsMapFormats, boost::algorithm::is_any_of(","));
 
@@ -650,7 +650,7 @@ void WMSConfig::init()
 
   // Begin the update loop
 
-  if(!itsCapabilityUpdatesDisabled)
+  if (!itsCapabilityUpdatesDisabled)
   {
     itsGetCapabilitiesThread.reset(
         new boost::thread(boost::bind(&WMSConfig::capabilitiesUpdateLoop, this)));
@@ -692,7 +692,8 @@ void WMSConfig::capabilitiesUpdateLoop()
       try
       {
         // update capabilities every N seconds
-        boost::system_time timeout = boost::get_system_time() + boost::posix_time::seconds(itsCapabilityUpdateInterval);
+        boost::system_time timeout =
+            boost::get_system_time() + boost::posix_time::seconds(itsCapabilityUpdateInterval);
 
         boost::unique_lock<boost::mutex> lock(itsShutdownMutex);
         while (!itsShutdownRequested)
@@ -1162,7 +1163,7 @@ boost::posix_time::ptime WMSConfig::mostCurrentTime(const std::string& theLayer)
   }
 }
 
-std::string WMSConfig::jsonText(const std::string& theLayerName) const
+Json::Value WMSConfig::json(const std::string& theLayerName) const
 {
   try
   {
@@ -1170,11 +1171,11 @@ std::string WMSConfig::jsonText(const std::string& theLayerName) const
     if (my_layers->find(theLayerName) == my_layers->end())
       return "";
 
-    return itsFileCache.get(my_layers->at(theLayerName).getLayer()->getDaliProductFile());
+    return itsJsonCache.get(my_layers->at(theLayerName).getLayer()->getDaliProductFile());
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Getting layer JSON text failed!");
+    throw Spine::Exception::Trace(BCP, "Getting layer JSON failed!");
   }
 }
 
@@ -1215,7 +1216,7 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
         json,
         itsDaliConfig.rootDirectory(use_wms),
         itsDaliConfig.rootDirectory(use_wms) + "/customers/" + customer + "/layers",
-        itsFileCache);
+        itsJsonCache);
 
     Spine::JSON::dereference(json);
 

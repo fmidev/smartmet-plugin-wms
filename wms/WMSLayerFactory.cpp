@@ -207,7 +207,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         root,
         theWMSConfig.itsDaliConfig.rootDirectory(use_wms),
         theWMSConfig.itsDaliConfig.rootDirectory(use_wms) + "/customers/" + theCustomer + "/layers",
-        theWMSConfig.itsFileCache);
+        theWMSConfig.itsJsonCache);
     Spine::JSON::dereference(root);
 
     SharedWMSLayer layer;

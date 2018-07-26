@@ -1015,7 +1015,7 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
       Spine::JSON::preprocess(legendJson,
                               wmsConfig.getDaliConfig().rootDirectory(true),
                               layersRoot,
-                              wmsConfig.getFileCache());
+                              wmsConfig.getJsonCache());
 
       labelHeight = isoband_legend_height(legendJson);
       isobandWidth = isoband_legend_width(legendJson, *(actualSettings.layout.legend_width));

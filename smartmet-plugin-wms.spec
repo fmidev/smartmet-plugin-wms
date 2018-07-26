@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.7.18
+Version: 18.7.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -17,21 +17,21 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-giza-devel >= 18.5.2
-BuildRequires: smartmet-library-macgyver-devel >= 18.6.7
-BuildRequires: smartmet-library-spine-devel >= 18.6.6
+BuildRequires: smartmet-library-giza-devel >= 18.6.27
+BuildRequires: smartmet-library-macgyver-devel >= 18.7.26
+BuildRequires: smartmet-library-spine-devel >= 18.7.26
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 18.4.7
+BuildRequires: smartmet-engine-authentication-devel >= 18.7.25
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 18.5.29
+BuildRequires: smartmet-engine-observation-devel >= 18.7.25
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 18.4.7
-BuildRequires: smartmet-engine-geonames-devel >= 18.4.7
-BuildRequires: smartmet-engine-querydata-devel >= 18.5.23
-BuildRequires: smartmet-engine-contour-devel >= 18.4.9
-BuildRequires: smartmet-library-gis-devel >= 18.4.7
+BuildRequires: smartmet-engine-gis-devel >= 18.7.25
+BuildRequires: smartmet-engine-geonames-devel >= 18.7.25
+BuildRequires: smartmet-engine-querydata-devel >= 18.7.25
+BuildRequires: smartmet-engine-contour-devel >= 18.7.25
+BuildRequires: smartmet-library-gis-devel >= 18.7.23
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.5
 BuildRequires: jsoncpp-devel
@@ -44,18 +44,18 @@ Requires: fmt
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
-Requires: smartmet-library-gis >= 18.4.7
-Requires: smartmet-library-macgyver >= 18.6.7
-Requires: smartmet-library-giza >= 18.5.2
+Requires: smartmet-library-gis >= 18.7.23
+Requires: smartmet-library-macgyver >= 18.7.26
+Requires: smartmet-library-giza >= 18.6.27
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 18.4.7
+Requires: smartmet-engine-authentication >= 18.7.25
 %endif
-Requires: smartmet-engine-querydata >= 18.5.23
-Requires: smartmet-engine-contour >= 18.4.9
-Requires: smartmet-engine-gis >= 18.4.7
-Requires: smartmet-engine-geonames >= 18.4.7
-Requires: smartmet-server >= 18.6.6
-Requires: smartmet-library-spine >= 18.6.6
+Requires: smartmet-engine-querydata >= 18.7.25
+Requires: smartmet-engine-contour >= 18.7.25
+Requires: smartmet-engine-gis >= 18.7.25
+Requires: smartmet-engine-geonames >= 18.7.25
+Requires: smartmet-server >= 18.7.25
+Requires: smartmet-library-spine >= 18.7.26
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Jul 26 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.7.26-1.fmi
+- Use Spine::JsonCache to avoid parsing WMS layer files repeatedly
+
 * Wed Jul 18 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.7.18-1.fmi
 - Fixed observation layers not to be cached
 

@@ -24,6 +24,7 @@
 
 #include <spine/FileCache.h>
 #include <spine/HTTP.h>
+#include <spine/JsonCache.h>
 #include <spine/Reactor.h>
 #include <spine/SmartMetCache.h>
 #include <spine/SmartMetPlugin.h>
@@ -145,6 +146,7 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
 
   // Cache files
   mutable Spine::FileCache itsFileCache;
+  mutable Spine::JsonCache itsJsonCache;
 
   // Cache results
   mutable std::unique_ptr<ImageCache> itsImageCache;
