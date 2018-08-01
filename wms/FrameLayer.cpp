@@ -4,7 +4,7 @@
 #include "LonLatToXYTransformation.h"
 #include "State.h"
 #include "TextUtility.h"
-#include <boost/foreach.hpp>
+
 #include <ctpp2/CDT.hpp>
 #include <gis/OGR.h>
 #include <spine/Exception.h>

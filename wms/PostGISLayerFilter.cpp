@@ -1,7 +1,7 @@
 #include "PostGISLayerFilter.h"
 #include "Config.h"
 #include "Hash.h"
-#include <boost/foreach.hpp>
+
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <stdexcept>
@@ -28,7 +28,7 @@ void PostGISLayerFilter::init(const Json::Value& theJson, const Config& theConfi
     // Iterate through all the members
 
     const auto members = theJson.getMemberNames();
-    BOOST_FOREACH (const auto& name, members)
+    for (const auto& name : members)
     {
       const Json::Value& json = theJson[name];
 

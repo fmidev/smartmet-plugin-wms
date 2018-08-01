@@ -1,6 +1,6 @@
 #include "Views.h"
 #include "Hash.h"
-#include <boost/foreach.hpp>
+
 #include <ctpp2/CDT.hpp>
 #include <spine/Exception.h>
 
@@ -50,7 +50,7 @@ void Views::generate(CTPP::CDT& theGlobals, State& theState)
 {
   try
   {
-    BOOST_FOREACH (auto& view, views)
+    for (auto& view : views)
     {
       CTPP::CDT view_hash(CTPP::CDT::HASH_VAL);
       view->generate(theGlobals, view_hash, theState);

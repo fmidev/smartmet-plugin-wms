@@ -1,7 +1,7 @@
 #include "Styles.h"
 #include "Config.h"
 #include "Hash.h"
-#include <boost/foreach.hpp>
+
 #include <ctpp2/CDT.hpp>
 #include <macgyver/StringConversion.h>
 #include <spine/Exception.h>
@@ -30,7 +30,7 @@ void Styles::init(const Json::Value& theJson, const Config& theConfig)
     // Iterate through all the members
 
     const auto class_members = theJson.getMemberNames();
-    BOOST_FOREACH (const auto& class_name, class_members)
+    for (const auto& class_name : class_members)
     {
       const Json::Value& class_json = theJson[class_name];
 
@@ -42,7 +42,7 @@ void Styles::init(const Json::Value& theJson, const Config& theConfig)
                 class_name + "'");
 
       const auto members = class_json.getMemberNames();
-      BOOST_FOREACH (const auto& name, members)
+      for (const auto& name : members)
       {
         const Json::Value json = class_json[name];
 
@@ -100,10 +100,10 @@ void Styles::generate(CTPP::CDT& theGlobals, State& theState) const
   try
   {
     // Add to styles
-    BOOST_FOREACH (const auto& style, styles)
+    for (const auto& style : styles)
     {
       CTPP::CDT css(CTPP::CDT::HASH_VAL);
-      BOOST_FOREACH (const auto& setting, style.second)
+      for (const auto& setting : style.second)
       {
         css[setting.first] = setting.second;
       }

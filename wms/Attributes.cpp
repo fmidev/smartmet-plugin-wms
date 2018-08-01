@@ -6,7 +6,7 @@
 #include "State.h"
 #include "StyleSheet.h"
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/foreach.hpp>
+
 #include <ctpp2/CDT.hpp>
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
@@ -55,7 +55,7 @@ void Attributes::init(const Json::Value& theJson, const Config& theConfig)
     // Iterate trhough all the members
 
     const auto members = theJson.getMemberNames();
-    BOOST_FOREACH (const auto& name, members)
+    for (const auto& name : members)
     {
       const Json::Value& json = theJson[name];
 
@@ -130,7 +130,7 @@ void Attributes::generate(CTPP::CDT& theLocals, State& theState) const
     // Collect presentation attributes into a single style attribute
     std::map<std::string, std::string> style;
 
-    BOOST_FOREACH (const auto& attribute, attributes)
+    for (const auto& attribute : attributes)
     {
       const auto& attr_name = attribute.first;
       const auto& attr_value = attribute.second;
@@ -162,7 +162,7 @@ void Attributes::generate(CTPP::CDT& theLocals, State& theState) const
     if (!style.empty())
     {
       std::string text;
-      BOOST_FOREACH (const auto& name_value, style)
+      for (const auto& name_value : style)
       {
         if (!text.empty())
           text += "; ";

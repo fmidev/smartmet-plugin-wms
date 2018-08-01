@@ -2,7 +2,7 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "State.h"
-#include <boost/foreach.hpp>
+
 #include <ctpp2/CDT.hpp>
 #include <spine/Exception.h>
 
@@ -45,7 +45,7 @@ void TranslationLayer::init(const Json::Value& theJson,
         throw Spine::Exception(BCP, "translations setting must be a JSON map");
 
       const auto members = json.getMemberNames();
-      BOOST_FOREACH (const auto& name, members)
+      for (const auto& name : members)
       {
         const Json::Value& text_json = json[name];
         if (!text_json.isString())

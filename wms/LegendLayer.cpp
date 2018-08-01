@@ -6,7 +6,7 @@
 #include "Iri.h"
 #include "Layer.h"
 #include "State.h"
-#include <boost/foreach.hpp>
+
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
 #include <macgyver/StringConversion.h>

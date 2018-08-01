@@ -19,7 +19,6 @@
 #include <spine/Json.h>
 #include <spine/TimeSeries.h>
 
-#include <boost/foreach.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <ctpp2/CDT.hpp>
 #include <gdal/ogr_spatialref.h>
@@ -121,7 +120,7 @@ double mean(const Spine::TimeSeries::TimeSeries& tseries)
   {
     double sum = 0;
     int count = 0;
-    BOOST_FOREACH (const auto& tv, tseries)
+    for (const auto& tv : tseries)
     {
       const double* value = boost::get<double>(&tv.value);
       if (value && *value != kFloatMissing)
@@ -153,7 +152,7 @@ double max(const Spine::TimeSeries::TimeSeries& tseries)
   {
     double res = 0;
     bool valid = false;
-    BOOST_FOREACH (const auto& tv, tseries)
+    for (const auto& tv : tseries)
     {
       const double* value = boost::get<double>(&tv.value);
       if (value && *value != kFloatMissing)
@@ -250,7 +249,7 @@ std::vector<double> calculate_rose_distribution(const Spine::TimeSeries::TimeSer
 
     std::vector<double> result(sectors, 0);
 
-    BOOST_FOREACH (const auto& tv, directions)
+    for (const auto& tv : directions)
     {
       const double* value = boost::get<double>(&tv.value);
 
@@ -452,7 +451,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // Collect the text layers separately
     std::list<CTPP::CDT> text_layers;
 
-    BOOST_FOREACH (const auto& station, stations.stations)
+    for (const auto& station : stations.stations)
     {
       // Currently we require the station to have a fmisid
       if (!station.fmisid)
@@ -655,7 +654,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
       if (wdata.valid)
       {
-        BOOST_FOREACH (const auto& observation, observations.observations)
+        for (const auto& observation : observations.observations)
         {
           double value = 0;
           if (observation.parameter == "mean_t(T)")
@@ -683,7 +682,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     }
 
     theLayersCdt.PushBack(group_cdt);
-    BOOST_FOREACH (const auto& cdt, text_layers)
+    for (const auto& cdt : text_layers)
       theLayersCdt.PushBack(cdt);
 
     // Close the grouping
@@ -726,7 +725,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
 
     std::map<int, WindRoseData> result;
 
-    BOOST_FOREACH (const auto& station, stations.stations)
+    for (const auto& station : stations.stations)
     {
       settings.fmisids.clear();
       if (!station.fmisid)

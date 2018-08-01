@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 #include "Projection.h"
-#include <boost/foreach.hpp>
+
 #include <engines/querydata/ParameterOptions.h>
 #include <gis/OGR.h>
 #include <spine/Convenience.h>
@@ -195,7 +195,7 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
     // Iterate through all the members
 
     const auto members = theJson.getMemberNames();
-    BOOST_FOREACH (const auto& name, members)
+    for (const auto& name : members)
     {
       const Json::Value& json = theJson[name];
 

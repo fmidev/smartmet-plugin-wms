@@ -1,7 +1,7 @@
 #include "Symbols.h"
 #include "Config.h"
 #include "Hash.h"
-#include <boost/foreach.hpp>
+
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
 #include <string>
@@ -28,7 +28,7 @@ void Symbols::init(const Json::Value& theJson, const State& theState)
     // Iterate through all the members
 
     const auto symbols_members = theJson.getMemberNames();
-    BOOST_FOREACH (const auto& name, symbols_members)
+    for (const auto& name : symbols_members)
     {
       const Json::Value& symbol_json = theJson[name];
 

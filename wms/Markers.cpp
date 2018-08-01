@@ -1,7 +1,7 @@
 #include "Markers.h"
 #include "Config.h"
 #include "Hash.h"
-#include <boost/foreach.hpp>
+
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
 #include <string>
@@ -28,7 +28,7 @@ void Markers::init(const Json::Value& theJson, const State& theState)
     // Iterate through all the members
 
     const auto markers_members = theJson.getMemberNames();
-    BOOST_FOREACH (const auto& name, markers_members)
+    for (const auto& name : markers_members)
     {
       const Json::Value& marker_json = theJson[name];
 

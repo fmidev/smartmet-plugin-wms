@@ -19,7 +19,7 @@
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
-#include <boost/foreach.hpp>
+
 #include <ctpp2/CDT.hpp>
 #include <gis/Box.h>
 #include <gis/OGR.h>

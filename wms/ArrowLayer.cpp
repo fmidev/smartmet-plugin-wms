@@ -23,7 +23,6 @@
 #include <newbase/NFmiArea.h>
 #include <newbase/NFmiPoint.h>
 
-#include <boost/foreach.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>

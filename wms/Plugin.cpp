@@ -32,7 +32,7 @@
 
 #include <boost/date_time/posix_time/time_formatters.hpp>
 #include <boost/filesystem/operations.hpp>
-#include <boost/foreach.hpp>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/timer/timer.hpp>
 #include <boost/utility.hpp>

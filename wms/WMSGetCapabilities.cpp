@@ -3,7 +3,7 @@
 #include "WMSException.h"
 
 #include <boost/algorithm/string/join.hpp>
-#include <boost/foreach.hpp>
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/range/adaptor/map.hpp>

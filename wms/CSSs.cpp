@@ -1,7 +1,7 @@
 #include "CSSs.h"
 #include "Config.h"
 #include "Hash.h"
-#include <boost/foreach.hpp>
+
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
 #include <string>
@@ -28,7 +28,7 @@ void CSSs::init(const Json::Value& theJson, const State& theState)
     // Iterate through all the members
 
     const auto csss_members = theJson.getMemberNames();
-    BOOST_FOREACH (const auto& name, csss_members)
+    for (const auto& name : csss_members)
     {
       const Json::Value& css_json = theJson[name];
 

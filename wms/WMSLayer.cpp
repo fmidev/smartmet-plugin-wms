@@ -14,7 +14,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/split.hpp>
-#include <boost/foreach.hpp>
+
 #include <boost/make_shared.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 

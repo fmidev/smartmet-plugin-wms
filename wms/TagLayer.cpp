@@ -3,7 +3,7 @@
 #include "Layer.h"
 #include "LonLatToXYTransformation.h"
 #include "State.h"
-#include <boost/foreach.hpp>
+
 #include <ctpp2/CDT.hpp>
 #include <spine/Exception.h>
 

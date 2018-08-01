@@ -1,7 +1,7 @@
 #include "Filters.h"
 #include "Config.h"
 #include "Hash.h"
-#include <boost/foreach.hpp>
+
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
 #include <string>
@@ -28,7 +28,7 @@ void Filters::init(const Json::Value& theJson, const State& theState)
     // Iterate through all the members
 
     const auto filters_members = theJson.getMemberNames();
-    BOOST_FOREACH (const auto& name, filters_members)
+    for (const auto& name : filters_members)
     {
       const Json::Value& filter_json = theJson[name];
 

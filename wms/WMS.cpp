@@ -1,7 +1,6 @@
 #include "WMS.h"
 #include "WMSException.h"
 
-#include <boost/foreach.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/tokenizer.hpp>

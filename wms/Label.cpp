@@ -1,7 +1,7 @@
 #include "Label.h"
 #include "Config.h"
 #include "Hash.h"
-#include <boost/foreach.hpp>
+
 #include <boost/format.hpp>
 #include <boost/locale.hpp>
 #include <spine/Exception.h>
@@ -100,7 +100,7 @@ void Label::init(const Json::Value& theJson, const Config& theConfig)
     // Iterate through all the members
 
     const auto members = theJson.getMemberNames();
-    BOOST_FOREACH (const auto& name, members)
+    for (const auto& name : members)
     {
       const Json::Value& json = theJson[name];
 

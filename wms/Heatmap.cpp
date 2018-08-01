@@ -1,7 +1,7 @@
 #include "Heatmap.h"
 #include "Config.h"
 #include "Hash.h"
-#include <boost/foreach.hpp>
+
 #include <spine/Exception.h>
 #include <stdexcept>
 
@@ -45,7 +45,7 @@ void Heatmap::init(const Json::Value& theJson, const Config& theConfig)
     // Iterate through all the members.
 
     const auto members = theJson.getMemberNames();
-    BOOST_FOREACH (const auto& name, members)
+    for (const auto& name : members)
     {
       const Json::Value& json = theJson[name];
 

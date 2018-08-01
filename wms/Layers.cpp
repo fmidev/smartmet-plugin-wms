@@ -2,7 +2,7 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "LayerFactory.h"
-#include <boost/foreach.hpp>
+
 #include <boost/functional/hash.hpp>
 #include <ctpp2/CDT.hpp>
 #include <spine/Exception.h>
@@ -53,7 +53,7 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
 {
   try
   {
-    BOOST_FOREACH (auto& layer, layers)
+    for (auto& layer : layers)
     {
       // Each layer may actually generate multiple CDT layers
       // (Animations, inner tags etc). Each is pushed separately

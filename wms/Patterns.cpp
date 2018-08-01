@@ -1,7 +1,7 @@
 #include "Patterns.h"
 #include "Config.h"
 #include "Hash.h"
-#include <boost/foreach.hpp>
+
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
 #include <string>
@@ -28,7 +28,7 @@ void Patterns::init(const Json::Value& theJson, const State& theState)
     // Iterate through all the members
 
     const auto patterns_members = theJson.getMemberNames();
-    BOOST_FOREACH (const auto& name, patterns_members)
+    for (const auto& name : patterns_members)
     {
       const Json::Value& pattern_json = theJson[name];
 

@@ -7,7 +7,7 @@
 #include <macgyver/StringConversion.h>
 
 #include <boost/algorithm/string/erase.hpp>
-#include <boost/foreach.hpp>
+
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -135,7 +135,7 @@ void validate_options(const tag_get_map_request_options& options,
       }
 
       // check that given timesteps are valid
-      BOOST_FOREACH (const boost::posix_time::ptime& timestamp, options.timesteps)
+      for (const boost::posix_time::ptime& timestamp : options.timesteps)
       {
         if (!itsConfig.isValidTime(layer, timestamp, querydata))
         {

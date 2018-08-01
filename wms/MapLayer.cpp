@@ -6,7 +6,7 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "State.h"
-#include <boost/foreach.hpp>
+
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
 #include <gis/Box.h>

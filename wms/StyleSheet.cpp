@@ -30,11 +30,9 @@ void StyleSheet::add(const std::string& theCSS)
   const boost::regex REopenblock{R"(^\{\s*)"};
   const boost::regex REcloseblock{R"(^\})"};
 
-  const boost::regex REproperty{
-      R"(^(\*?[-#/\*\w]+(\[[0-9a-z_-]+\])?)\s*)"};
+  const boost::regex REproperty{R"(^(\*?[-#/\*\w]+(\[[0-9a-z_-]+\])?)\s*)"};
   const boost::regex REequals{R"(^:\s*)"};
-  const boost::regex REvalue{
-      R"(^((?:'(?:\\'|.)*?'|\"(?:\\\"|.)*?\"|\([^\)]*?\)|[^\};])+))"};
+  const boost::regex REvalue{R"(^((?:'(?:\\'|.)*?'|\"(?:\\\"|.)*?\"|\([^\)]*?\)|[^\};])+))"};
   const boost::regex REnextproperty{R"(^[;\s]*)"};
 
   // Remove comments

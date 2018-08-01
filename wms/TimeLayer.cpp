@@ -8,7 +8,7 @@
 #include "State.h"
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/foreach.hpp>
+
 #include <ctpp2/CDT.hpp>
 #include <fmt/time.h>
 #include <gis/Box.h>

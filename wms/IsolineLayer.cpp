@@ -7,7 +7,7 @@
 #include "Isoline.h"
 #include "Layer.h"
 #include "State.h"
-#include <boost/foreach.hpp>
+
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
 #include <engines/gis/Engine.h>

@@ -5,7 +5,6 @@
 #include <macgyver/StringConversion.h>
 #include <spine/Exception.h>
 
-#include <boost/foreach.hpp>
 #include <ctpp2/CDT.hpp>
 #include <stdexcept>
 

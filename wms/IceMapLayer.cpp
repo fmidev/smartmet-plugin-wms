@@ -8,7 +8,7 @@
 #include "State.h"
 #include "TextTable.h"
 #include "TextUtility.h"
-#include <boost/foreach.hpp>
+
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <gis/Box.h>
@@ -394,7 +394,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     defaultSR.importFromEPSG(3395);  // if sr is missing use this one
     unsigned int mapid(1);           // id to concatenate to iri to make it unique
     // Get the polygons and store them into the template engine
-    BOOST_FOREACH (const PostGISLayerFilter& filter, filters)
+    for (const PostGISLayerFilter& filter : filters)
     {
       if (time_condition && filter.where)
         mapOptions.where = (*filter.where + " AND " + *time_condition);

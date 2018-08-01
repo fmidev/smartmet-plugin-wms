@@ -7,7 +7,7 @@
 #include "Isoband.h"
 #include "Layer.h"
 #include "State.h"
-#include <boost/foreach.hpp>
+
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
 #include <engines/contour/Interpolation.h>

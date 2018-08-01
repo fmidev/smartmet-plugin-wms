@@ -1,7 +1,7 @@
 #include "Gradients.h"
 #include "Config.h"
 #include "Hash.h"
-#include <boost/foreach.hpp>
+
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
 #include <string>
@@ -28,7 +28,7 @@ void Gradients::init(const Json::Value& theJson, const State& theState)
     // Iterate through all the members
 
     const auto gradients_members = theJson.getMemberNames();
-    BOOST_FOREACH (const auto& name, gradients_members)
+    for (const auto& name : gradients_members)
     {
       const Json::Value& gradient_json = theJson[name];
 

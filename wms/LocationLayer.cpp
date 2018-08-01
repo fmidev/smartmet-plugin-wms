@@ -6,7 +6,7 @@
 #include "Layer.h"
 #include "Select.h"
 #include "State.h"
-#include <boost/foreach.hpp>
+
 #include <ctpp2/CDT.hpp>
 #include <engines/geonames/Engine.h>
 #include <gdal/ogr_spatialref.h>
@@ -87,7 +87,7 @@ void LocationLayer::init(const Json::Value& theJson,
       else if (json.isObject())
       {
         const auto features = json.getMemberNames();
-        BOOST_FOREACH (const auto& feature, features)
+        for (const auto& feature : features)
         {
           const Json::Value& innerjson = json[feature];
           if (!innerjson.isArray())
@@ -206,7 +206,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     // Process all the locations
 
-    BOOST_FOREACH (const auto& location, locations)
+    for (const auto& location : locations)
     {
       // The location information
       double lon = location->longitude;
@@ -311,10 +311,10 @@ std::size_t LocationLayer::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(symbol));
     boost::hash_combine(hash, Dali::hash_symbol(symbol, theState));
 
-    BOOST_FOREACH (const auto& name_symbol, symbols)
+    for (const auto& name_symbol : symbols)
     {
       boost::hash_combine(hash, Dali::hash_value(name_symbol.first));
-      BOOST_FOREACH (const auto& selection, name_symbol.second)
+      for (const auto& selection : name_symbol.second)
       {
         boost::hash_combine(hash, Dali::hash_value(selection, theState));
       }

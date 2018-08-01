@@ -1,7 +1,7 @@
 // ======================================================================
 
 #include "Select.h"
-#include <boost/foreach.hpp>
+
 #include <spine/Exception.h>
 
 namespace SmartMet
@@ -25,7 +25,7 @@ boost::optional<AttributeSelection> attribute(const std::vector<AttributeSelecti
   {
     boost::optional<AttributeSelection> ret;
 
-    BOOST_FOREACH (const auto& attrs, theSelection)
+    for (const auto& attrs : theSelection)
     {
       if (attrs.matches(theValue))
       {

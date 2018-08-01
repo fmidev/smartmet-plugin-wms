@@ -15,7 +15,6 @@
 #endif
 #include <engines/querydata/Engine.h>
 
-#include <boost/foreach.hpp>
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
 #include <gis/Box.h>

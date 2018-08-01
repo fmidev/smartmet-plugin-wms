@@ -5,7 +5,7 @@
 #include "Hash.h"
 #include "Projection.h"
 #include "State.h"
-#include <boost/foreach.hpp>
+
 #include <engines/contour/Engine.h>
 #include <engines/contour/Interpolation.h>
 #include <gis/Box.h>

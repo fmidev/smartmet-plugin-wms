@@ -1,7 +1,7 @@
 #include "LegendLabels.h"
 #include "Config.h"
 #include "Hash.h"
-#include <boost/foreach.hpp>
+
 #include <spine/Exception.h>
 #include <stdexcept>
 
@@ -37,7 +37,7 @@ void LegendLabels::init(const Json::Value& theJson, const Config& theConfig)
     // Iterate through all the members
 
     const auto members = theJson.getMemberNames();
-    BOOST_FOREACH (const auto& name, members)
+    for (const auto& name : members)
     {
       const Json::Value& json = theJson[name];
 
@@ -58,7 +58,7 @@ void LegendLabels::init(const Json::Value& theJson, const Config& theConfig)
         if (!json.isObject())
           throw Spine::Exception(BCP, "legend-layer conversions setting in a must be a map");
         const auto members = json.getMemberNames();
-        BOOST_FOREACH (const auto& name, members)
+        for (const auto& name : members)
         {
           const Json::Value& label_json = json[name];
           if (label_json.isString())
@@ -66,7 +66,7 @@ void LegendLabels::init(const Json::Value& theJson, const Config& theConfig)
           else if (label_json.isObject())
           {
             const auto languages = label_json.getMemberNames();
-            BOOST_FOREACH (const auto& lang, languages)
+            for (const auto& lang : languages)
             {
               const Json::Value& lang_json = label_json[lang];
               if (!lang_json.isString())
