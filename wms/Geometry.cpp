@@ -169,8 +169,8 @@ std::string toString(const OGRGeometry& theGeom,
   if (theType == "kml")
     return toKML(theGeom, theBox, theSRS);
 
-  // Default is SVG-style
-  const int precision = 1;
+  // Default is SVG-style with approximately half pixel precision
+  const double precision = 0.3;
   return Fmi::OGR::exportToSvg(theGeom, theBox, precision);
 }
 

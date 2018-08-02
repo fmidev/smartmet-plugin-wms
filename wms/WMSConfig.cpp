@@ -927,7 +927,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
       const auto& layer_name = iter_pair.first;
       // If authentication is requested, skip the layer if authentication fails
       if (apikey && authenticate)
-        if (!itsAuthEngine | !itsAuthEngine->authorize(*apikey, layer_name, wmsService))
+        if (!itsAuthEngine || !itsAuthEngine->authorize(*apikey, layer_name, wmsService))
           continue;
 #endif
 
