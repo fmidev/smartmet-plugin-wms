@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 18.8.2
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -17,9 +17,9 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-giza-devel >= 18.6.27
-BuildRequires: smartmet-library-macgyver-devel >= 18.7.26
-BuildRequires: smartmet-library-spine-devel >= 18.7.26
+BuildRequires: smartmet-library-giza-devel >= 18.8.1
+BuildRequires: smartmet-library-macgyver-devel >= 18.8.1
+BuildRequires: smartmet-library-spine-devel >= 18.8.2
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.7.25
@@ -29,9 +29,9 @@ BuildRequires: smartmet-engine-observation-devel >= 18.7.25
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.7.25
 BuildRequires: smartmet-engine-geonames-devel >= 18.7.25
-BuildRequires: smartmet-engine-querydata-devel >= 18.7.25
+BuildRequires: smartmet-engine-querydata-devel >= 18.8.2
 BuildRequires: smartmet-engine-contour-devel >= 18.7.25
-BuildRequires: smartmet-library-gis-devel >= 18.7.23
+BuildRequires: smartmet-library-gis-devel >= 18.8.2
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.5
 BuildRequires: jsoncpp-devel
@@ -44,18 +44,18 @@ Requires: fmt
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
-Requires: smartmet-library-gis >= 18.7.23
-Requires: smartmet-library-macgyver >= 18.7.26
-Requires: smartmet-library-giza >= 18.6.27
+Requires: smartmet-library-gis >= 18.8.2
+Requires: smartmet-library-macgyver >= 18.8.1
+Requires: smartmet-library-giza >= 18.8.1
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 18.7.25
 %endif
-Requires: smartmet-engine-querydata >= 18.7.25
+Requires: smartmet-engine-querydata >= 18.8.2
 Requires: smartmet-engine-contour >= 18.7.25
 Requires: smartmet-engine-gis >= 18.7.25
 Requires: smartmet-engine-geonames >= 18.7.25
-Requires: smartmet-server >= 18.7.25
-Requires: smartmet-library-spine >= 18.7.26
+Requires: smartmet-server >= 18.8.1
+Requires: smartmet-library-spine >= 18.8.2
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Aug  2 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.8.2-2.fmi
+- Changed default resolution to 0.3 decimals (was 1)
+
 * Thu Aug  2 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.8.2-1.fmi
 - Fixed a potential crash if authentication engine is not available
 
