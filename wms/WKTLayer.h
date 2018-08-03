@@ -44,6 +44,7 @@ class WKTLayer : public Layer
   std::string wkt;
   boost::optional<double> resolution;
   boost::optional<double> relativeresolution;
+  double precision = 1.0;
 
 };  // class WKTLayer
 

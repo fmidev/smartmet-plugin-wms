@@ -84,6 +84,27 @@ Config::Config(const string& configfile)
       }
     }
 
+    // Default precisions for various layers
+
+    if (itsConfig.exists("precision"))
+    {
+      const auto& precisions = itsConfig.lookup("precision");
+      if (!precisions.isGroup())
+      {
+        throw Spine::Exception::Trace(BCP, "Configuration error!")
+            .addParameter("Configuration file", configfile)
+            .addDetail("Configured value of 'precisions' must be a group");
+      }
+
+      for (int i = 0; i < precisions.getLength(); ++i)
+      {
+        const auto& setting = precisions[i];
+        std::string name = setting.getName();
+        double value = setting;
+        itsDefaultPrecisions[name] = value;
+      }
+    }
+
     // Store array of SVG attribute names into a set for looking up valid names
     {
       const auto& attributes = itsConfig.lookup("regular_attributes");
@@ -208,6 +229,20 @@ std::string Config::defaultTemplate(const std::string& theType) const
 
   // Backward compatibility in case the settings are missing
   return "svg";
+}
+
+double Config::defaultPrecision(const std::string& theName) const
+{
+  auto it = itsDefaultPrecisions.find(theName);
+  if (it != itsDefaultPrecisions.end())
+    return it->second;
+
+  it = itsDefaultPrecisions.find("default");
+  if (it != itsDefaultPrecisions.end())
+    return it->second;
+
+  // default precision is one decimal
+  return 1.0;
 }
 
 const std::string& Config::wmsUrl() const

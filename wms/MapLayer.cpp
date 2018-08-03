@@ -41,6 +41,8 @@ void MapLayer::init(const Json::Value& theJson,
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
+    precision = theConfig.defaultPrecision("map");
+
     // Extract all members
 
     Json::Value nulljson;
@@ -48,6 +50,10 @@ void MapLayer::init(const Json::Value& theJson,
     auto json = theJson.get("map", nulljson);
     if (!json.isNull())
       map.init(json, theConfig);
+
+    json = theJson.get("precision", nulljson);
+    if (!json.isNull())
+      precision = json.asDouble();
   }
   catch (...)
   {
@@ -146,7 +152,7 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       map_cdt["iri"] = iri;
       map_cdt["type"] = Geometry::name(*geom, theState.getType());
       map_cdt["layertype"] = "map";
-      map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs);
+      map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
 
       theState.addPresentationAttributes(map_cdt, css, attributes);
 
@@ -207,6 +213,7 @@ std::size_t MapLayer::hash_value(const State& theState) const
   {
     auto hash = Layer::hash_value(theState);
     boost::hash_combine(hash, Dali::hash_value(map, theState));
+    boost::hash_combine(hash, boost::hash_value(precision));
     return hash;
   }
   catch (...)

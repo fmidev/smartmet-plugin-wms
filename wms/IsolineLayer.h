@@ -35,6 +35,8 @@ class IsolineLayer : public Layer
   std::vector<Isoline> isolines;
   Smoother smoother;
 
+  double precision = 1.0;
+
   boost::optional<double> multiplier;
   boost::optional<double> offset;
 

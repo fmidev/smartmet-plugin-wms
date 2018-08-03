@@ -80,6 +80,7 @@ class FrameLayer : public Layer
   boost::optional<FrameDimension> itsOuterBorder;
   boost::optional<std::string> itsPattern;
   boost::optional<FrameScale> itsScale;
+  double itsPrecision = 1.0;
   OGRGeometryPtr itsGeom;
   Attributes itsScaleAttributes;
 
