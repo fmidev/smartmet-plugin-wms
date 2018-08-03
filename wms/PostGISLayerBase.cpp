@@ -1,6 +1,6 @@
 #include "PostGISLayerBase.h"
+#include "Config.h"
 #include "Hash.h"
-
 #include <engines/gis/Engine.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
@@ -29,6 +29,8 @@ void PostGISLayerBase::init(const Json::Value& theJson,
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
+    this->precision = theConfig.defaultPrecision("icemap");
+
     Json::Value nulljson;
 
     auto json = theJson.get("pgname", nulljson);
@@ -48,6 +50,10 @@ void PostGISLayerBase::init(const Json::Value& theJson,
       this->table = json.asString();
     else
       throw Spine::Exception(BCP, "'table' must be defined for postgis layer");
+
+    json = theJson.get("precision", nulljson);
+    if (!json.isNull())
+      this->precision = json.asDouble();
 
     json = theJson.get("time_column", nulljson);
     if (!json.isNull())
@@ -104,6 +110,7 @@ std::size_t PostGISLayerBase::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(pgname));
     boost::hash_combine(hash, Dali::hash_value(schema));
     boost::hash_combine(hash, Dali::hash_value(table));
+    boost::hash_combine(hash, Dali::hash_value(precision));
     boost::hash_combine(hash, Dali::hash_value(time_column));
     boost::hash_combine(hash, Dali::hash_value(time_condition));
     boost::hash_combine(hash, Dali::hash_value(filters, theState));

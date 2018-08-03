@@ -1,10 +1,10 @@
 #include "FrameLayer.h"
+#include "Config.h"
 #include "Hash.h"
 #include "Layer.h"
 #include "LonLatToXYTransformation.h"
 #include "State.h"
 #include "TextUtility.h"
-
 #include <ctpp2/CDT.hpp>
 #include <gis/OGR.h>
 #include <spine/Exception.h>
@@ -101,6 +101,8 @@ void FrameLayer::init(const Json::Value& theJson,
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
+    itsPrecision = theConfig.defaultPrecision("frame");
+
     // Extract member values
     Json::Value nulljson;
 
@@ -111,6 +113,10 @@ void FrameLayer::init(const Json::Value& theJson,
     auto jsonDimension = theJson.get("dimension", nulljson);
     if (jsonDimension.isNull())
       throw Spine::Exception(BCP, "Frame-layer must have dimension element!");
+
+    auto jsonPrecision = theJson.get("precision", nulljson);
+    if (!jsonPrecision.isNull())
+      itsPrecision = jsonPrecision.asDouble();
 
     auto json = jsonDimension.get("inner_border", nulljson);
     if (json.isNull())
@@ -217,7 +223,7 @@ void FrameLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     frame_cdt["type"] = Geometry::name(*itsGeom, theState.getType());
 
     frame_cdt["layertype"] = "frame";
-    frame_cdt["data"] = Geometry::toString(*itsGeom, theState.getType(), box, crs);
+    frame_cdt["data"] = Geometry::toString(*itsGeom, theState.getType(), box, crs, itsPrecision);
     //    theState.addPresentationAttributes(frame_cdt, css, attributes);
     theGlobals["paths"][iri] = frame_cdt;
 
@@ -527,6 +533,7 @@ std::size_t FrameLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
+    boost::hash_combine(hash, itsPrecision);
     boost::hash_combine(hash, itsInnerBorder.hash_value());
     if (itsOuterBorder)
       boost::hash_combine(hash, itsOuterBorder->hash_value());

@@ -43,6 +43,8 @@ void IsolineLayer::init(const Json::Value& theJson,
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
+    precision = theConfig.defaultPrecision("isoline");
+
     // Extract member values
 
     Json::Value nulljson;
@@ -62,6 +64,10 @@ void IsolineLayer::init(const Json::Value& theJson,
     json = theJson.get("smoother", nulljson);
     if (!json.isNull())
       smoother.init(json, theConfig);
+
+    json = theJson.get("precision", nulljson);
+    if (!json.isNull())
+      precision = json.asDouble();
 
     json = theJson.get("multiplier", nulljson);
     if (!json.isNull())
@@ -304,7 +310,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           isoline_cdt["parameter"] = *parameter;
           isoline_cdt["type"] = Geometry::name(*geom2, theState.getType());
           isoline_cdt["layertype"] = "isoline";
-          isoline_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs);
+          isoline_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs, precision);
           isoline_cdt["value"] = isoline.value;
 
           theState.addPresentationAttributes(isoline_cdt, css, attributes, isoline.attributes);
@@ -346,6 +352,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(level));
     boost::hash_combine(hash, Dali::hash_value(isolines, theState));
     boost::hash_combine(hash, Dali::hash_value(smoother, theState));
+    boost::hash_combine(hash, Dali::hash_value(precision));
     boost::hash_combine(hash, Dali::hash_value(multiplier));
     boost::hash_combine(hash, Dali::hash_value(offset));
     boost::hash_combine(hash, Dali::hash_value(outside, theState));

@@ -161,7 +161,8 @@ std::string toKML(const OGRGeometry& theGeom,
 std::string toString(const OGRGeometry& theGeom,
                      const std::string& theType,
                      const Fmi::Box& theBox,
-                     boost::shared_ptr<OGRSpatialReference> theSRS)
+                     boost::shared_ptr<OGRSpatialReference> theSRS,
+                     double thePrecision)
 {
   if (theType == "geojson")
     return toGeoJSON(theGeom, theBox, theSRS);
@@ -169,9 +170,7 @@ std::string toString(const OGRGeometry& theGeom,
   if (theType == "kml")
     return toKML(theGeom, theBox, theSRS);
 
-  // Default is SVG-style with approximately half pixel precision
-  const double precision = 0.3;
-  return Fmi::OGR::exportToSvg(theGeom, theBox, precision);
+  return Fmi::OGR::exportToSvg(theGeom, theBox, thePrecision);
 }
 
 }  // namespace Geometry

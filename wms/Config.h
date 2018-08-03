@@ -52,6 +52,8 @@ class Config : private boost::noncopyable
 
   std::string defaultTemplate(const std::string& theType) const;
 
+  double defaultPrecision(const std::string& theName) const;
+
 #ifndef WITHOUT_AUHTENTICATION
   bool authenticate() const;
 #endif
@@ -85,6 +87,8 @@ class Config : private boost::noncopyable
   std::set<std::string> itsPresentationAttributes;
 
   std::map<std::string, std::string> itsDefaultTemplates;  // data type to template name
+
+  std::map<std::string, double> itsDefaultPrecisions;  // path precision for SVG etc
 
   bool itsQuiet = false;
 

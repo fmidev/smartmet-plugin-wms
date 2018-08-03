@@ -99,7 +99,7 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           map_cdt["iri"] = iri;
           map_cdt["type"] = Geometry::name(*geom, theState.getType());
           map_cdt["layertype"] = "postgis";
-          map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs);
+          map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
           theState.addPresentationAttributes(map_cdt, css, attributes);
           theGlobals["paths"][iri] = map_cdt;
 

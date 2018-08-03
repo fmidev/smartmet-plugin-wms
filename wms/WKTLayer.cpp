@@ -1,4 +1,5 @@
 #include "WKTLayer.h"
+#include "Config.h"
 #include "Geometry.h"
 #include "Hash.h"
 #include "Layer.h"
@@ -34,6 +35,8 @@ void WKTLayer::init(const Json::Value& theJson,
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
+    precision = theConfig.defaultPrecision("wkt");
+
     // Extract member values
 
     Json::Value nulljson;
@@ -49,6 +52,10 @@ void WKTLayer::init(const Json::Value& theJson,
     json = theJson.get("relativeresolution", nulljson);
     if (!json.isNull())
       relativeresolution = json.asDouble();
+
+    json = theJson.get("precision", nulljson);
+    if (!json.isNull())
+      precision = json.asDouble();
   }
   catch (...)
   {
@@ -152,7 +159,7 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     CTPP::CDT wkt_cdt(CTPP::CDT::HASH_VAL);
     wkt_cdt["iri"] = iri;
-    wkt_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs);
+    wkt_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs, precision);
     wkt_cdt["type"] = Geometry::name(*geom2, theState.getType());
     wkt_cdt["layertype"] = "wkt";
 
@@ -199,6 +206,7 @@ std::size_t WKTLayer::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(wkt));
     boost::hash_combine(hash, Dali::hash_value(resolution));
     boost::hash_combine(hash, Dali::hash_value(relativeresolution));
+    boost::hash_combine(hash, Dali::hash_value(precision));
     return hash;
   }
   catch (...)

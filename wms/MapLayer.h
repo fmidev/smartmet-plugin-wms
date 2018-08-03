@@ -33,6 +33,7 @@ class MapLayer : public Layer
   virtual std::size_t hash_value(const State& theState) const;
 
   Map map;
+  double precision = 1.0;
 
  private:
 };  // class MapLayer

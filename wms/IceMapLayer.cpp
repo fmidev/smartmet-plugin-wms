@@ -1143,7 +1143,8 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
   map_cdt["iri"] = iri;
   map_cdt["type"] = Geometry::name(*theResultItem.geom, theState.getType());
   map_cdt["layertype"] = "icemap";
-  map_cdt["data"] = Geometry::toString(*theResultItem.geom, theState.getType(), box, crs);
+  map_cdt["data"] =
+      Geometry::toString(*theResultItem.geom, theState.getType(), box, crs, precision);
   theState.addPresentationAttributes(map_cdt, css, attributes);
   theGlobals["paths"][iri] = map_cdt;
 

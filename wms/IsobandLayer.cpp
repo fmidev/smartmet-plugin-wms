@@ -56,6 +56,8 @@ void IsobandLayer::init(const Json::Value& theJson,
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
+    precision = theConfig.defaultPrecision("isoband");
+
     // Extract member values
 
     Json::Value nulljson;
@@ -79,6 +81,10 @@ void IsobandLayer::init(const Json::Value& theJson,
     json = theJson.get("smoother", nulljson);
     if (!json.isNull())
       smoother.init(json, theConfig);
+
+    json = theJson.get("precision", nulljson);
+    if (!json.isNull())
+      precision = json.asDouble();
 
     json = theJson.get("multiplier", nulljson);
     if (!json.isNull())
@@ -536,7 +542,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           isoband_cdt["iri"] = iri;
           isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
           isoband_cdt["parameter"] = *parameter;
-          isoband_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs);
+          isoband_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs, precision);
           isoband_cdt["type"] = Geometry::name(*geom2, theState.getType());
           isoband_cdt["layertype"] = "isoband";
 
@@ -593,6 +599,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(isobands, theState));
     boost::hash_combine(hash, Dali::hash_value(interpolation));
     boost::hash_combine(hash, Dali::hash_value(smoother, theState));
+    boost::hash_combine(hash, Dali::hash_value(precision));
     boost::hash_combine(hash, Dali::hash_value(multiplier));
     boost::hash_combine(hash, Dali::hash_value(offset));
     boost::hash_combine(hash, Dali::hash_value(outside, theState));
