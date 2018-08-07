@@ -495,8 +495,8 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
       {
         // Convert pixel coordinate to world coordinate (or latlon for geographic spatial
         // references)
-        double xcoord = static_cast<double>(xpos);
-        double ycoord = static_cast<double>(ypos);
+        auto xcoord = static_cast<double>(xpos);
+        auto ycoord = static_cast<double>(ypos);
 
         theBox.itransform(xcoord, ycoord);
 

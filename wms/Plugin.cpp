@@ -593,8 +593,7 @@ void Plugin::init()
       engine = itsReactor->getSingleton("Authentication", nullptr);
       if (!engine)
         throw Spine::Exception(BCP, "Authentication unavailable");
-      Engine::Authentication::Engine *authEngine =
-          reinterpret_cast<Engine::Authentication::Engine *>(engine);
+      auto *authEngine = reinterpret_cast<Engine::Authentication::Engine *>(engine);
 
 // WMS configurations
 #ifndef WITHOUT_OBSERVATION

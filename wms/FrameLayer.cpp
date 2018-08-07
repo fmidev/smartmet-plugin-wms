@@ -54,11 +54,11 @@ OGRGeometryPtr createFrameGeometry(const FrameDimension& inner,
 {
   OGRGeometryPtr pFrameGeom;
 
-  OGRPolygon* polygon = dynamic_cast<OGRPolygon*>(OGRGeometryFactory::createGeometry(wkbPolygon));
+  auto* polygon = dynamic_cast<OGRPolygon*>(OGRGeometryFactory::createGeometry(wkbPolygon));
 
   if (outer)
   {
-    OGRLinearRing* exterior =
+    auto* exterior =
         dynamic_cast<OGRLinearRing*>(OGRGeometryFactory::createGeometry(wkbLinearRing));
 
     exterior->addPoint(outer->leftLongitude, outer->bottomLatitude);
@@ -68,8 +68,7 @@ OGRGeometryPtr createFrameGeometry(const FrameDimension& inner,
     exterior->addPoint(outer->leftLongitude, outer->bottomLatitude);
     polygon->addRing(exterior);
   }
-  OGRLinearRing* interior =
-      dynamic_cast<OGRLinearRing*>(OGRGeometryFactory::createGeometry(wkbLinearRing));
+  auto* interior = dynamic_cast<OGRLinearRing*>(OGRGeometryFactory::createGeometry(wkbLinearRing));
   interior->addPoint(inner.leftLongitude, inner.bottomLatitude);
   interior->addPoint(inner.rightLongitude, inner.bottomLatitude);
   interior->addPoint(inner.rightLongitude, inner.topLatitude);

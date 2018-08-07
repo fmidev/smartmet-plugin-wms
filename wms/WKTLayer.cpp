@@ -95,7 +95,7 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     // Create the shape
 
-    OGRSpatialReference* wgs84 = new OGRSpatialReference;
+    auto* wgs84 = new OGRSpatialReference;
     wgs84->SetFromUserInput("WGS84");
 
     char* cwkt = const_cast<char*>(wkt.c_str());

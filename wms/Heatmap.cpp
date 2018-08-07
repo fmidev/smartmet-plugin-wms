@@ -105,7 +105,7 @@ std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> Heatmap::getStamp(u
       unsigned y;
       unsigned d = 2 * r + 1;
 
-      float* stamp = static_cast<float*>(calloc(d * d, sizeof(float)));
+      auto* stamp = static_cast<float*>(calloc(d * d, sizeof(float)));
 
       if (!stamp)
         throw Spine::Exception(BCP, "Could not allocate memory for heatmap stamp");
