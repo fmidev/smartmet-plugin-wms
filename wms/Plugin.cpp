@@ -483,7 +483,6 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
       itsQEngine(nullptr),
       itsContourEngine(nullptr),
       itsGisEngine(nullptr),
-      itsGeoEngine(nullptr),
 #ifdef WITHOUT_OBSERVATION
       itsGeoEngine(nullptr)
 #else
