@@ -117,7 +117,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
   boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
   boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
   boost::local_time::local_date_time localdatetime(met_time, utc);
-  std::string tmp = "";
+  std::string tmp;
   auto mylocale = std::locale::classic();
   NFmiPoint dummy;
 

@@ -118,7 +118,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
       boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
       boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
       boost::local_time::local_date_time localdatetime(theTime, utc);
-      std::string tmp = "";
+      std::string tmp;
       auto mylocale = std::locale::classic();
       NFmiPoint dummy;
 
