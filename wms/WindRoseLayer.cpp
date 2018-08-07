@@ -469,8 +469,8 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       double y = lat;
       transformation->Transform(1, &x, &y);
       box.transform(x, y);
-      int xrose = static_cast<int>(std::round(x));
-      int yrose = static_cast<int>(std::round(y));
+      int xrose = lround(x);
+      int yrose = lround(y);
 
       // Where the station is located
 
@@ -478,8 +478,8 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       y = wdata.latitude;
       transformation->Transform(1, &x, &y);
       box.transform(x, y);
-      int xstation = static_cast<int>(std::round(x));
-      int ystation = static_cast<int>(std::round(y));
+      int xstation = lround(x);
+      int ystation = lround(y);
 
       // Generate marker for station if so desired
 

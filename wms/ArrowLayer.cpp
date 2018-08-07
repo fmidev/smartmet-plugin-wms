@@ -967,7 +967,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       double rotate = fmod(wdir + 180, 360);
 
       // Disable rotation for slow wind speeds if a limit is set
-      int nrotate = static_cast<int>(std::round(rotate));
+      int nrotate = lround(rotate);
       if (minrotationspeed && wspd < *minrotationspeed)
         nrotate = 0;
 

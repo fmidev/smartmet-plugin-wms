@@ -106,8 +106,8 @@ void addTextField(double xPos,
     textCdt["start"] = "<text";
     textCdt["end"] = "</text>";
     textCdt["cdata"] = row;
-    textCdt["attributes"]["x"] = Fmi::to_string(std::round(xCoord));
-    textCdt["attributes"]["y"] = Fmi::to_string(std::round(yCoord));
+    textCdt["attributes"]["x"] = Fmi::to_string(lround(xCoord));
+    textCdt["attributes"]["y"] = Fmi::to_string(lround(yCoord));
     textCdt["attributes"]["xml:space"] = "preserve";
     state.addAttributes(globals, textCdt, attributes);
     layersCdt.PushBack(textCdt);
@@ -152,8 +152,8 @@ void addTextField(double xPos,
     textCdt["start"] = "<text";
     textCdt["end"] = "</text>";
     textCdt["cdata"] = row;
-    textCdt["attributes"]["x"] = Fmi::to_string(std::round(xCoord));
-    textCdt["attributes"]["y"] = Fmi::to_string(std::round(yCoord));
+    textCdt["attributes"]["x"] = Fmi::to_string(lround(xCoord));
+    textCdt["attributes"]["y"] = Fmi::to_string(lround(yCoord));
     textCdt["attributes"]["xml:space"] = "preserve";
     state.addAttributes(globals, textCdt, attributes);
     layersCdt.PushBack(textCdt);

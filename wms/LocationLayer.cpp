@@ -276,8 +276,8 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
           theGlobals["includes"][iri] = theState.getSymbol(iri);
 
         tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-        tag_cdt["attributes"]["x"] = Fmi::to_string(std::round(x));
-        tag_cdt["attributes"]["y"] = Fmi::to_string(std::round(y));
+        tag_cdt["attributes"]["x"] = Fmi::to_string(lround(x));
+        tag_cdt["attributes"]["y"] = Fmi::to_string(lround(y));
 
         group_cdt["tags"].PushBack(tag_cdt);
       }

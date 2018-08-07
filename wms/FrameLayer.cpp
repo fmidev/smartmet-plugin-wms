@@ -260,8 +260,8 @@ void FrameLayer::addScaleNumber(CTPP::CDT& theLayersCdt, double x, double y, con
   textCdt["start"] = "<text";
   textCdt["end"] = "</text>";
   textCdt["cdata"] = num;
-  textCdt["attributes"]["x"] = Fmi::to_string(std::round(x));
-  textCdt["attributes"]["y"] = Fmi::to_string(std::round(y));
+  textCdt["attributes"]["x"] = Fmi::to_string(lround(x));
+  textCdt["attributes"]["y"] = Fmi::to_string(lround(y));
   textCdt["attributes"]["font-family"] = itsScaleAttributes.value("font-family");
   textCdt["attributes"]["font-size"] = itsScaleAttributes.value("font-size");
   textCdt["attributes"]["font-style"] = itsScaleAttributes.value("font-style");
@@ -364,7 +364,7 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt)
     // add labels
     if (fmod(tic.first, *(itsScale->labelStep)) < 0.01)
     {
-      std::string labelText = (Fmi::to_string(std::round(tic.first)) + "°");
+      std::string labelText = (Fmi::to_string(lround(tic.first)) + "°");
       text_dimension_t labelDimension = getTextDimension(labelText, labelStyle);
 
       if (labelIsOutside)
@@ -459,7 +459,7 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt)
     // add labels
     if (fmod(tic.first, *(itsScale->labelStep)) < 0.01)
     {
-      std::string labelText = (Fmi::to_string(std::round(tic.first)));
+      std::string labelText = (Fmi::to_string(lround(tic.first)));
       text_dimension_t labelDimension = getTextDimension(labelText, labelStyle);
       labelText += "°";
 

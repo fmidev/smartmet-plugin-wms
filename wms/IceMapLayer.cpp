@@ -130,7 +130,7 @@ std::string convertText(const std::string& theText)
 }
 
 Json::Value getJsonValue(const std::string& param_name,
-                         const std::map<std::string, std::string> parameters)
+                         const std::map<std::string, std::string>& parameters)
 {
   Json::Value ret;
   if (parameters.find(param_name) != parameters.end())
@@ -507,8 +507,8 @@ void IceMapLayer::handleSymbol(const Fmi::Feature& theResultItem, CTPP::CDT& the
     tag_cdt["start"] = "<use";
     tag_cdt["end"] = "/>";
     tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-    tag_cdt["attributes"]["x"] = Fmi::to_string(std::round(lon));
-    tag_cdt["attributes"]["y"] = Fmi::to_string(std::round(lat));
+    tag_cdt["attributes"]["x"] = Fmi::to_string(lround(lon));
+    tag_cdt["attributes"]["y"] = Fmi::to_string(lround(lat));
     theGroupCdt["tags"].PushBack(tag_cdt);
   }
 }
@@ -558,7 +558,7 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
 
   if (theResultItem.geom && theResultItem.geom->IsEmpty() == 0)
   {
-    const auto* point = static_cast<const OGRPoint*>(theResultItem.geom.get());
+    const auto* point = dynamic_cast<const OGRPoint*>(theResultItem.geom.get());
 
     double lon(point->getX());
     double lat(point->getY());
@@ -757,7 +757,7 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
   text_dimension_t text_dimension = getTextDimension(mean_temperature, text_style);
 
   // position of the geometry mean temperature
-  const auto* point = static_cast<const OGRPoint*>(theResultItem.geom.get());
+  const auto* point = dynamic_cast<const OGRPoint*>(theResultItem.geom.get());
 
   double xpos = point->getX();
   double ypos = point->getY();
@@ -953,7 +953,7 @@ void IceMapLayer::addLocationName(double theXPos,
                                   const PostGISLayerFilter& theFilter,
                                   CTPP::CDT& theGlobals,
                                   CTPP::CDT& theLayersCdt,
-                                  CTPP::CDT& theGroupCdt,
+                                  CTPP::CDT& /* theGroupCdt */,
                                   State& theState) const
 {
   std::string first_name(theFirstName);
@@ -1083,8 +1083,8 @@ void IceMapLayer::addLocationName(double theXPos,
     text_cdt["start"] = "<text";
     text_cdt["end"] = "</text>";
     text_cdt["cdata"] = first_name;
-    text_cdt["attributes"]["x"] = Fmi::to_string(std::round(x_coord));
-    text_cdt["attributes"]["y"] = Fmi::to_string(std::round(y_coord_first));
+    text_cdt["attributes"]["x"] = Fmi::to_string(lround(x_coord));
+    text_cdt["attributes"]["y"] = Fmi::to_string(lround(y_coord_first));
     theState.addAttributes(theGlobals, text_cdt, theFilter.attributes);
     theLayersCdt.PushBack(text_cdt);
   }
@@ -1096,8 +1096,8 @@ void IceMapLayer::addLocationName(double theXPos,
     text_cdt["start"] = "<text";
     text_cdt["end"] = "</text>";
     text_cdt["cdata"] = second_name;
-    text_cdt["attributes"]["x"] = Fmi::to_string(std::round(x_coord));
-    text_cdt["attributes"]["y"] = Fmi::to_string(std::round(y_coord_second));
+    text_cdt["attributes"]["x"] = Fmi::to_string(lround(x_coord));
+    text_cdt["attributes"]["y"] = Fmi::to_string(lround(y_coord_second));
     theState.addAttributes(theGlobals, text_cdt, theFilter.attributes);
     theLayersCdt.PushBack(text_cdt);
   }
@@ -1112,18 +1112,18 @@ void IceMapLayer::addLocationName(double theXPos,
   CTPP::CDT arrow_cdt(CTPP::CDT::HASH_VAL);
   arrow_cdt["start"] = "<line";
   arrow_cdt["end"] = "</line>";
-  arrow_cdt["attributes"]["x1"] = Fmi::to_string(std::round(arrow_x_coord));
-  arrow_cdt["attributes"]["y1"] = Fmi::to_string(std::round(y_coord_first - 2));
+  arrow_cdt["attributes"]["x1"] = Fmi::to_string(lround(arrow_x_coord));
+  arrow_cdt["attributes"]["y1"] = Fmi::to_string(lround(y_coord_first - 2));
   arrow_cdt["attributes"]["x2"] = Fmi::to_string(
-      std::round(arrow_x_coord + ((text_dimension_first.width / first_name.size()) * 2)));
-  arrow_cdt["attributes"]["y2"] = Fmi::to_string(std::round(y_coord_first - 2));
+      lround(arrow_x_coord + ((text_dimension_first.width / first_name.size()) * 2)));
+  arrow_cdt["attributes"]["y2"] = Fmi::to_string(lround(y_coord_first - 2));
   arrow_cdt["attributes"]["stroke"] = "black";
   arrow_cdt["attributes"]["stroke-width"] = "0.5";
   arrow_cdt["attributes"]["marker-end"] = "url(#spearhead)";
   // add arrow next to the location name
   arrow_cdt["attributes"]["transform"] =
-      ("rotate(" + Fmi::to_string(theArrowAngle) + " " + Fmi::to_string(std::round(arrow_x_coord)) +
-       " " + Fmi::to_string(std::round(y_coord_first - 2)) + ") ");
+      ("rotate(" + Fmi::to_string(theArrowAngle) + " " + Fmi::to_string(lround(arrow_x_coord)) +
+       " " + Fmi::to_string(lround(y_coord_first - 2)) + ") ");
 
   theState.addAttributes(theGlobals, arrow_cdt, theFilter.attributes);
   theLayersCdt.PushBack(arrow_cdt);
