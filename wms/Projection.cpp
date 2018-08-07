@@ -452,12 +452,12 @@ void Projection::prepareCRS() const
         double circumference = 2 * pi * 6371.220;
 
         // This will work well, since we move along an isocircle
-        double dy = 360 * (*ysize) / 2 * (*resolution) / circumference;  // Equation 3.
-        YMIN = CY - dy;                                                  // Equation 4.
-        YMAX = CY + dy;                                                  // Equation 5
+        double dy = 360 * (*ysize) / 2.0 * (*resolution) / circumference;  // Equation 3.
+        YMIN = CY - dy;                                                    // Equation 4.
+        YMAX = CY + dy;                                                    // Equation 5
 
         // Distances will become distorted the further away we are from the equator
-        double dx = 360 * (*xsize) / 2 * (*resolution) / circumference / cos(CX * pi / 180);
+        double dx = 360 * (*xsize) / 2.0 * (*resolution) / circumference / cos(CX * pi / 180.0);
         XMIN = CX - dx;
         XMAX = CX + dx;
 
@@ -465,10 +465,10 @@ void Projection::prepareCRS() const
       }
       else
       {
-        XMIN = CX - (*xsize) / 2 * (*resolution) * 1000;  // Equation 1.
-        XMAX = CX + (*xsize) / 2 * (*resolution) * 1000;  // Equation 2.
-        YMIN = CY - (*ysize) / 2 * (*resolution) * 1000;
-        YMAX = CY + (*ysize) / 2 * (*resolution) * 1000;
+        XMIN = CX - (*xsize) / 2.0 * (*resolution) * 1000;  // Equation 1.
+        XMAX = CX + (*xsize) / 2.0 * (*resolution) * 1000;  // Equation 2.
+        YMIN = CY - (*ysize) / 2.0 * (*resolution) * 1000;
+        YMAX = CY + (*ysize) / 2.0 * (*resolution) * 1000;
         box = boost::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
       }
     }
