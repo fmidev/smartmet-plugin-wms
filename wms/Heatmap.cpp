@@ -7,17 +7,17 @@
 
 namespace
 {
-static float linearKernel(float d)
+float linearKernel(float d)
 {
   return d;
 }
 
-static float sqrtKernel(float d)
+float sqrtKernel(float d)
 {
   return sqrtf(d);
 }
 
-static float expKernel(float d, double deviation)
+float expKernel(float d, double deviation)
 {
   return (float)exp(-0.5 * sqrtf(d / deviation));
 }
