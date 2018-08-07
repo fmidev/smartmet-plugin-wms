@@ -31,7 +31,7 @@ enum class WMSRequestType
   NOT_A_WMS_REQUEST
 };
 
-typedef boost::shared_ptr<Fmi::TemplateFormatterMT> WMSExceptionFormatter;
+using WMSExceptionFormatter = boost::shared_ptr<Fmi::TemplateFormatterMT>;
 
 struct rgb_color
 {
