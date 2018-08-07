@@ -273,11 +273,11 @@ void Plugin::formatResponse(const std::string &theSvg,
 
       boost::shared_ptr<std::string> buffer;
       if (theType == "png")
-        buffer.reset(new std::string(Giza::Svg::topng(theSvg, theProduct.png.options)));
+        buffer = boost::make_shared<std::string>(Giza::Svg::topng(theSvg, theProduct.png.options));
       else if (theType == "pdf")
-        buffer.reset(new std::string(Giza::Svg::topdf(theSvg)));
+        buffer = boost::make_shared<std::string>(Giza::Svg::topdf(theSvg));
       else if (theType == "ps")
-        buffer.reset(new std::string(Giza::Svg::tops(theSvg)));
+        buffer = boost::make_shared<std::string>(Giza::Svg::tops(theSvg));
       else
         throw Spine::Exception(BCP, "Cannot convert SVG to unknown format '" + theType + "'");
 
