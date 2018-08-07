@@ -291,15 +291,10 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt)
     return;
   auto transformation = LonLatToXYTransformation(projection);
 
-  double lonMax = itsInnerBorder.rightLongitude;
-  double latMax = itsInnerBorder.topLatitude;
-  double lonMin = itsInnerBorder.leftLongitude;
-  double latMin = itsInnerBorder.bottomLatitude;
-
-  lonMin = floor(lonMin);
-  lonMax = ceil(lonMax);
-  latMin = floor(latMin);
-  latMax = ceil(latMax);
+  int lonMax = ceil(itsInnerBorder.rightLongitude);
+  int latMax = ceil(itsInnerBorder.topLatitude);
+  int lonMin = floor(itsInnerBorder.leftLongitude);
+  int latMin = floor(itsInnerBorder.bottomLatitude);
 
   text_style_t labelStyle;
   labelStyle.fontfamily = itsScaleAttributes.value("font-family");
@@ -312,31 +307,39 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt)
   // first add long tics
   if (itsScale->longTic)
   {
-    for (double lat = latMin + itsScale->longTic->step; lat < latMax;
-         lat += itsScale->longTic->step)
+    double lat = latMin + itsScale->longTic->step;
+    while (lat < latMax)
+    {
       if (lat > itsInnerBorder.bottomLatitude && lat < itsInnerBorder.topLatitude)
         latitudeTics.insert(std::make_pair(lat, *(itsScale->longTic)));
+      lat += itsScale->longTic->step;
+    }
   }
+
   if (itsScale->intermediateTic)
   {
-    // add intermediate tic, if long tic does not exist at the same latitude
-    for (double lat = latMin + itsScale->intermediateTic->step; lat < latMax;
-         lat += itsScale->intermediateTic->step)
+    double lat = latMin + itsScale->intermediateTic->step;
+    while (lat < latMax)
     {
       if (itsScale->longTic && fmod(lat, itsScale->longTic->step) > 0.01 &&
           lat > itsInnerBorder.bottomLatitude && lat < itsInnerBorder.topLatitude)
         latitudeTics.insert(std::make_pair(lat, *(itsScale->intermediateTic)));
+      lat += itsScale->intermediateTic->step;
     }
   }
+
   if (itsScale->smallTic)
   {
     // add small tic, if long or intermediate tic does not exist at the same latitude
-    for (double lat = latMin + itsScale->smallTic->step; lat < latMax;
-         lat += itsScale->smallTic->step)
+    double lat = latMin + itsScale->smallTic->step;
+    while (lat < latMax)
+    {
       if (itsScale->longTic && fmod(lat, itsScale->longTic->step) > 0.01 &&
           itsScale->intermediateTic && fmod(lat, itsScale->intermediateTic->step) > 0.01 &&
           lat > itsInnerBorder.bottomLatitude && lat < itsInnerBorder.topLatitude)
         latitudeTics.insert(std::make_pair(lat, *(itsScale->smallTic)));
+      lat += itsScale->smallTic->step;
+    }
   }
 
   bool ticIsOutside = (itsScale->ticPosition == "outside");
@@ -400,30 +403,42 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt)
   // first add long tics
   if (itsScale->longTic)
   {
-    for (double lon = lonMin + itsScale->longTic->step; lon < lonMax;
-         lon += itsScale->longTic->step)
+    double lon = lonMin + itsScale->longTic->step;
+    while (lon < lonMax)
+    {
       if (lon > itsInnerBorder.leftLongitude && lon < itsInnerBorder.rightLongitude)
         longitudeTics.insert(std::make_pair(lon, *(itsScale->longTic)));
+      lon += itsScale->longTic->step;
+    }
   }
+
   if (itsScale->intermediateTic)
   {
     // add intermediate tic, if long tic does not exist at the same longitude
-    for (double lon = lonMin + itsScale->intermediateTic->step; lon < lonMax;
-         lon += itsScale->intermediateTic->step)
+    double lon = lonMin + itsScale->intermediateTic->step;
+    while (lon < lonMax)
+    {
       if (itsScale->longTic && fmod(lon, itsScale->longTic->step) > 0.01 &&
           lon > itsInnerBorder.leftLongitude && lon < itsInnerBorder.rightLongitude)
         longitudeTics.insert(std::make_pair(lon, *(itsScale->intermediateTic)));
+      lon += itsScale->intermediateTic->step;
+    }
   }
+
   if (itsScale->smallTic)
   {
     // add small tic, if long or intermediate tic does not exist at the same longitude
-    for (double lon = lonMin + itsScale->smallTic->step; lon < lonMax;
-         lon += itsScale->smallTic->step)
+    double lon = lonMin + itsScale->smallTic->step;
+    while (lon < lonMax)
+    {
       if (itsScale->longTic && fmod(lon, itsScale->longTic->step) > 0.01 &&
           itsScale->intermediateTic && fmod(lon, itsScale->intermediateTic->step) > 0.01 &&
           lon > itsInnerBorder.leftLongitude && lon < itsInnerBorder.rightLongitude)
         longitudeTics.insert(std::make_pair(lon, *(itsScale->smallTic)));
+      lon += itsScale->smallTic->step;
+    }
   }
+
   for (auto tic : longitudeTics)
   {
     // top
