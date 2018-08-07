@@ -13,8 +13,6 @@
 #define WMS_GET_MAP "GetMap"
 #define WMS_GET_LEGEND_GRAPHIC "GetLegendGraphic"
 
-using namespace std;
-using namespace boost;
 using boost::property_tree::ptree;
 
 namespace SmartMet

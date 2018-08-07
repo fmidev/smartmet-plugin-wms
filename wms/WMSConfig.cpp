@@ -29,8 +29,11 @@
 #include <stdexcept>
 #include <string>
 
-using namespace std;
-using namespace SmartMet::Plugin::Dali;
+using SmartMet::Plugin::Dali::Config;
+using SmartMet::Plugin::Dali::Layer;
+using SmartMet::Plugin::Dali::Product;
+using SmartMet::Plugin::Dali::State;
+using SmartMet::Plugin::Dali::View;
 
 namespace
 {
@@ -1283,7 +1286,7 @@ void WMSConfig::getLegendGraphic(const std::string& theLayerName,
   boost::shared_ptr<View> view = *(theProduct.views.views.begin());
   for (auto legendL : legendLayers)
   {
-    boost::shared_ptr<Layer> legendLayer(LayerFactory::create(legendL));
+    boost::shared_ptr<Layer> legendLayer(Dali::LayerFactory::create(legendL));
     legendLayer->init(legendL, theState, itsDaliConfig, theProduct);
     view->layers.layers.push_back(legendLayer);
 
@@ -1298,7 +1301,7 @@ void WMSConfig::getLegendGraphic(const std::string& theLayerName,
         {
           if (!defLayerJson.isNull())
           {
-            boost::shared_ptr<Layer> defLayer(LayerFactory::create(defLayerJson));
+            boost::shared_ptr<Layer> defLayer(Dali::LayerFactory::create(defLayerJson));
             defLayer->init(defLayerJson, theState, itsDaliConfig, theProduct);
             theProduct.defs.layers.layers.push_back(defLayer);
           }
