@@ -90,7 +90,7 @@ std::string Label::print(double theValue) const
  */
 // ----------------------------------------------------------------------
 
-void Label::init(const Json::Value& theJson, const Config& theConfig)
+void Label::init(const Json::Value& theJson, const Config& /* theConfig */)
 {
   try
   {
@@ -149,7 +149,7 @@ void Label::init(const Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-std::size_t Label::hash_value(const State& theState) const
+std::size_t Label::hash_value(const State& /* theState */) const
 {
   try
   {
