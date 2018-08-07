@@ -25,7 +25,7 @@ std::string name(const OGRGeometry& theGeom, const std::string& theType);
 std::string toString(const OGRGeometry& theGeom,
                      const std::string& theType,
                      const Fmi::Box& theBox,
-                     boost::shared_ptr<OGRSpatialReference> theSRS,
+                     const boost::shared_ptr<OGRSpatialReference>& theSRS,
                      double thePrecision);
 
 }  // namespace Geometry

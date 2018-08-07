@@ -77,7 +77,7 @@ std::string name(const OGRGeometry& theGeom, const std::string& theType)
 
 std::string toGeoJSON(const OGRGeometry& theGeom,
                       const Fmi::Box& /* theBox */,
-                      boost::shared_ptr<OGRSpatialReference> theSRS)
+                      const boost::shared_ptr<OGRSpatialReference>& theSRS)
 {
   // Reproject to WGS84. TODO: Optimize if theSRS == WGS84.
 
@@ -124,7 +124,7 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
 
 std::string toKML(const OGRGeometry& theGeom,
                   const Fmi::Box& /* theBox */,
-                  boost::shared_ptr<OGRSpatialReference> theSRS)
+                  const boost::shared_ptr<OGRSpatialReference>& theSRS)
 {
   // Reproject to WGS84. TODO: Optimize if theSRS == WGS84.
 
@@ -162,7 +162,7 @@ std::string toKML(const OGRGeometry& theGeom,
 std::string toString(const OGRGeometry& theGeom,
                      const std::string& theType,
                      const Fmi::Box& theBox,
-                     boost::shared_ptr<OGRSpatialReference> theSRS,
+                     const boost::shared_ptr<OGRSpatialReference>& theSRS,
                      double thePrecision)
 {
   if (theType == "geojson")

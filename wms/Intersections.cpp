@@ -51,7 +51,7 @@ void Intersections::init(const Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-void Intersections::init(Engine::Querydata::Q q,
+void Intersections::init(const Engine::Querydata::Q& q,
                          const Projection& theProjection,
                          const boost::posix_time::ptime& theTime,
                          const State& theState)
