@@ -86,7 +86,7 @@ class FrameLayer : public Layer
 
   void addScale(CTPP::CDT& theLayersCdt);
   void addTic(CTPP::CDT& theLayersCdt, double x1, double y1, double x2, double y2);
-  void addScaleNumber(CTPP::CDT& theHash, double x, double y, const std::string& num);
+  void addScaleNumber(CTPP::CDT& theLayersCdt, double x, double y, const std::string& num);
 
 };  // class FrameLayer
 

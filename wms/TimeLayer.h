@@ -26,7 +26,7 @@ class TimeLayer : public Layer
   virtual void init(const Json::Value& theJson,
                     const State& theState,
                     const Config& theConfig,
-                    const Properties& theParent);
+                    const Properties& theProperties);
 
   virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 

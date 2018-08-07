@@ -33,7 +33,7 @@ class Attributes
   void add(const std::string& theName, const std::string& theValue);
 
   void generate(CTPP::CDT& theLocals, State& theState) const;
-  void generatePresentation(CTPP::CDT& theLayer,
+  void generatePresentation(CTPP::CDT& theLocals,
                             State& theState,
                             const std::string& theCSS = {}) const;
   std::size_t hash_value(const State& theState) const;

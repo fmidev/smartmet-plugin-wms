@@ -38,7 +38,7 @@ class Config : private boost::noncopyable
 
   const std::string& wmsUrl() const;
 
-  const std::string& rootDirectory(bool theWmsMode) const;
+  const std::string& rootDirectory(bool theWmsFlag) const;
 
   unsigned long long maxMemoryCacheSize() const;
   unsigned long long maxFilesystemCacheSize() const;

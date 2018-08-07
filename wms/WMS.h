@@ -78,7 +78,7 @@ struct CaseInsensitiveComparator : std::binary_function<std::string, std::string
 };
 
 std::string demimetype(const std::string& theMimeType);
-void useStyle(Json::Value& root, const Json::Value& styleLayer);
+void useStyle(Json::Value& root, const Json::Value& styles);
 void useStyle(Json::Value& root, const std::string& styleName);
 
 }  // namespace WMS

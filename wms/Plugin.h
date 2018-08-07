@@ -69,23 +69,23 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   Product getProduct(const Spine::HTTP::Request& theRequest,
                      const State& theState,
                      const std::string& theName,
-                     bool theDebugFlag) const;
+                     bool print_json) const;
   std::string getStyle(const std::string& theCustomer,
                        const std::string& theCSS,
                        bool theWmsFlag) const;
   std::string getFilter(const std::string& theName, bool theWmsFlag) const;
   std::size_t getFilterHash(const std::string& theName, bool theWmsFlag) const;
   std::string getMarker(const std::string& theCustomer,
-                        const std::string& theSymbol,
+                        const std::string& theName,
                         bool theWmsFlag) const;
   std::size_t getMarkerHash(const std::string& theCustomer,
-                            const std::string& theSymbol,
+                            const std::string& theName,
                             bool theWmsFlag) const;
   std::string getSymbol(const std::string& theCustomer,
-                        const std::string& theSymbol,
+                        const std::string& theName,
                         bool theWmsFlag) const;
   std::size_t getSymbolHash(const std::string& theCustomer,
-                            const std::string& theSymbol,
+                            const std::string& theName,
                             bool theWmsFlag) const;
   std::string getPattern(const std::string& theCustomer,
                          const std::string& theName,
@@ -109,12 +109,12 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
 
   void daliQuery(Spine::Reactor& theReactor,
                  State& theState,
-                 const Spine::HTTP::Request& req,
-                 Spine::HTTP::Response& response);
+                 const Spine::HTTP::Request& theRequest,
+                 Spine::HTTP::Response& theResponse);
   WMSQueryStatus wmsQuery(Spine::Reactor& theReactor,
                           State& theState,
-                          const Spine::HTTP::Request& req,
-                          Spine::HTTP::Response& response);
+                          const Spine::HTTP::Request& theRequest,
+                          Spine::HTTP::Response& theResponse);
   void formatResponse(const std::string& theSvg,
                       const std::string& theFormat,
                       const Spine::HTTP::Request& theRequest,
@@ -122,7 +122,7 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                       bool usetimer,
                       const Product& theProduct = Product(),
                       std::size_t theHash = 0);
-  std::string mimeType(const std::string& theFormat) const;
+  std::string mimeType(const std::string& theType) const;
 
   std::string parseWMSException(Spine::Exception& wmsException, bool isdebug) const;
 
