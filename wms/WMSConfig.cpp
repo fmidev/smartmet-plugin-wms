@@ -43,8 +43,7 @@ namespace
 
 bool looks_like_pattern(const std::string& pattern)
 {
-  using namespace boost::algorithm;
-  return (starts_with(pattern, "/") && ends_with(pattern, "/"));
+  return (boost::algorithm::starts_with(pattern, "/") && boost::algorithm::ends_with(pattern, "/"));
 }
 
 /*
