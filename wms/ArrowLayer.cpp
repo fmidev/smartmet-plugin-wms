@@ -164,7 +164,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                     dummy);
       auto vresult = q->value(vp, localdatetime);
 
-      if (boost::get<double>(&uresult) && boost::get<double>(&vresult))
+      if (boost::get<double>(&uresult) != nullptr && boost::get<double>(&vresult) != nullptr)
       {
         auto uspd = *boost::get<double>(&uresult);
         auto vspd = *boost::get<double>(&vresult);
@@ -174,7 +174,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
           wspd = sqrt(uspd * uspd + vspd * vspd);
           if (uspd != 0 || vspd != 0)
           {
-            if (!uvtransformation)
+            if (uvtransformation == nullptr)
               wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
             else
             {
@@ -695,7 +695,7 @@ PointValues read_observations(const ArrowLayer& layer,
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
-    if (!transformation)
+    if (transformation == nullptr)
       throw Spine::Exception(
           BCP, "Failed to create the needed coordinate transformation when drawing arrows");
 
@@ -935,7 +935,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
-    if (!transformation)
+    if (transformation == nullptr)
       throw Spine::Exception(
           BCP,
           "Failed to create the needed coordinate transformation when reading wind directions");

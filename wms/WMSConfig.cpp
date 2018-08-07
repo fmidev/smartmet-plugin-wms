@@ -713,7 +713,7 @@ void WMSConfig::capabilitiesUpdateLoop()
 bool WMSConfig::validateGetMapAuthorization(const Spine::HTTP::Request& theRequest) const
 {
   // Everything ok if authentication is disabled
-  if (!itsAuthEngine)
+  if (itsAuthEngine == nullptr)
     return true;
 
   try
@@ -917,7 +917,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
       const auto& layer_name = iter_pair.first;
       // If authentication is requested, skip the layer if authentication fails
       if (apikey && authenticate)
-        if (!itsAuthEngine || !itsAuthEngine->authorize(*apikey, layer_name, wmsService))
+        if (itsAuthEngine == nullptr || !itsAuthEngine->authorize(*apikey, layer_name, wmsService))
           continue;
 #endif
 
@@ -1252,7 +1252,7 @@ CTPP::CDT WMSConfig::getCapabilitiesResponseVariables() const
 #ifndef WITHOUT_OBSERVATION
 std::set<std::string> WMSConfig::getObservationProducers() const
 {
-  if (itsObsEngine)
+  if (itsObsEngine != nullptr)
     return itsObsEngine->getValidStationTypes();
 
   return std::set<std::string>();

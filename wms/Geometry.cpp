@@ -88,7 +88,7 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
 
   boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
       OGRCreateCoordinateTransformation(theSRS.get(), wgs84.get()));
-  if (!transformation)
+  if (transformation == nullptr)
     throw Spine::Exception(BCP,
                            "Failed to create the coordinate transformation for producing GeoJSON");
 
@@ -135,7 +135,7 @@ std::string toKML(const OGRGeometry& theGeom,
 
   boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
       OGRCreateCoordinateTransformation(theSRS.get(), wgs84.get()));
-  if (!transformation)
+  if (transformation == nullptr)
     throw Spine::Exception(BCP, "Failed to create the coordinate transformation for producing KML");
 
   // Reproject a clone

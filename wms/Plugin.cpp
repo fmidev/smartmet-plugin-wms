@@ -575,7 +575,7 @@ void Plugin::init()
     if (!itsConfig.obsEngineDisabled())
     {
       engine = itsReactor->getSingleton("Observation", nullptr);
-      if (!engine)
+      if (engine == nullptr)
         throw Spine::Exception(BCP, "Observation engine unavailable");
       itsObsEngine = reinterpret_cast<Engine::Observation::Engine *>(engine);
     }

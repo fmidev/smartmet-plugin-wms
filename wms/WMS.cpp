@@ -116,7 +116,7 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
 
     size_t pos(designatorCharPos - 1);
     // count digits before previous character
-    while (isdigit(periodString.at(pos)))
+    while (isdigit(periodString.at(pos)) != 0)
       pos--;
 
     if ((designatorCharPos - pos) == 1)

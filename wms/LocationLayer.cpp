@@ -161,7 +161,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(geocrs.get(), crs.get()));
-    if (!transformation)
+    if (transformation == nullptr)
       throw Spine::Exception(
           BCP, "Failed to create the needed coordinate transformation when drawing locations");
 

@@ -102,12 +102,12 @@ PointValues read_forecasts(const SymbolLayer& layer,
             *param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
 
         auto result = q->value(options, localdatetime);
-        if (boost::get<double>(&result))
+        if (boost::get<double>(&result) != nullptr)
         {
           double tmp = *boost::get<double>(&result);
           pointvalues.push_back(PointValue{point, tmp});
         }
-        else if (boost::get<int>(&result))
+        else if (boost::get<int>(&result) != nullptr)
         {
           double tmp = *boost::get<int>(&result);
           pointvalues.push_back(PointValue{point, tmp});
@@ -647,7 +647,7 @@ PointValues read_observations(const SymbolLayer& layer,
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
-    if (!transformation)
+    if (transformation == nullptr)
       throw Spine::Exception(
           BCP, "Failed to create the needed coordinate transformation when drawing symbols");
 

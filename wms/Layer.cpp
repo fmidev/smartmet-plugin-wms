@@ -337,7 +337,7 @@ std::map<std::string, double> Layer::getClipBoundingBox(
   // Create the transformation from image world coordinates to WGS84 coordinates
   boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
       OGRCreateCoordinateTransformation(theCRS.get(), wgs84.get()));
-  if (!transformation)
+  if (transformation == nullptr)
     throw Spine::Exception(
         BCP, "Failed to create the needed coordinate transformation when drawing wind arrows");
 
@@ -355,7 +355,7 @@ std::map<std::string, double> Layer::getClipBoundingBox(
   int hsamples = minsamples;
 
   // Otherwise we need to sample the edges
-  if (!theCRS->IsGeographic())
+  if (theCRS->IsGeographic() == 0)
   {
     wsamples = std::max(wsamples, w / npixels);
     hsamples = std::max(hsamples, h / npixels);
@@ -403,8 +403,8 @@ std::map<std::string, double> Layer::getClipBoundingBox(
 
   for (std::size_t i = 0; i < x.size(); i++)
   {
-    if (!theCRS->IsGeographic())
-      if (!transformation->Transform(1, &x[i], &y[i]))
+    if (theCRS->IsGeographic() == 0)
+      if (transformation->Transform(1, &x[i], &y[i]) == 0)
         continue;
 
     minlon = (uninitialized ? x[i] : std::min(minlon, x[i]));
