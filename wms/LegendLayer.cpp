@@ -31,7 +31,7 @@ namespace Dali
 std::string pretty(double num, const char* format)
 {
   if (strcmp(format, "%.0f") == 0)
-    return fmt::sprintf("%d", static_cast<long>(round(num)));
+    return fmt::sprintf("%d", lround(num));
 
   std::string ret = fmt::sprintf(format, num);
   std::size_t pos = ret.size();
