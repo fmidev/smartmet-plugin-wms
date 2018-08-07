@@ -17,7 +17,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Map::init(const Json::Value& theJson, const Config& theConfig)
+void Map::init(const Json::Value& theJson, const Config& /* theConfig */)
 {
   try
   {
@@ -61,7 +61,7 @@ void Map::init(const Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-std::size_t Map::hash_value(const State& theState) const
+std::size_t Map::hash_value(const State& /* theState */) const
 {
   try
   {
