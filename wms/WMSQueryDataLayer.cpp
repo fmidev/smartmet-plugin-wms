@@ -1,4 +1,5 @@
 #include "WMSQueryDataLayer.h"
+#include <boost/move/make_unique.hpp>
 #include <spine/Exception.h>
 
 namespace SmartMet
@@ -28,14 +29,14 @@ void WMSQueryDataLayer::updateLayerMetaData()
       // interval
       boost::posix_time::time_duration first_timestep =
           (*(++validtimes->begin()) - *(validtimes->begin()));
-      std::unique_ptr<IntervalTimeDimension> newTimeDimension(new IntervalTimeDimension(
-          *(validtimes->begin()), *(--validtimes->end()), first_timestep));
+      auto newTimeDimension = boost::movelib::make_unique<IntervalTimeDimension>(
+          *(validtimes->begin()), *(--validtimes->end()), first_timestep);
       timeDimension = std::move(newTimeDimension);
     }
     else
     {
       // timesteps
-      std::unique_ptr<StepTimeDimension> newTimeDimension(new StepTimeDimension());
+      auto newTimeDimension = boost::movelib::make_unique<StepTimeDimension>();
       for (auto tim : *validtimes)
         newTimeDimension->addTimestep(tim);
       timeDimension = std::move(newTimeDimension);

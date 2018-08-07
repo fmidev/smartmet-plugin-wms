@@ -10,35 +10,26 @@
 #include "WMSConfig.h"
 #include "WMSGetLegendGraphic.h"
 #include "WMSGetMap.h"
-
 #include <spine/Convenience.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/SmartMet.h>
-
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
-
-#include <macgyver/AnsiEscapeCodes.h>
-
-#include <giza/Svg.h>
-
-#include <json/json.h>
-#include <json/reader.h>
-#include <json/writer.h>
-
-#include <ctpp2/CDT.hpp>
-
 #include <boost/date_time/posix_time/time_formatters.hpp>
 #include <boost/filesystem/operations.hpp>
-
+#include <boost/move/make_unique.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/timer/timer.hpp>
 #include <boost/utility.hpp>
-
+#include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
-
+#include <giza/Svg.h>
+#include <json/json.h>
+#include <json/reader.h>
+#include <json/writer.h>
+#include <macgyver/AnsiEscapeCodes.h>
 #include <stdexcept>
 
 namespace
@@ -190,9 +181,9 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
     CTPP::CDT hash(CTPP::CDT::HASH_VAL);
     {
       std::string report = "Product::generate finished in %t sec CPU, %w sec real\n";
-      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
-        mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
+        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
       product.generate(hash, theState);
     }
 
@@ -207,9 +198,9 @@ void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
     try
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
-      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
-        mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
+        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
       tmpl->process(hash, output, log);
     }
     catch (const CTPP::CTPPException &e)
@@ -276,9 +267,9 @@ void Plugin::formatResponse(const std::string &theSvg,
     {
       // Convert buffer content
       std::string report = "svg_to_" + theType + " finished in %t sec CPU, %w sec real\n";
-      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (usetimer)
-        mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
+        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
       boost::shared_ptr<std::string> buffer;
       if (theType == "png")
@@ -497,9 +488,6 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
 #ifndef WITHOUT_OBSERVATION
       itsObsEngine(nullptr),
 #endif
-      itsTemplateFactory(),
-      itsImageCache(),
-      itsWMSConfig(),
       itsWMSGetCapabilities()
 {
   try
@@ -530,9 +518,9 @@ void Plugin::init()
   {
     // Imagecache
 
-    itsImageCache.reset(new ImageCache(itsConfig.maxMemoryCacheSize(),
-                                       itsConfig.maxFilesystemCacheSize(),
-                                       itsConfig.filesystemCacheDirectory()));
+    itsImageCache = boost::movelib::make_unique<ImageCache>(itsConfig.maxMemoryCacheSize(),
+                                                            itsConfig.maxFilesystemCacheSize(),
+                                                            itsConfig.filesystemCacheDirectory());
 
     // CONTOUR
 
@@ -610,30 +598,31 @@ void Plugin::init()
 
 // WMS configurations
 #ifndef WITHOUT_OBSERVATION
-      itsWMSConfig.reset(new WMS::WMSConfig(
-          itsConfig, itsJsonCache, itsQEngine, authEngine, itsObsEngine, itsGisEngine));
+      itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
+          itsConfig, itsJsonCache, itsQEngine, authEngine, itsObsEngine, itsGisEngine);
 #else
-      itsWMSConfig.reset(
-          new WMS::WMSConfig(itsConfig, itsJsonCache, itsQEngine, authEngine, itsGisEngine));
+      itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
+          itsConfig, itsJsonCache, itsQEngine, authEngine, itsGisEngine);
 #endif
     }
     else
     {
 #ifndef WITHOUT_OBSERVATION
-      itsWMSConfig.reset(new WMS::WMSConfig(
-          itsConfig, itsJsonCache, itsQEngine, nullptr, itsObsEngine, itsGisEngine));
+      itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
+          itsConfig, itsJsonCache, itsQEngine, nullptr, itsObsEngine, itsGisEngine);
 #else
-      itsWMSConfig.reset(
-          new WMS::WMSConfig(itsConfig, itsJsonCache, itsQEngine, nullptr, itsGisEngine));
+      itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
+          itsConfig, itsJsonCache, itsQEngine, nullptr, itsGisEngine);
 #endif
     }
 
 #else
 #ifndef WITHOUT_OBSERVATION
-    itsWMSConfig.reset(
-        new WMS::WMSConfig(itsConfig, itsJsonCache, itsQEngine, itsObsEngine, itsGisEngine));
+    itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
+        itsConfig, itsJsonCache, itsQEngine, itsObsEngine, itsGisEngine);
 #else
-    itsWMSConfig.reset(new WMS::WMSConfig(itsConfig, itsJsonCache, itsQEngine, itsGisEngine));
+    itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
+        itsConfig, itsJsonCache, itsQEngine, itsGisEngine);
 #endif
 #endif
 
@@ -645,8 +634,8 @@ void Plugin::init()
     if (itsShutdownRequested)
       itsWMSConfig->shutdown();
 
-    itsWMSGetCapabilities.reset(
-        new WMS::WMSGetCapabilities(itsConfig.templateDirectory() + "/wms_get_capabilities.c2t"));
+    itsWMSGetCapabilities = boost::movelib::make_unique<WMS::WMSGetCapabilities>(
+        itsConfig.templateDirectory() + "/wms_get_capabilities.c2t");
 
     // Register dali content handler
 
@@ -1438,9 +1427,9 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
     try
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
-      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
-        mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
+        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
       tmpl->process(hash, output, log);
     }
     catch (...)

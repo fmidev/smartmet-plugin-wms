@@ -8,14 +8,14 @@
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
-
 #include <engines/gis/Engine.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
-#include <engines/querydata/Engine.h>
-
+#include <boost/move/make_unique.hpp>
+#include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
+#include <engines/querydata/Engine.h>
 #include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
@@ -26,9 +26,6 @@
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 #include <iomanip>
-
-// TODO:
-#include <boost/timer/timer.hpp>
 
 namespace SmartMet
 {
@@ -643,12 +640,12 @@ PointValues read_observations(const SymbolLayer& layer,
     // Create the coordinate transformation from image world coordinates
     // to WGS84 coordinates
 
-    std::unique_ptr<OGRSpatialReference> obscrs(new OGRSpatialReference);
+    auto obscrs = boost::movelib::make_unique<OGRSpatialReference>();
     OGRErr err = obscrs->SetFromUserInput("WGS84");
     if (err != OGRERR_NONE)
       throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation(
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
     if (!transformation)
       throw Spine::Exception(
@@ -759,9 +756,9 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Time execution
     std::string report = "SymbolLayer::generate finished in %t sec CPU, %w sec real\n";
-    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
-      timer.reset(new boost::timer::auto_cpu_timer(2, report));
+      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
     // A symbol must be defined either globally or for values
 

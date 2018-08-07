@@ -10,23 +10,20 @@
 #include "State.h"
 #include "Stations.h"
 #include "WindRose.h"
+#include <boost/math/constants/constants.hpp>
+#include <boost/move/make_unique.hpp>
+#include <boost/timer/timer.hpp>
+#include <ctpp2/CDT.hpp>
 #include <engines/observation/Engine.h>
 #include <engines/observation/Settings.h>
+#include <gdal/ogr_spatialref.h>
 #include <gis/Box.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/TimeSeries.h>
-
-#include <boost/math/constants/constants.hpp>
-#include <ctpp2/CDT.hpp>
-#include <gdal/ogr_spatialref.h>
-
 #include <algorithm>
-
-// TODO:
-#include <boost/timer/timer.hpp>
 
 namespace SmartMet
 {
@@ -393,9 +390,9 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       return;
 
     std::string report = "WindRoseLayer::generate finished in %t sec CPU, %w sec real\n";
-    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
-      timer.reset(new boost::timer::auto_cpu_timer(2, report));
+      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
     // Update the globals
 
@@ -412,12 +409,12 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     // Create the coordinate transformation from latlon to world coordinates
 
-    std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
     OGRErr err = wgs84->SetFromUserInput("WGS84");
     if (err != OGRERR_NONE)
       throw Spine::Exception(BCP, "WindRoseLayer failed to generate WGS84 spatial reference");
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation(
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
     if (!transformation)
       throw Spine::Exception(

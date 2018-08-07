@@ -1,5 +1,6 @@
 #include "WMSObservationLayer.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/move/make_unique.hpp>
 #include <spine/Exception.h>
 
 namespace SmartMet
@@ -18,10 +19,10 @@ void WMSObservationLayer::updateLayerMetaData()
       metaData.timestep = itsTimestep;
     geographicBoundingBox = metaData.bbox;
 
-    std::unique_ptr<IntervalTimeDimension> newTimeDimension(
-        new IntervalTimeDimension(metaData.period.begin(),
-                                  metaData.period.end(),
-                                  boost::posix_time::minutes(metaData.timestep)));
+    auto newTimeDimension = boost::movelib::make_unique<IntervalTimeDimension>(
+        metaData.period.begin(),
+        metaData.period.end(),
+        boost::posix_time::minutes(metaData.timestep));
     timeDimension = std::move(newTimeDimension);
     metadataTimestamp = boost::posix_time::second_clock::universal_time();
   }

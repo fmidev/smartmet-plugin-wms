@@ -11,16 +11,15 @@
 #include "WMSLayer.h"
 #include "WMSLayerProxy.h"
 #include "WMSLegendGraphicSettings.h"
-
+#include <boost/move/unique_ptr.hpp>
+#include <boost/optional.hpp>
+#include <boost/utility.hpp>
+#include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
 #include <engines/observation/Engine.h>
 #include <engines/querydata/Engine.h>
 #include <spine/JsonCache.h>
 #include <spine/Thread.h>
-
-#include <boost/optional.hpp>
-#include <boost/utility.hpp>
-#include <ctpp2/CDT.hpp>
 #include <libconfig.h++>
 #include <map>
 #include <set>
@@ -162,7 +161,7 @@ class WMSConfig
   using LayerMap = std::map<std::string, WMSLayerProxy>;
   boost::shared_ptr<LayerMap> itsLayers;
 
-  std::unique_ptr<boost::thread> itsGetCapabilitiesThread;
+  boost::movelib::unique_ptr<boost::thread> itsGetCapabilitiesThread;
 
   void capabilitiesUpdateLoop();
   void updateLayerMetaData();

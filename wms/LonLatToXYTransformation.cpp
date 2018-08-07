@@ -1,4 +1,5 @@
 #include "LonLatToXYTransformation.h"
+#include <boost/move/make_unique.hpp>
 
 namespace SmartMet
 {
@@ -11,7 +12,7 @@ LonLatToXYTransformation::LonLatToXYTransformation(const Projection& projection)
 {
   boost::shared_ptr<OGRSpatialReference> sr = projection.getCRS();
 
-  std::unique_ptr<OGRSpatialReference> geocrs(new OGRSpatialReference);
+  auto geocrs = boost::movelib::make_unique<OGRSpatialReference>();
   OGRErr err = geocrs->SetFromUserInput("WGS84");
   if (err != OGRERR_NONE)
     throw std::runtime_error("GDAL does not understand crs 'WGS84'");

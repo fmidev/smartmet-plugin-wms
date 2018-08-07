@@ -13,7 +13,6 @@
 #include "WMSException.h"
 #include "WMSGetCapabilities.h"
 #include "WMSQueryStatus.h"
-
 #include <engines/contour/Engine.h>
 #include <engines/geonames/Engine.h>
 #include <engines/gis/Engine.h>
@@ -21,7 +20,7 @@
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
-
+#include <boost/move/unique_ptr.hpp>
 #include <spine/FileCache.h>
 #include <spine/HTTP.h>
 #include <spine/JsonCache.h>
@@ -149,12 +148,12 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   mutable Spine::JsonCache itsJsonCache;
 
   // Cache results
-  mutable std::unique_ptr<ImageCache> itsImageCache;
+  mutable boost::movelib::unique_ptr<ImageCache> itsImageCache;
 
   // WMS configuration
-  std::unique_ptr<WMS::WMSConfig> itsWMSConfig;
+  boost::movelib::unique_ptr<WMS::WMSConfig> itsWMSConfig;
   // WMS Capabilities
-  std::unique_ptr<WMS::WMSGetCapabilities> itsWMSGetCapabilities;
+  boost::movelib::unique_ptr<WMS::WMSGetCapabilities> itsWMSGetCapabilities;
 
 };  // class Plugin
 

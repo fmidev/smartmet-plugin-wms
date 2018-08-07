@@ -1,9 +1,9 @@
 #include "WMSPostGISLayer.h"
 #include "WMSConfig.h"
-#include <spine/Exception.h>
-
+#include <boost/move/make_unique.hpp>
 #include <gis/Host.h>
 #include <gis/OGR.h>
+#include <spine/Exception.h>
 
 namespace SmartMet
 {
@@ -192,13 +192,13 @@ void WMSPostGISLayer::updateLayerMetaData()
         boost::posix_time::time_duration resolution =
             (metadata.timesteps[1] - metadata.timesteps[0]);
 
-        std::unique_ptr<IntervalTimeDimension> newTimeDimension(
-            new IntervalTimeDimension(first_time, last_time, resolution));
+        auto newTimeDimension =
+            boost::movelib::make_unique<IntervalTimeDimension>(first_time, last_time, resolution);
         timeDimension = std::move(newTimeDimension);
       }
       else
       {
-        std::unique_ptr<StepTimeDimension> newTimeDimension(new StepTimeDimension());
+        auto newTimeDimension = boost::movelib::make_unique<StepTimeDimension>();
         for (const auto& tim : metadata.timesteps)
           newTimeDimension->addTimestep(tim);
         timeDimension = std::move(newTimeDimension);

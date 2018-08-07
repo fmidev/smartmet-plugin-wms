@@ -6,16 +6,14 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "State.h"
-
+#include <boost/move/make_unique.hpp>
+#include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
 #include <spine/Exception.h>
-
-// TODO:
-#include <boost/timer/timer.hpp>
 
 namespace SmartMet
 {
@@ -75,9 +73,9 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       return;
 
     std::string report = "MapLayer::generate finished in %t sec CPU, %w sec real\n";
-    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
-      timer.reset(new boost::timer::auto_cpu_timer(2, report));
+      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
     // Get projection details
 
@@ -104,9 +102,9 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     const auto& gis = theState.getGisEngine();
     {
       std::string report = "getShape finished in %t sec CPU, %w sec real\n";
-      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
-        mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
+        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
       geom = gis.getShape(crs.get(), map.options);
 
       if (!geom)
@@ -124,9 +122,9 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     {
       std::string report = "polyclip finished in %t sec CPU, %w sec real\n";
-      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
-        mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
+        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
       if (map.lines)
         geom.reset(Fmi::OGR::lineclip(*geom, clipbox));  // fast and hence not cached in gisengine
       else
@@ -144,9 +142,9 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     {
       std::string report = "Generating coordinate data finished in %t sec CPU, %w sec real\n";
-      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
-        mytimer.reset(new boost::timer::auto_cpu_timer(2, report));
+        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
       CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
       map_cdt["iri"] = iri;

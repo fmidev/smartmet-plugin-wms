@@ -6,7 +6,8 @@
 #include "Layer.h"
 #include "Select.h"
 #include "State.h"
-
+#include <boost/move/make_unique.hpp>
+#include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/geonames/Engine.h>
 #include <gdal/ogr_spatialref.h>
@@ -14,9 +15,6 @@
 #include <macgyver/NearTree.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
-
-// TODO:
-#include <boost/timer/timer.hpp>
 
 namespace SmartMet
 {
@@ -127,9 +125,9 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // Time execution
 
     std::string report = "LocationLayer::generate finished in %t sec CPU, %w sec real\n";
-    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
-      timer.reset(new boost::timer::auto_cpu_timer(2, report));
+      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
     // A keyword must be defined
 
@@ -154,14 +152,14 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     // Get the geonames projection
 
-    std::unique_ptr<OGRSpatialReference> geocrs(new OGRSpatialReference);
+    auto geocrs = boost::movelib::make_unique<OGRSpatialReference>();
     OGRErr err = geocrs->SetFromUserInput("WGS84");
     if (err != OGRERR_NONE)
       throw Spine::Exception(BCP, "GDAL does not understand this crs 'WGS84'");
 
     // Create the coordinate transformation from geonames coordinates to image coordinates
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation(
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(geocrs.get(), crs.get()));
     if (!transformation)
       throw Spine::Exception(

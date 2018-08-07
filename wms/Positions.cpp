@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 #include "Projection.h"
-
+#include <boost/move/make_unique.hpp>
 #include <engines/querydata/ParameterOptions.h>
 #include <gis/OGR.h>
 #include <spine/Convenience.h>
@@ -432,14 +432,14 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
   {
     // Get the data projection
 
-    std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
     OGRErr err = wgs84->SetFromUserInput("WGS84");
     if (err != OGRERR_NONE)
       throw Spine::Exception(BCP, "GDAL does not understand WGS84!");
 
     // Create the coordinate transformation from image world coordinates to latlon
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation(
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(theCRS.get(), wgs84.get()));
     if (!transformation)
       throw Spine::Exception(
@@ -545,7 +545,7 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
   {
     // Get the data projection
 
-    std::unique_ptr<OGRSpatialReference> qcrs(new OGRSpatialReference);
+    auto qcrs = boost::movelib::make_unique<OGRSpatialReference>();
     OGRErr err;
     if (theQ->isArea())
       err = qcrs->SetFromUserInput(theQ->area().WKT().c_str());
@@ -558,7 +558,7 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
     // Create the coordinate transformation from image world coordinates
     // to querydata world coordinates
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation(
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(theCRS.get(), qcrs.get()));
     if (!transformation)
       throw Spine::Exception(
@@ -623,7 +623,7 @@ Positions::Points Positions::getGraticulePoints(
   {
     // Set the graticule projection
 
-    std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
@@ -631,7 +631,7 @@ Positions::Points Positions::getGraticulePoints(
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation(
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
     if (!transformation)
       throw Spine::Exception(BCP,
@@ -701,7 +701,7 @@ Positions::Points Positions::getGraticuleFillPoints(
   {
     // Set the graticule projection
 
-    std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
@@ -709,7 +709,7 @@ Positions::Points Positions::getGraticuleFillPoints(
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation(
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
     if (!transformation)
       throw Spine::Exception(BCP,
@@ -915,7 +915,7 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
 
     // Keyword locations are in WGS84
 
-    std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
@@ -923,7 +923,7 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation(
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
     if (!transformation)
       throw Spine::Exception(BCP,
@@ -990,7 +990,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
 
     // Keyword locations are in WGS84
 
-    std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
@@ -998,7 +998,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation(
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
     if (!transformation)
       throw Spine::Exception(BCP,
@@ -1080,7 +1080,7 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
 
     // Station coordinates are in WGS84
 
-    std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
@@ -1088,7 +1088,7 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation(
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
     if (!transformation)
       throw Spine::Exception(BCP,

@@ -1,4 +1,5 @@
 #include "Geometry.h"
+#include <boost/move/make_unique.hpp>
 #include <gdal/ogr_spatialref.h>
 #include <spine/Exception.h>
 
@@ -80,25 +81,25 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
 {
   // Reproject to WGS84. TODO: Optimize if theSRS == WGS84.
 
-  std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+  auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
   OGRErr err = wgs84->SetFromUserInput("WGS84");
   if (err != OGRERR_NONE)
     throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
-  std::unique_ptr<OGRCoordinateTransformation> transformation(
+  boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
       OGRCreateCoordinateTransformation(theSRS.get(), wgs84.get()));
   if (!transformation)
     throw Spine::Exception(BCP,
                            "Failed to create the coordinate transformation for producing GeoJSON");
 
   // Reproject a clone
-  std::unique_ptr<OGRGeometry> geom(theGeom.clone());
+  boost::movelib::unique_ptr<OGRGeometry> geom(theGeom.clone());
   err = geom->transform(transformation.get());
   if (err != OGRERR_NONE)
     throw Spine::Exception(BCP, "Failed to project geometry to WGS84 GeoJSON");
 
   // Fix winding rule to be CCW for shells
-  std::unique_ptr<OGRGeometry> geom2(Fmi::OGR::reverseWindingOrder(*geom));
+  boost::movelib::unique_ptr<OGRGeometry> geom2(Fmi::OGR::reverseWindingOrder(*geom));
 
   char* tmp = geom2->exportToJson();
   std::string ret = tmp;
@@ -127,18 +128,18 @@ std::string toKML(const OGRGeometry& theGeom,
 {
   // Reproject to WGS84. TODO: Optimize if theSRS == WGS84.
 
-  std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+  auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
   OGRErr err = wgs84->SetFromUserInput("WGS84");
   if (err != OGRERR_NONE)
     throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
-  std::unique_ptr<OGRCoordinateTransformation> transformation(
+  boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
       OGRCreateCoordinateTransformation(theSRS.get(), wgs84.get()));
   if (!transformation)
     throw Spine::Exception(BCP, "Failed to create the coordinate transformation for producing KML");
 
   // Reproject a clone
-  std::unique_ptr<OGRGeometry> geom(theGeom.clone());
+  boost::movelib::unique_ptr<OGRGeometry> geom(theGeom.clone());
   err = geom->transform(transformation.get());
   if (err != OGRERR_NONE)
     throw Spine::Exception(BCP, "Failed to project geometry to WGS84 KML");

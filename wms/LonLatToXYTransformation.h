@@ -1,9 +1,8 @@
-
-
 #pragma once
 
 #include "Geometry.h"
 #include "Projection.h"
+#include <boost/move/unique_ptr.hpp>
 #include <gis/Box.h>
 
 namespace SmartMet
@@ -21,7 +20,7 @@ class LonLatToXYTransformation
   void transform(double& inoutX, double& inoutY);
 
  private:
-  std::unique_ptr<OGRCoordinateTransformation> transformation;
+  boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation;
   const Fmi::Box& box;
 };
 }  // namespace Dali

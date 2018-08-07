@@ -7,30 +7,27 @@
 #include "Isoband.h"
 #include "Layer.h"
 #include "State.h"
-
+#include "ValueTools.h"
+#include <boost/move/make_unique.hpp>
+#include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
 #include <engines/contour/Interpolation.h>
 #include <engines/gis/Engine.h>
-#include <gis/Box.h>
-#include <gis/OGR.h>
-#include <spine/Exception.h>
-#include <spine/Json.h>
-#include <spine/ParameterFactory.h>
-#include <limits>
-
-#include "ValueTools.h"
 #include <engines/observation/Engine.h>
 #include <engines/observation/Settings.h>
 #include <engines/querydata/Model.h>
+#include <gis/Box.h>
+#include <gis/OGR.h>
 #include <macgyver/StringConversion.h>
 #include <newbase/NFmiGdalArea.h>
 #include <newbase/NFmiQueryData.h>
 #include <newbase/NFmiQueryDataUtil.h>
 #include <newbase/NFmiTimeList.h>
-
-// TODO:
-#include <boost/timer/timer.hpp>
+#include <spine/Exception.h>
+#include <spine/Json.h>
+#include <spine/ParameterFactory.h>
+#include <limits>
 
 namespace SmartMet
 {
@@ -192,13 +189,13 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
       if (!values.empty())
       {
         // Station WGS84 coordinates
-        std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+        auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
         OGRErr err = wgs84->SetFromUserInput("WGS84");
 
         if (err != OGRERR_NONE)
           throw Spine::Exception(BCP, "GDAL does not understand WKT 'WGS84'!");
 
-        std::unique_ptr<OGRCoordinateTransformation> transformation(
+        boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
             OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
         if (!transformation)
           throw Spine::Exception(BCP,
@@ -320,9 +317,9 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       return;
 
     std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
-    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
-      timer.reset(new boost::timer::auto_cpu_timer(2, report));
+      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
     // Establish the data
     auto q = getModel(theState);
@@ -373,9 +370,9 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         throw Spine::Exception(BCP, "Isoband-layer can't use both sampling and heatmap!");
 
       std::string report2 = "IsobandLayer::resample finished in %t sec CPU, %w sec real\n";
-      std::unique_ptr<boost::timer::auto_cpu_timer> timer2;
+      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer2;
       if (theState.useTimer())
-        timer2.reset(new boost::timer::auto_cpu_timer(2, report2));
+        timer2 = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report2);
 
       auto demdata = theState.getGeoEngine().dem();
       auto landdata = theState.getGeoEngine().landCover();

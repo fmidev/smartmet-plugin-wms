@@ -6,15 +6,13 @@
 #include "Iri.h"
 #include "Layer.h"
 #include "State.h"
-
+#include <boost/move/make_unique.hpp>
+#include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
 #include <macgyver/StringConversion.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
-
-// TODO:
-#include <boost/timer/timer.hpp>
 
 namespace SmartMet
 {
@@ -244,9 +242,9 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     // Time execution
 
     std::string report = "LegendLayer::generate finished in %t sec CPU, %w sec real\n";
-    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
-      timer.reset(new boost::timer::auto_cpu_timer(2, report));
+      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
     // A symbol must be defined
 

@@ -11,7 +11,7 @@
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
-
+#include <boost/move/make_unique.hpp>
 #include <ctpp2/CDT.hpp>
 #include <gis/Box.h>
 #include <gis/OGR.h>
@@ -329,13 +329,13 @@ std::map<std::string, double> Layer::getClipBoundingBox(
 
   // Observations are in WGS84 coordinates
 
-  std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+  auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
   OGRErr err = wgs84->SetFromUserInput("WGS84");
   if (err != OGRERR_NONE)
     throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
   // Create the transformation from image world coordinates to WGS84 coordinates
-  std::unique_ptr<OGRCoordinateTransformation> transformation(
+  boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
       OGRCreateCoordinateTransformation(theCRS.get(), wgs84.get()));
   if (!transformation)
     throw Spine::Exception(

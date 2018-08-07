@@ -7,7 +7,6 @@
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
-
 #include <engines/gis/Engine.h>
 #include <engines/querydata/Q.h>
 #include <spine/Exception.h>
@@ -16,20 +15,17 @@
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
-
+#include <boost/math/constants/constants.hpp>
+#include <boost/move/make_unique.hpp>
+#include <boost/timer/timer.hpp>
+#include <ctpp2/CDT.hpp>
+#include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
 #include <newbase/NFmiArea.h>
 #include <newbase/NFmiPoint.h>
-
-#include <boost/math/constants/constants.hpp>
-#include <ctpp2/CDT.hpp>
-#include <fmt/format.h>
 #include <iomanip>
-
-// TODO:
-#include <boost/timer/timer.hpp>
 
 const double pi = boost::math::constants::pi<double>();
 
@@ -93,17 +89,17 @@ PointValues read_forecasts(const ArrowLayer& layer,
   // WindUMS and WindVMS are metaparameters, cannot check their existence here
 
   // We may need to convert relative U/V components to true north
-  std::unique_ptr<OGRCoordinateTransformation> uvtransformation;
-  std::unique_ptr<OGRSpatialReference> wgs84;
-  std::unique_ptr<OGRSpatialReference> qsrs;
+  boost::movelib::unique_ptr<OGRCoordinateTransformation> uvtransformation;
+  boost::movelib::unique_ptr<OGRSpatialReference> wgs84;
+  boost::movelib::unique_ptr<OGRSpatialReference> qsrs;
   if (uparam && vparam && q->isRelativeUV())
   {
-    wgs84.reset(new OGRSpatialReference);
+    wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
     OGRErr err = wgs84->SetFromUserInput("WGS84");
     if (err != OGRERR_NONE)
       throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
-    qsrs.reset(new OGRSpatialReference);
+    qsrs = boost::movelib::make_unique<OGRSpatialReference>();
     err = qsrs->SetFromUserInput(q->area().WKT().c_str());
     if (err != OGRERR_NONE)
       throw Spine::Exception(BCP, "Failed to establish querydata spatial reference");
@@ -692,12 +688,12 @@ PointValues read_observations(const ArrowLayer& layer,
     // Create the coordinate transformation from image world coordinates
     // to WGS84 coordinates
 
-    std::unique_ptr<OGRSpatialReference> obscrs(new OGRSpatialReference);
+    auto obscrs = boost::movelib::make_unique<OGRSpatialReference>();
     OGRErr err = obscrs->SetFromUserInput("WGS84");
     if (err != OGRERR_NONE)
       throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation(
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
     if (!transformation)
       throw Spine::Exception(
@@ -833,9 +829,9 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     // Time execution
 
     std::string report = "ArrowLayer::generate finished in %t sec CPU, %w sec real\n";
-    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
-      timer.reset(new boost::timer::auto_cpu_timer(2, report));
+      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
     // A symbol must be defined either globally or for speed ranges
 
@@ -932,12 +928,12 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     // Coordinate transformation from WGS84 to output SRS so that we can rotate
     // winds according to map north
 
-    std::unique_ptr<OGRSpatialReference> wgs84(new OGRSpatialReference);
+    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
     OGRErr err = wgs84->SetFromUserInput("WGS84");
     if (err != OGRERR_NONE)
       throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
-    std::unique_ptr<OGRCoordinateTransformation> transformation(
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
     if (!transformation)
       throw Spine::Exception(

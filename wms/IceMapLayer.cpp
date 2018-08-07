@@ -8,7 +8,7 @@
 #include "State.h"
 #include "TextTable.h"
 #include "TextUtility.h"
-
+#include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <gis/Box.h>
@@ -28,8 +28,8 @@ namespace Dali
 {
 namespace
 {
-typedef boost::shared_ptr<OGRSpatialReference> OGRSpatialReferencePtr;
-typedef std::unique_ptr<OGRCoordinateTransformation> OGRCoordinateTransformationPtr;
+using OGRSpatialReferencePtr = boost::shared_ptr<OGRSpatialReference>;
+using OGRCoordinateTransformationPtr = boost::movelib::unique_ptr<OGRCoordinateTransformation>;
 
 const char* const attribute_columns[] = {"firstname_column",
                                          "secondname_column",
@@ -294,9 +294,9 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       return;
 
     std::string report = "IceMapLayer::generate finished in %t sec CPU, %w sec real\n";
-    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
-      timer.reset(new boost::timer::auto_cpu_timer(2, report));
+      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
     // Get projection details
     if (!projection.crs)

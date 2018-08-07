@@ -15,16 +15,13 @@
 #include "WMSLegendGraphicInfo.h"
 #include "WMSLegendGraphicSettings.h"
 #include "WMSTimeDimension.h"
-
-#include <engines/gis/BBox.h>
-
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/shared_ptr.hpp>
 #include <ctpp2/CDT.hpp>
+#include <engines/gis/BBox.h>
 #include <spine/Json.h>
 #include <spine/Value.h>
-
 #include <list>
 #include <map>
 #include <set>

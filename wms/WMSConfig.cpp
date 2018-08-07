@@ -1,3 +1,5 @@
+#define BOOST_FILESYSTEM_NO_DEPRECATED
+
 #include "WMSConfig.h"
 #include "Layer.h"
 #include "LayerFactory.h"
@@ -6,34 +8,26 @@
 #include "View.h"
 #include "WMSException.h"
 #include "WMSLayerFactory.h"
-
 #include <spine/Convenience.h>
 #include <spine/Exception.h>
 #include <spine/FmiApiKey.h>
 #include <spine/Json.h>
-
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
-
-#include <macgyver/StringConversion.h>
-
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
-
+#include <boost/move/make_unique.hpp>
 #include <boost/regex.hpp>
-
-#define BOOST_FILESYSTEM_NO_DEPRECATED
-
+#include <gdal/ogr_spatialref.h>
+#include <macgyver/StringConversion.h>
 #include <algorithm>
 #include <map>
 #include <stdexcept>
 #include <string>
-
-#include <gdal/ogr_spatialref.h>
 
 using namespace std;
 using namespace SmartMet::Plugin::Dali;
@@ -652,8 +646,8 @@ void WMSConfig::init()
 
   if (!itsCapabilityUpdatesDisabled)
   {
-    itsGetCapabilitiesThread.reset(
-        new boost::thread(boost::bind(&WMSConfig::capabilitiesUpdateLoop, this)));
+    itsGetCapabilitiesThread = boost::movelib::make_unique<boost::thread>(
+        boost::bind(&WMSConfig::capabilitiesUpdateLoop, this));
   }
 }
 
