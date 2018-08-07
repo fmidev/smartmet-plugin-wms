@@ -19,13 +19,13 @@ namespace
 {
 void readBoundingBox(const std::string& bbox, FrameDimension& dimension)
 {
-  if (bbox.find(",") == std::string::npos)
+  if (bbox.find(',') == std::string::npos)
     throw Spine::Exception(BCP,
                            "Frame layer error: invalid bounding box format: should be <lon lat, "
                            "lon lat> (bottom left, top right)");
 
-  std::string bottomLeft = bbox.substr(0, bbox.find(","));
-  std::string topRight = bbox.substr(bbox.find(",") + 1);
+  std::string bottomLeft = bbox.substr(0, bbox.find(','));
+  std::string topRight = bbox.substr(bbox.find(',') + 1);
   boost::algorithm::trim(bottomLeft);
   boost::algorithm::trim(topRight);
 
