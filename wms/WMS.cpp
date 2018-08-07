@@ -153,14 +153,14 @@ unsigned int resolution_in_minutes(const std::string resolution)
 {
   try
   {
-    bool timeResolutionExists(resolution.find("T") != std::string::npos);
-    bool minutesDefined(timeResolutionExists && (resolution.rfind("M") > resolution.find("T")));
+    bool timeResolutionExists(resolution.find('T') != std::string::npos);
+    bool minutesDefined(timeResolutionExists && (resolution.rfind('M') > resolution.find('T')));
 
     // note! years, months are not relevant in FMI timesteps, so they are not parsed
-    unsigned int days(parse_resolution(resolution, resolution.find("D")));
-    unsigned int hours(parse_resolution(resolution, resolution.find("H")));
-    unsigned int minutes(minutesDefined ? parse_resolution(resolution, resolution.rfind("M")) : 0);
-    unsigned int seconds(parse_resolution(resolution, resolution.find("S")));
+    unsigned int days(parse_resolution(resolution, resolution.find('D')));
+    unsigned int hours(parse_resolution(resolution, resolution.find('H')));
+    unsigned int minutes(minutesDefined ? parse_resolution(resolution, resolution.rfind('M')) : 0);
+    unsigned int seconds(parse_resolution(resolution, resolution.find('S')));
 
     return ((days * 1440) + (hours * 60) + (minutes + seconds / 60));
   }
