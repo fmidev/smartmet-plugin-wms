@@ -58,29 +58,29 @@
    <use class="WindRose" x="285" xlink:href="#windrose" y="336"/>
    <path class="HeavyWind" d="M285 336 296.011,340.561 A 11.9187 11.9187 0,0,1 289.561,347.011Z"/>
    <path class="HeavyWind" d="M285 336 292.654,354.478 A 20 20 0,0,1 277.346,354.478Z"/>
-   <line class="RoseConnector" x1="192" x2="269" y1="412" y2="348"/>
+   <line class="RoseConnector" x1="193" x2="270" y1="413" y2="349"/>
    <use class="StationMarker" x="435" xlink:href="#station" y="401"/>
    <use class="WindRose" x="463" xlink:href="#windrose" y="324"/>
    <path class="ModerateWind" d="M463 324 480.644,331.308 A 19.0973 19.0973 0,0,1 470.308,341.644Z"/>
    <path class="LightWind" d="M463 324 470.654,342.478 A 20 20 0,0,1 455.346,342.478Z"/>
    <path class="LightWind" d="M463 324 460.375,330.338 A 6.85994 6.85994 0,0,1 456.662,326.625Z"/>
-   <line class="RoseConnector" x1="435" x2="456" y1="399" y2="342"/>
+   <line class="RoseConnector" x1="436" x2="456" y1="399" y2="343"/>
    <use class="StationMarker" x="155" xlink:href="#station" y="211"/>
    <use class="WindRose" x="285" xlink:href="#windrose" y="241"/>
    <path class="ModerateWind" d="M285 241 298.817,246.723 A 14.9551 14.9551 0,0,1 290.723,254.817Z"/>
    <path class="ModerateWind" d="M285 241 292.654,259.478 A 20 20 0,0,1 277.346,259.478Z"/>
-   <line class="RoseConnector" x1="156" x2="265" y1="211" y2="236"/>
+   <line class="RoseConnector" x1="157" x2="266" y1="211" y2="236"/>
    <use class="StationMarker" x="311" xlink:href="#station" y="125"/>
    <use class="WindRose" x="417" xlink:href="#windrose" y="159"/>
    <path class="ModerateWind" d="M417 159 434.219,166.132 A 18.6378 18.6378 0,0,1 424.132,176.219Z"/>
    <path class="ModerateWind" d="M417 159 424.654,177.478 A 20 20 0,0,1 409.346,177.478Z"/>
-   <line class="RoseConnector" x1="312" x2="397" y1="125" y2="152"/>
+   <line class="RoseConnector" x1="313" x2="398" y1="126" y2="153"/>
    <use class="StationMarker" x="348" xlink:href="#station" y="58"/>
    <use class="WindRose" x="515" xlink:href="#windrose" y="51"/>
    <path class="ModerateWind" d="M515 51 533.478,58.6537 A 20 20 0,0,1 522.654,69.4776Z"/>
    <path class="ModerateWind" d="M515 51 522.297,68.6177 A 19.0693 19.0693 0,0,1 507.703,68.6177Z"/>
    <path class="LightWind" d="M515 51 511.736,58.8789 A 8.52803 8.52803 0,0,1 507.121,54.2635Z"/>
-   <line class="RoseConnector" x1="349" x2="495" y1="57" y2="51"/>
+   <line class="RoseConnector" x1="350" x2="495" y1="58" y2="52"/>
   
   <text class="StationName" x="275" y="310">Utö</text>
   <text class="RoseTemperature" x="310" y="352">1 &#176;C</text>

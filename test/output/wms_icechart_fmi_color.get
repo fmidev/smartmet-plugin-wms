@@ -12223,11 +12223,11 @@ viewBox="0 0 1000 1000">
   <text class="SmallLegendText" x="489.259" y="813.889">Coordinating icebreaker</text>
   </g>
   <g>
-   <use transform="translate(703,388)" xlink:href="#ice_egg"/>
+   <use transform="translate(704,389)" xlink:href="#ice_egg"/>
   </g>
   <text font-family="Arial" font-size="36" font-weight="normal" style="text-anchor:middle" x="1037.04" xml:space="preserve" y="138.889">Jääkartta   Iskarta  Ice Chart</text>
   <g>
-   <use transform="translate(222,138)" xlink:href="#fmi_logo"/>
+   <use transform="translate(222,139)" xlink:href="#fmi_logo"/>
   </g>
   <text font-family="Arial" font-size="36" font-weight="normal" style="text-anchor:middle" x="1037" y="180">27.02.2012</text>
   <g>
