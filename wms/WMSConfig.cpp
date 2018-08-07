@@ -796,7 +796,7 @@ void WMSConfig::updateLayerMetaData()
                   try
                   {
                     std::string pathName = itr2->path().string();
-                    std::string fullLayername(theNamespace + ":" + layername);
+                    std::string fullLayername = theNamespace + ":" + layername;
 
                     // Check for modified product files here
                     std::time_t modtime = boost::filesystem::last_write_time(pathName);
