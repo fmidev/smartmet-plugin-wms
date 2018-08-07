@@ -484,10 +484,13 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
       itsContourEngine(nullptr),
       itsGisEngine(nullptr),
       itsGeoEngine(nullptr),
-#ifndef WITHOUT_OBSERVATION
-      itsObsEngine(nullptr),
+#ifdef WITHOUT_OBSERVATION
+      itsGeoEngine(nullptr)
+#else
+      itsGeoEngine(nullptr),
+      itsObsEngine(nullptr)
 #endif
-      itsWMSGetCapabilities()
+
 {
   try
   {
