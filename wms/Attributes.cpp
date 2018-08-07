@@ -41,7 +41,7 @@ void Attributes::add(const std::string& theName, const std::string& theValue)
  */
 // ----------------------------------------------------------------------
 
-void Attributes::init(const Json::Value& theJson, const Config& theConfig)
+void Attributes::init(const Json::Value& theJson, const Config& /* theConfig */)
 {
   try
   {
@@ -140,7 +140,7 @@ void Attributes::generate(CTPP::CDT& theLocals, State& theState) const
       bool is_regular = (regular_attributes.find(attr_name) != regular_attributes.end());
       bool is_presentation = (!is_regular && (presentation_attributes.find(attr_name) !=
                                               presentation_attributes.end()));
-      bool is_valid = ((attr_name == "qid") | is_presentation | is_regular);
+      bool is_valid = ((attr_name == "qid") || is_presentation || is_regular);
 
       if (!is_valid)
         throw Spine::Exception(BCP, "Illegal SVG attribute name '" + attr_name + "'");
@@ -220,7 +220,7 @@ void Attributes::generatePresentation(CTPP::CDT& theLocals,
       bool is_regular = (regular_attributes.find(attr_name) != regular_attributes.end());
       bool is_presentation = (!is_regular && (presentation_attributes.find(attr_name) !=
                                               presentation_attributes.end()));
-      bool is_valid = ((attr_name == "qid") | is_presentation | is_regular);
+      bool is_valid = ((attr_name == "qid") || is_presentation || is_regular);
 
       if (!is_valid)
         throw Spine::Exception(BCP, "Illegal SVG attribute name '" + attr_name + "'");
