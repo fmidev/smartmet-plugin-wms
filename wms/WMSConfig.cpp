@@ -154,8 +154,8 @@ bool prepareLegendGraphic(Product& product)
     it++;
     views.erase(it, views.end());
 
-    boost::shared_ptr<View> view = *(views.begin());
-    std::list<boost::shared_ptr<Layer> >& layers = view->layers.layers;
+    auto view = *(views.begin());
+    auto& layers = view->layers.layers;
 
     layers.erase(layers.begin(), layers.end());
     layers.push_back(legendLayer);
@@ -165,8 +165,8 @@ bool prepareLegendGraphic(Product& product)
   auto it = views.begin();
   it++;
   views.erase(it, views.end());
-  boost::shared_ptr<View> view = *(views.begin());
-  std::list<boost::shared_ptr<Layer> >& layers = view->layers.layers;
+  auto view = *(views.begin());
+  auto& layers = view->layers.layers;
   layers.erase(layers.begin(), layers.end());
   return false;
 }
