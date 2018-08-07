@@ -186,7 +186,7 @@ int rose_sector(int sectors, double direction)
 {
   try
   {
-    return static_cast<int>(sectors * direction / 360 + 0.5) % sectors;
+    return lround(sectors * direction / 360.0) % sectors;
   }
   catch (...)
   {
