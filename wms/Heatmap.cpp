@@ -19,7 +19,7 @@ float sqrtKernel(float d)
 
 float expKernel(float d, double deviation)
 {
-  return (float)exp(-0.5 * sqrtf(d / deviation));
+  return static_cast<float>(exp(-0.5 * sqrtf(d / deviation)));
 }
 }  // namespace
 
@@ -105,7 +105,7 @@ std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> Heatmap::getStamp(u
       unsigned y;
       unsigned d = 2 * r + 1;
 
-      float* stamp = (float*)calloc(d * d, sizeof(float));
+      float* stamp = static_cast<float*>(calloc(d * d, sizeof(float)));
 
       if (!stamp)
         throw Spine::Exception(BCP, "Could not allocate memory for heatmap stamp");
@@ -118,7 +118,8 @@ std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> Heatmap::getStamp(u
 
         for (x = 0; x < d; ++x, ++line)
         {
-          const float dist = sqrtf((float)((x - r) * (x - r) + (y - r) * (y - r))) / (float)(r + 1);
+          const auto dist =
+              static_cast<float>(sqrt(((x - r) * (x - r) + (y - r) * (y - r))) / (r + 1));
           const float ds = expKernel(dist, *deviation);
           /* This doesn't generate optimal assembly, but meh, it's readable. */
           const float clamped_ds = ds > 1.0f ? 1.0f : ds < 0.0f ? 0.0f : ds;
