@@ -528,7 +528,7 @@ void Plugin::init()
       return;
 
     auto engine = itsReactor->getSingleton("Contour", nullptr);
-    if (!engine)
+    if (engine == nullptr)
       throw Spine::Exception(BCP, "Contour engine unavailable");
     itsContourEngine = reinterpret_cast<Engine::Contour::Engine *>(engine);
     if (itsShutdownRequested)
@@ -540,7 +540,7 @@ void Plugin::init()
       return;
 
     engine = itsReactor->getSingleton("Gis", nullptr);
-    if (!engine)
+    if (engine == nullptr)
       throw Spine::Exception(BCP, "Gis engine unavailable");
     itsGisEngine = reinterpret_cast<Engine::Gis::Engine *>(engine);
     if (itsShutdownRequested)
@@ -552,7 +552,7 @@ void Plugin::init()
       return;
 
     engine = itsReactor->getSingleton("Querydata", nullptr);
-    if (!engine)
+    if (engine == nullptr)
       throw Spine::Exception(BCP, "Querydata engine unavailable");
     itsQEngine = reinterpret_cast<Engine::Querydata::Engine *>(engine);
     if (itsShutdownRequested)
@@ -561,7 +561,7 @@ void Plugin::init()
     // GEONAMES
 
     engine = itsReactor->getSingleton("Geonames", nullptr);
-    if (!engine)
+    if (engine == nullptr)
       throw Spine::Exception(BCP, "Geonames engine unavailable");
     itsGeoEngine = reinterpret_cast<Engine::Geonames::Engine *>(engine);
     if (itsShutdownRequested)
@@ -591,7 +591,7 @@ void Plugin::init()
     if (itsConfig.authenticate())
     {
       engine = itsReactor->getSingleton("Authentication", nullptr);
-      if (!engine)
+      if (engine == nullptr)
         throw Spine::Exception(BCP, "Authentication unavailable");
       auto *authEngine = reinterpret_cast<Engine::Authentication::Engine *>(engine);
 
