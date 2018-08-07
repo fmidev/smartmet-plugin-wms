@@ -408,7 +408,7 @@ void useStyle(Json::Value& root, const std::string& styleName)
     if (!json.isArray())
       throw Spine::Exception(BCP, "WMSLayer styles settings must be an array");
 
-    for (auto styleJson : json)
+    for (const auto& styleJson : json)
     {
       const auto& nameJson = styleJson.get("name", nulljson);
 

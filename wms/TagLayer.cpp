@@ -120,7 +120,7 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       // Update coordinates of sublayers
       if (!longitude.empty() && !latitude.empty())
       {
-        for (auto layer : layers.layers)
+        for (const auto& layer : layers.layers)
         {
           std::string x = layer->attributes.value("x");
           std::string y = layer->attributes.value("y");

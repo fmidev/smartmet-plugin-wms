@@ -1189,7 +1189,7 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
   width = result.width;
   height = result.height;
 
-  for (auto legendLayer : result.legendLayers)
+  for (const auto& legendLayer : result.legendLayers)
   {
     Json::Value json;
     Json::Reader reader;
@@ -1277,7 +1277,7 @@ void WMSConfig::getLegendGraphic(const std::string& theLayerName,
   Json::Value nulljson;
 
   boost::shared_ptr<View> view = *(theProduct.views.views.begin());
-  for (auto legendL : legendLayers)
+  for (const auto& legendL : legendLayers)
   {
     boost::shared_ptr<Layer> legendLayer(Dali::LayerFactory::create(legendL));
     legendLayer->init(legendL, theState, itsDaliConfig, theProduct);
@@ -1290,7 +1290,7 @@ void WMSConfig::getLegendGraphic(const std::string& theLayerName,
       auto defLayers = defs.get("layers", nulljson);
       if (!defLayers.isNull())
       {
-        for (auto defLayerJson : defLayers)
+        for (const auto& defLayerJson : defLayers)
         {
           if (!defLayerJson.isNull())
           {

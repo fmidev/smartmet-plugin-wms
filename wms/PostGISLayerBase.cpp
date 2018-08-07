@@ -174,7 +174,7 @@ Fmi::Features PostGISLayerBase::getFeatures(const State& theState,
 
     Fmi::Features result_set = gis.getFeatures(theSR, theMapOptions);
 
-    for (auto result_item : result_set)
+    for (const auto& result_item : result_set)
     {
       if (!result_item->geom || result_item->geom->IsEmpty() != 0)
       {
