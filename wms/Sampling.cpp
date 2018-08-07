@@ -86,13 +86,11 @@ boost::optional<double> Sampling::getResolution(const Projection& theProjection)
         return resolution;
       return {};
     }
-    else
-    {
-      auto scaled_resolution = (*theProjection.resolution) * (*relativeresolution);
-      if (scaled_resolution > 0)
-        return scaled_resolution;
-      return {};
-    }
+
+    auto scaled_resolution = (*theProjection.resolution) * (*relativeresolution);
+    if (scaled_resolution > 0)
+      return scaled_resolution;
+    return {};
   }
   catch (...)
   {

@@ -47,34 +47,25 @@ std::string WMSGetCapabilities::resolveGetMapURI(const Spine::HTTP::Request& the
       // This should never happen, host header is mandatory in HTTP 1.1
       return "http://smartmet.fmi.fi/wms";
     }
-    else
+
+    // http/https scheme selection based on 'X-Forwarded-Proto' header
+    auto host_protocol = theRequest.getProtocol();
+    std::string protocol((host_protocol ? *host_protocol : "http") + "://");
+
+    std::string host = *host_header;
+    if (host == "data.fmi.fi" || host == "wms.fmi.fi")  // These should be configurable
     {
-      // http/https scheme selection based on 'X-Forwarded-Proto' header
-      auto host_protocol = theRequest.getProtocol();
-      std::string protocol((host_protocol ? *host_protocol : "http") + "://");
+      // These hosts need apikey in order to work
+      auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
 
-      std::string host = *host_header;
-      if (host == "data.fmi.fi" || host == "wms.fmi.fi")  // These should be configurable
-      {
-        // These hosts need apikey in order to work
-        auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
+      if (!apikey)
 
-        if (!apikey)
-        {
-          // No apikey? We'll make do without.
-          return protocol + host + "/wms";
-        }
-        else
-        {
-          return protocol + host + "/fmi-apikey/" + *apikey + "/wms";
-        }
-      }
-      else
-      {
-        // No apikey needed
-        return protocol + host + "/wms";
-      }
+        return protocol + host + "/wms";  // No apikey? We'll make do without.
+      return protocol + host + "/fmi-apikey/" + *apikey + "/wms";
     }
+
+    // No apikey needed
+    return protocol + host + "/wms";
   }
   catch (...)
   {

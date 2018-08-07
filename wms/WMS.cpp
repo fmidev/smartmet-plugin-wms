@@ -85,11 +85,11 @@ WMSRequestType wmsRequestType(const Spine::HTTP::Request& theHTTPRequest)
 
     if (boost::iequals(request, WMS_GET_CAPABILITIES) && boost::iequals(service, WMS_SERVICE))
       return WMSRequestType::GET_CAPABILITIES;
-    else if (boost::iequals(request, WMS_GET_MAP))
+    if (boost::iequals(request, WMS_GET_MAP))
       return WMSRequestType::GET_MAP;
-    else if (boost::iequals(request, WMS_GET_LEGEND_GRAPHIC))
+    if (boost::iequals(request, WMS_GET_LEGEND_GRAPHIC))
       return WMSRequestType::GET_LEGEND_GRAPHIC;
-    else if (boost::iequals(request, WMS_GET_FEATURE_INFO))
+    if (boost::iequals(request, WMS_GET_FEATURE_INFO))
       return WMSRequestType::GET_FEATURE_INFO;
 
     return WMSRequestType::NOT_A_WMS_REQUEST;

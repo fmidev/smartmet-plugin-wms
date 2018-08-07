@@ -188,8 +188,7 @@ const std::string& Config::rootDirectory(bool theWmsFlag) const
 {
   if (theWmsFlag)
     return itsWmsRootDirectory;
-  else
-    return itsRootDirectory;
+  return itsRootDirectory;
 }
 const std::string& Config::filesystemCacheDirectory() const
 {

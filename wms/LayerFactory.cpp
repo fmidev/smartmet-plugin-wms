@@ -46,42 +46,42 @@ Layer* create(const Json::Value& theJson)
 
     if (name == "arrow")
       return new ArrowLayer;
-    else if (name == "background")
+    if (name == "background")
       return new BackgroundLayer;
-    else if (name == "postgis")
+    if (name == "postgis")
       return new PostGISLayer;
-    else if (name == "isoband")
+    if (name == "isoband")
       return new IsobandLayer;
-    else if (name == "isoline")
+    if (name == "isoline")
       return new IsolineLayer;
-    else if (name == "legend")
+    if (name == "legend")
       return new LegendLayer;
-    else if (name == "location")
+    if (name == "location")
       return new LocationLayer;
-    else if (name == "map")
+    if (name == "map")
       return new MapLayer;
-    else if (name == "number")
+    if (name == "number")
       return new NumberLayer;
-    else if (name == "symbol")
+    if (name == "symbol")
       return new SymbolLayer;
-    else if (name == "tag")
+    if (name == "tag")
       return new TagLayer;
-    else if (name == "time")
+    if (name == "time")
       return new TimeLayer;
-    else if (name == "translation")
+    if (name == "translation")
       return new TranslationLayer;
-    else if (name == "wkt")
+    if (name == "wkt")
       return new WKTLayer;
 #ifndef WITHOUT_OBSERVATION
-    else if (name == "windrose")
+    if (name == "windrose")
       return new WindRoseLayer;
 #endif
-    else if (name == "icemap")
+    if (name == "icemap")
       return new IceMapLayer;
-    else if (name == "frame")
+    if (name == "frame")
       return new FrameLayer;
-    else
-      throw Spine::Exception(BCP, "Unknown layer type '" + name + "'");
+
+    throw Spine::Exception(BCP, "Unknown layer type '" + name + "'");
   }
   catch (...)
   {

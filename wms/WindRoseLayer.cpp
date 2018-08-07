@@ -128,8 +128,7 @@ double mean(const Spine::TimeSeries::TimeSeries& tseries)
     }
     if (count == 0)
       return kFloatMissing;
-    else
-      return sum / count;
+    return sum / count;
   }
   catch (...)
   {
@@ -163,8 +162,7 @@ double max(const Spine::TimeSeries::TimeSeries& tseries)
     }
     if (!valid)
       return kFloatMissing;
-    else
-      return res;
+    return res;
   }
   catch (...)
   {

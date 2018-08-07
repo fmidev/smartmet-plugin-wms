@@ -67,16 +67,13 @@ std::string Label::print(double theValue) const
         ret = "0";
       return prefix + ret + suffix;
     }
-    else
-    {
-      // Handle special sign selections
-      *formatter << std::fixed << std::setprecision(precision) << std::abs(value);
-      std::string ret = formatter->str();
-      if (value < 0)
-        return prefix + minusprefix + ret + suffix;
-      else
-        return prefix + plusprefix + ret + suffix;
-    }
+
+    // Handle special sign selections
+    *formatter << std::fixed << std::setprecision(precision) << std::abs(value);
+    std::string ret = formatter->str();
+    if (value < 0)
+      return prefix + minusprefix + ret + suffix;
+    return prefix + plusprefix + ret + suffix;
   }
   catch (...)
   {

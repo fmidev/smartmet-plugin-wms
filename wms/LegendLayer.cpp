@@ -46,8 +46,7 @@ std::string pretty(double num, const char* format)
 
   if (ret != "-0")
     return ret;
-  else
-    return "0";
+  return "0";
 }
 
 // ----------------------------------------------------------------------
@@ -85,19 +84,19 @@ std::string legend_text(const Isoband& theIsoband, const LegendLabels& theLabels
 
     if (theLabels.type == "none")
       return empty;
-    else if (theLabels.type == "lolimit")
+    if (theLabels.type == "lolimit")
     {
       if (!theIsoband.lolimit)
         return empty;
       return legend_text(*theIsoband.lolimit, theLabels);
     }
-    else if (theLabels.type == "hilimit")
+    if (theLabels.type == "hilimit")
     {
       if (!theIsoband.hilimit)
         return empty;
       return legend_text(*theIsoband.hilimit, theLabels);
     }
-    else if (theLabels.type == "range")
+    if (theLabels.type == "range")
     {
       if (!theIsoband.lolimit)
       {
@@ -105,16 +104,13 @@ std::string legend_text(const Isoband& theIsoband, const LegendLabels& theLabels
           return "MISSING";
         return "&lt; " + legend_text(*theIsoband.hilimit, theLabels);
       }
-      else
-      {
-        if (!theIsoband.hilimit)
-          return "&gt; " + legend_text(*theIsoband.lolimit, theLabels);
-        return (legend_text(*theIsoband.lolimit, theLabels) + theLabels.separator +
-                legend_text(*theIsoband.hilimit, theLabels));
-      }
+      if (!theIsoband.hilimit)
+        return "&gt; " + legend_text(*theIsoband.lolimit, theLabels);
+      return (legend_text(*theIsoband.lolimit, theLabels) + theLabels.separator +
+              legend_text(*theIsoband.hilimit, theLabels));
     }
-    else
-      throw Spine::Exception(BCP, "Unknown legend label type '" + theLabels.type + "'");
+
+    throw Spine::Exception(BCP, "Unknown legend label type '" + theLabels.type + "'");
   }
   catch (...)
   {

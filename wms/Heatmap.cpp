@@ -63,7 +63,7 @@ void Heatmap::init(const Json::Value& theJson, const Config& theConfig)
 
     if (!resolution)
       throw Spine::Exception(BCP, "Heatmap resolution is not set");
-    else if (!radius)
+    if (!radius)
       throw Spine::Exception(BCP, "Heatmap radius is not set");
 
     if (!kernel)
