@@ -17,7 +17,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Png::init(const Json::Value& theJson, const Config& theConfig)
+void Png::init(const Json::Value& theJson, const Config& /* theConfig */)
 {
   try
   {
@@ -55,7 +55,7 @@ void Png::init(const Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-std::size_t Png::hash_value(const State& theState) const
+std::size_t Png::hash_value(const State& /* theState */) const
 {
   try
   {
