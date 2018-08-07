@@ -54,7 +54,7 @@ using PointValues = std::vector<PointValue>;
 // ----------------------------------------------------------------------
 
 PointValues read_forecasts(const NumberLayer& layer,
-                           Engine::Querydata::Q q,
+                           const Engine::Querydata::Q& q,
                            const boost::shared_ptr<OGRSpatialReference>& crs,
                            const Fmi::Box& box,
                            const boost::posix_time::time_period& valid_time_period)
