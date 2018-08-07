@@ -364,7 +364,7 @@ void useStyle(Json::Value& root, const Json::Value& styles)
   auto styleLayers = styles.get("layers", nulljson);
   if (!styleLayers.isNull() && styleLayers.isArray())
   {
-    for (auto styleLayer : styleLayers)
+    for (const auto& styleLayer : styleLayers)
     {
       auto qid = styleLayer.get("qid", nulljson);
       if (qid.isNull())
@@ -412,7 +412,7 @@ void useStyle(Json::Value& root, const std::string& styleName)
 
     for (auto styleJson : json)
     {
-      auto nameJson = styleJson.get("name", nulljson);
+      const auto& nameJson = styleJson.get("name", nulljson);
 
       if (!nameJson.isNull() && nameJson.asString() == styleName)
       {

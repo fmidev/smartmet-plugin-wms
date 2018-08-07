@@ -75,7 +75,7 @@ bool overlaps(const Fmi::Box& theBox,
 // ----------------------------------------------------------------------
 
 void apply_direction_offsets(Positions::Points& thePoints,
-                             Engine::Querydata::Q theQ,
+                             const Engine::Querydata::Q& theQ,
                              const boost::posix_time::ptime& theTime,
                              int theOffset,
                              int theRotation,
@@ -321,7 +321,7 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-void Positions::init(Engine::Querydata::Q q,
+void Positions::init(const Engine::Querydata::Q& q,
                      const Projection& theProjection,
                      const boost::posix_time::ptime& theTime,
                      const State& theState)
@@ -384,8 +384,8 @@ void Positions::addMargins(int theXMargin, int theYMargin)
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getPoints(Engine::Querydata::Q theQ,
-                                       boost::shared_ptr<OGRSpatialReference> theCRS,
+Positions::Points Positions::getPoints(const Engine::Querydata::Q& theQ,
+                                       const boost::shared_ptr<OGRSpatialReference>& theCRS,
                                        const Fmi::Box& theBox,
                                        bool forecastMode) const
 {
@@ -423,8 +423,8 @@ Positions::Points Positions::getPoints(Engine::Querydata::Q theQ,
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getGridPoints(Engine::Querydata::Q theQ,
-                                           boost::shared_ptr<OGRSpatialReference> theCRS,
+Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
+                                           const boost::shared_ptr<OGRSpatialReference>& theCRS,
                                            const Fmi::Box& theBox,
                                            bool forecastMode) const
 {
@@ -530,8 +530,8 @@ Positions::Points Positions::getGridPoints(Engine::Querydata::Q theQ,
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getDataPoints(Engine::Querydata::Q theQ,
-                                           boost::shared_ptr<OGRSpatialReference> theCRS,
+Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
+                                           const boost::shared_ptr<OGRSpatialReference>& theCRS,
                                            const Fmi::Box& theBox,
                                            bool forecastMode) const
 {
@@ -613,10 +613,11 @@ Positions::Points Positions::getDataPoints(Engine::Querydata::Q theQ,
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getGraticulePoints(Engine::Querydata::Q theQ,
-                                                boost::shared_ptr<OGRSpatialReference> theCRS,
-                                                const Fmi::Box& theBox,
-                                                bool forecastMode) const
+Positions::Points Positions::getGraticulePoints(
+    const Engine::Querydata::Q& theQ,
+    const boost::shared_ptr<OGRSpatialReference>& theCRS,
+    const Fmi::Box& theBox,
+    bool forecastMode) const
 {
   try
   {
@@ -690,10 +691,11 @@ Positions::Points Positions::getGraticulePoints(Engine::Querydata::Q theQ,
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getGraticuleFillPoints(Engine::Querydata::Q theQ,
-                                                    boost::shared_ptr<OGRSpatialReference> theCRS,
-                                                    const Fmi::Box& theBox,
-                                                    bool forecastMode) const
+Positions::Points Positions::getGraticuleFillPoints(
+    const Engine::Querydata::Q& theQ,
+    const boost::shared_ptr<OGRSpatialReference>& theCRS,
+    const Fmi::Box& theBox,
+    bool forecastMode) const
 {
   try
   {
@@ -895,8 +897,8 @@ Positions::Points Positions::getGraticuleFillPoints(Engine::Querydata::Q theQ,
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getKeywordPoints(Engine::Querydata::Q theQ,
-                                              boost::shared_ptr<OGRSpatialReference> theCRS,
+Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
+                                              const boost::shared_ptr<OGRSpatialReference>& theCRS,
                                               const Fmi::Box& theBox,
                                               bool forecastMode) const
 {
@@ -974,8 +976,8 @@ Positions::Points Positions::getKeywordPoints(Engine::Querydata::Q theQ,
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getLatLonPoints(Engine::Querydata::Q theQ,
-                                             boost::shared_ptr<OGRSpatialReference> theCRS,
+Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
+                                             const boost::shared_ptr<OGRSpatialReference>& theCRS,
                                              const Fmi::Box& theBox,
                                              bool forecastMode) const
 {
@@ -1059,8 +1061,8 @@ Positions::Points Positions::getLatLonPoints(Engine::Querydata::Q theQ,
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getStationPoints(Engine::Querydata::Q theQ,
-                                              boost::shared_ptr<OGRSpatialReference> theCRS,
+Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
+                                              const boost::shared_ptr<OGRSpatialReference>& theCRS,
                                               const Fmi::Box& theBox,
                                               bool forecastMode) const
 {

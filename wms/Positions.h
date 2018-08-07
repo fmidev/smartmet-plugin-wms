@@ -55,13 +55,13 @@ class Positions
   void init(const Json::Value& theJson, const Config& theConfig);
   virtual std::size_t hash_value(const State& theState) const;
 
-  void init(Engine::Querydata::Q q,
+  void init(const Engine::Querydata::Q& q,
             const Projection& theProjection,
             const boost::posix_time::ptime& theTime,
             const State& theState);
 
-  Points getPoints(Engine::Querydata::Q theQ,
-                   boost::shared_ptr<OGRSpatialReference> theCRS,
+  Points getPoints(const Engine::Querydata::Q& theQ,
+                   const boost::shared_ptr<OGRSpatialReference>& theCRS,
                    const Fmi::Box& theBox,
                    bool forecastMode) const;
 
@@ -122,38 +122,38 @@ class Positions
   int ymargin = 0;
 
  private:
-  Points getGridPoints(Engine::Querydata::Q theQ,
-                       boost::shared_ptr<OGRSpatialReference> theCRS,
+  Points getGridPoints(const Engine::Querydata::Q& theQ,
+                       const boost::shared_ptr<OGRSpatialReference>& theCRS,
                        const Fmi::Box& theBox,
                        bool forecastMode) const;
 
-  Points getDataPoints(Engine::Querydata::Q theQ,
-                       boost::shared_ptr<OGRSpatialReference> theCRS,
+  Points getDataPoints(const Engine::Querydata::Q& theQ,
+                       const boost::shared_ptr<OGRSpatialReference>& theCRS,
                        const Fmi::Box& theBox,
                        bool forecastMode) const;
 
-  Points getGraticulePoints(Engine::Querydata::Q theQ,
-                            boost::shared_ptr<OGRSpatialReference> theCRS,
+  Points getGraticulePoints(const Engine::Querydata::Q& theQ,
+                            const boost::shared_ptr<OGRSpatialReference>& theCRS,
                             const Fmi::Box& theBox,
                             bool forecastMode) const;
 
-  Points getGraticuleFillPoints(Engine::Querydata::Q theQ,
-                                boost::shared_ptr<OGRSpatialReference> theCRS,
+  Points getGraticuleFillPoints(const Engine::Querydata::Q& theQ,
+                                const boost::shared_ptr<OGRSpatialReference>& theCRS,
                                 const Fmi::Box& theBox,
                                 bool forecastMode) const;
 
-  Points getKeywordPoints(Engine::Querydata::Q theQ,
-                          boost::shared_ptr<OGRSpatialReference> theCRS,
+  Points getKeywordPoints(const Engine::Querydata::Q& theQ,
+                          const boost::shared_ptr<OGRSpatialReference>& theCRS,
                           const Fmi::Box& theBox,
                           bool forecastMode) const;
 
-  Points getLatLonPoints(Engine::Querydata::Q theQ,
-                         boost::shared_ptr<OGRSpatialReference> theCRS,
+  Points getLatLonPoints(const Engine::Querydata::Q& theQ,
+                         const boost::shared_ptr<OGRSpatialReference>& theCRS,
                          const Fmi::Box& theBox,
                          bool forecastMode) const;
 
-  Points getStationPoints(Engine::Querydata::Q theQ,
-                          boost::shared_ptr<OGRSpatialReference> theCRS,
+  Points getStationPoints(const Engine::Querydata::Q& theQ,
+                          const boost::shared_ptr<OGRSpatialReference>& theCRS,
                           const Fmi::Box& theBox,
                           bool forecastMode) const;
 
