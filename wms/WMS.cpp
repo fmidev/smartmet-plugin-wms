@@ -147,7 +147,7 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
   }
 }
 
-unsigned int resolution_in_minutes(const std::string resolution)
+unsigned int resolution_in_minutes(const std::string& resolution)
 {
   try
   {
