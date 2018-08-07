@@ -44,7 +44,7 @@ void Filters::init(const Json::Value& theJson, const State& theState)
                                "Only RFC2397 data-URLs supported: URL incorrect '" + value +
                                    "' for filter '" + name + "'");
       value = value.substr(6);  // Cut away data:,
-      if (theState.setFilter(name, value) == false)
+      if (!theState.setFilter(name, value))
         throw Spine::Exception(BCP, "defs.filters filter '" + name + "' defined multiple times");
       filters[name] = value;
     }

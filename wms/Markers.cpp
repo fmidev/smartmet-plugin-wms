@@ -44,7 +44,7 @@ void Markers::init(const Json::Value& theJson, const State& theState)
                                "Only RFC2397 data-URLs supported: URL incorrect '" + value +
                                    "' for marker '" + name + "'");
       value = value.substr(6);  // Cut away data:,
-      if (theState.setMarker(name, value) == false)
+      if (!theState.setMarker(name, value))
         throw Spine::Exception(BCP, "defs.markers marker '" + name + "' defined multiple times");
       markers[name] = value;
     }
