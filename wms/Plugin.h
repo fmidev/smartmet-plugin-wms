@@ -116,7 +116,7 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                           const Spine::HTTP::Request& theRequest,
                           Spine::HTTP::Response& theResponse);
   void formatResponse(const std::string& theSvg,
-                      const std::string& theFormat,
+                      const std::string& theType,
                       const Spine::HTTP::Request& theRequest,
                       Spine::HTTP::Response& theResponse,
                       bool usetimer,
