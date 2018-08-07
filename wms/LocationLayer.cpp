@@ -175,7 +175,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     // Read the data from geonames. We use autocomplete mode
     // to get a good prioritized sort for the locations.
-    // TODO: Use even more query options?
+    // Use even more query options?
 
     const auto& engine = theState.getGeoEngine();
     Locus::QueryOptions options;

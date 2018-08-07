@@ -8,14 +8,12 @@
 #include "State.h"
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-
+#include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <fmt/time.h>
 #include <gis/Box.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
-// TODO:
-#include <boost/timer/timer.hpp>
 
 namespace SmartMet
 {

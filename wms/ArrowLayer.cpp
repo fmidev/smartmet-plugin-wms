@@ -190,11 +190,11 @@ PointValues read_forecasts(const ArrowLayer& layer,
     else
     {
       q->param(dirparam->number());
-      wdir = q->interpolate(point.latlon, met_time, 180);  // TODO: magic constant
+      wdir = q->interpolate(point.latlon, met_time, 180);
       if (speedparam)
       {
         q->param(speedparam->number());
-        wspd = q->interpolate(point.latlon, met_time, 180);  // TODO: magic constant
+        wspd = q->interpolate(point.latlon, met_time, 180);
       }
     }
 
