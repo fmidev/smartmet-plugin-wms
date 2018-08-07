@@ -35,8 +35,8 @@ struct LegendGraphicInfoItem
   std::map<std::string, Json::Value> info;
 };
 
-typedef std::vector<LegendGraphicInfoItem> LegendGraphicInfo;
-typedef std::map<std::string, LegendGraphicInfo> NamedLegendGraphicInfo;
+using LegendGraphicInfo = std::vector<LegendGraphicInfoItem>;
+using NamedLegendGraphicInfo = std::map<std::string, LegendGraphicInfo>;
 
 struct LegendGraphicResult
 {

@@ -27,7 +27,7 @@ class State;
 class Markers
 {
  private:
-  typedef std::map<std::string, std::string> MarkerMap;
+  using MarkerMap = std::map<std::string, std::string>;
   MarkerMap markers;
 
  public:

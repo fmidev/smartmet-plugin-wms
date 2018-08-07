@@ -27,7 +27,7 @@ class State;
 class Gradients
 {
  private:
-  typedef std::map<std::string, std::string> GradientMap;
+  using GradientMap = std::map<std::string, std::string>;
   GradientMap gradients;
 
  public:

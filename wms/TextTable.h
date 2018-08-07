@@ -46,7 +46,7 @@ struct TableCell
   std::vector<std::string> rows;  // there can be several rows in a cell
 };
 
-typedef std::vector<TableCell> RowCellInfo;
+using RowCellInfo = std::vector<TableCell>;
 
 class TextTable
 {

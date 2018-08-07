@@ -21,7 +21,7 @@ namespace Plugin
 {
 namespace Dali
 {
-typedef boost::shared_ptr<Fmi::TemplateFormatter> SharedFormatter;
+using SharedFormatter = boost::shared_ptr<Fmi::TemplateFormatter>;
 
 class TemplateFactory : public boost::noncopyable
 {
@@ -39,8 +39,8 @@ class TemplateFactory : public boost::noncopyable
 
   // CT++ may not be thread safe - but using a thread specific
   // storage for cached copies makes using it thread safe
-  typedef std::map<boost::filesystem::path, TemplateInfo> TemplateMap;
-  typedef boost::thread_specific_ptr<TemplateMap> Templates;
+  using TemplateMap = std::map<boost::filesystem::path, TemplateInfo>;
+  using Templates = boost::thread_specific_ptr<TemplateMap>;
   mutable Templates itsTemplates;
 
 };  // class TemplateFactory

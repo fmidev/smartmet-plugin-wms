@@ -27,7 +27,7 @@ class State;
 class Patterns
 {
  private:
-  typedef std::map<std::string, std::string> PatternMap;
+  using PatternMap = std::map<std::string, std::string>;
   PatternMap patterns;
 
  public:

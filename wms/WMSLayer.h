@@ -123,8 +123,8 @@ class WMSLayer
   static Json::Value readJsonFile(const std::string theFileName);
 };
 
-typedef boost::shared_ptr<WMSLayer> SharedWMSLayer;
-typedef std::map<std::string, SharedWMSLayer> SharedWMSLayers;
+using SharedWMSLayer = boost::shared_ptr<WMSLayer>;
+using SharedWMSLayers = std::map<std::string, SharedWMSLayer>;
 
 std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer);
 std::ostream& operator<<(std::ostream& ost, const LegendGraphicInfoItem& lgi);

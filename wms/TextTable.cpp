@@ -284,7 +284,7 @@ void TextTable::addContent(const Json::Value& tableDataJson)
   if (tableDataJson.isNull())
     return;
 
-  typedef std::vector<std::string> TableRow;
+  using TableRow = std::vector<std::string>;
   Json::Value json, nulljson;
   // add title
   json = tableDataJson.get("title", nulljson);

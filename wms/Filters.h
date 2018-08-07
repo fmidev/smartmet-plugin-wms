@@ -27,7 +27,7 @@ class State;
 class Filters
 {
  private:
-  typedef std::map<std::string, std::string> FilterMap;
+  using FilterMap = std::map<std::string, std::string>;
   FilterMap filters;
 
  public:

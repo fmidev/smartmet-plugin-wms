@@ -25,8 +25,8 @@ class State;
 class Styles
 {
  private:
-  typedef std::map<std::string, std::string> Style;
-  typedef std::map<std::string, Style> StyleMap;
+  using Style = std::map<std::string, std::string>;
+  using StyleMap = std::map<std::string, Style>;
   StyleMap styles;
 
  public:

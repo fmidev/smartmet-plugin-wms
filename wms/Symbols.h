@@ -27,7 +27,7 @@ class State;
 class Symbols
 {
  private:
-  typedef std::map<std::string, std::string> SymbolMap;
+  using SymbolMap = std::map<std::string, std::string>;
   SymbolMap symbols;
 
  public:

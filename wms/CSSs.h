@@ -27,7 +27,7 @@ class State;
 class CSSs
 {
  private:
-  typedef std::map<std::string, std::string> CSSMap;
+  using CSSMap = std::map<std::string, std::string>;
 
  public:
   CSSMap csss;
