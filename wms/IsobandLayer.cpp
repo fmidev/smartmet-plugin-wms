@@ -164,10 +164,10 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
         "FMI", *crs, box.xmin(), box.ymin(), box.xmax(), box.ymax());
     double datawidth = newarea->WorldXYWidth() / 1000.0;  // view extent in kilometers
     double dataheight = newarea->WorldXYHeight() / 1000.0;
-    int width = static_cast<int>(datawidth / *heatmap.resolution);
-    int height = static_cast<int>(dataheight / *heatmap.resolution);
+    unsigned int width = lround(datawidth / *heatmap.resolution);
+    unsigned int height = lround(dataheight / *heatmap.resolution);
 
-    if ((width * height) > (int)heatmap.max_points)
+    if (width * height > heatmap.max_points)
       throw Spine::Exception(
           BCP,
           (std::string("Heatmap too big (") + Fmi::to_string(width * height) + " points, max " +
@@ -175,8 +175,8 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
     // Must use at least two grid points, value 1 would cause a segmentation fault in here
 
-    width = std::max(width, 2);
-    height = std::max(height, 2);
+    width = std::max(width, 2u);
+    height = std::max(height, 2u);
 
     NFmiGrid grid(newarea.get(), width, height);
     std::unique_ptr<heatmap_t, void (*)(heatmap_t*)> hm(nullptr, heatmap_free);
