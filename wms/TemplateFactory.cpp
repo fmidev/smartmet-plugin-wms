@@ -24,34 +24,34 @@ SharedFormatter TemplateFactory::get(const boost::filesystem::path& theFilename)
     if (theFilename.empty())
       throw Spine::Exception(BCP, "TemplateFactory: Cannot use empty templates");
 
-    TemplateMap* tmap = itsTemplates.get();
-
-    // tmap is thread specific and hence safe to use without locking
-
-    if (tmap == nullptr)
-    {
-      tmap = new TemplateMap;
-      itsTemplates.reset(tmap);
-    }
+    // Make sure thread specific map is initialized
+    if (itsTemplates.get() == nullptr)
+      itsTemplates.reset(new TemplateMap);
 
     // Find out if there is a formatter which is up to date
 
-    auto& info = (*tmap)[theFilename];
+    auto& tmap = *itsTemplates;
 
-    std::time_t modtime = boost::filesystem::last_write_time(theFilename);
+    const auto& tinfo = tmap.find(theFilename);
 
-    // We assume there are no templates with modtime=0
-    if (info.modtime == modtime)
-      return info.formatter;
+    const std::time_t modtime = boost::filesystem::last_write_time(theFilename);
 
-    // Initialize a new formatter and return it
+    // Use cached template if it is up to date
+    if (tinfo != tmap.end())
+      if (tinfo->second.modtime == modtime)
+        return tinfo->second.formatter;
 
-    info.modtime = modtime;
-    info.formatter = boost::make_shared<Fmi::TemplateFormatter>();
+    // Initialize a new formatter
 
-    info.formatter->load_template(theFilename.c_str());
+    TemplateInfo newinfo;
+    newinfo.modtime = modtime;
+    newinfo.formatter = boost::make_shared<Fmi::TemplateFormatter>();
+    newinfo.formatter->load_template(theFilename.c_str());
 
-    return info.formatter;
+    // Cache the new formatter
+    tmap.insert(std::make_pair(theFilename, newinfo));
+
+    return newinfo.formatter;
   }
   catch (...)
   {
