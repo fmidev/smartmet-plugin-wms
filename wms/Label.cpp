@@ -30,7 +30,7 @@ void Label::setLocale(const std::string& theLocale)
     if (!theLocale.empty())
     {
       boost::locale::generator gen;
-      formatter->imbue(gen(theLocale.c_str()));
+      formatter->imbue(gen(theLocale));
     }
   }
   catch (...)
