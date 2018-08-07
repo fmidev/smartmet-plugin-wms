@@ -845,17 +845,22 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
   // y = y0 + b*sin t;
   double firstY = DBL_MIN;
   double previousY = DBL_MAX;
-  for (double i = 0; i < 10.0; i += 0.05)
+
+  double angle = 0;
+  while (angle < 10)
   {
-    double x = xMiddle + rx * cos(i);
-    double y = yMiddle + ry * sin(i);
-    if (i == 0)
+    double x = xMiddle + rx * cos(angle);
+    double y = yMiddle + ry * sin(angle);
+    if (angle == 0)
       firstY = y;
     else if (previousY < firstY && y >= firstY)
       break;
     points.push_back(std::pair<double, double>(x, y));
     previousY = y;
+
+    angle += 0.05;
   }
+
   // In polygon last point is same as first one
   OGRGeometryCollection collection;
   points.push_back(points.front());
