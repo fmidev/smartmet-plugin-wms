@@ -51,9 +51,9 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
-    int red = 255;
-    int green = 255;
-    int blue = 255;
+    unsigned int red = 255;
+    unsigned int green = 255;
+    unsigned int blue = 255;
 
     try
     {
@@ -68,7 +68,7 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
-    return rgb_color(red, green, blue);
+    return {red, green, blue};
   }
   catch (...)
   {
