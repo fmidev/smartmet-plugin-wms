@@ -17,7 +17,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Smoother::init(const Json::Value& theJson, const Config& theConfig)
+void Smoother::init(const Json::Value& theJson, const Config& /* theConfig */)
 {
   try
   {
@@ -51,7 +51,7 @@ void Smoother::init(const Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-std::size_t Smoother::hash_value(const State& theState) const
+std::size_t Smoother::hash_value(const State& /* theState */) const
 {
   try
   {

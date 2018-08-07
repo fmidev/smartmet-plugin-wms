@@ -18,7 +18,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Sampling::init(const Json::Value& theJson, const Config& theConfig)
+void Sampling::init(const Json::Value& theJson, const Config& /* theConfig */)
 {
   try
   {
@@ -106,7 +106,7 @@ boost::optional<double> Sampling::getResolution(const Projection& theProjection)
  */
 // ----------------------------------------------------------------------
 
-std::size_t Sampling::hash_value(const State& theState) const
+std::size_t Sampling::hash_value(const State& /* theState */) const
 {
   try
   {

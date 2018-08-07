@@ -149,7 +149,7 @@ std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> Heatmap::getStamp(u
  */
 // ----------------------------------------------------------------------
 
-std::size_t Heatmap::hash_value(const State& theState) const
+std::size_t Heatmap::hash_value(const State& /* theState */) const
 {
   try
   {

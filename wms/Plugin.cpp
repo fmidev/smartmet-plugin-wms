@@ -74,7 +74,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Dali::Plugin::daliQuery(Spine::Reactor &theReactor,
+void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
                              State &theState,
                              const Spine::HTTP::Request &theRequest,
                              Spine::HTTP::Response &theResponse)
@@ -1190,7 +1190,7 @@ std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException, bool
  * \brief Perform a WMS query
  */
 // ----------------------------------------------------------------------
-WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor &theReactor,
+WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
                                       State &theState,
                                       const Spine::HTTP::Request &theRequest,
                                       Spine::HTTP::Response &theResponse)

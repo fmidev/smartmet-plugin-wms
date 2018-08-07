@@ -64,7 +64,7 @@ void check_getlegendgraphic_request_options(const Spine::HTTP::Request& theHTTPR
 
 void validate_options(const get_legend_graphic_request_options& options,
                       const WMSConfig& itsConfig,
-                      const Engine::Querydata::Engine& querydata)
+                      const Engine::Querydata::Engine& /* querydata */)
 {
   try
   {

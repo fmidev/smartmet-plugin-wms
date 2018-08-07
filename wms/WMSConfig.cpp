@@ -1085,7 +1085,7 @@ bool WMSConfig::isValidCRS(const std::string& theLayer, const std::string& theCR
 
 bool WMSConfig::isValidTime(const std::string& theLayer,
                             const boost::posix_time::ptime& theTime,
-                            const Engine::Querydata::Engine& theQEngine) const
+                            const Engine::Querydata::Engine& /* theQEngine */) const
 {
   try
   {

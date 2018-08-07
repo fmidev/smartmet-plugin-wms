@@ -120,7 +120,7 @@ void patch_protocols(CTPP::CDT& dcptypes, const std::string& newprotocol)
 }
 
 std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
-                                         const Engine::Querydata::Engine& theQEngine,
+                                         const Engine::Querydata::Engine& /* theQEngine */,
                                          const WMSConfig& theConfig) const
 {
   try

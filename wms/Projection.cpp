@@ -28,7 +28,9 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Projection::init(const Json::Value& theJson, const State& theState, const Config& theConfig)
+void Projection::init(const Json::Value& theJson,
+                      const State& theState,
+                      const Config& /* theConfig */)
 {
   try
   {
@@ -181,7 +183,7 @@ void Projection::init(const Json::Value& theJson, const State& theState, const C
  */
 // ----------------------------------------------------------------------
 
-std::size_t Projection::hash_value(const State& theState) const
+std::size_t Projection::hash_value(const State& /* theState */) const
 {
   try
   {
