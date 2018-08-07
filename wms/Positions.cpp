@@ -104,8 +104,8 @@ void apply_direction_offsets(Positions::Points& thePoints,
         double dir = q.interpolate(point.latlon, theTime, 180);  // TODO: magic constant
         if (dir != kFloatMissing)
         {
-          point.x += theOffset * cos((dir + 90 + theRotation) * pi / 180);
-          point.y += theOffset * sin((dir + 90 + theRotation) * pi / 180);
+          point.x += lround(theOffset * cos((dir + 90 + theRotation) * pi / 180.0));
+          point.y += lround(theOffset * sin((dir + 90 + theRotation) * pi / 180.0));
         }
       }
     }
@@ -166,8 +166,8 @@ void apply_direction_offsets(Positions::Points& thePoints,
           if (uspd != kFloatMissing && vspd != kFloatMissing && (uspd != 0 || vspd != 0))
           {
             double dir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
-            point.x += theOffset * cos((dir + 90 + theRotation) * pi / 180);
-            point.y += theOffset * sin((dir + 90 + theRotation) * pi / 180);
+            point.x += lround(theOffset * cos((dir + 90 + theRotation) * pi / 180.0));
+            point.y += lround(theOffset * sin((dir + 90 + theRotation) * pi / 180.0));
           }
         }
       }

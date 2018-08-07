@@ -220,8 +220,8 @@ PointValues read_flash_observations(const NumberLayer& layer,
       if (!layer.positions->inside(lon, lat, ivalues))
         continue;
 
-      int xpos = x;
-      int ypos = y;
+      int xpos = lround(x);
+      int ypos = lround(y);
 
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
       PointValue pv{point, value};
@@ -332,8 +332,8 @@ PointValues read_all_observations(const NumberLayer& layer,
       if (!layer.positions->inside(lon, lat, ivalues))
         continue;
 
-      int xpos = x;
-      int ypos = y;
+      int xpos = lround(x);
+      int ypos = lround(y);
 
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
       PointValue pv{point, value};
@@ -464,8 +464,8 @@ PointValues read_station_observations(const NumberLayer& layer,
       if (!layer.positions->inside(lon, lat, ivalues))
         continue;
 
-      int xpos = x;
-      int ypos = y;
+      int xpos = lround(x);
+      int ypos = lround(y);
 
       // Keep only the latest value for each coordinate
 
@@ -594,8 +594,8 @@ PointValues read_latlon_observations(const NumberLayer& layer,
       if (!layer.positions->inside(lon, lat, ivalues))
         continue;
 
-      int xpos = x;
-      int ypos = y;
+      int xpos = lround(x);
+      int ypos = lround(y);
 
       Positions::Point pp{xpos, ypos, NFmiPoint(lon, lat), point.dx, point.dy};
       PointValue pv{pp, value};

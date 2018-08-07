@@ -594,8 +594,8 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
             ok = false;
           else
           {
-            x1 = x1 + alpha * (x2 - x1);
-            y1 = y1 + alpha * (y2 - y1);
+            x1 += lround(alpha * (x2 - x1));
+            y1 += lround(alpha * (y2 - y1));
           }
         }
 
@@ -608,8 +608,8 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
             ok = false;
           else
           {
-            x2 = x2 + alpha * (x1 - x2);
-            y2 = y2 + alpha * (y1 - y2);
+            x2 += lround(alpha * (x1 - x2));
+            y2 += lround(alpha * (y1 - y2));
           }
         }
 

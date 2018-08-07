@@ -49,6 +49,10 @@ class Positions
         : x(theX), y(theY), latlon(theLatLon), dx(theDX), dy(theDY)
     {
     }
+    Point(double theX, double theY, const NFmiPoint& theLatLon, int theDX, int theDY)
+        : x(lround(theX)), y(lround(theY)), latlon(theLatLon), dx(theDX), dy(theDY)
+    {
+    }
   };
   using Points = std::vector<Point>;
 

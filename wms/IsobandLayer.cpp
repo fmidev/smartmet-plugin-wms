@@ -208,7 +208,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
         if (!hm)
           throw Spine::Exception(BCP, "Heatmap allocation failed");
 
-        radius = round(*heatmap.radius / *heatmap.resolution);
+        radius = lround(*heatmap.radius / *heatmap.resolution);
         if (radius == 0)
           radius = 1;
 

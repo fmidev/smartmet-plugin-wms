@@ -342,8 +342,8 @@ PointValues read_all_observations(const ArrowLayer& layer,
       if (!layer.positions->inside(lon, lat, ivalues))
         continue;
 
-      int xpos = x;
-      int ypos = y;
+      int xpos = lround(x);
+      int ypos = lround(y);
 
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
       PointValue pv{point, wdir, wspd};
@@ -504,8 +504,8 @@ PointValues read_station_observations(const ArrowLayer& layer,
       if (!layer.positions->inside(lon, lat, ivalues))
         continue;
 
-      int xpos = x;
-      int ypos = y;
+      int xpos = lround(x);
+      int ypos = lround(y);
 
       int deltax = (station.dx ? *station.dx : 0);
       int deltay = (station.dy ? *station.dy : 0);
@@ -661,8 +661,8 @@ PointValues read_latlon_observations(const ArrowLayer& layer,
       if (!layer.positions->inside(lon, lat, ivalues))
         continue;
 
-      int xpos = x;
-      int ypos = y;
+      int xpos = lround(x);
+      int ypos = lround(y);
 
       Positions::Point pp{xpos, ypos, NFmiPoint(lon, lat), point.dx, point.dy};
       PointValue pv{pp, wdir, wspd};
