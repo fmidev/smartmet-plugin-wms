@@ -136,8 +136,8 @@ Json::Value getJsonValue(const std::string& param_name,
   if (parameters.find(param_name) != parameters.end())
   {
     Json::Reader reader;
-    std::string str = parameters.at(param_name);
-    reader.parse(str.c_str(), ret);
+    const auto& str = parameters.at(param_name);
+    reader.parse(str, ret);
   }
 
   return ret;
@@ -415,13 +415,13 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
       Fmi::Features result_set = getFeatures(theState, projectionSR.get(), mapOptions);
 
-      for (auto result_item : result_set)
+      for (const auto& result_item : result_set)
       {
         if (result_item->geom && result_item->geom->IsEmpty() == 0)
         {
           OGRSpatialReference* sr = result_item->geom->getSpatialReference();
 
-          if (!sr)
+          if (sr != nullptr)
           {
             result_item->geom->assignSpatialReference(&defaultSR);
             result_item->geom->transformTo(projectionSR.get());
@@ -517,7 +517,7 @@ void IceMapLayer::handleTextField(const Fmi::Feature& theResultItem,
                                   const PostGISLayerFilter& theFilter,
                                   CTPP::CDT& theGlobals,
                                   CTPP::CDT& theLayersCdt,
-                                  CTPP::CDT& theGroupCdt,
+                                  CTPP::CDT& /* theGroupCdt */,
                                   State& theState) const
 {
   // text field
@@ -558,7 +558,7 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
 
   if (theResultItem.geom && theResultItem.geom->IsEmpty() == 0)
   {
-    const OGRPoint* point = static_cast<const OGRPoint*>(theResultItem.geom.get());
+    const auto* point = static_cast<const OGRPoint*>(theResultItem.geom.get());
 
     double lon(point->getX());
     double lat(point->getY());
@@ -647,7 +647,7 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
   if (attribute_columns.empty())
     return;
 
-  std::string label_text("");
+  std::string label_text;
   text_style_t text_style;
 
   // default name of text column for a label is 'textstring'
@@ -676,8 +676,8 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
                                                theResultItem.attributes.at(fontsize_column));
 
   // erase decimal part from fontsize
-  if (text_style.fontsize.find(".") != std::string::npos)
-    text_style.fontsize.erase(text_style.fontsize.find("."));
+  if (text_style.fontsize.find('.') != std::string::npos)
+    text_style.fontsize.erase(text_style.fontsize.find('.'));
 
   text_style = getTextStyle(theFilter.text_attributes, text_style);
 
@@ -746,7 +746,7 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
   std::string mean_temperature =
       boost::apply_visitor(PostGISAttributeToString(), theResultItem.attributes.at(col_name));
 
-  if (mean_temperature.empty() || !isdigit(mean_temperature.at(0)))
+  if (mean_temperature.empty() || isdigit(mean_temperature.at(0) == 0))
     return;
 
   if (mean_temperature.size() == 1)
@@ -757,7 +757,7 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
   text_dimension_t text_dimension = getTextDimension(mean_temperature, text_style);
 
   // position of the geometry mean temperature
-  const OGRPoint* point = static_cast<const OGRPoint*>(theResultItem.geom.get());
+  const auto* point = static_cast<const OGRPoint*>(theResultItem.geom.get());
 
   double xpos = point->getX();
   double ypos = point->getY();
@@ -791,7 +791,7 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
   theLayersCdt.PushBack(text_cdt);
 }
 
-void IceMapLayer::handleTrafficRestrictions(const Fmi::Feature& theResultItem,
+void IceMapLayer::handleTrafficRestrictions(const Fmi::Feature& /* theResultItem */,
                                             const PostGISLayerFilter& theFilter,
                                             CTPP::CDT& theGlobals,
                                             CTPP::CDT& theLayersCdt,
@@ -804,7 +804,7 @@ void IceMapLayer::handleTrafficRestrictions(const Fmi::Feature& theResultItem,
 
   auto jsonTableAttributes = getJsonValue("table_attributes", itsParameters);
 
-  TextTable mapTable(jsonTableAttributes, xpos, ypos);
+  TextTable mapTable(jsonTableAttributes, lround(xpos), lround(ypos));
 
   auto tableDataJson = getJsonValue("table_data", itsParameters);
 
@@ -910,7 +910,7 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
   std::for_each(
       rows.begin(), rows.end(), boost::bind(&boost::trim<std::string>, _1, std::locale()));
   for (std::string& r : rows)
-    if (r.size() > 0 && r.back() == '+')
+    if (!r.empty() && r.back() == '+')
       r.insert(0, " ");
 
   text_style_t text_style;
@@ -922,7 +922,7 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
   for (unsigned int i = 0; i < rows.size(); i++)
   {
     const std::string& r = rows[i];
-    if (r.size() == 0)
+    if (r.empty())
       continue;
     std::vector<std::string> rows2;
     rows2.push_back(r);
@@ -1106,8 +1106,9 @@ void IceMapLayer::addLocationName(double theXPos,
   if (theArrowAngle == -1 || first_name.empty())
     return;
 
-  int arrow_x_coord(
+  int arrow_x_coord = lround(
       theArrowAngle >= 90 && theArrowAngle <= 270 ? x_coord : x_coord + text_dimension_first.width);
+
   CTPP::CDT arrow_cdt(CTPP::CDT::HASH_VAL);
   arrow_cdt["start"] = "<line";
   arrow_cdt["end"] = "</line>";
