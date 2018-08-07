@@ -20,7 +20,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Styles::init(const Json::Value& theJson, const Config& theConfig)
+void Styles::init(const Json::Value& theJson, const Config& /* theConfig */)
 {
   try
   {
@@ -95,7 +95,7 @@ void Styles::init(const Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-void Styles::generate(CTPP::CDT& theGlobals, State& theState) const
+void Styles::generate(CTPP::CDT& theGlobals, State& /* theState */) const
 {
   try
   {
@@ -122,7 +122,7 @@ void Styles::generate(CTPP::CDT& theGlobals, State& theState) const
  */
 // ----------------------------------------------------------------------
 
-std::size_t Styles::hash_value(const State& theState) const
+std::size_t Styles::hash_value(const State& /* theState */) const
 {
   try
   {
