@@ -23,9 +23,8 @@ void Intersections::init(const Json::Value& theJson, const Config& theConfig)
   {
     if (theJson.isArray())
     {
-      for (unsigned int i = 0; i < theJson.size(); i++)
+      for (const auto& json : theJson)
       {
-        const Json::Value& json = theJson[i];
         Intersection intersection;
         intersection.init(json, theConfig);
         intersections.push_back(intersection);

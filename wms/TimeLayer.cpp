@@ -65,8 +65,8 @@ void TimeLayer::init(const Json::Value& theJson,
     {
       if (json.isArray())
       {
-        for (unsigned int i = 0; i < json.size(); i++)
-          timestamp.push_back(json[i].asString());
+        for (const auto& str : json)
+          timestamp.push_back(str.asString());
       }
       else
         timestamp.push_back(json.asString());
@@ -85,8 +85,8 @@ void TimeLayer::init(const Json::Value& theJson,
     {
       if (json.isArray())
       {
-        for (unsigned int i = 0; i < json.size(); i++)
-          format.push_back(json[i].asString());
+        for (const auto& str : json)
+          format.push_back(str.asString());
       }
       else
         format.push_back(json.asString());

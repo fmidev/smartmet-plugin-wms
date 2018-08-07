@@ -45,9 +45,9 @@ text_dimension_t getTextDimension(const std::vector<std::string>& rows,
 {
   text_dimension_t ret = getTextDimension(std::string("W"), textStyle);
   // if width is longer in subsequent rows, update width
-  for (unsigned int i = 0; i < rows.size(); i++)
+  for (const auto& row : rows)
   {
-    text_dimension_t textDim = getTextDimension(rows[i], textStyle);
+    text_dimension_t textDim = getTextDimension(row, textStyle);
     if (textDim.width > ret.width)
       ret.width = textDim.width;
   }

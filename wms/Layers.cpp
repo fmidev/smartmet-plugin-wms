@@ -29,9 +29,8 @@ void Layers::init(const Json::Value& theJson,
     if (!theJson.isArray())
       throw Spine::Exception(BCP, "Layers JSON is not a JSON array");
 
-    for (unsigned int i = 0; i < theJson.size(); i++)
+    for (const auto& json : theJson)
     {
-      const Json::Value& json = theJson[i];
       boost::shared_ptr<Layer> layer(LayerFactory::create(json));
       layer->init(json, theState, theConfig, theProperties);
       layers.push_back(layer);

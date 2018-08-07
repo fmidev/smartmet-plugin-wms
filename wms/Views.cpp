@@ -26,9 +26,8 @@ void Views::init(const Json::Value& theJson,
     if (!theJson.isArray())
       throw Spine::Exception(BCP, "Views setting must be an array");
 
-    for (unsigned int i = 0; i < theJson.size(); i++)
+    for (const auto& json : theJson)
     {
-      const Json::Value& json = theJson[i];
       boost::shared_ptr<View> view(new View);
       view->init(json, theState, theConfig, theProperties);
       views.push_back(view);
