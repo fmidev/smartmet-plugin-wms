@@ -23,7 +23,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Location::init(const Json::Value& theJson, const Config& theConfig)
+void Location::init(const Json::Value& theJson, const Config& /* theConfig */)
 {
   try
   {
@@ -65,7 +65,7 @@ void Location::init(const Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-std::size_t Location::hash_value(const State& theState) const
+std::size_t Location::hash_value(const State& /* theState */) const
 {
   try
   {
