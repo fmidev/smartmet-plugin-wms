@@ -24,7 +24,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Text::init(const Json::Value& theJson, const Config& theConfig)
+void Text::init(const Json::Value& theJson, const Config& /* theConfig */)
 {
   try
   {
