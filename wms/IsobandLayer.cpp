@@ -268,7 +268,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
     NFmiFastQueryInfo info(pdesc, tdesc, hdesc, vdesc);
     boost::shared_ptr<NFmiQueryData> data(NFmiQueryDataUtil::CreateEmptyData(info));
-    if (data.get() == 0)
+    if (data == nullptr)
       throw Spine::Exception(BCP, "Failed to create heatmap");
 
     NFmiFastQueryInfo dstinfo(data.get());
