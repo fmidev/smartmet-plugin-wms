@@ -26,8 +26,7 @@ boost::posix_time::ptime parse_time(const std::string& theTime)
     if (Fmi::TimeParser::looks(theTime) != "offset")
       return t;
 
-    return boost::posix_time::ptime(t.date(),
-                                    boost::posix_time::hours(t.time_of_day().hours() + 1));
+    return {t.date(), boost::posix_time::hours(t.time_of_day().hours() + 1)};
   }
   catch (...)
   {
