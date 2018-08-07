@@ -427,7 +427,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     std::vector<Engine::Contour::Range> limits;
     const auto& contourer = theState.getContourEngine();
     for (const Isoband& isoband : isobands)
-      limits.push_back(Engine::Contour::Range(isoband.lolimit, isoband.hilimit));
+      limits.emplace_back(Engine::Contour::Range(isoband.lolimit, isoband.hilimit));
 
     Engine::Contour::Options options(param, valid_time, limits);
 

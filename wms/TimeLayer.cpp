@@ -187,10 +187,10 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
     // Set defaults and validate input.
 
     if (timestamp.empty())
-      timestamp.push_back("validtime");
+      timestamp.emplace_back("validtime");
 
     if (format.empty())
-      format.push_back("%Y-%m-%d %H:%M");
+      format.emplace_back("%Y-%m-%d %H:%M");
 
     if (timestamp.size() != format.size())
       throw Spine::Exception(BCP,
