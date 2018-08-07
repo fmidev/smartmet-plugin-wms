@@ -400,7 +400,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
             std::string firstMessage = wmsException.what();
             boost::algorithm::replace_all(firstMessage, "\n", " ");
             firstMessage = firstMessage.substr(0, 300);
-            theResponse.setHeader("X-WMS-Error", firstMessage.c_str());
+            theResponse.setHeader("X-WMS-Error", firstMessage);
 
             if (exceptionCode == WMS_LAYER_NOT_QUERYABLE ||
                 exceptionCode == WMS_OPERATION_NOT_SUPPORTED)
@@ -461,7 +461,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       std::string firstMessage = exception.what();
       boost::algorithm::replace_all(firstMessage, "\n", " ");
       firstMessage = firstMessage.substr(0, 300);
-      theResponse.setHeader("X-Dali-Error", firstMessage.c_str());
+      theResponse.setHeader("X-Dali-Error", firstMessage);
     }
   }
   catch (...)
