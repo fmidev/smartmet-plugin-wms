@@ -44,7 +44,7 @@ void Gradients::init(const Json::Value& theJson, const State& theState)
                                "Only RFC2397 data-URLs supported: URL incorrect '" + value +
                                    "' for gradient '" + name + "'");
       value = value.substr(6);  // Cut away data:,
-      if (theState.setGradient(name, value) == false)
+      if (!theState.setGradient(name, value))
         throw Spine::Exception(BCP,
                                "defs.gradients gradient '" + name + "' defined multiple times");
       gradients[name] = value;

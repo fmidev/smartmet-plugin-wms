@@ -56,25 +56,22 @@ CTPP::CDT WMSLayerStyle::getCapabilities() const
 
     style["legend_url"] = style_legend_url_list;
 
-    // Style sheet
+#if 0
+    // Style sheet not implemented
 
-    if (false)  // NOT IMPLEMENTED
-    {
-      CTPP::CDT style_style_sheet_url(CTPP::CDT::HASH_VAL);
-      style_style_sheet_url["format"] = "css";
-      style_style_sheet_url["online_resource"] = "http://www.www.wwws/style.css";
-      style["style_sheet_url"] = style_style_sheet_url;
-    }
+    CTPP::CDT style_style_sheet_url(CTPP::CDT::HASH_VAL);
+    style_style_sheet_url["format"] = "css";
+    style_style_sheet_url["online_resource"] = "http://www.www.wwws/style.css";
+    style["style_sheet_url"] = style_style_sheet_url;
 
-    // Style URL
+    // Style URL not implemmented
 
-    if (false)  // NOT IMPLEMENTED
-    {
-      CTPP::CDT style_style_url(CTPP::CDT::HASH_VAL);
-      style_style_url["format"] = "css";
-      style_style_url["online_resource"] = "http://www.www.wwws/style.css";
-      style["style_url"] = style_style_url;
-    }
+    CTPP::CDT style_style_url(CTPP::CDT::HASH_VAL);
+    style_style_url["format"] = "css";
+    style_style_url["online_resource"] = "http://www.www.wwws/style.css";
+    style["style_url"] = style_style_url;
+
+#endif
 
     return style;
   }

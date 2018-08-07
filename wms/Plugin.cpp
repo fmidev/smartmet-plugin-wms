@@ -702,10 +702,7 @@ bool Plugin::queryIsFast(const Spine::HTTP::Request &theRequest) const
   try
   {
     // WMS requests should be handled ASAP, others, not so much
-    if (theRequest.getResource() == "/wms")
-      return true;
-    else
-      return false;
+    return (theRequest.getResource() == "/wms");
   }
   catch (...)
   {

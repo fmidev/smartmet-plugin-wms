@@ -1039,7 +1039,7 @@ bool WMSConfig::isValidStyle(const std::string& theLayer, const std::string& the
 {
   try
   {
-    if (isValidLayerImpl(theLayer, true) == false)
+    if (!isValidLayerImpl(theLayer, true))
       return false;
 
     // empty means default style
@@ -1075,7 +1075,7 @@ bool WMSConfig::isValidCRS(const std::string& theLayer, const std::string& theCR
 {
   try
   {
-    if (isValidLayerImpl(theLayer) == false)
+    if (!isValidLayerImpl(theLayer))
       return false;
 
     auto my_layers = boost::atomic_load(&itsLayers);
@@ -1095,7 +1095,7 @@ bool WMSConfig::isValidTime(const std::string& theLayer,
 {
   try
   {
-    if (isValidLayerImpl(theLayer) == false)
+    if (!isValidLayerImpl(theLayer))
       return false;
 
     auto my_layers = boost::atomic_load(&itsLayers);
@@ -1113,7 +1113,7 @@ bool WMSConfig::isTemporal(const std::string& theLayer) const
 {
   try
   {
-    if (isValidLayerImpl(theLayer) == false)
+    if (!isValidLayerImpl(theLayer))
       return false;
 
     auto my_layers = boost::atomic_load(&itsLayers);
@@ -1131,7 +1131,7 @@ bool WMSConfig::currentValue(const std::string& theLayer) const
 {
   try
   {
-    if (isValidLayerImpl(theLayer) == false)
+    if (!isValidLayerImpl(theLayer))
       return false;
 
     auto my_layers = boost::atomic_load(&itsLayers);
@@ -1149,7 +1149,7 @@ boost::posix_time::ptime WMSConfig::mostCurrentTime(const std::string& theLayer)
 {
   try
   {
-    if (isValidLayerImpl(theLayer) == false)
+    if (!isValidLayerImpl(theLayer))
       return boost::posix_time::not_a_date_time;
 
     auto my_layers = boost::atomic_load(&itsLayers);

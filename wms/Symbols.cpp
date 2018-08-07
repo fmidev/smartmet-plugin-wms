@@ -44,7 +44,7 @@ void Symbols::init(const Json::Value& theJson, const State& theState)
                                "Only RFC2397 data-URLs supported: URL incorrect '" + value +
                                    "' for symbol '" + name + "'");
       value = value.substr(6);  // Cut away data:,
-      if (theState.setSymbol(name, value) == false)
+      if (!theState.setSymbol(name, value))
         throw Spine::Exception(BCP, "defs.symbols symbol '" + name + "' defined multiple times");
       symbols[name] = value;
     }

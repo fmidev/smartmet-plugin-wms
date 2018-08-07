@@ -256,7 +256,7 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
     // resolve current time (most recent) for the layer
     CaseInsensitiveComparator cicomp;
     std::string time_str = Spine::optional_string(theRequest.getParameter("TIME"), "current");
-    if (true == cicomp(time_str, "current"))
+    if (cicomp(time_str, "current"))
     {
       if (!itsConfig.isTemporal(layerName))
       {
@@ -264,7 +264,7 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
       }
       else
       {
-        if (false == itsConfig.currentValue(layerName))
+        if (!itsConfig.currentValue(layerName))
         {
           Spine::Exception exception(BCP, "Invalid TIME option value for the current layer!");
           exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
