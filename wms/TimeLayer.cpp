@@ -296,12 +296,12 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
       {
         auto timeinfo = to_tm(loctime->local_time());
         char buffer[100];
-        if (!strftime(buffer, 100, fmt.c_str(), &timeinfo))
+        if (!strftime(static_cast<char*>(buffer), 100, fmt.c_str(), &timeinfo))
         {
           throw Spine::Exception(BCP, "Failed to format a non-empty time string with strftime")
               .addParameter("format", "'" + fmt + "'");
         }
-        msg << buffer;
+        msg << static_cast<char*>(buffer);
       }
       else if (formatter == "fmt")
       {
