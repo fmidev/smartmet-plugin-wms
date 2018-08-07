@@ -1178,7 +1178,7 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
 
   auto my_layers = boost::atomic_load(&itsLayers);
 
-  std::string customer = layerName.substr(0, layerName.find(":"));
+  std::string customer = layerName.substr(0, layerName.find(':'));
 
   std::string legendDirectory = itsDaliConfig.rootDirectory(true) + "/customers/legends";
 
