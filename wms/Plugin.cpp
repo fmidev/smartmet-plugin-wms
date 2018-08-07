@@ -477,8 +477,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 // ----------------------------------------------------------------------
 
 Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
-    : SmartMetPlugin(),
-      itsModuleName("WMS"),
+    : itsModuleName("WMS"),
       itsConfig(theConfig),
       itsReactor(theReactor),
       itsQEngine(nullptr),

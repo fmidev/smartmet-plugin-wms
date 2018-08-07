@@ -31,15 +31,7 @@ namespace Dali
 // ----------------------------------------------------------------------
 
 State::State(const Plugin& thePlugin)
-    : itsPlugin(thePlugin),
-      itsQCache(),
-      itsUsedStyles(),
-      itsUsedIds(),
-      itsInDefs(false),
-      itUsesTimer(false),
-      itUsesWms(false),
-      itsCustomer(),
-      itsType()
+    : itsPlugin(thePlugin), itsInDefs(false), itUsesTimer(false), itUsesWms(false)
 {
 }
 
