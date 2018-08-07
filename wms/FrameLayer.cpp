@@ -340,8 +340,8 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt)
         latitudeTics.insert(std::make_pair(lat, *(itsScale->smallTic)));
   }
 
-  bool ticIsOutside = (itsScale->ticPosition.compare("outside") == 0);
-  bool labelIsOutside = (itsScale->labelPosition->compare("outside") == 0);
+  bool ticIsOutside = (itsScale->ticPosition == "outside");
+  bool labelIsOutside = (*itsScale->labelPosition == "outside");
 
   for (auto tic : latitudeTics)
   {
