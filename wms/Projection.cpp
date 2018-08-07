@@ -151,7 +151,7 @@ void Projection::init(const Json::Value& theJson, const State& theState, const C
         spatref.SetFromUserInput(crs->c_str());
       }
 
-      bool latLonOrder = spatref.EPSGTreatsAsLatLong();
+      bool latLonOrder = spatref.EPSGTreatsAsLatLong() != 0;
 
       if (latLonOrder)
       {
@@ -405,7 +405,7 @@ void Projection::prepareCRS() const
         box = boost::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
       }
 
-      if (ogr_crs->IsGeographic())
+      if (ogr_crs->IsGeographic() != 0)
       {
         // Substract equations 5 and 4, subsititute equation 3 and solve resolution
         double pi = boost::math::constants::pi<double>();
@@ -446,7 +446,7 @@ void Projection::prepareCRS() const
         transformation->Transform(1, &CX, &CY);
       }
 
-      if (ogr_crs->IsGeographic())
+      if (ogr_crs->IsGeographic() != 0)
       {
         double pi = boost::math::constants::pi<double>();
         double circumference = 2 * pi * 6371.220;

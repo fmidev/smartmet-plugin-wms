@@ -508,17 +508,17 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
       OGRGeometryPtr geom = geoms[i];
-      if (geom && !geom->IsEmpty())
+      if (geom && geom->IsEmpty() == 0)
       {
         OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, clipbox));
         const Isoband& isoband = isobands[i];
 
         // Do intersections if so requested
 
-        if (geom2 && !geom2->IsEmpty() && inshape)
+        if (geom2 && geom2->IsEmpty() == 0 && inshape)
           geom2.reset(geom2->Intersection(inshape.get()));
 
-        if (geom2 && !geom2->IsEmpty() && outshape)
+        if (geom2 && geom2->IsEmpty() == 0 && outshape)
           geom2.reset(geom2->Difference(outshape.get()));
 
         // Intersect with data too
@@ -526,7 +526,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         geom2 = intersections.intersect(geom2);
 
         // Finally produce output if we still have something left
-        if (geom2 && !geom2->IsEmpty())
+        if (geom2 && geom2->IsEmpty() == 0)
         {
           // Store the path with unique ID
           std::string iri = qid + (qid.empty() ? "" : ".") + isoband.getQid(theState);

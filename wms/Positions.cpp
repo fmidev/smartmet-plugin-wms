@@ -507,7 +507,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
 
         // Convert world coordinate to latlon, skipping points which cannot be handled
 
-        if (!transformation->Transform(1, &xcoord, &ycoord))
+        if (transformation->Transform(1, &xcoord, &ycoord) == 0)
           continue;
 
         points.emplace_back(Point(xpos, ypos, NFmiPoint(xcoord, ycoord)));
@@ -575,7 +575,7 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
       // Convert latlon to world coordinate
 
       NFmiPoint xy;
-      if (theCRS->IsGeographic())
+      if (theCRS->IsGeographic() != 0)
         xy = latlon;
       else
         xy = theQ->area().LatLonToWorldXY(latlon);
@@ -651,7 +651,7 @@ Positions::Points Positions::getGraticulePoints(
           // latlon to world coordinate
           double xcoord = lon;
           double ycoord = lat;
-          if (!transformation->Transform(1, &xcoord, &ycoord))
+          if (transformation->Transform(1, &xcoord, &ycoord) == 0)
             continue;
 
           // to pixel coordinate
@@ -745,13 +745,13 @@ Positions::Points Positions::getGraticuleFillPoints(
         double y4 = lat + size;
 
         // to projection coordinates
-        if (!transformation->Transform(1, &x1, &y1))
+        if (transformation->Transform(1, &x1, &y1) == 0)
           continue;
-        if (!transformation->Transform(1, &x2, &y2))
+        if (transformation->Transform(1, &x2, &y2) == 0)
           continue;
-        if (!transformation->Transform(1, &x3, &y3))
+        if (transformation->Transform(1, &x3, &y3) == 0)
           continue;
-        if (!transformation->Transform(1, &x4, &y4))
+        if (transformation->Transform(1, &x4, &y4) == 0)
           continue;
 
         // to pixel coordinates
@@ -790,7 +790,7 @@ Positions::Points Positions::getGraticuleFillPoints(
           double newx = newlon;
           double newy = newlat;
 
-          if (!transformation->Transform(1, &newx, &newy))
+          if (transformation->Transform(1, &newx, &newy) == 0)
             continue;
           theBox.transform(newx, newy);
 
@@ -814,7 +814,7 @@ Positions::Points Positions::getGraticuleFillPoints(
           double newx = newlon;
           double newy = newlat;
 
-          if (!transformation->Transform(1, &newx, &newy))
+          if (transformation->Transform(1, &newx, &newy) == 0)
             continue;
           theBox.transform(newx, newy);
 
@@ -844,7 +844,7 @@ Positions::Points Positions::getGraticuleFillPoints(
             double newx = newlon;
             double newy = newlat;
 
-            if (!transformation->Transform(1, &newx, &newy))
+            if (transformation->Transform(1, &newx, &newy) == 0)
               continue;
             theBox.transform(newx, newy);
 
@@ -867,7 +867,7 @@ Positions::Points Positions::getGraticuleFillPoints(
     double newx = newlon;
     double newy = newlat;
 
-    if (!transformation->Transform(1, &newx, &newy))
+    if (transformation->Transform(1, &newx, &newy) == 0)
     {
       int deltax = 0;
       if (dx)
@@ -942,7 +942,7 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
       // To world coordinate
       double xcoord = lon;
       double ycoord = lat;
-      if (!transformation->Transform(1, &xcoord, &ycoord))
+      if (transformation->Transform(1, &xcoord, &ycoord) == 0)
         continue;
 
       // to pixel coordinate
@@ -1018,7 +1018,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
       // To world coordinate
       double xcoord = lon;
       double ycoord = lat;
-      if (!transformation->Transform(1, &xcoord, &ycoord))
+      if (transformation->Transform(1, &xcoord, &ycoord) == 0)
         continue;
 
       // to pixel coordinate
@@ -1158,7 +1158,7 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
       // To world coordinate
       double xcoord = lon;
       double ycoord = lat;
-      if (!transformation->Transform(1, &xcoord, &ycoord))
+      if (transformation->Transform(1, &xcoord, &ycoord) == 0)
         continue;
 
       // to pixel coordinate

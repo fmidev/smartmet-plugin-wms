@@ -417,7 +417,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
       for (auto result_item : result_set)
       {
-        if (result_item->geom && !result_item->geom->IsEmpty())
+        if (result_item->geom && result_item->geom->IsEmpty() == 0)
         {
           OGRSpatialReference* sr = result_item->geom->getSpatialReference();
 
@@ -488,7 +488,7 @@ void IceMapLayer::handleSymbol(const Fmi::Feature& theResultItem, CTPP::CDT& the
 
   std::string iri(getParameterValue("symbol"));
 
-  if (theResultItem.geom && !theResultItem.geom->IsEmpty())
+  if (theResultItem.geom && theResultItem.geom->IsEmpty() == 0)
   {
     // envelope should work for point and areas
     OGREnvelope envelope;
@@ -556,7 +556,7 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
 {
   auto transformation = LonLatToXYTransformation(projection);
 
-  if (theResultItem.geom && !theResultItem.geom->IsEmpty())
+  if (theResultItem.geom && theResultItem.geom->IsEmpty() == 0)
   {
     const OGRPoint* point = static_cast<const OGRPoint*>(theResultItem.geom.get());
 
@@ -823,7 +823,7 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
                                CTPP::CDT& theLayersCdt,
                                State& theState) const
 {
-  if (!theResultItem.geom || theResultItem.geom->IsEmpty())
+  if (!theResultItem.geom || theResultItem.geom->IsEmpty() != 0)
     return;
 
   // We get bounding box from database, but need to show egg-shaped ellipse
@@ -1130,7 +1130,7 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
                                  CTPP::CDT& theGroupCdt,
                                  State& theState) const
 {
-  if (!theResultItem.geom || theResultItem.geom->IsEmpty())
+  if (!theResultItem.geom || theResultItem.geom->IsEmpty() != 0)
     return;
 
   const auto box = projection.getBox();

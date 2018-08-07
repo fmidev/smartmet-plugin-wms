@@ -83,14 +83,14 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
       OGRGeometryPtr geom = getShape(theState, crs.get(), mapOptions);
 
-      if (geom && !geom->IsEmpty())
+      if (geom && geom->IsEmpty() == 0)
       {
         if (isLines())
           geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
         else
           geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
 
-        if (geom && !geom->IsEmpty())
+        if (geom && geom->IsEmpty() == 0)
         {
           // Store the path
           std::string iri = (qid + std::to_string(mapid++));

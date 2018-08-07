@@ -205,8 +205,8 @@ PointValues read_flash_observations(const NumberLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (!crs->IsGeographic())
-        if (!transformation.Transform(1, &x, &y))
+      if (crs->IsGeographic() == 0)
+        if (transformation.Transform(1, &x, &y) == 0)
           continue;
 
       // To pixel coordinate
@@ -317,8 +317,8 @@ PointValues read_all_observations(const NumberLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (!crs->IsGeographic())
-        if (!transformation.Transform(1, &x, &y))
+      if (crs->IsGeographic() == 0)
+        if (transformation.Transform(1, &x, &y) == 0)
           continue;
 
       // To pixel coordinate
@@ -449,8 +449,8 @@ PointValues read_station_observations(const NumberLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (!crs->IsGeographic())
-        if (!transformation.Transform(1, &x, &y))
+      if (crs->IsGeographic() == 0)
+        if (transformation.Transform(1, &x, &y) == 0)
           continue;
 
       // To pixel coordinate
@@ -579,8 +579,8 @@ PointValues read_latlon_observations(const NumberLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (!crs->IsGeographic())
-        if (!transformation.Transform(1, &x, &y))
+      if (crs->IsGeographic() == 0)
+        if (transformation.Transform(1, &x, &y) == 0)
           continue;
 
       // To pixel coordinate

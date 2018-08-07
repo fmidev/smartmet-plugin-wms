@@ -97,12 +97,12 @@ OGRGeometryPtr Intersection::intersect(OGRGeometryPtr theGeometry) const
       return theGeometry;
 
     // Otherwise if the input is null, return null
-    if (!theGeometry || theGeometry->IsEmpty())
+    if (!theGeometry || theGeometry->IsEmpty() != 0)
       return {};
 
     // Do the intersection
 
-    if (!isoband || isoband->IsEmpty())
+    if (!isoband || isoband->IsEmpty() != 0)
       return {};
 
     return OGRGeometryPtr(theGeometry->Intersection(isoband.get()));
@@ -129,7 +129,7 @@ bool Intersection::inside(double theX, double theY) const
     if (!parameter)
       return true;
 
-    if (!isoband || isoband->IsEmpty())
+    if (!isoband || isoband->IsEmpty() != 0)
       return false;
 
     return Fmi::OGR::inside(*isoband, theX, theY);
@@ -247,7 +247,7 @@ void Intersection::init(Engine::Querydata::Q q,
         contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), crs.get());
     isoband = *(isobands.begin());
 
-    if (!isoband || isoband->IsEmpty())
+    if (!isoband || isoband->IsEmpty() != 0)
       return;
 
     // This does not obey layer margin settings, hence this is disabled:

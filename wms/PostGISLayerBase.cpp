@@ -139,7 +139,7 @@ OGRGeometryPtr PostGISLayerBase::getShape(const State& theState,
     {
       geom = gis.getShape(theSR, theMapOptions);
 
-      if (!geom && !geom->IsEmpty())
+      if (!geom && geom->IsEmpty() == 0)
       {
         std::string msg = "Requested map data is empty: '" + theMapOptions.schema + '.' +
                           theMapOptions.table + "'";
@@ -176,7 +176,7 @@ Fmi::Features PostGISLayerBase::getFeatures(const State& theState,
 
     for (auto result_item : result_set)
     {
-      if (!result_item->geom || result_item->geom->IsEmpty())
+      if (!result_item->geom || result_item->geom->IsEmpty() != 0)
       {
         std::string msg = "Requested map data is empty: '" + theMapOptions.schema + '.' +
                           theMapOptions.table + "'";
