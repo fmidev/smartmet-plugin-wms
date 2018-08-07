@@ -23,7 +23,7 @@ double get_double(const Spine::TimeSeries::Value& value)
   if (const int* ivalue = boost::get<int>(&value))
     return *ivalue;
 
-  if (boost::get<Spine::TimeSeries::None>(&value))
+  if (boost::get<Spine::TimeSeries::None>(&value) != nullptr)
     return kFloatMissing;
 
   // None, std::string, LonLat and local_date_time not accepted. See spine/TimeSeries.h

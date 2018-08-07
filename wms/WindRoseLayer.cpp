@@ -120,7 +120,7 @@ double mean(const Spine::TimeSeries::TimeSeries& tseries)
     for (const auto& tv : tseries)
     {
       const double* value = boost::get<double>(&tv.value);
-      if (value && *value != kFloatMissing)
+      if (value != nullptr && *value != kFloatMissing)
       {
         sum += *value;
         ++count;
@@ -151,7 +151,7 @@ double max(const Spine::TimeSeries::TimeSeries& tseries)
     for (const auto& tv : tseries)
     {
       const double* value = boost::get<double>(&tv.value);
-      if (value && *value != kFloatMissing)
+      if (value != nullptr && *value != kFloatMissing)
       {
         if (!valid)
           res = *value;
@@ -248,7 +248,7 @@ std::vector<double> calculate_rose_distribution(const Spine::TimeSeries::TimeSer
     {
       const double* value = boost::get<double>(&tv.value);
 
-      if (value && *value != kFloatMissing)
+      if (value != nullptr && *value != kFloatMissing)
       {
         ++counts[rose_sector(sectors, *value)];
         ++total_count;
@@ -287,7 +287,7 @@ std::vector<double> calculate_rose_maxima(const Spine::TimeSeries::TimeSeries& d
     {
       const double* dir = boost::get<double>(&directions[i].value);
       const double* spd = boost::get<double>(&speeds[i].value);
-      if (dir && spd && *dir != kFloatMissing && *spd != kFloatMissing)
+      if (dir != nullptr && spd != nullptr && *dir != kFloatMissing && *spd != kFloatMissing)
       {
         int sector = rose_sector(sectors, *dir);
         result[sector] = std::max(result[sector], *spd);
@@ -414,7 +414,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
-    if (!transformation)
+    if (transformation == nullptr)
       throw Spine::Exception(
           BCP,
           "WindRoseLayer failed to create the coordinate transformation from WGS84 to world "

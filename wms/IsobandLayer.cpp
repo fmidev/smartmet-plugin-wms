@@ -197,7 +197,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
         boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
             OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
-        if (!transformation)
+        if (transformation == nullptr)
           throw Spine::Exception(BCP,
                                  "Failed to create the needed coordinate transformation for "
                                  "generating station positions");
@@ -230,8 +230,8 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
           double x = lon;
           double y = lat;
 
-          if (!crs->IsGeographic())
-            if (!transformation->Transform(1, &x, &y))
+          if (crs->IsGeographic() == 0)
+            if (transformation->Transform(1, &x, &y) == 0)
               continue;
 
           // To pixel coordinate
@@ -274,7 +274,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     NFmiFastQueryInfo dstinfo(data.get());
     dstinfo.First();
 
-    if (result && hm && hm->buf)
+    if (result && hm && hm->buf != nullptr)
     {
       float* v = hm->buf;
 

@@ -19,7 +19,7 @@ LonLatToXYTransformation::LonLatToXYTransformation(const Projection& projection)
 
   // Create the coordinate transformation from geonames coordinates to image coordinates
   transformation.reset(OGRCreateCoordinateTransformation(geocrs.get(), sr.get()));
-  if (!transformation)
+  if (transformation == nullptr)
     throw std::runtime_error("Failed to create the needed coordinate transformation");
 }
 

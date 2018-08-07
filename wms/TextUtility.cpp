@@ -136,9 +136,9 @@ void addTextField(double xPos,
 
   //"text-anchor": "start"
   std::string textAnchor = attributes.value("text-anchor");
-  if (textAnchor.compare("middle") == 0)
+  if (textAnchor == "middle")
     xCoord += (fieldWidth / 2.0);
-  else if (textAnchor.compare("end") == 0)
+  else if (textAnchor == "end")
     xCoord += (fieldWidth - 3.0);
   else
     xCoord += 3.0;

@@ -158,7 +158,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
                                                       dummy);
         auto vresult = q.value(vp, localdatetime);
 
-        if (boost::get<double>(&uresult) && boost::get<double>(&vresult))
+        if (boost::get<double>(&uresult) != nullptr && boost::get<double>(&vresult) != nullptr)
         {
           auto uspd = *boost::get<double>(&uresult);
           auto vspd = *boost::get<double>(&vresult);
@@ -441,7 +441,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(theCRS.get(), wgs84.get()));
-    if (!transformation)
+    if (transformation == nullptr)
       throw Spine::Exception(
           BCP, "Failed to create the needed coordinate transformation for position generation!");
 
@@ -560,7 +560,7 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(theCRS.get(), qcrs.get()));
-    if (!transformation)
+    if (transformation == nullptr)
       throw Spine::Exception(
           BCP, "Failed to create the needed coordinate transformation for generating positions!");
 
@@ -633,7 +633,7 @@ Positions::Points Positions::getGraticulePoints(
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
-    if (!transformation)
+    if (transformation == nullptr)
       throw Spine::Exception(BCP,
                              "Failed to create the needed coordinate transformation for "
                              "generating graticule positions");
@@ -711,7 +711,7 @@ Positions::Points Positions::getGraticuleFillPoints(
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
-    if (!transformation)
+    if (transformation == nullptr)
       throw Spine::Exception(BCP,
                              "Failed to create the needed coordinate transformation for "
                              "generating graticule positions!");
@@ -925,7 +925,7 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
-    if (!transformation)
+    if (transformation == nullptr)
       throw Spine::Exception(BCP,
                              "Failed to create the needed coordinate transformation for "
                              "generating keyword positions!");
@@ -1090,7 +1090,7 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
-    if (!transformation)
+    if (transformation == nullptr)
       throw Spine::Exception(BCP,
                              "Failed to create the needed coordinate transformation for "
                              "generating station positions!");
