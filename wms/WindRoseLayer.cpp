@@ -79,7 +79,8 @@ bool is_rose_data_valid(const Spine::TimeSeries::TimeSeries& directions,
       const double* spd = boost::get<double>(&speeds[i].value);
       const double* t2m = boost::get<double>(&temperatures[i].value);
 
-      if (dir && spd && t2m && boost::get<double>(directions[i].value) != kFloatMissing &&
+      if (dir != nullptr && spd != nullptr && t2m != nullptr &&
+          boost::get<double>(directions[i].value) != kFloatMissing &&
           boost::get<double>(speeds[i].value) != kFloatMissing &&
           boost::get<double>(temperatures[i].value) != kFloatMissing)
       {
