@@ -241,7 +241,8 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
           if (Properties::inside(box, x, y))
           {
             NFmiPoint gridPoint = grid.LatLonToGrid(lon, lat);
-            heatmap_add_point_with_stamp(hm.get(), gridPoint.X(), gridPoint.Y(), hms.get());
+            heatmap_add_point_with_stamp(
+                hm.get(), lround(gridPoint.X()), lround(gridPoint.Y()), hms.get());
           }
         }
       }
