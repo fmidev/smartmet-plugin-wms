@@ -101,7 +101,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
 
       for (auto& point : thePoints)
       {
-        double dir = q.interpolate(point.latlon, theTime, 180);  // TODO: magic constant
+        double dir = q.interpolate(point.latlon, theTime, 180);
         if (dir != kFloatMissing)
         {
           point.x += lround(theOffset * cos((dir + 90 + theRotation) * pi / 180.0));
@@ -1000,7 +1000,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
-    if (!transformation)
+    if (transformation == nullptr)
       throw Spine::Exception(BCP,
                              "Failed to create the needed coordinate transformation for "
                              "generating latlon positions!");
