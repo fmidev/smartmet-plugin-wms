@@ -12,7 +12,6 @@
 #pragma once
 
 #include <boost/shared_ptr.hpp>
-#include <macgyver/TemplateFormatterMT.h>
 #include <spine/HTTP.h>
 #include <spine/Json.h>
 
@@ -30,8 +29,6 @@ enum class WMSRequestType
   GET_FEATURE_INFO,
   NOT_A_WMS_REQUEST
 };
-
-using WMSExceptionFormatter = boost::shared_ptr<Fmi::TemplateFormatterMT>;
 
 struct rgb_color
 {
