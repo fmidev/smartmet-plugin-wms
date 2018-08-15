@@ -116,17 +116,6 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
 {
   try
   {
-    CTPP::CDT hash;
-    try
-    {
-      hash = theConfig.getCapabilitiesResponseVariables();
-    }
-    catch (...)
-    {
-      throw Spine::Exception(
-          BCP, "Failed to extract capabilities from configuration file", nullptr);
-    }
-
     boost::optional<std::string> apikey;
     try
     {
@@ -136,6 +125,17 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     catch (...)
     {
       throw Spine::Exception(BCP, "Failed to get apikey from the query", nullptr);
+    }
+
+    CTPP::CDT hash;
+    try
+    {
+      hash = theConfig.getCapabilitiesResponseVariables();
+    }
+    catch (...)
+    {
+      throw Spine::Exception(
+          BCP, "Failed to extract capabilities from configuration file", nullptr);
     }
 
     CTPP::CDT configuredLayers;
@@ -151,6 +151,7 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
 
     if (!hash.Exists("capability"))
       throw Spine::Exception(BCP, "WMS generated has does not contain a capability section!");
+
     try
     {
       hash.At("capability")["layer"] = configuredLayers;
