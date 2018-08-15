@@ -1,5 +1,6 @@
 #include "WMSGetMap.h"
 #include "CaseInsensitiveComparator.h"
+#include "Colour.h"
 #include "TemplateFactory.h"
 #include "WMS.h"
 #include "WMSException.h"
