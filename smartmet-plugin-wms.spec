@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.8.8
+Version: 18.8.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -17,19 +17,19 @@ BuildRequires: make
 BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-giza-devel >= 18.8.1
-BuildRequires: smartmet-library-macgyver-devel >= 18.8.1
-BuildRequires: smartmet-library-spine-devel >= 18.8.2
+BuildRequires: smartmet-library-giza-devel >= 18.8.6
+BuildRequires: smartmet-library-macgyver-devel >= 18.8.4
+BuildRequires: smartmet-library-spine-devel >= 18.8.13
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.7.25
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 18.7.25
+BuildRequires: smartmet-engine-observation-devel >= 18.8.13
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.7.25
-BuildRequires: smartmet-engine-geonames-devel >= 18.7.25
-BuildRequires: smartmet-engine-querydata-devel >= 18.8.2
+BuildRequires: smartmet-engine-geonames-devel >= 18.8.13
+BuildRequires: smartmet-engine-querydata-devel >= 18.8.13
 BuildRequires: smartmet-engine-contour-devel >= 18.7.25
 BuildRequires: smartmet-library-gis-devel >= 18.8.2
 BuildRequires: fmt-devel
@@ -45,17 +45,17 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
 Requires: smartmet-library-gis >= 18.8.2
-Requires: smartmet-library-macgyver >= 18.8.1
-Requires: smartmet-library-giza >= 18.8.1
+Requires: smartmet-library-macgyver >= 18.8.4
+Requires: smartmet-library-giza >= 18.8.6
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 18.7.25
 %endif
-Requires: smartmet-engine-querydata >= 18.8.2
+Requires: smartmet-engine-querydata >= 18.8.13
 Requires: smartmet-engine-contour >= 18.7.25
 Requires: smartmet-engine-gis >= 18.7.25
-Requires: smartmet-engine-geonames >= 18.7.25
-Requires: smartmet-server >= 18.8.1
-Requires: smartmet-library-spine >= 18.8.2
+Requires: smartmet-engine-geonames >= 18.8.13
+Requires: smartmet-server >= 18.8.8
+Requires: smartmet-library-spine >= 18.8.13
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Aug 15 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.8.15-1.fmi
+- Refactored code
+
 * Wed Aug  8 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.8.8-1.fmi
 - Silenced several CodeChecker warnings
 - Fixed CTTP2 template cache, it did not cache anything
