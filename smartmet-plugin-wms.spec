@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 18.8.15
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -31,7 +31,7 @@ BuildRequires: smartmet-engine-gis-devel >= 18.7.25
 BuildRequires: smartmet-engine-geonames-devel >= 18.8.13
 BuildRequires: smartmet-engine-querydata-devel >= 18.8.13
 BuildRequires: smartmet-engine-contour-devel >= 18.7.25
-BuildRequires: smartmet-library-gis-devel >= 18.8.2
+BuildRequires: smartmet-library-gis-devel >= 18.8.15
 BuildRequires: fmt-devel
 BuildRequires: ctpp2 >= 2.8.5
 BuildRequires: jsoncpp-devel
@@ -44,7 +44,7 @@ Requires: fmt
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
-Requires: smartmet-library-gis >= 18.8.2
+Requires: smartmet-library-gis >= 18.8.15
 Requires: smartmet-library-macgyver >= 18.8.4
 Requires: smartmet-library-giza >= 18.8.6
 %if %{with authentication}
@@ -92,6 +92,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Aug 15 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.8.15-2.fmi
+- Improved iceegg creation algorithm (BRAINSTORM-1266)
+- Fixed (potential) memory leak in FrameLayer
+
 * Wed Aug 15 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.8.15-1.fmi
 - Refactored code
 
