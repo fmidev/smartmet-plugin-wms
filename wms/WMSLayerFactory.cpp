@@ -1,5 +1,5 @@
 #include "WMSLayerFactory.h"
-
+#include "CaseInsensitiveComparator.h"
 #include "WMSPostGISLayer.h"
 #include "WMSQueryDataLayer.h"
 #ifndef WITHOUT_OBSERVATION
@@ -7,7 +7,6 @@
 #endif
 #include <engines/querydata/Engine.h>
 #include <spine/Exception.h>
-
 #include <set>
 
 namespace SmartMet

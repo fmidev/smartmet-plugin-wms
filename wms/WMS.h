@@ -32,31 +32,6 @@ unsigned int resolution_in_minutes(const std::string& resolution);
 
 std::ostream& operator<<(std::ostream& ost, const Spine::HTTP::Request& theHTTPRequest);
 
-struct CaseInsensitiveComparator : std::binary_function<std::string, std::string, bool>
-{
-  char asciilower(char ch) const
-  {
-    char ret = ch;
-    if (ch >= 'A' && ch <= 'Z')
-      ret = static_cast<char>(ch + ('a' - 'A'));
-    return ret;
-  }
-
-  bool operator()(const std::string& first, const std::string& second) const
-  {
-    std::size_t n = std::min(first.size(), second.size());
-    for (std::size_t i = 0; i < n; i++)
-    {
-      char ch1 = asciilower(first[i]);
-      char ch2 = asciilower(second[i]);
-      if (ch1 != ch2)
-        return false;
-    }
-
-    return (first.size() == second.size());
-  }
-};
-
 std::string demimetype(const std::string& theMimeType);
 void useStyle(Json::Value& root, const Json::Value& styles);
 void useStyle(Json::Value& root, const std::string& styleName);

@@ -1,6 +1,7 @@
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 
 #include "WMSConfig.h"
+#include "CaseInsensitiveComparator.h"
 #include "Layer.h"
 #include "LayerFactory.h"
 #include "Product.h"

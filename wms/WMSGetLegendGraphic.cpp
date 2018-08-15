@@ -1,19 +1,15 @@
 #include "WMSGetLegendGraphic.h"
+#include "CaseInsensitiveComparator.h"
+#include "TemplateFactory.h"
 #include "WMS.h"
 #include "WMSException.h"
-
-#include "TemplateFactory.h"
-
-#include <macgyver/StringConversion.h>
-
 #include <boost/algorithm/string/erase.hpp>
-
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/range/adaptors.hpp>
 #include <boost/range/algorithm.hpp>
-
+#include <macgyver/StringConversion.h>
 #include <spine/Convenience.h>
 #include <spine/Exception.h>
 
