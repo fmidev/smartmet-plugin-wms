@@ -204,7 +204,7 @@ TextTable::TextTable(const Json::Value& tableAttributes, unsigned int theX, unsi
   }
   catch (...)
   {
-    throw Spine::Exception(BCP, "TextTable: Error parsing configuration file!", nullptr);
+    throw Spine::Exception::Trace(BCP, "TextTable: Error parsing configuration file!");
   }
 }
 
