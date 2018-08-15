@@ -1,11 +1,6 @@
 // ======================================================================
 /*!
  * \brief A Meb Maps Service (WMS) Request
- *
- * Characteristics:
- *
- *  -
- *  -
  */
 // ======================================================================
 
@@ -21,15 +16,6 @@ namespace Plugin
 {
 namespace WMS
 {
-enum class WMSRequestType
-{
-  GET_CAPABILITIES,
-  GET_MAP,
-  GET_LEGEND_GRAPHIC,
-  GET_FEATURE_INFO,
-  NOT_A_WMS_REQUEST
-};
-
 struct rgb_color
 {
   unsigned int red;
@@ -39,8 +25,6 @@ struct rgb_color
   rgb_color() : red(0xFF), green(0xFF), blue(0xFF) {}
   rgb_color(unsigned int r, unsigned int g, unsigned int b) : red(r), green(g), blue(b) {}
 };
-
-WMSRequestType wmsRequestType(const Spine::HTTP::Request& theHTTPRequest);
 
 std::string enclose_with_quotes(const std::string& param);
 rgb_color hex_string_to_rgb(const std::string& hex_string);

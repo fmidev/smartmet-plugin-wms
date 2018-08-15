@@ -10,6 +10,7 @@
 #include "WMSConfig.h"
 #include "WMSGetLegendGraphic.h"
 #include "WMSGetMap.h"
+#include "WMSRequestType.h"
 #include <spine/Convenience.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
