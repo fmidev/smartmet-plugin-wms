@@ -1,11 +1,6 @@
 // ======================================================================
 /*!
- * \brief A Meb Maps Service Layer data structure
- *
- * Characteristics:
- *
- *  -
- *  -
+ * \brief A Web Maps Service Layer data structure
  */
 // ======================================================================
 
