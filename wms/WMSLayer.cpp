@@ -1,26 +1,19 @@
 #include "WMSLayer.h"
 #include "TemplateFactory.h"
 #include "TextUtility.h"
-#include "WMS.h"
 #include "WMSConfig.h"
 #include "WMSException.h"
-
-#include <engines/gis/Engine.h>
-#include <spine/Exception.h>
-
-#include <macgyver/StringConversion.h>
-#include <macgyver/TimeParser.h>
-
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/split.hpp>
-
 #include <boost/make_shared.hpp>
 #include <boost/property_tree/xml_parser.hpp>
-
+#include <engines/gis/Engine.h>
 #include <fmt/format.h>
-
 #include <gdal/ogr_spatialref.h>
+#include <macgyver/StringConversion.h>
+#include <macgyver/TimeParser.h>
+#include <spine/Exception.h>
 
 namespace SmartMet
 {

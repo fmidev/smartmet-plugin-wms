@@ -4,7 +4,6 @@
 #include "Mime.h"
 #include "TemplateFactory.h"
 #include "TimeResolution.h"
-#include "WMS.h"
 #include "WMSException.h"
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/property_tree/json_parser.hpp>

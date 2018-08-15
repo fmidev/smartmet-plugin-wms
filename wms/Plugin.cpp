@@ -8,6 +8,7 @@
 #include "Mime.h"
 #include "Product.h"
 #include "State.h"
+#include "StyleSelection.h"
 #include "WMSConfig.h"
 #include "WMSGetLegendGraphic.h"
 #include "WMSGetMap.h"

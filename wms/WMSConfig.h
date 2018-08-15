@@ -7,7 +7,6 @@
 #pragma once
 
 #include "Config.h"
-#include "WMS.h"
 #include "WMSLayer.h"
 #include "WMSLayerProxy.h"
 #include "WMSLegendGraphicSettings.h"

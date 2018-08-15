@@ -1,5 +1,6 @@
 #include "WMSLayerFactory.h"
 #include "CaseInsensitiveComparator.h"
+#include "StyleSelection.h"
 #include "WMSPostGISLayer.h"
 #include "WMSQueryDataLayer.h"
 #ifndef WITHOUT_OBSERVATION
