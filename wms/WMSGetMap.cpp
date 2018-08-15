@@ -3,6 +3,7 @@
 #include "Colour.h"
 #include "Mime.h"
 #include "TemplateFactory.h"
+#include "TimeResolution.h"
 #include "WMS.h"
 #include "WMSException.h"
 #include <boost/algorithm/string/erase.hpp>

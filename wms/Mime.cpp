@@ -1,0 +1,58 @@
+#include "Mime.h"
+#include <spine/Exception.h>
+
+namespace SmartMet
+{
+namespace Plugin
+{
+namespace Dali
+{
+// ----------------------------------------------------------------------
+/*!
+ * \brief Establish format from mime type
+ */
+// ----------------------------------------------------------------------
+
+std::string demimetype(const std::string& theMimeType)
+{
+  if (theMimeType == "image/png")
+    return "png";
+  if (theMimeType == "application/pdf")
+    return "pdf";
+  if (theMimeType == "application/postscript")
+    return "ps";
+  if (theMimeType == "image/svg+xml")
+    return "svg";
+
+  throw Spine::Exception(BCP, "Unknown mime type requested: '" + theMimeType + "'");
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Establish the mime type for the product
+ */
+// ----------------------------------------------------------------------
+
+std::string mimeType(const std::string& theType)
+{
+  if (theType == "xml")
+    return "text/xml; charset=UTF-8";
+  if (theType == "svg")
+    return "image/svg+xml; charset=UTF-8";
+  if (theType == "png")
+    return "image/png";
+  if (theType == "pdf")
+    return "application/pdf";
+  if (theType == "ps")
+    return "application/postscript";
+  if (theType == "geojson")
+    return "application/geo+json";
+  if (theType == "kml")
+    return "application/vnd.google-earth.kml+xml";
+
+  throw Spine::Exception(BCP, "Unknown image format '" + theType + "'");
+}
+
+}  // namespace Dali
+}  // namespace Plugin
+}  // namespace SmartMet
