@@ -26,7 +26,6 @@ struct rgb_color
   rgb_color(unsigned int r, unsigned int g, unsigned int b) : red(r), green(g), blue(b) {}
 };
 
-std::string enclose_with_quotes(const std::string& param);
 rgb_color hex_string_to_rgb(const std::string& hex_string);
 unsigned int parse_resolution(const std::string& periodString, size_t designatorCharPos);
 unsigned int resolution_in_minutes(const std::string& resolution);

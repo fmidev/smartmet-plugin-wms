@@ -15,25 +15,6 @@ namespace Plugin
 {
 namespace WMS
 {
-std::string enclose_with_quotes(const std::string& param)
-{
-  try
-  {
-    std::string retval(param);
-
-    if (retval != "null")
-    {
-      retval.insert(retval.begin(), '"');
-      retval.append("\"");
-    }
-    return retval;
-  }
-  catch (...)
-  {
-    throw Spine::Exception::Trace(BCP, "Enclosing string with quotes failed!");
-  }
-}
-
 rgb_color hex_string_to_rgb(const std::string& hex_string)
 {
   try
