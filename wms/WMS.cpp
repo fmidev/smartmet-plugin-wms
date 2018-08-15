@@ -217,20 +217,6 @@ std::ostream& operator<<(std::ostream& ost, const Spine::HTTP::Request& theHTTPR
   }
 }
 
-std::string demimetype(const std::string& theMimeType)
-{
-  if (theMimeType == "image/png")
-    return "png";
-  if (theMimeType == "application/pdf")
-    return "pdf";
-  if (theMimeType == "application/postscript")
-    return "ps";
-  if (theMimeType == "image/svg+xml")
-    return "svg";
-
-  throw Spine::Exception(BCP, "Unknown mime type requested: '" + theMimeType + "'");
-}
-
 void handleLayerStyle(Json::Value& layerJson,
                       const Json::Value& qid,
                       const Json::Value& layer_type,

@@ -1,6 +1,7 @@
 #include "WMSGetMap.h"
 #include "CaseInsensitiveComparator.h"
 #include "Colour.h"
+#include "Mime.h"
 #include "TemplateFactory.h"
 #include "WMS.h"
 #include "WMSException.h"
@@ -430,7 +431,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
 
     // Convert format to image type
     theRequest.removeParameter("format");
-    theRequest.addParameter("type", demimetype(itsParameters.format));
+    theRequest.addParameter("type", Dali::demimetype(itsParameters.format));
 
     // Convert WMS width & height to projection xsize & ysize
     theRequest.removeParameter("width");

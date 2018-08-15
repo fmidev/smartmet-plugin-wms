@@ -122,7 +122,6 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                       bool usetimer,
                       const Product& theProduct = Product(),
                       std::size_t theHash = 0);
-  std::string mimeType(const std::string& theType) const;
 
   std::string parseWMSException(Spine::Exception& wmsException, bool isdebug) const;
 

@@ -1,5 +1,6 @@
 #include "WMSGetLegendGraphic.h"
 #include "CaseInsensitiveComparator.h"
+#include "Mime.h"
 #include "TemplateFactory.h"
 #include "WMS.h"
 #include "WMSException.h"
@@ -230,7 +231,7 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
 
     // Convert format to image type
     theRequest.removeParameter("format");
-    theRequest.addParameter("type", demimetype(itsParameters.format));
+    theRequest.addParameter("type", Dali::demimetype(itsParameters.format));
 
     // Convert WMS width & height to projection xsize & ysize
     std::string xsize = Fmi::to_string(itsParameters.width);
@@ -245,7 +246,7 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
     theRequest.addParameter("projection.ysize", ysize);
 
     theRequest.removeParameter("format");
-    theRequest.addParameter("type", demimetype(itsParameters.format));
+    theRequest.addParameter("type", Dali::demimetype(itsParameters.format));
     theRequest.addParameter("projection.crs", "EPSG:4326");
     theRequest.addParameter("projection.bbox", "0,0,1,1");
 

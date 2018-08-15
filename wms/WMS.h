@@ -21,7 +21,6 @@ unsigned int resolution_in_minutes(const std::string& resolution);
 
 std::ostream& operator<<(std::ostream& ost, const Spine::HTTP::Request& theHTTPRequest);
 
-std::string demimetype(const std::string& theMimeType);
 void useStyle(Json::Value& root, const Json::Value& styles);
 void useStyle(Json::Value& root, const std::string& styleName);
 

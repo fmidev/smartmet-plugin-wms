@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Plugin.h"
+#include "Mime.h"
 #include "Product.h"
 #include "State.h"
 #include "WMSConfig.h"
@@ -300,32 +301,6 @@ void Plugin::formatResponse(const std::string &theSvg,
   {
     throw Spine::Exception::Trace(BCP, "Response format failed!");
   }
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Establish the mime type for the product
- */
-// ----------------------------------------------------------------------
-
-std::string Plugin::mimeType(const std::string &theType) const
-{
-  if (theType == "xml")
-    return "text/xml; charset=UTF-8";
-  if (theType == "svg")
-    return "image/svg+xml; charset=UTF-8";
-  if (theType == "png")
-    return "image/png";
-  if (theType == "pdf")
-    return "application/pdf";
-  if (theType == "ps")
-    return "application/postscript";
-  if (theType == "geojson")
-    return "application/geo+json";
-  if (theType == "kml")
-    return "application/vnd.google-earth.kml+xml";
-
-  throw Spine::Exception(BCP, "Unknown image format '" + theType + "'");
 }
 
 // ----------------------------------------------------------------------
