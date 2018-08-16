@@ -1,15 +1,13 @@
 #pragma once
 
-#include <map>
-#include <set>
-#include <string>
-
+#include "TemplateFactory.h"
+#include "WMSConfig.h"
 #include <engines/querydata/Engine.h>
 #include <spine/HTTP.h>
 #include <spine/Value.h>
-
-#include "TemplateFactory.h"
-#include "WMSConfig.h"
+#include <map>
+#include <set>
+#include <string>
 
 namespace SmartMet
 {
@@ -17,21 +15,15 @@ namespace Plugin
 {
 namespace WMS
 {
-class WMSGetCapabilities
+namespace WMSGetCapabilities
 {
- public:
-  WMSGetCapabilities(const std::string& theTemplatePath);
+// response to GetCapabilities request
+std::string response(const Dali::SharedFormatter& theFormatter,
+                     const Spine::HTTP::Request& theRequest,
+                     const Engine::Querydata::Engine& theQEngine,
+                     const WMSConfig& theConfig);
 
-  // response to GetCapabilities request
-  std::string response(const Spine::HTTP::Request& theRequest,
-                       const Engine::Querydata::Engine& theQEngine,
-                       const WMSConfig& theConfig) const;
-
- private:
-  Dali::SharedFormatter itsResponseFormatter;
-
-  std::string resolveGetMapURI(const Spine::HTTP::Request& theRequest) const;
-};
+}  // namespace WMSGetCapabilities
 
 }  // namespace WMS
 }  // namespace Plugin
