@@ -19,6 +19,7 @@
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <algorithm>
+#include <cmath>
 
 namespace SmartMet
 {
@@ -421,11 +422,12 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         {
           OGRSpatialReference* sr = result_item->geom->getSpatialReference();
 
-          if (sr != nullptr)
+          if (sr == nullptr)
           {
             result_item->geom->assignSpatialReference(&defaultSR);
             result_item->geom->transformTo(projectionSR.get());
           }
+
           handleResultItem(
               *result_item, filter, mapid, theGlobals, theLayersCdt, theGroupCdt, theState);
         }
@@ -826,7 +828,7 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
   if (!theResultItem.geom || theResultItem.geom->IsEmpty() != 0)
     return;
 
-  // We get bounding box from database, but need to show egg-shaped ellipse
+  // We get rectangle from database, but need to show egg-shaped ellipse
   OGREnvelope envelope;
   theResultItem.geom->getEnvelope(&envelope);
   double xLeft = envelope.MinX;
@@ -836,38 +838,45 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
 
   double xMiddle = fabs(xLeft + xRight) * 0.5;
   double yMiddle = fabs(yBottom + yTop) * 0.5;
-  double rx = fabs(xRight - xLeft) * 0.45;
+
+  // We draw a bounding ellipse for the original rectangle,
+  // so we need a new bounding box limits for ellipse
+  double width = xRight - xLeft;
+  double height = yTop - yBottom;
+  xRight = xMiddle + (width / sqrt(2.0));
+  xLeft = xMiddle - (width / sqrt(2.0));
+  yTop = yMiddle + (height / sqrt(2.0));
+  yBottom = yMiddle - (height / sqrt(2.0));
+
+  double rx = fabs(xRight - xLeft) * 0.4;
   double ry = fabs(yTop - yBottom) * 0.5;
 
   // Ellipse points
   Fmi::OGR::CoordinatePoints points;
-  // x = x0 + a*cos t;
-  // y = y0 + b*sin t;
-  double firstY = DBL_MIN;
-  double previousY = DBL_MAX;
-
   double angle = 0;
-  while (angle < 10)
+  while (angle < 360.0)
   {
-    double x = xMiddle + rx * cos(angle);
-    double y = yMiddle + ry * sin(angle);
-    if (angle == 0)
-      firstY = y;
-    else if (previousY < firstY && y >= firstY)
-      break;
+    double rad = angle / 57.2957795;
+    double x = xMiddle + rx * cos(rad);
+    double y = yMiddle + ry * sin(rad);
     points.push_back(std::pair<double, double>(x, y));
-    previousY = y;
-
-    angle += 0.05;
+    angle += 2.0;
   }
 
   // In polygon last point is same as first one
-  OGRGeometryCollection collection;
   points.push_back(points.front());
 
-  OGRSpatialReference* sr = theResultItem.geom->getSpatialReference();
-  int epsgNumber = sr->GetEPSGGeogCS();
-  OGRGeometry* ellipse = Fmi::OGR::constructGeometry(points, wkbPolygon, epsgNumber);
+  std::string wktString = "POLYGON((";
+  for (auto p : points)
+  {
+    if (wktString.length() > 9)
+      wktString += ", ";
+    wktString += Fmi::to_string(p.first) + " " + Fmi::to_string(p.second);
+  }
+  wktString += "))";
+
+  std::unique_ptr<OGRGeometry> ellipse;
+  ellipse.reset(Fmi::OGR::createFromWkt(wktString));
 
   // Horizontal lines of iceegg
   double firstHorizontalY = yBottom + (fabs(yTop - yBottom) * 0.34);
@@ -875,25 +884,22 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
   double thirdHorizontalY = yBottom + (fabs(yTop - yBottom) * 0.76);
   double zeroHorizontalY = yBottom + (fabs(yTop - yBottom) * 0.13);
 
-  points.clear();
-  points.push_back(std::pair<double, double>(xLeft, firstHorizontalY));
-  points.push_back(std::pair<double, double>(xRight, firstHorizontalY));
-  OGRGeometry* line1 = Fmi::OGR::constructGeometry(points, wkbLineString, epsgNumber);
-  collection.addGeometry(line1);
-  points.clear();
-  points.push_back(std::pair<double, double>(xLeft, secondHorizontalY));
-  points.push_back(std::pair<double, double>(xRight, secondHorizontalY));
-  OGRGeometry* line2 = Fmi::OGR::constructGeometry(points, wkbLineString, epsgNumber);
-  collection.addGeometry(line2);
-  points.clear();
-  points.push_back(std::pair<double, double>(xLeft, thirdHorizontalY));
-  points.push_back(std::pair<double, double>(xRight, thirdHorizontalY));
-  OGRGeometry* line3 = Fmi::OGR::constructGeometry(points, wkbLineString, epsgNumber);
-  collection.addGeometry(line3);
-  OGRGeometry* horizontalLines = collection.Intersection(ellipse);
-  collection.empty();
-  collection.addGeometry(ellipse);
-  collection.addGeometry(horizontalLines);
+  wktString = "MULTILINESTRING((" + Fmi::to_string(xLeft) + " " + Fmi::to_string(firstHorizontalY) +
+              ", " + Fmi::to_string(xRight) + " " + Fmi::to_string(firstHorizontalY) + "),";
+  wktString += "(" + Fmi::to_string(xLeft) + " " + Fmi::to_string(secondHorizontalY) + ", " +
+               Fmi::to_string(xRight) + " " + Fmi::to_string(secondHorizontalY) + "),";
+  wktString += "(" + Fmi::to_string(xLeft) + " " + Fmi::to_string(thirdHorizontalY) + ", " +
+               Fmi::to_string(xRight) + " " + Fmi::to_string(thirdHorizontalY) + "))";
+
+  std::unique_ptr<OGRGeometry> horizontalLines;
+
+  horizontalLines.reset(Fmi::OGR::createFromWkt(wktString));
+  horizontalLines.reset(horizontalLines->Intersection(ellipse.get()));
+
+  OGRGeometryCollection collection;
+  collection.addGeometry(ellipse.get());
+  collection.addGeometry(horizontalLines.get());
+
   Fmi::Feature feat;
   feat.geom.reset(collection.clone());
   handleGeometry(feat, theFilter, theMapId, theGlobals, theGroupCdt, theState);
@@ -906,7 +912,7 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
 
   std::vector<std::string> rows;
   boost::algorithm::split(rows, egg_text, boost::algorithm::is_any_of("\n"));
-  // Remove leadinf and trailing spaces
+  // Remove leading and trailing spaces
   std::for_each(
       rows.begin(), rows.end(), boost::bind(&boost::trim<std::string>, _1, std::locale()));
   for (std::string& r : rows)
