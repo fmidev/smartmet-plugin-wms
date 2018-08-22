@@ -10,6 +10,7 @@
 #include "State.h"
 #include "StyleSelection.h"
 #include "WMSConfig.h"
+#include "WMSGetCapabilities.h"
 #include "WMSGetLegendGraphic.h"
 #include "WMSGetMap.h"
 #include "WMSRequestType.h"
@@ -611,8 +612,10 @@ void Plugin::init()
     if (itsShutdownRequested)
       itsWMSConfig->shutdown();
 
+#if SHITSHIT
     itsWMSGetCapabilities = boost::movelib::make_unique<WMS::WMSGetCapabilities>(
         itsConfig.templateDirectory() + "/wms_get_capabilities.c2t");
+#endif
 
     // Register dali content handler
 
@@ -1204,7 +1207,9 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
       if (requestType == WMS::WMSRequestType::GET_CAPABILITIES)
       {
-        auto msg = itsWMSGetCapabilities->response(thisRequest, *itsQEngine, *itsWMSConfig);
+        const auto tmpl_path = itsConfig.templateDirectory() + "/wms_get_capabilities.c2t";
+        auto tmpl = itsTemplateFactory.get(tmpl_path);
+        auto msg = WMS::WMSGetCapabilities::response(tmpl, thisRequest, *itsQEngine, *itsWMSConfig);
         formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
         return WMSQueryStatus::OK;
       }

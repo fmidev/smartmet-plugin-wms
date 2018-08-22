@@ -96,9 +96,12 @@ rm -rf $RPM_BUILD_ROOT
 - Fixed handling of symbols and symbol groups in GetLegendGraphic response (BRAINSTORM-1279)
 - New symbols taken in use for precipitation form
 
-* Wed Aug 15 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.8.15-2.fmi
-- Improved ice egg creation algorithm (BRAINSTORM-1266)
+* Thu Aug 16 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.8.16-1.fmi
+- Improved iceegg creation algorithm (BRAINSTORM-1266)
 - Fixed (potential) memory leak in FrameLayer
+
+* Wed Aug 15 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.8.15-2.fmi
+- Use only one TemplateFactory object, WMSGetCapabilities is now plain namespace instead of an object
 
 * Wed Aug 15 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.8.15-1.fmi
 - Refactored code

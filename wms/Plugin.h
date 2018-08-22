@@ -11,7 +11,6 @@
 #include "TemplateFactory.h"
 #include "WMSConfig.h"
 #include "WMSException.h"
-#include "WMSGetCapabilities.h"
 #include "WMSQueryStatus.h"
 #include <engines/contour/Engine.h>
 #include <engines/geonames/Engine.h>
@@ -151,8 +150,6 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
 
   // WMS configuration
   boost::movelib::unique_ptr<WMS::WMSConfig> itsWMSConfig;
-  // WMS Capabilities
-  boost::movelib::unique_ptr<WMS::WMSGetCapabilities> itsWMSGetCapabilities;
 
 };  // class Plugin
 
