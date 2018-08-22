@@ -1,21 +1,17 @@
 #include "WMSGetCapabilities.h"
 #include "TemplateFactory.h"
 #include "WMSException.h"
-
 #include <boost/algorithm/string/join.hpp>
-
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/algorithm/copy.hpp>
 #include <boost/shared_ptr.hpp>
-#include <algorithm>
-
 #include <ctpp2/CTPP2Logger.hpp>  // logging level defines
-
 #include <spine/Convenience.h>
 #include <spine/Exception.h>
 #include <spine/FmiApiKey.h>
+#include <algorithm>
 
 namespace SmartMet
 {
@@ -23,20 +19,7 @@ namespace Plugin
 {
 namespace WMS
 {
-WMSGetCapabilities::WMSGetCapabilities(const std::string& theTemplatePath)
-{
-  try
-  {
-    Dali::TemplateFactory templateFactory;
-    itsResponseFormatter = templateFactory.get(theTemplatePath);
-  }
-  catch (...)
-  {
-    throw Spine::Exception::Trace(BCP, "Initializing WMS repsonse template failed!");
-  }
-}
-
-std::string WMSGetCapabilities::resolveGetMapURI(const Spine::HTTP::Request& theRequest) const
+std::string resolveGetMapURI(const Spine::HTTP::Request& theRequest)
 {
   try
   {
@@ -110,9 +93,10 @@ void patch_protocols(CTPP::CDT& dcptypes, const std::string& newprotocol)
   }
 }
 
-std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
+std::string WMSGetCapabilities::response(const Dali::SharedFormatter& theFormatter,
+                                         const Spine::HTTP::Request& theRequest,
                                          const Engine::Querydata::Engine& /* theQEngine */,
-                                         const WMSConfig& theConfig) const
+                                         const WMSConfig& theConfig)
 {
   try
   {
@@ -188,8 +172,8 @@ std::string WMSGetCapabilities::response(const Spine::HTTP::Request& theRequest,
     std::stringstream logstream;
     try
     {
-      itsResponseFormatter->process(hash, outstream, logstream);
-      // itsResponseFormatter->process(hash, outstream, logstream, CTPP2_LOG_DEBUG);
+      theFormatter->process(hash, outstream, logstream);
+      // theFormatter->process(hash, outstream, logstream, CTPP2_LOG_DEBUG);
     }
     catch (const std::exception& e)
     {
