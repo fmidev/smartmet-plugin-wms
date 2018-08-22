@@ -1,0 +1,24 @@
+<symbol overflow="visible" id="freezingdrizzle">
+     <defs></defs>
+     <g id="10401000" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="scale(0.1) translate(-256,-256)">
+        <g id="tihku" transform="translate(151.000000, 240.000000)">
+            <g id="line-1" transform="translate(25.000000, 0.000000)" fill="#E3384D">
+                <circle id="Oval" cx="11" cy="11" r="11"></circle>
+                <circle id="Oval" cx="11" cy="49" r="11"></circle>
+            </g>
+            <g id="line-1" transform="translate(71.000000, 0.000000)" fill="#E3384D">
+                <circle id="Oval" cx="11" cy="11" r="11"></circle>
+                <circle id="Oval" cx="11" cy="49" r="11"></circle>
+            </g>
+            <g id="line-1" transform="translate(117.000000, 0.000000)" fill="#E3384D">
+                <circle id="Oval" cx="11" cy="11" r="11"></circle>
+                <circle id="Oval" cx="11" cy="49" r="11"></circle>
+            </g>
+            <g id="line-1" transform="translate(163.000000, 0.000000)" fill="#E3384D">
+                <circle id="Oval" cx="11" cy="11" r="11"></circle>
+                <circle id="Oval" cx="11" cy="49" r="11"></circle>
+            </g>
+            <rect id="Rectangle" fill="#0A95D7" x="0" y="75" width="210" height="20" rx="10"></rect>
+        </g>
+    </g>
+</symbol>

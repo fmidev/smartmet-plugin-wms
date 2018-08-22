@@ -60,6 +60,30 @@ Json::Value parse_json_string(const std::string theJsonString)
   return json;
 }
 
+void add_attributes(Json::Value& json, const LegendGraphicInfoItem& lgi)
+{
+  Json::Value attributes = lgi.asJsonValue("attributes");
+  if (!attributes.isNull())
+    json["attributes"] = attributes;
+}
+
+void add_name(Json::Value& json,
+              const WMSLegendGraphicSettings& lgs,
+              const LegendGraphicInfoItem& lgi)
+{
+  std::string name = lgi.asString("lolimit") + "..." + lgi.asString("hilimit");
+
+  if (name.length() == 3)
+  {
+    std::string symbolName = lgi.asString("symbol");
+    if (!symbolName.empty() && lgs.parameters.find(symbolName) != lgs.parameters.end())
+      name = lgs.parameters.at(symbolName).name;
+    else
+      name = symbolName;
+  }
+
+  json = Json::Value(name);
+}
 Json::Value process_symbol_group_json(const Json::Value& jsonTemplate,
                                       const WMSLegendGraphicSettings& lgs,
                                       const LegendGraphicInfo& legendGraphicInfo,
@@ -67,7 +91,13 @@ Json::Value process_symbol_group_json(const Json::Value& jsonTemplate,
                                       unsigned int ypos,
                                       unsigned int uniqueId)
 {
-  Json::Value legendJson = jsonTemplate;
+  Json::Value legendTemplate = jsonTemplate;
+  // Take a copy of template, remove layers and add them again with actual values
+  Json::Value ret = jsonTemplate;
+  ret.removeMember("layers");
+  ret["layers"] = Json::Value();
+  Json::Value& layers = ret["layers"];
+
   unsigned int symbol_xpos = xpos + *lgs.layout.legend_xoffset + 10;
   unsigned int symbol_ypos = ypos + *lgs.layout.legend_yoffset;
   unsigned int header_ypos = ypos + *lgs.layout.param_name_yoffset;
@@ -77,75 +107,62 @@ Json::Value process_symbol_group_json(const Json::Value& jsonTemplate,
   {
     std::string symbolName = lgi.asString("symbol");
 
-    // some symbols need not to be shown in legend graphis, for exmaple logos
+    // Some symbols need not to be shown in legend graphs, for exmaple logos
     if (lgs.symbolsToIgnore.find(symbolName) != lgs.symbolsToIgnore.end())
       continue;
 
-    // handling individual symbols
-    Json::Value& xPosJson = legendJson["x"];
-    Json::Value& layersJson = legendJson["layers"];
+    // Handling individual symbols
+    Json::Value& xPosJson = legendTemplate["x"];
+    Json::Value& layersJson = legendTemplate["layers"];
     Json::Value& symbolLayerJson = layersJson[layersJson.size() - 2];
     Json::Value& textLayerJson = layersJson[layersJson.size() - 1];
+
     bool firstSymbol = (xPosJson.asInt() == 99999);
+    // Add header before first symbol
     if (firstSymbol)
     {
-      Json::Value& yPosJson = legendJson["y"];
+      Json::Value& yPosJson = legendTemplate["y"];
       xPosJson = Json::Value(symbol_xpos);
       yPosJson = Json::Value(symbol_ypos);
       Json::Value& headerLayerJson = layersJson[0];
       Json::Value& cdataJson = headerLayerJson["cdata"];
-      std::string legendHeader = lgi.asString("parameter_name");
-      cdataJson = Json::Value(legendHeader);
+      std::string parameterName = lgi.asString("parameter_name");
+      if (lgs.parameters.find(parameterName) != lgs.parameters.end())
+        parameterName = lgs.parameters.at(parameterName).name;
+
+      cdataJson = Json::Value(parameterName);
       Json::Value& attributesHeaderJson = headerLayerJson["attributes"];
       Json::Value& xPosHeaderJson = attributesHeaderJson["x"];
       Json::Value& yPosHeaderJson = attributesHeaderJson["y"];
       xPosHeaderJson = Json::Value(header_xpos);
       yPosHeaderJson = Json::Value(header_ypos);
 
-      Json::Value& symbolJson = symbolLayerJson["symbol"];
-      symbolJson = Json::Value(lgi.asString("symbol"));
-      Json::Value& positionsJson = symbolLayerJson["positions"];
-      Json::Value& xPosSymbolJson = positionsJson["x"];
-      Json::Value& yPosSymbolJson = positionsJson["y"];
-      xPosSymbolJson = Json::Value(symbol_xpos);
-      yPosSymbolJson = Json::Value(symbol_ypos - 5);
-
-      Json::Value& cdataTextJson = textLayerJson["cdata"];
-      cdataTextJson = Json::Value(lgi.asString("symbol"));
-
-      Json::Value& attributesTextJson = textLayerJson["attributes"];
-      Json::Value& xPosSymbolTextJson = attributesTextJson["x"];
-      Json::Value& yPosSymbolTextJson = attributesTextJson["y"];
-      xPosSymbolTextJson = Json::Value(symbol_xpos + *lgs.layout.symbol_group_x_padding);
-      yPosSymbolTextJson = Json::Value(symbol_ypos);
+      layers.append(headerLayerJson);
     }
-    else
-    {
-      Json::Value newSymbolLayerJson = symbolLayerJson;
-      Json::Value newTextLayerJson = textLayerJson;
-      Json::Value& symbolJson = newSymbolLayerJson["symbol"];
-      symbolJson = Json::Value(lgi.asString("symbol"));
-      Json::Value& positionsJson = newSymbolLayerJson["positions"];
-      Json::Value& xPosSymbolJson = positionsJson["x"];
-      Json::Value& yPosSymbolJson = positionsJson["y"];
-      xPosSymbolJson = Json::Value(symbol_xpos);
-      yPosSymbolJson = Json::Value(symbol_ypos - 5);
+    Json::Value& symbolJson = symbolLayerJson["symbol"];
+    symbolJson = Json::Value(lgi.asString("symbol"));
+    Json::Value& positionsJson = symbolLayerJson["positions"];
+    Json::Value& xPosSymbolJson = positionsJson["x"];
+    Json::Value& yPosSymbolJson = positionsJson["y"];
+    xPosSymbolJson = Json::Value(symbol_xpos);
+    yPosSymbolJson = Json::Value(symbol_ypos - 5);
 
-      Json::Value& cdataTextJson = newTextLayerJson["cdata"];
-      cdataTextJson = Json::Value(lgi.asString("symbol"));
+    Json::Value& cdataTextJson = textLayerJson["cdata"];
+    add_attributes(symbolLayerJson, lgi);
+    add_name(cdataTextJson, lgs, lgi);
 
-      Json::Value& attributesTextJson = newTextLayerJson["attributes"];
-      Json::Value& xPosSymbolTextJson = attributesTextJson["x"];
-      Json::Value& yPosSymbolTextJson = attributesTextJson["y"];
-      xPosSymbolTextJson = Json::Value(symbol_xpos + *lgs.layout.symbol_group_x_padding);
-      yPosSymbolTextJson = Json::Value(symbol_ypos);
-      layersJson.append(newSymbolLayerJson);
-      layersJson.append(newTextLayerJson);
-    }
+    Json::Value& attributesTextJson = textLayerJson["attributes"];
+    Json::Value& xPosSymbolTextJson = attributesTextJson["x"];
+    Json::Value& yPosSymbolTextJson = attributesTextJson["y"];
+    xPosSymbolTextJson = Json::Value(symbol_xpos + *lgs.layout.symbol_group_x_padding);
+    yPosSymbolTextJson = Json::Value(symbol_ypos);
+    layers.append(symbolLayerJson);
+    layers.append(textLayerJson);
+
     symbol_ypos += *lgs.layout.symbol_group_y_padding;
   }
 
-  return legendJson;
+  return ret;
 }
 
 Json::Value set_legend_position(const Json::Value& jsonTemplate,
@@ -431,118 +448,40 @@ Json::Value process_legend_json(const Json::Value& jsonTemplate,
   }
   else if (legendType == "symbol")
   {
-    if (parameterName == "PrecipitationForm")
-    {
-      Json::Value& xPosJson = legendJson["x"];
-      Json::Value& yPosJson = legendJson["y"];
-      xPosJson = Json::Value(xpos);
-      yPosJson = Json::Value(ypos);
-      Json::Value& layersJson = legendJson["layers"];
-      for (unsigned int i = 0; i < layersJson.size(); i++)
-      {
-        Json::Value& layerJson = layersJson[i];
-        if (!layerJson.isNull())
-        {
-          Json::Value& cdataJson = layerJson["cdata"];
-          if (!cdataJson.isNull())
-          {
-            std::string cdata = cdataJson.asString();
-            Json::Value& attributesJson = layerJson["attributes"];
-            Json::Value& xPosJson = attributesJson["x"];
-            Json::Value& yPosJson = attributesJson["y"];
+    Json::Value& yPosLegendJson = legendJson["y"];
+    Json::Value& xPosLegendJson = legendJson["x"];
+    xPosLegendJson = Json::Value(xpos);
+    yPosLegendJson = Json::Value(ypos);
+    Json::Value& layersJson = legendJson["layers"];
+    Json::Value& headerLayerJson = layersJson[0];
+    Json::Value& cdataJson = headerLayerJson["cdata"];
+    cdataJson = Json::Value(parameterName);
+    Json::Value& attributesHeaderJson = headerLayerJson["attributes"];
+    Json::Value& xPosHeaderJson = attributesHeaderJson["x"];
+    Json::Value& yPosHeaderJson = attributesHeaderJson["y"];
+    xPosHeaderJson = Json::Value(xpos);
+    yPosHeaderJson = Json::Value(ypos);
 
-            if (cdata == "precipitation_form_header")
-            {
-              cdataJson = Json::Value(legendHeader);
-              xPosJson = Json::Value(xpos + 20);
-              yPosJson = Json::Value(ypos + 20);
-            }
-            else if (cdata == "rain")
-            {
-              xPosJson = Json::Value(xpos + *lgs.layout.param_name_xoffset +
-                                     *lgs.layout.symbol_group_x_padding);
-              yPosJson = Json::Value(ypos + *lgs.layout.legend_yoffset);
-            }
-            else if (cdata == "drizzle")
-            {
-              xPosJson = Json::Value(xpos + *lgs.layout.param_name_xoffset +
-                                     *lgs.layout.symbol_group_x_padding);
-              yPosJson = Json::Value(ypos + *lgs.layout.legend_yoffset +
-                                     *lgs.layout.symbol_group_y_padding);
-            }
-            else if (cdata == "snow")
-            {
-              xPosJson = Json::Value(xpos + *lgs.layout.param_name_xoffset +
-                                     *lgs.layout.symbol_group_x_padding);
-              yPosJson = Json::Value(ypos + *lgs.layout.legend_yoffset +
-                                     (*lgs.layout.symbol_group_y_padding * 2));
-            }
-          }
-          Json::Value& positionsJson = layerJson["positions"];
-          if (!positionsJson.isNull())
-          {
-            Json::Value& xPosJson = positionsJson["x"];
-            Json::Value& yPosJson = positionsJson["y"];
-            Json::Value& symbolJson = layerJson["symbol"];
-            std::string symbol = symbolJson.asString();
-            if (symbol == "rain")
-            {
-              xPosJson = Json::Value(xpos + *lgs.layout.legend_xoffset);
-              yPosJson = Json::Value(ypos + *lgs.layout.legend_yoffset);
-            }
-            else if (symbol == "drizzle")
-            {
-              xPosJson = Json::Value(xpos + *lgs.layout.legend_xoffset);
-              yPosJson = Json::Value(ypos + *lgs.layout.legend_yoffset +
-                                     *lgs.layout.symbol_group_y_padding);
-            }
-            else if (symbol == "snow")
-            {
-              xPosJson = Json::Value(xpos + *lgs.layout.legend_xoffset);
-              yPosJson = Json::Value(ypos + *lgs.layout.legend_yoffset +
-                                     (*lgs.layout.symbol_group_y_padding * 2));
-            }
-          }
-        }
-      }
-    }
-    else
-    {
-      Json::Value& yPosLegendJson = legendJson["y"];
-      Json::Value& xPosLegendJson = legendJson["x"];
-      xPosLegendJson = Json::Value(xpos);
-      yPosLegendJson = Json::Value(ypos);
-      Json::Value& layersJson = legendJson["layers"];
-      Json::Value& headerLayerJson = layersJson[0];
-      Json::Value& cdataJson = headerLayerJson["cdata"];
-      cdataJson = Json::Value(parameterName);
-      Json::Value& attributesHeaderJson = headerLayerJson["attributes"];
-      Json::Value& xPosHeaderJson = attributesHeaderJson["x"];
-      Json::Value& yPosHeaderJson = attributesHeaderJson["y"];
-      xPosHeaderJson = Json::Value(xpos);
-      yPosHeaderJson = Json::Value(ypos);
+    Json::Value& symbolLayerJson = layersJson[1];
+    Json::Value& textLayerJson = layersJson[2];
+    Json::Value& symbolJson = symbolLayerJson["symbol"];
+    symbolJson = lgi.asJsonValue("symbol");
+    Json::Value& positionsJson = symbolLayerJson["positions"];
+    Json::Value& xPosSymbolJson = positionsJson["x"];
+    Json::Value& yPosSymbolJson = positionsJson["y"];
+    unsigned int symbol_xpos = (xpos + *lgs.layout.legend_xoffset);
+    unsigned int symbol_ypos = (ypos + *lgs.layout.legend_yoffset);
+    xPosSymbolJson = Json::Value(symbol_xpos);
+    yPosSymbolJson = Json::Value(symbol_ypos);
 
-      Json::Value& symbolLayerJson = layersJson[1];
-      Json::Value& textLayerJson = layersJson[2];
-      Json::Value& symbolJson = symbolLayerJson["symbol"];
-      symbolJson = lgi.asJsonValue("symbol");
-      Json::Value& positionsJson = symbolLayerJson["positions"];
-      Json::Value& xPosSymbolJson = positionsJson["x"];
-      Json::Value& yPosSymbolJson = positionsJson["y"];
-      unsigned int symbol_xpos = (xpos + *lgs.layout.legend_xoffset);
-      unsigned int symbol_ypos = (ypos + *lgs.layout.legend_yoffset);
-      xPosSymbolJson = Json::Value(symbol_xpos);
-      yPosSymbolJson = Json::Value(symbol_ypos);
+    Json::Value& cdataTextJson = textLayerJson["cdata"];
+    cdataTextJson = lgi.asJsonValue("symbol");
 
-      Json::Value& cdataTextJson = textLayerJson["cdata"];
-      cdataTextJson = lgi.asJsonValue("symbol");
-
-      Json::Value& attributesTextJson = textLayerJson["attributes"];
-      Json::Value& xPosSymbolTextJson = attributesTextJson["x"];
-      Json::Value& yPosSymbolTextJson = attributesTextJson["y"];
-      xPosSymbolTextJson = Json::Value(symbol_xpos + *lgs.layout.symbol_group_x_padding);
-      yPosSymbolTextJson = Json::Value(symbol_ypos + 10);
-    }
+    Json::Value& attributesTextJson = textLayerJson["attributes"];
+    Json::Value& xPosSymbolTextJson = attributesTextJson["x"];
+    Json::Value& yPosSymbolTextJson = attributesTextJson["y"];
+    xPosSymbolTextJson = Json::Value(symbol_xpos + *lgs.layout.symbol_group_x_padding);
+    yPosSymbolTextJson = Json::Value(symbol_ypos + 10);
   }
 
   return legendJson;
@@ -591,9 +530,43 @@ LegendGraphicInfo handle_json_layers(Json::Value layersJson)
         json = layerJson.get("css", nulljson);
         if (!json.isNull())
           lgi.add("css", json);
+        // Single symbol
         json = layerJson.get("symbol", nulljson);
         if (!json.isNull())
           lgi.add("symbol", json);
+        json = layerJson.get("symbols", nulljson);
+        if (!json.isNull())
+        {
+          // Expand symbol group
+          Json::Value symbolGroup = parse_json_string(json.toStyledString());
+          if (symbolGroup.isArray())
+          {
+            for (unsigned int i = 0; i < symbolGroup.size(); i++)
+            {
+              LegendGraphicInfoItem lgiSymbol;
+              if (!lgi.asJsonValue("parameter_name").isNull())
+                lgiSymbol.add("parameter_name", lgi.asJsonValue("parameter_name"));
+              if (!lgi.asJsonValue("layer_type").isNull())
+                lgiSymbol.add("layer_type", lgi.asJsonValue("layer_type"));
+              Json::Value& symbolJson = symbolGroup[i];
+              json = symbolJson.get("symbol", nulljson);
+              if (!json.isNull())
+                lgiSymbol.add("symbol", json);
+              json = symbolJson.get("attributes", nulljson);
+              if (!json.isNull())
+                lgiSymbol.add("attributes", json);
+              json = symbolJson.get("lolimit", nulljson);
+              if (!json.isNull())
+                lgiSymbol.add("lolimit", json);
+              json = symbolJson.get("hilimit", nulljson);
+              if (!json.isNull())
+                lgiSymbol.add("hilimit", json);
+
+              ret.push_back(lgiSymbol);
+            }
+            continue;
+          }
+        }
         json = layerJson.get("attributes", nulljson);
         if (!json.isNull())
         {
@@ -936,22 +909,22 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
   std::set<std::string> processedParameters;
   unsigned int uniqueId = 0;
 
-  //  symbol_group symbolGroup;
-  LegendGraphicInfo symbolGroupInfo;
-  Json::Value symbolGroupJson;
+  // Vector of symbol groups for PrecipitationForm, CloudBase2, ...
+  NamedLegendGraphicInfo lgiSymbols;
   for (auto lgi : legendGraphicInfo)
   {
     std::string key;
     std::string layerType = lgi.asString("layer_type");
     std::string layerSubType = lgi.asString("layer_subtype");
     std::string parameterName = lgi.asString("parameter_name");
+
     if (layerType == "icemap" && layerSubType == "symbol")
       layerType = "symbol";
 
     // handle all symbols together in the end
-    if (layerType == "symbol" && parameterName != "PrecipitationForm")
+    if (layerType == "symbol")
     {
-      symbolGroupInfo.push_back(lgi);
+      lgiSymbols[parameterName].push_back(lgi);
       continue;
     }
 
@@ -964,13 +937,7 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
     bool isGenericTemplate = false;
     // Legends are identified by parameter name + layer type (e.g. Temperature_isoline,
     // Temperature_isoband), or by plain layer type (e.g. isoline, isoband)
-    // Precipitation form is special case
-    if (layerType == "symbol" && parameterName == "PrecipitationForm")
-    {
-      isGenericTemplate = true;
-      key = parameterName;
-    }
-    else if (legends.find(parameterName + "_" + layerType) != legends.end())
+    if (legends.find(parameterName + "_" + layerType) != legends.end())
       key = (parameterName + "_" + layerType);
     else if (legends.find(layerType) != legends.end())
     {
@@ -1050,25 +1017,31 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
 
   ret.width = xpos;
 
-  // symbol group
-  if (symbolGroupInfo.size() > 0)
+  // Finally all symbol groups are handled
+  if (lgiSymbols.size() > 0)
   {
-    Json::Value symbolGroup = process_symbol_group_json(
-        legends.at("symbol"), actualSettings, symbolGroupInfo, xpos, ypos, uniqueId);
-    ret.legendLayers.push_back(symbolGroup.toStyledString());
-
-    Json::Value nulljson;
-    auto layersJson = symbolGroup.get("layers", nulljson);
-    if (!layersJson.isNull() && layersJson.isArray())
+    for (std::map<std::string, LegendGraphicInfo>::const_iterator iter = lgiSymbols.begin();
+         iter != lgiSymbols.end();
+         ++iter)
     {
-      for (const auto& layer : layersJson)
+      const LegendGraphicInfo& legendGraphicInfo = iter->second;
+
+      Json::Value symbolGroup = process_symbol_group_json(
+          legends.at("symbol"), actualSettings, legendGraphicInfo, xpos, ypos, uniqueId);
+      ret.legendLayers.push_back(symbolGroup.toStyledString());
+      Json::Value nulljson;
+      auto layersJson = symbolGroup.get("layers", nulljson);
+      if (!layersJson.isNull() && layersJson.isArray())
       {
-        get_legend_dimension(layer, "attributes", ret.width, ret.height);
-        get_legend_dimension(layer, "positions", ret.width, ret.height);
+        for (const auto& layer : layersJson)
+        {
+          get_legend_dimension(layer, "attributes", ret.width, ret.height);
+          get_legend_dimension(layer, "positions", ret.width, ret.height);
+        }
       }
+      ret.width += *actualSettings.layout.symbol_group_x_padding;
+      ret.height += *actualSettings.layout.symbol_group_y_padding;
     }
-    ret.width += *actualSettings.layout.symbol_group_x_padding;
-    ret.height += *actualSettings.layout.symbol_group_y_padding;
   }
 
   return ret;

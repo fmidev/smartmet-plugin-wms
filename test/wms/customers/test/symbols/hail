@@ -1,0 +1,19 @@
+<symbol overflow="visible" id="hail">
+    <defs></defs>
+   <g id="10601080" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="scale(0.1) translate(-256,-256)">
+        <g id="raekuuro" transform="translate(172.000000, 200.000000)">
+            <g id="rae" transform="translate(62.000000, 20.000000)">
+                <polygon fill="#0A95D7" points="22 90 41.0525589 101 41.0525589 123 22 134 2.94744112 123 2.94744112 101"></polygon>
+                <rect id="line" fill="#02A9F1" x="12.5" y="0" width="20" height="76" rx="10"></rect>
+            </g>
+            <g id="rae">
+                <polygon fill="#0A95D7" points="22 90 41.0525589 101 41.0525589 123 22 134 2.94744112 123 2.94744112 101"></polygon>
+                <rect id="line" fill="#02A9F1" x="12.5" y="0" width="20" height="76" rx="10"></rect>
+            </g>
+            <g id="rae" transform="translate(124.000000, 0.000000)">
+                <polygon fill="#0A95D7" points="22 90 41.0525589 101 41.0525589 123 22 134 2.94744112 123 2.94744112 101"></polygon>
+                <rect id="line" fill="#02A9F1" x="12.5" y="0" width="20" height="76" rx="10"></rect>
+            </g>
+        </g>
+    </g>
+</symbol>
