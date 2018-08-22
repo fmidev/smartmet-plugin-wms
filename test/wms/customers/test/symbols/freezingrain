@@ -1,0 +1,10 @@
+<symbol overflow="visible" id="freezingrain">
+   <defs></defs>
+   <g id="10501000" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="scale(0.1) translate(-256,-256)">
+        <g id="jaatava-sade" transform="translate(167.000000, 240.000000)" fill="#E3384D">
+            <polyline id="jaatava-pisara" points="37 0 0 92 0 0"></polyline>
+            <polyline id="jaatava-pisara" points="108 0 71 92 71 0"></polyline>
+            <polyline id="jaatava-pisara" points="179 0 142 92 142 0"></polyline>
+        </g>
+    </g>
+</symbol>

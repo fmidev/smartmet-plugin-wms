@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.8.16
+Version: 18.8.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Aug 22 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.8.22-2.fmi
+- Fixed handling of symbols and symbol groups in GetLegendGraphic response (BRAINSTORM-1279)
+- New symbols taken in use for precipitation form
+
 * Thu Aug 16 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.8.16-1.fmi
 - Improved iceegg creation algorithm (BRAINSTORM-1266)
 - Fixed (potential) memory leak in FrameLayer
