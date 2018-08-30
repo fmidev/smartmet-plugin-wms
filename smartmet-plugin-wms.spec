@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.8.28
+Version: 18.8.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -28,7 +28,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 18.8.21
 BuildRequires: smartmet-engine-observation-devel >= 18.8.29
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.7.25
-BuildRequires: smartmet-engine-geonames-devel >= 18.8.26
+BuildRequires: smartmet-engine-geonames-devel >= 18.8.30
 BuildRequires: smartmet-engine-querydata-devel >= 18.8.20
 BuildRequires: smartmet-engine-contour-devel >= 18.7.25
 BuildRequires: smartmet-library-gis-devel >= 18.8.15
@@ -53,7 +53,7 @@ Requires: smartmet-engine-authentication >= 18.8.21
 Requires: smartmet-engine-querydata >= 18.8.20
 Requires: smartmet-engine-contour >= 18.7.25
 Requires: smartmet-engine-gis >= 18.7.25
-Requires: smartmet-engine-geonames >= 18.8.26
+Requires: smartmet-engine-geonames >= 18.8.30
 Requires: smartmet-server >= 18.8.22
 Requires: smartmet-library-spine >= 18.8.30
 Requires: boost-date-time
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Aug 30 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.8.30-1.fmi
+- Silenced CodeChecker warnings
+
 * Tue Aug 28 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.8.28-1.fmi
 - Oracle parameter names in test/cnf/observation.conf file made uppercase (BRAINSTORM-1156)
 
