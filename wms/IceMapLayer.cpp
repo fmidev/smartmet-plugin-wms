@@ -1121,7 +1121,7 @@ void IceMapLayer::addLocationName(double theXPos,
   arrow_cdt["attributes"]["x1"] = Fmi::to_string(lround(arrow_x_coord));
   arrow_cdt["attributes"]["y1"] = Fmi::to_string(lround(y_coord_first - 2));
   arrow_cdt["attributes"]["x2"] = Fmi::to_string(
-      lround(arrow_x_coord + ((text_dimension_first.width / first_name.size()) * 2)));
+      lround(arrow_x_coord + ((1.0 * text_dimension_first.width / first_name.size()) * 2)));
   arrow_cdt["attributes"]["y2"] = Fmi::to_string(lround(y_coord_first - 2));
   arrow_cdt["attributes"]["stroke"] = "black";
   arrow_cdt["attributes"]["stroke-width"] = "0.5";
