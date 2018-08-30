@@ -26,6 +26,7 @@ namespace WMS
 class WMSTimeDimension
 {
  public:
+  virtual ~WMSTimeDimension() = default;
   WMSTimeDimension() : current(true) {}
   void addTimestep(const boost::posix_time::ptime& timestep);
 
