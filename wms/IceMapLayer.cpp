@@ -114,22 +114,6 @@ std::vector<std::string> getAttributeColumns(const std::map<std::string, std::st
   return column_name_vector;
 }
 
-std::string convertText(const std::string& theText)
-{
-  std::string ret(theText);  // original text is returned by default
-
-  if (theText == "Slight Pressure" || theText == "Slight to Moderate Pressure")
-    ret = "1";
-  else if (theText == "Moderate Pressure" || theText == "Moderate to Strong Pressure")
-    ret = "2";
-  else if (theText == "Strong Pressure")
-    ret = "3";
-  else if (theText == "No Pressure")
-    ret = "0";
-
-  return ret;
-}
-
 Json::Value getJsonValue(const std::string& param_name,
                          const std::map<std::string, std::string>& parameters)
 {
