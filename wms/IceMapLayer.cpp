@@ -732,7 +732,7 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
   std::string mean_temperature =
       boost::apply_visitor(PostGISAttributeToString(), theResultItem.attributes.at(col_name));
 
-  if (mean_temperature.empty() || isdigit(mean_temperature.at(0) == 0))
+  if (mean_temperature.empty() || isdigit(mean_temperature.at(0)) == 0)
     return;
 
   if (mean_temperature.size() == 1)
