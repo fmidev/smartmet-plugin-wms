@@ -425,7 +425,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     auto valid_time = getValidTime();
 
-    // TODO: use interval_start and interval_end instead
+    // TODO(mheiskan): use interval_start and interval_end instead
     auto starttime = valid_time + boost::posix_time::hours(starttimeoffset);
     auto endtime = valid_time + boost::posix_time::hours(endtimeoffset);
 

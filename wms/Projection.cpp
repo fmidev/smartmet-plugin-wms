@@ -91,7 +91,7 @@ void Projection::init(const Json::Value& theJson,
     if (!json.isNull())
     {
       const auto& engine = theState.getGeoEngine();
-      // TODO: Make the language configurable
+      // TODO(mheiskan): Make the language configurable
       int id = json.asInt();
       auto loc = engine.idSearch(id, "fi");
       if (!loc)
@@ -106,7 +106,7 @@ void Projection::init(const Json::Value& theJson,
     if (!json.isNull())
     {
       const auto& engine = theState.getGeoEngine();
-      // TODO: Make the language configurable
+      // TODO(mheiskan): Make the language configurable
       std::string name = json.asString();
       auto loc = engine.nameSearch(name, "fi");
       if (!loc)

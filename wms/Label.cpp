@@ -49,7 +49,7 @@ std::string Label::print(double theValue) const
 {
   try
   {
-    // TODO: querydata should return NaN for kFloatMissing
+    // TODO(mheiskan): querydata should return NaN for kFloatMissing
 
     if (theValue == 32700 || !std::isfinite(theValue))
       return missing;
