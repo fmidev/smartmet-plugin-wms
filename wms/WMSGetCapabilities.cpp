@@ -71,10 +71,8 @@ void patch_protocol(CTPP::CDT& dcptype,
     auto& resource = dcptype.At(protocol).At(method).At("online_resource");
     std::string url = resource.GetString();
 
-    if (boost::find_first(url, "http://"))
-      boost::algorithm::replace_first(url, "http://", newprotocol);
-    else if (boost::find_first(url, "https://"))
-      boost::algorithm::replace_first(url, "https://", newprotocol);
+    boost::algorithm::replace_first(url, "http://", newprotocol);
+    boost::algorithm::replace_first(url, "https://", newprotocol);
 
     resource = url;
   }
