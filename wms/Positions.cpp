@@ -475,7 +475,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
 
     int row = 0;
 
-    // TODO: Must alter these if there is a margin
+    // TODO(mheiskan): Must alter these if there is a margin
     const int height = theBox.height();
     const int width = theBox.width();
 

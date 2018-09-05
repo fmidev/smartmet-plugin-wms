@@ -227,7 +227,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     // Calculate the isolines and store them into the template engine
 
-    // TODO: Clean up Options API to use optionals
+    // TODO(mheiskan): Clean up Options API to use optionals
     const auto& contourer = theState.getContourEngine();
     std::vector<double> isoline_values;
     for (const Isoline& isoline : isolines)

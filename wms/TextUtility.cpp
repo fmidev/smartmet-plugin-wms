@@ -95,7 +95,7 @@ void addTextField(double xPos,
 
   double xCoord = xPos;
   double yCoord = yPos;
-  double rowHeight = textDimension.height / rows.size();
+  double rowHeight = textDimension.height / (1.0 * rows.size());
 
   for (unsigned int i = 0; i < rows.size(); i++)
   {
@@ -132,7 +132,7 @@ void addTextField(double xPos,
 
   double xCoord = xPos;
   double yCoord = yPos;
-  double rowHeight = textDimension.height / rows.size();
+  double rowHeight = textDimension.height / (1.0 * rows.size());
 
   //"text-anchor": "start"
   std::string textAnchor = attributes.value("text-anchor");

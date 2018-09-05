@@ -260,7 +260,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     NFmiParamDescriptor pdesc(pbag);
 
     NFmiTimeList tlist;
-    tlist.Add(new NFmiMetTime(theTime));
+    tlist.Add(new NFmiMetTime(theTime));  // NOLINT(cppcoreguidelines-owning-memory)
     NFmiTimeDescriptor tdesc(theTime, tlist);
 
     NFmiHPlaceDescriptor hdesc(grid);

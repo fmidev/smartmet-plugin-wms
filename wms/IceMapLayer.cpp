@@ -114,22 +114,6 @@ std::vector<std::string> getAttributeColumns(const std::map<std::string, std::st
   return column_name_vector;
 }
 
-std::string convertText(const std::string& theText)
-{
-  std::string ret(theText);  // original text is returned by default
-
-  if (theText == "Slight Pressure" || theText == "Slight to Moderate Pressure")
-    ret = "1";
-  else if (theText == "Moderate Pressure" || theText == "Moderate to Strong Pressure")
-    ret = "2";
-  else if (theText == "Strong Pressure")
-    ret = "3";
-  else if (theText == "No Pressure")
-    ret = "0";
-
-  return ret;
-}
-
 Json::Value getJsonValue(const std::string& param_name,
                          const std::map<std::string, std::string>& parameters)
 {
@@ -748,7 +732,7 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
   std::string mean_temperature =
       boost::apply_visitor(PostGISAttributeToString(), theResultItem.attributes.at(col_name));
 
-  if (mean_temperature.empty() || isdigit(mean_temperature.at(0) == 0))
+  if (mean_temperature.empty() || isdigit(mean_temperature.at(0)) == 0)
     return;
 
   if (mean_temperature.size() == 1)
@@ -1121,7 +1105,7 @@ void IceMapLayer::addLocationName(double theXPos,
   arrow_cdt["attributes"]["x1"] = Fmi::to_string(lround(arrow_x_coord));
   arrow_cdt["attributes"]["y1"] = Fmi::to_string(lround(y_coord_first - 2));
   arrow_cdt["attributes"]["x2"] = Fmi::to_string(
-      lround(arrow_x_coord + ((text_dimension_first.width / first_name.size()) * 2)));
+      lround(arrow_x_coord + ((1.0 * text_dimension_first.width / first_name.size()) * 2)));
   arrow_cdt["attributes"]["y2"] = Fmi::to_string(lround(y_coord_first - 2));
   arrow_cdt["attributes"]["stroke"] = "black";
   arrow_cdt["attributes"]["stroke-width"] = "0.5";

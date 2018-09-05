@@ -352,7 +352,7 @@ std::size_t TimeLayer::hash_value(const State& theState) const
     boost::hash_combine(hash, Dali::hash_value(longitude));
     boost::hash_combine(hash, Dali::hash_value(latitude));
 
-    // TODO: The timestamp to be drawn may depend on the wall clock - must include it
+    // TODO(mheiskan): The timestamp to be drawn may depend on the wall clock - must include it
     // in the hash. A better solution would be to format the timestamp and
     // then calculate the hash.
 

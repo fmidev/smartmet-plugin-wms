@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.8.28
+Version: 18.8.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,18 +18,18 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.8.6
-BuildRequires: smartmet-library-macgyver-devel >= 18.8.4
-BuildRequires: smartmet-library-spine-devel >= 18.8.13
+BuildRequires: smartmet-library-macgyver-devel >= 18.8.20
+BuildRequires: smartmet-library-spine-devel >= 18.8.30
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 18.7.25
+BuildRequires: smartmet-engine-authentication-devel >= 18.8.21
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 18.8.13
+BuildRequires: smartmet-engine-observation-devel >= 18.8.29
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.7.25
-BuildRequires: smartmet-engine-geonames-devel >= 18.8.13
-BuildRequires: smartmet-engine-querydata-devel >= 18.8.13
+BuildRequires: smartmet-engine-geonames-devel >= 18.8.30
+BuildRequires: smartmet-engine-querydata-devel >= 18.8.20
 BuildRequires: smartmet-engine-contour-devel >= 18.7.25
 BuildRequires: smartmet-library-gis-devel >= 18.8.15
 BuildRequires: fmt-devel
@@ -45,17 +45,17 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.5
 Requires: libconfig
 Requires: smartmet-library-gis >= 18.8.15
-Requires: smartmet-library-macgyver >= 18.8.4
+Requires: smartmet-library-macgyver >= 18.8.20
 Requires: smartmet-library-giza >= 18.8.6
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 18.7.25
+Requires: smartmet-engine-authentication >= 18.8.21
 %endif
-Requires: smartmet-engine-querydata >= 18.8.13
+Requires: smartmet-engine-querydata >= 18.8.20
 Requires: smartmet-engine-contour >= 18.7.25
 Requires: smartmet-engine-gis >= 18.7.25
-Requires: smartmet-engine-geonames >= 18.8.13
-Requires: smartmet-server >= 18.8.8
-Requires: smartmet-library-spine >= 18.8.13
+Requires: smartmet-engine-geonames >= 18.8.30
+Requires: smartmet-server >= 18.8.22
+Requires: smartmet-library-spine >= 18.8.30
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,7 +92,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-* Wed Aug 28 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.8.28-1.fmi
+* Thu Aug 30 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.8.30-1.fmi
+- Silenced CodeChecker warnings
+
+* Tue Aug 28 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.8.28-1.fmi
 - Oracle parameter names in test/cnf/observation.conf file made uppercase (BRAINSTORM-1156)
 
 * Wed Aug 22 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.8.22-2.fmi

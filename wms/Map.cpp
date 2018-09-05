@@ -67,7 +67,7 @@ std::size_t Map::hash_value(const State& /* theState */) const
   {
     auto hash = Dali::hash_value(lines);
 
-    // TODO: Should we add hash_value to Gis::MapOptions??
+    // TODO(mheiskan): Should we add hash_value to Gis::MapOptions??
     boost::hash_combine(hash, Dali::hash_value(options.pgname));
     boost::hash_combine(hash, Dali::hash_value(options.schema));
     boost::hash_combine(hash, Dali::hash_value(options.table));
