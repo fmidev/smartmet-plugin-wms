@@ -122,7 +122,18 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                       const Product& theProduct = Product(),
                       std::size_t theHash = 0);
 
-  std::string parseWMSException(Spine::Exception& wmsException, bool isdebug) const;
+  std::string getExceptionFormat(const std::string& theFormat) const;
+
+  std::string parseWMSException(Spine::Exception& wmsException,
+                                const std::string& theFormat,
+                                bool isdebug) const;
+
+  void formatWmsExceptionResponse(Spine::Exception& wmsException,
+                                  const std::string& theFormat,
+                                  bool isdebug,
+                                  const Spine::HTTP::Request& theRequest,
+                                  Spine::HTTP::Response& theResponse,
+                                  bool usetimer);
 
   // Plugin configuration
   const std::string itsModuleName;

@@ -254,7 +254,7 @@ void Plugin::formatResponse(const std::string &theSvg,
     theResponse.setHeader("Content-Type", mimeType(theType));
 
     if (theType == "xml" || theType == "svg" || theType == "image/svg+xml" ||
-        theType == "geojson" || theType == "kml")
+        theType == "geojson" || theType == "kml" || theType == "json")
     {
       // Set string content as-is
       if (theSvg.empty())
@@ -1111,17 +1111,39 @@ const Config &Plugin::getConfig() const
 {
   return itsConfig;
 }
+
+std::string Dali::Plugin::getExceptionFormat(const std::string &theFormat) const
+{
+  const auto &supported_formats = itsWMSConfig->supportedWMSExceptions();
+  if (supported_formats.find(theFormat) == supported_formats.end())
+    return "xml";
+  return theFormat;
+}
+
+void Dali::Plugin::formatWmsExceptionResponse(Spine::Exception &wmsException,
+                                              const std::string &theFormat,
+                                              bool isdebug,
+                                              const Spine::HTTP::Request &theRequest,
+                                              Spine::HTTP::Response &theResponse,
+                                              bool usetimer)
+{
+  auto msg = parseWMSException(wmsException, theFormat, isdebug);
+  formatResponse(msg, getExceptionFormat(theFormat), theRequest, theResponse, usetimer);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Parses WMS exception
  */
 // ----------------------------------------------------------------------
 
-std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException, bool isdebug) const
+std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException,
+                                            const std::string &theFormat,
+                                            bool isdebug) const
 {
   try
   {
-    // std::cerr << wmsException;
+    auto format = getExceptionFormat(theFormat);
 
     CTPP::CDT hash;
 
@@ -1147,7 +1169,8 @@ std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException, bool
     hash["exception_code"] = exceptionCode;
     hash["exception_text"] = exceptionText;
 
-    auto wms_exception_template = getTemplate("wms_exception_xml");
+    auto tmpl_name = "wms_exception_" + format;
+    auto wms_exception_template = getTemplate(tmpl_name);
 
     std::stringstream tmpl_ss;
     std::stringstream logstream;
@@ -1186,34 +1209,36 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     bool isdebug = Spine::optional_bool(thisRequest.getParameter("debug"), false);
 
+    std::string format = Spine::optional_string(thisRequest.getParameter("format"), "xml");
+
     Product product;
     WMS::WMSRequestType requestType(WMS::wmsRequestType(thisRequest));
 
     try
     {
-      if (requestType == WMS::WMSRequestType::NOT_A_WMS_REQUEST)
-      {
-        Spine::Exception ex(BCP, "Not a WMS request!");
-        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-        auto msg = parseWMSException(ex, isdebug);
-        formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
-        throw ex;
-      }
-
       if (requestType == WMS::WMSRequestType::GET_CAPABILITIES)
       {
         auto tmpl = getTemplate("wms_get_capabilities_xml");
         auto msg = WMS::WMSGetCapabilities::response(tmpl, thisRequest, *itsQEngine, *itsWMSConfig);
-        formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
+        formatResponse(msg, format, thisRequest, theResponse, theState.useTimer());
         return WMSQueryStatus::OK;
+      }
+
+      if (requestType == WMS::WMSRequestType::NOT_A_WMS_REQUEST)
+      {
+        Spine::Exception ex(BCP, "Not a WMS request!");
+        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+        formatWmsExceptionResponse(
+            ex, format, isdebug, thisRequest, theResponse, theState.useTimer());
+        throw ex;
       }
 
       if (requestType == WMS::WMSRequestType::GET_FEATURE_INFO)
       {
-        Spine::Exception exception(BCP, "GetFeatureInfo not supported!");
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED);
-        auto msg = parseWMSException(exception, isdebug);
-        formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
+        Spine::Exception ex(BCP, "GetFeatureInfo not supported!");
+        ex.addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED);
+        formatWmsExceptionResponse(
+            ex, format, isdebug, thisRequest, theResponse, theState.useTimer());
         return WMSQueryStatus::OK;
       }
 
@@ -1272,8 +1297,8 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
       {
         Spine::Exception ex(BCP, "Customer setting is empty!");
         ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-        auto msg = parseWMSException(ex, isdebug);
-        formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
+        formatWmsExceptionResponse(
+            ex, format, isdebug, thisRequest, theResponse, theState.useTimer());
         throw ex;
       }
 
@@ -1345,8 +1370,8 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
       Spine::Exception ex(BCP, "Operation failed!", nullptr);
       if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
         ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      auto msg = parseWMSException(ex, isdebug);
-      formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
+      formatWmsExceptionResponse(
+          ex, format, isdebug, thisRequest, theResponse, theState.useTimer());
       throw ex;
     }
 
@@ -1414,8 +1439,8 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
           BCP, "Error in processing the template '" + *product.svg_tmpl + "'!", nullptr);
       if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
         ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      auto msg = parseWMSException(ex, isdebug);
-      formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
+      formatWmsExceptionResponse(
+          ex, format, isdebug, thisRequest, theResponse, theState.useTimer());
       throw ex;
     }
 
