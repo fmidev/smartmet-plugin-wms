@@ -612,11 +612,6 @@ void Plugin::init()
     if (itsShutdownRequested)
       itsWMSConfig->shutdown();
 
-#if SHITSHIT
-    itsWMSGetCapabilities = boost::movelib::make_unique<WMS::WMSGetCapabilities>(
-        itsConfig.templateDirectory() + "/wms_get_capabilities.c2t");
-#endif
-
     // Register dali content handler
 
     if (!itsReactor->addContentHandler(this,
@@ -1152,7 +1147,7 @@ std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException, bool
     hash["exception_code"] = exceptionCode;
     hash["exception_text"] = exceptionText;
 
-    auto wms_exception_template = getTemplate("wms_exception");
+    auto wms_exception_template = getTemplate("wms_exception_xml");
 
     std::stringstream tmpl_ss;
     std::stringstream logstream;
@@ -1207,8 +1202,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
       if (requestType == WMS::WMSRequestType::GET_CAPABILITIES)
       {
-        const auto tmpl_path = itsConfig.templateDirectory() + "/wms_get_capabilities.c2t";
-        auto tmpl = itsTemplateFactory.get(tmpl_path);
+        auto tmpl = getTemplate("wms_get_capabilities_xml");
         auto msg = WMS::WMSGetCapabilities::response(tmpl, thisRequest, *itsQEngine, *itsWMSConfig);
         formatResponse(msg, "xml", thisRequest, theResponse, theState.useTimer());
         return WMSQueryStatus::OK;
