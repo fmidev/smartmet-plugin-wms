@@ -596,6 +596,14 @@ WMSConfig::WMSConfig(const Config& daliConfig,
     for (int i = 0; i < exceptions.getLength(); i++)
       itsSupportedWMSExceptions.insert(exceptions[i].c_str());
 
+    const auto& capability_formats =
+        config.lookup("wms.get_capabilities.capability.request.getcapabilities.format");
+    if (!capability_formats.isArray())
+      throw Spine::Exception(
+          BCP, "wms.get_capabilities.capability.request.getcapabilities.format must be an array");
+    for (int i = 0; i < capability_formats.getLength(); i++)
+      itsSupportedWMSGetCapabilityFormats.insert(capability_formats[i].c_str());
+
     std::string wmsVersions = config.lookup("wms.supported_versions").c_str();
     boost::algorithm::split(itsSupportedWMSVersions, wmsVersions, boost::algorithm::is_any_of(","));
     parse_references();
@@ -990,6 +998,10 @@ const std::map<std::string, std::string>& WMSConfig::supportedWMSReferences() co
 const std::set<std::string>& WMSConfig::supportedWMSExceptions() const
 {
   return itsSupportedWMSExceptions;
+}
+const std::set<std::string>& WMSConfig::supportedWMSGetCapabilityFormats() const
+{
+  return itsSupportedWMSGetCapabilityFormats;
 }
 
 const std::map<std::string, Engine::Gis::BBox>& WMSConfig::WMSBBoxes() const

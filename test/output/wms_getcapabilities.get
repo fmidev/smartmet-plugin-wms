@@ -38,6 +38,7 @@
   <Request>
     <GetCapabilities>
       <Format>text/xml</Format>
+      <Format>application/json</Format>
       <DCPType>
         <HTTP>
           <Get>
@@ -71,6 +72,7 @@
   </Request>
   <Exception>
     <Format>XML</Format>
+    <Format>application/json</Format>
   </Exception>
   <inspire_vs:ExtendedCapabilities>
     <inspire_common:MetadataUrl xsi:type="inspire_common:resourceLocatorType">

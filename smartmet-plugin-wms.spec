@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.9.9
+Version: 18.9.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -33,7 +33,7 @@ BuildRequires: smartmet-engine-querydata-devel >= 18.8.20
 BuildRequires: smartmet-engine-contour-devel >= 18.7.25
 BuildRequires: smartmet-library-gis-devel >= 18.8.15
 BuildRequires: fmt-devel
-BuildRequires: ctpp2 >= 2.8.5
+BuildRequires: ctpp2 >= 2.8.6
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
 BuildRequires: cairo-devel
@@ -42,7 +42,7 @@ BuildRequires: heatmap-devel
 Requires: cairo
 Requires: fmt
 Requires: jsoncpp
-Requires: ctpp2 >= 2.8.5
+Requires: ctpp2 >= 2.8.6
 Requires: libconfig
 Requires: smartmet-library-gis >= 18.8.15
 Requires: smartmet-library-macgyver >= 18.9.5
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Mon Sep 10 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.9.10-1.fmi
+- Enabled JSON output for GetCapabilities and exceptions
+
 * Sun Sep  9 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.9.9-1.fmi
 - Fixed derived class destructors to be virtual
 

@@ -23,6 +23,8 @@ std::string demimetype(const std::string& theMimeType)
     return "ps";
   if (theMimeType == "image/svg+xml")
     return "svg";
+  if (theMimeType == "application/json")
+    return "json";
 
   throw Spine::Exception(BCP, "Unknown mime type requested: '" + theMimeType + "'");
 }
@@ -49,6 +51,8 @@ std::string mimeType(const std::string& theType)
     return "application/geo+json";
   if (theType == "kml")
     return "application/vnd.google-earth.kml+xml";
+  if (theType == "json" || theType == "application/json")
+    return "application/json";
 
   throw Spine::Exception(BCP, "Unknown image format '" + theType + "'");
 }

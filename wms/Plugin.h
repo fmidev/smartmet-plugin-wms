@@ -123,6 +123,7 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                       std::size_t theHash = 0);
 
   std::string getExceptionFormat(const std::string& theFormat) const;
+  std::string getCapabilityFormat(const std::string& theFormat) const;
 
   std::string parseWMSException(Spine::Exception& wmsException,
                                 const std::string& theFormat,

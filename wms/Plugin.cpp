@@ -251,10 +251,12 @@ void Plugin::formatResponse(const std::string &theSvg,
 {
   try
   {
+    std::set<std::string> text_formats{
+        "xml", "svg", "image/svg+xml", "geojson", "kml", "json", "application/json"};
+
     theResponse.setHeader("Content-Type", mimeType(theType));
 
-    if (theType == "xml" || theType == "svg" || theType == "image/svg+xml" ||
-        theType == "geojson" || theType == "kml" || theType == "json")
+    if (text_formats.find(theType) != text_formats.end())
     {
       // Set string content as-is
       if (theSvg.empty())
@@ -1117,7 +1119,23 @@ std::string Dali::Plugin::getExceptionFormat(const std::string &theFormat) const
   const auto &supported_formats = itsWMSConfig->supportedWMSExceptions();
   if (supported_formats.find(theFormat) == supported_formats.end())
     return "xml";
-  return theFormat;
+
+  if (theFormat == "application/json")
+    return "json";
+
+  return "xml";
+}
+
+std::string Dali::Plugin::getCapabilityFormat(const std::string &theFormat) const
+{
+  const auto &supported_formats = itsWMSConfig->supportedWMSGetCapabilityFormats();
+  if (supported_formats.find(theFormat) == supported_formats.end())
+    return "xml";
+
+  if (theFormat == "application/json")
+    return "json";
+
+  return "xml";
 }
 
 void Dali::Plugin::formatWmsExceptionResponse(Spine::Exception &wmsException,
@@ -1175,7 +1193,6 @@ std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException,
     std::stringstream tmpl_ss;
     std::stringstream logstream;
     wms_exception_template->process(hash, tmpl_ss, logstream);
-
     return tmpl_ss.str();
   }
   catch (...)
@@ -1218,7 +1235,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
     {
       if (requestType == WMS::WMSRequestType::GET_CAPABILITIES)
       {
-        auto tmpl = getTemplate("wms_get_capabilities_xml");
+        auto tmpl = getTemplate("wms_get_capabilities_" + getCapabilityFormat(format));
         auto msg = WMS::WMSGetCapabilities::response(tmpl, thisRequest, *itsQEngine, *itsWMSConfig);
         formatResponse(msg, format, thisRequest, theResponse, theState.useTimer());
         return WMSQueryStatus::OK;

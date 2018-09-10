@@ -1,0 +1,7 @@
+{
+	"exception":
+	{
+		"text": "The requested version is not supported!",
+		"code": "OperationNotSupported"
+	}
+}
