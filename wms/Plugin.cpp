@@ -1496,5 +1496,5 @@ extern "C" SmartMetPlugin *create(SmartMet::Spine::Reactor *them, const char *co
 extern "C" void destroy(SmartMetPlugin *us)
 {
   // This will call 'Plugin::~Plugin()' since the destructor is virtual
-  delete us;
+  delete us;  // NOLINT(cppcoreguidelines-owning-memory)
 }
