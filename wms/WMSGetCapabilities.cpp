@@ -170,19 +170,22 @@ std::string WMSGetCapabilities::response(const Dali::SharedFormatter& theFormatt
     std::stringstream logstream;
     try
     {
-      theFormatter->process(hash, outstream, logstream);
-      // theFormatter->process(hash, outstream, logstream, CTPP2_LOG_DEBUG);
+      bool isdebug = Spine::optional_bool(theRequest.getParameter("debug"), false);
+      if (isdebug)
+        theFormatter->process(hash, outstream, logstream, CTPP2_LOG_DEBUG);
+      else
+        theFormatter->process(hash, outstream, logstream);
     }
     catch (const std::exception& e)
     {
-      throw Spine::Exception(BCP, "CTPP formatter failed")
+      throw Spine::Exception::Trace(BCP, "CTPP formatter failed")
           .addParameter("what", e.what())
-          .addParameter("log", logstream.str());
+          .addParameter("log enabled by debug=1", logstream.str());
     }
     catch (...)
     {
       throw Spine::Exception::Trace(BCP, "CTPP formatter failed")
-          .addParameter("log", logstream.str());
+          .addParameter("log enabled by debug=1", logstream.str());
     }
 
     // Finish up with host name replacements

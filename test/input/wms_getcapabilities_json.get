@@ -1,0 +1,1 @@
+GET /wms?service=wms&request=GetCapabilities&format=application/json&debug=1 HTTP/1.0

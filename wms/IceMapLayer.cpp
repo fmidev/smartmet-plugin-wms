@@ -457,7 +457,7 @@ std::size_t IceMapLayer::hash_value(const State& theState) const
 {
   try
   {
-    auto hash = Layer::hash_value(theState);
+    auto hash = PostGISLayerBase::hash_value(theState);
     boost::hash_combine(hash, Dali::hash_value(itsParameters));
     boost::hash_combine(hash, Dali::hash_value(filters, theState));
     return hash;

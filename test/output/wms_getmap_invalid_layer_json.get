@@ -1,0 +1,7 @@
+{
+	"exception":
+	{
+		"text": "The requested layer is not supported!",
+		"code": "LayerNotDefined"
+	}
+}

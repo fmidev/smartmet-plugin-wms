@@ -1,0 +1,9 @@
+{
+	"exception":
+	{
+		"text": "<TMPL_var JSONESCAPE(exception_text)>"
+		<-TMPL_if DEFINED(exception_code)>,
+		"code": "<TMPL_var exception_code>"
+		<-/TMPL_if>
+	}
+}

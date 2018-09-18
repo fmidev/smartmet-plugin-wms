@@ -1,0 +1,7 @@
+{
+	"exception":
+	{
+		"text": "Invalid time requested!",
+		"code": "InvalidDimensionValue"
+	}
+}

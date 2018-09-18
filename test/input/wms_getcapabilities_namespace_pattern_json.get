@@ -1,0 +1,1 @@
+GET /wms?service=wms&request=GetCapabilities&format=application/json&namespace=/temperature|wind/ HTTP/1.0

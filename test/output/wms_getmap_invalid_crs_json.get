@@ -1,0 +1,7 @@
+{
+	"exception":
+	{
+		"text": "The CRS is not supported by the requested layer!",
+		"code": "InvalidCRS"
+	}
+}

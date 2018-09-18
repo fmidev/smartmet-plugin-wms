@@ -1,0 +1,7 @@
+{
+	"exception":
+	{
+		"text": "The style is not supported by the requested layer!",
+		"code": "StyleNotDefined"
+	}
+}

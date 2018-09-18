@@ -50,6 +50,7 @@ class WMSTimeDimension
 class StepTimeDimension : public WMSTimeDimension
 {
  public:
+  virtual ~StepTimeDimension() = default;
   StepTimeDimension() = default;
 
   virtual std::string getCapabilities() const;
@@ -72,6 +73,7 @@ class IntervalTimeDimension : public WMSTimeDimension
   };
 
  public:
+  virtual ~IntervalTimeDimension() = default;
   IntervalTimeDimension(const boost::posix_time::ptime& start,
                         const boost::posix_time::ptime& end,
                         const boost::posix_time::time_duration& res);

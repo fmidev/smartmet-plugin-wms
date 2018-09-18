@@ -1,0 +1,548 @@
+{
+	"WMS_Capabilities":
+	{
+		"version": "<TMPL_var version>",
+		"Service":
+		{
+			"Name": "WMS",
+			"Title": "<TMPL_if defined(service.title)><TMPL_var JSONESCAPE(service.title)></TMPL_if>",
+
+			<-TMPL_if defined(service.abstract)>
+			"Abstract": "<TMPL_var JSONESCAPE(service.abstract)>",
+			<-/TMPL_if>
+
+			<-TMPL_if defined(service.keywords)>
+			"KeywordList": <TMPL_var JSON(service.keywords)>,
+			</TMPL_if->
+
+			"OnlineResource":
+			{
+				"xlink:href": "<TMPL_var JSONESCAPE(service.online_resource)>"
+			}
+	    
+			<-TMPL_if defined(service.contact_information)>,
+			"ContactInformation":
+			{
+				<-TMPL_comment>
+				Everything is optional. Comma has to be there though, so we use a dummy until a better solution
+				is available. Testing all variables incrementally is a more hideous solution.
+				</TMPL_comment>
+				"dummy": true
+				<-TMPL_if defined(service.contact_information.contact_person_primary)>,
+				"ContactPersonPrimary":
+				{
+					"ContactPerson": "<TMPL_var JSONESCAPE(service.contact_information.contact_person_primary.contact_person)>",
+					"ContactOrganization": "<TMPL_var JSONESCAPE(service.contact_information.contact_person_primary.contact_organization)>"
+				}
+				<-/TMPL_if>
+
+				<-TMPL_if defined(service.contact_information.contact_position)>,
+				"ContactPosition": "<TMPL_var JSONESCAPE(service.contact_information.contact_position)>"
+				<-/TMPL_if->
+
+				<-TMPL_if defined(service.contact_information.contact_address)>,
+				"ContactAddress":
+				{
+					"AddressType": "<TMPL_var JSONESCAPE(service.contact_information.contact_address.address_type)->",
+					"Address": "<TMPL_var JSONESCAPE(service.contact_information.contact_address.address)->",
+					"City": "<TMPL_var JSONESCAPE(service.contact_information.contact_address.city)->",
+					"StateOrProvince": "<TMPL_var JSONESCAPE(service.contact_information.contact_address.state_or_province)->",
+					"PostCode": "<TMPL_var JSONESCAPE(service.contact_information.contact_address.post_code)->",
+					"Country": "<TMPL_var JSONESCAPE(service.contact_information.contact_address.country)>"
+				}
+				<-/TMPL_if->
+
+				<-TMPL_if defined(service.contact_information.contact_voice_telephone)>,
+				"ContactVoiceTelephone": "<TMPL_var JSONESCAPE(service.contact_information.contact_voice_telephone)>"
+				<-/TMPL_if->
+
+				<-TMPL_if defined(service.contact_information.contact_facsimile_telephone)>,
+				"ContactFacsimileTelephone": "<TMPL_var JSONESCAPE(service.contact_information.contact_facsimile_telephone)>"
+				<-/TMPL_if->				
+
+				<-TMPL_if defined(service.contact_information.contact_electronic_mail_address)>,
+				"ContactElectronicMailAddress": "<TMPL_var JSONESCAPE(service.contact_information.contact_electronic_mail_address)>"
+				<-/TMPL_if>
+			}
+			<-/TMPL_if->
+
+			<-TMPL_if defined(service.fees)>,
+			"Fees": "<TMPL_var JSONESCAPE(service.fees)>"
+			<-/TMPL_if->
+
+			<-TMPL_if defined(service.access_constraints)>,
+			"AccessConstraints": "<TMPL_var JSONESCAPE(service.access_constraints)>"
+			<-/TMPL_if->
+
+			<-TMPL_if defined(service.layer_limit)>,
+			"LayerLimit": <TMPL_var service.layer_limit>
+			<-/TMPL_if->
+
+			<-TMPL_if defined(service.max_width)>,
+			"MaxWidth": <TMPL_var service.max_width>
+			<-/TMPL_if->
+
+			<-TMPL_if defined(service.max_height)>,
+			"MaxHeight": <TMPL_var service.max_height>
+			<-/TMPL_if>
+		}
+	},
+	"Capability":
+	{
+		"Request":
+		{
+			<-TMPL_if defined(capability.request.getfeatureinfo)->
+			"GetFeatureInfo":
+			{
+				"Format": <TMPL_var JSON(capability.request.getfeatureinfo.format)>,
+				"DCPType":
+				[
+					<-TMPL_foreach capability.request.getfeatureinfo.dcptype as dcptype>
+					<-TMPL_if dcptype.__first__><TMPL_else>,</TMPL_if>
+					{
+						"HTTP":
+						{
+							<TMPL_if defined(dcptype.http.post)>
+							"Post":
+							{
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "__hostname____apikey__/wms"
+								}
+							},
+							</TMPL_if->
+							"Get":
+							{
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "__hostname____apikey__/wms"
+								}
+							}
+						}
+					}
+					<-/TMPL_foreach>
+				]
+			},
+			<-/TMPL_if>
+			"GetCapabilities":
+			{
+				"Format": <TMPL_var JSON(capability.request.getcapabilities.format)>,
+				"DCPType":
+				[
+					<-TMPL_foreach capability.request.getcapabilities.dcptype as dcptype>
+					<-TMPL_if dcptype.__first__><TMPL_else>,</TMPL_if>
+					{
+						"HTTP":
+						{
+							<-TMPL_if defined(dcptype.http.post)>
+							"Post":
+							{
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "__hostname____apikey__/wms"
+								}
+							},
+							</TMPL_if>
+							"Get":
+							{
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "__hostname____apikey__/wms"
+								}
+							}
+						}
+					}
+					<-/TMPL_foreach>
+				]
+			},
+			"GetMap":
+			{
+				"Format": <TMPL_var JSON(capability.request.getmap.format)>,
+				"DCPType":
+				[
+					<-TMPL_foreach capability.request.getmap.dcptype as dcptype>
+					<-TMPL_if dcptype.__first__><TMPL_else>,</TMPL_if>
+					{
+						"HTTP":
+						{
+							<TMPL_if defined(dcptype.http.post)>
+							"Post":
+							{
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "__hostname____apikey__/wms"
+								}
+							},
+							</TMPL_if>
+							"Get":
+							{
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "__hostname____apikey__/wms"
+								}
+							}
+						}
+					}
+					<-/TMPL_foreach>
+				]
+			}
+		},
+		"Exception":
+		{
+			"Format": <TMPL_var JSON(capability.exception)>
+		}
+	},
+
+	<-TMPL_if defined(capability.extended_capabilities.inspire)>
+	"inspire_vs:ExtendedCapabilities":
+	{
+		"inspire_common:MetadataUrl":
+		{
+			"inspire_common:URL": "<TMPL_var JSONESCAPE(capability.extended_capabilities.inspire.metadata_url)>",
+			"inspire_common:MediaType": "application/vnd.ogc.csw.GetRecordByIdResponse_xml"
+		},
+		"inspire_common:SupportedLanguages":
+		{
+			"inspire_common:DefaultLanguage":
+			{
+				"inspire_common:Language": "<TMPL_var JSONESCAPE(capability.extended_capabilities.inspire.default_language)>"
+			},
+			"inspire_common:SupportedLanguage":
+			{
+				"inspire_common:Language": "<TMPL_var JSONESCAPE(capability.extended_capabilities.inspire.supported_language)>"
+			},
+			"inspire_common:ResponseLanguage":
+			{
+				"inspire_common:Language": "<TMPL_var JSONESCAPE(capability.extended_capabilities.inspire.response_language)>"
+			}
+ 		}
+	},
+	<-/TMPL_if->
+
+	<-TMPL_comment>We use one master layer to group all layers. See section 7.2.4.5 in the standard </TMPL_comment>
+
+	"Layer":
+	{
+		<TMPL_if defined(capability.master_layer.queryable)	>"queryable": <TMPL_var capability.master_layer.queryable>,	</TMPL_if>
+		<TMPL_if defined(capability.master_layer.cascaded)	>"cascaded": <TMPL_var capability.master_layer.cascaded>,	</TMPL_if>
+		<TMPL_if defined(capability.master_layer.opaque)	>"opaque": <TMPL_var capability.master_layer.opaque>,	</TMPL_if>
+		<TMPL_if defined(capability.master_layer.no_subsets)	>"noSubsets": <TMPL_var capability.master_layer.no_subsets>,	</TMPL_if>
+		<TMPL_if defined(capability.master_layer.fixed_width) >"fixedWidth": <TMPL_var capability.master_layer.fixed_width>, </TMPL_if>
+		<TMPL_if defined(capability.master_layer.fixed_height)>"fixedHeight": <TMPL_var capability.master_layer.fixed_height>,</TMPL_if>
+		<TMPL_if defined(capability.master_layer.abstract)>"Abstract": "<TMPL_var JSONESCAPE(capability.master_layer.abstract)>",</TMPL_if->
+
+		"Layer":
+		[
+			<-TMPL_foreach capability.layer as layer>
+			<-TMPL_if layer.__first__><TMPL_else>,</TMPL_if>
+			{
+				<-TMPL_comment> The following settings override the master settings set above </TMPL_comment>
+				"Title": "<TMPL_if defined(layer.title)><TMPL_var JSONESCAPE(layer.title)></TMPL_if>"
+
+				<-TMPL_if defined(layer.queryable)>,
+				"queryable": <TMPL_var layer.queryable>
+				<-/TMPL_if->
+
+				<-TMPL_if defined(layer.cascaded)>,
+				"cascaded": <TMPL_var layer.cascaded>
+				<-/TMPL_if->
+				
+				<-TMPL_if defined(layer.opaque)>,
+				"opaque": <TMPL_var layer.opaque>
+				<-/TMPL_if->
+				
+				<-TMPL_if defined(layer.no_subsets)>,
+				"noSubsets": <TMPL_var layer.no_subsets>
+				<-/TMPL_if->
+				
+				<-TMPL_if defined(layer.fixed_width)>,
+				"fixedWidth": <TMPL_var layer.fixed_width>
+				<-/TMPL_if->
+				
+				<-TMPL_if defined(layer.fixed_height)>,
+				"fixedHeight": <TMPL_var layer.fixed_height>
+				<-/TMPL_if->
+
+				<-TMPL_if defined(layer.name)>,
+				"Name": "<TMPL_var JSONESCAPE(layer.name)>"
+				<-/TMPL_if>
+
+				<-TMPL_if defined(layer.abstract)>,
+				"Abstract": "<TMPL_var JSONESCAPE(layer.abstract)>"
+				<-/TMPL_if->
+
+				<-TMPL_if defined(layer.keyword)>,
+				"KeywordList": <TMPL_var JSON(layer.keyword)>
+				<-/TMPL_if>
+
+				<-TMPL_if defined(layer.crs)>,
+				"CRS": <TMPL_var JSON(layer.crs)>
+				<-/TMPL_if>
+
+				<-TMPL_if defined(layer.ex_geographic_bounding_box)>,
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": <TMPL_var layer.ex_geographic_bounding_box.west_bound_longitude>,
+					"eastBoundLongitude": <TMPL_var layer.ex_geographic_bounding_box.east_bound_longitude>,
+					"southBoundLatitude": <TMPL_var layer.ex_geographic_bounding_box.south_bound_latitude>,
+					"northBoundLatitude": <TMPL_var layer.ex_geographic_bounding_box.north_bound_latitude>
+				}
+				<-/TMPL_if->
+
+				<-TMPL_if defined(layer.bounding_box)>,
+				"BoundingBox":
+				[
+					<-TMPL_foreach layer.bounding_box as bounding_box->
+					<-TMPL_if bounding_box.__first__><TMPL_else>,</TMPL_if>
+					{
+						"CRS": "<TMPL_var JSONESCAPE(bounding_box.crs)>",
+						<TMPL_if defined(bounding_box.resx)>"resx": <TMPL_var bounding_box.resx>,<-/TMPL_if->
+						<TMPL_if defined(bounding_box.resy)>"resx": <TMPL_var bounding_box.resy>,<-/TMPL_if->
+						"minx": <TMPL_var bounding_box.minx>,
+						"miny": <TMPL_var bounding_box.miny>,
+						"maxx": <TMPL_var bounding_box.maxx>,
+						"maxy": <TMPL_var bounding_box.maxy>
+					}
+					<-/TMPL_foreach>
+				]
+				<-/TMPL_if->
+
+				<-TMPL_if defined(layer.dimension)>,
+				"Dimension":
+				[
+					<-TMPL_foreach layer.dimension as dimension>
+					<-TMPL_if dimension.__first__><TMPL_else>,</TMPL_if>
+					{
+						"name": "<TMPL_var JSONESCAPE(dimension.name)>",
+						"units": "<TMPL_var JSONESCAPE(dimension.units)>",
+						"value": "<TMPL_var JSONESCAPE(dimension.value)>"
+
+						<-TMPL_if defined(dimension.unit_symbol)	>,
+						"unitSymbol": "<TMPL_var JSONESCAPE(dimension.unit_symbol)>"
+						<-/TMPL_if->
+
+						<-TMPL_if defined(dimension.default)>,
+						"default": "<TMPL_var JSONESCAPE(dimension.default)>",
+						<-/TMPL_if->
+						
+						<-TMPL_if defined(dimension.multiple_values)>,
+						"multipleValues": <TMPL_var dimension.multiple_values>
+						<-/TMPL_if->
+						
+						<-TMPL_if defined(dimension.nearest_values) >,
+						"nearestValues": <TMPL_var dimension.nearest_values>
+						<-/TMPL_if->
+						
+						<-TMPL_if defined(dimension.current)>,
+						"current": <TMPL_var JSONESCAPE(dimension.current)>
+						<-/TMPL_if>
+					}
+					</TMPL_foreach>
+				]
+				<-/TMPL_if->
+
+				<-TMPL_if defined(layer.attribution)>,
+				"Attribution":
+				{
+					<-TMPL_if defined(layer.attribution.title)>
+					"Title": <TMPL_var JSONESCAPE(layer.attribution.title)>,
+					<-/TMPL_if->
+					"OnlineResource":
+					{
+						"xlink:type": "simple",
+						"xlink:href": "<TMPL_var JSONESCAPE(layer.attribution.online_resource)>"
+					},
+					<TMPL_if defined(layer.attribution.logo_url)>,
+					"LogoURL":
+					{
+						"Format": <TMPL_var JSONESCAPE(layer.attribution.logo_url.format)>,
+						"OnlineResource":
+						{
+							"xlink:type": "simple",
+							"xlink:href": "<TMPL_var JSONESCAPE(layer.attribution.logo_url.online_resource)>"
+						}
+						<-TMPL_if defined(layer.attribution.logo_url.width) >,
+						"width": <TMPL_var layer.attribution.logo_url.width>
+						<-/TMPL_if->
+						<-TMPL_if defined(layer.attribution.logo_url.height)>,
+						"height": <TMPL_var layer.attribution.logo_url.height>
+						<-/TMPL_if->
+					}
+					<-/TMPL_if->
+				},
+				<-/TMPL_if->
+
+				<-TMPL_if defined(layer.authority_url)>,
+				"AuthorityURL":
+				[
+					<-TMPL_foreach layer.authority_url as authority_url>
+					<-TMPL_if authority_url.__first__><TMPL_else>,</TMPL_if>
+					{
+						"name": "<TMPL_var JSONESCAPE(authority_url.name)>",
+						"OnlineResource":
+						{
+							"xlink:type": "simple",
+							"xlink:href": "<TMPL_var JSONESCAPE(authority_url.online_resource)>"
+						}
+					}
+					</TMPL_foreach>
+				]
+				<-/TMPL_if->
+
+				<-TMPL_if defined(layer.identifier)>,
+				"Identifier":
+				[
+					<-TMPL_foreach layer.identifier as identifier>
+					{
+						<-TMPL_if defined(identifier.authority)>
+						"authority": "<TMPL_var JSONESCAPE(identifier.authority)>",
+						</TMPL_if>
+						<-TMPL_if defined(identifier.value)>,
+						"value": "<-TMPL_var JSONESCAPE(identifier.value)->"
+						</TMPL_if->
+					},
+					</TMPL_foreach>
+				]
+				<-/TMPL_if->
+
+				<-TMPL_if defined(layer.metadata_url)>,
+				"MetadataURL":
+				[
+					<-TMPL_foreach layer.metadata_url as metadata_url>
+					<-TMPL_if metadata_url.__first__><TMPL_else>,</TMPL_if>
+					{
+						"type": "<TMPL_var JSONESCAPE(metadata_url.type)>",
+						"Format": "<TMPL_var JSONESCAPE(metadata_url.format)>",
+						"OnlineResource":
+						{
+							"xlink:type": "simple",
+							"xlink:href": "<TMPL_var JSONESCAPE(metadata_url.online_resource)>"
+						}
+					}
+					</TMPL_foreach>
+				]
+				<-/TMPL_if->
+
+				<-TMPL_if defined(layer.data_url)>,
+				"DataURL":
+				[
+					<-TMPL_foreach layer.data_url as data_url>
+					<-TMPL_if data_url.__first__><TMPL_else>,</TMPL_if>
+					{
+						"type": "<TMPL_var JSONESCAPE(data_url.type)>",
+						"Format": "<TMPL_var JSONESCAPE(data_url.format)>",
+						"OnlineResource":
+						{
+							"xlink:type": "simple",
+							"xlink:href": "<TMPL_var JSONESCAPE(data_url.online_resource)>"
+						}
+					}
+					</TMPL_foreach>
+				]
+				<-/TMPL_if->
+
+				<-TMPL_if defined(layer.feature_list_url)>,
+				"FeatureListURL":
+				[
+					<-TMPL_foreach layer.feature_list_url as feature_list_url>
+					<-TMPL_if feature_list_url.__first__><TMPL_else>,</TMPL_if>
+					{
+						"type": "<TMPL_var JSONESCAPE(feature_list_url.type)>",
+						"Format": "<TMPL_var JSONESCAPE(feature_list_url.format)>",
+						"OnlineResource":
+						{
+							"xlink:type": "simple",
+							"xlink:href": "<TMPL_var JSONESCAPE(feature_list_url.online_resource)>"
+						}
+					}
+					</TMPL_foreach>
+				]
+				<-/TMPL_if->
+
+				<-TMPL_if defined(layer.style)>,
+				"Style":
+				[
+					<-TMPL_foreach layer.style as style->
+					<-TMPL_if style.__first__><TMPL_else>,</TMPL_if>
+					{
+						"Name": "<TMPL_if defined(style.name)><TMPL_var JSONESCAPE(style.name)></TMPL_if>",
+						"Title": "<TMPL_if defined(style.title)><TMPL_var JSONESCAPE(style.title)></TMPL_if>"
+
+						<-TMPL_if defined(style.abstract)>,
+						"Abstract": "<TMPL_var JSONESCAPE(style.abstract)>"
+						<-/TMPL_if->
+
+						<-TMPL_if defined(style.legend_url)>,
+						"LegendURL":
+						[
+							<-TMPL_foreach style.legend_url as legend_url>
+							<-TMPL_if legend_url.__first__><TMPL_else>,</TMPL_if>
+							{
+								"Format": "<TMPL_var JSONESCAPE(legend_url.format)>",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "<TMPL_var JSONESCAPE(legend_url.online_resource)>"
+								}
+								<-TMPL_if defined(legend_url.width) >,
+								"width": <-TMPL_var legend_url.width>
+								<-/TMPL_if->
+							
+								<-TMPL_if defined(legend_url.height)>,
+								"height": <-TMPL_var legend_url.height>
+								<-/TMPL_if>
+							}
+							<-/TMPL_foreach>
+						]
+						<-/TMPL_if->
+
+						<-TMPL_if defined(style.style_sheet_url)->,
+						"StyleSheetURL":
+						{
+							"Format": "<TMPL_var JSONESCAPE(style.style_sheet_url.format)>",
+							"OnlineResource":
+							{
+								"xlink:type": "simple",
+								"xlink:href": "<TMPL_var JSONESCAPE(style.style_sheet_url.online_resource)>"
+							}
+						},
+						<-/TMPL_if->
+
+						<-TMPL_if defined(style.style_url)->,
+						"StyleURL":
+						{
+							"Format": "<TMPL_var JSONESCAPE(style.style_url.format)>",
+							"OnlineResource":
+							{
+								"xlink:type": "simple",
+								"xlink:href": "<TMPL_var JSONESCAPE(style.style_url.online_resource)>"
+							}
+						}
+						<-/TMPL_if>
+					}
+					<-/TMPL_foreach>
+				]
+				<-/TMPL_if>
+
+			}
+			<-/TMPL_foreach>
+		]
+
+		<-TMPL_if defined(layer.min_scale_denominator)->,
+		"MinScaleDenominator": <TMPL_var layer.min_scale_denominator>
+		<-/TMPL_if->
+
+		<-TMPL_if defined(layer.max_scale_denominator)->,
+		"MaxScaleDenominator"<TMPL_var layer.min_scale_denominator>
+		<-/TMPL_if->
+
+		<-TMPL_comment> Global default attributes for all layers </TMPL_comment>,
+		"Title": "<TMPL_var JSONESCAPE(capability.master_layer.title)>"
+	}
+}
