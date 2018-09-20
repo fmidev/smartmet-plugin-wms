@@ -93,7 +93,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Thu Sep 20 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.9.20-1.fmi
-- Added handling of new optional attribute 'disable_wms_time_dimension' in product configuration file 
+- Added handling of new optional product attribute 'disable_wms_time_dimension'
 
 * Tue Sep 11 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.9.11-1.fmi
 - Fixed IceMapLayer hash_value calculations
