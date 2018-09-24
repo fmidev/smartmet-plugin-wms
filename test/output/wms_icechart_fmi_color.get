@@ -9900,9 +9900,9 @@ viewBox="0 0 1000 1000">
   <ellipse class="MeanTemperature" cx="1041.55" cy="1106.59" rx="15" ry="9">
   </ellipse>
   <text dx="-5" font-family="Arial" font-size="10" x="1037.05" y="1111.09">0.5°</text>
-  <ellipse class="MeanTemperature" cx="1041.55" cy="828.816" rx="16.5" ry="9">
+  <ellipse class="MeanTemperature" cx="1041.55" cy="828.816" rx="13.5" ry="9">
   </ellipse>
-  <text dx="-5" font-family="Arial" font-size="10" x="1037.05" y="833.316">ICE°</text>
+  <text dx="-5" font-family="Arial" font-size="10" x="1037.05" y="833.316">ICE</text>
   <ellipse class="MeanTemperature" cx="1063.77" cy="1523.26" rx="15" ry="9">
   </ellipse>
   <text dx="-5" font-family="Arial" font-size="10" x="1059.27" y="1527.76">2.0°</text>
@@ -9915,24 +9915,24 @@ viewBox="0 0 1000 1000">
   <ellipse class="MeanTemperature" cx="1063.77" cy="946.877" rx="15" ry="9">
   </ellipse>
   <text dx="-5" font-family="Arial" font-size="10" x="1059.27" y="951.377">0.3°</text>
-  <ellipse class="MeanTemperature" cx="1189.69" cy="689.927" rx="16.5" ry="9">
+  <ellipse class="MeanTemperature" cx="1189.69" cy="689.927" rx="13.5" ry="9">
   </ellipse>
-  <text dx="-5" font-family="Arial" font-size="10" x="1185.19" y="694.427">ICE°</text>
-  <ellipse class="MeanTemperature" cx="1189.69" cy="551.039" rx="16.5" ry="9">
+  <text dx="-5" font-family="Arial" font-size="10" x="1185.19" y="694.427">ICE</text>
+  <ellipse class="MeanTemperature" cx="1189.69" cy="551.039" rx="13.5" ry="9">
   </ellipse>
-  <text dx="-5" font-family="Arial" font-size="10" x="1185.19" y="555.539">ICE°</text>
+  <text dx="-5" font-family="Arial" font-size="10" x="1185.19" y="555.539">ICE</text>
   <ellipse class="MeanTemperature" cx="1211.92" cy="1342.71" rx="15" ry="9">
   </ellipse>
   <text dx="-5" font-family="Arial" font-size="10" x="1207.42" y="1347.21">0.5°</text>
-  <ellipse class="MeanTemperature" cx="1263.77" cy="648.263" rx="16.5" ry="9">
+  <ellipse class="MeanTemperature" cx="1263.77" cy="648.263" rx="13.5" ry="9">
   </ellipse>
-  <text dx="-5" font-family="Arial" font-size="10" x="1259.27" y="652.763">ICE°</text>
-  <ellipse class="MeanTemperature" cx="1360.06" cy="1321.88" rx="16.5" ry="9">
+  <text dx="-5" font-family="Arial" font-size="10" x="1259.27" y="652.763">ICE</text>
+  <ellipse class="MeanTemperature" cx="1360.06" cy="1321.88" rx="13.5" ry="9">
   </ellipse>
-  <text dx="-5" font-family="Arial" font-size="10" x="1355.56" y="1326.38">ICE°</text>
-  <ellipse class="MeanTemperature" cx="1508.21" cy="1245.48" rx="16.5" ry="9">
+  <text dx="-5" font-family="Arial" font-size="10" x="1355.56" y="1326.38">ICE</text>
+  <ellipse class="MeanTemperature" cx="1508.21" cy="1245.48" rx="13.5" ry="9">
   </ellipse>
-  <text dx="-5" font-family="Arial" font-size="10" x="1503.71" y="1249.98">ICE°</text>
+  <text dx="-5" font-family="Arial" font-size="10" x="1503.71" y="1249.98">ICE</text>
   <g>
    <use x="355.178" xlink:href="#harbour_capital" y="1259.42"/>
    <use x="486.844" xlink:href="#harbour_capital" y="1856.76"/>
@@ -10419,7 +10419,7 @@ viewBox="0 0 1000 1000">
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="840" y="1486">Sandsänkan</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="788" y="1085">Blomman</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="812" y="974">Gran</text>
-  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(347 835 972) " x1="835" x2="845" y1="972" y2="972">
+  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(347 835 972) " x1="835" x2="847" y1="972" y2="972">
   </line>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="828" y="1577">Knolls gr.</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="825" y="1037">Agö</text>
@@ -10429,7 +10429,7 @@ viewBox="0 0 1000 1000">
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="856" y="1162">Björn</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="864" y="1639">St. Karlsö</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="862" y="1201">Örskar</text>
-  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(328 893 1199) " x1="893" x2="901" y1="1199" y2="1199">
+  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(328 893 1199) " x1="893" x2="902" y1="1199" y2="1199">
   </line>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="884" y="1698">Hoburg</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="856" y="1231">Svartklubben</text>
@@ -10437,7 +10437,7 @@ viewBox="0 0 1000 1000">
   </line>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="879" y="1319">Trälhavet</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="869" y="1211">Understen</text>
-  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(360 917 1209) " x1="917" x2="927" y1="1209" y2="1209">
+  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(360 917 1209) " x1="917" x2="928" y1="1209" y2="1209">
   </line>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="928" y="855">Högbonden</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="938" y="1113">Finngrundet</text>
@@ -10471,16 +10471,16 @@ viewBox="0 0 1000 1000">
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1084" y="1091">Rauma</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1130" y="1115">Kajakulma</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1131" y="885">Storkallegrund</text>
-  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(188 1131 883) " x1="1131" x2="1139" y1="883" y2="883">
+  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(188 1131 883) " x1="1131" x2="1141" y1="883" y2="883">
   </line>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1091" y="610">Gåsören</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1138" y="978">Yttergrund</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1088" y="1222">Kumlinge</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1099" y="552">Nygrån</text>
-  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(362 1132 550) " x1="1132" x2="1140" y1="550" y2="550">
+  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(362 1132 550) " x1="1132" x2="1141" y1="550" y2="550">
   </line>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1149" y="936">Sälgrund</text>
-  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(202 1149 934) " x1="1149" x2="1157" y1="934" y2="934">
+  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(202 1149 934) " x1="1149" x2="1159" y1="934" y2="934">
   </line>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1151" y="1032">Mäntyluoto</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1094" y="642">Blackkallen</text>
@@ -10489,7 +10489,7 @@ viewBox="0 0 1000 1000">
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1139" y="1569">Irbenskij</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1147" y="1250">Lohm</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1166" y="1057">Säppi</text>
-  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(204 1166 1055) " x1="1166" x2="1174" y1="1055" y2="1055">
+  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(204 1166 1055) " x1="1166" x2="1175" y1="1055" y2="1055">
   </line>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1139" y="1258">Nötö</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1103" y="486">Farstugrunden</text>
@@ -10503,7 +10503,7 @@ viewBox="0 0 1000 1000">
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1214" y="546">Nordströmsgrund</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1189" y="528">Rödkallen</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1225" y="786">Helsingkallan</text>
-  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(212 1225 784) " x1="1225" x2="1233" y1="784" y2="784">
+  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(212 1225 784) " x1="1225" x2="1234" y1="784" y2="784">
   </line>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1198" y="1306">Bengtskär</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1190" y="731">Kallan</text>
@@ -10516,7 +10516,7 @@ viewBox="0 0 1000 1000">
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1246" y="649">Ulkokalla</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1274" y="498">Malören</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1301" y="706">Kokkola</text>
-  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(195 1301 704) " x1="1301" x2="1311" y1="704" y2="704">
+  <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(195 1301 704) " x1="1301" x2="1312" y1="704" y2="704">
   </line>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1282" y="1294">Jussarö</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1268" y="610">Nahkiainen</text>
