@@ -120,6 +120,9 @@ bool WMSPostGISLayer::mustUpdateLayerMetaData()
 {
   try
   {
+    if (timeDimensionDisabled)
+      return false;
+
     if (!itsMetaDataSettings.found)
       return true;
 
@@ -164,6 +167,10 @@ void WMSPostGISLayer::updateLayerMetaData()
 
     try
     {
+      // If timeDimensionDisabled dont fetch timesteps from database
+      if (timeDimensionDisabled)
+        mdq_options.time_column.reset();
+
       metadata = itsGisEngine->getMetaData(mdq_options);
     }
     catch (...)
@@ -183,7 +190,7 @@ void WMSPostGISLayer::updateLayerMetaData()
     geographicBoundingBox.xMax = metadata.xmax;
     geographicBoundingBox.yMax = metadata.ymax;
 
-    if (hasTemporalDimension)
+    if (hasTemporalDimension && !timeDimensionDisabled)
     {
       if (even_timesteps(metadata.timesteps))
       {

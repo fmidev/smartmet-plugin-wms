@@ -268,10 +268,6 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     layer->productFile = theFileName;
     layer->customer = theCustomer;
 
-    // Update metadata from DB etc
-
-    layer->updateLayerMetaData();
-
     // WMS GetCapability settings
 
     Json::Value nulljson;
@@ -280,6 +276,10 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     auto json = root.get("hidden", nulljson);
     if (!json.isNull())
       layer->hidden = json.asBool();
+
+    json = root.get("disable_wms_time_dimension", nulljson);
+    if (!json.isNull())
+      layer->timeDimensionDisabled = json.asBool();
 
     json = root.get("name", nulljson);
     if (!json.isNull())
@@ -334,6 +334,10 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         throw Spine::Exception(
             BCP, p.string() + " keyword value must be an array of strings or a string");
     }
+
+    // Update metadata from DB etc
+
+    layer->updateLayerMetaData();
 
     // handle styles
 

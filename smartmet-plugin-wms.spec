@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.9.11
+Version: 18.9.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Sep 20 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.9.20-1.fmi
+- Added handling of new optional product attribute 'disable_wms_time_dimension'
+
 * Tue Sep 11 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.9.11-1.fmi
 - Fixed IceMapLayer hash_value calculations
 - Silenced some CodeChecker warnings

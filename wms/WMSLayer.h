@@ -55,7 +55,9 @@ class WMSLayer
   boost::optional<int> fixed_height;
 
   const WMSConfig& wmsConfig;
-  bool hidden = false;  // if this is true, dont show in GetCapabilities response
+  bool hidden{false};  // If this is true, dont show in GetCapabilities response
+  bool timeDimensionDisabled{
+      false};  // If this is true, any timestamp can be used in GetMap-request
   boost::posix_time::ptime metadataTimestamp;
   unsigned int metadataUpdateInterval;
 
