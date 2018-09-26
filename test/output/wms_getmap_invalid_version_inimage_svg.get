@@ -1,0 +1,21 @@
+<svg width="541" height="35" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>Error</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+
+ ]]>
+</style>
+
+
+</defs>
+
+<g>
+ <g id="view1">
+   <g/>
+  
+  <text font-family="Arial" font-size="26" font-weight="normal" style="text-anchor:start" x="5" y="25">Error: The requested version is not supported!</text>
+ </g>
+</g>
+
+</svg>

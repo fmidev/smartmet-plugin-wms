@@ -118,6 +118,7 @@ class WMSLayer
   unsigned int metaDataUpdateInterval() const { return metadataUpdateInterval; }
   // read json file
   static Json::Value readJsonFile(const std::string theFileName);
+  static Json::Value parseJsonString(const std::string theJsonString);
 };
 
 using SharedWMSLayer = boost::shared_ptr<WMSLayer>;

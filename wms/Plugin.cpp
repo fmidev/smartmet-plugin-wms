@@ -5,10 +5,12 @@
 // ======================================================================
 
 #include "Plugin.h"
+#include "CaseInsensitiveComparator.h"
 #include "Mime.h"
 #include "Product.h"
 #include "State.h"
 #include "StyleSelection.h"
+#include "TextUtility.h"
 #include "WMSConfig.h"
 #include "WMSGetCapabilities.h"
 #include "WMSGetLegendGraphic.h"
@@ -64,6 +66,7 @@ const std::string &check_attack(const std::string &theName)
     throw SmartMet::Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
 }  // namespace
 
 namespace SmartMet
@@ -1224,11 +1227,10 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     bool print_json = Spine::optional_bool(thisRequest.getParameter("printjson"), false);
 
-    bool isdebug = Spine::optional_bool(thisRequest.getParameter("debug"), false);
-
     std::string format = Spine::optional_string(thisRequest.getParameter("format"), "xml");
 
     Product product;
+
     WMS::WMSRequestType requestType(WMS::wmsRequestType(thisRequest));
 
     try
@@ -1243,20 +1245,16 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
       if (requestType == WMS::WMSRequestType::NOT_A_WMS_REQUEST)
       {
-        Spine::Exception ex(BCP, "Not a WMS request!");
+        Spine::Exception ex(BCP, ERROR_NOT_WMS_REQUEST);
         ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-        formatWmsExceptionResponse(
-            ex, format, isdebug, thisRequest, theResponse, theState.useTimer());
-        throw ex;
+        return handleWmsException(ex, theState, thisRequest, theResponse);
       }
 
       if (requestType == WMS::WMSRequestType::GET_FEATURE_INFO)
       {
-        Spine::Exception ex(BCP, "GetFeatureInfo not supported!");
+        Spine::Exception ex(BCP, ERROR_GETFEATUREINFO_NOT_SUPPORTED);
         ex.addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED);
-        formatWmsExceptionResponse(
-            ex, format, isdebug, thisRequest, theResponse, theState.useTimer());
-        return WMSQueryStatus::OK;
+        return handleWmsException(ex, theState, thisRequest, theResponse);
       }
 
       Json::Value json;
@@ -1312,11 +1310,9 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
       if (theState.getCustomer().empty())
       {
-        Spine::Exception ex(BCP, "Customer setting is empty!");
+        Spine::Exception ex(BCP, ERROR_NO_CUSTOMER);
         ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-        formatWmsExceptionResponse(
-            ex, format, isdebug, thisRequest, theResponse, theState.useTimer());
-        throw ex;
+        return handleWmsException(ex, theState, thisRequest, theResponse);
       }
 
       // Set WMS product defaults before preprocessing starts
@@ -1387,9 +1383,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
       Spine::Exception ex(BCP, "Operation failed!", nullptr);
       if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
         ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      formatWmsExceptionResponse(
-          ex, format, isdebug, thisRequest, theResponse, theState.useTimer());
-      throw ex;
+      return handleWmsException(ex, theState, thisRequest, theResponse);
     }
 
     // Format can no longer be changed by anything, provide the info to layers
@@ -1456,9 +1450,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
           BCP, "Error in processing the template '" + *product.svg_tmpl + "'!", nullptr);
       if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
         ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      formatWmsExceptionResponse(
-          ex, format, isdebug, thisRequest, theResponse, theState.useTimer());
-      throw ex;
+      return handleWmsException(ex, theState, thisRequest, theResponse);
     }
 
     if (print_hash)
@@ -1477,6 +1469,161 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
   {
     throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
+}
+
+WMSQueryStatus Dali::Plugin::handleWmsException(Spine::Exception &exception,
+                                                State &theState,
+                                                const Spine::HTTP::Request &theRequest,
+                                                Spine::HTTP::Response &theResponse)
+{
+  WMS::CaseInsensitiveComparator cicomp;
+  WmsExceptionFormat exceptionFormat = WmsExceptionFormat::XML;
+  std::string exceptionFormatStr =
+      Spine::optional_string(theRequest.getParameter("EXCEPTIONS"), "XML");
+  if (cicomp(exceptionFormatStr, "INIMAGE"))
+    exceptionFormat = WmsExceptionFormat::INIMAGE;
+  else if (cicomp(exceptionFormatStr, "BLANK"))
+    exceptionFormat = WmsExceptionFormat::BLANK;
+  else if (cicomp(exceptionFormatStr, "JSON"))
+    exceptionFormat = WmsExceptionFormat::JSON;
+
+  std::string mapFormat = Spine::optional_string(theRequest.getParameter("format"), "xml");
+
+  bool isdebug = Spine::optional_bool(theRequest.getParameter("debug"), false);
+
+  if (exceptionFormat != WmsExceptionFormat::INIMAGE &&
+      exceptionFormat != WmsExceptionFormat::BLANK)
+  {
+    if (exceptionFormat == WmsExceptionFormat::JSON)
+      mapFormat = "application/json";
+    formatWmsExceptionResponse(
+        exception, mapFormat, isdebug, theRequest, theResponse, theState.useTimer());
+    return WMSQueryStatus::OK;
+  }
+
+  Json::Value json = getExceptionJson(exception.what(), mapFormat, exceptionFormat);
+
+  try
+  {
+    Product product;
+    // Initialize the product specs from the JSON
+    product.init(json, theState, itsConfig);
+
+    if (!product.svg_tmpl)
+      product.svg_tmpl = itsConfig.defaultTemplate(product.type);
+
+    auto tmpl = getTemplate(*product.svg_tmpl);
+
+    // Build the response CDT
+    CTPP::CDT hash(CTPP::CDT::HASH_VAL);
+
+    product.generate(hash, theState);
+
+    // Build the template
+    std::ostringstream output, log;
+    try
+    {
+      std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
+      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      if (theState.useTimer())
+        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      tmpl->process(hash, output, log);
+    }
+    catch (...)
+    {
+      Spine::Exception ex(
+          BCP, "Error in processing the template '" + *product.svg_tmpl + "'!", nullptr);
+      if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+      formatWmsExceptionResponse(
+          ex, mapFormat, isdebug, theRequest, theResponse, theState.useTimer());
+      throw ex;
+    }
+
+    auto product_hash = 0;
+
+    formatResponse(output.str(),
+                   product.type,
+                   theRequest,
+                   theResponse,
+                   theState.useTimer(),
+                   product,
+                   product_hash);
+
+    return WMSQueryStatus::OK;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+Json::Value Dali::Plugin::getExceptionJson(const std::string &description,
+                                           const std::string &mapFormat,
+                                           WmsExceptionFormat format) const
+{
+  std::string jsonStr;
+
+  std::string errorString = "Error: " + description;
+  SmartMet::Plugin::Dali::text_style_t textStyle;
+  textStyle.fontsize = "26";
+  SmartMet::Plugin::Dali::text_dimension_t textDimension =
+      SmartMet::Plugin::Dali::getTextDimension(errorString, textStyle);
+
+  jsonStr = "{";
+  jsonStr += "\"title\": \"Error\",\n";
+  jsonStr += "\"language\": \"fi\",\n";
+  if (mapFormat.find("png") != std::string::npos)
+    jsonStr += "\"type\": \"png\",\n";
+  else if (mapFormat.find("pdf") != std::string::npos)
+    jsonStr += "\"type\": \"pdf\",\n";
+  else
+    jsonStr += "\"type\": \"svg\",\n";
+  jsonStr += "\"projection\":\n";
+  jsonStr += "{\n";
+  jsonStr += "   \"crs\": \"data\",\n";
+  jsonStr += "   \"xsize\": " + std::to_string(textDimension.width + 20) + ",\n";
+  jsonStr += "   \"ysize\": " + std::to_string(textDimension.height + 10) + "\n";
+  jsonStr += "},\n";
+  jsonStr += "\"views\": [\n";
+  jsonStr += "    {\n";
+  jsonStr += "        \"qid\": \"v1\",\n";
+  jsonStr += "        \"attributes\":\n";
+  jsonStr += "        {\n";
+  jsonStr += "            \"id\": \"view1\"\n";
+  jsonStr += "        },\n";
+  jsonStr += "        \"layers\": [\n";
+  if (format == WmsExceptionFormat::INIMAGE)
+  {
+    jsonStr += "{\n";
+    jsonStr += "	   \"qid\": \"tagi\",\n";
+    jsonStr += "	   \"tag\": \"g\",\n";
+    jsonStr += "	   \"layer_type\": \"tag\"\n";
+    jsonStr += "},\n";
+    jsonStr += "{";
+    jsonStr += "     \"tag\": \"text\",\n";
+    jsonStr += "     \"cdata\":\n";
+    jsonStr += "     {\n";
+    jsonStr += ("           \"en\": \"" + errorString + "\",\n");
+    jsonStr += ("           \"fi\": \"" + errorString + "\"\n");
+    jsonStr += "     },\n";
+    jsonStr += "     \"attributes\":\n";
+    jsonStr += "     {\n";
+    jsonStr += "           \"x\": \"5\",\n";
+    jsonStr += "           \"y\": \"" + std::to_string(textDimension.height) + "\",\n";
+    jsonStr += "           \"font-family\": \"" + textStyle.fontfamily + "\",\n";
+    jsonStr += "           \"font-weight\": \"" + textStyle.fontweight + "\",\n";
+    jsonStr += "           \"font-size\": \"" + textStyle.fontsize + "\",\n";
+    jsonStr += "           \"text-anchor\": \"start\"\n";
+    jsonStr += "      }\n";
+    jsonStr += "}\n";
+  }
+  jsonStr += "         ]\n";
+  jsonStr += "    }\n";
+  jsonStr += "       ]\n";
+  jsonStr += "}\n";
+
+  return SmartMet::Plugin::WMS::WMSLayer::parseJsonString(jsonStr);
 }
 
 }  // namespace Dali

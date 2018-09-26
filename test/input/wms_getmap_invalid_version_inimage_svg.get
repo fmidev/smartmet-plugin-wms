@@ -1,0 +1,1 @@
+GET /wms?service=wms&request=GetMap&version=1.3.1&layers=ely:elymap&styles=&crs=EPSG:4326&bbox=59,17,71,34&width=300&height=500&format=image/svg&time=200808050300&exceptions=inimage HTTP/1.0

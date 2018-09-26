@@ -45,21 +45,6 @@ double clamp_latitude(double lat)
   return lat;
 }
 
-Json::Value parse_json_string(const std::string theJsonString)
-{
-  Json::Value json;
-
-  Json::Reader reader;
-  bool parsingSuccessful = reader.parse(theJsonString, json);
-  if (!parsingSuccessful)
-  {
-    // report to the user the failure
-    throw Spine::Exception(BCP, reader.getFormattedErrorMessages());
-  }
-
-  return json;
-}
-
 void add_attributes(Json::Value& json, const LegendGraphicInfoItem& lgi)
 {
   Json::Value attributes = lgi.asJsonValue("attributes");
@@ -538,7 +523,7 @@ LegendGraphicInfo handle_json_layers(Json::Value layersJson)
         if (!json.isNull())
         {
           // Expand symbol group
-          Json::Value symbolGroup = parse_json_string(json.toStyledString());
+          Json::Value symbolGroup = WMSLayer::parseJsonString(json.toStyledString());
           if (symbolGroup.isArray())
           {
             for (unsigned int i = 0; i < symbolGroup.size(); i++)
@@ -1485,22 +1470,27 @@ Json::Value WMSLayer::readJsonFile(const std::string theFileName)
 
     content.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
 
-    Json::Value json = parse_json_string(content);
-
-    Json::Reader reader;
-    bool parsingSuccessful = reader.parse(content, json);
-    if (!parsingSuccessful)
-    {
-      // report to the user the failure
-      throw Spine::Exception(BCP, reader.getFormattedErrorMessages());
-    }
-
-    return json;
+    return WMSLayer::parseJsonString(content);
   }
   catch (...)
   {
     throw Spine::Exception::Trace(BCP, "Error in reading json-file" + theFileName);
   }
+}
+
+Json::Value WMSLayer::parseJsonString(const std::string theJsonString)
+{
+  Json::Value json;
+
+  Json::Reader reader;
+  bool parsingSuccessful = reader.parse(theJsonString, json);
+  if (!parsingSuccessful)
+  {
+    // report to the user the failure
+    throw Spine::Exception(BCP, reader.getFormattedErrorMessages());
+  }
+
+  return json;
 }
 
 }  // namespace WMS
