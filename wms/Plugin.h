@@ -135,6 +135,13 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                                   const Spine::HTTP::Request& theRequest,
                                   Spine::HTTP::Response& theResponse,
                                   bool usetimer);
+  WMSQueryStatus handleWmsException(Spine::Exception& exception,
+                                    State& theState,
+                                    const Spine::HTTP::Request& theRequest,
+                                    Spine::HTTP::Response& theResponse);
+  Json::Value getExceptionJson(const std::string& description,
+                               const std::string& mapFormat,
+                               WmsExceptionFormat format) const;
 
   // Plugin configuration
   const std::string itsModuleName;

@@ -13,3 +13,15 @@
 #define WMS_INVALID_DIMENSION_VALUE "InvalidDimensionValue"
 #define WMS_OPERATION_NOT_SUPPORTED "OperationNotSupported"
 #define WMS_VOID_EXCEPTION_CODE "InvalidExceptionCode"
+
+enum class WmsExceptionFormat
+{
+  XML,
+  JSON,
+  INIMAGE,
+  BLANK
+};
+
+#define ERROR_NOT_WMS_REQUEST "Not a WMS request!"
+#define ERROR_GETFEATUREINFO_NOT_SUPPORTED "GetFeatureInfo operation not supported!"
+#define ERROR_NO_CUSTOMER "Customer setting is empty!"

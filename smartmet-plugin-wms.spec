@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.9.20
+Version: 18.9.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Sep 26 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.9.26-1.fmi
+- Handling of WMS's optional EXCEPTIONS-parameter added (BRAINSTORM-1344)
+- In addition to xml-, and json-formats, it is now possible to get all exceptions also in picture formats (svg,png,pdf)
+
 * Thu Sep 20 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.9.20-1.fmi
 - Added handling of new optional product attribute 'disable_wms_time_dimension'
 
