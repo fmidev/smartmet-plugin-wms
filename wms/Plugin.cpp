@@ -1501,7 +1501,14 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Spine::Exception &exception,
     return WMSQueryStatus::OK;
   }
 
-  Json::Value json = getExceptionJson(exception.what(), mapFormat, exceptionFormat);
+  boost::optional<std::string> width = theRequest.getParameter("WIDTH");
+  boost::optional<std::string> height = theRequest.getParameter("HEIGHT");
+
+  Json::Value json = getExceptionJson(exception.what(),
+                                      mapFormat,
+                                      exceptionFormat,
+                                      Fmi::stoi(width ? *width : "0"),
+                                      Fmi::stoi(height ? *height : "0"));
 
   try
   {
@@ -1560,7 +1567,9 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Spine::Exception &exception,
 
 Json::Value Dali::Plugin::getExceptionJson(const std::string &description,
                                            const std::string &mapFormat,
-                                           WmsExceptionFormat format) const
+                                           WmsExceptionFormat format,
+                                           unsigned int width,
+                                           unsigned int height) const
 {
   std::string jsonStr;
 
@@ -1569,6 +1578,9 @@ Json::Value Dali::Plugin::getExceptionJson(const std::string &description,
   textStyle.fontsize = "26";
   SmartMet::Plugin::Dali::text_dimension_t textDimension =
       SmartMet::Plugin::Dali::getTextDimension(errorString, textStyle);
+
+  unsigned int pictureWidth = (width > 0 ? width : textDimension.width + 20);
+  unsigned int pictureHeight = (height > 0 ? height : textDimension.height + 10);
 
   jsonStr = "{";
   jsonStr += "\"title\": \"Error\",\n";
@@ -1582,8 +1594,8 @@ Json::Value Dali::Plugin::getExceptionJson(const std::string &description,
   jsonStr += "\"projection\":\n";
   jsonStr += "{\n";
   jsonStr += "   \"crs\": \"data\",\n";
-  jsonStr += "   \"xsize\": " + std::to_string(textDimension.width + 20) + ",\n";
-  jsonStr += "   \"ysize\": " + std::to_string(textDimension.height + 10) + "\n";
+  jsonStr += "   \"xsize\": " + std::to_string(pictureWidth) + ",\n";
+  jsonStr += "   \"ysize\": " + std::to_string(pictureHeight) + "\n";
   jsonStr += "},\n";
   jsonStr += "\"views\": [\n";
   jsonStr += "    {\n";

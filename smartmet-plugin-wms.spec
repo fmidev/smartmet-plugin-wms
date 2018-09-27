@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.9.26
+Version: 18.9.27
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Sep 27 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.9.27-1.fmi
+- WIDTH- and HEIGHT-parameters, when present, determine the size of 
+Exception-picture (when EXCEPTIONS=INIMAGE)
+
 * Wed Sep 26 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.9.26-1.fmi
 - Handling of WMS's optional EXCEPTIONS-parameter added (BRAINSTORM-1344)
 - In addition to xml-, and json-formats, it is now possible to get all exceptions also in picture formats (svg,png,pdf)
