@@ -17,6 +17,7 @@
 #include <ctpp2/CDT.hpp>
 #include <engines/querydata/Engine.h>
 #include <fmt/format.h>
+#include <fmt/printf.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>

@@ -31,6 +31,7 @@
 #include <boost/utility.hpp>
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
+#include <fmt/printf.h>
 #include <giza/Svg.h>
 #include <json/json.h>
 #include <json/reader.h>

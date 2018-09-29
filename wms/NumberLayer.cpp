@@ -22,6 +22,7 @@
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
+#include <fmt/printf.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>

@@ -10,6 +10,7 @@
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
+#include <fmt/printf.h>
 #include <macgyver/StringConversion.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>

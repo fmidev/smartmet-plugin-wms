@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.9.27
+Version: 18.9.29
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,21 +18,21 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.8.6
-BuildRequires: smartmet-library-macgyver-devel >= 18.9.5
-BuildRequires: smartmet-library-spine-devel >= 18.9.24
+BuildRequires: smartmet-library-macgyver-devel >= 18.9.29
+BuildRequires: smartmet-library-spine-devel >= 18.9.29
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.9.10
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 18.9.26
+BuildRequires: smartmet-engine-observation-devel >= 18.9.28
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.9.19
-BuildRequires: smartmet-engine-geonames-devel >= 18.9.23
+BuildRequires: smartmet-engine-geonames-devel >= 18.9.29
 BuildRequires: smartmet-engine-querydata-devel >= 18.9.11
 BuildRequires: smartmet-engine-contour-devel >= 18.7.25
-BuildRequires: smartmet-library-gis-devel >= 18.9.17
-BuildRequires: fmt-devel
+BuildRequires: smartmet-library-gis-devel >= 18.9.29
+BuildRequires: fmt-devel >= 5.2.0
 BuildRequires: ctpp2 >= 2.8.6
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
@@ -40,12 +40,12 @@ BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
 BuildRequires: heatmap-devel
 Requires: cairo
-Requires: fmt
+Requires: fmt >= 5.2.0
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.6
 Requires: libconfig
-Requires: smartmet-library-gis >= 18.9.17
-Requires: smartmet-library-macgyver >= 18.9.5
+Requires: smartmet-library-gis >= 18.9.29
+Requires: smartmet-library-macgyver >= 18.9.29
 Requires: smartmet-library-giza >= 18.8.6
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 18.9.10
@@ -53,9 +53,9 @@ Requires: smartmet-engine-authentication >= 18.9.10
 Requires: smartmet-engine-querydata >= 18.9.11
 Requires: smartmet-engine-contour >= 18.7.25
 Requires: smartmet-engine-gis >= 18.9.19
-Requires: smartmet-engine-geonames >= 18.9.23
-Requires: smartmet-server >= 18.9.12
-Requires: smartmet-library-spine >= 18.9.24
+Requires: smartmet-engine-geonames >= 18.9.29
+Requires: smartmet-server >= 18.9.29
+Requires: smartmet-library-spine >= 18.9.29
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Sat Sep 29 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.9.29-1.fmi
+- Upgrade to latest fmt
+
 * Thu Sep 27 2018 Anssi Reponen <anssi.reponen@fmi.fi> - 18.9.27-1.fmi
 - WIDTH- and HEIGHT-parameters, when present, determine the size of 
 Exception-picture (when EXCEPTIONS=INIMAGE)
