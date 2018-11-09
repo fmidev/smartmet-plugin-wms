@@ -198,6 +198,9 @@ class WMSConfig
   // setting so that processing other layers will not slow down unnecessarily.
   int itsMargin = 0;
 
+  // Set of files for which a warning has already been printed
+  std::set<std::string> itsWarnedFiles;
+
 };  // class WMSConfig
 
 }  // namespace WMS

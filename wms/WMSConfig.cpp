@@ -867,9 +867,17 @@ void WMSConfig::updateLayerMetaData()
                   catch (...)
                   {
                     // Ignore and report failed product definitions
-                    Spine::Exception exception(BCP, "Failed to parse configuration!", nullptr);
-                    exception.addParameter("Path", itr2->path().c_str());
-                    exception.printError();
+
+                    auto badfile = itr2->path().c_str();
+                    if (itsWarnedFiles.find(badfile) == itsWarnedFiles.end())
+                    {
+                      Spine::Exception exception(BCP, "Failed to parse configuration!", nullptr);
+                      exception.addParameter("Path", itr2->path().c_str());
+                      exception.printError();
+
+                      // Don't warn again about the same file
+                      itsWarnedFiles.insert(badfile);
+                    }
                     continue;
                   }
                 }
