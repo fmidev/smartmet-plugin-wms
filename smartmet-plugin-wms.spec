@@ -93,7 +93,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Nov 12 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.11.12-2.fmi
-- Added tz setting for all layers, which affects how "time" (not not origintime) is parsed
+- Added tz setting for all layers, which affects how "time" (not origintime) is parsed
 
 * Mon Nov 12 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.11.12-1.fmi
 - Refactored TemplateFactory into macgyver library
