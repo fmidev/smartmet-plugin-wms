@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.11.9
+Version: 18.11.12
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,7 +18,7 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
-BuildRequires: smartmet-library-macgyver-devel >= 18.9.29
+BuildRequires: smartmet-library-macgyver-devel >= 18.11.12
 BuildRequires: smartmet-library-spine-devel >= 18.11.9
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
@@ -45,7 +45,7 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.6
 Requires: libconfig
 Requires: smartmet-library-gis >= 18.9.29
-Requires: smartmet-library-macgyver >= 18.9.29
+Requires: smartmet-library-macgyver >= 18.11.12
 Requires: smartmet-library-giza >= 18.10.1
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 18.9.10
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Mon Nov 12 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.11.12-1.fmi
+- Refactored TemplateFactory into macgyver library
+
 * Fri Nov  9 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.11.9-1.fmi
 - GetCapabilities update loop will now warn only once per file to avoid flooding the logs
 

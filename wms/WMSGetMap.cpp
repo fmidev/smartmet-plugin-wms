@@ -2,7 +2,6 @@
 #include "CaseInsensitiveComparator.h"
 #include "Colour.h"
 #include "Mime.h"
-#include "TemplateFactory.h"
 #include "TimeResolution.h"
 #include "WMSException.h"
 #include <boost/algorithm/string/erase.hpp>

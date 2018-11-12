@@ -1,5 +1,4 @@
 #include "WMSLayer.h"
-#include "TemplateFactory.h"
 #include "TextUtility.h"
 #include "WMSConfig.h"
 #include "WMSException.h"

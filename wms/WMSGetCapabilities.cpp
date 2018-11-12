@@ -1,5 +1,4 @@
 #include "WMSGetCapabilities.h"
-#include "TemplateFactory.h"
 #include "WMSException.h"
 #include <boost/algorithm/string/join.hpp>
 #include <boost/property_tree/ptree.hpp>
@@ -91,7 +90,7 @@ void patch_protocols(CTPP::CDT& dcptypes, const std::string& newprotocol)
   }
 }
 
-std::string WMSGetCapabilities::response(const Dali::SharedFormatter& theFormatter,
+std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatter,
                                          const Spine::HTTP::Request& theRequest,
                                          const Engine::Querydata::Engine& /* theQEngine */,
                                          const WMSConfig& theConfig)

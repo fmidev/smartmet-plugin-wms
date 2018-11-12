@@ -1,8 +1,8 @@
 #pragma once
 
-#include "TemplateFactory.h"
 #include "WMSConfig.h"
 #include <engines/querydata/Engine.h>
+#include <macgyver/TemplateFactory.h>
 #include <spine/HTTP.h>
 #include <spine/Value.h>
 #include <map>
@@ -18,7 +18,7 @@ namespace WMS
 namespace WMSGetCapabilities
 {
 // response to GetCapabilities request
-std::string response(const Dali::SharedFormatter& theFormatter,
+std::string response(const Fmi::SharedFormatter& theFormatter,
                      const Spine::HTTP::Request& theRequest,
                      const Engine::Querydata::Engine& theQEngine,
                      const WMSConfig& theConfig);

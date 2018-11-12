@@ -837,7 +837,7 @@ std::string Plugin::getStyle(const std::string &theCustomer,
  */
 // ----------------------------------------------------------------------
 
-SharedFormatter Plugin::getTemplate(const std::string &theName) const
+Fmi::SharedFormatter Plugin::getTemplate(const std::string &theName) const
 {
   try
   {

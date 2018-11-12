@@ -8,7 +8,6 @@
 
 #include "Config.h"
 #include "Product.h"
-#include "TemplateFactory.h"
 #include "WMSConfig.h"
 #include "WMSException.h"
 #include "WMSQueryStatus.h"
@@ -20,6 +19,7 @@
 #include <engines/observation/Engine.h>
 #endif
 #include <boost/move/unique_ptr.hpp>
+#include <macgyver/TemplateFactory.h>
 #include <spine/FileCache.h>
 #include <spine/HTTP.h>
 #include <spine/JsonCache.h>
@@ -64,7 +64,7 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   // Plugin specific public API:
 
   const Config& getConfig() const;
-  SharedFormatter getTemplate(const std::string& theName) const;
+  Fmi::SharedFormatter getTemplate(const std::string& theName) const;
   Product getProduct(const Spine::HTTP::Request& theRequest,
                      const State& theState,
                      const std::string& theName,
@@ -160,7 +160,7 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
 #endif
 
   // Cache templates
-  TemplateFactory itsTemplateFactory;
+  Fmi::TemplateFactory itsTemplateFactory;
 
   // Cache files
   mutable Spine::FileCache itsFileCache;
