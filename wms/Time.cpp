@@ -34,6 +34,46 @@ boost::posix_time::ptime parse_time(const std::string& theTime)
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Parse a time option with an optional time zone (default = UTC)
+ */
+// ----------------------------------------------------------------------
+
+boost::posix_time::ptime parse_time(const std::string& theTime,
+                                    const boost::local_time::time_zone_ptr& theZone)
+{
+  try
+  {
+    if (!theZone)
+      return parse_time(theTime);
+
+    auto t = Fmi::TimeParser::parse(theTime, theZone).utc_time();
+
+    if (Fmi::TimeParser::looks(theTime) != "offset")
+      return t;
+
+    return {t.date(), boost::posix_time::hours(t.time_of_day().hours() + 1)};
+  }
+
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Parse a time zone option
+ */
+// ----------------------------------------------------------------------
+
+boost::local_time::time_zone_ptr parse_timezone(const std::string& theName,
+                                                const Fmi::TimeZones& theZones)
+{
+  return theZones.time_zone_from_string(theName);
+}
+
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet

@@ -47,6 +47,9 @@ struct Properties
   boost::optional<boost::posix_time::ptime> time;
   boost::optional<int> time_offset;  // minutes
 
+  // Timezone for time parsing
+  boost::local_time::time_zone_ptr tz;
+
   // An interval can be used to select the latest observation available, if any, or for example all
   // lightning observations. For forecasts the interval settings are meaningless.
 
