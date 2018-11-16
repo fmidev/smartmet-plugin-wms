@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.11.12
-Release: 2%{?dist}.fmi
+Version: 18.11.16
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -25,11 +25,11 @@ BuildRequires: smartmet-library-giza-devel
 BuildRequires: smartmet-engine-authentication-devel >= 18.9.10
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 18.9.29
+BuildRequires: smartmet-engine-observation-devel >= 18.11.12
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.10.1
 BuildRequires: smartmet-engine-geonames-devel >= 18.9.29
-BuildRequires: smartmet-engine-querydata-devel >= 18.10.19
+BuildRequires: smartmet-engine-querydata-devel >= 18.11.15
 BuildRequires: smartmet-engine-contour-devel >= 18.7.25
 BuildRequires: smartmet-library-gis-devel >= 18.9.29
 BuildRequires: fmt-devel >= 5.2.0
@@ -50,7 +50,7 @@ Requires: smartmet-library-giza >= 18.10.1
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 18.9.10
 %endif
-Requires: smartmet-engine-querydata >= 18.10.19
+Requires: smartmet-engine-querydata >= 18.11.15
 Requires: smartmet-engine-contour >= 18.7.25
 Requires: smartmet-engine-gis >= 18.10.1
 Requires: smartmet-engine-geonames >= 18.9.29
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Fri Nov 16 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.11.16-1.fmi
+- Fixed intersections to inherit the producer name instead of the data so that landscaped parameters can be handled too
+
 * Mon Nov 12 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.11.12-2.fmi
 - Added tz setting for all layers, which affects how "time" (not origintime) is parsed
 

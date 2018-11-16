@@ -51,7 +51,7 @@ void Intersections::init(const Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-void Intersections::init(const Engine::Querydata::Q& q,
+void Intersections::init(const boost::optional<std::string>& theProducer,
                          const Projection& theProjection,
                          const boost::posix_time::ptime& theTime,
                          const State& theState)
@@ -60,7 +60,7 @@ void Intersections::init(const Engine::Querydata::Q& q,
   {
     for (auto& intersection : intersections)
     {
-      intersection.init(q, theProjection, theTime, theState);
+      intersection.init(theProducer, theProjection, theTime, theState);
     }
   }
   catch (...)

@@ -832,7 +832,7 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(q, projection, valid_time_period.begin(), theState);
+    positions->init(producer, projection, valid_time_period.begin(), theState);
 
     // Establish the numbers to draw. At this point we know that if
     // use_observations is true, obsengine is not disabled.

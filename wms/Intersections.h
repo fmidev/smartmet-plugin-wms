@@ -26,7 +26,7 @@ class Intersections
 
   void init(const Json::Value& theJson, const Config& theConfig);
 
-  void init(const Engine::Querydata::Q& q,
+  void init(const boost::optional<std::string>& theProducer,
             const Projection& theProjection,
             const boost::posix_time::ptime& theTime,
             const State& theState);

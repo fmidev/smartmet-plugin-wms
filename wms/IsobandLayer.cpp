@@ -421,7 +421,8 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     }
 
     // Logical operations with isobands are initialized before hand
-    intersections.init(q, projection, valid_time, theState);
+
+    intersections.init(producer, projection, valid_time, theState);
 
     // Calculate the isobands and store them into the template engine
 

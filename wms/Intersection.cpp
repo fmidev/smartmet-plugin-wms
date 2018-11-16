@@ -146,7 +146,7 @@ bool Intersection::inside(double theX, double theY) const
  */
 // ----------------------------------------------------------------------
 
-void Intersection::init(Engine::Querydata::Q q,
+void Intersection::init(const boost::optional<std::string>& theProducer,
                         const Projection& theProjection,
                         const boost::posix_time::ptime& theTime,
                         const State& theState)
@@ -164,8 +164,11 @@ void Intersection::init(Engine::Querydata::Q q,
     auto param = Spine::ParameterFactory::instance().parse(*parameter);
 
     // Establish the data
-    if (producer)
-      q = theState.get(*producer);
+
+    if(!producer && !theProducer)
+      throw Spine::Exception(BCP, "Producer not set for intersection");
+
+    auto q = theState.get(producer ? *producer : *theProducer);
 
     // This can happen when we use observations
     if (!q)
@@ -220,14 +223,10 @@ void Intersection::init(Engine::Querydata::Q q,
     // Select the data
 
     if (!q->param(options.parameter.number()))
-    {
       throw Spine::Exception(BCP, "Parameter '" + options.parameter.name() + "' unavailable.");
-    }
 
     if (!q->firstLevel())
-    {
       throw Spine::Exception(BCP, "Unable to set first level in querydata.");
-    }
 
     // Select the level.
     if (options.level)

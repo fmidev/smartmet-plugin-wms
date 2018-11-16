@@ -321,7 +321,7 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-void Positions::init(const Engine::Querydata::Q& q,
+void Positions::init(const boost::optional<std::string>& theProducer,
                      const Projection& theProjection,
                      const boost::posix_time::ptime& theTime,
                      const State& theState)
@@ -357,8 +357,7 @@ void Positions::init(const Engine::Querydata::Q& q,
       // outshape.reset(Fmi::OGR::polyclip(*outshape, theProjection.getBox()));
     }
 
-    if (q)
-      intersections.init(q, theProjection, theTime, theState);
+    intersections.init(theProducer, theProjection, theTime, theState);
   }
   catch (...)
   {

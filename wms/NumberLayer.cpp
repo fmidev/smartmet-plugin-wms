@@ -802,7 +802,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(q, projection, valid_time_period.begin(), theState);
+    positions->init(producer, projection, valid_time_period.begin(), theState);
 
     // Update the globals
 
