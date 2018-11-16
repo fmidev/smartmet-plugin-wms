@@ -41,7 +41,7 @@
    <use transform="translate(325,175)" xlink:href="#dot"/>
    <use transform="translate(215,184)" xlink:href="#dot"/>
    <use transform="translate(323,186)" xlink:href="#dot"/>
-   <use transform="translate(373,182)" xlink:href="#dot"/>
+   <use transform="translate(374,183)" xlink:href="#dot"/>
    <use transform="translate(238,193)" xlink:href="#dot"/>
    <use transform="translate(274,194)" xlink:href="#dot"/>
    <use transform="translate(389,207)" xlink:href="#dot"/>
@@ -130,7 +130,7 @@
   <text x="330" y="180">-4</text>
   <text x="220" y="189">0</text>
   <text x="328" y="191">-1</text>
-  <text x="378" y="187">-1</text>
+  <text x="379" y="188">-1</text>
   <text x="243" y="198">-1</text>
   <text x="279" y="199">-1</text>
   <text x="394" y="212">-2</text>
