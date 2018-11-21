@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.11.16
+Version: 18.11.21
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Nov 21 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.11.21-1.fmi
+- Minor const correctness fix
+
 * Fri Nov 16 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.11.16-1.fmi
 - Fixed intersections to inherit the producer name instead of the data so that landscaped parameters can be handled too
 

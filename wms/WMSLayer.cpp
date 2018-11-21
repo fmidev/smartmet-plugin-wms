@@ -471,7 +471,7 @@ Json::Value process_legend_json(const Json::Value& jsonTemplate,
   return legendJson;
 }
 
-LegendGraphicInfo handle_json_layers(Json::Value layersJson)
+LegendGraphicInfo handle_json_layers(const Json::Value& layersJson)
 {
   LegendGraphicInfo ret;
   Json::Value nulljson;
