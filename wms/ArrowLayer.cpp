@@ -842,7 +842,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
     // Establish the data
 
-    bool use_observations = isObservation(theState);
+    bool use_observations = theState.isObservation(producer);
     Engine::Querydata::Q q = getModel(theState);
 
     // Make sure position generation is initialized
@@ -1079,7 +1079,7 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
   try
   {
     // Disable caching of observation layers
-    if (isObservation(theState))
+    if (theState.isObservation(producer))
       return 0;
 
     auto hash = Layer::hash_value(theState);

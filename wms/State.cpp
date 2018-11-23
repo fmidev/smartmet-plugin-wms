@@ -788,6 +788,39 @@ std::string State::makeQid(const std::string& thePrefix) const
   return thePrefix + Fmi::to_string(num);
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return true if the producer is for observations
+ */
+// ----------------------------------------------------------------------
+
+bool State::isObservation(const boost::optional<std::string>& theProducer) const
+{
+  std::string model = (theProducer ? *theProducer : getConfig().defaultModel());
+  return isObservation(model);
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Return true if the producer is for observations
+ */
+// ----------------------------------------------------------------------
+
+bool State::isObservation(const std::string& theProducer) const
+{
+#ifdef WITHOUT_OBSERVATION
+  return false;
+#else
+  if (getConfig().obsEngineDisabled())
+    return false;
+
+  auto observers = getObsEngine().getValidStationTypes();
+  return (observers.find(theProducer) != observers.end());
+#endif
+  
+}
+
+
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet

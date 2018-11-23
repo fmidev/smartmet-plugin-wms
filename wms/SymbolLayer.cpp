@@ -568,7 +568,8 @@ PointValues read_latlon_observations(const SymbolLayer& layer,
       const auto& values = *result;
 
       // We accept only the newest observation for each interval
-      // obsengine returns the data sorted by fmisid and by time
+      // obsengine returns the data sorted by fmisid and by time.
+      // We've used latest=true, so we should get one row only
 
       auto row = values[0].size() - 1;
       if (row != 0)
@@ -772,7 +773,7 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     // Establish the data
 
     bool is_legend = theGlobals.Exists("legend");
-    bool use_observations = isObservation(theState) && !is_legend;
+    bool use_observations = theState.isObservation(producer) && !is_legend;
     auto q = getModel(theState);
 
     // Make sure position generation is initialized
@@ -939,7 +940,7 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
   try
   {
     // Disable caching of observation layers
-    if (isObservation(theState))
+    if (theState.isObservation(producer))
       return 0;
 
     auto hash = Layer::hash_value(theState);

@@ -332,7 +332,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     //
     // Heatmap does not use the parameter currently (only flash coordinates)
     bool allowUnknownParam =
-        (isObservation(theState) && (*producer == "flash") && heatmap.resolution);
+        (theState.isObservation(producer) && (*producer == "flash") && heatmap.resolution);
 
     if (!parameter)
       throw Spine::Exception(BCP, "Parameter not set for isoband-layer!");
@@ -396,7 +396,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     {
       q = buildHeatmap(param, valid_time, theState);
     }
-    else if (isObservation(theState))
+    else if (theState.isObservation(producer))
       throw Spine::Exception(
           BCP, "Can't produce isobandlayer from observation data without heatmap configuration!");
 
@@ -591,7 +591,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
   {
     auto hash = Layer::hash_value(theState);
 
-    if (!isObservation(theState))
+    if (!theState.isObservation(producer))
       boost::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
     boost::hash_combine(hash, Dali::hash_value(parameter));
     boost::hash_combine(hash, Dali::hash_value(level));

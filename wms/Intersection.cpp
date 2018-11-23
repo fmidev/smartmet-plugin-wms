@@ -161,11 +161,14 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     if (!parameter)
       return;
 
-    auto param = Spine::ParameterFactory::instance().parse(*parameter);
+    // No polygons for observations
+
+    if (theState.isObservation(theProducer))
+      return;
 
     // Establish the data
 
-    if(!producer && !theProducer)
+    if (!producer && !theProducer)
       throw Spine::Exception(BCP, "Producer not set for intersection");
 
     auto q = theState.get(producer ? *producer : *theProducer);
@@ -173,6 +176,10 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     // This can happen when we use observations
     if (!q)
       return;
+
+    // Now that we know the parameter is not for observations, parse it
+
+    auto param = Spine::ParameterFactory::instance().parse(*parameter);
 
     // Establish the level
 

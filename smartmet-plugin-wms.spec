@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 18.11.21
+Version: 18.11.23
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -33,7 +33,7 @@ BuildRequires: smartmet-engine-querydata-devel >= 18.11.15
 BuildRequires: smartmet-engine-contour-devel >= 18.7.25
 BuildRequires: smartmet-library-gis-devel >= 18.9.29
 BuildRequires: fmt-devel >= 5.2.0
-BuildRequires: ctpp2 >= 2.8.6
+BuildRequires: ctpp2 >= 2.8.7
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
 BuildRequires: cairo-devel
@@ -42,7 +42,7 @@ BuildRequires: heatmap-devel
 Requires: cairo
 Requires: fmt >= 5.2.0
 Requires: jsoncpp
-Requires: ctpp2 >= 2.8.6
+Requires: ctpp2 >= 2.8.7
 Requires: libconfig
 Requires: smartmet-library-gis >= 18.9.29
 Requires: smartmet-library-macgyver >= 18.11.12
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Fri Nov 23 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.11.23-1.fmi
+- Fixed handling of observations
+
 * Wed Nov 21 2018 Mika Heiskanen <mika.heiskanen@fmi.fi> - 18.11.21-1.fmi
 - Minor const correctness fix
 

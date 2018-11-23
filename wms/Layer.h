@@ -64,9 +64,6 @@ class Layer : public Properties
   // Does the layer satisfy resolution etc constraints?
   bool validLayer(const State& theState) const;
 
-  // Establish whether the producer is for observations
-  bool isObservation(const State& theState) const;
-
   // Get the model data
   Engine::Querydata::Q getModel(const State& theState) const;
 

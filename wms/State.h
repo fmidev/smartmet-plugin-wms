@@ -165,6 +165,10 @@ class State
   const boost::optional<boost::posix_time::ptime>& getExpirationTime() const;
   void updateExpirationTime(const boost::posix_time::ptime& theTime) const;
 
+  // Test if producer is for observations
+  bool isObservation(const boost::optional<std::string>& theProducer) const;
+  bool isObservation(const std::string& theProducer) const;
+  
  private:
   const Plugin& itsPlugin;
   mutable std::map<Engine::Querydata::Producer, Engine::Querydata::Q> itsQCache;

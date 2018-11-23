@@ -108,27 +108,6 @@ bool Layer::validLayer(const State& theState) const
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Return true if the producer refers to observations
- */
-// ----------------------------------------------------------------------
-
-bool Layer::isObservation(const State& theState) const
-{
-  std::string model = (producer ? *producer : theState.getConfig().defaultModel());
-
-#ifdef WITHOUT_OBSERVATION
-  return false;
-#else
-  if (theState.getConfig().obsEngineDisabled())
-    return false;
-
-  auto observers = theState.getObsEngine().getValidStationTypes();
-  return (observers.find(model) != observers.end());
-#endif
-}
-
-// ----------------------------------------------------------------------
-/*!
  * \brief Get the model data
  *
  * Note: It is not an error to request a model when the producer
@@ -140,10 +119,10 @@ Engine::Querydata::Q Layer::getModel(const State& theState) const
 {
   try
   {
-    if (isObservation(theState))
-      return {};
-
     std::string model = (producer ? *producer : theState.getConfig().defaultModel());
+
+    if (theState.isObservation(model))
+      return {};
 
     if (!origintime)
       return theState.get(model);
