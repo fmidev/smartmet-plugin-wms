@@ -2,8 +2,8 @@
     "producer": "lot",
     "title": "Test",
     "projection": {
-	"crs": "EPSG:3857",
-	"x1": 11000000, "y1": 0, "x2": 11250000, "y2": 250000,
+	"crs": "WGS84",
+	"x1": 0, "y1": 0, "x2": 22, "y2": 22,
 	"xsize": 600,
 	"ysize": 600
     },
@@ -16,16 +16,8 @@
                     "attributes": {
                         "shape-rendering": "crispEdges"
                     },
-//                    "isobands": "json:isobands/sm.json",
-"isobands":
-[
-    {
-        "attributes": { "fill": "blue" },
-        "hilimit": 45.220,
-        "qid": "lower"
-    }
-],
-                   "css": "isobands/generic.css",
+                    "isobands": "json:isobands/sm.json",
+                    "css": "isobands/generic.css",
                     "layer_type": "isoband"
                 }
 // ,
