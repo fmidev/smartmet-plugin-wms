@@ -4,6 +4,11 @@
     "projection":
     {
 	"crs": "data",
+	"bboxcrs": "WGS84",
+	"x1": -40,
+	"y1": 0,
+	"x2": 70,
+	"y2": 89,
 	"xsize": 500,
 	"ysize": 500
     },
@@ -21,12 +26,14 @@
 		    "map":
 		    {
 			"schema": "natural_earth",
-			"table": "admin_0_countries",
-			"where": "iso_a2 NOT IN ('FI','AX')"
+			"table": "admin_0_countries"
+//			"where": "iso_a2 IN ('FI','AX')"
+//			"where": "iso_a2 NOT IN ('FI','AX','SE','NO','DK','ES','LV','LT','RU','GE','PO')"
 		    },
 		    "attributes":
 		    {
 			"id": "europe_country",
+			"stroke": "black",
 			"fill": "rgb(120,120,0)"
 		    }
 		}
