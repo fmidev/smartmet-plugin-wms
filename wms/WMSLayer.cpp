@@ -1286,11 +1286,21 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
 
           // Intersect with target EPSG bounding box (latlon) if it is available
 
-          Engine::Gis::BBox epsg_box = crs_bbox.at(id);
-          auto x1 = std::max(geographicBoundingBox.xMin, epsg_box.west);
-          auto x2 = std::min(geographicBoundingBox.xMax, epsg_box.east);
-          auto y1 = std::max(geographicBoundingBox.yMin, epsg_box.south);
-          auto y2 = std::min(geographicBoundingBox.yMax, epsg_box.north);
+          auto x1 = geographicBoundingBox.xMin;
+          auto x2 = geographicBoundingBox.xMax;
+          auto y1 = geographicBoundingBox.yMin;
+          auto y2 = geographicBoundingBox.yMax;
+
+          auto epsg_info = crs_bbox.find(id);
+
+          if (epsg_info != crs_bbox.end())
+          {
+            auto& epsg_box = epsg_info->second;
+            x1 = std::max(x1, epsg_box.west);
+            x2 = std::min(x2, epsg_box.east);
+            y1 = std::max(y1, epsg_box.south);
+            y2 = std::min(y2, epsg_box.north);
+          }
 
           // Produce bbox only if there is overlap
 
