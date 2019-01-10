@@ -1356,11 +1356,20 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
       if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
       {
-        std::string layerName = *(theRequest.getParameter("LAYER"));
-        std::string styleName = *(theRequest.getParameter("STYLE"));
-        if (styleName.empty())
-          styleName = "default";
+        auto layerOpt = theRequest.getParameter("LAYER");
+        if (!layerOpt)
+        {
+          throw Spine::Exception(BCP, "Layer must be defined in GetLegendGraphic request")
+              .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
+        }
+        std::string layerName = *layerOpt;
+
+        // Style is optional.
+        auto styleOpt = theRequest.getParameter("STYLE");
+        std::string styleName = (styleOpt && !styleOpt->empty() ? *styleOpt : "default");
+
         itsWMSConfig->getLegendGraphic(layerName, styleName, product, theState);
+
         // getLegendGraphic-function sets width and height, but if width & height is given in
         // request override values
         std::string xsize = Fmi::to_string(*product.width);
