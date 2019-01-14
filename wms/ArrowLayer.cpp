@@ -953,10 +953,17 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       double wdir = pointvalue.direction;
       double wspd = pointvalue.speed;
 
+      if (wdir == kFloatMissing)
+        continue;
+
+      if (check_speeds && wspd == kFloatMissing)
+        continue;
+
       // Unit transformation
       double xmultiplier = (multiplier ? *multiplier : 1.0);
       double xoffset = (offset ? *offset : 0.0);
-      wspd = xmultiplier * wspd + xoffset;
+      if (wspd != kFloatMissing)
+        wspd = xmultiplier * wspd + xoffset;
 
       // Apply final rotation to output coordinate system
       auto fix = Fmi::OGR::gridNorth(*transformation, point.latlon.X(), point.latlon.Y());
@@ -969,7 +976,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
       // Disable rotation for slow wind speeds if a limit is set
       int nrotate = lround(rotate);
-      if (minrotationspeed && wspd < *minrotationspeed)
+      if (wspd != kFloatMissing && minrotationspeed && wspd < *minrotationspeed)
         nrotate = 0;
 
       CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);

@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.1.10
+Version: 19.1.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Mon Jan 14 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.1.14-1.fmi
+- Fixed ArrowLayer to handle missing values properly
+
 * Thu Jan 10 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.1.10-1.fmi
 - Fixed GetLegendGraphic not to crash if the style option is not given
 
