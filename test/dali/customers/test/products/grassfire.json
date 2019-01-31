@@ -1,0 +1,298 @@
+{
+    "title": "Grass Fire Warnings map",
+    "projection":
+    {
+	"xsize": 500,
+	"ysize": 500,
+	"crs": "EPSG:4326",	// WGS84
+	"cy": 64.8,
+	"cx": 25.4,
+	"resolution": 2.5
+    },
+    "producer": "grassfire",
+    "views":
+    [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers":
+	    [
+		{
+		    "qid": "sea",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "white"
+		    }
+		},
+		{
+		    "qid": "warnings",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"pgname": "gis",
+			"schema": "public",
+			"table": "varoalueet"
+		    },
+		    "attributes":
+		    {
+			"fill": "grey",
+			"stroke": "black",
+			"stroke-width": "0.2px"
+		    },
+		    "styles":
+		    {
+			"parameter": "GrassFireIndex",
+			"field": "nimi",
+			"features":
+			[
+			    {
+				"value": "Uusimaa",
+				"number": 1,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Varsinais-Suomi",
+				"number": 2,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Satakunta",
+				"number": 4,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Kanta-Häme",
+				"number": 5,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Pirkanmaa",
+				"number": 6,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Päijät-Häme",
+				"number": 7,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Kymenlaakso",
+				"number": 8,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Etelä-Karjala",
+				"number": 9,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Etelä-Savo",
+				"number": 10,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Pohjois-Savo",
+				"number": 11,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Pohjois-Karjala",
+				"number": 12,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Keski-Suomi",
+				"number": 13,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Etelä-Pohjanmaa",
+				"number": 14,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Pohjanmaa",
+				"number": 15,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Keski-Pohjanmaa",
+				"number": 16,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Pohjois-Pohjanmaan länsiosa",
+				"number": 17,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Kainuu",
+				"number": 18,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Ahvenanmaa",
+				"number": 21,
+				"attributes": { "stroke-width": "1px" }
+			    },
+			    {
+				"value": "Enontekiö",
+				"number": 47
+			    },
+			    {
+				"value": "Inari",
+				"number": 148
+			    },
+			    {
+				"value": "Kemi",
+				"number": 240
+			    },
+			    {
+				"value": "Keminmaa",
+				"number": 241
+			    },
+			    {
+				"value": "Kittilä",
+				"number": 261
+			    },
+			    {
+				"value": "Kolari",
+				"number": 273
+			    },
+			    {
+				"value": "Kemijärvi",
+				"number": 320
+			    },
+			    {
+				"value": "Muonio",
+				"number": 498
+			    },
+			    {
+				"value": "Pelkosenniemi",
+				"number": 583
+			    },
+			    {
+				"value": "Posio",
+				"number": 614
+			    },
+			    {
+				"value": "Ranua",
+				"number": 683
+			    },
+			    {
+				"value": "Rovaniemi",
+				"number": 698
+			    },
+			    {
+				"value": "Salla",
+				"number": 732
+			    },
+			    {
+				"value": "Savukoski",
+				"number": 742
+			    },
+			    {
+				"value": "Simo",
+				"number": 751
+			    },
+			    {
+				"value": "Sodankylä",
+				"number": 758
+			    },
+			    {
+				"value": "Tervola",
+				"number": 845
+			    },
+			    {
+				"value": "Tornio",
+				"number": 851
+			    },
+			    {
+				"value": "Pello",
+				"number": 854
+			    },
+			    {
+				"value": "Utsjoki",
+				"number": 890
+			    },
+			    {
+				"value": "Ylitornio",
+				"number": 976
+			    }
+			],
+			"attributes":
+			[
+			    {
+				"lolimit": 0,
+				"hilimit": 1,
+				"attributes":
+				{
+				    "fill": "white"
+				}
+			    },
+			    {
+				"lolimit": 1,
+				"hilimit": 2,
+				"attributes":
+				{
+				    "fill": "rgb(0,255,255)"
+				}
+			    },
+			    {
+				"lolimit": 2,
+				"hilimit": 3,
+				"attributes":
+				{
+				    "fill": "rgb(64,189,65)"
+				}
+			    },
+			    {
+				"lolimit": 3,
+				"hilimit": 4,
+				"attributes":
+				{
+				    "fill": "rgb(189,189,65)"
+				}
+			    },
+			    {
+				"lolimit": 4,
+				"hilimit": 5,
+				"attributes":
+				{
+				    "fill": "rgb(255,130,0)"
+				}
+			    },
+			    {
+				"lolimit": 5,
+				"hilimit": 5.5,
+				"attributes":
+				{
+				    "fill": "rgb(255,0,0)"
+				}
+			    },
+			    {
+				"lolimit": 5.5,
+				"hilimit": 6,
+				"attributes":
+				{
+				    "fill": "rgb(255,0,130)"
+				}
+			    },
+			    {
+				"lolimit": 6,
+				"attributes":
+				{
+				    "fill": "rgb(130,0,255)"
+				}
+			    }
+			]
+		    }
+		}
+	    ]
+        }
+    ]
+}

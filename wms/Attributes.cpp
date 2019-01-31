@@ -30,6 +30,20 @@ void Attributes::add(const std::string& theName, const std::string& theValue)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Add multiple attributes
+ */
+// ----------------------------------------------------------------------
+
+void Attributes::add(const Attributes& theAttributes)
+{
+  // We want the new attributes to override old ones, hence we use an explicit loop
+
+  for (const auto& name_value : theAttributes.attributes)
+    attributes[name_value.first] = name_value.second;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Initialize attributes from JSON
  *
  * Note: We allow JSON values to be integers and doubles, but
@@ -115,6 +129,9 @@ void Attributes::init(const Json::Value& theJson, const Config& /* theConfig */)
  *       Hence we know the attributes should not contain a style tag.
  *
  * Note: We allow qid in the input, but disable it in the output
+ *
+ * Note: Merging multiple styles does not work. Better merge Attributes
+ *       first instead of calling generate multiple times.
  */
 // ----------------------------------------------------------------------
 

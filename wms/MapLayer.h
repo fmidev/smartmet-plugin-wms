@@ -9,6 +9,8 @@
 #include "Attributes.h"
 #include "Layer.h"
 #include "Map.h"
+#include "MapStyles.h"
+#include <boost/optional.hpp>
 
 namespace SmartMet
 {
@@ -35,7 +37,12 @@ class MapLayer : public Layer
   Map map;
   double precision = 1.0;
 
+  boost::optional<MapStyles> styles;
+
  private:
+  void generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  void generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+
 };  // class MapLayer
 
 }  // namespace Dali

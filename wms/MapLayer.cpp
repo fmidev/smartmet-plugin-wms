@@ -1,10 +1,9 @@
-//======================================================================
-
 #include "MapLayer.h"
 #include "Config.h"
 #include "Geometry.h"
 #include "Hash.h"
 #include "Layer.h"
+#include "Select.h"
 #include "State.h"
 #include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
@@ -14,6 +13,7 @@
 #include <gis/OGR.h>
 #include <gis/Types.h>
 #include <spine/Exception.h>
+#include <spine/ParameterFactory.h>
 
 namespace SmartMet
 {
@@ -52,6 +52,10 @@ void MapLayer::init(const Json::Value& theJson,
     json = theJson.get("precision", nulljson);
     if (!json.isNull())
       precision = json.asDouble();
+
+    json = theJson.get("styles", nulljson);
+    if (!json.isNull())
+      (styles = MapStyles())->init(json, theConfig);
   }
   catch (...)
   {
@@ -89,6 +93,27 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       projection.update(q);
     }
 
+    if (!styles)
+      generate_full_map(theGlobals, theLayersCdt, theState);
+    else
+      generate_styled_map(theGlobals, theLayersCdt, theState);
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate a map with no feature specific styling
+ */
+// ----------------------------------------------------------------------
+
+void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+{
+  try
+  {
     auto crs = projection.getCRS();
     const Fmi::Box& box = projection.getBox();
 
@@ -201,6 +226,211 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Generate a map with feature specific styling
+ */
+// ----------------------------------------------------------------------
+
+void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+{
+  try
+  {
+    if (!producer)
+      throw Spine::Exception(BCP, "MapLayer producer not set for styling");
+
+    if (theState.isObservation(producer))
+      throw Spine::Exception(BCP, "Observations not supported in MapLayer")
+          .addParameter("producer", *producer);
+
+    // Establish data
+
+    auto q = getModel(theState);
+
+    if (!q)
+      throw Spine::Exception(BCP, "MapLayer querydata undefined");
+
+    if (q->isGrid())
+      throw Spine::Exception(BCP, "MapLayer querydata must be point data, not gridded");
+
+    // Set the parameter and time
+
+    if (styles->parameter.empty())
+      throw Spine::Exception(BCP, "MapLayer styling parameter not set");
+    auto param = Spine::ParameterFactory::instance().parse(styles->parameter);
+
+    if (!q->param(param.number()))
+      throw Spine::Exception(BCP, "MapLayer parameter not available in querydata")
+          .addParameter("parameter", styles->parameter);
+
+    auto valid_time = getValidTime();
+    if (!q->time(valid_time))
+      throw Spine::Exception(BCP, "Selected MapLayer time not available in querydata")
+          .addParameter("time", Fmi::to_iso_string(valid_time));
+
+    // Establish projection, bbox and optional clipping bbox
+
+    auto crs = projection.getCRS();
+    const Fmi::Box& box = projection.getBox();
+
+    const auto clipbox = getClipBox(box);
+
+    // Fetch the features in our projection
+
+    Fmi::Features features;
+
+    const auto& gis = theState.getGisEngine();
+    {
+      std::string report = "getFeatures finished in %t sec CPU, %w sec real\n";
+      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      if (theState.useTimer())
+        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+
+      map.options.fieldnames.insert(styles->field);
+      features = gis.getFeatures(crs.get(), map.options);
+
+      for (const auto& feature : features)
+      {
+        if (!feature->geom || feature->geom->IsEmpty() != 0)
+        {
+          std::string msg =
+              "Requested map data is empty: '" + map.options.schema + '.' + map.options.table + "'";
+          if (map.options.minarea)
+            msg += " Is the minarea limit too large?";
+          throw Spine::Exception(BCP, msg);
+        }
+      }
+    }
+
+    if (css)
+    {
+      std::string name = theState.getCustomer() + "/" + *css;
+      theGlobals["css"][name] = theState.getStyle(*css);
+    }
+
+    // Handle each feature separately
+
+    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
+    group_cdt["start"] = "<g";
+    group_cdt["end"] = "</g>";
+    group_cdt["attributes"] = CTPP::CDT(CTPP::CDT::HASH_VAL);
+    theState.addAttributes(theGlobals, group_cdt, attributes);
+
+    // Clip if necessary
+
+    addClipRect(theLayersCdt, theGlobals, box, theState);
+
+    int counter = 0;
+
+    for (const auto& feature : features)
+    {
+      if (feature->geom == nullptr || feature->geom->IsEmpty() == 1)
+        continue;
+
+      // Clip the geometry
+      OGRGeometryPtr geom = feature->geom;
+      if (map.lines)
+        geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
+      else
+        geom.reset(Fmi::OGR::polyclip(*geom, clipbox));  // fast and hence not cached in gisengine
+
+      if (!geom)
+        continue;
+
+      // Increase counter for each feature
+
+      std::string iri = qid + Fmi::to_string(++counter);
+
+      CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
+      map_cdt["iri"] = iri;
+      map_cdt["type"] = Geometry::name(*geom, theState.getType());
+      map_cdt["layertype"] = "map";
+      map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
+
+      theGlobals["paths"][iri] = map_cdt;
+
+      // Establish station to pick from querydata
+
+      boost::optional<std::string> station_name;
+      int station_number = -1;
+      const auto& feature_value =
+          feature->attributes.at(styles->field);  // <int,double,string,time>
+
+      if (styles->features.empty())
+      {
+        // Assume feature value matches station number
+        if (feature_value.which() == 0)
+          station_number = boost::get<int>(feature_value);
+        else
+          throw Spine::Exception(BCP, "Feature type for a styled MapLayer must be int or string");
+      }
+      else
+      {
+        auto station_pos = styles->features.end();
+
+        if (feature_value.which() == 2)
+          station_pos = styles->features.find(boost::get<std::string>(feature_value));
+        else if (feature_value.which() == 0)
+          station_pos = styles->features.find(Fmi::to_string(boost::get<int>(feature_value)));
+        else
+          throw Spine::Exception(BCP, "Feature type for a styled MapLayer must be int or string");
+
+        if (station_pos == styles->features.end())
+          continue;
+        station_name = station_pos->first;
+        station_number = station_pos->second;
+      }
+
+      auto info = q->info();
+      if (!info->Location(station_number))
+        continue;
+
+      auto value = info->FloatValue();
+      if (value == kFloatMissing)
+        continue;
+
+      // Do not produce a use-statement for empty data or in the header
+      if (geom->IsEmpty() == 0)
+      {
+        // Add the SVG use element
+        CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+        tag_cdt["start"] = "<use";
+        tag_cdt["end"] = "/>";
+
+        // Cannot call addAttributes two times or style will be messed up, better
+        // create one Attributes object and add everything once
+        Attributes attrs;
+        attrs.add("xlink:href", "#" + iri);
+
+        // Add feature specific attributes
+        if (!styles->features.empty() && station_name)
+        {
+          const auto& feature_attrs = styles->feature_attributes.find(*station_name);
+          if (feature_attrs != styles->feature_attributes.end())
+            attrs.add(feature_attrs->second);
+        }
+
+        // Add data specific attributes. These will overide feature specific settings
+        auto selection = Select::attribute(styles->data_attributes, value);
+        if (selection)
+          attrs.add(selection->attributes);
+
+        // And this will generate a single style-setting joining all styles set above
+        theState.addAttributes(theGlobals, tag_cdt, attrs);
+
+        // Tag to group
+        group_cdt["tags"].PushBack(tag_cdt);
+      }
+    }
+
+    theLayersCdt.PushBack(group_cdt);
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value
  */
 // ----------------------------------------------------------------------
@@ -212,6 +442,7 @@ std::size_t MapLayer::hash_value(const State& theState) const
     auto hash = Layer::hash_value(theState);
     boost::hash_combine(hash, Dali::hash_value(map, theState));
     boost::hash_combine(hash, boost::hash_value(precision));
+    boost::hash_combine(hash, Dali::hash_value(styles, theState));
     return hash;
   }
   catch (...)

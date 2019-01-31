@@ -138,6 +138,19 @@ inline std::size_t hash_value(const std::map<T, S>& objs)
   return hash;
 }
 
+// We assume the key is some simple type, and value is from Dali
+template <typename T, typename S>
+inline std::size_t hash_value(const std::map<T, S>& objs, const State& theState)
+{
+  std::size_t hash = 0;
+  for (const auto& obj : objs)
+  {
+    boost::hash_combine(hash, Dali::hash_value(obj.first));
+    boost::hash_combine(hash, Dali::hash_value(obj.second, theState));
+  }
+  return hash;
+}
+
 // Symbols. Unfortunately we cannot just use getSymbol since
 // the symbol may be defined inline in the json. Also, we're
 // not checking markers, filters, patterns or gradients either,
