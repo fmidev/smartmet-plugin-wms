@@ -164,6 +164,10 @@
 				"number": 273
 			    },
 			    {
+				"value": "Kuusamo",
+				"number": 305
+			    },
+			    {
 				"value": "Kemijärvi",
 				"number": 320
 			    },
@@ -178,6 +182,10 @@
 			    {
 				"value": "Posio",
 				"number": 614
+			    },
+			    {
+				"value": "Pudasjärvi",
+				"number": 615
 			    },
 			    {
 				"value": "Ranua",
@@ -202,6 +210,10 @@
 			    {
 				"value": "Sodankylä",
 				"number": 758
+			    },
+			    {
+				"value": "Taivalkoski",
+				"number": 832
 			    },
 			    {
 				"value": "Tervola",
