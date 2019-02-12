@@ -70,9 +70,9 @@ std::size_t Location::hash_value(const State& /* theState */) const
   try
   {
     auto hash = Dali::hash_value(longitude);
-    boost::hash_combine(hash, Dali::hash_value(latitude));
-    boost::hash_combine(hash, Dali::hash_value(dx));
-    boost::hash_combine(hash, Dali::hash_value(dy));
+    Dali::hash_combine(hash, Dali::hash_value(latitude));
+    Dali::hash_combine(hash, Dali::hash_value(dx));
+    Dali::hash_combine(hash, Dali::hash_value(dy));
     return hash;
   }
   catch (...)

@@ -246,7 +246,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;
-    boost::hash_combine(valueshash, options.data_hash_value());
+    Dali::hash_combine(valueshash, options.data_hash_value());
 
     std::string wkt = q->area().WKT();
 
@@ -345,18 +345,18 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    boost::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
-    boost::hash_combine(hash, Dali::hash_value(parameter));
-    boost::hash_combine(hash, Dali::hash_value(level));
-    boost::hash_combine(hash, Dali::hash_value(isolines, theState));
-    boost::hash_combine(hash, Dali::hash_value(smoother, theState));
-    boost::hash_combine(hash, Dali::hash_value(precision));
-    boost::hash_combine(hash, Dali::hash_value(multiplier));
-    boost::hash_combine(hash, Dali::hash_value(offset));
-    boost::hash_combine(hash, Dali::hash_value(outside, theState));
-    boost::hash_combine(hash, Dali::hash_value(inside, theState));
-    boost::hash_combine(hash, Dali::hash_value(sampling, theState));
-    boost::hash_combine(hash, Dali::hash_value(intersections, theState));
+    Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+    Dali::hash_combine(hash, Dali::hash_value(parameter));
+    Dali::hash_combine(hash, Dali::hash_value(level));
+    Dali::hash_combine(hash, Dali::hash_value(isolines, theState));
+    Dali::hash_combine(hash, Dali::hash_value(smoother, theState));
+    Dali::hash_combine(hash, Dali::hash_value(precision));
+    Dali::hash_combine(hash, Dali::hash_value(multiplier));
+    Dali::hash_combine(hash, Dali::hash_value(offset));
+    Dali::hash_combine(hash, Dali::hash_value(outside, theState));
+    Dali::hash_combine(hash, Dali::hash_value(inside, theState));
+    Dali::hash_combine(hash, Dali::hash_value(sampling, theState));
+    Dali::hash_combine(hash, Dali::hash_value(intersections, theState));
     return hash;
   }
   catch (...)

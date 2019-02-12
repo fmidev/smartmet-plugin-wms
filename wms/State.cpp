@@ -817,9 +817,7 @@ bool State::isObservation(const std::string& theProducer) const
   auto observers = getObsEngine().getValidStationTypes();
   return (observers.find(theProducer) != observers.end());
 #endif
-  
 }
-
 
 }  // namespace Dali
 }  // namespace Plugin

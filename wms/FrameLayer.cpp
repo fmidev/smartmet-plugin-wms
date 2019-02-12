@@ -506,10 +506,10 @@ std::size_t FrameDimension::hash_value() const
 {
   std::size_t hash = 0;
 
-  boost::hash_combine(hash, Dali::hash_value(bottomLatitude));
-  boost::hash_combine(hash, Dali::hash_value(leftLongitude));
-  boost::hash_combine(hash, Dali::hash_value(topLatitude));
-  boost::hash_combine(hash, Dali::hash_value(rightLongitude));
+  Dali::hash_combine(hash, Dali::hash_value(bottomLatitude));
+  Dali::hash_combine(hash, Dali::hash_value(leftLongitude));
+  Dali::hash_combine(hash, Dali::hash_value(topLatitude));
+  Dali::hash_combine(hash, Dali::hash_value(rightLongitude));
 
   return hash;
 }
@@ -518,8 +518,8 @@ std::size_t TicInfo::hash_value() const
 {
   std::size_t hash = 0;
 
-  boost::hash_combine(hash, Dali::hash_value(step));
-  boost::hash_combine(hash, Dali::hash_value(length));
+  Dali::hash_combine(hash, Dali::hash_value(step));
+  Dali::hash_combine(hash, Dali::hash_value(length));
 
   return hash;
 }
@@ -528,16 +528,16 @@ std::size_t FrameScale::hash_value() const
 {
   std::size_t hash = 0;
 
-  boost::hash_combine(hash, dimension.hash_value());
+  Dali::hash_combine(hash, dimension.hash_value());
   if (smallTic)
-    boost::hash_combine(hash, smallTic->hash_value());
+    Dali::hash_combine(hash, smallTic->hash_value());
   if (intermediateTic)
-    boost::hash_combine(hash, intermediateTic->hash_value());
+    Dali::hash_combine(hash, intermediateTic->hash_value());
   if (longTic)
-    boost::hash_combine(hash, longTic->hash_value());
-  boost::hash_combine(hash, Dali::hash_value(ticPosition));
-  boost::hash_combine(hash, Dali::hash_value(labelStep));
-  boost::hash_combine(hash, Dali::hash_value(labelPosition));
+    Dali::hash_combine(hash, longTic->hash_value());
+  Dali::hash_combine(hash, Dali::hash_value(ticPosition));
+  Dali::hash_combine(hash, Dali::hash_value(labelStep));
+  Dali::hash_combine(hash, Dali::hash_value(labelPosition));
 
   return hash;
 }
@@ -546,14 +546,15 @@ std::size_t FrameLayer::hash_value(const State& theState) const
 {
   try
   {
-    auto hash = Layer::hash_value(theState);
-    boost::hash_combine(hash, itsPrecision);
-    boost::hash_combine(hash, itsInnerBorder.hash_value());
+    std::size_t hash = 0;
+    Dali::hash_combine(hash, Layer::hash_value(theState));
+    Dali::hash_combine(hash, itsPrecision);
+    Dali::hash_combine(hash, itsInnerBorder.hash_value());
     if (itsOuterBorder)
-      boost::hash_combine(hash, itsOuterBorder->hash_value());
+      Dali::hash_combine(hash, itsOuterBorder->hash_value());
     if (itsScale)
-      boost::hash_combine(hash, itsScale->hash_value());
-    boost::hash_combine(hash, Dali::hash_value(itsScaleAttributes, theState));
+      Dali::hash_combine(hash, itsScale->hash_value());
+    Dali::hash_combine(hash, Dali::hash_value(itsScaleAttributes, theState));
 
     return hash;
   }

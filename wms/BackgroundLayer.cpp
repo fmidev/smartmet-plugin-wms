@@ -1,8 +1,8 @@
 #include "BackgroundLayer.h"
 #include "Config.h"
+#include "Hash.h"
 #include "Layer.h"
 #include "State.h"
-
 #include <ctpp2/CDT.hpp>
 #include <gis/Box.h>
 #include <macgyver/StringConversion.h>
@@ -102,7 +102,8 @@ std::size_t BackgroundLayer::hash_value(const State& theState) const
 {
   try
   {
-    auto hash = Layer::hash_value(theState);
+    std::size_t hash = 0;
+    Dali::hash_combine(hash, Layer::hash_value(theState));
     return hash;
   }
   catch (...)

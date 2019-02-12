@@ -294,17 +294,17 @@ std::size_t Properties::hash_value(const State& theState) const
   try
   {
     auto hash = Dali::hash_value(language);
-    boost::hash_combine(hash, Dali::hash_value(producer));
-    boost::hash_combine(hash, Dali::hash_value(origintime));
+    Dali::hash_combine(hash, Dali::hash_value(producer));
+    Dali::hash_combine(hash, Dali::hash_value(origintime));
     // timezone is irrelevant, time is always in UTC timen
-    boost::hash_combine(hash, Dali::hash_value(time));
-    boost::hash_combine(hash, Dali::hash_value(time_offset));
-    boost::hash_combine(hash, Dali::hash_value(interval_start));
-    boost::hash_combine(hash, Dali::hash_value(interval_end));
-    boost::hash_combine(hash, Dali::hash_value(xmargin));
-    boost::hash_combine(hash, Dali::hash_value(ymargin));
-    boost::hash_combine(hash, Dali::hash_value(clip));
-    boost::hash_combine(hash, Dali::hash_value(projection, theState));
+    Dali::hash_combine(hash, Dali::hash_value(time));
+    Dali::hash_combine(hash, Dali::hash_value(time_offset));
+    Dali::hash_combine(hash, Dali::hash_value(interval_start));
+    Dali::hash_combine(hash, Dali::hash_value(interval_end));
+    Dali::hash_combine(hash, Dali::hash_value(xmargin));
+    Dali::hash_combine(hash, Dali::hash_value(ymargin));
+    Dali::hash_combine(hash, Dali::hash_value(clip));
+    Dali::hash_combine(hash, Dali::hash_value(projection, theState));
     return hash;
   }
   catch (...)

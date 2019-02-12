@@ -151,16 +151,16 @@ std::size_t Label::hash_value(const State& /* theState */) const
   try
   {
     auto hash = Dali::hash_value(dx);
-    boost::hash_combine(hash, Dali::hash_value(dy));
-    boost::hash_combine(hash, Dali::hash_value(multiplier));
-    boost::hash_combine(hash, Dali::hash_value(offset));
-    boost::hash_combine(hash, Dali::hash_value(format));
-    boost::hash_combine(hash, Dali::hash_value(missing));
-    boost::hash_combine(hash, Dali::hash_value(precision));
-    boost::hash_combine(hash, Dali::hash_value(prefix));
-    boost::hash_combine(hash, Dali::hash_value(suffix));
-    boost::hash_combine(hash, Dali::hash_value(plusprefix));
-    boost::hash_combine(hash, Dali::hash_value(minusprefix));
+    Dali::hash_combine(hash, Dali::hash_value(dy));
+    Dali::hash_combine(hash, Dali::hash_value(multiplier));
+    Dali::hash_combine(hash, Dali::hash_value(offset));
+    Dali::hash_combine(hash, Dali::hash_value(format));
+    Dali::hash_combine(hash, Dali::hash_value(missing));
+    Dali::hash_combine(hash, Dali::hash_value(precision));
+    Dali::hash_combine(hash, Dali::hash_value(prefix));
+    Dali::hash_combine(hash, Dali::hash_value(suffix));
+    Dali::hash_combine(hash, Dali::hash_value(plusprefix));
+    Dali::hash_combine(hash, Dali::hash_value(minusprefix));
     return hash;
   }
   catch (...)

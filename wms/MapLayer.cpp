@@ -440,9 +440,9 @@ std::size_t MapLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    boost::hash_combine(hash, Dali::hash_value(map, theState));
-    boost::hash_combine(hash, boost::hash_value(precision));
-    boost::hash_combine(hash, Dali::hash_value(styles, theState));
+    Dali::hash_combine(hash, Dali::hash_value(map, theState));
+    Dali::hash_combine(hash, boost::hash_value(precision));
+    Dali::hash_combine(hash, Dali::hash_value(styles, theState));
     return hash;
   }
   catch (...)

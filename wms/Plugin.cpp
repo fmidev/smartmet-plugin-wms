@@ -6,6 +6,7 @@
 
 #include "Plugin.h"
 #include "CaseInsensitiveComparator.h"
+#include "Hash.h"
 #include "Mime.h"
 #include "Product.h"
 #include "State.h"
@@ -147,7 +148,8 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
     // If request was ETag request, respond accordingly
     if (theRequest.getHeader("X-Request-ETag"))
     {
-      theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
+      if (product_hash != invalid_hash)
+        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setHeader("Content-Type", mimeType(product.type));
       theResponse.setStatus(Spine::HTTP::Status::no_content);
 
@@ -158,6 +160,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
         boost::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
         theResponse.setHeader("Expires", tformat->format(*expires));
       }
+
       return;
     }
 
@@ -291,7 +294,7 @@ void Plugin::formatResponse(const std::string &theSvg,
       else
         throw Spine::Exception(BCP, "Cannot convert SVG to unknown format '" + theType + "'");
 
-      if (theHash != 0)
+      if (theHash != invalid_hash)
       {
 #ifdef MYDEBUG
         std::cout << "Inserting product to cache with hash " << theHash << std::endl;
@@ -409,8 +412,10 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       const ptime t_now = boost::posix_time::second_clock::universal_time();
       theResponse.setHeader("Last-Modified", tformat->format(t_now));
 
-      // Send expiration header only if there was no error
-      bool is_error = (static_cast<int>(theResponse.getStatus()) < 300);
+      // Send expiration header only if there was no error. Note: 304 Not Modified must pass!
+
+      bool is_error = (static_cast<int>(theResponse.getStatus()) >= 400);
+
       if (!is_error)
       {
         const auto &expires = state.getExpirationTime();
@@ -1403,10 +1408,15 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     auto product_hash = product.hash_value(theState);
 
-    // If request was ETag request, respond accordingly
+    // We always return the ETag
+
+    if (product_hash != invalid_hash)
+      theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
+
+    // If request was an ETag request, we're done already
+
     if (thisRequest.getHeader("X-Request-ETag"))
     {
-      theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setHeader("Content-Type", mimeType(product.type));
       theResponse.setStatus(Spine::HTTP::Status::no_content);
       return WMSQueryStatus::OK;
@@ -1426,8 +1436,6 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
       theResponse.setHeader("Content-Type", mimeType(product.type));
 
       // For frontend caching
-      theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
-
       theResponse.setContent(obj);
       return WMSQueryStatus::OK;
     }
@@ -1557,15 +1565,13 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Spine::Exception &exception,
       throw ex;
     }
 
-    auto product_hash = 0;
-
     formatResponse(output.str(),
                    product.type,
                    theRequest,
                    theResponse,
                    theState.useTimer(),
                    product,
-                   product_hash);
+                   invalid_hash);
 
     return WMSQueryStatus::OK;
   }

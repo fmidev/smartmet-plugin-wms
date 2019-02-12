@@ -156,7 +156,7 @@ std::size_t Product::hash_value(const State& theState) const
 {
   try
   {
-    // Note: Dali::hash_combine propagates zeros to end result
+    // Note: Dali::hash_combine propagates invalid_hash results to final hash value
     auto hash = Dali::hash_value(svg_tmpl);
     Dali::hash_combine(hash, Dali::hash_value(svg_tmpl));
     Dali::hash_combine(hash, Dali::hash_value(type));

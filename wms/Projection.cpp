@@ -188,16 +188,16 @@ std::size_t Projection::hash_value(const State& /* theState */) const
   try
   {
     auto hash = Dali::hash_value(crs);
-    boost::hash_combine(hash, Dali::hash_value(xsize));
-    boost::hash_combine(hash, Dali::hash_value(ysize));
-    boost::hash_combine(hash, Dali::hash_value(x1));
-    boost::hash_combine(hash, Dali::hash_value(y1));
-    boost::hash_combine(hash, Dali::hash_value(x2));
-    boost::hash_combine(hash, Dali::hash_value(y2));
-    boost::hash_combine(hash, Dali::hash_value(cx));
-    boost::hash_combine(hash, Dali::hash_value(cy));
-    boost::hash_combine(hash, Dali::hash_value(resolution));
-    boost::hash_combine(hash, Dali::hash_value(bboxcrs));
+    Dali::hash_combine(hash, Dali::hash_value(xsize));
+    Dali::hash_combine(hash, Dali::hash_value(ysize));
+    Dali::hash_combine(hash, Dali::hash_value(x1));
+    Dali::hash_combine(hash, Dali::hash_value(y1));
+    Dali::hash_combine(hash, Dali::hash_value(x2));
+    Dali::hash_combine(hash, Dali::hash_value(y2));
+    Dali::hash_combine(hash, Dali::hash_value(cx));
+    Dali::hash_combine(hash, Dali::hash_value(cy));
+    Dali::hash_combine(hash, Dali::hash_value(resolution));
+    Dali::hash_combine(hash, Dali::hash_value(bboxcrs));
     return hash;
   }
   catch (...)

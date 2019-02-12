@@ -60,10 +60,10 @@ std::size_t Png::hash_value(const State& /* theState */) const
   try
   {
     auto hash = Dali::hash_value(options.quality);
-    boost::hash_combine(hash, Dali::hash_value(options.errorfactor));
-    boost::hash_combine(hash, Dali::hash_value(options.errorfactor));
-    boost::hash_combine(hash, Dali::hash_value(options.maxcolors));
-    boost::hash_combine(hash, Dali::hash_value(options.truecolor));
+    Dali::hash_combine(hash, Dali::hash_value(options.errorfactor));
+    Dali::hash_combine(hash, Dali::hash_value(options.errorfactor));
+    Dali::hash_combine(hash, Dali::hash_value(options.maxcolors));
+    Dali::hash_combine(hash, Dali::hash_value(options.truecolor));
     return hash;
   }
   catch (...)

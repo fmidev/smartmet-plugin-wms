@@ -955,22 +955,22 @@ std::size_t NumberLayer::hash_value(const State& theState) const
   {
     // Disable caching of observation layers
     if (theState.isObservation(producer))
-      return 0;
+      return invalid_hash;
 
     auto hash = Layer::hash_value(theState);
     auto q = getModel(theState);
     if (q)
-      boost::hash_combine(hash, Engine::Querydata::hash_value(q));
-    boost::hash_combine(hash, Dali::hash_value(parameter));
-    boost::hash_combine(hash, Dali::hash_value(level));
-    boost::hash_combine(hash, Dali::hash_value(multiplier));
-    boost::hash_combine(hash, Dali::hash_value(offset));
-    boost::hash_combine(hash, Dali::hash_value(positions, theState));
-    boost::hash_combine(hash, Dali::hash_value(maxdistance));
-    boost::hash_combine(hash, Dali::hash_symbol(symbol, theState));
-    boost::hash_combine(hash, Dali::hash_value(scale));
-    boost::hash_combine(hash, Dali::hash_value(label, theState));
-    boost::hash_combine(hash, Dali::hash_value(numbers, theState));
+      Dali::hash_combine(hash, Engine::Querydata::hash_value(q));
+    Dali::hash_combine(hash, Dali::hash_value(parameter));
+    Dali::hash_combine(hash, Dali::hash_value(level));
+    Dali::hash_combine(hash, Dali::hash_value(multiplier));
+    Dali::hash_combine(hash, Dali::hash_value(offset));
+    Dali::hash_combine(hash, Dali::hash_value(positions, theState));
+    Dali::hash_combine(hash, Dali::hash_value(maxdistance));
+    Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
+    Dali::hash_combine(hash, Dali::hash_value(scale));
+    Dali::hash_combine(hash, Dali::hash_value(label, theState));
+    Dali::hash_combine(hash, Dali::hash_value(numbers, theState));
     return hash;
   }
   catch (...)

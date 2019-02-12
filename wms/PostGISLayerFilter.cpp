@@ -59,7 +59,7 @@ std::size_t PostGISLayerFilter::hash_value(const State& theState) const
   try
   {
     auto hash = Dali::hash_value(where);
-    boost::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
     return hash;
   }
   catch (...)

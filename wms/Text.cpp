@@ -71,7 +71,7 @@ std::size_t Text::hash_value(const State& theState) const
   try
   {
     auto hash = Dali::hash_value(attributes, theState);
-    boost::hash_combine(hash, Dali::hash_value(translations));
+    Dali::hash_combine(hash, Dali::hash_value(translations));
     return hash;
   }
   catch (...)

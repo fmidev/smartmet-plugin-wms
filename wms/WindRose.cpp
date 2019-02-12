@@ -69,13 +69,13 @@ std::size_t WindRose::hash_value(const State& theState) const
   try
   {
     auto hash = Dali::hash_value(minpercentage);
-    boost::hash_combine(hash, Dali::hash_value(radius));
-    boost::hash_combine(hash, Dali::hash_value(sectors));
-    boost::hash_combine(hash, Dali::hash_symbol(symbol, theState));
-    boost::hash_combine(hash, Dali::hash_value(attributes, theState));
-    boost::hash_combine(hash, Dali::hash_value(connector, theState));
-    boost::hash_combine(hash, Dali::hash_value(parameter));
-    boost::hash_combine(hash, Dali::hash_value(limits, theState));
+    Dali::hash_combine(hash, Dali::hash_value(radius));
+    Dali::hash_combine(hash, Dali::hash_value(sectors));
+    Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
+    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Dali::hash_combine(hash, Dali::hash_value(connector, theState));
+    Dali::hash_combine(hash, Dali::hash_value(parameter));
+    Dali::hash_combine(hash, Dali::hash_value(limits, theState));
     return hash;
   }
   catch (...)

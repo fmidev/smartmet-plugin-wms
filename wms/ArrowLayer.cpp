@@ -1087,28 +1087,28 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
   {
     // Disable caching of observation layers
     if (theState.isObservation(producer))
-      return 0;
+      return invalid_hash;
 
     auto hash = Layer::hash_value(theState);
     auto q = getModel(theState);
     if (q)
-      boost::hash_combine(hash, Engine::Querydata::hash_value(q));
-    boost::hash_combine(hash, Dali::hash_value(direction));
-    boost::hash_combine(hash, Dali::hash_value(speed));
-    boost::hash_combine(hash, Dali::hash_value(u));
-    boost::hash_combine(hash, Dali::hash_value(v));
-    boost::hash_combine(hash, Dali::hash_value(level));
-    boost::hash_combine(hash, Dali::hash_value(multiplier));
-    boost::hash_combine(hash, Dali::hash_value(offset));
-    boost::hash_combine(hash, Dali::hash_value(minrotationspeed));
-    boost::hash_combine(hash, Dali::hash_symbol(symbol, theState));
-    boost::hash_combine(hash, Dali::hash_value(scale));
-    boost::hash_combine(hash, Dali::hash_value(southflop));
-    boost::hash_combine(hash, Dali::hash_value(positions, theState));
-    boost::hash_combine(hash, Dali::hash_value(dx));
-    boost::hash_combine(hash, Dali::hash_value(dy));
-    boost::hash_combine(hash, Dali::hash_value(maxdistance));
-    boost::hash_combine(hash, Dali::hash_value(arrows, theState));
+      Dali::hash_combine(hash, Engine::Querydata::hash_value(q));
+    Dali::hash_combine(hash, Dali::hash_value(direction));
+    Dali::hash_combine(hash, Dali::hash_value(speed));
+    Dali::hash_combine(hash, Dali::hash_value(u));
+    Dali::hash_combine(hash, Dali::hash_value(v));
+    Dali::hash_combine(hash, Dali::hash_value(level));
+    Dali::hash_combine(hash, Dali::hash_value(multiplier));
+    Dali::hash_combine(hash, Dali::hash_value(offset));
+    Dali::hash_combine(hash, Dali::hash_value(minrotationspeed));
+    Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
+    Dali::hash_combine(hash, Dali::hash_value(scale));
+    Dali::hash_combine(hash, Dali::hash_value(southflop));
+    Dali::hash_combine(hash, Dali::hash_value(positions, theState));
+    Dali::hash_combine(hash, Dali::hash_value(dx));
+    Dali::hash_combine(hash, Dali::hash_value(dy));
+    Dali::hash_combine(hash, Dali::hash_value(maxdistance));
+    Dali::hash_combine(hash, Dali::hash_value(arrows, theState));
     return hash;
   }
   catch (...)

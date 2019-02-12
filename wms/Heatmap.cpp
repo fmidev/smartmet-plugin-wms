@@ -155,11 +155,11 @@ std::size_t Heatmap::hash_value(const State& /* theState */) const
   {
     std::size_t hash = 0;
 
-    boost::hash_combine(hash, Dali::hash_value(resolution));
-    boost::hash_combine(hash, Dali::hash_value(radius));
-    boost::hash_combine(hash, Dali::hash_value(kernel));
+    Dali::hash_combine(hash, Dali::hash_value(resolution));
+    Dali::hash_combine(hash, Dali::hash_value(radius));
+    Dali::hash_combine(hash, Dali::hash_value(kernel));
     if (kernel && (*kernel == "exp"))
-      boost::hash_combine(hash, Dali::hash_value(deviation));
+      Dali::hash_combine(hash, Dali::hash_value(deviation));
     return hash;
   }
   catch (...)

@@ -369,13 +369,13 @@ std::size_t LegendLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    boost::hash_combine(hash, Dali::hash_value(x));
-    boost::hash_combine(hash, Dali::hash_value(y));
-    boost::hash_combine(hash, Dali::hash_value(dx));
-    boost::hash_combine(hash, Dali::hash_value(dy));
-    boost::hash_combine(hash, Dali::hash_value(symbols, theState));
-    boost::hash_combine(hash, Dali::hash_value(labels, theState));
-    boost::hash_combine(hash, Dali::hash_value(isobands, theState));
+    Dali::hash_combine(hash, Dali::hash_value(x));
+    Dali::hash_combine(hash, Dali::hash_value(y));
+    Dali::hash_combine(hash, Dali::hash_value(dx));
+    Dali::hash_combine(hash, Dali::hash_value(dy));
+    Dali::hash_combine(hash, Dali::hash_value(symbols, theState));
+    Dali::hash_combine(hash, Dali::hash_value(labels, theState));
+    Dali::hash_combine(hash, Dali::hash_value(isobands, theState));
     return hash;
   }
   catch (...)

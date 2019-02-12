@@ -203,10 +203,10 @@ std::size_t WKTLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    boost::hash_combine(hash, Dali::hash_value(wkt));
-    boost::hash_combine(hash, Dali::hash_value(resolution));
-    boost::hash_combine(hash, Dali::hash_value(relativeresolution));
-    boost::hash_combine(hash, Dali::hash_value(precision));
+    Dali::hash_combine(hash, Dali::hash_value(wkt));
+    Dali::hash_combine(hash, Dali::hash_value(resolution));
+    Dali::hash_combine(hash, Dali::hash_value(relativeresolution));
+    Dali::hash_combine(hash, Dali::hash_value(precision));
     return hash;
   }
   catch (...)

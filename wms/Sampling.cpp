@@ -110,10 +110,10 @@ std::size_t Sampling::hash_value(const State& /* theState */) const
   {
     std::size_t hash = 0;
 
-    boost::hash_combine(hash, Dali::hash_value(maxresolution));
-    boost::hash_combine(hash, Dali::hash_value(minresolution));
-    boost::hash_combine(hash, Dali::hash_value(resolution));
-    boost::hash_combine(hash, Dali::hash_value(relativeresolution));
+    Dali::hash_combine(hash, Dali::hash_value(maxresolution));
+    Dali::hash_combine(hash, Dali::hash_value(minresolution));
+    Dali::hash_combine(hash, Dali::hash_value(resolution));
+    Dali::hash_combine(hash, Dali::hash_value(relativeresolution));
     return hash;
   }
   catch (...)

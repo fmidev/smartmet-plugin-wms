@@ -1281,35 +1281,35 @@ std::size_t Positions::hash_value(const State& theState) const
   {
     auto hash = Dali::hash_value(static_cast<int>(layout));
 
-    boost::hash_combine(hash, Dali::hash_value(x));
-    boost::hash_combine(hash, Dali::hash_value(y));
-    boost::hash_combine(hash, Dali::hash_value(dx));
-    boost::hash_combine(hash, Dali::hash_value(dy));
-    boost::hash_combine(hash, Dali::hash_value(ddx));
+    Dali::hash_combine(hash, Dali::hash_value(x));
+    Dali::hash_combine(hash, Dali::hash_value(y));
+    Dali::hash_combine(hash, Dali::hash_value(dx));
+    Dali::hash_combine(hash, Dali::hash_value(dy));
+    Dali::hash_combine(hash, Dali::hash_value(ddx));
 
-    boost::hash_combine(hash, Dali::hash_value(size));
+    Dali::hash_combine(hash, Dali::hash_value(size));
 
-    boost::hash_combine(hash, Dali::hash_value(step));
+    Dali::hash_combine(hash, Dali::hash_value(step));
 
-    boost::hash_combine(hash, Dali::hash_value(mindistance));
+    Dali::hash_combine(hash, Dali::hash_value(mindistance));
 
-    boost::hash_combine(hash, Dali::hash_value(keyword));
+    Dali::hash_combine(hash, Dali::hash_value(keyword));
 
-    boost::hash_combine(hash, Dali::hash_value(locations, theState));
-    boost::hash_combine(hash, Dali::hash_value(stations, theState));
+    Dali::hash_combine(hash, Dali::hash_value(locations, theState));
+    Dali::hash_combine(hash, Dali::hash_value(stations, theState));
 
-    boost::hash_combine(hash, Dali::hash_value(directionoffset));
-    boost::hash_combine(hash, Dali::hash_value(rotate));
-    boost::hash_combine(hash, Dali::hash_value(direction));
-    boost::hash_combine(hash, Dali::hash_value(u));
-    boost::hash_combine(hash, Dali::hash_value(v));
+    Dali::hash_combine(hash, Dali::hash_value(directionoffset));
+    Dali::hash_combine(hash, Dali::hash_value(rotate));
+    Dali::hash_combine(hash, Dali::hash_value(direction));
+    Dali::hash_combine(hash, Dali::hash_value(u));
+    Dali::hash_combine(hash, Dali::hash_value(v));
 
-    boost::hash_combine(hash, Dali::hash_value(outsidemap, theState));
-    boost::hash_combine(hash, Dali::hash_value(insidemap, theState));
-    boost::hash_combine(hash, Dali::hash_value(intersections, theState));
+    Dali::hash_combine(hash, Dali::hash_value(outsidemap, theState));
+    Dali::hash_combine(hash, Dali::hash_value(insidemap, theState));
+    Dali::hash_combine(hash, Dali::hash_value(intersections, theState));
 
-    boost::hash_combine(hash, Dali::hash_value(xmargin));
-    boost::hash_combine(hash, Dali::hash_value(ymargin));
+    Dali::hash_combine(hash, Dali::hash_value(xmargin));
+    Dali::hash_combine(hash, Dali::hash_value(ymargin));
 
     return hash;
   }

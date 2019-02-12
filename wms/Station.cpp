@@ -119,17 +119,17 @@ std::size_t Station::hash_value(const State& theState) const
   try
   {
     auto hash = Dali::hash_value(fmisid);
-    boost::hash_combine(hash, Dali::hash_value(lpnn));
-    boost::hash_combine(hash, Dali::hash_value(wmo));
-    boost::hash_combine(hash, Dali::hash_value(geoid));
-    boost::hash_combine(hash, Dali::hash_value(longitude));
-    boost::hash_combine(hash, Dali::hash_value(latitude));
-    boost::hash_combine(hash, Dali::hash_value(symbol));
-    boost::hash_combine(hash, Dali::hash_symbol(symbol, theState));
-    boost::hash_combine(hash, Dali::hash_value(attributes, theState));
-    boost::hash_combine(hash, Dali::hash_value(title, theState));
-    boost::hash_combine(hash, Dali::hash_value(dx));
-    boost::hash_combine(hash, Dali::hash_value(dy));
+    Dali::hash_combine(hash, Dali::hash_value(lpnn));
+    Dali::hash_combine(hash, Dali::hash_value(wmo));
+    Dali::hash_combine(hash, Dali::hash_value(geoid));
+    Dali::hash_combine(hash, Dali::hash_value(longitude));
+    Dali::hash_combine(hash, Dali::hash_value(latitude));
+    Dali::hash_combine(hash, Dali::hash_value(symbol));
+    Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
+    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Dali::hash_combine(hash, Dali::hash_value(title, theState));
+    Dali::hash_combine(hash, Dali::hash_value(dx));
+    Dali::hash_combine(hash, Dali::hash_value(dy));
     return hash;
   }
   catch (...)

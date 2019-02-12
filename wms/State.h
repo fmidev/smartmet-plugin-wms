@@ -168,7 +168,7 @@ class State
   // Test if producer is for observations
   bool isObservation(const boost::optional<std::string>& theProducer) const;
   bool isObservation(const std::string& theProducer) const;
-  
+
  private:
   const Plugin& itsPlugin;
   mutable std::map<Engine::Querydata::Producer, Engine::Querydata::Q> itsQCache;

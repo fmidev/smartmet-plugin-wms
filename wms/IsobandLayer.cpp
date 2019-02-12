@@ -592,20 +592,20 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     auto hash = Layer::hash_value(theState);
 
     if (!theState.isObservation(producer))
-      boost::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
-    boost::hash_combine(hash, Dali::hash_value(parameter));
-    boost::hash_combine(hash, Dali::hash_value(level));
-    boost::hash_combine(hash, Dali::hash_value(isobands, theState));
-    boost::hash_combine(hash, Dali::hash_value(interpolation));
-    boost::hash_combine(hash, Dali::hash_value(smoother, theState));
-    boost::hash_combine(hash, Dali::hash_value(precision));
-    boost::hash_combine(hash, Dali::hash_value(multiplier));
-    boost::hash_combine(hash, Dali::hash_value(offset));
-    boost::hash_combine(hash, Dali::hash_value(outside, theState));
-    boost::hash_combine(hash, Dali::hash_value(inside, theState));
-    boost::hash_combine(hash, Dali::hash_value(sampling, theState));
-    boost::hash_combine(hash, Dali::hash_value(intersections, theState));
-    boost::hash_combine(hash, Dali::hash_value(heatmap, theState));
+      Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+    Dali::hash_combine(hash, Dali::hash_value(parameter));
+    Dali::hash_combine(hash, Dali::hash_value(level));
+    Dali::hash_combine(hash, Dali::hash_value(isobands, theState));
+    Dali::hash_combine(hash, Dali::hash_value(interpolation));
+    Dali::hash_combine(hash, Dali::hash_value(smoother, theState));
+    Dali::hash_combine(hash, Dali::hash_value(precision));
+    Dali::hash_combine(hash, Dali::hash_value(multiplier));
+    Dali::hash_combine(hash, Dali::hash_value(offset));
+    Dali::hash_combine(hash, Dali::hash_value(outside, theState));
+    Dali::hash_combine(hash, Dali::hash_value(inside, theState));
+    Dali::hash_combine(hash, Dali::hash_value(sampling, theState));
+    Dali::hash_combine(hash, Dali::hash_value(intersections, theState));
+    Dali::hash_combine(hash, Dali::hash_value(heatmap, theState));
     return hash;
   }
   catch (...)

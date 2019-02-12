@@ -303,18 +303,18 @@ std::size_t LocationLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    boost::hash_combine(hash, Dali::hash_value(keyword));
-    boost::hash_combine(hash, Dali::hash_value(mindistance));
-    boost::hash_combine(hash, Dali::hash_value(countries));
-    boost::hash_combine(hash, Dali::hash_value(symbol));
-    boost::hash_combine(hash, Dali::hash_symbol(symbol, theState));
+    Dali::hash_combine(hash, Dali::hash_value(keyword));
+    Dali::hash_combine(hash, Dali::hash_value(mindistance));
+    Dali::hash_combine(hash, Dali::hash_value(countries));
+    Dali::hash_combine(hash, Dali::hash_value(symbol));
+    Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
 
     for (const auto& name_symbol : symbols)
     {
-      boost::hash_combine(hash, Dali::hash_value(name_symbol.first));
+      Dali::hash_combine(hash, Dali::hash_value(name_symbol.first));
       for (const auto& selection : name_symbol.second)
       {
-        boost::hash_combine(hash, Dali::hash_value(selection, theState));
+        Dali::hash_combine(hash, Dali::hash_value(selection, theState));
       }
     }
     return hash;

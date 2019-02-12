@@ -69,10 +69,10 @@ std::size_t Title::hash_value(const State& theState) const
   try
   {
     auto hash = Dali::hash_value(qid);
-    boost::hash_combine(hash, Dali::hash_value(dx));
-    boost::hash_combine(hash, Dali::hash_value(dy));
-    boost::hash_combine(hash, Dali::hash_value(attributes, theState));
-    boost::hash_combine(hash, Dali::hash_value(text, theState));
+    Dali::hash_combine(hash, Dali::hash_value(dx));
+    Dali::hash_combine(hash, Dali::hash_value(dy));
+    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Dali::hash_combine(hash, Dali::hash_value(text, theState));
     return hash;
   }
   catch (...)

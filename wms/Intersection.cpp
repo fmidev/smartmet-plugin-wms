@@ -224,7 +224,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
 
     std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;
-    boost::hash_combine(valueshash, options.data_hash_value());
+    Dali::hash_combine(valueshash, options.data_hash_value());
     std::string wkt = q->area().WKT();
 
     // Select the data
@@ -281,17 +281,17 @@ std::size_t Intersection::hash_value(const State& theState) const
     std::size_t hash = 0;
 
     if (producer)
-      boost::hash_combine(hash, Engine::Querydata::hash_value(theState.get(*producer)));
+      Dali::hash_combine(hash, Engine::Querydata::hash_value(theState.get(*producer)));
 
-    boost::hash_combine(hash, Dali::hash_value(lolimit));
-    boost::hash_combine(hash, Dali::hash_value(hilimit));
-    boost::hash_combine(hash, Dali::hash_value(value));
-    boost::hash_combine(hash, Dali::hash_value(level));
-    boost::hash_combine(hash, Dali::hash_value(producer));
-    boost::hash_combine(hash, Dali::hash_value(parameter));
-    boost::hash_combine(hash, Dali::hash_value(interpolation));
-    boost::hash_combine(hash, Dali::hash_value(multiplier));
-    boost::hash_combine(hash, Dali::hash_value(offset));
+    Dali::hash_combine(hash, Dali::hash_value(lolimit));
+    Dali::hash_combine(hash, Dali::hash_value(hilimit));
+    Dali::hash_combine(hash, Dali::hash_value(value));
+    Dali::hash_combine(hash, Dali::hash_value(level));
+    Dali::hash_combine(hash, Dali::hash_value(producer));
+    Dali::hash_combine(hash, Dali::hash_value(parameter));
+    Dali::hash_combine(hash, Dali::hash_value(interpolation));
+    Dali::hash_combine(hash, Dali::hash_value(multiplier));
+    Dali::hash_combine(hash, Dali::hash_value(offset));
     return hash;
   }
   catch (...)

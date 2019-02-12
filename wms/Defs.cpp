@@ -111,7 +111,8 @@ std::size_t Defs::hash_value(const State& theState) const
 {
   try
   {
-    auto hash = Dali::hash_value(qid);
+    std::size_t hash = 0;
+    Dali::hash_combine(hash, Dali::hash_value(qid));
     Dali::hash_combine(hash, Dali::hash_value(styles, theState));
     Dali::hash_combine(hash, Dali::hash_value(layers, theState));
     return hash;

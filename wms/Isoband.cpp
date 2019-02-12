@@ -75,9 +75,9 @@ std::size_t Isoband::hash_value(const State& theState) const
   try
   {
     auto hash = boost::hash_value(qid);
-    boost::hash_combine(hash, Dali::hash_value(lolimit));
-    boost::hash_combine(hash, Dali::hash_value(hilimit));
-    boost::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Dali::hash_combine(hash, Dali::hash_value(lolimit));
+    Dali::hash_combine(hash, Dali::hash_value(hilimit));
+    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
     return hash;
   }
   catch (...)

@@ -340,17 +340,17 @@ std::size_t TimeLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    boost::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
-    boost::hash_combine(hash, Dali::hash_value(timezone));
-    boost::hash_combine(hash, Dali::hash_value(prefix));
-    boost::hash_combine(hash, Dali::hash_value(suffix));
-    boost::hash_combine(hash, Dali::hash_value(timestamp));
-    boost::hash_combine(hash, Dali::hash_value(format));
-    boost::hash_combine(hash, Dali::hash_value(formatter));
-    boost::hash_combine(hash, Dali::hash_value(x));
-    boost::hash_combine(hash, Dali::hash_value(y));
-    boost::hash_combine(hash, Dali::hash_value(longitude));
-    boost::hash_combine(hash, Dali::hash_value(latitude));
+    Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+    Dali::hash_combine(hash, Dali::hash_value(timezone));
+    Dali::hash_combine(hash, Dali::hash_value(prefix));
+    Dali::hash_combine(hash, Dali::hash_value(suffix));
+    Dali::hash_combine(hash, Dali::hash_value(timestamp));
+    Dali::hash_combine(hash, Dali::hash_value(format));
+    Dali::hash_combine(hash, Dali::hash_value(formatter));
+    Dali::hash_combine(hash, Dali::hash_value(x));
+    Dali::hash_combine(hash, Dali::hash_value(y));
+    Dali::hash_combine(hash, Dali::hash_value(longitude));
+    Dali::hash_combine(hash, Dali::hash_value(latitude));
 
     // TODO(mheiskan): The timestamp to be drawn may depend on the wall clock - must include it
     // in the hash. A better solution would be to format the timestamp and
@@ -359,7 +359,7 @@ std::size_t TimeLayer::hash_value(const State& theState) const
     for (const auto& name : timestamp)
     {
       if (name == "wallclock" || name == "now")
-        boost::hash_combine(hash, Dali::hash_value(now));
+        Dali::hash_combine(hash, Dali::hash_value(now));
     }
 
     return hash;

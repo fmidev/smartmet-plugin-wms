@@ -126,7 +126,9 @@ std::size_t Styles::hash_value(const State& /* theState */) const
 {
   try
   {
-    return Dali::hash_value(styles);
+    std::size_t hash = 0;  // to avoid nonzero responses
+    Dali::hash_combine(hash, Dali::hash_value(styles));
+    return hash;
   }
   catch (...)
   {

@@ -57,9 +57,10 @@ std::size_t Connector::hash_value(const State& theState) const
 {
   try
   {
-    auto hash = Dali::hash_value(startoffset);
-    boost::hash_combine(hash, Dali::hash_value(endoffset));
-    boost::hash_combine(hash, Dali::hash_value(attributes, theState));
+    std::size_t hash = 0;
+    Dali::hash_combine(hash, Dali::hash_value(startoffset));
+    Dali::hash_combine(hash, Dali::hash_value(endoffset));
+    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
     return hash;
   }
   catch (...)
