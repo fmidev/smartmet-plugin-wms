@@ -75,6 +75,10 @@ void IsobandLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       interpolation = json.asString();
 
+    json = theJson.get("extrapolation", nulljson);
+    if (!json.isNull())
+      extrapolation = json.asInt();
+
     json = theJson.get("smoother", nulljson);
     if (!json.isNull())
       smoother.init(json, theConfig);
@@ -439,6 +443,8 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     options.filter_size = smoother.size;
     options.filter_degree = smoother.degree;
 
+    options.extrapolation = extrapolation;
+
     if (interpolation == "linear")
       options.interpolation = Engine::Contour::Linear;
     else if (interpolation == "nearest")
@@ -598,6 +604,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     Dali::hash_combine(hash, Dali::hash_value(isobands, theState));
     Dali::hash_combine(hash, Dali::hash_value(interpolation));
     Dali::hash_combine(hash, Dali::hash_value(smoother, theState));
+    Dali::hash_combine(hash, Dali::hash_value(extrapolation));
     Dali::hash_combine(hash, Dali::hash_value(precision));
     Dali::hash_combine(hash, Dali::hash_value(multiplier));
     Dali::hash_combine(hash, Dali::hash_value(offset));

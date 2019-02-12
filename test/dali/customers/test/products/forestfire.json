@@ -1,0 +1,122 @@
+{
+    "title": "Forest Fire Warnings map",
+    "projection":
+    {
+	"xsize": 500,
+	"ysize": 500,
+	"crs": "EPSG:4326",	// WGS84
+	"cy": 64.8,
+	"cx": 25.4,
+	"resolution": 2.5
+    },
+    "producer": "forestfire",
+    "views":
+    [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers":
+	    [
+		{
+		    "qid": "sea",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "white"
+		    }
+		},
+		{
+		    "qid": "index",
+		    "layer_type": "isoband",
+		    "parameter": "ForestFireIndex",
+		    "extrapolation": 2,
+		    "isobands":
+		    [
+			{
+			    "lolimit": 0,
+			    "hilimit": 1,
+			    "attributes":
+			    {
+				"fill": "white"
+			    }
+			},
+			{
+			    "lolimit": 1,
+			    "hilimit": 2,
+			    "attributes":
+			    {
+				"fill": "rgb(0,255,255)"
+			    }
+			},
+			{
+			    "lolimit": 2,
+			    "hilimit": 3,
+			    "attributes":
+			    {
+				"fill": "rgb(64,189,65)"
+			    }
+			},
+			{
+			    "lolimit": 3,
+			    "hilimit": 4,
+			    "attributes":
+			    {
+				"fill": "rgb(189,189,65)"
+			    }
+			},
+			{
+			    "lolimit": 4,
+			    "hilimit": 5,
+			    "attributes":
+			    {
+				"fill": "rgb(255,130,0)"
+			    }
+			},
+			{
+			    "lolimit": 5,
+			    "hilimit": 5.5,
+			    "attributes":
+			    {
+				"fill": "rgb(255,0,0)"
+			    }
+			},
+			{
+			    "lolimit": 5.5,
+			    "hilimit": 6,
+			    "attributes":
+			    {
+				"fill": "rgb(255,0,130)"
+			    }
+			},
+			{
+			    "lolimit": 6,
+			    "attributes":
+			    {
+				"fill": "rgb(130,0,255)"
+			    }
+			}
+		    ]
+		},
+		{
+		    "qid": "areas",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"pgname": "gis",
+			"schema": "public",
+			"table": "varoalueet"
+		    },
+		    "attributes":
+		    {
+			"fill": "none",
+			"stroke": "black",
+			"stroke-width": "0.2px"
+		    }
+		}
+	    ]
+        }
+    ]
+}

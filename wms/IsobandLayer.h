@@ -42,6 +42,7 @@ class IsobandLayer : public Layer
   std::vector<Isoband> isobands;
   std::string interpolation{"linear"};
   Smoother smoother;
+  int extrapolation = 0;
 
   double precision = 1.0;
 

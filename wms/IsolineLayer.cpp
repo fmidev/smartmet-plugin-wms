@@ -63,6 +63,10 @@ void IsolineLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       smoother.init(json, theConfig);
 
+    json = theJson.get("extrapolation", nulljson);
+    if (!json.isNull())
+      extrapolation = json.asInt();
+
     json = theJson.get("precision", nulljson);
     if (!json.isNull())
       precision = json.asDouble();
@@ -241,6 +245,8 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     options.filter_size = smoother.size;
     options.filter_degree = smoother.degree;
 
+    options.extrapolation = extrapolation;
+
     // Do the actual contouring, either full grid or just
     // a sampled section
 
@@ -350,6 +356,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     Dali::hash_combine(hash, Dali::hash_value(level));
     Dali::hash_combine(hash, Dali::hash_value(isolines, theState));
     Dali::hash_combine(hash, Dali::hash_value(smoother, theState));
+    Dali::hash_combine(hash, Dali::hash_value(extrapolation));
     Dali::hash_combine(hash, Dali::hash_value(precision));
     Dali::hash_combine(hash, Dali::hash_value(multiplier));
     Dali::hash_combine(hash, Dali::hash_value(offset));

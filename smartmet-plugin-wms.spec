@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.2.7
+Version: 19.2.12
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -29,8 +29,8 @@ BuildRequires: smartmet-engine-observation-devel >= 18.12.4
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.11.22
 BuildRequires: smartmet-engine-geonames-devel >= 19.1.28
-BuildRequires: smartmet-engine-querydata-devel >= 19.1.28
-BuildRequires: smartmet-engine-contour-devel >= 18.7.25
+BuildRequires: smartmet-engine-querydata-devel >= 19.2.8
+BuildRequires: smartmet-engine-contour-devel >= 19.2.12
 BuildRequires: smartmet-library-gis-devel >= 18.12.10
 BuildRequires: fmt-devel >= 5.2.0
 BuildRequires: ctpp2 >= 2.8.7
@@ -50,8 +50,8 @@ Requires: smartmet-library-giza >= 18.10.1
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 18.9.10
 %endif
-Requires: smartmet-engine-querydata >= 19.1.28
-Requires: smartmet-engine-contour >= 18.7.25
+Requires: smartmet-engine-querydata >= 19.2.8
+Requires: smartmet-engine-contour >= 19.2.12
 Requires: smartmet-engine-gis >= 18.11.22
 Requires: smartmet-engine-geonames >= 19.1.28
 Requires: smartmet-server >= 18.12.14
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Feb 12 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.12-1.fmi
+- Added extrapolation-setting for IsoLineLayer and IsoBandLayer
+
 * Thu Feb  7 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.7-1.fmi
 - Fixed etag-based caching
 
