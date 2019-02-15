@@ -1495,6 +1495,9 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Spine::Exception &exception,
                                                 const Spine::HTTP::Request &theRequest,
                                                 Spine::HTTP::Response &theResponse)
 {
+  // Console logging
+  exception.printError();
+
   WMS::CaseInsensitiveComparator cicomp;
   WmsExceptionFormat exceptionFormat = WmsExceptionFormat::XML;
   std::string exceptionFormatStr =
