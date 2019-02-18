@@ -1496,6 +1496,8 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Spine::Exception &exception,
                                                 Spine::HTTP::Response &theResponse)
 {
   // Console logging
+  exception.addParameter("URI", theRequest.getURI());
+  exception.addParameter("ClientIP", theRequest.getClientIP());
   exception.printError();
 
   WMS::CaseInsensitiveComparator cicomp;
