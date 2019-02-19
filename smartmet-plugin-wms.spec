@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.2.18
+Version: 19.2.19
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Feb 19 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.19-1.fmi
+- Always return ETag unless it is invalid
+
 * Mon Feb 18 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.18-1.fmi
 - Print URI and client IP on WMS exceptions to the console
 

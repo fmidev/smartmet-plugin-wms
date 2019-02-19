@@ -145,23 +145,26 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 
     auto product_hash = product.hash_value(theState);
 
-    // If request was ETag request, respond accordingly
-    if (theRequest.getHeader("X-Request-ETag"))
+    if (product_hash != invalid_hash)
     {
-      if (product_hash != invalid_hash)
-        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
-      theResponse.setHeader("Content-Type", mimeType(product.type));
-      theResponse.setStatus(Spine::HTTP::Status::no_content);
+      theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
 
-      // Add updated expiration time if available
-      const auto &expires = theState.getExpirationTime();
-      if (expires)
+      // If request was ETag request, respond accordingly
+      if (theRequest.getHeader("X-Request-ETag"))
       {
-        boost::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
-        theResponse.setHeader("Expires", tformat->format(*expires));
-      }
+        theResponse.setHeader("Content-Type", mimeType(product.type));
+        theResponse.setStatus(Spine::HTTP::Status::no_content);
 
-      return;
+        // Add updated expiration time if available
+        const auto &expires = theState.getExpirationTime();
+        if (expires)
+        {
+          boost::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
+          theResponse.setHeader("Expires", tformat->format(*expires));
+        }
+
+        return;
+      }
     }
 
     auto obj = itsImageCache->find(product_hash);
@@ -1409,18 +1412,20 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     auto product_hash = product.hash_value(theState);
 
-    // We always return the ETag
+    // We always return valid ETags
 
     if (product_hash != invalid_hash)
+    {
       theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
 
-    // If request was an ETag request, we're done already
+      // If request was an ETag request, we're done already
 
-    if (thisRequest.getHeader("X-Request-ETag"))
-    {
-      theResponse.setHeader("Content-Type", mimeType(product.type));
-      theResponse.setStatus(Spine::HTTP::Status::no_content);
-      return WMSQueryStatus::OK;
+      if (thisRequest.getHeader("X-Request-ETag"))
+      {
+        theResponse.setHeader("Content-Type", mimeType(product.type));
+        theResponse.setStatus(Spine::HTTP::Status::no_content);
+        return WMSQueryStatus::OK;
+      }
     }
 
     auto obj = itsImageCache->find(product_hash);
