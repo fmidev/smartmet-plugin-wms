@@ -18,13 +18,15 @@ namespace Dali
  * Allowed forms:
  *
  *   "text": "foobar";
- *	 "text": { "default": "foobar"; }
- *   "text": { "fi": "jotain"; "en": "foobar"; ... }
+ *   "text": { "default": "foobar" }
+ *   "text": { "fi": "jotain", "en": "foobar" ... }
+ *   "text": { "fi": "jotain", "en": "foobar", ... , "attributes": { ... } }
+ *   "
  *
  */
 // ----------------------------------------------------------------------
 
-void Text::init(const Json::Value& theJson, const Config& /* theConfig */)
+void Text::init(const Json::Value& theJson, const Config& theConfig)
 {
   try
   {
@@ -46,12 +48,17 @@ void Text::init(const Json::Value& theJson, const Config& /* theConfig */)
     {
       const Json::Value& json = theJson[name];
 
-      if (!json.isString())
-        throw Spine::Exception(BCP,
-                               "Text hash must consist of name string-value pairs, value of " +
-                                   name + " is not a string");
+      if (name == "attributes")
+        attributes.init(json, theConfig);
+      else
+      {
+        if (!json.isString())
+          throw Spine::Exception(BCP,
+                                 "Text hash must consist of name string-value pairs, value of " +
+                                     name + " is not a string");
 
-      translations[name] = json.asString();
+        translations[name] = json.asString();
+      }
     }
   }
   catch (...)

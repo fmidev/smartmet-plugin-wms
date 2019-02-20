@@ -56,7 +56,7 @@ std::string pretty(double num, const char* format)
  */
 // ----------------------------------------------------------------------
 
-std::string legend_text(double theValue, const LegendLabels& theLabels)
+std::string legend_number(double theValue, const LegendLabels& theLabels)
 {
   try
   {
@@ -77,7 +77,9 @@ std::string legend_text(double theValue, const LegendLabels& theLabels)
  */
 // ----------------------------------------------------------------------
 
-std::string legend_text(const Isoband& theIsoband, const LegendLabels& theLabels)
+std::string untranslated_legend_text(const Isoband& theIsoband,
+                                     const LegendLabels& theLabels,
+                                     const boost::optional<std::string>& theLanguage)
 {
   try
   {
@@ -85,30 +87,38 @@ std::string legend_text(const Isoband& theIsoband, const LegendLabels& theLabels
 
     if (theLabels.type == "none")
       return empty;
+
+    // Isoband specific override handled first
+    if (theIsoband.label)
+      return theIsoband.label->translate(theLanguage);
+
+    // Then generic processing
     if (theLabels.type == "lolimit")
     {
       if (!theIsoband.lolimit)
         return empty;
-      return legend_text(*theIsoband.lolimit, theLabels);
+      return legend_number(*theIsoband.lolimit, theLabels);
     }
+
     if (theLabels.type == "hilimit")
     {
       if (!theIsoband.hilimit)
         return empty;
-      return legend_text(*theIsoband.hilimit, theLabels);
+      return legend_number(*theIsoband.hilimit, theLabels);
     }
+
     if (theLabels.type == "range")
     {
       if (!theIsoband.lolimit)
       {
         if (!theIsoband.hilimit)
           return "MISSING";
-        return "&lt; " + legend_text(*theIsoband.hilimit, theLabels);
+        return "&lt; " + legend_number(*theIsoband.hilimit, theLabels);
       }
       if (!theIsoband.hilimit)
-        return "&gt; " + legend_text(*theIsoband.lolimit, theLabels);
-      return (legend_text(*theIsoband.lolimit, theLabels) + theLabels.separator +
-              legend_text(*theIsoband.hilimit, theLabels));
+        return "&gt; " + legend_number(*theIsoband.lolimit, theLabels);
+      return (legend_number(*theIsoband.lolimit, theLabels) + theLabels.separator +
+              legend_number(*theIsoband.hilimit, theLabels));
     }
 
     throw Spine::Exception(BCP, "Unknown legend label type '" + theLabels.type + "'");
@@ -131,7 +141,10 @@ std::string legend_text(const Isoband& theIsoband,
 {
   try
   {
-    std::string text = legend_text(theIsoband, theLabels);
+    // Note: The text may actually already be translated, if there are isoband
+    // specific translations in the Isoband object itself.
+
+    std::string text = untranslated_legend_text(theIsoband, theLabels, theLanguage);
     if (text.empty())
       return text;
 
@@ -333,7 +346,11 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         text_cdt["end"] = "</text>";
         text_cdt["cdata"] = text;
 
-        theState.addAttributes(theGlobals, text_cdt, labels.attributes);
+        auto attrs = labels.attributes;
+        if (isoband.label)
+          attrs.add(isoband.label->attributes);  // isoband specific attrs override
+
+        theState.addAttributes(theGlobals, text_cdt, attrs);
 
         text_cdt["attributes"]["x"] = Fmi::to_string(xpos + labels.dx);
         text_cdt["attributes"]["y"] = Fmi::to_string(ypos + labels.dy);

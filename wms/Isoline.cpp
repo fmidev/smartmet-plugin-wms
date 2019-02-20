@@ -37,6 +37,11 @@ void Isoline::init(const Json::Value& theJson, const Config& theConfig)
         value = json.asDouble();
       else if (name == "attributes")
         attributes.init(json, theConfig);
+      else if (name == "label")
+      {
+        label = Text();
+        label->init(json, theConfig);
+      }
       else
         throw Spine::Exception(BCP, "Isoline does not have a setting named '" + name + "'");
     }
@@ -75,6 +80,7 @@ std::size_t Isoline::hash_value(const State& theState) const
     auto hash = Dali::hash_value(qid);
     Dali::hash_combine(hash, Dali::hash_value(value));
     Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Dali::hash_combine(hash, Dali::hash_value(label, theState));
     return hash;
   }
   catch (...)

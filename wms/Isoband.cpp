@@ -1,7 +1,6 @@
 #include "Isoband.h"
 #include "Config.h"
 #include "Hash.h"
-
 #include <spine/Exception.h>
 #include <stdexcept>
 
@@ -39,6 +38,11 @@ void Isoband::init(const Json::Value& theJson, const Config& theConfig)
         hilimit = json.asDouble();
       else if (name == "attributes")
         attributes.init(json, theConfig);
+      else if (name == "label")
+      {
+        label = Text();
+        label->init(json, theConfig);
+      }
       else
         throw Spine::Exception(BCP, "Isoband does not have a setting named '" + name + "'");
     }
@@ -78,6 +82,7 @@ std::size_t Isoband::hash_value(const State& theState) const
     Dali::hash_combine(hash, Dali::hash_value(lolimit));
     Dali::hash_combine(hash, Dali::hash_value(hilimit));
     Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Dali::hash_combine(hash, Dali::hash_value(label, theState));
     return hash;
   }
   catch (...)

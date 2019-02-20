@@ -7,6 +7,7 @@
 #pragma once
 
 #include "Attributes.h"
+#include "Text.h"
 #include <boost/optional.hpp>
 #include <json/json.h>
 #include <string>
@@ -36,6 +37,8 @@ class Isoband
 
   // SVG attributes (id, class, style, ...)
   Attributes attributes;
+
+  boost::optional<Text> label;
 
  private:
   mutable std::string generated_qid;
