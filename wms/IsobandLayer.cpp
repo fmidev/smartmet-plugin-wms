@@ -87,6 +87,10 @@ void IsobandLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       precision = json.asDouble();
 
+    json = theJson.get("minarea", nulljson);
+    if (!json.isNull())
+      minarea = json.asDouble();
+
     json = theJson.get("multiplier", nulljson);
     if (!json.isNull())
       multiplier = json.asDouble();
@@ -440,6 +444,8 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     if (multiplier || offset)
       options.transformation(multiplier ? *multiplier : 1.0, offset ? *offset : 0.0);
 
+    options.minarea = minarea;
+
     options.filter_size = smoother.size;
     options.filter_degree = smoother.degree;
 
@@ -606,6 +612,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     Dali::hash_combine(hash, Dali::hash_value(smoother, theState));
     Dali::hash_combine(hash, Dali::hash_value(extrapolation));
     Dali::hash_combine(hash, Dali::hash_value(precision));
+    Dali::hash_combine(hash, Dali::hash_value(minarea));
     Dali::hash_combine(hash, Dali::hash_value(multiplier));
     Dali::hash_combine(hash, Dali::hash_value(offset));
     Dali::hash_combine(hash, Dali::hash_value(outside, theState));

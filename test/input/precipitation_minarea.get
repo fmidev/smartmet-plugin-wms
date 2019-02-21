@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=precipitation&time=200808050300&l1.minarea=5000&l2.minarea=5000 HTTP/1.0

@@ -46,6 +46,8 @@ class IsobandLayer : public Layer
 
   double precision = 1.0;
 
+  boost::optional<double> minarea;
+
   boost::optional<double> multiplier;
   boost::optional<double> offset;
 

@@ -71,6 +71,10 @@ void IsolineLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       precision = json.asDouble();
 
+    json = theJson.get("minarea", nulljson);
+    if (!json.isNull())
+      minarea = json.asDouble();
+
     json = theJson.get("multiplier", nulljson);
     if (!json.isNull())
       multiplier = json.asDouble();
@@ -239,6 +243,8 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     Engine::Contour::Options options(param, valid_time, isoline_values);
 
+    options.minarea = minarea;
+
     if (multiplier || offset)
       options.transformation(multiplier ? *multiplier : 1.0, offset ? *offset : 0.0);
 
@@ -358,6 +364,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     Dali::hash_combine(hash, Dali::hash_value(smoother, theState));
     Dali::hash_combine(hash, Dali::hash_value(extrapolation));
     Dali::hash_combine(hash, Dali::hash_value(precision));
+    Dali::hash_combine(hash, Dali::hash_value(minarea));
     Dali::hash_combine(hash, Dali::hash_value(multiplier));
     Dali::hash_combine(hash, Dali::hash_value(offset));
     Dali::hash_combine(hash, Dali::hash_value(outside, theState));
