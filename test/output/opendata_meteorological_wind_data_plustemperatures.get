@@ -108,7 +108,7 @@
    <use transform="translate(137 320) rotate(133)" xlink:href="#windbarb_1"/>
    <use transform="translate(166 326) rotate(147)" xlink:href="#windbarb_1"/>
    <use transform="translate(184 320) rotate(179)" xlink:href="#windbarb_5"/>
-   <use transform="translate(224 341) rotate(118)" xlink:href="#windbarb_1"/>
+   <use transform="translate(221 341) rotate(118)" xlink:href="#windbarb_1"/>
    <use transform="translate(231 308) rotate(118)" xlink:href="#windbarb_5"/>
    <use transform="translate(244 342) rotate(124)" xlink:href="#windbarb_5"/>
    <use transform="translate(279 321) rotate(145)" xlink:href="#windbarb_5"/>
