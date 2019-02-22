@@ -40,7 +40,8 @@
           "arrows": "json:arrows/windbarb.json",
           "css": "arrows/windbarb.css",
           "direction": "WindDirection",
-	  "multiplier": 1.94384449244,	// to knots, inverse of 0.514444....
+          "unit_conversion": "ms_to_knots",
+//	  "multiplier": 1.94384449244,	// to knots, inverse of 0.514444....
 	  "southflop": true,
 	  "scale": 1.0,
           "speed": "WindSpeedMS",
