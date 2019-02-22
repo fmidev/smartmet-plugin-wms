@@ -87,7 +87,7 @@ std::string Label::print(double theValue) const
  */
 // ----------------------------------------------------------------------
 
-void Label::init(const Json::Value& theJson, const Config& /* theConfig */)
+void Label::init(const Json::Value& theJson, const Config& theConfig)
 {
   try
   {
@@ -105,6 +105,8 @@ void Label::init(const Json::Value& theJson, const Config& /* theConfig */)
         dx = json.asInt();
       else if (name == "dy")
         dy = json.asInt();
+      else if (name == "unit_conversion")
+        unit_conversion = json.asString();
       else if (name == "multiplier")
         multiplier = json.asDouble();
       else if (name == "offset")
@@ -133,6 +135,13 @@ void Label::init(const Json::Value& theJson, const Config& /* theConfig */)
       else
         throw Spine::Exception(BCP, "Unknown setting '" + name + "'!");
     }
+
+    if (!unit_conversion.empty())
+    {
+      auto conv = theConfig.unitConversion(unit_conversion);
+      multiplier = conv.multiplier;
+      offset = conv.offset;
+    }
   }
   catch (...)
   {
@@ -152,6 +161,7 @@ std::size_t Label::hash_value(const State& /* theState */) const
   {
     auto hash = Dali::hash_value(dx);
     Dali::hash_combine(hash, Dali::hash_value(dy));
+    Dali::hash_combine(hash, Dali::hash_value(unit_conversion));
     Dali::hash_combine(hash, Dali::hash_value(multiplier));
     Dali::hash_combine(hash, Dali::hash_value(offset));
     Dali::hash_combine(hash, Dali::hash_value(format));

@@ -68,6 +68,10 @@ void Intersection::init(const Json::Value& theJson, const Config& theConfig)
     if (!json.isNull())
       smoother.init(json, theConfig);
 
+    json = theJson.get("unit_conversion", nulljson);
+    if (!json.isNull())
+      unit_conversion = json.asString();
+
     json = theJson.get("multiplier", nulljson);
     if (!json.isNull())
       multiplier = json.asDouble();
@@ -205,6 +209,13 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     limits.push_back(range);
     Engine::Contour::Options options(param, theTime, limits);
 
+    if (!unit_conversion.empty())
+    {
+      auto conv = theState.getConfig().unitConversion(unit_conversion);
+      multiplier = conv.multiplier;
+      offset = conv.offset;
+    }
+
     if (multiplier || offset)
       options.transformation(multiplier ? *multiplier : 1.0, offset ? *offset : 0.0);
 
@@ -290,6 +301,7 @@ std::size_t Intersection::hash_value(const State& theState) const
     Dali::hash_combine(hash, Dali::hash_value(producer));
     Dali::hash_combine(hash, Dali::hash_value(parameter));
     Dali::hash_combine(hash, Dali::hash_value(interpolation));
+    Dali::hash_combine(hash, Dali::hash_value(unit_conversion));
     Dali::hash_combine(hash, Dali::hash_value(multiplier));
     Dali::hash_combine(hash, Dali::hash_value(offset));
     return hash;

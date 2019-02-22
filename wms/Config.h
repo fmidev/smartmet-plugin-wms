@@ -21,6 +21,12 @@ namespace Dali
 class Config : private boost::noncopyable
 {
  public:
+  struct UnitConversion
+  {
+    double multiplier = 1;
+    double offset = 0;
+  };
+
   Config() = delete;
   Config(const std::string& configfile);
 
@@ -53,6 +59,8 @@ class Config : private boost::noncopyable
   std::string defaultTemplate(const std::string& theType) const;
 
   double defaultPrecision(const std::string& theName) const;
+
+  UnitConversion unitConversion(const std::string& theUnitConversion) const;
 
 #ifndef WITHOUT_AUHTENTICATION
   bool authenticate() const;
@@ -99,6 +107,8 @@ class Config : private boost::noncopyable
 #ifndef WITHOUT_OBSERVATION
   bool itsObsEngineDisabled = false;
 #endif
+
+  std::map<std::string, UnitConversion> itsUnitConversionMap;
 
 };  // class Config
 

@@ -40,6 +40,7 @@ class IsolineLayer : public Layer
 
   boost::optional<double> minarea;
 
+  std::string unit_conversion;
   boost::optional<double> multiplier;
   boost::optional<double> offset;
 

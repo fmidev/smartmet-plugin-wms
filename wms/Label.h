@@ -34,6 +34,7 @@ class Label
 
  private:
   // Value conversion
+  std::string unit_conversion;
   double multiplier = 1.0;
   double offset = 0.0;
 

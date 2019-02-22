@@ -105,6 +105,36 @@ Config::Config(const string& configfile)
       }
     }
 
+    // Optional unit conversion definitions
+
+    if (itsConfig.exists("unit_conversion"))
+    {
+      const auto& conversions = itsConfig.lookup("unit_conversion");
+      if (!conversions.isGroup())
+      {
+        throw Spine::Exception::Trace(BCP, "Configuration error!")
+            .addParameter("Configuration file", configfile)
+            .addDetail("Configured value of 'unit_conversions' must be an array");
+      }
+      for (int i = 0; i < conversions.getLength(); ++i)
+      {
+        const auto& conversion = conversions[i];
+        if (!conversion.isGroup())
+        {
+          throw Spine::Exception::Trace(BCP, "Configuration error!")
+              .addParameter("Configuration file", configfile)
+              .addDetail(
+                  "Configured value of a unit_conversion must be a group containing "
+                  "multiplier/offset");
+        }
+
+        UnitConversion uconversion;  // initialized to 1*x+0
+        conversion.lookupValue("multiplier", uconversion.multiplier);
+        conversion.lookupValue("offset", uconversion.offset);
+        itsUnitConversionMap[conversion.getName()] = uconversion;
+      }
+    }
+
     // Store array of SVG attribute names into a set for looking up valid names
     {
       const auto& attributes = itsConfig.lookup("regular_attributes");
@@ -242,6 +272,14 @@ double Config::defaultPrecision(const std::string& theName) const
 
   // default precision is one decimal
   return 1.0;
+}
+
+Config::UnitConversion Config::unitConversion(const std::string& theUnitConversion) const
+{
+  auto pos = itsUnitConversionMap.find(theUnitConversion);
+  if (pos == itsUnitConversionMap.end())
+    throw Spine::Exception(BCP, "Unknown unit conversion '" + theUnitConversion + "'");
+  return pos->second;
 }
 
 const std::string& Config::wmsUrl() const

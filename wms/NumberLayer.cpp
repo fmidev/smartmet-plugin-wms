@@ -688,6 +688,10 @@ void NumberLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       level = json.asDouble();
 
+    json = theJson.get("unit_conversion", nulljson);
+    if (!json.isNull())
+      unit_conversion = json.asString();
+
     json = theJson.get("multiplier", nulljson);
     if (!json.isNull())
       multiplier = json.asDouble();
@@ -813,6 +817,13 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     }
 
     // Data conversion settings
+
+    if (!unit_conversion.empty())
+    {
+      auto conv = theState.getConfig().unitConversion(unit_conversion);
+      multiplier = conv.multiplier;
+      offset = conv.offset;
+    }
 
     double xmultiplier = (multiplier ? *multiplier : 1.0);
     double xoffset = (offset ? *offset : 0.0);
@@ -963,6 +974,7 @@ std::size_t NumberLayer::hash_value(const State& theState) const
       Dali::hash_combine(hash, Engine::Querydata::hash_value(q));
     Dali::hash_combine(hash, Dali::hash_value(parameter));
     Dali::hash_combine(hash, Dali::hash_value(level));
+    Dali::hash_combine(hash, Dali::hash_value(unit_conversion));
     Dali::hash_combine(hash, Dali::hash_value(multiplier));
     Dali::hash_combine(hash, Dali::hash_value(offset));
     Dali::hash_combine(hash, Dali::hash_value(positions, theState));

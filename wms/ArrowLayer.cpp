@@ -773,6 +773,18 @@ void ArrowLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       scale = json.asDouble();
 
+    json = theJson.get("southflop", nulljson);
+    if (!json.isNull())
+      southflop = json.asBool();
+
+    json = theJson.get("northflop", nulljson);
+    if (!json.isNull())
+      northflop = json.asBool();
+
+    json = theJson.get("flip", nulljson);
+    if (!json.isNull())
+      flip = json.asBool();
+
     json = theJson.get("positions", nulljson);
     if (!json.isNull())
     {
@@ -791,6 +803,10 @@ void ArrowLayer::init(const Json::Value& theJson,
     json = theJson.get("maxdistance", nulljson);
     if (!json.isNull())
       maxdistance = json.asDouble();
+
+    json = theJson.get("unit_conversion", nulljson);
+    if (!json.isNull())
+      unit_conversion = json.asString();
 
     json = theJson.get("multiplier", nulljson);
     if (!json.isNull())
@@ -941,6 +957,15 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
           BCP,
           "Failed to create the needed coordinate transformation when reading wind directions");
 
+    // Alter units if requested
+
+    if (!unit_conversion.empty())
+    {
+      auto conv = theState.getConfig().unitConversion(unit_conversion);
+      multiplier = conv.multiplier;
+      offset = conv.offset;
+    }
+
     // Render the collected values
 
     for (const auto& pointvalue : pointvalues)
@@ -1016,7 +1041,8 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       if (!iri.empty())
       {
         std::string IRI = Iri::normalize(iri);
-        bool flop = southflop && (point.latlon.Y() < 0);
+        bool flop =
+            ((southflop && (point.latlon.Y() < 0)) || (northflop && (point.latlon.Y() > 0)));
 
         if (theState.addId(IRI))
           theGlobals["includes"][iri] = theState.getSymbol(iri);
@@ -1027,7 +1053,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
         // must use the translate transformation instead.
         std::string transform;
 
-        double yscale = (scale ? *scale : 1.0);
+        double yscale = (flip ? -1 : 1) * (scale ? *scale : 1.0);
         double xscale = (flop ? -yscale : yscale);
 
         if (rescale)
@@ -1098,12 +1124,15 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
     Dali::hash_combine(hash, Dali::hash_value(u));
     Dali::hash_combine(hash, Dali::hash_value(v));
     Dali::hash_combine(hash, Dali::hash_value(level));
+    Dali::hash_combine(hash, Dali::hash_value(unit_conversion));
     Dali::hash_combine(hash, Dali::hash_value(multiplier));
     Dali::hash_combine(hash, Dali::hash_value(offset));
     Dali::hash_combine(hash, Dali::hash_value(minrotationspeed));
     Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
     Dali::hash_combine(hash, Dali::hash_value(scale));
     Dali::hash_combine(hash, Dali::hash_value(southflop));
+    Dali::hash_combine(hash, Dali::hash_value(northflop));
+    Dali::hash_combine(hash, Dali::hash_value(flip));
     Dali::hash_combine(hash, Dali::hash_value(positions, theState));
     Dali::hash_combine(hash, Dali::hash_value(dx));
     Dali::hash_combine(hash, Dali::hash_value(dy));

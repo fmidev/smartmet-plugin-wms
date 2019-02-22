@@ -43,12 +43,15 @@ class ArrowLayer : public Layer
   boost::optional<std::string> v;
 
   boost::optional<double> level;
+  std::string unit_conversion;
   boost::optional<double> multiplier;
   boost::optional<double> offset;
   boost::optional<double> minrotationspeed;
   boost::optional<std::string> symbol;
   boost::optional<double> scale;
-  bool southflop;
+  bool southflop = false;
+  bool northflop = false;
+  bool flip = false;
 
   // Arrow position generator
   boost::optional<Positions> positions;

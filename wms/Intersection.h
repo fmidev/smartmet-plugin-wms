@@ -54,6 +54,7 @@ class Intersection
 
   Smoother smoother;
 
+  std::string unit_conversion;
   boost::optional<double> multiplier;
   boost::optional<double> offset;
 
