@@ -522,8 +522,8 @@
   </line>
   <line stroke="black" stroke-width="2" x1="1725" x2="1710" y1="441.176" y2="441.176">
   </line>
-  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="95" y="448">65°</text>
-  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1683" y="448">65°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="95" y="447">65°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1683" y="447">65°</text>
   <line stroke="black" stroke-width="2" x1="75" x2="80" y1="426.471" y2="426.471">
   </line>
   <line stroke="black" stroke-width="2" x1="1725" x2="1720" y1="426.471" y2="426.471">
@@ -858,7 +858,7 @@
   </line>
   <line stroke="black" stroke-width="2" x1="525" x2="525" y1="2205.88" y2="2190.88">
   </line>
-  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="517" y="327">15°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="517" y="326">15°</text>
   <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="517" y="2186">15°</text>
   <line stroke="black" stroke-width="2" x1="532.5" x2="532.5" y1="294.118" y2="299.118">
   </line>
@@ -1298,7 +1298,7 @@
   </line>
   <line stroke="black" stroke-width="2" x1="1275" x2="1275" y1="2205.88" y2="2190.88">
   </line>
-  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1267" y="327">25°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1267" y="326">25°</text>
   <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1267" y="2186">25°</text>
   <line stroke="black" stroke-width="2" x1="1282.5" x2="1282.5" y1="294.118" y2="299.118">
   </line>

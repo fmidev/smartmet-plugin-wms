@@ -10059,7 +10059,7 @@ viewBox="0 0 1000 1000">
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="275" y="1611">Fredrikshavn</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="330" y="2109">Travemünde</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="394" y="1395">Strömstad</text>
-  <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="394" y="2120">Wismar</text>
+  <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="393" y="2120">Wismar</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="399" y="1699">Anholt</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="445" y="1577">GÖTEBORG</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="425" y="2016">Gedser</text>
@@ -10092,9 +10092,9 @@ viewBox="0 0 1000 1000">
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="776" y="2030">Darlowo</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="714" y="1627">Oskarshamn</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="782" y="2016">Ustka</text>
-  <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="764" y="1296">Västerås</text>
+  <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="763" y="1296">Västerås</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="735" y="1454">Norrköping</text>
-  <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="741" y="1563">Västervik</text>
+  <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="739" y="1563">Västervik</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="748" y="1071">SÖDERHAMN</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="753" y="1011">HUDIKSVALL</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="777" y="1426">Oxelösund</text>
@@ -10104,7 +10104,7 @@ viewBox="0 0 1000 1000">
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="815" y="886">HÄRNÖSAND</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="875" y="1976">Rozewie</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="888" y="2008">Gdynia</text>
-  <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="903" y="2040">Gdansk</text>
+  <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="902" y="2040">Gdansk</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="898" y="1285">Norrtälje</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="856" y="795">ÖRNSKÖLDSVIK</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1010" y="2043">Tolkmicko</text>
@@ -10184,7 +10184,7 @@ viewBox="0 0 1000 1000">
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1155" y="995">Merikarvia</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1302" y="1219">INKOO</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1302" y="1230">Ingå</text>
-  <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1342" y="1229">Kantvik</text>
+  <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1341" y="1229">Kantvik</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1347" y="466">Ajos</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1404" y="1330">Muuga</text>
   <text font-family="Times" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1437" y="532">Virpiniemi</text>
@@ -10495,7 +10495,7 @@ viewBox="0 0 1000 1000">
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1103" y="486">Farstugrunden</text>
   <line font-family="Arial" font-size="10" font-style="normal" font-weight="normal" marker-end="url(#spearhead)" stroke="black" stroke-width="0.5" style="text-anchor:start" transform="rotate(18 1171 484) " x1="1171" x2="1181" y1="484" y2="484">
   </line>
-  <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1132" y="1479">Vilsandi</text>
+  <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1131" y="1479">Vilsandi</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1173" y="1389">Ristna</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1194" y="1544">Sörve</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1161" y="578">Simpgrundet</text>
@@ -10531,7 +10531,7 @@ viewBox="0 0 1000 1000">
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1457" y="1255">Kalbådagrund</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1471" y="1297">Mohni</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1485" y="1242">Tiiskeri</text>
-  <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1486" y="1289">Vaindlo</text>
+  <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1485" y="1289">Vaindlo</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1510" y="1271">Rodsker</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1528" y="1295">Mal. Tyters</text>
   <text font-family="Arial" font-size="10" font-style="normal" font-weight="normal" style="text-anchor:start" x="1558" y="1240">Suursaari</text>
@@ -10597,8 +10597,8 @@ viewBox="0 0 1000 1000">
   </line>
   <line stroke="black" stroke-width="0.5" x1="1851.85" x2="1866.85" y1="2083.33" y2="2083.33">
   </line>
-  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="181" y="2090">54°</text>
-  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1871" y="2090">54°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="181" y="2089">54°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1871" y="2089">54°</text>
   <line stroke="black" stroke-width="0.5" x1="222.222" x2="217.222" y1="2069.44" y2="2069.44">
   </line>
   <line stroke="black" stroke-width="0.5" x1="1851.85" x2="1856.85" y1="2069.44" y2="2069.44">
@@ -10639,8 +10639,8 @@ viewBox="0 0 1000 1000">
   </line>
   <line stroke="black" stroke-width="0.5" x1="1851.85" x2="1866.85" y1="1944.44" y2="1944.44">
   </line>
-  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="181" y="1951">55°</text>
-  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1871" y="1951">55°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="181" y="1950">55°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1871" y="1950">55°</text>
   <line stroke="black" stroke-width="0.5" x1="222.222" x2="217.222" y1="1930.56" y2="1930.56">
   </line>
   <line stroke="black" stroke-width="0.5" x1="1851.85" x2="1856.85" y1="1930.56" y2="1930.56">
@@ -11418,7 +11418,7 @@ viewBox="0 0 1000 1000">
   <line stroke="black" stroke-width="0.5" x1="666.667" x2="666.667" y1="2222.22" y2="2237.22">
   </line>
   <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="659" y="328">15°</text>
-  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="659" y="2255">15°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="659" y="2254">15°</text>
   <line stroke="black" stroke-width="0.5" x1="674.074" x2="674.074" y1="347.222" y2="342.222">
   </line>
   <line stroke="black" stroke-width="0.5" x1="674.074" x2="674.074" y1="2222.22" y2="2227.22">
@@ -11858,7 +11858,7 @@ viewBox="0 0 1000 1000">
   <line stroke="black" stroke-width="0.5" x1="1407.41" x2="1407.41" y1="2222.22" y2="2237.22">
   </line>
   <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1399" y="328">25°</text>
-  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1399" y="2255">25°</text>
+  <text font-family="Arial" font-size="14" font-style="normal" font-weight="normal" text-anchor="start" x="1399" y="2254">25°</text>
   <line stroke="black" stroke-width="0.5" x1="1414.81" x2="1414.81" y1="347.222" y2="342.222">
   </line>
   <line stroke="black" stroke-width="0.5" x1="1414.81" x2="1414.81" y1="2222.22" y2="2227.22">
