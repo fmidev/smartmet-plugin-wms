@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.2.22
+Version: 19.3.29
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -19,19 +19,19 @@ BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
 BuildRequires: smartmet-library-macgyver-devel >= 18.11.24
-BuildRequires: smartmet-library-spine-devel >= 18.12.13
+BuildRequires: smartmet-library-spine-devel >= 19.3.14
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.9.10
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 18.12.4
+BuildRequires: smartmet-engine-observation-devel >= 19.3.18
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.11.22
-BuildRequires: smartmet-engine-geonames-devel >= 19.1.28
-BuildRequires: smartmet-engine-querydata-devel >= 19.2.8
+BuildRequires: smartmet-engine-geonames-devel >= 19.3.22
+BuildRequires: smartmet-engine-querydata-devel >= 19.3.21
 BuildRequires: smartmet-engine-contour-devel >= 19.2.22
-BuildRequires: smartmet-library-gis-devel >= 19.2.21
+BuildRequires: smartmet-library-gis-devel >= 19.3.14
 BuildRequires: fmt-devel >= 5.2.0
 BuildRequires: ctpp2 >= 2.8.7
 BuildRequires: jsoncpp-devel
@@ -44,18 +44,18 @@ Requires: fmt >= 5.2.0
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.7
 Requires: libconfig
-Requires: smartmet-library-gis >= 19.2.21
+Requires: smartmet-library-gis >= 19.3.14
 Requires: smartmet-library-macgyver >= 18.11.24
 Requires: smartmet-library-giza >= 18.10.1
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 18.9.10
 %endif
-Requires: smartmet-engine-querydata >= 19.2.8
+Requires: smartmet-engine-querydata >= 19.3.21
 Requires: smartmet-engine-contour >= 19.2.22
 Requires: smartmet-engine-gis >= 18.11.22
-Requires: smartmet-engine-geonames >= 19.1.28
-Requires: smartmet-server >= 18.12.14
-Requires: smartmet-library-spine >= 18.12.13
+Requires: smartmet-engine-geonames >= 19.3.22
+Requires: smartmet-server >= 19.3.19
+Requires: smartmet-library-spine >= 19.3.14
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Fri Mar 29 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.3.29-1.fmi
+- Fixed WMS exceptions not to return 304/200 responses which might be cached
+
 * Thu Feb 21 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.2.22-1.fmi
 - Fixed ArrowLayer southflop setting to work
 - Added ArrowLayer flip and northflop settings

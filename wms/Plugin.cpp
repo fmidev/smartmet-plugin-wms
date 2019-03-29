@@ -1527,7 +1527,8 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Spine::Exception &exception,
       mapFormat = "application/json";
     formatWmsExceptionResponse(
         exception, mapFormat, isdebug, theRequest, theResponse, theState.useTimer());
-    return WMSQueryStatus::OK;
+
+    throw exception;
   }
 
   boost::optional<std::string> width = theRequest.getParameter("WIDTH");
@@ -1584,7 +1585,7 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Spine::Exception &exception,
                    product,
                    invalid_hash);
 
-    return WMSQueryStatus::OK;
+    throw exception;
   }
   catch (...)
   {
