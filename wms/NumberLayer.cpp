@@ -633,7 +633,7 @@ PointValues read_observations(const NumberLayer& layer,
       throw Spine::Exception(
           BCP, "Failed to create the needed coordinate transformation when drawing symbols");
 
-    if (*layer.producer == "flash")
+    if (layer.isFlashOrMobileProducer(*layer.producer))
       return read_flash_observations(layer, state, crs, box, valid_time_period, *transformation);
 
     if (layer.positions->layout == Positions::Layout::Station)

@@ -103,6 +103,8 @@ class Layer : public Properties
 
   boost::optional<std::string> type;
 
+  bool isFlashOrMobileProducer(const std::string& producer) const;
+
  private:
   bool validResolution() const;
   bool validType(const std::string& theType) const;

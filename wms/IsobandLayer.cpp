@@ -146,8 +146,8 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 {
   try
   {
-    if (*producer != "flash")
-      throw Spine::Exception(BCP, "Heatmap requires flash data!");
+    if (!isFlashOrMobileProducer(*producer))
+      throw Spine::Exception(BCP, "Heatmap requires flash or mobile data!");
 
     auto valid_time_period = getValidTimePeriod();
     auto crs = projection.getCRS();
@@ -342,9 +342,9 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     // Establish the parameter
     //
-    // Heatmap does not use the parameter currently (only flash coordinates)
-    bool allowUnknownParam =
-        (theState.isObservation(producer) && (*producer == "flash") && heatmap.resolution);
+    // Heatmap does not use the parameter currently (only flash or mobile coordinates)
+    bool allowUnknownParam = (theState.isObservation(producer) &&
+                              isFlashOrMobileProducer(*producer) && heatmap.resolution);
 
     if (!parameter)
       throw Spine::Exception(BCP, "Parameter not set for isoband-layer!");
