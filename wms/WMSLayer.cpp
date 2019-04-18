@@ -22,6 +22,35 @@ namespace WMS
 {
 namespace
 {
+std::string get_symbol_translation(const LegendGraphicSymbol& symbolSettings,
+                                   const std::string& language,
+                                   const std::string& defaultValue)
+{
+  if (symbolSettings.translations.find(language) != symbolSettings.translations.end())
+    return symbolSettings.translations.at(language);
+
+  return defaultValue;
+}
+
+std::string get_legend_title_string(const LegendGraphicParameter& parameterSettings,
+                                    const std::string& language)
+{
+  // 1) If hide_title == true return empty string
+  if (parameterSettings.hide_title)
+    return "";
+
+  // 2) Return translation if exists
+  if (parameterSettings.translations.find(language) != parameterSettings.translations.end())
+    return parameterSettings.translations.at(language);
+
+  // 3) Return name given in parameter settings (wms - or product configuration file)
+  if (!parameterSettings.given_name.empty())
+    return parameterSettings.given_name;
+
+  // 4) Return data_name by default
+  return parameterSettings.data_name;
+}
+
 // wms.longitude must be in range [-180...180] inclusive
 double clamp_longitude(double lon)
 {
@@ -51,9 +80,10 @@ void add_attributes(Json::Value& json, const LegendGraphicInfoItem& lgi)
     json["attributes"] = attributes;
 }
 
-void add_name(Json::Value& json,
-              const WMSLegendGraphicSettings& lgs,
-              const LegendGraphicInfoItem& lgi)
+void add_symbol_name(Json::Value& json,
+                     const WMSLegendGraphicSettings& lgs,
+                     const LegendGraphicInfoItem& lgi,
+                     const std::string& language)
 {
   std::string name = lgi.asString("lolimit") + "..." + lgi.asString("hilimit");
 
@@ -61,16 +91,25 @@ void add_name(Json::Value& json,
   {
     std::string symbolName = lgi.asString("symbol");
     if (!symbolName.empty() && lgs.parameters.find(symbolName) != lgs.parameters.end())
-      name = lgs.parameters.at(symbolName).name;
+    {
+      name = lgs.parameters.at(symbolName).given_name;
+    }
     else
-      name = symbolName;
+    {
+      std::string translation = symbolName;
+      if (lgs.symbols.find(symbolName) != lgs.symbols.end())
+        translation = get_symbol_translation(lgs.symbols.at(symbolName), language, symbolName);
+      name = translation;
+    }
   }
 
   json = Json::Value(name);
 }
+
 Json::Value process_symbol_group_json(const Json::Value& jsonTemplate,
                                       const WMSLegendGraphicSettings& lgs,
                                       const LegendGraphicInfo& legendGraphicInfo,
+                                      const std::string& language,
                                       unsigned int xpos,
                                       unsigned int ypos,
                                       unsigned int uniqueId)
@@ -112,7 +151,7 @@ Json::Value process_symbol_group_json(const Json::Value& jsonTemplate,
       Json::Value& cdataJson = headerLayerJson["cdata"];
       std::string parameterName = lgi.asString("parameter_name");
       if (lgs.parameters.find(parameterName) != lgs.parameters.end())
-        parameterName = lgs.parameters.at(parameterName).name;
+        parameterName = get_legend_title_string(lgs.parameters.at(parameterName), language);
 
       cdataJson = Json::Value(parameterName);
       Json::Value& attributesHeaderJson = headerLayerJson["attributes"];
@@ -132,8 +171,9 @@ Json::Value process_symbol_group_json(const Json::Value& jsonTemplate,
     yPosSymbolJson = Json::Value(symbol_ypos - 5);
 
     Json::Value& cdataTextJson = textLayerJson["cdata"];
+
     add_attributes(symbolLayerJson, lgi);
-    add_name(cdataTextJson, lgs, lgi);
+    add_symbol_name(cdataTextJson, lgs, lgi, language);
 
     Json::Value& attributesTextJson = textLayerJson["attributes"];
     Json::Value& xPosSymbolTextJson = attributesTextJson["x"];
@@ -326,7 +366,6 @@ Json::Value process_legend_json(const Json::Value& jsonTemplate,
   {
     Json::Value& layersJson = (legendJson.isMember("layers") ? legendJson["layers"] : nulljson);
     process_template_layers(layersJson, legendId, lgi);
-
     return set_legend_position(legendJson, xpos, ypos);
   }
 
@@ -414,6 +453,7 @@ Json::Value process_legend_json(const Json::Value& jsonTemplate,
             yPosJson = Json::Value(ypos + *lgs.layout.legend_yoffset - 5);
           }
           Json::Value& cdataJson = layerJson["cdata"];
+
           if (!cdataJson.isNull())
           {
             cdataJson = Json::Value(legendHeader + " isoline");
@@ -507,7 +547,35 @@ LegendGraphicInfo handle_json_layers(const Json::Value& layersJson)
 
         json = layerJson.get("isobands", nulljson);
         if (!json.isNull())
+        {
           lgi.add("isobands", json);
+          if (json.isArray())
+          {
+            for (unsigned int i = 0; i < json.size(); i++)
+            {
+              Json::Value& isoband = json[i];
+              Json::Value label = isoband.get("label", nulljson);
+              if (!label.isNull())
+              {
+                Json::Value::Members members = label.getMemberNames();
+                for (unsigned int j = 0; j < members.size(); j++)
+                {
+                  std::string language = members[j];
+                  Json::Value translationJson = label.get(language, nulljson);
+                  std::string translation =
+                      (!translationJson.isNull() ? translationJson.asString() : "");
+                  Dali::text_dimension_t tdim =
+                      Dali::getTextDimension(translation, Dali::text_style_t());
+                  tdim.width *= 1.6;
+                  if (lgi.text_lengths.find(language) == lgi.text_lengths.end())
+                    lgi.text_lengths.insert(make_pair(language, 0));
+                  if (tdim.width > lgi.text_lengths.at(language))
+                    lgi.text_lengths[language] = tdim.width;
+                }
+              }
+            }
+          }
+        }
         json = layerJson.get("isolines", nulljson);
         if (!json.isNull())
           lgi.add("isolines", json);
@@ -517,7 +585,9 @@ LegendGraphicInfo handle_json_layers(const Json::Value& layersJson)
         // Single symbol
         json = layerJson.get("symbol", nulljson);
         if (!json.isNull())
+        {
           lgi.add("symbol", json);
+        }
         json = layerJson.get("symbols", nulljson);
         if (!json.isNull())
         {
@@ -573,6 +643,24 @@ LegendGraphicInfo handle_json_layers(const Json::Value& layersJson)
   return ret;
 }
 
+// Language support
+void get_translations(const Json::Value& translationJson,
+                      std::map<std::string, std::string>& translations)
+{
+  if (!translationJson.isNull())
+  {
+    Json::Value nulljson;
+    Json::Value::Members languages = translationJson.getMemberNames();
+    for (unsigned int j = 0; j < languages.size(); j++)
+    {
+      std::string language = languages[j];
+      Json::Value translatedJson = translationJson.get(language, nulljson);
+      std::string translation = (!translatedJson.isNull() ? translatedJson.asString() : "");
+      translations.insert(std::make_pair(language, translation));
+    }
+  }
+}
+
 void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettings& settings)
 {
   Json::Value nulljson;
@@ -587,8 +675,31 @@ void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettin
   if (legendGraphicJson.isNull())
     return;
 
-  auto parametersJson = legendGraphicJson.get("parameters", nulljson);
+  auto symbolsJson = legendGraphicJson.get("symbols", nulljson);
+  // symbols
+  for (unsigned int i = 0; i < symbolsJson.size(); i++)
+  {
+    auto symbolJson = symbolsJson[i];
 
+    json = symbolJson.get("name", nulljson);
+    if (!json.isNull())
+    {
+      std::string symbol_name = json.asString();
+      LegendGraphicSymbol lgs(symbol_name);
+      Json::Value translationJson = symbolJson.get("translation", nulljson);
+      get_translations(translationJson, lgs.translations);
+      if (settings.symbols.find(symbol_name) != settings.symbols.end())
+      {
+        settings.symbols[symbol_name] = lgs;
+      }
+      else
+      {
+        settings.symbols.insert(std::make_pair(symbol_name, lgs));
+      }
+    }
+  }
+
+  auto parametersJson = legendGraphicJson.get("parameters", nulljson);
   // parameters
   for (unsigned int i = 0; i < parametersJson.size(); i++)
   {
@@ -597,6 +708,7 @@ void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettin
     std::string data_name;
     std::string name;
     std::string unit;
+    bool hide_title = false;
 
     json = parameterJson.get("data_name", nulljson);
     if (!json.isNull())
@@ -607,15 +719,25 @@ void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettin
     json = parameterJson.get("unit", nulljson);
     if (!json.isNull())
       unit = json.asString();
+    json = parameterJson.get("hide_title", nulljson);
+    if (!json.isNull())
+      hide_title = json.asBool();
 
+    std::vector<std::string> param_names;
     if (!data_name.empty())
     {
-      std::vector<std::string> param_names;
       boost::algorithm::split(param_names, data_name, boost::algorithm::is_any_of(","));
+      // Language support
+      Json::Value translationJson = parameterJson.get("translation", nulljson);
+      std::map<std::string, std::string> translations;
+      get_translations(translationJson, translations);
 
       for (const auto& param_name : param_names)
       {
-        settings.parameters.insert(std::make_pair(param_name, LegendGraphicParameter(name, unit)));
+        settings.parameters.insert(
+            std::make_pair(param_name, LegendGraphicParameter(param_name, name, unit, hide_title)));
+        if (translations.size() > 0)
+          settings.parameters[param_name].translations = translations;
       }
     }
   }
@@ -678,7 +800,7 @@ unsigned int isoband_legend_width(const Json::Value& json, unsigned int def)
   }
 
   return ret;
-}
+}  // namespace
 
 unsigned int isoband_legend_height(const Json::Value& json)
 {
@@ -767,7 +889,19 @@ std::map<std::string, Json::Value> readLegendFiles(const std::string& wmsroot,
   return legend_templates;
 }
 
-}  // anonymous namespace
+void replace_translations(const std::map<std::string, std::string>& sourceTranslations,
+                          std::map<std::string, std::string>& targetTranslations)
+{
+  for (const auto& tr : sourceTranslations)
+  {
+    if (targetTranslations.find(tr.first) == targetTranslations.end())
+      targetTranslations.insert(tr);
+    else
+      targetTranslations[tr.first] = tr.second;
+  }
+}
+
+}  // namespace
 
 // Remember to run updateLayerMetaData before using the layer!
 WMSLayer::WMSLayer(const WMSConfig& config)
@@ -816,17 +950,8 @@ void WMSLayer::addStyle(const Json::Value& root,
 
   if (!legendGraphicInfo.empty())
   {
-    get_legend_graphic_settings(root, legendGraphicSettings);
-    std::string legendGraphicID =
-        layerName + "::" + (layerStyle.name.empty() ? "default" : layerStyle.name);
-    //   WMSLegendGraphicSettings itsLegendGraphicSettings;
-    //	WMSLegendGraphicSettings lgs = wmsConfig.getLegendGraphicSettings();
-    LegendGraphicResult legendGraphicResult =
-        getLegendGraphic(wmsConfig.getLegendGraphicSettings(), legendGraphicID);
-    WMSLayerStyle style = layerStyle;
-    style.legend_url.width = legendGraphicResult.width;
-    style.legend_url.height = legendGraphicResult.height;
-    addStyle(layerName, style);
+    get_legend_graphic_settings(root, itsLegendGraphicSettings);
+    addStyle(layerName, layerStyle);
   }
 }
 
@@ -846,7 +971,8 @@ void WMSLayer::addStyle(const std::string& layerName, const WMSLayerStyle& layer
 }
 
 LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& settings,
-                                               const std::string& legendGraphicID) const
+                                               const std::string& legendGraphicID,
+                                               const std::string& language) const
 {
   LegendGraphicResult ret;
 
@@ -864,29 +990,57 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
   WMSLegendGraphicSettings actualSettings = settings;
 
   // settings from layer file (product file) will overwrite wms configuration file settings
-  for (const auto& pair : legendGraphicSettings.parameters)
-    actualSettings.parameters[pair.first] = pair.second;
+  // parameter settings
+  for (const auto& pair : itsLegendGraphicSettings.parameters)
+  {
+    if (actualSettings.parameters.find(pair.first) == actualSettings.parameters.end())
+      actualSettings.parameters.insert(std::make_pair(pair.first, pair.second));
+    else
+    {
+      LegendGraphicParameter& actualLgp = actualSettings.parameters[pair.first];
+      const LegendGraphicParameter& layerLgp = pair.second;
+      actualLgp.data_name = layerLgp.data_name;
+      actualLgp.given_name = layerLgp.given_name;
+      actualLgp.unit = layerLgp.unit;
+      actualLgp.hide_title = layerLgp.hide_title;
+      replace_translations(layerLgp.translations, actualLgp.translations);
+    }
+  }
+  // symbol settings
+  for (const auto& pair : itsLegendGraphicSettings.symbols)
+  {
+    if (actualSettings.symbols.find(pair.first) == actualSettings.symbols.end())
+    {
+      actualSettings.symbols.insert(std::make_pair(pair.first, pair.second));
+    }
+    else
+    {
+      LegendGraphicSymbol& actualLgs = actualSettings.symbols[pair.first];
+      const LegendGraphicSymbol& layerLgs = pair.second;
+      replace_translations(layerLgs.translations, actualLgs.translations);
+    }
+  }
 
-  if (legendGraphicSettings.layout.param_name_xoffset)
-    actualSettings.layout.param_name_xoffset = legendGraphicSettings.layout.param_name_xoffset;
-  if (legendGraphicSettings.layout.param_name_yoffset)
-    actualSettings.layout.param_name_yoffset = legendGraphicSettings.layout.param_name_yoffset;
-  if (legendGraphicSettings.layout.param_unit_xoffset)
-    actualSettings.layout.param_unit_xoffset = legendGraphicSettings.layout.param_unit_xoffset;
-  if (legendGraphicSettings.layout.param_unit_yoffset)
-    actualSettings.layout.param_unit_yoffset = legendGraphicSettings.layout.param_unit_yoffset;
-  if (legendGraphicSettings.layout.symbol_group_x_padding)
+  if (itsLegendGraphicSettings.layout.param_name_xoffset)
+    actualSettings.layout.param_name_xoffset = itsLegendGraphicSettings.layout.param_name_xoffset;
+  if (itsLegendGraphicSettings.layout.param_name_yoffset)
+    actualSettings.layout.param_name_yoffset = itsLegendGraphicSettings.layout.param_name_yoffset;
+  if (itsLegendGraphicSettings.layout.param_unit_xoffset)
+    actualSettings.layout.param_unit_xoffset = itsLegendGraphicSettings.layout.param_unit_xoffset;
+  if (itsLegendGraphicSettings.layout.param_unit_yoffset)
+    actualSettings.layout.param_unit_yoffset = itsLegendGraphicSettings.layout.param_unit_yoffset;
+  if (itsLegendGraphicSettings.layout.symbol_group_x_padding)
     actualSettings.layout.symbol_group_x_padding =
-        legendGraphicSettings.layout.symbol_group_x_padding;
-  if (legendGraphicSettings.layout.symbol_group_y_padding)
+        itsLegendGraphicSettings.layout.symbol_group_x_padding;
+  if (itsLegendGraphicSettings.layout.symbol_group_y_padding)
     actualSettings.layout.symbol_group_y_padding =
-        legendGraphicSettings.layout.symbol_group_y_padding;
-  if (legendGraphicSettings.layout.legend_xoffset)
-    actualSettings.layout.legend_xoffset = legendGraphicSettings.layout.legend_xoffset;
-  if (legendGraphicSettings.layout.legend_yoffset)
-    actualSettings.layout.legend_yoffset = legendGraphicSettings.layout.legend_yoffset;
-  if (legendGraphicSettings.layout.legend_width)
-    actualSettings.layout.legend_width = legendGraphicSettings.layout.legend_width;
+        itsLegendGraphicSettings.layout.symbol_group_y_padding;
+  if (itsLegendGraphicSettings.layout.legend_xoffset)
+    actualSettings.layout.legend_xoffset = itsLegendGraphicSettings.layout.legend_xoffset;
+  if (itsLegendGraphicSettings.layout.legend_yoffset)
+    actualSettings.layout.legend_yoffset = itsLegendGraphicSettings.layout.legend_yoffset;
+  if (itsLegendGraphicSettings.layout.legend_width)
+    actualSettings.layout.legend_width = itsLegendGraphicSettings.layout.legend_width;
 
   std::map<std::string, Json::Value> legends =
       readLegendFiles(wmsConfig.getDaliConfig().rootDirectory(true), customer);
@@ -912,11 +1066,13 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
       continue;
     }
 
-    const LegendGraphicParameter* parameterSettings = nullptr;
-    if (actualSettings.parameters.find(parameterName) != actualSettings.parameters.end())
-      parameterSettings = &(actualSettings.parameters.at(parameterName));
+    LegendGraphicParameter lgp(parameterName);
+    const LegendGraphicParameter& parameterSettings =
+        (actualSettings.parameters.find(parameterName) != actualSettings.parameters.end()
+             ? actualSettings.parameters.at(parameterName)
+             : lgp);
 
-    std::string legendHeader = (parameterSettings ? parameterSettings->name : parameterName);
+    std::string legendHeader = get_legend_title_string(parameterSettings, language);
 
     bool isGenericTemplate = false;
     // Legends are identified by parameter name + layer type (e.g. Temperature_isoline,
@@ -936,13 +1092,12 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
 
     // Generic template file is same for all layers of same type (e.g. all isobands),
     // non-generig is parameter-specific and only location need to be modified here
-    std::string unit = (parameterSettings ? parameterSettings->unit : "");
     auto legendJson = process_legend_json(templateJson,
                                           layerType,
                                           parameterName,
                                           isGenericTemplate,
                                           legendHeader,
-                                          unit,
+                                          parameterSettings.unit,
                                           actualSettings,
                                           lgi,
                                           xpos,
@@ -963,6 +1118,11 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
 
       labelHeight = isoband_legend_height(legendJson);
       isobandWidth = isoband_legend_width(legendJson, *(actualSettings.layout.legend_width));
+      unsigned int localizedWidth = lgi.labelWidth(language);
+      if (actualSettings.layout.legend_xoffset)
+        localizedWidth += *(actualSettings.layout.legend_xoffset);
+      if (localizedWidth > isobandWidth)
+        isobandWidth = localizedWidth;
     }
     else if (layerType == "isoline")
       labelHeight = ypos + (*actualSettings.layout.legend_yoffset * 2);
@@ -1011,7 +1171,7 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
       const LegendGraphicInfo& legendGraphicInfo = iter->second;
 
       Json::Value symbolGroup = process_symbol_group_json(
-          legends.at("symbol"), actualSettings, legendGraphicInfo, xpos, ypos, uniqueId);
+          legends.at("symbol"), actualSettings, legendGraphicInfo, language, xpos, ypos, uniqueId);
       ret.legendLayers.push_back(symbolGroup.toStyledString());
       Json::Value nulljson;
       auto layersJson = symbolGroup.get("layers", nulljson);

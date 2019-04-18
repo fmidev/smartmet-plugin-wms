@@ -31,8 +31,15 @@ struct LegendGraphicInfoItem
   bool exists(const std::string& name) const { return (info.find(name) != info.end()); }
   bool empty() const { return (info.size() == 0); }
   void add(const std::string& name, const Json::Value& val) { info.insert(make_pair(name, val)); }
+  unsigned int labelWidth(const std::string& language) const
+  {
+    if (text_lengths.find(language) != text_lengths.end())
+      return text_lengths.at(language);
+    return 0;
+  }
 
   std::map<std::string, Json::Value> info;
+  std::map<std::string, unsigned int> text_lengths;
 };
 
 using LegendGraphicInfo = std::vector<LegendGraphicInfoItem>;

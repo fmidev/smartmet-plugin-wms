@@ -20,11 +20,41 @@ namespace WMS
 struct LegendGraphicParameter
 {
   LegendGraphicParameter() {}
-  LegendGraphicParameter(const std::string& n, const std::string& u) : name(n), unit(u) {}
-  LegendGraphicParameter(const LegendGraphicParameter& lgp) : name(lgp.name), unit(lgp.unit) {}
+  LegendGraphicParameter(const std::string& dn) : data_name(dn) {}
+  LegendGraphicParameter(const std::string& dn,
+                         const std::string& gn,
+                         const std::string& u,
+                         bool ht)
+      : data_name(dn), given_name(gn), unit(u), hide_title(ht)
+  {
+  }
+  LegendGraphicParameter(const LegendGraphicParameter& lgp)
+      : data_name(lgp.data_name),
+        given_name(lgp.given_name),
+        unit(lgp.unit),
+        hide_title(lgp.hide_title),
+        translations(lgp.translations)
+  {
+  }
 
-  std::string name;
+  std::string data_name;
+  std::string given_name;
   std::string unit;
+  bool hide_title{false};
+  std::map<std::string, std::string> translations;
+};
+
+struct LegendGraphicSymbol
+{
+  LegendGraphicSymbol() {}
+  LegendGraphicSymbol(const std::string& sn) : symbol_name(sn) {}
+  LegendGraphicSymbol(const LegendGraphicSymbol& lgs)
+      : symbol_name(lgs.symbol_name), translations(lgs.translations)
+  {
+  }
+
+  std::string symbol_name;
+  std::map<std::string, std::string> translations;
 };
 
 struct LegendGraphicLayout
@@ -51,6 +81,7 @@ class WMSLegendGraphicSettings
 
   LegendGraphicLayout layout;
   std::map<std::string, LegendGraphicParameter> parameters;
+  std::map<std::string, LegendGraphicSymbol> symbols;
   std::set<std::string> symbolsToIgnore;
   int expires;
 };

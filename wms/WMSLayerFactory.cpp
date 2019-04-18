@@ -154,6 +154,8 @@ WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
     Json::Value nulljson;
     Json::Value views = jsonRoot.get("views", nulljson);
 
+    Json::Value title = jsonRoot.get("title", nulljson);
+
     // browse layers and if 'postgis'-layer is found type is WMSLayerType::PostGISLayer
     // otherwise it is WMSLayerType::QueryDataLayer
     if (views.isNull())
@@ -172,6 +174,7 @@ WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
       else
       {
         WMSLayerType layer_type = findLayerType(layers, layerRef);  // The resolved layer type
+
         if (layer_type != WMSLayerType::NotWMSLayer)
           return layer_type;
 
@@ -378,13 +381,6 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
           auto legend_url_json = style_json.get("legend_url", nulljson);
           if (!legend_url_json.isNull())
           {
-            // TODO: chek if this is needed???
-            json_value = legend_url_json.get("width", nulljson);
-            if (!json_value.isNull())
-              layerStyle.legend_url.width = json_value.asInt();
-            json_value = legend_url_json.get("height", nulljson);
-            if (!json_value.isNull())
-              layerStyle.legend_url.height = json_value.asInt();
             json_value = legend_url_json.get("format", nulljson);
             if (!json_value.isNull())
               layerStyle.legend_url.format = json_value.asString();

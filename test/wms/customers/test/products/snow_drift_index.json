@@ -1,0 +1,53 @@
+{
+  "title": "HARMONIE Snow Drift Index",
+  "abstract": "Snow drift index from HARMONIE forecast model",
+  "projection": {},
+  "note": "pal_skandinavia is not valid for snow_drift index, but is good enough for GetCapabilities and LegendGraphic tests",
+  "producer": "pal_skandinavia",
+  "defs":
+    {
+	"get_legend_graphic":
+	{
+            "parameters": [
+		{
+		    "data_name": "SnowDriftIndex",
+		    "name": "SnowDriftIndex",
+		    "translation":
+		    {
+			"fi": "Lumikertymä",
+			"sv": "Snödrift",
+			"en": "Snowdrift"
+		    }
+		}
+	    ],
+	    "layout":
+	    {
+		"param_name_xoffset": 20,
+		"param_name_yoffset": 20,
+		"param_unit_xoffset": 30,
+		"param_unit_yoffset": 40,
+		"symbol_group_x_padding": 30,
+		"symbol_group_y_padding": 40,
+		"legend_xoffset": 30,
+		"legend_yoffset": 50,
+		"legend_width": 150
+	    }
+	}	
+    },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "SnowDriftIndex",
+          "layer_type": "isoband",
+          "parameter": "SnowDriftIndex",
+          "isobands": "json:isobands/SnowDriftIndex.json",
+          "css": "isobands/SnowDriftIndex.css",
+          "attributes": {
+            "shape-rendering": "crispEdges"
+          }
+        }
+      ]
+    }
+  ]
+}

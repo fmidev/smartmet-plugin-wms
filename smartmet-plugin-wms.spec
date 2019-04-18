@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.4.11
+Version: 19.4.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Apr 18 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.4.18-1.fmi
+- Language support for automatically generated legends (BRAINSTORM-1523)
+
 * Thu Apr 11 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.4.11-1.fmi
 - Test cases for new mobile producers (NetAtmo, RoadCloud)
 

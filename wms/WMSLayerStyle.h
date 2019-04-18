@@ -22,9 +22,7 @@ namespace WMS
 {
 struct LegendURL
 {
-  LegendURL() : width(200), height(200), format("image/png") {}
-  int width;
-  int height;
+  LegendURL() : format("image/png") {}
   std::string format;
   std::string online_resource;
 };

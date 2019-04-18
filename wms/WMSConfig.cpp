@@ -108,10 +108,9 @@ std::string makeLayerNamespace(const std::string& customer,
 
 // if legend layer exixts use it directly
 // otherwise generate legend from configuration
-bool prepareLegendGraphic(Product& product)
+bool prepareLegendGraphic(Product& theProduct)
 {
-  std::list<boost::shared_ptr<View> >& views = product.views.views;
-  unsigned int i = 0;
+  std::list<boost::shared_ptr<View> >& views = theProduct.views.views;
   boost::shared_ptr<Layer> legendLayer;
 
   bool legendLayerFound = false;
@@ -119,7 +118,6 @@ bool prepareLegendGraphic(Product& product)
   {
     std::list<boost::shared_ptr<Layer> > layers = view->layers.layers;
 
-    unsigned int j = 0;
     for (auto& layer : layers)
     {
       std::list<boost::shared_ptr<Layer> > sublayers = layer->layers.layers;
@@ -133,18 +131,14 @@ bool prepareLegendGraphic(Product& product)
           break;
         }
       }
-      j++;
 
-      unsigned int k = 0;
       for (auto& sublayer : sublayers)
       {
         std::list<boost::shared_ptr<Layer> > sublayers2 = sublayer->layers.layers;
-        k++;
       }
     }
     if (legendLayerFound)
       break;
-    i++;
   }
 
   if (legendLayer)
@@ -159,8 +153,10 @@ bool prepareLegendGraphic(Product& product)
 
     layers.erase(layers.begin(), layers.end());
     layers.push_back(legendLayer);
+
     return true;
   }
+
   // delete all layers and generate legend layer from configuration
   auto it = views.begin();
   it++;
@@ -168,6 +164,7 @@ bool prepareLegendGraphic(Product& product)
   auto view = *(views.begin());
   auto& layers = view->layers.layers;
   layers.erase(layers.begin(), layers.end());
+
   return false;
 }
 
@@ -1201,7 +1198,8 @@ Json::Value WMSConfig::json(const std::string& theLayerName) const
 std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerName,
                                                      const std::string& styleName,
                                                      std::size_t& width,
-                                                     std::size_t& height) const
+                                                     std::size_t& height,
+                                                     const std::string& language) const
 {
   std::vector<Json::Value> ret;
 
@@ -1214,7 +1212,7 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
   std::string legendGraphicID = layerName + "::" + styleName;
 
   LegendGraphicResult result = my_layers->at(layerName).getLayer()->getLegendGraphic(
-      itsLegendGraphicSettings, legendGraphicID);
+      itsLegendGraphicSettings, legendGraphicID, language);
   width = result.width;
   height = result.height;
 
@@ -1291,7 +1289,8 @@ std::set<std::string> WMSConfig::getObservationProducers() const
 void WMSConfig::getLegendGraphic(const std::string& theLayerName,
                                  const std::string& theStyleName,
                                  Product& theProduct,
-                                 const State& theState) const
+                                 const State& theState,
+                                 const std::string& theLanguage) const
 {
   if (prepareLegendGraphic(theProduct))
     return;
@@ -1299,13 +1298,13 @@ void WMSConfig::getLegendGraphic(const std::string& theLayerName,
   std::size_t width = 100;
   std::size_t height = 100;
   std::vector<Json::Value> legendLayers =
-      getLegendGraphic(theLayerName, theStyleName, width, height);
+      getLegendGraphic(theLayerName, theStyleName, width, height, theLanguage);
   theProduct.width = width;
   theProduct.height = height;
 
   Json::Value nulljson;
-
   boost::shared_ptr<View> view = *(theProduct.views.views.begin());
+
   for (const auto& legendL : legendLayers)
   {
     boost::shared_ptr<Layer> legendLayer(Dali::LayerFactory::create(legendL));

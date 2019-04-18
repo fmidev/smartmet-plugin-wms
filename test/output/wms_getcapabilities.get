@@ -130,7 +130,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="150" height="160">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=ely%3Aelymap"/>
         </LegendURL>
@@ -173,7 +173,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="150" height="160">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=ely%3Awmsmap"/>
         </LegendURL>
@@ -241,7 +241,7 @@
       <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/><Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="127" height="85">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aflobrg"/>
         </LegendURL>
@@ -482,7 +482,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="191" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_bob_bw"/>
         </LegendURL>
@@ -526,7 +526,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="191" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_bob_color"/>
         </LegendURL>
@@ -570,7 +570,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="191" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_bw"/>
         </LegendURL>
@@ -614,7 +614,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="191" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_color"/>
         </LegendURL>
@@ -658,7 +658,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="191" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_smhi_bw"/>
         </LegendURL>
@@ -702,7 +702,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="191" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_smhi_color"/>
         </LegendURL>
@@ -746,7 +746,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="191" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_gof_bw"/>
         </LegendURL>
@@ -790,7 +790,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="191" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_gof_color"/>
         </LegendURL>
@@ -869,7 +869,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="191" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_nsp2_bw"/>
         </LegendURL>
@@ -913,7 +913,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="191" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_nsp2_color"/>
         </LegendURL>
@@ -957,7 +957,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="191" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_sob_bw"/>
         </LegendURL>
@@ -1001,7 +1001,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="191" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_sob_color"/>
         </LegendURL>
@@ -1045,7 +1045,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="191" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_wgof_bw"/>
         </LegendURL>
@@ -1089,7 +1089,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="191" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_wgof_color"/>
         </LegendURL>
@@ -1109,7 +1109,7 @@
       <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/><Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="125" height="85">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicedft"/>
         </LegendURL>
@@ -1142,7 +1142,7 @@
       <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/><Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="154" height="85">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicefra_zone"/>
         </LegendURL>
@@ -1175,7 +1175,7 @@
       <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/><Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="128" height="85">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicerdg"/>
         </LegendURL>
@@ -1195,7 +1195,7 @@
       <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/><Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="122" height="85">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicerft"/>
         </LegendURL>
@@ -1215,7 +1215,7 @@
       <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/><Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="130" height="85">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Ajmdbrr"/>
         </LegendURL>
@@ -1363,7 +1363,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="100" height="365">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Anetatmo5min"/>
         </LegendURL>
@@ -1406,21 +1406,21 @@
       <Style>
         <Name>precipitation_thin_style</Name>
         <Title>Precipitation thin style</Title><Abstract>Pressure isolines line width is 1 px</Abstract>
-        <LegendURL width="618" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thin_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation"/>
         </LegendURL>
       </Style><Style>
         <Name>precipitation_thick_style</Name>
         <Title>Precipitation thick style</Title><Abstract>Pressure isolines line width is 2 px</Abstract>
-        <LegendURL width="618" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thick_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation"/>
         </LegendURL>
       </Style><Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="618" height="295">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation"/>
         </LegendURL>
@@ -1463,7 +1463,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="618" height="380">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_modified"/>
         </LegendURL>
@@ -1506,9 +1506,53 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="100" height="1240">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aroadcloud5min"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    <Layer>
+      <Name>test:snow_drift_index</Name>
+      <Title>HARMONIE Snow Drift Index</Title>
+      <Abstract>Snow drift index from HARMONIE forecast model</Abstract>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>-9.09870632718</westBoundLongitude>
+        <eastBoundLongitude>49</eastBoundLongitude>
+        <southBoundLatitude>51.3</southBoundLatitude>
+        <northBoundLatitude>70.2</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:83" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:84" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="-1366068.51938" miny="-3945258.59869" maxx="2145400.5886" maxy="-2649349.08649"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2030401.83511" miny="-3648105.94667" maxx="1005949.87844" maxy="-1814781.62012"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3674549.99025" maxy="7785726.69718"/>
+      <BoundingBox CRS="EPSG:3035" minx="3006482.43753" miny="3305514.91803" maxx="5432786.5425" maxy="5479598.18246"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="613375.780227" maxy="7790970.34751"/>
+      <BoundingBox CRS="EPSG:3067" minx="43547.7892277" miny="6549298.62199" maxx="674306.988933" maxy="7782478.68382"/>
+      <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
+      <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL>
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asnow_drift_index"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -1549,28 +1593,28 @@
       <Style>
         <Name>temperature_two_degrees</Name>
         <Title>Temperature isobands every two degrees</Title><Abstract>Temperature isoband width is two degrees</Abstract>
-        <LegendURL width="500" height="990">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=temperature_two_degrees&amp;format=image%2Fpng&amp;layer=test%3At2m"/>
         </LegendURL>
       </Style><Style>
         <Name>temperature_three_degrees</Name>
         <Title>Temperature isobands every three degrees</Title><Abstract>Temperature isoband width is three degrees</Abstract>
-        <LegendURL width="500" height="553">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=temperature_three_degrees&amp;format=image%2Fpng&amp;layer=test%3At2m"/>
         </LegendURL>
       </Style><Style>
         <Name>temperature_one_degrees</Name>
         <Title>Temperature isobands every one degrees</Title><Abstract>Temperature isoband width is one degrees</Abstract>
-        <LegendURL width="500" height="1959">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=temperature_one_degrees&amp;format=image%2Fpng&amp;layer=test%3At2m"/>
         </LegendURL>
       </Style><Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="500" height="990">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m"/>
         </LegendURL>
@@ -1613,7 +1657,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="500" height="990">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m_isoband_labels"/>
         </LegendURL>
@@ -1656,7 +1700,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="800" height="990">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m_p"/>
         </LegendURL>
@@ -1752,7 +1796,7 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="200" height="200">
+        <LegendURL>
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Awind_legend"/>
         </LegendURL>

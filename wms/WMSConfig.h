@@ -100,7 +100,8 @@ class WMSConfig
   std::vector<Json::Value> getLegendGraphic(const std::string& theLayerName,
                                             const std::string& theStyleName,
                                             std::size_t& width,
-                                            std::size_t& height) const;
+                                            std::size_t& height,
+                                            const std::string& language) const;
 
   bool inspireExtensionSupported() const;
   CTPP::CDT getCapabilitiesResponseVariables() const;
@@ -110,7 +111,8 @@ class WMSConfig
   void getLegendGraphic(const std::string& theLayerName,
                         const std::string& theStyleName,
                         Dali::Product& theProduct,
-                        const Dali::State& theState) const;
+                        const Dali::State& theState,
+                        const std::string& language) const;
 
   const Spine::JsonCache& getJsonCache() const { return itsJsonCache; }
   const Plugin::Dali::Config& getDaliConfig() const { return itsDaliConfig; }
