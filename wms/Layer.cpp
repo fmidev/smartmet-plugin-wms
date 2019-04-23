@@ -457,6 +457,11 @@ std::size_t Layer::hash_value(const State& theState) const
   }
 }
 
+bool Layer::isFlashOrMobileProducer(const std::string& producer) const
+{
+  return (producer == "flash" || producer == "roadcloud" || producer == "netatmo");
+}
+
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet

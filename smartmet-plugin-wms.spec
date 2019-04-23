@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.4.12
+Version: 19.4.23
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Apr 23 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.4.11-1.fmi
+- Support for mobile and external observations (BRAINSTORM-1420)
+
 * Fri Apr 12 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.4.12-1.fmi
 - Fixed MapLayer hash calculation to include querydata hash value if styles are used
 

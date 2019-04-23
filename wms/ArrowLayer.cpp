@@ -700,8 +700,8 @@ PointValues read_observations(const ArrowLayer& layer,
       throw Spine::Exception(
           BCP, "Failed to create the needed coordinate transformation when drawing arrows");
 
-    if (*layer.producer == "flash")
-      throw Spine::Exception(BCP, "Cannot use producer flash in ArrowLayer");
+    if (layer.isFlashOrMobileProducer(*layer.producer))
+      throw Spine::Exception(BCP, "Cannot use flsh or mobile producer in ArrowLayer");
 
     if (layer.positions->layout == Positions::Layout::Station)
       return read_station_observations(layer, state, crs, box, valid_time_period, *transformation);
