@@ -443,6 +443,11 @@ std::size_t MapLayer::hash_value(const State& theState) const
     Dali::hash_combine(hash, Dali::hash_value(map, theState));
     Dali::hash_combine(hash, boost::hash_value(precision));
     Dali::hash_combine(hash, Dali::hash_value(styles, theState));
+
+    // Add data hash
+    if (styles && !theState.isObservation(producer))
+      Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+
     return hash;
   }
   catch (...)
