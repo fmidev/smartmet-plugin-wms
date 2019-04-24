@@ -1,0 +1,87 @@
+{
+    "title": "Demo product",
+    "producer": "pal_skandinavia",
+    "language": "fi",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 600,
+	"bboxcrs": "WGS84",
+	"cx": 25,
+	"cy": 65,
+	"resolution": 2
+    },
+    "defs":
+    {
+	"styles":
+	{
+	    ".City":
+	    {
+		"stroke": "black",
+		"stroke-width": "1px"
+	    }
+	}
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+                {
+		    "qid": "lisoband",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css",
+                    "parameter": "Temperature.raw",
+		    "attributes":
+		    {
+			"id": "temperature_isobands"
+		    }
+		},
+                {
+                    "qid": "lmap",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 100
+                    },
+                    "attributes":
+                    {
+                        "id": "europe_country_lines",
+                        "fill": "none",
+                        "stroke": "#222",
+                        "stroke-width": "0.3px"
+                    }
+                },
+		{
+		    "qid": "lsymbol",
+		    "layer_type": "symbol",
+		    "symbol": "city",
+		    "parameter": "Temperature.raw",
+		    "symbols": "json:isobands/temperature.json",
+/*
+		    "positions":
+		    {
+			"layout": "keyword",
+			"keyword": "synop_fi"
+		    }
+*/
+		    "positions":
+		    {
+			"layout": "graticulefill",
+			"size": 10,
+			"step": 1,
+			"mindistance": 10
+		    }
+		}
+            ]
+        }
+    ]
+}
+

@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.4.18
+Version: 19.4.23
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -19,7 +19,7 @@ BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
 BuildRequires: smartmet-library-macgyver-devel >= 18.11.24
-BuildRequires: smartmet-library-spine-devel >= 19.3.14
+BuildRequires: smartmet-library-spine-devel >= 19.4.4
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.9.10
@@ -55,7 +55,7 @@ Requires: smartmet-engine-contour >= 19.2.22
 Requires: smartmet-engine-gis >= 18.11.22
 Requires: smartmet-engine-geonames >= 19.3.22
 Requires: smartmet-server >= 19.3.19
-Requires: smartmet-library-spine >= 19.3.14
+Requires: smartmet-library-spine >= 19.4.4
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,14 +92,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-* Thu Apr 18 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.4.18-1.fmi
+* Wed Apr 23 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.4.23-1.fmi
 - Language support for automatically generated legends (BRAINSTORM-1523)
-
-* Thu Apr 11 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.4.11-1.fmi
-- Test cases for new mobile producers (NetAtmo, RoadCloud)
-
-* Tue Apr 9 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.4.9-1.fmi
 - Support for mobile and external observations (BRAINSTORM-1420)
+
+* Fri Apr 12 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.4.12-1.fmi
+- Fixed MapLayer hash calculation to include querydata hash value if styles are used
 
 * Fri Mar 29 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.3.29-1.fmi
 - Fixed WMS exceptions not to return 304/200 responses which might be cached
