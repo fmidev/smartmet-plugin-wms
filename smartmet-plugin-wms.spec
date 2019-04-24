@@ -18,14 +18,14 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
-BuildRequires: smartmet-library-macgyver-devel >= 18.11.24
-BuildRequires: smartmet-library-spine-devel >= 19.4.4
+BuildRequires: smartmet-library-macgyver-devel >= 19.4.23
+BuildRequires: smartmet-library-spine-devel >= 19.4.23
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.9.10
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 19.3.18
+BuildRequires: smartmet-engine-observation-devel >= 19.4.23
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.11.22
 BuildRequires: smartmet-engine-geonames-devel >= 19.3.22
@@ -45,7 +45,7 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.7
 Requires: libconfig
 Requires: smartmet-library-gis >= 19.3.14
-Requires: smartmet-library-macgyver >= 18.11.24
+Requires: smartmet-library-macgyver >= 19.4.23
 Requires: smartmet-library-giza >= 18.10.1
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 18.9.10
@@ -55,7 +55,7 @@ Requires: smartmet-engine-contour >= 19.2.22
 Requires: smartmet-engine-gis >= 18.11.22
 Requires: smartmet-engine-geonames >= 19.3.22
 Requires: smartmet-server >= 19.3.19
-Requires: smartmet-library-spine >= 19.4.4
+Requires: smartmet-library-spine >= 19.4.23
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
