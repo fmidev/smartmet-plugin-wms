@@ -5,15 +5,48 @@
     {
 	"get_legend_graphic":
 	{
-            "parameters": [
+ 	    "symbols":
+	    [
+		{
+		    "name": "drizzle",
+		    "translation":
+		    {
+			"fi": "Tihkusade"
+		    }
+		}
+	    ],
+           "parameters": [
 		{
 		    "data_name": "PrecipitationForm",
-		    "name": "sateen olomuoto"
+		    "name": "Precipitation form",
+		    "hide_title": true,
+		    "translation":
+		    {
+			"fi": "Sateen olomuoto",
+			"sv": "Regn form",
+			"en": "Precipitation from"
+		    }
 		},
 		{
 		    "data_name": "Precipitation1h",
-		    "name": "sateen intensiteetti",
-		    "unit": "mm/h" 
+		    "name": "Precipitation",
+		    "unit": "mm/h",
+		    "translation":
+		    {
+			"fi": "Sateen intensiteetti",
+			"sv": "Regn intensitet",
+			"en": "Precipitation intensity"
+		    }
+		},
+		{
+		    "data_name": "Pressure",
+		    "name": "Pressure",
+		    "translation":
+		    {
+			"fi": "Ilmanpaine",
+			"sv": "Atmosfärtryck",
+			"en": "Air Pressure"
+		    }
 		}
 	    ],
 	    "layout":
@@ -25,7 +58,7 @@
 		"symbol_group_x_padding": 30,
 		"symbol_group_y_padding": 40,
 		"legend_xoffset": 30,
-		"legend_yoffset": 100,
+		"legend_yoffset": 50,
 		"legend_width": 150
 	    }
 	}	

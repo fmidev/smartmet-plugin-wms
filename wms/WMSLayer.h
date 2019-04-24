@@ -72,7 +72,7 @@ class WMSLayer
   std::string productFile;  // dali product
   //  LegendGraphicInfo legendGraphicInfo;
   NamedLegendGraphicInfo itsNamedLegendGraphicInfo;
-  WMSLegendGraphicSettings legendGraphicSettings;
+  WMSLegendGraphicSettings itsLegendGraphicSettings;
 
   friend class WMSLayerFactory;
   friend std::ostream& operator<<(std::ostream&, const WMSLayer&);
@@ -89,7 +89,8 @@ class WMSLayer
   const std::string& getCustomer() const { return customer; }
   const std::string& getDaliProductFile() const { return productFile; }
   LegendGraphicResult getLegendGraphic(const WMSLegendGraphicSettings& settings,
-                                       const std::string& legendGraphicID) const;
+                                       const std::string& legendGraphicID,
+                                       const std::string& language) const;
 
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;

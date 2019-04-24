@@ -92,7 +92,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-* Thu Apr 23 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.4.11-1.fmi
+* Wed Apr 23 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.4.23-1.fmi
+- Language support for automatically generated legends (BRAINSTORM-1523)
 - Support for mobile and external observations (BRAINSTORM-1420)
 
 * Fri Apr 12 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.4.12-1.fmi

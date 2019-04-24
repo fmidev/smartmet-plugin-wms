@@ -16,8 +16,6 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayerStyle& layerStyle)
   ost << "title: " << layerStyle.title << std::endl;
   ost << "abstract: " << layerStyle.abstract << std::endl;
   ost << "LegendURL: " << std::endl;
-  ost << " width: " << layerStyle.legend_url.width << std::endl;
-  ost << " height: " << layerStyle.legend_url.height << std::endl;
   ost << " format: " << layerStyle.legend_url.format << std::endl;
   ost << " online resource: " << layerStyle.legend_url.online_resource << std::endl;
 
@@ -48,8 +46,6 @@ CTPP::CDT WMSLayerStyle::getCapabilities() const
     CTPP::CDT style_legend_url_list(CTPP::CDT::ARRAY_VAL);
 
     CTPP::CDT style_legend_url(CTPP::CDT::HASH_VAL);
-    style_legend_url["width"] = legend_url.width;
-    style_legend_url["height"] = legend_url.height;
     style_legend_url["format"] = legend_url.format;
     style_legend_url["online_resource"] = legend_url.online_resource;
     style_legend_url_list.PushBack(style_legend_url);
@@ -64,7 +60,7 @@ CTPP::CDT WMSLayerStyle::getCapabilities() const
     style_style_sheet_url["online_resource"] = "http://www.www.wwws/style.css";
     style["style_sheet_url"] = style_style_sheet_url;
 
-    // Style URL not implemmented
+    // Style URL not implemented
 
     CTPP::CDT style_style_url(CTPP::CDT::HASH_VAL);
     style_style_url["format"] = "css";

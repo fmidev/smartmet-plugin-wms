@@ -1377,7 +1377,12 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
         auto styleOpt = theRequest.getParameter("STYLE");
         std::string styleName = (styleOpt && !styleOpt->empty() ? *styleOpt : "default");
 
-        itsWMSConfig->getLegendGraphic(layerName, styleName, product, theState);
+        std::string language = itsConfig.defaultLanguage();
+        auto languageParam = theRequest.getParameter("LANGUAGE");
+        if (languageParam)
+          language = *languageParam;
+
+        itsWMSConfig->getLegendGraphic(layerName, styleName, product, theState, language);
 
         // getLegendGraphic-function sets width and height, but if width & height is given in
         // request override values
@@ -1527,8 +1532,7 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Spine::Exception &exception,
       mapFormat = "application/json";
     formatWmsExceptionResponse(
         exception, mapFormat, isdebug, theRequest, theResponse, theState.useTimer());
-
-    throw exception;
+    return WMSQueryStatus::OK;
   }
 
   boost::optional<std::string> width = theRequest.getParameter("WIDTH");
@@ -1585,7 +1589,7 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Spine::Exception &exception,
                    product,
                    invalid_hash);
 
-    throw exception;
+    return WMSQueryStatus::OK;
   }
   catch (...)
   {
