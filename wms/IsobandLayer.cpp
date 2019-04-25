@@ -20,7 +20,6 @@
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <macgyver/StringConversion.h>
-#include <newbase/NFmiGdalArea.h>
 #include <newbase/NFmiQueryData.h>
 #include <newbase/NFmiQueryDataUtil.h>
 #include <newbase/NFmiTimeList.h>
@@ -172,8 +171,9 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
     // Establish new projection and the required grid size of the desired resolution
 
-    auto newarea = boost::make_shared<NFmiGdalArea>(
-        "FMI", *crs, box.xmin(), box.ymin(), box.xmax(), box.ymax());
+    std::unique_ptr<NFmiArea> newarea(NFmiArea::CreateFromBBox(
+        *crs, NFmiPoint(box.xmin(), box.ymin()), NFmiPoint(box.xmax(), box.ymax())));
+
     double datawidth = newarea->WorldXYWidth() / 1000.0;  // view extent in kilometers
     double dataheight = newarea->WorldXYHeight() / 1000.0;
     unsigned int width = lround(datawidth / *heatmap.resolution);
