@@ -337,7 +337,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
     // no matter what format-option was given in request
     try
     {
-      State state(*this);
+      State state(*this, theRequest);
       state.useTimer(Spine::optional_bool(theRequest.getParameter("timer"), false));
 
       using boost::posix_time::ptime;

@@ -21,6 +21,7 @@
 #include <boost/optional.hpp>
 #include <engines/geonames/Engine.h>
 #include <engines/querydata/Q.h>
+#include <spine/HTTP.h>
 #include <map>
 #include <set>
 
@@ -67,7 +68,7 @@ class State
   State() = delete;
 
   // Set the state of the plugin
-  State(const Plugin& thePlugin);
+  State(const Plugin& thePlugin, const Spine::HTTP::Request& theRequest);
 
   // Get the engines
   const Engine::Querydata::Engine& getQEngine() const;
@@ -80,6 +81,8 @@ class State
 
   // Give access to configuration variables
   const Config& getConfig() const;
+
+  const Spine::HTTP::Request& getRequest() const { return itsRequest; }
 
   // Customer
   const std::string& getCustomer() const { return itsCustomer; }
@@ -213,6 +216,9 @@ class State
 
   // The image format
   std::string itsType;
+
+  // The request itself
+  const Spine::HTTP::Request itsRequest;
 };
 
 }  // namespace Dali

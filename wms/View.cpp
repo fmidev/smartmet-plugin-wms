@@ -71,6 +71,10 @@ void View::generate(CTPP::CDT& theGlobals, CTPP::CDT& theViewCdt, State& theStat
 {
   try
   {
+    if (attributes.value("display") == "none" &&
+        theState.getRequest().getParameter("optimizesize") != std::string("0"))
+      return;
+
     // Currently we always group the view
     theViewCdt["start"] = "<g";
     theViewCdt["end"] = "</g>";

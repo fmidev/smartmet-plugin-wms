@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 19.4.30
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Apr 30 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.4.30-2.fmi
+- Remove display=none views and layers from SVG output if optimizesize=1 is set
+
 * Tue Apr 30 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.4.30-1.fmi
 - Option quiet=1|true disables stack trace printing
 - Modified illegal input tests to use quiet=1 to keep test output simple
