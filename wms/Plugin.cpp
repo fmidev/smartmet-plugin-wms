@@ -435,7 +435,9 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       Spine::Exception exception(BCP, "Request processing exception!", nullptr);
       exception.addParameter("URI", theRequest.getURI());
       exception.addParameter("ClientIP", theRequest.getClientIP());
-      exception.printError();
+      auto quiet = theRequest.getParameter("quiet");
+      if (!quiet || (*quiet == "0" && *quiet == "false"))
+        exception.printError();
 
       if (isdebug)
       {
@@ -1508,7 +1510,9 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Spine::Exception &exception,
   // Console logging
   exception.addParameter("URI", theRequest.getURI());
   exception.addParameter("ClientIP", theRequest.getClientIP());
-  exception.printError();
+  auto quiet = theRequest.getParameter("quiet");
+  if (!quiet || (*quiet == "0" || *quiet == "false"))
+    exception.printError();
 
   WMS::CaseInsensitiveComparator cicomp;
   WmsExceptionFormat exceptionFormat = WmsExceptionFormat::XML;
