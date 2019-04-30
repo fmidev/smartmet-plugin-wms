@@ -2,7 +2,6 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "LayerFactory.h"
-
 #include <boost/functional/hash.hpp>
 #include <ctpp2/CDT.hpp>
 #include <spine/Exception.h>
@@ -57,7 +56,10 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
       // Each layer may actually generate multiple CDT layers
       // (Animations, inner tags etc). Each is pushed separately
       // to the back of the layers CDT
-      layer->generate(theGlobals, theLayersCdt, theState);
+
+      if (layer->attributes.value("display") != "none" ||
+          theState.getRequest().getParameter("optimizesize") == std::string("0"))
+        layer->generate(theGlobals, theLayersCdt, theState);
     }
   }
   catch (...)

@@ -2,10 +2,9 @@
 
 #include "State.h"
 #include "Plugin.h"
+#include <ctpp2/CDT.hpp>
 #include <macgyver/StringConversion.h>
 #include <spine/Exception.h>
-
-#include <ctpp2/CDT.hpp>
 #include <stdexcept>
 
 namespace SmartMet
@@ -30,8 +29,12 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-State::State(const Plugin& thePlugin)
-    : itsPlugin(thePlugin), itsInDefs(false), itUsesTimer(false), itUsesWms(false)
+State::State(const Plugin& thePlugin, const Spine::HTTP::Request& theRequest)
+    : itsPlugin(thePlugin),
+      itsInDefs(false),
+      itUsesTimer(false),
+      itUsesWms(false),
+      itsRequest(theRequest)
 {
 }
 
