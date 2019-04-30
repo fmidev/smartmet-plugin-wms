@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.4.23
+Version: 19.4.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Apr 30 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.4.30-1.fmi
+- Option quiet=1|true disables stack trace printing
+- Modified illegal input tests to use quiet=1 to keep test output simple
+
 * Wed Apr 23 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.4.23-1.fmi
 - Language support for automatically generated legends (BRAINSTORM-1523)
 - Support for mobile and external observations (BRAINSTORM-1420)
