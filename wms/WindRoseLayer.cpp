@@ -709,7 +709,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
     settings.starttime = theStartTime;
     settings.endtime = theEndTime;
     settings.starttimeGiven = true;
-    settings.stationtype = "fmi";
+    settings.stationtype = "opendata";
     settings.timezone = timezone;
 
     auto& observation = theState.getObsEngine();
@@ -732,6 +732,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
       auto res = observation.values(settings);
 
       // We skip stations with missing data
+
       if (!res || res->size() != 5)
         continue;
 
@@ -747,6 +748,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
           directions.empty())
       {
         // No data for this station, continue to the next
+        std::cerr << "No data for " << *station.fmisid << std::endl;
         continue;
       }
 

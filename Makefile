@@ -38,7 +38,7 @@ DIFFICULTFLAGS = \
 
 
 ARFLAGS = -r
-DEFINES = -DUNIX -D_REENTRANT
+DEFINES = -DUNIX -DWGS84 -D_REENTRANT
 
 # Default compile options
 

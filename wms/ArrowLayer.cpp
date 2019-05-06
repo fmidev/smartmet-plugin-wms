@@ -101,7 +101,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
       throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
     qsrs = boost::movelib::make_unique<OGRSpatialReference>();
-    err = qsrs->SetFromUserInput(q->area().WKT().c_str());
+    err = qsrs->SetFromUserInput(q->area().ProjStr().c_str());
     if (err != OGRERR_NONE)
       throw Spine::Exception(BCP, "Failed to establish querydata spatial reference");
     uvtransformation.reset(OGRCreateCoordinateTransformation(wgs84.get(), qsrs.get()));

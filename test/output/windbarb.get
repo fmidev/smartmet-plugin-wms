@@ -326,13 +326,13 @@
    <use transform="translate(170 395) rotate(125)" xlink:href="#windbarb_15"/>
    <use transform="translate(200 395) rotate(83)" xlink:href="#windbarb_15"/>
    <use transform="translate(230 395) rotate(28)" xlink:href="#windbarb_30"/>
-   <use transform="translate(260 395) rotate(16)" xlink:href="#windbarb_25"/>
+   <use transform="translate(260 395) rotate(17)" xlink:href="#windbarb_25"/>
    <use transform="translate(290 395) rotate(7)" xlink:href="#windbarb_5"/>
    <use transform="translate(320 395) rotate(28)" xlink:href="#windbarb_5"/>
-   <use transform="translate(350 395) rotate(67)" xlink:href="#windbarb_10"/>
+   <use transform="translate(350 395) rotate(66)" xlink:href="#windbarb_10"/>
    <use transform="translate(380 395) rotate(350)" xlink:href="#windbarb_5"/>
    <use transform="translate(410 395) rotate(347)" xlink:href="#windbarb_5"/>
-   <use transform="translate(440 395) rotate(344)" xlink:href="#windbarb_5"/>
+   <use transform="translate(440 395) rotate(345)" xlink:href="#windbarb_5"/>
    <use transform="translate(470 395) rotate(330)" xlink:href="#windbarb_5"/>
    <use transform="translate(5 425) rotate(135)" xlink:href="#windbarb_20"/>
    <use transform="translate(35 425) rotate(129)" xlink:href="#windbarb_25"/>

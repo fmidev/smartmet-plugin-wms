@@ -547,12 +547,13 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
     auto qcrs = boost::movelib::make_unique<OGRSpatialReference>();
     OGRErr err;
     if (theQ->isArea())
-      err = qcrs->SetFromUserInput(theQ->area().WKT().c_str());
+      err = qcrs->SetFromUserInput(theQ->area().ProjStr().c_str());
     else
       err = qcrs->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this FMI WKT: " + theQ->area().WKT());
+      throw Spine::Exception(BCP,
+                             "GDAL does not understand this projection: " + theQ->area().ProjStr());
 
     // Create the coordinate transformation from image world coordinates
     // to querydata world coordinates
@@ -626,7 +627,8 @@ Positions::Points Positions::getGraticulePoints(
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+      throw Spine::Exception(BCP,
+                             "GDAL does not understand this projection: " + theQ->area().ProjStr());
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -704,7 +706,8 @@ Positions::Points Positions::getGraticuleFillPoints(
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+      throw Spine::Exception(BCP,
+                             "GDAL does not understand this projection: " + theQ->area().ProjStr());
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -918,7 +921,8 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+      throw Spine::Exception(BCP,
+                             "GDAL does not understand this projection: " + theQ->area().ProjStr());
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -993,7 +997,8 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+      throw Spine::Exception(BCP,
+                             "GDAL does not understand this projection: " + theQ->area().ProjStr());
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -1083,7 +1088,8 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+      throw Spine::Exception(BCP,
+                             "GDAL does not understand this projection: " + theQ->area().ProjStr());
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 

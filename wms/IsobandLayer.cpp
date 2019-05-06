@@ -479,7 +479,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;
     boost::hash_combine(valueshash, options.data_hash_value());
-    std::string wkt = q->area().WKT();
+    std::string proj4 = q->area().ProjStr();
 
     // Select the data
 
@@ -508,7 +508,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs.get());
     std::vector<OGRGeometryPtr> geoms =
-        contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), crs.get());
+        contourer.contour(qhash, proj4, *matrix, coords, options, q->needsWraparound(), crs.get());
 
     // Update the globals
 

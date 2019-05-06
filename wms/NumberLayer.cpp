@@ -397,6 +397,8 @@ PointValues read_station_observations(const NumberLayer& layer,
     // We must read the stations one at a time to preserve dx,dy values
     PointValues pointvalues;
 
+    std::cerr << "Reading station observations" << std::endl;
+
     for (const auto& station : layer.positions->stations.stations)
     {
       // Copy Oracle settings

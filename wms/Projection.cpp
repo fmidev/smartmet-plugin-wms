@@ -5,9 +5,9 @@
 #include "Hash.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/operations.hpp>
-
 #include <boost/math/constants/constants.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <fmt/format.h>
 #include <gdal/ogr_geometry.h>
 #include <gdal/ogr_spatialref.h>
 #include <gis/Box.h>
@@ -221,12 +221,20 @@ void Projection::update(const Engine::Querydata::Q& theQ)
   {
     if (crs && *crs == "data")
     {
-      crs = theQ->area().WKT().c_str();
+      crs = theQ->area().ProjStr();
 
       bool no_bbox = (!x1 && !y1 && !x2 && !y2 && !cx && !cy && !resolution && !bboxcrs);
 
       if (no_bbox)
       {
+#ifdef WGS84
+        auto world1 = theQ->area().XYToWorldXY(theQ->area().BottomLeft());
+        auto world2 = theQ->area().XYToWorldXY(theQ->area().TopRight());
+        x1 = world1.X();
+        y1 = world1.Y();
+        x2 = world2.X();
+        y2 = world2.Y();
+#else
         if (theQ->area().ClassName() == std::string("NFmiLatLonArea") ||
             theQ->area().ClassName() == std::string("NFmiRotatedLatlLonArea"))
         {
@@ -246,6 +254,7 @@ void Projection::update(const Engine::Querydata::Q& theQ)
           x2 = world2.X();
           y2 = world2.Y();
         }
+#endif
       }
 
       ogr_crs.reset();
@@ -477,14 +486,13 @@ void Projection::prepareCRS() const
 
     // newbase corners calculated from world xy coordinates
 
-    const char* fmiwkt = R"xxx(GEOGCS["FMI_Sphere",DATUM["FMI_2007",SPHEROID["FMI_Sphere",)xxx"
-                         R"xxx(6371220,0]],PRIMEM["Greenwich",0],UNIT["Degree",0.)xxx"
-                         R"xxx(0174532925199433]])xxx";
+    auto proj =
+        fmt::format("+proj=latlong +R={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth);
     OGRSpatialReference fmi;
-    err = fmi.SetFromUserInput(fmiwkt);
+    err = fmi.SetFromUserInput(proj.c_str());
 
     if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "Unable to parse FMI WKT in Dali::Projection");
+      throw Spine::Exception(BCP, "Unable to parse FMI sphere in Dali::Projection");
 
     boost::shared_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(ogr_crs.get(), &fmi));

@@ -59,12 +59,12 @@
    <path class="HeavyWind" d="M285 336 296.011,340.561 A 11.9187 11.9187 0,0,1 289.561,347.011Z"/>
    <path class="HeavyWind" d="M285 336 292.654,354.478 A 20 20 0,0,1 277.346,354.478Z"/>
    <line class="RoseConnector" x1="193" x2="270" y1="413" y2="349"/>
-   <use class="StationMarker" x="435" xlink:href="#station" y="401"/>
+   <use class="StationMarker" x="434" xlink:href="#station" y="401"/>
    <use class="WindRose" x="463" xlink:href="#windrose" y="324"/>
    <path class="ModerateWind" d="M463 324 480.644,331.308 A 19.0973 19.0973 0,0,1 470.308,341.644Z"/>
    <path class="LightWind" d="M463 324 470.654,342.478 A 20 20 0,0,1 455.346,342.478Z"/>
    <path class="LightWind" d="M463 324 460.375,330.338 A 6.85994 6.85994 0,0,1 456.662,326.625Z"/>
-   <line class="RoseConnector" x1="436" x2="456" y1="399" y2="343"/>
+   <line class="RoseConnector" x1="435" x2="456" y1="399" y2="343"/>
    <use class="StationMarker" x="155" xlink:href="#station" y="211"/>
    <use class="WindRose" x="285" xlink:href="#windrose" y="241"/>
    <path class="ModerateWind" d="M285 241 298.817,246.723 A 14.9551 14.9551 0,0,1 290.723,254.817Z"/>
