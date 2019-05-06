@@ -269,7 +269,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 
     layer->quiet = theWMSConfig.itsDaliConfig.quiet();
     layer->productFile = theFileName;
-    layer->customer = theCustomer;
+    layer->setCustomer(theCustomer);
 
     // WMS GetCapability settings
 

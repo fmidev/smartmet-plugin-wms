@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.4.30
+Version: 19.5.6
 Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Mon May 6 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.5.6-1.fmi
+- Added a proper error message for missing legend template files (BRAINSTORM-1526)
+
 * Tue Apr 30 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.4.30-2.fmi
 - Remove display=none views and layers from SVG output if optimizesize=1 is set
 
