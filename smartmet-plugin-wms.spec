@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.4.30
+Version: 19.5.6
 Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -19,13 +19,13 @@ BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
 BuildRequires: smartmet-library-macgyver-devel >= 19.4.23
-BuildRequires: smartmet-library-spine-devel >= 19.4.23
+BuildRequires: smartmet-library-spine-devel >= 19.4.29
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.9.10
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 19.4.23
+BuildRequires: smartmet-engine-observation-devel >= 19.5.2
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 18.11.22
 BuildRequires: smartmet-engine-geonames-devel >= 19.3.22
@@ -55,7 +55,7 @@ Requires: smartmet-engine-contour >= 19.2.22
 Requires: smartmet-engine-gis >= 18.11.22
 Requires: smartmet-engine-geonames >= 19.3.22
 Requires: smartmet-server >= 19.3.19
-Requires: smartmet-library-spine >= 19.4.23
+Requires: smartmet-library-spine >= 19.4.29
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Mon May 6 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.5.6-1.fmi
+- Added a proper error message for missing legend template files (BRAINSTORM-1526)
+
 * Tue Apr 30 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.4.30-2.fmi
 - Remove display=none views and layers from SVG output if optimizesize=1 is set
 

@@ -1044,6 +1044,7 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
 
   std::map<std::string, Json::Value> legends =
       readLegendFiles(wmsConfig.getDaliConfig().rootDirectory(true), customer);
+
   std::set<std::string> processedParameters;
   unsigned int uniqueId = 0;
 
@@ -1660,6 +1661,30 @@ Json::Value WMSLayer::parseJsonString(const std::string theJsonString)
   }
 
   return json;
+}
+
+void WMSLayer::setCustomer(const std::string& c)
+{
+  customer = c;
+
+  std::map<std::string, Json::Value> legends =
+      readLegendFiles(wmsConfig.getDaliConfig().rootDirectory(true), customer);
+  std::string missingTemplateFiles;
+  if (legends.find("symbol") == legends.end())
+    missingTemplateFiles += "symbol.json";
+  if (legends.find("isoband") == legends.end())
+    missingTemplateFiles += ",isoband.json";
+  if (legends.find("isoline") == legends.end())
+    missingTemplateFiles += ",isoline.json";
+  if (legends.find("PrecipitationForm") == legends.end())
+    missingTemplateFiles += ",PrecipitationForm.json";
+  if (missingTemplateFiles.size() > 0)
+  {
+    if (missingTemplateFiles.at(0) == ',')
+      missingTemplateFiles = missingTemplateFiles.substr(1);
+
+    throw Spine::Exception(BCP, "Missing legend template file(s): " + missingTemplateFiles + "!");
+  }
 }
 
 }  // namespace WMS
