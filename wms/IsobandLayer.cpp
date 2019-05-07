@@ -174,8 +174,20 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     std::unique_ptr<NFmiArea> newarea(NFmiArea::CreateFromBBox(
         *crs, NFmiPoint(box.xmin(), box.ymin()), NFmiPoint(box.xmax(), box.ymax())));
 
-    double datawidth = newarea->WorldXYWidth() / 1000.0;  // view extent in kilometers
-    double dataheight = newarea->WorldXYHeight() / 1000.0;
+    double datawidth = newarea->WorldXYWidth();  // in native units
+    double dataheight = newarea->WorldXYHeight();
+
+    if (newarea->SpatialReference()->IsGeographic())
+    {
+      datawidth *= kRearth * kPii / 180 / 1000;  // degrees to kilometers
+      dataheight *= kRearth * kPii / 180 / 1000;
+    }
+    else
+    {
+      datawidth /= 1000;  // meters to kilometers
+      dataheight /= 1000;
+    }
+
     unsigned int width = lround(datawidth / *heatmap.resolution);
     unsigned int height = lround(dataheight / *heatmap.resolution);
 
@@ -200,20 +212,6 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
       if (!values.empty())
       {
-        // Station WGS84 coordinates
-        auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-        OGRErr err = wgs84->SetFromUserInput("WGS84");
-
-        if (err != OGRERR_NONE)
-          throw Spine::Exception(BCP, "GDAL does not understand WKT 'WGS84'!");
-
-        boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-            OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
-        if (transformation == nullptr)
-          throw Spine::Exception(BCP,
-                                 "Failed to create the needed coordinate transformation for "
-                                 "generating station positions");
-
         const auto nrows = values[0].size();
 
         hm.reset(heatmap_new(width, height));
@@ -241,10 +239,12 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
           double x = lon;
           double y = lat;
-
           if (crs->IsGeographic() == 0)
-            if (transformation->Transform(1, &x, &y) == 0)
-              continue;
+          {
+            auto xy = newarea->LatLonToWorldXY(NFmiPoint(x, y));
+            x = xy.X();
+            y = xy.Y();
+          }
 
           // To pixel coordinate
           box.transform(x, y);
