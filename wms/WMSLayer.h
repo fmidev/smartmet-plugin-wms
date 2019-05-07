@@ -85,6 +85,7 @@ class WMSLayer
                 const WMSLayerStyle& layerStyle);
   void addStyle(const std::string& layerName, const WMSLayerStyle& layerStyle);
   bool isHidden() const { return hidden; }
+  void setCustomer(const std::string& c);
   const std::string& getName() const { return name; }
   const std::string& getCustomer() const { return customer; }
   const std::string& getDaliProductFile() const { return productFile; }
