@@ -192,7 +192,15 @@ void WMSPostGISLayer::updateLayerMetaData()
 
     if (hasTemporalDimension && !timeDimensionDisabled)
     {
-      if (even_timesteps(metadata.timesteps))
+      if (metadata.timeinterval)
+      {
+        auto newTimeDimension =
+            boost::movelib::make_unique<IntervalTimeDimension>(metadata.timeinterval->starttime,
+                                                               metadata.timeinterval->endtime,
+                                                               metadata.timeinterval->timestep);
+        timeDimension = std::move(newTimeDimension);
+      }
+      else if (even_timesteps(metadata.timesteps))
       {
         boost::posix_time::ptime first_time(metadata.timesteps[0]);
         boost::posix_time::ptime last_time(metadata.timesteps[metadata.timesteps.size() - 1]);
