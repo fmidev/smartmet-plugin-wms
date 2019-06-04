@@ -800,6 +800,10 @@ void ArrowLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       dy = json.asInt();
 
+    json = theJson.get("minvalues", nulljson);
+    if (!json.isNull())
+      minvalues = json.asInt();
+
     json = theJson.get("maxdistance", nulljson);
     if (!json.isNull())
       maxdistance = json.asDouble();
@@ -968,6 +972,8 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
     // Render the collected values
 
+    int valid_count = 0;
+
     for (const auto& pointvalue : pointvalues)
     {
       const auto& point = pointvalue.point;
@@ -983,6 +989,8 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
       if (check_speeds && wspd == kFloatMissing)
         continue;
+
+      ++valid_count;
 
       // Unit transformation
       double xmultiplier = (multiplier ? *multiplier : 1.0);
@@ -1092,6 +1100,11 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       }
     }
 
+    if (valid_count < minvalues)
+      throw Spine::Exception(BCP, "Too few valid values in arrow layer")
+          .addParameter("valid values", std::to_string(valid_count))
+          .addParameter("minimum count", std::to_string(minvalues));
+
     // We created only this one layer
     theLayersCdt.PushBack(group_cdt);
   }
@@ -1136,6 +1149,7 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
     Dali::hash_combine(hash, Dali::hash_value(positions, theState));
     Dali::hash_combine(hash, Dali::hash_value(dx));
     Dali::hash_combine(hash, Dali::hash_value(dy));
+    Dali::hash_combine(hash, Dali::hash_value(minvalues));
     Dali::hash_combine(hash, Dali::hash_value(maxdistance));
     Dali::hash_combine(hash, Dali::hash_value(arrows, theState));
     return hash;

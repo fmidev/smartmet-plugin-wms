@@ -38,6 +38,9 @@ class SymbolLayer : public Layer
 
   boost::optional<Positions> positions;
 
+  // Require at least this many valid valies
+  int minvalues = 0;
+
   // Station distance limit in kilometers
   double maxdistance = 5;
 

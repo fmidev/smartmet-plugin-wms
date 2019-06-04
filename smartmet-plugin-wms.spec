@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.5.29
+Version: 19.6.4
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Jun  4 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.6.4-1.fmi
+- Added minvalues setting to symbol, number and arrow layers to require a sufficient number of valid values
+
 * Wed May 29 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.5.29-1.fmi
 - Changed to handle altered MetaData class from Gis-engine
 

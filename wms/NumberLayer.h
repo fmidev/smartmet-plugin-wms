@@ -43,6 +43,9 @@ class NumberLayer : public Layer
   // Grid coordinate settings
   boost::optional<Positions> positions;
 
+  // Require at least this many valid valies
+  int minvalues = 0;
+
   // Station distance limit in kilometers
   double maxdistance = 5;
 

@@ -713,6 +713,10 @@ void SymbolLayer::init(const Json::Value& theJson,
       positions->init(json, theConfig);
     }
 
+    json = theJson.get("minvalues", nulljson);
+    if (!json.isNull())
+      minvalues = json.asInt();
+
     json = theJson.get("maxdistance", nulljson);
     if (!json.isNull())
       maxdistance = json.asDouble();
@@ -861,9 +865,14 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     theState.addAttributes(theGlobals, group_cdt, attributes);
 
+    int valid_count = 0;
+
     for (const auto& pointvalue : pointvalues)
     {
       const auto& point = pointvalue.point;
+
+      if (pointvalue.value != kFloatMissing)
+        ++valid_count;
 
       // Start generating the hash
 
@@ -920,6 +929,11 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       }
     }
 
+    if (valid_count < minvalues)
+      throw Spine::Exception(BCP, "Too few valid values in symbol layer")
+          .addParameter("valid values", std::to_string(valid_count))
+          .addParameter("minimum count", std::to_string(minvalues));
+
     // We created only this one layer
     theLayersCdt.PushBack(group_cdt);
   }
@@ -951,6 +965,7 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
     Dali::hash_combine(hash, Dali::hash_value(parameter));
     Dali::hash_combine(hash, Dali::hash_value(level));
     Dali::hash_combine(hash, Dali::hash_value(positions, theState));
+    Dali::hash_combine(hash, Dali::hash_value(minvalues));
     Dali::hash_combine(hash, Dali::hash_value(maxdistance));
     Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
     Dali::hash_combine(hash, Dali::hash_value(scale));

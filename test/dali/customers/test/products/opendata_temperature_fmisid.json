@@ -50,6 +50,7 @@
 		    "layer_type": "number",
 		    "css": "numbers/integers.css",
 		    "parameter": "Temperature",
+		    "minvalues": 27,
 		    "label":
 		    {
 			"dx": 5,

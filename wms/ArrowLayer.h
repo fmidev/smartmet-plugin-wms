@@ -58,6 +58,9 @@ class ArrowLayer : public Layer
   boost::optional<int> dx;
   boost::optional<int> dy;
 
+  // Require at least this many valid valies
+  int minvalues = 0;
+
   // Station distance limit in kilometers
   double maxdistance = 5;
 

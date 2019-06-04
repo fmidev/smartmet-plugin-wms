@@ -52,6 +52,7 @@
 		    // reusing isobands settings here
 		    "css": "isobands/temperature.css",
 		    "symbols": "json:isobands/temperature.json",
+		    "minvalues": 7,
 		    "symbol": "circle",
 		    "scale": 0.75,
 		    "attributes":
