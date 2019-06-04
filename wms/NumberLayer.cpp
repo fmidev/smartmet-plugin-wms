@@ -711,6 +711,10 @@ void NumberLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       maxdistance = json.asDouble();
 
+    json = theJson.get("minvalues", nulljson);
+    if (!json.isNull())
+      minvalues = json.asInt();
+
     json = theJson.get("label", nulljson);
     if (!json.isNull())
       label.init(json, theConfig);
@@ -913,13 +917,17 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Then numbers
 
+    int valid_count = 0;
     for (const auto& pointvalue : pointvalues)
     {
       const auto& point = pointvalue.point;
       float value = pointvalue.value;
 
       if (value != kFloatMissing)
+      {
+        ++valid_count;
         value = xmultiplier * value + xoffset;
+      }
 
       std::string txt = label.print(value);
 
@@ -944,6 +952,11 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         theLayersCdt.PushBack(text_cdt);
       }
     }
+
+    if (valid_count < minvalues)
+      throw Spine::Exception(BCP, "Too few valid values in number layer")
+          .addParameter("valid values", std::to_string(valid_count))
+          .addParameter("minimum count", std::to_string(minvalues));
 
     // Close the grouping
     theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n  </g>");
@@ -978,6 +991,7 @@ std::size_t NumberLayer::hash_value(const State& theState) const
     Dali::hash_combine(hash, Dali::hash_value(multiplier));
     Dali::hash_combine(hash, Dali::hash_value(offset));
     Dali::hash_combine(hash, Dali::hash_value(positions, theState));
+    Dali::hash_combine(hash, Dali::hash_value(minvalues));
     Dali::hash_combine(hash, Dali::hash_value(maxdistance));
     Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
     Dali::hash_combine(hash, Dali::hash_value(scale));
