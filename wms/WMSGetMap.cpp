@@ -136,10 +136,12 @@ void validate_options(const tag_get_map_request_options& options,
       {
         if (!itsConfig.isValidTime(layer, timestamp, querydata))
         {
+          // TODO: enable when FMI app is working properly
           throw Spine::Exception(BCP, "Invalid time requested!")
               .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
               .addParameter("Requested time", Fmi::to_iso_string(timestamp))
-              .addParameter("Requested layer", layer);
+              .addParameter("Requested layer", layer)
+              .disableStackTrace();
         }
       }
     }
