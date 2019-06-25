@@ -50,13 +50,25 @@ void BackgroundLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, S
 
     // Establish the data in case it is needed for the size
 
-    auto q = getModel(theState);
 
-    // Get projection details
+    bool has_data_proj = (projection.crs && *projection.crs == "data");
 
-    projection.update(q);
+    // Update projection from querydata if necessary
+    if (has_data_proj)
+    {
+      if (!source || *source != "grid")
+      {
+        auto q = getModel(theState);
+        projection.update(q);
+      }
+      else
+      {
+        return;
+      }
+    }
+
     auto crs = projection.getCRS();
-    const auto& box = projection.getBox();
+    auto box = projection.getBox();
 
     // Update the globals
 

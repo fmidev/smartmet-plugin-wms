@@ -33,6 +33,7 @@ void TagLayer::init(const Json::Value& theJson,
 
     // Extract member values
 
+    type = "tag";
     Json::Value nulljson;
 
     auto json = theJson.get("tag", nulljson);

@@ -51,6 +51,10 @@ class IsolineLayer : public Layer
   Intersections intersections;
 
  private:
+
+  virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+
 };  // class IsolineLayer
 
 }  // namespace Dali

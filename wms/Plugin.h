@@ -15,6 +15,7 @@
 #include <engines/geonames/Engine.h>
 #include <engines/gis/Engine.h>
 #include <engines/querydata/Engine.h>
+#include <engines/grid/Engine.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
@@ -54,6 +55,7 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   bool queryIsFast(const Spine::HTTP::Request& theRequest) const;
 
   // Get the engines
+  Engine::Grid::Engine* getGridEngine() { return itsGridEngine; }
   const Engine::Querydata::Engine& getQEngine() const { return *itsQEngine; }
   const Engine::Contour::Engine& getContourEngine() const { return *itsContourEngine; }
   const Engine::Gis::Engine& getGisEngine() const { return *itsGisEngine; }
@@ -151,6 +153,7 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
 
   // Cache server and engine instances
   Spine::Reactor* itsReactor;
+  Engine::Grid::Engine* itsGridEngine;
   Engine::Querydata::Engine* itsQEngine;
   Engine::Contour::Engine* itsContourEngine;
   Engine::Gis::Engine* itsGisEngine;

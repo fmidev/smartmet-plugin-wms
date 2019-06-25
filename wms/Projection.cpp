@@ -316,6 +316,7 @@ void Projection::prepareCRS() const
     if (!xsize && !ysize)
       throw Spine::Exception(BCP, "CRS xsize and ysize are both missing");
 
+
     // Are subdefinitions complete?
     bool full_rect_bbox = (x1 && y1 && x2 && y2);
     bool full_center_bbox = (cx && cy && resolution);
@@ -348,6 +349,7 @@ void Projection::prepareCRS() const
 
     // Create the CRS
     ogr_crs = boost::make_shared<OGRSpatialReference>();
+
     OGRErr err = ogr_crs->SetFromUserInput(crs->c_str());
     if (err != OGRERR_NONE)
       throw Spine::Exception(BCP, "Unknown CRS: '" + *crs + "'");

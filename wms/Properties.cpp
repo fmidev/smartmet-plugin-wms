@@ -28,6 +28,10 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
     auto json = theJson.get("language", theConfig.defaultLanguage());
     language = json.asString();
 
+    json = theJson.get("source", nulljson);
+    if (!json.isNull())
+      source = json.asString();
+
     json = theJson.get("producer", theConfig.defaultModel());
     producer = json.asString();
 
@@ -127,6 +131,12 @@ void Properties::init(const Json::Value& theJson,
       language = theProperties.language;
     else
       language = json.asString();
+
+    json = theJson.get("source", nulljson);
+    if (json.isNull())
+      source = theProperties.source;
+    else
+      source = json.asString();
 
     json = theJson.get("producer", nulljson);
     if (json.isNull())

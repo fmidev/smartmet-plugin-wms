@@ -475,6 +475,7 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
     : itsModuleName("WMS"),
       itsConfig(theConfig),
       itsReactor(theReactor),
+      itsGridEngine(nullptr),
       itsQEngine(nullptr),
       itsContourEngine(nullptr),
       itsGisEngine(nullptr),
@@ -551,6 +552,15 @@ void Plugin::init()
     if (engine == nullptr)
       throw Spine::Exception(BCP, "Querydata engine unavailable");
     itsQEngine = reinterpret_cast<Engine::Querydata::Engine *>(engine);
+    if (itsShutdownRequested)
+      return;
+
+    // GRID ENGINE
+
+    engine = itsReactor->getSingleton("grid", nullptr);
+    if (engine == nullptr)
+      throw Spine::Exception(BCP, "Grid engine unavailable");
+    itsGridEngine = reinterpret_cast<Engine::Grid::Engine *>(engine);
     if (itsShutdownRequested)
       return;
 

@@ -21,6 +21,7 @@
 #include <boost/optional.hpp>
 #include <engines/geonames/Engine.h>
 #include <engines/querydata/Q.h>
+#include <engines/grid/Engine.h>
 #include <spine/HTTP.h>
 #include <map>
 #include <set>
@@ -35,6 +36,10 @@ namespace SmartMet
 namespace Engine
 {
 namespace Querydata
+{
+class Engine;
+}
+namespace Grid
 {
 class Engine;
 }
@@ -68,9 +73,10 @@ class State
   State() = delete;
 
   // Set the state of the plugin
-  State(const Plugin& thePlugin, const Spine::HTTP::Request& theRequest);
+  State(Plugin& thePlugin, const Spine::HTTP::Request& theRequest);
 
   // Get the engines
+  Engine::Grid::Engine* getGridEngine();
   const Engine::Querydata::Engine& getQEngine() const;
   const Engine::Contour::Engine& getContourEngine() const;
   const Engine::Gis::Engine& getGisEngine() const;
@@ -173,7 +179,7 @@ class State
   bool isObservation(const std::string& theProducer) const;
 
  private:
-  const Plugin& itsPlugin;
+  Plugin& itsPlugin;
   mutable std::map<Engine::Querydata::Producer, Engine::Querydata::Q> itsQCache;
 
   // Names which have already been used for styling

@@ -61,6 +61,10 @@ class IsobandLayer : public Layer
   Heatmap heatmap;
 
  private:
+
+  virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+
   boost::shared_ptr<Engine::Querydata::QImpl> buildHeatmap(const Spine::Parameter& theParameter,
                                                            const boost::posix_time::ptime& theTime,
                                                            State& theState);
