@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.6.5
+Version: 19.6.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -19,13 +19,13 @@ BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
 BuildRequires: smartmet-library-macgyver-devel >= 19.4.23
-BuildRequires: smartmet-library-spine-devel >= 19.5.8
+BuildRequires: smartmet-library-spine-devel >= 19.6.4
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.9.10
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 19.5.23
+BuildRequires: smartmet-engine-observation-devel >= 19.6.8
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 19.5.29
 BuildRequires: smartmet-engine-geonames-devel >= 19.3.22
@@ -55,7 +55,7 @@ Requires: smartmet-engine-contour >= 19.2.22
 Requires: smartmet-engine-gis >= 19.5.29
 Requires: smartmet-engine-geonames >= 19.3.22
 Requires: smartmet-server >= 19.3.19
-Requires: smartmet-library-spine >= 19.5.8
+Requires: smartmet-library-spine >= 19.6.4
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Fri Jun 14 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.6.14-1.fmi
+- Fixed intersection code to check for empty output
+
 * Wed Jun  5 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.6.5-1.fmi
 - Do not print a stack trace for invalid time requests to reduce log sizes
 
