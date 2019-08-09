@@ -365,7 +365,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
 
 
 
-    auto itsGridEngine = theState.getGridEngine();
+    auto gridEngine = theState.getGridEngine();
     QueryServer::Query query;
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
@@ -397,7 +397,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     }
 
     std::string wkt = *projection.crs;
-    //std::cout << wkt << "\n";
 
     if (wkt != "data")
     {
@@ -429,57 +428,11 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
 
     // Adding parameter information into the query.
 
-    std::string aProducer = *producer;
-    std::string name = *parameter;
-    std::string key = aProducer + ";" + name;
+    std::string param = gridEngine->getParameterString(*producer,*parameter);
 
-    Engine::Grid::ParameterDetails_vec parameters;
-    itsGridEngine->getParameterDetails(aProducer,name,parameters);
-
-    std::string prod;
-    std::string geomId;
-    std::string level;
-    std::string levelId;
-    std::string forecastType;
-    std::string forecastNumber;
-
-    size_t len = parameters.size();
-
-    if (len > 0  &&  strcasecmp(parameters[0].mProducerName.c_str(),key.c_str()) != 0)
-    {
-      for (size_t t = 0; t < len; t++)
-      {
-        //parameters[t].print(std::cout,0,0);
-
-        if (parameters[t].mLevelId > "")
-          levelId = parameters[t].mLevelId;
-
-        if (parameters[t].mLevel > "")
-          level = parameters[t].mLevel;
-
-        if (parameters[t].mForecastType > "")
-          forecastType = parameters[t].mForecastType;
-
-        if (parameters[t].mForecastNumber > "")
-          forecastNumber = parameters[t].mForecastNumber;
-
-        if (parameters[t].mProducerName > "")
-          prod = parameters[t].mProducerName;
-
-        if (parameters[t].mGeometryId > "")
-        {
-          prod = parameters[t].mProducerName;
-          geomId = parameters[t].mGeometryId;
-        }
-      }
-      std::string paramStr = name + ":" + prod + ":" + geomId + ":" + levelId + ":" + level+ ":" + forecastType + ":" + forecastNumber;
-      attributeList.addAttribute("param",paramStr);
-    }
-    else
-    {
-      attributeList.addAttribute("producer",aProducer);
-      attributeList.addAttribute("param",name);
-    }
+    attributeList.addAttribute("param",param);
+    if (param == *parameter)
+      attributeList.addAttribute("producer",*producer);
 
     std::string forecastTime = Fmi::to_iso_string(*time);
     attributeList.addAttribute("startTime",forecastTime);
@@ -541,7 +494,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     //query.print(std::cout,0,0);
 
     // Executing the query.
-    itsGridEngine->executeQuery(query);
+    gridEngine->executeQuery(query);
 
     // The Query object after the query execution.
     //query.print(std::cout,0,0);
@@ -559,7 +512,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
           uint c = 0;
           for (auto wkb = val->mValueData.begin(); wkb != val->mValueData.end(); ++wkb)
           {
-            //printf("--- Contour %d : %f - %f     %lu\n",c,contourLowValues[c],contourHighValues[c],wkb->size());
             unsigned char *cwkb = reinterpret_cast<unsigned char *>(wkb->data());
             OGRGeometry *geom = nullptr;
             OGRGeometryFactory::createFromWkb(cwkb,nullptr,&geom,wkb->size());
@@ -606,51 +558,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
       }
     }
 
-    // Setting up the projection information for the presentation.
-
-
-    // Sample to higher resolution if necessary
-/*
-    auto sampleresolution = sampling.getResolution(projection);
-    if (sampleresolution)
-    {
-      if (heatmap.resolution)
-        throw Spine::Exception(BCP, "Isoband-layer can't use both sampling and heatmap!");
-
-      std::string report2 = "IsobandLayer::resample finished in %t sec CPU, %w sec real\n";
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer2;
-      if (theState.useTimer())
-        timer2 = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report2);
-
-      auto demdata = theState.getGeoEngine().dem();
-      auto landdata = theState.getGeoEngine().landCover();
-      if (!demdata || !landdata)
-        throw Spine::Exception(BCP,
-                               "Resampling data requires DEM and land cover data to be available!");
-
-      q = q->sample(param,
-                    valid_time,
-                    *crs,
-                    box.xmin(),
-                    box.ymin(),
-                    box.xmax(),
-                    box.ymax(),
-                    *sampleresolution,
-                    *demdata,
-                    *landdata);
-    }
-    else if (heatmap.resolution)
-    {
-      q = buildHeatmap(param, valid_time, theState);
-    }
-
-    else if (theState.isObservation(producer))
-      throw Spine::Exception(
-          BCP, "Can't produce isobandlayer from observation data without heatmap configuration!");
-*/
-    // Logical operations with maps require shapes
-
-    // Setting up the projection information for the presentation.
 
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();
@@ -679,51 +586,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     // Logical operations with isobands are initialized before hand
 
     intersections.init(producer, projection, valid_time, theState);
-
-    // Calculate the isobands and store them into the template engine
-/*
-    std::vector<Engine::Contour::Range> limits;
-    const auto& contourer = theState.getContourEngine();
-    for (const Isoband& isoband : isobands)
-      limits.emplace_back(Engine::Contour::Range(isoband.lolimit, isoband.hilimit));
-      */
-/*
-    Engine::Contour::Options options(param, valid_time, limits);
-
-    if (interpolation == "linear")
-      options.interpolation = Engine::Contour::Linear;
-    else if (interpolation == "nearest")
-      options.interpolation = Engine::Contour::Nearest;
-    else if (interpolation == "discrete")
-      options.interpolation = Engine::Contour::Discrete;
-    else if (interpolation == "loglinear")
-      options.interpolation = Engine::Contour::LogLinear;
-    else
-      throw Spine::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
-*/
-    // Do the actual contouring, either full grid or just
-    // a sampled section
-
-    //std::size_t qhash = Engine::Querydata::hash_value(q);
-    //auto valueshash = qhash;
-    //boost::hash_combine(valueshash, options.data_hash_value());
-    //std::string wkt = q->area().WKT();
-
-    // Select the data
-/*
-    if (heatmap.resolution)
-    {
-      // Heatmap querydata has just 1 fixed parameter (1/pressure)
-      options.parameter = Spine::ParameterFactory::instance().parse("1");
-    }
-    */
-
-/*
-    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs.get());
-    std::vector<OGRGeometryPtr> geoms =
-        contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), crs.get());
-*/
-    // Update the globals
 
     if (css)
     {
@@ -1112,8 +974,8 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
   {
     auto hash = Layer::hash_value(theState);
 
-//    if (!theState.isObservation(producer))
-//      Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+    if (!theState.isObservation(producer))
+      Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
     Dali::hash_combine(hash, Dali::hash_value(source));
     Dali::hash_combine(hash, Dali::hash_value(parameter));
     Dali::hash_combine(hash, Dali::hash_value(level));

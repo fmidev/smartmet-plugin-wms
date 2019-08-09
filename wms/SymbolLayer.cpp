@@ -27,6 +27,10 @@
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 #include <iomanip>
+#include <grid-content/queryServer/definition/QueryConfigurator.h>
+#include <grid-files/common/ImagePaint.h>
+#include <grid-files/common/GeneralFunctions.h>
+#include <engines/grid/Engine.h>
 
 namespace SmartMet
 {
@@ -120,6 +124,93 @@ PointValues read_forecasts(const SymbolLayer& layer,
         }
       }
     }
+    return pointvalues;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Grid Forecast reader
+ */
+// ----------------------------------------------------------------------
+
+PointValues read_gridForecasts(const SymbolLayer& layer,
+                            Engine::Grid::Engine *gridEngine,
+                            QueryServer::Query& query,
+                            const boost::shared_ptr<OGRSpatialReference>& crs,
+                            const Fmi::Box& box,
+                            const boost::posix_time::time_period& valid_time_period)
+{
+  try
+  {
+    // Generate the coordinates for the symbols
+
+    const bool forecast_mode = true;
+    auto points = layer.positions->getPoints(nullptr, crs, box, forecast_mode);
+
+    PointValues pointvalues;
+
+    int width = 0;
+    int height = 0;
+
+    const char *widthStr = query.mAttributeList.getAttributeValue("grid.width");
+    const char *heightStr = query.mAttributeList.getAttributeValue("grid.height");
+
+    if (widthStr)
+      width = atoi(widthStr);
+
+    if (heightStr)
+      height = atoi(heightStr);
+
+    T::ParamValue_vec *values = nullptr;
+
+    for (auto param = query.mQueryParameterList.begin(); param != query.mQueryParameterList.end(); ++param)
+    {
+      for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
+      {
+        if (val->mValueVector.size() > 0)
+        {
+          values = &val->mValueVector;
+        }
+      }
+    }
+
+    if (values  &&  values->size() > 0)
+    {
+      for (const auto& point : points)
+      {
+        if (layer.inside(box, point.x, point.y))
+        {
+          size_t pos = (height-point.y-1) * width + point.x;
+
+          if (pos < values->size())
+          {
+            double tmp = (*values)[pos];
+            if (tmp != ParamValueMissing)
+            {
+              pointvalues.push_back(PointValue{point,tmp});
+            }
+            else
+            {
+              PointValue missingvalue{point,kFloatMissing};
+              pointvalues.push_back(missingvalue);
+            }
+            //printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(), point.latlon.Y(),tmp);
+          }
+          else
+          {
+            PointValue missingvalue{point,kFloatMissing};
+            pointvalues.push_back(missingvalue);
+          }
+        }
+      }
+    }
+
     return pointvalues;
   }
   catch (...)
@@ -754,6 +845,315 @@ void SymbolLayer::init(const Json::Value& theJson,
 // ----------------------------------------------------------------------
 
 void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+{
+  try
+  {
+    if (source && *source == "grid")
+      generate_gridEngine(theGlobals,theLayersCdt,theState);
+    else
+      generate_qEngine(theGlobals,theLayersCdt,theState);
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
+void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+{
+  try
+  {
+    if (!validLayer(theState))
+      return;
+
+    // Time execution
+    std::string report = "SymbolLayer::generate finished in %t sec CPU, %w sec real\n";
+    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    if (theState.useTimer())
+      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+
+    // A symbol must be defined either globally or for values
+
+    if (!symbol && symbols.empty())
+      throw Spine::Exception(
+          BCP,
+          "Must define default symbol with 'symbol' or several 'symbols' for specific values in a "
+          "symbol-layer");
+
+    // Establish the data
+
+    bool is_legend = theGlobals.Exists("legend");
+
+
+    // Make sure position generation is initialized
+
+    if (!positions)
+      positions = Positions{};
+
+    // Add layer margins to position generation
+    positions->addMargins(xmargin, ymargin);
+
+    // Establish the parameter
+
+    if (!parameter)
+      throw Spine::Exception(BCP, "Parameter not set for symbol-layer");
+
+    auto gridEngine = theState.getGridEngine();
+    QueryServer::Query query;
+    QueryServer::QueryConfigurator queryConfigurator;
+    T::AttributeList attributeList;
+    auto valid_time_period = getValidTimePeriod();
+
+    // Do this conversion just once for speed:
+    NFmiMetTime met_time = valid_time_period.begin();
+
+
+    std::string wkt = *projection.crs;
+    //std::cout << wkt << "\n";
+
+    if (wkt != "data")
+    {
+      // Getting WKT and the bounding box of the requested projection.
+
+      auto crs = projection.getCRS();
+      char *out = nullptr;
+      crs->exportToWkt(&out);
+      wkt = out;
+      OGRFree(out);
+
+      //std::cout << wkt << "\n";
+
+      auto bl = projection.bottomLeftLatLon();
+      auto tr = projection.topRightLatLon();
+
+      char bbox[100];
+      sprintf(bbox,"%f,%f,%f,%f",bl.X(),bl.Y(),tr.X(),tr.Y());
+
+      // Adding the bounding box information into the query.
+      query.mAttributeList.addAttribute("grid.llbox",bbox);
+    }
+    else
+    {
+      // The requested projection is the same as the projection of the requested data. This means that we
+      // we do not know the actual projection yet and we have to wait that the grid-engine delivers us
+      // the requested data and the projection information of the current data.
+    }
+
+    // Adding parameter information into the query.
+
+    std::string param = gridEngine->getParameterString(*producer,*parameter);
+
+    attributeList.addAttribute("param",param);
+    if (param == *parameter)
+      attributeList.addAttribute("producer",*producer);
+
+    std::string forecastTime = Fmi::to_iso_string(*time);
+    attributeList.addAttribute("startTime",forecastTime);
+    attributeList.addAttribute("endTime",forecastTime);
+    attributeList.addAttribute("timelist",forecastTime);
+    attributeList.addAttribute("timezone","UTC");
+
+    // Tranforming information from the attribute list into the query object.
+    queryConfigurator.configure(query,attributeList);
+
+    // Fullfilling information into the query object.
+
+    for (auto it = query.mQueryParameterList.begin(); it != query.mQueryParameterList.end(); ++it)
+    {
+      it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+      it->mType = QueryServer::QueryParameter::Type::Vector;
+      it->mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
+    }
+
+    query.mSearchType = QueryServer::Query::SearchType::TimeSteps;
+    query.mAttributeList.addAttribute("grid.crs",wkt);
+
+    if (projection.xsize)
+      query.mAttributeList.addAttribute("grid.width",std::to_string(*projection.xsize));
+
+    if (projection.ysize)
+      query.mAttributeList.addAttribute("grid.height",std::to_string(*projection.ysize));
+
+    if (wkt == "data"  &&  projection.x1 && projection.y1 && projection.x2 && projection.y2)
+    {
+      char bbox[100];
+      sprintf(bbox,"%f,%f,%f,%f",*projection.x1,*projection.y1,*projection.x2,*projection.y2);
+      query.mAttributeList.addAttribute("grid.bbox",bbox);
+    }
+
+    // The Query object before the query execution.
+    //query.print(std::cout,0,0);
+
+    // Executing the query.
+    gridEngine->executeQuery(query);
+
+    // The Query object after the query execution.
+    //query.print(std::cout,0,0);
+
+
+    // Extracting the projection information from the query result.
+
+    const char *crsStr = query.mAttributeList.getAttributeValue("grid.crs");
+    const char *bboxStr = query.mAttributeList.getAttributeValue("grid.bbox");
+    const char *llboxStr = query.mAttributeList.getAttributeValue("grid.llbox");
+    const char *projectionTypeStr = query.mAttributeList.getAttributeValue("grid.projectionType");
+    uint projectionType = 0;
+
+    if (projectionTypeStr != nullptr)
+      projectionType = atoi(projectionTypeStr);
+
+    if (crsStr != nullptr  &&  *projection.crs == "data")
+    {
+      projection.crs = crsStr;
+      std::vector<double> partList;
+
+      if (llboxStr != nullptr  &&  ((projectionType == T::GridProjectionValue::LatLon || projectionType == T::GridProjectionValue::RotatedLatLon) ||  bboxStr == nullptr))
+      {
+        splitString(llboxStr,',',partList);
+      }
+      else
+      if (bboxStr != nullptr)
+      {
+        splitString(bboxStr,',',partList);
+      }
+
+      if (partList.size() == 4)
+      {
+        projection.x1 = partList[0];
+        projection.y1 = partList[1];
+        projection.x2 = partList[2];
+        projection.y2 = partList[3];
+      }
+    }
+
+
+    auto crs = projection.getCRS();
+    const auto& box = projection.getBox();
+
+    // Initialize inside/outside shapes and intersection isobands
+
+    positions->init(producer, projection, valid_time_period.begin(), theState);
+
+    // Update the globals
+
+    if (css)
+    {
+      std::string name = theState.getCustomer() + "/" + *css;
+      theGlobals["css"][name] = theState.getStyle(*css);
+    }
+
+    // Set the proper symbol on if it is needed
+    if (!symbols.empty())
+    {
+      if (!parameter)
+        throw Spine::Exception(
+            BCP, "Parameter not set for SymbolLayer even though multiple symbols are in use");
+    }
+
+
+    // Establish the numbers to draw.
+
+    PointValues pointvalues;
+    pointvalues = read_gridForecasts(*this, gridEngine, query, crs, box, valid_time_period);
+
+    // Clip if necessary
+
+    addClipRect(theLayersCdt, theGlobals, box, theState);
+
+    // Begin a G-group, put arrows into it as tags
+
+    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
+    group_cdt["start"] = "<g";
+    group_cdt["end"] = "</g>";
+
+    // Add layer attributes to the group, not to the symbols
+
+    theState.addAttributes(theGlobals, group_cdt, attributes);
+
+    int valid_count = 0;
+
+    for (const auto& pointvalue : pointvalues)
+    {
+      const auto& point = pointvalue.point;
+
+      if (pointvalue.value != kFloatMissing)
+        ++valid_count;
+
+      // Start generating the hash
+
+      CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+      tag_cdt["start"] = "<use";
+      tag_cdt["end"] = "/>";
+
+      std::string iri;
+
+      if (symbol)
+        iri = *symbol;
+
+      // librsvg cannot handle scale + transform, must move former into latter
+      boost::optional<double> rescale;
+
+      if (!symbols.empty())
+      {
+        auto selection = Select::attribute(symbols, pointvalue.value);
+        if (selection)
+        {
+          if (selection->symbol)
+            iri = *selection->symbol;
+
+          auto scaleattr = selection->attributes.remove("scale");
+          if (scaleattr)
+            rescale = Fmi::stod(*scaleattr);
+
+          theState.addAttributes(theGlobals, tag_cdt, selection->attributes);
+        }
+      }
+
+      if (!iri.empty())
+      {
+        std::string IRI = Iri::normalize(iri);
+        if (theState.addId(IRI))
+          theGlobals["includes"][iri] = theState.getSymbol(iri);
+
+        // Lack of CSS3 transform support forces us to use a direct transformation
+        // which may override user settings
+        tag_cdt["attributes"]["xlink:href"] = "#" + IRI;
+
+        int x = point.x + point.dx + (dx ? *dx : 0);
+        int y = point.y + point.dy + (dy ? *dy : 0);
+
+        std::string tmp = fmt::sprintf("translate(%d,%d)", x, y);
+
+        double newscale = (scale ? *scale : 1.0) * (rescale ? *rescale : 1.0);
+        if (newscale != 1.0)
+          tmp += fmt::sprintf(" scale(%g)", newscale);
+
+        tag_cdt["attributes"]["transform"] = tmp;
+
+        group_cdt["tags"].PushBack(tag_cdt);
+      }
+    }
+
+    if (valid_count < minvalues)
+      throw Spine::Exception(BCP, "Too few valid values in symbol layer")
+          .addParameter("valid values", std::to_string(valid_count))
+          .addParameter("minimum count", std::to_string(minvalues));
+
+    // We created only this one layer
+    theLayersCdt.PushBack(group_cdt);
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
+
+void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
 {
   try
   {

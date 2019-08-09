@@ -68,6 +68,8 @@ class ArrowLayer : public Layer
   std::vector<AttributeSelection> arrows;
 
  private:
+  virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 };  // class ArrowLayer
 
 }  // namespace Dali

@@ -27,6 +27,10 @@
 #include <newbase/NFmiArea.h>
 #include <newbase/NFmiPoint.h>
 #include <iomanip>
+#include <grid-content/queryServer/definition/QueryConfigurator.h>
+#include <grid-files/common/ImagePaint.h>
+#include <grid-files/common/GeneralFunctions.h>
+#include <engines/grid/Engine.h>
 
 const double pi = boost::math::constants::pi<double>();
 
@@ -209,6 +213,88 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
   return pointvalues;
 }
+
+
+
+PointValues read_gridForecasts(const ArrowLayer& layer,
+                           Engine::Grid::Engine *gridEngine,
+                           QueryServer::Query& query,
+                           std::string dirParam,
+                           std::string speedParam,
+                           const boost::shared_ptr<OGRSpatialReference>& crs,
+                           const Fmi::Box& box,
+                           const boost::posix_time::time_period& time_period)
+{
+  // Generate the coordinates for the symbols
+
+  const bool forecast_mode = true;
+  auto points = layer.positions->getPoints(nullptr, crs, box, forecast_mode);
+
+  PointValues pointvalues;
+
+  int width = 0;
+  int height = 0;
+
+  const char *widthStr = query.mAttributeList.getAttributeValue("grid.width");
+  const char *heightStr = query.mAttributeList.getAttributeValue("grid.height");
+
+  if (widthStr)
+    width = atoi(widthStr);
+
+  if (heightStr)
+    height = atoi(heightStr);
+
+  T::ParamValue_vec *dirValues = nullptr;
+  T::ParamValue_vec *speedValues = nullptr;
+
+  for (auto param = query.mQueryParameterList.begin(); param != query.mQueryParameterList.end(); ++param)
+  {
+    for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
+    {
+      if (val->mValueVector.size() > 0)
+      {
+        if (param->mParameterKey == dirParam)
+          dirValues = &val->mValueVector;
+        else
+        if (param->mParameterKey == speedParam)
+          speedValues = &val->mValueVector;
+      }
+    }
+  }
+
+  if (dirValues  &&  speedValues  &&  dirValues->size() != speedValues->size())
+    return pointvalues;
+
+
+  if (dirValues  && dirValues->size() > 0)
+  {
+    for (const auto& point : points)
+    {
+      double wdir = ParamValueMissing;
+      double wspeed = 0;
+      if (layer.inside(box, point.x, point.y))
+      {
+        size_t pos = (height-point.y-1) * width + point.x;
+
+        if (pos < dirValues->size())
+        {
+          wdir = (*dirValues)[pos];
+          if (speedValues)
+             wspeed = (*speedValues)[pos];
+
+          if (wdir != ParamValueMissing  &&  wspeed != ParamValueMissing)
+          {
+            PointValue value{point, wdir, wspeed};
+            pointvalues.push_back(value);
+          }
+        }
+      }
+    }
+  }
+
+  return pointvalues;
+}
+
 
 // ----------------------------------------------------------------------
 /*!
@@ -840,7 +926,420 @@ void ArrowLayer::init(const Json::Value& theJson,
  */
 // ----------------------------------------------------------------------
 
+
 void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+{
+  try
+  {
+    if (source && *source == "grid")
+      generate_gridEngine(theGlobals,theLayersCdt,theState);
+    else
+      generate_qEngine(theGlobals,theLayersCdt,theState);
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
+
+void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+{
+  try
+  {
+    if (!validLayer(theState))
+      return;
+
+    // Time execution
+
+    std::string report = "ArrowLayer::generate finished in %t sec CPU, %w sec real\n";
+    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    if (theState.useTimer())
+      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+
+    // A symbol must be defined either globally or for speed ranges
+
+    if (!symbol && arrows.empty())
+      throw Spine::Exception(
+          BCP, "Must define arrow with 'symbol' or 'arrows' to define the symbol for arrows");
+
+
+    // Make sure position generation is initialized
+
+    if (!positions)
+      positions = Positions{};
+
+    // Add layer margins to position generation
+    positions->addMargins(xmargin, ymargin);
+
+    // Establish the parameters
+
+    std::vector<std::string> paramList;
+
+    boost::optional<std::string> dirparam, speedparam, uparam, vparam;
+
+    if (direction)
+    {
+      paramList.push_back(*direction);
+    }
+    if (speed)
+    {
+      paramList.push_back(*speed);
+    }
+    if (u)
+    {
+      paramList.push_back(*u);
+    }
+    if (v)
+    {
+      paramList.push_back(*v);
+    }
+
+
+    auto gridEngine = theState.getGridEngine();
+    QueryServer::Query query;
+    QueryServer::QueryConfigurator queryConfigurator;
+    T::AttributeList attributeList;
+    auto valid_time_period = getValidTimePeriod();
+
+    // Do this conversion just once for speed:
+    NFmiMetTime met_time = valid_time_period.begin();
+
+
+    std::string wkt = *projection.crs;
+    if (wkt != "data")
+    {
+      // Getting WKT and the bounding box of the requested projection.
+
+      auto crs = projection.getCRS();
+      char *out = nullptr;
+      crs->exportToWkt(&out);
+      wkt = out;
+      OGRFree(out);
+
+      //std::cout << wkt << "\n";
+
+      auto bl = projection.bottomLeftLatLon();
+      auto tr = projection.topRightLatLon();
+
+      char bbox[100];
+      sprintf(bbox,"%f,%f,%f,%f",bl.X(),bl.Y(),tr.X(),tr.Y());
+
+      // Adding the bounding box information into the query.
+      query.mAttributeList.addAttribute("grid.llbox",bbox);
+    }
+    else
+    {
+      // The requested projection is the same as the projection of the requested data. This means that we
+      // we do not know the actual projection yet and we have to wait that the grid-engine delivers us
+      // the requested data and the projection information of the current data.
+    }
+
+    // Adding parameter information into the query.
+
+    std::string aProducer = *producer;
+    char paramBuf[1000];
+    char *p = paramBuf;
+
+    for (auto parameter = paramList.begin(); parameter != paramList.end(); ++parameter)
+    {
+      std::string param = gridEngine->getParameterString(*producer,*parameter);
+      if (param == *parameter)
+        attributeList.addAttribute("producer",*producer);
+
+      if (p != paramBuf)
+        p += sprintf(p,",");
+
+      p += sprintf(p,"%s",param.c_str());
+    }
+
+    attributeList.addAttribute("param",paramBuf);
+
+    std::string forecastTime = Fmi::to_iso_string(*time);
+    attributeList.addAttribute("startTime",forecastTime);
+    attributeList.addAttribute("endTime",forecastTime);
+    attributeList.addAttribute("timelist",forecastTime);
+    attributeList.addAttribute("timezone","UTC");
+
+    // Tranforming information from the attribute list into the query object.
+    queryConfigurator.configure(query,attributeList);
+
+    // Fullfilling information into the query object.
+
+    for (auto it = query.mQueryParameterList.begin(); it != query.mQueryParameterList.end(); ++it)
+    {
+      it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+      it->mType = QueryServer::QueryParameter::Type::Vector;
+      it->mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
+    }
+
+    query.mSearchType = QueryServer::Query::SearchType::TimeSteps;
+    query.mAttributeList.addAttribute("grid.crs",wkt);
+
+    if (projection.xsize)
+      query.mAttributeList.addAttribute("grid.width",std::to_string(*projection.xsize));
+
+    if (projection.ysize)
+      query.mAttributeList.addAttribute("grid.height",std::to_string(*projection.ysize));
+
+    if (wkt == "data"  &&  projection.x1 && projection.y1 && projection.x2 && projection.y2)
+    {
+      char bbox[100];
+      sprintf(bbox,"%f,%f,%f,%f",*projection.x1,*projection.y1,*projection.x2,*projection.y2);
+      query.mAttributeList.addAttribute("grid.bbox",bbox);
+    }
+
+    // The Query object before the query execution.
+    //query.print(std::cout,0,0);
+
+    // Executing the query.
+    gridEngine->executeQuery(query);
+
+    // The Query object after the query execution.
+    //query.print(std::cout,0,0);
+
+
+    // Extracting the projection information from the query result.
+
+    const char *crsStr = query.mAttributeList.getAttributeValue("grid.crs");
+    const char *bboxStr = query.mAttributeList.getAttributeValue("grid.bbox");
+    const char *llboxStr = query.mAttributeList.getAttributeValue("grid.llbox");
+    const char *projectionTypeStr = query.mAttributeList.getAttributeValue("grid.projectionType");
+    uint projectionType = 0;
+
+    if (projectionTypeStr != nullptr)
+      projectionType = atoi(projectionTypeStr);
+
+    if (crsStr != nullptr  &&  *projection.crs == "data")
+    {
+      projection.crs = crsStr;
+      std::vector<double> partList;
+
+      if (llboxStr != nullptr  &&  ((projectionType == T::GridProjectionValue::LatLon || projectionType == T::GridProjectionValue::RotatedLatLon) ||  bboxStr == nullptr))
+      {
+        splitString(llboxStr,',',partList);
+      }
+      else
+      if (bboxStr != nullptr)
+      {
+        splitString(bboxStr,',',partList);
+      }
+
+      if (partList.size() == 4)
+      {
+        projection.x1 = partList[0];
+        projection.y1 = partList[1];
+        projection.x2 = partList[2];
+        projection.y2 = partList[3];
+      }
+    }
+
+
+    // Get projection details
+
+    auto crs = projection.getCRS();
+    const auto& box = projection.getBox();
+
+    // Initialize inside/outside shapes and intersection isobands
+
+    positions->init(producer, projection, valid_time_period.begin(), theState);
+
+    if (css)
+    {
+      std::string name = theState.getCustomer() + "/" + *css;
+      theGlobals["css"][name] = theState.getStyle(*css);
+    }
+
+    // Clip if necessary
+
+    addClipRect(theLayersCdt, theGlobals, box, theState);
+
+    // Begin a G-group, put arrows into it as tags
+
+    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
+    group_cdt["start"] = "<g";
+    group_cdt["end"] = "</g>";
+
+    // Add layer attributes to the group, not to the arrows
+    theState.addAttributes(theGlobals, group_cdt, attributes);
+
+    // Establish the relevant numbers
+
+    PointValues pointvalues = read_gridForecasts(*this,gridEngine,query,*direction,*speed,crs,box,valid_time_period);
+
+    // Coordinate transformation from WGS84 to output SRS so that we can rotate
+    // winds according to map north
+
+    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
+    OGRErr err = wgs84->SetFromUserInput("WGS84");
+    if (err != OGRERR_NONE)
+      throw Spine::Exception(BCP, "GDAL does not understand WGS84");
+
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
+        OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
+    if (transformation == nullptr)
+      throw Spine::Exception(
+          BCP,
+          "Failed to create the needed coordinate transformation when reading wind directions");
+
+    // Alter units if requested
+
+    if (!unit_conversion.empty())
+    {
+      auto conv = theState.getConfig().unitConversion(unit_conversion);
+      multiplier = conv.multiplier;
+      offset = conv.offset;
+    }
+
+    // Render the collected values
+
+    int valid_count = 0;
+
+    for (const auto& pointvalue : pointvalues)
+    {
+      const auto& point = pointvalue.point;
+
+      // Select arrow based on speed or U- and V-components, if available
+      bool check_speeds = (!arrows.empty() && (speed || (u && v)));
+
+      double wdir = pointvalue.direction;
+      double wspd = pointvalue.speed;
+
+      if (wdir == kFloatMissing)
+        continue;
+
+      if (check_speeds && wspd == kFloatMissing)
+        continue;
+
+      ++valid_count;
+
+      // Unit transformation
+      double xmultiplier = (multiplier ? *multiplier : 1.0);
+      double xoffset = (offset ? *offset : 0.0);
+      if (wspd != kFloatMissing)
+        wspd = xmultiplier * wspd + xoffset;
+
+      // Apply final rotation to output coordinate system
+      auto fix = Fmi::OGR::gridNorth(*transformation, point.latlon.X(), point.latlon.Y());
+      if (!fix)
+        continue;
+      wdir = fmod(wdir + *fix, 360);
+
+      // North wind blows, rotate 180 degrees
+      double rotate = fmod(wdir + 180, 360);
+
+      // Disable rotation for slow wind speeds if a limit is set
+      int nrotate = lround(rotate);
+      if (wspd != kFloatMissing && minrotationspeed && wspd < *minrotationspeed)
+        nrotate = 0;
+
+      CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
+      tag_cdt["start"] = "<use";
+      tag_cdt["end"] = "/>";
+
+      // librsvg cannot handle scale + transform, must move former into latter
+
+      boost::optional<double> rescale;
+
+      // Determine the symbol to be used
+      std::string iri;
+
+      if (!check_speeds)
+      {
+        if (symbol)
+          iri = *symbol;
+      }
+      else
+      {
+        auto selection = Select::attribute(arrows, wspd);
+        if (selection)
+        {
+          if (selection->symbol)
+            iri = *selection->symbol;
+          else if (symbol)
+            iri = *symbol;
+
+          auto scaleattr = selection->attributes.remove("scale");
+          if (scaleattr)
+            rescale = Fmi::stod(*scaleattr);
+
+          theState.addAttributes(theGlobals, tag_cdt, selection->attributes);
+        }
+      }
+
+      if (!iri.empty())
+      {
+        std::string IRI = Iri::normalize(iri);
+        bool flop =
+            ((southflop && (point.latlon.Y() < 0)) || (northflop && (point.latlon.Y() > 0)));
+
+        if (theState.addId(IRI))
+          theGlobals["includes"][iri] = theState.getSymbol(iri);
+
+        tag_cdt["attributes"]["xlink:href"] = "#" + IRI;
+
+        // Using x and y attributes messes up rotation, hence we
+        // must use the translate transformation instead.
+        std::string transform;
+
+        double yscale = (flip ? -1 : 1) * (scale ? *scale : 1.0);
+        double xscale = (flop ? -yscale : yscale);
+
+        if (rescale)
+        {
+          xscale *= *rescale;
+          yscale *= *rescale;
+        }
+
+        int x = point.x + point.dx + (dx ? *dx : 0);
+        int y = point.y + point.dy + (dy ? *dy : 0);
+
+        if (nrotate == 0)
+        {
+          if (xscale == 1 && yscale == 1)
+            transform = fmt::sprintf("translate(%d %d)", x, y);
+          else if (xscale == yscale)
+            transform = fmt::sprintf("translate(%d %d) scale(%g)", x, y, xscale);
+          else
+            transform = fmt::sprintf("translate(%d %d) scale(%g %g)", x, y, xscale, yscale);
+        }
+        else
+        {
+          if (xscale == 1 && yscale == 1)
+            transform = fmt::sprintf("translate(%d %d) rotate(%d)", x, y, nrotate);
+          else if (xscale == yscale)
+            transform =
+                fmt::sprintf("translate(%d %d) rotate(%d) scale(%g)", x, y, nrotate, xscale);
+          else
+            transform = fmt::sprintf(
+                "translate(%d %d) rotate(%d) scale(%g %g)", x, y, nrotate, xscale, yscale);
+        }
+
+        tag_cdt["attributes"]["transform"] = transform;
+
+        group_cdt["tags"].PushBack(tag_cdt);
+      }
+    }
+
+    if (valid_count < minvalues)
+      throw Spine::Exception(BCP, "Too few valid values in arrow layer")
+          .addParameter("valid values", std::to_string(valid_count))
+          .addParameter("minimum count", std::to_string(minvalues));
+
+    // We created only this one layer
+    theLayersCdt.PushBack(group_cdt);
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
+void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
 {
   try
   {
@@ -1113,6 +1612,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
 
 // ----------------------------------------------------------------------
 /*!

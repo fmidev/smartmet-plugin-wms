@@ -435,6 +435,7 @@ void Projection::prepareCRS() const
 
       if (latlon_center || (bboxcrs && *crs != *bboxcrs))
       {
+
         // Reproject center coordinates from latlon/bboxcrs to crs
         OGRSpatialReference ogr_crs2;
         if (latlon_center)

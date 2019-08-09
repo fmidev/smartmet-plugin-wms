@@ -429,6 +429,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
 {
   try
   {
+
     // Get the data projection
 
     auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
@@ -482,7 +483,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
     // the margins had a logic error
     xstart -= deltaxx;
 
-    for (int ypos = ystart; ypos < height + ymargin; ypos += deltay)
+    for (int ypos = ystart; ypos < (height + ymargin); ypos += deltay)
     {
       // Stagger every other row
       if (row++ % 2 == 0)
@@ -490,7 +491,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
       else
         xstart -= deltaxx;
 
-      for (int xpos = xstart; xpos < width + xmargin; xpos += deltax)
+      for (int xpos = xstart; xpos < (width + xmargin); xpos += deltax)
       {
         // Convert pixel coordinate to world coordinate (or latlon for geographic spatial
         // references)
@@ -626,7 +627,12 @@ Positions::Points Positions::getGraticulePoints(
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+    {
+      Spine::Exception exception(BCP, "GDAL does not understand this WKT!");
+      if (theQ)
+        exception.addParameter("WKT",theQ->area().WKT());
+      throw exception;
+    }
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -704,7 +710,12 @@ Positions::Points Positions::getGraticuleFillPoints(
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+    {
+      Spine::Exception exception(BCP, "GDAL does not understand this WKT!");
+      if (theQ)
+        exception.addParameter("WKT",theQ->area().WKT());
+      throw exception;
+    }
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -918,7 +929,12 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+    {
+      Spine::Exception exception(BCP, "GDAL does not understand this WKT!");
+      if (theQ)
+        exception.addParameter("WKT",theQ->area().WKT());
+      throw exception;
+    }
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -993,7 +1009,12 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+    {
+      Spine::Exception exception(BCP, "GDAL does not understand this WKT!");
+      if (theQ)
+        exception.addParameter("WKT",theQ->area().WKT());
+      throw exception;
+    }
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -1083,7 +1104,12 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
     OGRErr err = wgs84->SetFromUserInput("WGS84");
 
     if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+    {
+      Spine::Exception exception(BCP, "GDAL does not understand this WKT!");
+      if (theQ)
+        exception.addParameter("WKT",theQ->area().WKT());
+      throw exception;
+    }
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 

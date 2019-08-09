@@ -89,6 +89,7 @@ class State
   const Config& getConfig() const;
 
   const Spine::HTTP::Request& getRequest() const { return itsRequest; }
+  Plugin& getPlugin() { return itsPlugin;}
 
   // Customer
   const std::string& getCustomer() const { return itsCustomer; }

@@ -159,7 +159,7 @@ void IsolineLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     if (!parameter)
       throw Spine::Exception(BCP, "Parameter not set for isoline-layer");
 
-    auto itsGridEngine = theState.getGridEngine();
+    auto gridEngine = theState.getGridEngine();
     QueryServer::Query query;
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
@@ -213,57 +213,11 @@ void IsolineLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
 
     // Adding parameter information into the query.
 
-    std::string aProducer = *producer;
-    std::string name = *parameter;
-    std::string key = aProducer + ";" + name;
+    std::string param = gridEngine->getParameterString(*producer,*parameter);
 
-    Engine::Grid::ParameterDetails_vec parameters;
-    itsGridEngine->getParameterDetails(aProducer,name,parameters);
-
-    std::string prod;
-    std::string geomId;
-    std::string level;
-    std::string levelId;
-    std::string forecastType;
-    std::string forecastNumber;
-
-    size_t len = parameters.size();
-
-    if (len > 0  &&  strcasecmp(parameters[0].mProducerName.c_str(),key.c_str()) != 0)
-    {
-      for (size_t t = 0; t < len; t++)
-      {
-        //parameters[t].print(std::cout,0,0);
-
-        if (parameters[t].mLevelId > "")
-          levelId = parameters[t].mLevelId;
-
-        if (parameters[t].mLevel > "")
-          level = parameters[t].mLevel;
-
-        if (parameters[t].mForecastType > "")
-          forecastType = parameters[t].mForecastType;
-
-        if (parameters[t].mForecastNumber > "")
-          forecastNumber = parameters[t].mForecastNumber;
-
-        if (parameters[t].mProducerName > "")
-          prod = parameters[t].mProducerName;
-
-        if (parameters[t].mGeometryId > "")
-        {
-          prod = parameters[t].mProducerName;
-          geomId = parameters[t].mGeometryId;
-        }
-      }
-      std::string paramStr = name + ":" + prod + ":" + geomId + ":" + levelId + ":" + level+ ":" + forecastType + ":" + forecastNumber;
-      attributeList.addAttribute("param",paramStr);
-    }
-    else
-    {
-      attributeList.addAttribute("producer",aProducer);
-      attributeList.addAttribute("param",name);
-    }
+    attributeList.addAttribute("param",param);
+    if (param == *parameter)
+      attributeList.addAttribute("producer",*producer);
 
     std::string forecastTime = Fmi::to_iso_string(*time);
     attributeList.addAttribute("startTime",forecastTime);
@@ -324,7 +278,7 @@ void IsolineLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     //query.print(std::cout,0,0);
 
     // Executing the query.
-    itsGridEngine->executeQuery(query);
+    gridEngine->executeQuery(query);
 
     // The Query object after the query execution.
     //query.print(std::cout,0,0);
@@ -763,7 +717,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    //Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+    Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
     Dali::hash_combine(hash, Dali::hash_value(source));
     Dali::hash_combine(hash, Dali::hash_value(parameter));
     Dali::hash_combine(hash, Dali::hash_value(level));

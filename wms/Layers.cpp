@@ -61,8 +61,8 @@ bool Layers::getProjection(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     for (auto& layer : layers)
     {
-      // std::cout << "PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs << "\n";
-      if ((layer->attributes.value("display") != "none" || theState.getRequest().getParameter("optimizesize") == std::string("0")))
+      //std::cout << "PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs << "\n";
+      if (*layer->type != "map" &&  (layer->attributes.value("display") != "none" || theState.getRequest().getParameter("optimizesize") == std::string("0")))
       {
         layer->generate(theGlobals, theLayersCdt, theState);
         if (*layer->projection.crs != "data")
@@ -109,7 +109,8 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
     if (*(*first)->projection.crs == "data")
     {
       CTPP::CDT tmpGlobals(theGlobals);
-      State tmpState(theState);
+      State tmpState(theState.getPlugin(),theState.getRequest());
+      tmpState.setCustomer(theState.getCustomer());
       CTPP::CDT tmpLayersCdt;
       getProjection(tmpGlobals,theLayersCdt,tmpState,projection);
     }
@@ -123,7 +124,7 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
       // Each layer may actually generate multiple CDT layers
       // (Animations, inner tags etc). Each is pushed separately
       // to the back of the layers CDT
-      // std::cout << "### PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs << "\n";
+      //std::cout << "### PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs << "\n";
 
       if (layer->attributes.value("display") != "none" ||theState.getRequest().getParameter("optimizesize") == std::string("0"))
       {
