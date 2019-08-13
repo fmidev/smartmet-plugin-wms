@@ -1,0 +1,49 @@
+{
+    "title": "Temperature",
+    "abstract": "Temperature",
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views":
+    [
+	{
+	    "layers":
+	    [
+		{
+		    "qid": "temperature",
+		    "layer_type": "isoband",
+		    "parameter": "Temperature",
+		    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css",
+		    "smoother":
+		    {
+			"degree": 1,
+			"size": 1
+		    }
+		},
+		{
+		    "qid": "l4",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"minarea": 100
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country_lines",
+			"fill": "none",
+			"stroke": "#222",
+			"stroke-width": "0.3px"
+		    }
+		}
+		
+	    ]
+	}
+    ]
+}
