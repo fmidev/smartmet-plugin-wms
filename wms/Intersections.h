@@ -31,6 +31,12 @@ class Intersections
             const boost::posix_time::ptime& theTime,
             const State& theState);
 
+  void init(const boost::optional<std::string>& theProducer,
+            Engine::Grid::Engine *gridEngine,
+            const Projection& theProjection,
+            const boost::posix_time::ptime& theTime,
+            const State& theState);
+
   std::size_t hash_value(const State& theState) const;
 
   OGRGeometryPtr intersect(OGRGeometryPtr geom) const;

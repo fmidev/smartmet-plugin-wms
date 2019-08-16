@@ -12,6 +12,7 @@
 #include <gis/OGR.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
+#include <grid-content/queryServer/definition/QueryConfigurator.h>
 
 namespace SmartMet
 {
@@ -151,6 +152,158 @@ bool Intersection::inside(double theX, double theY) const
 // ----------------------------------------------------------------------
 
 void Intersection::init(const boost::optional<std::string>& theProducer,
+                        Engine::Grid::Engine *gridEngine,
+                        const Projection& theProjection,
+                        const boost::posix_time::ptime& theTime,
+                        const State& theState)
+{
+  try
+  {
+    QueryServer::Query query;
+    QueryServer::QueryConfigurator queryConfigurator;
+    T::AttributeList attributeList;
+
+    std::string wkt = *theProjection.crs;
+
+    if (wkt != "data")
+    {
+      // Getting WKT and the bounding box of the requested projection.
+
+      auto crs = theProjection.getCRS();
+      char *out = nullptr;
+      crs->exportToWkt(&out);
+      wkt = out;
+      OGRFree(out);
+
+      //std::cout << wkt << "\n";
+
+      auto bl = theProjection.bottomLeftLatLon();
+      auto tr = theProjection.topRightLatLon();
+
+      char bbox[100];
+      sprintf(bbox,"%f,%f,%f,%f",bl.X(),bl.Y(),tr.X(),tr.Y());
+
+      // Adding the bounding box information into the query.
+      query.mAttributeList.addAttribute("grid.llbox",bbox);
+    }
+
+    // Adding parameter information into the query.
+
+    std::string param = gridEngine->getParameterString(*theProducer,*parameter);
+    attributeList.addAttribute("param",param);
+
+    if (param == *parameter  &&  query.mProducerNameList.size() == 0)
+    {
+      gridEngine->getProducerNameList(*theProducer,query.mProducerNameList);
+      if (query.mProducerNameList.size() == 0)
+        query.mProducerNameList.push_back(*theProducer);
+    }
+
+    std::string forecastTime = Fmi::to_iso_string(theTime);
+    attributeList.addAttribute("startTime",forecastTime);
+    attributeList.addAttribute("endTime",forecastTime);
+    attributeList.addAttribute("timelist",forecastTime);
+    attributeList.addAttribute("timezone","UTC");
+
+    // Tranforming information from the attribute list into the query object.
+    queryConfigurator.configure(query,attributeList);
+
+    // Fullfilling information into the query object.
+
+    if (!hilimit)
+      hilimit = 1000000000;
+
+    if (!lolimit)
+      lolimit = -1000000000;
+
+    float hlimit = C_FLOAT(*hilimit);
+    float llimit = C_FLOAT(*lolimit);
+
+    for (auto it = query.mQueryParameterList.begin(); it != query.mQueryParameterList.end(); ++it)
+    {
+      it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+      it->mType = QueryServer::QueryParameter::Type::Isoband;
+      it->mContourLowValues.push_back(llimit);
+      it->mContourHighValues.push_back(hlimit);
+    }
+
+    query.mSearchType = QueryServer::Query::SearchType::TimeSteps;
+    query.mAttributeList.addAttribute("grid.crs",wkt);
+
+    if (theProjection.xsize)
+      query.mAttributeList.addAttribute("grid.width",std::to_string(*theProjection.xsize));
+
+    if (theProjection.ysize)
+      query.mAttributeList.addAttribute("grid.height",std::to_string(*theProjection.ysize));
+
+    if (wkt == "data"  &&  theProjection.x1 && theProjection.y1 && theProjection.x2 && theProjection.y2)
+    {
+      char bbox[100];
+      sprintf(bbox,"%f,%f,%f,%f",*theProjection.x1,*theProjection.y1,*theProjection.x2,*theProjection.y2);
+      query.mAttributeList.addAttribute("grid.bbox",bbox);
+    }
+
+    if (smoother.size)
+      query.mAttributeList.addAttribute("contour.smooth.size",std::to_string(*smoother.size));
+
+    if (smoother.degree)
+      query.mAttributeList.addAttribute("contour.smooth.degree",std::to_string(*smoother.degree));
+
+    if (offset)
+      query.mAttributeList.addAttribute("contour.offset",std::to_string(*offset));
+
+    query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::ORIGINAL_COORDINATES));
+    //query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::LATLON_COORDINATES));
+    //query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
+
+    // The Query object before the query execution.
+    //query.print(std::cout,0,0);
+
+    // Executing the query.
+    gridEngine->executeQuery(query);
+
+    // The Query object after the query execution.
+    // query.print(std::cout,0,0);
+
+
+    // Converting the returned WKB-isolines into OGRGeometry objects.
+
+    std::vector<OGRGeometryPtr> isobands;
+    for (auto param = query.mQueryParameterList.begin(); param != query.mQueryParameterList.end(); ++param)
+    {
+      for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
+      {
+        if (val->mValueData.size() > 0)
+        {
+          uint c = 0;
+          for (auto wkb = val->mValueData.begin(); wkb != val->mValueData.end(); ++wkb)
+          {
+            unsigned char *cwkb = reinterpret_cast<unsigned char *>(wkb->data());
+            OGRGeometry *geom = nullptr;
+            OGRGeometryFactory::createFromWkb(cwkb,nullptr,&geom,wkb->size());
+            auto geomPtr = OGRGeometryPtr(geom);
+            isobands.push_back(geomPtr);
+            c++;
+          }
+        }
+      }
+    }
+    isoband = *(isobands.begin());
+
+    if (!isoband || isoband->IsEmpty() != 0)
+      return;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
+
+
+void Intersection::init(const boost::optional<std::string>& theProducer,
                         const Projection& theProjection,
                         const boost::posix_time::ptime& theTime,
                         const State& theState)
@@ -278,6 +431,10 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+
+
+
 
 // ----------------------------------------------------------------------
 /*!

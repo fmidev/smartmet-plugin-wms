@@ -931,6 +931,9 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 {
   try
   {
+    //if (!validLayer(theState))
+    //  return;
+
     if (source && *source == "grid")
       generate_gridEngine(theGlobals,theLayersCdt,theState);
     else
@@ -949,9 +952,6 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayers
 {
   try
   {
-    if (!validLayer(theState))
-      return;
-
     // Time execution
 
     std::string report = "ArrowLayer::generate finished in %t sec CPU, %w sec real\n";
@@ -1046,8 +1046,12 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayers
     for (auto parameter = paramList.begin(); parameter != paramList.end(); ++parameter)
     {
       std::string param = gridEngine->getParameterString(*producer,*parameter);
-      if (param == *parameter)
-        attributeList.addAttribute("producer",*producer);
+      if (param == *parameter  &&  query.mProducerNameList.size() == 0)
+      {
+        gridEngine->getProducerNameList(*producer,query.mProducerNameList);
+        if (query.mProducerNameList.size() == 0)
+          query.mProducerNameList.push_back(*producer);
+      }
 
       if (p != paramBuf)
         p += sprintf(p,",");
@@ -1098,7 +1102,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayers
     gridEngine->executeQuery(query);
 
     // The Query object after the query execution.
-    //query.print(std::cout,0,0);
+    query.print(std::cout,0,0);
 
 
     // Extracting the projection information from the query result.
@@ -1343,9 +1347,6 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
 {
   try
   {
-    if (!validLayer(theState))
-      return;
-
     // Time execution
 
     std::string report = "ArrowLayer::generate finished in %t sec CPU, %w sec real\n";

@@ -73,7 +73,12 @@ bool Layers::getProjection(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
         if (layer->layers.layers.size() > 0)
         {
-          if (layer->layers.getProjection(theGlobals,theLayersCdt,theState,projection))
+          CTPP::CDT tmpGlobals(theGlobals);
+          State tmpState(theState.getPlugin(),theState.getRequest());
+          tmpState.setCustomer(theState.getCustomer());
+          CTPP::CDT tmpLayersCdt;
+
+          if (layer->layers.getProjection(tmpGlobals,theLayersCdt,tmpState,projection))
             return true;
         }
       }

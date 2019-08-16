@@ -12,6 +12,9 @@
 #include <engines/querydata/Engine.h>
 #include <json/json.h>
 #include <string>
+#include <grid-content/queryServer/definition/Query.h>
+#include <engines/grid/Engine.h>
+
 
 namespace SmartMet
 {
@@ -28,6 +31,12 @@ class Intersection
   void init(const Json::Value& theJson, const Config& theConfig);
 
   void init(const boost::optional<std::string>& theProducer,
+            const Projection& theProjection,
+            const boost::posix_time::ptime& theTime,
+            const State& theState);
+
+  void init(const boost::optional<std::string>& theProducer,
+            Engine::Grid::Engine *gridEngine,
             const Projection& theProjection,
             const boost::posix_time::ptime& theTime,
             const State& theState);

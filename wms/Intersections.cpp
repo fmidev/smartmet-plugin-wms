@@ -69,6 +69,28 @@ void Intersections::init(const boost::optional<std::string>& theProducer,
   }
 }
 
+
+
+void Intersections::init(const boost::optional<std::string>& theProducer,
+                         Engine::Grid::Engine *gridEngine,
+                         const Projection& theProjection,
+                         const boost::posix_time::ptime& theTime,
+                         const State& theState)
+{
+  try
+  {
+    for (auto& intersection : intersections)
+    {
+      intersection.init(theProducer, gridEngine, theProjection, theTime, theState);
+    }
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Intersect with isobands

@@ -129,6 +129,9 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 {
   try
   {
+    if (!validLayer(theState))
+      return;
+
     if (source && *source == "grid")
       generate_gridEngine(theGlobals,theLayersCdt,theState);
     else
@@ -148,9 +151,6 @@ void IsolineLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
 {
   try
   {
-    //if (!validLayer(theState))
-    //  return;
-
     std::string report = "IsolineLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
@@ -267,7 +267,7 @@ void IsolineLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     if (extrapolation)
       query.mAttributeList.addAttribute("contour.multiplier",std::to_string(*multiplier));
 
-    if (extrapolation)
+    if (offset)
       query.mAttributeList.addAttribute("contour.offset",std::to_string(*offset));
 
     query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::ORIGINAL_COORDINATES));
@@ -469,9 +469,6 @@ void IsolineLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 {
   try
   {
-    if (!validLayer(theState))
-      return;
-
     std::string report = "IsolineLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())

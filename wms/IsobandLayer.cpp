@@ -334,6 +334,9 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 {
   try
   {
+    if (!validLayer(theState))
+      return;
+
     if (source && *source == "grid")
       generate_gridEngine(theGlobals,theLayersCdt,theState);
     else
@@ -429,10 +432,14 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     // Adding parameter information into the query.
 
     std::string param = gridEngine->getParameterString(*producer,*parameter);
-
     attributeList.addAttribute("param",param);
-    if (param == *parameter)
-      attributeList.addAttribute("producer",*producer);
+
+    if (param == *parameter  &&  query.mProducerNameList.size() == 0)
+    {
+      gridEngine->getProducerNameList(*producer,query.mProducerNameList);
+      if (query.mProducerNameList.size() == 0)
+        query.mProducerNameList.push_back(*producer);
+    }
 
     std::string forecastTime = Fmi::to_iso_string(*time);
     attributeList.addAttribute("startTime",forecastTime);
@@ -483,7 +490,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     if (extrapolation)
       query.mAttributeList.addAttribute("contour.multiplier",std::to_string(*multiplier));
 
-    if (extrapolation)
+    if (offset)
       query.mAttributeList.addAttribute("contour.offset",std::to_string(*offset));
 
     query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::ORIGINAL_COORDINATES));
@@ -491,13 +498,13 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     //query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
 
     // The Query object before the query execution.
-    //query.print(std::cout,0,0);
+    // query.print(std::cout,0,0);
 
     // Executing the query.
     gridEngine->executeQuery(query);
 
     // The Query object after the query execution.
-    //query.print(std::cout,0,0);
+    // query.print(std::cout,0,0);
 
 
     // Converting the returned WKB-isolines into OGRGeometry objects.
@@ -519,9 +526,47 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
             geoms.push_back(geomPtr);
             c++;
           }
+
+          int width = 3600; //atoi(query.mAttributeList.getAttributeValue("grid.width"));
+          int height = 1800; // atoi(query.mAttributeList.getAttributeValue("grid.height"));
+
+          if (width > 0 &&  height > 0)
+          {
+            double mp = 10;
+            ImagePaint imagePaint(width,height,0xFFFFFF,false,true);
+
+            // ### Painting contours into the image:
+
+            if (param->mType == QueryServer::QueryParameter::Type::Isoband)
+            {
+              if (val->mValueData.size() > 0)
+              {
+                uint c = 250;
+                uint step = 250 / val->mValueData.size();
+
+                for (auto it = val->mValueData.begin(); it != val->mValueData.end(); ++it)
+                {
+                  uint col = (c << 16) + (c << 8) + c;
+                  imagePaint.paintWkb(mp,mp,180,90,*it,col);
+                  c = c - step;
+                }
+              }
+            }
+            else
+            {
+              imagePaint.paintWkb(mp,mp,180,90,val->mValueData,0x00);
+            }
+
+            // ### Saving the image and releasing the image data:
+
+            //imagePaint.saveJpgImage("/tmp/contour.jpg");
+          }
+
         }
       }
     }
+
+
 
     // Extracting the projection information from the query result.
 
@@ -585,7 +630,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
 
     // Logical operations with isobands are initialized before hand
 
-    intersections.init(producer, projection, valid_time, theState);
+    intersections.init(producer, gridEngine, projection, valid_time, theState);
 
     if (css)
     {
@@ -685,9 +730,6 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 {
   try
   {
-    if (!validLayer(theState))
-      return;
-
     std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())

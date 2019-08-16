@@ -835,6 +835,9 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 {
   try
   {
+    //if (!validLayer(theState))
+//      return;
+
     if (source && *source == "grid")
       generate_gridEngine(theGlobals,theLayersCdt,theState);
     else
@@ -916,10 +919,14 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
     // Adding parameter information into the query.
 
     std::string param = gridEngine->getParameterString(*producer,*parameter);
-
     attributeList.addAttribute("param",param);
-    if (param == *parameter)
-      attributeList.addAttribute("producer",*producer);
+
+    if (param == *parameter  &&  query.mProducerNameList.size() == 0)
+    {
+      gridEngine->getProducerNameList(*producer,query.mProducerNameList);
+      if (query.mProducerNameList.size() == 0)
+        query.mProducerNameList.push_back(*producer);
+    }
 
     std::string forecastTime = Fmi::to_iso_string(*time);
     attributeList.addAttribute("startTime",forecastTime);
@@ -962,7 +969,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
     gridEngine->executeQuery(query);
 
     // The Query object after the query execution.
-    //query.print(std::cout,0,0);
+    // query.print(std::cout,0,0);
 
     // Extracting the projection information from the query result.
 
@@ -1167,9 +1174,6 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 {
   try
   {
-    if (!validLayer(theState))
-      return;
-
     // Time execution
 
     std::string report = "NumberLayer::generate finished in %t sec CPU, %w sec real\n";
