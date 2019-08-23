@@ -416,6 +416,51 @@ Positions::Points Positions::getPoints(const Engine::Querydata::Q& theQ,
   }
 }
 
+
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate the locations to be rendered
+ */
+// ----------------------------------------------------------------------
+
+Positions::Points Positions::getPoints(const char *originalCrs,
+                                       int originalWidth,
+                                       int originalHeight,
+                                       T::Coordinate_vec&  originalCoordinates,
+                                       const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                                       const Fmi::Box& theBox) const
+{
+  try
+  {
+    switch (layout)
+    {
+      case Layout::Grid:
+        return getGridPoints(nullptr, theCRS, theBox, true);
+      case Layout::Data:
+        return getDataPoints(originalCrs,originalWidth,originalHeight,originalCoordinates,theCRS, theBox);
+      case Layout::Graticule:
+        return getGraticulePoints(nullptr, theCRS, theBox, true);
+      case Layout::GraticuleFill:
+        return getGraticuleFillPoints(nullptr, theCRS, theBox, true);
+      case Layout::Keyword:
+        return getKeywordPoints(nullptr, theCRS, theBox, true);
+      case Layout::LatLon:
+        return getLatLonPoints(nullptr, theCRS, theBox, true);
+      case Layout::Station:
+        return getStationPoints(nullptr, theCRS, theBox, true);
+    }
+    // Dummy to prevent g++ from complaining
+    return Points();
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Generate a grid of locations
@@ -594,11 +639,92 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
 
       // Skip if not inside desired shapes
       if (inside(latlon.X(), latlon.Y(), forecastMode))
+      {
         points.emplace_back(Point(xcoord, ycoord, latlon, deltax, deltay));
+      }
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
 
+    return points;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+Positions::Points Positions::getDataPoints(const char *originalCrs,
+                                           int originalWidth,
+                                           int originalHeight,
+                                           T::Coordinate_vec&  originalCoordinates,
+                                           const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                                           const Fmi::Box& theBox) const
+{
+  try
+  {
+    int deltax = (!!dx ? *dx : 11);
+    int deltay = (!!dy ? *dy : 12);
+
+    //printf("DELTA %d %d\n",deltax,deltay);
+
+    uint pos = 0;
+    uint sz = originalCoordinates.size();
+    Points points;
+    for (int y=0; y<originalHeight; y = y + deltay)
+    {
+      for (int x=0; x<originalWidth; x = x + deltax)
+      {
+        pos = y * originalWidth + x;
+        if (pos < sz)
+        {
+          auto cc = originalCoordinates[pos];
+          if (inside(cc.x(), cc.y(), false))
+          {
+            NFmiPoint latlon(cc.x(),cc.y());
+            points.emplace_back(Point(x,y, latlon, deltax, deltay));
+          }
+        }
+      }
+    }
+#if 0
+    for (auto cc = originalCoordinates.begin(); cc != originalCoordinates.end(); ++cc)
+    {
+      // Convert latlon to world coordinate
+
+      NFmiPoint latlon(cc->x(),cc->y());
+      NFmiPoint xy(cc->x(),cc->y());
+      /*
+      if (theCRS->IsGeographic() != 0)
+        xy = latlon;
+      else
+        xy = theQ->area().LatLonToWorldXY(latlon);
+*/
+      // World coordinate to pixel coordinate
+      double xcoord = xy.X();
+      double ycoord = xy.Y();
+
+      printf("%f,%f => ",xcoord,ycoord);
+      theBox.transform(xcoord, ycoord);
+      printf("=> %f,%f \n",xcoord,ycoord);
+
+      int deltax = 0;
+      if (dx)
+        deltax += *dx;
+      int deltay = 0;
+      if (dy)
+        deltay += *dy;
+
+      // Skip if not inside desired shapes
+      if (inside(latlon.X(), latlon.Y(), false))
+      {
+        points.emplace_back(Point(xcoord, ycoord, latlon, deltax, deltay));
+      }
+    }
+
+    //apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
+#endif
     return points;
   }
   catch (...)

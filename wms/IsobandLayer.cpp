@@ -498,13 +498,13 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     //query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
 
     // The Query object before the query execution.
-    // query.print(std::cout,0,0);
+    query.print(std::cout,0,0);
 
     // Executing the query.
     gridEngine->executeQuery(query);
 
     // The Query object after the query execution.
-    // query.print(std::cout,0,0);
+    query.print(std::cout,0,0);
 
 
     // Converting the returned WKB-isolines into OGRGeometry objects.
@@ -526,7 +526,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
             geoms.push_back(geomPtr);
             c++;
           }
-
+#if 0
           int width = 3600; //atoi(query.mAttributeList.getAttributeValue("grid.width"));
           int height = 1800; // atoi(query.mAttributeList.getAttributeValue("grid.height"));
 
@@ -561,7 +561,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
 
             //imagePaint.saveJpgImage("/tmp/contour.jpg");
           }
-
+#endif
         }
       }
     }
