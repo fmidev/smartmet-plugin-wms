@@ -424,6 +424,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     }
     else
     {
+      // query.mAttributeList.addAttribute("grid.llbox","8.005675,55.368185,57.105244,70.542125");
       // The requested projection is the same as the projection of the requested data. This means that we
       // we do not know the actual projection yet and we have to wait that the grid-engine delivers us
       // the requested data and the projection information of the current data.
@@ -469,6 +470,18 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     if (projection.ysize)
       query.mAttributeList.addAttribute("grid.height",std::to_string(*projection.ysize));
 
+    if (projection.bboxcrs)
+      query.mAttributeList.addAttribute("grid.bboxcrs",*projection.bboxcrs);
+
+    if (projection.cx)
+      query.mAttributeList.addAttribute("grid.cx",std::to_string(*projection.cx));
+
+    if (projection.cy)
+      query.mAttributeList.addAttribute("grid.cy",std::to_string(*projection.cy));
+
+    if (projection.resolution)
+      query.mAttributeList.addAttribute("grid.resolution",std::to_string(*projection.resolution));
+
     if (wkt == "data"  &&  projection.x1 && projection.y1 && projection.x2 && projection.y2)
     {
       char bbox[100];
@@ -498,13 +511,13 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     //query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
 
     // The Query object before the query execution.
-    query.print(std::cout,0,0);
+    //query.print(std::cout,0,0);
 
     // Executing the query.
     gridEngine->executeQuery(query);
 
     // The Query object after the query execution.
-    query.print(std::cout,0,0);
+    //query.print(std::cout,0,0);
 
 
     // Converting the returned WKB-isolines into OGRGeometry objects.
@@ -546,6 +559,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
 
                 for (auto it = val->mValueData.begin(); it != val->mValueData.end(); ++it)
                 {
+                  printf("Contour %lu\n",it->size());
                   uint col = (c << 16) + (c << 8) + c;
                   imagePaint.paintWkb(mp,mp,180,90,*it,col);
                   c = c - step;
@@ -559,7 +573,9 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
 
             // ### Saving the image and releasing the image data:
 
-            //imagePaint.saveJpgImage("/tmp/contour.jpg");
+            char fname[200];
+            sprintf(fname,"/tmp/contour_%llu.jpg",getTime());
+            imagePaint.saveJpgImage(fname);
           }
 #endif
         }
@@ -571,8 +587,8 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     // Extracting the projection information from the query result.
 
     const char *crsStr = query.mAttributeList.getAttributeValue("grid.crs");
-    const char *bboxStr = query.mAttributeList.getAttributeValue("grid.bbox");
-    const char *llboxStr = query.mAttributeList.getAttributeValue("grid.llbox");
+    //const char *bboxStr = query.mAttributeList.getAttributeValue("grid.bbox");
+    //const char *llboxStr = query.mAttributeList.getAttributeValue("grid.llbox");
     const char *projectionTypeStr = query.mAttributeList.getAttributeValue("grid.projectionType");
     uint projectionType = 0;
 
@@ -584,22 +600,29 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
       projection.crs = crsStr;
       std::vector<double> partList;
 
-      if (llboxStr != nullptr  &&  ((projectionType == T::GridProjectionValue::LatLon || projectionType == T::GridProjectionValue::RotatedLatLon) ||  bboxStr == nullptr))
-      {
-        splitString(llboxStr,',',partList);
-      }
-      else
-      if (bboxStr != nullptr)
-      {
-        splitString(bboxStr,',',partList);
-      }
 
-      if (partList.size() == 4)
+      if (!projection.bboxcrs)
       {
-        projection.x1 = partList[0];
-        projection.y1 = partList[1];
-        projection.x2 = partList[2];
-        projection.y2 = partList[3];
+        const char *bboxStr = query.mAttributeList.getAttributeValue("grid.bbox");
+        const char *llboxStr = query.mAttributeList.getAttributeValue("grid.llbox");
+
+        if (llboxStr != nullptr  &&  ((projectionType == T::GridProjectionValue::LatLon || projectionType == T::GridProjectionValue::RotatedLatLon) ||  bboxStr == nullptr))
+        {
+          splitString(llboxStr,',',partList);
+        }
+        else
+        if (bboxStr != nullptr)
+        {
+          splitString(bboxStr,',',partList);
+        }
+
+        if (partList.size() == 4)
+        {
+          projection.x1 = partList[0];
+          projection.y1 = partList[1];
+          projection.x2 = partList[2];
+          projection.y2 = partList[3];
+        }
       }
     }
 

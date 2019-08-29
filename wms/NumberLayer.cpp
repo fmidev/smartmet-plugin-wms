@@ -96,13 +96,13 @@ PointValues read_forecasts(const NumberLayer& layer,
         {
           double tmp = *boost::get<double>(&result);
           pointvalues.push_back(PointValue{point, tmp});
-          printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(), point.latlon.Y(),tmp);
+          //printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(), point.latlon.Y(),tmp);
         }
         else if (boost::get<int>(&result) != nullptr)
         {
           double tmp = *boost::get<int>(&result);
           pointvalues.push_back(PointValue{point, tmp});
-          printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(), point.latlon.Y(),tmp);
+          //printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(), point.latlon.Y(),tmp);
         }
         else
         {
@@ -149,7 +149,6 @@ PointValues read_gridForecasts(const NumberLayer& layer,
     int originalWidth = 0;
     int originalHeight = 0;
 
-
     const char *widthStr = query.mAttributeList.getAttributeValue("grid.width");
     const char *heightStr = query.mAttributeList.getAttributeValue("grid.height");
     const char *originalCrs = query.mAttributeList.getAttributeValue("grid.original.crs");
@@ -189,8 +188,6 @@ PointValues read_gridForecasts(const NumberLayer& layer,
     if (geometryId > 0)
       originalCoordinates =  Identification::gridDef.getGridLatLonCoordinatesByGeometryId(geometryId);
 
-    printf("ORIGINAL COORDINATES : %lu\n",originalCoordinates.size());
-
     auto points = layer.positions->getPoints(originalCrs,originalWidth,originalHeight,originalCoordinates,crs, box);
 
 
@@ -214,7 +211,7 @@ PointValues read_gridForecasts(const NumberLayer& layer,
               PointValue missingvalue{point,kFloatMissing};
               pointvalues.push_back(missingvalue);
             }
-            printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(), point.latlon.Y(),tmp);
+            //printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(), point.latlon.Y(),tmp);
           }
           else
           {
@@ -996,13 +993,13 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
     }
 
     // The Query object before the query execution.
-    query.print(std::cout,0,0);
+    //query.print(std::cout,0,0);
 
     // Executing the query.
     gridEngine->executeQuery(query);
 
     // The Query object after the query execution.
-    query.print(std::cout,0,0);
+    //query.print(std::cout,0,0);
 
     // Extracting the projection information from the query result.
 

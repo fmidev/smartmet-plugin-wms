@@ -70,148 +70,155 @@ PointValues read_forecasts(const ArrowLayer& layer,
                            const Fmi::Box& box,
                            const boost::posix_time::time_period& time_period)
 {
-  NFmiMetTime met_time = time_period.begin();
-
-  boost::optional<Spine::Parameter> dirparam, speedparam, uparam, vparam;
-
-  if (layer.direction)
-    dirparam = Spine::ParameterFactory::instance().parse(*layer.direction);
-  if (layer.speed)
-    speedparam = Spine::ParameterFactory::instance().parse(*layer.speed);
-  if (layer.u)
-    uparam = Spine::ParameterFactory::instance().parse(*layer.u);
-  if (layer.v)
-    vparam = Spine::ParameterFactory::instance().parse(*layer.v);
-
-  if (speedparam && !q->param(speedparam->number()))
-    throw Spine::Exception(
-        BCP, "Parameter " + speedparam->name() + " not available in the arrow layer querydata");
-
-  if (dirparam && !q->param(dirparam->number()))
-    throw Spine::Exception(
-        BCP, "Parameter " + dirparam->name() + " not available in the arrow layer querydata");
-
-  // WindUMS and WindVMS are metaparameters, cannot check their existence here
-
-  // We may need to convert relative U/V components to true north
-  boost::movelib::unique_ptr<OGRCoordinateTransformation> uvtransformation;
-  boost::movelib::unique_ptr<OGRSpatialReference> wgs84;
-  boost::movelib::unique_ptr<OGRSpatialReference> qsrs;
-  if (uparam && vparam && q->isRelativeUV())
+  try
   {
-    wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = wgs84->SetFromUserInput("WGS84");
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand WGS84");
+    NFmiMetTime met_time = time_period.begin();
 
-    qsrs = boost::movelib::make_unique<OGRSpatialReference>();
-    err = qsrs->SetFromUserInput(q->area().WKT().c_str());
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "Failed to establish querydata spatial reference");
-    uvtransformation.reset(OGRCreateCoordinateTransformation(wgs84.get(), qsrs.get()));
-  }
+    boost::optional<Spine::Parameter> dirparam, speedparam, uparam, vparam;
 
-  // Generate the coordinates for the arrows
+    if (layer.direction)
+      dirparam = Spine::ParameterFactory::instance().parse(*layer.direction);
+    if (layer.speed)
+      speedparam = Spine::ParameterFactory::instance().parse(*layer.speed);
+    if (layer.u)
+      uparam = Spine::ParameterFactory::instance().parse(*layer.u);
+    if (layer.v)
+      vparam = Spine::ParameterFactory::instance().parse(*layer.v);
 
-  const bool forecast_mode = true;
-  auto points = layer.positions->getPoints(q, crs, box, forecast_mode);
+    if (speedparam && !q->param(speedparam->number()))
+      throw Spine::Exception(
+          BCP, "Parameter " + speedparam->name() + " not available in the arrow layer querydata");
 
-  PointValues pointvalues;
+    if (dirparam && !q->param(dirparam->number()))
+      throw Spine::Exception(
+          BCP, "Parameter " + dirparam->name() + " not available in the arrow layer querydata");
 
-  // Q API SUCKS
-  boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-  boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
-  boost::local_time::local_date_time localdatetime(met_time, utc);
-  std::string tmp;
-  auto mylocale = std::locale::classic();
-  NFmiPoint dummy;
+    // WindUMS and WindVMS are metaparameters, cannot check their existence here
 
-  for (const auto& point : points)
-  {
-    if (!layer.inside(box, point.x, point.y))
-      continue;
-
-    // Arrow direction and speed
-    double wdir = kFloatMissing;
-    double wspd = 0;
-
-    if (uparam && vparam)
+    // We may need to convert relative U/V components to true north
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> uvtransformation;
+    boost::movelib::unique_ptr<OGRSpatialReference> wgs84;
+    boost::movelib::unique_ptr<OGRSpatialReference> qsrs;
+    if (uparam && vparam && q->isRelativeUV())
     {
-      Spine::Location loc(point.latlon.X(), point.latlon.Y());
+      wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
+      OGRErr err = wgs84->SetFromUserInput("WGS84");
+      if (err != OGRERR_NONE)
+        throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
-      auto up = Engine::Querydata::ParameterOptions(*uparam,
-                                                    tmp,
-                                                    loc,
-                                                    tmp,
-                                                    tmp,
-                                                    *timeformatter,
-                                                    tmp,
-                                                    tmp,
-                                                    mylocale,
-                                                    tmp,
-                                                    false,
-                                                    dummy,
-                                                    dummy);
-      auto uresult = q->value(up, localdatetime);
+      qsrs = boost::movelib::make_unique<OGRSpatialReference>();
+      err = qsrs->SetFromUserInput(q->area().WKT().c_str());
+      if (err != OGRERR_NONE)
+        throw Spine::Exception(BCP, "Failed to establish querydata spatial reference");
+      uvtransformation.reset(OGRCreateCoordinateTransformation(wgs84.get(), qsrs.get()));
+    }
 
-      auto vp = Engine::Querydata::ParameterOptions(*vparam,
-                                                    tmp,
-                                                    loc,
-                                                    tmp,
-                                                    tmp,
-                                                    *timeformatter,
-                                                    tmp,
-                                                    tmp,
-                                                    mylocale,
-                                                    tmp,
-                                                    false,
-                                                    dummy,
-                                                    dummy);
-      auto vresult = q->value(vp, localdatetime);
+    // Generate the coordinates for the arrows
 
-      if (boost::get<double>(&uresult) != nullptr && boost::get<double>(&vresult) != nullptr)
+    const bool forecast_mode = true;
+    auto points = layer.positions->getPoints(q, crs, box, forecast_mode);
+
+    PointValues pointvalues;
+
+    // Q API SUCKS
+    boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+    boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
+    boost::local_time::local_date_time localdatetime(met_time, utc);
+    std::string tmp;
+    auto mylocale = std::locale::classic();
+    NFmiPoint dummy;
+
+    for (const auto& point : points)
+    {
+      if (!layer.inside(box, point.x, point.y))
+        continue;
+
+      // Arrow direction and speed
+      double wdir = kFloatMissing;
+      double wspd = 0;
+
+      if (uparam && vparam)
       {
-        auto uspd = *boost::get<double>(&uresult);
-        auto vspd = *boost::get<double>(&vresult);
+        Spine::Location loc(point.latlon.X(), point.latlon.Y());
 
-        if (uspd != kFloatMissing && vspd != kFloatMissing)
+        auto up = Engine::Querydata::ParameterOptions(*uparam,
+                                                      tmp,
+                                                      loc,
+                                                      tmp,
+                                                      tmp,
+                                                      *timeformatter,
+                                                      tmp,
+                                                      tmp,
+                                                      mylocale,
+                                                      tmp,
+                                                      false,
+                                                      dummy,
+                                                      dummy);
+        auto uresult = q->value(up, localdatetime);
+
+        auto vp = Engine::Querydata::ParameterOptions(*vparam,
+                                                      tmp,
+                                                      loc,
+                                                      tmp,
+                                                      tmp,
+                                                      *timeformatter,
+                                                      tmp,
+                                                      tmp,
+                                                      mylocale,
+                                                      tmp,
+                                                      false,
+                                                      dummy,
+                                                      dummy);
+        auto vresult = q->value(vp, localdatetime);
+
+        if (boost::get<double>(&uresult) != nullptr && boost::get<double>(&vresult) != nullptr)
         {
-          wspd = sqrt(uspd * uspd + vspd * vspd);
-          if (uspd != 0 || vspd != 0)
+          auto uspd = *boost::get<double>(&uresult);
+          auto vspd = *boost::get<double>(&vresult);
+
+          if (uspd != kFloatMissing && vspd != kFloatMissing)
           {
-            if (uvtransformation == nullptr)
-              wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
-            else
+            wspd = sqrt(uspd * uspd + vspd * vspd);
+            if (uspd != 0 || vspd != 0)
             {
-              auto rot = Fmi::OGR::gridNorth(*uvtransformation, point.latlon.X(), point.latlon.Y());
-              if (!rot)
-                continue;
-              wdir = fmod(180 - *rot + 180 / pi * atan2(uspd, vspd), 360);
+              if (uvtransformation == nullptr)
+                wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+              else
+              {
+                auto rot = Fmi::OGR::gridNorth(*uvtransformation, point.latlon.X(), point.latlon.Y());
+                if (!rot)
+                  continue;
+                wdir = fmod(180 - *rot + 180 / pi * atan2(uspd, vspd), 360);
+              }
             }
           }
         }
       }
-    }
-    else
-    {
-      q->param(dirparam->number());
-      wdir = q->interpolate(point.latlon, met_time, 180);
-      if (speedparam)
+      else
       {
-        q->param(speedparam->number());
-        wspd = q->interpolate(point.latlon, met_time, 180);
+        q->param(dirparam->number());
+        wdir = q->interpolate(point.latlon, met_time, 180);
+        if (speedparam)
+        {
+          q->param(speedparam->number());
+          wspd = q->interpolate(point.latlon, met_time, 180);
+        }
       }
+
+      // Skip points with invalid values
+      if (wdir == kFloatMissing || wspd == kFloatMissing)
+        continue;
+
+      PointValue value{point, wdir, wspd};
+      pointvalues.push_back(value);
     }
 
-    // Skip points with invalid values
-    if (wdir == kFloatMissing || wspd == kFloatMissing)
-      continue;
-
-    PointValue value{point, wdir, wspd};
-    pointvalues.push_back(value);
+    return pointvalues;
   }
-
-  return pointvalues;
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
+  }
 }
 
 
@@ -219,80 +226,160 @@ PointValues read_forecasts(const ArrowLayer& layer,
 PointValues read_gridForecasts(const ArrowLayer& layer,
                            Engine::Grid::Engine *gridEngine,
                            QueryServer::Query& query,
-                           std::string dirParam,
-                           std::string speedParam,
+                           boost::optional<std::string> dirParam,
+                           boost::optional<std::string> speedParam,
+                           boost::optional<std::string> uParam,
+                           boost::optional<std::string> vParam,
                            const boost::shared_ptr<OGRSpatialReference>& crs,
                            const Fmi::Box& box,
                            const boost::posix_time::time_period& time_period)
 {
-  // Generate the coordinates for the symbols
-
-  const bool forecast_mode = true;
-  auto points = layer.positions->getPoints(nullptr, crs, box, forecast_mode);
-
-  PointValues pointvalues;
-
-  int width = 0;
-  int height = 0;
-
-  const char *widthStr = query.mAttributeList.getAttributeValue("grid.width");
-  const char *heightStr = query.mAttributeList.getAttributeValue("grid.height");
-
-  if (widthStr)
-    width = atoi(widthStr);
-
-  if (heightStr)
-    height = atoi(heightStr);
-
-  T::ParamValue_vec *dirValues = nullptr;
-  T::ParamValue_vec *speedValues = nullptr;
-
-  for (auto param = query.mQueryParameterList.begin(); param != query.mQueryParameterList.end(); ++param)
+  try
   {
-    for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
+    // Generate the coordinates for the symbols
+
+    const bool forecast_mode = true;
+    auto points = layer.positions->getPoints(nullptr, crs, box, forecast_mode);
+
+    PointValues pointvalues;
+
+    int width = 0;
+    int height = 0;
+    int relativeUV = 0;
+
+    const char *widthStr = query.mAttributeList.getAttributeValue("grid.width");
+    const char *heightStr = query.mAttributeList.getAttributeValue("grid.height");
+    const char *originalCrsStr = query.mAttributeList.getAttributeValue("grid.original.crs");
+    const char *originalRelativeUVStr = query.mAttributeList.getAttributeValue("grid.original.relativeUV");
+
+    if (widthStr)
+      width = atoi(widthStr);
+
+    if (heightStr)
+      height = atoi(heightStr);
+
+    if (originalRelativeUVStr)
+      relativeUV = atoi(originalRelativeUVStr);
+
+    T::ParamValue_vec *dirValues = nullptr;
+    T::ParamValue_vec *speedValues = nullptr;
+    T::ParamValue_vec *vValues = nullptr;
+    T::ParamValue_vec *uValues = nullptr;
+
+    for (auto param = query.mQueryParameterList.begin(); param != query.mQueryParameterList.end(); ++param)
     {
-      if (val->mValueVector.size() > 0)
+      for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
       {
-        if (param->mParameterKey == dirParam)
-          dirValues = &val->mValueVector;
-        else
-        if (param->mParameterKey == speedParam)
-          speedValues = &val->mValueVector;
-      }
-    }
-  }
-
-  if (dirValues  &&  speedValues  &&  dirValues->size() != speedValues->size())
-    return pointvalues;
-
-
-  if (dirValues  && dirValues->size() > 0)
-  {
-    for (const auto& point : points)
-    {
-      double wdir = ParamValueMissing;
-      double wspeed = 0;
-      if (layer.inside(box, point.x, point.y))
-      {
-        size_t pos = (height-point.y-1) * width + point.x;
-
-        if (pos < dirValues->size())
+        if (val->mValueVector.size() > 0)
         {
-          wdir = (*dirValues)[pos];
-          if (speedValues)
-             wspeed = (*speedValues)[pos];
-
-          if (wdir != ParamValueMissing  &&  wspeed != ParamValueMissing)
-          {
-            PointValue value{point, wdir, wspeed};
-            pointvalues.push_back(value);
-          }
+          if (dirParam && param->mParameterKey == *dirParam)
+            dirValues = &val->mValueVector;
+          else
+          if (speedParam &&  param->mParameterKey == *speedParam)
+            speedValues = &val->mValueVector;
+          else
+          if (vParam &&  param->mParameterKey == *vParam)
+            vValues = &val->mValueVector;
+          else
+          if (uParam  &&  param->mParameterKey == *uParam)
+            uValues = &val->mValueVector;
         }
       }
     }
-  }
 
-  return pointvalues;
+    if (dirValues  &&  speedValues  &&  dirValues->size() == speedValues->size())
+    {
+      for (const auto& point : points)
+      {
+        double wdir = ParamValueMissing;
+        double wspeed = 0;
+        if (layer.inside(box, point.x, point.y))
+        {
+          size_t pos = (height-point.y-1) * width + point.x;
+
+          if (pos < dirValues->size())
+          {
+            wdir = (*dirValues)[pos];
+            if (speedValues)
+               wspeed = (*speedValues)[pos];
+
+            if (wdir != ParamValueMissing  &&  wspeed != ParamValueMissing)
+            {
+              PointValue value{point, wdir, wspeed};
+              pointvalues.push_back(value);
+            }
+          }
+        }
+      }
+      return pointvalues;
+    }
+
+    if (uValues  &&  vValues  &&  uValues->size() == vValues->size())
+    {
+      // We may need to convert relative U/V components to true north
+      boost::movelib::unique_ptr<OGRCoordinateTransformation> uvtransformation;
+
+      if (relativeUV  &&  originalCrsStr)
+      {
+        boost::movelib::unique_ptr<OGRSpatialReference> wgs84;
+        boost::movelib::unique_ptr<OGRSpatialReference> qsrs;
+        wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
+        OGRErr err = wgs84->SetFromUserInput("WGS84");
+        if (err != OGRERR_NONE)
+          throw Spine::Exception(BCP, "GDAL does not understand WGS84");
+
+        qsrs = boost::movelib::make_unique<OGRSpatialReference>();
+        err = qsrs->SetFromUserInput(originalCrsStr);
+        if (err != OGRERR_NONE)
+          throw Spine::Exception(BCP, "Failed to establish querydata spatial reference");
+
+        uvtransformation.reset(OGRCreateCoordinateTransformation(wgs84.get(), qsrs.get()));
+      }
+
+      for (const auto& point : points)
+      {
+        double wdir = ParamValueMissing;
+        double wspeed = 0;
+        if (layer.inside(box, point.x, point.y))
+        {
+          size_t pos = (height-point.y-1) * width + point.x;
+
+          if (pos < vValues->size())
+          {
+            double v = (*vValues)[pos];
+            double u = (*uValues)[pos];
+            if (u != ParamValueMissing  &&  v != ParamValueMissing)
+            {
+              wspeed = sqrt(u*u + v*v);
+
+              if (uvtransformation == nullptr)
+                wdir = fmod(180 + 180 / pi * atan2(u, v), 360);
+              else
+              {
+                auto rot = Fmi::OGR::gridNorth(*uvtransformation, point.latlon.X(), point.latlon.Y());
+                if (!rot)
+                  continue;
+                wdir = fmod(180 - *rot + 180 / pi * atan2(u, v), 360);
+              }
+            }
+
+            if (wdir != ParamValueMissing  &&  wspeed != ParamValueMissing)
+            {
+              PointValue value{point, wdir, wspeed};
+              pointvalues.push_back(value);
+            }
+          }
+        }
+      }
+      return pointvalues;
+    }
+
+    return pointvalues;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
+  }
 }
 
 
@@ -1102,7 +1189,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayers
     gridEngine->executeQuery(query);
 
     // The Query object after the query execution.
-    query.print(std::cout,0,0);
+    //query.print(std::cout,0,0);
 
 
     // Extracting the projection information from the query result.
@@ -1171,7 +1258,8 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayers
 
     // Establish the relevant numbers
 
-    PointValues pointvalues = read_gridForecasts(*this,gridEngine,query,*direction,*speed,crs,box,valid_time_period);
+
+    PointValues pointvalues = read_gridForecasts(*this,gridEngine,query,direction,speed,u,v,crs,box,valid_time_period);
 
     // Coordinate transformation from WGS84 to output SRS so that we can rotate
     // winds according to map north

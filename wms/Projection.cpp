@@ -351,6 +351,7 @@ void Projection::prepareCRS() const
     ogr_crs = boost::make_shared<OGRSpatialReference>();
 
     OGRErr err = ogr_crs->SetFromUserInput(crs->c_str());
+
     if (err != OGRERR_NONE)
       throw Spine::Exception(BCP, "Unknown CRS: '" + *crs + "'");
 
@@ -494,11 +495,16 @@ void Projection::prepareCRS() const
 
     // Calculate bottom left and top right coordinates
 
+    //printf("*** BOX %f,%f,%f,%f\n",XMIN,YMIN,XMAX,YMAX);
+
     transformation->Transform(1, &XMIN, &YMIN);
     itsBottomLeft = NFmiPoint(XMIN, YMIN);
 
     transformation->Transform(1, &XMAX, &YMAX);
     itsTopRight = NFmiPoint(XMAX, YMAX);
+
+
+    //printf("BOX %f,%f,%f,%f\n",itsBottomLeft.X(),itsBottomLeft.Y(),itsTopRight.X(),itsTopRight.Y());
   }
   catch (...)
   {

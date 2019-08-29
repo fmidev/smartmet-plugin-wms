@@ -474,7 +474,6 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
 {
   try
   {
-
     // Get the data projection
 
     auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();

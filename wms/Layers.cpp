@@ -53,7 +53,7 @@ bool Layers::getProjection(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     auto first = layers.begin();
 
-    if (*(*first)->projection.crs != "data")
+    if ((*first).get() != nullptr  &&  *(*first)->projection.crs != "data")
     {
       projection  = (*first)->projection;
       return true;
@@ -110,18 +110,20 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
     Projection projection;
 
     auto first = layers.begin();
-
-    if (*(*first)->projection.crs == "data")
+    if ((*first).get() != nullptr)
     {
-      CTPP::CDT tmpGlobals(theGlobals);
-      State tmpState(theState.getPlugin(),theState.getRequest());
-      tmpState.setCustomer(theState.getCustomer());
-      CTPP::CDT tmpLayersCdt;
-      getProjection(tmpGlobals,theLayersCdt,tmpState,projection);
-    }
-    else
-    {
-      projection = (*first)->projection;
+      if (*(*first)->projection.crs == "data")
+      {
+        CTPP::CDT tmpGlobals(theGlobals);
+        State tmpState(theState.getPlugin(),theState.getRequest());
+        tmpState.setCustomer(theState.getCustomer());
+        CTPP::CDT tmpLayersCdt;
+        getProjection(tmpGlobals,theLayersCdt,tmpState,projection);
+      }
+      else
+      {
+        projection = (*first)->projection;
+      }
     }
 
     for (auto& layer : layers)
