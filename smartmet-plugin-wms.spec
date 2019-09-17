@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.9.12
+Version: 19.9.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -25,7 +25,7 @@ BuildRequires: smartmet-library-giza-devel
 BuildRequires: smartmet-engine-authentication-devel >= 18.9.10
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 19.8.28
+BuildRequires: smartmet-engine-observation-devel >= 19.9.11
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 19.5.29
 BuildRequires: smartmet-engine-geonames-devel >= 19.8.28
@@ -92,6 +92,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Sep 17 2019  Anssi Reponen <anssi.reponen@fmi.fi> - 19.9.17-1.fmi
+- NetAtmo and RoadCloud test cases updated because mid-parameter is no more supported,
+but parameter name must be used instead (Related to BRAINSTORM-1673)
+
 * Thu Sep 12 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.9.12-1.fmi
 - Fixed WMSLayer destructor to be virtual to avoid memory problems
 
