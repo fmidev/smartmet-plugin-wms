@@ -57,7 +57,7 @@ class Positions
   using Points = std::vector<Point>;
 
   void init(const Json::Value& theJson, const Config& theConfig);
-  virtual std::size_t hash_value(const State& theState) const;
+  std::size_t hash_value(const State& theState) const;
 
   void init(const boost::optional<std::string>& theProducer,
             const Projection& theProjection,
