@@ -19,21 +19,21 @@ BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
 BuildRequires: smartmet-library-macgyver-devel >= 19.8.2
-BuildRequires: smartmet-library-spine-devel >= 19.8.28
+BuildRequires: smartmet-library-spine-devel >= 19.9.17
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 18.9.10
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 19.9.11
+BuildRequires: smartmet-engine-observation-devel >= 19.9.17
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 19.5.29
+BuildRequires: smartmet-engine-gis-devel >= 19.9.13
 BuildRequires: smartmet-engine-geonames-devel >= 19.8.28
 BuildRequires: smartmet-engine-querydata-devel >= 19.8.28
 BuildRequires: smartmet-engine-contour-devel >= 19.2.22
 BuildRequires: smartmet-library-gis-devel >= 19.3.14
 BuildRequires: fmt-devel >= 5.2.0
-BuildRequires: ctpp2 >= 2.8.7
+BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
 BuildRequires: cairo-devel
@@ -42,7 +42,7 @@ BuildRequires: heatmap-devel
 Requires: cairo
 Requires: fmt >= 5.2.0
 Requires: jsoncpp
-Requires: ctpp2 >= 2.8.7
+Requires: ctpp2 >= 2.8.8
 Requires: libconfig
 Requires: smartmet-library-gis >= 19.3.14
 Requires: smartmet-library-macgyver >= 19.8.2
@@ -52,10 +52,10 @@ Requires: smartmet-engine-authentication >= 18.9.10
 %endif
 Requires: smartmet-engine-querydata >= 19.8.28
 Requires: smartmet-engine-contour >= 19.2.22
-Requires: smartmet-engine-gis >= 19.5.29
+Requires: smartmet-engine-gis >= 19.9.13
 Requires: smartmet-engine-geonames >= 19.8.28
-Requires: smartmet-server >= 19.8.9
-Requires: smartmet-library-spine >= 19.8.28
+Requires: smartmet-server >= 19.9.17
+Requires: smartmet-library-spine >= 19.9.17
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
