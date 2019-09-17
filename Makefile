@@ -7,7 +7,8 @@ FLAGS = -std=c++11 -MD -fPIC -rdynamic -Wall -W \
 	-Wno-unused-parameter \
 	-fno-omit-frame-pointer \
 	-Wno-deprecated-declarations \
-	-Wno-unknown-pragmas
+	-Wno-unknown-pragmas \
+	-Wnon-virtual-dtor 
 
 
 FLAGS_DEBUG = \

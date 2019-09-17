@@ -36,82 +36,17 @@
                     }
                 },
 	    {
-	    "qid": "l",
-	    "layer_type": "symbol",
-	    "css": "symbols/iot_station.css",
-	    "parameter": "mid",
-	    "symbol": "iot_station",
+		"qid": "l2",
+		"layer_type": "symbol",
+		"css": "symbols/iot_station.css",
+		"parameter": "Temperature",
+		"symbol": "iot_station",
 	    "symbols":
 	    [
 		{
-		    "value": 37,
 		    "attributes":
 		    {
 			"fill": "#ff0000",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 38,
-		    "attributes":
-		    {
-			"fill": "#990000",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 39,
-		    "attributes":
-		    {
-			"fill": "#0000ff",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 40,
-		    "attributes":
-		    {
-			"fill": "#00004d",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 41,
-		    "attributes":
-		    {
-			"fill": "#00ff00",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 42,
-		    "attributes":
-		    {
-			"fill": "#004d00",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 43,
-		    "attributes":
-		    {
-			"fill": "#ffff00",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 44,
-		    "attributes":
-		    {
-			"fill": "#808000",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 45,
-		    "attributes":
-		    {
-			"fill": "#f33ffff",
 			"scale": 0.5
 		    }
 		}
@@ -119,18 +54,51 @@
 	    "attributes":
 	    {
 		"class": "IoTStationMarker"
-	    },
-	    "positions":
-	    {
-		"layout" : "data",
-		"intersect":
-		[
-		    {
-			"parameter": "multiplicity",
-			"lolimit": 1
-		    }
-		]
 	    }
-	}]
+	    },
+	    {
+	    "qid": "l3",
+	    "layer_type": "symbol",
+	    "css": "symbols/iot_station.css",
+	    "parameter": "Pressure",
+	    "symbol": "iot_station",
+	    "symbols":
+	    [
+		{
+		    "attributes":
+		    {
+			"fill": "#ff0000",
+			"scale": 0.5
+		    }
+		}
+	    ],
+	    "attributes":
+	    {
+		"class": "IoTStationMarker"
+	    }
+	    },
+	    {
+	    "qid": "l4",
+	    "layer_type": "symbol",
+	    "css": "symbols/iot_station.css",
+	    "parameter": "Humidity",
+	    "symbol": "iot_station",
+	    "symbols":
+	    [
+		{
+		    "attributes":
+		    {
+			"fill": "#ff0000",
+			"scale": 0.5
+		    }
+		}
+	    ],
+	    "attributes":
+	    {
+		"class": "IoTStationMarker"
+	    }
+	    }
+	]
     }]
 }
+

@@ -24,9 +24,9 @@ class State;
 class MapStyles
 {
  public:
-  virtual void init(const Json::Value& theJson, const Config& theConfig);
+  void init(const Json::Value& theJson, const Config& theConfig);
 
-  virtual std::size_t hash_value(const State& theState) const;
+  std::size_t hash_value(const State& theState) const;
 
   std::string field;                    // database field identifying the area
   std::string parameter;                // weather parameter whose value to pick
