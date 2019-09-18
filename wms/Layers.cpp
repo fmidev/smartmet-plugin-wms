@@ -44,6 +44,25 @@ void Layers::init(const Json::Value& theJson,
 
 
 
+void Layers::setProjection(Projection& projection)
+{
+  try
+  {
+    for (auto& layer : layers)
+    {
+      layer->projection = projection;
+    }
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
+
+
 bool Layers::getProjection(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState,Projection& projection)
 {
   try
@@ -62,7 +81,7 @@ bool Layers::getProjection(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     for (auto& layer : layers)
     {
       //std::cout << "PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs << "\n";
-      if (*layer->type != "map" &&  (layer->attributes.value("display") != "none" || theState.getRequest().getParameter("optimizesize") == std::string("0")))
+      if (*layer->type != "map" &&  *layer->type != "time" &&  (layer->attributes.value("display") != "none" || theState.getRequest().getParameter("optimizesize") == std::string("0")))
       {
         layer->generate(theGlobals, theLayersCdt, theState);
         if (*layer->projection.crs != "data")
@@ -107,10 +126,19 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
     if (layers.size() == 0)
       return;
 
-    Projection projection;
 
+
+    // If the projection CRS is "data" and we are using the grid-engine, then we
+    // actually need to fetch some data in order to see which projection it comes from.
+    // The point is that there is no one-to-one mapping between the producer and the projection
+    // when using the grid-engine. In other words, a producer might have grids in different sizes
+    // and different projections, and we do not necessary know, which one is used until we actually
+    // fetch some data. That's why we first need to find out the actual projection and then use it
+    // with the other layers.
+
+    Projection projection;
     auto first = layers.begin();
-    if ((*first).get() != nullptr)
+    if ((*first).get() != nullptr  &&  (*first)->source  &&  *(*first)->source == "grid")
     {
       if (*(*first)->projection.crs == "data")
       {
@@ -131,14 +159,14 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
       // Each layer may actually generate multiple CDT layers
       // (Animations, inner tags etc). Each is pushed separately
       // to the back of the layers CDT
-      //std::cout << "### PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs << "\n";
 
       if (layer->attributes.value("display") != "none" ||theState.getRequest().getParameter("optimizesize") == std::string("0"))
       {
-        if (*layer->projection.crs == "data")
+        if (*layer->projection.crs == "data"  &&  layer->source  &&  *layer->source == "grid")
         {
-          layer->projection = projection;
+          layer->setProjection(projection);
         }
+        //std::cout << "PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs << "\n";
 
         layer->generate(theGlobals, theLayersCdt, theState);
       }

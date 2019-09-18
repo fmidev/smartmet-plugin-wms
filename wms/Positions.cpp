@@ -4,6 +4,7 @@
 #include "Projection.h"
 #include <boost/move/make_unique.hpp>
 #include <engines/querydata/ParameterOptions.h>
+#include <grid-files/identification/GridDef.h>
 #include <gis/OGR.h>
 #include <spine/Convenience.h>
 #include <spine/Exception.h>
@@ -427,7 +428,7 @@ Positions::Points Positions::getPoints(const Engine::Querydata::Q& theQ,
 Positions::Points Positions::getPoints(const char *originalCrs,
                                        int originalWidth,
                                        int originalHeight,
-                                       T::Coordinate_vec&  originalCoordinates,
+                                       uint originalGeometryId,
                                        const boost::shared_ptr<OGRSpatialReference>& theCRS,
                                        const Fmi::Box& theBox) const
 {
@@ -438,7 +439,7 @@ Positions::Points Positions::getPoints(const char *originalCrs,
       case Layout::Grid:
         return getGridPoints(nullptr, theCRS, theBox, true);
       case Layout::Data:
-        return getDataPoints(originalCrs,originalWidth,originalHeight,originalCoordinates,theCRS, theBox);
+        return getDataPoints(originalCrs,originalWidth,originalHeight,originalGeometryId,theCRS, theBox);
       case Layout::Graticule:
         return getGraticulePoints(nullptr, theCRS, theBox, true);
       case Layout::GraticuleFill:
@@ -636,6 +637,7 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
       if (dy)
         deltay += *dy;
 
+
       // Skip if not inside desired shapes
       if (inside(latlon.X(), latlon.Y(), forecastMode))
       {
@@ -657,16 +659,35 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
 Positions::Points Positions::getDataPoints(const char *originalCrs,
                                            int originalWidth,
                                            int originalHeight,
-                                           T::Coordinate_vec&  originalCoordinates,
+                                           uint originalGeometryId,
                                            const boost::shared_ptr<OGRSpatialReference>& theCRS,
                                            const Fmi::Box& theBox) const
 {
   try
   {
-    int deltax = (!!dx ? *dx : 11);
-    int deltay = (!!dy ? *dy : 12);
+    auto qcrs = boost::movelib::make_unique<OGRSpatialReference>();
 
-    //printf("DELTA %d %d\n",deltax,deltay);
+    //OGRErr err = qcrs->SetFromUserInput(originalCrs);
+    OGRErr err = qcrs->importFromEPSG(4326);
+    if (err != OGRERR_NONE)
+      throw Spine::Exception(BCP, "GDAL does not understand this FMI WKT: " + std::string(originalCrs));
+
+    // Create the coordinate transformation from image world coordinates
+    // to querydata world coordinates
+
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(OGRCreateCoordinateTransformation(qcrs.get(),theCRS.get()));
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation2(OGRCreateCoordinateTransformation(theCRS.get(),qcrs.get()));
+
+    if (transformation == nullptr)
+      throw Spine::Exception(BCP, "Failed to create the needed coordinate transformation for generating positions!");
+
+    int deltax = (!!dx ? *dx : 10);
+    int deltay = (!!dy ? *dy : 10);
+
+    T::Coordinate_vec  originalCoordinates;
+    if (originalGeometryId > 0)
+      originalCoordinates =  Identification::gridDef.getGridLatLonCoordinatesByGeometryId(originalGeometryId);
+
 
     uint pos = 0;
     uint sz = originalCoordinates.size();
@@ -681,49 +702,22 @@ Positions::Points Positions::getDataPoints(const char *originalCrs,
           auto cc = originalCoordinates[pos];
           if (inside(cc.x(), cc.y(), false))
           {
-            NFmiPoint latlon(cc.x(),cc.y());
-            points.emplace_back(Point(x,y, latlon, deltax, deltay));
+            double xx = cc.x();
+            double yy = cc.y();
+
+            transformation->Transform(1,&xx,&yy);
+
+            double xp = xx;
+            double yp = yy;
+
+            theBox.transform(xp, yp);
+
+            NFmiPoint coordinate(cc.x(),cc.y());
+            points.emplace_back(Point(xp,yp, coordinate, deltax, deltay));
           }
         }
       }
     }
-#if 0
-    for (auto cc = originalCoordinates.begin(); cc != originalCoordinates.end(); ++cc)
-    {
-      // Convert latlon to world coordinate
-
-      NFmiPoint latlon(cc->x(),cc->y());
-      NFmiPoint xy(cc->x(),cc->y());
-      /*
-      if (theCRS->IsGeographic() != 0)
-        xy = latlon;
-      else
-        xy = theQ->area().LatLonToWorldXY(latlon);
-*/
-      // World coordinate to pixel coordinate
-      double xcoord = xy.X();
-      double ycoord = xy.Y();
-
-      printf("%f,%f => ",xcoord,ycoord);
-      theBox.transform(xcoord, ycoord);
-      printf("=> %f,%f \n",xcoord,ycoord);
-
-      int deltax = 0;
-      if (dx)
-        deltax += *dx;
-      int deltay = 0;
-      if (dy)
-        deltay += *dy;
-
-      // Skip if not inside desired shapes
-      if (inside(latlon.X(), latlon.Y(), false))
-      {
-        points.emplace_back(Point(xcoord, ycoord, latlon, deltax, deltay));
-      }
-    }
-
-    //apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
-#endif
     return points;
   }
   catch (...)

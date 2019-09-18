@@ -39,6 +39,7 @@ struct Properties
 
   boost::optional<std::string> language;
   boost::optional<std::string> producer;
+  boost::optional<int> geometryId;
   boost::optional<std::string> source;
 
   // Wanted origintime. Use latest if omitted

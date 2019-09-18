@@ -8,6 +8,7 @@
 
 #include <boost/math/constants/constants.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <grid-files/common/GeneralFunctions.h>
 #include <gdal/ogr_geometry.h>
 #include <gdal/ogr_spatialref.h>
 #include <gis/Box.h>
@@ -49,13 +50,33 @@ void Projection::init(const Json::Value& theJson,
     if (!json.isNull())
       bboxcrs = json.asString();
 
-    json = theJson.get("xsize", nulljson);
+    json = theJson.get("size", nulljson);
     if (!json.isNull())
-      xsize = json.asInt();
+      size = json.asDouble();
 
-    json = theJson.get("ysize", nulljson);
-    if (!json.isNull())
-      ysize = json.asInt();
+    auto request = theState.getRequest();
+    boost::optional<std::string> v = request.getParameter("size");
+    if (v)
+      size = toDouble(*v);
+
+    if (!size ||  *size <= 0)
+    {
+      json = theJson.get("xsize", nulljson);
+      if (!json.isNull())
+        xsize = json.asInt();
+
+      json = theJson.get("ysize", nulljson);
+      if (!json.isNull())
+        ysize = json.asInt();
+
+      v = request.getParameter("xsize");
+      if (v)
+        xsize = toInt32(*v);
+
+      v = request.getParameter("ysize");
+      if (v)
+        ysize = toInt32(*v);
+    }
 
     json = theJson.get("x1", nulljson);
     if (!json.isNull())
@@ -188,6 +209,7 @@ std::size_t Projection::hash_value(const State& /* theState */) const
   try
   {
     auto hash = Dali::hash_value(crs);
+    Dali::hash_combine(hash, Dali::hash_value(size));
     Dali::hash_combine(hash, Dali::hash_value(xsize));
     Dali::hash_combine(hash, Dali::hash_value(ysize));
     Dali::hash_combine(hash, Dali::hash_value(x1));
@@ -198,6 +220,7 @@ std::size_t Projection::hash_value(const State& /* theState */) const
     Dali::hash_combine(hash, Dali::hash_value(cy));
     Dali::hash_combine(hash, Dali::hash_value(resolution));
     Dali::hash_combine(hash, Dali::hash_value(bboxcrs));
+    Dali::hash_combine(hash, Dali::hash_value(size));
     return hash;
   }
   catch (...)
@@ -246,6 +269,12 @@ void Projection::update(const Engine::Querydata::Q& theQ)
           x2 = world2.X();
           y2 = world2.Y();
         }
+      }
+
+      if (size)
+      {
+        xsize = C_INT(C_DOUBLE(theQ->info()->GridXNumber()) * (*size));
+        ysize = C_INT(C_DOUBLE(theQ->info()->GridYNumber()) * (*size));
       }
 
       ogr_crs.reset();
@@ -314,7 +343,12 @@ void Projection::prepareCRS() const
       throw Spine::Exception(BCP, "CRS not set, unable to create projection");
 
     if (!xsize && !ysize)
+    {
+      if (size)
+        return;
+
       throw Spine::Exception(BCP, "CRS xsize and ysize are both missing");
+    }
 
 
     // Are subdefinitions complete?
@@ -495,16 +529,11 @@ void Projection::prepareCRS() const
 
     // Calculate bottom left and top right coordinates
 
-    //printf("*** BOX %f,%f,%f,%f\n",XMIN,YMIN,XMAX,YMAX);
-
     transformation->Transform(1, &XMIN, &YMIN);
     itsBottomLeft = NFmiPoint(XMIN, YMIN);
 
     transformation->Transform(1, &XMAX, &YMAX);
     itsTopRight = NFmiPoint(XMAX, YMAX);
-
-
-    //printf("BOX %f,%f,%f,%f\n",itsBottomLeft.X(),itsBottomLeft.Y(),itsTopRight.X(),itsTopRight.Y());
   }
   catch (...)
   {

@@ -31,7 +31,10 @@ class IsolineLayer : public Layer
   virtual std::size_t hash_value(const State& theState) const;
 
   boost::optional<std::string> parameter;
+  boost::optional<int> levelId;
   boost::optional<double> level;
+  boost::optional<int> forecastType;
+  boost::optional<int> forecastNumber;
   std::vector<Isoline> isolines;
   Smoother smoother;
   int extrapolation = 0;

@@ -42,6 +42,7 @@ class Layers
 
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   bool getProjection(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState,Projection& projection);
+  void setProjection(Projection& projection);
 
   std::size_t hash_value(const State& theState) const;
 

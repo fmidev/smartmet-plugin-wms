@@ -179,7 +179,18 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
         }
       }
     }
-
+    if (layer.symbols.empty())
+    {
+      for (const auto& point : points)
+      {
+        if (layer.inside(box, point.x, point.y))
+        {
+          PointValue missingvalue{point, kFloatMissing};
+          pointvalues.push_back(missingvalue);
+        }
+      }
+    }
+    else
     if (values  &&  values->size() > 0)
     {
       for (const auto& point : points)
@@ -793,9 +804,47 @@ void SymbolLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       parameter = json.asString();
 
+    json = theJson.get("geometryId", nulljson);
+    if (!json.isNull())
+      geometryId = json.asInt();
+
+    json = theJson.get("levelId", nulljson);
+    if (!json.isNull())
+      levelId = json.asInt();
+
     json = theJson.get("level", nulljson);
     if (!json.isNull())
       level = json.asDouble();
+
+    json = theJson.get("forecastType", nulljson);
+    if (!json.isNull())
+      forecastType = json.asInt();
+
+    json = theJson.get("forecastNumber", nulljson);
+    if (!json.isNull())
+      forecastNumber = json.asInt();
+
+    auto request = theState.getRequest();
+
+    boost::optional<std::string> v = request.getParameter("geometryId");
+    if (v)
+      geometryId = toInt32(*v);
+
+    v = request.getParameter("levelId");
+    if (v)
+      levelId = toInt32(*v);
+
+    v = request.getParameter("level");
+    if (v)
+      level = toInt32(*v);
+
+    v = request.getParameter("forecastType");
+    if (v)
+      forecastType = toInt32(*v);
+
+    v = request.getParameter("forecastNumber");
+    if (v)
+      forecastNumber = toInt32(*v);
 
     json = theJson.get("positions", nulljson);
     if (!json.isNull())
@@ -882,6 +931,10 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
           "Must define default symbol with 'symbol' or several 'symbols' for specific values in a "
           "symbol-layer");
 
+
+    if (*projection.crs == "data"  &&  !parameter)
+      return;
+
     // Establish the data
 
     bool is_legend = theGlobals.Exists("legend");
@@ -897,8 +950,11 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
 
     // Establish the parameter
 
-    if (!parameter)
-      throw Spine::Exception(BCP, "Parameter not set for symbol-layer");
+    if (!symbols.empty())
+    {
+      if (!parameter)
+        throw Spine::Exception(BCP, "Parameter not set for symbol-layer");
+    }
 
     auto gridEngine = theState.getGridEngine();
     QueryServer::Query query;
@@ -925,14 +981,18 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
 
       //std::cout << wkt << "\n";
 
-      auto bl = projection.bottomLeftLatLon();
-      auto tr = projection.topRightLatLon();
+      // Adding the bounding box information into the query.
 
       char bbox[100];
-      sprintf(bbox,"%f,%f,%f,%f",bl.X(),bl.Y(),tr.X(),tr.Y());
 
-      // Adding the bounding box information into the query.
+      auto bl = projection.bottomLeftLatLon();
+      auto tr = projection.topRightLatLon();
+      sprintf(bbox,"%f,%f,%f,%f",bl.X(),bl.Y(),tr.X(),tr.Y());
       query.mAttributeList.addAttribute("grid.llbox",bbox);
+
+      const auto& box = projection.getBox();
+      sprintf(bbox,"%f,%f,%f,%f",box.xmin(),box.ymin(),box.xmax(),box.ymax());
+      query.mAttributeList.addAttribute("grid.bbox",bbox);
     }
     else
     {
@@ -945,6 +1005,9 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
 
     std::string param = gridEngine->getParameterString(*producer,*parameter);
     attributeList.addAttribute("param",param);
+
+    if (!projection.projectionParameter)
+      projection.projectionParameter = param;
 
     if (param == *parameter  &&  query.mProducerNameList.size() == 0)
     {
@@ -969,16 +1032,38 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
       it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
       it->mType = QueryServer::QueryParameter::Type::Vector;
       it->mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
+
+      if (geometryId)
+        it->mGeometryId = *geometryId;
+
+      if (levelId)
+        it->mParameterLevelId = *levelId;
+
+      if (level)
+        it->mParameterLevel = C_INT(*level);
+
+      if (forecastType)
+        it->mForecastType = C_INT(*forecastType);
+
+      if (forecastNumber)
+        it->mForecastNumber = C_INT(*forecastNumber);
     }
 
     query.mSearchType = QueryServer::Query::SearchType::TimeSteps;
     query.mAttributeList.addAttribute("grid.crs",wkt);
 
-    if (projection.xsize)
-      query.mAttributeList.addAttribute("grid.width",std::to_string(*projection.xsize));
+    if (projection.size  &&  *projection.size > 0)
+    {
+      query.mAttributeList.addAttribute("grid.size",std::to_string(*projection.size));
+    }
+    else
+    {
+      if (projection.xsize)
+        query.mAttributeList.addAttribute("grid.width",std::to_string(*projection.xsize));
 
-    if (projection.ysize)
-      query.mAttributeList.addAttribute("grid.height",std::to_string(*projection.ysize));
+      if (projection.ysize)
+        query.mAttributeList.addAttribute("grid.height",std::to_string(*projection.ysize));
+    }
 
     if (wkt == "data"  &&  projection.x1 && projection.y1 && projection.x2 && projection.y2)
     {
@@ -1000,41 +1085,49 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
     // Extracting the projection information from the query result.
 
     const char *crsStr = query.mAttributeList.getAttributeValue("grid.crs");
-    const char *bboxStr = query.mAttributeList.getAttributeValue("grid.bbox");
-    const char *llboxStr = query.mAttributeList.getAttributeValue("grid.llbox");
-    const char *projectionTypeStr = query.mAttributeList.getAttributeValue("grid.projectionType");
-    uint projectionType = 0;
 
-    if (projectionTypeStr != nullptr)
-      projectionType = atoi(projectionTypeStr);
+    if (projection.size  &&  *projection.size > 0)
+    {
+      const char *widthStr = query.mAttributeList.getAttributeValue("grid.width");
+      const char *heightStr = query.mAttributeList.getAttributeValue("grid.height");
+
+      if (widthStr != nullptr)
+        projection.xsize = atoi(widthStr);
+
+      if (heightStr != nullptr)
+        projection.ysize = atoi(heightStr);
+    }
+
+    if (!projection.xsize  &&  !projection.ysize)
+      throw Spine::Exception(BCP, "The projection size is unknown!");
 
     if (crsStr != nullptr  &&  *projection.crs == "data")
     {
       projection.crs = crsStr;
       std::vector<double> partList;
 
-      if (llboxStr != nullptr  &&  ((projectionType == T::GridProjectionValue::LatLon || projectionType == T::GridProjectionValue::RotatedLatLon) ||  bboxStr == nullptr))
+      if (!projection.bboxcrs)
       {
-        splitString(llboxStr,',',partList);
-      }
-      else
-      if (bboxStr != nullptr)
-      {
-        splitString(bboxStr,',',partList);
-      }
+        const char *bboxStr = query.mAttributeList.getAttributeValue("grid.bbox");
 
-      if (partList.size() == 4)
-      {
-        projection.x1 = partList[0];
-        projection.y1 = partList[1];
-        projection.x2 = partList[2];
-        projection.y2 = partList[3];
+        if (bboxStr != nullptr)
+          splitString(bboxStr,',',partList);
+
+        if (partList.size() == 4)
+        {
+          projection.x1 = partList[0];
+          projection.y1 = partList[1];
+          projection.x2 = partList[2];
+          projection.y2 = partList[3];
+        }
       }
     }
 
-
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();
+
+    if (wkt == "data")
+      return;
 
     // Initialize inside/outside shapes and intersection isobands
 
@@ -1359,12 +1452,20 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
       return invalid_hash;
 
     auto hash = Layer::hash_value(theState);
-    auto q = getModel(theState);
-    if (q)
-      Dali::hash_combine(hash, Engine::Querydata::hash_value(q));
+
+    if (!(source && *source == "grid"))
+    {
+      auto q = getModel(theState);
+      if (q)
+        Dali::hash_combine(hash, Engine::Querydata::hash_value(q));
+    }
 
     Dali::hash_combine(hash, Dali::hash_value(parameter));
+    Dali::hash_combine(hash, Dali::hash_value(geometryId));
+    Dali::hash_combine(hash, Dali::hash_value(levelId));
     Dali::hash_combine(hash, Dali::hash_value(level));
+    Dali::hash_combine(hash, Dali::hash_value(forecastType));
+    Dali::hash_combine(hash, Dali::hash_value(forecastNumber));
     Dali::hash_combine(hash, Dali::hash_value(positions, theState));
     Dali::hash_combine(hash, Dali::hash_value(minvalues));
     Dali::hash_combine(hash, Dali::hash_value(maxdistance));

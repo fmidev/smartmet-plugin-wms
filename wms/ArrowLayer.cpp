@@ -133,6 +133,8 @@ PointValues read_forecasts(const ArrowLayer& layer,
       if (!layer.inside(box, point.x, point.y))
         continue;
 
+      //printf("POS %d,%d  %f %f\n",point.x, point.y,point.latlon.X(), point.latlon.Y());
+
       // Arrow direction and speed
       double wdir = kFloatMissing;
       double wspd = 0;
@@ -238,19 +240,23 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
   {
     // Generate the coordinates for the symbols
 
-    const bool forecast_mode = true;
-    auto points = layer.positions->getPoints(nullptr, crs, box, forecast_mode);
+    //const bool forecast_mode = true;
+    //auto points = layer.positions->getPoints(nullptr, crs, box, forecast_mode);
 
     PointValues pointvalues;
 
     int width = 0;
     int height = 0;
+    int originalWidth = 0;
+    int originalHeight = 0;
     int relativeUV = 0;
 
     const char *widthStr = query.mAttributeList.getAttributeValue("grid.width");
     const char *heightStr = query.mAttributeList.getAttributeValue("grid.height");
-    const char *originalCrsStr = query.mAttributeList.getAttributeValue("grid.original.crs");
+    const char *originalCrs = query.mAttributeList.getAttributeValue("grid.original.crs");
     const char *originalRelativeUVStr = query.mAttributeList.getAttributeValue("grid.original.relativeUV");
+    const char *originalWidthStr = query.mAttributeList.getAttributeValue("grid.original.width");
+    const char *originalHeightStr = query.mAttributeList.getAttributeValue("grid.original.height");
 
     if (widthStr)
       width = atoi(widthStr);
@@ -261,10 +267,18 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
     if (originalRelativeUVStr)
       relativeUV = atoi(originalRelativeUVStr);
 
+    if (originalWidthStr)
+      originalWidth = atoi(originalWidthStr);
+
+    if (originalHeightStr)
+      originalHeight = atoi(originalHeightStr);
+
+
     T::ParamValue_vec *dirValues = nullptr;
     T::ParamValue_vec *speedValues = nullptr;
     T::ParamValue_vec *vValues = nullptr;
     T::ParamValue_vec *uValues = nullptr;
+    uint originalGeometryId = 0;
 
     for (auto param = query.mQueryParameterList.begin(); param != query.mQueryParameterList.end(); ++param)
     {
@@ -272,6 +286,8 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
       {
         if (val->mValueVector.size() > 0)
         {
+          originalGeometryId = val->mGeometryId;
+
           if (dirParam && param->mParameterKey == *dirParam)
             dirValues = &val->mValueVector;
           else
@@ -287,6 +303,8 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
       }
     }
 
+    auto points = layer.positions->getPoints(originalCrs,originalWidth,originalHeight,originalGeometryId,crs, box);
+
     if (dirValues  &&  speedValues  &&  dirValues->size() == speedValues->size())
     {
       for (const auto& point : points)
@@ -296,6 +314,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
         if (layer.inside(box, point.x, point.y))
         {
           size_t pos = (height-point.y-1) * width + point.x;
+
 
           if (pos < dirValues->size())
           {
@@ -307,6 +326,8 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
             {
               PointValue value{point, wdir, wspeed};
               pointvalues.push_back(value);
+              //printf("POS %d,%d  %f %f\n",point.x, point.y,point.latlon.X(), point.latlon.Y());
+
             }
           }
         }
@@ -319,7 +340,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
       // We may need to convert relative U/V components to true north
       boost::movelib::unique_ptr<OGRCoordinateTransformation> uvtransformation;
 
-      if (relativeUV  &&  originalCrsStr)
+      if (relativeUV  &&  originalCrs)
       {
         boost::movelib::unique_ptr<OGRSpatialReference> wgs84;
         boost::movelib::unique_ptr<OGRSpatialReference> qsrs;
@@ -329,7 +350,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
           throw Spine::Exception(BCP, "GDAL does not understand WGS84");
 
         qsrs = boost::movelib::make_unique<OGRSpatialReference>();
-        err = qsrs->SetFromUserInput(originalCrsStr);
+        err = qsrs->SetFromUserInput(originalCrs);
         if (err != OGRERR_NONE)
           throw Spine::Exception(BCP, "Failed to establish querydata spatial reference");
 
@@ -934,9 +955,47 @@ void ArrowLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       v = json.asString();
 
+    json = theJson.get("geometryId", nulljson);
+    if (!json.isNull())
+      geometryId = json.asInt();
+
+    json = theJson.get("levelId", nulljson);
+    if (!json.isNull())
+      levelId = json.asInt();
+
     json = theJson.get("level", nulljson);
     if (!json.isNull())
       level = json.asDouble();
+
+    json = theJson.get("forecastType", nulljson);
+    if (!json.isNull())
+      forecastType = json.asInt();
+
+    json = theJson.get("forecastNumber", nulljson);
+    if (!json.isNull())
+      forecastNumber = json.asInt();
+
+    auto request = theState.getRequest();
+
+    boost::optional<std::string> v = request.getParameter("geometryId");
+    if (v)
+      geometryId = toInt32(*v);
+
+    v = request.getParameter("levelId");
+    if (v)
+      levelId = toInt32(*v);
+
+    v = request.getParameter("level");
+    if (v)
+      level = toInt32(*v);
+
+    v = request.getParameter("forecastType");
+    if (v)
+      forecastType = toInt32(*v);
+
+    v = request.getParameter("forecastNumber");
+    if (v)
+      forecastNumber = toInt32(*v);
 
     json = theJson.get("symbol", nulljson);
     if (!json.isNull())
@@ -1028,7 +1087,13 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    Spine::Exception exception(BCP, "Operation failed!",nullptr);
+    exception.addParameter("Producer",*producer);
+    exception.addParameter("Direction",*direction);
+    exception.addParameter("Speed",*speed);
+    exception.addParameter("V",*v);
+    exception.addParameter("U",*u);
+    throw exception;
   }
 }
 
@@ -1098,7 +1163,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayers
     std::string wkt = *projection.crs;
     if (wkt != "data")
     {
-      // Getting WKT and the bounding box of the requested projection.
+      // Getting the bounding box and the WKT of the requested projection.
 
       auto crs = projection.getCRS();
       char *out = nullptr;
@@ -1108,14 +1173,18 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayers
 
       //std::cout << wkt << "\n";
 
-      auto bl = projection.bottomLeftLatLon();
-      auto tr = projection.topRightLatLon();
+      // Adding the bounding box information into the query.
 
       char bbox[100];
-      sprintf(bbox,"%f,%f,%f,%f",bl.X(),bl.Y(),tr.X(),tr.Y());
 
-      // Adding the bounding box information into the query.
+      auto bl = projection.bottomLeftLatLon();
+      auto tr = projection.topRightLatLon();
+      sprintf(bbox,"%f,%f,%f,%f",bl.X(),bl.Y(),tr.X(),tr.Y());
       query.mAttributeList.addAttribute("grid.llbox",bbox);
+
+      const auto& box = projection.getBox();
+      sprintf(bbox,"%f,%f,%f,%f",box.xmin(),box.ymin(),box.xmax(),box.ymax());
+      query.mAttributeList.addAttribute("grid.bbox",bbox);
     }
     else
     {
@@ -1133,6 +1202,10 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayers
     for (auto parameter = paramList.begin(); parameter != paramList.end(); ++parameter)
     {
       std::string param = gridEngine->getParameterString(*producer,*parameter);
+
+      if (!projection.projectionParameter)
+        projection.projectionParameter = param;
+
       if (param == *parameter  &&  query.mProducerNameList.size() == 0)
       {
         gridEngine->getProducerNameList(*producer,query.mProducerNameList);
@@ -1164,16 +1237,38 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayers
       it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
       it->mType = QueryServer::QueryParameter::Type::Vector;
       it->mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
+
+      if (geometryId)
+        it->mGeometryId = *geometryId;
+
+      if (levelId)
+        it->mParameterLevelId = *levelId;
+
+      if (level)
+        it->mParameterLevel = C_INT(*level);
+
+      if (forecastType)
+        it->mForecastType = C_INT(*forecastType);
+
+      if (forecastNumber)
+        it->mForecastNumber = C_INT(*forecastNumber);
     }
 
     query.mSearchType = QueryServer::Query::SearchType::TimeSteps;
     query.mAttributeList.addAttribute("grid.crs",wkt);
 
-    if (projection.xsize)
-      query.mAttributeList.addAttribute("grid.width",std::to_string(*projection.xsize));
+    if (projection.size  &&  *projection.size > 0)
+    {
+      query.mAttributeList.addAttribute("grid.size",std::to_string(*projection.size));
+    }
+    else
+    {
+      if (projection.xsize)
+        query.mAttributeList.addAttribute("grid.width",std::to_string(*projection.xsize));
 
-    if (projection.ysize)
-      query.mAttributeList.addAttribute("grid.height",std::to_string(*projection.ysize));
+      if (projection.ysize)
+        query.mAttributeList.addAttribute("grid.height",std::to_string(*projection.ysize));
+    }
 
     if (wkt == "data"  &&  projection.x1 && projection.y1 && projection.x2 && projection.y2)
     {
@@ -1183,47 +1278,53 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayers
     }
 
     // The Query object before the query execution.
-    //query.print(std::cout,0,0);
+    // query.print(std::cout,0,0);
 
     // Executing the query.
     gridEngine->executeQuery(query);
 
     // The Query object after the query execution.
-    //query.print(std::cout,0,0);
+    // query.print(std::cout,0,0);
 
 
     // Extracting the projection information from the query result.
 
     const char *crsStr = query.mAttributeList.getAttributeValue("grid.crs");
-    const char *bboxStr = query.mAttributeList.getAttributeValue("grid.bbox");
-    const char *llboxStr = query.mAttributeList.getAttributeValue("grid.llbox");
-    const char *projectionTypeStr = query.mAttributeList.getAttributeValue("grid.projectionType");
-    uint projectionType = 0;
 
-    if (projectionTypeStr != nullptr)
-      projectionType = atoi(projectionTypeStr);
+    if (projection.size  &&  *projection.size > 0)
+    {
+      const char *widthStr = query.mAttributeList.getAttributeValue("grid.width");
+      const char *heightStr = query.mAttributeList.getAttributeValue("grid.height");
+
+      if (widthStr != nullptr)
+        projection.xsize = atoi(widthStr);
+
+      if (heightStr != nullptr)
+        projection.ysize = atoi(heightStr);
+    }
+
+    if (!projection.xsize  &&  !projection.ysize)
+      throw Spine::Exception(BCP, "The projection size is unknown!");
 
     if (crsStr != nullptr  &&  *projection.crs == "data")
     {
       projection.crs = crsStr;
       std::vector<double> partList;
 
-      if (llboxStr != nullptr  &&  ((projectionType == T::GridProjectionValue::LatLon || projectionType == T::GridProjectionValue::RotatedLatLon) ||  bboxStr == nullptr))
+      if (!projection.bboxcrs)
       {
-        splitString(llboxStr,',',partList);
-      }
-      else
-      if (bboxStr != nullptr)
-      {
-        splitString(bboxStr,',',partList);
-      }
+        const char *bboxStr = query.mAttributeList.getAttributeValue("grid.bbox");
 
-      if (partList.size() == 4)
-      {
-        projection.x1 = partList[0];
-        projection.y1 = partList[1];
-        projection.x2 = partList[2];
-        projection.y2 = partList[3];
+        if (bboxStr != nullptr)
+          splitString(bboxStr,',',partList);
+
+        if (partList.size() == 4)
+        {
+          projection.x1 = partList[0];
+          projection.y1 = partList[1];
+          projection.x2 = partList[2];
+          projection.y2 = partList[3];
+        }
       }
     }
 
@@ -1232,6 +1333,9 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayers
 
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();
+
+    if (wkt == "data")
+      return;
 
     // Initialize inside/outside shapes and intersection isobands
 
@@ -1307,16 +1411,20 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayers
 
       ++valid_count;
 
+      //printf("POINT %d,%d %f,%f\n",point.x,point.y,wdir,wspd);
+
       // Unit transformation
       double xmultiplier = (multiplier ? *multiplier : 1.0);
       double xoffset = (offset ? *offset : 0.0);
       if (wspd != kFloatMissing)
         wspd = xmultiplier * wspd + xoffset;
 
+
       // Apply final rotation to output coordinate system
       auto fix = Fmi::OGR::gridNorth(*transformation, point.latlon.X(), point.latlon.Y());
       if (!fix)
         continue;
+
       wdir = fmod(wdir + *fix, 360);
 
       // North wind blows, rotate 180 degrees
@@ -1387,6 +1495,9 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayers
 
         int x = point.x + point.dx + (dx ? *dx : 0);
         int y = point.y + point.dy + (dy ? *dy : 0);
+
+        //printf("-- POINT %d,%d %f,%f\n",x,y,wdir,wspd);
+
 
         if (nrotate == 0)
         {
@@ -1718,14 +1829,23 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
       return invalid_hash;
 
     auto hash = Layer::hash_value(theState);
-    auto q = getModel(theState);
-    if (q)
-      Dali::hash_combine(hash, Engine::Querydata::hash_value(q));
+
+    if (!(source && *source == "grid"))
+    {
+      auto q = getModel(theState);
+      if (q)
+        Dali::hash_combine(hash, Engine::Querydata::hash_value(q));
+    }
+
     Dali::hash_combine(hash, Dali::hash_value(direction));
     Dali::hash_combine(hash, Dali::hash_value(speed));
     Dali::hash_combine(hash, Dali::hash_value(u));
     Dali::hash_combine(hash, Dali::hash_value(v));
+    Dali::hash_combine(hash, Dali::hash_value(geometryId));
+    Dali::hash_combine(hash, Dali::hash_value(levelId));
     Dali::hash_combine(hash, Dali::hash_value(level));
+    Dali::hash_combine(hash, Dali::hash_value(forecastType));
+    Dali::hash_combine(hash, Dali::hash_value(forecastNumber));
     Dali::hash_combine(hash, Dali::hash_value(unit_conversion));
     Dali::hash_combine(hash, Dali::hash_value(multiplier));
     Dali::hash_combine(hash, Dali::hash_value(offset));

@@ -257,7 +257,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     //query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
 
     // The Query object before the query execution.
-    //query.print(std::cout,0,0);
+    // query.print(std::cout,0,0);
 
     // Executing the query.
     gridEngine->executeQuery(query);
@@ -288,7 +288,8 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
         }
       }
     }
-    isoband = *(isobands.begin());
+    if (isobands.size() > 0)
+      isoband = isobands[0];
 
     if (!isoband || isoband->IsEmpty() != 0)
       return;

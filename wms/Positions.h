@@ -72,7 +72,7 @@ class Positions
   Points getPoints(const char *originalCrs,
                    int originalWidth,
                    int originalHeight,
-                   T::Coordinate_vec&  originalCoordinates,
+                   uint originalGeometryId,
                    const boost::shared_ptr<OGRSpatialReference>& theCRS,
                    const Fmi::Box& theBox) const;
 
@@ -147,7 +147,7 @@ class Positions
   Points getDataPoints(const char *originalCrs,
                        int originalWidth,
                        int originalHeight,
-                       T::Coordinate_vec&  originalCoordinates,
+                       uint originalGeometryId,
                        const boost::shared_ptr<OGRSpatialReference>& theCRS,
                        const Fmi::Box& theBox) const;
 

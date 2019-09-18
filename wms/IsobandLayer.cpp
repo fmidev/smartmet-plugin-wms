@@ -67,9 +67,48 @@ void IsobandLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       parameter = json.asString();
 
+    json = theJson.get("geometryId", nulljson);
+    if (!json.isNull())
+      geometryId = json.asInt();
+
+    json = theJson.get("levelId", nulljson);
+    if (!json.isNull())
+      levelId = json.asInt();
+
     json = theJson.get("level", nulljson);
     if (!json.isNull())
       level = json.asDouble();
+
+    json = theJson.get("forecastType", nulljson);
+    if (!json.isNull())
+      forecastType = json.asInt();
+
+    json = theJson.get("forecastNumber", nulljson);
+    if (!json.isNull())
+      forecastNumber = json.asInt();
+
+    auto request = theState.getRequest();
+
+    boost::optional<std::string> v = request.getParameter("geometryId");
+    if (v)
+      geometryId = toInt32(*v);
+
+    v = request.getParameter("levelId");
+    if (v)
+      levelId = toInt32(*v);
+
+    v = request.getParameter("level");
+    if (v)
+      level = toInt32(*v);
+
+    v = request.getParameter("forecastType");
+    if (v)
+      forecastType = toInt32(*v);
+
+    v = request.getParameter("forecastNumber");
+    if (v)
+      forecastNumber = toInt32(*v);
+
 
     json = theJson.get("isobands", nulljson);
     if (!json.isNull())
@@ -344,7 +383,10 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    Spine::Exception exception(BCP, "Operation failed!",nullptr);
+    exception.addParameter("Producer",*producer);
+    exception.addParameter("Parameter",*parameter);
+    throw exception;
   }
 }
 
@@ -363,8 +405,8 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     // Establish the parameter
     //
     // Heatmap does not use the parameter currently (only flash or mobile coordinates)
-    bool allowUnknownParam = (theState.isObservation(producer) &&
-                              isFlashOrMobileProducer(*producer) && heatmap.resolution);
+    // bool allowUnknownParam = (theState.isObservation(producer) &&
+    //                          isFlashOrMobileProducer(*producer) && heatmap.resolution);
 
 
 
@@ -413,18 +455,21 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
 
       //std::cout << wkt << "\n";
 
-      auto bl = projection.bottomLeftLatLon();
-      auto tr = projection.topRightLatLon();
+      // Adding the bounding box information into the query.
 
       char bbox[100];
-      sprintf(bbox,"%f,%f,%f,%f",bl.X(),bl.Y(),tr.X(),tr.Y());
 
-      // Adding the bounding box information into the query.
+      auto bl = projection.bottomLeftLatLon();
+      auto tr = projection.topRightLatLon();
+      sprintf(bbox,"%f,%f,%f,%f",bl.X(),bl.Y(),tr.X(),tr.Y());
       query.mAttributeList.addAttribute("grid.llbox",bbox);
+
+      const auto& box = projection.getBox();
+      sprintf(bbox,"%f,%f,%f,%f",box.xmin(),box.ymin(),box.xmax(),box.ymax());
+      query.mAttributeList.addAttribute("grid.bbox",bbox);
     }
     else
     {
-      // query.mAttributeList.addAttribute("grid.llbox","8.005675,55.368185,57.105244,70.542125");
       // The requested projection is the same as the projection of the requested data. This means that we
       // we do not know the actual projection yet and we have to wait that the grid-engine delivers us
       // the requested data and the projection information of the current data.
@@ -434,6 +479,9 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
 
     std::string param = gridEngine->getParameterString(*producer,*parameter);
     attributeList.addAttribute("param",param);
+
+    if (!projection.projectionParameter)
+      projection.projectionParameter = param;
 
     if (param == *parameter  &&  query.mProducerNameList.size() == 0)
     {
@@ -459,16 +507,38 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
       it->mType = QueryServer::QueryParameter::Type::Isoband;
       it->mContourLowValues = contourLowValues;
       it->mContourHighValues = contourHighValues;
+
+      if (geometryId)
+        it->mGeometryId = *geometryId;
+
+      if (levelId)
+        it->mParameterLevelId = *levelId;
+
+      if (level)
+        it->mParameterLevel = C_INT(*level);
+
+      if (forecastType)
+        it->mForecastType = C_INT(*forecastType);
+
+      if (forecastNumber)
+        it->mForecastNumber = C_INT(*forecastNumber);
     }
 
     query.mSearchType = QueryServer::Query::SearchType::TimeSteps;
     query.mAttributeList.addAttribute("grid.crs",wkt);
 
-    if (projection.xsize)
-      query.mAttributeList.addAttribute("grid.width",std::to_string(*projection.xsize));
+    if (projection.size  &&  *projection.size > 0)
+    {
+      query.mAttributeList.addAttribute("grid.size",std::to_string(*projection.size));
+    }
+    else
+    {
+      if (projection.xsize)
+        query.mAttributeList.addAttribute("grid.width",std::to_string(*projection.xsize));
 
-    if (projection.ysize)
-      query.mAttributeList.addAttribute("grid.height",std::to_string(*projection.ysize));
+      if (projection.ysize)
+        query.mAttributeList.addAttribute("grid.height",std::to_string(*projection.ysize));
+    }
 
     if (projection.bboxcrs)
       query.mAttributeList.addAttribute("grid.bboxcrs",*projection.bboxcrs);
@@ -511,13 +581,13 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     //query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
 
     // The Query object before the query execution.
-    //query.print(std::cout,0,0);
+    // query.print(std::cout,0,0);
 
     // Executing the query.
     gridEngine->executeQuery(query);
 
     // The Query object after the query execution.
-    //query.print(std::cout,0,0);
+    // query.print(std::cout,0,0);
 
 
     // Converting the returned WKB-isolines into OGRGeometry objects.
@@ -583,38 +653,36 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     }
 
 
-
     // Extracting the projection information from the query result.
 
     const char *crsStr = query.mAttributeList.getAttributeValue("grid.crs");
-    //const char *bboxStr = query.mAttributeList.getAttributeValue("grid.bbox");
-    //const char *llboxStr = query.mAttributeList.getAttributeValue("grid.llbox");
-    const char *projectionTypeStr = query.mAttributeList.getAttributeValue("grid.projectionType");
-    uint projectionType = 0;
 
-    if (projectionTypeStr != nullptr)
-      projectionType = atoi(projectionTypeStr);
+    if (projection.size  &&  *projection.size > 0)
+    {
+      const char *widthStr = query.mAttributeList.getAttributeValue("grid.width");
+      const char *heightStr = query.mAttributeList.getAttributeValue("grid.height");
+
+      if (widthStr != nullptr)
+        projection.xsize = atoi(widthStr);
+
+      if (heightStr != nullptr)
+        projection.ysize = atoi(heightStr);
+    }
+
+    if (!projection.xsize  &&  !projection.ysize)
+      throw Spine::Exception(BCP, "The projection size is unknown!");
 
     if (crsStr != nullptr  &&  *projection.crs == "data")
     {
       projection.crs = crsStr;
       std::vector<double> partList;
 
-
       if (!projection.bboxcrs)
       {
         const char *bboxStr = query.mAttributeList.getAttributeValue("grid.bbox");
-        const char *llboxStr = query.mAttributeList.getAttributeValue("grid.llbox");
 
-        if (llboxStr != nullptr  &&  ((projectionType == T::GridProjectionValue::LatLon || projectionType == T::GridProjectionValue::RotatedLatLon) ||  bboxStr == nullptr))
-        {
-          splitString(llboxStr,',',partList);
-        }
-        else
         if (bboxStr != nullptr)
-        {
           splitString(bboxStr,',',partList);
-        }
 
         if (partList.size() == 4)
         {
@@ -629,6 +697,9 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
 
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();
+
+    if (wkt == "data")
+      return;
 
     // And the box needed for clipping
     const auto clipbox = getClipBox(box);
@@ -1037,13 +1108,21 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
 {
   try
   {
+    //if (source && *source == "grid")
+      //return invalid_hash;
+
     auto hash = Layer::hash_value(theState);
 
-    if (!theState.isObservation(producer))
+    if (!theState.isObservation(producer)  &&  !(source && *source == "grid"))
       Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+
     Dali::hash_combine(hash, Dali::hash_value(source));
     Dali::hash_combine(hash, Dali::hash_value(parameter));
+    Dali::hash_combine(hash, Dali::hash_value(geometryId));
+    Dali::hash_combine(hash, Dali::hash_value(levelId));
     Dali::hash_combine(hash, Dali::hash_value(level));
+    Dali::hash_combine(hash, Dali::hash_value(forecastType));
+    Dali::hash_combine(hash, Dali::hash_value(forecastNumber));
     Dali::hash_combine(hash, Dali::hash_value(isobands, theState));
     Dali::hash_combine(hash, Dali::hash_value(interpolation));
     Dali::hash_combine(hash, Dali::hash_value(smoother, theState));

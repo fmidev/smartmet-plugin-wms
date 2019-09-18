@@ -35,7 +35,10 @@ class NumberLayer : public Layer
   virtual std::size_t hash_value(const State& theState) const;
 
   boost::optional<std::string> parameter;
+  boost::optional<int> levelId;
   boost::optional<double> level;
+  boost::optional<int> forecastType;
+  boost::optional<int> forecastNumber;
   std::string unit_conversion;
   boost::optional<double> multiplier;
   boost::optional<double> offset;

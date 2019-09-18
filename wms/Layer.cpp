@@ -124,6 +124,9 @@ Engine::Querydata::Q Layer::getModel(const State& theState) const
     if (theState.isObservation(model))
       return {};
 
+    if (source && *source == "grid")
+      return {};
+
     if (!origintime)
       return theState.get(model);
     return theState.get(model, *origintime);
@@ -168,6 +171,25 @@ bool Layer::validResolution() const
     throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+
+
+
+void Layer::setProjection(Projection& proj)
+{
+  try
+  {
+    projection = proj;
+    layers.setProjection(proj);
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
 
 // ----------------------------------------------------------------------
 /*!

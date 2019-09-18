@@ -35,6 +35,10 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
     json = theJson.get("producer", theConfig.defaultModel());
     producer = json.asString();
 
+    json = theJson.get("geometryId", nulljson);
+    if (!json.isNull())
+      geometryId = json.asInt();
+
     json = theJson.get("tz", nulljson);
     if (json.isString())
       tz = parse_timezone(json.asString(), theState.getGeoEngine().getTimeZones());
@@ -305,6 +309,8 @@ std::size_t Properties::hash_value(const State& theState) const
   {
     auto hash = Dali::hash_value(language);
     Dali::hash_combine(hash, Dali::hash_value(producer));
+    Dali::hash_combine(hash, Dali::hash_value(geometryId));
+    Dali::hash_combine(hash, Dali::hash_value(source));
     Dali::hash_combine(hash, Dali::hash_value(origintime));
     // timezone is irrelevant, time is always in UTC timen
     Dali::hash_combine(hash, Dali::hash_value(time));

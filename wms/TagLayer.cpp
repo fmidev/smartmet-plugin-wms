@@ -66,6 +66,9 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     if (!validLayer(theState))
       return;
 
+    //if (source && *source == "grid")
+    //  return;
+
     // longitude & latitude
     std::string longitude = attributes.value("longitude");
     std::string latitude = attributes.value("latitude");
@@ -187,6 +190,9 @@ std::size_t TagLayer::hash_value(const State& theState) const
 {
   try
   {
+    //if (source && *source == "grid")
+      return invalid_hash;
+
     auto hash = Layer::hash_value(theState);
     Dali::hash_combine(hash, Dali::hash_value(tag));
     Dali::hash_combine(hash, Dali::hash_value(cdata, theState));
