@@ -162,13 +162,15 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
 
       if (layer->attributes.value("display") != "none" ||theState.getRequest().getParameter("optimizesize") == std::string("0"))
       {
-        if (*layer->projection.crs == "data"  &&  layer->source  &&  *layer->source == "grid")
-        {
+        if (/* *layer->projection.crs == "data"  &&*/  layer->source  &&  *layer->source == "grid")
           layer->setProjection(projection);
-        }
-        //std::cout << "PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs << "\n";
+
+        // std::cout << "PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs << "\n";
 
         layer->generate(theGlobals, theLayersCdt, theState);
+
+        if (layer->projection.projectionParameter &&  !projection.projectionParameter)
+          projection.projectionParameter = *layer->projection.projectionParameter;
       }
     }
   }

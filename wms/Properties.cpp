@@ -3,6 +3,7 @@
 #include "Hash.h"
 #include "Time.h"
 #include <spine/Exception.h>
+#include <grid-files/common/GeneralFunctions.h>
 
 namespace SmartMet
 {
@@ -20,20 +21,39 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
 {
   try
   {
-    if (!theJson.isObject())
-      return;
+    //if (!theJson.isObject())
+    //  return;
 
     Json::Value nulljson;
 
     auto json = theJson.get("language", theConfig.defaultLanguage());
     language = json.asString();
 
-    json = theJson.get("source", nulljson);
-    if (!json.isNull())
-      source = json.asString();
 
     json = theJson.get("producer", theConfig.defaultModel());
     producer = json.asString();
+
+    json = theJson.get("source", nulljson);
+    if (!json.isNull())
+    {
+      source = json.asString();
+    }
+    else
+    {
+      if (theConfig.primaryForecastSource() == "grid")
+        source = "grid";
+      else
+      if (theConfig.primaryForecastSource() == ""  &&  producer)
+      {
+        auto gridEngine = theState.getGridEngine();
+        if (gridEngine->isGridProducer(*producer))
+          source = "grid";
+      }
+      else
+      {
+        source = theConfig.primaryForecastSource();
+      }
+    }
 
     json = theJson.get("geometryId", nulljson);
     if (!json.isNull())

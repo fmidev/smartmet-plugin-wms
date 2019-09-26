@@ -76,7 +76,7 @@ class State
   State(Plugin& thePlugin, const Spine::HTTP::Request& theRequest);
 
   // Get the engines
-  Engine::Grid::Engine* getGridEngine();
+  const Engine::Grid::Engine* getGridEngine() const;
   const Engine::Querydata::Engine& getQEngine() const;
   const Engine::Contour::Engine& getContourEngine() const;
   const Engine::Gis::Engine& getGisEngine() const;

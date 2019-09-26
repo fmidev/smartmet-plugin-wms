@@ -275,6 +275,9 @@ void IsolineLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLaye
     attributeList.addAttribute("timelist",forecastTime);
     attributeList.addAttribute("timezone","UTC");
 
+    if (origintime)
+      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+
     // Tranforming information from the attribute list into the query object.
     queryConfigurator.configure(query,attributeList);
 
@@ -801,7 +804,6 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     if (!(source && *source == "grid"))
       Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
-    Dali::hash_combine(hash, Dali::hash_value(source));
     Dali::hash_combine(hash, Dali::hash_value(parameter));
     Dali::hash_combine(hash, Dali::hash_value(geometryId));
     Dali::hash_combine(hash, Dali::hash_value(levelId));

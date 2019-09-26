@@ -152,7 +152,7 @@ bool Intersection::inside(double theX, double theY) const
 // ----------------------------------------------------------------------
 
 void Intersection::init(const boost::optional<std::string>& theProducer,
-                        Engine::Grid::Engine *gridEngine,
+                        const Engine::Grid::Engine *gridEngine,
                         const Projection& theProjection,
                         const boost::posix_time::ptime& theTime,
                         const State& theState)

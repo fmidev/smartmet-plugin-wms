@@ -3,10 +3,12 @@
 #include "StyleSelection.h"
 #include "WMSPostGISLayer.h"
 #include "WMSQueryDataLayer.h"
+#include "WMSGridDataLayer.h"
 #ifndef WITHOUT_OBSERVATION
 #include "WMSObservationLayer.h"
 #endif
 #include <engines/querydata/Engine.h>
+#include <grid-files/common/GeneralFunctions.h>
 #include <spine/Exception.h>
 #include <set>
 
@@ -23,6 +25,7 @@ enum class WMSLayerType
 #ifndef WITHOUT_OBSERVATION
   ObservationLayer,  // Observation layer
 #endif
+  GridDataLayer,
   NotWMSLayer
 };
 
@@ -230,6 +233,32 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     else
       layerType = determineProductType(root, parsedLayer);
 
+    Json::Value nulljson;
+    boost::optional<std::string> source;
+    uint geometryId = 0;
+
+    auto json = root.get("source", nulljson);
+    if (!json.isNull())
+    {
+      source = json.asString();
+      if (*source == "grid")
+      {
+        layerType = WMSLayerType::GridDataLayer;
+
+        std::vector<std::string> partList;
+        splitString(producer,':',partList);
+        if (partList.size() == 2)
+        {
+          producer = partList[0];
+          geometryId = toUInt32(partList[1]);
+        }
+
+        json = root.get("geometryId", nulljson);
+        if (!json.isNull())
+          geometryId = json.asInt();
+      }
+    }
+
     boost::filesystem::path p(theFileName);
 
     switch (layerType)
@@ -245,6 +274,14 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         if (producer.empty())
           producer = theWMSConfig.itsDaliConfig.defaultModel();
         layer = boost::make_shared<WMSQueryDataLayer>(theWMSConfig, producer);
+        break;
+      }
+      case WMSLayerType::GridDataLayer:
+      {
+        // if no producer defined, let's use default producer
+        if (producer.empty())
+          producer = theWMSConfig.itsDaliConfig.defaultModel();
+        layer = boost::make_shared<WMSGridDataLayer>(theWMSConfig, producer,geometryId);
         break;
       }
       case WMSLayerType::ObservationLayer:
@@ -273,10 +310,8 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 
     // WMS GetCapability settings
 
-    Json::Value nulljson;
-
     // for hiding the layer from GetCapabilities queries for example if the layer is not public
-    auto json = root.get("hidden", nulljson);
+    json = root.get("hidden", nulljson);
     if (!json.isNull())
       layer->hidden = json.asBool();
 

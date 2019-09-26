@@ -226,7 +226,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
 
 PointValues read_gridForecasts(const ArrowLayer& layer,
-                           Engine::Grid::Engine *gridEngine,
+                           const Engine::Grid::Engine *gridEngine,
                            QueryServer::Query& query,
                            boost::optional<std::string> dirParam,
                            boost::optional<std::string> speedParam,
@@ -305,7 +305,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
 
     auto points = layer.positions->getPoints(originalCrs,originalWidth,originalHeight,originalGeometryId,crs, box);
 
-    if (dirValues  &&  speedValues  &&  dirValues->size() == speedValues->size())
+    if (dirValues  &&  dirValues->size() > 0)
     {
       for (const auto& point : points)
       {
@@ -321,6 +321,8 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
             wdir = (*dirValues)[pos];
             if (speedValues)
                wspeed = (*speedValues)[pos];
+            else
+              wspeed = 10;
 
             if (wdir != ParamValueMissing  &&  wspeed != ParamValueMissing)
             {
@@ -955,10 +957,6 @@ void ArrowLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       v = json.asString();
 
-    json = theJson.get("geometryId", nulljson);
-    if (!json.isNull())
-      geometryId = json.asInt();
-
     json = theJson.get("levelId", nulljson);
     if (!json.isNull())
       levelId = json.asInt();
@@ -1226,6 +1224,9 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayers
     attributeList.addAttribute("endTime",forecastTime);
     attributeList.addAttribute("timelist",forecastTime);
     attributeList.addAttribute("timezone","UTC");
+
+    if (origintime)
+      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
 
     // Tranforming information from the attribute list into the query object.
     queryConfigurator.configure(query,attributeList);
@@ -1837,6 +1838,7 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
         Dali::hash_combine(hash, Engine::Querydata::hash_value(q));
     }
 
+    Dali::hash_combine(hash, Dali::hash_value(source));
     Dali::hash_combine(hash, Dali::hash_value(direction));
     Dali::hash_combine(hash, Dali::hash_value(speed));
     Dali::hash_combine(hash, Dali::hash_value(u));

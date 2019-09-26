@@ -1,0 +1,79 @@
+{
+  "title": "Wind demo",
+  "producer": "SMARTMET",
+  "projection": {
+    "crs": "data",
+    "size": 1.0
+  },
+  "views": [
+    {
+      "qid": "v1",
+      "attributes": {
+        "id": "view1"
+      },
+      "layers": [
+        {
+          "qid": "background",
+          "layer_type": "background",
+          "attributes":
+          {
+            "fill": "rgb(255,255,255)"
+          }
+        },
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "isobands": "json:isobands/wind.json",
+          "css": "isobands/wind.css",
+          "parameter": "WindSpeedMS",
+          "attributes": {
+            "id": "wind_isobands"
+          }
+        },
+        {
+          "qid": "l2",
+          "layer_type": "isoline",
+          "isolines": "json:isolines/wind.json",
+          "css": "isolines/wind.css",
+          "parameter": "WindSpeedMS",
+          "attributes": {
+            "id": "wind_isolines",
+            "class": "Wind"
+          }
+        },
+        {
+          "qid": "l3",
+          "layer_type": "number",
+          "css": "numbers/integers.css",
+          "parameter": "WindSpeedMS",
+          "attributes": {
+            "class": "Number",
+            "id": "wind_numbers"
+          },
+          "label": "json:numbers/integers.json",
+          "positions": {
+            "x": 15,
+            "y": 15,
+            "dx": 20,
+            "dy": 20,
+            "ddx": 10
+          }
+        },
+        {
+          "qid": "l4",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries"
+          },
+          "attributes": {
+            "id": "europe_country_lines",
+            "fill": "none",
+            "stroke": "#222",
+            "stroke-width": "0.3px"
+          }
+        }
+      ]
+    }
+  ]
+}

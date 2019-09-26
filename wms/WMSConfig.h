@@ -17,6 +17,7 @@
 #include <engines/gis/Engine.h>
 #include <engines/observation/Engine.h>
 #include <engines/querydata/Engine.h>
+#include <engines/grid/Engine.h>
 #include <spine/JsonCache.h>
 #include <spine/Thread.h>
 #include <libconfig.h++>
@@ -59,7 +60,8 @@ class WMSConfig
 #ifndef WITHOUT_OBSERVATION
             Engine::Observation::Engine* obsEngine,
 #endif
-            Engine::Gis::Engine* gisEngine);
+            Engine::Gis::Engine* gisEngine,
+            Engine::Grid::Engine* gridEngine);
 
 #ifndef WITHOUT_AUTHENTICATION
   CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
@@ -118,6 +120,7 @@ class WMSConfig
   const Plugin::Dali::Config& getDaliConfig() const { return itsDaliConfig; }
   const Engine::Querydata::Engine* qEngine() const { return itsQEngine; }
   const Engine::Gis::Engine* gisEngine() const { return itsGisEngine; }
+  const Engine::Grid::Engine* gridEngine() const { return itsGridEngine; }
 #ifndef WITHOUT_OBSERVATION
   const Engine::Observation::Engine* obsEngine() const { return itsObsEngine; }
 #endif
@@ -135,6 +138,8 @@ class WMSConfig
   // Engines for GetCapabilities
   Engine::Querydata::Engine* itsQEngine = nullptr;
   Engine::Gis::Engine* itsGisEngine = nullptr;
+  Engine::Grid::Engine* itsGridEngine = nullptr;
+
 
 #ifndef WITHOUT_AUTHENTICATION
   // For GetCapabilities and GetMap Authentication

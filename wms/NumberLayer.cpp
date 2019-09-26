@@ -131,7 +131,7 @@ PointValues read_forecasts(const NumberLayer& layer,
 // ----------------------------------------------------------------------
 
 PointValues read_gridForecasts(const NumberLayer& layer,
-                           Engine::Grid::Engine *gridEngine,
+                           const Engine::Grid::Engine *gridEngine,
                            QueryServer::Query& query,
                            const boost::shared_ptr<OGRSpatialReference>& crs,
                            const Fmi::Box& box,
@@ -1003,6 +1003,9 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
     attributeList.addAttribute("timelist",forecastTime);
     attributeList.addAttribute("timezone","UTC");
 
+    if (origintime)
+      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+
     // Tranforming information from the attribute list into the query object.
     queryConfigurator.configure(query,attributeList);
 
@@ -1504,13 +1507,15 @@ std::size_t NumberLayer::hash_value(const State& theState) const
     if (theState.isObservation(producer))
       return invalid_hash;
 
-    if (source && *source == "grid")
-      return invalid_hash;
-
     auto hash = Layer::hash_value(theState);
-    auto q = getModel(theState);
-    if (q)
-      Dali::hash_combine(hash, Engine::Querydata::hash_value(q));
+
+    if (!(source && *source == "grid"))
+    {
+      auto q = getModel(theState);
+      if (q)
+        Dali::hash_combine(hash, Engine::Querydata::hash_value(q));
+    }
+
     Dali::hash_combine(hash, Dali::hash_value(parameter));
     Dali::hash_combine(hash, Dali::hash_value(geometryId));
     Dali::hash_combine(hash, Dali::hash_value(levelId));

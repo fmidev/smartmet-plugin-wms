@@ -140,7 +140,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
 // ----------------------------------------------------------------------
 
 PointValues read_gridForecasts(const SymbolLayer& layer,
-                            Engine::Grid::Engine *gridEngine,
+                            const Engine::Grid::Engine *gridEngine,
                             QueryServer::Query& query,
                             const boost::shared_ptr<OGRSpatialReference>& crs,
                             const Fmi::Box& box,
@@ -937,8 +937,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
 
     // Establish the data
 
-    bool is_legend = theGlobals.Exists("legend");
-
+    //bool is_legend = theGlobals.Exists("legend");
 
     // Make sure position generation is initialized
 
@@ -1021,6 +1020,9 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
     attributeList.addAttribute("endTime",forecastTime);
     attributeList.addAttribute("timelist",forecastTime);
     attributeList.addAttribute("timezone","UTC");
+
+    if (origintime)
+      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
 
     // Tranforming information from the attribute list into the query object.
     queryConfigurator.configure(query,attributeList);

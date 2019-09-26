@@ -282,6 +282,9 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     attributeList.addAttribute("timelist",forecastTime);
     attributeList.addAttribute("timezone","UTC");
 
+    if (origintime)
+      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+
     // Tranforming information from the attribute list into the query object.
     queryConfigurator.configure(query,attributeList);
 
@@ -743,11 +746,11 @@ std::size_t TimeLayer::hash_value(const State& theState) const
 {
   try
   {
-    //if (source && *source == "grid")
-      return invalid_hash;
-
     auto hash = Layer::hash_value(theState);
-    Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+
+    if (!(source && *source == "grid"))
+      Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+
     Dali::hash_combine(hash, Dali::hash_value(timezone));
     Dali::hash_combine(hash, Dali::hash_value(prefix));
     Dali::hash_combine(hash, Dali::hash_value(suffix));

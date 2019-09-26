@@ -19,6 +19,7 @@
 #include <spine/HTTP.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
+#include <grid-files/common/GeneralFunctions.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -41,7 +42,6 @@ void Layer::init(const Json::Value& theJson,
   try
   {
     Properties::init(theJson, theState, theConfig, theProperties);
-
     Json::Value nulljson;
 
     auto json = theJson.get("qid", nulljson);
@@ -79,6 +79,29 @@ void Layer::init(const Json::Value& theJson,
     json = theJson.get("layer_type", nulljson);
     if (!json.isNull())
       type = json.asString();
+
+    if (producer)
+    {
+      std::vector<std::string> partList;
+      splitString(*producer,':',partList);
+      if (partList.size() == 2)
+      {
+        producer = partList[0];
+        geometryId = toUInt32(partList[1]);
+      }
+    }
+
+    auto request = theState.getRequest();
+
+    boost::optional<std::string> v = request.getParameter("geometryId");
+    if (v)
+      geometryId = toInt32(*v);
+
+    //boost::optional<std::string> v = request.getParameter("producerId");
+    //if (v)
+    //  geometryId = toInt32(*v);
+
+
   }
   catch (...)
   {

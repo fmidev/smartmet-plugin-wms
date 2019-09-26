@@ -604,7 +604,7 @@ void Plugin::init()
 // WMS configurations
 #ifndef WITHOUT_OBSERVATION
       itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
-          itsConfig, itsJsonCache, itsQEngine, authEngine, itsObsEngine, itsGisEngine);
+          itsConfig, itsJsonCache, itsQEngine, authEngine, itsObsEngine, itsGisEngine, itsGridEngine);
 #else
       itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
           itsConfig, itsJsonCache, itsQEngine, authEngine, itsGisEngine);
@@ -614,7 +614,7 @@ void Plugin::init()
     {
 #ifndef WITHOUT_OBSERVATION
       itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
-          itsConfig, itsJsonCache, itsQEngine, nullptr, itsObsEngine, itsGisEngine);
+          itsConfig, itsJsonCache, itsQEngine, nullptr, itsObsEngine, itsGisEngine, itsGridEngine);
 #else
       itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
           itsConfig, itsJsonCache, itsQEngine, nullptr, itsGisEngine);
@@ -624,10 +624,10 @@ void Plugin::init()
 #else
 #ifndef WITHOUT_OBSERVATION
     itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
-        itsConfig, itsJsonCache, itsQEngine, itsObsEngine, itsGisEngine);
+        itsConfig, itsJsonCache, itsQEngine, itsObsEngine, itsGisEngine, itsGridEngine);
 #else
     itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
-        itsConfig, itsJsonCache, itsQEngine, itsGisEngine);
+        itsConfig, itsJsonCache, itsQEngine, itsGisEngine, itsGridEngine);
 #endif
 #endif
 
@@ -1473,7 +1473,19 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
     if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
       hash["legend"] = "true";
 
-    product.generate(hash, theState);
+    printf("**** WMS GENERATE START\n");
+
+    try
+    {
+      product.generate(hash, theState);
+    }
+    catch (...)
+    {
+      Spine::Exception e(BCP, "Operation failed!",nullptr);
+      e.printError();
+    }
+
+    printf("**** WMS GENERATE END\n");
 
     // Build the template
     std::ostringstream output, log;
@@ -1572,7 +1584,11 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Spine::Exception &exception,
     // Build the response CDT
     CTPP::CDT hash(CTPP::CDT::HASH_VAL);
 
+    printf("### WMS GENERATE START\n");
+
     product.generate(hash, theState);
+
+    printf("### WMS GENERATE END\n");
 
     // Build the template
     std::ostringstream output, log;

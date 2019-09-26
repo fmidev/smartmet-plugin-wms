@@ -62,7 +62,7 @@ const Engine::Contour::Engine& State::getContourEngine() const
  */
 // ----------------------------------------------------------------------
 
-Engine::Grid::Engine* State::getGridEngine()
+const Engine::Grid::Engine* State::getGridEngine() const
 {
   try
   {

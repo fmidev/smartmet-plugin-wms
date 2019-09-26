@@ -560,11 +560,13 @@ WMSConfig::WMSConfig(const Config& daliConfig,
 #ifndef WITHOUT_OBSERVATION
                      Engine::Observation::Engine* obsEngine,
 #endif
-                     Engine::Gis::Engine* gisEngine)
+                     Engine::Gis::Engine* gisEngine,
+                     Engine::Grid::Engine* gridEngine)
     : itsDaliConfig(daliConfig),
       itsJsonCache(theJsonCache),
       itsQEngine(qEngine),
       itsGisEngine(gisEngine),
+      itsGridEngine(gridEngine),
 #ifndef WITHOUT_AUTHENTICATION
       itsAuthEngine(authEngine),
 #endif

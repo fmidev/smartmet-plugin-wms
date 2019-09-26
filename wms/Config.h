@@ -37,6 +37,8 @@ class Config : private boost::noncopyable
   const std::string& defaultLanguage() const;
 
   const std::string& templateDirectory() const;
+  const std::string& primaryForecastSource() const;
+
 
   const std::set<std::string>& regularAttributes() const;
   const std::set<std::string>& presentationAttributes() const;
@@ -77,6 +79,8 @@ class Config : private boost::noncopyable
   std::string itsDefaultCustomer = "fmi";
   std::string itsDefaultModel = "pal_skandinavia";
   std::string itsDefaultLanguage = "en";
+  std::string itsPrimaryForecastSource = "querydata";
+
 
   std::string itsTemplateDirectory = "/etc/smartmet/plugins/dali/templates";
   std::string itsRootDirectory;

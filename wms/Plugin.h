@@ -55,7 +55,7 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   bool queryIsFast(const Spine::HTTP::Request& theRequest) const;
 
   // Get the engines
-  Engine::Grid::Engine* getGridEngine() { return itsGridEngine; }
+  const Engine::Grid::Engine* getGridEngine() const { return itsGridEngine; }
   const Engine::Querydata::Engine& getQEngine() const { return *itsQEngine; }
   const Engine::Contour::Engine& getContourEngine() const { return *itsContourEngine; }
   const Engine::Gis::Engine& getGisEngine() const { return *itsGisEngine; }

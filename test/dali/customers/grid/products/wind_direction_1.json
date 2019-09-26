@@ -1,0 +1,110 @@
+{
+  "title": "Wind demo",
+  "producer": "SMARTMET",
+  "projection": {
+    "crs": "data",
+    "size": 1.0
+  },
+  "views": [
+    {
+      "qid": "v1",
+      "attributes": {
+        "id": "view1"
+      },
+      "layers": [
+        {
+          "qid": "background",
+          "layer_type": "background",
+          "attributes":
+          {
+            "fill": "rgb(187,204,225)"
+          }
+        },
+        {
+          "qid": "europe",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries"
+          },
+          "attributes": {
+            "id": "europe_country",
+            "fill": "rgb(250,250,250)"
+          }
+        },
+        {
+          "qid": "l3",
+          "margin": -10,
+          "layer_type": "arrow",
+          "arrows": "json:arrows/wind.json",
+          "css": "arrows/windarrow.css",
+          "direction": "DD-D",
+          "symbol": "windarrow",
+          "attributes": {
+            "id": "wind_arrows"
+          },
+          "positions": {
+            "x": 0,
+            "y": 0,
+            "dx": 10,
+            "dy": 10,
+            "ddx": 5
+          }
+        },
+        {
+          "qid": "l4",
+          "layer_type": "symbol",
+          "symbol": "dot",
+          "css": "symbols/dot.css",
+          "parameter": "DD-D",
+          "attributes": {
+            "class": "Dot",
+            "id": "wind_markers"
+          },
+          "positions": {
+            "x": 20,
+            "y": 20,
+            "dx": 40,
+            "dy": 40,
+            "ddx": 20
+          }
+        },
+        /*
+        {
+          "qid": "l5",
+          "layer_type": "number",
+          "css": "numbers/integers.css",
+          "parameter": "WindSpeedMS",
+          "attributes": {
+            "class": "Number",
+            "id": "wind_numbers"
+          },
+          "label": "json:numbers/integers.json",
+          "positions": {
+            "x": 15,
+            "y": 15,
+            "dx": 20,
+            "dy": 20,
+            "ddx": 10
+          }
+        },
+        */
+        
+        {
+          "qid": "l4",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries"
+          },
+          "attributes": {
+            "id": "europe_country_lines",
+            "fill": "none",
+            "stroke": "#222",
+            "stroke-width": "0.3px"
+          }
+        }
+      ]
+    }
+  ]
+}
