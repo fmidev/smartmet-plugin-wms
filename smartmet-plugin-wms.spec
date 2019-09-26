@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.9.17
+Version: 19.9.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,20 +18,20 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
-BuildRequires: smartmet-library-macgyver-devel >= 19.8.2
-BuildRequires: smartmet-library-spine-devel >= 19.9.17
+BuildRequires: smartmet-library-macgyver-devel >= 19.9.26
+BuildRequires: smartmet-library-spine-devel >= 19.9.26
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 18.9.10
+BuildRequires: smartmet-engine-authentication-devel >= 19.9.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 19.9.17
+BuildRequires: smartmet-engine-observation-devel >= 19.9.26
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 19.9.13
-BuildRequires: smartmet-engine-geonames-devel >= 19.8.28
-BuildRequires: smartmet-engine-querydata-devel >= 19.8.28
-BuildRequires: smartmet-engine-contour-devel >= 19.2.22
-BuildRequires: smartmet-library-gis-devel >= 19.3.14
+BuildRequires: smartmet-engine-gis-devel >= 19.9.26
+BuildRequires: smartmet-engine-geonames-devel >= 19.9.26
+BuildRequires: smartmet-engine-querydata-devel >= 19.9.26
+BuildRequires: smartmet-engine-contour-devel >= 19.9.26
+BuildRequires: smartmet-library-gis-devel >= 19.9.26
 BuildRequires: fmt-devel >= 5.2.0
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -44,18 +44,18 @@ Requires: fmt >= 5.2.0
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-gis >= 19.3.14
-Requires: smartmet-library-macgyver >= 19.8.2
+Requires: smartmet-library-gis >= 19.9.26
+Requires: smartmet-library-macgyver >= 19.9.26
 Requires: smartmet-library-giza >= 18.10.1
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 18.9.10
+Requires: smartmet-engine-authentication >= 19.9.26
 %endif
-Requires: smartmet-engine-querydata >= 19.8.28
-Requires: smartmet-engine-contour >= 19.2.22
-Requires: smartmet-engine-gis >= 19.9.13
-Requires: smartmet-engine-geonames >= 19.8.28
-Requires: smartmet-server >= 19.9.17
-Requires: smartmet-library-spine >= 19.9.17
+Requires: smartmet-engine-querydata >= 19.9.26
+Requires: smartmet-engine-contour >= 19.9.26
+Requires: smartmet-engine-gis >= 19.9.26
+Requires: smartmet-engine-geonames >= 19.9.26
+Requires: smartmet-server >= 19.9.26
+Requires: smartmet-library-spine >= 19.9.26
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Sep 26 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.9.26-1.fmi
+- Repackaged due to ABI changes
+
 * Tue Sep 17 2019  Anssi Reponen <anssi.reponen@fmi.fi> - 19.9.17-1.fmi
 - NetAtmo and RoadCloud test cases updated because mid-parameter is no more supported,
 but parameter name must be used instead (Related to BRAINSTORM-1673)
