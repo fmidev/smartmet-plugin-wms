@@ -69,6 +69,22 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     //if (source && *source == "grid")
     //  return;
 
+    std::string x = attributes.value("x");
+    std::string y = attributes.value("y");
+
+    if (!x.empty() && !y.empty())
+    {
+      double xx = atof(x.c_str());
+      double yy = atof(y.c_str());
+      const auto& box = projection.getBox();
+
+      if (xx < 0)
+        attributes.add("x",std::to_string(box.width() + xx));
+
+      if (yy < 0)
+        attributes.add("y",std::to_string(box.height() + yy));
+    }
+
     // longitude & latitude
     std::string longitude = attributes.value("longitude");
     std::string latitude = attributes.value("latitude");
@@ -116,6 +132,7 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       theState.addAttributes(theGlobals, tag_cdt, attributes);
 
       group_cdt["tags"].PushBack(tag_cdt);
+
       theLayersCdt.PushBack(group_cdt);
     }
     else
@@ -190,9 +207,6 @@ std::size_t TagLayer::hash_value(const State& theState) const
 {
   try
   {
-    //if (source && *source == "grid")
-      return invalid_hash;
-
     auto hash = Layer::hash_value(theState);
     Dali::hash_combine(hash, Dali::hash_value(tag));
     Dali::hash_combine(hash, Dali::hash_value(cdata, theState));
