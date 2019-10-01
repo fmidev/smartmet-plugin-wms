@@ -7,7 +7,8 @@ FLAGS = -std=c++11 -MD -fPIC -rdynamic -Wall -W \
 	-Wno-unused-parameter \
 	-fno-omit-frame-pointer \
 	-Wno-deprecated-declarations \
-	-Wno-unknown-pragmas
+	-Wno-unknown-pragmas \
+	-Wnon-virtual-dtor 
 
 
 FLAGS_DEBUG = \
@@ -191,7 +192,7 @@ objdir:
 
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
-	tar -czvf $(SPEC).tar.gz --transform "s,^,$(SPEC)/," *
+	tar -czvf $(SPEC).tar.gz --exclude test --exclude-vcs --transform "s,^,$(SPEC)/," *
 	rpmbuild -ta $(SPEC).tar.gz
 	rm -f $(SPEC).tar.gz
 

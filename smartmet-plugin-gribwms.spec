@@ -18,22 +18,22 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
-BuildRequires: smartmet-library-macgyver-devel >= 19.4.23
-BuildRequires: smartmet-library-spine-devel >= 19.5.8
+BuildRequires: smartmet-library-macgyver-devel >= 19.9.26
+BuildRequires: smartmet-library-spine-devel >= 19.9.26
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 18.9.10
+BuildRequires: smartmet-engine-authentication-devel >= 19.9.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 19.5.23
+BuildRequires: smartmet-engine-observation-devel >= 19.9.26
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 19.5.29
-BuildRequires: smartmet-engine-geonames-devel >= 19.3.22
-BuildRequires: smartmet-engine-querydata-devel >= 19.3.21
-BuildRequires: smartmet-engine-contour-devel >= 19.2.22
-BuildRequires: smartmet-library-gis-devel >= 19.3.14
+BuildRequires: smartmet-engine-gis-devel >= 19.9.26
+BuildRequires: smartmet-engine-geonames-devel >= 19.9.26
+BuildRequires: smartmet-engine-querydata-devel >= 19.9.26
+BuildRequires: smartmet-engine-contour-devel >= 19.9.26
+BuildRequires: smartmet-library-gis-devel >= 19.9.26
 BuildRequires: fmt-devel >= 5.2.0
-BuildRequires: ctpp2 >= 2.8.7
+BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
 BuildRequires: cairo-devel
@@ -42,20 +42,20 @@ BuildRequires: heatmap-devel
 Requires: cairo
 Requires: fmt >= 5.2.0
 Requires: jsoncpp
-Requires: ctpp2 >= 2.8.7
+Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-gis >= 19.3.14
-Requires: smartmet-library-macgyver >= 19.4.23
+Requires: smartmet-library-gis >= 19.9.26
+Requires: smartmet-library-macgyver >= 19.9.26
 Requires: smartmet-library-giza >= 18.10.1
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 18.9.10
+Requires: smartmet-engine-authentication >= 19.9.26
 %endif
-Requires: smartmet-engine-querydata >= 19.3.21
-Requires: smartmet-engine-contour >= 19.2.22
-Requires: smartmet-engine-gis >= 19.5.29
-Requires: smartmet-engine-geonames >= 19.3.22
-Requires: smartmet-server >= 19.3.19
-Requires: smartmet-library-spine >= 19.5.8
+Requires: smartmet-engine-querydata >= 19.9.26
+Requires: smartmet-engine-contour >= 19.9.26
+Requires: smartmet-engine-gis >= 19.9.26
+Requires: smartmet-engine-geonames >= 19.9.26
+Requires: smartmet-server >= 19.9.26
+Requires: smartmet-library-spine >= 19.9.26
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -94,6 +94,19 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Oct  1 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.10.1-1.fmi
 - Repackaged due to SmartMet library ABI changes
+
+* Tue Sep 17 2019  Anssi Reponen <anssi.reponen@fmi.fi> - 19.9.17-1.fmi
+- NetAtmo and RoadCloud test cases updated because mid-parameter is no more supported,
+but parameter name must be used instead (Related to BRAINSTORM-1673)
+
+* Thu Sep 12 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.9.12-1.fmi
+- Fixed WMSLayer destructor to be virtual to avoid memory problems
+
+* Wed Aug 28 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.8.28-1.fmi
+- Repackaged since Spine::Location ABI changed
+
+* Fri Jun 14 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.6.14-1.fmi
+- Fixed intersection code to check for empty output
 
 * Wed Jun  5 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.6.5-1.fmi
 - Do not print a stack trace for invalid time requests to reduce log sizes

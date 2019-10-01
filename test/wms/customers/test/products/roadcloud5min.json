@@ -36,301 +36,71 @@
                     }
                 },
 	    {
-	    "qid": "l",
+	    "qid": "l2",
 	    "layer_type": "symbol",
 	    "css": "symbols/iot_station.css",
-	    "parameter": "mid",
+	    "parameter": "speed",
 	    "symbol": "iot_station",
 	    "symbols":
 	    [
 		{
-		    "value": 1,
 		    "attributes":
 		    {
-			"fill": "#ffcccc",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 2,
-		    "attributes":
-		    {
-			"fill": "#ff6666",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 3,
-		    "attributes":
-		    {
-			"fill": "#ff0000",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 4,
-		    "attributes":
-		    {
-			"fill": "#990000",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 5,
-		    "attributes":
-		    {
-			"fill": "#330000",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 6,
-		    "attributes":
-		    {
-			"fill": "#9999ff",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 7,
-		    "attributes":
-		    {
-			"fill": "#0000ff",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 8,
-		    "attributes":
-		    {
-			"fill": "#000066",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 9,
-		    "attributes":
-		    {
-			"fill": "#00ffff",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 10,
-		    "attributes":
-		    {
-			"fill": "#006666",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 11,
-		    "attributes":
-		    {
-			"fill": "#99ffff",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 12,
-		    "attributes":
-		    {
-			"fill": "#c6ffb3",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 13,
-		    "attributes":
-		    {
-			"fill": "#66ff33",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 14,
-		    "attributes":
-		    {
-			"fill": "#208000",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 15,
-		    "attributes":
-		    {
-			"fill": "#ffff80",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 16,
-		    "attributes":
-		    {
-			"fill": "#ffff00",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 18,
-		    "attributes":
-		    {
-			"fill": "#666600",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 19,
-		    "attributes":
-		    {
-			"fill": "#ff80ff",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 20,
-		    "attributes":
-		    {
-			"fill": "#ff00ff",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 21,
-		    "attributes":
-		    {
-			"fill": "#800080",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 22,
-		    "attributes":
-		    {
-			"fill": "#ffc299",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 23,
-		    "attributes":
-		    {
-			"fill": "#ff6600",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 24,
-		    "attributes":
-		    {
-			"fill": "#803300",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 25,
-		    "attributes":
-		    {
-			"fill": "#331400",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 26,
-		    "attributes":
-		    {
-			"fill": "#b3e6ff",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 27,
-		    "attributes":
-		    {
-			"fill": "#33bbff",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 28,
-		    "attributes":
-		    {
-			"fill": "#004466",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 29,
-		    "attributes":
-		    {
-			"fill": "#e6b3e6",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 30,
-		    "attributes":
-		    {
-			"fill": "#bf40bf",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 31,
-		    "attributes":
-		    {
-			"fill": "#4d194d",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 32,
-		    "attributes":
-		    {
-			"fill": "#ddddbb",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 33,
-		    "attributes":
-		    {
-			"fill": "#aaaa55",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 34,
-		    "attributes":
-		    {
-			"fill": "#444422",
-			"scale": 0.5
-		    }
-		},
-		{
-		    "value": 36,
-		    "attributes":
-		    {
-			"fill": "#ff1aff",
+			"fill": "#00ff00",
 			"scale": 0.5
 		    }
 		}
+
 	    ],
 	    "attributes":
 	    {
 		"class": "IoTStationMarker"
-	    },
-	    "positions":
-	    {
-		"layout" : "data",
-		"intersect":
-		[
-		    {
-			"parameter": "multiplicity",
-			"lolimit": 1
-		    }
-		]
 	    }
-	}]
+	   },
+	    {
+	    "qid": "l3",
+	    "layer_type": "symbol",
+	    "css": "symbols/iot_station.css",
+	    "parameter": "friction",
+	    "symbol": "iot_station",
+	    "symbols":
+	    [
+		{
+		    "attributes":
+		    {
+			"fill": "#00ff00",
+			"scale": 0.5
+		    }
+		}
+
+	    ],
+	    "attributes":
+	    {
+		"class": "IoTStationMarker"
+	    }
+	   },
+	    {
+	    "qid": "l4",
+	    "layer_type": "symbol",
+	    "css": "symbols/iot_station.css",
+	    "parameter": "road_state",
+	    "symbol": "iot_station",
+	    "symbols":
+	    [
+		{
+		    "attributes":
+		    {
+			"fill": "#00ff00",
+			"scale": 0.5
+		    }
+		}
+
+	    ],
+	    "attributes":
+	    {
+		"class": "IoTStationMarker"
+	    }
+	   }
+	]
     }]
 }

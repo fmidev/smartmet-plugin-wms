@@ -416,6 +416,10 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs.get());
     std::vector<OGRGeometryPtr> isobands =
         contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), crs.get());
+
+    if (isobands.empty())
+      return;
+
     isoband = *(isobands.begin());
 
     if (!isoband || isoband->IsEmpty() != 0)

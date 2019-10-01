@@ -709,7 +709,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
     settings.starttime = theStartTime;
     settings.endtime = theEndTime;
     settings.starttimeGiven = true;
-    settings.stationtype = "fmi";
+    settings.stationtype = "observations_fmi";
     settings.timezone = timezone;
 
     auto& observation = theState.getObsEngine();
