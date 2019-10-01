@@ -1,10 +1,10 @@
 %bcond_without authentication
 %bcond_without observation
-%define DIRNAME wms
+%define DIRNAME gribwms
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.6.5
+Version: 19.10.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -87,11 +87,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %Files
 %defattr(0775,root,root,0775)
-%{_datadir}/smartmet/plugins/%{DIRNAME}.so
+%{_datadir}/smartmet/plugins/wms.so
 %defattr(0664,root,root,0775)
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Oct  1 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.10.1-1.fmi
+- Repackaged due to SmartMet library ABI changes
+
 * Wed Jun  5 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.6.5-1.fmi
 - Do not print a stack trace for invalid time requests to reduce log sizes
 

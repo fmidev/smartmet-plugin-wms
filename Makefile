@@ -1,5 +1,5 @@
 SUBNAME = wms
-SPEC = smartmet-plugin-$(SUBNAME)
+SPEC = smartmet-plugin-grib$(SUBNAME)
 INCDIR = smartmet/plugins/$(SUBNAME)
 
 FLAGS = -std=c++11 -MD -fPIC -rdynamic -Wall -W \
