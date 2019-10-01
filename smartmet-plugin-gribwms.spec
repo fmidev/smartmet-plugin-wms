@@ -89,7 +89,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0775,root,root,0775)
 %{_datadir}/smartmet/plugins/wms.so
 %defattr(0664,root,root,0775)
-%{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
+%{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
 * Tue Oct  1 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.10.1-1.fmi
