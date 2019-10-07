@@ -78,6 +78,7 @@ class WMSLayer
   friend std::ostream& operator<<(std::ostream&, const WMSLayer&);
 
  public:
+  virtual ~WMSLayer() = default;
   WMSLayer(const WMSConfig& config);
 
   void addStyle(const Json::Value& root,
