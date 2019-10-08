@@ -87,6 +87,8 @@ PointValues read_forecasts(const ArrowLayer& layer,
     throw Spine::Exception(
         BCP, "Parameter " + dirparam->name() + " not available in the arrow layer querydata");
 
+  // WindUMS and WindVMS are metaparameters, cannot check their existence here
+
   // Generate the coordinates for the arrows
 
   const bool forecast_mode = true;
@@ -155,7 +157,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
           wspd = sqrt(uspd * uspd + vspd * vspd);
           if (uspd != 0 || vspd != 0)
           {
-            // Note: qengine handles grid north fixing automatically
+            // Note: qengine already fixes U/V component orientation
             wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
           }
         }
