@@ -87,26 +87,6 @@ PointValues read_forecasts(const ArrowLayer& layer,
     throw Spine::Exception(
         BCP, "Parameter " + dirparam->name() + " not available in the arrow layer querydata");
 
-  // WindUMS and WindVMS are metaparameters, cannot check their existence here
-
-  // We may need to convert relative U/V components to true north
-  boost::movelib::unique_ptr<OGRCoordinateTransformation> uvtransformation;
-  boost::movelib::unique_ptr<OGRSpatialReference> wgs84;
-  boost::movelib::unique_ptr<OGRSpatialReference> qsrs;
-  if (uparam && vparam && q->isRelativeUV())
-  {
-    wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = wgs84->SetFromUserInput("WGS84");
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand WGS84");
-
-    qsrs = boost::movelib::make_unique<OGRSpatialReference>();
-    err = qsrs->SetFromUserInput(q->area().ProjStr().c_str());
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "Failed to establish querydata spatial reference");
-    uvtransformation.reset(OGRCreateCoordinateTransformation(wgs84.get(), qsrs.get()));
-  }
-
   // Generate the coordinates for the arrows
 
   const bool forecast_mode = true;
@@ -175,15 +155,8 @@ PointValues read_forecasts(const ArrowLayer& layer,
           wspd = sqrt(uspd * uspd + vspd * vspd);
           if (uspd != 0 || vspd != 0)
           {
-            if (uvtransformation == nullptr)
-              wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
-            else
-            {
-              auto rot = Fmi::OGR::gridNorth(*uvtransformation, point.latlon.X(), point.latlon.Y());
-              if (!rot)
-                continue;
-              wdir = fmod(180 - *rot + 180 / pi * atan2(uspd, vspd), 360);
-            }
+            // Note: qengine handles grid north fixing automatically
+            wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
           }
         }
       }
