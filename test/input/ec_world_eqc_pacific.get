@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=ec_world_eqc_pacific&time=201503131200 HTTP/1.0

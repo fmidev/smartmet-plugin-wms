@@ -1,0 +1,33 @@
+{
+  "title": "EC world in WGS84",
+  "producer": "ecmwf_maailma_pinta",
+  "projection": {
+    "crs": "EPSG:4326",
+      "x1" : 0,
+      "y1" : -85,
+      "x2" : 360,
+      "y2" : 85,
+      "xsize": 1440,
+      "ysize": 720
+  },
+  "views": [
+    {
+      "qid": "v1",
+      "attributes": {
+        "id": "view1"
+      },
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "isobands": "json:isobands/temperature.json",
+          "css": "isobands/temperature.css",
+          "parameter": "Temperature",
+          "attributes": {
+            "id": "t2m_isobands"
+          }
+        }
+      ]
+    }
+  ]
+}
