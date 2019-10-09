@@ -64,8 +64,8 @@ fi
 # Note: sometimes 'file' reports text/x-asm instead of html due to dots in css class names
 
 if [[ "$MIME" == "text/html" || "$MIME" == "text/x-asm" ]]; then
-    rsvg-convert -b white -f png -o $EXPECTED_PNG $EXPECTED
-    rsvg-convert -b white -f png -o $RESULT_PNG $RESULT
+    rsvg-convert -u -b white -f png -o $EXPECTED_PNG $EXPECTED
+    rsvg-convert -u -b white -f png -o $RESULT_PNG $RESULT
 
 elif [[ "$MIME" == "application/pdf" ]]; then
     convert $EXPECTED $EXPECTED_PNG
