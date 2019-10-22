@@ -1,0 +1,66 @@
+{
+    "title": "Background map",
+    "projection": { },
+    "views": [
+        {
+	    "qid": "v1-",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+		{
+		    "qid": "sea",
+		    "layer_type": "background",
+		    "css": "maps/map.css",
+		    "attributes":
+		    {
+			"class": "Sea"
+		    }
+		},
+		{
+		    "qid": "borders",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"lines": true,
+			"schema": "natural_earth",
+			"table": "admin_0_countries"
+		    },
+		    "attributes":
+		    {
+			"class": "Borders"
+		    }
+		},
+		{
+		    "qid": "europe",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"where": "iso_a2 NOT IN ('FI','AX')"
+		    },
+		    "attributes":
+		    {
+			"class": "Europe"
+		    }
+		},
+		{
+		    "qid": "finland",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"where": "iso_a2 IN ('FI','AX')"
+		    },
+		    "attributes":
+		    {
+			"class": "Finland"
+		    }
+		}
+            ]
+        }
+    ]
+}

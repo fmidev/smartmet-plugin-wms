@@ -1,0 +1,114 @@
+{
+    "title": "City location map",
+    "refs":
+    {
+	"myprojection":
+	{
+	    "xsize": 300,
+	    "ysize": 550,
+	    "crs": "EPSG:2393",	// YKJ
+	    "bboxcrs": "EPSG:4326",	// WGS84
+	    // the following were obtained by trial and error from Foreca images
+	    "cy": 64.8,
+	    "cx": 25.4,
+	    "resolution": 2.5
+	}
+    },
+    "projection": "ref:refs.myprojection",
+    "defs":
+    {
+        "styles":
+	{
+	    ".City":
+	    {
+		"fill": "rgb(192,0,0)",
+		"stroke": "rgb(0,0,0)",
+		"stroke-width": 0.5
+	    },
+	    ".BigCity":
+	    {
+		"fill": "rgb(255,0,0)",
+		"stroke": "rgb(0,0,0)",
+		"stroke-width": 0.5
+	    },
+	    ".Alandcity":
+	    {
+		"fill": "rgb(255,0,0)",
+		"stroke": "rgb(0,0,0)",
+		"stroke-width": 0.5
+	    }
+	},
+	"layers": [
+	    {
+		"tag": "symbol",
+		"attributes":
+		{
+		    "id": "rect"
+		},
+		"layers": [
+		    {
+			"tag": "rect",
+			"attributes":
+			{
+			    "width": "14",
+			    "height": "12"
+			}
+		    }
+		]
+	    },
+	    {
+		"tag": "symbol",
+		"attributes":
+		{
+		    "id": "uptriangle"
+		},
+		"layers": [
+		    {
+			"tag": "path",
+			"attributes":
+			{
+			    "d": "M0 12,7 0,14 12Z"
+			}
+		    }
+		]
+	    }
+	]
+    },
+    "views": [
+        {
+	    "qid": "v1-",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+		{
+		    "layer_type": "location",
+		    "keyword": "municipalities_fi",
+		    "countries": "fi",
+		    "mindistance": 10,
+		    "symbols":
+		    {
+			"default":
+			[
+				{
+					"hilimit": 10000,
+					"symbol": "city"
+				},
+				{
+					"lolimit": 10000,
+					"symbol": "bigcity"
+				}
+			],
+			"ADM2":
+			[
+				{
+					"symbol": "alandcity"
+				}
+			]
+		    }
+		}
+            ]
+        }
+    ]
+}
