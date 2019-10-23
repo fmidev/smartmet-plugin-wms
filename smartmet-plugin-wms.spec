@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.10.8
+Version: 19.10.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Oct 22 2019  Anssi Reponen <anssi.reponen@fmi.fi> - 19.10.22-1.fmi
+- If multiple layers is given in WMS LAYERS-option they are combined together (B
+
 * Tue Oct  8 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.10.8-1.fmi
 - Fixed arrow layer not to correct U/V components anymore, qengine handles it
 
