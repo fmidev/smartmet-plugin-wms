@@ -86,9 +86,9 @@ void useStyle(Json::Value& root, const Json::Value& styles)
   }
 }
 
-void useStyle(Json::Value& root, const std::string& styleNames)
+void useStyle(Json::Value& root, const std::string& styleName)
 {
-  if (styleNames.empty())
+  if (styleName.empty())
     return;
 
   Json::Value nulljson;
@@ -99,21 +99,14 @@ void useStyle(Json::Value& root, const std::string& styleNames)
     if (!json.isArray())
       throw Spine::Exception(BCP, "WMSLayer styles settings must be an array");
 
-    std::vector<std::string> styleNameVector;
-    boost::algorithm::split(
-        styleNameVector, styleNames, boost::is_any_of(","), boost::token_compress_on);
-
-    for (auto styleName : styleNameVector)
+    for (const auto& styleJson : json)
     {
-      for (const auto& styleJson : json)
-      {
-        const auto& nameJson = styleJson.get("name", nulljson);
+      const auto& nameJson = styleJson.get("name", nulljson);
 
-        if (!nameJson.isNull() && nameJson.asString() == styleName)
-        {
-          useStyle(root, styleJson);
-          break;
-        }
+      if (!nameJson.isNull() && nameJson.asString() == styleName)
+      {
+        useStyle(root, styleJson);
+        break;
       }
     }
   }

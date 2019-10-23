@@ -2,6 +2,7 @@
 #include "CaseInsensitiveComparator.h"
 #include "Colour.h"
 #include "Mime.h"
+#include "StyleSelection.h"
 #include "TimeResolution.h"
 #include "WMSException.h"
 #include <boost/algorithm/string/erase.hpp>
@@ -711,17 +712,17 @@ Json::Value WMSGetMap::json() const
 {
   try
   {
-    if (itsParameters.map_info_vector.size() == 1)
-    {
-      const tag_map_info map_info = itsParameters.map_info_vector.back();
-      return itsConfig.json(map_info.name);
-    }
-
     std::vector<Json::Value> jsonlayers;
     for (auto map_info : itsParameters.map_info_vector)
     {
-      jsonlayers.push_back(itsConfig.json(map_info.name));
+      Json::Value json = itsConfig.json(map_info.name);
+      if (!map_info.style.empty())
+        SmartMet::Plugin::WMS::useStyle(json, map_info.style);
+      jsonlayers.push_back(json);
     }
+
+    if (jsonlayers.size() == 1)
+      return jsonlayers.back();
 
     return merge_layers(jsonlayers);
   }
