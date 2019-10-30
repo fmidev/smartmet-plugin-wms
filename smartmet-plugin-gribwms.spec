@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.10.1
+Version: 19.10.23
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -19,13 +19,13 @@ BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
 BuildRequires: smartmet-library-macgyver-devel >= 19.9.26
-BuildRequires: smartmet-library-spine-devel >= 19.9.26
+BuildRequires: smartmet-library-spine-devel >= 19.10.8
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 19.9.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 19.9.26
+BuildRequires: smartmet-engine-observation-devel >= 19.10.21
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 19.9.26
 BuildRequires: smartmet-engine-geonames-devel >= 19.9.26
@@ -54,8 +54,8 @@ Requires: smartmet-engine-querydata >= 19.9.26
 Requires: smartmet-engine-contour >= 19.9.26
 Requires: smartmet-engine-gis >= 19.9.26
 Requires: smartmet-engine-geonames >= 19.9.26
-Requires: smartmet-server >= 19.9.26
-Requires: smartmet-library-spine >= 19.9.26
+Requires: smartmet-server >= 19.10.1
+Requires: smartmet-library-spine >= 19.10.8
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,8 +92,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Oct 23 2019  Anssi Reponen <anssi.reponen@fmi.fi> - 19.10.23-1.fmi
+- If multiple layers is given in WMS LAYERS-option they are combined together (B
+
+* Tue Oct  8 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.10.8-1.fmi
+- Fixed arrow layer not to correct U/V components anymore, qengine handles it
+
 * Tue Oct  1 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.10.1-1.fmi
 - Repackaged due to SmartMet library ABI changes
+
+* Thu Sep 26 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.9.26-1.fmi
+- Repackaged due to ABI changes
 
 * Tue Sep 17 2019  Anssi Reponen <anssi.reponen@fmi.fi> - 19.9.17-1.fmi
 - NetAtmo and RoadCloud test cases updated because mid-parameter is no more supported,

@@ -10,7 +10,6 @@
 #include "Mime.h"
 #include "Product.h"
 #include "State.h"
-#include "StyleSelection.h"
 #include "TextUtility.h"
 #include "WMSConfig.h"
 #include "WMSGetCapabilities.h"
@@ -1317,12 +1316,6 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
                      boost::posix_time::seconds(itsWMSConfig->getLegendGraphicSettings().expires);
           theState.updateExpirationTime(tmp);
         }
-      }
-
-      if (requestType == WMS::WMSRequestType::GET_MAP)
-      {
-        std::string styleName = *(theRequest.getParameter("STYLES"));
-        SmartMet::Plugin::WMS::useStyle(json, styleName);
       }
 
       // Define the customer
