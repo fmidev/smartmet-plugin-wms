@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.10.23
+Version: 19.10.31
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -19,18 +19,18 @@ BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
 BuildRequires: smartmet-library-macgyver-devel >= 19.9.26
-BuildRequires: smartmet-library-spine-devel >= 19.10.8
+BuildRequires: smartmet-library-spine-devel >= 19.10.31
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 19.9.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 19.10.21
+BuildRequires: smartmet-engine-observation-devel >= 19.10.31
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 19.9.26
-BuildRequires: smartmet-engine-geonames-devel >= 19.9.26
-BuildRequires: smartmet-engine-querydata-devel >= 19.9.26
-BuildRequires: smartmet-engine-contour-devel >= 19.9.26
+BuildRequires: smartmet-engine-gis-devel >= 19.10.31
+BuildRequires: smartmet-engine-geonames-devel >= 19.10.25
+BuildRequires: smartmet-engine-querydata-devel >= 19.10.31
+BuildRequires: smartmet-engine-contour-devel >= 19.10.31
 BuildRequires: smartmet-library-gis-devel >= 19.9.26
 BuildRequires: fmt-devel >= 5.2.0
 BuildRequires: ctpp2 >= 2.8.8
@@ -50,12 +50,12 @@ Requires: smartmet-library-giza >= 18.10.1
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 19.9.26
 %endif
-Requires: smartmet-engine-querydata >= 19.9.26
-Requires: smartmet-engine-contour >= 19.9.26
-Requires: smartmet-engine-gis >= 19.9.26
-Requires: smartmet-engine-geonames >= 19.9.26
+Requires: smartmet-engine-querydata >= 19.10.31
+Requires: smartmet-engine-contour >= 19.10.31
+Requires: smartmet-engine-gis >= 19.10.31
+Requires: smartmet-engine-geonames >= 19.10.25
 Requires: smartmet-server >= 19.10.1
-Requires: smartmet-library-spine >= 19.10.8
+Requires: smartmet-library-spine >= 19.10.31
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Oct 31 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.10.31-1.fmi
+- Rebuilt due to newbase API/ABI changes
+
 * Wed Oct 23 2019  Anssi Reponen <anssi.reponen@fmi.fi> - 19.10.23-1.fmi
 - If multiple layers is given in WMS LAYERS-option they are combined together (B
 
