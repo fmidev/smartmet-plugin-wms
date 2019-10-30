@@ -181,38 +181,39 @@ PointValues read_forecasts(const ArrowLayer& layer,
           if (uspd != kFloatMissing && vspd != kFloatMissing)
           {
             wspd = sqrt(uspd * uspd + vspd * vspd);
-            // Note: qengine already fixes U/V component orientation
             if (uspd != 0 || vspd != 0)
-              wdir = fmod(180 - *rot + 180 / pi * atan2(uspd, vspd), 360);
+            {
+              // Note: qengine fixes orientation automatically
+              wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+            }
           }
         }
       }
-    }
-    else
-    {
-      q->param(dirparam->number());
-      wdir = q->interpolate(point.latlon, met_time, 180);
-      if (speedparam)
+      else
       {
-        q->param(speedparam->number());
-        wspd = q->interpolate(point.latlon, met_time, 180);
+        q->param(dirparam->number());
+        wdir = q->interpolate(point.latlon, met_time, 180);
+        if (speedparam)
+        {
+          q->param(speedparam->number());
+          wspd = q->interpolate(point.latlon, met_time, 180);
+        }
       }
+
+      // Skip points with invalid values
+      if (wdir == kFloatMissing || wspd == kFloatMissing)
+        continue;
+
+      PointValue value{point, wdir, wspd};
+      pointvalues.push_back(value);
     }
 
-    // Skip points with invalid values
-    if (wdir == kFloatMissing || wspd == kFloatMissing)
-      continue;
-
-    PointValue value{point, wdir, wspd};
-    pointvalues.push_back(value);
+    return pointvalues;
   }
-
-  return pointvalues;
-}
-catch (...)
-{
-  throw Spine::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
-}
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
+  }
 }  // namespace Dali
 
 PointValues read_gridForecasts(const ArrowLayer& layer,
@@ -306,8 +307,18 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
 
           if (pos < dirValues->size())
           {
-            // Note: qengine already fixes U/V component orientation
-            wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+            wdir = (*dirValues)[pos];
+            if (speedValues)
+              wspeed = (*speedValues)[pos];
+            else
+              wspeed = 10;
+
+            if (wdir != ParamValueMissing && wspeed != ParamValueMissing)
+            {
+              PointValue value{point, wdir, wspeed};
+              pointvalues.push_back(value);
+              // printf("POS %d,%d  %f %f\n",point.x, point.y,point.latlon.X(), point.latlon.Y());
+            }
           }
         }
       }
@@ -1836,6 +1847,6 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
   }
 }
 
+}  // namespace Dali
 }  // namespace Plugin
-}  // namespace SmartMet
 }  // namespace SmartMet
