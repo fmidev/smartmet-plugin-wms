@@ -6,6 +6,7 @@
 
 #include <ctpp2/CDT.hpp>
 #include <spine/Exception.h>
+#include <grid-files/common/GeneralFunctions.h>
 
 namespace SmartMet
 {
@@ -74,8 +75,8 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     if (!x.empty() && !y.empty())
     {
-      double xx = atof(x.c_str());
-      double yy = atof(y.c_str());
+      double xx = toDouble(x.c_str());
+      double yy = toDouble(y.c_str());
       const auto& box = projection.getBox();
 
       if (xx < 0)
