@@ -387,7 +387,7 @@ void IsolineLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     const char* crsStr = query.mAttributeList.getAttributeValue("grid.crs");
 
-    if (projection.size && *projection.size > 0)
+    if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
     {
       const char* widthStr = query.mAttributeList.getAttributeValue("grid.width");
       const char* heightStr = query.mAttributeList.getAttributeValue("grid.height");

@@ -140,7 +140,7 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
     auto first = layers.begin();
     if ((*first).get() != nullptr  &&  (*first)->source  &&  *(*first)->source == "grid")
     {
-      if (*(*first)->projection.crs == "data")
+      if ((*first)->projection.crs && *(*first)->projection.crs == "data")
       {
         CTPP::CDT tmpGlobals(theGlobals);
         State tmpState(theState.getPlugin(),theState.getRequest());
