@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.11.22
+Version: 19.12.4
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -21,13 +21,13 @@ BuildRequires: smartmet-library-giza-devel >= 18.10.1
 BuildRequires: smartmet-library-macgyver-devel >= 19.9.26
 BuildRequires: smartmet-library-spine-devel >= 19.11.20
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
-BuildRequires: smartmet-library-grid-content-devel >= 19.11.22
-BuildRequires: smartmet-library-grid-files-devel >= 19.11.20
+BuildRequires: smartmet-library-grid-content-devel >= 19.12.4
+BuildRequires: smartmet-library-grid-files-devel >= 19.12.4
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 19.9.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 19.11.20
+BuildRequires: smartmet-engine-observation-devel >= 19.11.26
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 19.11.20
 BuildRequires: smartmet-engine-geonames-devel >= 19.11.14
@@ -49,8 +49,8 @@ Requires: libconfig
 Requires: smartmet-library-gis >= 19.9.26
 Requires: smartmet-library-macgyver >= 19.9.26
 Requires: smartmet-library-giza >= 18.10.1
-Requires: smartmet-library-grid-content >= 19.11.22
-Requires: smartmet-library-grid-files >= 19.11.20
+Requires: smartmet-library-grid-content >= 19.12.4
+Requires: smartmet-library-grid-files >= 19.12.4
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 19.9.26
 %endif
@@ -96,6 +96,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Dec  4 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.4-1.fmi
+- Added more error checks
+
 * Fri Nov 22 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.22-1.fmi
 - Repackaged due to API changes in grid-content library
 
