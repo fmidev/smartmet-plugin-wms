@@ -298,6 +298,11 @@ boost::shared_ptr<OGRSpatialReference> Projection::getCRS() const
   try
   {
     prepareCRS();
+
+    if (!ogr_crs)
+      throw Spine::Exception::Trace(BCP, "Projection creation failed!");
+
+
     return ogr_crs;
   }
   catch (...)

@@ -189,7 +189,15 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
 
     // Adding parameter information into the query.
 
-    std::string param = gridEngine->getParameterString(*theProducer, *parameter);
+    std::string pName = *parameter;
+    auto pos = pName.find(".raw");
+    if (pos != std::string::npos)
+    {
+      attributeList.addAttribute("areaInterpolationMethod",std::to_string(T::AreaInterpolationMethod::Linear));
+      pName.erase(pos,4);
+    }
+
+    std::string param = gridEngine->getParameterString(*producer, pName);
     attributeList.addAttribute("param", param);
 
     if (param == *parameter && query.mProducerNameList.size() == 0)

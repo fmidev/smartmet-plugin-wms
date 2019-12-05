@@ -1182,7 +1182,15 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     for (auto parameter = paramList.begin(); parameter != paramList.end(); ++parameter)
     {
-      std::string param = gridEngine->getParameterString(*producer, *parameter);
+      std::string pName = *parameter;
+      auto pos = pName.find(".raw");
+      if (pos != std::string::npos)
+      {
+        attributeList.addAttribute("areaInterpolationMethod",std::to_string(T::AreaInterpolationMethod::Linear));
+        pName.erase(pos,4);
+      }
+
+      std::string param = gridEngine->getParameterString(*producer, pName);
 
       if (!projection.projectionParameter)
         projection.projectionParameter = param;

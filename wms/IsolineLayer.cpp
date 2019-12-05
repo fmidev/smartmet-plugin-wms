@@ -254,7 +254,15 @@ void IsolineLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Adding parameter information into the query.
 
-    std::string param = gridEngine->getParameterString(*producer, *parameter);
+    std::string pName = *parameter;
+    auto pos = pName.find(".raw");
+    if (pos != std::string::npos)
+    {
+      attributeList.addAttribute("areaInterpolationMethod",std::to_string(T::AreaInterpolationMethod::Linear));
+      pName.erase(pos,4);
+    }
+
+    std::string param = gridEngine->getParameterString(*producer, pName);
     attributeList.addAttribute("param", param);
 
     if (!projection.projectionParameter)
