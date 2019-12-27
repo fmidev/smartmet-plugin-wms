@@ -8,6 +8,7 @@
 #include <spine/Convenience.h>
 #include <spine/Exception.h>
 #include <spine/ParameterFactory.h>
+#include <iomanip>
 #include <stdexcept>
 
 namespace SmartMet
@@ -542,24 +543,14 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
 
   try
   {
-    // Get the data projection
+    // Get the data projection (not owned)
+    auto* qcrs = theQ->SpatialReference();
 
-    auto qcrs = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err;
-    if (theQ->isArea())
-      err = qcrs->SetFromUserInput(theQ->area().ProjStr().c_str());
-    else
-      err = qcrs->SetFromUserInput("WGS84");
-
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP,
-                             "GDAL does not understand this projection: " + theQ->area().ProjStr());
-
-    // Create the coordinate transformation from image world coordinates
-    // to querydata world coordinates
+    // Create the coordinate transformation from querydata world coordinates
+    // to image world coordinates
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(theCRS.get(), qcrs.get()));
+        OGRCreateCoordinateTransformation(theCRS.get(), qcrs));
     if (transformation == nullptr)
       throw Spine::Exception(
           BCP, "Failed to create the needed coordinate transformation for generating positions!");
@@ -568,21 +559,19 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
 
     Points points;
 
-    auto shared_latlons = theQ->latLonCache();
-
-    for (const auto& latlon : *shared_latlons)
+    for (theQ->resetLocation(); theQ->nextLocation();)
     {
-      // Convert latlon to world coordinate
+      NFmiPoint latlon = theQ->latLon();
+      NFmiPoint worldxy = theQ->worldXY();
 
-      NFmiPoint xy;
-      if (theCRS->IsGeographic() != 0)
-        xy = latlon;
-      else
-        xy = theQ->area().LatLonToWorldXY(latlon);
+      // Date world coordinate to image world coordinate
+      double xcoord = worldxy.X();
+      double ycoord = worldxy.Y();
 
-      // World coordinate to pixel coordinate
-      double xcoord = xy.X();
-      double ycoord = xy.Y();
+      if (transformation->Transform(1, &xcoord, &ycoord) != 1)
+        continue;
+
+      // Image world coordinate to pixel coordinate
       theBox.transform(xcoord, ycoord);
 
       int deltax = 0;

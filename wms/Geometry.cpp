@@ -1,7 +1,7 @@
 #include "Geometry.h"
 #include <boost/move/make_unique.hpp>
-#include <gdal/ogr_spatialref.h>
 #include <spine/Exception.h>
+#include <ogr_spatialref.h>
 
 namespace SmartMet
 {
@@ -44,11 +44,9 @@ std::string name_geojson(const OGRGeometry& theGeom)
     case wkbGeometryCollection:
     case wkbGeometryCollection25D:
       return "GeometryCollection";
-    case wkbUnknown:
+    default:
       throw Spine::Exception(
           BCP, "Encountered an unknown geometry component when extracting geometry name");
-    case wkbNone:
-      throw Spine::Exception(BCP, "Encountered a 'none' geometry when extracting geometry name");
   }
 
   throw Spine::Exception(BCP, "Unknown geometry type when extracting geometry name");

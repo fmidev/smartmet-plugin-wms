@@ -23,6 +23,7 @@
 #include <newbase/NFmiQueryData.h>
 #include <newbase/NFmiQueryDataUtil.h>
 #include <newbase/NFmiTimeList.h>
+#include <spine/Convenience.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
@@ -172,7 +173,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     // Establish new projection and the required grid size of the desired resolution
 
     std::unique_ptr<NFmiArea> newarea(NFmiArea::CreateFromBBox(
-        *crs, NFmiPoint(box.xmin(), box.ymin()), NFmiPoint(box.xmax(), box.ymax())));
+        crs.get(), NFmiPoint(box.xmin(), box.ymin()), NFmiPoint(box.xmax(), box.ymax())));
 
     double datawidth = newarea->WorldXYWidth();  // in native units
     double dataheight = newarea->WorldXYHeight();

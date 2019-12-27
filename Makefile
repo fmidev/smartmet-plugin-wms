@@ -88,6 +88,7 @@ INCLUDES = -I$(includedir) \
 	-I$(includedir)/mysql \
 	-I$(includedir)/oracle/11.2/client64 \
 	-I$(includedir)/soci \
+	-I$(PREFIX)/gdal30/include \
 	`pkg-config --cflags librsvg-2.0` \
 	`pkg-config --cflags cairo` \
 	`pkg-config --cflags jsoncpp`

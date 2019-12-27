@@ -9,7 +9,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <engines/gis/Engine.h>
 #include <fmt/format.h>
-#include <gdal/ogr_spatialref.h>
+#include <ogr_spatialref.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
 #include <spine/Exception.h>

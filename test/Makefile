@@ -19,6 +19,7 @@ INCLUDES = \
 	-I/usr/include/mysql \
 	-I/usr/include/oracle/11.2/client64 \
 	-I/usr/include/soci \
+	-I/usr/gdal30/include \
 	`pkg-config --cflags libconfig++` \
 	`pkg-config --cflags jsoncpp`
 
@@ -35,7 +36,7 @@ LIBS = 	-lsmartmet-spine  \
 	-lboost_iostreams \
 	-lboost_serialization \
 	-lboost_system \
-	-lgdal \
+	-L/usr/gdal30/lib -lgdal \
 	-lfmt \
 	-lbz2 -lz -lpthread -ldl
 

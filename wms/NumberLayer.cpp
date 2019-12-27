@@ -11,6 +11,7 @@
 #include "State.h"
 #include "ValueTools.h"
 #include <engines/gis/Engine.h>
+#include <spine/Convenience.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
