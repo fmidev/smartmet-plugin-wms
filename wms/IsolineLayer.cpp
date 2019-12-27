@@ -154,6 +154,9 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     if (level)
     {
+      if (!q)
+        throw Spine::Exception(BCP, "Cannot generate isobands without gridded level data");
+
       bool match = false;
       for (q->resetLevel(); !match && q->nextLevel();)
         match = (q->levelValue() == *level);
@@ -176,6 +179,9 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     auto sampleresolution = sampling.getResolution(projection);
     if (sampleresolution)
     {
+      if (!q)
+        throw Spine::Exception(BCP, "Cannot resample without gridded data");
+
       auto demdata = theState.getGeoEngine().dem();
       auto landdata = theState.getGeoEngine().landCover();
       if (!demdata || !landdata)
@@ -195,25 +201,8 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
                     *landdata);
     }
 
-    // Update the globals
-
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
-
-    // Clip if necessary
-
-    addClipRect(theLayersCdt, theGlobals, box, theState);
-
-    // Generate isolines as use tags statements inside <g>..</g>
-
-    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
-    group_cdt["start"] = "<g";
-    group_cdt["end"] = "</g>";
-    // Add attributes to the group, not the isobands
-    theState.addAttributes(theGlobals, group_cdt, attributes);
+    if (!q)
+      throw Spine::Exception(BCP, "Cannot generate isobands without gridded data");
 
     // Logical operations with maps require shapes
 
@@ -297,6 +286,26 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs.get());
     std::vector<OGRGeometryPtr> geoms =
         contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), crs.get());
+
+    // Update the globals
+
+    if (css)
+    {
+      std::string name = theState.getCustomer() + "/" + *css;
+      theGlobals["css"][name] = theState.getStyle(*css);
+    }
+
+    // Clip if necessary
+
+    addClipRect(theLayersCdt, theGlobals, box, theState);
+
+    // Generate isolines as use tags statements inside <g>..</g>
+
+    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
+    group_cdt["start"] = "<g";
+    group_cdt["end"] = "</g>";
+    // Add attributes to the group, not the isobands
+    theState.addAttributes(theGlobals, group_cdt, attributes);
 
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
