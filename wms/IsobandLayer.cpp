@@ -359,6 +359,9 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     if (level)
     {
+      if (!q)
+        throw Spine::Exception(BCP, "Cannot generate isobands without gridded level data");
+
       bool match = false;
       for (q->resetLevel(); !match && q->nextLevel();)
         match = (q->levelValue() == *level);
@@ -380,6 +383,9 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     auto sampleresolution = sampling.getResolution(projection);
     if (sampleresolution)
     {
+      if (!q)
+        throw Spine::Exception(BCP, "Cannot resample without gridded data");
+
       if (heatmap.resolution)
         throw Spine::Exception(BCP, "Isoband-layer can't use both sampling and heatmap!");
 
@@ -412,6 +418,9 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     else if (theState.isObservation(producer))
       throw Spine::Exception(
           BCP, "Can't produce isobandlayer from observation data without heatmap configuration!");
+
+    if (!q)
+      throw Spine::Exception(BCP, "Cannot generate isobands without gridded data");
 
     // Logical operations with maps require shapes
 
