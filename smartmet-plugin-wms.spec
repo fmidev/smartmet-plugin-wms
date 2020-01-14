@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 19.12.27
+Version: 20.01.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Jan 14 2020 Anssi Reponen <anssi.reponen@fmi.fi> - 20.01.14-1.fmi
+- Support added for starttime/endtime parameters in GetCapabilities-request 
+in order to restrict valid time period in output document (BRAINSTORM-1744)
+
 * Fri Dec 27 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.27-1.fmi
 - Prevent crashes if sampling is requested for observations in isoband/isoline layers
 
@@ -101,8 +105,8 @@ rm -rf $RPM_BUILD_ROOT
 * Thu Oct 31 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.10.31-1.fmi
 - Rebuilt due to newbase API/ABI changes
 
-* Wed Oct 23 2019  Anssi Reponen <anssi.reponen@fmi.fi> - 19.10.23-1.fmi
-- If multiple layers is given in WMS LAYERS-option they are combined together (B
+* Wed Oct 23 2019 Anssi Reponen <anssi.reponen@fmi.fi> - 19.10.23-1.fmi
+- If multiple layers is given in WMS LAYERS-option they are combined together (BRAINSTORM-1059)
 
 * Tue Oct  8 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.10.8-1.fmi
 - Fixed arrow layer not to correct U/V components anymore, qengine handles it

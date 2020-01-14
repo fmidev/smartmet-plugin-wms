@@ -105,7 +105,9 @@ class WMSLayer
   boost::posix_time::ptime mostCurrentTime() const;
 
   // Empty for hidden layers
-  boost::optional<CTPP::CDT> generateGetCapabilities(const Engine::Gis::Engine& gisengine);
+  boost::optional<CTPP::CDT> generateGetCapabilities(const Engine::Gis::Engine& gisengine,
+                                                     const boost::optional<std::string>& starttime,
+                                                     const boost::optional<std::string>& endtime);
 
   // Update layer metadata for GetCapabilities (time,spatial dimensions)
   virtual void updateLayerMetaData() = 0;

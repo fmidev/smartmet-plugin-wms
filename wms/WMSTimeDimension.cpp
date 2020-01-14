@@ -1,6 +1,7 @@
 #include "WMSTimeDimension.h"
 #include <boost/algorithm/string/join.hpp>
 #include <macgyver/StringConversion.h>
+#include <macgyver/TimeParser.h>
 
 namespace SmartMet
 {
@@ -8,6 +9,17 @@ namespace Plugin
 {
 namespace WMS
 {
+namespace
+{
+boost::posix_time::ptime parse_time(const std::string& time_string)
+{
+  if (time_string == "now")
+    return boost::posix_time::second_clock::universal_time();
+
+  return Fmi::TimeParser::parse(time_string);
+}
+}  // namespace
+
 void WMSTimeDimension::addTimestep(const boost::posix_time::ptime& timestep)
 {
   try
@@ -117,7 +129,8 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
   }
 }
 
-std::string StepTimeDimension::getCapabilities() const
+std::string StepTimeDimension::getCapabilities(const boost::optional<std::string>& starttime,
+                                               const boost::optional<std::string>& endtime) const
 {
   try
   {
@@ -126,9 +139,17 @@ std::string StepTimeDimension::getCapabilities() const
     std::vector<std::string> ret;
     ret.reserve(itsTimesteps.size());
 
+    boost::posix_time::ptime startt =
+        (starttime ? parse_time(*starttime) : boost::posix_time::min_date_time);
+    boost::posix_time::ptime endt =
+        (endtime ? parse_time(*endtime) : boost::posix_time::max_date_time);
+
     for (auto& step : itsTimesteps)
     {
-      ret.push_back(Fmi::to_iso_extended_string(step) + "Z");
+      if (step >= startt && step <= endt)
+        ret.push_back(Fmi::to_iso_extended_string(step) + "Z");
+      if (step > endt)
+        break;
     }
 
     return boost::algorithm::join(ret, ", ");
@@ -161,14 +182,53 @@ IntervalTimeDimension::tag_interval IntervalTimeDimension::getInterval() const
   return itsInterval;
 }
 
-std::string IntervalTimeDimension::getCapabilities() const
+std::string IntervalTimeDimension::getCapabilities(
+    const boost::optional<std::string>& starttime,
+    const boost::optional<std::string>& endtime) const
 {
   try
   {
+    if ((starttime && endtime) && parse_time(*starttime) > parse_time(*endtime))
+      throw Spine::Exception::Trace(BCP,
+                                    "Requested starttime must be earlier than requested endtime!");
+
+    boost::posix_time::ptime startt = itsInterval.startTime;
+    boost::posix_time::ptime endt = itsInterval.endTime;
+    boost::posix_time::ptime requested_startt =
+        (starttime ? parse_time(*starttime) : itsInterval.startTime);
+    boost::posix_time::ptime requested_endt =
+        (endtime ? parse_time(*endtime) : itsInterval.endTime);
+
+    if (requested_startt > endt || requested_endt < startt)
+      return "";
+
+    if (startt < requested_startt)
+    {
+      startt = boost::posix_time::ptime(requested_startt.date(), startt.time_of_day());
+      boost::posix_time::time_duration resolution =
+          (itsInterval.resolution.total_seconds() == 0 ? boost::posix_time::minutes(1)
+                                                       : itsInterval.resolution);
+      if (startt < requested_startt)
+      {
+        while (startt < requested_startt)
+          startt += resolution;
+      }
+      else if (startt > requested_startt)
+      {
+        while (startt - resolution >= requested_startt)
+          startt -= resolution;
+      }
+    }
+
+    if (requested_endt < endt)
+    {
+      endt = requested_endt;
+    }
+
     std::ostringstream os;
 
-    os << Fmi::to_iso_extended_string(itsInterval.startTime) << "Z/"
-       << Fmi::to_iso_extended_string(itsInterval.endTime) << "Z/PT";
+    os << Fmi::to_iso_extended_string(startt) << "Z/" << Fmi::to_iso_extended_string(endt)
+       << "Z/PT";
     if (itsInterval.resolution.hours() == 0 && itsInterval.resolution.minutes() <= 60)
       os << itsInterval.resolution.minutes() << "M";
     else
