@@ -122,7 +122,10 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     try
     {
       auto wms_namespace = theRequest.getParameter("namespace");
-      configuredLayers = theConfig.getCapabilities(apikey, wms_namespace);
+      auto starttime = theRequest.getParameter("starttime");
+      auto endtime = theRequest.getParameter("endtime");
+
+      configuredLayers = theConfig.getCapabilities(apikey, starttime, endtime, wms_namespace);
     }
     catch (...)
     {
