@@ -1357,7 +1357,10 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
   }
 }
 
-boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::Engine& gisengine)
+boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
+    const Engine::Gis::Engine& gisengine,
+    const boost::optional<std::string>& starttime,
+    const boost::optional<std::string>& endtime)
 {
   try
   {
@@ -1509,7 +1512,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(const Engine::Gis::
       layer_dimension["nearest_value"] = 0;
       layer_dimension["current"] = (timeDimension->currentValue() ? 1 : 0);
 
-      layer_dimension["value"] = timeDimension->getCapabilities();  // a string
+      layer_dimension["value"] = timeDimension->getCapabilities(starttime, endtime);  // a string
       layer_dimension_list.PushBack(layer_dimension);
       layer["dimension"] = layer_dimension_list;
     }

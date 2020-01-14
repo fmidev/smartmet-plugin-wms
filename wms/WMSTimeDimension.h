@@ -12,6 +12,7 @@
 #pragma once
 
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/optional.hpp>
 #include <spine/Exception.h>
 
 #include <list>
@@ -38,7 +39,8 @@ class WMSTimeDimension
 
   std::set<boost::posix_time::ptime> getTimeSteps() const;
 
-  virtual std::string getCapabilities() const = 0;
+  virtual std::string getCapabilities(const boost::optional<std::string>& starttime,
+                                      const boost::optional<std::string>& endtime) const = 0;
 
   bool currentValue() { return current; }
 
@@ -53,7 +55,8 @@ class StepTimeDimension : public WMSTimeDimension
   virtual ~StepTimeDimension() = default;
   StepTimeDimension() = default;
 
-  virtual std::string getCapabilities() const;
+  virtual std::string getCapabilities(const boost::optional<std::string>& starttime,
+                                      const boost::optional<std::string>& endtime) const;
 };
 
 class IntervalTimeDimension : public WMSTimeDimension
@@ -62,7 +65,6 @@ class IntervalTimeDimension : public WMSTimeDimension
   {
     boost::posix_time::ptime startTime = boost::posix_time::not_a_date_time;
     boost::posix_time::ptime endTime = boost::posix_time::not_a_date_time;
-    ;
     boost::posix_time::time_duration resolution = boost::posix_time::minutes(1);
     tag_interval(const boost::posix_time::ptime& start,
                  const boost::posix_time::ptime& end,
@@ -80,7 +82,8 @@ class IntervalTimeDimension : public WMSTimeDimension
 
   tag_interval getInterval() const;
 
-  virtual std::string getCapabilities() const;
+  virtual std::string getCapabilities(const boost::optional<std::string>& starttime,
+                                      const boost::optional<std::string>& endtime) const;
   virtual boost::posix_time::ptime mostCurrentTime() const;
   virtual bool isValidTime(const boost::posix_time::ptime& theTime) const;
 
