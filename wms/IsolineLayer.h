@@ -50,6 +50,9 @@ class IsolineLayer : public Layer
   Sampling sampling;
   Intersections intersections;
 
+ protected:
+  std::vector<OGRGeometryPtr> getIsolines(const std::vector<double> isovalues, State& theState);
+
  private:
 };  // class IsolineLayer
 
