@@ -226,7 +226,7 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
         const auto crad = cos(radians);
         auto transform = fmt::format("translate({} {}) rotate({})",
                                      std::round(point.x + label.dx * crad + label.dy * srad),
-                                     std::round(point.y - label.dx * srad + label.dy * crad),
+                                     std::round(point.y + label.dx * srad - label.dy * crad),
                                      std::round(point.angle));
         text_cdt["attributes"]["transform"] = transform;
 
