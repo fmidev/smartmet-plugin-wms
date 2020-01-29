@@ -18,6 +18,7 @@
 #include <gis/OGR.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
+#include <limits>
 
 namespace SmartMet
 {
@@ -212,6 +213,9 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
       for (const auto& point : points)
       {
+        if (std::isnan(point.angle))
+          continue;
+
         CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
         text_cdt["start"] = "<text";
         text_cdt["end"] = "</text>";
@@ -463,7 +467,11 @@ void IsolabelLayer::fix_orientation(std::vector<CandidateList>& candidates,
 
       box.itransform(x, y);  // world xy coordinate in image crs
 
-      if (transformation->Transform(1, &x, &y) == 1)
+      if (transformation->Transform(1, &x, &y) == 0)
+      {
+        candidate.angle = std::numeric_limits<double>::quiet_NaN();
+      }
+      else
       {
         // Must convert to native geocentric coordinates since the API does not support WorldXY
         // interpolation
@@ -482,6 +490,8 @@ void IsolabelLayer::fix_orientation(std::vector<CandidateList>& candidates,
           tmp = *boost::get<double>(&result);
         else if (boost::get<int>(&result) != nullptr)
           tmp = *boost::get<int>(&result);
+        else
+          candidate.angle = std::numeric_limits<double>::quiet_NaN();
 
         if (tmp < isovalue)
         {
