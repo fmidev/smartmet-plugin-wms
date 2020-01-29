@@ -48,6 +48,8 @@ class Label
   std::string plusprefix = "";   // for numbers >= 0
   std::string minusprefix = "";  // for numbers < 0
 
+  std::string orientation = "horizontal";  // vertical, auto, gradient
+
   void setLocale(const std::string& theLocale);
   // shared because otherwise the compiler would force definitions for all constructors
   boost::shared_ptr<std::ostringstream> formatter{new std::ostringstream};

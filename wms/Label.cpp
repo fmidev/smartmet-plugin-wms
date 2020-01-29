@@ -132,6 +132,13 @@ void Label::init(const Json::Value& theJson, const Config& theConfig)
         plusprefix = json.asString();
       else if (name == "minusprefix")
         minusprefix = json.asString();
+      else if (name == "orientation")
+      {
+        orientation = json.asString();
+        if (orientation != "horizontal" && orientation != "vertical" && orientation != "auto" &&
+            orientation != "gradient")
+          throw Spine::Exception(BCP, "Unknown label orientation '" + orientation + "'");
+      }
       else
         throw Spine::Exception(BCP, "Unknown setting '" + name + "'!");
     }
@@ -171,6 +178,7 @@ std::size_t Label::hash_value(const State& /* theState */) const
     Dali::hash_combine(hash, Dali::hash_value(suffix));
     Dali::hash_combine(hash, Dali::hash_value(plusprefix));
     Dali::hash_combine(hash, Dali::hash_value(minusprefix));
+    Dali::hash_combine(hash, Dali::hash_value(orientation));
     return hash;
   }
   catch (...)

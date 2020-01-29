@@ -126,8 +126,8 @@ void IsolineLayer::init(const Json::Value& theJson,
 std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> isovalues,
                                                       State& theState)
 {
-  // Establish the data
-  auto q = getModel(theState);
+  // Establish the data. Store to member variable for IsolabelLayer use
+  q = getModel(theState);
 
   if (q && !(q->isGrid()))
     throw Spine::Exception(BCP, "Isoline-layer can't use point data!");
