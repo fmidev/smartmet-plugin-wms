@@ -46,7 +46,7 @@ class IsolabelLayer : public IsolineLayer
   Label label;
 
   std::vector<double> angles{0, -45, 45, 180};  // rotate isolines to find directed extrema
-  bool upright = true;                          // force labels to be upright
+  bool upright = false;                         // force labels to be upright
   double max_angle = 60;                        // and never rotate more than +-60 degrees
 
   double min_distance_other = 10;   // min dist (px) to already selected labels for other isovalues
@@ -57,6 +57,8 @@ class IsolabelLayer : public IsolineLayer
   double max_distance_edge = 9999;  // max dist (px) to image edge
 
   double max_curvature = 90;  // max total curvature change
+
+  int stencil_size = 5;  // for curvature and extrema analysis
 
   std::vector<double> isovalues;  // generated from isolines, isobands and isovalues settings
 

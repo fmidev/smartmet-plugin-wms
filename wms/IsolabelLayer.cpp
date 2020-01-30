@@ -70,6 +70,10 @@ void IsolabelLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       max_curvature = json.asDouble();
 
+    json = theJson.get("stencil_size", nulljson);
+    if (!json.isNull())
+      stencil_size = json.asInt();
+
     json = theJson.get("isobands", nulljson);
     if (!json.isNull())
     {
@@ -270,23 +274,24 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
 // ----------------------------------------------------------------------
 
-std::vector<std::size_t> find_max_positions(const std::vector<double>& values, bool is_closed)
+std::vector<std::size_t> find_max_positions(const std::vector<double>& values,
+                                            bool is_closed,
+                                            int stencil_size)
 {
   std::vector<std::size_t> positions;
 
   const auto n = values.size();
 
-  // Find positions which look like local minima over +-5 points
-  const int minlen = 5;
+  // Find positions which look like local minima over +-5 stencil_size points
 
-  const int startpos = (is_closed ? 0 : minlen);
-  const int endpos = (is_closed ? n - 1 : n - 1 - minlen);
+  const int startpos = (is_closed ? 0 : stencil_size);
+  const int endpos = (is_closed ? n - 1 : n - 1 - stencil_size);
 
   // Note that i%n would not work as intended below for negative i, hence +n
   for (int pos = startpos; pos <= endpos; ++pos)
   {
     bool ok = true;
-    for (int i = 1; ok && i <= minlen; ++i)
+    for (int i = 1; ok && i <= stencil_size; ++i)
     {
       const auto prev = (pos - i + n) % n;
       const auto next = (pos + i + n) % n;
@@ -301,14 +306,12 @@ std::vector<std::size_t> find_max_positions(const std::vector<double>& values, b
 
 // ----------------------------------------------------------------------
 
-double curvature(const OGRLineString* geom, int pos)
+double curvature(const OGRLineString* geom, int pos, int stencil_size)
 {
-  const int minlen = 5;  // measure over +-5 points
-
   const auto n = geom->getNumPoints();
 
-  const auto minpos = (pos < minlen ? 0 : pos - minlen);
-  const auto maxpos = (pos > n - minlen - 1 ? n - 1 : pos + minlen);
+  const auto minpos = (pos < stencil_size ? 0 : pos - stencil_size);
+  const auto maxpos = (pos > n - stencil_size - 1 ? n - 1 : pos + stencil_size);
 
   // Cannot estimate unless we have at least a triangle
   if (maxpos - minpos < 3)
@@ -343,6 +346,7 @@ double curvature(const OGRLineString* geom, int pos)
 void get_linestring_points(CandidateList& candidates,
                            double sine,
                            double cosine,
+                           int stencil_size,
                            const OGRLineString* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
@@ -356,7 +360,7 @@ void get_linestring_points(CandidateList& candidates,
 
   const bool is_closed = (geom->getX(0) == geom->getX(n - 1) && geom->getY(0) == geom->getY(n - 1));
 
-  auto positions = find_max_positions(ycoords, is_closed);
+  auto positions = find_max_positions(ycoords, is_closed, stencil_size);
 
   for (const auto pos : positions)
   {
@@ -372,7 +376,7 @@ void get_linestring_points(CandidateList& candidates,
     auto angle = 0.5 * (atan2(y3 - y2, x3 - x2) + atan2(y2 - y1, x2 - x1));
     angle *= 180 / M_PI;
 
-    auto curv = curvature(geom, pos);
+    auto curv = curvature(geom, pos, stencil_size);
 
     candidates.emplace_back(Candidate{x2, y2, angle, curv});
   }
@@ -381,6 +385,7 @@ void get_linestring_points(CandidateList& candidates,
 void get_linearring_points(CandidateList& candidates,
                            double sine,
                            double cosine,
+                           int stencil_size,
                            const OGRLinearRing* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
@@ -394,7 +399,7 @@ void get_linearring_points(CandidateList& candidates,
 
   const auto is_closed = true;
 
-  auto positions = find_max_positions(ycoords, is_closed);
+  auto positions = find_max_positions(ycoords, is_closed, stencil_size);
 
   for (const auto pos : positions)
   {
@@ -410,60 +415,75 @@ void get_linearring_points(CandidateList& candidates,
     auto angle = 0.5 * (atan2(y3 - y2, x3 - x2) + atan2(y2 - y1, x2 - x1));
     angle *= 180 / M_PI;
 
-    auto curv = curvature(geom, pos);
+    auto curv = curvature(geom, pos, stencil_size);
 
     candidates.emplace_back(Candidate{x2, y2, angle, curv});
   }
 }
 
-void get_polygon_points(CandidateList& candidates,
-                        double sine,
-                        double cosine,
-                        const OGRPolygon* geom)
+void get_polygon_points(
+    CandidateList& candidates, double sine, double cosine, int stencil_size, const OGRPolygon* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
-  get_linearring_points(candidates, cosine, sine, geom->getExteriorRing());
+  get_linearring_points(candidates, sine, cosine, stencil_size, geom->getExteriorRing());
 }
 
 void get_multilinestring_points(CandidateList& candidates,
                                 double sine,
                                 double cosine,
+                                int stencil_size,
                                 const OGRMultiLineString* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
   for (int i = 0, n = geom->getNumGeometries(); i < n; ++i)
-    get_linestring_points(
-        candidates, sine, cosine, dynamic_cast<const OGRLineString*>(geom->getGeometryRef(i)));
+    get_linestring_points(candidates,
+                          sine,
+                          cosine,
+                          stencil_size,
+                          dynamic_cast<const OGRLineString*>(geom->getGeometryRef(i)));
 }
 
 void get_multipolygon_points(CandidateList& candidates,
                              double sine,
                              double cosine,
+                             int stencil_size,
                              const OGRMultiPolygon* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
   for (int i = 0, n = geom->getNumGeometries(); i < n; ++i)
-    get_polygon_points(
-        candidates, sine, cosine, dynamic_cast<const OGRPolygon*>(geom->getGeometryRef(i)));
+    get_polygon_points(candidates,
+                       sine,
+                       cosine,
+                       stencil_size,
+                       dynamic_cast<const OGRPolygon*>(geom->getGeometryRef(i)));
 }
 
-void get_points(CandidateList& candidates, double sine, double cosine, const OGRGeometry* geom);
+void get_points(CandidateList& candidates,
+                double sine,
+                double cosine,
+                int stencil_size,
+                const OGRGeometry* geom);
 
 void get_geometrycollection_points(CandidateList& candidates,
                                    double sine,
                                    double cosine,
+                                   int stencil_size,
                                    const OGRGeometryCollection* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
   for (int i = 0, n = geom->getNumGeometries(); i < n; ++i)
-    get_points(candidates, sine, cosine, geom->getGeometryRef(i));
+    get_points(candidates, sine, cosine, stencil_size, geom->getGeometryRef(i));
 }
 
-void get_points(CandidateList& candidates, double sine, double cosine, const OGRGeometry* geom)
+void get_points(CandidateList& candidates,
+                double sine,
+                double cosine,
+                int stencil_size,
+                const OGRGeometry* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
@@ -473,21 +493,22 @@ void get_points(CandidateList& candidates, double sine, double cosine, const OGR
   {
     case wkbLineString:
       return get_linestring_points(
-          candidates, sine, cosine, dynamic_cast<const OGRLineString*>(geom));
+          candidates, sine, cosine, stencil_size, dynamic_cast<const OGRLineString*>(geom));
     case wkbLinearRing:
       return get_linearring_points(
-          candidates, sine, cosine, dynamic_cast<const OGRLinearRing*>(geom));
+          candidates, sine, cosine, stencil_size, dynamic_cast<const OGRLinearRing*>(geom));
     case wkbPolygon:
-      return get_polygon_points(candidates, sine, cosine, dynamic_cast<const OGRPolygon*>(geom));
+      return get_polygon_points(
+          candidates, sine, cosine, stencil_size, dynamic_cast<const OGRPolygon*>(geom));
     case wkbMultiLineString:
       return get_multilinestring_points(
-          candidates, sine, cosine, dynamic_cast<const OGRMultiLineString*>(geom));
+          candidates, sine, cosine, stencil_size, dynamic_cast<const OGRMultiLineString*>(geom));
     case wkbMultiPolygon:
       return get_multipolygon_points(
-          candidates, sine, cosine, dynamic_cast<const OGRMultiPolygon*>(geom));
+          candidates, sine, cosine, stencil_size, dynamic_cast<const OGRMultiPolygon*>(geom));
     case wkbGeometryCollection:
       return get_geometrycollection_points(
-          candidates, sine, cosine, dynamic_cast<const OGRGeometryCollection*>(geom));
+          candidates, sine, cosine, stencil_size, dynamic_cast<const OGRGeometryCollection*>(geom));
     default:
       break;
   }
@@ -521,7 +542,7 @@ std::vector<CandidateList> IsolabelLayer::find_candidates(const std::vector<OGRG
         const auto cosine = cos(radians);
         const auto sine = sin(radians);
 
-        get_points(candidates, sine, cosine, geom.get());
+        get_points(candidates, sine, cosine, stencil_size, geom.get());
       }
     }
 
@@ -707,6 +728,7 @@ std::size_t IsolabelLayer::hash_value(const State& theState) const
     Dali::hash_combine(hash, min_distance_edge);
     Dali::hash_combine(hash, max_distance_edge);
     Dali::hash_combine(hash, max_curvature);
+    Dali::hash_combine(hash, stencil_size);
     Dali::hash_combine(hash, Dali::hash_value(isovalues));
     return hash;
   }
