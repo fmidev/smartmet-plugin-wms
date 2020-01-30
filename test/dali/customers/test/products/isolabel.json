@@ -1,0 +1,83 @@
+{
+    "title": "Demo product",
+    "producer": "pal_skandinavia",
+    "language": "fi",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "defs":
+    {
+	"styles":
+	{
+	    ".Label":
+	    {
+		"font": "Arial",
+		"font-size": 10,
+		"text-anchor": "middle"
+	    }
+	}
+    },
+    "views": [
+        {
+	    "qid": "v",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers":
+	    [
+                {
+                    "qid": "b",
+                    "layer_type": "background",
+                    "attributes":
+                    {
+                        "fill": "white"
+                    }
+                },
+		{
+		    "qid": "m",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"minarea": 100
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country_lines",
+			"fill": "none",
+			"stroke": "#222",
+			"stroke-width": "0.3px"
+		    }
+		},
+		{
+		    "qid": "i",
+		    "layer_type": "isoline",
+		    "isolines": "json:isolines/pressure.json",
+		    "css": "isolines/pressure.css",
+		    "parameter": "Pressure",
+		    "precision": 0.1,
+		    "attributes":
+		    {
+			"id": "pressure_isolines",
+			"class": "Pressure"
+		    }
+		},
+		{
+		    "qid": "l",
+		    "layer_type": "isolabel",
+		    "isolines": "json:isolines/pressure.json",
+		    "parameter": "Pressure",
+		    "attributes":
+		    {
+			"class": "Label"
+		    }
+		}
+	    ]
+	}
+    ]
+}
