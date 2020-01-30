@@ -6,6 +6,11 @@
 #include <list>
 #include <vector>
 
+namespace Fmi
+{
+class Box;
+}
+
 namespace SmartMet
 {
 namespace Plugin
@@ -20,7 +25,8 @@ struct Candidate
 {
   double x;
   double y;
-  double angle;  // radians
+  double angle;      // degrees
+  double curvature;  // total change in degrees along path, not "circle" curvature
 };
 
 using CandidateList = std::list<Candidate>;
@@ -39,21 +45,25 @@ class IsolabelLayer : public IsolineLayer
 
   Label label;
 
-  std::vector<double> angles{0, -45, 45};  // rotate isolines to find directed extrema
-  int max_total_count = 100;               // max total number of labels
-  double min_distance_other = 10;  // min dist to already selected labels for other isovalues in px
-  double min_distance_self = 50;  // min dist to already selected labels for the same isovalue in px
-  double min_distance_edge = 20;  // min dist image edge in px
-  double max_distance_edge = 9999;  // max dist to image edge in px
-  double max_curvature = 30;        // max total curvature change
-  double curvature_length = 15;     // measure curvature change over +- 15 pixels
+  std::vector<double> angles{0, -45, 45, 180};  // rotate isolines to find directed extrema
+  bool upright = true;                          // force labels to be upright
+  double max_angle = 60;                        // and never rotate more than +-60 degrees
+
+  double min_distance_other = 10;   // min dist (px) to already selected labels for other isovalues
+  double max_distance_other = 100;  // max distance (px) to labels for other isovalues
+  double min_distance_self = 50;  // min dist (px) to already selected labels for the same isovalue
+
+  double min_distance_edge = 10;    // min dist (px) to image edge
+  double max_distance_edge = 9999;  // max dist (px) to image edge
+
+  double max_curvature = 90;  // max total curvature change
 
   std::vector<double> isovalues;  // generated from isolines, isobands and isovalues settings
 
  private:
   std::vector<CandidateList> find_candidates(const std::vector<OGRGeometryPtr>& geoms);
-  std::vector<CandidateList> select_best_candidates(
-      const std::vector<CandidateList>& candidates) const;
+  std::vector<CandidateList> select_best_candidates(const std::vector<CandidateList>& candidates,
+                                                    const Fmi::Box& box) const;
   void fix_orientation(std::vector<CandidateList>& candidates,
                        const Fmi::Box& box,
                        OGRSpatialReference& crs) const;

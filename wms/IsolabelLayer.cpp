@@ -50,6 +50,26 @@ void IsolabelLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       label.init(json, theConfig);
 
+    json = theJson.get("upright", nulljson);
+    if (!json.isNull())
+      upright = json.asBool();
+
+    json = theJson.get("max_angle", nulljson);
+    if (!json.isNull())
+      max_angle = json.asDouble();
+
+    json = theJson.get("min_distance_edge", nulljson);
+    if (!json.isNull())
+      min_distance_edge = json.asDouble();
+
+    json = theJson.get("max_distance_edge", nulljson);
+    if (!json.isNull())
+      max_distance_edge = json.asDouble();
+
+    json = theJson.get("max_curvature", nulljson);
+    if (!json.isNull())
+      max_curvature = json.asDouble();
+
     json = theJson.get("isobands", nulljson);
     if (!json.isNull())
     {
@@ -160,11 +180,11 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     // Select the actual label locations from the candidates
 
-    candidates = select_best_candidates(candidates);
+    candidates = select_best_candidates(candidates, box);
 
     // Fix the label orientations so numbers indicate in which direction the values increase.
     // In practise we just rotate the numbers 180 degrees if they seem to point to the wrong
-    // direction.
+    // direction, and then also apply "upright" condition if so requested.
 
     if (label.orientation == "auto")
       fix_orientation(candidates, box, *crs);
@@ -250,86 +270,200 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
 // ----------------------------------------------------------------------
 
-void get_linestring_points(CandidateList& candidates, const OGRLineString* geom)
+std::vector<std::size_t> find_max_positions(const std::vector<double>& values, bool is_closed)
+{
+  std::vector<std::size_t> positions;
+
+  const auto n = values.size();
+
+  // Find positions which look like local minima over +-5 points
+  const int minlen = 5;
+
+  const int startpos = (is_closed ? 0 : minlen);
+  const int endpos = (is_closed ? n - 1 : n - 1 - minlen);
+
+  // Note that i%n would not work as intended below for negative i, hence +n
+  for (int pos = startpos; pos <= endpos; ++pos)
+  {
+    bool ok = true;
+    for (int i = 1; ok && i <= minlen; ++i)
+    {
+      const auto prev = (pos - i + n) % n;
+      const auto next = (pos + i + n) % n;
+      ok = (values[pos] < values[prev] && values[pos] < values[next]);
+    }
+    if (ok)
+      positions.push_back(pos);
+  }
+
+  return positions;
+}
+
+// ----------------------------------------------------------------------
+
+double curvature(const OGRLineString* geom, int pos)
+{
+  const int minlen = 5;  // measure over +-5 points
+
+  const auto n = geom->getNumPoints();
+
+  const auto minpos = (pos < minlen ? 0 : pos - minlen);
+  const auto maxpos = (pos > n - minlen - 1 ? n - 1 : pos + minlen);
+
+  // Cannot estimate unless we have at least a triangle
+  if (maxpos - minpos < 3)
+    return 999;
+
+  double last_angle = 0;
+  double sum = 0;
+
+  for (int i = minpos; i <= maxpos - 1; ++i)
+  {
+    double angle =
+        180 / M_PI * atan2(geom->getY(i + 1) - geom->getY(i), geom->getX(i + 1) - geom->getX(i));
+
+    if (i > minpos)
+    {
+      // Add turn angle along the shortest route
+      auto diff = angle - last_angle;
+      if (diff < -180)
+        diff += 360;
+      else if (diff > 180)
+        diff -= 360;
+      sum += std::abs(diff);
+      last_angle = angle;
+    }
+
+    last_angle = angle;
+  }
+
+  return sum;
+}
+
+void get_linestring_points(CandidateList& candidates,
+                           double sine,
+                           double cosine,
+                           const OGRLineString* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
 
-  for (int i = 5, n = geom->getNumPoints(); i < n - 1; i += 20)
+  // Gather rotated coordinates
+  std::vector<double> ycoords;
+  const auto n = geom->getNumPoints();
+  for (int i = 0; i < n; ++i)
+    ycoords.push_back(sine * geom->getX(i) + cosine * geom->getY(i));
+
+  const bool is_closed = (geom->getX(0) == geom->getX(n - 1) && geom->getY(0) == geom->getY(n - 1));
+
+  auto positions = find_max_positions(ycoords, is_closed);
+
+  for (const auto pos : positions)
   {
-    double x2 = geom->getX(i);
-    double y2 = geom->getY(i);
+    double x2 = geom->getX(pos);
+    double y2 = geom->getY(pos);
 
-    double x1 = geom->getX(i - 1);
-    double y1 = geom->getY(i - 1);
+    double x1 = geom->getX((pos - 1) % n);
+    double y1 = geom->getY((pos - 1) % n);
 
-    double x3 = geom->getX(i + 1);
-    double y3 = geom->getY(i + 1);
+    double x3 = geom->getX((pos + 1) % n);
+    double y3 = geom->getY((pos + 1) % n);
 
     auto angle = 0.5 * (atan2(y3 - y2, x3 - x2) + atan2(y2 - y1, x2 - x1));
     angle *= 180 / M_PI;
 
-    candidates.emplace_back(Candidate{x2, y2, angle});
+    auto curv = curvature(geom, pos);
+
+    candidates.emplace_back(Candidate{x2, y2, angle, curv});
   }
 }
 
-void get_linearring_points(CandidateList& candidates, const OGRLinearRing* geom)
+void get_linearring_points(CandidateList& candidates,
+                           double sine,
+                           double cosine,
+                           const OGRLinearRing* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
 
-  for (int i = 5, n = geom->getNumPoints(); i < n - 1; i += 20)
+  // Gather rotated coordinates
+  std::vector<double> ycoords;
+  const auto n = geom->getNumPoints();
+  for (int i = 0; i < n; ++i)
+    ycoords.push_back(sine * geom->getX(i) + cosine * geom->getY(i));
+
+  const auto is_closed = true;
+
+  auto positions = find_max_positions(ycoords, is_closed);
+
+  for (const auto pos : positions)
   {
-    double x2 = geom->getX(i);
-    double y2 = geom->getY(i);
+    double x2 = geom->getX(pos);
+    double y2 = geom->getY(pos);
 
-    double x1 = geom->getX(i - 1);
-    double y1 = geom->getY(i - 1);
+    double x1 = geom->getX((pos - 1) % n);
+    double y1 = geom->getY((pos - 1) % n);
 
-    double x3 = geom->getX(i + 1);
-    double y3 = geom->getY(i + 1);
+    double x3 = geom->getX((pos + 1) % n);
+    double y3 = geom->getY((pos + 1) % n);
 
     auto angle = 0.5 * (atan2(y3 - y2, x3 - x2) + atan2(y2 - y1, x2 - x1));
     angle *= 180 / M_PI;
 
-    candidates.emplace_back(Candidate{x2, y2, angle});
+    auto curv = curvature(geom, pos);
+
+    candidates.emplace_back(Candidate{x2, y2, angle, curv});
   }
 }
 
-void get_polygon_points(CandidateList& candidates, const OGRPolygon* geom)
+void get_polygon_points(CandidateList& candidates,
+                        double sine,
+                        double cosine,
+                        const OGRPolygon* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
-  get_linearring_points(candidates, geom->getExteriorRing());
+  get_linearring_points(candidates, cosine, sine, geom->getExteriorRing());
 }
 
-void get_multilinestring_points(CandidateList& candidates, const OGRMultiLineString* geom)
-{
-  if (geom == nullptr || geom->IsEmpty() != 0)
-    return;
-  for (int i = 0, n = geom->getNumGeometries(); i < n; ++i)
-    get_linestring_points(candidates, dynamic_cast<const OGRLineString*>(geom->getGeometryRef(i)));
-}
-
-void get_multipolygon_points(CandidateList& candidates, const OGRMultiPolygon* geom)
-{
-  if (geom == nullptr || geom->IsEmpty() != 0)
-    return;
-  for (int i = 0, n = geom->getNumGeometries(); i < n; ++i)
-    get_polygon_points(candidates, dynamic_cast<const OGRPolygon*>(geom->getGeometryRef(i)));
-}
-
-void get_points(CandidateList& candidates, const OGRGeometry* geom);
-
-void get_geometrycollection_points(CandidateList& candidates, const OGRGeometryCollection* geom)
+void get_multilinestring_points(CandidateList& candidates,
+                                double sine,
+                                double cosine,
+                                const OGRMultiLineString* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
   for (int i = 0, n = geom->getNumGeometries(); i < n; ++i)
-    get_points(candidates, geom->getGeometryRef(i));
+    get_linestring_points(
+        candidates, sine, cosine, dynamic_cast<const OGRLineString*>(geom->getGeometryRef(i)));
 }
 
-void get_points(CandidateList& candidates, const OGRGeometry* geom)
+void get_multipolygon_points(CandidateList& candidates,
+                             double sine,
+                             double cosine,
+                             const OGRMultiPolygon* geom)
+{
+  if (geom == nullptr || geom->IsEmpty() != 0)
+    return;
+  for (int i = 0, n = geom->getNumGeometries(); i < n; ++i)
+    get_polygon_points(
+        candidates, sine, cosine, dynamic_cast<const OGRPolygon*>(geom->getGeometryRef(i)));
+}
+
+void get_points(CandidateList& candidates, double sine, double cosine, const OGRGeometry* geom);
+
+void get_geometrycollection_points(CandidateList& candidates,
+                                   double sine,
+                                   double cosine,
+                                   const OGRGeometryCollection* geom)
+{
+  if (geom == nullptr || geom->IsEmpty() != 0)
+    return;
+  for (int i = 0, n = geom->getNumGeometries(); i < n; ++i)
+    get_points(candidates, sine, cosine, geom->getGeometryRef(i));
+}
+
+void get_points(CandidateList& candidates, double sine, double cosine, const OGRGeometry* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
@@ -338,18 +472,22 @@ void get_points(CandidateList& candidates, const OGRGeometry* geom)
   switch (id)
   {
     case wkbLineString:
-      return get_linestring_points(candidates, dynamic_cast<const OGRLineString*>(geom));
+      return get_linestring_points(
+          candidates, sine, cosine, dynamic_cast<const OGRLineString*>(geom));
     case wkbLinearRing:
-      return get_linearring_points(candidates, dynamic_cast<const OGRLinearRing*>(geom));
+      return get_linearring_points(
+          candidates, sine, cosine, dynamic_cast<const OGRLinearRing*>(geom));
     case wkbPolygon:
-      return get_polygon_points(candidates, dynamic_cast<const OGRPolygon*>(geom));
+      return get_polygon_points(candidates, sine, cosine, dynamic_cast<const OGRPolygon*>(geom));
     case wkbMultiLineString:
-      return get_multilinestring_points(candidates, dynamic_cast<const OGRMultiLineString*>(geom));
+      return get_multilinestring_points(
+          candidates, sine, cosine, dynamic_cast<const OGRMultiLineString*>(geom));
     case wkbMultiPolygon:
-      return get_multipolygon_points(candidates, dynamic_cast<const OGRMultiPolygon*>(geom));
+      return get_multipolygon_points(
+          candidates, sine, cosine, dynamic_cast<const OGRMultiPolygon*>(geom));
     case wkbGeometryCollection:
-      return get_geometrycollection_points(candidates,
-                                           dynamic_cast<const OGRGeometryCollection*>(geom));
+      return get_geometrycollection_points(
+          candidates, sine, cosine, dynamic_cast<const OGRGeometryCollection*>(geom));
     default:
       break;
   }
@@ -358,6 +496,12 @@ void get_points(CandidateList& candidates, const OGRGeometry* geom)
 // ----------------------------------------------------------------------
 /*!
  * \brief Given geometries select candidate locations for labels
+ *
+ * For all selected angles, rotate the isoline by the angle, and find
+ * locations of local min/max in the Y-coordinate.
+ *
+ * The angles are in order of preference, hence we select candidates
+ * for the first angle first.
  */
 // ----------------------------------------------------------------------
 
@@ -371,8 +515,14 @@ std::vector<CandidateList> IsolabelLayer::find_candidates(const std::vector<OGRG
     OGRGeometryPtr geom = geoms[i];
     if (geom && geom->IsEmpty() == 0)
     {
-      // Select all points for now
-      get_points(candidates, geom.get());
+      for (auto angle : angles)
+      {
+        const auto radians = angle * M_PI / 180;
+        const auto cosine = cos(radians);
+        const auto sine = sin(radians);
+
+        get_points(candidates, sine, cosine, geom.get());
+      }
     }
 
     ret.emplace_back(candidates);
@@ -383,14 +533,62 @@ std::vector<CandidateList> IsolabelLayer::find_candidates(const std::vector<OGRG
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Distance of candidate to image edge
+ *
+ * We assume the candidate is inside the image so that we do not bother
+ * calculating true distances to the corners even though they might be
+ * the closest points.
+ */
+// ----------------------------------------------------------------------
+
+double distance(const Candidate& candidate, const Fmi::Box& box)
+{
+  const auto dleft = std::abs(candidate.x);
+  const auto dright = std::abs(candidate.x - box.width());
+  const auto dtop = std::abs(candidate.y);
+  const auto dbottom = std::abs(candidate.y - box.height());
+
+  const auto dx = std::min(dleft, dright);
+  const auto dy = std::min(dtop, dbottom);
+
+  return std::min(dx, dy);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Given candidates for each isoline select the best combination of them
  */
 // ----------------------------------------------------------------------
 
 std::vector<CandidateList> IsolabelLayer::select_best_candidates(
-    const std::vector<CandidateList>& candidates) const
+    const std::vector<CandidateList>& candidates, const Fmi::Box& box) const
 {
-  return candidates;  // TODO
+  std::vector<CandidateList> ret;
+
+  // Discard too angled labels and labels too close or far from the edges
+  for (const auto& cands : candidates)
+  {
+    CandidateList ok_cands;
+    for (const auto& point : cands)
+    {
+      // Angle condition
+      bool ok = (point.angle >= -max_angle and point.angle <= max_angle);
+      // Edge conditions
+      if (ok)
+      {
+        const auto dist = distance(point, box);
+        ok = (dist >= min_distance_edge && dist <= max_distance_edge);
+      }
+      if (ok)
+        ok = (point.curvature < max_curvature);
+
+      if (ok)
+        ok_cands.push_back(point);
+    }
+    ret.push_back(ok_cands);
+  }
+
+  return ret;
 }
 
 // ----------------------------------------------------------------------
@@ -474,6 +672,14 @@ void IsolabelLayer::fix_orientation(std::vector<CandidateList>& candidates,
           if (candidate.angle > 360)
             candidate.angle -= 360;
         }
+
+        // Force labels upright if so requested
+        if (upright && (candidate.angle < -90 || candidate.angle > 90))
+        {
+          candidate.angle += 180;
+          if (candidate.angle > 360)
+            candidate.angle -= 360;
+        }
       }
     }
   }
@@ -493,13 +699,14 @@ std::size_t IsolabelLayer::hash_value(const State& theState) const
     Dali::hash_combine(hash, Dali::hash_value(label, theState));
     for (auto& angle : angles)
       Dali::hash_combine(hash, Dali::hash_value(angle));
-    Dali::hash_combine(hash, max_total_count);
+    Dali::hash_combine(hash, upright);
+    Dali::hash_combine(hash, max_angle);
     Dali::hash_combine(hash, min_distance_other);
+    Dali::hash_combine(hash, max_distance_other);
     Dali::hash_combine(hash, min_distance_self);
     Dali::hash_combine(hash, min_distance_edge);
     Dali::hash_combine(hash, max_distance_edge);
     Dali::hash_combine(hash, max_curvature);
-    Dali::hash_combine(hash, curvature_length);
     Dali::hash_combine(hash, Dali::hash_value(isovalues));
     return hash;
   }
