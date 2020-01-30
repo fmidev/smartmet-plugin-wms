@@ -50,10 +50,6 @@ void IsolabelLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       label.init(json, theConfig);
 
-    json = theJson.get("symbol", nulljson);
-    if (!json.isNull())
-      symbol = json.asString();
-
     json = theJson.get("isobands", nulljson);
     if (!json.isNull())
     {
@@ -170,7 +166,8 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // In practise we just rotate the numbers 180 degrees if they seem to point to the wrong
     // direction.
 
-    fix_orientation(candidates, box, *crs);
+    if (label.orientation == "auto")
+      fix_orientation(candidates, box, *crs);
 
     // Update the globals
 
@@ -221,14 +218,23 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
         text_cdt["end"] = "</text>";
         text_cdt["cdata"] = txt;
 
-        const auto radians = point.angle * M_PI / 180;
-        const auto srad = sin(radians);
-        const auto crad = cos(radians);
-        auto transform = fmt::format("translate({} {}) rotate({})",
-                                     std::round(point.x + label.dx * crad + label.dy * srad),
-                                     std::round(point.y + label.dx * srad - label.dy * crad),
-                                     std::round(point.angle));
-        text_cdt["attributes"]["transform"] = transform;
+        if (label.orientation == "auto")
+        {
+          const auto radians = point.angle * M_PI / 180;
+          const auto srad = sin(radians);
+          const auto crad = cos(radians);
+          auto transform = fmt::format("translate({} {}) rotate({})",
+                                       std::round(point.x + label.dx * crad + label.dy * srad),
+                                       std::round(point.y + label.dx * srad - label.dy * crad),
+                                       std::round(point.angle));
+          text_cdt["attributes"]["transform"] = transform;
+        }
+        else
+        {
+          auto transform = fmt::format(
+              "translate({} {})", std::round(point.x + label.dx), std::round(point.y - label.dy));
+          text_cdt["attributes"]["transform"] = transform;
+        }
 
         theLayersCdt.PushBack(text_cdt);
       }
@@ -243,44 +249,13 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 }
 
 // ----------------------------------------------------------------------
-/*!
- * \brief Hash value for the layer
- */
-// ----------------------------------------------------------------------
-
-std::size_t IsolabelLayer::hash_value(const State& theState) const
-{
-  try
-  {
-    auto hash = IsolineLayer::hash_value(theState);
-    Dali::hash_combine(hash, Dali::hash_value(label, theState));
-    Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
-    for (auto& angle : angles)
-      Dali::hash_combine(hash, Dali::hash_value(angle));
-    Dali::hash_combine(hash, max_total_count);
-    Dali::hash_combine(hash, min_distance_other);
-    Dali::hash_combine(hash, min_distance_self);
-    Dali::hash_combine(hash, min_distance_edge);
-    Dali::hash_combine(hash, max_distance_edge);
-    Dali::hash_combine(hash, max_curvature);
-    Dali::hash_combine(hash, curvature_length);
-    Dali::hash_combine(hash, Dali::hash_value(isovalues));
-    return hash;
-  }
-  catch (...)
-  {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
-// ----------------------------------------------------------------------
 
 void get_linestring_points(CandidateList& candidates, const OGRLineString* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
 
-  for (int i = 5, n = geom->getNumPoints(); i < n - 1; i += 10)
+  for (int i = 5, n = geom->getNumPoints(); i < n - 1; i += 20)
   {
     double x2 = geom->getX(i);
     double y2 = geom->getY(i);
@@ -303,7 +278,7 @@ void get_linearring_points(CandidateList& candidates, const OGRLinearRing* geom)
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
 
-  for (int i = 5, n = geom->getNumPoints(); i < n - 1; i += 10)
+  for (int i = 5, n = geom->getNumPoints(); i < n - 1; i += 20)
   {
     double x2 = geom->getX(i);
     double y2 = geom->getY(i);
@@ -501,6 +476,36 @@ void IsolabelLayer::fix_orientation(std::vector<CandidateList>& candidates,
         }
       }
     }
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Hash value for the layer
+ */
+// ----------------------------------------------------------------------
+
+std::size_t IsolabelLayer::hash_value(const State& theState) const
+{
+  try
+  {
+    auto hash = IsolineLayer::hash_value(theState);
+    Dali::hash_combine(hash, Dali::hash_value(label, theState));
+    for (auto& angle : angles)
+      Dali::hash_combine(hash, Dali::hash_value(angle));
+    Dali::hash_combine(hash, max_total_count);
+    Dali::hash_combine(hash, min_distance_other);
+    Dali::hash_combine(hash, min_distance_self);
+    Dali::hash_combine(hash, min_distance_edge);
+    Dali::hash_combine(hash, max_distance_edge);
+    Dali::hash_combine(hash, max_curvature);
+    Dali::hash_combine(hash, curvature_length);
+    Dali::hash_combine(hash, Dali::hash_value(isovalues));
+    return hash;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

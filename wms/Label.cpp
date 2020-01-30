@@ -168,6 +168,7 @@ std::size_t Label::hash_value(const State& /* theState */) const
   {
     auto hash = Dali::hash_value(dx);
     Dali::hash_combine(hash, Dali::hash_value(dy));
+    Dali::hash_combine(hash, Dali::hash_value(orientation));
     Dali::hash_combine(hash, Dali::hash_value(unit_conversion));
     Dali::hash_combine(hash, Dali::hash_value(multiplier));
     Dali::hash_combine(hash, Dali::hash_value(offset));
@@ -178,7 +179,6 @@ std::size_t Label::hash_value(const State& /* theState */) const
     Dali::hash_combine(hash, Dali::hash_value(suffix));
     Dali::hash_combine(hash, Dali::hash_value(plusprefix));
     Dali::hash_combine(hash, Dali::hash_value(minusprefix));
-    Dali::hash_combine(hash, Dali::hash_value(orientation));
     return hash;
   }
   catch (...)

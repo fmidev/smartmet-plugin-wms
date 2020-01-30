@@ -32,6 +32,8 @@ class Label
   int dx = 0;
   int dy = 0;
 
+  std::string orientation = "horizontal";  // horizontal, auto
+
  private:
   // Value conversion
   std::string unit_conversion;
@@ -47,8 +49,6 @@ class Label
   // Signed prefixes
   std::string plusprefix = "";   // for numbers >= 0
   std::string minusprefix = "";  // for numbers < 0
-
-  std::string orientation = "horizontal";  // vertical, auto, gradient
 
   void setLocale(const std::string& theLocale);
   // shared because otherwise the compiler would force definitions for all constructors

@@ -62,7 +62,7 @@
 		    "label":
 		    {
 			"dy": -4,
-			"orientation": "auto"
+			"orientation": "horizontal"
 		    },
 		    "attributes":
 		    {

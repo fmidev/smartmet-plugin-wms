@@ -38,7 +38,6 @@ class IsolabelLayer : public IsolineLayer
   virtual std::size_t hash_value(const State& theState) const;
 
   Label label;
-  boost::optional<std::string> symbol;
 
   std::vector<double> angles{0, -45, 45};  // rotate isolines to find directed extrema
   int max_total_count = 100;               // max total number of labels
