@@ -3,7 +3,6 @@
 #include "IsolineLayer.h"
 #include "Label.h"
 #include <boost/optional.hpp>
-#include <list>
 #include <vector>
 
 namespace Fmi
@@ -21,15 +20,18 @@ class Config;
 class Plugin;
 class State;
 
+// For candidate positions
 struct Candidate
 {
+  double isovalue;
   double x;
   double y;
   double angle;      // degrees
   double curvature;  // total change in degrees along path, not "circle" curvature
+  int id;            // unique feature ID for each separate isoline
 };
 
-using CandidateList = std::list<Candidate>;
+using Candidates = std::vector<Candidate>;
 
 class IsolabelLayer : public IsolineLayer
 {
@@ -49,9 +51,9 @@ class IsolabelLayer : public IsolineLayer
   bool upright = false;                         // force labels to be upright
   double max_angle = 60;                        // and never rotate more than +-60 degrees
 
-  double min_distance_other = 10;   // min dist (px) to already selected labels for other isovalues
-  double max_distance_other = 100;  // max distance (px) to labels for other isovalues
-  double min_distance_self = 50;  // min dist (px) to already selected labels for the same isovalue
+  double min_distance_other = 20;  // min dist (px) to labels for other isovalues
+  double min_distance_same = 50;   // min dist (px) to the same isovalue labels
+  double min_distance_self = 200;  // min dist (px) to labels on the same isoline segment
 
   double min_distance_edge = 10;    // min dist (px) to image edge
   double max_distance_edge = 9999;  // max dist (px) to image edge
@@ -63,12 +65,9 @@ class IsolabelLayer : public IsolineLayer
   std::vector<double> isovalues;  // generated from isolines, isobands and isovalues settings
 
  private:
-  std::vector<CandidateList> find_candidates(const std::vector<OGRGeometryPtr>& geoms);
-  std::vector<CandidateList> select_best_candidates(const std::vector<CandidateList>& candidates,
-                                                    const Fmi::Box& box) const;
-  void fix_orientation(std::vector<CandidateList>& candidates,
-                       const Fmi::Box& box,
-                       OGRSpatialReference& crs) const;
+  Candidates find_candidates(const std::vector<OGRGeometryPtr>& geoms);
+  Candidates select_best_candidates(const Candidates& candidates, const Fmi::Box& box) const;
+  void fix_orientation(Candidates& candidates, const Fmi::Box& box, OGRSpatialReference& crs) const;
 
 };  // namespace Dali
 

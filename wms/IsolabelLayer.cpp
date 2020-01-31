@@ -8,7 +8,9 @@
 #include "Isoline.h"
 #include "Layer.h"
 #include "State.h"
+#include <boost/logic/tribool.hpp>
 #include <boost/move/make_unique.hpp>
+#include <boost/optional.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
@@ -26,6 +28,17 @@ namespace Plugin
 {
 namespace Dali
 {
+// For minimum spanning tree searches
+struct Edge
+{
+  std::size_t first;
+  std::size_t second;
+  double length;
+  bool valid;
+};
+
+using Edges = std::vector<Edge>;
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize from JSON
@@ -65,6 +78,18 @@ void IsolabelLayer::init(const Json::Value& theJson,
     json = theJson.get("max_distance_edge", nulljson);
     if (!json.isNull())
       max_distance_edge = json.asDouble();
+
+    json = theJson.get("min_distance_other", nulljson);
+    if (!json.isNull())
+      min_distance_other = json.asDouble();
+
+    json = theJson.get("min_distance_same", nulljson);
+    if (!json.isNull())
+      min_distance_same = json.asDouble();
+
+    json = theJson.get("min_distance_self", nulljson);
+    if (!json.isNull())
+      min_distance_self = json.asDouble();
 
     json = theJson.get("max_curvature", nulljson);
     if (!json.isNull())
@@ -217,52 +242,44 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     theLayersCdt.PushBack(group_cdt);
 
-    for (unsigned int i = 0; i < candidates.size(); i++)
+    for (const auto& point : candidates)
     {
-      const auto& points = candidates[i];
-
-      if (points.empty())
-        continue;
-
-      const auto value = isovalues[i];
-      const auto txt = label.print(value);
+      const auto txt = label.print(point.isovalue);
 
       if (txt.empty())
         continue;
 
       // Generate a text tag for each point
 
-      for (const auto& point : points)
+      if (std::isnan(point.angle))
+        continue;
+
+      CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
+      text_cdt["start"] = "<text";
+      text_cdt["end"] = "</text>";
+      text_cdt["cdata"] = txt;
+
+      if (label.orientation == "auto")
       {
-        if (std::isnan(point.angle))
-          continue;
-
-        CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
-        text_cdt["start"] = "<text";
-        text_cdt["end"] = "</text>";
-        text_cdt["cdata"] = txt;
-
-        if (label.orientation == "auto")
-        {
-          const auto radians = point.angle * M_PI / 180;
-          const auto srad = sin(radians);
-          const auto crad = cos(radians);
-          auto transform = fmt::format("translate({} {}) rotate({})",
-                                       std::round(point.x + label.dx * crad + label.dy * srad),
-                                       std::round(point.y + label.dx * srad - label.dy * crad),
-                                       std::round(point.angle));
-          text_cdt["attributes"]["transform"] = transform;
-        }
-        else
-        {
-          auto transform = fmt::format(
-              "translate({} {})", std::round(point.x + label.dx), std::round(point.y - label.dy));
-          text_cdt["attributes"]["transform"] = transform;
-        }
-
-        theLayersCdt.PushBack(text_cdt);
+        const auto radians = point.angle * M_PI / 180;
+        const auto srad = sin(radians);
+        const auto crad = cos(radians);
+        auto transform = fmt::format("translate({} {}) rotate({})",
+                                     std::round(point.x + label.dx * crad + label.dy * srad),
+                                     std::round(point.y + label.dx * srad - label.dy * crad),
+                                     std::round(point.angle));
+        text_cdt["attributes"]["transform"] = transform;
       }
+      else
+      {
+        auto transform = fmt::format(
+            "translate({} {})", std::round(point.x + label.dx), std::round(point.y - label.dy));
+        text_cdt["attributes"]["transform"] = transform;
+      }
+
+      theLayersCdt.PushBack(text_cdt);
     }
+
     // Close the grouping
     theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n  </g>");
   }
@@ -343,11 +360,13 @@ double curvature(const OGRLineString* geom, int pos, int stencil_size)
   return sum;
 }
 
-void get_linestring_points(CandidateList& candidates,
-                           double sine,
-                           double cosine,
-                           int stencil_size,
-                           const OGRLineString* geom)
+void find_candidates(Candidates& candidates,
+                     double isovalue,
+                     int& id,
+                     double sine,
+                     double cosine,
+                     int stencil_size,
+                     const OGRLineString* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
@@ -378,15 +397,17 @@ void get_linestring_points(CandidateList& candidates,
 
     auto curv = curvature(geom, pos, stencil_size);
 
-    candidates.emplace_back(Candidate{x2, y2, angle, curv});
+    candidates.emplace_back(Candidate{isovalue, x2, y2, angle, curv, id});
   }
 }
 
-void get_linearring_points(CandidateList& candidates,
-                           double sine,
-                           double cosine,
-                           int stencil_size,
-                           const OGRLinearRing* geom)
+void find_candidates(Candidates& candidates,
+                     double isovalue,
+                     int& id,
+                     double sine,
+                     double cosine,
+                     int stencil_size,
+                     const OGRLinearRing* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
@@ -417,98 +438,147 @@ void get_linearring_points(CandidateList& candidates,
 
     auto curv = curvature(geom, pos, stencil_size);
 
-    candidates.emplace_back(Candidate{x2, y2, angle, curv});
+    candidates.emplace_back(Candidate{isovalue, x2, y2, angle, curv, id});
   }
 }
 
-void get_polygon_points(
-    CandidateList& candidates, double sine, double cosine, int stencil_size, const OGRPolygon* geom)
+void find_candidates(Candidates& candidates,
+                     double isovalue,
+                     int& id,
+                     double sine,
+                     double cosine,
+                     int stencil_size,
+                     const OGRPolygon* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
-  get_linearring_points(candidates, sine, cosine, stencil_size, geom->getExteriorRing());
+  find_candidates(candidates, isovalue, id, sine, cosine, stencil_size, geom->getExteriorRing());
 }
 
-void get_multilinestring_points(CandidateList& candidates,
-                                double sine,
-                                double cosine,
-                                int stencil_size,
-                                const OGRMultiLineString* geom)
+void find_candidates(Candidates& candidates,
+                     double isovalue,
+                     int& id,
+                     double sine,
+                     double cosine,
+                     int stencil_size,
+                     const OGRMultiLineString* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
   for (int i = 0, n = geom->getNumGeometries(); i < n; ++i)
-    get_linestring_points(candidates,
-                          sine,
-                          cosine,
-                          stencil_size,
-                          dynamic_cast<const OGRLineString*>(geom->getGeometryRef(i)));
+    find_candidates(candidates,
+                    isovalue,
+                    ++id,
+                    sine,
+                    cosine,
+                    stencil_size,
+                    dynamic_cast<const OGRLineString*>(geom->getGeometryRef(i)));
 }
 
-void get_multipolygon_points(CandidateList& candidates,
-                             double sine,
-                             double cosine,
-                             int stencil_size,
-                             const OGRMultiPolygon* geom)
+void find_candidates(Candidates& candidates,
+                     double isovalue,
+                     int& id,
+                     double sine,
+                     double cosine,
+                     int stencil_size,
+                     const OGRMultiPolygon* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
   for (int i = 0, n = geom->getNumGeometries(); i < n; ++i)
-    get_polygon_points(candidates,
-                       sine,
-                       cosine,
-                       stencil_size,
-                       dynamic_cast<const OGRPolygon*>(geom->getGeometryRef(i)));
+    find_candidates(candidates,
+                    isovalue,
+                    ++id,
+                    sine,
+                    cosine,
+                    stencil_size,
+                    dynamic_cast<const OGRPolygon*>(geom->getGeometryRef(i)));
 }
 
-void get_points(CandidateList& candidates,
-                double sine,
-                double cosine,
-                int stencil_size,
-                const OGRGeometry* geom);
+void find_candidates(Candidates& candidates,
+                     double isovalue,
+                     int& id,
+                     double sine,
+                     double cosine,
+                     int stencil_size,
+                     const OGRGeometry* geom);
 
-void get_geometrycollection_points(CandidateList& candidates,
-                                   double sine,
-                                   double cosine,
-                                   int stencil_size,
-                                   const OGRGeometryCollection* geom)
+void find_candidates(Candidates& candidates,
+                     double isovalue,
+                     int& id,
+                     double sine,
+                     double cosine,
+                     int stencil_size,
+                     const OGRGeometryCollection* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
   for (int i = 0, n = geom->getNumGeometries(); i < n; ++i)
-    get_points(candidates, sine, cosine, stencil_size, geom->getGeometryRef(i));
+    find_candidates(
+        candidates, isovalue, ++id, sine, cosine, stencil_size, geom->getGeometryRef(i));
 }
 
-void get_points(CandidateList& candidates,
-                double sine,
-                double cosine,
-                int stencil_size,
-                const OGRGeometry* geom)
+void find_candidates(Candidates& candidates,
+                     double isovalue,
+                     int& id,
+                     double sine,
+                     double cosine,
+                     int stencil_size,
+                     const OGRGeometry* geom)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
 
-  auto id = geom->getGeometryType();
-  switch (id)
+  switch (geom->getGeometryType())
   {
     case wkbLineString:
-      return get_linestring_points(
-          candidates, sine, cosine, stencil_size, dynamic_cast<const OGRLineString*>(geom));
+      return find_candidates(candidates,
+                             isovalue,
+                             ++id,
+                             sine,
+                             cosine,
+                             stencil_size,
+                             dynamic_cast<const OGRLineString*>(geom));
     case wkbLinearRing:
-      return get_linearring_points(
-          candidates, sine, cosine, stencil_size, dynamic_cast<const OGRLinearRing*>(geom));
+      return find_candidates(candidates,
+                             isovalue,
+                             ++id,
+                             sine,
+                             cosine,
+                             stencil_size,
+                             dynamic_cast<const OGRLinearRing*>(geom));
     case wkbPolygon:
-      return get_polygon_points(
-          candidates, sine, cosine, stencil_size, dynamic_cast<const OGRPolygon*>(geom));
+      return find_candidates(candidates,
+                             isovalue,
+                             ++id,
+                             sine,
+                             cosine,
+                             stencil_size,
+                             dynamic_cast<const OGRPolygon*>(geom));
     case wkbMultiLineString:
-      return get_multilinestring_points(
-          candidates, sine, cosine, stencil_size, dynamic_cast<const OGRMultiLineString*>(geom));
+      return find_candidates(candidates,
+                             isovalue,
+                             ++id,
+                             sine,
+                             cosine,
+                             stencil_size,
+                             dynamic_cast<const OGRMultiLineString*>(geom));
     case wkbMultiPolygon:
-      return get_multipolygon_points(
-          candidates, sine, cosine, stencil_size, dynamic_cast<const OGRMultiPolygon*>(geom));
+      return find_candidates(candidates,
+                             isovalue,
+                             ++id,
+                             sine,
+                             cosine,
+                             stencil_size,
+                             dynamic_cast<const OGRMultiPolygon*>(geom));
     case wkbGeometryCollection:
-      return get_geometrycollection_points(
-          candidates, sine, cosine, stencil_size, dynamic_cast<const OGRGeometryCollection*>(geom));
+      return find_candidates(candidates,
+                             isovalue,
+                             ++id,
+                             sine,
+                             cosine,
+                             stencil_size,
+                             dynamic_cast<const OGRGeometryCollection*>(geom));
     default:
       break;
   }
@@ -526,30 +596,30 @@ void get_points(CandidateList& candidates,
  */
 // ----------------------------------------------------------------------
 
-std::vector<CandidateList> IsolabelLayer::find_candidates(const std::vector<OGRGeometryPtr>& geoms)
+Candidates IsolabelLayer::find_candidates(const std::vector<OGRGeometryPtr>& geoms)
 {
-  std::vector<CandidateList> ret;
+  Candidates candidates;
 
+  int id = 0;
   for (std::size_t i = 0; i < geoms.size(); i++)
   {
-    CandidateList candidates;
     OGRGeometryPtr geom = geoms[i];
     if (geom && geom->IsEmpty() == 0)
     {
+      const auto old_id = id;
       for (auto angle : angles)
       {
+        id = old_id;  // use same id for different angles
         const auto radians = angle * M_PI / 180;
         const auto cosine = cos(radians);
         const auto sine = sin(radians);
 
-        get_points(candidates, sine, cosine, stencil_size, geom.get());
+        Dali::find_candidates(candidates, isovalues[i], id, sine, cosine, stencil_size, geom.get());
       }
     }
-
-    ret.emplace_back(candidates);
   }
 
-  return ret;
+  return candidates;
 }
 
 // ----------------------------------------------------------------------
@@ -577,36 +647,227 @@ double distance(const Candidate& candidate, const Fmi::Box& box)
 
 // ----------------------------------------------------------------------
 /*!
+ * Find the shortest valid edge
+ */
+// ----------------------------------------------------------------------
+
+boost::optional<std::size_t> find_tree_start_edge(const Edges& edges)
+{
+  std::size_t best_edge = 0;
+  double best_length = -1;
+
+  for (std::size_t i = 0; i < edges.size(); i++)
+  {
+    const auto& edge = edges[i];
+    if (edge.valid && (best_length < 0 || edge.length < best_length))
+    {
+      best_edge = i;
+      best_length = edge.length;
+    }
+  }
+
+#ifdef MYDEBUG
+  std::cout << "Start edge: " << best_edge << " from " << edges[best_edge].first << " to "
+            << edges[best_edge].second << " length=" << best_length << std::endl;
+#endif
+
+  if (best_length < 0)
+    return {};
+  return best_edge;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Find next shortest valid edge to be added to MSP
+ */
+// ----------------------------------------------------------------------
+
+boost::optional<std::size_t> find_next_edge(const Edges& edges, std::vector<boost::tribool>& status)
+{
+  std::size_t best_edge = 0;
+  double best_length = -1;
+
+  for (std::size_t i = 0; i < edges.size(); i++)
+  {
+    const auto& edge = edges[i];
+    if (edge.valid && (best_length < 0 || edge.length < best_length))
+    {
+      auto v1 = edges[i].first;
+      auto v2 = edges[i].second;
+
+      // Skip if either vertex has already been rejected
+      if (!status[v1] || !status[v2])
+        continue;
+
+      // Skip if both have already been selected
+      if (status[v1] && status[v2])
+        continue;
+
+      // One must be true, one indeterminate
+      auto new_vertex = (status[v1] ? v2 : v1);
+
+      // The new vertex must not be connected to any of the already selected vertices
+      // by an invalid edge, or it is too close to them. If so, we disable vertex
+      // right away.
+
+      bool ok = true;
+      for (const auto& edge : edges)
+      {
+        if (!edge.valid)
+        {
+          if (edge.first == new_vertex)
+          {
+            if (status[edge.second] == true)
+              ok = false;
+          }
+          else if (edge.second == new_vertex)
+          {
+            if (status[edge.first] == true)
+              ok = false;
+          }
+          if (!ok)
+            break;
+        }
+      }
+
+      if (!ok)
+      {
+#ifdef MYDEBUG
+        std::cout << "Vertex " << new_vertex << " forbidden" << std::endl;
+#endif
+        status[new_vertex] = false;
+      }
+      else
+      {
+        best_edge = i;
+        best_length = edge.length;
+      }
+    }
+  }
+
+#ifdef MYDEBUG
+  std::cout << "Start edge: " << best_edge << " from " << edges[best_edge].first << " to "
+            << edges[best_edge].second << " length=" << best_length << std::endl;
+#endif
+
+  if (best_length < 0)
+    return {};
+  return best_edge;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Given candidates for each isoline select the best combination of them
  */
 // ----------------------------------------------------------------------
 
-std::vector<CandidateList> IsolabelLayer::select_best_candidates(
-    const std::vector<CandidateList>& candidates, const Fmi::Box& box) const
+Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
+                                                 const Fmi::Box& box) const
 {
-  std::vector<CandidateList> ret;
+  Candidates candis;
 
   // Discard too angled labels and labels too close or far from the edges
-  for (const auto& cands : candidates)
+  for (const auto& cand : candidates)
   {
-    CandidateList ok_cands;
-    for (const auto& point : cands)
+    // Angle condition
+    bool ok = (cand.angle >= -max_angle and cand.angle <= max_angle);
+    // Edge conditions
+    if (ok)
     {
-      // Angle condition
-      bool ok = (point.angle >= -max_angle and point.angle <= max_angle);
-      // Edge conditions
-      if (ok)
-      {
-        const auto dist = distance(point, box);
-        ok = (dist >= min_distance_edge && dist <= max_distance_edge);
-      }
-      if (ok)
-        ok = (point.curvature < max_curvature);
-
-      if (ok)
-        ok_cands.push_back(point);
+      const auto dist = distance(cand, box);
+      ok = (dist >= min_distance_edge && dist <= max_distance_edge);
     }
-    ret.push_back(ok_cands);
+    if (ok)
+      ok = (cand.curvature < max_curvature);
+
+    if (ok)
+      candis.push_back(cand);
+  }
+
+  if (candis.empty())
+    return candis;
+
+#ifdef MYDEBUG
+  for (std::size_t i = 0; i < candis.size(); i++)
+  {
+    const auto& c = candis[i];
+    std::cout << "C:\t" << c.isovalue << "\tat " << c.x << "," << c.y << "\tid= " << c.id
+              << std::endl;
+  }
+#endif
+
+  // Find Euclician "minimum" spanning tree using Prim's algorithm with
+  // modifications:
+  //   1. Do not choose random vertex as starting point, select shortest edge satisfying distance
+  //      constraints as the first pair of points.
+  //   2. Choose the next shortest edge satisfying distance constraints to the selected points
+  //      and add the end vertex to the set of selected points.
+  //   3. Repeat until no edge satisfies the constraints
+  //
+  // We assume this approximates the true solution under the distance constraints without
+  // attempting to prove it does.
+
+  // Create a vector of all possible undirected edges
+
+  Edges edges;
+
+  const auto n = candis.size();
+
+  for (std::size_t i = 0; i < n - 1; i++)
+    for (std::size_t j = i + 1; j < n; j++)
+    {
+      auto length = std::hypot(candis[i].x - candis[j].x, candis[i].y - candis[j].y);
+
+      bool valid;
+      if (candis[i].id == candis[j].id)
+        valid = (length >= min_distance_self);  // same isoline segment
+      else if (candis[i].isovalue == candis[j].isovalue)
+        valid = (length >= min_distance_same);  // same isoline value, another segment
+      else
+        valid = (length >= min_distance_other);  // different isovalue or isoline segment
+
+      edges.emplace_back(Edge{i, j, length, valid});
+
+#ifdef MYDEBUG
+      std::cout << "E:\t" << i << "\t" << j << "\t" << length << "\t" << candis[i].isovalue << " - "
+                << candis[j].isovalue << "\t" << candis[i].id << " - " << candis[j].id << "\t"
+                << (valid ? "OK" : "BAD") << std::endl;
+#endif
+    }
+
+  // Start the minimum spanning tree
+
+  auto opt_start = find_tree_start_edge(edges);
+  if (!opt_start)
+    return {};
+
+  // First selected candidates
+
+  auto cand1 = edges[*opt_start].first;
+  auto cand2 = edges[*opt_start].second;
+
+  // Start building the tree
+  std::vector<boost::tribool> candidate_status(candis.size(), boost::logic::indeterminate);
+  candidate_status[cand1] = true;
+  candidate_status[cand2] = true;
+
+  while (true)
+  {
+    auto opt_next = find_next_edge(edges, candidate_status);
+    if (!opt_next)
+      break;
+
+    cand1 = edges[*opt_next].first;
+    cand2 = edges[*opt_next].second;
+    candidate_status[cand1] = true;
+    candidate_status[cand2] = true;
+  }
+
+  Candidates ret;
+  for (std::size_t i = 0; i < candidate_status.size(); i++)
+  {
+    if (candidate_status[i])  // fails for false|indeterminate
+      ret.push_back(candis[i]);
   }
 
   return ret;
@@ -618,7 +879,7 @@ std::vector<CandidateList> IsolabelLayer::select_best_candidates(
  */
 // ----------------------------------------------------------------------
 
-void IsolabelLayer::fix_orientation(std::vector<CandidateList>& candidates,
+void IsolabelLayer::fix_orientation(Candidates& candidates,
                                     const Fmi::Box& box,
                                     OGRSpatialReference& crs) const
 {
@@ -648,59 +909,55 @@ void IsolabelLayer::fix_orientation(std::vector<CandidateList>& candidates,
                            "Failed to create coordinate transformation for orienting isolabels");
 
   // Check and fix orientations for each isovalue
-  for (std::size_t i = 0; i < candidates.size(); i++)
+
+  for (auto& cand : candidates)
   {
-    const auto isovalue = isovalues[i];
+    const int length = 2;  // move in pixel units in the orientation marked for the label
 
-    for (auto& candidate : candidates[i])
+    auto x = cand.x + length * sin(cand.angle * M_PI / 180);
+    auto y = cand.y - length * cos(cand.angle * M_PI / 180);
+
+    box.itransform(x, y);  // world xy coordinate in image crs
+
+    if (transformation->Transform(1, &x, &y) == 0)
     {
-      const int length = 2;  // move in pixel units in the orientation marked for the label
+      cand.angle = std::numeric_limits<double>::quiet_NaN();
+    }
+    else
+    {
+      // Must convert to native geocentric coordinates since the API does not support WorldXY
+      // interpolation
+      NFmiPoint latlon = q->area().WorldXYToLatLon(NFmiPoint(x, y));
 
-      auto x = candidate.x + length * sin(candidate.angle * M_PI / 180);
-      auto y = candidate.y - length * cos(candidate.angle * M_PI / 180);
+      // Q API SUCKS!!
+      Spine::Location loc(latlon.X(), latlon.Y());
+      Engine::Querydata::ParameterOptions options(
+          param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
 
-      box.itransform(x, y);  // world xy coordinate in image crs
+      auto result = q->value(options, localdatetime);
 
-      if (transformation->Transform(1, &x, &y) == 0)
-      {
-        candidate.angle = std::numeric_limits<double>::quiet_NaN();
-      }
+      double tmp = cand.isovalue;
+
+      if (boost::get<double>(&result) != nullptr)
+        tmp = *boost::get<double>(&result);
+      else if (boost::get<int>(&result) != nullptr)
+        tmp = *boost::get<int>(&result);
       else
+        cand.angle = std::numeric_limits<double>::quiet_NaN();
+
+      if (tmp < cand.isovalue)
       {
-        // Must convert to native geocentric coordinates since the API does not support WorldXY
-        // interpolation
-        NFmiPoint latlon = q->area().WorldXYToLatLon(NFmiPoint(x, y));
+        cand.angle = cand.angle + 180;
+        if (cand.angle > 360)
+          cand.angle -= 360;
+      }
 
-        // Q API SUCKS!!
-        Spine::Location loc(latlon.X(), latlon.Y());
-        Engine::Querydata::ParameterOptions options(
-            param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
-
-        auto result = q->value(options, localdatetime);
-
-        double tmp = isovalue;
-
-        if (boost::get<double>(&result) != nullptr)
-          tmp = *boost::get<double>(&result);
-        else if (boost::get<int>(&result) != nullptr)
-          tmp = *boost::get<int>(&result);
-        else
-          candidate.angle = std::numeric_limits<double>::quiet_NaN();
-
-        if (tmp < isovalue)
-        {
-          candidate.angle = candidate.angle + 180;
-          if (candidate.angle > 360)
-            candidate.angle -= 360;
-        }
-
-        // Force labels upright if so requested
-        if (upright && (candidate.angle < -90 || candidate.angle > 90))
-        {
-          candidate.angle += 180;
-          if (candidate.angle > 360)
-            candidate.angle -= 360;
-        }
+      // Force labels upright if so requested
+      if (upright && (cand.angle < -90 || cand.angle > 90))
+      {
+        cand.angle += 180;
+        if (cand.angle > 360)
+          cand.angle -= 360;
       }
     }
   }
@@ -723,7 +980,7 @@ std::size_t IsolabelLayer::hash_value(const State& theState) const
     Dali::hash_combine(hash, upright);
     Dali::hash_combine(hash, max_angle);
     Dali::hash_combine(hash, min_distance_other);
-    Dali::hash_combine(hash, max_distance_other);
+    Dali::hash_combine(hash, min_distance_same);
     Dali::hash_combine(hash, min_distance_self);
     Dali::hash_combine(hash, min_distance_edge);
     Dali::hash_combine(hash, max_distance_edge);

@@ -59,6 +59,7 @@
 		    "layer_type": "isolabel",
 		    "isolines": "json:isolines/pressure.json",
 		    "parameter": "Pressure",
+		    "upright": true,
 		    "label":
 		    {
 			"dy": -4,
