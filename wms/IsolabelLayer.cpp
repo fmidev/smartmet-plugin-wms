@@ -22,6 +22,8 @@
 #include <spine/ParameterFactory.h>
 #include <limits>
 
+#define MYDEBUG 1
+
 namespace SmartMet
 {
 namespace Plugin
@@ -690,47 +692,80 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges, std::vector<boos
   for (std::size_t i = 0; i < edges.size(); i++)
   {
     const auto& edge = edges[i];
+
+    auto v1 = edges[i].first;
+    auto v2 = edges[i].second;
+
+#ifdef MYDEBUG_DETAILS
+    std::cout << "\t\t\t\t";
+    std::cout << v1 << "=";
+    if (status[v1] == true)
+      std::cout << "T";
+    else if (status[v1] == false)
+      std::cout << "F";
+    else
+      std::cout << "?";
+    std::cout << "\t" << v2 << "=";
+    if (status[v2] == true)
+      std::cout << "T";
+    else if (status[v2] == false)
+      std::cout << "F";
+    else
+      std::cout << "?";
+    std::cout << std::endl;
+#endif
+
+    // Note: tribool logic. We require one "true", one "indeterminate"
+
+    if (status[v1])
+    {
+      if (status[v2] || !status[v2])
+        continue;
+    }
+    else if (status[v2])
+    {
+      if (status[v1] || !status[v1])
+        continue;
+    }
+    else
+      continue;
+
+    // Now we know one must have been selected, one is indeterminate
+    auto new_vertex = (status[v1] ? v2 : v1);
+
     if (edge.valid && (best_length < 0 || edge.length < best_length))
     {
-      auto v1 = edges[i].first;
-      auto v2 = edges[i].second;
-
-      // Skip if either vertex has already been rejected
-      if (!status[v1] || !status[v2])
-        continue;
-
-      // Skip if both have already been selected
-      if (status[v1] && status[v2])
-        continue;
-
-      // One must be true, one indeterminate
-      auto new_vertex = (status[v1] ? v2 : v1);
-
       // The new vertex must not be connected to any of the already selected vertices
       // by an invalid edge, or it is too close to them. If so, we disable vertex
-      // right away.
+      // right away. It is always connected to all the vertices though, since
+      // we created all possible edges.
 
-      bool ok = true;
+      bool forbidden = false;
+
       for (const auto& edge : edges)
       {
-        if (!edge.valid)
+        if (edge.first == new_vertex)
         {
-          if (edge.first == new_vertex)
+          if (status[edge.second] && !edge.valid)
           {
-            if (status[edge.second] == true)
-              ok = false;
-          }
-          else if (edge.second == new_vertex)
-          {
-            if (status[edge.first] == true)
-              ok = false;
-          }
-          if (!ok)
+            forbidden = true;
             break;
+          }
+        }
+        else if (edge.second == new_vertex)
+        {
+          if (status[edge.first] && !edge.valid)
+          {
+            forbidden = true;
+            break;
+          }
         }
       }
 
-      if (!ok)
+      std::cout << "\t\t" << v1 << "\t" << v2 << "\tlen=" << edge.length << "\t"
+                << (forbidden ? "forbidden" : "not forbidden") << std::endl;
+
+      if (forbidden)
       {
 #ifdef MYDEBUG
         std::cout << "Vertex " << new_vertex << " forbidden" << std::endl;
@@ -746,7 +781,7 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges, std::vector<boos
   }
 
 #ifdef MYDEBUG
-  std::cout << "Start edge: " << best_edge << " from " << edges[best_edge].first << " to "
+  std::cout << "Next edge: " << best_edge << " from " << edges[best_edge].first << " to "
             << edges[best_edge].second << " length=" << best_length << std::endl;
 #endif
 
@@ -853,6 +888,14 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
 
   while (true)
   {
+#ifdef MYDEBUG
+    std::cout << "\tCurrent selections: ";
+    for (std::size_t i = 0; i < candidate_status.size(); i++)
+      if (candidate_status[i] == true)
+        std::cout << i << " ";
+    std::cout << std::endl;
+#endif
+
     auto opt_next = find_next_edge(edges, candidate_status);
     if (!opt_next)
       break;
