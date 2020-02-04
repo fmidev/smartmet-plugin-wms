@@ -22,7 +22,8 @@
 #include <spine/ParameterFactory.h>
 #include <limits>
 
-#define MYDEBUG 1
+// #define MYDEBUG 1
+// #define MYDEBUG_DETAILS 1
 
 namespace SmartMet
 {
@@ -762,8 +763,10 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges, std::vector<boos
         }
       }
 
+#ifdef MYDEBUG_DETAILS
       std::cout << "\t\t" << v1 << "\t" << v2 << "\tlen=" << edge.length << "\t"
                 << (forbidden ? "forbidden" : "not forbidden") << std::endl;
+#endif
 
       if (forbidden)
       {
