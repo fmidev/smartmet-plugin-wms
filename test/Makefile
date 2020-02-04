@@ -22,7 +22,8 @@ INCLUDES = \
 	`pkg-config --cflags libconfig++` \
 	`pkg-config --cflags jsoncpp`
 
-LIBS = 	-lsmartmet-spine  \
+LIBS = 	-lsmartmet-grid-files \
+	-lsmartmet-spine  \
 	-lsmartmet-newbase \
 	-lsmartmet-giza \
 	`pkg-config --libs libconfig++` \
