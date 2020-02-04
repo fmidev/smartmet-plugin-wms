@@ -27,13 +27,13 @@
    <use transform="translate(109,100)" xlink:href="#dot"/>
    <use transform="translate(305,162)" xlink:href="#dot"/>
    <use transform="translate(296,214)" xlink:href="#dot"/>
-   <use transform="translate(187,293)" xlink:href="#dot"/>
+   <use transform="translate(186,293)" xlink:href="#dot"/>
    <use transform="translate(325,293)" xlink:href="#dot"/>
    <use transform="translate(155,418)" xlink:href="#dot"/>
    <use transform="translate(122,349)" xlink:href="#dot"/>
    <use transform="translate(273,346)" xlink:href="#dot"/>
    <use transform="translate(451,333)" xlink:href="#dot"/>
-   <use transform="translate(356,397)" xlink:href="#dot"/>
+   <use transform="translate(355,397)" xlink:href="#dot"/>
    <use transform="translate(208,381)" xlink:href="#dot"/>
    <use transform="translate(248,429)" xlink:href="#dot"/>
    <use transform="translate(202,116)" xlink:href="#dot"/>
@@ -55,13 +55,13 @@
   <text x="114" y="105">-4</text>
   <text x="310" y="167">-2</text>
   <text x="301" y="219">-1</text>
-  <text x="192" y="298">2</text>
+  <text x="191" y="298">2</text>
   <text x="330" y="298">0</text>
   <text x="160" y="423">5</text>
   <text x="127" y="354">2</text>
   <text x="278" y="351">2</text>
   <text x="456" y="338">0</text>
-  <text x="361" y="402">2</text>
+  <text x="360" y="402">2</text>
   <text x="213" y="386">5</text>
   <text x="248" y="424">5</text>
   <text x="207" y="121">-2</text>

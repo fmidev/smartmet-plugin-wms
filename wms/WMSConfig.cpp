@@ -915,10 +915,14 @@ void WMSConfig::updateLayerMetaData()
 
 #ifndef WITHOUT_AUTHENTICATION
 CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
+                                     const boost::optional<std::string>& starttime,
+                                     const boost::optional<std::string>& endtime,
                                      const boost::optional<std::string>& wms_namespace,
                                      bool authenticate) const
 #else
 CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
+                                     const boost::optional<std::string>& starttime,
+                                     const boost::optional<std::string>& endtime,
                                      const boost::optional<std::string>& wms_namespace) const
 #endif
 {
@@ -942,7 +946,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
           continue;
 #endif
 
-      auto cdt = iter_pair.second.getCapabilities();
+      auto cdt = iter_pair.second.getCapabilities(starttime, endtime);
 
       // Note: The boost::optional is empty for hidden layers.
       if (cdt)

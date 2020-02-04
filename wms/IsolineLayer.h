@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "Sampling.h"
 #include "Smoother.h"
+#include <engines/querydata/Q.h>
 #include <vector>
 
 namespace SmartMet
@@ -53,10 +54,14 @@ class IsolineLayer : public Layer
   Sampling sampling;
   Intersections intersections;
 
- private:
+ protected:
+  std::vector<OGRGeometryPtr> getIsolines(const std::vector<double> isovalues, State& theState);
+  Engine::Querydata::Q q;  // Make used data available to derived IsolabelLayer
 
-  virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
-  virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+ private:
+  std::vector<OGRGeometryPtr> getIsolinesGrid(const std::vector<double> isovalues, State& theState);
+  std::vector<OGRGeometryPtr> getIsolinesQuerydata(const std::vector<double> isovalues,
+                                                   State& theState);
 
 };  // class IsolineLayer
 

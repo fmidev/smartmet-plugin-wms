@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=synop_numbers&time=20081201T1200 HTTP/1.0

@@ -1,0 +1,31 @@
+[
+  {
+    "hilimit": 0.5,
+    "symbol": "frontpage_winddirection/calm"
+  },
+  {
+    "lolimit": 0.5,
+    "hilimit": 4,
+    "symbol": "frontpage_winddirection/directionblue"
+  },
+  {
+    "lolimit": 4,
+    "hilimit": 8,
+    "symbol": "frontpage_winddirection/directiongreen"
+  },
+  {
+    "lolimit": 8,
+    "hilimit": 14,
+    "symbol": "frontpage_winddirection/directionyellow"
+  },
+  {
+    "lolimit": 14,
+    "hilimit": 21,
+    "symbol": "frontpage_winddirection/directionorange"
+  },
+  {
+    "lolimit": 21,
+    "hilimit": 100,
+    "symbol": "frontpage_winddirection/directionred"
+  }
+]

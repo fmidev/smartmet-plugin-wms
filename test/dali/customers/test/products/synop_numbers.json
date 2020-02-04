@@ -1,0 +1,68 @@
+{
+    "title": "SYNOP temperatures at data points",
+    "producer": "synop",
+    "projection":
+    {
+	"crs": "EPSG:4326",
+	"bboxcrs": "WGS84",
+	"xsize": 800,
+	"ysize": 800,
+	"resolution": 0.25,
+	"cx": 25,
+	"cy": 60
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+	    "layers":
+	    [
+		{
+                    "qid": "mymap",
+                    "layer_type": "map",
+                    "map":
+                    {
+			"lines": true,
+			"schema": "natural_earth",
+			"minarea": 50,
+			"table": "admin_0_countries"
+                    },
+                    "attributes":
+                    {
+			"id": "europe",
+			"stroke": "#333",
+			"stroke-width": "0.5px",
+			"fill": "none"
+                    }
+		},
+		{
+		    "qid": "l2",
+		    "layer_type": "number",
+		    "css": "numbers/integers.css",
+		    "parameter": "Temperature",
+		    "symbol": "dot",
+		    "attributes":
+		    {
+			"class": "Number",
+			"id": "t2m_numbers"
+		    },
+		    "label":
+		    {
+			"dx": 10,
+			"dy": 5,
+			"precision": 1,
+			"missing": "-"
+		    },
+		    "positions":
+		    {
+			"layout": "data"
+		    }
+		}
+	    ]
+	}
+    ]
+}
