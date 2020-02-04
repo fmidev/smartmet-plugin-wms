@@ -6,6 +6,7 @@
 #include "FrameLayer.h"
 #include "IceMapLayer.h"
 #include "IsobandLayer.h"
+#include "IsolabelLayer.h"
 #include "IsolineLayer.h"
 #include "LegendLayer.h"
 #include "LocationLayer.h"
@@ -54,6 +55,8 @@ Layer* create(const Json::Value& theJson)
       return new IsobandLayer;
     if (name == "isoline")
       return new IsolineLayer;
+    if (name == "isolabel")
+      return new IsolabelLayer;
     if (name == "legend")
       return new LegendLayer;
     if (name == "location")

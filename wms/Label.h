@@ -32,6 +32,8 @@ class Label
   int dx = 0;
   int dy = 0;
 
+  std::string orientation = "horizontal";  // horizontal, auto
+
  private:
   // Value conversion
   std::string unit_conversion;

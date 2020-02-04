@@ -1,0 +1,177 @@
+{
+  "title": "Havainto",
+  "producer": "opendata",
+  "language": "fi",
+  "refs": {
+      "projection":
+      {
+	  "xsize": 900,
+	  "ysize": 1300,
+	  "crs": "EPSG:2393", // YKJ
+	  "bboxcrs": "EPSG:4326", // WGS84
+	  "cy": 64.5,
+	  "cx": 23.4,
+	  "resolution": 1.02
+      },
+    "finland": {
+      "schema": "esri",
+      "table": "finland_country_wgs84",
+      "minarea": 10,
+      "mindistance": 1
+    }
+  },
+  "defs": {
+    "layers": [
+      {
+        "tag": "symbol",
+        "attributes": {
+          "id": "rect"
+        },
+        "layers": [
+          {
+            "tag": "rect",
+            "attributes": {
+              "width": "25",
+              "height": "50",
+              "stroke": "black",
+              "stroke-width": "1px"
+            }
+          }
+        ]
+      },
+      {
+        "tag": "clipPath",
+        "attributes": {
+          "id": "cutNorwayRussia"
+        },
+        "layers": [
+          {
+            "tag": "path",
+            "attributes": {
+              "d": "M200,450 900,450 900,1300 0,1300z"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "projection": "ref:refs.projection",
+  "views": [
+    {
+      "qid": "v1-",
+      "attributes": {
+        "id": "view1"
+      },
+      "layers": [
+        {
+          "qid": "time_label",
+          "tag": "text",
+          "cdata": "",
+          "attributes": {
+            "x": 40,
+            "y": 70,
+            "text-anchor": "left",
+            "font-family": "Roboto, Arial",
+            "font-size": "45px"
+          }
+        },
+        {
+          "qid": "wxsymbols",
+          "layer_type": "symbol",
+          "symbols": "json:symbols/frontpage_smartweather.json",
+          "parameter": "smartsymbol",
+          "scale": 2.4,
+          "positions": {
+            "layout": "station",
+            "stations": [
+              {
+                // Utsjoki Kevo
+                "fmisid": 102035,
+                "dx": 20,
+                "dy": 10
+              },
+              {
+                // Enontekiö Kilpisjärvi Kyläkeskus
+                "fmisid": 102016,
+                "dx": 30,
+                "dy": -5
+              },
+              {
+                // Muonio KK
+                "fmisid": 106435,
+                "dx": 30,
+                "dy": 30
+              },
+              {
+                // Sodankylä Tähtelä
+                "fmisid": 101932,
+                "dx": 30,
+                "dy": -30
+              },
+              {
+                // Tornio Torppi
+                "fmisid": 101851,
+                "dx": 20,
+                "dy": -30
+              },
+              {
+                // Kuusamo Lentokenttä
+                "fmisid": 101886,
+                "dx": -10
+              },
+              {
+                // Ylivieska Lentokenttä
+                "fmisid": 101690,
+                "dy": 20
+              },
+              {
+                // Vieremä Kaarakkala
+                "fmisid": 101726,
+                "dx": 20
+              },
+              {
+                // Turku Artukainen
+                "fmisid": 100949,
+                "dx": 40,
+                "dy": -30
+              },
+              {
+                // Kaskinen Sälgrund
+                "fmisid": 101256,
+                "dx": 60,
+                "dy": 10
+              },
+              {
+                // Jyväskylä Lentoasema
+                "fmisid": 101339
+              },
+              {
+                // Ilomantsi Mekrijärvi
+                "fmisid": 101651,
+                "dx": -40,
+                "dy": 20
+              },
+              {
+                // Lappeenranta Lentoasema
+                "fmisid": 101237,
+                "dx": -20,
+                "dy": -10
+              },
+              {
+                // Tampere Härmälä
+                "fmisid": 101124,
+                "dx": 20,
+                "dy": -10
+              },
+              {
+                // Helsinki Kaisaniemi
+                "fmisid": 100971,
+                "dy": -10
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
