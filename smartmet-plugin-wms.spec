@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.2.4
+Version: 20.2.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,20 +18,20 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
-BuildRequires: smartmet-library-macgyver-devel >= 20.1.9
-BuildRequires: smartmet-library-spine-devel >= 20.1.15
+BuildRequires: smartmet-library-macgyver-devel >= 20.2.5
+BuildRequires: smartmet-library-spine-devel >= 20.2.7
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 19.9.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 19.12.19
+BuildRequires: smartmet-engine-observation-devel >= 20.2.7
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 20.1.23
 BuildRequires: smartmet-engine-geonames-devel >= 19.12.5
 BuildRequires: smartmet-engine-querydata-devel >= 20.1.30
 BuildRequires: smartmet-engine-contour-devel >= 19.11.20
-BuildRequires: smartmet-library-gis-devel >= 20.1.29
+BuildRequires: smartmet-library-gis-devel >= 20.2.5
 BuildRequires: fmt-devel >= 5.2.0
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -44,8 +44,8 @@ Requires: fmt >= 5.2.0
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-gis >= 20.1.29
-Requires: smartmet-library-macgyver >= 20.1.9
+Requires: smartmet-library-gis >= 20.2.5
+Requires: smartmet-library-macgyver >= 20.2.5
 Requires: smartmet-library-giza >= 18.10.1
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 19.9.26
@@ -55,7 +55,7 @@ Requires: smartmet-engine-contour >= 19.11.20
 Requires: smartmet-engine-gis >= 20.1.23
 Requires: smartmet-engine-geonames >= 19.12.5
 Requires: smartmet-server >= 20.1.15
-Requires: smartmet-library-spine >= 20.1.15
+Requires: smartmet-library-spine >= 20.2.7
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Fri Feb  7 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.7-1.fmi
+- Repackaged since Spine::Station API changed due to POD member initializations
+
 * Tue Feb  4 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.4-1.fmi
 - Added IsolabelLayer
 
