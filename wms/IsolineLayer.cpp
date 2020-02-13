@@ -416,6 +416,9 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
     {
       if (val->mValueData.size() > 0)
       {
+        fileId = val->mFileId[0];
+        messageIndex = val->mMessageIndex[0];
+
         for (auto wkb = val->mValueData.begin(); wkb != val->mValueData.end(); ++wkb)
         {
           unsigned char* cwkb = reinterpret_cast<unsigned char*>(wkb->data());
