@@ -63,6 +63,35 @@ void Layers::setProjection(Projection& projection)
 
 
 
+boost::optional<std::string> Layers::getProjectionParameter()
+{
+  try
+  {
+    boost::optional<std::string> param;
+
+    for (auto& layer : layers)
+    {
+      if (layer->projection.projectionParameter)
+        return layer->projection.projectionParameter;
+
+      if (layer->layers.layers.size() > 0)
+      {
+        param = layer->layers.getProjectionParameter();
+        if (param)
+          return param;
+      }
+    }
+    return param;
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
+
 bool Layers::getProjection(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState,Projection& projection)
 {
   try
@@ -154,6 +183,7 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
       }
     }
 
+
     for (auto& layer : layers)
     {
       // Each layer may actually generate multiple CDT layers
@@ -165,11 +195,23 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
         if (/* *layer->projection.crs == "data"  &&*/  layer->source  &&  *layer->source == "grid")
           layer->setProjection(projection);
 
-        // std::cout << "PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs << "\n";
+        //std::cout << "PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs  << "\n";
+
+        if (!layer->projection.projectionParameter)
+        {
+          if (!projection.projectionParameter)
+            projection.projectionParameter = getProjectionParameter();
+
+          if (projection.projectionParameter)
+            layer->projection.projectionParameter = projection.projectionParameter;
+        }
+
+        //if (layer->projection.projectionParameter)
+        //  std::cout << "  PARAM : " << *layer->projection.projectionParameter << "\n";
 
         layer->generate(theGlobals, theLayersCdt, theState);
 
-        if (layer->projection.projectionParameter &&  !projection.projectionParameter)
+        if (layer->projection.projectionParameter  &&  !projection.projectionParameter)
           projection.projectionParameter = *layer->projection.projectionParameter;
       }
     }
