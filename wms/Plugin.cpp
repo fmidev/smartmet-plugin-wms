@@ -1466,8 +1466,6 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
     if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
       hash["legend"] = "true";
 
-    printf("**** WMS GENERATE START\n");
-
     try
     {
       product.generate(hash, theState);
@@ -1477,8 +1475,6 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
       Spine::Exception e(BCP, "Operation failed!",nullptr);
       e.printError();
     }
-
-    printf("**** WMS GENERATE END\n");
 
     // Build the template
     std::ostringstream output, log;
@@ -1577,11 +1573,7 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Spine::Exception &exception,
     // Build the response CDT
     CTPP::CDT hash(CTPP::CDT::HASH_VAL);
 
-    printf("### WMS GENERATE START\n");
-
     product.generate(hash, theState);
-
-    printf("### WMS GENERATE END\n");
 
     // Build the template
     std::ostringstream output, log;
