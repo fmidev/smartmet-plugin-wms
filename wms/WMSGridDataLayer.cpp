@@ -48,8 +48,8 @@ time_t even_timesteps(std::set<std::string>& contentTimeList)
 
 
 
-WMSGridDataLayer::WMSGridDataLayer(const WMSConfig& config, const std::string& producer,uint geometryId)
-    : WMSLayer(config), itsGridEngine(config.gridEngine()), itsProducer(producer),itsGeometryId(geometryId)
+WMSGridDataLayer::WMSGridDataLayer(const WMSConfig& config, const std::string& producer,const std::string& parameter,uint geometryId)
+    : WMSLayer(config), itsGridEngine(config.gridEngine()), itsProducer(producer),itsParameter(parameter),itsGeometryId(geometryId)
 {
 }
 
@@ -100,11 +100,63 @@ void WMSGridDataLayer::updateLayerMetaData()
       }
     }
 
-
     std::set<std::string> contentTimeList;
-    if (contentServer->getContentTimeListByGenerationAndGeometryId(0,generationInfo->mGenerationId,itsGeometryId,contentTimeList) != 0)
-      return;
 
+    if (itsParameter > "")
+    {
+      std::string param = itsGridEngine->getParameterString(itsProducer,itsParameter);
+      std::vector<std::string> p;
+      splitString(param,':',p);
+
+      T::ParamKeyType parameterKeyType = T::ParamKeyTypeValue::FMI_NAME;
+      std::string parameterKey = p[0];
+      T::ParamLevelIdType parameterLevelIdType = T::ParamLevelIdTypeValue::IGNORE;
+      T::ParamLevelId parameterLevelId = 0;
+      T::ParamLevel minLevel = 0;
+      T::ParamLevel maxLevel = 1000000000;
+      T::ForecastType forecastType = 1;
+      T::ForecastNumber forecastNumber = -1;
+      std::string startTime = "19000101T000000";
+      std::string endTime = "23000101T000000";
+
+      if (p.size() >= 3  &&  p[2] > "")
+      {
+        parameterLevelIdType = T::ParamLevelIdTypeValue::FMI;
+        itsGeometryId = toInt32(p[2]);
+      }
+
+      if (p.size() >= 4  &&  p[3] > "")
+        parameterLevelId = toInt32(p[3]);
+
+      if (p.size() >= 5  &&  p[4] > "")
+      {
+        minLevel = toInt32(p[4]);
+        maxLevel = minLevel;
+      }
+
+      if (p.size() >= 6  &&  p[5] > "")
+        forecastType = toInt32(p[5]);
+
+      if (p.size() >= 7  &&  p[6] > "")
+        forecastNumber = toInt32(p[6]);
+
+      T::ContentInfoList contentInfoList;
+      if (contentServer->getContentListByParameterAndGenerationId(0,generationInfo->mGenerationId,parameterKeyType,parameterKey,parameterLevelIdType,parameterLevelId,minLevel,maxLevel,forecastType,forecastNumber,itsGeometryId,startTime,endTime,0,contentInfoList) != 0)
+        return;
+
+      uint len = contentInfoList.getLength();
+      for (uint t= 0; t<len; t++)
+      {
+        T::ContentInfo *info = contentInfoList.getContentInfoByIndex(t);
+        if (contentTimeList.find(info->mForecastTime) == contentTimeList.end())
+          contentTimeList.insert(info->mForecastTime);
+      }
+    }
+    else
+    {
+      if (contentServer->getContentTimeListByGenerationAndGeometryId(0,generationInfo->mGenerationId,itsGeometryId,contentTimeList) != 0)
+        return;
+    }
 
     time_t step = even_timesteps(contentTimeList);
     if (step > 0)

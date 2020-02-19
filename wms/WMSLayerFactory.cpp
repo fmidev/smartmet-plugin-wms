@@ -236,8 +236,13 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     Json::Value nulljson;
     boost::optional<std::string> source;
     uint geometryId = 0;
+    std::string parameter;
 
-    auto json = root.get("source", nulljson);
+    auto json = root.get("parameter", nulljson);
+    if (!json.isNull())
+      parameter = json.asString();
+
+    json = root.get("source", nulljson);
     if (!json.isNull())
     {
       source = json.asString();
@@ -281,7 +286,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         // if no producer defined, let's use default producer
         if (producer.empty())
           producer = theWMSConfig.itsDaliConfig.defaultModel();
-        layer = boost::make_shared<WMSGridDataLayer>(theWMSConfig, producer,geometryId);
+        layer = boost::make_shared<WMSGridDataLayer>(theWMSConfig, producer,parameter,geometryId);
         break;
       }
       case WMSLayerType::ObservationLayer:

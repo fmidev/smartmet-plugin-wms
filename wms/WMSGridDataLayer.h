@@ -24,7 +24,7 @@ namespace WMS
 class WMSGridDataLayer : public WMSLayer
 {
   public:
-    WMSGridDataLayer(const WMSConfig& config, const std::string& producer,uint geometryId);
+    WMSGridDataLayer(const WMSConfig& config, const std::string& producer,const std::string& parameter,uint geometryId);
 
   protected:
     virtual void updateLayerMetaData();
@@ -32,6 +32,7 @@ class WMSGridDataLayer : public WMSLayer
   private:
     const Engine::Grid::Engine* itsGridEngine;
     const std::string itsProducer;
+    const std::string itsParameter;
     uint itsGeometryId;
 };
 
