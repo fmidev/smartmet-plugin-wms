@@ -4,6 +4,7 @@
 #include "Isoline.h"
 #include "Layer.h"
 #include "Map.h"
+#include "ParameterInfo.h"
 #include "Sampling.h"
 #include "Smoother.h"
 #include <engines/querydata/Q.h>
@@ -30,6 +31,8 @@ class IsolineLayer : public Layer
   virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 
   virtual std::size_t hash_value(const State& theState) const;
+
+  virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   boost::optional<std::string> parameter;
   boost::optional<int> levelId;

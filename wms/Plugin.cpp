@@ -8,6 +8,7 @@
 #include "CaseInsensitiveComparator.h"
 #include "Hash.h"
 #include "Mime.h"
+#include "ParameterInfo.h"
 #include "Product.h"
 #include "State.h"
 #include "TextUtility.h"
@@ -68,6 +69,33 @@ const std::string &check_attack(const std::string &theName)
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \print Information on product parameters
+ */
+// ----------------------------------------------------------------------
+
+void print(const SmartMet::Plugin::Dali::ParameterInfos &infos)
+{
+  if (infos.empty())
+  {
+    std::cout << "No grid parameters used in the product\n";
+  }
+  else
+  {
+    const std::string missing = "?";
+    std::cout << "Parameter information:\n";
+    for (const auto &info : infos)
+    {
+      std::cout << fmt::format("Parameter={} Producer={} Level={}\n",
+                               info.parameter,
+                               (info.producer ? *info.producer : missing),
+                               (info.level ? Fmi::to_string(*info.level) : missing));
+    }
+  }
+  std::cout << std::flush;
+}
+
 }  // namespace
 
 namespace SmartMet
@@ -107,6 +135,8 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 
     const bool print_json = Spine::optional_bool(theRequest.getParameter("printjson"), false);
 
+    const bool print_params = Spine::optional_bool(theRequest.getParameter("printparams"), false);
+
     const bool usetimer = Spine::optional_bool(theRequest.getParameter("timer"), false);
 
     // Define the customer and image format
@@ -139,6 +169,9 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 
     // Image format can no longer be changed by anything, provide the info to layers
     theState.setType(product.type);
+
+    if (print_params)
+      print(product.getGridParameterInfo(theState));
 
     // Calculate hash for the product
 
@@ -1230,6 +1263,7 @@ std::string Dali::Plugin::parseWMSException(Spine::Exception &wmsException,
  * \brief Perform a WMS query
  */
 // ----------------------------------------------------------------------
+
 WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
                                       State &theState,
                                       const Spine::HTTP::Request &theRequest,
@@ -1244,9 +1278,11 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     // Establish debugging related variables
 
-    bool print_hash = Spine::optional_bool(thisRequest.getParameter("printhash"), false);
+    const bool print_hash = Spine::optional_bool(thisRequest.getParameter("printhash"), false);
 
-    bool print_json = Spine::optional_bool(thisRequest.getParameter("printjson"), false);
+    const bool print_json = Spine::optional_bool(thisRequest.getParameter("printjson"), false);
+
+    const bool print_params = Spine::optional_bool(theRequest.getParameter("printparams"), false);
 
     std::string format = Spine::optional_string(thisRequest.getParameter("format"), "xml");
 
@@ -1417,6 +1453,9 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     // Format can no longer be changed by anything, provide the info to layers
     theState.setType(product.type);
+
+    if (print_params)
+      print(product.getGridParameterInfo(theState));
 
     // Calculate hash for the product
 

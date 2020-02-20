@@ -700,6 +700,25 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Extract information on used parameters
+ */
+// ----------------------------------------------------------------------
+
+void IsolineLayer::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
+{
+  if (theState.isObservation(producer))
+    return;
+  if (parameter)
+  {
+    ParameterInfo info(*parameter);
+    info.producer = producer;
+    info.level = level;
+    add(infos, info);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value for the layer
  */
 // ----------------------------------------------------------------------

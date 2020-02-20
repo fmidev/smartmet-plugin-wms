@@ -98,6 +98,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Feb 20 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.20-1.fmi
 - GRIB GetCapabilities response now depends on the used parameters
+- Added print_params query option
 
 * Wed Feb 19 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.19-1.fmi
 - Improved GetCapabilities responses in GRIB mode

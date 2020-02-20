@@ -1109,6 +1109,25 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Extract information on used parameters
+ */
+// ----------------------------------------------------------------------
+
+void IsobandLayer::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
+{
+  if (theState.isObservation(producer))
+    return;
+  if (parameter)
+  {
+    ParameterInfo info(*parameter);
+    info.producer = producer;
+    info.level = level;
+    add(infos, info);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value for the layer
  */
 // ----------------------------------------------------------------------

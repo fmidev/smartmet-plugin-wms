@@ -224,6 +224,18 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Extract information on used parameters
+ */
+// ----------------------------------------------------------------------
+
+void Layers::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
+{
+  for (const auto& layer : layers)
+    layer->addGridParameterInfo(infos, theState);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value = combined hash from all layers
  */
 // ----------------------------------------------------------------------
