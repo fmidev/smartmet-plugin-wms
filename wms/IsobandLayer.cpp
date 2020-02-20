@@ -390,6 +390,9 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 {
   try
   {
+    if (!parameter)
+      throw Spine::Exception(BCP, "Parameter not set for isoband-layer");
+
     std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
