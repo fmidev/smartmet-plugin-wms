@@ -13,6 +13,7 @@
 
 #include "Attributes.h"
 #include "Layers.h"
+#include "ParameterInfo.h"
 #include "Properties.h"
 #include <boost/optional.hpp>
 #include <json/json.h>
@@ -60,6 +61,8 @@ class Layer : public Properties
 
   // Base provides a reasonable default!
   virtual std::size_t hash_value(const State& theState) const;
+
+  virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   // Does the layer satisfy resolution etc constraints?
   bool validLayer(const State& theState) const;

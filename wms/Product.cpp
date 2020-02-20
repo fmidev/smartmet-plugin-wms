@@ -148,6 +148,19 @@ void Product::generate(CTPP::CDT& theGlobals, State& theState)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Gather information on used grid parameters
+ */
+// ----------------------------------------------------------------------
+
+ParameterInfos Product::getGridParameterInfo(const State& theState) const
+{
+  ParameterInfos infos;
+  views.addGridParameterInfo(infos, theState);
+  return infos;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value
  */
 // ----------------------------------------------------------------------

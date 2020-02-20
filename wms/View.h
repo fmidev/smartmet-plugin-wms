@@ -14,8 +14,8 @@
 
 #include "Attributes.h"
 #include "Layers.h"
+#include "ParameterInfo.h"
 #include "Properties.h"
-
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/time_serialize.hpp>
 #include <boost/optional.hpp>
@@ -43,6 +43,8 @@ class View : public Properties
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theViewCdt, State& theState);
 
   std::size_t hash_value(const State& theState) const;
+
+  void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   // TODO: Add projection
   // TODO: Add bounding box

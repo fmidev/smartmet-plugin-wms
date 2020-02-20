@@ -93,6 +93,17 @@ void View::generate(CTPP::CDT& theGlobals, CTPP::CDT& theViewCdt, State& theStat
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Extract information on used parameters
+ */
+// ----------------------------------------------------------------------
+
+void View::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
+{
+  layers.addGridParameterInfo(infos, theState);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value = combined hash from all layers
  *
  * Other members are ignored, their hash comes from the hash

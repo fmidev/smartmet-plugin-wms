@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "ParameterInfo.h"
 #include "View.h"
 #include <boost/shared_ptr.hpp>
 #include <json/json.h>
@@ -40,6 +41,8 @@ class Views
   void generate(CTPP::CDT& theGlobals, State& theState);
 
   std::size_t hash_value(const State& theState) const;
+
+  void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   std::list<boost::shared_ptr<View> > views;
 };

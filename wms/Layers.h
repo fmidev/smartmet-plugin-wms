@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "ParameterInfo.h"
 #include <boost/shared_ptr.hpp>
 #include <json/json.h>
 #include <list>
@@ -44,6 +45,8 @@ class Layers
   std::size_t hash_value(const State& theState) const;
 
   bool empty() const { return layers.empty(); }
+
+  void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   std::list<boost::shared_ptr<Layer> > layers;
 };

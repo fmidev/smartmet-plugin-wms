@@ -1091,6 +1091,47 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Extract information on used parameters
+ */
+// ----------------------------------------------------------------------
+
+void ArrowLayer::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
+{
+  if (theState.isObservation(producer))
+    return;
+
+  if (direction)
+  {
+    ParameterInfo info(*direction);
+    info.producer = producer;
+    info.level = level;
+    add(infos, info);
+  }
+  if (speed)
+  {
+    ParameterInfo info(*speed);
+    info.producer = producer;
+    info.level = level;
+    add(infos, info);
+  }
+  if (u)
+  {
+    ParameterInfo info(*u);
+    info.producer = producer;
+    info.level = level;
+    add(infos, info);
+  }
+  if (v)
+  {
+    ParameterInfo info(*v);
+    info.producer = producer;
+    info.level = level;
+    add(infos, info);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value for the layer
  */
 // ----------------------------------------------------------------------
