@@ -1,5 +1,6 @@
 #include "LonLatToXYTransformation.h"
 #include <boost/move/make_unique.hpp>
+#include <ogr_spatialref.h>
 
 namespace SmartMet
 {

@@ -4,12 +4,11 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "State.h"
-
 #include <ctpp2/CDT.hpp>
-#include <spine/Exception.h>
-
 #include <gis/OGR.h>
 #include <gis/Types.h>
+#include <spine/Exception.h>
+#include <ogr_geometry.h>
 
 namespace SmartMet
 {

@@ -1,7 +1,7 @@
 #include "Geometry.h"
 #include <boost/move/make_unique.hpp>
 #include <spine/Exception.h>
-#include <ogr_spatialref.h>
+#include <ogr_geometry.h>
 
 namespace SmartMet
 {

@@ -1,13 +1,11 @@
 #include "PostGISLayer.h"
-
 #include "Geometry.h"
 #include "State.h"
-
 #include <ctpp2/CDT.hpp>
-
 #include <engines/gis/MapOptions.h>
 #include <gis/OGR.h>
 #include <spine/Exception.h>
+#include <ogr_geometry.h>
 
 namespace SmartMet
 {

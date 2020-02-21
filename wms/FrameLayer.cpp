@@ -8,6 +8,7 @@
 #include <ctpp2/CDT.hpp>
 #include <gis/OGR.h>
 #include <spine/Exception.h>
+#include <ogr_geometry.h>
 
 namespace SmartMet
 {

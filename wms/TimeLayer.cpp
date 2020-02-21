@@ -14,6 +14,7 @@
 #include <gis/Box.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
+#include <ogr_spatialref.h>
 
 namespace SmartMet
 {

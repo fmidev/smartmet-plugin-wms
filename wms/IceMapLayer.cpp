@@ -20,6 +20,7 @@
 #include <spine/Json.h>
 #include <algorithm>
 #include <cmath>
+#include <ogr_geometry.h>
 
 namespace SmartMet
 {

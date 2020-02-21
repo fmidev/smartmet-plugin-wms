@@ -3,9 +3,9 @@
 #include "Layer.h"
 #include "LonLatToXYTransformation.h"
 #include "State.h"
-
 #include <ctpp2/CDT.hpp>
 #include <spine/Exception.h>
+#include <ogr_spatialref.h>
 
 namespace SmartMet
 {

@@ -331,7 +331,6 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     // The above call guarantees these have been resolved:
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();
->>>>>>> master
 
     // Update the globals
 
@@ -358,11 +357,6 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       OGRGeometryPtr geom = geoms[i];
       if (geom && geom->IsEmpty() == 0)
       {
-<<<<<<< HEAD
-        OGRGeometryPtr geom2(Fmi::OGR::lineclip(*geom, clipbox));
-
-=======
->>>>>>> master
         const Isoline& isoline = isolines[i];
 
         // Store the path with unique QID
