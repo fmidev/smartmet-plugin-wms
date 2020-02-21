@@ -432,6 +432,17 @@ Parameter Layer::getParameter() const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Extract information on used parameters
+ */
+// ----------------------------------------------------------------------
+
+void Layer::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
+{
+  // By default a layer uses no parameters
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the hash for the layer
  */
 // ----------------------------------------------------------------------

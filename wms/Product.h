@@ -8,6 +8,7 @@
 
 #include "Attributes.h"
 #include "Defs.h"
+#include "ParameterInfo.h"
 #include "Png.h"
 #include "Projection.h"
 #include "Properties.h"
@@ -40,6 +41,8 @@ class Product : public Properties
 
   void generate(CTPP::CDT& theGlobals, State& theState);
   std::size_t hash_value(const State& theState) const;
+
+  ParameterInfos getGridParameterInfo(const State& theState) const;
 
   // Element specific:
   boost::optional<std::string> svg_tmpl;

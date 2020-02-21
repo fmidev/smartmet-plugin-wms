@@ -8,6 +8,7 @@
 
 #include "AttributeSelection.h"
 #include "Layer.h"
+#include "ParameterInfo.h"
 #include "Positions.h"
 #include "Projection.h"
 #include <boost/optional.hpp>
@@ -34,6 +35,8 @@ class ArrowLayer : public Layer
   virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 
   virtual std::size_t hash_value(const State& theState) const;
+
+  virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   // Direction and speed parameters
   boost::optional<std::string> direction;

@@ -64,6 +64,18 @@ void Views::generate(CTPP::CDT& theGlobals, State& theState)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Extract information on used parameters
+ */
+// ----------------------------------------------------------------------
+
+void Views::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
+{
+  for (const auto& view : views)
+    view->addGridParameterInfo(infos, theState);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value = combined hash from all views
  */
 // ----------------------------------------------------------------------
