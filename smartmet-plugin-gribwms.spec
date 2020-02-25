@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.2.20
+Version: 20.2.25
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,8 +18,8 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
-BuildRequires: smartmet-library-grid-content-devel >= 20.2.19
-BuildRequires: smartmet-library-grid-files-devel >= 20.2.19
+BuildRequires: smartmet-library-grid-content-devel >= 20.2.25
+BuildRequires: smartmet-library-grid-files-devel >= 20.2.25
 BuildRequires: smartmet-library-macgyver-devel >= 20.2.5
 BuildRequires: smartmet-library-spine-devel >= 20.2.13
 BuildRequires: smartmet-library-giza-devel
@@ -27,7 +27,7 @@ BuildRequires: smartmet-library-giza-devel
 BuildRequires: smartmet-engine-authentication-devel >= 19.9.26
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.2.10
+BuildRequires: smartmet-engine-observation-devel >= 20.2.20
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 20.2.18
 BuildRequires: smartmet-engine-geonames-devel >= 19.12.5
@@ -49,8 +49,8 @@ Requires: libconfig
 Requires: smartmet-library-gis >= 20.2.18
 Requires: smartmet-library-macgyver >= 20.2.5
 Requires: smartmet-library-giza >= 18.10.1
-Requires: smartmet-library-grid-content >= 20.2.19
-Requires: smartmet-library-grid-files >= 20.2.19
+Requires: smartmet-library-grid-content >= 20.2.25
+Requires: smartmet-library-grid-files >= 20.2.25
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 19.9.26
 %endif
@@ -96,6 +96,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Feb 25 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.25-1.fmi
+- Repackaged due to base library API changes
+
 * Thu Feb 20 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.20-1.fmi
 - GRIB GetCapabilities response now depends on the used parameters
 - Added print_params query option
