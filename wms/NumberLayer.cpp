@@ -789,17 +789,16 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Establish the level
 
+    if (q && !q->firstLevel())
+      throw Spine::Exception(BCP, "Unable to set first level in querydata.");
+
     if (level)
     {
       if (use_observations)
         throw std::runtime_error("Cannot set level value for observations in NumberLayer");
 
-      bool match = false;
-      for (q->resetLevel(); !match && q->nextLevel();)
-        match = (q->levelValue() == *level);
-
-      if (!match)
-        throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available");
+      if (!q->selectLevel(*level))
+        throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
     }
 
     // Get projection details

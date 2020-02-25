@@ -145,17 +145,16 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
 
   // Establish the level
 
+  if (q && !q->firstLevel())
+    throw Spine::Exception(BCP, "Unable to set first level in querydata.");
+
   if (level)
   {
     if (!q)
       throw Spine::Exception(BCP, "Cannot generate isobands without gridded level data");
 
-    bool match = false;
-    for (q->resetLevel(); !match && q->nextLevel();)
-      match = (q->levelValue() == *level);
-
-    if (!match)
-      throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available");
+    if (!q->selectLevel(*level))
+      throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
   }
 
   // Get projection details
@@ -224,6 +223,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   const auto& contourer = theState.getContourEngine();
 
   Engine::Contour::Options options(param, valid_time, isovalues);
+  options.level = level;
 
   options.minarea = minarea;
 
@@ -254,20 +254,6 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   std::string wkt = q->area().WKT();
 
   // Select the data
-
-  if (!q->firstLevel())
-    throw Spine::Exception(BCP, "Unable to set first level in querydata.");
-
-  // Select the level.
-  if (options.level)
-  {
-    if (!q->selectLevel(*options.level))
-    {
-      throw Spine::Exception(
-          BCP,
-          "Level value " + boost::lexical_cast<std::string>(*options.level) + " is not available.");
-    }
-  }
 
   const auto& qEngine = theState.getQEngine();
   auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
