@@ -210,7 +210,7 @@ PointValues read_all_observations(const ArrowLayer& layer,
     settings.numberofstations = 1;
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
 
-    // settings.timestep = ?;
+    settings.timestep = 0;
 
     settings.starttimeGiven = true;
 
