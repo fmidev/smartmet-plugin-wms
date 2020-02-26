@@ -151,7 +151,7 @@ PointValues read_flash_observations(const SymbolLayer& layer,
     settings.timezone = "UTC";
     settings.numberofstations = 1;
 
-    // settings.timestep = ?;
+    settings.timestep = 0;
 
     settings.starttimeGiven = true;
 
