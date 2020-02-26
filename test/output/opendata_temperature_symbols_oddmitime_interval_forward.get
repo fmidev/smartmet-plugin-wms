@@ -186,6 +186,7 @@
    <use class="Temperature_2_4" transform="translate(244,342) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_6_5" transform="translate(218,136) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_4_3" transform="translate(220,140) scale(0.75)" xlink:href="#circle"/>
+   <use class="Temperature_3_2" transform="translate(206,140) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_1_2" transform="translate(118,308) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_4_6" transform="translate(256,412) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_4_6" transform="translate(238,416) scale(0.75)" xlink:href="#circle"/>
@@ -215,6 +216,7 @@
    <use class="Temperature_0_1" transform="translate(126,393) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_1_0" transform="translate(373,310) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_1_0" transform="translate(284,191) scale(0.75)" xlink:href="#circle"/>
+   <use class="Temperature_1_0" transform="translate(278,192) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_1_0" transform="translate(274,194) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_2_1" transform="translate(390,170) scale(0.75)" xlink:href="#circle"/>
    <use class="Temperature_4_3" transform="translate(405,148) scale(0.75)" xlink:href="#circle"/>
