@@ -504,6 +504,20 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   auto valid_time = getValidTime();
 
+  // Establish the level
+
+  if (q && !q->firstLevel())
+    throw Spine::Exception(BCP, "Unable to set first level in querydata.");
+
+  if (level)
+  {
+    if (!q)
+      throw Spine::Exception(BCP, "Cannot generate isobands without gridded level data");
+
+    if (!q->selectLevel(*level))
+      throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
+  }
+
   // Get projection details
 
   projection.update(q);
@@ -550,6 +564,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   const auto& contourer = theState.getContourEngine();
 
   Engine::Contour::Options options(param, valid_time, isovalues);
+  options.level = level;
 
   options.minarea = minarea;
 

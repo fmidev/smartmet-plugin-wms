@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.2.25
+Version: 20.2.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -29,7 +29,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 19.9.26
 %if %{with observation}
 BuildRequires: smartmet-engine-observation-devel >= 20.2.20
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 20.2.18
+BuildRequires: smartmet-engine-gis-devel >= 20.2.25
 BuildRequires: smartmet-engine-geonames-devel >= 19.12.5
 BuildRequires: smartmet-engine-querydata-devel >= 20.1.30
 BuildRequires: smartmet-engine-contour-devel >= 19.11.20
@@ -56,7 +56,7 @@ Requires: smartmet-engine-authentication >= 19.9.26
 %endif
 Requires: smartmet-engine-querydata >= 20.1.30
 Requires: smartmet-engine-contour >= 19.11.20
-Requires: smartmet-engine-gis >= 20.2.18
+Requires: smartmet-engine-gis >= 20.2.25
 Requires: smartmet-engine-geonames >= 19.12.5
 Requires: smartmet-server >= 20.2.13
 Requires: smartmet-library-spine >= 20.2.13
@@ -96,8 +96,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Feb 26 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.26-1.fmi
+- Fixed IsolabelLayer type to be a querydata-layer for WMS requests
+
 * Tue Feb 25 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.25-1.fmi
 - Repackaged due to base library API changes
+- Fixed level-setting to work for isoline/isoband layers
 
 * Thu Feb 20 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.20-1.fmi
 - GRIB GetCapabilities response now depends on the used parameters
