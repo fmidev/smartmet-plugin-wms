@@ -177,6 +177,20 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       map_cdt["layertype"] = "map";
       map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
 
+      std::cerr << "GEOM: " << geom->getSpatialReference()->EPSGTreatsAsLatLong()
+                << "\nIMAGE: " << crs->EPSGTreatsAsLatLong() << std::endl;
+
+      std::cerr << "NE: " << geom->getSpatialReference()->EPSGTreatsAsNorthingEasting()
+                << "\nIMAGE: " << crs->EPSGTreatsAsNorthingEasting() << std::endl;
+
+      if (geom->getSpatialReference() != nullptr)
+        std::cerr << "\nSHAPE: " << Fmi::OGR::exportToPrettyWkt(*geom->getSpatialReference())
+                  << std::endl;
+      else
+        std::cerr << "No shape sref" << std::endl;
+
+      std::cerr << "\nIMAGE: " << Fmi::OGR::exportToPrettyWkt(*crs) << std::endl;
+
       theState.addPresentationAttributes(map_cdt, css, attributes);
 
       theGlobals["paths"][iri] = map_cdt;

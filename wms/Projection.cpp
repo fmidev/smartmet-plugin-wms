@@ -8,12 +8,12 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <fmt/format.h>
-#include <ogr_geometry.h>
-#include <ogr_spatialref.h>
 #include <gis/Box.h>
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
 #include <cmath>
+#include <ogr_geometry.h>
+#include <ogr_spatialref.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -504,6 +504,18 @@ void Projection::prepareCRS() const
 
     transformation->Transform(1, &XMAX, &YMAX);
     itsTopRight = NFmiPoint(XMAX, YMAX);
+
+    std::cerr << std::setprecision(8) << "\nProjection:\n\n"
+              << "\nxsize=" << (xsize ? *xsize : -1) << "\nysize=" << (ysize ? *ysize : -1)
+              << "\nx1=" << (x1 ? *x1 : -1) << "\ny1=" << (y1 ? *y1 : -1)
+              << "\nx2=" << (x2 ? *x2 : -1) << "\ny2=" << (y2 ? *y2 : -1)
+              << "\ncx=" << (cx ? *cx : -1) << "\ncy=" << (cy ? *cy : -1)
+              << "\nres=" << (resolution ? *resolution : -1) << "\nbl=" << itsBottomLeft.X() << ","
+              << itsBottomLeft.Y() << "\ntr=" << itsTopRight.X() << "," << itsTopRight.Y() << "\n"
+              << "\nxmin=" << box->xmin() << "\nxmax=" << box->xmax() << "\nymin=" << box->ymin()
+              << "\nymax=" << box->ymax() << "\nwidth=" << box->width()
+              << "\nheight=" << box->height() << "\n"
+              << std::endl;
   }
   catch (...)
   {
