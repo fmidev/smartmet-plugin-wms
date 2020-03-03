@@ -1002,7 +1002,16 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
 
     // Adding parameter information into the query.
 
-    std::string pName = *parameter;
+    if (!parameter && !projection.projectionParameter)
+      return;
+
+    std::string pName;
+
+    if (parameter)
+      pName = *parameter;
+    else
+      pName = *projection.projectionParameter;
+
     auto pos = pName.find(".raw");
     if (pos != std::string::npos)
     {
