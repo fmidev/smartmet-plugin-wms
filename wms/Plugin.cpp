@@ -587,21 +587,24 @@ void Plugin::init()
     if (itsShutdownRequested)
       return;
 
-    // GRID ENGINE
-
-    engine = itsReactor->getSingleton("grid", nullptr);
-    if (engine == nullptr)
-      throw Spine::Exception(BCP, "Grid engine unavailable");
-    itsGridEngine = reinterpret_cast<Engine::Grid::Engine *>(engine);
-    if (itsShutdownRequested)
-      return;
-
     // GEONAMES
 
     engine = itsReactor->getSingleton("Geonames", nullptr);
     if (engine == nullptr)
       throw Spine::Exception(BCP, "Geonames engine unavailable");
     itsGeoEngine = reinterpret_cast<Engine::Geonames::Engine *>(engine);
+    if (itsShutdownRequested)
+      return;
+
+    // GRID ENGINE
+
+    engine = itsReactor->getSingleton("grid", nullptr);
+    if (engine == nullptr)
+      throw Spine::Exception(BCP, "Grid engine unavailable");
+    itsGridEngine = reinterpret_cast<Engine::Grid::Engine *>(engine);
+    itsGridEngine->setDem(itsGeoEngine->dem());
+    itsGridEngine->setLandCover(itsGeoEngine->landCover());
+
     if (itsShutdownRequested)
       return;
 
