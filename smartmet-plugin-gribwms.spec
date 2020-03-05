@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.2.26
+Version: 20.3.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -47,7 +47,7 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
 Requires: smartmet-library-gis >= 20.2.18
-Requires: smartmet-library-macgyver >= 20.2.5
+Requires: smartmet-library-macgyver >= 20.3.5
 Requires: smartmet-library-giza >= 18.10.1
 Requires: smartmet-library-grid-content >= 20.2.25
 Requires: smartmet-library-grid-files >= 20.2.25
@@ -59,7 +59,7 @@ Requires: smartmet-engine-contour >= 19.11.20
 Requires: smartmet-engine-gis >= 20.2.25
 Requires: smartmet-engine-geonames >= 19.12.5
 Requires: smartmet-server >= 20.2.13
-Requires: smartmet-library-spine >= 20.2.13
+Requires: smartmet-library-spine >= 20.3.5
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -96,6 +96,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Mar  5 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.3.5-1.fmi
+- Use SmartMet::Spine::makeParameter
+
 * Wed Feb 26 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.26-1.fmi
 - Fixed IsolabelLayer type to be a querydata-layer for WMS requests
 

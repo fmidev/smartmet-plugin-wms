@@ -12,6 +12,7 @@
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
+#include <spine/ParameterTools.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
@@ -427,23 +428,23 @@ PointValues read_all_observations(const ArrowLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(obsengine.makeParameter("stationlon"));
-    settings.parameters.push_back(obsengine.makeParameter("stationlat"));
+    settings.parameters.push_back(Spine::makeParameter("stationlon"));
+    settings.parameters.push_back(Spine::makeParameter("stationlat"));
 
     bool use_uv_components = (layer.u && layer.v);
 
     if (use_uv_components)
     {
-      settings.parameters.push_back(obsengine.makeParameter(*layer.u));
-      settings.parameters.push_back(obsengine.makeParameter(*layer.v));
+      settings.parameters.push_back(Spine::makeParameter(*layer.u));
+      settings.parameters.push_back(Spine::makeParameter(*layer.v));
     }
     else
     {
-      settings.parameters.push_back(obsengine.makeParameter(*layer.direction));
+      settings.parameters.push_back(Spine::makeParameter(*layer.direction));
       if (layer.speed)
-        settings.parameters.push_back(obsengine.makeParameter(*layer.speed));
+        settings.parameters.push_back(Spine::makeParameter(*layer.speed));
       else
-        settings.parameters.push_back(obsengine.makeParameter("WindSpeedMS"));
+        settings.parameters.push_back(Spine::makeParameter("WindSpeedMS"));
     }
 
     // Request intersection parameters too - if any
@@ -453,7 +454,7 @@ PointValues read_all_observations(const ArrowLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+      settings.parameters.push_back(Spine::makeParameter(extraparam));
 
     // Coordinates or bounding box
 
@@ -570,23 +571,23 @@ PointValues read_station_observations(const ArrowLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(obsengine.makeParameter("stationlon"));
-    settings.parameters.push_back(obsengine.makeParameter("stationlat"));
+    settings.parameters.push_back(Spine::makeParameter("stationlon"));
+    settings.parameters.push_back(Spine::makeParameter("stationlat"));
 
     bool use_uv_components = (layer.u && layer.v);
 
     if (use_uv_components)
     {
-      settings.parameters.push_back(obsengine.makeParameter(*layer.u));
-      settings.parameters.push_back(obsengine.makeParameter(*layer.v));
+      settings.parameters.push_back(Spine::makeParameter(*layer.u));
+      settings.parameters.push_back(Spine::makeParameter(*layer.v));
     }
     else
     {
-      settings.parameters.push_back(obsengine.makeParameter(*layer.direction));
+      settings.parameters.push_back(Spine::makeParameter(*layer.direction));
       if (layer.speed)
-        settings.parameters.push_back(obsengine.makeParameter(*layer.speed));
+        settings.parameters.push_back(Spine::makeParameter(*layer.speed));
       else
-        settings.parameters.push_back(obsengine.makeParameter("WindSpeedMS"));
+        settings.parameters.push_back(Spine::makeParameter("WindSpeedMS"));
     }
 
     // Request intersection parameters too - if any
@@ -596,7 +597,7 @@ PointValues read_station_observations(const ArrowLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+      settings.parameters.push_back(Spine::makeParameter(extraparam));
 
     if (!layer.positions)
       throw Spine::Exception(BCP, "Positions not defined for station-layout of numbers");
@@ -734,24 +735,24 @@ PointValues read_latlon_observations(const ArrowLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(obsengine.makeParameter("stationlon"));
-    settings.parameters.push_back(obsengine.makeParameter("stationlat"));
-    settings.parameters.push_back(obsengine.makeParameter("fmisid"));
+    settings.parameters.push_back(Spine::makeParameter("stationlon"));
+    settings.parameters.push_back(Spine::makeParameter("stationlat"));
+    settings.parameters.push_back(Spine::makeParameter("fmisid"));
 
     bool use_uv_components = (layer.u && layer.v);
 
     if (use_uv_components)
     {
-      settings.parameters.push_back(obsengine.makeParameter(*layer.u));
-      settings.parameters.push_back(obsengine.makeParameter(*layer.v));
+      settings.parameters.push_back(Spine::makeParameter(*layer.u));
+      settings.parameters.push_back(Spine::makeParameter(*layer.v));
     }
     else
     {
-      settings.parameters.push_back(obsengine.makeParameter(*layer.direction));
+      settings.parameters.push_back(Spine::makeParameter(*layer.direction));
       if (layer.speed)
-        settings.parameters.push_back(obsengine.makeParameter(*layer.speed));
+        settings.parameters.push_back(Spine::makeParameter(*layer.speed));
       else
-        settings.parameters.push_back(obsengine.makeParameter("WindSpeedMS"));
+        settings.parameters.push_back(Spine::makeParameter("WindSpeedMS"));
     }
 
     // Request intersection parameters too - if any
@@ -761,7 +762,7 @@ PointValues read_latlon_observations(const ArrowLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+      settings.parameters.push_back(Spine::makeParameter(extraparam));
 
     // Process the points one at a time so that we can assign dx,dy values to them
 

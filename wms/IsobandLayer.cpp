@@ -31,6 +31,7 @@
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
+#include <spine/ParameterTools.h>
 #include <limits>
 
 namespace SmartMet
@@ -203,9 +204,9 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
     // Get actual data (flash coordinates plus parameter column values)
     auto& obsengine = theState.getObsEngine();
-    settings.parameters.push_back(obsengine.makeParameter("longitude"));
-    settings.parameters.push_back(obsengine.makeParameter("latitude"));
-    settings.parameters.push_back(obsengine.makeParameter(*parameter));
+    settings.parameters.push_back(Spine::makeParameter("longitude"));
+    settings.parameters.push_back(Spine::makeParameter("latitude"));
+    settings.parameters.push_back(Spine::makeParameter(*parameter));
 
     settings.boundingBox = getClipBoundingBox(box, crs);
 

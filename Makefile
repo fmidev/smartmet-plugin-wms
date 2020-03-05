@@ -2,8 +2,12 @@ SUBNAME = wms
 SPEC = smartmet-plugin-grib$(SUBNAME)
 INCDIR = smartmet/plugins/$(SUBNAME)
 
-FLAGS = -std=c++11 -MD -fPIC -rdynamic -Wall -W \
-	-fdiagnostics-color=always \
+-include $(HOME)/.smartmet.mk
+GCC_DIAG_COLOR ?= always
+CXX_STD ?= c++11
+
+FLAGS = -std=$(CXX_STD) -MD -fPIC -rdynamic -Wall -W \
+	-fdiagnostics-color=$(GCC_DIAG_COLOR) \
 	-Wno-unused-parameter \
 	-fno-omit-frame-pointer \
 	-Wno-deprecated-declarations \

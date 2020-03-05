@@ -26,6 +26,7 @@
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
+#include <spine/ParameterTools.h>
 #include <iomanip>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <grid-files/common/ImagePaint.h>
@@ -261,11 +262,11 @@ PointValues read_flash_observations(const SymbolLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(obsengine.makeParameter("longitude"));
-    settings.parameters.push_back(obsengine.makeParameter("latitude"));
+    settings.parameters.push_back(Spine::makeParameter("longitude"));
+    settings.parameters.push_back(Spine::makeParameter("latitude"));
 
     if (layer.parameter)
-      settings.parameters.push_back(obsengine.makeParameter(*layer.parameter));
+      settings.parameters.push_back(Spine::makeParameter(*layer.parameter));
 
     // Request intersection parameters too - if any
     auto iparams = layer.positions->intersections.parameters();
@@ -274,7 +275,7 @@ PointValues read_flash_observations(const SymbolLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+      settings.parameters.push_back(Spine::makeParameter(extraparam));
 
     // Generate the coordinates for the symbols
 
@@ -379,11 +380,11 @@ PointValues read_all_observations(const SymbolLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(obsengine.makeParameter("stationlon"));
-    settings.parameters.push_back(obsengine.makeParameter("stationlat"));
+    settings.parameters.push_back(Spine::makeParameter("stationlon"));
+    settings.parameters.push_back(Spine::makeParameter("stationlat"));
 
     if (layer.parameter)
-      settings.parameters.push_back(obsengine.makeParameter(*layer.parameter));
+      settings.parameters.push_back(Spine::makeParameter(*layer.parameter));
 
     // Request intersection parameters too - if any
     auto iparams = layer.positions->intersections.parameters();
@@ -392,7 +393,7 @@ PointValues read_all_observations(const SymbolLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+      settings.parameters.push_back(Spine::makeParameter(extraparam));
 
     // Coordinates or bounding box
 
@@ -493,11 +494,11 @@ PointValues read_station_observations(const SymbolLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(obsengine.makeParameter("stationlon"));
-    settings.parameters.push_back(obsengine.makeParameter("stationlat"));
+    settings.parameters.push_back(Spine::makeParameter("stationlon"));
+    settings.parameters.push_back(Spine::makeParameter("stationlat"));
 
     if (layer.parameter)
-      settings.parameters.push_back(obsengine.makeParameter(*layer.parameter));
+      settings.parameters.push_back(Spine::makeParameter(*layer.parameter));
 
     // Request intersection parameters too - if any
     auto iparams = layer.positions->intersections.parameters();
@@ -506,7 +507,7 @@ PointValues read_station_observations(const SymbolLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+      settings.parameters.push_back(Spine::makeParameter(extraparam));
 
     if (!layer.positions)
       throw Spine::Exception(BCP, "Positions not defined for station-layout of numbers");
@@ -630,12 +631,12 @@ PointValues read_latlon_observations(const SymbolLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(obsengine.makeParameter("stationlon"));
-    settings.parameters.push_back(obsengine.makeParameter("stationlat"));
-    settings.parameters.push_back(obsengine.makeParameter("fmisid"));
+    settings.parameters.push_back(Spine::makeParameter("stationlon"));
+    settings.parameters.push_back(Spine::makeParameter("stationlat"));
+    settings.parameters.push_back(Spine::makeParameter("fmisid"));
 
     if (layer.parameter)
-      settings.parameters.push_back(obsengine.makeParameter(*layer.parameter));
+      settings.parameters.push_back(Spine::makeParameter(*layer.parameter));
 
     // Request intersection parameters too - if any
     auto iparams = layer.positions->intersections.parameters();
@@ -644,7 +645,7 @@ PointValues read_latlon_observations(const SymbolLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+      settings.parameters.push_back(Spine::makeParameter(extraparam));
 
     // Process the points one at a time so that we can assign dx,dy values to them
 
