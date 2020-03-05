@@ -22,6 +22,7 @@
 #include <macgyver/TimeParser.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
+#include <spine/ParameterTools.h>
 #include <spine/TimeSeries.h>
 #include <algorithm>
 
@@ -713,11 +714,11 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
     settings.timezone = timezone;
 
     auto& observation = theState.getObsEngine();
-    settings.parameters.push_back(observation.makeParameter("wd_10min"));
-    settings.parameters.push_back(observation.makeParameter("ws_10min"));
-    settings.parameters.push_back(observation.makeParameter("T"));
-    settings.parameters.push_back(observation.makeParameter("stationlongitude"));
-    settings.parameters.push_back(observation.makeParameter("stationlatitude"));
+    settings.parameters.push_back(Spine::makeParameter("wd_10min"));
+    settings.parameters.push_back(Spine::makeParameter("ws_10min"));
+    settings.parameters.push_back(Spine::makeParameter("T"));
+    settings.parameters.push_back(Spine::makeParameter("stationlongitude"));
+    settings.parameters.push_back(Spine::makeParameter("stationlatitude"));
 
     std::map<int, WindRoseData> result;
 
