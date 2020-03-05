@@ -18,7 +18,7 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
-BuildRequires: smartmet-library-macgyver-devel >= 20.2.5
+BuildRequires: smartmet-library-macgyver-devel >= 20.3.5
 BuildRequires: smartmet-library-spine-devel >= 20.3.5
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
@@ -45,7 +45,7 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
 Requires: smartmet-library-gis >= 20.2.18
-Requires: smartmet-library-macgyver >= 20.2.5
+Requires: smartmet-library-macgyver >= 20.3.5
 Requires: smartmet-library-giza >= 18.10.1
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 19.9.26
