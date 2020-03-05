@@ -1,6 +1,10 @@
 PROG = $(patsubst %.cpp,%,$(wildcard *Test.cpp))
 
-MAINFLAGS = -std=c++11 -Wall -W -Wno-unused-parameter -Wno-unknown-pragmas
+-include $(HOME)/.smartmet.mk
+GCC_DIAG_COLOR ?= always
+CXX_STD ?= c++11
+
+MAINFLAGS = -std=$(CXX_STD) -Wall -W -Wno-unused-parameter -Wno-unknown-pragmas
 
 EXTRAFLAGS = -Werror -pedantic -Wpointer-arith -Wcast-qual \
 	-Wcast-align -Wwrite-strings -Wconversion -Winline \
