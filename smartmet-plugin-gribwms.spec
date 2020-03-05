@@ -18,10 +18,10 @@ BuildRequires: boost-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
-BuildRequires: smartmet-library-grid-content-devel >= 20.2.25
-BuildRequires: smartmet-library-grid-files-devel >= 20.2.25
-BuildRequires: smartmet-library-macgyver-devel >= 20.2.5
-BuildRequires: smartmet-library-spine-devel >= 20.2.13
+BuildRequires: smartmet-library-grid-content-devel >= 20.3.5
+BuildRequires: smartmet-library-grid-files-devel >= 20.3.5
+BuildRequires: smartmet-library-macgyver-devel >= 20.3.5
+BuildRequires: smartmet-library-spine-devel >= 20.3.5
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 19.9.26
@@ -49,8 +49,8 @@ Requires: libconfig
 Requires: smartmet-library-gis >= 20.2.18
 Requires: smartmet-library-macgyver >= 20.3.5
 Requires: smartmet-library-giza >= 18.10.1
-Requires: smartmet-library-grid-content >= 20.2.25
-Requires: smartmet-library-grid-files >= 20.2.25
+Requires: smartmet-library-grid-content >= 20.3.5
+Requires: smartmet-library-grid-files >= 20.3.5
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 19.9.26
 %endif
