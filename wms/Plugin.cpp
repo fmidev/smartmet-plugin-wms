@@ -1290,30 +1290,33 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     WMS::WMSRequestType requestType(WMS::wmsRequestType(thisRequest));
 
+    // Handle common errors directly
+
+    if (requestType == WMS::WMSRequestType::GET_CAPABILITIES)
+    {
+      auto tmpl = getTemplate("wms_get_capabilities_" + getCapabilityFormat(format));
+      auto msg = WMS::WMSGetCapabilities::response(tmpl, thisRequest, *itsQEngine, *itsWMSConfig);
+      formatResponse(msg, format, thisRequest, theResponse, theState.useTimer());
+      return WMSQueryStatus::OK;
+    }
+
+    if (requestType == WMS::WMSRequestType::NOT_A_WMS_REQUEST)
+    {
+      Spine::Exception ex(BCP, ERROR_NOT_WMS_REQUEST);
+      ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+      return handleWmsException(ex, theState, thisRequest, theResponse);
+    }
+
+    if (requestType == WMS::WMSRequestType::GET_FEATURE_INFO)
+    {
+      Spine::Exception ex(BCP, ERROR_GETFEATUREINFO_NOT_SUPPORTED);
+      ex.addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED);
+      return handleWmsException(ex, theState, thisRequest, theResponse);
+    }
+
+    // Catch other errors and handle them with handleEmsException
     try
     {
-      if (requestType == WMS::WMSRequestType::GET_CAPABILITIES)
-      {
-        auto tmpl = getTemplate("wms_get_capabilities_" + getCapabilityFormat(format));
-        auto msg = WMS::WMSGetCapabilities::response(tmpl, thisRequest, *itsQEngine, *itsWMSConfig);
-        formatResponse(msg, format, thisRequest, theResponse, theState.useTimer());
-        return WMSQueryStatus::OK;
-      }
-
-      if (requestType == WMS::WMSRequestType::NOT_A_WMS_REQUEST)
-      {
-        Spine::Exception ex(BCP, ERROR_NOT_WMS_REQUEST);
-        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-        return handleWmsException(ex, theState, thisRequest, theResponse);
-      }
-
-      if (requestType == WMS::WMSRequestType::GET_FEATURE_INFO)
-      {
-        Spine::Exception ex(BCP, ERROR_GETFEATUREINFO_NOT_SUPPORTED);
-        ex.addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED);
-        return handleWmsException(ex, theState, thisRequest, theResponse);
-      }
-
       Json::Value json;
 
       if (requestType == WMS::WMSRequestType::GET_MAP)
@@ -1354,18 +1357,6 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
         }
       }
 
-      // Define the customer
-      std::string customer =
-          Spine::optional_string(thisRequest.getParameter("customer"), itsConfig.defaultCustomer());
-      theState.setCustomer(customer);
-
-      if (theState.getCustomer().empty())
-      {
-        Spine::Exception ex(BCP, ERROR_NO_CUSTOMER);
-        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-        return handleWmsException(ex, theState, thisRequest, theResponse);
-      }
-
       // Set WMS product defaults before preprocessing starts
 
       if (itsWMSConfig->getMargin() != 0)
@@ -1378,6 +1369,17 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
         if (ymargin.isNull())
           json["ymargin"] = itsWMSConfig->getMargin();
       }
+
+      // Define the customer. Note that parseHTTPRequest may have set a customer
+      // for the layer, so this needs to be done after parsing the request
+
+      std::string customer =
+          Spine::optional_string(thisRequest.getParameter("customer"), itsConfig.defaultCustomer());
+      theState.setCustomer(customer);
+
+      if (theState.getCustomer().empty())
+        throw Spine::Exception(BCP, ERROR_NO_CUSTOMER)
+            .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
 
       // Preprocess
 
@@ -1586,7 +1588,8 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Spine::Exception &exception,
       mapFormat = "application/json";
     formatWmsExceptionResponse(
         exception, mapFormat, isdebug, theRequest, theResponse, theState.useTimer());
-    throw;
+    // Note: a simple throw is not sufficient, the exception object may not have been thrown
+    throw exception;
   }
 
   boost::optional<std::string> width = theRequest.getParameter("WIDTH");

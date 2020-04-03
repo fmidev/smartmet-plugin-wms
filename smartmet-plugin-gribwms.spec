@@ -98,6 +98,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Fri Apr  3 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.3-1.fmi
 - Repackaged due to library API changes
+- Avoid recursion in WMS exception handling
 
 * Fri Mar 20 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.3.20-1.fmi
 - Do not return 200 OK except for error responses in image format
