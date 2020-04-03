@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.3.20
+Version: 20.4.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -19,18 +19,18 @@ BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 18.10.1
 BuildRequires: smartmet-library-macgyver-devel >= 20.3.5
-BuildRequires: smartmet-library-spine-devel >= 20.3.5
+BuildRequires: smartmet-library-spine-devel >= 20.3.9
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 20.2.14
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.2.20
+BuildRequires: smartmet-engine-observation-devel >= 20.3.18
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 20.2.18
-BuildRequires: smartmet-engine-geonames-devel >= 20.2.14
-BuildRequires: smartmet-engine-querydata-devel >= 20.2.13
-BuildRequires: smartmet-engine-contour-devel >= 20.2.13
+BuildRequires: smartmet-engine-gis-devel >= 20.2.25
+BuildRequires: smartmet-engine-geonames-devel >= 19.12.5
+BuildRequires: smartmet-engine-querydata-devel >= 20.3.19
+BuildRequires: smartmet-engine-contour-devel >= 19.11.20
 BuildRequires: smartmet-library-gis-devel >= 20.2.18
 BuildRequires: fmt-devel >= 5.2.0
 BuildRequires: ctpp2 >= 2.8.8
@@ -55,7 +55,7 @@ Requires: smartmet-engine-contour >= 20.2.13
 Requires: smartmet-engine-gis >= 20.2.18
 Requires: smartmet-engine-geonames >= 20.2.14
 Requires: smartmet-server >= 20.2.13
-Requires: smartmet-library-spine >= 20.3.5
+Requires: smartmet-library-spine >= 20.3.9
 Requires: boost-date-time
 Requires: boost-filesystem
 Requires: boost-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Fri Apr  3 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.3-1.fmi
+- Avoid recursion in WMS exception handling
+
 * Fri Mar 20 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.3.20-1.fmi
 - Do not return 200 OK except for error responses in image format
 
