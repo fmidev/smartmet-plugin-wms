@@ -16,8 +16,8 @@
 #include <ctpp2/CDT.hpp>
 #include <engines/observation/Engine.h>
 #include <engines/observation/Settings.h>
-#include <ogr_spatialref.h>
 #include <gis/Box.h>
+#include <gis/CoordinateTransformation.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
 #include <spine/Exception.h>
@@ -25,6 +25,7 @@
 #include <spine/ParameterTools.h>
 #include <spine/TimeSeries.h>
 #include <algorithm>
+#include <ogr_spatialref.h>
 
 namespace SmartMet
 {
@@ -404,23 +405,12 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     // Establish the projection
 
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     // Create the coordinate transformation from latlon to world coordinates
 
-    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = wgs84->SetFromUserInput("WGS84");
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "WindRoseLayer failed to generate WGS84 spatial reference");
-
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
-    if (transformation == nullptr)
-      throw Spine::Exception(
-          BCP,
-          "WindRoseLayer failed to create the coordinate transformation from WGS84 to world "
-          "coordinates");
+    Fmi::CoordinateTransformation transformation("WGS84", crs);
 
     // Establish the time range
 
@@ -469,7 +459,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
       double x = lon;
       double y = lat;
-      transformation->Transform(1, &x, &y);
+      transformation.Transform(x, y);
       box.transform(x, y);
       int xrose = lround(x);
       int yrose = lround(y);
@@ -478,7 +468,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
       x = wdata.longitude;
       y = wdata.latitude;
-      transformation->Transform(1, &x, &y);
+      transformation.Transform(x, y);
       box.transform(x, y);
       int xstation = lround(x);
       int ystation = lround(y);

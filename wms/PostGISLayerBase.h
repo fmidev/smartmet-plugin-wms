@@ -9,9 +9,7 @@
 #include "Attributes.h"
 #include "Layer.h"
 #include "PostGISLayerFilter.h"
-
 #include <boost/optional.hpp>
-
 #include <engines/gis/MapOptions.h>
 #include <gis/Types.h>
 
@@ -50,11 +48,11 @@ class PostGISLayerBase : public Layer
   std::vector<PostGISLayerFilter> filters;
 
   OGRGeometryPtr getShape(const State& theState,
-                          OGRSpatialReference* theSR,
+                          const Fmi::SpatialReference& theSR,
                           Engine::Gis::MapOptions& theMapOptions) const;
 
   Fmi::Features getFeatures(const State& theState,
-                            OGRSpatialReference* theSR,
+                            const Fmi::SpatialReference& theSR,
                             Engine::Gis::MapOptions& theMapOptions) const;
 
 };  // class PostGISLayer

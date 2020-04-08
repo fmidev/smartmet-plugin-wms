@@ -9,10 +9,11 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <engines/gis/Engine.h>
 #include <fmt/format.h>
-#include <ogr_spatialref.h>
+#include <gis/CoordinateTransformation.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
 #include <spine/Exception.h>
+#include <ogr_spatialref.h>
 
 namespace SmartMet
 {
@@ -1409,8 +1410,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
     // Layer CRS list and their bounding boxes
 
     // Calculate CRS bbox from latlon bbox
-    OGRSpatialReference srs;
-    srs.importFromEPSGA(4326);
+    Fmi::SpatialReference srs("WGS84");
 
     if (!crs.empty())
     {
@@ -1426,6 +1426,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
         layer_bbox["crs"] = id;
 
+        // TODO!!!! Should we use IsGeographic() instead???
         if (id == "EPSG:4326")
         {
           layer_crs_list.PushBack(id);
@@ -1437,16 +1438,9 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
         }
         else
         {
-          OGRSpatialReference target;
-          auto err = target.SetFromUserInput(decl.c_str());
-          if (err != OGRERR_NONE)
-            throw Spine::Exception(BCP, "Unknown spatial reference declaration: '" + decl + "'");
-
-          boost::shared_ptr<OGRCoordinateTransformation> transformation(
-              OGRCreateCoordinateTransformation(&srs, &target));
-
-          if (transformation == nullptr)
-            throw Spine::Exception(BCP, "OGRCreateCoordinateTransformation function call failed");
+          Fmi::SpatialReference source(srs);
+          Fmi::SpatialReference target(decl);
+          Fmi::CoordinateTransformation transformation(source, target);
 
           // Intersect with target EPSG bounding box (latlon) if it is available
 
@@ -1470,8 +1464,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
           if (x1 < x2 && y1 < y2)
           {
-            bool ok =
-                (transformation->Transform(1, &x1, &y1) && transformation->Transform(1, &x2, &y2));
+            bool ok = (transformation.Transform(x1, y1) && transformation.Transform(x2, y2));
 
             // Produce bbox only if projection succeeds
 
@@ -1480,12 +1473,14 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
               // Acceptable CRS
               layer_crs_list.PushBack(id);
 
+#ifdef TODO_WGS84_IS_THIS_NEEDED
               // Use proper coordinate ordering for the EPSG
-              if (target.EPSGTreatsAsLatLong())
+              if (target.IsAxisSwapped())
               {
                 std::swap(x1, y1);
                 std::swap(x2, y2);
               }
+#endif
               layer_bbox["minx"] = x1;
               layer_bbox["miny"] = y1;
               layer_bbox["maxx"] = x2;

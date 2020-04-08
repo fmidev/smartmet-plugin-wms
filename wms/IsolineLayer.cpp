@@ -160,7 +160,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   // Get projection details
 
   projection.update(q);
-  auto crs = projection.getCRS();
+  const auto& crs = projection.getCRS();
   const auto& box = projection.getBox();
 
   // And the box needed for clipping
@@ -182,7 +182,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
 
     q = q->sample(param,
                   valid_time,
-                  *crs,
+                  crs,
                   box.xmin(),
                   box.ymin(),
                   box.xmax(),
@@ -202,14 +202,14 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   OGRGeometryPtr inshape, outshape;
   if (inside)
   {
-    inshape = gis.getShape(crs.get(), inside->options);
+    inshape = gis.getShape(&crs, inside->options);
     if (!inshape)
       throw Spine::Exception(BCP, "IsolineLayer received empty inside-shape from database");
     inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
   }
   if (outside)
   {
-    outshape = gis.getShape(crs.get(), outside->options);
+    outshape = gis.getShape(&crs, outside->options);
     if (outshape)
       outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
   }
@@ -257,7 +257,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   const auto& qEngine = theState.getQEngine();
   auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
 
-  CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs.get());
+  CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
   auto geoms =
       contourer.contour(qhash, proj4, *matrix, coords, options, q->needsWraparound(), crs.get());
 
@@ -312,7 +312,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     auto geoms = getIsolines(isovalues, theState);
 
     // The above call guarantees these have been resolved:
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     // Update the globals

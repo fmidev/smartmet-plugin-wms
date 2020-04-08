@@ -151,7 +151,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
       throw Spine::Exception(BCP, "Heatmap requires flash or mobile data!");
 
     auto valid_time_period = getValidTimePeriod();
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     Engine::Observation::Settings settings;
@@ -174,12 +174,12 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     // Establish new projection and the required grid size of the desired resolution
 
     std::unique_ptr<NFmiArea> newarea(NFmiArea::CreateFromBBox(
-        crs.get(), NFmiPoint(box.xmin(), box.ymin()), NFmiPoint(box.xmax(), box.ymax())));
+        crs, NFmiPoint(box.xmin(), box.ymin()), NFmiPoint(box.xmax(), box.ymax())));
 
     double datawidth = newarea->WorldXYWidth();  // in native units
     double dataheight = newarea->WorldXYHeight();
 
-    if (newarea->SpatialReference()->IsGeographic())
+    if (newarea->SpatialReference().IsGeographic())
     {
       datawidth *= kRearth * kPii / 180 / 1000;  // degrees to kilometers
       dataheight *= kRearth * kPii / 180 / 1000;
@@ -241,7 +241,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
           double x = lon;
           double y = lat;
-          if (crs->IsGeographic() == 0)
+          if (crs.IsGeographic() == 0)
           {
             auto xy = newarea->LatLonToWorldXY(NFmiPoint(x, y));
             x = xy.X();
@@ -311,7 +311,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     boost::hash_combine(hash, radius);
 
     char* tmp;
-    crs->exportToWkt(&tmp);
+    crs.get()->exportToWkt(&tmp);
     boost::hash_combine(hash, tmp);
     OGRFree(tmp);
 
@@ -373,7 +373,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     // Get projection details
 
     projection.update(q);
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     // And the box needed for clipping
@@ -403,7 +403,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
       q = q->sample(param,
                     valid_time,
-                    *crs,
+                    crs,
                     box.xmin(),
                     box.ymin(),
                     box.xmax(),
@@ -430,7 +430,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     OGRGeometryPtr inshape, outshape;
     if (inside)
     {
-      inshape = gis.getShape(crs.get(), inside->options);
+      inshape = gis.getShape(&crs, inside->options);
       if (!inshape)
         throw Spine::Exception(BCP, "Received empty inside-shape from database!");
 
@@ -438,7 +438,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     }
     if (outside)
     {
-      outshape = gis.getShape(crs.get(), outside->options);
+      outshape = gis.getShape(&crs, outside->options);
       if (outshape)
         outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
     }
@@ -504,7 +504,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     const auto& qEngine = theState.getQEngine();
     auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
 
-    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs.get());
+    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
     std::vector<OGRGeometryPtr> geoms =
         contourer.contour(qhash, proj4, *matrix, coords, options, q->needsWraparound(), crs.get());
 

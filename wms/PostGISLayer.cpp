@@ -39,7 +39,7 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     if (!projection.crs)
       throw Spine::Exception(BCP, "PostGISLayer projection not set");
 
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
 
     // Update the globals
     if (css)
@@ -79,7 +79,7 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       else if (filter.where)
         mapOptions.where = filter.where;
 
-      OGRGeometryPtr geom = getShape(theState, crs.get(), mapOptions);
+      OGRGeometryPtr geom = getShape(theState, crs, mapOptions);
 
       if (geom && geom->IsEmpty() == 0)
       {

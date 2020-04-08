@@ -259,7 +259,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
 
     const auto& qEngine = theState.getQEngine();
     auto matrix = qEngine.getValues(q, valueshash, options.time);
-    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs.get());
+    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
     std::vector<OGRGeometryPtr> isobands =
         contourer.contour(qhash, proj4, *matrix, coords, options, q->needsWraparound(), crs.get());
 

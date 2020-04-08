@@ -14,6 +14,7 @@
 #include <boost/move/make_unique.hpp>
 #include <ctpp2/CDT.hpp>
 #include <gis/Box.h>
+#include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
@@ -301,25 +302,15 @@ Fmi::Box Layer::getClipBox(const Fmi::Box& theBox) const
  */
 // ----------------------------------------------------------------------
 
-std::map<std::string, double> Layer::getClipBoundingBox(
-    const Fmi::Box& theBox, const boost::shared_ptr<OGRSpatialReference>& theCRS) const
+std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
+                                                        const Fmi::SpatialReference& theCRS) const
 {
   // Expand world coordinates by the margin settings
   const auto clipbox = getClipBox(theBox);
 
   // Observations are in WGS84 coordinates
 
-  auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-  OGRErr err = wgs84->SetFromUserInput("WGS84");
-  if (err != OGRERR_NONE)
-    throw Spine::Exception(BCP, "GDAL does not understand WGS84");
-
-  // Create the transformation from image world coordinates to WGS84 coordinates
-  boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-      OGRCreateCoordinateTransformation(theCRS.get(), wgs84.get()));
-  if (transformation == nullptr)
-    throw Spine::Exception(
-        BCP, "Failed to create the needed coordinate transformation when drawing wind arrows");
+  Fmi::CoordinateTransformation transformation(theCRS, "WGS84");
 
   // Establish the number of samples along each edge. We wish to sample at roughly 5 pixel
   // intervals.
@@ -335,7 +326,7 @@ std::map<std::string, double> Layer::getClipBoundingBox(
   int hsamples = minsamples;
 
   // Otherwise we need to sample the edges
-  if (theCRS->IsGeographic() == 0)
+  if (!theCRS.IsGeographic())
   {
     wsamples = std::max(wsamples, w / npixels);
     hsamples = std::max(hsamples, h / npixels);
@@ -383,8 +374,8 @@ std::map<std::string, double> Layer::getClipBoundingBox(
 
   for (std::size_t i = 0; i < x.size(); i++)
   {
-    if (theCRS->IsGeographic() == 0)
-      if (transformation->Transform(1, &x[i], &y[i]) == 0)
+    if (!theCRS.IsGeographic())
+      if (!transformation.Transform(x[i], y[i]))
         continue;
 
     minlon = (uninitialized ? x[i] : std::min(minlon, x[i]));

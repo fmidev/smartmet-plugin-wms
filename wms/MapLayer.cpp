@@ -114,7 +114,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 {
   try
   {
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const Fmi::Box& box = projection.getBox();
 
     // And the box needed for clipping
@@ -130,7 +130,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
         mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
-      geom = gis.getShape(crs.get(), map.options);
+      geom = gis.getShape(&crs, map.options);
 
       if (!geom)
       {
@@ -177,11 +177,12 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       map_cdt["layertype"] = "map";
       map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
 
+#if 0
       std::cerr << "GEOM: " << geom->getSpatialReference()->EPSGTreatsAsLatLong()
-                << "\nIMAGE: " << crs->EPSGTreatsAsLatLong() << std::endl;
+                << "\nIMAGE: " << crs.IsAxisSwapped() << std::endl;
 
       std::cerr << "NE: " << geom->getSpatialReference()->EPSGTreatsAsNorthingEasting()
-                << "\nIMAGE: " << crs->EPSGTreatsAsNorthingEasting() << std::endl;
+                << "\nIMAGE: " << crs.IsAxisSwapped() << std::endl;
 
       if (geom->getSpatialReference() != nullptr)
         std::cerr << "\nSHAPE: " << Fmi::OGR::exportToPrettyWkt(*geom->getSpatialReference())
@@ -190,6 +191,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
         std::cerr << "No shape sref" << std::endl;
 
       std::cerr << "\nIMAGE: " << Fmi::OGR::exportToPrettyWkt(*crs) << std::endl;
+#endif
 
       theState.addPresentationAttributes(map_cdt, css, attributes);
 
@@ -282,7 +284,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     // Establish projection, bbox and optional clipping bbox
 
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const Fmi::Box& box = projection.getBox();
 
     const auto clipbox = getClipBox(box);
@@ -299,7 +301,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
         mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
       map.options.fieldnames.insert(styles->field);
-      features = gis.getFeatures(crs.get(), map.options);
+      features = gis.getFeatures(crs, map.options);
 
       for (const auto& feature : features)
       {

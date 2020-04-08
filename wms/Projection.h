@@ -37,10 +37,9 @@
 
 #include <boost/optional.hpp>
 #include <engines/querydata/Q.h>
+#include <gis/SpatialReference.h>
 #include <json/json.h>
 #include <string>
-
-class OGRSpatialReference;
 
 namespace Fmi
 {
@@ -94,7 +93,7 @@ class Projection
 
   void update(const Engine::Querydata::Q& theQ);
 
-  boost::shared_ptr<OGRSpatialReference> getCRS() const;
+  const Fmi::SpatialReference& getCRS() const;
   const Fmi::Box& getBox() const;
 
   // User is responsible for calling getCRS or getBox first
@@ -104,8 +103,10 @@ class Projection
  private:
   // Cached results
   void prepareCRS() const;
-  mutable boost::shared_ptr<OGRSpatialReference> ogr_crs;
-  mutable boost::shared_ptr<Fmi::Box> box;
+
+  // The following are initialized lazily
+  mutable std::shared_ptr<Fmi::SpatialReference> ogr_crs;
+  mutable std::shared_ptr<Fmi::Box> box;
 
   mutable NFmiPoint itsBottomLeft;
   mutable NFmiPoint itsTopRight;

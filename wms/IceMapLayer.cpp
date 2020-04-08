@@ -30,9 +30,6 @@ namespace Dali
 {
 namespace
 {
-using OGRSpatialReferencePtr = boost::shared_ptr<OGRSpatialReference>;
-using OGRCoordinateTransformationPtr = boost::movelib::unique_ptr<OGRCoordinateTransformation>;
-
 const char* const attribute_columns[] = {"firstname_column",
                                          "secondname_column",
                                          "nameposition_column",
@@ -346,7 +343,8 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     if (theState.addId("very_open_ice"))
       theGlobals["includes"]["very_open_ice"] = theState.getPattern("very_open_ice");
 
-    auto crs = projection.getCRS();
+    // const auto& crs = projection.getCRS();
+
     // Update the globals
     if (css)
     {
@@ -375,10 +373,11 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     unsigned int s = theLayersCdt.Size();
     theLayersCdt.PushBack(theGroupCdt);
 
-    OGRSpatialReferencePtr projectionSR = projection.getCRS();
-    OGRSpatialReference defaultSR;
-    defaultSR.importFromEPSG(3395);  // if sr is missing use this one
-    unsigned int mapid(1);           // id to concatenate to iri to make it unique
+    const auto& projectionSR = projection.getCRS();
+
+    Fmi::SpatialReference defaultSR("EPSG:3395");
+
+    unsigned int mapid = 1;  // id to concatenate to iri to make it unique
     // Get the polygons and store them into the template engine
     for (const PostGISLayerFilter& filter : filters)
     {
@@ -399,7 +398,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
       mapOptions.fieldnames.insert(attribute_column_names.begin(), attribute_column_names.end());
 
-      Fmi::Features result_set = getFeatures(theState, projectionSR.get(), mapOptions);
+      Fmi::Features result_set = getFeatures(theState, projectionSR, mapOptions);
 
       for (const auto& result_item : result_set)
       {
@@ -409,7 +408,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
           if (sr == nullptr)
           {
-            result_item->geom->assignSpatialReference(&defaultSR);
+            result_item->geom->assignSpatialReference(defaultSR.get());
             result_item->geom->transformTo(projectionSR.get());
           }
 
@@ -1133,8 +1132,8 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
   if (!theResultItem.geom || theResultItem.geom->IsEmpty() != 0)
     return;
 
-  const auto box = projection.getBox();
-  const auto crs = projection.getCRS();
+  const auto& box = projection.getBox();
+  const auto& crs = projection.getCRS();
 
   // Store the path with unique ID
   std::string iri = (qid + Fmi::to_string(theMapId++));

@@ -17,6 +17,7 @@
 #include <engines/gis/Engine.h>
 #include <fmt/format.h>
 #include <gis/Box.h>
+#include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
@@ -196,7 +197,7 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     auto geoms = IsolineLayer::getIsolines(isovalues, theState);
 
     // The above call guarantees these have been resolved:
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     // Project the geometries to pixel coordinates
@@ -219,7 +220,7 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // direction, and then also apply "upright" condition if so requested.
 
     if (label.orientation == "auto")
-      fix_orientation(candidates, box, *crs);
+      fix_orientation(candidates, box, crs);
 
     // Update the globals
 
@@ -927,7 +928,7 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
 
 void IsolabelLayer::fix_orientation(Candidates& candidates,
                                     const Fmi::Box& box,
-                                    OGRSpatialReference& crs) const
+                                    const Fmi::SpatialReference& crs) const
 {
   // The parameter being used
   auto param = Spine::ParameterFactory::instance().parse(*parameter);
@@ -939,20 +940,11 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
   NFmiPoint dummy;
 
   // Querydata spatial reference
-  std::unique_ptr<OGRSpatialReference> qcrs(new OGRSpatialReference());
-  OGRErr err = qcrs->SetFromUserInput(q->area().WKT().c_str());
-
-  if (err != OGRERR_NONE)
-    throw Spine::Exception(BCP, "GDAL does not understand this FMI WKT: " + q->area().WKT());
+  Fmi::SpatialReference qcrs(q->SpatialReference());
 
   // From image world coordinates to querydata world coordinates
 
-  std::unique_ptr<OGRCoordinateTransformation> transformation(
-      OGRCreateCoordinateTransformation(&crs, qcrs.get()));
-
-  if (transformation == nullptr)
-    throw Spine::Exception(BCP,
-                           "Failed to create coordinate transformation for orienting isolabels");
+  Fmi::CoordinateTransformation transformation(crs, qcrs);
 
   // Check and fix orientations for each isovalue
 
@@ -965,7 +957,7 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
 
     box.itransform(x, y);  // world xy coordinate in image crs
 
-    if (transformation->Transform(1, &x, &y) == 0)
+    if (!transformation.Transform(x, y))
     {
       cand.angle = std::numeric_limits<double>::quiet_NaN();
     }

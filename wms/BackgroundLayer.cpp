@@ -55,7 +55,7 @@ void BackgroundLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, S
     // Get projection details
 
     projection.update(q);
-    auto crs = projection.getCRS();
+    // const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     // Update the globals

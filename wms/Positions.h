@@ -15,6 +15,11 @@
 #include <json/json.h>
 #include <cstddef>
 
+namespace Fmi
+{
+class SpatialReference;
+}
+
 namespace SmartMet
 {
 namespace Plugin
@@ -65,7 +70,7 @@ class Positions
             const State& theState);
 
   Points getPoints(const Engine::Querydata::Q& theQ,
-                   const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                   const Fmi::SpatialReference& theCRS,
                    const Fmi::Box& theBox,
                    bool forecastMode) const;
 
@@ -127,37 +132,37 @@ class Positions
 
  private:
   Points getGridPoints(const Engine::Querydata::Q& theQ,
-                       const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                       const Fmi::SpatialReference& theCRS,
                        const Fmi::Box& theBox,
                        bool forecastMode) const;
 
   Points getDataPoints(const Engine::Querydata::Q& theQ,
-                       const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                       const Fmi::SpatialReference& theCRS,
                        const Fmi::Box& theBox,
                        bool forecastMode) const;
 
   Points getGraticulePoints(const Engine::Querydata::Q& theQ,
-                            const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                            const Fmi::SpatialReference& theCRS,
                             const Fmi::Box& theBox,
                             bool forecastMode) const;
 
   Points getGraticuleFillPoints(const Engine::Querydata::Q& theQ,
-                                const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                                const Fmi::SpatialReference& theCRS,
                                 const Fmi::Box& theBox,
                                 bool forecastMode) const;
 
   Points getKeywordPoints(const Engine::Querydata::Q& theQ,
-                          const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                          const Fmi::SpatialReference& theCRS,
                           const Fmi::Box& theBox,
                           bool forecastMode) const;
 
   Points getLatLonPoints(const Engine::Querydata::Q& theQ,
-                         const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                         const Fmi::SpatialReference& theCRS,
                          const Fmi::Box& theBox,
                          bool forecastMode) const;
 
   Points getStationPoints(const Engine::Querydata::Q& theQ,
-                          const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                          const Fmi::SpatialReference& theCRS,
                           const Fmi::Box& theBox,
                           bool forecastMode) const;
 

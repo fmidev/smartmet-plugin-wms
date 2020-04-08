@@ -4,6 +4,7 @@
 #include "Projection.h"
 #include <boost/move/unique_ptr.hpp>
 #include <gis/Box.h>
+#include <gis/CoordinateTransformation.h>
 
 namespace SmartMet
 {
@@ -20,7 +21,7 @@ class LonLatToXYTransformation
   void transform(double& inoutX, double& inoutY);
 
  private:
-  boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation;
+  Fmi::CoordinateTransformation transformation;
   const Fmi::Box& box;
 };
 }  // namespace Dali

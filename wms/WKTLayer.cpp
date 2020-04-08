@@ -86,16 +86,14 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     auto q = getModel(theState);
 
     projection.update(q);
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     // And the box needed for clipping
     const auto clipbox = getClipBox(box);
 
     // Create the shape
-
-    auto* wgs84 = new OGRSpatialReference;
-    wgs84->SetFromUserInput("WGS84");
+    Fmi::SpatialReference wgs84("WGS84");
 
     char* cwkt = const_cast<char*>(wkt.c_str());  // NOLINT(cppcoreguidelines-pro-type-const-cast)
     OGRGeometry* ogeom = nullptr;
@@ -107,7 +105,7 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       throw SmartMet::Spine::Exception(BCP, "Failed to convert WKT to OGRGeometry");
     }
 
-    if (wgs84->EPSGTreatsAsLatLong())
+    if (wgs84.IsAxisSwapped())
       ogeom->swapXY();
 
     OGRGeometryPtr geom(ogeom);

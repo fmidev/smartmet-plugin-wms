@@ -9,6 +9,7 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <fmt/format.h>
 #include <gis/Box.h>
+#include <gis/CoordinateTransformation.h>
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
 #include <cmath>
@@ -135,20 +136,16 @@ void Projection::init(const Json::Value& theJson,
       if (bboxcrs)
       {
         // SetFromUserInput wants 'EPSGA' - code in order to understand axis ordering
-        if (boost::algorithm::starts_with(*bboxcrs, "EPSG"))
-        {
-          boost::algorithm::replace_first(*bboxcrs, "EPSG", "EPSGA");
-        }
+        if (boost::algorithm::starts_with(*bboxcrs, "EPSG:"))
+          boost::algorithm::replace_first(*bboxcrs, "EPSG:", "EPSGA:");
 
         spatref.SetFromUserInput(bboxcrs->c_str());
       }
       else
       {
         // SetFromUserInput wants 'EPSGA' - code in order to understand axis ordering
-        if (boost::algorithm::starts_with(*crs, "EPSG"))
-        {
-          boost::algorithm::replace_first(*crs, "EPSG", "EPSGA");
-        }
+        if (boost::algorithm::starts_with(*crs, "EPSG:"))
+          boost::algorithm::replace_first(*crs, "EPSG:", "EPSGA:");
 
         spatref.SetFromUserInput(crs->c_str());
       }
@@ -273,12 +270,12 @@ void Projection::update(const Engine::Querydata::Q& theQ)
  */
 // ----------------------------------------------------------------------
 
-boost::shared_ptr<OGRSpatialReference> Projection::getCRS() const
+const Fmi::SpatialReference& Projection::getCRS() const
 {
   try
   {
     prepareCRS();
-    return ogr_crs;
+    return *ogr_crs;
   }
   catch (...)
   {
@@ -356,10 +353,7 @@ void Projection::prepareCRS() const
           BCP, "CRS xsize and ysize are required when a centered bounding box is used");
 
     // Create the CRS
-    ogr_crs = boost::make_shared<OGRSpatialReference>();
-    OGRErr err = ogr_crs->SetFromUserInput(crs->c_str());
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "Unknown CRS: '" + *crs + "'");
+    ogr_crs = std::make_shared<Fmi::SpatialReference>(*crs);
 
     if (xsize && *xsize <= 0)
       throw Spine::Exception(BCP, "Projection xsize must be positive");
@@ -385,15 +379,9 @@ void Projection::prepareCRS() const
       if (bboxcrs)
       {
         // Reproject corners coordinates from bboxcrs to crs
-        OGRSpatialReference ogr_crs2;
-        err = ogr_crs2.SetFromUserInput(bboxcrs->c_str());
-        if (err != OGRERR_NONE)
-          throw Spine::Exception(BCP, "Unknown CRS: '" + *bboxcrs + "'");
-
-        boost::shared_ptr<OGRCoordinateTransformation> transformation(
-            OGRCreateCoordinateTransformation(&ogr_crs2, ogr_crs.get()));
-        transformation->Transform(1, &XMIN, &YMIN);
-        transformation->Transform(1, &XMAX, &YMAX);
+        Fmi::CoordinateTransformation transformation(*bboxcrs, *ogr_crs);
+        transformation.Transform(XMIN, YMIN);
+        transformation.Transform(XMAX, YMAX);
       }
 
       if (XMIN == XMAX || YMIN == YMAX)
@@ -403,17 +391,17 @@ void Projection::prepareCRS() const
       {
         // Preserve aspect by calculating xsize
         int w = boost::numeric_cast<int>((*ysize) * (XMAX - XMIN) / (YMAX - YMIN));
-        box = boost::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, w, *ysize);
+        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, w, *ysize);
       }
       else if (!ysize)
       {
         // Preserve aspect by calculating ysize
         int h = boost::numeric_cast<int>((*xsize) * (YMAX - YMIN) / (XMAX - XMIN));
-        box = boost::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, h);
+        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, h);
       }
       else
       {
-        box = boost::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
+        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
       }
 
       if (ogr_crs->IsGeographic() != 0)
@@ -422,7 +410,6 @@ void Projection::prepareCRS() const
         double pi = boost::math::constants::pi<double>();
         double circumference = 2 * pi * 6371.220;
         resolution = (YMAX - YMIN) * circumference / (360 * (*ysize));
-        ;
       }
       else
       {
@@ -443,18 +430,9 @@ void Projection::prepareCRS() const
       if (latlon_center || (bboxcrs && *crs != *bboxcrs))
       {
         // Reproject center coordinates from latlon/bboxcrs to crs
-        OGRSpatialReference ogr_crs2;
-        if (latlon_center)
-          err = ogr_crs2.SetFromUserInput("WGS84");
-        else
-          err = ogr_crs2.SetFromUserInput(bboxcrs->c_str());
-
-        if (err != OGRERR_NONE)
-          throw Spine::Exception(BCP, "Unknown CRS: '" + *bboxcrs + "'");
-
-        boost::shared_ptr<OGRCoordinateTransformation> transformation(
-            OGRCreateCoordinateTransformation(&ogr_crs2, ogr_crs.get()));
-        transformation->Transform(1, &CX, &CY);
+        Fmi::CoordinateTransformation transformation(latlon_center ? "WGS84" : bboxcrs->c_str(),
+                                                     *ogr_crs);
+        transformation.Transform(CX, CY);
       }
 
       if (ogr_crs->IsGeographic() != 0)
@@ -472,7 +450,7 @@ void Projection::prepareCRS() const
         XMIN = CX - dx;
         XMAX = CX + dx;
 
-        box = boost::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
+        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
       }
       else
       {
@@ -480,7 +458,7 @@ void Projection::prepareCRS() const
         XMAX = CX + (*xsize) / 2.0 * (*resolution) * 1000;  // Equation 2.
         YMIN = CY - (*ysize) / 2.0 * (*resolution) * 1000;
         YMAX = CY + (*ysize) / 2.0 * (*resolution) * 1000;
-        box = boost::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
+        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
       }
     }
 
@@ -488,23 +466,18 @@ void Projection::prepareCRS() const
 
     auto proj =
         fmt::format("+proj=latlong +R={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth);
-    OGRSpatialReference fmi;
-    err = fmi.SetFromUserInput(proj.c_str());
 
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "Unable to parse FMI sphere in Dali::Projection");
-
-    boost::shared_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(ogr_crs.get(), &fmi));
+    Fmi::CoordinateTransformation transformation(*ogr_crs, proj);
 
     // Calculate bottom left and top right coordinates
 
-    transformation->Transform(1, &XMIN, &YMIN);
+    transformation.Transform(XMIN, YMIN);
     itsBottomLeft = NFmiPoint(XMIN, YMIN);
 
-    transformation->Transform(1, &XMAX, &YMAX);
+    transformation.Transform(XMAX, YMAX);
     itsTopRight = NFmiPoint(XMAX, YMAX);
 
+#if 0
     std::cerr << std::setprecision(8) << "\nProjection:\n\n"
               << "\nxsize=" << (xsize ? *xsize : -1) << "\nysize=" << (ysize ? *ysize : -1)
               << "\nx1=" << (x1 ? *x1 : -1) << "\ny1=" << (y1 ? *y1 : -1)
@@ -516,6 +489,7 @@ void Projection::prepareCRS() const
               << "\nymax=" << box->ymax() << "\nwidth=" << box->width()
               << "\nheight=" << box->height() << "\n"
               << std::endl;
+#endif
   }
   catch (...)
   {

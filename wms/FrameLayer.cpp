@@ -203,7 +203,7 @@ void FrameLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
   try
   {
     const auto box = projection.getBox();
-    const auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
 
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
     if (!theState.inDefs())

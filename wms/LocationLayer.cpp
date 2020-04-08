@@ -10,11 +10,12 @@
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/geonames/Engine.h>
-#include <ogr_spatialref.h>
 #include <gis/Box.h>
+#include <gis/CoordinateTransformation.h>
 #include <macgyver/NearTree.h>
 #include <spine/Exception.h>
 #include <spine/Json.h>
+#include <ogr_spatialref.h>
 
 namespace SmartMet
 {
@@ -147,23 +148,12 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     // Get projection details
     projection.update(q);
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
-
-    // Get the geonames projection
-
-    auto geocrs = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = geocrs->SetFromUserInput("WGS84");
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this crs 'WGS84'");
 
     // Create the coordinate transformation from geonames coordinates to image coordinates
 
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(geocrs.get(), crs.get()));
-    if (transformation == nullptr)
-      throw Spine::Exception(
-          BCP, "Failed to create the needed coordinate transformation when drawing locations");
+    Fmi::CoordinateTransformation transformation("WGS84", crs);
 
     // Update the globals
 
@@ -214,7 +204,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
       double x = lon;
       double y = lat;
-      transformation->Transform(1, &x, &y);
+      transformation.Transform(x, y);
 
       // Skip locations outside the image.
 

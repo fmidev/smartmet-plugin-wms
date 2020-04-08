@@ -19,6 +19,7 @@
 #include <fmt/format.h>
 #include <fmt/printf.h>
 #include <gis/Box.h>
+#include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
 #include <newbase/NFmiArea.h>
@@ -60,7 +61,7 @@ using PointValues = std::vector<PointValue>;
 
 PointValues read_forecasts(const SymbolLayer& layer,
                            const Engine::Querydata::Q& q,
-                           const boost::shared_ptr<OGRSpatialReference>& crs,
+                           const Fmi::SpatialReference& crs,
                            const Fmi::Box& box,
                            const boost::posix_time::time_period& valid_time_period)
 {
@@ -138,10 +139,10 @@ PointValues read_forecasts(const SymbolLayer& layer,
 #ifndef WITHOUT_OBSERVATION
 PointValues read_flash_observations(const SymbolLayer& layer,
                                     State& state,
-                                    const boost::shared_ptr<OGRSpatialReference>& crs,
+                                    const Fmi::SpatialReference& crs,
                                     const Fmi::Box& box,
                                     const boost::posix_time::time_period& valid_time_period,
-                                    OGRCoordinateTransformation& transformation)
+                                    const Fmi::CoordinateTransformation& transformation)
 {
   try
   {
@@ -222,8 +223,8 @@ PointValues read_flash_observations(const SymbolLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (crs->IsGeographic() == 0)
-        if (transformation.Transform(1, &x, &y) == 0)
+      if (!crs.IsGeographic())
+        if (!transformation.Transform(x, y) == 0)
           continue;
 
       // To pixel coordinate
@@ -255,10 +256,10 @@ PointValues read_flash_observations(const SymbolLayer& layer,
 
 PointValues read_all_observations(const SymbolLayer& layer,
                                   State& state,
-                                  const boost::shared_ptr<OGRSpatialReference>& crs,
+                                  const Fmi::SpatialReference& crs,
                                   const Fmi::Box& box,
                                   const boost::posix_time::time_period& valid_time_period,
-                                  OGRCoordinateTransformation& transformation)
+                                  const Fmi::CoordinateTransformation& transformation)
 {
   try
   {
@@ -334,8 +335,8 @@ PointValues read_all_observations(const SymbolLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (crs->IsGeographic() == 0)
-        if (transformation.Transform(1, &x, &y) == 0)
+      if (!crs.IsGeographic())
+        if (!transformation.Transform(x, y))
           continue;
 
       // To pixel coordinate
@@ -367,10 +368,10 @@ PointValues read_all_observations(const SymbolLayer& layer,
 
 PointValues read_station_observations(const SymbolLayer& layer,
                                       State& state,
-                                      const boost::shared_ptr<OGRSpatialReference>& crs,
+                                      const Fmi::SpatialReference& crs,
                                       const Fmi::Box& box,
                                       const boost::posix_time::time_period& valid_time_period,
-                                      OGRCoordinateTransformation& transformation)
+                                      const Fmi::CoordinateTransformation& transformation)
 {
   try
   {
@@ -467,8 +468,8 @@ PointValues read_station_observations(const SymbolLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (crs->IsGeographic() == 0)
-        if (transformation.Transform(1, &x, &y) == 0)
+      if (!crs.IsGeographic())
+        if (!transformation.Transform(x, y))
           continue;
 
       // To pixel coordinate
@@ -505,10 +506,10 @@ PointValues read_station_observations(const SymbolLayer& layer,
 
 PointValues read_latlon_observations(const SymbolLayer& layer,
                                      State& state,
-                                     const boost::shared_ptr<OGRSpatialReference>& crs,
+                                     const Fmi::SpatialReference& crs,
                                      const Fmi::Box& box,
                                      const boost::posix_time::time_period& valid_time_period,
-                                     OGRCoordinateTransformation& transformation,
+                                     const Fmi::CoordinateTransformation& transformation,
                                      const Positions::Points& points)
 {
   try
@@ -601,8 +602,8 @@ PointValues read_latlon_observations(const SymbolLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (crs->IsGeographic() == 0)
-        if (transformation.Transform(1, &x, &y) == 0)
+      if (!crs.IsGeographic())
+        if (!transformation.Transform(x, y))
           continue;
 
       // To pixel coordinate
@@ -634,7 +635,7 @@ PointValues read_latlon_observations(const SymbolLayer& layer,
 
 PointValues read_observations(const SymbolLayer& layer,
                               State& state,
-                              const boost::shared_ptr<OGRSpatialReference>& crs,
+                              const Fmi::SpatialReference& crs,
                               const Fmi::Box& box,
                               const boost::posix_time::time_period& valid_time_period)
 {
@@ -643,22 +644,13 @@ PointValues read_observations(const SymbolLayer& layer,
     // Create the coordinate transformation from image world coordinates
     // to WGS84 coordinates
 
-    auto obscrs = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = obscrs->SetFromUserInput("WGS84");
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand WGS84");
-
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
-    if (transformation == nullptr)
-      throw Spine::Exception(
-          BCP, "Failed to create the needed coordinate transformation when drawing symbols");
+    Fmi::CoordinateTransformation transformation("WGS84", crs);
 
     if (layer.isFlashOrMobileProducer(*layer.producer))
-      return read_flash_observations(layer, state, crs, box, valid_time_period, *transformation);
+      return read_flash_observations(layer, state, crs, box, valid_time_period, transformation);
 
     if (layer.positions->layout == Positions::Layout::Station)
-      return read_station_observations(layer, state, crs, box, valid_time_period, *transformation);
+      return read_station_observations(layer, state, crs, box, valid_time_period, transformation);
 
     Engine::Querydata::Q q;
     const bool forecast_mode = false;
@@ -666,9 +658,9 @@ PointValues read_observations(const SymbolLayer& layer,
 
     if (!points.empty())
       return read_latlon_observations(
-          layer, state, crs, box, valid_time_period, *transformation, points);
+          layer, state, crs, box, valid_time_period, transformation, points);
 
-    return read_all_observations(layer, state, crs, box, valid_time_period, *transformation);
+    return read_all_observations(layer, state, crs, box, valid_time_period, transformation);
   }
   catch (...)
   {
@@ -817,7 +809,7 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     // Get projection details
 
     projection.update(q);
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     // Set the proper symbol on if it is needed
