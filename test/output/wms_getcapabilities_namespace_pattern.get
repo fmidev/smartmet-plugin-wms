@@ -120,7 +120,7 @@
       <BoundingBox CRS="CRS:84" minx="11.3001098633" miny="54.1500854492" maxx="26.3001098633" maxy="65.0001220703"/>
       <BoundingBox CRS="CRS:SmartMetEurope" minx="87256.4209033" miny="-3844726.29036" maxx="956820.213493" maxy="-3272046.66022"/>
       <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-581698.914143" miny="-3801468.17743" maxx="289229.899046" maxy="-2619765.59641"/>
-      <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3467154.57005" maxy="7211668.32659"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3467154.57005" maxy="7211668.32659"/>
       <BoundingBox CRS="EPSG:3035" minx="4405961.86131" miny="3450022.30882" maxx="5086775.90071" maxy="4744790.64153"/>
       <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="466996.19624" maxy="7208650.88022"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7892277" miny="6549298.62199" maxx="466996.19624" maxy="7208650.88022"/>
@@ -154,7 +154,7 @@
       <BoundingBox CRS="CRS:84" minx="9.02344115211" miny="54.1173189013" maxx="22.4499560953" maxy="62.9455216043"/>
       <BoundingBox CRS="CRS:SmartMetEurope" minx="-65607.8659724" miny="-3848912.7592" maxx="734951.645596" maxy="-3328909.78343"/>
       <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-732967.821702" miny="-3779046.43956" maxx="122266.065592" maxy="-2857626.51544"/>
-      <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3269319.77287" maxy="6990614.83127"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3269319.77287" maxy="6990614.83127"/>
       <BoundingBox CRS="EPSG:3035" minx="4257130.37505" miny="3446043.58572" maxx="4952147.76661" maxy="4483138.7725"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7892277" miny="6549298.62199" maxx="269241.641265" maxy="6987685.49922"/>
       <BoundingBox CRS="EPSG:3857" minx="1004484.87426" miny="7192406.47349" maxx="2499117.68086" maxy="9086905.12844"/>
@@ -207,7 +207,7 @@
       <BoundingBox CRS="CRS:84" minx="-9.09870632718" miny="51.487470956" maxx="49" maxy="70.3221089926"/>
       <BoundingBox CRS="CRS:SmartMetEurope" minx="-1358923.78325" miny="-3924624.32507" maxx="2145400.5886" maxy="-2649349.08649"/>
       <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2019782.53958" miny="-3629025.82444" maxx="1005949.87844" maxy="-1814781.62012"/>
-      <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3674549.99025" maxy="7785726.69718"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3674549.99025" maxy="7785726.69717"/>
       <BoundingBox CRS="EPSG:3035" minx="3011879.57409" miny="3325771.69955" maxx="5426354.14391" maxy="5491695.36271"/>
       <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="612704.753321" maxy="7804573.6147"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7892277" miny="6549298.62199" maxx="674306.988933" maxy="7782478.68382"/>
@@ -255,7 +255,7 @@
       <BoundingBox CRS="CRS:84" minx="-9.09870632718" miny="51.487470956" maxx="49" maxy="70.3221089926"/>
       <BoundingBox CRS="CRS:SmartMetEurope" minx="-1358923.78325" miny="-3924624.32507" maxx="2145400.5886" maxy="-2649349.08649"/>
       <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2019782.53958" miny="-3629025.82444" maxx="1005949.87844" maxy="-1814781.62012"/>
-      <BoundingBox CRS="EPSG:2393" minx="3064557.21484" miny="6651895.28725" maxx="3674549.99025" maxy="7785726.69718"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3674549.99025" maxy="7785726.69717"/>
       <BoundingBox CRS="EPSG:3035" minx="3011879.57409" miny="3325771.69955" maxx="5426354.14391" maxy="5491695.36271"/>
       <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="612704.753321" maxy="7804573.6147"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7892277" miny="6549298.62199" maxx="674306.988933" maxy="7782478.68382"/>
