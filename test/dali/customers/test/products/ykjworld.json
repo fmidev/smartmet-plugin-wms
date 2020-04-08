@@ -6,7 +6,7 @@
     {
 	"xsize": 500,
 	"ysize": 500,
-	"crs": "EPSG:4326",
+	"crs": "EPSG:2393",
 	"bboxcrs": "WGS84",
 	"cx": 25,
 	"cy": 60,
