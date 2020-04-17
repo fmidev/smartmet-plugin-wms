@@ -2,7 +2,7 @@
   "title": "EC world in WGS84",
   "producer": "ecmwf_maailma_pinta",
   "projection": {
-    "crs": "EPSG:4326",
+      "crs": "+proj=longlat +ellps=WGS84 +datum=WGS84 +lon_0=180 +no_defs",
       "x1" : 0,
       "y1" : -85,
       "x2" : 360,
