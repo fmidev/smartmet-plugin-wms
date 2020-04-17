@@ -4,6 +4,7 @@
 #include "ArrowLayer.h"
 #include "BackgroundLayer.h"
 #include "FrameLayer.h"
+#include "GridLayer.h"
 #include "IceMapLayer.h"
 #include "IsobandLayer.h"
 #include "IsolabelLayer.h"
@@ -83,6 +84,8 @@ Layer* create(const Json::Value& theJson)
       return new IceMapLayer;
     if (name == "frame")
       return new FrameLayer;
+    if (name == "grid")
+      return new GridLayer;
 
     throw Spine::Exception(BCP, "Unknown layer type '" + name + "'");
   }
