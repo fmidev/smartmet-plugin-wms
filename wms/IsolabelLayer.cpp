@@ -957,7 +957,7 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
 
     box.itransform(x, y);  // world xy coordinate in image crs
 
-    if (!transformation.Transform(x, y))
+    if (!transformation.transform(x, y))
     {
       cand.angle = std::numeric_limits<double>::quiet_NaN();
     }

@@ -459,7 +459,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
       double x = lon;
       double y = lat;
-      transformation.Transform(x, y);
+      transformation.transform(x, y);
       box.transform(x, y);
       int xrose = lround(x);
       int yrose = lround(y);
@@ -468,7 +468,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
       x = wdata.longitude;
       y = wdata.latitude;
-      transformation.Transform(x, y);
+      transformation.transform(x, y);
       box.transform(x, y);
       int xstation = lround(x);
       int ystation = lround(y);

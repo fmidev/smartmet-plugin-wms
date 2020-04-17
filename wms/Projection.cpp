@@ -380,8 +380,8 @@ void Projection::prepareCRS() const
       {
         // Reproject corners coordinates from bboxcrs to crs
         Fmi::CoordinateTransformation transformation(*bboxcrs, *ogr_crs);
-        transformation.Transform(XMIN, YMIN);
-        transformation.Transform(XMAX, YMAX);
+        transformation.transform(XMIN, YMIN);
+        transformation.transform(XMAX, YMAX);
       }
 
       if (XMIN == XMAX || YMIN == YMAX)
@@ -404,7 +404,7 @@ void Projection::prepareCRS() const
         box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
       }
 
-      if (ogr_crs->IsGeographic() != 0)
+      if (ogr_crs->isGeographic() != 0)
       {
         // Substract equations 5 and 4, subsititute equation 3 and solve resolution
         double pi = boost::math::constants::pi<double>();
@@ -432,10 +432,10 @@ void Projection::prepareCRS() const
         // Reproject center coordinates from latlon/bboxcrs to crs
         Fmi::CoordinateTransformation transformation(latlon_center ? "WGS84" : bboxcrs->c_str(),
                                                      *ogr_crs);
-        transformation.Transform(CX, CY);
+        transformation.transform(CX, CY);
       }
 
-      if (ogr_crs->IsGeographic() != 0)
+      if (ogr_crs->isGeographic() != 0)
       {
         double pi = boost::math::constants::pi<double>();
         double circumference = 2 * pi * 6371.220;
@@ -471,10 +471,10 @@ void Projection::prepareCRS() const
 
     // Calculate bottom left and top right coordinates
 
-    transformation.Transform(XMIN, YMIN);
+    transformation.transform(XMIN, YMIN);
     itsBottomLeft = NFmiPoint(XMIN, YMIN);
 
-    transformation.Transform(XMAX, YMAX);
+    transformation.transform(XMAX, YMAX);
     itsTopRight = NFmiPoint(XMAX, YMAX);
 
 #if 0

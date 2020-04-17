@@ -204,7 +204,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
       double x = lon;
       double y = lat;
-      transformation.Transform(x, y);
+      transformation.transform(x, y);
 
       // Skip locations outside the image.
 

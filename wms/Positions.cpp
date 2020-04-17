@@ -497,7 +497,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
 
         // Convert world coordinate to latlon, skipping points which cannot be handled
 
-        if (!transformation.Transform(xcoord, ycoord))
+        if (!transformation.transform(xcoord, ycoord))
           continue;
 
         points.emplace_back(Point(xpos, ypos, NFmiPoint(xcoord, ycoord)));
@@ -536,7 +536,7 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
     // Create the coordinate transformation from querydata world coordinates
     // to image world coordinates
 
-    Fmi::CoordinateTransformation transformation(theCRS, theQ->SpatialReference());
+    Fmi::CoordinateTransformation transformation(theQ->SpatialReference(), theCRS);
 
     // Generate the grid coordinates
 
@@ -551,7 +551,7 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
       double xcoord = worldxy.X();
       double ycoord = worldxy.Y();
 
-      if (!transformation.Transform(xcoord, ycoord))
+      if (!transformation.transform(xcoord, ycoord))
         continue;
 
       // Image world coordinate to pixel coordinate
@@ -609,7 +609,7 @@ Positions::Points Positions::getGraticulePoints(const Engine::Querydata::Q& theQ
           // latlon to world coordinate
           double xcoord = lon;
           double ycoord = lat;
-          if (!transformation.Transform(xcoord, ycoord))
+          if (!transformation.transform(xcoord, ycoord))
             continue;
 
           // to pixel coordinate
@@ -689,13 +689,13 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
         double y4 = lat + size;
 
         // to projection coordinates
-        if (!transformation.Transform(x1, y1))
+        if (!transformation.transform(x1, y1))
           continue;
-        if (!transformation.Transform(x2, y2))
+        if (!transformation.transform(x2, y2))
           continue;
-        if (!transformation.Transform(x3, y3))
+        if (!transformation.transform(x3, y3))
           continue;
-        if (!transformation.Transform(x4, y4))
+        if (!transformation.transform(x4, y4))
           continue;
 
         // to pixel coordinates
@@ -734,7 +734,7 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
           double newx = newlon;
           double newy = newlat;
 
-          if (!transformation.Transform(newx, newy))
+          if (!transformation.transform(newx, newy))
             continue;
           theBox.transform(newx, newy);
 
@@ -758,7 +758,7 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
           double newx = newlon;
           double newy = newlat;
 
-          if (!transformation.Transform(newx, newy))
+          if (!transformation.transform(newx, newy))
             continue;
           theBox.transform(newx, newy);
 
@@ -788,7 +788,7 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
             double newx = newlon;
             double newy = newlat;
 
-            if (!transformation.Transform(newx, newy))
+            if (!transformation.transform(newx, newy))
               continue;
             theBox.transform(newx, newy);
 
@@ -811,7 +811,7 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
     double newx = newlon;
     double newy = newlat;
 
-    if (!transformation.Transform(newx, newy))
+    if (!transformation.transform(newx, newy))
     {
       int deltax = 0;
       if (dx)
@@ -873,7 +873,7 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
       // To world coordinate
       double xcoord = lon;
       double ycoord = lat;
-      if (!transformation.Transform(xcoord, ycoord))
+      if (!transformation.transform(xcoord, ycoord))
         continue;
 
       // to pixel coordinate
@@ -936,7 +936,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
       // To world coordinate
       double xcoord = lon;
       double ycoord = lat;
-      if (!transformation.Transform(xcoord, ycoord))
+      if (!transformation.transform(xcoord, ycoord))
         continue;
 
       // to pixel coordinate
@@ -1063,7 +1063,7 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
       // To world coordinate
       double xcoord = lon;
       double ycoord = lat;
-      if (!transformation.Transform(xcoord, ycoord))
+      if (!transformation.transform(xcoord, ycoord))
         continue;
 
       // to pixel coordinate

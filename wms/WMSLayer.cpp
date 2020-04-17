@@ -1426,7 +1426,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
         layer_bbox["crs"] = id;
 
-        // TODO!!!! Should we use IsGeographic() instead???
+        // TODO!!!! Should we use isGeographic() instead???
         if (id == "EPSG:4326")
         {
           layer_crs_list.PushBack(id);
@@ -1464,7 +1464,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
           if (x1 < x2 && y1 < y2)
           {
-            bool ok = (transformation.Transform(x1, y1) && transformation.Transform(x2, y2));
+            bool ok = (transformation.transform(x1, y1) && transformation.transform(x2, y2));
 
             // Produce bbox only if projection succeeds
 

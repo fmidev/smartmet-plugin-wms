@@ -367,6 +367,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
       boost::optional<std::string> station_name;
       int station_number = -1;
+
       const auto& feature_value =
           feature->attributes.at(styles->field);  // <int,double,string,time>
 

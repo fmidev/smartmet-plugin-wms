@@ -105,7 +105,7 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       throw SmartMet::Spine::Exception(BCP, "Failed to convert WKT to OGRGeometry");
     }
 
-    if (wgs84.IsAxisSwapped())
+    if (wgs84.isAxisSwapped())
       ogeom->swapXY();
 
     OGRGeometryPtr geom(ogeom);

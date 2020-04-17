@@ -16,7 +16,7 @@ LonLatToXYTransformation::LonLatToXYTransformation(const Projection& projection)
 
 void LonLatToXYTransformation::transform(double longitude, double latitude, double& x, double& y)
 {
-  transformation.Transform(longitude, latitude);
+  transformation.transform(longitude, latitude);
   box.transform(longitude, latitude);
   x = longitude;
   y = latitude;

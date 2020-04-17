@@ -305,8 +305,8 @@ PointValues read_all_observations(const ArrowLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (!crs.IsGeographic())
-        if (!transformation.Transform(x, y))
+      if (!crs.isGeographic())
+        if (!transformation.transform(x, y))
           continue;
 
       // To pixel coordinate
@@ -467,8 +467,8 @@ PointValues read_station_observations(const ArrowLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (!crs.IsGeographic())
-        if (!transformation.Transform(x, y))
+      if (!crs.isGeographic())
+        if (!transformation.transform(x, y))
           continue;
 
       // To pixel coordinate
@@ -624,8 +624,8 @@ PointValues read_latlon_observations(const ArrowLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (!crs.IsGeographic())
-        if (!transformation.Transform(x, y))
+      if (!crs.isGeographic())
+        if (!transformation.transform(x, y))
           continue;
 
       // To pixel coordinate

@@ -258,8 +258,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
 
   CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
-  auto geoms =
-      contourer.contour(qhash, proj4, *matrix, coords, options, q->needsWraparound(), crs.get());
+  auto geoms = contourer.contour(
+      qhash, q->SpatialReference(), crs, *matrix, *coords, options, q->needsWraparound());
 
   // Perform polygon operations
   for (unsigned int i = 0; i < geoms.size(); i++)

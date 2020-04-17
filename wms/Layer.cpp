@@ -326,7 +326,7 @@ std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
   int hsamples = minsamples;
 
   // Otherwise we need to sample the edges
-  if (!theCRS.IsGeographic())
+  if (!theCRS.isGeographic())
   {
     wsamples = std::max(wsamples, w / npixels);
     hsamples = std::max(hsamples, h / npixels);
@@ -374,8 +374,8 @@ std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
 
   for (std::size_t i = 0; i < x.size(); i++)
   {
-    if (!theCRS.IsGeographic())
-      if (!transformation.Transform(x[i], y[i]))
+    if (!theCRS.isGeographic())
+      if (!transformation.transform(x[i], y[i]))
         continue;
 
     minlon = (uninitialized ? x[i] : std::min(minlon, x[i]));

@@ -179,7 +179,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     double datawidth = newarea->WorldXYWidth();  // in native units
     double dataheight = newarea->WorldXYHeight();
 
-    if (newarea->SpatialReference().IsGeographic())
+    if (newarea->SpatialReference().isGeographic())
     {
       datawidth *= kRearth * kPii / 180 / 1000;  // degrees to kilometers
       dataheight *= kRearth * kPii / 180 / 1000;
@@ -241,7 +241,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
           double x = lon;
           double y = lat;
-          if (crs.IsGeographic() == 0)
+          if (crs.isGeographic() == 0)
           {
             auto xy = newarea->LatLonToWorldXY(NFmiPoint(x, y));
             x = xy.X();
@@ -505,8 +505,8 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
 
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
-    std::vector<OGRGeometryPtr> geoms =
-        contourer.contour(qhash, proj4, *matrix, coords, options, q->needsWraparound(), crs.get());
+    std::vector<OGRGeometryPtr> geoms = contourer.contour(
+        qhash, q->SpatialReference(), crs, *matrix, *coords, options, q->needsWraparound());
 
     // Update the globals
 
