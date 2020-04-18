@@ -2,8 +2,7 @@
   "title": "GFS world Pacific View",
   "producer": "gfs",
   "projection": {
-//  "crs": "EPSG:4087",
-    "crs": "+proj=eqc +lat_ts=0 +lat_0=0 +lon_0=180 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +over",
+    "crs": "+init=epsg:4087 +lon_0=180",
     "x1": 0,
     "y1": -9462156.72,
     "x2":  40052752.78,
