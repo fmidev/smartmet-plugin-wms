@@ -2,11 +2,11 @@
   "title": "GFS world in WGS84",
   "producer": "gfs",
   "projection": {
-      "crs": "+proj=longlat +ellps=WGS84 +datum=WGS84 +lon_0=180 +lon_wrap=180 +no_defs",
-      "x1" : -360,
-      "y1" : -85,
-      "x2" : 360,
-      "y2" : 85,
+      "crs": "+init=epsg:4326 +lon_wrap=180",
+      "x1" : 0,
+      "y1" : -90,
+      "x2" : 359.75,
+      "y2" : 90,
       "xsize": 1440,
       "ysize": 720
   },
