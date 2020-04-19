@@ -17,7 +17,14 @@ DIFFICULTFLAGS = -Weffc++ -Wunreachable-code -Wredundant-decls
 CC = g++
 CFLAGS = -DUNIX -O0 -g $(MAINFLAGS)
 
-INCLUDES = \
+# Boost 1.69
+
+ifneq "$(wildcard /usr/include/boost169)" ""
+  INCLUDES += -I/usr/include/boost169
+  LIBS += -L/usr/lib64/boost169
+endif
+
+INCLUDES += \
 	-I../wms \
 	-I/usr/include/smartmet \
 	-I/usr/include/mysql \
@@ -27,7 +34,7 @@ INCLUDES = \
 	`pkg-config --cflags libconfig++` \
 	`pkg-config --cflags jsoncpp`
 
-LIBS = 	-lsmartmet-spine  \
+LIBS += -lsmartmet-spine  \
 	-lsmartmet-newbase \
 	-lsmartmet-giza \
 	`pkg-config --libs libconfig++` \
