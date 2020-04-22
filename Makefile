@@ -44,7 +44,7 @@ DEFINES = -DUNIX -DWGS84 -D_REENTRANT
 # Default compile options
 
 CFLAGS_RELEASE = $(DEFINES) $(FLAGS) $(FLAGS_RELEASE) -DNDEBUG -O2 -g
-CFLAGS_DEBUG   = $(DEFINES) $(FLAGS) $(FLAGS_DEBUG)   -Werror -O0 -g 
+CFLAGS_DEBUG   = $(DEFINES) $(FLAGS) $(FLAGS_DEBUG)   -Werror -O0 -g
 
 ifneq (,$(findstring debug,$(MAKECMDGOALS)))
   override CFLAGS += $(CFLAGS_DEBUG)
@@ -90,12 +90,19 @@ ifneq "$(wildcard /usr/include/boost169)" ""
   LIBS += -L/usr/lib64/boost169
 endif
 
+ifneq "$(wildcard /usr/gdal30/include)" ""
+  INCLUDES += -I/usr/gdal30/include
+  LIBS += -L/usr/gdal30/lib
+else
+  INCLUDES += -I/usr/include/gdal
+endif
+
+
 INCLUDES += -I$(includedir) \
 	-I$(includedir)/smartmet \
 	-I$(includedir)/mysql \
 	-I$(includedir)/oracle/11.2/client64 \
 	-I$(includedir)/soci \
-	-I$(PREFIX)/gdal30/include \
 	`pkg-config --cflags librsvg-2.0` \
 	`pkg-config --cflags cairo` \
 	`pkg-config --cflags jsoncpp`
