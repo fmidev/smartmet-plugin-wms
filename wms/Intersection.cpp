@@ -260,8 +260,8 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     const auto& qEngine = theState.getQEngine();
     auto matrix = qEngine.getValues(q, valueshash, options.time);
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
-    std::vector<OGRGeometryPtr> isobands = contourer.contour(
-        qhash, q->SpatialReference(), crs, *matrix, *coords, options, q->needsWraparound());
+    std::vector<OGRGeometryPtr> isobands =
+        contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
 
     if (isobands.empty())
       return;
