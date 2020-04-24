@@ -1,0 +1,33 @@
+{
+  "title": "GFS world Atlantic View",
+  "producer": "gfs",
+  "projection": {
+    "crs": "+proj=stere +lat_0=90 +lat_ts=60 +lon_0=20 +x_0=0 +y_0=0 +R=6371229 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
+    "bboxcrs": "WGS84",
+    "cx": 10,
+    "cy": 60,
+    "resolution": 4,
+    "xsize": 800,
+    "ysize": 800
+  },
+  "views": [
+    {
+      "qid": "v1",
+      "attributes": {
+        "id": "view1"
+      },
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "isobands": "json:isobands/temperature.json",
+          "css": "isobands/temperature.css",
+          "parameter": "Temperature",
+          "attributes": {
+            "id": "t2m_isobands"
+          }
+        }
+      ]
+    }
+  ]
+}
