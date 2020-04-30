@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.4.18
+Version: 20.4.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,8 +18,8 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.4.18
-BuildRequires: smartmet-library-grid-content-devel >= 20.4.18
-BuildRequires: smartmet-library-grid-files-devel >= 20.4.18
+BuildRequires: smartmet-library-grid-content-devel >= 20.4.30
+BuildRequires: smartmet-library-grid-files-devel >= 20.4.30
 BuildRequires: smartmet-library-macgyver-devel >= 20.4.18
 BuildRequires: smartmet-library-spine-devel >= 20.4.18
 BuildRequires: smartmet-library-giza-devel
@@ -46,8 +46,8 @@ Requires: fmt >= 5.2.0
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-grid-content >= 20.4.18
-Requires: smartmet-library-grid-files >= 20.4.18
+Requires: smartmet-library-grid-content >= 20.4.30
+Requires: smartmet-library-grid-files >= 20.4.30
 Requires: smartmet-library-gis >= 20.4.18
 Requires: smartmet-library-macgyver >= 20.4.18
 Requires: smartmet-library-giza >= 20.4.18
@@ -96,6 +96,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Apr 30 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.30-1.fmi
+- Repackaged due to base library API changes
+
 * Sat Apr 18 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.4.18-1.fmi
 - Upgraded to Boost 1.69
 
