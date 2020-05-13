@@ -714,11 +714,11 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
 
     for (const auto& station : stations.stations)
     {
-      settings.fmisids.clear();
+      settings.taggedFMISIDs.clear();
       if (!station.fmisid)
         throw Spine::Exception(BCP, "Station fmisid is required for wind roses");
 
-      settings.fmisids.push_back(*station.fmisid);
+      settings.taggedFMISIDs.emplace_back(Fmi::to_string(*station.fmisid), *station.fmisid);
 
       auto res = observation.values(settings);
 
