@@ -27,10 +27,10 @@ BuildRequires: smartmet-engine-authentication-devel >= 20.4.18
 %if %{with observation}
 BuildRequires: smartmet-engine-observation-devel >= 20.5.12
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 20.4.18
+BuildRequires: smartmet-engine-gis-devel >= 20.5.7
 BuildRequires: smartmet-engine-geonames-devel >= 20.4.18
-BuildRequires: smartmet-engine-querydata-devel >= 20.4.18
-BuildRequires: smartmet-engine-contour-devel >= 20.4.18
+BuildRequires: smartmet-engine-querydata-devel >= 20.5.13
+BuildRequires: smartmet-engine-contour-devel >= 20.5.13
 BuildRequires: smartmet-library-gis-devel >= 20.4.18
 BuildRequires: fmt-devel >= 5.2.0
 BuildRequires: ctpp2 >= 2.8.8
@@ -50,9 +50,9 @@ Requires: smartmet-library-giza >= 20.4.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 20.4.18
 %endif
-Requires: smartmet-engine-querydata >= 20.4.18
-Requires: smartmet-engine-contour >= 20.4.18
-Requires: smartmet-engine-gis >= 20.4.18
+Requires: smartmet-engine-querydata >= 20.5.13
+Requires: smartmet-engine-contour >= 20.5.13
+Requires: smartmet-engine-gis >= 20.5.7
 Requires: smartmet-engine-geonames >= 20.4.18
 Requires: smartmet-server >= 20.4.18
 Requires: smartmet-library-spine >= 20.5.12
