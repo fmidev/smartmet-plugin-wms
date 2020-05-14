@@ -14,6 +14,7 @@
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
+#include <spine/ParameterTools.h>
 #include <spine/ValueFormatter.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
@@ -250,7 +251,7 @@ PointValues read_flash_observations(const NumberLayer& layer,
     settings.timezone = "UTC";
     settings.numberofstations = 1;
 
-    // settings.timestep = ?;
+    settings.timestep = 0;
 
     settings.starttimeGiven = true;
 
@@ -258,11 +259,11 @@ PointValues read_flash_observations(const NumberLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(obsengine.makeParameter("longitude"));
-    settings.parameters.push_back(obsengine.makeParameter("latitude"));
+    settings.parameters.push_back(Spine::makeParameter("longitude"));
+    settings.parameters.push_back(Spine::makeParameter("latitude"));
 
     if (layer.parameter)
-      settings.parameters.push_back(obsengine.makeParameter(*layer.parameter));
+      settings.parameters.push_back(Spine::makeParameter(*layer.parameter));
 
     // Request intersection parameters too - if any
     auto iparams = layer.positions->intersections.parameters();
@@ -271,7 +272,7 @@ PointValues read_flash_observations(const NumberLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+      settings.parameters.push_back(Spine::makeParameter(extraparam));
 
     // Generate the coordinates for the symbols
 
@@ -279,7 +280,10 @@ PointValues read_flash_observations(const NumberLayer& layer,
     const bool forecast_mode = false;
     auto points = layer.positions->getPoints(q, crs, box, forecast_mode);
 
-    settings.boundingBox = layer.getClipBoundingBox(box, crs);
+    Engine::Observation::StationSettings stationSettings;
+    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
+    settings.taggedFMISIDs = obsengine.translateToFMISID(
+        settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
     auto result = obsengine.values(settings);
 
@@ -376,11 +380,11 @@ PointValues read_all_observations(const NumberLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(obsengine.makeParameter("stationlon"));
-    settings.parameters.push_back(obsengine.makeParameter("stationlat"));
+    settings.parameters.push_back(Spine::makeParameter("stationlon"));
+    settings.parameters.push_back(Spine::makeParameter("stationlat"));
 
     if (layer.parameter)
-      settings.parameters.push_back(obsengine.makeParameter(*layer.parameter));
+      settings.parameters.push_back(Spine::makeParameter(*layer.parameter));
 
     // Request intersection parameters too - if any
     auto iparams = layer.positions->intersections.parameters();
@@ -389,11 +393,13 @@ PointValues read_all_observations(const NumberLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+      settings.parameters.push_back(Spine::makeParameter(extraparam));
 
     // Coordinates or bounding box
-
-    settings.boundingBox = layer.getClipBoundingBox(box, crs);
+    Engine::Observation::StationSettings stationSettings;
+    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
+    settings.taggedFMISIDs = obsengine.translateToFMISID(
+        settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
     auto result = obsengine.values(settings);
 
@@ -472,8 +478,6 @@ PointValues read_station_observations(const NumberLayer& layer,
 {
   try
   {
-    using Coordinate = std::map<std::string, double>;
-
     Engine::Observation::Settings settings;
     settings.allplaces = false;
     settings.stationtype = *layer.producer;
@@ -490,11 +494,11 @@ PointValues read_station_observations(const NumberLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(obsengine.makeParameter("stationlon"));
-    settings.parameters.push_back(obsengine.makeParameter("stationlat"));
+    settings.parameters.push_back(Spine::makeParameter("stationlon"));
+    settings.parameters.push_back(Spine::makeParameter("stationlat"));
 
     if (layer.parameter)
-      settings.parameters.push_back(obsengine.makeParameter(*layer.parameter));
+      settings.parameters.push_back(Spine::makeParameter(*layer.parameter));
 
     // Request intersection parameters too - if any
     auto iparams = layer.positions->intersections.parameters();
@@ -503,7 +507,7 @@ PointValues read_station_observations(const NumberLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+      settings.parameters.push_back(Spine::makeParameter(extraparam));
 
     if (!layer.positions)
       throw Spine::Exception(BCP, "Positions not defined for station-layout of numbers");
@@ -516,23 +520,32 @@ PointValues read_station_observations(const NumberLayer& layer,
       // Copy Oracle settings
       auto opts = settings;
 
+      Engine::Observation::StationSettings stationSettings;
+
       // Use an unique ID first if specified, ignoring the coordinates even if set
       if (station.fmisid)
-        opts.fmisids.push_back(*station.fmisid);
+        stationSettings.fmisids.push_back(*station.fmisid);
       else if (station.wmo)
-        opts.wmos.push_back(*station.wmo);
+        stationSettings.wmos.push_back(*station.wmo);
       else if (station.lpnn)
-        opts.lpnns.push_back(*station.lpnn);
+        stationSettings.lpnns.push_back(*station.lpnn);
       else if (station.geoid)
-        opts.geoids.push_back(*station.geoid);
+      {
+        stationSettings.geoid_settings.geoids.push_back(*station.geoid);
+        stationSettings.geoid_settings.maxdistance = opts.maxdistance;
+        stationSettings.geoid_settings.numberofstations = opts.numberofstations;
+        stationSettings.geoid_settings.language = opts.language;
+      }
       else if (station.longitude && station.latitude)
       {
-        Coordinate coordinate{std::make_pair("lon", *station.longitude),
-                              std::make_pair("lat", *station.latitude)};
-        opts.coordinates.push_back(coordinate);
+        stationSettings.nearest_station_settings.emplace_back(
+            *station.longitude, *station.latitude, opts.maxdistance, opts.numberofstations, "");
       }
       else
         throw Spine::Exception(BCP, "Station ID or coordinate missing");
+
+      opts.taggedFMISIDs = obsengine.translateToFMISID(
+          settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
       auto result = obsengine.values(opts);
 
@@ -610,8 +623,6 @@ PointValues read_latlon_observations(const NumberLayer& layer,
 {
   try
   {
-    using Coordinate = std::map<std::string, double>;
-
     Engine::Observation::Settings settings;
     settings.allplaces = false;
     settings.stationtype = *layer.producer;
@@ -626,12 +637,12 @@ PointValues read_latlon_observations(const NumberLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(obsengine.makeParameter("stationlon"));
-    settings.parameters.push_back(obsengine.makeParameter("stationlat"));
-    settings.parameters.push_back(obsengine.makeParameter("fmisid"));
+    settings.parameters.push_back(Spine::makeParameter("stationlon"));
+    settings.parameters.push_back(Spine::makeParameter("stationlat"));
+    settings.parameters.push_back(Spine::makeParameter("fmisid"));
 
     if (layer.parameter)
-      settings.parameters.push_back(obsengine.makeParameter(*layer.parameter));
+      settings.parameters.push_back(Spine::makeParameter(*layer.parameter));
 
     // Request intersection parameters too - if any
     auto iparams = layer.positions->intersections.parameters();
@@ -640,7 +651,7 @@ PointValues read_latlon_observations(const NumberLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(obsengine.makeParameter(extraparam));
+      settings.parameters.push_back(Spine::makeParameter(extraparam));
 
     // Process the points one at a time so that we can assign dx,dy values to them
 
@@ -654,10 +665,13 @@ PointValues read_latlon_observations(const NumberLayer& layer,
       // Copy common Oracle settings
       auto opts = settings;
 
-      Coordinate coordinate{std::make_pair("lon", point.latlon.X()),
-                            std::make_pair("lat", point.latlon.Y())};
+      Engine::Observation::StationSettings stationSettings;
+      stationSettings.nearest_station_settings.emplace_back(
+          point.latlon.X(), point.latlon.Y(), opts.maxdistance, opts.numberofstations, "");
 
-      opts.coordinates.push_back(coordinate);
+      opts.taggedFMISIDs = obsengine.translateToFMISID(
+          settings.starttime, settings.endtime, settings.stationtype, stationSettings);
+
       auto result = obsengine.values(opts);
 
       if (!result || result->empty() || (*result)[0].empty())
@@ -1323,17 +1337,16 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     // Establish the level
 
+    if (q && !q->firstLevel())
+      throw Spine::Exception(BCP, "Unable to set first level in querydata.");
+
     if (level)
     {
       if (use_observations)
         throw std::runtime_error("Cannot set level value for observations in NumberLayer");
 
-      bool match = false;
-      for (q->resetLevel(); !match && q->nextLevel();)
-        match = (q->levelValue() == *level);
-
-      if (!match)
-        throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available");
+      if (!q->selectLevel(*level))
+        throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
     }
 
     // Get projection details

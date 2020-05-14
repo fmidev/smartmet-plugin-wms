@@ -31,6 +31,7 @@
 #include <spine/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
+#include <spine/ParameterTools.h>
 #include <limits>
 
 namespace SmartMet
@@ -203,9 +204,9 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
     // Get actual data (flash coordinates plus parameter column values)
     auto& obsengine = theState.getObsEngine();
-    settings.parameters.push_back(obsengine.makeParameter("longitude"));
-    settings.parameters.push_back(obsengine.makeParameter("latitude"));
-    settings.parameters.push_back(obsengine.makeParameter(*parameter));
+    settings.parameters.push_back(Spine::makeParameter("longitude"));
+    settings.parameters.push_back(Spine::makeParameter("latitude"));
+    settings.parameters.push_back(Spine::makeParameter(*parameter));
 
     settings.boundingBox = getClipBoundingBox(box, crs);
 
@@ -852,15 +853,15 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     // Establish the level
 
+    if (q && !q->firstLevel())
+      throw Spine::Exception(BCP, "Unable to set first level in querydata.");
+
     if (level)
     {
       if (!q)
         throw Spine::Exception(BCP, "Cannot generate isobands without gridded level data");
 
-      bool match = false;
-      for (q->resetLevel(); !match && q->nextLevel();)
-        match = (q->levelValue() == *level);
-      if (!match)
+      if (!q->selectLevel(*level))
         throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
     }
 
@@ -949,6 +950,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       limits.emplace_back(Engine::Contour::Range(isoband.lolimit, isoband.hilimit));
 
     Engine::Contour::Options options(param, valid_time, limits);
+    options.level = level;
 
     if (!unit_conversion.empty())
     {
@@ -992,20 +994,6 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     {
       // Heatmap querydata has just 1 fixed parameter (1/pressure)
       options.parameter = Spine::ParameterFactory::instance().parse("1");
-    }
-
-    if (!q->firstLevel())
-      throw Spine::Exception(BCP, "Unable to set first level in querydata.");
-
-    // Select the level.
-    if (options.level)
-    {
-      if (!q->selectLevel(*options.level))
-      {
-        throw Spine::Exception(BCP,
-                               "Level value " + boost::lexical_cast<std::string>(*options.level) +
-                                   " is not available!");
-      }
     }
 
     const auto& qEngine = theState.getQEngine();

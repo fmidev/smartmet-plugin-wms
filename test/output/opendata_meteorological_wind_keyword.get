@@ -135,6 +135,7 @@
    <use transform="translate(244 342) rotate(124)" xlink:href="#windbarb_5"/>
    <use transform="translate(218 136) rotate(146)" xlink:href="#windbarb_20"/>
    <use transform="translate(220 140) rotate(130)" xlink:href="#windbarb_15"/>
+   <use transform="translate(206 140) rotate(76)" xlink:href="#windbarb_1"/>
    <use transform="translate(118 308) rotate(15)" xlink:href="#windbarb_5"/>
    <use transform="translate(256 412) rotate(143)" xlink:href="#windbarb_5"/>
    <use transform="translate(263 252) rotate(143)" xlink:href="#windbarb_5"/>
@@ -164,6 +165,7 @@
    <use transform="translate(126 393) rotate(146)" xlink:href="#windbarb_10"/>
    <use transform="translate(373 310) rotate(143)" xlink:href="#windbarb_5"/>
    <use transform="translate(284 191) rotate(111)" xlink:href="#windbarb_5"/>
+   <use transform="translate(278 192) rotate(117)" xlink:href="#windbarb_5"/>
    <use transform="translate(274 194) rotate(88)" xlink:href="#windbarb_5"/>
    <use transform="translate(390 170) rotate(123)" xlink:href="#windbarb_5"/>
    <use transform="translate(374 183) rotate(136)" xlink:href="#windbarb_5"/>

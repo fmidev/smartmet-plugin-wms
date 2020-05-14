@@ -1,6 +1,10 @@
 PROG = $(patsubst %.cpp,%,$(wildcard *Test.cpp))
 
-MAINFLAGS = -std=c++11 -Wall -W -Wno-unused-parameter -Wno-unknown-pragmas
+-include $(HOME)/.smartmet.mk
+GCC_DIAG_COLOR ?= always
+CXX_STD ?= c++11
+
+MAINFLAGS = -std=$(CXX_STD) -Wall -W -Wno-unused-parameter -Wno-unknown-pragmas
 
 EXTRAFLAGS = -Werror -pedantic -Wpointer-arith -Wcast-qual \
 	-Wcast-align -Wwrite-strings -Wconversion -Winline \
@@ -13,7 +17,14 @@ DIFFICULTFLAGS = -Weffc++ -Wunreachable-code -Wredundant-decls
 CC = g++
 CFLAGS = -DUNIX -O0 -g $(MAINFLAGS)
 
-INCLUDES = \
+# Boost 1.69
+
+ifneq "$(wildcard /usr/include/boost169)" ""
+  INCLUDES += -I/usr/include/boost169
+  LIBS += -L/usr/lib64/boost169
+endif
+
+INCLUDES += \
 	-I../wms \
 	-I/usr/include/smartmet \
 	-I/usr/include/mysql \
@@ -22,7 +33,7 @@ INCLUDES = \
 	`pkg-config --cflags libconfig++` \
 	`pkg-config --cflags jsoncpp`
 
-LIBS = 	-lsmartmet-grid-files \
+LIBS += -lsmartmet-grid-files \
 	-lsmartmet-spine  \
 	-lsmartmet-newbase \
 	-lsmartmet-giza \

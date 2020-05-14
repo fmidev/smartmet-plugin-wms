@@ -2,14 +2,16 @@ SUBNAME = wms
 SPEC = smartmet-plugin-grib$(SUBNAME)
 INCDIR = smartmet/plugins/$(SUBNAME)
 
-FLAGS = -std=c++11 -MD -fPIC -rdynamic -Wall -W \
-	-fdiagnostics-color=always \
+-include $(HOME)/.smartmet.mk
+GCC_DIAG_COLOR ?= always
+CXX_STD ?= c++11
+
+FLAGS = -std=$(CXX_STD) -MD -fPIC -rdynamic -Wall -W \
+	-fdiagnostics-color=$(GCC_DIAG_COLOR) \
 	-Wno-unused-parameter \
 	-fno-omit-frame-pointer \
 	-Wno-deprecated-declarations \
-	-Wno-unknown-pragmas \
-	-Wnon-virtual-dtor 
-
+	-Wno-unknown-pragmas
 
 FLAGS_DEBUG = \
 	-Wcast-align \
@@ -17,9 +19,7 @@ FLAGS_DEBUG = \
 	-Winline \
 	-Wno-multichar \
 	-Wno-pmf-conversions \
-	-Woverloaded-virtual  \
 	-Wpointer-arith \
-	-Wredundant-decls \
 	-Wwrite-strings \
 	-Wsign-promo
 
@@ -83,7 +83,14 @@ plugindir = $(datadir)/smartmet/plugins
 confdir = $(sysconfdir)/smartmet/plugins/wms
 objdir = obj
 
-INCLUDES = -I$(includedir) \
+# Boost 1.69
+
+ifneq "$(wildcard /usr/include/boost169)" ""
+  INCLUDES += -I/usr/include/boost169
+  LIBS += -L/usr/lib64/boost169
+endif
+
+INCLUDES += -I$(includedir) \
 	-I$(includedir)/smartmet \
 	-I$(includedir)/mysql \
 	-I$(includedir)/oracle/11.2/client64 \
@@ -92,7 +99,7 @@ INCLUDES = -I$(includedir) \
 	`pkg-config --cflags cairo` \
 	`pkg-config --cflags jsoncpp`
 
-LIBS = -L$(libdir) \
+LIBS += -L$(libdir) \
 	-lsmartmet-spine \
 	-lsmartmet-newbase \
 	-lsmartmet-macgyver \
