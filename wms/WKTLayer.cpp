@@ -4,7 +4,9 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "State.h"
+#include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
+#include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
 #include <spine/Exception.h>
@@ -81,6 +83,11 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     if (resolution && relativeresolution)
       throw Spine::Exception(BCP, "Cannot set both resolution and relativeresolution for WKT");
 
+    std::string report = "WKTLayer::generate finished in %t sec CPU, %w sec real\n";
+    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    if (theState.useTimer())
+      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+
     // Get projection details
 
     auto q = getModel(theState);
@@ -101,7 +108,7 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     if (err != OGRERR_NONE)
     {
-      delete wgs84;
+      // delete wgs84;  would segfault
       throw SmartMet::Spine::Exception(BCP, "Failed to convert WKT to OGRGeometry");
     }
 
@@ -135,13 +142,18 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     // Establish coordinate transformation from WGS84 to image
 
-    err = geom->transformTo(crs.get());
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "Failed to project the WKT to image coordinates");
+    Fmi::CoordinateTransformation transformation(wgs84, *crs);
+
+    geom.reset(transformation.transformGeometry(*geom));
+
+    if (!geom || geom->IsEmpty())
+      return;
 
     // Clip the geometry to the bounding box
 
-    OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, clipbox));
+    geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
+    if (!geom || geom->IsEmpty())
+      return;
 
     // Update the globals
 
@@ -159,8 +171,8 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     CTPP::CDT wkt_cdt(CTPP::CDT::HASH_VAL);
     wkt_cdt["iri"] = iri;
-    wkt_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs, precision);
-    wkt_cdt["type"] = Geometry::name(*geom2, theState.getType());
+    wkt_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
+    wkt_cdt["type"] = Geometry::name(*geom, theState.getType());
     wkt_cdt["layertype"] = "wkt";
 
     theGlobals["paths"][iri] = wkt_cdt;
