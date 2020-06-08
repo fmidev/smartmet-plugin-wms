@@ -404,7 +404,6 @@ PointValues read_station_observations(const ArrowLayer& layer,
       auto opts = settings;
 
       Engine::Observation::StationSettings stationSettings;
-      stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
 
       // Use an unique ID first if specified, ignoring the coordinates even if set
       if (station.fmisid)

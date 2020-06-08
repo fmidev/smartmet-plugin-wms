@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.5.12
+Version: 20.6.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -19,13 +19,13 @@ BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.4.18
 BuildRequires: smartmet-library-macgyver-devel >= 20.4.18
-BuildRequires: smartmet-library-spine-devel >= 20.5.12
+BuildRequires: smartmet-library-spine-devel >= 20.5.27
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 20.4.18
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.5.12
+BuildRequires: smartmet-engine-observation-devel >= 20.5.27
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 20.5.7
 BuildRequires: smartmet-engine-geonames-devel >= 20.4.18
@@ -55,7 +55,7 @@ Requires: smartmet-engine-contour >= 20.5.13
 Requires: smartmet-engine-gis >= 20.5.7
 Requires: smartmet-engine-geonames >= 20.4.18
 Requires: smartmet-server >= 20.4.18
-Requires: smartmet-library-spine >= 20.5.12
+Requires: smartmet-library-spine >= 20.5.27
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Mon Jun  8 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.8-1.fmi
+- Fixed ArrowLayer not to fetch clipping bbox observations when wanted stations are listed
+
 * Tue May 12 2020 Anssi Reponen <anssi.reponen@fmi.fi> - 20.5.12-1.fmi
 - Observation-engine API changed (BRAINSTORM-1678)
 
