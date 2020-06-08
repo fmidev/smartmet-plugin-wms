@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.5.15
+Version: 20.6.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,16 +18,16 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.4.18
-BuildRequires: smartmet-library-grid-content-devel >= 20.5.15
-BuildRequires: smartmet-library-grid-files-devel >= 20.5.15
+BuildRequires: smartmet-library-grid-content-devel >= 20.6.8
+BuildRequires: smartmet-library-grid-files-devel >= 20.6.8
 BuildRequires: smartmet-library-macgyver-devel >= 20.4.18
-BuildRequires: smartmet-library-spine-devel >= 20.5.12
+BuildRequires: smartmet-library-spine-devel >= 20.5.27
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 20.4.18
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.5.13
+BuildRequires: smartmet-engine-observation-devel >= 20.5.27
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 20.5.7
 BuildRequires: smartmet-engine-geonames-devel >= 20.4.18
@@ -46,8 +46,8 @@ Requires: fmt >= 5.2.0
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-grid-content >= 20.5.15
-Requires: smartmet-library-grid-files >= 20.5.15
+Requires: smartmet-library-grid-content >= 20.6.8
+Requires: smartmet-library-grid-files >= 20.6.8
 Requires: smartmet-library-gis >= 20.4.18
 Requires: smartmet-library-macgyver >= 20.4.18
 Requires: smartmet-library-giza >= 20.4.18
@@ -59,7 +59,7 @@ Requires: smartmet-engine-contour >= 20.5.13
 Requires: smartmet-engine-gis >= 20.5.7
 Requires: smartmet-engine-geonames >= 20.4.18
 Requires: smartmet-server >= 20.4.18
-Requires: smartmet-library-spine >= 20.5.12
+Requires: smartmet-library-spine >= 20.5.27
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -96,6 +96,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Jun  8 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.8-1.fmi
+- Repackaged due to base library changes
+
 * Fri May 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.5.15-1.fmi
 - Repackaged due to base library changes
 
