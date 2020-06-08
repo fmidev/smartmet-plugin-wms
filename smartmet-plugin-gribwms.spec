@@ -97,6 +97,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Mon Jun  8 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.8-1.fmi
+- Fixed ArrowLayer not to fetch clipping bbox observations when wanted stations are listed
 - Repackaged due to base library changes
 
 * Fri May 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.5.15-1.fmi
