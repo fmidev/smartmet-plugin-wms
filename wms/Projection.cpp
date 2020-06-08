@@ -464,10 +464,7 @@ void Projection::prepareCRS() const
 
     // newbase corners calculated from world xy coordinates
 
-    auto proj =
-        fmt::format("+proj=latlong +R={:.0f} +wktext +over +no_defs +towgs84=0,0,0", kRearth);
-
-    Fmi::CoordinateTransformation transformation(*ogr_crs, proj);
+    Fmi::CoordinateTransformation transformation(*ogr_crs, "FMI");
 
     // Calculate bottom left and top right coordinates
 
