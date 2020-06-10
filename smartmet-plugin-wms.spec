@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.6.8
+Version: 20.6.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -25,7 +25,7 @@ BuildRequires: smartmet-library-giza-devel
 BuildRequires: smartmet-engine-authentication-devel >= 20.4.18
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.5.27
+BuildRequires: smartmet-engine-observation-devel >= 20.6.10
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 20.5.7
 BuildRequires: smartmet-engine-geonames-devel >= 20.4.18
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Jun 10 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.6.10-1.fmi
+- Rebuilt due to obsengine API change
+
 * Mon Jun  8 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.8-1.fmi
 - Fixed ArrowLayer not to fetch clipping bbox observations when wanted stations are listed
 
