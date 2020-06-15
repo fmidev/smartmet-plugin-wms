@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.6.8
+Version: 20.6.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -91,11 +91,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %Files
 %defattr(0775,root,root,0775)
-%{_datadir}/smartmet/plugins/wms.so
+%{_datadir}/smartmet/plugins/gribwms.so
 %defattr(0664,root,root,0775)
-%{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
+%{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
+* Mon Jun 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.15-1.fmi
+- Renamed .so to enable simultaneous installation of wms and gribwms
+
 * Mon Jun  8 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.8-1.fmi
 - Fixed ArrowLayer not to fetch clipping bbox observations when wanted stations are listed
 - Repackaged due to base library changes
