@@ -39,6 +39,9 @@ workflows:
   build_and_test:
     jobs:
       - build
+          filters:
+            branches:
+              only: grid_dev  
       - test:
           requires:
             - build
