@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.6.8
+Version: 20.6.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,17 +18,17 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.4.18
-BuildRequires: smartmet-library-macgyver-devel >= 20.4.18
-BuildRequires: smartmet-library-spine-devel >= 20.5.27
+BuildRequires: smartmet-library-macgyver-devel >= 20.6.8
+BuildRequires: smartmet-library-spine-devel >= 20.6.8
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 20.4.18
+BuildRequires: smartmet-engine-authentication-devel >= 20.6.8
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.5.27
+BuildRequires: smartmet-engine-observation-devel >= 20.6.17
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 20.5.7
-BuildRequires: smartmet-engine-geonames-devel >= 20.4.18
+BuildRequires: smartmet-engine-geonames-devel >= 20.6.8
 BuildRequires: smartmet-engine-querydata-devel >= 20.5.13
 BuildRequires: smartmet-engine-contour-devel >= 20.5.13
 BuildRequires: smartmet-library-gis-devel >= 20.4.18
@@ -45,17 +45,17 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
 Requires: smartmet-library-gis >= 20.4.18
-Requires: smartmet-library-macgyver >= 20.4.18
+Requires: smartmet-library-macgyver >= 20.6.8
 Requires: smartmet-library-giza >= 20.4.18
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 20.4.18
+Requires: smartmet-engine-authentication >= 20.6.8
 %endif
 Requires: smartmet-engine-querydata >= 20.5.13
 Requires: smartmet-engine-contour >= 20.5.13
 Requires: smartmet-engine-gis >= 20.5.7
-Requires: smartmet-engine-geonames >= 20.4.18
+Requires: smartmet-engine-geonames >= 20.6.8
 Requires: smartmet-server >= 20.4.18
-Requires: smartmet-library-spine >= 20.5.27
+Requires: smartmet-library-spine >= 20.6.8
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -92,6 +92,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Mon Jun 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.22-1.fmi
+- Removed debugging code
+
+* Wed Jun 10 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.6.10-1.fmi
+- Rebuilt due to obsengine API change
+
 * Mon Jun  8 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.8-1.fmi
 - Fixed ArrowLayer not to fetch clipping bbox observations when wanted stations are listed
 
