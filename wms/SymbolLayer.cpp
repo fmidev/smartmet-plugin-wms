@@ -883,10 +883,10 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     for (const auto& pointvalue : pointvalues)
     {
-      const auto& point = pointvalue.point;
-
       if (pointvalue.value != kFloatMissing)
         ++valid_count;
+
+      const auto& point = pointvalue.point;
 
       // Start generating the hash
 
@@ -904,6 +904,9 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
       if (!symbols.empty())
       {
+        if (pointvalue.value == kFloatMissing)
+          continue;
+
         auto selection = Select::attribute(symbols, pointvalue.value);
         if (selection)
         {
