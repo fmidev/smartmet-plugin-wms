@@ -33,36 +33,36 @@
   <text x="20" y="21">8</text>
   <text x="50" y="21">8</text>
   <text x="80" y="21">7</text>
-  <text x="110" y="21">5</text>
-  <text x="140" y="21">3</text>
-  <text x="170" y="21">2</text>
-  <text x="200" y="21">1</text>
+  <text x="110" y="21">6</text>
+  <text x="140" y="21">4</text>
+  <text x="170" y="21">3</text>
+  <text x="200" y="21">2</text>
   <text x="230" y="21">3</text>
   <text x="260" y="21">7</text>
   <text x="290" y="21">7</text>
   <text x="5" y="51">9</text>
   <text x="35" y="51">7</text>
-  <text x="65" y="51">4</text>
-  <text x="95" y="51">2</text>
+  <text x="65" y="51">5</text>
+  <text x="95" y="51">3</text>
   <text x="125" y="51">2</text>
   <text x="155" y="51">2</text>
   <text x="185" y="51">2</text>
   <text x="215" y="51">4</text>
-  <text x="245" y="51">5</text>
+  <text x="245" y="51">6</text>
   <text x="275" y="51">7</text>
   <text x="20" y="81">6</text>
   <text x="50" y="81">4</text>
   <text x="80" y="81">3</text>
   <text x="110" y="81">4</text>
   <text x="140" y="81">5</text>
-  <text x="170" y="81">6</text>
-  <text x="200" y="81">7</text>
-  <text x="230" y="81">5</text>
+  <text x="170" y="81">5</text>
+  <text x="200" y="81">6</text>
+  <text x="230" y="81">4</text>
   <text x="260" y="81">6</text>
   <text x="290" y="81">7</text>
   <text x="5" y="111">5</text>
   <text x="35" y="111">3</text>
-  <text x="65" y="111">6</text>
+  <text x="65" y="111">5</text>
   <text x="95" y="111">6</text>
   <text x="125" y="111">6</text>
   <text x="155" y="111">6</text>
@@ -70,7 +70,7 @@
   <text x="215" y="111">7</text>
   <text x="245" y="111">7</text>
   <text x="275" y="111">7</text>
-  <text x="20" y="141">2</text>
+  <text x="20" y="141">3</text>
   <text x="50" y="141">5</text>
   <text x="80" y="141">5</text>
   <text x="110" y="141">5</text>
@@ -80,11 +80,11 @@
   <text x="230" y="141">6</text>
   <text x="260" y="141">6</text>
   <text x="290" y="141">5</text>
-  <text x="5" y="171">4</text>
+  <text x="5" y="171">3</text>
   <text x="35" y="171">5</text>
   <text x="65" y="171">5</text>
   <text x="95" y="171">7</text>
-  <text x="125" y="171">9</text>
+  <text x="125" y="171">8</text>
   <text x="155" y="171">8</text>
   <text x="185" y="171">7</text>
   <text x="215" y="171">6</text>
@@ -94,53 +94,53 @@
   <text x="50" y="201">6</text>
   <text x="80" y="201">7</text>
   <text x="110" y="201">8</text>
-  <text x="140" y="201">8</text>
+  <text x="140" y="201">9</text>
   <text x="170" y="201">6</text>
   <text x="200" y="201">7</text>
   <text x="230" y="201">6</text>
   <text x="260" y="201">8</text>
-  <text x="290" y="201">9</text>
+  <text x="290" y="201">10</text>
   <text x="5" y="231">6</text>
   <text x="35" y="231">6</text>
   <text x="65" y="231">7</text>
-  <text x="95" y="231">12</text>
-  <text x="125" y="231">12</text>
+  <text x="95" y="231">11</text>
+  <text x="125" y="231">10</text>
   <text x="155" y="231">7</text>
-  <text x="185" y="231">7</text>
+  <text x="185" y="231">6</text>
   <text x="215" y="231">6</text>
   <text x="245" y="231">7</text>
-  <text x="275" y="231">8</text>
+  <text x="275" y="231">9</text>
   <text x="20" y="261">7</text>
-  <text x="50" y="261">8</text>
-  <text x="80" y="261">13</text>
+  <text x="50" y="261">7</text>
+  <text x="80" y="261">12</text>
   <text x="110" y="261">14</text>
   <text x="140" y="261">11</text>
   <text x="170" y="261">9</text>
   <text x="200" y="261">8</text>
-  <text x="230" y="261">7</text>
+  <text x="230" y="261">6</text>
   <text x="260" y="261">6</text>
   <text x="290" y="261">7</text>
-  <text x="5" y="291">8</text>
+  <text x="5" y="291">7</text>
   <text x="35" y="291">9</text>
   <text x="65" y="291">11</text>
-  <text x="95" y="291">13</text>
-  <text x="125" y="291">11</text>
+  <text x="95" y="291">14</text>
+  <text x="125" y="291">12</text>
   <text x="155" y="291">10</text>
-  <text x="185" y="291">9</text>
-  <text x="215" y="291">6</text>
+  <text x="185" y="291">8</text>
+  <text x="215" y="291">7</text>
   <text x="245" y="291">7</text>
   <text x="275" y="291">7</text>
-  <text x="20" y="321">11</text>
-  <text x="50" y="321">14</text>
+  <text x="20" y="321">10</text>
+  <text x="50" y="321">13</text>
   <text x="80" y="321">13</text>
-  <text x="110" y="321">9</text>
+  <text x="110" y="321">10</text>
   <text x="140" y="321">11</text>
-  <text x="170" y="321">10</text>
+  <text x="170" y="321">9</text>
   <text x="200" y="321">8</text>
-  <text x="230" y="321">8</text>
-  <text x="260" y="321">9</text>
-  <text x="290" y="321">9</text>
-  <text x="5" y="351">15</text>
+  <text x="230" y="321">7</text>
+  <text x="260" y="321">8</text>
+  <text x="290" y="321">8</text>
+  <text x="5" y="351">13</text>
   <text x="35" y="351">16</text>
   <text x="65" y="351">14</text>
   <text x="95" y="351">11</text>
@@ -159,57 +159,57 @@
   <text x="200" y="381">11</text>
   <text x="230" y="381">11</text>
   <text x="260" y="381">10</text>
-  <text x="290" y="381">11</text>
-  <text x="5" y="411">16</text>
+  <text x="290" y="381">10</text>
+  <text x="5" y="411">17</text>
   <text x="35" y="411">16</text>
   <text x="65" y="411">14</text>
   <text x="95" y="411">11</text>
   <text x="125" y="411">10</text>
-  <text x="155" y="411">12</text>
-  <text x="185" y="411">12</text>
+  <text x="155" y="411">11</text>
+  <text x="185" y="411">11</text>
   <text x="215" y="411">12</text>
   <text x="245" y="411">12</text>
-  <text x="275" y="411">14</text>
+  <text x="275" y="411">13</text>
   <text x="20" y="441">16</text>
   <text x="50" y="441">15</text>
   <text x="80" y="441">12</text>
-  <text x="110" y="441">12</text>
+  <text x="110" y="441">11</text>
   <text x="140" y="441">12</text>
   <text x="170" y="441">12</text>
   <text x="200" y="441">12</text>
-  <text x="230" y="441">13</text>
+  <text x="230" y="441">12</text>
   <text x="260" y="441">15</text>
   <text x="290" y="441">15</text>
-  <text x="5" y="471">15</text>
+  <text x="5" y="471">16</text>
   <text x="35" y="471">15</text>
   <text x="65" y="471">15</text>
-  <text x="95" y="471">14</text>
-  <text x="125" y="471">14</text>
-  <text x="155" y="471">14</text>
-  <text x="185" y="471">15</text>
+  <text x="95" y="471">13</text>
+  <text x="125" y="471">13</text>
+  <text x="155" y="471">13</text>
+  <text x="185" y="471">14</text>
   <text x="215" y="471">13</text>
   <text x="245" y="471">13</text>
-  <text x="275" y="471">13</text>
+  <text x="275" y="471">14</text>
   <text x="20" y="501">17</text>
   <text x="50" y="501">16</text>
   <text x="80" y="501">16</text>
   <text x="110" y="501">15</text>
-  <text x="140" y="501">14</text>
-  <text x="170" y="501">14</text>
-  <text x="200" y="501">14</text>
+  <text x="140" y="501">15</text>
+  <text x="170" y="501">15</text>
+  <text x="200" y="501">15</text>
   <text x="230" y="501">11</text>
   <text x="260" y="501">10</text>
   <text x="290" y="501">10</text>
   <text x="5" y="531">19</text>
-  <text x="35" y="531">18</text>
+  <text x="35" y="531">17</text>
   <text x="65" y="531">16</text>
   <text x="95" y="531">16</text>
   <text x="125" y="531">14</text>
   <text x="155" y="531">12</text>
   <text x="185" y="531">12</text>
   <text x="215" y="531">11</text>
-  <text x="245" y="531">9</text>
-  <text x="275" y="531">8</text>
+  <text x="245" y="531">10</text>
+  <text x="275" y="531">9</text>
   </g>
  </g>
 </g>

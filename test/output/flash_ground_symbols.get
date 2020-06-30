@@ -3071,6 +3071,7 @@
    <use style="fill:red" transform="translate(213,211) scale(0.75)" xlink:href="#flash"/>
    <use style="fill:red" transform="translate(317,185) scale(0.75)" xlink:href="#flash"/>
    <use style="fill:blue" transform="translate(388,169) scale(0.75)" xlink:href="#flash"/>
+   <use style="fill:blue" transform="translate(351,230) scale(0.75)" xlink:href="#flash"/>
   </g>
  </g>
 </g>
