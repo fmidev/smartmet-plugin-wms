@@ -54,8 +54,8 @@ fi
 
 if [[ "$MIME" == "text/plain" ]]; then
     echo "FAIL: text output differs: $RESULT <> $EXPECTED"
-    echo diff $EXPECTED $RESULT
-    diff $EXPECTED $RESULT
+#   echo diff $EXPECTED $RESULT
+#   diff $EXPECTED $RESULT
     exit 1
 fi
 
