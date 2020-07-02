@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.6.22
+Version: 20.7.2
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Jul  2 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.2-1.fmi
+- Fixed GetCapabilities to list times with "," separator without a space after the comma
+
+* Mon Jun 29 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.29-1.fmi
+- Do not draw SymbolLayer symbols if the data value is missing
+
 * Mon Jun 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.22-1.fmi
 - Removed debugging code
 

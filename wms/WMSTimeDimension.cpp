@@ -152,7 +152,7 @@ std::string StepTimeDimension::getCapabilities(const boost::optional<std::string
         break;
     }
 
-    return boost::algorithm::join(ret, ", ");
+    return boost::algorithm::join(ret, ",");
   }
   catch (...)
   {
