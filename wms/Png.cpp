@@ -32,11 +32,11 @@ void Png::init(const Json::Value& theJson, const Config& /* theConfig */)
       const Json::Value& json = theJson[name];
 
       if (name == "quality")
-        options.quality = boost::numeric_cast<double>(json.asInt());
+        options.quality = json.asDouble();
       else if (name == "errorfactor")
-        options.errorfactor = boost::numeric_cast<double>(json.asInt());
+        options.errorfactor = json.asDouble();
       else if (name == "maxcolors")
-        options.maxcolors = boost::numeric_cast<int>(json.asInt());
+        options.maxcolors = json.asInt();
       else if (name == "truecolor")
         options.truecolor = json.asBool();
       else
