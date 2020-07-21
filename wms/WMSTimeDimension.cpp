@@ -223,20 +223,18 @@ std::string IntervalTimeDimension::getCapabilities(
       endt = requested_endt;
     }
 
-    std::ostringstream os;
-
-    os << Fmi::to_iso_extended_string(startt) << "Z/" << Fmi::to_iso_extended_string(endt)
-       << "Z/PT";
+    std::string ret =
+        Fmi::to_iso_extended_string(startt) + "Z/" + Fmi::to_iso_extended_string(endt) + "Z/PT";
     if (itsInterval.resolution.hours() == 0 && itsInterval.resolution.minutes() <= 60)
-      os << itsInterval.resolution.minutes() << "M";
+      ret += Fmi::to_string(itsInterval.resolution.minutes()) + "M";
     else
     {
-      os << itsInterval.resolution.hours() << "H";
+      ret += Fmi::to_string(itsInterval.resolution.hours()) + "H";
       if (itsInterval.resolution.minutes() > 0)
-        os << itsInterval.resolution.minutes() << "M";
+        ret += Fmi::to_string(itsInterval.resolution.minutes()) + "M";
     }
 
-    return os.str();
+    return ret;
   }
   catch (...)
   {
