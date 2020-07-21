@@ -134,8 +134,6 @@ std::string StepTimeDimension::getCapabilities(const boost::optional<std::string
 {
   try
   {
-    std::ostringstream os;
-
     std::vector<std::string> ret;
     ret.reserve(itsTimesteps.size());
 
