@@ -20,30 +20,6 @@ boost::posix_time::ptime parse_time(const std::string& time_string)
 }
 }  // namespace
 
-void WMSTimeDimension::addTimestep(const boost::posix_time::ptime& timestep)
-{
-  try
-  {
-    itsTimesteps.insert(timestep);
-  }
-  catch (...)
-  {
-    throw Spine::Exception::Trace(BCP, "Failed to add time step!");
-  }
-}
-
-void WMSTimeDimension::removeTimestep(const boost::posix_time::ptime& timestep)
-{
-  try
-  {
-    itsTimesteps.erase(timestep);
-  }
-  catch (...)
-  {
-    throw Spine::Exception::Trace(BCP, "Failed to remove time step!");
-  }
-}
-
 bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) const
 {
   // Allow any time within the range
@@ -60,13 +36,8 @@ bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) cons
     auto res = itsTimesteps.find(theTime);
 
     if (res == itsTimesteps.end())
-    {
       return false;
-    }
-    else
-    {
       return true;
-    }
   }
   catch (...)
   {
@@ -94,6 +65,7 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
 
     auto itLastTimestep = itsTimesteps.end();
     itLastTimestep--;
+
     // if current time is later than last timestep -> return last timestep
     if (current_time >= *itLastTimestep)
       return *itLastTimestep;
@@ -129,8 +101,36 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
   }
 }
 
+StepTimeDimension::StepTimeDimension(const std::list<boost::posix_time::ptime>& times)
+{
+  std::copy(times.begin(), times.end(), std::inserter(itsTimesteps, itsTimesteps.begin()));
+  itsCapabilities = makeCapabilities(boost::none, boost::none);
+}
+
+StepTimeDimension::StepTimeDimension(const std::vector<boost::posix_time::ptime>& times)
+{
+  std::copy(times.begin(), times.end(), std::inserter(itsTimesteps, itsTimesteps.begin()));
+  itsCapabilities = makeCapabilities(boost::none, boost::none);
+}
+
 std::string StepTimeDimension::getCapabilities(const boost::optional<std::string>& starttime,
                                                const boost::optional<std::string>& endtime) const
+{
+  try
+  {
+    if (!starttime && !endtime)
+      return itsCapabilities;
+
+    return makeCapabilities(starttime, endtime);
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Failed to extract time dimension capabilities!");
+  }
+}
+
+std::string StepTimeDimension::makeCapabilities(const boost::optional<std::string>& starttime,
+                                                const boost::optional<std::string>& endtime) const
 {
   try
   {
@@ -152,7 +152,7 @@ std::string StepTimeDimension::getCapabilities(const boost::optional<std::string
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to extract time dimension capabilities!");
+    throw Spine::Exception::Trace(BCP, "Failed to make time dimension capabilities!");
   }
 }
 
@@ -161,6 +161,7 @@ IntervalTimeDimension::IntervalTimeDimension(const boost::posix_time::ptime& beg
                                              const boost::posix_time::time_duration& step)
     : itsInterval(begin, end, step)
 {
+  itsCapabilities = makeCapabilities(boost::none, boost::none);
 }
 
 boost::posix_time::ptime IntervalTimeDimension::mostCurrentTime() const
@@ -179,6 +180,23 @@ IntervalTimeDimension::tag_interval IntervalTimeDimension::getInterval() const
 }
 
 std::string IntervalTimeDimension::getCapabilities(
+    const boost::optional<std::string>& starttime,
+    const boost::optional<std::string>& endtime) const
+{
+  try
+  {
+    if (!starttime && !endtime)
+      return itsCapabilities;
+
+    return makeCapabilities(starttime, endtime);
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Failed to generate time dimension capabilities!");
+  }
+}
+
+std::string IntervalTimeDimension::makeCapabilities(
     const boost::optional<std::string>& starttime,
     const boost::optional<std::string>& endtime) const
 {
@@ -233,7 +251,7 @@ std::string IntervalTimeDimension::getCapabilities(
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to generate time dimension capabilities!");
+    throw Spine::Exception::Trace(BCP, "Failed to make time dimension capabilities!");
   }
 }
 
