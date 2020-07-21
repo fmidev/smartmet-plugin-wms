@@ -86,7 +86,7 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
     if (itsTimesteps.size() == 0)
       return boost::posix_time::not_a_date_time;
 
-    boost::posix_time::ptime current_time = boost::posix_time::second_clock::universal_time();
+    auto current_time = boost::posix_time::second_clock::universal_time();
 
     // if current time is earlier than first timestep -> return first timestep
     if (current_time <= *(itsTimesteps.begin()))
@@ -109,8 +109,8 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
           return *it;
 
         // check which is closer to current time: current timestep or previous timestep
-        boost::posix_time::time_duration duration_tonext(*it - current_time);
-        boost::posix_time::time_duration duration_toprevious(current_time - *itPrevious);
+        auto duration_tonext(*it - current_time);
+        auto duration_toprevious(current_time - *itPrevious);
 
         if (duration_toprevious.total_seconds() <= duration_tonext.total_seconds())
           return *itPrevious;
@@ -137,10 +137,8 @@ std::string StepTimeDimension::getCapabilities(const boost::optional<std::string
     std::vector<std::string> ret;
     ret.reserve(itsTimesteps.size());
 
-    boost::posix_time::ptime startt =
-        (starttime ? parse_time(*starttime) : boost::posix_time::min_date_time);
-    boost::posix_time::ptime endt =
-        (endtime ? parse_time(*endtime) : boost::posix_time::max_date_time);
+    auto startt = (starttime ? parse_time(*starttime) : boost::posix_time::min_date_time);
+    auto endt = (endtime ? parse_time(*endtime) : boost::posix_time::max_date_time);
 
     for (auto& step : itsTimesteps)
     {
@@ -190,12 +188,10 @@ std::string IntervalTimeDimension::getCapabilities(
       throw Spine::Exception::Trace(BCP,
                                     "Requested starttime must be earlier than requested endtime!");
 
-    boost::posix_time::ptime startt = itsInterval.startTime;
-    boost::posix_time::ptime endt = itsInterval.endTime;
-    boost::posix_time::ptime requested_startt =
-        (starttime ? parse_time(*starttime) : itsInterval.startTime);
-    boost::posix_time::ptime requested_endt =
-        (endtime ? parse_time(*endtime) : itsInterval.endTime);
+    auto startt = itsInterval.startTime;
+    auto endt = itsInterval.endTime;
+    auto requested_startt = (starttime ? parse_time(*starttime) : itsInterval.startTime);
+    auto requested_endt = (endtime ? parse_time(*endtime) : itsInterval.endTime);
 
     if (requested_startt > endt || requested_endt < startt)
       return "";
@@ -203,9 +199,8 @@ std::string IntervalTimeDimension::getCapabilities(
     if (startt < requested_startt)
     {
       startt = boost::posix_time::ptime(requested_startt.date(), startt.time_of_day());
-      boost::posix_time::time_duration resolution =
-          (itsInterval.resolution.total_seconds() == 0 ? boost::posix_time::minutes(1)
-                                                       : itsInterval.resolution);
+      auto resolution = (itsInterval.resolution.total_seconds() == 0 ? boost::posix_time::minutes(1)
+                                                                     : itsInterval.resolution);
       if (startt < requested_startt)
       {
         while (startt < requested_startt)
