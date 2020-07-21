@@ -25,7 +25,7 @@ BuildRequires: smartmet-library-giza-devel
 BuildRequires: smartmet-engine-authentication-devel >= 20.6.8
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.6.17
+BuildRequires: smartmet-engine-observation-devel >= 20.7.21
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 20.5.7
 BuildRequires: smartmet-engine-geonames-devel >= 20.6.8
@@ -94,6 +94,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Jul 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.21-1.fmi
 - GetCapabilities speed improvements
+- Repackaged due to ObsEngine ABI changes for station searches
 
 * Thu Jul  2 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.2-2.fmi
 - Fixed PNG settings quality and errorfactor to be of type double instead of int
