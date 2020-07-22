@@ -1422,7 +1422,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
         layer_bbox["crs"] = id;
 
-        if (id == "EPSG:4326")
+        if (id == "EPSG:4326" || id == "WGS84")
         {
           layer_crs_list.PushBack(id);
           layer_bbox["minx"] = geographicBoundingBox.xMin;
@@ -1433,9 +1433,6 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
         }
         else
         {
-          auto target = gisengine.getSpatialReference(decl);
-          auto transformation = gisengine.getCoordinateTransformation("WGS84", decl);
-
           // Intersect with target EPSG bounding box (latlon) if it is available
 
           auto x1 = geographicBoundingBox.xMin;
@@ -1458,6 +1455,8 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
           if (x1 < x2 && y1 < y2)
           {
+            auto transformation = gisengine.getCoordinateTransformation("WGS84", decl);
+
             bool ok =
                 (transformation->Transform(1, &x1, &y1) && transformation->Transform(1, &x2, &y2));
 
@@ -1469,7 +1468,8 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
               layer_crs_list.PushBack(id);
 
               // Use proper coordinate ordering for the EPSG
-              if (target->EPSGTreatsAsLatLong())
+
+              if (transformation->GetTargetCS()->EPSGTreatsAsLatLong())
               {
                 std::swap(x1, y1);
                 std::swap(x2, y2);
