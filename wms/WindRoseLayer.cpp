@@ -14,6 +14,7 @@
 #include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
+#include <engines/gis/Engine.h>
 #include <engines/observation/Engine.h>
 #include <engines/observation/Settings.h>
 #include <gdal/ogr_spatialref.h>
@@ -404,23 +405,10 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     // Establish the projection
 
-    auto crs = projection.getCRS();
     const auto& box = projection.getBox();
 
-    // Create the coordinate transformation from latlon to world coordinates
-
-    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = wgs84->SetFromUserInput("WGS84");
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "WindRoseLayer failed to generate WGS84 spatial reference");
-
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
-    if (transformation == nullptr)
-      throw Spine::Exception(
-          BCP,
-          "WindRoseLayer failed to create the coordinate transformation from WGS84 to world "
-          "coordinates");
+    auto transformation =
+        theState.getGisEngine().getCoordinateTransformation("WGS84", projection.getProjString());
 
     // Establish the time range
 

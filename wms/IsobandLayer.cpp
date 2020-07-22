@@ -167,7 +167,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     settings.parameters.push_back(Spine::makeParameter("latitude"));
     settings.parameters.push_back(Spine::makeParameter(*parameter));
 
-    settings.boundingBox = getClipBoundingBox(box, crs);
+    settings.boundingBox = getClipBoundingBox(box, theState, crs);
 
     auto result = obsengine.values(settings);
 
@@ -201,19 +201,10 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
       if (!values.empty())
       {
-        // Station WGS84 coordinates
-        auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-        OGRErr err = wgs84->SetFromUserInput("WGS84");
+        // Station coordinates are WGS84
 
-        if (err != OGRERR_NONE)
-          throw Spine::Exception(BCP, "GDAL does not understand WKT 'WGS84'!");
-
-        boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-            OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
-        if (transformation == nullptr)
-          throw Spine::Exception(BCP,
-                                 "Failed to create the needed coordinate transformation for "
-                                 "generating station positions");
+        auto transformation = theState.getGisEngine().getCoordinateTransformation(
+            "WGS84", projection.getProjString());
 
         const auto nrows = values[0].size();
 
@@ -561,8 +552,8 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           isoband_cdt["iri"] = iri;
           isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
           isoband_cdt["parameter"] = *parameter;
-          isoband_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs, precision);
-          isoband_cdt["type"] = Geometry::name(*geom2, theState.getType());
+          isoband_cdt["data"] = Geometry::toString(*geom2, theState, box, crs, precision);
+          isoband_cdt["type"] = Geometry::name(*geom2, theState);
           isoband_cdt["layertype"] = "isoband";
 
           // Use null to indicate unset values in GeoJSON

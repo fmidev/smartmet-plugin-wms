@@ -49,6 +49,14 @@ class Box;
 
 namespace SmartMet
 {
+namespace Engine
+{
+namespace Gis
+{
+class Engine;
+}
+}  // namespace Engine
+
 namespace HTTP
 {
 class Request;
@@ -94,7 +102,8 @@ class Projection
 
   void update(const Engine::Querydata::Q& theQ);
 
-  boost::shared_ptr<OGRSpatialReference> getCRS() const;
+  std::string getProjString() const;
+  std::shared_ptr<OGRSpatialReference> getCRS() const;
   const Fmi::Box& getBox() const;
 
   // User is responsible for calling getCRS or getBox first
@@ -104,7 +113,7 @@ class Projection
  private:
   // Cached results
   void prepareCRS() const;
-  mutable boost::shared_ptr<OGRSpatialReference> ogr_crs;
+  mutable std::shared_ptr<OGRSpatialReference> ogr_crs;
   mutable boost::shared_ptr<Fmi::Box> box;
 
   mutable NFmiPoint itsBottomLeft;
@@ -112,6 +121,8 @@ class Projection
 
   // Was the center set using geoid or name?
   bool latlon_center = false;
+
+  const Engine::Gis::Engine* gisengine = nullptr;  // not owned
 
 };  // class Projection
 

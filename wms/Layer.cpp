@@ -13,6 +13,7 @@
 #endif
 #include <boost/move/make_unique.hpp>
 #include <ctpp2/CDT.hpp>
+#include <engines/gis/Engine.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <spine/Exception.h>
@@ -209,7 +210,7 @@ bool Layer::validType(const std::string& theType) const
 void Layer::addClipRect(CTPP::CDT& theCdt,
                         CTPP::CDT& theGlobals,
                         const Fmi::Box& theBox,
-                        State& theState)
+                        const State& theState)
 {
   // Generate nothing of clipping is not requested
   if (!clip)
@@ -301,17 +302,16 @@ Fmi::Box Layer::getClipBox(const Fmi::Box& theBox) const
 // ----------------------------------------------------------------------
 
 std::map<std::string, double> Layer::getClipBoundingBox(
-    const Fmi::Box& theBox, const boost::shared_ptr<OGRSpatialReference>& theCRS) const
+    const Fmi::Box& theBox,
+    const State& theState,
+    const std::shared_ptr<OGRSpatialReference>& theCRS) const
 {
   // Expand world coordinates by the margin settings
   const auto clipbox = getClipBox(theBox);
 
   // Observations are in WGS84 coordinates
 
-  auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-  OGRErr err = wgs84->SetFromUserInput("WGS84");
-  if (err != OGRERR_NONE)
-    throw Spine::Exception(BCP, "GDAL does not understand WGS84");
+  auto wgs84 = theState.getGisEngine().getSpatialReference("WGS84");
 
   // Create the transformation from image world coordinates to WGS84 coordinates
   boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(

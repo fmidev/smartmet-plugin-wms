@@ -98,7 +98,7 @@ void TimeLayer::init(const Json::Value& theJson,
       double latitude = latitudeJson.asDouble();
       double xCoord = 0;
       double yCoord = 0;
-      LonLatToXYTransformation transformation(projection);
+      LonLatToXYTransformation transformation(projection, theState);
       transformation.transform(longitude, latitude, xCoord, yCoord);
       x = xCoord;
       y = yCoord;

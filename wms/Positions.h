@@ -17,6 +17,14 @@
 
 namespace SmartMet
 {
+namespace Engine
+{
+namespace Gis
+{
+class Engine;
+}
+}  // namespace Engine
+
 namespace Plugin
 {
 namespace Dali
@@ -65,7 +73,7 @@ class Positions
             const State& theState);
 
   Points getPoints(const Engine::Querydata::Q& theQ,
-                   const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                   const std::shared_ptr<OGRSpatialReference>& theCRS,
                    const Fmi::Box& theBox,
                    bool forecastMode) const;
 
@@ -127,37 +135,37 @@ class Positions
 
  private:
   Points getGridPoints(const Engine::Querydata::Q& theQ,
-                       const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                       const std::shared_ptr<OGRSpatialReference>& theCRS,
                        const Fmi::Box& theBox,
                        bool forecastMode) const;
 
   Points getDataPoints(const Engine::Querydata::Q& theQ,
-                       const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                       const std::shared_ptr<OGRSpatialReference>& theCRS,
                        const Fmi::Box& theBox,
                        bool forecastMode) const;
 
   Points getGraticulePoints(const Engine::Querydata::Q& theQ,
-                            const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                            const std::shared_ptr<OGRSpatialReference>& theCRS,
                             const Fmi::Box& theBox,
                             bool forecastMode) const;
 
   Points getGraticuleFillPoints(const Engine::Querydata::Q& theQ,
-                                const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                                const std::shared_ptr<OGRSpatialReference>& theCRS,
                                 const Fmi::Box& theBox,
                                 bool forecastMode) const;
 
   Points getKeywordPoints(const Engine::Querydata::Q& theQ,
-                          const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                          const std::shared_ptr<OGRSpatialReference>& theCRS,
                           const Fmi::Box& theBox,
                           bool forecastMode) const;
 
   Points getLatLonPoints(const Engine::Querydata::Q& theQ,
-                         const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                         const std::shared_ptr<OGRSpatialReference>& theCRS,
                          const Fmi::Box& theBox,
                          bool forecastMode) const;
 
   Points getStationPoints(const Engine::Querydata::Q& theQ,
-                          const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                          const std::shared_ptr<OGRSpatialReference>& theCRS,
                           const Fmi::Box& theBox,
                           bool forecastMode) const;
 
@@ -168,6 +176,8 @@ class Positions
   // not part of the UI - not involved in the hash
   boost::posix_time::ptime time;
   const Engine::Geonames::Engine* geonames;
+
+  const Engine::Gis::Engine* gisengine;
 
 };  // class Positions
 

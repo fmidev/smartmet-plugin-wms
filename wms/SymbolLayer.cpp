@@ -60,7 +60,7 @@ using PointValues = std::vector<PointValue>;
 
 PointValues read_forecasts(const SymbolLayer& layer,
                            const Engine::Querydata::Q& q,
-                           const boost::shared_ptr<OGRSpatialReference>& crs,
+                           const std::shared_ptr<OGRSpatialReference>& crs,
                            const Fmi::Box& box,
                            const boost::posix_time::time_period& valid_time_period)
 {
@@ -138,7 +138,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
 #ifndef WITHOUT_OBSERVATION
 PointValues read_flash_observations(const SymbolLayer& layer,
                                     State& state,
-                                    const boost::shared_ptr<OGRSpatialReference>& crs,
+                                    const std::shared_ptr<OGRSpatialReference>& crs,
                                     const Fmi::Box& box,
                                     const boost::posix_time::time_period& valid_time_period,
                                     OGRCoordinateTransformation& transformation)
@@ -182,7 +182,7 @@ PointValues read_flash_observations(const SymbolLayer& layer,
     auto points = layer.positions->getPoints(q, crs, box, forecast_mode);
 
     Engine::Observation::StationSettings stationSettings;
-    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
+    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, state, crs);
     settings.taggedFMISIDs = obsengine.translateToFMISID(
         settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
@@ -258,7 +258,7 @@ PointValues read_flash_observations(const SymbolLayer& layer,
 
 PointValues read_all_observations(const SymbolLayer& layer,
                                   State& state,
-                                  const boost::shared_ptr<OGRSpatialReference>& crs,
+                                  const std::shared_ptr<OGRSpatialReference>& crs,
                                   const Fmi::Box& box,
                                   const boost::posix_time::time_period& valid_time_period,
                                   OGRCoordinateTransformation& transformation)
@@ -299,7 +299,7 @@ PointValues read_all_observations(const SymbolLayer& layer,
     // Coordinates or bounding box
 
     Engine::Observation::StationSettings stationSettings;
-    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
+    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, state, crs);
     settings.taggedFMISIDs = obsengine.translateToFMISID(
         settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
@@ -373,7 +373,7 @@ PointValues read_all_observations(const SymbolLayer& layer,
 
 PointValues read_station_observations(const SymbolLayer& layer,
                                       State& state,
-                                      const boost::shared_ptr<OGRSpatialReference>& crs,
+                                      const std::shared_ptr<OGRSpatialReference>& crs,
                                       const Fmi::Box& box,
                                       const boost::posix_time::time_period& valid_time_period,
                                       OGRCoordinateTransformation& transformation)
@@ -517,7 +517,7 @@ PointValues read_station_observations(const SymbolLayer& layer,
 
 PointValues read_latlon_observations(const SymbolLayer& layer,
                                      State& state,
-                                     const boost::shared_ptr<OGRSpatialReference>& crs,
+                                     const std::shared_ptr<OGRSpatialReference>& crs,
                                      const Fmi::Box& box,
                                      const boost::posix_time::time_period& valid_time_period,
                                      OGRCoordinateTransformation& transformation,
@@ -647,7 +647,7 @@ PointValues read_latlon_observations(const SymbolLayer& layer,
 
 PointValues read_observations(const SymbolLayer& layer,
                               State& state,
-                              const boost::shared_ptr<OGRSpatialReference>& crs,
+                              const std::shared_ptr<OGRSpatialReference>& crs,
                               const Fmi::Box& box,
                               const boost::posix_time::time_period& valid_time_period)
 {
@@ -656,10 +656,7 @@ PointValues read_observations(const SymbolLayer& layer,
     // Create the coordinate transformation from image world coordinates
     // to WGS84 coordinates
 
-    auto obscrs = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = obscrs->SetFromUserInput("WGS84");
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand WGS84");
+    auto obscrs = state.getGisEngine().getSpatialReference("WGS84");
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));

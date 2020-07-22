@@ -1408,10 +1408,6 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
     // Layer CRS list and their bounding boxes
 
-    // Calculate CRS bbox from latlon bbox
-    OGRSpatialReference srs;
-    srs.importFromEPSGA(4326);
-
     if (!crs.empty())
     {
       CTPP::CDT layer_crs_list(CTPP::CDT::ARRAY_VAL);
@@ -1437,16 +1433,8 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
         }
         else
         {
-          OGRSpatialReference target;
-          auto err = target.SetFromUserInput(decl.c_str());
-          if (err != OGRERR_NONE)
-            throw Spine::Exception(BCP, "Unknown spatial reference declaration: '" + decl + "'");
-
-          boost::shared_ptr<OGRCoordinateTransformation> transformation(
-              OGRCreateCoordinateTransformation(&srs, &target));
-
-          if (transformation == nullptr)
-            throw Spine::Exception(BCP, "OGRCreateCoordinateTransformation function call failed");
+          auto target = gisengine.getSpatialReference(decl);
+          auto transformation = gisengine.getCoordinateTransformation("WGS84", decl);
 
           // Intersect with target EPSG bounding box (latlon) if it is available
 
@@ -1481,7 +1469,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
               layer_crs_list.PushBack(id);
 
               // Use proper coordinate ordering for the EPSG
-              if (target.EPSGTreatsAsLatLong())
+              if (target->EPSGTreatsAsLatLong())
               {
                 std::swap(x1, y1);
                 std::swap(x2, y2);

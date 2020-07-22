@@ -219,10 +219,10 @@ void FrameLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
     CTPP::CDT frame_cdt(CTPP::CDT::HASH_VAL);
     frame_cdt["iri"] = iri;
-    frame_cdt["type"] = Geometry::name(*itsGeom, theState.getType());
+    frame_cdt["type"] = Geometry::name(*itsGeom, theState);
 
     frame_cdt["layertype"] = "frame";
-    frame_cdt["data"] = Geometry::toString(*itsGeom, theState.getType(), box, crs, itsPrecision);
+    frame_cdt["data"] = Geometry::toString(*itsGeom, theState, box, crs, itsPrecision);
     //    theState.addPresentationAttributes(frame_cdt, css, attributes);
     theGlobals["paths"][iri] = frame_cdt;
 
@@ -245,7 +245,7 @@ void FrameLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       group_cdt["tags"].PushBack(tag_cdt);
     }
     theLayersCdt.PushBack(group_cdt);
-    addScale(theLayersCdt);
+    addScale(theLayersCdt, theState);
   }
   catch (...)
   {
@@ -285,11 +285,11 @@ void FrameLayer::addTic(CTPP::CDT& theLayersCdt, double x1, double y1, double x2
   theLayersCdt.PushBack(lineCdt);
 }
 
-void FrameLayer::addScale(CTPP::CDT& theLayersCdt)
+void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& theState)
 {
   if (!itsScale)
     return;
-  auto transformation = LonLatToXYTransformation(projection);
+  auto transformation = LonLatToXYTransformation(projection, theState);
 
   int lonMax = ceil(itsInnerBorder.rightLongitude);
   int latMax = ceil(itsInnerBorder.topLatitude);

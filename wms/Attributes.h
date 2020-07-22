@@ -33,9 +33,9 @@ class Attributes
   void add(const std::string& theName, const std::string& theValue);
   void add(const Attributes& theAttributes);
 
-  void generate(CTPP::CDT& theLocals, State& theState) const;
+  void generate(CTPP::CDT& theLocals, const State& theState) const;
   void generatePresentation(CTPP::CDT& theLocals,
-                            State& theState,
+                            const State& theState,
                             const std::string& theCSS = {}) const;
   std::size_t hash_value(const State& theState) const;
 

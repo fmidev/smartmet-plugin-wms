@@ -219,7 +219,7 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // direction, and then also apply "upright" condition if so requested.
 
     if (label.orientation == "auto")
-      fix_orientation(candidates, box, *crs);
+      fix_orientation(candidates, box, theState, *crs);
 
     // Update the globals
 
@@ -927,6 +927,7 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
 
 void IsolabelLayer::fix_orientation(Candidates& candidates,
                                     const Fmi::Box& box,
+                                    const State& state,
                                     OGRSpatialReference& crs) const
 {
   // The parameter being used
@@ -939,11 +940,7 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
   NFmiPoint dummy;
 
   // Querydata spatial reference
-  std::unique_ptr<OGRSpatialReference> qcrs(new OGRSpatialReference());
-  OGRErr err = qcrs->SetFromUserInput(q->area().WKT().c_str());
-
-  if (err != OGRERR_NONE)
-    throw Spine::Exception(BCP, "GDAL does not understand this FMI WKT: " + q->area().WKT());
+  auto qcrs = state.getGisEngine().getSpatialReference(q->area().WKT().c_str());
 
   // From image world coordinates to querydata world coordinates
 

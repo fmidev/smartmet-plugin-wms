@@ -173,9 +173,9 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
       CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
       map_cdt["iri"] = iri;
-      map_cdt["type"] = Geometry::name(*geom, theState.getType());
+      map_cdt["type"] = Geometry::name(*geom, theState);
       map_cdt["layertype"] = "map";
-      map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
+      map_cdt["data"] = Geometry::toString(*geom, theState, box, crs, precision);
 
       theState.addPresentationAttributes(map_cdt, css, attributes);
 
@@ -341,9 +341,9 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
       CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
       map_cdt["iri"] = iri;
-      map_cdt["type"] = Geometry::name(*geom, theState.getType());
+      map_cdt["type"] = Geometry::name(*geom, theState);
       map_cdt["layertype"] = "map";
-      map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
+      map_cdt["data"] = Geometry::toString(*geom, theState, box, crs, precision);
 
       theGlobals["paths"][iri] = map_cdt;
 

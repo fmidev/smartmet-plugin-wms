@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.7.21
+Version: 20.7.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -27,7 +27,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 20.6.8
 %if %{with observation}
 BuildRequires: smartmet-engine-observation-devel >= 20.7.21
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 20.5.7
+BuildRequires: smartmet-engine-gis-devel >= 20.7.22
 BuildRequires: smartmet-engine-geonames-devel >= 20.6.8
 BuildRequires: smartmet-engine-querydata-devel >= 20.5.13
 BuildRequires: smartmet-engine-contour-devel >= 20.5.13
@@ -52,7 +52,7 @@ Requires: smartmet-engine-authentication >= 20.6.8
 %endif
 Requires: smartmet-engine-querydata >= 20.5.13
 Requires: smartmet-engine-contour >= 20.5.13
-Requires: smartmet-engine-gis >= 20.5.7
+Requires: smartmet-engine-gis >= 20.7.22
 Requires: smartmet-engine-geonames >= 20.6.8
 Requires: smartmet-server >= 20.4.18
 Requires: smartmet-library-spine >= 20.6.8
@@ -92,6 +92,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Jul 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.22-1.fmi
+- Use GIS-engine for creating coordinate transformations faster
+
+* Tue Jul 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.21-2.fmi
+- Use GIS-engine for creating spatial references faster
+
 * Tue Jul 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.21-1.fmi
 - GetCapabilities speed improvements
 - Repackaged due to ObsEngine ABI changes for station searches

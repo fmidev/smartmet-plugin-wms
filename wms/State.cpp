@@ -214,7 +214,7 @@ Engine::Querydata::Q State::get(const Engine::Querydata::Producer& theProducer,
  */
 // ----------------------------------------------------------------------
 
-void State::requireId(const std::string& theID)
+void State::requireId(const std::string& theID) const
 {
   try
   {
@@ -255,7 +255,7 @@ bool State::addId(const std::string& theID) const
  */
 // ----------------------------------------------------------------------
 
-void State::addAttributes(CTPP::CDT& theGlobals, const Attributes& theAttributes)
+void State::addAttributes(CTPP::CDT& theGlobals, const Attributes& theAttributes) const
 {
   try
   {
@@ -297,7 +297,7 @@ void State::addAttributes(CTPP::CDT& theGlobals, const Attributes& theAttributes
 
 void State::addAttributes(CTPP::CDT& theGlobals,
                           CTPP::CDT& theLocals,
-                          const Attributes& theAttributes)
+                          const Attributes& theAttributes) const
 {
   try
   {
@@ -354,7 +354,7 @@ void State::addAttributes(CTPP::CDT& theGlobals,
 
 void State::addPresentationAttributes(CTPP::CDT& theLayer,
                                       const boost::optional<std::string>& theCSS,
-                                      const Attributes& theAttributes)
+                                      const Attributes& theAttributes) const
 {
   try
   {
@@ -379,7 +379,7 @@ void State::addPresentationAttributes(CTPP::CDT& theLayer,
 void State::addPresentationAttributes(CTPP::CDT& theLayer,
                                       const boost::optional<std::string>& theCSS,
                                       const Attributes& theLayerAttributes,
-                                      const Attributes& theObjectAttributes)
+                                      const Attributes& theObjectAttributes) const
 {
   try
   {

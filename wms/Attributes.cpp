@@ -135,7 +135,7 @@ void Attributes::init(const Json::Value& theJson, const Config& /* theConfig */)
  */
 // ----------------------------------------------------------------------
 
-void Attributes::generate(CTPP::CDT& theLocals, State& theState) const
+void Attributes::generate(CTPP::CDT& theLocals, const State& theState) const
 {
   try
   {
@@ -204,7 +204,7 @@ void Attributes::generate(CTPP::CDT& theLocals, State& theState) const
 // ----------------------------------------------------------------------
 
 void Attributes::generatePresentation(CTPP::CDT& theLocals,
-                                      State& theState,
+                                      const State& theState,
                                       const std::string& theCSS) const
 {
   try

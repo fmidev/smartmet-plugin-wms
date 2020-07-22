@@ -331,16 +331,15 @@ void Positions::init(const boost::optional<std::string>& theProducer,
     // For applying directional corrections to positions
     time = theTime;
 
-    // GeoEngine might be needed
+    // Needed engines
     geonames = &theState.getGeoEngine();
+    gisengine = &theState.getGisEngine();
 
     // Initialize clipping shapes
 
-    const auto& gis = theState.getGisEngine();
-
     if (insidemap)
     {
-      inshape = gis.getShape(theProjection.getCRS().get(), insidemap->options);
+      inshape = gisengine->getShape(theProjection.getCRS().get(), insidemap->options);
       if (!inshape)
         throw Spine::Exception(BCP, "Positions received empty inside-shape from database!");
 
@@ -350,7 +349,7 @@ void Positions::init(const boost::optional<std::string>& theProducer,
 
     if (outsidemap)
     {
-      outshape = gis.getShape(theProjection.getCRS().get(), outsidemap->options);
+      outshape = gisengine->getShape(theProjection.getCRS().get(), outsidemap->options);
 
       // This does not obey layer margings, hence we disable this speed optimization
       // if (outshape)
@@ -384,7 +383,7 @@ void Positions::addMargins(int theXMargin, int theYMargin)
 // ----------------------------------------------------------------------
 
 Positions::Points Positions::getPoints(const Engine::Querydata::Q& theQ,
-                                       const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                                       const std::shared_ptr<OGRSpatialReference>& theCRS,
                                        const Fmi::Box& theBox,
                                        bool forecastMode) const
 {
@@ -423,7 +422,7 @@ Positions::Points Positions::getPoints(const Engine::Querydata::Q& theQ,
 // ----------------------------------------------------------------------
 
 Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
-                                           const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                                           const std::shared_ptr<OGRSpatialReference>& theCRS,
                                            const Fmi::Box& theBox,
                                            bool forecastMode) const
 {
@@ -431,10 +430,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
   {
     // Get the data projection
 
-    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = wgs84->SetFromUserInput("WGS84");
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand WGS84!");
+    auto wgs84 = gisengine->getSpatialReference("WGS84");
 
     // Create the coordinate transformation from image world coordinates to latlon
 
@@ -530,7 +526,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
 // ----------------------------------------------------------------------
 
 Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
-                                           const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                                           const std::shared_ptr<OGRSpatialReference>& theCRS,
                                            const Fmi::Box& theBox,
                                            bool forecastMode) const
 {
@@ -544,15 +540,12 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
   {
     // Get the data projection
 
-    auto qcrs = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err;
-    if (theQ->isArea())
-      err = qcrs->SetFromUserInput(theQ->area().WKT().c_str());
-    else
-      err = qcrs->SetFromUserInput("WGS84");
+    std::shared_ptr<OGRSpatialReference> qcrs;
 
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this FMI WKT: " + theQ->area().WKT());
+    if (theQ->isArea())
+      qcrs = gisengine->getSpatialReference(theQ->area().WKT());
+    else
+      qcrs = gisengine->getSpatialReference("WGS84");
 
     // Create the coordinate transformation from image world coordinates
     // to querydata world coordinates
@@ -612,21 +605,16 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getGraticulePoints(
-    const Engine::Querydata::Q& theQ,
-    const boost::shared_ptr<OGRSpatialReference>& theCRS,
-    const Fmi::Box& theBox,
-    bool forecastMode) const
+Positions::Points Positions::getGraticulePoints(const Engine::Querydata::Q& theQ,
+                                                const std::shared_ptr<OGRSpatialReference>& theCRS,
+                                                const Fmi::Box& theBox,
+                                                bool forecastMode) const
 {
   try
   {
     // Set the graticule projection
 
-    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = wgs84->SetFromUserInput("WGS84");
-
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+    auto wgs84 = gisengine->getSpatialReference("WGS84");
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -692,7 +680,7 @@ Positions::Points Positions::getGraticulePoints(
 
 Positions::Points Positions::getGraticuleFillPoints(
     const Engine::Querydata::Q& theQ,
-    const boost::shared_ptr<OGRSpatialReference>& theCRS,
+    const std::shared_ptr<OGRSpatialReference>& theCRS,
     const Fmi::Box& theBox,
     bool forecastMode) const
 {
@@ -700,11 +688,7 @@ Positions::Points Positions::getGraticuleFillPoints(
   {
     // Set the graticule projection
 
-    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = wgs84->SetFromUserInput("WGS84");
-
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+    auto wgs84 = gisengine->getSpatialReference("WGS84");
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -897,7 +881,7 @@ Positions::Points Positions::getGraticuleFillPoints(
 // ----------------------------------------------------------------------
 
 Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
-                                              const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                                              const std::shared_ptr<OGRSpatialReference>& theCRS,
                                               const Fmi::Box& theBox,
                                               bool forecastMode) const
 {
@@ -914,11 +898,7 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
 
     // Keyword locations are in WGS84
 
-    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = wgs84->SetFromUserInput("WGS84");
-
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+    auto wgs84 = gisengine->getSpatialReference("WGS84");
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -976,7 +956,7 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
 // ----------------------------------------------------------------------
 
 Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
-                                             const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                                             const std::shared_ptr<OGRSpatialReference>& theCRS,
                                              const Fmi::Box& theBox,
                                              bool forecastMode) const
 {
@@ -989,11 +969,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
 
     // Keyword locations are in WGS84
 
-    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = wgs84->SetFromUserInput("WGS84");
-
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+    auto wgs84 = gisengine->getSpatialReference("WGS84");
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -1061,7 +1037,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
 // ----------------------------------------------------------------------
 
 Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
-                                              const boost::shared_ptr<OGRSpatialReference>& theCRS,
+                                              const std::shared_ptr<OGRSpatialReference>& theCRS,
                                               const Fmi::Box& theBox,
                                               bool forecastMode) const
 {
@@ -1079,11 +1055,7 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
 
     // Station coordinates are in WGS84
 
-    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = wgs84->SetFromUserInput("WGS84");
-
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this WKT: " + theQ->area().WKT());
+    auto wgs84 = gisengine->getSpatialReference("WGS84");
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 

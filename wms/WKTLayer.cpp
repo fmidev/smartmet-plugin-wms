@@ -4,12 +4,11 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "State.h"
-
 #include <ctpp2/CDT.hpp>
-#include <spine/Exception.h>
-
+#include <engines/gis/Engine.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
+#include <spine/Exception.h>
 
 namespace SmartMet
 {
@@ -95,18 +94,14 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     // Create the shape
 
-    auto* wgs84 = new OGRSpatialReference;
-    wgs84->SetFromUserInput("WGS84");
+    auto wgs84 = theState.getGisEngine().getSpatialReference("WGS84");
 
     char* cwkt = const_cast<char*>(wkt.c_str());  // NOLINT(cppcoreguidelines-pro-type-const-cast)
     OGRGeometry* ogeom = nullptr;
-    OGRErr err = OGRGeometryFactory::createFromWkt(&cwkt, wgs84, &ogeom);
+    OGRErr err = OGRGeometryFactory::createFromWkt(&cwkt, wgs84.get(), &ogeom);
 
     if (err != OGRERR_NONE)
-    {
-      delete wgs84;
       throw SmartMet::Spine::Exception(BCP, "Failed to convert WKT to OGRGeometry");
-    }
 
     OGRGeometryPtr geom(ogeom);
 
@@ -159,8 +154,8 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     CTPP::CDT wkt_cdt(CTPP::CDT::HASH_VAL);
     wkt_cdt["iri"] = iri;
-    wkt_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs, precision);
-    wkt_cdt["type"] = Geometry::name(*geom2, theState.getType());
+    wkt_cdt["data"] = Geometry::toString(*geom2, theState, box, crs, precision);
+    wkt_cdt["type"] = Geometry::name(*geom2, theState);
     wkt_cdt["layertype"] = "wkt";
 
     theGlobals["paths"][iri] = wkt_cdt;
