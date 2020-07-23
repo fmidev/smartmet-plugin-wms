@@ -22,6 +22,8 @@ namespace WMS
 {
 namespace
 {
+const std::set<std::string> geographic_crs{"WGS84", "EPSG:4326", "EPSGA:4326"};
+
 std::string get_symbol_translation(const LegendGraphicSymbol& symbolSettings,
                                    const std::string& language,
                                    const std::string& defaultValue)
@@ -1357,6 +1359,60 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
   }
 }
 
+void WMSLayer::initProjectedBBoxes(const Engine::Gis::Engine& gisengine)
+{
+  for (const auto& id_decl : crs)
+  {
+    const auto& id = id_decl.first;
+    const auto& decl = id_decl.second;
+
+    if (geographic_crs.find(id) != geographic_crs.end())
+      continue;
+
+    // Intersect with target EPSG bounding box (latlon) if it is available
+
+    auto x1 = geographicBoundingBox.xMin;
+    auto x2 = geographicBoundingBox.xMax;
+    auto y1 = geographicBoundingBox.yMin;
+    auto y2 = geographicBoundingBox.yMax;
+
+    auto epsg_info = crs_bbox.find(id);
+
+    if (epsg_info != crs_bbox.end())
+    {
+      auto& epsg_box = epsg_info->second;
+      x1 = std::max(x1, epsg_box.west);
+      x2 = std::min(x2, epsg_box.east);
+      y1 = std::max(y1, epsg_box.south);
+      y2 = std::min(y2, epsg_box.north);
+    }
+
+    // Produce bbox only if there is overlap
+
+    if (x1 < x2 && y1 < y2)
+    {
+      auto transformation = gisengine.getCoordinateTransformation("WGS84", decl);
+
+      bool ok = (transformation->Transform(1, &x1, &y1) && transformation->Transform(1, &x2, &y2));
+
+      // Produce bbox only if projection succeeds
+
+      if (ok)
+      {
+        // Use proper coordinate ordering for the EPSG
+
+        if (transformation->GetTargetCS()->EPSGTreatsAsLatLong())
+        {
+          std::swap(x1, y1);
+          std::swap(x2, y2);
+        }
+        Engine::Gis::BBox bbox(x1, x2, y1, y2);
+        projected_bbox.insert(std::make_pair(id, std::move(bbox)));
+      }
+    }
+  }
+}
+
 boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
     const Engine::Gis::Engine& gisengine,
     const boost::optional<std::string>& starttime,
@@ -1418,11 +1474,10 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
         CTPP::CDT layer_bbox(CTPP::CDT::HASH_VAL);
 
         const auto& id = id_decl.first;
-        const auto& decl = id_decl.second;
 
         layer_bbox["crs"] = id;
 
-        if (id == "EPSG:4326" || id == "WGS84")
+        if (geographic_crs.find(id) != geographic_crs.end())
         {
           layer_crs_list.PushBack(id);
           layer_bbox["minx"] = geographicBoundingBox.xMin;
@@ -1433,53 +1488,18 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
         }
         else
         {
-          // Intersect with target EPSG bounding box (latlon) if it is available
+          auto pos = projected_bbox.find(id);
 
-          auto x1 = geographicBoundingBox.xMin;
-          auto x2 = geographicBoundingBox.xMax;
-          auto y1 = geographicBoundingBox.yMin;
-          auto y2 = geographicBoundingBox.yMax;
-
-          auto epsg_info = crs_bbox.find(id);
-
-          if (epsg_info != crs_bbox.end())
+          if (pos != projected_bbox.end())
           {
-            auto& epsg_box = epsg_info->second;
-            x1 = std::max(x1, epsg_box.west);
-            x2 = std::min(x2, epsg_box.east);
-            y1 = std::max(y1, epsg_box.south);
-            y2 = std::min(y2, epsg_box.north);
-          }
+            // Acceptable CRS
+            layer_crs_list.PushBack(id);
 
-          // Produce bbox only if there is overlap
-
-          if (x1 < x2 && y1 < y2)
-          {
-            auto transformation = gisengine.getCoordinateTransformation("WGS84", decl);
-
-            bool ok =
-                (transformation->Transform(1, &x1, &y1) && transformation->Transform(1, &x2, &y2));
-
-            // Produce bbox only if projection succeeds
-
-            if (ok)
-            {
-              // Acceptable CRS
-              layer_crs_list.PushBack(id);
-
-              // Use proper coordinate ordering for the EPSG
-
-              if (transformation->GetTargetCS()->EPSGTreatsAsLatLong())
-              {
-                std::swap(x1, y1);
-                std::swap(x2, y2);
-              }
-              layer_bbox["minx"] = x1;
-              layer_bbox["miny"] = y1;
-              layer_bbox["maxx"] = x2;
-              layer_bbox["maxy"] = y2;
-              layer_bbox_list.PushBack(layer_bbox);
-            }
+            layer_bbox["minx"] = pos->second.west;
+            layer_bbox["miny"] = pos->second.south;
+            layer_bbox["maxx"] = pos->second.east;
+            layer_bbox["maxy"] = pos->second.north;
+            layer_bbox_list.PushBack(layer_bbox);
           }
         }
       }

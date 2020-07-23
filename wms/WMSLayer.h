@@ -62,8 +62,9 @@ class WMSLayer
   unsigned int metadataUpdateInterval;
 
   Spine::BoundingBox geographicBoundingBox;
-  std::map<std::string, std::string> crs;             // id to GDAL definition
-  std::map<std::string, Engine::Gis::BBox> crs_bbox;  // id to bounding box mapping
+  std::map<std::string, std::string> crs;                   // id to GDAL definition
+  std::map<std::string, Engine::Gis::BBox> crs_bbox;        // id to bounding box mapping
+  std::map<std::string, Engine::Gis::BBox> projected_bbox;  // final bbox for GetCapabilities output
 
   std::vector<WMSLayerStyle> itsStyles;
   boost::shared_ptr<WMSTimeDimension> timeDimension;  // Optional, may be empty for non-temporal
@@ -108,6 +109,9 @@ class WMSLayer
   boost::optional<CTPP::CDT> generateGetCapabilities(const Engine::Gis::Engine& gisengine,
                                                      const boost::optional<std::string>& starttime,
                                                      const boost::optional<std::string>& endtime);
+
+  // To be called after crs and crs_bbox have been initialized
+  void initProjectedBBoxes(const Engine::Gis::Engine& gisengine);
 
   // Update layer metadata for GetCapabilities (time,spatial dimensions)
   virtual void updateLayerMetaData() = 0;

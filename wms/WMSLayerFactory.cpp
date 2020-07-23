@@ -429,6 +429,9 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     if (mapcrs.substr(0, 5) == "EPSG:" || mapcrs.substr(0, 4) == "CRS:")
       layer->crs.insert(std::make_pair(mapcrs, mapcrs));
 
+    // Calculate projected bboxes only once to speed up GetCapabilities
+    layer->initProjectedBBoxes(*theWMSConfig.gisEngine());
+
     return layer;
   }
   catch (...)
