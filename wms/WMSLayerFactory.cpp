@@ -338,6 +338,21 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
             BCP, p.string() + " keyword value must be an array of strings or a string");
     }
 
+    json = root.get("crs", nulljson);
+    if (!json.isNull())
+    {
+      if (!json.isObject())
+        throw Spine::Exception(BCP, "top level crs setting must be a group");
+
+      auto j = json.get("enable", nulljson);
+      if (!j.isNull())
+        Spine::JSON::extract_set("crs.enable", layer->enabled_refs, j);
+
+      j = json.get("disable", nulljson);
+      if (!j.isNull())
+        Spine::JSON::extract_set("crs.disable", layer->disabled_refs, j);
+    }
+
     // Update metadata from DB etc
 
     layer->updateLayerMetaData();
@@ -417,17 +432,18 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     }
 
     // Spatial references supported by default, if applicable
-    layer->crs = theWMSConfig.supportedWMSReferences();
-    layer->crs_bbox = theWMSConfig.WMSBBoxes();
+    layer->refs = theWMSConfig.supportedWMSReferences();
 
     // And extra references supported by the layer itself
 
     Json::Value projection = root["projection"];
     std::string mapcrs = projection["crs"].asString();
 
+#if 0  // What's this for? All native projections should be on the supported list anyway.
     // Validate namespace
     if (mapcrs.substr(0, 5) == "EPSG:" || mapcrs.substr(0, 4) == "CRS:")
       layer->crs.insert(std::make_pair(mapcrs, mapcrs));
+#endif
 
     // Calculate projected bboxes only once to speed up GetCapabilities
     layer->initProjectedBBoxes(*theWMSConfig.gisEngine());

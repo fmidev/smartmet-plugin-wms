@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.7.23
+Version: 20.7.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -92,6 +92,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Fri Jul 24 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.24-1.fmi
+- System wide known spatial references can now be disabled by default
+- Layers can now disable or enable spatial references listed in the main configuration file
+
 * Thu Jul 23 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.23-1.fmi
 - Precalculate WMS layer projected bboxes for GetCapabilities speedup
 
