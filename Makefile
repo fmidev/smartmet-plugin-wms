@@ -80,7 +80,7 @@ includedir = $(PREFIX)/include
 datadir = $(PREFIX)/share
 enginedir = $(datadir)/smartmet/engines
 plugindir = $(datadir)/smartmet/plugins
-confdir = $(sysconfdir)/smartmet/plugins/wms
+confdir = $(sysconfdir)/smartmet/plugins/gribwms
 objdir = obj
 
 # Boost 1.69
@@ -126,7 +126,7 @@ BYTECODES = $(TEMPLATES:%.tmpl=%.c2t)
 
 # What to install
 
-LIBFILE = $(SUBNAME).so
+LIBFILE = grib$(SUBNAME).so
 
 # How to install
 
