@@ -67,7 +67,7 @@ using PointValues = std::vector<PointValue>;
 
 PointValues read_forecasts(const ArrowLayer& layer,
                            const Engine::Querydata::Q& q,
-                           const boost::shared_ptr<OGRSpatialReference>& crs,
+                           const std::shared_ptr<OGRSpatialReference>& crs,
                            const Fmi::Box& box,
                            const boost::posix_time::time_period& time_period)
 {
@@ -224,7 +224,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
                                boost::optional<std::string> speedParam,
                                boost::optional<std::string> uParam,
                                boost::optional<std::string> vParam,
-                               const boost::shared_ptr<OGRSpatialReference>& crs,
+                               const std::shared_ptr<OGRSpatialReference>& crs,
                                const Fmi::Box& box,
                                const boost::posix_time::time_period& time_period)
 {
@@ -405,7 +405,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
 
 PointValues read_all_observations(const ArrowLayer& layer,
                                   State& state,
-                                  const boost::shared_ptr<OGRSpatialReference>& crs,
+                                  const std::shared_ptr<OGRSpatialReference>& crs,
                                   const Fmi::Box& box,
                                   const boost::posix_time::time_period& valid_time_period,
                                   OGRCoordinateTransformation& transformation)
@@ -459,7 +459,7 @@ PointValues read_all_observations(const ArrowLayer& layer,
     // Coordinates or bounding box
 
     Engine::Observation::StationSettings stationSettings;
-    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
+    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, state, crs);
     settings.taggedFMISIDs = obsengine.translateToFMISID(
         settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
@@ -549,7 +549,7 @@ PointValues read_all_observations(const ArrowLayer& layer,
 
 PointValues read_station_observations(const ArrowLayer& layer,
                                       State& state,
-                                      const boost::shared_ptr<OGRSpatialReference>& crs,
+                                      const std::shared_ptr<OGRSpatialReference>& crs,
                                       const Fmi::Box& box,
                                       const boost::posix_time::time_period& valid_time_period,
                                       OGRCoordinateTransformation& transformation)
@@ -721,7 +721,7 @@ PointValues read_station_observations(const ArrowLayer& layer,
 
 PointValues read_latlon_observations(const ArrowLayer& layer,
                                      State& state,
-                                     const boost::shared_ptr<OGRSpatialReference>& crs,
+                                     const std::shared_ptr<OGRSpatialReference>& crs,
                                      const Fmi::Box& box,
                                      const boost::posix_time::time_period& valid_time_period,
                                      OGRCoordinateTransformation& transformation,
@@ -876,7 +876,7 @@ PointValues read_latlon_observations(const ArrowLayer& layer,
 
 PointValues read_observations(const ArrowLayer& layer,
                               State& state,
-                              const boost::shared_ptr<OGRSpatialReference>& crs,
+                              const std::shared_ptr<OGRSpatialReference>& crs,
                               const Fmi::Box& box,
                               const boost::posix_time::time_period& valid_time_period)
 {
@@ -885,10 +885,7 @@ PointValues read_observations(const ArrowLayer& layer,
     // Create the coordinate transformation from image world coordinates
     // to WGS84 coordinates
 
-    auto obscrs = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = obscrs->SetFromUserInput("WGS84");
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand WGS84");
+    auto obscrs = state.getGisEngine().getSpatialReference("WGS84");
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
@@ -1198,8 +1195,9 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       auto pos = pName.find(".raw");
       if (pos != std::string::npos)
       {
-        attributeList.addAttribute("areaInterpolationMethod",std::to_string(T::AreaInterpolationMethod::Linear));
-        pName.erase(pos,4);
+        attributeList.addAttribute("areaInterpolationMethod",
+                                   std::to_string(T::AreaInterpolationMethod::Linear));
+        pName.erase(pos, 4);
       }
 
       std::string param = gridEngine->getParameterString(*producer, pName);
@@ -1646,10 +1644,7 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
     // Coordinate transformation from WGS84 to output SRS so that we can rotate
     // winds according to map north
 
-    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = wgs84->SetFromUserInput("WGS84");
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand WGS84");
+    auto wgs84 = theState.getGisEngine().getSpatialReference("WGS84");
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));

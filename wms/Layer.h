@@ -76,7 +76,7 @@ class Layer : public Properties
   void addClipRect(CTPP::CDT& theCdt,
                    CTPP::CDT& theGlobals,
                    const Fmi::Box& theBox,
-                   State& theState);
+                   const State& theState);
 
   // Generate bounding box for clipping paths and testing point insidedness
 
@@ -84,7 +84,9 @@ class Layer : public Properties
 
   // Generate bounding box for fetching observations
   std::map<std::string, double> getClipBoundingBox(
-      const Fmi::Box& theBox, const boost::shared_ptr<OGRSpatialReference>& theCRS) const;
+      const Fmi::Box& theBox,
+      const State& theState,
+      const std::shared_ptr<OGRSpatialReference>& theCRS) const;
 
   // Layer specific settings
   std::string qid;

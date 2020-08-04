@@ -1,5 +1,7 @@
 #include "LonLatToXYTransformation.h"
+#include "State.h"
 #include <boost/move/make_unique.hpp>
+#include <engines/gis/Engine.h>
 
 namespace SmartMet
 {
@@ -7,15 +9,13 @@ namespace Plugin
 {
 namespace Dali
 {
-LonLatToXYTransformation::LonLatToXYTransformation(const Projection& projection)
+LonLatToXYTransformation::LonLatToXYTransformation(const Projection& projection,
+                                                   const State& theState)
     : box(projection.getBox())
 {
-  boost::shared_ptr<OGRSpatialReference> sr = projection.getCRS();
+  auto sr = projection.getCRS();
 
-  auto geocrs = boost::movelib::make_unique<OGRSpatialReference>();
-  OGRErr err = geocrs->SetFromUserInput("WGS84");
-  if (err != OGRERR_NONE)
-    throw std::runtime_error("GDAL does not understand crs 'WGS84'");
+  auto geocrs = theState.getGisEngine().getSpatialReference("WGS84");
 
   // Create the coordinate transformation from geonames coordinates to image coordinates
   transformation.reset(OGRCreateCoordinateTransformation(geocrs.get(), sr.get()));

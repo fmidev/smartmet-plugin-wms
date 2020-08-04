@@ -686,9 +686,9 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         isoline_cdt["iri"] = iri;
         isoline_cdt["time"] = Fmi::to_iso_extended_string(getValidTime());
         isoline_cdt["parameter"] = *parameter;
-        isoline_cdt["type"] = Geometry::name(*geom, theState.getType());
+        isoline_cdt["type"] = Geometry::name(*geom, theState);
         isoline_cdt["layertype"] = "isoline";
-        isoline_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
+        isoline_cdt["data"] = Geometry::toString(*geom, theState, box, crs, precision);
         isoline_cdt["value"] = isoline.value;
 
         theState.addPresentationAttributes(isoline_cdt, css, attributes, isoline.attributes);

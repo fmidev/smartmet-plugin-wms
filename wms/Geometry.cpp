@@ -1,5 +1,7 @@
 #include "Geometry.h"
+#include "State.h"
 #include <boost/move/make_unique.hpp>
+#include <engines/gis/Engine.h>
 #include <gdal/ogr_spatialref.h>
 #include <spine/Exception.h>
 
@@ -60,9 +62,11 @@ std::string name_geojson(const OGRGeometry& theGeom)
  */
 // ----------------------------------------------------------------------
 
-std::string name(const OGRGeometry& theGeom, const std::string& theType)
+std::string name(const OGRGeometry& theGeom, const State& theState)
 {
-  if (theType == "geojson")
+  auto type = theState.getType();
+
+  if (type == "geojson")
     return name_geojson(theGeom);
 
   // By default we use WKT names
@@ -77,14 +81,12 @@ std::string name(const OGRGeometry& theGeom, const std::string& theType)
 
 std::string toGeoJSON(const OGRGeometry& theGeom,
                       const Fmi::Box& /* theBox */,
-                      const boost::shared_ptr<OGRSpatialReference>& theSRS)
+                      const std::shared_ptr<OGRSpatialReference>& theSRS,
+                      const State& theState)
 {
   // Reproject to WGS84. TODO: Optimize if theSRS == WGS84.
 
-  auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-  OGRErr err = wgs84->SetFromUserInput("WGS84");
-  if (err != OGRERR_NONE)
-    throw Spine::Exception(BCP, "GDAL does not understand WGS84");
+  auto wgs84 = theState.getGisEngine().getSpatialReference("WGS84");
 
   boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
       OGRCreateCoordinateTransformation(theSRS.get(), wgs84.get()));
@@ -94,7 +96,7 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
 
   // Reproject a clone
   boost::movelib::unique_ptr<OGRGeometry> geom(theGeom.clone());
-  err = geom->transform(transformation.get());
+  auto err = geom->transform(transformation.get());
   if (err != OGRERR_NONE)
     throw Spine::Exception(BCP, "Failed to project geometry to WGS84 GeoJSON");
 
@@ -124,14 +126,12 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
 
 std::string toKML(const OGRGeometry& theGeom,
                   const Fmi::Box& /* theBox */,
-                  const boost::shared_ptr<OGRSpatialReference>& theSRS)
+                  const std::shared_ptr<OGRSpatialReference>& theSRS,
+                  const State& theState)
 {
   // Reproject to WGS84. TODO: Optimize if theSRS == WGS84.
 
-  auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-  OGRErr err = wgs84->SetFromUserInput("WGS84");
-  if (err != OGRERR_NONE)
-    throw Spine::Exception(BCP, "GDAL does not understand WGS84");
+  auto wgs84 = theState.getGisEngine().getSpatialReference("WGS84");
 
   boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
       OGRCreateCoordinateTransformation(theSRS.get(), wgs84.get()));
@@ -140,7 +140,7 @@ std::string toKML(const OGRGeometry& theGeom,
 
   // Reproject a clone
   boost::movelib::unique_ptr<OGRGeometry> geom(theGeom.clone());
-  err = geom->transform(transformation.get());
+  auto err = geom->transform(transformation.get());
   if (err != OGRERR_NONE)
     throw Spine::Exception(BCP, "Failed to project geometry to WGS84 KML");
 
@@ -160,16 +160,18 @@ std::string toKML(const OGRGeometry& theGeom,
 // ----------------------------------------------------------------------
 
 std::string toString(const OGRGeometry& theGeom,
-                     const std::string& theType,
+                     const State& theState,
                      const Fmi::Box& theBox,
-                     const boost::shared_ptr<OGRSpatialReference>& theSRS,
+                     const std::shared_ptr<OGRSpatialReference>& theSRS,
                      double thePrecision)
 {
-  if (theType == "geojson")
-    return toGeoJSON(theGeom, theBox, theSRS);
+  auto type = theState.getType();
 
-  if (theType == "kml")
-    return toKML(theGeom, theBox, theSRS);
+  if (type == "geojson")
+    return toGeoJSON(theGeom, theBox, theSRS, theState);
+
+  if (type == "kml")
+    return toKML(theGeom, theBox, theSRS, theState);
 
   return Fmi::OGR::exportToSvg(theGeom, theBox, thePrecision);
 }

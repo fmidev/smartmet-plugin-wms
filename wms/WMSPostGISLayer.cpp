@@ -213,10 +213,7 @@ void WMSPostGISLayer::updateLayerMetaData()
       }
       else
       {
-        auto newTimeDimension = boost::movelib::make_unique<StepTimeDimension>();
-        for (const auto& tim : metadata.timesteps)
-          newTimeDimension->addTimestep(tim);
-        timeDimension = std::move(newTimeDimension);
+        timeDimension = boost::make_shared<StepTimeDimension>(metadata.timesteps);
       }
     }
     else

@@ -5,13 +5,13 @@
 #include "Hash.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/operations.hpp>
-
 #include <boost/math/constants/constants.hpp>
 #include <boost/numeric/conversion/cast.hpp>
-#include <grid-files/common/GeneralFunctions.h>
+#include <engines/gis/Engine.h>
 #include <gdal/ogr_geometry.h>
 #include <gdal/ogr_spatialref.h>
 #include <gis/Box.h>
+#include <grid-files/common/GeneralFunctions.h>
 #include <spine/Exception.h>
 #include <spine/HTTP.h>
 #include <cmath>
@@ -38,6 +38,9 @@ void Projection::init(const Json::Value& theJson,
     if (!theJson.isObject())
       throw Spine::Exception(BCP, "Projection JSON is not a JSON object (name-value pairs)");
 
+    // For later use
+    gisengine = &theState.getGisEngine();
+
     // Extract all the members
 
     Json::Value nulljson;
@@ -59,7 +62,7 @@ void Projection::init(const Json::Value& theJson,
     if (v)
       size = toDouble(*v);
 
-    if (!size ||  *size <= 0)
+    if (!size || *size <= 0)
     {
       json = theJson.get("xsize", nulljson);
       if (!json.isNull())
@@ -152,29 +155,29 @@ void Projection::init(const Json::Value& theJson,
       // for example in EPSG:4326 order of coordinates is changed in WMS
       // for more info: https://trac.osgeo.org/gdal/wiki/rfc20_srs_axes
 
-      OGRSpatialReference spatref;
+      std::shared_ptr<OGRSpatialReference> spatref;
       if (bboxcrs)
       {
-        // SetFromUserInput wants 'EPSGA' - code in order to understand axis ordering
+        // GDAL wants 'EPSGA' - code in order to understand axis ordering
         if (boost::algorithm::starts_with(*bboxcrs, "EPSG"))
         {
           boost::algorithm::replace_first(*bboxcrs, "EPSG", "EPSGA");
         }
 
-        spatref.SetFromUserInput(bboxcrs->c_str());
+        spatref = theState.getGisEngine().getSpatialReference(*bboxcrs);
       }
       else
       {
-        // SetFromUserInput wants 'EPSGA' - code in order to understand axis ordering
+        // GDAL wants 'EPSGA' - code in order to understand axis ordering
         if (boost::algorithm::starts_with(*crs, "EPSG"))
         {
           boost::algorithm::replace_first(*crs, "EPSG", "EPSGA");
         }
 
-        spatref.SetFromUserInput(crs->c_str());
+        spatref = theState.getGisEngine().getSpatialReference(*crs);
       }
 
-      bool latLonOrder = spatref.EPSGTreatsAsLatLong() != 0;
+      bool latLonOrder = spatref->EPSGTreatsAsLatLong() != 0;
 
       if (latLonOrder)
       {
@@ -289,11 +292,25 @@ void Projection::update(const Engine::Querydata::Q& theQ)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Return the description of the spatial reference
+ */
+// ----------------------------------------------------------------------.
+
+std::string Projection::getProjString() const
+{
+  if (crs)
+    return *crs;
+
+  throw Spine::Exception(BCP, "Projection string not available");
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Return the spatial reference
  */
 // ----------------------------------------------------------------------
 
-boost::shared_ptr<OGRSpatialReference> Projection::getCRS() const
+std::shared_ptr<OGRSpatialReference> Projection::getCRS() const
 {
   try
   {
@@ -301,7 +318,6 @@ boost::shared_ptr<OGRSpatialReference> Projection::getCRS() const
 
     if (!ogr_crs)
       throw Spine::Exception::Trace(BCP, "Projection creation failed!");
-
 
     return ogr_crs;
   }
@@ -355,7 +371,6 @@ void Projection::prepareCRS() const
       throw Spine::Exception(BCP, "CRS xsize and ysize are both missing");
     }
 
-
     // Are subdefinitions complete?
     bool full_rect_bbox = (x1 && y1 && x2 && y2);
     bool full_center_bbox = (cx && cy && resolution);
@@ -387,12 +402,7 @@ void Projection::prepareCRS() const
           BCP, "CRS xsize and ysize are required when a centered bounding box is used");
 
     // Create the CRS
-    ogr_crs = boost::make_shared<OGRSpatialReference>();
-
-    OGRErr err = ogr_crs->SetFromUserInput(crs->c_str());
-
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "Unknown CRS: '" + *crs + "'");
+    ogr_crs = gisengine->getSpatialReference(*crs);
 
     if (xsize && *xsize <= 0)
       throw Spine::Exception(BCP, "Projection xsize must be positive");
@@ -418,13 +428,7 @@ void Projection::prepareCRS() const
       if (bboxcrs)
       {
         // Reproject corners coordinates from bboxcrs to crs
-        OGRSpatialReference ogr_crs2;
-        err = ogr_crs2.SetFromUserInput(bboxcrs->c_str());
-        if (err != OGRERR_NONE)
-          throw Spine::Exception(BCP, "Unknown CRS: '" + *bboxcrs + "'");
-
-        boost::shared_ptr<OGRCoordinateTransformation> transformation(
-            OGRCreateCoordinateTransformation(&ogr_crs2, ogr_crs.get()));
+        auto transformation = gisengine->getCoordinateTransformation(*bboxcrs, *crs);
         transformation->Transform(1, &XMIN, &YMIN);
         transformation->Transform(1, &XMAX, &YMAX);
       }
@@ -475,19 +479,9 @@ void Projection::prepareCRS() const
 
       if (latlon_center || (bboxcrs && *crs != *bboxcrs))
       {
-
         // Reproject center coordinates from latlon/bboxcrs to crs
-        OGRSpatialReference ogr_crs2;
-        if (latlon_center)
-          err = ogr_crs2.SetFromUserInput("WGS84");
-        else
-          err = ogr_crs2.SetFromUserInput(bboxcrs->c_str());
-
-        if (err != OGRERR_NONE)
-          throw Spine::Exception(BCP, "Unknown CRS: '" + *bboxcrs + "'");
-
-        boost::shared_ptr<OGRCoordinateTransformation> transformation(
-            OGRCreateCoordinateTransformation(&ogr_crs2, ogr_crs.get()));
+        auto transformation =
+            gisengine->getCoordinateTransformation(latlon_center ? "WGS84" : *bboxcrs, *crs);
         transformation->Transform(1, &CX, &CY);
       }
 
@@ -520,17 +514,12 @@ void Projection::prepareCRS() const
 
     // newbase corners calculated from world xy coordinates
 
-    const char* fmiwkt = R"xxx(GEOGCS["FMI_Sphere",DATUM["FMI_2007",SPHEROID["FMI_Sphere",)xxx"
-                         R"xxx(6371220,0]],PRIMEM["Greenwich",0],UNIT["Degree",0.)xxx"
-                         R"xxx(0174532925199433]])xxx";
-    OGRSpatialReference fmi;
-    err = fmi.SetFromUserInput(fmiwkt);
+    const std::string fmiwkt =
+        R"xxx(GEOGCS["FMI_Sphere",DATUM["FMI_2007",SPHEROID["FMI_Sphere",)xxx"
+        R"xxx(6371220,0]],PRIMEM["Greenwich",0],UNIT["Degree",0.)xxx"
+        R"xxx(0174532925199433]])xxx";
 
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "Unable to parse FMI WKT in Dali::Projection");
-
-    boost::shared_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(ogr_crs.get(), &fmi));
+    auto transformation = gisengine->getCoordinateTransformation(*crs, fmiwkt);
 
     // Calculate bottom left and top right coordinates
 

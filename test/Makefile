@@ -68,5 +68,5 @@ test: $(PROG)
 	fi
 
 
-$(PROG) : % : %.cpp Makefile ../wms.so
+$(PROG) : % : %.cpp Makefile ../gribwms.so
 	$(CC) $(CFLAGS) -o $@ $@.cpp $(INCLUDES) $(LIBS)
