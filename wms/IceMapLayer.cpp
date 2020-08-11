@@ -374,7 +374,8 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     unsigned int s = theLayersCdt.Size();
     theLayersCdt.PushBack(theGroupCdt);
 
-    OGRSpatialReferencePtr projectionSR = projection.getCRS();
+    auto projectionSR = projection.getCRS();
+
     OGRSpatialReference defaultSR;
     defaultSR.importFromEPSG(3395);  // if sr is missing use this one
     unsigned int mapid(1);           // id to concatenate to iri to make it unique
@@ -468,9 +469,11 @@ std::size_t IceMapLayer::hash_value(const State& theState) const
   }
 }
 
-void IceMapLayer::handleSymbol(const Fmi::Feature& theResultItem, CTPP::CDT& theGroupCdt) const
+void IceMapLayer::handleSymbol(const Fmi::Feature& theResultItem,
+                               CTPP::CDT& theGroupCdt,
+                               const State& theState) const
 {
-  auto transformation = LonLatToXYTransformation(projection);
+  auto transformation = LonLatToXYTransformation(projection, theState);
 
   std::string iri(getParameterValue("symbol"));
 
@@ -527,7 +530,7 @@ void IceMapLayer::handleTextField(const Fmi::Feature& theResultItem,
 
   double xpos = Fmi::stod(itsParameters.at("longitude"));
   double ypos = Fmi::stod(itsParameters.at("latitude"));
-  auto transformation = LonLatToXYTransformation(projection);
+  auto transformation = LonLatToXYTransformation(projection, theState);
   transformation.transform(xpos, ypos);
 
   addTextField(xpos, ypos, rows, theFilter.attributes, theGlobals, theLayersCdt, theState);
@@ -540,7 +543,7 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
                                       CTPP::CDT& theGroupCdt,
                                       State& theState) const
 {
-  auto transformation = LonLatToXYTransformation(projection);
+  auto transformation = LonLatToXYTransformation(projection, theState);
 
   if (theResultItem.geom && theResultItem.geom->IsEmpty() == 0)
   {
@@ -678,7 +681,7 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
   double xpos = envelope.MinX;
   double ypos = envelope.MaxY;
 
-  auto transformation = LonLatToXYTransformation(projection);
+  auto transformation = LonLatToXYTransformation(projection, theState);
 
   transformation.transform(xpos, ypos);
 
@@ -751,7 +754,7 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
   double xpos = point->getX();
   double ypos = point->getY();
 
-  auto transformation = LonLatToXYTransformation(projection);
+  auto transformation = LonLatToXYTransformation(projection, theState);
   transformation.transform(xpos, ypos);
 
   // background ellipse
@@ -788,7 +791,7 @@ void IceMapLayer::handleTrafficRestrictions(const Fmi::Feature& /* theResultItem
 {
   double xpos = Fmi::stod(itsParameters.at("longitude"));
   double ypos = Fmi::stod(itsParameters.at("latitude"));
-  auto transformation = LonLatToXYTransformation(projection);
+  auto transformation = LonLatToXYTransformation(projection, theState);
   transformation.transform(xpos, ypos);
 
   auto jsonTableAttributes = getJsonValue("table_attributes", itsParameters);
@@ -909,7 +912,7 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
   text_style_t text_style;
   text_style = getTextStyle(theFilter.text_attributes, text_style);
   text_dimension_t text_dimension = getTextDimension("1234567890", text_style);
-  auto transformation = LonLatToXYTransformation(projection);
+  auto transformation = LonLatToXYTransformation(projection, theState);
 
   // Add row by row to get more precise y-position inside the egg
   for (unsigned int i = 0; i < rows.size(); i++)
@@ -1140,10 +1143,9 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
 
   CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
   map_cdt["iri"] = iri;
-  map_cdt["type"] = Geometry::name(*theResultItem.geom, theState.getType());
+  map_cdt["type"] = Geometry::name(*theResultItem.geom, theState);
   map_cdt["layertype"] = "icemap";
-  map_cdt["data"] =
-      Geometry::toString(*theResultItem.geom, theState.getType(), box, crs, precision);
+  map_cdt["data"] = Geometry::toString(*theResultItem.geom, theState, box, crs, precision);
   theState.addPresentationAttributes(map_cdt, css, attributes);
   theGlobals["paths"][iri] = map_cdt;
 
@@ -1184,7 +1186,7 @@ void IceMapLayer::handleResultItem(const Fmi::Feature& theResultItem,
   }
   else if (layer_subtype == "symbol")
   {
-    handleSymbol(theResultItem, theGroupCdt);
+    handleSymbol(theResultItem, theGroupCdt, theState);
   }
   else if (layer_subtype == "named_location")
   {
@@ -1204,7 +1206,7 @@ void IceMapLayer::handleResultItem(const Fmi::Feature& theResultItem,
   }
   else if (layer_subtype == "degree_of_pressure")
   {
-    handleSymbol(theResultItem, theGroupCdt);
+    handleSymbol(theResultItem, theGroupCdt, theState);
     handleLabel(theResultItem, theFilter, theGlobals, theLayersCdt, theState);
   }
   else if (layer_subtype == "ice_egg")

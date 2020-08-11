@@ -219,7 +219,7 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // direction, and then also apply "upright" condition if so requested.
 
     if (label.orientation == "auto")
-      fix_orientation(candidates, box, *crs, theState);
+      fix_orientation(candidates, box, theState, *crs);
 
     // Update the globals
 
@@ -927,12 +927,12 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
 
 void IsolabelLayer::fix_orientation(Candidates& candidates,
                                     const Fmi::Box& box,
-                                    OGRSpatialReference& crs,
-                                    State& theState) const
+                                    const State& state,
+                                    OGRSpatialReference& crs) const
 {
   if (source && *source == "grid")
   {
-    fix_orientation_gridEngine(candidates,box,crs,theState);
+    fix_orientation_gridEngine(candidates, box, state, crs);
     return;
   }
 
@@ -946,11 +946,7 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
   NFmiPoint dummy;
 
   // Querydata spatial reference
-  std::unique_ptr<OGRSpatialReference> qcrs(new OGRSpatialReference());
-  OGRErr err = qcrs->SetFromUserInput(q->area().WKT().c_str());
-
-  if (err != OGRERR_NONE)
-    throw Spine::Exception(BCP, "GDAL does not understand this FMI WKT: " + q->area().WKT());
+  auto qcrs = state.getGisEngine().getSpatialReference(q->area().WKT().c_str());
 
   // From image world coordinates to querydata world coordinates
 
@@ -1016,23 +1012,21 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
   }
 }
 
-
-
-
 void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
-                                    const Fmi::Box& box,
-                                    OGRSpatialReference& sr_image,
-                                    State& theState) const
+                                               const Fmi::Box& box,
+                                               const State& state,
+                                               OGRSpatialReference& sr_image) const
 {
   try
   {
-    auto gridEngine = theState.getGridEngine();
+    auto gridEngine = state.getGridEngine();
     auto dataServer = gridEngine->getDataServer_sptr();
 
     OGRSpatialReference sr_latlon;
     sr_latlon.importFromEPSG(4326);
 
-    OGRCoordinateTransformation *transformation = OGRCreateCoordinateTransformation(&sr_image,&sr_latlon);
+    OGRCoordinateTransformation* transformation =
+        OGRCreateCoordinateTransformation(&sr_image, &sr_latlon);
     std::vector<T::Coordinate> pointList;
 
     for (auto& cand : candidates)
@@ -1045,7 +1039,7 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
       auto x2 = cand.x + length * sin(cand.angle * M_PI / 180);
       auto y2 = cand.y - length * cos(cand.angle * M_PI / 180);
 
-      //printf("%f,%f  %f,%f => ",x1,y1,x2,y2);
+      // printf("%f,%f  %f,%f => ",x1,y1,x2,y2);
 
       box.itransform(x1, y1);
       box.itransform(x2, y2);
@@ -1053,25 +1047,31 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
       transformation->Transform(1, &x1, &y1);
       transformation->Transform(1, &x2, &y2);
 
-      //printf("%f,%f  %f,%f\n",x1,y1,x2,y2);
+      // printf("%f,%f  %f,%f\n",x1,y1,x2,y2);
 
-      pointList.push_back(T::Coordinate(x1,y1));
-      pointList.push_back(T::Coordinate(x2,y2));
+      pointList.push_back(T::Coordinate(x1, y1));
+      pointList.push_back(T::Coordinate(x2, y2));
     }
 
     T::GridValueList valueList;
-    dataServer->getGridValueListByPointList(0,fileId,messageIndex,T::CoordinateTypeValue::LATLON_COORDINATES,pointList,T::AreaInterpolationMethod::Linear,valueList);
+    dataServer->getGridValueListByPointList(0,
+                                            fileId,
+                                            messageIndex,
+                                            T::CoordinateTypeValue::LATLON_COORDINATES,
+                                            pointList,
+                                            T::AreaInterpolationMethod::Linear,
+                                            valueList);
 
     if (valueList.getLength() == pointList.size())
     {
       uint i = 0;
       for (auto& cand : candidates)
       {
-        T::GridValue *val1 = valueList.getGridValuePtrByIndex(i);
-        T::GridValue *val2 = valueList.getGridValuePtrByIndex(i+1);
+        T::GridValue* val1 = valueList.getGridValuePtrByIndex(i);
+        T::GridValue* val2 = valueList.getGridValuePtrByIndex(i + 1);
         i = i + 2;
 
-        if (val1 != nullptr  &&  val2 != nullptr &&  val1->mValue > val2->mValue)
+        if (val1 != nullptr && val2 != nullptr && val1->mValue > val2->mValue)
         {
           cand.angle = cand.angle + 180;
           if (cand.angle > 360)
@@ -1096,7 +1096,6 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
     throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
 
 // ----------------------------------------------------------------------
 /*!

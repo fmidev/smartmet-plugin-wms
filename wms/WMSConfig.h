@@ -10,6 +10,7 @@
 #include "WMSLayer.h"
 #include "WMSLayerProxy.h"
 #include "WMSLegendGraphicSettings.h"
+#include "WMSSupportedReference.h"
 #include <boost/move/unique_ptr.hpp>
 #include <boost/optional.hpp>
 #include <boost/utility.hpp>
@@ -83,8 +84,7 @@ class WMSConfig
   const std::set<std::string>& supportedWMSVersions() const;
   const std::set<std::string>& supportedWMSExceptions() const;
   const std::set<std::string>& supportedWMSGetCapabilityFormats() const;
-  const std::map<std::string, std::string>& supportedWMSReferences() const;
-  const std::map<std::string, Engine::Gis::BBox>& WMSBBoxes() const;
+  const std::map<std::string, WMSSupportedReference>& supportedWMSReferences() const;
   const std::string& getCRSDefinition(const std::string& theCRS) const;
   bool isValidMapFormat(const std::string& theMapFormat) const;
   bool isValidVersion(const std::string& theVersion) const;
@@ -161,10 +161,13 @@ class WMSConfig
   std::set<std::string> itsSupportedWMSExceptions;
   // supported wms getcapability formats
   std::set<std::string> itsSupportedWMSGetCapabilityFormats;
+
+  std::map<std::string, WMSSupportedReference> itsWMSSupportedReferences;
+
   // supported wms epsg references. Map from name to GDAL definition
-  std::map<std::string, std::string> itsSupportedWMSReferences;
+  // std::map<std::string, std::string> itsSupportedWMSReferences;
   // the bounding boxes for all spatial references
-  std::map<std::string, Engine::Gis::BBox> itsWMSBBoxes;
+  // std::map<std::string, Engine::Gis::BBox> itsWMSBBoxes;
 
   bool itsCapabilityUpdatesDisabled = false;  // disable updates after initial scan?
   int itsCapabilityUpdateInterval = 5;        // scan interval in seconds

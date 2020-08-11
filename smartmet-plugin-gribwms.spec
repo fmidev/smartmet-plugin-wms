@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.6.15
+Version: 20.7.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -27,9 +27,9 @@ BuildRequires: smartmet-library-giza-devel
 BuildRequires: smartmet-engine-authentication-devel >= 20.6.8
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.6.8
+BuildRequires: smartmet-engine-observation-devel >= 20.7.21
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 20.5.7
+BuildRequires: smartmet-engine-gis-devel >= 20.7.22
 BuildRequires: smartmet-engine-grid-devel >= 20.6.8
 BuildRequires: smartmet-engine-geonames-devel >= 20.6.8
 BuildRequires: smartmet-engine-querydata-devel >= 20.5.13
@@ -57,7 +57,7 @@ Requires: smartmet-engine-authentication >= 20.6.8
 %endif
 Requires: smartmet-engine-querydata >= 20.5.13
 Requires: smartmet-engine-contour >= 20.5.13
-Requires: smartmet-engine-gis >= 20.5.7
+Requires: smartmet-engine-gis >= 20.7.22
 Requires: smartmet-engine-grid >= 20.6.8
 Requires: smartmet-engine-geonames >= 20.6.8
 Requires: smartmet-server >= 20.4.18
@@ -98,8 +98,43 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
+* Fri Jul 24 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.24-1.fmi
+- System wide known spatial references can now be disabled by default
+- Layers can now disable or enable spatial references listed in the main configuration file
+
+* Thu Jul 23 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.23-1.fmi
+- Precalculate WMS layer projected bboxes for GetCapabilities speedup
+
+* Wed Jul 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.22-2.fmi
+- Avoid unnecessary OGRCoordinateTransformation creation for speed
+
+* Wed Jul 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.22-1.fmi
+- Use GIS-engine for creating coordinate transformations faster
+
+* Tue Jul 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.21-2.fmi
+- Use GIS-engine for creating spatial references faster
+
+* Tue Jul 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.21-1.fmi
+- GetCapabilities speed improvements
+- Repackaged due to ObsEngine ABI changes for station searches
+
+* Thu Jul  2 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.2-2.fmi
+- Fixed PNG settings quality and errorfactor to be of type double instead of int
+
+* Thu Jul  2 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.2-1.fmi
+- Fixed GetCapabilities to list times with "," separator without a space after the comma
+
+* Mon Jun 29 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.29-1.fmi
+- Do not draw SymbolLayer symbols if the data value is missing
+
+* Mon Jun 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.22-1.fmi
+- Removed debugging code
+
 * Mon Jun 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.15-1.fmi
 - Renamed .so to enable simultaneous installation of wms and gribwms
+
+* Wed Jun 10 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.6.10-1.fmi
+- Rebuilt due to obsengine API change
 
 * Mon Jun  8 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.6.8-1.fmi
 - Fixed ArrowLayer not to fetch clipping bbox observations when wanted stations are listed

@@ -22,6 +22,8 @@ namespace WMS
 {
 namespace
 {
+const std::set<std::string> geographic_crs{"WGS84", "EPSG:4326", "EPSGA:4326"};
+
 std::string get_symbol_translation(const LegendGraphicSymbol& symbolSettings,
                                    const std::string& language,
                                    const std::string& defaultValue)
@@ -1196,10 +1198,21 @@ bool WMSLayer::isValidCRS(const std::string& theCRS) const
 {
   try
   {
-    if (crs.find(theCRS) != crs.end())
+    // Disabled explicitly?
+    if (disabled_refs.find(theCRS) != disabled_refs.end())
+      return false;
+
+    // Disabled if not in the known list at all
+    auto ref = refs.find(theCRS);
+    if (ref == refs.end())
+      return false;
+
+    // Known, and enabled explicitly?
+    if (enabled_refs.find(theCRS) != enabled_refs.end())
       return true;
 
-    return false;
+    // Enabled by default?
+    return ref->second.enabled;
   }
   catch (...)
   {
@@ -1334,8 +1347,8 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
         << "eastBoundLongitude=" << layer.geographicBoundingBox.xMax << " "
         << "northBoundLatitude=" << layer.geographicBoundingBox.yMax << "\n"
         << "crs:";
-    for (auto c : layer.crs)
-      ost << c.first << "=" << c.second << " ";
+    for (auto c : layer.refs)
+      ost << c.first << "=" << c.second.proj << " ";
     ost << "styles:";
     for (auto style : layer.itsStyles)
       ost << style.name << " ";
@@ -1354,6 +1367,58 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
   catch (...)
   {
     throw Spine::Exception::Trace(BCP, "Printing the request failed!");
+  }
+}
+
+void WMSLayer::initProjectedBBoxes(const Engine::Gis::Engine& gisengine)
+{
+  for (const auto& id_ref : refs)
+  {
+    const auto& id = id_ref.first;
+    const auto& ref = id_ref.second;
+
+    if (!isValidCRS(id))
+      continue;
+
+    if (geographic_crs.find(id) != geographic_crs.end())
+      continue;
+
+    // Intersect with target EPSG bounding box (latlon) if it is available
+
+    auto x1 = geographicBoundingBox.xMin;
+    auto x2 = geographicBoundingBox.xMax;
+    auto y1 = geographicBoundingBox.yMin;
+    auto y2 = geographicBoundingBox.yMax;
+
+    auto& epsg_box = ref.bbox;
+    x1 = std::max(x1, epsg_box.west);
+    x2 = std::min(x2, epsg_box.east);
+    y1 = std::max(y1, epsg_box.south);
+    y2 = std::min(y2, epsg_box.north);
+
+    // Produce bbox only if there is overlap
+
+    if (x1 < x2 && y1 < y2)
+    {
+      auto transformation = gisengine.getCoordinateTransformation("WGS84", ref.proj);
+
+      bool ok = (transformation->Transform(1, &x1, &y1) && transformation->Transform(1, &x2, &y2));
+
+      // Produce bbox only if projection succeeds
+
+      if (ok)
+      {
+        // Use proper coordinate ordering for the EPSG
+
+        if (transformation->GetTargetCS()->EPSGTreatsAsLatLong())
+        {
+          std::swap(x1, y1);
+          std::swap(x2, y2);
+        }
+        Engine::Gis::BBox bbox(x1, x2, y1, y2);
+        projected_bbox.insert(std::make_pair(id, std::move(bbox)));
+      }
+    }
   }
 }
 
@@ -1408,25 +1473,23 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
     // Layer CRS list and their bounding boxes
 
-    // Calculate CRS bbox from latlon bbox
-    OGRSpatialReference srs;
-    srs.importFromEPSGA(4326);
-
-    if (!crs.empty())
+    if (!refs.empty())
     {
       CTPP::CDT layer_crs_list(CTPP::CDT::ARRAY_VAL);
       CTPP::CDT layer_bbox_list(CTPP::CDT::ARRAY_VAL);
 
-      for (const auto& id_decl : crs)
+      for (const auto& id_ref : refs)
       {
-        CTPP::CDT layer_bbox(CTPP::CDT::HASH_VAL);
+        const auto& id = id_ref.first;
 
-        const auto& id = id_decl.first;
-        const auto& decl = id_decl.second;
+        if (!isValidCRS(id))
+          continue;
+
+        CTPP::CDT layer_bbox(CTPP::CDT::HASH_VAL);
 
         layer_bbox["crs"] = id;
 
-        if (id == "EPSG:4326")
+        if (geographic_crs.find(id) != geographic_crs.end())
         {
           layer_crs_list.PushBack(id);
           layer_bbox["minx"] = geographicBoundingBox.xMin;
@@ -1437,67 +1500,27 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
         }
         else
         {
-          OGRSpatialReference target;
-          auto err = target.SetFromUserInput(decl.c_str());
-          if (err != OGRERR_NONE)
-            throw Spine::Exception(BCP, "Unknown spatial reference declaration: '" + decl + "'");
+          auto pos = projected_bbox.find(id);
 
-          boost::shared_ptr<OGRCoordinateTransformation> transformation(
-              OGRCreateCoordinateTransformation(&srs, &target));
-
-          if (transformation == nullptr)
-            throw Spine::Exception(BCP, "OGRCreateCoordinateTransformation function call failed");
-
-          // Intersect with target EPSG bounding box (latlon) if it is available
-
-          auto x1 = geographicBoundingBox.xMin;
-          auto x2 = geographicBoundingBox.xMax;
-          auto y1 = geographicBoundingBox.yMin;
-          auto y2 = geographicBoundingBox.yMax;
-
-          auto epsg_info = crs_bbox.find(id);
-
-          if (epsg_info != crs_bbox.end())
+          if (pos != projected_bbox.end())
           {
-            auto& epsg_box = epsg_info->second;
-            x1 = std::max(x1, epsg_box.west);
-            x2 = std::min(x2, epsg_box.east);
-            y1 = std::max(y1, epsg_box.south);
-            y2 = std::min(y2, epsg_box.north);
-          }
+            // Acceptable CRS
+            layer_crs_list.PushBack(id);
 
-          // Produce bbox only if there is overlap
-
-          if (x1 < x2 && y1 < y2)
-          {
-            bool ok =
-                (transformation->Transform(1, &x1, &y1) && transformation->Transform(1, &x2, &y2));
-
-            // Produce bbox only if projection succeeds
-
-            if (ok)
-            {
-              // Acceptable CRS
-              layer_crs_list.PushBack(id);
-
-              // Use proper coordinate ordering for the EPSG
-              if (target.EPSGTreatsAsLatLong())
-              {
-                std::swap(x1, y1);
-                std::swap(x2, y2);
-              }
-              layer_bbox["minx"] = x1;
-              layer_bbox["miny"] = y1;
-              layer_bbox["maxx"] = x2;
-              layer_bbox["maxy"] = y2;
-              layer_bbox_list.PushBack(layer_bbox);
-            }
+            layer_bbox["minx"] = pos->second.west;
+            layer_bbox["miny"] = pos->second.south;
+            layer_bbox["maxx"] = pos->second.east;
+            layer_bbox["maxy"] = pos->second.north;
+            layer_bbox_list.PushBack(layer_bbox);
           }
         }
       }
 
-      layer["crs"] = layer_crs_list;
-      layer["bounding_box"] = layer_bbox_list;
+      if (layer_crs_list.Size() > 0)
+      {
+        layer["crs"] = layer_crs_list;
+        layer["bounding_box"] = layer_bbox_list;
+      }
     }
 
     // Layer dimensions

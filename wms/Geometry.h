@@ -18,14 +18,16 @@ namespace Plugin
 {
 namespace Dali
 {
+class State;
+
 namespace Geometry
 {
-std::string name(const OGRGeometry& theGeom, const std::string& theType);
+std::string name(const OGRGeometry& theGeom, const State& theState);
 
 std::string toString(const OGRGeometry& theGeom,
-                     const std::string& theType,
+                     const State& theState,
                      const Fmi::Box& theBox,
-                     const boost::shared_ptr<OGRSpatialReference>& theSRS,
+                     const std::shared_ptr<OGRSpatialReference>& theSRS,
                      double thePrecision);
 
 }  // namespace Geometry

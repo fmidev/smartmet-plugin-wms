@@ -1,10 +1,7 @@
-// ======================================================================
-
 #include "Product.h"
 #include "Config.h"
 #include "Hash.h"
 #include "State.h"
-
 #include <ctpp2/CDT.hpp>
 #include <spine/Exception.h>
 #include <spine/HTTP.h>

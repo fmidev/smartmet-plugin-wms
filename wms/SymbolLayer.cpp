@@ -15,12 +15,16 @@
 #include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
+#include <engines/grid/Engine.h>
 #include <engines/querydata/Engine.h>
 #include <fmt/format.h>
 #include <fmt/printf.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
+#include <grid-content/queryServer/definition/QueryConfigurator.h>
+#include <grid-files/common/GeneralFunctions.h>
+#include <grid-files/common/ImagePaint.h>
 #include <newbase/NFmiArea.h>
 #include <newbase/NFmiPoint.h>
 #include <spine/Exception.h>
@@ -28,10 +32,6 @@
 #include <spine/ParameterFactory.h>
 #include <spine/ParameterTools.h>
 #include <iomanip>
-#include <grid-content/queryServer/definition/QueryConfigurator.h>
-#include <grid-files/common/ImagePaint.h>
-#include <grid-files/common/GeneralFunctions.h>
-#include <engines/grid/Engine.h>
 
 namespace SmartMet
 {
@@ -64,7 +64,7 @@ using PointValues = std::vector<PointValue>;
 
 PointValues read_forecasts(const SymbolLayer& layer,
                            const Engine::Querydata::Q& q,
-                           const boost::shared_ptr<OGRSpatialReference>& crs,
+                           const std::shared_ptr<OGRSpatialReference>& crs,
                            const Fmi::Box& box,
                            const boost::posix_time::time_period& valid_time_period)
 {
@@ -133,7 +133,6 @@ PointValues read_forecasts(const SymbolLayer& layer,
   }
 }
 
-
 // ----------------------------------------------------------------------
 /*!
  * \brief Grid Forecast reader
@@ -141,11 +140,11 @@ PointValues read_forecasts(const SymbolLayer& layer,
 // ----------------------------------------------------------------------
 
 PointValues read_gridForecasts(const SymbolLayer& layer,
-                            const Engine::Grid::Engine *gridEngine,
-                            QueryServer::Query& query,
-                            const boost::shared_ptr<OGRSpatialReference>& crs,
-                            const Fmi::Box& box,
-                            const boost::posix_time::time_period& valid_time_period)
+                               const Engine::Grid::Engine* gridEngine,
+                               QueryServer::Query& query,
+                               const std::shared_ptr<OGRSpatialReference>& crs,
+                               const Fmi::Box& box,
+                               const boost::posix_time::time_period& valid_time_period)
 {
   try
   {
@@ -159,8 +158,8 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
     int width = 0;
     int height = 0;
 
-    const char *widthStr = query.mAttributeList.getAttributeValue("grid.width");
-    const char *heightStr = query.mAttributeList.getAttributeValue("grid.height");
+    const char* widthStr = query.mAttributeList.getAttributeValue("grid.width");
+    const char* heightStr = query.mAttributeList.getAttributeValue("grid.height");
 
     if (widthStr)
       width = atoi(widthStr);
@@ -168,9 +167,10 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
     if (heightStr)
       height = atoi(heightStr);
 
-    T::ParamValue_vec *values = nullptr;
+    T::ParamValue_vec* values = nullptr;
 
-    for (auto param = query.mQueryParameterList.begin(); param != query.mQueryParameterList.end(); ++param)
+    for (auto param = query.mQueryParameterList.begin(); param != query.mQueryParameterList.end();
+         ++param)
     {
       for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
       {
@@ -191,32 +191,32 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
         }
       }
     }
-    else
-    if (values  &&  values->size() > 0)
+    else if (values && values->size() > 0)
     {
       for (const auto& point : points)
       {
         if (layer.inside(box, point.x, point.y))
         {
-          size_t pos = (height-point.y-1) * width + point.x;
+          size_t pos = (height - point.y - 1) * width + point.x;
 
           if (pos < values->size())
           {
             double tmp = (*values)[pos];
             if (tmp != ParamValueMissing)
             {
-              pointvalues.push_back(PointValue{point,tmp});
+              pointvalues.push_back(PointValue{point, tmp});
             }
             else
             {
-              PointValue missingvalue{point,kFloatMissing};
+              PointValue missingvalue{point, kFloatMissing};
               pointvalues.push_back(missingvalue);
             }
-            //printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(), point.latlon.Y(),tmp);
+            // printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(),
+            // point.latlon.Y(),tmp);
           }
           else
           {
-            PointValue missingvalue{point,kFloatMissing};
+            PointValue missingvalue{point, kFloatMissing};
             pointvalues.push_back(missingvalue);
           }
         }
@@ -240,7 +240,7 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
 #ifndef WITHOUT_OBSERVATION
 PointValues read_flash_observations(const SymbolLayer& layer,
                                     State& state,
-                                    const boost::shared_ptr<OGRSpatialReference>& crs,
+                                    const std::shared_ptr<OGRSpatialReference>& crs,
                                     const Fmi::Box& box,
                                     const boost::posix_time::time_period& valid_time_period,
                                     OGRCoordinateTransformation& transformation)
@@ -284,7 +284,7 @@ PointValues read_flash_observations(const SymbolLayer& layer,
     auto points = layer.positions->getPoints(q, crs, box, forecast_mode);
 
     Engine::Observation::StationSettings stationSettings;
-    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
+    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, state, crs);
     settings.taggedFMISIDs = obsengine.translateToFMISID(
         settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
@@ -360,7 +360,7 @@ PointValues read_flash_observations(const SymbolLayer& layer,
 
 PointValues read_all_observations(const SymbolLayer& layer,
                                   State& state,
-                                  const boost::shared_ptr<OGRSpatialReference>& crs,
+                                  const std::shared_ptr<OGRSpatialReference>& crs,
                                   const Fmi::Box& box,
                                   const boost::posix_time::time_period& valid_time_period,
                                   OGRCoordinateTransformation& transformation)
@@ -401,7 +401,7 @@ PointValues read_all_observations(const SymbolLayer& layer,
     // Coordinates or bounding box
 
     Engine::Observation::StationSettings stationSettings;
-    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
+    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, state, crs);
     settings.taggedFMISIDs = obsengine.translateToFMISID(
         settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
@@ -475,7 +475,7 @@ PointValues read_all_observations(const SymbolLayer& layer,
 
 PointValues read_station_observations(const SymbolLayer& layer,
                                       State& state,
-                                      const boost::shared_ptr<OGRSpatialReference>& crs,
+                                      const std::shared_ptr<OGRSpatialReference>& crs,
                                       const Fmi::Box& box,
                                       const boost::posix_time::time_period& valid_time_period,
                                       OGRCoordinateTransformation& transformation)
@@ -619,7 +619,7 @@ PointValues read_station_observations(const SymbolLayer& layer,
 
 PointValues read_latlon_observations(const SymbolLayer& layer,
                                      State& state,
-                                     const boost::shared_ptr<OGRSpatialReference>& crs,
+                                     const std::shared_ptr<OGRSpatialReference>& crs,
                                      const Fmi::Box& box,
                                      const boost::posix_time::time_period& valid_time_period,
                                      OGRCoordinateTransformation& transformation,
@@ -749,7 +749,7 @@ PointValues read_latlon_observations(const SymbolLayer& layer,
 
 PointValues read_observations(const SymbolLayer& layer,
                               State& state,
-                              const boost::shared_ptr<OGRSpatialReference>& crs,
+                              const std::shared_ptr<OGRSpatialReference>& crs,
                               const Fmi::Box& box,
                               const boost::posix_time::time_period& valid_time_period)
 {
@@ -758,10 +758,7 @@ PointValues read_observations(const SymbolLayer& layer,
     // Create the coordinate transformation from image world coordinates
     // to WGS84 coordinates
 
-    auto obscrs = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = obscrs->SetFromUserInput("WGS84");
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand WGS84");
+    auto obscrs = state.getGisEngine().getSpatialReference("WGS84");
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
@@ -915,9 +912,9 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       return;
 
     if (source && *source == "grid")
-      generate_gridEngine(theGlobals,theLayersCdt,theState);
+      generate_gridEngine(theGlobals, theLayersCdt, theState);
     else
-      generate_qEngine(theGlobals,theLayersCdt,theState);
+      generate_qEngine(theGlobals, theLayersCdt, theState);
   }
   catch (...)
   {
@@ -925,9 +922,9 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   }
 }
 
-
-
-void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
+                                      CTPP::CDT& theLayersCdt,
+                                      State& theState)
 {
   try
   {
@@ -945,13 +942,12 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
           "Must define default symbol with 'symbol' or several 'symbols' for specific values in a "
           "symbol-layer");
 
-
-    if (*projection.crs == "data"  &&  !parameter)
+    if (*projection.crs == "data" && !parameter)
       return;
 
     // Establish the data
 
-    //bool is_legend = theGlobals.Exists("legend");
+    // bool is_legend = theGlobals.Exists("legend");
 
     // Make sure position generation is initialized
 
@@ -978,21 +974,20 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
     // Do this conversion just once for speed:
     NFmiMetTime met_time = valid_time_period.begin();
 
-
     std::string wkt = *projection.crs;
-    //std::cout << wkt << "\n";
+    // std::cout << wkt << "\n";
 
     if (wkt != "data")
     {
       // Getting WKT and the bounding box of the requested projection.
 
       auto crs = projection.getCRS();
-      char *out = nullptr;
+      char* out = nullptr;
       crs->exportToWkt(&out);
       wkt = out;
       OGRFree(out);
 
-      //std::cout << wkt << "\n";
+      // std::cout << wkt << "\n";
 
       // Adding the bounding box information into the query.
 
@@ -1000,18 +995,18 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
 
       auto bl = projection.bottomLeftLatLon();
       auto tr = projection.topRightLatLon();
-      sprintf(bbox,"%f,%f,%f,%f",bl.X(),bl.Y(),tr.X(),tr.Y());
-      query.mAttributeList.addAttribute("grid.llbox",bbox);
+      sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
+      query.mAttributeList.addAttribute("grid.llbox", bbox);
 
       const auto& box = projection.getBox();
-      sprintf(bbox,"%f,%f,%f,%f",box.xmin(),box.ymin(),box.xmax(),box.ymax());
-      query.mAttributeList.addAttribute("grid.bbox",bbox);
+      sprintf(bbox, "%f,%f,%f,%f", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+      query.mAttributeList.addAttribute("grid.bbox", bbox);
     }
     else
     {
-      // The requested projection is the same as the projection of the requested data. This means that we
-      // we do not know the actual projection yet and we have to wait that the grid-engine delivers us
-      // the requested data and the projection information of the current data.
+      // The requested projection is the same as the projection of the requested data. This means
+      // that we we do not know the actual projection yet and we have to wait that the grid-engine
+      // delivers us the requested data and the projection information of the current data.
     }
 
     // Adding parameter information into the query.
@@ -1029,34 +1024,35 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
     auto pos = pName.find(".raw");
     if (pos != std::string::npos)
     {
-      attributeList.addAttribute("areaInterpolationMethod",std::to_string(T::AreaInterpolationMethod::Linear));
-      pName.erase(pos,4);
+      attributeList.addAttribute("areaInterpolationMethod",
+                                 std::to_string(T::AreaInterpolationMethod::Linear));
+      pName.erase(pos, 4);
     }
 
     std::string param = gridEngine->getParameterString(*producer, pName);
-    attributeList.addAttribute("param",param);
+    attributeList.addAttribute("param", param);
 
     if (!projection.projectionParameter)
       projection.projectionParameter = param;
 
-    if (param == *parameter  &&  query.mProducerNameList.size() == 0)
+    if (param == *parameter && query.mProducerNameList.size() == 0)
     {
-      gridEngine->getProducerNameList(*producer,query.mProducerNameList);
+      gridEngine->getProducerNameList(*producer, query.mProducerNameList);
       if (query.mProducerNameList.size() == 0)
         query.mProducerNameList.push_back(*producer);
     }
 
     std::string forecastTime = Fmi::to_iso_string(*time);
-    attributeList.addAttribute("startTime",forecastTime);
-    attributeList.addAttribute("endTime",forecastTime);
-    attributeList.addAttribute("timelist",forecastTime);
-    attributeList.addAttribute("timezone","UTC");
+    attributeList.addAttribute("startTime", forecastTime);
+    attributeList.addAttribute("endTime", forecastTime);
+    attributeList.addAttribute("timelist", forecastTime);
+    attributeList.addAttribute("timezone", "UTC");
 
     if (origintime)
       attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
 
     // Tranforming information from the attribute list into the query object.
-    queryConfigurator.configure(query,attributeList);
+    queryConfigurator.configure(query, attributeList);
 
     // Fullfilling information into the query object.
 
@@ -1083,46 +1079,45 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
     }
 
     query.mSearchType = QueryServer::Query::SearchType::TimeSteps;
-    query.mAttributeList.addAttribute("grid.crs",wkt);
+    query.mAttributeList.addAttribute("grid.crs", wkt);
 
-    if (projection.size  &&  *projection.size > 0)
+    if (projection.size && *projection.size > 0)
     {
-      query.mAttributeList.addAttribute("grid.size",std::to_string(*projection.size));
+      query.mAttributeList.addAttribute("grid.size", std::to_string(*projection.size));
     }
     else
     {
       if (projection.xsize)
-        query.mAttributeList.addAttribute("grid.width",std::to_string(*projection.xsize));
+        query.mAttributeList.addAttribute("grid.width", std::to_string(*projection.xsize));
 
       if (projection.ysize)
-        query.mAttributeList.addAttribute("grid.height",std::to_string(*projection.ysize));
+        query.mAttributeList.addAttribute("grid.height", std::to_string(*projection.ysize));
     }
 
-    if (wkt == "data"  &&  projection.x1 && projection.y1 && projection.x2 && projection.y2)
+    if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
     {
       char bbox[100];
-      sprintf(bbox,"%f,%f,%f,%f",*projection.x1,*projection.y1,*projection.x2,*projection.y2);
-      query.mAttributeList.addAttribute("grid.bbox",bbox);
+      sprintf(bbox, "%f,%f,%f,%f", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
+      query.mAttributeList.addAttribute("grid.bbox", bbox);
     }
 
     // The Query object before the query execution.
-    //query.print(std::cout,0,0);
+    // query.print(std::cout,0,0);
 
     // Executing the query.
     gridEngine->executeQuery(query);
 
     // The Query object after the query execution.
-    //query.print(std::cout,0,0);
-
+    // query.print(std::cout,0,0);
 
     // Extracting the projection information from the query result.
 
-    const char *crsStr = query.mAttributeList.getAttributeValue("grid.crs");
+    const char* crsStr = query.mAttributeList.getAttributeValue("grid.crs");
 
     if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
     {
-      const char *widthStr = query.mAttributeList.getAttributeValue("grid.width");
-      const char *heightStr = query.mAttributeList.getAttributeValue("grid.height");
+      const char* widthStr = query.mAttributeList.getAttributeValue("grid.width");
+      const char* heightStr = query.mAttributeList.getAttributeValue("grid.height");
 
       if (widthStr != nullptr)
         projection.xsize = atoi(widthStr);
@@ -1131,20 +1126,20 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
         projection.ysize = atoi(heightStr);
     }
 
-    if (!projection.xsize  &&  !projection.ysize)
+    if (!projection.xsize && !projection.ysize)
       throw Spine::Exception(BCP, "The projection size is unknown!");
 
-    if (crsStr != nullptr  &&  *projection.crs == "data")
+    if (crsStr != nullptr && *projection.crs == "data")
     {
       projection.crs = crsStr;
       std::vector<double> partList;
 
       if (!projection.bboxcrs)
       {
-        const char *bboxStr = query.mAttributeList.getAttributeValue("grid.bbox");
+        const char* bboxStr = query.mAttributeList.getAttributeValue("grid.bbox");
 
         if (bboxStr != nullptr)
-          splitString(bboxStr,',',partList);
+          splitString(bboxStr, ',', partList);
 
         if (partList.size() == 4)
         {
@@ -1181,7 +1176,6 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
         throw Spine::Exception(
             BCP, "Parameter not set for SymbolLayer even though multiple symbols are in use");
     }
-
 
     // Establish the numbers to draw.
 
@@ -1279,9 +1273,6 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayer
     throw Spine::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
-
-
 
 void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
 {
@@ -1396,10 +1387,10 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     for (const auto& pointvalue : pointvalues)
     {
-      const auto& point = pointvalue.point;
-
       if (pointvalue.value != kFloatMissing)
         ++valid_count;
+
+      const auto& point = pointvalue.point;
 
       // Start generating the hash
 
@@ -1417,6 +1408,9 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
       if (!symbols.empty())
       {
+        if (pointvalue.value == kFloatMissing)
+          continue;
+
         auto selection = Select::attribute(symbols, pointvalue.value);
         if (selection)
         {

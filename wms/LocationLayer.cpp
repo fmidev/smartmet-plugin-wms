@@ -10,6 +10,7 @@
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/geonames/Engine.h>
+#include <engines/gis/Engine.h>
 #include <gdal/ogr_spatialref.h>
 #include <gis/Box.h>
 #include <macgyver/NearTree.h>
@@ -152,10 +153,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     // Get the geonames projection
 
-    auto geocrs = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = geocrs->SetFromUserInput("WGS84");
-    if (err != OGRERR_NONE)
-      throw Spine::Exception(BCP, "GDAL does not understand this crs 'WGS84'");
+    auto geocrs = theState.getGisEngine().getSpatialReference("WGS84");
 
     // Create the coordinate transformation from geonames coordinates to image coordinates
 

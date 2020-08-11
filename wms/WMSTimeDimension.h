@@ -29,9 +29,6 @@ class WMSTimeDimension
  public:
   virtual ~WMSTimeDimension() = default;
   WMSTimeDimension() : current(true) {}
-  void addTimestep(const boost::posix_time::ptime& timestep);
-
-  void removeTimestep(const boost::posix_time::ptime& timestep);
 
   virtual bool isValidTime(const boost::posix_time::ptime& theTime) const;
 
@@ -47,16 +44,23 @@ class WMSTimeDimension
  protected:
   bool current;
   std::set<boost::posix_time::ptime> itsTimesteps;
+  std::string itsCapabilities;  // returned when querying all times
 };
 
 class StepTimeDimension : public WMSTimeDimension
 {
  public:
   virtual ~StepTimeDimension() = default;
-  StepTimeDimension() = default;
+  StepTimeDimension() = delete;
+  StepTimeDimension(const std::list<boost::posix_time::ptime>& times);
+  StepTimeDimension(const std::vector<boost::posix_time::ptime>& times);
 
   virtual std::string getCapabilities(const boost::optional<std::string>& starttime,
                                       const boost::optional<std::string>& endtime) const;
+
+ private:
+  std::string makeCapabilities(const boost::optional<std::string>& starttime,
+                               const boost::optional<std::string>& endtime) const;
 };
 
 class IntervalTimeDimension : public WMSTimeDimension
@@ -76,6 +80,7 @@ class IntervalTimeDimension : public WMSTimeDimension
 
  public:
   virtual ~IntervalTimeDimension() = default;
+  IntervalTimeDimension() = delete;
   IntervalTimeDimension(const boost::posix_time::ptime& start,
                         const boost::posix_time::ptime& end,
                         const boost::posix_time::time_duration& res);
@@ -88,6 +93,9 @@ class IntervalTimeDimension : public WMSTimeDimension
   virtual bool isValidTime(const boost::posix_time::ptime& theTime) const;
 
  private:
+  std::string makeCapabilities(const boost::optional<std::string>& starttime,
+                               const boost::optional<std::string>& endtime) const;
+
   tag_interval itsInterval;
 };
 
