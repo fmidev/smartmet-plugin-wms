@@ -343,7 +343,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     boost::optional<boost::posix_time::ptime> originTime;
     if (p)
-      originTime = boost::posix_time::from_iso_string(p->mAnalysisTime);
+      originTime = Fmi::TimeParser::parse_iso(p->mAnalysisTime);
 
     // Update the globals
 
