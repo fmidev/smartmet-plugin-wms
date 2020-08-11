@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.7.24
+Version: 20.8.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,16 +18,16 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.4.18
-BuildRequires: smartmet-library-grid-content-devel >= 20.6.15
-BuildRequires: smartmet-library-grid-files-devel >= 20.6.15
-BuildRequires: smartmet-library-macgyver-devel >= 20.6.8
-BuildRequires: smartmet-library-spine-devel >= 20.6.8
+BuildRequires: smartmet-library-grid-content-devel >= 20.8.11
+BuildRequires: smartmet-library-grid-files-devel >= 20.8.11
+BuildRequires: smartmet-library-macgyver-devel >= 20.8.7
+BuildRequires: smartmet-library-spine-devel >= 20.8.11
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 20.6.8
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.7.21
+BuildRequires: smartmet-engine-observation-devel >= 20.8.7
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 20.7.22
 BuildRequires: smartmet-engine-grid-devel >= 20.6.8
@@ -47,10 +47,10 @@ Requires: fmt >= 5.2.0
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-grid-content >= 20.6.15
-Requires: smartmet-library-grid-files >= 20.6.15
+Requires: smartmet-library-grid-content >= 20.8.11
+Requires: smartmet-library-grid-files >= 20.8.11
 Requires: smartmet-library-gis >= 20.4.18
-Requires: smartmet-library-macgyver >= 20.6.8
+Requires: smartmet-library-macgyver >= 20.8.7
 Requires: smartmet-library-giza >= 20.4.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 20.6.8
@@ -60,8 +60,8 @@ Requires: smartmet-engine-contour >= 20.5.13
 Requires: smartmet-engine-gis >= 20.7.22
 Requires: smartmet-engine-grid >= 20.6.8
 Requires: smartmet-engine-geonames >= 20.6.8
-Requires: smartmet-server >= 20.4.18
-Requires: smartmet-library-spine >= 20.6.8
+Requires: smartmet-server >= 20.8.10
+Requires: smartmet-library-spine >= 20.8.11
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -98,6 +98,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
+* Tue Aug 11 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.11-1.fmi
+- Speed improvements
+
 * Fri Jul 24 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.24-1.fmi
 - System wide known spatial references can now be disabled by default
 - Layers can now disable or enable spatial references listed in the main configuration file
