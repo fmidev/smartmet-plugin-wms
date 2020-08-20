@@ -144,7 +144,9 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     Fmi::CoordinateTransformation transformation(wgs84, *crs);
 
-    geom.reset(transformation.transformGeometry(*geom));
+    // Perhaps this should be customizable instead of being fixed to one degree?
+    const double maximum_segment_length = 1;
+    geom.reset(transformation.transformGeometry(*geom, maximum_segment_length));
 
     if (!geom || geom->IsEmpty())
       return;
