@@ -14,6 +14,7 @@
 #include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
+#include <engines/gis/Engine.h>
 #include <engines/observation/Engine.h>
 #include <engines/observation/Settings.h>
 #include <gis/Box.h>

@@ -21,6 +21,8 @@ namespace Plugin
 {
 namespace Dali
 {
+class State;
+
 namespace Geometry
 {
 std::string name(const OGRGeometry& theGeom, const std::string& theType);

@@ -38,6 +38,9 @@ void Projection::init(const Json::Value& theJson,
     if (!theJson.isObject())
       throw Spine::Exception(BCP, "Projection JSON is not a JSON object (name-value pairs)");
 
+    // For later use
+    gisengine = &theState.getGisEngine();
+
     // Extract all the members
 
     Json::Value nulljson;

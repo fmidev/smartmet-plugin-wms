@@ -378,6 +378,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     Fmi::SpatialReference defaultSR("EPSG:3395");
 
     unsigned int mapid = 1;  // id to concatenate to iri to make it unique
+
     // Get the polygons and store them into the template engine
     for (const PostGISLayerFilter& filter : filters)
     {
@@ -468,7 +469,9 @@ std::size_t IceMapLayer::hash_value(const State& theState) const
   }
 }
 
-void IceMapLayer::handleSymbol(const Fmi::Feature& theResultItem, CTPP::CDT& theGroupCdt) const
+void IceMapLayer::handleSymbol(const Fmi::Feature& theResultItem,
+                               CTPP::CDT& theGroupCdt,
+                               const State& theState) const
 {
   auto transformation = LonLatToXYTransformation(projection);
 
@@ -1184,7 +1187,7 @@ void IceMapLayer::handleResultItem(const Fmi::Feature& theResultItem,
   }
   else if (layer_subtype == "symbol")
   {
-    handleSymbol(theResultItem, theGroupCdt);
+    handleSymbol(theResultItem, theGroupCdt, theState);
   }
   else if (layer_subtype == "named_location")
   {
@@ -1204,7 +1207,7 @@ void IceMapLayer::handleResultItem(const Fmi::Feature& theResultItem,
   }
   else if (layer_subtype == "degree_of_pressure")
   {
-    handleSymbol(theResultItem, theGroupCdt);
+    handleSymbol(theResultItem, theGroupCdt, theState);
     handleLabel(theResultItem, theFilter, theGlobals, theLayersCdt, theState);
   }
   else if (layer_subtype == "ice_egg")

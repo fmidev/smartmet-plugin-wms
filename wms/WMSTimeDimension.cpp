@@ -20,30 +20,6 @@ boost::posix_time::ptime parse_time(const std::string& time_string)
 }
 }  // namespace
 
-void WMSTimeDimension::addTimestep(const boost::posix_time::ptime& timestep)
-{
-  try
-  {
-    itsTimesteps.insert(timestep);
-  }
-  catch (...)
-  {
-    throw Spine::Exception::Trace(BCP, "Failed to add time step!");
-  }
-}
-
-void WMSTimeDimension::removeTimestep(const boost::posix_time::ptime& timestep)
-{
-  try
-  {
-    itsTimesteps.erase(timestep);
-  }
-  catch (...)
-  {
-    throw Spine::Exception::Trace(BCP, "Failed to remove time step!");
-  }
-}
-
 bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) const
 {
   // Allow any time within the range
@@ -60,13 +36,8 @@ bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) cons
     auto res = itsTimesteps.find(theTime);
 
     if (res == itsTimesteps.end())
-    {
       return false;
-    }
-    else
-    {
       return true;
-    }
   }
   catch (...)
   {
@@ -86,7 +57,7 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
     if (itsTimesteps.size() == 0)
       return boost::posix_time::not_a_date_time;
 
-    boost::posix_time::ptime current_time = boost::posix_time::second_clock::universal_time();
+    auto current_time = boost::posix_time::second_clock::universal_time();
 
     // if current time is earlier than first timestep -> return first timestep
     if (current_time <= *(itsTimesteps.begin()))
@@ -94,6 +65,7 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
 
     auto itLastTimestep = itsTimesteps.end();
     itLastTimestep--;
+
     // if current time is later than last timestep -> return last timestep
     if (current_time >= *itLastTimestep)
       return *itLastTimestep;
@@ -109,8 +81,8 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
           return *it;
 
         // check which is closer to current time: current timestep or previous timestep
-        boost::posix_time::time_duration duration_tonext(*it - current_time);
-        boost::posix_time::time_duration duration_toprevious(current_time - *itPrevious);
+        auto duration_tonext(*it - current_time);
+        auto duration_toprevious(current_time - *itPrevious);
 
         if (duration_toprevious.total_seconds() <= duration_tonext.total_seconds())
           return *itPrevious;
@@ -129,20 +101,44 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
   }
 }
 
+StepTimeDimension::StepTimeDimension(const std::list<boost::posix_time::ptime>& times)
+{
+  std::copy(times.begin(), times.end(), std::inserter(itsTimesteps, itsTimesteps.begin()));
+  itsCapabilities = makeCapabilities(boost::none, boost::none);
+}
+
+StepTimeDimension::StepTimeDimension(const std::vector<boost::posix_time::ptime>& times)
+{
+  std::copy(times.begin(), times.end(), std::inserter(itsTimesteps, itsTimesteps.begin()));
+  itsCapabilities = makeCapabilities(boost::none, boost::none);
+}
+
 std::string StepTimeDimension::getCapabilities(const boost::optional<std::string>& starttime,
                                                const boost::optional<std::string>& endtime) const
 {
   try
   {
-    std::ostringstream os;
+    if (!starttime && !endtime)
+      return itsCapabilities;
 
+    return makeCapabilities(starttime, endtime);
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Failed to extract time dimension capabilities!");
+  }
+}
+
+std::string StepTimeDimension::makeCapabilities(const boost::optional<std::string>& starttime,
+                                                const boost::optional<std::string>& endtime) const
+{
+  try
+  {
     std::vector<std::string> ret;
     ret.reserve(itsTimesteps.size());
 
-    boost::posix_time::ptime startt =
-        (starttime ? parse_time(*starttime) : boost::posix_time::min_date_time);
-    boost::posix_time::ptime endt =
-        (endtime ? parse_time(*endtime) : boost::posix_time::max_date_time);
+    auto startt = (starttime ? parse_time(*starttime) : boost::posix_time::min_date_time);
+    auto endt = (endtime ? parse_time(*endtime) : boost::posix_time::max_date_time);
 
     for (auto& step : itsTimesteps)
     {
@@ -156,7 +152,7 @@ std::string StepTimeDimension::getCapabilities(const boost::optional<std::string
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to extract time dimension capabilities!");
+    throw Spine::Exception::Trace(BCP, "Failed to make time dimension capabilities!");
   }
 }
 
@@ -165,6 +161,7 @@ IntervalTimeDimension::IntervalTimeDimension(const boost::posix_time::ptime& beg
                                              const boost::posix_time::time_duration& step)
     : itsInterval(begin, end, step)
 {
+  itsCapabilities = makeCapabilities(boost::none, boost::none);
 }
 
 boost::posix_time::ptime IntervalTimeDimension::mostCurrentTime() const
@@ -188,16 +185,31 @@ std::string IntervalTimeDimension::getCapabilities(
 {
   try
   {
+    if (!starttime && !endtime)
+      return itsCapabilities;
+
+    return makeCapabilities(starttime, endtime);
+  }
+  catch (...)
+  {
+    throw Spine::Exception::Trace(BCP, "Failed to generate time dimension capabilities!");
+  }
+}
+
+std::string IntervalTimeDimension::makeCapabilities(
+    const boost::optional<std::string>& starttime,
+    const boost::optional<std::string>& endtime) const
+{
+  try
+  {
     if ((starttime && endtime) && parse_time(*starttime) > parse_time(*endtime))
       throw Spine::Exception::Trace(BCP,
                                     "Requested starttime must be earlier than requested endtime!");
 
-    boost::posix_time::ptime startt = itsInterval.startTime;
-    boost::posix_time::ptime endt = itsInterval.endTime;
-    boost::posix_time::ptime requested_startt =
-        (starttime ? parse_time(*starttime) : itsInterval.startTime);
-    boost::posix_time::ptime requested_endt =
-        (endtime ? parse_time(*endtime) : itsInterval.endTime);
+    auto startt = itsInterval.startTime;
+    auto endt = itsInterval.endTime;
+    auto requested_startt = (starttime ? parse_time(*starttime) : itsInterval.startTime);
+    auto requested_endt = (endtime ? parse_time(*endtime) : itsInterval.endTime);
 
     if (requested_startt > endt || requested_endt < startt)
       return "";
@@ -205,9 +217,8 @@ std::string IntervalTimeDimension::getCapabilities(
     if (startt < requested_startt)
     {
       startt = boost::posix_time::ptime(requested_startt.date(), startt.time_of_day());
-      boost::posix_time::time_duration resolution =
-          (itsInterval.resolution.total_seconds() == 0 ? boost::posix_time::minutes(1)
-                                                       : itsInterval.resolution);
+      auto resolution = (itsInterval.resolution.total_seconds() == 0 ? boost::posix_time::minutes(1)
+                                                                     : itsInterval.resolution);
       if (startt < requested_startt)
       {
         while (startt < requested_startt)
@@ -225,24 +236,22 @@ std::string IntervalTimeDimension::getCapabilities(
       endt = requested_endt;
     }
 
-    std::ostringstream os;
-
-    os << Fmi::to_iso_extended_string(startt) << "Z/" << Fmi::to_iso_extended_string(endt)
-       << "Z/PT";
+    std::string ret =
+        Fmi::to_iso_extended_string(startt) + "Z/" + Fmi::to_iso_extended_string(endt) + "Z/PT";
     if (itsInterval.resolution.hours() == 0 && itsInterval.resolution.minutes() <= 60)
-      os << itsInterval.resolution.minutes() << "M";
+      ret += Fmi::to_string(itsInterval.resolution.minutes()) + "M";
     else
     {
-      os << itsInterval.resolution.hours() << "H";
+      ret += Fmi::to_string(itsInterval.resolution.hours()) + "H";
       if (itsInterval.resolution.minutes() > 0)
-        os << itsInterval.resolution.minutes() << "M";
+        ret += Fmi::to_string(itsInterval.resolution.minutes()) + "M";
     }
 
-    return os.str();
+    return ret;
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to generate time dimension capabilities!");
+    throw Spine::Exception::Trace(BCP, "Failed to make time dimension capabilities!");
   }
 }
 

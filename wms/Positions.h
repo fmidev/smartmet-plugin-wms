@@ -22,6 +22,14 @@ class SpatialReference;
 
 namespace SmartMet
 {
+namespace Engine
+{
+namespace Gis
+{
+class Engine;
+}
+}  // namespace Engine
+
 namespace Plugin
 {
 namespace Dali
@@ -173,6 +181,8 @@ class Positions
   // not part of the UI - not involved in the hash
   boost::posix_time::ptime time;
   const Engine::Geonames::Engine* geonames;
+
+  const Engine::Gis::Engine* gisengine;
 
 };  // class Positions
 

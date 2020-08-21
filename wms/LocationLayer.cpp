@@ -10,6 +10,7 @@
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/geonames/Engine.h>
+#include <engines/gis/Engine.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <macgyver/NearTree.h>

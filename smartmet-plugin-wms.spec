@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.7.2
-Release: 2%{?dist}.fmi
+Version: 20.8.21
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -18,21 +18,21 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.4.18
-BuildRequires: smartmet-library-macgyver-devel >= 20.6.8
-BuildRequires: smartmet-library-spine-devel >= 20.6.8
+BuildRequires: smartmet-library-macgyver-devel >= 20.8.21
+BuildRequires: smartmet-library-spine-devel >= 20.8.21
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 20.6.8
+BuildRequires: smartmet-engine-authentication-devel >= 20.8.21
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.6.17
+BuildRequires: smartmet-engine-observation-devel >= 20.8.21
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 20.5.7
-BuildRequires: smartmet-engine-geonames-devel >= 20.6.8
-BuildRequires: smartmet-engine-querydata-devel >= 20.5.13
-BuildRequires: smartmet-engine-contour-devel >= 20.5.13
-BuildRequires: smartmet-library-gis-devel >= 20.4.18
-BuildRequires: fmt-devel >= 5.2.0
+BuildRequires: smartmet-engine-gis-devel >= 20.8.21
+BuildRequires: smartmet-engine-geonames-devel >= 20.8.21
+BuildRequires: smartmet-engine-querydata-devel >= 20.8.21
+BuildRequires: smartmet-engine-contour-devel >= 20.8.21
+BuildRequires: smartmet-library-gis-devel >= 20.8.21
+BuildRequires: fmt-devel >= 6.2.1
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
@@ -40,22 +40,22 @@ BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
 BuildRequires: heatmap-devel
 Requires: cairo
-Requires: fmt >= 5.2.0
+Requires: fmt >= 6.2.1
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-gis >= 20.4.18
-Requires: smartmet-library-macgyver >= 20.6.8
+Requires: smartmet-library-gis >= 20.8.21
+Requires: smartmet-library-macgyver >= 20.8.21
 Requires: smartmet-library-giza >= 20.4.18
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 20.6.8
+Requires: smartmet-engine-authentication >= 20.8.21
 %endif
-Requires: smartmet-engine-querydata >= 20.5.13
-Requires: smartmet-engine-contour >= 20.5.13
-Requires: smartmet-engine-gis >= 20.5.7
-Requires: smartmet-engine-geonames >= 20.6.8
-Requires: smartmet-server >= 20.4.18
-Requires: smartmet-library-spine >= 20.6.8
+Requires: smartmet-engine-querydata >= 20.8.21
+Requires: smartmet-engine-contour >= 20.8.21
+Requires: smartmet-engine-gis >= 20.8.21
+Requires: smartmet-engine-geonames >= 20.8.21
+Requires: smartmet-server >= 20.8.21
+Requires: smartmet-library-spine >= 20.8.21
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -92,6 +92,29 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Fri Aug 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.21-1.fmi
+- Upgrade to fmt 6.2
+
+* Fri Jul 24 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.24-1.fmi
+- System wide known spatial references can now be disabled by default
+- Layers can now disable or enable spatial references listed in the main configuration file
+
+* Thu Jul 23 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.23-1.fmi
+- Precalculate WMS layer projected bboxes for GetCapabilities speedup
+
+* Wed Jul 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.22-2.fmi
+- Avoid unnecessary OGRCoordinateTransformation creation for speed
+
+* Wed Jul 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.22-1.fmi
+- Use GIS-engine for creating coordinate transformations faster
+
+* Tue Jul 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.21-2.fmi
+- Use GIS-engine for creating spatial references faster
+
+* Tue Jul 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.21-1.fmi
+- GetCapabilities speed improvements
+- Repackaged due to ObsEngine ABI changes for station searches
+
 * Thu Jul  2 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.2-2.fmi
 - Fixed PNG settings quality and errorfactor to be of type double instead of int
 

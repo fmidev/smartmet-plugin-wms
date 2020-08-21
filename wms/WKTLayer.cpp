@@ -104,13 +104,10 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     char* cwkt = const_cast<char*>(wkt.c_str());  // NOLINT(cppcoreguidelines-pro-type-const-cast)
     OGRGeometry* ogeom = nullptr;
-    OGRErr err = OGRGeometryFactory::createFromWkt(&cwkt, wgs84, &ogeom);
+    OGRErr err = OGRGeometryFactory::createFromWkt(&cwkt, wgs84.get(), &ogeom);
 
     if (err != OGRERR_NONE)
-    {
-      // delete wgs84;  would segfault
       throw SmartMet::Spine::Exception(BCP, "Failed to convert WKT to OGRGeometry");
-    }
 
     if (wgs84.isAxisSwapped())
       ogeom->swapXY();

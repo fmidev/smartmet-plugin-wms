@@ -96,7 +96,7 @@ class State
                            const boost::posix_time::ptime& theOriginTime) const;
 
   // Require given ID to be free, and mark it used if it is free
-  void requireId(const std::string& theID);
+  void requireId(const std::string& theID) const;
 
   // If given ID has not been used, mark it used now
   bool addId(const std::string& theID) const;
@@ -133,20 +133,22 @@ class State
   std::size_t getFilterHash(const std::string& theName) const;
 
   // Add attributes
-  void addAttributes(CTPP::CDT& theGlobals, const Attributes& theAttributes);
+  void addAttributes(CTPP::CDT& theGlobals, const Attributes& theAttributes) const;
 
-  void addAttributes(CTPP::CDT& theGlobals, CTPP::CDT& theLocals, const Attributes& theAttributes);
+  void addAttributes(CTPP::CDT& theGlobals,
+                     CTPP::CDT& theLocals,
+                     const Attributes& theAttributes) const;
 
   // Add presentation attributes
 
   void addPresentationAttributes(CTPP::CDT& theLayer,
                                  const boost::optional<std::string>& theCSS,
-                                 const Attributes& theAttributes);
+                                 const Attributes& theAttributes) const;
 
   void addPresentationAttributes(CTPP::CDT& theLayer,
                                  const boost::optional<std::string>& theCSS,
                                  const Attributes& theLayerAttributes,
-                                 const Attributes& theObjectAttributes);
+                                 const Attributes& theObjectAttributes) const;
 
   // Generation stage
 

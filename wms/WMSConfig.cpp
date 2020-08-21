@@ -501,10 +501,10 @@ void WMSConfig::parse_references()
   {
     int num = epsg_settings[i];
     std::string name = "EPSG:" + Fmi::to_string(num);
-    itsSupportedWMSReferences[name] = name;
-
     Engine::Gis::BBox bbox = itsGisEngine->getBBox(num);
-    itsWMSBBoxes.insert(std::make_pair(name, bbox));
+    bool enabled = true;
+    WMSSupportedReference ref(name, bbox, enabled);
+    itsWMSSupportedReferences.insert(std::make_pair(name, ref));
   }
 
   // CRS settings is an array of id,proj,bbox tuples, whose name shall be CRS:<id>
@@ -525,21 +525,24 @@ void WMSConfig::parse_references()
     std::string proj = group["proj"];
     std::string name = "CRS:" + id;
 
-    itsSupportedWMSReferences[name] = proj;
+    bool enabled = true;
+    group.lookupValue("enabled", enabled);
 
-    const auto& bbox = group["bbox"];
-    if (!bbox.isArray())
+    const auto& bbox_array = group["bbox"];
+    if (!bbox_array.isArray())
       throw Spine::Exception(BCP, "wms.supported_references.crs bboxes must be arrays");
 
-    if (bbox.getLength() != 4)
+    if (bbox_array.getLength() != 4)
       throw Spine::Exception(BCP, "wms.supported_references.crs bboxes must have 4 elements");
 
-    double west = bbox[0];
-    double east = bbox[1];
-    double south = bbox[2];
-    double north = bbox[3];
+    double west = bbox_array[0];
+    double east = bbox_array[1];
+    double south = bbox_array[2];
+    double north = bbox_array[3];
+    Engine::Gis::BBox bbox(west, east, south, north);
 
-    itsWMSBBoxes.insert(std::make_pair(name, Engine::Gis::BBox(west, east, south, north)));
+    WMSSupportedReference ref(proj, bbox, enabled);
+    itsWMSSupportedReferences.insert(std::make_pair(name, ref));
   }
 }
 
@@ -1000,9 +1003,9 @@ const std::set<std::string>& WMSConfig::supportedWMSVersions() const
 {
   return itsSupportedWMSVersions;
 }
-const std::map<std::string, std::string>& WMSConfig::supportedWMSReferences() const
+const std::map<std::string, WMSSupportedReference>& WMSConfig::supportedWMSReferences() const
 {
-  return itsSupportedWMSReferences;
+  return itsWMSSupportedReferences;
 }
 const std::set<std::string>& WMSConfig::supportedWMSExceptions() const
 {
@@ -1013,33 +1016,14 @@ const std::set<std::string>& WMSConfig::supportedWMSGetCapabilityFormats() const
   return itsSupportedWMSGetCapabilityFormats;
 }
 
-const std::map<std::string, Engine::Gis::BBox>& WMSConfig::WMSBBoxes() const
-{
-  return itsWMSBBoxes;
-}
-
 bool WMSConfig::isValidMapFormat(const std::string& theMapFormat) const
 {
-  try
-  {
-    return (itsSupportedMapFormats.find(theMapFormat) != itsSupportedMapFormats.end());
-  }
-  catch (...)
-  {
-    throw Spine::Exception::Trace(BCP, "Checking valid MapFormat failed!");
-  }
+  return (itsSupportedMapFormats.find(theMapFormat) != itsSupportedMapFormats.end());
 }
 
 bool WMSConfig::isValidVersion(const std::string& theVersion) const
 {
-  try
-  {
-    return (itsSupportedWMSVersions.find(theVersion) != itsSupportedWMSVersions.end());
-  }
-  catch (...)
-  {
-    throw Spine::Exception::Trace(BCP, "Checking WMS version failed!");
-  }
+  return (itsSupportedWMSVersions.find(theVersion) != itsSupportedWMSVersions.end());
 }
 
 bool WMSConfig::isValidLayer(const std::string& theLayer,
@@ -1083,11 +1067,11 @@ const std::string& WMSConfig::getCRSDefinition(const std::string& theCRS) const
 {
   try
   {
-    return itsSupportedWMSReferences.at(theCRS);
+    return itsWMSSupportedReferences.at(theCRS).proj;
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "GDAL defintion for CRS not available!");
+    throw Spine::Exception::Trace(BCP, "GDAL definition for CRS not available!");
   }
 }
 

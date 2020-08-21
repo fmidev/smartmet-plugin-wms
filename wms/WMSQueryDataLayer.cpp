@@ -35,11 +35,7 @@ void WMSQueryDataLayer::updateLayerMetaData()
     }
     else
     {
-      // timesteps
-      auto newTimeDimension = boost::movelib::make_unique<StepTimeDimension>();
-      for (auto tim : *validtimes)
-        newTimeDimension->addTimestep(tim);
-      timeDimension = std::move(newTimeDimension);
+      timeDimension = boost::make_shared<StepTimeDimension>(*validtimes);
     }
     metadataTimestamp = boost::posix_time::second_clock::universal_time();
   }

@@ -84,7 +84,7 @@ class FrameLayer : public Layer
   OGRGeometryPtr itsGeom;
   Attributes itsScaleAttributes;
 
-  void addScale(CTPP::CDT& theLayersCdt);
+  void addScale(CTPP::CDT& theLayersCdt, const State& theState);
   void addTic(CTPP::CDT& theLayersCdt, double x1, double y1, double x2, double y2);
   void addScaleNumber(CTPP::CDT& theLayersCdt, double x, double y, const std::string& num);
 

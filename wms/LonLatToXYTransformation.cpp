@@ -1,4 +1,5 @@
 #include "LonLatToXYTransformation.h"
+#include "State.h"
 #include <boost/move/make_unique.hpp>
 #include <gis/SpatialReference.h>
 #include <ogr_spatialref.h>

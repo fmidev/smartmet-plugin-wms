@@ -3,6 +3,7 @@
 #include "Hash.h"
 #include "Time.h"
 #include <spine/Exception.h>
+#include <spine/Json.h>
 
 namespace SmartMet
 {

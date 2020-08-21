@@ -13,6 +13,7 @@
 #endif
 #include <boost/move/make_unique.hpp>
 #include <ctpp2/CDT.hpp>
+#include <engines/gis/Engine.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
@@ -211,7 +212,7 @@ bool Layer::validType(const std::string& theType) const
 void Layer::addClipRect(CTPP::CDT& theCdt,
                         CTPP::CDT& theGlobals,
                         const Fmi::Box& theBox,
-                        State& theState)
+                        const State& theState)
 {
   // Generate nothing of clipping is not requested
   if (!clip)

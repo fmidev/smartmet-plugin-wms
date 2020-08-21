@@ -2,6 +2,7 @@
 
 #include "Geometry.h"
 #include "Projection.h"
+#include "State.h"
 #include <boost/move/unique_ptr.hpp>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
@@ -12,6 +13,8 @@ namespace Plugin
 {
 namespace Dali
 {
+class State;
+
 class LonLatToXYTransformation
 {
  public:

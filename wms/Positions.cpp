@@ -333,16 +333,15 @@ void Positions::init(const boost::optional<std::string>& theProducer,
     // For applying directional corrections to positions
     time = theTime;
 
-    // GeoEngine might be needed
+    // Needed engines
     geonames = &theState.getGeoEngine();
+    gisengine = &theState.getGisEngine();
 
     // Initialize clipping shapes
 
-    const auto& gis = theState.getGisEngine();
-
     if (insidemap)
     {
-      inshape = gis.getShape(&theProjection.getCRS(), insidemap->options);
+      inshape = gisengine->getShape(&theProjection.getCRS(), insidemap->options);
       if (!inshape)
         throw Spine::Exception(BCP, "Positions received empty inside-shape from database!");
 
@@ -352,7 +351,7 @@ void Positions::init(const boost::optional<std::string>& theProducer,
 
     if (outsidemap)
     {
-      outshape = gis.getShape(&theProjection.getCRS(), outsidemap->options);
+      outshape = gisengine->getShape(&theProjection.getCRS(), outsidemap->options);
 
       // This does not obey layer margings, hence we disable this speed optimization
       // if (outshape)

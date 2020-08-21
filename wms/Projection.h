@@ -48,6 +48,14 @@ class Box;
 
 namespace SmartMet
 {
+namespace Engine
+{
+namespace Gis
+{
+class Engine;
+}
+}  // namespace Engine
+
 namespace HTTP
 {
 class Request;
@@ -113,6 +121,8 @@ class Projection
 
   // Was the center set using geoid or name?
   bool latlon_center = false;
+
+  const Engine::Gis::Engine* gisengine = nullptr;  // not owned
 
 };  // class Projection
 

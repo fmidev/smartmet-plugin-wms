@@ -1,4 +1,5 @@
 #include "Geometry.h"
+#include "State.h"
 #include <boost/move/make_unique.hpp>
 #include <gis/CoordinateTransformation.h>
 #include <gis/SpatialReference.h>
