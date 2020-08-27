@@ -37,9 +37,6 @@ elif [[ "$MIME" == "application/pdf" ]]; then
     convert $RESULT $RESULT_PNG 
 elif [[ "$MIME" == "image/png" ]]; then
     cp $RESULT $RESULT_PNG
-else
-    echo "FAIL: Unknown mime type '$MIME'"
-    exit 1
 fi
 
 # Check expected output exists after result image has been created
