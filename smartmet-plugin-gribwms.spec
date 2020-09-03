@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.8.31
+Version: 20.9.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,14 +20,14 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.4.18
 BuildRequires: smartmet-library-grid-content-devel >= 20.8.31
 BuildRequires: smartmet-library-grid-files-devel >= 20.8.31
-BuildRequires: smartmet-library-macgyver-devel >= 20.8.26
-BuildRequires: smartmet-library-spine-devel >= 20.8.26
+BuildRequires: smartmet-library-macgyver-devel >= 20.8.31
+BuildRequires: smartmet-library-spine-devel >= 20.9.1
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 20.8.21
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.8.21
+BuildRequires: smartmet-engine-observation-devel >= 20.9.1
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 20.8.21
 BuildRequires: smartmet-engine-grid-devel >= 20.8.31
@@ -50,7 +50,7 @@ Requires: libconfig
 Requires: smartmet-library-grid-content >= 20.8.31
 Requires: smartmet-library-grid-files >= 20.8.31
 Requires: smartmet-library-gis >= 20.8.21
-Requires: smartmet-library-macgyver >= 20.8.26
+Requires: smartmet-library-macgyver >= 20.8.31
 Requires: smartmet-library-giza >= 20.4.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 20.8.21
@@ -61,7 +61,7 @@ Requires: smartmet-engine-gis >= 20.8.21
 Requires: smartmet-engine-grid >= 20.8.31
 Requires: smartmet-engine-geonames >= 20.8.21
 Requires: smartmet-server >= 20.8.25
-Requires: smartmet-library-spine >= 20.8.26
+Requires: smartmet-library-spine >= 20.9.1
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -98,6 +98,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
+* Wed Sep  2 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.1-1.fmi
+- Repackaged since Observation::Settings size changed
+
 * Mon Aug 31 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.31-1.fmi
 - Repackaged due to library ABI changes
 
