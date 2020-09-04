@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.7.24
+Version: 20.9.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,24 +18,24 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.4.18
-BuildRequires: smartmet-library-grid-content-devel >= 20.6.15
-BuildRequires: smartmet-library-grid-files-devel >= 20.6.15
-BuildRequires: smartmet-library-macgyver-devel >= 20.6.8
-BuildRequires: smartmet-library-spine-devel >= 20.6.8
+BuildRequires: smartmet-library-grid-content-devel >= 20.8.31
+BuildRequires: smartmet-library-grid-files-devel >= 20.8.31
+BuildRequires: smartmet-library-macgyver-devel >= 20.8.31
+BuildRequires: smartmet-library-spine-devel >= 20.9.1
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 20.6.8
+BuildRequires: smartmet-engine-authentication-devel >= 20.8.21
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.7.21
+BuildRequires: smartmet-engine-observation-devel >= 20.9.1
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 20.7.22
-BuildRequires: smartmet-engine-grid-devel >= 20.6.8
-BuildRequires: smartmet-engine-geonames-devel >= 20.6.8
-BuildRequires: smartmet-engine-querydata-devel >= 20.5.13
-BuildRequires: smartmet-engine-contour-devel >= 20.5.13
-BuildRequires: smartmet-library-gis-devel >= 20.4.18
-BuildRequires: fmt-devel >= 5.2.0
+BuildRequires: smartmet-engine-gis-devel >= 20.8.21
+BuildRequires: smartmet-engine-grid-devel >= 20.8.31
+BuildRequires: smartmet-engine-geonames-devel >= 20.8.21
+BuildRequires: smartmet-engine-querydata-devel >= 20.8.21
+BuildRequires: smartmet-engine-contour-devel >= 20.8.21
+BuildRequires: smartmet-library-gis-devel >= 20.8.21
+BuildRequires: fmt-devel >= 6.2.1
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
@@ -43,25 +43,25 @@ BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
 BuildRequires: heatmap-devel
 Requires: cairo
-Requires: fmt >= 5.2.0
+Requires: fmt >= 6.2.1
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-grid-content >= 20.6.15
-Requires: smartmet-library-grid-files >= 20.6.15
-Requires: smartmet-library-gis >= 20.4.18
-Requires: smartmet-library-macgyver >= 20.6.8
+Requires: smartmet-library-grid-content >= 20.8.31
+Requires: smartmet-library-grid-files >= 20.8.31
+Requires: smartmet-library-gis >= 20.8.21
+Requires: smartmet-library-macgyver >= 20.8.31
 Requires: smartmet-library-giza >= 20.4.18
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 20.6.8
+Requires: smartmet-engine-authentication >= 20.8.21
 %endif
-Requires: smartmet-engine-querydata >= 20.5.13
-Requires: smartmet-engine-contour >= 20.5.13
-Requires: smartmet-engine-gis >= 20.7.22
-Requires: smartmet-engine-grid >= 20.6.8
-Requires: smartmet-engine-geonames >= 20.6.8
-Requires: smartmet-server >= 20.4.18
-Requires: smartmet-library-spine >= 20.6.8
+Requires: smartmet-engine-querydata >= 20.8.21
+Requires: smartmet-engine-contour >= 20.8.21
+Requires: smartmet-engine-gis >= 20.8.21
+Requires: smartmet-engine-grid >= 20.8.31
+Requires: smartmet-engine-geonames >= 20.8.21
+Requires: smartmet-server >= 20.8.25
+Requires: smartmet-library-spine >= 20.9.1
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -98,6 +98,24 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
+* Wed Sep  2 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.1-1.fmi
+- Repackaged since Observation::Settings size changed
+
+* Mon Aug 31 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.31-1.fmi
+- Repackaged due to library ABI changes
+
+* Fri Aug 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.21-1.fmi
+- Upgrade to fmt 6.2
+
+* Tue Aug 18 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.18-1.fmi
+- Repackaged due to grid library ABI changes
+
+* Fri Aug 14 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.14-1.fmi
+- Repackaged due to grid library ABI changes
+
+* Tue Aug 11 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.8.11-1.fmi
+- Speed improvements
+
 * Fri Jul 24 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.7.24-1.fmi
 - System wide known spatial references can now be disabled by default
 - Layers can now disable or enable spatial references listed in the main configuration file
