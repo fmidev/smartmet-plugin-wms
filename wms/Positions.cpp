@@ -676,36 +676,38 @@ Positions::Points Positions::getDataPoints(const char* originalCrs,
     int deltax = (!!dx ? *dx : 10);
     int deltay = (!!dy ? *dy : 10);
 
-    T::Coordinate_vec originalCoordinates;
+    T::Coordinate_svec originalCoordinates;
     if (originalGeometryId > 0)
-      originalCoordinates =
-          Identification::gridDef.getGridLatLonCoordinatesByGeometryId(originalGeometryId);
+      originalCoordinates = Identification::gridDef.getGridLatLonCoordinatesByGeometryId(originalGeometryId);
 
-    uint pos = 0;
-    uint sz = originalCoordinates.size();
     Points points;
-    for (int y = 0; y < originalHeight; y = y + deltay)
+    if (originalCoordinates)
     {
-      for (int x = 0; x < originalWidth; x = x + deltax)
+      uint pos = 0;
+      uint sz = originalCoordinates->size();
+      for (int y = 0; y < originalHeight; y = y + deltay)
       {
-        pos = y * originalWidth + x;
-        if (pos < sz)
+        for (int x = 0; x < originalWidth; x = x + deltax)
         {
-          auto cc = originalCoordinates[pos];
-          if (inside(cc.x(), cc.y(), false))
+          pos = y * originalWidth + x;
+          if (pos < sz)
           {
-            double xx = cc.x();
-            double yy = cc.y();
+            auto cc = (*originalCoordinates)[pos];
+            if (inside(cc.x(), cc.y(), false))
+            {
+              double xx = cc.x();
+              double yy = cc.y();
 
-            transformation->Transform(1, &xx, &yy);
+              transformation->Transform(1, &xx, &yy);
 
-            double xp = xx;
-            double yp = yy;
+              double xp = xx;
+              double yp = yy;
 
-            theBox.transform(xp, yp);
+              theBox.transform(xp, yp);
 
-            NFmiPoint coordinate(cc.x(), cc.y());
-            points.emplace_back(Point(xp, yp, coordinate, deltax, deltay));
+              NFmiPoint coordinate(cc.x(), cc.y());
+              points.emplace_back(Point(xp, yp, coordinate, deltax, deltay));
+            }
           }
         }
       }

@@ -966,7 +966,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     }
 
     auto gridEngine = theState.getGridEngine();
-    QueryServer::Query query;
+    std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
     auto valid_time_period = getValidTimePeriod();
@@ -996,11 +996,11 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       auto bl = projection.bottomLeftLatLon();
       auto tr = projection.topRightLatLon();
       sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
-      query.mAttributeList.addAttribute("grid.llbox", bbox);
+      originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
       const auto& box = projection.getBox();
       sprintf(bbox, "%f,%f,%f,%f", box.xmin(), box.ymin(), box.xmax(), box.ymax());
-      query.mAttributeList.addAttribute("grid.bbox", bbox);
+      originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
     else
     {
@@ -1035,11 +1035,11 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!projection.projectionParameter)
       projection.projectionParameter = param;
 
-    if (param == *parameter && query.mProducerNameList.size() == 0)
+    if (param == *parameter && originalGridQuery->mProducerNameList.size() == 0)
     {
-      gridEngine->getProducerNameList(*producer, query.mProducerNameList);
-      if (query.mProducerNameList.size() == 0)
-        query.mProducerNameList.push_back(*producer);
+      gridEngine->getProducerNameList(*producer, originalGridQuery->mProducerNameList);
+      if (originalGridQuery->mProducerNameList.size() == 0)
+        originalGridQuery->mProducerNameList.push_back(*producer);
     }
 
     std::string forecastTime = Fmi::to_iso_string(*time);
@@ -1052,11 +1052,11 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
 
     // Tranforming information from the attribute list into the query object.
-    queryConfigurator.configure(query, attributeList);
+    queryConfigurator.configure(*originalGridQuery, attributeList);
 
     // Fullfilling information into the query object.
 
-    for (auto it = query.mQueryParameterList.begin(); it != query.mQueryParameterList.end(); ++it)
+    for (auto it = originalGridQuery->mQueryParameterList.begin(); it != originalGridQuery->mQueryParameterList.end(); ++it)
     {
       it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
       it->mType = QueryServer::QueryParameter::Type::Vector;
@@ -1078,46 +1078,46 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         it->mForecastNumber = C_INT(*forecastNumber);
     }
 
-    query.mSearchType = QueryServer::Query::SearchType::TimeSteps;
-    query.mAttributeList.addAttribute("grid.crs", wkt);
+    originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
+    originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
     if (projection.size && *projection.size > 0)
     {
-      query.mAttributeList.addAttribute("grid.size", std::to_string(*projection.size));
+      originalGridQuery->mAttributeList.addAttribute("grid.size", std::to_string(*projection.size));
     }
     else
     {
       if (projection.xsize)
-        query.mAttributeList.addAttribute("grid.width", std::to_string(*projection.xsize));
+        originalGridQuery->mAttributeList.addAttribute("grid.width", std::to_string(*projection.xsize));
 
       if (projection.ysize)
-        query.mAttributeList.addAttribute("grid.height", std::to_string(*projection.ysize));
+        originalGridQuery->mAttributeList.addAttribute("grid.height", std::to_string(*projection.ysize));
     }
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
     {
       char bbox[100];
       sprintf(bbox, "%f,%f,%f,%f", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
-      query.mAttributeList.addAttribute("grid.bbox", bbox);
+      originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
 
     // The Query object before the query execution.
     // query.print(std::cout,0,0);
 
     // Executing the query.
-    gridEngine->executeQuery(query);
+    std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
 
     // The Query object after the query execution.
     // query.print(std::cout,0,0);
 
     // Extracting the projection information from the query result.
 
-    const char* crsStr = query.mAttributeList.getAttributeValue("grid.crs");
+    const char* crsStr = query->mAttributeList.getAttributeValue("grid.crs");
 
     if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
     {
-      const char* widthStr = query.mAttributeList.getAttributeValue("grid.width");
-      const char* heightStr = query.mAttributeList.getAttributeValue("grid.height");
+      const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
+      const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
 
       if (widthStr != nullptr)
         projection.xsize = atoi(widthStr);
@@ -1136,7 +1136,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       if (!projection.bboxcrs)
       {
-        const char* bboxStr = query.mAttributeList.getAttributeValue("grid.bbox");
+        const char* bboxStr = query->mAttributeList.getAttributeValue("grid.bbox");
 
         if (bboxStr != nullptr)
           splitString(bboxStr, ',', partList);
@@ -1180,7 +1180,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // Establish the numbers to draw.
 
     PointValues pointvalues;
-    pointvalues = read_gridForecasts(*this, gridEngine, query, crs, box, valid_time_period);
+    pointvalues = read_gridForecasts(*this, gridEngine, *query, crs, box, valid_time_period);
 
     // Clip if necessary
 

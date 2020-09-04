@@ -159,7 +159,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
 {
   try
   {
-    QueryServer::Query query;
+    std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
 
@@ -184,7 +184,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
       sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
 
       // Adding the bounding box information into the query.
-      query.mAttributeList.addAttribute("grid.llbox", bbox);
+      originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
     }
 
     // Adding parameter information into the query.
@@ -200,11 +200,11 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     std::string param = gridEngine->getParameterString(*producer, pName);
     attributeList.addAttribute("param", param);
 
-    if (param == *parameter && query.mProducerNameList.size() == 0)
+    if (param == *parameter && originalGridQuery->mProducerNameList.size() == 0)
     {
-      gridEngine->getProducerNameList(*theProducer, query.mProducerNameList);
-      if (query.mProducerNameList.size() == 0)
-        query.mProducerNameList.push_back(*theProducer);
+      gridEngine->getProducerNameList(*theProducer, originalGridQuery->mProducerNameList);
+      if (originalGridQuery->mProducerNameList.size() == 0)
+        originalGridQuery->mProducerNameList.push_back(*theProducer);
     }
 
     std::string forecastTime = Fmi::to_iso_string(theTime);
@@ -214,7 +214,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     attributeList.addAttribute("timezone", "UTC");
 
     // Tranforming information from the attribute list into the query object.
-    queryConfigurator.configure(query, attributeList);
+    queryConfigurator.configure(*originalGridQuery, attributeList);
 
     // Fullfilling information into the query object.
 
@@ -227,7 +227,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     float hlimit = C_FLOAT(*hilimit);
     float llimit = C_FLOAT(*lolimit);
 
-    for (auto it = query.mQueryParameterList.begin(); it != query.mQueryParameterList.end(); ++it)
+    for (auto it = originalGridQuery->mQueryParameterList.begin(); it != originalGridQuery->mQueryParameterList.end(); ++it)
     {
       it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
       it->mType = QueryServer::QueryParameter::Type::Isoband;
@@ -235,14 +235,14 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
       it->mContourHighValues.push_back(hlimit);
     }
 
-    query.mSearchType = QueryServer::Query::SearchType::TimeSteps;
-    query.mAttributeList.addAttribute("grid.crs", wkt);
+    originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
+    originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
     if (theProjection.xsize)
-      query.mAttributeList.addAttribute("grid.width", std::to_string(*theProjection.xsize));
+      originalGridQuery->mAttributeList.addAttribute("grid.width", std::to_string(*theProjection.xsize));
 
     if (theProjection.ysize)
-      query.mAttributeList.addAttribute("grid.height", std::to_string(*theProjection.ysize));
+      originalGridQuery->mAttributeList.addAttribute("grid.height", std::to_string(*theProjection.ysize));
 
     if (wkt == "data" && theProjection.x1 && theProjection.y1 && theProjection.x2 &&
         theProjection.y2)
@@ -254,19 +254,19 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
               *theProjection.y1,
               *theProjection.x2,
               *theProjection.y2);
-      query.mAttributeList.addAttribute("grid.bbox", bbox);
+      originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
 
     if (smoother.size)
-      query.mAttributeList.addAttribute("contour.smooth.size", std::to_string(*smoother.size));
+      originalGridQuery->mAttributeList.addAttribute("contour.smooth.size", std::to_string(*smoother.size));
 
     if (smoother.degree)
-      query.mAttributeList.addAttribute("contour.smooth.degree", std::to_string(*smoother.degree));
+      originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree", std::to_string(*smoother.degree));
 
     if (offset)
-      query.mAttributeList.addAttribute("contour.offset", std::to_string(*offset));
+      originalGridQuery->mAttributeList.addAttribute("contour.offset", std::to_string(*offset));
 
-    query.mAttributeList.setAttribute(
+    originalGridQuery->mAttributeList.setAttribute(
         "contour.coordinateType",
         std::to_string(static_cast<int>(T::CoordinateTypeValue::ORIGINAL_COORDINATES)));
     // query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::LATLON_COORDINATES));
@@ -276,7 +276,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     // query.print(std::cout,0,0);
 
     // Executing the query.
-    gridEngine->executeQuery(query);
+    std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
 
     // The Query object after the query execution.
     // query.print(std::cout,0,0);
@@ -284,7 +284,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     // Converting the returned WKB-isolines into OGRGeometry objects.
 
     std::vector<OGRGeometryPtr> isobands;
-    for (auto param = query.mQueryParameterList.begin(); param != query.mQueryParameterList.end();
+    for (auto param = query->mQueryParameterList.begin(); param != query->mQueryParameterList.end();
          ++param)
     {
       for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
