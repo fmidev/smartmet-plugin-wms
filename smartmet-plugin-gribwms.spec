@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.9.14
+Version: 20.9.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,10 +18,10 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.4.18
-BuildRequires: smartmet-library-grid-content-devel >= 20.9.14
-BuildRequires: smartmet-library-grid-files-devel >= 20.9.14
+BuildRequires: smartmet-library-grid-content-devel >= 20.9.15
+BuildRequires: smartmet-library-grid-files-devel >= 20.9.15
 BuildRequires: smartmet-library-macgyver-devel >= 20.9.3
-BuildRequires: smartmet-library-spine-devel >= 20.9.8
+BuildRequires: smartmet-library-spine-devel >= 20.9.14
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 20.8.21
@@ -47,8 +47,8 @@ Requires: fmt >= 6.2.1
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-grid-content >= 20.9.14
-Requires: smartmet-library-grid-files >= 20.9.14
+Requires: smartmet-library-grid-content >= 20.9.15
+Requires: smartmet-library-grid-files >= 20.9.15
 Requires: smartmet-library-gis >= 20.8.21
 Requires: smartmet-library-macgyver >= 20.9.3
 Requires: smartmet-library-giza >= 20.4.18
@@ -60,8 +60,8 @@ Requires: smartmet-engine-contour >= 20.8.21
 Requires: smartmet-engine-gis >= 20.8.21
 Requires: smartmet-engine-grid >= 20.9.14
 Requires: smartmet-engine-geonames >= 20.8.21
-Requires: smartmet-server >= 20.9.9
-Requires: smartmet-library-spine >= 20.9.8
+Requires: smartmet-server >= 20.9.14
+Requires: smartmet-library-spine >= 20.9.14
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -98,6 +98,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
+* Tue Sep 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.15-1.fmi
+- Repackaged due to library ABI changes
+
 * Mon Sep 14 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.14-1.fmi
 - Repackaged due to library ABI changes
 
