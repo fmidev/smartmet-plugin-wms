@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -22,7 +22,7 @@ void LegendSymbols::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Legend-layer symbols JSON must be a map");
+      throw Fmi::Exception(BCP, "Legend-layer symbols JSON must be a map");
 
     // Iterate through all the members
 
@@ -44,13 +44,13 @@ void LegendSymbols::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "attributes")
         attributes.init(json, theConfig);
       else
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "Legend-layer symbols do not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -74,7 +74,7 @@ std::size_t LegendSymbols::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

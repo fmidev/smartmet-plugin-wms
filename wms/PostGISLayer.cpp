@@ -7,7 +7,7 @@
 
 #include <engines/gis/MapOptions.h>
 #include <gis/OGR.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -26,7 +26,7 @@ void PostGISLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -39,7 +39,7 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     // Get projection details
     if (!projection.crs)
-      throw Spine::Exception(BCP, "PostGISLayer projection not set");
+      throw Fmi::Exception(BCP, "PostGISLayer projection not set");
 
     auto crs = projection.getCRS();
 
@@ -118,7 +118,7 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -130,7 +130,7 @@ std::size_t PostGISLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

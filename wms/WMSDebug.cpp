@@ -1,6 +1,6 @@
 #include "WMSDebug.h"
 #include <spine/Convenience.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -139,7 +139,7 @@ std::ostream& operator<<(std::ostream& ost, const Spine::HTTP::Request& theHTTPR
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Printing WMS request failed!");
+    throw Fmi::Exception::Trace(BCP, "Printing WMS request failed!");
   }
 }
 

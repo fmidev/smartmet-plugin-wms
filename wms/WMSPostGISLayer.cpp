@@ -3,7 +3,7 @@
 #include <boost/move/make_unique.hpp>
 #include <gis/Host.h>
 #include <gis/OGR.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -56,7 +56,7 @@ PostGISMetaDataSettings get_postgis_metadata_settings(const libconfig::Config& c
     const auto& group = postgis_layer_settings[i];
 
     if (!group.isGroup())
-      throw Spine::Exception(BCP, "wms.get_capabilities.postgis_layer must be a list of groups");
+      throw Fmi::Exception(BCP, "wms.get_capabilities.postgis_layer must be a list of groups");
 
     // layer specific interval
     group.lookupValue("update_interval", ret.update_interval);
@@ -85,13 +85,13 @@ WMSPostGISLayer::WMSPostGISLayer(const WMSConfig& config, const Json::Value& jso
   try
   {
     if (json["pgname"].isNull())
-      throw Spine::Exception(BCP, "'pgname' must be defined for postgis layer");
+      throw Fmi::Exception(BCP, "'pgname' must be defined for postgis layer");
     if (json["schema"].isNull())
-      throw Spine::Exception(BCP, "'schema' must be defined for postgis layer");
+      throw Fmi::Exception(BCP, "'schema' must be defined for postgis layer");
     if (json["table"].isNull())
-      throw Spine::Exception(BCP, "'table' must be defined for postgis layer");
+      throw Fmi::Exception(BCP, "'table' must be defined for postgis layer");
     if (json["geometry_column"].isNull())
-      throw Spine::Exception(BCP, "'geometry_column' must be defined for postgis layer");
+      throw Fmi::Exception(BCP, "'geometry_column' must be defined for postgis layer");
 
     mdq_options.pgname = json["pgname"].asString();
     mdq_options.schema = json["schema"].asString();
@@ -112,7 +112,7 @@ WMSPostGISLayer::WMSPostGISLayer(const WMSConfig& config, const Json::Value& jso
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to initializa PostGIS layer!");
+    throw Fmi::Exception::Trace(BCP, "Failed to initializa PostGIS layer!");
   }
 }
 
@@ -154,7 +154,7 @@ bool WMSPostGISLayer::mustUpdateLayerMetaData()
   }
   catch (...)
   {
-    throw Spine::Exception(
+    throw Fmi::Exception(
         BCP, "WMSPostGISLayer::mustUpdateLayerMetaData() function call failed!", nullptr);
   }
 }
@@ -177,7 +177,7 @@ void WMSPostGISLayer::updateLayerMetaData()
     {
       if (!quiet)
       {
-        Spine::Exception exception(BCP, "WMS layer metadata update failure!", nullptr);
+        Fmi::Exception exception(BCP, "WMS layer metadata update failure!", nullptr);
         exception.addParameter("Layer name", name);
         exception.printError();
       }
@@ -223,7 +223,7 @@ void WMSPostGISLayer::updateLayerMetaData()
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to update PostGIS layer metadata!");
+    throw Fmi::Exception::Trace(BCP, "Failed to update PostGIS layer metadata!");
   }
 }
 

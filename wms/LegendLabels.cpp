@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -32,7 +32,7 @@ void LegendLabels::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Legend-layer labels JSON must be a map");
+      throw Fmi::Exception(BCP, "Legend-layer labels JSON must be a map");
 
     // Iterate through all the members
 
@@ -56,7 +56,7 @@ void LegendLabels::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "conversions")
       {
         if (!json.isObject())
-          throw Spine::Exception(BCP, "legend-layer conversions setting in a must be a map");
+          throw Fmi::Exception(BCP, "legend-layer conversions setting in a must be a map");
         const auto members = json.getMemberNames();
         for (const auto& name : members)
         {
@@ -70,25 +70,25 @@ void LegendLabels::init(const Json::Value& theJson, const Config& theConfig)
             {
               const Json::Value& lang_json = label_json[lang];
               if (!lang_json.isString())
-                throw Spine::Exception(
+                throw Fmi::Exception(
                     BCP,
                     "Legend layer conversion '" + name + "' value for a language must be a string");
               conversions[lang + ":" + name] = lang_json.asString();
             }
           }
           else
-            throw Spine::Exception(
+            throw Fmi::Exception(
                 BCP, "Legend layer conversion '" + name + "' value must be a string or a map");
         }
       }
       else
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "Legend-layer labels do not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -113,7 +113,7 @@ std::size_t LegendLabels::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

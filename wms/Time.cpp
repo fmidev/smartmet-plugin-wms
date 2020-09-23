@@ -1,7 +1,7 @@
 #include "Time.h"
 
 #include <macgyver/TimeParser.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -30,7 +30,7 @@ boost::posix_time::ptime parse_time(const std::string& theTime)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -58,7 +58,7 @@ boost::posix_time::ptime parse_time(const std::string& theTime,
 
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

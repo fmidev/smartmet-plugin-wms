@@ -8,7 +8,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 
 #include <ctpp2/CDT.hpp>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 
 namespace SmartMet
@@ -64,7 +64,7 @@ void Attributes::init(const Json::Value& theJson, const Config& /* theConfig */)
       return;
 
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Attributes JSON is not a JSON object (name-value pairs)");
+      throw Fmi::Exception(BCP, "Attributes JSON is not a JSON object (name-value pairs)");
 
     // Iterate trhough all the members
 
@@ -100,18 +100,18 @@ void Attributes::init(const Json::Value& theJson, const Config& /* theConfig */)
         }
         case Json::arrayValue:
         {
-          throw Spine::Exception(BCP, "Arrays are not allowed as an Attribute value");
+          throw Fmi::Exception(BCP, "Arrays are not allowed as an Attribute value");
         }
         case Json::objectValue:
         {
-          throw Spine::Exception(BCP, "Maps are not allowed as an Attribute value");
+          throw Fmi::Exception(BCP, "Maps are not allowed as an Attribute value");
         }
       }
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -160,7 +160,7 @@ void Attributes::generate(CTPP::CDT& theLocals, const State& theState) const
       bool is_valid = ((attr_name == "qid") || is_presentation || is_regular);
 
       if (!is_valid)
-        throw Spine::Exception(BCP, "Illegal SVG attribute name '" + attr_name + "'");
+        throw Fmi::Exception(BCP, "Illegal SVG attribute name '" + attr_name + "'");
 
       // Make sure the ID is unique
       if (attr_name == "id")
@@ -193,7 +193,7 @@ void Attributes::generate(CTPP::CDT& theLocals, const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -240,7 +240,7 @@ void Attributes::generatePresentation(CTPP::CDT& theLocals,
       bool is_valid = ((attr_name == "qid") || is_presentation || is_regular);
 
       if (!is_valid)
-        throw Spine::Exception(BCP, "Illegal SVG attribute name '" + attr_name + "'");
+        throw Fmi::Exception(BCP, "Illegal SVG attribute name '" + attr_name + "'");
 
       // Handle the attribute
 
@@ -254,7 +254,7 @@ void Attributes::generatePresentation(CTPP::CDT& theLocals,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -309,7 +309,7 @@ std::size_t Attributes::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -347,7 +347,7 @@ boost::optional<std::string> Attributes::getLocalIri(const std::string& theName)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -1,6 +1,6 @@
 #include "TimeResolution.h"
 #include "WMSException.h"
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -14,7 +14,7 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
   {
     if (periodString.empty() || periodString.at(0) != 'P' || designatorCharPos == 0)
     {
-      Spine::Exception exception(BCP, "Cannot parse resolution string '" + periodString + "'!");
+      Fmi::Exception exception(BCP, "Cannot parse resolution string '" + periodString + "'!");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
       throw exception;
     }
@@ -29,7 +29,7 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
 
     if ((designatorCharPos - pos) == 1)
     {
-      throw Spine::Exception(BCP, "Invalid dimension value '" + periodString + "'!")
+      throw Fmi::Exception(BCP, "Invalid dimension value '" + periodString + "'!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
     }
 
@@ -43,7 +43,7 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
     }
     catch (const boost::bad_lexical_cast&)
     {
-      throw Spine::Exception::Trace(BCP, "Invalid dimension value '" + periodString + "'!")
+      throw Fmi::Exception::Trace(BCP, "Invalid dimension value '" + periodString + "'!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
     }
 
@@ -51,7 +51,7 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Parsing resolution failed!");
+    throw Fmi::Exception::Trace(BCP, "Parsing resolution failed!");
   }
 }
 
@@ -72,7 +72,7 @@ unsigned int resolution_in_minutes(const std::string& resolution)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Extracting resolution in minutes failed!");
+    throw Fmi::Exception::Trace(BCP, "Extracting resolution in minutes failed!");
   }
 }
 

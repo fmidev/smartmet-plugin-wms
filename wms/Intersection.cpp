@@ -31,7 +31,7 @@ void Intersection::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Intersection JSON is not a JSON map");
+      throw Fmi::Exception(BCP, "Intersection JSON is not a JSON map");
 
     // Extract member values
 
@@ -83,7 +83,7 @@ void Intersection::init(const Json::Value& theJson, const Config& theConfig)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -114,7 +114,7 @@ OGRGeometryPtr Intersection::intersect(OGRGeometryPtr theGeometry) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -141,7 +141,7 @@ bool Intersection::inside(double theX, double theY) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -312,7 +312,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -339,7 +339,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     // Establish the data
 
     if (!producer && !theProducer)
-      throw Spine::Exception(BCP, "Producer not set for intersection");
+      throw Fmi::Exception(BCP, "Producer not set for intersection");
 
     auto q = theState.get(producer ? *producer : *theProducer);
 
@@ -359,7 +359,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
       for (q->resetLevel(); !match && q->nextLevel();)
         match = (q->levelValue() == *level);
       if (!match)
-        throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available");
+        throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available");
     }
 
     // Establish the projection from the geometry to be clipped
@@ -397,7 +397,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     else if (interpolation == "loglinear")
       options.interpolation = Engine::Contour::LogLinear;
     else
-      throw Spine::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'");
+      throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'");
 
     std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;
@@ -407,17 +407,17 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     // Select the data
 
     if (!q->param(options.parameter.number()))
-      throw Spine::Exception(BCP, "Parameter '" + options.parameter.name() + "' unavailable.");
+      throw Fmi::Exception(BCP, "Parameter '" + options.parameter.name() + "' unavailable.");
 
     if (!q->firstLevel())
-      throw Spine::Exception(BCP, "Unable to set first level in querydata.");
+      throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
 
     // Select the level.
     if (options.level)
     {
       if (!q->selectLevel(*options.level))
       {
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "Level value " + boost::lexical_cast<std::string>(*options.level) +
                                    " is not available.");
       }
@@ -445,7 +445,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -478,7 +478,7 @@ std::size_t Intersection::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -19,7 +19,7 @@
 #include "TranslationLayer.h"
 #include "WKTLayer.h"
 #include "WindRoseLayer.h"
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -41,7 +41,7 @@ Layer* create(const Json::Value& theJson)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Layer JSON must be an object");
+      throw Fmi::Exception(BCP, "Layer JSON must be an object");
 
     auto name = theJson.get("layer_type", "tag").asString();
 
@@ -84,11 +84,11 @@ Layer* create(const Json::Value& theJson)
     if (name == "frame")
       return new FrameLayer;
 
-    throw Spine::Exception(BCP, "Unknown layer type '" + name + "'");
+    throw Fmi::Exception(BCP, "Unknown layer type '" + name + "'");
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 }  // namespace LayerFactory

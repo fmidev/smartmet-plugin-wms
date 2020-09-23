@@ -12,7 +12,7 @@
 #include <gdal/ogr_spatialref.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -797,7 +797,7 @@ unsigned int isoband_legend_width(const Json::Value& json, unsigned int def)
   }
   catch (...)
   {
-    throw Spine::Exception(
+    throw Fmi::Exception(
         BCP, "'fixed_width' attribute must be integer: " + widthJson.toStyledString());
   }
 
@@ -1216,7 +1216,7 @@ bool WMSLayer::isValidCRS(const std::string& theCRS) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Validating CRS failed!");
+    throw Fmi::Exception::Trace(BCP, "Validating CRS failed!");
   }
 }
 
@@ -1232,7 +1232,7 @@ bool WMSLayer::isValidStyle(const std::string& theStyle) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Validating style failed!");
+    throw Fmi::Exception::Trace(BCP, "Validating style failed!");
   }
 }
 
@@ -1247,7 +1247,7 @@ bool WMSLayer::isValidTime(const boost::posix_time::ptime& theTime) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Validating time failed!");
+    throw Fmi::Exception::Trace(BCP, "Validating time failed!");
   }
 }
 
@@ -1260,7 +1260,7 @@ bool WMSLayer::currentValue() const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Validating current time failed!");
+    throw Fmi::Exception::Trace(BCP, "Validating current time failed!");
   }
 }
 
@@ -1272,7 +1272,7 @@ boost::posix_time::ptime WMSLayer::mostCurrentTime() const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Validating most current time!");
+    throw Fmi::Exception::Trace(BCP, "Validating most current time!");
   }
 }
 
@@ -1288,7 +1288,7 @@ std::string WMSLayer::info() const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "WMS info operation failed!");
+    throw Fmi::Exception::Trace(BCP, "WMS info operation failed!");
   }
 }
 
@@ -1366,7 +1366,7 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Printing the request failed!");
+    throw Fmi::Exception::Trace(BCP, "Printing the request failed!");
   }
 }
 
@@ -1650,7 +1650,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to generate capabilities for the layer!");
+    throw Fmi::Exception::Trace(BCP, "Failed to generate capabilities for the layer!");
   }
 }
 
@@ -1662,7 +1662,7 @@ Json::Value WMSLayer::readJsonFile(const std::string theFileName)
     std::ifstream in(theFileName.c_str());
 
     if (!in)
-      throw Spine::Exception(BCP, "Failed to open '" + theFileName + "' for reading!");
+      throw Fmi::Exception(BCP, "Failed to open '" + theFileName + "' for reading!");
 
     content.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
 
@@ -1670,7 +1670,7 @@ Json::Value WMSLayer::readJsonFile(const std::string theFileName)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Error in reading json-file" + theFileName);
+    throw Fmi::Exception::Trace(BCP, "Error in reading json-file" + theFileName);
   }
 }
 
@@ -1683,7 +1683,7 @@ Json::Value WMSLayer::parseJsonString(const std::string theJsonString)
   if (!parsingSuccessful)
   {
     // report to the user the failure
-    throw Spine::Exception(BCP, reader.getFormattedErrorMessages());
+    throw Fmi::Exception(BCP, reader.getFormattedErrorMessages());
   }
 
   return json;
@@ -1709,7 +1709,7 @@ void WMSLayer::setCustomer(const std::string& c)
     if (missingTemplateFiles.at(0) == ',')
       missingTemplateFiles = missingTemplateFiles.substr(1);
 
-    throw Spine::Exception(BCP, "Missing legend template file(s): " + missingTemplateFiles + "!");
+    throw Fmi::Exception(BCP, "Missing legend template file(s): " + missingTemplateFiles + "!");
   }
 }
 

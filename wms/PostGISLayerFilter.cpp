@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/Json.h>
 #include <stdexcept>
 
@@ -23,7 +23,7 @@ void PostGISLayerFilter::init(const Json::Value& theJson, const Config& theConfi
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "JSON is not a JSON object!");
+      throw Fmi::Exception(BCP, "JSON is not a JSON object!");
 
     // Iterate through all the members
 
@@ -39,12 +39,12 @@ void PostGISLayerFilter::init(const Json::Value& theJson, const Config& theConfi
       else if (name == "text_attributes")
         text_attributes.init(json, theConfig);
       else
-        throw Spine::Exception(BCP, "Unknown setting '" + name + "'!");
+        throw Fmi::Exception(BCP, "Unknown setting '" + name + "'!");
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Layer init failed!");
+    throw Fmi::Exception::Trace(BCP, "Layer init failed!");
   }
 }
 
@@ -64,7 +64,7 @@ std::size_t PostGISLayerFilter::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

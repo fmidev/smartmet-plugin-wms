@@ -4,7 +4,7 @@
 
 #include <boost/format.hpp>
 #include <boost/locale.hpp>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <cmath>
 #include <iomanip>
 #include <stdexcept>
@@ -35,7 +35,7 @@ void Label::setLocale(const std::string& theLocale)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -77,7 +77,7 @@ std::string Label::print(double theValue) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -92,7 +92,7 @@ void Label::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "JSON is not a JSON object");
 
     // Iterate through all the members
 
@@ -137,10 +137,10 @@ void Label::init(const Json::Value& theJson, const Config& theConfig)
         orientation = json.asString();
         if (orientation != "horizontal" && orientation != "vertical" && orientation != "auto" &&
             orientation != "gradient")
-          throw Spine::Exception(BCP, "Unknown label orientation '" + orientation + "'");
+          throw Fmi::Exception(BCP, "Unknown label orientation '" + orientation + "'");
       }
       else
-        throw Spine::Exception(BCP, "Unknown setting '" + name + "'!");
+        throw Fmi::Exception(BCP, "Unknown setting '" + name + "'!");
     }
 
     if (!unit_conversion.empty())
@@ -152,7 +152,7 @@ void Label::init(const Json::Value& theJson, const Config& theConfig)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -183,7 +183,7 @@ std::size_t Label::hash_value(const State& /* theState */) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

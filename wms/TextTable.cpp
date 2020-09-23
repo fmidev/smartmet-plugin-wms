@@ -1,6 +1,6 @@
 #include "TextTable.h"
 #include <macgyver/StringConversion.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <numeric>
 
 namespace SmartMet
@@ -178,7 +178,7 @@ void TextTable::addTableAttributes(const Json::Value& attributes, std::string ta
       }
       else
       {
-        throw Spine::Exception(
+        throw Fmi::Exception(
             BCP, "TextTable: Error: text-attribute of header and columns must be an array!");
       }
     }
@@ -205,7 +205,7 @@ TextTable::TextTable(const Json::Value& tableAttributes, unsigned int theX, unsi
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "TextTable: Error parsing configuration file!");
+    throw Fmi::Exception::Trace(BCP, "TextTable: Error parsing configuration file!");
   }
 }
 
@@ -318,7 +318,7 @@ void TextTable::addContent(const Json::Value& tableDataJson)
   if (!dataJson.isNull())
   {
     if (!dataJson.isArray())
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "IceMapLayer: Error in configuration: table_data.data attribute must be array!");
 
     for (unsigned int i = 0; i < dataJson.size(); i++)

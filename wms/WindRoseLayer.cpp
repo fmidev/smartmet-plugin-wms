@@ -21,7 +21,7 @@
 #include <gis/Box.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterTools.h>
 #include <spine/TimeSeries.h>
@@ -67,7 +67,7 @@ bool is_rose_data_valid(const Spine::TimeSeries::TimeSeries& directions,
     // Safety check, the sizes should really be always equal
 
     if (directions.size() != speeds.size() || speeds.size() != temperatures.size())
-      throw Spine::Exception(BCP, "Internal failure in wind rose observations, data size mismatch");
+      throw Fmi::Exception(BCP, "Internal failure in wind rose observations, data size mismatch");
 
     bool first = true;
     boost::posix_time::ptime previous_valid_time;
@@ -104,7 +104,7 @@ bool is_rose_data_valid(const Spine::TimeSeries::TimeSeries& directions,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -135,7 +135,7 @@ double mean(const Spine::TimeSeries::TimeSeries& tseries)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -169,7 +169,7 @@ double max(const Spine::TimeSeries::TimeSeries& tseries)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -191,7 +191,7 @@ int rose_sector(int sectors, double direction)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -209,7 +209,7 @@ double sector_start_angle(int sector, int sectors)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -227,7 +227,7 @@ double sector_end_angle(int sector, int sectors)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -268,7 +268,7 @@ std::vector<double> calculate_rose_distribution(const Spine::TimeSeries::TimeSer
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -301,7 +301,7 @@ std::vector<double> calculate_rose_maxima(const Spine::TimeSeries::TimeSeries& d
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -319,7 +319,7 @@ void WindRoseLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "WindRose-layer JSON is not a JSON hash");
+      throw Fmi::Exception(BCP, "WindRose-layer JSON is not a JSON hash");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -353,7 +353,7 @@ void WindRoseLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -385,7 +385,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
   try
   {
     if (theState.inDefs())
-      throw Spine::Exception(BCP, "WindRoseLayer cannot be used in the defs section");
+      throw Fmi::Exception(BCP, "WindRoseLayer cannot be used in the defs section");
 
     if (!validLayer(theState))
       return;
@@ -440,7 +440,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     {
       // Currently we require the station to have a fmisid
       if (!station.fmisid)
-        throw Spine::Exception(BCP, "WindRose station fmisid missing");
+        throw Fmi::Exception(BCP, "WindRose station fmisid missing");
 
       // Find the observations for the station
       auto it = rosedata.find(*station.fmisid);
@@ -649,7 +649,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
           else if (observation.parameter == "max_t(ws_10min)")
             value = wdata.max_wind;
           else
-            throw Spine::Exception(
+            throw Fmi::Exception(
                 BCP, "Unknown WindRoseLayer parameter '" + observation.parameter + "'");
 
           CTPP::CDT obs_cdt(CTPP::CDT::HASH_VAL);
@@ -675,7 +675,7 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -714,7 +714,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
     {
       settings.taggedFMISIDs.clear();
       if (!station.fmisid)
-        throw Spine::Exception(BCP, "Station fmisid is required for wind roses");
+        throw Fmi::Exception(BCP, "Station fmisid is required for wind roses");
 
       settings.taggedFMISIDs.emplace_back(Fmi::to_string(*station.fmisid), *station.fmisid);
 
@@ -757,7 +757,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -782,7 +782,7 @@ std::size_t WindRoseLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

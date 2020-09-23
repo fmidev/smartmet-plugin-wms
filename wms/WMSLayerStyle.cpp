@@ -2,7 +2,7 @@
 #include <ostream>
 
 #include <macgyver/StringConversion.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -31,9 +31,9 @@ CTPP::CDT WMSLayerStyle::getCapabilities() const
     // Style name, title and abstract
 
     if (name.empty())
-      throw Spine::Exception::Trace(BCP, "WMS layer style must have a name!");
+      throw Fmi::Exception::Trace(BCP, "WMS layer style must have a name!");
     if (title.empty())
-      throw Spine::Exception::Trace(BCP, "WMS layer style must have a title!");
+      throw Fmi::Exception::Trace(BCP, "WMS layer style must have a title!");
 
     style["name"] = name;
     style["title"] = title;
@@ -73,7 +73,7 @@ CTPP::CDT WMSLayerStyle::getCapabilities() const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to convert WMSLayerStyle to template output format");
+    throw Fmi::Exception::Trace(BCP, "Failed to convert WMSLayerStyle to template output format");
   }
 }
 

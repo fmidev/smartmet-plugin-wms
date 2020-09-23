@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 #include <string>
 
@@ -23,7 +23,7 @@ void Symbols::init(const Json::Value& theJson, const State& theState)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Styles JSON must be a JSON object (name-value pairs)");
+      throw Fmi::Exception(BCP, "Styles JSON must be a JSON object (name-value pairs)");
 
     // Iterate through all the members
 
@@ -33,25 +33,25 @@ void Symbols::init(const Json::Value& theJson, const State& theState)
       const Json::Value& symbol_json = theJson[name];
 
       if (!symbol_json.isString())
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "Invalid object type in defs.symbols initialization, expecting "
                                "name-value pair for symbol '" +
                                    name + "'");
 
       std::string value = Spine::HTTP::urldecode(symbol_json.asString());
       if (value.substr(0, 6) != "data:,")
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "Only RFC2397 data-URLs supported: URL incorrect '" + value +
                                    "' for symbol '" + name + "'");
       value = value.substr(6);  // Cut away data:,
       if (!theState.setSymbol(name, value))
-        throw Spine::Exception(BCP, "defs.symbols symbol '" + name + "' defined multiple times");
+        throw Fmi::Exception(BCP, "defs.symbols symbol '" + name + "' defined multiple times");
       symbols[name] = value;
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -22,7 +22,7 @@ void Isoline::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Isoline JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Isoline JSON is not a JSON object");
 
     // Iterate through all the members
 
@@ -43,12 +43,12 @@ void Isoline::init(const Json::Value& theJson, const Config& theConfig)
         label->init(json, theConfig);
       }
       else
-        throw Spine::Exception(BCP, "Isoline does not have a setting named '" + name + "'");
+        throw Fmi::Exception(BCP, "Isoline does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -85,7 +85,7 @@ std::size_t Isoline::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

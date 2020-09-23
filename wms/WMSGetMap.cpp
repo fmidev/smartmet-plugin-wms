@@ -13,7 +13,7 @@
 #include <boost/range/algorithm.hpp>
 #include <macgyver/StringConversion.h>
 #include <spine/Convenience.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -248,55 +248,55 @@ void check_getmap_request_options(const Spine::HTTP::Request& theHTTPRequest)
 
     if (!theHTTPRequest.getParameter("VERSION"))
     {
-      throw Spine::Exception(BCP, "Version not defined")
+      throw Fmi::Exception(BCP, "Version not defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
     if (!theHTTPRequest.getParameter("LAYERS"))
     {
-      throw Spine::Exception(BCP, "At least one layer must be defined in GetMap request")
+      throw Fmi::Exception(BCP, "At least one layer must be defined in GetMap request")
           .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
     }
 
     if (!theHTTPRequest.getParameter("STYLES"))
     {
-      throw Spine::Exception(BCP, "STYLES-option must be defined, even if it is empty")
+      throw Fmi::Exception(BCP, "STYLES-option must be defined, even if it is empty")
           .addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED);
     }
 
     if (!theHTTPRequest.getParameter("CRS"))
     {
-      throw Spine::Exception(BCP, "CRS-option has not been defined")
+      throw Fmi::Exception(BCP, "CRS-option has not been defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
     if (!theHTTPRequest.getParameter("BBOX"))
     {
-      throw Spine::Exception(BCP, "BBOX-option has not been defined")
+      throw Fmi::Exception(BCP, "BBOX-option has not been defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
     }
 
     if (!theHTTPRequest.getParameter("WIDTH"))
     {
-      throw Spine::Exception(BCP, "WIDTH-option has not been defined")
+      throw Fmi::Exception(BCP, "WIDTH-option has not been defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
     }
 
     if (!theHTTPRequest.getParameter("HEIGHT"))
     {
-      throw Spine::Exception(BCP, "HEIGHT-option has not been defined")
+      throw Fmi::Exception(BCP, "HEIGHT-option has not been defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
     }
 
     if (!theHTTPRequest.getParameter("FORMAT"))
     {
-      throw Spine::Exception(BCP, "FORMAT-option has not been defined")
+      throw Fmi::Exception(BCP, "FORMAT-option has not been defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "GetMap request options did not validate!");
+    throw Fmi::Exception::Trace(BCP, "GetMap request options did not validate!");
   }
 }
 
@@ -309,7 +309,7 @@ void validate_options(const tag_get_map_request_options& options,
     // check the requested version number
     if (!itsConfig.isValidVersion(options.version))
     {
-      throw Spine::Exception(BCP, "The requested version is not supported!")
+      throw Fmi::Exception(BCP, "The requested version is not supported!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED)
           .addParameter("Requested version", options.version)
           .addParameter("Supported versions",
@@ -325,7 +325,7 @@ void validate_options(const tag_get_map_request_options& options,
       // check that layer is valid (as defined in GetCapabilities response)
       if (!itsConfig.isValidLayer(layer))
       {
-        throw Spine::Exception(BCP, "The requested layer is not supported!")
+        throw Fmi::Exception(BCP, "The requested layer is not supported!")
             .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED)
             .addParameter("Requested layer", layer);
       }
@@ -333,7 +333,7 @@ void validate_options(const tag_get_map_request_options& options,
       // check that style is valid (as defined in GetCapabilities response)
       if (!itsConfig.isValidStyle(layer, style))
       {
-        throw Spine::Exception(BCP, "The style is not supported by the requested layer!")
+        throw Fmi::Exception(BCP, "The style is not supported by the requested layer!")
             .addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED)
             .addParameter("Requested style", style)
             .addParameter("Requested layer", layer);
@@ -342,7 +342,7 @@ void validate_options(const tag_get_map_request_options& options,
       // check that CRS is valid (as defined in GetCapabilities response)
       if (!itsConfig.isValidCRS(layer, options.bbox.crs))
       {
-        throw Spine::Exception(BCP, "The CRS is not supported by the requested layer!")
+        throw Fmi::Exception(BCP, "The CRS is not supported by the requested layer!")
             .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_CRS)
             .addParameter("Requested CRS", options.bbox.crs)
             .addParameter("Requested layer", layer);
@@ -354,7 +354,7 @@ void validate_options(const tag_get_map_request_options& options,
         if (!itsConfig.isValidTime(layer, timestamp, querydata))
         {
           // TODO: enable when FMI app is working properly
-          throw Spine::Exception(BCP, "Invalid time requested!")
+          throw Fmi::Exception(BCP, "Invalid time requested!")
               .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
               .addParameter("Requested time", Fmi::to_iso_string(timestamp))
               .addParameter("Requested layer", layer)
@@ -366,7 +366,7 @@ void validate_options(const tag_get_map_request_options& options,
     // check format
     if (!itsConfig.isValidMapFormat(options.format))
     {
-      throw Spine::Exception(BCP, "The requested map format is not supported!")
+      throw Fmi::Exception(BCP, "The requested map format is not supported!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_FORMAT)
           .addParameter("Requested map format", options.format)
           .addParameter("Supported map formats",
@@ -376,7 +376,7 @@ void validate_options(const tag_get_map_request_options& options,
     // check bbox
     if (options.bbox.xMin > options.bbox.xMax || options.bbox.yMin > options.bbox.yMax)
     {
-      throw Spine::Exception(BCP, "Invalid BBOX definition!")
+      throw Fmi::Exception(BCP, "Invalid BBOX definition!")
           .addDetail("'xMin' must be smaller than 'xMax' and 'yMin' must be smaller than 'yMax'.")
           .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
           .addParameter("xMin", std::to_string(options.bbox.xMin))
@@ -387,7 +387,7 @@ void validate_options(const tag_get_map_request_options& options,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "GetMap options did not validate!");
+    throw Fmi::Exception::Trace(BCP, "GetMap options did not validate!");
   }
 }
 
@@ -410,7 +410,7 @@ boost::posix_time::ptime parse_time(const std::string& time)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Parsing GetMap time failed!");
+    throw Fmi::Exception::Trace(BCP, "Parsing GetMap time failed!");
   }
 }
 
@@ -425,7 +425,7 @@ void parse_interval_with_resolution(const std::string time_str,
 
     if (parts.size() != 3)
     {
-      Spine::Exception exception(BCP, "Invalid time interval!");
+      Fmi::Exception exception(BCP, "Invalid time interval!");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
       exception.addParameter("Time interval", time_str);
       throw exception;
@@ -441,7 +441,7 @@ void parse_interval_with_resolution(const std::string time_str,
 
     if (endTime < startTime)
     {
-      Spine::Exception exception(BCP, "Invalid time interval!");
+      Fmi::Exception exception(BCP, "Invalid time interval!");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
       exception.addParameter("Time interval", time_str);
       throw exception;
@@ -462,7 +462,7 @@ void parse_interval_with_resolution(const std::string time_str,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Parsing GetMap time interval failed!");
+    throw Fmi::Exception::Trace(BCP, "Parsing GetMap time interval failed!");
   }
 }
 
@@ -491,7 +491,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     {
       if (!itsConfig.isValidLayer(layers[i]))
       {
-        Spine::Exception exception(BCP, "The requested layer is not supported!");
+        Fmi::Exception exception(BCP, "The requested layer is not supported!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
         exception.addParameter("Layer", layers[i]);
         throw exception;
@@ -509,7 +509,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     // so if styles has been defined there must be equal amount of layers
     if (styles.size() != layers.size())
     {
-      Spine::Exception exception(BCP, "LAYERS and STYLES amount mismatch");
+      Fmi::Exception exception(BCP, "LAYERS and STYLES amount mismatch");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       exception.addParameter("Layers", std::to_string(layers.size()));
       exception.addParameter("Styles", std::to_string(styles.size()));
@@ -524,7 +524,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     }
     catch (...)
     {
-      throw Spine::Exception::Trace(BCP, "Invalid width / height value!")
+      throw Fmi::Exception::Trace(BCP, "Invalid width / height value!")
           .addDetail("The WIDTH and HEIGHT options must be valid integer numbers!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
@@ -535,7 +535,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
 
       if (!itsConfig.isValidLayer(layerName))
       {
-        Spine::Exception exception(BCP, "The requested layer is not supported!");
+        Fmi::Exception exception(BCP, "The requested layer is not supported!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
         exception.addParameter("Requested layer", layerName);
         throw exception;
@@ -561,7 +561,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
         Spine::optional_string(theRequest.getParameter("TRANSPARENT"), "FALSE"));
     if (false == cicomp(transparent_str, "true") && false == cicomp(transparent_str, "false"))
     {
-      Spine::Exception exception(BCP, "Invalid value for the TRANSPARENT option!");
+      Fmi::Exception exception(BCP, "Invalid value for the TRANSPARENT option!");
       exception.addDetail("The TRANSPARENT option must have value 'TRUE' or 'FALSE'");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       throw exception;
@@ -629,7 +629,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       }
       else
       {
-        Spine::Exception exception(BCP, "Invalid TIME option value!");
+        Fmi::Exception exception(BCP, "Invalid TIME option value!");
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
         exception.addParameter("Time value", time_str);
         throw exception;
@@ -681,7 +681,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       {
         if (false == itsConfig.currentValue(layerName))
         {
-          Spine::Exception exception(BCP, "Invalid TIME option value for the current layer!");
+          Fmi::Exception exception(BCP, "Invalid TIME option value for the current layer!");
           exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
           exception.addParameter("Time value", time_str);
           exception.addParameter("Layer", layerName);
@@ -698,13 +698,13 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     else
     {
       if (itsParameters.timesteps.empty())
-        throw Spine::Exception(BCP, "Intervals need to be at least one minute long");
+        throw Fmi::Exception(BCP, "Intervals need to be at least one minute long");
       theRequest.addParameter("time", Fmi::to_iso_string(itsParameters.timesteps[0]));
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to complete GetMap request!");
+    throw Fmi::Exception::Trace(BCP, "Failed to complete GetMap request!");
   }
 }
 
@@ -728,7 +728,7 @@ Json::Value WMSGetMap::json() const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Extracting GetMap JSON failed!");
+    throw Fmi::Exception::Trace(BCP, "Extracting GetMap JSON failed!");
   }
 }
 

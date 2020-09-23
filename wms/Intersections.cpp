@@ -3,7 +3,7 @@
 
 #include <boost/functional/hash.hpp>
 #include <ctpp2/CDT.hpp>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -37,11 +37,11 @@ void Intersections::init(const Json::Value& theJson, const Config& theConfig)
       intersections.push_back(intersection);
     }
     else
-      throw Spine::Exception(BCP, "Intersections must be a JSON array or a JSON map");
+      throw Fmi::Exception(BCP, "Intersections must be a JSON array or a JSON map");
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -65,7 +65,7 @@ void Intersections::init(const boost::optional<std::string>& theProducer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -86,7 +86,7 @@ void Intersections::init(const boost::optional<std::string>& theProducer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -109,7 +109,7 @@ OGRGeometryPtr Intersections::intersect(OGRGeometryPtr geom) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -137,7 +137,7 @@ bool Intersections::inside(double theX, double theY) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -213,7 +213,7 @@ std::size_t Intersections::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

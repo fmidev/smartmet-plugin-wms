@@ -1,7 +1,7 @@
 #include "WMSObservationLayer.h"
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/move/make_unique.hpp>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -28,7 +28,7 @@ void WMSObservationLayer::updateLayerMetaData()
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to update observation layer metadata!");
+    throw Fmi::Exception::Trace(BCP, "Failed to update observation layer metadata!");
   }
 }
 

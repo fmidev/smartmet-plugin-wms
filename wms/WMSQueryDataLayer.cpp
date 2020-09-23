@@ -1,6 +1,6 @@
 #include "WMSQueryDataLayer.h"
 #include <boost/move/make_unique.hpp>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -41,7 +41,7 @@ void WMSQueryDataLayer::updateLayerMetaData()
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to update querydata layer metadata!");
+    throw Fmi::Exception::Trace(BCP, "Failed to update querydata layer metadata!");
   }
 }
 

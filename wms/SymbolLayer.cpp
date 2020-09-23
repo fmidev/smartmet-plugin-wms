@@ -27,7 +27,7 @@
 #include <grid-files/common/ImagePaint.h>
 #include <newbase/NFmiArea.h>
 #include <newbase/NFmiPoint.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 #include <spine/ParameterTools.h>
@@ -129,7 +129,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -227,7 +227,7 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -354,7 +354,7 @@ PointValues read_flash_observations(const SymbolLayer& layer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "SymbolLayer failed to read observations from the database");
+    throw Fmi::Exception::Trace(BCP, "SymbolLayer failed to read observations from the database");
   }
 }
 
@@ -469,7 +469,7 @@ PointValues read_all_observations(const SymbolLayer& layer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "SymbolLayer failed to read observations from the database");
+    throw Fmi::Exception::Trace(BCP, "SymbolLayer failed to read observations from the database");
   }
 }
 
@@ -514,7 +514,7 @@ PointValues read_station_observations(const SymbolLayer& layer,
       settings.parameters.push_back(Spine::makeParameter(extraparam));
 
     if (!layer.positions)
-      throw Spine::Exception(BCP, "Positions not defined for station-layout of numbers");
+      throw Fmi::Exception(BCP, "Positions not defined for station-layout of numbers");
 
     // We must read the stations one at a time to preserve dx,dy values
     PointValues pointvalues;
@@ -545,7 +545,7 @@ PointValues read_station_observations(const SymbolLayer& layer,
             *station.longitude, *station.latitude, opts.maxdistance, opts.numberofstations, "");
       }
       else
-        throw Spine::Exception(BCP, "Station ID or coordinate missing");
+        throw Fmi::Exception(BCP, "Station ID or coordinate missing");
 
       opts.taggedFMISIDs = obsengine.translateToFMISID(
           settings.starttime, settings.endtime, settings.stationtype, stationSettings);
@@ -613,7 +613,7 @@ PointValues read_station_observations(const SymbolLayer& layer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "SymbolLayer failed to read observations from the database");
+    throw Fmi::Exception::Trace(BCP, "SymbolLayer failed to read observations from the database");
   }
 }
 
@@ -689,7 +689,7 @@ PointValues read_latlon_observations(const SymbolLayer& layer,
 
       auto row = values[0].size() - 1;
       if (row != 0)
-        throw Spine::Exception(BCP, "Should have gotten row=0")
+        throw Fmi::Exception(BCP, "Should have gotten row=0")
             .addParameter("row", Fmi::to_string(row));
 
       double lon = get_double(values.at(0).at(row));
@@ -743,7 +743,7 @@ PointValues read_latlon_observations(const SymbolLayer& layer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "SymbolLayer failed to read observations from the database");
+    throw Fmi::Exception::Trace(BCP, "SymbolLayer failed to read observations from the database");
   }
 }
 
@@ -763,7 +763,7 @@ PointValues read_observations(const SymbolLayer& layer,
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
     if (transformation == nullptr)
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "Failed to create the needed coordinate transformation when drawing symbols");
 
     if (layer.isFlashOrMobileProducer(*layer.producer))
@@ -784,7 +784,7 @@ PointValues read_observations(const SymbolLayer& layer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "SymbolLayer failed to read observations from the database");
+    throw Fmi::Exception::Trace(BCP, "SymbolLayer failed to read observations from the database");
   }
 }
 #endif
@@ -803,7 +803,7 @@ void SymbolLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Symbol-layer JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Symbol-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -894,7 +894,7 @@ void SymbolLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -918,7 +918,7 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -937,7 +937,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // A symbol must be defined either globally or for values
 
     if (!symbol && symbols.empty())
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP,
           "Must define default symbol with 'symbol' or several 'symbols' for specific values in a "
           "symbol-layer");
@@ -962,7 +962,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!symbols.empty())
     {
       if (!parameter)
-        throw Spine::Exception(BCP, "Parameter not set for symbol-layer");
+        throw Fmi::Exception(BCP, "Parameter not set for symbol-layer");
     }
 
     auto gridEngine = theState.getGridEngine();
@@ -1127,7 +1127,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     }
 
     if (!projection.xsize && !projection.ysize)
-      throw Spine::Exception(BCP, "The projection size is unknown!");
+      throw Fmi::Exception(BCP, "The projection size is unknown!");
 
     if (crsStr != nullptr && *projection.crs == "data")
     {
@@ -1173,7 +1173,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!symbols.empty())
     {
       if (!parameter)
-        throw Spine::Exception(
+        throw Fmi::Exception(
             BCP, "Parameter not set for SymbolLayer even though multiple symbols are in use");
     }
 
@@ -1261,7 +1261,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     }
 
     if (valid_count < minvalues)
-      throw Spine::Exception(BCP, "Too few valid values in symbol layer")
+      throw Fmi::Exception(BCP, "Too few valid values in symbol layer")
           .addParameter("valid values", std::to_string(valid_count))
           .addParameter("minimum count", std::to_string(minvalues));
 
@@ -1270,7 +1270,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1287,7 +1287,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     // A symbol must be defined either globally or for values
 
     if (!symbol && symbols.empty())
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP,
           "Must define default symbol with 'symbol' or several 'symbols' for specific values in a "
           "symbol-layer");
@@ -1320,15 +1320,15 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     // Establish the level
 
     if (q && !q->firstLevel())
-      throw Spine::Exception(BCP, "Unable to set first level in querydata.");
+      throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
 
     if (level)
     {
       if (!q)
-        throw Spine::Exception(BCP, "Cannot generate isobands without gridded level data");
+        throw Fmi::Exception(BCP, "Cannot generate isobands without gridded level data");
 
       if (!q->selectLevel(*level))
-        throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
+        throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
     }
 
     // Get projection details
@@ -1341,7 +1341,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     if (!symbols.empty())
     {
       if (!parameter)
-        throw Spine::Exception(
+        throw Fmi::Exception(
             BCP, "Parameter not set for SymbolLayer even though multiple symbols are in use");
     }
 
@@ -1451,7 +1451,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     }
 
     if (valid_count < minvalues)
-      throw Spine::Exception(BCP, "Too few valid values in symbol layer")
+      throw Fmi::Exception(BCP, "Too few valid values in symbol layer")
           .addParameter("valid values", std::to_string(valid_count))
           .addParameter("minimum count", std::to_string(minvalues));
 
@@ -1460,7 +1460,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1524,7 +1524,7 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -4,7 +4,7 @@
 
 #include <ctpp2/CDT.hpp>
 #include <macgyver/StringConversion.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 #include <stdexcept>
 
@@ -25,7 +25,7 @@ void Styles::init(const Json::Value& theJson, const Config& /* theConfig */)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Styles JSON must be a JSON object (name-value pairs)");
+      throw Fmi::Exception(BCP, "Styles JSON must be a JSON object (name-value pairs)");
 
     // Iterate through all the members
 
@@ -35,7 +35,7 @@ void Styles::init(const Json::Value& theJson, const Config& /* theConfig */)
       const Json::Value& class_json = theJson[class_name];
 
       if (!class_json.isObject())
-        throw Spine::Exception(
+        throw Fmi::Exception(
             BCP,
             "Invalid object type in defs.styles initialization, expecting name-value pairs for CSS "
             "class '" +
@@ -73,11 +73,11 @@ void Styles::init(const Json::Value& theJson, const Config& /* theConfig */)
           }
           case Json::arrayValue:
           {
-            throw Spine::Exception(BCP, "JSON arrays are not allowed in styles");
+            throw Fmi::Exception(BCP, "JSON arrays are not allowed in styles");
           }
           case Json::objectValue:
           {
-            throw Spine::Exception(BCP, "JSON hashes are not allowed in styles");
+            throw Fmi::Exception(BCP, "JSON hashes are not allowed in styles");
           }
         }
       }
@@ -85,7 +85,7 @@ void Styles::init(const Json::Value& theJson, const Config& /* theConfig */)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -112,7 +112,7 @@ void Styles::generate(CTPP::CDT& theGlobals, State& /* theState */) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -132,7 +132,7 @@ std::size_t Styles::hash_value(const State& /* theState */) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

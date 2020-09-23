@@ -2,7 +2,7 @@
 
 #include "Select.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -37,7 +37,7 @@ boost::optional<AttributeSelection> attribute(const std::vector<AttributeSelecti
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

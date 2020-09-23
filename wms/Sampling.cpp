@@ -3,7 +3,7 @@
 #include "Hash.h"
 #include "Projection.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -23,7 +23,7 @@ void Sampling::init(const Json::Value& theJson, const Config& /* theConfig */)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Sampling JSON is not map");
+      throw Fmi::Exception(BCP, "Sampling JSON is not map");
 
     // Iterate through all the members
 
@@ -41,12 +41,12 @@ void Sampling::init(const Json::Value& theJson, const Config& /* theConfig */)
       else if (name == "relativeresolution")
         relativeresolution = json.asDouble();
       else
-        throw Spine::Exception(BCP, "Sampling does not have a setting named '" + name + "'");
+        throw Fmi::Exception(BCP, "Sampling does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -67,7 +67,7 @@ boost::optional<double> Sampling::getResolution(const Projection& theProjection)
     // No resolution provided? Error
 
     if (!theProjection.resolution)
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "Cannot request sampling of data without a projection with a resolution available");
 
     // Not in valid range --> no resolution
@@ -94,7 +94,7 @@ boost::optional<double> Sampling::getResolution(const Projection& theProjection)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -118,7 +118,7 @@ std::size_t Sampling::hash_value(const State& /* theState */) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -2,7 +2,7 @@
 #include <boost/move/make_unique.hpp>
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/identification/GridDef.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -38,7 +38,7 @@ time_t even_timesteps(std::set<std::string>& contentTimeList)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to update querydata layer metadata!");
+    throw Fmi::Exception::Trace(BCP, "Failed to update querydata layer metadata!");
   }
 }
 
@@ -200,7 +200,7 @@ void WMSGridDataLayer::updateLayerMetaData()
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to update querydata layer metadata!");
+    throw Fmi::Exception::Trace(BCP, "Failed to update querydata layer metadata!");
   }
 }
 

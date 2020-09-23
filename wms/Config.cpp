@@ -6,7 +6,7 @@
 
 #include "Config.h"
 #include <macgyver/StringConversion.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 using std::string;
@@ -73,7 +73,7 @@ Config::Config(const string& configfile)
       const auto& templates = itsConfig.lookup("templates");
       if (!templates.isGroup())
       {
-        throw Spine::Exception::Trace(BCP, "Configuration error!")
+        throw Fmi::Exception::Trace(BCP, "Configuration error!")
             .addParameter("Configuration file", configfile)
             .addDetail("Configured value of 'templates' must be a group");
       }
@@ -94,7 +94,7 @@ Config::Config(const string& configfile)
       const auto& precisions = itsConfig.lookup("precision");
       if (!precisions.isGroup())
       {
-        throw Spine::Exception::Trace(BCP, "Configuration error!")
+        throw Fmi::Exception::Trace(BCP, "Configuration error!")
             .addParameter("Configuration file", configfile)
             .addDetail("Configured value of 'precisions' must be a group");
       }
@@ -115,7 +115,7 @@ Config::Config(const string& configfile)
       const auto& conversions = itsConfig.lookup("unit_conversion");
       if (!conversions.isGroup())
       {
-        throw Spine::Exception::Trace(BCP, "Configuration error!")
+        throw Fmi::Exception::Trace(BCP, "Configuration error!")
             .addParameter("Configuration file", configfile)
             .addDetail("Configured value of 'unit_conversions' must be an array");
       }
@@ -124,7 +124,7 @@ Config::Config(const string& configfile)
         const auto& conversion = conversions[i];
         if (!conversion.isGroup())
         {
-          throw Spine::Exception::Trace(BCP, "Configuration error!")
+          throw Fmi::Exception::Trace(BCP, "Configuration error!")
               .addParameter("Configuration file", configfile)
               .addDetail(
                   "Configured value of a unit_conversion must be a group containing "
@@ -143,7 +143,7 @@ Config::Config(const string& configfile)
       const auto& attributes = itsConfig.lookup("regular_attributes");
       if (!attributes.isArray())
       {
-        throw Spine::Exception::Trace(BCP, "Configuration error!")
+        throw Fmi::Exception::Trace(BCP, "Configuration error!")
             .addParameter("Configuration file", configfile)
             .addDetail("Configured value of 'regular_attributes' must be an array");
       }
@@ -155,7 +155,7 @@ Config::Config(const string& configfile)
       const auto& attributes = itsConfig.lookup("presentation_attributes");
       if (!attributes.isArray())
       {
-        throw Spine::Exception::Trace(BCP, "Configuration error!")
+        throw Fmi::Exception::Trace(BCP, "Configuration error!")
             .addParameter("Configuration file", configfile)
             .addDetail("Configured value of 'presentation_attributes' must be an array");
       }
@@ -167,22 +167,22 @@ Config::Config(const string& configfile)
 
   catch (const libconfig::SettingNotFoundException& e)
   {
-    throw Spine::Exception(BCP, "Setting not found").addParameter("Setting path", e.getPath());
+    throw Fmi::Exception(BCP, "Setting not found").addParameter("Setting path", e.getPath());
   }
   catch (const libconfig::ParseException& e)
   {
-    throw Spine::Exception::Trace(BCP, "Configuration error!")
+    throw Fmi::Exception::Trace(BCP, "Configuration error!")
         .addParameter("Configuration file", configfile)
         .addParameter("Line", Fmi::to_string(e.getLine()));
   }
   catch (const libconfig::ConfigException&)
   {
-    throw Spine::Exception::Trace(BCP, "Configuration error!")
+    throw Fmi::Exception::Trace(BCP, "Configuration error!")
         .addParameter("Configuration file", configfile);
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Configuration error!")
+    throw Fmi::Exception::Trace(BCP, "Configuration error!")
         .addParameter("Configuration file", configfile);
   }
 }
@@ -249,7 +249,7 @@ bool Config::isValidAttribute(const std::string& theName) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -285,7 +285,7 @@ Config::UnitConversion Config::unitConversion(const std::string& theUnitConversi
 {
   auto pos = itsUnitConversionMap.find(theUnitConversion);
   if (pos == itsUnitConversionMap.end())
-    throw Spine::Exception(BCP, "Unknown unit conversion '" + theUnitConversion + "'");
+    throw Fmi::Exception(BCP, "Unknown unit conversion '" + theUnitConversion + "'");
   return pos->second;
 }
 

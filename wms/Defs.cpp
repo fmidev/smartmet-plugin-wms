@@ -7,7 +7,7 @@
 #include "Symbols.h"
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 
 namespace SmartMet
@@ -36,7 +36,7 @@ void Defs::init(const Json::Value& theJson,
       return;
 
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Defs JSON is not a JSON object (name-value pairs)");
+      throw Fmi::Exception(BCP, "Defs JSON is not a JSON object (name-value pairs)");
 
     // Extract member values
 
@@ -75,7 +75,7 @@ void Defs::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -97,7 +97,7 @@ void Defs::generate(CTPP::CDT& theGlobals, State& theState)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -119,7 +119,7 @@ std::size_t Defs::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

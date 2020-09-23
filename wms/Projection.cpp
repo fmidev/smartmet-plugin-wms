@@ -12,7 +12,7 @@
 #include <gdal/ogr_spatialref.h>
 #include <gis/Box.h>
 #include <grid-files/common/GeneralFunctions.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 #include <cmath>
 #include <stdexcept>
@@ -36,7 +36,7 @@ void Projection::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Projection JSON is not a JSON object (name-value pairs)");
+      throw Fmi::Exception(BCP, "Projection JSON is not a JSON object (name-value pairs)");
 
     // For later use
     gisengine = &theState.getGisEngine();
@@ -119,7 +119,7 @@ void Projection::init(const Json::Value& theJson,
       int id = json.asInt();
       auto loc = engine.idSearch(id, "fi");
       if (!loc)
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "Unable to find coordinates for geoid '" + Fmi::to_string(id) + "'");
       latlon_center = true;
       cx = loc->longitude;
@@ -134,7 +134,7 @@ void Projection::init(const Json::Value& theJson,
       std::string name = json.asString();
       auto loc = engine.nameSearch(name, "fi");
       if (!loc)
-        throw Spine::Exception(BCP, "Unable to find coordinates for location '" + name + "'");
+        throw Fmi::Exception(BCP, "Unable to find coordinates for location '" + name + "'");
 
       latlon_center = true;
       cx = loc->longitude;
@@ -150,7 +150,7 @@ void Projection::init(const Json::Value& theJson,
       std::vector<std::string> parts;
       boost::algorithm::split(parts, bbox, boost::algorithm::is_any_of(","));
       if (parts.size() != 4)
-        throw Spine::Exception(BCP, "bbox should contain 4 comma separated doubles");
+        throw Fmi::Exception(BCP, "bbox should contain 4 comma separated doubles");
 
       // for example in EPSG:4326 order of coordinates is changed in WMS
       // for more info: https://trac.osgeo.org/gdal/wiki/rfc20_srs_axes
@@ -197,7 +197,7 @@ void Projection::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -228,7 +228,7 @@ std::size_t Projection::hash_value(const State& /* theState */) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -286,7 +286,7 @@ void Projection::update(const Engine::Querydata::Q& theQ)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -301,7 +301,7 @@ std::string Projection::getProjString() const
   if (crs)
     return *crs;
 
-  throw Spine::Exception(BCP, "Projection string not available");
+  throw Fmi::Exception(BCP, "Projection string not available");
 }
 
 // ----------------------------------------------------------------------
@@ -317,13 +317,13 @@ std::shared_ptr<OGRSpatialReference> Projection::getCRS() const
     prepareCRS();
 
     if (!ogr_crs)
-      throw Spine::Exception::Trace(BCP, "Projection creation failed!");
+      throw Fmi::Exception::Trace(BCP, "Projection creation failed!");
 
     return ogr_crs;
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -342,7 +342,7 @@ const Fmi::Box& Projection::getBox() const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -361,14 +361,14 @@ void Projection::prepareCRS() const
       return;
 
     if (!crs)
-      throw Spine::Exception(BCP, "CRS not set, unable to create projection");
+      throw Fmi::Exception(BCP, "CRS not set, unable to create projection");
 
     if (!xsize && !ysize)
     {
       if (size)
         return;
 
-      throw Spine::Exception(BCP, "CRS xsize and ysize are both missing");
+      throw Fmi::Exception(BCP, "CRS xsize and ysize are both missing");
     }
 
     // Are subdefinitions complete?
@@ -381,34 +381,34 @@ void Projection::prepareCRS() const
 
     // Disallow partial definitions
     if (partial_rect_bbox)
-      throw Spine::Exception(BCP, "Partial CRS bounding box given: x1,y1,x2,y2 are needed");
+      throw Fmi::Exception(BCP, "Partial CRS bounding box given: x1,y1,x2,y2 are needed");
     if (partial_center_bbox)
-      throw Spine::Exception(BCP, "Partial CRS bounding box given: cx,cy,resolution are needed");
+      throw Fmi::Exception(BCP, "Partial CRS bounding box given: cx,cy,resolution are needed");
 
     // bbox definition missing completely?
     if (!full_rect_bbox && !full_center_bbox)
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "CRS bounding box missing: x1,y2,x2,y2 or cx,cy,resolution are needed");
 
 // two conflicting definitions is OK, since we create the corners from centered bbox
 #if 0
         if(full_rect_bbox && full_center_bbox)
-      throw Spine::Exception(BCP,"CRS bounding box overdefined: use only x1,y2,x2,y2 or cx,cy,resolution");
+      throw Fmi::Exception(BCP,"CRS bounding box overdefined: use only x1,y2,x2,y2 or cx,cy,resolution");
 #endif
 
     // must give both width and height if centered bbox is given
     if (!full_rect_bbox && full_center_bbox && (!xsize || !ysize))
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "CRS xsize and ysize are required when a centered bounding box is used");
 
     // Create the CRS
     ogr_crs = gisengine->getSpatialReference(*crs);
 
     if (xsize && *xsize <= 0)
-      throw Spine::Exception(BCP, "Projection xsize must be positive");
+      throw Fmi::Exception(BCP, "Projection xsize must be positive");
 
     if (ysize && *ysize <= 0)
-      throw Spine::Exception(BCP, "Projection ysize must be positive");
+      throw Fmi::Exception(BCP, "Projection ysize must be positive");
 
     // World XY bounding box will be calculated during the process
 
@@ -434,7 +434,7 @@ void Projection::prepareCRS() const
       }
 
       if (XMIN == XMAX || YMIN == YMAX)
-        throw Spine::Exception(BCP, "Bounding box size is zero!");
+        throw Fmi::Exception(BCP, "Bounding box size is zero!");
 
       if (!xsize)
       {
@@ -472,7 +472,7 @@ void Projection::prepareCRS() const
     {
       // centered bounding box
       if (!xsize || !ysize)
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "xsize and ysize are required when a centered bounding box is used");
 
       double CX = *cx, CY = *cy;
@@ -531,7 +531,7 @@ void Projection::prepareCRS() const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

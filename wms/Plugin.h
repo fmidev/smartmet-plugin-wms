@@ -127,17 +127,17 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   std::string getExceptionFormat(const std::string& theFormat) const;
   std::string getCapabilityFormat(const std::string& theFormat) const;
 
-  std::string parseWMSException(Spine::Exception& wmsException,
+  std::string parseWMSException(Fmi::Exception& wmsException,
                                 const std::string& theFormat,
                                 bool isdebug) const;
 
-  void formatWmsExceptionResponse(Spine::Exception& wmsException,
+  void formatWmsExceptionResponse(Fmi::Exception& wmsException,
                                   const std::string& theFormat,
                                   bool isdebug,
                                   const Spine::HTTP::Request& theRequest,
                                   Spine::HTTP::Response& theResponse,
                                   bool usetimer);
-  WMSQueryStatus handleWmsException(Spine::Exception& exception,
+  WMSQueryStatus handleWmsException(Fmi::Exception& exception,
                                     State& theState,
                                     const Spine::HTTP::Request& theRequest,
                                     Spine::HTTP::Response& theResponse);
