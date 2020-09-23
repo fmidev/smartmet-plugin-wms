@@ -12,7 +12,7 @@
 #include <fmt/format.h>
 #include <fmt/printf.h>
 #include <macgyver/StringConversion.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/Json.h>
 
 namespace SmartMet
@@ -67,7 +67,7 @@ std::string legend_number(double theValue, const LegendLabels& theLabels)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -121,11 +121,11 @@ std::string untranslated_legend_text(const Isoband& theIsoband,
               legend_number(*theIsoband.hilimit, theLabels));
     }
 
-    throw Spine::Exception(BCP, "Unknown legend label type '" + theLabels.type + "'");
+    throw Fmi::Exception(BCP, "Unknown legend label type '" + theLabels.type + "'");
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -165,7 +165,7 @@ std::string legend_text(const Isoband& theIsoband,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -183,7 +183,7 @@ void LegendLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Symbol-layer JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Symbol-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -221,7 +221,7 @@ void LegendLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -259,7 +259,7 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     // A symbol must be defined
 
     if (!symbols.symbol)
-      throw Spine::Exception(BCP, "Must define default symbol with 'symbol' in a legend-layer");
+      throw Fmi::Exception(BCP, "Must define default symbol with 'symbol' in a legend-layer");
 
     // Update the globals
 
@@ -371,7 +371,7 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -397,7 +397,7 @@ std::size_t LegendLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -23,6 +23,13 @@ ifneq "$(wildcard /usr/include/boost169)" ""
   LIBS += -L/usr/lib64/boost169
 endif
 
+ifneq "$(wildcard /usr/gdal30/include)" ""
+  INCLUDES += -isystem /usr/gdal30/include
+  LIBS += -L$(PREFIX)/gdal30/lib
+else
+  INCLUDES += -isystem /usr/include/gdal
+endif
+
 INCLUDES += \
 	-I../wms \
 	-I/usr/include/smartmet \
@@ -34,6 +41,7 @@ INCLUDES += \
 
 LIBS += -lsmartmet-spine  \
 	-lsmartmet-newbase \
+	-lsmartmet-macgyver \
 	-lsmartmet-giza \
 	`pkg-config --libs libconfig++` \
 	`pkg-config --libs jsoncpp` \

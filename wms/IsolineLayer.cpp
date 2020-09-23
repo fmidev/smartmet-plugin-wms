@@ -37,7 +37,7 @@ void IsolineLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Isoline-layer JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Isoline-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -111,7 +111,7 @@ void IsolineLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -130,12 +130,12 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   q = getModel(theState);
 
   if (q && !(q->isGrid()))
-    throw Spine::Exception(BCP, "Isoline-layer can't use point data!");
+    throw Fmi::Exception(BCP, "Isoline-layer can't use point data!");
 
   // Establish the desired direction parameter
 
   if (!parameter)
-    throw Spine::Exception(BCP, "Parameter not set for isoline-layer");
+    throw Fmi::Exception(BCP, "Parameter not set for isoline-layer");
 
   auto param = Spine::ParameterFactory::instance().parse(*parameter);
 
@@ -146,15 +146,15 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   // Establish the level
 
   if (q && !q->firstLevel())
-    throw Spine::Exception(BCP, "Unable to set first level in querydata.");
+    throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
 
   if (level)
   {
     if (!q)
-      throw Spine::Exception(BCP, "Cannot generate isobands without gridded level data");
+      throw Fmi::Exception(BCP, "Cannot generate isobands without gridded level data");
 
     if (!q->selectLevel(*level))
-      throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
+      throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
   }
 
   // Get projection details
@@ -172,12 +172,12 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   if (sampleresolution)
   {
     if (!q)
-      throw Spine::Exception(BCP, "Cannot resample without gridded data");
+      throw Fmi::Exception(BCP, "Cannot resample without gridded data");
 
     auto demdata = theState.getGeoEngine().dem();
     auto landdata = theState.getGeoEngine().landCover();
     if (!demdata || !landdata)
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "Resampling data in IsolineLayer requires DEM and land cover data to be available");
 
     q = q->sample(param,
@@ -193,7 +193,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   }
 
   if (!q)
-    throw Spine::Exception(BCP, "Cannot generate isobands without gridded data");
+    throw Fmi::Exception(BCP, "Cannot generate isobands without gridded data");
 
   // Logical operations with maps require shapes
 
@@ -204,7 +204,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   {
     inshape = gis.getShape(crs.get(), inside->options);
     if (!inshape)
-      throw Spine::Exception(BCP, "IsolineLayer received empty inside-shape from database");
+      throw Fmi::Exception(BCP, "IsolineLayer received empty inside-shape from database");
     inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
   }
   if (outside)
@@ -347,7 +347,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         std::string iri = qid + (qid.empty() ? "" : ".") + isoline.getQid(theState);
 
         if (!theState.addId(iri))
-          throw Spine::Exception(BCP, "Non-unique ID assigned to isoline").addParameter("ID", iri);
+          throw Fmi::Exception(BCP, "Non-unique ID assigned to isoline").addParameter("ID", iri);
 
         CTPP::CDT isoline_cdt(CTPP::CDT::HASH_VAL);
         isoline_cdt["iri"] = iri;
@@ -376,7 +376,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -429,7 +429,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

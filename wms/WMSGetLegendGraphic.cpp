@@ -10,7 +10,7 @@
 #include <boost/range/algorithm.hpp>
 #include <macgyver/StringConversion.h>
 #include <spine/Convenience.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -29,31 +29,31 @@ void check_getlegendgraphic_request_options(const Spine::HTTP::Request& theHTTPR
 
     if (!theHTTPRequest.getParameter("VERSION"))
     {
-      throw Spine::Exception(BCP, "Schema version not defined")
+      throw Fmi::Exception(BCP, "Schema version not defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
     if (!theHTTPRequest.getParameter("SLD_VERSION"))
     {
-      throw Spine::Exception(BCP, "SLD specification version not defined")
+      throw Fmi::Exception(BCP, "SLD specification version not defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
     if (!theHTTPRequest.getParameter("LAYER"))
     {
-      throw Spine::Exception(BCP, "Layer must be defined in GetLegendGraphic request")
+      throw Fmi::Exception(BCP, "Layer must be defined in GetLegendGraphic request")
           .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
     }
 
     if (!theHTTPRequest.getParameter("FORMAT"))
     {
-      throw Spine::Exception(BCP, "FORMAT-option has not been defined")
+      throw Fmi::Exception(BCP, "FORMAT-option has not been defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Checking GetLegendGraphic options failed!");
+    throw Fmi::Exception::Trace(BCP, "Checking GetLegendGraphic options failed!");
   }
 }
 
@@ -66,7 +66,7 @@ void validate_options(const get_legend_graphic_request_options& options,
     // check the requested version number
     if (!itsConfig.isValidVersion(options.version))
     {
-      throw Spine::Exception(BCP, "The requested version is not supported!")
+      throw Fmi::Exception(BCP, "The requested version is not supported!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED)
           .addParameter("Requested version", options.version)
           .addParameter("Supported versions",
@@ -76,7 +76,7 @@ void validate_options(const get_legend_graphic_request_options& options,
     // check that layer is valid (as defined in GetCapabilities response)
     if (!itsConfig.isValidLayer(options.layer, true))
     {
-      throw Spine::Exception(BCP, "The requested layer is not supported!")
+      throw Fmi::Exception(BCP, "The requested layer is not supported!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED)
           .addParameter("Requested layer", options.layer);
     }
@@ -84,7 +84,7 @@ void validate_options(const get_legend_graphic_request_options& options,
     // check that style is valid (as defined in GetCapabilities response)
     if (!itsConfig.isValidStyle(options.layer, options.style))
     {
-      throw Spine::Exception(BCP,
+      throw Fmi::Exception(BCP,
                              "The style is not supported by the requested layer!" + options.layer +
                                  ", " + options.style)
           .addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED)
@@ -95,7 +95,7 @@ void validate_options(const get_legend_graphic_request_options& options,
     // check format
     if (!itsConfig.isValidMapFormat(options.format))
     {
-      throw Spine::Exception(BCP, "The requested map format is not supported!")
+      throw Fmi::Exception(BCP, "The requested map format is not supported!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_FORMAT)
           .addParameter("Requested map format", options.format)
           .addParameter("Supported map formats",
@@ -104,7 +104,7 @@ void validate_options(const get_legend_graphic_request_options& options,
 
     if (options.sld_version != "1.1.0")
     {
-      throw Spine::Exception(BCP, "Invalid SLD-specification version!")
+      throw Fmi::Exception(BCP, "Invalid SLD-specification version!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED)
           .addParameter("Requested SLD-specification version", options.format)
           .addParameter("Supported SLD-specification version",
@@ -113,7 +113,7 @@ void validate_options(const get_legend_graphic_request_options& options,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "GetLegendGraphic request did not validate!");
+    throw Fmi::Exception::Trace(BCP, "GetLegendGraphic request did not validate!");
   }
 }
 
@@ -139,7 +139,7 @@ boost::posix_time::ptime parse_time(const std::string& time)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Parsing GetLegendGraphic time failed!");
+    throw Fmi::Exception::Trace(BCP, "Parsing GetLegendGraphic time failed!");
   }
 }
 
@@ -154,7 +154,7 @@ void parse_interval_with_resolution(const std::string time_str,
 
     if (parts.size() != 3)
     {
-      Spine::Exception exception(BCP, "Invalid time interval!");
+      Fmi::Exception exception(BCP, "Invalid time interval!");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
       exception.addParameter("Time interval", time_str);
       throw exception;
@@ -170,7 +170,7 @@ void parse_interval_with_resolution(const std::string time_str,
 
     if (endTime < startTime)
     {
-      Spine::Exception exception(BCP, "Invalid time interval!");
+      Fmi::Exception exception(BCP, "Invalid time interval!");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
       exception.addParameter("Time interval", time_str);
       throw exception;
@@ -191,7 +191,7 @@ void parse_interval_with_resolution(const std::string time_str,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Parsing time interval failed!");
+    throw Fmi::Exception::Trace(BCP, "Parsing time interval failed!");
   }
 }
 #endif
@@ -261,7 +261,7 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
       {
         if (!itsConfig.currentValue(layerName))
         {
-          Spine::Exception exception(BCP, "Invalid TIME option value for the current layer!");
+          Fmi::Exception exception(BCP, "Invalid TIME option value for the current layer!");
           exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
           exception.addParameter("Time value", time_str);
           exception.addParameter("Layer", layerName);
@@ -284,7 +284,7 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Parsing GetLegendGraphic request failed!");
+    throw Fmi::Exception::Trace(BCP, "Parsing GetLegendGraphic request failed!");
   }
 }
 
@@ -296,7 +296,7 @@ Json::Value WMSGetLegendGraphic::json() const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "GetLegendGraphic JSON generation failed!");
+    throw Fmi::Exception::Trace(BCP, "GetLegendGraphic JSON generation failed!");
   }
 }
 }  // namespace WMS

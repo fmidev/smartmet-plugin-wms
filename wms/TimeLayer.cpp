@@ -12,7 +12,7 @@
 #include <ctpp2/CDT.hpp>
 #include <fmt/chrono.h>
 #include <gis/Box.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/Json.h>
 
 namespace SmartMet
@@ -38,7 +38,7 @@ void TimeLayer::init(const Json::Value& theJson,
     now = boost::posix_time::second_clock::universal_time();
 
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Time-layer JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Time-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -75,7 +75,7 @@ void TimeLayer::init(const Json::Value& theJson,
     {
       formatter = json.asString();
       if (formatter != "boost" && formatter != "strftime" && formatter != "fmt")
-        throw Spine::Exception(BCP, "Unknown time formatter '" + formatter + "'");
+        throw Fmi::Exception(BCP, "Unknown time formatter '" + formatter + "'");
     }
 
     json = theJson.get("format", nulljson);
@@ -116,7 +116,7 @@ void TimeLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -191,7 +191,7 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
       format.emplace_back("%Y-%m-%d %H:%M");
 
     if (timestamp.size() != format.size())
-      throw Spine::Exception(BCP,
+      throw Fmi::Exception(BCP,
                              "TimeLayer timestamp and format arrays should be of the same size");
 
     // Create the output
@@ -204,9 +204,9 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
       auto fmt = format[i];
 
       if (name.empty())
-        throw Spine::Exception(BCP, "TimeLayer timestamp setting cannot be an empty string");
+        throw Fmi::Exception(BCP, "TimeLayer timestamp setting cannot be an empty string");
       if (fmt.empty())
-        throw Spine::Exception(BCP, "TimeLayer format setting cannot be an empty string");
+        throw Fmi::Exception(BCP, "TimeLayer format setting cannot be an empty string");
 
       boost::optional<boost::local_time::local_date_time> loctime;
       boost::optional<boost::posix_time::time_duration> duration;
@@ -218,7 +218,7 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
       else if (name == "origintime")
       {
         if (!q)
-          throw Spine::Exception(BCP, "Origintime not avaible for TimeLayer");
+          throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
         loctime = boost::local_time::local_date_time(q->originTime(), tz);
       }
       else if (name == "wallclock" || name == "now")
@@ -242,13 +242,13 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
       else if (name == "leadtime")
       {
         if (!q)
-          throw Spine::Exception(BCP, "Origintime not avaible for TimeLayer");
+          throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
         duration = valid_time - q->originTime();
       }
       else if (name == "leadhour")
       {
         if (!q)
-          throw Spine::Exception(BCP, "Origintime not avaible for TimeLayer");
+          throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
         boost::posix_time::ptime ot = q->originTime();
         duration =
             valid_time - ot + ot.time_of_day() - boost::posix_time::hours(ot.time_of_day().hours());
@@ -286,7 +286,7 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
         }
         catch (...)
         {
-          throw Spine::Exception::Trace(BCP, "Failed to format time with Boost")
+          throw Fmi::Exception::Trace(BCP, "Failed to format time with Boost")
               .addParameter("format", "'" + fmt + "'");
         }
       }
@@ -296,7 +296,7 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
         char buffer[100];
         if (strftime(static_cast<char*>(buffer), 100, fmt.c_str(), &timeinfo) == 0)
         {
-          throw Spine::Exception(BCP, "Failed to format a non-empty time string with strftime")
+          throw Fmi::Exception(BCP, "Failed to format a non-empty time string with strftime")
               .addParameter("format", "'" + fmt + "'");
         }
         msg << static_cast<char*>(buffer);
@@ -310,13 +310,13 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
         }
         catch (...)
         {
-          throw Spine::Exception::Trace(BCP, "Failed to format time with fmt")
+          throw Fmi::Exception::Trace(BCP, "Failed to format time with fmt")
               .addParameter("format", "'" + fmt + "'");
         }
       }
 
       else
-        throw Spine::Exception(BCP, "Unknown TimeLayer time formatter '" + formatter + "'");
+        throw Fmi::Exception(BCP, "Unknown TimeLayer time formatter '" + formatter + "'");
     }
     msg << suffix;
 
@@ -325,7 +325,7 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -366,7 +366,7 @@ std::size_t TimeLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -9,7 +9,7 @@
 #include "ValueTools.h"
 #include <engines/gis/Engine.h>
 #include <engines/querydata/Q.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 #include <spine/ParameterTools.h>
@@ -81,11 +81,11 @@ PointValues read_forecasts(const ArrowLayer& layer,
     vparam = Spine::ParameterFactory::instance().parse(*layer.v);
 
   if (speedparam && !q->param(speedparam->number()))
-    throw Spine::Exception(
+    throw Fmi::Exception(
         BCP, "Parameter " + speedparam->name() + " not available in the arrow layer querydata");
 
   if (dirparam && !q->param(dirparam->number()))
-    throw Spine::Exception(
+    throw Fmi::Exception(
         BCP, "Parameter " + dirparam->name() + " not available in the arrow layer querydata");
 
   // WindUMS and WindVMS are metaparameters, cannot check their existence here
@@ -334,7 +334,7 @@ PointValues read_all_observations(const ArrowLayer& layer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
+    throw Fmi::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
   }
 }
 
@@ -392,7 +392,7 @@ PointValues read_station_observations(const ArrowLayer& layer,
       settings.parameters.push_back(Spine::makeParameter(extraparam));
 
     if (!layer.positions)
-      throw Spine::Exception(BCP, "Positions not defined for station-layout of numbers");
+      throw Fmi::Exception(BCP, "Positions not defined for station-layout of numbers");
 
     // We must read the stations one at a time to preserve dx,dy values
     PointValues pointvalues;
@@ -424,7 +424,7 @@ PointValues read_station_observations(const ArrowLayer& layer,
             *station.longitude, *station.latitude, opts.maxdistance, opts.numberofstations, "");
       }
       else
-        throw Spine::Exception(BCP, "Station ID or coordinate missing");
+        throw Fmi::Exception(BCP, "Station ID or coordinate missing");
 
       opts.taggedFMISIDs = obsengine.translateToFMISID(
           settings.starttime, settings.endtime, settings.stationtype, stationSettings);
@@ -506,7 +506,7 @@ PointValues read_station_observations(const ArrowLayer& layer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
+    throw Fmi::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
   }
 }
 
@@ -661,7 +661,7 @@ PointValues read_latlon_observations(const ArrowLayer& layer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
+    throw Fmi::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
   }
 }
 
@@ -681,11 +681,11 @@ PointValues read_observations(const ArrowLayer& layer,
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
     if (transformation == nullptr)
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "Failed to create the needed coordinate transformation when drawing arrows");
 
     if (layer.isFlashOrMobileProducer(*layer.producer))
-      throw Spine::Exception(BCP, "Cannot use flsh or mobile producer in ArrowLayer");
+      throw Fmi::Exception(BCP, "Cannot use flsh or mobile producer in ArrowLayer");
 
     if (layer.positions->layout == Positions::Layout::Station)
       return read_station_observations(layer, state, crs, box, valid_time_period, *transformation);
@@ -702,7 +702,7 @@ PointValues read_observations(const ArrowLayer& layer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
+    throw Fmi::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
   }
 }
 #endif
@@ -721,7 +721,7 @@ void ArrowLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Arrow-layer JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Arrow-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -814,7 +814,7 @@ void ArrowLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -841,7 +841,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     // A symbol must be defined either globally or for speed ranges
 
     if (!symbol && arrows.empty())
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "Must define arrow with 'symbol' or 'arrows' to define the symbol for arrows");
 
     // Establish the data
@@ -876,7 +876,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       for (q->resetLevel(); !match && q->nextLevel();)
         match = (q->levelValue() == *level);
       if (!match)
-        throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available");
+        throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available");
     }
 
     // Get projection details
@@ -892,11 +892,11 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     // The parameters. TODO: Allow metaparameters, needs better Q API
 
     if ((u && (direction || speed)) || (v && (direction || speed)))
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "ArrowLayer cannot define direction, speed and u- and v-components simultaneously");
 
     if ((u && !v) || (v && !u))
-      throw Spine::Exception(BCP, "ArrowLayer must define both U- and V-components");
+      throw Fmi::Exception(BCP, "ArrowLayer must define both U- and V-components");
 
     // Update the globals
 
@@ -938,7 +938,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
     if (transformation == nullptr)
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP,
           "Failed to create the needed coordinate transformation when reading wind directions");
 
@@ -1082,7 +1082,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     }
 
     if (valid_count < minvalues)
-      throw Spine::Exception(BCP, "Too few valid values in arrow layer")
+      throw Fmi::Exception(BCP, "Too few valid values in arrow layer")
           .addParameter("valid values", std::to_string(valid_count))
           .addParameter("minimum count", std::to_string(minvalues));
 
@@ -1091,7 +1091,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1178,7 +1178,7 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

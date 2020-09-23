@@ -14,7 +14,7 @@
 #include <gdal/ogr_spatialref.h>
 #include <gis/Box.h>
 #include <macgyver/NearTree.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/Json.h>
 
 namespace SmartMet
@@ -49,7 +49,7 @@ void LocationLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Location-layer JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Location-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -90,7 +90,7 @@ void LocationLayer::init(const Json::Value& theJson,
         {
           const Json::Value& innerjson = json[feature];
           if (!innerjson.isArray())
-            throw Spine::Exception(
+            throw Fmi::Exception(
                 BCP,
                 "LocationLayer symbols setting does not contain a hash of JSON arrays for each "
                 "feature");
@@ -100,13 +100,13 @@ void LocationLayer::init(const Json::Value& theJson,
         }
       }
       else
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "LocationLayer symbols setting must be an array or a JSON hash");
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -133,12 +133,12 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // A keyword must be defined
 
     if (keyword.empty())
-      throw Spine::Exception(BCP, "No keyword specified for location-layer");
+      throw Fmi::Exception(BCP, "No keyword specified for location-layer");
 
     // A symbol must be defined either globally or for values
 
     if (!symbol && symbols.empty())
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP,
           "Must define default symbol with 'symbol' or several 'symbols' for specific values in a "
           "location-layer");
@@ -160,7 +160,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(geocrs.get(), crs.get()));
     if (transformation == nullptr)
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "Failed to create the needed coordinate transformation when drawing locations");
 
     // Update the globals
@@ -181,7 +181,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     engine.sort(locations);
 
     if (locations.empty())
-      throw Spine::Exception(BCP, "No locations found for keyword '" + keyword + "'");
+      throw Fmi::Exception(BCP, "No locations found for keyword '" + keyword + "'");
 
     // Clip if necessary
 
@@ -286,7 +286,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -319,7 +319,7 @@ std::size_t LocationLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

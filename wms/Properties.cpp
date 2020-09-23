@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 #include "Time.h"
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/Json.h>
 
 namespace SmartMet
@@ -36,7 +36,7 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
     if (json.isString())
       tz = parse_timezone(json.asString(), theState.getGeoEngine().getTimeZones());
     else if (!json.isNull())
-      throw Spine::Exception(BCP, "Failed to parse tz setting: '" + json.asString());
+      throw Fmi::Exception(BCP, "Failed to parse tz setting: '" + json.asString());
 
     json = theJson.get("origintime", nulljson);
     if (json.isString())
@@ -48,7 +48,7 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
       origintime = parse_time(Fmi::to_string(tmp));
     }
     else if (!json.isNull())
-      throw Spine::Exception(BCP, "Failed to parse origintime setting: '" + json.asString());
+      throw Fmi::Exception(BCP, "Failed to parse origintime setting: '" + json.asString());
 
     json = theJson.get("time", nulljson);
     if (json.isString())
@@ -60,7 +60,7 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
       time = parse_time(Fmi::to_string(tmp), tz);
     }
     else if (!json.isNull())
-      throw Spine::Exception(BCP, "Failed to parse time setting: '" + json.asString());
+      throw Fmi::Exception(BCP, "Failed to parse time setting: '" + json.asString());
 
     json = theJson.get("time_offset", nulljson);
     if (!json.isNull())
@@ -101,7 +101,7 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -141,7 +141,7 @@ void Properties::init(const Json::Value& theJson,
     else if (json.isNull())
       tz = theProperties.tz;
     else
-      throw Spine::Exception(BCP, "Failed to parse tz setting: '" + json.asString());
+      throw Fmi::Exception(BCP, "Failed to parse tz setting: '" + json.asString());
 
     json = theJson.get("origintime", nulljson);
     if (json.isString())
@@ -155,7 +155,7 @@ void Properties::init(const Json::Value& theJson,
     else if (json.isNull())
       origintime = theProperties.origintime;
     else
-      throw Spine::Exception(BCP, "Failed to parse origintime setting: '" + json.asString());
+      throw Fmi::Exception(BCP, "Failed to parse origintime setting: '" + json.asString());
 
     json = theJson.get("time", nulljson);
     if (json.isString())
@@ -169,7 +169,7 @@ void Properties::init(const Json::Value& theJson,
     else if (json.isNull())
       time = theProperties.time;
     else
-      throw Spine::Exception(BCP, "Failed to parse time setting: '" + json.asString());
+      throw Fmi::Exception(BCP, "Failed to parse time setting: '" + json.asString());
 
     json = theJson.get("time_offset", nulljson);
     if (json.isNull())
@@ -226,7 +226,7 @@ void Properties::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -243,7 +243,7 @@ void Properties::init(const Json::Value& theJson,
 boost::posix_time::ptime Properties::getValidTime() const
 {
   if (!time)
-    throw Spine::Exception(BCP, "Time has not been set for all layers");
+    throw Fmi::Exception(BCP, "Time has not been set for all layers");
 
   auto valid_time = *time;
   if (time_offset)
@@ -310,7 +310,7 @@ std::size_t Properties::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to calculate hash value for layer properties!");
+    throw Fmi::Exception::Trace(BCP, "Failed to calculate hash value for layer properties!");
   }
 }
 

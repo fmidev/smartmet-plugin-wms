@@ -41,7 +41,7 @@ bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) cons
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to validate time!");
+    throw Fmi::Exception::Trace(BCP, "Failed to validate time!");
   }
 #endif
 }
@@ -97,7 +97,7 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to establish most current time!");
+    throw Fmi::Exception::Trace(BCP, "Failed to establish most current time!");
   }
 }
 
@@ -125,7 +125,7 @@ std::string StepTimeDimension::getCapabilities(const boost::optional<std::string
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to extract time dimension capabilities!");
+    throw Fmi::Exception::Trace(BCP, "Failed to extract time dimension capabilities!");
   }
 }
 
@@ -152,7 +152,7 @@ std::string StepTimeDimension::makeCapabilities(const boost::optional<std::strin
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to make time dimension capabilities!");
+    throw Fmi::Exception::Trace(BCP, "Failed to make time dimension capabilities!");
   }
 }
 
@@ -192,7 +192,7 @@ std::string IntervalTimeDimension::getCapabilities(
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to generate time dimension capabilities!");
+    throw Fmi::Exception::Trace(BCP, "Failed to generate time dimension capabilities!");
   }
 }
 
@@ -203,7 +203,7 @@ std::string IntervalTimeDimension::makeCapabilities(
   try
   {
     if ((starttime && endtime) && parse_time(*starttime) > parse_time(*endtime))
-      throw Spine::Exception::Trace(BCP,
+      throw Fmi::Exception::Trace(BCP,
                                     "Requested starttime must be earlier than requested endtime!");
 
     auto startt = itsInterval.startTime;
@@ -251,7 +251,7 @@ std::string IntervalTimeDimension::makeCapabilities(
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to make time dimension capabilities!");
+    throw Fmi::Exception::Trace(BCP, "Failed to make time dimension capabilities!");
   }
 }
 
@@ -272,7 +272,7 @@ std::ostream& operator<<(std::ostream& ost, const StepTimeDimension& timeDimensi
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to print step time dimension data!");
+    throw Fmi::Exception::Trace(BCP, "Failed to print step time dimension data!");
   }
 }
 
@@ -288,7 +288,7 @@ std::ostream& operator<<(std::ostream& ost, const IntervalTimeDimension& timeDim
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to print time dimension data!");
+    throw Fmi::Exception::Trace(BCP, "Failed to print time dimension data!");
   }
 }
 

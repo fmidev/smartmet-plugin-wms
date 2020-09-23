@@ -2,7 +2,7 @@
 #include "Hash.h"
 
 #include <boost/numeric/conversion/cast.hpp>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -22,7 +22,7 @@ void Png::init(const Json::Value& theJson, const Config& /* theConfig */)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Png JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Png JSON is not a JSON object");
 
     // Iterate through all the members
 
@@ -40,12 +40,12 @@ void Png::init(const Json::Value& theJson, const Config& /* theConfig */)
       else if (name == "truecolor")
         options.truecolor = json.asBool();
       else
-        throw Spine::Exception(BCP, "Png does not have a setting named '" + name + "'");
+        throw Fmi::Exception(BCP, "Png does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -68,7 +68,7 @@ std::size_t Png::hash_value(const State& /* theState */) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

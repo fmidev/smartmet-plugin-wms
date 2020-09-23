@@ -7,7 +7,7 @@
 #include "WMSObservationLayer.h"
 #endif
 #include <engines/querydata/Engine.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <set>
 
 namespace SmartMet
@@ -62,7 +62,7 @@ WMSLayerType getWMSLayerType(const Json::Value& layer)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to get WMS layer type!");
+    throw Fmi::Exception::Trace(BCP, "Failed to get WMS layer type!");
   }
 }
 
@@ -94,7 +94,7 @@ std::string getWMSLayerTypeAsString(WMSLayerType layerType)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to get layer type as string!");
+    throw Fmi::Exception::Trace(BCP, "Failed to get layer type as string!");
   }
 }
 
@@ -160,7 +160,7 @@ WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
     // otherwise it is WMSLayerType::QueryDataLayer
     if (views.isNull())
     {
-      throw Spine::Exception(BCP, "No views in WMS layer definition");
+      throw Fmi::Exception(BCP, "No views in WMS layer definition");
     }
     else
     {
@@ -169,7 +169,7 @@ WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
       Json::Value layers = view.get("layers", nulljson);
       if (layers.isNull())
       {
-        throw Spine::Exception(BCP, "No layers in WMS layer definition");
+        throw Fmi::Exception(BCP, "No layers in WMS layer definition");
       }
       else
       {
@@ -186,13 +186,13 @@ WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
         // This is currently an error, WMS layer must contain some spatio-temporal data
 
         // Misconfigured layer is this
-        throw Spine::Exception(BCP, "No valid Dali layer definitions in WMS layer definition");
+        throw Fmi::Exception(BCP, "No valid Dali layer definitions in WMS layer definition");
       }
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to determine layer product type!");
+    throw Fmi::Exception::Trace(BCP, "Failed to determine layer product type!");
   }
 }
 
@@ -261,7 +261,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
       }
       default:  // we should never end up here since determineLayerType should always return a
                 // valid layer type
-        throw Spine::Exception(BCP, "WMS Layer enum not handled in WMSLayerFactory.");
+        throw Fmi::Exception(BCP, "WMS Layer enum not handled in WMSLayerFactory.");
     };
 
     // Generic variables. The quiet flag must be set before
@@ -334,7 +334,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
           layer->keywords->insert(json[i].asString());
       }
       else
-        throw Spine::Exception(
+        throw Fmi::Exception(
             BCP, p.string() + " keyword value must be an array of strings or a string");
     }
 
@@ -342,7 +342,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     if (!json.isNull())
     {
       if (!json.isObject())
-        throw Spine::Exception(BCP, "top level crs setting must be a group");
+        throw Fmi::Exception(BCP, "top level crs setting must be a group");
 
       auto j = json.get("enable", nulljson);
       if (!j.isNull())
@@ -376,7 +376,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
       if (!json.isNull())
       {
         if (!json.isArray())
-          throw Spine::Exception(BCP, "WMSLayer styles settings must be an array");
+          throw Fmi::Exception(BCP, "WMSLayer styles settings must be an array");
 
         WMSLayerStyle layerStyle;
 
@@ -452,7 +452,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to create WMS layer!");
+    throw Fmi::Exception::Trace(BCP, "Failed to create WMS layer!");
   }
 }
 

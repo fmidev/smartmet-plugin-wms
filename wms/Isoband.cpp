@@ -1,7 +1,7 @@
 #include "Isoband.h"
 #include "Config.h"
 #include "Hash.h"
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -21,7 +21,7 @@ void Isoband::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Isoband JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Isoband JSON is not a JSON object");
 
     // Iterate through all the members
 
@@ -44,12 +44,12 @@ void Isoband::init(const Json::Value& theJson, const Config& theConfig)
         label->init(json, theConfig);
       }
       else
-        throw Spine::Exception(BCP, "Isoband does not have a setting named '" + name + "'");
+        throw Fmi::Exception(BCP, "Isoband does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -87,7 +87,7 @@ std::size_t Isoband::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

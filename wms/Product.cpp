@@ -3,7 +3,7 @@
 #include "Hash.h"
 #include "State.h"
 #include <ctpp2/CDT.hpp>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 
 namespace SmartMet
@@ -23,7 +23,7 @@ void Product::init(const Json::Value& theJson, const State& theState, const Conf
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Product JSON is not a JSON object (name-value pairs)");
+      throw Fmi::Exception(BCP, "Product JSON is not a JSON object (name-value pairs)");
 
     // Extract all members
 
@@ -79,12 +79,12 @@ void Product::init(const Json::Value& theJson, const State& theState, const Conf
 #if 0
     // WMS layers may not define either directly, since the desired size is given in the query string
     if (!width || !height)
-      throw Spine::Exception(BCP, "SVG width or height is undefined");
+      throw Fmi::Exception(BCP, "SVG width or height is undefined");
 #endif
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Product init failed!");
+    throw Fmi::Exception::Trace(BCP, "Product init failed!");
   }
 }
 
@@ -139,7 +139,7 @@ void Product::generate(CTPP::CDT& theGlobals, State& theState)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -181,7 +181,7 @@ std::size_t Product::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

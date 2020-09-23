@@ -6,7 +6,7 @@
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -69,7 +69,7 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
         const auto& parameter_settings = config.lookup("wms.get_legend_graphic.parameters");
 
         if (!parameter_settings.isList())
-          throw Spine::Exception(BCP, "wms.get_legend_graphic.parameters must be a list");
+          throw Fmi::Exception(BCP, "wms.get_legend_graphic.parameters must be a list");
 
         for (int i = 0; i < parameter_settings.getLength(); i++)
         {
@@ -118,7 +118,7 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
         const auto& symbol_settings = config.lookup("wms.get_legend_graphic.symbols");
 
         if (!symbol_settings.isList())
-          throw Spine::Exception(BCP, "wms.get_legend_graphic.symbols must be a list");
+          throw Fmi::Exception(BCP, "wms.get_legend_graphic.symbols must be a list");
 
         for (int i = 0; i < symbol_settings.getLength(); i++)
         {

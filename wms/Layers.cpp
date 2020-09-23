@@ -4,7 +4,7 @@
 #include "LayerFactory.h"
 #include <boost/functional/hash.hpp>
 #include <ctpp2/CDT.hpp>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -26,7 +26,7 @@ void Layers::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isArray())
-      throw Spine::Exception(BCP, "Layers JSON is not a JSON array");
+      throw Fmi::Exception(BCP, "Layers JSON is not a JSON array");
 
     for (const auto& json : theJson)
     {
@@ -37,7 +37,7 @@ void Layers::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -64,7 +64,7 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -94,7 +94,7 @@ std::size_t Layers::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -2,7 +2,7 @@
 #include "Hash.h"
 
 #include <ctpp2/CDT.hpp>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -24,7 +24,7 @@ void Views::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isArray())
-      throw Spine::Exception(BCP, "Views setting must be an array");
+      throw Fmi::Exception(BCP, "Views setting must be an array");
 
     for (const auto& json : theJson)
     {
@@ -35,7 +35,7 @@ void Views::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -58,7 +58,7 @@ void Views::generate(CTPP::CDT& theGlobals, State& theState)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -88,7 +88,7 @@ std::size_t Views::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
