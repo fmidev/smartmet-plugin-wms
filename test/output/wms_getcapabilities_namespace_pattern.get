@@ -167,6 +167,10 @@
       <Name>test:temperature_isotherm_labels</Name>
       <Title>Temperature isotherm labels</Title>
       <Abstract>Temperature isotherm labels</Abstract>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>EPSG:4258</CRS>
       <CRS>EPSG:4326</CRS>
       <EX_GeographicBoundingBox>
         <westBoundLongitude>0</westBoundLongitude>
@@ -174,6 +178,10 @@
         <southBoundLatitude>0</southBoundLatitude>
         <northBoundLatitude>0</northBoundLatitude>
       </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="0" miny="0" maxx="0" maxy="0"/>
+      <BoundingBox CRS="CRS:83" minx="0" miny="0" maxx="0" maxy="0"/>
+      <BoundingBox CRS="CRS:84" minx="0" miny="0" maxx="0" maxy="0"/>
+      <BoundingBox CRS="EPSG:4258" minx="0" miny="0" maxx="0" maxy="0"/>
       <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/>
     </Layer>
     <Layer queryable="1" cascaded="1" opaque="0" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
