@@ -446,7 +446,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 #endif
 
     // Calculate projected bboxes only once to speed up GetCapabilities
-    layer->initProjectedBBoxes(*theWMSConfig.gisEngine());
+    layer->initProjectedBBoxes();
 
     return layer;
   }

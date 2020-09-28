@@ -23,8 +23,6 @@ namespace WMS
 {
 namespace
 {
-const std::set<std::string> geographic_crs{"WGS84", "EPSG:4326", "EPSGA:4326"};
-
 std::string get_symbol_translation(const LegendGraphicSymbol& symbolSettings,
                                    const std::string& language,
                                    const std::string& defaultValue)
@@ -1371,7 +1369,7 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
   }
 }
 
-void WMSLayer::initProjectedBBoxes(const Engine::Gis::Engine& gisengine)
+void WMSLayer::initProjectedBBoxes()
 {
   for (const auto& id_ref : refs)
   {
@@ -1381,7 +1379,8 @@ void WMSLayer::initProjectedBBoxes(const Engine::Gis::Engine& gisengine)
     if (!isValidCRS(id))
       continue;
 
-    if (geographic_crs.find(id) != geographic_crs.end())
+    Fmi::SpatialReference crs(ref.proj);
+    if(crs.isGeographic())
       continue;
 
     // Intersect with target EPSG bounding box (latlon) if it is available
@@ -1401,9 +1400,9 @@ void WMSLayer::initProjectedBBoxes(const Engine::Gis::Engine& gisengine)
 
     if (x1 < x2 && y1 < y2)
     {
-      auto transformation = gisengine.getCoordinateTransformation("WGS84", ref.proj);
+      Fmi::CoordinateTransformation transformation("WGS84",ref.proj);
 
-      bool ok = (transformation->Transform(1, &x1, &y1) && transformation->Transform(1, &x2, &y2));
+      bool ok = (transformation.transform(x1,y1) && transformation.transform(x2,y2));
 
       // Produce bbox only if projection succeeds
 
@@ -1411,7 +1410,7 @@ void WMSLayer::initProjectedBBoxes(const Engine::Gis::Engine& gisengine)
       {
         // Use proper coordinate ordering for the EPSG
 
-        if (transformation->GetTargetCS()->EPSGTreatsAsLatLong())
+        if (transformation.getTargetCS().EPSGTreatsAsLatLong())
         {
           std::swap(x1, y1);
           std::swap(x2, y2);
@@ -1424,7 +1423,6 @@ void WMSLayer::initProjectedBBoxes(const Engine::Gis::Engine& gisengine)
 }
 
 boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
-    const Engine::Gis::Engine& gisengine,
     const boost::optional<std::string>& starttime,
     const boost::optional<std::string>& endtime)
 {
@@ -1482,6 +1480,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
       for (const auto& id_ref : refs)
       {
         const auto& id = id_ref.first;
+        const auto& ref = id_ref.second;
 
         if (!isValidCRS(id))
           continue;
@@ -1490,7 +1489,9 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
         layer_bbox["crs"] = id;
 
-        if (geographic_crs.find(id) != geographic_crs.end())
+        Fmi::SpatialReference crs(ref.proj);
+        
+        if (crs.isGeographic())
         {
           layer_crs_list.PushBack(id);
           layer_bbox["minx"] = geographicBoundingBox.xMin;

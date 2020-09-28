@@ -38,7 +38,7 @@ class WMSLayerProxy
   boost::optional<CTPP::CDT> getCapabilities(const boost::optional<std::string>& starttime,
                                              const boost::optional<std::string>& endtime) const
   {
-    return itsLayer->generateGetCapabilities(*itsGisEngine, starttime, endtime);
+    return itsLayer->generateGetCapabilities(starttime, endtime);
   }
 
  private:
