@@ -4,8 +4,8 @@
 #include "LonLatToXYTransformation.h"
 #include "State.h"
 #include <ctpp2/CDT.hpp>
-#include <spine/Exception.h>
 #include <ogr_spatialref.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -27,7 +27,7 @@ void TagLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Symbol-layer JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Symbol-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -45,7 +45,7 @@ void TagLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -60,7 +60,7 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
   try
   {
     if (!tag || tag->empty())
-      throw Spine::Exception(BCP, "TagLayer tag must be defined and be non-empty");
+      throw Fmi::Exception(BCP, "TagLayer tag must be defined and be non-empty");
 
     if (!validLayer(theState))
       return;
@@ -172,7 +172,7 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -193,7 +193,7 @@ std::size_t TagLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -7,7 +7,7 @@
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <spine/Convenience.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/ParameterFactory.h>
 #include <iomanip>
 #include <stdexcept>
@@ -64,7 +64,7 @@ bool overlaps(const Fmi::Box& theBox,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -98,7 +98,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
     {
       auto param = Spine::ParameterFactory::instance().parse(theDirection);
       if (!q.param(param.number()))
-        throw Spine::Exception(
+        throw Fmi::Exception(
             BCP, "Parameter '" + theDirection + "' is not available for position selection!");
 
       for (auto& point : thePoints)
@@ -177,7 +177,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -192,7 +192,7 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Positions JSON is not a JSON object!");
+      throw Fmi::Exception(BCP, "Positions JSON is not a JSON object!");
 
     // Iterate through all the members
 
@@ -219,7 +219,7 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
         else if (tmp == "station")
           layout = Layout::Station;
         else
-          throw Spine::Exception(BCP, "Unknown layout type for positions: '" + tmp + "'!");
+          throw Fmi::Exception(BCP, "Unknown layout type for positions: '" + tmp + "'!");
       }
 
       else if (name == "x")
@@ -280,40 +280,40 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
         intersections.init(json, theConfig);
 
       else
-        throw Spine::Exception(BCP, "Positions does not have a setting named '" + name + "'!");
+        throw Fmi::Exception(BCP, "Positions does not have a setting named '" + name + "'!");
     }
 
     if (size <= 0)
-      throw Spine::Exception(BCP, "Positions size-setting must be nonnegative!");
+      throw Fmi::Exception(BCP, "Positions size-setting must be nonnegative!");
 
     if (step <= 0)
-      throw Spine::Exception(BCP, "Positions step-setting must be nonnegative!");
+      throw Fmi::Exception(BCP, "Positions step-setting must be nonnegative!");
 
     if (step > size)
-      throw Spine::Exception(BCP, "Positions step-setting must be smaller than the size-setting!");
+      throw Fmi::Exception(BCP, "Positions step-setting must be smaller than the size-setting!");
 
     if (180 % step != 0)
-      throw Spine::Exception(BCP, "Positions step-size must divide 180 degrees evenly");
+      throw Fmi::Exception(BCP, "Positions step-size must divide 180 degrees evenly");
 
     // we cannot allow stuff like 1e-6, that'll generate a huge amounts of points
     if (mindistance < 2)
-      throw Spine::Exception(BCP, "Minimum distance between positions must be at least 2 pixels!");
+      throw Fmi::Exception(BCP, "Minimum distance between positions must be at least 2 pixels!");
 
     if (!direction.empty() && (!u.empty() || !v.empty()))
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "Cannot specify position offsets using both direction and the u- and v-components!");
 
     if ((!u.empty() && v.empty()) || (!v.empty() && u.empty()))
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "Cannot specify only one of u- and v-components for position offsets!");
 
     if (directionoffset != 0 && direction.empty() && u.empty() && v.empty())
-      throw Spine::Exception(BCP,
+      throw Fmi::Exception(BCP,
                              "Must specify direction parameter for direction offset of positions!");
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -343,7 +343,7 @@ void Positions::init(const boost::optional<std::string>& theProducer,
     {
       inshape = gisengine->getShape(&theProjection.getCRS(), insidemap->options);
       if (!inshape)
-        throw Spine::Exception(BCP, "Positions received empty inside-shape from database!");
+        throw Fmi::Exception(BCP, "Positions received empty inside-shape from database!");
 
       // This does not obey layer margins, hence we disable this speed optimization
       // inshape.reset(Fmi::OGR::polyclip(*inshape, theProjection.getBox()));
@@ -362,7 +362,7 @@ void Positions::init(const boost::optional<std::string>& theProducer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -413,7 +413,7 @@ Positions::Points Positions::getPoints(const Engine::Querydata::Q& theQ,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -437,10 +437,10 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
     // Use defaults for this layout if nothing is specified
 
     if (!!dx && *dx <= 0)
-      throw Spine::Exception(BCP, "Positions dx-setting must be nonnegative for grid-layouts!");
+      throw Fmi::Exception(BCP, "Positions dx-setting must be nonnegative for grid-layouts!");
 
     if (!!dy && *dy <= 0)
-      throw Spine::Exception(BCP, "Positions dy-setting must be nonnegative for grid-layouts!");
+      throw Fmi::Exception(BCP, "Positions dy-setting must be nonnegative for grid-layouts!");
 
     int xstart = (!!x ? *x : 5);
     int ystart = (!!y ? *y : 5);
@@ -450,7 +450,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
 
     // Sanity check
     if (deltaxx >= deltax)
-      throw Spine::Exception(BCP, "ddx must be smaller than dx when generating a grid layout!");
+      throw Fmi::Exception(BCP, "ddx must be smaller than dx when generating a grid layout!");
 
     // Generate the grid coordinates
 
@@ -509,7 +509,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -574,7 +574,7 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -637,7 +637,7 @@ Positions::Points Positions::getGraticulePoints(const Engine::Querydata::Q& theQ
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -830,7 +830,7 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -850,7 +850,7 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
     // Read the keyword
 
     if (keyword.empty())
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "No keyword given when trying to use a keyword for location definitions!");
 
     Locus::QueryOptions options;
@@ -896,7 +896,7 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -927,7 +927,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
     {
       // keyword location latlon
       if (!location.longitude || !location.latitude)
-        throw Spine::Exception(BCP, "Incomplete location in the locations list!");
+        throw Fmi::Exception(BCP, "Incomplete location in the locations list!");
 
       double lon = *location.longitude;
       double lat = *location.latitude;
@@ -968,7 +968,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1042,11 +1042,11 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
       }
       else if (station.longitude || station.latitude)
       {
-        throw Spine::Exception(
+        throw Fmi::Exception(
             BCP, "Use latlon instead of station layout for forecast data when listing coordinates");
       }
       else
-        throw Spine::Exception(BCP, "Station ID not set in the configuration");
+        throw Fmi::Exception(BCP, "Station ID not set in the configuration");
 
       if (places.empty())
         continue;
@@ -1096,7 +1096,7 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1120,7 +1120,7 @@ bool Positions::insideShapes(double theX, double theY) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1144,7 +1144,7 @@ bool Positions::inside(double theX, double theY, bool forecastMode) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1170,7 +1170,7 @@ bool Positions::inside(double theX,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1220,7 +1220,7 @@ std::size_t Positions::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

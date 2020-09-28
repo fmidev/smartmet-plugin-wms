@@ -16,7 +16,7 @@
 #include <gis/OGR.h>
 #include <gis/PostGIS.h>
 #include <macgyver/StringConversion.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/Json.h>
 #include <algorithm>
 #include <cmath>
@@ -142,7 +142,7 @@ void IceMapLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "PostGIS JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "PostGIS JSON is not a JSON object");
 
     PostGISLayerBase::init(theJson, theState, theConfig, theProperties);
 
@@ -259,7 +259,7 @@ void IceMapLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -423,7 +423,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -444,7 +444,7 @@ std::string IceMapLayer::getParameterValue(const std::string& theKey) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -465,7 +465,7 @@ std::size_t IceMapLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -522,7 +522,7 @@ void IceMapLayer::handleTextField(const Fmi::Feature& theResultItem,
   }
   else
   {
-    throw Spine::Exception(BCP, "Error: text_column must be defined for PostGIS-based text field!");
+    throw Fmi::Exception(BCP, "Error: text_column must be defined for PostGIS-based text field!");
   }
 
   std::vector<std::string> rows;

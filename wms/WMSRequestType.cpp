@@ -1,6 +1,6 @@
 #include "WMSRequestType.h"
 #include <spine/Convenience.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 #define WMS_SERVICE "WMS"
 #define WMS_GET_CAPABILITIES "GetCapabilities"
@@ -34,7 +34,7 @@ WMSRequestType wmsRequestType(const Spine::HTTP::Request& theHTTPRequest)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Extracting MWS request type failed!");
+    throw Fmi::Exception::Trace(BCP, "Extracting MWS request type failed!");
   }
 }
 

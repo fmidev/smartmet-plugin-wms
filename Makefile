@@ -86,23 +86,22 @@ objdir = obj
 # Boost 1.69
 
 ifneq "$(wildcard /usr/include/boost169)" ""
-  INCLUDES += -I/usr/include/boost169
+  INCLUDES += -isystem /usr/include/boost169
   LIBS += -L/usr/lib64/boost169
 endif
 
 ifneq "$(wildcard /usr/gdal30/include)" ""
-  INCLUDES += -I/usr/gdal30/include
-  LIBS += -L/usr/gdal30/lib
+  INCLUDES += -isystem /usr/gdal30/include
+  LIBS += -L$(PREFIX)/gdal30/lib
 else
-  INCLUDES += -I/usr/include/gdal
+  INCLUDES += -isystem /usr/include/gdal
 endif
 
-
-INCLUDES += -I$(includedir) \
+INCLUDES += \
 	-I$(includedir)/smartmet \
-	-I$(includedir)/mysql \
-	-I$(includedir)/oracle/11.2/client64 \
-	-I$(includedir)/soci \
+	-isystem $(includedir)/mysql \
+	-isystem $(includedir)/oracle/11.2/client64 \
+	-isystem $(includedir)/soci \
 	`pkg-config --cflags librsvg-2.0` \
 	`pkg-config --cflags cairo` \
 	`pkg-config --cflags jsoncpp`
@@ -177,7 +176,7 @@ jsontest:
 	fi
 
 $(LIBFILE): $(OBJS) Makefile
-	$(CXX) $(CFLAGS) -shared -rdynamic -o $(LIBFILE) $(OBJS) $(LIBS)
+	$(CC) $(LDFLAGS) -shared -rdynamic -o $(LIBFILE) $(OBJS) $(LIBS)
 
 clean:
 	rm -f $(LIBFILE)

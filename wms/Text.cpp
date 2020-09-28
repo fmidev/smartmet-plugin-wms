@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -39,7 +39,7 @@ void Text::init(const Json::Value& theJson, const Config& theConfig)
     }
 
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Text JSON must be a string or a JSON hash");
+      throw Fmi::Exception(BCP, "Text JSON must be a string or a JSON hash");
 
     // Iterate through all the members
 
@@ -53,7 +53,7 @@ void Text::init(const Json::Value& theJson, const Config& theConfig)
       else
       {
         if (!json.isString())
-          throw Spine::Exception(BCP,
+          throw Fmi::Exception(BCP,
                                  "Text hash must consist of name string-value pairs, value of " +
                                      name + " is not a string");
 
@@ -63,7 +63,7 @@ void Text::init(const Json::Value& theJson, const Config& theConfig)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -83,7 +83,7 @@ std::size_t Text::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -110,11 +110,11 @@ const std::string& Text::translate(const std::string& theLanguage) const
 
     // Error
 
-    throw Spine::Exception(BCP, "No translation set for language '" + theLanguage + "'");
+    throw Fmi::Exception(BCP, "No translation set for language '" + theLanguage + "'");
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -139,11 +139,11 @@ const std::string& Text::translate(const boost::optional<std::string>& theLangua
 
     // Error
 
-    throw Spine::Exception(BCP, "Default text value missing when language is not set");
+    throw Fmi::Exception(BCP, "Default text value missing when language is not set");
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

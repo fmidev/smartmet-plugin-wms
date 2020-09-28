@@ -4,7 +4,7 @@
 #include "State.h"
 
 #include <ctpp2/CDT.hpp>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -26,7 +26,7 @@ void TranslationLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Translation-layer JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Translation-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -42,14 +42,14 @@ void TranslationLayer::init(const Json::Value& theJson,
     if (!json.isNull())
     {
       if (!json.isObject())
-        throw Spine::Exception(BCP, "translations setting must be a JSON map");
+        throw Fmi::Exception(BCP, "translations setting must be a JSON map");
 
       const auto members = json.getMemberNames();
       for (const auto& name : members)
       {
         const Json::Value& text_json = json[name];
         if (!text_json.isString())
-          throw Spine::Exception(
+          throw Fmi::Exception(
               BCP, "Translation-layer name '" + name + "' translation is not a string");
         translations[name] = text_json.asString();
       }
@@ -57,7 +57,7 @@ void TranslationLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -72,10 +72,10 @@ void TranslationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, 
   try
   {
     if (tag.empty())
-      throw Spine::Exception(BCP, "TranslationLayer tag must be defined and be non-empty");
+      throw Fmi::Exception(BCP, "TranslationLayer tag must be defined and be non-empty");
 
     if (!language || language->empty())
-      throw Spine::Exception(BCP, "Unable to generate translation-layer, language code is not set");
+      throw Fmi::Exception(BCP, "Unable to generate translation-layer, language code is not set");
 
     if (!validLayer(theState))
       return;
@@ -84,7 +84,7 @@ void TranslationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, 
 
     const auto& translation = translations.find(*language);
     if (translation == translations.end())
-      throw Spine::Exception(BCP, "Translation missing for language '" + *language + "'");
+      throw Fmi::Exception(BCP, "Translation missing for language '" + *language + "'");
 
     // Update the globals
 
@@ -106,7 +106,7 @@ void TranslationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, 
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -127,7 +127,7 @@ std::size_t TranslationLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

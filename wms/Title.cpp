@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -29,7 +29,7 @@ void Title::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Title JSON must be a JSON hash");
+      throw Fmi::Exception(BCP, "Title JSON must be a JSON hash");
 
     // Iterate through all the members
 
@@ -49,12 +49,12 @@ void Title::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "attributes")
         attributes.init(json, theConfig);
       else
-        throw Spine::Exception(BCP, "Title object has no field named '" + name + "'");
+        throw Fmi::Exception(BCP, "Title object has no field named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -77,7 +77,7 @@ std::size_t Title::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -95,7 +95,7 @@ const std::string& Title::translate(const std::string& theLanguage) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -113,7 +113,7 @@ const std::string& Title::translate(const boost::optional<std::string>& theLangu
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

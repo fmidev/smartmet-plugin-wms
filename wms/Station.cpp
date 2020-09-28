@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -37,7 +37,7 @@ void Station::init(const Json::Value& theJson, const Config& theConfig)
     // Initialize with more details
 
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Station JSON must be an integer (fmisid) or a JSON hash");
+      throw Fmi::Exception(BCP, "Station JSON must be an integer (fmisid) or a JSON hash");
 
     // Iterate through all the members
 
@@ -72,7 +72,7 @@ void Station::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "dy")
         dy = json.asInt();
       else
-        throw Spine::Exception(BCP, "Station does not have a setting named '" + name + "'");
+        throw Fmi::Exception(BCP, "Station does not have a setting named '" + name + "'");
     }
 
     // Make sure the selection is unique. For historical reasons
@@ -90,21 +90,21 @@ void Station::init(const Json::Value& theJson, const Config& theConfig)
       ++count;
 
     if (count == 0)
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "Station does not specify any of fmisid, lpnn, wmo, geoid or latlon coordinates");
     if (count > 1)
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP,
           "Station must be defined by only one of fmisid, lpnn, wmo, geoid or latlon coordinates");
 
     if (longitude && !latitude)
-      throw Spine::Exception(BCP, "Station latitude missing");
+      throw Fmi::Exception(BCP, "Station latitude missing");
     if (!longitude && latitude)
-      throw Spine::Exception(BCP, "Station longitude missing");
+      throw Fmi::Exception(BCP, "Station longitude missing");
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -134,7 +134,7 @@ std::size_t Station::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

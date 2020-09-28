@@ -9,8 +9,8 @@
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
-#include <spine/Exception.h>
 #include <ogr_geometry.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -32,7 +32,7 @@ void WKTLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "WKT-layer JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "WKT-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -60,7 +60,7 @@ void WKTLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -75,13 +75,13 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
   try
   {
     if (wkt.empty())
-      throw Spine::Exception(BCP, "WKTLayer WKT must be defined and be non-empty");
+      throw Fmi::Exception(BCP, "WKTLayer WKT must be defined and be non-empty");
 
     if (!validLayer(theState))
       return;
 
     if (resolution && relativeresolution)
-      throw Spine::Exception(BCP, "Cannot set both resolution and relativeresolution for WKT");
+      throw Fmi::Exception(BCP, "Cannot set both resolution and relativeresolution for WKT");
 
     std::string report = "WKTLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
@@ -107,7 +107,7 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     OGRErr err = OGRGeometryFactory::createFromWkt(&cwkt, wgs84.get(), &ogeom);
 
     if (err != OGRERR_NONE)
-      throw SmartMet::Spine::Exception(BCP, "Failed to convert WKT to OGRGeometry");
+      throw Fmi::Exception(BCP, "Failed to convert WKT to OGRGeometry");
 
     if (wgs84.isAxisSwapped())
       ogeom->swapXY();
@@ -119,7 +119,7 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     if (resolution || relativeresolution)
     {
       if (!projection.resolution)
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "Cannot segmentize WKT layer if projection resolution is not known");
 
       double res = 0;
@@ -166,7 +166,7 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     if (iri.empty())
       iri = theState.generateUniqueId();
     else if (!theState.addId(iri))
-      throw Spine::Exception(BCP, "Non-unique ID assigned to WKT layer").addParameter("ID", iri);
+      throw Fmi::Exception(BCP, "Non-unique ID assigned to WKT layer").addParameter("ID", iri);
 
     CTPP::CDT wkt_cdt(CTPP::CDT::HASH_VAL);
     wkt_cdt["iri"] = iri;
@@ -199,7 +199,7 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -222,7 +222,7 @@ std::size_t WKTLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

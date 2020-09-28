@@ -7,8 +7,8 @@
 #include "TextUtility.h"
 #include <ctpp2/CDT.hpp>
 #include <gis/OGR.h>
-#include <spine/Exception.h>
 #include <ogr_geometry.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -21,7 +21,7 @@ namespace
 void readBoundingBox(const std::string& bbox, FrameDimension& dimension)
 {
   if (bbox.find(',') == std::string::npos)
-    throw Spine::Exception(BCP,
+    throw Fmi::Exception(BCP,
                            "Frame layer error: invalid bounding box format: should be <lon lat, "
                            "lon lat> (bottom left, top right)");
 
@@ -33,7 +33,7 @@ void readBoundingBox(const std::string& bbox, FrameDimension& dimension)
   std::vector<std::string> parts;
   boost::algorithm::split(parts, bottomLeft, boost::algorithm::is_any_of(" "));
   if (parts.size() != 2)
-    throw Spine::Exception(BCP,
+    throw Fmi::Exception(BCP,
                            "Frame layer error: invalid bounding box format: should be <lon lat, "
                            "lon lat> (bottom left, top right)");
   dimension.leftLongitude = Fmi::stod(parts[0]);
@@ -43,7 +43,7 @@ void readBoundingBox(const std::string& bbox, FrameDimension& dimension)
 
   boost::algorithm::split(parts, topRight, boost::algorithm::is_any_of(" "));
   if (parts.size() != 2)
-    throw Spine::Exception(BCP,
+    throw Fmi::Exception(BCP,
                            "Frame layer error: invalid bounding box format: should be <lon lat, "
                            "lon lat> (bottom left, top right)");
   dimension.rightLongitude = Fmi::stod(parts[0]);
@@ -97,7 +97,7 @@ void FrameLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Frame-layer JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Frame-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -112,7 +112,7 @@ void FrameLayer::init(const Json::Value& theJson,
 
     auto jsonDimension = theJson.get("dimension", nulljson);
     if (jsonDimension.isNull())
-      throw Spine::Exception(BCP, "Frame-layer must have dimension element!");
+      throw Fmi::Exception(BCP, "Frame-layer must have dimension element!");
 
     auto jsonPrecision = theJson.get("precision", nulljson);
     if (!jsonPrecision.isNull())
@@ -120,7 +120,7 @@ void FrameLayer::init(const Json::Value& theJson,
 
     auto json = jsonDimension.get("inner_border", nulljson);
     if (json.isNull())
-      throw Spine::Exception(BCP, "Frame-layer must have inner_border element!");
+      throw Fmi::Exception(BCP, "Frame-layer must have inner_border element!");
     std::string innerBorder = json.asString();
     readBoundingBox(innerBorder, itsInnerBorder);
 
@@ -188,7 +188,7 @@ void FrameLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -250,7 +250,7 @@ void FrameLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -561,7 +561,7 @@ std::size_t FrameLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -17,7 +17,7 @@
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
@@ -85,7 +85,7 @@ void Layer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -105,7 +105,7 @@ bool Layer::validLayer(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -133,7 +133,7 @@ Engine::Querydata::Q Layer::getModel(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to get required model data!");
+    throw Fmi::Exception::Trace(BCP, "Failed to get required model data!");
   }
 }
 
@@ -152,7 +152,7 @@ bool Layer::validResolution() const
       return true;
 
     if (!projection.resolution)
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP,
           "Projection resolution has not been specified, cannot use min/maxresolution settings");
 
@@ -168,7 +168,7 @@ bool Layer::validResolution() const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -186,7 +186,7 @@ bool Layer::validType(const std::string& theType) const
   try
   {
     if (!enable.empty() && !disable.empty())
-      throw Spine::Exception(BCP,
+      throw Fmi::Exception(BCP,
                              "Setting disable and enable image formats simultaneously is an error");
 
     if (!disable.empty())
@@ -199,7 +199,7 @@ bool Layer::validType(const std::string& theType) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -417,7 +417,7 @@ std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
 Parameter Layer::getParameter() const
 {
   if(!parameter)
-	throw Spine::Exception(BCP,"Parameter has not been set for all layers");
+	throw Fmi::Exception(BCP,"Parameter has not been set for all layers");
   return Spine::ParameterFactory::instance().parse(*parameter);
 }
 
@@ -457,7 +457,7 @@ std::size_t Layer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

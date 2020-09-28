@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -22,7 +22,7 @@ void Map::init(const Json::Value& theJson, const Config& /* theConfig */)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Map JSON is not map");
+      throw Fmi::Exception(BCP, "Map JSON is not map");
 
     // Iterate through all the members
 
@@ -46,12 +46,12 @@ void Map::init(const Json::Value& theJson, const Config& /* theConfig */)
       else if (name == "minarea")
         options.minarea = json.asDouble();
       else
-        throw Spine::Exception(BCP, "Map does not have a setting named '" + name + "'");
+        throw Fmi::Exception(BCP, "Map does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -78,7 +78,7 @@ std::size_t Map::hash_value(const State& /* theState */) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -1,6 +1,6 @@
 #include "Colour.h"
 #include "WMSException.h"
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -15,7 +15,7 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
     // valid fromat is 0xFFFFFF
     if (hex_string.size() != 8)
     {
-      throw Spine::Exception(BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!")
+      throw Fmi::Exception(BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
@@ -32,7 +32,7 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
     }
     catch (...)
     {
-      throw Spine::Exception::Trace(BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!")
+      throw Fmi::Exception::Trace(BCP, "Invalid BGCOLOR parameter '" + hex_string + "'!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
@@ -40,7 +40,7 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Converting hex string to RGB failed!");
+    throw Fmi::Exception::Trace(BCP, "Converting hex string to RGB failed!");
   }
 }
 

@@ -8,7 +8,7 @@
 #include <boost/shared_ptr.hpp>
 #include <ctpp2/CTPP2Logger.hpp>  // logging level defines
 #include <spine/Convenience.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/FmiApiKey.h>
 #include <algorithm>
 
@@ -51,7 +51,7 @@ std::string resolveGetMapURI(const Spine::HTTP::Request& theRequest)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Resolving GetMap URI failed!");
+    throw Fmi::Exception::Trace(BCP, "Resolving GetMap URI failed!");
   }
 }
 
@@ -105,7 +105,7 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     }
     catch (...)
     {
-      throw Spine::Exception::Trace(BCP, "Failed to get apikey from the query");
+      throw Fmi::Exception::Trace(BCP, "Failed to get apikey from the query");
     }
 
     CTPP::CDT hash;
@@ -115,7 +115,7 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     }
     catch (...)
     {
-      throw Spine::Exception::Trace(BCP, "Failed to extract capabilities from configuration file");
+      throw Fmi::Exception::Trace(BCP, "Failed to extract capabilities from configuration file");
     }
 
     CTPP::CDT configuredLayers;
@@ -129,11 +129,11 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     }
     catch (...)
     {
-      throw Spine::Exception::Trace(BCP, "Failed to get capabilities from configured layers");
+      throw Fmi::Exception::Trace(BCP, "Failed to get capabilities from configured layers");
     }
 
     if (!hash.Exists("capability"))
-      throw Spine::Exception(BCP, "WMS generated has does not contain a capability section!");
+      throw Fmi::Exception(BCP, "WMS generated has does not contain a capability section!");
 
     try
     {
@@ -141,7 +141,7 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     }
     catch (...)
     {
-      throw Spine::Exception::Trace(BCP, "Setting configured layers to output hash failed");
+      throw Fmi::Exception::Trace(BCP, "Setting configured layers to output hash failed");
     }
 
     // http/https scheme selection based on 'X-Forwarded-Proto' header
@@ -163,7 +163,7 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
       }
       catch (...)
       {
-        throw Spine::Exception::Trace(BCP, "Patching protocol failed")
+        throw Fmi::Exception::Trace(BCP, "Patching protocol failed")
             .addParameter("protocol", protocol);
       }
     }
@@ -180,13 +180,13 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     }
     catch (const std::exception& e)
     {
-      throw Spine::Exception::Trace(BCP, "CTPP formatter failed")
+      throw Fmi::Exception::Trace(BCP, "CTPP formatter failed")
           .addParameter("what", e.what())
           .addParameter("log enabled by debug=1", logstream.str());
     }
     catch (...)
     {
-      throw Spine::Exception::Trace(BCP, "CTPP formatter failed")
+      throw Fmi::Exception::Trace(BCP, "CTPP formatter failed")
           .addParameter("log enabled by debug=1", logstream.str());
     }
 
@@ -218,14 +218,14 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     }
     catch (...)
     {
-      throw Spine::Exception::Trace(BCP, "Fixing host name failed")
+      throw Fmi::Exception::Trace(BCP, "Fixing host name failed")
           .addParameter("host", *host_header);
     }
   }
 
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "WMSGetCapabilities::response() failed!");
+    throw Fmi::Exception::Trace(BCP, "WMSGetCapabilities::response() failed!");
   }
 }
 

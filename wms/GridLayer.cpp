@@ -9,7 +9,7 @@
 #include <gis/CoordinateMatrixAnalysis.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <ogr_geometry.h>
 
 namespace SmartMet
@@ -32,13 +32,13 @@ void GridLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Grid-layer JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Grid-layer JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -119,7 +119,7 @@ void GridLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
     if (iri.empty())
       iri = theState.generateUniqueId();
     else if (!theState.addId(iri))
-      throw Spine::Exception(BCP, "Non-unique ID assigned to Grid layer").addParameter("ID", iri);
+      throw Fmi::Exception(BCP, "Non-unique ID assigned to Grid layer").addParameter("ID", iri);
 
     const double precision = 0.1;  // about 1 pixel accuracy should be sufficient
     CTPP::CDT grid_cdt(CTPP::CDT::HASH_VAL);
@@ -153,7 +153,7 @@ void GridLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }  // namespace Dali
 
@@ -172,7 +172,7 @@ std::size_t GridLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

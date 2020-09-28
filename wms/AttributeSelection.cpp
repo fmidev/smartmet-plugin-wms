@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -22,7 +22,7 @@ bool AttributeSelection::matches(double theValue) const
   try
   {
     if (value && (lolimit || hilimit))
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "Attribute depends both on a single value and upper and/or lower limit");
 
     if (value)
@@ -37,7 +37,7 @@ bool AttributeSelection::matches(double theValue) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -63,7 +63,7 @@ void AttributeSelection::init(const Json::Value& theJson, const Config& theConfi
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Arrows JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Arrows JSON is not a JSON object");
 
     // Iterate through all the members
 
@@ -86,13 +86,13 @@ void AttributeSelection::init(const Json::Value& theJson, const Config& theConfi
       {  // ignored so that f.ex. SymbolLayer may reuse Isobands
       }
       else
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "Attribute selection does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -116,7 +116,7 @@ std::size_t AttributeSelection::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

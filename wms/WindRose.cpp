@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/Json.h>
 #include <stdexcept>
 
@@ -23,7 +23,7 @@ void WindRose::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "WindRose JSON is not a JSON hash");
+      throw Fmi::Exception(BCP, "WindRose JSON is not a JSON hash");
 
     // Iterate through all the members
 
@@ -49,12 +49,12 @@ void WindRose::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "limits")
         Spine::JSON::extract_array("limits", limits, json, theConfig);
       else
-        throw Spine::Exception(BCP, "WindRose does not have a setting named '" + name + "'");
+        throw Fmi::Exception(BCP, "WindRose does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -80,7 +80,7 @@ std::size_t WindRose::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -8,7 +8,7 @@
 #include "State.h"
 
 #include <ctpp2/CDT.hpp>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 
 namespace SmartMet
@@ -35,7 +35,7 @@ void View::init(const Json::Value& theJson,
       return;
 
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "View JSON is not a JSON object (name-value pairs)");
+      throw Fmi::Exception(BCP, "View JSON is not a JSON object (name-value pairs)");
 
     Properties::init(theJson, theState, theConfig, theProperties);
 
@@ -57,7 +57,7 @@ void View::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -87,7 +87,7 @@ void View::generate(CTPP::CDT& theGlobals, CTPP::CDT& theViewCdt, State& theStat
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -123,7 +123,7 @@ std::size_t View::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

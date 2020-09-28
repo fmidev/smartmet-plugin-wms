@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 #include <string>
 
@@ -23,7 +23,7 @@ void Patterns::init(const Json::Value& theJson, const State& theState)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Styles JSON must be a JSON object (name-value pairs)");
+      throw Fmi::Exception(BCP, "Styles JSON must be a JSON object (name-value pairs)");
 
     // Iterate through all the members
 
@@ -33,25 +33,25 @@ void Patterns::init(const Json::Value& theJson, const State& theState)
       const Json::Value& pattern_json = theJson[name];
 
       if (!pattern_json.isString())
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "Invalid object type in defs.patterns initialization, expecting "
                                "name-value pair for pattern '" +
                                    name + "'");
 
       std::string value = Spine::HTTP::urldecode(pattern_json.asString());
       if (value.substr(0, 6) != "data:,")
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "Only RFC2397 data-URLs supported: URL incorrect '" + value +
                                    "' for pattern '" + name + "'");
       value = value.substr(6);  // Cut away data:,
       if (!theState.setPattern(name, value))
-        throw Spine::Exception(BCP, "defs.patterns pattern '" + name + "' defined multiple times");
+        throw Fmi::Exception(BCP, "defs.patterns pattern '" + name + "' defined multiple times");
       patterns[name] = value;
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

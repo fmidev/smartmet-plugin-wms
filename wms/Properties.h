@@ -7,9 +7,11 @@
 #pragma once
 
 #include "Projection.h"
+
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/optional.hpp>
 #include <gis/Box.h>
+
 #include <string>
 
 namespace SmartMet
@@ -21,8 +23,9 @@ namespace Dali
 class Config;
 class State;
 
-struct Properties
+class Properties
 {
+ public:
   virtual ~Properties() {}
   void init(const Json::Value& theJson, const State& theState, const Config& theConfig);
 

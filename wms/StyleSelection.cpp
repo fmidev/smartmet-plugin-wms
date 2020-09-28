@@ -1,6 +1,6 @@
 #include "StyleSelection.h"
 #include <spine/Convenience.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -97,7 +97,7 @@ void useStyle(Json::Value& root, const std::string& styleName)
   if (!json.isNull())
   {
     if (!json.isArray())
-      throw Spine::Exception(BCP, "WMSLayer styles settings must be an array");
+      throw Fmi::Exception(BCP, "WMSLayer styles settings must be an array");
 
     for (const auto& styleJson : json)
     {

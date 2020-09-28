@@ -1,4 +1,4 @@
-#if 0  // ### REPLACED BY Spine::Exception
+#if 0  // ### REPLACED BY Fmi::Exception
 
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>

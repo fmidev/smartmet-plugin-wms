@@ -10,7 +10,7 @@
 #include "WMSException.h"
 #include "WMSLayerFactory.h"
 #include <spine/Convenience.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/FmiApiKey.h>
 #include <spine/Json.h>
 #ifndef WITHOUT_AUTHENTICATION
@@ -83,7 +83,7 @@ std::string makeLayerNamespace(const std::string& customer,
     {
       // Safety check needed for some incorrect specifications
       if (tokens.empty())
-        throw SmartMet::Spine::Exception(BCP, "Failed to generate layer namespace")
+        throw Fmi::Exception(BCP, "Failed to generate layer namespace")
             .addParameter("customer", customer)
             .addParameter("file directory", fileDir)
             .addParameter("root directory", productRoot);
@@ -102,7 +102,7 @@ std::string makeLayerNamespace(const std::string& customer,
   }
   catch (...)
   {
-    throw SmartMet::Spine::Exception::Trace(BCP, "Making layer namespace failed!");
+    throw Fmi::Exception::Trace(BCP, "Making layer namespace failed!");
   }
 }
 
@@ -196,7 +196,7 @@ bool looks_valid_filename(const std::string& name)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Filename validation failed!");
+    throw Fmi::Exception::Trace(BCP, "Filename validation failed!");
   }
 }
 
@@ -232,7 +232,7 @@ void set_scalar(CTPP::CDT& tmpl,
     case libconfig::Setting::Type::TypeList:
     case libconfig::Setting::Type::TypeGroup:
     case libconfig::Setting::Type::TypeNone:
-      throw Spine::Exception(BCP, path + " value must be a scalar");
+      throw Fmi::Exception(BCP, path + " value must be a scalar");
   }
 }
 
@@ -266,7 +266,7 @@ CTPP::CDT get_request(const libconfig::Config& config,
 
   const auto& formats = config.lookup(path + ".format");
   if (!formats.isArray())
-    throw Spine::Exception(BCP, path + ".format  must be an array");
+    throw Fmi::Exception(BCP, path + ".format  must be an array");
 
   CTPP::CDT format_list(CTPP::CDT::ARRAY_VAL);
   for (int i = 0; i < formats.getLength(); i++)
@@ -275,7 +275,7 @@ CTPP::CDT get_request(const libconfig::Config& config,
 
   const auto& dcptypes = config.lookup(path + ".dcptype");
   if (dcptypes.isArray())
-    throw Spine::Exception(BCP, path + ".dcptype must be an array");
+    throw Fmi::Exception(BCP, path + ".dcptype must be an array");
   CTPP::CDT dcptype_list(CTPP::CDT::ARRAY_VAL);
 
   for (int i = 0; i < dcptypes.getLength(); i++)
@@ -327,7 +327,7 @@ CTPP::CDT get_capabilities(const libconfig::Config& config)
     const auto& settings = config.lookup("wms.get_capabilities.service.keywords");
 
     if (!settings.isArray())
-      throw Spine::Exception(BCP, "wms.get_capabilities.service.keywords must be an array");
+      throw Fmi::Exception(BCP, "wms.get_capabilities.service.keywords must be an array");
 
     for (int i = 0; i < settings.getLength(); i++)
       keywords.PushBack(settings[i].c_str());
@@ -437,7 +437,7 @@ CTPP::CDT get_capabilities(const libconfig::Config& config)
 
   const auto& exceptions = config.lookup("wms.get_capabilities.capability.exception");
   if (!exceptions.isArray())
-    throw Spine::Exception(BCP, "wms.get_capabilities.capability.exception must be an array");
+    throw Fmi::Exception(BCP, "wms.get_capabilities.capability.exception must be an array");
   CTPP::CDT exception_list(CTPP::CDT::ARRAY_VAL);
   for (int i = 0; i < exceptions.getLength(); i++)
     exception_list.PushBack(exceptions[i].c_str());
@@ -495,7 +495,7 @@ void WMSConfig::parse_references()
   const auto& epsg_settings = config.lookup("wms.supported_references.epsg");
 
   if (!epsg_settings.isArray())
-    throw Spine::Exception(BCP, "wms.supported_references.epsg must be an array of integers");
+    throw Fmi::Exception(BCP, "wms.supported_references.epsg must be an array of integers");
 
   for (int i = 0; i < epsg_settings.getLength(); i++)
   {
@@ -512,14 +512,14 @@ void WMSConfig::parse_references()
   const auto& crs_settings = config.lookup("wms.supported_references.crs");
 
   if (!crs_settings.isList())
-    throw Spine::Exception(BCP, "wms.supported_references.crs must be a list");
+    throw Fmi::Exception(BCP, "wms.supported_references.crs must be a list");
 
   for (int i = 0; i < crs_settings.getLength(); i++)
   {
     const auto& group = crs_settings[i];
 
     if (!group.isGroup())
-      throw Spine::Exception(BCP, "wms.supported_references.crs must be a list of groups");
+      throw Fmi::Exception(BCP, "wms.supported_references.crs must be a list of groups");
 
     std::string id = group["id"];
     std::string proj = group["proj"];
@@ -530,10 +530,10 @@ void WMSConfig::parse_references()
 
     const auto& bbox_array = group["bbox"];
     if (!bbox_array.isArray())
-      throw Spine::Exception(BCP, "wms.supported_references.crs bboxes must be arrays");
+      throw Fmi::Exception(BCP, "wms.supported_references.crs bboxes must be arrays");
 
     if (bbox_array.getLength() != 4)
-      throw Spine::Exception(BCP, "wms.supported_references.crs bboxes must have 4 elements");
+      throw Fmi::Exception(BCP, "wms.supported_references.crs bboxes must have 4 elements");
 
     double west = bbox_array[0];
     double east = bbox_array[1];
@@ -592,14 +592,14 @@ WMSConfig::WMSConfig(const Config& daliConfig,
 
     const auto& exceptions = config.lookup("wms.get_capabilities.capability.exception");
     if (!exceptions.isArray())
-      throw Spine::Exception(BCP, "wms.get_capabilities.capability.exception must be an array");
+      throw Fmi::Exception(BCP, "wms.get_capabilities.capability.exception must be an array");
     for (int i = 0; i < exceptions.getLength(); i++)
       itsSupportedWMSExceptions.insert(exceptions[i].c_str());
 
     const auto& capability_formats =
         config.lookup("wms.get_capabilities.capability.request.getcapabilities.format");
     if (!capability_formats.isArray())
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "wms.get_capabilities.capability.request.getcapabilities.format must be an array");
     for (int i = 0; i < capability_formats.getLength(); i++)
       itsSupportedWMSGetCapabilityFormats.insert(capability_formats[i].c_str());
@@ -615,20 +615,20 @@ WMSConfig::WMSConfig(const Config& daliConfig,
   }
   catch (const libconfig::SettingNotFoundException& e)
   {
-    throw Spine::Exception(BCP, "Setting not found").addParameter("Setting path", e.getPath());
+    throw Fmi::Exception(BCP, "Setting not found").addParameter("Setting path", e.getPath());
   }
   catch (const libconfig::ParseException& e)
   {
-    throw Spine::Exception::Trace(BCP, "WMS Configuration error!")
+    throw Fmi::Exception::Trace(BCP, "WMS Configuration error!")
         .addParameter("Line", Fmi::to_string(e.getLine()));
   }
   catch (const libconfig::ConfigException&)
   {
-    throw Spine::Exception::Trace(BCP, "WMS Configuration error!");
+    throw Fmi::Exception::Trace(BCP, "WMS Configuration error!");
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "WMS Configuration initialization failed!");
+    throw Fmi::Exception::Trace(BCP, "WMS Configuration initialization failed!");
   }
 }
 
@@ -682,7 +682,7 @@ void WMSConfig::shutdown()
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Starting shutdown failed!");
+    throw Fmi::Exception::Trace(BCP, "Starting shutdown failed!");
   }
 }
 
@@ -711,7 +711,7 @@ void WMSConfig::capabilitiesUpdateLoop()
       }
       catch (...)
       {
-        Spine::Exception exception(BCP, "Could not update capabilities!", nullptr);
+        Fmi::Exception exception(BCP, "Could not update capabilities!", nullptr);
         exception.printError();
       }
     }
@@ -719,7 +719,7 @@ void WMSConfig::capabilitiesUpdateLoop()
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Capabilities update failed!");
+    throw Fmi::Exception::Trace(BCP, "Capabilities update failed!");
   }
 }
 
@@ -757,7 +757,7 @@ bool WMSConfig::validateGetMapAuthorization(const Spine::HTTP::Request& theReque
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "GetMap authorization failed!");
+    throw Fmi::Exception::Trace(BCP, "GetMap authorization failed!");
   }
 }
 #endif
@@ -871,7 +871,7 @@ void WMSConfig::updateLayerMetaData()
                     auto badfile = itr2->path().c_str();
                     if (itsWarnedFiles.find(badfile) == itsWarnedFiles.end())
                     {
-                      Spine::Exception exception(BCP, "Failed to parse configuration!", nullptr);
+                      Fmi::Exception exception(BCP, "Failed to parse configuration!", nullptr);
                       exception.addParameter("Path", itr2->path().c_str());
                       exception.printError();
 
@@ -885,7 +885,7 @@ void WMSConfig::updateLayerMetaData()
             }
             catch (...)
             {
-              Spine::Exception exception(
+              Fmi::Exception exception(
                   BCP,
                   "Lost " + std::string(itr2->path().c_str()) + " while scanning the filesystem!",
                   nullptr);
@@ -897,7 +897,7 @@ void WMSConfig::updateLayerMetaData()
       }
       catch (...)
       {
-        Spine::Exception exception(
+        Fmi::Exception exception(
             BCP,
             "Lost " + std::string(itr->path().c_str()) + " while scanning the filesystem!",
             nullptr);
@@ -910,7 +910,7 @@ void WMSConfig::updateLayerMetaData()
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Layer metadata update failed!");
+    throw Fmi::Exception::Trace(BCP, "Layer metadata update failed!");
   }
 }
 
@@ -973,7 +973,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "GetCapabilities failed!");
+    throw Fmi::Exception::Trace(BCP, "GetCapabilities failed!");
   }
 }
 
@@ -991,7 +991,7 @@ std::string WMSConfig::layerCustomer(const std::string& theLayerName) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Extracting customer for layer failed!");
+    throw Fmi::Exception::Trace(BCP, "Extracting customer for layer failed!");
   }
 }
 
@@ -1035,7 +1035,7 @@ bool WMSConfig::isValidLayer(const std::string& theLayer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Checking layer validity failed!");
+    throw Fmi::Exception::Trace(BCP, "Checking layer validity failed!");
   }
 }
 
@@ -1059,7 +1059,7 @@ bool WMSConfig::isValidStyle(const std::string& theLayer, const std::string& the
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Checking style validity failed!");
+    throw Fmi::Exception::Trace(BCP, "Checking style validity failed!");
   }
 }
 
@@ -1071,7 +1071,7 @@ const std::string& WMSConfig::getCRSDefinition(const std::string& theCRS) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "GDAL definition for CRS not available!");
+    throw Fmi::Exception::Trace(BCP, "GDAL definition for CRS not available!");
   }
 }
 
@@ -1089,7 +1089,7 @@ bool WMSConfig::isValidCRS(const std::string& theLayer, const std::string& theCR
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Checking CRS validity failed!");
+    throw Fmi::Exception::Trace(BCP, "Checking CRS validity failed!");
   }
 }
 
@@ -1109,7 +1109,7 @@ bool WMSConfig::isValidTime(const std::string& theLayer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Checking time validity failed!");
+    throw Fmi::Exception::Trace(BCP, "Checking time validity failed!");
   }
 }
 
@@ -1127,7 +1127,7 @@ bool WMSConfig::isTemporal(const std::string& theLayer) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Checking whether layer is temporal failed!");
+    throw Fmi::Exception::Trace(BCP, "Checking whether layer is temporal failed!");
   }
 }
 
@@ -1145,7 +1145,7 @@ bool WMSConfig::currentValue(const std::string& theLayer) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Getting current value for layer failed!");
+    throw Fmi::Exception::Trace(BCP, "Getting current value for layer failed!");
   }
 }
 
@@ -1163,7 +1163,7 @@ boost::posix_time::ptime WMSConfig::mostCurrentTime(const std::string& theLayer)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Getting most current time failed!");
+    throw Fmi::Exception::Trace(BCP, "Getting most current time failed!");
   }
 }
 
@@ -1179,7 +1179,7 @@ Json::Value WMSConfig::json(const std::string& theLayerName) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Getting layer JSON failed!");
+    throw Fmi::Exception::Trace(BCP, "Getting layer JSON failed!");
   }
 }
 
@@ -1213,7 +1213,7 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
     {
       std::string msg = reader.getFormattedErrorMessages();
       std::replace(msg.begin(), msg.end(), '\n', ' ');
-      throw Spine::Exception(BCP, "Legend template file parsing failed!").addDetail(msg);
+      throw Fmi::Exception(BCP, "Legend template file parsing failed!").addDetail(msg);
     }
 
     const bool use_wms = true;
@@ -1250,7 +1250,7 @@ bool WMSConfig::isValidLayerImpl(const std::string& theLayer,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Checking layer validity failed!");
+    throw Fmi::Exception::Trace(BCP, "Checking layer validity failed!");
   }
 }
 

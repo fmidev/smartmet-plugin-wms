@@ -1,5 +1,5 @@
 #include "Mime.h"
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -26,7 +26,7 @@ std::string demimetype(const std::string& theMimeType)
   if (theMimeType == "application/json")
     return "json";
 
-  throw Spine::Exception(BCP, "Unknown mime type requested: '" + theMimeType + "'");
+  throw Fmi::Exception(BCP, "Unknown mime type requested: '" + theMimeType + "'");
 }
 
 // ----------------------------------------------------------------------
@@ -54,7 +54,7 @@ std::string mimeType(const std::string& theType)
   if (theType == "json" || theType == "application/json")
     return "application/json";
 
-  throw Spine::Exception(BCP, "Unknown image format '" + theType + "'");
+  throw Fmi::Exception(BCP, "Unknown image format '" + theType + "'");
 }
 
 }  // namespace Dali

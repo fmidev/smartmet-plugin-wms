@@ -14,28 +14,34 @@ EXTRAFLAGS = -Werror -pedantic -Wpointer-arith -Wcast-qual \
 
 DIFFICULTFLAGS = -Weffc++ -Wunreachable-code -Wredundant-decls
 
-CC = g++
 CFLAGS = -DUNIX -O0 -g $(MAINFLAGS)
 
 # Boost 1.69
 
 ifneq "$(wildcard /usr/include/boost169)" ""
-  INCLUDES += -I/usr/include/boost169
+  INCLUDES += -isystem /usr/include/boost169
   LIBS += -L/usr/lib64/boost169
+endif
+
+ifneq "$(wildcard /usr/gdal30/include)" ""
+  INCLUDES += -isystem /usr/gdal30/include
+  LIBS += -L$(PREFIX)/gdal30/lib
+else
+  INCLUDES += -isystem /usr/include/gdal
 endif
 
 INCLUDES += \
 	-I../wms \
 	-I/usr/include/smartmet \
-	-I/usr/include/mysql \
-	-I/usr/include/oracle/11.2/client64 \
-	-I/usr/include/soci \
-	-I/usr/gdal30/include \
+	-isystem /usr/include/mysql \
+	-isystem /usr/include/oracle/11.2/client64 \
+	-isystem /usr/include/soci \
 	`pkg-config --cflags libconfig++` \
 	`pkg-config --cflags jsoncpp`
 
 LIBS += -lsmartmet-spine  \
 	-lsmartmet-newbase \
+	-lsmartmet-macgyver \
 	-lsmartmet-giza \
 	`pkg-config --libs libconfig++` \
 	`pkg-config --libs jsoncpp` \
@@ -70,4 +76,4 @@ test: $(PROG)
 
 
 $(PROG) : % : %.cpp Makefile ../wms.so
-	$(CC) $(CFLAGS) -o $@ $@.cpp $(INCLUDES) $(LIBS)
+	$(CXX) $(CFLAGS) -o $@ $@.cpp $(INCLUDES) $(LIBS)

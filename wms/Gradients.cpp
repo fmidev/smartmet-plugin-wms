@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 #include <string>
 
@@ -23,7 +23,7 @@ void Gradients::init(const Json::Value& theJson, const State& theState)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Styles JSON must be a JSON object (name-value pairs)");
+      throw Fmi::Exception(BCP, "Styles JSON must be a JSON object (name-value pairs)");
 
     // Iterate through all the members
 
@@ -33,26 +33,26 @@ void Gradients::init(const Json::Value& theJson, const State& theState)
       const Json::Value& gradient_json = theJson[name];
 
       if (!gradient_json.isString())
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "Invalid object type in defs.gradients initialization, expecting "
                                "name-value pair for gradient '" +
                                    name + "'");
 
       std::string value = Spine::HTTP::urldecode(gradient_json.asString());
       if (value.substr(0, 6) != "data:,")
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "Only RFC2397 data-URLs supported: URL incorrect '" + value +
                                    "' for gradient '" + name + "'");
       value = value.substr(6);  // Cut away data:,
       if (!theState.setGradient(name, value))
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "defs.gradients gradient '" + name + "' defined multiple times");
       gradients[name] = value;
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

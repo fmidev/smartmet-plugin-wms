@@ -2,7 +2,7 @@
 #include "Hash.h"
 
 #include <boost/numeric/conversion/cast.hpp>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -22,7 +22,7 @@ void Smoother::init(const Json::Value& theJson, const Config& /* theConfig */)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Smoother JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Smoother JSON is not a JSON object");
 
     // Iterate through all the members
 
@@ -36,12 +36,12 @@ void Smoother::init(const Json::Value& theJson, const Config& /* theConfig */)
       else if (name == "degree")
         degree = boost::numeric_cast<std::size_t>(json.asInt());
       else
-        throw Spine::Exception(BCP, "Smoother does not have a setting named '" + name + "'");
+        throw Fmi::Exception(BCP, "Smoother does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -61,7 +61,7 @@ std::size_t Smoother::hash_value(const State& /* theState */) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

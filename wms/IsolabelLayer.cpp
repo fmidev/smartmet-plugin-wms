@@ -57,7 +57,7 @@ void IsolabelLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Isolabel-layer JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Isolabel-layer JSON is not a JSON object");
 
     IsolineLayer::init(theJson, theState, theConfig, theProperties);
 
@@ -134,19 +134,19 @@ void IsolabelLayer::init(const Json::Value& theJson,
         auto stop = json.get("stop", nulljson);
         auto step = json.get("step", nulljson);
         if (start.isNull() || stop.isNull())
-          throw Spine::Exception(BCP, "Isolabel-layer isovalues start or stop setting missing");
+          throw Fmi::Exception(BCP, "Isolabel-layer isovalues start or stop setting missing");
 
         double iso1 = start.asDouble();
         double iso2 = stop.asDouble();
         double isostep = (step.isNull() ? 1.0 : step.asDouble());
 
         if (iso2 < iso1)
-          throw Spine::Exception(
+          throw Fmi::Exception(
               BCP, "Isolabel-layer isovalues stop value must be greater than the start value");
         if (isostep < 0)
-          throw Spine::Exception(BCP, "Isolabel-layer step value must be greater than zero");
+          throw Fmi::Exception(BCP, "Isolabel-layer step value must be greater than zero");
         if ((iso2 - iso1) / isostep > 1000)
-          throw Spine::Exception(BCP, "Isolabel-layer generates to many isovalues (> 1000)");
+          throw Fmi::Exception(BCP, "Isolabel-layer generates to many isovalues (> 1000)");
 
         // The end condition is used to make sure we do not get both 999.99999 and 1000.000 due to
         // numerical inaccuracies.
@@ -155,7 +155,7 @@ void IsolabelLayer::init(const Json::Value& theJson,
         isovalues.push_back(iso2);
       }
       else
-        throw Spine::Exception(
+        throw Fmi::Exception(
             BCP, "Isolabel-layer isovalues setting must be an object or a vector of numbers");
     }
 
@@ -172,7 +172,7 @@ void IsolabelLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -289,7 +289,7 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1029,7 +1029,7 @@ std::size_t IsolabelLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

@@ -24,7 +24,7 @@
 #include <newbase/NFmiQueryDataUtil.h>
 #include <newbase/NFmiTimeList.h>
 #include <spine/Convenience.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 #include <spine/ParameterTools.h>
@@ -50,7 +50,7 @@ void IsobandLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -132,7 +132,7 @@ void IsobandLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -148,7 +148,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
   try
   {
     if (!isFlashOrMobileProducer(*producer))
-      throw Spine::Exception(BCP, "Heatmap requires flash or mobile data!");
+      throw Fmi::Exception(BCP, "Heatmap requires flash or mobile data!");
 
     auto valid_time_period = getValidTimePeriod();
     const auto& crs = projection.getCRS();
@@ -194,7 +194,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     unsigned int height = lround(dataheight / *heatmap.resolution);
 
     if (width * height > heatmap.max_points)
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP,
           (std::string("Heatmap too big (") + Fmi::to_string(width * height) + " points, max " +
            Fmi::to_string(heatmap.max_points) + "), increase resolution"));
@@ -218,7 +218,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
         hm.reset(heatmap_new(width, height));
         if (!hm)
-          throw Spine::Exception(BCP, "Heatmap allocation failed");
+          throw Fmi::Exception(BCP, "Heatmap allocation failed");
 
         radius = lround(*heatmap.radius / *heatmap.resolution);
         if (radius == 0)
@@ -226,7 +226,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
         auto hms = heatmap.getStamp(radius);
         if (!hms)
-          throw Spine::Exception(BCP, "Heatmap stamp generation failed");
+          throw Fmi::Exception(BCP, "Heatmap stamp generation failed");
 
         for (std::size_t row = 0; row < nrows; ++row)
         {
@@ -284,7 +284,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     NFmiFastQueryInfo info(pdesc, tdesc, hdesc, vdesc);
     boost::shared_ptr<NFmiQueryData> data(NFmiQueryDataUtil::CreateEmptyData(info));
     if (data == nullptr)
-      throw Spine::Exception(BCP, "Failed to create heatmap");
+      throw Fmi::Exception(BCP, "Failed to create heatmap");
 
     NFmiFastQueryInfo dstinfo(data.get());
     dstinfo.First();
@@ -320,7 +320,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -340,7 +340,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     auto q = getModel(theState);
 
     if (q && !(q->isGrid()))
-      throw Spine::Exception(BCP, "Isoband-layer can't use point data!");
+      throw Fmi::Exception(BCP, "Isoband-layer can't use point data!");
 
     // Establish the parameter
     //
@@ -349,7 +349,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
                               isFlashOrMobileProducer(*producer) && heatmap.resolution);
 
     if (!parameter)
-      throw Spine::Exception(BCP, "Parameter not set for isoband-layer!");
+      throw Fmi::Exception(BCP, "Parameter not set for isoband-layer!");
     auto param = Spine::ParameterFactory::instance().parse(*parameter, allowUnknownParam);
 
     // Establish the valid time
@@ -359,15 +359,15 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     // Establish the level
 
     if (q && !q->firstLevel())
-      throw Spine::Exception(BCP, "Unable to set first level in querydata.");
+      throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
 
     if (level)
     {
       if (!q)
-        throw Spine::Exception(BCP, "Cannot generate isobands without gridded level data");
+        throw Fmi::Exception(BCP, "Cannot generate isobands without gridded level data");
 
       if (!q->selectLevel(*level))
-        throw Spine::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
+        throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
     }
 
     // Get projection details
@@ -385,10 +385,10 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     if (sampleresolution)
     {
       if (!q)
-        throw Spine::Exception(BCP, "Cannot resample without gridded data");
+        throw Fmi::Exception(BCP, "Cannot resample without gridded data");
 
       if (heatmap.resolution)
-        throw Spine::Exception(BCP, "Isoband-layer can't use both sampling and heatmap!");
+        throw Fmi::Exception(BCP, "Isoband-layer can't use both sampling and heatmap!");
 
       std::string report2 = "IsobandLayer::resample finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer2;
@@ -398,7 +398,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       auto demdata = theState.getGeoEngine().dem();
       auto landdata = theState.getGeoEngine().landCover();
       if (!demdata || !landdata)
-        throw Spine::Exception(BCP,
+        throw Fmi::Exception(BCP,
                                "Resampling data requires DEM and land cover data to be available!");
 
       q = q->sample(param,
@@ -417,11 +417,11 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       q = buildHeatmap(param, valid_time, theState);
     }
     else if (theState.isObservation(producer))
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "Can't produce isobandlayer from observation data without heatmap configuration!");
 
     if (!q)
-      throw Spine::Exception(BCP, "Cannot generate isobands without gridded data");
+      throw Fmi::Exception(BCP, "Cannot generate isobands without gridded data");
 
     // Logical operations with maps require shapes
 
@@ -432,7 +432,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     {
       inshape = gis.getShape(&crs, inside->options);
       if (!inshape)
-        throw Spine::Exception(BCP, "Received empty inside-shape from database!");
+        throw Fmi::Exception(BCP, "Received empty inside-shape from database!");
 
       inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
     }
@@ -483,7 +483,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     else if (interpolation == "loglinear")
       options.interpolation = Engine::Contour::LogLinear;
     else
-      throw Spine::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
+      throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
 
     // Do the actual contouring, either full grid or just
     // a sampled section
@@ -555,7 +555,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           std::string iri = qid + (qid.empty() ? "" : ".") + isoband.getQid(theState);
 
           if (!theState.addId(iri))
-            throw Spine::Exception(BCP, "Non-unique ID assigned to isoband")
+            throw Fmi::Exception(BCP, "Non-unique ID assigned to isoband")
                 .addParameter("ID", iri);
 
           CTPP::CDT isoband_cdt(CTPP::CDT::HASH_VAL);
@@ -596,7 +596,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -653,7 +653,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

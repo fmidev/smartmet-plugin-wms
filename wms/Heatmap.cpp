@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace
@@ -40,7 +40,7 @@ void Heatmap::init(const Json::Value& theJson, const Config& theConfig)
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Heatmap JSON is not map");
+      throw Fmi::Exception(BCP, "Heatmap JSON is not map");
 
     // Iterate through all the members.
 
@@ -58,13 +58,13 @@ void Heatmap::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "deviation")
         deviation = json.asDouble();
       else
-        throw Spine::Exception(BCP, "Heatmap does not have a setting named '" + name + "'");
+        throw Fmi::Exception(BCP, "Heatmap does not have a setting named '" + name + "'");
     }
 
     if (!resolution)
-      throw Spine::Exception(BCP, "Heatmap resolution is not set");
+      throw Fmi::Exception(BCP, "Heatmap resolution is not set");
     if (!radius)
-      throw Spine::Exception(BCP, "Heatmap radius is not set");
+      throw Fmi::Exception(BCP, "Heatmap radius is not set");
 
     if (!kernel)
       kernel = "exp";
@@ -75,7 +75,7 @@ void Heatmap::init(const Json::Value& theJson, const Config& theConfig)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -108,7 +108,7 @@ std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> Heatmap::getStamp(u
       auto* stamp = static_cast<float*>(calloc(d * d, sizeof(float)));
 
       if (stamp == nullptr)
-        throw Spine::Exception(BCP, "Could not allocate memory for heatmap stamp");
+        throw Fmi::Exception(BCP, "Could not allocate memory for heatmap stamp");
       std::unique_ptr<float> up_stamp(stamp);
 
       for (y = 0; y < d; ++y)
@@ -130,16 +130,16 @@ std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> Heatmap::getStamp(u
       hms = heatmap_stamp_load(d, d, stamp);
     }
     else
-      throw Spine::Exception(BCP, "Heatmap does not support kernel '" + *kernel + "'");
+      throw Fmi::Exception(BCP, "Heatmap does not support kernel '" + *kernel + "'");
 
     if (hms == nullptr)
-      throw Spine::Exception(BCP, "Heatmap stamp generation failed");
+      throw Fmi::Exception(BCP, "Heatmap stamp generation failed");
 
     return std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)>(hms, heatmap_stamp_free);
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -164,7 +164,7 @@ std::size_t Heatmap::hash_value(const State& /* theState */) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

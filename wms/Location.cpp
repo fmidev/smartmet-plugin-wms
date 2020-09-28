@@ -3,7 +3,7 @@
 #include "Hash.h"
 #include "State.h"
 
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -32,7 +32,7 @@ void Location::init(const Json::Value& theJson, const Config& /* theConfig */)
     // Initialize with more details
 
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Location JSON must be a JSON hash");
+      throw Fmi::Exception(BCP, "Location JSON must be a JSON hash");
 
     // Iterate through all the members
 
@@ -50,12 +50,12 @@ void Location::init(const Json::Value& theJson, const Config& /* theConfig */)
       else if (name == "dy")
         dy = json.asInt();
       else
-        throw Spine::Exception(BCP, "Location does not have a setting named '" + name + "'");
+        throw Fmi::Exception(BCP, "Location does not have a setting named '" + name + "'");
     }
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -77,7 +77,7 @@ std::size_t Location::hash_value(const State& /* theState */) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

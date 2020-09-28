@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 #include <engines/gis/Engine.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/Json.h>
 
 namespace SmartMet
@@ -25,7 +25,7 @@ void PostGISLayerBase::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "PostGIS JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "PostGIS JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -37,19 +37,19 @@ void PostGISLayerBase::init(const Json::Value& theJson,
     if (!json.isNull())
       this->pgname = json.asString();
     else
-      throw Spine::Exception(BCP, "'pgname' must be defined for postgis layer");
+      throw Fmi::Exception(BCP, "'pgname' must be defined for postgis layer");
 
     json = theJson.get("schema", nulljson);
     if (!json.isNull())
       this->schema = json.asString();
     else
-      throw Spine::Exception(BCP, "'schema' must be defined for postgis layer");
+      throw Fmi::Exception(BCP, "'schema' must be defined for postgis layer");
 
     json = theJson.get("table", nulljson);
     if (!json.isNull())
       this->table = json.asString();
     else
-      throw Spine::Exception(BCP, "'table' must be defined for postgis layer");
+      throw Fmi::Exception(BCP, "'table' must be defined for postgis layer");
 
     json = theJson.get("precision", nulljson);
     if (!json.isNull())
@@ -77,7 +77,7 @@ void PostGISLayerBase::init(const Json::Value& theJson,
         if (time_truncate != "minute" && time_truncate != "hour" && time_truncate != "day" &&
             time_truncate != "week" && time_truncate != "month" && time_truncate != "year")
         {
-          throw Spine::Exception(BCP, "Invalid value for time truncation: '" + time_truncate + "'");
+          throw Fmi::Exception(BCP, "Invalid value for time truncation: '" + time_truncate + "'");
         }
 
         std::string trunc = "DATE_TRUNC('" + time_truncate + "',";
@@ -97,7 +97,7 @@ void PostGISLayerBase::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -118,7 +118,7 @@ std::size_t PostGISLayerBase::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -146,7 +146,7 @@ OGRGeometryPtr PostGISLayerBase::getShape(const State& theState,
         if (theMapOptions.minarea)
           msg += " Is the minarea limit too large?";
 
-        throw Spine::Exception(BCP, msg);
+        throw Fmi::Exception(BCP, msg);
       }
     }
 
@@ -154,7 +154,7 @@ OGRGeometryPtr PostGISLayerBase::getShape(const State& theState,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -183,7 +183,7 @@ Fmi::Features PostGISLayerBase::getFeatures(const State& theState,
         if (theMapOptions.minarea)
           msg += " Is the minarea limit too large?";
 
-        throw Spine::Exception(BCP, msg);
+        throw Fmi::Exception(BCP, msg);
       }
     }
 
@@ -191,7 +191,7 @@ Fmi::Features PostGISLayerBase::getFeatures(const State& theState,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

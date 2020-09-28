@@ -1,7 +1,7 @@
 #include "ValueTools.h"
 #include <macgyver/StringConversion.h>
 #include <newbase/NFmiGlobals.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -28,7 +28,7 @@ double get_double(const Spine::TimeSeries::Value& value)
 
   // None, std::string, LonLat and local_date_time not accepted. See spine/TimeSeries.h
 
-  throw Spine::Exception::Trace(BCP, "Failed to convert observation engine value to a number!");
+  throw Fmi::Exception::Trace(BCP, "Failed to convert observation engine value to a number!");
 }
 
 // ----------------------------------------------------------------------
@@ -66,7 +66,7 @@ int get_fmisid(const Spine::TimeSeries::Value& value)
 
   // None, LonLat and local_date_time not accepted. See spine/TimeSeries.h
 
-  throw Spine::Exception::Trace(BCP, "Failed to convert observation engine value to fmisid!");
+  throw Fmi::Exception::Trace(BCP, "Failed to convert observation engine value to fmisid!");
 }
 
 int get_fmisid(const Spine::TimeSeries::TimedValue& timedvalue)

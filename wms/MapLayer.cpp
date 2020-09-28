@@ -12,7 +12,7 @@
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
-#include <spine/Exception.h>
+#include <macgyver/Exception.h>
 #include <spine/ParameterFactory.h>
 
 namespace SmartMet
@@ -35,7 +35,7 @@ void MapLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Spine::Exception(BCP, "Map JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Map JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
@@ -59,7 +59,7 @@ void MapLayer::init(const Json::Value& theJson,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -100,7 +100,7 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -139,7 +139,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
         if (map.options.minarea)
           msg += " Is the minarea limit too large?";
 
-        throw Spine::Exception(BCP, msg);
+        throw Fmi::Exception(BCP, msg);
       }
     }
 
@@ -236,7 +236,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -251,10 +251,10 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
   try
   {
     if (!producer)
-      throw Spine::Exception(BCP, "MapLayer producer not set for styling");
+      throw Fmi::Exception(BCP, "MapLayer producer not set for styling");
 
     if (theState.isObservation(producer))
-      throw Spine::Exception(BCP, "Observations not supported in MapLayer")
+      throw Fmi::Exception(BCP, "Observations not supported in MapLayer")
           .addParameter("producer", *producer);
 
     // Establish data
@@ -262,24 +262,24 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     auto q = getModel(theState);
 
     if (!q)
-      throw Spine::Exception(BCP, "MapLayer querydata undefined");
+      throw Fmi::Exception(BCP, "MapLayer querydata undefined");
 
     if (q->isGrid())
-      throw Spine::Exception(BCP, "MapLayer querydata must be point data, not gridded");
+      throw Fmi::Exception(BCP, "MapLayer querydata must be point data, not gridded");
 
     // Set the parameter and time
 
     if (styles->parameter.empty())
-      throw Spine::Exception(BCP, "MapLayer styling parameter not set");
+      throw Fmi::Exception(BCP, "MapLayer styling parameter not set");
     auto param = Spine::ParameterFactory::instance().parse(styles->parameter);
 
     if (!q->param(param.number()))
-      throw Spine::Exception(BCP, "MapLayer parameter not available in querydata")
+      throw Fmi::Exception(BCP, "MapLayer parameter not available in querydata")
           .addParameter("parameter", styles->parameter);
 
     auto valid_time = getValidTime();
     if (!q->time(valid_time))
-      throw Spine::Exception(BCP, "Selected MapLayer time not available in querydata")
+      throw Fmi::Exception(BCP, "Selected MapLayer time not available in querydata")
           .addParameter("time", Fmi::to_iso_string(valid_time));
 
     // Establish projection, bbox and optional clipping bbox
@@ -311,7 +311,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
               "Requested map data is empty: '" + map.options.schema + '.' + map.options.table + "'";
           if (map.options.minarea)
             msg += " Is the minarea limit too large?";
-          throw Spine::Exception(BCP, msg);
+          throw Fmi::Exception(BCP, msg);
         }
       }
     }
@@ -377,7 +377,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
         if (feature_value.which() == 0)
           station_number = boost::get<int>(feature_value);
         else
-          throw Spine::Exception(BCP, "Feature type for a styled MapLayer must be int or string");
+          throw Fmi::Exception(BCP, "Feature type for a styled MapLayer must be int or string");
       }
       else
       {
@@ -388,7 +388,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
         else if (feature_value.which() == 0)
           station_pos = styles->features.find(Fmi::to_string(boost::get<int>(feature_value)));
         else
-          throw Spine::Exception(BCP, "Feature type for a styled MapLayer must be int or string");
+          throw Fmi::Exception(BCP, "Feature type for a styled MapLayer must be int or string");
 
         if (station_pos == styles->features.end())
           continue;
@@ -442,7 +442,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -469,7 +469,7 @@ std::size_t MapLayer::hash_value(const State& theState) const
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

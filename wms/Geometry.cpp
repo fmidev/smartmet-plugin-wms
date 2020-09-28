@@ -3,8 +3,9 @@
 #include <boost/move/make_unique.hpp>
 #include <gis/CoordinateTransformation.h>
 #include <gis/SpatialReference.h>
-#include <spine/Exception.h>
 #include <ogr_geometry.h>
+#include <engines/gis/Engine.h>
+#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -48,11 +49,11 @@ std::string name_geojson(const OGRGeometry& theGeom)
     case wkbGeometryCollection25D:
       return "GeometryCollection";
     default:
-      throw Spine::Exception(
+      throw Fmi::Exception(
           BCP, "Encountered an unknown geometry component when extracting geometry name");
   }
 
-  throw Spine::Exception(BCP, "Unknown geometry type when extracting geometry name");
+  throw Fmi::Exception(BCP, "Unknown geometry type when extracting geometry name");
 }
 
 // ----------------------------------------------------------------------
@@ -88,7 +89,7 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
   boost::movelib::unique_ptr<OGRGeometry> geom(theGeom.clone());
   auto err = geom->transform(transformation.get());
   if (err != OGRERR_NONE)
-    throw Spine::Exception(BCP, "Failed to project geometry to WGS84 GeoJSON");
+    throw Fmi::Exception(BCP, "Failed to project geometry to WGS84 GeoJSON");
 
   // Fix winding rule to be CCW for shells
   boost::movelib::unique_ptr<OGRGeometry> geom2(Fmi::OGR::reverseWindingOrder(*geom));
@@ -103,7 +104,7 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
   std::size_t pos2 = ret.rfind(']');
 
   if (pos1 == std::string::npos || pos2 == std::string::npos)
-    throw Spine::Exception(BCP, "Failed to extract GeoJSON from GDAL output");
+    throw Fmi::Exception(BCP, "Failed to extract GeoJSON from GDAL output");
 
   return ret.substr(pos1, pos2 - pos1 + 1);
 }
@@ -126,7 +127,7 @@ std::string toKML(const OGRGeometry& theGeom,
   boost::movelib::unique_ptr<OGRGeometry> geom(theGeom.clone());
   auto err = geom->transform(transformation.get());
   if (err != OGRERR_NONE)
-    throw Spine::Exception(BCP, "Failed to project geometry to WGS84 KML");
+    throw Fmi::Exception(BCP, "Failed to project geometry to WGS84 KML");
 
   char* tmp = geom->exportToKML();
   std::string ret = tmp;
