@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.9.23
+Version: 20.10.6
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,20 +18,20 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.4.18
-BuildRequires: smartmet-library-macgyver-devel >= 20.9.18
+BuildRequires: smartmet-library-macgyver-devel >= 20.10.5
 BuildRequires: smartmet-library-spine-devel >= 20.9.23
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 20.8.21
+BuildRequires: smartmet-engine-authentication-devel >= 20.9.23
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.9.23
+BuildRequires: smartmet-engine-observation-devel >= 20.10.5
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 20.8.23
 BuildRequires: smartmet-engine-geonames-devel >= 20.9.23
 BuildRequires: smartmet-engine-querydata-devel >= 20.9.23
 BuildRequires: smartmet-engine-contour-devel >= 20.8.23
-BuildRequires: smartmet-library-gis-devel >= 20.8.21
+BuildRequires: smartmet-library-gis-devel >= 20.10.5
 BuildRequires: fmt-devel >= 6.2.1
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -44,11 +44,11 @@ Requires: fmt >= 6.2.1
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-gis >= 20.8.21
-Requires: smartmet-library-macgyver >= 20.9.18
+Requires: smartmet-library-gis >= 20.10.5
+Requires: smartmet-library-macgyver >= 20.10.5
 Requires: smartmet-library-giza >= 20.4.18
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 20.8.21
+Requires: smartmet-engine-authentication >= 20.9.23
 %endif
 Requires: smartmet-engine-querydata >= 20.9.23
 Requires: smartmet-engine-contour >= 20.8.23
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Tue Oct  6 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.6-1.fmi
+- Enable sensible relative libconfig include paths
+
 * Wed Sep 23 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.9.23-1.fmi
 - Use Fmi::Exception instead of SmartMet::Exception
 

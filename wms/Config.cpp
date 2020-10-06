@@ -7,6 +7,7 @@
 #include "Config.h"
 #include <macgyver/StringConversion.h>
 #include <macgyver/Exception.h>
+#include <boost/filesystem/path.hpp>
 #include <stdexcept>
 
 using std::string;
@@ -30,6 +31,11 @@ Config::Config(const string& configfile)
 
   try
   {
+    // Enable sensible relative include paths
+    boost::filesystem::path p = configfile;
+    p.remove_filename();
+    itsConfig.setIncludeDir(p.c_str());
+    
     itsConfig.readFile(configfile.c_str());
 
     // required parameters
