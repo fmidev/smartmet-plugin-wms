@@ -14,6 +14,7 @@
 #include <gis/Types.h>
 #include <macgyver/Exception.h>
 #include <spine/ParameterFactory.h>
+#include <fmt/format.h>
 
 namespace SmartMet
 {
@@ -164,7 +165,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     // refer to the same map.
 
     std::string iri = qid;
-
+    
     {
       std::string report = "Generating coordinate data finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
@@ -176,22 +177,6 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       map_cdt["type"] = Geometry::name(*geom, theState.getType());
       map_cdt["layertype"] = "map";
       map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
-
-#if 0
-      std::cerr << "GEOM: " << geom->getSpatialReference()->EPSGTreatsAsLatLong()
-                << "\nIMAGE: " << crs.IsAxisSwapped() << std::endl;
-
-      std::cerr << "NE: " << geom->getSpatialReference()->EPSGTreatsAsNorthingEasting()
-                << "\nIMAGE: " << crs.IsAxisSwapped() << std::endl;
-
-      if (geom->getSpatialReference() != nullptr)
-        std::cerr << "\nSHAPE: " << Fmi::OGR::exportToPrettyWkt(*geom->getSpatialReference())
-                  << std::endl;
-      else
-        std::cerr << "No shape sref" << std::endl;
-
-      std::cerr << "\nIMAGE: " << Fmi::OGR::exportToPrettyWkt(*crs) << std::endl;
-#endif
 
       theState.addPresentationAttributes(map_cdt, css, attributes);
 
