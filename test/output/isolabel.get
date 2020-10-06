@@ -38,14 +38,14 @@
   </g>
   <g class="Label">
   
-  <text transform="translate(213 350) rotate(2)">990</text>
-  <text transform="translate(231 318) rotate(-0)">995</text>
-  <text transform="translate(239 297) rotate(2)">1000</text>
-  <text transform="translate(396 453) rotate(182)">1000</text>
-  <text transform="translate(239 269) rotate(-0)">1005</text>
-  <text transform="translate(97 206) rotate(45)">1005</text>
-  <text transform="translate(243 231) rotate(0)">1010</text>
-  <text transform="translate(287 164) rotate(1)">1015</text>
+  <text transform="translate(213.0 350.0) rotate(2.0)">990</text>
+  <text transform="translate(231.0 318.0) rotate(-0.0)">995</text>
+  <text transform="translate(239.0 297.0) rotate(2.0)">1000</text>
+  <text transform="translate(396.0 453.0) rotate(182.0)">1000</text>
+  <text transform="translate(239.0 269.0) rotate(-0.0)">1005</text>
+  <text transform="translate(97.0 206.0) rotate(45.0)">1005</text>
+  <text transform="translate(243.0 231.0) rotate(0.0)">1010</text>
+  <text transform="translate(287.0 164.0) rotate(1.0)">1015</text>
   </g>
  </g>
 </g>

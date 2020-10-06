@@ -722,7 +722,7 @@
    <use class="Temperature_2_4" transform="translate(89,83)" xlink:href="#city"/>
    <use class="Temperature_2_4" transform="translate(89,73)" xlink:href="#city"/>
    <use class="Temperature_2_4" transform="translate(89,62)" xlink:href="#city"/>
-   <use class="Temperature_2_4" transform="translate(89,52)" xlink:href="#city"/>
+   <use class="Temperature_4_6" transform="translate(89,52)" xlink:href="#city"/>
    <use class="Temperature_6_8" transform="translate(89,42)" xlink:href="#city"/>
    <use class="Temperature_8_10" transform="translate(89,32)" xlink:href="#city"/>
    <use class="Temperature_12_14" transform="translate(99,568)" xlink:href="#city"/>

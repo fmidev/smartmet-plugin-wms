@@ -31,21 +31,21 @@
   
   <g class="Label" id="l">
   
-  <text transform="translate(209 389) rotate(177)">985</text>
-  <text transform="translate(198 417) rotate(184)">990</text>
-  <text transform="translate(231 322) rotate(-0)">995</text>
-  <text transform="translate(198 433) rotate(180)">995</text>
-  <text transform="translate(340 418) rotate(182)">1000</text>
-  <text transform="translate(239 301) rotate(2)">1000</text>
-  <text transform="translate(216 453) rotate(181)">1000</text>
-  <text transform="translate(239 273) rotate(-0)">1005</text>
-  <text transform="translate(94 209) rotate(45)">1005</text>
-  <text transform="translate(70 338) rotate(-46)">1005</text>
-  <text transform="translate(243 235) rotate(0)">1010</text>
-  <text transform="translate(120 165) rotate(42)">1010</text>
-  <text transform="translate(228 59) rotate(-0)">1015</text>
-  <text transform="translate(205 187) rotate(6)">1015</text>
-  <text transform="translate(351 180) rotate(2)">1015</text>
+  <text transform="translate(209.0 389.0) rotate(177.0)">985</text>
+  <text transform="translate(198.0 417.0) rotate(184.0)">990</text>
+  <text transform="translate(231.0 322.0) rotate(-0.0)">995</text>
+  <text transform="translate(198.0 433.0) rotate(180.0)">995</text>
+  <text transform="translate(340.0 418.0) rotate(182.0)">1000</text>
+  <text transform="translate(239.0 301.0) rotate(2.0)">1000</text>
+  <text transform="translate(216.0 453.0) rotate(181.0)">1000</text>
+  <text transform="translate(239.0 273.0) rotate(-0.0)">1005</text>
+  <text transform="translate(94.0 209.0) rotate(45.0)">1005</text>
+  <text transform="translate(70.0 338.0) rotate(-46.0)">1005</text>
+  <text transform="translate(243.0 235.0) rotate(0.0)">1010</text>
+  <text transform="translate(120.0 165.0) rotate(42.0)">1010</text>
+  <text transform="translate(228.0 59.0) rotate(-0.0)">1015</text>
+  <text transform="translate(205.0 187.0) rotate(6.0)">1015</text>
+  <text transform="translate(351.0 180.0) rotate(2.0)">1015</text>
   </g>
   <mask id="isolabelmask">
   

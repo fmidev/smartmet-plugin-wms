@@ -218,7 +218,7 @@
    <use transform="translate(235 105) rotate(321)" xlink:href="#windarrow"/>
    <use transform="translate(255 105) rotate(355)" xlink:href="#windarrow"/>
    <use transform="translate(275 105) rotate(9)" xlink:href="#windarrow"/>
-   <use transform="translate(295 105) rotate(333)" xlink:href="#windarrow"/>
+   <use transform="translate(295 105) rotate(334)" xlink:href="#windarrow"/>
    <use transform="translate(315 105) rotate(128)" xlink:href="#windarrow"/>
    <use transform="translate(335 105) rotate(124)" xlink:href="#windarrow"/>
    <use transform="translate(355 105) rotate(132)" xlink:href="#windarrow"/>
@@ -261,7 +261,7 @@
    <use transform="translate(95 145) rotate(246)" xlink:href="#windarrow"/>
    <use transform="translate(115 145) rotate(274)" xlink:href="#windarrow"/>
    <use transform="translate(135 145) rotate(321)" xlink:href="#windarrow"/>
-   <use transform="translate(155 145) rotate(322)" xlink:href="#windarrow"/>
+   <use transform="translate(155 145) rotate(323)" xlink:href="#windarrow"/>
    <use transform="translate(175 145) rotate(305)" xlink:href="#windarrow"/>
    <use transform="translate(195 145) rotate(296)" xlink:href="#windarrow"/>
    <use transform="translate(215 145) rotate(277)" xlink:href="#windarrow"/>
