@@ -203,7 +203,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 {
   try
   {
-    Json::Value root = WMSLayer::readJsonFile(theFileName);
+    Json::Value root = theWMSConfig.getJsonCache().get(theFileName);
 
     const bool use_wms = true;
     Spine::JSON::preprocess(
