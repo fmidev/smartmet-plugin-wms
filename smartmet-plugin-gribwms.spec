@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.10.9
+Version: 20.10.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,19 +18,19 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.10.7
-BuildRequires: smartmet-library-grid-content-devel >= 20.10.6
-BuildRequires: smartmet-library-grid-files-devel >= 20.10.1
-BuildRequires: smartmet-library-macgyver-devel >= 20.10.7
-BuildRequires: smartmet-library-spine-devel >= 20.10.7
+BuildRequires: smartmet-library-grid-content-devel >= 20.10.15
+BuildRequires: smartmet-library-grid-files-devel >= 20.10.15
+BuildRequires: smartmet-library-macgyver-devel >= 20.10.9
+BuildRequires: smartmet-library-spine-devel >= 20.10.14
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 20.9.23
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.10.5
+BuildRequires: smartmet-engine-observation-devel >= 20.10.9
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 20.10.6
-BuildRequires: smartmet-engine-grid-devel >= 20.10.7
+BuildRequires: smartmet-engine-grid-devel >= 20.10.15
 BuildRequires: smartmet-engine-geonames-devel >= 20.10.6
 BuildRequires: smartmet-engine-querydata-devel >= 20.10.6
 BuildRequires: smartmet-engine-contour-devel >= 20.10.6
@@ -47,10 +47,10 @@ Requires: fmt >= 6.2.1
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-grid-content >= 20.10.6
-Requires: smartmet-library-grid-files >= 20.10.1
+Requires: smartmet-library-grid-content >= 20.10.15
+Requires: smartmet-library-grid-files >= 20.10.15
 Requires: smartmet-library-gis >= 20.10.5
-Requires: smartmet-library-macgyver >= 20.10.7
+Requires: smartmet-library-macgyver >= 20.10.9
 Requires: smartmet-library-giza >= 20.10.7
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 20.9.23
@@ -58,10 +58,10 @@ Requires: smartmet-engine-authentication >= 20.9.23
 Requires: smartmet-engine-querydata >= 20.10.6
 Requires: smartmet-engine-contour >= 20.10.6
 Requires: smartmet-engine-gis >= 20.10.6
-Requires: smartmet-engine-grid >= 20.10.7
+Requires: smartmet-engine-grid >= 20.10.15
 Requires: smartmet-engine-geonames >= 20.10.6
-Requires: smartmet-server >= 20.9.23
-Requires: smartmet-library-spine >= 20.10.7
+Requires: smartmet-server >= 20.10.12
+Requires: smartmet-library-spine >= 20.10.14
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -98,6 +98,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
+* Thu Oct 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.15-1.fmi
+- Repackaged due to library ABI changes
+
 * Fri Oct  9 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.9-1.fmi
 - Use a cache for reading all JSON files
 
