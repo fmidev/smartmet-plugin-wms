@@ -330,14 +330,14 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     // query.print(std::cout,0,0);
 
 
-    QueryServer::ParameterValues *p = nullptr;
+    std::shared_ptr<QueryServer::ParameterValues> p;
 
     for (auto param = query->mQueryParameterList.begin(); param != query->mQueryParameterList.end()  &&  p == nullptr; ++param)
     {
       if (param->mParam == paramStr  &&  param->mValueList.size() > 0)
       {
         auto val = param->mValueList.begin();
-        p = &(*val);
+        p = (*val);
       }
     }
 

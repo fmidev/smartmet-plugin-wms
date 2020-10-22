@@ -277,18 +277,18 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
     {
       for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
       {
-        if (val->mValueVector.size() > 0)
+        if ((*val)->mValueVector.size() > 0)
         {
-          originalGeometryId = val->mGeometryId;
+          originalGeometryId = (*val)->mGeometryId;
 
           if (dirParam && param->mParameterKey == *dirParam)
-            dirValues = &val->mValueVector;
+            dirValues = &(*val)->mValueVector;
           else if (speedParam && param->mParameterKey == *speedParam)
-            speedValues = &val->mValueVector;
+            speedValues = &(*val)->mValueVector;
           else if (vParam && param->mParameterKey == *vParam)
-            vValues = &val->mValueVector;
+            vValues = &(*val)->mValueVector;
           else if (uParam && param->mParameterKey == *uParam)
-            uValues = &val->mValueVector;
+            uValues = &(*val)->mValueVector;
         }
       }
     }

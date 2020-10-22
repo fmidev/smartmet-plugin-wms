@@ -289,10 +289,10 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     {
       for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
       {
-        if (val->mValueData.size() > 0)
+        if ((*val)->mValueData.size() > 0)
         {
           uint c = 0;
-          for (auto wkb = val->mValueData.begin(); wkb != val->mValueData.end(); ++wkb)
+          for (auto wkb = (*val)->mValueData.begin(); wkb != (*val)->mValueData.end(); ++wkb)
           {
             unsigned char* cwkb = reinterpret_cast<unsigned char*>(wkb->data());
             OGRGeometry* geom = nullptr;

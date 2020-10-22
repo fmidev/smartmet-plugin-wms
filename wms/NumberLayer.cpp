@@ -177,10 +177,10 @@ PointValues read_gridForecasts(const NumberLayer& layer,
     {
       for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
       {
-        if (val->mValueVector.size() > 0)
+        if ((*val)->mValueVector.size() > 0)
         {
-          originalGeometryId = val->mGeometryId;
-          values = &val->mValueVector;
+          originalGeometryId = (*val)->mGeometryId;
+          values = &(*val)->mValueVector;
         }
       }
     }

@@ -174,9 +174,9 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
     {
       for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
       {
-        if (val->mValueVector.size() > 0)
+        if ((*val)->mValueVector.size() > 0)
         {
-          values = &val->mValueVector;
+          values = &(*val)->mValueVector;
         }
       }
     }

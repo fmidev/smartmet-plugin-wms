@@ -414,12 +414,12 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   {
     for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
     {
-      if (val->mValueData.size() > 0)
+      if ((*val)->mValueData.size() > 0)
       {
-        fileId = val->mFileId[0];
-        messageIndex = val->mMessageIndex[0];
+        fileId = (*val)->mFileId[0];
+        messageIndex = (*val)->mMessageIndex[0];
 
-        for (auto wkb = val->mValueData.begin(); wkb != val->mValueData.end(); ++wkb)
+        for (auto wkb = (*val)->mValueData.begin(); wkb != (*val)->mValueData.end(); ++wkb)
         {
           unsigned char* cwkb = reinterpret_cast<unsigned char*>(wkb->data());
           OGRGeometry* geom = nullptr;
