@@ -204,7 +204,7 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
   }
   catch (...)
   {
-    throw Spine::Exception::Trace(BCP, "Failed to run the tests");
+    throw Fmi::Exception::Trace(BCP, "Failed to run the tests");
   }
 }
 
@@ -247,7 +247,7 @@ int main() try
 }
 catch (...)
 {
-  SmartMet::Spine::Exception ex(BCP, "Failed to run the tests", nullptr);
+  Fmi::Exception ex(BCP, "Failed to run the tests", nullptr);
   ex.printError();
   return 1;
 }
