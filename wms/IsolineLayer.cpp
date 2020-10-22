@@ -558,7 +558,10 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   if (!q->firstLevel())
     throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
 
-  // Calculate the isolines
+  // Logical operations with isobands are initialized before hand
+  intersections.init(producer, projection, valid_time, theState);
+
+  // Calculate the isolines and store them into the template engine
 
   // TODO(mheiskan): Clean up Options API to use optionals
   const auto& contourer = theState.getContourEngine();

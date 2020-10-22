@@ -1,13 +1,11 @@
 #include "Plugin.h"
-
 #include <smartmet/spine/HTTP.h>
 #include <smartmet/spine/Options.h>
 #include <smartmet/spine/Reactor.h>
-
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
-
+#include <macgyver/Exception.h>
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
@@ -110,6 +108,7 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
   {
     options.parseConfig();
     SmartMet::Spine::Reactor reactor(options);
+    reactor.init();
     prelude(reactor);
 
     std::cout << "OK" << std::endl;

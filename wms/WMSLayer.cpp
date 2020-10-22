@@ -850,7 +850,7 @@ unsigned int isoband_legend_height(const Json::Value& json)
   return ret;
 }
 
-std::map<std::string, Json::Value> readLegendDirectory(const std::string& legendDirectory)
+std::map<std::string, Json::Value> readLegendDirectory(const std::string& legendDirectory, const Spine::JsonCache& cache)
 {
   std::map<std::string, Json::Value> ret;
 
@@ -863,7 +863,7 @@ std::map<std::string, Json::Value> readLegendDirectory(const std::string& legend
       if (is_regular_file(itr->status()))
       {
         std::string paramname = itr->path().stem().string();
-        Json::Value json = WMSLayer::readJsonFile(itr->path().string());
+        Json::Value json = cache.get(itr->path());
         ret.insert(std::make_pair(paramname, json));
       }
     }
@@ -873,14 +873,15 @@ std::map<std::string, Json::Value> readLegendDirectory(const std::string& legend
 }
 
 std::map<std::string, Json::Value> readLegendFiles(const std::string& wmsroot,
+                                                   const Spine::JsonCache& cache,
                                                    const std::string& customer)
 {
   // First read common templates from wmsroot/legends/templates
   std::map<std::string, Json::Value> legend_templates =
-      readLegendDirectory(wmsroot + "/legends/templates");
+      readLegendDirectory(wmsroot + "/legends/templates",cache);
   // Then read customer specific templates from wmsroot/customer/legends/templates
   std::map<std::string, Json::Value> customer_specific =
-      readLegendDirectory(wmsroot + "/customers/" + customer + "/legends/templates");
+      readLegendDirectory(wmsroot + "/customers/" + customer + "/legends/templates",cache);
   // Merge and replace common templates with customer specific templates
   for (auto t : customer_specific)
     if (legend_templates.find(t.first) == legend_templates.end())
@@ -1045,7 +1046,9 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
     actualSettings.layout.legend_width = itsLegendGraphicSettings.layout.legend_width;
 
   std::map<std::string, Json::Value> legends =
-      readLegendFiles(wmsConfig.getDaliConfig().rootDirectory(true), customer);
+      readLegendFiles(wmsConfig.getDaliConfig().rootDirectory(true),
+                      wmsConfig.getJsonCache(),
+                      customer);
 
   std::set<std::string> processedParameters;
   unsigned int uniqueId = 0;
@@ -1654,25 +1657,6 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
   }
 }
 
-Json::Value WMSLayer::readJsonFile(const std::string theFileName)
-{
-  try
-  {
-    std::string content;
-    std::ifstream in(theFileName.c_str());
-
-    if (!in)
-      throw Fmi::Exception(BCP, "Failed to open '" + theFileName + "' for reading!");
-
-    content.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
-
-    return WMSLayer::parseJsonString(content);
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Error in reading json-file" + theFileName);
-  }
-}
 
 Json::Value WMSLayer::parseJsonString(const std::string theJsonString)
 {
@@ -1694,7 +1678,7 @@ void WMSLayer::setCustomer(const std::string& c)
   customer = c;
 
   std::map<std::string, Json::Value> legends =
-      readLegendFiles(wmsConfig.getDaliConfig().rootDirectory(true), customer);
+      readLegendFiles(wmsConfig.getDaliConfig().rootDirectory(true), wmsConfig.getJsonCache(), customer);
   std::string missingTemplateFiles;
   if (legends.find("symbol") == legends.end())
     missingTemplateFiles += "symbol.json";

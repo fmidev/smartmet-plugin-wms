@@ -129,6 +129,14 @@ PointValues read_forecasts(const ArrowLayer& layer,
     auto mylocale = std::locale::classic();
     NFmiPoint dummy;
 
+  if (speedparam && !q->param(speedparam->number()))
+    throw Fmi::Exception(
+        BCP, "Parameter " + speedparam->name() + " not available in the arrow layer querydata");
+
+  if (dirparam && !q->param(dirparam->number()))
+    throw Fmi::Exception(
+        BCP, "Parameter " + dirparam->name() + " not available in the arrow layer querydata");
+
     for (const auto& point : points)
     {
       if (!layer.inside(box, point.x, point.y))
