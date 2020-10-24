@@ -240,7 +240,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
                 << hash.RecursiveDump() << std::endl;
     }
 
-    std::ostringstream output, log;
+    std::string output, log;
     try
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
@@ -265,7 +265,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
     // Set the response content and mime type
 
     formatResponse(
-        output.str(), product.type, theRequest, theResponse, usetimer, product, product_hash);
+        output, product.type, theRequest, theResponse, usetimer, product, product_hash);
 
     // boost auto_cpu_timer does not flush, we need to do it separately
     if (usetimer)
@@ -1237,10 +1237,10 @@ std::string Dali::Plugin::parseWMSException(Fmi::Exception &wmsException,
     auto tmpl_name = "wms_exception_" + format;
     auto wms_exception_template = getTemplate(tmpl_name);
 
-    std::stringstream tmpl_ss;
-    std::stringstream logstream;
-    wms_exception_template->process(hash, tmpl_ss, logstream);
-    return tmpl_ss.str();
+    std::string tmpl;
+    std::string log;
+    wms_exception_template->process(hash, tmpl, log);
+    return tmpl;
   }
   catch (...)
   {
@@ -1500,7 +1500,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
     product.generate(hash, theState);
 
     // Build the template
-    std::ostringstream output, log;
+    std::string output, log;
     try
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
@@ -1521,7 +1521,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
     if (print_hash)
       std::cout << "Generated CDT:" << std::endl << hash.RecursiveDump() << std::endl;
 
-    formatResponse(output.str(),
+    formatResponse(output,
                    product.type,
                    thisRequest,
                    theResponse,
@@ -1600,7 +1600,7 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
     product.generate(hash, theState);
 
     // Build the template
-    std::ostringstream output, log;
+    std::string output, log;
     try
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
@@ -1620,7 +1620,7 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
       throw ex;
     }
 
-    formatResponse(output.str(),
+    formatResponse(output,
                    product.type,
                    theRequest,
                    theResponse,

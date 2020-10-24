@@ -168,26 +168,26 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
       }
     }
 
-    std::stringstream outstream;
-    std::stringstream logstream;
+    std::string ret;
+    std::string log;
     try
     {
       bool isdebug = Spine::optional_bool(theRequest.getParameter("debug"), false);
       if (isdebug)
-        theFormatter->process(hash, outstream, logstream, CTPP2_LOG_DEBUG);
+        theFormatter->process(hash, ret, log, CTPP2_LOG_DEBUG);
       else
-        theFormatter->process(hash, outstream, logstream);
+        theFormatter->process(hash, ret, log);
     }
     catch (const std::exception& e)
     {
       throw Fmi::Exception::Trace(BCP, "CTPP formatter failed")
           .addParameter("what", e.what())
-          .addParameter("log enabled by debug=1", logstream.str());
+          .addParameter("log enabled by debug=1", log);
     }
     catch (...)
     {
       throw Fmi::Exception::Trace(BCP, "CTPP formatter failed")
-          .addParameter("log enabled by debug=1", logstream.str());
+          .addParameter("log enabled by debug=1", log);
     }
 
     // Finish up with host name replacements
@@ -195,8 +195,6 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     auto host_header = theRequest.getHeader("Host");
     try
     {
-      std::string ret = outstream.str();
-
       if (!host_header)
       {
         // This should never happen, host header is mandatory in HTTP 1.1
