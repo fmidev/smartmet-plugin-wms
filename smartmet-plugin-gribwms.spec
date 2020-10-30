@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.10.22
+Version: 20.10.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,22 +20,22 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.10.7
 BuildRequires: smartmet-library-grid-content-devel >= 20.10.22
 BuildRequires: smartmet-library-grid-files-devel >= 20.10.22
-BuildRequires: smartmet-library-macgyver-devel >= 20.10.9
-BuildRequires: smartmet-library-spine-devel >= 20.10.20
+BuildRequires: smartmet-library-macgyver-devel >= 20.10.28
+BuildRequires: smartmet-library-spine-devel >= 20.10.28
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 20.10.20
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.10.9
+BuildRequires: smartmet-engine-observation-devel >= 20.10.28
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 20.10.6
 BuildRequires: smartmet-engine-grid-devel >= 20.10.22
-BuildRequires: smartmet-engine-geonames-devel >= 20.10.6
+BuildRequires: smartmet-engine-geonames-devel >= 20.10.28
 BuildRequires: smartmet-engine-querydata-devel >= 20.10.6
 BuildRequires: smartmet-engine-contour-devel >= 20.10.6
-BuildRequires: smartmet-library-gis-devel >= 20.10.5
-BuildRequires: fmt-devel >= 6.2.1
+BuildRequires: smartmet-library-gis-devel >= 20.10.28
+BuildRequires: fmt-devel >= 7.1.0
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
@@ -43,14 +43,14 @@ BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
 BuildRequires: heatmap-devel
 Requires: cairo
-Requires: fmt >= 6.2.1
+Requires: fmt >= 7.1.0
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
 Requires: smartmet-library-grid-content >= 20.10.22
 Requires: smartmet-library-grid-files >= 20.10.22
-Requires: smartmet-library-gis >= 20.10.5
-Requires: smartmet-library-macgyver >= 20.10.9
+Requires: smartmet-library-gis >= 20.10.28
+Requires: smartmet-library-macgyver >= 20.10.28
 Requires: smartmet-library-giza >= 20.10.7
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 20.10.20
@@ -59,9 +59,9 @@ Requires: smartmet-engine-querydata >= 20.10.6
 Requires: smartmet-engine-contour >= 20.10.6
 Requires: smartmet-engine-gis >= 20.10.6
 Requires: smartmet-engine-grid >= 20.10.22
-Requires: smartmet-engine-geonames >= 20.10.6
-Requires: smartmet-server >= 20.10.21
-Requires: smartmet-library-spine >= 20.10.20
+Requires: smartmet-engine-geonames >= 20.10.28
+Requires: smartmet-server >= 20.10.28
+Requires: smartmet-library-spine >= 20.10.28
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -98,6 +98,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
+* Fri Oct 30 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.30-1.fmi
+- Upgrade to FMT 7.1
+
 * Thu Oct 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.22-1.fmi
 - Updated libconfig requirement
 
