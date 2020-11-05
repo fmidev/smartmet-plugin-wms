@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.10.23
+Version: 20.10.28
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,8 +18,8 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.4.18
-BuildRequires: smartmet-library-macgyver-devel >= 20.10.5
-BuildRequires: smartmet-library-spine-devel >= 20.9.23
+BuildRequires: smartmet-library-macgyver-devel >= 20.10.28
+BuildRequires: smartmet-library-spine-devel >= 20.10.28
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 20.9.23
@@ -32,7 +32,7 @@ BuildRequires: smartmet-engine-geonames-devel >= 20.9.23
 BuildRequires: smartmet-engine-querydata-devel >= 20.9.23
 BuildRequires: smartmet-engine-contour-devel >= 20.8.23
 BuildRequires: smartmet-library-gis-devel >= 20.10.5
-BuildRequires: fmt-devel >= 6.2.1
+BuildRequires: fmt-devel >= 7.1.0
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
@@ -40,12 +40,12 @@ BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
 BuildRequires: heatmap-devel
 Requires: cairo
-Requires: fmt >= 6.2.1
+Requires: fmt >= 7.1.0
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
 Requires: smartmet-library-gis >= 20.10.5
-Requires: smartmet-library-macgyver >= 20.10.5
+Requires: smartmet-library-macgyver >= 20.10.28
 Requires: smartmet-library-giza >= 20.4.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 20.9.23
@@ -55,7 +55,7 @@ Requires: smartmet-engine-contour >= 20.8.23
 Requires: smartmet-engine-gis >= 20.8.23
 Requires: smartmet-engine-geonames >= 20.9.23
 Requires: smartmet-server >= 20.9.23
-Requires: smartmet-library-spine >= 20.9.23
+Requires: smartmet-library-spine >= 20.10.28
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -92,6 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Wed Oct 28 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.10.28-1.fmi
+- Rebuild due to fmt upgrade
+
 * Fri Oct 23 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.23-1.fmi
 - Use new TemplateFormatter API
 
