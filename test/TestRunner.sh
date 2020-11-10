@@ -22,7 +22,9 @@ function testerExit
     # Remove the pipes
     rm -f $in $out
     # reset terminal colour, the plugin init sequence modifies the terminal
-    tput sgr0
+    if [[ $CI == "" ]]; then
+	tput sgr0
+    fi
     echo ""
     echo "PluginTest has shutdown unexpectedly. A timeout for a single test may have occurred."
     exit 1
@@ -61,7 +63,9 @@ function ClosePlugin
     # Remove the pipes
     rm -f $in $out
     # reset terminal colour, the plugin init sequence modifies the terminal
-    tput sgr0
+    if [[ $CI == "" ]]; then
+	tput sgr0
+    fi
     # return faulty status for interrupted test runner
     echo "PluginTest killed because of signal"
     exit 1
