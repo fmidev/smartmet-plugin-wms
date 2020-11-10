@@ -72,6 +72,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: gcc-c++
 #TestRequires: jsoncpp-devel
 #TestRequires: libconfig-devel >= 1.4.9
+#TestRequires: librsvg2-tools = 2.40.6
 #TestRequires: ImageMagick
 #TestRequires: bc
 #TestRequires: smartmet-engine-contour-devel >= 20.8.23
