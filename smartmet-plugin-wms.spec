@@ -39,6 +39,7 @@ BuildRequires: jsoncpp-devel
 BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
 BuildRequires: heatmap-devel
+BuildRequires: librsvg2-devel = 2.40.6
 Requires: cairo
 Requires: fmt >= 7.1.0
 Requires: jsoncpp
