@@ -62,6 +62,7 @@ clean:
 
 ifdef CI
 test: $(PROG) fminames
+	@sed -i -e 's|"../tmpl"|"/etc/smartmet/plugins/wms/tmpl"|/g' cnf/wms.conf
 else
 test: $(PROG)
 endif
