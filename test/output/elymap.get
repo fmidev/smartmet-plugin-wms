@@ -88,7 +88,6 @@
    <use x="250" xlink:href="#bigcity" y="357"/>
    <use x="207" xlink:href="#bigcity" y="448"/>
    <use x="8" xlink:href="#bigcity" y="418"/>
-   <use x="348" xlink:href="#bigcity" y="374"/>
    <use x="266" xlink:href="#bigcity" y="443"/>
    <use x="112" xlink:href="#bigcity" y="444"/>
    <use x="172" xlink:href="#bigcity" y="195"/>
@@ -100,7 +99,6 @@
    <use x="228" xlink:href="#bigcity" y="416"/>
    <use x="81" xlink:href="#bigcity" y="320"/>
    <use x="129" xlink:href="#bigcity" y="460"/>
-   <use x="-2" xlink:href="#bigcity" y="440"/>
    <use x="91" xlink:href="#bigcity" y="472"/>
    <use x="231" xlink:href="#bigcity" y="305"/>
    <use x="69" xlink:href="#bigcity" y="424"/>
@@ -132,20 +130,15 @@
    <use x="54" xlink:href="#bigcity" y="346"/>
    <use x="52" xlink:href="#bigcity" y="448"/>
    <use x="121" xlink:href="#bigcity" y="449"/>
-   <use x="305" xlink:href="#bigcity" y="222"/>
    <use x="157" xlink:href="#bigcity" y="271"/>
-   <use x="-11" xlink:href="#bigcity" y="452"/>
    <use x="182" xlink:href="#bigcity" y="469"/>
    <use x="3" xlink:href="#bigcity" y="482"/>
    <use x="19" xlink:href="#bigcity" y="371"/>
    <use x="60" xlink:href="#bigcity" y="359"/>
    <use x="23" xlink:href="#bigcity" y="385"/>
    <use x="121" xlink:href="#bigcity" y="308"/>
-   <use x="330" xlink:href="#bigcity" y="366"/>
-   <use x="336" xlink:href="#bigcity" y="341"/>
    <use x="92" xlink:href="#bigcity" y="303"/>
    <use x="17" xlink:href="#bigcity" y="438"/>
-   <use x="310" xlink:href="#bigcity" y="377"/>
    <use x="29" xlink:href="#bigcity" y="407"/>
    <use x="35" xlink:href="#bigcity" y="367"/>
    <use x="118" xlink:href="#bigcity" y="398"/>
@@ -161,13 +154,10 @@
    <use x="91" xlink:href="#bigcity" y="357"/>
    <use x="232" xlink:href="#bigcity" y="340"/>
    <use x="42" xlink:href="#bigcity" y="468"/>
-   <use x="325" xlink:href="#city" y="299"/>
    <use x="52" xlink:href="#city" y="496"/>
-   <use x="-13" xlink:href="#city" y="379"/>
    <use x="159" xlink:href="#city" y="243"/>
    <use x="76" xlink:href="#city" y="461"/>
    <use x="78" xlink:href="#city" y="375"/>
-   <use x="332" xlink:href="#city" y="399"/>
    <use x="195" xlink:href="#city" y="325"/>
    <use x="299" xlink:href="#city" y="265"/>
    <use x="179" xlink:href="#city" y="277"/>
@@ -175,7 +165,6 @@
    <use x="214" xlink:href="#city" y="144"/>
    <use x="127" xlink:href="#city" y="228"/>
    <use x="157" xlink:href="#city" y="434"/>
-   <use x="300" xlink:href="#city" y="329"/>
    <use x="35" xlink:href="#city" y="454"/>
    <use x="5" xlink:href="#city" y="449"/>
    <use x="231" xlink:href="#city" y="192"/>
@@ -189,9 +178,7 @@
    <use x="81" xlink:href="#city" y="387"/>
    <use x="148" xlink:href="#city" y="305"/>
    <use x="293" xlink:href="#city" y="368"/>
-   <use x="-70" xlink:href="#alandcity" y="484"/>
    <use x="167" xlink:href="#city" y="351"/>
-   <use x="-7" xlink:href="#city" y="392"/>
    <use x="185" xlink:href="#city" y="447"/>
    <use x="52" xlink:href="#city" y="396"/>
    <use x="247" xlink:href="#city" y="407"/>
@@ -206,12 +193,8 @@
    <use x="201" xlink:href="#city" y="398"/>
    <use x="170" xlink:href="#city" y="326"/>
    <use x="6" xlink:href="#city" y="377"/>
-   <use x="375" xlink:href="#city" y="362"/>
    <use x="12" xlink:href="#city" y="428"/>
-   <use x="322" xlink:href="#city" y="414"/>
    <use x="92" xlink:href="#city" y="314"/>
-   <use x="-7" xlink:href="#city" y="361"/>
-   <use x="302" xlink:href="#city" y="346"/>
    <use x="192" xlink:href="#city" y="383"/>
    <use x="246" xlink:href="#city" y="392"/>
    <use x="200" xlink:href="#city" y="467"/>
@@ -221,8 +204,6 @@
    <use x="202" xlink:href="#city" y="343"/>
    <use x="181" xlink:href="#city" y="408"/>
    <use x="96" xlink:href="#city" y="401"/>
-   <use x="348" xlink:href="#city" y="388"/>
-   <use x="308" xlink:href="#city" y="360"/>
    <use x="106" xlink:href="#city" y="203"/>
    <use x="30" xlink:href="#city" y="444"/>
    <use x="240" xlink:href="#city" y="322"/>
@@ -238,7 +219,6 @@
    <use x="214" xlink:href="#city" y="318"/>
    <use x="107" xlink:href="#city" y="188"/>
    <use x="75" xlink:href="#city" y="365"/>
-   <use x="304" xlink:href="#city" y="428"/>
    <use x="285" xlink:href="#city" y="381"/>
    <use x="243" xlink:href="#city" y="293"/>
    <use x="257" xlink:href="#city" y="215"/>
@@ -256,8 +236,6 @@
    <use x="285" xlink:href="#city" y="355"/>
    <use x="211" xlink:href="#city" y="288"/>
    <use x="176" xlink:href="#city" y="418"/>
-   <use x="-5" xlink:href="#city" y="405"/>
-   <use x="-3" xlink:href="#city" y="428"/>
    <use x="59" xlink:href="#city" y="439"/>
    <use x="247" xlink:href="#city" y="440"/>
    <use x="244" xlink:href="#city" y="274"/>
@@ -274,7 +252,6 @@
    <use x="38" xlink:href="#city" y="393"/>
    <use x="65" xlink:href="#city" y="453"/>
    <use x="139" xlink:href="#city" y="417"/>
-   <use x="326" xlink:href="#city" y="388"/>
    <use x="188" xlink:href="#city" y="348"/>
    <use x="265" xlink:href="#city" y="418"/>
    <use x="286" xlink:href="#city" y="323"/>
@@ -285,7 +262,6 @@
    <use x="10" xlink:href="#city" y="394"/>
    <use x="103" xlink:href="#city" y="362"/>
    <use x="0" xlink:href="#city" y="458"/>
-   <use x="-18" xlink:href="#city" y="365"/>
    <use x="62" xlink:href="#city" y="390"/>
    <use x="112" xlink:href="#city" y="407"/>
    <use x="40" xlink:href="#city" y="407"/>
@@ -308,21 +284,12 @@
    <use x="275" xlink:href="#city" y="147"/>
    <use x="234" xlink:href="#city" y="170"/>
    <use x="125" xlink:href="#city" y="265"/>
-   <use x="-17" xlink:href="#city" y="463"/>
    <use x="122" xlink:href="#city" y="333"/>
    <use x="163" xlink:href="#city" y="409"/>
    <use x="101" xlink:href="#alandcity" y="164"/>
    <use x="224" xlink:href="#city" y="349"/>
    <use x="141" xlink:href="#city" y="444"/>
    <use x="34" xlink:href="#city" y="417"/>
-   <use x="-62" xlink:href="#alandcity" y="474"/>
-   <use x="-85" xlink:href="#alandcity" y="479"/>
-   <use x="-47" xlink:href="#alandcity" y="489"/>
-   <use x="-27" xlink:href="#alandcity" y="470"/>
-   <use x="-74" xlink:href="#alandcity" y="470"/>
-   <use x="-50" xlink:href="#alandcity" y="477"/>
-   <use x="-37" xlink:href="#alandcity" y="474"/>
-   <use x="-27" xlink:href="#alandcity" y="492"/>
   </g>
  </g>
 </g>
