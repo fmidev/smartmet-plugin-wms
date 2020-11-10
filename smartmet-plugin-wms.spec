@@ -15,7 +15,7 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
-BuildRequires: libconfig >= 1.4.9
+BuildRequires: libconfig-devel >= 1.4.9
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.4.18
 BuildRequires: smartmet-library-macgyver-devel >= 20.10.28
@@ -65,6 +65,25 @@ Requires: boost169-thread
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-dali < 16.11.1
 Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
+#TestRequires: boost169-devel
+#TestRequires: bzip2-devel
+#TestRequires: fmt-devel
+#TestRequires: gcc-c++
+#TestRequires: jsoncpp-devel
+#TestRequires: libconfig-devel >= 1.4.9
+#TestRequires: smartmet-engine-contour-devel >= 20.8.23
+#TestRequires: smartmet-engine-geonames-devel >= 20.9.23
+#TestRequires: smartmet-engine-gis-devel >= 20.8.23
+#TestRequires: smartmet-engine-querydata-devel >= 20.9.23
+#TestRequires: smartmet-library-giza-devel >= 20.4.18
+#TestRequires: smartmet-library-newbase-devel >= 20.10.28
+#TestRequires: smartmet-library-spine-devel >= 20.10.28
+#TestRequires: smartmet-test-data
+#TestRequires: smartmet-test-db
+#TestRequires: zlib-devel
+%if %{with observation}
+#TestRequires: smartmet-engine-observation-devel >= 20.10.5
+%endif
 
 %description
 SmartMet WMS/Dali plugin

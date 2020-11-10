@@ -60,7 +60,11 @@ all: $(PROG)
 clean:
 	rm -f $(PROG) *~ Plugintest failures/*
 
+ifdef CI
+test: $(PROG) fminames
+else
 test: $(PROG)
+endif
 	rm -f failures/*
 	./TestRunner.sh
 	@if [ -e output/wms_getcapabilities.get ]; then \
@@ -72,6 +76,11 @@ test: $(PROG)
 	   echo Validating failures/wms_getcapabilities.get; \
 	   cat failures/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
 	fi
+
+
+fminames:
+	@sed -i -e 's/"smartmet-test"/"localhost"/g' cnf/*.conf
+	@/usr/share/smartmet/test/db/init-and-start.sh && /usr/share/smartmet/test/db/install-test-db.sh > /dev/null
 
 
 $(PROG) : % : %.cpp Makefile ../wms.so
