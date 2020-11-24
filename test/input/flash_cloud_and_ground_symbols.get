@@ -1,1 +1,1 @@
-GET /dali?customer=test&product=flash_cloud_and_ground_symbols&time=20160705T1500 HTTP/1.0
+GET /dali?customer=test&product=flash_cloud_and_ground_symbols&time=20130805T1500 HTTP/1.0

@@ -49,10 +49,9 @@
 		    "qid": "l2",
 		    "layer_type": "symbol",
 		    "parameter": "Temperature",
-		    // reusing isobands settings here
 		    "css": "isobands/temperature.css",
 		    "symbols": "json:isobands/temperature.json",
-		    "minvalues": 7,
+		    "minvalues": 2,
 		    "symbol": "circle",
 		    "scale": 0.75,
 		    "attributes":

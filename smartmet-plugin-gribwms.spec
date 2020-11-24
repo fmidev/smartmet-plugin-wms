@@ -20,6 +20,7 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.10.7
 BuildRequires: smartmet-library-grid-content-devel >= 20.10.22
 BuildRequires: smartmet-library-grid-files-devel >= 20.10.22
+>>>>>>> master:smartmet-plugin-wms.spec
 BuildRequires: smartmet-library-macgyver-devel >= 20.10.28
 BuildRequires: smartmet-library-spine-devel >= 20.10.28
 BuildRequires: smartmet-library-giza-devel
@@ -42,6 +43,7 @@ BuildRequires: jsoncpp-devel
 BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
 BuildRequires: heatmap-devel
+BuildRequires: librsvg2-devel = 2.40.6
 Requires: cairo
 Requires: fmt >= 7.1.0
 Requires: jsoncpp
@@ -71,6 +73,28 @@ Requires: boost169-thread
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-dali < 16.11.1
 Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
+#TestRequires: boost169-devel
+#TestRequires: bzip2-devel
+#TestRequires: fmt-devel
+#TestRequires: gcc-c++
+#TestRequires: jsoncpp-devel
+#TestRequires: libconfig-devel >= 1.4.9
+#TestRequires: librsvg2-tools = 2.40.6
+#TestRequires: ImageMagick
+#TestRequires: bc
+#TestRequires: smartmet-engine-contour-devel >= 20.8.23
+#TestRequires: smartmet-engine-geonames-devel >= 20.9.23
+#TestRequires: smartmet-engine-gis-devel >= 20.8.23
+#TestRequires: smartmet-engine-querydata-devel >= 20.9.23
+#TestRequires: smartmet-library-giza-devel >= 20.4.18
+#TestRequires: smartmet-library-newbase-devel >= 20.10.28
+#TestRequires: smartmet-library-spine-devel >= 20.10.28
+#TestRequires: smartmet-test-data
+#TestRequires: smartmet-test-db
+#TestRequires: zlib-devel
+%if %{with observation}
+#TestRequires: smartmet-engine-observation-devel >= 20.10.5
+%endif
 
 %description
 SmartMet WMS/Dali plugin
@@ -101,11 +125,20 @@ rm -rf $RPM_BUILD_ROOT
 * Fri Oct 30 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.30-1.fmi
 - Upgrade to FMT 7.1
 
+* Wed Oct 28 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.10.28-1.fmi
+- Rebuild due to fmt upgrade
+
 * Thu Oct 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.22-1.fmi
 - Updated libconfig requirement
 
 * Thu Oct 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.15-1.fmi
 - Repackaged due to library ABI changes
+
+* Fri Oct 23 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.23-1.fmi
+- Use new TemplateFormatter API
+
+* Thu Oct 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.15-1.fmi
+- Fixed LocationLayer coordinate clipping to work for metric spatial references
 
 * Fri Oct  9 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.9-1.fmi
 - Use a cache for reading all JSON files
