@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.11.24
+Version: 20.11.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,19 +18,19 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.7.2
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.10.7
-BuildRequires: smartmet-library-grid-content-devel >= 20.11.24
+BuildRequires: smartmet-library-grid-content-devel >= 20.11.30
 BuildRequires: smartmet-library-grid-files-devel >= 20.11.24
-BuildRequires: smartmet-library-macgyver-devel >= 20.10.28
+BuildRequires: smartmet-library-macgyver-devel >= 20.11.24
 BuildRequires: smartmet-library-spine-devel >= 20.11.23
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 20.10.20
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.11.23
+BuildRequires: smartmet-engine-observation-devel >= 20.11.26
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 20.10.6
-BuildRequires: smartmet-engine-grid-devel >= 20.11.24
+BuildRequires: smartmet-engine-grid-devel >= 20.11.30
 BuildRequires: smartmet-engine-geonames-devel >= 20.10.28
 BuildRequires: smartmet-engine-querydata-devel >= 20.10.6
 BuildRequires: smartmet-engine-contour-devel >= 20.11.6
@@ -48,10 +48,10 @@ Requires: fmt >= 7.1.0
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-grid-content >= 20.11.24
+Requires: smartmet-library-grid-content >= 20.11.30
 Requires: smartmet-library-grid-files >= 20.11.24
 Requires: smartmet-library-gis >= 20.10.28
-Requires: smartmet-library-macgyver >= 20.10.28
+Requires: smartmet-library-macgyver >= 20.11.24
 Requires: smartmet-library-giza >= 20.10.7
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 20.10.20
@@ -59,7 +59,7 @@ Requires: smartmet-engine-authentication >= 20.10.20
 Requires: smartmet-engine-querydata >= 20.10.6
 Requires: smartmet-engine-contour >= 20.11.6
 Requires: smartmet-engine-gis >= 20.10.6
-Requires: smartmet-engine-grid >= 20.11.24
+Requires: smartmet-engine-grid >= 20.11.30
 Requires: smartmet-engine-geonames >= 20.10.28
 Requires: smartmet-server >= 20.10.28
 Requires: smartmet-library-spine >= 20.11.23
@@ -121,6 +121,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
+* Mon Nov 30 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.11.30-1.fmi
+- Repackaged due to grid-content library API changes
+
 * Tue Nov 24 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.11.24-1.fmi
 - Repackaged due to library ABI changes
 
