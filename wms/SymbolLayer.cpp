@@ -448,6 +448,9 @@ PointValues read_station_observations(const SymbolLayer& layer,
       opts.taggedFMISIDs = obsengine.translateToFMISID(
           settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
+      if(opts.taggedFMISIDs.empty())
+        continue;
+
       auto result = obsengine.values(opts);
 
       if (!result || result->empty() || (*result)[0].empty())
@@ -573,6 +576,9 @@ PointValues read_latlon_observations(const SymbolLayer& layer,
 
       opts.taggedFMISIDs = obsengine.translateToFMISID(
           settings.starttime, settings.endtime, settings.stationtype, stationSettings);
+
+      if(opts.taggedFMISIDs.empty())
+        continue;
 
       auto result = obsengine.values(opts);
 
