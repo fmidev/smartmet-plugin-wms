@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.11.30
+Version: 20.12.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -77,22 +77,22 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: fmt-devel
 #TestRequires: gcc-c++
 #TestRequires: jsoncpp-devel
-#TestRequires: libconfig-devel >= 1.4.9
+#TestRequires: libconfig-devel >= 1.7.2
 #TestRequires: librsvg2-tools = 2.40.6
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 20.8.23
-#TestRequires: smartmet-engine-geonames-devel >= 20.9.23
-#TestRequires: smartmet-engine-gis-devel >= 20.8.23
-#TestRequires: smartmet-engine-querydata-devel >= 20.9.23
-#TestRequires: smartmet-library-giza-devel >= 20.4.18
+#TestRequires: smartmet-engine-contour-devel >= 20.11.6
+#TestRequires: smartmet-engine-geonames-devel >= 20.10.28
+#TestRequires: smartmet-engine-gis-devel >= 20.10.6
+#TestRequires: smartmet-engine-querydata-devel >= 20.10.6
+#TestRequires: smartmet-library-giza-devel >= 20.10.7
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
 #TestRequires: smartmet-library-spine-devel >= 20.11.23
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
 #TestRequires: zlib-devel
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 20.10.5
+#TestRequires: smartmet-engine-observation-devel >= 20.11.26
 %endif
 
 %description
@@ -121,6 +121,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
+* Tue Dec  1 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.1-1.fmi
+- Fixed observation layers not to abort if there are no nearby layers
+
 * Mon Nov 30 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.11.30-1.fmi
 - Repackaged due to grid-content library API changes
 
