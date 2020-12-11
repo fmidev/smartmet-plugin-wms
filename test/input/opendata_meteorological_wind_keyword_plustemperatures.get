@@ -1,1 +1,1 @@
-GET /dali?customer=test&product=opendata_meteorological_wind_keyword_plustemperatures&time=20170214T1500 HTTP/1.0
+GET /dali?customer=test&product=opendata_meteorological_wind_keyword_plustemperatures&time=20130805T1500 HTTP/1.0

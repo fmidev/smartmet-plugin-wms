@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.10.15
+Version: 20.12.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -15,53 +15,54 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
-BuildRequires: libconfig >= 1.4.9
+BuildRequires: libconfig >= 1.7.2
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 20.10.7
-BuildRequires: smartmet-library-grid-content-devel >= 20.10.15
-BuildRequires: smartmet-library-grid-files-devel >= 20.10.15
-BuildRequires: smartmet-library-macgyver-devel >= 20.10.9
-BuildRequires: smartmet-library-spine-devel >= 20.10.14
+BuildRequires: smartmet-library-grid-content-devel >= 20.12.3
+BuildRequires: smartmet-library-grid-files-devel >= 20.12.3
+BuildRequires: smartmet-library-macgyver-devel >= 20.11.24
+BuildRequires: smartmet-library-spine-devel >= 20.11.23
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 20.9.23
+BuildRequires: smartmet-engine-authentication-devel >= 20.10.20
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.10.9
+BuildRequires: smartmet-engine-observation-devel >= 20.11.26
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 20.10.6
-BuildRequires: smartmet-engine-grid-devel >= 20.10.15
-BuildRequires: smartmet-engine-geonames-devel >= 20.10.6
+BuildRequires: smartmet-engine-grid-devel >= 20.12.3
+BuildRequires: smartmet-engine-geonames-devel >= 20.10.28
 BuildRequires: smartmet-engine-querydata-devel >= 20.10.6
-BuildRequires: smartmet-engine-contour-devel >= 20.10.6
-BuildRequires: smartmet-library-gis-devel >= 20.10.5
-BuildRequires: fmt-devel >= 6.2.1
+BuildRequires: smartmet-engine-contour-devel >= 20.11.6
+BuildRequires: smartmet-library-gis-devel >= 20.10.28
+BuildRequires: fmt-devel >= 7.1.0
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
 BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
 BuildRequires: heatmap-devel
+BuildRequires: librsvg2-devel = 2.40.6
 Requires: cairo
-Requires: fmt >= 6.2.1
+Requires: fmt >= 7.1.0
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-grid-content >= 20.10.15
-Requires: smartmet-library-grid-files >= 20.10.15
-Requires: smartmet-library-gis >= 20.10.5
-Requires: smartmet-library-macgyver >= 20.10.9
+Requires: smartmet-library-grid-content >= 20.12.3
+Requires: smartmet-library-grid-files >= 20.12.3
+Requires: smartmet-library-gis >= 20.10.28
+Requires: smartmet-library-macgyver >= 20.11.24
 Requires: smartmet-library-giza >= 20.10.7
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 20.9.23
+Requires: smartmet-engine-authentication >= 20.10.20
 %endif
 Requires: smartmet-engine-querydata >= 20.10.6
-Requires: smartmet-engine-contour >= 20.10.6
+Requires: smartmet-engine-contour >= 20.11.6
 Requires: smartmet-engine-gis >= 20.10.6
-Requires: smartmet-engine-grid >= 20.10.15
-Requires: smartmet-engine-geonames >= 20.10.6
-Requires: smartmet-server >= 20.10.12
-Requires: smartmet-library-spine >= 20.10.14
+Requires: smartmet-engine-grid >= 20.12.3
+Requires: smartmet-engine-geonames >= 20.10.28
+Requires: smartmet-server >= 20.10.28
+Requires: smartmet-library-spine >= 20.11.23
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -71,6 +72,28 @@ Requires: boost169-thread
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-dali < 16.11.1
 Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
+#TestRequires: boost169-devel
+#TestRequires: bzip2-devel
+#TestRequires: fmt-devel
+#TestRequires: gcc-c++
+#TestRequires: jsoncpp-devel
+#TestRequires: libconfig-devel >= 1.7.2
+#TestRequires: librsvg2-tools = 2.40.6
+#TestRequires: ImageMagick
+#TestRequires: bc
+#TestRequires: smartmet-engine-contour-devel >= 20.11.6
+#TestRequires: smartmet-engine-geonames-devel >= 20.10.28
+#TestRequires: smartmet-engine-gis-devel >= 20.10.6
+#TestRequires: smartmet-engine-querydata-devel >= 20.10.6
+#TestRequires: smartmet-library-giza-devel >= 20.10.7
+#TestRequires: smartmet-library-newbase-devel >= 20.10.28
+#TestRequires: smartmet-library-spine-devel >= 20.11.23
+#TestRequires: smartmet-test-data
+#TestRequires: smartmet-test-db
+#TestRequires: zlib-devel
+%if %{with observation}
+#TestRequires: smartmet-engine-observation-devel >= 20.11.26
+%endif
 
 %description
 SmartMet WMS/Dali plugin
@@ -98,8 +121,32 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
-* Thu Oct 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.15-1.fmi
+* Thu Dec  3 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.3-1.fmi
 - Repackaged due to library ABI changes
+
+* Tue Dec  1 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.1-1.fmi
+- Fixed observation layers not to abort if there are no nearby layers
+
+* Mon Nov 30 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.11.30-1.fmi
+- Repackaged due to grid-content library API changes
+
+* Tue Nov 24 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.11.24-1.fmi
+- Repackaged due to library ABI changes
+
+* Fri Oct 30 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.30-1.fmi
+- Upgrade to FMT 7.1
+
+* Wed Oct 28 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.10.28-1.fmi
+- Rebuild due to fmt upgrade
+
+* Fri Oct 23 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.23-1.fmi
+- Use new TemplateFormatter API
+
+* Thu Oct 22 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.22-1.fmi
+- Updated libconfig requirement
+
+* Thu Oct 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.15-1.fmi
+- Fixed LocationLayer coordinate clipping to work for metric spatial references
 
 * Fri Oct  9 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.9-1.fmi
 - Use a cache for reading all JSON files

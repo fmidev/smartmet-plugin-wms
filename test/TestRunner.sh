@@ -22,7 +22,9 @@ function testerExit
     # Remove the pipes
     rm -f $in $out
     # reset terminal colour, the plugin init sequence modifies the terminal
-    tput sgr0
+    if [[ $CI == "" ]]; then
+	tput sgr0
+    fi
     echo ""
     echo "PluginTest has shutdown unexpectedly. A timeout for a single test may have occurred."
     exit 1
@@ -61,7 +63,9 @@ function ClosePlugin
     # Remove the pipes
     rm -f $in $out
     # reset terminal colour, the plugin init sequence modifies the terminal
-    tput sgr0
+    if [[ $CI == "" ]]; then
+	tput sgr0
+    fi
     # return faulty status for interrupted test runner
     echo "PluginTest killed because of signal"
     exit 1
@@ -89,7 +93,6 @@ nfailures=0
 for f in input/*.get; do
     request_name=$(basename $f)
     name=$(basename $(basename $request_name .get) .post)
-    echo "$request_name" >&3
 
     result=failures/$request_name
     expected=output/$request_name
@@ -100,35 +103,42 @@ for f in input/*.get; do
 
     printf "%s %s " $request_name "${dots:${#request_name}}"
 
-    extralines=""
-    while true; do
-	read line <&4
-	if [[ "$line" == "DONE" ]]; then
-	    break
-	else
-	    # echo $line
-	    if [[ -z $extralines ]]; then
-		extralines="\t${line}"
+    ignore=$(grep -xc $request_name input/.testignore)
+
+    if [[ $ignore -eq 1 ]]; then
+	echo "IGNORED IN THIS SETUP"
+    else
+	echo "$request_name" >&3
+	extralines=""
+	while true; do
+	    read line <&4
+	    if [[ "$line" == "DONE" ]]; then
+		break
 	    else
-		extralines="${extralines}\n\t$line"
+		# echo $line
+		if [[ -z $extralines ]]; then
+		extralines="\t${line}"
+		else
+		    extralines="${extralines}\n\t$line"
+		fi
+	    fi
+	done
+	
+	ntests=$((ntests+1))
+	if [[ -z  "$result" ]]; then
+	    nfailures=$((nfailures+1))
+	    echo "FAIL - NO OUTPUT"
+	else
+	    ./CompareImages.sh $result $expected
+	    if [[ $? -ne 0 ]]; then
+		nfailures=$((nfailures+1))
 	    fi
 	fi
-    done
 
-    ntests=$((ntests+1))
-    if [[ -z  "$result" ]]; then
-	nfailures=$((nfailures+1))
-	echo "FAIL - NO OUTPUT"
-    else
-	./CompareImages.sh $result $expected
-	if [[ $? -ne 0 ]]; then
-	    nfailures=$((nfailures+1))
+	# Print extra messages collected during the test after the actual comparison
+	if [[ ! -z "$extralines" ]]; then
+	    echo -e "$extralines"
 	fi
-    fi
-
-    # Print extra messages collected during the test after the actual comparison
-    if [[ ! -z "$extralines" ]]; then
-	echo -e "$extralines"
     fi
 
 done

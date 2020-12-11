@@ -552,6 +552,9 @@ PointValues read_station_observations(const NumberLayer& layer,
       opts.taggedFMISIDs = obsengine.translateToFMISID(
           settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
+      if(opts.taggedFMISIDs.empty())
+        continue;
+
       auto result = obsengine.values(opts);
 
       if (!result || result->empty() || (*result)[0].empty())
@@ -649,6 +652,8 @@ PointValues read_latlon_observations(const NumberLayer& layer,
     if (layer.parameter)
       settings.parameters.push_back(Spine::makeParameter(*layer.parameter));
 
+    // settings.debug_options = Engine::Observation::Settings::DUMP_SETTINGS;
+    
     // Request intersection parameters too - if any
     auto iparams = layer.positions->intersections.parameters();
 
@@ -677,6 +682,9 @@ PointValues read_latlon_observations(const NumberLayer& layer,
       opts.taggedFMISIDs = obsengine.translateToFMISID(
           settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
+      if(opts.taggedFMISIDs.empty())
+        continue;
+      
       auto result = obsengine.values(opts);
 
       if (!result || result->empty() || (*result)[0].empty())

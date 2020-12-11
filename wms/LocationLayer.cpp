@@ -214,12 +214,12 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       double y = lat;
       transformation->Transform(1, &x, &y);
 
+      box.transform(x, y);
+      
       // Skip locations outside the image.
 
       if (!inside(box, x, y))
         continue;
-
-      box.transform(x, y);
 
 #if 0
         std::cerr << location->name
