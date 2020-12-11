@@ -163,6 +163,8 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
 
+    std::string producerName = gridEngine->getProducerName(*theProducer);
+
     std::string wkt = *theProjection.crs;
 
     if (wkt != "data")
@@ -197,14 +199,14 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
       pName.erase(pos,4);
     }
 
-    std::string param = gridEngine->getParameterString(*producer, pName);
+    std::string param = gridEngine->getParameterString(producerName, pName);
     attributeList.addAttribute("param", param);
 
     if (param == *parameter && originalGridQuery->mProducerNameList.size() == 0)
     {
-      gridEngine->getProducerNameList(*theProducer, originalGridQuery->mProducerNameList);
+      gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
       if (originalGridQuery->mProducerNameList.size() == 0)
-        originalGridQuery->mProducerNameList.push_back(*theProducer);
+        originalGridQuery->mProducerNameList.push_back(producerName);
     }
 
     std::string forecastTime = Fmi::to_iso_string(theTime);

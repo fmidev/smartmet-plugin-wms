@@ -956,6 +956,9 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
+
+    std::string producerName = gridEngine->getProducerName(*producer);
+
     auto valid_time_period = getValidTimePeriod();
 
     // Do this conversion just once for speed:
@@ -1007,7 +1010,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       pName.erase(pos, 4);
     }
 
-    std::string param = gridEngine->getParameterString(*producer, pName);
+    std::string param = gridEngine->getParameterString(producerName, pName);
     attributeList.addAttribute("param", param);
 
     if (!projection.projectionParameter)
@@ -1015,9 +1018,9 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     if (param == *parameter && originalGridQuery->mProducerNameList.size() == 0)
     {
-      gridEngine->getProducerNameList(*producer,originalGridQuery->mProducerNameList);
+      gridEngine->getProducerNameList(producerName,originalGridQuery->mProducerNameList);
       if (originalGridQuery->mProducerNameList.size() == 0)
-        originalGridQuery->mProducerNameList.push_back(*producer);
+        originalGridQuery->mProducerNameList.push_back(producerName);
     }
 
     std::string forecastTime = Fmi::to_iso_string(*time);

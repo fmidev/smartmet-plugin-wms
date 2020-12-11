@@ -247,6 +247,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   QueryServer::QueryConfigurator queryConfigurator;
   T::AttributeList attributeList;
 
+  std::string producerName = gridEngine->getProducerName(*producer);
+
   // std::cout << valid_time << "TIMEZONE " << tz << "\n";
 
   T::ParamValue_vec contourValues;
@@ -305,7 +307,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
     pName.erase(pos, 4);
   }
 
-  std::string param = gridEngine->getParameterString(*producer, pName);
+  std::string param = gridEngine->getParameterString(producerName, pName);
   attributeList.addAttribute("param", param);
 
   if (!projection.projectionParameter)
@@ -313,9 +315,9 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
   if (param == *parameter && originalGridQuery->mProducerNameList.size() == 0)
   {
-    gridEngine->getProducerNameList(*producer, originalGridQuery->mProducerNameList);
+    gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
     if (originalGridQuery->mProducerNameList.size() == 0)
-      originalGridQuery->mProducerNameList.push_back(*producer);
+      originalGridQuery->mProducerNameList.push_back(producerName);
   }
 
   std::string forecastTime = Fmi::to_iso_string(*time);

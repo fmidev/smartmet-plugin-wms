@@ -226,6 +226,9 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
+
+    std::string producerName = gridEngine->getProducerName(*producer);
+
     auto valid_time = getValidTime();;
 
     std::string wkt = *projection.crs;
@@ -269,9 +272,9 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     if (originalGridQuery->mProducerNameList.size() == 0)
     {
-      gridEngine->getProducerNameList(*producer,originalGridQuery->mProducerNameList);
+      gridEngine->getProducerNameList(producerName,originalGridQuery->mProducerNameList);
       if (originalGridQuery->mProducerNameList.size() == 0)
-        originalGridQuery->mProducerNameList.push_back(*producer);
+        originalGridQuery->mProducerNameList.push_back(producerName);
     }
 
     attributeList.addAttribute("param",paramStr);
@@ -342,7 +345,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     }
 
     boost::optional<boost::posix_time::ptime> originTime;
-    if (p)
+    if (p  && p->mAnalysisTime.length() >= 15)
       originTime = Fmi::TimeParser::parse_iso(p->mAnalysisTime);
 
     // Update the globals
