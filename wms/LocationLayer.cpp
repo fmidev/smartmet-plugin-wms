@@ -11,7 +11,7 @@
 #include <ctpp2/CDT.hpp>
 #include <engines/geonames/Engine.h>
 #include <engines/gis/Engine.h>
-#include <gdal/ogr_spatialref.h>
+#include <ogr_spatialref.h>
 #include <gis/Box.h>
 #include <macgyver/NearTree.h>
 #include <macgyver/Exception.h>

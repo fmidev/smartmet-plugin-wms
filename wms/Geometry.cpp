@@ -2,7 +2,7 @@
 #include "State.h"
 #include <boost/move/make_unique.hpp>
 #include <engines/gis/Engine.h>
-#include <gdal/ogr_spatialref.h>
+#include <ogr_spatialref.h>
 #include <macgyver/Exception.h>
 
 namespace SmartMet
