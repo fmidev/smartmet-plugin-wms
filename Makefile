@@ -90,9 +90,9 @@ ifneq "$(wildcard /usr/include/boost169)" ""
   LIBS += -L/usr/lib64/boost169
 endif
 
-ifneq "$(wildcard /usr/gdal30/include)" ""
-  INCLUDES += -isystem /usr/gdal30/include
-  LIBS += -L$(PREFIX)/gdal30/lib
+ifneq "$(wildcard /usr/gdal32/include)" ""
+  INCLUDES += -isystem /usr/gdal32/include
+  LIBS += -L$(PREFIX)/gdal32/lib
 else
   INCLUDES += -isystem /usr/include/gdal
 endif
@@ -207,7 +207,7 @@ objdir:
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
 	tar -czvf $(SPEC).tar.gz --exclude test --exclude-vcs --transform "s,^,$(SPEC)/," *
-	rpmbuild -ta $(SPEC).tar.gz
+	rpmbuild -tb $(SPEC).tar.gz
 	rm -f $(SPEC).tar.gz
 
 .SUFFIXES: $(SUFFIXES) .cpp

@@ -116,8 +116,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Wed Dec 16 2020 Anssi Reponen <anssi.reponen@fmi.fi> - 20.12.16-1.fmi
-- Support for layer hierarchy, reference_time, elevation in GetCapabilities response (BRAINSTORM-1836,BRAINSTORM-1413,BRAINSTORM-1414)
+- Support for layer hierarchy, reference_time, elevation in 
+GetCapabilities response (BRAINSTORM-1836,BRAINSTORM-1413,BRAINSTORM-1414),
+to see this feature 'newfeature=1' or 'newfearure=2' option must be used in GetCapabilities request
 - Fixed attribute name nearestValues to nearestValue in GetCapbilities response
+
+* Tue Dec 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.15-1.fmi
+- Upgrade to pgdg12
 
 * Tue Dec  1 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.1-1.fmi
 - Fixed observation layers not to abort if there are no nearby layers

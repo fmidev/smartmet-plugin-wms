@@ -24,7 +24,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/move/make_unique.hpp>
 #include <boost/regex.hpp>
-#include <gdal/ogr_spatialref.h>
+#include <ogr_spatialref.h>
 #include <macgyver/StringConversion.h>
 #include <algorithm>
 #include <map>

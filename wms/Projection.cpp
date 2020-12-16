@@ -8,8 +8,8 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <engines/gis/Engine.h>
-#include <gdal/ogr_geometry.h>
-#include <gdal/ogr_spatialref.h>
+#include <ogr_geometry.h>
+#include <ogr_spatialref.h>
 #include <gis/Box.h>
 #include <macgyver/Exception.h>
 #include <spine/HTTP.h>

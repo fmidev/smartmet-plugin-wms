@@ -17,7 +17,7 @@
 #include <engines/gis/Engine.h>
 #include <engines/observation/Engine.h>
 #include <engines/observation/Settings.h>
-#include <gdal/ogr_spatialref.h>
+#include <ogr_spatialref.h>
 #include <gis/Box.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
