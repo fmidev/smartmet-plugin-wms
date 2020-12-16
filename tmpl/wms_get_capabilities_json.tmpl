@@ -313,10 +313,10 @@
 				]
 				<-/TMPL_if->
 
-				<-TMPL_if defined(layer.dimension)>,
+				<-TMPL_if defined(layer.time_dimension)>,
 				"Dimension":
 				[
-					<-TMPL_foreach layer.dimension as dimension>
+					<-TMPL_foreach layer.time_dimension as dimension>
 					<-TMPL_if dimension.__first__><TMPL_else>,</TMPL_if>
 					{
 						"name": "<TMPL_var JSONESCAPE(dimension.name)>",
@@ -335,8 +335,8 @@
 						"multipleValues": <TMPL_var dimension.multiple_values>
 						<-/TMPL_if->
 						
-						<-TMPL_if defined(dimension.nearest_values) >,
-						"nearestValues": <TMPL_var dimension.nearest_values>
+						<-TMPL_if defined(dimension.nearest_value) >,
+						"nearestValue": <TMPL_var dimension.nearest_value>
 						<-/TMPL_if->
 						
 						<-TMPL_if defined(dimension.current)>,

@@ -39,7 +39,7 @@ class WMSTimeDimension
   virtual std::string getCapabilities(const boost::optional<std::string>& starttime,
                                       const boost::optional<std::string>& endtime) const = 0;
 
-  bool currentValue() { return current; }
+  bool currentValue() const { return current; }
 
  protected:
   bool current;
@@ -54,6 +54,7 @@ class StepTimeDimension : public WMSTimeDimension
   StepTimeDimension() = delete;
   StepTimeDimension(const std::list<boost::posix_time::ptime>& times);
   StepTimeDimension(const std::vector<boost::posix_time::ptime>& times);
+  StepTimeDimension(const std::set<boost::posix_time::ptime>& times);
 
   virtual std::string getCapabilities(const boost::optional<std::string>& starttime,
                                       const boost::optional<std::string>& endtime) const;
@@ -99,9 +100,6 @@ class IntervalTimeDimension : public WMSTimeDimension
   tag_interval itsInterval;
 };
 
-std::ostream& operator<<(std::ostream& ost, const StepTimeDimension& timeDimension);
-std::ostream& operator<<(std::ostream& ost, const IntervalTimeDimension& timeDimension);
-
 // check if timesteps are even, timesteps are in a list or in a vector
 template <typename Container>
 bool even_timesteps(const Container& container)
@@ -129,6 +127,31 @@ bool even_timesteps(const Container& container)
 
   return even_timesteps;
 }
+
+class WMSTimeDimensions
+{
+public:
+  WMSTimeDimensions(const std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>>& tdims);
+  void addTimeDimension(const boost::posix_time::ptime& origintime, boost::shared_ptr<WMSTimeDimension> td);
+  const WMSTimeDimension& getDefaultTimeDimension() const;
+  const WMSTimeDimension& getTimeDimension(const boost::posix_time::ptime& origintime) const;
+  bool origintimeOK(const boost::posix_time::ptime& origintime) const;
+  const std::vector<boost::posix_time::ptime>& getOrigintimes() const;
+
+  bool isValidTime(const boost::posix_time::ptime& t, const boost::optional<boost::posix_time::ptime>& origintime) const;
+  boost::posix_time::ptime mostCurrentTime(const boost::optional<boost::posix_time::ptime>& origintime) const;
+  bool currentValue() const;
+  bool isIdentical(const WMSTimeDimensions& td) const;
+
+private:
+  std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>> itsTimeDimensions;
+  boost::posix_time::ptime itsDefaultOrigintime{boost::posix_time::not_a_date_time};
+  std::vector<boost::posix_time::ptime> itsOrigintimes;
+};
+
+std::ostream& operator<<(std::ostream& ost, const WMSTimeDimensions& timeDimensions);
+std::ostream& operator<<(std::ostream& ost, const StepTimeDimension& timeDimension);
+std::ostream& operator<<(std::ostream& ost, const IntervalTimeDimension& timeDimension);
 
 }  // namespace WMS
 }  // namespace Plugin

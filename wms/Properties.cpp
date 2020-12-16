@@ -98,6 +98,19 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
     json = theJson.get("clip", nulljson);
     if (!json.isNull())
       clip = json.asBool();
+
+	// Use external elevation if given
+	if(theState.getRequest().getParameter("elevation"))
+	  {
+		level = std::stod(*theState.getRequest().getParameter("elevation"));
+	  }
+	else
+	  {
+		json = theJson.get("level", nulljson);
+		if (!json.isNull())
+		  level = json.asDouble();
+	  }
+
   }
   catch (...)
   {
@@ -223,6 +236,18 @@ void Properties::init(const Json::Value& theJson,
       clip = theProperties.clip;
     else
       clip = json.asBool();
+
+	// Use external elevation if given
+	if(theState.getRequest().getParameter("elevation"))
+	  {
+		level = std::stod(*theState.getRequest().getParameter("elevation"));
+	  }
+	else
+	  {
+		json = theJson.get("level", nulljson);
+		if (!json.isNull())
+		  level = json.asDouble();
+	  }
   }
   catch (...)
   {

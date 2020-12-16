@@ -51,10 +51,6 @@ void IsolineLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       parameter = json.asString();
 
-    json = theJson.get("level", nulljson);
-    if (!json.isNull())
-      level = json.asDouble();
-
     json = theJson.get("isolines", nulljson);
     if (!json.isNull())
       Spine::JSON::extract_array("isolines", isolines, json, theConfig);

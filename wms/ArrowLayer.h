@@ -45,7 +45,6 @@ class ArrowLayer : public Layer
   boost::optional<std::string> u;
   boost::optional<std::string> v;
 
-  boost::optional<double> level;
   std::string unit_conversion;
   boost::optional<double> multiplier;
   boost::optional<double> offset;

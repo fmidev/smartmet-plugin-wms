@@ -146,6 +146,7 @@
 		[
 			{
 				"Title": "ELY map",
+				"queryable": 1,
 				"Name": "ely:elymap",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -249,6 +250,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -275,6 +277,7 @@
 			},
 			{
 				"Title": "ELY map",
+				"queryable": 1,
 				"Name": "ely:wmsmap",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -378,6 +381,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -404,6 +408,7 @@
 			},
 			{
 				"Title": "Background map",
+				"queryable": 1,
 				"Name": "test:backgroundmap",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -507,6 +512,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -515,6 +521,7 @@
 			},
 			{
 				"Title": "City location map",
+				"queryable": 1,
 				"Name": "test:cities",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -618,6 +625,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -626,6 +634,7 @@
 			},
 			{
 				"Title": "Coordinate grid",
+				"queryable": 1,
 				"Name": "test:coordinate_grid",
 				"Abstract": "Coordinate grid",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -727,6 +736,7 @@
 			},
 			{
 				"Title": "Estimated ice edge",
+				"queryable": 1,
 				"Name": "test:estimated_ice_edge",
 				"Abstract": "Estimated ice edge or -boundary",
 				"CRS": ["EPSG:4326"],
@@ -751,6 +761,7 @@
 			},
 			{
 				"Title": "Flobit, floberg",
+				"queryable": 1,
 				"Name": "test:flobrg",
 				"Abstract": "Flobit, floberg",
 				"CRS": ["EPSG:4326"],
@@ -793,6 +804,7 @@
 			},
 			{
 				"Title": "Legend",
+				"queryable": 1,
 				"Name": "test:frame_layer",
 				"Abstract": "Icemap legend",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -897,6 +909,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -905,6 +918,7 @@
 			},
 			{
 				"Title": "Harbours",
+				"queryable": 1,
 				"Name": "test:harbours",
 				"Abstract": "Harbours",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -1006,6 +1020,7 @@
 			},
 			{
 				"Title": "Ice breakers",
+				"queryable": 1,
 				"Name": "test:ice_breakers",
 				"Abstract": "Ice breakers",
 				"CRS": ["EPSG:4326"],
@@ -1030,6 +1045,7 @@
 			},
 			{
 				"Title": "Ice edge",
+				"queryable": 1,
 				"Name": "test:ice_edge",
 				"Abstract": "Ice edge or -boundary",
 				"CRS": ["EPSG:4326"],
@@ -1054,6 +1070,7 @@
 			},
 			{
 				"Title": "Ice map",
+				"queryable": 1,
 				"Name": "test:ice_pg",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -1157,6 +1174,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -1165,6 +1183,7 @@
 			},
 			{
 				"Title": "Ice thickness",
+				"queryable": 1,
 				"Name": "test:ice_thickness",
 				"Abstract": "Ice thickness (cm)",
 				"CRS": ["EPSG:4326"],
@@ -1189,6 +1208,7 @@
 			},
 			{
 				"Title": "Ice thickness leaders",
+				"queryable": 1,
 				"Name": "test:ice_thickness_leaders",
 				"Abstract": "Ice thickness leaders",
 				"CRS": ["EPSG:4326"],
@@ -1213,6 +1233,7 @@
 			},
 			{
 				"Title": "Ice map",
+				"queryable": 1,
 				"Name": "test:icechart_areas",
 				"Abstract": "Ice map polygons",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -1317,6 +1338,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -1325,6 +1347,7 @@
 			},
 			{
 				"Title": "Ice Chart",
+				"queryable": 1,
 				"Name": "test:icechart_bob_bw",
 				"Abstract": "Bay of Bothnia Ice Chart (black and white)",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -1429,6 +1452,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -1455,6 +1479,7 @@
 			},
 			{
 				"Title": "Ice Chart",
+				"queryable": 1,
 				"Name": "test:icechart_bob_color",
 				"Abstract": "Bay of Bothnia Ice Chart",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -1559,6 +1584,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -1585,6 +1611,7 @@
 			},
 			{
 				"Title": "Ice map",
+				"queryable": 1,
 				"Name": "test:icechart_fmi_bw",
 				"Abstract": "Ice map polygons",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -1689,6 +1716,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -1715,6 +1743,7 @@
 			},
 			{
 				"Title": "Ice map",
+				"queryable": 1,
 				"Name": "test:icechart_fmi_color",
 				"Abstract": "Ice map polygons",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -1819,6 +1848,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -1845,6 +1875,7 @@
 			},
 			{
 				"Title": "Ice map",
+				"queryable": 1,
 				"Name": "test:icechart_fmi_smhi_bw",
 				"Abstract": "Ice map polygons",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -1949,6 +1980,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -1975,6 +2007,7 @@
 			},
 			{
 				"Title": "Ice map",
+				"queryable": 1,
 				"Name": "test:icechart_fmi_smhi_color",
 				"Abstract": "Ice map polygons",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -2079,6 +2112,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -2105,6 +2139,7 @@
 			},
 			{
 				"Title": "Ice Chart",
+				"queryable": 1,
 				"Name": "test:icechart_gof_bw",
 				"Abstract": "Gulf of Finland Ice Chart (black and white)",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -2209,6 +2244,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -2235,6 +2271,7 @@
 			},
 			{
 				"Title": "Ice Chart",
+				"queryable": 1,
 				"Name": "test:icechart_gof_color",
 				"Abstract": "Gulf of Finland Ice Chart",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -2339,6 +2376,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -2365,6 +2403,7 @@
 			},
 			{
 				"Title": "Legend",
+				"queryable": 1,
 				"Name": "test:icechart_legend",
 				"Abstract": "Icemap legend",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -2466,6 +2505,7 @@
 			},
 			{
 				"Title": "Ice Chart",
+				"queryable": 1,
 				"Name": "test:icechart_nsp2_bw",
 				"Abstract": "Nord Stream II Ice Chart",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -2570,6 +2610,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -2596,6 +2637,7 @@
 			},
 			{
 				"Title": "Ice Chart",
+				"queryable": 1,
 				"Name": "test:icechart_nsp2_color",
 				"Abstract": "Nord Stream II Ice Chart",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -2700,6 +2742,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -2726,6 +2769,7 @@
 			},
 			{
 				"Title": "Ice Chart",
+				"queryable": 1,
 				"Name": "test:icechart_sob_bw",
 				"Abstract": "Bothnian Sea Ice Chart (black and white)",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -2830,6 +2874,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -2856,6 +2901,7 @@
 			},
 			{
 				"Title": "Ice Chart",
+				"queryable": 1,
 				"Name": "test:icechart_sob_color",
 				"Abstract": "Bothnian Sea Ice Chart",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -2960,6 +3006,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -2986,6 +3033,7 @@
 			},
 			{
 				"Title": "Ice Chart",
+				"queryable": 1,
 				"Name": "test:icechart_wgof_bw",
 				"Abstract": "Western Gulf of Finland Ice Chart (black and white)",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -3090,6 +3138,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -3116,6 +3165,7 @@
 			},
 			{
 				"Title": "Ice Chart",
+				"queryable": 1,
 				"Name": "test:icechart_wgof_color",
 				"Abstract": "Western Golf of Finland Ice Chart",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -3220,6 +3270,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -3246,6 +3297,7 @@
 			},
 			{
 				"Title": "Ice drift",
+				"queryable": 1,
 				"Name": "test:icedft",
 				"Abstract": "Ice drift",
 				"CRS": ["EPSG:4326"],
@@ -3288,6 +3340,7 @@
 			},
 			{
 				"Title": "Fracture",
+				"queryable": 1,
 				"Name": "test:icefra",
 				"Abstract": "Fracture",
 				"CRS": ["EPSG:4326"],
@@ -3312,6 +3365,7 @@
 			},
 			{
 				"Title": "Fracture zone",
+				"queryable": 1,
 				"Name": "test:icefra_zone",
 				"Abstract": "Fracture zone",
 				"CRS": ["EPSG:4326"],
@@ -3354,6 +3408,7 @@
 			},
 			{
 				"Title": "Ice pressure",
+				"queryable": 1,
 				"Name": "test:iceprs",
 				"Abstract": "Ice pressure, degree of pressure (1-3)",
 				"CRS": ["EPSG:4326"],
@@ -3378,6 +3433,7 @@
 			},
 			{
 				"Title": "Ridged or hummocked ice",
+				"queryable": 1,
 				"Name": "test:icerdg",
 				"Abstract": "Ridged or hummocked ice",
 				"CRS": ["EPSG:4326"],
@@ -3420,6 +3476,7 @@
 			},
 			{
 				"Title": "Rafted ice",
+				"queryable": 1,
 				"Name": "test:icerft",
 				"Abstract": "Rafted ice",
 				"CRS": ["EPSG:4326"],
@@ -3462,6 +3519,7 @@
 			},
 			{
 				"Title": "Brash ice barrier",
+				"queryable": 1,
 				"Name": "test:jmdbrr",
 				"Abstract": "Brash ice barrier",
 				"CRS": ["EPSG:4326"],
@@ -3504,6 +3562,7 @@
 			},
 			{
 				"Title": "Landmask",
+				"queryable": 1,
 				"Name": "test:land_mask",
 				"Abstract": "Landmask",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -3605,6 +3664,7 @@
 			},
 			{
 				"Title": "Lighthouses",
+				"queryable": 1,
 				"Name": "test:lighthouses",
 				"Abstract": "Lighthouses",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -3706,6 +3766,7 @@
 			},
 			{
 				"Title": "Mean temperature",
+				"queryable": 1,
 				"Name": "test:mean_temperature",
 				"Abstract": "Sea surface mean temperature (1971-2000)",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -3807,6 +3868,7 @@
 			},
 			{
 				"Title": "NetAtmo obervations for 5 minute period",
+				"queryable": 1,
 				"Name": "test:netatmo5min",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -3910,6 +3972,7 @@
 						"units": "ISO8601",
 						"value": "2019-03-25T09:00:00Z/2019-03-25T09:05:00Z/PT5M",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -3936,6 +3999,7 @@
 			},
 			{
 				"Title": "Demo product",
+				"queryable": 1,
 				"Name": "test:precipitation",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -4039,6 +4103,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -4097,6 +4162,7 @@
 			},
 			{
 				"Title": "Precipitation map",
+				"queryable": 1,
 				"Name": "test:precipitation_areas",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -4200,6 +4266,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -4258,6 +4325,7 @@
 			},
 			{
 				"Title": "Demo product",
+				"queryable": 1,
 				"Name": "test:precipitation_modified",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -4361,6 +4429,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -4387,6 +4456,7 @@
 			},
 			{
 				"Title": "RoadCloud obervations for 5 minute period",
+				"queryable": 1,
 				"Name": "test:roadcloud5min",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -4490,6 +4560,7 @@
 						"units": "ISO8601",
 						"value": "2019-03-25T09:00:00Z/2019-03-25T09:05:00Z/PT5M",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -4516,6 +4587,7 @@
 			},
 			{
 				"Title": "HARMONIE Snow Drift Index",
+				"queryable": 1,
 				"Name": "test:snow_drift_index",
 				"Abstract": "Snow drift index from HARMONIE forecast model",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -4620,6 +4692,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -4646,6 +4719,7 @@
 			},
 			{
 				"Title": "Demo product",
+				"queryable": 1,
 				"Name": "test:t2m",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -4749,6 +4823,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -4823,6 +4898,7 @@
 			},
 			{
 				"Title": "How to change labels from isoband settings",
+				"queryable": 1,
 				"Name": "test:t2m_isoband_labels",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -4926,6 +5002,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -4952,6 +5029,7 @@
 			},
 			{
 				"Title": "Demo product",
+				"queryable": 1,
 				"Name": "test:t2m_p",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -5055,6 +5133,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -5081,6 +5160,7 @@
 			},
 			{
 				"Title": "Temperature isotherm",
+				"queryable": 1,
 				"Name": "test:temperature_isotherm",
 				"Abstract": "Temperature isotherm",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -5178,6 +5258,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -5186,6 +5267,7 @@
 			},
 			{
 				"Title": "Temperature isotherm labels",
+				"queryable": 1,
 				"Name": "test:temperature_isotherm_labels",
 				"Abstract": "Temperature isotherm labels",
 				"CRS": ["EPSG:4326"],
@@ -5321,6 +5403,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -5458,6 +5541,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					

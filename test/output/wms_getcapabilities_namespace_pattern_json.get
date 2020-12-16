@@ -146,6 +146,7 @@
 		[
 			{
 				"Title": "Mean temperature",
+				"queryable": 1,
 				"Name": "test:mean_temperature",
 				"Abstract": "Sea surface mean temperature (1971-2000)",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -247,6 +248,7 @@
 			},
 			{
 				"Title": "Temperature isotherm",
+				"queryable": 1,
 				"Name": "test:temperature_isotherm",
 				"Abstract": "Temperature isotherm",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
@@ -344,6 +346,7 @@
 						"units": "ISO8601",
 						"value": "2012-02-27T14:22:00Z",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -352,6 +355,7 @@
 			},
 			{
 				"Title": "Temperature isotherm labels",
+				"queryable": 1,
 				"Name": "test:temperature_isotherm_labels",
 				"Abstract": "Temperature isotherm labels",
 				"CRS": ["EPSG:4326"],
@@ -487,6 +491,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -624,6 +629,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					

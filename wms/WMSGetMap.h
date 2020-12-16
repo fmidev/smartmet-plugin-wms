@@ -41,8 +41,9 @@ struct tag_get_map_request_options
     unsigned int blue;
   } bgcolor;
   std::string exceptions;
+  boost::optional<boost::posix_time::ptime> reference_time;
   std::vector<boost::posix_time::ptime> timesteps;
-  int elevation;
+  boost::optional<int> elevation;
   unsigned int width;
   unsigned int height;
   bool debug;

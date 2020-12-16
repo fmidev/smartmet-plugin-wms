@@ -37,7 +37,6 @@ class SymbolLayer : public Layer
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   boost::optional<std::string> parameter;
-  boost::optional<double> level;
 
   boost::optional<Positions> positions;
 

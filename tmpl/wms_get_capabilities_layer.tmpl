@@ -1,0 +1,184 @@
+<Layer
+      <-TMPL_if defined(layer.queryable)   > queryable="  <-TMPL_var layer.queryable>"   <-/TMPL_if->
+      <-TMPL_if defined(layer.cascaded)    > cascaded="   <-TMPL_var layer.cascaded>"    <-/TMPL_if->
+      <-TMPL_if defined(layer.opaque)      > opaque="     <-TMPL_var layer.opaque>"      <-/TMPL_if->
+      <-TMPL_if defined(layer.no_subsets)  > noSubsets="  <-TMPL_var layer.no_subsets>"  <-/TMPL_if->
+      <-TMPL_if defined(layer.fixed_width) > fixedWidth=" <-TMPL_var layer.fixed_width>" <-/TMPL_if->
+      <-TMPL_if defined(layer.fixed_height)> fixedHeight="<-TMPL_var layer.fixed_height>"<-/TMPL_if->>
+
+      <-TMPL_if defined(layer.name)>
+      <Name><TMPL_var XMLESCAPE(layer.name)></Name>
+      <-/TMPL_if>
+      <Title><TMPL_if defined(layer.title)><TMPL_var XMLESCAPE(layer.title)></TMPL_if></Title>
+
+      <-TMPL_if defined(layer.abstract)>
+      <Abstract><TMPL_var XMLESCAPE(layer.abstract)></Abstract>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.keyword)>
+      <KeywordList>
+      <-TMPL_foreach layer.keyword as keyword>
+        <Keyword><TMPL_var XMLESCAPE(keyword)></Keyword>
+      <-/TMPL_foreach>
+      </KeywordList>
+      <-/TMPL_if>
+
+      <-TMPL_if defined(layer.crs)->
+      <-TMPL_foreach layer.crs as crs>
+      <CRS><TMPL_var crs></CRS>
+      <-/TMPL_foreach>
+      <-/TMPL_if>
+
+      <-TMPL_if defined(layer.ex_geographic_bounding_box)>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude><TMPL_var layer.ex_geographic_bounding_box.west_bound_longitude></westBoundLongitude>
+        <eastBoundLongitude><TMPL_var layer.ex_geographic_bounding_box.east_bound_longitude></eastBoundLongitude>
+        <southBoundLatitude><TMPL_var layer.ex_geographic_bounding_box.south_bound_latitude></southBoundLatitude>
+        <northBoundLatitude><TMPL_var layer.ex_geographic_bounding_box.north_bound_latitude></northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.bounding_box)->
+      <-TMPL_foreach layer.bounding_box as bounding_box>
+      <BoundingBox CRS="<TMPL_var bounding_box.crs>"
+                   <-TMPL_if defined(layer.bounding_box)> minx="<TMPL_var bounding_box.minx>"</TMPL_if>
+                   <-TMPL_if defined(layer.bounding_box)> miny="<TMPL_var bounding_box.miny>"</TMPL_if>
+                   <-TMPL_if defined(layer.bounding_box)> maxx="<TMPL_var bounding_box.maxx>"</TMPL_if>
+                   <-TMPL_if defined(layer.bounding_box)> maxy="<TMPL_var bounding_box.maxy>"</TMPL_if>
+                   <-TMPL_if defined(bounding_box.resx)> resx="<TMPL_var bounding_box.resx>"<-/TMPL_if->
+                   <-TMPL_if defined(bounding_box.resy)> resx="<TMPL_var bounding_box.resy>"<-/TMPL_if->/>
+      <-/TMPL_foreach->
+      <-/TMPL_if->
+
+
+      <-TMPL_if defined(layer.time_dimension)->
+      <-TMPL_foreach layer.time_dimension as dimension>
+      <Dimension name="<TMPL_var dimension.name>" units="<TMPL_var dimension.units>"
+        <-TMPL_if defined(dimension.unit_symbol)    > unitSymbol="    <-TMPL_var dimension.unit_symbol>"    <-/TMPL_if->
+        <-TMPL_if defined(dimension.default)        > default="       <-TMPL_var dimension.default>"        <-/TMPL_if->
+        <-TMPL_if defined(dimension.multiple_values)> multipleValues="<-TMPL_var dimension.multiple_values>"<-/TMPL_if->
+        <-TMPL_if defined(dimension.nearest_value) > nearestValue=" <-TMPL_var dimension.nearest_value>" <-/TMPL_if->
+        <-TMPL_if defined(dimension.current)        > current="       <-TMPL_var dimension.current>"        <-/TMPL_if->>
+      <-TMPL_var dimension.value->
+      </Dimension>
+      </TMPL_foreach>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.elevation_dimension)->
+      <-TMPL_foreach layer.elevation_dimension as dimension>
+      <Dimension name="<TMPL_var dimension.name>" units="<TMPL_var dimension.units>"
+        <-TMPL_if defined(dimension.unit_symbol)> unitSymbol="<-TMPL_var dimension.unit_symbol>"<-/TMPL_if->
+        <-TMPL_if defined(dimension.default)> default="<-TMPL_var dimension.default>"<-/TMPL_if->
+        <-TMPL_if defined(dimension.multiple_values)> multipleValues="<-TMPL_var dimension.multiple_values>"<-/TMPL_if->
+        <-TMPL_if defined(dimension.nearest_value)> nearestValue="<-TMPL_var dimension.nearest_value>"<-/TMPL_if->
+        <-TMPL_if defined(dimension.current)> current=" <-TMPL_var dimension.current>"<-/TMPL_if->>
+      <-TMPL_var dimension.value->
+      </Dimension>
+      </TMPL_foreach>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.attribution)->
+      <Attribution>
+        <TMPL_if defined(layer.attribution.title)><Title><TMPL_var XMLESCAPE(layer.attribution.title)><-/TMPL_if->
+        <TMPL_if defined(layer.attribution.online_resource)><Title><TMPL_var layer.attribution.online_resource><-/TMPL_if->
+        <OnlineResource xlink:type="simple" xlink:href="<TMPL_var layer.attribution.online_resource>"/>
+        <TMPL_if defined(layer.attribution.logo_url)>
+        <LogoURL
+          <-TMPL_if defined(layer.attribution.logo_url.width) > width=" <-TMPL_var layer.attribution.logo_url.width>" <-/TMPL_if->
+          <-TMPL_if defined(layer.attribution.logo_url.height)> height="<-TMPL_var layer.attribution.logo_url.height>"<-/TMPL_if->>
+          <Format><TMPL_var layer.attribution.logo_url.format></Format>
+          <OnlineResource xlink:type="simple" xlink:href="<TMPL_var layer.attribution.logo_url.online_resource>"/>
+        </LogoURL>
+        <-/TMPL_if->
+      </Attribution>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.authority_url)->
+      <-TMPL_foreach layer.authority_url as authority_url>
+      <AuthorityURL name="<TMPL_var authority_url.name>">
+        <OnlineResource xlink:type="simple" xlink:href="<TMPL_var authority_url.online_resource>"/>
+      </AuthorityURL>
+      </TMPL_foreach>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.identifier)->
+      <-TMPL_foreach layer.identifier as identifier>
+      <Identifier<TMPL_if defined(identifier.authority)> authority="<TMPL_var XMLESCAPE(identifier.authority)>"></TMPL_if>
+       <-TMPL_if defined(identifier.value)><-TMPL_var XMLESCAPE(identifier.value)-></TMPL_if->
+      </Identifier>
+      </TMPL_foreach>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.metadata_url)->
+      <-TMPL_foreach layer.metadata_url as metadata_url>
+      <MetadataURL type="<TMPL_var metadata_url.type>">
+        <Format><TMPL_var metadata_url.format></Format>
+        <OnlineResource xlink:type="simple" xlink:href="<TMPL_var metadata_url.online_resource>"/>
+      </MetadataURL>
+      </TMPL_foreach>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.data_url)->
+      <-TMPL_foreach layer.data_url as data_url>
+      <DataURL type="<TMPL_var data_url.type>">
+        <Format><TMPL_var data_url.format></Format>
+        <OnlineResource xlink:type="simple" xlink:href="<TMPL_var data_url.online_resource>"/>
+      </DataURL>
+      </TMPL_foreach>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.feature_list_url)->
+      <-TMPL_foreach layer.feature_list_url as feature_list_url>
+      <FeatureListURL type="<TMPL_var feature_list_url.type>">
+        <Format><TMPL_var feature_list_url.format></Format>
+        <OnlineResource xlink:type="simple" xlink:href="<TMPL_var feature_list_url.online_resource>"/>
+      </FeatureListURL>
+      </TMPL_foreach>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.style)->
+      <-TMPL_foreach layer.style as style>
+      <Style>
+        <Name><TMPL_if defined(style.name)><TMPL_var XMLESCAPE(style.name)></TMPL_if></Name>
+        <Title><TMPL_if defined(style.title)><TMPL_var XMLESCAPE(style.title)></TMPL_if></Title>
+
+        <-TMPL_if defined(style.abstract)><Abstract><TMPL_var style.abstract></Abstract><-/TMPL_if>
+
+        <-TMPL_if defined(style.legend_url)->
+        <-TMPL_foreach style.legend_url as legend_url>
+        <LegendURL
+          <-TMPL_if defined(legend_url.width) > width=" <-TMPL_var legend_url.width>" <-/TMPL_if->
+          <-TMPL_if defined(legend_url.height)> height="<-TMPL_var legend_url.height>"<-/TMPL_if->>
+          <Format><TMPL_var legend_url.format></Format>
+          <OnlineResource xlink:type="simple" xlink:href="<TMPL_var legend_url.online_resource>"/>
+        </LegendURL>
+        <-/TMPL_foreach->
+        <-/TMPL_if->
+
+        <-TMPL_if defined(style.style_sheet_url)->
+        <StyleSheetURL>
+          <Format><TMPL_var style.style_sheet_url.format></Format>
+          <OnlineResource xlink:type="simple" xlink:href="<TMPL_var style.style_sheet_url.online_resource>"/>
+        </StyleSheetURL>
+        <-/TMPL_if->
+
+        <-TMPL_if defined(style.style_url)->
+        <StyleURL>
+          <Format><TMPL_var style.style_url.format></Format>
+          <OnlineResource xlink:type="simple" xlink:href="<TMPL_var style.style_url.online_resource>"/>
+        </StyleURL>
+        <-/TMPL_if>
+      </Style>
+      <-/TMPL_foreach->
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.min_scale_denominator)->
+      <MinScaleDenominator><TMPL_var layer.min_scale_denominator></MinScaleDenominator>
+      <-/TMPL_if->
+
+      <-TMPL_if defined(layer.max_scale_denominator)->
+      <MaxScaleDenominator><TMPL_var layer.min_scale_denominator></MaxScaleDenominator>
+      <-/TMPL_if->
+      <-TMPL_unless defined(layer.sublayers)>
+      </Layer>
+     <-/TMPL_unless->

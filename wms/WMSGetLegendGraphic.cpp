@@ -268,7 +268,8 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
           throw exception;
         }
 
-        boost::posix_time::ptime mostCurrentTime(itsConfig.mostCurrentTime(layerName));
+		const boost::optional<boost::posix_time::ptime> reference_time;
+        boost::posix_time::ptime mostCurrentTime(itsConfig.mostCurrentTime(layerName, reference_time));
         if (mostCurrentTime.is_not_a_date_time())
           theRequest.removeParameter("time");
         else
