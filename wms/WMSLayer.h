@@ -108,6 +108,7 @@ class WMSLayer
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;
   bool isValidTime(const boost::posix_time::ptime& theTime, const boost::optional<boost::posix_time::ptime>& theReferenceTime) const;
+  bool isValidReferenceTime(const boost::posix_time::ptime& theReferenceTime) const;
   bool isValidElevation(int theElevation) const;
   bool isTemporal() const { return timeDimensions != nullptr; }
   bool currentValue() const;  // returns true if current value can be queried from layer

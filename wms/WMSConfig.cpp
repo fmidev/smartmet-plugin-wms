@@ -1131,6 +1131,25 @@ bool WMSConfig::isValidCRS(const std::string& theLayer, const std::string& theCR
 
 }
 
+bool WMSConfig::isValidReferenceTime(const std::string& theLayer,
+									 const boost::posix_time::ptime& theReferenceTime) const
+{
+  try
+  {
+    if (!isValidLayerImpl(theLayer))
+      return false;
+
+    auto my_layers = boost::atomic_load(&itsLayers);
+    SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
+
+    return layer->isValidReferenceTime(theReferenceTime);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Checking reference time validity failed!");
+  }
+}
+
 bool WMSConfig::isValidTime(const std::string& theLayer,
                             const boost::posix_time::ptime& theTime,
 							const boost::optional<boost::posix_time::ptime>& theReferenceTime) const

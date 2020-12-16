@@ -102,6 +102,9 @@ class WMSConfig
   bool isValidTime(const std::string& theLayer,
                    const boost::posix_time::ptime& theTime,
                    const boost::optional<boost::posix_time::ptime>& reference_time) const;
+  bool isValidReferenceTime(const std::string& theLayer,
+							const boost::posix_time::ptime& theReferenceTime) const;
+
   bool isTemporal(const std::string& theLayer) const;
   bool currentValue(const std::string& theLayer) const;
   boost::posix_time::ptime mostCurrentTime(const std::string& theLayer, const boost::optional<boost::posix_time::ptime>& reference_time) const;

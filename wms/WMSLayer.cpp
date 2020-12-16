@@ -1255,6 +1255,21 @@ bool WMSLayer::isValidElevation(int theElevation) const
   }
 }
 
+bool WMSLayer::isValidReferenceTime(const boost::posix_time::ptime& theReferenceTime) const
+{
+  try
+  {
+    if (timeDimensions)
+      return timeDimensions->isValidReferenceTime(theReferenceTime);
+    else
+      return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Validating reference time failed!");
+  }
+}
+
 bool WMSLayer::isValidTime(const boost::posix_time::ptime& theTime, const boost::optional<boost::posix_time::ptime>& theReferenceTime) const
 {
   try

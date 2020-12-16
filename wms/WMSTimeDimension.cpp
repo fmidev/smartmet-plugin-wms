@@ -295,10 +295,22 @@ const std::vector<boost::posix_time::ptime>& WMSTimeDimensions::getOrigintimes()
   return itsOrigintimes;
 }
 
+
+bool WMSTimeDimensions::isValidReferenceTime(const boost::posix_time::ptime& origintime) const
+{
+  return (itsTimeDimensions.find(origintime) != itsTimeDimensions.end());
+}
+
 bool WMSTimeDimensions::isValidTime(const boost::posix_time::ptime& t, const boost::optional<boost::posix_time::ptime>& origintime) const
 {
   if(origintime)
-	return getTimeDimension(*origintime).isValidTime(t);
+	{
+	  // Check for valid origintime
+	  if(!isValidReferenceTime(*origintime))
+		return false;
+
+	  return getTimeDimension(*origintime).isValidTime(t);
+	}
   else
 	return getDefaultTimeDimension().isValidTime(t);
 }

@@ -138,6 +138,7 @@ public:
   bool origintimeOK(const boost::posix_time::ptime& origintime) const;
   const std::vector<boost::posix_time::ptime>& getOrigintimes() const;
 
+  bool isValidReferenceTime(const boost::posix_time::ptime& origintime) const;
   bool isValidTime(const boost::posix_time::ptime& t, const boost::optional<boost::posix_time::ptime>& origintime) const;
   boost::posix_time::ptime mostCurrentTime(const boost::optional<boost::posix_time::ptime>& origintime) const;
   bool currentValue() const;

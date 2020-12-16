@@ -348,6 +348,19 @@ void validate_options(const tag_get_map_request_options& options,
             .addParameter("Requested layer", layer);
       }
 
+	  // check reference time
+	  if(options.reference_time)
+		{
+		  if (!itsConfig.isValidReferenceTime(layer, *options.reference_time))
+			{
+			  throw Fmi::Exception(BCP, "Invalid reference time requested!")
+              .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
+				.addParameter("Requested reference time", Fmi::to_iso_string(*options.reference_time))
+              .addParameter("Requested layer", layer)
+				.disableStackTrace();
+			}		  
+		}
+
       // check that given timesteps are valid
       for (const boost::posix_time::ptime& timestamp : options.timesteps)
       {
