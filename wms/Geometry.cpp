@@ -2,8 +2,8 @@
 #include "State.h"
 #include <boost/move/make_unique.hpp>
 #include <engines/gis/Engine.h>
-#include <ogr_spatialref.h>
 #include <macgyver/Exception.h>
+#include <ogr_spatialref.h>
 
 namespace SmartMet
 {
@@ -46,11 +46,9 @@ std::string name_geojson(const OGRGeometry& theGeom)
     case wkbGeometryCollection:
     case wkbGeometryCollection25D:
       return "GeometryCollection";
-    case wkbUnknown:
+    default:
       throw Fmi::Exception(
           BCP, "Encountered an unknown geometry component when extracting geometry name");
-    case wkbNone:
-      throw Fmi::Exception(BCP, "Encountered a 'none' geometry when extracting geometry name");
   }
 
   throw Fmi::Exception(BCP, "Unknown geometry type when extracting geometry name");
@@ -92,7 +90,7 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
       OGRCreateCoordinateTransformation(theSRS.get(), wgs84.get()));
   if (transformation == nullptr)
     throw Fmi::Exception(BCP,
-                           "Failed to create the coordinate transformation for producing GeoJSON");
+                         "Failed to create the coordinate transformation for producing GeoJSON");
 
   // Reproject a clone
   boost::movelib::unique_ptr<OGRGeometry> geom(theGeom.clone());
@@ -105,7 +103,7 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
 
   char* tmp = geom2->exportToJson();
   std::string ret = tmp;
-  OGRFree(tmp);
+  CPLFree(tmp);
 
   // Extract the coordinates
 
@@ -146,7 +144,7 @@ std::string toKML(const OGRGeometry& theGeom,
 
   char* tmp = geom->exportToKML();
   std::string ret = tmp;
-  OGRFree(tmp);
+  CPLFree(tmp);
 
   // Extract the coordinates
 

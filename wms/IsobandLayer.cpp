@@ -19,12 +19,12 @@
 #include <engines/querydata/Model.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
+#include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <newbase/NFmiGdalArea.h>
 #include <newbase/NFmiQueryData.h>
 #include <newbase/NFmiQueryDataUtil.h>
 #include <newbase/NFmiTimeList.h>
-#include <macgyver/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 #include <spine/ParameterTools.h>
@@ -303,7 +303,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     char* tmp;
     crs->exportToWkt(&tmp);
     boost::hash_combine(hash, tmp);
-    OGRFree(tmp);
+    CPLFree(tmp);
 
     auto model = boost::make_shared<Engine::Querydata::Model>(data, hash);
     return boost::make_shared<Engine::Querydata::QImpl>(model);
@@ -389,7 +389,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       auto landdata = theState.getGeoEngine().landCover();
       if (!demdata || !landdata)
         throw Fmi::Exception(BCP,
-                               "Resampling data requires DEM and land cover data to be available!");
+                             "Resampling data requires DEM and land cover data to be available!");
 
       q = q->sample(param,
                     valid_time,
@@ -545,8 +545,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           std::string iri = qid + (qid.empty() ? "" : ".") + isoband.getQid(theState);
 
           if (!theState.addId(iri))
-            throw Fmi::Exception(BCP, "Non-unique ID assigned to isoband")
-                .addParameter("ID", iri);
+            throw Fmi::Exception(BCP, "Non-unique ID assigned to isoband").addParameter("ID", iri);
 
           CTPP::CDT isoband_cdt(CTPP::CDT::HASH_VAL);
           isoband_cdt["iri"] = iri;
