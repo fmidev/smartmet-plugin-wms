@@ -46,16 +46,18 @@ DIFFERENCE_PNG="failures/${NAME}_difference.png"
 # Handle XML failures
 
 if [[ "$MIME" == "application/xml" ]]; then
-   echo "FAIL: XML output differs: $RESULT <> $EXPECTED"
-   exit 1
+    echo "FAIL: XML output differs: $RESULT <> $EXPECTED"
+    echo "diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80"
+    diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80
+    exit 1
 fi
 
 # Handle text/plain failures
 
 if [[ "$MIME" == "text/plain" ]]; then
     echo "FAIL: text output differs: $RESULT <> $EXPECTED"
-    echo diff $EXPECTED $RESULT
-    diff $EXPECTED $RESULT
+    echo "diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80"
+    diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80
     exit 1
 fi
 
