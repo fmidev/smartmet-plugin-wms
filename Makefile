@@ -2,7 +2,7 @@ SUBNAME = wms
 SPEC = smartmet-plugin-$(SUBNAME)
 INCDIR = smartmet/plugins/$(SUBNAME)
 
-REQUIRES = gdal jsoncpp cairo fmt librsvg mysql
+REQUIRES = gdal jsoncpp cairo fmt librsvg ctpp2
 
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
@@ -20,7 +20,6 @@ LIBS += -L$(libdir) \
 	-lsmartmet-gis \
 	-lsmartmet-giza \
 	-lsmartmet-locus \
-	-lctpp2 \
 	-lboost_date_time \
 	-lboost_thread \
 	-lboost_regex \

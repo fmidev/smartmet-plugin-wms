@@ -7,13 +7,7 @@ include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 CFLAGS = -DUNIX -O0 -g $(FLAGS) -Wno-unknown-pragmas
 
 INCLUDES += \
-	-I../wms \
-	-I/usr/include/smartmet \
-	-isystem /usr/include/mysql \
-	-isystem /usr/include/oracle/11.2/client64 \
-	-isystem /usr/include/soci \
-	`pkg-config --cflags libconfig++` \
-	`pkg-config --cflags jsoncpp`
+	-I../wms
 
 LIBS += $(REQUIRED_LIBS) \
 	-lsmartmet-spine  \
@@ -28,17 +22,6 @@ LIBS += $(REQUIRED_LIBS) \
 	-lboost_serialization \
 	-lboost_system \
 	-lbz2 -lz -lpthread -ldl
-
-LIBS += $(REQUIRED_LIBS) \
-	-lsmartmet-spine  \
-	-lsmartmet-macgyver \
-	-lsmartmet-newbase \
-	-lboost_date_time \
-	-lboost_thread \
-	-lboost_filesystem \
-	-lboost_iostreams \
-	-lboost_system \
-	-lpthread -ldl
 
 all: $(PROG)
 clean:
