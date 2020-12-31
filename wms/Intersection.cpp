@@ -175,7 +175,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
       char* out = nullptr;
       crs->exportToWkt(&out);
       wkt = out;
-      OGRFree(out);
+      CPLFree(out);
 
       // std::cout << wkt << "\n";
 

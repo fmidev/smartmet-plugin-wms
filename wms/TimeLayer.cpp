@@ -242,7 +242,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       char *out = nullptr;
       crs->exportToWkt(&out);
       wkt = out;
-      OGRFree(out);
+      CPLFree(out);
 
       //std::cout << wkt << "\n";
 

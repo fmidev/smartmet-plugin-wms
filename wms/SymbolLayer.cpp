@@ -994,7 +994,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       char* out = nullptr;
       crs->exportToWkt(&out);
       wkt = out;
-      OGRFree(out);
+      CPLFree(out);
 
       // std::cout << wkt << "\n";
 

@@ -165,6 +165,8 @@ void Projection::init(const Json::Value& theJson,
         }
 
         spatref = theState.getGisEngine().getSpatialReference(*bboxcrs);
+        spatref->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+
       }
       else
       {
@@ -319,6 +321,8 @@ std::shared_ptr<OGRSpatialReference> Projection::getCRS() const
     if (!ogr_crs)
       throw Fmi::Exception::Trace(BCP, "Projection creation failed!");
 
+    ogr_crs->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+
     return ogr_crs;
   }
   catch (...)
@@ -403,6 +407,7 @@ void Projection::prepareCRS() const
 
     // Create the CRS
     ogr_crs = gisengine->getSpatialReference(*crs);
+    ogr_crs->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     if (xsize && *xsize <= 0)
       throw Fmi::Exception(BCP, "Projection xsize must be positive");

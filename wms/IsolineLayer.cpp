@@ -274,7 +274,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
     char* out = nullptr;
     crs->exportToWkt(&out);
     wkt = out;
-    OGRFree(out);
+    CPLFree(out);
 
     // Adding the bounding box information into the query.
 

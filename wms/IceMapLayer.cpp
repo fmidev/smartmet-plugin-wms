@@ -375,9 +375,11 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     theLayersCdt.PushBack(theGroupCdt);
 
     auto projectionSR = projection.getCRS();
+    projectionSR->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     OGRSpatialReference defaultSR;
     defaultSR.importFromEPSG(3395);  // if sr is missing use this one
+    defaultSR.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
     unsigned int mapid(1);           // id to concatenate to iri to make it unique
     // Get the polygons and store them into the template engine
     for (const PostGISLayerFilter& filter : filters)
@@ -412,6 +414,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
             result_item->geom->assignSpatialReference(&defaultSR);
             result_item->geom->transformTo(projectionSR.get());
           }
+          sr->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
           handleResultItem(
               *result_item, filter, mapid, theGlobals, theLayersCdt, theGroupCdt, theState);

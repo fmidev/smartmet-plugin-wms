@@ -107,10 +107,13 @@ PointValues read_forecasts(const ArrowLayer& layer,
       if (err != OGRERR_NONE)
         throw Fmi::Exception(BCP, "GDAL does not understand WGS84");
 
+      wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
       qsrs = boost::movelib::make_unique<OGRSpatialReference>();
       err = qsrs->SetFromUserInput(q->area().WKT().c_str());
       if (err != OGRERR_NONE)
         throw Fmi::Exception(BCP, "Failed to establish querydata spatial reference");
+      qsrs->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+
       uvtransformation.reset(OGRCreateCoordinateTransformation(wgs84.get(), qsrs.get()));
     }
 
@@ -129,13 +132,11 @@ PointValues read_forecasts(const ArrowLayer& layer,
     auto mylocale = std::locale::classic();
     NFmiPoint dummy;
 
-  if (speedparam && !q->param(speedparam->number()))
-    throw Fmi::Exception(
-        BCP, "Parameter " + speedparam->name() + " not available in the arrow layer querydata");
+    if (speedparam && !q->param(speedparam->number()))
+      throw Fmi::Exception(BCP, "Parameter " + speedparam->name() + " not available in the arrow layer querydata");
 
-  if (dirparam && !q->param(dirparam->number()))
-    throw Fmi::Exception(
-        BCP, "Parameter " + dirparam->name() + " not available in the arrow layer querydata");
+    if (dirparam && !q->param(dirparam->number()))
+      throw Fmi::Exception(BCP, "Parameter " + dirparam->name() + " not available in the arrow layer querydata");
 
     for (const auto& point : points)
     {
@@ -347,11 +348,13 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
         OGRErr err = wgs84->SetFromUserInput("WGS84");
         if (err != OGRERR_NONE)
           throw Fmi::Exception(BCP, "GDAL does not understand WGS84");
+        wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
         qsrs = boost::movelib::make_unique<OGRSpatialReference>();
         err = qsrs->SetFromUserInput(originalCrs);
         if (err != OGRERR_NONE)
           throw Fmi::Exception(BCP, "Failed to establish querydata spatial reference");
+        qsrs->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
         uvtransformation.reset(OGRCreateCoordinateTransformation(wgs84.get(), qsrs.get()));
       }
@@ -1176,7 +1179,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       char* out = nullptr;
       crs->exportToWkt(&out);
       wkt = out;
-      OGRFree(out);
+      CPLFree(out);
 
       // std::cout << wkt << "\n";
 
@@ -1389,6 +1392,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     OGRErr err = wgs84->SetFromUserInput("WGS84");
     if (err != OGRERR_NONE)
       throw Fmi::Exception(BCP, "GDAL does not understand WGS84");
+    wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
         OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));

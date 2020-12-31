@@ -1024,6 +1024,7 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
 
     OGRSpatialReference sr_latlon;
     sr_latlon.importFromEPSG(4326);
+    sr_latlon.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     OGRCoordinateTransformation* transformation =
         OGRCreateCoordinateTransformation(&sr_image, &sr_latlon);

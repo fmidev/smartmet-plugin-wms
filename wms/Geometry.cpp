@@ -105,7 +105,7 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
 
   char* tmp = geom2->exportToJson();
   std::string ret = tmp;
-  OGRFree(tmp);
+  CPLFree(tmp);
 
   // Extract the coordinates
 
@@ -146,7 +146,7 @@ std::string toKML(const OGRGeometry& theGeom,
 
   char* tmp = geom->exportToKML();
   std::string ret = tmp;
-  OGRFree(tmp);
+  CPLFree(tmp);
 
   // Extract the coordinates
 

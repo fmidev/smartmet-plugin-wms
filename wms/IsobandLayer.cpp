@@ -344,7 +344,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     char* tmp;
     crs->exportToWkt(&tmp);
     boost::hash_combine(hash, tmp);
-    OGRFree(tmp);
+    CPLFree(tmp);
 
     auto model = boost::make_shared<Engine::Querydata::Model>(data, hash);
     return boost::make_shared<Engine::Querydata::QImpl>(model);
@@ -439,7 +439,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       char* out = nullptr;
       crs->exportToWkt(&out);
       wkt = out;
-      OGRFree(out);
+      CPLFree(out);
 
       // std::cout << wkt << "\n";
 

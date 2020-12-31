@@ -334,7 +334,7 @@ void Plugin::formatResponse(const std::string &theSvg,
 #ifdef MYDEBUG
         std::cout << "Inserting product to cache with hash " << theHash << std::endl;
 #endif
-        itsImageCache->insert(theHash, buffer);
+        //itsImageCache->insert(theHash, buffer);
 
         // For frontend caching
         theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", theHash));

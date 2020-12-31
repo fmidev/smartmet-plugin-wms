@@ -590,6 +590,8 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
     else
       qcrs = gisengine->getSpatialReference("WGS84");
 
+    qcrs->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+
     // Create the coordinate transformation from image world coordinates
     // to querydata world coordinates
 
@@ -660,6 +662,7 @@ Positions::Points Positions::getDataPoints(const char* originalCrs,
     if (err != OGRERR_NONE)
       throw Fmi::Exception(BCP,
                              "GDAL does not understand this FMI WKT: " + std::string(originalCrs));
+    qcrs->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     // Create the coordinate transformation from image world coordinates
     // to querydata world coordinates
@@ -736,6 +739,7 @@ Positions::Points Positions::getGraticulePoints(const Engine::Querydata::Q& theQ
     // Set the graticule projection
 
     auto wgs84 = gisengine->getSpatialReference("WGS84");
+    wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -810,6 +814,7 @@ Positions::Points Positions::getGraticuleFillPoints(
     // Set the graticule projection
 
     auto wgs84 = gisengine->getSpatialReference("WGS84");
+    wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -1020,6 +1025,7 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
     // Keyword locations are in WGS84
 
     auto wgs84 = gisengine->getSpatialReference("WGS84");
+    wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -1091,6 +1097,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
     // Keyword locations are in WGS84
 
     auto wgs84 = gisengine->getSpatialReference("WGS84");
+    wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
@@ -1177,6 +1184,7 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
     // Station coordinates are in WGS84
 
     auto wgs84 = gisengine->getSpatialReference("WGS84");
+    wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     // Create the coordinate transformation from WGS84 to projection coordinates
 
