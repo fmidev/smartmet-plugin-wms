@@ -1,0 +1,727 @@
+[
+    // daytime symbols
+    {
+        "value": 1,
+        "symbol": "weather/smartsymbol/day/1",
+        "attributes":
+        {
+        "class": "Clear"
+        }
+        },
+    {
+        "value": 2,
+        "symbol": "weather/smartsymbol/day/2",
+        "attributes":
+        {
+        "class": "MostlyClear"
+        }
+    },
+    {
+        "value": 4,
+        "symbol": "weather/smartsymbol/day/4",
+        "attributes":
+        {
+        "class": "PartlyCloudy"
+        }
+    },
+    {
+        "value": 6,
+        "symbol": "weather/smartsymbol/day/6",
+        "attributes":
+        {
+        "class": "MostlyCloudy"
+        }
+    },
+    {
+        "value": 7,
+        "symbol": "weather/smartsymbol/day/7",
+        "attributes":
+        {
+        "class": "Overcast"
+        }
+    },
+    {
+        "value": 9,
+        "symbol": "weather/smartsymbol/day/9",
+        "attributes":
+        {
+        "class": "Fog"
+        }
+    },
+    {
+        "value": 71,
+        "symbol": "weather/smartsymbol/day/71",
+        "attributes":
+        {
+        "class": "IsolatedThunderShowers"
+        }
+    },
+    {
+        "value": 74,
+        "symbol": "weather/smartsymbol/day/74",
+        "attributes":
+        {
+        "class": "ScatteredThunderShowers"
+        }
+    },
+    {
+        "value": 77,
+        "symbol": "weather/smartsymbol/day/77",
+        "attributes":
+        {
+        "class": "ThunderShowers"
+        }
+    },
+    {
+        "value": 21,
+        "symbol": "weather/smartsymbol/day/21",
+        "attributes":
+        {
+        "class": "IsolatedShowers"
+        }
+    },
+    {
+        "value": 24,
+        "symbol": "weather/smartsymbol/day/24",
+        "attributes":
+        {
+        "class": "ScatteredShowers"
+        }
+    },
+    {
+        "value": 27,
+        "symbol": "weather/smartsymbol/day/27",
+        "attributes":
+        {
+        "class": "Showers"
+        }
+    },
+    {
+        "value": 14,
+        "symbol": "weather/smartsymbol/day/14",
+        "attributes":
+        {
+        "class": "FreezingDrizzle"
+        }
+    },
+    {
+        "value": 17,
+        "symbol": "weather/smartsymbol/day/17",
+        "attributes":
+        {
+        "class": "FreezingRain"
+        }
+    },
+    {
+        "value": 11,
+        "symbol": "weather/smartsymbol/day/11",
+        "attributes":
+        {
+        "class": "Drizzle"
+        }
+    },
+    {
+        "value": 31,
+        "symbol": "weather/smartsymbol/day/31",
+        "attributes":
+        {
+        "class": "PeriodsOfLightRain"
+        }
+    },
+    {
+        "value": 34,
+        "symbol": "weather/smartsymbol/day/34",
+        "attributes":
+        {
+        "class": "PeriodsOfLightRain2"
+        }
+    },
+    {
+        "value": 37,
+        "symbol": "weather/smartsymbol/day/37",
+        "attributes":
+        {
+        "class": "LightRain"
+        }
+    },
+    {
+        "value": 32,
+        "symbol": "weather/smartsymbol/day/32",
+        "attributes":
+        {
+        "class": "PeriodsOfModerateRain"
+        }
+    },
+    {
+        "value": 35,
+        "symbol": "weather/smartsymbol/day/35",
+        "attributes":
+        {
+        "class": "PeriodsOfModerateRain2"
+        }
+    },
+    {
+        "value": 38,
+        "symbol": "weather/smartsymbol/day/38",
+        "attributes":
+        {
+        "class": "ModerateRain"
+        }
+    },
+    {
+        "value": 33,
+        "symbol": "weather/smartsymbol/day/33",
+        "attributes":
+        {
+        "class": "PeriodsOfHeavyRain"
+        }
+    },
+    {
+        "value": 36,
+        "symbol": "weather/smartsymbol/day/36",
+        "attributes":
+        {
+        "class": "PeriodsOfHeavyRain2"
+        }
+    },
+    {
+        "value": 39,
+        "symbol": "weather/smartsymbol/day/39",
+        "attributes":
+        {
+        "class": "HeavyRain"
+        }
+    },
+    {
+        "value": 41,
+        "symbol": "weather/smartsymbol/day/41",
+        "attributes":
+        {
+        "class": "IsolatedLightSleetShowers"
+        }
+    },
+        {
+        "value": 44,
+        "symbol": "weather/smartsymbol/day/44",
+        "attributes":
+        {
+        "class": "ScatteredLightSleetShowers"
+        }
+        },
+    {
+        "value": 47,
+        "symbol": "weather/smartsymbol/day/47",
+        "attributes":
+        {
+        "class": "LightSleet"
+        }
+    },
+    {
+        "value": 42,
+        "symbol": "weather/smartsymbol/day/42",
+        "attributes":
+        {
+        "class": "IsolatedModerateSleetShowers"
+        }
+    },
+    {
+        "value": 45,
+        "symbol": "weather/smartsymbol/day/45",
+        "attributes":
+        {
+        "class": "ScatteredModerateSleetShowers"
+        }
+    },
+    {
+        "value": 48,
+        "symbol": "weather/smartsymbol/day/48",
+        "attributes":
+        {
+        "class": "ModerateSleet"
+        }
+    },
+    {
+        "value": 43,
+        "symbol": "weather/smartsymbol/day/43",
+        "attributes":
+        {
+        "class": "IsolatedHeavySleetShowers"
+        }
+    },
+    {
+        "value": 46,
+        "symbol": "weather/smartsymbol/day/46",
+        "attributes":
+        {
+        "class": "ScatteredHeavySleetShowers"
+        }
+    },
+    {
+        "value": 49,
+        "symbol": "weather/smartsymbol/day/49",
+        "attributes":
+        {
+        "class": "HeavySleet"
+        }
+    },
+    {
+        "value": 51,
+        "symbol": "weather/smartsymbol/day/51",
+        "attributes":
+        {
+        "class": "IsolatedLightSnowShowers"
+        }
+    },
+    {
+        "value": 54,
+        "symbol": "weather/smartsymbol/day/54",
+        "attributes":
+        {
+        "class": "ScatteredLightSnowShowers"
+        }
+    },
+    {
+        "value": 57,
+        "symbol": "weather/smartsymbol/day/57",
+        "attributes":
+        {
+        "class": "LightSnowfall"
+        }
+    },
+    {
+        "value": 52,
+        "symbol": "weather/smartsymbol/day/52",
+        "attributes":
+        {
+        "class": "IsolatedModerateSnowShowers"
+        }
+    },
+    {
+        "value": 55,
+        "symbol": "weather/smartsymbol/day/55",
+        "attributes":
+        {
+        "class": "ScatteredModerateSnowShowers"
+        }
+    },
+    {
+        "value": 58,
+        "symbol": "weather/smartsymbol/day/58",
+        "attributes":
+        {
+        "class": "ModerateSnowfall"
+        }
+    },
+    {
+        "value": 53,
+        "symbol": "weather/smartsymbol/day/53",
+        "attributes":
+        {
+        "class": "IsolatedHeavySnowShowers"
+        }
+    },
+    {
+        "value": 56,
+        "symbol": "weather/smartsymbol/day/56",
+        "attributes":
+        {
+        "class": "HeavySnowShowers"
+        }
+    },
+    {
+        "value": 59,
+        "symbol": "weather/smartsymbol/day/59",
+        "attributes":
+        {
+        "class": "HeavySnowFall"
+        }
+    },
+    {
+        "value": 61,
+        "symbol": "weather/smartsymbol/day/61",
+        "attributes":
+        {
+        "class": "IsolatedHailShowers"
+        }
+    },
+    {
+        "value": 64,
+        "symbol": "weather/smartsymbol/day/64",
+        "attributes":
+        {
+        "class": "ScattereddHailShowers"
+        }
+    },
+    {
+        "value": 67,
+        "symbol": "weather/smartsymbol/day/67",
+        "attributes":
+        {
+        "class": "HailShowers"
+        }
+    },
+
+
+
+    // nighttime symbols
+    {
+        "value": 101,
+        "symbol": "weather/smartsymbol/night/101",
+        "attributes":
+        {
+        "class": "Clear"
+        }
+        },
+    {
+        "value": 102,
+        "symbol": "weather/smartsymbol/night/102",
+        "attributes":
+        {
+        "class": "MostlyClear"
+        }
+    },
+    {
+        "value": 104,
+        "symbol": "weather/smartsymbol/night/104",
+        "attributes":
+        {
+        "class": "PartlyCloudy"
+        }
+    },
+    {
+        "value": 106,
+        "symbol": "weather/smartsymbol/night/106",
+        "attributes":
+        {
+        "class": "MostlyCloudy"
+        }
+    },
+    {
+        "value": 107,
+        "symbol": "weather/smartsymbol/night/107",
+        "attributes":
+        {
+        "class": "Overcast"
+        }
+    },
+    {
+        "value": 109,
+        "symbol": "weather/smartsymbol/night/109",
+        "attributes":
+        {
+        "class": "Fog"
+        }
+    },
+    {
+        "value": 171,
+        "symbol": "weather/smartsymbol/night/171",
+        "attributes":
+        {
+        "class": "IsolatedThunderShowers"
+        }
+    },
+    {
+        "value": 174,
+        "symbol": "weather/smartsymbol/night/174",
+        "attributes":
+        {
+        "class": "ScatteredThunderShowers"
+        }
+    },
+    {
+        "value": 177,
+        "symbol": "weather/smartsymbol/night/177",
+        "attributes":
+        {
+        "class": "ThunderShowers"
+        }
+    },
+    {
+        "value": 121,
+        "symbol": "weather/smartsymbol/night/121",
+        "attributes":
+        {
+        "class": "IsolatedShowers"
+        }
+    },
+    {
+        "value": 124,
+        "symbol": "weather/smartsymbol/night/124",
+        "attributes":
+        {
+        "class": "ScatteredShowers"
+        }
+    },
+    {
+        "value": 127,
+        "symbol": "weather/smartsymbol/night/127",
+        "attributes":
+        {
+        "class": "Showers"
+        }
+    },
+    {
+        "value": 114,
+        "symbol": "weather/smartsymbol/night/114",
+        "attributes":
+        {
+        "class": "FreezingDrizzle"
+        }
+    },
+    {
+        "value": 117,
+        "symbol": "weather/smartsymbol/night/117",
+        "attributes":
+        {
+        "class": "FreezingRain"
+        }
+    },
+    {
+        "value": 111,
+        "symbol": "weather/smartsymbol/night/111",
+        "attributes":
+        {
+        "class": "Drizzle"
+        }
+    },
+    {
+        "value": 131,
+        "symbol": "weather/smartsymbol/night/131",
+        "attributes":
+        {
+        "class": "PeriodsOfLightRain"
+        }
+    },
+    {
+        "value": 134,
+        "symbol": "weather/smartsymbol/night/134",
+        "attributes":
+        {
+        "class": "PeriodsOfLightRain2"
+        }
+    },
+    {
+        "value": 137,
+        "symbol": "weather/smartsymbol/night/137",
+        "attributes":
+        {
+        "class": "LightRain"
+        }
+    },
+    {
+        "value": 132,
+        "symbol": "weather/smartsymbol/night/132",
+        "attributes":
+        {
+        "class": "PeriodsOfModerateRain"
+        }
+    },
+    {
+        "value": 135,
+        "symbol": "weather/smartsymbol/night/135",
+        "attributes":
+        {
+        "class": "PeriodsOfModerateRain2"
+        }
+    },
+    {
+        "value": 138,
+        "symbol": "weather/smartsymbol/night/138",
+        "attributes":
+        {
+        "class": "ModerateRain"
+        }
+    },
+    {
+        "value": 133,
+        "symbol": "weather/smartsymbol/night/133",
+        "attributes":
+        {
+        "class": "PeriodsOfHeavyRain"
+        }
+    },
+    {
+        "value": 136,
+        "symbol": "weather/smartsymbol/night/136",
+        "attributes":
+        {
+        "class": "PeriodsOfHeavyRain2"
+        }
+    },
+    {
+        "value": 139,
+        "symbol": "weather/smartsymbol/night/139",
+        "attributes":
+        {
+        "class": "HeavyRain"
+        }
+    },
+    {
+        "value": 141,
+        "symbol": "weather/smartsymbol/night/141",
+        "attributes":
+        {
+        "class": "IsolatedLightSleetShowers"
+        }
+    },
+        {
+        "value": 144,
+        "symbol": "weather/smartsymbol/night/144",
+        "attributes":
+        {
+        "class": "ScatteredLightSleetShowers"
+        }
+        },
+    {
+        "value": 147,
+        "symbol": "weather/smartsymbol/night/147",
+        "attributes":
+        {
+        "class": "LightSleet"
+        }
+    },
+    {
+        "value": 142,
+        "symbol": "weather/smartsymbol/night/142",
+        "attributes":
+        {
+        "class": "IsolatedModerateSleetShowers"
+        }
+    },
+    {
+        "value": 145,
+        "symbol": "weather/smartsymbol/night/145",
+        "attributes":
+        {
+        "class": "ScatteredModerateSleetShowers"
+        }
+    },
+    {
+        "value": 148,
+        "symbol": "weather/smartsymbol/night/148",
+        "attributes":
+        {
+        "class": "ModerateSleet"
+        }
+    },
+    {
+        "value": 143,
+        "symbol": "weather/smartsymbol/night/143",
+        "attributes":
+        {
+        "class": "IsolatedHeavySleetShowers"
+        }
+    },
+    {
+        "value": 146,
+        "symbol": "weather/smartsymbol/night/146",
+        "attributes":
+        {
+        "class": "ScatteredHeavySleetShowers"
+        }
+    },
+    {
+        "value": 149,
+        "symbol": "weather/smartsymbol/night/149",
+        "attributes":
+        {
+        "class": "HeavySleet"
+        }
+    },
+    {
+        "value": 151,
+        "symbol": "weather/smartsymbol/night/151",
+        "attributes":
+        {
+        "class": "IsolatedLightSnowShowers"
+        }
+    },
+    {
+        "value": 154,
+        "symbol": "weather/smartsymbol/night/154",
+        "attributes":
+        {
+        "class": "ScatteredLightSnowShowers"
+        }
+    },
+    {
+        "value": 157,
+        "symbol": "weather/smartsymbol/night/157",
+        "attributes":
+        {
+        "class": "LightSnowfall"
+        }
+    },
+    {
+        "value": 152,
+        "symbol": "weather/smartsymbol/night/152",
+        "attributes":
+        {
+        "class": "IsolatedModerateSnowShowers"
+        }
+    },
+    {
+        "value": 155,
+        "symbol": "weather/smartsymbol/night/155",
+        "attributes":
+        {
+        "class": "ScatteredModerateSnowShowers"
+        }
+    },
+    {
+        "value": 158,
+        "symbol": "weather/smartsymbol/night/158",
+        "attributes":
+        {
+        "class": "ModerateSnowfall"
+        }
+    },
+    {
+        "value": 153,
+        "symbol": "weather/smartsymbol/night/153",
+        "attributes":
+        {
+        "class": "IsolatedHeavySnowShowers"
+        }
+    },
+    {
+        "value": 156,
+        "symbol": "weather/smartsymbol/night/156",
+        "attributes":
+        {
+        "class": "HeavySnowShowers"
+        }
+    },
+    {
+        "value": 159,
+        "symbol": "weather/smartsymbol/night/159",
+        "attributes":
+        {
+        "class": "HeavySnowFall"
+        }
+    },
+    {
+        "value": 161,
+        "symbol": "weather/smartsymbol/night/161",
+        "attributes":
+        {
+        "class": "IsolatedHailShowers"
+        }
+    },
+    {
+        "value": 164,
+        "symbol": "weather/smartsymbol/night/164",
+        "attributes":
+        {
+        "class": "ScattereddHailShowers"
+        }
+    },
+    {
+        "value": 167,
+        "symbol": "weather/smartsymbol/night/167",
+        "attributes":
+        {
+        "class": "HailShowers"
+        }
+    }
+]

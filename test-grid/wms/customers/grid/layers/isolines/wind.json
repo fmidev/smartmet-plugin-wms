@@ -1,0 +1,38 @@
+[
+        {
+	    "qid": "wind_3",
+	    "value": 3
+        },
+        {
+	    "qid": "wind_5",
+            "value": 5
+        },
+        {
+	    "qid": "wind_7",
+            "value": 7
+        },
+        {
+	    "qid": "wind_10",
+            "value": 10
+        },
+        {
+	    "qid": "wind_14",
+            "value": 14
+        },
+        {
+	    "qid": "wind_17",
+            "value": 17
+        },
+        {
+	    "qid": "wind_21",
+            "value": 21
+        },
+        {
+	    "qid": "wind_26",
+            "value": 26
+        },
+        {
+	    "qid": "wind_32",
+            "value": 32
+        }
+]

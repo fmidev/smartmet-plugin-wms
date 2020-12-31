@@ -1,0 +1,17 @@
+.Precipitation_0_50  { stroke: none; fill: rgb(225,225,0) }
+.Precipitation_50_75	{ stroke: none; fill: rgb(10,155,255) }
+.Precipitation_75_100	{ stroke: none; fill: rgb(5,205,170) }
+.Precipitation_100_125	{ stroke: none; fill: rgb(140,230,20) }
+.Precipitation_125_150	{ stroke: none; fill: rgb(240,240,20) }
+.Precipitation_150_175	{ stroke: none; fill: rgb(255,205,20) }
+.Precipitation_175_200	{ stroke: none; fill: rgb(255,80,60) }
+.Precipitation_200_225  { stroke: none; fill: rgb(255,100,80) }
+.Precipitation_225_250  { stroke: none; fill: rgb(255,120,100) }
+.Precipitation_250_275  { stroke: none; fill: rgb(255,140,120) }
+.Precipitation_275_300  { stroke: none; fill: rgb(255,160,140) }
+.Precipitation_300_400  { stroke: none; fill: rgb(255,180,160) }
+.Precipitation_400_500  { stroke: none; fill: rgb(255,200,180) }
+.Precipitation_500_inf	{ stroke: none; fill: rgb(255,0,0) }
+
+
+ 
