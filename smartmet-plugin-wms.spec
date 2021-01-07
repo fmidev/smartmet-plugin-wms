@@ -39,7 +39,13 @@ BuildRequires: jsoncpp-devel
 BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
 BuildRequires: heatmap-devel
+%if %{defined el7}
 BuildRequires: librsvg2-devel = 2.40.6
+#TestRequires: librsvg2-tools = 2.40.6
+%else
+BuildRequires: librsvg2-devel
+#TestRequires: librsvg2-tools
+%endif
 Requires: cairo
 Requires: fmt >= 7.1.3
 Requires: jsoncpp
@@ -72,7 +78,6 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: gcc-c++
 #TestRequires: jsoncpp-devel
 #TestRequires: libconfig-devel >= 1.7.2
-#TestRequires: librsvg2-tools = 2.40.6
 #TestRequires: ImageMagick
 #TestRequires: bc
 #TestRequires: smartmet-engine-contour-devel >= 21.1.5
