@@ -15,8 +15,8 @@
 #include <gis/Host.h>
 #include <gis/OGR.h>
 #include <gis/PostGIS.h>
-#include <macgyver/StringConversion.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <spine/Json.h>
 #include <algorithm>
 #include <cmath>
@@ -29,6 +29,8 @@ namespace Dali
 {
 namespace
 {
+Json::CharReaderBuilder charreaderbuilder;
+
 using OGRSpatialReferencePtr = boost::shared_ptr<OGRSpatialReference>;
 using OGRCoordinateTransformationPtr = boost::movelib::unique_ptr<OGRCoordinateTransformation>;
 
@@ -120,9 +122,12 @@ Json::Value getJsonValue(const std::string& param_name,
   Json::Value ret;
   if (parameters.find(param_name) != parameters.end())
   {
-    Json::Reader reader;
     const auto& str = parameters.at(param_name);
-    reader.parse(str, ret);
+
+    std::unique_ptr<Json::CharReader> reader(charreaderbuilder.newCharReader());
+    std::string errors;
+    if (!reader->parse(str.c_str(), str.c_str() + str.size(), &ret, &errors))
+      throw Fmi::Exception(BCP, "Failed to parse JSON value").addParameter("Message", errors);
   }
 
   return ret;
