@@ -91,6 +91,8 @@ if [ "$DBZ" = inf ]; then
     exit 0
 elif [ $(echo "$DBZ >= 50" | bc) = 1 ]; then
     echo -e "OK\t\tPNSR = $DBZ dB"
+    composite $EXPECTED_PNG $RESULT_PNG -compose DIFFERENCE png:- | \
+	convert - -contrast-stretch 0 $DIFFERENCE_PNG
     exit 0
 elif [ $(echo "$DBZ >= 20" | bc) = 1 ]; then
     echo -e "WARNING\t\tPNSR = $DBZ dB (< 50 dB)"
