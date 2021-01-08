@@ -435,11 +435,14 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     {
       // Getting WKT and the bounding box of the requested projection.
 
-      auto crs = projection.getCRS();
-      char* out = nullptr;
-      crs->exportToWkt(&out);
-      wkt = out;
-      CPLFree(out);
+      if (strstr(wkt.c_str(),"+proj") != wkt.c_str())
+      {
+        auto crs = projection.getCRS();
+        char* out = nullptr;
+        crs->exportToWkt(&out);
+        wkt = out;
+        CPLFree(out);
+      }
 
       // std::cout << wkt << "\n";
 

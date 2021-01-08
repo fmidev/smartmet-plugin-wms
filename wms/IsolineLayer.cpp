@@ -270,11 +270,14 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   {
     // Getting WKT and the bounding box of the requested projection.
 
-    auto crs = projection.getCRS();
-    char* out = nullptr;
-    crs->exportToWkt(&out);
-    wkt = out;
-    CPLFree(out);
+    if (strstr(wkt.c_str(),"+proj") != wkt.c_str())
+    {
+      auto crs = projection.getCRS();
+      char* out = nullptr;
+      crs->exportToWkt(&out);
+      wkt = out;
+      CPLFree(out);
+    }
 
     // Adding the bounding box information into the query.
 
