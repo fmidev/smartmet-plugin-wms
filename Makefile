@@ -5,6 +5,7 @@ INCDIR = smartmet/plugins/$(SUBNAME)
 REQUIRES = gdal jsoncpp cairo fmt librsvg ctpp2
 
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
+sysconfdir ?= /etc
 
 # Compiler options
 
@@ -95,11 +96,10 @@ format:
 install:
 	@mkdir -p $(plugindir)
 	$(INSTALL_PROG) $(LIBFILE) $(plugindir)/$(LIBFILE)
-	@mkdir -p $(confdir)
-	@mkdir -p $(confdir)/tmpl
+	@mkdir -p $(sysconfdir)/smartmet/plugins/wms/tmpl
 	@list=`ls -1 tmpl/*.c2t`; \
-	echo $(INSTALL_DATA) $$list "$(confdir)/tmpl"; \
-        $(INSTALL_DATA) $$list "$(confdir)/tmpl";
+	echo $(INSTALL_DATA) $$list "$(sysconfdir)/smartmet/plugins/wms/tmpl"; \
+        $(INSTALL_DATA) $$list "$(sysconfdir)/smartmet/plugins/wms/tmpl";
 
 test: configtest
 	cd test && make test
