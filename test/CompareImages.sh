@@ -45,7 +45,7 @@ DIFFERENCE_PNG="failures/${NAME}_difference.png"
 
 # Handle XML failures
 
-if [[ "$MIME" == "application/xml" ]]; then
+if [[ "$MIME" == "application/xml" || "$MIME" == "text/xml" ]]; then
     echo "FAIL: XML output differs: $RESULT <> $EXPECTED"
     echo "diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80"
     diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80
@@ -65,7 +65,7 @@ fi
 # Create the PNGs for comparisons.
 # Note: sometimes 'file' reports text/x-asm instead of html due to dots in css class names
 
-if [[ "$MIME" == "text/html" || "$MIME" == "text/x-asm" ]]; then
+if [[ "$MIME" == "text/html" || "$MIME" == "text/x-asm" || "$MIME" == "image/svg" ]]; then
     rsvg-convert -b white -f png -o $EXPECTED_PNG $EXPECTED
     rsvg-convert -b white -f png -o $RESULT_PNG $RESULT
 
