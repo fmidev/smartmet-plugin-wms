@@ -85,7 +85,10 @@ fi
 
 DBZ=$((compare 2>&1 -metric PSNR $EXPECTED_PNG $RESULT_PNG /dev/null | head -1 | sed "-es/ dB//") || echo PNG COMPARISON FAILED && exit 1)
 
-if [ "$DBZ" = inf ]; then
+if ! echo "$DBZ" | grep -Eq '^(inf|[\+\-]?[0-9][0-9]*(\.[0-9]*)?)$' ; then
+    echo -e "FAIL\t\t$DBZ"
+    exit 1
+elif [ "$DBZ" = inf ]; then
     echo -e "OK\t\tPSNR = inf"
     rm -f $EXPECTED_PNG $RESULT_PNG $DIFFERENCE_PNG
     exit 0
