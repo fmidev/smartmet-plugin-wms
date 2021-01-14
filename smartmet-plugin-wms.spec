@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.1.12
+Version: 21.1.14
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -17,21 +17,21 @@ BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: libconfig-devel >= 1.7.2
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-giza-devel >= 20.10.7
-BuildRequires: smartmet-library-macgyver-devel >= 21.1.5
-BuildRequires: smartmet-library-spine-devel >= 21.1.5
+BuildRequires: smartmet-library-giza-devel >= 21.1.14
+BuildRequires: smartmet-library-macgyver-devel >= 21.1.14
+BuildRequires: smartmet-library-spine-devel >= 21.1.14
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 20.12.15
+BuildRequires: smartmet-engine-authentication-devel >= 21.1.14
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 21.1.5
+BuildRequires: smartmet-engine-observation-devel >= 21.1.14
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 21.1.5
-BuildRequires: smartmet-engine-geonames-devel >= 21.1.5
-BuildRequires: smartmet-engine-querydata-devel >= 20.12.30
-BuildRequires: smartmet-engine-contour-devel >= 21.1.5
-BuildRequires: smartmet-library-gis-devel >= 21.1.7
+BuildRequires: smartmet-engine-gis-devel >= 21.1.14
+BuildRequires: smartmet-engine-geonames-devel >= 21.1.14
+BuildRequires: smartmet-engine-querydata-devel >= 21.1.14
+BuildRequires: smartmet-engine-contour-devel >= 21.1.14
+BuildRequires: smartmet-library-gis-devel >= 21.1.14
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -51,18 +51,18 @@ Requires: fmt >= 7.1.3
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-gis >= 21.1.7
-Requires: smartmet-library-macgyver >= 21.1.5
-Requires: smartmet-library-giza >= 20.10.7
+Requires: smartmet-library-gis >= 21.1.14
+Requires: smartmet-library-macgyver >= 21.1.14
+Requires: smartmet-library-giza >= 21.1.14
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 20.12.15
+Requires: smartmet-engine-authentication >= 21.1.14
 %endif
-Requires: smartmet-engine-querydata >= 20.12.30
-Requires: smartmet-engine-contour >= 21.1.5
-Requires: smartmet-engine-gis >= 21.1.5
-Requires: smartmet-engine-geonames >= 21.1.5
-Requires: smartmet-server >= 21.1.5
-Requires: smartmet-library-spine >= 21.1.5
+Requires: smartmet-engine-querydata >= 21.1.14
+Requires: smartmet-engine-contour >= 21.1.14
+Requires: smartmet-engine-gis >= 21.1.14
+Requires: smartmet-engine-geonames >= 21.1.14
+Requires: smartmet-server >= 21.1.14
+Requires: smartmet-library-spine >= 21.1.14
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -80,18 +80,18 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: libconfig-devel >= 1.7.2
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 21.1.5
-#TestRequires: smartmet-engine-geonames-devel >= 21.1.5
-#TestRequires: smartmet-engine-gis-devel >= 21.1.5
-#TestRequires: smartmet-engine-querydata-devel >= 20.12.30
-#TestRequires: smartmet-library-giza-devel >= 20.10.7
+#TestRequires: smartmet-engine-contour-devel >= 21.1.14
+#TestRequires: smartmet-engine-geonames-devel >= 21.1.14
+#TestRequires: smartmet-engine-gis-devel >= 21.1.14
+#TestRequires: smartmet-engine-querydata-devel >= 21.1.14
+#TestRequires: smartmet-library-giza-devel >= 21.1.14
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
-#TestRequires: smartmet-library-spine-devel >= 21.1.5
+#TestRequires: smartmet-library-spine-devel >= 21.1.14
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
 #TestRequires: zlib-devel
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 21.1.5
+#TestRequires: smartmet-engine-observation-devel >= 21.1.14
 %endif
 
 %description
@@ -120,6 +120,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Jan 14 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.14-1.fmi
+- Repackaged smartmet to resolve debuginfo issues
+
 * Tue Jan 12 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.12-1.fmi
 - Upgraded jsoncpp
 
