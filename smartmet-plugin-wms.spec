@@ -41,9 +41,11 @@ BuildRequires: bzip2-devel
 BuildRequires: heatmap-devel
 %if %{defined el7}
 BuildRequires: librsvg2-devel = 2.40.6
+#TestRequires: librsvg2-devel = 2.40.6
 #TestRequires: librsvg2-tools = 2.40.6
 %else
 BuildRequires: librsvg2-devel
+#TestRequires: librsvg2-devel
 #TestRequires: librsvg2-tools
 %endif
 Requires: cairo
@@ -90,6 +92,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
 #TestRequires: zlib-devel
+#TestRequires: cairo-devel
 %if %{with observation}
 #TestRequires: smartmet-engine-observation-devel >= 21.1.14
 %endif
