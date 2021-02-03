@@ -84,8 +84,10 @@ Layer* create(const Json::Value& theJson)
       return new IceMapLayer;
     if (name == "frame")
       return new FrameLayer;
+#ifdef WGS84
     if (name == "grid")
       return new GridLayer;
+#endif
 
     throw Fmi::Exception(BCP, "Unknown layer type '" + name + "'");
   }

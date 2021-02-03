@@ -19,16 +19,20 @@
 #include <engines/querydata/Model.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
+#include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <newbase/NFmiQueryData.h>
 #include <newbase/NFmiQueryDataUtil.h>
 #include <newbase/NFmiTimeList.h>
 #include <spine/Convenience.h>
-#include <macgyver/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 #include <spine/ParameterTools.h>
 #include <limits>
+
+#ifndef NEW_NFMIAREA
+#include <newbase/NFmiGdalArea.h>
+#endif
 
 namespace SmartMet
 {
@@ -173,6 +177,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
     // Establish new projection and the required grid size of the desired resolution
 
+#ifdef NEW_NFMIAREA
     std::unique_ptr<NFmiArea> newarea(NFmiArea::CreateFromBBox(
         crs, NFmiPoint(box.xmin(), box.ymin()), NFmiPoint(box.xmax(), box.ymax())));
 
@@ -189,6 +194,13 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
       datawidth /= 1000;  // meters to kilometers
       dataheight /= 1000;
     }
+#else
+    auto newarea = boost::make_shared<NFmiGdalArea>(
+        "FMI", *crs, box.xmin(), box.ymin(), box.xmax(), box.ymax());
+
+    double datawidth = newarea->WorldXYWidth() / 1000.0;  // view extent in kilometers
+    double dataheight = newarea->WorldXYHeight() / 1000.0;
+#endif
 
     unsigned int width = lround(datawidth / *heatmap.resolution);
     unsigned int height = lround(dataheight / *heatmap.resolution);
@@ -313,7 +325,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     char* tmp;
     crs.get()->exportToWkt(&tmp);
     boost::hash_combine(hash, tmp);
-    OGRFree(tmp);
+    CPLFree(tmp);
 
     auto model = boost::make_shared<Engine::Querydata::Model>(data, hash);
     return boost::make_shared<Engine::Querydata::QImpl>(model);
@@ -399,7 +411,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       auto landdata = theState.getGeoEngine().landCover();
       if (!demdata || !landdata)
         throw Fmi::Exception(BCP,
-                               "Resampling data requires DEM and land cover data to be available!");
+                             "Resampling data requires DEM and land cover data to be available!");
 
       q = q->sample(param,
                     valid_time,
@@ -491,7 +503,6 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;
     boost::hash_combine(valueshash, options.data_hash_value());
-    std::string proj4 = q->area().ProjStr();
 
     // Select the data
 
@@ -505,8 +516,14 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
 
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
+
+#ifdef NEW_NFMIAREA
     std::vector<OGRGeometryPtr> geoms =
         contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
+#else
+    std::vector<OGRGeometryPtr> geoms = contourer.contour(
+        qhash, q->area().WKT(), *matrix, coords, options, q->needsWraparound(), crs.get());
+#endif
 
     // Update the globals
 
@@ -555,8 +572,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
           std::string iri = qid + (qid.empty() ? "" : ".") + isoband.getQid(theState);
 
           if (!theState.addId(iri))
-            throw Fmi::Exception(BCP, "Non-unique ID assigned to isoband")
-                .addParameter("ID", iri);
+            throw Fmi::Exception(BCP, "Non-unique ID assigned to isoband").addParameter("ID", iri);
 
           CTPP::CDT isoband_cdt(CTPP::CDT::HASH_VAL);
           isoband_cdt["iri"] = iri;

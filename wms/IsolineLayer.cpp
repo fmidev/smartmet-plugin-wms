@@ -251,14 +251,17 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   auto valueshash = qhash;
   Dali::hash_combine(valueshash, options.data_hash_value());
 
-  std::string wkt = q->area().WKT();
-  std::string proj4 = q->area().ProjStr();
-
   const auto& qEngine = theState.getQEngine();
   auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
 
   CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
+
+#ifdef NEW_NFMIAREA
   auto geoms = contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
+#else
+  auto geoms = contourer.contour(
+      qhash, q->area().WKT(), *matrix, coords, options, q->needsWraparound(), crs.get());
+#endif
 
   // Perform polygon operations
   for (unsigned int i = 0; i < geoms.size(); i++)

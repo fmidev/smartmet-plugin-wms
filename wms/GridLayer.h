@@ -1,3 +1,5 @@
+#ifdef WGS84
+
 // ======================================================================
 /*!
  * \brief Grid layer
@@ -37,3 +39,5 @@ class GridLayer : public Layer
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet
+
+#endif

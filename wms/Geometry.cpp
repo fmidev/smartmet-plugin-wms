@@ -1,11 +1,11 @@
 #include "Geometry.h"
 #include "State.h"
 #include <boost/move/make_unique.hpp>
+#include <engines/gis/Engine.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/SpatialReference.h>
-#include <ogr_geometry.h>
-#include <engines/gis/Engine.h>
 #include <macgyver/Exception.h>
+#include <ogr_geometry.h>
 
 namespace SmartMet
 {
@@ -96,7 +96,7 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
 
   char* tmp = geom2->exportToJson();
   std::string ret = tmp;
-  OGRFree(tmp);
+  CPLFree(tmp);
 
   // Extract the coordinates
 
@@ -131,7 +131,7 @@ std::string toKML(const OGRGeometry& theGeom,
 
   char* tmp = geom->exportToKML();
   std::string ret = tmp;
-  OGRFree(tmp);
+  CPLFree(tmp);
 
   // Extract the coordinates
 

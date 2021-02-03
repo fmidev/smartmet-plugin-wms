@@ -1,3 +1,5 @@
+#ifdef WGS84
+
 #include "GridLayer.h"
 #include "Config.h"
 #include "Geometry.h"
@@ -179,3 +181,5 @@ std::size_t GridLayer::hash_value(const State& theState) const
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet
+
+#endif

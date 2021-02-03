@@ -100,7 +100,7 @@ void Projection::init(const Json::Value& theJson,
       auto loc = engine.idSearch(id, "fi");
       if (!loc)
         throw Fmi::Exception(BCP,
-                               "Unable to find coordinates for geoid '" + Fmi::to_string(id) + "'");
+                             "Unable to find coordinates for geoid '" + Fmi::to_string(id) + "'");
       latlon_center = true;
       cx = loc->longitude;
       cy = loc->latitude;
@@ -221,13 +221,16 @@ void Projection::update(const Engine::Querydata::Q& theQ)
   {
     if (crs && *crs == "data")
     {
+#ifdef NEW_NFMIAREA
       crs = theQ->area().ProjStr();
-
+#else
+      crs = theQ->area().WKT().c_str();
+#endif
       bool no_bbox = (!x1 && !y1 && !x2 && !y2 && !cx && !cy && !resolution && !bboxcrs);
 
       if (no_bbox)
       {
-#ifdef WGS84
+#ifdef NEW_NFMIAREA
         auto world1 = theQ->area().XYToWorldXY(theQ->area().BottomLeft());
         auto world2 = theQ->area().XYToWorldXY(theQ->area().TopRight());
         x1 = world1.X();
@@ -341,8 +344,8 @@ void Projection::prepareCRS() const
 
     // bbox definition missing completely?
     if (!full_rect_bbox && !full_center_bbox)
-      throw Fmi::Exception(
-          BCP, "CRS bounding box missing: x1,y2,x2,y2 or cx,cy,resolution are needed");
+      throw Fmi::Exception(BCP,
+                           "CRS bounding box missing: x1,y2,x2,y2 or cx,cy,resolution are needed");
 
 // two conflicting definitions is OK, since we create the corners from centered bbox
 #if 0
@@ -352,8 +355,8 @@ void Projection::prepareCRS() const
 
     // must give both width and height if centered bbox is given
     if (!full_rect_bbox && full_center_bbox && (!xsize || !ysize))
-      throw Fmi::Exception(
-          BCP, "CRS xsize and ysize are required when a centered bounding box is used");
+      throw Fmi::Exception(BCP,
+                           "CRS xsize and ysize are required when a centered bounding box is used");
 
     // Create the CRS
     ogr_crs = std::make_shared<Fmi::SpatialReference>(*crs);
@@ -426,7 +429,7 @@ void Projection::prepareCRS() const
       // centered bounding box
       if (!xsize || !ysize)
         throw Fmi::Exception(BCP,
-                               "xsize and ysize are required when a centered bounding box is used");
+                             "xsize and ysize are required when a centered bounding box is used");
 
       double CX = *cx, CY = *cy;
 

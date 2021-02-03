@@ -6,8 +6,8 @@
 #include <engines/querydata/ParameterOptions.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
-#include <spine/Convenience.h>
 #include <macgyver/Exception.h>
+#include <spine/Convenience.h>
 #include <spine/ParameterFactory.h>
 #include <iomanip>
 #include <stdexcept>
@@ -304,12 +304,12 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
           BCP, "Cannot specify position offsets using both direction and the u- and v-components!");
 
     if ((!u.empty() && v.empty()) || (!v.empty() && u.empty()))
-      throw Fmi::Exception(
-          BCP, "Cannot specify only one of u- and v-components for position offsets!");
+      throw Fmi::Exception(BCP,
+                           "Cannot specify only one of u- and v-components for position offsets!");
 
     if (directionoffset != 0 && direction.empty() && u.empty() && v.empty())
       throw Fmi::Exception(BCP,
-                             "Must specify direction parameter for direction offset of positions!");
+                           "Must specify direction parameter for direction offset of positions!");
   }
   catch (...)
   {
@@ -535,12 +535,28 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
     // Create the coordinate transformation from querydata world coordinates
     // to image world coordinates
 
+#ifdef NEW_NFMIAREA
     Fmi::CoordinateTransformation transformation(theQ->SpatialReference(), theCRS);
+#else
+    std::shared_ptr<OGRSpatialReference> qcrs;
+
+    if (theQ->isArea())
+      qcrs = gisengine->getSpatialReference(theQ->area().WKT());
+    else
+      qcrs = gisengine->getSpatialReference("WGS84");
+
+    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
+        OGRCreateCoordinateTransformation(theCRS.get(), qcrs.get()));
+    if (transformation == nullptr)
+      throw Fmi::Exception(
+          BCP, "Failed to create the needed coordinate transformation for generating positions!");
+#endif
 
     // Generate the grid coordinates
 
     Points points;
 
+#ifdef NEW_NFMIAREA
     for (theQ->resetLocation(); theQ->nextLocation();)
     {
       NFmiPoint latlon = theQ->latLon();
@@ -552,6 +568,23 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
 
       if (!transformation.transform(xcoord, ycoord))
         continue;
+#else
+    auto shared_latlons = theQ->latLonCache();
+
+    for (const auto& latlon : *shared_latlons)
+    {
+      // Convert latlon to world coordinate
+
+      NFmiPoint xy;
+      if (theCRS.isGeographic() != 0)
+        xy = latlon;
+      else
+        xy = theQ->area().LatLonToWorldXY(latlon);
+
+      // World coordinate to pixel coordinate
+      double xcoord = xy.X();
+      double ycoord = xy.Y();
+#endif
 
       // Image world coordinate to pixel coordinate
       theBox.transform(xcoord, ycoord);
