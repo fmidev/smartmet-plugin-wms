@@ -521,8 +521,8 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     std::vector<OGRGeometryPtr> geoms =
         contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
 #else
-    std::vector<OGRGeometryPtr> geoms = contourer.contour(
-        qhash, q->area().WKT(), *matrix, coords, options, q->needsWraparound(), crs.get());
+    std::vector<OGRGeometryPtr> geoms =
+        contourer.contour(qhash, q->area().WKT(), crs, *matrix, *coords, options);
 #endif
 
     // Update the globals

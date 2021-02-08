@@ -538,25 +538,13 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
 #ifdef NEW_NFMIAREA
     Fmi::CoordinateTransformation transformation(theQ->SpatialReference(), theCRS);
 #else
-    std::shared_ptr<OGRSpatialReference> qcrs;
-
-    if (theQ->isArea())
-      qcrs = gisengine->getSpatialReference(theQ->area().WKT());
-    else
-      qcrs = gisengine->getSpatialReference("WGS84");
-
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(theCRS.get(), qcrs.get()));
-    if (transformation == nullptr)
-      throw Fmi::Exception(
-          BCP, "Failed to create the needed coordinate transformation for generating positions!");
+    Fmi::CoordinateTransformation transformation(theQ->area().WKT(), theCRS);
 #endif
 
     // Generate the grid coordinates
 
     Points points;
 
-#ifdef NEW_NFMIAREA
     for (theQ->resetLocation(); theQ->nextLocation();)
     {
       NFmiPoint latlon = theQ->latLon();
@@ -568,23 +556,6 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
 
       if (!transformation.transform(xcoord, ycoord))
         continue;
-#else
-    auto shared_latlons = theQ->latLonCache();
-
-    for (const auto& latlon : *shared_latlons)
-    {
-      // Convert latlon to world coordinate
-
-      NFmiPoint xy;
-      if (theCRS.isGeographic() != 0)
-        xy = latlon;
-      else
-        xy = theQ->area().LatLonToWorldXY(latlon);
-
-      // World coordinate to pixel coordinate
-      double xcoord = xy.X();
-      double ycoord = xy.Y();
-#endif
 
       // Image world coordinate to pixel coordinate
       theBox.transform(xcoord, ycoord);

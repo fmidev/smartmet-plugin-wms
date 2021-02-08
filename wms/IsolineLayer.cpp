@@ -259,8 +259,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
 #ifdef NEW_NFMIAREA
   auto geoms = contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
 #else
-  auto geoms = contourer.contour(
-      qhash, q->area().WKT(), *matrix, coords, options, q->needsWraparound(), crs.get());
+  auto geoms = contourer.contour(qhash, q->area().WKT(), crs, *matrix, *coords, options);
 #endif
 
   // Perform polygon operations

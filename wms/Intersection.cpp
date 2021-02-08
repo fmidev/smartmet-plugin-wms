@@ -264,8 +264,8 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     std::vector<OGRGeometryPtr> isobands =
         contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
 #else
-    std::vector<OGRGeometryPtr> isobands = contourer.contour(
-        qhash, q->area().WKT(), *matrix, coords, options, q->needsWraparound(), crs.get());
+    std::vector<OGRGeometryPtr> isobands =
+        contourer.contour(qhash, q->area().WKT(), crs, *matrix, *coords, options);
 #endif
 
     if (isobands.empty())
