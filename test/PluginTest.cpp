@@ -1,10 +1,10 @@
 #include "Plugin.h"
-#include <smartmet/spine/HTTP.h>
-#include <smartmet/spine/Options.h>
-#include <smartmet/spine/Reactor.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
+#include <smartmet/spine/HTTP.h>
+#include <smartmet/spine/Options.h>
+#include <smartmet/spine/Reactor.h>
 #include <macgyver/Exception.h>
 #include <algorithm>
 #include <fstream>
@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-static const int testtimeout = 90;  // Seconds a single test is allowed to run
+static const int testtimeout = 600;  // Seconds a single test is allowed to run
 
 namespace SmartMet
 {

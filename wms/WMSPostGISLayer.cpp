@@ -133,11 +133,10 @@ bool WMSPostGISLayer::mustUpdateLayerMetaData()
     moptions.fieldnames.insert(itsMetaDataSettings.field);
     moptions.where = itsMetaDataSettings.where;
 
-    OGRSpatialReference* sr = nullptr;
     boost::posix_time::ptime mostCurrentTimestamp = mostCurrentTime();
 
     // fetch the latest publicationdate of icemap
-    Fmi::Features features = itsGisEngine->getFeatures(sr, moptions);
+    Fmi::Features features = itsGisEngine->getFeatures(moptions);
     if (!features.empty())
     {
       Fmi::FeaturePtr feature = features[0];

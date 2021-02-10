@@ -10,7 +10,10 @@
 #include <gis/OGR.h>
 #include <string>
 
-class OGRSpatialReference;
+namespace Fmi
+{
+class SpatialReference;
+}
 
 namespace SmartMet
 {
@@ -22,12 +25,12 @@ class State;
 
 namespace Geometry
 {
-std::string name(const OGRGeometry& theGeom, const State& theState);
+std::string name(const OGRGeometry& theGeom, const std::string& theType);
 
 std::string toString(const OGRGeometry& theGeom,
-                     const State& theState,
+                     const std::string& theType,
                      const Fmi::Box& theBox,
-                     const std::shared_ptr<OGRSpatialReference>& theSRS,
+                     const Fmi::SpatialReference& theSRS,
                      double thePrecision);
 
 }  // namespace Geometry

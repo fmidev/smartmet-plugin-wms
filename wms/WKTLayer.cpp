@@ -4,10 +4,12 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "State.h"
+#include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
-#include <engines/gis/Engine.h>
+#include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
+#include <ogr_geometry.h>
 #include <macgyver/Exception.h>
 
 namespace SmartMet
@@ -81,20 +83,24 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     if (resolution && relativeresolution)
       throw Fmi::Exception(BCP, "Cannot set both resolution and relativeresolution for WKT");
 
+    std::string report = "WKTLayer::generate finished in %t sec CPU, %w sec real\n";
+    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    if (theState.useTimer())
+      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+
     // Get projection details
 
     auto q = getModel(theState);
 
     projection.update(q);
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     // And the box needed for clipping
     const auto clipbox = getClipBox(box);
 
     // Create the shape
-
-    auto wgs84 = theState.getGisEngine().getSpatialReference("WGS84");
+    Fmi::SpatialReference wgs84("WGS84");
 
     char* cwkt = const_cast<char*>(wkt.c_str());  // NOLINT(cppcoreguidelines-pro-type-const-cast)
     OGRGeometry* ogeom = nullptr;
@@ -102,6 +108,9 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     if (err != OGRERR_NONE)
       throw Fmi::Exception(BCP, "Failed to convert WKT to OGRGeometry");
+
+    if (wgs84.isAxisSwapped())
+      ogeom->swapXY();
 
     OGRGeometryPtr geom(ogeom);
 
@@ -130,13 +139,20 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     // Establish coordinate transformation from WGS84 to image
 
-    err = geom->transformTo(crs.get());
-    if (err != OGRERR_NONE)
-      throw Fmi::Exception(BCP, "Failed to project the WKT to image coordinates");
+    Fmi::CoordinateTransformation transformation(wgs84, *crs);
+
+    // Perhaps this should be customizable instead of being fixed to one degree?
+    const double maximum_segment_length = 1;
+    geom.reset(transformation.transformGeometry(*geom, maximum_segment_length));
+
+    if (!geom || geom->IsEmpty())
+      return;
 
     // Clip the geometry to the bounding box
 
-    OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, clipbox));
+    geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
+    if (!geom || geom->IsEmpty())
+      return;
 
     // Update the globals
 
@@ -154,8 +170,8 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     CTPP::CDT wkt_cdt(CTPP::CDT::HASH_VAL);
     wkt_cdt["iri"] = iri;
-    wkt_cdt["data"] = Geometry::toString(*geom2, theState, box, crs, precision);
-    wkt_cdt["type"] = Geometry::name(*geom2, theState);
+    wkt_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
+    wkt_cdt["type"] = Geometry::name(*geom, theState.getType());
     wkt_cdt["layertype"] = "wkt";
 
     theGlobals["paths"][iri] = wkt_cdt;

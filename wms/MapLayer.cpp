@@ -14,6 +14,7 @@
 #include <gis/Types.h>
 #include <macgyver/Exception.h>
 #include <spine/ParameterFactory.h>
+#include <fmt/format.h>
 
 namespace SmartMet
 {
@@ -114,7 +115,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 {
   try
   {
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const Fmi::Box& box = projection.getBox();
 
     // And the box needed for clipping
@@ -130,7 +131,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
         mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
-      geom = gis.getShape(crs.get(), map.options);
+      geom = gis.getShape(&crs, map.options);
 
       if (!geom)
       {
@@ -164,7 +165,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     // refer to the same map.
 
     std::string iri = qid;
-
+    
     {
       std::string report = "Generating coordinate data finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
@@ -173,9 +174,9 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
       CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
       map_cdt["iri"] = iri;
-      map_cdt["type"] = Geometry::name(*geom, theState);
+      map_cdt["type"] = Geometry::name(*geom, theState.getType());
       map_cdt["layertype"] = "map";
-      map_cdt["data"] = Geometry::toString(*geom, theState, box, crs, precision);
+      map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
 
       theState.addPresentationAttributes(map_cdt, css, attributes);
 
@@ -268,7 +269,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     // Establish projection, bbox and optional clipping bbox
 
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const Fmi::Box& box = projection.getBox();
 
     const auto clipbox = getClipBox(box);
@@ -285,7 +286,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
         mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
       map.options.fieldnames.insert(styles->field);
-      features = gis.getFeatures(crs.get(), map.options);
+      features = gis.getFeatures(crs, map.options);
 
       for (const auto& feature : features)
       {
@@ -341,9 +342,9 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
       CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
       map_cdt["iri"] = iri;
-      map_cdt["type"] = Geometry::name(*geom, theState);
+      map_cdt["type"] = Geometry::name(*geom, theState.getType());
       map_cdt["layertype"] = "map";
-      map_cdt["data"] = Geometry::toString(*geom, theState, box, crs, precision);
+      map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
 
       theGlobals["paths"][iri] = map_cdt;
 
@@ -351,6 +352,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
       boost::optional<std::string> station_name;
       int station_number = -1;
+
       const auto& feature_value =
           feature->attributes.at(styles->field);  // <int,double,string,time>
 

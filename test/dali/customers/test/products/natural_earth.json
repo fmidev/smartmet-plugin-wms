@@ -5,10 +5,13 @@
     {
 	"crs": "data",
 	"bboxcrs": "WGS84",
-	"x1": -40,
-	"y1": 0,
-	"x2": 70,
-	"y2": 89,
+	"cx": 10,
+	"cy": 45,
+	"resolution": 300,
+//	"x1": -40,
+//	"y1": 0,
+//	"x2": 70,
+//	"y2": 89,
 	"xsize": 500,
 	"ysize": 500
     },
@@ -27,8 +30,8 @@
 		    {
 			"schema": "natural_earth",
 			"table": "admin_0_countries"
-//			"where": "iso_a2 IN ('FI','AX')"
-//			"where": "iso_a2 NOT IN ('FI','AX','SE','NO','DK','ES','LV','LT','RU','GE','PO')"
+//			"where": "iso_a2 IN ('FI','AX','SE','NO','DK','ES','LV','LT','RU','GE','PO')"
+//			"where": "iso_a2 IN ('AQ')"
 		    },
 		    "attributes":
 		    {

@@ -20,6 +20,7 @@
 #include <spine/Json.h>
 #include <algorithm>
 #include <cmath>
+#include <ogr_geometry.h>
 
 namespace SmartMet
 {
@@ -350,7 +351,8 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     if (theState.addId("very_open_ice"))
       theGlobals["includes"]["very_open_ice"] = theState.getPattern("very_open_ice");
 
-    auto crs = projection.getCRS();
+    // const auto& crs = projection.getCRS();
+
     // Update the globals
     if (css)
     {
@@ -379,11 +381,12 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     unsigned int s = theLayersCdt.Size();
     theLayersCdt.PushBack(theGroupCdt);
 
-    auto projectionSR = projection.getCRS();
+    const auto& projectionSR = projection.getCRS();
 
-    OGRSpatialReference defaultSR;
-    defaultSR.importFromEPSG(3395);  // if sr is missing use this one
-    unsigned int mapid(1);           // id to concatenate to iri to make it unique
+    Fmi::SpatialReference defaultSR("EPSG:3395");
+
+    unsigned int mapid = 1;  // id to concatenate to iri to make it unique
+
     // Get the polygons and store them into the template engine
     for (const PostGISLayerFilter& filter : filters)
     {
@@ -404,7 +407,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
       mapOptions.fieldnames.insert(attribute_column_names.begin(), attribute_column_names.end());
 
-      Fmi::Features result_set = getFeatures(theState, projectionSR.get(), mapOptions);
+      Fmi::Features result_set = getFeatures(theState, projectionSR, mapOptions);
 
       for (const auto& result_item : result_set)
       {
@@ -414,7 +417,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
           if (sr == nullptr)
           {
-            result_item->geom->assignSpatialReference(&defaultSR);
+            result_item->geom->assignSpatialReference(defaultSR.get());
             result_item->geom->transformTo(projectionSR.get());
           }
 
@@ -478,7 +481,7 @@ void IceMapLayer::handleSymbol(const Fmi::Feature& theResultItem,
                                CTPP::CDT& theGroupCdt,
                                const State& theState) const
 {
-  auto transformation = LonLatToXYTransformation(projection, theState);
+  auto transformation = LonLatToXYTransformation(projection);
 
   std::string iri(getParameterValue("symbol"));
 
@@ -535,7 +538,7 @@ void IceMapLayer::handleTextField(const Fmi::Feature& theResultItem,
 
   double xpos = Fmi::stod(itsParameters.at("longitude"));
   double ypos = Fmi::stod(itsParameters.at("latitude"));
-  auto transformation = LonLatToXYTransformation(projection, theState);
+  auto transformation = LonLatToXYTransformation(projection);
   transformation.transform(xpos, ypos);
 
   addTextField(xpos, ypos, rows, theFilter.attributes, theGlobals, theLayersCdt, theState);
@@ -548,7 +551,7 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
                                       CTPP::CDT& theGroupCdt,
                                       State& theState) const
 {
-  auto transformation = LonLatToXYTransformation(projection, theState);
+  auto transformation = LonLatToXYTransformation(projection);
 
   if (theResultItem.geom && theResultItem.geom->IsEmpty() == 0)
   {
@@ -686,7 +689,7 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
   double xpos = envelope.MinX;
   double ypos = envelope.MaxY;
 
-  auto transformation = LonLatToXYTransformation(projection, theState);
+  auto transformation = LonLatToXYTransformation(projection);
 
   transformation.transform(xpos, ypos);
 
@@ -759,7 +762,7 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
   double xpos = point->getX();
   double ypos = point->getY();
 
-  auto transformation = LonLatToXYTransformation(projection, theState);
+  auto transformation = LonLatToXYTransformation(projection);
   transformation.transform(xpos, ypos);
 
   // background ellipse
@@ -796,7 +799,7 @@ void IceMapLayer::handleTrafficRestrictions(const Fmi::Feature& /* theResultItem
 {
   double xpos = Fmi::stod(itsParameters.at("longitude"));
   double ypos = Fmi::stod(itsParameters.at("latitude"));
-  auto transformation = LonLatToXYTransformation(projection, theState);
+  auto transformation = LonLatToXYTransformation(projection);
   transformation.transform(xpos, ypos);
 
   auto jsonTableAttributes = getJsonValue("table_attributes", itsParameters);
@@ -917,7 +920,7 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
   text_style_t text_style;
   text_style = getTextStyle(theFilter.text_attributes, text_style);
   text_dimension_t text_dimension = getTextDimension("1234567890", text_style);
-  auto transformation = LonLatToXYTransformation(projection, theState);
+  auto transformation = LonLatToXYTransformation(projection);
 
   // Add row by row to get more precise y-position inside the egg
   for (unsigned int i = 0; i < rows.size(); i++)
@@ -1140,17 +1143,18 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
   if (!theResultItem.geom || theResultItem.geom->IsEmpty() != 0)
     return;
 
-  const auto box = projection.getBox();
-  const auto crs = projection.getCRS();
+  const auto& box = projection.getBox();
+  const auto& crs = projection.getCRS();
 
   // Store the path with unique ID
   std::string iri = (qid + Fmi::to_string(theMapId++));
 
   CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
   map_cdt["iri"] = iri;
-  map_cdt["type"] = Geometry::name(*theResultItem.geom, theState);
+  map_cdt["type"] = Geometry::name(*theResultItem.geom, theState.getType());
   map_cdt["layertype"] = "icemap";
-  map_cdt["data"] = Geometry::toString(*theResultItem.geom, theState, box, crs, precision);
+  map_cdt["data"] =
+      Geometry::toString(*theResultItem.geom, theState.getType(), box, crs, precision);
   theState.addPresentationAttributes(map_cdt, css, attributes);
   theGlobals["paths"][iri] = map_cdt;
 

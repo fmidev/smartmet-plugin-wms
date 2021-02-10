@@ -4,7 +4,7 @@
     "projection": {
         "xsize": 1025,
         "ysize": 712,
-        "crs": "+proj=laea +lat_0=60 +lon_0=20 +units=m +ellps=WGS84",
+        "crs": "+proj=laea +lat_0=60 +lon_0=20 +units=m +datum=WGS84",
         "bboxcrs": "EPSG:4326",
         "cy": 53,
         "cx": 5,

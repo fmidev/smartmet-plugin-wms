@@ -9,6 +9,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <engines/gis/Engine.h>
 #include <fmt/format.h>
+#include <gis/CoordinateTransformation.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
@@ -1372,7 +1373,7 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
   }
 }
 
-void WMSLayer::initProjectedBBoxes(const Engine::Gis::Engine& gisengine)
+void WMSLayer::initProjectedBBoxes()
 {
   for (const auto& id_ref : refs)
   {
@@ -1402,9 +1403,9 @@ void WMSLayer::initProjectedBBoxes(const Engine::Gis::Engine& gisengine)
 
     if (x1 < x2 && y1 < y2)
     {
-      auto transformation = gisengine.getCoordinateTransformation("WGS84", ref.proj);
+      Fmi::CoordinateTransformation transformation("WGS84", ref.proj);
 
-      bool ok = (transformation->Transform(1, &x1, &y1) && transformation->Transform(1, &x2, &y2));
+      bool ok = (transformation.transform(x1, y1) && transformation.transform(x2, y2));
 
       // Produce bbox only if projection succeeds
 
@@ -1412,7 +1413,7 @@ void WMSLayer::initProjectedBBoxes(const Engine::Gis::Engine& gisengine)
       {
         // Use proper coordinate ordering for the EPSG
 
-        if (transformation->GetTargetCS()->EPSGTreatsAsLatLong())
+        if (transformation.getTargetCS().EPSGTreatsAsLatLong())
         {
           std::swap(x1, y1);
           std::swap(x2, y2);
@@ -1425,9 +1426,7 @@ void WMSLayer::initProjectedBBoxes(const Engine::Gis::Engine& gisengine)
 }
 
 boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
-    const Engine::Gis::Engine& gisengine,
-    const boost::optional<std::string>& starttime,
-    const boost::optional<std::string>& endtime)
+    const boost::optional<std::string>& starttime, const boost::optional<std::string>& endtime)
 {
   try
   {

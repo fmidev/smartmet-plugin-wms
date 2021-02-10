@@ -9,11 +9,6 @@ NAME=$(basename $(basename $1 .get) .post)
 
 # Validate the arguments
 
-if [[ ! -e "$EXPECTED" ]]; then
-    echo -e "FAIL\t\t'$EXPECTED' is missing"
-    exit 1
-fi
-
 if [[ ! -e "$RESULT" ]]; then
     echo -e "FAIL\t\t'$RESULT' is missing"
     exit 1
@@ -21,6 +16,33 @@ fi
 
 if [[ ! -s "$RESULT" ]]; then
     echo -e "FAIL\t\t'$RESULT' is empty"
+    exit 1
+fi
+
+# Establish the result image type
+
+MIME=$(file --brief --mime-type $RESULT)
+
+# What we want to compare, and the difference image for locating problems
+
+EXPECTED_PNG="failures/${NAME}_expected.png"
+RESULT_PNG="failures/${NAME}_result.png"
+DIFFERENCE_PNG="failures/${NAME}_difference.png"
+
+# Create result images before exiting of EXPECTED image is missing
+
+if [[ "$MIME" == "text/html" || "$MIME" == "text/x-asm" ]]; then
+    rsvg-convert -u -b white -f png -o $RESULT_PNG $RESULT
+elif [[ "$MIME" == "application/pdf" ]]; then
+    convert $RESULT $RESULT_PNG 
+elif [[ "$MIME" == "image/png" ]]; then
+    cp $RESULT $RESULT_PNG
+fi
+
+# Check expected output exists after result image has been created
+
+if [[ ! -e "$EXPECTED" ]]; then
+    echo -e "FAIL\t\t'$EXPECTED' is missing"
     exit 1
 fi
 
@@ -32,16 +54,6 @@ if [[ $? -eq 0 ]]; then
     rm -f $RESULT
     exit 0
 fi
-
-# Establish the result image type
-
-MIME=$(file --brief --mime-type $EXPECTED)
-
-# What we want to compare, and the difference image for locating problems
-
-EXPECTED_PNG="failures/${NAME}_expected.png"
-RESULT_PNG="failures/${NAME}_result.png"
-DIFFERENCE_PNG="failures/${NAME}_difference.png"
 
 # Handle XML failures
 
@@ -61,8 +73,7 @@ if [[ "$MIME" == "text/plain" ]]; then
     exit 1
 fi
 
-
-# Create the PNGs for comparisons.
+# Create the expected PNGs for comparisons.
 # Note: sometimes 'file' reports text/x-asm instead of html due to dots in css class names
 
 if [[ "$MIME" == "text/html" || "$MIME" == "text/x-asm" || "$MIME" == "image/svg" ]]; then
@@ -71,11 +82,8 @@ if [[ "$MIME" == "text/html" || "$MIME" == "text/x-asm" || "$MIME" == "image/svg
 
 elif [[ "$MIME" == "application/pdf" ]]; then
     convert $EXPECTED $EXPECTED_PNG
-    convert $RESULT $RESULT_PNG 
-
 elif [[ "$MIME" == "image/png" ]]; then
     cp $EXPECTED $EXPECTED_PNG
-    cp $RESULT $RESULT_PNG
 else
     echo "FAIL: Unknown mime type '$MIME'"
     exit 1
@@ -90,7 +98,8 @@ if ! echo "$DBZ" | grep -Eq '^(inf|[\+\-]?[0-9][0-9]*(\.[0-9]*)?)$' ; then
     exit 1
 elif [ "$DBZ" = inf ]; then
     echo -e "OK\t\tPSNR = inf"
-    rm -f $EXPECTED_PNG $RESULT_PNG $DIFFERENCE_PNG
+    composite $EXPECTED_PNG $RESULT_PNG -compose DIFFERENCE png:- | \
+	convert - -contrast-stretch 0 $DIFFERENCE_PNG
     exit 0
 elif [ $(echo "$DBZ >= 50" | bc) = 1 ]; then
     echo -e "OK\t\tPNSR = $DBZ dB"

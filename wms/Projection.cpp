@@ -8,12 +8,14 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <engines/gis/Engine.h>
-#include <ogr_geometry.h>
-#include <ogr_spatialref.h>
+#include <fmt/format.h>
 #include <gis/Box.h>
+#include <gis/CoordinateTransformation.h>
 #include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 #include <cmath>
+#include <ogr_geometry.h>
+#include <ogr_spatialref.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -99,7 +101,7 @@ void Projection::init(const Json::Value& theJson,
       auto loc = engine.idSearch(id, "fi");
       if (!loc)
         throw Fmi::Exception(BCP,
-                               "Unable to find coordinates for geoid '" + Fmi::to_string(id) + "'");
+                             "Unable to find coordinates for geoid '" + Fmi::to_string(id) + "'");
       latlon_center = true;
       cx = loc->longitude;
       cy = loc->latitude;
@@ -134,29 +136,25 @@ void Projection::init(const Json::Value& theJson,
       // for example in EPSG:4326 order of coordinates is changed in WMS
       // for more info: https://trac.osgeo.org/gdal/wiki/rfc20_srs_axes
 
-      std::shared_ptr<OGRSpatialReference> spatref;
+      OGRSpatialReference spatref;
       if (bboxcrs)
       {
-        // GDAL wants 'EPSGA' - code in order to understand axis ordering
-        if (boost::algorithm::starts_with(*bboxcrs, "EPSG"))
-        {
-          boost::algorithm::replace_first(*bboxcrs, "EPSG", "EPSGA");
-        }
+        // SetFromUserInput wants 'EPSGA' - code in order to understand axis ordering
+        if (boost::algorithm::starts_with(*bboxcrs, "EPSG:"))
+          boost::algorithm::replace_first(*bboxcrs, "EPSG:", "EPSGA:");
 
-        spatref = theState.getGisEngine().getSpatialReference(*bboxcrs);
+        spatref.SetFromUserInput(bboxcrs->c_str());
       }
       else
       {
-        // GDAL wants 'EPSGA' - code in order to understand axis ordering
-        if (boost::algorithm::starts_with(*crs, "EPSG"))
-        {
-          boost::algorithm::replace_first(*crs, "EPSG", "EPSGA");
-        }
+        // SetFromUserInput wants 'EPSGA' - code in order to understand axis ordering
+        if (boost::algorithm::starts_with(*crs, "EPSG:"))
+          boost::algorithm::replace_first(*crs, "EPSG:", "EPSGA:");
 
-        spatref = theState.getGisEngine().getSpatialReference(*crs);
+        spatref.SetFromUserInput(crs->c_str());
       }
 
-      bool latLonOrder = spatref->EPSGTreatsAsLatLong() != 0;
+      bool latLonOrder = spatref.EPSGTreatsAsLatLong() != 0;
 
       if (latLonOrder)
       {
@@ -224,12 +222,23 @@ void Projection::update(const Engine::Querydata::Q& theQ)
   {
     if (crs && *crs == "data")
     {
+#ifdef NEW_NFMIAREA
+      crs = theQ->area().ProjStr();
+#else
       crs = theQ->area().WKT().c_str();
-
+#endif
       bool no_bbox = (!x1 && !y1 && !x2 && !y2 && !cx && !cy && !resolution && !bboxcrs);
 
       if (no_bbox)
       {
+#ifdef NEW_NFMIAREA
+        auto world1 = theQ->area().XYToWorldXY(theQ->area().BottomLeft());
+        auto world2 = theQ->area().XYToWorldXY(theQ->area().TopRight());
+        x1 = world1.X();
+        y1 = world1.Y();
+        x2 = world2.X();
+        y2 = world2.Y();
+#else
         if (theQ->area().ClassName() == std::string("NFmiLatLonArea") ||
             theQ->area().ClassName() == std::string("NFmiRotatedLatlLonArea"))
         {
@@ -249,6 +258,7 @@ void Projection::update(const Engine::Querydata::Q& theQ)
           x2 = world2.X();
           y2 = world2.Y();
         }
+#endif
       }
 
       ogr_crs.reset();
@@ -263,30 +273,16 @@ void Projection::update(const Engine::Querydata::Q& theQ)
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Return the description of the spatial reference
- */
-// ----------------------------------------------------------------------.
-
-std::string Projection::getProjString() const
-{
-  if (crs)
-    return *crs;
-
-  throw Fmi::Exception(BCP, "Projection string not available");
-}
-
-// ----------------------------------------------------------------------
-/*!
  * \brief Return the spatial reference
  */
 // ----------------------------------------------------------------------
 
-std::shared_ptr<OGRSpatialReference> Projection::getCRS() const
+const Fmi::SpatialReference& Projection::getCRS() const
 {
   try
   {
     prepareCRS();
-    return ogr_crs;
+    return *ogr_crs;
   }
   catch (...)
   {
@@ -349,8 +345,8 @@ void Projection::prepareCRS() const
 
     // bbox definition missing completely?
     if (!full_rect_bbox && !full_center_bbox)
-      throw Fmi::Exception(
-          BCP, "CRS bounding box missing: x1,y2,x2,y2 or cx,cy,resolution are needed");
+      throw Fmi::Exception(BCP,
+                           "CRS bounding box missing: x1,y2,x2,y2 or cx,cy,resolution are needed");
 
 // two conflicting definitions is OK, since we create the corners from centered bbox
 #if 0
@@ -360,12 +356,11 @@ void Projection::prepareCRS() const
 
     // must give both width and height if centered bbox is given
     if (!full_rect_bbox && full_center_bbox && (!xsize || !ysize))
-      throw Fmi::Exception(
-          BCP, "CRS xsize and ysize are required when a centered bounding box is used");
+      throw Fmi::Exception(BCP,
+                           "CRS xsize and ysize are required when a centered bounding box is used");
 
     // Create the CRS
-
-    ogr_crs = gisengine->getSpatialReference(*crs);
+    ogr_crs = std::make_shared<Fmi::SpatialReference>(*crs);
 
     if (xsize && *xsize <= 0)
       throw Fmi::Exception(BCP, "Projection xsize must be positive");
@@ -391,9 +386,9 @@ void Projection::prepareCRS() const
       if (bboxcrs)
       {
         // Reproject corners coordinates from bboxcrs to crs
-        auto transformation = gisengine->getCoordinateTransformation(*bboxcrs, *crs);
-        transformation->Transform(1, &XMIN, &YMIN);
-        transformation->Transform(1, &XMAX, &YMAX);
+        Fmi::CoordinateTransformation transformation(*bboxcrs, *ogr_crs);
+        transformation.transform(XMIN, YMIN);
+        transformation.transform(XMAX, YMAX);
       }
 
       if (XMIN == XMAX || YMIN == YMAX)
@@ -403,26 +398,25 @@ void Projection::prepareCRS() const
       {
         // Preserve aspect by calculating xsize
         int w = boost::numeric_cast<int>((*ysize) * (XMAX - XMIN) / (YMAX - YMIN));
-        box = boost::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, w, *ysize);
+        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, w, *ysize);
       }
       else if (!ysize)
       {
         // Preserve aspect by calculating ysize
         int h = boost::numeric_cast<int>((*xsize) * (YMAX - YMIN) / (XMAX - XMIN));
-        box = boost::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, h);
+        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, h);
       }
       else
       {
-        box = boost::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
+        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
       }
 
-      if (ogr_crs->IsGeographic() != 0)
+      if (ogr_crs->isGeographic() != 0)
       {
         // Substract equations 5 and 4, subsititute equation 3 and solve resolution
         double pi = boost::math::constants::pi<double>();
         double circumference = 2 * pi * 6371.220;
         resolution = (YMAX - YMIN) * circumference / (360 * (*ysize));
-        ;
       }
       else
       {
@@ -436,19 +430,19 @@ void Projection::prepareCRS() const
       // centered bounding box
       if (!xsize || !ysize)
         throw Fmi::Exception(BCP,
-                               "xsize and ysize are required when a centered bounding box is used");
+                             "xsize and ysize are required when a centered bounding box is used");
 
       double CX = *cx, CY = *cy;
 
       if (latlon_center || (bboxcrs && *crs != *bboxcrs))
       {
         // Reproject center coordinates from latlon/bboxcrs to crs
-        auto transformation =
-            gisengine->getCoordinateTransformation(latlon_center ? "WGS84" : *bboxcrs, *crs);
-        transformation->Transform(1, &CX, &CY);
+        Fmi::CoordinateTransformation transformation(latlon_center ? "WGS84" : bboxcrs->c_str(),
+                                                     *ogr_crs);
+        transformation.transform(CX, CY);
       }
 
-      if (ogr_crs->IsGeographic() != 0)
+      if (ogr_crs->isGeographic() != 0)
       {
         double pi = boost::math::constants::pi<double>();
         double circumference = 2 * pi * 6371.220;
@@ -463,7 +457,7 @@ void Projection::prepareCRS() const
         XMIN = CX - dx;
         XMAX = CX + dx;
 
-        box = boost::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
+        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
       }
       else
       {
@@ -471,26 +465,35 @@ void Projection::prepareCRS() const
         XMAX = CX + (*xsize) / 2.0 * (*resolution) * 1000;  // Equation 2.
         YMIN = CY - (*ysize) / 2.0 * (*resolution) * 1000;
         YMAX = CY + (*ysize) / 2.0 * (*resolution) * 1000;
-        box = boost::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
+        box = std::make_shared<Fmi::Box>(XMIN, YMIN, XMAX, YMAX, *xsize, *ysize);
       }
     }
 
     // newbase corners calculated from world xy coordinates
 
-    const std::string fmiwkt =
-        R"xxx(GEOGCS["FMI_Sphere",DATUM["FMI_2007",SPHEROID["FMI_Sphere",)xxx"
-        R"xxx(6371220,0]],PRIMEM["Greenwich",0],UNIT["Degree",0.)xxx"
-        R"xxx(0174532925199433]])xxx";
-
-    auto transformation = gisengine->getCoordinateTransformation(*crs, fmiwkt);
+    Fmi::CoordinateTransformation transformation(*ogr_crs, "FMI");
 
     // Calculate bottom left and top right coordinates
 
-    transformation->Transform(1, &XMIN, &YMIN);
+    transformation.transform(XMIN, YMIN);
     itsBottomLeft = NFmiPoint(XMIN, YMIN);
 
-    transformation->Transform(1, &XMAX, &YMAX);
+    transformation.transform(XMAX, YMAX);
     itsTopRight = NFmiPoint(XMAX, YMAX);
+
+#if 0
+    std::cerr << std::setprecision(8) << "\nProjection:\n\n"
+              << "\nxsize=" << (xsize ? *xsize : -1) << "\nysize=" << (ysize ? *ysize : -1)
+              << "\nx1=" << (x1 ? *x1 : -1) << "\ny1=" << (y1 ? *y1 : -1)
+              << "\nx2=" << (x2 ? *x2 : -1) << "\ny2=" << (y2 ? *y2 : -1)
+              << "\ncx=" << (cx ? *cx : -1) << "\ncy=" << (cy ? *cy : -1)
+              << "\nres=" << (resolution ? *resolution : -1) << "\nbl=" << itsBottomLeft.X() << ","
+              << itsBottomLeft.Y() << "\ntr=" << itsTopRight.X() << "," << itsTopRight.Y() << "\n"
+              << "\nxmin=" << box->xmin() << "\nxmax=" << box->xmax() << "\nymin=" << box->ymin()
+              << "\nymax=" << box->ymax() << "\nwidth=" << box->width()
+              << "\nheight=" << box->height() << "\n"
+              << std::endl;
+#endif
   }
   catch (...)
   {

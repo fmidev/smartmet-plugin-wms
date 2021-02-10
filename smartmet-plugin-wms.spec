@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.1.14
+Version: 21.2.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -15,23 +15,23 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
-BuildRequires: libconfig-devel >= 1.7.2
+BuildRequires: libconfig >= 1.7.2
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.1.14
-BuildRequires: smartmet-library-macgyver-devel >= 21.1.14
-BuildRequires: smartmet-library-spine-devel >= 21.1.14
+BuildRequires: smartmet-library-macgyver-devel >= 21.1.25
+BuildRequires: smartmet-library-spine-devel >= 21.2.5
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 21.1.14
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 21.1.14
+BuildRequires: smartmet-engine-observation-devel >= 21.2.9
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 21.1.14
-BuildRequires: smartmet-engine-geonames-devel >= 21.1.14
-BuildRequires: smartmet-engine-querydata-devel >= 21.1.14
-BuildRequires: smartmet-engine-contour-devel >= 21.1.14
-BuildRequires: smartmet-library-gis-devel >= 21.1.14
+BuildRequires: smartmet-engine-geonames-devel >= 21.1.25
+BuildRequires: smartmet-engine-querydata-devel >= 21.2.10
+BuildRequires: smartmet-engine-contour-devel >= 21.2.10
+BuildRequires: smartmet-library-gis-devel >= 21.2.10
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -53,18 +53,18 @@ Requires: fmt >= 7.1.3
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-gis >= 21.1.14
-Requires: smartmet-library-macgyver >= 21.1.14
+Requires: smartmet-library-gis >= 21.2.10
+Requires: smartmet-library-macgyver >= 21.1.25
 Requires: smartmet-library-giza >= 21.1.14
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.1.14
 %endif
-Requires: smartmet-engine-querydata >= 21.1.14
-Requires: smartmet-engine-contour >= 21.1.14
+Requires: smartmet-engine-querydata >= 21.2.10
+Requires: smartmet-engine-contour >= 21.2.10
 Requires: smartmet-engine-gis >= 21.1.14
-Requires: smartmet-engine-geonames >= 21.1.14
+Requires: smartmet-engine-geonames >= 21.1.25
 Requires: smartmet-server >= 21.1.14
-Requires: smartmet-library-spine >= 21.1.14
+Requires: smartmet-library-spine >= 21.2.5
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -221,6 +221,9 @@ rm -rf $RPM_BUILD_ROOT
 * Tue Feb 25 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.25-1.fmi
 - Fixed level-setting to work for isoline/isoband layers
 
+* Fri Feb 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.21-1.fmi
+- Upgrade to GDAL 3.0
+
 * Thu Feb 20 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.20-1.fmi
 - Added print_params query option
 
@@ -239,6 +242,9 @@ in order to restrict valid time period in output document (BRAINSTORM-1744)
 
 * Fri Dec 27 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.27-1.fmi
 - Prevent crashes if sampling is requested for observations in isoband/isoline layers
+
+* Fri Dec 13 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.13-1.fmi
+- Upgrade to GDAL 3.0
 
 * Wed Nov 20 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.20-1.fmi
 - Repackaged since Spine::Parameter size changed

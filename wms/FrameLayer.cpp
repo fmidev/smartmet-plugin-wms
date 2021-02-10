@@ -7,6 +7,7 @@
 #include "TextUtility.h"
 #include <ctpp2/CDT.hpp>
 #include <gis/OGR.h>
+#include <ogr_geometry.h>
 #include <macgyver/Exception.h>
 
 namespace SmartMet
@@ -202,7 +203,7 @@ void FrameLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
   try
   {
     const auto box = projection.getBox();
-    const auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
 
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
     if (!theState.inDefs())
@@ -219,10 +220,10 @@ void FrameLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
     CTPP::CDT frame_cdt(CTPP::CDT::HASH_VAL);
     frame_cdt["iri"] = iri;
-    frame_cdt["type"] = Geometry::name(*itsGeom, theState);
+    frame_cdt["type"] = Geometry::name(*itsGeom, theState.getType());
 
     frame_cdt["layertype"] = "frame";
-    frame_cdt["data"] = Geometry::toString(*itsGeom, theState, box, crs, itsPrecision);
+    frame_cdt["data"] = Geometry::toString(*itsGeom, theState.getType(), box, crs, itsPrecision);
     //    theState.addPresentationAttributes(frame_cdt, css, attributes);
     theGlobals["paths"][iri] = frame_cdt;
 
@@ -289,7 +290,7 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& theState)
 {
   if (!itsScale)
     return;
-  auto transformation = LonLatToXYTransformation(projection, theState);
+  auto transformation = LonLatToXYTransformation(projection);
 
   int lonMax = ceil(itsInnerBorder.rightLongitude);
   int latMax = ceil(itsInnerBorder.topLatitude);

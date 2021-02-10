@@ -160,7 +160,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   // Get projection details
 
   projection.update(q);
-  auto crs = projection.getCRS();
+  const auto& crs = projection.getCRS();
   const auto& box = projection.getBox();
 
   // And the box needed for clipping
@@ -182,7 +182,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
 
     q = q->sample(param,
                   valid_time,
-                  *crs,
+                  crs,
                   box.xmin(),
                   box.ymin(),
                   box.xmax(),
@@ -202,14 +202,14 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   OGRGeometryPtr inshape, outshape;
   if (inside)
   {
-    inshape = gis.getShape(crs.get(), inside->options);
+    inshape = gis.getShape(&crs, inside->options);
     if (!inshape)
       throw Fmi::Exception(BCP, "IsolineLayer received empty inside-shape from database");
     inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
   }
   if (outside)
   {
-    outshape = gis.getShape(crs.get(), outside->options);
+    outshape = gis.getShape(&crs, outside->options);
     if (outshape)
       outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
   }
@@ -251,16 +251,12 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   auto valueshash = qhash;
   Dali::hash_combine(valueshash, options.data_hash_value());
 
-  std::string wkt = q->area().WKT();
-
-  // Select the data
-
   const auto& qEngine = theState.getQEngine();
   auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
 
-  CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs.get());
-  auto geoms =
-      contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), crs.get());
+  CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
+
+  auto geoms = contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
 
   // Perform polygon operations
   for (unsigned int i = 0; i < geoms.size(); i++)
@@ -313,7 +309,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     auto geoms = getIsolines(isovalues, theState);
 
     // The above call guarantees these have been resolved:
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     // Update the globals
@@ -353,9 +349,9 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         isoline_cdt["iri"] = iri;
         isoline_cdt["time"] = Fmi::to_iso_extended_string(getValidTime());
         isoline_cdt["parameter"] = *parameter;
-        isoline_cdt["type"] = Geometry::name(*geom, theState);
+        isoline_cdt["type"] = Geometry::name(*geom, theState.getType());
         isoline_cdt["layertype"] = "isoline";
-        isoline_cdt["data"] = Geometry::toString(*geom, theState, box, crs, precision);
+        isoline_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
         isoline_cdt["value"] = isoline.value;
 
         theState.addPresentationAttributes(isoline_cdt, css, attributes, isoline.attributes);

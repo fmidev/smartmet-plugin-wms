@@ -1,0 +1,54 @@
+{
+  "title": "GFS world Perspective View",
+  "producer": "gfs",
+  "projection":
+    {
+	"crs": "proj-string: +proj=nsper +h=3000000 +lat_0=60 +lon_0=25",
+	"bboxcrs": "WGS84",
+	"cx": 25,
+	"cy": 60,
+	"resolution": 8,
+	"xsize": 800,
+	"ysize": 800
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+	    "layers":
+	    [
+		{
+		    "qid": "l1",
+		    "layer_type": "isoband",
+		    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css",
+		    "parameter": "Temperature",
+		    "attributes":
+		    {
+			"id": "t2m_isobands"
+		    }
+		},
+		{
+                    "qid": "map",
+                    "layer_type": "map",
+                    "map":
+		    {
+			"schema": "natural_earth",
+                    "table": "admin_0_countries",
+			"lines": true
+                    },
+                    "attributes":
+		    {
+			"fill": "none",
+			"stroke": "#222",
+			"stroke-width": "0.3px"
+                    }
+		}
+	    ]
+	}
+    ]
+}
