@@ -9,8 +9,8 @@
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
-#include <ogr_geometry.h>
 #include <macgyver/Exception.h>
+#include <ogr_geometry.h>
 
 namespace SmartMet
 {
@@ -102,9 +102,8 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     // Create the shape
     Fmi::SpatialReference wgs84("WGS84");
 
-    char* cwkt = const_cast<char*>(wkt.c_str());  // NOLINT(cppcoreguidelines-pro-type-const-cast)
     OGRGeometry* ogeom = nullptr;
-    OGRErr err = OGRGeometryFactory::createFromWkt(&cwkt, wgs84.get(), &ogeom);
+    OGRErr err = OGRGeometryFactory::createFromWkt(wkt.c_str(), wgs84.get(), &ogeom);
 
     if (err != OGRERR_NONE)
       throw Fmi::Exception(BCP, "Failed to convert WKT to OGRGeometry");
@@ -120,7 +119,7 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     {
       if (!projection.resolution)
         throw Fmi::Exception(BCP,
-                               "Cannot segmentize WKT layer if projection resolution is not known");
+                             "Cannot segmentize WKT layer if projection resolution is not known");
 
       double res = 0;
       if (resolution)
