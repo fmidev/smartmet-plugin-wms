@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.10.9
+Version: 21.2.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -39,6 +39,15 @@ BuildRequires: jsoncpp-devel
 BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
 BuildRequires: heatmap-devel
+%if %{defined el7}
+BuildRequires: librsvg2-devel = 2.40.6
+#TestRequires: librsvg2-devel = 2.40.6
+#TestRequires: librsvg2-tools = 2.40.6
+%else
+BuildRequires: librsvg2-devel
+#TestRequires: librsvg2-devel
+#TestRequires: librsvg2-tools
+%endif
 Requires: cairo
 Requires: fmt >= 7.1.3
 Requires: jsoncpp
@@ -65,6 +74,28 @@ Requires: boost169-thread
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-dali < 16.11.1
 Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
+#TestRequires: boost169-devel
+#TestRequires: bzip2-devel
+#TestRequires: fmt-devel
+#TestRequires: gcc-c++
+#TestRequires: jsoncpp-devel
+#TestRequires: libconfig-devel >= 1.7.2
+#TestRequires: ImageMagick
+#TestRequires: bc
+#TestRequires: smartmet-engine-contour-devel >= 21.1.14
+#TestRequires: smartmet-engine-geonames-devel >= 21.1.14
+#TestRequires: smartmet-engine-gis-devel >= 21.1.14
+#TestRequires: smartmet-engine-querydata-devel >= 21.1.14
+#TestRequires: smartmet-library-giza-devel >= 21.1.14
+#TestRequires: smartmet-library-newbase-devel >= 20.10.28
+#TestRequires: smartmet-library-spine-devel >= 21.1.14
+#TestRequires: smartmet-test-data
+#TestRequires: smartmet-test-db
+#TestRequires: zlib-devel
+#TestRequires: cairo-devel
+%if %{with observation}
+#TestRequires: smartmet-engine-observation-devel >= 21.1.14
+%endif
 
 %description
 SmartMet WMS/Dali plugin
@@ -92,6 +123,30 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Jan 14 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.14-1.fmi
+- Repackaged smartmet to resolve debuginfo issues
+
+* Tue Jan 12 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.12-1.fmi
+- Upgraded jsoncpp
+
+* Tue Jan  5 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.5-1.fmi
+- GDAL32 and FMT 7.1.3 upgrades
+
+* Tue Dec 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.15-1.fmi
+- Upgrade to pgdg12
+
+* Tue Dec  1 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.1-1.fmi
+- Fixed observation layers not to abort if there are no nearby layers
+
+* Wed Oct 28 2020 Andris Pavenis <andris.pavenis@fmi.fi> - 20.10.28-1.fmi
+- Rebuild due to fmt upgrade
+
+* Fri Oct 23 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.23-1.fmi
+- Use new TemplateFormatter API
+
+* Thu Oct 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.15-1.fmi
+- Fixed LocationLayer coordinate clipping to work for metric spatial references
+
 * Fri Oct  9 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.10.9-1.fmi
 - Use a cache for reading all JSON files
 

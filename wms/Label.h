@@ -41,7 +41,6 @@ class Label
   double offset = 0.0;
 
   // Printing
-  std::string format = "%0.f";
   std::string missing = "-";
   int precision = 0;
   std::string prefix = "";

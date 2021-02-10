@@ -1,1 +1,1 @@
-GET /dali?customer=test&product=heatmap&time=20160705T1500&l.heatmap.kernel=exp&l.heatmap.radius=20&l.heatmap.deviation=10 HTTP/1.0
+GET /dali?customer=test&product=heatmap&time=20130805T1500&l.heatmap.kernel=exp&l.heatmap.radius=40&l.heatmap.deviation=4 HTTP/1.0

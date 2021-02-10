@@ -17,8 +17,8 @@
 #include "WMSGetLegendGraphic.h"
 #include "WMSGetMap.h"
 #include "WMSRequestType.h"
-#include <spine/Convenience.h>
 #include <macgyver/Exception.h>
+#include <spine/Convenience.h>
 #include <spine/Json.h>
 #include <spine/SmartMet.h>
 #ifndef WITHOUT_AUTHENTICATION
@@ -42,6 +42,8 @@
 
 namespace
 {
+Json::CharReaderBuilder charreaderbuilder;
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Validate name for inclusion
@@ -240,7 +242,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
                 << hash.RecursiveDump() << std::endl;
     }
 
-    std::ostringstream output, log;
+    std::string output, log;
     try
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
@@ -264,8 +266,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 
     // Set the response content and mime type
 
-    formatResponse(
-        output.str(), product.type, theRequest, theResponse, usetimer, product, product_hash);
+    formatResponse(output, product.type, theRequest, theResponse, usetimer, product, product_hash);
 
     // boost auto_cpu_timer does not flush, we need to do it separately
     if (usetimer)
@@ -785,19 +786,15 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
 
     // Read the JSON
 
-    Json::Value json;
-    Json::Reader reader;
     std::string json_text = itsFileCache.get(product_path);
-    bool json_ok = reader.parse(json_text, json);
 
-    if (!json_ok)
-    {
-      std::string msg = reader.getFormattedErrorMessages();
-      std::replace(msg.begin(), msg.end(), '\n', ' ');
-      throw Fmi::Exception(BCP, "Product parsing failed!")
-          .addDetail(msg)
-          .addParameter("Product", product_path);
-    }
+    Json::Value json;
+    std::unique_ptr<Json::CharReader> reader(charreaderbuilder.newCharReader());
+    std::string errors;
+    if (!reader->parse(json_text.c_str(), json_text.c_str() + json_text.size(), &json, &errors))
+      throw Fmi::Exception(BCP, "Legend template file parsing failed!")
+          .addParameter("Product", product_path)
+          .addParameter("Message", errors);
 
     // Replace references (json: and ref:) from query string options
 
@@ -1237,10 +1234,10 @@ std::string Dali::Plugin::parseWMSException(Fmi::Exception &wmsException,
     auto tmpl_name = "wms_exception_" + format;
     auto wms_exception_template = getTemplate(tmpl_name);
 
-    std::stringstream tmpl_ss;
-    std::stringstream logstream;
-    wms_exception_template->process(hash, tmpl_ss, logstream);
-    return tmpl_ss.str();
+    std::string tmpl;
+    std::string log;
+    wms_exception_template->process(hash, tmpl, log);
+    return tmpl;
   }
   catch (...)
   {
@@ -1500,7 +1497,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
     product.generate(hash, theState);
 
     // Build the template
-    std::ostringstream output, log;
+    std::string output, log;
     try
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
@@ -1521,13 +1518,8 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
     if (print_hash)
       std::cout << "Generated CDT:" << std::endl << hash.RecursiveDump() << std::endl;
 
-    formatResponse(output.str(),
-                   product.type,
-                   thisRequest,
-                   theResponse,
-                   theState.useTimer(),
-                   product,
-                   product_hash);
+    formatResponse(
+        output, product.type, thisRequest, theResponse, theState.useTimer(), product, product_hash);
     return WMSQueryStatus::OK;
   }
   catch (...)
@@ -1600,7 +1592,7 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
     product.generate(hash, theState);
 
     // Build the template
-    std::ostringstream output, log;
+    std::string output, log;
     try
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
@@ -1620,13 +1612,8 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
       throw ex;
     }
 
-    formatResponse(output.str(),
-                   product.type,
-                   theRequest,
-                   theResponse,
-                   theState.useTimer(),
-                   product,
-                   invalid_hash);
+    formatResponse(
+        output, product.type, theRequest, theResponse, theState.useTimer(), product, invalid_hash);
 
     return WMSQueryStatus::OK;
   }

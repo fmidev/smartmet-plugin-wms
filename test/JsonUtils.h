@@ -2,9 +2,9 @@
 
 #include <dtl/dtl.hpp>
 
-#include <thor/json.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
+#include <thor/json.h>
 #include <fstream>
 #include <sstream>
 
@@ -28,14 +28,22 @@ void show_diff(const std::string& src, const std::string& dest)
   dtl::Diff<std::string> d(f1, f2);
   d.compose();
   d.composeUnifiedHunks();
-  d.printUnifiedFormat(std::cout);
+
+  std::ostringstream out;
+  d.printUnifiedFormat(out);
+  std::string ret = out.str();
+
+  if (ret.size() > 10000)
+    return "Diff size " + std::to_string(ret.size()) + " is too big (>10000)";
+  std::cout << ret;
 }
 
 std::string get_file_contents(const boost::filesystem::path& filename)
 {
   std::string content;
   std::ifstream in(filename.c_str());
-  if (in) content.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
+  if (in)
+    content.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
   return content;
 }
 
@@ -55,7 +63,8 @@ template <typename T>
 void write_json(const T& ob, const std::string& filename)
 {
   std::ofstream out(filename);
-  if (!out) throw std::runtime_error("Failed to open '" + filename + "' for writing");
+  if (!out)
+    throw std::runtime_error("Failed to open '" + filename + "' for writing");
   out << Thor::Serialize::jsonExport(ob);
 }
 
@@ -71,7 +80,8 @@ template <typename T>
 T read_json(const std::string& filename)
 {
   std::ifstream in(filename);
-  if (!in) throw std::runtime_error("Failed to open '" + filename + "' for reading");
+  if (!in)
+    throw std::runtime_error("Failed to open '" + filename + "' for reading");
   T ob;
   in >> Thor::Serialize::jsonImport(ob);
   return ob;

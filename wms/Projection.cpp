@@ -7,6 +7,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <boost/numeric/conversion/cast.hpp>
+#include <engines/gis/Engine.h>
 #include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>

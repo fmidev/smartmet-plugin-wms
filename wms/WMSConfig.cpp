@@ -9,8 +9,8 @@
 #include "View.h"
 #include "WMSException.h"
 #include "WMSLayerFactory.h"
-#include <spine/Convenience.h>
 #include <macgyver/Exception.h>
+#include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
 #include <spine/Json.h>
 #ifndef WITHOUT_AUTHENTICATION
@@ -23,10 +23,10 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/move/make_unique.hpp>
 #include <boost/regex.hpp>
-#include <ogr_spatialref.h>
 #include <macgyver/StringConversion.h>
 #include <algorithm>
 #include <map>
+#include <ogr_spatialref.h>
 #include <stdexcept>
 #include <string>
 
@@ -38,6 +38,8 @@ using SmartMet::Plugin::Dali::View;
 
 namespace
 {
+Json::CharReaderBuilder charreaderbuilder;
+
 /*
  * namespace patterns look like "/..../"
  */
@@ -503,7 +505,10 @@ void WMSConfig::parse_references()
     std::string name = "EPSG:" + Fmi::to_string(num);
     Engine::Gis::BBox bbox = itsGisEngine->getBBox(num);
     bool enabled = true;
-    WMSSupportedReference ref(name, bbox, enabled);
+    auto crs = itsGisEngine->getSpatialReference(name);
+    bool geographic = crs->IsGeographic();
+
+    WMSSupportedReference ref(name, bbox, enabled, geographic);
     itsWMSSupportedReferences.insert(std::make_pair(name, ref));
   }
 
@@ -541,7 +546,10 @@ void WMSConfig::parse_references()
     double north = bbox_array[3];
     Engine::Gis::BBox bbox(west, east, south, north);
 
-    WMSSupportedReference ref(proj, bbox, enabled);
+    auto crs = itsGisEngine->getSpatialReference(proj);
+    bool geographic = crs->IsGeographic();
+
+    WMSSupportedReference ref(proj, bbox, enabled, geographic);
     itsWMSSupportedReferences.insert(std::make_pair(name, ref));
   }
 }
@@ -1207,14 +1215,13 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
   for (const auto& legendLayer : result.legendLayers)
   {
     Json::Value json;
-    Json::Reader reader;
-    bool json_ok = reader.parse(legendLayer, json);
-    if (!json_ok)
-    {
-      std::string msg = reader.getFormattedErrorMessages();
-      std::replace(msg.begin(), msg.end(), '\n', ' ');
-      throw Fmi::Exception(BCP, "Legend template file parsing failed!").addDetail(msg);
-    }
+
+    std::unique_ptr<Json::CharReader> reader(charreaderbuilder.newCharReader());
+    std::string errors;
+    if (!reader->parse(
+            legendLayer.c_str(), legendLayer.c_str() + legendLayer.size(), &json, &errors))
+      throw Fmi::Exception(BCP, "Legend template file parsing failed!")
+          .addParameter("Message", errors);
 
     const bool use_wms = true;
     Spine::JSON::preprocess(

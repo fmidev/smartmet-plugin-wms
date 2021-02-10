@@ -232,13 +232,16 @@ void alarmhandler(int signal)
   exit(1);
 }
 
-int main() try
+int main(int argc, char* argv[]) try
 {
   SmartMet::Spine::Options options;
   options.quiet = true;
   options.defaultlogging = false;
   options.configfile = "cnf/reactor.conf";
 
+  if(!options.parse(argc, argv))
+    exit(1);
+  
   signal(SIGALRM, alarmhandler);
   SmartMet::MyTest::test(options, prelude);
 

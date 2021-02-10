@@ -10,10 +10,10 @@
 #include <engines/gis/Engine.h>
 #include <fmt/format.h>
 #include <gis/CoordinateTransformation.h>
+#include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
 #include <ogr_spatialref.h>
-#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -23,6 +23,8 @@ namespace WMS
 {
 namespace
 {
+Json::CharReaderBuilder charreaderbuilder;
+
 std::string get_symbol_translation(const LegendGraphicSymbol& symbolSettings,
                                    const std::string& language,
                                    const std::string& defaultValue)
@@ -796,8 +798,8 @@ unsigned int isoband_legend_width(const Json::Value& json, unsigned int def)
   }
   catch (...)
   {
-    throw Fmi::Exception(
-        BCP, "'fixed_width' attribute must be integer: " + widthJson.toStyledString());
+    throw Fmi::Exception(BCP,
+                         "'fixed_width' attribute must be integer: " + widthJson.toStyledString());
   }
 
   return ret;
@@ -849,7 +851,8 @@ unsigned int isoband_legend_height(const Json::Value& json)
   return ret;
 }
 
-std::map<std::string, Json::Value> readLegendDirectory(const std::string& legendDirectory, const Spine::JsonCache& cache)
+std::map<std::string, Json::Value> readLegendDirectory(const std::string& legendDirectory,
+                                                       const Spine::JsonCache& cache)
 {
   std::map<std::string, Json::Value> ret;
 
@@ -877,10 +880,10 @@ std::map<std::string, Json::Value> readLegendFiles(const std::string& wmsroot,
 {
   // First read common templates from wmsroot/legends/templates
   std::map<std::string, Json::Value> legend_templates =
-      readLegendDirectory(wmsroot + "/legends/templates",cache);
+      readLegendDirectory(wmsroot + "/legends/templates", cache);
   // Then read customer specific templates from wmsroot/customer/legends/templates
   std::map<std::string, Json::Value> customer_specific =
-      readLegendDirectory(wmsroot + "/customers/" + customer + "/legends/templates",cache);
+      readLegendDirectory(wmsroot + "/customers/" + customer + "/legends/templates", cache);
   // Merge and replace common templates with customer specific templates
   for (auto t : customer_specific)
     if (legend_templates.find(t.first) == legend_templates.end())
@@ -1044,10 +1047,8 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
   if (itsLegendGraphicSettings.layout.legend_width)
     actualSettings.layout.legend_width = itsLegendGraphicSettings.layout.legend_width;
 
-  std::map<std::string, Json::Value> legends =
-      readLegendFiles(wmsConfig.getDaliConfig().rootDirectory(true),
-                      wmsConfig.getJsonCache(),
-                      customer);
+  std::map<std::string, Json::Value> legends = readLegendFiles(
+      wmsConfig.getDaliConfig().rootDirectory(true), wmsConfig.getJsonCache(), customer);
 
   std::set<std::string> processedParameters;
   unsigned int uniqueId = 0;
@@ -1382,8 +1383,7 @@ void WMSLayer::initProjectedBBoxes()
     if (!isValidCRS(id))
       continue;
 
-    Fmi::SpatialReference crs(ref.proj);
-    if(crs.isGeographic())
+    if (ref.geographic)
       continue;
 
     // Intersect with target EPSG bounding box (latlon) if it is available
@@ -1403,9 +1403,9 @@ void WMSLayer::initProjectedBBoxes()
 
     if (x1 < x2 && y1 < y2)
     {
-      Fmi::CoordinateTransformation transformation("WGS84",ref.proj);
+      Fmi::CoordinateTransformation transformation("WGS84", ref.proj);
 
-      bool ok = (transformation.transform(x1,y1) && transformation.transform(x2,y2));
+      bool ok = (transformation.transform(x1, y1) && transformation.transform(x2, y2));
 
       // Produce bbox only if projection succeeds
 
@@ -1426,8 +1426,7 @@ void WMSLayer::initProjectedBBoxes()
 }
 
 boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
-    const boost::optional<std::string>& starttime,
-    const boost::optional<std::string>& endtime)
+    const boost::optional<std::string>& starttime, const boost::optional<std::string>& endtime)
 {
   try
   {
@@ -1492,9 +1491,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
         layer_bbox["crs"] = id;
 
-        Fmi::SpatialReference crs(ref.proj);
-        
-        if (crs.isGeographic())
+        if (ref.geographic)
         {
           layer_crs_list.PushBack(id);
           layer_bbox["minx"] = geographicBoundingBox.xMin;
@@ -1659,18 +1656,16 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
   }
 }
 
-
 Json::Value WMSLayer::parseJsonString(const std::string theJsonString)
 {
   Json::Value json;
 
-  Json::Reader reader;
-  bool parsingSuccessful = reader.parse(theJsonString, json);
-  if (!parsingSuccessful)
-  {
-    // report to the user the failure
-    throw Fmi::Exception(BCP, reader.getFormattedErrorMessages());
-  }
+  std::unique_ptr<Json::CharReader> reader(charreaderbuilder.newCharReader());
+  std::string errors;
+  if (!reader->parse(
+          theJsonString.c_str(), theJsonString.c_str() + theJsonString.size(), &json, &errors))
+    throw Fmi::Exception(BCP, "Legend template file parsing failed!")
+        .addParameter("Message", errors);
 
   return json;
 }
@@ -1679,8 +1674,8 @@ void WMSLayer::setCustomer(const std::string& c)
 {
   customer = c;
 
-  std::map<std::string, Json::Value> legends =
-      readLegendFiles(wmsConfig.getDaliConfig().rootDirectory(true), wmsConfig.getJsonCache(), customer);
+  std::map<std::string, Json::Value> legends = readLegendFiles(
+      wmsConfig.getDaliConfig().rootDirectory(true), wmsConfig.getJsonCache(), customer);
   std::string missingTemplateFiles;
   if (legends.find("symbol") == legends.end())
     missingTemplateFiles += "symbol.json";

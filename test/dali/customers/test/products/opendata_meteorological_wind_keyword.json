@@ -52,7 +52,7 @@
 		    "css": "arrows/windbarb.css",
 		    "direction": "WindDirection",
 		    "speed": "WindSpeedMS",
-		    "minvalues": 155,
+		    "minvalues": 50,
 		    "multiplier": 1.94384449244,  // to knots, inverse of 0.514444....
 		    "southflop": true,
 		    "scale": 1.0,
