@@ -940,11 +940,7 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
   NFmiPoint dummy;
 
   // Querydata spatial reference
-#ifdef NEW_NFMIAREA
   Fmi::SpatialReference qcrs(q->SpatialReference());
-#else
-  Fmi::SpatialReference qcrs(q->area().WKT());
-#endif
 
   // From image world coordinates to querydata world coordinates
 

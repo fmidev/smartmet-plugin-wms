@@ -256,11 +256,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
 
   CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
 
-#ifdef NEW_NFMIAREA
   auto geoms = contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
-#else
-  auto geoms = contourer.contour(qhash, q->area().WKT(), crs, *matrix, *coords, options);
-#endif
 
   // Perform polygon operations
   for (unsigned int i = 0; i < geoms.size(); i++)

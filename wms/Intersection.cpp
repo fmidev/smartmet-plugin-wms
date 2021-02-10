@@ -260,13 +260,8 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     auto matrix = qEngine.getValues(q, valueshash, options.time);
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
 
-#ifdef NEW_NFMIAREA
     std::vector<OGRGeometryPtr> isobands =
         contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
-#else
-    std::vector<OGRGeometryPtr> isobands =
-        contourer.contour(qhash, q->area().WKT(), crs, *matrix, *coords, options);
-#endif
 
     if (isobands.empty())
       return;

@@ -517,13 +517,8 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
 
-#ifdef NEW_NFMIAREA
     std::vector<OGRGeometryPtr> geoms =
         contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
-#else
-    std::vector<OGRGeometryPtr> geoms =
-        contourer.contour(qhash, q->area().WKT(), crs, *matrix, *coords, options);
-#endif
 
     // Update the globals
 
@@ -551,6 +546,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       if (geom && geom->IsEmpty() == 0)
       {
         OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, clipbox));
+
         const Isoband& isoband = isobands[i];
 
         // Do intersections if so requested

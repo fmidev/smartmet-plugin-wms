@@ -535,11 +535,7 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
     // Create the coordinate transformation from querydata world coordinates
     // to image world coordinates
 
-#ifdef NEW_NFMIAREA
     Fmi::CoordinateTransformation transformation(theQ->SpatialReference(), theCRS);
-#else
-    Fmi::CoordinateTransformation transformation(theQ->area().WKT(), theCRS);
-#endif
 
     // Generate the grid coordinates
 

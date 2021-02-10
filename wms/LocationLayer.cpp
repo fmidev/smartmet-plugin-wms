@@ -13,8 +13,8 @@
 #include <engines/gis/Engine.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
-#include <macgyver/NearTree.h>
 #include <macgyver/Exception.h>
+#include <macgyver/NearTree.h>
 #include <spine/Json.h>
 #include <ogr_spatialref.h>
 
@@ -101,8 +101,7 @@ void LocationLayer::init(const Json::Value& theJson,
         }
       }
       else
-        throw Fmi::Exception(BCP,
-                               "LocationLayer symbols setting must be an array or a JSON hash");
+        throw Fmi::Exception(BCP, "LocationLayer symbols setting must be an array or a JSON hash");
     }
   }
   catch (...)
@@ -207,12 +206,12 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       double y = lat;
       transformation.transform(x, y);
 
+      box.transform(x, y);
+
       // Skip locations outside the image.
 
       if (!inside(box, x, y))
         continue;
-
-      box.transform(x, y);
 
 #if 0
         std::cerr << location->name
