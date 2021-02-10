@@ -19,9 +19,9 @@
 #include <engines/observation/Settings.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
+#include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
-#include <macgyver/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterTools.h>
 #include <spine/TimeSeries.h>
@@ -652,8 +652,8 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
           else if (observation.parameter == "max_t(ws_10min)")
             value = wdata.max_wind;
           else
-            throw Fmi::Exception(
-                BCP, "Unknown WindRoseLayer parameter '" + observation.parameter + "'");
+            throw Fmi::Exception(BCP,
+                                 "Unknown WindRoseLayer parameter '" + observation.parameter + "'");
 
           CTPP::CDT obs_cdt(CTPP::CDT::HASH_VAL);
           obs_cdt["start"] = "<text";
@@ -703,13 +703,16 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
     settings.starttimeGiven = true;
     settings.stationtype = "observations_fmi";
     settings.timezone = timezone;
+    settings.useCommonQueryMethod = true;
 
     auto& observation = theState.getObsEngine();
-    settings.parameters.push_back(Spine::makeParameter("wd_10min"));
-    settings.parameters.push_back(Spine::makeParameter("ws_10min"));
-    settings.parameters.push_back(Spine::makeParameter("T"));
+    settings.parameters.push_back(Spine::makeParameter("WindDirection"));
+    settings.parameters.push_back(Spine::makeParameter("WindSpeedMS"));
+    settings.parameters.push_back(Spine::makeParameter("t2m"));
     settings.parameters.push_back(Spine::makeParameter("stationlongitude"));
     settings.parameters.push_back(Spine::makeParameter("stationlatitude"));
+
+    // settings.debug_options = Engine::Observation::Settings::DUMP_SETTINGS;
 
     std::map<int, WindRoseData> result;
 
@@ -741,6 +744,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
       {
         // No data for this station, continue to the next
         std::cerr << "No data for " << *station.fmisid << std::endl;
+
         continue;
       }
 
@@ -748,6 +752,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
       rosedata.mean_wind = mean(speeds);
       rosedata.max_wind = max(speeds);
       rosedata.mean_temperature = mean((*res)[2]);
+
       rosedata.longitude = boost::get<double>(longitudes[0].value);
       rosedata.latitude = boost::get<double>(latitudes[0].value);
 
