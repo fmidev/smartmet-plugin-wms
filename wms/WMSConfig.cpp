@@ -9,6 +9,7 @@
 #include "View.h"
 #include "WMSException.h"
 #include "WMSLayerFactory.h"
+#include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
@@ -505,8 +506,8 @@ void WMSConfig::parse_references()
     std::string name = "EPSG:" + Fmi::to_string(num);
     Engine::Gis::BBox bbox = itsGisEngine->getBBox(num);
     bool enabled = true;
-    auto crs = itsGisEngine->getSpatialReference(name);
-    bool geographic = crs->IsGeographic();
+    Fmi::SpatialReference crs(name);
+    bool geographic = crs.isGeographic();
 
     WMSSupportedReference ref(name, bbox, enabled, geographic);
     itsWMSSupportedReferences.insert(std::make_pair(name, ref));
@@ -546,8 +547,8 @@ void WMSConfig::parse_references()
     double north = bbox_array[3];
     Engine::Gis::BBox bbox(west, east, south, north);
 
-    auto crs = itsGisEngine->getSpatialReference(proj);
-    bool geographic = crs->IsGeographic();
+    Fmi::SpatialReference crs(proj);
+    bool geographic = crs.isGeographic();
 
     WMSSupportedReference ref(proj, bbox, enabled, geographic);
     itsWMSSupportedReferences.insert(std::make_pair(name, ref));
