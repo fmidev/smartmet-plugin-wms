@@ -208,8 +208,6 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
       box.transform(x, y);
 
-      box.transform(x, y);
-
       // Skip locations outside the image.
 
       if (!inside(box, x, y))
