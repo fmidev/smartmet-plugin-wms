@@ -15,11 +15,13 @@
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
 #include <gis/Box.h>
+#include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
+#include <ogr_spatialref.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -301,24 +303,15 @@ Fmi::Box Layer::getClipBox(const Fmi::Box& theBox) const
  */
 // ----------------------------------------------------------------------
 
-std::map<std::string, double> Layer::getClipBoundingBox(
-    const Fmi::Box& theBox,
-    const State& theState,
-    const std::shared_ptr<OGRSpatialReference>& theCRS) const
+std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
+                                                        const Fmi::SpatialReference& theCRS) const
 {
   // Expand world coordinates by the margin settings
   const auto clipbox = getClipBox(theBox);
 
   // Observations are in WGS84 coordinates
 
-  auto wgs84 = theState.getGisEngine().getSpatialReference("WGS84");
-
-  // Create the transformation from image world coordinates to WGS84 coordinates
-  boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-      OGRCreateCoordinateTransformation(theCRS.get(), wgs84.get()));
-  if (transformation == nullptr)
-    throw Fmi::Exception(
-        BCP, "Failed to create the needed coordinate transformation when drawing wind arrows");
+  Fmi::CoordinateTransformation transformation(theCRS, "WGS84");
 
   // Establish the number of samples along each edge. We wish to sample at roughly 5 pixel
   // intervals.
@@ -334,7 +327,7 @@ std::map<std::string, double> Layer::getClipBoundingBox(
   int hsamples = minsamples;
 
   // Otherwise we need to sample the edges
-  if (theCRS->IsGeographic() == 0)
+  if (!theCRS.isGeographic())
   {
     wsamples = std::max(wsamples, w / npixels);
     hsamples = std::max(hsamples, h / npixels);
@@ -382,8 +375,8 @@ std::map<std::string, double> Layer::getClipBoundingBox(
 
   for (std::size_t i = 0; i < x.size(); i++)
   {
-    if (theCRS->IsGeographic() == 0)
-      if (transformation->Transform(1, &x[i], &y[i]) == 0)
+    if (!theCRS.isGeographic())
+      if (!transformation.transform(x[i], y[i]))
         continue;
 
     minlon = (uninitialized ? x[i] : std::min(minlon, x[i]));

@@ -1,0 +1,11 @@
+How to debug individual tests with gdb:
+
+1. echo "grassfire.get" > foobar    # feed test name into a file
+2. gdb ./PluginTest
+3. break main
+4. run < foobar                     # read test name from a file
+
+or preferably with a known line as follows
+
+3. break wms/IsobandLayer.cpp:row
+4. run < foobar

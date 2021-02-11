@@ -134,11 +134,11 @@ bool WMSPostGISLayer::mustUpdateLayerMetaData()
     moptions.where = itsMetaDataSettings.where;
 
     OGRSpatialReference* sr = nullptr;
-	const boost::optional<boost::posix_time::ptime> reference_time;
+    const boost::optional<boost::posix_time::ptime> reference_time;
     boost::posix_time::ptime mostCurrentTimestamp = mostCurrentTime(reference_time);
 
     // fetch the latest publicationdate of icemap
-    Fmi::Features features = itsGisEngine->getFeatures(sr, moptions);
+    Fmi::Features features = itsGisEngine->getFeatures(moptions);
     if (!features.empty())
     {
       Fmi::FeaturePtr feature = features[0];
@@ -193,13 +193,13 @@ void WMSPostGISLayer::updateLayerMetaData()
 
     if (hasTemporalDimension && !timeDimensionDisabled)
     {
-	  std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
-	  boost::shared_ptr<WMSTimeDimension> timeDimension = nullptr;
+      std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
+      boost::shared_ptr<WMSTimeDimension> timeDimension = nullptr;
       if (metadata.timeinterval)
       {
-		timeDimension = boost::make_shared<IntervalTimeDimension>(metadata.timeinterval->starttime,
-																  metadata.timeinterval->endtime,
-																  metadata.timeinterval->timestep);
+        timeDimension = boost::make_shared<IntervalTimeDimension>(metadata.timeinterval->starttime,
+                                                                  metadata.timeinterval->endtime,
+                                                                  metadata.timeinterval->timestep);
       }
       else if (even_timesteps(metadata.timesteps))
       {
@@ -207,22 +207,23 @@ void WMSPostGISLayer::updateLayerMetaData()
         boost::posix_time::ptime last_time(metadata.timesteps[metadata.timesteps.size() - 1]);
         boost::posix_time::time_duration resolution =
             (metadata.timesteps[1] - metadata.timesteps[0]);
-		timeDimension = boost::make_shared<IntervalTimeDimension>(first_time, last_time, resolution);
+        timeDimension =
+            boost::make_shared<IntervalTimeDimension>(first_time, last_time, resolution);
       }
       else
       {
-		timeDimension = boost::make_shared<StepTimeDimension>(metadata.timesteps);
+        timeDimension = boost::make_shared<StepTimeDimension>(metadata.timesteps);
       }
-	  boost::posix_time::ptime origintime(boost::posix_time::not_a_date_time);
-	  newTimeDimensions.insert(std::make_pair(origintime, timeDimension));
-	  timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);
+      boost::posix_time::ptime origintime(boost::posix_time::not_a_date_time);
+      newTimeDimensions.insert(std::make_pair(origintime, timeDimension));
+      timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);
     }
-	else
-	  {
-		timeDimensions = nullptr;
-	  }
-	
-    metadataTimestamp = boost::posix_time::second_clock::universal_time();	  
+    else
+    {
+      timeDimensions = nullptr;
+    }
+
+    metadataTimestamp = boost::posix_time::second_clock::universal_time();
   }
   catch (...)
   {

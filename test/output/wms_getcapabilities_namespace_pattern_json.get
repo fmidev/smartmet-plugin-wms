@@ -196,8 +196,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3467154.57005,
 						"maxy": 7211668.32659
 					},
@@ -298,8 +298,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3269319.77287,
 						"maxy": 6990614.83127
 					},
@@ -350,31 +350,6 @@
 						"current": 1
 					}
 					
-				]
-
-			},
-			{
-				"Title": "Temperature isotherm labels",
-				"queryable": 1,
-				"Name": "test:temperature_isotherm_labels",
-				"Abstract": "Temperature isotherm labels",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
-					}
 				]
 
 			},
@@ -436,10 +411,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -574,10 +549,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",

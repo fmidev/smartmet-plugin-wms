@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 20.12.16
+Version: 21.2.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -15,48 +15,56 @@ BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: boost169-devel
-BuildRequires: libconfig-devel >= 1.7.2
+BuildRequires: libconfig >= 1.7.2
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-giza-devel >= 20.10.7
-BuildRequires: smartmet-library-macgyver-devel >= 20.11.24
-BuildRequires: smartmet-library-spine-devel >= 20.11.23
+BuildRequires: smartmet-library-giza-devel >= 21.1.14
+BuildRequires: smartmet-library-macgyver-devel >= 21.1.25
+BuildRequires: smartmet-library-spine-devel >= 21.2.5
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 20.10.20
+BuildRequires: smartmet-engine-authentication-devel >= 21.1.14
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 20.11.26
+BuildRequires: smartmet-engine-observation-devel >= 21.2.9
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 20.10.6
-BuildRequires: smartmet-engine-geonames-devel >= 20.10.28
-BuildRequires: smartmet-engine-querydata-devel >= 20.10.6
-BuildRequires: smartmet-engine-contour-devel >= 20.11.6
-BuildRequires: smartmet-library-gis-devel >= 20.10.28
-BuildRequires: fmt-devel >= 7.1.0
+BuildRequires: smartmet-engine-gis-devel >= 21.1.14
+BuildRequires: smartmet-engine-geonames-devel >= 21.1.25
+BuildRequires: smartmet-engine-querydata-devel >= 21.2.10
+BuildRequires: smartmet-engine-contour-devel >= 21.2.10
+BuildRequires: smartmet-library-gis-devel >= 21.2.10
+BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
 BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
 BuildRequires: heatmap-devel
+%if %{defined el7}
 BuildRequires: librsvg2-devel = 2.40.6
+#TestRequires: librsvg2-devel = 2.40.6
+#TestRequires: librsvg2-tools = 2.40.6
+%else
+BuildRequires: librsvg2-devel
+#TestRequires: librsvg2-devel
+#TestRequires: librsvg2-tools
+%endif
 Requires: cairo
-Requires: fmt >= 7.1.0
+Requires: fmt >= 7.1.3
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-gis >= 20.10.28
-Requires: smartmet-library-macgyver >= 20.11.24
-Requires: smartmet-library-giza >= 20.10.7
+Requires: smartmet-library-gis >= 21.2.10
+Requires: smartmet-library-macgyver >= 21.1.25
+Requires: smartmet-library-giza >= 21.1.14
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 20.10.20
+Requires: smartmet-engine-authentication >= 21.1.14
 %endif
-Requires: smartmet-engine-querydata >= 20.10.6
-Requires: smartmet-engine-contour >= 20.11.6
-Requires: smartmet-engine-gis >= 20.10.6
-Requires: smartmet-engine-geonames >= 20.10.28
-Requires: smartmet-server >= 20.10.28
-Requires: smartmet-library-spine >= 20.11.23
+Requires: smartmet-engine-querydata >= 21.2.10
+Requires: smartmet-engine-contour >= 21.2.10
+Requires: smartmet-engine-gis >= 21.1.14
+Requires: smartmet-engine-geonames >= 21.1.25
+Requires: smartmet-server >= 21.1.14
+Requires: smartmet-library-spine >= 21.2.5
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -72,21 +80,21 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: gcc-c++
 #TestRequires: jsoncpp-devel
 #TestRequires: libconfig-devel >= 1.7.2
-#TestRequires: librsvg2-tools = 2.40.6
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 20.11.6
-#TestRequires: smartmet-engine-geonames-devel >= 20.10.28
-#TestRequires: smartmet-engine-gis-devel >= 20.10.6
-#TestRequires: smartmet-engine-querydata-devel >= 20.10.6
-#TestRequires: smartmet-library-giza-devel >= 20.10.7
+#TestRequires: smartmet-engine-contour-devel >= 21.1.14
+#TestRequires: smartmet-engine-geonames-devel >= 21.1.14
+#TestRequires: smartmet-engine-gis-devel >= 21.1.14
+#TestRequires: smartmet-engine-querydata-devel >= 21.1.14
+#TestRequires: smartmet-library-giza-devel >= 21.1.14
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
-#TestRequires: smartmet-library-spine-devel >= 20.11.23
+#TestRequires: smartmet-library-spine-devel >= 21.1.14
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
 #TestRequires: zlib-devel
+#TestRequires: cairo-devel
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 20.11.26
+#TestRequires: smartmet-engine-observation-devel >= 21.1.14
 %endif
 
 %description
@@ -115,11 +123,20 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
-* Wed Dec 16 2020 Anssi Reponen <anssi.reponen@fmi.fi> - 20.12.16-1.fmi
+* Thu Feb 11 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.2.11-1.fmi
 - Support for layer hierarchy, reference_time, elevation in 
 GetCapabilities response (BRAINSTORM-1836,BRAINSTORM-1413,BRAINSTORM-1414),
 to see this feature 'newfeature=1' or 'newfearure=2' option must be used in GetCapabilities request
 - Fixed attribute name nearestValues to nearestValue in GetCapbilities response
+
+* Thu Jan 14 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.14-1.fmi
+- Repackaged smartmet to resolve debuginfo issues
+
+* Tue Jan 12 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.12-1.fmi
+- Upgraded jsoncpp
+
+* Tue Jan  5 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.5-1.fmi
+- GDAL32 and FMT 7.1.3 upgrades
 
 * Tue Dec 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.15-1.fmi
 - Upgrade to pgdg12
@@ -210,6 +227,9 @@ to see this feature 'newfeature=1' or 'newfearure=2' option must be used in GetC
 * Tue Feb 25 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.25-1.fmi
 - Fixed level-setting to work for isoline/isoband layers
 
+* Fri Feb 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.21-1.fmi
+- Upgrade to GDAL 3.0
+
 * Thu Feb 20 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.20-1.fmi
 - Added print_params query option
 
@@ -228,6 +248,9 @@ in order to restrict valid time period in output document (BRAINSTORM-1744)
 
 * Fri Dec 27 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.27-1.fmi
 - Prevent crashes if sampling is requested for observations in isoband/isoline layers
+
+* Fri Dec 13 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.13-1.fmi
+- Upgrade to GDAL 3.0
 
 * Wed Nov 20 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.11.20-1.fmi
 - Repackaged since Spine::Parameter size changed

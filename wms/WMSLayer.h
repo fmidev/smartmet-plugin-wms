@@ -6,12 +6,12 @@
 
 #pragma once
 
+#include "WMSElevationDimension.h"
 #include "WMSLayerStyle.h"
 #include "WMSLegendGraphicInfo.h"
 #include "WMSLegendGraphicSettings.h"
 #include "WMSSupportedReference.h"
 #include "WMSTimeDimension.h"
-#include "WMSElevationDimension.h"
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/shared_ptr.hpp>
@@ -71,8 +71,9 @@ class WMSLayer
   std::set<std::string> disabled_refs;
 
   std::vector<WMSLayerStyle> itsStyles;
-  boost::shared_ptr<WMSTimeDimensions> timeDimensions{nullptr};// Optional, may be empty for non-temporal postgis layers
-  boost::shared_ptr<WMSElevationDimension> elevationDimension{nullptr};// Optional
+  boost::shared_ptr<WMSTimeDimensions> timeDimensions{
+      nullptr};  // Optional, may be empty for non-temporal postgis layers
+  boost::shared_ptr<WMSElevationDimension> elevationDimension{nullptr};  // Optional
 
   std::string customer;
   std::string productFile;  // dali product
@@ -104,10 +105,11 @@ class WMSLayer
   LegendGraphicResult getLegendGraphic(const WMSLegendGraphicSettings& settings,
                                        const std::string& legendGraphicID,
                                        const std::string& language) const;
-  
+
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;
-  bool isValidTime(const boost::posix_time::ptime& theTime, const boost::optional<boost::posix_time::ptime>& theReferenceTime) const;
+  bool isValidTime(const boost::posix_time::ptime& theTime,
+                   const boost::optional<boost::posix_time::ptime>& theReferenceTime) const;
   bool isValidReferenceTime(const boost::posix_time::ptime& theReferenceTime) const;
   bool isValidElevation(int theElevation) const;
   bool isTemporal() const { return timeDimensions != nullptr; }
@@ -115,27 +117,31 @@ class WMSLayer
                               // (time=current)
 
   // returns the most current valid time for the layer
-  boost::posix_time::ptime mostCurrentTime(const boost::optional<boost::posix_time::ptime>& reference_time) const;
+  boost::posix_time::ptime mostCurrentTime(
+      const boost::optional<boost::posix_time::ptime>& reference_time) const;
 
   // Empty for hidden layers
-  boost::optional<CTPP::CDT> generateGetCapabilities(const Engine::Gis::Engine& gisengine,
-                                                     const boost::optional<std::string>& starttime,
-                                                     const boost::optional<std::string>& endtime,
-													 const boost::optional<std::string>& reference_time);
+
+  boost::optional<CTPP::CDT> generateGetCapabilities(
+      const Engine::Gis::Engine& gisengine,
+      const boost::optional<std::string>& starttime,
+      const boost::optional<std::string>& endtime,
+      const boost::optional<std::string>& reference_time);
 
   boost::optional<CTPP::CDT> getLayerBaseInfo() const;
   boost::optional<CTPP::CDT> getGeographicBoundingBoxInfo() const;
   boost::optional<CTPP::CDT> getProjectedBoundingBoxInfo() const;
-  boost::optional<CTPP::CDT> getTimeDimensionInfo(const boost::optional<std::string>& starttime,
-												  const boost::optional<std::string>& endtime,
-												  const boost::optional<std::string>& reference_time) const;
+  boost::optional<CTPP::CDT> getTimeDimensionInfo(
+      const boost::optional<std::string>& starttime,
+      const boost::optional<std::string>& endtime,
+      const boost::optional<std::string>& reference_time) const;
   boost::optional<CTPP::CDT> getReferenceDimensionInfo() const;
   boost::optional<CTPP::CDT> getElevationDimensionInfo() const;
   boost::optional<CTPP::CDT> getStyleInfo() const;
   const boost::shared_ptr<WMSTimeDimensions>& getTimeDimensions() const;
 
   // To be called after crs and crs_bbox have been initialized
-  void initProjectedBBoxes(const Engine::Gis::Engine& gisengine);
+  void initProjectedBBoxes();
 
   // Update layer metadata for GetCapabilities (time,spatial dimensions)
   virtual void updateLayerMetaData() = 0;

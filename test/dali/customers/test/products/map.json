@@ -1,0 +1,55 @@
+{
+    "title": "Map cutting tests",
+    "projection":
+    {
+	"qid": "p",
+	"crs": "",
+	"bboxcrs": "WGS84",
+	"cx": 0,
+	"cy": 0,
+	"resolution": 50,
+	"xsize": 800,
+	"ysize": 800
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+	    "layers":
+	    [
+		{
+		    "qid": "wkt",
+		    "layer_type": "wkt",
+		    "wkt": "POLYGON((-180 -90,-180 90,180 90,180 -90,-180 -90))",
+		    "resolution": 1000,
+		    "attributes":
+		    {
+			"fill": "#069",
+			"stroke": "#888",
+			"stroke-width": "0.1px"
+		    }
+		},
+  		{
+                    "qid": "map",
+                    "layer_type": "map",
+  		    "precision": 0.1,
+                    "map":
+  		    {
+  			"schema": "natural_earth",
+  			"table": "admin_0_countries"
+                    },
+                    "attributes":
+  		    {
+  			"fill": "#ddc",
+  			"stroke": "#222",
+  			"stroke-width": "0.3px"
+                    }
+ 		}
+	    ]
+	}
+    ]
+}

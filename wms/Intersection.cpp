@@ -236,7 +236,6 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;
     Dali::hash_combine(valueshash, options.data_hash_value());
-    std::string wkt = q->area().WKT();
 
     // Select the data
 
@@ -252,16 +251,17 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
       if (!q->selectLevel(*options.level))
       {
         throw Fmi::Exception(BCP,
-                               "Level value " + boost::lexical_cast<std::string>(*options.level) +
-                                   " is not available.");
+                             "Level value " + boost::lexical_cast<std::string>(*options.level) +
+                                 " is not available.");
       }
     }
 
     const auto& qEngine = theState.getQEngine();
     auto matrix = qEngine.getValues(q, valueshash, options.time);
-    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs.get());
+    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
+
     std::vector<OGRGeometryPtr> isobands =
-        contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), crs.get());
+        contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
 
     if (isobands.empty())
       return;

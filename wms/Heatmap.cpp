@@ -105,11 +105,13 @@ std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> Heatmap::getStamp(u
       unsigned y;
       unsigned d = 2 * r + 1;
 
-      auto* stamp = static_cast<float*>(calloc(d * d, sizeof(float)));
+      auto* stamp = static_cast<float*>(std::calloc(d * d, sizeof(float)));
 
       if (stamp == nullptr)
         throw Fmi::Exception(BCP, "Could not allocate memory for heatmap stamp");
-      std::unique_ptr<float> up_stamp(stamp);
+
+      // Safely deallocate the data in case of exceptions
+      std::unique_ptr<float, decltype(free)*> delete_stamp{stamp, free};
 
       for (y = 0; y < d; ++y)
       {

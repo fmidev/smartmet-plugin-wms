@@ -195,10 +195,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -326,10 +326,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -457,10 +457,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -570,10 +570,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -684,10 +684,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3696382.63726,
-						"maxy": 7493965.6415
+						"maxy": 7493965.64149
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -730,74 +730,6 @@
 						"miny": 52.0856260866,
 						"maxx": 32.0508254225,
 						"maxy": 67.4681861737
-					}
-				]
-
-			},
-			{
-				"Title": "Estimated ice edge",
-				"queryable": 1,
-				"Name": "test:estimated_ice_edge",
-				"Abstract": "Estimated ice edge or -boundary",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
-					}
-				]
-
-			},
-			{
-				"Title": "Flobit, floberg",
-				"queryable": 1,
-				"Name": "test:flobrg",
-				"Abstract": "Flobit, floberg",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
-					}
-				],
-				"Style":
-				[
-					{
-						"Name": "default",
-						"Title": "Default style",
-						"LegendURL":
-						[
-							{
-								"Format": "image/png",
-								"OnlineResource":
-								{
-									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aflobrg"
-								}
-							}
-						]
 					}
 				]
 
@@ -854,10 +786,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -968,8 +900,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649844.93408,
 						"maxy": 7308434.42878
 					},
@@ -1014,56 +946,6 @@
 						"miny": 53.4362000003,
 						"maxx": 30.2763999999,
 						"maxy": 65.8346000016
-					}
-				]
-
-			},
-			{
-				"Title": "Ice breakers",
-				"queryable": 1,
-				"Name": "test:ice_breakers",
-				"Abstract": "Ice breakers",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
-					}
-				]
-
-			},
-			{
-				"Title": "Ice edge",
-				"queryable": 1,
-				"Name": "test:ice_edge",
-				"Abstract": "Ice edge or -boundary",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
 					}
 				]
 
@@ -1119,8 +1001,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -1182,56 +1064,6 @@
 
 			},
 			{
-				"Title": "Ice thickness",
-				"queryable": 1,
-				"Name": "test:ice_thickness",
-				"Abstract": "Ice thickness (cm)",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
-					}
-				]
-
-			},
-			{
-				"Title": "Ice thickness leaders",
-				"queryable": 1,
-				"Name": "test:ice_thickness_leaders",
-				"Abstract": "Ice thickness leaders",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
-					}
-				]
-
-			},
-			{
 				"Title": "Ice map",
 				"queryable": 1,
 				"Name": "test:icechart_areas",
@@ -1283,8 +1115,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -1397,8 +1229,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -1529,8 +1361,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -1661,8 +1493,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -1793,8 +1625,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -1925,8 +1757,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -2057,8 +1889,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -2189,8 +2021,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -2321,8 +2153,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -2453,8 +2285,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3696725.56064,
 						"maxy": 7489340.3577
 					},
@@ -2555,8 +2387,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -2687,8 +2519,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -2819,8 +2651,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -2951,8 +2783,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -3083,8 +2915,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -3215,8 +3047,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3649926.79605,
 						"maxy": 7316019.14868
 					},
@@ -3296,271 +3128,6 @@
 
 			},
 			{
-				"Title": "Ice drift",
-				"queryable": 1,
-				"Name": "test:icedft",
-				"Abstract": "Ice drift",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
-					}
-				],
-				"Style":
-				[
-					{
-						"Name": "default",
-						"Title": "Default style",
-						"LegendURL":
-						[
-							{
-								"Format": "image/png",
-								"OnlineResource":
-								{
-									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicedft"
-								}
-							}
-						]
-					}
-				]
-
-			},
-			{
-				"Title": "Fracture",
-				"queryable": 1,
-				"Name": "test:icefra",
-				"Abstract": "Fracture",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
-					}
-				]
-
-			},
-			{
-				"Title": "Fracture zone",
-				"queryable": 1,
-				"Name": "test:icefra_zone",
-				"Abstract": "Fracture zone",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
-					}
-				],
-				"Style":
-				[
-					{
-						"Name": "default",
-						"Title": "Default style",
-						"LegendURL":
-						[
-							{
-								"Format": "image/png",
-								"OnlineResource":
-								{
-									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicefra_zone"
-								}
-							}
-						]
-					}
-				]
-
-			},
-			{
-				"Title": "Ice pressure",
-				"queryable": 1,
-				"Name": "test:iceprs",
-				"Abstract": "Ice pressure, degree of pressure (1-3)",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
-					}
-				]
-
-			},
-			{
-				"Title": "Ridged or hummocked ice",
-				"queryable": 1,
-				"Name": "test:icerdg",
-				"Abstract": "Ridged or hummocked ice",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
-					}
-				],
-				"Style":
-				[
-					{
-						"Name": "default",
-						"Title": "Default style",
-						"LegendURL":
-						[
-							{
-								"Format": "image/png",
-								"OnlineResource":
-								{
-									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicerdg"
-								}
-							}
-						]
-					}
-				]
-
-			},
-			{
-				"Title": "Rafted ice",
-				"queryable": 1,
-				"Name": "test:icerft",
-				"Abstract": "Rafted ice",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
-					}
-				],
-				"Style":
-				[
-					{
-						"Name": "default",
-						"Title": "Default style",
-						"LegendURL":
-						[
-							{
-								"Format": "image/png",
-								"OnlineResource":
-								{
-									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicerft"
-								}
-							}
-						]
-					}
-				]
-
-			},
-			{
-				"Title": "Brash ice barrier",
-				"queryable": 1,
-				"Name": "test:jmdbrr",
-				"Abstract": "Brash ice barrier",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
-					}
-				],
-				"Style":
-				[
-					{
-						"Name": "default",
-						"Title": "Default style",
-						"LegendURL":
-						[
-							{
-								"Format": "image/png",
-								"OnlineResource":
-								{
-									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Ajmdbrr"
-								}
-							}
-						]
-					}
-				]
-
-			},
-			{
 				"Title": "Landmask",
 				"queryable": 1,
 				"Name": "test:land_mask",
@@ -3612,8 +3179,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3696725.56064,
 						"maxy": 7489340.3577
 					},
@@ -3714,10 +3281,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3625173.9707,
-						"maxy": 7272102.42395
+						"maxy": 7272102.42394
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -3816,8 +3383,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3467154.57005,
 						"maxy": 7211668.32659
 					},
@@ -3917,10 +3484,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -4048,10 +3615,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -4211,10 +3778,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -4374,10 +3941,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -4505,10 +4072,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -4637,10 +4204,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -4768,10 +4335,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -4947,10 +4514,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -5078,10 +4645,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -5210,8 +4777,8 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3269319.77287,
 						"maxy": 6990614.83127
 					},
@@ -5262,31 +4829,6 @@
 						"current": 1
 					}
 					
-				]
-
-			},
-			{
-				"Title": "Temperature isotherm labels",
-				"queryable": 1,
-				"Name": "test:temperature_isotherm_labels",
-				"Abstract": "Temperature isotherm labels",
-				"CRS": ["EPSG:4326"],
-				"EX_GeographicBoundingBox":
-				{
-					"westBoundLongitude": 0,
-					"eastBoundLongitude": 0,
-					"southBoundLatitude": 0,
-					"northBoundLatitude": 0
-				},
-				"BoundingBox":
-				[
-					{
-						"CRS": "EPSG:4326",
-						"minx": 0,
-						"miny": 0,
-						"maxx": 0,
-						"maxy": 0
-					}
 				]
 
 			},
@@ -5348,10 +4890,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",
@@ -5486,10 +5028,10 @@
 					},
 					{
 						"CRS": "EPSG:2393",
-						"minx": 3064557.21484,
-						"miny": 6651895.28725,
+						"minx": 3064557.21476,
+						"miny": 6651895.28724,
 						"maxx": 3674549.99025,
-						"maxy": 7785726.69718
+						"maxy": 7785726.69717
 					},
 					{
 						"CRS": "EPSG:3035",

@@ -106,7 +106,7 @@ for f in input/*.get; do
     ignore=$(grep -xc $request_name input/.testignore)
 
     if [[ $ignore -eq 1 ]]; then
-	echo "IGNORED IN THIS SETUP"
+	echo "ON IGNORE LIST"
     else
 	echo "$request_name" >&3
 	extralines=""
