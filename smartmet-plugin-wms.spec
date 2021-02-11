@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.2.10
+Version: 21.2.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
