@@ -698,10 +698,6 @@ void NumberLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       parameter = json.asString();
 
-    json = theJson.get("level", nulljson);
-    if (!json.isNull())
-      level = json.asDouble();
-
     json = theJson.get("unit_conversion", nulljson);
     if (!json.isNull())
       unit_conversion = json.asString();

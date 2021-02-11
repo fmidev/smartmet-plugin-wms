@@ -93,7 +93,7 @@
   </inspire_vs:ExtendedCapabilities>
   <Layer queryable="0" cascaded="0" opaque="1" noSubsets="0" fixedWidth="0" fixedHeight="0">
     <Title>Finnish Meteorological Institute Web Map Service</Title>
-    <Layer>
+    <Layer queryable="1">
       <Name>ely:elymap</Name>
       <Title>ELY map</Title>
       <CRS>CRS:27</CRS>
@@ -126,7 +126,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -136,7 +136,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>ely:wmsmap</Name>
       <Title>ELY map</Title>
       <CRS>CRS:27</CRS>
@@ -169,7 +170,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -179,6 +180,7 @@
         </LegendURL>
       </Style>
     </Layer>
+    
   </Layer>
 </Capability>
 </WMS_Capabilities>

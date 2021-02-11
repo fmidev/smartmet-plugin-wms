@@ -93,7 +93,7 @@
   </inspire_vs:ExtendedCapabilities>
   <Layer queryable="0" cascaded="0" opaque="1" noSubsets="0" fixedWidth="0" fixedHeight="0">
     <Title>Finnish Meteorological Institute Web Map Service</Title>
-    <Layer>
+    <Layer queryable="1">
       <Name>ely:elymap</Name>
       <Title>ELY map</Title>
       <CRS>CRS:27</CRS>
@@ -126,7 +126,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -136,7 +136,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>ely:wmsmap</Name>
       <Title>ELY map</Title>
       <CRS>CRS:27</CRS>
@@ -169,7 +170,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -179,7 +180,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:backgroundmap</Name>
       <Title>Background map</Title>
       <CRS>CRS:27</CRS>
@@ -212,10 +214,11 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:cities</Name>
       <Title>City location map</Title>
       <CRS>CRS:27</CRS>
@@ -248,10 +251,11 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:coordinate_grid</Name>
       <Title>Coordinate grid</Title>
       <Abstract>Coordinate grid</Abstract>
@@ -286,7 +290,8 @@
       <BoundingBox CRS="EPSG:4258" minx="7.58612154991" miny="52.0856260866" maxx="32.0508254225" maxy="67.4681861737"/>
       <BoundingBox CRS="EPSG:4326" minx="7.58612154991" miny="52.0856260866" maxx="32.0508254225" maxy="67.4681861737"/>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:frame_layer</Name>
       <Title>Legend</Title>
       <Abstract>Icemap legend</Abstract>
@@ -320,10 +325,11 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:harbours</Name>
       <Title>Harbours</Title>
       <Abstract>Harbours</Abstract>
@@ -358,7 +364,8 @@
       <BoundingBox CRS="EPSG:4258" minx="9.51720000058" miny="53.4362000003" maxx="30.2763999999" maxy="65.8346000016"/>
       <BoundingBox CRS="EPSG:4326" minx="9.51720000058" miny="53.4362000003" maxx="30.2763999999" maxy="65.8346000016"/>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:ice_pg</Name>
       <Title>Ice map</Title>
       <CRS>CRS:27</CRS>
@@ -391,10 +398,11 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_areas</Name>
       <Title>Ice map</Title>
       <Abstract>Ice map polygons</Abstract>
@@ -428,10 +436,11 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_bob_bw</Name>
       <Title>Ice Chart</Title>
       <Abstract>Bay of Bothnia Ice Chart (black and white)</Abstract>
@@ -465,7 +474,7 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -475,7 +484,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_bob_color</Name>
       <Title>Ice Chart</Title>
       <Abstract>Bay of Bothnia Ice Chart</Abstract>
@@ -509,7 +519,7 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -519,7 +529,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_fmi_bw</Name>
       <Title>Ice map</Title>
       <Abstract>Ice map polygons</Abstract>
@@ -553,7 +564,7 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -563,7 +574,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_fmi_color</Name>
       <Title>Ice map</Title>
       <Abstract>Ice map polygons</Abstract>
@@ -597,7 +609,7 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -607,7 +619,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_fmi_smhi_bw</Name>
       <Title>Ice map</Title>
       <Abstract>Ice map polygons</Abstract>
@@ -641,7 +654,7 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -651,7 +664,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_fmi_smhi_color</Name>
       <Title>Ice map</Title>
       <Abstract>Ice map polygons</Abstract>
@@ -685,7 +699,7 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -695,7 +709,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_gof_bw</Name>
       <Title>Ice Chart</Title>
       <Abstract>Gulf of Finland Ice Chart (black and white)</Abstract>
@@ -729,7 +744,7 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -739,7 +754,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_gof_color</Name>
       <Title>Ice Chart</Title>
       <Abstract>Gulf of Finland Ice Chart</Abstract>
@@ -773,7 +789,7 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -783,7 +799,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_legend</Name>
       <Title>Legend</Title>
       <Abstract>Icemap legend</Abstract>
@@ -818,7 +835,8 @@
       <BoundingBox CRS="EPSG:4258" minx="7.66943473252" miny="52.1272388108" maxx="31.9683246197" maxy="67.4266201564"/>
       <BoundingBox CRS="EPSG:4326" minx="7.66943473252" miny="52.1272388108" maxx="31.9683246197" maxy="67.4266201564"/>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_nsp2_bw</Name>
       <Title>Ice Chart</Title>
       <Abstract>Nord Stream II Ice Chart</Abstract>
@@ -852,7 +870,7 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -862,7 +880,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_nsp2_color</Name>
       <Title>Ice Chart</Title>
       <Abstract>Nord Stream II Ice Chart</Abstract>
@@ -896,7 +915,7 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -906,7 +925,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_sob_bw</Name>
       <Title>Ice Chart</Title>
       <Abstract>Bothnian Sea Ice Chart (black and white)</Abstract>
@@ -940,7 +960,7 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -950,7 +970,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_sob_color</Name>
       <Title>Ice Chart</Title>
       <Abstract>Bothnian Sea Ice Chart</Abstract>
@@ -984,7 +1005,7 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -994,7 +1015,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_wgof_bw</Name>
       <Title>Ice Chart</Title>
       <Abstract>Western Gulf of Finland Ice Chart (black and white)</Abstract>
@@ -1028,7 +1050,7 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -1038,7 +1060,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:icechart_wgof_color</Name>
       <Title>Ice Chart</Title>
       <Abstract>Western Golf of Finland Ice Chart</Abstract>
@@ -1072,7 +1095,7 @@
       <BoundingBox CRS="EPSG:3857" minx="1018754.49849" miny="7056810.10216" maxx="3371519.21443" maxy="9850204.1155"/>
       <BoundingBox CRS="EPSG:4258" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
       <BoundingBox CRS="EPSG:4326" minx="9.15162736761" miny="53.3972015757" maxx="30.2868724102" maxy="65.9024709481"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -1082,7 +1105,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:land_mask</Name>
       <Title>Landmask</Title>
       <Abstract>Landmask</Abstract>
@@ -1117,7 +1141,8 @@
       <BoundingBox CRS="EPSG:4258" minx="7.66943473252" miny="52.1272388108" maxx="31.9683246197" maxy="67.4266201564"/>
       <BoundingBox CRS="EPSG:4326" minx="7.66943473252" miny="52.1272388108" maxx="31.9683246197" maxy="67.4266201564"/>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:lighthouses</Name>
       <Title>Lighthouses</Title>
       <Abstract>Lighthouses</Abstract>
@@ -1152,7 +1177,8 @@
       <BoundingBox CRS="EPSG:4258" minx="9.18059237405" miny="54.2085713236" maxx="29.7029918695" maxy="65.5197171158"/>
       <BoundingBox CRS="EPSG:4326" minx="9.18059237405" miny="54.2085713236" maxx="29.7029918695" maxy="65.5197171158"/>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:mean_temperature</Name>
       <Title>Mean temperature</Title>
       <Abstract>Sea surface mean temperature (1971-2000)</Abstract>
@@ -1187,7 +1213,8 @@
       <BoundingBox CRS="EPSG:4258" minx="11.3001098633" miny="54.1500854492" maxx="26.3001098633" maxy="65.0001220703"/>
       <BoundingBox CRS="EPSG:4326" minx="11.3001098633" miny="54.1500854492" maxx="26.3001098633" maxy="65.0001220703"/>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:netatmo5min</Name>
       <Title>NetAtmo obervations for 5 minute period</Title>
       <CRS>CRS:27</CRS>
@@ -1220,7 +1247,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1224514.39873" miny="6274861.39401" maxx="3784862.68697" maxy="12515545.2125"/>
       <BoundingBox CRS="EPSG:4258" minx="-11" miny="49" maxx="34" maxy="74"/>
       <BoundingBox CRS="EPSG:4326" minx="-11" miny="49" maxx="34" maxy="74"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2019-03-25T09:00:00Z/2019-03-25T09:05:00Z/PT5M</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2019-03-25T09:00:00Z/2019-03-25T09:05:00Z/PT5M</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -1230,7 +1257,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:precipitation</Name>
       <Title>Demo product</Title>
       <CRS>CRS:27</CRS>
@@ -1263,7 +1291,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
         <Name>precipitation_thin_style</Name>
         <Title>Precipitation thin style</Title><Abstract>Pressure isolines line width is 1 px</Abstract>
@@ -1287,7 +1315,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:precipitation_areas</Name>
       <Title>Precipitation map</Title>
       <CRS>CRS:27</CRS>
@@ -1320,7 +1349,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
         <Name>precipitation_thin_style</Name>
         <Title>Precipitation thin style</Title><Abstract>Precipitation isolines line width is 1 px</Abstract>
@@ -1344,7 +1373,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:precipitation_modified</Name>
       <Title>Demo product</Title>
       <CRS>CRS:27</CRS>
@@ -1377,7 +1407,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -1387,7 +1417,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:roadcloud5min</Name>
       <Title>RoadCloud obervations for 5 minute period</Title>
       <CRS>CRS:27</CRS>
@@ -1420,7 +1451,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1224514.39873" miny="6274861.39401" maxx="3784862.68697" maxy="12515545.2125"/>
       <BoundingBox CRS="EPSG:4258" minx="-11" miny="49" maxx="34" maxy="74"/>
       <BoundingBox CRS="EPSG:4326" minx="-11" miny="49" maxx="34" maxy="74"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2019-03-25T09:00:00Z/2019-03-25T09:05:00Z/PT5M</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2019-03-25T09:00:00Z/2019-03-25T09:05:00Z/PT5M</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -1430,7 +1461,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:snow_drift_index</Name>
       <Title>HARMONIE Snow Drift Index</Title>
       <Abstract>Snow drift index from HARMONIE forecast model</Abstract>
@@ -1464,7 +1496,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -1474,7 +1506,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:t2m</Name>
       <Title>Demo product</Title>
       <CRS>CRS:27</CRS>
@@ -1507,7 +1540,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
         <Name>temperature_two_degrees</Name>
         <Title>Temperature isobands every two degrees</Title><Abstract>Temperature isoband width is two degrees</Abstract>
@@ -1538,7 +1571,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:t2m_isoband_labels</Name>
       <Title>How to change labels from isoband settings</Title>
       <CRS>CRS:27</CRS>
@@ -1571,7 +1605,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -1581,7 +1615,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:t2m_p</Name>
       <Title>Demo product</Title>
       <CRS>CRS:27</CRS>
@@ -1614,7 +1649,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -1624,7 +1659,8 @@
         </LegendURL>
       </Style>
     </Layer>
-    <Layer>
+    
+    <Layer queryable="1">
       <Name>test:temperature_isotherm</Name>
       <Title>Temperature isotherm</Title>
       <Abstract>Temperature isotherm</Abstract>
@@ -1656,9 +1692,10 @@
       <BoundingBox CRS="EPSG:3857" minx="1004484.87426" miny="7192406.47349" maxx="2499117.68086" maxy="9086905.12844"/>
       <BoundingBox CRS="EPSG:4258" minx="9.02344115211" miny="54.1173189013" maxx="22.4499560953" maxy="62.9455216043"/>
       <BoundingBox CRS="EPSG:4326" minx="9.02344115211" miny="54.1173189013" maxx="22.4499560953" maxy="62.9455216043"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2012-02-27T14:22:00Z</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2012-02-27T14:22:00Z</Dimension>
       
     </Layer>
+    
     <Layer queryable="1" cascaded="1" opaque="0" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
       <Name>test:wind</Name>
       <Title>Wind demo</Title>
@@ -1697,7 +1734,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -1707,6 +1744,7 @@
         </LegendURL>
       </Style>
     </Layer>
+    
     <Layer queryable="1" cascaded="1" opaque="0" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
       <Name>test:windarrows</Name>
       <Title>Wind demo</Title>
@@ -1745,9 +1783,10 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
       
     </Layer>
+    
   </Layer>
 </Capability>
 </WMS_Capabilities>

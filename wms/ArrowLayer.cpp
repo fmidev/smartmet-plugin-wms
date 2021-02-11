@@ -746,10 +746,6 @@ void ArrowLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       v = json.asString();
 
-    json = theJson.get("level", nulljson);
-    if (!json.isNull())
-      level = json.asDouble();
-
     json = theJson.get("symbol", nulljson);
     if (!json.isNull())
       symbol = json.asString();

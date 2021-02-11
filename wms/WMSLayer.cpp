@@ -910,7 +910,8 @@ void replace_translations(const std::map<std::string, std::string>& sourceTransl
 
 // Remember to run updateLayerMetaData before using the layer!
 WMSLayer::WMSLayer(const WMSConfig& config)
-    : wmsConfig(config),
+    : queryable(true),
+      wmsConfig(config),
       hidden(false),
       metadataTimestamp(boost::posix_time::not_a_date_time),
       metadataUpdateInterval(5)
@@ -1239,12 +1240,43 @@ bool WMSLayer::isValidStyle(const std::string& theStyle) const
   }
 }
 
-bool WMSLayer::isValidTime(const boost::posix_time::ptime& theTime) const
+bool WMSLayer::isValidElevation(int theElevation) const
 {
   try
   {
-    if (timeDimension)
-      return timeDimension->isValidTime(theTime);
+    if (elevationDimension)
+      return elevationDimension->isValidElevation(theElevation);
+    else
+      return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Validating time failed!");
+  }
+}
+
+bool WMSLayer::isValidReferenceTime(const boost::posix_time::ptime& theReferenceTime) const
+{
+  try
+  {
+    if (timeDimensions)
+      return timeDimensions->isValidReferenceTime(theReferenceTime);
+    else
+      return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Validating reference time failed!");
+  }
+}
+
+bool WMSLayer::isValidTime(const boost::posix_time::ptime& theTime,
+                           const boost::optional<boost::posix_time::ptime>& theReferenceTime) const
+{
+  try
+  {
+    if (timeDimensions)
+      return timeDimensions->isValidTime(theTime, theReferenceTime);
     else
       return true;
   }
@@ -1259,7 +1291,7 @@ bool WMSLayer::currentValue() const
   try
   {
     // if time dimension is not present, time-option is irrelevant
-    return (timeDimension ? timeDimension->currentValue() : true);
+    return (timeDimensions ? timeDimensions->currentValue() : true);
   }
   catch (...)
   {
@@ -1267,11 +1299,13 @@ bool WMSLayer::currentValue() const
   }
 }
 
-boost::posix_time::ptime WMSLayer::mostCurrentTime() const
+boost::posix_time::ptime WMSLayer::mostCurrentTime(
+    const boost::optional<boost::posix_time::ptime>& reference_time) const
 {
   try
   {
-    return (timeDimension ? timeDimension->mostCurrentTime() : boost::posix_time::not_a_date_time);
+    return (timeDimensions ? timeDimensions->mostCurrentTime(reference_time)
+                           : boost::posix_time::not_a_date_time);
   }
   catch (...)
   {
@@ -1358,10 +1392,10 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
     if (layer.itsStyles.size() > 0)
       ost << " \ncustomer: " << layer.customer << "\n";
 
-    if (layer.timeDimension)
-      ost << "timeDimension: " << layer.timeDimension;
+    if (layer.timeDimensions)
+      ost << "timeDimensions: " << layer.timeDimensions;
     else
-      ost << "timeDimension: -";
+      ost << "timeDimensions: -";
 
     ost << "*******************************" << std::endl;
 
@@ -1425,8 +1459,335 @@ void WMSLayer::initProjectedBBoxes()
   }
 }
 
+boost::optional<CTPP::CDT> WMSLayer::getLayerBaseInfo() const
+{
+  try
+  {
+    if (hidden)
+      return {};
+
+    CTPP::CDT layer(CTPP::CDT::HASH_VAL);
+
+    // Layer name, title and abstract
+    if (!name.empty())
+      layer["name"] = name;
+    if (title)
+      layer["title"] = *title;
+    if (abstract)
+      layer["abstract"] = *abstract;
+    if (opaque)
+      layer["opaque"] = *opaque;
+    if (queryable)
+      layer["queryable"] = *queryable;
+    if (cascaded)
+      layer["cascaded"] = *cascaded;
+    if (no_subsets)
+      layer["no_subsets"] = *no_subsets;
+    if (fixed_width)
+      layer["fixed_width"] = *fixed_width;
+    if (fixed_height)
+      layer["fixed_height"] = *fixed_height;
+
+    return layer;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to generate capabilities for the layer!");
+  }
+}
+
+boost::optional<CTPP::CDT> WMSLayer::getGeographicBoundingBoxInfo() const
+{
+  try
+  {
+    if (hidden)
+      return {};
+
+    // Layer geographic bounding boxes
+    CTPP::CDT layer(CTPP::CDT::HASH_VAL);
+
+    CTPP::CDT layer_bbox(CTPP::CDT::HASH_VAL);
+    layer_bbox["west_bound_longitude"] = clamp_longitude(geographicBoundingBox.xMin);
+    layer_bbox["east_bound_longitude"] = clamp_longitude(geographicBoundingBox.xMax);
+    layer_bbox["south_bound_latitude"] = clamp_latitude(geographicBoundingBox.yMin);
+    layer_bbox["north_bound_latitude"] = clamp_latitude(geographicBoundingBox.yMax);
+    layer["ex_geographic_bounding_box"] = layer_bbox;
+
+    return layer;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to generate capabilities for the layer!");
+  }
+}
+
+boost::optional<CTPP::CDT> WMSLayer::getProjectedBoundingBoxInfo() const
+{
+  try
+  {
+    if (hidden)
+      return {};
+
+    CTPP::CDT layer(CTPP::CDT::HASH_VAL);
+
+    // Layer CRS list and their bounding boxes
+    if (!refs.empty())
+    {
+      CTPP::CDT layer_crs_list(CTPP::CDT::ARRAY_VAL);
+      CTPP::CDT layer_bbox_list(CTPP::CDT::ARRAY_VAL);
+
+      for (const auto& id_ref : refs)
+      {
+        const auto& id = id_ref.first;
+        const auto& ref = id_ref.second;
+
+        if (!isValidCRS(id))
+          continue;
+
+        CTPP::CDT layer_bbox(CTPP::CDT::HASH_VAL);
+
+        layer_bbox["crs"] = id;
+
+        if (ref.geographic)
+        {
+          layer_crs_list.PushBack(id);
+          layer_bbox["minx"] = geographicBoundingBox.xMin;
+          layer_bbox["miny"] = geographicBoundingBox.yMin;
+          layer_bbox["maxx"] = geographicBoundingBox.xMax;
+          layer_bbox["maxy"] = geographicBoundingBox.yMax;
+          layer_bbox_list.PushBack(layer_bbox);
+        }
+        else
+        {
+          auto pos = projected_bbox.find(id);
+
+          if (pos != projected_bbox.end())
+          {
+            // Acceptable CRS
+            layer_crs_list.PushBack(id);
+
+            layer_bbox["minx"] = pos->second.west;
+            layer_bbox["miny"] = pos->second.south;
+            layer_bbox["maxx"] = pos->second.east;
+            layer_bbox["maxy"] = pos->second.north;
+            layer_bbox_list.PushBack(layer_bbox);
+          }
+        }
+      }
+
+      if (layer_crs_list.Size() > 0)
+      {
+        layer["crs"] = layer_crs_list;
+        layer["bounding_box"] = layer_bbox_list;
+      }
+    }
+    return layer;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to generate capabilities for the layer!");
+  }
+}
+
+boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
+    const boost::optional<std::string>& starttime,
+    const boost::optional<std::string>& endtime,
+    const boost::optional<std::string>& reference_time) const
+{
+  try
+  {
+    if (hidden)
+      return {};
+
+    CTPP::CDT layer(CTPP::CDT::HASH_VAL);
+
+    CTPP::CDT layer_dimension_list(CTPP::CDT::ARRAY_VAL);
+    if (timeDimensions)
+    {
+      if (reference_time)
+      {
+        boost::posix_time::ptime ref_time = Fmi::TimeParser::parse(*reference_time);
+        // Show time dimension of reference time
+
+        if (timeDimensions->origintimeOK(ref_time))
+        {
+          const WMSTimeDimension& td = timeDimensions->getTimeDimension(ref_time);
+          CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
+          layer_dimension["name"] = "time";
+          layer_dimension["units"] = "ISO8601";
+          layer_dimension["multiple_values"] = 0;
+          layer_dimension["nearest_value"] = 0;
+          layer_dimension["current"] = (td.currentValue() ? 1 : 0);
+          layer_dimension["value"] = td.getCapabilities(starttime, endtime);  // a string
+          CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
+          reference_time_dimension["name"] = "reference_time";
+          reference_time_dimension["units"] = "ISO8601";
+          reference_time_dimension["multiple_values"] = 0;
+          reference_time_dimension["nearest_value"] = 0;
+          reference_time_dimension["value"] = (Fmi::to_iso_extended_string(ref_time) + "Z");
+          layer_dimension_list.PushBack(layer_dimension);
+          layer_dimension_list.PushBack(reference_time_dimension);
+        }
+      }
+      else
+      {
+        const WMSTimeDimension& td = timeDimensions->getDefaultTimeDimension();
+        CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
+        layer_dimension["name"] = "time";
+        layer_dimension["units"] = "ISO8601";
+        layer_dimension["multiple_values"] = 0;
+        layer_dimension["nearest_value"] = 0;
+        layer_dimension["current"] = (td.currentValue() ? 1 : 0);
+        layer_dimension["value"] = td.getCapabilities(starttime, endtime);  // a string
+        CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
+        const std::vector<boost::posix_time::ptime>& origintimes = timeDimensions->getOrigintimes();
+        bool showOrigintimes = !origintimes.empty() && !origintimes.front().is_not_a_date_time();
+        if (showOrigintimes)
+        {
+          StepTimeDimension orgintimesDimension(timeDimensions->getOrigintimes());
+          reference_time_dimension["name"] = "reference_time";
+          reference_time_dimension["units"] = "ISO8601";
+          reference_time_dimension["multiple_values"] = 0;
+          reference_time_dimension["nearest_value"] = 0;
+          reference_time_dimension["current"] = 1;
+          reference_time_dimension["default"] =
+              (Fmi::to_iso_extended_string(orgintimesDimension.mostCurrentTime()) + "Z");
+          boost::optional<std::string> t;
+          reference_time_dimension["value"] = orgintimesDimension.getCapabilities(t, t);
+        }
+        layer_dimension_list.PushBack(layer_dimension);
+        if (showOrigintimes)
+          layer_dimension_list.PushBack(reference_time_dimension);
+      }
+    }
+
+    if (layer_dimension_list.Size() > 0)
+      layer["time_dimension"] = layer_dimension_list;
+
+    return layer;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to generate capabilities for the layer!");
+  }
+}
+
+boost::optional<CTPP::CDT> WMSLayer::getReferenceDimensionInfo() const
+{
+  try
+  {
+    if (hidden)
+      return {};
+
+    CTPP::CDT layer(CTPP::CDT::HASH_VAL);
+
+    CTPP::CDT layer_dimension_list(CTPP::CDT::ARRAY_VAL);
+    if (timeDimensions)
+    {
+      CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
+      const std::vector<boost::posix_time::ptime>& origintimes = timeDimensions->getOrigintimes();
+      bool showOrigintimes = !origintimes.empty() && !origintimes.front().is_not_a_date_time();
+      if (showOrigintimes)
+      {
+        StepTimeDimension orgintimesDimension(timeDimensions->getOrigintimes());
+        reference_time_dimension["name"] = "reference_time";
+        reference_time_dimension["units"] = "ISO8601";
+        reference_time_dimension["multiple_values"] = 0;
+        reference_time_dimension["nearest_value"] = 0;
+        reference_time_dimension["current"] = 1;
+        reference_time_dimension["default"] =
+            (Fmi::to_iso_extended_string(orgintimesDimension.mostCurrentTime()) + "Z");
+        boost::optional<std::string> t;
+        reference_time_dimension["value"] = orgintimesDimension.getCapabilities(t, t);
+      }
+      if (showOrigintimes)
+        layer_dimension_list.PushBack(reference_time_dimension);
+    }
+
+    if (layer_dimension_list.Size() > 0)
+      layer["time_dimension"] = layer_dimension_list;
+
+    return layer;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to generate capabilities for the layer!");
+  }
+}
+
+boost::optional<CTPP::CDT> WMSLayer::getElevationDimensionInfo() const
+{
+  try
+  {
+    if (hidden)
+      return {};
+
+    CTPP::CDT layer(CTPP::CDT::HASH_VAL);
+    CTPP::CDT layer_dimension_list(CTPP::CDT::ARRAY_VAL);
+
+    if (elevationDimension && elevationDimension->isOK())
+    {
+      CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
+      layer_dimension["name"] = "elevation";
+      layer_dimension["units"] = elevationDimension->getLevelName();
+      layer_dimension["unit_symbol"] = elevationDimension->getUnitSymbol();
+      layer_dimension["multiple_values"] = 0;
+      layer_dimension["nearest_value"] = 0;
+      layer_dimension["default"] = elevationDimension->getDefaultElevation();
+      layer_dimension["value"] = elevationDimension->getCapabilities();
+      layer_dimension_list.PushBack(layer_dimension);
+    }
+
+    if (layer_dimension_list.Size() > 0)
+      layer["elevation_dimension"] = layer_dimension_list;
+
+    return layer;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to generate capabilities for the layer!");
+  }
+}
+
+boost::optional<CTPP::CDT> WMSLayer::getStyleInfo() const
+{
+  try
+  {
+    if (hidden)
+      return {};
+
+    CTPP::CDT layer(CTPP::CDT::HASH_VAL);
+
+    // Layer styles
+    if (!itsStyles.empty())
+    {
+      CTPP::CDT layer_style_list(CTPP::CDT::ARRAY_VAL);
+      for (const auto& style : itsStyles)
+      {
+        layer_style_list.PushBack(style.getCapabilities());
+      }
+      if (layer_style_list.Size() > 0)
+        layer["style"] = layer_style_list;
+    }
+
+    return layer;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to generate capabilities for the layer!");
+  }
+}
+
+const boost::shared_ptr<WMSTimeDimensions>& WMSLayer::getTimeDimensions() const
+{
+  return timeDimensions;
+}
+
 boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
-    const boost::optional<std::string>& starttime, const boost::optional<std::string>& endtime)
+    const Engine::Gis::Engine& gisengine,
+    const boost::optional<std::string>& starttime,
+    const boost::optional<std::string>& endtime,
+    const boost::optional<std::string>& reference_time)
 {
   try
   {
@@ -1527,19 +1888,19 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
     // Layer dimensions
 
-    if (timeDimension)
+    if (timeDimensions)
     {
       CTPP::CDT layer_dimension_list(CTPP::CDT::ARRAY_VAL);
       CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
+      const WMSTimeDimension& td = timeDimensions->getDefaultTimeDimension();
       layer_dimension["name"] = "time";
       layer_dimension["units"] = "ISO8601";
       layer_dimension["multiple_values"] = 0;
       layer_dimension["nearest_value"] = 0;
-      layer_dimension["current"] = (timeDimension->currentValue() ? 1 : 0);
-
-      layer_dimension["value"] = timeDimension->getCapabilities(starttime, endtime);  // a string
+      layer_dimension["current"] = (td.currentValue() ? 1 : 0);
+      layer_dimension["value"] = td.getCapabilities(starttime, endtime);  // a string
       layer_dimension_list.PushBack(layer_dimension);
-      layer["dimension"] = layer_dimension_list;
+      layer["time_dimension"] = layer_dimension_list;
     }
 
     // Layer attribution
@@ -1692,6 +2053,53 @@ void WMSLayer::setCustomer(const std::string& c)
 
     throw Fmi::Exception(BCP, "Missing legend template file(s): " + missingTemplateFiles + "!");
   }
+}
+
+bool WMSLayer::identicalGeographicBoundingBox(const WMSLayer& layer) const
+{
+  return geographicBoundingBox == layer.geographicBoundingBox;
+}
+
+bool WMSLayer::identicalProjectedBoundingBox(const WMSLayer& layer) const
+{
+  for (const auto& item : projected_bbox)
+  {
+    if (layer.projected_bbox.find(item.first) == layer.projected_bbox.end())
+      return false;
+    const Engine::Gis::BBox& bbox1 = item.second;
+    const Engine::Gis::BBox& bbox2 = layer.projected_bbox.at(item.first);
+    if (bbox1.west != bbox2.west || bbox1.east != bbox2.east || bbox1.south != bbox2.south ||
+        bbox1.north != bbox2.north)
+      return false;
+  }
+
+  return true;
+}
+
+bool WMSLayer::identicalTimeDimension(const WMSLayer& layer) const
+{
+  // If both are nullptr -> identical
+  if (layer.timeDimensions == nullptr && timeDimensions == nullptr)
+    return true;
+
+  // If one is nullptr -> not identical
+  if (layer.timeDimensions == nullptr || timeDimensions == nullptr)
+    return false;
+
+  return layer.timeDimensions->isIdentical(*timeDimensions);
+}
+
+bool WMSLayer::identicalElevationDimension(const WMSLayer& layer) const
+{
+  // If both are nullptr -> identical
+  if (layer.elevationDimension == nullptr && elevationDimension == nullptr)
+    return true;
+
+  // If one is nullptr -> not identical
+  if (layer.elevationDimension == nullptr || elevationDimension == nullptr)
+    return false;
+
+  return layer.elevationDimension->isIdentical(*elevationDimension);
 }
 
 }  // namespace WMS

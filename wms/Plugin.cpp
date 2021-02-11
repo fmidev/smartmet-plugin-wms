@@ -1301,7 +1301,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
       return handleWmsException(ex, theState, thisRequest, theResponse);
     }
 
-    // Catch other errors and handle them with handleEmsException
+    // Catch other errors and handle them with handleWmsException
     try
     {
       Json::Value json;

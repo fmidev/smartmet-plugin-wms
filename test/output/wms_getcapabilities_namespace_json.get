@@ -146,6 +146,7 @@
 		[
 			{
 				"Title": "ELY map",
+				"queryable": 1,
 				"Name": "ely:elymap",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -249,6 +250,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					
@@ -275,6 +277,7 @@
 			},
 			{
 				"Title": "ELY map",
+				"queryable": 1,
 				"Name": "ely:wmsmap",
 				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -378,6 +381,7 @@
 						"units": "ISO8601",
 						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
 						"multipleValues": 0,
+						"nearestValue": 0,
 						"current": 1
 					}
 					

@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "WMSElevationDimension.h"
 #include "WMSLayerStyle.h"
 #include "WMSLegendGraphicInfo.h"
 #include "WMSLegendGraphicSettings.h"
@@ -70,11 +71,12 @@ class WMSLayer
   std::set<std::string> disabled_refs;
 
   std::vector<WMSLayerStyle> itsStyles;
-  boost::shared_ptr<WMSTimeDimension> timeDimension;  // Optional, may be empty for non-temporal
-                                                      // postgis layers
+  boost::shared_ptr<WMSTimeDimensions> timeDimensions{
+      nullptr};  // Optional, may be empty for non-temporal postgis layers
+  boost::shared_ptr<WMSElevationDimension> elevationDimension{nullptr};  // Optional
+
   std::string customer;
   std::string productFile;  // dali product
-  //  LegendGraphicInfo legendGraphicInfo;
   NamedLegendGraphicInfo itsNamedLegendGraphicInfo;
   WMSLegendGraphicSettings itsLegendGraphicSettings;
 
@@ -84,6 +86,12 @@ class WMSLayer
  public:
   virtual ~WMSLayer() = default;
   WMSLayer(const WMSConfig& config);
+
+  bool identicalRefs(const WMSLayer& layer) const;
+  bool identicalGeographicBoundingBox(const WMSLayer& layer) const;
+  bool identicalProjectedBoundingBox(const WMSLayer& layer) const;
+  bool identicalTimeDimension(const WMSLayer& layer) const;
+  bool identicalElevationDimension(const WMSLayer& layer) const;
 
   void addStyle(const Json::Value& root,
                 const std::string& layerName,
@@ -100,17 +108,37 @@ class WMSLayer
 
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;
-  bool isValidTime(const boost::posix_time::ptime& theTime) const;
-  bool isTemporal() const { return timeDimension != nullptr; }
+  bool isValidTime(const boost::posix_time::ptime& theTime,
+                   const boost::optional<boost::posix_time::ptime>& theReferenceTime) const;
+  bool isValidReferenceTime(const boost::posix_time::ptime& theReferenceTime) const;
+  bool isValidElevation(int theElevation) const;
+  bool isTemporal() const { return timeDimensions != nullptr; }
   bool currentValue() const;  // returns true if current value can be queried from layer
                               // (time=current)
 
   // returns the most current valid time for the layer
-  boost::posix_time::ptime mostCurrentTime() const;
+  boost::posix_time::ptime mostCurrentTime(
+      const boost::optional<boost::posix_time::ptime>& reference_time) const;
 
   // Empty for hidden layers
-  boost::optional<CTPP::CDT> generateGetCapabilities(const boost::optional<std::string>& starttime,
-                                                     const boost::optional<std::string>& endtime);
+
+  boost::optional<CTPP::CDT> generateGetCapabilities(
+      const Engine::Gis::Engine& gisengine,
+      const boost::optional<std::string>& starttime,
+      const boost::optional<std::string>& endtime,
+      const boost::optional<std::string>& reference_time);
+
+  boost::optional<CTPP::CDT> getLayerBaseInfo() const;
+  boost::optional<CTPP::CDT> getGeographicBoundingBoxInfo() const;
+  boost::optional<CTPP::CDT> getProjectedBoundingBoxInfo() const;
+  boost::optional<CTPP::CDT> getTimeDimensionInfo(
+      const boost::optional<std::string>& starttime,
+      const boost::optional<std::string>& endtime,
+      const boost::optional<std::string>& reference_time) const;
+  boost::optional<CTPP::CDT> getReferenceDimensionInfo() const;
+  boost::optional<CTPP::CDT> getElevationDimensionInfo() const;
+  boost::optional<CTPP::CDT> getStyleInfo() const;
+  const boost::shared_ptr<WMSTimeDimensions>& getTimeDimensions() const;
 
   // To be called after crs and crs_bbox have been initialized
   void initProjectedBBoxes();

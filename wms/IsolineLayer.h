@@ -35,7 +35,6 @@ class IsolineLayer : public Layer
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   boost::optional<std::string> parameter;
-  boost::optional<double> level;
   std::vector<Isoline> isolines;
   Smoother smoother;
   int extrapolation = 0;

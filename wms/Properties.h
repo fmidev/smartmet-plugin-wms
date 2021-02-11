@@ -42,6 +42,7 @@ class Properties
 
   boost::optional<std::string> language;
   boost::optional<std::string> producer;
+  boost::optional<double> level;
 
   // Wanted origintime. Use latest if omitted
   boost::optional<boost::posix_time::ptime> origintime;
