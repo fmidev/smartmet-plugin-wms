@@ -51,7 +51,7 @@ fi
 cmp --quiet $RESULT $EXPECTED
 if [[ $? -eq 0 ]]; then
     echo "OK"
-    rm -f $RESULT
+    rm -f $RESULT $RESULT_PNG
     exit 0
 fi
 
@@ -98,8 +98,7 @@ if ! echo "$DBZ" | grep -Eq '^(inf|[\+\-]?[0-9][0-9]*(\.[0-9]*)?)$' ; then
     exit 1
 elif [ "$DBZ" = inf ]; then
     echo -e "OK\t\tPSNR = inf"
-    composite $EXPECTED_PNG $RESULT_PNG -compose DIFFERENCE png:- | \
-	convert - -contrast-stretch 0 $DIFFERENCE_PNG
+    rm -f $RESULT_PNG $EXPECTED_PNG
     exit 0
 elif [ $(echo "$DBZ >= 50" | bc) = 1 ]; then
     echo -e "OK\t\tPNSR = $DBZ dB"
