@@ -4,6 +4,8 @@ symbols_coloured_fin.get
 symbols_coloured_native.get
 symbols_coloured_webmercator.get
 symbols_coloured_wgs84.get
+; Half of the image is missing
+ec_world_wgs84_pacific.get
 ; Too large SVG
 ec_world_webmercator.get
 ; Maps not working yet
