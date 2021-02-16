@@ -5,8 +5,8 @@
 #include "State.h"
 #include <ctpp2/CDT.hpp>
 #include <gis/Box.h>
-#include <macgyver/StringConversion.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 
 namespace SmartMet
 {
@@ -50,7 +50,6 @@ void BackgroundLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, S
 
     // Establish the data in case it is needed for the size
 
-
     bool has_data_proj = (projection.crs && *projection.crs == "data");
 
     // Update projection from querydata if necessary
@@ -67,8 +66,9 @@ void BackgroundLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, S
       }
     }
 
-    auto crs = projection.getCRS();
-    auto box = projection.getBox();
+    projection.update(q);
+    // const auto& crs = projection.getCRS();
+    const auto& box = projection.getBox();
 
     // Update the globals
 

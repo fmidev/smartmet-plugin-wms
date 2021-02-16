@@ -1,0 +1,34 @@
+{
+  "title": "EC world Pacific View",
+  "producer": "ecmwf_maailma_pinta",
+  "projection": {
+      "crs": "+init=epsg:4087 +lon_0=180",
+      "bboxcrs": "WGS84",
+      "x1": 0,
+      "y1": -90,
+      "x2": 359.75,
+      "y2": 90,
+      "xsize": 1440,
+      "ysize": 720
+  },
+  "views": [
+    {
+      "qid": "v1",
+      "attributes": {
+        "id": "view1"
+      },
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "isobands": "json:isobands/temperature.json",
+          "css": "isobands/temperature.css",
+          "parameter": "Temperature",
+          "attributes": {
+            "id": "t2m_isobands"
+          }
+        }
+      ]
+    }
+  ]
+}

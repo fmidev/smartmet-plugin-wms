@@ -29,7 +29,8 @@ class CDT;
 namespace Fmi
 {
 class Box;
-}
+class Spatialreference;
+}  // namespace Fmi
 
 namespace SmartMet
 {
@@ -83,10 +84,8 @@ class Layer : public Properties
   Fmi::Box getClipBox(const Fmi::Box& theBox) const;
 
   // Generate bounding box for fetching observations
-  std::map<std::string, double> getClipBoundingBox(
-      const Fmi::Box& theBox,
-      const State& theState,
-      const std::shared_ptr<OGRSpatialReference>& theCRS) const;
+  std::map<std::string, double> getClipBoundingBox(const Fmi::Box& theBox,
+                                                   const Fmi::SpatialReference& theCRS) const;
 
   // Layer specific settings
   std::string qid;

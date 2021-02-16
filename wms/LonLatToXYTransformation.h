@@ -5,6 +5,7 @@
 #include "State.h"
 #include <boost/move/unique_ptr.hpp>
 #include <gis/Box.h>
+#include <gis/CoordinateTransformation.h>
 
 namespace SmartMet
 {
@@ -17,13 +18,13 @@ class State;
 class LonLatToXYTransformation
 {
  public:
-  LonLatToXYTransformation(const Projection& projection, const State& theState);
+  LonLatToXYTransformation(const Projection& projection);
 
   void transform(double longitude, double latitude, double& x, double& y);
   void transform(double& inoutX, double& inoutY);
 
  private:
-  boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation;
+  Fmi::CoordinateTransformation transformation;
   const Fmi::Box& box;
 };
 }  // namespace Dali

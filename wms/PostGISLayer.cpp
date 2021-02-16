@@ -1,12 +1,10 @@
 #include "PostGISLayer.h"
-
 #include "Geometry.h"
 #include "State.h"
-
 #include <ctpp2/CDT.hpp>
-
 #include <engines/gis/MapOptions.h>
 #include <gis/OGR.h>
+#include <ogr_geometry.h>
 #include <macgyver/Exception.h>
 
 namespace SmartMet
@@ -41,7 +39,7 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     if (!projection.crs)
       throw Fmi::Exception(BCP, "PostGISLayer projection not set");
 
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
 
     // Update the globals
     if (css)
@@ -81,7 +79,7 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       else if (filter.where)
         mapOptions.where = filter.where;
 
-      OGRGeometryPtr geom = getShape(theState, crs.get(), mapOptions);
+      OGRGeometryPtr geom = getShape(theState, crs, mapOptions);
 
       if (geom && geom->IsEmpty() == 0)
       {
@@ -97,9 +95,9 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
           CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
           map_cdt["iri"] = iri;
-          map_cdt["type"] = Geometry::name(*geom, theState);
+          map_cdt["type"] = Geometry::name(*geom, theState.getType());
           map_cdt["layertype"] = "postgis";
-          map_cdt["data"] = Geometry::toString(*geom, theState, box, crs, precision);
+          map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
           theState.addPresentationAttributes(map_cdt, css, attributes);
           theGlobals["paths"][iri] = map_cdt;
 

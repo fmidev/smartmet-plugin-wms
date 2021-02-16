@@ -4,11 +4,13 @@
 #include "Projection.h"
 #include <boost/move/make_unique.hpp>
 #include <engines/querydata/ParameterOptions.h>
+#include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <grid-files/identification/GridDef.h>
-#include <spine/Convenience.h>
 #include <macgyver/Exception.h>
+#include <spine/Convenience.h>
 #include <spine/ParameterFactory.h>
+#include <iomanip>
 #include <stdexcept>
 
 namespace SmartMet
@@ -303,12 +305,12 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
           BCP, "Cannot specify position offsets using both direction and the u- and v-components!");
 
     if ((!u.empty() && v.empty()) || (!v.empty() && u.empty()))
-      throw Fmi::Exception(
-          BCP, "Cannot specify only one of u- and v-components for position offsets!");
+      throw Fmi::Exception(BCP,
+                           "Cannot specify only one of u- and v-components for position offsets!");
 
     if (directionoffset != 0 && direction.empty() && u.empty() && v.empty())
       throw Fmi::Exception(BCP,
-                             "Must specify direction parameter for direction offset of positions!");
+                           "Must specify direction parameter for direction offset of positions!");
   }
   catch (...)
   {
@@ -340,7 +342,7 @@ void Positions::init(const boost::optional<std::string>& theProducer,
 
     if (insidemap)
     {
-      inshape = gisengine->getShape(theProjection.getCRS().get(), insidemap->options);
+      inshape = gisengine->getShape(&theProjection.getCRS(), insidemap->options);
       if (!inshape)
         throw Fmi::Exception(BCP, "Positions received empty inside-shape from database!");
 
@@ -350,7 +352,7 @@ void Positions::init(const boost::optional<std::string>& theProducer,
 
     if (outsidemap)
     {
-      outshape = gisengine->getShape(theProjection.getCRS().get(), outsidemap->options);
+      outshape = gisengine->getShape(&theProjection.getCRS(), outsidemap->options);
 
       // This does not obey layer margings, hence we disable this speed optimization
       // if (outshape)
@@ -384,7 +386,7 @@ void Positions::addMargins(int theXMargin, int theYMargin)
 // ----------------------------------------------------------------------
 
 Positions::Points Positions::getPoints(const Engine::Querydata::Q& theQ,
-                                       const std::shared_ptr<OGRSpatialReference>& theCRS,
+                                       const Fmi::SpatialReference& theCRS,
                                        const Fmi::Box& theBox,
                                        bool forecastMode) const
 {
@@ -465,7 +467,7 @@ Positions::Points Positions::getPoints(const char* originalCrs,
 // ----------------------------------------------------------------------
 
 Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
-                                           const std::shared_ptr<OGRSpatialReference>& theCRS,
+                                           const Fmi::SpatialReference& theCRS,
                                            const Fmi::Box& theBox,
                                            bool forecastMode) const
 {
@@ -473,15 +475,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
   {
     // Get the data projection
 
-    auto wgs84 = gisengine->getSpatialReference("WGS84");
-
-    // Create the coordinate transformation from image world coordinates to latlon
-
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(theCRS.get(), wgs84.get()));
-    if (transformation == nullptr)
-      throw Fmi::Exception(
-          BCP, "Failed to create the needed coordinate transformation for position generation!");
+    Fmi::CoordinateTransformation transformation(theCRS, "WGS84");
 
     // Use defaults for this layout if nothing is specified
 
@@ -545,7 +539,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
 
         // Convert world coordinate to latlon, skipping points which cannot be handled
 
-        if (transformation->Transform(1, &xcoord, &ycoord) == 0)
+        if (!transformation.transform(xcoord, ycoord))
           continue;
 
         points.emplace_back(Point(xpos, ypos, NFmiPoint(xcoord, ycoord)));
@@ -569,7 +563,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
 // ----------------------------------------------------------------------
 
 Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
-                                           const std::shared_ptr<OGRSpatialReference>& theCRS,
+                                           const Fmi::SpatialReference& theCRS,
                                            const Fmi::Box& theBox,
                                            bool forecastMode) const
 {
@@ -581,45 +575,28 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
 
   try
   {
-    // Get the data projection
+    // Create the coordinate transformation from querydata world coordinates
+    // to image world coordinates
 
-    std::shared_ptr<OGRSpatialReference> qcrs;
-
-    if (theQ->isArea())
-      qcrs = gisengine->getSpatialReference(theQ->area().WKT());
-    else
-      qcrs = gisengine->getSpatialReference("WGS84");
-
-    qcrs->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-
-    // Create the coordinate transformation from image world coordinates
-    // to querydata world coordinates
-
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(theCRS.get(), qcrs.get()));
-    if (transformation == nullptr)
-      throw Fmi::Exception(
-          BCP, "Failed to create the needed coordinate transformation for generating positions!");
+    Fmi::CoordinateTransformation transformation(theQ->SpatialReference(), theCRS);
 
     // Generate the grid coordinates
 
     Points points;
 
-    auto shared_latlons = theQ->latLonCache();
-
-    for (const auto& latlon : *shared_latlons)
+    for (theQ->resetLocation(); theQ->nextLocation();)
     {
-      // Convert latlon to world coordinate
+      NFmiPoint latlon = theQ->latLon();
+      NFmiPoint worldxy = theQ->worldXY();
 
-      NFmiPoint xy;
-      if (theCRS->IsGeographic() != 0)
-        xy = latlon;
-      else
-        xy = theQ->area().LatLonToWorldXY(latlon);
+      // Date world coordinate to image world coordinate
+      double xcoord = worldxy.X();
+      double ycoord = worldxy.Y();
 
-      // World coordinate to pixel coordinate
-      double xcoord = xy.X();
-      double ycoord = xy.Y();
+      if (!transformation.transform(xcoord, ycoord))
+        continue;
+
+      // Image world coordinate to pixel coordinate
       theBox.transform(xcoord, ycoord);
 
       int deltax = 0;
@@ -661,7 +638,7 @@ Positions::Points Positions::getDataPoints(const char* originalCrs,
     OGRErr err = qcrs->importFromEPSG(4326);
     if (err != OGRERR_NONE)
       throw Fmi::Exception(BCP,
-                             "GDAL does not understand this FMI WKT: " + std::string(originalCrs));
+                           "GDAL does not understand this FMI WKT: " + std::string(originalCrs));
     qcrs->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     // Create the coordinate transformation from image world coordinates
@@ -681,7 +658,8 @@ Positions::Points Positions::getDataPoints(const char* originalCrs,
 
     T::Coordinate_svec originalCoordinates;
     if (originalGeometryId > 0)
-      originalCoordinates = Identification::gridDef.getGridLatLonCoordinatesByGeometryId(originalGeometryId);
+      originalCoordinates =
+          Identification::gridDef.getGridLatLonCoordinatesByGeometryId(originalGeometryId);
 
     Points points;
     if (originalCoordinates)
@@ -730,25 +708,15 @@ Positions::Points Positions::getDataPoints(const char* originalCrs,
 // ----------------------------------------------------------------------
 
 Positions::Points Positions::getGraticulePoints(const Engine::Querydata::Q& theQ,
-                                                const std::shared_ptr<OGRSpatialReference>& theCRS,
+                                                const Fmi::SpatialReference& theCRS,
                                                 const Fmi::Box& theBox,
                                                 bool forecastMode) const
 {
   try
   {
-    // Set the graticule projection
-
-    auto wgs84 = gisengine->getSpatialReference("WGS84");
-    wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-
     // Create the coordinate transformation from WGS84 to projection coordinates
 
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
-    if (transformation == nullptr)
-      throw Fmi::Exception(BCP,
-                             "Failed to create the needed coordinate transformation for "
-                             "generating graticule positions");
+    Fmi::CoordinateTransformation transformation("WGS84", theCRS);
 
     // Generate the graticule coordinates.
 
@@ -763,7 +731,7 @@ Positions::Points Positions::getGraticulePoints(const Engine::Querydata::Q& theQ
           // latlon to world coordinate
           double xcoord = lon;
           double ycoord = lat;
-          if (transformation->Transform(1, &xcoord, &ycoord) == 0)
+          if (!transformation.transform(xcoord, ycoord))
             continue;
 
           // to pixel coordinate
@@ -803,27 +771,16 @@ Positions::Points Positions::getGraticulePoints(const Engine::Querydata::Q& theQ
  */
 // ----------------------------------------------------------------------
 
-Positions::Points Positions::getGraticuleFillPoints(
-    const Engine::Querydata::Q& theQ,
-    const std::shared_ptr<OGRSpatialReference>& theCRS,
-    const Fmi::Box& theBox,
-    bool forecastMode) const
+Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& theQ,
+                                                    const Fmi::SpatialReference& theCRS,
+                                                    const Fmi::Box& theBox,
+                                                    bool forecastMode) const
 {
   try
   {
-    // Set the graticule projection
-
-    auto wgs84 = gisengine->getSpatialReference("WGS84");
-    wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-
     // Create the coordinate transformation from WGS84 to projection coordinates
 
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
-    if (transformation == nullptr)
-      throw Fmi::Exception(BCP,
-                             "Failed to create the needed coordinate transformation for "
-                             "generating graticule positions!");
+    Fmi::CoordinateTransformation transformation("WGS84", theCRS);
 
     // Generate the graticule coordinates. Algorithm:
     //
@@ -854,13 +811,13 @@ Positions::Points Positions::getGraticuleFillPoints(
         double y4 = lat + size;
 
         // to projection coordinates
-        if (transformation->Transform(1, &x1, &y1) == 0)
+        if (!transformation.transform(x1, y1))
           continue;
-        if (transformation->Transform(1, &x2, &y2) == 0)
+        if (!transformation.transform(x2, y2))
           continue;
-        if (transformation->Transform(1, &x3, &y3) == 0)
+        if (!transformation.transform(x3, y3))
           continue;
-        if (transformation->Transform(1, &x4, &y4) == 0)
+        if (!transformation.transform(x4, y4))
           continue;
 
         // to pixel coordinates
@@ -899,7 +856,7 @@ Positions::Points Positions::getGraticuleFillPoints(
           double newx = newlon;
           double newy = newlat;
 
-          if (transformation->Transform(1, &newx, &newy) == 0)
+          if (!transformation.transform(newx, newy))
             continue;
           theBox.transform(newx, newy);
 
@@ -923,7 +880,7 @@ Positions::Points Positions::getGraticuleFillPoints(
           double newx = newlon;
           double newy = newlat;
 
-          if (transformation->Transform(1, &newx, &newy) == 0)
+          if (!transformation.transform(newx, newy))
             continue;
           theBox.transform(newx, newy);
 
@@ -953,7 +910,7 @@ Positions::Points Positions::getGraticuleFillPoints(
             double newx = newlon;
             double newy = newlat;
 
-            if (transformation->Transform(1, &newx, &newy) == 0)
+            if (!transformation.transform(newx, newy))
               continue;
             theBox.transform(newx, newy);
 
@@ -976,7 +933,7 @@ Positions::Points Positions::getGraticuleFillPoints(
     double newx = newlon;
     double newy = newlat;
 
-    if (transformation->Transform(1, &newx, &newy) == 0)
+    if (!transformation.transform(newx, newy))
     {
       int deltax = 0;
       if (dx)
@@ -1007,7 +964,7 @@ Positions::Points Positions::getGraticuleFillPoints(
 // ----------------------------------------------------------------------
 
 Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
-                                              const std::shared_ptr<OGRSpatialReference>& theCRS,
+                                              const Fmi::SpatialReference& theCRS,
                                               const Fmi::Box& theBox,
                                               bool forecastMode) const
 {
@@ -1024,17 +981,7 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
 
     // Keyword locations are in WGS84
 
-    auto wgs84 = gisengine->getSpatialReference("WGS84");
-    wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-
-    // Create the coordinate transformation from WGS84 to projection coordinates
-
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
-    if (transformation == nullptr)
-      throw Fmi::Exception(BCP,
-                             "Failed to create the needed coordinate transformation for "
-                             "generating keyword positions!");
+    Fmi::CoordinateTransformation transformation("WGS84", theCRS);
 
     Points points;
 
@@ -1048,7 +995,7 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
       // To world coordinate
       double xcoord = lon;
       double ycoord = lat;
-      if (transformation->Transform(1, &xcoord, &ycoord) == 0)
+      if (!transformation.transform(xcoord, ycoord))
         continue;
 
       // to pixel coordinate
@@ -1083,7 +1030,7 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
 // ----------------------------------------------------------------------
 
 Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
-                                             const std::shared_ptr<OGRSpatialReference>& theCRS,
+                                             const Fmi::SpatialReference& theCRS,
                                              const Fmi::Box& theBox,
                                              bool forecastMode) const
 {
@@ -1094,19 +1041,9 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
     if (locations.locations.empty())
       return points;
 
-    // Keyword locations are in WGS84
-
-    auto wgs84 = gisengine->getSpatialReference("WGS84");
-    wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-
     // Create the coordinate transformation from WGS84 to projection coordinates
 
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
-    if (transformation == nullptr)
-      throw Fmi::Exception(BCP,
-                             "Failed to create the needed coordinate transformation for "
-                             "generating latlon positions!");
+    Fmi::CoordinateTransformation transformation("WGS84", theCRS);
 
     // This loop order makes it easier to handle the poles only once
     for (const auto& location : locations.locations)
@@ -1121,7 +1058,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
       // To world coordinate
       double xcoord = lon;
       double ycoord = lat;
-      if (transformation->Transform(1, &xcoord, &ycoord) == 0)
+      if (!transformation.transform(xcoord, ycoord))
         continue;
 
       // to pixel coordinate
@@ -1165,7 +1102,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
 // ----------------------------------------------------------------------
 
 Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
-                                              const std::shared_ptr<OGRSpatialReference>& theCRS,
+                                              const Fmi::SpatialReference& theCRS,
                                               const Fmi::Box& theBox,
                                               bool forecastMode) const
 {
@@ -1181,19 +1118,9 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
     if (stations.empty())
       return points;
 
-    // Station coordinates are in WGS84
-
-    auto wgs84 = gisengine->getSpatialReference("WGS84");
-    wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-
     // Create the coordinate transformation from WGS84 to projection coordinates
 
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(wgs84.get(), theCRS.get()));
-    if (transformation == nullptr)
-      throw Fmi::Exception(BCP,
-                             "Failed to create the needed coordinate transformation for "
-                             "generating station positions!");
+    Fmi::CoordinateTransformation transformation("WGS84", theCRS);
 
     Locus::QueryOptions options;
     auto locations = geonames->keywordSearch(options, keyword);
@@ -1258,7 +1185,7 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
       // To world coordinate
       double xcoord = lon;
       double ycoord = lat;
-      if (transformation->Transform(1, &xcoord, &ycoord) == 0)
+      if (!transformation.transform(xcoord, ycoord))
         continue;
 
       // to pixel coordinate

@@ -3,8 +3,8 @@
 #include "Layer.h"
 #include "LonLatToXYTransformation.h"
 #include "State.h"
-
 #include <ctpp2/CDT.hpp>
+#include <ogr_spatialref.h>
 #include <macgyver/Exception.h>
 #include <grid-files/common/GeneralFunctions.h>
 
@@ -93,7 +93,7 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     {
       double xCoord = 0;
       double yCoord = 0;
-      LonLatToXYTransformation transformation(projection, theState);
+      LonLatToXYTransformation transformation(projection);
       transformation.transform(Fmi::stod(longitude), Fmi::stod(latitude), xCoord, yCoord);
       attributes.add("x", Fmi::to_string(xCoord));
       attributes.add("y", Fmi::to_string(yCoord));
@@ -150,7 +150,7 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
           {
             double xCoord = 0;
             double yCoord = 0;
-            LonLatToXYTransformation transformation(projection, theState);
+            LonLatToXYTransformation transformation(projection);
             transformation.transform(Fmi::stod(longitude), Fmi::stod(latitude), xCoord, yCoord);
             xCoord += Fmi::stod(x);
             yCoord += Fmi::stod(y);

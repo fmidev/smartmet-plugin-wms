@@ -9,8 +9,10 @@
 #include "View.h"
 #include "WMSException.h"
 #include "WMSLayerFactory.h"
-#include <spine/Convenience.h>
+#include "WMSLayerHierarchy.h"
+#include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
+#include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
 #include <spine/Json.h>
 #ifndef WITHOUT_AUTHENTICATION
@@ -23,10 +25,10 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/move/make_unique.hpp>
 #include <boost/regex.hpp>
-#include <ogr_spatialref.h>
 #include <macgyver/StringConversion.h>
 #include <algorithm>
 #include <map>
+#include <ogr_spatialref.h>
 #include <stdexcept>
 #include <string>
 
@@ -38,6 +40,8 @@ using SmartMet::Plugin::Dali::View;
 
 namespace
 {
+Json::CharReaderBuilder charreaderbuilder;
+
 /*
  * namespace patterns look like "/..../"
  */
@@ -503,7 +507,10 @@ void WMSConfig::parse_references()
     std::string name = "EPSG:" + Fmi::to_string(num);
     Engine::Gis::BBox bbox = itsGisEngine->getBBox(num);
     bool enabled = true;
-    WMSSupportedReference ref(name, bbox, enabled);
+    Fmi::SpatialReference crs(name);
+    bool geographic = crs.isGeographic();
+
+    WMSSupportedReference ref(name, bbox, enabled, geographic);
     itsWMSSupportedReferences.insert(std::make_pair(name, ref));
   }
 
@@ -541,7 +548,10 @@ void WMSConfig::parse_references()
     double north = bbox_array[3];
     Engine::Gis::BBox bbox(west, east, south, north);
 
-    WMSSupportedReference ref(proj, bbox, enabled);
+    Fmi::SpatialReference crs(proj);
+    bool geographic = crs.isGeographic();
+
+    WMSSupportedReference ref(proj, bbox, enabled, geographic);
     itsWMSSupportedReferences.insert(std::make_pair(name, ref));
   }
 }
@@ -920,24 +930,45 @@ void WMSConfig::updateLayerMetaData()
 CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
                                      const boost::optional<std::string>& starttime,
                                      const boost::optional<std::string>& endtime,
+                                     const boost::optional<std::string>& reference_time,
                                      const boost::optional<std::string>& wms_namespace,
+                                     int newfeature_id,
                                      bool authenticate) const
 #else
 CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
                                      const boost::optional<std::string>& starttime,
                                      const boost::optional<std::string>& endtime,
-                                     const boost::optional<std::string>& wms_namespace) const
+                                     const boost::optional<std::string>& reference_time,
+                                     const boost::optional<std::string>& wms_namespace,
+                                     int newfeature_id) const
 #endif
 {
   try
   {
+    // Atomic copy of layer data
+    auto my_layers = boost::atomic_load(&itsLayers);
+
+    if (newfeature_id > 0)
+    {
+      WMSLayerHierarchy::HierarchyType hierarchy_type =
+          (newfeature_id == 0 ? WMSLayerHierarchy::HierarchyType::flat
+                              : (newfeature_id == 1 ? WMSLayerHierarchy::HierarchyType::deep1
+                                                    : WMSLayerHierarchy::HierarchyType::deep2));
+#ifndef WITHOUT_AUTHENTICATION
+      WMSLayerHierarchy lh(*my_layers, wms_namespace, hierarchy_type, apikey, itsAuthEngine);
+#else
+      WMSLayerHierarchy lh(*my_layers, wns_namespace, hierarchy_type);
+#endif
+
+      //		std::cout << "Hierarchy:\n" << lh << std::endl;
+
+      return lh.getCapabilities(starttime, endtime, reference_time);
+    }
+
     // Return array of individual layer capabilities
     CTPP::CDT layersCapabilities(CTPP::CDT::ARRAY_VAL);
 
     const std::string wmsService = "wms";
-
-    // Atomic copy of layer data
-    auto my_layers = boost::atomic_load(&itsLayers);
 
     for (const auto& iter_pair : *my_layers)
     {
@@ -949,7 +980,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
           continue;
 #endif
 
-      auto cdt = iter_pair.second.getCapabilities(starttime, endtime);
+      auto cdt = iter_pair.second.getCapabilities(starttime, endtime, reference_time);
 
       // Note: The boost::optional is empty for hidden layers.
       if (cdt)
@@ -1095,9 +1126,7 @@ bool WMSConfig::isValidCRS(const std::string& theLayer, const std::string& theCR
   }
 }
 
-bool WMSConfig::isValidTime(const std::string& theLayer,
-                            const boost::posix_time::ptime& theTime,
-                            const Engine::Querydata::Engine& /* theQEngine */) const
+bool WMSConfig::isValidElevation(const std::string& theLayer, int theElevation) const
 {
   try
   {
@@ -1107,7 +1136,46 @@ bool WMSConfig::isValidTime(const std::string& theLayer,
     auto my_layers = boost::atomic_load(&itsLayers);
     SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
-    return layer->isValidTime(theTime);
+    return layer->isValidElevation(theElevation);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Checking time validity failed!");
+  }
+}
+
+bool WMSConfig::isValidReferenceTime(const std::string& theLayer,
+                                     const boost::posix_time::ptime& theReferenceTime) const
+{
+  try
+  {
+    if (!isValidLayerImpl(theLayer))
+      return false;
+
+    auto my_layers = boost::atomic_load(&itsLayers);
+    SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
+
+    return layer->isValidReferenceTime(theReferenceTime);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Checking reference time validity failed!");
+  }
+}
+
+bool WMSConfig::isValidTime(const std::string& theLayer,
+                            const boost::posix_time::ptime& theTime,
+                            const boost::optional<boost::posix_time::ptime>& theReferenceTime) const
+{
+  try
+  {
+    if (!isValidLayerImpl(theLayer))
+      return false;
+
+    auto my_layers = boost::atomic_load(&itsLayers);
+    SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
+
+    return layer->isValidTime(theTime, theReferenceTime);
   }
   catch (...)
   {
@@ -1151,7 +1219,9 @@ bool WMSConfig::currentValue(const std::string& theLayer) const
   }
 }
 
-boost::posix_time::ptime WMSConfig::mostCurrentTime(const std::string& theLayer) const
+boost::posix_time::ptime WMSConfig::mostCurrentTime(
+    const std::string& theLayer,
+    const boost::optional<boost::posix_time::ptime>& reference_time) const
 {
   try
   {
@@ -1161,7 +1231,7 @@ boost::posix_time::ptime WMSConfig::mostCurrentTime(const std::string& theLayer)
     auto my_layers = boost::atomic_load(&itsLayers);
     SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
-    return layer->mostCurrentTime();
+    return layer->mostCurrentTime(reference_time);
   }
   catch (...)
   {
@@ -1209,14 +1279,13 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
   for (const auto& legendLayer : result.legendLayers)
   {
     Json::Value json;
-    Json::Reader reader;
-    bool json_ok = reader.parse(legendLayer, json);
-    if (!json_ok)
-    {
-      std::string msg = reader.getFormattedErrorMessages();
-      std::replace(msg.begin(), msg.end(), '\n', ' ');
-      throw Fmi::Exception(BCP, "Legend template file parsing failed!").addDetail(msg);
-    }
+
+    std::unique_ptr<Json::CharReader> reader(charreaderbuilder.newCharReader());
+    std::string errors;
+    if (!reader->parse(
+            legendLayer.c_str(), legendLayer.c_str() + legendLayer.size(), &json, &errors))
+      throw Fmi::Exception(BCP, "Legend template file parsing failed!")
+          .addParameter("Message", errors);
 
     const bool use_wms = true;
     Spine::JSON::preprocess(

@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.1.27
+Version: 21.2.16
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -42,7 +42,15 @@ BuildRequires: jsoncpp-devel
 BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
 BuildRequires: heatmap-devel
+%if %{defined el7}
 BuildRequires: librsvg2-devel = 2.40.6
+#TestRequires: librsvg2-devel = 2.40.6
+#TestRequires: librsvg2-tools = 2.40.6
+%else
+BuildRequires: librsvg2-devel
+#TestRequires: librsvg2-devel
+#TestRequires: librsvg2-tools
+%endif
 Requires: cairo
 Requires: fmt >= 7.1.3
 Requires: jsoncpp
@@ -78,7 +86,6 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: gcc-c++
 #TestRequires: jsoncpp-devel
 #TestRequires: libconfig-devel >= 1.7.2
-#TestRequires: librsvg2-tools = 2.40.6
 #TestRequires: ImageMagick
 #TestRequires: bc
 #TestRequires: smartmet-engine-contour-devel >= 21.1.14
@@ -91,6 +98,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
 #TestRequires: zlib-devel
+#TestRequires: cairo-devel
 %if %{with observation}
 #TestRequires: smartmet-engine-observation-devel >= 21.1.25
 %endif
@@ -121,6 +129,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
+* Tue Feb 16 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.16-1.fmi
+- Repackaged due to NFmiArea ABI changes
+
+* Thu Feb 11 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.2.11-1.fmi
+- Support for layer hierarchy, reference_time, elevation in 
+GetCapabilities response (BRAINSTORM-1836,BRAINSTORM-1413,BRAINSTORM-1414),
+to see this feature 'newfeature=1' or 'newfearure=2' option must be used in GetCapabilities request
+- Fixed attribute name nearestValues to nearestValue in GetCapbilities response
+
 * Wed Jan 27 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.27-1.fmi
 - Repackaged due to base library ABI changes
 
@@ -130,11 +147,20 @@ rm -rf $RPM_BUILD_ROOT
 * Thu Jan 14 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.14-1.fmi
 - Repackaged smartmet to resolve debuginfo issues
 
+* Tue Jan 12 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.12-1.fmi
+- Upgraded jsoncpp
+
 * Mon Jan 11 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.11-1.fmi
 - Repackaged due to grid-files API changes
 
+* Tue Jan  5 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.5-1.fmi
+- GDAL32 and FMT 7.1.3 upgrades
+
 * Mon Jan  4 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.1.4-1.fmi
 - Upgrade to GDAL 3.2
+
+* Tue Dec 15 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.15-1.fmi
+- Upgrade to pgdg12
 
 * Thu Dec  3 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.12.3-1.fmi
 - Repackaged due to library ABI changes
@@ -276,6 +302,9 @@ rm -rf $RPM_BUILD_ROOT
 - Repackaged due to base library API changes
 - Fixed level-setting to work for isoline/isoband layers
 
+* Fri Feb 21 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.21-1.fmi
+- Upgrade to GDAL 3.0
+
 * Thu Feb 20 2020 Mika Heiskanen <mika.heiskanen@fmi.fi> - 20.2.20-1.fmi
 - GRIB GetCapabilities response now depends on the used parameters
 - Added print_params query option
@@ -307,6 +336,9 @@ in order to restrict valid time period in output document (BRAINSTORM-1744)
 
 * Fri Dec 27 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.27-1.fmi
 - Prevent crashes if sampling is requested for observations in isoband/isoline layers
+
+* Fri Dec 13 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.13-1.fmi
+- Upgrade to GDAL 3.0
 
 * Wed Dec 11 2019 Mika Heiskanen <mika.heiskanen@fmi.fi> - 19.12.11-1.fmi
 - Fixed handling of "{name}.raw" parameters

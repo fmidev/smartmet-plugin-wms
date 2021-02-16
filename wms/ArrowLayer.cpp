@@ -24,6 +24,7 @@
 #include <fmt/format.h>
 #include <fmt/printf.h>
 #include <gis/Box.h>
+#include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
@@ -67,7 +68,7 @@ using PointValues = std::vector<PointValue>;
 
 PointValues read_forecasts(const ArrowLayer& layer,
                            const Engine::Querydata::Q& q,
-                           const std::shared_ptr<OGRSpatialReference>& crs,
+                           const Fmi::SpatialReference& crs,
                            const Fmi::Box& box,
                            const boost::posix_time::time_period& time_period)
 {
@@ -133,10 +134,12 @@ PointValues read_forecasts(const ArrowLayer& layer,
     NFmiPoint dummy;
 
     if (speedparam && !q->param(speedparam->number()))
-      throw Fmi::Exception(BCP, "Parameter " + speedparam->name() + " not available in the arrow layer querydata");
+      throw Fmi::Exception(
+          BCP, "Parameter " + speedparam->name() + " not available in the arrow layer querydata");
 
     if (dirparam && !q->param(dirparam->number()))
-      throw Fmi::Exception(BCP, "Parameter " + dirparam->name() + " not available in the arrow layer querydata");
+      throw Fmi::Exception(
+          BCP, "Parameter " + dirparam->name() + " not available in the arrow layer querydata");
 
     for (const auto& point : points)
     {
@@ -416,10 +419,10 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
 
 PointValues read_all_observations(const ArrowLayer& layer,
                                   State& state,
-                                  const std::shared_ptr<OGRSpatialReference>& crs,
+                                  const Fmi::SpatialReference& crs,
                                   const Fmi::Box& box,
                                   const boost::posix_time::time_period& valid_time_period,
-                                  OGRCoordinateTransformation& transformation)
+                                  const Fmi::CoordinateTransformation& transformation)
 {
   try
   {
@@ -470,7 +473,7 @@ PointValues read_all_observations(const ArrowLayer& layer,
     // Coordinates or bounding box
 
     Engine::Observation::StationSettings stationSettings;
-    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, state, crs);
+    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
     settings.taggedFMISIDs = obsengine.translateToFMISID(
         settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
@@ -527,8 +530,8 @@ PointValues read_all_observations(const ArrowLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (crs->IsGeographic() == 0)
-        if (transformation.Transform(1, &x, &y) == 0)
+      if (!crs.isGeographic())
+        if (!transformation.transform(x, y))
           continue;
 
       // To pixel coordinate
@@ -560,10 +563,10 @@ PointValues read_all_observations(const ArrowLayer& layer,
 
 PointValues read_station_observations(const ArrowLayer& layer,
                                       State& state,
-                                      const std::shared_ptr<OGRSpatialReference>& crs,
+                                      const Fmi::SpatialReference& crs,
                                       const Fmi::Box& box,
                                       const boost::posix_time::time_period& valid_time_period,
-                                      OGRCoordinateTransformation& transformation)
+                                      const Fmi::CoordinateTransformation& transformation)
 {
   try
   {
@@ -649,7 +652,7 @@ PointValues read_station_observations(const ArrowLayer& layer,
       opts.taggedFMISIDs = obsengine.translateToFMISID(
           settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
-      if(opts.taggedFMISIDs.empty())
+      if (opts.taggedFMISIDs.empty())
         continue;
 
       auto result = obsengine.values(opts);
@@ -699,8 +702,8 @@ PointValues read_station_observations(const ArrowLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (crs->IsGeographic() == 0)
-        if (transformation.Transform(1, &x, &y) == 0)
+      if (!crs.isGeographic())
+        if (!transformation.transform(x, y))
           continue;
 
       // To pixel coordinate
@@ -735,10 +738,10 @@ PointValues read_station_observations(const ArrowLayer& layer,
 
 PointValues read_latlon_observations(const ArrowLayer& layer,
                                      State& state,
-                                     const std::shared_ptr<OGRSpatialReference>& crs,
+                                     const Fmi::SpatialReference& crs,
                                      const Fmi::Box& box,
                                      const boost::posix_time::time_period& valid_time_period,
-                                     OGRCoordinateTransformation& transformation,
+                                     const Fmi::CoordinateTransformation& transformation,
                                      const Positions::Points& points)
 {
   try
@@ -805,7 +808,7 @@ PointValues read_latlon_observations(const ArrowLayer& layer,
       opts.taggedFMISIDs = obsengine.translateToFMISID(
           settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
-      if(opts.taggedFMISIDs.empty())
+      if (opts.taggedFMISIDs.empty())
         continue;
 
       auto result = obsengine.values(opts);
@@ -860,8 +863,8 @@ PointValues read_latlon_observations(const ArrowLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (crs->IsGeographic() == 0)
-        if (transformation.Transform(1, &x, &y) == 0)
+      if (!crs.isGeographic())
+        if (!transformation.transform(x, y))
           continue;
 
       // To pixel coordinate
@@ -893,7 +896,7 @@ PointValues read_latlon_observations(const ArrowLayer& layer,
 
 PointValues read_observations(const ArrowLayer& layer,
                               State& state,
-                              const std::shared_ptr<OGRSpatialReference>& crs,
+                              const Fmi::SpatialReference& crs,
                               const Fmi::Box& box,
                               const boost::posix_time::time_period& valid_time_period)
 {
@@ -902,19 +905,13 @@ PointValues read_observations(const ArrowLayer& layer,
     // Create the coordinate transformation from image world coordinates
     // to WGS84 coordinates
 
-    auto obscrs = state.getGisEngine().getSpatialReference("WGS84");
-
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
-    if (transformation == nullptr)
-      throw Fmi::Exception(
-          BCP, "Failed to create the needed coordinate transformation when drawing arrows");
+    Fmi::CoordinateTransformation transformation("WGS84", crs);
 
     if (layer.isFlashOrMobileProducer(*layer.producer))
-      throw Fmi::Exception(BCP, "Cannot use flsh or mobile producer in ArrowLayer");
+      throw Fmi::Exception(BCP, "Cannot use flash or mobile producer in ArrowLayer");
 
     if (layer.positions->layout == Positions::Layout::Station)
-      return read_station_observations(layer, state, crs, box, valid_time_period, *transformation);
+      return read_station_observations(layer, state, crs, box, valid_time_period, transformation);
 
     Engine::Querydata::Q q;
     const bool forecast_mode = false;
@@ -922,9 +919,9 @@ PointValues read_observations(const ArrowLayer& layer,
 
     if (!points.empty())
       return read_latlon_observations(
-          layer, state, crs, box, valid_time_period, *transformation, points);
+          layer, state, crs, box, valid_time_period, transformation, points);
 
-    return read_all_observations(layer, state, crs, box, valid_time_period, *transformation);
+    return read_all_observations(layer, state, crs, box, valid_time_period, transformation);
   }
   catch (...)
   {
@@ -1175,7 +1172,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     {
       // Getting the bounding box and the WKT of the requested projection.
 
-      if (strstr(wkt.c_str(),"+proj") != wkt.c_str())
+      if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
       {
         auto crs = projection.getCRS();
         char* out = nullptr;
@@ -1257,7 +1254,9 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Fullfilling information into the query object.
 
-    for (auto it = originalGridQuery->mQueryParameterList.begin(); it != originalGridQuery->mQueryParameterList.end(); ++it)
+    for (auto it = originalGridQuery->mQueryParameterList.begin();
+         it != originalGridQuery->mQueryParameterList.end();
+         ++it)
     {
       it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
       it->mType = QueryServer::QueryParameter::Type::Vector;
@@ -1289,10 +1288,12 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     else
     {
       if (projection.xsize)
-        originalGridQuery->mAttributeList.addAttribute("grid.width", std::to_string(*projection.xsize));
+        originalGridQuery->mAttributeList.addAttribute("grid.width",
+                                                       std::to_string(*projection.xsize));
 
       if (projection.ysize)
-        originalGridQuery->mAttributeList.addAttribute("grid.height", std::to_string(*projection.ysize));
+        originalGridQuery->mAttributeList.addAttribute("grid.height",
+                                                       std::to_string(*projection.ysize));
     }
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
@@ -1617,7 +1618,7 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
     // Get projection details
 
     projection.update(q);
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     // Initialize inside/outside shapes and intersection isobands
@@ -1668,14 +1669,7 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
     // Coordinate transformation from WGS84 to output SRS so that we can rotate
     // winds according to map north
 
-    auto wgs84 = theState.getGisEngine().getSpatialReference("WGS84");
-
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
-    if (transformation == nullptr)
-      throw Fmi::Exception(
-          BCP,
-          "Failed to create the needed coordinate transformation when reading wind directions");
+    Fmi::CoordinateTransformation transformation("WGS84", crs);
 
     // Alter units if requested
 
@@ -1715,7 +1709,9 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
         wspd = xmultiplier * wspd + xoffset;
 
       // Apply final rotation to output coordinate system
-      auto fix = Fmi::OGR::gridNorth(*transformation, point.latlon.X(), point.latlon.Y());
+
+      // TODO: Clean up the API on constness. GDAL is not properly const correct
+      auto fix = Fmi::OGR::gridNorth(transformation, point.latlon.X(), point.latlon.Y());
       if (!fix)
         continue;
       wdir = fmod(wdir + *fix, 360);

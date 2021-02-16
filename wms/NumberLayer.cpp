@@ -1,20 +1,20 @@
 //======================================================================
 
-#include <spine/TimeSeriesOutput.h>
-
+#include "NumberLayer.h"
 #include "Config.h"
 #include "Hash.h"
 #include "Iri.h"
 #include "Layer.h"
-#include "NumberLayer.h"
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
 #include <engines/gis/Engine.h>
 #include <macgyver/Exception.h>
+#include <spine/Convenience.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 #include <spine/ParameterTools.h>
+#include <spine/TimeSeriesOutput.h>
 #include <spine/ValueFormatter.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
@@ -26,6 +26,7 @@
 #include <fmt/format.h>
 #include <fmt/printf.h>
 #include <gis/Box.h>
+#include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
@@ -57,7 +58,7 @@ using PointValues = std::vector<PointValue>;
 
 PointValues read_forecasts(const NumberLayer& layer,
                            const Engine::Querydata::Q& q,
-                           const std::shared_ptr<OGRSpatialReference>& crs,
+                           const Fmi::SpatialReference& crs,
                            const Fmi::Box& box,
                            const boost::posix_time::time_period& valid_time_period)
 {
@@ -242,10 +243,10 @@ PointValues read_gridForecasts(const NumberLayer& layer,
 #ifndef WITHOUT_OBSERVATION
 PointValues read_flash_observations(const NumberLayer& layer,
                                     State& state,
-                                    const std::shared_ptr<OGRSpatialReference>& crs,
+                                    const Fmi::SpatialReference& crs,
                                     const Fmi::Box& box,
                                     const boost::posix_time::time_period& valid_time_period,
-                                    OGRCoordinateTransformation& transformation)
+                                    const Fmi::CoordinateTransformation& transformation)
 {
   try
   {
@@ -286,7 +287,7 @@ PointValues read_flash_observations(const NumberLayer& layer,
     auto points = layer.positions->getPoints(q, crs, box, forecast_mode);
 
     Engine::Observation::StationSettings stationSettings;
-    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, state, crs);
+    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
     settings.taggedFMISIDs = obsengine.translateToFMISID(
         settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
@@ -329,8 +330,8 @@ PointValues read_flash_observations(const NumberLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (crs->IsGeographic() == 0)
-        if (transformation.Transform(1, &x, &y) == 0)
+      if (!crs.isGeographic())
+        if (!transformation.transform(x, y))
           continue;
 
       // To pixel coordinate
@@ -362,10 +363,10 @@ PointValues read_flash_observations(const NumberLayer& layer,
 
 PointValues read_all_observations(const NumberLayer& layer,
                                   State& state,
-                                  const std::shared_ptr<OGRSpatialReference>& crs,
+                                  const Fmi::SpatialReference& crs,
                                   const Fmi::Box& box,
                                   const boost::posix_time::time_period& valid_time_period,
-                                  OGRCoordinateTransformation& transformation)
+                                  const Fmi::CoordinateTransformation& transformation)
 {
   try
   {
@@ -402,7 +403,7 @@ PointValues read_all_observations(const NumberLayer& layer,
 
     // Coordinates or bounding box
     Engine::Observation::StationSettings stationSettings;
-    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, state, crs);
+    stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
     settings.taggedFMISIDs = obsengine.translateToFMISID(
         settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
@@ -443,8 +444,8 @@ PointValues read_all_observations(const NumberLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (crs->IsGeographic() == 0)
-        if (transformation.Transform(1, &x, &y) == 0)
+      if (!crs.isGeographic())
+        if (!transformation.transform(x, y))
           continue;
 
       // To pixel coordinate
@@ -476,10 +477,10 @@ PointValues read_all_observations(const NumberLayer& layer,
 
 PointValues read_station_observations(const NumberLayer& layer,
                                       State& state,
-                                      const std::shared_ptr<OGRSpatialReference>& crs,
+                                      const Fmi::SpatialReference& crs,
                                       const Fmi::Box& box,
                                       const boost::posix_time::time_period& valid_time_period,
-                                      OGRCoordinateTransformation& transformation)
+                                      const Fmi::CoordinateTransformation& transformation)
 {
   try
   {
@@ -552,7 +553,7 @@ PointValues read_station_observations(const NumberLayer& layer,
       opts.taggedFMISIDs = obsengine.translateToFMISID(
           settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
-      if(opts.taggedFMISIDs.empty())
+      if (opts.taggedFMISIDs.empty())
         continue;
 
       auto result = obsengine.values(opts);
@@ -585,8 +586,8 @@ PointValues read_station_observations(const NumberLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (crs->IsGeographic() == 0)
-        if (transformation.Transform(1, &x, &y) == 0)
+      if (!crs.isGeographic())
+        if (!transformation.transform(x, y))
           continue;
 
       // To pixel coordinate
@@ -623,10 +624,10 @@ PointValues read_station_observations(const NumberLayer& layer,
 
 PointValues read_latlon_observations(const NumberLayer& layer,
                                      State& state,
-                                     const std::shared_ptr<OGRSpatialReference>& crs,
+                                     const Fmi::SpatialReference& crs,
                                      const Fmi::Box& box,
                                      const boost::posix_time::time_period& valid_time_period,
-                                     OGRCoordinateTransformation& transformation,
+                                     const Fmi::CoordinateTransformation& transformation,
                                      const Positions::Points& points)
 {
   try
@@ -653,7 +654,7 @@ PointValues read_latlon_observations(const NumberLayer& layer,
       settings.parameters.push_back(Spine::makeParameter(*layer.parameter));
 
     // settings.debug_options = Engine::Observation::Settings::DUMP_SETTINGS;
-    
+
     // Request intersection parameters too - if any
     auto iparams = layer.positions->intersections.parameters();
 
@@ -682,9 +683,9 @@ PointValues read_latlon_observations(const NumberLayer& layer,
       opts.taggedFMISIDs = obsengine.translateToFMISID(
           settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
-      if(opts.taggedFMISIDs.empty())
+      if (opts.taggedFMISIDs.empty())
         continue;
-      
+
       auto result = obsengine.values(opts);
 
       if (!result || result->empty() || (*result)[0].empty())
@@ -721,8 +722,8 @@ PointValues read_latlon_observations(const NumberLayer& layer,
       double x = lon;
       double y = lat;
 
-      if (crs->IsGeographic() == 0)
-        if (transformation.Transform(1, &x, &y) == 0)
+      if (!crs.isGeographic())
+        if (!transformation.transform(x, y))
           continue;
 
       // To pixel coordinate
@@ -754,7 +755,7 @@ PointValues read_latlon_observations(const NumberLayer& layer,
 
 PointValues read_observations(const NumberLayer& layer,
                               State& state,
-                              const std::shared_ptr<OGRSpatialReference>& crs,
+                              const Fmi::SpatialReference& crs,
                               const Fmi::Box& box,
                               const boost::posix_time::time_period& valid_time_period)
 {
@@ -763,19 +764,13 @@ PointValues read_observations(const NumberLayer& layer,
     // Create the coordinate transformation from image world coordinates
     // to WGS84 coordinates
 
-    auto obscrs = state.getGisEngine().getSpatialReference("WGS84");
-
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(obscrs.get(), crs.get()));
-    if (transformation == nullptr)
-      throw Fmi::Exception(
-          BCP, "Failed to create the needed coordinate transformation when drawing symbols");
+    Fmi::CoordinateTransformation transformation("WGS84", crs);
 
     if (layer.isFlashOrMobileProducer(*layer.producer))
-      return read_flash_observations(layer, state, crs, box, valid_time_period, *transformation);
+      return read_flash_observations(layer, state, crs, box, valid_time_period, transformation);
 
     if (layer.positions->layout == Positions::Layout::Station)
-      return read_station_observations(layer, state, crs, box, valid_time_period, *transformation);
+      return read_station_observations(layer, state, crs, box, valid_time_period, transformation);
 
     Engine::Querydata::Q q;
     const bool forecast_mode = false;
@@ -783,9 +778,9 @@ PointValues read_observations(const NumberLayer& layer,
 
     if (!points.empty())
       return read_latlon_observations(
-          layer, state, crs, box, valid_time_period, *transformation, points);
+          layer, state, crs, box, valid_time_period, transformation, points);
 
-    return read_all_observations(layer, state, crs, box, valid_time_period, *transformation);
+    return read_all_observations(layer, state, crs, box, valid_time_period, transformation);
   }
   catch (...)
   {
@@ -979,7 +974,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     {
       // Getting WKT and the bounding box of the requested projection.
 
-      if (strstr(wkt.c_str(),"+proj") != wkt.c_str())
+      if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
       {
         auto crs = projection.getCRS();
         char* out = nullptr;
@@ -1029,7 +1024,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     if (param == *parameter && originalGridQuery->mProducerNameList.size() == 0)
     {
-      gridEngine->getProducerNameList(producerName,originalGridQuery->mProducerNameList);
+      gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
       if (originalGridQuery->mProducerNameList.size() == 0)
         originalGridQuery->mProducerNameList.push_back(producerName);
     }
@@ -1048,7 +1043,9 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Fullfilling information into the query object.
 
-    for (auto it = originalGridQuery->mQueryParameterList.begin(); it != originalGridQuery->mQueryParameterList.end(); ++it)
+    for (auto it = originalGridQuery->mQueryParameterList.begin();
+         it != originalGridQuery->mQueryParameterList.end();
+         ++it)
     {
       it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
       it->mType = QueryServer::QueryParameter::Type::Vector;
@@ -1080,10 +1077,12 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     else
     {
       if (projection.xsize)
-        originalGridQuery->mAttributeList.addAttribute("grid.width", std::to_string(*projection.xsize));
+        originalGridQuery->mAttributeList.addAttribute("grid.width",
+                                                       std::to_string(*projection.xsize));
 
       if (projection.ysize)
-        originalGridQuery->mAttributeList.addAttribute("grid.height", std::to_string(*projection.ysize));
+        originalGridQuery->mAttributeList.addAttribute("grid.height",
+                                                       std::to_string(*projection.ysize));
     }
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
@@ -1177,7 +1176,8 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // use_observations is true, obsengine is not disabled.
 
     PointValues pointvalues;
-    pointvalues = read_gridForecasts(*this, gridEngine, *originalGridQuery, crs, box, valid_time_period);
+    pointvalues =
+        read_gridForecasts(*this, gridEngine, *originalGridQuery, crs, box, valid_time_period);
 
     // Clip if necessary
 
@@ -1366,7 +1366,7 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     // Get projection details
 
     projection.update(q);
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     // Initialize inside/outside shapes and intersection isobands

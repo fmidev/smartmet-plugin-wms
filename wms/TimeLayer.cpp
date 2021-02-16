@@ -17,6 +17,7 @@
 #include <engines/grid/Engine.h>
 #include <macgyver/Exception.h>
 #include <spine/Json.h>
+#include <ogr_spatialref.h>
 
 namespace SmartMet
 {
@@ -147,7 +148,7 @@ void TimeLayer::init(const Json::Value& theJson,
       double latitude = latitudeJson.asDouble();
       double xCoord = 0;
       double yCoord = 0;
-      LonLatToXYTransformation transformation(projection, theState);
+      LonLatToXYTransformation transformation(projection);
       transformation.transform(longitude, latitude, xCoord, yCoord);
       x = xCoord;
       y = yCoord;

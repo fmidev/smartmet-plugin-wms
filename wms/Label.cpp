@@ -113,10 +113,8 @@ void Label::init(const Json::Value& theJson, const Config& theConfig)
         offset = json.asDouble();
       else if (name == "format")
       {
-        format = json.asString();
-        std::cerr
-            << "Warning: label.format does not work properly in RHEL6, use label.precision instead"
-            << std::endl;
+        std::cerr << "Warning: label.format has been deprecated, use label.precision instead"
+                  << std::endl;
       }
       else if (name == "missing")
         missing = json.asString();
@@ -172,7 +170,6 @@ std::size_t Label::hash_value(const State& /* theState */) const
     Dali::hash_combine(hash, Dali::hash_value(unit_conversion));
     Dali::hash_combine(hash, Dali::hash_value(multiplier));
     Dali::hash_combine(hash, Dali::hash_value(offset));
-    Dali::hash_combine(hash, Dali::hash_value(format));
     Dali::hash_combine(hash, Dali::hash_value(missing));
     Dali::hash_combine(hash, Dali::hash_value(precision));
     Dali::hash_combine(hash, Dali::hash_value(prefix));

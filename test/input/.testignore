@@ -4,3 +4,39 @@ symbols_coloured_fin.get
 symbols_coloured_native.get
 symbols_coloured_webmercator.get
 symbols_coloured_wgs84.get
+; Half of the image is missing
+ec_world_wgs84_pacific.get
+; Too large SVG
+ec_world_webmercator.get
+; Maps not working yet
+map_aeqd.get
+map_airy.get
+map_bertin1953.get
+map_bipc.get
+map_ccon.get
+map_chamb.get
+map_eqearth.get
+map_geos.get
+map_gnom.get
+map_gstmerc.get
+map_imw_p.get
+map_isea.get
+map_laea.get
+map_lcc.get
+map_lsat.get
+map_mil_os.get
+map_murd2.get
+map_nicol.get
+map_nsper.get
+map_ob_tran.get
+map_omerc.get
+map_ortho.get
+map_pconic.get
+map_sterea.get
+map_stere.get
+map_tcc.get
+map_tcea.get
+map_tmerc.get
+map_tpeqd.get
+map_tpers.get
+map_ups.get

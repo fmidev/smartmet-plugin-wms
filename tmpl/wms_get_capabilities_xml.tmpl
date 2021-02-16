@@ -200,9 +200,79 @@ no attributes, the value will be stored in "variable".
       <-TMPL_if defined(capability.master_layer.fixed_width) > fixedWidth=" <-TMPL_var capability.master_layer.fixed_width>" <-/TMPL_if->
       <-TMPL_if defined(capability.master_layer.fixed_height)> fixedHeight="<-TMPL_var capability.master_layer.fixed_height>"<-/TMPL_if->>
     <Title><TMPL_var capability.master_layer.title></Title>
-    <-TMPL_if defined(capability.master_layer.abstract)><TMPL_var capability.master_layer.abstract></TMPL_if>
-
+    <-TMPL_if defined(capability.master_layer.abstract)><TMPL_var capability.master_layer.abstract><-/TMPL_if->
     <-TMPL_foreach capability.layer as layer>
+      <-TMPL_if defined(capability.newfeature)>
+      <TMPL_comment> Level #1 sublayer </TMPL_comment>
+      <-TMPL_if defined(layer.sublayers)>
+       <-TMPL_foreach layer.sublayers as layer>
+        <TMPL_include "wms_get_capabilities_layer.tmpl">
+	<TMPL_comment> Level #2 sublayer </TMPL_comment>
+	<-TMPL_if defined(layer.sublayers)>
+	 <-TMPL_foreach layer.sublayers as layer>
+	  <TMPL_include "wms_get_capabilities_layer.tmpl">
+	  <TMPL_comment> Level #3 sublayer </TMPL_comment>
+	  <-TMPL_if defined(layer.sublayers)>
+	   <-TMPL_foreach layer.sublayers as layer>
+	    <TMPL_include "wms_get_capabilities_layer.tmpl">
+	    <TMPL_comment> Level #4 sublayer </TMPL_comment>
+	    <-TMPL_if defined(layer.sublayers)>
+	     <-TMPL_foreach layer.sublayers as layer>
+	      <TMPL_include "wms_get_capabilities_layer.tmpl">
+	      <TMPL_comment> Level #5 sublayer </TMPL_comment>
+	      <-TMPL_if defined(layer.sublayers)>
+	       <-TMPL_foreach layer.sublayers as layer>
+	        <TMPL_include "wms_get_capabilities_layer.tmpl">
+		<TMPL_comment> Level #6 sublayer </TMPL_comment>
+		<-TMPL_if defined(layer.sublayers)>
+		 <-TMPL_foreach layer.sublayers as layer>
+		  <TMPL_include "wms_get_capabilities_layer.tmpl">
+		  <TMPL_comment> Level #7 sublayer </TMPL_comment>
+		  <-TMPL_if defined(layer.sublayers)>
+		   <-TMPL_foreach layer.sublayers as layer>
+		    <TMPL_include "wms_get_capabilities_layer.tmpl">
+		    <TMPL_comment> Level #8 sublayer </TMPL_comment>
+		    <-TMPL_if defined(layer.sublayers)>
+		     <-TMPL_foreach layer.sublayers as layer>
+		      <TMPL_include "wms_get_capabilities_layer.tmpl">
+		      <TMPL_comment> Level #9 sublayer </TMPL_comment>
+		      <-TMPL_if defined(layer.sublayers)>
+                       <-TMPL_foreach layer.sublayers as layer>
+		        <TMPL_include "wms_get_capabilities_layer.tmpl">
+			<TMPL_comment> Level #10 sublayer </TMPL_comment>
+			<-TMPL_if defined(layer.sublayers)>
+			 <-TMPL_foreach layer.sublayers as layer>
+			  <TMPL_include "wms_get_capabilities_layer.tmpl">
+			 <-/TMPL_foreach->
+		       	 </Layer>
+			 <-/TMPL_if->
+                       <-/TMPL_foreach->
+		       </Layer>
+		       <-/TMPL_if->
+		     <-/TMPL_foreach->
+		     </Layer>
+		     <-/TMPL_if->
+		   <-/TMPL_foreach->
+	      	   </Layer>
+		   <-/TMPL_if->
+	     	 <-/TMPL_foreach->
+	   	 </Layer>
+	    	 <-/TMPL_if->
+	       <-/TMPL_foreach->
+	       </Layer>
+	       <-/TMPL_if->
+       	     <-/TMPL_foreach->
+	     </Layer>
+      	     <-/TMPL_if->
+    	   <-/TMPL_foreach->
+	   </Layer>
+	   <-/TMPL_if->
+ 	  <-/TMPL_foreach->
+	  </Layer>
+	  <-/TMPL_if->
+       <-/TMPL_foreach->
+       <-/TMPL_if->
+      <TMPL_else>
     <Layer
       <-TMPL_comment> The following settings override the master settings set above </TMPL_comment>
       <-TMPL_if defined(layer.queryable)   > queryable="  <-TMPL_var layer.queryable>"   <-/TMPL_if->
@@ -246,22 +316,22 @@ no attributes, the value will be stored in "variable".
       <-TMPL_if defined(layer.bounding_box)->
       <TMPL_foreach layer.bounding_box as bounding_box>
       <BoundingBox CRS="<TMPL_var bounding_box.crs>"
-                   <-TMPL_if 1> minx="<TMPL_var bounding_box.minx>"</TMPL_if>
-                   <-TMPL_if 1> miny="<TMPL_var bounding_box.miny>"</TMPL_if>
-                   <-TMPL_if 1> maxx="<TMPL_var bounding_box.maxx>"</TMPL_if>
-                   <-TMPL_if 1> maxy="<TMPL_var bounding_box.maxy>"</TMPL_if>
+                   <-TMPL_if defined(layer.bounding_box)> minx="<TMPL_var bounding_box.minx>"</TMPL_if>
+                   <-TMPL_if defined(layer.bounding_box)> miny="<TMPL_var bounding_box.miny>"</TMPL_if>
+                   <-TMPL_if defined(layer.bounding_box)> maxx="<TMPL_var bounding_box.maxx>"</TMPL_if>
+                   <-TMPL_if defined(layer.bounding_box)> maxy="<TMPL_var bounding_box.maxy>"</TMPL_if>
                    <-TMPL_if defined(bounding_box.resx)> resx="<TMPL_var bounding_box.resx>"<-/TMPL_if->
                    <-TMPL_if defined(bounding_box.resy)> resx="<TMPL_var bounding_box.resy>"<-/TMPL_if->/>
       <-/TMPL_foreach>
       <-/TMPL_if->
 
-      <-TMPL_if defined(layer.dimension)->
-      <-TMPL_foreach layer.dimension as dimension>
+      <-TMPL_if defined(layer.time_dimension)->
+      <-TMPL_foreach layer.time_dimension as dimension>
       <Dimension name="<TMPL_var dimension.name>" units="<TMPL_var dimension.units>"
         <-TMPL_if defined(dimension.unit_symbol)    > unitSymbol="    <-TMPL_var dimension.unit_symbol>"    <-/TMPL_if->
         <-TMPL_if defined(dimension.default)        > default="       <-TMPL_var dimension.default>"        <-/TMPL_if->
         <-TMPL_if defined(dimension.multiple_values)> multipleValues="<-TMPL_var dimension.multiple_values>"<-/TMPL_if->
-        <-TMPL_if defined(dimension.nearest_values) > nearestValues=" <-TMPL_var dimension.nearest_values>" <-/TMPL_if->
+        <-TMPL_if defined(dimension.nearest_value) > nearestValue=" <-TMPL_var dimension.nearest_value>" <-/TMPL_if->
         <-TMPL_if defined(dimension.current)        > current="       <-TMPL_var dimension.current>"        <-/TMPL_if->>
       <-TMPL_var dimension.value->
       </Dimension>
@@ -371,6 +441,7 @@ no attributes, the value will be stored in "variable".
       <MaxScaleDenominator><TMPL_var layer.min_scale_denominator></MaxScaleDenominator>
       <-/TMPL_if>
     </Layer>
+    </TMPL_if>
     <-/TMPL_foreach>
   </Layer>
 </Capability>

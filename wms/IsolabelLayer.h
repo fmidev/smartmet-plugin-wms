@@ -8,7 +8,8 @@
 namespace Fmi
 {
 class Box;
-}
+class SpatialReference;
+}  // namespace Fmi
 
 namespace SmartMet
 {
@@ -73,8 +74,7 @@ class IsolabelLayer : public IsolineLayer
                                   OGRSpatialReference& crs) const;
   void fix_orientation(Candidates& candidates,
                        const Fmi::Box& box,
-                       const State& state,
-                       OGRSpatialReference& crs) const;
+                       const Fmi::SpatialReference& crs) const;
 
 };  // namespace Dali
 

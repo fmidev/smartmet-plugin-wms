@@ -23,16 +23,20 @@
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/common/ImagePaint.h>
+#include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
-#include <newbase/NFmiGdalArea.h>
 #include <newbase/NFmiQueryData.h>
 #include <newbase/NFmiQueryDataUtil.h>
 #include <newbase/NFmiTimeList.h>
-#include <macgyver/Exception.h>
+#include <spine/Convenience.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 #include <spine/ParameterTools.h>
 #include <limits>
+
+#ifndef NEW_NFMIAREA
+#include <newbase/NFmiGdalArea.h>
+#endif
 
 namespace SmartMet
 {
@@ -192,7 +196,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
       throw Fmi::Exception(BCP, "Heatmap requires flash or mobile data!");
 
     auto valid_time_period = getValidTimePeriod();
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     Engine::Observation::Settings settings;
@@ -208,16 +212,37 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     settings.parameters.push_back(Spine::makeParameter("latitude"));
     settings.parameters.push_back(Spine::makeParameter(*parameter));
 
-    settings.boundingBox = getClipBoundingBox(box, theState, crs);
+    settings.boundingBox = getClipBoundingBox(box, crs);
 
     auto result = obsengine.values(settings);
 
     // Establish new projection and the required grid size of the desired resolution
 
+#ifdef NEW_NFMIAREA
+    std::unique_ptr<NFmiArea> newarea(NFmiArea::CreateFromBBox(
+        crs, NFmiPoint(box.xmin(), box.ymin()), NFmiPoint(box.xmax(), box.ymax())));
+
+    double datawidth = newarea->WorldXYWidth();  // in native units
+    double dataheight = newarea->WorldXYHeight();
+
+    if (newarea->SpatialReference().isGeographic())
+    {
+      datawidth *= kRearth * kPii / 180 / 1000;  // degrees to kilometers
+      dataheight *= kRearth * kPii / 180 / 1000;
+    }
+    else
+    {
+      datawidth /= 1000;  // meters to kilometers
+      dataheight /= 1000;
+    }
+#else
     auto newarea = boost::make_shared<NFmiGdalArea>(
         "FMI", *crs, box.xmin(), box.ymin(), box.xmax(), box.ymax());
+
     double datawidth = newarea->WorldXYWidth() / 1000.0;  // view extent in kilometers
     double dataheight = newarea->WorldXYHeight() / 1000.0;
+#endif
+
     unsigned int width = lround(datawidth / *heatmap.resolution);
     unsigned int height = lround(dataheight / *heatmap.resolution);
 
@@ -242,11 +267,6 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
       if (!values.empty())
       {
-        // Station coordinates are WGS84
-
-        auto transformation = theState.getGisEngine().getCoordinateTransformation(
-            "WGS84", projection.getProjString());
-
         const auto nrows = values[0].size();
 
         hm.reset(heatmap_new(width, height));
@@ -274,10 +294,12 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
           double x = lon;
           double y = lat;
-
-          if (crs->IsGeographic() == 0)
-            if (transformation->Transform(1, &x, &y) == 0)
-              continue;
+          if (crs.isGeographic() == 0)
+          {
+            auto xy = newarea->LatLonToWorldXY(NFmiPoint(x, y));
+            x = xy.X();
+            y = xy.Y();
+          }
 
           // To pixel coordinate
           box.transform(x, y);
@@ -342,7 +364,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     boost::hash_combine(hash, radius);
 
     char* tmp;
-    crs->exportToWkt(&tmp);
+    crs.get()->exportToWkt(&tmp);
     boost::hash_combine(hash, tmp);
     CPLFree(tmp);
 
@@ -435,7 +457,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     {
       // Getting WKT and the bounding box of the requested projection.
 
-      if (strstr(wkt.c_str(),"+proj") != wkt.c_str())
+      if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
       {
         auto crs = projection.getCRS();
         char* out = nullptr;
@@ -504,7 +526,9 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Fullfilling information into the query object.
 
-    for (auto it = originalGridQuery->mQueryParameterList.begin(); it != originalGridQuery->mQueryParameterList.end(); ++it)
+    for (auto it = originalGridQuery->mQueryParameterList.begin();
+         it != originalGridQuery->mQueryParameterList.end();
+         ++it)
     {
       it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
       it->mType = QueryServer::QueryParameter::Type::Isoband;
@@ -537,10 +561,12 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     else
     {
       if (projection.xsize)
-        originalGridQuery->mAttributeList.addAttribute("grid.width", std::to_string(*projection.xsize));
+        originalGridQuery->mAttributeList.addAttribute("grid.width",
+                                                       std::to_string(*projection.xsize));
 
       if (projection.ysize)
-        originalGridQuery->mAttributeList.addAttribute("grid.height", std::to_string(*projection.ysize));
+        originalGridQuery->mAttributeList.addAttribute("grid.height",
+                                                       std::to_string(*projection.ysize));
     }
 
     if (projection.bboxcrs)
@@ -553,7 +579,8 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       originalGridQuery->mAttributeList.addAttribute("grid.cy", std::to_string(*projection.cy));
 
     if (projection.resolution)
-      originalGridQuery->mAttributeList.addAttribute("grid.resolution", std::to_string(*projection.resolution));
+      originalGridQuery->mAttributeList.addAttribute("grid.resolution",
+                                                     std::to_string(*projection.resolution));
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
     {
@@ -563,18 +590,22 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     }
 
     if (smoother.size)
-      originalGridQuery->mAttributeList.addAttribute("contour.smooth.size", std::to_string(*smoother.size));
+      originalGridQuery->mAttributeList.addAttribute("contour.smooth.size",
+                                                     std::to_string(*smoother.size));
 
     if (smoother.degree)
-      originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree", std::to_string(*smoother.degree));
+      originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
+                                                     std::to_string(*smoother.degree));
 
     if (minarea)
       originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(*minarea));
 
-    originalGridQuery->mAttributeList.addAttribute("contour.extrapolation", std::to_string(extrapolation));
+    originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
+                                                   std::to_string(extrapolation));
 
     if (extrapolation)
-      originalGridQuery->mAttributeList.addAttribute("contour.multiplier", std::to_string(*multiplier));
+      originalGridQuery->mAttributeList.addAttribute("contour.multiplier",
+                                                     std::to_string(*multiplier));
 
     if (offset)
       originalGridQuery->mAttributeList.addAttribute("contour.offset", std::to_string(*offset));
@@ -774,8 +805,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
           std::string iri = qid + (qid.empty() ? "" : ".") + isoband.getQid(theState);
 
           if (!theState.addId(iri))
-            throw Fmi::Exception(BCP, "Non-unique ID assigned to isoband")
-                .addParameter("ID", iri);
+            throw Fmi::Exception(BCP, "Non-unique ID assigned to isoband").addParameter("ID", iri);
 
           CTPP::CDT isoband_cdt(CTPP::CDT::HASH_VAL);
           isoband_cdt["iri"] = iri;
@@ -865,7 +895,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     // Get projection details
 
     projection.update(q);
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     // And the box needed for clipping
@@ -891,11 +921,11 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       auto landdata = theState.getGeoEngine().landCover();
       if (!demdata || !landdata)
         throw Fmi::Exception(BCP,
-                               "Resampling data requires DEM and land cover data to be available!");
+                             "Resampling data requires DEM and land cover data to be available!");
 
       q = q->sample(param,
                     valid_time,
-                    *crs,
+                    crs,
                     box.xmin(),
                     box.ymin(),
                     box.xmax(),
@@ -922,7 +952,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     OGRGeometryPtr inshape, outshape;
     if (inside)
     {
-      inshape = gis.getShape(crs.get(), inside->options);
+      inshape = gis.getShape(&crs, inside->options);
       if (!inshape)
         throw Fmi::Exception(BCP, "Received empty inside-shape from database!");
 
@@ -930,7 +960,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     }
     if (outside)
     {
-      outshape = gis.getShape(crs.get(), outside->options);
+      outshape = gis.getShape(&crs, outside->options);
       if (outshape)
         outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
     }
@@ -983,7 +1013,6 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;
     boost::hash_combine(valueshash, options.data_hash_value());
-    std::string wkt = q->area().WKT();
 
     // Select the data
 
@@ -996,9 +1025,10 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     const auto& qEngine = theState.getQEngine();
     auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
 
-    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs.get());
+    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
+
     std::vector<OGRGeometryPtr> geoms =
-        contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), crs.get());
+        contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
 
     // Update the globals
 
@@ -1026,6 +1056,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       if (geom && geom->IsEmpty() == 0)
       {
         OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, clipbox));
+
         const Isoband& isoband = isobands[i];
 
         // Do intersections if so requested
@@ -1047,15 +1078,14 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
           std::string iri = qid + (qid.empty() ? "" : ".") + isoband.getQid(theState);
 
           if (!theState.addId(iri))
-            throw Fmi::Exception(BCP, "Non-unique ID assigned to isoband")
-                .addParameter("ID", iri);
+            throw Fmi::Exception(BCP, "Non-unique ID assigned to isoband").addParameter("ID", iri);
 
           CTPP::CDT isoband_cdt(CTPP::CDT::HASH_VAL);
           isoband_cdt["iri"] = iri;
           isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
           isoband_cdt["parameter"] = *parameter;
-          isoband_cdt["data"] = Geometry::toString(*geom2, theState, box, crs, precision);
-          isoband_cdt["type"] = Geometry::name(*geom2, theState);
+          isoband_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs, precision);
+          isoband_cdt["type"] = Geometry::name(*geom2, theState.getType());
           isoband_cdt["layertype"] = "isoband";
 
           // Use null to indicate unset values in GeoJSON

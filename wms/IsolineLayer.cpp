@@ -270,7 +270,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   {
     // Getting WKT and the bounding box of the requested projection.
 
-    if (strstr(wkt.c_str(),"+proj") != wkt.c_str())
+    if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
     {
       auto crs = projection.getCRS();
       char* out = nullptr;
@@ -337,7 +337,9 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
   // Fullfilling information into the query object.
 
-  for (auto it = originalGridQuery->mQueryParameterList.begin(); it != originalGridQuery->mQueryParameterList.end(); ++it)
+  for (auto it = originalGridQuery->mQueryParameterList.begin();
+       it != originalGridQuery->mQueryParameterList.end();
+       ++it)
   {
     it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
     it->mType = QueryServer::QueryParameter::Type::Isoline;
@@ -369,10 +371,12 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   else
   {
     if (projection.xsize)
-      originalGridQuery->mAttributeList.addAttribute("grid.width", std::to_string(*projection.xsize));
+      originalGridQuery->mAttributeList.addAttribute("grid.width",
+                                                     std::to_string(*projection.xsize));
 
     if (projection.ysize)
-      originalGridQuery->mAttributeList.addAttribute("grid.height", std::to_string(*projection.ysize));
+      originalGridQuery->mAttributeList.addAttribute("grid.height",
+                                                     std::to_string(*projection.ysize));
   }
 
   if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
@@ -383,18 +387,22 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   }
 
   if (smoother.size)
-    originalGridQuery->mAttributeList.addAttribute("contour.smooth.size", std::to_string(*smoother.size));
+    originalGridQuery->mAttributeList.addAttribute("contour.smooth.size",
+                                                   std::to_string(*smoother.size));
 
   if (smoother.degree)
-    originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree", std::to_string(*smoother.degree));
+    originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
+                                                   std::to_string(*smoother.degree));
 
   if (minarea)
     originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(*minarea));
 
-  originalGridQuery->mAttributeList.addAttribute("contour.extrapolation", std::to_string(extrapolation));
+  originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
+                                                 std::to_string(extrapolation));
 
   if (extrapolation)
-    originalGridQuery->mAttributeList.addAttribute("contour.multiplier", std::to_string(*multiplier));
+    originalGridQuery->mAttributeList.addAttribute("contour.multiplier",
+                                                   std::to_string(*multiplier));
 
   if (offset)
     originalGridQuery->mAttributeList.addAttribute("contour.offset", std::to_string(*offset));
@@ -526,7 +534,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   // Get projection details
 
   projection.update(q);
-  auto crs = projection.getCRS();
+  const auto& crs = projection.getCRS();
   const auto& box = projection.getBox();
 
   // Sample to higher resolution if necessary
@@ -545,7 +553,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
     q = q->sample(param,
                   valid_time,
-                  *crs,
+                  crs,
                   box.xmin(),
                   box.ymin(),
                   box.xmax(),
@@ -556,12 +564,22 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   }
 
   if (!q)
-    throw Fmi::Exception(BCP, "Cannot generate isobands without gridded data");
+    throw Fmi::Exception(BCP, "Cannot generate isolines without gridded data");
 
-  // Select the level.
-
-  if (!q->firstLevel())
-    throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
+  OGRGeometryPtr inshape, outshape;
+  if (inside)
+  {
+    inshape = gis.getShape(&crs, inside->options);
+    if (!inshape)
+      throw Fmi::Exception(BCP, "IsolineLayer received empty inside-shape from database");
+    inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
+  }
+  if (outside)
+  {
+    outshape = gis.getShape(&crs, outside->options);
+    if (outshape)
+      outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
+  }
 
   // Logical operations with isobands are initialized before hand
   intersections.init(producer, projection, valid_time, theState);
@@ -580,8 +598,6 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   if (!q->firstLevel())
     throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
-
-  options.level = level;
 
   if (options.level)
   {
@@ -617,14 +633,12 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   auto valueshash = qhash;
   Dali::hash_combine(valueshash, options.data_hash_value());
 
-  std::string wkt = q->area().WKT();
-
   const auto& qEngine = theState.getQEngine();
   auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
 
-  CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs.get());
-  auto geoms =
-      contourer.contour(qhash, wkt, *matrix, coords, options, q->needsWraparound(), crs.get());
+  CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
+
+  auto geoms = contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
 
   return geoms;
 }
@@ -654,7 +668,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     auto geoms = getIsolines(isovalues, theState);
 
     // The above call guarantees these have been resolved:
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
     // Update the globals
@@ -694,9 +708,9 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         isoline_cdt["iri"] = iri;
         isoline_cdt["time"] = Fmi::to_iso_extended_string(getValidTime());
         isoline_cdt["parameter"] = *parameter;
-        isoline_cdt["type"] = Geometry::name(*geom, theState);
+        isoline_cdt["type"] = Geometry::name(*geom, theState.getType());
         isoline_cdt["layertype"] = "isoline";
-        isoline_cdt["data"] = Geometry::toString(*geom, theState, box, crs, precision);
+        isoline_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
         isoline_cdt["value"] = isoline.value;
 
         theState.addPresentationAttributes(isoline_cdt, css, attributes, isoline.attributes);

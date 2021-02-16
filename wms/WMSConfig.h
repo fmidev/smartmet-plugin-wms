@@ -68,13 +68,17 @@ class WMSConfig
   CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
                             const boost::optional<std::string>& starttime,
                             const boost::optional<std::string>& endtime,
+							const boost::optional<std::string>& reference_time,
                             const boost::optional<std::string>& wms_namespace,
+							int newfeature_id,
                             bool authenticate = true) const;
 #else
   CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
                             const boost::optional<std::string>& starttime,
                             const boost::optional<std::string>& endtime,
-                            const boost::optional<std::string>& wms_namespace) const;
+							const boost::optional<std::string>& reference_time,
+                            const boost::optional<std::string>& wms_namespace,
+							int newfeature_id) const;
 #endif
 
   void init();
@@ -96,12 +100,16 @@ class WMSConfig
   bool validateGetMapAuthorization(const Spine::HTTP::Request& theRequest) const;
 #endif
 
+  bool isValidElevation(const std::string& theLayer, int theElevation) const;
   bool isValidTime(const std::string& theLayer,
                    const boost::posix_time::ptime& theTime,
-                   const Engine::Querydata::Engine& theQEngine) const;
+                   const boost::optional<boost::posix_time::ptime>& reference_time) const;
+  bool isValidReferenceTime(const std::string& theLayer,
+							const boost::posix_time::ptime& theReferenceTime) const;
+
   bool isTemporal(const std::string& theLayer) const;
   bool currentValue(const std::string& theLayer) const;
-  boost::posix_time::ptime mostCurrentTime(const std::string& theLayer) const;
+  boost::posix_time::ptime mostCurrentTime(const std::string& theLayer, const boost::optional<boost::posix_time::ptime>& reference_time) const;
   Json::Value json(const std::string& theLayerName) const;
   std::vector<Json::Value> getLegendGraphic(const std::string& theLayerName,
                                             const std::string& theStyleName,
@@ -214,7 +222,6 @@ class WMSConfig
 
   // Set of files for which a warning has already been printed
   std::set<std::string> itsWarnedFiles;
-
 };  // class WMSConfig
 
 }  // namespace WMS

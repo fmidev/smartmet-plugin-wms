@@ -11,11 +11,12 @@
 #include <ctpp2/CDT.hpp>
 #include <engines/geonames/Engine.h>
 #include <engines/gis/Engine.h>
-#include <ogr_spatialref.h>
 #include <gis/Box.h>
-#include <macgyver/NearTree.h>
+#include <gis/CoordinateTransformation.h>
 #include <macgyver/Exception.h>
+#include <macgyver/NearTree.h>
 #include <spine/Json.h>
+#include <ogr_spatialref.h>
 
 namespace SmartMet
 {
@@ -100,8 +101,7 @@ void LocationLayer::init(const Json::Value& theJson,
         }
       }
       else
-        throw Fmi::Exception(BCP,
-                               "LocationLayer symbols setting must be an array or a JSON hash");
+        throw Fmi::Exception(BCP, "LocationLayer symbols setting must be an array or a JSON hash");
     }
   }
   catch (...)
@@ -148,20 +148,12 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     // Get projection details
     projection.update(q);
-    auto crs = projection.getCRS();
+    const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
-
-    // Get the geonames projection
-
-    auto geocrs = theState.getGisEngine().getSpatialReference("WGS84");
 
     // Create the coordinate transformation from geonames coordinates to image coordinates
 
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(geocrs.get(), crs.get()));
-    if (transformation == nullptr)
-      throw Fmi::Exception(
-          BCP, "Failed to create the needed coordinate transformation when drawing locations");
+    Fmi::CoordinateTransformation transformation("WGS84", crs);
 
     // Update the globals
 
@@ -212,10 +204,10 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
       double x = lon;
       double y = lat;
-      transformation->Transform(1, &x, &y);
+      transformation.transform(x, y);
 
       box.transform(x, y);
-      
+
       // Skip locations outside the image.
 
       if (!inside(box, x, y))
