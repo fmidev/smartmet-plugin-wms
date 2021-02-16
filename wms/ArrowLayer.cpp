@@ -98,24 +98,15 @@ PointValues read_forecasts(const ArrowLayer& layer,
     // WindUMS and WindVMS are metaparameters, cannot check their existence here
 
     // We may need to convert relative U/V components to true north
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> uvtransformation;
-    boost::movelib::unique_ptr<OGRSpatialReference> wgs84;
-    boost::movelib::unique_ptr<OGRSpatialReference> qsrs;
+
+    std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
     if (uparam && vparam && q->isRelativeUV())
     {
-      wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-      OGRErr err = wgs84->SetFromUserInput("WGS84");
-      if (err != OGRERR_NONE)
-        throw Fmi::Exception(BCP, "GDAL does not understand WGS84");
-
-      wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-      qsrs = boost::movelib::make_unique<OGRSpatialReference>();
-      err = qsrs->SetFromUserInput(q->area().WKT().c_str());
-      if (err != OGRERR_NONE)
-        throw Fmi::Exception(BCP, "Failed to establish querydata spatial reference");
-      qsrs->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-
-      uvtransformation.reset(OGRCreateCoordinateTransformation(wgs84.get(), qsrs.get()));
+#ifdef NEW_NFMIAREA
+      uvtransformation.reset(new Fmi::CoordinateTransformation("WGS84", q->SpatialReference());
+#else
+      uvtransformation.reset(new Fmi::CoordinateTransformation("WGS84", q->area().WKT()));
+#endif
     }
 
     // Generate the coordinates for the arrows
@@ -236,7 +227,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
                                boost::optional<std::string> speedParam,
                                boost::optional<std::string> uParam,
                                boost::optional<std::string> vParam,
-                               const std::shared_ptr<OGRSpatialReference>& crs,
+                               const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
                                const boost::posix_time::time_period& time_period)
 {
@@ -341,26 +332,10 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
     if (uValues && vValues && uValues->size() == vValues->size())
     {
       // We may need to convert relative U/V components to true north
-      boost::movelib::unique_ptr<OGRCoordinateTransformation> uvtransformation;
+      std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
 
       if (relativeUV && originalCrs)
-      {
-        boost::movelib::unique_ptr<OGRSpatialReference> wgs84;
-        boost::movelib::unique_ptr<OGRSpatialReference> qsrs;
-        wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-        OGRErr err = wgs84->SetFromUserInput("WGS84");
-        if (err != OGRERR_NONE)
-          throw Fmi::Exception(BCP, "GDAL does not understand WGS84");
-        wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-
-        qsrs = boost::movelib::make_unique<OGRSpatialReference>();
-        err = qsrs->SetFromUserInput(originalCrs);
-        if (err != OGRERR_NONE)
-          throw Fmi::Exception(BCP, "Failed to establish querydata spatial reference");
-        qsrs->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-
-        uvtransformation.reset(OGRCreateCoordinateTransformation(wgs84.get(), qsrs.get()));
-      }
+        uvtransformation.reset(new Fmi::CoordinateTransformation("WGS84", originalCrs));
 
       for (const auto& point : points)
       {
@@ -378,7 +353,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
             {
               wspeed = sqrt(u * u + v * v);
 
-              if (uvtransformation == nullptr)
+              if (!uvtransformation)
                 wdir = fmod(180 + 180 / pi * atan2(u, v), 360);
               else
               {
@@ -1176,7 +1151,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       {
         auto crs = projection.getCRS();
         char* out = nullptr;
-        crs->exportToWkt(&out);
+        crs.get()->exportToWkt(&out);
         wkt = out;
         CPLFree(out);
       }
@@ -1392,18 +1367,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // Coordinate transformation from WGS84 to output SRS so that we can rotate
     // winds according to map north
 
-    auto wgs84 = boost::movelib::make_unique<OGRSpatialReference>();
-    OGRErr err = wgs84->SetFromUserInput("WGS84");
-    if (err != OGRERR_NONE)
-      throw Fmi::Exception(BCP, "GDAL does not understand WGS84");
-    wgs84->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(wgs84.get(), crs.get()));
-    if (transformation == nullptr)
-      throw Fmi::Exception(
-          BCP,
-          "Failed to create the needed coordinate transformation when reading wind directions");
+    Fmi::CoordinateTransformation transformation("WGS84", crs);
 
     // Alter units if requested
 
@@ -1445,7 +1409,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         wspd = xmultiplier * wspd + xoffset;
 
       // Apply final rotation to output coordinate system
-      auto fix = Fmi::OGR::gridNorth(*transformation, point.latlon.X(), point.latlon.Y());
+      auto fix = Fmi::OGR::gridNorth(transformation, point.latlon.X(), point.latlon.Y());
       if (!fix)
         continue;
 

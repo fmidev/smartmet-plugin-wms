@@ -189,14 +189,14 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   OGRGeometryPtr inshape, outshape;
   if (inside)
   {
-    inshape = gis.getShape(crs.get(), inside->options);
+    inshape = gis.getShape(&crs, inside->options);
     if (!inshape)
       throw Fmi::Exception(BCP, "IsolineLayer received empty inside-shape from database");
     inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
   }
   if (outside)
   {
-    outshape = gis.getShape(crs.get(), outside->options);
+    outshape = gis.getShape(&crs, outside->options);
     if (outshape)
       outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
   }
@@ -274,7 +274,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
     {
       auto crs = projection.getCRS();
       char* out = nullptr;
-      crs->exportToWkt(&out);
+      crs.get()->exportToWkt(&out);
       wkt = out;
       CPLFree(out);
     }
@@ -536,6 +536,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   projection.update(q);
   const auto& crs = projection.getCRS();
   const auto& box = projection.getBox();
+  const auto clipbox = getClipBox(box);
 
   // Sample to higher resolution if necessary
 
@@ -565,6 +566,10 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   if (!q)
     throw Fmi::Exception(BCP, "Cannot generate isolines without gridded data");
+
+  // Logical operations with maps require shapes
+
+  const auto& gis = theState.getGisEngine();
 
   OGRGeometryPtr inshape, outshape;
   if (inside)

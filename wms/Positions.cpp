@@ -428,7 +428,7 @@ Positions::Points Positions::getPoints(const char* originalCrs,
                                        int originalWidth,
                                        int originalHeight,
                                        uint originalGeometryId,
-                                       const std::shared_ptr<OGRSpatialReference>& theCRS,
+                                       const Fmi::SpatialReference& theCRS,
                                        const Fmi::Box& theBox) const
 {
   try
@@ -627,31 +627,16 @@ Positions::Points Positions::getDataPoints(const char* originalCrs,
                                            int originalWidth,
                                            int originalHeight,
                                            uint originalGeometryId,
-                                           const std::shared_ptr<OGRSpatialReference>& theCRS,
+                                           const Fmi::SpatialReference& theCRS,
                                            const Fmi::Box& theBox) const
 {
   try
   {
-    auto qcrs = boost::movelib::make_unique<OGRSpatialReference>();
-
-    // OGRErr err = qcrs->SetFromUserInput(originalCrs);
-    OGRErr err = qcrs->importFromEPSG(4326);
-    if (err != OGRERR_NONE)
-      throw Fmi::Exception(BCP,
-                           "GDAL does not understand this FMI WKT: " + std::string(originalCrs));
-    qcrs->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-
     // Create the coordinate transformation from image world coordinates
     // to querydata world coordinates
 
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation(
-        OGRCreateCoordinateTransformation(qcrs.get(), theCRS.get()));
-    boost::movelib::unique_ptr<OGRCoordinateTransformation> transformation2(
-        OGRCreateCoordinateTransformation(theCRS.get(), qcrs.get()));
-
-    if (transformation == nullptr)
-      throw Fmi::Exception(
-          BCP, "Failed to create the needed coordinate transformation for generating positions!");
+    Fmi::CoordinateTransformation transformation("WGS84", theCRS);
+    Fmi::CoordinateTransformation transformation2(theCRS, "WGS84");
 
     int deltax = (!!dx ? *dx : 10);
     int deltay = (!!dy ? *dy : 10);
@@ -679,7 +664,7 @@ Positions::Points Positions::getDataPoints(const char* originalCrs,
               double xx = cc.x();
               double yy = cc.y();
 
-              transformation->Transform(1, &xx, &yy);
+              transformation.transform(xx, yy);
 
               double xp = xx;
               double yp = yy;

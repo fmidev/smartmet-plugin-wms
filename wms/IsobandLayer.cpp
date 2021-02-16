@@ -461,7 +461,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       {
         auto crs = projection.getCRS();
         char* out = nullptr;
-        crs->exportToWkt(&out);
+        crs.get()->exportToWkt(&out);
         wkt = out;
         CPLFree(out);
       }
@@ -743,7 +743,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     OGRGeometryPtr inshape, outshape;
     if (inside)
     {
-      inshape = gis.getShape(crs.get(), inside->options);
+      inshape = gis.getShape(&crs, inside->options);
       if (!inshape)
         throw Fmi::Exception(BCP, "Received empty inside-shape from database!");
 
@@ -751,7 +751,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     }
     if (outside)
     {
-      outshape = gis.getShape(crs.get(), outside->options);
+      outshape = gis.getShape(&crs, outside->options);
       if (outshape)
         outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
     }
@@ -811,8 +811,8 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
           isoband_cdt["iri"] = iri;
           isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
           isoband_cdt["parameter"] = *parameter;
-          isoband_cdt["data"] = Geometry::toString(*geom2, theState, box, crs, precision);
-          isoband_cdt["type"] = Geometry::name(*geom2, theState);
+          isoband_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs, precision);
+          isoband_cdt["type"] = Geometry::name(*geom2, theState.getType());
           isoband_cdt["layertype"] = "isoband";
 
           // Use null to indicate unset values in GeoJSON

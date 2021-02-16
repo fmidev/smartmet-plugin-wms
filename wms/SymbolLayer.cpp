@@ -26,9 +26,9 @@
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/common/ImagePaint.h>
+#include <macgyver/Exception.h>
 #include <newbase/NFmiArea.h>
 #include <newbase/NFmiPoint.h>
-#include <macgyver/Exception.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 #include <spine/ParameterTools.h>
@@ -143,7 +143,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
 PointValues read_gridForecasts(const SymbolLayer& layer,
                                const Engine::Grid::Engine* gridEngine,
                                QueryServer::Query& query,
-                               const std::shared_ptr<OGRSpatialReference>& crs,
+                               const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
                                const boost::posix_time::time_period& valid_time_period)
 {
@@ -551,7 +551,7 @@ PointValues read_station_observations(const SymbolLayer& layer,
       opts.taggedFMISIDs = obsengine.translateToFMISID(
           settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
-      if(opts.taggedFMISIDs.empty())
+      if (opts.taggedFMISIDs.empty())
         continue;
 
       auto result = obsengine.values(opts);
@@ -680,7 +680,7 @@ PointValues read_latlon_observations(const SymbolLayer& layer,
       opts.taggedFMISIDs = obsengine.translateToFMISID(
           settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
-      if(opts.taggedFMISIDs.empty())
+      if (opts.taggedFMISIDs.empty())
         continue;
 
       auto result = obsengine.values(opts);
@@ -985,11 +985,11 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     {
       // Getting WKT and the bounding box of the requested projection.
 
-      if (strstr(wkt.c_str(),"+proj") != wkt.c_str())
+      if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
       {
         auto crs = projection.getCRS();
         char* out = nullptr;
-        crs->exportToWkt(&out);
+        crs.get()->exportToWkt(&out);
         wkt = out;
         CPLFree(out);
       }
@@ -1063,7 +1063,9 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Fullfilling information into the query object.
 
-    for (auto it = originalGridQuery->mQueryParameterList.begin(); it != originalGridQuery->mQueryParameterList.end(); ++it)
+    for (auto it = originalGridQuery->mQueryParameterList.begin();
+         it != originalGridQuery->mQueryParameterList.end();
+         ++it)
     {
       it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
       it->mType = QueryServer::QueryParameter::Type::Vector;
@@ -1095,10 +1097,12 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     else
     {
       if (projection.xsize)
-        originalGridQuery->mAttributeList.addAttribute("grid.width", std::to_string(*projection.xsize));
+        originalGridQuery->mAttributeList.addAttribute("grid.width",
+                                                       std::to_string(*projection.xsize));
 
       if (projection.ysize)
-        originalGridQuery->mAttributeList.addAttribute("grid.height", std::to_string(*projection.ysize));
+        originalGridQuery->mAttributeList.addAttribute("grid.height",
+                                                       std::to_string(*projection.ysize));
     }
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)

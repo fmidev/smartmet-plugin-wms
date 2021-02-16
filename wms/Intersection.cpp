@@ -173,7 +173,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
 
       auto crs = theProjection.getCRS();
       char* out = nullptr;
-      crs->exportToWkt(&out);
+      crs.get()->exportToWkt(&out);
       wkt = out;
       CPLFree(out);
 
@@ -195,8 +195,9 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     auto pos = pName.find(".raw");
     if (pos != std::string::npos)
     {
-      attributeList.addAttribute("areaInterpolationMethod",std::to_string(T::AreaInterpolationMethod::Linear));
-      pName.erase(pos,4);
+      attributeList.addAttribute("areaInterpolationMethod",
+                                 std::to_string(T::AreaInterpolationMethod::Linear));
+      pName.erase(pos, 4);
     }
 
     std::string param = gridEngine->getParameterString(producerName, pName);
@@ -229,7 +230,9 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     float hlimit = C_FLOAT(*hilimit);
     float llimit = C_FLOAT(*lolimit);
 
-    for (auto it = originalGridQuery->mQueryParameterList.begin(); it != originalGridQuery->mQueryParameterList.end(); ++it)
+    for (auto it = originalGridQuery->mQueryParameterList.begin();
+         it != originalGridQuery->mQueryParameterList.end();
+         ++it)
     {
       it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
       it->mType = QueryServer::QueryParameter::Type::Isoband;
@@ -241,10 +244,12 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
     if (theProjection.xsize)
-      originalGridQuery->mAttributeList.addAttribute("grid.width", std::to_string(*theProjection.xsize));
+      originalGridQuery->mAttributeList.addAttribute("grid.width",
+                                                     std::to_string(*theProjection.xsize));
 
     if (theProjection.ysize)
-      originalGridQuery->mAttributeList.addAttribute("grid.height", std::to_string(*theProjection.ysize));
+      originalGridQuery->mAttributeList.addAttribute("grid.height",
+                                                     std::to_string(*theProjection.ysize));
 
     if (wkt == "data" && theProjection.x1 && theProjection.y1 && theProjection.x2 &&
         theProjection.y2)
@@ -260,10 +265,12 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     }
 
     if (smoother.size)
-      originalGridQuery->mAttributeList.addAttribute("contour.smooth.size", std::to_string(*smoother.size));
+      originalGridQuery->mAttributeList.addAttribute("contour.smooth.size",
+                                                     std::to_string(*smoother.size));
 
     if (smoother.degree)
-      originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree", std::to_string(*smoother.degree));
+      originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
+                                                     std::to_string(*smoother.degree));
 
     if (offset)
       originalGridQuery->mAttributeList.addAttribute("contour.offset", std::to_string(*offset));

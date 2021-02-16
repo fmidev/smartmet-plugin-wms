@@ -165,7 +165,7 @@ void Projection::init(const Json::Value& theJson,
           boost::algorithm::replace_first(*bboxcrs, "EPSG:", "EPSGA:");
 
         spatref.SetFromUserInput(bboxcrs->c_str());
-        spatref->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+        spatref.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
       }
       else
       {

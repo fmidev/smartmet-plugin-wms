@@ -176,17 +176,17 @@ void WMSGridDataLayer::updateLayerMetaData()
         return;
     }
 
+    boost::shared_ptr<WMSTimeDimension> timeDimension;
+
     time_t step = even_timesteps(contentTimeList);
     if (step > 0)
     {
-      // interval
+      // time interval
       boost::posix_time::time_duration timestep = boost::posix_time::seconds(step);
-
-      auto newTimeDimension = boost::movelib::make_unique<IntervalTimeDimension>(
-          toTimeStamp(*(contentTimeList.begin())),
-          toTimeStamp(*(--contentTimeList.end())),
-          timestep);
-      timeDimension = std::move(newTimeDimension);
+      timeDimension =
+          boost::make_shared<IntervalTimeDimension>(toTimeStamp(*(contentTimeList.begin())),
+                                                    toTimeStamp(*(--contentTimeList.end())),
+                                                    timestep);
     }
     else
     {
@@ -196,6 +196,9 @@ void WMSGridDataLayer::updateLayerMetaData()
         times.push_back(toTimeStamp(stime));
       timeDimension = boost::make_shared<StepTimeDimension>(times);
     }
+
+    timeDimensions = boost::make_shared<WMSTimeDimensions>(timeDimension);
+
     metadataTimestamp = boost::posix_time::second_clock::universal_time();
   }
   catch (...)

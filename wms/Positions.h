@@ -86,7 +86,7 @@ class Positions
                    int originalWidth,
                    int originalHeight,
                    uint originalGeometryId,
-                   const std::shared_ptr<OGRSpatialReference>& theCRS,
+                   const Fmi::SpatialReference& theCRS,
                    const Fmi::Box& theBox) const;
 
   bool inside(double theX, double theY, bool forecastMode) const;
@@ -160,7 +160,7 @@ class Positions
                        int originalWidth,
                        int originalHeight,
                        uint originalGeometryId,
-                       const std::shared_ptr<OGRSpatialReference>& theCRS,
+                       const Fmi::SpatialReference& theCRS,
                        const Fmi::Box& theBox) const;
 
   Points getGraticulePoints(const Engine::Querydata::Q& theQ,

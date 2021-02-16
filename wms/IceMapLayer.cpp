@@ -32,9 +32,6 @@ namespace
 {
 Json::CharReaderBuilder charreaderbuilder;
 
-using OGRSpatialReferencePtr = boost::shared_ptr<OGRSpatialReference>;
-using OGRCoordinateTransformationPtr = boost::movelib::unique_ptr<OGRCoordinateTransformation>;
-
 const char* const attribute_columns[] = {"firstname_column",
                                          "secondname_column",
                                          "nameposition_column",

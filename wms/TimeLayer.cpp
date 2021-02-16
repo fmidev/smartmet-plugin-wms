@@ -10,11 +10,11 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
+#include <engines/grid/Engine.h>
 #include <fmt/chrono.h>
 #include <gis/Box.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <grid-files/common/GeneralFunctions.h>
-#include <engines/grid/Engine.h>
 #include <macgyver/Exception.h>
 #include <spine/Json.h>
 #include <ogr_spatialref.h>
@@ -93,53 +93,53 @@ void TimeLayer::init(const Json::Value& theJson,
       else
         format.push_back(json.asString());
     }
-/*
-    json = theJson.get("parameter", nulljson);
-    if (!json.isNull())
-      parameter = json.asString();
+    /*
+        json = theJson.get("parameter", nulljson);
+        if (!json.isNull())
+          parameter = json.asString();
 
-    json = theJson.get("geometryId", nulljson);
-    if (!json.isNull())
-      geometryId = json.asInt();
+        json = theJson.get("geometryId", nulljson);
+        if (!json.isNull())
+          geometryId = json.asInt();
 
-    json = theJson.get("levelId", nulljson);
-    if (!json.isNull())
-      levelId = json.asInt();
+        json = theJson.get("levelId", nulljson);
+        if (!json.isNull())
+          levelId = json.asInt();
 
-    json = theJson.get("level", nulljson);
-    if (!json.isNull())
-      level = json.asDouble();
+        json = theJson.get("level", nulljson);
+        if (!json.isNull())
+          level = json.asDouble();
 
-    json = theJson.get("forecastType", nulljson);
-    if (!json.isNull())
-      forecastType = json.asInt();
+        json = theJson.get("forecastType", nulljson);
+        if (!json.isNull())
+          forecastType = json.asInt();
 
-    json = theJson.get("forecastNumber", nulljson);
-    if (!json.isNull())
-      forecastNumber = json.asInt();
+        json = theJson.get("forecastNumber", nulljson);
+        if (!json.isNull())
+          forecastNumber = json.asInt();
 
-    auto request = theState.getRequest();
+        auto request = theState.getRequest();
 
-    boost::optional<std::string> v = request.getParameter("geometryId");
-    if (v)
-      geometryId = toInt32(*v);
+        boost::optional<std::string> v = request.getParameter("geometryId");
+        if (v)
+          geometryId = toInt32(*v);
 
-    v = request.getParameter("levelId");
-    if (v)
-      levelId = toInt32(*v);
+        v = request.getParameter("levelId");
+        if (v)
+          levelId = toInt32(*v);
 
-    v = request.getParameter("level");
-    if (v)
-      level = toInt32(*v);
+        v = request.getParameter("level");
+        if (v)
+          level = toInt32(*v);
 
-    v = request.getParameter("forecastType");
-    if (v)
-      forecastType = toInt32(*v);
+        v = request.getParameter("forecastType");
+        if (v)
+          forecastType = toInt32(*v);
 
-    v = request.getParameter("forecastNumber");
-    if (v)
-      forecastNumber = toInt32(*v);
-*/
+        v = request.getParameter("forecastNumber");
+        if (v)
+          forecastNumber = toInt32(*v);
+    */
     auto longitudeJson = theJson.get("longitude", nulljson);
     auto latitudeJson = theJson.get("latitude", nulljson);
     if (!longitudeJson.isNull() && !latitudeJson.isNull())
@@ -184,19 +184,15 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
       return;
 
     if (source && *source == "grid")
-      generate_gridEngine(theGlobals,theLayersCdt,theState);
+      generate_gridEngine(theGlobals, theLayersCdt, theState);
     else
-      generate_qEngine(theGlobals,theLayersCdt,theState);
+      generate_qEngine(theGlobals, theLayersCdt, theState);
   }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
-
-
-
 
 void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
 {
@@ -205,7 +201,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     if (*projection.crs == "data")
       return;
 
-    //if (!validLayer(theState))
+    // if (!validLayer(theState))
     //  return;
 
     // Time execution
@@ -216,7 +212,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
     // Establish the data
-    //auto q = getModel(theState);
+    // auto q = getModel(theState);
 
     // Establish the valid time
 
@@ -230,25 +226,26 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     std::string producerName = gridEngine->getProducerName(*producer);
 
-    auto valid_time = getValidTime();;
+    auto valid_time = getValidTime();
+    ;
 
     std::string wkt = *projection.crs;
-    //std::cout << wkt << "\n";
+    // std::cout << wkt << "\n";
 
     if (wkt != "data")
     {
       // Getting WKT and the bounding box of the requested projection.
 
-      if (strstr(wkt.c_str(),"+proj") != wkt.c_str())
+      if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
       {
         auto crs = projection.getCRS();
-        char *out = nullptr;
-        crs->exportToWkt(&out);
+        char* out = nullptr;
+        crs.get()->exportToWkt(&out);
         wkt = out;
         CPLFree(out);
       }
 
-      //std::cout << wkt << "\n";
+      // std::cout << wkt << "\n";
 
       // Adding the bounding box information into the query.
 
@@ -256,18 +253,18 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
       auto bl = projection.bottomLeftLatLon();
       auto tr = projection.topRightLatLon();
-      sprintf(bbox,"%f,%f,%f,%f",bl.X(),bl.Y(),tr.X(),tr.Y());
-      originalGridQuery->mAttributeList.addAttribute("grid.llbox",bbox);
+      sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
+      originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
       const auto& box = projection.getBox();
-      sprintf(bbox,"%f,%f,%f,%f",box.xmin(),box.ymin(),box.xmax(),box.ymax());
-      originalGridQuery->mAttributeList.addAttribute("grid.bbox",bbox);
+      sprintf(bbox, "%f,%f,%f,%f", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+      originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
     else
     {
-      // The requested projection is the same as the projection of the requested data. This means that we
-      // we do not know the actual projection yet and we have to wait that the grid-engine delivers us
-      // the requested data and the projection information of the current data.
+      // The requested projection is the same as the projection of the requested data. This means
+      // that we we do not know the actual projection yet and we have to wait that the grid-engine
+      // delivers us the requested data and the projection information of the current data.
     }
 
     // Adding parameter information into the query.
@@ -276,28 +273,30 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     if (originalGridQuery->mProducerNameList.size() == 0)
     {
-      gridEngine->getProducerNameList(producerName,originalGridQuery->mProducerNameList);
+      gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
       if (originalGridQuery->mProducerNameList.size() == 0)
         originalGridQuery->mProducerNameList.push_back(producerName);
     }
 
-    attributeList.addAttribute("param",paramStr);
+    attributeList.addAttribute("param", paramStr);
 
     std::string forecastTime = Fmi::to_iso_string(*time);
-    attributeList.addAttribute("startTime",forecastTime);
-    attributeList.addAttribute("endTime",forecastTime);
-    attributeList.addAttribute("timelist",forecastTime);
-    attributeList.addAttribute("timezone","UTC");
+    attributeList.addAttribute("startTime", forecastTime);
+    attributeList.addAttribute("endTime", forecastTime);
+    attributeList.addAttribute("timelist", forecastTime);
+    attributeList.addAttribute("timezone", "UTC");
 
     if (origintime)
       attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
 
     // Tranforming information from the attribute list into the query object.
-    queryConfigurator.configure(*originalGridQuery,attributeList);
+    queryConfigurator.configure(*originalGridQuery, attributeList);
 
     // Fullfilling information into the query object.
 
-    for (auto it = originalGridQuery->mQueryParameterList.begin(); it != originalGridQuery->mQueryParameterList.end(); ++it)
+    for (auto it = originalGridQuery->mQueryParameterList.begin();
+         it != originalGridQuery->mQueryParameterList.end();
+         ++it)
     {
       it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
       it->mType = QueryServer::QueryParameter::Type::Vector;
@@ -305,26 +304,28 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
-    originalGridQuery->mAttributeList.addAttribute("grid.crs",wkt);
+    originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
 
-    if (projection.size  &&  *projection.size > 0)
+    if (projection.size && *projection.size > 0)
     {
-      originalGridQuery->mAttributeList.addAttribute("grid.size",std::to_string(*projection.size));
+      originalGridQuery->mAttributeList.addAttribute("grid.size", std::to_string(*projection.size));
     }
     else
     {
       if (projection.xsize)
-        originalGridQuery->mAttributeList.addAttribute("grid.width",std::to_string(*projection.xsize));
+        originalGridQuery->mAttributeList.addAttribute("grid.width",
+                                                       std::to_string(*projection.xsize));
 
       if (projection.ysize)
-        originalGridQuery->mAttributeList.addAttribute("grid.height",std::to_string(*projection.ysize));
+        originalGridQuery->mAttributeList.addAttribute("grid.height",
+                                                       std::to_string(*projection.ysize));
     }
 
-    if (wkt == "data"  &&  projection.x1 && projection.y1 && projection.x2 && projection.y2)
+    if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
     {
       char bbox[100];
-      sprintf(bbox,"%f,%f,%f,%f",*projection.x1,*projection.y1,*projection.x2,*projection.y2);
-      originalGridQuery->mAttributeList.addAttribute("grid.bbox",bbox);
+      sprintf(bbox, "%f,%f,%f,%f", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
+      originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
 
     // The Query object before the query execution.
@@ -336,12 +337,13 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     // The Query object after the query execution.
     // query.print(std::cout,0,0);
 
-
     std::shared_ptr<QueryServer::ParameterValues> p;
 
-    for (auto param = query->mQueryParameterList.begin(); param != query->mQueryParameterList.end()  &&  p == nullptr; ++param)
+    for (auto param = query->mQueryParameterList.begin();
+         param != query->mQueryParameterList.end() && p == nullptr;
+         ++param)
     {
-      if (param->mParam == paramStr  &&  param->mValueList.size() > 0)
+      if (param->mParam == paramStr && param->mValueList.size() > 0)
       {
         auto val = param->mValueList.begin();
         p = (*val);
@@ -349,7 +351,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     }
 
     boost::optional<boost::posix_time::ptime> originTime;
-    if (p  && p->mAnalysisTime.length() >= 15)
+    if (p && p->mAnalysisTime.length() >= 15)
       originTime = Fmi::TimeParser::parse_iso(p->mAnalysisTime);
 
     // Update the globals
@@ -373,7 +375,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     if (x || y)
     {
-      //projection.update(q);
+      // projection.update(q);
       const auto& box = projection.getBox();
 
       if (x)
@@ -396,7 +398,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       format.emplace_back("%Y-%m-%d %H:%M");
 
     if (timestamp.size() != format.size())
-      throw Fmi::Exception(BCP,"TimeLayer timestamp and format arrays should be of the same size");
+      throw Fmi::Exception(BCP, "TimeLayer timestamp and format arrays should be of the same size");
 
     // Create the output
     std::ostringstream msg;
@@ -458,7 +460,8 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
           throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
 
         boost::posix_time::ptime ot = *originTime;
-        duration = valid_time - ot + ot.time_of_day() - boost::posix_time::hours(ot.time_of_day().hours());
+        duration =
+            valid_time - ot + ot.time_of_day() - boost::posix_time::hours(ot.time_of_day().hours());
       }
       else if (name == "time_offset")
       {
@@ -536,10 +539,6 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
   }
 }
 
-
-
-
-
 void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
 {
   try
@@ -605,8 +604,7 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       format.emplace_back("%Y-%m-%d %H:%M");
 
     if (timestamp.size() != format.size())
-      throw Fmi::Exception(BCP,
-                             "TimeLayer timestamp and format arrays should be of the same size");
+      throw Fmi::Exception(BCP, "TimeLayer timestamp and format arrays should be of the same size");
 
     // Create the output
     std::ostringstream msg;

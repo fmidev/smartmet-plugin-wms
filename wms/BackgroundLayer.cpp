@@ -66,7 +66,6 @@ void BackgroundLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, S
       }
     }
 
-    projection.update(q);
     // const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 

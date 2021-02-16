@@ -220,7 +220,7 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // direction, and then also apply "upright" condition if so requested.
 
     if (label.orientation == "auto")
-      fix_orientation(candidates, box, crs);
+      fix_orientation(candidates, box, theState, crs);
 
     // Update the globals
 
@@ -928,6 +928,7 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
 
 void IsolabelLayer::fix_orientation(Candidates& candidates,
                                     const Fmi::Box& box,
+                                    const State& state,
                                     const Fmi::SpatialReference& crs) const
 {
   if (source && *source == "grid")
@@ -1010,19 +1011,15 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
 void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
                                                const Fmi::Box& box,
                                                const State& state,
-                                               OGRSpatialReference& sr_image) const
+                                               const Fmi::SpatialReference& sr_image) const
 {
   try
   {
     auto gridEngine = state.getGridEngine();
     auto dataServer = gridEngine->getDataServer_sptr();
 
-    OGRSpatialReference sr_latlon;
-    sr_latlon.importFromEPSG(4326);
-    sr_latlon.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+    Fmi::CoordinateTransformation transformation(sr_image, "WGS84");
 
-    OGRCoordinateTransformation* transformation =
-        OGRCreateCoordinateTransformation(&sr_image, &sr_latlon);
     std::vector<T::Coordinate> pointList;
 
     for (auto& cand : candidates)
@@ -1040,8 +1037,8 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
       box.itransform(x1, y1);
       box.itransform(x2, y2);
 
-      transformation->Transform(1, &x1, &y1);
-      transformation->Transform(1, &x2, &y2);
+      transformation.transform(x1, y1);
+      transformation.transform(x2, y2);
 
       // printf("%f,%f  %f,%f\n",x1,y1,x2,y2);
 
@@ -1083,9 +1080,6 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
         }
       }
     }
-
-    if (transformation != nullptr)
-      OCTDestroyCoordinateTransformation(transformation);
   }
   catch (...)
   {

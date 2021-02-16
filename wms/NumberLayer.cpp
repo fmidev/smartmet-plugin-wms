@@ -137,7 +137,7 @@ PointValues read_forecasts(const NumberLayer& layer,
 PointValues read_gridForecasts(const NumberLayer& layer,
                                const Engine::Grid::Engine* gridEngine,
                                QueryServer::Query& query,
-                               const std::shared_ptr<OGRSpatialReference>& crs,
+                               const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
                                const boost::posix_time::time_period& valid_time_period)
 {
@@ -978,7 +978,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       {
         auto crs = projection.getCRS();
         char* out = nullptr;
-        crs->exportToWkt(&out);
+        crs.get()->exportToWkt(&out);
         wkt = out;
         CPLFree(out);
       }

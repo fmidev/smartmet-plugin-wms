@@ -71,9 +71,10 @@ class IsolabelLayer : public IsolineLayer
   void fix_orientation_gridEngine(Candidates& candidates,
                                   const Fmi::Box& box,
                                   const State& state,
-                                  OGRSpatialReference& crs) const;
+                                  const Fmi::SpatialReference& crs) const;
   void fix_orientation(Candidates& candidates,
                        const Fmi::Box& box,
+                       const State& state,
                        const Fmi::SpatialReference& crs) const;
 
 };  // namespace Dali
