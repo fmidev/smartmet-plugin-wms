@@ -98,10 +98,10 @@ format:
 install:
 	@mkdir -p $(plugindir)
 	$(INSTALL_PROG) $(LIBFILE) $(plugindir)/$(LIBFILE)
-	@mkdir -p $(sysconfdir)/smartmet/plugins/wms/tmpl
+	@mkdir -p $(sysconfdir)/smartmet/plugins/gribwms/tmpl
 	@list=`ls -1 tmpl/*.c2t`; \
-	echo $(INSTALL_DATA) $$list "$(sysconfdir)/smartmet/plugins/wms/tmpl"; \
-        $(INSTALL_DATA) $$list "$(sysconfdir)/smartmet/plugins/wms/tmpl";
+	echo $(INSTALL_DATA) $$list "$(sysconfdir)/smartmet/plugins/gribwms/tmpl"; \
+        $(INSTALL_DATA) $$list "$(sysconfdir)/smartmet/plugins/gribwms/tmpl";
 
 test: configtest
 	cd test && make test
