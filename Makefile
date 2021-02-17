@@ -16,6 +16,7 @@ DEFINES = -DUNIX -D_REENTRANT -DWGS84
 
 LIBS += -L$(libdir) \
 	$(REQUIRED_LIBS) \
+	-lsmartmet-grid-content \
 	-lsmartmet-spine \
 	-lsmartmet-newbase \
 	-lsmartmet-macgyver \
