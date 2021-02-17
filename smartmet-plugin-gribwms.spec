@@ -130,7 +130,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Tue Feb 16 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.16-1.fmi
-- Repackaged due to NFmiArea ABI changes
+- Fixed GRIB mode GetCapabilities response to handle all analysis times
 
 * Thu Feb 11 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.2.11-1.fmi
 - Support for layer hierarchy, reference_time, elevation in 
