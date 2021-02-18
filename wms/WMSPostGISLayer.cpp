@@ -133,7 +133,6 @@ bool WMSPostGISLayer::mustUpdateLayerMetaData()
     moptions.fieldnames.insert(itsMetaDataSettings.field);
     moptions.where = itsMetaDataSettings.where;
 
-    OGRSpatialReference* sr = nullptr;
     const boost::optional<boost::posix_time::ptime> reference_time;
     boost::posix_time::ptime mostCurrentTimestamp = mostCurrentTime(reference_time);
 

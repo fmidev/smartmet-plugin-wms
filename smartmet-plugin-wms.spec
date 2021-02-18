@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.2.16
+Version: 21.2.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -29,8 +29,8 @@ BuildRequires: smartmet-engine-observation-devel >= 21.2.11
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 21.2.10
 BuildRequires: smartmet-engine-geonames-devel >= 21.1.25
-BuildRequires: smartmet-engine-querydata-devel >= 21.2.15
-BuildRequires: smartmet-engine-contour-devel >= 21.2.11
+BuildRequires: smartmet-engine-querydata-devel >= 21.2.18
+BuildRequires: smartmet-engine-contour-devel >= 21.2.18
 BuildRequires: smartmet-library-gis-devel >= 21.2.11
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
@@ -59,8 +59,8 @@ Requires: smartmet-library-giza >= 21.1.14
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.1.14
 %endif
-Requires: smartmet-engine-querydata >= 21.2.15
-Requires: smartmet-engine-contour >= 21.2.11
+Requires: smartmet-engine-querydata >= 21.2.18
+Requires: smartmet-engine-contour >= 21.2.18
 Requires: smartmet-engine-gis >= 21.2.10
 Requires: smartmet-engine-geonames >= 21.1.25
 Requires: smartmet-server >= 21.1.14
@@ -123,6 +123,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Thu Feb 18 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.18-1.fmi
+- Repackaged due to newbase ABI changes
+
 * Tue Feb 16 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.16-1.fmi
 - Repackaged due to NFmiArea ABI changes
 
