@@ -11,7 +11,7 @@ sysconfdir ?= /etc
 
 CFLAGS += -Wno-maybe-uninitialized
 
-DEFINES = -DUNIX -D_REENTRANT -DWGS84
+DEFINES = -DUNIX -D_REENTRANT
 # DEFINES = -DUNIX -D_REENTRANT -DNEW_NFMIAREA
 
 LIBS += -L$(libdir) \
