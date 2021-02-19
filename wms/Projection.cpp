@@ -246,11 +246,7 @@ void Projection::update(const Engine::Querydata::Q& theQ)
   {
     if (crs && *crs == "data")
     {
-#ifdef NEW_NFMIAREA
-      crs = theQ->area().ProjStr();
-#else
-      crs = theQ->area().WKT().c_str();
-#endif
+      crs = theQ->SpatialReference().projStr();
       bool no_bbox = (!x1 && !y1 && !x2 && !y2 && !cx && !cy && !resolution && !bboxcrs);
 
       if (no_bbox)
