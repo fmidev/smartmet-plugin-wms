@@ -19,7 +19,7 @@ map_bipc.get
 map_ccon.get
 map_chamb.get
 map_eqearth.get
-zmap_geos.get
+map_geos.get
 map_gnom.get
 map_gstmerc.get
 map_imw_p.get
