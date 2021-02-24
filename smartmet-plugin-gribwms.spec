@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.2.19
+Version: 21.2.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -19,7 +19,7 @@ BuildRequires: libconfig >= 1.7.2
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.1.14
 BuildRequires: smartmet-library-grid-content-devel >= 21.2.3
-BuildRequires: smartmet-library-grid-files-devel >= 21.2.15
+BuildRequires: smartmet-library-grid-files-devel >= 21.2.24
 BuildRequires: smartmet-library-macgyver-devel >= 21.1.25
 BuildRequires: smartmet-library-spine-devel >= 21.2.5
 BuildRequires: smartmet-library-giza-devel
@@ -32,9 +32,9 @@ BuildRequires: smartmet-engine-observation-devel >= 21.2.11
 BuildRequires: smartmet-engine-gis-devel >= 21.2.10
 BuildRequires: smartmet-engine-grid-devel >= 21.2.16
 BuildRequires: smartmet-engine-geonames-devel >= 21.2.18
-BuildRequires: smartmet-engine-querydata-devel >= 21.2.18
+BuildRequires: smartmet-engine-querydata-devel >= 21.2.20
 BuildRequires: smartmet-engine-contour-devel >= 21.2.18
-BuildRequires: smartmet-library-gis-devel >= 21.2.11
+BuildRequires: smartmet-library-gis-devel >= 21.2.24
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -57,14 +57,14 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
 Requires: smartmet-library-grid-content >= 21.2.3
-Requires: smartmet-library-grid-files >= 21.2.15
-Requires: smartmet-library-gis >= 21.2.11
+Requires: smartmet-library-grid-files >= 21.2.24
+Requires: smartmet-library-gis >= 21.2.24
 Requires: smartmet-library-macgyver >= 21.1.25
 Requires: smartmet-library-giza >= 21.1.14
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.1.14
 %endif
-Requires: smartmet-engine-querydata >= 21.2.18
+Requires: smartmet-engine-querydata >= 21.2.20
 Requires: smartmet-engine-contour >= 21.2.18
 Requires: smartmet-engine-gis >= 21.2.10
 Requires: smartmet-engine-grid >= 21.2.16
@@ -91,7 +91,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 21.2.18
 #TestRequires: smartmet-engine-geonames-devel >= 21.2.18
 #TestRequires: smartmet-engine-gis-devel >= 21.2.10
-#TestRequires: smartmet-engine-querydata-devel >= 21.2.18
+#TestRequires: smartmet-engine-querydata-devel >= 21.2.20
 #TestRequires: smartmet-library-giza-devel >= 21.1.14
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
 #TestRequires: smartmet-library-spine-devel >= 21.2.5
@@ -129,6 +129,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
+* Wed Feb 24 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.24-1.fmi
+- Fixed to handle missing size settings
+
 * Fri Feb 19 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.19-1.fmi
 - Repackaged due to newbase ABI changes
 
