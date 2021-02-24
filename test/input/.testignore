@@ -4,11 +4,9 @@ symbols_coloured_fin.get
 symbols_coloured_native.get
 symbols_coloured_webmercator.get
 symbols_coloured_wgs84.get
-; Not possible to control output precision, hence fails on different architectures
+; Not possible to control output precision, hence works on RHEL7 but fails on RHEL8
 t2m_p_geojson.get
 t2m_p_kml.get
-; Incorrect result
-ec_world_wgs84_pacific.json
 ; Maps not working yet
 map_aeqd.get
 map_airy.get
