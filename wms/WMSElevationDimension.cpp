@@ -1,6 +1,7 @@
 #include "WMSElevationDimension.h"
 #include <macgyver/Exception.h>
 #include <functional>
+#include <numeric>
 
 namespace SmartMet
 {
