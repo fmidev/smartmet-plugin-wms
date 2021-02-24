@@ -8,6 +8,8 @@ symbols_coloured_wgs84.get
 t2m_p_geojson.get
 t2m_p_kml.get
 ; Maps not working yet
+map_rotlatlon.get
+map_eqc.get
 map_aeqd.get
 map_airy.get
 map_bertin1953.get
