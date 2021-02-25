@@ -46,6 +46,9 @@ void Projection::init(const Json::Value& theJson,
     // Extract all the members
 
     Json::Value nulljson;
+    auto request = theState.getRequest();
+    boost::optional<std::string> v;
+
 
     auto json = theJson.get("crs", nulljson);
     if (!json.isNull())
@@ -60,12 +63,11 @@ void Projection::init(const Json::Value& theJson,
       json = theJson.get("size", nulljson);
       if (!json.isNull())
         size = json.asDouble();
-    }
 
-    auto request = theState.getRequest();
-    boost::optional<std::string> v = request.getParameter("size");
-    if (v)
-      size = toDouble(*v);
+      v = request.getParameter("size");
+      if (v)
+        size = toDouble(*v);
+    }
 
     if (!size || *size <= 0)
     {
