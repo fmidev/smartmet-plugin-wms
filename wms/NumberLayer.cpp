@@ -1103,8 +1103,6 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Extracting the projection information from the query result.
 
-    const char* crsStr = query->mAttributeList.getAttributeValue("grid.crs");
-
     if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
     {
       const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
@@ -1120,24 +1118,32 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!projection.xsize && !projection.ysize)
       throw Fmi::Exception(BCP, "The projection size is unknown!");
 
-    if (crsStr != nullptr && *projection.crs == "data")
+    if (*projection.crs == "data")
     {
-      projection.crs = crsStr;
-      std::vector<double> partList;
+      const char* crsStr = query->mAttributeList.getAttributeValue("grid.crs");
+      const char* proj4Str = query->mAttributeList.getAttributeValue("grid.proj4");
+      if (proj4Str != nullptr &&  strstr(proj4Str,"+lon_wrap") != nullptr )
+        crsStr = proj4Str;
 
-      if (!projection.bboxcrs)
+      if (crsStr != nullptr)
       {
-        const char* bboxStr = query->mAttributeList.getAttributeValue("grid.bbox");
-
-        if (bboxStr != nullptr)
-          splitString(bboxStr, ',', partList);
-
-        if (partList.size() == 4)
+        projection.crs = crsStr;
+        if (!projection.bboxcrs)
         {
-          projection.x1 = partList[0];
-          projection.y1 = partList[1];
-          projection.x2 = partList[2];
-          projection.y2 = partList[3];
+          const char* bboxStr = query->mAttributeList.getAttributeValue("grid.bbox");
+          if (bboxStr != nullptr)
+          {
+            std::vector<double> partList;
+            splitString(bboxStr, ',', partList);
+
+            if (partList.size() == 4)
+            {
+              projection.x1 = partList[0];
+              projection.y1 = partList[1];
+              projection.x2 = partList[2];
+              projection.y2 = partList[3];
+            }
+          }
         }
       }
     }
