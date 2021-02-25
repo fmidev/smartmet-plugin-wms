@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.2.24
+Version: 21.2.25
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -19,7 +19,7 @@ BuildRequires: libconfig >= 1.7.2
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.1.14
 BuildRequires: smartmet-library-grid-content-devel >= 21.2.3
-BuildRequires: smartmet-library-grid-files-devel >= 21.2.24
+BuildRequires: smartmet-library-grid-files-devel >= 21.2.25
 BuildRequires: smartmet-library-macgyver-devel >= 21.1.25
 BuildRequires: smartmet-library-spine-devel >= 21.2.5
 BuildRequires: smartmet-library-giza-devel
@@ -57,7 +57,7 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
 Requires: smartmet-library-grid-content >= 21.2.3
-Requires: smartmet-library-grid-files >= 21.2.24
+Requires: smartmet-library-grid-files >= 21.2.25
 Requires: smartmet-library-gis >= 21.2.24
 Requires: smartmet-library-macgyver >= 21.1.25
 Requires: smartmet-library-giza >= 21.1.14
@@ -129,6 +129,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
+* Thu Feb 25 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.25-1.fmi
+- Added lon_wrap support for data using 0...360 longitudes
+
 * Wed Feb 24 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.24-1.fmi
 - Fixed to handle missing size settings
 
