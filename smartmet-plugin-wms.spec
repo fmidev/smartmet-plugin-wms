@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.2.20
+Version: 21.2.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,20 +18,20 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.7.2
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.1.14
-BuildRequires: smartmet-library-macgyver-devel >= 21.1.25
+BuildRequires: smartmet-library-macgyver-devel >= 21.2.25
 BuildRequires: smartmet-library-spine-devel >= 21.2.5
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 21.1.14
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 21.2.11
+BuildRequires: smartmet-engine-observation-devel >= 21.2.25
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 21.2.10
+BuildRequires: smartmet-engine-gis-devel >= 21.2.26
 BuildRequires: smartmet-engine-geonames-devel >= 21.2.18
-BuildRequires: smartmet-engine-querydata-devel >= 21.2.20
+BuildRequires: smartmet-engine-querydata-devel >= 21.2.25
 BuildRequires: smartmet-engine-contour-devel >= 21.2.18
-BuildRequires: smartmet-library-gis-devel >= 21.2.11
+BuildRequires: smartmet-library-gis-devel >= 21.2.26
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -53,15 +53,15 @@ Requires: fmt >= 7.1.3
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-gis >= 21.2.11
-Requires: smartmet-library-macgyver >= 21.1.25
+Requires: smartmet-library-gis >= 21.2.26
+Requires: smartmet-library-macgyver >= 21.2.25
 Requires: smartmet-library-giza >= 21.1.14
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.1.14
 %endif
-Requires: smartmet-engine-querydata >= 21.2.20
+Requires: smartmet-engine-querydata >= 21.2.25
 Requires: smartmet-engine-contour >= 21.2.18
-Requires: smartmet-engine-gis >= 21.2.10
+Requires: smartmet-engine-gis >= 21.2.26
 Requires: smartmet-engine-geonames >= 21.2.18
 Requires: smartmet-server >= 21.1.14
 Requires: smartmet-library-spine >= 21.2.5
@@ -84,7 +84,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: bc
 #TestRequires: smartmet-engine-contour-devel >= 21.1.14
 #TestRequires: smartmet-engine-geonames-devel >= 21.1.14
-#TestRequires: smartmet-engine-gis-devel >= 21.2.10
+#TestRequires: smartmet-engine-gis-devel >= 21.2.26
 #TestRequires: smartmet-engine-querydata-devel >= 21.1.14
 #TestRequires: smartmet-library-giza-devel >= 21.1.14
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
@@ -123,6 +123,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/%{DIRNAME}/tmpl/*.c2t
 
 %changelog
+* Fri Feb 26 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.26-1.fmi
+- Fmi::CoordinateTransformation API changed
+
 * Sat Feb 20 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.20-1.fmi
 - Fixed undefined behaviour in FrameLayer
 
