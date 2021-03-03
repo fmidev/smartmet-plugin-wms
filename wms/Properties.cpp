@@ -45,7 +45,7 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
       else if (theConfig.primaryForecastSource() == "" && producer)
       {
         auto gridEngine = theState.getGridEngine();
-        if (gridEngine->isGridProducer(*producer))
+        if (gridEngine && gridEngine->isEnabled() && gridEngine->isGridProducer(*producer))
           source = "grid";
       }
       else

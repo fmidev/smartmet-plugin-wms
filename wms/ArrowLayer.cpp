@@ -233,6 +233,9 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
 {
   try
   {
+    if (!gridEngine || !gridEngine->isEnabled())
+      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
     // Generate the coordinates for the symbols
 
     // const bool forecast_mode = true;
@@ -1086,6 +1089,10 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 {
   try
   {
+    auto gridEngine = theState.getGridEngine();
+    if (!gridEngine || !gridEngine->isEnabled())
+      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
     // Time execution
 
     std::string report = "ArrowLayer::generate finished in %t sec CPU, %w sec real\n";
@@ -1130,7 +1137,6 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       paramList.push_back(*v);
     }
 
-    auto gridEngine = theState.getGridEngine();
     std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;

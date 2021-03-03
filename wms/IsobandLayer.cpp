@@ -404,6 +404,10 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 {
   try
   {
+    auto gridEngine = theState.getGridEngine();
+    if (!gridEngine || !gridEngine->isEnabled())
+      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
     if (!parameter)
       throw Fmi::Exception(BCP, "Parameter not set for isoband-layer");
 
@@ -418,7 +422,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // bool allowUnknownParam = (theState.isObservation(producer) &&
     //                          isFlashOrMobileProducer(*producer) && heatmap.resolution);
 
-    auto gridEngine = theState.getGridEngine();
     std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;

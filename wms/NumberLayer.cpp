@@ -935,6 +935,10 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 {
   try
   {
+    auto gridEngine = theState.getGridEngine();
+    if (!gridEngine || !gridEngine->isEnabled())
+      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
     // Time execution
 
     std::string report = "NumberLayer::generate finished in %t sec CPU, %w sec real\n";
@@ -955,7 +959,6 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!parameter)
       throw Fmi::Exception(BCP, "Parameter not set for number-layer");
 
-    auto gridEngine = theState.getGridEngine();
     std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;

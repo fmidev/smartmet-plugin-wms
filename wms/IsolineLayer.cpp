@@ -239,10 +239,13 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
 std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<double> isovalues,
                                                           State& theState)
 {
+  auto gridEngine = theState.getGridEngine();
+  if (!gridEngine || !gridEngine->isEnabled())
+    throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
   if (!parameter)
     throw Fmi::Exception(BCP, "Parameter not set for isoline-layer");
 
-  auto gridEngine = theState.getGridEngine();
   std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
   QueryServer::QueryConfigurator queryConfigurator;
   T::AttributeList attributeList;

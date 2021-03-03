@@ -929,6 +929,10 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 {
   try
   {
+    auto gridEngine = theState.getGridEngine();
+    if (!gridEngine || !gridEngine->isEnabled())
+      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
     // Time execution
     std::string report = "SymbolLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
@@ -966,7 +970,6 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         throw Fmi::Exception(BCP, "Parameter not set for symbol-layer");
     }
 
-    auto gridEngine = theState.getGridEngine();
     std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;

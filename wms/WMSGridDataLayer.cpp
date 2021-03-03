@@ -58,6 +58,9 @@ void WMSGridDataLayer::updateLayerMetaData()
 {
   try
   {
+    if (!itsGridEngine || !itsGridEngine->isEnabled())
+      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
     auto contentServer = itsGridEngine->getContentServer_sptr();
 
     T::ProducerInfo producerInfo;

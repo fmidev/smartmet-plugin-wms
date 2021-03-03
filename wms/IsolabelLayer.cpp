@@ -1016,6 +1016,9 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
   try
   {
     auto gridEngine = state.getGridEngine();
+    if (!gridEngine || !gridEngine->isEnabled())
+      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
     auto dataServer = gridEngine->getDataServer_sptr();
 
     Fmi::CoordinateTransformation transformation(sr_image, "WGS84");

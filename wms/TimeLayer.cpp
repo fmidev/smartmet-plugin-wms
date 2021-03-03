@@ -198,6 +198,10 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 {
   try
   {
+    auto gridEngine = theState.getGridEngine();
+    if (!gridEngine || !gridEngine->isEnabled())
+      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
     if (*projection.crs == "data")
       return;
 
@@ -219,7 +223,6 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     if (!projection.projectionParameter)
       throw Fmi::Exception(BCP, "Parameter not set for time-layer");
 
-    auto gridEngine = theState.getGridEngine();
     std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;

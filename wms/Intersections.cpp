@@ -79,6 +79,9 @@ void Intersections::init(const boost::optional<std::string>& theProducer,
 {
   try
   {
+    if (!gridEngine || !gridEngine->isEnabled())
+      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
     for (auto& intersection : intersections)
     {
       intersection.init(theProducer, gridEngine, theProjection, theTime, theState);
