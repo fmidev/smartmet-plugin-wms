@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.2.25
+Version: 21.3.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,23 +18,23 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.7.2
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.1.14
-BuildRequires: smartmet-library-grid-content-devel >= 21.2.3
+BuildRequires: smartmet-library-grid-content-devel >= 21.3.3
 BuildRequires: smartmet-library-grid-files-devel >= 21.2.25
-BuildRequires: smartmet-library-macgyver-devel >= 21.1.25
-BuildRequires: smartmet-library-spine-devel >= 21.2.5
+BuildRequires: smartmet-library-macgyver-devel >= 21.2.25
+BuildRequires: smartmet-library-spine-devel >= 21.3.1
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 21.1.14
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 21.2.11
+BuildRequires: smartmet-engine-observation-devel >= 21.3.2
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 21.2.10
-BuildRequires: smartmet-engine-grid-devel >= 21.2.16
+BuildRequires: smartmet-engine-gis-devel >= 21.2.26
+BuildRequires: smartmet-engine-grid-devel >= 21.3.3
 BuildRequires: smartmet-engine-geonames-devel >= 21.2.18
-BuildRequires: smartmet-engine-querydata-devel >= 21.2.20
+BuildRequires: smartmet-engine-querydata-devel >= 21.3.2
 BuildRequires: smartmet-engine-contour-devel >= 21.2.18
-BuildRequires: smartmet-library-gis-devel >= 21.2.24
+BuildRequires: smartmet-library-gis-devel >= 21.2.26
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -56,21 +56,21 @@ Requires: fmt >= 7.1.3
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-grid-content >= 21.2.3
+Requires: smartmet-library-grid-content >= 21.3.3
 Requires: smartmet-library-grid-files >= 21.2.25
-Requires: smartmet-library-gis >= 21.2.24
-Requires: smartmet-library-macgyver >= 21.1.25
+Requires: smartmet-library-gis >= 21.2.26
+Requires: smartmet-library-macgyver >= 21.2.25
 Requires: smartmet-library-giza >= 21.1.14
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.1.14
 %endif
-Requires: smartmet-engine-querydata >= 21.2.20
+Requires: smartmet-engine-querydata >= 21.3.2
 Requires: smartmet-engine-contour >= 21.2.18
-Requires: smartmet-engine-gis >= 21.2.10
-Requires: smartmet-engine-grid >= 21.2.16
+Requires: smartmet-engine-gis >= 21.2.26
+Requires: smartmet-engine-grid >= 21.3.3
 Requires: smartmet-engine-geonames >= 21.2.18
 Requires: smartmet-server >= 21.1.14
-Requires: smartmet-library-spine >= 21.2.5
+Requires: smartmet-library-spine >= 21.3.1
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -90,17 +90,17 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: bc
 #TestRequires: smartmet-engine-contour-devel >= 21.2.18
 #TestRequires: smartmet-engine-geonames-devel >= 21.2.18
-#TestRequires: smartmet-engine-gis-devel >= 21.2.10
-#TestRequires: smartmet-engine-querydata-devel >= 21.2.20
+#TestRequires: smartmet-engine-gis-devel >= 21.2.26
+#TestRequires: smartmet-engine-querydata-devel >= 21.3.2
 #TestRequires: smartmet-library-giza-devel >= 21.1.14
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
-#TestRequires: smartmet-library-spine-devel >= 21.2.5
+#TestRequires: smartmet-library-spine-devel >= 21.3.1
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
 #TestRequires: zlib-devel
 #TestRequires: cairo-devel
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 21.2.11
+#TestRequires: smartmet-engine-observation-devel >= 21.3.2
 %endif
 
 %description
@@ -129,6 +129,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
 
 %changelog
+* Wed Mar  3 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.3-1.fmi
+- Grid-engine may now be disabled
+
 * Thu Feb 25 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.25-1.fmi
 - Added lon_wrap support for data using 0...360 longitudes
 
