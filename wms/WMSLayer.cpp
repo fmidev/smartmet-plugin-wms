@@ -1437,7 +1437,9 @@ void WMSLayer::initProjectedBBoxes()
 
     if (x1 < x2 && y1 < y2)
     {
-      Fmi::CoordinateTransformation transformation("WGS84", ref.proj);
+      Fmi::SpatialReference wgs84("WGS84");
+      Fmi::SpatialReference target(ref.proj);
+      Fmi::CoordinateTransformation transformation(wgs84, target);
 
       bool ok = (transformation.transform(x1, y1) && transformation.transform(x2, y2));
 
@@ -1447,7 +1449,7 @@ void WMSLayer::initProjectedBBoxes()
       {
         // Use proper coordinate ordering for the EPSG
 
-        if (transformation.getTargetCS().EPSGTreatsAsLatLong())
+        if (target.EPSGTreatsAsLatLong())
         {
           std::swap(x1, y1);
           std::swap(x2, y2);

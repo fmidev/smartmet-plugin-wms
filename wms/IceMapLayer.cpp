@@ -1143,6 +1143,10 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
 
   const auto& box = projection.getBox();
   const auto& crs = projection.getCRS();
+  const auto clipbox = getClipBox(box);
+
+  // Clip the data or on high zoom levels the coordinates may overflow in Cairo
+  OGRGeometryPtr geom(Fmi::OGR::polyclip(*theResultItem.geom, clipbox));
 
   // Store the path with unique ID
   std::string iri = (qid + Fmi::to_string(theMapId++));
@@ -1151,8 +1155,7 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
   map_cdt["iri"] = iri;
   map_cdt["type"] = Geometry::name(*theResultItem.geom, theState.getType());
   map_cdt["layertype"] = "icemap";
-  map_cdt["data"] =
-      Geometry::toString(*theResultItem.geom, theState.getType(), box, crs, precision);
+  map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
   theState.addPresentationAttributes(map_cdt, css, attributes);
   theGlobals["paths"][iri] = map_cdt;
 

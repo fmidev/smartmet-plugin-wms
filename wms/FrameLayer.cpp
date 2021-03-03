@@ -7,8 +7,8 @@
 #include "TextUtility.h"
 #include <ctpp2/CDT.hpp>
 #include <gis/OGR.h>
-#include <ogr_geometry.h>
 #include <macgyver/Exception.h>
+#include <ogr_geometry.h>
 
 namespace SmartMet
 {
@@ -22,8 +22,8 @@ void readBoundingBox(const std::string& bbox, FrameDimension& dimension)
 {
   if (bbox.find(',') == std::string::npos)
     throw Fmi::Exception(BCP,
-                           "Frame layer error: invalid bounding box format: should be <lon lat, "
-                           "lon lat> (bottom left, top right)");
+                         "Frame layer error: invalid bounding box format: should be <lon lat, "
+                         "lon lat> (bottom left, top right)");
 
   std::string bottomLeft = bbox.substr(0, bbox.find(','));
   std::string topRight = bbox.substr(bbox.find(',') + 1);
@@ -34,8 +34,8 @@ void readBoundingBox(const std::string& bbox, FrameDimension& dimension)
   boost::algorithm::split(parts, bottomLeft, boost::algorithm::is_any_of(" "));
   if (parts.size() != 2)
     throw Fmi::Exception(BCP,
-                           "Frame layer error: invalid bounding box format: should be <lon lat, "
-                           "lon lat> (bottom left, top right)");
+                         "Frame layer error: invalid bounding box format: should be <lon lat, "
+                         "lon lat> (bottom left, top right)");
   dimension.leftLongitude = Fmi::stod(parts[0]);
   dimension.bottomLatitude = Fmi::stod(parts[1]);
 
@@ -44,8 +44,8 @@ void readBoundingBox(const std::string& bbox, FrameDimension& dimension)
   boost::algorithm::split(parts, topRight, boost::algorithm::is_any_of(" "));
   if (parts.size() != 2)
     throw Fmi::Exception(BCP,
-                           "Frame layer error: invalid bounding box format: should be <lon lat, "
-                           "lon lat> (bottom left, top right)");
+                         "Frame layer error: invalid bounding box format: should be <lon lat, "
+                         "lon lat> (bottom left, top right)");
   dimension.rightLongitude = Fmi::stod(parts[0]);
   dimension.topLatitude = Fmi::stod(parts[1]);
 }
@@ -304,7 +304,7 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& theState)
   labelStyle.fontweight = itsScaleAttributes.value("font-weight");
   labelStyle.textanchor = itsScaleAttributes.value("text-anchor");
 
-  std::map<double, const TicInfo&> latitudeTics;
+  std::map<double, TicInfo> latitudeTics;
   // first add long tics
   if (itsScale->longTic)
   {
@@ -346,7 +346,7 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& theState)
   bool ticIsOutside = (itsScale->ticPosition == "outside");
   bool labelIsOutside = (*itsScale->labelPosition == "outside");
 
-  for (auto tic : latitudeTics)
+  for (const auto& tic : latitudeTics)
   {
     // left hand side
     double lonStartLeft = itsInnerBorder.leftLongitude;
@@ -400,7 +400,7 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& theState)
     }
   }
 
-  std::map<double, const TicInfo&> longitudeTics;
+  std::map<double, TicInfo> longitudeTics;
   // first add long tics
   if (itsScale->longTic)
   {
@@ -440,7 +440,7 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& theState)
     }
   }
 
-  for (auto tic : longitudeTics)
+  for (const auto& tic : longitudeTics)
   {
     // top
     double lonStart = tic.first;
