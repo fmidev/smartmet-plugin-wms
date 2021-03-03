@@ -135,11 +135,11 @@ rm -rf $RPM_BUILD_ROOT
 * Wed Mar  3 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.3-1.fmi
 - Clip IceMapLayer polygons to the image size to prevent problems in high zoom levels
 
-* Thu Feb 25 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.25-1.fmi
-- Added lon_wrap support for data using 0...360 longitudes
-
 * Fri Feb 26 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.26-1.fmi
 - Fmi::CoordinateTransformation API changed
+
+* Thu Feb 25 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.25-1.fmi
+- Added lon_wrap support for data using 0...360 longitudes
 
 * Wed Feb 24 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.2.24-1.fmi
 - Fixed to handle missing size settings
