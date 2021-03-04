@@ -89,7 +89,7 @@ cnf/authentication.conf cnf/geonames.conf cnf/gis.conf:
 templates:
 	$(MAKE) -C .. $@
 
-$(PROG) : % : %.cpp Makefile ../gribwms.so
+$(PROG) : % : %.cpp Makefile ../wms.so
 	$(CXX) $(CFLAGS) -o $@ $@.cpp $(INCLUDES) $(LIBS)
 
 .PHONY: cnf/authentication.conf cnf/geonames.conf cnf/gis.conf dummy

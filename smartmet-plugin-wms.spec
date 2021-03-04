@@ -1,6 +1,6 @@
 %bcond_without authentication
 %bcond_without observation
-%define DIRNAME gribwms
+%define DIRNAME wms
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
@@ -124,9 +124,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %Files
 %defattr(0775,root,root,0775)
-%{_datadir}/smartmet/plugins/gribwms.so
+%{_datadir}/smartmet/plugins/wms.so
 %defattr(0664,root,root,0775)
-%{_sysconfdir}/smartmet/plugins/gribwms/tmpl/*.c2t
+%{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
 * Wed Mar  3 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.3-2.fmi
