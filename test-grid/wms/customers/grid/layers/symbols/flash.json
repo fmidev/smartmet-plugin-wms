@@ -1,0 +1,19 @@
+[
+        {
+	    "hilimit": 0,
+	    "symbol": "flash",
+	    "attributes":
+	    {
+		"fill": "blue"
+	    }
+        },
+        {
+	    "lolimit": 0,
+	    "symbol": "flash",
+	    "attributes":
+	    {
+		"fill": "red"
+	    }
+        }
+]
+

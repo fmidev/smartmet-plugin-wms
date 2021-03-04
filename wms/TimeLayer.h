@@ -47,7 +47,18 @@ class TimeLayer : public Layer
   boost::optional<int> longitude;  // longitude, latitude take precedence over x, y
   boost::optional<int> latitude;
 
+  // We need a parameter definition in order to find a correct generation / origintime (grid-support)
+  /*
+  boost::optional<std::string> parameter;
+  boost::optional<int> levelId;
+  boost::optional<double> level;
+  boost::optional<int> forecastType;
+  boost::optional<int> forecastNumber;
+*/
  private:
+  virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+
   boost::posix_time::ptime now;
 
 };  // class TimeLayer

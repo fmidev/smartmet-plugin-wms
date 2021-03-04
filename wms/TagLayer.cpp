@@ -6,6 +6,7 @@
 #include <ctpp2/CDT.hpp>
 #include <ogr_spatialref.h>
 #include <macgyver/Exception.h>
+#include <grid-files/common/GeneralFunctions.h>
 
 namespace SmartMet
 {
@@ -33,6 +34,7 @@ void TagLayer::init(const Json::Value& theJson,
 
     // Extract member values
 
+    type = "tag";
     Json::Value nulljson;
 
     auto json = theJson.get("tag", nulljson);
@@ -64,6 +66,25 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
     if (!validLayer(theState))
       return;
+
+    //if (source && *source == "grid")
+    //  return;
+
+    std::string x = attributes.value("x");
+    std::string y = attributes.value("y");
+
+    if (!x.empty() && !y.empty())
+    {
+      double xx = toDouble(x.c_str());
+      double yy = toDouble(y.c_str());
+      const auto& box = projection.getBox();
+
+      if (xx < 0)
+        attributes.add("x",std::to_string(box.width() + xx));
+
+      if (yy < 0)
+        attributes.add("y",std::to_string(box.height() + yy));
+    }
 
     // longitude & latitude
     std::string longitude = attributes.value("longitude");
@@ -112,6 +133,7 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       theState.addAttributes(theGlobals, tag_cdt, attributes);
 
       group_cdt["tags"].PushBack(tag_cdt);
+
       theLayersCdt.PushBack(group_cdt);
     }
     else

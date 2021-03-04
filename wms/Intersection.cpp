@@ -10,6 +10,7 @@
 #include <engines/contour/Interpolation.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
+#include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 
@@ -149,6 +150,183 @@ bool Intersection::inside(double theX, double theY) const
  * \brief Initialize the intersecting polygon
  */
 // ----------------------------------------------------------------------
+
+void Intersection::init(const boost::optional<std::string>& theProducer,
+                        const Engine::Grid::Engine* gridEngine,
+                        const Projection& theProjection,
+                        const boost::posix_time::ptime& theTime,
+                        const State& theState)
+{
+  try
+  {
+    if (!gridEngine || !gridEngine->isEnabled())
+      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
+    std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
+    QueryServer::QueryConfigurator queryConfigurator;
+    T::AttributeList attributeList;
+
+    std::string producerName = gridEngine->getProducerName(*theProducer);
+
+    std::string wkt = *theProjection.crs;
+
+    if (wkt != "data")
+    {
+      // Getting WKT and the bounding box of the requested projection.
+
+      auto crs = theProjection.getCRS();
+      char* out = nullptr;
+      crs.get()->exportToWkt(&out);
+      wkt = out;
+      CPLFree(out);
+
+      // std::cout << wkt << "\n";
+
+      auto bl = theProjection.bottomLeftLatLon();
+      auto tr = theProjection.topRightLatLon();
+
+      char bbox[100];
+      sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
+
+      // Adding the bounding box information into the query.
+      originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
+    }
+
+    // Adding parameter information into the query.
+
+    std::string pName = *parameter;
+    auto pos = pName.find(".raw");
+    if (pos != std::string::npos)
+    {
+      attributeList.addAttribute("areaInterpolationMethod",
+                                 std::to_string(T::AreaInterpolationMethod::Linear));
+      pName.erase(pos, 4);
+    }
+
+    std::string param = gridEngine->getParameterString(producerName, pName);
+    attributeList.addAttribute("param", param);
+
+    if (param == *parameter && originalGridQuery->mProducerNameList.size() == 0)
+    {
+      gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
+      if (originalGridQuery->mProducerNameList.size() == 0)
+        originalGridQuery->mProducerNameList.push_back(producerName);
+    }
+
+    std::string forecastTime = Fmi::to_iso_string(theTime);
+    attributeList.addAttribute("startTime", forecastTime);
+    attributeList.addAttribute("endTime", forecastTime);
+    attributeList.addAttribute("timelist", forecastTime);
+    attributeList.addAttribute("timezone", "UTC");
+
+    // Tranforming information from the attribute list into the query object.
+    queryConfigurator.configure(*originalGridQuery, attributeList);
+
+    // Fullfilling information into the query object.
+
+    if (!hilimit)
+      hilimit = 1000000000;
+
+    if (!lolimit)
+      lolimit = -1000000000;
+
+    float hlimit = C_FLOAT(*hilimit);
+    float llimit = C_FLOAT(*lolimit);
+
+    for (auto it = originalGridQuery->mQueryParameterList.begin();
+         it != originalGridQuery->mQueryParameterList.end();
+         ++it)
+    {
+      it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+      it->mType = QueryServer::QueryParameter::Type::Isoband;
+      it->mContourLowValues.push_back(llimit);
+      it->mContourHighValues.push_back(hlimit);
+    }
+
+    originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
+    originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
+
+    if (theProjection.xsize)
+      originalGridQuery->mAttributeList.addAttribute("grid.width",
+                                                     std::to_string(*theProjection.xsize));
+
+    if (theProjection.ysize)
+      originalGridQuery->mAttributeList.addAttribute("grid.height",
+                                                     std::to_string(*theProjection.ysize));
+
+    if (wkt == "data" && theProjection.x1 && theProjection.y1 && theProjection.x2 &&
+        theProjection.y2)
+    {
+      char bbox[100];
+      sprintf(bbox,
+              "%f,%f,%f,%f",
+              *theProjection.x1,
+              *theProjection.y1,
+              *theProjection.x2,
+              *theProjection.y2);
+      originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+    }
+
+    if (smoother.size)
+      originalGridQuery->mAttributeList.addAttribute("contour.smooth.size",
+                                                     std::to_string(*smoother.size));
+
+    if (smoother.degree)
+      originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
+                                                     std::to_string(*smoother.degree));
+
+    if (offset)
+      originalGridQuery->mAttributeList.addAttribute("contour.offset", std::to_string(*offset));
+
+    originalGridQuery->mAttributeList.setAttribute(
+        "contour.coordinateType",
+        std::to_string(static_cast<int>(T::CoordinateTypeValue::ORIGINAL_COORDINATES)));
+    // query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::LATLON_COORDINATES));
+    // query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
+
+    // The Query object before the query execution.
+    // query.print(std::cout,0,0);
+
+    // Executing the query.
+    std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
+
+    // The Query object after the query execution.
+    // query.print(std::cout,0,0);
+
+    // Converting the returned WKB-isolines into OGRGeometry objects.
+
+    std::vector<OGRGeometryPtr> isobands;
+    for (auto param = query->mQueryParameterList.begin(); param != query->mQueryParameterList.end();
+         ++param)
+    {
+      for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
+      {
+        if ((*val)->mValueData.size() > 0)
+        {
+          uint c = 0;
+          for (auto wkb = (*val)->mValueData.begin(); wkb != (*val)->mValueData.end(); ++wkb)
+          {
+            unsigned char* cwkb = reinterpret_cast<unsigned char*>(wkb->data());
+            OGRGeometry* geom = nullptr;
+            OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb->size());
+            auto geomPtr = OGRGeometryPtr(geom);
+            isobands.push_back(geomPtr);
+            c++;
+          }
+        }
+      }
+    }
+    if (isobands.size() > 0)
+      isoband = isobands[0];
+
+    if (!isoband || isoband->IsEmpty() != 0)
+      return;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 
 void Intersection::init(const boost::optional<std::string>& theProducer,
                         const Projection& theProjection,

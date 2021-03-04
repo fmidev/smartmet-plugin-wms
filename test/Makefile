@@ -7,9 +7,16 @@ include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 CFLAGS = -DUNIX -DWGS84 -O0 -g $(FLAGS) -Wno-unknown-pragmas
 
 INCLUDES += \
-	-I../wms
+	-I../wms \
+	-I/usr/include/smartmet \
+	-isystem /usr/include/mysql \
+	-isystem /usr/include/oracle/11.2/client64 \
+	-isystem /usr/include/soci
+
+LIBS += 
 
 LIBS += $(REQUIRED_LIBS) \
+	-lsmartmet-grid-files \
 	-lsmartmet-spine  \
 	-lsmartmet-newbase \
 	-lsmartmet-macgyver \
@@ -82,7 +89,7 @@ cnf/authentication.conf cnf/geonames.conf cnf/gis.conf:
 templates:
 	$(MAKE) -C .. $@
 
-$(PROG) : % : %.cpp Makefile ../wms.so
+$(PROG) : % : %.cpp Makefile ../gribwms.so
 	$(CXX) $(CFLAGS) -o $@ $@.cpp $(INCLUDES) $(LIBS)
 
 .PHONY: cnf/authentication.conf cnf/geonames.conf cnf/gis.conf dummy

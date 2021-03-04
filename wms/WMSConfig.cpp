@@ -8,8 +8,8 @@
 #include "State.h"
 #include "View.h"
 #include "WMSException.h"
-#include "WMSLayerHierarchy.h"
 #include "WMSLayerFactory.h"
+#include "WMSLayerHierarchy.h"
 #include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
@@ -573,11 +573,13 @@ WMSConfig::WMSConfig(const Config& daliConfig,
 #ifndef WITHOUT_OBSERVATION
                      Engine::Observation::Engine* obsEngine,
 #endif
-                     Engine::Gis::Engine* gisEngine)
+                     Engine::Gis::Engine* gisEngine,
+                     Engine::Grid::Engine* gridEngine)
     : itsDaliConfig(daliConfig),
       itsJsonCache(theJsonCache),
       itsQEngine(qEngine),
       itsGisEngine(gisEngine),
+      itsGridEngine(gridEngine),
 #ifndef WITHOUT_AUTHENTICATION
       itsAuthEngine(authEngine),
 #endif
@@ -926,45 +928,48 @@ void WMSConfig::updateLayerMetaData()
 
 #ifndef WITHOUT_AUTHENTICATION
 CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
-									 const boost::optional<std::string>& starttime,
-									 const boost::optional<std::string>& endtime,
-									 const boost::optional<std::string>& reference_time,
-									 const boost::optional<std::string>& wms_namespace,
-									 int newfeature_id,
-									 bool authenticate) const
+                                     const boost::optional<std::string>& starttime,
+                                     const boost::optional<std::string>& endtime,
+                                     const boost::optional<std::string>& reference_time,
+                                     const boost::optional<std::string>& wms_namespace,
+                                     int newfeature_id,
+                                     bool authenticate) const
 #else
- CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
-									  const boost::optional<std::string>& starttime,
-									  const boost::optional<std::string>& endtime,
-									  const boost::optional<std::string>& reference_time,
-									  const boost::optional<std::string>& wms_namespace,
-									  int newfeature_id) const
+CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
+                                     const boost::optional<std::string>& starttime,
+                                     const boost::optional<std::string>& endtime,
+                                     const boost::optional<std::string>& reference_time,
+                                     const boost::optional<std::string>& wms_namespace,
+                                     int newfeature_id) const
 #endif
 {
   try
   {
-   // Atomic copy of layer data
+    // Atomic copy of layer data
     auto my_layers = boost::atomic_load(&itsLayers);
 
-	if(newfeature_id > 0)
-	  {
-		WMSLayerHierarchy::HierarchyType hierarchy_type = (newfeature_id == 0 ? WMSLayerHierarchy::HierarchyType::flat : (newfeature_id == 1 ? WMSLayerHierarchy::HierarchyType::deep1 : WMSLayerHierarchy::HierarchyType::deep2));
+    if (newfeature_id > 0)
+    {
+      WMSLayerHierarchy::HierarchyType hierarchy_type =
+          (newfeature_id == 0 ? WMSLayerHierarchy::HierarchyType::flat
+                              : (newfeature_id == 1 ? WMSLayerHierarchy::HierarchyType::deep1
+                                                    : WMSLayerHierarchy::HierarchyType::deep2));
 #ifndef WITHOUT_AUTHENTICATION
-		WMSLayerHierarchy lh(*my_layers, wms_namespace, hierarchy_type, apikey, itsAuthEngine);
+      WMSLayerHierarchy lh(*my_layers, wms_namespace, hierarchy_type, apikey, itsAuthEngine);
 #else
-		WMSLayerHierarchy lh(*my_layers, wns_namespace, hierarchy_type);
+      WMSLayerHierarchy lh(*my_layers, wns_namespace, hierarchy_type);
 #endif
-		
-		//		std::cout << "Hierarchy:\n" << lh << std::endl;
 
-		return lh.getCapabilities(starttime, endtime, reference_time);
-	  }
+      //		std::cout << "Hierarchy:\n" << lh << std::endl;
+
+      return lh.getCapabilities(starttime, endtime, reference_time);
+    }
 
     // Return array of individual layer capabilities
     CTPP::CDT layersCapabilities(CTPP::CDT::ARRAY_VAL);
 
     const std::string wmsService = "wms";
-	
+
     for (const auto& iter_pair : *my_layers)
     {
 #ifndef WITHOUT_AUTHENTICATION
@@ -1121,7 +1126,7 @@ bool WMSConfig::isValidCRS(const std::string& theLayer, const std::string& theCR
   }
 }
 
-  bool WMSConfig::isValidElevation(const std::string& theLayer, int theElevation) const
+bool WMSConfig::isValidElevation(const std::string& theLayer, int theElevation) const
 {
   try
   {
@@ -1137,11 +1142,10 @@ bool WMSConfig::isValidCRS(const std::string& theLayer, const std::string& theCR
   {
     throw Fmi::Exception::Trace(BCP, "Checking time validity failed!");
   }
-
 }
 
 bool WMSConfig::isValidReferenceTime(const std::string& theLayer,
-									 const boost::posix_time::ptime& theReferenceTime) const
+                                     const boost::posix_time::ptime& theReferenceTime) const
 {
   try
   {
@@ -1161,7 +1165,7 @@ bool WMSConfig::isValidReferenceTime(const std::string& theLayer,
 
 bool WMSConfig::isValidTime(const std::string& theLayer,
                             const boost::posix_time::ptime& theTime,
-							const boost::optional<boost::posix_time::ptime>& theReferenceTime) const
+                            const boost::optional<boost::posix_time::ptime>& theReferenceTime) const
 {
   try
   {
@@ -1215,7 +1219,9 @@ bool WMSConfig::currentValue(const std::string& theLayer) const
   }
 }
 
-boost::posix_time::ptime WMSConfig::mostCurrentTime(const std::string& theLayer, const boost::optional<boost::posix_time::ptime>& reference_time) const
+boost::posix_time::ptime WMSConfig::mostCurrentTime(
+    const std::string& theLayer,
+    const boost::optional<boost::posix_time::ptime>& reference_time) const
 {
   try
   {

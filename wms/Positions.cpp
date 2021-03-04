@@ -6,6 +6,7 @@
 #include <engines/querydata/ParameterOptions.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
+#include <grid-files/identification/GridDef.h>
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
 #include <spine/ParameterFactory.h>
@@ -419,6 +420,48 @@ Positions::Points Positions::getPoints(const Engine::Querydata::Q& theQ,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Generate the locations to be rendered
+ */
+// ----------------------------------------------------------------------
+
+Positions::Points Positions::getPoints(const char* originalCrs,
+                                       int originalWidth,
+                                       int originalHeight,
+                                       uint originalGeometryId,
+                                       const Fmi::SpatialReference& theCRS,
+                                       const Fmi::Box& theBox) const
+{
+  try
+  {
+    switch (layout)
+    {
+      case Layout::Grid:
+        return getGridPoints(nullptr, theCRS, theBox, true);
+      case Layout::Data:
+        return getDataPoints(
+            originalCrs, originalWidth, originalHeight, originalGeometryId, theCRS, theBox);
+      case Layout::Graticule:
+        return getGraticulePoints(nullptr, theCRS, theBox, true);
+      case Layout::GraticuleFill:
+        return getGraticuleFillPoints(nullptr, theCRS, theBox, true);
+      case Layout::Keyword:
+        return getKeywordPoints(nullptr, theCRS, theBox, true);
+      case Layout::LatLon:
+        return getLatLonPoints(nullptr, theCRS, theBox, true);
+      case Layout::Station:
+        return getStationPoints(nullptr, theCRS, theBox, true);
+    }
+    // Dummy to prevent g++ from complaining
+    return Points();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate a grid of locations
  */
 // ----------------------------------------------------------------------
@@ -472,7 +515,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
     // the margins had a logic error
     xstart -= deltaxx;
 
-    for (int ypos = ystart; ypos < height + ymargin; ypos += deltay)
+    for (int ypos = ystart; ypos < (height + ymargin); ypos += deltay)
     {
       // Stagger every other row
       if (row++ % 2 == 0)
@@ -480,7 +523,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
       else
         xstart -= deltaxx;
 
-      for (int xpos = xstart; xpos < width + xmargin; xpos += deltax)
+      for (int xpos = xstart; xpos < (width + xmargin); xpos += deltax)
       {
         // Convert pixel coordinate to world coordinate (or latlon for geographic spatial
         // references)
@@ -565,11 +608,76 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
 
       // Skip if not inside desired shapes
       if (inside(latlon.X(), latlon.Y(), forecastMode))
+      {
         points.emplace_back(Point(xcoord, ycoord, latlon, deltax, deltay));
+      }
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
 
+    return points;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+Positions::Points Positions::getDataPoints(const char* originalCrs,
+                                           int originalWidth,
+                                           int originalHeight,
+                                           uint originalGeometryId,
+                                           const Fmi::SpatialReference& theCRS,
+                                           const Fmi::Box& theBox) const
+{
+  try
+  {
+    // Create the coordinate transformation from image world coordinates
+    // to querydata world coordinates
+
+    Fmi::CoordinateTransformation transformation("WGS84", theCRS);
+    Fmi::CoordinateTransformation transformation2(theCRS, "WGS84");
+
+    int deltax = (!!dx ? *dx : 10);
+    int deltay = (!!dy ? *dy : 10);
+
+    T::Coordinate_svec originalCoordinates;
+    if (originalGeometryId > 0)
+      originalCoordinates =
+          Identification::gridDef.getGridLatLonCoordinatesByGeometryId(originalGeometryId);
+
+    Points points;
+    if (originalCoordinates)
+    {
+      uint pos = 0;
+      uint sz = originalCoordinates->size();
+      for (int y = 0; y < originalHeight; y = y + deltay)
+      {
+        for (int x = 0; x < originalWidth; x = x + deltax)
+        {
+          pos = y * originalWidth + x;
+          if (pos < sz)
+          {
+            auto cc = (*originalCoordinates)[pos];
+            if (inside(cc.x(), cc.y(), false))
+            {
+              double xx = cc.x();
+              double yy = cc.y();
+
+              transformation.transform(xx, yy);
+
+              double xp = xx;
+              double yp = yy;
+
+              theBox.transform(xp, yp);
+
+              NFmiPoint coordinate(cc.x(), cc.y());
+              points.emplace_back(Point(xp, yp, coordinate, deltax, deltay));
+            }
+          }
+        }
+      }
+    }
     return points;
   }
   catch (...)

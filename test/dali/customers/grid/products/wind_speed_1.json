@@ -1,0 +1,149 @@
+{
+  "title": "Wind demo",
+  "producer": "SMARTMET",
+  "projection": {
+    "crs": "data",
+    "size": 1.0
+  },
+  "views": [
+    {
+      "qid": "v1",
+      "attributes": {
+        "id": "view1"
+      },
+      "layers": [
+        {
+          "qid": "background",
+          "layer_type": "background",
+          "attributes":
+          {
+            "fill": "rgb(255,255,255)"
+          }
+        },
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "isobands": "json:isobands/wind.json",
+          "css": "isobands/wind.css",
+          "parameter": "WindSpeedMS",
+          "attributes": {
+            "id": "wind_isobands"
+          }
+        },
+        {
+          "qid": "l2",
+          "layer_type": "isoline",
+          "isolines": "json:isolines/wind.json",
+          "css": "isolines/wind.css",
+          "parameter": "WindSpeedMS",
+          "attributes": {
+            "id": "wind_isolines",
+            "class": "Wind"
+          }
+        },
+        /*
+        {
+          "qid": "l3",
+          "margin": -10,
+          "layer_type": "arrow",
+          "arrows": "json:arrows/wind.json",
+          "css": "arrows/windarrow.css",
+          "direction": "DD-D",
+          "speed": "FF-MS",
+          "symbol": "windarrow",
+          "attributes": {
+            "id": "wind_arrows"
+          },
+          "positions": {
+            "x": 0,
+            "y": 0,
+            "dx": 10,
+            "dy": 10,
+            "ddx": 5
+          }
+        },
+        {
+          "qid": "l4",
+          "layer_type": "symbol",
+          "symbol": "dot",
+          "css": "symbols/dot.css",
+          "parameter": "FF-MS",
+          "attributes": {
+            "class": "Dot",
+            "id": "wind_markers"
+          },
+          "positions": {
+            "x": 15,
+            "y": 15,
+            "dx": 20,
+            "dy": 20,
+            "ddx": 10
+          }
+        },
+        {
+          "qid": "l5",
+          "layer_type": "number",
+          "css": "numbers/integers.css",
+          "parameter": "WindSpeedMS",
+          "attributes": {
+            "class": "Number",
+            "id": "wind_numbers"
+          },
+          "label": "json:numbers/integers.json",
+          "positions": {
+            "x": 15,
+            "y": 15,
+            "dx": 20,
+            "dy": 20,
+            "ddx": 10
+          }
+        },
+        */
+        {
+          "qid": "l4",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries"
+          },
+          "attributes": {
+            "id": "europe_country_lines",
+            "fill": "none",
+            "stroke": "#222",
+            "stroke-width": "0.3px"
+          }
+        },
+        {
+          "qid": "l11",
+          "tag": "rect",
+          "attributes": {
+            "x": -168,
+            "y": 3,
+            "width": 155,
+            "height": 25,
+            "rx": 8,
+            "ry": 8,
+            "fill": "white",
+            "stroke": "black",
+            "stroke-width": "0.6"
+          }
+        },
+        {
+          "qid": "l12",
+          "layer_type": "time",
+          "timestamp": "validtime",
+          "timezone": "Europe/Helsinki",
+          "format": "%Y-%m-%d %H:%M",
+          "x": -20,
+          "y": 20,
+          "attributes": {
+            "text-anchor": "end",
+            "font-family": "Verdana",
+            "font-weight": "bold",
+            "font-size": 14
+          }
+        }                
+      ]
+    }
+  ]
+}

@@ -29,7 +29,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-State::State(const Plugin& thePlugin, const Spine::HTTP::Request& theRequest)
+State::State(Plugin& thePlugin, const Spine::HTTP::Request& theRequest)
     : itsPlugin(thePlugin),
       itsInDefs(false),
       itUsesTimer(false),
@@ -49,6 +49,24 @@ const Engine::Contour::Engine& State::getContourEngine() const
   try
   {
     return itsPlugin.getContourEngine();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get the grid engine
+ */
+// ----------------------------------------------------------------------
+
+const Engine::Grid::Engine* State::getGridEngine() const
+{
+  try
+  {
+    return itsPlugin.getGridEngine();
   }
   catch (...)
   {

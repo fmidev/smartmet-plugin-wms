@@ -1,5 +1,5 @@
 SUBNAME = wms
-SPEC = smartmet-plugin-$(SUBNAME)
+SPEC = smartmet-plugin-grib$(SUBNAME)
 INCDIR = smartmet/plugins/$(SUBNAME)
 
 REQUIRES = gdal jsoncpp cairo fmt librsvg ctpp2
@@ -16,6 +16,7 @@ DEFINES = -DUNIX -D_REENTRANT
 
 LIBS += -L$(libdir) \
 	$(REQUIRED_LIBS) \
+	-lsmartmet-grid-content \
 	-lsmartmet-spine \
 	-lsmartmet-newbase \
 	-lsmartmet-macgyver \
@@ -38,7 +39,7 @@ BYTECODES = $(TEMPLATES:%.tmpl=%.c2t)
 
 # What to install
 
-LIBFILE = $(SUBNAME).so
+LIBFILE = grib$(SUBNAME).so
 
 # Compilation directories
 
@@ -97,10 +98,10 @@ format:
 install:
 	@mkdir -p $(plugindir)
 	$(INSTALL_PROG) $(LIBFILE) $(plugindir)/$(LIBFILE)
-	@mkdir -p $(sysconfdir)/smartmet/plugins/wms/tmpl
+	@mkdir -p $(sysconfdir)/smartmet/plugins/gribwms/tmpl
 	@list=`ls -1 tmpl/*.c2t`; \
-	echo $(INSTALL_DATA) $$list "$(sysconfdir)/smartmet/plugins/wms/tmpl"; \
-        $(INSTALL_DATA) $$list "$(sysconfdir)/smartmet/plugins/wms/tmpl";
+	echo $(INSTALL_DATA) $$list "$(sysconfdir)/smartmet/plugins/gribwms/tmpl"; \
+        $(INSTALL_DATA) $$list "$(sysconfdir)/smartmet/plugins/gribwms/tmpl";
 
 test: configtest
 	cd test && make test

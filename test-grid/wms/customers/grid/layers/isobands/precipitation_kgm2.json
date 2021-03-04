@@ -1,0 +1,127 @@
+[
+  {
+    "qid": "precipitation_500_inf",
+    "lolimit": 500,
+    "attributes": {
+      "fill": "rgb(0,80,171)",
+      "stroke": "none"
+    }
+  },
+  {
+    "qid": "precipitation_400_500",
+    "lolimit": 400,
+    "hilimit": 500,
+    "attributes": {
+      "fill": "rgb(6,98,196)",
+      "stroke": "none"
+    }
+  },
+  {
+    "qid": "precipitation_300_400",
+    "lolimit": 300,
+    "hilimit": 400,
+    "attributes": {
+      "fill": "rgb(24,122,219)",
+      "stroke": "none"
+    }
+  },
+  {
+    "qid": "precipitation_275_300",
+    "lolimit": 275,
+    "hilimit": 300,
+    "attributes": {
+      "fill": "rgb(17,141,250)",
+      "stroke": "none"
+    }
+  },
+  {
+    "qid": "precipitation_250_275",
+    "lolimit": 250,
+    "hilimit": 275,
+    "attributes": {
+      "fill": "rgb(64,169,255)",
+      "stroke": "none"
+    }
+  },
+  {
+    "qid": "precipitation_225_250",
+    "lolimit": 225,
+    "hilimit": 250,
+    "attributes": {
+      "fill": "rgb(101,189,247)",
+      "stroke": "none"
+    }
+  },
+  {
+    "qid": "precipitation_200_225",
+    "lolimit": 200,
+    "hilimit": 225,
+    "attributes": {
+      "fill": "rgb(0,103,140)",
+      "stroke": "none"
+    }
+  },
+  {
+    "qid": "precipitation_175_200",
+    "lolimit": 175,
+    "hilimit": 200,
+    "attributes": {
+      "fill": "rgb(2,123,163)",
+      "stroke": "none"
+    }
+  },
+  {
+    "qid": "precipitation_150_175",
+    "lolimit": 150,
+    "hilimit": 175,
+    "attributes": {
+      "fill": "rgb(0,155,186)",
+      "stroke": "none"
+    }
+  },
+  {
+    "qid": "precipitation_125_150",
+    "lolimit": 125,
+    "hilimit": 150,
+    "attributes": {
+      "fill": "rgb(34,188,212)",
+      "stroke": "none"
+    }
+  },
+  {
+    "qid": "precipitation_100_125",
+    "lolimit": 100,
+    "hilimit": 125,
+    "attributes": {
+      "fill": "rgb(103,219,230)",
+      "stroke": "none"
+    }
+  },
+  {
+    "qid": "precipitation_75_100",
+    "lolimit": 75,
+    "hilimit": 100,
+    "attributes": {
+      "fill": "rgb(163,243,247)",
+      "stroke": "none"
+    }
+  },
+  {
+    "qid": "precipitation_50_75",
+    "lolimit": 50,
+    "hilimit": 75,
+    "attributes": {
+      "fill": "rgb(212,255,255)",
+      "stroke": "none"
+    }
+  },
+  {
+    "qid": "precipitation_0_50",
+    "lolimit": 0,
+    "hilimit": 50.0,
+    "attributes": {
+      "fill": "rgb(5,179,138)",
+      "stroke": "none"
+    }
+  }
+]

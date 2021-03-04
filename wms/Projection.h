@@ -77,6 +77,13 @@ class Projection
   // Coordinate reference system
   boost::optional<std::string> crs;
 
+  // The parameter used for the projection (grid-suport)
+  boost::optional<std::string> projectionParameter;
+
+
+  // If this is set then the original grid size is multiplied by this value.
+  boost::optional<double> size;
+
   // At least one of these must be given, both if cx & cy are used:
   boost::optional<int> xsize;
   boost::optional<int> ysize;
@@ -107,6 +114,9 @@ class Projection
   // User is responsible for calling getCRS or getBox first
   const NFmiPoint& bottomLeftLatLon() const { return itsBottomLeft; }
   const NFmiPoint& topRightLatLon() const { return itsTopRight; }
+
+  void setBottomLeft(double x,double y) {itsBottomLeft.Set(x,y);}
+  void setTopRight(double x,double y) {itsTopRight.Set(x,y);}
 
  private:
   // Cached results

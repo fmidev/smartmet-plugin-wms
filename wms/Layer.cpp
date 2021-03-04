@@ -17,6 +17,7 @@
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
+#include <grid-files/common/GeneralFunctions.h>
 #include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 #include <spine/Json.h>
@@ -44,7 +45,6 @@ void Layer::init(const Json::Value& theJson,
   try
   {
     Properties::init(theJson, theState, theConfig, theProperties);
-
     Json::Value nulljson;
 
     auto json = theJson.get("qid", nulljson);
@@ -82,6 +82,27 @@ void Layer::init(const Json::Value& theJson,
     json = theJson.get("layer_type", nulljson);
     if (!json.isNull())
       type = json.asString();
+
+    if (producer)
+    {
+      std::vector<std::string> partList;
+      splitString(*producer, ':', partList);
+      if (partList.size() == 2)
+      {
+        producer = partList[0];
+        geometryId = toUInt32(partList[1]);
+      }
+    }
+
+    auto request = theState.getRequest();
+
+    boost::optional<std::string> v = request.getParameter("geometryId");
+    if (v)
+      geometryId = toInt32(*v);
+
+    // boost::optional<std::string> v = request.getParameter("producerId");
+    // if (v)
+    //  geometryId = toInt32(*v);
   }
   catch (...)
   {
@@ -125,6 +146,9 @@ Engine::Querydata::Q Layer::getModel(const State& theState) const
     std::string model = (producer ? *producer : theState.getConfig().defaultModel());
 
     if (theState.isObservation(model))
+      return {};
+
+    if (source && *source == "grid")
       return {};
 
     if (!origintime)
@@ -172,6 +196,19 @@ bool Layer::validResolution() const
   }
 }
 
+void Layer::setProjection(Projection& proj)
+{
+  try
+  {
+    projection = proj;
+    layers.setProjection(proj);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Test if the set format is allowed for the layer
@@ -187,7 +224,7 @@ bool Layer::validType(const std::string& theType) const
   {
     if (!enable.empty() && !disable.empty())
       throw Fmi::Exception(BCP,
-                             "Setting disable and enable image formats simultaneously is an error");
+                           "Setting disable and enable image formats simultaneously is an error");
 
     if (!disable.empty())
       return disable.find(theType) == disable.end();

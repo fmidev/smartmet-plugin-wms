@@ -89,9 +89,16 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     // Update projection from querydata if necessary
     if (has_data_proj)
     {
-      // Establish the data
-      auto q = getModel(theState);
-      projection.update(q);
+      if (!source || *source != "grid")
+      {
+        // Establish the data
+        auto q = getModel(theState);
+        projection.update(q);
+      }
+      else
+      {
+        return;
+      }
     }
 
     if (!styles)

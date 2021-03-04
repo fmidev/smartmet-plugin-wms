@@ -1,0 +1,72 @@
+{
+  "title": "Temperature",
+  "abstract": "Temperature",
+  "producer": "SMARTMET",
+  "projection": {
+    "crs": "data",
+    "size": 1.0
+  },
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "parameter": "T-K",
+          "isobands": "json:isobands/T-K.json",
+          "css": "isobands/temperature.css",
+          "smoother": {
+            "degree": 1,
+            "size": 1
+          }
+        },
+        {
+          "qid": "l10",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries"
+          },
+          "attributes": {
+            "id": "europe_country_lines",
+            "fill": "none",
+            "stroke": "#222",
+            "stroke-width": "0.3px"
+          }
+        },
+        {
+          "qid": "l11",
+          "tag": "rect",
+          "attributes": {
+            "x": -168,
+            "y": 3,
+            "width": 155,
+            "height": 25,
+            "rx": 8,
+            "ry": 8,
+            "fill": "white",
+            "stroke": "black",
+            "stroke-width": "0.6"
+          }
+        },
+        {
+          "qid": "l12",
+          "layer_type": "time",
+          "timestamp": "validtime",
+          "timezone": "Europe/Helsinki",
+          "format": "%Y-%m-%d %H:%M",
+          "x": -20,
+          "y": 20,
+          "attributes": {
+            "text-anchor": "end",
+            "font-family": "Verdana",
+            "font-weight": "bold",
+            "font-size": 14
+          }
+        }
+      ]
+    }
+  ]
+}
+]
+}

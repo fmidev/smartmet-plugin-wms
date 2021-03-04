@@ -38,6 +38,10 @@ class NumberLayer : public Layer
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   boost::optional<std::string> parameter;
+  boost::optional<int> levelId;
+  boost::optional<double> level;
+  boost::optional<int> forecastType;
+  boost::optional<int> forecastNumber;
   std::string unit_conversion;
   boost::optional<double> multiplier;
   boost::optional<double> offset;
@@ -61,6 +65,9 @@ class NumberLayer : public Layer
   std::vector<AttributeSelection> numbers;
 
  private:
+  virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+
 };  // class NumberLayer
 
 }  // namespace Dali

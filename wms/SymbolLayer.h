@@ -37,6 +37,10 @@ class SymbolLayer : public Layer
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   boost::optional<std::string> parameter;
+  boost::optional<int> levelId;
+  boost::optional<double> level;
+  boost::optional<int> forecastType;
+  boost::optional<int> forecastNumber;
 
   boost::optional<Positions> positions;
 
@@ -56,6 +60,10 @@ class SymbolLayer : public Layer
 
   // The parameter values or ranges to be styled separately
   std::vector<AttributeSelection> symbols;
+
+ private:
+  virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 
 };  // class SymbolLayer
 

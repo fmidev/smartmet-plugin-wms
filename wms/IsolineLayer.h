@@ -35,6 +35,10 @@ class IsolineLayer : public Layer
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   boost::optional<std::string> parameter;
+  boost::optional<int> levelId;
+  boost::optional<double> level;
+  boost::optional<int> forecastType;
+  boost::optional<int> forecastNumber;
   std::vector<Isoline> isolines;
   Smoother smoother;
   int extrapolation = 0;
@@ -55,10 +59,15 @@ class IsolineLayer : public Layer
 
  protected:
   std::vector<OGRGeometryPtr> getIsolines(const std::vector<double> isovalues, State& theState);
-
   Engine::Querydata::Q q;  // Make used data available to derived IsolabelLayer
+  uint fileId = 0;
+  uint messageIndex = 0;
 
  private:
+  std::vector<OGRGeometryPtr> getIsolinesGrid(const std::vector<double> isovalues, State& theState);
+  std::vector<OGRGeometryPtr> getIsolinesQuerydata(const std::vector<double> isovalues,
+                                                   State& theState);
+
 };  // class IsolineLayer
 
 }  // namespace Dali

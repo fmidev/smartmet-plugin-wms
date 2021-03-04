@@ -82,6 +82,13 @@ class Positions
                    const Fmi::Box& theBox,
                    bool forecastMode) const;
 
+  Points getPoints(const char* originalCrs,
+                   int originalWidth,
+                   int originalHeight,
+                   uint originalGeometryId,
+                   const Fmi::SpatialReference& theCRS,
+                   const Fmi::Box& theBox) const;
+
   bool inside(double theX, double theY, bool forecastMode) const;
 
   bool insideShapes(double theX, double theY) const;
@@ -148,6 +155,13 @@ class Positions
                        const Fmi::SpatialReference& theCRS,
                        const Fmi::Box& theBox,
                        bool forecastMode) const;
+
+  Points getDataPoints(const char* originalCrs,
+                       int originalWidth,
+                       int originalHeight,
+                       uint originalGeometryId,
+                       const Fmi::SpatialReference& theCRS,
+                       const Fmi::Box& theBox) const;
 
   Points getGraticulePoints(const Engine::Querydata::Q& theQ,
                             const Fmi::SpatialReference& theCRS,

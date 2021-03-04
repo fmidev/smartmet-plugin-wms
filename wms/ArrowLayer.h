@@ -45,6 +45,10 @@ class ArrowLayer : public Layer
   boost::optional<std::string> u;
   boost::optional<std::string> v;
 
+  boost::optional<int> levelId;
+  boost::optional<double> level;
+  boost::optional<int> forecastType;
+  boost::optional<int> forecastNumber;
   std::string unit_conversion;
   boost::optional<double> multiplier;
   boost::optional<double> offset;
@@ -70,6 +74,8 @@ class ArrowLayer : public Layer
   std::vector<AttributeSelection> arrows;
 
  private:
+  virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 };  // class ArrowLayer
 
 }  // namespace Dali

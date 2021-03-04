@@ -11,6 +11,7 @@
 #include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
+#include <grid-files/common/GeneralFunctions.h>
 #include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 #include <cmath>
@@ -45,6 +46,9 @@ void Projection::init(const Json::Value& theJson,
     // Extract all the members
 
     Json::Value nulljson;
+    auto request = theState.getRequest();
+    boost::optional<std::string> v;
+
 
     auto json = theJson.get("crs", nulljson);
     if (!json.isNull())
@@ -54,13 +58,35 @@ void Projection::init(const Json::Value& theJson,
     if (!json.isNull())
       bboxcrs = json.asString();
 
-    json = theJson.get("xsize", nulljson);
-    if (!json.isNull())
-      xsize = json.asInt();
+    if (crs && *crs == "data")
+    {
+      json = theJson.get("size", nulljson);
+      if (!json.isNull())
+        size = json.asDouble();
 
-    json = theJson.get("ysize", nulljson);
-    if (!json.isNull())
-      ysize = json.asInt();
+      v = request.getParameter("size");
+      if (v)
+        size = toDouble(*v);
+    }
+
+    if (!size || *size <= 0)
+    {
+      json = theJson.get("xsize", nulljson);
+      if (!json.isNull())
+        xsize = json.asInt();
+
+      json = theJson.get("ysize", nulljson);
+      if (!json.isNull())
+        ysize = json.asInt();
+
+      v = request.getParameter("xsize");
+      if (v)
+        xsize = toInt32(*v);
+
+      v = request.getParameter("ysize");
+      if (v)
+        ysize = toInt32(*v);
+    }
 
     json = theJson.get("x1", nulljson);
     if (!json.isNull())
@@ -144,6 +170,7 @@ void Projection::init(const Json::Value& theJson,
           boost::algorithm::replace_first(*bboxcrs, "EPSG:", "EPSGA:");
 
         spatref.SetFromUserInput(bboxcrs->c_str());
+        spatref.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
       }
       else
       {
@@ -189,6 +216,7 @@ std::size_t Projection::hash_value(const State& /* theState */) const
   try
   {
     auto hash = Dali::hash_value(crs);
+    Dali::hash_combine(hash, Dali::hash_value(size));
     Dali::hash_combine(hash, Dali::hash_value(xsize));
     Dali::hash_combine(hash, Dali::hash_value(ysize));
     Dali::hash_combine(hash, Dali::hash_value(x1));
@@ -199,6 +227,7 @@ std::size_t Projection::hash_value(const State& /* theState */) const
     Dali::hash_combine(hash, Dali::hash_value(cy));
     Dali::hash_combine(hash, Dali::hash_value(resolution));
     Dali::hash_combine(hash, Dali::hash_value(bboxcrs));
+    Dali::hash_combine(hash, Dali::hash_value(size));
     return hash;
   }
   catch (...)
@@ -255,6 +284,12 @@ void Projection::update(const Engine::Querydata::Q& theQ)
           y2 = world2.Y();
         }
 #endif
+      }
+
+      if (size)
+      {
+        xsize = C_INT(C_DOUBLE(theQ->info()->GridXNumber()) * (*size));
+        ysize = C_INT(C_DOUBLE(theQ->info()->GridYNumber()) * (*size));
       }
 
       ogr_crs.reset();
@@ -323,7 +358,12 @@ void Projection::prepareCRS() const
       throw Fmi::Exception(BCP, "CRS not set, unable to create projection");
 
     if (!xsize && !ysize)
+    {
+      if (size)
+        return;
+
       throw Fmi::Exception(BCP, "CRS xsize and ysize are both missing");
+    }
 
     // Are subdefinitions complete?
     bool full_rect_bbox = (x1 && y1 && x2 && y2);

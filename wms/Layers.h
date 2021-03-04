@@ -7,6 +7,7 @@
 #pragma once
 
 #include "ParameterInfo.h"
+#include "Projection.h"
 #include <boost/shared_ptr.hpp>
 #include <json/json.h>
 #include <list>
@@ -41,6 +42,12 @@ class Layers
             const Properties& theProperties);
 
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  bool getProjection(CTPP::CDT& theGlobals,
+                     CTPP::CDT& theLayersCdt,
+                     State& theState,
+                     Projection& projection);
+  boost::optional<std::string> getProjectionParameter();
+  void setProjection(Projection& projection);
 
   std::size_t hash_value(const State& theState) const;
 

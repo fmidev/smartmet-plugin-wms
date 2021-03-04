@@ -44,10 +44,13 @@ Config::Config(const string& configfile)
     itsRootDirectory = root;
     itsWmsRootDirectory = wmsroot;
 
+
     // optional parameters
     itsConfig.lookupValue("url", itsDefaultUrl);
     itsConfig.lookupValue("model", itsDefaultModel);
     itsConfig.lookupValue("language", itsDefaultLanguage);
+
+    itsConfig.lookupValue("primarytForecastSource",itsPrimaryForecastSource);
 
     itsConfig.lookupValue("template", itsDefaultTemplate);
     itsConfig.lookupValue("templatedir", itsTemplateDirectory);
@@ -215,6 +218,10 @@ const std::string& Config::defaultTemplate() const
 const std::string& Config::defaultCustomer() const
 {
   return itsDefaultCustomer;
+}
+const std::string& Config::primaryForecastSource() const
+{
+  return itsPrimaryForecastSource;
 }
 const std::string& Config::templateDirectory() const
 {

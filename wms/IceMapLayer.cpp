@@ -32,9 +32,6 @@ namespace
 {
 Json::CharReaderBuilder charreaderbuilder;
 
-using OGRSpatialReferencePtr = boost::shared_ptr<OGRSpatialReference>;
-using OGRCoordinateTransformationPtr = boost::movelib::unique_ptr<OGRCoordinateTransformation>;
-
 const char* const attribute_columns[] = {"firstname_column",
                                          "secondname_column",
                                          "nameposition_column",
@@ -420,6 +417,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
             result_item->geom->assignSpatialReference(defaultSR.get());
             result_item->geom->transformTo(projectionSR.get());
           }
+          sr->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
           handleResultItem(
               *result_item, filter, mapid, theGlobals, theLayersCdt, theGroupCdt, theState);

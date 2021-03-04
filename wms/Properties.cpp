@@ -2,6 +2,7 @@
 #include "Config.h"
 #include "Hash.h"
 #include "Time.h"
+#include <grid-files/common/GeneralFunctions.h>
 #include <macgyver/Exception.h>
 #include <spine/Json.h>
 
@@ -21,8 +22,8 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
 {
   try
   {
-    if (!theJson.isObject())
-      return;
+    // if (!theJson.isObject())
+    //  return;
 
     Json::Value nulljson;
 
@@ -31,6 +32,31 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
 
     json = theJson.get("producer", theConfig.defaultModel());
     producer = json.asString();
+
+    json = theJson.get("source", nulljson);
+    if (!json.isNull())
+    {
+      source = json.asString();
+    }
+    else
+    {
+      if (theConfig.primaryForecastSource() == "grid")
+        source = "grid";
+      else if (theConfig.primaryForecastSource() == "" && producer)
+      {
+        auto gridEngine = theState.getGridEngine();
+        if (gridEngine && gridEngine->isEnabled() && gridEngine->isGridProducer(*producer))
+          source = "grid";
+      }
+      else
+      {
+        source = theConfig.primaryForecastSource();
+      }
+    }
+
+    json = theJson.get("geometryId", nulljson);
+    if (!json.isNull())
+      geometryId = json.asInt();
 
     json = theJson.get("tz", nulljson);
     if (json.isString())
@@ -141,6 +167,12 @@ void Properties::init(const Json::Value& theJson,
       language = theProperties.language;
     else
       language = json.asString();
+
+    json = theJson.get("source", nulljson);
+    if (json.isNull())
+      source = theProperties.source;
+    else
+      source = json.asString();
 
     json = theJson.get("producer", nulljson);
     if (json.isNull())
@@ -321,6 +353,8 @@ std::size_t Properties::hash_value(const State& theState) const
   {
     auto hash = Dali::hash_value(language);
     Dali::hash_combine(hash, Dali::hash_value(producer));
+    Dali::hash_combine(hash, Dali::hash_value(geometryId));
+    Dali::hash_combine(hash, Dali::hash_value(source));
     Dali::hash_combine(hash, Dali::hash_value(origintime));
     // timezone is irrelevant, time is always in UTC timen
     Dali::hash_combine(hash, Dali::hash_value(time));

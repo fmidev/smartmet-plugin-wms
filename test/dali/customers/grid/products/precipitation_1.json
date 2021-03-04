@@ -1,0 +1,113 @@
+{
+  "title": "Demo product",
+  "producer": "SMARTMET",
+  "projection": {
+    "crs": "data",
+    "size": 1.0
+  },
+  "views": [
+    {
+      "qid": "v1",
+      "attributes": {
+        "id": "view1"
+      },
+      "layers": [
+        {
+          "qid": "background",
+          "layer_type": "background",
+          "attributes": {
+            "fill": "rgb(187,204,225)"
+          }
+        },
+        {
+          "qid": "europe",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries"
+          },
+          "attributes": {
+            "id": "europe_country",
+            "fill": "rgb(255,255,255)"
+          }
+        },
+        {
+          "qid": "vv1",
+          "tag": "g",
+          "attributes": {
+            "filter": "url(#shadow)",
+            "id": "precipitation_group"
+          },
+          "layers": [
+            {
+              "qid": "l1",
+              "layer_type": "isoband",
+              "isobands": "json:isobands/precipitation.json",
+              "css": "isobands/precipitation.css",
+              "parameter": "RRR-KGM2",
+              "attributes": {
+                "id": "precipitation_isobands"
+              }
+            } /*,
+            {
+              "qid": "l2",
+              "layer_type": "isoline",
+              "isolines": "json:isolines/precipitation.json",
+              "css": "isolines/precipitation.css",
+              "parameter": "RRR-KGM2",
+              "attributes": {
+                "id": "precipitation_isolines",
+                "class": "Precipitation"
+              }
+            } 
+            */          
+          ]
+        },
+        {
+          "qid": "europe_lines",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries"
+          },
+          "attributes": {
+            "id": "europe_country_lines",
+            "fill": "none",
+            "stroke": "#222",
+            "stroke-width": "0.3px"
+          }
+        },
+        {
+          "qid": "l11",
+          "tag": "rect",
+          "attributes": {
+            "x": -168,
+            "y": 3,
+            "width": 155,
+            "height": 25,
+            "rx": 8,
+            "ry": 8,
+            "fill": "white",
+            "stroke": "black",
+            "stroke-width": "0.6"
+          }
+        },
+        {
+          "qid": "l12",
+          "layer_type": "time",
+          "timestamp": "validtime",
+          "timezone": "Europe/Helsinki",
+          "format": "%Y-%m-%d %H:%M",
+          "x": -20,
+          "y": 20,
+          "attributes": {
+            "text-anchor": "end",
+            "font-family": "Verdana",
+            "font-weight": "bold",
+            "font-size": 14
+          }
+        }                
+      ]
+    }
+  ]
+}

@@ -41,6 +41,10 @@ class IsobandLayer : public Layer
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   boost::optional<std::string> parameter;
+  boost::optional<int> levelId;
+  boost::optional<double> level;
+  boost::optional<int> forecastType;
+  boost::optional<int> forecastNumber;
   std::vector<Isoband> isobands;
   std::string interpolation{"linear"};
   Smoother smoother;
@@ -63,6 +67,9 @@ class IsobandLayer : public Layer
   Heatmap heatmap;
 
  private:
+  virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+
   boost::shared_ptr<Engine::Querydata::QImpl> buildHeatmap(const Spine::Parameter& theParameter,
                                                            const boost::posix_time::ptime& theTime,
                                                            State& theState);

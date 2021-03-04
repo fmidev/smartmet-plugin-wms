@@ -69,6 +69,31 @@ void Intersections::init(const boost::optional<std::string>& theProducer,
   }
 }
 
+
+
+void Intersections::init(const boost::optional<std::string>& theProducer,
+                         const Engine::Grid::Engine *gridEngine,
+                         const Projection& theProjection,
+                         const boost::posix_time::ptime& theTime,
+                         const State& theState)
+{
+  try
+  {
+    if (!gridEngine || !gridEngine->isEnabled())
+      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
+    for (auto& intersection : intersections)
+    {
+      intersection.init(theProducer, gridEngine, theProjection, theTime, theState);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Intersect with isobands

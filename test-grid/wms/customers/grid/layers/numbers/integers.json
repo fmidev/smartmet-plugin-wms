@@ -1,0 +1,9 @@
+{
+    "dx": 0,
+    "dy": 3,
+    "multiplier": 1.0,
+    "offset": 0.0,
+//  "format": "%.0f",
+    "precision": 0,
+    "missing": "-"
+}

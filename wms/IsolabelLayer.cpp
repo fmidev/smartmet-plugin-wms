@@ -23,8 +23,8 @@
 #include <spine/ParameterFactory.h>
 #include <limits>
 
-// #define MYDEBUG 1
-// #define MYDEBUG_DETAILS 1
+//#define MYDEBUG 1
+//#define MYDEBUG_DETAILS 1
 
 namespace SmartMet
 {
@@ -220,7 +220,7 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // direction, and then also apply "upright" condition if so requested.
 
     if (label.orientation == "auto")
-      fix_orientation(candidates, box, crs);
+      fix_orientation(candidates, box, theState, crs);
 
     // Update the globals
 
@@ -928,8 +928,15 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
 
 void IsolabelLayer::fix_orientation(Candidates& candidates,
                                     const Fmi::Box& box,
+                                    const State& state,
                                     const Fmi::SpatialReference& crs) const
 {
+  if (source && *source == "grid")
+  {
+    fix_orientation_gridEngine(candidates, box, state, crs);
+    return;
+  }
+
   // The parameter being used
   auto param = Spine::ParameterFactory::instance().parse(*parameter);
 
@@ -998,6 +1005,88 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
           cand.angle -= 360;
       }
     }
+  }
+}
+
+void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
+                                               const Fmi::Box& box,
+                                               const State& state,
+                                               const Fmi::SpatialReference& sr_image) const
+{
+  try
+  {
+    auto gridEngine = state.getGridEngine();
+    if (!gridEngine || !gridEngine->isEnabled())
+      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
+    auto dataServer = gridEngine->getDataServer_sptr();
+
+    Fmi::CoordinateTransformation transformation(sr_image, "WGS84");
+
+    std::vector<T::Coordinate> pointList;
+
+    for (auto& cand : candidates)
+    {
+      const int length = 2;  // move in pixel units in the orientation marked for the label
+
+      auto x1 = cand.x;
+      auto y1 = cand.y;
+
+      auto x2 = cand.x + length * sin(cand.angle * M_PI / 180);
+      auto y2 = cand.y - length * cos(cand.angle * M_PI / 180);
+
+      // printf("%f,%f  %f,%f => ",x1,y1,x2,y2);
+
+      box.itransform(x1, y1);
+      box.itransform(x2, y2);
+
+      transformation.transform(x1, y1);
+      transformation.transform(x2, y2);
+
+      // printf("%f,%f  %f,%f\n",x1,y1,x2,y2);
+
+      pointList.push_back(T::Coordinate(x1, y1));
+      pointList.push_back(T::Coordinate(x2, y2));
+    }
+
+    T::GridValueList valueList;
+    dataServer->getGridValueListByPointList(0,
+                                            fileId,
+                                            messageIndex,
+                                            T::CoordinateTypeValue::LATLON_COORDINATES,
+                                            pointList,
+                                            T::AreaInterpolationMethod::Linear,
+                                            valueList);
+
+    if (valueList.getLength() == pointList.size())
+    {
+      uint i = 0;
+      for (auto& cand : candidates)
+      {
+        T::GridValue* val1 = valueList.getGridValuePtrByIndex(i);
+        T::GridValue* val2 = valueList.getGridValuePtrByIndex(i + 1);
+        i = i + 2;
+
+        if (val1 != nullptr && val2 != nullptr && val1->mValue > val2->mValue)
+        {
+          cand.angle = cand.angle + 180;
+          if (cand.angle > 360)
+            cand.angle -= 360;
+        }
+
+        // Force labels upright if so requested
+        if (upright && (cand.angle < -90 || cand.angle > 90))
+        {
+          cand.angle += 180;
+          if (cand.angle > 360)
+            cand.angle -= 360;
+        }
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

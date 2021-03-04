@@ -68,6 +68,8 @@ class Layer : public Properties
   // Does the layer satisfy resolution etc constraints?
   bool validLayer(const State& theState) const;
 
+  void setProjection(Projection& proj);
+
   // Get the model data
   Engine::Querydata::Q getModel(const State& theState) const;
 

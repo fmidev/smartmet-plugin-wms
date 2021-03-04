@@ -335,7 +335,7 @@ void Plugin::formatResponse(const std::string &theSvg,
 #ifdef MYDEBUG
         std::cout << "Inserting product to cache with hash " << theHash << std::endl;
 #endif
-        itsImageCache->insert(theHash, buffer);
+        //itsImageCache->insert(theHash, buffer);
 
         // For frontend caching
         theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", theHash));
@@ -508,6 +508,7 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
     : itsModuleName("WMS"),
       itsConfig(theConfig),
       itsReactor(theReactor),
+      itsGridEngine(nullptr),
       itsQEngine(nullptr),
       itsContourEngine(nullptr),
       itsGisEngine(nullptr),
@@ -596,6 +597,18 @@ void Plugin::init()
     if (itsShutdownRequested)
       return;
 
+    // GRID ENGINE
+
+    engine = itsReactor->getSingleton("grid", nullptr);
+    if (engine == nullptr)
+      throw Fmi::Exception(BCP, "Grid engine unavailable");
+    itsGridEngine = reinterpret_cast<Engine::Grid::Engine *>(engine);
+    itsGridEngine->setDem(itsGeoEngine->dem());
+    itsGridEngine->setLandCover(itsGeoEngine->landCover());
+
+    if (itsShutdownRequested)
+      return;
+
     // OBSERVATION
 
     if (itsShutdownRequested)
@@ -627,7 +640,7 @@ void Plugin::init()
 // WMS configurations
 #ifndef WITHOUT_OBSERVATION
       itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
-          itsConfig, itsJsonCache, itsQEngine, authEngine, itsObsEngine, itsGisEngine);
+          itsConfig, itsJsonCache, itsQEngine, authEngine, itsObsEngine, itsGisEngine, itsGridEngine);
 #else
       itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
           itsConfig, itsJsonCache, itsQEngine, authEngine, itsGisEngine);
@@ -637,7 +650,7 @@ void Plugin::init()
     {
 #ifndef WITHOUT_OBSERVATION
       itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
-          itsConfig, itsJsonCache, itsQEngine, nullptr, itsObsEngine, itsGisEngine);
+          itsConfig, itsJsonCache, itsQEngine, nullptr, itsObsEngine, itsGisEngine, itsGridEngine);
 #else
       itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
           itsConfig, itsJsonCache, itsQEngine, nullptr, itsGisEngine);
@@ -647,10 +660,10 @@ void Plugin::init()
 #else
 #ifndef WITHOUT_OBSERVATION
     itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
-        itsConfig, itsJsonCache, itsQEngine, itsObsEngine, itsGisEngine);
+        itsConfig, itsJsonCache, itsQEngine, itsObsEngine, itsGisEngine, itsGridEngine);
 #else
     itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
-        itsConfig, itsJsonCache, itsQEngine, itsGisEngine);
+        itsConfig, itsJsonCache, itsQEngine, itsGisEngine, itsGridEngine);
 #endif
 #endif
 
@@ -1494,7 +1507,15 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
     if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
       hash["legend"] = "true";
 
-    product.generate(hash, theState);
+    try
+    {
+      product.generate(hash, theState);
+    }
+    catch (...)
+    {
+      Fmi::Exception e(BCP, "Operation failed!",nullptr);
+      e.printError();
+    }
 
     // Build the template
     std::string output, log;

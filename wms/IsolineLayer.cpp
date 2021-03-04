@@ -12,8 +12,12 @@
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
 #include <engines/gis/Engine.h>
+#include <engines/grid/Engine.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
+#include <grid-content/queryServer/definition/QueryConfigurator.h>
+#include <grid-files/common/GeneralFunctions.h>
+#include <grid-files/common/ImagePaint.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 
@@ -50,6 +54,48 @@ void IsolineLayer::init(const Json::Value& theJson,
     auto json = theJson.get("parameter", nulljson);
     if (!json.isNull())
       parameter = json.asString();
+
+    json = theJson.get("geometryId", nulljson);
+    if (!json.isNull())
+      geometryId = json.asInt();
+
+    json = theJson.get("levelId", nulljson);
+    if (!json.isNull())
+      levelId = json.asInt();
+
+    json = theJson.get("level", nulljson);
+    if (!json.isNull())
+      level = json.asDouble();
+
+    json = theJson.get("forecastType", nulljson);
+    if (!json.isNull())
+      forecastType = json.asInt();
+
+    json = theJson.get("forecastNumber", nulljson);
+    if (!json.isNull())
+      forecastNumber = json.asInt();
+
+    auto request = theState.getRequest();
+
+    boost::optional<std::string> v = request.getParameter("geometryId");
+    if (v)
+      geometryId = toInt32(*v);
+
+    v = request.getParameter("levelId");
+    if (v)
+      levelId = toInt32(*v);
+
+    v = request.getParameter("level");
+    if (v)
+      level = toInt32(*v);
+
+    v = request.getParameter("forecastType");
+    if (v)
+      forecastType = toInt32(*v);
+
+    v = request.getParameter("forecastNumber");
+    if (v)
+      forecastNumber = toInt32(*v);
 
     json = theJson.get("isolines", nulljson);
     if (!json.isNull())
@@ -122,6 +168,347 @@ void IsolineLayer::init(const Json::Value& theJson,
 std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> isovalues,
                                                       State& theState)
 {
+  std::vector<OGRGeometryPtr> geoms;
+  if (source && *source == "grid")
+    geoms = getIsolinesGrid(isovalues, theState);
+  else
+    geoms = getIsolinesQuerydata(isovalues, theState);
+
+  // Establish clipping box
+
+  const auto& box = projection.getBox();
+  const auto clipbox = getClipBox(box);
+
+  // Logical operations with maps require shapes
+
+  const auto& gis = theState.getGisEngine();
+
+  auto crs = projection.getCRS();
+  auto valid_time = getValidTime();
+
+  OGRGeometryPtr inshape, outshape;
+  if (inside)
+  {
+    inshape = gis.getShape(&crs, inside->options);
+    if (!inshape)
+      throw Fmi::Exception(BCP, "IsolineLayer received empty inside-shape from database");
+    inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
+  }
+  if (outside)
+  {
+    outshape = gis.getShape(&crs, outside->options);
+    if (outshape)
+      outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
+  }
+
+  // Logical operations with isobands are initialized before hand
+  intersections.init(producer, projection, valid_time, theState);
+
+  // Perform polygon operations
+  for (unsigned int i = 0; i < geoms.size(); i++)
+  {
+    OGRGeometryPtr geom = geoms[i];
+    if (geom && geom->IsEmpty() == 0)
+    {
+      OGRGeometryPtr geom2(Fmi::OGR::lineclip(*geom, clipbox));
+
+      // Do intersections if so requested
+
+      if (geom2 && geom2->IsEmpty() == 0 && inshape)
+        geom2.reset(geom2->Intersection(inshape.get()));
+
+      if (geom2 && geom2->IsEmpty() == 0 && outshape)
+        geom2.reset(geom2->Difference(outshape.get()));
+
+      // Intersect with data too
+      geom2 = intersections.intersect(geom2);
+
+      geoms[i] = geom2;
+    }
+  }
+
+  return geoms;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate the isoline vectors based on the settings
+ */
+// ----------------------------------------------------------------------
+
+std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<double> isovalues,
+                                                          State& theState)
+{
+  auto gridEngine = theState.getGridEngine();
+  if (!gridEngine || !gridEngine->isEnabled())
+    throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
+  if (!parameter)
+    throw Fmi::Exception(BCP, "Parameter not set for isoline-layer");
+
+  std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
+  QueryServer::QueryConfigurator queryConfigurator;
+  T::AttributeList attributeList;
+
+  std::string producerName = gridEngine->getProducerName(*producer);
+
+  // std::cout << valid_time << "TIMEZONE " << tz << "\n";
+
+  T::ParamValue_vec contourValues;
+  for (auto value : isovalues)
+    contourValues.push_back(value);
+
+  // Alter units if requested
+  if (!unit_conversion.empty())
+  {
+    auto conv = theState.getConfig().unitConversion(unit_conversion);
+    multiplier = conv.multiplier;
+    offset = conv.offset;
+  }
+
+  std::string wkt = *projection.crs;
+  // std::cout << wkt << "\n";
+
+  if (wkt != "data")
+  {
+    // Getting WKT and the bounding box of the requested projection.
+
+    if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
+    {
+      auto crs = projection.getCRS();
+      char* out = nullptr;
+      crs.get()->exportToWkt(&out);
+      wkt = out;
+      CPLFree(out);
+    }
+
+    // Adding the bounding box information into the query.
+
+    char bbox[100];
+
+    auto bl = projection.bottomLeftLatLon();
+    auto tr = projection.topRightLatLon();
+    sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
+    originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
+
+    const auto& box = projection.getBox();
+    sprintf(bbox, "%f,%f,%f,%f", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+    originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+  }
+  else
+  {
+    // The requested projection is the same as the projection of the requested data. This means
+    // that we we do not know the actual projection yet and we have to wait that the grid-engine
+    // delivers us the requested data and the projection information of the current data.
+  }
+
+  // Adding parameter information into the query.
+
+  std::string pName = *parameter;
+  auto pos = pName.find(".raw");
+  if (pos != std::string::npos)
+  {
+    attributeList.addAttribute("areaInterpolationMethod",
+                               std::to_string(T::AreaInterpolationMethod::Linear));
+    pName.erase(pos, 4);
+  }
+
+  std::string param = gridEngine->getParameterString(producerName, pName);
+  attributeList.addAttribute("param", param);
+
+  if (!projection.projectionParameter)
+    projection.projectionParameter = param;
+
+  if (param == *parameter && originalGridQuery->mProducerNameList.size() == 0)
+  {
+    gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
+    if (originalGridQuery->mProducerNameList.size() == 0)
+      originalGridQuery->mProducerNameList.push_back(producerName);
+  }
+
+  std::string forecastTime = Fmi::to_iso_string(*time);
+  attributeList.addAttribute("startTime", forecastTime);
+  attributeList.addAttribute("endTime", forecastTime);
+  attributeList.addAttribute("timelist", forecastTime);
+  attributeList.addAttribute("timezone", "UTC");
+
+  if (origintime)
+    attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+
+  // Tranforming information from the attribute list into the query object.
+  queryConfigurator.configure(*originalGridQuery, attributeList);
+
+  // Fullfilling information into the query object.
+
+  for (auto it = originalGridQuery->mQueryParameterList.begin();
+       it != originalGridQuery->mQueryParameterList.end();
+       ++it)
+  {
+    it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+    it->mType = QueryServer::QueryParameter::Type::Isoline;
+    it->mContourLowValues = contourValues;
+
+    if (geometryId)
+      it->mGeometryId = *geometryId;
+
+    if (levelId)
+      it->mParameterLevelId = *levelId;
+
+    if (level)
+      it->mParameterLevel = C_INT(*level);
+
+    if (forecastType)
+      it->mForecastType = C_INT(*forecastType);
+
+    if (forecastNumber)
+      it->mForecastNumber = C_INT(*forecastNumber);
+  }
+
+  originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
+  originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
+
+  if (projection.size && *projection.size > 0)
+  {
+    originalGridQuery->mAttributeList.addAttribute("grid.size", std::to_string(*projection.size));
+  }
+  else
+  {
+    if (projection.xsize)
+      originalGridQuery->mAttributeList.addAttribute("grid.width",
+                                                     std::to_string(*projection.xsize));
+
+    if (projection.ysize)
+      originalGridQuery->mAttributeList.addAttribute("grid.height",
+                                                     std::to_string(*projection.ysize));
+  }
+
+  if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
+  {
+    char bbox[100];
+    sprintf(bbox, "%f,%f,%f,%f", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
+    originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+  }
+
+  if (smoother.size)
+    originalGridQuery->mAttributeList.addAttribute("contour.smooth.size",
+                                                   std::to_string(*smoother.size));
+
+  if (smoother.degree)
+    originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
+                                                   std::to_string(*smoother.degree));
+
+  if (minarea)
+    originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(*minarea));
+
+  originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
+                                                 std::to_string(extrapolation));
+
+  if (extrapolation)
+    originalGridQuery->mAttributeList.addAttribute("contour.multiplier",
+                                                   std::to_string(*multiplier));
+
+  if (offset)
+    originalGridQuery->mAttributeList.addAttribute("contour.offset", std::to_string(*offset));
+
+  originalGridQuery->mAttributeList.setAttribute(
+      "contour.coordinateType",
+      std::to_string(static_cast<int>(T::CoordinateTypeValue::ORIGINAL_COORDINATES)));
+  // query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::LATLON_COORDINATES));
+  // query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
+
+  // The Query object before the query execution.
+  // query.print(std::cout,0,0);
+
+  // Executing the query.
+  std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
+
+  // Converting the returned WKB-isolines into OGRGeometry objects.
+
+  std::vector<OGRGeometryPtr> geoms;
+  for (auto param = query->mQueryParameterList.begin(); param != query->mQueryParameterList.end();
+       ++param)
+  {
+    for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
+    {
+      if ((*val)->mValueData.size() > 0)
+      {
+        fileId = (*val)->mFileId[0];
+        messageIndex = (*val)->mMessageIndex[0];
+
+        for (auto wkb = (*val)->mValueData.begin(); wkb != (*val)->mValueData.end(); ++wkb)
+        {
+          unsigned char* cwkb = reinterpret_cast<unsigned char*>(wkb->data());
+          OGRGeometry* geom = nullptr;
+          OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb->size());
+          if (geom != nullptr)
+          {
+            auto geomPtr = OGRGeometryPtr(geom);
+            geoms.push_back(geomPtr);
+          }
+        }
+      }
+    }
+  }
+
+  // Extracting the projection information from the query result.
+
+  if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
+  {
+    const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
+    const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
+
+    if (widthStr != nullptr)
+      projection.xsize = atoi(widthStr);
+
+    if (heightStr != nullptr)
+      projection.ysize = atoi(heightStr);
+  }
+
+  if (!projection.xsize && !projection.ysize)
+    throw Fmi::Exception(BCP, "The projection size is unknown!");
+
+  if (*projection.crs == "data")
+  {
+    const char* crsStr = query->mAttributeList.getAttributeValue("grid.crs");
+    const char* proj4Str = query->mAttributeList.getAttributeValue("grid.proj4");
+    if (proj4Str != nullptr &&  strstr(proj4Str,"+lon_wrap") != nullptr )
+      crsStr = proj4Str;
+
+    if (crsStr != nullptr)
+    {
+      projection.crs = crsStr;
+      if (!projection.bboxcrs)
+      {
+        const char* bboxStr = query->mAttributeList.getAttributeValue("grid.bbox");
+        if (bboxStr != nullptr)
+        {
+          std::vector<double> partList;
+          splitString(bboxStr, ',', partList);
+
+          if (partList.size() == 4)
+          {
+            projection.x1 = partList[0];
+            projection.y1 = partList[1];
+            projection.x2 = partList[2];
+            projection.y2 = partList[3];
+          }
+        }
+      }
+    }
+  }
+
+  return geoms;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate the isoline vectors based on the settings
+ */
+// ----------------------------------------------------------------------
+
+std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector<double> isovalues,
+                                                               State& theState)
+{
   // Establish the data. Store to member variable for IsolabelLayer use
   q = getModel(theState);
 
@@ -158,8 +545,6 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   projection.update(q);
   const auto& crs = projection.getCRS();
   const auto& box = projection.getBox();
-
-  // And the box needed for clipping
   const auto clipbox = getClipBox(box);
 
   // Sample to higher resolution if necessary
@@ -189,7 +574,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   }
 
   if (!q)
-    throw Fmi::Exception(BCP, "Cannot generate isobands without gridded data");
+    throw Fmi::Exception(BCP, "Cannot generate isolines without gridded data");
 
   // Logical operations with maps require shapes
 
@@ -223,6 +608,21 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
 
   options.minarea = minarea;
 
+  // Set the requested level
+
+  if (!q->firstLevel())
+    throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
+
+  if (options.level)
+  {
+    if (!q->selectLevel(*options.level))
+    {
+      throw Fmi::Exception(
+          BCP,
+          "Level value " + boost::lexical_cast<std::string>(*options.level) + " is not available.");
+    }
+  }
+
   // Alter units if requested
 
   if (!unit_conversion.empty())
@@ -253,29 +653,6 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
 
   auto geoms = contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
-
-  // Perform polygon operations
-  for (unsigned int i = 0; i < geoms.size(); i++)
-  {
-    OGRGeometryPtr geom = geoms[i];
-    if (geom && geom->IsEmpty() == 0)
-    {
-      OGRGeometryPtr geom2(Fmi::OGR::lineclip(*geom, clipbox));
-
-      // Do intersections if so requested
-
-      if (geom2 && geom2->IsEmpty() == 0 && inshape)
-        geom2.reset(geom2->Intersection(inshape.get()));
-
-      if (geom2 && geom2->IsEmpty() == 0 && outshape)
-        geom2.reset(geom2->Difference(outshape.get()));
-
-      // Intersect with data too
-      geom2 = intersections.intersect(geom2);
-
-      geoms[i] = geom2;
-    }
-  }
 
   return geoms;
 }
@@ -402,9 +779,16 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+
+    if (!(source && *source == "grid"))
+      Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+
     Dali::hash_combine(hash, Dali::hash_value(parameter));
+    Dali::hash_combine(hash, Dali::hash_value(geometryId));
+    Dali::hash_combine(hash, Dali::hash_value(levelId));
     Dali::hash_combine(hash, Dali::hash_value(level));
+    Dali::hash_combine(hash, Dali::hash_value(forecastType));
+    Dali::hash_combine(hash, Dali::hash_value(forecastNumber));
     Dali::hash_combine(hash, Dali::hash_value(isolines, theState));
     Dali::hash_combine(hash, Dali::hash_value(smoother, theState));
     Dali::hash_combine(hash, Dali::hash_value(extrapolation));
