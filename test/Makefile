@@ -63,6 +63,12 @@ test: $(PROG) $(TEST_PREPARE_TARGETS) redis-start
 	fi
 	@rm -f wms-access-log
 	@rm -f cnf/grid/redis/redis.conf
+#	@echo 
+#	@echo "*** Shutting down the Redis database and removing useless files." 
+#	@echo 
+#	@cat cnf/grid/redis/redis-server.pid | xargs kill -9
+#	@rm -f cnf/grid/redis/redis-server.pid
+#	@rm -f cnf/grid/redis/redis-server.log
 	@if [ -e failures/wms_getcapabilities.get ]; then \
 	   echo Validating failures/wms_getcapabilities.get; \
 	   cat failures/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
