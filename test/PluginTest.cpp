@@ -2,10 +2,10 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/foreach.hpp>
+#include <macgyver/Exception.h>
 #include <smartmet/spine/HTTP.h>
 #include <smartmet/spine/Options.h>
 #include <smartmet/spine/Reactor.h>
-#include <macgyver/Exception.h>
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
@@ -232,16 +232,17 @@ void alarmhandler(int signal)
   exit(1);
 }
 
-int main(int argc, char* argv[]) try
+int main(int argc, char* argv[])
+try
 {
   SmartMet::Spine::Options options;
   options.quiet = true;
   options.defaultlogging = false;
   options.configfile = "cnf/reactor.conf";
 
-  if(!options.parse(argc, argv))
+  if (!options.parse(argc, argv))
     exit(1);
-  
+
   signal(SIGALRM, alarmhandler);
   SmartMet::MyTest::test(options, prelude);
 

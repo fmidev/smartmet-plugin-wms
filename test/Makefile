@@ -1,10 +1,10 @@
-PROG = PluginTest
+PROG = PluginTest TestConfigCreator
 
 REQUIRES = gdal jsoncpp configpp ctpp2 fmt librsvg
 
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
-CFLAGS = -DUNIX -DWGS84 -O0 -g $(FLAGS) -Wno-unknown-pragmas
+CFLAGS = -DUNIX -O0 -g $(FLAGS) -Wno-unknown-pragmas
 
 INCLUDES += \
 	-I../wms \
@@ -50,7 +50,7 @@ clean:
 	-$(MAKE) stop-geonames-db
 	rm -rm tmp-geonames-db*
 
-test: $(PROG) $(TEST_PREPARE_TARGETS)
+test: $(PROG) $(TEST_PREPARE_TARGETS) redis-start
 	rm -f failures/*
 	if ./TestRunner.sh; then \
 		ok=true; $(MAKE) $(TEST_FINISH_TARGETS); \
@@ -62,10 +62,18 @@ test: $(PROG) $(TEST_PREPARE_TARGETS)
 	   cat output/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
 	fi
 	@rm -f wms-access-log
+	@rm -f cnf/grid/redis/redis.conf
 	@if [ -e failures/wms_getcapabilities.get ]; then \
 	   echo Validating failures/wms_getcapabilities.get; \
 	   cat failures/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
 	fi
+
+redis-start:
+	@echo "*** Creating the Redis configuration file."
+	@./TestConfigCreator cnf/environment.conf cnf/grid/redis/redis-template.conf cnf/grid/redis/redis.conf
+	@echo "*** Starting the Redis database."
+	@redis-server cnf/grid/redis/redis.conf
+
 
 geonames-database:
 	@-$(MAKE) stop-geonames-db

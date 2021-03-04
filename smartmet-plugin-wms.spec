@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.3.3
-Release: 2%{?dist}.fmi
+Version: 21.3.4
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -18,8 +18,8 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.7.2
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.1.14
-BuildRequires: smartmet-library-grid-content-devel >= 21.3.3
-BuildRequires: smartmet-library-grid-files-devel >= 21.2.25
+BuildRequires: smartmet-library-grid-content-devel >= 21.3.4
+BuildRequires: smartmet-library-grid-files-devel >= 21.3.4
 BuildRequires: smartmet-library-macgyver-devel >= 21.2.25
 BuildRequires: smartmet-library-spine-devel >= 21.3.1
 BuildRequires: smartmet-library-giza-devel
@@ -56,8 +56,8 @@ Requires: fmt >= 7.1.3
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-grid-content >= 21.3.3
-Requires: smartmet-library-grid-files >= 21.2.25
+Requires: smartmet-library-grid-content >= 21.3.4
+Requires: smartmet-library-grid-files >= 21.3.4
 Requires: smartmet-library-gis >= 21.2.26
 Requires: smartmet-library-macgyver >= 21.2.25
 Requires: smartmet-library-giza >= 21.1.14
@@ -129,6 +129,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Mar  4 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.4-1.fmi
+- Merged grid and querydata code and tests
+
 * Wed Mar  3 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.3-2.fmi
 - Grid-engine may now be disabled
 

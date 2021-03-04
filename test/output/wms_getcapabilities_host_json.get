@@ -407,6 +407,711 @@
 
 			},
 			{
+				"Title": "Demo product",
+				"queryable": 1,
+				"Name": "grid:precipitation_1",
+				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": 0,
+					"eastBoundLongitude": 0,
+					"southBoundLatitude": 0,
+					"northBoundLatitude": 0
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4258",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					}
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Aprecipitation_1"
+								}
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Demo product",
+				"queryable": 1,
+				"Name": "grid:precipitation_kgm2_1",
+				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": 0,
+					"eastBoundLongitude": 0,
+					"southBoundLatitude": 0,
+					"northBoundLatitude": 0
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4258",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					}
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Aprecipitation_kgm2_1"
+								}
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Temperature",
+				"queryable": 1,
+				"Name": "grid:temperature_1",
+				"Abstract": "Temperature",
+				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": 0,
+					"eastBoundLongitude": 0,
+					"southBoundLatitude": 0,
+					"northBoundLatitude": 0
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4258",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					}
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Temperature isobands every two degrees",
+						"Abstract": "Temperature isoband width is two degrees",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_1"
+								}
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Temperature",
+				"queryable": 1,
+				"Name": "grid:temperature_2",
+				"Abstract": "Temperature",
+				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": 0,
+					"eastBoundLongitude": 0,
+					"southBoundLatitude": 0,
+					"northBoundLatitude": 0
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4258",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					}
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_2"
+								}
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Temperature",
+				"queryable": 1,
+				"Name": "grid:temperature_3",
+				"Abstract": "Temperature",
+				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": 0,
+					"eastBoundLongitude": 0,
+					"southBoundLatitude": 0,
+					"northBoundLatitude": 0
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4258",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					}
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_3"
+								}
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Temperature",
+				"queryable": 1,
+				"Name": "grid:temperature_4",
+				"Abstract": "Temperature",
+				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": 0,
+					"eastBoundLongitude": 0,
+					"southBoundLatitude": 0,
+					"northBoundLatitude": 0
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4258",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					}
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_4"
+								}
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Wind demo",
+				"queryable": 1,
+				"Name": "grid:wind_direction_1",
+				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": 0,
+					"eastBoundLongitude": 0,
+					"southBoundLatitude": 0,
+					"northBoundLatitude": 0
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4258",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					}
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_direction_1"
+								}
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Wind demo",
+				"queryable": 1,
+				"Name": "grid:wind_speed_1",
+				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": 0,
+					"eastBoundLongitude": 0,
+					"southBoundLatitude": 0,
+					"northBoundLatitude": 0
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4258",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					}
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_1"
+								}
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Wind demo",
+				"queryable": 1,
+				"Name": "grid:wind_speed_2",
+				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": 0,
+					"eastBoundLongitude": 0,
+					"southBoundLatitude": 0,
+					"northBoundLatitude": 0
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4258",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					}
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_2"
+								}
+							}
+						]
+					}
+				]
+
+			},
+			{
+				"Title": "Wind demo",
+				"queryable": 1,
+				"Name": "grid:wind_speed_and_direction_1",
+				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"EX_GeographicBoundingBox":
+				{
+					"westBoundLongitude": 0,
+					"eastBoundLongitude": 0,
+					"southBoundLatitude": 0,
+					"northBoundLatitude": 0
+				},
+				"BoundingBox":
+				[
+					{
+						"CRS": "CRS:27",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:83",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "CRS:84",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4258",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					},
+					{
+						"CRS": "EPSG:4326",
+						"minx": 0,
+						"miny": 0,
+						"maxx": 0,
+						"maxy": 0
+					}
+				],
+				"Style":
+				[
+					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://test.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_and_direction_1"
+								}
+							}
+						]
+					}
+				]
+
+			},
+			{
 				"Title": "Background map",
 				"queryable": 1,
 				"Name": "test:backgroundmap",

@@ -226,3 +226,83 @@
 56459:C 31 Dec 2020 10:54:31.816 # Configuration loaded
 56460:M 31 Dec 2020 10:54:31.817 * Increased maximum number of open files to 10032 (it was originally set to 1024).
 56460:M 31 Dec 2020 10:54:31.817 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+50672:C 04 Mar 2021 14:40:04.560 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+50672:C 04 Mar 2021 14:40:04.562 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=50672, just started
+50672:C 04 Mar 2021 14:40:04.563 # Configuration loaded
+50674:M 04 Mar 2021 14:40:04.569 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+51091:C 04 Mar 2021 14:41:43.213 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+51091:C 04 Mar 2021 14:41:43.216 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=51091, just started
+51091:C 04 Mar 2021 14:41:43.218 # Configuration loaded
+51092:M 04 Mar 2021 14:41:43.224 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+51200:C 04 Mar 2021 14:42:00.799 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+51200:C 04 Mar 2021 14:42:00.802 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=51200, just started
+51200:C 04 Mar 2021 14:42:00.804 # Configuration loaded
+51201:M 04 Mar 2021 14:42:00.810 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+51641:C 04 Mar 2021 14:43:48.263 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+51641:C 04 Mar 2021 14:43:48.266 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=51641, just started
+51641:C 04 Mar 2021 14:43:48.268 # Configuration loaded
+51642:M 04 Mar 2021 14:43:48.274 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+51746:C 04 Mar 2021 14:44:06.545 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+51746:C 04 Mar 2021 14:44:06.547 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=51746, just started
+51746:C 04 Mar 2021 14:44:06.550 # Configuration loaded
+51747:M 04 Mar 2021 14:44:06.554 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+51914:C 04 Mar 2021 14:44:42.384 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+51914:C 04 Mar 2021 14:44:42.387 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=51914, just started
+51914:C 04 Mar 2021 14:44:42.388 # Configuration loaded
+51915:M 04 Mar 2021 14:44:42.394 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+52297:C 04 Mar 2021 14:45:45.756 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+52297:C 04 Mar 2021 14:45:45.758 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=52297, just started
+52297:C 04 Mar 2021 14:45:45.760 # Configuration loaded
+52298:M 04 Mar 2021 14:45:45.766 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+52375:C 04 Mar 2021 14:45:59.039 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+52375:C 04 Mar 2021 14:45:59.042 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=52375, just started
+52375:C 04 Mar 2021 14:45:59.044 # Configuration loaded
+52376:M 04 Mar 2021 14:45:59.049 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+52641:C 04 Mar 2021 14:46:55.171 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+52641:C 04 Mar 2021 14:46:55.174 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=52641, just started
+52641:C 04 Mar 2021 14:46:55.176 # Configuration loaded
+52642:M 04 Mar 2021 14:46:55.181 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+55246:C 04 Mar 2021 14:57:58.520 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+55246:C 04 Mar 2021 14:57:58.522 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=55246, just started
+55246:C 04 Mar 2021 14:57:58.524 # Configuration loaded
+55247:M 04 Mar 2021 14:57:58.531 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+55581:C 04 Mar 2021 14:58:46.619 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+55581:C 04 Mar 2021 14:58:46.622 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=55581, just started
+55581:C 04 Mar 2021 14:58:46.624 # Configuration loaded
+55582:M 04 Mar 2021 14:58:46.629 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+56466:C 04 Mar 2021 15:01:15.449 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+56466:C 04 Mar 2021 15:01:15.452 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=56466, just started
+56466:C 04 Mar 2021 15:01:15.454 # Configuration loaded
+56467:M 04 Mar 2021 15:01:15.459 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+67728:C 04 Mar 2021 15:19:44.338 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+67728:C 04 Mar 2021 15:19:44.340 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=67728, just started
+67728:C 04 Mar 2021 15:19:44.342 # Configuration loaded
+67729:M 04 Mar 2021 15:19:44.347 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+69483:C 04 Mar 2021 15:23:02.208 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+69483:C 04 Mar 2021 15:23:02.210 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=69483, just started
+69483:C 04 Mar 2021 15:23:02.212 # Configuration loaded
+69484:M 04 Mar 2021 15:23:02.217 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+69870:C 04 Mar 2021 15:23:59.422 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+69870:C 04 Mar 2021 15:23:59.424 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=69870, just started
+69870:C 04 Mar 2021 15:23:59.427 # Configuration loaded
+69871:M 04 Mar 2021 15:23:59.435 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+71610:C 04 Mar 2021 15:30:04.701 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+71610:C 04 Mar 2021 15:30:04.703 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=71610, just started
+71610:C 04 Mar 2021 15:30:04.706 # Configuration loaded
+71611:M 04 Mar 2021 15:30:04.712 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+72062:C 04 Mar 2021 15:30:52.594 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+72062:C 04 Mar 2021 15:30:52.597 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=72062, just started
+72062:C 04 Mar 2021 15:30:52.599 # Configuration loaded
+72063:M 04 Mar 2021 15:30:52.605 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+72408:C 04 Mar 2021 15:31:30.863 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+72408:C 04 Mar 2021 15:31:30.865 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=72408, just started
+72408:C 04 Mar 2021 15:31:30.868 # Configuration loaded
+72409:M 04 Mar 2021 15:31:30.874 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+79815:C 04 Mar 2021 15:45:18.102 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+79815:C 04 Mar 2021 15:45:18.104 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=79815, just started
+79815:C 04 Mar 2021 15:45:18.106 # Configuration loaded
+79816:M 04 Mar 2021 15:45:18.111 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
+81393:C 04 Mar 2021 15:48:12.963 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+81393:C 04 Mar 2021 15:48:12.966 # Redis version=5.0.8, bits=64, commit=00000000, modified=0, pid=81393, just started
+81393:C 04 Mar 2021 15:48:12.968 # Configuration loaded
+81394:M 04 Mar 2021 15:48:12.975 # Could not create server TCP listening socket 127.0.0.1:6380: bind: Address already in use
