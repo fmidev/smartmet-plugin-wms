@@ -4,9 +4,9 @@
 #include "LonLatToXYTransformation.h"
 #include "State.h"
 #include <ctpp2/CDT.hpp>
-#include <ogr_spatialref.h>
-#include <macgyver/Exception.h>
 #include <grid-files/common/GeneralFunctions.h>
+#include <macgyver/Exception.h>
+#include <ogr_spatialref.h>
 
 namespace SmartMet
 {
@@ -67,25 +67,6 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     if (!validLayer(theState))
       return;
 
-    //if (source && *source == "grid")
-    //  return;
-
-    std::string x = attributes.value("x");
-    std::string y = attributes.value("y");
-
-    if (!x.empty() && !y.empty())
-    {
-      double xx = toDouble(x.c_str());
-      double yy = toDouble(y.c_str());
-      const auto& box = projection.getBox();
-
-      if (xx < 0)
-        attributes.add("x",std::to_string(box.width() + xx));
-
-      if (yy < 0)
-        attributes.add("y",std::to_string(box.height() + yy));
-    }
-
     // longitude & latitude
     std::string longitude = attributes.value("longitude");
     std::string latitude = attributes.value("latitude");
@@ -100,6 +81,26 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       attributes.remove("latitude");
       attributes.remove("longitude");
     }
+
+#if 0
+    // GRIB VERSION CODE, NOT SURE WHY THIS WAS ADDED
+    std::string x = attributes.value("x");
+    std::string y = attributes.value("y");
+
+    if (!x.empty() && !y.empty())
+    {
+      double xx = toDouble(x.c_str());
+      double yy = toDouble(y.c_str());
+
+      const auto& box = projection.getBox();
+
+      if (xx < 0)
+        attributes.add("x", std::to_string(box.width() + xx));
+
+      if (yy < 0)
+        attributes.add("y", std::to_string(box.height() + yy));
+    }
+#endif
 
     // Update the globals
 
