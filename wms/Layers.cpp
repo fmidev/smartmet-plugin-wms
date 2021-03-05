@@ -126,7 +126,7 @@ bool Layers::getProjection(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
           tmpState.setCustomer(theState.getCustomer());
           CTPP::CDT tmpLayersCdt;
 
-          if (layer->layers.getProjection(tmpGlobals,theLayersCdt,tmpState,projection))
+          if (layer->layers.getProjection(tmpGlobals,tmpLayersCdt,tmpState,projection))
             return true;
         }
       }
@@ -175,7 +175,7 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
         State tmpState(theState.getPlugin(),theState.getRequest());
         tmpState.setCustomer(theState.getCustomer());
         CTPP::CDT tmpLayersCdt;
-        getProjection(tmpGlobals,theLayersCdt,tmpState,projection);
+        getProjection(tmpGlobals,tmpLayersCdt,tmpState,projection);
       }
       else
       {
