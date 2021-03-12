@@ -35,7 +35,7 @@ TEST_FINISH_TARGETS := dummy
 TEST_DB_DIR := $(shell pwd)/tmp-geonames-db
 
 ifdef CI
-GEONAMES_HOST_EDIT := sed -e 's/"smartmet-test"/"localhost"/g'
+GEONAMES_HOST_EDIT := sed -e 's|"smartmet-test"|"$(TEST_DB_DIR)"|g'
 TEST_PREPARE_TARGETS += geonames-database start-geonames-db
 TEST_FINISH_TARGETS += stop-geonames-db
 else
