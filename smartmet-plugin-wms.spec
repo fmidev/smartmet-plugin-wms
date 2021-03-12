@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.3.5
+Version: 21.3.12
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -21,18 +21,18 @@ BuildRequires: smartmet-library-giza-devel >= 21.1.14
 BuildRequires: smartmet-library-grid-content-devel >= 21.3.4
 BuildRequires: smartmet-library-grid-files-devel >= 21.3.4
 BuildRequires: smartmet-library-macgyver-devel >= 21.2.25
-BuildRequires: smartmet-library-spine-devel >= 21.3.1
+BuildRequires: smartmet-library-spine-devel >= 21.3.9
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 21.1.14
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 21.3.2
+BuildRequires: smartmet-engine-observation-devel >= 21.3.12
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 21.2.26
-BuildRequires: smartmet-engine-grid-devel >= 21.3.3
+BuildRequires: smartmet-engine-grid-devel >= 21.3.11
 BuildRequires: smartmet-engine-geonames-devel >= 21.2.18
-BuildRequires: smartmet-engine-querydata-devel >= 21.3.2
+BuildRequires: smartmet-engine-querydata-devel >= 21.3.4
 BuildRequires: smartmet-engine-contour-devel >= 21.2.18
 BuildRequires: smartmet-library-gis-devel >= 21.2.26
 BuildRequires: fmt-devel >= 7.1.3
@@ -64,13 +64,13 @@ Requires: smartmet-library-giza >= 21.1.14
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.1.14
 %endif
-Requires: smartmet-engine-querydata >= 21.3.2
+Requires: smartmet-engine-querydata >= 21.3.4
 Requires: smartmet-engine-contour >= 21.2.18
 Requires: smartmet-engine-gis >= 21.2.26
-Requires: smartmet-engine-grid >= 21.3.3
+Requires: smartmet-engine-grid >= 21.3.11
 Requires: smartmet-engine-geonames >= 21.2.18
 Requires: smartmet-server >= 21.1.14
-Requires: smartmet-library-spine >= 21.3.1
+Requires: smartmet-library-spine >= 21.3.9
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -91,16 +91,16 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 21.2.18
 #TestRequires: smartmet-engine-geonames-devel >= 21.2.18
 #TestRequires: smartmet-engine-gis-devel >= 21.2.26
-#TestRequires: smartmet-engine-querydata-devel >= 21.3.2
+#TestRequires: smartmet-engine-querydata-devel >= 21.3.4
 #TestRequires: smartmet-library-giza-devel >= 21.1.14
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
-#TestRequires: smartmet-library-spine-devel >= 21.3.1
+#TestRequires: smartmet-library-spine-devel >= 21.3.9
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
 #TestRequires: zlib-devel
 #TestRequires: cairo-devel
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 21.3.2
+#TestRequires: smartmet-engine-observation-devel >= 21.3.12
 %endif
 
 %description
@@ -129,6 +129,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Fri Mar 12 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.12-1.fmi
+- Print apikey on for errorneous requests
+
 * Fri Mar  5 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.5-1.fmi
 - Small fix to layer handling
 

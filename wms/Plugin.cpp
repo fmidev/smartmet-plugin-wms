@@ -19,6 +19,7 @@
 #include "WMSRequestType.h"
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
+#include <spine/FmiApiKey.h>
 #include <spine/Json.h>
 #include <spine/SmartMet.h>
 #ifndef WITHOUT_AUTHENTICATION
@@ -335,7 +336,7 @@ void Plugin::formatResponse(const std::string &theSvg,
 #ifdef MYDEBUG
         std::cout << "Inserting product to cache with hash " << theHash << std::endl;
 #endif
-        //itsImageCache->insert(theHash, buffer);
+        // itsImageCache->insert(theHash, buffer);
 
         // For frontend caching
         theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", theHash));
@@ -468,6 +469,11 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       Fmi::Exception exception(BCP, "Request processing exception!", nullptr);
       exception.addParameter("URI", theRequest.getURI());
       exception.addParameter("ClientIP", theRequest.getClientIP());
+
+      const bool check_token = true;
+      auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
+      exception.addParameter("Apikey", (apikey ? *apikey : std::string("-")));
+
       auto quiet = theRequest.getParameter("quiet");
       if (!quiet || (*quiet == "0" && *quiet == "false"))
         exception.printError();
@@ -639,8 +645,13 @@ void Plugin::init()
 
 // WMS configurations
 #ifndef WITHOUT_OBSERVATION
-      itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
-          itsConfig, itsJsonCache, itsQEngine, authEngine, itsObsEngine, itsGisEngine, itsGridEngine);
+      itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(itsConfig,
+                                                                 itsJsonCache,
+                                                                 itsQEngine,
+                                                                 authEngine,
+                                                                 itsObsEngine,
+                                                                 itsGisEngine,
+                                                                 itsGridEngine);
 #else
       itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
           itsConfig, itsJsonCache, itsQEngine, authEngine, itsGisEngine);
@@ -1513,7 +1524,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
     }
     catch (...)
     {
-      Fmi::Exception e(BCP, "Operation failed!",nullptr);
+      Fmi::Exception e(BCP, "Operation failed!", nullptr);
       e.printError();
     }
 
