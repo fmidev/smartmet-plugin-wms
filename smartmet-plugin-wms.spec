@@ -100,6 +100,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-test-db
 #TestRequires: zlib-devel
 #TestRequires: cairo-devel
+#TestRequires: redis
 %if %{with observation}
 #TestRequires: smartmet-engine-observation-devel >= 21.3.12
 %endif
