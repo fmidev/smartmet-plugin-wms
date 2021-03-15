@@ -1,3 +1,5 @@
 /authentication.conf
 /geonames.conf
 /gis.conf
+/grid/redis/redis-server.log
+/grid/redis/redis-server.pid
