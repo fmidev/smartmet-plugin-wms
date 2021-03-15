@@ -59,7 +59,11 @@ void WMSGridDataLayer::updateLayerMetaData()
   try
   {
     if (!itsGridEngine || !itsGridEngine->isEnabled())
-      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+    {
+      Fmi::Exception exception(BCP, "The grid-engine is disabled!");
+      exception.disableLogging();
+      throw exception;
+    }
 
     auto contentServer = itsGridEngine->getContentServer_sptr();
 

@@ -885,7 +885,10 @@ void WMSConfig::updateLayerMetaData()
                     {
                       Fmi::Exception exception(BCP, "Failed to parse configuration!", nullptr);
                       exception.addParameter("Path", itr2->path().c_str());
-                      exception.printError();
+
+                      auto *e = exception.getFirstException();
+                      if (!e->loggingDisabled())
+                        exception.printError();
 
                       // Don't warn again about the same file
                       itsWarnedFiles.insert(badfile);
