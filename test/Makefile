@@ -30,25 +30,29 @@ LIBS += $(REQUIRED_LIBS) \
 	-lboost_system \
 	-lbz2 -lz -lpthread -ldl
 
-TEST_PREPARE_TARGETS := templates cnf/authentication.conf cnf/geonames.conf cnf/gis.conf
+TEST_PREPARE_TARGETS := templates cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf
 TEST_FINISH_TARGETS := dummy
 TEST_DB_DIR := $(shell pwd)/tmp-geonames-db
 
 ifdef CI
 GEONAMES_HOST_EDIT := sed -e 's|"smartmet-test"|"$(TEST_DB_DIR)"|g'
+OBSERVATION_CONF_EDIT := sed -e 's|"@IOT_OBS@"|"$(TEST_DB_DIR)"|g'
 TEST_PREPARE_TARGETS += geonames-database start-geonames-db
 TEST_FINISH_TARGETS += stop-geonames-db
 else
 GEONAMES_HOST_EDIT := cat
+OBSERVATION_CONF_EDIT := sed -e 's|"@IOT_OBS@"|"localhost"|g'
 endif
 
 all: $(PROG)
 
 clean:
 	rm -f $(PROG) *~
-	rm -f cnf/authentication.conf cnf/geonames.conf cnf/gis.conf
-	-$(MAKE) stop-geonames-db
-	rm -rm tmp-geonames-db*
+	rm -f cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf
+	-if [ -f tmp-geonames-db/postmaster.pid ] ; then $(MAKE) stop-geonames-db; fi
+	rm -rf tmp-geonames-db*
+	rm -f cnf/grid/redis/redis-server.log
+	rm -f cnf/grid/redis/redis-server.pid
 
 test: $(PROG) $(TEST_PREPARE_TARGETS) redis-start
 	rm -f failures/*
@@ -74,7 +78,7 @@ test: $(PROG) $(TEST_PREPARE_TARGETS) redis-start
 	   cat failures/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
 	fi
 
-redis-start:
+redis-start:	TestConfigCreator
 	@echo "*** Creating the Redis configuration file."
 	@./TestConfigCreator cnf/environment.conf cnf/grid/redis/redis-template.conf cnf/grid/redis/redis.conf
 	@echo "*** Starting the Redis database."
@@ -100,10 +104,13 @@ dummy:
 cnf/authentication.conf cnf/geonames.conf cnf/gis.conf:
 	$(GEONAMES_HOST_EDIT) $@.in >$@
 
+cnf/observation.conf: cnf/observation.conf.in
+	$(OBSERVATION_CONF_EDIT) $@.in >$@
+
 templates:
 	$(MAKE) -C .. $@
 
 $(PROG) : % : %.cpp Makefile ../wms.so
 	$(CXX) $(CFLAGS) -o $@ $@.cpp $(INCLUDES) $(LIBS)
 
-.PHONY: cnf/authentication.conf cnf/geonames.conf cnf/gis.conf dummy
+.PHONY: cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf dummy
