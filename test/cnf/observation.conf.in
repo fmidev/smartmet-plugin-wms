@@ -9,7 +9,7 @@ database_info:
 
                 postgresql_mobile_observations:
                 {
-                        host            = "localhost";
+                        host            = "@IOT_OBS@";
                         database        = "iot_obs";
                         username        = "iot_user";
                         password        = "iot_pw";

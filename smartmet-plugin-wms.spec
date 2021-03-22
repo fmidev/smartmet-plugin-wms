@@ -95,10 +95,12 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 21.1.14
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
 #TestRequires: smartmet-library-spine-devel >= 21.3.9
+#TestRequires: smartmet-engine-grid-devel >= 21.3.11
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
 #TestRequires: zlib-devel
 #TestRequires: cairo-devel
+#TestRequires: redis
 %if %{with observation}
 #TestRequires: smartmet-engine-observation-devel >= 21.3.12
 %endif

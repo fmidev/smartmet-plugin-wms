@@ -1,3 +1,4 @@
 /failures
-dali-access-log
+/dali-access-log
 /tmp-geonames-db*
+/TestConfigCreator
