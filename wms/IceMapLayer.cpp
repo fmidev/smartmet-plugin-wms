@@ -492,7 +492,8 @@ void IceMapLayer::handleSymbol(const Fmi::Feature& theResultItem,
     double lon = ((envelope.MinX + envelope.MaxX) / 2);
     double lat = ((envelope.MinY + envelope.MaxY) / 2);
 
-    transformation.transform(lon, lat);
+    if (!transformation.transform(lon, lat))
+      return;
 
     lon -= 15;
     lat -= 5;
@@ -537,7 +538,8 @@ void IceMapLayer::handleTextField(const Fmi::Feature& theResultItem,
   double xpos = Fmi::stod(itsParameters.at("longitude"));
   double ypos = Fmi::stod(itsParameters.at("latitude"));
   auto transformation = LonLatToXYTransformation(projection);
-  transformation.transform(xpos, ypos);
+  if (!transformation.transform(xpos, ypos))
+    return;
 
   addTextField(xpos, ypos, rows, theFilter.attributes, theGlobals, theLayersCdt, theState);
 }
@@ -558,7 +560,8 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
     double lon(point->getX());
     double lat(point->getY());
 
-    transformation.transform(lon, lat);
+    if (!transformation.transform(lon, lat))
+      return;
 
     // Start generating the hash
     CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
@@ -689,7 +692,8 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
 
   auto transformation = LonLatToXYTransformation(projection);
 
-  transformation.transform(xpos, ypos);
+  if (!transformation.transform(xpos, ypos))
+    return;
 
   ypos += (text_dimension.height + 5);
 
@@ -761,7 +765,8 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
   double ypos = point->getY();
 
   auto transformation = LonLatToXYTransformation(projection);
-  transformation.transform(xpos, ypos);
+  if (!transformation.transform(xpos, ypos))
+    return;
 
   // background ellipse
   CTPP::CDT background_ellipse_cdt(CTPP::CDT::HASH_VAL);
@@ -798,7 +803,9 @@ void IceMapLayer::handleTrafficRestrictions(const Fmi::Feature& /* theResultItem
   double xpos = Fmi::stod(itsParameters.at("longitude"));
   double ypos = Fmi::stod(itsParameters.at("latitude"));
   auto transformation = LonLatToXYTransformation(projection);
-  transformation.transform(xpos, ypos);
+
+  if (!transformation.transform(xpos, ypos))
+    return;
 
   auto jsonTableAttributes = getJsonValue("table_attributes", itsParameters);
 
@@ -938,7 +945,8 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
       ypos = firstHorizontalY;
     else
       ypos = zeroHorizontalY;
-    transformation.transform(xpos, ypos);
+    if (!transformation.transform(xpos, ypos))
+      continue;
     ypos += (text_dimension.height / 10.0);
     addTextField(xpos, ypos, rows2, theFilter.text_attributes, theGlobals, theLayersCdt, theState);
   }

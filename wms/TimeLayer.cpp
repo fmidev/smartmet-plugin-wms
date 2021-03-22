@@ -149,7 +149,8 @@ void TimeLayer::init(const Json::Value& theJson,
       double xCoord = 0;
       double yCoord = 0;
       LonLatToXYTransformation transformation(projection);
-      transformation.transform(longitude, latitude, xCoord, yCoord);
+      if (!transformation.transform(longitude, latitude, xCoord, yCoord))
+        throw Fmi::Exception(BCP, "Invalid lonlat for timestamp");
       x = xCoord;
       y = yCoord;
     }

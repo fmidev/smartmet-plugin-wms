@@ -20,8 +20,8 @@ class LonLatToXYTransformation
  public:
   LonLatToXYTransformation(const Projection& projection);
 
-  void transform(double longitude, double latitude, double& x, double& y);
-  void transform(double& inoutX, double& inoutY);
+  bool transform(double longitude, double latitude, double& x, double& y);
+  bool transform(double& inoutX, double& inoutY);
 
  private:
   Fmi::CoordinateTransformation transformation;

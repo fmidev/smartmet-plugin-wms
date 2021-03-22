@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.3.12
+Version: 21.3.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -129,6 +129,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Mar 22 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.22-1.fmi
+- Handle invalid coordinates for ice map components, times, tags etc
+
 * Fri Mar 12 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.12-1.fmi
 - Print apikey on for errorneous requests
 

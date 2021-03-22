@@ -15,17 +15,21 @@ LonLatToXYTransformation::LonLatToXYTransformation(const Projection& projection)
 {
 }
 
-void LonLatToXYTransformation::transform(double longitude, double latitude, double& x, double& y)
+bool LonLatToXYTransformation::transform(double longitude, double latitude, double& x, double& y)
 {
-  transformation.transform(longitude, latitude);
+  if (!transformation.transform(longitude, latitude))
+    return false;
+
   box.transform(longitude, latitude);
   x = longitude;
   y = latitude;
+
+  return true;
 }
 
-void LonLatToXYTransformation::transform(double& inoutX, double& inoutY)
+bool LonLatToXYTransformation::transform(double& inoutX, double& inoutY)
 {
-  transform(inoutX, inoutY, inoutX, inoutY);
+  return transform(inoutX, inoutY, inoutX, inoutY);
 }
 
 }  // namespace Dali

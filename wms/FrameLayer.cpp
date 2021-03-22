@@ -351,7 +351,9 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& theState)
     // left hand side
     double lonStartLeft = itsInnerBorder.leftLongitude;
     double latStart = tic.first;
-    transformation.transform(lonStartLeft, latStart);
+    if (!transformation.transform(lonStartLeft, latStart))
+      continue;
+
     double lonEnd = lonStartLeft + (ticIsOutside ? -tic.second.length : tic.second.length);
     addTic(theLayersCdt, lonStartLeft, latStart, lonEnd, latStart);
 
@@ -445,7 +447,9 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& theState)
     // top
     double lonStart = tic.first;
     double latStartTop = itsInnerBorder.topLatitude;  // latMax;
-    transformation.transform(lonStart, latStartTop);
+    if (!transformation.transform(lonStart, latStartTop))
+      continue;
+
     double latEnd = latStartTop + (ticIsOutside ? -tic.second.length : tic.second.length);
     addTic(theLayersCdt, lonStart, latStartTop, lonStart, latEnd);
 
@@ -453,7 +457,9 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& theState)
     lonStart = tic.first;
     double latStartBottom = itsInnerBorder.bottomLatitude;  // latMin;
 
-    transformation.transform(lonStart, latStartBottom);
+    if (!transformation.transform(lonStart, latStartBottom))
+      continue;
+
     latEnd = latStartBottom + (ticIsOutside ? tic.second.length : -tic.second.length);
     addTic(theLayersCdt, lonStart, latStartBottom, lonStart, latEnd);
 

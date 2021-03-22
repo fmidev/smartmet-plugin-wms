@@ -78,7 +78,8 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       double xCoord = 0;
       double yCoord = 0;
       LonLatToXYTransformation transformation(projection);
-      transformation.transform(Fmi::stod(longitude), Fmi::stod(latitude), xCoord, yCoord);
+      if (!transformation.transform(Fmi::stod(longitude), Fmi::stod(latitude), xCoord, yCoord))
+        throw Fmi::Exception(BCP, "Invalid lonlat for tag");
       attributes.add("x", Fmi::to_string(xCoord));
       attributes.add("y", Fmi::to_string(yCoord));
       attributes.remove("latitude");
@@ -158,7 +159,9 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
             double xCoord = 0;
             double yCoord = 0;
             LonLatToXYTransformation transformation(projection);
-            transformation.transform(Fmi::stod(longitude), Fmi::stod(latitude), xCoord, yCoord);
+            if (!transformation.transform(
+                    Fmi::stod(longitude), Fmi::stod(latitude), xCoord, yCoord))
+              throw Fmi::Exception(BCP, "Invalid lonlat for tag");
             xCoord += Fmi::stod(x);
             yCoord += Fmi::stod(y);
             layer->attributes.add("x", Fmi::to_string(xCoord));
