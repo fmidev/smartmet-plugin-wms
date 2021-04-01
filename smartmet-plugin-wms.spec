@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.3.22
+Version: 21.4.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,23 +18,23 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.7.2
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.1.14
-BuildRequires: smartmet-library-grid-content-devel >= 21.3.4
-BuildRequires: smartmet-library-grid-files-devel >= 21.3.4
+BuildRequires: smartmet-library-grid-content-devel >= 21.3.29
+BuildRequires: smartmet-library-grid-files-devel >= 21.3.31
 BuildRequires: smartmet-library-macgyver-devel >= 21.2.25
-BuildRequires: smartmet-library-spine-devel >= 21.3.9
+BuildRequires: smartmet-library-spine-devel >= 21.3.27
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 21.1.14
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 21.3.12
+BuildRequires: smartmet-engine-observation-devel >= 21.3.31
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 21.2.26
-BuildRequires: smartmet-engine-grid-devel >= 21.3.11
+BuildRequires: smartmet-engine-gis-devel >= 21.3.23
+BuildRequires: smartmet-engine-grid-devel >= 21.3.29
 BuildRequires: smartmet-engine-geonames-devel >= 21.2.18
 BuildRequires: smartmet-engine-querydata-devel >= 21.3.4
-BuildRequires: smartmet-engine-contour-devel >= 21.2.18
-BuildRequires: smartmet-library-gis-devel >= 21.2.26
+BuildRequires: smartmet-engine-contour-devel >= 21.3.23
+BuildRequires: smartmet-library-gis-devel >= 21.3.29
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -56,21 +56,21 @@ Requires: fmt >= 7.1.3
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
-Requires: smartmet-library-grid-content >= 21.3.4
-Requires: smartmet-library-grid-files >= 21.3.4
-Requires: smartmet-library-gis >= 21.2.26
+Requires: smartmet-library-grid-content >= 21.3.29
+Requires: smartmet-library-grid-files >= 21.3.31
+Requires: smartmet-library-gis >= 21.3.29
 Requires: smartmet-library-macgyver >= 21.2.25
 Requires: smartmet-library-giza >= 21.1.14
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.1.14
 %endif
 Requires: smartmet-engine-querydata >= 21.3.4
-Requires: smartmet-engine-contour >= 21.2.18
-Requires: smartmet-engine-gis >= 21.2.26
-Requires: smartmet-engine-grid >= 21.3.11
+Requires: smartmet-engine-contour >= 21.3.23
+Requires: smartmet-engine-gis >= 21.3.23
+Requires: smartmet-engine-grid >= 21.3.29
 Requires: smartmet-engine-geonames >= 21.2.18
 Requires: smartmet-server >= 21.1.14
-Requires: smartmet-library-spine >= 21.3.9
+Requires: smartmet-library-spine >= 21.3.27
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -88,21 +88,21 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: libconfig-devel >= 1.7.2
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 21.2.18
+#TestRequires: smartmet-engine-contour-devel >= 21.3.23
 #TestRequires: smartmet-engine-geonames-devel >= 21.2.18
-#TestRequires: smartmet-engine-gis-devel >= 21.2.26
+#TestRequires: smartmet-engine-gis-devel >= 21.3.23
 #TestRequires: smartmet-engine-querydata-devel >= 21.3.4
 #TestRequires: smartmet-library-giza-devel >= 21.1.14
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
-#TestRequires: smartmet-library-spine-devel >= 21.3.9
-#TestRequires: smartmet-engine-grid-devel >= 21.3.11
+#TestRequires: smartmet-library-spine-devel >= 21.3.27
+#TestRequires: smartmet-engine-grid-devel >= 21.3.29
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
 #TestRequires: zlib-devel
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 21.3.12
+#TestRequires: smartmet-engine-observation-devel >= 21.3.31
 %endif
 
 %description
@@ -131,6 +131,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Apr  1 2021 Pertti Kinnia <pertti.kinnia@fmi.fi> - 21.4.1-1.fmi
+- Repackaged due to grid-files API changes
+
 * Mon Mar 22 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.3.22-1.fmi
 - Handle invalid coordinates for ice map components, times, tags etc
 
