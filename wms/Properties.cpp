@@ -127,9 +127,7 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
 
     // Use external elevation if given
     if (theState.getRequest().getParameter("elevation"))
-    {
       level = std::stod(*theState.getRequest().getParameter("elevation"));
-    }
     else
     {
       json = theJson.get("level", nulljson);
@@ -270,13 +268,13 @@ void Properties::init(const Json::Value& theJson,
 
     // Use external elevation if given
     if (theState.getRequest().getParameter("elevation"))
-    {
       level = std::stod(*theState.getRequest().getParameter("elevation"));
-    }
     else
     {
       json = theJson.get("level", nulljson);
-      if (!json.isNull())
+      if (json.isNull())
+        level = theProperties.level;
+      else
         level = json.asDouble();
     }
   }
