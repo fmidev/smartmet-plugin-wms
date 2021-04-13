@@ -134,6 +134,10 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
       if (!json.isNull())
         level = json.asDouble();
     }
+
+    json = theJson.get("levelId", nulljson);
+    if (!json.isNull())
+      levelId = json.asInt();
   }
   catch (...)
   {
@@ -277,6 +281,12 @@ void Properties::init(const Json::Value& theJson,
       else
         level = json.asDouble();
     }
+
+    json = theJson.get("levelId", nulljson);
+    if (json.isNull())
+      levelId = theProperties.levelId;
+    else
+      levelId = json.asInt();
   }
   catch (...)
   {
@@ -352,6 +362,8 @@ std::size_t Properties::hash_value(const State& theState) const
     Dali::hash_combine(hash, Dali::hash_value(producer));
     Dali::hash_combine(hash, Dali::hash_value(geometryId));
     Dali::hash_combine(hash, Dali::hash_value(source));
+    Dali::hash_combine(hash, Dali::hash_value(level));
+    Dali::hash_combine(hash, Dali::hash_value(levelId));
     Dali::hash_combine(hash, Dali::hash_value(origintime));
     // timezone is irrelevant, time is always in UTC timen
     Dali::hash_combine(hash, Dali::hash_value(time));

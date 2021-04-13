@@ -59,14 +59,6 @@ void IsolineLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       geometryId = json.asInt();
 
-    json = theJson.get("levelId", nulljson);
-    if (!json.isNull())
-      levelId = json.asInt();
-
-    json = theJson.get("level", nulljson);
-    if (!json.isNull())
-      level = json.asDouble();
-
     json = theJson.get("forecastType", nulljson);
     if (!json.isNull())
       forecastType = json.asInt();
@@ -80,14 +72,6 @@ void IsolineLayer::init(const Json::Value& theJson,
     boost::optional<std::string> v = request.getParameter("geometryId");
     if (v)
       geometryId = toInt32(*v);
-
-    v = request.getParameter("levelId");
-    if (v)
-      levelId = toInt32(*v);
-
-    v = request.getParameter("level");
-    if (v)
-      level = toInt32(*v);
 
     v = request.getParameter("forecastType");
     if (v)
@@ -785,8 +769,6 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
 
     Dali::hash_combine(hash, Dali::hash_value(parameter));
     Dali::hash_combine(hash, Dali::hash_value(geometryId));
-    Dali::hash_combine(hash, Dali::hash_value(levelId));
-    Dali::hash_combine(hash, Dali::hash_value(level));
     Dali::hash_combine(hash, Dali::hash_value(forecastType));
     Dali::hash_combine(hash, Dali::hash_value(forecastNumber));
     Dali::hash_combine(hash, Dali::hash_value(isolines, theState));

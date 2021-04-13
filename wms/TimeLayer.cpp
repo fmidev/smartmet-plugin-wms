@@ -102,14 +102,6 @@ void TimeLayer::init(const Json::Value& theJson,
         if (!json.isNull())
           geometryId = json.asInt();
 
-        json = theJson.get("levelId", nulljson);
-        if (!json.isNull())
-          levelId = json.asInt();
-
-        json = theJson.get("level", nulljson);
-        if (!json.isNull())
-          level = json.asDouble();
-
         json = theJson.get("forecastType", nulljson);
         if (!json.isNull())
           forecastType = json.asInt();
@@ -123,14 +115,6 @@ void TimeLayer::init(const Json::Value& theJson,
         boost::optional<std::string> v = request.getParameter("geometryId");
         if (v)
           geometryId = toInt32(*v);
-
-        v = request.getParameter("levelId");
-        if (v)
-          levelId = toInt32(*v);
-
-        v = request.getParameter("level");
-        if (v)
-          level = toInt32(*v);
 
         v = request.getParameter("forecastType");
         if (v)

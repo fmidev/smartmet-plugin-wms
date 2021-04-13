@@ -51,8 +51,6 @@ class TimeLayer : public Layer
   // (grid-support)
   /*
   boost::optional<std::string> parameter;
-  boost::optional<int> levelId;
-  boost::optional<double> level;
   boost::optional<int> forecastType;
   boost::optional<int> forecastNumber;
 */

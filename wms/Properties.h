@@ -45,6 +45,7 @@ class Properties
   boost::optional<uint> geometryId;
   boost::optional<std::string> source;
   boost::optional<double> level;
+  boost::optional<int> levelId;
 
   // Wanted origintime. Use latest if omitted
   boost::optional<boost::posix_time::ptime> origintime;

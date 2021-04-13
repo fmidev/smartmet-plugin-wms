@@ -45,8 +45,6 @@ class ArrowLayer : public Layer
   boost::optional<std::string> u;
   boost::optional<std::string> v;
 
-  boost::optional<int> levelId;
-  boost::optional<double> level;
   boost::optional<int> forecastType;
   boost::optional<int> forecastNumber;
   std::string unit_conversion;
