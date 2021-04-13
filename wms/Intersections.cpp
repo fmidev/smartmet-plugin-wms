@@ -69,10 +69,8 @@ void Intersections::init(const boost::optional<std::string>& theProducer,
   }
 }
 
-
-
 void Intersections::init(const boost::optional<std::string>& theProducer,
-                         const Engine::Grid::Engine *gridEngine,
+                         const Engine::Grid::Engine* gridEngine,
                          const Projection& theProjection,
                          const boost::posix_time::ptime& theTime,
                          const State& theState)
@@ -92,7 +90,6 @@ void Intersections::init(const boost::optional<std::string>& theProducer,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
 
 // ----------------------------------------------------------------------
 /*!

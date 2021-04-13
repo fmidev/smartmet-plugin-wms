@@ -16,9 +16,9 @@
 #include <boost/utility.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
+#include <engines/grid/Engine.h>
 #include <engines/observation/Engine.h>
 #include <engines/querydata/Engine.h>
-#include <engines/grid/Engine.h>
 #include <spine/JsonCache.h>
 #include <spine/Thread.h>
 #include <libconfig.h++>
@@ -68,17 +68,17 @@ class WMSConfig
   CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
                             const boost::optional<std::string>& starttime,
                             const boost::optional<std::string>& endtime,
-							const boost::optional<std::string>& reference_time,
+                            const boost::optional<std::string>& reference_time,
                             const boost::optional<std::string>& wms_namespace,
-							int newfeature_id,
+                            int newfeature_id,
                             bool authenticate = true) const;
 #else
   CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
                             const boost::optional<std::string>& starttime,
                             const boost::optional<std::string>& endtime,
-							const boost::optional<std::string>& reference_time,
+                            const boost::optional<std::string>& reference_time,
                             const boost::optional<std::string>& wms_namespace,
-							int newfeature_id) const;
+                            int newfeature_id) const;
 #endif
 
   void init();
@@ -105,11 +105,13 @@ class WMSConfig
                    const boost::posix_time::ptime& theTime,
                    const boost::optional<boost::posix_time::ptime>& reference_time) const;
   bool isValidReferenceTime(const std::string& theLayer,
-							const boost::posix_time::ptime& theReferenceTime) const;
+                            const boost::posix_time::ptime& theReferenceTime) const;
 
   bool isTemporal(const std::string& theLayer) const;
   bool currentValue(const std::string& theLayer) const;
-  boost::posix_time::ptime mostCurrentTime(const std::string& theLayer, const boost::optional<boost::posix_time::ptime>& reference_time) const;
+  boost::posix_time::ptime mostCurrentTime(
+      const std::string& theLayer,
+      const boost::optional<boost::posix_time::ptime>& reference_time) const;
   Json::Value json(const std::string& theLayerName) const;
   std::vector<Json::Value> getLegendGraphic(const std::string& theLayerName,
                                             const std::string& theStyleName,
@@ -151,7 +153,6 @@ class WMSConfig
   Engine::Querydata::Engine* itsQEngine = nullptr;
   Engine::Gis::Engine* itsGisEngine = nullptr;
   Engine::Grid::Engine* itsGridEngine = nullptr;
-
 
 #ifndef WITHOUT_AUTHENTICATION
   // For GetCapabilities and GetMap Authentication

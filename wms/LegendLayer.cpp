@@ -11,8 +11,8 @@
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
 #include <fmt/printf.h>
-#include <macgyver/StringConversion.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <spine/Json.h>
 
 namespace SmartMet

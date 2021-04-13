@@ -8,9 +8,9 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/range/adaptors.hpp>
 #include <boost/range/algorithm.hpp>
+#include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <spine/Convenience.h>
-#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -85,8 +85,8 @@ void validate_options(const get_legend_graphic_request_options& options,
     if (!itsConfig.isValidStyle(options.layer, options.style))
     {
       throw Fmi::Exception(BCP,
-                             "The style is not supported by the requested layer!" + options.layer +
-                                 ", " + options.style)
+                           "The style is not supported by the requested layer!" + options.layer +
+                               ", " + options.style)
           .addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED)
           .addParameter("Requested style", options.style)
           .addParameter("Requested layer", options.layer);
@@ -268,8 +268,9 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
           throw exception;
         }
 
-		const boost::optional<boost::posix_time::ptime> reference_time;
-        boost::posix_time::ptime mostCurrentTime(itsConfig.mostCurrentTime(layerName, reference_time));
+        const boost::optional<boost::posix_time::ptime> reference_time;
+        boost::posix_time::ptime mostCurrentTime(
+            itsConfig.mostCurrentTime(layerName, reference_time));
         if (mostCurrentTime.is_not_a_date_time())
           theRequest.removeParameter("time");
         else

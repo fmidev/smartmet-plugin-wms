@@ -9,12 +9,11 @@
 #include "Smoother.h"
 #include <boost/optional.hpp>
 #include <engines/gis/Engine.h>
+#include <engines/grid/Engine.h>
 #include <engines/querydata/Engine.h>
+#include <grid-content/queryServer/definition/Query.h>
 #include <json/json.h>
 #include <string>
-#include <grid-content/queryServer/definition/Query.h>
-#include <engines/grid/Engine.h>
-
 
 namespace SmartMet
 {
@@ -36,7 +35,7 @@ class Intersection
             const State& theState);
 
   void init(const boost::optional<std::string>& theProducer,
-            const Engine::Grid::Engine *gridEngine,
+            const Engine::Grid::Engine* gridEngine,
             const Projection& theProjection,
             const boost::posix_time::ptime& theTime,
             const State& theState);

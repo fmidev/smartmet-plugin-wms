@@ -41,9 +41,6 @@ void Layers::init(const Json::Value& theJson,
   }
 }
 
-
-
-
 void Layers::setProjection(Projection& projection)
 {
   try
@@ -58,10 +55,6 @@ void Layers::setProjection(Projection& projection)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
-
-
-
 
 boost::optional<std::string> Layers::getProjectionParameter()
 {
@@ -89,10 +82,10 @@ boost::optional<std::string> Layers::getProjectionParameter()
   }
 }
 
-
-
-
-bool Layers::getProjection(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState,Projection& projection)
+bool Layers::getProjection(CTPP::CDT& theGlobals,
+                           CTPP::CDT& theLayersCdt,
+                           State& theState,
+                           Projection& projection)
 {
   try
   {
@@ -101,16 +94,18 @@ bool Layers::getProjection(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     auto first = layers.begin();
 
-    if ((*first).get() != nullptr  &&  *(*first)->projection.crs != "data")
+    if ((*first).get() != nullptr && *(*first)->projection.crs != "data")
     {
-      projection  = (*first)->projection;
+      projection = (*first)->projection;
       return true;
     }
 
     for (auto& layer : layers)
     {
-      //std::cout << "PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs << "\n";
-      if (*layer->type != "map" &&  *layer->type != "time" &&  (layer->attributes.value("display") != "none" || theState.getRequest().getParameter("optimizesize") == std::string("0")))
+      // std::cout << "PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs << "\n";
+      if (*layer->type != "map" && *layer->type != "time" &&
+          (layer->attributes.value("display") != "none" ||
+           theState.getRequest().getParameter("optimizesize") == std::string("0")))
       {
         layer->generate(theGlobals, theLayersCdt, theState);
         if (*layer->projection.crs != "data")
@@ -122,11 +117,11 @@ bool Layers::getProjection(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         if (layer->layers.layers.size() > 0)
         {
           CTPP::CDT tmpGlobals(theGlobals);
-          State tmpState(theState.getPlugin(),theState.getRequest());
+          State tmpState(theState.getPlugin(), theState.getRequest());
           tmpState.setCustomer(theState.getCustomer());
           CTPP::CDT tmpLayersCdt;
 
-          if (layer->layers.getProjection(tmpGlobals,tmpLayersCdt,tmpState,projection))
+          if (layer->layers.getProjection(tmpGlobals, tmpLayersCdt, tmpState, projection))
             return true;
         }
       }
@@ -139,8 +134,6 @@ bool Layers::getProjection(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
-
 
 // ----------------------------------------------------------------------
 /*!
@@ -155,8 +148,6 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
     if (layers.size() == 0)
       return;
 
-
-
     // If the projection CRS is "data" and we are using the grid-engine, then we
     // actually need to fetch some data in order to see which projection it comes from.
     // The point is that there is no one-to-one mapping between the producer and the projection
@@ -167,15 +158,15 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
 
     Projection projection;
     auto first = layers.begin();
-    if ((*first).get() != nullptr  &&  (*first)->source  &&  *(*first)->source == "grid")
+    if ((*first).get() != nullptr && (*first)->source && *(*first)->source == "grid")
     {
       if ((*first)->projection.crs && *(*first)->projection.crs == "data")
       {
         CTPP::CDT tmpGlobals(theGlobals);
-        State tmpState(theState.getPlugin(),theState.getRequest());
+        State tmpState(theState.getPlugin(), theState.getRequest());
         tmpState.setCustomer(theState.getCustomer());
         CTPP::CDT tmpLayersCdt;
-        getProjection(tmpGlobals,tmpLayersCdt,tmpState,projection);
+        getProjection(tmpGlobals, tmpLayersCdt, tmpState, projection);
       }
       else
       {
@@ -183,19 +174,20 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
       }
     }
 
-
     for (auto& layer : layers)
     {
       // Each layer may actually generate multiple CDT layers
       // (Animations, inner tags etc). Each is pushed separately
       // to the back of the layers CDT
 
-      if (layer->attributes.value("display") != "none" ||theState.getRequest().getParameter("optimizesize") == std::string("0"))
+      if (layer->attributes.value("display") != "none" ||
+          theState.getRequest().getParameter("optimizesize") == std::string("0"))
       {
-        if (/* *layer->projection.crs == "data"  &&*/  layer->source  &&  *layer->source == "grid")
+        if (/* *layer->projection.crs == "data"  &&*/ layer->source && *layer->source == "grid")
           layer->setProjection(projection);
 
-        //std::cout << "PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs  << "\n";
+        // std::cout << "PROJECTION (" << *layer->type <<  ") : " << *layer->projection.crs  <<
+        // "\n";
 
         if (!layer->projection.projectionParameter)
         {
@@ -206,12 +198,12 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
             layer->projection.projectionParameter = projection.projectionParameter;
         }
 
-        //if (layer->projection.projectionParameter)
+        // if (layer->projection.projectionParameter)
         //  std::cout << "  PARAM : " << *layer->projection.projectionParameter << "\n";
 
         layer->generate(theGlobals, theLayersCdt, theState);
 
-        if (layer->projection.projectionParameter  &&  !projection.projectionParameter)
+        if (layer->projection.projectionParameter && !projection.projectionParameter)
           projection.projectionParameter = *layer->projection.projectionParameter;
       }
     }

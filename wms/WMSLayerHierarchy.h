@@ -25,33 +25,44 @@ namespace Plugin
 {
 namespace WMS
 {
-
 class WMSLayerHierarchy
 {
-public:
-
-enum class HierarchyType{flat,deep1,deep2};
-enum class ElementType{geo_bbox,proj_bbox,time_dim,elev_dim};
+ public:
+  enum class HierarchyType
+  {
+    flat,
+    deep1,
+    deep2
+  };
+  enum class ElementType
+  {
+    geo_bbox,
+    proj_bbox,
+    time_dim,
+    elev_dim
+  };
 
 #ifndef WITHOUT_AUTHENTICATION
-WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap, 
-				  const boost::optional<std::string>& wms_namespace,
-				  HierarchyType hierarchy_type,
-				  const boost::optional<std::string>& apikey, 
-				  Engine::Authentication::Engine* authEngine);
+  WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
+                    const boost::optional<std::string>& wms_namespace,
+                    HierarchyType hierarchy_type,
+                    const boost::optional<std::string>& apikey,
+                    Engine::Authentication::Engine* authEngine);
 #else
-WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap, const boost::optional<std::string>& wms_namespace, HierarchyType hierarchy_type);
+  WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
+                    const boost::optional<std::string>& wms_namespace,
+                    HierarchyType hierarchy_type);
 #endif
 
   WMSLayerHierarchy(const std::string& n);
   WMSLayerHierarchy& operator=(const WMSLayerHierarchy& lh) = delete;
   WMSLayerHierarchy(const WMSLayerHierarchy& lh) = delete;
   WMSLayerHierarchy() = delete;
- 
+
   CTPP::CDT getCapabilities(const boost::optional<std::string>& starttime,
-							const boost::optional<std::string>& endtime,
-							const boost::optional<std::string>& reference_time) const;
-  
+                            const boost::optional<std::string>& endtime,
+                            const boost::optional<std::string>& reference_time) const;
+
   std::string name;
   // Parts that can be inhereted by sublayers
   boost::optional<const WMSLayerProxy&> baseInfoLayer;
@@ -64,20 +75,19 @@ WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap, const bo
   std::list<boost::shared_ptr<WMSLayerHierarchy>> sublayers;
   boost::optional<const boost::posix_time::ptime&> reference_time;
 
-private:
+ private:
 #ifndef WITHOUT_AUTHENTICATION
-  void processLayers(const std::map<std::string, WMSLayerProxy>& layerMap, 
-					 const boost::optional<std::string>& wms_namespace, 
-					 HierarchyType hierarchy_type, 
-					 const boost::optional<std::string>& apikey, 
-					 Engine::Authentication::Engine* authEngine);
+  void processLayers(const std::map<std::string, WMSLayerProxy>& layerMap,
+                     const boost::optional<std::string>& wms_namespace,
+                     HierarchyType hierarchy_type,
+                     const boost::optional<std::string>& apikey,
+                     Engine::Authentication::Engine* authEngine);
 #else
-  void processLayers(const std::map<std::string, WMSLayerProxy>& layerMap, 
-					 const boost::optional<std::string>& wms_namespace, 
-					 HierarchyType hierarchy_type);
+  void processLayers(const std::map<std::string, WMSLayerProxy>& layerMap,
+                     const boost::optional<std::string>& wms_namespace,
+                     HierarchyType hierarchy_type);
 #endif
 };
-
 
 std::ostream& operator<<(std::ostream& ost, const WMSLayerHierarchy& lh);
 

@@ -3,8 +3,8 @@
 #include "State.h"
 #include "Plugin.h"
 #include <ctpp2/CDT.hpp>
-#include <macgyver/StringConversion.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <stdexcept>
 
 namespace SmartMet

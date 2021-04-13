@@ -11,9 +11,9 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/range/adaptors.hpp>
 #include <boost/range/algorithm.hpp>
+#include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <spine/Convenience.h>
-#include <macgyver/Exception.h>
 
 namespace SmartMet
 {
@@ -348,18 +348,18 @@ void validate_options(const tag_get_map_request_options& options,
             .addParameter("Requested layer", layer);
       }
 
-	  // check reference time
-	  if(options.reference_time)
-		{
-		  if (!itsConfig.isValidReferenceTime(layer, *options.reference_time))
-			{
-			  throw Fmi::Exception(BCP, "Invalid reference time requested!")
+      // check reference time
+      if (options.reference_time)
+      {
+        if (!itsConfig.isValidReferenceTime(layer, *options.reference_time))
+        {
+          throw Fmi::Exception(BCP, "Invalid reference time requested!")
               .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
-				.addParameter("Requested reference time", Fmi::to_iso_string(*options.reference_time))
+              .addParameter("Requested reference time", Fmi::to_iso_string(*options.reference_time))
               .addParameter("Requested layer", layer)
-				.disableStackTrace();
-			}		  
-		}
+              .disableStackTrace();
+        }
+      }
 
       // check that given timesteps are valid
       for (const boost::posix_time::ptime& timestamp : options.timesteps)
@@ -375,18 +375,18 @@ void validate_options(const tag_get_map_request_options& options,
         }
       }
 
-	  // check that given elevation is valid
-	  if(options.elevation)
-		{
-		  if (!itsConfig.isValidElevation(layer, *options.elevation))
-			{
-			  throw Fmi::Exception(BCP, "Invalid elevation requested!")
-				.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
-				.addParameter("Requested elevation", Fmi::to_string(*options.elevation))
-				.addParameter("Requested layer", layer)
-				.disableStackTrace();
-			}
-		}
+      // check that given elevation is valid
+      if (options.elevation)
+      {
+        if (!itsConfig.isValidElevation(layer, *options.elevation))
+        {
+          throw Fmi::Exception(BCP, "Invalid elevation requested!")
+              .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
+              .addParameter("Requested elevation", Fmi::to_string(*options.elevation))
+              .addParameter("Requested layer", layer)
+              .disableStackTrace();
+        }
+      }
     }
 
     // check format
@@ -614,24 +614,25 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     itsParameters.version = *(theRequest.getParameter("VERSION"));
 
     if (theRequest.getParameter("ELEVATION"))
-	  {
-		itsParameters.elevation = Spine::optional_int(theRequest.getParameter("ELEVATION"), 0);
-	  }
+    {
+      itsParameters.elevation = Spine::optional_int(theRequest.getParameter("ELEVATION"), 0);
+    }
 
     if (theRequest.getParameter("REFERENCE_TIME") || theRequest.getParameter("ORIGINTIME"))
-	  {
-		std::string reference_time = Spine::optional_string(theRequest.getParameter("REFERENCE_TIME"), "");
-		std::string origintime = Spine::optional_string(theRequest.getParameter("ORIGINTIME"), "");
-		if(reference_time.empty() && !origintime.empty())
-		  reference_time = origintime;
+    {
+      std::string reference_time =
+          Spine::optional_string(theRequest.getParameter("REFERENCE_TIME"), "");
+      std::string origintime = Spine::optional_string(theRequest.getParameter("ORIGINTIME"), "");
+      if (reference_time.empty() && !origintime.empty())
+        reference_time = origintime;
 
-		if(!reference_time.empty())
-		  itsParameters.reference_time = parse_time(reference_time);
+      if (!reference_time.empty())
+        itsParameters.reference_time = parse_time(reference_time);
 
-		// reference_time and origintime are the same thing, dali understands origintime-parameter
-		if(origintime.empty() && !reference_time.empty())
-		  theRequest.addParameter("origintime", reference_time);
-	  }
+      // reference_time and origintime are the same thing, dali understands origintime-parameter
+      if (origintime.empty() && !reference_time.empty())
+        theRequest.addParameter("origintime", reference_time);
+    }
 
     if (theRequest.getParameter("TIME"))
     {
@@ -734,7 +735,8 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
           throw exception;
         }
 
-        boost::posix_time::ptime mostCurrentTime(itsConfig.mostCurrentTime(layerName, itsParameters.reference_time));
+        boost::posix_time::ptime mostCurrentTime(
+            itsConfig.mostCurrentTime(layerName, itsParameters.reference_time));
         if (mostCurrentTime.is_not_a_date_time())
           theRequest.removeParameter("time");
         else

@@ -1,7 +1,7 @@
 #include "Time.h"
 
-#include <macgyver/TimeParser.h>
 #include <macgyver/Exception.h>
+#include <macgyver/TimeParser.h>
 
 namespace SmartMet
 {

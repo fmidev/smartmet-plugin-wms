@@ -34,15 +34,15 @@ void CSSs::init(const Json::Value& theJson, const State& /* theState */)
 
       if (!css_json.isString())
         throw Fmi::Exception(BCP,
-                               "Invalid object type in defs.csss initialization, expecting "
-                               "name-value pair for css '" +
-                                   name + "'");
+                             "Invalid object type in defs.csss initialization, expecting "
+                             "name-value pair for css '" +
+                                 name + "'");
 
       std::string value = Spine::HTTP::urldecode(css_json.asString());
       if (value.substr(0, 6) != "data:,")
         throw Fmi::Exception(BCP,
-                               "Only RFC2397 data-URLs supported: URL incorrect '" + value +
-                                   "' for css '" + name + "'");
+                             "Only RFC2397 data-URLs supported: URL incorrect '" + value +
+                                 "' for css '" + name + "'");
       value = value.substr(6);  // Cut away data:,
       if (csss.count(name) > 0)
         throw Fmi::Exception(BCP, "defs.csss css '" + name + "' defined multiple times");

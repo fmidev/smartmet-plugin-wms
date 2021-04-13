@@ -5,9 +5,9 @@
 // ======================================================================
 
 #include "Config.h"
-#include <macgyver/StringConversion.h>
-#include <macgyver/Exception.h>
 #include <boost/filesystem/path.hpp>
+#include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <stdexcept>
 
 using std::string;
@@ -35,7 +35,7 @@ Config::Config(const string& configfile)
     boost::filesystem::path p = configfile;
     p.remove_filename();
     itsConfig.setIncludeDir(p.c_str());
-    
+
     itsConfig.readFile(configfile.c_str());
 
     // required parameters
@@ -44,13 +44,12 @@ Config::Config(const string& configfile)
     itsRootDirectory = root;
     itsWmsRootDirectory = wmsroot;
 
-
     // optional parameters
     itsConfig.lookupValue("url", itsDefaultUrl);
     itsConfig.lookupValue("model", itsDefaultModel);
     itsConfig.lookupValue("language", itsDefaultLanguage);
 
-    itsConfig.lookupValue("primarytForecastSource",itsPrimaryForecastSource);
+    itsConfig.lookupValue("primarytForecastSource", itsPrimaryForecastSource);
 
     itsConfig.lookupValue("template", itsDefaultTemplate);
     itsConfig.lookupValue("templatedir", itsTemplateDirectory);

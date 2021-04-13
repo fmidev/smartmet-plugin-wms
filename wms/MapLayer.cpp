@@ -9,12 +9,12 @@
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
+#include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
 #include <macgyver/Exception.h>
 #include <spine/ParameterFactory.h>
-#include <fmt/format.h>
 
 namespace SmartMet
 {
@@ -172,7 +172,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     // refer to the same map.
 
     std::string iri = qid;
-    
+
     {
       std::string report = "Generating coordinate data finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;

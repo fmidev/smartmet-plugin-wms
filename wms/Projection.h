@@ -80,7 +80,6 @@ class Projection
   // The parameter used for the projection (grid-suport)
   boost::optional<std::string> projectionParameter;
 
-
   // If this is set then the original grid size is multiplied by this value.
   boost::optional<double> size;
 
@@ -115,8 +114,8 @@ class Projection
   const NFmiPoint& bottomLeftLatLon() const { return itsBottomLeft; }
   const NFmiPoint& topRightLatLon() const { return itsTopRight; }
 
-  void setBottomLeft(double x,double y) {itsBottomLeft.Set(x,y);}
-  void setTopRight(double x,double y) {itsTopRight.Set(x,y);}
+  void setBottomLeft(double x, double y) { itsBottomLeft.Set(x, y); }
+  void setTopRight(double x, double y) { itsTopRight.Set(x, y); }
 
  private:
   // Cached results

@@ -47,7 +47,8 @@ class TimeLayer : public Layer
   boost::optional<int> longitude;  // longitude, latitude take precedence over x, y
   boost::optional<int> latitude;
 
-  // We need a parameter definition in order to find a correct generation / origintime (grid-support)
+  // We need a parameter definition in order to find a correct generation / origintime
+  // (grid-support)
   /*
   boost::optional<std::string> parameter;
   boost::optional<int> levelId;

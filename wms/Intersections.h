@@ -32,7 +32,7 @@ class Intersections
             const State& theState);
 
   void init(const boost::optional<std::string>& theProducer,
-            const Engine::Grid::Engine *gridEngine,
+            const Engine::Grid::Engine* gridEngine,
             const Projection& theProjection,
             const boost::posix_time::ptime& theTime,
             const State& theState);

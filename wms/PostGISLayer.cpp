@@ -4,8 +4,8 @@
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/MapOptions.h>
 #include <gis/OGR.h>
-#include <ogr_geometry.h>
 #include <macgyver/Exception.h>
+#include <ogr_geometry.h>
 
 namespace SmartMet
 {

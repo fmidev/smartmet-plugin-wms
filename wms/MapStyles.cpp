@@ -50,7 +50,7 @@ void MapStyles::init(const Json::Value& theJson, const Config& theConfig)
     {
       if (!json.isArray())
         throw Fmi::Exception(BCP,
-                               "Feature mapping from database fields to stations must be an array");
+                             "Feature mapping from database fields to stations must be an array");
       for (unsigned int i = 0; i < json.size(); i++)
       {
         const auto& j = json[i];

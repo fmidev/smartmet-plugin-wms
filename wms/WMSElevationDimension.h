@@ -10,8 +10,8 @@
 #pragma once
 
 #include <newbase/NFmiLevelType.h>
-#include <string>
 #include <set>
+#include <string>
 
 namespace SmartMet
 {
@@ -19,11 +19,12 @@ namespace Plugin
 {
 namespace WMS
 {
-
 class WMSElevationDimension
 {
  public:
-  WMSElevationDimension(const std::string& level_name, FmiLevelType level_type, const std::set<int>& elevations);
+  WMSElevationDimension(const std::string& level_name,
+                        FmiLevelType level_type,
+                        const std::set<int>& elevations);
 
   bool isValidElevation(const int elevation) const;
   std::string getDefaultElevation() const;

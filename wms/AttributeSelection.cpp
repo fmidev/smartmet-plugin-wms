@@ -22,8 +22,8 @@ bool AttributeSelection::matches(double theValue) const
   try
   {
     if (value && (lolimit || hilimit))
-      throw Fmi::Exception(
-          BCP, "Attribute depends both on a single value and upper and/or lower limit");
+      throw Fmi::Exception(BCP,
+                           "Attribute depends both on a single value and upper and/or lower limit");
 
     if (value)
       return (theValue == *value);
@@ -87,7 +87,7 @@ void AttributeSelection::init(const Json::Value& theJson, const Config& theConfi
       }
       else
         throw Fmi::Exception(BCP,
-                               "Attribute selection does not have a setting named '" + name + "'");
+                             "Attribute selection does not have a setting named '" + name + "'");
     }
   }
   catch (...)

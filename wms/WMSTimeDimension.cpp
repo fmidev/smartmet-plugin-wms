@@ -210,7 +210,7 @@ std::string IntervalTimeDimension::makeCapabilities(
   {
     if ((starttime && endtime) && parse_time(*starttime) > parse_time(*endtime))
       throw Fmi::Exception::Trace(BCP,
-                                    "Requested starttime must be earlier than requested endtime!");
+                                  "Requested starttime must be earlier than requested endtime!");
 
     auto startt = itsInterval.startTime;
     auto endt = itsInterval.endTime;
@@ -261,33 +261,37 @@ std::string IntervalTimeDimension::makeCapabilities(
   }
 }
 
-WMSTimeDimensions::WMSTimeDimensions(const std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>>& tdims)
+WMSTimeDimensions::WMSTimeDimensions(
+    const std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>>& tdims)
 {
-  for(const auto td : tdims)
-	addTimeDimension(td.first, td.second);
+  for (const auto td : tdims)
+    addTimeDimension(td.first, td.second);
 }
 
-void WMSTimeDimensions::addTimeDimension(const boost::posix_time::ptime& origintime, boost::shared_ptr<WMSTimeDimension> td)
+void WMSTimeDimensions::addTimeDimension(const boost::posix_time::ptime& origintime,
+                                         boost::shared_ptr<WMSTimeDimension> td)
 {
   itsTimeDimensions[origintime] = td;
-  if(itsDefaultOrigintime == boost::posix_time::not_a_date_time || itsDefaultOrigintime < origintime)
-	itsDefaultOrigintime = origintime;
+  if (itsDefaultOrigintime == boost::posix_time::not_a_date_time ||
+      itsDefaultOrigintime < origintime)
+    itsDefaultOrigintime = origintime;
   itsOrigintimes.push_back(origintime);
 }
 
-const WMSTimeDimension& WMSTimeDimensions::getDefaultTimeDimension() const 
-{ 
-  return *itsTimeDimensions.at(itsDefaultOrigintime); 
+const WMSTimeDimension& WMSTimeDimensions::getDefaultTimeDimension() const
+{
+  return *itsTimeDimensions.at(itsDefaultOrigintime);
 }
 
-const WMSTimeDimension& WMSTimeDimensions::getTimeDimension(const boost::posix_time::ptime& origintime) const
-{ 
-  return *itsTimeDimensions.at(origintime); 
+const WMSTimeDimension& WMSTimeDimensions::getTimeDimension(
+    const boost::posix_time::ptime& origintime) const
+{
+  return *itsTimeDimensions.at(origintime);
 }
 
 bool WMSTimeDimensions::origintimeOK(const boost::posix_time::ptime& origintime) const
-{ 
-  return itsTimeDimensions.find(origintime) != itsTimeDimensions.end(); 
+{
+  return itsTimeDimensions.find(origintime) != itsTimeDimensions.end();
 }
 
 const std::vector<boost::posix_time::ptime>& WMSTimeDimensions::getOrigintimes() const
@@ -295,32 +299,34 @@ const std::vector<boost::posix_time::ptime>& WMSTimeDimensions::getOrigintimes()
   return itsOrigintimes;
 }
 
-
 bool WMSTimeDimensions::isValidReferenceTime(const boost::posix_time::ptime& origintime) const
 {
   return (itsTimeDimensions.find(origintime) != itsTimeDimensions.end());
 }
 
-bool WMSTimeDimensions::isValidTime(const boost::posix_time::ptime& t, const boost::optional<boost::posix_time::ptime>& origintime) const
+bool WMSTimeDimensions::isValidTime(
+    const boost::posix_time::ptime& t,
+    const boost::optional<boost::posix_time::ptime>& origintime) const
 {
-  if(origintime)
-	{
-	  // Check for valid origintime
-	  if(!isValidReferenceTime(*origintime))
-		return false;
+  if (origintime)
+  {
+    // Check for valid origintime
+    if (!isValidReferenceTime(*origintime))
+      return false;
 
-	  return getTimeDimension(*origintime).isValidTime(t);
-	}
+    return getTimeDimension(*origintime).isValidTime(t);
+  }
   else
-	return getDefaultTimeDimension().isValidTime(t);
+    return getDefaultTimeDimension().isValidTime(t);
 }
 
-boost::posix_time::ptime WMSTimeDimensions::mostCurrentTime(const boost::optional<boost::posix_time::ptime>& origintime) const
+boost::posix_time::ptime WMSTimeDimensions::mostCurrentTime(
+    const boost::optional<boost::posix_time::ptime>& origintime) const
 {
-  if(origintime)
-	return getTimeDimension(*origintime).mostCurrentTime();
+  if (origintime)
+    return getTimeDimension(*origintime).mostCurrentTime();
   else
-	return getDefaultTimeDimension().mostCurrentTime();
+    return getDefaultTimeDimension().mostCurrentTime();
 }
 
 bool WMSTimeDimensions::currentValue() const
@@ -328,33 +334,34 @@ bool WMSTimeDimensions::currentValue() const
   return getDefaultTimeDimension().currentValue();
 }
 
-bool  WMSTimeDimensions::isIdentical(const WMSTimeDimensions& td) const
+bool WMSTimeDimensions::isIdentical(const WMSTimeDimensions& td) const
 {
-  for(const auto& item : itsTimeDimensions)
-	{
-	  if(td.itsTimeDimensions.find(item.first) == td.itsTimeDimensions.end())
-		return false;
+  for (const auto& item : itsTimeDimensions)
+  {
+    if (td.itsTimeDimensions.find(item.first) == td.itsTimeDimensions.end())
+      return false;
 
-	  const boost::shared_ptr<WMSTimeDimension>& tdim1 = item.second;
-	  const boost::shared_ptr<WMSTimeDimension>& tdim2 = td.itsTimeDimensions.at(item.first);
+    const boost::shared_ptr<WMSTimeDimension>& tdim1 = item.second;
+    const boost::shared_ptr<WMSTimeDimension>& tdim2 = td.itsTimeDimensions.at(item.first);
 
-	  boost::optional<std::string> missing_time;
-	  if(tdim1->getCapabilities(missing_time, missing_time) != tdim2->getCapabilities(missing_time, missing_time))
-		return false;
-	}
+    boost::optional<std::string> missing_time;
+    if (tdim1->getCapabilities(missing_time, missing_time) !=
+        tdim2->getCapabilities(missing_time, missing_time))
+      return false;
+  }
 
   return true;
 
   /*
   for(const auto& item : itsTimeDimensions)
-	{
-	  if(td.itsTimeDimensions.find(item.first) == td.itsTimeDimensions.end())
-		return false;
+        {
+          if(td.itsTimeDimensions.find(item.first) == td.itsTimeDimensions.end())
+                return false;
 
-	  const boost::shared_ptr<WMSTimeDimension>& tdim1 = item.second;
-	  const boost::shared_ptr<WMSTimeDimension>& tdim1 = td.itsTimeDimensions.at(item.first);
+          const boost::shared_ptr<WMSTimeDimension>& tdim1 = item.second;
+          const boost::shared_ptr<WMSTimeDimension>& tdim1 = td.itsTimeDimensions.at(item.first);
 
-	}
+        }
 
   return true;
 
@@ -406,21 +413,20 @@ std::ostream& operator<<(std::ostream& ost, const WMSTimeDimensions& timeDimensi
 {
   try
   {
-	const std::vector<boost::posix_time::ptime>& origintimes = timeDimensions.getOrigintimes();
+    const std::vector<boost::posix_time::ptime>& origintimes = timeDimensions.getOrigintimes();
 
-	
-	for(const auto& ot : origintimes)
-	  {
-		if(!ot.is_not_a_date_time())
-		  ost << "Time dimension for origintime " << ot << " -> " << std::endl;
-		const WMSTimeDimension* td = &timeDimensions.getTimeDimension(ot);
-		if (dynamic_cast<const IntervalTimeDimension*>(td) != nullptr)
-		  ost << *(dynamic_cast<const IntervalTimeDimension*>(td)) << std::endl;
-		else if(dynamic_cast<const StepTimeDimension*>(td) != nullptr)
-		  ost << *(dynamic_cast<const StepTimeDimension*>(td)) << std::endl;
-	  }
+    for (const auto& ot : origintimes)
+    {
+      if (!ot.is_not_a_date_time())
+        ost << "Time dimension for origintime " << ot << " -> " << std::endl;
+      const WMSTimeDimension* td = &timeDimensions.getTimeDimension(ot);
+      if (dynamic_cast<const IntervalTimeDimension*>(td) != nullptr)
+        ost << *(dynamic_cast<const IntervalTimeDimension*>(td)) << std::endl;
+      else if (dynamic_cast<const StepTimeDimension*>(td) != nullptr)
+        ost << *(dynamic_cast<const StepTimeDimension*>(td)) << std::endl;
+    }
 
-	return ost;
+    return ost;
   }
   catch (...)
   {

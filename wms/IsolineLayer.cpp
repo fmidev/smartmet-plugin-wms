@@ -471,7 +471,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   {
     const char* crsStr = query->mAttributeList.getAttributeValue("grid.crs");
     const char* proj4Str = query->mAttributeList.getAttributeValue("grid.proj4");
-    if (proj4Str != nullptr &&  strstr(proj4Str,"+lon_wrap") != nullptr )
+    if (proj4Str != nullptr && strstr(proj4Str, "+lon_wrap") != nullptr)
       crsStr = proj4Str;
 
     if (crsStr != nullptr)

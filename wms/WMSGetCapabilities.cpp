@@ -7,8 +7,8 @@
 #include <boost/range/algorithm/copy.hpp>
 #include <boost/shared_ptr.hpp>
 #include <ctpp2/CTPP2Logger.hpp>  // logging level defines
-#include <spine/Convenience.h>
 #include <macgyver/Exception.h>
+#include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
 #include <algorithm>
 
@@ -119,16 +119,16 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     }
 
     CTPP::CDT configuredLayers;
-	auto newfeature = theRequest.getParameter("newfeature");
-	int newfeature_id = 0;
-	if(newfeature)
-	  {
-		if(*newfeature == "1")
-		  newfeature_id = 1;
-		if(*newfeature == "2")
-		  newfeature_id = 2;
-	  }
-	   
+    auto newfeature = theRequest.getParameter("newfeature");
+    int newfeature_id = 0;
+    if (newfeature)
+    {
+      if (*newfeature == "1")
+        newfeature_id = 1;
+      if (*newfeature == "2")
+        newfeature_id = 2;
+    }
+
     try
     {
       auto wms_namespace = theRequest.getParameter("namespace");
@@ -136,7 +136,8 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
       auto endtime = theRequest.getParameter("endtime");
       auto reference_time = theRequest.getParameter("reference_time");
 
-	  configuredLayers = theConfig.getCapabilities(apikey, starttime, endtime, reference_time, wms_namespace, newfeature_id);
+      configuredLayers = theConfig.getCapabilities(
+          apikey, starttime, endtime, reference_time, wms_namespace, newfeature_id);
     }
     catch (...)
     {
@@ -149,8 +150,8 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     try
     {
       hash.At("capability")["layer"] = configuredLayers;
-	  if(newfeature_id > 0)
-		hash["capability"]["newfeature"] = Fmi::to_string(newfeature_id);
+      if (newfeature_id > 0)
+        hash["capability"]["newfeature"] = Fmi::to_string(newfeature_id);
     }
     catch (...)
     {

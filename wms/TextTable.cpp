@@ -1,6 +1,6 @@
 #include "TextTable.h"
-#include <macgyver/StringConversion.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <numeric>
 
 namespace SmartMet

@@ -1,7 +1,7 @@
 #include "ValueTools.h"
+#include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <newbase/NFmiGlobals.h>
-#include <macgyver/Exception.h>
 
 namespace SmartMet
 {

@@ -45,7 +45,7 @@ void LegendSymbols::init(const Json::Value& theJson, const Config& theConfig)
         attributes.init(json, theConfig);
       else
         throw Fmi::Exception(BCP,
-                               "Legend-layer symbols do not have a setting named '" + name + "'");
+                             "Legend-layer symbols do not have a setting named '" + name + "'");
     }
   }
   catch (...)

@@ -54,8 +54,8 @@ void Text::init(const Json::Value& theJson, const Config& theConfig)
       {
         if (!json.isString())
           throw Fmi::Exception(BCP,
-                                 "Text hash must consist of name string-value pairs, value of " +
-                                     name + " is not a string");
+                               "Text hash must consist of name string-value pairs, value of " +
+                                   name + " is not a string");
 
         translations[name] = json.asString();
       }

@@ -13,29 +13,29 @@
 
 #include "WMSConfig.h"
 
-
 namespace SmartMet
 {
 namespace Plugin
 {
 namespace WMS
 {
-
 class WMSGridDataLayer : public WMSLayer
 {
-  public:
-    WMSGridDataLayer(const WMSConfig& config, const std::string& producer,const std::string& parameter,uint geometryId);
+ public:
+  WMSGridDataLayer(const WMSConfig& config,
+                   const std::string& producer,
+                   const std::string& parameter,
+                   uint geometryId);
 
-  protected:
-    virtual void updateLayerMetaData();
+ protected:
+  virtual void updateLayerMetaData();
 
-  private:
-    const Engine::Grid::Engine* itsGridEngine;
-    const std::string itsProducer;
-    const std::string itsParameter;
-    uint itsGeometryId;
+ private:
+  const Engine::Grid::Engine* itsGridEngine;
+  const std::string itsProducer;
+  const std::string itsParameter;
+  uint itsGeometryId;
 };
-
 
 }  // namespace WMS
 }  // namespace Plugin

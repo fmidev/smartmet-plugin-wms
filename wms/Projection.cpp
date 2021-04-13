@@ -49,7 +49,6 @@ void Projection::init(const Json::Value& theJson,
     auto request = theState.getRequest();
     boost::optional<std::string> v;
 
-
     auto json = theJson.get("crs", nulljson);
     if (!json.isNull())
       crs = json.asString();

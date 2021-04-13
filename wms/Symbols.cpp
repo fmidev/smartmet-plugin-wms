@@ -34,15 +34,15 @@ void Symbols::init(const Json::Value& theJson, const State& theState)
 
       if (!symbol_json.isString())
         throw Fmi::Exception(BCP,
-                               "Invalid object type in defs.symbols initialization, expecting "
-                               "name-value pair for symbol '" +
-                                   name + "'");
+                             "Invalid object type in defs.symbols initialization, expecting "
+                             "name-value pair for symbol '" +
+                                 name + "'");
 
       std::string value = Spine::HTTP::urldecode(symbol_json.asString());
       if (value.substr(0, 6) != "data:,")
         throw Fmi::Exception(BCP,
-                               "Only RFC2397 data-URLs supported: URL incorrect '" + value +
-                                   "' for symbol '" + name + "'");
+                             "Only RFC2397 data-URLs supported: URL incorrect '" + value +
+                                 "' for symbol '" + name + "'");
       value = value.substr(6);  // Cut away data:,
       if (!theState.setSymbol(name, value))
         throw Fmi::Exception(BCP, "defs.symbols symbol '" + name + "' defined multiple times");

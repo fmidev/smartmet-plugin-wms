@@ -1,6 +1,6 @@
 #include "WMSRequestType.h"
-#include <spine/Convenience.h>
 #include <macgyver/Exception.h>
+#include <spine/Convenience.h>
 
 #define WMS_SERVICE "WMS"
 #define WMS_GET_CAPABILITIES "GetCapabilities"

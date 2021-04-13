@@ -21,16 +21,16 @@ void WMSObservationLayer::updateLayerMetaData()
 
     metadataTimestamp = boost::posix_time::second_clock::universal_time();
 
-	std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
+    std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
 
-    auto newTimeDimension = boost::make_shared<IntervalTimeDimension>(
-        metaData.period.begin(),
-        metaData.period.end(),
-        boost::posix_time::minutes(metaData.timestep));
+    auto newTimeDimension =
+        boost::make_shared<IntervalTimeDimension>(metaData.period.begin(),
+                                                  metaData.period.end(),
+                                                  boost::posix_time::minutes(metaData.timestep));
 
-	boost::posix_time::ptime origintime(boost::posix_time::not_a_date_time);
-	newTimeDimensions.insert(std::make_pair(origintime, newTimeDimension));
-	timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);
+    boost::posix_time::ptime origintime(boost::posix_time::not_a_date_time);
+    newTimeDimensions.insert(std::make_pair(origintime, newTimeDimension));
+    timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);
   }
   catch (...)
   {

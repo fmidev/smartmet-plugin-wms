@@ -49,8 +49,8 @@ void TranslationLayer::init(const Json::Value& theJson,
       {
         const Json::Value& text_json = json[name];
         if (!text_json.isString())
-          throw Fmi::Exception(
-              BCP, "Translation-layer name '" + name + "' translation is not a string");
+          throw Fmi::Exception(BCP,
+                               "Translation-layer name '" + name + "' translation is not a string");
         translations[name] = text_json.asString();
       }
     }

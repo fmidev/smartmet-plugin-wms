@@ -34,15 +34,15 @@ void Filters::init(const Json::Value& theJson, const State& theState)
 
       if (!filter_json.isString())
         throw Fmi::Exception(BCP,
-                               "Invalid object type in defs.filters initialization, expecting "
-                               "name-value pair for filter '" +
-                                   name + "'");
+                             "Invalid object type in defs.filters initialization, expecting "
+                             "name-value pair for filter '" +
+                                 name + "'");
 
       std::string value = Spine::HTTP::urldecode(filter_json.asString());
       if (value.substr(0, 6) != "data:,")
         throw Fmi::Exception(BCP,
-                               "Only RFC2397 data-URLs supported: URL incorrect '" + value +
-                                   "' for filter '" + name + "'");
+                             "Only RFC2397 data-URLs supported: URL incorrect '" + value +
+                                 "' for filter '" + name + "'");
       value = value.substr(6);  // Cut away data:,
       if (!theState.setFilter(name, value))
         throw Fmi::Exception(BCP, "defs.filters filter '" + name + "' defined multiple times");

@@ -20,8 +20,8 @@
 #include "Attributes.h"
 #include <boost/optional.hpp>
 #include <engines/geonames/Engine.h>
-#include <engines/querydata/Q.h>
 #include <engines/grid/Engine.h>
+#include <engines/querydata/Q.h>
 #include <spine/HTTP.h>
 #include <map>
 #include <set>
@@ -89,7 +89,7 @@ class State
   const Config& getConfig() const;
 
   const Spine::HTTP::Request& getRequest() const { return itsRequest; }
-  Plugin& getPlugin() { return itsPlugin;}
+  Plugin& getPlugin() { return itsPlugin; }
 
   // Customer
   const std::string& getCustomer() const { return itsCustomer; }

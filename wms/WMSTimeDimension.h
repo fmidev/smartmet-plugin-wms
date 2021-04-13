@@ -130,21 +130,25 @@ bool even_timesteps(const Container& container)
 
 class WMSTimeDimensions
 {
-public:
-  WMSTimeDimensions(const std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>>& tdims);
-  void addTimeDimension(const boost::posix_time::ptime& origintime, boost::shared_ptr<WMSTimeDimension> td);
+ public:
+  WMSTimeDimensions(
+      const std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>>& tdims);
+  void addTimeDimension(const boost::posix_time::ptime& origintime,
+                        boost::shared_ptr<WMSTimeDimension> td);
   const WMSTimeDimension& getDefaultTimeDimension() const;
   const WMSTimeDimension& getTimeDimension(const boost::posix_time::ptime& origintime) const;
   bool origintimeOK(const boost::posix_time::ptime& origintime) const;
   const std::vector<boost::posix_time::ptime>& getOrigintimes() const;
 
   bool isValidReferenceTime(const boost::posix_time::ptime& origintime) const;
-  bool isValidTime(const boost::posix_time::ptime& t, const boost::optional<boost::posix_time::ptime>& origintime) const;
-  boost::posix_time::ptime mostCurrentTime(const boost::optional<boost::posix_time::ptime>& origintime) const;
+  bool isValidTime(const boost::posix_time::ptime& t,
+                   const boost::optional<boost::posix_time::ptime>& origintime) const;
+  boost::posix_time::ptime mostCurrentTime(
+      const boost::optional<boost::posix_time::ptime>& origintime) const;
   bool currentValue() const;
   bool isIdentical(const WMSTimeDimensions& td) const;
 
-private:
+ private:
   std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>> itsTimeDimensions;
   boost::posix_time::ptime itsDefaultOrigintime{boost::posix_time::not_a_date_time};
   std::vector<boost::posix_time::ptime> itsOrigintimes;

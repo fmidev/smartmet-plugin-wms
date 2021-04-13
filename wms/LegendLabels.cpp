@@ -82,8 +82,7 @@ void LegendLabels::init(const Json::Value& theJson, const Config& theConfig)
         }
       }
       else
-        throw Fmi::Exception(BCP,
-                               "Legend-layer labels do not have a setting named '" + name + "'");
+        throw Fmi::Exception(BCP, "Legend-layer labels do not have a setting named '" + name + "'");
     }
   }
   catch (...)

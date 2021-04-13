@@ -3,8 +3,8 @@
 #include "Hash.h"
 
 #include <ctpp2/CDT.hpp>
-#include <macgyver/StringConversion.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <spine/HTTP.h>
 #include <stdexcept>
 

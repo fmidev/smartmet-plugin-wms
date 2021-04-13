@@ -1,9 +1,9 @@
 #include "WMSLayerFactory.h"
 #include "CaseInsensitiveComparator.h"
 #include "StyleSelection.h"
+#include "WMSGridDataLayer.h"
 #include "WMSPostGISLayer.h"
 #include "WMSQueryDataLayer.h"
-#include "WMSGridDataLayer.h"
 #ifndef WITHOUT_OBSERVATION
 #include "WMSObservationLayer.h"
 #endif
@@ -251,7 +251,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         layerType = WMSLayerType::GridDataLayer;
 
         std::vector<std::string> partList;
-        splitString(producer,':',partList);
+        splitString(producer, ':', partList);
         if (partList.size() == 2)
         {
           producer = partList[0];
@@ -286,7 +286,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         // if no producer defined, let's use default producer
         if (producer.empty())
           producer = theWMSConfig.itsDaliConfig.defaultModel();
-        layer = boost::make_shared<WMSGridDataLayer>(theWMSConfig, producer,parameter,geometryId);
+        layer = boost::make_shared<WMSGridDataLayer>(theWMSConfig, producer, parameter, geometryId);
         break;
       }
       case WMSLayerType::ObservationLayer:
@@ -374,8 +374,8 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
           layer->keywords->insert(json[i].asString());
       }
       else
-        throw Fmi::Exception(
-            BCP, p.string() + " keyword value must be an array of strings or a string");
+        throw Fmi::Exception(BCP,
+                             p.string() + " keyword value must be an array of strings or a string");
     }
 
     json = root.get("crs", nulljson);
