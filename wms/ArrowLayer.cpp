@@ -946,28 +946,6 @@ void ArrowLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       v = json.asString();
 
-    json = theJson.get("forecastType", nulljson);
-    if (!json.isNull())
-      forecastType = json.asInt();
-
-    json = theJson.get("forecastNumber", nulljson);
-    if (!json.isNull())
-      forecastNumber = json.asInt();
-
-    auto request = theState.getRequest();
-
-    boost::optional<std::string> v = request.getParameter("geometryId");
-    if (v)
-      geometryId = toInt32(*v);
-
-    v = request.getParameter("forecastType");
-    if (v)
-      forecastType = toInt32(*v);
-
-    v = request.getParameter("forecastNumber");
-    if (v)
-      forecastNumber = toInt32(*v);
-
     json = theJson.get("symbol", nulljson);
     if (!json.isNull())
       symbol = json.asString();
@@ -1850,14 +1828,10 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
         Dali::hash_combine(hash, Engine::Querydata::hash_value(q));
     }
 
-    Dali::hash_combine(hash, Dali::hash_value(source));
     Dali::hash_combine(hash, Dali::hash_value(direction));
     Dali::hash_combine(hash, Dali::hash_value(speed));
     Dali::hash_combine(hash, Dali::hash_value(u));
     Dali::hash_combine(hash, Dali::hash_value(v));
-    Dali::hash_combine(hash, Dali::hash_value(geometryId));
-    Dali::hash_combine(hash, Dali::hash_value(forecastType));
-    Dali::hash_combine(hash, Dali::hash_value(forecastNumber));
     Dali::hash_combine(hash, Dali::hash_value(unit_conversion));
     Dali::hash_combine(hash, Dali::hash_value(multiplier));
     Dali::hash_combine(hash, Dali::hash_value(offset));

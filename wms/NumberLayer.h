@@ -38,8 +38,6 @@ class NumberLayer : public Layer
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   boost::optional<std::string> parameter;
-  boost::optional<int> forecastType;
-  boost::optional<int> forecastNumber;
   std::string unit_conversion;
   boost::optional<double> multiplier;
   boost::optional<double> offset;

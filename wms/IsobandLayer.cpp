@@ -71,32 +71,6 @@ void IsobandLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       parameter = json.asString();
 
-    json = theJson.get("geometryId", nulljson);
-    if (!json.isNull())
-      geometryId = json.asInt();
-
-    json = theJson.get("forecastType", nulljson);
-    if (!json.isNull())
-      forecastType = json.asInt();
-
-    json = theJson.get("forecastNumber", nulljson);
-    if (!json.isNull())
-      forecastNumber = json.asInt();
-
-    auto request = theState.getRequest();
-
-    boost::optional<std::string> v = request.getParameter("geometryId");
-    if (v)
-      geometryId = toInt32(*v);
-
-    v = request.getParameter("forecastType");
-    if (v)
-      forecastType = toInt32(*v);
-
-    v = request.getParameter("forecastNumber");
-    if (v)
-      forecastNumber = toInt32(*v);
-
     json = theJson.get("isobands", nulljson);
     if (!json.isNull())
       Spine::JSON::extract_array("isobands", isobands, json, theConfig);
@@ -1153,9 +1127,6 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
       Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
     Dali::hash_combine(hash, Dali::hash_value(parameter));
-    Dali::hash_combine(hash, Dali::hash_value(geometryId));
-    Dali::hash_combine(hash, Dali::hash_value(forecastType));
-    Dali::hash_combine(hash, Dali::hash_value(forecastNumber));
     Dali::hash_combine(hash, Dali::hash_value(isobands, theState));
     Dali::hash_combine(hash, Dali::hash_value(interpolation));
     Dali::hash_combine(hash, Dali::hash_value(smoother, theState));

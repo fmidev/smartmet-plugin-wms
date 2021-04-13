@@ -51,8 +51,6 @@ class TimeLayer : public Layer
   // (grid-support)
   /*
   boost::optional<std::string> parameter;
-  boost::optional<int> forecastType;
-  boost::optional<int> forecastNumber;
 */
  private:
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);

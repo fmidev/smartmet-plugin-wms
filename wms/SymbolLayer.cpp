@@ -816,32 +816,6 @@ void SymbolLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       parameter = json.asString();
 
-    json = theJson.get("geometryId", nulljson);
-    if (!json.isNull())
-      geometryId = json.asInt();
-
-    json = theJson.get("forecastType", nulljson);
-    if (!json.isNull())
-      forecastType = json.asInt();
-
-    json = theJson.get("forecastNumber", nulljson);
-    if (!json.isNull())
-      forecastNumber = json.asInt();
-
-    auto request = theState.getRequest();
-
-    boost::optional<std::string> v = request.getParameter("geometryId");
-    if (v)
-      geometryId = toInt32(*v);
-
-    v = request.getParameter("forecastType");
-    if (v)
-      forecastType = toInt32(*v);
-
-    v = request.getParameter("forecastNumber");
-    if (v)
-      forecastNumber = toInt32(*v);
-
     json = theJson.get("positions", nulljson);
     if (!json.isNull())
     {
@@ -1511,9 +1485,6 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
     }
 
     Dali::hash_combine(hash, Dali::hash_value(parameter));
-    Dali::hash_combine(hash, Dali::hash_value(geometryId));
-    Dali::hash_combine(hash, Dali::hash_value(forecastType));
-    Dali::hash_combine(hash, Dali::hash_value(forecastNumber));
     Dali::hash_combine(hash, Dali::hash_value(positions, theState));
     Dali::hash_combine(hash, Dali::hash_value(minvalues));
     Dali::hash_combine(hash, Dali::hash_value(maxdistance));

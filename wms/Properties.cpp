@@ -54,6 +54,14 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
       }
     }
 
+    json = theJson.get("forecastType", nulljson);
+    if (!json.isNull())
+      forecastType = json.asInt();
+
+    json = theJson.get("forecastNumber", nulljson);
+    if (!json.isNull())
+      forecastNumber = json.asInt();
+
     json = theJson.get("geometryId", nulljson);
     if (!json.isNull())
       geometryId = json.asInt();
@@ -180,6 +188,18 @@ void Properties::init(const Json::Value& theJson,
       producer = theProperties.producer;
     else
       producer = json.asString();
+
+    json = theJson.get("forecastType", nulljson);
+    if (json.isNull())
+      forecastType = theProperties.forecastType;
+    else
+      forecastType = json.asInt();
+
+    json = theJson.get("forecastNumber", nulljson);
+    if (json.isNull())
+      forecastNumber = theProperties.forecastNumber;
+    else
+      forecastNumber = json.asInt();
 
     json = theJson.get("tz", nulljson);
     if (json.isString())
@@ -360,8 +380,10 @@ std::size_t Properties::hash_value(const State& theState) const
   {
     auto hash = Dali::hash_value(language);
     Dali::hash_combine(hash, Dali::hash_value(producer));
-    Dali::hash_combine(hash, Dali::hash_value(geometryId));
     Dali::hash_combine(hash, Dali::hash_value(source));
+    Dali::hash_combine(hash, Dali::hash_value(forecastType));
+    Dali::hash_combine(hash, Dali::hash_value(forecastNumber));
+    Dali::hash_combine(hash, Dali::hash_value(geometryId));
     Dali::hash_combine(hash, Dali::hash_value(level));
     Dali::hash_combine(hash, Dali::hash_value(levelId));
     Dali::hash_combine(hash, Dali::hash_value(origintime));

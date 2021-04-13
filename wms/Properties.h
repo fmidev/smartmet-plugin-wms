@@ -42,8 +42,10 @@ class Properties
 
   boost::optional<std::string> language;
   boost::optional<std::string> producer;
-  boost::optional<uint> geometryId;
   boost::optional<std::string> source;
+  boost::optional<int> forecastType;
+  boost::optional<int> forecastNumber;
+  boost::optional<uint> geometryId;
   boost::optional<double> level;
   boost::optional<int> levelId;
 
