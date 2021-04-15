@@ -255,34 +255,12 @@ void Projection::update(const Engine::Querydata::Q& theQ)
 
       if (no_bbox)
       {
-#ifdef NEW_NFMIAREA
         auto world1 = theQ->area().XYToWorldXY(theQ->area().BottomLeft());
         auto world2 = theQ->area().XYToWorldXY(theQ->area().TopRight());
         x1 = world1.X();
         y1 = world1.Y();
         x2 = world2.X();
         y2 = world2.Y();
-#else
-        if (theQ->area().ClassName() == std::string("NFmiLatLonArea") ||
-            theQ->area().ClassName() == std::string("NFmiRotatedLatlLonArea"))
-        {
-          auto bottomleft = theQ->area().BottomLeftLatLon();
-          auto topright = theQ->area().TopRightLatLon();
-          x1 = bottomleft.X();
-          y1 = bottomleft.Y();
-          x2 = topright.X();
-          y2 = topright.Y();
-        }
-        else
-        {
-          auto world1 = theQ->area().XYToWorldXY(theQ->area().BottomLeft());
-          auto world2 = theQ->area().XYToWorldXY(theQ->area().TopRight());
-          x1 = world1.X();
-          y1 = world1.Y();
-          x2 = world2.X();
-          y2 = world2.Y();
-        }
-#endif
       }
 
       if (size)
