@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-static const int testtimeout = 600;  // Seconds a single test is allowed to run
+static const int testtimeout = 900;  // Seconds a single test is allowed to run
 
 namespace SmartMet
 {
