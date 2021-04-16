@@ -45,5 +45,6 @@ map_tpers.get
 map_ups.get
 map_adams_hemi.get
 map_aitoff.get
+map_igh_shifted.get
 map_igh_o.get
 map_peirce_q.get
