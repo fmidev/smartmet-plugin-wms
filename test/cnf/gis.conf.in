@@ -37,7 +37,7 @@ postgis:
 
 cache:
 {
-	max_size	= 1000;
+	max_size	= 10;
 };
 
 gdal:
