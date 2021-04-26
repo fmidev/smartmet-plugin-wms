@@ -90,6 +90,7 @@ clean:
 	find . -name '*.c2t' -exec rm -f {} ';'
 	find . -name '*.d' -exec rm -f {} ';'
 	find . -name '.#*' -exec rm -f {} ';'
+	$(MAKE) -C test $@
 
 
 format:

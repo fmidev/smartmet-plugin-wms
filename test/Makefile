@@ -1,4 +1,4 @@
-PROG = PluginTest TestConfigCreator
+PROG = PluginTest
 
 REQUIRES = gdal jsoncpp configpp ctpp2 fmt librsvg
 
@@ -30,8 +30,16 @@ LIBS += $(REQUIRED_LIBS) \
 	-lboost_system \
 	-lbz2 -lz -lpthread -ldl
 
-TEST_PREPARE_TARGETS := templates cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf
-TEST_FINISH_TARGETS := dummy
+TEST_PREPARE_TARGETS := \
+	templates \
+	cnf/authentication.conf \
+	cnf/geonames.conf \
+	cnf/gis.conf \
+	cnf/observation.conf \
+	start-redis-db
+
+TEST_FINISH_TARGETS := stop-redis-db
+
 TEST_DB_DIR := $(shell pwd)/tmp-geonames-db
 
 ifdef CI
@@ -46,44 +54,29 @@ endif
 
 all: $(PROG)
 
-clean:
+clean:	clean-redis
 	rm -f $(PROG) *~
 	rm -f cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf
 	-if [ -f tmp-geonames-db/postmaster.pid ] ; then $(MAKE) stop-geonames-db; fi
 	rm -rf tmp-geonames-db*
-	rm -f cnf/grid/redis/redis-server.log
-	rm -f cnf/grid/redis/redis-server.pid
 
-test: $(PROG) $(TEST_PREPARE_TARGETS) redis-start
+test: $(PROG) $(TEST_PREPARE_TARGETS)
 	rm -f failures/*
 	if ./TestRunner.sh; then \
 		ok=true; $(MAKE) $(TEST_FINISH_TARGETS); \
 	else \
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
-	fi; $$ok
-	@if [ -e output/wms_getcapabilities.get ]; then \
+	fi; \
+	if [ -e output/wms_getcapabilities.get ]; then \
 	   echo Validating output/wms_getcapabilities.get; \
 	   cat output/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
-	fi
-	@rm -f wms-access-log
-	@rm -f cnf/grid/redis/redis.conf
-#	@echo 
-#	@echo "*** Shutting down the Redis database and removing useless files." 
-#	@echo 
-#	@cat cnf/grid/redis/redis-server.pid | xargs kill -9
-#	@rm -f cnf/grid/redis/redis-server.pid
-#	@rm -f cnf/grid/redis/redis-server.log
-	@if [ -e failures/wms_getcapabilities.get ]; then \
+	fi; \
+	rm -f wms-access-log; \
+	if [ -e failures/wms_getcapabilities.get ]; then \
 	   echo Validating failures/wms_getcapabilities.get; \
 	   cat failures/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
-	fi
-
-redis-start:	TestConfigCreator
-	@echo "*** Creating the Redis configuration file."
-	@./TestConfigCreator cnf/environment.conf cnf/grid/redis/redis-template.conf cnf/grid/redis/redis.conf
-	@echo "*** Starting the Redis database."
-	@redis-server cnf/grid/redis/redis.conf
-
+	fi; \
+	$$ok
 
 geonames-database:
 	@-$(MAKE) stop-geonames-db
@@ -98,6 +91,23 @@ start-geonames-db: geonames-database
 
 stop-geonames-db:
 	-/usr/share/smartmet/test/db/test-db-ctl.sh $(TEST_DB_DIR) stop
+
+start-redis-db:
+	rm -rf cnf/grid
+	cp -pr $(datadir)/smartmet/test/grid cnf/
+	@echo "*** Creating the Redis configuration file."
+	smartmet-grid-test-config-creator cnf/environment.conf cnf/grid/redis/redis-template.conf cnf/grid/redis/redis.conf
+	@echo "*** Starting the Redis database."
+	@redis-server cnf/grid/redis/redis.conf
+
+stop-redis-db:
+	@if [ -f cnf/grid/redis/redis-server.pid ] ; then \
+		cat cnf/grid/redis/redis-server.pid | xargs kill -9; \
+		rm -f cnf/grid/redis/redis-server.pid; \
+	fi
+
+clean-redis:
+	rm -rf cnf/grid
 
 dummy:
 

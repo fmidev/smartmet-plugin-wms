@@ -2,5 +2,4 @@
 /geonames.conf
 /gis.conf
 /observation.conf
-/grid/redis/redis-server.log
-/grid/redis/redis-server.pid
+/grid
