@@ -96,7 +96,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
 #TestRequires: smartmet-library-spine-devel >= 21.4.15
 #TestRequires: smartmet-engine-grid-devel >= 21.4.2
-#TestRqeuires: smartmet-engine-grid-test
+#TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
 #TestRequires: zlib-devel
