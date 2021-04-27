@@ -172,7 +172,13 @@ IntervalTimeDimension::IntervalTimeDimension(const boost::posix_time::ptime& beg
 
 boost::posix_time::ptime IntervalTimeDimension::mostCurrentTime() const
 {
-  return itsInterval.endTime;
+  auto current_time = boost::posix_time::second_clock::universal_time();
+  
+  boost::posix_time::ptime ret = itsInterval.startTime;
+  while(ret < current_time && ret <= (itsInterval.endTime - itsInterval.resolution))
+	ret += itsInterval.resolution;
+  
+  return ret;
 }
 
 bool IntervalTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) const

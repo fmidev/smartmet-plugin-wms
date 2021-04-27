@@ -23,6 +23,17 @@ namespace WMS
 {
 namespace
 {
+
+std::string layer_name(const std::string& name)
+{
+  std::string ret = name;
+  
+  if(ret.find(":origintime_") != std::string::npos)
+	ret = ret.substr(0, ret.find(":origintime_"));
+
+  return ret;
+}
+
 std::string get_json_element_value(const Json::Value& json, const std::string& keyStr)
 {
   std::string ret = "";
@@ -513,15 +524,20 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     if (!layers_opt.empty())
       boost::algorithm::split(layers, layers_opt, boost::algorithm::is_any_of(","));
 
+	std::string layer_origintime;
     for (unsigned int i = 0; i < layers.size(); i++)
     {
-      if (!itsConfig.isValidLayer(layers[i]))
-      {
-        Fmi::Exception exception(BCP, "The requested layer is not supported!");
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
-        exception.addParameter("Layer", layers[i]);
-        throw exception;
-      }
+	  std::string layername = layers[i];
+	  if (!itsConfig.isValidLayer(layer_name(layername)))
+		{
+		  Fmi::Exception exception(BCP, "The requested layer is not supported!");
+		  exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
+		  exception.addParameter("Layer", layername);
+		  throw exception;
+		}
+	  
+	  if(layername.find(":origintime_") != std::string::npos)
+		layer_origintime = layername.substr(layername.find(":origintime_")+12);
     }
 
     if (!styles_opt.empty())
@@ -557,7 +573,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
 
     for (unsigned int i = 0; i < layers.size(); i++)
     {
-      std::string layerName(layers[i]);
+      std::string layerName(layer_name(layers[i]));
 
       if (!itsConfig.isValidLayer(layerName))
       {
@@ -618,13 +634,19 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       itsParameters.elevation = Spine::optional_int(theRequest.getParameter("ELEVATION"), 0);
     }
 
-    if (theRequest.getParameter("REFERENCE_TIME") || theRequest.getParameter("ORIGINTIME"))
+    if (theRequest.getParameter("REFERENCE_TIME") || theRequest.getParameter("ORIGINTIME") || !layer_origintime.empty())
     {
       std::string reference_time =
           Spine::optional_string(theRequest.getParameter("REFERENCE_TIME"), "");
       std::string origintime = Spine::optional_string(theRequest.getParameter("ORIGINTIME"), "");
       if (reference_time.empty() && !origintime.empty())
         reference_time = origintime;
+
+	  if(reference_time.empty())
+		{
+		  // Use origintime from layer name
+		  reference_time = layer_origintime;
+		}
 
       if (!reference_time.empty())
         itsParameters.reference_time = parse_time(reference_time);
@@ -691,10 +713,9 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     // validate the given options
     validate_options(itsParameters, itsConfig, theQEngine);
 
-    std::string layerName(layers.size() > 0 ? layers.back() : "");
+    std::string layerName(layers.size() > 0 ? layer_name(layers.back()) : "");
 
     // Valite authorization for the layers
-
     // Convert format to image type
     theRequest.removeParameter("format");
     theRequest.addParameter("type", Dali::demimetype(itsParameters.format));
@@ -718,6 +739,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
 
     // resolve current time (most recent) for the layer
     std::string time_str = Spine::optional_string(theRequest.getParameter("TIME"), "current");
+
     if (true == cicomp(time_str, "current"))
     {
       if (!itsConfig.isTemporal(layerName))
@@ -737,6 +759,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
 
         boost::posix_time::ptime mostCurrentTime(
             itsConfig.mostCurrentTime(layerName, itsParameters.reference_time));
+
         if (mostCurrentTime.is_not_a_date_time())
           theRequest.removeParameter("time");
         else
@@ -747,6 +770,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     {
       if (itsParameters.timesteps.empty())
         throw Fmi::Exception(BCP, "Intervals need to be at least one minute long");
+	  theRequest.removeParameter("time");
       theRequest.addParameter("time", Fmi::to_iso_string(itsParameters.timesteps[0]));
     }
   }

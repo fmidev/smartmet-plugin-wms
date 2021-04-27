@@ -246,6 +246,16 @@ void add_layer_info(CTPP::CDT& ctpp,
   if (lh.sublayers.empty() && lh.baseInfoLayer)
   {
     baseInfo = lh.baseInfoLayer->getLayer()->getLayerBaseInfo();
+	if(lh.reference_time)
+	  {
+		std::string name = (*baseInfo)["name"].GetString();
+		std::string title = (*baseInfo)["title"].GetString();
+		std::string reference_time = boost::posix_time::to_iso_string(*(lh.reference_time));
+		name += (":origintime_" + reference_time);
+		title += (" origintime " + reference_time);
+		(*baseInfo)["name"] = name;
+		(*baseInfo)["title"] = title;
+	  }
   }
 
   if (baseInfo)
