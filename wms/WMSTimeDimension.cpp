@@ -173,11 +173,11 @@ IntervalTimeDimension::IntervalTimeDimension(const boost::posix_time::ptime& beg
 boost::posix_time::ptime IntervalTimeDimension::mostCurrentTime() const
 {
   auto current_time = boost::posix_time::second_clock::universal_time();
-  
+
   boost::posix_time::ptime ret = itsInterval.startTime;
-  while(ret < current_time && ret <= (itsInterval.endTime - itsInterval.resolution))
-	ret += itsInterval.resolution;
-  
+  while (ret < current_time && ret <= (itsInterval.endTime - itsInterval.resolution))
+    ret += itsInterval.resolution;
+
   return ret;
 }
 

@@ -23,13 +23,12 @@ namespace WMS
 {
 namespace
 {
-
 std::string layer_name(const std::string& name)
 {
   std::string ret = name;
-  
-  if(ret.find(":origintime_") != std::string::npos)
-	ret = ret.substr(0, ret.find(":origintime_"));
+
+  if (ret.find(":origintime_") != std::string::npos)
+    ret = ret.substr(0, ret.find(":origintime_"));
 
   return ret;
 }
@@ -524,20 +523,20 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     if (!layers_opt.empty())
       boost::algorithm::split(layers, layers_opt, boost::algorithm::is_any_of(","));
 
-	std::string layer_origintime;
+    std::string layer_origintime;
     for (unsigned int i = 0; i < layers.size(); i++)
     {
-	  std::string layername = layers[i];
-	  if (!itsConfig.isValidLayer(layer_name(layername)))
-		{
-		  Fmi::Exception exception(BCP, "The requested layer is not supported!");
-		  exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
-		  exception.addParameter("Layer", layername);
-		  throw exception;
-		}
-	  
-	  if(layername.find(":origintime_") != std::string::npos)
-		layer_origintime = layername.substr(layername.find(":origintime_")+12);
+      std::string layername = layers[i];
+      if (!itsConfig.isValidLayer(layer_name(layername)))
+      {
+        Fmi::Exception exception(BCP, "The requested layer is not supported!");
+        exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
+        exception.addParameter("Layer", layername);
+        throw exception;
+      }
+
+      if (layername.find(":origintime_") != std::string::npos)
+        layer_origintime = layername.substr(layername.find(":origintime_") + 12);
     }
 
     if (!styles_opt.empty())
@@ -634,7 +633,8 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       itsParameters.elevation = Spine::optional_int(theRequest.getParameter("ELEVATION"), 0);
     }
 
-    if (theRequest.getParameter("REFERENCE_TIME") || theRequest.getParameter("ORIGINTIME") || !layer_origintime.empty())
+    if (theRequest.getParameter("REFERENCE_TIME") || theRequest.getParameter("ORIGINTIME") ||
+        !layer_origintime.empty())
     {
       std::string reference_time =
           Spine::optional_string(theRequest.getParameter("REFERENCE_TIME"), "");
@@ -642,11 +642,11 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       if (reference_time.empty() && !origintime.empty())
         reference_time = origintime;
 
-	  if(reference_time.empty())
-		{
-		  // Use origintime from layer name
-		  reference_time = layer_origintime;
-		}
+      if (reference_time.empty())
+      {
+        // Use origintime from layer name
+        reference_time = layer_origintime;
+      }
 
       if (!reference_time.empty())
         itsParameters.reference_time = parse_time(reference_time);
@@ -770,7 +770,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     {
       if (itsParameters.timesteps.empty())
         throw Fmi::Exception(BCP, "Intervals need to be at least one minute long");
-	  theRequest.removeParameter("time");
+      theRequest.removeParameter("time");
       theRequest.addParameter("time", Fmi::to_iso_string(itsParameters.timesteps[0]));
     }
   }
