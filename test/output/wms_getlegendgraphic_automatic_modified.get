@@ -1,4 +1,4 @@
-<svg width="631" height="295" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="630" height="330" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <title>Demo product</title>
 <defs>
 <style type="text/css"><![CDATA[
@@ -156,7 +156,7 @@
   
   <text x="48" y="113">0.1-0.2</text>
   <text class="Units" x="20" y="20">Sateen intensiteetti</text>
-  <text class="Units" x="30" y="30">mm/h</text>
+  <text class="Units" x="30" y="40">mm/h</text>
   </g>
   <g>
   
@@ -180,29 +180,29 @@
   </g>
   <text x="520" y="50">Tihkusade</text>
   <g>
-   <use transform="translate(490,80)" xlink:href="#rain"/>
+   <use transform="translate(490,85)" xlink:href="#rain"/>
   </g>
-  <text x="520" y="85">Vesisade</text>
+  <text x="520" y="90">Vesisade</text>
   <g>
-   <use transform="translate(490,115)" xlink:href="#sleet"/>
+   <use transform="translate(490,125)" xlink:href="#sleet"/>
   </g>
-  <text x="520" y="120">Räntä</text>
+  <text x="520" y="130">Räntä</text>
   <g>
-   <use transform="translate(490,150)" xlink:href="#snow"/>
+   <use transform="translate(490,165)" xlink:href="#snow"/>
   </g>
-  <text x="520" y="155">Lumi</text>
+  <text x="520" y="170">Lumi</text>
   <g>
-   <use transform="translate(490,185)" xlink:href="#freezingdrizzle"/>
+   <use transform="translate(490,205)" xlink:href="#freezingdrizzle"/>
   </g>
-  <text x="520" y="190">Jäätävä tihku</text>
+  <text x="520" y="210">Jäätävä tihku</text>
   <g>
-   <use transform="translate(490,220)" xlink:href="#freezingrain"/>
+   <use transform="translate(490,245)" xlink:href="#freezingrain"/>
   </g>
-  <text x="520" y="225">Jäätävä vesisade</text>
+  <text x="520" y="250">Jäätävä vesisade</text>
   <g>
-   <use transform="translate(490,255)" xlink:href="#hail"/>
+   <use transform="translate(490,285)" xlink:href="#hail"/>
   </g>
-  <text x="520" y="260">Rakeita</text>
+  <text x="520" y="290">Rakeita</text>
   </g>
  </g>
 </g>

@@ -726,21 +726,26 @@ void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettin
     if (!json.isNull())
       hide_title = json.asBool();
 
-    std::vector<std::string> param_names;
     if (!data_name.empty())
     {
+	  std::vector<std::string> param_names;
       boost::algorithm::split(param_names, data_name, boost::algorithm::is_any_of(","));
       // Language support
       Json::Value translationJson = parameterJson.get("translation", nulljson);
       std::map<std::string, std::string> translations;
       get_translations(translationJson, translations);
-
       for (const auto& param_name : param_names)
       {
         settings.parameters.insert(
             std::make_pair(param_name, LegendGraphicParameter(param_name, name, unit, hide_title)));
         if (translations.size() > 0)
           settings.parameters[param_name].translations = translations;
+		for(const auto& item : translations)
+		  {
+			Dali::text_dimension_t tdim =
+			  Dali::getTextDimension(item.second, Dali::text_style_t());
+			settings.parameters[param_name].text_lengths[item.first] = (tdim.width * 1.6);
+		  }		
       }
     }
   }
@@ -748,7 +753,7 @@ void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettin
   // layout
   auto layoutJson = legendGraphicJson.get("layout", nulljson);
 
-  if (json.isNull())
+  if (layoutJson.isNull())
     return;
 
   json = layoutJson.get("param_name_xoffset", nulljson);
@@ -778,6 +783,19 @@ void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettin
   json = layoutJson.get("legend_width", nulljson);
   if (!json.isNull())
     settings.layout.legend_width = json.asInt();
+
+  json = layoutJson.get("legend_width_per_language", nulljson);
+  if (!json.isNull())
+	{
+	  Json::Value::Members languages = json.getMemberNames();
+	  for (unsigned int j = 0; j < languages.size(); j++)
+		{
+		  std::string language = languages[j];
+		  Json::Value widthJson = json.get(language, nulljson);
+		  unsigned int width = (!widthJson.isNull() ? widthJson.asInt() : *(settings.layout.legend_width));
+		  settings.layout.legend_width_per_language.insert(std::make_pair(language, width));
+		}
+	}
 }
 
 unsigned int isoband_legend_width(const Json::Value& json, unsigned int def)
@@ -947,7 +965,6 @@ void WMSLayer::addStyle(const Json::Value& root,
       if (!layersJson.isNull() && layersJson.isArray())
       {
         LegendGraphicInfo lgi = handle_json_layers(layersJson);
-
         if (lgi.size() > 0)
           legendGraphicInfo.insert(legendGraphicInfo.end(), lgi.begin(), lgi.end());
       }
@@ -1047,11 +1064,15 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
     actualSettings.layout.legend_yoffset = itsLegendGraphicSettings.layout.legend_yoffset;
   if (itsLegendGraphicSettings.layout.legend_width)
     actualSettings.layout.legend_width = itsLegendGraphicSettings.layout.legend_width;
+  actualSettings.layout.legend_width_per_language = itsLegendGraphicSettings.layout.legend_width_per_language;
+  // If width per language defined use it
+  if(actualSettings.layout.legend_width_per_language.find(language) != actualSettings.layout.legend_width_per_language.end())
+	actualSettings.layout.legend_width = actualSettings.layout.legend_width_per_language.at(language);
 
   std::map<std::string, Json::Value> legends = readLegendFiles(
       wmsConfig.getDaliConfig().rootDirectory(true), wmsConfig.getJsonCache(), customer);
 
-  std::set<std::string> processedParameters;
+  std::set<std::string> parameterNames;
   unsigned int uniqueId = 0;
 
   // Vector of symbol groups for PrecipitationForm, CloudBase2, ...
@@ -1062,6 +1083,8 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
     std::string layerType = lgi.asString("layer_type");
     std::string layerSubType = lgi.asString("layer_subtype");
     std::string parameterName = lgi.asString("parameter_name");
+
+    parameterNames.insert(parameterName);
 
     if (layerType == "icemap" && layerSubType == "symbol")
       layerType = "symbol";
@@ -1128,6 +1151,7 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
       unsigned int localizedWidth = lgi.labelWidth(language);
       if (actualSettings.layout.legend_xoffset)
         localizedWidth += *(actualSettings.layout.legend_xoffset);
+
       if (localizedWidth > isobandWidth)
         isobandWidth = localizedWidth;
     }
@@ -1162,8 +1186,6 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
     xpos += (*(actualSettings.layout.legend_width) > isobandWidth
                  ? *(actualSettings.layout.legend_width)
                  : isobandWidth);
-
-    processedParameters.insert(parameterName + layerType);
   }
 
   ret.width = xpos;
@@ -1194,6 +1216,29 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
       ret.height += *actualSettings.layout.symbol_group_y_padding;
     }
   }
+
+  for(const auto& name : parameterNames)
+	{
+	  Dali::text_dimension_t tdim =
+        Dali::getTextDimension(name, Dali::text_style_t());	  
+	  unsigned int data_name_width = (tdim.width * 1.6);
+	  unsigned int parameter_name_width = data_name_width;
+
+	  if(actualSettings.parameters.find(name) != actualSettings.parameters.end())
+		{
+		  const auto& lgp = actualSettings.parameters.at(name);
+		  tdim = Dali::getTextDimension(lgp.given_name, Dali::text_style_t());	  
+		  unsigned int  given_name_width = (tdim.width * 1.6);
+		  parameter_name_width = std::max(data_name_width, given_name_width);
+		  // Translation of parameter overrides original parameter name
+		  if(lgp.text_lengths.find(language) != lgp.text_lengths.end())
+			parameter_name_width = lgp.text_lengths.at(language);
+		}
+	  if(actualSettings.layout.legend_xoffset)
+		parameter_name_width += *actualSettings.layout.legend_xoffset;
+
+	  ret.width = std::max(parameter_name_width, ret.width);
+	}
 
   return ret;
 }
