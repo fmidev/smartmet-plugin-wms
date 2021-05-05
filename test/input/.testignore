@@ -1,30 +1,32 @@
+; Debugging test case
 high_resolution.get
+
 ; Sea is missing
 natural_earth.get
-symbols_coloured_fin.get
-symbols_coloured_native.get
-symbols_coloured_webmercator.get
-symbols_coloured_wgs84.get
+
 ; Not possible to control output precision, hence works on RHEL7 but fails on RHEL8
 t2m_p_geojson.get
 t2m_p_kml.get
-; Maps not working yet
+
+; PROJ.7 code seems to have the interrupts at wrong locations
+map_isea.get
+
+; Map shape clipped incorrectly
+ykjworld.get
+
+; Stopped working
+map_sterea.get
+
+; Difficulties getting the globe right, requires a lot of sampling
+map_laea.get
+
+; Maps not working - given up on them
 map_aeqd.get
-map_aitoff.get
 map_bertin1953.get
-map_bipc.get
 map_ccon.get
 map_chamb.get
-map_eqc.get
-map_geos.get
 map_gnom.get
-map_gstmerc.get
-map_igh_o.get
-map_igh_shifted.get
 map_imw_p.get
-map_isea.get
-map_laea.get
-map_lcc.get
 map_lsat.get
 map_murd2.get
 map_nicol.get
@@ -33,8 +35,5 @@ map_ob_tran.get
 map_omerc.get
 map_pconic.get
 map_peirce_q.get
-map_roteqc.get
-map_rotlatlon.get
 map_tcc.get
 map_tcea.get
-map_tpers.get
