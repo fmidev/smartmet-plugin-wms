@@ -33,7 +33,8 @@ struct LegendGraphicParameter
         given_name(lgp.given_name),
         unit(lgp.unit),
         hide_title(lgp.hide_title),
-        translations(lgp.translations)
+        translations(lgp.translations),
+		text_lengths(lgp.text_lengths)
   {
   }
 
@@ -42,6 +43,7 @@ struct LegendGraphicParameter
   std::string unit;
   bool hide_title{false};
   std::map<std::string, std::string> translations;
+  std::map<std::string, unsigned int> text_lengths;
 };
 
 struct LegendGraphicSymbol
@@ -49,7 +51,7 @@ struct LegendGraphicSymbol
   LegendGraphicSymbol() {}
   LegendGraphicSymbol(const std::string& sn) : symbol_name(sn) {}
   LegendGraphicSymbol(const LegendGraphicSymbol& lgs)
-      : symbol_name(lgs.symbol_name), translations(lgs.translations)
+	: symbol_name(lgs.symbol_name), translations(lgs.translations)
   {
   }
 
@@ -68,6 +70,7 @@ struct LegendGraphicLayout
   boost::optional<unsigned int> symbol_group_x_padding;  // space between symbols in symbol-group
   boost::optional<unsigned int> symbol_group_y_padding;
   boost::optional<unsigned int> legend_width;  // width of one legend
+  std::map<std::string, unsigned int> legend_width_per_language; // legend width per langauge
   unsigned int
       output_document_width;  // size of non-automatically generated documents, default 500*500
   unsigned int output_document_height;

@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.4.27
+Version: 21.5.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -132,6 +132,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed May 5 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.5.5-1.fmi
+- Fixed manual setting of legend width (BRAINSTORM-1522)
+- Now it is also possible to configure fixed width per language
+
 * Tue Apr 27 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.4.27-1.fmi
 - Set unique name for reference time layers (BRAINSTORM-1836)
 
