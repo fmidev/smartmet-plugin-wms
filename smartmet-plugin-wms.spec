@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.5.5
+Version: 21.5.6
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -32,8 +32,8 @@ BuildRequires: smartmet-engine-observation-devel >= 21.4.20
 BuildRequires: smartmet-engine-gis-devel >= 21.3.23
 BuildRequires: smartmet-engine-grid-devel >= 21.4.27
 BuildRequires: smartmet-engine-geonames-devel >= 21.4.12
-BuildRequires: smartmet-engine-querydata-devel >= 21.5.3
-BuildRequires: smartmet-engine-contour-devel >= 21.4.15
+BuildRequires: smartmet-engine-querydata-devel >= 21.5.6
+BuildRequires: smartmet-engine-contour-devel >= 21.5.6
 BuildRequires: smartmet-library-gis-devel >= 21.5.5
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
@@ -64,8 +64,8 @@ Requires: smartmet-library-giza >= 21.1.14
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.1.14
 %endif
-Requires: smartmet-engine-querydata >= 21.5.3
-Requires: smartmet-engine-contour >= 21.4.15
+Requires: smartmet-engine-querydata >= 21.5.6
+Requires: smartmet-engine-contour >= 21.5.6
 Requires: smartmet-engine-gis >= 21.3.23
 Requires: smartmet-engine-grid >= 21.4.27
 Requires: smartmet-engine-geonames >= 21.4.12
@@ -88,10 +88,10 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: libconfig-devel >= 1.7.2
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 21.4.15
+#TestRequires: smartmet-engine-contour-devel >= 21.5.6
 #TestRequires: smartmet-engine-geonames-devel >= 21.4.12
 #TestRequires: smartmet-engine-gis-devel >= 21.3.23
-#TestRequires: smartmet-engine-querydata-devel >= 21.5.3
+#TestRequires: smartmet-engine-querydata-devel >= 21.5.6
 #TestRequires: smartmet-library-giza-devel >= 21.1.14
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
 #TestRequires: smartmet-library-spine-devel >= 21.4.16
@@ -132,6 +132,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu May  6 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.6-1.fmi
+- Repackaged due to ABI changes in NFmiAzimuthalArea
+
 * Wed May 5 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.5.5-1.fmi
 - Fixed manual setting of legend width (BRAINSTORM-1522)
 - Now it is also possible to configure fixed width per language
