@@ -1,9 +1,6 @@
 ; Debugging test case
 high_resolution.get
 
-; Sea is missing
-natural_earth.get
-
 ; Not possible to control output precision, hence works on RHEL7 but fails on RHEL8
 t2m_p_geojson.get
 t2m_p_kml.get
