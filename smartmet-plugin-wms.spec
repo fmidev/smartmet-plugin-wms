@@ -21,7 +21,7 @@ BuildRequires: smartmet-library-giza-devel >= 21.1.14
 BuildRequires: smartmet-library-grid-content-devel >= 21.3.29
 BuildRequires: smartmet-library-grid-files-devel >= 21.4.13
 BuildRequires: smartmet-library-macgyver-devel >= 21.2.25
-BuildRequires: smartmet-library-spine-devel >= 21.4.16
+BuildRequires: smartmet-library-spine-devel >= 21.5.11
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 21.1.14
@@ -70,7 +70,7 @@ Requires: smartmet-engine-gis >= 21.3.23
 Requires: smartmet-engine-grid >= 21.4.27
 Requires: smartmet-engine-geonames >= 21.4.12
 Requires: smartmet-server >= 21.1.14
-Requires: smartmet-library-spine >= 21.4.16
+Requires: smartmet-library-spine >= 21.5.11
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -94,7 +94,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-querydata-devel >= 21.5.6
 #TestRequires: smartmet-library-giza-devel >= 21.1.14
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
-#TestRequires: smartmet-library-spine-devel >= 21.4.16
+#TestRequires: smartmet-library-spine-devel >= 21.5.11
 #TestRequires: smartmet-engine-grid-devel >= 21.4.27
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
