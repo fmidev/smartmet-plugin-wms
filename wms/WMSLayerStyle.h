@@ -13,6 +13,7 @@
 
 #include <ctpp2/CDT.hpp>
 #include <string>
+#include <set>
 
 namespace SmartMet
 {
@@ -37,6 +38,9 @@ struct WMSLayerStyle
   LegendURL legend_url;
   CTPP::CDT getCapabilities() const;
 };
+
+// Layers with optional altenative styles
+static std::set<std::string> supportedStyleLayers = {"isoline", "isoband", "symbol","arrow","number","isolabel"};
 
 std::ostream& operator<<(std::ostream& ost, const WMSLayerStyle& layerStyle);
 

@@ -1,0 +1,137 @@
+{
+    "title": "Demo product",
+    "producer": "pal_skandinavia",
+    "language": "fi",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "defs":
+    {
+	"styles":
+	{
+	    ".Label":
+	    {
+		"font": "Arial",
+		"font-size": 18,
+		"text-anchor": "middle",
+		"fill": "black"
+	    },
+	    ".LabelSmallBlue":
+	    {
+		"font": "Arial",
+		"font-size": 24,
+		"text-anchor": "middle",
+		"fill": "blue"
+	    },
+	    ".LabelBigRed":
+	    {
+		"font": "Arial",
+		"font-size": 36,
+		"text-anchor": "middle",
+		"fill": "red"
+	    }
+	}
+    },
+    "styles":
+	[
+	    {
+		"name": "isolabel_small_blue_text_style",
+		"title": "Isolabel with small blue font",
+		"abstract": "Isolabel with small blue font",
+		"layers":
+		[
+		    {
+			"qid": "l",
+			"layer_type": "isolabel",
+			"attributes":
+			{
+			    "class": "LabelSmallBlue"
+			}
+		    }
+		]
+	    },
+	    {
+		"name": "isolabel_big_red_text_style",
+		"title": "Isolabel with big red font",
+		"abstract": "Isolabel with big red font",
+		"layers":
+		[
+		    {
+			"qid": "l",
+			"layer_type": "isolabel",
+			"attributes":
+			{
+			    "class": "LabelBigRed"
+			}
+		    }
+		]
+	    }
+	],
+    "views": [
+        {
+	    "qid": "v",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers":
+	    [
+                {
+                    "qid": "b",
+                    "layer_type": "background",
+                    "attributes":
+                    {
+                        "fill": "white"
+                    }
+                },
+		{
+		    "qid": "m",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"minarea": 100
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country_lines",
+			"fill": "none",
+			"stroke": "#222",
+			"stroke-width": "0.3px"
+		    }
+		},
+		{
+		    "qid": "i",
+		    "layer_type": "isoline",
+		    "isolines": "json:isolines/pressure.json",
+		    "css": "isolines/pressure.css",
+		    "parameter": "Pressure",
+		    "precision": 0.1,
+		    "attributes":
+		    {
+			"id": "pressure_isolines",
+			"class": "Pressure"
+		    }
+		},
+		{
+		    "qid": "l",
+		    "layer_type": "isolabel",
+		    "isolines": "json:isolines/pressure.json",
+		    "parameter": "Pressure",
+		    "label":
+		    {
+			"orientation": "auto"
+		    },
+		    "attributes":
+		    {
+			"class": "Label"
+		    }
+		}
+	    ]
+	}
+    ]
+}

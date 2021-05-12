@@ -1,4 +1,5 @@
 #include "StyleSelection.h"
+#include "WMSLayerStyle.h"
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
 
@@ -8,82 +9,161 @@ namespace Plugin
 {
 namespace WMS
 {
-void handleLayerStyle(Json::Value& layerJson,
-                      const Json::Value& qid,
-                      const Json::Value& layer_type,
-                      const Json::Value& isoLB,
-                      const Json::Value& css)
+// Use layer type + qid as a key
+std::string getKey(const Json::Value& json)
 {
   Json::Value nulljson;
-  auto layerQid = layerJson.get("qid", nulljson);
-  if (!layerQid.isNull() && qid == layerQid)
-  {
-    auto layerType = layerJson.get("layer_type", nulljson);
-    if (layerType == layer_type && !layerType.isNull())
-    {
-      if (layerType.asString() == "isoline" && !isoLB.isNull())
-      {
-        Json::Value& isolines = layerJson["isolines"];
-        isolines = isoLB;
-      }
-      else if (layerType.asString() == "isoband" && !isoLB.isNull())
-      {
-        Json::Value& isobands = layerJson["isobands"];
-        isobands = isoLB;
-      }
-    }
-    Json::Value& cssJson = layerJson["css"];
-    if (!cssJson.isNull() && !css.isNull())
-      cssJson = css;
-  }
 
-  auto subLayers = layerJson.get("layers", nulljson);
+  auto qid = json.get("qid", nulljson);
+  if (qid.isNull())
+	return "";
+  
+  auto layer_type = json.get("layer_type", nulljson);
+  if(layer_type.isNull())
+	return "";
+  std::string layerTypeString = layer_type.asString();
+  if(layerTypeString.empty() || supportedStyleLayers.find(layerTypeString) == supportedStyleLayers.end())
+	return "";
+  
+  return (qid.asString() + "_" + layerTypeString);
+}
+
+// Replace view layer attributes with style layer attributes
+void addOrReplace(Json::Value& viewLayerJson, const Json::Value& styleLayerJson, const std::string& key)
+{
+  Json::Value nulljson;
+  if(!key.empty())
+	{
+	  auto styleJson = styleLayerJson.get(key, nulljson);
+	  if(!styleJson.isNull())
+		viewLayerJson[key] = styleJson;
+	}
+
+}
+
+void handleStyles(std::map<std::string, Json::Value*> viewLayers, std::map<std::string, const Json::Value*> styleLayers)
+{
+  Json::Value nulljson;
+  // 
+  for(auto& item : viewLayers)
+	{
+	  std::string key = item.first;
+
+	  if(styleLayers.find(key) == styleLayers.end())
+		continue;
+
+	  auto& viewLayerJson = *item.second;
+
+	  if(viewLayerJson.isNull())
+		continue;
+
+	  const auto& styleLayerJson = *(styleLayers.at(key));
+	  	  
+	  if(styleLayerJson.isNull())
+		continue;
+
+	  if(!viewLayerJson.isMember("layer_type"))
+		return;
+
+	  auto layerType = viewLayerJson.get("layer_type", nulljson);
+	  if(layerType.isNull())
+		return;
+
+	  std::string layerTypeString = layerType.asString();
+	  std::string layerDefinitionId = "";
+	  if(layerTypeString == "isoline")
+		layerDefinitionId = "isolines";
+	  else if(layerTypeString == "isoband")
+		layerDefinitionId = "isobands";
+	  else if(layerTypeString == "symbol")
+		layerDefinitionId = "symbols";
+	  else if(layerTypeString == "arrow")
+		layerDefinitionId = "arrows";
+	  else if(layerTypeString == "number")
+		layerDefinitionId = "label";
+	  else if(layerTypeString == "isolabel")
+		layerDefinitionId = "isolabels";
+	  
+	  addOrReplace(viewLayerJson, styleLayerJson, layerDefinitionId);
+	  addOrReplace(viewLayerJson, styleLayerJson, "css");
+	  addOrReplace(viewLayerJson, styleLayerJson, "scale");
+	  addOrReplace(viewLayerJson, styleLayerJson, "positions");
+	  addOrReplace(viewLayerJson, styleLayerJson, "upright");
+	  addOrReplace(viewLayerJson, styleLayerJson, "angles");
+	  addOrReplace(viewLayerJson, styleLayerJson, "max_angle");
+	  addOrReplace(viewLayerJson, styleLayerJson, "min_distance_other");
+	  addOrReplace(viewLayerJson, styleLayerJson, "min_distance_same");
+	  addOrReplace(viewLayerJson, styleLayerJson, "min_distance_self");
+	  addOrReplace(viewLayerJson, styleLayerJson, "min_distance_edge");
+	  addOrReplace(viewLayerJson, styleLayerJson, "max_curvature");
+	  addOrReplace(viewLayerJson, styleLayerJson, "stencil_size");
+
+	  // Handle attributes one by one
+	  auto viewLayerAttributesJson = viewLayerJson.get("attributes", nulljson);
+	  auto styleLayerAttributesJson = styleLayerJson.get("attributes", nulljson);
+	  if(!viewLayerAttributesJson.isNull() && !styleLayerAttributesJson.isNull())
+		{
+		  Json::Value::Members attributeNames = styleLayerAttributesJson.getMemberNames();
+		  for(const auto& name : attributeNames)
+			addOrReplace(viewLayerJson["attributes"], styleLayerJson["attributes"], name);
+		}
+	}
+}
+
+void handleViewLayer(Json::Value& viewLayer, std::map<std::string, Json::Value*>& viewL)
+{
+  if(viewLayer.isNull())
+	return;
+
+  std::string key = getKey(viewLayer);
+      
+  if(!key.empty())
+	viewL.insert(std::make_pair(key, &viewLayer));
+
+  // Handle sublayers
+  Json::Value nulljson;
+  auto subLayers = viewLayer.get("layers", nulljson);
   if (!subLayers.isNull() && subLayers.isArray())
-    for (auto& subLayer : layerJson["layers"])
-      handleLayerStyle(subLayer, qid, layer_type, isoLB, css);
+    for (auto& subLayer : viewLayer["layers"])
+      handleViewLayer(subLayer, viewL);
 }
 
 void useStyle(Json::Value& root, const Json::Value& styles)
 {
   Json::Value nulljson;
 
-  auto nameJson = styles.get("name", nulljson);
-  auto titleJson = styles.get("name", nulljson);
+  std::map<std::string, const Json::Value*> styleL;
+  std::map<std::string, Json::Value*> viewL;
 
-  auto styleLayers = styles.get("layers", nulljson);
+  if(!styles.isMember("layers"))
+	return;
+  const auto& styleLayers = styles.get("layers", nulljson);
   if (!styleLayers.isNull() && styleLayers.isArray())
   {
-    for (const auto& styleLayer : styleLayers)
+    for (const auto& styleLayer : styles["layers"])
     {
-      auto qid = styleLayer.get("qid", nulljson);
-      if (qid.isNull())
-        continue;
+	  std::string key = getKey(styleLayer);
+	  if(key.empty())
+		continue;
 
-      auto layer_type = styleLayer.get("layer_type", nulljson);
-      std::string layerTypeString = (!layer_type.isNull() ? layer_type.asString() : "");
-      auto isolines = styleLayer.get("isolines", nulljson);
-      auto isobands = styleLayer.get("isobands", nulljson);
-      auto css = styleLayer.get("css", nulljson);
-      auto viewsJson = root.get("views", nulljson);
-
-      if (!viewsJson.isNull() && viewsJson.isArray())
-      {
-        for (auto& viewJson : root["views"])
-        {
-          auto viewLayers = viewJson.get("layers", nulljson);
-          if (!viewLayers.isNull() && viewLayers.isArray())
-          {
-            for (auto& layerJson : viewJson["layers"])
-              handleLayerStyle(layerJson,
-                               qid,
-                               layer_type,
-                               (layerTypeString == "isoline" ? isolines : isobands),
-                               css);
-          }
-        }
-      }
-    }
+	  styleL.insert(std::make_pair(key, &styleLayer));
+	}
   }
+
+  auto& views = root["views"];
+  if(views.isNull())
+	return;
+  for (auto& viewJson : views)
+	{
+	  auto viewLayers = viewJson.get("layers", nulljson);
+	  if (!viewLayers.isNull() && viewLayers.isArray())
+		{
+		  for (auto& viewLayer : viewJson["layers"])
+			handleViewLayer(viewLayer, viewL);
+		}
+	}
+
+  handleStyles(viewL, styleL);
 }
 
 void useStyle(Json::Value& root, const std::string& styleName)

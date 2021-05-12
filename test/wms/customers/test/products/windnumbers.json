@@ -1,0 +1,62 @@
+{
+  "title": "Wind demo",
+  "producer": "pal_skandinavia",
+  "projection": {
+    "crs": "data",
+    "xsize": 500,
+    "ysize": 500
+  },
+    "styles":
+	[
+	    {
+		"name": "windnumbers_sparse_style",
+		"title": "Windnumbers sparse layout",
+		"abstract": "Windnumbers in sparse layout",
+		"layers":
+		[
+		    {
+			"qid": "l1",
+			"layer_type": "number",
+			"css": "numbers/integers_big.css",
+			"positions":
+			{
+			    "x": 0,
+			    "y": 0,
+			    "dx": 60,
+			    "dy": 60,
+			    "ddx": 5
+			}
+		    }
+		]
+	    }
+	],
+  "views": [
+    {
+      "qid": "v1",
+      "attributes": {
+        "id": "view1"
+      },
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "number",
+          "css": "numbers/integers.css",
+          "parameter": "WindSpeedMS",
+          "attributes": {
+            "class": "Number",
+            "id": "wind_numbers"
+          },
+          "label": "json:numbers/integers.json",
+          "positions": {
+            "x": 15,
+            "y": 15,
+            "dx": 20,
+            "dy": 20,
+            "ddx": 10
+          }
+        }
+      ]
+    }
+  ]
+}
+

@@ -10,6 +10,28 @@
     "styles":
 	[
 	    {
+		"name": "precipitation_red_rain_style",
+		"title": "Precipitation red rain style",
+		"abstract": "Rain drops in red colour",
+		"layers":
+		[
+		    {
+		    "qid": "l3",
+		    "layer_type": "symbol",
+		    "symbols": "json:symbols/precipitationform_red_rain.json",
+			"scale": 1.6,
+			"positions":
+			{
+			    "x": 5,
+			    "y": 5,
+			    "dx": 40,
+			    "dy": 40,
+			    "ddx": 5
+			}
+		    }
+		]
+	    },
+	    {
 		"name": "precipitation_thin_style",
 		"title": "Precipitation thin style",
 		"abstract": "Pressure isolines line width is 1 px",
@@ -137,6 +159,7 @@
 			    "layer_type": "symbol",
 			    "symbols": "json:symbols/precipitationform.json",
 			    "parameter": "PrecipitationForm",
+			    "scale": 1.0,
 			    "positions":
 			    {
 				"x": 5,
