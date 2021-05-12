@@ -18,6 +18,30 @@
 	"xsize": 500,
 	"ysize": 500
     },
+    "styles":
+	[
+	    {
+		"name": "windarrows_sparse_style",
+		"title": "Windarrows sparse layout",
+		"abstract": "Windarrows in sparse layout",
+		"layers":
+		[
+		    {
+			"qid": "l3",
+			"layer_type": "arrow",
+			"scale": 3.0,
+			"positions":
+			{
+			    "x": 0,
+			    "y": 0,
+			    "dx": 50,
+			    "dy": 50,
+			    "ddx": 5
+			}
+		    }
+		]
+	    }
+	],
     "views":
     [
 	{

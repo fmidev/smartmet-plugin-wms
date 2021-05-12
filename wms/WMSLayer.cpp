@@ -542,8 +542,7 @@ LegendGraphicInfo handle_json_layers(const Json::Value& layersJson)
             layerTypeString = json.asString();
           lgi.add("layer_subtype", json);
         }
-        if (layerTypeString != "isoband" && layerTypeString != "isoline" &&
-            layerTypeString != "symbol")
+        if (supportedStyleLayers.find(layerTypeString) == supportedStyleLayers.end())
           continue;
 
         lgi.add("layer_type", layerTypeJson);
