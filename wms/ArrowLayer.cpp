@@ -1036,11 +1036,16 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
   catch (...)
   {
     Fmi::Exception exception(BCP, "Operation failed!", nullptr);
-    exception.addParameter("Producer", *producer);
-    exception.addParameter("Direction", *direction);
-    exception.addParameter("Speed", *speed);
-    exception.addParameter("V", *v);
-    exception.addParameter("U", *u);
+    if (producer)
+      exception.addParameter("Producer", *producer);
+    if (direction)
+      exception.addParameter("Direction", *direction);
+    if (speed)
+      exception.addParameter("Speed", *speed);
+    if (v)
+      exception.addParameter("V", *v);
+    if (u)
+      exception.addParameter("U", *u);
     throw exception;
   }
 }
