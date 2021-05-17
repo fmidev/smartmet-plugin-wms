@@ -329,7 +329,7 @@ PointValues read_flash_observations(const SymbolLayer& layer,
       double y = lat;
 
       if (!crs.isGeographic())
-        if (!transformation.transform(x, y) == 0)
+        if (!transformation.transform(x, y))
           continue;
 
       // To pixel coordinate

@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.5.12
+Version: 21.5.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -132,6 +132,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon May 17 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.17-1.fmi
+- Fixed SymbolLayer to handle lightning coordinates correctly for non geographic CRS queries
+
 * Wed May 12 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.5.12-1.fmi
 - Implemented styles-option for symbol,arrow,number,isolabel layers (BRAINSTORM-2057)
 
