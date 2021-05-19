@@ -214,19 +214,19 @@ std::size_t Projection::hash_value(const State& /* theState */) const
 {
   try
   {
-    auto hash = Dali::hash_value(crs);
-    Dali::hash_combine(hash, Dali::hash_value(size));
-    Dali::hash_combine(hash, Dali::hash_value(xsize));
-    Dali::hash_combine(hash, Dali::hash_value(ysize));
-    Dali::hash_combine(hash, Dali::hash_value(x1));
-    Dali::hash_combine(hash, Dali::hash_value(y1));
-    Dali::hash_combine(hash, Dali::hash_value(x2));
-    Dali::hash_combine(hash, Dali::hash_value(y2));
-    Dali::hash_combine(hash, Dali::hash_value(cx));
-    Dali::hash_combine(hash, Dali::hash_value(cy));
-    Dali::hash_combine(hash, Dali::hash_value(resolution));
-    Dali::hash_combine(hash, Dali::hash_value(bboxcrs));
-    Dali::hash_combine(hash, Dali::hash_value(size));
+    auto hash = Fmi::hash_value(crs);
+    Fmi::hash_combine(hash, Fmi::hash_value(size));
+    Fmi::hash_combine(hash, Fmi::hash_value(xsize));
+    Fmi::hash_combine(hash, Fmi::hash_value(ysize));
+    Fmi::hash_combine(hash, Fmi::hash_value(x1));
+    Fmi::hash_combine(hash, Fmi::hash_value(y1));
+    Fmi::hash_combine(hash, Fmi::hash_value(x2));
+    Fmi::hash_combine(hash, Fmi::hash_value(y2));
+    Fmi::hash_combine(hash, Fmi::hash_value(cx));
+    Fmi::hash_combine(hash, Fmi::hash_value(cy));
+    Fmi::hash_combine(hash, Fmi::hash_value(resolution));
+    Fmi::hash_combine(hash, Fmi::hash_value(bboxcrs));
+    Fmi::hash_combine(hash, Fmi::hash_value(size));
     return hash;
   }
   catch (...)

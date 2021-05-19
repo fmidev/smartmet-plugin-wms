@@ -4,6 +4,7 @@
 #include "Plugin.h"
 #include <ctpp2/CDT.hpp>
 #include <macgyver/Exception.h>
+#include <macgyver/Hash.h>
 #include <macgyver/StringConversion.h>
 #include <stdexcept>
 
@@ -584,7 +585,7 @@ std::size_t State::getSymbolHash(const std::string& theName) const
   try
   {
     if (itsSymbols.count(theName) > 0)
-      return boost::hash_value(itsSymbols[theName]);
+      return Fmi::hash_value(itsSymbols[theName]);
     return itsPlugin.getSymbolHash(itsCustomer, theName, itUsesWms);
   }
   catch (...)
@@ -624,7 +625,7 @@ std::size_t State::getFilterHash(const std::string& theName) const
   try
   {
     if (itsFilters.count(theName) > 0)
-      return boost::hash_value(itsFilters[theName]);
+      return Fmi::hash_value(itsFilters[theName]);
     return itsPlugin.getFilterHash(theName, itUsesWms);
   }
   catch (...)
@@ -664,7 +665,7 @@ std::size_t State::getPatternHash(const std::string& theName) const
   try
   {
     if (itsPatterns.count(theName) > 0)
-      return boost::hash_value(itsPatterns[theName]);
+      return Fmi::hash_value(itsPatterns[theName]);
     return itsPlugin.getPatternHash(itsCustomer, theName, itUsesWms);
   }
   catch (...)
@@ -704,7 +705,7 @@ std::size_t State::getMarkerHash(const std::string& theName) const
   try
   {
     if (itsMarkers.count(theName) > 0)
-      return boost::hash_value(itsMarkers[theName]);
+      return Fmi::hash_value(itsMarkers[theName]);
     return itsPlugin.getMarkerHash(itsCustomer, theName, itUsesWms);
   }
   catch (...)
@@ -744,7 +745,7 @@ std::size_t State::getGradientHash(const std::string& theName) const
   try
   {
     if (itsGradients.count(theName) > 0)
-      return boost::hash_value(itsGradients[theName]);
+      return Fmi::hash_value(itsGradients[theName]);
     return itsPlugin.getGradientHash(itsCustomer, theName, itUsesWms);
   }
   catch (...)

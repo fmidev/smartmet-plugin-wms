@@ -378,24 +378,24 @@ std::size_t Properties::hash_value(const State& theState) const
 {
   try
   {
-    auto hash = Dali::hash_value(language);
-    Dali::hash_combine(hash, Dali::hash_value(producer));
-    Dali::hash_combine(hash, Dali::hash_value(source));
-    Dali::hash_combine(hash, Dali::hash_value(forecastType));
-    Dali::hash_combine(hash, Dali::hash_value(forecastNumber));
-    Dali::hash_combine(hash, Dali::hash_value(geometryId));
-    Dali::hash_combine(hash, Dali::hash_value(level));
-    Dali::hash_combine(hash, Dali::hash_value(levelId));
-    Dali::hash_combine(hash, Dali::hash_value(origintime));
+    auto hash = Fmi::hash_value(language);
+    Fmi::hash_combine(hash, Fmi::hash_value(producer));
+    Fmi::hash_combine(hash, Fmi::hash_value(source));
+    Fmi::hash_combine(hash, Fmi::hash_value(forecastType));
+    Fmi::hash_combine(hash, Fmi::hash_value(forecastNumber));
+    Fmi::hash_combine(hash, Fmi::hash_value(geometryId));
+    Fmi::hash_combine(hash, Fmi::hash_value(level));
+    Fmi::hash_combine(hash, Fmi::hash_value(levelId));
+    Fmi::hash_combine(hash, Fmi::hash_value(origintime));
     // timezone is irrelevant, time is always in UTC timen
-    Dali::hash_combine(hash, Dali::hash_value(time));
-    Dali::hash_combine(hash, Dali::hash_value(time_offset));
-    Dali::hash_combine(hash, Dali::hash_value(interval_start));
-    Dali::hash_combine(hash, Dali::hash_value(interval_end));
-    Dali::hash_combine(hash, Dali::hash_value(xmargin));
-    Dali::hash_combine(hash, Dali::hash_value(ymargin));
-    Dali::hash_combine(hash, Dali::hash_value(clip));
-    Dali::hash_combine(hash, Dali::hash_value(projection, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(time));
+    Fmi::hash_combine(hash, Fmi::hash_value(time_offset));
+    Fmi::hash_combine(hash, Fmi::hash_value(interval_start));
+    Fmi::hash_combine(hash, Fmi::hash_value(interval_end));
+    Fmi::hash_combine(hash, Fmi::hash_value(xmargin));
+    Fmi::hash_combine(hash, Fmi::hash_value(ymargin));
+    Fmi::hash_combine(hash, Fmi::hash_value(clip));
+    Fmi::hash_combine(hash, Dali::hash_value(projection, theState));
     return hash;
   }
   catch (...)

@@ -59,11 +59,11 @@ std::size_t Png::hash_value(const State& /* theState */) const
 {
   try
   {
-    auto hash = Dali::hash_value(options.quality);
-    Dali::hash_combine(hash, Dali::hash_value(options.errorfactor));
-    Dali::hash_combine(hash, Dali::hash_value(options.errorfactor));
-    Dali::hash_combine(hash, Dali::hash_value(options.maxcolors));
-    Dali::hash_combine(hash, Dali::hash_value(options.truecolor));
+    auto hash = Fmi::hash_value(options.quality);
+    Fmi::hash_combine(hash, Fmi::hash_value(options.errorfactor));
+    Fmi::hash_combine(hash, Fmi::hash_value(options.errorfactor));
+    Fmi::hash_combine(hash, Fmi::hash_value(options.maxcolors));
+    Fmi::hash_combine(hash, Fmi::hash_value(options.truecolor));
     return hash;
   }
   catch (...)

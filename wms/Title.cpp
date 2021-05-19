@@ -68,11 +68,11 @@ std::size_t Title::hash_value(const State& theState) const
 {
   try
   {
-    auto hash = Dali::hash_value(qid);
-    Dali::hash_combine(hash, Dali::hash_value(dx));
-    Dali::hash_combine(hash, Dali::hash_value(dy));
-    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
-    Dali::hash_combine(hash, Dali::hash_value(text, theState));
+    auto hash = Fmi::hash_value(qid);
+    Fmi::hash_combine(hash, Fmi::hash_value(dx));
+    Fmi::hash_combine(hash, Fmi::hash_value(dy));
+    Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(text, theState));
     return hash;
   }
   catch (...)

@@ -219,8 +219,8 @@ std::size_t TagLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    Dali::hash_combine(hash, Dali::hash_value(tag));
-    Dali::hash_combine(hash, Dali::hash_value(cdata, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(tag));
+    Fmi::hash_combine(hash, Dali::hash_value(cdata, theState));
     return hash;
   }
   catch (...)

@@ -12,8 +12,8 @@
 #pragma once
 
 #include <ctpp2/CDT.hpp>
-#include <string>
 #include <set>
+#include <string>
 
 namespace SmartMet
 {
@@ -40,7 +40,8 @@ struct WMSLayerStyle
 };
 
 // Layers with optional altenative styles
-static std::set<std::string> supportedStyleLayers = {"isoline", "isoband", "symbol","arrow","number","isolabel"};
+static std::set<std::string> supportedStyleLayers = {
+    "isoline", "isoband", "symbol", "arrow", "number", "isolabel"};
 
 std::ostream& operator<<(std::ostream& ost, const WMSLayerStyle& layerStyle);
 

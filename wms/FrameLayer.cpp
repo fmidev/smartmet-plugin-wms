@@ -513,10 +513,10 @@ std::size_t FrameDimension::hash_value() const
 {
   std::size_t hash = 0;
 
-  Dali::hash_combine(hash, Dali::hash_value(bottomLatitude));
-  Dali::hash_combine(hash, Dali::hash_value(leftLongitude));
-  Dali::hash_combine(hash, Dali::hash_value(topLatitude));
-  Dali::hash_combine(hash, Dali::hash_value(rightLongitude));
+  Fmi::hash_combine(hash, Fmi::hash_value(bottomLatitude));
+  Fmi::hash_combine(hash, Fmi::hash_value(leftLongitude));
+  Fmi::hash_combine(hash, Fmi::hash_value(topLatitude));
+  Fmi::hash_combine(hash, Fmi::hash_value(rightLongitude));
 
   return hash;
 }
@@ -525,8 +525,8 @@ std::size_t TicInfo::hash_value() const
 {
   std::size_t hash = 0;
 
-  Dali::hash_combine(hash, Dali::hash_value(step));
-  Dali::hash_combine(hash, Dali::hash_value(length));
+  Fmi::hash_combine(hash, Fmi::hash_value(step));
+  Fmi::hash_combine(hash, Fmi::hash_value(length));
 
   return hash;
 }
@@ -535,16 +535,16 @@ std::size_t FrameScale::hash_value() const
 {
   std::size_t hash = 0;
 
-  Dali::hash_combine(hash, dimension.hash_value());
+  Fmi::hash_combine(hash, dimension.hash_value());
   if (smallTic)
-    Dali::hash_combine(hash, smallTic->hash_value());
+    Fmi::hash_combine(hash, smallTic->hash_value());
   if (intermediateTic)
-    Dali::hash_combine(hash, intermediateTic->hash_value());
+    Fmi::hash_combine(hash, intermediateTic->hash_value());
   if (longTic)
-    Dali::hash_combine(hash, longTic->hash_value());
-  Dali::hash_combine(hash, Dali::hash_value(ticPosition));
-  Dali::hash_combine(hash, Dali::hash_value(labelStep));
-  Dali::hash_combine(hash, Dali::hash_value(labelPosition));
+    Fmi::hash_combine(hash, longTic->hash_value());
+  Fmi::hash_combine(hash, Fmi::hash_value(ticPosition));
+  Fmi::hash_combine(hash, Fmi::hash_value(labelStep));
+  Fmi::hash_combine(hash, Fmi::hash_value(labelPosition));
 
   return hash;
 }
@@ -554,14 +554,14 @@ std::size_t FrameLayer::hash_value(const State& theState) const
   try
   {
     std::size_t hash = 0;
-    Dali::hash_combine(hash, Layer::hash_value(theState));
-    Dali::hash_combine(hash, itsPrecision);
-    Dali::hash_combine(hash, itsInnerBorder.hash_value());
+    Fmi::hash_combine(hash, Layer::hash_value(theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(itsPrecision));
+    Fmi::hash_combine(hash, itsInnerBorder.hash_value());
     if (itsOuterBorder)
-      Dali::hash_combine(hash, itsOuterBorder->hash_value());
+      Fmi::hash_combine(hash, itsOuterBorder->hash_value());
     if (itsScale)
-      Dali::hash_combine(hash, itsScale->hash_value());
-    Dali::hash_combine(hash, Dali::hash_value(itsScaleAttributes, theState));
+      Fmi::hash_combine(hash, itsScale->hash_value());
+    Fmi::hash_combine(hash, Dali::hash_value(itsScaleAttributes, theState));
 
     return hash;
   }

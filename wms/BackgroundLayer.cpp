@@ -114,7 +114,7 @@ std::size_t BackgroundLayer::hash_value(const State& theState) const
   try
   {
     std::size_t hash = 0;
-    Dali::hash_combine(hash, Layer::hash_value(theState));
+    Fmi::hash_combine(hash, Layer::hash_value(theState));
     return hash;
   }
   catch (...)

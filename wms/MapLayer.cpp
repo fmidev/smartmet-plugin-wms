@@ -449,13 +449,13 @@ std::size_t MapLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    Dali::hash_combine(hash, Dali::hash_value(map, theState));
-    Dali::hash_combine(hash, boost::hash_value(precision));
-    Dali::hash_combine(hash, Dali::hash_value(styles, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(map, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(precision));
+    Fmi::hash_combine(hash, Dali::hash_value(styles, theState));
 
     // Add data hash
     if (styles && !theState.isObservation(producer))
-      Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+      Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
     return hash;
   }

@@ -1101,19 +1101,19 @@ std::size_t IsolabelLayer::hash_value(const State& theState) const
   try
   {
     auto hash = IsolineLayer::hash_value(theState);
-    Dali::hash_combine(hash, Dali::hash_value(label, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(label, theState));
     for (auto& angle : angles)
-      Dali::hash_combine(hash, Dali::hash_value(angle));
-    Dali::hash_combine(hash, upright);
-    Dali::hash_combine(hash, max_angle);
-    Dali::hash_combine(hash, min_distance_other);
-    Dali::hash_combine(hash, min_distance_same);
-    Dali::hash_combine(hash, min_distance_self);
-    Dali::hash_combine(hash, min_distance_edge);
-    Dali::hash_combine(hash, max_distance_edge);
-    Dali::hash_combine(hash, max_curvature);
-    Dali::hash_combine(hash, stencil_size);
-    Dali::hash_combine(hash, Dali::hash_value(isovalues));
+      Fmi::hash_combine(hash, Fmi::hash_value(angle));
+    Fmi::hash_combine(hash, Fmi::hash_value(upright));
+    Fmi::hash_combine(hash, Fmi::hash_value(max_angle));
+    Fmi::hash_combine(hash, Fmi::hash_value(min_distance_other));
+    Fmi::hash_combine(hash, Fmi::hash_value(min_distance_same));
+    Fmi::hash_combine(hash, Fmi::hash_value(min_distance_self));
+    Fmi::hash_combine(hash, Fmi::hash_value(min_distance_edge));
+    Fmi::hash_combine(hash, Fmi::hash_value(max_distance_edge));
+    Fmi::hash_combine(hash, Fmi::hash_value(max_curvature));
+    Fmi::hash_combine(hash, Fmi::hash_value(stencil_size));
+    Fmi::hash_combine(hash, Fmi::hash_value(isovalues));
     return hash;
   }
   catch (...)

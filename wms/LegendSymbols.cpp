@@ -65,11 +65,11 @@ std::size_t LegendSymbols::hash_value(const State& theState) const
   try
   {
     auto hash = Dali::hash_css(css, theState);
-    Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
-    Dali::hash_combine(hash, Dali::hash_symbol(start, theState));
-    Dali::hash_combine(hash, Dali::hash_symbol(end, theState));
-    Dali::hash_combine(hash, Dali::hash_symbol(missing, theState));
-    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Fmi::hash_combine(hash, Dali::hash_symbol(symbol, theState));
+    Fmi::hash_combine(hash, Dali::hash_symbol(start, theState));
+    Fmi::hash_combine(hash, Dali::hash_symbol(end, theState));
+    Fmi::hash_combine(hash, Dali::hash_symbol(missing, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
     return hash;
   }
   catch (...)

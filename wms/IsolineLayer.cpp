@@ -603,7 +603,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   std::size_t qhash = Engine::Querydata::hash_value(q);
   auto valueshash = qhash;
-  Dali::hash_combine(valueshash, options.data_hash_value());
+  Fmi::hash_combine(valueshash, options.data_hash_value());
 
   const auto& qEngine = theState.getQEngine();
   auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
@@ -739,21 +739,21 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     auto hash = Layer::hash_value(theState);
 
     if (!(source && *source == "grid"))
-      Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+      Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
-    Dali::hash_combine(hash, Dali::hash_value(parameter));
-    Dali::hash_combine(hash, Dali::hash_value(isolines, theState));
-    Dali::hash_combine(hash, Dali::hash_value(smoother, theState));
-    Dali::hash_combine(hash, Dali::hash_value(extrapolation));
-    Dali::hash_combine(hash, Dali::hash_value(precision));
-    Dali::hash_combine(hash, Dali::hash_value(minarea));
-    Dali::hash_combine(hash, Dali::hash_value(unit_conversion));
-    Dali::hash_combine(hash, Dali::hash_value(multiplier));
-    Dali::hash_combine(hash, Dali::hash_value(offset));
-    Dali::hash_combine(hash, Dali::hash_value(outside, theState));
-    Dali::hash_combine(hash, Dali::hash_value(inside, theState));
-    Dali::hash_combine(hash, Dali::hash_value(sampling, theState));
-    Dali::hash_combine(hash, Dali::hash_value(intersections, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(parameter));
+    Fmi::hash_combine(hash, Dali::hash_value(isolines, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(smoother, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(extrapolation));
+    Fmi::hash_combine(hash, Fmi::hash_value(precision));
+    Fmi::hash_combine(hash, Fmi::hash_value(minarea));
+    Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
+    Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
+    Fmi::hash_combine(hash, Fmi::hash_value(offset));
+    Fmi::hash_combine(hash, Dali::hash_value(outside, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(inside, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(sampling, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(intersections, theState));
     return hash;
   }
   catch (...)

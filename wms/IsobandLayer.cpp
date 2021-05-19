@@ -30,6 +30,7 @@
 #include <newbase/NFmiTimeList.h>
 #include <spine/Convenience.h>
 #include <spine/Json.h>
+#include <spine/Parameter.h>
 #include <spine/ParameterFactory.h>
 #include <spine/ParameterTools.h>
 #include <limits>
@@ -311,19 +312,19 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     // Return the new Q but with a new hash value
 
     std::size_t hash = 0;
-    boost::hash_combine(hash, theParameter);
-    boost::hash_combine(hash, to_simple_string(valid_time_period.begin()));
-    boost::hash_combine(hash, to_simple_string(valid_time_period.end()));
-    boost::hash_combine(hash, box.xmin());
-    boost::hash_combine(hash, box.ymin());
-    boost::hash_combine(hash, box.xmax());
-    boost::hash_combine(hash, box.ymax());
-    boost::hash_combine(hash, Dali::hash_value(heatmap, theState));
-    boost::hash_combine(hash, radius);
+    Fmi::hash_combine(hash, Fmi::hash_value(theParameter.originalName()));
+    Fmi::hash_combine(hash, Fmi::hash_value(valid_time_period.begin()));
+    Fmi::hash_combine(hash, Fmi::hash_value(valid_time_period.end()));
+    Fmi::hash_combine(hash, Fmi::hash_value(box.xmin()));
+    Fmi::hash_combine(hash, Fmi::hash_value(box.ymin()));
+    Fmi::hash_combine(hash, Fmi::hash_value(box.xmax()));
+    Fmi::hash_combine(hash, Fmi::hash_value(box.ymax()));
+    Fmi::hash_combine(hash, Dali::hash_value(heatmap, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(radius));
 
     char* tmp;
     crs.get()->exportToWkt(&tmp);
-    boost::hash_combine(hash, tmp);
+    Fmi::hash_combine(hash, Fmi::hash_value(tmp));
     CPLFree(tmp);
 
     auto model = boost::make_shared<Engine::Querydata::Model>(data, hash);
@@ -979,7 +980,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;
-    boost::hash_combine(valueshash, options.data_hash_value());
+    Fmi::hash_combine(valueshash, options.data_hash_value());
 
     // Select the data
 
@@ -1119,28 +1120,28 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
   try
   {
     // if (source && *source == "grid")
-    // return invalid_hash;
+    // return Fmi::bad_hash;
 
     auto hash = Layer::hash_value(theState);
 
     if (!theState.isObservation(producer) && !(source && *source == "grid"))
-      Dali::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
+      Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
-    Dali::hash_combine(hash, Dali::hash_value(parameter));
-    Dali::hash_combine(hash, Dali::hash_value(isobands, theState));
-    Dali::hash_combine(hash, Dali::hash_value(interpolation));
-    Dali::hash_combine(hash, Dali::hash_value(smoother, theState));
-    Dali::hash_combine(hash, Dali::hash_value(extrapolation));
-    Dali::hash_combine(hash, Dali::hash_value(precision));
-    Dali::hash_combine(hash, Dali::hash_value(minarea));
-    Dali::hash_combine(hash, Dali::hash_value(unit_conversion));
-    Dali::hash_combine(hash, Dali::hash_value(multiplier));
-    Dali::hash_combine(hash, Dali::hash_value(offset));
-    Dali::hash_combine(hash, Dali::hash_value(outside, theState));
-    Dali::hash_combine(hash, Dali::hash_value(inside, theState));
-    Dali::hash_combine(hash, Dali::hash_value(sampling, theState));
-    Dali::hash_combine(hash, Dali::hash_value(intersections, theState));
-    Dali::hash_combine(hash, Dali::hash_value(heatmap, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(parameter));
+    Fmi::hash_combine(hash, Dali::hash_value(isobands, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(interpolation));
+    Fmi::hash_combine(hash, Dali::hash_value(smoother, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(extrapolation));
+    Fmi::hash_combine(hash, Fmi::hash_value(precision));
+    Fmi::hash_combine(hash, Fmi::hash_value(minarea));
+    Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
+    Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
+    Fmi::hash_combine(hash, Fmi::hash_value(offset));
+    Fmi::hash_combine(hash, Dali::hash_value(outside, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(inside, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(sampling, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(intersections, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(heatmap, theState));
     return hash;
   }
   catch (...)

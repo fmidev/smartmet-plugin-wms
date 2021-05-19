@@ -86,11 +86,11 @@ std::size_t MapStyles::hash_value(const State& theState) const
 {
   try
   {
-    auto hash = boost::hash_value(field);
-    Dali::hash_combine(hash, boost::hash_value(parameter));
-    Dali::hash_combine(hash, Dali::hash_value(features));
-    Dali::hash_combine(hash, Dali::hash_value(feature_attributes, theState));
-    Dali::hash_combine(hash, Dali::hash_value(data_attributes, theState));
+    auto hash = Fmi::hash_value(field);
+    Fmi::hash_combine(hash, Fmi::hash_value(parameter));
+    Fmi::hash_combine(hash, Fmi::hash_value(features));
+    Fmi::hash_combine(hash, Dali::hash_value(feature_attributes, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(data_attributes, theState));
     return hash;
   }
   catch (...)

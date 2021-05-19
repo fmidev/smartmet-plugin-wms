@@ -782,12 +782,12 @@ std::size_t WindRoseLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    Dali::hash_combine(hash, Dali::hash_value(timezone));
-    Dali::hash_combine(hash, Dali::hash_value(starttimeoffset));
-    Dali::hash_combine(hash, Dali::hash_value(endtimeoffset));
-    Dali::hash_combine(hash, Dali::hash_value(windrose, theState));
-    Dali::hash_combine(hash, Dali::hash_value(observations, theState));
-    Dali::hash_combine(hash, Dali::hash_value(stations, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(timezone));
+    Fmi::hash_combine(hash, Fmi::hash_value(starttimeoffset));
+    Fmi::hash_combine(hash, Fmi::hash_value(endtimeoffset));
+    Fmi::hash_combine(hash, Dali::hash_value(windrose, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(observations, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(stations, theState));
     return hash;
   }
   catch (...)

@@ -107,13 +107,13 @@ std::size_t PostGISLayerBase::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    Dali::hash_combine(hash, Dali::hash_value(pgname));
-    Dali::hash_combine(hash, Dali::hash_value(schema));
-    Dali::hash_combine(hash, Dali::hash_value(table));
-    Dali::hash_combine(hash, Dali::hash_value(precision));
-    Dali::hash_combine(hash, Dali::hash_value(time_column));
-    Dali::hash_combine(hash, Dali::hash_value(time_condition));
-    Dali::hash_combine(hash, Dali::hash_value(filters, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(pgname));
+    Fmi::hash_combine(hash, Fmi::hash_value(schema));
+    Fmi::hash_combine(hash, Fmi::hash_value(table));
+    Fmi::hash_combine(hash, Fmi::hash_value(precision));
+    Fmi::hash_combine(hash, Fmi::hash_value(time_column));
+    Fmi::hash_combine(hash, Fmi::hash_value(time_condition));
+    Fmi::hash_combine(hash, Dali::hash_value(filters, theState));
     return hash;
   }
   catch (...)

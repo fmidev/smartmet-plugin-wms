@@ -118,18 +118,18 @@ std::size_t Station::hash_value(const State& theState) const
 {
   try
   {
-    auto hash = Dali::hash_value(fmisid);
-    Dali::hash_combine(hash, Dali::hash_value(lpnn));
-    Dali::hash_combine(hash, Dali::hash_value(wmo));
-    Dali::hash_combine(hash, Dali::hash_value(geoid));
-    Dali::hash_combine(hash, Dali::hash_value(longitude));
-    Dali::hash_combine(hash, Dali::hash_value(latitude));
-    Dali::hash_combine(hash, Dali::hash_value(symbol));
-    Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
-    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
-    Dali::hash_combine(hash, Dali::hash_value(title, theState));
-    Dali::hash_combine(hash, Dali::hash_value(dx));
-    Dali::hash_combine(hash, Dali::hash_value(dy));
+    auto hash = Fmi::hash_value(fmisid);
+    Fmi::hash_combine(hash, Fmi::hash_value(lpnn));
+    Fmi::hash_combine(hash, Fmi::hash_value(wmo));
+    Fmi::hash_combine(hash, Fmi::hash_value(geoid));
+    Fmi::hash_combine(hash, Fmi::hash_value(longitude));
+    Fmi::hash_combine(hash, Fmi::hash_value(latitude));
+    Fmi::hash_combine(hash, Fmi::hash_value(symbol));
+    Fmi::hash_combine(hash, Dali::hash_symbol(symbol, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(title, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(dx));
+    Fmi::hash_combine(hash, Fmi::hash_value(dy));
     return hash;
   }
   catch (...)

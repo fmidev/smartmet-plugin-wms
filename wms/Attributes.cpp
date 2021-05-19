@@ -269,41 +269,41 @@ std::size_t Attributes::hash_value(const State& theState) const
   try
   {
     std::size_t hash = 0;  // to prevent zero hash value
-    Dali::hash_combine(hash, Dali::hash_value(attributes));
+    Fmi::hash_combine(hash, Fmi::hash_value(attributes));
 
     // Special attributes. See also State::addAttributes
 
     auto iri = getLocalIri("filter");
     if (iri)
-      Dali::hash_combine(hash, theState.getFilterHash(*iri));
+      Fmi::hash_combine(hash, theState.getFilterHash(*iri));
 
     iri = getLocalIri("marker");
     if (iri)
-      Dali::hash_combine(hash, theState.getMarkerHash(*iri));
+      Fmi::hash_combine(hash, theState.getMarkerHash(*iri));
 
     iri = getLocalIri("marker-start");
     if (iri)
-      Dali::hash_combine(hash, theState.getMarkerHash(*iri));
+      Fmi::hash_combine(hash, theState.getMarkerHash(*iri));
 
     iri = getLocalIri("marker-mid");
     if (iri)
-      Dali::hash_combine(hash, theState.getMarkerHash(*iri));
+      Fmi::hash_combine(hash, theState.getMarkerHash(*iri));
 
     iri = getLocalIri("marker-end");
     if (iri)
-      Dali::hash_combine(hash, theState.getMarkerHash(*iri));
+      Fmi::hash_combine(hash, theState.getMarkerHash(*iri));
 
     iri = getLocalIri("fill");
     if (iri)
-      Dali::hash_combine(hash, theState.getPatternHash(*iri));
+      Fmi::hash_combine(hash, theState.getPatternHash(*iri));
 
     iri = getLocalIri("linearGradient");
     if (iri)
-      Dali::hash_combine(hash, theState.getGradientHash(*iri));
+      Fmi::hash_combine(hash, theState.getGradientHash(*iri));
 
     iri = getLocalIri("radialGradient");
     if (iri)
-      Dali::hash_combine(hash, theState.getGradientHash(*iri));
+      Fmi::hash_combine(hash, theState.getGradientHash(*iri));
 
     return hash;
   }

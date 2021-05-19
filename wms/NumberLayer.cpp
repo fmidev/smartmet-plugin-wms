@@ -1526,7 +1526,7 @@ std::size_t NumberLayer::hash_value(const State& theState) const
   {
     // Disable caching of observation layers
     if (theState.isObservation(producer))
-      return invalid_hash;
+      return Fmi::bad_hash;
 
     auto hash = Layer::hash_value(theState);
 
@@ -1534,20 +1534,20 @@ std::size_t NumberLayer::hash_value(const State& theState) const
     {
       auto q = getModel(theState);
       if (q)
-        Dali::hash_combine(hash, Engine::Querydata::hash_value(q));
+        Fmi::hash_combine(hash, Engine::Querydata::hash_value(q));
     }
 
-    Dali::hash_combine(hash, Dali::hash_value(parameter));
-    Dali::hash_combine(hash, Dali::hash_value(unit_conversion));
-    Dali::hash_combine(hash, Dali::hash_value(multiplier));
-    Dali::hash_combine(hash, Dali::hash_value(offset));
-    Dali::hash_combine(hash, Dali::hash_value(positions, theState));
-    Dali::hash_combine(hash, Dali::hash_value(minvalues));
-    Dali::hash_combine(hash, Dali::hash_value(maxdistance));
-    Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
-    Dali::hash_combine(hash, Dali::hash_value(scale));
-    Dali::hash_combine(hash, Dali::hash_value(label, theState));
-    Dali::hash_combine(hash, Dali::hash_value(numbers, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(parameter));
+    Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
+    Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
+    Fmi::hash_combine(hash, Fmi::hash_value(offset));
+    Fmi::hash_combine(hash, Dali::hash_value(positions, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(minvalues));
+    Fmi::hash_combine(hash, Fmi::hash_value(maxdistance));
+    Fmi::hash_combine(hash, Dali::hash_symbol(symbol, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(scale));
+    Fmi::hash_combine(hash, Dali::hash_value(label, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(numbers, theState));
     return hash;
   }
   catch (...)

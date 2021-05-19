@@ -1822,7 +1822,7 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
   {
     // Disable caching of observation layers
     if (theState.isObservation(producer))
-      return invalid_hash;
+      return Fmi::bad_hash;
 
     auto hash = Layer::hash_value(theState);
 
@@ -1830,28 +1830,28 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
     {
       auto q = getModel(theState);
       if (q)
-        Dali::hash_combine(hash, Engine::Querydata::hash_value(q));
+        Fmi::hash_combine(hash, Engine::Querydata::hash_value(q));
     }
 
-    Dali::hash_combine(hash, Dali::hash_value(direction));
-    Dali::hash_combine(hash, Dali::hash_value(speed));
-    Dali::hash_combine(hash, Dali::hash_value(u));
-    Dali::hash_combine(hash, Dali::hash_value(v));
-    Dali::hash_combine(hash, Dali::hash_value(unit_conversion));
-    Dali::hash_combine(hash, Dali::hash_value(multiplier));
-    Dali::hash_combine(hash, Dali::hash_value(offset));
-    Dali::hash_combine(hash, Dali::hash_value(minrotationspeed));
-    Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
-    Dali::hash_combine(hash, Dali::hash_value(scale));
-    Dali::hash_combine(hash, Dali::hash_value(southflop));
-    Dali::hash_combine(hash, Dali::hash_value(northflop));
-    Dali::hash_combine(hash, Dali::hash_value(flip));
-    Dali::hash_combine(hash, Dali::hash_value(positions, theState));
-    Dali::hash_combine(hash, Dali::hash_value(dx));
-    Dali::hash_combine(hash, Dali::hash_value(dy));
-    Dali::hash_combine(hash, Dali::hash_value(minvalues));
-    Dali::hash_combine(hash, Dali::hash_value(maxdistance));
-    Dali::hash_combine(hash, Dali::hash_value(arrows, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(direction));
+    Fmi::hash_combine(hash, Fmi::hash_value(speed));
+    Fmi::hash_combine(hash, Fmi::hash_value(u));
+    Fmi::hash_combine(hash, Fmi::hash_value(v));
+    Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
+    Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
+    Fmi::hash_combine(hash, Fmi::hash_value(offset));
+    Fmi::hash_combine(hash, Fmi::hash_value(minrotationspeed));
+    Fmi::hash_combine(hash, Dali::hash_symbol(symbol, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(scale));
+    Fmi::hash_combine(hash, Fmi::hash_value(southflop));
+    Fmi::hash_combine(hash, Fmi::hash_value(northflop));
+    Fmi::hash_combine(hash, Fmi::hash_value(flip));
+    Fmi::hash_combine(hash, Dali::hash_value(positions, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(dx));
+    Fmi::hash_combine(hash, Fmi::hash_value(dy));
+    Fmi::hash_combine(hash, Fmi::hash_value(minvalues));
+    Fmi::hash_combine(hash, Fmi::hash_value(maxdistance));
+    Fmi::hash_combine(hash, Dali::hash_value(arrows, theState));
     return hash;
   }
   catch (...)

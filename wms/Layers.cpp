@@ -2,7 +2,6 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "LayerFactory.h"
-#include <boost/functional/hash.hpp>
 #include <ctpp2/CDT.hpp>
 #include <macgyver/Exception.h>
 

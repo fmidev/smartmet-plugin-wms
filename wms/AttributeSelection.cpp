@@ -107,11 +107,11 @@ std::size_t AttributeSelection::hash_value(const State& theState) const
   try
   {
     std::size_t hash = 0;
-    Dali::hash_combine(hash, Dali::hash_value(value));
-    Dali::hash_combine(hash, Dali::hash_value(lolimit));
-    Dali::hash_combine(hash, Dali::hash_value(hilimit));
-    Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
-    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(value));
+    Fmi::hash_combine(hash, Fmi::hash_value(lolimit));
+    Fmi::hash_combine(hash, Fmi::hash_value(hilimit));
+    Fmi::hash_combine(hash, Dali::hash_symbol(symbol, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
     return hash;
   }
   catch (...)

@@ -164,18 +164,18 @@ std::size_t Label::hash_value(const State& /* theState */) const
 {
   try
   {
-    auto hash = Dali::hash_value(dx);
-    Dali::hash_combine(hash, Dali::hash_value(dy));
-    Dali::hash_combine(hash, Dali::hash_value(orientation));
-    Dali::hash_combine(hash, Dali::hash_value(unit_conversion));
-    Dali::hash_combine(hash, Dali::hash_value(multiplier));
-    Dali::hash_combine(hash, Dali::hash_value(offset));
-    Dali::hash_combine(hash, Dali::hash_value(missing));
-    Dali::hash_combine(hash, Dali::hash_value(precision));
-    Dali::hash_combine(hash, Dali::hash_value(prefix));
-    Dali::hash_combine(hash, Dali::hash_value(suffix));
-    Dali::hash_combine(hash, Dali::hash_value(plusprefix));
-    Dali::hash_combine(hash, Dali::hash_value(minusprefix));
+    auto hash = Fmi::hash_value(dx);
+    Fmi::hash_combine(hash, Fmi::hash_value(dy));
+    Fmi::hash_combine(hash, Fmi::hash_value(orientation));
+    Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
+    Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
+    Fmi::hash_combine(hash, Fmi::hash_value(offset));
+    Fmi::hash_combine(hash, Fmi::hash_value(missing));
+    Fmi::hash_combine(hash, Fmi::hash_value(precision));
+    Fmi::hash_combine(hash, Fmi::hash_value(prefix));
+    Fmi::hash_combine(hash, Fmi::hash_value(suffix));
+    Fmi::hash_combine(hash, Fmi::hash_value(plusprefix));
+    Fmi::hash_combine(hash, Fmi::hash_value(minusprefix));
     return hash;
   }
   catch (...)

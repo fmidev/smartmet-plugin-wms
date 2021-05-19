@@ -293,18 +293,18 @@ std::size_t LocationLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    Dali::hash_combine(hash, Dali::hash_value(keyword));
-    Dali::hash_combine(hash, Dali::hash_value(mindistance));
-    Dali::hash_combine(hash, Dali::hash_value(countries));
-    Dali::hash_combine(hash, Dali::hash_value(symbol));
-    Dali::hash_combine(hash, Dali::hash_symbol(symbol, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(keyword));
+    Fmi::hash_combine(hash, Fmi::hash_value(mindistance));
+    Fmi::hash_combine(hash, Fmi::hash_value(countries));
+    Fmi::hash_combine(hash, Fmi::hash_value(symbol));
+    Fmi::hash_combine(hash, Dali::hash_symbol(symbol, theState));
 
     for (const auto& name_symbol : symbols)
     {
-      Dali::hash_combine(hash, Dali::hash_value(name_symbol.first));
+      Fmi::hash_combine(hash, Fmi::hash_value(name_symbol.first));
       for (const auto& selection : name_symbol.second)
       {
-        Dali::hash_combine(hash, Dali::hash_value(selection, theState));
+        Fmi::hash_combine(hash, Dali::hash_value(selection, theState));
       }
     }
     return hash;

@@ -55,8 +55,8 @@ std::size_t Smoother::hash_value(const State& /* theState */) const
 {
   try
   {
-    auto hash = Dali::hash_value(size);
-    Dali::hash_combine(hash, Dali::hash_value(degree));
+    auto hash = Fmi::hash_value(size);
+    Fmi::hash_combine(hash, Fmi::hash_value(degree));
     return hash;
   }
   catch (...)

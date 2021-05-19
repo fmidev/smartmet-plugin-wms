@@ -121,8 +121,8 @@ std::size_t TranslationLayer::hash_value(const State& theState) const
   try
   {
     auto hash = Layer::hash_value(theState);
-    Dali::hash_combine(hash, Dali::hash_value(tag));
-    Dali::hash_combine(hash, Dali::hash_value(translations));
+    Fmi::hash_combine(hash, Fmi::hash_value(tag));
+    Fmi::hash_combine(hash, Fmi::hash_value(translations));
     return hash;
   }
   catch (...)

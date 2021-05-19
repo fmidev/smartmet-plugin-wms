@@ -166,17 +166,17 @@ std::size_t Product::hash_value(const State& theState) const
 {
   try
   {
-    // Note: Dali::hash_combine propagates invalid_hash results to final hash value
-    auto hash = Dali::hash_value(svg_tmpl);
-    Dali::hash_combine(hash, Dali::hash_value(svg_tmpl));
-    Dali::hash_combine(hash, Dali::hash_value(type));
-    Dali::hash_combine(hash, Dali::hash_value(width));
-    Dali::hash_combine(hash, Dali::hash_value(height));
-    Dali::hash_combine(hash, Dali::hash_value(title));
-    Dali::hash_combine(hash, Dali::hash_value(defs, theState));
-    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
-    Dali::hash_combine(hash, Dali::hash_value(views, theState));
-    Dali::hash_combine(hash, Dali::hash_value(png, theState));
+    // Note: Fmi::hash_combine propagates Fmi::bad_hash results to final hash value
+    auto hash = Fmi::hash_value(svg_tmpl);
+    Fmi::hash_combine(hash, Fmi::hash_value(svg_tmpl));
+    Fmi::hash_combine(hash, Fmi::hash_value(type));
+    Fmi::hash_combine(hash, Fmi::hash_value(width));
+    Fmi::hash_combine(hash, Fmi::hash_value(height));
+    Fmi::hash_combine(hash, Fmi::hash_value(title));
+    Fmi::hash_combine(hash, Dali::hash_value(defs, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(views, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(png, theState));
     return hash;
   }
   catch (...)

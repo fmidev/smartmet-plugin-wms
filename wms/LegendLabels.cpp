@@ -101,13 +101,13 @@ std::size_t LegendLabels::hash_value(const State& theState) const
 {
   try
   {
-    auto hash = Dali::hash_value(type);
-    Dali::hash_combine(hash, Dali::hash_value(format));
-    Dali::hash_combine(hash, Dali::hash_value(dx));
-    Dali::hash_combine(hash, Dali::hash_value(dy));
-    Dali::hash_combine(hash, Dali::hash_value(separator));
-    Dali::hash_combine(hash, Dali::hash_value(conversions));
-    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
+    auto hash = Fmi::hash_value(type);
+    Fmi::hash_combine(hash, Fmi::hash_value(format));
+    Fmi::hash_combine(hash, Fmi::hash_value(dx));
+    Fmi::hash_combine(hash, Fmi::hash_value(dy));
+    Fmi::hash_combine(hash, Fmi::hash_value(separator));
+    Fmi::hash_combine(hash, Fmi::hash_value(conversions));
+    Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
     return hash;
   }
   catch (...)

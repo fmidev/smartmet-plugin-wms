@@ -413,7 +413,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
 
     std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;
-    Dali::hash_combine(valueshash, options.data_hash_value());
+    Fmi::hash_combine(valueshash, options.data_hash_value());
 
     // Select the data
 
@@ -474,18 +474,18 @@ std::size_t Intersection::hash_value(const State& theState) const
     std::size_t hash = 0;
 
     if (producer)
-      Dali::hash_combine(hash, Engine::Querydata::hash_value(theState.get(*producer)));
+      Fmi::hash_combine(hash, Engine::Querydata::hash_value(theState.get(*producer)));
 
-    Dali::hash_combine(hash, Dali::hash_value(lolimit));
-    Dali::hash_combine(hash, Dali::hash_value(hilimit));
-    Dali::hash_combine(hash, Dali::hash_value(value));
-    Dali::hash_combine(hash, Dali::hash_value(level));
-    Dali::hash_combine(hash, Dali::hash_value(producer));
-    Dali::hash_combine(hash, Dali::hash_value(parameter));
-    Dali::hash_combine(hash, Dali::hash_value(interpolation));
-    Dali::hash_combine(hash, Dali::hash_value(unit_conversion));
-    Dali::hash_combine(hash, Dali::hash_value(multiplier));
-    Dali::hash_combine(hash, Dali::hash_value(offset));
+    Fmi::hash_combine(hash, Fmi::hash_value(lolimit));
+    Fmi::hash_combine(hash, Fmi::hash_value(hilimit));
+    Fmi::hash_combine(hash, Fmi::hash_value(value));
+    Fmi::hash_combine(hash, Fmi::hash_value(level));
+    Fmi::hash_combine(hash, Fmi::hash_value(producer));
+    Fmi::hash_combine(hash, Fmi::hash_value(parameter));
+    Fmi::hash_combine(hash, Fmi::hash_value(interpolation));
+    Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
+    Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
+    Fmi::hash_combine(hash, Fmi::hash_value(offset));
     return hash;
   }
   catch (...)

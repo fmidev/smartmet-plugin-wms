@@ -57,9 +57,9 @@ std::size_t Observation::hash_value(const State& theState) const
 {
   try
   {
-    auto hash = Dali::hash_value(parameter);
-    Dali::hash_combine(hash, Dali::hash_value(label, theState));
-    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
+    auto hash = Fmi::hash_value(parameter);
+    Fmi::hash_combine(hash, Dali::hash_value(label, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
     return hash;
   }
   catch (...)

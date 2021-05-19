@@ -116,9 +116,9 @@ std::size_t View::hash_value(const State& theState) const
   try
   {
     auto hash = Properties::hash_value(theState);
-    Dali::hash_combine(hash, Dali::hash_value(qid));
-    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
-    Dali::hash_combine(hash, Dali::hash_value(layers, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(qid));
+    Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(layers, theState));
     return hash;
   }
   catch (...)

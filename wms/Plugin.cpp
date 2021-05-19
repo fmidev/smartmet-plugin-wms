@@ -180,7 +180,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 
     auto product_hash = product.hash_value(theState);
 
-    if (product_hash != invalid_hash)
+    if (product_hash != Fmi::bad_hash)
     {
       theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
 
@@ -331,7 +331,7 @@ void Plugin::formatResponse(const std::string &theSvg,
       else
         throw Fmi::Exception(BCP, "Cannot convert SVG to unknown format '" + theType + "'");
 
-      if (theHash != invalid_hash)
+      if (theHash != Fmi::bad_hash)
       {
 #ifdef MYDEBUG
         std::cout << "Inserting product to cache with hash " << theHash << std::endl;
@@ -1476,7 +1476,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     // We always return valid ETags
 
-    if (product_hash != invalid_hash)
+    if (product_hash != Fmi::bad_hash)
     {
       theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
 
@@ -1645,7 +1645,7 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
     }
 
     formatResponse(
-        output, product.type, theRequest, theResponse, theState.useTimer(), product, invalid_hash);
+        output, product.type, theRequest, theResponse, theState.useTimer(), product, Fmi::bad_hash);
 
     return WMSQueryStatus::OK;
   }

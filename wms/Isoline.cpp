@@ -77,10 +77,10 @@ std::size_t Isoline::hash_value(const State& theState) const
 {
   try
   {
-    auto hash = Dali::hash_value(qid);
-    Dali::hash_combine(hash, Dali::hash_value(value));
-    Dali::hash_combine(hash, Dali::hash_value(attributes, theState));
-    Dali::hash_combine(hash, Dali::hash_value(label, theState));
+    auto hash = Fmi::hash_value(qid);
+    Fmi::hash_combine(hash, Fmi::hash_value(value));
+    Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(label, theState));
     return hash;
   }
   catch (...)

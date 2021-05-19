@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.5.17
-Release: 2%{?dist}.fmi
+Version: 21.5.19
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -132,6 +132,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed May 19 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.19-1.fmi
+- Use FMI hash functions, boost::hash_combine produces too many collisions
+
 * Mon May 17 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.17-2.fmi
 - Fixed ArrowLayer exception handling not to dereference uninitialized optional values
 
