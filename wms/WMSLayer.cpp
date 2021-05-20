@@ -129,7 +129,7 @@ Json::Value process_symbol_group_json(const Json::Value& jsonTemplate,
   unsigned int header_ypos = ypos + *lgs.layout.param_name_yoffset;
   unsigned int header_xpos = xpos + *lgs.layout.legend_xoffset;
 
-  for (auto lgi : legendGraphicInfo)
+  for (const auto& lgi : legendGraphicInfo)
   {
     std::string symbolName = lgi.asString("symbol");
 
@@ -855,7 +855,7 @@ unsigned int isoband_legend_height(const Json::Value& json)
     if (!layersJson.isNull() && layersJson.isArray())
     {
       unsigned int size = 0;
-      for (auto layer : layersJson)
+      for (const auto& layer : layersJson)
       {
         unsigned int sizeOfIsobands = isoband_legend_height(layer);
         if (sizeOfIsobands > size)
@@ -902,7 +902,7 @@ std::map<std::string, Json::Value> readLegendFiles(const std::string& wmsroot,
   std::map<std::string, Json::Value> customer_specific =
       readLegendDirectory(wmsroot + "/customers/" + customer + "/legends/templates", cache);
   // Merge and replace common templates with customer specific templates
-  for (auto t : customer_specific)
+  for (const auto& t : customer_specific)
     if (legend_templates.find(t.first) == legend_templates.end())
       legend_templates.insert(std::make_pair(t.first, t.second));
     else
@@ -1079,7 +1079,7 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
 
   // Vector of symbol groups for PrecipitationForm, CloudBase2, ...
   NamedLegendGraphicInfo lgiSymbols;
-  for (auto lgi : legendGraphicInfo)
+  for (const auto& lgi : legendGraphicInfo)
   {
     std::string key;
     std::string layerType = lgi.asString("layer_type");
@@ -1167,7 +1167,7 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const WMSLegendGraphicSettings& s
       if (!layersJson.isNull() && layersJson.isArray() &&
           actualSettings.layout.symbol_group_y_padding)
       {
-        for (auto layerJson : layersJson)
+        for (const auto& layerJson : layersJson)
         {
           auto layerTypeJson = layerJson.get("layer_type", nulljson);
           if (!layerTypeJson.isNull())
@@ -1274,7 +1274,7 @@ bool WMSLayer::isValidStyle(const std::string& theStyle) const
 {
   try
   {
-    for (auto style : itsStyles)
+    for (const auto& style : itsStyles)
       if (style.name == theStyle)
         return true;
 
@@ -1378,7 +1378,7 @@ std::string WMSLayer::info() const
 std::ostream& operator<<(std::ostream& ost, const LegendGraphicInfoItem& lgi)
 {
   Json::StyledWriter writer;
-  for (auto elem : lgi.info)
+  for (const auto& elem : lgi.info)
   {
     std::cout << elem.first << ":\n" << writer.write(elem.second) << std::endl;
   }
@@ -1389,7 +1389,7 @@ std::ostream& operator<<(std::ostream& ost, const LegendGraphicInfoItem& lgi)
 std::ostream& operator<<(std::ostream& ost, const LegendGraphicInfo& lgi)
 {
   Json::StyledWriter writer;
-  for (auto elem : lgi)
+  for (const auto& elem : lgi)
   {
     std::cout << elem << std::endl;
   }
@@ -1430,10 +1430,10 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
         << "eastBoundLongitude=" << layer.geographicBoundingBox.xMax << " "
         << "northBoundLatitude=" << layer.geographicBoundingBox.yMax << "\n"
         << "crs:";
-    for (auto c : layer.refs)
+    for (const auto& c : layer.refs)
       ost << c.first << "=" << c.second.proj << " ";
     ost << "styles:";
-    for (auto style : layer.itsStyles)
+    for (const auto& style : layer.itsStyles)
       ost << style.name << " ";
     if (layer.itsStyles.size() > 0)
       ost << " \ncustomer: " << layer.customer << "\n";

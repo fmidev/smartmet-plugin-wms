@@ -131,7 +131,7 @@ void set_layer_elements(WMSLayerHierarchy& lh)
   bool identicalTimeDimension = true;
   bool identicalElevationDimension = true;
 
-  for (auto item : leaf_layers)
+  for (const auto& item : leaf_layers)
   {
     if (!is_identical(first_item, *item, WMSLayerHierarchy::ElementType::geo_bbox))
       identicalGeographicBoundingBox = false;

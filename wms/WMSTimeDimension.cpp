@@ -146,7 +146,7 @@ std::string StepTimeDimension::makeCapabilities(const boost::optional<std::strin
     auto startt = (starttime ? parse_time(*starttime) : boost::posix_time::min_date_time);
     auto endt = (endtime ? parse_time(*endtime) : boost::posix_time::max_date_time);
 
-    for (auto& step : itsTimesteps)
+    for (const auto& step : itsTimesteps)
     {
       if (step >= startt && step <= endt)
         ret.push_back(Fmi::to_iso_extended_string(step) + "Z");
@@ -384,10 +384,8 @@ std::ostream& operator<<(std::ostream& ost, const StepTimeDimension& timeDimensi
   {
     auto timesteps = timeDimension.getTimeSteps();
 
-    for (auto& step : timesteps)
-    {
+    for (const auto& step : timesteps)
       ost << step << " ";
-    }
 
     ost << std::endl;
 

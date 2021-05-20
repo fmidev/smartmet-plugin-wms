@@ -101,7 +101,7 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
               {
                 std::string language_code = language_codes[k];
                 std::string tr = translation[language_code.c_str()];
-                for (auto p : param_names)
+                for (const auto& p : param_names)
                 {
                   LegendGraphicParameter& lgp = parameters[p];
                   lgp.translations.insert(std::make_pair(language_code, tr));

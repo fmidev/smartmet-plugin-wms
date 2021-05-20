@@ -213,7 +213,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   // std::cout << valid_time << "TIMEZONE " << tz << "\n";
 
   T::ParamValue_vec contourValues;
-  for (auto value : isovalues)
+  for (const auto& value : isovalues)
     contourValues.push_back(value);
 
   // Alter units if requested

@@ -41,7 +41,7 @@ std::string get_json_element_value(const Json::Value& json, const std::string& k
   boost::algorithm::split(keys, keyStr, boost::is_any_of("."), boost::token_compress_on);
 
   const Json::Value* jsonPtr = &json;
-  for (auto key : keys)
+  for (const auto& key : keys)
   {
     if (jsonPtr->isMember(key))
     {
@@ -65,7 +65,7 @@ void rename_json_element(const Json::Value& json,
   Json::Value nulljson;
   const Json::Value* to = &json;
   bool found = false;
-  for (auto key : keys)
+  for (const auto& key : keys)
   {
     found = false;
     if (to->isMember(key))
@@ -157,7 +157,7 @@ Json::Value merge_layers(const std::vector<Json::Value>& layers)
 
   // Store ids of layers in defs-section of first layer
   std::set<std::string> defsLayerIdSet;
-  for (auto layer : retDefsLayers)
+  for (const auto& layer : retDefsLayers)
   {
     std::string layerId = get_json_element_value(layer, "attributes.id");
     if (!layerId.empty())
@@ -180,7 +180,7 @@ Json::Value merge_layers(const std::vector<Json::Value>& layers)
                                                   currentStyleNames.end());
         const Json::Value& fromDefsStyles = fromDefs["styles"];
         Json::Value::Members fromStyleMemberNames = fromDefsStyles.getMemberNames();
-        for (auto stylename : fromStyleMemberNames)
+        for (const auto& stylename : fromStyleMemberNames)
         {
           // If style with same name does not exist add it
           if (currentStyleNameSet.find(stylename) == currentStyleNameSet.end())
@@ -193,7 +193,7 @@ Json::Value merge_layers(const std::vector<Json::Value>& layers)
       if (fromDefs.isMember("layers"))
       {
         const auto& defsLayers = fromDefs["layers"];
-        for (auto layer : defsLayers)
+        for (const auto& layer : defsLayers)
         {
           std::string layerId = get_json_element_value(layer, "attributes.id");
           if (layerId.empty() || defsLayerIdSet.find(layerId) == defsLayerIdSet.end())
@@ -212,7 +212,7 @@ Json::Value merge_layers(const std::vector<Json::Value>& layers)
       Json::Value::Members fromRefNames = fromRefs.getMemberNames();
       Json::Value::Members currentRefNames = retRefs.getMemberNames();
       std::set<std::string> currentRefNameSet(currentRefNames.begin(), currentRefNames.end());
-      for (auto refname : fromRefNames)
+      for (const auto& refname : fromRefNames)
       {
         // If ref with same name does not exist add it
         if (currentRefNameSet.find(refname) == currentRefNameSet.end())
@@ -228,7 +228,7 @@ Json::Value merge_layers(const std::vector<Json::Value>& layers)
       Json::Value fromStyles = fromLayer.get("styles", nulljson);
       if (!fromStyles.isNull() && fromStyles.isArray())
       {
-        for (auto fromStyle : fromStyles)
+        for (const auto& fromStyle : fromStyles)
         {
           retStyles.append(fromStyle);
         }
@@ -239,7 +239,7 @@ Json::Value merge_layers(const std::vector<Json::Value>& layers)
     auto fromViews = fromLayer.get("views", nulljson);
     if (!fromViews.isNull() && fromViews.isArray())
     {
-      for (auto fromView : fromViews)
+      for (const auto& fromView : fromViews)
       {
         retViews.append(fromView);
       }
@@ -785,11 +785,13 @@ Json::Value WMSGetMap::json() const
   try
   {
     std::vector<Json::Value> jsonlayers;
-    for (auto map_info : itsParameters.map_info_vector)
+    for (const auto& map_info : itsParameters.map_info_vector)
     {
       Json::Value json = itsConfig.json(map_info.name);
       if (!map_info.style.empty())
+      {
         SmartMet::Plugin::WMS::useStyle(json, map_info.style);
+      }
       jsonlayers.push_back(json);
     }
 

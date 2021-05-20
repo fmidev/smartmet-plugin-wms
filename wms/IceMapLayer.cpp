@@ -87,7 +87,7 @@ std::vector<std::string> getAttributeColumns(const std::map<std::string, std::st
                                              boost::optional<boost::posix_time::ptime> time)
 {
   std::vector<std::string> column_name_vector;
-  for (auto col : attribute_columns)
+  for (const auto& col : attribute_columns)
   {
     if (parameters.find(col) == parameters.end())
       continue;
@@ -256,7 +256,7 @@ void IceMapLayer::init(const Json::Value& theJson,
       std::string cols = json.asString();
       std::vector<std::string> columns;
       boost::algorithm::split(columns, cols, boost::algorithm::is_any_of(","));
-      for (auto col : columns)
+      for (const auto& col : columns)
       {
         itsParameters.insert(make_pair(col, col));
       }
@@ -870,7 +870,7 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
   points.push_back(points.front());
 
   std::string wktString = "POLYGON((";
-  for (auto p : points)
+  for (const auto& p : points)
   {
     if (wktString.length() > 9)
       wktString += ", ";

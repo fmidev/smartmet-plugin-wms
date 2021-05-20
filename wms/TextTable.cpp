@@ -61,7 +61,7 @@ CTPP::CDT get_rect_cdt(unsigned int x, unsigned int y, unsigned int w, unsigned 
 text_dimension_t get_row_dimension(const RowCellInfo& rci)
 {
   text_dimension_t ret;
-  for (auto ci : rci)
+  for (const auto& ci : rci)
   {
     ret.width += ci.dimension.width;
     if (ci.dimension.height > ret.height)
@@ -112,7 +112,7 @@ void TextTable::addTableAttributes(const Json::Value& attributes, std::string ta
     if (!frameJson.isNull())
     {
       Json::Value::Members members = frameJson.getMemberNames();
-      for (auto name : members)
+      for (const auto& name : members)
       {
         auto jsonValue = frameJson.get(name, nulljson);
         if (!jsonValue.isNull())
@@ -134,7 +134,7 @@ void TextTable::addTableAttributes(const Json::Value& attributes, std::string ta
       if (!textJson.isNull())
       {
         Json::Value::Members members = textJson.getMemberNames();
-        for (auto name : members)
+        for (const auto& name : members)
         {
           auto jsonValue = textJson.get(name, nulljson);
           if (!jsonValue.isNull())
@@ -163,7 +163,7 @@ void TextTable::addTableAttributes(const Json::Value& attributes, std::string ta
           {
             Json::Value::Members members = textJs.getMemberNames();
             Attributes textAttributes;
-            for (auto name : members)
+            for (const auto& name : members)
             {
               auto jsonValue = textJs.get(name, nulljson);
               if (!jsonValue.isNull())
