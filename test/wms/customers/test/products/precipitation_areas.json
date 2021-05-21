@@ -47,7 +47,7 @@
                 "layers":
                 [
                     {
-                        "qid": "l1",
+                        "qid": "l2",
                         "layer_type": "isoline",
                         "css": "isolines/precipitation_thick.css"
                     }
