@@ -71,7 +71,7 @@
 </defs>
 
 <g>
- <g font-family="Verdana" font-size="14" font-weight="bold" style="text-anchor:end">
+ <g font-family="Roboto" font-size="14" font-weight="bold" style="text-anchor:end">
   <g id="temperature_isobands">
    <use class="Temperature_24_26" xlink:href="#l1.temperature_24_26"/>
    <use class="Temperature_22_24" xlink:href="#l1.temperature_22_24"/>

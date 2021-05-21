@@ -126,7 +126,7 @@
   </g>
    <use style="fill:none; stroke:black" xlink:href="#mycircle"/>
   
-   <use font-family="Verdana" font-size="55" font-weight="bold" style="fill:yellow; filter:url(#myshadow); stroke:black; text-anchor:middle" x="250" xlink:href="#mytext" y="250"/>
+   <use font-family="Roboto" font-size="55" font-weight="bold" style="fill:yellow; filter:url(#myshadow); stroke:black; text-anchor:middle" x="250" xlink:href="#mytext" y="250"/>
   
  </g>
 </g>

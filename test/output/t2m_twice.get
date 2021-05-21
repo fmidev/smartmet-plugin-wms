@@ -135,7 +135,7 @@
    <use xlink:href="#l1.temperature_p16"/>
    <use xlink:href="#l1.temperature_p18"/>
   </g>
-  <text font-family="Verdana" font-size="14" font-weight="bold" style="text-anchor:end" x="480" y="20">2008-08-05 06:00</text>
+  <text font-family="Roboto" font-size="14" font-weight="bold" style="text-anchor:end" x="480" y="20">2008-08-05 06:00</text>
  </g>
  <g class="View2" id="view2" transform="translate(520,10)">
   <g id="view1_layer2_temperature_isobands">
@@ -163,7 +163,7 @@
    <use xlink:href="#l2.temperature_p16"/>
    <use xlink:href="#l2.temperature_p18"/>
   </g>
-  <text font-family="Verdana" font-size="14" font-weight="bold" style="text-anchor:end" x="480" y="20">2008-08-06 06:00</text>
+  <text font-family="Roboto" font-size="14" font-weight="bold" style="text-anchor:end" x="480" y="20">2008-08-06 06:00</text>
  </g>
 </g>
 

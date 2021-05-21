@@ -10,7 +10,7 @@
 .Precipitation_2_5	{ stroke: none; fill: rgb(255,205,20) }
 .Precipitation_5_10	{ stroke: none; fill: rgb(255,80,60) }
 .Precipitation_10_inf	{ stroke: none; fill: rgb(213,26,13) }
-.Number	{ fill: black; font-family: Verdana; font-size: 8px; text-anchor: middle }
+.Number	{ fill: black; font-family: Roboto; font-size: 8px; text-anchor: middle }
 
  ]]>
 </style>

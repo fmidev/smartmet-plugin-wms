@@ -14,7 +14,7 @@
 	{
 	    ".Label":
 	    {
-		"font": "Arial",
+		"font": "Roboto",
 		"font-size": 10,
 		"text-anchor": "middle"
 	    }

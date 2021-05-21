@@ -218,7 +218,7 @@
 			    },
 			    "text_attributes":
 			    {
-				"font-family": "Arial",
+				"font-family": "Roboto",
 				"font-size": "18",
 				"font-style": "normal",
 				"font-weight": "normal",
@@ -375,7 +375,7 @@
 			    },
 			    "text_attributes":
 			    {
-				"font-family": "Arial", // override database font
+				"font-family": "Roboto", // override database font
 				"font-size": "10",
 				"dx": "-9",
 				"dy": "13",
@@ -422,7 +422,7 @@
 			    },
 			    "text_attributes":
 			    {
-				"font-family": "Arial",
+				"font-family": "Roboto",
 				"font-size": "10",
 				"dx": "-5"
 			    }
@@ -448,7 +448,7 @@
 			    "where": "symbol_code=0",
  			    "attributes":
 			    {
-				"font-family": "Times",
+				"font-family": "Roboto",
 				"font-size": "10",
 				"font-style": "normal",
 				"font-weight": "normal",
@@ -476,7 +476,7 @@
 			    "where": "symbol_code=1",
  			    "attributes":
 			    {
-				"font-family": "Times",
+				"font-family": "Roboto",
 				"font-size": "10",
 				"font-style": "normal",
 				"font-weight": "normal",
@@ -504,7 +504,7 @@
 			    "where": "symbol_code=3",
  			    "attributes":
 			    {
-				"font-family": "Times",
+				"font-family": "Roboto",
 				"font-size": "10",
 				"font-style": "normal",
 				"font-weight": "normal",
@@ -532,7 +532,7 @@
 			{
 			    "attributes":
 			    {
-				"font-family": "Arial",
+				"font-family": "Roboto",
 				"font-size": "10",
 				"font-style": "normal",
 				"font-weight": "normal",
@@ -585,7 +585,7 @@
  			    "text_attributes":
 			    {
 // here you can override text attributes read from database
-//				"font-family": "Times",
+//				"font-family": "Roboto",
 //				"font-size": "8"
 //				"font-style": "normal",
 //				"font-weight": "normal"
@@ -612,7 +612,7 @@
 			    "where": "textstring IS NOT NULL and length(textstring) > 0",
 			    "text_attributes":
 			    {
-				"font-family": "Arial", // override database font
+				"font-family": "Roboto", // override database font
 				"font-size": "18",
 				"font-style": "normal",
 				"font-weight": "normal",
@@ -664,7 +664,7 @@
 			    },
 			    "text_attributes":
 			    {
-				"font-family": "Arial",
+				"font-family": "Roboto",
 				"font-size": "12",
 				"font-style": "normal",
 				"font-weight": "normal",
@@ -703,7 +703,7 @@
 		    {
 			"stroke": "black",
 			"stroke-width": 0.5,
-			"font-family": "Arial",
+			"font-family": "Roboto",
 			"font-size": "14",
 			"font-style": "normal",
 			"font-weight": "normal",
@@ -744,7 +744,7 @@
 		    {
 			"longitude": "20",
 			"latitude": "68",
-			"font-family": "Arial",
+			"font-family": "Roboto",
 			"font-weight": "normal",
 			"font-size": "36",
 			"text-anchor": "middle",
@@ -775,7 +775,7 @@
 		    "latitude": 67.7,
 		    "attributes": {
 			"text-anchor": "middle",
-			"font-family": "Arial",
+			"font-family": "Roboto",
 			"font-weight": "normal",
 			"font-size": "36"
 			}
@@ -797,7 +797,7 @@
 			{
 			    "attributes":
 			    {
-				"font-family": "Arial",
+				"font-family": "Roboto",
 				"font-size": "28",
 				"font-style": "normal",
 				"font-weight": "normal",
@@ -831,7 +831,7 @@
 			    },
 			    "text":
 			    {
-                            "font-family": "Arial",
+                            "font-family": "Roboto",
                             "font-size": "14",
                             "font-style": "normal",
                             "font-weight": "bold",
@@ -849,7 +849,7 @@
 			    },
 			    "text":
 			    {
-				"font-family": "Arial",
+				"font-family": "Roboto",
 				"font-size": "12",
 				"font-style": "normal",
 				"font-weight": "normal",
@@ -869,14 +869,14 @@
 			    "text":
 			    [
 				{
-				    "font-family": "Arial",
+				    "font-family": "Roboto",
 				    "font-size": "12",
 				    "font-style": "normal",
 				    "font-weight": "bold",
 				    "text-anchor": "start"
 				},
 				{
-				    "font-family": "Arial",
+				    "font-family": "Roboto",
 				    "font-size": "12",
 				    "font-style": "normal",
 				    "font-weight": "bold",
@@ -896,14 +896,14 @@
 			    "text":
 			    [
 				{
-				    "font-family": "Arial",
+				    "font-family": "Roboto",
 				    "font-size": "12",
 				    "font-style": "normal",
 				    "font-weight": "normal",
 				    "text-anchor": "start"
 				},
 				{
-				    "font-family": "Arial",
+				    "font-family": "Roboto",
 				    "font-size": "12",
 				    "font-style": "normal",
 				    "font-weight": "normal",
@@ -967,7 +967,7 @@
                             },
                             "text_attributes":
                             {
-                                "font-family": "Arial",
+                                "font-family": "Roboto",
                                 "font-size": "14",
                                 "font-style": "normal",
                                 "font-weight": "normal",
@@ -985,7 +985,7 @@
 		    {
 			"longitude": "9.0",
 			"latitude": "52.6",
-			"font-family": "Arial",
+			"font-family": "Roboto",
 			"font-weight": "normal",
 			"font-size": "10",
 			"text-anchor": "start",
@@ -1001,7 +1001,7 @@
 		    {
 			"longitude": "16.5",
 			"latitude": "52.6",
-			"font-family": "Arial",
+			"font-family": "Roboto",
 			"font-weight": "normal",
 			"font-size": "10",
 			"text-anchor": "start",
@@ -1017,7 +1017,7 @@
 		    {
 			"longitude": "24.0",
 			"latitude": "52.6",
-			"font-family": "Arial",
+			"font-family": "Roboto",
 			"font-weight": "normal",
 			"font-size": "10",
 			"text-anchor": "start",

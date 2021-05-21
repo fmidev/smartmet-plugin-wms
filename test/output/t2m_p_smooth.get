@@ -162,7 +162,7 @@
    <use xlink:href="#p1.pressure_1015"/>
    <use xlink:href="#p1.pressure_1020"/>
   </g>
-  <text font-family="Verdana" font-size="14" font-weight="bold" style="text-anchor:end" x="480" y="20">2008-08-05 06:00</text>
+  <text font-family="Roboto" font-size="14" font-weight="bold" style="text-anchor:end" x="480" y="20">2008-08-05 06:00</text>
  </g>
  <g class="View2" id="view2" transform="translate(520,10)">
   <g id="view2_temperature_isobands">
@@ -200,7 +200,7 @@
    <use xlink:href="#p2.pressure_1015"/>
    <use xlink:href="#p2.pressure_1020"/>
   </g>
-  <text font-family="Verdana" font-size="14" font-weight="bold" style="text-anchor:end" x="480" y="20">2008-08-05 06:00</text>
+  <text font-family="Roboto" font-size="14" font-weight="bold" style="text-anchor:end" x="480" y="20">2008-08-05 06:00</text>
  </g>
 </g>
 

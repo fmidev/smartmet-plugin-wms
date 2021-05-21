@@ -94,7 +94,7 @@
 		    {
 			"x": "250",
 			"y": "350",
-			"font-family": "Verdana",
+			"font-family": "Roboto",
 			"font-weight": "bold",
 			"font-size": "45",
 			"fill": "yellow",
@@ -114,7 +114,7 @@
 		    {
 			"x": "250",
 			"y": "250",
-			"font-family": "Verdana",
+			"font-family": "Roboto",
 			"font-weight": "bold",
 			"font-size": "55",
 			"fill": "yellow",

@@ -2,7 +2,7 @@
 <title>Demo product</title>
 <defs>
 <style type="text/css"><![CDATA[
- .Label { font:Arial; font-size:9; } .Units { font:Arial; font-size:14; }
+ .Label { font:Roboto; font-size:9; } .Units { font:Roboto; font-size:14; }
 .Temperature_inf_50	{ stroke:none; fill: rgb(154,8,117) }
 .Temperature_50_48	{ stroke:none; fill: rgb(198,26,155) }
 .Temperature_48_46	{ stroke:none; fill: rgb(230,62,200) }
@@ -291,7 +291,7 @@
   </g>
    <use id="europe_country_lines" style="fill:none; stroke:#222; stroke-width:0.3px" xlink:href="#l4"/>
   
-  <text font-family="Verdana" font-size="14" font-weight="bold" style="text-anchor:end" x="480" y="20">2008-08-05 06:00</text>
+  <text font-family="Roboto" font-size="14" font-weight="bold" style="text-anchor:end" x="480" y="20">2008-08-05 06:00</text>
   </g>
  </g>
 </g>

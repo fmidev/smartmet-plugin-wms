@@ -5,12 +5,12 @@
 	{
 	    ".Label":
 	    {
-		"font": "Arial",
+		"font": "Roboto",
 		"font-size": 9
 	    },
 	    ".Units":
 	    {
-		"font": "Arial",
+		"font": "Roboto",
 		"font-size": 14
 	    }
 	},

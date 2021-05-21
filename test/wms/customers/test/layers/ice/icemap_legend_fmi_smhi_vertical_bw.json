@@ -78,7 +78,7 @@
 	{
 	    "x": 40,
 	    "y": 15,
-	    "font-family": "Arial",
+	    "font-family": "Roboto",
 	    "font-size": "12",
 	    "font-style": "normal",
 	    "font-weight": "bold",
@@ -93,7 +93,7 @@
 	{
 	    "x": 245,
 	    "y": 15,
-	    "font-family": "Arial",
+	    "font-family": "Roboto",
 	    "font-size": "12",
 	    "font-style": "normal",
 	    "font-weight": "bold",
@@ -108,7 +108,7 @@
 	{
 	    "x": 285,
 	    "y": 15,
-	    "font-family": "Arial",
+	    "font-family": "Roboto",
 	    "font-size": "12",
 	    "font-style": "normal",
 	    "font-weight": "bold",
@@ -1063,7 +1063,7 @@
 	{
 	    "x": 260,
 	    "y": 395,
-	    "font-family": "Arial",
+	    "font-family": "Roboto",
 	    "font-size": "16",
 	    "font-style": "normal",
 	    "font-weight": "normal",

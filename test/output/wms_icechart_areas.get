@@ -3,8 +3,8 @@
 <defs>
 <style type="text/css"><![CDATA[
 
-.LegendText		{ stroke: none; fill: black; text-anchor: start; font-family: Verdana; font-size: 14 }
-.SmallLegendText	{ stroke: none; text-anchor: start; font-family: Arial; font-size: 10 }
+.LegendText		{ stroke: none; fill: black; text-anchor: start; font-family: Roboto; font-size: 14 }
+.SmallLegendText	{ stroke: none; text-anchor: start; font-family: Roboto; font-size: 10 }
 .Land			{ stroke: none; fill: rgb(246,246,246) }
 .Border			{ stroke: black; stroke-width: 0.3px; fill: none }
 .OpenWater		{ stroke: black; stroke-width: 0.2; fill: rgb(150,200,255) }
@@ -40,16 +40,16 @@
 .NordStreamBlockMarker     {  fill:none; stroke:  rgb(128,0,128); stroke-width: 1.5 }
 
 .StationMarker		{ fill: none; stroke: black; stroke-width: 0.2px }
-.StationName		{ fill: black; font-family: Verdana; font-size: 11; text-decoration: underline }
+.StationName		{ fill: black; font-family: Roboto; font-size: 11; text-decoration: underline }
 .WindRose		{ fill: none; stroke: black; stroke-width: 0.2px; stroke-dasharray: 3,3 }
 .RoseConnector		{ stroke: black; stroke-width: 0.2px; stroke-dasharray: 2,2 }
 .LightWind		{ fill: green; stroke: black; stroke-width: 0.5px }
 .ModerateWind		{ fill: yellow; stroke: black; stroke-width: 0.5px }
 .HeavyWind		{ fill: red; stroke: black; stroke-width: 0.5px }
-.RoseTemperature	{ fill: black; font-family: Verdana; font-size: 10 }
-.RoseMeanWind		{ fill: black; font-family: Verdana; font-size: 10; font-weight: bold; letter-spacing: -0.03em }
-.RoseMaxWind		{ fill: black; font-family: Verdana; font-size: 10 }
-.RoseLegendText		{ stroke: none; fill: black; text-anchor: end; font-family: Verdana; font-size: 10 }
+.RoseTemperature	{ fill: black; font-family: Roboto; font-size: 10 }
+.RoseMeanWind		{ fill: black; font-family: Roboto; font-size: 10; font-weight: bold; letter-spacing: -0.03em }
+.RoseMaxWind		{ fill: black; font-family: Roboto; font-size: 10 }
+.RoseLegendText		{ stroke: none; fill: black; text-anchor: end; font-family: Roboto; font-size: 10 }
 
  ]]>
 </style>
@@ -91,7 +91,7 @@ viewBox="0 0 1000 1000">
 </symbol>
 <symbol id="ice_thickness">
 <rect x="1" y="1" width="35" height="15" stroke="black" fill="white" />
-<text x="3" y="12" fill="black" font-family="Arial" font-size="12">20-40</text>
+<text x="3" y="12" fill="black" font-family="Roboto" font-size="12">20-40</text>
 </symbol>
 <symbol id="icecom">
 <svg xmlns="http://www.w3.org/2000/svg" width="7mm" height="2.5mm" viewBox="0 0 7 2.5">
@@ -192,7 +192,7 @@ viewBox="0 0 1000 1000">
 <symbol id="sea_surface_mean_temperature">
  <ellipse cx="16" cy="12" rx="15" ry="10"
   style="fill:white;stroke:black;stroke-width:1" />
- <text x="5" y="15" fill="black" font-family="Arial" font-size="12">2,1°</text>
+ <text x="5" y="15" fill="black" font-family="Roboto" font-size="12">2,1°</text>
 </symbol>
 <symbol id="strips_and_patches">
 <svg xml:space="preserve" width="6mm" height="6mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
@@ -212,7 +212,7 @@ viewBox="0 0 1000 1000">
 </pattern>
 <symbol id="watertemperature_isotherm">
 <line x1="1" y1="7" x2="10" y2="7" style="stroke:black;stroke-width:1"/>
- <text x="10" y="10" fill="black" font="Arial" font-size="12">2°</text>
+ <text x="10" y="10" fill="black" font="Roboto" font-size="12">2°</text>
 <line x1="22" y1="7" x2="30" y2="7" style="stroke:black;stroke-width:1"/>
 </symbol>
 

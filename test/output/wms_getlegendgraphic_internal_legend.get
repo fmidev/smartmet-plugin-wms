@@ -2,7 +2,7 @@
 <title>Demo product</title>
 <defs>
 <style type="text/css"><![CDATA[
- .Label { font:Arial; font-size:9; } .Units { font:Arial; font-size:14; }
+ .Label { font:Roboto; font-size:9; } .Units { font:Roboto; font-size:14; }
 .Temperature_inf_50	{ stroke:none; fill: rgb(154,8,117) }
 .Temperature_50_48	{ stroke:none; fill: rgb(198,26,155) }
 .Temperature_48_46	{ stroke:none; fill: rgb(230,62,200) }

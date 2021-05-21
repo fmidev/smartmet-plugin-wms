@@ -1,5 +1,5 @@
-.LegendText		{ stroke: none; fill: black; text-anchor: start; font-family: Verdana; font-size: 14 }
-.SmallLegendText	{ stroke: none; text-anchor: start; font-family: Arial; font-size: 10 }
+.LegendText		{ stroke: none; fill: black; text-anchor: start; font-family: Roboto; font-size: 14 }
+.SmallLegendText	{ stroke: none; text-anchor: start; font-family: Roboto; font-size: 10 }
 .Land			{ stroke: none; fill: rgb(246,246,246) }
 .Border			{ stroke: black; stroke-width: 0.3px; fill: none }
 .OpenWater		{ stroke: black; stroke-width: 0.2; fill: rgb(150,200,255) }
@@ -35,13 +35,13 @@
 .NordStreamBlockMarker     {  fill:none; stroke:  rgb(128,0,128); stroke-width: 1.5 }
 
 .StationMarker		{ fill: none; stroke: black; stroke-width: 0.2px }
-.StationName		{ fill: black; font-family: Verdana; font-size: 11; text-decoration: underline }
+.StationName		{ fill: black; font-family: Roboto; font-size: 11; text-decoration: underline }
 .WindRose		{ fill: none; stroke: black; stroke-width: 0.2px; stroke-dasharray: 3,3 }
 .RoseConnector		{ stroke: black; stroke-width: 0.2px; stroke-dasharray: 2,2 }
 .LightWind		{ fill: green; stroke: black; stroke-width: 0.5px }
 .ModerateWind		{ fill: yellow; stroke: black; stroke-width: 0.5px }
 .HeavyWind		{ fill: red; stroke: black; stroke-width: 0.5px }
-.RoseTemperature	{ fill: black; font-family: Verdana; font-size: 10 }
-.RoseMeanWind		{ fill: black; font-family: Verdana; font-size: 10; font-weight: bold; letter-spacing: -0.03em }
-.RoseMaxWind		{ fill: black; font-family: Verdana; font-size: 10 }
-.RoseLegendText		{ stroke: none; fill: black; text-anchor: end; font-family: Verdana; font-size: 10 }
+.RoseTemperature	{ fill: black; font-family: Roboto; font-size: 10 }
+.RoseMeanWind		{ fill: black; font-family: Roboto; font-size: 10; font-weight: bold; letter-spacing: -0.03em }
+.RoseMaxWind		{ fill: black; font-family: Roboto; font-size: 10 }
+.RoseLegendText		{ stroke: none; fill: black; text-anchor: end; font-family: Roboto; font-size: 10 }

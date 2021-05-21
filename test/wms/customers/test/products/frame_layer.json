@@ -43,7 +43,7 @@
 		    {
 			"stroke": "black",
 			"stroke-width": 2.0,
-			"font-family": "Arial",
+			"font-family": "Roboto",
 			"font-size": "14",
 			"font-style": "normal",
 			"font-weight": "normal",
@@ -59,7 +59,7 @@
 		    {
 			"longitude": "20",
 			"latitude": "67",
-			"font-family": "Arial",
+			"font-family": "Roboto",
 			"font-weight": "normal",
 			"font-size": "38",
 			"fill": "#18447e",

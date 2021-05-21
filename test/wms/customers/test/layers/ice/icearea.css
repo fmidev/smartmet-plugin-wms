@@ -1,4 +1,4 @@
-.LegendText		{ stroke: none; fill: black; text-anchor: start; font-family: Verdana; font-size: 14 }
+.LegendText		{ stroke: none; fill: black; text-anchor: start; font-family: Roboto; font-size: 14 }
 .Land			{ stroke: none; fill: rgb(246,246,246) }
 .Border			{ stroke: black; stroke-width: 0.3px; fill: none }
 .OpenWater		{ stroke: black; stroke-width: 0.5px; fill: rgb(150,200,255) }

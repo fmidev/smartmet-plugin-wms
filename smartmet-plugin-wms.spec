@@ -99,6 +99,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
+#TestRequires: google-roboto-fonts
 #TestRequires: zlib-devel
 #TestRequires: cairo-devel
 #TestRequires: redis
