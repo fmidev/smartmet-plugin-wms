@@ -14,6 +14,9 @@ ykjworld.get
 ; Stopped working
 map_sterea.get
 
+; Clipping problems
+map_tmerc.get
+
 ; Difficulties getting the globe right, requires a lot of sampling
 map_laea.get
 
