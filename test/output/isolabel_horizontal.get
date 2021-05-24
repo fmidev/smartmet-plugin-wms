@@ -2,7 +2,7 @@
 <title>Demo product</title>
 <defs>
 <style type="text/css"><![CDATA[
- .Label { font:Roboto; font-size:10; text-anchor:middle; }
+ .Label { font-family:Roboto; font-size:10; text-anchor:middle; }
 .Pressure	{ fill:none; stroke: #333; stroke-width: 1.5px }
 
  ]]>

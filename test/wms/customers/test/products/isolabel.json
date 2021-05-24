@@ -14,21 +14,21 @@
 	{
 	    ".Label":
 	    {
-		"font": "Roboto",
+		"font-family": "Roboto",
 		"font-size": 18,
 		"text-anchor": "middle",
 		"fill": "black"
 	    },
 	    ".LabelSmallBlue":
 	    {
-		"font": "Roboto",
+		"font-family": "Roboto",
 		"font-size": 24,
 		"text-anchor": "middle",
 		"fill": "blue"
 	    },
 	    ".LabelBigRed":
 	    {
-		"font": "Roboto",
+		"font-family": "Roboto",
 		"font-size": 36,
 		"text-anchor": "middle",
 		"fill": "red"

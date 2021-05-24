@@ -2,7 +2,7 @@
 <title>Temperature Overlay</title>
 <defs>
 <style type="text/css"><![CDATA[
- .Label { font:Roboto; font-size:9; } .Units { font:Roboto; font-size:14; }
+ .Label { font-family:Roboto; font-size:9; } .Units { font-family:Roboto; font-size:14; }
 .Number	{ fill: black; font-family: Roboto; font-size: 8px; text-anchor: middle }
 .ScandNumber	{ fill: black; font-family: Roboto; font-size: 16px; text-anchor: middle }
 

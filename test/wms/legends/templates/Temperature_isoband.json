@@ -5,12 +5,12 @@
 	{
 	    ".Label":
 	    {
-		"font": "Roboto",
+		"font-family": "Roboto",
 		"font-size": 9
 	    },
 	    ".Units":
 	    {
-		"font": "Roboto",
+		"font-family": "Roboto",
 		"font-size": 14
 	    }
 	},
