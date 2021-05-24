@@ -29,7 +29,7 @@ struct text_style_t
   std::string textanchor;
 
   text_style_t()
-      : fontfamily("Arial"),
+      : fontfamily("Roboto"),
         fontsize("10"),
         fontstyle("normal"),
         fontweight("normal"),
