@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.5.21
+Version: 21.5.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -56,6 +56,8 @@ Requires: fmt >= 7.1.3
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig
+# Default font for some layers:
+Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 21.3.29
 Requires: smartmet-library-grid-files >= 21.4.13
 Requires: smartmet-library-gis >= 21.5.20
@@ -133,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon May 24 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.24-1.fmi
+- Use Roboto as default font for some layers
+
 * Fri May 21 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.21-1.fmi
 - Repackaged due to a QEngine API change
 
