@@ -536,7 +536,7 @@ TableAttributes::TableAttributes()
   title.frame.add("fill", "white");
   title.frame.add("stroke", "black");
   title.frame.add("stroke-width", "0.5");
-  title.text.add("font-family", "Arial");
+  title.text.add("font-family", "Roboto");
   title.text.add("font-size", "14");
   title.text.add("font-style", "normal");
   title.text.add("font-weight", "normal");
@@ -545,13 +545,13 @@ TableAttributes::TableAttributes()
   // header
   header.frame = title.frame;
   Attributes col1;  // #1 column
-  col1.add("font-family", "Arial");
+  col1.add("font-family", "Roboto");
   col1.add("font-size", "14");
   col1.add("font-style", "normal");
   col1.add("font-weight", "normal");
   col1.add("text-anchor", "left");
   Attributes col2;  // #2 column and later
-  col2.add("font-family", "Arial");
+  col2.add("font-family", "Roboto");
   col2.add("font-size", "14");
   col2.add("font-style", "normal");
   col2.add("font-weight", "normal");
@@ -561,7 +561,7 @@ TableAttributes::TableAttributes()
 
   // footer
   footer.frame = title.frame;
-  footer.text.add("font-family", "Arial");
+  footer.text.add("font-family", "Roboto");
   footer.text.add("font-size", "14");
   footer.text.add("font-style", "normal");
   footer.text.add("font-weight", "normal");
@@ -569,12 +569,12 @@ TableAttributes::TableAttributes()
 
   // data columns (use same attributes as header)
   columns.frame = header.frame;
-  col1.add("font-family", "Arial");
+  col1.add("font-family", "Roboto");
   col1.add("font-size", "14");
   col1.add("font-style", "normal");
   col1.add("font-weight", "normal");
   col1.add("text-anchor", "left");
-  col2.add("font-family", "Arial");
+  col2.add("font-family", "Roboto");
   col2.add("font-size", "14");
   col2.add("font-style", "normal");
   col2.add("font-weight", "normal");

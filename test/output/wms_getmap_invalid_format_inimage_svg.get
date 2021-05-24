@@ -14,7 +14,7 @@
  <g id="view1">
    <g/>
   
-  <text font-family="Arial" font-size="26" font-weight="normal" style="text-anchor:start" x="5" y="25">Error: The requested map format is not supported!</text>
+  <text font-family="Roboto" font-size="26" font-weight="normal" style="text-anchor:start" x="5" y="25">Error: The requested map format is not supported!</text>
  </g>
 </g>
 
