@@ -1668,7 +1668,7 @@ boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
           layer_dimension["current"] = (td.currentValue() ? 1 : 0);
           layer_dimension["value"] = td.getCapabilities(starttime, endtime);  // a string
           CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
-          reference_time_dimension["name"] = "reference_time";
+          reference_time_dimension["name"] = "dim_reference_time";
           reference_time_dimension["units"] = "ISO8601";
           reference_time_dimension["multiple_values"] = 0;
           reference_time_dimension["nearest_value"] = 0;
@@ -1693,7 +1693,7 @@ boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
         if (showOrigintimes)
         {
           StepTimeDimension orgintimesDimension(timeDimensions->getOrigintimes());
-          reference_time_dimension["name"] = "reference_time";
+          reference_time_dimension["name"] = "dim_reference_time";
           reference_time_dimension["units"] = "ISO8601";
           reference_time_dimension["multiple_values"] = 0;
           reference_time_dimension["nearest_value"] = 0;
@@ -1738,7 +1738,7 @@ boost::optional<CTPP::CDT> WMSLayer::getReferenceDimensionInfo() const
       if (showOrigintimes)
       {
         StepTimeDimension orgintimesDimension(timeDimensions->getOrigintimes());
-        reference_time_dimension["name"] = "reference_time";
+        reference_time_dimension["name"] = "dim_reference_time";
         reference_time_dimension["units"] = "ISO8601";
         reference_time_dimension["multiple_values"] = 0;
         reference_time_dimension["nearest_value"] = 0;
