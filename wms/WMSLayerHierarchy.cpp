@@ -226,7 +226,7 @@ void add_sublayers(WMSLayerHierarchy& lh,
     lh.projectedBoundingBox = layer_to_use;
     lh.timeDimension = layer_to_use;
     lh.elevationDimension = layer_to_use;
-    if (hierarchy_type == WMSLayerHierarchy::HierarchyType::deep2)
+    if (hierarchy_type == WMSLayerHierarchy::HierarchyType::recursivetimes)
       expand_layer(lh);
   }
 }

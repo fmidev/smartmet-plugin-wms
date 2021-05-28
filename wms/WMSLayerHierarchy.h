@@ -31,8 +31,8 @@ class WMSLayerHierarchy
   enum class HierarchyType
   {
     flat,
-    deep1,
-    deep2
+    recursive,
+    recursivetimes
   };
   enum class ElementType
   {

@@ -621,6 +621,18 @@ WMSConfig::WMSConfig(const Config& daliConfig,
     parse_references();
 
     config.lookupValue("wms.margin", itsMargin);
+	// Default layout is flat
+	std::string layout = "flat";
+	// Layout can be defined in configuration file
+    config.lookupValue("wms.get_capabilities.layout", layout);
+	if(layout == "flat")
+	  itsLayerHierarchyType = WMSLayerHierarchy::HierarchyType::flat;
+	else if(layout == "recursive")
+	  itsLayerHierarchyType = WMSLayerHierarchy::HierarchyType::recursive;
+	else if(layout == "recursivetimes")
+	  itsLayerHierarchyType = WMSLayerHierarchy::HierarchyType::recursivetimes;
+	else
+	  throw Fmi::Exception::Trace(BCP, ("Error! Invalid layout defined in configuration file: " + layout));
 
     // Parse GetCapability settings once to make sure the config file is valid
     get_capabilities(config);
@@ -935,15 +947,15 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
                                      const boost::optional<std::string>& endtime,
                                      const boost::optional<std::string>& reference_time,
                                      const boost::optional<std::string>& wms_namespace,
-                                     int newfeature_id,
-                                     bool authenticate) const
+									 WMSLayerHierarchy::HierarchyType hierarchy_type, 
+									 bool authenticate) const
 #else
 CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
                                      const boost::optional<std::string>& starttime,
                                      const boost::optional<std::string>& endtime,
                                      const boost::optional<std::string>& reference_time,
                                      const boost::optional<std::string>& wms_namespace,
-                                     int newfeature_id) const
+									 WMSLayerHierarchy::HierarchyType hierarchy_type) const
 #endif
 {
   try
@@ -951,12 +963,8 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
     // Atomic copy of layer data
     auto my_layers = boost::atomic_load(&itsLayers);
 
-    if (newfeature_id > 0)
+    if (hierarchy_type != WMSLayerHierarchy::HierarchyType::flat)
     {
-      WMSLayerHierarchy::HierarchyType hierarchy_type =
-          (newfeature_id == 0 ? WMSLayerHierarchy::HierarchyType::flat
-                              : (newfeature_id == 1 ? WMSLayerHierarchy::HierarchyType::deep1
-                                                    : WMSLayerHierarchy::HierarchyType::deep2));
 #ifndef WITHOUT_AUTHENTICATION
       WMSLayerHierarchy lh(*my_layers, wms_namespace, hierarchy_type, apikey, itsAuthEngine);
 #else
