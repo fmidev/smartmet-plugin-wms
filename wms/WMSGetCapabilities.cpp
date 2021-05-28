@@ -155,8 +155,7 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
 			multipleIntervals = false;
 		}
 
-      configuredLayers = theConfig.getCapabilities(
-												   apikey, starttime, endtime, reference_time, wms_namespace, hierarchyType, multipleIntervals);
+      configuredLayers = theConfig.getCapabilities(apikey, starttime, endtime, reference_time, wms_namespace, hierarchyType, multipleIntervals);
     }
     catch (...)
     {

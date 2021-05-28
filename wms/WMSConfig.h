@@ -227,8 +227,9 @@ class WMSConfig
   int itsMargin = 0;
   // Mode of layer hierarchy
   WMSLayerHierarchy::HierarchyType itsLayerHierarchyType = WMSLayerHierarchy::HierarchyType::flat;
-  // 
+  // Flag indicates if multiple intervals are allowed
   bool itsMultipleIntervals = false;
+
   // Set of files for which a warning has already been printed
   std::set<std::string> itsWarnedFiles;
 };  // class WMSConfig
