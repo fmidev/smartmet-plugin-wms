@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 21.5.28
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -135,8 +135,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
-* Fri May 28 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.28-1.fmi
-- Fixed WMS parameter name to be dim_reference_time instead of plain reference_time
+* Fri May 28 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.28-2.fmi
+- Fixed WMS parameter name to be dim_reference_time instead of plain reference_time in query strings
 
 * Tue May 25 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.25-1.fmi
 - Repackaged due to grid-files ABI changes
