@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.5.28
-Release: 2%{?dist}.fmi
+Version: 21.5.31
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon May 31 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.5.31-1.fmi
+- Added layout configuration parameter (BRAINSTORM-2076)
+
 * Fri May 28 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.28-2.fmi
 - Fixed WMS parameter name to be dim_reference_time instead of plain reference_time in query strings
 

@@ -11,6 +11,7 @@
 #include "WMSLayerProxy.h"
 #include "WMSLegendGraphicSettings.h"
 #include "WMSSupportedReference.h"
+#include "WMSLayerHierarchy.h"
 #include <boost/move/unique_ptr.hpp>
 #include <boost/optional.hpp>
 #include <boost/utility.hpp>
@@ -70,7 +71,7 @@ class WMSConfig
                             const boost::optional<std::string>& endtime,
                             const boost::optional<std::string>& reference_time,
                             const boost::optional<std::string>& wms_namespace,
-                            int newfeature_id,
+                            WMSLayerHierarchy::HierarchyType hierarchy_type,
                             bool authenticate = true) const;
 #else
   CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
@@ -78,7 +79,7 @@ class WMSConfig
                             const boost::optional<std::string>& endtime,
                             const boost::optional<std::string>& reference_time,
                             const boost::optional<std::string>& wms_namespace,
-                            int newfeature_id) const;
+							WMSLayerHierarchy::HierarchyType hierarchy_type) const;
 #endif
 
   void init();
@@ -142,6 +143,7 @@ class WMSConfig
   const WMSLegendGraphicSettings& getLegendGraphicSettings() const;
 
   int getMargin() const { return itsMargin; }
+  WMSLayerHierarchy::HierarchyType getLayerHierarchyType() const { return itsLayerHierarchyType; }
 
  private:
   void parse_references();
@@ -220,6 +222,8 @@ class WMSConfig
   // symbol in use. Layers using bigger symbols should probably use a layer specific
   // setting so that processing other layers will not slow down unnecessarily.
   int itsMargin = 0;
+  // Mode of layer hierarchy
+  WMSLayerHierarchy::HierarchyType itsLayerHierarchyType = WMSLayerHierarchy::HierarchyType::flat;
 
   // Set of files for which a warning has already been printed
   std::set<std::string> itsWarnedFiles;

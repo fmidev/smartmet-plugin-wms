@@ -119,15 +119,24 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     }
 
     CTPP::CDT configuredLayers;
-    auto newfeature = theRequest.getParameter("newfeature");
-    int newfeature_id = 0;
-    if (newfeature)
-    {
-      if (*newfeature == "1")
-        newfeature_id = 1;
-      if (*newfeature == "2")
-        newfeature_id = 2;
-    }
+	// Layer hierarchy type: default value is flat, can be 
+	// overwritten in configuration file, and finally
+	// can be overwritten in URL
+	WMSLayerHierarchy::HierarchyType hierarchyType = theConfig.getLayerHierarchyType();
+    auto layout = theRequest.getParameter("layout");
+	if(layout)
+	  {
+		if(*layout == "flat")
+		  hierarchyType = WMSLayerHierarchy::HierarchyType::flat;
+		else if(*layout == "recursive")
+		  hierarchyType = WMSLayerHierarchy::HierarchyType::recursive;
+		else if(*layout == "recursivetimes")
+		  hierarchyType = WMSLayerHierarchy::HierarchyType::recursivetimes;
+		else
+		  {
+			throw Fmi::Exception::Trace(BCP, ("Error! Invalid layout defined in request: " + *layout));
+		  }
+	  }
 
     try
     {
@@ -137,7 +146,7 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
       auto reference_time = theRequest.getParameter("dim_reference_time");
 
       configuredLayers = theConfig.getCapabilities(
-          apikey, starttime, endtime, reference_time, wms_namespace, newfeature_id);
+          apikey, starttime, endtime, reference_time, wms_namespace, hierarchyType);
     }
     catch (...)
     {
@@ -150,8 +159,8 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     try
     {
       hash.At("capability")["layer"] = configuredLayers;
-      if (newfeature_id > 0)
-        hash["capability"]["newfeature"] = Fmi::to_string(newfeature_id);
+      if (hierarchyType != WMSLayerHierarchy::HierarchyType::flat)
+        hash["capability"]["newfeature"] = (hierarchyType == WMSLayerHierarchy::HierarchyType::recursive ? "1" : "2");
     }
     catch (...)
     {
