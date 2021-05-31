@@ -143,7 +143,7 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
       auto wms_namespace = theRequest.getParameter("namespace");
       auto starttime = theRequest.getParameter("starttime");
       auto endtime = theRequest.getParameter("endtime");
-      auto reference_time = theRequest.getParameter("reference_time");
+      auto reference_time = theRequest.getParameter("dim_reference_time");
 
       configuredLayers = theConfig.getCapabilities(
           apikey, starttime, endtime, reference_time, wms_namespace, hierarchyType);

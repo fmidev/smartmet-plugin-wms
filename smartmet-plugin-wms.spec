@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.5.28
+Version: 21.5.31
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,8 +18,8 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.7.2
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.1.14
-BuildRequires: smartmet-library-grid-content-devel >= 21.3.29
-BuildRequires: smartmet-library-grid-files-devel >= 21.4.13
+BuildRequires: smartmet-library-grid-content-devel >= 21.5.25
+BuildRequires: smartmet-library-grid-files-devel >= 21.5.25
 BuildRequires: smartmet-library-macgyver-devel >= 21.5.21
 BuildRequires: smartmet-library-spine-devel >= 21.5.21
 BuildRequires: smartmet-library-giza-devel
@@ -30,11 +30,11 @@ BuildRequires: smartmet-engine-authentication-devel >= 21.1.14
 BuildRequires: smartmet-engine-observation-devel >= 21.5.20
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 21.5.20
-BuildRequires: smartmet-engine-grid-devel >= 21.4.27
+BuildRequires: smartmet-engine-grid-devel >= 21.5.25
 BuildRequires: smartmet-engine-geonames-devel >= 21.5.20
 BuildRequires: smartmet-engine-querydata-devel >= 21.5.21
 BuildRequires: smartmet-engine-contour-devel >= 21.5.20
-BuildRequires: smartmet-library-gis-devel >= 21.5.20
+BuildRequires: smartmet-library-gis-devel >= 21.5.24
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -58,9 +58,9 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 21.3.29
-Requires: smartmet-library-grid-files >= 21.4.13
-Requires: smartmet-library-gis >= 21.5.20
+Requires: smartmet-library-grid-content >= 21.5.25
+Requires: smartmet-library-grid-files >= 21.5.25
+Requires: smartmet-library-gis >= 21.5.24
 Requires: smartmet-library-macgyver >= 21.5.21
 Requires: smartmet-library-giza >= 21.1.14
 %if %{with authentication}
@@ -69,7 +69,7 @@ Requires: smartmet-engine-authentication >= 21.1.14
 Requires: smartmet-engine-querydata >= 21.5.21
 Requires: smartmet-engine-contour >= 21.5.20
 Requires: smartmet-engine-gis >= 21.5.20
-Requires: smartmet-engine-grid >= 21.4.27
+Requires: smartmet-engine-grid >= 21.5.25
 Requires: smartmet-engine-geonames >= 21.5.20
 Requires: smartmet-server >= 21.1.14
 Requires: smartmet-library-spine >= 21.5.21
@@ -97,7 +97,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 21.1.14
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
 #TestRequires: smartmet-library-spine-devel >= 21.5.21
-#TestRequires: smartmet-engine-grid-devel >= 21.4.27
+#TestRequires: smartmet-engine-grid-devel >= 21.5.25
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -135,8 +135,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
-* Fri May 28 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.5.28-1.fmi
+* Mon May 31 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.5.31-1.fmi
 - Added layout configuration parameter (BRAINSTORM-2076)
+
+* Fri May 28 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.28-2.fmi
+- Fixed WMS parameter name to be dim_reference_time instead of plain reference_time in query strings
+
+* Tue May 25 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.25-1.fmi
+- Repackaged due to grid-files ABI changes
 
 * Mon May 24 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.5.24-1.fmi
 - Use Roboto as default font for some layers

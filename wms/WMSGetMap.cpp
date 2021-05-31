@@ -633,11 +633,11 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       itsParameters.elevation = Spine::optional_int(theRequest.getParameter("ELEVATION"), 0);
     }
 
-    if (theRequest.getParameter("REFERENCE_TIME") || theRequest.getParameter("ORIGINTIME") ||
+    if (theRequest.getParameter("DIM_REFERENCE_TIME") || theRequest.getParameter("ORIGINTIME") ||
         !layer_origintime.empty())
     {
       std::string reference_time =
-          Spine::optional_string(theRequest.getParameter("REFERENCE_TIME"), "");
+          Spine::optional_string(theRequest.getParameter("DIM_REFERENCE_TIME"), "");
       std::string origintime = Spine::optional_string(theRequest.getParameter("ORIGINTIME"), "");
       if (reference_time.empty() && !origintime.empty())
         reference_time = origintime;
