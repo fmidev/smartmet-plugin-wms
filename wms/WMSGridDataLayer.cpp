@@ -175,8 +175,8 @@ void WMSGridDataLayer::updateLayerMetaData()
         for (uint t = 0; t < len; t++)
         {
           T::ContentInfo* info = contentInfoList.getContentInfoByIndex(t);
-          if (contentTimeList.find(info->mForecastTime) == contentTimeList.end())
-            contentTimeList.insert(info->mForecastTime);
+          if (contentTimeList.find(info->getForecastTime()) == contentTimeList.end())
+            contentTimeList.insert(std::string(info->getForecastTime()));
         }
       }
       else
