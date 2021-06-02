@@ -45,13 +45,10 @@ void WMSQueryDataLayer::updateLayerMetaData()
       if (!validtimes->empty())
       {
         boost::shared_ptr<WMSTimeDimension> timeDimension;
-        if (even_timesteps(*validtimes))
+		time_intervals intervals = get_intervals(*validtimes);
+        if (!intervals.empty())
         {
-          // interval
-          boost::posix_time::time_duration first_timestep =
-              (*(++validtimes->begin()) - *(validtimes->begin()));
-          timeDimension = boost::make_shared<IntervalTimeDimension>(
-              *(validtimes->begin()), *(--validtimes->end()), first_timestep);
+          timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);		  
         }
         else
         {
@@ -69,18 +66,15 @@ void WMSQueryDataLayer::updateLayerMetaData()
         boost::shared_ptr<Engine::Querydata::ValidTimeList> vt = q->validTimes();
         boost::shared_ptr<WMSTimeDimension> timeDimension;
 
-        if (even_timesteps(*vt))
+		time_intervals intervals = get_intervals(*vt);
+        if (!intervals.empty())
         {
-          // interval
-          boost::posix_time::time_duration first_timestep = (*(++vt->begin()) - *(vt->begin()));
-          timeDimension = boost::make_shared<IntervalTimeDimension>(
-              *(vt->begin()), *(--vt->end()), first_timestep);
+          timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);		  
         }
         else
         {
           timeDimension = boost::make_shared<StepTimeDimension>(*vt);
         }
-
         newTimeDimensions.insert(std::make_pair(t, timeDimension));
       }
     }
