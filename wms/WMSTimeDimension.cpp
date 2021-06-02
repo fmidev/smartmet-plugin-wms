@@ -290,7 +290,6 @@ std::string IntervalTimeDimension::getIntervalCapability(const tag_interval& int
   return ret;
 }
 
-
 std::string IntervalTimeDimension::makeCapabilities(
     const boost::optional<std::string>& starttime,
     const boost::optional<std::string>& endtime) const
