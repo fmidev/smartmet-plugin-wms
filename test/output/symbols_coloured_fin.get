@@ -208,13 +208,9 @@
    <use class="Temperature_4_6" transform="translate(495,579)" xlink:href="#city"/>
    <use class="Temperature_12_14" transform="translate(3,556)" xlink:href="#city"/>
    <use class="Temperature_12_14" transform="translate(13,557)" xlink:href="#city"/>
-   <use class="Temperature_12_14" transform="translate(23,559)" xlink:href="#city"/>
    <use class="Temperature_12_14" transform="translate(33,560)" xlink:href="#city"/>
-   <use class="Temperature_12_14" transform="translate(43,562)" xlink:href="#city"/>
    <use class="Temperature_12_14" transform="translate(53,563)" xlink:href="#city"/>
-   <use class="Temperature_12_14" transform="translate(63,564)" xlink:href="#city"/>
    <use class="Temperature_12_14" transform="translate(72,566)" xlink:href="#city"/>
-   <use class="Temperature_12_14" transform="translate(82,567)" xlink:href="#city"/>
    <use class="Temperature_12_14" transform="translate(92,568)" xlink:href="#city"/>
    <use class="Temperature_8_10" transform="translate(0,5)" xlink:href="#city"/>
    <use class="Temperature_10_12" transform="translate(1,47)" xlink:href="#city"/>
@@ -788,7 +784,6 @@
    <use class="Temperature_4_6" transform="translate(150,43)" xlink:href="#city"/>
    <use class="Temperature_4_6" transform="translate(151,33)" xlink:href="#city"/>
    <use class="Temperature_6_8" transform="translate(153,23)" xlink:href="#city"/>
-   <use class="Temperature_12_14" transform="translate(102,569)" xlink:href="#city"/>
    <use class="Temperature_12_14" transform="translate(103,559)" xlink:href="#city"/>
    <use class="Temperature_12_14" transform="translate(104,549)" xlink:href="#city"/>
    <use class="Temperature_12_14" transform="translate(105,539)" xlink:href="#city"/>

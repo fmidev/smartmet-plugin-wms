@@ -8,9 +8,6 @@ t2m_p_kml.get
 ; PROJ.7 code seems to have the interrupts at wrong locations
 map_isea.get
 
-; Map shape clipped incorrectly
-ykjworld.get
-
 ; Stopped working
 map_sterea.get
 

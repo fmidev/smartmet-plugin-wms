@@ -8,6 +8,7 @@
 #include <gis/OGR.h>
 #include <grid-files/identification/GridDef.h>
 #include <macgyver/Exception.h>
+#include <macgyver/NearTree.h>
 #include <spine/Convenience.h>
 #include <spine/ParameterFactory.h>
 #include <iomanip>
@@ -19,6 +20,19 @@ namespace Plugin
 {
 namespace Dali
 {
+// For NearTree calculations
+class XY
+{
+ public:
+  XY(double theX, double theY) : itsX(theX), itsY(theY) {}
+  double x() const { return itsX; }
+  double y() const { return itsY; }
+
+ private:
+  double itsX;
+  double itsY;
+};
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Length of a segment
@@ -783,6 +797,9 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
 
     Points points;
 
+    // Do not allow too close pixels
+    Fmi::NearTree<XY> selected_coordinates;
+
     for (int lat = -90; lat < 90; lat += size)
       for (int lon = -180; lon < 180; lon += size)
       {
@@ -854,7 +871,15 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
 
           // Skip if not inside desired areas
           if (inside(newlon, newlat, forecastMode))
-            points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
+          {
+            XY xy(newx, newy);
+            auto match = selected_coordinates.nearest(xy, mindistance);
+            if (!match)
+            {
+              points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
+              selected_coordinates.insert(xy);
+            }
+          }
         }
 
         // Bottom edge
@@ -878,7 +903,15 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
 
           // Skip if not inside desired shapes
           if (inside(newlon, newlat, forecastMode))
-            points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
+          {
+            XY xy(newx, newy);
+            auto match = selected_coordinates.nearest(xy, mindistance);
+            if (!match)
+            {
+              points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
+              selected_coordinates.insert(xy);
+            }
+          }
 
           // Handle the south pole only once
           if (newlat == -90)
@@ -908,7 +941,15 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
 
             // Skip if not inside desired area
             if (inside(newlon, newlat, forecastMode))
-              points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
+            {
+              XY xy(newx, newy);
+              auto match = selected_coordinates.nearest(xy, mindistance);
+              if (!match)
+              {
+                points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
+                selected_coordinates.insert(xy);
+              }
+            }
           }
       }
 
@@ -929,7 +970,15 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
 
       // Skip if not inside desired areas
       if (inside(newlon, newlat, forecastMode))
-        points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
+      {
+        XY xy(newx, newy);
+        auto match = selected_coordinates.nearest(xy, mindistance);
+        if (!match)
+        {
+          points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
+          selected_coordinates.insert(xy);
+        }
+      }
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
