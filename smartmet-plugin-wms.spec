@@ -32,9 +32,9 @@ BuildRequires: smartmet-engine-observation-devel >= 21.5.31
 BuildRequires: smartmet-engine-gis-devel >= 21.5.27
 BuildRequires: smartmet-engine-grid-devel >= 21.6.1
 BuildRequires: smartmet-engine-geonames-devel >= 21.5.20
-BuildRequires: smartmet-engine-querydata-devel >= 21.5.31
+BuildRequires: smartmet-engine-querydata-devel >= 21.6.3
 BuildRequires: smartmet-engine-contour-devel >= 21.5.20
-BuildRequires: smartmet-library-gis-devel >= 21.5.24
+BuildRequires: smartmet-library-gis-devel >= 21.6.7
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -60,18 +60,18 @@ Requires: libconfig
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 21.6.1
 Requires: smartmet-library-grid-files >= 21.6.1
-Requires: smartmet-library-gis >= 21.5.24
+Requires: smartmet-library-gis >= 21.6.7
 Requires: smartmet-library-macgyver >= 21.5.31
 Requires: smartmet-library-giza >= 21.1.14
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.1.14
 %endif
-Requires: smartmet-engine-querydata >= 21.5.31
+Requires: smartmet-engine-querydata >= 21.6.3
 Requires: smartmet-engine-contour >= 21.5.20
 Requires: smartmet-engine-gis >= 21.5.27
 Requires: smartmet-engine-grid >= 21.6.1
 Requires: smartmet-engine-geonames >= 21.5.20
-Requires: smartmet-server >= 21.1.14
+Requires: smartmet-server >= 21.6.3
 Requires: smartmet-library-spine >= 21.5.31
 Requires: boost169-date-time
 Requires: boost169-filesystem
@@ -93,7 +93,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 21.5.20
 #TestRequires: smartmet-engine-geonames-devel >= 21.5.20
 #TestRequires: smartmet-engine-gis-devel >= 21.5.27
-#TestRequires: smartmet-engine-querydata-devel >= 21.5.31
+#TestRequires: smartmet-engine-querydata-devel >= 21.6.3
 #TestRequires: smartmet-library-giza-devel >= 21.1.14
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
 #TestRequires: smartmet-library-spine-devel >= 21.5.31
