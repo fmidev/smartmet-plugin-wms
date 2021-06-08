@@ -144,9 +144,19 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
       auto starttime = theRequest.getParameter("starttime");
       auto endtime = theRequest.getParameter("endtime");
       auto reference_time = theRequest.getParameter("dim_reference_time");
+	  auto multipleIntervals = theConfig.multipleIntervals();
+	  auto enableintervals = theRequest.getParameter("enableintervals");
+	  // If request option given and it is 1 or 0 use it
+	  if(enableintervals)
+		{
+		  if(*enableintervals == "1")
+			multipleIntervals = true;
+		  else if(*enableintervals == "0")
+			multipleIntervals = false;
+		}
 
       configuredLayers = theConfig.getCapabilities(
-          apikey, starttime, endtime, reference_time, wms_namespace, hierarchyType);
+												   apikey, starttime, endtime, reference_time, wms_namespace, hierarchyType, multipleIntervals);
     }
     catch (...)
     {

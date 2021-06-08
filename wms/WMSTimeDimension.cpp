@@ -119,7 +119,8 @@ StepTimeDimension::StepTimeDimension(const std::set<boost::posix_time::ptime>& t
   itsCapabilities = makeCapabilities(boost::none, boost::none);
 }
 
-std::string StepTimeDimension::getCapabilities(const boost::optional<std::string>& starttime,
+std::string StepTimeDimension::getCapabilities(bool multiple_intervals,
+											   const boost::optional<std::string>& starttime,
                                                const boost::optional<std::string>& endtime) const
 {
   try
@@ -219,11 +220,16 @@ const std::vector<tag_interval>& IntervalTimeDimension::getIntervals() const
 }
 
 std::string IntervalTimeDimension::getCapabilities(
-    const boost::optional<std::string>& starttime,
-    const boost::optional<std::string>& endtime) const
+												   bool multiple_intervals,
+												   const boost::optional<std::string>& starttime,
+												   const boost::optional<std::string>& endtime) const
 {
   try
   {
+	// Show individual timesteps
+	if(!multiple_intervals && itsIntervals.size() > 1)
+	  return makeCapabilitiesTimesteps(starttime, endtime);
+
     if (!starttime && !endtime)
       return itsCapabilities;
 
@@ -284,6 +290,7 @@ std::string IntervalTimeDimension::getIntervalCapability(const tag_interval& int
   return ret;
 }
 
+
 std::string IntervalTimeDimension::makeCapabilities(
     const boost::optional<std::string>& starttime,
     const boost::optional<std::string>& endtime) const
@@ -322,6 +329,48 @@ std::string IntervalTimeDimension::makeCapabilities(
 			ret += interval_capa;
 		  }
 		previous_interval_end_time = interval.endTime;
+	  }
+
+    return ret;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to make time dimension capabilities!");
+  }
+}
+
+std::string IntervalTimeDimension::makeCapabilitiesTimesteps(
+    const boost::optional<std::string>& starttime,
+    const boost::optional<std::string>& endtime) const
+{
+  try
+  {
+    if ((starttime && endtime) && parse_time(*starttime) > parse_time(*endtime))
+      throw Fmi::Exception::Trace(BCP,
+                                  "Requested starttime must be earlier than requested endtime!");
+
+	std::string ret;
+	for(const auto& interval : itsIntervals)
+	  {
+		boost::posix_time::time_period interval_period(interval.startTime, interval.endTime);
+		auto requested_startt = (starttime ? parse_time(*starttime) : interval.startTime);
+		auto requested_endt = (endtime ? parse_time(*endtime) : interval.endTime);
+		boost::posix_time::time_period requested_period(requested_startt, requested_endt);
+
+		if (!interval_period.intersects(requested_period))
+		  continue;
+	
+		boost::posix_time::ptime timestep = interval.startTime;
+		while(timestep <= interval.endTime)
+		  {
+			if(requested_period.contains(timestep))
+			  {
+				if(!ret.empty())
+				  ret += ",";
+				ret +=  (Fmi::to_iso_extended_string(timestep) + "Z");
+			  }
+			timestep += interval.resolution;
+		  }
 	  }
 
     return ret;
@@ -416,8 +465,8 @@ bool WMSTimeDimensions::isIdentical(const WMSTimeDimensions& td) const
     const boost::shared_ptr<WMSTimeDimension>& tdim2 = td.itsTimeDimensions.at(item.first);
 
     boost::optional<std::string> missing_time;
-    if (tdim1->getCapabilities(missing_time, missing_time) !=
-        tdim2->getCapabilities(missing_time, missing_time))
+    if (tdim1->getCapabilities(false, missing_time, missing_time) !=
+        tdim2->getCapabilities(false, missing_time, missing_time))
       return false;
   }
 

@@ -634,6 +634,8 @@ WMSConfig::WMSConfig(const Config& daliConfig,
 	else
 	  throw Fmi::Exception::Trace(BCP, ("Error! Invalid layout defined in configuration file: " + layout));
 
+    config.lookupValue("wms.get_capabilities.enableintervals", itsMultipleIntervals);
+
     // Parse GetCapability settings once to make sure the config file is valid
     get_capabilities(config);
   }
@@ -948,6 +950,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
                                      const boost::optional<std::string>& reference_time,
                                      const boost::optional<std::string>& wms_namespace,
 									 WMSLayerHierarchy::HierarchyType hierarchy_type, 
+									 bool multiple_intervals,
 									 bool authenticate) const
 #else
 CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
@@ -955,7 +958,8 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
                                      const boost::optional<std::string>& endtime,
                                      const boost::optional<std::string>& reference_time,
                                      const boost::optional<std::string>& wms_namespace,
-									 WMSLayerHierarchy::HierarchyType hierarchy_type) const
+									 WMSLayerHierarchy::HierarchyType hierarchy_type,
+									 bool multiple_intervals) const
 #endif
 {
   try
@@ -973,7 +977,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
 
       //		std::cout << "Hierarchy:\n" << lh << std::endl;
 
-      return lh.getCapabilities(starttime, endtime, reference_time);
+      return lh.getCapabilities(multiple_intervals, starttime, endtime, reference_time);
     }
 
     // Return array of individual layer capabilities
@@ -991,7 +995,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
           continue;
 #endif
 
-      auto cdt = iter_pair.second.getCapabilities(starttime, endtime, reference_time);
+      auto cdt = iter_pair.second.getCapabilities(multiple_intervals, starttime, endtime, reference_time);
 
       // Note: The boost::optional is empty for hidden layers.
       if (cdt)
