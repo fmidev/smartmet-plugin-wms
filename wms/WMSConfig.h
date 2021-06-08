@@ -72,6 +72,7 @@ class WMSConfig
                             const boost::optional<std::string>& reference_time,
                             const boost::optional<std::string>& wms_namespace,
                             WMSLayerHierarchy::HierarchyType hierarchy_type,
+							bool multiple_intervals,
                             bool authenticate = true) const;
 #else
   CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
@@ -79,7 +80,8 @@ class WMSConfig
                             const boost::optional<std::string>& endtime,
                             const boost::optional<std::string>& reference_time,
                             const boost::optional<std::string>& wms_namespace,
-							WMSLayerHierarchy::HierarchyType hierarchy_type) const;
+							WMSLayerHierarchy::HierarchyType hierarchy_type,
+							bool multiple_intervals) const;
 #endif
 
   void init();
@@ -144,6 +146,7 @@ class WMSConfig
 
   int getMargin() const { return itsMargin; }
   WMSLayerHierarchy::HierarchyType getLayerHierarchyType() const { return itsLayerHierarchyType; }
+  bool multipleIntervals() const { return itsMultipleIntervals; }
 
  private:
   void parse_references();
@@ -224,7 +227,8 @@ class WMSConfig
   int itsMargin = 0;
   // Mode of layer hierarchy
   WMSLayerHierarchy::HierarchyType itsLayerHierarchyType = WMSLayerHierarchy::HierarchyType::flat;
-
+  // 
+  bool itsMultipleIntervals = false;
   // Set of files for which a warning has already been printed
   std::set<std::string> itsWarnedFiles;
 };  // class WMSConfig

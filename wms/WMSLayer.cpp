@@ -1638,9 +1638,10 @@ boost::optional<CTPP::CDT> WMSLayer::getProjectedBoundingBoxInfo() const
 }
 
 boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
-    const boost::optional<std::string>& starttime,
-    const boost::optional<std::string>& endtime,
-    const boost::optional<std::string>& reference_time) const
+														  bool  multiple_intervals,
+														  const boost::optional<std::string>& starttime,
+														  const boost::optional<std::string>& endtime,
+														  const boost::optional<std::string>& reference_time) const
 {
   try
   {
@@ -1666,7 +1667,7 @@ boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
           layer_dimension["multiple_values"] = 0;
           layer_dimension["nearest_value"] = 0;
           layer_dimension["current"] = (td.currentValue() ? 1 : 0);
-          layer_dimension["value"] = td.getCapabilities(starttime, endtime);  // a string
+          layer_dimension["value"] = td.getCapabilities(multiple_intervals, starttime, endtime);  // a string
           CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
           reference_time_dimension["name"] = "reference_time";
           reference_time_dimension["units"] = "ISO8601";
@@ -1686,7 +1687,7 @@ boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
         layer_dimension["multiple_values"] = 0;
         layer_dimension["nearest_value"] = 0;
         layer_dimension["current"] = (td.currentValue() ? 1 : 0);
-        layer_dimension["value"] = td.getCapabilities(starttime, endtime);  // a string
+        layer_dimension["value"] = td.getCapabilities(multiple_intervals, starttime, endtime);  // a string
         CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
         const std::vector<boost::posix_time::ptime>& origintimes = timeDimensions->getOrigintimes();
         bool showOrigintimes = !origintimes.empty() && !origintimes.front().is_not_a_date_time();
@@ -1701,7 +1702,7 @@ boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
           reference_time_dimension["default"] =
               (Fmi::to_iso_extended_string(orgintimesDimension.mostCurrentTime()) + "Z");
           boost::optional<std::string> t;
-          reference_time_dimension["value"] = orgintimesDimension.getCapabilities(t, t);
+          reference_time_dimension["value"] = orgintimesDimension.getCapabilities(false, t, t);
         }
         layer_dimension_list.PushBack(layer_dimension);
         if (showOrigintimes)
@@ -1746,7 +1747,7 @@ boost::optional<CTPP::CDT> WMSLayer::getReferenceDimensionInfo() const
         reference_time_dimension["default"] =
             (Fmi::to_iso_extended_string(orgintimesDimension.mostCurrentTime()) + "Z");
         boost::optional<std::string> t;
-        reference_time_dimension["value"] = orgintimesDimension.getCapabilities(t, t);
+        reference_time_dimension["value"] = orgintimesDimension.getCapabilities(false, t, t);
       }
       if (showOrigintimes)
         layer_dimension_list.PushBack(reference_time_dimension);
@@ -1832,10 +1833,11 @@ const boost::shared_ptr<WMSTimeDimensions>& WMSLayer::getTimeDimensions() const
 }
 
 boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
-    const Engine::Gis::Engine& gisengine,
-    const boost::optional<std::string>& starttime,
-    const boost::optional<std::string>& endtime,
-    const boost::optional<std::string>& reference_time)
+															 bool multiple_intervals,
+															 const Engine::Gis::Engine& gisengine,
+															 const boost::optional<std::string>& starttime,
+															 const boost::optional<std::string>& endtime,
+															 const boost::optional<std::string>& reference_time)
 {
   try
   {
@@ -1946,7 +1948,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
       layer_dimension["multiple_values"] = 0;
       layer_dimension["nearest_value"] = 0;
       layer_dimension["current"] = (td.currentValue() ? 1 : 0);
-      layer_dimension["value"] = td.getCapabilities(starttime, endtime);  // a string
+      layer_dimension["value"] = td.getCapabilities(multiple_intervals, starttime, endtime);  // a string
       layer_dimension_list.PushBack(layer_dimension);
       layer["time_dimension"] = layer_dimension_list;
     }

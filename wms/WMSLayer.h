@@ -123,18 +123,20 @@ class WMSLayer
   // Empty for hidden layers
 
   boost::optional<CTPP::CDT> generateGetCapabilities(
-      const Engine::Gis::Engine& gisengine,
-      const boost::optional<std::string>& starttime,
-      const boost::optional<std::string>& endtime,
-      const boost::optional<std::string>& reference_time);
+													 bool multiple_intervals,
+													 const Engine::Gis::Engine& gisengine,
+													 const boost::optional<std::string>& starttime,
+													 const boost::optional<std::string>& endtime,
+													 const boost::optional<std::string>& reference_time);
 
   boost::optional<CTPP::CDT> getLayerBaseInfo() const;
   boost::optional<CTPP::CDT> getGeographicBoundingBoxInfo() const;
   boost::optional<CTPP::CDT> getProjectedBoundingBoxInfo() const;
   boost::optional<CTPP::CDT> getTimeDimensionInfo(
-      const boost::optional<std::string>& starttime,
-      const boost::optional<std::string>& endtime,
-      const boost::optional<std::string>& reference_time) const;
+												  bool  multiple_intervals,
+												  const boost::optional<std::string>& starttime,
+												  const boost::optional<std::string>& endtime,
+												  const boost::optional<std::string>& reference_time) const;
   boost::optional<CTPP::CDT> getReferenceDimensionInfo() const;
   boost::optional<CTPP::CDT> getElevationDimensionInfo() const;
   boost::optional<CTPP::CDT> getStyleInfo() const;

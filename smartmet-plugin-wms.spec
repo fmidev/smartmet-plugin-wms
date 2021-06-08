@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.6.3
+Version: 21.6.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Jun 8 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.6.8-1.fmi
+- List of intervals in GetCapabilities reponse is made optional (BRAINSTORM-2090)
+
 * Thu Jun  3 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.3-1.fmi
 - Improved mindistance handling in graticulefill layouts
 

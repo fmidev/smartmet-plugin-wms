@@ -231,7 +231,8 @@ void add_sublayers(WMSLayerHierarchy& lh,
   }
 }
 
-void add_layer_info(CTPP::CDT& ctpp,
+void add_layer_info(bool  multiple_intervals,
+					CTPP::CDT& ctpp,
                     const WMSLayerHierarchy& lh,
                     const boost::optional<std::string>& starttime,
                     const boost::optional<std::string>& endtime,
@@ -311,14 +312,14 @@ void add_layer_info(CTPP::CDT& ctpp,
     {
       // Reference time layer
       std::string ref_time = Fmi::to_iso_string(*lh.reference_time);
-      time_dim = lh.timeDimension->getLayer()->getTimeDimensionInfo(starttime, endtime, ref_time);
+      time_dim = lh.timeDimension->getLayer()->getTimeDimensionInfo(multiple_intervals, starttime, endtime, ref_time);
     }
     else
     {
       if (!lh.parent ||
           (lh.parent && !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::time_dim)))
         time_dim =
-            lh.timeDimension->getLayer()->getTimeDimensionInfo(starttime, endtime, reference_time);
+		  lh.timeDimension->getLayer()->getTimeDimensionInfo(multiple_intervals, starttime, endtime, reference_time);
     }
 
     if (time_dim)
@@ -345,7 +346,7 @@ void add_layer_info(CTPP::CDT& ctpp,
     ctpp.PushBack(capa);
     unsigned int nextLevel = level + 1;
     for (const auto& item : lh.sublayers)
-      add_layer_info(capa["sublayers"], *item, starttime, endtime, reference_time, nextLevel);
+      add_layer_info(multiple_intervals, capa["sublayers"], *item, starttime, endtime, reference_time, nextLevel);
   }
   else
     ctpp.PushBack(capa);
@@ -455,16 +456,16 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
   }
 }
 
-CTPP::CDT WMSLayerHierarchy::getCapabilities(
-    const boost::optional<std::string>& starttime,
-    const boost::optional<std::string>& endtime,
-    const boost::optional<std::string>& reference_time) const
+CTPP::CDT WMSLayerHierarchy::getCapabilities(bool  multiple_intervals,
+											 const boost::optional<std::string>& starttime,
+											 const boost::optional<std::string>& endtime,
+											 const boost::optional<std::string>& reference_time) const
 {
   // Return array of individual layer capabilities
   CTPP::CDT capa(CTPP::CDT::ARRAY_VAL);
 
   // std::cout << "CAPA:\n " << *this << std::endl;
-  add_layer_info(capa, *this, starttime, endtime, reference_time, 1);
+  add_layer_info(multiple_intervals, capa, *this, starttime, endtime, reference_time, 1);
 
   return capa;
 }

@@ -36,7 +36,8 @@ class WMSTimeDimension
 
   std::set<boost::posix_time::ptime> getTimeSteps() const;
 
-  virtual std::string getCapabilities(const boost::optional<std::string>& starttime,
+  virtual std::string getCapabilities(bool multiple_intervals,
+									  const boost::optional<std::string>& starttime,
                                       const boost::optional<std::string>& endtime) const = 0;
 
   bool currentValue() const { return current; }
@@ -56,7 +57,8 @@ class StepTimeDimension : public WMSTimeDimension
   StepTimeDimension(const std::vector<boost::posix_time::ptime>& times);
   StepTimeDimension(const std::set<boost::posix_time::ptime>& times);
 
-  virtual std::string getCapabilities(const boost::optional<std::string>& starttime,
+  virtual std::string getCapabilities(bool multiple_intervals,
+									  const boost::optional<std::string>& starttime,
                                       const boost::optional<std::string>& endtime) const;
 
  private:
@@ -90,13 +92,17 @@ class IntervalTimeDimension : public WMSTimeDimension
 
   const std::vector<tag_interval>& getIntervals() const;
 
-  virtual std::string getCapabilities(const boost::optional<std::string>& starttime,
+  virtual std::string getCapabilities(bool multiple_intervals,
+									  const boost::optional<std::string>& starttime,
                                       const boost::optional<std::string>& endtime) const;
   virtual boost::posix_time::ptime mostCurrentTime() const;
   virtual bool isValidTime(const boost::posix_time::ptime& theTime) const;
   
 
  private:
+  std::string makeCapabilitiesTimesteps(const boost::optional<std::string>& starttime,
+										const boost::optional<std::string>& endtime) const;
+
   std::string makeCapabilities(const boost::optional<std::string>& starttime,
                                const boost::optional<std::string>& endtime) const;
   std::string getIntervalCapability(const tag_interval& interval,
