@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 21.6.8
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -18,8 +18,8 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.7.2
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.1.14
-BuildRequires: smartmet-library-grid-content-devel >= 21.6.1
-BuildRequires: smartmet-library-grid-files-devel >= 21.6.1
+BuildRequires: smartmet-library-grid-content-devel >= 21.6.8
+BuildRequires: smartmet-library-grid-files-devel >= 21.6.8
 BuildRequires: smartmet-library-macgyver-devel >= 21.5.31
 BuildRequires: smartmet-library-spine-devel >= 21.5.31
 BuildRequires: smartmet-library-giza-devel
@@ -30,7 +30,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 21.1.14
 BuildRequires: smartmet-engine-observation-devel >= 21.5.31
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 21.5.27
-BuildRequires: smartmet-engine-grid-devel >= 21.6.1
+BuildRequires: smartmet-engine-grid-devel >= 21.6.8
 BuildRequires: smartmet-engine-geonames-devel >= 21.5.20
 BuildRequires: smartmet-engine-querydata-devel >= 21.6.3
 BuildRequires: smartmet-engine-contour-devel >= 21.5.20
@@ -58,8 +58,8 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 21.6.1
-Requires: smartmet-library-grid-files >= 21.6.1
+Requires: smartmet-library-grid-content >= 21.6.8
+Requires: smartmet-library-grid-files >= 21.6.8
 Requires: smartmet-library-gis >= 21.6.7
 Requires: smartmet-library-macgyver >= 21.5.31
 Requires: smartmet-library-giza >= 21.1.14
@@ -69,7 +69,7 @@ Requires: smartmet-engine-authentication >= 21.1.14
 Requires: smartmet-engine-querydata >= 21.6.3
 Requires: smartmet-engine-contour >= 21.5.20
 Requires: smartmet-engine-gis >= 21.5.27
-Requires: smartmet-engine-grid >= 21.6.1
+Requires: smartmet-engine-grid >= 21.6.8
 Requires: smartmet-engine-geonames >= 21.5.20
 Requires: smartmet-server >= 21.6.3
 Requires: smartmet-library-spine >= 21.5.31
@@ -97,7 +97,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 21.1.14
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
 #TestRequires: smartmet-library-spine-devel >= 21.5.31
-#TestRequires: smartmet-engine-grid-devel >= 21.6.1
+#TestRequires: smartmet-engine-grid-devel >= 21.6.8
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Jun  8 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.8-2.fmi
+- Repackaged due to memory saving ABI changes in base libraries
+
 * Tue Jun 8 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.6.8-1.fmi
 - List of intervals in GetCapabilities reponse is made optional (BRAINSTORM-2090)
 
