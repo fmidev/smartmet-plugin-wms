@@ -42,7 +42,7 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
   layout.legend_yoffset = 40;
   layout.symbol_group_x_padding = 30;
   layout.symbol_group_y_padding = 30;
-  layout.legend_width = 150;
+  layout.legend_width = 10;
   layout.output_document_width = 500;
   layout.output_document_height = 500;
   expires = -1;  // No caching

@@ -110,7 +110,7 @@ std::string makeLayerNamespace(const std::string& customer,
   }
 }
 
-// if legend layer exixts use it directly
+// If legend layer exixts use it directly
 // otherwise generate legend from configuration
 bool prepareLegendGraphic(Product& theProduct)
 {
@@ -260,23 +260,31 @@ void set_optional(CTPP::CDT& tmpl,
   set_scalar(tmpl, config, path, variable);
 }
 
-CTPP::CDT get_request(const libconfig::Config& config,
-                      const std::string& prefix,
-                      const std::string& variable)
+CTPP::CDT WMSConfig::get_request(const libconfig::Config& config,
+				 const std::string& prefix,
+				 const std::string& variable) const
 {
   CTPP::CDT request(CTPP::CDT::HASH_VAL);
 
   const std::string path = prefix + "." + variable;
 
-  const auto& formats = config.lookup(path + ".format");
-  if (!formats.isArray())
-    throw Fmi::Exception(BCP, path + ".format  must be an array");
-
   CTPP::CDT format_list(CTPP::CDT::ARRAY_VAL);
-  for (int i = 0; i < formats.getLength(); i++)
-    format_list.PushBack(formats[i].c_str());
+  if(variable != "getmap")
+    {
+      const auto& formats = config.lookup(path + ".format");
+      if (!formats.isArray())
+	throw Fmi::Exception(BCP, path + ".format  must be an array");
+      
+      for (int i = 0; i < formats.getLength(); i++)
+	format_list.PushBack(formats[i].c_str());
+    }
+  else
+    {
+      for (const auto& format : itsSupportedMapFormats)
+	format_list.PushBack(format);
+    }
   request["format"] = format_list;
-
+  
   const auto& dcptypes = config.lookup(path + ".dcptype");
   if (dcptypes.isArray())
     throw Fmi::Exception(BCP, path + ".dcptype must be an array");
@@ -308,7 +316,7 @@ CTPP::CDT get_request(const libconfig::Config& config,
   return request;
 }
 
-CTPP::CDT get_capabilities(const libconfig::Config& config)
+CTPP::CDT WMSConfig::get_capabilities(const libconfig::Config& config) const
 {
   // Extract capabilities into a CTTP hash
 
@@ -594,13 +602,9 @@ WMSConfig::WMSConfig(const Config& daliConfig,
   {
     const libconfig::Config& config = daliConfig.getConfig();
 
-    std::string wmsMapFormats = config.lookup("wms.map_formats").c_str();
 
     config.lookupValue("wms.disable_updates", itsCapabilityUpdatesDisabled);
     config.lookupValue("wms.update_interval", itsCapabilityUpdateInterval);
-
-    boost::algorithm::split(
-        itsSupportedMapFormats, wmsMapFormats, boost::algorithm::is_any_of(","));
 
     const auto& exceptions = config.lookup("wms.get_capabilities.capability.exception");
     if (!exceptions.isArray())
@@ -608,14 +612,23 @@ WMSConfig::WMSConfig(const Config& daliConfig,
     for (int i = 0; i < exceptions.getLength(); i++)
       itsSupportedWMSExceptions.insert(exceptions[i].c_str());
 
+    const auto& getmap_formats = config.lookup("wms.get_capabilities.capability.request.getmap.format");
+
+    if (!getmap_formats.isArray())
+      throw Fmi::Exception(
+          BCP, "wms.get_capabilities.capability.request.getmap.format must be an array");
+
+    for (int i = 0; i < getmap_formats.getLength(); i++)
+      itsSupportedMapFormats.insert(getmap_formats[i].c_str());
+
     const auto& capability_formats =
-        config.lookup("wms.get_capabilities.capability.request.getcapabilities.format");
+	  config.lookup("wms.get_capabilities.capability.request.getcapabilities.format");
     if (!capability_formats.isArray())
       throw Fmi::Exception(
           BCP, "wms.get_capabilities.capability.request.getcapabilities.format must be an array");
     for (int i = 0; i < capability_formats.getLength(); i++)
       itsSupportedWMSGetCapabilityFormats.insert(capability_formats[i].c_str());
-
+        
     std::string wmsVersions = config.lookup("wms.supported_versions").c_str();
     boost::algorithm::split(itsSupportedWMSVersions, wmsVersions, boost::algorithm::is_any_of(","));
     parse_references();
@@ -798,6 +811,7 @@ void WMSConfig::updateLayerMetaData()
     const bool use_wms = true;
     std::string customerdir(itsDaliConfig.rootDirectory(use_wms) + "/customers");
 
+	std::map<SharedWMSLayer, std::string> layersWithExternalLagendFile;
     boost::filesystem::directory_iterator end_itr;
     for (boost::filesystem::directory_iterator itr(customerdir); itr != end_itr; ++itr)
     {
@@ -886,6 +900,8 @@ void WMSConfig::updateLayerMetaData()
                     {
                       SharedWMSLayer wmsLayer(WMSLayerFactory::createWMSLayer(
                           pathName, theNamespace, customername, *this));
+					  if(!wmsLayer->getLegendFile().empty())
+						layersWithExternalLagendFile[wmsLayer] = wmsLayer->getLegendFile();
                       WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
                       newProxies->insert(make_pair(fullLayername, newProxy));
                     }
@@ -934,6 +950,18 @@ void WMSConfig::updateLayerMetaData()
         exception.printError();
       }
     }
+
+	// It external legend file is used set legend dimension here
+	for(auto& externalLegendItem : layersWithExternalLagendFile)
+	  {
+		for(auto& proxyItem : *newProxies)
+		  {
+			if(proxyItem.second.getLayer()->getName() == externalLegendItem.second)
+			  {
+				externalLegendItem.first->setLegendDimension(*proxyItem.second.getLayer());
+			  }
+		  }
+	  }
 
     boost::atomic_store(&itsLayers, newProxies);
   }
@@ -1282,12 +1310,14 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
 
   std::string customer = layerName.substr(0, layerName.find(':'));
 
-  std::string legendDirectory = itsDaliConfig.rootDirectory(true) + "/customers/legends";
+  //  std::string legendDirectory = itsDaliConfig.rootDirectory(true) + "/customers/legends";
 
   std::string legendGraphicID = layerName + "::" + styleName;
 
-  LegendGraphicResult result = my_layers->at(layerName).getLayer()->getLegendGraphic(
-      itsLegendGraphicSettings, legendGraphicID, language);
+  //  std::cout << "legendGraphicID: " << legendGraphicID << std::endl;
+  
+
+  LegendGraphicResult result = my_layers->at(layerName).getLayer()->getLegendGraphic(legendGraphicID, language);
   width = result.width;
   height = result.height;
 
@@ -1369,8 +1399,8 @@ void WMSConfig::getLegendGraphic(const std::string& theLayerName,
   if (prepareLegendGraphic(theProduct))
     return;
 
-  std::size_t width = 100;
-  std::size_t height = 100;
+  std::size_t width = 10;
+  std::size_t height = 10;
   std::vector<Json::Value> legendLayers =
       getLegendGraphic(theLayerName, theStyleName, width, height, theLanguage);
   theProduct.width = width;

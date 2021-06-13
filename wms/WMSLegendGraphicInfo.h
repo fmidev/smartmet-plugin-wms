@@ -47,10 +47,12 @@ using NamedLegendGraphicInfo = std::map<std::string, LegendGraphicInfo>;
 
 struct LegendGraphicResult
 {
-  unsigned int width;
-  unsigned int height;
+  unsigned int width{10};
+  unsigned int height{10};
   std::vector<std::string> legendLayers;
 };
+
+using LegendGraphicResultPerLanguage = std::map<std::string, LegendGraphicResult>;
 
 }  // namespace WMS
 }  // namespace Plugin

@@ -1,5 +1,4 @@
 #include "WMSLayerFactory.h"
-#include "CaseInsensitiveComparator.h"
 #include "StyleSelection.h"
 #include "WMSGridDataLayer.h"
 #include "WMSPostGISLayer.h"
@@ -397,80 +396,6 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 
     layer->updateLayerMetaData();
 
-    // handle styles
-
-    // 1) read "legend_url_layer"-parameter and use it to generate styles entry
-    json = root.get("legend_url_layer", nulljson);
-    if (!json.isNull())
-    {
-      WMSLayerStyle layerStyle;
-      std::string legendURLLayer = json.asString();
-      layer->addStyle(legendURLLayer, layerStyle);
-    }
-
-    if (layer->itsStyles.size() == 0)
-    {
-      bool addDefaultStyle = true;
-      // 2) read styles vector from configuration and generate layer styles
-      json = root.get("styles", nulljson);
-      if (!json.isNull())
-      {
-        if (!json.isArray())
-          throw Fmi::Exception(BCP, "WMSLayer styles settings must be an array");
-
-        WMSLayerStyle layerStyle;
-
-        for (unsigned int i = 0; i < json.size(); i++)
-        {
-          const Json::Value& style_json = json[i];
-          auto json_value = style_json.get("name", nulljson);
-          if (!json_value.isNull())
-            layerStyle.name = json_value.asString();
-          json_value = style_json.get("title", nulljson);
-          if (!json_value.isNull())
-            layerStyle.title = json_value.asString();
-          json_value = style_json.get("abstract", nulljson);
-          if (!json_value.isNull())
-            layerStyle.abstract = json_value.asString();
-
-          auto legend_url_json = style_json.get("legend_url", nulljson);
-          if (!legend_url_json.isNull())
-          {
-            json_value = legend_url_json.get("format", nulljson);
-            if (!json_value.isNull())
-              layerStyle.legend_url.format = json_value.asString();
-            json_value = legend_url_json.get("online_resource", nulljson);
-            if (!json_value.isNull())
-              layerStyle.legend_url.online_resource = json_value.asString();
-            layer->itsStyles.push_back(layerStyle);
-          }
-          else
-          {
-            // Modify right style for the product and add getCapabilities Style info
-            Json::Value modifiedLayer = root;
-            useStyle(modifiedLayer, style_json);
-            layer->addStyle(modifiedLayer, layer->name, layerStyle);
-
-            CaseInsensitiveComparator cicomp;
-            if (cicomp(layerStyle.name, "default"))
-              addDefaultStyle = false;
-          }
-        }
-        if (addDefaultStyle)
-        {
-          WMSLayerStyle layerStyle;
-          layer->addStyle(root, layer->name, layerStyle);
-        }
-      }
-    }
-
-    // 3) generate layer styles automatically from configuration
-    if (layer->itsStyles.size() == 0)
-    {
-      WMSLayerStyle layerStyle;
-      layer->addStyle(root, layer->name, layerStyle);
-    }
-
     // Spatial references supported by default, if applicable
     layer->refs = theWMSConfig.supportedWMSReferences();
 
@@ -488,6 +413,9 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     // Calculate projected bboxes only once to speed up GetCapabilities
     layer->initProjectedBBoxes();
 
+    // Calculate LegedGraphicInfo only once
+    layer->initLegendGraphicInfo(root);
+    
     return layer;
   }
   catch (...)
