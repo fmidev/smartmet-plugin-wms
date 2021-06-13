@@ -150,6 +150,10 @@ class WMSConfig
 
  private:
   void parse_references();
+  CTPP::CDT get_capabilities(const libconfig::Config& config) const;
+  CTPP::CDT get_request(const libconfig::Config& config,
+			const std::string& prefix,
+			const std::string& variable) const;
 
   const Plugin::Dali::Config& itsDaliConfig;
   const Spine::JsonCache& itsJsonCache;

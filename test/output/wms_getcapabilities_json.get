@@ -76,7 +76,7 @@
 			},
 			"GetMap":
 			{
-				"Format": ["image/png","image/svg+xml","application/pdf"],
+				"Format": ["application/pdf","image/png","image/svg+xml"],
 				"DCPType":
 				[
 					{
@@ -267,7 +267,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=ely%3Aelymap"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=ely%3Aelymap&amp;width=150&amp;height=160"
 								}
 							}
 						]
@@ -398,7 +398,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=ely%3Awmsmap"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=ely%3Awmsmap&amp;width=150&amp;height=160"
 								}
 							}
 						]
@@ -468,7 +468,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Aprecipitation_1"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Aprecipitation_1&amp;width=150&amp;height=133"
 								}
 							}
 						]
@@ -538,7 +538,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Aprecipitation_kgm2_1"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Aprecipitation_kgm2_1&amp;width=150&amp;height=196"
 								}
 							}
 						]
@@ -610,7 +610,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_1"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_1&amp;width=150&amp;height=520"
 								}
 							}
 						]
@@ -681,7 +681,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_2"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_2&amp;width=300&amp;height=520"
 								}
 							}
 						]
@@ -752,7 +752,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_3"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_3&amp;width=150&amp;height=520"
 								}
 							}
 						]
@@ -823,7 +823,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_4"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_4&amp;width=150&amp;height=520"
 								}
 							}
 						]
@@ -893,7 +893,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_direction_1"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_direction_1&amp;width=116&amp;height=85"
 								}
 							}
 						]
@@ -963,7 +963,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_1"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_1&amp;width=300&amp;height=142"
 								}
 							}
 						]
@@ -1033,7 +1033,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_2"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_2&amp;width=300&amp;height=142"
 								}
 							}
 						]
@@ -1103,7 +1103,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_and_direction_1"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_speed_and_direction_1&amp;width=116&amp;height=85"
 								}
 							}
 						]
@@ -2006,7 +2006,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_bob_bw"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_bob_bw&amp;width=188&amp;height=295"
 								}
 							}
 						]
@@ -2138,7 +2138,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_bob_color"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_bob_color&amp;width=188&amp;height=295"
 								}
 							}
 						]
@@ -2270,7 +2270,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_bw"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_bw&amp;width=188&amp;height=295"
 								}
 							}
 						]
@@ -2402,7 +2402,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_color"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_color&amp;width=188&amp;height=295"
 								}
 							}
 						]
@@ -2534,7 +2534,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_smhi_bw"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_smhi_bw&amp;width=188&amp;height=295"
 								}
 							}
 						]
@@ -2666,7 +2666,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_smhi_color"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_fmi_smhi_color&amp;width=188&amp;height=295"
 								}
 							}
 						]
@@ -2798,7 +2798,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_gof_bw"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_gof_bw&amp;width=188&amp;height=295"
 								}
 							}
 						]
@@ -2930,7 +2930,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_gof_color"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_gof_color&amp;width=188&amp;height=295"
 								}
 							}
 						]
@@ -3164,7 +3164,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_nsp2_bw"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_nsp2_bw&amp;width=188&amp;height=295"
 								}
 							}
 						]
@@ -3296,7 +3296,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_nsp2_color"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_nsp2_color&amp;width=188&amp;height=295"
 								}
 							}
 						]
@@ -3428,7 +3428,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_sob_bw"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_sob_bw&amp;width=188&amp;height=295"
 								}
 							}
 						]
@@ -3560,7 +3560,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_sob_color"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_sob_color&amp;width=188&amp;height=295"
 								}
 							}
 						]
@@ -3692,7 +3692,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_wgof_bw"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_wgof_bw&amp;width=188&amp;height=295"
 								}
 							}
 						]
@@ -3824,7 +3824,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_wgof_color"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aicechart_wgof_color&amp;width=188&amp;height=295"
 								}
 							}
 						]
@@ -3946,9 +3946,8 @@
 				"Style":
 				[
 					{
-						"Name": "isolabel_small_blue_text_style",
-						"Title": "Isolabel with small blue font",
-						"Abstract": "Isolabel with small blue font",
+						"Name": "default",
+						"Title": "Default style",
 						"LegendURL":
 						[
 							{
@@ -3956,7 +3955,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=isolabel_small_blue_text_style&amp;format=image%2Fpng&amp;layer=test%3Aisolabel"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aisolabel&amp;width=150&amp;height=100"
 								}
 							}
 						]
@@ -3972,14 +3971,15 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=isolabel_big_red_text_style&amp;format=image%2Fpng&amp;layer=test%3Aisolabel"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=isolabel_big_red_text_style&amp;format=image%2Fpng&amp;layer=test%3Aisolabel&amp;width=150&amp;height=100"
 								}
 							}
 						]
 					},
 					{
-						"Name": "default",
-						"Title": "Default style",
+						"Name": "isolabel_small_blue_text_style",
+						"Title": "Isolabel with small blue font",
+						"Abstract": "Isolabel with small blue font",
 						"LegendURL":
 						[
 							{
@@ -3987,7 +3987,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aisolabel"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=isolabel_small_blue_text_style&amp;format=image%2Fpng&amp;layer=test%3Aisolabel&amp;width=150&amp;height=100"
 								}
 							}
 						]
@@ -4424,7 +4424,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Anetatmo5min"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Anetatmo5min&amp;width=162&amp;height=155"
 								}
 							}
 						]
@@ -4546,6 +4546,21 @@
 				"Style":
 				[
 					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation&amp;width=626&amp;height=295"
+								}
+							}
+						]
+					},
+					{
 						"Name": "precipitation_red_rain_style",
 						"Title": "Precipitation red rain style",
 						"Abstract": "Rain drops in red colour",
@@ -4556,23 +4571,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_red_rain_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation"
-								}
-							}
-						]
-					},
-					{
-						"Name": "precipitation_thin_style",
-						"Title": "Precipitation thin style",
-						"Abstract": "Pressure isolines line width is 1 px",
-						"LegendURL":
-						[
-							{
-								"Format": "image/png",
-								"OnlineResource":
-								{
-									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thin_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_red_rain_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation&amp;width=626&amp;height=295"
 								}
 							}
 						]
@@ -4588,14 +4587,15 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thick_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thick_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation&amp;width=626&amp;height=295"
 								}
 							}
 						]
 					},
 					{
-						"Name": "default",
-						"Title": "Default style",
+						"Name": "precipitation_thin_style",
+						"Title": "Precipitation thin style",
+						"Abstract": "Pressure isolines line width is 1 px",
 						"LegendURL":
 						[
 							{
@@ -4603,7 +4603,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thin_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation&amp;width=626&amp;height=295"
 								}
 							}
 						]
@@ -4725,9 +4725,8 @@
 				"Style":
 				[
 					{
-						"Name": "precipitation_thin_style",
-						"Title": "Precipitation thin style",
-						"Abstract": "Precipitation isolines line width is 1 px",
+						"Name": "default",
+						"Title": "Default style",
 						"LegendURL":
 						[
 							{
@@ -4735,7 +4734,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thin_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_areas"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_areas&amp;width=300&amp;height=133"
 								}
 							}
 						]
@@ -4751,14 +4750,15 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thick_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_areas"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thick_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_areas&amp;width=300&amp;height=133"
 								}
 							}
 						]
 					},
 					{
-						"Name": "default",
-						"Title": "Default style",
+						"Name": "precipitation_thin_style",
+						"Title": "Precipitation thin style",
+						"Abstract": "Precipitation isolines line width is 1 px",
 						"LegendURL":
 						[
 							{
@@ -4766,7 +4766,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_areas"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thin_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_areas&amp;width=300&amp;height=133"
 								}
 							}
 						]
@@ -4897,7 +4897,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_modified"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_modified&amp;width=626&amp;height=330"
 								}
 							}
 						]
@@ -5028,7 +5028,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aroadcloud5min"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aroadcloud5min&amp;width=160&amp;height=155"
 								}
 							}
 						]
@@ -5160,7 +5160,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asnow_drift_index"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asnow_drift_index&amp;width=196&amp;height=97"
 								}
 							}
 						]
@@ -5282,9 +5282,8 @@
 				"Style":
 				[
 					{
-						"Name": "temperature_two_degrees",
-						"Title": "Temperature isobands every two degrees",
-						"Abstract": "Temperature isoband width is two degrees",
+						"Name": "default",
+						"Title": "Default style",
 						"LegendURL":
 						[
 							{
@@ -5292,23 +5291,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=temperature_two_degrees&amp;format=image%2Fpng&amp;layer=test%3At2m"
-								}
-							}
-						]
-					},
-					{
-						"Name": "temperature_three_degrees",
-						"Title": "Temperature isobands every three degrees",
-						"Abstract": "Temperature isoband width is three degrees",
-						"LegendURL":
-						[
-							{
-								"Format": "image/png",
-								"OnlineResource":
-								{
-									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=temperature_three_degrees&amp;format=image%2Fpng&amp;layer=test%3At2m"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m&amp;width=500&amp;height=990"
 								}
 							}
 						]
@@ -5324,14 +5307,15 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=temperature_one_degrees&amp;format=image%2Fpng&amp;layer=test%3At2m"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=temperature_one_degrees&amp;format=image%2Fpng&amp;layer=test%3At2m&amp;width=500&amp;height=1959"
 								}
 							}
 						]
 					},
 					{
-						"Name": "default",
-						"Title": "Default style",
+						"Name": "temperature_three_degrees",
+						"Title": "Temperature isobands every three degrees",
+						"Abstract": "Temperature isoband width is three degrees",
 						"LegendURL":
 						[
 							{
@@ -5339,7 +5323,23 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=temperature_three_degrees&amp;format=image%2Fpng&amp;layer=test%3At2m&amp;width=500&amp;height=553"
+								}
+							}
+						]
+					},
+					{
+						"Name": "temperature_two_degrees",
+						"Title": "Temperature isobands every two degrees",
+						"Abstract": "Temperature isoband width is two degrees",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=temperature_two_degrees&amp;format=image%2Fpng&amp;layer=test%3At2m&amp;width=500&amp;height=990"
 								}
 							}
 						]
@@ -5470,7 +5470,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m_isoband_labels"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m_isoband_labels&amp;width=500&amp;height=990"
 								}
 							}
 						]
@@ -5601,7 +5601,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m_p"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3At2m_p&amp;width=800&amp;height=990"
 								}
 							}
 						]
@@ -5846,7 +5846,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Awind_legend"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;width=10&amp;height=10"
 								}
 							}
 						]
@@ -5975,6 +5975,21 @@
 				"Style":
 				[
 					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Awindarrows&amp;width=30&amp;height=10"
+								}
+							}
+						]
+					},
+					{
 						"Name": "windarrows_sparse_style",
 						"Title": "Windarrows sparse layout",
 						"Abstract": "Windarrows in sparse layout",
@@ -5985,22 +6000,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=windarrows_sparse_style&amp;format=image%2Fpng&amp;layer=test%3Awindarrows"
-								}
-							}
-						]
-					},
-					{
-						"Name": "default",
-						"Title": "Default style",
-						"LegendURL":
-						[
-							{
-								"Format": "image/png",
-								"OnlineResource":
-								{
-									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Awindarrows"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=windarrows_sparse_style&amp;format=image%2Fpng&amp;layer=test%3Awindarrows&amp;width=30&amp;height=10"
 								}
 							}
 						]
@@ -6122,6 +6122,21 @@
 				"Style":
 				[
 					{
+						"Name": "default",
+						"Title": "Default style",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Awindnumbers&amp;width=137&amp;height=10"
+								}
+							}
+						]
+					},
+					{
 						"Name": "windnumbers_sparse_style",
 						"Title": "Windnumbers sparse layout",
 						"Abstract": "Windnumbers in sparse layout",
@@ -6132,22 +6147,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=windnumbers_sparse_style&amp;format=image%2Fpng&amp;layer=test%3Awindnumbers"
-								}
-							}
-						]
-					},
-					{
-						"Name": "default",
-						"Title": "Default style",
-						"LegendURL":
-						[
-							{
-								"Format": "image/png",
-								"OnlineResource":
-								{
-									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Awindnumbers"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=windnumbers_sparse_style&amp;format=image%2Fpng&amp;layer=test%3Awindnumbers&amp;width=137&amp;height=10"
 								}
 							}
 						]

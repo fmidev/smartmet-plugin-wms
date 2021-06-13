@@ -55,6 +55,8 @@ class WMSLayer
   boost::optional<int> no_subsets;
   boost::optional<int> fixed_width;
   boost::optional<int> fixed_height;
+  boost::optional<int> width; // If this layer is used as a legend file width and hieght are needed here
+  boost::optional<int> height;
 
   const WMSConfig& wmsConfig;
   bool hidden{false};  // If this is true, dont show in GetCapabilities response
@@ -70,15 +72,15 @@ class WMSLayer
   std::set<std::string> enabled_refs;
   std::set<std::string> disabled_refs;
 
-  std::vector<WMSLayerStyle> itsStyles;
+  std::map<std::string, WMSLayerStyle> itsStyles;
   boost::shared_ptr<WMSTimeDimensions> timeDimensions{
       nullptr};  // Optional, may be empty for non-temporal postgis layers
   boost::shared_ptr<WMSElevationDimension> elevationDimension{nullptr};  // Optional
 
   std::string customer;
   std::string productFile;  // dali product
-  NamedLegendGraphicInfo itsNamedLegendGraphicInfo;
-  WMSLegendGraphicSettings itsLegendGraphicSettings;
+  std::map<std::string, LegendGraphicResultPerLanguage> itsLegendGraphicResults;
+  std::string itsLegendFile;
 
   friend class WMSLayerFactory;
   friend std::ostream& operator<<(std::ostream&, const WMSLayer&);
@@ -93,18 +95,14 @@ class WMSLayer
   bool identicalTimeDimension(const WMSLayer& layer) const;
   bool identicalElevationDimension(const WMSLayer& layer) const;
 
-  void addStyle(const Json::Value& root,
-                const std::string& layerName,
-                const WMSLayerStyle& layerStyle);
-  void addStyle(const std::string& layerName, const WMSLayerStyle& layerStyle);
   bool isHidden() const { return hidden; }
   void setCustomer(const std::string& c);
   const std::string& getName() const { return name; }
   const std::string& getCustomer() const { return customer; }
   const std::string& getDaliProductFile() const { return productFile; }
-  LegendGraphicResult getLegendGraphic(const WMSLegendGraphicSettings& settings,
-                                       const std::string& legendGraphicID,
+  LegendGraphicResult getLegendGraphic(const std::string& legendGraphicID,
                                        const std::string& language) const;
+  const std::string& getLegendFile() const { return itsLegendFile; }
 
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;
@@ -115,6 +113,10 @@ class WMSLayer
   bool isTemporal() const { return timeDimensions != nullptr; }
   bool currentValue() const;  // returns true if current value can be queried from layer
                               // (time=current)
+  // Legend width, height is read from separate file
+  void setLegendDimension(const WMSLayer& legendLayer);
+  const boost::optional<int>& getWidth() const { return width; }
+  const boost::optional<int>& getHeight() const { return height; }
 
   // returns the most current valid time for the layer
   boost::posix_time::ptime mostCurrentTime(
@@ -144,6 +146,9 @@ class WMSLayer
 
   // To be called after crs and crs_bbox have been initialized
   void initProjectedBBoxes();
+
+  // 
+  void initLegendGraphicInfo(const Json::Value& root);
 
   // Update layer metadata for GetCapabilities (time,spatial dimensions)
   virtual void updateLayerMetaData() = 0;

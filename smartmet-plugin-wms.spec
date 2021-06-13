@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.6.8
-Release: 2%{?dist}.fmi
+Version: 21.6.14
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -135,6 +135,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Jun 14 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.6.14-1.fmi
+- Fixed LegendGraphic related bugs (BRAINSTORM-2083)
+- Added width,height parameters to GetLegendGraphic URL
+
 * Tue Jun  8 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.8-2.fmi
 - Repackaged due to memory saving ABI changes in base libraries
 
