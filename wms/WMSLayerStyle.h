@@ -26,6 +26,8 @@ struct LegendURL
   LegendURL() : format("image/png") {}
   std::string format;
   std::string online_resource;
+  std::string width;
+  std::string height;
 };
 
 struct WMSLayerStyle

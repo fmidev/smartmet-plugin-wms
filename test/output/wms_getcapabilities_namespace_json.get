@@ -268,7 +268,9 @@
 								{
 									"xlink:type": "simple",
 									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=ely%3Aelymap&amp;width=150&amp;height=160"
-								}
+								},
+								"width":150,
+								"height":160
 							}
 						]
 					}
@@ -399,7 +401,9 @@
 								{
 									"xlink:type": "simple",
 									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=ely%3Awmsmap&amp;width=150&amp;height=160"
-								}
+								},
+								"width":150,
+								"height":160
 							}
 						]
 					}

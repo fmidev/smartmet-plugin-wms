@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 21.6.14
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -20,14 +20,14 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.1.14
 BuildRequires: smartmet-library-grid-content-devel >= 21.6.8
 BuildRequires: smartmet-library-grid-files-devel >= 21.6.8
-BuildRequires: smartmet-library-macgyver-devel >= 21.5.31
+BuildRequires: smartmet-library-macgyver-devel >= 21.6.10
 BuildRequires: smartmet-library-spine-devel >= 21.5.31
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 21.1.14
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 21.5.31
+BuildRequires: smartmet-engine-observation-devel >= 21.6.14
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 21.5.27
 BuildRequires: smartmet-engine-grid-devel >= 21.6.8
@@ -61,7 +61,7 @@ Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 21.6.8
 Requires: smartmet-library-grid-files >= 21.6.8
 Requires: smartmet-library-gis >= 21.6.7
-Requires: smartmet-library-macgyver >= 21.5.31
+Requires: smartmet-library-macgyver >= 21.6.10
 Requires: smartmet-library-giza >= 21.1.14
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.1.14
@@ -106,7 +106,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 21.5.31
+#TestRequires: smartmet-engine-observation-devel >= 21.6.14
 %endif
 
 %description
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Jun 14 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.14-2.fmi
+- Fixed GetCapabilities LegendURL to have width and height attributes
+
 * Mon Jun 14 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.6.14-1.fmi
 - Fixed LegendGraphic related bugs (BRAINSTORM-2083)
 - Added width,height parameters to GetLegendGraphic URL

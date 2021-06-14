@@ -1442,6 +1442,8 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
           itsStyles[styleName].legend_url.online_resource +=
               ("&amp;width=" + Fmi::to_string(result.width) +
                "&amp;height=" + Fmi::to_string(result.height));
+          itsStyles[styleName].legend_url.width = Fmi::to_string(result.width);
+          itsStyles[styleName].legend_url.height = Fmi::to_string(result.height);
         }
       }
     }
@@ -2380,11 +2382,15 @@ void WMSLayer::setLegendDimension(const WMSLayer& legendLayer)
       style.second.legend_url.online_resource +=
           ("&amp;width=" + Fmi::to_string(*legendLayer.getWidth()) +
            "&amp;height=" + Fmi::to_string(*legendLayer.getHeight()));
+      style.second.legend_url.width = Fmi::to_string(*legendLayer.getWidth());
+      style.second.legend_url.height = Fmi::to_string(*legendLayer.getHeight());
     }
     else
     {
       // If width, height are NOT given in separate legend file, use defult 10
       style.second.legend_url.online_resource += ("&amp;width=10&amp;height=10");
+      style.second.legend_url.width = "10";
+      style.second.legend_url.height = "10";
     }
   }
 }

@@ -48,6 +48,12 @@ CTPP::CDT WMSLayerStyle::getCapabilities() const
     CTPP::CDT style_legend_url(CTPP::CDT::HASH_VAL);
     style_legend_url["format"] = legend_url.format;
     style_legend_url["online_resource"] = legend_url.online_resource;
+    if (!legend_url.width.empty() && !legend_url.height.empty())
+    {
+      style_legend_url["width"] = legend_url.width;
+      style_legend_url["height"] = legend_url.height;
+    }
+
     style_legend_url_list.PushBack(style_legend_url);
 
     style["legend_url"] = style_legend_url_list;
