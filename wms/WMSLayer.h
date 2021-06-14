@@ -55,7 +55,8 @@ class WMSLayer
   boost::optional<int> no_subsets;
   boost::optional<int> fixed_width;
   boost::optional<int> fixed_height;
-  boost::optional<int> width; // If this layer is used as a legend file width and hieght are needed here
+  boost::optional<int>
+      width;  // If this layer is used as a legend file width and hieght are needed here
   boost::optional<int> height;
 
   const WMSConfig& wmsConfig;
@@ -125,20 +126,20 @@ class WMSLayer
   // Empty for hidden layers
 
   boost::optional<CTPP::CDT> generateGetCapabilities(
-													 bool multiple_intervals,
-													 const Engine::Gis::Engine& gisengine,
-													 const boost::optional<std::string>& starttime,
-													 const boost::optional<std::string>& endtime,
-													 const boost::optional<std::string>& reference_time);
+      bool multiple_intervals,
+      const Engine::Gis::Engine& gisengine,
+      const boost::optional<std::string>& starttime,
+      const boost::optional<std::string>& endtime,
+      const boost::optional<std::string>& reference_time);
 
   boost::optional<CTPP::CDT> getLayerBaseInfo() const;
   boost::optional<CTPP::CDT> getGeographicBoundingBoxInfo() const;
   boost::optional<CTPP::CDT> getProjectedBoundingBoxInfo() const;
   boost::optional<CTPP::CDT> getTimeDimensionInfo(
-												  bool  multiple_intervals,
-												  const boost::optional<std::string>& starttime,
-												  const boost::optional<std::string>& endtime,
-												  const boost::optional<std::string>& reference_time) const;
+      bool multiple_intervals,
+      const boost::optional<std::string>& starttime,
+      const boost::optional<std::string>& endtime,
+      const boost::optional<std::string>& reference_time) const;
   boost::optional<CTPP::CDT> getReferenceDimensionInfo() const;
   boost::optional<CTPP::CDT> getElevationDimensionInfo() const;
   boost::optional<CTPP::CDT> getStyleInfo() const;
@@ -147,7 +148,7 @@ class WMSLayer
   // To be called after crs and crs_bbox have been initialized
   void initProjectedBBoxes();
 
-  // 
+  //
   void initLegendGraphicInfo(const Json::Value& root);
 
   // Update layer metadata for GetCapabilities (time,spatial dimensions)

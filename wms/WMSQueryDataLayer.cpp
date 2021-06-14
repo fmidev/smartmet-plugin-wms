@@ -45,10 +45,10 @@ void WMSQueryDataLayer::updateLayerMetaData()
       if (!validtimes->empty())
       {
         boost::shared_ptr<WMSTimeDimension> timeDimension;
-		time_intervals intervals = get_intervals(*validtimes);
+        time_intervals intervals = get_intervals(*validtimes);
         if (!intervals.empty())
         {
-          timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);		  
+          timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);
         }
         else
         {
@@ -66,10 +66,10 @@ void WMSQueryDataLayer::updateLayerMetaData()
         boost::shared_ptr<Engine::Querydata::ValidTimeList> vt = q->validTimes();
         boost::shared_ptr<WMSTimeDimension> timeDimension;
 
-		time_intervals intervals = get_intervals(*vt);
+        time_intervals intervals = get_intervals(*vt);
         if (!intervals.empty())
         {
-          timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);		  
+          timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);
         }
         else
         {

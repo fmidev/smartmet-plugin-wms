@@ -261,30 +261,30 @@ void set_optional(CTPP::CDT& tmpl,
 }
 
 CTPP::CDT WMSConfig::get_request(const libconfig::Config& config,
-				 const std::string& prefix,
-				 const std::string& variable) const
+                                 const std::string& prefix,
+                                 const std::string& variable) const
 {
   CTPP::CDT request(CTPP::CDT::HASH_VAL);
 
   const std::string path = prefix + "." + variable;
 
   CTPP::CDT format_list(CTPP::CDT::ARRAY_VAL);
-  if(variable != "getmap")
-    {
-      const auto& formats = config.lookup(path + ".format");
-      if (!formats.isArray())
-	throw Fmi::Exception(BCP, path + ".format  must be an array");
-      
-      for (int i = 0; i < formats.getLength(); i++)
-	format_list.PushBack(formats[i].c_str());
-    }
+  if (variable != "getmap")
+  {
+    const auto& formats = config.lookup(path + ".format");
+    if (!formats.isArray())
+      throw Fmi::Exception(BCP, path + ".format  must be an array");
+
+    for (int i = 0; i < formats.getLength(); i++)
+      format_list.PushBack(formats[i].c_str());
+  }
   else
-    {
-      for (const auto& format : itsSupportedMapFormats)
-	format_list.PushBack(format);
-    }
+  {
+    for (const auto& format : itsSupportedMapFormats)
+      format_list.PushBack(format);
+  }
   request["format"] = format_list;
-  
+
   const auto& dcptypes = config.lookup(path + ".dcptype");
   if (dcptypes.isArray())
     throw Fmi::Exception(BCP, path + ".dcptype must be an array");
@@ -602,7 +602,6 @@ WMSConfig::WMSConfig(const Config& daliConfig,
   {
     const libconfig::Config& config = daliConfig.getConfig();
 
-
     config.lookupValue("wms.disable_updates", itsCapabilityUpdatesDisabled);
     config.lookupValue("wms.update_interval", itsCapabilityUpdateInterval);
 
@@ -612,7 +611,8 @@ WMSConfig::WMSConfig(const Config& daliConfig,
     for (int i = 0; i < exceptions.getLength(); i++)
       itsSupportedWMSExceptions.insert(exceptions[i].c_str());
 
-    const auto& getmap_formats = config.lookup("wms.get_capabilities.capability.request.getmap.format");
+    const auto& getmap_formats =
+        config.lookup("wms.get_capabilities.capability.request.getmap.format");
 
     if (!getmap_formats.isArray())
       throw Fmi::Exception(
@@ -622,30 +622,31 @@ WMSConfig::WMSConfig(const Config& daliConfig,
       itsSupportedMapFormats.insert(getmap_formats[i].c_str());
 
     const auto& capability_formats =
-	  config.lookup("wms.get_capabilities.capability.request.getcapabilities.format");
+        config.lookup("wms.get_capabilities.capability.request.getcapabilities.format");
     if (!capability_formats.isArray())
       throw Fmi::Exception(
           BCP, "wms.get_capabilities.capability.request.getcapabilities.format must be an array");
     for (int i = 0; i < capability_formats.getLength(); i++)
       itsSupportedWMSGetCapabilityFormats.insert(capability_formats[i].c_str());
-        
+
     std::string wmsVersions = config.lookup("wms.supported_versions").c_str();
     boost::algorithm::split(itsSupportedWMSVersions, wmsVersions, boost::algorithm::is_any_of(","));
     parse_references();
 
     config.lookupValue("wms.margin", itsMargin);
-	// Default layout is flat
-	std::string layout = "flat";
-	// Layout can be defined in configuration file
+    // Default layout is flat
+    std::string layout = "flat";
+    // Layout can be defined in configuration file
     config.lookupValue("wms.get_capabilities.layout", layout);
-	if(layout == "flat")
-	  itsLayerHierarchyType = WMSLayerHierarchy::HierarchyType::flat;
-	else if(layout == "recursive")
-	  itsLayerHierarchyType = WMSLayerHierarchy::HierarchyType::recursive;
-	else if(layout == "recursivetimes")
-	  itsLayerHierarchyType = WMSLayerHierarchy::HierarchyType::recursivetimes;
-	else
-	  throw Fmi::Exception::Trace(BCP, ("Error! Invalid layout defined in configuration file: " + layout));
+    if (layout == "flat")
+      itsLayerHierarchyType = WMSLayerHierarchy::HierarchyType::flat;
+    else if (layout == "recursive")
+      itsLayerHierarchyType = WMSLayerHierarchy::HierarchyType::recursive;
+    else if (layout == "recursivetimes")
+      itsLayerHierarchyType = WMSLayerHierarchy::HierarchyType::recursivetimes;
+    else
+      throw Fmi::Exception::Trace(
+          BCP, ("Error! Invalid layout defined in configuration file: " + layout));
 
     config.lookupValue("wms.get_capabilities.enableintervals", itsMultipleIntervals);
 
@@ -811,7 +812,7 @@ void WMSConfig::updateLayerMetaData()
     const bool use_wms = true;
     std::string customerdir(itsDaliConfig.rootDirectory(use_wms) + "/customers");
 
-	std::map<SharedWMSLayer, std::string> layersWithExternalLagendFile;
+    std::map<SharedWMSLayer, std::string> layersWithExternalLagendFile;
     boost::filesystem::directory_iterator end_itr;
     for (boost::filesystem::directory_iterator itr(customerdir); itr != end_itr; ++itr)
     {
@@ -900,8 +901,8 @@ void WMSConfig::updateLayerMetaData()
                     {
                       SharedWMSLayer wmsLayer(WMSLayerFactory::createWMSLayer(
                           pathName, theNamespace, customername, *this));
-					  if(!wmsLayer->getLegendFile().empty())
-						layersWithExternalLagendFile[wmsLayer] = wmsLayer->getLegendFile();
+                      if (!wmsLayer->getLegendFile().empty())
+                        layersWithExternalLagendFile[wmsLayer] = wmsLayer->getLegendFile();
                       WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
                       newProxies->insert(make_pair(fullLayername, newProxy));
                     }
@@ -951,17 +952,17 @@ void WMSConfig::updateLayerMetaData()
       }
     }
 
-	// It external legend file is used set legend dimension here
-	for(auto& externalLegendItem : layersWithExternalLagendFile)
-	  {
-		for(auto& proxyItem : *newProxies)
-		  {
-			if(proxyItem.second.getLayer()->getName() == externalLegendItem.second)
-			  {
-				externalLegendItem.first->setLegendDimension(*proxyItem.second.getLayer());
-			  }
-		  }
-	  }
+    // It external legend file is used set legend dimension here
+    for (auto& externalLegendItem : layersWithExternalLagendFile)
+    {
+      for (auto& proxyItem : *newProxies)
+      {
+        if (proxyItem.second.getLayer()->getName() == externalLegendItem.second)
+        {
+          externalLegendItem.first->setLegendDimension(*proxyItem.second.getLayer());
+        }
+      }
+    }
 
     boost::atomic_store(&itsLayers, newProxies);
   }
@@ -977,17 +978,17 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
                                      const boost::optional<std::string>& endtime,
                                      const boost::optional<std::string>& reference_time,
                                      const boost::optional<std::string>& wms_namespace,
-									 WMSLayerHierarchy::HierarchyType hierarchy_type, 
-									 bool multiple_intervals,
-									 bool authenticate) const
+                                     WMSLayerHierarchy::HierarchyType hierarchy_type,
+                                     bool multiple_intervals,
+                                     bool authenticate) const
 #else
 CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
                                      const boost::optional<std::string>& starttime,
                                      const boost::optional<std::string>& endtime,
                                      const boost::optional<std::string>& reference_time,
                                      const boost::optional<std::string>& wms_namespace,
-									 WMSLayerHierarchy::HierarchyType hierarchy_type,
-									 bool multiple_intervals) const
+                                     WMSLayerHierarchy::HierarchyType hierarchy_type,
+                                     bool multiple_intervals) const
 #endif
 {
   try
@@ -1023,7 +1024,8 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
           continue;
 #endif
 
-      auto cdt = iter_pair.second.getCapabilities(multiple_intervals, starttime, endtime, reference_time);
+      auto cdt =
+          iter_pair.second.getCapabilities(multiple_intervals, starttime, endtime, reference_time);
 
       // Note: The boost::optional is empty for hidden layers.
       if (cdt)
@@ -1315,9 +1317,9 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
   std::string legendGraphicID = layerName + "::" + styleName;
 
   //  std::cout << "legendGraphicID: " << legendGraphicID << std::endl;
-  
 
-  LegendGraphicResult result = my_layers->at(layerName).getLayer()->getLegendGraphic(legendGraphicID, language);
+  LegendGraphicResult result =
+      my_layers->at(layerName).getLayer()->getLegendGraphic(legendGraphicID, language);
   width = result.width;
   height = result.height;
 

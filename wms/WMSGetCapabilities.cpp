@@ -119,24 +119,24 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     }
 
     CTPP::CDT configuredLayers;
-	// Layer hierarchy type: default value is flat, can be 
-	// overwritten in configuration file, and finally
-	// can be overwritten in URL
-	WMSLayerHierarchy::HierarchyType hierarchyType = theConfig.getLayerHierarchyType();
+    // Layer hierarchy type: default value is flat, can be
+    // overwritten in configuration file, and finally
+    // can be overwritten in URL
+    WMSLayerHierarchy::HierarchyType hierarchyType = theConfig.getLayerHierarchyType();
     auto layout = theRequest.getParameter("layout");
-	if(layout)
-	  {
-		if(*layout == "flat")
-		  hierarchyType = WMSLayerHierarchy::HierarchyType::flat;
-		else if(*layout == "recursive")
-		  hierarchyType = WMSLayerHierarchy::HierarchyType::recursive;
-		else if(*layout == "recursivetimes")
-		  hierarchyType = WMSLayerHierarchy::HierarchyType::recursivetimes;
-		else
-		  {
-			throw Fmi::Exception::Trace(BCP, ("Error! Invalid layout defined in request: " + *layout));
-		  }
-	  }
+    if (layout)
+    {
+      if (*layout == "flat")
+        hierarchyType = WMSLayerHierarchy::HierarchyType::flat;
+      else if (*layout == "recursive")
+        hierarchyType = WMSLayerHierarchy::HierarchyType::recursive;
+      else if (*layout == "recursivetimes")
+        hierarchyType = WMSLayerHierarchy::HierarchyType::recursivetimes;
+      else
+      {
+        throw Fmi::Exception::Trace(BCP, ("Error! Invalid layout defined in request: " + *layout));
+      }
+    }
 
     try
     {
@@ -144,18 +144,24 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
       auto starttime = theRequest.getParameter("starttime");
       auto endtime = theRequest.getParameter("endtime");
       auto reference_time = theRequest.getParameter("dim_reference_time");
-	  auto multipleIntervals = theConfig.multipleIntervals();
-	  auto enableintervals = theRequest.getParameter("enableintervals");
-	  // If request option given and it is 1 or 0 use it
-	  if(enableintervals)
-		{
-		  if(*enableintervals == "1")
-			multipleIntervals = true;
-		  else if(*enableintervals == "0")
-			multipleIntervals = false;
-		}
+      auto multipleIntervals = theConfig.multipleIntervals();
+      auto enableintervals = theRequest.getParameter("enableintervals");
+      // If request option given and it is 1 or 0 use it
+      if (enableintervals)
+      {
+        if (*enableintervals == "1")
+          multipleIntervals = true;
+        else if (*enableintervals == "0")
+          multipleIntervals = false;
+      }
 
-      configuredLayers = theConfig.getCapabilities(apikey, starttime, endtime, reference_time, wms_namespace, hierarchyType, multipleIntervals);
+      configuredLayers = theConfig.getCapabilities(apikey,
+                                                   starttime,
+                                                   endtime,
+                                                   reference_time,
+                                                   wms_namespace,
+                                                   hierarchyType,
+                                                   multipleIntervals);
     }
     catch (...)
     {
@@ -169,7 +175,8 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     {
       hash.At("capability")["layer"] = configuredLayers;
       if (hierarchyType != WMSLayerHierarchy::HierarchyType::flat)
-        hash["capability"]["newfeature"] = (hierarchyType == WMSLayerHierarchy::HierarchyType::recursive ? "1" : "2");
+        hash["capability"]["newfeature"] =
+            (hierarchyType == WMSLayerHierarchy::HierarchyType::recursive ? "1" : "2");
     }
     catch (...)
     {

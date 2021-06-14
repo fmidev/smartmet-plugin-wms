@@ -36,12 +36,13 @@ class WMSLayerProxy
   SharedWMSLayer getLayer() const { return itsLayer; }
 
   boost::optional<CTPP::CDT> getCapabilities(
-											 bool multiple_intervals,
-											 const boost::optional<std::string>& starttime,
-											 const boost::optional<std::string>& endtime,
-											 const boost::optional<std::string>& reference_time) const
+      bool multiple_intervals,
+      const boost::optional<std::string>& starttime,
+      const boost::optional<std::string>& endtime,
+      const boost::optional<std::string>& reference_time) const
   {
-    return itsLayer->generateGetCapabilities(multiple_intervals, *itsGisEngine, starttime, endtime, reference_time);
+    return itsLayer->generateGetCapabilities(
+        multiple_intervals, *itsGisEngine, starttime, endtime, reference_time);
   }
 
  private:

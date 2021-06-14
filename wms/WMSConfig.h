@@ -8,10 +8,10 @@
 
 #include "Config.h"
 #include "WMSLayer.h"
+#include "WMSLayerHierarchy.h"
 #include "WMSLayerProxy.h"
 #include "WMSLegendGraphicSettings.h"
 #include "WMSSupportedReference.h"
-#include "WMSLayerHierarchy.h"
 #include <boost/move/unique_ptr.hpp>
 #include <boost/optional.hpp>
 #include <boost/utility.hpp>
@@ -72,7 +72,7 @@ class WMSConfig
                             const boost::optional<std::string>& reference_time,
                             const boost::optional<std::string>& wms_namespace,
                             WMSLayerHierarchy::HierarchyType hierarchy_type,
-							bool multiple_intervals,
+                            bool multiple_intervals,
                             bool authenticate = true) const;
 #else
   CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
@@ -80,8 +80,8 @@ class WMSConfig
                             const boost::optional<std::string>& endtime,
                             const boost::optional<std::string>& reference_time,
                             const boost::optional<std::string>& wms_namespace,
-							WMSLayerHierarchy::HierarchyType hierarchy_type,
-							bool multiple_intervals) const;
+                            WMSLayerHierarchy::HierarchyType hierarchy_type,
+                            bool multiple_intervals) const;
 #endif
 
   void init();
@@ -152,8 +152,8 @@ class WMSConfig
   void parse_references();
   CTPP::CDT get_capabilities(const libconfig::Config& config) const;
   CTPP::CDT get_request(const libconfig::Config& config,
-			const std::string& prefix,
-			const std::string& variable) const;
+                        const std::string& prefix,
+                        const std::string& variable) const;
 
   const Plugin::Dali::Config& itsDaliConfig;
   const Spine::JsonCache& itsJsonCache;

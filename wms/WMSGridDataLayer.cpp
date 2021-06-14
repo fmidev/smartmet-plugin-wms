@@ -10,13 +10,12 @@ namespace Plugin
 {
 namespace WMS
 {
-
 std::vector<boost::posix_time::ptime> get_ptime_vector(std::set<std::string>& contentTimeList)
 {
   std::vector<boost::posix_time::ptime> ret;
 
   for (auto it = contentTimeList.begin(); it != contentTimeList.end(); ++it)
-	ret.push_back(boost::posix_time::from_time_t(utcTimeToTimeT(*it)));
+    ret.push_back(boost::posix_time::from_time_t(utcTimeToTimeT(*it)));
 
   return ret;
 }
@@ -198,42 +197,42 @@ void WMSGridDataLayer::updateLayerMetaData()
       }
 
       boost::shared_ptr<WMSTimeDimension> timeDimension;
-	  // timesteps
-	  std::list<boost::posix_time::ptime> timesteps;
-	  for (const auto& stime : contentTimeList)
-		timesteps.push_back(toTimeStamp(stime));
-	  time_intervals intervals = get_intervals(timesteps);
-	  if(!intervals.empty())
-		{
-		  timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);
-		}
-	  else
-		{
-		  timeDimension = boost::make_shared<StepTimeDimension>(timesteps);
-		}
-	  /*
-      time_t step = even_timesteps(contentTimeList);
-      if (step > 0)
+      // timesteps
+      std::list<boost::posix_time::ptime> timesteps;
+      for (const auto& stime : contentTimeList)
+        timesteps.push_back(toTimeStamp(stime));
+      time_intervals intervals = get_intervals(timesteps);
+      if (!intervals.empty())
       {
-        // time interval
-        boost::posix_time::time_duration timestep = boost::posix_time::seconds(step);
-        timeDimension =
-            boost::make_shared<IntervalTimeDimension>(toTimeStamp(*(contentTimeList.begin())),
-                                                      toTimeStamp(*(--contentTimeList.end())),
-                                                      timestep);
+        timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);
       }
       else
       {
-        // timesteps
-        std::list<boost::posix_time::ptime> times;
-        for (const auto& stime : contentTimeList)
-          times.push_back(toTimeStamp(stime));
-        timeDimension = boost::make_shared<StepTimeDimension>(times);
+        timeDimension = boost::make_shared<StepTimeDimension>(timesteps);
       }
-	  */
+      /*
+  time_t step = even_timesteps(contentTimeList);
+  if (step > 0)
+  {
+    // time interval
+    boost::posix_time::time_duration timestep = boost::posix_time::seconds(step);
+    timeDimension =
+        boost::make_shared<IntervalTimeDimension>(toTimeStamp(*(contentTimeList.begin())),
+                                                  toTimeStamp(*(--contentTimeList.end())),
+                                                  timestep);
+  }
+  else
+  {
+    // timesteps
+    std::list<boost::posix_time::ptime> times;
+    for (const auto& stime : contentTimeList)
+      times.push_back(toTimeStamp(stime));
+    timeDimension = boost::make_shared<StepTimeDimension>(times);
+  }
+      */
       if (timeDimension)
         newTimeDimensions.insert(
-            std::make_pair(toTimeStamp(generationInfo->mAnalysisTime), timeDimension));	 
+            std::make_pair(toTimeStamp(generationInfo->mAnalysisTime), timeDimension));
     }
 
     if (!newTimeDimensions.empty())

@@ -196,25 +196,24 @@ void WMSPostGISLayer::updateLayerMetaData()
       boost::shared_ptr<WMSTimeDimension> timeDimension = nullptr;
       if (metadata.timeinterval)
       {
-
-		tag_interval interval(metadata.timeinterval->starttime,
-							  metadata.timeinterval->endtime,
-							  metadata.timeinterval->timestep);
-		time_intervals timeintervals{interval};
+        tag_interval interval(metadata.timeinterval->starttime,
+                              metadata.timeinterval->endtime,
+                              metadata.timeinterval->timestep);
+        time_intervals timeintervals{interval};
         timeDimension = boost::make_shared<IntervalTimeDimension>(timeintervals);
       }
       else
-		{
-		  time_intervals intervals = get_intervals(metadata.timesteps);
-		  if (!intervals.empty())
-		  {
-			timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);			
-		  }
-		else
-		  {
-			timeDimension = boost::make_shared<StepTimeDimension>(metadata.timesteps);
-		  }
-		}
+      {
+        time_intervals intervals = get_intervals(metadata.timesteps);
+        if (!intervals.empty())
+        {
+          timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);
+        }
+        else
+        {
+          timeDimension = boost::make_shared<StepTimeDimension>(metadata.timesteps);
+        }
+      }
       boost::posix_time::ptime origintime(boost::posix_time::not_a_date_time);
       newTimeDimensions.insert(std::make_pair(origintime, timeDimension));
       timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);

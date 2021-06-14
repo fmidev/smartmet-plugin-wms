@@ -120,7 +120,7 @@ StepTimeDimension::StepTimeDimension(const std::set<boost::posix_time::ptime>& t
 }
 
 std::string StepTimeDimension::getCapabilities(bool multiple_intervals,
-											   const boost::optional<std::string>& starttime,
+                                               const boost::optional<std::string>& starttime,
                                                const boost::optional<std::string>& endtime) const
 {
   try
@@ -175,41 +175,41 @@ boost::posix_time::ptime IntervalTimeDimension::mostCurrentTime() const
 
   boost::posix_time::ptime ret = boost::posix_time::not_a_date_time;
 
-  for(const auto& interval : itsIntervals)
-	{
-	  if(ret >= interval.startTime && ret <= interval.endTime)
-		{
-		  ret = interval.startTime;
-		  while(ret + interval.resolution <= current_time)
-			ret += interval.resolution;
-		}
-	}
+  for (const auto& interval : itsIntervals)
+  {
+    if (ret >= interval.startTime && ret <= interval.endTime)
+    {
+      ret = interval.startTime;
+      while (ret + interval.resolution <= current_time)
+        ret += interval.resolution;
+    }
+  }
 
   // If current time is not inside any interval it can be before first or after last
-  if(ret.is_not_a_date_time())
-	{
-	  const auto& first_interval = itsIntervals.front();
-	  if(current_time < first_interval.startTime)
-		{
-		  ret = first_interval.startTime;
-		}
-	  else
-		{
-		  const auto& last_interval = itsIntervals.back();
-		  ret = last_interval.endTime;
-		}
-	}
+  if (ret.is_not_a_date_time())
+  {
+    const auto& first_interval = itsIntervals.front();
+    if (current_time < first_interval.startTime)
+    {
+      ret = first_interval.startTime;
+    }
+    else
+    {
+      const auto& last_interval = itsIntervals.back();
+      ret = last_interval.endTime;
+    }
+  }
 
   return ret;
 }
 
 bool IntervalTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) const
 {
-  for(const auto& interval : itsIntervals)
-	{
-	  if(theTime >= interval.startTime && theTime <= interval.endTime)
-		return true;
-	}
+  for (const auto& interval : itsIntervals)
+  {
+    if (theTime >= interval.startTime && theTime <= interval.endTime)
+      return true;
+  }
 
   return false;
 }
@@ -220,15 +220,15 @@ const std::vector<tag_interval>& IntervalTimeDimension::getIntervals() const
 }
 
 std::string IntervalTimeDimension::getCapabilities(
-												   bool multiple_intervals,
-												   const boost::optional<std::string>& starttime,
-												   const boost::optional<std::string>& endtime) const
+    bool multiple_intervals,
+    const boost::optional<std::string>& starttime,
+    const boost::optional<std::string>& endtime) const
 {
   try
   {
-	// Show individual timesteps
-	if(!multiple_intervals && itsIntervals.size() > 1)
-	  return makeCapabilitiesTimesteps(starttime, endtime);
+    // Show individual timesteps
+    if (!multiple_intervals && itsIntervals.size() > 1)
+      return makeCapabilitiesTimesteps(starttime, endtime);
 
     if (!starttime && !endtime)
       return itsCapabilities;
@@ -241,51 +241,51 @@ std::string IntervalTimeDimension::getCapabilities(
   }
 }
 
-std::string IntervalTimeDimension::getIntervalCapability(const tag_interval& interval,
-														 const boost::posix_time::ptime& requested_startt,
-														 const boost::posix_time::ptime& requested_endt) const
+std::string IntervalTimeDimension::getIntervalCapability(
+    const tag_interval& interval,
+    const boost::posix_time::ptime& requested_startt,
+    const boost::posix_time::ptime& requested_endt) const
 {
   std::string ret;
 
   auto startt = interval.startTime;
   auto endt = interval.endTime;
   auto resolution = (interval.resolution.total_seconds() == 0 ? boost::posix_time::minutes(1)
-					 : interval.resolution);
+                                                              : interval.resolution);
   if (startt < requested_startt)
-    {
-	  // Time of day taken from interval startTime
-      startt = boost::posix_time::ptime(requested_startt.date(), startt.time_of_day());
+  {
+    // Time of day taken from interval startTime
+    startt = boost::posix_time::ptime(requested_startt.date(), startt.time_of_day());
 
-	  // Starttime adjusted
-      if (startt < requested_startt)
-      {
-        while (startt + resolution < requested_startt)
-          startt += resolution;
-      }
-      else if (startt > requested_startt)
-      {
-        while (startt - resolution >= requested_startt)
-          startt -= resolution;
-      }
+    // Starttime adjusted
+    if (startt < requested_startt)
+    {
+      while (startt + resolution < requested_startt)
+        startt += resolution;
     }
+    else if (startt > requested_startt)
+    {
+      while (startt - resolution >= requested_startt)
+        startt -= resolution;
+    }
+  }
 
   // Endtime adjusted
   if (requested_endt < endt)
-	{
-	  while(endt - resolution >= requested_startt)
-		endt -= resolution;
-	}
-  
-    ret =
-	  Fmi::to_iso_extended_string(startt) + "Z/" + Fmi::to_iso_extended_string(endt) + "Z/PT";
-    if (resolution.hours() == 0 && resolution.minutes() <= 60)
+  {
+    while (endt - resolution >= requested_startt)
+      endt -= resolution;
+  }
+
+  ret = Fmi::to_iso_extended_string(startt) + "Z/" + Fmi::to_iso_extended_string(endt) + "Z/PT";
+  if (resolution.hours() == 0 && resolution.minutes() <= 60)
+    ret += Fmi::to_string(resolution.minutes()) + "M";
+  else
+  {
+    ret += Fmi::to_string(resolution.hours()) + "H";
+    if (resolution.minutes() > 0)
       ret += Fmi::to_string(resolution.minutes()) + "M";
-    else
-    {
-      ret += Fmi::to_string(resolution.hours()) + "H";
-      if (resolution.minutes() > 0)
-        ret += Fmi::to_string(resolution.minutes()) + "M";
-    }
+  }
 
   return ret;
 }
@@ -300,35 +300,36 @@ std::string IntervalTimeDimension::makeCapabilities(
       throw Fmi::Exception::Trace(BCP,
                                   "Requested starttime must be earlier than requested endtime!");
 
-	std::string ret;
+    std::string ret;
 
-	boost::posix_time::ptime previous_interval_end_time = boost::posix_time::not_a_date_time;
-	for(const auto& interval : itsIntervals)
-	  {
-		boost::posix_time::time_period interval_period(interval.startTime, interval.endTime);
-		auto requested_startt = (starttime ? parse_time(*starttime) : interval.startTime);
-		auto requested_endt = (endtime ? parse_time(*endtime) : interval.endTime);
-		boost::posix_time::time_period requested_period(requested_startt, requested_endt);
+    boost::posix_time::ptime previous_interval_end_time = boost::posix_time::not_a_date_time;
+    for (const auto& interval : itsIntervals)
+    {
+      boost::posix_time::time_period interval_period(interval.startTime, interval.endTime);
+      auto requested_startt = (starttime ? parse_time(*starttime) : interval.startTime);
+      auto requested_endt = (endtime ? parse_time(*endtime) : interval.endTime);
+      boost::posix_time::time_period requested_period(requested_startt, requested_endt);
 
-		if (!interval_period.intersects(requested_period))
-		  continue;
-	
-		// If there are several intervals, they must be separate: the next can not start
-		// from the same timestep where the previous ends
-		tag_interval actual_interval = interval;
-		if(previous_interval_end_time == actual_interval.startTime)
-		  {
-			actual_interval.startTime += interval.resolution;
-		  }
-		std::string interval_capa = getIntervalCapability(actual_interval, requested_startt, requested_endt);
-		if(!interval_capa.empty())
-		  {
-			if(!ret.empty())
-			  ret += ",";
-			ret += interval_capa;
-		  }
-		previous_interval_end_time = interval.endTime;
-	  }
+      if (!interval_period.intersects(requested_period))
+        continue;
+
+      // If there are several intervals, they must be separate: the next can not start
+      // from the same timestep where the previous ends
+      tag_interval actual_interval = interval;
+      if (previous_interval_end_time == actual_interval.startTime)
+      {
+        actual_interval.startTime += interval.resolution;
+      }
+      std::string interval_capa =
+          getIntervalCapability(actual_interval, requested_startt, requested_endt);
+      if (!interval_capa.empty())
+      {
+        if (!ret.empty())
+          ret += ",";
+        ret += interval_capa;
+      }
+      previous_interval_end_time = interval.endTime;
+    }
 
     return ret;
   }
@@ -348,29 +349,29 @@ std::string IntervalTimeDimension::makeCapabilitiesTimesteps(
       throw Fmi::Exception::Trace(BCP,
                                   "Requested starttime must be earlier than requested endtime!");
 
-	std::string ret;
-	for(const auto& interval : itsIntervals)
-	  {
-		boost::posix_time::time_period interval_period(interval.startTime, interval.endTime);
-		auto requested_startt = (starttime ? parse_time(*starttime) : interval.startTime);
-		auto requested_endt = (endtime ? parse_time(*endtime) : interval.endTime);
-		boost::posix_time::time_period requested_period(requested_startt, requested_endt);
+    std::string ret;
+    for (const auto& interval : itsIntervals)
+    {
+      boost::posix_time::time_period interval_period(interval.startTime, interval.endTime);
+      auto requested_startt = (starttime ? parse_time(*starttime) : interval.startTime);
+      auto requested_endt = (endtime ? parse_time(*endtime) : interval.endTime);
+      boost::posix_time::time_period requested_period(requested_startt, requested_endt);
 
-		if (!interval_period.intersects(requested_period))
-		  continue;
-	
-		boost::posix_time::ptime timestep = interval.startTime;
-		while(timestep <= interval.endTime)
-		  {
-			if(requested_period.contains(timestep))
-			  {
-				if(!ret.empty())
-				  ret += ",";
-				ret +=  (Fmi::to_iso_extended_string(timestep) + "Z");
-			  }
-			timestep += interval.resolution;
-		  }
-	  }
+      if (!interval_period.intersects(requested_period))
+        continue;
+
+      boost::posix_time::ptime timestep = interval.startTime;
+      while (timestep <= interval.endTime)
+      {
+        if (requested_period.contains(timestep))
+        {
+          if (!ret.empty())
+            ret += ",";
+          ret += (Fmi::to_iso_extended_string(timestep) + "Z");
+        }
+        timestep += interval.resolution;
+      }
+    }
 
     return ret;
   }
@@ -496,8 +497,9 @@ std::ostream& operator<<(std::ostream& ost, const IntervalTimeDimension& timeDim
   try
   {
     auto intervals = timeDimension.getIntervals();
-	for(const auto& interval : intervals)
-	  ost << interval.startTime << " - " << interval.endTime << " : " << interval.resolution << " " << std::endl;
+    for (const auto& interval : intervals)
+      ost << interval.startTime << " - " << interval.endTime << " : " << interval.resolution << " "
+          << std::endl;
 
     return ost;
   }

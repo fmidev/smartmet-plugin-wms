@@ -1,9 +1,9 @@
 #include "WMSLayer.h"
+#include "CaseInsensitiveComparator.h"
+#include "StyleSelection.h"
 #include "TextUtility.h"
 #include "WMSConfig.h"
 #include "WMSException.h"
-#include "StyleSelection.h"
-#include "CaseInsensitiveComparator.h"
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -872,15 +872,20 @@ unsigned int isoband_legend_height(const Json::Value& json)
 
 std::string get_online_resource_string(const std::string& styleName, const std::string& layerName)
 {
-  std::string ret =  "__hostname____apikey__/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=";
+  std::string ret =
+      "__hostname____apikey__/"
+      "wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;"
+      "style=";
   ret += Spine::HTTP::urlencode(styleName);
-  ret += + "&amp;format=image%2Fpng&amp;layer=";
+  ret += +"&amp;format=image%2Fpng&amp;layer=";
   ret += Spine::HTTP::urlencode(layerName);
 
   return ret;
 }
 
-std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root, const std::string& layerName, std::string& legendFile)
+std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
+                                                const std::string& layerName,
+                                                std::string& legendFile)
 {
   std::map<std::string, WMSLayerStyle> ret;
   Json::Value nulljson;
@@ -888,84 +893,82 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root, const s
   // 1) Read "legend_url_layer"-parameter and use it to generate styles entry
   Json::Value json = root.get("legend_url_layer", nulljson);
   if (!json.isNull())
+  {
+    WMSLayerStyle layerStyle;
+    std::string layerName = json.asString();
+    layerStyle.legend_url.online_resource = get_online_resource_string(layerStyle.name, layerName);
+    legendFile = layerName;
+    ret.insert(std::make_pair(layerStyle.name, layerStyle));
+  }
+
+  if (ret.empty())
+  {
+    bool addDefaultStyle = true;
+    // 2) Read styles vector from configuration and generate layer styles
+    json = root.get("styles", nulljson);
+    if (!json.isNull())
     {
+      if (!json.isArray())
+        throw Fmi::Exception(BCP, "WMSLayer styles settings must be an array");
+
       WMSLayerStyle layerStyle;
-	  std::string layerName = json.asString();
-	  layerStyle.legend_url.online_resource = get_online_resource_string(layerStyle.name, layerName);
-	  legendFile = layerName;
-	  ret.insert(std::make_pair(layerStyle.name, layerStyle));
-    }
 
-    if (ret.empty())
-    {
-      bool addDefaultStyle = true;
-      // 2) Read styles vector from configuration and generate layer styles
-      json = root.get("styles", nulljson);
-      if (!json.isNull())
+      for (unsigned int i = 0; i < json.size(); i++)
       {
-        if (!json.isArray())
-          throw Fmi::Exception(BCP, "WMSLayer styles settings must be an array");
+        const Json::Value& style_json = json[i];
+        auto json_value = style_json.get("name", nulljson);
+        if (!json_value.isNull())
+          layerStyle.name = json_value.asString();
+        json_value = style_json.get("title", nulljson);
+        if (!json_value.isNull())
+          layerStyle.title = json_value.asString();
+        json_value = style_json.get("abstract", nulljson);
+        if (!json_value.isNull())
+          layerStyle.abstract = json_value.asString();
 
-        WMSLayerStyle layerStyle;
-
-        for (unsigned int i = 0; i < json.size(); i++)
+        auto legend_url_json = style_json.get("legend_url", nulljson);
+        if (!legend_url_json.isNull())
         {
-          const Json::Value& style_json = json[i];
-          auto json_value = style_json.get("name", nulljson);
+          json_value = legend_url_json.get("format", nulljson);
           if (!json_value.isNull())
-            layerStyle.name = json_value.asString();
-          json_value = style_json.get("title", nulljson);
+            layerStyle.legend_url.format = json_value.asString();
+          json_value = legend_url_json.get("online_resource", nulljson);
           if (!json_value.isNull())
-            layerStyle.title = json_value.asString();
-          json_value = style_json.get("abstract", nulljson);
-          if (!json_value.isNull())
-            layerStyle.abstract = json_value.asString();
-
-          auto legend_url_json = style_json.get("legend_url", nulljson);
-          if (!legend_url_json.isNull())
-          {
-            json_value = legend_url_json.get("format", nulljson);
-            if (!json_value.isNull())
-              layerStyle.legend_url.format = json_value.asString();
-            json_value = legend_url_json.get("online_resource", nulljson);
-            if (!json_value.isNull())
-              layerStyle.legend_url.online_resource = json_value.asString();
-			ret.insert(std::make_pair(layerStyle.name, layerStyle));
-			//            ret.push_back(layerStyle);
-          }
-          else
-          {
-			layerStyle.legend_url.online_resource = get_online_resource_string(layerStyle.name, layerName);
-			ret.insert(std::make_pair(layerStyle.name, layerStyle));
-
-            CaseInsensitiveComparator cicomp;
-            if (cicomp(layerStyle.name, "default"))
-              addDefaultStyle = false;
-          }
+            layerStyle.legend_url.online_resource = json_value.asString();
+          ret.insert(std::make_pair(layerStyle.name, layerStyle));
+          //            ret.push_back(layerStyle);
         }
-        if (addDefaultStyle)
+        else
         {
-          WMSLayerStyle layerStyle;
-		  layerStyle.legend_url.online_resource = get_online_resource_string(layerStyle.name, layerName);
-		  ret.insert(std::make_pair(layerStyle.name, layerStyle));
+          layerStyle.legend_url.online_resource =
+              get_online_resource_string(layerStyle.name, layerName);
+          ret.insert(std::make_pair(layerStyle.name, layerStyle));
+
+          CaseInsensitiveComparator cicomp;
+          if (cicomp(layerStyle.name, "default"))
+            addDefaultStyle = false;
         }
       }
+      if (addDefaultStyle)
+      {
+        WMSLayerStyle layerStyle;
+        layerStyle.legend_url.online_resource =
+            get_online_resource_string(layerStyle.name, layerName);
+        ret.insert(std::make_pair(layerStyle.name, layerStyle));
+      }
     }
+  }
 
-    // 3) Generate layer styles automatically from configuration
-    if (ret.empty())
-    {
-      WMSLayerStyle layerStyle;
-	  layerStyle.legend_url.online_resource = get_online_resource_string(layerStyle.name, layerName);
-	  ret.insert(std::make_pair(layerStyle.name, layerStyle));
-    }
+  // 3) Generate layer styles automatically from configuration
+  if (ret.empty())
+  {
+    WMSLayerStyle layerStyle;
+    layerStyle.legend_url.online_resource = get_online_resource_string(layerStyle.name, layerName);
+    ret.insert(std::make_pair(layerStyle.name, layerStyle));
+  }
 
-	return ret;
+  return ret;
 }
-
-
-
-
 
 std::map<std::string, Json::Value> readLegendDirectory(const std::string& legendDirectory,
                                                        const Spine::JsonCache& cache)
@@ -1051,10 +1054,10 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
   // Read width, height from product file
   auto json = root.get("width", nulljson);
   if (!json.isNull())
-      width = json.asInt();
+    width = json.asInt();
   json = root.get("height", nulljson);
   if (!json.isNull())
-      height = json.asInt();
+    height = json.asInt();
 
   // 1) Settings from wms.conf is the starting point
   WMSLegendGraphicSettings actualSettings = wmsConfig.getLegendGraphicSettings();
@@ -1063,16 +1066,15 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
   WMSLegendGraphicSettings layerSettings;
   get_legend_graphic_layer_settings(root, layerSettings);
 
-
   // Parameter settings
   for (const auto& pair : layerSettings.parameters)
   {
     if (actualSettings.parameters.find(pair.first) == actualSettings.parameters.end())
-	  {
-		actualSettings.parameters.insert(std::make_pair(pair.first, pair.second));
-	  }
+    {
+      actualSettings.parameters.insert(std::make_pair(pair.first, pair.second));
+    }
     else
-    {      
+    {
       LegendGraphicParameter& actualLgp = actualSettings.parameters[pair.first];
       const LegendGraphicParameter& layerLgp = pair.second;
       actualLgp.data_name = layerLgp.data_name;
@@ -1081,8 +1083,8 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
       actualLgp.hide_title = layerLgp.hide_title;
       replace_translations(layerLgp.translations, actualLgp.translations);
     }
-	for(const auto& item : pair.second.translations)
-	  languages.insert(item.first);
+    for (const auto& item : pair.second.translations)
+      languages.insert(item.first);
   }
 
   // Symbol settings
@@ -1097,11 +1099,11 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
       LegendGraphicSymbol& actualLgs = actualSettings.symbols[pair.first];
       const LegendGraphicSymbol& layerLgs = pair.second;
       replace_translations(layerLgs.translations, actualLgs.translations);
-	  for(const auto& item : actualLgs.translations)
-		languages.insert(item.first);
+      for (const auto& item : actualLgs.translations)
+        languages.insert(item.first);
     }
   }
-  
+
   // Layout settings
   if (layerSettings.layout.param_name_xoffset)
     actualSettings.layout.param_name_xoffset = layerSettings.layout.param_name_xoffset;
@@ -1112,11 +1114,9 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
   if (layerSettings.layout.param_unit_yoffset)
     actualSettings.layout.param_unit_yoffset = layerSettings.layout.param_unit_yoffset;
   if (layerSettings.layout.symbol_group_x_padding)
-    actualSettings.layout.symbol_group_x_padding =
-        layerSettings.layout.symbol_group_x_padding;
+    actualSettings.layout.symbol_group_x_padding = layerSettings.layout.symbol_group_x_padding;
   if (layerSettings.layout.symbol_group_y_padding)
-    actualSettings.layout.symbol_group_y_padding =
-        layerSettings.layout.symbol_group_y_padding;
+    actualSettings.layout.symbol_group_y_padding = layerSettings.layout.symbol_group_y_padding;
   if (layerSettings.layout.legend_xoffset)
     actualSettings.layout.legend_xoffset = layerSettings.layout.legend_xoffset;
   if (layerSettings.layout.legend_yoffset)
@@ -1124,11 +1124,11 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
   if (layerSettings.layout.legend_width)
     actualSettings.layout.legend_width = layerSettings.layout.legend_width;
   // Replace widths per language if exist
-  for(const auto& item : layerSettings.layout.legend_width_per_language)
-	{
-	  actualSettings.layout.legend_width_per_language[item.first] = item.second;
-	  languages.insert(item.first);
-	}
+  for (const auto& item : layerSettings.layout.legend_width_per_language)
+  {
+    actualSettings.layout.legend_width_per_language[item.first] = item.second;
+    languages.insert(item.first);
+  }
 
   // 3) Read generic and parameter specifig template files and merge them
   std::map<std::string, Json::Value> legends = readLegendFiles(
@@ -1139,309 +1139,326 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
 
   // If external legend file used, no need to continue
   // width, height is set later
-  if(!itsLegendFile.empty())
-	return;
+  if (!itsLegendFile.empty())
+    return;
 
   NamedLegendGraphicInfo named_lgi;
 
   //  std::map<std::string, WMSLayerStyle*> new_styles;
-  for(const auto& item : itsStyles)
-	{
-	  std::string styleName = item.first;
-	  //	  new_styles[layerStyle.first] = &layerStyle.second;
-	  std::string legendGraphicInfoName = name + "::" + styleName;
-	  
-	  if (named_lgi.find(legendGraphicInfoName) == named_lgi.end())
-		named_lgi.insert(make_pair(legendGraphicInfoName, LegendGraphicInfo()));
+  for (const auto& item : itsStyles)
+  {
+    std::string styleName = item.first;
+    //	  new_styles[layerStyle.first] = &layerStyle.second;
+    std::string legendGraphicInfoName = name + "::" + styleName;
 
-	  // Read layer file and gather info needed for legends
-	  LegendGraphicInfo& legendGraphicInfo = named_lgi[legendGraphicInfoName];
+    if (named_lgi.find(legendGraphicInfoName) == named_lgi.end())
+      named_lgi.insert(make_pair(legendGraphicInfoName, LegendGraphicInfo()));
 
-	  // Set right style add getCapabilities Style info
-	  Json::Value modifiedLayer = root;
-	  useStyle(modifiedLayer, styleName);
-	  auto viewsJson = modifiedLayer.get("views", nulljson);
-	  if (!viewsJson.isNull() && viewsJson.isArray())
-		{
-		  for (unsigned int i = 0; i < viewsJson.size(); i++)
-			{
-			  auto viewJson = viewsJson[i];
-			  auto layersJson = viewJson.get("layers", nulljson);
-			  if (!layersJson.isNull() && layersJson.isArray())
-				{
-				  LegendGraphicInfo lgi = get_legend_graphic_info(layersJson);
-				  if (lgi.size() > 0)
-					legendGraphicInfo.insert(legendGraphicInfo.end(), lgi.begin(), lgi.end());
-				}
-			}
-		}	 
-	}
+    // Read layer file and gather info needed for legends
+    LegendGraphicInfo& legendGraphicInfo = named_lgi[legendGraphicInfoName];
+
+    // Set right style add getCapabilities Style info
+    Json::Value modifiedLayer = root;
+    useStyle(modifiedLayer, styleName);
+    auto viewsJson = modifiedLayer.get("views", nulljson);
+    if (!viewsJson.isNull() && viewsJson.isArray())
+    {
+      for (unsigned int i = 0; i < viewsJson.size(); i++)
+      {
+        auto viewJson = viewsJson[i];
+        auto layersJson = viewJson.get("layers", nulljson);
+        if (!layersJson.isNull() && layersJson.isArray())
+        {
+          LegendGraphicInfo lgi = get_legend_graphic_info(layersJson);
+          if (lgi.size() > 0)
+            legendGraphicInfo.insert(legendGraphicInfo.end(), lgi.begin(), lgi.end());
+        }
+      }
+    }
+  }
 
 #ifdef LATER
-  for(const auto& item : original_styles)
-	{
-	  if(new_styles.find(item.first) == new_styles.end())
-		{
-		  std::cout << "ERROR1: style: " << name << " -> " << item.first << " NOT found from new styles" << std::endl;
-		  continue;
-		}
-	  const WMSLayerStyle* original_style = item.second;
-	  const WMSLayerStyle* new_style = new_styles.at(item.first);
-	  if(original_style->name != new_style->name || original_style->title != new_style->title || original_style->abstract != new_style->abstract)
-		{
-		  std::cout << "ERROR2: name,title,abstract: " << name << " -> "  << original_style->name << " AND "  << new_style->name << ", "
-					<< original_style->title << " AND "  << new_style->title << ", "
-					<< original_style->abstract << " AND "  << new_style->abstract << std::endl;
-		  continue;
-		}
-	  if(original_style->legend_url.format != new_style->legend_url.format)
-		{
-		  std::cout << "ERROR3: legend_url.format: " << name << " -> "  << original_style->legend_url.format << " != " << new_style->legend_url.format << std::endl;
-		  continue;
-		}
-	  if(original_style->legend_url.online_resource != new_style->legend_url.online_resource)
-		{
-		  std::cout << "ERROR4: legend_url.online_resource: " << name << " -> "  << original_style->legend_url.online_resource << " != " << new_style->legend_url.online_resource << std::endl;
-		  continue;
-		}
-	  std::cout << "OK style: " << name << " -> " << item.first << std::endl;
-	}
-#endif  
+  for (const auto& item : original_styles)
+  {
+    if (new_styles.find(item.first) == new_styles.end())
+    {
+      std::cout << "ERROR1: style: " << name << " -> " << item.first << " NOT found from new styles"
+                << std::endl;
+      continue;
+    }
+    const WMSLayerStyle* original_style = item.second;
+    const WMSLayerStyle* new_style = new_styles.at(item.first);
+    if (original_style->name != new_style->name || original_style->title != new_style->title ||
+        original_style->abstract != new_style->abstract)
+    {
+      std::cout << "ERROR2: name,title,abstract: " << name << " -> " << original_style->name
+                << " AND " << new_style->name << ", " << original_style->title << " AND "
+                << new_style->title << ", " << original_style->abstract << " AND "
+                << new_style->abstract << std::endl;
+      continue;
+    }
+    if (original_style->legend_url.format != new_style->legend_url.format)
+    {
+      std::cout << "ERROR3: legend_url.format: " << name << " -> "
+                << original_style->legend_url.format << " != " << new_style->legend_url.format
+                << std::endl;
+      continue;
+    }
+    if (original_style->legend_url.online_resource != new_style->legend_url.online_resource)
+    {
+      std::cout << "ERROR4: legend_url.online_resource: " << name << " -> "
+                << original_style->legend_url.online_resource
+                << " != " << new_style->legend_url.online_resource << std::endl;
+      continue;
+    }
+    std::cout << "OK style: " << name << " -> " << item.first << std::endl;
+  }
+#endif
 
   unsigned int uniqueId = 0;
-  for(const auto language : languages)
-	{
-	  for (const auto& item : named_lgi)
-		{
-		  std::set<std::string> parameterNames;
-		  unsigned int xpos = 0;
-		  unsigned int ypos = 0;
-		  const auto& legendGraphicInfo = item.second;
-		  
-		  LegendGraphicResultPerLanguage& languageResult = itsLegendGraphicResults[item.first];
-		  LegendGraphicResult& result = languageResult[language];
-		  
-		  // Vector of symbol groups for PrecipitationForm, CloudBase2, ...
-		  NamedLegendGraphicInfo lgiSymbols;
-		  for (const auto& lgi : legendGraphicInfo)
-			{
-			  std::string key;
-			  std::string layerType = lgi.asString("layer_type");
-			  std::string layerSubType = lgi.asString("layer_subtype");
-			  std::string parameterName = lgi.asString("parameter_name");
-			  
-			  parameterNames.insert(parameterName);
-			  
-			  if (layerType == "icemap" && layerSubType == "symbol")
-				layerType = "symbol";
-			  
-			  // Handle all symbols together in the end
-			  if (layerType == "symbol")
-				{
-				  lgiSymbols[parameterName].push_back(lgi);
-				  continue;
-				}
-			  
-			  LegendGraphicParameter lgp(parameterName);
-			  const LegendGraphicParameter& parameterSettings =
-				(actualSettings.parameters.find(parameterName) != actualSettings.parameters.end()
-				 ? actualSettings.parameters.at(parameterName)
-				 : lgp);
-			  
-			  std::string legendHeader = get_legend_title_string(parameterSettings, language);
-			  
-			  bool isGenericTemplate = false;
-			  // Legends are identified by parameter name + layer type (e.g. Temperature_isoline,
-			  // Temperature_isoband), or by plain layer type (e.g. isoline, isoband)
-			  if (legends.find(parameterName + "_" + layerType) != legends.end())
-				key = (parameterName + "_" + layerType);
-			  else if (legends.find(layerType) != legends.end())
-				{
-				  isGenericTemplate = true;
-				  key = layerType;
-				}
-			  
-			  if (key.empty())
-				continue;
-			  
-			  const auto& templateJson = legends.at(key);
-			  // Read legend width from template if exists
-			  auto legendWidthJson = legends.at(key);
-			  boost::optional<int> templateLegendWidth;
-			  if(legendWidthJson.isMember("defs"))
-				{
-				  legendWidthJson = legendWidthJson["defs"];
-				  if(legendWidthJson.isMember("get_legend_graphic"))
-					{
-					  legendWidthJson = legendWidthJson["get_legend_graphic"];
-					  if(legendWidthJson.isMember("layout"))
-						{
-						  legendWidthJson = legendWidthJson["layout"];
-						  if(legendWidthJson.isMember("legend_width"))
-							templateLegendWidth = legendWidthJson["legend_width"].asInt();
-						}
-					}
-				}
-			 
-			  // Generic template file is the same for all layers of same type (e.g. all isobands),
-			  // non-generic is parameter-specific and only location need to be modified here
-			  auto legendJson = process_legend_json(templateJson,
-													layerType,
-													parameterName,
-													isGenericTemplate,
-													legendHeader,
-													parameterSettings.unit,
-													actualSettings,
-													lgi,
-													xpos,
-													ypos,
-													uniqueId++);
+  for (const auto language : languages)
+  {
+    for (const auto& item : named_lgi)
+    {
+      std::set<std::string> parameterNames;
+      unsigned int xpos = 0;
+      unsigned int ypos = 0;
+      const auto& legendGraphicInfo = item.second;
 
-			  unsigned int labelHeight = 0;
-			  unsigned int isobandWidth = 0;
-			  if (layerType == "isoband")
-				{
-				  std::string customerRoot =
-					(wmsConfig.getDaliConfig().rootDirectory(true) + "/customers/" + customer);
-				  std::string layersRoot = customerRoot + "/layers/";
-				  Spine::JSON::preprocess(legendJson,
-										  wmsConfig.getDaliConfig().rootDirectory(true),
-										  layersRoot,
-										  wmsConfig.getJsonCache());
-				  
-				  labelHeight = isoband_legend_height(legendJson);
-				  isobandWidth = isoband_legend_width(legendJson, (templateLegendWidth ? *templateLegendWidth : *(actualSettings.layout.legend_width)));
-				  unsigned int localizedWidth = lgi.labelWidth(language);
-				  if (actualSettings.layout.legend_xoffset)
-					localizedWidth += *(actualSettings.layout.legend_xoffset);
-				  
-				  if (localizedWidth > isobandWidth)
-					isobandWidth = localizedWidth;
-				}
-			  else if (layerType == "isoline")
-				{
-				  labelHeight = ypos + (*actualSettings.layout.legend_yoffset * 2);
-				}
-			  else if (layerType == "symbol")
-				{
-				  auto layersJson = legendJson.get("layers", nulljson);
-				  
-				  if (!layersJson.isNull() && layersJson.isArray() &&
-					  actualSettings.layout.symbol_group_y_padding)
-					{
-					  for (const auto& layerJson : layersJson)
-						{
-						  auto layerTypeJson = layerJson.get("layer_type", nulljson);
-						  if (!layerTypeJson.isNull())
-							labelHeight += *(actualSettings.layout.symbol_group_y_padding);
-						}
-					  if (actualSettings.layout.symbol_group_y_padding)
-						labelHeight += *(actualSettings.layout.symbol_group_y_padding);
-					  if (actualSettings.layout.param_name_yoffset)
-						labelHeight += *(actualSettings.layout.param_name_yoffset);
-					}
-				}
-			  
-			  if (labelHeight > result.height)
-				{
-				  result.height = labelHeight;
-				}
-			  
-			  result.legendLayers.push_back(legendJson.toStyledString());
-			  
-			  xpos += (*(actualSettings.layout.legend_width) > isobandWidth
-					   ? *(actualSettings.layout.legend_width)
-					   : isobandWidth);
-			}
-		  
-		  result.width = xpos;
-		  
-		  // Finally all symbol groups are handled
-		  if (lgiSymbols.size() > 0)
-			{
-			  for (std::map<std::string, LegendGraphicInfo>::const_iterator iter = lgiSymbols.begin();
-				   iter != lgiSymbols.end();
-				   ++iter)
-				{
-				  const LegendGraphicInfo& legendGraphicInfo = iter->second;
-				  
-				  Json::Value symbolGroup = process_symbol_group_json(
-																	  legends.at("symbol"), actualSettings, legendGraphicInfo, language, xpos, ypos, uniqueId);
-				  result.legendLayers.push_back(symbolGroup.toStyledString());
-				  Json::Value nulljson;
-				  auto layersJson = symbolGroup.get("layers", nulljson);
-				  if (!layersJson.isNull() && layersJson.isArray())
-					{
-					  for (const auto& layer : layersJson)
-						{
-						  get_legend_dimension(layer, "attributes", result.width, result.height);
-						  get_legend_dimension(layer, "positions", result.width, result.height);
-						}
-					}
-				  result.width += *actualSettings.layout.symbol_group_x_padding;
-				  result.height += *actualSettings.layout.symbol_group_y_padding;
-				}
-			}
-		  
-		  for (const auto& name : parameterNames)
-			{
-			  Dali::text_dimension_t tdim = Dali::getTextDimension(name, Dali::text_style_t());
-			  unsigned int data_name_width = (tdim.width * 1.6);
-			  unsigned int parameter_name_width = data_name_width;
-			  
-			  if (actualSettings.parameters.find(name) != actualSettings.parameters.end())
-				{
-				  const auto& lgp = actualSettings.parameters.at(name);
-				  tdim = Dali::getTextDimension(lgp.given_name, Dali::text_style_t());
-				  unsigned int given_name_width = (tdim.width * 1.6);
-				  parameter_name_width = std::max(data_name_width, given_name_width);
-				  // Translation of parameter overrides original parameter name
-				  if (lgp.text_lengths.find(language) != lgp.text_lengths.end())
-					parameter_name_width = lgp.text_lengths.at(language);
-				}
-			  if (actualSettings.layout.legend_xoffset)
-				parameter_name_width += *actualSettings.layout.legend_xoffset;			  
-			  result.width = std::max(parameter_name_width, result.width);			  
-			}
-		}
-	}
-  
+      LegendGraphicResultPerLanguage& languageResult = itsLegendGraphicResults[item.first];
+      LegendGraphicResult& result = languageResult[language];
+
+      // Vector of symbol groups for PrecipitationForm, CloudBase2, ...
+      NamedLegendGraphicInfo lgiSymbols;
+      for (const auto& lgi : legendGraphicInfo)
+      {
+        std::string key;
+        std::string layerType = lgi.asString("layer_type");
+        std::string layerSubType = lgi.asString("layer_subtype");
+        std::string parameterName = lgi.asString("parameter_name");
+
+        parameterNames.insert(parameterName);
+
+        if (layerType == "icemap" && layerSubType == "symbol")
+          layerType = "symbol";
+
+        // Handle all symbols together in the end
+        if (layerType == "symbol")
+        {
+          lgiSymbols[parameterName].push_back(lgi);
+          continue;
+        }
+
+        LegendGraphicParameter lgp(parameterName);
+        const LegendGraphicParameter& parameterSettings =
+            (actualSettings.parameters.find(parameterName) != actualSettings.parameters.end()
+                 ? actualSettings.parameters.at(parameterName)
+                 : lgp);
+
+        std::string legendHeader = get_legend_title_string(parameterSettings, language);
+
+        bool isGenericTemplate = false;
+        // Legends are identified by parameter name + layer type (e.g. Temperature_isoline,
+        // Temperature_isoband), or by plain layer type (e.g. isoline, isoband)
+        if (legends.find(parameterName + "_" + layerType) != legends.end())
+          key = (parameterName + "_" + layerType);
+        else if (legends.find(layerType) != legends.end())
+        {
+          isGenericTemplate = true;
+          key = layerType;
+        }
+
+        if (key.empty())
+          continue;
+
+        const auto& templateJson = legends.at(key);
+        // Read legend width from template if exists
+        auto legendWidthJson = legends.at(key);
+        boost::optional<int> templateLegendWidth;
+        if (legendWidthJson.isMember("defs"))
+        {
+          legendWidthJson = legendWidthJson["defs"];
+          if (legendWidthJson.isMember("get_legend_graphic"))
+          {
+            legendWidthJson = legendWidthJson["get_legend_graphic"];
+            if (legendWidthJson.isMember("layout"))
+            {
+              legendWidthJson = legendWidthJson["layout"];
+              if (legendWidthJson.isMember("legend_width"))
+                templateLegendWidth = legendWidthJson["legend_width"].asInt();
+            }
+          }
+        }
+
+        // Generic template file is the same for all layers of same type (e.g. all isobands),
+        // non-generic is parameter-specific and only location need to be modified here
+        auto legendJson = process_legend_json(templateJson,
+                                              layerType,
+                                              parameterName,
+                                              isGenericTemplate,
+                                              legendHeader,
+                                              parameterSettings.unit,
+                                              actualSettings,
+                                              lgi,
+                                              xpos,
+                                              ypos,
+                                              uniqueId++);
+
+        unsigned int labelHeight = 0;
+        unsigned int isobandWidth = 0;
+        if (layerType == "isoband")
+        {
+          std::string customerRoot =
+              (wmsConfig.getDaliConfig().rootDirectory(true) + "/customers/" + customer);
+          std::string layersRoot = customerRoot + "/layers/";
+          Spine::JSON::preprocess(legendJson,
+                                  wmsConfig.getDaliConfig().rootDirectory(true),
+                                  layersRoot,
+                                  wmsConfig.getJsonCache());
+
+          labelHeight = isoband_legend_height(legendJson);
+          isobandWidth = isoband_legend_width(
+              legendJson,
+              (templateLegendWidth ? *templateLegendWidth : *(actualSettings.layout.legend_width)));
+          unsigned int localizedWidth = lgi.labelWidth(language);
+          if (actualSettings.layout.legend_xoffset)
+            localizedWidth += *(actualSettings.layout.legend_xoffset);
+
+          if (localizedWidth > isobandWidth)
+            isobandWidth = localizedWidth;
+        }
+        else if (layerType == "isoline")
+        {
+          labelHeight = ypos + (*actualSettings.layout.legend_yoffset * 2);
+        }
+        else if (layerType == "symbol")
+        {
+          auto layersJson = legendJson.get("layers", nulljson);
+
+          if (!layersJson.isNull() && layersJson.isArray() &&
+              actualSettings.layout.symbol_group_y_padding)
+          {
+            for (const auto& layerJson : layersJson)
+            {
+              auto layerTypeJson = layerJson.get("layer_type", nulljson);
+              if (!layerTypeJson.isNull())
+                labelHeight += *(actualSettings.layout.symbol_group_y_padding);
+            }
+            if (actualSettings.layout.symbol_group_y_padding)
+              labelHeight += *(actualSettings.layout.symbol_group_y_padding);
+            if (actualSettings.layout.param_name_yoffset)
+              labelHeight += *(actualSettings.layout.param_name_yoffset);
+          }
+        }
+
+        if (labelHeight > result.height)
+        {
+          result.height = labelHeight;
+        }
+
+        result.legendLayers.push_back(legendJson.toStyledString());
+
+        xpos += (*(actualSettings.layout.legend_width) > isobandWidth
+                     ? *(actualSettings.layout.legend_width)
+                     : isobandWidth);
+      }
+
+      result.width = xpos;
+
+      // Finally all symbol groups are handled
+      if (lgiSymbols.size() > 0)
+      {
+        for (std::map<std::string, LegendGraphicInfo>::const_iterator iter = lgiSymbols.begin();
+             iter != lgiSymbols.end();
+             ++iter)
+        {
+          const LegendGraphicInfo& legendGraphicInfo = iter->second;
+
+          Json::Value symbolGroup = process_symbol_group_json(legends.at("symbol"),
+                                                              actualSettings,
+                                                              legendGraphicInfo,
+                                                              language,
+                                                              xpos,
+                                                              ypos,
+                                                              uniqueId);
+          result.legendLayers.push_back(symbolGroup.toStyledString());
+          Json::Value nulljson;
+          auto layersJson = symbolGroup.get("layers", nulljson);
+          if (!layersJson.isNull() && layersJson.isArray())
+          {
+            for (const auto& layer : layersJson)
+            {
+              get_legend_dimension(layer, "attributes", result.width, result.height);
+              get_legend_dimension(layer, "positions", result.width, result.height);
+            }
+          }
+          result.width += *actualSettings.layout.symbol_group_x_padding;
+          result.height += *actualSettings.layout.symbol_group_y_padding;
+        }
+      }
+
+      for (const auto& name : parameterNames)
+      {
+        Dali::text_dimension_t tdim = Dali::getTextDimension(name, Dali::text_style_t());
+        unsigned int data_name_width = (tdim.width * 1.6);
+        unsigned int parameter_name_width = data_name_width;
+
+        if (actualSettings.parameters.find(name) != actualSettings.parameters.end())
+        {
+          const auto& lgp = actualSettings.parameters.at(name);
+          tdim = Dali::getTextDimension(lgp.given_name, Dali::text_style_t());
+          unsigned int given_name_width = (tdim.width * 1.6);
+          parameter_name_width = std::max(data_name_width, given_name_width);
+          // Translation of parameter overrides original parameter name
+          if (lgp.text_lengths.find(language) != lgp.text_lengths.end())
+            parameter_name_width = lgp.text_lengths.at(language);
+        }
+        if (actualSettings.layout.legend_xoffset)
+          parameter_name_width += *actualSettings.layout.legend_xoffset;
+        result.width = std::max(parameter_name_width, result.width);
+      }
+    }
+  }
+
   // Set width, height in GetLegendGraphic URL
-  for(const auto& item : itsLegendGraphicResults)
-	{
-	  const LegendGraphicResultPerLanguage& languageResult = itsLegendGraphicResults[item.first];
-	  for(const auto& item2 : item.second)
-		{
-		  if(item2.first == wmsConfig.getDaliConfig().defaultLanguage())
-			{
-			  const LegendGraphicResult& result = languageResult.at(wmsConfig.getDaliConfig().defaultLanguage());
-			  std::string styleName = item.first.substr(item.first.rfind("::")+2);
-			  if(itsStyles.find(styleName) != itsStyles.end())
-				{
-				  // Width, height must be > 0
-				  if(result.width == 0 || result.height == 0)
-					{
-					  itsStyles.erase(styleName);
-					  continue;
-					}
-				  itsStyles[styleName].legend_url.online_resource += ("&amp;width=" + Fmi::to_string(result.width) + "&amp;height=" + Fmi::to_string(result.height));
-				}
-			}
-		}
-	}
+  for (const auto& item : itsLegendGraphicResults)
+  {
+    const LegendGraphicResultPerLanguage& languageResult = itsLegendGraphicResults[item.first];
+    for (const auto& item2 : item.second)
+    {
+      if (item2.first == wmsConfig.getDaliConfig().defaultLanguage())
+      {
+        const LegendGraphicResult& result =
+            languageResult.at(wmsConfig.getDaliConfig().defaultLanguage());
+        std::string styleName = item.first.substr(item.first.rfind("::") + 2);
+        if (itsStyles.find(styleName) != itsStyles.end())
+        {
+          // Width, height must be > 0
+          if (result.width == 0 || result.height == 0)
+          {
+            itsStyles.erase(styleName);
+            continue;
+          }
+          itsStyles[styleName].legend_url.online_resource +=
+              ("&amp;width=" + Fmi::to_string(result.width) +
+               "&amp;height=" + Fmi::to_string(result.height));
+        }
+      }
+    }
+  }
 }
 
 LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& legendGraphicID,
-											   const std::string& language) const
+                                               const std::string& language) const
 {
-  if(itsLegendGraphicResults.find(legendGraphicID) != itsLegendGraphicResults.end())
-	{
-	  const auto& layerLGR = itsLegendGraphicResults.at(legendGraphicID);
-	  if(layerLGR.find(language) != layerLGR.end())
-		return layerLGR.at(language);
-	  else
-		return layerLGR.at(wmsConfig.getDaliConfig().defaultLanguage());
-	}
+  if (itsLegendGraphicResults.find(legendGraphicID) != itsLegendGraphicResults.end())
+  {
+    const auto& layerLGR = itsLegendGraphicResults.at(legendGraphicID);
+    if (layerLGR.find(language) != layerLGR.end())
+      return layerLGR.at(language);
+    else
+      return layerLGR.at(wmsConfig.getDaliConfig().defaultLanguage());
+  }
 
   return LegendGraphicResult();
 }
@@ -1476,7 +1493,7 @@ bool WMSLayer::isValidStyle(const std::string& theStyle) const
 {
   try
   {
-	return (itsStyles.find(theStyle) != itsStyles.end());
+    return (itsStyles.find(theStyle) != itsStyles.end());
   }
   catch (...)
   {
@@ -1836,10 +1853,10 @@ boost::optional<CTPP::CDT> WMSLayer::getProjectedBoundingBoxInfo() const
 }
 
 boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
-														  bool  multiple_intervals,
-														  const boost::optional<std::string>& starttime,
-														  const boost::optional<std::string>& endtime,
-														  const boost::optional<std::string>& reference_time) const
+    bool multiple_intervals,
+    const boost::optional<std::string>& starttime,
+    const boost::optional<std::string>& endtime,
+    const boost::optional<std::string>& reference_time) const
 {
   try
   {
@@ -1865,7 +1882,8 @@ boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
           layer_dimension["multiple_values"] = 0;
           layer_dimension["nearest_value"] = 0;
           layer_dimension["current"] = (td.currentValue() ? 1 : 0);
-          layer_dimension["value"] = td.getCapabilities(multiple_intervals, starttime, endtime);  // a string
+          layer_dimension["value"] =
+              td.getCapabilities(multiple_intervals, starttime, endtime);  // a string
           CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
           reference_time_dimension["name"] = "reference_time";
           reference_time_dimension["units"] = "ISO8601";
@@ -1885,7 +1903,8 @@ boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
         layer_dimension["multiple_values"] = 0;
         layer_dimension["nearest_value"] = 0;
         layer_dimension["current"] = (td.currentValue() ? 1 : 0);
-        layer_dimension["value"] = td.getCapabilities(multiple_intervals, starttime, endtime);  // a string
+        layer_dimension["value"] =
+            td.getCapabilities(multiple_intervals, starttime, endtime);  // a string
         CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
         const std::vector<boost::posix_time::ptime>& origintimes = timeDimensions->getOrigintimes();
         bool showOrigintimes = !origintimes.empty() && !origintimes.front().is_not_a_date_time();
@@ -2031,11 +2050,11 @@ const boost::shared_ptr<WMSTimeDimensions>& WMSLayer::getTimeDimensions() const
 }
 
 boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
-															 bool multiple_intervals,
-															 const Engine::Gis::Engine& gisengine,
-															 const boost::optional<std::string>& starttime,
-															 const boost::optional<std::string>& endtime,
-															 const boost::optional<std::string>& reference_time)
+    bool multiple_intervals,
+    const Engine::Gis::Engine& gisengine,
+    const boost::optional<std::string>& starttime,
+    const boost::optional<std::string>& endtime,
+    const boost::optional<std::string>& reference_time)
 {
   try
   {
@@ -2146,7 +2165,8 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
       layer_dimension["multiple_values"] = 0;
       layer_dimension["nearest_value"] = 0;
       layer_dimension["current"] = (td.currentValue() ? 1 : 0);
-      layer_dimension["value"] = td.getCapabilities(multiple_intervals, starttime, endtime);  // a string
+      layer_dimension["value"] =
+          td.getCapabilities(multiple_intervals, starttime, endtime);  // a string
       layer_dimension_list.PushBack(layer_dimension);
       layer["time_dimension"] = layer_dimension_list;
     }
@@ -2353,18 +2373,20 @@ bool WMSLayer::identicalElevationDimension(const WMSLayer& layer) const
 // When external legend file used this is called to set dimension
 void WMSLayer::setLegendDimension(const WMSLayer& legendLayer)
 {
-  for(auto& style : itsStyles)
-	{
-	  if(legendLayer.getWidth() && legendLayer.getHeight())
-		{
-		  style.second.legend_url.online_resource += ("&amp;width=" + Fmi::to_string(*legendLayer.getWidth()) + "&amp;height=" + Fmi::to_string(*legendLayer.getHeight()));
-		}
-	  else
-		{
-		  // If width, height are NOT given in separate legend file, use defult 10
-		  style.second.legend_url.online_resource += ("&amp;width=10&amp;height=10");
-		}
-	}
+  for (auto& style : itsStyles)
+  {
+    if (legendLayer.getWidth() && legendLayer.getHeight())
+    {
+      style.second.legend_url.online_resource +=
+          ("&amp;width=" + Fmi::to_string(*legendLayer.getWidth()) +
+           "&amp;height=" + Fmi::to_string(*legendLayer.getHeight()));
+    }
+    else
+    {
+      // If width, height are NOT given in separate legend file, use defult 10
+      style.second.legend_url.online_resource += ("&amp;width=10&amp;height=10");
+    }
+  }
 }
 
 }  // namespace WMS

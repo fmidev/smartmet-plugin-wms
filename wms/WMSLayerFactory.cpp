@@ -415,7 +415,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 
     // Calculate LegedGraphicInfo only once
     layer->initLegendGraphicInfo(root);
-    
+
     return layer;
   }
   catch (...)

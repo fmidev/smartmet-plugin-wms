@@ -37,7 +37,7 @@ class WMSTimeDimension
   std::set<boost::posix_time::ptime> getTimeSteps() const;
 
   virtual std::string getCapabilities(bool multiple_intervals,
-									  const boost::optional<std::string>& starttime,
+                                      const boost::optional<std::string>& starttime,
                                       const boost::optional<std::string>& endtime) const = 0;
 
   bool currentValue() const { return current; }
@@ -58,7 +58,7 @@ class StepTimeDimension : public WMSTimeDimension
   StepTimeDimension(const std::set<boost::posix_time::ptime>& times);
 
   virtual std::string getCapabilities(bool multiple_intervals,
-									  const boost::optional<std::string>& starttime,
+                                      const boost::optional<std::string>& starttime,
                                       const boost::optional<std::string>& endtime) const;
 
  private:
@@ -72,13 +72,13 @@ struct tag_interval
   boost::posix_time::ptime endTime = boost::posix_time::not_a_date_time;
   boost::posix_time::time_duration resolution = boost::posix_time::minutes(1);
   tag_interval(const boost::posix_time::ptime& start,
-			   const boost::posix_time::ptime& end,
-			   const boost::posix_time::time_duration& res)
-	: startTime(start), endTime(end), resolution(res)
+               const boost::posix_time::ptime& end,
+               const boost::posix_time::time_duration& res)
+      : startTime(start), endTime(end), resolution(res)
   {
   }
   tag_interval(const tag_interval& interval)
-	: startTime(interval.startTime), endTime(interval.endTime), resolution(interval.resolution)
+      : startTime(interval.startTime), endTime(interval.endTime), resolution(interval.resolution)
   {
   }
 };
@@ -93,27 +93,26 @@ class IntervalTimeDimension : public WMSTimeDimension
   const std::vector<tag_interval>& getIntervals() const;
 
   virtual std::string getCapabilities(bool multiple_intervals,
-									  const boost::optional<std::string>& starttime,
+                                      const boost::optional<std::string>& starttime,
                                       const boost::optional<std::string>& endtime) const;
   virtual boost::posix_time::ptime mostCurrentTime() const;
   virtual bool isValidTime(const boost::posix_time::ptime& theTime) const;
-  
 
  private:
   std::string makeCapabilitiesTimesteps(const boost::optional<std::string>& starttime,
-										const boost::optional<std::string>& endtime) const;
+                                        const boost::optional<std::string>& endtime) const;
 
   std::string makeCapabilities(const boost::optional<std::string>& starttime,
                                const boost::optional<std::string>& endtime) const;
   std::string getIntervalCapability(const tag_interval& interval,
-									const boost::posix_time::ptime& requested_startt,
-									const boost::posix_time::ptime& requested_endt) const;
+                                    const boost::posix_time::ptime& requested_startt,
+                                    const boost::posix_time::ptime& requested_endt) const;
 
   std::vector<tag_interval> itsIntervals;
 };
 
 using time_intervals = std::vector<tag_interval>;
-// If interval(s) with even timesteps are detected return vector of intervals, 
+// If interval(s) with even timesteps are detected return vector of intervals,
 // otherwise empty vector. For example ECMWF data has 3h timesteps in the beginning
 // and 6h timesteps in the end
 template <typename Container>
@@ -136,29 +135,30 @@ time_intervals get_intervals(const Container& container)
   iter++;
   for (; iter != container.end(); iter++)
   {
-    boost::posix_time::time_duration latest_timestep = (*iter - current_interval->endTime);	
-	// Timestep length changes
+    boost::posix_time::time_duration latest_timestep = (*iter - current_interval->endTime);
+    // Timestep length changes
     if (latest_timestep.total_seconds() != current_interval->resolution.total_seconds())
     {
-	  // At least three timesteps required to acertain even steps
-	  if((current_interval->endTime - current_interval->startTime) == current_interval->resolution)
-		{
-		  ret.clear();
-		  break;
-		}
-	  interval_start_time = current_interval->endTime;
-	  interval_end_time = *iter;
-	  resolution = (interval_end_time - interval_start_time);
-	  // Add new interval
-	  ret.emplace_back(interval_start_time, interval_end_time, resolution);
-	  current_interval = &ret.back();
-	  continue;
+      // At least three timesteps required to acertain even steps
+      if ((current_interval->endTime - current_interval->startTime) == current_interval->resolution)
+      {
+        ret.clear();
+        break;
+      }
+      interval_start_time = current_interval->endTime;
+      interval_end_time = *iter;
+      resolution = (interval_end_time - interval_start_time);
+      // Add new interval
+      ret.emplace_back(interval_start_time, interval_end_time, resolution);
+      current_interval = &ret.back();
+      continue;
     }
-	current_interval->endTime = *iter;
+    current_interval->endTime = *iter;
   }
   // If latest interval has only two timesteps, we can not use IntervalTimeDimension
-  if(ret.size() > 0 && (current_interval->endTime - current_interval->startTime) == current_interval->resolution)
-	ret.clear();
+  if (ret.size() > 0 &&
+      (current_interval->endTime - current_interval->startTime) == current_interval->resolution)
+    ret.clear();
 
   return ret;
 }
