@@ -252,30 +252,23 @@ std::string IntervalTimeDimension::getIntervalCapability(
   auto endt = interval.endTime;
   auto resolution = (interval.resolution.total_seconds() == 0 ? boost::posix_time::minutes(1)
                                                               : interval.resolution);
+
   if (startt < requested_startt)
   {
     // Time of day taken from interval startTime
     startt = boost::posix_time::ptime(requested_startt.date(), startt.time_of_day());
 
     // Starttime adjusted
-    if (startt < requested_startt)
-    {
-      while (startt + resolution < requested_startt)
-        startt += resolution;
-    }
-    else if (startt > requested_startt)
-    {
-      while (startt - resolution >= requested_startt)
-        startt -= resolution;
-    }
+
+    while (startt > requested_startt)
+      startt -= resolution;
+    while (startt < requested_startt)
+      startt += resolution;
   }
 
   // Endtime adjusted
-  if (requested_endt < endt)
-  {
-    while (endt - resolution >= requested_startt)
-      endt -= resolution;
-  }
+  while (endt > requested_endt)
+    endt -= resolution;
 
   ret = Fmi::to_iso_extended_string(startt) + "Z/" + Fmi::to_iso_extended_string(endt) + "Z/PT";
   if (resolution.hours() == 0 && resolution.minutes() <= 60)
