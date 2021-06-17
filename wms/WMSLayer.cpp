@@ -1878,14 +1878,17 @@ boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
         if (timeDimensions->origintimeOK(ref_time))
         {
           const WMSTimeDimension& td = timeDimensions->getTimeDimension(ref_time);
+          auto dim_string = td.getCapabilities(multiple_intervals, starttime, endtime);
+          if (dim_string.empty())
+            return {};
+
           CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
           layer_dimension["name"] = "time";
           layer_dimension["units"] = "ISO8601";
           layer_dimension["multiple_values"] = 0;
           layer_dimension["nearest_value"] = 0;
           layer_dimension["current"] = (td.currentValue() ? 1 : 0);
-          layer_dimension["value"] =
-              td.getCapabilities(multiple_intervals, starttime, endtime);  // a string
+          layer_dimension["value"] = dim_string;
           CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
           reference_time_dimension["name"] = "reference_time";
           reference_time_dimension["units"] = "ISO8601";
@@ -1899,14 +1902,17 @@ boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
       else
       {
         const WMSTimeDimension& td = timeDimensions->getDefaultTimeDimension();
+        auto dim_string = td.getCapabilities(multiple_intervals, starttime, endtime);
+        if (dim_string.empty())
+          return {};
+
         CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
         layer_dimension["name"] = "time";
         layer_dimension["units"] = "ISO8601";
         layer_dimension["multiple_values"] = 0;
         layer_dimension["nearest_value"] = 0;
         layer_dimension["current"] = (td.currentValue() ? 1 : 0);
-        layer_dimension["value"] =
-            td.getCapabilities(multiple_intervals, starttime, endtime);  // a string
+        layer_dimension["value"] = dim_string;
         CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
         const std::vector<boost::posix_time::ptime>& origintimes = timeDimensions->getOrigintimes();
         bool showOrigintimes = !origintimes.empty() && !origintimes.front().is_not_a_date_time();
@@ -2065,6 +2071,30 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
     CTPP::CDT layer(CTPP::CDT::HASH_VAL);
 
+    // Layer dimensions handled first in case there is nothing available
+
+    if (timeDimensions)
+    {
+      const WMSTimeDimension& td = timeDimensions->getDefaultTimeDimension();
+
+      auto dim_string = td.getCapabilities(multiple_intervals, starttime, endtime);
+      if (dim_string.empty())
+        return {};
+
+      CTPP::CDT layer_dimension_list(CTPP::CDT::ARRAY_VAL);
+      CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
+
+      layer_dimension["name"] = "time";
+      layer_dimension["units"] = "ISO8601";
+      layer_dimension["multiple_values"] = 0;
+      layer_dimension["nearest_value"] = 0;
+      layer_dimension["current"] = (td.currentValue() ? 1 : 0);
+      layer_dimension["value"] = dim_string;
+
+      layer_dimension_list.PushBack(layer_dimension);
+      layer["time_dimension"] = layer_dimension_list;
+    }
+
     // Layer name, title and abstract
     if (!name.empty())
       layer["name"] = name;
@@ -2153,24 +2183,6 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
         layer["crs"] = layer_crs_list;
         layer["bounding_box"] = layer_bbox_list;
       }
-    }
-
-    // Layer dimensions
-
-    if (timeDimensions)
-    {
-      CTPP::CDT layer_dimension_list(CTPP::CDT::ARRAY_VAL);
-      CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
-      const WMSTimeDimension& td = timeDimensions->getDefaultTimeDimension();
-      layer_dimension["name"] = "time";
-      layer_dimension["units"] = "ISO8601";
-      layer_dimension["multiple_values"] = 0;
-      layer_dimension["nearest_value"] = 0;
-      layer_dimension["current"] = (td.currentValue() ? 1 : 0);
-      layer_dimension["value"] =
-          td.getCapabilities(multiple_intervals, starttime, endtime);  // a string
-      layer_dimension_list.PushBack(layer_dimension);
-      layer["time_dimension"] = layer_dimension_list;
     }
 
     // Layer attribution
