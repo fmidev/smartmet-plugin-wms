@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.6.17
+Version: 21.6.29
 Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -17,24 +17,24 @@ BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.7.2
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-giza-devel >= 21.1.14
+BuildRequires: smartmet-library-giza-devel >= 21.6.18
 BuildRequires: smartmet-library-grid-content-devel >= 21.6.8
 BuildRequires: smartmet-library-grid-files-devel >= 21.6.8
-BuildRequires: smartmet-library-macgyver-devel >= 21.6.10
-BuildRequires: smartmet-library-spine-devel >= 21.5.31
+BuildRequires: smartmet-library-macgyver-devel >= 21.6.18
+BuildRequires: smartmet-library-spine-devel >= 21.6.22
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 21.1.14
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 21.6.14
+BuildRequires: smartmet-engine-observation-devel >= 21.6.28
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 21.5.27
+BuildRequires: smartmet-engine-gis-devel >= 21.6.17
 BuildRequires: smartmet-engine-grid-devel >= 21.6.8
-BuildRequires: smartmet-engine-geonames-devel >= 21.5.20
+BuildRequires: smartmet-engine-geonames-devel >= 21.6.22
 BuildRequires: smartmet-engine-querydata-devel >= 21.6.3
 BuildRequires: smartmet-engine-contour-devel >= 21.5.20
-BuildRequires: smartmet-library-gis-devel >= 21.6.7
+BuildRequires: smartmet-library-gis-devel >= 21.6.18
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -60,19 +60,19 @@ Requires: libconfig
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 21.6.8
 Requires: smartmet-library-grid-files >= 21.6.8
-Requires: smartmet-library-gis >= 21.6.7
-Requires: smartmet-library-macgyver >= 21.6.10
-Requires: smartmet-library-giza >= 21.1.14
+Requires: smartmet-library-gis >= 21.6.18
+Requires: smartmet-library-macgyver >= 21.6.18
+Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.1.14
 %endif
 Requires: smartmet-engine-querydata >= 21.6.3
 Requires: smartmet-engine-contour >= 21.5.20
-Requires: smartmet-engine-gis >= 21.5.27
+Requires: smartmet-engine-gis >= 21.6.17
 Requires: smartmet-engine-grid >= 21.6.8
-Requires: smartmet-engine-geonames >= 21.5.20
+Requires: smartmet-engine-geonames >= 21.6.22
 Requires: smartmet-server >= 21.6.3
-Requires: smartmet-library-spine >= 21.5.31
+Requires: smartmet-library-spine >= 21.6.22
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -91,12 +91,12 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: ImageMagick
 #TestRequires: bc
 #TestRequires: smartmet-engine-contour-devel >= 21.5.20
-#TestRequires: smartmet-engine-geonames-devel >= 21.5.20
-#TestRequires: smartmet-engine-gis-devel >= 21.5.27
+#TestRequires: smartmet-engine-geonames-devel >= 21.6.22
+#TestRequires: smartmet-engine-gis-devel >= 21.6.17
 #TestRequires: smartmet-engine-querydata-devel >= 21.6.3
-#TestRequires: smartmet-library-giza-devel >= 21.1.14
+#TestRequires: smartmet-library-giza-devel >= 21.6.18
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
-#TestRequires: smartmet-library-spine-devel >= 21.5.31
+#TestRequires: smartmet-library-spine-devel >= 21.6.22
 #TestRequires: smartmet-engine-grid-devel >= 21.6.8
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
@@ -106,7 +106,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 21.6.14
+#TestRequires: smartmet-engine-observation-devel >= 21.6.28
 %endif
 
 %description
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Jun 29 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.29-2.fmi
+- Repackaged since Observation::Engine::Settings ABI changed
+
 * Thu Jun 17 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.17-2.fmi
 - Fixed GetCapabilities not to return a layer which contains no valid times in the given starttime/endtime interval
 
