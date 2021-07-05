@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.6.29
-Release: 2%{?dist}.fmi
+Version: 21.7.5
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -21,7 +21,7 @@ BuildRequires: smartmet-library-giza-devel >= 21.6.18
 BuildRequires: smartmet-library-grid-content-devel >= 21.6.8
 BuildRequires: smartmet-library-grid-files-devel >= 21.6.8
 BuildRequires: smartmet-library-macgyver-devel >= 21.6.18
-BuildRequires: smartmet-library-spine-devel >= 21.6.22
+BuildRequires: smartmet-library-spine-devel >= 21.7.5
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 21.1.14
@@ -72,7 +72,7 @@ Requires: smartmet-engine-gis >= 21.6.17
 Requires: smartmet-engine-grid >= 21.6.8
 Requires: smartmet-engine-geonames >= 21.6.22
 Requires: smartmet-server >= 21.6.3
-Requires: smartmet-library-spine >= 21.6.22
+Requires: smartmet-library-spine >= 21.7.5
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -96,7 +96,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-querydata-devel >= 21.6.3
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
-#TestRequires: smartmet-library-spine-devel >= 21.6.22
+#TestRequires: smartmet-library-spine-devel >= 21.7.5
 #TestRequires: smartmet-engine-grid-devel >= 21.6.8
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
@@ -106,7 +106,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 21.6.28
+#TestRequires: smartmet-engine-observation-devel >= 21.7.5
 %endif
 
 %description
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Jul  5 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.7.5-1.fmi
+- Rebuild after moving DataFilter from obsengine to spine
+
 * Tue Jun 29 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.6.29-2.fmi
 - Repackaged since Observation::Engine::Settings ABI changed
 
