@@ -1,6 +1,6 @@
 PROG = PluginTest
 
-REQUIRES = gdal jsoncpp configpp ctpp2 fmt librsvg
+REQUIRES = gdal jsoncpp configpp ctpp2 fmt librsvg libpqxx
 
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
