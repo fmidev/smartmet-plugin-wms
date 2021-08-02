@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.7.27
+Version: 21.8.2
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,22 +18,22 @@ BuildRequires: boost169-devel
 BuildRequires: libconfig >= 1.7.2
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.6.18
-BuildRequires: smartmet-library-grid-content-devel >= 21.7.27
+BuildRequires: smartmet-library-grid-content-devel >= 21.8.2
 BuildRequires: smartmet-library-grid-files-devel >= 21.6.8
-BuildRequires: smartmet-library-macgyver-devel >= 21.7.27
-BuildRequires: smartmet-library-spine-devel >= 21.7.5
+BuildRequires: smartmet-library-macgyver-devel >= 21.7.28
+BuildRequires: smartmet-library-spine-devel >= 21.7.28
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 21.7.8
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 21.7.13
+BuildRequires: smartmet-engine-observation-devel >= 21.7.31
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 21.7.27
+BuildRequires: smartmet-engine-gis-devel >= 21.7.28
 BuildRequires: smartmet-engine-grid-devel >= 21.7.8
-BuildRequires: smartmet-engine-geonames-devel >= 21.7.8
-BuildRequires: smartmet-engine-querydata-devel >= 21.6.3
-BuildRequires: smartmet-engine-contour-devel >= 21.5.20
+BuildRequires: smartmet-engine-geonames-devel >= 21.8.2
+BuildRequires: smartmet-engine-querydata-devel >= 21.8.2
+BuildRequires: smartmet-engine-contour-devel >= 21.7.28
 BuildRequires: smartmet-library-gis-devel >= 21.7.27
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
@@ -58,21 +58,21 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 21.7.27
+Requires: smartmet-library-grid-content >= 21.8.2
 Requires: smartmet-library-grid-files >= 21.6.8
 Requires: smartmet-library-gis >= 21.7.27
-Requires: smartmet-library-macgyver >= 21.7.27
+Requires: smartmet-library-macgyver >= 21.7.28
 Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.7.8
 %endif
-Requires: smartmet-engine-querydata >= 21.6.3
-Requires: smartmet-engine-contour >= 21.5.20
-Requires: smartmet-engine-gis >= 21.7.27
+Requires: smartmet-engine-querydata >= 21.8.2
+Requires: smartmet-engine-contour >= 21.7.28
+Requires: smartmet-engine-gis >= 21.7.28
 Requires: smartmet-engine-grid >= 21.7.8
-Requires: smartmet-engine-geonames >= 21.7.8
+Requires: smartmet-engine-geonames >= 21.8.2
 Requires: smartmet-server >= 21.6.3
-Requires: smartmet-library-spine >= 21.7.5
+Requires: smartmet-library-spine >= 21.7.28
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -90,13 +90,13 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: libconfig-devel >= 1.7.2
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 21.5.20
-#TestRequires: smartmet-engine-geonames-devel >= 21.7.8
-#TestRequires: smartmet-engine-gis-devel >= 21.7.27
-#TestRequires: smartmet-engine-querydata-devel >= 21.6.3
+#TestRequires: smartmet-engine-contour-devel >= 21.7.28
+#TestRequires: smartmet-engine-geonames-devel >= 21.8.2
+#TestRequires: smartmet-engine-gis-devel >= 21.7.28
+#TestRequires: smartmet-engine-querydata-devel >= 21.8.2
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
-#TestRequires: smartmet-library-spine-devel >= 21.7.5
+#TestRequires: smartmet-library-spine-devel >= 21.7.28
 #TestRequires: smartmet-engine-grid-devel >= 21.7.8
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Aug  2 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.8.2-1.fmi
+- Repackaged since GeoEngine ABI changed by swittching to boost::atomic_shared_ptr
+
 * Tue Jul 27 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.7.27-1.fmi
 - Repackaged due to GIS-library changes
 
