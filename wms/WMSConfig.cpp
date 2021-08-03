@@ -806,6 +806,8 @@ void WMSConfig::updateLayerMetaData()
 {
   try
   {
+    auto mycopy = itsLayers.load();
+
     // New shared pointer which will be atomically set into production
     boost::shared_ptr<LayerMap> newProxies(boost::make_shared<LayerMap>());
 
@@ -871,9 +873,9 @@ void WMSConfig::updateLayerMetaData()
                       }
                     }
                     bool mustUpdate = true;
-                    if (itsLayers && itsLayers->find(fullLayername) != itsLayers->end())
+                    if (mycopy && mycopy->find(fullLayername) != mycopy->end())
                     {
-                      WMSLayerProxy oldProxy = itsLayers->at(fullLayername);
+                      WMSLayerProxy oldProxy = mycopy->at(fullLayername);
                       SharedWMSLayer oldLayer = oldProxy.getLayer();
                       boost::posix_time::ptime timestamp = oldLayer->metaDataUpdateTime();
 
@@ -964,7 +966,7 @@ void WMSConfig::updateLayerMetaData()
       }
     }
 
-    boost::atomic_store(&itsLayers, newProxies);
+    itsLayers.store(newProxies);
   }
   catch (...)
   {
@@ -994,7 +996,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
   try
   {
     // Atomic copy of layer data
-    auto my_layers = boost::atomic_load(&itsLayers);
+    auto my_layers = itsLayers.load();
 
     if (hierarchy_type != WMSLayerHierarchy::HierarchyType::flat)
     {
@@ -1059,7 +1061,7 @@ std::string WMSConfig::layerCustomer(const std::string& theLayerName) const
 {
   try
   {
-    auto my_layers = boost::atomic_load(&itsLayers);
+    auto my_layers = itsLayers.load();
 
     auto it = my_layers->find(theLayerName);
     if (it == my_layers->end())
@@ -1129,7 +1131,7 @@ bool WMSConfig::isValidStyle(const std::string& theLayer, const std::string& the
     if (theStyle.empty() || cicomp(theStyle, "default"))
       return true;
 
-    auto my_layers = boost::atomic_load(&itsLayers);
+    auto my_layers = itsLayers.load();
 
     SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
@@ -1160,7 +1162,7 @@ bool WMSConfig::isValidCRS(const std::string& theLayer, const std::string& theCR
     if (!isValidLayerImpl(theLayer))
       return false;
 
-    auto my_layers = boost::atomic_load(&itsLayers);
+    auto my_layers = itsLayers.load();
     SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
     return layer->isValidCRS(theCRS);
@@ -1178,7 +1180,7 @@ bool WMSConfig::isValidElevation(const std::string& theLayer, int theElevation) 
     if (!isValidLayerImpl(theLayer))
       return false;
 
-    auto my_layers = boost::atomic_load(&itsLayers);
+    auto my_layers = itsLayers.load();
     SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
     return layer->isValidElevation(theElevation);
@@ -1197,7 +1199,7 @@ bool WMSConfig::isValidReferenceTime(const std::string& theLayer,
     if (!isValidLayerImpl(theLayer))
       return false;
 
-    auto my_layers = boost::atomic_load(&itsLayers);
+    auto my_layers = itsLayers.load();
     SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
     return layer->isValidReferenceTime(theReferenceTime);
@@ -1217,7 +1219,7 @@ bool WMSConfig::isValidTime(const std::string& theLayer,
     if (!isValidLayerImpl(theLayer))
       return false;
 
-    auto my_layers = boost::atomic_load(&itsLayers);
+    auto my_layers = itsLayers.load();
     SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
     return layer->isValidTime(theTime, theReferenceTime);
@@ -1235,7 +1237,7 @@ bool WMSConfig::isTemporal(const std::string& theLayer) const
     if (!isValidLayerImpl(theLayer))
       return false;
 
-    auto my_layers = boost::atomic_load(&itsLayers);
+    auto my_layers = itsLayers.load();
     SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
     return layer->isTemporal();
@@ -1253,7 +1255,7 @@ bool WMSConfig::currentValue(const std::string& theLayer) const
     if (!isValidLayerImpl(theLayer))
       return false;
 
-    auto my_layers = boost::atomic_load(&itsLayers);
+    auto my_layers = itsLayers.load();
     SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
     return layer->currentValue();
@@ -1273,7 +1275,7 @@ boost::posix_time::ptime WMSConfig::mostCurrentTime(
     if (!isValidLayerImpl(theLayer))
       return boost::posix_time::not_a_date_time;
 
-    auto my_layers = boost::atomic_load(&itsLayers);
+    auto my_layers = itsLayers.load();
     SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
     return layer->mostCurrentTime(reference_time);
@@ -1288,7 +1290,7 @@ Json::Value WMSConfig::json(const std::string& theLayerName) const
 {
   try
   {
-    auto my_layers = boost::atomic_load(&itsLayers);
+    auto my_layers = itsLayers.load();
     if (my_layers->find(theLayerName) == my_layers->end())
       return "";
 
@@ -1308,7 +1310,7 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
 {
   std::vector<Json::Value> ret;
 
-  auto my_layers = boost::atomic_load(&itsLayers);
+  auto my_layers = itsLayers.load();
 
   std::string customer = layerName.substr(0, layerName.find(':'));
 
@@ -1354,7 +1356,7 @@ bool WMSConfig::isValidLayerImpl(const std::string& theLayer,
 {
   try
   {
-    auto my_layers = boost::atomic_load(&itsLayers);
+    auto my_layers = itsLayers.load();
     if (my_layers->find(theLayer) != my_layers->end())
     {
       if (theAcceptHiddenLayerFlag)
