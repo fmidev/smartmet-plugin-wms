@@ -945,6 +945,7 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
   boost::local_time::local_date_time localdatetime(getValidTime(), utc);
   auto mylocale = std::locale::classic();
   NFmiPoint dummy;
+  SmartMet::Spine::TimeSeries::LocalTimePoolPtr localTimePool = nullptr;
 
   // Querydata spatial reference
   Fmi::SpatialReference qcrs(q->SpatialReference());
@@ -977,7 +978,7 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
       // Q API SUCKS!!
       Spine::Location loc(latlon.X(), latlon.Y());
       Engine::Querydata::ParameterOptions options(
-          param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
+												  param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy, localTimePool);
 
       auto result = q->value(options, localdatetime);
 

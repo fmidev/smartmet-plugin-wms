@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.8.3
+Version: 21.8.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -21,18 +21,18 @@ BuildRequires: smartmet-library-giza-devel >= 21.6.18
 BuildRequires: smartmet-library-grid-content-devel >= 21.8.2
 BuildRequires: smartmet-library-grid-files-devel >= 21.6.8
 BuildRequires: smartmet-library-macgyver-devel >= 21.7.28
-BuildRequires: smartmet-library-spine-devel >= 21.7.28
+BuildRequires: smartmet-library-spine-devel >= 21.8.17
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 21.7.8
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 21.7.31
+BuildRequires: smartmet-engine-observation-devel >= 21.8.17
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 21.7.28
 BuildRequires: smartmet-engine-grid-devel >= 21.7.8
 BuildRequires: smartmet-engine-geonames-devel >= 21.8.2
-BuildRequires: smartmet-engine-querydata-devel >= 21.8.2
+BuildRequires: smartmet-engine-querydata-devel >= 21.8.17
 BuildRequires: smartmet-engine-contour-devel >= 21.7.28
 BuildRequires: smartmet-library-gis-devel >= 21.7.27
 BuildRequires: fmt-devel >= 7.1.3
@@ -66,13 +66,13 @@ Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.7.8
 %endif
-Requires: smartmet-engine-querydata >= 21.8.2
+Requires: smartmet-engine-querydata >= 21.8.17
 Requires: smartmet-engine-contour >= 21.7.28
 Requires: smartmet-engine-gis >= 21.7.28
 Requires: smartmet-engine-grid >= 21.7.8
 Requires: smartmet-engine-geonames >= 21.8.2
 Requires: smartmet-server >= 21.6.3
-Requires: smartmet-library-spine >= 21.7.28
+Requires: smartmet-library-spine >= 21.8.17
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -96,7 +96,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-querydata-devel >= 21.8.2
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
-#TestRequires: smartmet-library-spine-devel >= 21.7.28
+#TestRequires: smartmet-library-spine-devel >= 21.8.17
 #TestRequires: smartmet-engine-grid-devel >= 21.7.8
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
@@ -106,7 +106,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 21.7.5
+#TestRequires: smartmet-engine-observation-devel >= 21.8.17
 %endif
 
 %description
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Aug 17 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.8.17-1.fmi
+- Start using local time pool to avoid unnecessary allocations of local_date_time objects (BRAINSTORM-2122)
+
 * Tue Aug  3 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.8.3-1.fmi
 - Use boost::atomic_shared_ptr instead of atomic_store/load
 

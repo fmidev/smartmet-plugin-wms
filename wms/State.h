@@ -25,6 +25,7 @@
 #include <spine/HTTP.h>
 #include <map>
 #include <set>
+#include <spine/TimeSeries.h>
 
 namespace CTPP
 {
@@ -180,6 +181,7 @@ class State
   // Test if producer is for observations
   bool isObservation(const boost::optional<std::string>& theProducer) const;
   bool isObservation(const std::string& theProducer) const;
+  Spine::TimeSeries::LocalTimePoolPtr getLocalTimePool() const { return itsLocalTimePool; }
 
  private:
   Plugin& itsPlugin;
@@ -228,6 +230,9 @@ class State
 
   // The request itself
   const Spine::HTTP::Request itsRequest;
+
+  // LocalTimePool for timeseries
+  Spine::TimeSeries::LocalTimePoolPtr itsLocalTimePool{nullptr};
 };
 
 }  // namespace Dali

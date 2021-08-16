@@ -604,21 +604,20 @@ void Plugin::init()
       return;
 
     // GRID ENGINE
-
-    engine = itsReactor->getSingleton("grid", nullptr);
-    if (engine == nullptr)
-      throw Fmi::Exception(BCP, "Grid engine unavailable");
-    itsGridEngine = reinterpret_cast<Engine::Grid::Engine *>(engine);
-    itsGridEngine->setDem(itsGeoEngine->dem());
-    itsGridEngine->setLandCover(itsGeoEngine->landCover());
-
+   if (!itsConfig.gridEngineDisabled())
+    {
+	  engine = itsReactor->getSingleton("grid", nullptr);
+	  if (engine == nullptr)
+		throw Fmi::Exception(BCP, "Grid engine unavailable");
+	  itsGridEngine = reinterpret_cast<Engine::Grid::Engine *>(engine);
+	  itsGridEngine->setDem(itsGeoEngine->dem());
+	  itsGridEngine->setLandCover(itsGeoEngine->landCover());
+	}
+	  
     if (itsShutdownRequested)
       return;
 
     // OBSERVATION
-
-    if (itsShutdownRequested)
-      return;
 
 #ifndef WITHOUT_OBSERVATION
     if (!itsConfig.obsEngineDisabled())
