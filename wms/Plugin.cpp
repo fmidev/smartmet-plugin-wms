@@ -560,38 +560,38 @@ void Plugin::init()
 
     // CONTOUR
 
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       return;
 
     auto engine = itsReactor->getSingleton("Contour", nullptr);
     if (engine == nullptr)
       throw Fmi::Exception(BCP, "Contour engine unavailable");
     itsContourEngine = reinterpret_cast<Engine::Contour::Engine *>(engine);
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       return;
 
     // GIS
 
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       return;
 
     engine = itsReactor->getSingleton("Gis", nullptr);
     if (engine == nullptr)
       throw Fmi::Exception(BCP, "Gis engine unavailable");
     itsGisEngine = reinterpret_cast<Engine::Gis::Engine *>(engine);
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       return;
 
     // QUERYDATA
 
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       return;
 
     engine = itsReactor->getSingleton("Querydata", nullptr);
     if (engine == nullptr)
       throw Fmi::Exception(BCP, "Querydata engine unavailable");
     itsQEngine = reinterpret_cast<Engine::Querydata::Engine *>(engine);
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       return;
 
     // GEONAMES
@@ -600,7 +600,7 @@ void Plugin::init()
     if (engine == nullptr)
       throw Fmi::Exception(BCP, "Geonames engine unavailable");
     itsGeoEngine = reinterpret_cast<Engine::Geonames::Engine *>(engine);
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       return;
 
     // GRID ENGINE
@@ -612,12 +612,12 @@ void Plugin::init()
     itsGridEngine->setDem(itsGeoEngine->dem());
     itsGridEngine->setLandCover(itsGeoEngine->landCover());
 
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       return;
 
     // OBSERVATION
 
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       return;
 
 #ifndef WITHOUT_OBSERVATION
@@ -630,7 +630,7 @@ void Plugin::init()
     }
 #endif
 
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       return;
 
 #ifndef WITHOUT_AUTHENTICATION
@@ -678,12 +678,12 @@ void Plugin::init()
 #endif
 #endif
 
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       itsWMSConfig->shutdown();
 
     itsWMSConfig->init();  // heavy initializations
 
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       itsWMSConfig->shutdown();
 
     // Register dali content handler
