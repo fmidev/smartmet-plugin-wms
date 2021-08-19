@@ -595,7 +595,6 @@ WMSConfig::WMSConfig(const Config& daliConfig,
       itsObsEngine(obsEngine),
 #endif
       itsActiveThreadCount(0),
-      itsShutdownRequested(false),
       itsLegendGraphicSettings(daliConfig.getConfig())
 {
   try
@@ -683,13 +682,13 @@ WMSConfig::WMSConfig(const Config& daliConfig,
 
 void WMSConfig::init()
 {
-  if (itsShutdownRequested)
+  if (Spine::Reactor::isShuttingDown())
     return;
 
   // Do first layer scan
   updateLayerMetaData();
 
-  if (itsShutdownRequested)
+  if (Spine::Reactor::isShuttingDown())
     return;
 
   // Begin the update loop
@@ -711,10 +710,9 @@ void WMSConfig::shutdown()
 {
   try
   {
-    if (itsShutdownRequested)
+    if (Spine::Reactor::isShuttingDown())
       return;
 
-    itsShutdownRequested = true;
     itsShutdownCondition.notify_all();
 
     while (itsActiveThreadCount > 0)
@@ -731,7 +729,7 @@ void WMSConfig::capabilitiesUpdateLoop()
   try
   {
     ++itsActiveThreadCount;
-    while (!itsShutdownRequested)
+    while (!Spine::Reactor::isShuttingDown())
     {
       try
       {
@@ -740,13 +738,13 @@ void WMSConfig::capabilitiesUpdateLoop()
             boost::get_system_time() + boost::posix_time::seconds(itsCapabilityUpdateInterval);
 
         boost::unique_lock<boost::mutex> lock(itsShutdownMutex);
-        while (!itsShutdownRequested)
+        while (!Spine::Reactor::isShuttingDown())
         {
           if (!itsShutdownCondition.timed_wait(lock, timeout))
             break;  // timeout
         }
 
-        if (!itsShutdownRequested)
+        if (!Spine::Reactor::isShuttingDown())
           updateLayerMetaData();
       }
       catch (...)
@@ -818,7 +816,7 @@ void WMSConfig::updateLayerMetaData()
     boost::filesystem::directory_iterator end_itr;
     for (boost::filesystem::directory_iterator itr(customerdir); itr != end_itr; ++itr)
     {
-      if (itsShutdownRequested)
+      if (Spine::Reactor::isShuttingDown())
         return;
 
       try
@@ -835,7 +833,7 @@ void WMSConfig::updateLayerMetaData()
                itr2 != end_prod_itr;
                ++itr2)
           {
-            if (itsShutdownRequested)
+            if (Spine::Reactor::isShuttingDown())
               return;
 
             try
