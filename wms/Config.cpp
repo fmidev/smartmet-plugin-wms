@@ -71,6 +71,7 @@ Config::Config(const string& configfile)
 #ifndef WITHOUT_OBSERVATION
     itsConfig.lookupValue("observation_disabled", itsObsEngineDisabled);
 #endif
+    itsConfig.lookupValue("gridengine_disabled", itsGridEngineDisabled);
 
     // Default templates for various types
 

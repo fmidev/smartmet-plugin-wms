@@ -70,6 +70,7 @@ class Config : private boost::noncopyable
 #ifndef WITHOUT_OBSERVATION
   bool obsEngineDisabled() const { return itsObsEngineDisabled; }
 #endif
+  bool gridEngineDisabled() const { return itsGridEngineDisabled; }
 
  private:
   libconfig::Config itsConfig;
@@ -109,6 +110,7 @@ class Config : private boost::noncopyable
 #ifndef WITHOUT_OBSERVATION
   bool itsObsEngineDisabled = false;
 #endif
+  bool itsGridEngineDisabled = false;
 
   std::map<std::string, UnitConversion> itsUnitConversionMap;
 

@@ -76,6 +76,7 @@ PointValues read_forecasts(const NumberLayer& layer,
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
     boost::local_time::local_date_time localdatetime(valid_time_period.begin(), utc);
+	SmartMet::Spine::TimeSeries::LocalTimePoolPtr localTimePool = nullptr;
 
     PointValues pointvalues;
 
@@ -90,7 +91,7 @@ PointValues read_forecasts(const NumberLayer& layer,
 
         // Q API SUCKS!!
         Engine::Querydata::ParameterOptions options(
-            param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
+													param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy, localTimePool);
 
         auto result = q->value(options, localdatetime);
         if (boost::get<double>(&result) != nullptr)
@@ -256,6 +257,7 @@ PointValues read_flash_observations(const NumberLayer& layer,
     settings.latest = false;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
+	settings.localTimePool = state.getLocalTimePool();
 
     settings.timestep = 0;
 
@@ -377,6 +379,7 @@ PointValues read_all_observations(const NumberLayer& layer,
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
+	settings.localTimePool = state.getLocalTimePool();
 
     // settings.timestep = ?;
 
@@ -491,6 +494,7 @@ PointValues read_station_observations(const NumberLayer& layer,
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
+	settings.localTimePool = state.getLocalTimePool();
 
     // settings.timestep = ?;
 
@@ -639,6 +643,7 @@ PointValues read_latlon_observations(const NumberLayer& layer,
     settings.numberofstations = 1;                    // we need only the nearest station
     settings.latest = true;                           // we need only the newest observation
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
+	settings.localTimePool = state.getLocalTimePool();
 
     settings.starttimeGiven = true;
 

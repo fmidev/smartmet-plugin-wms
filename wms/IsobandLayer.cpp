@@ -164,6 +164,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     settings.starttimeGiven = true;
     settings.stationtype = *producer;
     settings.timezone = "UTC";
+	settings.localTimePool = theState.getLocalTimePool();
 
     // Get actual data (flash coordinates plus parameter column values)
     auto& obsengine = theState.getObsEngine();
