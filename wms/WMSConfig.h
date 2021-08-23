@@ -215,7 +215,6 @@ class WMSConfig
   // Shutdown variables
 
   boost::atomic<int> itsActiveThreadCount;
-  boost::atomic<bool> itsShutdownRequested;
   boost::mutex itsShutdownMutex;
   boost::condition_variable itsShutdownCondition;
 
