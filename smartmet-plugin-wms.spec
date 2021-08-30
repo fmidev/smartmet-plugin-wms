@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.8.21
+Version: 21.8.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -20,21 +20,21 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.6.18
 BuildRequires: smartmet-library-grid-content-devel >= 21.8.18
 BuildRequires: smartmet-library-grid-files-devel >= 21.6.8
-BuildRequires: smartmet-library-macgyver-devel >= 21.8.20
-BuildRequires: smartmet-library-spine-devel >= 21.8.21
+BuildRequires: smartmet-library-macgyver-devel >= 21.8.30
+BuildRequires: smartmet-library-spine-devel >= 21.8.30
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 21.8.17
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 21.8.21
+BuildRequires: smartmet-engine-observation-devel >= 21.8.30
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 21.8.17
+BuildRequires: smartmet-engine-gis-devel >= 21.8.30
 BuildRequires: smartmet-engine-grid-devel >= 21.8.18
-BuildRequires: smartmet-engine-geonames-devel >= 21.8.17
-BuildRequires: smartmet-engine-querydata-devel >= 21.8.21
-BuildRequires: smartmet-engine-contour-devel >= 21.8.17
-BuildRequires: smartmet-library-gis-devel >= 21.8.3
+BuildRequires: smartmet-engine-geonames-devel >= 21.8.30
+BuildRequires: smartmet-engine-querydata-devel >= 21.8.30
+BuildRequires: smartmet-engine-contour-devel >= 21.8.30
+BuildRequires: smartmet-library-gis-devel >= 21.8.30
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -60,19 +60,19 @@ Requires: libconfig
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 21.8.18
 Requires: smartmet-library-grid-files >= 21.6.8
-Requires: smartmet-library-gis >= 21.8.3
-Requires: smartmet-library-macgyver >= 21.8.20
+Requires: smartmet-library-gis >= 21.8.30
+Requires: smartmet-library-macgyver >= 21.8.30
 Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.8.17
 %endif
-Requires: smartmet-engine-querydata >= 21.8.21
-Requires: smartmet-engine-contour >= 21.8.17
-Requires: smartmet-engine-gis >= 21.8.17
+Requires: smartmet-engine-querydata >= 21.8.30
+Requires: smartmet-engine-contour >= 21.8.30
+Requires: smartmet-engine-gis >= 21.8.30
 Requires: smartmet-engine-grid >= 21.8.18
-Requires: smartmet-engine-geonames >= 21.8.17
+Requires: smartmet-engine-geonames >= 21.8.30
 Requires: smartmet-server >= 21.6.3
-Requires: smartmet-library-spine >= 21.8.21
+Requires: smartmet-library-spine >= 21.8.30
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Aug 30 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.8.30-1.fmi
+- Cache counters added (BRAINSTORM-1005)
+
 * Sat Aug 21 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.8.21-1.fmi
 - Repackaged due to LocalTimePool ABI changes
 
