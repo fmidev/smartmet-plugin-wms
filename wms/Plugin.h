@@ -147,6 +147,8 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                                unsigned int width,
                                unsigned int height) const;
 
+  Fmi::Cache::CacheStatistics getCacheStats() const;  
+
   // Plugin configuration
   const std::string itsModuleName;
   Config itsConfig;

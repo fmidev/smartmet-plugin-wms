@@ -1,3 +1,4 @@
+
 // ======================================================================
 /*!
  * \brief SmartMet Dali plugin implementation
@@ -1725,6 +1726,16 @@ Json::Value Dali::Plugin::getExceptionJson(const std::string &description,
   jsonStr += "}\n";
 
   return SmartMet::Plugin::WMS::WMSLayer::parseJsonString(jsonStr);
+}
+
+Fmi::Cache::CacheStatistics Plugin::getCacheStats() const
+{
+  Fmi::Cache::CacheStatistics ret;
+
+  ret.insert(std::make_pair("Wms::image_cache::memory_cache", itsImageCache->getMemoryCacheStats()));
+  ret.insert(std::make_pair("Wms::image_cache::file_cache", itsImageCache->getFileCacheStats()));
+
+  return ret;
 }
 
 }  // namespace Dali
