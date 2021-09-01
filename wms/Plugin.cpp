@@ -337,7 +337,7 @@ void Plugin::formatResponse(const std::string &theSvg,
 #ifdef MYDEBUG
         std::cout << "Inserting product to cache with hash " << theHash << std::endl;
 #endif
-        // itsImageCache->insert(theHash, buffer);
+        itsImageCache->insert(theHash, buffer);
 
         // For frontend caching
         theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", theHash));
@@ -1732,7 +1732,8 @@ Fmi::Cache::CacheStatistics Plugin::getCacheStats() const
 {
   Fmi::Cache::CacheStatistics ret;
 
-  ret.insert(std::make_pair("Wms::image_cache::memory_cache", itsImageCache->getMemoryCacheStats()));
+  ret.insert(
+      std::make_pair("Wms::image_cache::memory_cache", itsImageCache->getMemoryCacheStats()));
   ret.insert(std::make_pair("Wms::image_cache::file_cache", itsImageCache->getFileCacheStats()));
 
   return ret;
