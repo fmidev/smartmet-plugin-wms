@@ -9,6 +9,11 @@ rm -f failures/*
 in=/tmp/test.in.$$
 out=/tmp/test.out.$$
 
+# Detect WGS84 mode
+grep --quiet "#define WGS84 1" /usr/include/smartmet/newbase/NFmiGlobals.h
+wgs84=$(expr $? == 0)
+
+
 echo -e "Starting the plugin, please wait a moment until it has been initialized...\n"
 
 rm -f $in $out
@@ -96,6 +101,15 @@ for f in input/*.get; do
 
     result=failures/$request_name
     expected=output/$request_name
+
+    # Use WGS84 expected result in WGS84 mode
+
+    if [[ $wgs84 == 1 ]]; then
+        wgs84result=${expected}.wgs84
+        if [ -e $wgs84result ]; then
+            expected=$wgs84result
+        fi
+    fi
     
     # The plugin will echo DONE when it's done producing the result,
     # but it may print something else first, hence we start by
