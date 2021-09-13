@@ -117,8 +117,8 @@
       <BoundingBox CRS="CRS:27" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="CRS:83" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="CRS:84" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <BoundingBox CRS="CRS:SmartMetEurope" minx="-1366068.51938" miny="-3945258.59869" maxx="2145400.5886" maxy="-2649349.08649"/>
-      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2030401.83511" miny="-3648105.94667" maxx="1005949.87844" maxy="-1814781.62012"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="-1370208.73749" miny="-3957215.70836" maxx="2152881.41537" maxy="-2658587.1382"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2036555.48431" miny="-3659162.45965" maxx="1010088.45179" maxy="-1822247.80407"/>
       <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3674549.99025" maxy="7785726.69717"/>
       <BoundingBox CRS="EPSG:3035" minx="3006482.43753" miny="3305514.91803" maxx="5432786.5425" maxy="5479598.18246"/>
       <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="613375.780227" maxy="7790970.34751"/>
@@ -161,8 +161,8 @@
       <BoundingBox CRS="CRS:27" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="CRS:83" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="CRS:84" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <BoundingBox CRS="CRS:SmartMetEurope" minx="-1366068.51938" miny="-3945258.59869" maxx="2145400.5886" maxy="-2649349.08649"/>
-      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2030401.83511" miny="-3648105.94667" maxx="1005949.87844" maxy="-1814781.62012"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="-1370208.73749" miny="-3957215.70836" maxx="2152881.41537" maxy="-2658587.1382"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2036555.48431" miny="-3659162.45965" maxx="1010088.45179" maxy="-1822247.80407"/>
       <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3674549.99025" maxy="7785726.69717"/>
       <BoundingBox CRS="EPSG:3035" minx="3006482.43753" miny="3305514.91803" maxx="5432786.5425" maxy="5479598.18246"/>
       <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="613375.780227" maxy="7790970.34751"/>
