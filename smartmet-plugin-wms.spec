@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.9.7
+Version: 21.9.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -17,23 +17,23 @@ BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.6.18
-BuildRequires: smartmet-library-grid-content-devel >= 21.8.31
-BuildRequires: smartmet-library-grid-files-devel >= 21.8.31
-BuildRequires: smartmet-library-macgyver-devel >= 21.8.30
-BuildRequires: smartmet-library-spine-devel >= 21.9.7
+BuildRequires: smartmet-library-grid-content-devel >= 21.9.15
+BuildRequires: smartmet-library-grid-files-devel >= 21.9.15
+BuildRequires: smartmet-library-macgyver-devel >= 21.9.13
+BuildRequires: smartmet-library-spine-devel >= 21.9.13
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 21.8.31
+BuildRequires: smartmet-engine-authentication-devel >= 21.9.9
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 21.8.31
+BuildRequires: smartmet-engine-observation-devel >= 21.9.13
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 21.8.30
-BuildRequires: smartmet-engine-grid-devel >= 21.8.31
-BuildRequires: smartmet-engine-geonames-devel >= 21.8.30
-BuildRequires: smartmet-engine-querydata-devel >= 21.9.7
-BuildRequires: smartmet-engine-contour-devel >= 21.8.30
-BuildRequires: smartmet-library-gis-devel >= 21.8.30
+BuildRequires: smartmet-engine-gis-devel >= 21.9.13
+BuildRequires: smartmet-engine-grid-devel >= 21.9.15
+BuildRequires: smartmet-engine-geonames-devel >= 21.9.13
+BuildRequires: smartmet-engine-querydata-devel >= 21.9.13
+BuildRequires: smartmet-engine-contour-devel >= 21.9.13
+BuildRequires: smartmet-library-gis-devel >= 21.9.13
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -56,22 +56,22 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 21.8.31
-Requires: smartmet-library-grid-files >= 21.8.31
-Requires: smartmet-library-gis >= 21.8.30
-Requires: smartmet-library-macgyver >= 21.8.30
-Requires: smartmet-library-spine >= 21.9.7
+Requires: smartmet-library-grid-content >= 21.9.15
+Requires: smartmet-library-grid-files >= 21.9.15
+Requires: smartmet-library-gis >= 21.9.13
+Requires: smartmet-library-macgyver >= 21.9.13
+Requires: smartmet-library-spine >= 21.9.13
 Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 21.8.31
+Requires: smartmet-engine-authentication >= 21.9.9
 %endif
-Requires: smartmet-engine-querydata >= 21.9.7
-Requires: smartmet-engine-contour >= 21.8.30
-Requires: smartmet-engine-gis >= 21.9.7
-Requires: smartmet-engine-grid >= 21.9.7
-Requires: smartmet-engine-geonames >= 21.8.30
-Requires: smartmet-server >= 21.6.3
-Requires: smartmet-library-spine >= 21.8.30
+Requires: smartmet-engine-querydata >= 21.9.13
+Requires: smartmet-engine-contour >= 21.9.13
+Requires: smartmet-engine-gis >= 21.9.13
+Requires: smartmet-engine-grid >= 21.9.15
+Requires: smartmet-engine-geonames >= 21.9.13
+Requires: smartmet-server >= 21.9.7
+Requires: smartmet-library-spine >= 21.9.13
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -91,7 +91,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 21.8.17
 #TestRequires: smartmet-engine-geonames-devel >= 21.8.17
 #TestRequires: smartmet-engine-gis-devel >= 21.9.7
-#TestRequires: smartmet-engine-querydata-devel >= 21.9.7
+#TestRequires: smartmet-engine-querydata-devel >= 21.9.13
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
 #TestRequires: smartmet-library-newbase-devel >= 20.10.28
 #TestRequires: smartmet-library-spine-devel >= 21.8.21
@@ -133,6 +133,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Sep 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.15-1.fmi
+- Repackaged due to NetCDF related ABI changes in base libraries
+
 * Tue Sep  7 2021 Andris Pavēnis <andris.pavenis@fmi.fi> - 21.9.7-1.fmi
 - Repackaged due to dependency changes (libconfig -> libconfig17)
 
