@@ -35,7 +35,7 @@
 #include <spine/ParameterTools.h>
 #include <limits>
 
-#ifndef NEW_NFMIAREA
+#ifndef WGS84
 #include <newbase/NFmiGdalArea.h>
 #endif
 
@@ -164,7 +164,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     settings.starttimeGiven = true;
     settings.stationtype = *producer;
     settings.timezone = "UTC";
-	settings.localTimePool = theState.getLocalTimePool();
+    settings.localTimePool = theState.getLocalTimePool();
 
     // Get actual data (flash coordinates plus parameter column values)
     auto& obsengine = theState.getObsEngine();
@@ -178,7 +178,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
     // Establish new projection and the required grid size of the desired resolution
 
-#ifdef NEW_NFMIAREA
+#ifdef WGS84
     std::unique_ptr<NFmiArea> newarea(NFmiArea::CreateFromBBox(
         crs, NFmiPoint(box.xmin(), box.ymin()), NFmiPoint(box.xmax(), box.ymax())));
 

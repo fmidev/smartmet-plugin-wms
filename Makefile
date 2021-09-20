@@ -12,7 +12,6 @@ sysconfdir ?= /etc
 FLAGS += -Wno-maybe-uninitialized -Wno-variadic-macros -Wno-deprecated-declarations
 
 DEFINES = -DUNIX -D_REENTRANT
-# DEFINES = -DUNIX -D_REENTRANT -DNEW_NFMIAREA
 
 LIBS += -L$(libdir) \
 	$(REQUIRED_LIBS) \

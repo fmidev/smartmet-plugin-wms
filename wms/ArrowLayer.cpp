@@ -102,8 +102,8 @@ PointValues read_forecasts(const ArrowLayer& layer,
     std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
     if (uparam && vparam && q->isRelativeUV())
     {
-#ifdef NEW_NFMIAREA
-      uvtransformation.reset(new Fmi::CoordinateTransformation("WGS84", q->SpatialReference());
+#ifdef WGS84
+      uvtransformation.reset(new Fmi::CoordinateTransformation("WGS84", q->SpatialReference()));
 #else
       uvtransformation.reset(new Fmi::CoordinateTransformation("WGS84", q->area().WKT()));
 #endif
@@ -123,7 +123,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
     std::string tmp;
     auto mylocale = std::locale::classic();
     NFmiPoint dummy;
-	SmartMet::Spine::TimeSeries::LocalTimePoolPtr localTimePool = nullptr;
+    SmartMet::Spine::TimeSeries::LocalTimePoolPtr localTimePool = nullptr;
 
     if (speedparam && !q->param(speedparam->number()))
       throw Fmi::Exception(
@@ -161,7 +161,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                       false,
                                                       dummy,
                                                       dummy,
-													  localTimePool);
+                                                      localTimePool);
         auto uresult = q->value(up, localdatetime);
 
         auto vp = Engine::Querydata::ParameterOptions(*vparam,
@@ -177,7 +177,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                       false,
                                                       dummy,
                                                       dummy,
-													  localTimePool);
+                                                      localTimePool);
         auto vresult = q->value(vp, localdatetime);
 
         if (boost::get<double>(&uresult) != nullptr && boost::get<double>(&vresult) != nullptr)
@@ -414,7 +414,7 @@ PointValues read_all_observations(const ArrowLayer& layer,
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
-	settings.localTimePool = state.getLocalTimePool();
+    settings.localTimePool = state.getLocalTimePool();
 
     settings.timestep = 0;
 
@@ -559,7 +559,7 @@ PointValues read_station_observations(const ArrowLayer& layer,
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
-	settings.localTimePool = state.getLocalTimePool();
+    settings.localTimePool = state.getLocalTimePool();
 
     // settings.timestep = ?;
 
@@ -736,7 +736,7 @@ PointValues read_latlon_observations(const ArrowLayer& layer,
     settings.numberofstations = 1;                    // we need only the nearest station
     settings.latest = true;                           // we need only the newest observation
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
-	settings.localTimePool = state.getLocalTimePool();
+    settings.localTimePool = state.getLocalTimePool();
 
     settings.starttimeGiven = true;
 
