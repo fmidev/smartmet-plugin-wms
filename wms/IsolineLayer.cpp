@@ -55,71 +55,83 @@ void IsolineLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       parameter = json.asString();
 
-	json = theJson.get("isolines", nulljson);
+    json = theJson.get("isolines", nulljson);
     if (!json.isNull())
-	  {
-		if (json.isArray())
-		  {
-			Spine::JSON::extract_array("isolines", isolines, json, theConfig);
-		  }
-		else
-		  {
-			auto json_startvalue = json.get("startvalue", nulljson);
-			auto json_endvalue = json.get("endvalue", nulljson);
-			auto json_interval = json.get("interval", nulljson);
-			auto json_except = json.get("except", nulljson);
-			auto json_qidprefix = json.get("qidprefix", nulljson);
-			if(json_startvalue.isNull()) throw Fmi::Exception(BCP, "isolines startvalue missing");
-			if(json_endvalue.isNull()) throw Fmi::Exception(BCP, "isolines endvalue missing");
-			if(json_interval.isNull()) throw Fmi::Exception(BCP, "isolines interval missing");
+    {
+      if (json.isArray())
+      {
+        Spine::JSON::extract_array("isolines", isolines, json, theConfig);
+      }
+      else
+      {
+        auto json_startvalue = json.get("startvalue", nulljson);
+        auto json_endvalue = json.get("endvalue", nulljson);
+        auto json_interval = json.get("interval", nulljson);
+        auto json_except = json.get("except", nulljson);
+        auto json_qidprefix = json.get("qidprefix", nulljson);
+        if (json_startvalue.isNull())
+          throw Fmi::Exception(BCP, "isolines startvalue missing");
+        if (json_endvalue.isNull())
+          throw Fmi::Exception(BCP, "isolines endvalue missing");
+        if (json_interval.isNull())
+          throw Fmi::Exception(BCP, "isolines interval missing");
 
-			auto startvalue = json_startvalue.asDouble();
-			auto endvalue = json_endvalue.asDouble();
-			auto interval = json_interval.asDouble();
-			std::vector<double> except_vector;
-			if(!json_except.isNull())
-			  {
-				if(json_except.isArray())
-				  {
-					for (const auto& e_json : json_except)
-					  except_vector.push_back(e_json.asDouble());
-				  }
-				else
-				  {
-					except_vector.push_back(json_except.asDouble());
-				  }
-			  }
-			
-			std::string qidprefix = "isoline_";
-			if(!json_qidprefix.isNull())
-			  qidprefix = json_qidprefix.asString();
-			for(double i = startvalue; i <= endvalue; i += interval)
-			  {
-				if(!except_vector.empty())
-				  {
-					bool skip = false;
-					for(const auto& except : except_vector)
-					  {
-						if(except != 0.0 && std::fmod(i, except) == 0.0)
-						  {
-							skip = true;
-							break;
-						  }
-					  }
-					if(skip)
-					  continue;
-				  }
-				Isoline isoline;
-				isoline.qid = (qidprefix + Fmi::to_string(i));
-				isoline.value = i;
-				isolines.push_back(isoline);
-			  }
-		  }
-	  }
-		
-	json = theJson.get("smoother", nulljson);
-	if (!json.isNull())
-	  smoother.init(json, theConfig);
+        auto startvalue = json_startvalue.asDouble();
+        auto endvalue = json_endvalue.asDouble();
+        auto interval = json_interval.asDouble();
+
+        if (startvalue > endvalue)
+          throw Fmi::Exception(BCP, "isolines startvalue > endvalue");
+        if (interval <= 0)
+          throw Fmi::Exception(BCP, "isolines interval must be positive");
+
+        std::vector<double> except_vector;
+        if (!json_except.isNull())
+        {
+          if (json_except.isArray())
+          {
+            for (const auto& e_json : json_except)
+              except_vector.push_back(e_json.asDouble());
+          }
+          else
+          {
+            except_vector.push_back(json_except.asDouble());
+          }
+        }
+
+        std::string qidprefix = "isoline_";
+        if (!json_qidprefix.isNull())
+          qidprefix = json_qidprefix.asString();
+        for (double i = startvalue; i <= endvalue; i += interval)
+        {
+          if (!except_vector.empty())
+          {
+            bool skip = false;
+            for (const auto& except : except_vector)
+            {
+              if (except != 0.0 && std::fmod(i, except) == 0.0)
+              {
+                skip = true;
+                break;
+              }
+            }
+            if (skip)
+              continue;
+          }
+          Isoline isoline;
+          isoline.qid = (qidprefix + Fmi::to_string(i));
+          isoline.value = i;
+          isolines.push_back(isoline);
+
+          if (isolines.size() > 10000)
+            throw Fmi::Exception(BCP, "Too many (> 10000) isolines");
+        }
+      }
+    }
+
+    json = theJson.get("smoother", nulljson);
+    if (!json.isNull())
+      smoother.init(json, theConfig);
 
     json = theJson.get("extrapolation", nulljson);
     if (!json.isNull())
