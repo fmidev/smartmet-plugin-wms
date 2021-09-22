@@ -55,13 +55,72 @@ void IsolineLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       parameter = json.asString();
 
-    json = theJson.get("isolines", nulljson);
+	json = theJson.get("isolines", nulljson);
     if (!json.isNull())
-      Spine::JSON::extract_array("isolines", isolines, json, theConfig);
-
-    json = theJson.get("smoother", nulljson);
-    if (!json.isNull())
-      smoother.init(json, theConfig);
+	  {
+		if (json.isArray())
+		  {
+			Spine::JSON::extract_array("isolines", isolines, json, theConfig);
+		  }
+		else
+		  {
+			auto json_startvalue = json.get("startvalue", nulljson);
+			auto json_endvalue = json.get("endvalue", nulljson);
+			auto json_interval = json.get("interval", nulljson);
+			auto json_except = json.get("except", nulljson);
+			auto json_qidprefix = json.get("qidprefix", nulljson);
+			if (!json_startvalue.isNull() && !json_endvalue.isNull() && !json_interval.isNull())
+			  {
+				double startvalue = json_startvalue.asDouble();
+				double endvalue = json_endvalue.asDouble();
+				double interval = json_interval.asDouble();
+				std::vector<double> except_vector;
+				if(!json_except.isNull())
+				  {
+					if(json_except.isArray())
+					  {
+						for (const auto& e_json : json_except)
+						  except_vector.push_back(e_json.asDouble());
+					  }
+					else
+					  {
+						except_vector.push_back(json_except.asDouble());
+					  }
+				  }
+				
+				std::string qidprefix = "isoline_";
+				if(!json_qidprefix.isNull())
+				  qidprefix = json_qidprefix.asString();
+				for(double i = startvalue; i <= endvalue; i += interval)
+				  {
+					if(!except_vector.empty())
+					  {
+						bool skip = false;
+						for(const auto& except : except_vector)
+						  {
+							if(except != 0.0 && std::fmod(i, except) == 0.0)
+							  {
+								skip = true;
+								break;
+							  }
+						  }
+						if(skip)
+						  continue;
+					  }
+					Isoline isoline;
+					isoline.qid = (qidprefix + Fmi::to_string(i));
+					isoline.value = i;
+					isolines.push_back(isoline);
+				  }
+			  }
+			else
+			  std::cout << "Error! startvalue, endvalue and interval must be defined for isoline-group!" << std::endl;
+		  }
+	  }
+		
+	json = theJson.get("smoother", nulljson);
+	if (!json.isNull())
+	  smoother.init(json, theConfig);
 
     json = theJson.get("extrapolation", nulljson);
     if (!json.isNull())
