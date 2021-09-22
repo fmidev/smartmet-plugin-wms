@@ -128,6 +128,7 @@
                     "layer_type": "isoline",
                      "isolines": 
 		    {  
+			"qidprefix": "isoline_main_",
 			"startvalue": 900, 
 			"endvalue": 1100,
 			"interval": 5
@@ -136,7 +137,6 @@
                     "parameter": "Pressure",
 		    "attributes":
 		    {
-			"id": "pressure_isolines_main",
 			"fill": "none",
 			"stroke": "#333",
 			"stroke-width": "1.5px"
@@ -147,6 +147,7 @@
                     "layer_type": "isoline",
                     "isolines": 
 		    {  
+			"qidprefix": "isoline_sub_",
 			"startvalue": 900, 
 			"endvalue": 1100,
 			"interval": 2,
@@ -156,7 +157,6 @@
                     "parameter": "Pressure",
 		    "attributes":
 		    {
-			"id": "pressure_isolines_sub",
 			"fill": "none",
 			"stroke": "red",
 			"stroke-dasharray": "10,5",
