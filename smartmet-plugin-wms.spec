@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.9.15
+Version: 21.9.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -133,6 +133,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Sep 22 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.9.22-1.fmi
+- Must be possible for IsolineLayer to define isolines by defining startvalue, endvalue, interval (BRAINSTORM-2157)
+
 * Wed Sep 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.9.15-1.fmi
 - Repackaged due to NetCDF related ABI changes in base libraries
 
