@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.9.22
+Version: 21.10.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -133,6 +133,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Oct 11 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.10.11-1.fmi
+- Support for finnish road observations (BRAINSTORM-2155)
+
 * Wed Sep 22 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.9.22-1.fmi
 - Must be possible for IsolineLayer to define isolines by defining startvalue, endvalue, interval (BRAINSTORM-2157)
 
