@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 RESULT=$1
 EXPECTED=$2
