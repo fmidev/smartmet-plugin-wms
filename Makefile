@@ -2,7 +2,7 @@ SUBNAME = wms
 SPEC = smartmet-plugin-$(SUBNAME)
 INCDIR = smartmet/plugins/$(SUBNAME)
 
-REQUIRES = gdal jsoncpp cairo fmt librsvg ctpp2
+REQUIRES = gdal jsoncpp cairo fmt librsvg ctpp2 configpp
 
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 sysconfdir ?= /etc
@@ -14,7 +14,6 @@ FLAGS += -Wno-maybe-uninitialized -Wno-variadic-macros -Wno-deprecated-declarati
 DEFINES = -DUNIX -D_REENTRANT
 
 LIBS += -L$(libdir) \
-	$(REQUIRED_LIBS) \
 	-lsmartmet-grid-content \
 	-lsmartmet-spine \
 	-lsmartmet-newbase \
@@ -22,6 +21,7 @@ LIBS += -L$(libdir) \
 	-lsmartmet-gis \
 	-lsmartmet-giza \
 	-lsmartmet-locus \
+	$(REQUIRED_LIBS) \
 	-lboost_date_time \
 	-lboost_thread \
 	-lboost_regex \
