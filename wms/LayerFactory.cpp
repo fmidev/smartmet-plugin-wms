@@ -20,6 +20,7 @@
 #include "TranslationLayer.h"
 #include "WKTLayer.h"
 #include "WindRoseLayer.h"
+#include "FinnishRoadObservationLayer.h"
 #include <macgyver/Exception.h>
 #include <stdexcept>
 
@@ -79,6 +80,8 @@ Layer* create(const Json::Value& theJson)
 #ifndef WITHOUT_OBSERVATION
     if (name == "windrose")
       return new WindRoseLayer;
+    if (name == "finnish_road_observation")
+      return new FinnishRoadObservationLayer;
 #endif
     if (name == "icemap")
       return new IceMapLayer;

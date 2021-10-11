@@ -33,6 +33,10 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
     json = theJson.get("producer", theConfig.defaultModel());
     producer = json.asString();
 
+    json = theJson.get("timestep", nulljson);
+    if (!json.isNull())
+	  timestep = json.asInt();
+
     json = theJson.get("source", nulljson);
     if (!json.isNull())
     {
@@ -188,6 +192,12 @@ void Properties::init(const Json::Value& theJson,
       producer = theProperties.producer;
     else
       producer = json.asString();
+
+    json = theJson.get("timestep", nulljson);
+    if (json.isNull())
+      timestep = theProperties.timestep;
+    else
+      timestep = json.asInt();
 
     json = theJson.get("forecastType", nulljson);
     if (json.isNull())
