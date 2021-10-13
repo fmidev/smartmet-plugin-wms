@@ -268,7 +268,7 @@ void add_layer_info(bool multiple_intervals,
   }
   else
   {
-    // From sepc: "If the layer has a Title but no Name, then that layer is only a category title
+    // From spec: "If the layer has a Title but no Name, then that layer is only a category title
     // for all the layers nested within."
     capa["title"] = lh.name;
     capa["queryable"] = 0;

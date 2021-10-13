@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.10.11
+Version: 21.10.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -133,6 +133,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+
+* Wed Oct 13 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.10.13-1.fmi
+- Fixed missing keyword in GetCapabilities response when layout is not flat (BRAINSTORM-2165)
 
 * Mon Oct 11 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.10.11-1.fmi
 - Simplified grid storage structures
