@@ -20,7 +20,7 @@ BuildRequires: smartmet-library-giza-devel >= 21.6.18
 BuildRequires: smartmet-library-grid-content-devel >= 21.10.11
 BuildRequires: smartmet-library-grid-files-devel >= 21.10.11
 BuildRequires: smartmet-library-macgyver-devel >= 21.10.4
-BuildRequires: smartmet-library-spine-devel >= 21.10.11
+BuildRequires: smartmet-library-spine-devel >= 21.10.12
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 21.9.9
@@ -60,7 +60,7 @@ Requires: smartmet-library-grid-content >= 21.10.11
 Requires: smartmet-library-grid-files >= 21.10.11
 Requires: smartmet-library-gis >= 21.9.24
 Requires: smartmet-library-macgyver >= 21.10.4
-Requires: smartmet-library-spine >= 21.10.11
+Requires: smartmet-library-spine >= 21.10.12
 Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.9.9
@@ -71,7 +71,7 @@ Requires: smartmet-engine-gis >= 21.9.13
 Requires: smartmet-engine-grid >= 21.10.11
 Requires: smartmet-engine-geonames >= 21.9.28
 Requires: smartmet-server >= 21.9.7
-Requires: smartmet-library-spine >= 21.10.11
+Requires: smartmet-library-spine >= 21.10.12
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
