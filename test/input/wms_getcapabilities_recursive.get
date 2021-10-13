@@ -1,0 +1,1 @@
+GET /wms?service=wms&request=GetCapabilities&debug=1&layout=recursive HTTP/1.0

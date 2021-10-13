@@ -1752,6 +1752,13 @@ boost::optional<CTPP::CDT> WMSLayer::getLayerBaseInfo() const
       layer["fixed_width"] = *fixed_width;
     if (fixed_height)
       layer["fixed_height"] = *fixed_height;
+	if (keywords)
+    {
+      CTPP::CDT kwords(CTPP::CDT::ARRAY_VAL);
+      for (const auto& kword : *keywords)
+        kwords.PushBack(kword);
+      layer["keyword"] = kwords;
+    }
 
     return layer;
   }
