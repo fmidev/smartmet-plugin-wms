@@ -133,7 +133,6 @@ void WMSGridDataLayer::updateLayerMetaData()
 
         T::ParamKeyType parameterKeyType = T::ParamKeyTypeValue::FMI_NAME;
         std::string parameterKey = p[0];
-        T::ParamLevelIdType parameterLevelIdType = T::ParamLevelIdTypeValue::IGNORE;
         T::ParamLevelId parameterLevelId = 0;
         T::ParamLevel minLevel = 0;
         T::ParamLevel maxLevel = 1000000000;
@@ -144,7 +143,6 @@ void WMSGridDataLayer::updateLayerMetaData()
 
         if (p.size() >= 3 && p[2] > "")
         {
-          parameterLevelIdType = T::ParamLevelIdTypeValue::FMI;
           itsGeometryId = toInt32(p[2]);
         }
 
@@ -168,7 +166,6 @@ void WMSGridDataLayer::updateLayerMetaData()
                                                                     generationInfo->mGenerationId,
                                                                     parameterKeyType,
                                                                     parameterKey,
-                                                                    parameterLevelIdType,
                                                                     parameterLevelId,
                                                                     minLevel,
                                                                     maxLevel,
