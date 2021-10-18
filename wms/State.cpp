@@ -330,7 +330,7 @@ void State::addAttributes(CTPP::CDT& theGlobals,
 
     auto iri = theAttributes.getLocalIri("filter");
     if (iri && addId(*iri))
-      theGlobals["includes"][*iri] = itsPlugin.getFilter(*iri, itUsesWms);
+      theGlobals["includes"][*iri] = itsPlugin.getFilter(itsCustomer, *iri, itUsesWms);
 
     iri = theAttributes.getLocalIri("marker");
     if (iri && addId(*iri))
@@ -607,7 +607,7 @@ std::string State::getFilter(const std::string& theName) const
   {
     if (itsFilters.count(theName) > 0)
       return itsFilters[theName];
-    return itsPlugin.getFilter(theName, itUsesWms);
+	return itsPlugin.getFilter(itsCustomer, theName, itUsesWms);
   }
   catch (...)
   {
@@ -624,10 +624,11 @@ std::string State::getFilter(const std::string& theName) const
 std::size_t State::getFilterHash(const std::string& theName) const
 {
   try
-  {
+  {	
     if (itsFilters.count(theName) > 0)
       return Fmi::hash_value(itsFilters[theName]);
-    return itsPlugin.getFilterHash(theName, itUsesWms);
+
+    return itsPlugin.getFilterHash(itsCustomer, theName, itUsesWms);
   }
   catch (...)
   {

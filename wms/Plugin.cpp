@@ -1,4 +1,3 @@
-
 // ======================================================================
 /*!
  * \brief SmartMet Dali plugin implementation
@@ -407,6 +406,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
           theResponse.setStatus(Spine::HTTP::Status::bad_request);
 
           const Fmi::Exception *e = wmsException.getExceptionByParameterName(WMS_EXCEPTION_CODE);
+
           if (e != nullptr)
           {
             // Status codes used by OGC and their HTTP response codes:
@@ -861,6 +861,37 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
   }
 }
 
+std::string Plugin::resolveFilePath(const std::string &theCustomer, const std::string& theSubDir, const std::string &theFileName, bool theWmsFlag) const
+{
+  if (theCustomer.empty() || theFileName.empty())
+	return "";
+
+  try
+  {
+	std::string file_path;
+
+	// 1) If file name starts with '/' search from wms-root
+	// 2) Else check existence of file first from customer-path then from wms-root
+
+	bool use_root_path = true;
+    if (theFileName[0] != '/')
+    {
+	  file_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + check_attack(theCustomer) +
+				   theSubDir + check_attack(theFileName));
+	  if(boost::filesystem::exists(file_path))
+		use_root_path = false;
+    }
+    if(use_root_path)
+      file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources" + theSubDir + check_attack(theFileName);
+
+    return file_path;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Resolving file name failed: " + theFileName);
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Get CSS contents from the internal cache
@@ -876,16 +907,7 @@ std::string Plugin::getStyle(const std::string &theCustomer,
     if (theCustomer.empty() || theCSS.empty())
       return "";
 
-    std::string css_path;
-    if (theCSS[0] != '/')
-    {
-      css_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + check_attack(theCustomer) +
-                  "/layers/" + check_attack(theCSS));
-    }
-    else
-    {
-      css_path = itsConfig.rootDirectory(theWmsFlag) + check_attack(theCSS);
-    }
+    std::string css_path = resolveFilePath(theCustomer, "/layers/", theCSS, theWmsFlag);
 
     return itsFileCache.get(css_path);
   }
@@ -921,15 +943,14 @@ Fmi::SharedFormatter Plugin::getTemplate(const std::string &theName) const
  */
 // ----------------------------------------------------------------------
 
-std::string Plugin::getFilter(const std::string &theName, bool theWmsFlag) const
+std::string Plugin::getFilter(const std::string &theCustomer, const std::string &theFileName, bool theWmsFlag) const
 {
   try
   {
-    if (theName.empty())
+    if (theFileName.empty())
       return "";
 
-    std::string filter_path =
-        (itsConfig.rootDirectory(theWmsFlag) + "/resources/filters/" + check_attack(theName));
+	std::string filter_path = resolveFilePath(theCustomer, "/filters/", theFileName, theWmsFlag);
 
     return itsFileCache.get(filter_path);
   }
@@ -945,15 +966,14 @@ std::string Plugin::getFilter(const std::string &theName, bool theWmsFlag) const
  */
 // ----------------------------------------------------------------------
 
-std::size_t Plugin::getFilterHash(const std::string &theName, bool theWmsFlag) const
+std::size_t Plugin::getFilterHash(const std::string &theCustomer, const std::string &theFileName, bool theWmsFlag) const
 {
   try
-  {
-    if (theName.empty())
+  {	
+    if (theFileName.empty())
       return 0;
 
-    std::string filter_path =
-        (itsConfig.rootDirectory(theWmsFlag) + "/resources/filters/" + check_attack(theName));
+	std::string filter_path = resolveFilePath(theCustomer, "/filters/", theFileName, theWmsFlag);
 
     return itsFileCache.last_modified(filter_path);
   }
@@ -978,8 +998,7 @@ std::string Plugin::getMarker(const std::string &theCustomer,
     if (theName.empty())
       return "";
 
-    std::string marker_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + theCustomer +
-                               "/markers/" + check_attack(theName));
+    std::string marker_path = resolveFilePath(theCustomer, "/markers/", theName, theWmsFlag);
 
     return itsFileCache.get(marker_path);
   }
@@ -1004,8 +1023,7 @@ std::size_t Plugin::getMarkerHash(const std::string &theCustomer,
     if (theName.empty())
       return 0;
 
-    std::string marker_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + theCustomer +
-                               "/markers/" + check_attack(theName));
+    std::string marker_path = resolveFilePath(theCustomer, "/markers/", theName, theWmsFlag);
 
     return itsFileCache.last_modified(marker_path);
   }
@@ -1030,8 +1048,7 @@ std::string Plugin::getSymbol(const std::string &theCustomer,
     if (theName.empty())
       return "";
 
-    std::string symbol_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + theCustomer +
-                               "/symbols/" + check_attack(theName));
+    std::string symbol_path = resolveFilePath(theCustomer, "/symbols/", theName, theWmsFlag);
 
     return itsFileCache.get(symbol_path);
   }
@@ -1056,8 +1073,7 @@ std::size_t Plugin::getSymbolHash(const std::string &theCustomer,
     if (theName.empty())
       return 0;
 
-    std::string symbol_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + theCustomer +
-                               "/symbols/" + check_attack(theName));
+    std::string symbol_path = resolveFilePath(theCustomer, "/symbols/", theName, theWmsFlag);
 
     return itsFileCache.last_modified(symbol_path);
   }
@@ -1082,8 +1098,7 @@ std::string Plugin::getPattern(const std::string &theCustomer,
     if (theName.empty())
       return "";
 
-    std::string pattern_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + theCustomer +
-                                "/patterns/" + check_attack(theName));
+    std::string pattern_path = resolveFilePath(theCustomer, "/patterns/", theName, theWmsFlag);
 
     return itsFileCache.get(pattern_path);
   }
@@ -1108,8 +1123,7 @@ std::size_t Plugin::getPatternHash(const std::string &theCustomer,
     if (theName.empty())
       return 0;
 
-    std::string pattern_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + theCustomer +
-                                "/patterns/" + check_attack(theName));
+    std::string pattern_path = resolveFilePath(theCustomer, "/patterns/", theName, theWmsFlag);
 
     return itsFileCache.last_modified(pattern_path);
   }
@@ -1134,8 +1148,7 @@ std::string Plugin::getGradient(const std::string &theCustomer,
     if (theName.empty())
       return "";
 
-    std::string gradient_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + theCustomer +
-                                 "/gradients/" + check_attack(theName));
+    std::string gradient_path = resolveFilePath(theCustomer, "/gradients/", theName, theWmsFlag);
 
     return itsFileCache.get(gradient_path);
   }
@@ -1160,8 +1173,7 @@ std::size_t Plugin::getGradientHash(const std::string &theCustomer,
     if (theName.empty())
       return 0;
 
-    std::string gradient_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + theCustomer +
-                                 "/gradients/" + check_attack(theName));
+    std::string gradient_path = resolveFilePath(theCustomer, "/gradients/", theName, theWmsFlag);
 
     return itsFileCache.last_modified(gradient_path);
   }
@@ -1472,7 +1484,20 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     // Calculate hash for the product
 
-    auto product_hash = product.hash_value(theState);
+	std::size_t product_hash = 0;
+    try
+    {
+	  product_hash = product.hash_value(theState);
+	}
+    catch (const Fmi::Exception &exception)
+	  {
+		auto layers = *(theRequest.getParameter("LAYERS"));
+	
+		Fmi::Exception ex(
+						  BCP, "Error in calculating hash_value for layer '" + layers + "'! " + exception.what(), nullptr);
+		ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+		return handleWmsException(ex, theState, thisRequest, theResponse);
+	  }
 
     // We always return valid ETags
 
@@ -1643,7 +1668,6 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
           ex, mapFormat, isdebug, theRequest, theResponse, theState.useTimer());
       throw ex;
     }
-
     formatResponse(
         output, product.type, theRequest, theResponse, theState.useTimer(), product, Fmi::bad_hash);
 
