@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.10.18
+Version: 21.10.21
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -133,6 +133,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+
+* Thu Oct 21 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.10.21-1.fmi
+- Minimum distance and priorities for ArrowLayer, SymbolLayer, NumberLayer (BRAINSTORM-2182)
 
 * Mon Oct 18 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.10.18-1.fmi
 - Use resources directory for common resources (BRAINSTORM-2164)

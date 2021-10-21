@@ -10,6 +10,7 @@
 #include "Layer.h"
 #include "ParameterInfo.h"
 #include "Positions.h"
+#include "PointValue.h"
 #include <vector>
 
 namespace SmartMet
@@ -56,6 +57,9 @@ class SymbolLayer : public Layer
 
   // The parameter values or ranges to be styled separately
   std::vector<AttributeSelection> symbols;
+
+  // Minimum distance, priorities of symbols
+  PointValueOptions point_value_options;
 
  private:
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);

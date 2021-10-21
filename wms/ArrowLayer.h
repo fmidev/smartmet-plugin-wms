@@ -11,6 +11,7 @@
 #include "ParameterInfo.h"
 #include "Positions.h"
 #include "Projection.h"
+#include "PointValue.h"
 #include <boost/optional.hpp>
 #include <vector>
 
@@ -68,6 +69,9 @@ class ArrowLayer : public Layer
 
   // The speed parameter and the ranges to be styled separately
   std::vector<AttributeSelection> arrows;
+
+  // Minimum distance, priorities of arrows
+  PointValueOptions point_value_options;
 
  private:
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
