@@ -1051,12 +1051,15 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
     }
 
     T::GridValueList valueList;
+    uint modificationOperation = 0;
+    double_vec modificationParameters;
     dataServer->getGridValueListByPointList(0,
                                             fileId,
                                             messageIndex,
                                             T::CoordinateTypeValue::LATLON_COORDINATES,
                                             pointList,
                                             T::AreaInterpolationMethod::Linear,
+                                            modificationOperation,modificationParameters,
                                             valueList);
 
     if (valueList.getLength() == pointList.size())
