@@ -42,11 +42,6 @@ namespace Plugin
 {
 namespace Dali
 {
-struct PointValue
-{
-  Positions::Point point;
-  double value;
-};
 
 using PointValues = std::vector<PointValue>;
 
@@ -864,6 +859,8 @@ void NumberLayer::init(const Json::Value& theJson,
     json = theJson.get("numbers", nulljson);
     if (!json.isNull())
       Spine::JSON::extract_array("numbers", numbers, json, theConfig);
+
+	point_value_options.init(theJson);
   }
   catch (...)
   {
@@ -1151,6 +1148,8 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     pointvalues =
         read_gridForecasts(*this, gridEngine, *originalGridQuery, crs, box, valid_time_period);
 
+	pointvalues = prioritize(pointvalues, point_value_options);
+	
     // Clip if necessary
 
     addClipRect(theLayersCdt, theGlobals, box, theState);
@@ -1377,6 +1376,8 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
       pointvalues = read_observations(*this, theState, crs, box, valid_time_period);
 #endif
 
+	pointvalues = prioritize(pointvalues, point_value_options);
+	
     // Clip if necessary
 
     addClipRect(theLayersCdt, theGlobals, box, theState);

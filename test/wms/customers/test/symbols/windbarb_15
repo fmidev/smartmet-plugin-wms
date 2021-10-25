@@ -1,0 +1,5 @@
+<symbol id="windbarb_15">
+ <line x1="0" y1="0" x2="0" y2="21.6" class="BarbLine"/>
+ <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
+ <line x1="0" y1="18" x2="-3.6373066958946" y2="20.1" class="BarbLine"/>
+</symbol>
