@@ -91,7 +91,7 @@ done
 
 # Feed all the queries to the running plugin process one by one
 
-dots='............................................................'
+dots='......................................................................'
 
 ntests=0
 nfailures=0
