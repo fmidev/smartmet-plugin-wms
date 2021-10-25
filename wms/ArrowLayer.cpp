@@ -50,14 +50,7 @@ namespace Dali
 
 namespace
 {
-struct PointValue
-{
-  Positions::Point point;
-  double direction;
-  double speed;
-};
-
-using PointValues = std::vector<PointValue>;
+using PointValues = std::vector<WindArrowValue>;
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -211,7 +204,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
       if (wdir == kFloatMissing || wspd == kFloatMissing)
         continue;
 
-      PointValue value{point, wdir, wspd};
+      WindArrowValue value{point, wdir, wspd};
       pointvalues.push_back(value);
     }
 
@@ -325,7 +318,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
 
             if (wdir != ParamValueMissing && wspeed != ParamValueMissing)
             {
-              PointValue value{point, wdir, wspeed};
+              WindArrowValue value{point, wdir, wspeed};
               pointvalues.push_back(value);
               // printf("POS %d,%d  %f %f\n",point.x, point.y,point.latlon.X(), point.latlon.Y());
             }
@@ -373,7 +366,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
 
             if (wdir != ParamValueMissing && wspeed != ParamValueMissing)
             {
-              PointValue value{point, wdir, wspeed};
+              WindArrowValue value{point, wdir, wspeed};
               pointvalues.push_back(value);
             }
           }
@@ -531,7 +524,7 @@ PointValues read_all_observations(const ArrowLayer& layer,
       int ypos = lround(y);
 
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-      PointValue pv{point, wdir, wspd};
+      WindArrowValue pv{point, wdir, wspd};
       pointvalues.push_back(pv);
     }
 
@@ -707,7 +700,7 @@ PointValues read_station_observations(const ArrowLayer& layer,
       int deltay = (station.dy ? *station.dy : 0);
 
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat), deltax, deltay};
-      PointValue pv{point, wdir, wspd};
+      WindArrowValue pv{point, wdir, wspd};
       pointvalues.push_back(pv);
     }
 
@@ -866,7 +859,7 @@ PointValues read_latlon_observations(const ArrowLayer& layer,
       int ypos = lround(y);
 
       Positions::Point pp{xpos, ypos, NFmiPoint(lon, lat), point.dx, point.dy};
-      PointValue pv{pp, wdir, wspd};
+      WindArrowValue pv{pp, wdir, wspd};
       pointvalues.push_back(pv);
     }
 
@@ -1014,6 +1007,8 @@ void ArrowLayer::init(const Json::Value& theJson,
     json = theJson.get("arrows", nulljson);
     if (!json.isNull())
       Spine::JSON::extract_array("arrows", arrows, json, theConfig);
+
+	point_value_options.init(theJson);
   }
   catch (...)
   {
@@ -1363,6 +1358,8 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       offset = conv.offset;
     }
 
+	pointvalues = prioritize(pointvalues, point_value_options);
+	
     // Render the collected values
 
     int valid_count = 0;
@@ -1615,6 +1612,8 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
       pointvalues = read_observations(*this, theState, crs, box, valid_time_period);
 #endif
 
+	pointvalues = prioritize(pointvalues, point_value_options);
+	
     // Coordinate transformation from WGS84 to output SRS so that we can rotate
     // winds according to map north
 

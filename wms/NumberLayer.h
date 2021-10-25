@@ -11,6 +11,7 @@
 #include "Layer.h"
 #include "ParameterInfo.h"
 #include "Positions.h"
+#include "PointValue.h"
 #include <vector>
 
 namespace SmartMet
@@ -50,6 +51,9 @@ class NumberLayer : public Layer
 
   // Station distance limit in kilometers
   double maxdistance = 5;
+
+  // Minimum distance, priorities of numbers
+  PointValueOptions point_value_options;
 
   // Label settings
   Label label;

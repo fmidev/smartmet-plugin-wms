@@ -8,6 +8,7 @@
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
+#include "PointValue.h"
 #include <engines/gis/Engine.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
@@ -48,12 +49,6 @@ namespace Dali
 
 namespace
 {
-struct PointValue
-{
-  Positions::Point point;
-  double value;
-};
-
 using PointValues = std::vector<PointValue>;
 }  // namespace
 
@@ -855,6 +850,8 @@ void SymbolLayer::init(const Json::Value& theJson,
     json = theJson.get("symbols", nulljson);
     if (!json.isNull())
       Spine::JSON::extract_array("symbols", symbols, json, theConfig);
+
+	point_value_options.init(theJson);
   }
   catch (...)
   {
@@ -1165,6 +1162,8 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     PointValues pointvalues;
     pointvalues = read_gridForecasts(*this, gridEngine, *query, crs, box, valid_time_period);
 
+	pointvalues = prioritize(pointvalues, point_value_options);
+	
     // Clip if necessary
 
     addClipRect(theLayersCdt, theGlobals, box, theState);
@@ -1351,6 +1350,8 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     else
       pointvalues = read_observations(*this, theState, crs, box, valid_time_period);
 #endif
+
+	pointvalues = prioritize(pointvalues, point_value_options);
 
     // Clip if necessary
 

@@ -1,0 +1,4 @@
+<symbol id="circle">
+ <desc>Simple round marker</desc>
+ <circle cx="0" cy="0" r="5" stroke="black" stroke-width="1"/>
+</symbol>
