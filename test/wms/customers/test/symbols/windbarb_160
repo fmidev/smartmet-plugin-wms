@@ -1,0 +1,7 @@
+<symbol id="windbarb_160">
+ <line x1="0" y1="0" x2="0" y2="49.2" class="BarbLine"/>
+ <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
+ <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
+ <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
+ <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
+</symbol>

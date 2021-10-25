@@ -1,0 +1,262 @@
+[
+        {
+            "hilimit": 0.5,
+	    "symbol": "windbarb_0"
+        },
+        {
+	    "lolimit": 0.5,
+            "hilimit": 2.5,
+	    "symbol": "windbarb_1"
+        },
+        {
+	    "lolimit": 2.5,
+            "hilimit": 7.5,
+	    "symbol": "windbarb_5"
+        },
+        {
+	    "lolimit": 7.5,
+            "hilimit": 12.5,
+	    "symbol": "windbarb_10"
+        },
+        {
+	    "lolimit": 12.5,
+            "hilimit": 17.5,
+	    "symbol": "windbarb_15"
+        },
+        {
+	    "lolimit": 17.5,
+            "hilimit": 22.5,
+	    "symbol": "windbarb_20"
+        },
+        {
+	    "lolimit": 22.5,
+            "hilimit": 27.5,
+	    "symbol": "windbarb_25"
+        },
+        {
+	    "lolimit": 27.5,
+            "hilimit": 32.5,
+	    "symbol": "windbarb_30"
+        },
+        {
+	    "lolimit": 32.5,
+            "hilimit": 37.5,
+	    "symbol": "windbarb_35"
+        },
+        {
+	    "lolimit": 37.5,
+            "hilimit": 42.5,
+	    "symbol": "windbarb_40"
+        },
+        {
+	    "lolimit": 42.5,
+            "hilimit": 47.5,
+	    "symbol": "windbarb_45"
+        },
+        {
+	    "lolimit": 47.5,
+            "hilimit": 52.5,
+	    "symbol": "windbarb_50"
+        },
+        {
+	    "lolimit": 52.5,
+            "hilimit": 57.5,
+	    "symbol": "windbarb_55"
+        },
+        {
+	    "lolimit": 57.5,
+            "hilimit": 62.5,
+	    "symbol": "windbarb_60"
+        },
+        {
+	    "lolimit": 62.5,
+            "hilimit": 67.5,
+	    "symbol": "windbarb_65"
+        },
+        {
+	    "lolimit": 67.5,
+            "hilimit": 72.5,
+	    "symbol": "windbarb_70"
+        },
+        {
+	    "lolimit": 72.5,
+            "hilimit": 77.5,
+	    "symbol": "windbarb_75"
+        },
+        {
+	    "lolimit": 77.5,
+            "hilimit": 82.5,
+	    "symbol": "windbarb_80"
+        },
+        {
+	    "lolimit": 82.5,
+            "hilimit": 87.5,
+	    "symbol": "windbarb_85"
+        },
+        {
+	    "lolimit": 87.5,
+            "hilimit": 92.5,
+	    "symbol": "windbarb_90"
+        },
+        {
+	    "lolimit": 92.5,
+            "hilimit": 97.5,
+	    "symbol": "windbarb_95"
+        },
+        {
+	    "lolimit": 97.5,
+            "hilimit": 102.5,
+	    "symbol": "windbarb_100"
+        },
+        {
+	    "lolimit": 102.5,
+            "hilimit": 107.5,
+	    "symbol": "windbarb_105"
+        },
+        {
+	    "lolimit": 107.5,
+            "hilimit": 112.5,
+	    "symbol": "windbarb_110"
+        },
+        {
+	    "lolimit": 112.5,
+            "hilimit": 117.5,
+	    "symbol": "windbarb_115"
+        },
+        {
+	    "lolimit": 117.5,
+            "hilimit": 122.5,
+	    "symbol": "windbarb_120"
+        },
+        {
+	    "lolimit": 122.5,
+            "hilimit": 127.5,
+	    "symbol": "windbarb_125"
+        },
+        {
+	    "lolimit": 127.5,
+            "hilimit": 132.5,
+	    "symbol": "windbarb_130"
+        },
+        {
+	    "lolimit": 132.5,
+            "hilimit": 137.5,
+	    "symbol": "windbarb_135"
+        },
+        {
+	    "lolimit": 137.5,
+            "hilimit": 142.5,
+	    "symbol": "windbarb_140"
+        },
+        {
+	    "lolimit": 142.5,
+            "hilimit": 147.5,
+	    "symbol": "windbarb_145"
+        },
+        {
+	    "lolimit": 147.5,
+            "hilimit": 152.5,
+	    "symbol": "windbarb_150"
+        },
+        {
+	    "lolimit": 152.5,
+            "hilimit": 157.5,
+	    "symbol": "windbarb_155"
+        },
+        {
+	    "lolimit": 157.5,
+            "hilimit": 162.5,
+	    "symbol": "windbarb_160"
+        },
+        {
+	    "lolimit": 162.5,
+            "hilimit": 167.5,
+	    "symbol": "windbarb_165"
+        },
+        {
+	    "lolimit": 167.5,
+            "hilimit": 172.5,
+	    "symbol": "windbarb_170"
+        },
+        {
+	    "lolimit": 172.5,
+            "hilimit": 177.5,
+	    "symbol": "windbarb_175"
+        },
+        {
+	    "lolimit": 177.5,
+            "hilimit": 182.5,
+	    "symbol": "windbarb_180"
+        },
+        {
+	    "lolimit": 182.5,
+            "hilimit": 187.5,
+	    "symbol": "windbarb_185"
+        },
+        {
+	    "lolimit": 187.5,
+            "hilimit": 192.5,
+	    "symbol": "windbarb_190"
+        },
+        {
+	    "lolimit": 192.5,
+            "hilimit": 197.5,
+	    "symbol": "windbarb_195"
+        },
+        {
+	    "lolimit": 197.5,
+            "hilimit": 202.5,
+	    "symbol": "windbarb_200"
+        },
+        {
+	    "lolimit": 202.5,
+            "hilimit": 207.5,
+	    "symbol": "windbarb_205"
+        },
+        {
+	    "lolimit": 207.5,
+            "hilimit": 212.5,
+	    "symbol": "windbarb_210"
+        },
+        {
+	    "lolimit": 212.5,
+            "hilimit": 217.5,
+	    "symbol": "windbarb_215"
+        },
+        {
+	    "lolimit": 217.5,
+            "hilimit": 222.5,
+	    "symbol": "windbarb_220"
+        },
+        {
+	    "lolimit": 222.5,
+            "hilimit": 227.5,
+	    "symbol": "windbarb_225"
+        },
+        {
+	    "lolimit": 227.5,
+            "hilimit": 222.5,
+	    "symbol": "windbarb_220"
+        },
+        {
+	    "lolimit": 232.5,
+            "hilimit": 237.5,
+	    "symbol": "windbarb_235"
+        },
+        {
+	    "lolimit": 237.5,
+            "hilimit": 242.5,
+	    "symbol": "windbarb_240"
+        },
+        {
+	    "lolimit": 242.5,
+            "hilimit": 247.5,
+	    "symbol": "windbarb_245"
+        },
+        {
+	    "lolimit": 247.5,
+            "hilimit": 252.5,
+	    "symbol": "windbarb_250"
+        }
+]
+

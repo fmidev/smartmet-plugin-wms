@@ -1,0 +1,71 @@
+{
+    "title": "Temperature observations as coloured circles",
+    "producer": "opendata",
+    "projection":
+    {
+	"crs": "EPSG:4326",
+	"cx" : 25,
+	"cy" : 65,
+	"resolution" : 3,
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+	    "layers":
+	    [
+		{
+		    "qid": "sea",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "white"
+		    }
+		},
+		{
+                    "qid": "l1",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 100
+                    },
+                    "attributes":
+                    {
+                        "id": "europe_country_lines",
+                        "fill": "none",
+                        "stroke": "#222",
+                        "stroke-width": "0.3px"
+                    }
+                },
+		{
+		    "qid": "l2",
+		    "layer_type": "symbol",
+		    "parameter": "Temperature",
+		    "css": "isobands/temperature.css",
+		    "symbols": "json:isobands/temperature.json",
+		    "minvalues": 2,
+		    "symbol": "circle",
+		    "scale": 0.75,
+		    "attributes":
+		    {
+			"class": "TemperatureMarker"
+		    },
+		    "maxdistance": 10,
+		    "positions":
+		    {
+			"layout" : "keyword",
+			"keyword" : "synop_fi"
+		    }
+		}
+	    ]
+	}
+    ]
+}
