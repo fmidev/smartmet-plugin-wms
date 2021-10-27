@@ -1317,6 +1317,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     if (requestType == WMS::WMSRequestType::GET_CAPABILITIES)
     {
+	  theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
       auto tmpl = getTemplate("wms_get_capabilities_" + getCapabilityFormat(format));
       auto msg = WMS::WMSGetCapabilities::response(tmpl, thisRequest, *itsQEngine, *itsWMSConfig);
       formatResponse(msg, format, thisRequest, theResponse, theState.useTimer());

@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.10.25
+Version: 21.10.27
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -133,6 +133,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+
+* Wed Oct 27 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.10.27-1.fmi
+- GetCapabilities expiration time may be defined in configuration file, default value 60s (BRAINSTORM-2172)
 
 * Mon Oct 25 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.10.25-1.fmi
 - Minimum distance and priority for Symbol-,Arrow-,NumberLayer (BRAINSTORM-2182)
