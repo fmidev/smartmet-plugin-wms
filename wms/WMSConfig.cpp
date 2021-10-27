@@ -601,8 +601,9 @@ WMSConfig::WMSConfig(const Config& daliConfig,
   {
     const libconfig::Config& config = daliConfig.getConfig();
 
-    config.lookupValue("wms.disable_updates", itsCapabilityUpdatesDisabled);
-    config.lookupValue("wms.update_interval", itsCapabilityUpdateInterval);
+    config.lookupValue("wms.get_capabilities.disable_updates", itsCapabilityUpdatesDisabled);
+    config.lookupValue("wms.get_capabilities.update_interval", itsCapabilityUpdateInterval);
+    config.lookupValue("wms.get_capabilities.expiration_time", itsCapabilityExpirationTime);
 
     const auto& exceptions = config.lookup("wms.get_capabilities.capability.exception");
     if (!exceptions.isArray())
@@ -1443,6 +1444,10 @@ const WMSLegendGraphicSettings& WMSConfig::getLegendGraphicSettings() const
   return itsLegendGraphicSettings;
 }
 
+boost::posix_time::ptime WMSConfig::getCapabilitiesExpirationTime() const
+{
+  return (boost::posix_time::second_clock::universal_time()+ boost::posix_time::seconds(itsCapabilityExpirationTime));
+}
 }  // namespace WMS
 }  // namespace Plugin
 }  // namespace SmartMet

@@ -148,7 +148,9 @@ class WMSConfig
   int getMargin() const { return itsMargin; }
   WMSLayerHierarchy::HierarchyType getLayerHierarchyType() const { return itsLayerHierarchyType; }
   bool multipleIntervals() const { return itsMultipleIntervals; }
+  boost::posix_time::ptime getCapabilitiesExpirationTime() const;
 
+  
  private:
   void parse_references();
   CTPP::CDT get_capabilities(const libconfig::Config& config) const;
@@ -190,6 +192,7 @@ class WMSConfig
 
   bool itsCapabilityUpdatesDisabled = false;  // disable updates after initial scan?
   int itsCapabilityUpdateInterval = 5;        // scan interval in seconds
+  int itsCapabilityExpirationTime = 60;
 
   bool itsInspireExtensionSupported = false;
 
