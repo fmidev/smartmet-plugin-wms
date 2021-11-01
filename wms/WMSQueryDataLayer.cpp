@@ -13,6 +13,7 @@ void WMSQueryDataLayer::updateLayerMetaData()
   try
   {
     auto q = itsQEngine->get(itsProducer);
+	itsModificationTime = q->modificationTime();
 
     std::string level_name = q->levelName();
     FmiLevelType level_type = q->levelType();
@@ -89,6 +90,11 @@ void WMSQueryDataLayer::updateLayerMetaData()
   {
     throw Fmi::Exception::Trace(BCP, "Failed to update querydata layer metadata!");
   }
+}
+
+const boost::posix_time::ptime& WMSQueryDataLayer::modificationTime() const
+{
+  return std::max(itsModificationTime, itsProductFileModificationTime);
 }
 
 }  // namespace WMS

@@ -178,6 +178,10 @@ class State
   const boost::optional<boost::posix_time::ptime>& getExpirationTime() const;
   void updateExpirationTime(const boost::posix_time::ptime& theTime) const;
 
+  // Get modification time
+  const boost::optional<boost::posix_time::ptime>& getModificationTime() const;
+  void updateModificationTime(const boost::posix_time::ptime& theTime) const;
+
   // Test if producer is for observations
   bool isObservation(const boost::optional<std::string>& theProducer) const;
   bool isObservation(const std::string& theProducer) const;
@@ -212,6 +216,9 @@ class State
 
   // Estimated expiration time
   mutable boost::optional<boost::posix_time::ptime> itsExpirationTime;
+
+  // Last modification time
+  mutable boost::optional<boost::posix_time::ptime> itsModificationTime;
 
   // Are we in the Defs section?
   bool itsInDefs;

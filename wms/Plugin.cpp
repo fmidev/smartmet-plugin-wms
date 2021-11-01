@@ -447,8 +447,12 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
       boost::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
 
-      const ptime t_now = boost::posix_time::second_clock::universal_time();
-      theResponse.setHeader("Last-Modified", tformat->format(t_now));
+	  const ptime t_now = boost::posix_time::second_clock::universal_time();
+	  const auto &modification_time = state.getModificationTime();
+	  if (!modification_time)
+		theResponse.setHeader("Last-Modified", tformat->format(t_now));
+	  else
+		theResponse.setHeader("Last-Modified", tformat->format(*modification_time));
 
       // Send expiration header only if there was no error. Note: 304 Not Modified must pass!
 
@@ -869,20 +873,42 @@ std::string Plugin::resolveFilePath(const std::string &theCustomer, const std::s
   try
   {
 	std::string file_path;
+	std::string filename = theFileName;
 
 	// 1) If file name starts with '/' search from wms-root
-	// 2) Else check existence of file first from customer-path then from wms-root
+	// 2) else check existence of file first from customer-path then from wms-root
+	// 3) In wms-root check in the following order
+	// 3.1) wms-root
+	// 3.2) wms-root/resources/layers/<theSubDir> except for filters check wms-root/resources/filters
+	// 3.3) wms-root/resources/<theSubDir>
+	// 3.4) wms-root/resources
 
-	bool use_root_path = true;
-    if (theFileName[0] != '/')
+    if (filename[0] != '/')
     {
 	  file_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + check_attack(theCustomer) +
 				   theSubDir + check_attack(theFileName));
-	  if(boost::filesystem::exists(file_path))
-		use_root_path = false;
+	  if(!boost::filesystem::exists(file_path))
+		filename.insert(filename.begin(), '/');
     }
-    if(use_root_path)
-      file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources" + theSubDir + check_attack(theFileName);
+    if (filename[0] == '/')
+	  {
+		file_path = itsConfig.rootDirectory(theWmsFlag) + check_attack(filename);
+		if(!boost::filesystem::exists(file_path))
+		  {
+			if(theSubDir == "/filters/")
+			  file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources/filters" + check_attack(filename);
+			else
+			  {
+				file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources/layers" + theSubDir + check_attack(filename);
+				if(!boost::filesystem::exists(file_path))
+				  file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources" + theSubDir + check_attack(filename);
+				if(!boost::filesystem::exists(file_path))
+				  {
+					file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources" + check_attack(filename);
+				  }
+			  }
+		  }
+	  }
 
     return file_path;
   }
@@ -1321,6 +1347,8 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
       auto tmpl = getTemplate("wms_get_capabilities_" + getCapabilityFormat(format));
       auto msg = WMS::WMSGetCapabilities::response(tmpl, thisRequest, *itsQEngine, *itsWMSConfig);
       formatResponse(msg, format, thisRequest, theResponse, theState.useTimer());
+	  theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
+	  theState.updateModificationTime(itsWMSConfig->getCapabilitiesModificationTime());	  
       return WMSQueryStatus::OK;
     }
 

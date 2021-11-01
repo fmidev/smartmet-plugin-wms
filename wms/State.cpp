@@ -799,6 +799,35 @@ void State::updateExpirationTime(const boost::posix_time::ptime& theTime) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Get the last modification time
+ */
+// ----------------------------------------------------------------------
+
+const boost::optional<boost::posix_time::ptime>& State::getModificationTime() const
+{
+  return itsModificationTime;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Update the estimated expiration time if necessary
+ *
+ * The final expiration time is the one estimated to be first in the
+ * future out of all the data used in the layers of the product.
+ */
+// ----------------------------------------------------------------------
+
+void State::updateModificationTime(const boost::posix_time::ptime& theTime) const
+{
+  if (!itsModificationTime)
+    itsModificationTime = theTime;
+  else
+    itsModificationTime = std::max(*itsModificationTime, theTime);
+}
+
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Return a generated QID for the given prefix
  *
  * We simply count the number of times each prefix has been used and

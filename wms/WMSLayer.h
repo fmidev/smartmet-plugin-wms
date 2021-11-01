@@ -41,6 +41,8 @@ class WMSConfig;
 
 class WMSLayer
 {
+private:
+  void setProductFile(const std::string& theProductFile);
  protected:
   bool quiet = true;
 
@@ -82,6 +84,7 @@ class WMSLayer
   std::string productFile;  // dali product
   std::map<std::string, LegendGraphicResultPerLanguage> itsLegendGraphicResults;
   std::string itsLegendFile;
+  boost::posix_time::ptime itsProductFileModificationTime;
 
   friend class WMSLayerFactory;
   friend std::ostream& operator<<(std::ostream&, const WMSLayer&);
@@ -100,7 +103,7 @@ class WMSLayer
   void setCustomer(const std::string& c);
   const std::string& getName() const { return name; }
   const std::string& getCustomer() const { return customer; }
-  const std::string& getDaliProductFile() const { return productFile; }
+  const std::string& getProductFile() const { return productFile; }
   LegendGraphicResult getLegendGraphic(const std::string& legendGraphicID,
                                        const std::string& language) const;
   const std::string& getLegendFile() const { return itsLegendFile; }
@@ -122,7 +125,6 @@ class WMSLayer
   // returns the most current valid time for the layer
   boost::posix_time::ptime mostCurrentTime(
       const boost::optional<boost::posix_time::ptime>& reference_time) const;
-
   // Empty for hidden layers
 
   boost::optional<CTPP::CDT> generateGetCapabilities(
@@ -163,6 +165,8 @@ class WMSLayer
   virtual bool mustUpdateLayerMetaData() { return true; }
   // by default interval is 5 seconds, but for some layers it could be longer
   unsigned int metaDataUpdateInterval() const { return metadataUpdateInterval; }
+  virtual const boost::posix_time::ptime& modificationTime() const;
+
   // read json file
   static Json::Value readJsonFile(const std::string theFileName);
   static Json::Value parseJsonString(const std::string theJsonString);

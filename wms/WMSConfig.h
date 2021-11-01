@@ -149,7 +149,7 @@ class WMSConfig
   WMSLayerHierarchy::HierarchyType getLayerHierarchyType() const { return itsLayerHierarchyType; }
   bool multipleIntervals() const { return itsMultipleIntervals; }
   boost::posix_time::ptime getCapabilitiesExpirationTime() const;
-
+  boost::posix_time::ptime getCapabilitiesModificationTime() const { return *itsCapabilitiesModificationTime; }
   
  private:
   void parse_references();
@@ -206,6 +206,7 @@ class WMSConfig
 
   void capabilitiesUpdateLoop();
   void updateLayerMetaData();
+  void updateModificationTime();
 
 #ifndef WITHOUT_OBSERVATION
   std::set<std::string> getObservationProducers() const;
@@ -239,6 +240,8 @@ class WMSConfig
 
   // Set of files for which a warning has already been printed
   std::set<std::string> itsWarnedFiles;
+
+  boost::optional<boost::posix_time::ptime> itsCapabilitiesModificationTime = boost::posix_time::from_time_t(0);
 };  // class WMSConfig
 
 }  // namespace WMS
