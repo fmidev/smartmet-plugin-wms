@@ -309,7 +309,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     // updateLayerMetaData is called.
 
     layer->quiet = theWMSConfig.itsDaliConfig.quiet();
-    layer->productFile = theFileName;
+    layer->setProductFile(theFileName);
     layer->setCustomer(theCustomer);
 
     // WMS GetCapability settings

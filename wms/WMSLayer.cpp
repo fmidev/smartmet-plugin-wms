@@ -2414,6 +2414,22 @@ void WMSLayer::setLegendDimension(const WMSLayer& legendLayer)
   }
 }
 
+void WMSLayer::setProductFile(const std::string& theProductFile)
+{
+  productFile = theProductFile;
+  
+  // Save modification time of product file
+  boost::system::error_code ec;
+  auto modtime = boost::filesystem::last_write_time(productFile, ec);
+  if (ec.value() == boost::system::errc::success)
+	itsProductFileModificationTime = boost::posix_time::from_time_t(modtime);
+}
+
+const boost::posix_time::ptime& WMSLayer::modificationTime() const
+{
+  return itsProductFileModificationTime;
+}
+
 }  // namespace WMS
 }  // namespace Plugin
 }  // namespace SmartMet

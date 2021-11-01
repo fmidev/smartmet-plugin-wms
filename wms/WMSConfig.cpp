@@ -42,6 +42,44 @@ namespace
 {
 Json::CharReaderBuilder charreaderbuilder;
 
+void check_modification_time(const std::string& theDir, boost::posix_time::ptime& max_time)
+{
+  try
+	{
+	  if (!boost::filesystem::exists(theDir) || !boost::filesystem::is_directory(theDir))
+		return;
+
+	  boost::system::error_code ec;
+	  boost::filesystem::directory_iterator end_itr;
+	  for (boost::filesystem::directory_iterator itr(theDir); itr != end_itr; ++itr)
+		{
+		  if (SmartMet::Spine::Reactor::isShuttingDown())
+			return;
+	  
+		  if (is_directory(itr->status()))
+			{			  
+			  std::string subdir = itr->path().filename().string();
+			  check_modification_time(theDir + subdir + "/", max_time);
+			}
+		  else if (is_regular_file(itr->status()))
+			{
+			  std::string filename = (theDir + itr->path().filename().string());
+			  std::time_t time_t_mod = boost::filesystem::last_write_time(filename, ec);
+			  if (ec.value() == boost::system::errc::success)
+				{
+				  auto ptime_mod = boost::posix_time::from_time_t(time_t_mod);
+				  if(max_time < ptime_mod)
+					max_time = ptime_mod;
+				}			  
+			}
+		}
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed getting maximum modification time!");
+  }
+}
+
 /*
  * namespace patterns look like "/..../"
  */
@@ -746,7 +784,10 @@ void WMSConfig::capabilitiesUpdateLoop()
         }
 
         if (!Spine::Reactor::isShuttingDown())
-          updateLayerMetaData();
+		  {
+			updateLayerMetaData();
+			updateModificationTime();
+		  }
       }
       catch (...)
       {
@@ -902,6 +943,7 @@ void WMSConfig::updateLayerMetaData()
                     {
                       SharedWMSLayer wmsLayer(WMSLayerFactory::createWMSLayer(
                           pathName, theNamespace, customername, *this));
+					  itsCapabilitiesModificationTime = std::max(*itsCapabilitiesModificationTime, wmsLayer->modificationTime());
                       if (!wmsLayer->getLegendFile().empty())
                         layersWithExternalLagendFile[wmsLayer] = wmsLayer->getLegendFile();
                       WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
@@ -966,6 +1008,24 @@ void WMSConfig::updateLayerMetaData()
     }
 
     itsLayers.store(newProxies);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Layer metadata update failed!");
+  }
+}
+
+void WMSConfig::updateModificationTime()
+{
+  try
+  {
+	auto max_time = *itsCapabilitiesModificationTime;
+
+	// Check all files under WMS-root
+	check_modification_time(itsDaliConfig.rootDirectory(true) + "/", max_time);
+	
+	if(*itsCapabilitiesModificationTime < max_time)
+	  itsCapabilitiesModificationTime = max_time;		
   }
   catch (...)
   {
@@ -1293,7 +1353,7 @@ Json::Value WMSConfig::json(const std::string& theLayerName) const
     if (my_layers->find(theLayerName) == my_layers->end())
       return "";
 
-    return itsJsonCache.get(my_layers->at(theLayerName).getLayer()->getDaliProductFile());
+    return itsJsonCache.get(my_layers->at(theLayerName).getLayer()->getProductFile());
   }
   catch (...)
   {
@@ -1448,6 +1508,7 @@ boost::posix_time::ptime WMSConfig::getCapabilitiesExpirationTime() const
 {
   return (boost::posix_time::second_clock::universal_time()+ boost::posix_time::seconds(itsCapabilityExpirationTime));
 }
+
 }  // namespace WMS
 }  // namespace Plugin
 }  // namespace SmartMet
