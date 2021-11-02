@@ -3,6 +3,9 @@ jobs:
   build-rhel7:
     docker:
       - image: fmidev/smartmet-cibase-7:latest
+    resource_class: xlarge
+    environment:
+      RPM_BUILD_NCPUS: 6
     steps:
       - checkout
       - run:
@@ -17,6 +20,9 @@ jobs:
   test-rhel7:
     docker:
       - image: fmidev/smartmet-cibase-7:latest
+    resource_class: xlarge
+    environment:
+      RPM_BUILD_NCPUS: 6
     steps:
       - checkout
       - attach_workspace:
@@ -54,6 +60,9 @@ jobs:
   build-rhel8:
     docker:
       - image: fmidev/smartmet-cibase-8:latest
+    resource_class: xlarge
+    environment:
+      RPM_BUILD_NCPUS: 6
     steps:
       - checkout
       - run:
@@ -68,6 +77,9 @@ jobs:
   test-rhel8:
     docker:
       - image: fmidev/smartmet-cibase-8:latest
+    resource_class: xlarge
+    environment:
+      RPM_BUILD_NCPUS: 6
     steps:
       - checkout
       - attach_workspace:
