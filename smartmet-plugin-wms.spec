@@ -133,7 +133,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
-
 * Mon Nov 15 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.11.15-1.fmi
 - Map-layer must not show time-dimension in GetCapabilities response (BRAINSTORM-2197)
 
