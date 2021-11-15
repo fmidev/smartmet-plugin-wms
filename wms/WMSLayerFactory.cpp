@@ -2,6 +2,7 @@
 #include "StyleSelection.h"
 #include "WMSGridDataLayer.h"
 #include "WMSPostGISLayer.h"
+#include "WMSNonTemporalLayer.h"
 #include "WMSQueryDataLayer.h"
 #ifndef WITHOUT_OBSERVATION
 #include "WMSObservationLayer.h"
@@ -25,11 +26,12 @@ enum class WMSLayerType
   ObservationLayer,  // Observation layer
 #endif
   GridDataLayer,
+  MapLayer,
   NotWMSLayer
 };
 
 static std::set<std::string> querydata_layers = {
-    "arrow", "isoband", "isoline", "isolabel", "map", "number", "symbol", "tag", "location"};
+    "arrow", "isoband", "isoline", "isolabel", "number", "symbol", "tag", "location"};
 
 static std::set<std::string> postgis_layers = {"postgis", "icemap"};
 
@@ -47,8 +49,13 @@ WMSLayerType getWMSLayerType(const Json::Value& layer)
       return WMSLayerType::NotWMSLayer;
     }
 
-    std::string type_name = layer_type.asString();
+    auto type_name = layer_type.asString();
 
+    if(type_name == "map")
+      {
+	return WMSLayerType::MapLayer;
+      }
+    
     if (postgis_layers.find(type_name) != postgis_layers.end())
     {
       return WMSLayerType::PostGISLayer;
@@ -82,6 +89,10 @@ std::string getWMSLayerTypeAsString(WMSLayerType layerType)
       case WMSLayerType::QueryDataLayer:
         ret = "QueryDataLayer";
         break;
+      case WMSLayerType::MapLayer:
+        ret = "MapLayer";
+        break;
+	
 #ifndef WITHOUT_OBSERVATION
       case WMSLayerType::ObservationLayer:
         ret = "ObservationLayer";
@@ -104,7 +115,8 @@ WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
 {
   WMSLayerType layer_type = WMSLayerType::NotWMSLayer;
   Json::Value nulljson;
-
+  
+  Json::Value mapLayers = Json::Value(Json::arrayValue);
   for (const auto& layer : layers)
   {
     if (!layer.isNull())
@@ -114,7 +126,9 @@ WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
       if (!sublayers.isNull())
       {
         layer_type = findLayerType(sublayers, layerRef);
-        if (layer_type != WMSLayerType::NotWMSLayer)
+	if(layer_type == WMSLayerType::MapLayer)
+	  continue;
+        else if (layer_type != WMSLayerType::NotWMSLayer)
           return layer_type;
       }
     }
@@ -135,6 +149,13 @@ WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
         // NotWMSLayer means we should proceed to find a more significant layer
         continue;
       }
+      else if(layer_type == WMSLayerType::MapLayer)
+	{
+	  // Map layer may be part of other layer
+	  mapLayers.append(layer);
+	  layerRef = mapLayers;
+	  continue;
+	}
       else
       {
         layerRef = layer;
@@ -267,6 +288,11 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 
     switch (layerType)
     {
+      case WMSLayerType::MapLayer:
+      {
+        layer = boost::make_shared<WMSMapLayer>(theWMSConfig, parsedLayer);
+        break;
+      }
       case WMSLayerType::PostGISLayer:
       {
         layer = boost::make_shared<WMSPostGISLayer>(theWMSConfig, parsedLayer);

@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.11.3
+Version: 21.11.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -133,6 +133,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Nov 15 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.11.15-1.fmi
+- Map-layer must not show time-dimension in GetCapabilities response (BRAINSTORM-2197)
+
 * Tue Nov 2 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.11.3-1.fmi
 - Set valid value in GetCapabilities Last-Modified field (BRAINSTORM-2174)
 - Fixed search order of file-path starting with '/' (BRAINSTORM-2193)
