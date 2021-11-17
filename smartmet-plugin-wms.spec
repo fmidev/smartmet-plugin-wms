@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 21.11.15
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -17,19 +17,19 @@ BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.6.18
-BuildRequires: smartmet-library-grid-content-devel >= 21.10.29
-BuildRequires: smartmet-library-grid-files-devel >= 21.10.29
+BuildRequires: smartmet-library-grid-content-devel >= 21.11.15
+BuildRequires: smartmet-library-grid-files-devel >= 21.11.15
 BuildRequires: smartmet-library-macgyver-devel >= 21.10.4
-BuildRequires: smartmet-library-spine-devel >= 21.11.3
+BuildRequires: smartmet-library-spine-devel >= 21.11.10
 BuildRequires: smartmet-library-giza-devel
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 21.9.9
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 21.9.20
+BuildRequires: smartmet-engine-observation-devel >= 21.11.11
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 21.9.13
-BuildRequires: smartmet-engine-grid-devel >= 21.10.29
+BuildRequires: smartmet-engine-grid-devel >= 21.11.15
 BuildRequires: smartmet-engine-geonames-devel >= 21.9.28
 BuildRequires: smartmet-engine-querydata-devel >= 21.9.13
 BuildRequires: smartmet-engine-contour-devel >= 21.9.13
@@ -56,11 +56,11 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 21.10.29
-Requires: smartmet-library-grid-files >= 21.10.29
+Requires: smartmet-library-grid-content >= 21.11.15
+Requires: smartmet-library-grid-files >= 21.11.15
 Requires: smartmet-library-gis >= 21.9.24
 Requires: smartmet-library-macgyver >= 21.10.4
-Requires: smartmet-library-spine >= 21.11.3
+Requires: smartmet-library-spine >= 21.11.10
 Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 21.9.9
@@ -68,10 +68,10 @@ Requires: smartmet-engine-authentication >= 21.9.9
 Requires: smartmet-engine-querydata >= 21.9.13
 Requires: smartmet-engine-contour >= 21.9.13
 Requires: smartmet-engine-gis >= 21.9.13
-Requires: smartmet-engine-grid >= 21.10.29
+Requires: smartmet-engine-grid >= 21.11.15
 Requires: smartmet-engine-geonames >= 21.9.28
 Requires: smartmet-server >= 21.9.7
-Requires: smartmet-library-spine >= 21.11.3
+Requires: smartmet-library-spine >= 21.11.10
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -133,6 +133,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+
+* Mon Nov 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.11.15-2.fmi
+- Repackaged due to ABI changes in base grid libraries
 
 * Mon Nov 15 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.11.15-1.fmi
 - Map-layer must not show time-dimension in GetCapabilities response (BRAINSTORM-2197)
