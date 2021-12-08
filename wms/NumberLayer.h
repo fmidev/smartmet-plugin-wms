@@ -10,8 +10,8 @@
 #include "Label.h"
 #include "Layer.h"
 #include "ParameterInfo.h"
-#include "Positions.h"
 #include "PointValue.h"
+#include "Positions.h"
 #include <vector>
 
 namespace SmartMet
