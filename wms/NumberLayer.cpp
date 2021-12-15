@@ -42,7 +42,6 @@ namespace Plugin
 {
 namespace Dali
 {
-
 using PointValues = std::vector<PointValue>;
 
 // ----------------------------------------------------------------------
@@ -71,7 +70,7 @@ PointValues read_forecasts(const NumberLayer& layer,
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
     boost::local_time::local_date_time localdatetime(valid_time_period.begin(), utc);
-	SmartMet::Spine::TimeSeries::LocalTimePoolPtr localTimePool = nullptr;
+    SmartMet::Spine::TimeSeries::LocalTimePoolPtr localTimePool = nullptr;
 
     PointValues pointvalues;
 
@@ -85,8 +84,20 @@ PointValues read_forecasts(const NumberLayer& layer,
         Spine::Location loc(point.latlon.X(), point.latlon.Y());
 
         // Q API SUCKS!!
-        Engine::Querydata::ParameterOptions options(
-													param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy, localTimePool);
+        Engine::Querydata::ParameterOptions options(param,
+                                                    "",
+                                                    loc,
+                                                    "",
+                                                    "",
+                                                    *timeformatter,
+                                                    "",
+                                                    "",
+                                                    mylocale,
+                                                    "",
+                                                    false,
+                                                    dummy,
+                                                    dummy,
+                                                    localTimePool);
 
         auto result = q->value(options, localdatetime);
         if (boost::get<double>(&result) != nullptr)
@@ -252,7 +263,7 @@ PointValues read_flash_observations(const NumberLayer& layer,
     settings.latest = false;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
-	settings.localTimePool = state.getLocalTimePool();
+    settings.localTimePool = state.getLocalTimePool();
 
     settings.timestep = 0;
 
@@ -374,7 +385,7 @@ PointValues read_all_observations(const NumberLayer& layer,
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
-	settings.localTimePool = state.getLocalTimePool();
+    settings.localTimePool = state.getLocalTimePool();
 
     // settings.timestep = ?;
 
@@ -489,7 +500,7 @@ PointValues read_station_observations(const NumberLayer& layer,
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
-	settings.localTimePool = state.getLocalTimePool();
+    settings.localTimePool = state.getLocalTimePool();
 
     // settings.timestep = ?;
 
@@ -638,7 +649,7 @@ PointValues read_latlon_observations(const NumberLayer& layer,
     settings.numberofstations = 1;                    // we need only the nearest station
     settings.latest = true;                           // we need only the newest observation
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
-	settings.localTimePool = state.getLocalTimePool();
+    settings.localTimePool = state.getLocalTimePool();
 
     settings.starttimeGiven = true;
 
@@ -860,7 +871,7 @@ void NumberLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       Spine::JSON::extract_array("numbers", numbers, json, theConfig);
 
-	point_value_options.init(theJson);
+    point_value_options.init(theJson);
   }
   catch (...)
   {
@@ -1148,8 +1159,8 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     pointvalues =
         read_gridForecasts(*this, gridEngine, *originalGridQuery, crs, box, valid_time_period);
 
-	pointvalues = prioritize(pointvalues, point_value_options);
-	
+    pointvalues = prioritize(pointvalues, point_value_options);
+
     // Clip if necessary
 
     addClipRect(theLayersCdt, theGlobals, box, theState);
@@ -1376,8 +1387,8 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
       pointvalues = read_observations(*this, theState, crs, box, valid_time_period);
 #endif
 
-	pointvalues = prioritize(pointvalues, point_value_options);
-	
+    pointvalues = prioritize(pointvalues, point_value_options);
+
     // Clip if necessary
 
     addClipRect(theLayersCdt, theGlobals, box, theState);

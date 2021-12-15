@@ -20,6 +20,7 @@ namespace Dali
 struct PointValueBase
 {
   PointValueBase(const Positions::Point& p) : point(p) {}
+  virtual ~PointValueBase() = default;
   Positions::Point point;
   virtual double priorityValue() const = 0;
 };

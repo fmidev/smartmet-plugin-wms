@@ -5,10 +5,10 @@
 #include "Intersections.h"
 #include "Iri.h"
 #include "Layer.h"
+#include "PointValue.h"
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
-#include "PointValue.h"
 #include <engines/gis/Engine.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
@@ -80,7 +80,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
     boost::local_time::local_date_time localdatetime(valid_time_period.begin(), utc);
-	SmartMet::Spine::TimeSeries::LocalTimePoolPtr localTimePool = nullptr;
+    SmartMet::Spine::TimeSeries::LocalTimePoolPtr localTimePool = nullptr;
 
     PointValues pointvalues;
     auto mylocale = std::locale::classic();
@@ -101,8 +101,20 @@ PointValues read_forecasts(const SymbolLayer& layer,
         Spine::Location loc(point.latlon.X(), point.latlon.Y());
 
         // Q API SUCKS!!
-        Engine::Querydata::ParameterOptions options(
-													*param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy, localTimePool);
+        Engine::Querydata::ParameterOptions options(*param,
+                                                    "",
+                                                    loc,
+                                                    "",
+                                                    "",
+                                                    *timeformatter,
+                                                    "",
+                                                    "",
+                                                    mylocale,
+                                                    "",
+                                                    false,
+                                                    dummy,
+                                                    dummy,
+                                                    localTimePool);
 
         auto result = q->value(options, localdatetime);
         if (boost::get<double>(&result) != nullptr)
@@ -250,7 +262,7 @@ PointValues read_flash_observations(const SymbolLayer& layer,
     settings.latest = false;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
-	settings.localTimePool = state.getLocalTimePool();
+    settings.localTimePool = state.getLocalTimePool();
 
     settings.timestep = 0;
 
@@ -372,7 +384,7 @@ PointValues read_all_observations(const SymbolLayer& layer,
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
-	settings.localTimePool = state.getLocalTimePool();
+    settings.localTimePool = state.getLocalTimePool();
 
     // settings.timestep = ?;
 
@@ -488,7 +500,7 @@ PointValues read_station_observations(const SymbolLayer& layer,
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
-	settings.localTimePool = state.getLocalTimePool();
+    settings.localTimePool = state.getLocalTimePool();
 
     // settings.timestep = ?;
 
@@ -637,7 +649,7 @@ PointValues read_latlon_observations(const SymbolLayer& layer,
     settings.numberofstations = 1;                    // we need only the nearest station
     settings.latest = true;                           // we need only the newest observation
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
-	settings.localTimePool = state.getLocalTimePool();
+    settings.localTimePool = state.getLocalTimePool();
 
     settings.starttimeGiven = true;
 
@@ -816,6 +828,18 @@ void SymbolLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       parameter = json.asString();
 
+    json = theJson.get("unit_conversion", nulljson);
+    if (!json.isNull())
+      unit_conversion = json.asString();
+
+    json = theJson.get("multiplier", nulljson);
+    if (!json.isNull())
+      multiplier = json.asDouble();
+
+    json = theJson.get("offset", nulljson);
+    if (!json.isNull())
+      offset = json.asDouble();
+
     json = theJson.get("positions", nulljson);
     if (!json.isNull())
     {
@@ -851,7 +875,7 @@ void SymbolLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       Spine::JSON::extract_array("symbols", symbols, json, theConfig);
 
-	point_value_options.init(theJson);
+    point_value_options.init(theJson);
   }
   catch (...)
   {
@@ -1149,6 +1173,18 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       theGlobals["css"][name] = theState.getStyle(*css);
     }
 
+    // Data conversion settings
+
+    if (!unit_conversion.empty())
+    {
+      auto conv = theState.getConfig().unitConversion(unit_conversion);
+      multiplier = conv.multiplier;
+      offset = conv.offset;
+    }
+
+    double xmultiplier = (multiplier ? *multiplier : 1.0);
+    double xoffset = (offset ? *offset : 0.0);
+
     // Set the proper symbol on if it is needed
     if (!symbols.empty())
     {
@@ -1162,8 +1198,8 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     PointValues pointvalues;
     pointvalues = read_gridForecasts(*this, gridEngine, *query, crs, box, valid_time_period);
 
-	pointvalues = prioritize(pointvalues, point_value_options);
-	
+    pointvalues = prioritize(pointvalues, point_value_options);
+
     // Clip if necessary
 
     addClipRect(theLayersCdt, theGlobals, box, theState);
@@ -1184,8 +1220,13 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     {
       const auto& point = pointvalue.point;
 
+      float value = pointvalue.value;
+
       if (pointvalue.value != kFloatMissing)
+      {
         ++valid_count;
+        value = xmultiplier * value + xoffset;
+      }
 
       // Start generating the hash
 
@@ -1203,7 +1244,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       if (!symbols.empty())
       {
-        auto selection = Select::attribute(symbols, pointvalue.value);
+        auto selection = Select::attribute(symbols, value);
         if (selection)
         {
           if (selection->symbol)
@@ -1335,6 +1376,18 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
       theGlobals["css"][name] = theState.getStyle(*css);
     }
 
+    // Data conversion settings
+
+    if (!unit_conversion.empty())
+    {
+      auto conv = theState.getConfig().unitConversion(unit_conversion);
+      multiplier = conv.multiplier;
+      offset = conv.offset;
+    }
+
+    double xmultiplier = (multiplier ? *multiplier : 1.0);
+    double xoffset = (offset ? *offset : 0.0);
+
     // Initialize inside/outside shapes and intersection isobands
 
     positions->init(producer, projection, valid_time_period.begin(), theState);
@@ -1351,7 +1404,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
       pointvalues = read_observations(*this, theState, crs, box, valid_time_period);
 #endif
 
-	pointvalues = prioritize(pointvalues, point_value_options);
+    pointvalues = prioritize(pointvalues, point_value_options);
 
     // Clip if necessary
 
@@ -1371,8 +1424,12 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     for (const auto& pointvalue : pointvalues)
     {
-      if (pointvalue.value != kFloatMissing)
+      auto value = pointvalue.value;
+      if (value != kFloatMissing)
+      {
         ++valid_count;
+        value = xmultiplier * value + xoffset;
+      }
 
       const auto& point = pointvalue.point;
 
@@ -1392,10 +1449,10 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
       if (!symbols.empty())
       {
-        if (pointvalue.value == kFloatMissing)
+        if (value == kFloatMissing)
           continue;
 
-        auto selection = Select::attribute(symbols, pointvalue.value);
+        auto selection = Select::attribute(symbols, value);
         if (selection)
         {
           if (selection->symbol)
@@ -1491,6 +1548,9 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
     }
 
     Fmi::hash_combine(hash, Fmi::hash_value(parameter));
+    Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
+    Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
+    Fmi::hash_combine(hash, Fmi::hash_value(offset));
     Fmi::hash_combine(hash, Dali::hash_value(positions, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(minvalues));
     Fmi::hash_combine(hash, Fmi::hash_value(maxdistance));
