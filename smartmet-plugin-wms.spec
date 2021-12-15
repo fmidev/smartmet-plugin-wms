@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.12.8
+Version: 21.12.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -132,6 +132,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Dec 15 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.12.15-1.fmi
+- Fixed NumberLayer style selection bug (BRAINSTORM-2220)
+
 * Wed Dec  8 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.12.8-1.fmi
 - Added unit conversion support for SymbolLayer
 

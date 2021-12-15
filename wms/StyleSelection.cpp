@@ -91,6 +91,7 @@ void handleStyles(std::map<std::string, Json::Value*> viewLayers,
     addOrReplace(viewLayerJson, styleLayerJson, "css");
     addOrReplace(viewLayerJson, styleLayerJson, "scale");
     addOrReplace(viewLayerJson, styleLayerJson, "positions");
+    addOrReplace(viewLayerJson, styleLayerJson, "maxdistance");
     addOrReplace(viewLayerJson, styleLayerJson, "upright");
     addOrReplace(viewLayerJson, styleLayerJson, "angles");
     addOrReplace(viewLayerJson, styleLayerJson, "max_angle");
@@ -100,6 +101,7 @@ void handleStyles(std::map<std::string, Json::Value*> viewLayers,
     addOrReplace(viewLayerJson, styleLayerJson, "min_distance_edge");
     addOrReplace(viewLayerJson, styleLayerJson, "max_curvature");
     addOrReplace(viewLayerJson, styleLayerJson, "stencil_size");
+    addOrReplace(viewLayerJson, styleLayerJson, "numbers");
 
     // Handle attributes one by one
     auto viewLayerAttributesJson = viewLayerJson.get("attributes", nulljson);
