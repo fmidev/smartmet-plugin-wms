@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.12.15
+Version: 21.12.16
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -132,6 +132,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+
+* Thu Dec 16 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.12.16-1.fmi
+- Fixed style selection so that any elment, except qid, can be redefined in styles-section
+
 * Wed Dec 15 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.12.15-1.fmi
 - Fixed NumberLayer style selection bug (BRAINSTORM-2220)
 
