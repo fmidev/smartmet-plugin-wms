@@ -9,7 +9,7 @@ namespace Plugin
 {
 namespace WMS
 {
-// Use layer type + qid as a key
+// Use layer qid as a key
 std::string getKey(const Json::Value& json)
 {
   Json::Value nulljson;
@@ -26,7 +26,7 @@ std::string getKey(const Json::Value& json)
       supportedStyleLayers.find(layerTypeString) == supportedStyleLayers.end())
     return "";
 
-  return (qid.asString() + "_" + layerTypeString);
+  return qid.asString();
 }
 
 // Replace view layer attributes with style layer attributes
@@ -47,7 +47,7 @@ void handleStyles(std::map<std::string, Json::Value*> viewLayers,
                   std::map<std::string, const Json::Value*> styleLayers)
 {
   Json::Value nulljson;
-  //
+
   for (auto& item : viewLayers)
   {
     std::string key = item.first;
@@ -72,46 +72,15 @@ void handleStyles(std::map<std::string, Json::Value*> viewLayers,
     if (layerType.isNull())
       return;
 
-    std::string layerTypeString = layerType.asString();
-    std::string layerDefinitionId = "";
-    if (layerTypeString == "isoline")
-      layerDefinitionId = "isolines";
-    else if (layerTypeString == "isoband")
-      layerDefinitionId = "isobands";
-    else if (layerTypeString == "symbol")
-      layerDefinitionId = "symbols";
-    else if (layerTypeString == "arrow")
-      layerDefinitionId = "arrows";
-    else if (layerTypeString == "number")
-      layerDefinitionId = "label";
-    else if (layerTypeString == "isolabel")
-      layerDefinitionId = "isolabels";
+	Json::Value::Members styleLayerMembers = styleLayerJson.getMemberNames();
 
-    addOrReplace(viewLayerJson, styleLayerJson, layerDefinitionId);
-    addOrReplace(viewLayerJson, styleLayerJson, "css");
-    addOrReplace(viewLayerJson, styleLayerJson, "scale");
-    addOrReplace(viewLayerJson, styleLayerJson, "positions");
-    addOrReplace(viewLayerJson, styleLayerJson, "maxdistance");
-    addOrReplace(viewLayerJson, styleLayerJson, "upright");
-    addOrReplace(viewLayerJson, styleLayerJson, "angles");
-    addOrReplace(viewLayerJson, styleLayerJson, "max_angle");
-    addOrReplace(viewLayerJson, styleLayerJson, "min_distance_other");
-    addOrReplace(viewLayerJson, styleLayerJson, "min_distance_same");
-    addOrReplace(viewLayerJson, styleLayerJson, "min_distance_self");
-    addOrReplace(viewLayerJson, styleLayerJson, "min_distance_edge");
-    addOrReplace(viewLayerJson, styleLayerJson, "max_curvature");
-    addOrReplace(viewLayerJson, styleLayerJson, "stencil_size");
-    addOrReplace(viewLayerJson, styleLayerJson, "numbers");
-
-    // Handle attributes one by one
-    auto viewLayerAttributesJson = viewLayerJson.get("attributes", nulljson);
-    auto styleLayerAttributesJson = styleLayerJson.get("attributes", nulljson);
-    if (!viewLayerAttributesJson.isNull() && !styleLayerAttributesJson.isNull())
-    {
-      Json::Value::Members attributeNames = styleLayerAttributesJson.getMemberNames();
-      for (const auto& name : attributeNames)
-        addOrReplace(viewLayerJson["attributes"], styleLayerJson["attributes"], name);
-    }
+	for (const auto& name : styleLayerMembers)
+	  {
+		if(name != "qid")
+		  {
+			addOrReplace(viewLayerJson, styleLayerJson, name);
+		  }
+	  }
   }
 }
 
