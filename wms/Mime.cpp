@@ -25,6 +25,8 @@ std::string demimetype(const std::string& theMimeType)
     return "svg";
   if (theMimeType == "application/json")
     return "json";
+  if (theMimeType == "cnf")
+    return "cnf";
 
   throw Fmi::Exception(BCP, "Unknown mime type requested: '" + theMimeType + "'");
 }
@@ -52,6 +54,8 @@ std::string mimeType(const std::string& theType)
   if (theType == "kml")
     return "application/vnd.google-earth.kml+xml";
   if (theType == "json" || theType == "application/json")
+    return "application/json";
+  if (theType == "cnf")
     return "application/json";
 
   throw Fmi::Exception(BCP, "Unknown image format '" + theType + "'");
