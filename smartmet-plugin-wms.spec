@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.1.18
+Version: 22.1.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -132,6 +132,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Jan 24 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.1.24-1.fmi
+- Rebuild due to package upgrade from PGDG (gdal 3.4 etc)
+
 * Tue Jan 18 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.1.18-1.fmi
 - Added support for type=cnf with stage=N for different phases of configuration file preprocessing
 
