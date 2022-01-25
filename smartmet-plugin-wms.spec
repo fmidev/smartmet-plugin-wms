@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.1.24
+Version: 22.1.25
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -17,9 +17,9 @@ BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.6.18
-BuildRequires: smartmet-library-grid-content-devel >= 22.1.21
-BuildRequires: smartmet-library-grid-files-devel >= 22.1.21
-BuildRequires: smartmet-library-macgyver-devel >= 22.1.20
+BuildRequires: smartmet-library-grid-content-devel >= 22.1.25
+BuildRequires: smartmet-library-grid-files-devel >= 22.1.25
+BuildRequires: smartmet-library-macgyver-devel >= 22.1.21
 BuildRequires: smartmet-library-spine-devel >= 22.1.21
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 22.1.21
@@ -28,11 +28,11 @@ BuildRequires: smartmet-engine-authentication-devel >= 22.1.21
 BuildRequires: smartmet-engine-observation-devel >= 22.1.21
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.1.21
-BuildRequires: smartmet-engine-grid-devel >= 22.1.21
+BuildRequires: smartmet-engine-grid-devel >= 22.1.25
 BuildRequires: smartmet-engine-geonames-devel >= 22.1.21
 BuildRequires: smartmet-engine-querydata-devel >= 22.1.21
-BuildRequires: smartmet-engine-contour-devel >= 21.1.21
-BuildRequires: smartmet-library-gis-devel >= 21.1.21
+BuildRequires: smartmet-engine-contour-devel >= 22.1.21
+BuildRequires: smartmet-library-gis-devel >= 22.1.24
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -55,10 +55,10 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 22.1.21
-Requires: smartmet-library-grid-files >= 22.1.21
-Requires: smartmet-library-gis >= 21.1.21
-Requires: smartmet-library-macgyver >= 22.1.20
+Requires: smartmet-library-grid-content >= 22.1.25
+Requires: smartmet-library-grid-files >= 22.1.25
+Requires: smartmet-library-gis >= 22.1.24
+Requires: smartmet-library-macgyver >= 22.1.21
 Requires: smartmet-library-spine >= 22.1.21
 Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
@@ -67,7 +67,7 @@ Requires: smartmet-engine-authentication >= 22.1.21
 Requires: smartmet-engine-querydata >= 22.1.21
 Requires: smartmet-engine-contour >= 22.1.21
 Requires: smartmet-engine-gis >= 22.1.21
-Requires: smartmet-engine-grid >= 22.1.21
+Requires: smartmet-engine-grid >= 22.1.25
 Requires: smartmet-engine-geonames >= 22.1.21
 Requires: smartmet-server >= 21.11.25
 Requires: smartmet-library-spine >= 22.1.21
@@ -94,7 +94,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
 #TestRequires: smartmet-library-newbase-devel >= 22.1.21
 #TestRequires: smartmet-library-spine-devel >= 22.1.21
-#TestRequires: smartmet-engine-grid-devel >= 22.1.21
+#TestRequires: smartmet-engine-grid-devel >= 22.1.25
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -132,6 +132,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Jan 25 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.1.25-1.fmi
+- Minor fix to unfinished generation handling
+
 * Mon Jan 24 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.1.24-1.fmi
 - Rebuild due to package upgrade from PGDG (gdal 3.4 etc)
 
