@@ -1,3 +1,4 @@
+
 //======================================================================
 
 #include "IsobandLayer.h"
@@ -966,13 +967,13 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     options.extrapolation = extrapolation;
 
     if (interpolation == "linear")
-      options.interpolation = Engine::Contour::Linear;
+      options.interpolation = Trax::InterpolationType::Linear;
     else if (interpolation == "nearest")
-      options.interpolation = Engine::Contour::Nearest;
+      options.interpolation = Trax::InterpolationType::Midpoint;
     else if (interpolation == "discrete")
-      options.interpolation = Engine::Contour::Discrete;
+      options.interpolation = Trax::InterpolationType::Midpoint;
     else if (interpolation == "loglinear")
-      options.interpolation = Engine::Contour::LogLinear;
+      throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
     else
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
 
