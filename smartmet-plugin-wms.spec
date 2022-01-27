@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 21.11.15
-Release: 2%{?dist}.fmi
+Version: 22.1.25
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -17,23 +17,22 @@ BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.6.18
-BuildRequires: smartmet-library-grid-content-devel >= 21.11.15
-BuildRequires: smartmet-library-grid-files-devel >= 21.11.15
-BuildRequires: smartmet-library-macgyver-devel >= 21.10.4
-BuildRequires: smartmet-library-spine-devel >= 21.11.10
-BuildRequires: smartmet-library-giza-devel
+BuildRequires: smartmet-library-grid-content-devel >= 22.1.25
+BuildRequires: smartmet-library-grid-files-devel >= 22.1.25
+BuildRequires: smartmet-library-macgyver-devel >= 22.1.21
+BuildRequires: smartmet-library-spine-devel >= 22.1.21
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 21.9.9
+BuildRequires: smartmet-engine-authentication-devel >= 22.1.21
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 21.11.11
+BuildRequires: smartmet-engine-observation-devel >= 22.1.21
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 21.9.13
-BuildRequires: smartmet-engine-grid-devel >= 21.11.15
-BuildRequires: smartmet-engine-geonames-devel >= 21.9.28
-BuildRequires: smartmet-engine-querydata-devel >= 21.9.13
-BuildRequires: smartmet-engine-contour-devel >= 21.9.13
-BuildRequires: smartmet-library-gis-devel >= 21.9.24
+BuildRequires: smartmet-engine-gis-devel >= 22.1.21
+BuildRequires: smartmet-engine-grid-devel >= 22.1.25
+BuildRequires: smartmet-engine-geonames-devel >= 22.1.21
+BuildRequires: smartmet-engine-querydata-devel >= 22.1.21
+BuildRequires: smartmet-engine-contour-devel >= 22.1.21
+BuildRequires: smartmet-library-gis-devel >= 22.1.24
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -56,22 +55,22 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 21.11.15
-Requires: smartmet-library-grid-files >= 21.11.15
-Requires: smartmet-library-gis >= 21.9.24
-Requires: smartmet-library-macgyver >= 21.10.4
-Requires: smartmet-library-spine >= 21.11.10
+Requires: smartmet-library-grid-content >= 22.1.25
+Requires: smartmet-library-grid-files >= 22.1.25
+Requires: smartmet-library-gis >= 22.1.24
+Requires: smartmet-library-macgyver >= 22.1.21
+Requires: smartmet-library-spine >= 22.1.21
 Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 21.9.9
+Requires: smartmet-engine-authentication >= 22.1.21
 %endif
-Requires: smartmet-engine-querydata >= 21.9.13
-Requires: smartmet-engine-contour >= 21.9.13
-Requires: smartmet-engine-gis >= 21.9.13
-Requires: smartmet-engine-grid >= 21.11.15
-Requires: smartmet-engine-geonames >= 21.9.28
-Requires: smartmet-server >= 21.9.7
-Requires: smartmet-library-spine >= 21.11.10
+Requires: smartmet-engine-querydata >= 22.1.21
+Requires: smartmet-engine-contour >= 22.1.21
+Requires: smartmet-engine-gis >= 22.1.21
+Requires: smartmet-engine-grid >= 22.1.25
+Requires: smartmet-engine-geonames >= 22.1.21
+Requires: smartmet-server >= 21.11.25
+Requires: smartmet-library-spine >= 22.1.21
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -88,14 +87,14 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: jsoncpp-devel
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 21.8.17
-#TestRequires: smartmet-engine-geonames-devel >= 21.8.17
-#TestRequires: smartmet-engine-gis-devel >= 21.9.7
-#TestRequires: smartmet-engine-querydata-devel >= 21.9.13
+#TestRequires: smartmet-engine-contour-devel >= 22.1.21
+#TestRequires: smartmet-engine-geonames-devel >= 22.1.21
+#TestRequires: smartmet-engine-gis-devel >= 22.1.21
+#TestRequires: smartmet-engine-querydata-devel >= 22.1.21
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
-#TestRequires: smartmet-library-newbase-devel >= 20.10.28
-#TestRequires: smartmet-library-spine-devel >= 21.8.21
-#TestRequires: smartmet-engine-grid-devel >= 21.9.7
+#TestRequires: smartmet-library-newbase-devel >= 22.1.21
+#TestRequires: smartmet-library-spine-devel >= 22.1.21
+#TestRequires: smartmet-engine-grid-devel >= 22.1.25
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -104,7 +103,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 21.9.7
+#TestRequires: smartmet-engine-observation-devel >= 22.1.21
 %endif
 
 %description
@@ -133,6 +132,27 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Jan 25 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.1.25-1.fmi
+- Minor fix to unfinished generation handling
+
+* Mon Jan 24 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.1.24-1.fmi
+- Rebuild due to package upgrade from PGDG (gdal 3.4 etc)
+
+* Tue Jan 18 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.1.18-1.fmi
+- Added support for type=cnf with stage=N for different phases of configuration file preprocessing
+
+* Thu Dec 16 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.12.16-1.fmi
+- Fixed style selection so that any elment, except qid, can be redefined in styles-section
+
+* Wed Dec 15 2021 Anssi Reponen <anssi.reponen@fmi.fi> - 21.12.15-1.fmi
+- Fixed NumberLayer style selection bug (BRAINSTORM-2220)
+
+* Wed Dec  8 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.12.8-1.fmi
+- Added unit conversion support for SymbolLayer
+
+* Tue Dec  7 2021 Andris Pavēnis <andris.pavenis@fmi.fi> 21.12.7-1.fmi
+- Update to postgresql 13 and gdal 3.3
+
 * Mon Nov 15 2021 Mika Heiskanen <mika.heiskanen@fmi.fi> - 21.11.15-2.fmi
 - Repackaged due to ABI changes in base grid libraries
 

@@ -108,9 +108,8 @@ void WMSGridDataLayer::updateLayerMetaData()
 
       if (itsGeometryId > 0)
       {
-        GRIB2::GridDef_ptr def =
-            Identification::gridDef.getGrib2DefinitionByGeometryId(itsGeometryId);
-        if (def != nullptr)
+        auto def = Identification::gridDef.getGrib2DefinitionByGeometryId(itsGeometryId);
+        if (def)
         {
           T::Coordinate topLeft, topRight, bottomLeft, bottomRight;
           if (def->getGridLatLonArea(topLeft, topRight, bottomLeft, bottomRight))

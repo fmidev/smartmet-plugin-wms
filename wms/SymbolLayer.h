@@ -9,8 +9,8 @@
 #include "AttributeSelection.h"
 #include "Layer.h"
 #include "ParameterInfo.h"
-#include "Positions.h"
 #include "PointValue.h"
+#include "Positions.h"
 #include <vector>
 
 namespace SmartMet
@@ -38,6 +38,9 @@ class SymbolLayer : public Layer
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   boost::optional<std::string> parameter;
+  std::string unit_conversion;
+  boost::optional<double> multiplier;
+  boost::optional<double> offset;
 
   boost::optional<Positions> positions;
 

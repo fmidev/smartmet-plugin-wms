@@ -45,34 +45,34 @@ Json::CharReaderBuilder charreaderbuilder;
 void check_modification_time(const std::string& theDir, boost::posix_time::ptime& max_time)
 {
   try
-	{
-	  if (!boost::filesystem::exists(theDir) || !boost::filesystem::is_directory(theDir))
-		return;
+  {
+    if (!boost::filesystem::exists(theDir) || !boost::filesystem::is_directory(theDir))
+      return;
 
-	  boost::system::error_code ec;
-	  boost::filesystem::directory_iterator end_itr;
-	  for (boost::filesystem::directory_iterator itr(theDir); itr != end_itr; ++itr)
-		{
-		  if (SmartMet::Spine::Reactor::isShuttingDown())
-			return;
-	  
-		  if (is_directory(itr->status()))
-			{			  
-			  std::string subdir = itr->path().filename().string();
-			  check_modification_time(theDir + subdir + "/", max_time);
-			}
-		  else if (is_regular_file(itr->status()))
-			{
-			  std::string filename = (theDir + itr->path().filename().string());
-			  std::time_t time_t_mod = boost::filesystem::last_write_time(filename, ec);
-			  if (ec.value() == boost::system::errc::success)
-				{
-				  auto ptime_mod = boost::posix_time::from_time_t(time_t_mod);
-				  if(max_time < ptime_mod)
-					max_time = ptime_mod;
-				}			  
-			}
-		}
+    boost::system::error_code ec;
+    boost::filesystem::directory_iterator end_itr;
+    for (boost::filesystem::directory_iterator itr(theDir); itr != end_itr; ++itr)
+    {
+      if (SmartMet::Spine::Reactor::isShuttingDown())
+        return;
+
+      if (is_directory(itr->status()))
+      {
+        std::string subdir = itr->path().filename().string();
+        check_modification_time(theDir + subdir + "/", max_time);
+      }
+      else if (is_regular_file(itr->status()))
+      {
+        std::string filename = (theDir + itr->path().filename().string());
+        std::time_t time_t_mod = boost::filesystem::last_write_time(filename, ec);
+        if (ec.value() == boost::system::errc::success)
+        {
+          auto ptime_mod = boost::posix_time::from_time_t(time_t_mod);
+          if (max_time < ptime_mod)
+            max_time = ptime_mod;
+        }
+      }
+    }
   }
   catch (...)
   {
@@ -784,10 +784,10 @@ void WMSConfig::capabilitiesUpdateLoop()
         }
 
         if (!Spine::Reactor::isShuttingDown())
-		  {
-			updateLayerMetaData();
-			updateModificationTime();
-		  }
+        {
+          updateLayerMetaData();
+          updateModificationTime();
+        }
       }
       catch (...)
       {
@@ -943,7 +943,8 @@ void WMSConfig::updateLayerMetaData()
                     {
                       SharedWMSLayer wmsLayer(WMSLayerFactory::createWMSLayer(
                           pathName, theNamespace, customername, *this));
-					  itsCapabilitiesModificationTime = std::max(*itsCapabilitiesModificationTime, wmsLayer->modificationTime());
+                      itsCapabilitiesModificationTime =
+                          std::max(*itsCapabilitiesModificationTime, wmsLayer->modificationTime());
                       if (!wmsLayer->getLegendFile().empty())
                         layersWithExternalLagendFile[wmsLayer] = wmsLayer->getLegendFile();
                       WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
@@ -1019,13 +1020,13 @@ void WMSConfig::updateModificationTime()
 {
   try
   {
-	auto max_time = *itsCapabilitiesModificationTime;
+    auto max_time = *itsCapabilitiesModificationTime;
 
-	// Check all files under WMS-root
-	check_modification_time(itsDaliConfig.rootDirectory(true) + "/", max_time);
-	
-	if(*itsCapabilitiesModificationTime < max_time)
-	  itsCapabilitiesModificationTime = max_time;		
+    // Check all files under WMS-root
+    check_modification_time(itsDaliConfig.rootDirectory(true) + "/", max_time);
+
+    if (*itsCapabilitiesModificationTime < max_time)
+      itsCapabilitiesModificationTime = max_time;
   }
   catch (...)
   {
@@ -1157,6 +1158,10 @@ const std::set<std::string>& WMSConfig::supportedWMSGetCapabilityFormats() const
 
 bool WMSConfig::isValidMapFormat(const std::string& theMapFormat) const
 {
+  // Special case for config JSON requests
+  if (theMapFormat == "cnf")
+    return true;
+
   return (itsSupportedMapFormats.find(theMapFormat) != itsSupportedMapFormats.end());
 }
 
@@ -1506,7 +1511,8 @@ const WMSLegendGraphicSettings& WMSConfig::getLegendGraphicSettings() const
 
 boost::posix_time::ptime WMSConfig::getCapabilitiesExpirationTime() const
 {
-  return (boost::posix_time::second_clock::universal_time()+ boost::posix_time::seconds(itsCapabilityExpirationTime));
+  return (boost::posix_time::second_clock::universal_time() +
+          boost::posix_time::seconds(itsCapabilityExpirationTime));
 }
 
 }  // namespace WMS
