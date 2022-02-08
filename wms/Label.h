@@ -43,6 +43,7 @@ class Label
   // Printing
   std::string missing = "-";
   int precision = 0;
+  double multiple = 0;  // used if non-zero
   std::string prefix = "";
   std::string suffix = "";
   // Signed prefixes

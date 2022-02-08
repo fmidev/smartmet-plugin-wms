@@ -67,19 +67,20 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
 
   const Config& getConfig() const;
   Fmi::SharedFormatter getTemplate(const std::string& theName) const;
-  Product getProduct(const Spine::HTTP::Request& theRequest,
-                     const State& theState,
-                     const std::string& theName,
-                     bool print_json) const;
+
+  Json::Value getProductJson(const Spine::HTTP::Request& theRequest,
+                             const State& theState,
+                             const std::string& theName,
+                             int stage) const;
   std::string getStyle(const std::string& theCustomer,
                        const std::string& theCSS,
                        bool theWmsFlag) const;
   std::string getFilter(const std::string& theCustomer,
-						const std::string& theName,
-						bool theWmsFlag) const;
+                        const std::string& theName,
+                        bool theWmsFlag) const;
   std::size_t getFilterHash(const std::string& theCustomer,
-							const std::string& theName,
-							bool theWmsFlag) const;
+                            const std::string& theName,
+                            bool theWmsFlag) const;
   std::string getMarker(const std::string& theCustomer,
                         const std::string& theName,
                         bool theWmsFlag) const;
@@ -151,11 +152,11 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                                unsigned int width,
                                unsigned int height) const;
 
-  Fmi::Cache::CacheStatistics getCacheStats() const;  
-  std::string resolveFilePath(const std::string &theCustomer,
-							  const std::string& theSubDir,
-							  const std::string &theFileName,
-							  bool theWmsFlag) const;
+  Fmi::Cache::CacheStatistics getCacheStats() const;
+  std::string resolveFilePath(const std::string& theCustomer,
+                              const std::string& theSubDir,
+                              const std::string& theFileName,
+                              bool theWmsFlag) const;
 
   // Plugin configuration
   const std::string itsModuleName;

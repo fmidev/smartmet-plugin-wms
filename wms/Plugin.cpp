@@ -138,6 +138,8 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 
     const bool print_json = Spine::optional_bool(theRequest.getParameter("printjson"), false);
 
+    const int json_stage = Spine::optional_int(theRequest.getParameter("stage"), 0);
+
     const bool print_params = Spine::optional_bool(theRequest.getParameter("printparams"), false);
 
     const bool usetimer = Spine::optional_bool(theRequest.getParameter("timer"), false);
@@ -154,18 +156,41 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 
     std::string product_name = Spine::required_string(
         theRequest.getParameter("product"), "Product configuration option 'product' not given");
-    auto product = getProduct(theRequest, theState, product_name, print_json);
 
-    // Trivial error checks done first for speed
+    auto json = getProductJson(theRequest, theState, product_name, json_stage);
+
+    // Debugging
+
+    if (print_json)
+    {
+      Json::StyledWriter writer;
+      std::cout << "Expanded " << product_name << " Spine::JSON:" << std::endl
+                << writer.write(json) << std::endl;
+    }
+
+    // Special product for reading configuration files
+    if (Spine::optional_string(theRequest.getParameter("type"), "svg") == "cnf")
+    {
+      theResponse.setHeader("Content-Type", mimeType("cnf"));
+      Json::StyledWriter writer;
+      theResponse.setContent(writer.write(json));
+      return;
+    }
+
+    // And initialize the product specs from the JSON
+
+    Product product;
+    product.init(json, theState, itsConfig);
 
     if (product.type.empty())
       product.type = "svg";
 
+    // Trivial error checks done first for speed
+
     if (!boost::iequals(product.type, "xml") && !boost::iequals(product.type, "svg") &&
         !boost::iequals(product.type, "png") && !boost::iequals(product.type, "pdf") &&
         !boost::iequals(product.type, "ps") && !boost::iequals(product.type, "geojson") &&
-        !boost::iequals(product.type, "kml"))
-
+        !boost::iequals(product.type, "kml") && !boost::iequals(product.type, "cnf"))
     {
       throw Fmi::Exception(BCP, "Invalid 'type' value '" + product.type + "'!");
     }
@@ -296,7 +321,7 @@ void Plugin::formatResponse(const std::string &theSvg,
   try
   {
     std::set<std::string> text_formats{
-        "xml", "svg", "image/svg+xml", "geojson", "kml", "json", "application/json"};
+        "xml", "svg", "image/svg+xml", "geojson", "kml", "json", "application/json", "cnf"};
 
     theResponse.setHeader("Content-Type", mimeType(theType));
 
@@ -447,12 +472,12 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
       boost::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
 
-	  const ptime t_now = boost::posix_time::second_clock::universal_time();
-	  const auto &modification_time = state.getModificationTime();
-	  if (!modification_time)
-		theResponse.setHeader("Last-Modified", tformat->format(t_now));
-	  else
-		theResponse.setHeader("Last-Modified", tformat->format(*modification_time));
+      const ptime t_now = boost::posix_time::second_clock::universal_time();
+      const auto &modification_time = state.getModificationTime();
+      if (!modification_time)
+        theResponse.setHeader("Last-Modified", tformat->format(t_now));
+      else
+        theResponse.setHeader("Last-Modified", tformat->format(*modification_time));
 
       // Send expiration header only if there was no error. Note: 304 Not Modified must pass!
 
@@ -787,16 +812,17 @@ int Plugin::getRequiredAPIVersion() const
 {
   return SMARTMET_API_VERSION;
 }
+
 // ----------------------------------------------------------------------
 /*!
- * \brief Get product definition from the plugin cache
+ * \brief Get the product JSON
  */
 // ----------------------------------------------------------------------
 
-Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
-                           const State &theState,
-                           const std::string &theName,
-                           bool print_json) const
+Json::Value Plugin::getProductJson(const Spine::HTTP::Request &theRequest,
+                                   const State &theState,
+                                   const std::string &theName,
+                                   int stage) const
 {
   try
   {
@@ -824,9 +850,15 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
           .addParameter("Product", product_path)
           .addParameter("Message", errors);
 
+    if (stage == 1)
+      return json;
+
     // Replace references (json: and ref:) from query string options
 
     Spine::JSON::replaceReferences(json, theRequest.getParameterMap());
+
+    if (stage == 2)
+      return json;
 
     // Expand the JSON
 
@@ -835,29 +867,21 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
     Spine::JSON::preprocess(
         json, itsConfig.rootDirectory(theState.useWms()), layers_root, itsJsonCache);
 
+    if (stage == 3)
+      return json;
+
     // Expand paths
 
     Spine::JSON::dereference(json);
+
+    if (stage == 4)
+      return json;
 
     // Modify variables as requested (not reference substitutions)
 
     Spine::JSON::expand(json, theRequest.getParameterMap(), "", false);
 
-    // Debugging
-
-    if (print_json)
-    {
-      Json::StyledWriter writer;
-      std::cout << "Expanded " << theName << " Spine::JSON:" << std::endl
-                << writer.write(json) << std::endl;
-    }
-
-    // And initialize the product specs from the JSON
-
-    Product product;
-    product.init(json, theState, itsConfig);
-
-    return product;
+    return json;
   }
   catch (...)
   {
@@ -865,50 +889,55 @@ Product Plugin::getProduct(const Spine::HTTP::Request &theRequest,
   }
 }
 
-std::string Plugin::resolveFilePath(const std::string &theCustomer, const std::string& theSubDir, const std::string &theFileName, bool theWmsFlag) const
+std::string Plugin::resolveFilePath(const std::string &theCustomer,
+                                    const std::string &theSubDir,
+                                    const std::string &theFileName,
+                                    bool theWmsFlag) const
 {
   if (theCustomer.empty() || theFileName.empty())
-	return "";
+    return "";
 
   try
   {
-	std::string file_path;
-	std::string filename = theFileName;
+    std::string file_path;
+    std::string filename = theFileName;
 
-	// 1) If file name starts with '/' search from wms-root
-	// 2) else check existence of file first from customer-path then from wms-root
-	// 3) In wms-root check in the following order
-	// 3.1) wms-root
-	// 3.2) wms-root/resources/layers/<theSubDir> except for filters check wms-root/resources/filters
-	// 3.3) wms-root/resources/<theSubDir>
-	// 3.4) wms-root/resources
+    // 1) If file name starts with '/' search from wms-root
+    // 2) else check existence of file first from customer-path then from wms-root
+    // 3) In wms-root check in the following order
+    // 3.1) wms-root
+    // 3.2) wms-root/resources/layers/<theSubDir> except for filters check
+    // wms-root/resources/filters 3.3) wms-root/resources/<theSubDir> 3.4) wms-root/resources
 
     if (filename[0] != '/')
     {
-	  file_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + check_attack(theCustomer) +
-				   theSubDir + check_attack(theFileName));
-	  if(!boost::filesystem::exists(file_path))
-		filename.insert(filename.begin(), '/');
+      file_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + check_attack(theCustomer) +
+                   theSubDir + check_attack(theFileName));
+      if (!boost::filesystem::exists(file_path))
+        filename.insert(filename.begin(), '/');
     }
     if (filename[0] == '/')
-	  {
-		file_path = itsConfig.rootDirectory(theWmsFlag) + check_attack(filename);
-		if(!boost::filesystem::exists(file_path))
-		  {
-			if(theSubDir == "/filters/")
-			  file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources/filters" + check_attack(filename);
-			else
-			  {
-				file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources/layers" + theSubDir + check_attack(filename);
-				if(!boost::filesystem::exists(file_path))
-				  file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources" + theSubDir + check_attack(filename);
-				if(!boost::filesystem::exists(file_path))
-				  {
-					file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources" + check_attack(filename);
-				  }
-			  }
-		  }
-	  }
+    {
+      file_path = itsConfig.rootDirectory(theWmsFlag) + check_attack(filename);
+      if (!boost::filesystem::exists(file_path))
+      {
+        if (theSubDir == "/filters/")
+          file_path =
+              itsConfig.rootDirectory(theWmsFlag) + "/resources/filters" + check_attack(filename);
+        else
+        {
+          file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources/layers" + theSubDir +
+                      check_attack(filename);
+          if (!boost::filesystem::exists(file_path))
+            file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources" + theSubDir +
+                        check_attack(filename);
+          if (!boost::filesystem::exists(file_path))
+          {
+            file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources" + check_attack(filename);
+          }
+        }
+      }
+    }
 
     return file_path;
   }
@@ -969,14 +998,16 @@ Fmi::SharedFormatter Plugin::getTemplate(const std::string &theName) const
  */
 // ----------------------------------------------------------------------
 
-std::string Plugin::getFilter(const std::string &theCustomer, const std::string &theFileName, bool theWmsFlag) const
+std::string Plugin::getFilter(const std::string &theCustomer,
+                              const std::string &theFileName,
+                              bool theWmsFlag) const
 {
   try
   {
     if (theFileName.empty())
       return "";
 
-	std::string filter_path = resolveFilePath(theCustomer, "/filters/", theFileName, theWmsFlag);
+    std::string filter_path = resolveFilePath(theCustomer, "/filters/", theFileName, theWmsFlag);
 
     return itsFileCache.get(filter_path);
   }
@@ -992,14 +1023,16 @@ std::string Plugin::getFilter(const std::string &theCustomer, const std::string 
  */
 // ----------------------------------------------------------------------
 
-std::size_t Plugin::getFilterHash(const std::string &theCustomer, const std::string &theFileName, bool theWmsFlag) const
+std::size_t Plugin::getFilterHash(const std::string &theCustomer,
+                                  const std::string &theFileName,
+                                  bool theWmsFlag) const
 {
   try
-  {	
+  {
     if (theFileName.empty())
       return 0;
 
-	std::string filter_path = resolveFilePath(theCustomer, "/filters/", theFileName, theWmsFlag);
+    std::string filter_path = resolveFilePath(theCustomer, "/filters/", theFileName, theWmsFlag);
 
     return itsFileCache.last_modified(filter_path);
   }
@@ -1331,6 +1364,8 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     const bool print_json = Spine::optional_bool(thisRequest.getParameter("printjson"), false);
 
+    const int json_stage = Spine::optional_int(theRequest.getParameter("stage"), 0);
+
     const bool print_params = Spine::optional_bool(theRequest.getParameter("printparams"), false);
 
     std::string format = Spine::optional_string(thisRequest.getParameter("format"), "xml");
@@ -1343,12 +1378,12 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     if (requestType == WMS::WMSRequestType::GET_CAPABILITIES)
     {
-	  theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
+      theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
       auto tmpl = getTemplate("wms_get_capabilities_" + getCapabilityFormat(format));
       auto msg = WMS::WMSGetCapabilities::response(tmpl, thisRequest, *itsQEngine, *itsWMSConfig);
       formatResponse(msg, format, thisRequest, theResponse, theState.useTimer());
-	  theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
-	  theState.updateModificationTime(itsWMSConfig->getCapabilitiesModificationTime());	  
+      theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
+      theState.updateModificationTime(itsWMSConfig->getCapabilitiesModificationTime());
       return WMSQueryStatus::OK;
     }
 
@@ -1422,6 +1457,9 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
           json["ymargin"] = itsWMSConfig->getMargin();
       }
 
+      // Is this a cnf request?
+      bool cnf_request = Spine::optional_string(theRequest.getParameter("format"), "svg") == "cnf";
+
       // Define the customer. Note that parseHTTPRequest may have set a customer
       // for the layer, so this needs to be done after parsing the request
 
@@ -1440,12 +1478,15 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
       std::string layers_root = customer_root + "/layers/";
 
-      Spine::JSON::preprocess(
-          json, itsConfig.rootDirectory(theState.useWms()), layers_root, itsJsonCache);
+      if (!cnf_request || (json_stage == 0 || json_stage > 1))
+        Spine::JSON::preprocess(
+            json, itsConfig.rootDirectory(theState.useWms()), layers_root, itsJsonCache);
 
-      Spine::JSON::dereference(json);
+      if (!cnf_request || (json_stage == 0 || json_stage > 2))
+        Spine::JSON::dereference(json);
 
-      Spine::JSON::expand(json, thisRequest.getParameterMap(), "", false);
+      if (!cnf_request || (json_stage == 0 || json_stage > 3))
+        Spine::JSON::expand(json, thisRequest.getParameterMap(), "", false);
 
       // Debugging
 
@@ -1453,6 +1494,15 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
       {
         Json::StyledWriter writer;
         std::cout << "Expanded Spine::JSON:" << std::endl << writer.write(json) << std::endl;
+      }
+
+      // Special product
+      if (cnf_request)
+      {
+        theResponse.setHeader("Content-Type", mimeType("cnf"));
+        Json::StyledWriter writer;
+        theResponse.setContent(writer.write(json));
+        return WMSQueryStatus::OK;
       }
 
       // And initialize the product specs from the JSON
@@ -1513,20 +1563,22 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     // Calculate hash for the product
 
-	std::size_t product_hash = 0;
+    std::size_t product_hash = 0;
     try
     {
-	  product_hash = product.hash_value(theState);
-	}
+      product_hash = product.hash_value(theState);
+    }
     catch (const Fmi::Exception &exception)
-	  {
-		auto layers = *(theRequest.getParameter("LAYERS"));
-	
-		Fmi::Exception ex(
-						  BCP, "Error in calculating hash_value for layer '" + layers + "'! " + exception.what(), nullptr);
-		ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-		return handleWmsException(ex, theState, thisRequest, theResponse);
-	  }
+    {
+      auto layers = *(theRequest.getParameter("LAYERS"));
+
+      Fmi::Exception ex(
+          BCP,
+          "Error in calculating hash_value for layer '" + layers + "'! " + exception.what(),
+          nullptr);
+      ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+      return handleWmsException(ex, theState, thisRequest, theResponse);
+    }
 
     // We always return valid ETags
 
