@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.1.25
+Version: 22.2.9
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -17,19 +17,19 @@ BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.6.18
-BuildRequires: smartmet-library-grid-content-devel >= 22.1.25
-BuildRequires: smartmet-library-grid-files-devel >= 22.1.25
+BuildRequires: smartmet-library-grid-content-devel >= 22.2.9
+BuildRequires: smartmet-library-grid-files-devel >= 22.2.9
 BuildRequires: smartmet-library-macgyver-devel >= 22.1.21
 BuildRequires: smartmet-library-spine-devel >= 22.1.21
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 22.1.21
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 22.1.21
+BuildRequires: smartmet-engine-observation-devel >= 22.2.8
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 22.1.21
-BuildRequires: smartmet-engine-grid-devel >= 22.1.25
-BuildRequires: smartmet-engine-geonames-devel >= 22.1.21
+BuildRequires: smartmet-engine-gis-devel >= 22.2.8
+BuildRequires: smartmet-engine-grid-devel >= 22.2.9
+BuildRequires: smartmet-engine-geonames-devel >= 22.1.31
 BuildRequires: smartmet-engine-querydata-devel >= 22.1.21
 BuildRequires: smartmet-engine-contour-devel >= 22.1.21
 BuildRequires: smartmet-library-gis-devel >= 22.1.24
@@ -55,8 +55,8 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 22.1.25
-Requires: smartmet-library-grid-files >= 22.1.25
+Requires: smartmet-library-grid-content >= 22.2.9
+Requires: smartmet-library-grid-files >= 22.2.9
 Requires: smartmet-library-gis >= 22.1.24
 Requires: smartmet-library-macgyver >= 22.1.21
 Requires: smartmet-library-spine >= 22.1.21
@@ -66,9 +66,9 @@ Requires: smartmet-engine-authentication >= 22.1.21
 %endif
 Requires: smartmet-engine-querydata >= 22.1.21
 Requires: smartmet-engine-contour >= 22.1.21
-Requires: smartmet-engine-gis >= 22.1.21
-Requires: smartmet-engine-grid >= 22.1.25
-Requires: smartmet-engine-geonames >= 22.1.21
+Requires: smartmet-engine-gis >= 22.2.8
+Requires: smartmet-engine-grid >= 22.2.9
+Requires: smartmet-engine-geonames >= 22.1.31
 Requires: smartmet-server >= 21.11.25
 Requires: smartmet-library-spine >= 22.1.21
 Requires: boost169-date-time
@@ -88,13 +88,13 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: ImageMagick
 #TestRequires: bc
 #TestRequires: smartmet-engine-contour-devel >= 22.1.21
-#TestRequires: smartmet-engine-geonames-devel >= 22.1.21
-#TestRequires: smartmet-engine-gis-devel >= 22.1.21
+#TestRequires: smartmet-engine-geonames-devel >= 22.1.31
+#TestRequires: smartmet-engine-gis-devel >= 22.2.8
 #TestRequires: smartmet-engine-querydata-devel >= 22.1.21
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
 #TestRequires: smartmet-library-newbase-devel >= 22.1.21
 #TestRequires: smartmet-library-spine-devel >= 22.1.21
-#TestRequires: smartmet-engine-grid-devel >= 22.1.25
+#TestRequires: smartmet-engine-grid-devel >= 22.2.9
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -103,7 +103,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 22.1.21
+#TestRequires: smartmet-engine-observation-devel >= 22.2.8
 %endif
 
 %description
@@ -132,6 +132,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Feb  9 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.2.9-1.fmi
+- Repackaged due to ABI changes in grid libraries
+
+* Mon Feb  7 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.2.7-1.fmi
+- Added "multiple" setting for labels
+
 * Tue Jan 25 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.1.25-1.fmi
 - Minor fix to unfinished generation handling
 

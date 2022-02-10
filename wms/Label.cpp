@@ -56,6 +56,9 @@ std::string Label::print(double theValue) const
 
     double value = multiplier * theValue + offset;
 
+    if (multiple > 0)
+      value = multiple * std::round(value / multiple);
+
     formatter->str("");
 
     if (plusprefix.empty() && minusprefix.empty())
@@ -122,6 +125,8 @@ void Label::init(const Json::Value& theJson, const Config& theConfig)
         this->setLocale(json.asString());
       else if (name == "precision")
         precision = json.asInt();
+      else if (name == "multiple")
+        multiple = json.asDouble();
       else if (name == "prefix")
         prefix = json.asString();
       else if (name == "suffix")
@@ -172,6 +177,7 @@ std::size_t Label::hash_value(const State& /* theState */) const
     Fmi::hash_combine(hash, Fmi::hash_value(offset));
     Fmi::hash_combine(hash, Fmi::hash_value(missing));
     Fmi::hash_combine(hash, Fmi::hash_value(precision));
+    Fmi::hash_combine(hash, Fmi::hash_value(multiple));
     Fmi::hash_combine(hash, Fmi::hash_value(prefix));
     Fmi::hash_combine(hash, Fmi::hash_value(suffix));
     Fmi::hash_combine(hash, Fmi::hash_value(plusprefix));
