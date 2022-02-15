@@ -229,7 +229,7 @@
    <use class="Temperature_inf_50" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_downtriangle" y="951"/>
   
   </g>
-  <mask id="isoband_Temperature_0">
+  <mask id="isoband_Temperature_3">
   
    <rect height="100%" style="fill:white" width="100%"/>
   
