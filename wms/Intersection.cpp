@@ -13,6 +13,7 @@
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
+#include <trax/InterpolationType.h>
 
 namespace SmartMet
 {
@@ -402,9 +403,8 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
 
     if (interpolation == "linear")
       options.interpolation = Trax::InterpolationType::Linear;
-    else if (interpolation == "nearest")
-      options.interpolation = Trax::InterpolationType::Midpoint;
-    else if (interpolation == "discrete")
+    else if (interpolation == "nearest" || interpolation == "discrete" ||
+             interpolation == "midpoint")
       options.interpolation = Trax::InterpolationType::Midpoint;
     else if (interpolation == "loglinear")
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'");

@@ -34,6 +34,7 @@
 #include <spine/Parameter.h>
 #include <spine/ParameterFactory.h>
 #include <spine/ParameterTools.h>
+#include <trax/InterpolationType.h>
 #include <limits>
 
 #ifndef WGS84
@@ -1023,6 +1024,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
       OGRGeometryPtr geom = geoms[i];
+
       if (geom && geom->IsEmpty() == 0)
       {
         OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, clipbox));

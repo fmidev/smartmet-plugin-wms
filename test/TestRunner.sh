@@ -133,7 +133,8 @@ for f in input/*.get; do
 		if [[ -z $extralines ]]; then
 		extralines="\t${line}"
 		else
-		    extralines="${extralines}\n\t$line"
+		    extralines+="\n\t"
+		    extralines+=$line
 		fi
 	    fi
 	done

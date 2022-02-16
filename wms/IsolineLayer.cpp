@@ -55,7 +55,7 @@ void IsolineLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       parameter = json.asString();
 
-	json = theJson.get("isolines", nulljson);
+    json = theJson.get("isolines", nulljson);
 
     if (!json.isNull())
     {
@@ -737,6 +737,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
       OGRGeometryPtr geom = geoms[i];
+
       if (geom && geom->IsEmpty() == 0)
       {
         const Isoline& isoline = isolines[i];
