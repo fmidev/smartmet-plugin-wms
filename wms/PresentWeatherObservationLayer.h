@@ -1,6 +1,6 @@
 // ======================================================================
 /*!
- * \brief FinnishRoadObservation layer
+ * \brief PresentWeatherObservation layer
  */
 // ======================================================================
 
@@ -20,7 +20,7 @@ class Config;
 class Plugin;
 class State;
 
-class FinnishRoadObservationLayer : public ObservationLayer
+class PresentWeatherObservationLayer : public ObservationLayer
 {
 private:
   virtual void getParameters(const boost::posix_time::ptime& requested_timestep, 
@@ -30,7 +30,7 @@ private:
   virtual StationSymbolPriorities processResultSet(const State& theState, 
 												   const ResultSet& theResultSet, 
 												   const boost::posix_time::ptime& requested_timestep) const;
-};  // class FinnishRoadObservationLayer
+};  // class PresentWeatherObservationLayer
 
 }  // namespace Dali
 }  // namespace Plugin

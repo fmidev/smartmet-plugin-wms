@@ -2,14 +2,10 @@
 
 #include "FinnishRoadObservationLayer.h"
 #include "State.h"
-#include "Config.h"
 #include "ValueTools.h"
 #include "LonLatToXYTransformation.h"
-#include "Hash.h"
-#include <macgyver/NearTree.h>
 #include <spine/ParameterTools.h>
 #include <spine/TimeSeriesAggregator.h>
-#include <ctpp2/CDT.hpp>
 
 namespace SmartMet
 {
@@ -208,90 +204,27 @@ int get_symbol_priority(int symbol, double t2m)
 
 }
 
-// ----------------------------------------------------------------------
-/*!
- * \brief Initialize from JSON
- */
-// ----------------------------------------------------------------------
-
-void FinnishRoadObservationLayer::init(const Json::Value& theJson,
-							const State& theState,
-							const Config& theConfig,
-							const Properties& theProperties)
+void FinnishRoadObservationLayer::getParameters(const boost::posix_time::ptime& requested_timestep, std::vector<SmartMet::Spine::Parameter>& parameters,  boost::posix_time::ptime& starttime,  boost::posix_time::ptime&endtime) const
 {
   try
   {
-    if (!theJson.isObject())
-      throw Fmi::Exception(BCP, "FinnishRoadObservation-layer JSON is not a JSON hash");
+	endtime = requested_timestep;
+	starttime = (endtime - boost::posix_time::hours(24)); //  // We must calculate mean temperature from last 24 hours
 
-    ObservationLayer::init(theJson, theState, theConfig, theProperties);
-
-    Json::Value nulljson;
-
-	Json::Value json = theJson.get("mindistance", nulljson);
-    if (!json.isNull())		
-	  mindistance = json.asInt();
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "FinnishRoadObservationLayer init failed!");
-  }
-}
-
-StationSymbolPriorities FinnishRoadObservationLayer::getProcessedData(State& theState) const
-{
-  try
-  {
-	if (theState.getConfig().obsEngineDisabled())
-	  throw std::runtime_error("Cannot use FinnishRoadObservationLayer when the observation engine is disabled");  
-	
-	// If time not given take current time and find nearest previous timestep
-	auto requested_timestep = (time ? *time : boost::posix_time::second_clock::universal_time());
-	int timestep_minutes = *timestep;
-	// Revert to previous timestep
-	if(timestep_minutes != 0)
-	  {
-		while(requested_timestep.time_of_day().minutes() % timestep_minutes != 0)
-		  {
-			requested_timestep -= boost::posix_time::minutes(1);
-		  }
-	  }
-	
-	ResultSet result_set = getObservations(theState, requested_timestep);
-	
-	return processResultSet(theState, result_set, requested_timestep);
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
-
-ResultSet FinnishRoadObservationLayer::getObservations(State& theState, const boost::posix_time::ptime& requested_timestep) const
-{
-  try
-  {
-	auto endtime = requested_timestep;
-	auto starttime = (endtime - boost::posix_time::hours(24)); //  // We must calculate mean temperature from last 24 hours
-	
-	std::vector<SmartMet::Spine::Parameter> parameters;
 	parameters.push_back(Spine::makeParameter("fmisid"));
 	parameters.push_back(Spine::makeParameter("longitude"));
 	parameters.push_back(Spine::makeParameter("latitude"));
 	parameters.push_back(Spine::makeParameter("ILMA"));
 	parameters.push_back(Spine::makeParameter("SADE"));
 	parameters.push_back(Spine::makeParameter("RST"));
-	
-	return ObservationLayer::getObservations(theState, parameters, starttime, endtime);
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Gettings finnish road observations failed!");
+    throw Fmi::Exception::Trace(BCP, "Gettings parameters for finnish road observations failed!");
   }
 }
 
-StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(State& theState, const ResultSet& theResultSet, const boost::posix_time::ptime& requested_timestep) const
+StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(const State& theState, const ResultSet& theResultSet, const boost::posix_time::ptime& requested_timestep) const
 {
   try
   {
@@ -312,15 +245,17 @@ StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(State& the
 	
 	StationSymbolPriorities ssps;
 	Spine::TimeSeries::Value none = Spine::TimeSeries::None();  
-	for(auto& result_set_item : theResultSet)
+	for(const auto& result_set_item : theResultSet)
 	  {
 		StationSymbolPriority ssp;
 		ssp.fmisid = result_set_item.first;
 		// FMISID: data independent
-		auto& longitude_result_set_vector = result_set_item.second.at(1);
+		const auto& longitude_result_set_vector = result_set_item.second.at(1);
+		if(longitude_result_set_vector.size() == 0)
+		  continue;
 		auto lon = get_double(longitude_result_set_vector.at(0).value);
 		// Latitude: data independent
-		auto& latitude_result_set_vector = result_set_item.second.at(2);
+		const auto& latitude_result_set_vector = result_set_item.second.at(2);
 		auto lat = get_double(latitude_result_set_vector.at(0).value);
 		// Transform to screen coordinates
 		if (transformation.transform(lon, lat))
@@ -333,7 +268,7 @@ StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(State& the
 			throw Fmi::Exception::Trace(BCP, "Transforming longitude, latitude to screen coordinates failed!");
 		  }
 		// ILMA: get mean of previous 24 hours
-		auto& ilma_result_set_vector = result_set_item.second.at(3);
+		const auto& ilma_result_set_vector = result_set_item.second.at(3);
 		auto agg_val = Spine::TimeSeries::time_aggregate(ilma_result_set_vector, ilma_func, requested_local_time);
 		if(agg_val.value == none)
 		  {
@@ -341,10 +276,10 @@ StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(State& the
 		  }
 		auto t2m = get_double(agg_val.value);
 		// SADE: get nearest value of previous or next 20 minutes
-		auto& sade_result_set_vector = result_set_item.second.at(4);
+		const auto& sade_result_set_vector = result_set_item.second.at(4);
 		auto sade = Spine::TimeSeries::time_aggregate(sade_result_set_vector, sade_rst_func, requested_local_time);
 		// RST: get nearest value of previous or next 20 minutes
-		auto& rst_result_set_vector = result_set_item.second.at(5);
+		const auto& rst_result_set_vector = result_set_item.second.at(5);
 		auto rst = Spine::TimeSeries::time_aggregate(rst_result_set_vector, sade_rst_func, requested_local_time);
 		
 		if(get_double(sade.value) == kFloatMissing || get_double(rst.value) == kFloatMissing)
@@ -368,83 +303,6 @@ StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(State& the
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Processing result set of finnish road observations failed!");
-  }
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Generate the layer details into the template hash
- *
- */
-// ----------------------------------------------------------------------
-
-void FinnishRoadObservationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
-{
-  try
-	{
-	  if (theState.getConfig().obsEngineDisabled())
-		throw std::runtime_error("Cannot use FinnishRoadObservationLayer when the observation engine is disabled");  
-	  
-	  // Get data from obsengine, do the aggregation, transform longitude/latitude to screen coordinates, prioritize stations
-	  StationSymbolPriorities ssps = getProcessedData(theState);
-
-	  Fmi::NearTree<StationSymbolPriority> stations_to_show;
-	  
-	  for(const auto& ssp : ssps)
-		{
-		  // Skip the station if it is too close to some station already on map
-		  if (mindistance > 0)
-			{
-			  auto match = stations_to_show.nearest(ssp, mindistance);
-			  if (match)
-				continue;
-			  stations_to_show.insert(ssp);
-			}
-		  
-		  std::string chr;
-		  chr.append(1, ssp.symbol);
-		  if(chr.empty())
-			{
-			  std::cout << "No symbol for station: " << ssp.fmisid << std::endl;
-			  continue;
-			}
-		  
-		  // Start generating the hash
-		  CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
-		  text_cdt["start"] = "<text";
-		  text_cdt["end"] = "</text>";
-		  text_cdt["cdata"] = ("&#" + Fmi::to_string(ssp.symbol)+";");//cdata;
-		  text_cdt["attributes"]["x"] = Fmi::to_string(lround(ssp.longitude));
-		  text_cdt["attributes"]["y"] = Fmi::to_string(lround(ssp.latitude));
-		  theState.addAttributes(theGlobals, text_cdt, attributes);
-		  theLayersCdt.PushBack(text_cdt);
-		}
-	}
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Generating template hash for finnish road observations failed!");
-  }
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Hash value
- */
-// ----------------------------------------------------------------------
-
-std::size_t FinnishRoadObservationLayer::hash_value(const State& theState) const
-{
-  try
-  {
-    auto hash = ObservationLayer::hash_value(theState);
-
-    Fmi::hash_combine(hash, Fmi::hash_value(mindistance));
-
-    return hash;
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
