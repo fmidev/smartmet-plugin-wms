@@ -1,12 +1,12 @@
 #ifndef WITHOUT_OBSERVATION
 
 #include "ObservationLayer.h"
-#include "State.h"
 #include "Config.h"
 #include "ValueTools.h"
 #include "Hash.h"
-#include <spine/TimeSeries.h>
+#include <ctpp2/CDT.hpp>
 #include <engines/observation/Engine.h>
+#include <spine/TimeSeriesOutput.h>
 
 namespace SmartMet
 {
@@ -81,6 +81,10 @@ void ObservationLayer::init(const Json::Value& theJson,
 		  }
 	  }
 		
+	json = theJson.get("mindistance", nulljson);
+    if (!json.isNull())		
+	  mindistance = json.asInt();
+
 	if(keyword.empty() && fmisids.empty())
 	  throw Fmi::Exception::Trace(BCP, "Either 'keyword' or 'fmisid' must be defined for observation layer! ");
   }
@@ -110,6 +114,7 @@ ResultSet ObservationLayer::getObservations(State& theState, const std::vector<S
 	  settings.endtime = endtime;
 	  settings.taggedFMISIDs = stationFMISIDs;
 	  settings.parameters = parameters;
+	  //	  settings.debug_options = 1;
 	  
 	  // Get values from Observation engine
 	  auto& obsengine = theState.getObsEngine();
@@ -160,7 +165,10 @@ ResultSet ObservationLayer::getObservations(State& theState, const std::vector<S
 			  Spine::TimeSeries::TimeSeries::const_iterator iter_first = source_vector.begin() + item.second.first;
 			  Spine::TimeSeries::TimeSeries::const_iterator iter_last = source_vector.begin() + item.second.second;
 			  Spine::TimeSeries::TimeSeries& target_vector = ret[item.first][i];
-			  target_vector.insert(target_vector.begin(), iter_first, iter_last); 
+			  if(iter_first == iter_last)
+				target_vector.insert(target_vector.begin(), *iter_first);
+			  else
+				target_vector.insert(target_vector.begin(), iter_first, iter_last); 
 			}
 		}
 	  
@@ -170,6 +178,104 @@ ResultSet ObservationLayer::getObservations(State& theState, const std::vector<S
 	{
 	  throw Fmi::Exception::Trace(BCP, "Getting observations for ObservationLayer failed!");
 	}
+}
+
+StationSymbolPriorities ObservationLayer::getProcessedData(State& theState) const
+{
+  try
+  {
+	if (theState.getConfig().obsEngineDisabled())
+	  throw std::runtime_error("Cannot use ObservationLayer when the observation engine is disabled");  
+	
+	// If time not given take current time and find nearest previous timestep
+	auto requested_timestep = (time ? *time : boost::posix_time::second_clock::universal_time());
+	int timestep_minutes = *timestep;
+	// Revert to previous timestep
+	if(timestep_minutes != 0)
+	  {
+		while(requested_timestep.time_of_day().minutes() % timestep_minutes != 0)
+		  {
+			requested_timestep -= boost::posix_time::minutes(1);
+		  }
+	  }
+	
+	ResultSet result_set = getObservations(theState, requested_timestep);
+	
+	return processResultSet(theState, result_set, requested_timestep);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+ResultSet ObservationLayer::getObservations(State& theState, const boost::posix_time::ptime& requested_timestep) const
+{
+  try
+  {
+	boost::posix_time::ptime starttime;
+	boost::posix_time::ptime endtime;
+	std::vector<SmartMet::Spine::Parameter> parameters;
+
+	getParameters(requested_timestep, parameters, starttime, endtime);
+
+	return getObservations(theState, parameters, starttime, endtime);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Gettings observations failed!");
+  }
+}
+
+
+void ObservationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+{
+  try
+	{
+	  if (theState.getConfig().obsEngineDisabled())
+		throw std::runtime_error("Cannot use PresentWeatherObservationLayer when the observation engine is disabled");  
+	  
+	  // Get data from obsengine, do the aggregation, transform longitude/latitude to screen coordinates, prioritize stations
+	  StationSymbolPriorities ssps = getProcessedData(theState);
+
+	  Fmi::NearTree<StationSymbolPriority> stations_to_show;
+	  
+	  for(const auto& ssp : ssps)
+		{
+		  // Skip the station if it is too close to some station already on map
+		  if (mindistance > 0)
+			{
+			  auto match = stations_to_show.nearest(ssp, mindistance);
+
+			  if (match)
+				continue;
+
+			  stations_to_show.insert(ssp);
+			}
+		  
+		  std::string chr;
+		  chr.append(1, ssp.symbol);
+		  if(chr.empty())
+			{
+			  std::cout << "No symbol for station: " << ssp.fmisid << std::endl;
+			  continue;
+			}
+		  
+		  // Start generating the hash
+		  CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
+		  text_cdt["start"] = "<text";
+		  text_cdt["end"] = "</text>";
+		  text_cdt["cdata"] = ("&#" + Fmi::to_string(ssp.symbol)+";");
+		  text_cdt["attributes"]["x"] = Fmi::to_string(lround(ssp.longitude));
+		  text_cdt["attributes"]["y"] = Fmi::to_string(lround(ssp.latitude));
+		  theState.addAttributes(theGlobals, text_cdt, attributes);
+		  theLayersCdt.PushBack(text_cdt);
+		}
+	}
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Generating template hash for finnish road observations failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -186,6 +292,7 @@ std::size_t ObservationLayer::hash_value(const State& theState) const
 
     Fmi::hash_combine(hash, Fmi::hash_value(keyword));
     Fmi::hash_combine(hash, Fmi::hash_value(fmisids));
+    Fmi::hash_combine(hash, Fmi::hash_value(mindistance));
 
     return hash;
   }

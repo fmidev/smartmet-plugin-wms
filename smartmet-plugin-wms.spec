@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.2.9
+Version: 22.2.16
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -132,6 +132,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Feb 16 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.2.16-1.fmi
+- Support for present weather observations (BRAINSTORM-2231)
+- Check for empty vector when processing result set  (BRAINSTORM-2264)
+
 * Wed Feb  9 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.2.9-1.fmi
 - Repackaged due to ABI changes in grid libraries
 
