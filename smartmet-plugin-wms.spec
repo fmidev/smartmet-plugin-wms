@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.2.16
+Version: 22.2.28
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -17,9 +17,9 @@ BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.6.18
-BuildRequires: smartmet-library-grid-content-devel >= 22.2.14
-BuildRequires: smartmet-library-grid-files-devel >= 22.2.9
-BuildRequires: smartmet-library-macgyver-devel >= 22.1.21
+BuildRequires: smartmet-library-grid-content-devel >= 22.2.28
+BuildRequires: smartmet-library-grid-files-devel >= 22.2.28
+BuildRequires: smartmet-library-macgyver-devel >= 22.2.24
 BuildRequires: smartmet-library-spine-devel >= 22.2.10
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 22.1.21
@@ -28,7 +28,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 22.1.21
 BuildRequires: smartmet-engine-observation-devel >= 22.2.15
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.2.10
-BuildRequires: smartmet-engine-grid-devel >= 22.2.9
+BuildRequires: smartmet-engine-grid-devel >= 22.2.28
 BuildRequires: smartmet-engine-geonames-devel >= 22.1.31
 BuildRequires: smartmet-engine-querydata-devel >= 22.1.21
 BuildRequires: smartmet-engine-contour-devel >= 22.1.21
@@ -55,10 +55,10 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 22.2.14
-Requires: smartmet-library-grid-files >= 22.2.9
+Requires: smartmet-library-grid-content >= 22.2.28
+Requires: smartmet-library-grid-files >= 22.2.28
 Requires: smartmet-library-gis >= 22.1.24
-Requires: smartmet-library-macgyver >= 22.1.21
+Requires: smartmet-library-macgyver >= 22.2.24
 Requires: smartmet-library-spine >= 22.2.10
 Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
@@ -67,7 +67,7 @@ Requires: smartmet-engine-authentication >= 22.1.21
 Requires: smartmet-engine-querydata >= 22.1.21
 Requires: smartmet-engine-contour >= 22.1.21
 Requires: smartmet-engine-gis >= 22.2.10
-Requires: smartmet-engine-grid >= 22.2.9
+Requires: smartmet-engine-grid >= 22.2.28
 Requires: smartmet-engine-geonames >= 22.1.31
 Requires: smartmet-server >= 21.11.25
 Requires: smartmet-library-spine >= 22.2.10
@@ -94,7 +94,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
 #TestRequires: smartmet-library-newbase-devel >= 22.1.21
 #TestRequires: smartmet-library-spine-devel >= 22.2.10
-#TestRequires: smartmet-engine-grid-devel >= 22.2.9
+#TestRequires: smartmet-engine-grid-devel >= 22.2.28
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -132,6 +132,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Feb 28 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.2.28-1.fmi
+- Repackaged due to base library/engine ABI changes
+
 * Wed Feb 16 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.2.16-1.fmi
 - Support for present weather observations (BRAINSTORM-2231)
 - Check for empty vector when processing result set  (BRAINSTORM-2264)
