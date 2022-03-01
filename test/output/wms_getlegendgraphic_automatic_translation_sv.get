@@ -10,7 +10,7 @@
  ]]>
 </style>
 
-<symbol id="isoband_SnowDriftIndex_0">
+<symbol id="isoband_SnowDriftIndex_2">
  <rect height="9" width="14"/>
 </symbol>
 
@@ -20,13 +20,13 @@
  <g>
   <g>
   
-   <use class="SnowDriftIndex_25_35" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#isoband_SnowDriftIndex_0" y="50"/>
+   <use class="SnowDriftIndex_25_35" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#isoband_SnowDriftIndex_2" y="50"/>
   
   <text x="48" y="59">Hög risk för snödrev</text>
-   <use class="SnowDriftIndex_15_25" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#isoband_SnowDriftIndex_0" y="59"/>
+   <use class="SnowDriftIndex_15_25" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#isoband_SnowDriftIndex_2" y="59"/>
   
   <text x="48" y="68">Måttlig risk för snödrev</text>
-   <use class="SnowDriftIndex_05_15" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#isoband_SnowDriftIndex_0" y="68"/>
+   <use class="SnowDriftIndex_05_15" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#isoband_SnowDriftIndex_2" y="68"/>
   
   <text x="48" y="77">Liten risk för snödrev</text>
   <text class="Units" x="20" y="20">Snödrift</text>
