@@ -17,7 +17,7 @@ BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.6.18
-BuildRequires: smartmet-library-grid-content-devel >= 22.2.28
+BuildRequires: smartmet-library-grid-content-devel >= 22.3.1
 BuildRequires: smartmet-library-grid-files-devel >= 22.2.28
 BuildRequires: smartmet-library-macgyver-devel >= 22.2.24
 BuildRequires: smartmet-library-spine-devel >= 22.2.10
@@ -25,10 +25,10 @@ BuildRequires: smartmet-library-spine-devel >= 22.2.10
 BuildRequires: smartmet-engine-authentication-devel >= 22.1.21
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 22.2.15
+BuildRequires: smartmet-engine-observation-devel >= 22.2.28
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.2.10
-BuildRequires: smartmet-engine-grid-devel >= 22.2.28
+BuildRequires: smartmet-engine-grid-devel >= 22.3.1
 BuildRequires: smartmet-engine-geonames-devel >= 22.1.31
 BuildRequires: smartmet-engine-querydata-devel >= 22.1.21
 BuildRequires: smartmet-engine-contour-devel >= 22.1.21
@@ -55,7 +55,7 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 22.2.28
+Requires: smartmet-library-grid-content >= 22.3.1
 Requires: smartmet-library-grid-files >= 22.2.28
 Requires: smartmet-library-gis >= 22.1.24
 Requires: smartmet-library-macgyver >= 22.2.24
@@ -67,7 +67,7 @@ Requires: smartmet-engine-authentication >= 22.1.21
 Requires: smartmet-engine-querydata >= 22.1.21
 Requires: smartmet-engine-contour >= 22.1.21
 Requires: smartmet-engine-gis >= 22.2.10
-Requires: smartmet-engine-grid >= 22.2.28
+Requires: smartmet-engine-grid >= 22.3.1
 Requires: smartmet-engine-geonames >= 22.1.31
 Requires: smartmet-server >= 21.11.25
 Requires: smartmet-library-spine >= 22.2.10
@@ -94,7 +94,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
 #TestRequires: smartmet-library-newbase-devel >= 22.1.21
 #TestRequires: smartmet-library-spine-devel >= 22.2.10
-#TestRequires: smartmet-engine-grid-devel >= 22.2.28
+#TestRequires: smartmet-engine-grid-devel >= 22.3.1
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -103,7 +103,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 22.2.15
+#TestRequires: smartmet-engine-observation-devel >= 22.2.28
 %endif
 
 %description
