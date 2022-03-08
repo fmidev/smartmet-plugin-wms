@@ -14,7 +14,6 @@
 #include <spine/Json.h>
 #include <spine/ParameterFactory.h>
 #include <spine/ParameterTools.h>
-#include <spine/ValueFormatter.h>
 #include <timeseries/TimeSeriesOutput.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
