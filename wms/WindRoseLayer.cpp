@@ -24,7 +24,7 @@
 #include <macgyver/TimeParser.h>
 #include <spine/Json.h>
 #include <spine/ParameterTools.h>
-#include <spine/TimeSeries.h>
+#include <timeseries/TimeSeriesInclude.h>
 #include <algorithm>
 #include <ogr_spatialref.h>
 
@@ -38,7 +38,7 @@ struct value_printer : public boost::static_visitor<std::string>
 {
   std::string operator()(const std::string& str) const { return str; }
   std::string operator()(double value) const { return Fmi::to_string(value); }
-  std::string operator()(const Spine::TimeSeries::LonLat& lonlat) const
+  std::string operator()(const TS::LonLat& lonlat) const
   {
     return Fmi::to_string(lonlat.lon) + ',' + Fmi::to_string(lonlat.lat);
   }
@@ -55,9 +55,9 @@ struct value_printer : public boost::static_visitor<std::string>
  */
 // ----------------------------------------------------------------------
 
-bool is_rose_data_valid(const Spine::TimeSeries::TimeSeries& directions,
-                        const Spine::TimeSeries::TimeSeries& speeds,
-                        const Spine::TimeSeries::TimeSeries& temperatures)
+bool is_rose_data_valid(const TS::TimeSeries& directions,
+                        const TS::TimeSeries& speeds,
+                        const TS::TimeSeries& temperatures)
 {
   try
   {
@@ -115,7 +115,7 @@ bool is_rose_data_valid(const Spine::TimeSeries::TimeSeries& directions,
  */
 // ----------------------------------------------------------------------
 
-double mean(const Spine::TimeSeries::TimeSeries& tseries)
+double mean(const TS::TimeSeries& tseries)
 {
   try
   {
@@ -146,7 +146,7 @@ double mean(const Spine::TimeSeries::TimeSeries& tseries)
  */
 // ----------------------------------------------------------------------
 
-double max(const Spine::TimeSeries::TimeSeries& tseries)
+double max(const TS::TimeSeries& tseries)
 {
   try
   {
@@ -238,7 +238,7 @@ double sector_end_angle(int sector, int sectors)
  */
 // ----------------------------------------------------------------------
 
-std::vector<double> calculate_rose_distribution(const Spine::TimeSeries::TimeSeries& directions,
+std::vector<double> calculate_rose_distribution(const TS::TimeSeries& directions,
                                                 int sectors)
 {
   try
@@ -279,8 +279,8 @@ std::vector<double> calculate_rose_distribution(const Spine::TimeSeries::TimeSer
  */
 // ----------------------------------------------------------------------
 
-std::vector<double> calculate_rose_maxima(const Spine::TimeSeries::TimeSeries& directions,
-                                          const Spine::TimeSeries::TimeSeries& speeds,
+std::vector<double> calculate_rose_maxima(const TS::TimeSeries& directions,
+                                          const TS::TimeSeries& speeds,
                                           int sectors)
 {
   try

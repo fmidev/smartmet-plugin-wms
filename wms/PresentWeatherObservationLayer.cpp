@@ -175,7 +175,7 @@ int get_symbol_priority(int symbol)
 
 }
 
-void PresentWeatherObservationLayer::getParameters(const boost::posix_time::ptime& requested_timestep, std::vector<SmartMet::Spine::Parameter>& parameters,  boost::posix_time::ptime& starttime,  boost::posix_time::ptime&endtime) const
+void PresentWeatherObservationLayer::getParameters(const boost::posix_time::ptime& requested_timestep, std::vector<Spine::Parameter>& parameters,  boost::posix_time::ptime& starttime,  boost::posix_time::ptime&endtime) const
 {
   try
   {
@@ -204,7 +204,7 @@ StationSymbolPriorities PresentWeatherObservationLayer::processResultSet(const S
 	auto transformation = LonLatToXYTransformation(projection);
 	
 	StationSymbolPriorities ssps;
-	Spine::TimeSeries::Value none = Spine::TimeSeries::None();  
+	TS::Value none = TS::None();  
 	for(auto& result_set_item : theResultSet)
 	  {
 		StationSymbolPriority ssp;

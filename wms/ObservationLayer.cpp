@@ -6,7 +6,7 @@
 #include "Hash.h"
 #include <ctpp2/CDT.hpp>
 #include <engines/observation/Engine.h>
-#include <spine/TimeSeriesOutput.h>
+#include <timeseries/TimeSeriesInclude.h>
 
 namespace SmartMet
 {
@@ -94,7 +94,7 @@ void ObservationLayer::init(const Json::Value& theJson,
   }
 }
 
-ResultSet ObservationLayer::getObservations(State& theState, const std::vector<SmartMet::Spine::Parameter>& parameters, const boost::posix_time::ptime& starttime, const boost::posix_time::ptime& endtime) const
+ResultSet ObservationLayer::getObservations(State& theState, const std::vector<Spine::Parameter>& parameters, const boost::posix_time::ptime& starttime, const boost::posix_time::ptime& endtime) const
 {
   try
 	{
@@ -138,7 +138,7 @@ ResultSet ObservationLayer::getObservations(State& theState, const std::vector<S
 	  
 	  // Find out FMISIDs their data in result set
 	  std::map<int, std::pair<int, int>> fmisid_ranges;
-	  const Spine::TimeSeries::TimeSeries& fmisid_vector = values->at(fmisid_index);
+	  const TS::TimeSeries& fmisid_vector = values->at(fmisid_index);
 	  for(unsigned int i = 0; i < fmisid_vector.size(); i++)
 		{
 		  int fmisid = get_fmisid(fmisid_vector.at(i).value);
@@ -154,17 +154,17 @@ ResultSet ObservationLayer::getObservations(State& theState, const std::vector<S
 	  
 	  // Allocate map for results of valid fmisids  
 	  for(const auto& item : fmisid_ranges)
-		ret.insert(std::make_pair(item.first, std::vector<Spine::TimeSeries::TimeSeries>(settings.parameters.size(), Spine::TimeSeries::TimeSeries(settings.localTimePool))));
+		ret.insert(std::make_pair(item.first, std::vector<TS::TimeSeries>(settings.parameters.size(), TS::TimeSeries(settings.localTimePool))));
 	  
 	  // Add results to map
 	  for(unsigned int i = 0; i < values->size(); i++)
 		{
-		  const Spine::TimeSeries::TimeSeries& source_vector = values->at(i);
+		  const TS::TimeSeries& source_vector = values->at(i);
 		  for(const auto& item : fmisid_ranges)
 			{
-			  Spine::TimeSeries::TimeSeries::const_iterator iter_first = source_vector.begin() + item.second.first;
-			  Spine::TimeSeries::TimeSeries::const_iterator iter_last = source_vector.begin() + item.second.second;
-			  Spine::TimeSeries::TimeSeries& target_vector = ret[item.first][i];
+			  TS::TimeSeries::const_iterator iter_first = source_vector.begin() + item.second.first;
+			  TS::TimeSeries::const_iterator iter_last = source_vector.begin() + item.second.second;
+			  TS::TimeSeries& target_vector = ret[item.first][i];
 			  if(iter_first == iter_last)
 				target_vector.insert(target_vector.begin(), *iter_first);
 			  else
@@ -215,7 +215,7 @@ ResultSet ObservationLayer::getObservations(State& theState, const boost::posix_
   {
 	boost::posix_time::ptime starttime;
 	boost::posix_time::ptime endtime;
-	std::vector<SmartMet::Spine::Parameter> parameters;
+	std::vector<Spine::Parameter> parameters;
 
 	getParameters(requested_timestep, parameters, starttime, endtime);
 

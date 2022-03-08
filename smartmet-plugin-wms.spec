@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.3.7
+Version: 22.3.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -19,8 +19,9 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.6.18
 BuildRequires: smartmet-library-grid-content-devel >= 22.3.7
 BuildRequires: smartmet-library-grid-files-devel >= 22.3.7
-BuildRequires: smartmet-library-macgyver-devel >= 22.2.24
-BuildRequires: smartmet-library-spine-devel >= 22.2.10
+BuildRequires: smartmet-library-macgyver-devel >= 22.3.8
+BuildRequires: smartmet-library-spine-devel >= 22.3.8
+BuildRequires: smartmet-library-timeseries-devel >= 22.3.8
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 22.1.21
 %endif
@@ -58,8 +59,9 @@ Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 22.3.7
 Requires: smartmet-library-grid-files >= 22.3.7
 Requires: smartmet-library-gis >= 22.1.24
-Requires: smartmet-library-macgyver >= 22.2.24
-Requires: smartmet-library-spine >= 22.2.10
+Requires: smartmet-library-macgyver >= 22.3.8
+Requires: smartmet-library-spine >= 22.3.8
+Requires: smartmet-library-timeseries >= 22.3.8
 Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 22.1.21
@@ -132,6 +134,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Mar 8 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.3.8-1.fmi
+- Started using timeseries-library (BRAINSTORM-2259)
+
 * Mon Mar  7 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.3.7-1.fmi
 - Repackaged due to base library API changes
 
