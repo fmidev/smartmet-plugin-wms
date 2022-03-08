@@ -15,7 +15,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-double get_double(const Spine::TimeSeries::Value& value)
+double get_double(const TS::Value& value)
 {
   if (const double* dvalue = boost::get<double>(&value))
     return *dvalue;
@@ -23,7 +23,7 @@ double get_double(const Spine::TimeSeries::Value& value)
   if (const int* ivalue = boost::get<int>(&value))
     return *ivalue;
 
-  if (boost::get<Spine::TimeSeries::None>(&value) != nullptr)
+  if (boost::get<TS::None>(&value) != nullptr)
     return kFloatMissing;
 
   // None, std::string, LonLat and local_date_time not accepted. See spine/TimeSeries.h
@@ -37,7 +37,7 @@ double get_double(const Spine::TimeSeries::Value& value)
  */
 // ----------------------------------------------------------------------
 
-double get_double(const Spine::TimeSeries::TimedValue& timedvalue)
+double get_double(const TS::TimedValue& timedvalue)
 {
   return get_double(timedvalue.value);
 }
@@ -53,7 +53,7 @@ double get_double(const Spine::TimeSeries::TimedValue& timedvalue)
  */
 // ----------------------------------------------------------------------
 
-int get_fmisid(const Spine::TimeSeries::Value& value)
+int get_fmisid(const TS::Value& value)
 {
   if (const double* dvalue = boost::get<double>(&value))
     return static_cast<int>(*dvalue);
@@ -69,7 +69,7 @@ int get_fmisid(const Spine::TimeSeries::Value& value)
   throw Fmi::Exception::Trace(BCP, "Failed to convert observation engine value to fmisid!");
 }
 
-int get_fmisid(const Spine::TimeSeries::TimedValue& timedvalue)
+int get_fmisid(const TS::TimedValue& timedvalue)
 {
   return get_fmisid(timedvalue.value);
 }

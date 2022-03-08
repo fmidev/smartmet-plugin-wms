@@ -5,7 +5,7 @@
 #include "ValueTools.h"
 #include "LonLatToXYTransformation.h"
 #include <spine/ParameterTools.h>
-#include <spine/TimeSeriesAggregator.h>
+#include <timeseries/TimeSeriesInclude.h>
 
 namespace SmartMet
 {
@@ -234,17 +234,17 @@ StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(const Stat
 	// Do the aggregation and transform longitude/latitude to screen coordinates
 	
 	// Functions for aggregation
-	Spine::ParameterFunction ilma_func(Spine::FunctionId::Mean, Spine::FunctionType::TimeFunction);
+	TS::DataFunction ilma_func(TS::FunctionId::Mean, TS::FunctionType::TimeFunction);
 	ilma_func.setAggregationIntervalBehind(1440); // 1440 minutes = 24h
 	ilma_func.setAggregationIntervalAhead(0);
-	Spine::ParameterFunction sade_rst_func(Spine::FunctionId::Nearest, Spine::FunctionType::TimeFunction);
+	TS::DataFunction sade_rst_func(TS::FunctionId::Nearest, TS::FunctionType::TimeFunction);
 	sade_rst_func.setAggregationIntervalBehind(20); // 20 minutes behind
 	sade_rst_func.setAggregationIntervalAhead(20); // 20 minutes ahead
 	// Transformation object
 	auto transformation = LonLatToXYTransformation(projection);
 	
 	StationSymbolPriorities ssps;
-	Spine::TimeSeries::Value none = Spine::TimeSeries::None();  
+	TS::Value none = TS::None();  
 	for(const auto& result_set_item : theResultSet)
 	  {
 		StationSymbolPriority ssp;
@@ -269,7 +269,7 @@ StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(const Stat
 		  }
 		// ILMA: get mean of previous 24 hours
 		const auto& ilma_result_set_vector = result_set_item.second.at(3);
-		auto agg_val = Spine::TimeSeries::time_aggregate(ilma_result_set_vector, ilma_func, requested_local_time);
+		auto agg_val = TS::Aggregator::time_aggregate(ilma_result_set_vector, ilma_func, requested_local_time);
 		if(agg_val.value == none)
 		  {
 			continue;
@@ -277,10 +277,10 @@ StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(const Stat
 		auto t2m = get_double(agg_val.value);
 		// SADE: get nearest value of previous or next 20 minutes
 		const auto& sade_result_set_vector = result_set_item.second.at(4);
-		auto sade = Spine::TimeSeries::time_aggregate(sade_result_set_vector, sade_rst_func, requested_local_time);
+		auto sade = TS::Aggregator::time_aggregate(sade_result_set_vector, sade_rst_func, requested_local_time);
 		// RST: get nearest value of previous or next 20 minutes
 		const auto& rst_result_set_vector = result_set_item.second.at(5);
-		auto rst = Spine::TimeSeries::time_aggregate(rst_result_set_vector, sade_rst_func, requested_local_time);
+		auto rst = TS::Aggregator::time_aggregate(rst_result_set_vector, sade_rst_func, requested_local_time);
 		
 		if(get_double(sade.value) == kFloatMissing || get_double(rst.value) == kFloatMissing)
 		  {

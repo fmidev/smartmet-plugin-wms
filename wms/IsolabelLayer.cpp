@@ -945,7 +945,7 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
   boost::local_time::local_date_time localdatetime(getValidTime(), utc);
   auto mylocale = std::locale::classic();
   NFmiPoint dummy;
-  SmartMet::Spine::TimeSeries::LocalTimePoolPtr localTimePool = nullptr;
+  TS::LocalTimePoolPtr localTimePool = nullptr;
 
   // Querydata spatial reference
   Fmi::SpatialReference qcrs(q->SpatialReference());

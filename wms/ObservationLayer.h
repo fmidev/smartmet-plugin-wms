@@ -35,7 +35,7 @@ struct StationSymbolPriority
 using StationSymbolPriorities =  std::vector<StationSymbolPriority>;
 
 // Results from DB mapped by FMISID
-using ResultSet = std::map<int, std::vector<Spine::TimeSeries::TimeSeries>>;
+using ResultSet = std::map<int, std::vector<TS::TimeSeries>>;
 
 class ObservationLayer : public Layer
 {

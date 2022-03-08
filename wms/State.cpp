@@ -36,7 +36,7 @@ State::State(Plugin& thePlugin, const Spine::HTTP::Request& theRequest)
       itUsesTimer(false),
       itUsesWms(false),
       itsRequest(theRequest),
-	  itsLocalTimePool(boost::make_shared<SmartMet::Spine::TimeSeries::LocalTimePool>())
+	  itsLocalTimePool(boost::make_shared<TS::LocalTimePool>())
 {
 }
 

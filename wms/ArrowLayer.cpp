@@ -116,7 +116,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
     std::string tmp;
     auto mylocale = std::locale::classic();
     NFmiPoint dummy;
-    SmartMet::Spine::TimeSeries::LocalTimePoolPtr localTimePool = nullptr;
+    TS::LocalTimePoolPtr localTimePool = nullptr;
 
     if (speedparam && !q->param(speedparam->number()))
       throw Fmi::Exception(
