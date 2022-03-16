@@ -14,6 +14,20 @@ namespace Plugin
 {
 namespace WMS
 {
+namespace
+{
+void replace_translations(const std::map<std::string, std::string>& sourceTranslations,
+                          std::map<std::string, std::string>& targetTranslations)
+{
+  for (const auto& tr : sourceTranslations)
+  {
+    if (targetTranslations.find(tr.first) == targetTranslations.end())
+      targetTranslations.insert(tr);
+    else
+      targetTranslations[tr.first] = tr.second;
+  }
+}
+}
 unsigned int numberOfLanguages = 193;
 const char* language_codes[] = {
     "ab", "aa", "af",      "ak",      "sq", "am", "ar", "an", "hy", "as",   "av", "ae", "ay", "az",
@@ -31,20 +45,30 @@ const char* language_codes[] = {
     "th", "bo", "ti",      "to",      "ts", "tr", "tk", "tw", "ug", "uk",   "ur", "uz", "ve", "vi",
     "vo", "wa", "cy",      "wo",      "fy", "xh", "yi", "ji", "yo", "za",   "zu"};
 
+WMSLegendGraphicSettings::WMSLegendGraphicSettings(bool initDefaults /*= false*/)
+{
+  if(initDefaults)
+	{
+	  // default layout settings
+	  layout.param_name_xoffset = 20;
+	  layout.param_name_yoffset = 20;
+	  layout.param_unit_xoffset = 30;
+	  layout.param_unit_yoffset = 30;
+	  layout.legend_xoffset = 30;
+	  layout.legend_yoffset = 40;
+	  layout.symbol_group_x_padding = 30;
+	  layout.symbol_group_y_padding = 35;
+	  layout.symbol_text_xoffset = 30;
+	  layout.symbol_text_yoffset = 0;
+	  layout.legend_width = 10;
+	  layout.output_document_width = 500;
+	  layout.output_document_height = 500;
+	}
+  expires = -1;  // No caching
+}
+
 WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& config)
 {
-  // default layout settings
-  layout.param_name_xoffset = 20;
-  layout.param_name_yoffset = 20;
-  layout.param_unit_xoffset = 30;
-  layout.param_unit_yoffset = 40;
-  layout.legend_xoffset = 30;
-  layout.legend_yoffset = 40;
-  layout.symbol_group_x_padding = 30;
-  layout.symbol_group_y_padding = 30;
-  layout.legend_width = 10;
-  layout.output_document_width = 500;
-  layout.output_document_height = 500;
   expires = -1;  // No caching
 
   if (config.exists("wms.get_legend_graphic"))
@@ -148,7 +172,7 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
         }
       }
 
-      // defaults can be overwritten from configuration
+      // Overwritten from configuration
       if (config.exists("wms.get_legend_graphic.layout.param_name_xoffset"))
         layout.param_name_xoffset =
             config.lookup("wms.get_legend_graphic.layout.param_name_xoffset");
@@ -173,6 +197,12 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
       if (config.exists("wms.get_legend_graphic.layout.symbol_group_y_padding"))
         layout.symbol_group_y_padding =
             config.lookup("wms.get_legend_graphic.layout.symbol_group_y_padding");
+      if (config.exists("wms.get_legend_graphic.layout.symbol_text_xoffset"))
+        layout.symbol_text_xoffset =
+            config.lookup("wms.get_legend_graphic.layout.symbol_text_xoffset");
+      if (config.exists("wms.get_legend_graphic.layout.symbol_text_yoffset"))
+        layout.symbol_text_yoffset =
+            config.lookup("wms.get_legend_graphic.layout.symbol_text_yoffset");
       if (config.exists("wms.get_legend_graphic.layout.output_document_width"))
         layout.output_document_width =
             config.lookup("wms.get_legend_graphic.layout.output_document_width");
@@ -182,6 +212,84 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
     }
   }
 }
+
+void WMSLegendGraphicSettings::merge(const WMSLegendGraphicSettings& settings)
+{
+  // Parameter settings
+  for (const auto& pair : settings.parameters)
+  {
+    if (parameters.find(pair.first) == parameters.end())
+    {
+      parameters.insert(std::make_pair(pair.first, pair.second));
+    }
+    else
+    {
+      LegendGraphicParameter& lgp = parameters[pair.first];
+      const LegendGraphicParameter& settings_lgp = pair.second;
+      lgp.data_name = settings_lgp.data_name;
+      lgp.given_name = settings_lgp.given_name;
+      lgp.unit = settings_lgp.unit;
+      lgp.hide_title = settings_lgp.hide_title;
+      replace_translations(settings_lgp.translations, lgp.translations);
+    }
+    for (const auto& item : pair.second.translations)
+      languages.insert(item.first);
+  }
+
+  // Symbol settings
+  for (const auto& pair : settings.symbols)
+  {
+    if (symbols.find(pair.first) == symbols.end())
+    {
+      symbols.insert(std::make_pair(pair.first, pair.second));
+    }
+    else
+    {
+      LegendGraphicSymbol& lgs = symbols[pair.first];
+      const LegendGraphicSymbol& settings_lgs = pair.second;
+      replace_translations(settings_lgs.translations, lgs.translations);
+      for (const auto& item : lgs.translations)
+        languages.insert(item.first);
+    }
+  }
+
+  // Symbols to ignore
+  if(!settings.symbolsToIgnore.empty())
+	symbolsToIgnore.insert(settings.symbolsToIgnore.begin(), settings.symbolsToIgnore.end());
+
+
+  // Layout settings
+  if (settings.layout.param_name_xoffset)
+    layout.param_name_xoffset = settings.layout.param_name_xoffset;
+  if (settings.layout.param_name_yoffset)
+    layout.param_name_yoffset = settings.layout.param_name_yoffset;
+  if (settings.layout.param_unit_xoffset)
+    layout.param_unit_xoffset = settings.layout.param_unit_xoffset;
+  if (settings.layout.param_unit_yoffset)
+    layout.param_unit_yoffset = settings.layout.param_unit_yoffset;
+  if (settings.layout.symbol_group_x_padding)
+    layout.symbol_group_x_padding = settings.layout.symbol_group_x_padding;
+  if (settings.layout.symbol_group_y_padding)
+    layout.symbol_group_y_padding = settings.layout.symbol_group_y_padding;
+  if (settings.layout.symbol_text_xoffset)
+    layout.symbol_text_xoffset = settings.layout.symbol_text_xoffset;
+  if (settings.layout.symbol_text_yoffset)
+    layout.symbol_text_yoffset = settings.layout.symbol_text_yoffset;
+  if (settings.layout.legend_xoffset)
+    layout.legend_xoffset = settings.layout.legend_xoffset;
+  if (settings.layout.legend_yoffset)
+    layout.legend_yoffset = settings.layout.legend_yoffset;
+  if (settings.layout.legend_width)
+    layout.legend_width = settings.layout.legend_width;
+  // Replace widths per language if exist
+  for (const auto& item : settings.layout.legend_width_per_language)
+  {
+    layout.legend_width_per_language[item.first] = item.second;
+    languages.insert(item.first);
+  }
+
+}
+
 
 }  // namespace WMS
 }  // namespace Plugin

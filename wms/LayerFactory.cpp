@@ -21,6 +21,7 @@
 #include "WKTLayer.h"
 #include "WindRoseLayer.h"
 #include "FinnishRoadObservationLayer.h"
+#include "PresentWeatherObservationLayer.h"
 #include <macgyver/Exception.h>
 #include <stdexcept>
 
@@ -82,6 +83,8 @@ Layer* create(const Json::Value& theJson)
       return new WindRoseLayer;
     if (name == "finnish_road_observation")
       return new FinnishRoadObservationLayer;
+    if (name == "present_weather_observation")
+      return new PresentWeatherObservationLayer;
 #endif
     if (name == "icemap")
       return new IceMapLayer;

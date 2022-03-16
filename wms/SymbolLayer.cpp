@@ -80,7 +80,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
     boost::local_time::local_date_time localdatetime(valid_time_period.begin(), utc);
-    SmartMet::Spine::TimeSeries::LocalTimePoolPtr localTimePool = nullptr;
+    TS::LocalTimePoolPtr localTimePool = nullptr;
 
     PointValues pointvalues;
     auto mylocale = std::locale::classic();

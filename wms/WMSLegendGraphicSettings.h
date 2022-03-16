@@ -69,6 +69,8 @@ struct LegendGraphicLayout
   boost::optional<int> legend_yoffset;
   boost::optional<unsigned int> symbol_group_x_padding;  // space between symbols in symbol-group
   boost::optional<unsigned int> symbol_group_y_padding;
+  boost::optional<unsigned int> symbol_text_xoffset; // x offset of symbol text
+  boost::optional<unsigned int> symbol_text_yoffset; // y offset of symbol text
   boost::optional<unsigned int> legend_width;                     // width of one legend
   std::map<std::string, unsigned int> legend_width_per_language;  // legend width per langauge
   unsigned int
@@ -80,12 +82,14 @@ class WMSLegendGraphicSettings
 {
  public:
   WMSLegendGraphicSettings(const libconfig::Config& config);
-  WMSLegendGraphicSettings() : expires(-1) {}
+  WMSLegendGraphicSettings(bool initDefaults = false);
+  void merge(const WMSLegendGraphicSettings& settings);
 
   LegendGraphicLayout layout;
   std::map<std::string, LegendGraphicParameter> parameters;
   std::map<std::string, LegendGraphicSymbol> symbols;
   std::set<std::string> symbolsToIgnore;
+  std::set<std::string> languages;
   int expires;
 };
 
