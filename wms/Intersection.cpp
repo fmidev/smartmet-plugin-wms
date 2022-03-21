@@ -12,7 +12,7 @@
 #include <gis/OGR.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <spine/Json.h>
-#include <spine/ParameterFactory.h>
+#include <timeseries/ParameterFactory.h>
 
 namespace SmartMet
 {
@@ -361,7 +361,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
 
     // Now that we know the parameter is not for observations, parse it
 
-    auto param = Spine::ParameterFactory::instance().parse(*parameter);
+    auto param = TS::ParameterFactory::instance().parse(*parameter);
 
     // Establish the level
 

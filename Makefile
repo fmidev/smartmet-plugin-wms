@@ -15,6 +15,7 @@ DEFINES = -DUNIX -D_REENTRANT
 
 LIBS += -L$(libdir) \
 	-lsmartmet-grid-content \
+	-lsmartmet-timeseries \
 	-lsmartmet-spine \
 	-lsmartmet-newbase \
 	-lsmartmet-macgyver \

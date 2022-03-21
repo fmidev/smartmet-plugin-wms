@@ -4,7 +4,7 @@
 #include "State.h"
 #include "ValueTools.h"
 #include "LonLatToXYTransformation.h"
-#include <spine/ParameterTools.h>
+#include <timeseries/ParameterTools.h>
 #include <timeseries/TimeSeriesInclude.h>
 
 namespace SmartMet
@@ -211,12 +211,12 @@ void FinnishRoadObservationLayer::getParameters(const boost::posix_time::ptime& 
 	endtime = requested_timestep;
 	starttime = (endtime - boost::posix_time::hours(24)); //  // We must calculate mean temperature from last 24 hours
 
-	parameters.push_back(Spine::makeParameter("fmisid"));
-	parameters.push_back(Spine::makeParameter("longitude"));
-	parameters.push_back(Spine::makeParameter("latitude"));
-	parameters.push_back(Spine::makeParameter("ILMA"));
-	parameters.push_back(Spine::makeParameter("SADE"));
-	parameters.push_back(Spine::makeParameter("RST"));
+	parameters.push_back(TS::makeParameter("fmisid"));
+	parameters.push_back(TS::makeParameter("longitude"));
+	parameters.push_back(TS::makeParameter("latitude"));
+	parameters.push_back(TS::makeParameter("ILMA"));
+	parameters.push_back(TS::makeParameter("SADE"));
+	parameters.push_back(TS::makeParameter("RST"));
   }
   catch (...)
   {

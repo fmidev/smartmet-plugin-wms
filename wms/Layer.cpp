@@ -21,7 +21,7 @@
 #include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 #include <spine/Json.h>
-#include <spine/ParameterFactory.h>
+#include <timeseries/ParameterFactory.h>
 #include <ogr_spatialref.h>
 #include <stdexcept>
 
