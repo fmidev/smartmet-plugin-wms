@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 22.3.21
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -135,6 +135,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Mar 21 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.3.21-2.fmi
+- Possible to have custom legends for alternative styles (BRAINSTORM-2275)
+- Fix default language bug of legends, config file->product file->url parameter (BRAINSTORM-2266)
+
 * Mon Mar 21 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.3.21-1.fmi
 - Update due to changes in smartmet-library-spine and smartnet-library-timeseries
 
