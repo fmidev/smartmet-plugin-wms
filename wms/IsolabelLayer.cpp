@@ -20,7 +20,7 @@
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <spine/Json.h>
-#include <spine/ParameterFactory.h>
+#include <timeseries/ParameterFactory.h>
 #include <limits>
 
 //#define MYDEBUG 1
@@ -938,7 +938,7 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
   }
 
   // The parameter being used
-  auto param = Spine::ParameterFactory::instance().parse(*parameter);
+  auto param = TS::ParameterFactory::instance().parse(*parameter);
 
   boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
   boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
