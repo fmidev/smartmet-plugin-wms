@@ -854,7 +854,7 @@ void WMSConfig::updateLayerMetaData()
     const bool use_wms = true;
     std::string customerdir(itsDaliConfig.rootDirectory(use_wms) + "/customers");
 
-    std::map<SharedWMSLayer, std::string> layersWithExternalLagendFile;
+    std::map<SharedWMSLayer, std::map<std::string, std::string>> layersWithExternalLegendFile;
     boost::filesystem::directory_iterator end_itr;
     for (boost::filesystem::directory_iterator itr(customerdir); itr != end_itr; ++itr)
     {
@@ -945,8 +945,8 @@ void WMSConfig::updateLayerMetaData()
                           pathName, theNamespace, customername, *this));
                       itsCapabilitiesModificationTime =
                           std::max(*itsCapabilitiesModificationTime, wmsLayer->modificationTime());
-                      if (!wmsLayer->getLegendFile().empty())
-                        layersWithExternalLagendFile[wmsLayer] = wmsLayer->getLegendFile();
+                      if (!wmsLayer->getLegendFiles().empty())
+                        layersWithExternalLegendFile[wmsLayer] = wmsLayer->getLegendFiles();
                       WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
                       newProxies->insert(make_pair(fullLayername, newProxy));
                     }
@@ -997,14 +997,18 @@ void WMSConfig::updateLayerMetaData()
     }
 
     // It external legend file is used set legend dimension here
-    for (auto& externalLegendItem : layersWithExternalLagendFile)
+    for (auto& externalLegendItem : layersWithExternalLegendFile)
     {
+	  const auto& externalLegendItems = externalLegendItem.second;
       for (auto& proxyItem : *newProxies)
       {
-        if (proxyItem.second.getLayer()->getName() == externalLegendItem.second)
-        {
-          externalLegendItem.first->setLegendDimension(*proxyItem.second.getLayer());
-        }
+		for (auto& legendStyleItem : externalLegendItems)
+		  {
+			if (proxyItem.second.getLayer()->getName() == legendStyleItem.second)
+			  {
+				externalLegendItem.first->setLegendDimension(*proxyItem.second.getLayer(), legendStyleItem.first);
+			  }
+		  }
       }
     }
 

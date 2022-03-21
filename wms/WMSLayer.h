@@ -83,7 +83,7 @@ private:
   std::string customer;
   std::string productFile;  // dali product
   std::map<std::string, LegendGraphicResultPerLanguage> itsLegendGraphicResults;
-  std::string itsLegendFile;
+  std::map<std::string, std::string> itsLegendFiles;
   boost::posix_time::ptime itsProductFileModificationTime;
 
   friend class WMSLayerFactory;
@@ -106,7 +106,7 @@ private:
   const std::string& getProductFile() const { return productFile; }
   LegendGraphicResult getLegendGraphic(const std::string& legendGraphicID,
                                        const std::string& language) const;
-  const std::string& getLegendFile() const { return itsLegendFile; }
+  const std::map<std::string, std::string>& getLegendFiles() const { return itsLegendFiles; }
 
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;
@@ -118,7 +118,7 @@ private:
   bool currentValue() const;  // returns true if current value can be queried from layer
                               // (time=current)
   // Legend width, height is read from separate file
-  void setLegendDimension(const WMSLayer& legendLayer);
+  void setLegendDimension(const WMSLayer& legendLayer, const std::string& styleName);
   const boost::optional<int>& getWidth() const { return width; }
   const boost::optional<int>& getHeight() const { return height; }
 
