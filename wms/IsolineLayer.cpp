@@ -19,7 +19,7 @@
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/common/ImagePaint.h>
 #include <spine/Json.h>
-#include <spine/ParameterFactory.h>
+#include <timeseries/ParameterFactory.h>
 
 namespace SmartMet
 {
@@ -549,7 +549,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   if (!parameter)
     throw Fmi::Exception(BCP, "Parameter not set for isoline-layer");
 
-  auto param = Spine::ParameterFactory::instance().parse(*parameter);
+  auto param = TS::ParameterFactory::instance().parse(*parameter);
 
   // Establish the valid time
 

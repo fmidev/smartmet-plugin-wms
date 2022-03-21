@@ -10,7 +10,7 @@
 #include <macgyver/Exception.h>
 #include <macgyver/NearTree.h>
 #include <spine/Convenience.h>
-#include <spine/ParameterFactory.h>
+#include <timeseries/ParameterFactory.h>
 #include <iomanip>
 #include <stdexcept>
 
@@ -111,7 +111,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
 
     if (!theDirection.empty())
     {
-      auto param = Spine::ParameterFactory::instance().parse(theDirection);
+      auto param = TS::ParameterFactory::instance().parse(theDirection);
       if (!q.param(param.number()))
         throw Fmi::Exception(
             BCP, "Parameter '" + theDirection + "' is not available for position selection!");
@@ -128,8 +128,8 @@ void apply_direction_offsets(Positions::Points& thePoints,
     }
     else
     {
-      auto uparam = Spine::ParameterFactory::instance().parse(theU);
-      auto vparam = Spine::ParameterFactory::instance().parse(theV);
+      auto uparam = TS::ParameterFactory::instance().parse(theU);
+      auto vparam = TS::ParameterFactory::instance().parse(theV);
 
       // Q API SUCKS
       boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));

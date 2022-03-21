@@ -12,8 +12,8 @@
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
 #include <spine/Json.h>
-#include <spine/ParameterFactory.h>
-#include <spine/ParameterTools.h>
+#include <timeseries/ParameterFactory.h>
+#include <timeseries/ParameterTools.h>
 #include <timeseries/TimeSeriesOutput.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
@@ -64,7 +64,7 @@ PointValues read_forecasts(const NumberLayer& layer,
 
     // The parameters. This *must* be done after the call to positions generation
 
-    auto param = Spine::ParameterFactory::instance().parse(*layer.parameter);
+    auto param = TS::ParameterFactory::instance().parse(*layer.parameter);
 
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
@@ -272,11 +272,11 @@ PointValues read_flash_observations(const NumberLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(Spine::makeParameter("longitude"));
-    settings.parameters.push_back(Spine::makeParameter("latitude"));
+    settings.parameters.push_back(TS::makeParameter("longitude"));
+    settings.parameters.push_back(TS::makeParameter("latitude"));
 
     if (layer.parameter)
-      settings.parameters.push_back(Spine::makeParameter(*layer.parameter));
+      settings.parameters.push_back(TS::makeParameter(*layer.parameter));
 
     // Request intersection parameters too - if any
     auto iparams = layer.positions->intersections.parameters();
@@ -285,7 +285,7 @@ PointValues read_flash_observations(const NumberLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(Spine::makeParameter(extraparam));
+      settings.parameters.push_back(TS::makeParameter(extraparam));
 
     // Generate the coordinates for the symbols
 
@@ -394,11 +394,11 @@ PointValues read_all_observations(const NumberLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(Spine::makeParameter("stationlon"));
-    settings.parameters.push_back(Spine::makeParameter("stationlat"));
+    settings.parameters.push_back(TS::makeParameter("stationlon"));
+    settings.parameters.push_back(TS::makeParameter("stationlat"));
 
     if (layer.parameter)
-      settings.parameters.push_back(Spine::makeParameter(*layer.parameter));
+      settings.parameters.push_back(TS::makeParameter(*layer.parameter));
 
     // Request intersection parameters too - if any
     auto iparams = layer.positions->intersections.parameters();
@@ -407,7 +407,7 @@ PointValues read_all_observations(const NumberLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(Spine::makeParameter(extraparam));
+      settings.parameters.push_back(TS::makeParameter(extraparam));
 
     // Coordinates or bounding box
     Engine::Observation::StationSettings stationSettings;
@@ -509,11 +509,11 @@ PointValues read_station_observations(const NumberLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(Spine::makeParameter("stationlon"));
-    settings.parameters.push_back(Spine::makeParameter("stationlat"));
+    settings.parameters.push_back(TS::makeParameter("stationlon"));
+    settings.parameters.push_back(TS::makeParameter("stationlat"));
 
     if (layer.parameter)
-      settings.parameters.push_back(Spine::makeParameter(*layer.parameter));
+      settings.parameters.push_back(TS::makeParameter(*layer.parameter));
 
     // Request intersection parameters too - if any
     auto iparams = layer.positions->intersections.parameters();
@@ -522,7 +522,7 @@ PointValues read_station_observations(const NumberLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(Spine::makeParameter(extraparam));
+      settings.parameters.push_back(TS::makeParameter(extraparam));
 
     if (!layer.positions)
       throw Fmi::Exception(BCP, "Positions not defined for station-layout of numbers");
@@ -656,12 +656,12 @@ PointValues read_latlon_observations(const NumberLayer& layer,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(Spine::makeParameter("stationlon"));
-    settings.parameters.push_back(Spine::makeParameter("stationlat"));
-    settings.parameters.push_back(Spine::makeParameter("fmisid"));
+    settings.parameters.push_back(TS::makeParameter("stationlon"));
+    settings.parameters.push_back(TS::makeParameter("stationlat"));
+    settings.parameters.push_back(TS::makeParameter("fmisid"));
 
     if (layer.parameter)
-      settings.parameters.push_back(Spine::makeParameter(*layer.parameter));
+      settings.parameters.push_back(TS::makeParameter(*layer.parameter));
 
     // settings.debug_options = Engine::Observation::Settings::DUMP_SETTINGS;
 
@@ -672,7 +672,7 @@ PointValues read_latlon_observations(const NumberLayer& layer,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(Spine::makeParameter(extraparam));
+      settings.parameters.push_back(TS::makeParameter(extraparam));
 
     // Process the points one at a time so that we can assign dx,dy values to them
 

@@ -4,7 +4,7 @@
 #include "State.h"
 #include "Config.h"
 #include "ValueTools.h"
-#include <spine/ParameterTools.h>
+#include <timeseries/ParameterTools.h>
 #include "LonLatToXYTransformation.h"
 
 namespace SmartMet
@@ -182,10 +182,10 @@ void PresentWeatherObservationLayer::getParameters(const boost::posix_time::ptim
 	endtime = requested_timestep;
 	starttime = requested_timestep;
 
-	parameters.push_back(Spine::makeParameter("fmisid"));
-	parameters.push_back(Spine::makeParameter("longitude"));
-	parameters.push_back(Spine::makeParameter("latitude"));
-	parameters.push_back(Spine::makeParameter("ww_aws"));
+	parameters.push_back(TS::makeParameter("fmisid"));
+	parameters.push_back(TS::makeParameter("longitude"));
+	parameters.push_back(TS::makeParameter("latitude"));
+	parameters.push_back(TS::makeParameter("ww_aws"));
   }
   catch (...)
   {

@@ -31,8 +31,8 @@
 #include <spine/Convenience.h>
 #include <spine/Json.h>
 #include <spine/Parameter.h>
-#include <spine/ParameterFactory.h>
-#include <spine/ParameterTools.h>
+#include <timeseries/ParameterFactory.h>
+#include <timeseries/ParameterTools.h>
 #include <limits>
 
 #ifndef WGS84
@@ -168,9 +168,9 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
     // Get actual data (flash coordinates plus parameter column values)
     auto& obsengine = theState.getObsEngine();
-    settings.parameters.push_back(Spine::makeParameter("longitude"));
-    settings.parameters.push_back(Spine::makeParameter("latitude"));
-    settings.parameters.push_back(Spine::makeParameter(*parameter));
+    settings.parameters.push_back(TS::makeParameter("longitude"));
+    settings.parameters.push_back(TS::makeParameter("latitude"));
+    settings.parameters.push_back(TS::makeParameter(*parameter));
 
     settings.boundingBox = getClipBoundingBox(box, crs);
 
@@ -841,7 +841,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     if (!parameter)
       throw Fmi::Exception(BCP, "Parameter not set for isoband-layer!");
-    auto param = Spine::ParameterFactory::instance().parse(*parameter, allowUnknownParam);
+    auto param = TS::ParameterFactory::instance().parse(*parameter, allowUnknownParam);
 
     // Establish the valid time
 
@@ -988,7 +988,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     if (heatmap.resolution)
     {
       // Heatmap querydata has just 1 fixed parameter (1/pressure)
-      options.parameter = Spine::ParameterFactory::instance().parse("1");
+      options.parameter = TS::ParameterFactory::instance().parse("1");
     }
 
     const auto& qEngine = theState.getQEngine();
