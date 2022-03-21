@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 22.3.21
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -30,7 +30,7 @@ BuildRequires: smartmet-engine-observation-devel >= 22.3.18
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.2.10
 BuildRequires: smartmet-engine-grid-devel >= 22.3.21
-BuildRequires: smartmet-engine-geonames-devel >= 22.3.16
+BuildRequires: smartmet-engine-geonames-devel >= 22.3.21
 BuildRequires: smartmet-engine-querydata-devel >= 22.3.18
 BuildRequires: smartmet-engine-contour-devel >= 22.3.11
 BuildRequires: smartmet-library-gis-devel >= 22.1.24
@@ -70,7 +70,7 @@ Requires: smartmet-engine-querydata >= 22.3.18
 Requires: smartmet-engine-contour >= 22.3.11
 Requires: smartmet-engine-gis >= 22.2.10
 Requires: smartmet-engine-grid >= 22.3.21
-Requires: smartmet-engine-geonames >= 22.3.16
+Requires: smartmet-engine-geonames >= 22.3.21
 Requires: smartmet-server >= 21.11.25
 Requires: smartmet-library-spine >= 22.3.18
 Requires: boost169-date-time
@@ -90,7 +90,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: ImageMagick
 #TestRequires: bc
 #TestRequires: smartmet-engine-contour-devel >= 22.3.11
-#TestRequires: smartmet-engine-geonames-devel >= 22.3.16
+#TestRequires: smartmet-engine-geonames-devel >= 22.3.21
 #TestRequires: smartmet-engine-gis-devel >= 22.2.10
 #TestRequires: smartmet-engine-querydata-devel >= 22.3.18
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Mar 21 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.3.21-3.fmi
+- Disable stack traces for trivial user errors such as missing obligatory query parameters
+
 * Mon Mar 21 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.3.21-2.fmi
 - Possible to have custom legends for alternative styles (BRAINSTORM-2275)
 - Fix default language bug of legends, config file->product file->url parameter (BRAINSTORM-2266)
