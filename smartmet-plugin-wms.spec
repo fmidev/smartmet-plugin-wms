@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.3.21
-Release: 3%{?dist}.fmi
+Version: 22.3.24
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Mar 24 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.3.24-1.fmi
+- Fix broken WMSConfig::shutdown()
+
 * Mon Mar 21 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.3.21-3.fmi
 - Disable stack traces for trivial user errors such as missing obligatory query parameters
 
