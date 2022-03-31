@@ -5,7 +5,7 @@ jobs:
       - image: fmidev/smartmet-cibase-7:latest
     resource_class: xlarge
     environment:
-      RPM_BUILD_NCPUS: 6
+      RPM_BUILD_NCPUS: 8
     steps:
       - checkout
       - run:
@@ -22,7 +22,7 @@ jobs:
       - image: fmidev/smartmet-cibase-7:latest
     resource_class: xlarge
     environment:
-      RPM_BUILD_NCPUS: 6
+      RPM_BUILD_NCPUS: 8
     steps:
       - checkout
       - attach_workspace:
@@ -44,7 +44,7 @@ jobs:
       - image: fmidev/smartmet-cibase-7:latest
     resource_class: xlarge
     environment:
-      RPM_BUILD_NCPUS: 6
+      RPM_BUILD_NCPUS: 8
     steps:
       - attach_workspace:
           at: /dist
@@ -65,7 +65,7 @@ jobs:
       - image: fmidev/smartmet-cibase-8:latest
     resource_class: xlarge
     environment:
-      RPM_BUILD_NCPUS: 6
+      RPM_BUILD_NCPUS: 8
     steps:
       - checkout
       - run:
