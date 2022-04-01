@@ -23,6 +23,7 @@
 #include <engines/querydata/Engine.h>
 #include <spine/JsonCache.h>
 #include <spine/Thread.h>
+#include <macgyver/AsyncTask.h>
 #include <libconfig.h++>
 #include <map>
 #include <set>
@@ -65,6 +66,8 @@ class WMSConfig
 #endif
             Engine::Gis::Engine* gisEngine,
             Engine::Grid::Engine* gridEngine);
+
+  virtual ~WMSConfig();
 
 #ifndef WITHOUT_AUTHENTICATION
   CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
@@ -202,7 +205,7 @@ class WMSConfig
   using LayerMap = std::map<std::string, WMSLayerProxy>;
   boost::atomic_shared_ptr<LayerMap> itsLayers;
 
-  boost::movelib::unique_ptr<boost::thread> itsGetCapabilitiesThread;
+  std::unique_ptr<Fmi::AsyncTask> itsGetCapabilitiesTask;
 
   void capabilitiesUpdateLoop();
   void updateLayerMetaData();
@@ -217,10 +220,6 @@ class WMSConfig
   friend class WMSLayerFactory;
 
   // Shutdown variables
-
-  boost::atomic<int> itsActiveThreadCount;
-  boost::mutex itsShutdownMutex;
-  boost::condition_variable itsShutdownCondition;
 
   std::map<std::string, Json::Value> itsLegendGraphicLayers;
   // configuration info for legend (parameter names, units, legend size)

@@ -632,7 +632,6 @@ WMSConfig::WMSConfig(const Config& daliConfig,
 #ifndef WITHOUT_OBSERVATION
       itsObsEngine(obsEngine),
 #endif
-      itsActiveThreadCount(0),
       itsLegendGraphicSettings(daliConfig.getConfig())
 {
   try
@@ -710,6 +709,16 @@ WMSConfig::WMSConfig(const Config& daliConfig,
   }
 }
 
+WMSConfig::~WMSConfig()
+{
+  if (itsGetCapabilitiesTask)
+  {
+    std::cout << "ERROR [WMS][WMSConfig]: Missing call to WMSConfig::shutdown(). Terminating..."
+              << std::endl;
+    abort();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Heavy initializations are done outside the constructor
@@ -734,8 +743,14 @@ void WMSConfig::init()
 
   if (!itsCapabilityUpdatesDisabled)
   {
-    itsGetCapabilitiesThread = boost::movelib::make_unique<boost::thread>(
-        boost::bind(&WMSConfig::capabilitiesUpdateLoop, this));
+    itsGetCapabilitiesTask.reset(
+      new Fmi::AsyncTask(
+        "WMSConfig: capabilities update task",
+        [this]()
+        {
+          capabilitiesUpdateLoop();
+        })
+    );
   }
 }
 
@@ -749,13 +764,12 @@ void WMSConfig::shutdown()
 {
   try
   {
-    if (Spine::Reactor::isShuttingDown())
-      return;
-
-    itsShutdownCondition.notify_all();
-
-    while (itsActiveThreadCount > 0)
-      boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+    if (itsGetCapabilitiesTask)
+    {
+      itsGetCapabilitiesTask->cancel();
+      itsGetCapabilitiesTask->wait();
+      itsGetCapabilitiesTask.reset();
+    }
   }
   catch (...)
   {
@@ -767,39 +781,16 @@ void WMSConfig::capabilitiesUpdateLoop()
 {
   try
   {
-    ++itsActiveThreadCount;
-    while (!Spine::Reactor::isShuttingDown())
-    {
-      try
-      {
-        // update capabilities every N seconds
-        boost::system_time timeout =
-            boost::get_system_time() + boost::posix_time::seconds(itsCapabilityUpdateInterval);
-
-        boost::unique_lock<boost::mutex> lock(itsShutdownMutex);
-        while (!Spine::Reactor::isShuttingDown())
-        {
-          if (!itsShutdownCondition.timed_wait(lock, timeout))
-            break;  // timeout
-        }
-
-        if (!Spine::Reactor::isShuttingDown())
-        {
-          updateLayerMetaData();
-          updateModificationTime();
-        }
-      }
-      catch (...)
-      {
-        Fmi::Exception exception(BCP, "Could not update capabilities!", nullptr);
-        exception.printError();
-      }
-    }
-    --itsActiveThreadCount;
+    // update capabilities every N seconds
+    // FIXME: do we need to put interruption points into methods called below?
+    boost::this_thread::sleep_for(boost::chrono::seconds(itsCapabilityUpdateInterval));
+    updateLayerMetaData();
+    updateModificationTime();
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Capabilities update failed!");
+    Fmi::Exception exception(BCP, "Could not update capabilities!", nullptr);
+    exception.printError();
   }
 }
 

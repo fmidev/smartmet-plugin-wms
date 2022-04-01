@@ -259,49 +259,57 @@ void check_getmap_request_options(const Spine::HTTP::Request& theHTTPRequest)
     if (!theHTTPRequest.getParameter("VERSION"))
     {
       throw Fmi::Exception(BCP, "Version not defined")
-          .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+          .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE)
+          .disableStackTrace();
     }
 
     if (!theHTTPRequest.getParameter("LAYERS"))
     {
       throw Fmi::Exception(BCP, "At least one layer must be defined in GetMap request")
-          .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
+          .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED)
+          .disableStackTrace();
     }
 
     if (!theHTTPRequest.getParameter("STYLES"))
     {
       throw Fmi::Exception(BCP, "STYLES-option must be defined, even if it is empty")
-          .addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED);
+          .addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED)
+          .disableStackTrace();
     }
 
     if (!theHTTPRequest.getParameter("CRS"))
     {
       throw Fmi::Exception(BCP, "CRS-option has not been defined")
-          .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+          .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE)
+          .disableStackTrace();
     }
 
     if (!theHTTPRequest.getParameter("BBOX"))
     {
       throw Fmi::Exception(BCP, "BBOX-option has not been defined")
-          .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
+          .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE)
+          .disableStackTrace();
     }
 
     if (!theHTTPRequest.getParameter("WIDTH"))
     {
       throw Fmi::Exception(BCP, "WIDTH-option has not been defined")
-          .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
+          .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE)
+          .disableStackTrace();
     }
 
     if (!theHTTPRequest.getParameter("HEIGHT"))
     {
       throw Fmi::Exception(BCP, "HEIGHT-option has not been defined")
-          .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE);
+          .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE)
+          .disableStackTrace();
     }
 
     if (!theHTTPRequest.getParameter("FORMAT"))
     {
       throw Fmi::Exception(BCP, "FORMAT-option has not been defined")
-          .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+          .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE)
+          .disableStackTrace();
     }
   }
   catch (...)
