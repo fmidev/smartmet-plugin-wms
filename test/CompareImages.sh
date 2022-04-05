@@ -10,12 +10,12 @@ NAME=$(basename $(basename $1 .get) .post)
 # Validate the arguments
 
 if [[ ! -e "$RESULT" ]]; then
-    echo -e "FAIL\t\t'$RESULT' is missing"
+    echo -n -e "FAIL\t\t'$RESULT' is missing"
     exit 1
 fi
 
 if [[ ! -s "$RESULT" ]]; then
-    echo -e "FAIL\t\t'$RESULT' is empty"
+    echo -n -e "FAIL\t\t'$RESULT' is empty"
     exit 1
 fi
 
@@ -42,7 +42,7 @@ fi
 # Check expected output exists after result image has been created
 
 if [[ ! -e "$EXPECTED" ]]; then
-    echo -e "FAIL\t\t'$EXPECTED' is missing"
+    echo -n -e "FAIL\t\t'$EXPECTED' is missing"
     exit 1
 fi
 
@@ -50,7 +50,7 @@ fi
 
 cmp --quiet $RESULT $EXPECTED
 if [[ $? -eq 0 ]]; then
-    echo "OK"
+    echo -n "OK"
     rm -f $RESULT $RESULT_PNG
     exit 0
 fi
@@ -58,8 +58,8 @@ fi
 # Handle XML failures
 
 if [[ "$MIME" == "application/xml" || "$MIME" == "text/xml" ]]; then
-    echo "FAIL: XML output differs: $RESULT <> $EXPECTED"
-    echo "diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80"
+    echo -n "FAIL: XML output differs: $RESULT <> $EXPECTED"
+    echo -n "diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80"
     diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80
     exit 1
 fi
@@ -67,8 +67,8 @@ fi
 # Handle text/plain failures
 
 if [[ "$MIME" == "text/plain" ]]; then
-    echo "FAIL: text output differs: $RESULT <> $EXPECTED"
-    echo "diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80"
+    echo -n "FAIL: text output differs: $RESULT <> $EXPECTED"
+    echo -n "diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80"
     diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80
     exit 1
 fi
@@ -85,33 +85,33 @@ elif [[ "$MIME" == "application/pdf" ]]; then
 elif [[ "$MIME" == "image/png" ]]; then
     cp $EXPECTED $EXPECTED_PNG
 else
-    echo "FAIL: Unknown mime type '$MIME'"
+    echo -n "FAIL: Unknown mime type '$MIME'"
     exit 1
 fi
 
 # Compare the images
 
-DBZ=$((compare 2>&1 -metric PSNR $EXPECTED_PNG $RESULT_PNG /dev/null | head -1 | sed "-es/ dB//") || echo PNG COMPARISON FAILED && exit 1)
+DBZ=$((compare 2>&1 -metric PSNR $EXPECTED_PNG $RESULT_PNG /dev/null | head -1 | sed "-es/ dB//") || echo -n PNG COMPARISON FAILED && exit 1)
 
-if ! echo "$DBZ" | grep -Eq '^(inf|[\+\-]?[0-9][0-9]*(\.[0-9]*)?)$' ; then
-    echo -e "FAIL\t\t$DBZ"
+if ! echo -n "$DBZ" | grep -Eq '^(inf|[\+\-]?[0-9][0-9]*(\.[0-9]*)?)$' ; then
+    echo -n -e "FAIL\t\t$DBZ"
     exit 1
 elif [ "$DBZ" = inf ]; then
-    echo -e "OK\t\tPSNR = inf"
+    echo -n -e "OK\t\tPSNR = inf"
     rm -f $RESULT_PNG $EXPECTED_PNG
     exit 0
-elif [ $(echo "$DBZ >= 50" | bc) = 1 ]; then
-    echo -e "OK\t\tPNSR = $DBZ dB"
+elif [ $(echo -n "$DBZ >= 50" | bc) = 1 ]; then
+    echo -n -e "OK\t\tPNSR = $DBZ dB"
     composite $EXPECTED_PNG $RESULT_PNG -compose DIFFERENCE png:- | \
 	convert -quiet - -contrast-stretch 0 $DIFFERENCE_PNG
     exit 0
-elif [ $(echo "$DBZ >= 20" | bc) = 1 ]; then
-    echo -e "WARNING\t\tPNSR = $DBZ dB (< 50 dB)"
+elif [ $(echo -n "$DBZ >= 20" | bc) = 1 ]; then
+    echo -n -e "WARNING\t\tPNSR = $DBZ dB (< 50 dB)"
     composite $EXPECTED_PNG $RESULT_PNG -compose DIFFERENCE png:- | \
 	convert -quiet - -contrast-stretch 0 $DIFFERENCE_PNG
     exit 0
 else
-    echo -e "FAIL\t\tPNSR = $DBZ (< 20 dB)"
+    echo -n -e "FAIL\t\tPNSR = $DBZ (< 20 dB)"
     composite $EXPECTED_PNG $RESULT_PNG -compose DIFFERENCE png:- | \
 	convert -quiet - -contrast-stretch 0 $DIFFERENCE_PNG
     exit 1
