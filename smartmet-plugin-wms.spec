@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 22.4.5
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -135,6 +135,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Apr 5 2022 Anssi Repone <anssi.reponen@fmi.fi> - 22.4.5-2.fmi
+- Fixed capabilitiesUpdateLoop-function bug (BRAINSTORM-2296)
+
 * Tue Apr  5 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.4.5-1.fmi
 - Repackaged
 

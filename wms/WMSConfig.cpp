@@ -781,11 +781,22 @@ void WMSConfig::capabilitiesUpdateLoop()
 {
   try
   {
-    // update capabilities every N seconds
-    // FIXME: do we need to put interruption points into methods called below?
-    boost::this_thread::sleep_for(boost::chrono::seconds(itsCapabilityUpdateInterval));
-    updateLayerMetaData();
-    updateModificationTime();
+    while (!Spine::Reactor::isShuttingDown())
+    {
+      try
+      {
+		  // update capabilities every N seconds
+		  // FIXME: do we need to put interruption points into methods called below?
+		  boost::this_thread::sleep_for(boost::chrono::seconds(itsCapabilityUpdateInterval));
+		  updateLayerMetaData();
+		  updateModificationTime();
+      }
+      catch (...)
+      {
+        Fmi::Exception exception(BCP, "Could not update capabilities!", nullptr);
+        exception.printError();
+      }
+    }
   }
   catch (...)
   {
