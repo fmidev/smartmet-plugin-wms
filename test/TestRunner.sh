@@ -122,6 +122,7 @@ for f in input/*.get; do
     if [[ $ignore -eq 1 ]]; then
 	echo "ON IGNORE LIST"
     else
+	start_time=$(date +%s.%3N)
 	echo "$request_name" >&3
 	extralines=""
 	while true; do
@@ -137,13 +138,16 @@ for f in input/*.get; do
 		fi
 	    fi
 	done
+	end_time=$(date +%s.%3N)
+	elapsed=$(echo "scale=3; $end_time - $start_time" | bc)
 	
 	ntests=$((ntests+1))
 	if [[ -z  "$result" ]]; then
 	    nfailures=$((nfailures+1))
-	    echo "FAIL - NO OUTPUT"
+	    echo -e "FAIL - NO OUTPUT\t$elapsed sec"
 	else
 	    ./CompareImages.sh $result $expected
+	    echo -e "\t$elapsed sec"
 	    if [[ $? -ne 0 ]]; then
 		nfailures=$((nfailures+1))
 	    fi
