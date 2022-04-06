@@ -1522,7 +1522,12 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
         auto styleOpt = theRequest.getParameter("STYLE");
         std::string styleName = (styleOpt && !styleOpt->empty() ? *styleOpt : "default");
 
+		// Default language from configuration file
         std::string language = itsConfig.defaultLanguage();
+		// Language overwritten from product file
+		if(product.language)
+		  language = *product.language;
+		// Finally language overwritten from URL-parameter
         auto languageParam = theRequest.getParameter("LANGUAGE");
         if (languageParam)
           language = *languageParam;

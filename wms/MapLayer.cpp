@@ -14,7 +14,7 @@
 #include <gis/OGR.h>
 #include <gis/Types.h>
 #include <macgyver/Exception.h>
-#include <spine/ParameterFactory.h>
+#include <timeseries/ParameterFactory.h>
 
 namespace SmartMet
 {
@@ -263,7 +263,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     if (styles->parameter.empty())
       throw Fmi::Exception(BCP, "MapLayer styling parameter not set");
-    auto param = Spine::ParameterFactory::instance().parse(styles->parameter);
+    auto param = TS::ParameterFactory::instance().parse(styles->parameter);
 
     if (!q->param(param.number()))
       throw Fmi::Exception(BCP, "MapLayer parameter not available in querydata")

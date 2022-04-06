@@ -632,7 +632,6 @@ WMSConfig::WMSConfig(const Config& daliConfig,
 #ifndef WITHOUT_OBSERVATION
       itsObsEngine(obsEngine),
 #endif
-      itsActiveThreadCount(0),
       itsLegendGraphicSettings(daliConfig.getConfig())
 {
   try
@@ -710,6 +709,16 @@ WMSConfig::WMSConfig(const Config& daliConfig,
   }
 }
 
+WMSConfig::~WMSConfig()
+{
+  if (itsGetCapabilitiesTask)
+  {
+    std::cout << "ERROR [WMS][WMSConfig]: Missing call to WMSConfig::shutdown(). Terminating..."
+              << std::endl;
+    abort();
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Heavy initializations are done outside the constructor
@@ -734,8 +743,14 @@ void WMSConfig::init()
 
   if (!itsCapabilityUpdatesDisabled)
   {
-    itsGetCapabilitiesThread = boost::movelib::make_unique<boost::thread>(
-        boost::bind(&WMSConfig::capabilitiesUpdateLoop, this));
+    itsGetCapabilitiesTask.reset(
+      new Fmi::AsyncTask(
+        "WMSConfig: capabilities update task",
+        [this]()
+        {
+          capabilitiesUpdateLoop();
+        })
+    );
   }
 }
 
@@ -749,13 +764,12 @@ void WMSConfig::shutdown()
 {
   try
   {
-    if (Spine::Reactor::isShuttingDown())
-      return;
-
-    itsShutdownCondition.notify_all();
-
-    while (itsActiveThreadCount > 0)
-      boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+    if (itsGetCapabilitiesTask)
+    {
+      itsGetCapabilitiesTask->cancel();
+      itsGetCapabilitiesTask->wait();
+      itsGetCapabilitiesTask.reset();
+    }
   }
   catch (...)
   {
@@ -767,27 +781,15 @@ void WMSConfig::capabilitiesUpdateLoop()
 {
   try
   {
-    ++itsActiveThreadCount;
     while (!Spine::Reactor::isShuttingDown())
     {
       try
       {
-        // update capabilities every N seconds
-        boost::system_time timeout =
-            boost::get_system_time() + boost::posix_time::seconds(itsCapabilityUpdateInterval);
-
-        boost::unique_lock<boost::mutex> lock(itsShutdownMutex);
-        while (!Spine::Reactor::isShuttingDown())
-        {
-          if (!itsShutdownCondition.timed_wait(lock, timeout))
-            break;  // timeout
-        }
-
-        if (!Spine::Reactor::isShuttingDown())
-        {
-          updateLayerMetaData();
-          updateModificationTime();
-        }
+		  // update capabilities every N seconds
+		  // FIXME: do we need to put interruption points into methods called below?
+		  boost::this_thread::sleep_for(boost::chrono::seconds(itsCapabilityUpdateInterval));
+		  updateLayerMetaData();
+		  updateModificationTime();
       }
       catch (...)
       {
@@ -795,11 +797,11 @@ void WMSConfig::capabilitiesUpdateLoop()
         exception.printError();
       }
     }
-    --itsActiveThreadCount;
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Capabilities update failed!");
+    Fmi::Exception exception(BCP, "Could not update capabilities!", nullptr);
+    exception.printError();
   }
 }
 
@@ -854,7 +856,7 @@ void WMSConfig::updateLayerMetaData()
     const bool use_wms = true;
     std::string customerdir(itsDaliConfig.rootDirectory(use_wms) + "/customers");
 
-    std::map<SharedWMSLayer, std::string> layersWithExternalLagendFile;
+    std::map<SharedWMSLayer, std::map<std::string, std::string>> layersWithExternalLegendFile;
     boost::filesystem::directory_iterator end_itr;
     for (boost::filesystem::directory_iterator itr(customerdir); itr != end_itr; ++itr)
     {
@@ -945,8 +947,8 @@ void WMSConfig::updateLayerMetaData()
                           pathName, theNamespace, customername, *this));
                       itsCapabilitiesModificationTime =
                           std::max(*itsCapabilitiesModificationTime, wmsLayer->modificationTime());
-                      if (!wmsLayer->getLegendFile().empty())
-                        layersWithExternalLagendFile[wmsLayer] = wmsLayer->getLegendFile();
+                      if (!wmsLayer->getLegendFiles().empty())
+                        layersWithExternalLegendFile[wmsLayer] = wmsLayer->getLegendFiles();
                       WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
                       newProxies->insert(make_pair(fullLayername, newProxy));
                     }
@@ -997,14 +999,18 @@ void WMSConfig::updateLayerMetaData()
     }
 
     // It external legend file is used set legend dimension here
-    for (auto& externalLegendItem : layersWithExternalLagendFile)
+    for (auto& externalLegendItem : layersWithExternalLegendFile)
     {
+	  const auto& externalLegendItems = externalLegendItem.second;
       for (auto& proxyItem : *newProxies)
       {
-        if (proxyItem.second.getLayer()->getName() == externalLegendItem.second)
-        {
-          externalLegendItem.first->setLegendDimension(*proxyItem.second.getLayer());
-        }
+		for (auto& legendStyleItem : externalLegendItems)
+		  {
+			if (proxyItem.second.getLayer()->getName() == legendStyleItem.second)
+			  {
+				externalLegendItem.first->setLegendDimension(*proxyItem.second.getLayer(), legendStyleItem.first);
+			  }
+		  }
       }
     }
 

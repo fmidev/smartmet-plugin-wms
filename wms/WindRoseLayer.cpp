@@ -23,7 +23,7 @@
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
 #include <spine/Json.h>
-#include <spine/ParameterTools.h>
+#include <timeseries/ParameterTools.h>
 #include <timeseries/TimeSeriesInclude.h>
 #include <algorithm>
 #include <ogr_spatialref.h>
@@ -707,11 +707,11 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
 	settings.localTimePool = theState.getLocalTimePool();
 
     auto& observation = theState.getObsEngine();
-    settings.parameters.push_back(Spine::makeParameter("WindDirection"));
-    settings.parameters.push_back(Spine::makeParameter("WindSpeedMS"));
-    settings.parameters.push_back(Spine::makeParameter("t2m"));
-    settings.parameters.push_back(Spine::makeParameter("stationlongitude"));
-    settings.parameters.push_back(Spine::makeParameter("stationlatitude"));
+    settings.parameters.push_back(TS::makeParameter("WindDirection"));
+    settings.parameters.push_back(TS::makeParameter("WindSpeedMS"));
+    settings.parameters.push_back(TS::makeParameter("t2m"));
+    settings.parameters.push_back(TS::makeParameter("stationlongitude"));
+    settings.parameters.push_back(TS::makeParameter("stationlatitude"));
 
     // settings.debug_options = Engine::Observation::Settings::DUMP_SETTINGS;
 

@@ -69,7 +69,7 @@ std::vector<T> prioritize_t(const std::vector<T>& pv, const PointValueOptions& o
 			std::sort(points.begin(), points.end(), min_sort);
 		  else if(*opts.priority == "extrema")
 			{
-			  double sum;
+			  double sum = 0;
 			  for(const auto &item : points)
 				sum += item.priorityValue();
 			  double mean = (sum / points.size());

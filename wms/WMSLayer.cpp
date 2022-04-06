@@ -46,7 +46,7 @@ std::string get_legend_title_string(const LegendGraphicParameter& parameterSetti
 
   // 2) Return translation if exists
   if (parameterSettings.translations.find(language) != parameterSettings.translations.end())
-    return parameterSettings.translations.at(language);
+	return parameterSettings.translations.at(language);
 
   // 3) Return name given in parameter settings (wms - or product configuration file)
   if (!parameterSettings.given_name.empty())
@@ -895,7 +895,7 @@ std::string get_online_resource_string(const std::string& styleName, const std::
 
 std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
                                                 const std::string& layerName,
-                                                std::string& legendFile)
+                                                std::map<std::string, std::string>& legendFiles)
 {
   std::map<std::string, WMSLayerStyle> ret;
   Json::Value nulljson;
@@ -907,7 +907,7 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
     WMSLayerStyle layerStyle;
     std::string layerName = json.asString();
     layerStyle.legend_url.online_resource = get_online_resource_string(layerStyle.name, layerName);
-    legendFile = layerName;
+    legendFiles.insert(make_pair(layerStyle.name, layerName));
     ret.insert(std::make_pair(layerStyle.name, layerStyle));
   }
 
@@ -928,13 +928,13 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
         const Json::Value& style_json = json[i];
         auto json_value = style_json.get("name", nulljson);
         if (!json_value.isNull())
-          layerStyle.name = json_value.asString();
+		  layerStyle.name = json_value.asString();
         json_value = style_json.get("title", nulljson);
         if (!json_value.isNull())
           layerStyle.title = json_value.asString();
         json_value = style_json.get("abstract", nulljson);
         if (!json_value.isNull())
-          layerStyle.abstract = json_value.asString();
+		  layerStyle.abstract = json_value.asString();
 
         auto legend_url_json = style_json.get("legend_url", nulljson);
         if (!legend_url_json.isNull())
@@ -946,14 +946,23 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
           if (!json_value.isNull())
             layerStyle.legend_url.online_resource = json_value.asString();
           ret.insert(std::make_pair(layerStyle.name, layerStyle));
-          //            ret.push_back(layerStyle);
         }
         else
         {
-          layerStyle.legend_url.online_resource =
-              get_online_resource_string(layerStyle.name, layerName);
-          ret.insert(std::make_pair(layerStyle.name, layerStyle));
-
+		  auto legend_url_layer_json = style_json.get("legend_url_layer", nulljson);
+		  if (!legend_url_layer_json.isNull())
+			{
+			  std::string legendLayerName = legend_url_layer_json.asString();
+			  layerStyle.legend_url.online_resource = get_online_resource_string("default", legendLayerName);
+			  legendFiles.insert(make_pair(layerStyle.name, legendLayerName));
+			  ret.insert(std::make_pair(layerStyle.name, layerStyle));
+			}
+		  else
+			{
+			  layerStyle.legend_url.online_resource =
+				get_online_resource_string(layerStyle.name, layerName);
+			  ret.insert(std::make_pair(layerStyle.name, layerStyle));
+			}
           CaseInsensitiveComparator cicomp;
           if (cicomp(layerStyle.name, "default"))
             addDefaultStyle = false;
@@ -1085,12 +1094,12 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
 	}
 
   // Get layer styles
-  itsStyles = get_styles(root, name, itsLegendFile);
+  itsStyles = get_styles(root, name, itsLegendFiles);
 
   // If external legend file used, no need to continue
   // width, height is set later
-  if (!itsLegendFile.empty())
-    return;
+  if (itsLegendFiles.find("default") != itsLegendFiles.end())
+	return;
 
   NamedLegendGraphicInfo named_lgi;
 
@@ -1098,6 +1107,12 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
   for (const auto& item : itsStyles)
   {
     std::string styleName = item.first;
+
+	// If external legend file used, no need to continue
+	// width, height is set later
+	if (itsLegendFiles.find(styleName) != itsLegendFiles.end())
+	  continue;
+
     std::string legendGraphicInfoName = name + "::" + styleName;
 
     if (named_lgi.find(legendGraphicInfoName) == named_lgi.end())
@@ -1105,7 +1120,6 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
 
     // Read layer file and gather info needed for legends
     LegendGraphicInfo& legendGraphicInfo = named_lgi[legendGraphicInfoName];
-
     // Set right style add getCapabilities Style info
     Json::Value modifiedLayer = root;
     useStyle(modifiedLayer, styleName);
@@ -2326,10 +2340,12 @@ bool WMSLayer::identicalElevationDimension(const WMSLayer& layer) const
 }
 
 // When external legend file used this is called to set dimension
-void WMSLayer::setLegendDimension(const WMSLayer& legendLayer)
-{
+void WMSLayer::setLegendDimension(const WMSLayer& legendLayer, const std::string& styleLayerName)
+{ 
   for (auto& style : itsStyles)
   {
+	if(styleLayerName != style.first)
+	  continue;
     if (legendLayer.getWidth() && legendLayer.getHeight())
     {
       style.second.legend_url.online_resource +=
