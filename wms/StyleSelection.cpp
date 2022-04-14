@@ -43,8 +43,8 @@ void addOrReplace(Json::Value& viewLayerJson,
   }
 }
 
-void handleStyles(std::map<std::string, Json::Value*> viewLayers,
-                  std::map<std::string, const Json::Value*> styleLayers)
+void handleStyles(std::map<std::string, Json::Value*>& viewLayers,
+                  std::map<std::string, const Json::Value*>& styleLayers)
 {
   Json::Value nulljson;
 
@@ -106,19 +106,37 @@ void useStyle(Json::Value& root, const Json::Value& styles)
 {
   Json::Value nulljson;
 
+  static std::string STARTING_TAGS_KEY =  "_TAGS_BEFORE_ANY_LAYER_";
   std::map<std::string, const Json::Value*> styleL;
+  std::map<std::string, std::vector<const Json::Value*>> styleLTags;
   std::map<std::string, Json::Value*> viewL;
 
   if (!styles.isMember("layers"))
     return;
   const auto& styleLayers = styles.get("layers", nulljson);
+  std::string previous_key = STARTING_TAGS_KEY;
   if (!styleLayers.isNull() && styleLayers.isArray())
   {
     for (const auto& styleLayer : styles["layers"])
     {
       std::string key = getKey(styleLayer);
       if (key.empty())
-        continue;
+		{
+		  auto tag = styleLayer.get("tag", nulljson);
+		  if (!tag.isNull())
+			{
+			  if(styleLTags.find(previous_key) != styleLTags.end())
+				styleLTags.at(previous_key).push_back(&styleLayer);
+			  else
+				{
+				  std::vector<const Json::Value*> layer_vector;
+				  layer_vector.push_back(&styleLayer);
+				  styleLTags.insert(std::make_pair(previous_key, layer_vector));
+				}
+			}
+		  continue;
+		}
+	  previous_key = key;
 
       styleL.insert(std::make_pair(key, &styleLayer));
     }
@@ -137,7 +155,47 @@ void useStyle(Json::Value& root, const Json::Value& styles)
     }
   }
 
+  // Data-layers (supportedStyleLayers) are handled here 
   handleStyles(viewL, styleL);
+
+  if(styleLTags.empty())
+	return;
+ 
+  // Tag-layers area handled here 
+  for (auto& viewJson : views)
+  {
+    auto viewLayers = viewJson.get("layers", nulljson);
+    if (!viewLayers.isNull() && viewLayers.isArray())
+    {
+	  auto& refViewLayers = viewJson["layers"];
+	  refViewLayers.clear();
+
+	  // Add in the beginning
+	  if(styleLTags.find(STARTING_TAGS_KEY) != styleLTags.end())
+		{
+			  const auto& tag_layers = styleLTags.at(STARTING_TAGS_KEY);
+			  for(const auto& tag_layer : tag_layers)
+				refViewLayers.append(*tag_layer);				
+			  styleLTags.erase(STARTING_TAGS_KEY);
+		}
+
+      for (const auto& viewLayer : viewLayers)
+		{
+		  auto qid_json = viewLayer.get("qid", nulljson);
+		  std::string key = qid_json.asString();
+		  refViewLayers.append(viewLayer);
+
+		  // Tag layer(s) is inserted in the same place where it was in the styles-section
+		  if(styleLTags.find(key) != styleLTags.end())
+			{
+			  const auto& tag_layers = styleLTags.at(key);
+			  for(const auto& tag_layer : tag_layers)
+				refViewLayers.append(*tag_layer);				
+			}
+		}
+    }
+  }
+
 }
 
 void useStyle(Json::Value& root, const std::string& styleName)
