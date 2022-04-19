@@ -100,12 +100,12 @@ elif [ "$DBZ" = inf ]; then
     echo -n -e "OK\t\tPSNR = inf"
     rm -f $RESULT_PNG $EXPECTED_PNG
     exit 0
-elif [ $(echo -n "$DBZ >= 50" | bc) = 1 ]; then
+elif [ $(echo "$DBZ >= 50" | bc) = 1 ]; then
     echo -n -e "OK\t\tPNSR = $DBZ dB"
     composite $EXPECTED_PNG $RESULT_PNG -compose DIFFERENCE png:- | \
 	convert -quiet - -contrast-stretch 0 $DIFFERENCE_PNG
     exit 0
-elif [ $(echo -n "$DBZ >= 20" | bc) = 1 ]; then
+elif [ $(echo "$DBZ >= 20" | bc) = 1 ]; then
     echo -n -e "WARNING\t\tPNSR = $DBZ dB (< 50 dB)"
     composite $EXPECTED_PNG $RESULT_PNG -compose DIFFERENCE png:- | \
 	convert -quiet - -contrast-stretch 0 $DIFFERENCE_PNG
