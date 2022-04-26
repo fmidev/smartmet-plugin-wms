@@ -6,7 +6,6 @@
 #include "Projection.h"
 #include "State.h"
 #include <engines/contour/Engine.h>
-#include <engines/contour/Interpolation.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>

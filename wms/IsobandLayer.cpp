@@ -1,4 +1,3 @@
-
 //======================================================================
 
 #include "IsobandLayer.h"
@@ -13,7 +12,6 @@
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
-#include <engines/contour/Interpolation.h>
 #include <engines/gis/Engine.h>
 #include <engines/grid/Engine.h>
 #include <engines/observation/Engine.h>
