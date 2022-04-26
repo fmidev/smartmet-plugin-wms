@@ -999,7 +999,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
 
     std::vector<OGRGeometryPtr> geoms =
-        contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
+        contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
 
     // Update the globals
 

@@ -681,7 +681,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
 
-  auto geoms = contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
+  auto geoms = contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
 
   return geoms;
 }

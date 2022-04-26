@@ -97,8 +97,8 @@ if ! echo -n "$DBZ" | grep -Eq '^(inf|[\+\-]?[0-9][0-9]*(\.[0-9]*)?)$' ; then
     echo -n -e "FAIL\t\t$DBZ"
     exit 1
 elif [ "$DBZ" = inf ]; then
-    echo -n -e "OK\t\tPSNR = inf"
-    rm -f $RESULT_PNG $EXPECTED_PNG
+    echo -n -e "OK ~"
+    rm -f $RESULT $RESULT_PNG $EXPECTED_PNG
     exit 0
 elif [ $(echo "$DBZ >= 50" | bc) = 1 ]; then
     echo -n -e "OK\t\tPNSR = $DBZ dB"
