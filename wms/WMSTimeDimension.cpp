@@ -377,7 +377,7 @@ std::string IntervalTimeDimension::makeCapabilitiesTimesteps(
 WMSTimeDimensions::WMSTimeDimensions(
     const std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>>& tdims)
 {
-  for (const auto td : tdims)
+  for (const auto& td : tdims)
     addTimeDimension(td.first, td.second);
 }
 
