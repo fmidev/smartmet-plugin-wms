@@ -41,6 +41,8 @@
 #include <macgyver/AnsiEscapeCodes.h>
 #include <stdexcept>
 
+using namespace boost::placeholders;
+
 namespace
 {
 Json::CharReaderBuilder charreaderbuilder;
