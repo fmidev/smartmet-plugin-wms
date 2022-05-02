@@ -76,7 +76,7 @@ fi
 # Create the expected PNGs for comparisons.
 # Note: sometimes 'file' reports text/x-asm instead of html due to dots in css class names
 
-if [[ "$MIME" == "text/html" || "$MIME" == "text/x-asm" || "$MIME" == "image/svg" ]]; then
+if [[ "$MIME" == "text/html" || "$MIME" == "text/x-asm" || "$MIME" == "image/svg" || "$MIME" == "image/svg+xml" ]]; then
     rsvg-convert -u -b white -f png -o $EXPECTED_PNG $EXPECTED
     rsvg-convert -u -b white -f png -o $RESULT_PNG $RESULT
 
