@@ -146,11 +146,8 @@ for f in input/*.get; do
 	    nfailures=$((nfailures+1))
 	    echo -e "FAIL - NO OUTPUT\t$elapsed sec"
 	else
-	    ./CompareImages.sh $result $expected
+	    ./CompareImages.sh $result $expected || nfailures=$((nfailures+1))
 	    echo -e "\t$elapsed sec"
-	    if [[ $? -ne 0 ]]; then
-		nfailures=$((nfailures+1))
-	    fi
 	fi
 
 	# Print extra messages collected during the test after the actual comparison
