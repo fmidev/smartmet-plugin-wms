@@ -35,7 +35,8 @@ TEST_PREPARE_TARGETS := \
 	cnf/authentication.conf \
 	cnf/geonames.conf \
 	cnf/gis.conf \
-	cnf/observation.conf
+	cnf/observation.conf \
+	start-redis-db
 
 TEST_FINISH_TARGETS := stop-redis-db
 
