@@ -55,7 +55,7 @@ void IsolineLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       parameter = json.asString();
 
-	json = theJson.get("isolines", nulljson);
+    json = theJson.get("isolines", nulljson);
 
     if (!json.isNull())
     {
@@ -681,7 +681,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
 
-  auto geoms = contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
+  auto geoms = contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
 
   return geoms;
 }
@@ -737,6 +737,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
       OGRGeometryPtr geom = geoms[i];
+
       if (geom && geom->IsEmpty() == 0)
       {
         const Isoline& isoline = isolines[i];

@@ -12,7 +12,6 @@
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
-#include <engines/contour/Interpolation.h>
 #include <engines/gis/Engine.h>
 #include <engines/grid/Engine.h>
 #include <engines/observation/Engine.h>
@@ -33,6 +32,7 @@
 #include <spine/Parameter.h>
 #include <timeseries/ParameterFactory.h>
 #include <timeseries/ParameterTools.h>
+#include <trax/InterpolationType.h>
 #include <limits>
 
 #ifndef WGS84
@@ -966,13 +966,13 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     options.extrapolation = extrapolation;
 
     if (interpolation == "linear")
-      options.interpolation = Engine::Contour::Linear;
+      options.interpolation = Trax::InterpolationType::Linear;
     else if (interpolation == "nearest")
-      options.interpolation = Engine::Contour::Nearest;
+      options.interpolation = Trax::InterpolationType::Midpoint;
     else if (interpolation == "discrete")
-      options.interpolation = Engine::Contour::Discrete;
+      options.interpolation = Trax::InterpolationType::Midpoint;
     else if (interpolation == "loglinear")
-      options.interpolation = Engine::Contour::LogLinear;
+      throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
     else
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
 
@@ -997,7 +997,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
 
     std::vector<OGRGeometryPtr> geoms =
-        contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
+        contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
 
     // Update the globals
 
@@ -1022,6 +1022,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
       OGRGeometryPtr geom = geoms[i];
+
       if (geom && geom->IsEmpty() == 0)
       {
         OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, clipbox));

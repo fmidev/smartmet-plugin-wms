@@ -118,13 +118,13 @@
     </g>
 </symbol>
 
-<symbol id="isoband_Precipitation1h_12">
+<symbol id="isoband_Precipitation1h_0">
  <rect height="9" width="14"/>
 </symbol>
-<symbol id="isoline_Precipitation1h_13">
+<symbol id="isoline_Precipitation1h_1">
  <path class="Precipitation" d="M10 10 L20 10 Z"/>
 </symbol>
-<symbol id="isoline_Pressure_14">
+<symbol id="isoline_Pressure_2">
  <path class="Pressure" d="M10 10 L20 10 Z"/>
 </symbol>
 
@@ -134,25 +134,25 @@
  <g id="view1">
   <g>
   
-   <use style="fill:rgb(213,26,13); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_12" y="50"/>
+   <use style="fill:rgb(213,26,13); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_0" y="50"/>
   
   <text x="48" y="59">&gt; 10</text>
-   <use style="fill:rgb(255,80,60); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_12" y="59"/>
+   <use style="fill:rgb(255,80,60); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_0" y="59"/>
   
   <text x="48" y="68">5-10</text>
-   <use style="fill:rgb(255,205,20); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_12" y="68"/>
+   <use style="fill:rgb(255,205,20); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_0" y="68"/>
   
   <text x="48" y="77">2-5</text>
-   <use style="fill:rgb(240,240,20); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_12" y="77"/>
+   <use style="fill:rgb(240,240,20); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_0" y="77"/>
   
   <text x="48" y="86">1-2</text>
-   <use style="fill:rgb(140,230,20); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_12" y="86"/>
+   <use style="fill:rgb(140,230,20); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_0" y="86"/>
   
   <text x="48" y="95">0.5-1</text>
-   <use style="fill:rgb(5,205,170); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_12" y="95"/>
+   <use style="fill:rgb(5,205,170); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_0" y="95"/>
   
   <text x="48" y="104">0.2-0.5</text>
-   <use style="fill:rgb(10,155,255); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_12" y="104"/>
+   <use style="fill:rgb(10,155,255); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_0" y="104"/>
   
   <text x="48" y="113">0.1-0.2</text>
   <text class="Units" x="20" y="20">Precipitation</text>
@@ -161,14 +161,14 @@
   <g>
   
   <g>
-   <use transform="translate(180,45)" xlink:href="#isoline_Precipitation1h_13"/>
+   <use transform="translate(180,45)" xlink:href="#isoline_Precipitation1h_1"/>
   </g>
   <text x="170" y="20">Precipitation isoline</text>
   </g>
   <g>
   
   <g>
-   <use transform="translate(330,45)" xlink:href="#isoline_Pressure_14"/>
+   <use transform="translate(330,45)" xlink:href="#isoline_Pressure_2"/>
   </g>
   <text x="320" y="20">Ilmanpaine isoline</text>
   </g>

@@ -35,8 +35,7 @@ TEST_PREPARE_TARGETS := \
 	cnf/authentication.conf \
 	cnf/geonames.conf \
 	cnf/gis.conf \
-	cnf/observation.conf \
-	start-redis-db
+	cnf/observation.conf
 
 TEST_FINISH_TARGETS := stop-redis-db
 
@@ -49,7 +48,7 @@ TEST_PREPARE_TARGETS += geonames-database start-geonames-db
 TEST_FINISH_TARGETS += stop-geonames-db
 else
 GEONAMES_HOST_EDIT := cat
-OBSERVATION_CONF_EDIT := sed -e 's|"@IOT_OBS@"|"localhost"|g'
+OBSERVATION_CONF_EDIT := sed -e 's|"@IOT_OBS@"|"smartmet-test"|g'
 endif
 
 all: $(PROG)

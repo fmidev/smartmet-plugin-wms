@@ -5,14 +5,13 @@
 #include "Hash.h"
 #include "Projection.h"
 #include "State.h"
-
 #include <engines/contour/Engine.h>
-#include <engines/contour/Interpolation.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <spine/Json.h>
 #include <timeseries/ParameterFactory.h>
+#include <trax/InterpolationType.h>
 
 namespace SmartMet
 {
@@ -401,13 +400,12 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     options.filter_degree = smoother.degree;
 
     if (interpolation == "linear")
-      options.interpolation = Engine::Contour::Linear;
-    else if (interpolation == "nearest")
-      options.interpolation = Engine::Contour::Nearest;
-    else if (interpolation == "discrete")
-      options.interpolation = Engine::Contour::Discrete;
+      options.interpolation = Trax::InterpolationType::Linear;
+    else if (interpolation == "nearest" || interpolation == "discrete" ||
+             interpolation == "midpoint")
+      options.interpolation = Trax::InterpolationType::Midpoint;
     else if (interpolation == "loglinear")
-      options.interpolation = Engine::Contour::LogLinear;
+      throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'");
     else
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'");
 
@@ -438,8 +436,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     auto matrix = qEngine.getValues(q, valueshash, options.time);
     CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
 
-    std::vector<OGRGeometryPtr> isobands =
-        contourer.contour(qhash, q->SpatialReference(), crs, *matrix, *coords, options);
+    std::vector<OGRGeometryPtr> isobands = contourer.contour(qhash, crs, *matrix, *coords, options);
 
     if (isobands.empty())
       return;

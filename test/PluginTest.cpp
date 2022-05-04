@@ -107,9 +107,9 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
   try
   {
     options.parseConfig();
-    SmartMet::Spine::Reactor reactor(options);
-    reactor.init();
-    prelude(reactor);
+    auto* reactor = new SmartMet::Spine::Reactor(options);
+    reactor->init();
+    prelude(*reactor);
 
     std::cout << "OK" << std::endl;
 
@@ -154,7 +154,7 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
         {
           SmartMet::Spine::HTTP::Response response;
 
-          auto view = reactor.getHandlerView(*query.second);
+          auto view = reactor->getHandlerView(*query.second);
           if (!view)
           {
             ok = false;
@@ -162,7 +162,7 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
           }
           else
           {
-            view->handle(reactor, *query.second, response);
+            view->handle(*reactor, *query.second, response);
 
             string result = get_full_response(response);
 

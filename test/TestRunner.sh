@@ -120,7 +120,7 @@ for f in input/*.get; do
     ignore=$(grep -xc $request_name input/.testignore)
 
     if [[ $ignore -eq 1 ]]; then
-	echo "ON IGNORE LIST"
+	echo "IGNORED"
     else
 	start_time=$(date +%s.%3N)
 	echo "$request_name" >&3
@@ -134,7 +134,8 @@ for f in input/*.get; do
 		if [[ -z $extralines ]]; then
 		extralines="\t${line}"
 		else
-		    extralines="${extralines}\n\t$line"
+		    extralines+="\n\t"
+		    extralines+=$line
 		fi
 	    fi
 	done
