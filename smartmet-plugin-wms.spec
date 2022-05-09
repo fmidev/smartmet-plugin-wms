@@ -32,9 +32,9 @@ BuildRequires: smartmet-engine-gis-devel >= 22.2.10
 BuildRequires: smartmet-engine-grid-devel >= 22.4.25
 BuildRequires: smartmet-engine-geonames-devel >= 22.3.21
 BuildRequires: smartmet-engine-querydata-devel >= 22.5.4
-BuildRequires: smartmet-engine-contour-devel >= 22.5.4
+BuildRequires: smartmet-engine-contour-devel >= 22.5.5
 BuildRequires: smartmet-library-gis-devel >= 22.5.4
-BuildRequires: smartmet-library-trax-devel >= 22.5.3
+BuildRequires: smartmet-library-trax-devel >= 22.5.5
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -60,7 +60,7 @@ Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 22.4.25
 Requires: smartmet-library-grid-files >= 22.3.15
 Requires: smartmet-library-gis >= 22.5.4
-Requires: smartmet-library-trax >= 22.5.3
+Requires: smartmet-library-trax >= 22.5.5
 Requires: smartmet-library-macgyver >= 22.3.28
 Requires: smartmet-library-spine >= 22.4.29
 Requires: smartmet-library-timeseries >= 22.3.18
@@ -69,7 +69,7 @@ Requires: smartmet-library-giza >= 21.6.18
 Requires: smartmet-engine-authentication >= 22.1.21
 %endif
 Requires: smartmet-engine-querydata >= 22.5.4
-Requires: smartmet-engine-contour >= 22.5.4
+Requires: smartmet-engine-contour >= 22.5.5
 Requires: smartmet-engine-gis >= 22.2.10
 Requires: smartmet-engine-grid >= 22.4.25
 Requires: smartmet-engine-geonames >= 22.3.21
@@ -91,12 +91,12 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: jsoncpp-devel
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 22.5.4
+#TestRequires: smartmet-engine-contour-devel >= 22.5.5
 #TestRequires: smartmet-engine-geonames-devel >= 22.3.21
 #TestRequires: smartmet-engine-gis-devel >= 22.2.10
 #TestRequires: smartmet-engine-querydata-devel >= 22.5.4
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
-#TestRequires: smartmet-library-trax-devel >= 22.5.3
+#TestRequires: smartmet-library-trax-devel >= 22.5.5
 #TestRequires: smartmet-library-newbase-devel >= 22.1.21
 #TestRequires: smartmet-library-spine-devel >= 22.4.29
 #TestRequires: smartmet-library-timeseries-devel >= 22.3.18
@@ -143,6 +143,9 @@ rm -rf $RPM_BUILD_ROOT
 - Fixed bug in custom legends with alternative styles (BRAINSTORM-2314)
 - Added missing error message when parsing alternative styles (BRAINSTORM-2316)
 - GetCapabilities namespace must allow layer name in namespace-string (BRAINSTORM-2313)
+
+* Thu May  5 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.5-1.fmi
+- Repackaged since Trax ABI switch from using doubles to floats
 
 * Wed May  4 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.4-1.fmi
 - Use Trax for contouring
