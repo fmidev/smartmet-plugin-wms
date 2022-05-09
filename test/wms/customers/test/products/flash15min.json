@@ -1,0 +1,55 @@
+{
+    "title": "Lightning for 15 minute period",
+    "producer": "flash",
+    "timestep": 15,
+    "interval_start": 15,
+    "interval_end": 0,
+    "intervals": [{"interval_start": 15, "interval_end": 0, "default": true},{"interval_start": 30, "interval_end": 0},{"interval_start": 0, "interval_end": 30},{"interval_start": 30, "interval_end": 30},{"interval_start": 60, "interval_end": 0}],
+    "margin": 5,
+    "projection":
+    {
+    },
+    "views": [{
+	"layers": [{
+	    "qid": "l",
+	    "layer_type": "symbol",
+	    "css": "symbols/flash.css",
+	    "parameter": "cloud_indicator",
+	    "symbol": "flash",
+	    "symbols":
+	    [
+		{
+		    "value": 0,
+		    "attributes":
+		    {
+			"fill": "#C58DEB",
+			"scale": 0.9
+		    }
+		},
+		{
+		    "value": 1,
+		    "attributes":
+		    {
+			"fill": "yellow",
+			"scale": 0.7
+		    }
+		}
+	    ],
+	    "attributes":
+	    {
+		"class": "FlashMarker"
+	    },
+	    "positions":
+	    {
+		"layout" : "data",
+		"intersect":
+		[
+		    {
+			"parameter": "multiplicity",
+			"lolimit": 1
+		    }
+		]
+	    }
+	}]
+    }]
+}

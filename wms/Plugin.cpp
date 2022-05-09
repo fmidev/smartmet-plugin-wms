@@ -1380,13 +1380,32 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     if (requestType == WMS::WMSRequestType::GET_CAPABILITIES)
     {
-      theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
-      auto tmpl = getTemplate("wms_get_capabilities_" + getCapabilityFormat(format));
-      auto msg = WMS::WMSGetCapabilities::response(tmpl, thisRequest, *itsQEngine, *itsWMSConfig);
-      formatResponse(msg, format, thisRequest, theResponse, theState.useTimer());
-      theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
-      theState.updateModificationTime(itsWMSConfig->getCapabilitiesModificationTime());
-      return WMSQueryStatus::OK;
+	  try
+		{
+		  theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
+		  auto tmpl = getTemplate("wms_get_capabilities_" + getCapabilityFormat(format));
+		  auto msg = WMS::WMSGetCapabilities::response(tmpl, thisRequest, *itsQEngine, *itsWMSConfig);
+		  formatResponse(msg, format, thisRequest, theResponse, theState.useTimer());
+		  theState.updateExpirationTime(itsWMSConfig->getCapabilitiesExpirationTime());
+		  theState.updateModificationTime(itsWMSConfig->getCapabilitiesModificationTime());
+		  return WMSQueryStatus::OK;
+		}
+	  catch (const Fmi::Exception &wmsException)
+		{
+		  Fmi::Exception ex(
+							BCP, ("Error in parsing GetCapabilities response! " + std::string(wmsException.what())));
+		  if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+			ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+		  return handleWmsException(ex, theState, thisRequest, theResponse);
+		}
+	  catch (...)
+		{
+		  Fmi::Exception ex(
+							BCP, ("Error in parsing GetCapabilities response!"));
+		  if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+			ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+		  return handleWmsException(ex, theState, thisRequest, theResponse);
+		}
     }
 
     if (requestType == WMS::WMSRequestType::NOT_A_WMS_REQUEST)

@@ -46,6 +46,9 @@ struct tag_get_map_request_options
   boost::optional<int> elevation;
   unsigned int width;
   unsigned int height;
+  boost::optional<int> interval_start;
+  boost::optional<int> interval_end;
+  
   bool debug;
 };
 
