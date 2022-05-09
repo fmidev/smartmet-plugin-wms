@@ -442,6 +442,50 @@
 
 	  
 	  <Layer queryable="1">
+      <Name>test:flash15min</Name>
+      <Title>Lightning for 15 minute period</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">1921-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT15M</Dimension>
+      
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="145" height="120">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aflash15min&amp;width=145&amp;height=120"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	  
+	  <Layer queryable="1">
       <Name>test:frame_layer</Name>
       <Title>Legend</Title>
       <Abstract>Icemap legend</Abstract>

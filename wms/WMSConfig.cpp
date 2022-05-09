@@ -96,7 +96,7 @@ bool looks_like_pattern(const std::string& pattern)
 bool match_namespace_pattern(const std::string& name, const std::string& pattern)
 {
   if (!looks_like_pattern(pattern))
-    return boost::algorithm::istarts_with(name, pattern + ":");
+	return (boost::algorithm::istarts_with(name, pattern + ":") || name == pattern);
 
   // Strip surrounding slashes first
   const std::string re_str = pattern.substr(1, pattern.size() - 2);
@@ -1001,7 +1001,7 @@ void WMSConfig::updateLayerMetaData()
     // It external legend file is used set legend dimension here
     for (auto& externalLegendItem : layersWithExternalLegendFile)
     {
-	  const auto& externalLegendItems = externalLegendItem.second;
+	  const auto& externalLegendItems = externalLegendItem.second;	  
       for (auto& proxyItem : *newProxies)
       {
 		for (auto& legendStyleItem : externalLegendItems)
@@ -1091,7 +1091,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
         if (itsAuthEngine == nullptr || !itsAuthEngine->authorize(*apikey, layer_name, wmsService))
           continue;
 #endif
-
+	  	  
       auto cdt =
           iter_pair.second.getCapabilities(multiple_intervals, starttime, endtime, reference_time);
 
@@ -1206,6 +1206,25 @@ bool WMSConfig::isValidStyle(const std::string& theLayer, const std::string& the
     SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
 
     return layer->isValidStyle(theStyle);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Checking style validity failed!");
+  }
+}
+
+bool WMSConfig::isValidInterval(const std::string& theLayer, int interval_start, int interval_end) const
+{
+  try
+  {
+    if (!isValidLayerImpl(theLayer, true))
+      return false;
+
+    auto my_layers = itsLayers.load();
+
+    SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
+
+    return layer->isValidInterval(interval_start, interval_end);
   }
   catch (...)
   {
