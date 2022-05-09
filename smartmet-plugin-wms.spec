@@ -138,7 +138,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
-* Thu May 9 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.5.9-1.fmi
+* Mon May 9 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.5.9-1.fmi
 - Interval dimension added (BRAINSTORM-2299)
 - Fixed bug in custom legends with alternative styles (BRAINSTORM-2314)
 - Added missing error message when parsing alternative styles (BRAINSTORM-2316)
