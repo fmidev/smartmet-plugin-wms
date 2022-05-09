@@ -29,7 +29,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 22.1.21
 BuildRequires: smartmet-engine-observation-devel >= 22.4.20
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.2.10
-BuildRequires: smartmet-engine-grid-devel >= 22.4.25
+BuildRequires: smartmet-engine-grid-devel >= 22.5.5
 BuildRequires: smartmet-engine-geonames-devel >= 22.3.21
 BuildRequires: smartmet-engine-querydata-devel >= 22.5.4
 BuildRequires: smartmet-engine-contour-devel >= 22.5.5
@@ -71,7 +71,7 @@ Requires: smartmet-engine-authentication >= 22.1.21
 Requires: smartmet-engine-querydata >= 22.5.4
 Requires: smartmet-engine-contour >= 22.5.5
 Requires: smartmet-engine-gis >= 22.2.10
-Requires: smartmet-engine-grid >= 22.4.25
+Requires: smartmet-engine-grid >= 22.5.5
 Requires: smartmet-engine-geonames >= 22.3.21
 Requires: smartmet-server >= 22.4.28
 Requires: smartmet-library-spine >= 22.4.29
@@ -100,7 +100,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-newbase-devel >= 22.1.21
 #TestRequires: smartmet-library-spine-devel >= 22.4.29
 #TestRequires: smartmet-library-timeseries-devel >= 22.3.18
-#TestRequires: smartmet-engine-grid-devel >= 22.4.25
+#TestRequires: smartmet-engine-grid-devel >= 22.5.5
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
