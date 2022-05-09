@@ -12,6 +12,7 @@
 #include "WMSLegendGraphicSettings.h"
 #include "WMSSupportedReference.h"
 #include "WMSTimeDimension.h"
+#include "WMSIntervalDimension.h"
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/shared_ptr.hpp>
@@ -79,6 +80,7 @@ private:
   boost::shared_ptr<WMSTimeDimensions> timeDimensions{
       nullptr};  // Optional, may be empty for non-temporal postgis layers
   boost::shared_ptr<WMSElevationDimension> elevationDimension{nullptr};  // Optional
+  boost::shared_ptr<WMSIntervalDimension> intervalDimension{nullptr}; // Optional
 
   std::string customer;
   std::string productFile;  // dali product
@@ -108,6 +110,7 @@ private:
                                        const std::string& language) const;
   const std::map<std::string, std::string>& getLegendFiles() const { return itsLegendFiles; }
 
+  bool isValidInterval(int interval_start, int interval_end) const;
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;
   bool isValidTime(const boost::posix_time::ptime& theTime,
@@ -166,6 +169,8 @@ private:
   // by default interval is 5 seconds, but for some layers it could be longer
   unsigned int metaDataUpdateInterval() const { return metadataUpdateInterval; }
   virtual const boost::posix_time::ptime& modificationTime() const;
+  // Add interval dimension
+  void addIntervalDimension(int interval_start, int interval_end, bool interval_default);
 
   // read json file
   static Json::Value readJsonFile(const std::string theFileName);

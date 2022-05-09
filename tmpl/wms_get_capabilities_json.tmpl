@@ -347,6 +347,36 @@
 				]
 				<-/TMPL_if->
 
+				<-TMPL_if defined(layer.interval_dimension)>,
+				"Dimension":
+				[
+					<-TMPL_foreach layer.interval_dimension as dimension>
+					<-TMPL_if dimension.__first__><TMPL_else>,</TMPL_if>
+					{
+						"name": "<TMPL_var JSONESCAPE(dimension.name)>",
+						"units": "<TMPL_var JSONESCAPE(dimension.units)>",
+						"value": "<TMPL_var JSONESCAPE(dimension.value)>"
+
+						<-TMPL_if defined(dimension.unit_symbol)	>,
+						"unitSymbol": "<TMPL_var JSONESCAPE(dimension.unit_symbol)>"
+						<-/TMPL_if->
+
+						<-TMPL_if defined(dimension.default)>,
+						"default": "<TMPL_var JSONESCAPE(dimension.default)>"
+						<-/TMPL_if->
+						
+						<-TMPL_if defined(dimension.multiple_values)>,
+						"multipleValues": <TMPL_var dimension.multiple_values>
+						<-/TMPL_if->
+						
+						<-TMPL_if defined(dimension.nearest_value) >,
+						"nearestValue": <TMPL_var dimension.nearest_value>
+						<-/TMPL_if>					
+					}
+					</TMPL_foreach>
+				]
+				<-/TMPL_if->
+
 				<-TMPL_if defined(layer.attribution)>,
 				"Attribution":
 				{

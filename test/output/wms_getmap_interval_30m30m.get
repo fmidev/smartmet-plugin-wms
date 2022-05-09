@@ -1,0 +1,185 @@
+<svg width="300" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>Lightning for 15 minute period</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+.FlashMarker		{ stroke: black; stroke-width: 1 }
+
+ ]]>
+</style>
+<symbol id="flash">
+ <desc>Simple flash marker</desc>
+ <circle cx="0" cy="0" r="3" stroke="black" stroke-width="0.5"/>
+</symbol>
+
+
+</defs>
+
+<g>
+ <g>
+  <g class="FlashMarker">
+   <use style="fill:#C58DEB" transform="translate(8,181) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(44,130) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(252,89) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(261,93) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(245,88) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(241,86) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(43,130) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(221,125) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(250,89) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(44,130) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(235,122) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(240,126) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(252,90) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(252,90) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(8,180) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(252,88) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(8,181) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(226,145) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(250,89) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(251,89) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(255,89) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(252,88) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(253,87) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(34,94) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(238,126) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(251,86) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(249,86) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(252,86) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(250,86) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(232,141) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(253,87) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(250,86) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(249,86) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(252,90) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(250,88) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(252,87) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(44,169) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(236,125) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(237,125) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(250,86) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(249,85) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(50,174) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(249,87) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(251,86) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(254,86) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(243,117) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(254,86) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(253,87) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(258,88) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(8,175) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(239,126) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(256,87) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(36,150) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(251,88) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(52,164) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(35,146) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(36,147) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(255,80) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(51,173) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(252,87) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(60,175) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(239,124) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(225,310) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(226,311) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(36,149) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(34,150) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(250,86) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(257,79) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(53,173) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(34,151) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(36,147) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(254,85) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(252,84) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(256,84) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(254,79) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(37,149) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(36,148) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(37,148) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(227,245) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(255,84) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(223,189) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(258,85) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(41,146) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(37,147) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(256,85) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(46,127) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(47,130) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(50,132) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(37,66) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(38,70) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(55,167) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(239,125) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(218,291) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(54,156) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(51,141) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(38,147) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(38,147) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(38,143) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(47,115) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(47,115) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(48,114) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(48,114) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(54,156) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(56,167) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(258,79) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(256,78) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(53,156) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(47,114) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(48,114) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(240,111) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(53,155) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(56,166) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(56,166) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(256,81) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(236,114) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(238,116) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(257,81) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(220,188) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(222,188) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(247,138) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(43,118) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(48,113) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(49,116) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(45,118) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(239,109) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(222,316) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(224,312) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(244,118) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(50,113) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(48,113) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(252,76) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(47,142) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(53,170) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(263,78) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(233,182) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(227,187) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(46,141) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(46,142) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(46,139) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(46,140) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(58,85) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(59,84) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(258,77) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(67,189) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(56,120) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(49,113) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(47,139) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(265,80) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(226,187) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(258,79) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(55,158) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(55,159) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(55,158) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(231,225) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(21,217) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(68,190) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(67,190) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:#C58DEB" transform="translate(259,76) scale(0.9)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(56,87) scale(0.7)" xlink:href="#flash"/>
+   <use style="fill:yellow" transform="translate(60,83) scale(0.7)" xlink:href="#flash"/>
+  </g>
+ </g>
+</g>
+
+</svg>
