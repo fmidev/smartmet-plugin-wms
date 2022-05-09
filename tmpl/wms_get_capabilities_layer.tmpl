@@ -77,6 +77,18 @@
       </TMPL_foreach>
       <-/TMPL_if->
 
+      <-TMPL_if defined(layer.interval_dimension)->
+      <-TMPL_foreach layer.interval_dimension as dimension>
+      <Dimension name="<TMPL_var dimension.name>" units="<TMPL_var dimension.units>"
+        <-TMPL_if defined(dimension.unit_symbol)    > unitSymbol="    <-TMPL_var dimension.unit_symbol>"    <-/TMPL_if->
+        <-TMPL_if defined(dimension.default)        > default="       <-TMPL_var dimension.default>"        <-/TMPL_if->
+        <-TMPL_if defined(dimension.multiple_values)> multipleValues="<-TMPL_var dimension.multiple_values>"<-/TMPL_if->
+        <-TMPL_if defined(dimension.nearest_value) > nearestValue=" <-TMPL_var dimension.nearest_value>" <-/TMPL_if->>
+      <-TMPL_var dimension.value->
+      </Dimension>
+      </TMPL_foreach>
+      <-/TMPL_if->
+
       <-TMPL_if defined(layer.attribution)->
       <Attribution>
         <TMPL_if defined(layer.attribution.title)><Title><TMPL_var XMLESCAPE(layer.attribution.title)><-/TMPL_if->
