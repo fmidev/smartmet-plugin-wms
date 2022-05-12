@@ -377,9 +377,9 @@ void State::addPresentationAttributes(CTPP::CDT& theLayer,
                                       const Attributes& theAttributes) const
 {
   try
-  {
+  {    
     if (theCSS)
-      theAttributes.generatePresentation(theLayer, *this, getStyle(*theCSS));
+      theAttributes.generatePresentation(theLayer, *this, getStyle(*theCSS, theAttributes.getSelector()));
     else
       theAttributes.generatePresentation(theLayer, *this);
   }
@@ -406,9 +406,10 @@ void State::addPresentationAttributes(CTPP::CDT& theLayer,
     // Note: Object attributes override layer attributes
     if (theCSS)
     {
-      const auto css = getStyle(*theCSS);
-      theLayerAttributes.generatePresentation(theLayer, *this, css);
-      theObjectAttributes.generatePresentation(theLayer, *this, css);
+      const auto css1 = getStyle(*theCSS, theLayerAttributes.getSelector());
+      theLayerAttributes.generatePresentation(theLayer, *this, css1);
+      const auto css2 = getStyle(*theCSS, theObjectAttributes.getSelector());
+      theObjectAttributes.generatePresentation(theLayer, *this, css2);
     }
     else
     {
@@ -427,12 +428,28 @@ void State::addPresentationAttributes(CTPP::CDT& theLayer,
  * \brief Fetch CSS from the cache
  */
 // ----------------------------------------------------------------------
-
 std::string State::getStyle(const std::string& theCSS) const
 {
   try
   {
     return itsPlugin.getStyle(itsCustomer, theCSS, itUsesWms);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Fetch parsed CSS from the cache
+ */
+// ----------------------------------------------------------------------
+std::map<std::string, std::string> State::getStyle(const std::string& theCSS, const std::string& theSelector) const
+{
+  try
+  {
+    return itsPlugin.getStyle(itsCustomer, theCSS, itUsesWms, theSelector);
   }
   catch (...)
   {

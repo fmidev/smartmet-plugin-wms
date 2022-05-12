@@ -114,6 +114,8 @@ class State
 
   // Fetch CSS contents
   std::string getStyle(const std::string& theCSS) const;
+  std::map<std::string, std::string> getStyle(const std::string& theCSS,
+					      const std::string& theSelector) const;
 
   // Fetch symbol contents
   bool setSymbol(const std::string& theName, const std::string& theValue) const;

@@ -55,6 +55,7 @@ Config::Config(const string& configfile)
     itsConfig.lookupValue("templatedir", itsTemplateDirectory);
     itsConfig.lookupValue("customer", itsDefaultCustomer);
 
+    itsConfig.lookupValue("css_cache_size", itsStyleSheetCacheSize);
     itsConfig.lookupValue("cache.memory_bytes", itsMaxMemoryCacheSize);
     itsConfig.lookupValue("cache.filesystem_bytes", itsMaxFilesystemCacheSize);
     itsConfig.lookupValue("cache.directory", itsFilesystemCacheDirectory);
@@ -307,6 +308,12 @@ unsigned long long Config::maxFilesystemCacheSize() const
 {
   return itsMaxFilesystemCacheSize;
 }
+
+unsigned int Config::styleSheetCacheSize() const
+{
+  return itsStyleSheetCacheSize;
+}
+
 bool Config::quiet() const
 {
   return itsQuiet;

@@ -11,6 +11,7 @@
 #include "WMSConfig.h"
 #include "WMSException.h"
 #include "WMSQueryStatus.h"
+#include "StyleSheet.h"
 #include <engines/contour/Engine.h>
 #include <engines/geonames/Engine.h>
 #include <engines/gis/Engine.h>
@@ -75,6 +76,10 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   std::string getStyle(const std::string& theCustomer,
                        const std::string& theCSS,
                        bool theWmsFlag) const;
+  std::map<std::string, std::string> getStyle(const std::string &theCustomer,
+					      const std::string &theCSS,
+					      bool theWmsFlag,
+					      const std::string& theSelector);
   std::string getFilter(const std::string& theCustomer,
                         const std::string& theName,
                         bool theWmsFlag) const;
@@ -180,6 +185,9 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   mutable Spine::FileCache itsFileCache;
   mutable Spine::JsonCache itsJsonCache;
 
+  // Style sheet cache
+  Fmi::Cache::Cache<std::size_t, StyleSheet> itsStyleSheetCache;
+  
   // Cache results
   mutable boost::movelib::unique_ptr<ImageCache> itsImageCache;
 
