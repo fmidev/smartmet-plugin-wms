@@ -566,7 +566,7 @@ Plugin::Plugin(Spine::Reactor *theReactor, const char *theConfig)
                 << "*** Dali Plugin and Server SmartMet API version mismatch ***" << ANSI_FG_DEFAULT
                 << ANSI_BOLD_OFF << std::endl;
       return;
-    }
+    }    
   }
   catch (...)
   {
@@ -589,6 +589,9 @@ void Plugin::init()
     itsImageCache = boost::movelib::make_unique<ImageCache>(itsConfig.maxMemoryCacheSize(),
                                                             itsConfig.maxFilesystemCacheSize(),
                                                             itsConfig.filesystemCacheDirectory());
+
+    // StyleSheet cache
+    itsStyleSheetCache.resize(itsConfig.styleSheetCacheSize());
 
     // CONTOUR
 
@@ -974,6 +977,35 @@ std::string Plugin::getStyle(const std::string &theCustomer,
   }
 }
 
+std::map<std::string, std::string> Plugin::getStyle(const std::string &theCustomer,
+						    const std::string &theCSS,
+						    bool theWmsFlag,
+						    const std::string& theSelector)
+{
+  try
+  {
+    auto css = getStyle(theCustomer, theCSS, theWmsFlag);
+
+    if(!css.empty())
+      {
+	auto style = itsStyleSheetCache.find(Fmi::hash_value(theCSS));
+	if(style)
+	  return style->declarations(theSelector);
+	
+	StyleSheet ss;
+	ss.add(theCSS);
+	itsStyleSheetCache.insert(Fmi::hash_value(theCSS), ss);	
+	return ss.declarations(theSelector);
+      }
+  
+    return {};
+  }
+  catch (...)
+    {
+      throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    }
+}
+  
 // ----------------------------------------------------------------------
 /*!
  * \brief Get template from the plugin cache

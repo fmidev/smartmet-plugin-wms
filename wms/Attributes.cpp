@@ -203,25 +203,25 @@ void Attributes::generate(CTPP::CDT& theLocals, const State& theState) const
  */
 // ----------------------------------------------------------------------
 
+std::string Attributes::getSelector() const
+{
+  std::string ret;
+  
+  const auto classiter = attributes.find("class");
+  if (classiter != attributes.end())
+    ret = "." + classiter->second;
+
+  return ret;
+}
+
 void Attributes::generatePresentation(CTPP::CDT& theLocals,
-                                      const State& theState,
-                                      const std::string& theCSS) const
+				      const State& theState,
+				      const std::map<std::string, std::string>& theStyle) const
 {
   try
   {
-    // Collect presentation attributes into a single map
-    std::map<std::string, std::string> style;
-
-    // Extract CSS class definitions first
-    const auto classiter = attributes.find("class");
-    if (classiter != attributes.end())
-    {
-      auto selector = "." + classiter->second;
-      StyleSheet ss;
-      ss.add(theCSS);
-      style = ss.declarations(selector);
-    }
-
+    std::map<std::string, std::string> style = theStyle;
+    
     // Override with element specific attributes
 
     const auto& regular_attributes = theState.getConfig().regularAttributes();

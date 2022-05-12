@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.5.9
+Version: 22.5.12
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -138,6 +138,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu May 12 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.5.12-1.fmi
+- Added StyleSheet cache (BRAINSTORM-2317)
+
 * Mon May 9 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.5.9-1.fmi
 - Interval dimension added (BRAINSTORM-2299)
 - Fixed bug in custom legends with alternative styles (BRAINSTORM-2314)
