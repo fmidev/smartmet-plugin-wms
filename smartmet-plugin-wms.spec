@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.5.12
+Version: 22.5.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -18,23 +18,23 @@ BuildRequires: boost169-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.6.18
 BuildRequires: smartmet-library-grid-content-devel >= 22.4.25
-BuildRequires: smartmet-library-grid-files-devel >= 22.3.15
+BuildRequires: smartmet-library-grid-files-devel >= 22.5.20
 BuildRequires: smartmet-library-macgyver-devel >= 22.3.28
-BuildRequires: smartmet-library-spine-devel >= 22.4.29
-BuildRequires: smartmet-library-timeseries-devel >= 22.3.18
+BuildRequires: smartmet-library-spine-devel >= 22.5.16
+BuildRequires: smartmet-library-timeseries-devel >= 22.5.20
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 22.1.21
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 22.4.20
+BuildRequires: smartmet-engine-observation-devel >= 22.5.10
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 22.2.10
+BuildRequires: smartmet-engine-gis-devel >= 22.5.20
 BuildRequires: smartmet-engine-grid-devel >= 22.5.5
 BuildRequires: smartmet-engine-geonames-devel >= 22.3.21
-BuildRequires: smartmet-engine-querydata-devel >= 22.5.4
-BuildRequires: smartmet-engine-contour-devel >= 22.5.5
+BuildRequires: smartmet-engine-querydata-devel >= 22.5.20
+BuildRequires: smartmet-engine-contour-devel >= 22.5.20
 BuildRequires: smartmet-library-gis-devel >= 22.5.4
-BuildRequires: smartmet-library-trax-devel >= 22.5.5
+BuildRequires: smartmet-library-trax-devel >= 22.5.18
 BuildRequires: fmt-devel >= 7.1.3
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -58,23 +58,23 @@ Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 22.4.25
-Requires: smartmet-library-grid-files >= 22.3.15
+Requires: smartmet-library-grid-files >= 22.5.20
 Requires: smartmet-library-gis >= 22.5.4
-Requires: smartmet-library-trax >= 22.5.5
+Requires: smartmet-library-trax >= 22.5.18
 Requires: smartmet-library-macgyver >= 22.3.28
-Requires: smartmet-library-spine >= 22.4.29
-Requires: smartmet-library-timeseries >= 22.3.18
+Requires: smartmet-library-spine >= 22.5.16
+Requires: smartmet-library-timeseries >= 22.5.20
 Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 22.1.21
 %endif
-Requires: smartmet-engine-querydata >= 22.5.4
-Requires: smartmet-engine-contour >= 22.5.5
-Requires: smartmet-engine-gis >= 22.2.10
+Requires: smartmet-engine-querydata >= 22.5.20
+Requires: smartmet-engine-contour >= 22.5.20
+Requires: smartmet-engine-gis >= 22.5.20
 Requires: smartmet-engine-grid >= 22.5.5
 Requires: smartmet-engine-geonames >= 22.3.21
-Requires: smartmet-server >= 22.4.28
-Requires: smartmet-library-spine >= 22.4.29
+Requires: smartmet-server >= 22.5.16
+Requires: smartmet-library-spine >= 22.5.16
 Requires: boost169-date-time
 Requires: boost169-filesystem
 Requires: boost169-iostreams
@@ -91,15 +91,15 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: jsoncpp-devel
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 22.5.5
+#TestRequires: smartmet-engine-contour-devel >= 22.5.20
 #TestRequires: smartmet-engine-geonames-devel >= 22.3.21
-#TestRequires: smartmet-engine-gis-devel >= 22.2.10
-#TestRequires: smartmet-engine-querydata-devel >= 22.5.4
+#TestRequires: smartmet-engine-gis-devel >= 22.5.20
+#TestRequires: smartmet-engine-querydata-devel >= 22.5.20
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
-#TestRequires: smartmet-library-trax-devel >= 22.5.5
+#TestRequires: smartmet-library-trax-devel >= 22.5.18
 #TestRequires: smartmet-library-newbase-devel >= 22.1.21
-#TestRequires: smartmet-library-spine-devel >= 22.4.29
-#TestRequires: smartmet-library-timeseries-devel >= 22.3.18
+#TestRequires: smartmet-library-spine-devel >= 22.5.16
+#TestRequires: smartmet-library-timeseries-devel >= 22.5.20
 #TestRequires: smartmet-engine-grid-devel >= 22.5.5
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
@@ -109,7 +109,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 22.4.20
+#TestRequires: smartmet-engine-observation-devel >= 22.5.10
 %endif
 
 %description
@@ -138,6 +138,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Fri May 20 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.5.20-1.fmi
+- Repackaged due to ABi changes to newbase LatLon methods
+
 * Thu May 12 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.5.12-1.fmi
 - Added StyleSheet cache (BRAINSTORM-2317)
 
