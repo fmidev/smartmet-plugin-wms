@@ -259,9 +259,9 @@
       <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/><Style>
         <Name>default</Name>
         <Title>Temperature isobands every two degrees</Title><Abstract>Temperature isoband width is two degrees</Abstract>
-        <LegendURL width="150" height="520">
+        <LegendURL width="150" height="485">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_1&amp;width=150&amp;height=520"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_1&amp;width=150&amp;height=485"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -288,9 +288,9 @@
       <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/><Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="300" height="520">
+        <LegendURL width="300" height="485">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_2&amp;width=300&amp;height=520"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_2&amp;width=300&amp;height=485"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -317,9 +317,9 @@
       <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/><Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="150" height="520">
+        <LegendURL width="150" height="485">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_3&amp;width=150&amp;height=520"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_3&amp;width=150&amp;height=485"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -346,9 +346,9 @@
       <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/><Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="150" height="520">
+        <LegendURL width="150" height="485">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_4&amp;width=150&amp;height=520"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Atemperature_4&amp;width=150&amp;height=485"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -481,25 +481,23 @@
       <CRS>EPSG:4258</CRS>
       <CRS>EPSG:4326</CRS>
       <EX_GeographicBoundingBox>
-        <westBoundLongitude>-9.072431653</westBoundLongitude>
-        <eastBoundLongitude>49</eastBoundLongitude>
-        <southBoundLatitude>51.3</southBoundLatitude>
-        <northBoundLatitude>70.2</northBoundLatitude>
+        <westBoundLongitude>-179.999999</westBoundLongitude>
+        <eastBoundLongitude>179.999999</eastBoundLongitude>
+        <southBoundLatitude>-90</southBoundLatitude>
+        <northBoundLatitude>83.634100653</northBoundLatitude>
       </EX_GeographicBoundingBox>
-      <BoundingBox CRS="CRS:27" minx="-9.072431653" miny="51.3" maxx="49" maxy="70.2"/>
-      <BoundingBox CRS="CRS:83" minx="-9.072431653" miny="51.3" maxx="49" maxy="70.2"/>
-      <BoundingBox CRS="CRS:84" minx="-9.072431653" miny="51.3" maxx="49" maxy="70.2"/>
-      <BoundingBox CRS="CRS:SmartMetEurope" minx="-1368393.89518" miny="-3957843.64199" maxx="2152881.41537" maxy="-2658587.1382"/>
-      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2034877.25307" miny="-3660095.99761" maxx="1010088.45179" maxy="-1822247.80407"/>
+      <BoundingBox CRS="CRS:27" minx="-179.999999" miny="-90" maxx="179.999999" maxy="83.634100653"/>
+      <BoundingBox CRS="CRS:83" minx="-179.999999" miny="-90" maxx="179.999999" maxy="83.634100653"/>
+      <BoundingBox CRS="CRS:84" minx="-179.999999" miny="-90" maxx="179.999999" maxy="83.634100653"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="-4460461.91185" miny="-6612906.73204" maxx="3387669.86061" maxy="-476105.949907"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2093861.75205" miny="-3626674.93858" maxx="1010088.45179" maxy="-1822247.80407"/>
       <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3674549.99025" maxy="7785726.69717"/>
-      <BoundingBox CRS="EPSG:3035" minx="3008242.77006" miny="3305040.02749" maxx="5432786.5425" maxy="5479598.18246"/>
-      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="613375.780227" maxy="7790970.34751"/>
+      <BoundingBox CRS="EPSG:3035" minx="1896628.61793" miny="1507846.05442" maxx="4692915.2233" maxy="6779480.47604"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="537120.082556" maxy="9288212.25094"/>
       <BoundingBox CRS="EPSG:3067" minx="43547.7892277" miny="6549298.62199" maxx="674306.988933" maxy="7782478.68382"/>
-      <BoundingBox CRS="EPSG:3857" minx="-1009938.47187" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
-      <BoundingBox CRS="EPSG:4258" minx="-9.072431653" miny="51.3" maxx="49" maxy="70.2"/>
-      <BoundingBox CRS="EPSG:4326" minx="-9.072431653" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      
+      <BoundingBox CRS="EPSG:3857" minx="-20037508.2315" miny="-20048966.104" maxx="20037508.2315" maxy="18428920.013"/>
+      <BoundingBox CRS="EPSG:4258" minx="-179.999999" miny="-90" maxx="179.999999" maxy="83.634100653"/>
+      <BoundingBox CRS="EPSG:4326" minx="-179.999999" miny="-90" maxx="179.999999" maxy="83.634100653"/>
     </Layer>
     
     <Layer queryable="1">
@@ -573,6 +571,52 @@
       <BoundingBox CRS="EPSG:3857" minx="844483.188032" miny="6815622.58113" maxx="3567881.56554" maxy="10290747.3174"/>
       <BoundingBox CRS="EPSG:4258" minx="7.58612154991" miny="52.0856260866" maxx="32.0508254225" maxy="67.4681861737"/>
       <BoundingBox CRS="EPSG:4326" minx="7.58612154991" miny="52.0856260866" maxx="32.0508254225" maxy="67.4681861737"/>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:flash15min</Name>
+      <Title>Lightning for 15 minute period</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT15M</Dimension>
+      
+      <Dimension name="interval_start" units="minute" default="15" multipleValues="0" nearestValue="0">15,30,0,60</Dimension>
+      
+      <Dimension name="interval_end" units="minute" default="0" multipleValues="0" nearestValue="0">0,30</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="145" height="120">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aflash15min&amp;width=145&amp;height=120"/>
+        </LegendURL>
+      </Style>
     </Layer>
     
     <Layer queryable="1">
@@ -852,6 +896,888 @@
     </Layer>
     
     <Layer queryable="1">
+      <Name>test:opendata_meteorological_windarrows</Name>
+      <Title>Wind observations</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_meteorological_windarrows_mindistance</Name>
+      <Title>Wind observations</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows_mindistance&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_meteorological_windarrows_mindistance_priority_array</Name>
+      <Title>Wind observations</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows_mindistance_priority_array&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_meteorological_windarrows_mindistance_priority_extrema</Name>
+      <Title>Wind observations</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows_mindistance_priority_extrema&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_meteorological_windarrows_mindistance_priority_max</Name>
+      <Title>Wind observations</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows_mindistance_priority_max&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_meteorological_windarrows_mindistance_priority_min</Name>
+      <Title>Wind observations</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows_mindistance_priority_min&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_meteorological_windarrows_mindistance_priority_none</Name>
+      <Title>Wind observations</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_meteorological_windarrows_mindistance_priority_none&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_temperature_numbers</Name>
+      <Title>Temperature observations</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="124" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers&amp;width=124&amp;height=10"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_temperature_numbers_mindistance</Name>
+      <Title>Temperature observations</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="124" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers_mindistance&amp;width=124&amp;height=10"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_temperature_numbers_mindistance_priority_array</Name>
+      <Title>Temperature observations</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="124" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers_mindistance_priority_array&amp;width=124&amp;height=10"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_temperature_numbers_mindistance_priority_extrema</Name>
+      <Title>Temperature observations</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="124" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers_mindistance_priority_extrema&amp;width=124&amp;height=10"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_temperature_numbers_mindistance_priority_max</Name>
+      <Title>Temperature observations</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="124" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers_mindistance_priority_max&amp;width=124&amp;height=10"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_temperature_numbers_mindistance_priority_min</Name>
+      <Title>Temperature observations</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="124" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers_mindistance_priority_min&amp;width=124&amp;height=10"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_temperature_numbers_mindistance_priority_none</Name>
+      <Title>Temperature observations</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="124" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_numbers_mindistance_priority_none&amp;width=124&amp;height=10"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_temperature_symbols</Name>
+      <Title>Temperature observations as coloured circles</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="140" height="1800">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols&amp;width=140&amp;height=1800"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_temperature_symbols_mindistance</Name>
+      <Title>Temperature observations as coloured circles</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="140" height="1800">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance&amp;width=140&amp;height=1800"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_temperature_symbols_mindistance_priority_array</Name>
+      <Title>Temperature observations as coloured circles</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="140" height="1800">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_array&amp;width=140&amp;height=1800"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_temperature_symbols_mindistance_priority_extrema</Name>
+      <Title>Temperature observations as coloured circles</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="140" height="1800">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_extrema&amp;width=140&amp;height=1800"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_temperature_symbols_mindistance_priority_max</Name>
+      <Title>Temperature observations as coloured circles</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="140" height="1800">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_max&amp;width=140&amp;height=1800"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_temperature_symbols_mindistance_priority_min</Name>
+      <Title>Temperature observations as coloured circles</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="140" height="1800">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_min&amp;width=140&amp;height=1800"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:opendata_temperature_symbols_mindistance_priority_none</Name>
+      <Title>Temperature observations as coloured circles</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>18</westBoundLongitude>
+        <eastBoundLongitude>33</eastBoundLongitude>
+        <southBoundLatitude>59</southBoundLatitude>
+        <northBoundLatitude>70</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:83" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:84" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-115474.470792" miny="-3306756.1933" maxx="473507.155268" maxy="-2050984.81935"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3675305.80536" maxy="7775710.76308"/>
+      <BoundingBox CRS="EPSG:3035" minx="4780585.74687" miny="4014656.44714" maxx="5190616.65632" maxy="5354794.08021"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="614473.714747" maxy="7768690.10866"/>
+      <BoundingBox CRS="EPSG:3067" minx="45660.9619997" miny="6567034.36814" maxx="675062.510714" maxy="7772466.78481"/>
+      <BoundingBox CRS="EPSG:3857" minx="2003750.83428" miny="8180386.88594" maxx="3673543.19618" maxy="11068715.6594"/>
+      <BoundingBox CRS="EPSG:4258" minx="18" miny="59" maxx="33" maxy="70"/>
+      <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1M</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="140" height="1800">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aopendata_temperature_symbols_mindistance_priority_none&amp;width=140&amp;height=1800"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
       <Name>test:precipitation</Name>
       <Title>Demo product</Title>
       <CRS>CRS:27</CRS>
@@ -1014,6 +1940,50 @@
         <LegendURL width="626" height="330">
           <Format>image/png</Format>
           <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_modified&amp;width=626&amp;height=330"/>
+        </LegendURL>
+      </Style>
+    </Layer>
+    
+    <Layer queryable="1">
+      <Name>test:pressure_isoline_groups</Name>
+      <Title>Demo product</Title>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>CRS:SmartMetEurope</CRS>
+      <CRS>CRS:SmartMetScandinavia</CRS>
+      <CRS>EPSG:2393</CRS>
+      <CRS>EPSG:3035</CRS>
+      <CRS>EPSG:3047</CRS>
+      <CRS>EPSG:3067</CRS>
+      <CRS>EPSG:3857</CRS>
+      <CRS>EPSG:4258</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>-9.072431653</westBoundLongitude>
+        <eastBoundLongitude>49</eastBoundLongitude>
+        <southBoundLatitude>51.3</southBoundLatitude>
+        <northBoundLatitude>70.2</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="-9.072431653" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:83" minx="-9.072431653" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:84" minx="-9.072431653" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="CRS:SmartMetEurope" minx="-1368393.89518" miny="-3957843.64199" maxx="2152881.41537" maxy="-2658587.1382"/>
+      <BoundingBox CRS="CRS:SmartMetScandinavia" minx="-2034877.25307" miny="-3660095.99761" maxx="1010088.45179" maxy="-1822247.80407"/>
+      <BoundingBox CRS="EPSG:2393" minx="3064557.21476" miny="6651895.28724" maxx="3674549.99025" maxy="7785726.69717"/>
+      <BoundingBox CRS="EPSG:3035" minx="3008242.77006" miny="3305040.02749" maxx="5432786.5425" maxy="5479598.18246"/>
+      <BoundingBox CRS="EPSG:3047" minx="330890.119265" miny="6615141.39345" maxx="613375.780227" maxy="7790970.34751"/>
+      <BoundingBox CRS="EPSG:3067" minx="43547.7892277" miny="6549298.62199" maxx="674306.988933" maxy="7782478.68382"/>
+      <BoundingBox CRS="EPSG:3857" minx="-1009938.47187" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
+      <BoundingBox CRS="EPSG:4258" minx="-9.072431653" miny="51.3" maxx="49" maxy="70.2"/>
+      <BoundingBox CRS="EPSG:4326" minx="-9.072431653" miny="51.3" maxx="49" maxy="70.2"/>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="776" height="295">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Apressure_isoline_groups&amp;width=776&amp;height=295"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -1258,9 +2228,9 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="10" height="10">
+        <LegendURL width="80" height="150">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;width=10&amp;height=10"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;width=80&amp;height=150"/>
         </LegendURL>
       </Style>
     </Layer>
