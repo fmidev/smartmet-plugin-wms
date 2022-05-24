@@ -2014,22 +2014,6 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
       layer["time_dimension"] = layer_dimension_list;
     }
 
-	/*
-	if(intervalDimension)
-	  {
-		CTPP::CDT layer_dimension_list(CTPP::CDT::ARRAY_VAL);
-		CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
-		
-		layer_dimension["name"] = "interval";
-		layer_dimension["units"] = "minute";
-		layer_dimension["multiple_values"] = 0;
-		layer_dimension["nearest_value"] = 0;
-		layer_dimension["default"] = intervalDimension->getDefaultInterval();
-		layer_dimension["value"] = intervalDimension->getIntervals();		
-		layer_dimension_list.PushBack(layer_dimension);
-		layer["interval_dimension"] = layer_dimension_list;
-	  }
-	*/
 	if(intervalDimension)
 	  {
 		CTPP::CDT interval_dimension_list(CTPP::CDT::ARRAY_VAL);
@@ -2396,6 +2380,20 @@ void WMSLayer::addIntervalDimension(int interval_start, int interval_end, bool i
   else
 	intervalDimension->addInterval(interval_start, interval_end, interval_default);
 }
+
+std::pair<std::string, std::string> WMSLayer::getDefaultInterval() const
+{
+  std::pair<std::string, std::string> ret{"", ""};
+
+  if(intervalDimension)
+	{
+	  ret.first = intervalDimension->getDefaultStartInterval();
+	  ret.second = intervalDimension->getDefaultEndInterval();
+	}
+
+  return ret;
+}
+
 
 }  // namespace WMS
 }  // namespace Plugin

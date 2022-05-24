@@ -1232,6 +1232,29 @@ bool WMSConfig::isValidInterval(const std::string& theLayer, int interval_start,
   }
 }
 
+std::pair<std::string, std::string> WMSConfig::getDefaultInterval(const std::string& theLayer) const
+{
+  try
+  {
+	std::pair<std::string, std::string> ret{"", ""};
+
+    if (!isValidLayerImpl(theLayer, true))
+      return ret;
+
+    auto my_layers = itsLayers.load();
+
+    SharedWMSLayer layer = my_layers->at(theLayer).getLayer();
+
+    return layer->getDefaultInterval();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Getting default interval failed!");
+  }
+
+}
+
+
 const std::string& WMSConfig::getCRSDefinition(const std::string& theCRS) const
 {
   try
