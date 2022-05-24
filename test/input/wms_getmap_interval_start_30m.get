@@ -1,1 +1,1 @@
-GET /wms?service=wms&request=GetMap&version=1.3.0&layers=test:flash15min&styles=&crs=EPSG:4326&bbox=59,17,71,34&width=300&height=500&format=image/svg%2Bxml&time=201308051200&dim_interval_start=-30 HTTP/1.0
+GET /wms?service=wms&request=GetMap&version=1.3.0&layers=test:flash15min&styles=&crs=EPSG:4326&bbox=59,17,71,34&width=300&height=500&format=image/svg%2Bxml&time=201308051200&dim_interval_start=30 HTTP/1.0

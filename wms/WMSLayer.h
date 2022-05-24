@@ -109,6 +109,7 @@ private:
   LegendGraphicResult getLegendGraphic(const std::string& legendGraphicID,
                                        const std::string& language) const;
   const std::map<std::string, std::string>& getLegendFiles() const { return itsLegendFiles; }
+  std::pair<std::string, std::string> getDefaultInterval() const;
 
   bool isValidInterval(int interval_start, int interval_end) const;
   bool isValidCRS(const std::string& theCRS) const;

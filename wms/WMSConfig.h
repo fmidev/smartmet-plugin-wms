@@ -103,6 +103,7 @@ class WMSConfig
   bool isValidStyle(const std::string& theLayer, const std::string& theStyle) const;
   bool isValidCRS(const std::string& theLayer, const std::string& theCRS) const;
   bool isValidInterval(const std::string& theLayer, int interval_start, int interval_end) const;
+  std::pair<std::string, std::string> getDefaultInterval(const std::string& theLayer) const;
 
 #ifndef WITHOUT_AUTHENTICATION
   bool validateGetMapAuthorization(const Spine::HTTP::Request& theRequest) const;

@@ -809,6 +809,22 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
 		theRequest.addParameter("interval_start", Fmi::to_string(abs(interval_start)));
 		theRequest.addParameter("interval_end", Fmi::to_string(abs(interval_end)));
 	  }
+	else
+	  {
+		// Else check if layer has default interval configured
+		auto default_interval = itsConfig.getDefaultInterval(layerName);
+		auto interval_start = default_interval.first;
+		auto interval_end = default_interval.second;
+		if(!interval_start.empty() || !interval_end.empty())
+		  {
+			if(interval_start.empty())
+			  interval_start = "0";
+			if(interval_end.empty())
+			  interval_end = "0";
+			theRequest.addParameter("interval_start", interval_start);
+			theRequest.addParameter("interval_end", interval_end);			
+		  }
+	  }
 
     // This must be done after the validate_options call or we will not get the
     // correct exception as output
