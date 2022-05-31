@@ -26,12 +26,12 @@ BuildRequires: smartmet-library-timeseries-devel >= 22.5.24
 BuildRequires: smartmet-engine-authentication-devel >= 22.5.24
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 22.5.24
+BuildRequires: smartmet-engine-observation-devel >= 22.5.31
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.5.24
 BuildRequires: smartmet-engine-grid-devel >= 22.5.24
 BuildRequires: smartmet-engine-geonames-devel >= 22.5.24
-BuildRequires: smartmet-engine-querydata-devel >= 22.5.24
+BuildRequires: smartmet-engine-querydata-devel >= 22.5.31
 BuildRequires: smartmet-engine-contour-devel >= 22.5.24
 BuildRequires: smartmet-library-gis-devel >= 22.5.4
 BuildRequires: smartmet-library-trax-devel >= 22.5.23
@@ -68,7 +68,7 @@ Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 22.5.24
 %endif
-Requires: smartmet-engine-querydata >= 22.5.24
+Requires: smartmet-engine-querydata >= 22.5.31
 Requires: smartmet-engine-contour >= 22.5.24
 Requires: smartmet-engine-gis >= 22.5.24
 Requires: smartmet-engine-grid >= 22.5.24
@@ -94,7 +94,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 22.5.24
 #TestRequires: smartmet-engine-geonames-devel >= 22.5.24
 #TestRequires: smartmet-engine-gis-devel >= 22.5.24
-#TestRequires: smartmet-engine-querydata-devel >= 22.5.24
+#TestRequires: smartmet-engine-querydata-devel >= 22.5.31
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
 #TestRequires: smartmet-library-trax-devel >= 22.5.23
 #TestRequires: smartmet-library-newbase-devel >= 22.1.21
@@ -109,7 +109,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 22.5.24
+#TestRequires: smartmet-engine-observation-devel >= 22.5.31
 %endif
 
 %description
