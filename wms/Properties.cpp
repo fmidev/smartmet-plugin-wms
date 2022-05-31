@@ -406,6 +406,18 @@ std::size_t Properties::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(ymargin));
     Fmi::hash_combine(hash, Fmi::hash_value(clip));
     Fmi::hash_combine(hash, Dali::hash_value(projection, theState));
+
+    if (source && *source == "grid")
+    {
+      auto gridEngine = theState.getGridEngine();
+      if (!gridEngine || !gridEngine->isEnabled())
+        throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
+      std::string producerName = gridEngine->getProducerName(*producer);
+      auto pHash = gridEngine->getProducerHash(producerName);
+      Fmi::hash_combine(hash, Fmi::hash_value(pHash));
+    }
+
     return hash;
   }
   catch (...)
