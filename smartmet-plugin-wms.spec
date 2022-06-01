@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.5.31
+Version: 22.6.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -17,7 +17,7 @@ BuildRequires: make
 BuildRequires: boost169-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.6.18
-BuildRequires: smartmet-library-grid-content-devel >= 22.5.24
+BuildRequires: smartmet-library-grid-content-devel >= 22.6.1
 BuildRequires: smartmet-library-grid-files-devel >= 22.5.24
 BuildRequires: smartmet-library-macgyver-devel >= 22.5.24
 BuildRequires: smartmet-library-spine-devel >= 22.5.24
@@ -29,7 +29,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 22.5.24
 BuildRequires: smartmet-engine-observation-devel >= 22.5.31
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.5.24
-BuildRequires: smartmet-engine-grid-devel >= 22.5.24
+BuildRequires: smartmet-engine-grid-devel >= 22.6.1
 BuildRequires: smartmet-engine-geonames-devel >= 22.5.24
 BuildRequires: smartmet-engine-querydata-devel >= 22.5.31
 BuildRequires: smartmet-engine-contour-devel >= 22.5.24
@@ -57,7 +57,7 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 22.5.24
+Requires: smartmet-library-grid-content >= 22.6.1
 Requires: smartmet-library-grid-files >= 22.5.24
 Requires: smartmet-library-gis >= 22.5.4
 Requires: smartmet-library-trax >= 22.5.23
@@ -71,9 +71,9 @@ Requires: smartmet-engine-authentication >= 22.5.24
 Requires: smartmet-engine-querydata >= 22.5.31
 Requires: smartmet-engine-contour >= 22.5.24
 Requires: smartmet-engine-gis >= 22.5.24
-Requires: smartmet-engine-grid >= 22.5.24
+Requires: smartmet-engine-grid >= 22.6.1
 Requires: smartmet-engine-geonames >= 22.5.24
-Requires: smartmet-server >= 22.5.16
+Requires: smartmet-server >= 22.5.24
 Requires: smartmet-library-spine >= 22.5.24
 Requires: boost169-date-time
 Requires: boost169-filesystem
@@ -100,7 +100,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-newbase-devel >= 22.1.21
 #TestRequires: smartmet-library-spine-devel >= 22.5.24
 #TestRequires: smartmet-library-timeseries-devel >= 22.5.24
-#TestRequires: smartmet-engine-grid-devel >= 22.5.24
+#TestRequires: smartmet-engine-grid-devel >= 22.6.1
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -138,6 +138,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Jun  1 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.1-1.fmi
+- Improved ETag calculation support
+
 * Tue May 31 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.5.31-1.fmi
 - Repackage due to smartmet-engine-querydata and smartmet-engine-observation ABI changes
 
