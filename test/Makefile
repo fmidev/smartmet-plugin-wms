@@ -61,8 +61,8 @@ clean:	clean-redis
 	rm -rf tmp-geonames-db*
 
 test: $(PROG) $(TEST_PREPARE_TARGETS)
-	rm -f failures/*
-	if ./TestRunner.sh; then \
+	@rm -f failures/*
+	@if ./TestRunner.sh; then \
 		ok=true; $(MAKE) $(TEST_FINISH_TARGETS); \
 	else \
 		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
@@ -93,10 +93,10 @@ stop-geonames-db:
 	-/usr/share/smartmet/test/db/test-db-ctl.sh $(TEST_DB_DIR) stop
 
 start-redis-db:
-	rm -rf cnf/grid
-	cp -pr $(datadir)/smartmet/test/grid cnf/
+	@rm -rf cnf/grid
+	@cp -pr $(datadir)/smartmet/test/grid cnf/
 	@echo "*** Creating the Redis configuration file."
-	smartmet-grid-test-config-creator cnf/environment.conf cnf/grid/redis/redis-template.conf cnf/grid/redis/redis.conf
+	@smartmet-grid-test-config-creator cnf/environment.conf cnf/grid/redis/redis-template.conf cnf/grid/redis/redis.conf
 	@echo "*** Starting the Redis database."
 	@redis-server cnf/grid/redis/redis.conf
 
