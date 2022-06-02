@@ -180,7 +180,12 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     double datawidth = newarea->WorldXYWidth();  // in native units
     double dataheight = newarea->WorldXYHeight();
 
-    if (newarea->SpatialReference().isGeographic())
+    // The test against 360 is due to legacy NFmiLatLonArea, which is sort of geographic
+    // but WorldXYWidth returns equidistant cylindrical width instead. This kludge effectively
+    // breaks metric projection heatmaps for areas smaller than 360 meters, but such analysis
+    // is highly unlikely to happen.
+
+    if (newarea->SpatialReference().isGeographic() && datawidth < 360)
     {
       datawidth *= kRearth * kPii / 180 / 1000;  // degrees to kilometers
       dataheight *= kRearth * kPii / 180 / 1000;
