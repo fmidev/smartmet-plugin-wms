@@ -35,10 +35,6 @@
 #include <trax/InterpolationType.h>
 #include <limits>
 
-#ifndef WGS84
-#include <newbase/NFmiGdalArea.h>
-#endif
-
 namespace SmartMet
 {
 namespace Plugin
@@ -178,7 +174,6 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
     // Establish new projection and the required grid size of the desired resolution
 
-#ifdef WGS84
     std::unique_ptr<NFmiArea> newarea(NFmiArea::CreateFromBBox(
         crs, NFmiPoint(box.xmin(), box.ymin()), NFmiPoint(box.xmax(), box.ymax())));
 
@@ -195,13 +190,6 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
       datawidth /= 1000;  // meters to kilometers
       dataheight /= 1000;
     }
-#else
-    auto newarea = boost::make_shared<NFmiGdalArea>(
-        "FMI", *crs, box.xmin(), box.ymin(), box.xmax(), box.ymax());
-
-    double datawidth = newarea->WorldXYWidth() / 1000.0;  // view extent in kilometers
-    double dataheight = newarea->WorldXYHeight() / 1000.0;
-#endif
 
     unsigned int width = lround(datawidth / *heatmap.resolution);
     unsigned int height = lround(dataheight / *heatmap.resolution);

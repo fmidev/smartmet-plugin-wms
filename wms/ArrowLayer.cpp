@@ -94,13 +94,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
     std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
     if (uparam && vparam && q->isRelativeUV())
-    {
-#ifdef WGS84
       uvtransformation.reset(new Fmi::CoordinateTransformation("WGS84", q->SpatialReference()));
-#else
-      uvtransformation.reset(new Fmi::CoordinateTransformation("WGS84", q->area().WKT()));
-#endif
-    }
 
     // Generate the coordinates for the arrows
 
@@ -1008,7 +1002,7 @@ void ArrowLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       Spine::JSON::extract_array("arrows", arrows, json, theConfig);
 
-	point_value_options.init(theJson);
+    point_value_options.init(theJson);
   }
   catch (...)
   {
@@ -1358,8 +1352,8 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       offset = conv.offset;
     }
 
-	pointvalues = prioritize(pointvalues, point_value_options);
-	
+    pointvalues = prioritize(pointvalues, point_value_options);
+
     // Render the collected values
 
     int valid_count = 0;
@@ -1612,8 +1606,8 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
       pointvalues = read_observations(*this, theState, crs, box, valid_time_period);
 #endif
 
-	pointvalues = prioritize(pointvalues, point_value_options);
-	
+    pointvalues = prioritize(pointvalues, point_value_options);
+
     // Coordinate transformation from WGS84 to output SRS so that we can rotate
     // winds according to map north
 
