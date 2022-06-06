@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.6.1
+Version: 22.6.6
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -26,7 +26,7 @@ BuildRequires: smartmet-library-timeseries-devel >= 22.5.24
 BuildRequires: smartmet-engine-authentication-devel >= 22.5.24
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 22.5.31
+BuildRequires: smartmet-engine-observation-devel >= 22.6.6
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.5.24
 BuildRequires: smartmet-engine-grid-devel >= 22.6.1
@@ -109,7 +109,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 22.5.31
+#TestRequires: smartmet-engine-observation-devel >= 22.6.6
 %endif
 
 %description
@@ -138,6 +138,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Jun  6 2022 Andris Pavenis <andris.pavenis@fmi.fi> 22.6.6-1.fmi
+- Repackage due to smartmet-engine-observation ABI changes
+
 * Wed Jun  1 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.1-1.fmi
 - Improved ETag calculation support
 
