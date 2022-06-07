@@ -177,8 +177,8 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     std::unique_ptr<NFmiArea> newarea(NFmiArea::CreateFromBBox(
         crs, NFmiPoint(box.xmin(), box.ymin()), NFmiPoint(box.xmax(), box.ymax())));
 
-    double datawidth = newarea->WorldXYWidth();  // in native units
-    double dataheight = newarea->WorldXYHeight();
+    double datawidth = std::abs(newarea->WorldXYWidth());  // in native units
+    double dataheight = std::abs(newarea->WorldXYHeight());
 
     // The test against 360 is due to legacy NFmiLatLonArea, which is sort of geographic
     // but WorldXYWidth returns equidistant cylindrical width instead. This kludge effectively

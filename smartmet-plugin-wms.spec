@@ -138,6 +138,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Jun  7 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.6-1.fmi
+- Fixed heatmap calculations to use std::abs to enforce positive sizes
+
 * Mon Jun  6 2022 Andris Pavenis <andris.pavenis@fmi.fi> 22.6.6-1.fmi
 - Repackage due to smartmet-engine-observation ABI changes
 
