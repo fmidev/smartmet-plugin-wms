@@ -93,9 +93,9 @@
   <text x="480" y="160">Validtime: 2008-8-5 15:00</text>
   <text x="480" y="180">Origintime: 2008-8-5 9:31</text>
   <text x="480" y="200">Range test: 8-4 12:00 - 8-5 12:00 UTC</text>
-  <text x="480" y="240">Validtime: 2008-8-5 15:00</text>
-  <text x="480" y="260">Origintime: 2008-8-5 9:31</text>
-  <text x="480" y="280">Range test: 8-4 12:00 -  8-5 12:00 UTC</text>
+  <text x="480" y="240">Validtime: 2008-08-05 15:00</text>
+  <text x="480" y="260">Origintime: 2008-08-05 09:31</text>
+  <text x="480" y="280">Range test: 08-04 12:00 -  08-05 12:00 UTC</text>
  </g>
 </g>
 

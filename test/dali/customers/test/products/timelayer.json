@@ -120,7 +120,7 @@
 		    "formatter": "fmt",
 		    "timestamp": "validtime",
                     "timezone": "Europe/Helsinki",
-                    "format": "Validtime: {:%Y-%-m-%-d %-H:%M}",
+                    "format": "Validtime: {:%Y-%m-%d %H:%M}",
 		    "x": -20,
 		    "y": 240
 		},
@@ -129,7 +129,7 @@
 		    "formatter": "fmt",
 		    "timestamp": "origintime",
                     "timezone": "Europe/Helsinki",
-                    "format": "Origintime: {:%Y-%-m-%-d %-H:%M}",
+                    "format": "Origintime: {:%Y-%m-%d %H:%M}",
 		    "x": -20,
 		    "y": 260
 		},
@@ -139,7 +139,7 @@
 		    "timestamp": ["-24h","validtime"],
                     "timezone": "UTC",
 		    "prefix": "Range test: ",
-                    "format": ["{:%-m-%-d %-H:%M - } ", "{:%-m-%-d %-H:%M}"],
+                    "format": ["{:%m-%d %H:%M - } ", "{:%m-%d %H:%M}"],
 		    "suffix": " UTC",
 		    "x": -20,
 		    "y": 280
