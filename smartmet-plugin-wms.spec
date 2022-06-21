@@ -11,31 +11,40 @@ Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
 Source0: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+%if 0%{?rhel} && 0%{rhel} < 9
+%define smartmet_boost boost169
+%else
+%define smartmet_boost boost
+%endif
+
+%define smartmet_fmt_min 8.1.1
+%define smartmet_fmt_max 8.2.0
+
 BuildRequires: rpm-build
 BuildRequires: gcc-c++
 BuildRequires: make
-BuildRequires: boost169-devel
+BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 21.6.18
 BuildRequires: smartmet-library-grid-content-devel >= 22.6.1
 BuildRequires: smartmet-library-grid-files-devel >= 22.5.24
-BuildRequires: smartmet-library-macgyver-devel >= 22.5.24
-BuildRequires: smartmet-library-spine-devel >= 22.5.24
-BuildRequires: smartmet-library-timeseries-devel >= 22.5.24
+BuildRequires: smartmet-library-macgyver-devel >= 22.6.16
+BuildRequires: smartmet-library-spine-devel >= 22.6.16
+BuildRequires: smartmet-library-timeseries-devel >= 22.6.16
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 22.5.24
+BuildRequires: smartmet-engine-authentication-devel >= 22.6.17
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 22.6.6
+BuildRequires: smartmet-engine-observation-devel >= 22.6.17
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 22.5.24
-BuildRequires: smartmet-engine-grid-devel >= 22.6.1
-BuildRequires: smartmet-engine-geonames-devel >= 22.5.24
-BuildRequires: smartmet-engine-querydata-devel >= 22.5.31
-BuildRequires: smartmet-engine-contour-devel >= 22.5.24
-BuildRequires: smartmet-library-gis-devel >= 22.5.4
-BuildRequires: smartmet-library-trax-devel >= 22.5.23
-BuildRequires: fmt-devel >= 7.1.3
+BuildRequires: smartmet-engine-gis-devel >= 22.6.17
+BuildRequires: smartmet-engine-grid-devel >= 22.6.17
+BuildRequires: smartmet-engine-geonames-devel >= 22.6.17
+BuildRequires: smartmet-engine-querydata-devel >= 22.6.17
+BuildRequires: smartmet-engine-contour-devel >= 22.6.17
+BuildRequires: smartmet-library-gis-devel >= 22.6.16
+BuildRequires: smartmet-library-trax-devel >= 22.6.16
+BuildRequires: fmt-devel >= %{smartmet_fmt_min}, fmt-devel < %{smartmet_fmt_max}
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
@@ -52,55 +61,55 @@ BuildRequires: librsvg2-devel
 #TestRequires: librsvg2-tools
 %endif
 Requires: cairo
-Requires: fmt >= 7.1.3
+Requires: fmt >= %{smartmet_fmt_min}, fmt < %{smartmet_fmt_max}
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 22.6.1
 Requires: smartmet-library-grid-files >= 22.5.24
-Requires: smartmet-library-gis >= 22.5.4
-Requires: smartmet-library-trax >= 22.5.23
-Requires: smartmet-library-macgyver >= 22.5.24
-Requires: smartmet-library-spine >= 22.5.24
-Requires: smartmet-library-timeseries >= 22.5.24
+Requires: smartmet-library-gis >= 22.6.16
+Requires: smartmet-library-trax >= 22.6.16
+Requires: smartmet-library-macgyver >= 22.6.16
+Requires: smartmet-library-spine >= 22.6.16
+Requires: smartmet-library-timeseries >= 22.6.16
 Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 22.5.24
+Requires: smartmet-engine-authentication >= 22.6.17
 %endif
-Requires: smartmet-engine-querydata >= 22.5.31
-Requires: smartmet-engine-contour >= 22.5.24
-Requires: smartmet-engine-gis >= 22.5.24
-Requires: smartmet-engine-grid >= 22.6.1
-Requires: smartmet-engine-geonames >= 22.5.24
+Requires: smartmet-engine-querydata >= 22.6.17
+Requires: smartmet-engine-contour >= 22.6.17
+Requires: smartmet-engine-gis >= 22.6.17
+Requires: smartmet-engine-grid >= 22.6.17
+Requires: smartmet-engine-geonames >= 22.6.17
 Requires: smartmet-server >= 22.5.24
-Requires: smartmet-library-spine >= 22.5.24
-Requires: boost169-date-time
-Requires: boost169-filesystem
-Requires: boost169-iostreams
-Requires: boost169-regex
-Requires: boost169-system
-Requires: boost169-thread
+Requires: smartmet-library-spine >= 22.6.16
+Requires: %{smartmet_boost}-date-time
+Requires: %{smartmet_boost}-filesystem
+Requires: %{smartmet_boost}-iostreams
+Requires: %{smartmet_boost}-regex
+Requires: %{smartmet_boost}-system
+Requires: %{smartmet_boost}-thread
 Provides: %{SPECNAME}
 Obsoletes: smartmet-brainstorm-dali < 16.11.1
 Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
-#TestRequires: boost169-devel
+#TestRequires: %{smartmet_boost}-devel
 #TestRequires: bzip2-devel
 #TestRequires: fmt-devel
 #TestRequires: gcc-c++
 #TestRequires: jsoncpp-devel
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 22.5.24
-#TestRequires: smartmet-engine-geonames-devel >= 22.5.24
-#TestRequires: smartmet-engine-gis-devel >= 22.5.24
-#TestRequires: smartmet-engine-querydata-devel >= 22.5.31
+#TestRequires: smartmet-engine-contour-devel >= 22.6.17
+#TestRequires: smartmet-engine-geonames-devel >= 22.6.17
+#TestRequires: smartmet-engine-gis-devel >= 22.6.17
+#TestRequires: smartmet-engine-querydata-devel >= 22.6.17
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
-#TestRequires: smartmet-library-trax-devel >= 22.5.23
-#TestRequires: smartmet-library-newbase-devel >= 22.1.21
-#TestRequires: smartmet-library-spine-devel >= 22.5.24
-#TestRequires: smartmet-library-timeseries-devel >= 22.5.24
-#TestRequires: smartmet-engine-grid-devel >= 22.6.1
+#TestRequires: smartmet-library-trax-devel >= 22.6.16
+#TestRequires: smartmet-library-newbase-devel >= 22.6.16
+#TestRequires: smartmet-library-spine-devel >= 22.6.16
+#TestRequires: smartmet-library-timeseries-devel >= 22.6.16
+#TestRequires: smartmet-engine-grid-devel >= 22.6.17
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -109,7 +118,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 22.6.6
+#TestRequires: smartmet-engine-observation-devel >= 22.6.17
 %endif
 
 %description
