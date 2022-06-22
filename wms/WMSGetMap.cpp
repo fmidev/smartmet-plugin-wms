@@ -23,14 +23,14 @@ namespace WMS
 {
 namespace
 {
-
-bool is_number(const std::string & str)
+bool is_number(const std::string& str)
 {
   auto it = str.begin();
-  if(*it == '-' || *it == '+')
-	it++;
-  while (it != str.end() && std::isdigit(*it)) {
-	it++;
+  if (*it == '-' || *it == '+')
+    it++;
+  while (it != str.end() && std::isdigit(*it))
+  {
+    it++;
   }
   return !str.empty() && it == str.end();
 }
@@ -441,24 +441,27 @@ void validate_options(const tag_get_map_request_options& options,
           .addParameter("yMax", std::to_string(options.bbox.yMax));
     }
 
-	// check interval dimesion
-	if(options.interval_start || options.interval_end)
-	  {
-		int interval_start = abs(options.interval_start ? *options.interval_start : 0);
-		int interval_end =  abs(options.interval_end ? *options.interval_end : 0);
+    // check interval dimesion
+    if (options.interval_start || options.interval_end)
+    {
+      int interval_start = abs(options.interval_start ? *options.interval_start : 0);
+      int interval_end = abs(options.interval_end ? *options.interval_end : 0);
 
-		for (unsigned int i = 0; i < options.map_info_vector.size(); i++)
-		  {
-			std::string layer(options.map_info_vector[i].name);
-			if(!itsConfig.isValidInterval(layer, interval_start, interval_end))
-			  {
-				std::string interval = (Fmi::to_string(interval_start) + ", " + Fmi::to_string(interval_end));
-				throw Fmi::Exception(BCP, "Invalid interval requested for layer " + layer + "! interval_start, interval_end: " + interval)
-				  .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
-				  .disableStackTrace();
-			  }
-		  }
-	  }
+      for (unsigned int i = 0; i < options.map_info_vector.size(); i++)
+      {
+        std::string layer(options.map_info_vector[i].name);
+        if (!itsConfig.isValidInterval(layer, interval_start, interval_end))
+        {
+          std::string interval =
+              (Fmi::to_string(interval_start) + ", " + Fmi::to_string(interval_end));
+          throw Fmi::Exception(BCP,
+                               "Invalid interval requested for layer " + layer +
+                                   "! interval_start, interval_end: " + interval)
+              .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
+              .disableStackTrace();
+        }
+      }
+    }
   }
   catch (...)
   {
@@ -559,8 +562,14 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     std::vector<std::string> layers;
     std::string layers_opt = *(theRequest.getParameter("LAYERS"));
     std::string styles_opt = *(theRequest.getParameter("STYLES"));
+
     if (!layers_opt.empty())
       boost::algorithm::split(layers, layers_opt, boost::algorithm::is_any_of(","));
+
+    // Must define at least one layer
+    if (layers.empty())
+      throw Fmi::Exception(BCP, "LAYERS option not set")
+          .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
 
     std::string layer_origintime;
     for (unsigned int i = 0; i < layers.size(); i++)
@@ -741,7 +750,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
         exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
         exception.addParameter("Time value", time_str);
         throw exception;
-      }	
+      }
     }
     else
     {
@@ -749,38 +758,39 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       // current time for each layer is resolved just before request is passed to dali
     }
 
+    // Check DIM_INTERVAL_START and DIM_INTERVAL_END
+    std::string dim_interval_start =
+        Spine::optional_string(theRequest.getParameter("DIM_INTERVAL_START"), "");
+    std::string dim_interval_end =
+        Spine::optional_string(theRequest.getParameter("DIM_INTERVAL_END"), "");
+    boost::algorithm::trim(dim_interval_start);
+    boost::algorithm::trim(dim_interval_end);
+    boost::replace_all(dim_interval_start, " ", "");
+    boost::replace_all(dim_interval_end, " ", "");
 
-	// Check DIM_INTERVAL_START and DIM_INTERVAL_END
-	std::string dim_interval_start = Spine::optional_string(theRequest.getParameter("DIM_INTERVAL_START"), "");
-	std::string dim_interval_end = Spine::optional_string(theRequest.getParameter("DIM_INTERVAL_END"), "");
-	boost::algorithm::trim(dim_interval_start);
-	boost::algorithm::trim(dim_interval_end);
-	boost::replace_all(dim_interval_start, " ", "");
-	boost::replace_all(dim_interval_end, " ", "");
+    if (!dim_interval_start.empty())
+    {
+      if (!is_number(dim_interval_start))
+      {
+        Fmi::Exception exception(BCP, "Invalid DIM_INTERVAL_START option value, must be integer!");
+        exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
+        exception.addParameter("Interval value", dim_interval_start);
+        throw exception;
+      }
+      itsParameters.interval_start = Fmi::stoi(dim_interval_start);
+    }
+    if (!dim_interval_end.empty())
+    {
+      if (!is_number(dim_interval_end))
+      {
+        Fmi::Exception exception(BCP, "Invalid DIM_INTERVAL_END option value, must be integer!");
+        exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
+        exception.addParameter("Interval value", dim_interval_end);
+        throw exception;
+      }
+      itsParameters.interval_end = Fmi::stoi(dim_interval_end);
+    }
 
-	if(!dim_interval_start.empty())
-	  {
-		if(!is_number(dim_interval_start))
-		  {
-			Fmi::Exception exception(BCP, "Invalid DIM_INTERVAL_START option value, must be integer!");
-			exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
-			exception.addParameter("Interval value", dim_interval_start);
-			throw exception;
-		  }
-		itsParameters.interval_start = Fmi::stoi(dim_interval_start);
-	  }
-	if(!dim_interval_end.empty())
-	  {
-		if(!is_number(dim_interval_end))
-		  {
-			Fmi::Exception exception(BCP, "Invalid DIM_INTERVAL_END option value, must be integer!");
-			exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
-			exception.addParameter("Interval value", dim_interval_end);
-			throw exception;
-		  }
-		itsParameters.interval_end = Fmi::stoi(dim_interval_end);
-	  }
-	
     // validate the given options
     validate_options(itsParameters, itsConfig, theQEngine);
 
@@ -798,33 +808,33 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     theRequest.addParameter("projection.xsize", Fmi::to_string(itsParameters.width));
     theRequest.addParameter("projection.ysize", Fmi::to_string(itsParameters.height));
 
-	// Add interval if exists
-	if(itsParameters.interval_start || itsParameters.interval_end)
-	  {
-		int interval_start = (itsParameters.interval_start ? *itsParameters.interval_start : 0);
-		int interval_end = (itsParameters.interval_end ? *itsParameters.interval_end : 0);
+    // Add interval if exists
+    if (itsParameters.interval_start || itsParameters.interval_end)
+    {
+      int interval_start = (itsParameters.interval_start ? *itsParameters.interval_start : 0);
+      int interval_end = (itsParameters.interval_end ? *itsParameters.interval_end : 0);
 
-		theRequest.removeParameter("DIM_INTERVAL_START");
-		theRequest.removeParameter("DIM_INTERVAL_END");
-		theRequest.addParameter("interval_start", Fmi::to_string(abs(interval_start)));
-		theRequest.addParameter("interval_end", Fmi::to_string(abs(interval_end)));
-	  }
-	else
-	  {
-		// Else check if layer has default interval configured
-		auto default_interval = itsConfig.getDefaultInterval(layerName);
-		auto interval_start = default_interval.first;
-		auto interval_end = default_interval.second;
-		if(!interval_start.empty() || !interval_end.empty())
-		  {
-			if(interval_start.empty())
-			  interval_start = "0";
-			if(interval_end.empty())
-			  interval_end = "0";
-			theRequest.addParameter("interval_start", interval_start);
-			theRequest.addParameter("interval_end", interval_end);			
-		  }
-	  }
+      theRequest.removeParameter("DIM_INTERVAL_START");
+      theRequest.removeParameter("DIM_INTERVAL_END");
+      theRequest.addParameter("interval_start", Fmi::to_string(abs(interval_start)));
+      theRequest.addParameter("interval_end", Fmi::to_string(abs(interval_end)));
+    }
+    else
+    {
+      // Else check if layer has default interval configured
+      auto default_interval = itsConfig.getDefaultInterval(layerName);
+      auto interval_start = default_interval.first;
+      auto interval_end = default_interval.second;
+      if (!interval_start.empty() || !interval_end.empty())
+      {
+        if (interval_start.empty())
+          interval_start = "0";
+        if (interval_end.empty())
+          interval_end = "0";
+        theRequest.addParameter("interval_start", interval_start);
+        theRequest.addParameter("interval_end", interval_end);
+      }
+    }
 
     // This must be done after the validate_options call or we will not get the
     // correct exception as output
