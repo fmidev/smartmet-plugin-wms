@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.6.22
+Version: 22.6.29
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -147,6 +147,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Jun 29 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.6.29-1.fmi
+- Repackage after merging hotfix
+
 * Wed Jun 22 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.6.22-1.fmi
 - Check that the WMS layers option is non empty
 
