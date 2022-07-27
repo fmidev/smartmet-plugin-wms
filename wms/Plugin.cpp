@@ -1896,9 +1896,9 @@ Fmi::Cache::CacheStatistics Plugin::getCacheStats() const
 {
   Fmi::Cache::CacheStatistics ret;
 
-  ret.insert(
-      std::make_pair("Wms::image_cache::memory_cache", itsImageCache->getMemoryCacheStats()));
-  ret.insert(std::make_pair("Wms::image_cache::file_cache", itsImageCache->getFileCacheStats()));
+  ret["Wms::image_cache::memory_cache"] = itsImageCache->getMemoryCacheStats();
+  ret["Wms::image_cache::file_cache"] = itsImageCache->getFileCacheStats();
+  ret["Wms::css_cache"] = itsStyleSheetCache.statistics();
 
   return ret;
 }
