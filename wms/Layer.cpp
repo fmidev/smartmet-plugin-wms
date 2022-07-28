@@ -151,9 +151,17 @@ Engine::Querydata::Q Layer::getModel(const State& theState) const
     if (source && *source == "grid")
       return {};
 
-    if (!origintime)
-      return theState.get(model);
-    return theState.get(model, *origintime);
+    // chosen valid time is not relevant here if an origintime is set, the data may or may not
+    // contain the time
+    if (origintime)
+      return theState.getModel(model, *origintime);
+
+    // otherwise we try to select the minimal amount of querydata files based on the time or the
+    // time interval
+    if (!time)
+      return theState.getModel(model);
+
+    return theState.getModel(model, getValidTimePeriod());
   }
   catch (...)
   {
