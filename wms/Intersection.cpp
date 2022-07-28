@@ -352,7 +352,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     if (!producer && !theProducer)
       throw Fmi::Exception(BCP, "Producer not set for intersection");
 
-    auto q = theState.get(producer ? *producer : *theProducer);
+    auto q = theState.getModel(producer ? *producer : *theProducer);
 
     // This can happen when we use observations
     if (!q)
@@ -471,7 +471,7 @@ std::size_t Intersection::hash_value(const State& theState) const
     std::size_t hash = 0;
 
     if (producer)
-      Fmi::hash_combine(hash, Engine::Querydata::hash_value(theState.get(*producer)));
+      Fmi::hash_combine(hash, Engine::Querydata::hash_value(theState.getModel(*producer)));
 
     Fmi::hash_combine(hash, Fmi::hash_value(lolimit));
     Fmi::hash_combine(hash, Fmi::hash_value(hilimit));

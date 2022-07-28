@@ -23,9 +23,9 @@
 #include <engines/grid/Engine.h>
 #include <engines/querydata/Q.h>
 #include <spine/HTTP.h>
+#include <timeseries/TimeSeriesInclude.h>
 #include <map>
 #include <set>
-#include <timeseries/TimeSeriesInclude.h>
 
 namespace CTPP
 {
@@ -99,9 +99,15 @@ class State
   const std::string& getType() const { return itsType; }
   void setType(const std::string& theType) { itsType = theType; }
   // Get Q to be used in the current product
-  Engine::Querydata::Q get(const Engine::Querydata::Producer& theProducer) const;
-  Engine::Querydata::Q get(const Engine::Querydata::Producer& theProducer,
-                           const boost::posix_time::ptime& theOriginTime) const;
+  Engine::Querydata::Q getModel(const Engine::Querydata::Producer& theProducer) const;
+  Engine::Querydata::Q getModel(const Engine::Querydata::Producer& theProducer,
+                                const boost::posix_time::ptime& theOriginTime) const;
+
+  // If no origintime is set, try extracting a minimal part of multifiles for example to keep the
+  // data has for old radar files the same even if newer ones have overridden the hash value for
+  // the full multifile.
+  Engine::Querydata::Q getModel(const Engine::Querydata::Producer& theProducer,
+                                const boost::posix_time::time_period& theTimePeriod) const;
 
   // Require given ID to be free, and mark it used if it is free
   void requireId(const std::string& theID) const;
@@ -115,7 +121,7 @@ class State
   // Fetch CSS contents
   std::string getStyle(const std::string& theCSS) const;
   std::map<std::string, std::string> getStyle(const std::string& theCSS,
-					      const std::string& theSelector) const;
+                                              const std::string& theSelector) const;
 
   // Fetch symbol contents
   bool setSymbol(const std::string& theName, const std::string& theValue) const;

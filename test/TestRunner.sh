@@ -126,13 +126,13 @@ for f in input/*.get; do
 	echo "$request_name" >&3
 	extralines=""
 	while true; do
-	    read line <&4
+	    IFS= read -r line <&4
 	    if [[ "$line" == "DONE" ]]; then
 		break
 	    else
 		# echo $line
 		if [[ -z $extralines ]]; then
-		extralines="\t${line}"
+		    extralines="\t${line}"
 		else
 		    extralines+="\n\t"
 		    extralines+=$line

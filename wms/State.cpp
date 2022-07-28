@@ -36,7 +36,7 @@ State::State(Plugin& thePlugin, const Spine::HTTP::Request& theRequest)
       itUsesTimer(false),
       itUsesWms(false),
       itsRequest(theRequest),
-	  itsLocalTimePool(boost::make_shared<TS::LocalTimePool>())
+      itsLocalTimePool(boost::make_shared<TS::LocalTimePool>())
 {
 }
 
@@ -183,12 +183,14 @@ const Config& State::getConfig() const
  */
 // ----------------------------------------------------------------------
 
-Engine::Querydata::Q State::get(const Engine::Querydata::Producer& theProducer) const
+Engine::Querydata::Q State::getModel(const Engine::Querydata::Producer& theProducer) const
 {
   try
   {
     // Use cached Q if there is one
-    auto res = itsQCache.find(theProducer);
+    auto key = theProducer;
+
+    auto res = itsQCache.find(key);
     if (res != itsQCache.end())
       return res->second;
 
@@ -200,7 +202,7 @@ Engine::Querydata::Q State::get(const Engine::Querydata::Producer& theProducer) 
 
     // Cache the obtained data and return it. The cache is
     // request specific, no need for mutexes here.
-    itsQCache.insert(std::make_pair(theProducer, q));
+    itsQCache.insert(std::make_pair(key, q));
     return q;
   }
   catch (...)
@@ -215,16 +217,70 @@ Engine::Querydata::Q State::get(const Engine::Querydata::Producer& theProducer) 
  */
 // ----------------------------------------------------------------------
 
-Engine::Querydata::Q State::get(const Engine::Querydata::Producer& theProducer,
-                                const boost::posix_time::ptime& theOriginTime) const
+Engine::Querydata::Q State::getModel(const Engine::Querydata::Producer& theProducer,
+                                     const boost::posix_time::ptime& theOriginTime) const
 {
   try
   {
-    return itsPlugin.getQEngine().get(theProducer, theOriginTime);
+    // We cache the data so that QEngine cannot delete it while we still need it for further layers
+    auto key = theProducer + " @ " + Fmi::to_iso_string(theOriginTime);
+
+    auto res = itsQCache.find(key);
+    if (res != itsQCache.end())
+      return res->second;
+
+    // Get the data from the engine
+    auto q = itsPlugin.getQEngine().get(theProducer, theOriginTime);
+
+    // Update estimated expiration time for the product
+    updateExpirationTime(q->expirationTime());
+
+    // Cache the obtained data and return it. The cache is
+    // request specific, no need for mutexes here.
+    itsQCache.insert(std::make_pair(key, q));
+    return q;
   }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get Q for a valid time period
+ */
+// ----------------------------------------------------------------------
+
+Engine::Querydata::Q State::getModel(const Engine::Querydata::Producer& theProducer,
+                                     const boost::posix_time::time_period& theTimePeriod) const
+{
+  try
+  {
+    // Use cached Q if there is one
+    auto key = theProducer + " from " + Fmi::to_iso_string(theTimePeriod.begin()) + " to " +
+               Fmi::to_iso_string(theTimePeriod.end());
+
+    auto res = itsQCache.find(key);
+    if (res != itsQCache.end())
+      return res->second;
+
+    // Get the data from the engine
+    auto q = itsPlugin.getQEngine().get(theProducer, theTimePeriod);
+
+    // Update estimated expiration time for the product
+    updateExpirationTime(q->expirationTime());
+
+    // Cache the obtained data and return it. The cache is
+    // request specific, no need for mutexes here.
+    itsQCache.insert(std::make_pair(key, q));
+    return q;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to obtain data for the requested time period!")
+        .addParameter("starttime", Fmi::to_iso_string(theTimePeriod.begin()))
+        .addParameter("endtime", Fmi::to_iso_string(theTimePeriod.end()));
   }
 }
 
@@ -377,9 +433,10 @@ void State::addPresentationAttributes(CTPP::CDT& theLayer,
                                       const Attributes& theAttributes) const
 {
   try
-  {    
+  {
     if (theCSS)
-      theAttributes.generatePresentation(theLayer, *this, getStyle(*theCSS, theAttributes.getSelector()));
+      theAttributes.generatePresentation(
+          theLayer, *this, getStyle(*theCSS, theAttributes.getSelector()));
     else
       theAttributes.generatePresentation(theLayer, *this);
   }
@@ -445,7 +502,8 @@ std::string State::getStyle(const std::string& theCSS) const
  * \brief Fetch parsed CSS from the cache
  */
 // ----------------------------------------------------------------------
-std::map<std::string, std::string> State::getStyle(const std::string& theCSS, const std::string& theSelector) const
+std::map<std::string, std::string> State::getStyle(const std::string& theCSS,
+                                                   const std::string& theSelector) const
 {
   try
   {
@@ -624,7 +682,7 @@ std::string State::getFilter(const std::string& theName) const
   {
     if (itsFilters.count(theName) > 0)
       return itsFilters[theName];
-	return itsPlugin.getFilter(itsCustomer, theName, itUsesWms);
+    return itsPlugin.getFilter(itsCustomer, theName, itUsesWms);
   }
   catch (...)
   {
@@ -641,7 +699,7 @@ std::string State::getFilter(const std::string& theName) const
 std::size_t State::getFilterHash(const std::string& theName) const
 {
   try
-  {	
+  {
     if (itsFilters.count(theName) > 0)
       return Fmi::hash_value(itsFilters[theName]);
 
@@ -841,7 +899,6 @@ void State::updateModificationTime(const boost::posix_time::ptime& theTime) cons
   else
     itsModificationTime = std::max(*itsModificationTime, theTime);
 }
-
 
 // ----------------------------------------------------------------------
 /*!

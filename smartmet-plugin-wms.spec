@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.7.27
-Release: 2%{?dist}.fmi
+Version: 22.7.28
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -40,7 +40,7 @@ BuildRequires: smartmet-engine-observation-devel >= 22.7.27
 BuildRequires: smartmet-engine-gis-devel >= 22.7.27
 BuildRequires: smartmet-engine-grid-devel >= 22.6.17
 BuildRequires: smartmet-engine-geonames-devel >= 22.7.27
-BuildRequires: smartmet-engine-querydata-devel >= 22.7.27
+BuildRequires: smartmet-engine-querydata-devel >= 22.7.28
 BuildRequires: smartmet-engine-contour-devel >= 22.7.27
 BuildRequires: smartmet-library-gis-devel >= 22.7.27
 BuildRequires: smartmet-library-trax-devel >= 22.6.16
@@ -77,7 +77,7 @@ Requires: smartmet-library-giza >= 21.6.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 22.6.17
 %endif
-Requires: smartmet-engine-querydata >= 22.7.27
+Requires: smartmet-engine-querydata >= 22.7.28
 Requires: smartmet-engine-contour >= 22.7.27
 Requires: smartmet-engine-gis >= 22.7.27
 Requires: smartmet-engine-grid >= 22.6.17
@@ -103,7 +103,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 22.7.27
 #TestRequires: smartmet-engine-geonames-devel >= 22.7.27
 #TestRequires: smartmet-engine-gis-devel >= 22.7.27
-#TestRequires: smartmet-engine-querydata-devel >= 22.7.27
+#TestRequires: smartmet-engine-querydata-devel >= 22.7.28
 #TestRequires: smartmet-library-giza-devel >= 21.6.18
 #TestRequires: smartmet-library-trax-devel >= 22.6.16
 #TestRequires: smartmet-library-newbase-devel >= 22.6.16
@@ -147,6 +147,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Jul 28 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.7.28-1.fmi
+- Fixed ETag generation for layers using multifiles
+
 * Wed Jul 27 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.7.27-2.fmi
 - Added CSS cache statistics to admin report
 
