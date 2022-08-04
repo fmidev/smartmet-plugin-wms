@@ -22,12 +22,19 @@ bool priority_sort(const StationSymbolPriority& rh1, const StationSymbolPriority
 
 float convert_possible_wawa_2_ww(float theValue)
 {
+  // clang-format off
   static const float wwCodeArray[100] = {
-      0,  1,  2,  3,  4,  5,  0,  0,  0,  0,  10, 0,  13, 0,  0,  0,  0,  0,  18, 0,
-      28, 21, 20, 21, 22, 24, 29, 0,  0,  0,  42, 41, 43, 45, 47, 48, 0,  0,  0,  0,
-      61, 63, 65, 61, 65, 71, 75, 66, 67, 0,  50, 51, 53, 55, 56, 57, 57, 58, 59, 0,
-      60, 61, 63, 65, 66, 67, 67, 68, 69, 0,  70, 71, 73, 75, 79, 79, 79, 77, 78, 0,
-      80, 80, 81, 81, 82, 85, 86, 86, 0,  89, 92, 17, 93, 96, 17, 97, 99, 0,  0,  8};
+      0,  1,  2,  3,  4,  5,  0,  0,  0,  0,
+      10, 0,  13, 0,  0,  0,  0,  0,  18, 0,
+      28, 21, 20, 21, 22, 24, 29, 0,  0,  0,
+      42, 41, 43, 45, 47, 48, 0,  0,  0,  0,
+      61, 63, 65, 61, 65, 71, 75, 66, 67, 0,
+      50, 51, 53, 55, 56, 57, 57, 58, 59, 0,
+      60, 61, 63, 65, 66, 67, 67, 68, 69, 0,
+      70, 71, 73, 75, 79, 79, 79, 77, 78, 0,
+      80, 80, 81, 81, 82, 85, 86, 86, 0, 89,
+      92, 17, 93, 96, 17, 97, 99, 0,  0,  8};
+  // clang-format on
 
   if (theValue >= 100 && theValue <= 199)
     return wwCodeArray[static_cast<int>(theValue - 100)];
@@ -39,9 +46,10 @@ int get_symbol(float wawa)
   float value = convert_possible_wawa_2_ww(wawa);
   if (value != kFloatMissing && value > 3)
   {
+    // the last value 255 is synop value 98, luckily also 99 is available
+    // but at location 48
     if (value == 99)
-      return 48;  // synop fontin viimeinen arvo 255 osuu synop arvolle 98, onneksi myös 99 löytyy
-                  // fontista, mutta sen sijainti on vain 48
+      return 48;
     else
       return (157 + value);
   }
