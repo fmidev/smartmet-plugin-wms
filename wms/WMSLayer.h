@@ -175,8 +175,8 @@ class WMSLayer
   void addIntervalDimension(int interval_start, int interval_end, bool interval_default);
 
   // read json file
-  static Json::Value readJsonFile(const std::string theFileName);
-  static Json::Value parseJsonString(const std::string theJsonString);
+  static Json::Value readJsonFile(const std::string& theFileName);
+  static Json::Value parseJsonString(const std::string& theJsonString);
 };
 
 using SharedWMSLayer = boost::shared_ptr<WMSLayer>;

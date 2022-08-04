@@ -51,7 +51,7 @@ class View;
 class Layer : public Properties
 {
  public:
-  virtual ~Layer() {}
+  virtual ~Layer() = default;
   using Properties::init;
   virtual void init(const Json::Value& theJson,
                     const State& theState,
@@ -63,7 +63,7 @@ class Layer : public Properties
   // Base provides a reasonable default!
   virtual std::size_t hash_value(const State& theState) const;
 
-  virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
+  void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   // Does the layer satisfy resolution etc constraints?
   bool validLayer(const State& theState) const;
@@ -109,7 +109,7 @@ class Layer : public Properties
 
   boost::optional<std::string> type;
 
-  bool isFlashOrMobileProducer(const std::string& producer) const;
+  static bool isFlashOrMobileProducer(const std::string& producer);
 
  private:
   bool validResolution() const;

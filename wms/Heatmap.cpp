@@ -124,8 +124,8 @@ std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> Heatmap::getStamp(u
               static_cast<float>(sqrt(((x - r) * (x - r) + (y - r) * (y - r))) / (r + 1));
           const float ds = expKernel(dist, *deviation);
           /* This doesn't generate optimal assembly, but meh, it's readable. */
-          const float clamped_ds = ds > 1.0f ? 1.0f : ds < 0.0f ? 0.0f : ds;
-          *line = 1.0f - clamped_ds;
+          const float clamped_ds = ds > 1.0F ? 1.0F : ds < 0.0F ? 0.0F : ds;
+          *line = 1.0F - clamped_ds;
         }
       }
 

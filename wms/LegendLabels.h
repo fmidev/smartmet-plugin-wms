@@ -32,8 +32,8 @@ class LegendLabels
 
   std::string type;
   boost::optional<std::string> format;
-  int dx;
-  int dy;
+  int dx = 0;
+  int dy = 0;
   std::string separator;
   std::map<std::string, std::string> conversions;
 

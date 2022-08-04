@@ -376,8 +376,9 @@ void find_candidates(Candidates& candidates,
     return;
 
   // Gather rotated coordinates
-  std::vector<double> ycoords;
   const auto n = geom->getNumPoints();
+  std::vector<double> ycoords;
+  ycoords.reserve(n);
   for (int i = 0; i < n; ++i)
     ycoords.push_back(sine * geom->getX(i) + cosine * geom->getY(i));
 
@@ -417,8 +418,9 @@ void find_candidates(Candidates& candidates,
     return;
 
   // Gather rotated coordinates
-  std::vector<double> ycoords;
   const auto n = geom->getNumPoints();
+  std::vector<double> ycoords;
+  ycoords.reserve(n);
   for (int i = 0; i < n; ++i)
     ycoords.push_back(sine * geom->getX(i) + cosine * geom->getY(i));
 
@@ -1028,7 +1030,7 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
 {
   try
   {
-    auto gridEngine = state.getGridEngine();
+    const auto* gridEngine = state.getGridEngine();
     if (!gridEngine || !gridEngine->isEnabled())
       throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
@@ -1058,8 +1060,8 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
 
       // printf("%f,%f  %f,%f\n",x1,y1,x2,y2);
 
-      pointList.push_back(T::Coordinate(x1, y1));
-      pointList.push_back(T::Coordinate(x2, y2));
+      pointList.emplace_back(T::Coordinate(x1, y1));
+      pointList.emplace_back(T::Coordinate(x2, y2));
     }
 
     T::GridValueList valueList;
@@ -1119,7 +1121,7 @@ std::size_t IsolabelLayer::hash_value(const State& theState) const
   {
     auto hash = IsolineLayer::hash_value(theState);
     Fmi::hash_combine(hash, Dali::hash_value(label, theState));
-    for (auto& angle : angles)
+    for (const auto& angle : angles)
       Fmi::hash_combine(hash, Fmi::hash_value(angle));
     Fmi::hash_combine(hash, Fmi::hash_value(upright));
     Fmi::hash_combine(hash, Fmi::hash_value(max_angle));

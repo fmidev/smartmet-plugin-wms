@@ -47,9 +47,9 @@ using ImageCache = Spine::SmartMetCache;
 class Plugin : public SmartMetPlugin, private boost::noncopyable
 {
  public:
+  ~Plugin() override;
   Plugin() = delete;
   Plugin(Spine::Reactor* theReactor, const char* theConfig);
-  virtual ~Plugin();
 
   const std::string& getPluginName() const;
   int getRequiredAPIVersion() const;
@@ -112,11 +112,11 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                               bool theWmsFlag) const;
 
  private:
-  void init();
-  void shutdown();
+  void init() override;
+  void shutdown() override;
   void requestHandler(Spine::Reactor& theReactor,
                       const Spine::HTTP::Request& theRequest,
-                      Spine::HTTP::Response& theResponse);
+                      Spine::HTTP::Response& theResponse) override;
 
   void daliQuery(Spine::Reactor& theReactor,
                  State& theState,
@@ -157,7 +157,7 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                                unsigned int width,
                                unsigned int height) const;
 
-  Fmi::Cache::CacheStatistics getCacheStats() const;
+  Fmi::Cache::CacheStatistics getCacheStats() const override;
   std::string resolveFilePath(const std::string& theCustomer,
                               const std::string& theSubDir,
                               const std::string& theFileName,

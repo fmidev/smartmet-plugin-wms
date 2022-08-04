@@ -26,15 +26,14 @@ class State;
 class IceMapLayer : public PostGISLayerBase
 {
  public:
-  IceMapLayer() {}
-  virtual void init(const Json::Value& theJson,
-                    const State& theState,
-                    const Config& theConfig,
-                    const Properties& theProperties);
+  void init(const Json::Value& theJson,
+            const State& theState,
+            const Config& theConfig,
+            const Properties& theProperties) override;
 
-  virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
 
-  virtual std::size_t hash_value(const State& theState) const;
+  std::size_t hash_value(const State& theState) const override;
 
   std::string getParameterValue(const std::string& theKey) const;
 
@@ -83,17 +82,17 @@ class IceMapLayer : public PostGISLayerBase
                     CTPP::CDT& theLayersCdt,
                     State& theState) const;
 
-  void addLocationName(double theXPos,
-                       double theYPos,
-                       const std::string& theFirstName,
-                       const std::string& theSecondName,
-                       int thePosition,
-                       int theArrowAngle,
-                       const PostGISLayerFilter& theFilter,
-                       CTPP::CDT& theGlobals,
-                       CTPP::CDT& theLayersCdt,
-                       CTPP::CDT& theGroupCdt,
-                       State& theState) const;
+  static void addLocationName(double theXPos,
+                              double theYPos,
+                              const std::string& theFirstName,
+                              const std::string& theSecondName,
+                              int thePosition,
+                              int theArrowAngle,
+                              const PostGISLayerFilter& theFilter,
+                              CTPP::CDT& theGlobals,
+                              CTPP::CDT& theLayersCdt,
+                              CTPP::CDT& theGroupCdt,
+                              State& theState);
 
   void handleGeometry(const Fmi::Feature& theResultItem,
                       const PostGISLayerFilter& theFilter,

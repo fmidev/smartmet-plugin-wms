@@ -100,7 +100,7 @@ void WMSGridDataLayer::updateLayerMetaData()
         std::set<T::GeometryId> geometryIdList;
         if (contentServer->getContentGeometryIdListByGenerationId(
                 0, generationInfo->mGenerationId, geometryIdList) != 0 ||
-            geometryIdList.size() == 0)
+            geometryIdList.empty())
           return;
 
         itsGeometryId = *geometryIdList.begin();

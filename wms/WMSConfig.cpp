@@ -116,7 +116,8 @@ std::string makeLayerNamespace(const std::string& customer,
       return customer;
     }
 
-    std::vector<std::string> tokens, namespace_tokens;
+    std::vector<std::string> tokens;
+    std::vector<std::string> namespace_tokens;
     boost::algorithm::split(tokens, fileDir, boost::is_any_of("/"), boost::token_compress_on);
 
     std::string currentPath;
@@ -951,13 +952,13 @@ void WMSConfig::updateLayerMetaData()
                   {
                     // Ignore and report failed product definitions
 
-                    auto badfile = itr2->path().c_str();
+                    const auto* badfile = itr2->path().c_str();
                     if (itsWarnedFiles.find(badfile) == itsWarnedFiles.end())
                     {
                       Fmi::Exception exception(BCP, "Failed to parse configuration!", nullptr);
                       exception.addParameter("Path", itr2->path().c_str());
 
-                      auto* e = exception.getFirstException();
+                      const auto* e = exception.getFirstException();
                       if (!e->loggingDisabled())
                         exception.printError();
 
@@ -998,7 +999,7 @@ void WMSConfig::updateLayerMetaData()
       const auto& externalLegendItems = externalLegendItem.second;
       for (auto& proxyItem : *newProxies)
       {
-        for (auto& legendStyleItem : externalLegendItems)
+        for (const auto& legendStyleItem : externalLegendItems)
         {
           if (proxyItem.second.getLayer()->getName() == legendStyleItem.second)
           {

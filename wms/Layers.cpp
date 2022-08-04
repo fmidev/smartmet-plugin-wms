@@ -66,7 +66,7 @@ boost::optional<std::string> Layers::getProjectionParameter()
       if (layer->projection.projectionParameter)
         return layer->projection.projectionParameter;
 
-      if (layer->layers.layers.size() > 0)
+      if (!layer->layers.layers.empty())
       {
         param = layer->layers.getProjectionParameter();
         if (param)
@@ -88,7 +88,7 @@ bool Layers::getProjection(CTPP::CDT& theGlobals,
 {
   try
   {
-    if (layers.size() == 0)
+    if (layers.empty())
       return false;
 
     auto first = layers.begin();
@@ -113,7 +113,7 @@ bool Layers::getProjection(CTPP::CDT& theGlobals,
           return true;
         }
 
-        if (layer->layers.layers.size() > 0)
+        if (!layer->layers.layers.empty())
         {
           CTPP::CDT tmpGlobals(theGlobals);
           State tmpState(theState.getPlugin(), theState.getRequest());
@@ -144,7 +144,7 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
 {
   try
   {
-    if (layers.size() == 0)
+    if (layers.empty())
       return;
 
     // If the projection CRS is "data" and we are using the grid-engine, then we

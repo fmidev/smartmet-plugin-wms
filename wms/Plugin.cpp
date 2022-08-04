@@ -598,7 +598,7 @@ void Plugin::init()
     if (Spine::Reactor::isShuttingDown())
       return;
 
-    auto engine = itsReactor->getSingleton("Contour", nullptr);
+    auto *engine = itsReactor->getSingleton("Contour", nullptr);
     if (engine == nullptr)
       throw Fmi::Exception(BCP, "Contour engine unavailable");
     itsContourEngine = reinterpret_cast<Engine::Contour::Engine *>(engine);
@@ -1694,7 +1694,8 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
     }
 
     // Build the template
-    std::string output, log;
+    std::string output;
+    std::string log;
     try
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";

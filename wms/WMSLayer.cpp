@@ -117,7 +117,7 @@ Json::Value process_symbol_group_json(const Json::Value& jsonTemplate,
                                       const std::string& language,
                                       unsigned int xpos,
                                       unsigned int ypos,
-                                      unsigned int uniqueId)
+                                      unsigned int /* uniqueId */)
 {
   Json::Value legendTemplate = jsonTemplate;
   // Take a copy of template, remove layers and add them again with actual values
@@ -1260,9 +1260,7 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
       // Finally all symbol groups are handled
       if (lgiSymbols.size() > 0)
       {
-        for (std::map<std::string, LegendGraphicInfo>::const_iterator iter = lgiSymbols.begin();
-             iter != lgiSymbols.end();
-             ++iter)
+        for (auto iter = lgiSymbols.begin(); iter != lgiSymbols.end(); ++iter)
         {
           std::string templateName = Fmi::ascii_tolower_copy(iter->first + "_symbol");
           if (iter->first.empty() || templateFiles.find(templateName) == templateFiles.end())
@@ -1365,8 +1363,8 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& legendGraphicI
     const auto& layerLGR = itsLegendGraphicResults.at(legendGraphicID);
     if (layerLGR.find(language) != layerLGR.end())
       return layerLGR.at(language);
-    else
-      return layerLGR.at(wmsConfig.getDaliConfig().defaultLanguage());
+
+    return layerLGR.at(wmsConfig.getDaliConfig().defaultLanguage());
   }
 
   return LegendGraphicResult();
@@ -1424,8 +1422,8 @@ bool WMSLayer::isValidElevation(int theElevation) const
   {
     if (elevationDimension)
       return elevationDimension->isValidElevation(theElevation);
-    else
-      return true;
+
+    return true;
   }
   catch (...)
   {
@@ -1439,8 +1437,8 @@ bool WMSLayer::isValidReferenceTime(const boost::posix_time::ptime& theReference
   {
     if (timeDimensions)
       return timeDimensions->isValidReferenceTime(theReferenceTime);
-    else
-      return true;
+
+    return true;
   }
   catch (...)
   {
@@ -1455,8 +1453,8 @@ bool WMSLayer::isValidTime(const boost::posix_time::ptime& theTime,
   {
     if (timeDimensions)
       return timeDimensions->isValidTime(theTime, theReferenceTime);
-    else
-      return true;
+
+    return true;
   }
   catch (...)
   {
@@ -1605,7 +1603,7 @@ void WMSLayer::initProjectedBBoxes()
     auto y1 = geographicBoundingBox.yMin;
     auto y2 = geographicBoundingBox.yMax;
 
-    auto& epsg_box = ref.bbox;
+    const auto& epsg_box = ref.bbox;
     x1 = std::max(x1, epsg_box.west);
     x2 = std::min(x2, epsg_box.east);
     y1 = std::max(y1, epsg_box.south);
@@ -1981,10 +1979,10 @@ const boost::shared_ptr<WMSTimeDimensions>& WMSLayer::getTimeDimensions() const
 
 boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
     bool multiple_intervals,
-    const Engine::Gis::Engine& gisengine,
+    const Engine::Gis::Engine& /* gisengine */,
     const boost::optional<std::string>& starttime,
     const boost::optional<std::string>& endtime,
-    const boost::optional<std::string>& reference_time)
+    const boost::optional<std::string>& /* reference_time */)
 {
   try
   {
@@ -2253,7 +2251,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
   }
 }
 
-Json::Value WMSLayer::parseJsonString(const std::string theJsonString)
+Json::Value WMSLayer::parseJsonString(const std::string& theJsonString)
 {
   Json::Value json;
 

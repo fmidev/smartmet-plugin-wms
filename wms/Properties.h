@@ -26,7 +26,7 @@ class State;
 class Properties
 {
  public:
-  virtual ~Properties() {}
+  virtual ~Properties() = default;
   void init(const Json::Value& theJson, const State& theState, const Config& theConfig);
 
   void init(const Json::Value& theJson,

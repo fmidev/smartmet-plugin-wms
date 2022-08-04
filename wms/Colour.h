@@ -10,11 +10,11 @@ namespace WMS
 {
 struct rgb_color
 {
-  unsigned int red;
-  unsigned int green;
-  unsigned int blue;
+  unsigned int red = 0xFF;
+  unsigned int green = 0xFF;
+  unsigned int blue = 0xFF;
 
-  rgb_color() : red(0xFF), green(0xFF), blue(0xFF) {}
+  rgb_color() = default;
   rgb_color(unsigned int r, unsigned int g, unsigned int b) : red(r), green(g), blue(b) {}
 };
 

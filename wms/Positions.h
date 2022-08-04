@@ -119,7 +119,7 @@ class Positions
   double mindistance = 50;  // minimum distance between parallel or meridian points in pixels
 
   // Keyword layout settings;
-  std::string keyword = "";
+  std::string keyword;
 
   // LatLon layout settings:
   Locations locations;
@@ -132,9 +132,9 @@ class Positions
   // Optional directional adjustments
   int directionoffset = 0;
   int rotate = 0;
-  std::string direction = "";
-  std::string u = "";
-  std::string v = "";
+  std::string direction;
+  std::string u;
+  std::string v;
 
   // Optional regional requirements (map names)
   boost::optional<Map> outsidemap;

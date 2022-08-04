@@ -49,7 +49,7 @@ void ObservationLayer::init(const Json::Value& theJson,
         const auto& geoengine = theState.getGeoEngine();
         Locus::QueryOptions options;
         auto locations = geoengine.keywordSearch(options, keyword);
-        for (auto loc : locations)
+        for (const auto& loc : locations)
           stationFMISIDs.push_back(Spine::TaggedFMISID(Fmi::to_string(*loc->fmisid), *loc->fmisid));
       }
     }

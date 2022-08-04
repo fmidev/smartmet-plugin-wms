@@ -82,8 +82,8 @@ text_style_t TableAttributes::headerTextStyle(unsigned int col)
   unsigned int nColumns = columns.text.size();
   if (col < nColumns)
     return getTextStyle(header.text[col], text_style_t());
-  else
-    return getTextStyle(header.text[nColumns - 1], text_style_t());
+
+  return getTextStyle(header.text[nColumns - 1], text_style_t());
 }
 
 text_style_t TableAttributes::columnTextStyle(unsigned int col)
@@ -91,8 +91,8 @@ text_style_t TableAttributes::columnTextStyle(unsigned int col)
   unsigned int nColumns = columns.text.size();
   if (col < nColumns)
     return getTextStyle(columns.text[col], text_style_t());
-  else
-    return getTextStyle(columns.text[nColumns - 1], text_style_t());
+
+  return getTextStyle(columns.text[nColumns - 1], text_style_t());
 }
 
 text_style_t TableAttributes::footerTextStyle()
@@ -100,7 +100,7 @@ text_style_t TableAttributes::footerTextStyle()
   return getTextStyle(footer.text, text_style_t());
 }
 
-void TextTable::addTableAttributes(const Json::Value& attributes, std::string tablePart)
+void TextTable::addTableAttributes(const Json::Value& attributes, const std::string& tablePart)
 {
   Json::Value nulljson;
 
@@ -286,7 +286,8 @@ void TextTable::addContent(const Json::Value& tableDataJson)
     return;
 
   using TableRow = std::vector<std::string>;
-  Json::Value json, nulljson;
+  Json::Value json;
+  Json::Value nulljson;
   // add title
   json = tableDataJson.get("title", nulljson);
   if (!json.isNull())
@@ -309,7 +310,7 @@ void TextTable::addContent(const Json::Value& tableDataJson)
         break;
       header.push_back(json.asString());
     }
-    if (header.size() > 0)
+    if (!header.empty())
       addHeader(header);
   }
 
@@ -334,15 +335,15 @@ void TextTable::addContent(const Json::Value& tableDataJson)
             break;
           dataRow.push_back(json.asString());
         }
-        if (dataRow.size() > 0)
+        if (!dataRow.empty())
           addData(dataRow);
       }
     }
   }
 }
 
-void TextTable::makeTable(const Attributes& theFrameAttributes,
-                          const Attributes& theTextAttributes,
+void TextTable::makeTable(const Attributes& /* theFrameAttributes */,
+                          const Attributes& /* theTextAttributes */,
                           CTPP::CDT& theGlobals,
                           CTPP::CDT& theLayersCdt,
                           State& theState) const

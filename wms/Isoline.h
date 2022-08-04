@@ -23,15 +23,13 @@ class Config;
 class Isoline
 {
  public:
-  Isoline() : value(0) {}
-
   std::string getQid(const State& theState) const;
   void init(const Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
   // Must be present:
   std::string qid;
-  double value;
+  double value = 0.0;
 
   // SVG attributes (id, class, style, ...)
   Attributes attributes;

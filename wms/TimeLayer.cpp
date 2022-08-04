@@ -158,7 +158,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 {
   try
   {
-    auto gridEngine = theState.getGridEngine();
+    const auto* gridEngine = theState.getGridEngine();
     if (!gridEngine || !gridEngine->isEnabled())
       throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
@@ -234,10 +234,10 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     std::string paramStr = *projection.projectionParameter;
 
-    if (originalGridQuery->mProducerNameList.size() == 0)
+    if (originalGridQuery->mProducerNameList.empty())
     {
       gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-      if (originalGridQuery->mProducerNameList.size() == 0)
+      if (originalGridQuery->mProducerNameList.empty())
         originalGridQuery->mProducerNameList.push_back(producerName);
     }
 
@@ -257,13 +257,11 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     // Fullfilling information into the query object.
 
-    for (auto it = originalGridQuery->mQueryParameterList.begin();
-         it != originalGridQuery->mQueryParameterList.end();
-         ++it)
+    for (auto& param : originalGridQuery->mQueryParameterList)
     {
-      it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      it->mType = QueryServer::QueryParameter::Type::Vector;
-      it->mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
+      param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+      param.mType = QueryServer::QueryParameter::Type::Vector;
+      param.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -367,7 +365,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     std::ostringstream msg;
     msg << prefix;
 
-    for (auto i = 0ul; i < timestamp.size(); i++)
+    for (auto i = 0UL; i < timestamp.size(); i++)
     {
       auto name = timestamp[i];
       auto fmt = format[i];

@@ -58,6 +58,7 @@ std::vector<T> prioritize_t(const std::vector<T>& pv, const PointValueOptions& o
     std::vector<T> ret;
 
     std::vector<PointValueWrapper> points;
+    points.reserve(pv.size());
     for (const auto& item : pv)
       points.push_back(&item);
 

@@ -153,7 +153,8 @@ void IceMapLayer::init(const Json::Value& theJson,
 
     // Extract all members
 
-    Json::Value nulljson, json;
+    Json::Value nulljson;
+    Json::Value json;
 
     // layer_subtype specifies the final layer type, e.g. label, symbol, named_location, ...
     json = theJson.get("layer_subtype", nulljson);
@@ -477,7 +478,7 @@ std::size_t IceMapLayer::hash_value(const State& theState) const
 
 void IceMapLayer::handleSymbol(const Fmi::Feature& theResultItem,
                                CTPP::CDT& theGroupCdt,
-                               const State& theState) const
+                               const State& /* theState */) const
 {
   auto transformation = LonLatToXYTransformation(projection);
 
@@ -965,7 +966,7 @@ void IceMapLayer::addLocationName(double theXPos,
                                   CTPP::CDT& theGlobals,
                                   CTPP::CDT& theLayersCdt,
                                   CTPP::CDT& /* theGroupCdt */,
-                                  State& theState) const
+                                  State& theState)
 {
   std::string first_name(theFirstName);
   std::string second_name(theSecondName);

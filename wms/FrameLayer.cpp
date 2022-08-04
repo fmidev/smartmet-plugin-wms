@@ -286,7 +286,7 @@ void FrameLayer::addTic(CTPP::CDT& theLayersCdt, double x1, double y1, double x2
   theLayersCdt.PushBack(lineCdt);
 }
 
-void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& theState)
+void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& /* theState */)
 {
   if (!itsScale)
     return;

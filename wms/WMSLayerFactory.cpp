@@ -75,6 +75,7 @@ WMSLayerType getWMSLayerType(const Json::Value& layer)
   }
 }
 
+#if 0
 std::string getWMSLayerTypeAsString(WMSLayerType layerType)
 {
   try
@@ -110,6 +111,7 @@ std::string getWMSLayerTypeAsString(WMSLayerType layerType)
     throw Fmi::Exception::Trace(BCP, "Failed to get layer type as string!");
   }
 }
+#endif
 
 WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
 {
@@ -140,27 +142,25 @@ WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
       // This is auxiliary layer, does not count
       continue;
     }
+
+    layer_type = getWMSLayerType(layer);
+
+    if (layer_type == WMSLayerType::NotWMSLayer)
+    {
+      // NotWMSLayer means we should proceed to find a more significant layer
+      continue;
+    }
+    else if (layer_type == WMSLayerType::MapLayer)
+    {
+      // Map layer may be part of other layer
+      mapLayers.append(layer);
+      layerRef = mapLayers;
+      continue;
+    }
     else
     {
-      layer_type = getWMSLayerType(layer);
-
-      if (layer_type == WMSLayerType::NotWMSLayer)
-      {
-        // NotWMSLayer means we should proceed to find a more significant layer
-        continue;
-      }
-      else if (layer_type == WMSLayerType::MapLayer)
-      {
-        // Map layer may be part of other layer
-        mapLayers.append(layer);
-        layerRef = mapLayers;
-        continue;
-      }
-      else
-      {
-        layerRef = layer;
-        return layer_type;
-      }
+      layerRef = layer;
+      return layer_type;
     }
   }
 
@@ -300,7 +300,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         if (json[i].isInt())
         {
           int interval_start = json[i].asInt();
-          intervals.push_back(interval_dimension_item(
+          intervals.emplace_back(interval_dimension_item(
               interval_start,
               0,
               (interval_default ? (*interval_default == interval_start ? true : false) : i == 0)));

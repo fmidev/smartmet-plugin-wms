@@ -207,8 +207,8 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
     // Must use at least two grid points, value 1 would cause a segmentation fault in here
 
-    width = std::max(width, 2u);
-    height = std::max(height, 2u);
+    width = std::max(width, 2U);
+    height = std::max(height, 2U);
 
     NFmiGrid grid(newarea.get(), width, height);
     std::unique_ptr<heatmap_t, void (*)(heatmap_t*)> hm(nullptr, heatmap_free);
@@ -357,7 +357,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 {
   try
   {
-    auto gridEngine = theState.getGridEngine();
+    const auto* gridEngine = theState.getGridEngine();
     if (!gridEngine || !gridEngine->isEnabled())
       throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
@@ -461,10 +461,10 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!projection.projectionParameter)
       projection.projectionParameter = param;
 
-    if (param == *parameter && originalGridQuery->mProducerNameList.size() == 0)
+    if (param == *parameter && originalGridQuery->mProducerNameList.empty())
     {
       gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-      if (originalGridQuery->mProducerNameList.size() == 0)
+      if (originalGridQuery->mProducerNameList.empty())
         originalGridQuery->mProducerNameList.push_back(producerName);
     }
 
@@ -482,29 +482,27 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Fullfilling information into the query object.
 
-    for (auto it = originalGridQuery->mQueryParameterList.begin();
-         it != originalGridQuery->mQueryParameterList.end();
-         ++it)
+    for (auto& param : originalGridQuery->mQueryParameterList)
     {
-      it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      it->mType = QueryServer::QueryParameter::Type::Isoband;
-      it->mContourLowValues = contourLowValues;
-      it->mContourHighValues = contourHighValues;
+      param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+      param.mType = QueryServer::QueryParameter::Type::Isoband;
+      param.mContourLowValues = contourLowValues;
+      param.mContourHighValues = contourHighValues;
 
       if (geometryId)
-        it->mGeometryId = *geometryId;
+        param.mGeometryId = *geometryId;
 
       if (levelId)
-        it->mParameterLevelId = *levelId;
+        param.mParameterLevelId = *levelId;
 
       if (level)
-        it->mParameterLevel = C_INT(*level);
+        param.mParameterLevel = C_INT(*level);
 
       if (forecastType)
-        it->mForecastType = C_INT(*forecastType);
+        param.mForecastType = C_INT(*forecastType);
 
       if (forecastNumber)
-        it->mForecastNumber = C_INT(*forecastNumber);
+        param.mForecastNumber = C_INT(*forecastNumber);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -594,7 +592,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
           uint c = 0;
           for (auto wkb = (*val)->mValueData.begin(); wkb != (*val)->mValueData.end(); ++wkb)
           {
-            unsigned char* cwkb = reinterpret_cast<unsigned char*>(wkb->data());
+            auto* cwkb = reinterpret_cast<unsigned char*>(wkb->data());
             OGRGeometry* geom = nullptr;
             OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb->size());
             auto geomPtr = OGRGeometryPtr(geom);
@@ -652,10 +650,10 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
 
       if (widthStr != nullptr)
-        projection.xsize = atoi(widthStr);
+        projection.xsize = Fmi::stoi(widthStr);
 
       if (heightStr != nullptr)
-        projection.ysize = atoi(heightStr);
+        projection.ysize = Fmi::stoi(heightStr);
     }
 
     if (!projection.xsize && !projection.ysize)
@@ -702,7 +700,8 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     const auto& gis = theState.getGisEngine();
 
-    OGRGeometryPtr inshape, outshape;
+    OGRGeometryPtr inshape;
+    OGRGeometryPtr outshape;
     if (inside)
     {
       inshape = gis.getShape(&crs, inside->options);
@@ -960,12 +959,8 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     if (interpolation == "linear")
       options.interpolation = Trax::InterpolationType::Linear;
-    else if (interpolation == "nearest")
+    else if (interpolation == "nearest" || interpolation == "discrete")
       options.interpolation = Trax::InterpolationType::Midpoint;
-    else if (interpolation == "discrete")
-      options.interpolation = Trax::InterpolationType::Midpoint;
-    else if (interpolation == "loglinear")
-      throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
     else
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
 

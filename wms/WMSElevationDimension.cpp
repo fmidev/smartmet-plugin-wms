@@ -147,15 +147,13 @@ bool WMSElevationDimension::isValidElevation(const int elevation) const
 
 std::string WMSElevationDimension::getDefaultElevation() const
 {
-  if (itsElevations.size() > 0)
-  {
-    if (itsLevelType == kFmiPressureLevel)
-      return std::to_string(*itsElevations.rbegin());
-    else
-      return std::to_string(*itsElevations.begin());
-  }
+  if (itsElevations.empty())
+    return "";
 
-  return "";
+  if (itsLevelType == kFmiPressureLevel)
+    return std::to_string(*itsElevations.rbegin());
+
+  return std::to_string(*itsElevations.begin());
 }
 
 const std::string& WMSElevationDimension::getUnitSymbol() const

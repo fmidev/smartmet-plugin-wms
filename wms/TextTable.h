@@ -66,7 +66,7 @@ class TextTable
                  State& theState) const;
 
  private:
-  void addTableAttributes(const Json::Value& attributes, std::string tablePart);
+  void addTableAttributes(const Json::Value& attributes, const std::string& tablePart);
 
   std::map<std::pair<unsigned int, unsigned int>, TableCell>
       itsTableContent;  // texts and dimensions

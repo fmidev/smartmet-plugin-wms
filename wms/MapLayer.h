@@ -25,14 +25,14 @@ class State;
 class MapLayer : public Layer
 {
  public:
-  virtual void init(const Json::Value& theJson,
-                    const State& theState,
-                    const Config& theConfig,
-                    const Properties& theProperties);
+  void init(const Json::Value& theJson,
+            const State& theState,
+            const Config& theConfig,
+            const Properties& theProperties) override;
 
-  virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
 
-  virtual std::size_t hash_value(const State& theState) const;
+  std::size_t hash_value(const State& theState) const override;
 
   Map map;
   double precision = 1.0;

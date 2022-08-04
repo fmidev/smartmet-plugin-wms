@@ -86,17 +86,17 @@ struct tag_interval
 class IntervalTimeDimension : public WMSTimeDimension
 {
  public:
-  virtual ~IntervalTimeDimension() = default;
+  ~IntervalTimeDimension() override = default;
   IntervalTimeDimension() = delete;
   IntervalTimeDimension(const std::vector<tag_interval>& intervals);
 
   const std::vector<tag_interval>& getIntervals() const;
 
-  virtual std::string getCapabilities(bool multiple_intervals,
-                                      const boost::optional<std::string>& starttime,
-                                      const boost::optional<std::string>& endtime) const;
-  virtual boost::posix_time::ptime mostCurrentTime() const;
-  virtual bool isValidTime(const boost::posix_time::ptime& theTime) const;
+  std::string getCapabilities(bool multiple_intervals,
+                              const boost::optional<std::string>& starttime,
+                              const boost::optional<std::string>& endtime) const override;
+  boost::posix_time::ptime mostCurrentTime() const override;
+  bool isValidTime(const boost::posix_time::ptime& theTime) const override;
 
  private:
   std::string makeCapabilitiesTimesteps(const boost::optional<std::string>& starttime,

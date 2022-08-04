@@ -32,12 +32,10 @@ inline std::size_t hash_value(const boost::optional<T>& obj, const State& theSta
 {
   if (!obj)
     return Fmi::hash_value(false);
-  else
-  {
-    std::size_t hash = obj->hash_value(theState);
-    Fmi::hash_combine(hash, Fmi::hash_value(true));
-    return hash;
-  }
+
+  std::size_t hash = obj->hash_value(theState);
+  Fmi::hash_combine(hash, Fmi::hash_value(true));
+  return hash;
 }
 
 // Shared objects with a member hash_value implementation
@@ -46,12 +44,10 @@ inline std::size_t hash_value(const boost::shared_ptr<T>& obj, const State& theS
 {
   if (!obj)
     return Fmi::hash_value(false);
-  else
-  {
-    std::size_t hash = Dali::hash_value(*obj, theState);
-    Fmi::hash_combine(hash, Fmi::hash_value(true));
-    return hash;
-  }
+
+  std::size_t hash = Dali::hash_value(*obj, theState);
+  Fmi::hash_combine(hash, Fmi::hash_value(true));
+  return hash;
 }
 
 // Vectors of Dali objects
@@ -113,12 +109,10 @@ inline std::size_t hash_symbol(const boost::optional<std::string>& name, const S
 {
   if (!name)
     return Fmi::hash_value(false);
-  else
-  {
-    auto hash = Fmi::hash_value(true);
-    Fmi::hash_combine(hash, hash_symbol(*name, theState));
-    return hash;
-  }
+
+  auto hash = Fmi::hash_value(true);
+  Fmi::hash_combine(hash, hash_symbol(*name, theState));
+  return hash;
 }
 
 // Style sheets
@@ -131,12 +125,10 @@ inline std::size_t hash_css(const boost::optional<std::string>& name, const Stat
 {
   if (!name)
     return Fmi::hash_value(false);
-  else
-  {
-    auto hash = Fmi::hash_value(true);
-    Fmi::hash_combine(hash, hash_css(*name, theState));
-    return hash;
-  }
+
+  auto hash = Fmi::hash_value(true);
+  Fmi::hash_combine(hash, hash_css(*name, theState));
+  return hash;
 }
 
 }  // namespace Dali

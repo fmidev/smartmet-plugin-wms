@@ -29,22 +29,18 @@ class State;
 
 struct FrameDimension
 {
-  FrameDimension() : bottomLatitude(0.0), leftLongitude(0.0), topLatitude(0.0), rightLongitude(0.0)
-  {
-  }
-  double bottomLatitude;
-  double leftLongitude;
-  double topLatitude;
-  double rightLongitude;
+  double bottomLatitude = 0.0;
+  double leftLongitude = 0.0;
+  double topLatitude = 0.0;
+  double rightLongitude = 0.0;
 
   std::size_t hash_value() const;
 };
 
 struct TicInfo
 {
-  TicInfo() : step(1.0), length(10) {}
-  double step;  // step in degrees
-  int length;   // length in pixels
+  double step = 1.0;  // step in degrees
+  int length = 10;    // length in pixels
   std::size_t hash_value() const;
 };
 
@@ -66,14 +62,14 @@ struct FrameScale
 class FrameLayer : public Layer
 {
  public:
-  virtual void init(const Json::Value& theJson,
-                    const State& theState,
-                    const Config& theConfig,
-                    const Properties& theProperties);
+  void init(const Json::Value& theJson,
+            const State& theState,
+            const Config& theConfig,
+            const Properties& theProperties) override;
 
-  virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
 
-  virtual std::size_t hash_value(const State& theState) const;
+  std::size_t hash_value(const State& theState) const override;
 
  private:
   FrameDimension itsInnerBorder;

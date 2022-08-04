@@ -94,7 +94,7 @@ void Layer::init(const Json::Value& theJson,
       }
     }
 
-    auto request = theState.getRequest();
+    const auto& request = theState.getRequest();
 
     boost::optional<std::string> v = request.getParameter("geometryId");
     if (v)
@@ -506,7 +506,7 @@ std::size_t Layer::hash_value(const State& theState) const
   }
 }
 
-bool Layer::isFlashOrMobileProducer(const std::string& producer) const
+bool Layer::isFlashOrMobileProducer(const std::string& producer)
 {
   return (producer == "flash" || producer == "roadcloud" || producer == "netatmo");
 }

@@ -44,11 +44,11 @@ class Label
   std::string missing = "-";
   int precision = 0;
   double multiple = 0;  // used if non-zero
-  std::string prefix = "";
-  std::string suffix = "";
+  std::string prefix;
+  std::string suffix;
   // Signed prefixes
-  std::string plusprefix = "";   // for numbers >= 0
-  std::string minusprefix = "";  // for numbers < 0
+  std::string plusprefix;   // for numbers >= 0
+  std::string minusprefix;  // for numbers < 0
 
   void setLocale(const std::string& theLocale);
   // shared because otherwise the compiler would force definitions for all constructors

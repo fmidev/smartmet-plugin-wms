@@ -14,10 +14,8 @@ namespace Dali
 {
 struct text_dimension_t
 {
-  text_dimension_t() : width(0), height(0) {}
-  text_dimension_t(const text_dimension_t& dim) : width(dim.width), height(dim.height) {}
-  unsigned int width;
-  unsigned int height;
+  unsigned int width = 0;
+  unsigned int height = 0;
 };
 
 struct text_style_t

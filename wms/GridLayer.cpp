@@ -76,7 +76,7 @@ void GridLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
 
     // Create the shape
 
-    OGRGeometryCollection* g = new OGRGeometryCollection;
+    auto* g = new OGRGeometryCollection;
 
     std::size_t j1 = 0;
     std::size_t j2 = analysis.valid.height() - 1;
@@ -105,7 +105,7 @@ void GridLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
 
     // Clip the geometry to the bounding box
 
-    auto geom2 = Fmi::OGR::polyclip(*geom, clipbox);
+    auto* geom2 = Fmi::OGR::polyclip(*geom, clipbox);
 
     // Update the globals
 

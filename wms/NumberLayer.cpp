@@ -141,11 +141,11 @@ PointValues read_forecasts(const NumberLayer& layer,
 // ----------------------------------------------------------------------
 
 PointValues read_gridForecasts(const NumberLayer& layer,
-                               const Engine::Grid::Engine* gridEngine,
+                               const Engine::Grid::Engine* /* gridEngine */,
                                QueryServer::Query& query,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
-                               const boost::posix_time::time_period& valid_time_period)
+                               const boost::posix_time::time_period& /* valid_time */ _period)
 {
   try
   {
@@ -165,29 +165,28 @@ PointValues read_gridForecasts(const NumberLayer& layer,
     const char* originalHeightStr = query.mAttributeList.getAttributeValue("grid.original.height");
 
     if (widthStr)
-      width = atoi(widthStr);
+      width = Fmi::stoi(widthStr);
 
     if (heightStr)
-      height = atoi(heightStr);
+      height = Fmi::stoi(heightStr);
 
     if (originalWidthStr)
-      originalWidth = atoi(originalWidthStr);
+      originalWidth = Fmi::stoi(originalWidthStr);
 
     if (originalHeightStr)
-      originalHeight = atoi(originalHeightStr);
+      originalHeight = Fmi::stoi(originalHeightStr);
 
     T::ParamValue_vec* values = nullptr;
     uint originalGeometryId = 0;
 
-    for (auto param = query.mQueryParameterList.begin(); param != query.mQueryParameterList.end();
-         ++param)
+    for (const auto& param : query.mQueryParameterList)
     {
-      for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
+      for (const auto& val : param.mValueList)
       {
-        if ((*val)->mValueVector.size() > 0)
+        if (val->mValueVector.size() > 0)
         {
-          originalGeometryId = (*val)->mGeometryId;
-          values = &(*val)->mValueVector;
+          originalGeometryId = val->mGeometryId;
+          values = &val->mValueVector;
         }
       }
     }
@@ -195,7 +194,7 @@ PointValues read_gridForecasts(const NumberLayer& layer,
     auto points = layer.positions->getPoints(
         originalCrs, originalWidth, originalHeight, originalGeometryId, crs, box);
 
-    if (values && values->size() > 0)
+    if (values && !values->empty())
     {
       for (const auto& point : points)
       {
@@ -905,7 +904,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 {
   try
   {
-    auto gridEngine = theState.getGridEngine();
+    const auto* gridEngine = theState.getGridEngine();
     if (!gridEngine || !gridEngine->isEnabled())
       throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
@@ -995,10 +994,10 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!projection.projectionParameter)
       projection.projectionParameter = param;
 
-    if (param == *parameter && originalGridQuery->mProducerNameList.size() == 0)
+    if (param == *parameter && originalGridQuery->mProducerNameList.empty())
     {
       gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-      if (originalGridQuery->mProducerNameList.size() == 0)
+      if (originalGridQuery->mProducerNameList.empty())
         originalGridQuery->mProducerNameList.push_back(producerName);
     }
 
@@ -1082,10 +1081,10 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
 
       if (widthStr != nullptr)
-        projection.xsize = atoi(widthStr);
+        projection.xsize = Fmi::stoi(widthStr);
 
       if (heightStr != nullptr)
-        projection.ysize = atoi(heightStr);
+        projection.ysize = Fmi::stoi(heightStr);
     }
 
     if (!projection.xsize && !projection.ysize)

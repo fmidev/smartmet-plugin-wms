@@ -16,7 +16,7 @@ namespace Dali
 {
 namespace Select
 {
-boost::optional<AttributeSelection> attribute(const std::vector<AttributeSelection> theSelection,
+boost::optional<AttributeSelection> attribute(const std::vector<AttributeSelection> &theSelection,
                                               double theValue);
 }  // namespace Select
 }  // namespace Dali

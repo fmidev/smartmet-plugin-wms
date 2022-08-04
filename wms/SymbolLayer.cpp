@@ -171,10 +171,10 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
     const char* heightStr = query.mAttributeList.getAttributeValue("grid.height");
 
     if (widthStr)
-      width = atoi(widthStr);
+      width = Fmi::stoi(widthStr);
 
     if (heightStr)
-      height = atoi(heightStr);
+      height = Fmi::stoi(heightStr);
 
     T::ParamValue_vec* values = nullptr;
 
@@ -1116,10 +1116,10 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
 
       if (widthStr != nullptr)
-        projection.xsize = atoi(widthStr);
+        projection.xsize = Fmi::stoi(widthStr);
 
       if (heightStr != nullptr)
-        projection.ysize = atoi(heightStr);
+        projection.ysize = Fmi::stoi(heightStr);
     }
 
     if (!projection.xsize && !projection.ysize)

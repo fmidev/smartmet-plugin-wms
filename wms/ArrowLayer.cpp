@@ -219,7 +219,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
                                boost::optional<std::string> vParam,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
-                               const boost::posix_time::time_period& time_period)
+                               const boost::posix_time::time_period& /* time_period */)
 {
   try
   {
@@ -248,19 +248,19 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
     const char* originalHeightStr = query.mAttributeList.getAttributeValue("grid.original.height");
 
     if (widthStr)
-      width = atoi(widthStr);
+      width = Fmi::stoi(widthStr);
 
     if (heightStr)
-      height = atoi(heightStr);
+      height = Fmi::stoi(heightStr);
 
     if (originalRelativeUVStr)
-      relativeUV = atoi(originalRelativeUVStr);
+      relativeUV = Fmi::stoi(originalRelativeUVStr);
 
     if (originalWidthStr)
-      originalWidth = atoi(originalWidthStr);
+      originalWidth = Fmi::stoi(originalWidthStr);
 
     if (originalHeightStr)
-      originalHeight = atoi(originalHeightStr);
+      originalHeight = Fmi::stoi(originalHeightStr);
 
     T::ParamValue_vec* dirValues = nullptr;
     T::ParamValue_vec* speedValues = nullptr;
@@ -268,23 +268,22 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
     T::ParamValue_vec* uValues = nullptr;
     uint originalGeometryId = 0;
 
-    for (auto param = query.mQueryParameterList.begin(); param != query.mQueryParameterList.end();
-         ++param)
+    for (const auto& param : query.mQueryParameterList)
     {
-      for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
+      for (const auto& val : param.mValueList)
       {
-        if ((*val)->mValueVector.size() > 0)
+        if (!val->mValueVector.empty())
         {
-          originalGeometryId = (*val)->mGeometryId;
+          originalGeometryId = val->mGeometryId;
 
-          if (dirParam && param->mParameterKey == *dirParam)
-            dirValues = &(*val)->mValueVector;
-          else if (speedParam && param->mParameterKey == *speedParam)
-            speedValues = &(*val)->mValueVector;
-          else if (vParam && param->mParameterKey == *vParam)
-            vValues = &(*val)->mValueVector;
-          else if (uParam && param->mParameterKey == *uParam)
-            uValues = &(*val)->mValueVector;
+          if (dirParam && param.mParameterKey == *dirParam)
+            dirValues = &val->mValueVector;
+          else if (speedParam && param.mParameterKey == *speedParam)
+            speedValues = &val->mValueVector;
+          else if (vParam && param.mParameterKey == *vParam)
+            vValues = &val->mValueVector;
+          else if (uParam && param.mParameterKey == *uParam)
+            uValues = &val->mValueVector;
         }
       }
     }
@@ -292,7 +291,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
     auto points = layer.positions->getPoints(
         originalCrs, originalWidth, originalHeight, originalGeometryId, crs, box);
 
-    if (dirValues && dirValues->size() > 0)
+    if (dirValues && !dirValues->empty())
     {
       for (const auto& point : points)
       {
@@ -1051,7 +1050,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 {
   try
   {
-    auto gridEngine = theState.getGridEngine();
+    const auto* gridEngine = theState.getGridEngine();
     if (!gridEngine || !gridEngine->isEnabled())
       throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
@@ -1080,24 +1079,19 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     std::vector<std::string> paramList;
 
-    boost::optional<std::string> dirparam, speedparam, uparam, vparam;
+    boost::optional<std::string> dirparam;
+    boost::optional<std::string> speedparam;
+    boost::optional<std::string> uparam;
+    boost::optional<std::string> vparam;
 
     if (direction)
-    {
       paramList.push_back(*direction);
-    }
     if (speed)
-    {
       paramList.push_back(*speed);
-    }
     if (u)
-    {
       paramList.push_back(*u);
-    }
     if (v)
-    {
       paramList.push_back(*v);
-    }
 
     std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
     QueryServer::QueryConfigurator queryConfigurator;
@@ -1148,7 +1142,6 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Adding parameter information into the query.
 
-    std::string aProducer = producerName;
     char paramBuf[1000];
     char* p = paramBuf;
 
@@ -1168,10 +1161,10 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       if (!projection.projectionParameter)
         projection.projectionParameter = param;
 
-      if (param == *parameter && originalGridQuery->mProducerNameList.size() == 0)
+      if (param == *parameter && originalGridQuery->mProducerNameList.empty())
       {
         gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-        if (originalGridQuery->mProducerNameList.size() == 0)
+        if (originalGridQuery->mProducerNameList.empty())
           originalGridQuery->mProducerNameList.push_back(producerName);
       }
 
@@ -1195,30 +1188,28 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // Tranforming information from the attribute list into the query object.
     queryConfigurator.configure(*originalGridQuery, attributeList);
 
-    // Fullfilling information into the query object.
+    // Filling information into the query object.
 
-    for (auto it = originalGridQuery->mQueryParameterList.begin();
-         it != originalGridQuery->mQueryParameterList.end();
-         ++it)
+    for (auto& param : originalGridQuery->mQueryParameterList)
     {
-      it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      it->mType = QueryServer::QueryParameter::Type::Vector;
-      it->mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
+      param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+      param.mType = QueryServer::QueryParameter::Type::Vector;
+      param.mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
 
       if (geometryId)
-        it->mGeometryId = *geometryId;
+        param.mGeometryId = *geometryId;
 
       if (levelId)
-        it->mParameterLevelId = *levelId;
+        param.mParameterLevelId = *levelId;
 
       if (level)
-        it->mParameterLevel = C_INT(*level);
+        param.mParameterLevel = C_INT(*level);
 
       if (forecastType)
-        it->mForecastType = C_INT(*forecastType);
+        param.mForecastType = C_INT(*forecastType);
 
       if (forecastNumber)
-        it->mForecastNumber = C_INT(*forecastNumber);
+        param.mForecastNumber = C_INT(*forecastNumber);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -1263,10 +1254,10 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
 
       if (widthStr != nullptr)
-        projection.xsize = atoi(widthStr);
+        projection.xsize = Fmi::stoi(widthStr);
 
       if (heightStr != nullptr)
-        projection.ysize = atoi(heightStr);
+        projection.ysize = Fmi::stoi(heightStr);
     }
 
     if (!projection.xsize && !projection.ysize)

@@ -50,8 +50,8 @@ int get_symbol(float wawa)
     // but at location 48
     if (value == 99)
       return 48;
-    else
-      return (157 + value);
+
+    return (157 + value);
   }
   return 106;  // Missing symbol 'Z'
 }

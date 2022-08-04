@@ -154,7 +154,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
                         const Engine::Grid::Engine* gridEngine,
                         const Projection& theProjection,
                         const boost::posix_time::ptime& theTime,
-                        const State& theState)
+                        const State& /* theState */)
 {
   try
   {
@@ -173,7 +173,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     {
       // Getting WKT and the bounding box of the requested projection.
 
-      auto crs = theProjection.getCRS();
+      const auto& crs = theProjection.getCRS();
       char* out = nullptr;
       crs.get()->exportToWkt(&out);
       wkt = out;
@@ -205,10 +205,10 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     std::string param = gridEngine->getParameterString(producerName, pName);
     attributeList.addAttribute("param", param);
 
-    if (param == *parameter && originalGridQuery->mProducerNameList.size() == 0)
+    if (param == *parameter && originalGridQuery->mProducerNameList.empty())
     {
       gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-      if (originalGridQuery->mProducerNameList.size() == 0)
+      if (originalGridQuery->mProducerNameList.empty())
         originalGridQuery->mProducerNameList.push_back(producerName);
     }
 
@@ -229,17 +229,15 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     if (!lolimit)
       lolimit = -1000000000;
 
-    float hlimit = C_FLOAT(*hilimit);
-    float llimit = C_FLOAT(*lolimit);
+    auto hlimit = C_FLOAT(*hilimit);
+    auto llimit = C_FLOAT(*lolimit);
 
-    for (auto it = originalGridQuery->mQueryParameterList.begin();
-         it != originalGridQuery->mQueryParameterList.end();
-         ++it)
+    for (auto& param : originalGridQuery->mQueryParameterList)
     {
-      it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      it->mType = QueryServer::QueryParameter::Type::Isoband;
-      it->mContourLowValues.push_back(llimit);
-      it->mContourHighValues.push_back(hlimit);
+      param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+      param.mType = QueryServer::QueryParameter::Type::Isoband;
+      param.mContourLowValues.push_back(llimit);
+      param.mContourHighValues.push_back(hlimit);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -295,19 +293,18 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     // Converting the returned WKB-isolines into OGRGeometry objects.
 
     std::vector<OGRGeometryPtr> isobands;
-    for (auto param = query->mQueryParameterList.begin(); param != query->mQueryParameterList.end();
-         ++param)
+    for (const auto& param : query->mQueryParameterList)
     {
-      for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
+      for (const auto& val : param.mValueList)
       {
-        if ((*val)->mValueData.size() > 0)
+        if (val->mValueData.size() > 0)
         {
           uint c = 0;
-          for (auto wkb = (*val)->mValueData.begin(); wkb != (*val)->mValueData.end(); ++wkb)
+          for (const auto& wkb : val->mValueData)
           {
-            unsigned char* cwkb = reinterpret_cast<unsigned char*>(wkb->data());
+            const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
             OGRGeometry* geom = nullptr;
-            OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb->size());
+            OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
             auto geomPtr = OGRGeometryPtr(geom);
             isobands.push_back(geomPtr);
             c++;
@@ -315,7 +312,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
         }
       }
     }
-    if (isobands.size() > 0)
+    if (!isobands.empty())
       isoband = isobands[0];
 
     if (!isoband || isoband->IsEmpty() != 0)
@@ -375,7 +372,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
 
     // Establish the projection from the geometry to be clipped
 
-    auto crs = theProjection.getCRS();
+    const auto& crs = theProjection.getCRS();
 
     // Calculate the isoband
 

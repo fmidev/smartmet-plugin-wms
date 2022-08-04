@@ -46,7 +46,7 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
     {
       if (theConfig.primaryForecastSource() == "grid")
         source = "grid";
-      else if (theConfig.primaryForecastSource() == "" && producer)
+      else if (theConfig.primaryForecastSource().empty() && producer)
       {
         auto gridEngine = theState.getGridEngine();
         if (gridEngine && gridEngine->isEnabled() && gridEngine->isGridProducer(*producer))
@@ -409,7 +409,7 @@ std::size_t Properties::hash_value(const State& theState) const
 
     if (source && *source == "grid")
     {
-      auto gridEngine = theState.getGridEngine();
+      const auto* gridEngine = theState.getGridEngine();
       if (!gridEngine || !gridEngine->isEnabled())
         throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 

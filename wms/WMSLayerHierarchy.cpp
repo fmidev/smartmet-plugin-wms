@@ -55,8 +55,8 @@ bool is_identical(const WMSLayerHierarchy& lh1,
     if ((layer1 && layer2 && layer1->identicalGeographicBoundingBox(*layer2)) ||
         (!layer1 && !layer2))
       return true;
-    else
-      return false;
+
+    return false;
   }
   else if (type == WMSLayerHierarchy::ElementType::proj_bbox)
   {
@@ -65,11 +65,8 @@ bool is_identical(const WMSLayerHierarchy& lh1,
     if (lh2.projectedBoundingBox)
       layer2 = lh2.projectedBoundingBox->getLayer();
 
-    if ((layer1 && layer2 && layer1->identicalProjectedBoundingBox(*layer2)) ||
-        (!layer1 && !layer2))
-      return true;
-    else
-      return false;
+    return ((layer1 && layer2 && layer1->identicalProjectedBoundingBox(*layer2)) ||
+            (!layer1 && !layer2));
   }
   else if (type == WMSLayerHierarchy::ElementType::time_dim)
   {
@@ -78,10 +75,7 @@ bool is_identical(const WMSLayerHierarchy& lh1,
     if (lh2.timeDimension)
       layer2 = lh2.timeDimension->getLayer();
 
-    if ((layer1 && layer2 && layer1->identicalTimeDimension(*layer2)) || (!layer1 && !layer2))
-      return true;
-    else
-      return false;
+    return ((layer1 && layer2 && layer1->identicalTimeDimension(*layer2)) || (!layer1 && !layer2));
   }
   else if (type == WMSLayerHierarchy::ElementType::elev_dim)
   {
@@ -90,10 +84,8 @@ bool is_identical(const WMSLayerHierarchy& lh1,
     if (lh2.elevationDimension)
       layer2 = lh2.elevationDimension->getLayer();
 
-    if ((layer1 && layer2 && layer1->identicalElevationDimension(*layer2)) || (!layer1 && !layer2))
-      return true;
-    else
-      return false;
+    return ((layer1 && layer2 && layer1->identicalElevationDimension(*layer2)) ||
+            (!layer1 && !layer2));
   }
 
   return false;
@@ -443,7 +435,7 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
         name += token_item;
         named_layers[name] = &item.second;
 
-        if (name.find(":") == std::string::npos)
+        if (name.find(':') == std::string::npos)
           top_level_layers.insert(name);
       }
     }

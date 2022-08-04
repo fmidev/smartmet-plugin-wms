@@ -194,7 +194,7 @@ void IsolineLayer::init(const Json::Value& theJson,
  */
 // ----------------------------------------------------------------------
 
-std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> isovalues,
+std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double>& isovalues,
                                                       State& theState)
 {
   std::vector<OGRGeometryPtr> geoms;
@@ -215,7 +215,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   auto crs = projection.getCRS();
   auto valid_time = getValidTime();
 
-  OGRGeometryPtr inshape, outshape;
+  OGRGeometryPtr inshape;
+  OGRGeometryPtr outshape;
   if (inside)
   {
     inshape = gis.getShape(&crs, inside->options);
@@ -234,9 +235,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
   intersections.init(producer, projection, valid_time, theState);
 
   // Perform polygon operations
-  for (unsigned int i = 0; i < geoms.size(); i++)
+  for (auto& geom : geoms)
   {
-    OGRGeometryPtr geom = geoms[i];
     if (geom && geom->IsEmpty() == 0)
     {
       OGRGeometryPtr geom2(Fmi::OGR::lineclip(*geom, clipbox));
@@ -252,7 +252,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double> 
       // Intersect with data too
       geom2 = intersections.intersect(geom2);
 
-      geoms[i] = geom2;
+      geom = geom2;
     }
   }
 
@@ -348,7 +348,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   if (!projection.projectionParameter)
     projection.projectionParameter = param;
 
-  if (param == *parameter && originalGridQuery->mProducerNameList.size() == 0)
+  if (param == *parameter && originalGridQuery->mProducerNameList.empty())
   {
     gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
     if (originalGridQuery->mProducerNameList.size() == 0)
@@ -369,28 +369,26 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
   // Fullfilling information into the query object.
 
-  for (auto it = originalGridQuery->mQueryParameterList.begin();
-       it != originalGridQuery->mQueryParameterList.end();
-       ++it)
+  for (auto& param : originalGridQuery->mQueryParameterList)
   {
-    it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-    it->mType = QueryServer::QueryParameter::Type::Isoline;
-    it->mContourLowValues = contourValues;
+    param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+    param.mType = QueryServer::QueryParameter::Type::Isoline;
+    param.mContourLowValues = contourValues;
 
     if (geometryId)
-      it->mGeometryId = *geometryId;
+      param.mGeometryId = *geometryId;
 
     if (levelId)
-      it->mParameterLevelId = *levelId;
+      param.mParameterLevelId = *levelId;
 
     if (level)
-      it->mParameterLevel = C_INT(*level);
+      param.mParameterLevel = C_INT(*level);
 
     if (forecastType)
-      it->mForecastType = C_INT(*forecastType);
+      param.mForecastType = C_INT(*forecastType);
 
     if (forecastNumber)
-      it->mForecastNumber = C_INT(*forecastNumber);
+      param.mForecastNumber = C_INT(*forecastNumber);
   }
 
   originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -454,21 +452,20 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   // Converting the returned WKB-isolines into OGRGeometry objects.
 
   std::vector<OGRGeometryPtr> geoms;
-  for (auto param = query->mQueryParameterList.begin(); param != query->mQueryParameterList.end();
-       ++param)
+  for (const auto& param : query->mQueryParameterList)
   {
-    for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
+    for (const auto& val : param.mValueList)
     {
-      if ((*val)->mValueData.size() > 0)
+      if (val->mValueData.size() > 0)
       {
-        fileId = (*val)->mFileId[0];
-        messageIndex = (*val)->mMessageIndex[0];
+        fileId = val->mFileId[0];
+        messageIndex = val->mMessageIndex[0];
 
-        for (auto wkb = (*val)->mValueData.begin(); wkb != (*val)->mValueData.end(); ++wkb)
+        for (const auto& wkb : val->mValueData)
         {
-          unsigned char* cwkb = reinterpret_cast<unsigned char*>(wkb->data());
+          const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
           OGRGeometry* geom = nullptr;
-          OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb->size());
+          OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
           if (geom != nullptr)
           {
             auto geomPtr = OGRGeometryPtr(geom);
@@ -487,10 +484,10 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
     const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
 
     if (widthStr != nullptr)
-      projection.xsize = atoi(widthStr);
+      projection.xsize = Fmi::stoi(widthStr);
 
     if (heightStr != nullptr)
-      projection.ysize = atoi(heightStr);
+      projection.ysize = Fmi::stoi(heightStr);
   }
 
   if (!projection.xsize && !projection.ysize)
@@ -535,7 +532,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
  */
 // ----------------------------------------------------------------------
 
-std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector<double> isovalues,
+std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector<double>& isovalues,
                                                                State& theState)
 {
   // Establish the data. Store to member variable for IsolabelLayer use

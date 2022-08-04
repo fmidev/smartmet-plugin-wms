@@ -15,7 +15,7 @@ namespace WMS
 {
 struct CaseInsensitiveComparator : std::binary_function<std::string, std::string, bool>
 {
-  char asciilower(char ch) const
+  static char asciilower(char ch)
   {
     char ret = ch;
     if (ch >= 'A' && ch <= 'Z')

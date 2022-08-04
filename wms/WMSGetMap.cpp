@@ -47,7 +47,7 @@ std::string layer_name(const std::string& name)
 
 std::string get_json_element_value(const Json::Value& json, const std::string& keyStr)
 {
-  std::string ret = "";
+  std::string ret;
 
   std::vector<std::string> keys;
   boost::algorithm::split(keys, keyStr, boost::is_any_of("."), boost::token_compress_on);
@@ -90,7 +90,7 @@ void rename_json_element(const Json::Value& json,
 
   if (found)
   {
-    Json::Value* tototo = const_cast<Json::Value*>(to);
+    auto* tototo = const_cast<Json::Value*>(to);
     *tototo = Json::Value(to->asString() + postfix);
   }
 }
@@ -332,7 +332,7 @@ void check_getmap_request_options(const Spine::HTTP::Request& theHTTPRequest)
 
 void validate_options(const tag_get_map_request_options& options,
                       const WMSConfig& itsConfig,
-                      const Engine::Querydata::Engine& querydata)
+                      const Engine::Querydata::Engine& /* querydata */)
 {
   try
   {
@@ -477,11 +477,11 @@ boost::posix_time::ptime parse_time(const std::string& time)
   {
     std::string t(time);
     // remove second fractions
-    if (t.find("Z") != std::string::npos && t.find(".") != std::string::npos &&
-        t.find("Z") > t.find("."))  // iso string with fractions of second
+    if (t.find('Z') != std::string::npos && t.find('.') != std::string::npos &&
+        t.find('Z') > t.find('.'))  // iso string with fractions of second
     {
-      size_t len(t.find("Z") - t.find("."));
-      t.erase(t.find("."), len);
+      size_t len(t.find('Z') - t.find('.'));
+      t.erase(t.find('.'), len);
     }
 
     return Fmi::TimeParser::parse(t);
@@ -633,7 +633,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       std::string layerCustomer(itsConfig.layerCustomer(layerName));
       std::string layerStyle(styles[i]);
 
-      itsParameters.map_info_vector.push_back(tag_map_info(layerName, layerStyle));
+      itsParameters.map_info_vector.emplace_back(tag_map_info(layerName, layerStyle));
     }
 
     std::string crs = *(theRequest.getParameter("CRS"));  // desired CRS name
@@ -849,7 +849,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     // resolve current time (most recent) for the layer
     std::string time_str = Spine::optional_string(theRequest.getParameter("TIME"), "current");
 
-    if (true == cicomp(time_str, "current"))
+    if (cicomp(time_str, "current"))
     {
       if (!itsConfig.isTemporal(layerName))
       {
@@ -857,7 +857,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       }
       else
       {
-        if (false == itsConfig.currentValue(layerName))
+        if (!itsConfig.currentValue(layerName))
         {
           Fmi::Exception exception(BCP, "Invalid TIME option value for the current layer!");
           exception.addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);
