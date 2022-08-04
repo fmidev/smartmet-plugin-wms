@@ -4,7 +4,7 @@
  *
  * Characteristics:
  *
- *  - 
+ *  -
  *  -
  */
 // ======================================================================
@@ -27,15 +27,17 @@ namespace Plugin
 {
 namespace WMS
 {
-
 struct interval_dimension_item
 {
-  interval_dimension_item(int s, int e, bool d) : interval_start(s), interval_end(e), interval_default(d) {}
+  interval_dimension_item(int s, int e, bool d)
+      : interval_start(s), interval_end(e), interval_default(d)
+  {
+  }
   int interval_start;
   int interval_end;
   bool interval_default{false};
 };
-  
+
 class WMSIntervalDimension
 {
  public:
@@ -53,7 +55,7 @@ class WMSIntervalDimension
   bool isValidInterval(int interval_start, int interval_end) const;
 
  private:
-  std::vector<interval_dimension_item> itsIntervals; // Intervals back- and forwards
+  std::vector<interval_dimension_item> itsIntervals;  // Intervals back- and forwards
 };
 
 }  // namespace WMS

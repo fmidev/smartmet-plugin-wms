@@ -109,9 +109,10 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
     options.parseConfig();
     auto* reactor = new SmartMet::Spine::Reactor(options);
     reactor->init();
-    if (reactor->isShuttingDown()) {
-        throw Fmi::Exception::Trace(BCP,
-            "SmartMet::Spine::Reactor shutdown detected while init phase.");
+    if (reactor->isShuttingDown())
+    {
+      throw Fmi::Exception::Trace(BCP,
+                                  "SmartMet::Spine::Reactor shutdown detected while init phase.");
     }
     prelude(*reactor);
 

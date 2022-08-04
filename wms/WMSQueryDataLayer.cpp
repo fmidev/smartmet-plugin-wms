@@ -13,7 +13,7 @@ void WMSQueryDataLayer::updateLayerMetaData()
   try
   {
     auto q = itsQEngine->get(itsProducer);
-	itsModificationTime = q->modificationTime();
+    itsModificationTime = q->modificationTime();
 
     std::string level_name = q->levelName();
     FmiLevelType level_type = q->levelType();

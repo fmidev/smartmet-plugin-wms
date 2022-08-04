@@ -7,12 +7,12 @@
 #pragma once
 
 #include "WMSElevationDimension.h"
+#include "WMSIntervalDimension.h"
 #include "WMSLayerStyle.h"
 #include "WMSLegendGraphicInfo.h"
 #include "WMSLegendGraphicSettings.h"
 #include "WMSSupportedReference.h"
 #include "WMSTimeDimension.h"
-#include "WMSIntervalDimension.h"
 #include <boost/date_time/local_time/local_time.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/shared_ptr.hpp>
@@ -42,8 +42,9 @@ class WMSConfig;
 
 class WMSLayer
 {
-private:
+ private:
   void setProductFile(const std::string& theProductFile);
+
  protected:
   bool quiet = true;
 
@@ -80,7 +81,7 @@ private:
   boost::shared_ptr<WMSTimeDimensions> timeDimensions{
       nullptr};  // Optional, may be empty for non-temporal postgis layers
   boost::shared_ptr<WMSElevationDimension> elevationDimension{nullptr};  // Optional
-  boost::shared_ptr<WMSIntervalDimension> intervalDimension{nullptr}; // Optional
+  boost::shared_ptr<WMSIntervalDimension> intervalDimension{nullptr};    // Optional
 
   std::string customer;
   std::string productFile;  // dali product

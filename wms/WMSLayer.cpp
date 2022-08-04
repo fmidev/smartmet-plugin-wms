@@ -46,7 +46,7 @@ std::string get_legend_title_string(const LegendGraphicParameter& parameterSetti
 
   // 2) Return translation if exists
   if (parameterSettings.translations.find(language) != parameterSettings.translations.end())
-	return parameterSettings.translations.at(language);
+    return parameterSettings.translations.at(language);
 
   // 3) Return name given in parameter settings (wms - or product configuration file)
   if (!parameterSettings.given_name.empty())
@@ -692,8 +692,8 @@ void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettin
       LegendGraphicSymbol lgs(symbol_name);
       Json::Value translationJson = symbolJson.get("translation", nulljson);
       get_translations(translationJson, lgs.translations);
-	  for(const auto& item : lgs.translations)
-		settings.languages.insert(item.first);
+      for (const auto& item : lgs.translations)
+        settings.languages.insert(item.first);
       if (settings.symbols.find(symbol_name) != settings.symbols.end())
       {
         settings.symbols[symbol_name] = lgs;
@@ -737,8 +737,8 @@ void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettin
       Json::Value translationJson = parameterJson.get("translation", nulljson);
       std::map<std::string, std::string> translations;
       get_translations(translationJson, translations);
-	  for(const auto& item : translations)
-		settings.languages.insert(item.first);
+      for (const auto& item : translations)
+        settings.languages.insert(item.first);
       for (const auto& param_name : param_names)
       {
         settings.parameters.insert(
@@ -915,65 +915,66 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
   // 2) Read styles vector from configuration and generate layer styles
   json = root.get("styles", nulljson);
   if (!json.isNull())
+  {
+    if (!json.isArray())
+      throw Fmi::Exception(BCP, "WMSLayer styles settings must be an array");
+
+    WMSLayerStyle layerStyle;
+
+    for (unsigned int i = 0; i < json.size(); i++)
     {
-      if (!json.isArray())
-        throw Fmi::Exception(BCP, "WMSLayer styles settings must be an array");
-	  
-      WMSLayerStyle layerStyle;
-	  
-      for (unsigned int i = 0; i < json.size(); i++)
-		{
-		  const Json::Value& style_json = json[i];
-		  auto json_value = style_json.get("name", nulljson);
-		  if (!json_value.isNull())
-			layerStyle.name = json_value.asString();
-		  json_value = style_json.get("title", nulljson);
-		  if (!json_value.isNull())
-			layerStyle.title = json_value.asString();
-		  json_value = style_json.get("abstract", nulljson);
-		  if (!json_value.isNull())
-			layerStyle.abstract = json_value.asString();
-		  
-		  auto legend_url_json = style_json.get("legend_url", nulljson);
-		  if (!legend_url_json.isNull())
-			{
-			  json_value = legend_url_json.get("format", nulljson);
-			  if (!json_value.isNull())
-				layerStyle.legend_url.format = json_value.asString();
-			  json_value = legend_url_json.get("online_resource", nulljson);
-			  if (!json_value.isNull())
-				layerStyle.legend_url.online_resource = json_value.asString();
-			  ret.insert(std::make_pair(layerStyle.name, layerStyle));
-			}
-		  else
-			{
-			  auto legend_url_layer_json = style_json.get("legend_url_layer", nulljson);
-			  if (!legend_url_layer_json.isNull())
-				{
-				  std::string legendLayerName = legend_url_layer_json.asString();
-				  layerStyle.legend_url.online_resource = get_online_resource_string("default", legendLayerName);
-				  legendFiles.insert(make_pair(layerStyle.name, legendLayerName));
-				  ret.insert(std::make_pair(layerStyle.name, layerStyle));
-				}
-			  else
-				{
-				  layerStyle.legend_url.online_resource =
-					get_online_resource_string(layerStyle.name, layerName);
-				  ret.insert(std::make_pair(layerStyle.name, layerStyle));
-				}
-			  CaseInsensitiveComparator cicomp;
-			  if (cicomp(layerStyle.name, "default"))
-				addDefaultStyle = false;
-			}
-		}
-      if (addDefaultStyle)
-		{
-		  WMSLayerStyle layerStyle;
-		  layerStyle.legend_url.online_resource =
-            get_online_resource_string(layerStyle.name, layerName);
-		  ret.insert(std::make_pair(layerStyle.name, layerStyle));
-		}
+      const Json::Value& style_json = json[i];
+      auto json_value = style_json.get("name", nulljson);
+      if (!json_value.isNull())
+        layerStyle.name = json_value.asString();
+      json_value = style_json.get("title", nulljson);
+      if (!json_value.isNull())
+        layerStyle.title = json_value.asString();
+      json_value = style_json.get("abstract", nulljson);
+      if (!json_value.isNull())
+        layerStyle.abstract = json_value.asString();
+
+      auto legend_url_json = style_json.get("legend_url", nulljson);
+      if (!legend_url_json.isNull())
+      {
+        json_value = legend_url_json.get("format", nulljson);
+        if (!json_value.isNull())
+          layerStyle.legend_url.format = json_value.asString();
+        json_value = legend_url_json.get("online_resource", nulljson);
+        if (!json_value.isNull())
+          layerStyle.legend_url.online_resource = json_value.asString();
+        ret.insert(std::make_pair(layerStyle.name, layerStyle));
+      }
+      else
+      {
+        auto legend_url_layer_json = style_json.get("legend_url_layer", nulljson);
+        if (!legend_url_layer_json.isNull())
+        {
+          std::string legendLayerName = legend_url_layer_json.asString();
+          layerStyle.legend_url.online_resource =
+              get_online_resource_string("default", legendLayerName);
+          legendFiles.insert(make_pair(layerStyle.name, legendLayerName));
+          ret.insert(std::make_pair(layerStyle.name, layerStyle));
+        }
+        else
+        {
+          layerStyle.legend_url.online_resource =
+              get_online_resource_string(layerStyle.name, layerName);
+          ret.insert(std::make_pair(layerStyle.name, layerStyle));
+        }
+        CaseInsensitiveComparator cicomp;
+        if (cicomp(layerStyle.name, "default"))
+          addDefaultStyle = false;
+      }
     }
+    if (addDefaultStyle)
+    {
+      WMSLayerStyle layerStyle;
+      layerStyle.legend_url.online_resource =
+          get_online_resource_string(layerStyle.name, layerName);
+      ret.insert(std::make_pair(layerStyle.name, layerStyle));
+    }
+  }
 
   // 3) Generate layer styles automatically from configuration
   if (ret.empty())
@@ -1021,13 +1022,13 @@ std::map<std::string, Json::Value> readLegendFiles(const std::string& wmsroot,
       readLegendDirectory(wmsroot + "/customers/" + customer + "/legends/templates", cache);
   // Merge and replace common templates with customer specific templates
   for (const auto& t : customer_specific)
-	{
-	  std::string  name = Fmi::ascii_tolower_copy(t.first);
-	  if (legend_templates.find(name) == legend_templates.end())
-		legend_templates.insert(std::make_pair(name, t.second));
-	  else
-		legend_templates[name] = t.second;
-	}
+  {
+    std::string name = Fmi::ascii_tolower_copy(t.first);
+    if (legend_templates.find(name) == legend_templates.end())
+      legend_templates.insert(std::make_pair(name, t.second));
+    else
+      legend_templates[name] = t.second;
+  }
 
   return legend_templates;
 }
@@ -1067,7 +1068,7 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
     height = json.asInt();
 
   // 1) Default settings
-  WMSLegendGraphicSettings actualSettings(true); // Deafult values
+  WMSLegendGraphicSettings actualSettings(true);  // Deafult values
   // 2) Settings from wms.conf
   WMSLegendGraphicSettings configSettings = wmsConfig.getLegendGraphicSettings();
   actualSettings.merge(configSettings);
@@ -1081,14 +1082,14 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
       wmsConfig.getDaliConfig().rootDirectory(true), wmsConfig.getJsonCache(), customer);
   std::map<std::string, WMSLegendGraphicSettings> templateSettings;
 
-  for(auto item : templateFiles)
-	{
-	  WMSLegendGraphicSettings settings;
-	  get_legend_graphic_settings(item.second, settings);
-	  templateSettings.insert(std::make_pair(item.first, settings));
-	  if(settings.languages.size() > 0)
-		languages.insert(settings.languages.begin(), settings.languages.end());
-	}
+  for (auto item : templateFiles)
+  {
+    WMSLegendGraphicSettings settings;
+    get_legend_graphic_settings(item.second, settings);
+    templateSettings.insert(std::make_pair(item.first, settings));
+    if (settings.languages.size() > 0)
+      languages.insert(settings.languages.begin(), settings.languages.end());
+  }
 
   // Get layer styles
   itsStyles = get_styles(root, name, itsLegendFiles);
@@ -1100,10 +1101,10 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
   {
     std::string styleName = item.first;
 
-	// If external legend file used, no need to continue
-	// width, height is set later
-	if (itsLegendFiles.find(styleName) != itsLegendFiles.end())
-	  continue;
+    // If external legend file used, no need to continue
+    // width, height is set later
+    if (itsLegendFiles.find(styleName) != itsLegendFiles.end())
+      continue;
 
     std::string legendGraphicInfoName = name + "::" + styleName;
 
@@ -1152,7 +1153,7 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
         std::string layerType = lgi.asString("layer_type");
         std::string layerSubType = lgi.asString("layer_subtype");
         std::string parameterName = lgi.asString("parameter_name");
-		
+
         parameterNames.insert(parameterName);
 
         if (layerType == "icemap" && layerSubType == "symbol")
@@ -1170,28 +1171,30 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
         // Temperature_isoband), or by plain layer type (e.g. isoline, isoband)
         std::string key = Fmi::ascii_tolower_copy(parameterName + "_" + layerType);
         if (parameterName.empty() || templateFiles.find(key) == templateFiles.end())
-		  {
-			key = Fmi::ascii_tolower_copy(layerType);		
-			if (templateFiles.find(key) != templateFiles.end())
-			  {
-				isGenericTemplate = true;
-			  }
-			else
-			  {
-				key.clear();
-			  }
-		  }
-		if(key.empty())
-		  continue;
+        {
+          key = Fmi::ascii_tolower_copy(layerType);
+          if (templateFiles.find(key) != templateFiles.end())
+          {
+            isGenericTemplate = true;
+          }
+          else
+          {
+            key.clear();
+          }
+        }
+        if (key.empty())
+          continue;
 
-		// 3) Settings from template file will overwrite the previous settings (default settings, wms.conf)
+        // 3) Settings from template file will overwrite the previous settings (default settings,
+        // wms.conf)
         const auto& templateJson = templateFiles.at(key);
-		actualSettings.merge(templateSettings.at(key));
+        actualSettings.merge(templateSettings.at(key));
 
-		// 4) Settings from layer file (product file) will overwrite the previous settings (default settings, wms.conf, template file)
-		actualSettings.merge(layerSettings);
+        // 4) Settings from layer file (product file) will overwrite the previous settings (default
+        // settings, wms.conf, template file)
+        actualSettings.merge(layerSettings);
 
-		LegendGraphicParameter lgp(parameterName);
+        LegendGraphicParameter lgp(parameterName);
         const LegendGraphicParameter& parameterSettings =
             (actualSettings.parameters.find(parameterName) != actualSettings.parameters.end()
                  ? actualSettings.parameters.at(parameterName)
@@ -1261,26 +1264,28 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
              iter != lgiSymbols.end();
              ++iter)
         {
-		  std::string templateName = Fmi::ascii_tolower_copy(iter->first + "_symbol");
-		  if (iter->first.empty() || templateFiles.find(templateName) == templateFiles.end())
-			templateName = "symbol";
+          std::string templateName = Fmi::ascii_tolower_copy(iter->first + "_symbol");
+          if (iter->first.empty() || templateFiles.find(templateName) == templateFiles.end())
+            templateName = "symbol";
 
-		  WMSLegendGraphicSettings actualSymbolSettings = actualSettings;
-		  // 3) Settings from template file will overwrite the previous settings (default settings, wms.conf)
-		  actualSymbolSettings.merge(templateSettings.at(templateName));
-		  // 4) Settings from layer file (product file) will overwrite the previous settings (default settings, wms.conf, template file)
-		  actualSymbolSettings.merge(layerSettings);			  
+          WMSLegendGraphicSettings actualSymbolSettings = actualSettings;
+          // 3) Settings from template file will overwrite the previous settings (default settings,
+          // wms.conf)
+          actualSymbolSettings.merge(templateSettings.at(templateName));
+          // 4) Settings from layer file (product file) will overwrite the previous settings
+          // (default settings, wms.conf, template file)
+          actualSymbolSettings.merge(layerSettings);
 
           Json::Value symbolTemplate = templateFiles.at(templateName);
-		  const LegendGraphicInfo& legendGraphicInfo = iter->second;
-		  
-		  symbolTemplate = process_symbol_group_json(symbolTemplate,
-													 actualSymbolSettings,
-													 legendGraphicInfo,
-													 language,
-													 xpos,
-													 ypos,
-													 uniqueId);
+          const LegendGraphicInfo& legendGraphicInfo = iter->second;
+
+          symbolTemplate = process_symbol_group_json(symbolTemplate,
+                                                     actualSymbolSettings,
+                                                     legendGraphicInfo,
+                                                     language,
+                                                     xpos,
+                                                     ypos,
+                                                     uniqueId);
 
           result.legendLayers.push_back(symbolTemplate.toStyledString());
           Json::Value nulljson;
@@ -1297,8 +1302,6 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
           result.height += *actualSettings.layout.symbol_group_y_padding;
         }
       }
-
-
 
       for (const auto& name : parameterNames)
       {
@@ -1361,9 +1364,9 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& legendGraphicI
   {
     const auto& layerLGR = itsLegendGraphicResults.at(legendGraphicID);
     if (layerLGR.find(language) != layerLGR.end())
-	  return layerLGR.at(language);
+      return layerLGR.at(language);
     else
-	  return layerLGR.at(wmsConfig.getDaliConfig().defaultLanguage());
+      return layerLGR.at(wmsConfig.getDaliConfig().defaultLanguage());
   }
 
   return LegendGraphicResult();
@@ -1371,9 +1374,9 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& legendGraphicI
 
 bool WMSLayer::isValidInterval(int interval_start, int interval_end) const
 {
-  if(!intervalDimension)
-	return false;
-  
+  if (!intervalDimension)
+    return false;
+
   return intervalDimension->isValidInterval(interval_start, interval_end);
 }
 
@@ -1664,7 +1667,7 @@ boost::optional<CTPP::CDT> WMSLayer::getLayerBaseInfo() const
       layer["fixed_width"] = *fixed_width;
     if (fixed_height)
       layer["fixed_height"] = *fixed_height;
-	if (keywords)
+    if (keywords)
     {
       CTPP::CDT kwords(CTPP::CDT::ARRAY_VAL);
       for (const auto& kword : *keywords)
@@ -2014,31 +2017,30 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
       layer["time_dimension"] = layer_dimension_list;
     }
 
-	if(intervalDimension)
-	  {
-		CTPP::CDT interval_dimension_list(CTPP::CDT::ARRAY_VAL);
-		CTPP::CDT interval_dimension_start(CTPP::CDT::HASH_VAL);
-		
-		interval_dimension_start["name"] = "interval_start";
-		interval_dimension_start["units"] = "minute";
-		interval_dimension_start["multiple_values"] = 0;
-		interval_dimension_start["nearest_value"] = 0;
-		interval_dimension_start["default"] = intervalDimension->getDefaultStartInterval();
-		interval_dimension_start["value"] = intervalDimension->getStartIntervals();
+    if (intervalDimension)
+    {
+      CTPP::CDT interval_dimension_list(CTPP::CDT::ARRAY_VAL);
+      CTPP::CDT interval_dimension_start(CTPP::CDT::HASH_VAL);
 
-		CTPP::CDT interval_dimension_end(CTPP::CDT::HASH_VAL);
-		interval_dimension_end["name"] = "interval_end";
-		interval_dimension_end["units"] = "minute";
-		interval_dimension_end["multiple_values"] = 0;
-		interval_dimension_end["nearest_value"] = 0;
-		interval_dimension_end["default"] = intervalDimension->getDefaultEndInterval();
-		interval_dimension_end["value"] = intervalDimension->getEndIntervals();
+      interval_dimension_start["name"] = "interval_start";
+      interval_dimension_start["units"] = "minute";
+      interval_dimension_start["multiple_values"] = 0;
+      interval_dimension_start["nearest_value"] = 0;
+      interval_dimension_start["default"] = intervalDimension->getDefaultStartInterval();
+      interval_dimension_start["value"] = intervalDimension->getStartIntervals();
 
-		interval_dimension_list.PushBack(interval_dimension_start);
-		interval_dimension_list.PushBack(interval_dimension_end);
-		layer["interval_dimension"] = interval_dimension_list;		
-	  }
+      CTPP::CDT interval_dimension_end(CTPP::CDT::HASH_VAL);
+      interval_dimension_end["name"] = "interval_end";
+      interval_dimension_end["units"] = "minute";
+      interval_dimension_end["multiple_values"] = 0;
+      interval_dimension_end["nearest_value"] = 0;
+      interval_dimension_end["default"] = intervalDimension->getDefaultEndInterval();
+      interval_dimension_end["value"] = intervalDimension->getEndIntervals();
 
+      interval_dimension_list.PushBack(interval_dimension_start);
+      interval_dimension_list.PushBack(interval_dimension_end);
+      layer["interval_dimension"] = interval_dimension_list;
+    }
 
     // Layer name, title and abstract
     if (!name.empty())
@@ -2238,11 +2240,13 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
     return layer;
   }
-  catch (const Fmi::Exception &wmsException)
-	{
-	  Fmi::Exception ex(BCP, ("Failed to generate GetCapbilities reponse for layer '" + name +"' " + std::string(wmsException.what())));
-	  throw ex;
-	}
+  catch (const Fmi::Exception& wmsException)
+  {
+    Fmi::Exception ex(BCP,
+                      ("Failed to generate GetCapbilities reponse for layer '" + name + "' " +
+                       std::string(wmsException.what())));
+    throw ex;
+  }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Failed to generate capabilities for the layer!");
@@ -2337,8 +2341,8 @@ void WMSLayer::setLegendDimension(const WMSLayer& legendLayer, const std::string
 {
   for (auto& style : itsStyles)
   {
-	if(styleLayerName != style.first)
-	  continue;
+    if (styleLayerName != style.first)
+      continue;
     if (legendLayer.getWidth() && legendLayer.getHeight())
     {
       style.second.legend_url.online_resource +=
@@ -2360,12 +2364,12 @@ void WMSLayer::setLegendDimension(const WMSLayer& legendLayer, const std::string
 void WMSLayer::setProductFile(const std::string& theProductFile)
 {
   productFile = theProductFile;
-  
+
   // Save modification time of product file
   boost::system::error_code ec;
   auto modtime = boost::filesystem::last_write_time(productFile, ec);
   if (ec.value() == boost::system::errc::success)
-	itsProductFileModificationTime = boost::posix_time::from_time_t(modtime);
+    itsProductFileModificationTime = boost::posix_time::from_time_t(modtime);
 }
 
 const boost::posix_time::ptime& WMSLayer::modificationTime() const
@@ -2375,25 +2379,25 @@ const boost::posix_time::ptime& WMSLayer::modificationTime() const
 
 void WMSLayer::addIntervalDimension(int interval_start, int interval_end, bool interval_default)
 {
-  if(!intervalDimension)
-	intervalDimension = boost::make_shared<WMSIntervalDimension>(interval_start, interval_end, interval_default);
+  if (!intervalDimension)
+    intervalDimension =
+        boost::make_shared<WMSIntervalDimension>(interval_start, interval_end, interval_default);
   else
-	intervalDimension->addInterval(interval_start, interval_end, interval_default);
+    intervalDimension->addInterval(interval_start, interval_end, interval_default);
 }
 
 std::pair<std::string, std::string> WMSLayer::getDefaultInterval() const
 {
   std::pair<std::string, std::string> ret{"", ""};
 
-  if(intervalDimension)
-	{
-	  ret.first = intervalDimension->getDefaultStartInterval();
-	  ret.second = intervalDimension->getDefaultEndInterval();
-	}
+  if (intervalDimension)
+  {
+    ret.first = intervalDimension->getDefaultStartInterval();
+    ret.second = intervalDimension->getDefaultEndInterval();
+  }
 
   return ret;
 }
-
 
 }  // namespace WMS
 }  // namespace Plugin

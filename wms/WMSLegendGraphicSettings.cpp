@@ -27,7 +27,7 @@ void replace_translations(const std::map<std::string, std::string>& sourceTransl
       targetTranslations[tr.first] = tr.second;
   }
 }
-}
+}  // namespace
 unsigned int numberOfLanguages = 193;
 const char* language_codes[] = {
     "ab", "aa", "af",      "ak",      "sq", "am", "ar", "an", "hy", "as",   "av", "ae", "ay", "az",
@@ -47,23 +47,23 @@ const char* language_codes[] = {
 
 WMSLegendGraphicSettings::WMSLegendGraphicSettings(bool initDefaults /*= false*/)
 {
-  if(initDefaults)
-	{
-	  // default layout settings
-	  layout.param_name_xoffset = 20;
-	  layout.param_name_yoffset = 20;
-	  layout.param_unit_xoffset = 30;
-	  layout.param_unit_yoffset = 30;
-	  layout.legend_xoffset = 30;
-	  layout.legend_yoffset = 40;
-	  layout.symbol_group_x_padding = 30;
-	  layout.symbol_group_y_padding = 35;
-	  layout.symbol_text_xoffset = 30;
-	  layout.symbol_text_yoffset = 0;
-	  layout.legend_width = 10;
-	  layout.output_document_width = 500;
-	  layout.output_document_height = 500;
-	}
+  if (initDefaults)
+  {
+    // default layout settings
+    layout.param_name_xoffset = 20;
+    layout.param_name_yoffset = 20;
+    layout.param_unit_xoffset = 30;
+    layout.param_unit_yoffset = 30;
+    layout.legend_xoffset = 30;
+    layout.legend_yoffset = 40;
+    layout.symbol_group_x_padding = 30;
+    layout.symbol_group_y_padding = 35;
+    layout.symbol_text_xoffset = 30;
+    layout.symbol_text_yoffset = 0;
+    layout.legend_width = 10;
+    layout.output_document_width = 500;
+    layout.output_document_height = 500;
+  }
   expires = -1;  // No caching
 }
 
@@ -254,9 +254,8 @@ void WMSLegendGraphicSettings::merge(const WMSLegendGraphicSettings& settings)
   }
 
   // Symbols to ignore
-  if(!settings.symbolsToIgnore.empty())
-	symbolsToIgnore.insert(settings.symbolsToIgnore.begin(), settings.symbolsToIgnore.end());
-
+  if (!settings.symbolsToIgnore.empty())
+    symbolsToIgnore.insert(settings.symbolsToIgnore.begin(), settings.symbolsToIgnore.end());
 
   // Layout settings
   if (settings.layout.param_name_xoffset)
@@ -287,9 +286,7 @@ void WMSLegendGraphicSettings::merge(const WMSLegendGraphicSettings& settings)
     layout.legend_width_per_language[item.first] = item.second;
     languages.insert(item.first);
   }
-
 }
-
 
 }  // namespace WMS
 }  // namespace Plugin

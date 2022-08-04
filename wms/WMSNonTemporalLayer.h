@@ -30,16 +30,14 @@ class WMSNonTemporalLayer : public WMSLayer
   void updateLayerMetaData() override {}
 
  public:
- WMSNonTemporalLayer(const WMSConfig& config) : WMSLayer(config)
-  {
-  }
+  WMSNonTemporalLayer(const WMSConfig& config) : WMSLayer(config) {}
 
   const boost::posix_time::ptime& modificationTime() const override { return itsModificationTime; }
 };
 
 class WMSMapLayer : public WMSNonTemporalLayer
 {
-public:
+ public:
   WMSMapLayer(const WMSConfig& config, const Json::Value& json);
 };
 

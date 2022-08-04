@@ -977,8 +977,20 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
 
       // Q API SUCKS!!
       Spine::Location loc(latlon.X(), latlon.Y());
-      Engine::Querydata::ParameterOptions options(
-												  param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy, localTimePool);
+      Engine::Querydata::ParameterOptions options(param,
+                                                  "",
+                                                  loc,
+                                                  "",
+                                                  "",
+                                                  *timeformatter,
+                                                  "",
+                                                  "",
+                                                  mylocale,
+                                                  "",
+                                                  false,
+                                                  dummy,
+                                                  dummy,
+                                                  localTimePool);
 
       auto result = q->value(options, localdatetime);
 
@@ -1059,7 +1071,8 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
                                             T::CoordinateTypeValue::LATLON_COORDINATES,
                                             pointList,
                                             T::AreaInterpolationMethod::Linear,
-                                            modificationOperation,modificationParameters,
+                                            modificationOperation,
+                                            modificationParameters,
                                             valueList);
 
     if (valueList.getLength() == pointList.size())

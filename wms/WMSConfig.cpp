@@ -96,7 +96,7 @@ bool looks_like_pattern(const std::string& pattern)
 bool match_namespace_pattern(const std::string& name, const std::string& pattern)
 {
   if (!looks_like_pattern(pattern))
-	return (boost::algorithm::istarts_with(name, pattern + ":") || name == pattern);
+    return (boost::algorithm::istarts_with(name, pattern + ":") || name == pattern);
 
   // Strip surrounding slashes first
   const std::string re_str = pattern.substr(1, pattern.size() - 2);
@@ -152,17 +152,17 @@ std::string makeLayerNamespace(const std::string& customer,
 // otherwise generate legend from configuration
 bool prepareLegendGraphic(Product& theProduct)
 {
-  std::list<boost::shared_ptr<View> >& views = theProduct.views.views;
+  std::list<boost::shared_ptr<View>>& views = theProduct.views.views;
   boost::shared_ptr<Layer> legendLayer;
 
   bool legendLayerFound = false;
   for (auto& view : views)
   {
-    std::list<boost::shared_ptr<Layer> > layers = view->layers.layers;
+    std::list<boost::shared_ptr<Layer>> layers = view->layers.layers;
 
     for (auto& layer : layers)
     {
-      std::list<boost::shared_ptr<Layer> > sublayers = layer->layers.layers;
+      std::list<boost::shared_ptr<Layer>> sublayers = layer->layers.layers;
 
       if (layer->type)
       {
@@ -176,7 +176,7 @@ bool prepareLegendGraphic(Product& theProduct)
 
       for (auto& sublayer : sublayers)
       {
-        std::list<boost::shared_ptr<Layer> > sublayers2 = sublayer->layers.layers;
+        std::list<boost::shared_ptr<Layer>> sublayers2 = sublayer->layers.layers;
       }
     }
     if (legendLayerFound)
@@ -743,14 +743,8 @@ void WMSConfig::init()
 
   if (!itsCapabilityUpdatesDisabled)
   {
-    itsGetCapabilitiesTask.reset(
-      new Fmi::AsyncTask(
-        "WMSConfig: capabilities update task",
-        [this]()
-        {
-          capabilitiesUpdateLoop();
-        })
-    );
+    itsGetCapabilitiesTask.reset(new Fmi::AsyncTask("WMSConfig: capabilities update task",
+                                                    [this]() { capabilitiesUpdateLoop(); }));
   }
 }
 
@@ -785,11 +779,11 @@ void WMSConfig::capabilitiesUpdateLoop()
     {
       try
       {
-		  // update capabilities every N seconds
-		  // FIXME: do we need to put interruption points into methods called below?
-		  boost::this_thread::sleep_for(boost::chrono::seconds(itsCapabilityUpdateInterval));
-		  updateLayerMetaData();
-		  updateModificationTime();
+        // update capabilities every N seconds
+        // FIXME: do we need to put interruption points into methods called below?
+        boost::this_thread::sleep_for(boost::chrono::seconds(itsCapabilityUpdateInterval));
+        updateLayerMetaData();
+        updateModificationTime();
       }
       catch (...)
       {
@@ -1001,16 +995,17 @@ void WMSConfig::updateLayerMetaData()
     // It external legend file is used set legend dimension here
     for (auto& externalLegendItem : layersWithExternalLegendFile)
     {
-	  const auto& externalLegendItems = externalLegendItem.second;	  
+      const auto& externalLegendItems = externalLegendItem.second;
       for (auto& proxyItem : *newProxies)
       {
-		for (auto& legendStyleItem : externalLegendItems)
-		  {
-			if (proxyItem.second.getLayer()->getName() == legendStyleItem.second)
-			  {
-				externalLegendItem.first->setLegendDimension(*proxyItem.second.getLayer(), legendStyleItem.first);
-			  }
-		  }
+        for (auto& legendStyleItem : externalLegendItems)
+        {
+          if (proxyItem.second.getLayer()->getName() == legendStyleItem.second)
+          {
+            externalLegendItem.first->setLegendDimension(*proxyItem.second.getLayer(),
+                                                         legendStyleItem.first);
+          }
+        }
       }
     }
 
@@ -1091,7 +1086,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
         if (itsAuthEngine == nullptr || !itsAuthEngine->authorize(*apikey, layer_name, wmsService))
           continue;
 #endif
-	  	  
+
       auto cdt =
           iter_pair.second.getCapabilities(multiple_intervals, starttime, endtime, reference_time);
 
@@ -1213,7 +1208,9 @@ bool WMSConfig::isValidStyle(const std::string& theLayer, const std::string& the
   }
 }
 
-bool WMSConfig::isValidInterval(const std::string& theLayer, int interval_start, int interval_end) const
+bool WMSConfig::isValidInterval(const std::string& theLayer,
+                                int interval_start,
+                                int interval_end) const
 {
   try
   {
@@ -1236,7 +1233,7 @@ std::pair<std::string, std::string> WMSConfig::getDefaultInterval(const std::str
 {
   try
   {
-	std::pair<std::string, std::string> ret{"", ""};
+    std::pair<std::string, std::string> ret{"", ""};
 
     if (!isValidLayerImpl(theLayer, true))
       return ret;
@@ -1251,9 +1248,7 @@ std::pair<std::string, std::string> WMSConfig::getDefaultInterval(const std::str
   {
     throw Fmi::Exception::Trace(BCP, "Getting default interval failed!");
   }
-
 }
-
 
 const std::string& WMSConfig::getCRSDefinition(const std::string& theCRS) const
 {

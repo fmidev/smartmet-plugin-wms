@@ -9,9 +9,9 @@
 #include "AttributeSelection.h"
 #include "Layer.h"
 #include "ParameterInfo.h"
+#include "PointValue.h"
 #include "Positions.h"
 #include "Projection.h"
-#include "PointValue.h"
 #include <boost/optional.hpp>
 #include <vector>
 

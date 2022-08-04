@@ -1,8 +1,8 @@
 #include "WMSLayerFactory.h"
 #include "StyleSelection.h"
 #include "WMSGridDataLayer.h"
-#include "WMSPostGISLayer.h"
 #include "WMSNonTemporalLayer.h"
+#include "WMSPostGISLayer.h"
 #include "WMSQueryDataLayer.h"
 #ifndef WITHOUT_OBSERVATION
 #include "WMSObservationLayer.h"
@@ -51,11 +51,11 @@ WMSLayerType getWMSLayerType(const Json::Value& layer)
 
     auto type_name = layer_type.asString();
 
-    if(type_name == "map")
-      {
-	return WMSLayerType::MapLayer;
-      }
-    
+    if (type_name == "map")
+    {
+      return WMSLayerType::MapLayer;
+    }
+
     if (postgis_layers.find(type_name) != postgis_layers.end())
     {
       return WMSLayerType::PostGISLayer;
@@ -92,7 +92,7 @@ std::string getWMSLayerTypeAsString(WMSLayerType layerType)
       case WMSLayerType::MapLayer:
         ret = "MapLayer";
         break;
-	
+
 #ifndef WITHOUT_OBSERVATION
       case WMSLayerType::ObservationLayer:
         ret = "ObservationLayer";
@@ -115,7 +115,7 @@ WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
 {
   WMSLayerType layer_type = WMSLayerType::NotWMSLayer;
   Json::Value nulljson;
-  
+
   Json::Value mapLayers = Json::Value(Json::arrayValue);
   for (const auto& layer : layers)
   {
@@ -126,8 +126,8 @@ WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
       if (!sublayers.isNull())
       {
         layer_type = findLayerType(sublayers, layerRef);
-	if(layer_type == WMSLayerType::MapLayer)
-	  continue;
+        if (layer_type == WMSLayerType::MapLayer)
+          continue;
         else if (layer_type != WMSLayerType::NotWMSLayer)
           return layer_type;
       }
@@ -149,13 +149,13 @@ WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
         // NotWMSLayer means we should proceed to find a more significant layer
         continue;
       }
-      else if(layer_type == WMSLayerType::MapLayer)
-	{
-	  // Map layer may be part of other layer
-	  mapLayers.append(layer);
-	  layerRef = mapLayers;
-	  continue;
-	}
+      else if (layer_type == WMSLayerType::MapLayer)
+      {
+        // Map layer may be part of other layer
+        mapLayers.append(layer);
+        layerRef = mapLayers;
+        continue;
+      }
       else
       {
         layerRef = layer;
@@ -284,57 +284,63 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
       }
     }
 
-	std::vector<interval_dimension_item> intervals;
-	boost::optional<int> interval_default;
+    std::vector<interval_dimension_item> intervals;
+    boost::optional<int> interval_default;
     json = root.get("interval", nulljson);
     if (!json.isNull())
       interval_default = json.asInt();
     json = root.get("intervals", nulljson);
     if (!json.isNull())
-	  {
-		if (!json.isArray())
-		  throw Fmi::Exception(BCP, "WMSLayer intervals settings must be an array");
+    {
+      if (!json.isArray())
+        throw Fmi::Exception(BCP, "WMSLayer intervals settings must be an array");
 
-        for (unsigned int i = 0; i < json.size(); i++)
-		  {
-			if(json[i].isInt())
-			  {
-				int interval_start = json[i].asInt();
-				intervals.push_back(interval_dimension_item(interval_start, 0, (interval_default ? (*interval_default == interval_start ? true : false) : i == 0)));
-			  }
-			else if(json[i].isObject())
-			  {		
-				boost::optional<int> interval_start;
-				boost::optional<int> interval_end;
-				bool interval_default = false;
-				auto json_value = json[i].get("interval_start", nulljson);
-				if (!json_value.isNull())
-				  interval_start = json_value.asInt();
-				json_value = json[i].get("interval_end", nulljson);
-				if (!json_value.isNull())
-				  interval_end = json_value.asInt();
-				json_value = json[i].get("default", nulljson);
-				if (!json_value.isNull())
-				  interval_default = json_value.asBool();
+      for (unsigned int i = 0; i < json.size(); i++)
+      {
+        if (json[i].isInt())
+        {
+          int interval_start = json[i].asInt();
+          intervals.push_back(interval_dimension_item(
+              interval_start,
+              0,
+              (interval_default ? (*interval_default == interval_start ? true : false) : i == 0)));
+        }
+        else if (json[i].isObject())
+        {
+          boost::optional<int> interval_start;
+          boost::optional<int> interval_end;
+          bool interval_default = false;
+          auto json_value = json[i].get("interval_start", nulljson);
+          if (!json_value.isNull())
+            interval_start = json_value.asInt();
+          json_value = json[i].get("interval_end", nulljson);
+          if (!json_value.isNull())
+            interval_end = json_value.asInt();
+          json_value = json[i].get("default", nulljson);
+          if (!json_value.isNull())
+            interval_default = json_value.asBool();
 
-				if(interval_start || interval_end)
-				  intervals.push_back(interval_dimension_item(interval_start ? *interval_start : 0, interval_end ? *interval_end : 0, interval_default));
-			  }
-		  }
+          if (interval_start || interval_end)
+            intervals.push_back(interval_dimension_item(interval_start ? *interval_start : 0,
+                                                        interval_end ? *interval_end : 0,
+                                                        interval_default));
+        }
       }
-	else
-	  {
-		boost::optional<int> interval_start;
-		boost::optional<int> interval_end;
-		json = root.get("interval_start", nulljson);
-		if (!json.isNull())
-		  interval_start = json.asInt();
-		json = root.get("interval_end", nulljson);
-		if (!json.isNull())
-		  interval_end = json.asInt();
-		if(interval_start || interval_end)
-		  intervals.push_back(interval_dimension_item(interval_start ? *interval_start : 0, interval_end ? *interval_end : 0, true));		
-	  }
+    }
+    else
+    {
+      boost::optional<int> interval_start;
+      boost::optional<int> interval_end;
+      json = root.get("interval_start", nulljson);
+      if (!json.isNull())
+        interval_start = json.asInt();
+      json = root.get("interval_end", nulljson);
+      if (!json.isNull())
+        interval_end = json.asInt();
+      if (interval_start || interval_end)
+        intervals.push_back(interval_dimension_item(
+            interval_start ? *interval_start : 0, interval_end ? *interval_end : 0, true));
+    }
 
     boost::filesystem::path p(theFileName);
 
@@ -494,9 +500,9 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     // Calculate LegedGraphicInfo only once
     layer->initLegendGraphicInfo(root);
 
-	// Add interval dimension
-	for(const auto& item : intervals)
-	  layer->addIntervalDimension(item.interval_start, item.interval_end, item.interval_default);
+    // Add interval dimension
+    for (const auto& item : intervals)
+      layer->addIntervalDimension(item.interval_start, item.interval_end, item.interval_default);
 
     return layer;
   }

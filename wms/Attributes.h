@@ -35,8 +35,8 @@ class Attributes
 
   void generate(CTPP::CDT& theLocals, const State& theState) const;
   void generatePresentation(CTPP::CDT& theLocals,
-			    const State& theState,
-			    const std::map<std::string, std::string>& theStyle = {}) const; 
+                            const State& theState,
+                            const std::map<std::string, std::string>& theStyle = {}) const;
   std::string getSelector() const;
   std::size_t hash_value(const State& theState) const;
 

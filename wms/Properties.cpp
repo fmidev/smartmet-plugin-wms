@@ -35,7 +35,7 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
 
     json = theJson.get("timestep", nulljson);
     if (!json.isNull())
-	  timestep = json.asInt();
+      timestep = json.asInt();
 
     json = theJson.get("source", nulljson);
     if (!json.isNull())

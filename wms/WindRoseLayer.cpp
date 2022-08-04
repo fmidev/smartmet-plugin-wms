@@ -238,8 +238,7 @@ double sector_end_angle(int sector, int sectors)
  */
 // ----------------------------------------------------------------------
 
-std::vector<double> calculate_rose_distribution(const TS::TimeSeries& directions,
-                                                int sectors)
+std::vector<double> calculate_rose_distribution(const TS::TimeSeries& directions, int sectors)
 {
   try
   {
@@ -704,7 +703,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
     settings.stationtype = "observations_fmi";
     settings.timezone = timezone;
     settings.useCommonQueryMethod = true;
-	settings.localTimePool = theState.getLocalTimePool();
+    settings.localTimePool = theState.getLocalTimePool();
 
     auto& observation = theState.getObsEngine();
     settings.parameters.push_back(TS::makeParameter("WindDirection"));

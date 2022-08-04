@@ -916,9 +916,9 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
   std::vector<std::string> rows;
   boost::algorithm::split(rows, egg_text, boost::algorithm::is_any_of("\n"));
   // Remove leading and trailing spaces
-  std::for_each(
-      rows.begin(), rows.end(),
-      boost::bind(&boost::trim<std::string>, boost::placeholders::_1, std::locale()));
+  std::for_each(rows.begin(),
+                rows.end(),
+                boost::bind(&boost::trim<std::string>, boost::placeholders::_1, std::locale()));
   for (std::string& r : rows)
     if (!r.empty() && r.back() == '+')
       r.insert(0, " ");

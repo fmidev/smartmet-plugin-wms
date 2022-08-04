@@ -89,7 +89,7 @@ class Config : private boost::noncopyable
 
   unsigned long long itsMaxMemoryCacheSize = 104857600;      // 100 MB
   unsigned long long itsMaxFilesystemCacheSize = 209715200;  // 200 MB
-  unsigned int itsStyleSheetCacheSize = 1000;  // 1000 objects
+  unsigned int itsStyleSheetCacheSize = 1000;                // 1000 objects
 
   unsigned itsMaxHeatmapPoints = 2000 * 2000;
 

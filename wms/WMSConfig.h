@@ -21,9 +21,9 @@
 #include <engines/grid/Engine.h>
 #include <engines/observation/Engine.h>
 #include <engines/querydata/Engine.h>
+#include <macgyver/AsyncTask.h>
 #include <spine/JsonCache.h>
 #include <spine/Thread.h>
-#include <macgyver/AsyncTask.h>
 #include <libconfig.h++>
 #include <map>
 #include <set>
@@ -154,8 +154,11 @@ class WMSConfig
   WMSLayerHierarchy::HierarchyType getLayerHierarchyType() const { return itsLayerHierarchyType; }
   bool multipleIntervals() const { return itsMultipleIntervals; }
   boost::posix_time::ptime getCapabilitiesExpirationTime() const;
-  boost::posix_time::ptime getCapabilitiesModificationTime() const { return *itsCapabilitiesModificationTime; }
-  
+  boost::posix_time::ptime getCapabilitiesModificationTime() const
+  {
+    return *itsCapabilitiesModificationTime;
+  }
+
  private:
   void parse_references();
   CTPP::CDT get_capabilities(const libconfig::Config& config) const;
@@ -242,7 +245,8 @@ class WMSConfig
   // Set of files for which a warning has already been printed
   std::set<std::string> itsWarnedFiles;
 
-  boost::optional<boost::posix_time::ptime> itsCapabilitiesModificationTime = boost::posix_time::from_time_t(0);
+  boost::optional<boost::posix_time::ptime> itsCapabilitiesModificationTime =
+      boost::posix_time::from_time_t(0);
 };  // class WMSConfig
 
 }  // namespace WMS

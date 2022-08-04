@@ -32,44 +32,46 @@ struct StationSymbolPriority
   double y() const { return latitude; }
 };
 
-using StationSymbolPriorities =  std::vector<StationSymbolPriority>;
+using StationSymbolPriorities = std::vector<StationSymbolPriority>;
 
 // Results from DB mapped by FMISID
 using ResultSet = std::map<int, std::vector<TS::TimeSeries>>;
 
 class ObservationLayer : public Layer
 {
-public:
-
+ public:
   virtual void init(const Json::Value& theJson,
-					const State& theState,
+                    const State& theState,
                     const Config& theConfig,
-					const Properties& theProperties);
+                    const Properties& theProperties);
 
   virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
-    
+
   virtual std::size_t hash_value(const State& theState) const;
-    
-protected:
 
-  virtual StationSymbolPriorities processResultSet(const State& theState, 
-												   const ResultSet& theResultSet, 
-												   const boost::posix_time::ptime& requested_timestep) const = 0;
-  virtual void getParameters(const boost::posix_time::ptime& requested_timestep, 
-							 std::vector<SmartMet::Spine::Parameter>& parameters,  
-							 boost::posix_time::ptime& starttime,  
-							 boost::posix_time::ptime&endtime) const = 0;
+ protected:
+  virtual StationSymbolPriorities processResultSet(
+      const State& theState,
+      const ResultSet& theResultSet,
+      const boost::posix_time::ptime& requested_timestep) const = 0;
+  virtual void getParameters(const boost::posix_time::ptime& requested_timestep,
+                             std::vector<SmartMet::Spine::Parameter>& parameters,
+                             boost::posix_time::ptime& starttime,
+                             boost::posix_time::ptime& endtime) const = 0;
 
-  ResultSet getObservations(State& theState, const std::vector<SmartMet::Spine::Parameter>& parameters, const boost::posix_time::ptime& starttime, const boost::posix_time::ptime& endtime) const;
-  ResultSet getObservations(State& theState, const boost::posix_time::ptime& requested_timestep) const;
+  ResultSet getObservations(State& theState,
+                            const std::vector<SmartMet::Spine::Parameter>& parameters,
+                            const boost::posix_time::ptime& starttime,
+                            const boost::posix_time::ptime& endtime) const;
+  ResultSet getObservations(State& theState,
+                            const boost::posix_time::ptime& requested_timestep) const;
 
   std::string keyword;
   std::string fmisids;
   unsigned int mindistance{0};
   SmartMet::Spine::TaggedFMISIDList stationFMISIDs;
 
-private:
-
+ private:
   StationSymbolPriorities getProcessedData(State& theState) const;
 
 };  // class ObservationLayer

@@ -138,7 +138,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
       std::string tmp;
       auto mylocale = std::locale::classic();
       NFmiPoint dummy;
-	  TS::LocalTimePoolPtr localTimePool = nullptr;
+      TS::LocalTimePoolPtr localTimePool = nullptr;
 
       for (auto& point : thePoints)
       {
@@ -159,7 +159,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
                                                       false,
                                                       dummy,
                                                       dummy,
-													  localTimePool);
+                                                      localTimePool);
         auto uresult = q.value(up, localdatetime);
 
         auto vp = Engine::Querydata::ParameterOptions(vparam,
@@ -175,7 +175,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
                                                       false,
                                                       dummy,
                                                       dummy,
-													  localTimePool);
+                                                      localTimePool);
         auto vresult = q.value(vp, localdatetime);
 
         if (boost::get<double>(&uresult) != nullptr && boost::get<double>(&vresult) != nullptr)

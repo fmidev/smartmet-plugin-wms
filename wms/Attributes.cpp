@@ -206,7 +206,7 @@ void Attributes::generate(CTPP::CDT& theLocals, const State& theState) const
 std::string Attributes::getSelector() const
 {
   std::string ret;
-  
+
   const auto classiter = attributes.find("class");
   if (classiter != attributes.end())
     ret = "." + classiter->second;
@@ -215,13 +215,13 @@ std::string Attributes::getSelector() const
 }
 
 void Attributes::generatePresentation(CTPP::CDT& theLocals,
-				      const State& theState,
-				      const std::map<std::string, std::string>& theStyle) const
+                                      const State& theState,
+                                      const std::map<std::string, std::string>& theStyle) const
 {
   try
   {
     std::map<std::string, std::string> style = theStyle;
-    
+
     // Override with element specific attributes
 
     const auto& regular_attributes = theState.getConfig().regularAttributes();

@@ -3,6 +3,7 @@
 #include "LayerFactory.h"
 #include "ArrowLayer.h"
 #include "BackgroundLayer.h"
+#include "FinnishRoadObservationLayer.h"
 #include "FrameLayer.h"
 #include "GridLayer.h"
 #include "IceMapLayer.h"
@@ -14,14 +15,13 @@
 #include "MapLayer.h"
 #include "NumberLayer.h"
 #include "PostGISLayer.h"
+#include "PresentWeatherObservationLayer.h"
 #include "SymbolLayer.h"
 #include "TagLayer.h"
 #include "TimeLayer.h"
 #include "TranslationLayer.h"
 #include "WKTLayer.h"
 #include "WindRoseLayer.h"
-#include "FinnishRoadObservationLayer.h"
-#include "PresentWeatherObservationLayer.h"
 #include <macgyver/Exception.h>
 #include <stdexcept>
 
