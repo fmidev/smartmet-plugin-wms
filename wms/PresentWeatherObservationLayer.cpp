@@ -20,9 +20,10 @@ bool priority_sort(const StationSymbolPriority& rh1, const StationSymbolPriority
   return (rh1.priority > rh2.priority);
 }
 
-float convert_possible_wawa_2_ww(float theValue)
+float convert_wawa_2_ww(float theValue)
 {
   // clang-format off
+  // See https://hav.fmi.fi/hav/havainnot/index.php?page=wcodes&mode=wawa_to_ww
   static const float wwCodeArray[100] = {
       0,  1,  2,  3,  4,  5,  0,  0,  0,  0,
       10, 0,  13, 0,  0,  0,  0,  0,  18, 0,
@@ -36,14 +37,14 @@ float convert_possible_wawa_2_ww(float theValue)
       92, 17, 93, 96, 17, 97, 99, 0,  0,  8};
   // clang-format on
 
-  if (theValue >= 100 && theValue <= 199)
-    return wwCodeArray[static_cast<int>(theValue - 100)];
+  if (theValue < 100)
+    return wwCodeArray[static_cast<int>(theValue)];
   return theValue;
 }
 
 int get_symbol(float wawa)
 {
-  float value = convert_possible_wawa_2_ww(wawa);
+  float value = convert_wawa_2_ww(wawa);
   if (value != kFloatMissing && value > 3)
   {
     // the last value 255 is synop value 98, luckily also 99 is available
