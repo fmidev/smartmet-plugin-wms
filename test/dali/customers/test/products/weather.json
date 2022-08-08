@@ -1,6 +1,6 @@
 {
     "title": "Weather symbol test",
-    "producer": "pal_skandinavia",
+    "producer": "pal",
     "projection":
     {
 	"crs": "data",
