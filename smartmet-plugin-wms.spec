@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.8.8
+Version: 22.8.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -147,6 +147,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Aug 17 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.8.17-1.fmi
+- Added support for AUTO2 spatial references
+
 * Mon Aug  8 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.8.8-1.fmi
 - Fixed WaWa to WW conversion for PresentWeatherObservationLayer
 

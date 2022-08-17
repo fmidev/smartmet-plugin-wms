@@ -96,6 +96,13 @@
     <Layer queryable="1">
       <Name>ely:elymap</Name>
       <Title>ELY map</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -140,6 +147,13 @@
     <Layer queryable="1">
       <Name>ely:wmsmap</Name>
       <Title>ELY map</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>

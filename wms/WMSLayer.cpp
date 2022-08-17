@@ -1382,17 +1382,24 @@ bool WMSLayer::isValidCRS(const std::string& theCRS) const
 {
   try
   {
+    auto crs = theCRS;
+    if (boost::algorithm::starts_with(crs, "AUTO2:"))
+    {
+      auto pos = crs.find(',');
+      crs = crs.substr(0, pos);
+    }
+
     // Disabled explicitly?
-    if (disabled_refs.find(theCRS) != disabled_refs.end())
+    if (disabled_refs.find(crs) != disabled_refs.end())
       return false;
 
     // Disabled if not in the known list at all
-    auto ref = refs.find(theCRS);
+    auto ref = refs.find(crs);
     if (ref == refs.end())
       return false;
 
     // Known, and enabled explicitly?
-    if (enabled_refs.find(theCRS) != enabled_refs.end())
+    if (enabled_refs.find(crs) != enabled_refs.end())
       return true;
 
     // Enabled by default?
@@ -1596,6 +1603,9 @@ void WMSLayer::initProjectedBBoxes()
     if (ref.geographic)
       continue;
 
+    if (boost::algorithm::starts_with(id, "AUTO2:"))
+      continue;
+
     // Intersect with target EPSG bounding box (latlon) if it is available
 
     auto x1 = geographicBoundingBox.xMin;
@@ -1757,6 +1767,9 @@ boost::optional<CTPP::CDT> WMSLayer::getProjectedBoundingBoxInfo() const
             layer_bbox["maxy"] = pos->second.north;
             layer_bbox_list.PushBack(layer_bbox);
           }
+          // No bbox provided for AUTO2 projections, just the CRS name
+          else if (boost::algorithm::starts_with(id, "AUTO2:"))
+            layer_crs_list.PushBack(id);
         }
       }
 
@@ -2120,6 +2133,10 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
             layer_bbox["maxy"] = pos->second.north;
             layer_bbox_list.PushBack(layer_bbox);
           }
+
+          // No bbox provided for AUTO2 projections, just the CRS name
+          else if (boost::algorithm::starts_with(id, "AUTO2:"))
+            layer_crs_list.PushBack(id);
         }
       }
 

@@ -148,7 +148,7 @@
 				"Title": "ELY map",
 				"queryable": 1,
 				"Name": "ely:elymap",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": -9.09870632718,
@@ -281,7 +281,7 @@
 				"Title": "ELY map",
 				"queryable": 1,
 				"Name": "ely:wmsmap",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": -9.09870632718,

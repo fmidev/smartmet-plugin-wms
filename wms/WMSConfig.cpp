@@ -10,14 +10,11 @@
 #include "WMSException.h"
 #include "WMSLayerFactory.h"
 #include "WMSLayerHierarchy.h"
-#include <gis/SpatialReference.h>
-#include <macgyver/Exception.h>
-#include <spine/Convenience.h>
-#include <spine/FmiApiKey.h>
-#include <spine/Json.h>
+
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
+
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -25,7 +22,13 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/move/make_unique.hpp>
 #include <boost/regex.hpp>
+#include <fmt/format.h>
+#include <gis/SpatialReference.h>
+#include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <spine/Convenience.h>
+#include <spine/FmiApiKey.h>
+#include <spine/Json.h>
 #include <algorithm>
 #include <map>
 #include <ogr_spatialref.h>
@@ -533,15 +536,44 @@ CTPP::CDT WMSConfig::get_capabilities(const libconfig::Config& config) const
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Extract supported EPSG and CRS references from the configuration
+ * \brief Extract supported units and EPSG, CRS and AUTO2 references
  */
 // ----------------------------------------------------------------------
 
 void WMSConfig::parse_references()
 {
-  // EPSG settings is an array of integers, whose name shall be EPSG:<int>
-
   const libconfig::Config& config = itsDaliConfig.getConfig();
+
+  // Units settings is an array of unit,scale,name typles. The data is used when generating AUTO2
+  // spatial references
+
+  std::string units_name = "wms.supported_references.units";
+  if (!config.exists(units_name))
+  {
+    itsLengthUnits["m"] = 1.0;  // enable meters by default
+  }
+  else
+  {
+    const auto& units_settings = config.lookup(units_name);
+    if (!units_settings.isList())
+      throw Fmi::Exception(BCP, units_name + " must be a list of groups");
+
+    for (int i = 0; i < units_settings.getLength(); i++)
+    {
+      const auto& group = units_settings[i];
+
+      if (!group.isGroup())
+        throw Fmi::Exception(BCP, units_settings + " must be a list of groups");
+
+      // we ignore the name of the units, it's for documentation only
+      std::string unit = group["unit"];
+      double scale = group["scale"];
+
+      itsLengthUnits[unit] = scale;
+    }
+  }
+
+  // EPSG settings is an array of integers, whose name shall be EPSG:<int>
 
   const auto& epsg_settings = config.lookup("wms.supported_references.epsg");
 
@@ -561,7 +593,7 @@ void WMSConfig::parse_references()
     itsWMSSupportedReferences.insert(std::make_pair(name, ref));
   }
 
-  // CRS settings is an array of id,proj,bbox tuples, whose name shall be CRS:<id>
+  // CRS settings is a list of id,proj,bbox tuples, whose name shall be CRS:<id>
 
   const auto& crs_settings = config.lookup("wms.supported_references.crs");
 
@@ -600,6 +632,38 @@ void WMSConfig::parse_references()
 
     WMSSupportedReference ref(proj, bbox, enabled, geographic);
     itsWMSSupportedReferences.insert(std::make_pair(name, ref));
+  }
+
+  // AUTO2 settings is a list of id, proj, bbox tuple, whose name shall be AUTO2:<id>
+
+  std::string auto2_name = "wms.supported_references.auto2";
+  if (config.exists(auto2_name))
+  {
+    const auto& auto2_settings = config.lookup(auto2_name);
+
+    if (!auto2_settings.isList())
+      throw Fmi::Exception(BCP, auto2_name + " must be a list of groups");
+
+    for (int i = 0; i < auto2_settings.getLength(); i++)
+    {
+      const auto& group = auto2_settings[i];
+
+      if (!group.isGroup())
+        throw Fmi::Exception(BCP, auto2_name + " must be a list of groups");
+
+      const int id = group["id"];
+      std::string proj = group["proj"];
+
+      itsAutoProjections[id] = proj;
+
+      const Engine::Gis::BBox bbox(-180, 180, -90, 90);
+      const bool enabled = true;
+      const bool geographic = false;
+      const std::string name = fmt::format("AUTO2:{}", id);
+
+      WMSSupportedReference ref(name, bbox, enabled, geographic);
+      itsWMSSupportedReferences.insert(std::make_pair(name, ref));
+    }
   }
 }
 
@@ -692,6 +756,10 @@ WMSConfig::WMSConfig(const Config& daliConfig,
     get_capabilities(config);
   }
   catch (const libconfig::SettingNotFoundException& e)
+  {
+    throw Fmi::Exception(BCP, "Setting not found").addParameter("Setting path", e.getPath());
+  }
+  catch (const libconfig::SettingTypeException& e)
   {
     throw Fmi::Exception(BCP, "Setting not found").addParameter("Setting path", e.getPath());
   }
@@ -1251,11 +1319,65 @@ std::pair<std::string, std::string> WMSConfig::getDefaultInterval(const std::str
   }
 }
 
-const std::string& WMSConfig::getCRSDefinition(const std::string& theCRS) const
+std::string WMSConfig::getCRSDefinition(const std::string& theCRS) const
 {
   try
   {
-    return itsWMSSupportedReferences.at(theCRS).proj;
+    // Normal EPSG and named references
+    const auto pos = itsWMSSupportedReferences.find(theCRS);
+    if (pos != itsWMSSupportedReferences.end())
+      return pos->second.proj;
+
+    if (!boost::algorithm::starts_with(theCRS, "AUTO2:"))
+      throw Fmi::Exception(BCP, "Unknown spatial reference").addParameter("CRS", theCRS);
+
+    // Supported AUTO2 projections
+
+    const auto params = theCRS.substr(6, std::string::npos);
+
+    std::vector<std::string> parts;
+    boost::algorithm::split(parts, params, boost::algorithm::is_any_of(","));
+
+    if (parts.size() != 4)
+      throw Fmi::Exception(BCP, "AUTO2 definitions require 4 parameters: id,scale,lon,lat")
+          .addParameter("CRS", theCRS);
+
+    const auto id = Fmi::stoi(parts[0]);
+    const auto scale = Fmi::stod(parts[1]);
+    const auto lon = Fmi::stod(parts[2]);
+    const auto lat = Fmi::stod(parts[3]);
+
+    const auto apos = itsAutoProjections.find(id);
+    if (apos == itsAutoProjections.end())
+      throw Fmi::Exception(BCP, "Unsupported AUTO2 projection").addParameter("CRS", theCRS);
+
+    auto proj = apos->second;
+
+    // Find the unit
+    std::string unit_name;
+    for (const auto& unit : itsLengthUnits)
+    {
+      if (unit.second == scale)
+      {
+        unit_name = unit.first;
+        break;
+      }
+    }
+
+    if (unit_name.empty())
+      throw Fmi::Exception(BCP, "No known unit for the given projection scale")
+          .addParameter("CRS", theCRS);
+
+    // Make parameter substitutions
+
+    const auto false_northing = (lat >= 0 ? 0 : 10000000.0);
+    const auto central_meridian = -183 + 6 * std::min(std::floor((lon + 180) / 6) + 1.0, 60.0);
+    boost::replace_all(proj, "${lon0}", Fmi::to_string(lon));
+    boost::replace_all(proj, "${lat0}", Fmi::to_string(lat));
+    boost::replace_all(proj, "${false_northing}", Fmi::to_string(false_northing));
+    boost::replace_all(proj, "${central_meridian}", Fmi::to_string(central_meridian));
+    boost::replace_all(proj, "${units}", unit_name);
+    return proj;
   }
   catch (...)
   {

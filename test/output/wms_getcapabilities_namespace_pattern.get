@@ -97,6 +97,13 @@
       <Name>grid:temperature_1</Name>
       <Title>Temperature</Title>
       <Abstract>Temperature</Abstract>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -126,6 +133,13 @@
       <Name>grid:temperature_2</Name>
       <Title>Temperature</Title>
       <Abstract>Temperature</Abstract>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -155,6 +169,13 @@
       <Name>grid:temperature_3</Name>
       <Title>Temperature</Title>
       <Abstract>Temperature</Abstract>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -184,6 +205,13 @@
       <Name>grid:temperature_4</Name>
       <Title>Temperature</Title>
       <Abstract>Temperature</Abstract>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -212,6 +240,13 @@
     <Layer queryable="1">
       <Name>grid:wind_direction_1</Name>
       <Title>Wind demo</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -240,6 +275,13 @@
     <Layer queryable="1">
       <Name>grid:wind_speed_1</Name>
       <Title>Wind demo</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -268,6 +310,13 @@
     <Layer queryable="1">
       <Name>grid:wind_speed_2</Name>
       <Title>Wind demo</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -296,6 +345,13 @@
     <Layer queryable="1">
       <Name>grid:wind_speed_and_direction_1</Name>
       <Title>Wind demo</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -325,6 +381,13 @@
       <Name>test:mean_temperature</Name>
       <Title>Mean temperature</Title>
       <Abstract>Sea surface mean temperature (1971-2000)</Abstract>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -360,6 +423,13 @@
     <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows</Name>
       <Title>Wind observations</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -402,6 +472,13 @@
     <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows_mindistance</Name>
       <Title>Wind observations</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -444,6 +521,13 @@
     <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows_mindistance_priority_array</Name>
       <Title>Wind observations</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -486,6 +570,13 @@
     <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows_mindistance_priority_extrema</Name>
       <Title>Wind observations</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -528,6 +619,13 @@
     <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows_mindistance_priority_max</Name>
       <Title>Wind observations</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -570,6 +668,13 @@
     <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows_mindistance_priority_min</Name>
       <Title>Wind observations</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -612,6 +717,13 @@
     <Layer queryable="1">
       <Name>test:opendata_meteorological_windarrows_mindistance_priority_none</Name>
       <Title>Wind observations</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -654,6 +766,13 @@
     <Layer queryable="1">
       <Name>test:opendata_temperature_numbers</Name>
       <Title>Temperature observations</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -696,6 +815,13 @@
     <Layer queryable="1">
       <Name>test:opendata_temperature_numbers_mindistance</Name>
       <Title>Temperature observations</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -738,6 +864,13 @@
     <Layer queryable="1">
       <Name>test:opendata_temperature_numbers_mindistance_priority_array</Name>
       <Title>Temperature observations</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -780,6 +913,13 @@
     <Layer queryable="1">
       <Name>test:opendata_temperature_numbers_mindistance_priority_extrema</Name>
       <Title>Temperature observations</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -822,6 +962,13 @@
     <Layer queryable="1">
       <Name>test:opendata_temperature_numbers_mindistance_priority_max</Name>
       <Title>Temperature observations</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -864,6 +1011,13 @@
     <Layer queryable="1">
       <Name>test:opendata_temperature_numbers_mindistance_priority_min</Name>
       <Title>Temperature observations</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -906,6 +1060,13 @@
     <Layer queryable="1">
       <Name>test:opendata_temperature_numbers_mindistance_priority_none</Name>
       <Title>Temperature observations</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -948,6 +1109,13 @@
     <Layer queryable="1">
       <Name>test:opendata_temperature_symbols</Name>
       <Title>Temperature observations as coloured circles</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -990,6 +1158,13 @@
     <Layer queryable="1">
       <Name>test:opendata_temperature_symbols_mindistance</Name>
       <Title>Temperature observations as coloured circles</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1032,6 +1207,13 @@
     <Layer queryable="1">
       <Name>test:opendata_temperature_symbols_mindistance_priority_array</Name>
       <Title>Temperature observations as coloured circles</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1074,6 +1256,13 @@
     <Layer queryable="1">
       <Name>test:opendata_temperature_symbols_mindistance_priority_extrema</Name>
       <Title>Temperature observations as coloured circles</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1116,6 +1305,13 @@
     <Layer queryable="1">
       <Name>test:opendata_temperature_symbols_mindistance_priority_max</Name>
       <Title>Temperature observations as coloured circles</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1158,6 +1354,13 @@
     <Layer queryable="1">
       <Name>test:opendata_temperature_symbols_mindistance_priority_min</Name>
       <Title>Temperature observations as coloured circles</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1200,6 +1403,13 @@
     <Layer queryable="1">
       <Name>test:opendata_temperature_symbols_mindistance_priority_none</Name>
       <Title>Temperature observations as coloured circles</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1243,6 +1453,13 @@
       <Name>test:temperature_isotherm</Name>
       <Title>Temperature isotherm</Title>
       <Abstract>Temperature isotherm</Abstract>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1283,6 +1500,13 @@
         <Keyword>bar</Keyword>
         <Keyword>foo</Keyword>
       </KeywordList>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1332,6 +1556,13 @@
         <Keyword>bar</Keyword>
         <Keyword>foo</Keyword>
       </KeywordList>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>
@@ -1383,6 +1614,13 @@
     <Layer queryable="1">
       <Name>test:windnumbers</Name>
       <Title>Wind demo</Title>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
       <CRS>CRS:27</CRS>
       <CRS>CRS:83</CRS>
       <CRS>CRS:84</CRS>

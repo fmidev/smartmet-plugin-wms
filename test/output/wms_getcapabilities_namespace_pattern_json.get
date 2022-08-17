@@ -149,7 +149,7 @@
 				"queryable": 1,
 				"Name": "grid:temperature_1",
 				"Abstract": "Temperature",
-				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 0,
@@ -223,7 +223,7 @@
 				"queryable": 1,
 				"Name": "grid:temperature_2",
 				"Abstract": "Temperature",
-				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 0,
@@ -296,7 +296,7 @@
 				"queryable": 1,
 				"Name": "grid:temperature_3",
 				"Abstract": "Temperature",
-				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 0,
@@ -369,7 +369,7 @@
 				"queryable": 1,
 				"Name": "grid:temperature_4",
 				"Abstract": "Temperature",
-				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 0,
@@ -441,7 +441,7 @@
 				"Title": "Wind demo",
 				"queryable": 1,
 				"Name": "grid:wind_direction_1",
-				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 0,
@@ -513,7 +513,7 @@
 				"Title": "Wind demo",
 				"queryable": 1,
 				"Name": "grid:wind_speed_1",
-				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 0,
@@ -585,7 +585,7 @@
 				"Title": "Wind demo",
 				"queryable": 1,
 				"Name": "grid:wind_speed_2",
-				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 0,
@@ -657,7 +657,7 @@
 				"Title": "Wind demo",
 				"queryable": 1,
 				"Name": "grid:wind_speed_and_direction_1",
-				"CRS": ["CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 0,
@@ -730,7 +730,7 @@
 				"queryable": 1,
 				"Name": "test:mean_temperature",
 				"Abstract": "Sea surface mean temperature (1971-2000)",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 11.3001098633,
@@ -831,7 +831,7 @@
 				"Title": "Wind observations",
 				"queryable": 1,
 				"Name": "test:opendata_meteorological_windarrows",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -957,7 +957,7 @@
 				"Title": "Wind observations",
 				"queryable": 1,
 				"Name": "test:opendata_meteorological_windarrows_mindistance",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -1083,7 +1083,7 @@
 				"Title": "Wind observations",
 				"queryable": 1,
 				"Name": "test:opendata_meteorological_windarrows_mindistance_priority_array",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -1209,7 +1209,7 @@
 				"Title": "Wind observations",
 				"queryable": 1,
 				"Name": "test:opendata_meteorological_windarrows_mindistance_priority_extrema",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -1335,7 +1335,7 @@
 				"Title": "Wind observations",
 				"queryable": 1,
 				"Name": "test:opendata_meteorological_windarrows_mindistance_priority_max",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -1461,7 +1461,7 @@
 				"Title": "Wind observations",
 				"queryable": 1,
 				"Name": "test:opendata_meteorological_windarrows_mindistance_priority_min",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -1587,7 +1587,7 @@
 				"Title": "Wind observations",
 				"queryable": 1,
 				"Name": "test:opendata_meteorological_windarrows_mindistance_priority_none",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -1713,7 +1713,7 @@
 				"Title": "Temperature observations",
 				"queryable": 1,
 				"Name": "test:opendata_temperature_numbers",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -1839,7 +1839,7 @@
 				"Title": "Temperature observations",
 				"queryable": 1,
 				"Name": "test:opendata_temperature_numbers_mindistance",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -1965,7 +1965,7 @@
 				"Title": "Temperature observations",
 				"queryable": 1,
 				"Name": "test:opendata_temperature_numbers_mindistance_priority_array",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -2091,7 +2091,7 @@
 				"Title": "Temperature observations",
 				"queryable": 1,
 				"Name": "test:opendata_temperature_numbers_mindistance_priority_extrema",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -2217,7 +2217,7 @@
 				"Title": "Temperature observations",
 				"queryable": 1,
 				"Name": "test:opendata_temperature_numbers_mindistance_priority_max",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -2343,7 +2343,7 @@
 				"Title": "Temperature observations",
 				"queryable": 1,
 				"Name": "test:opendata_temperature_numbers_mindistance_priority_min",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -2469,7 +2469,7 @@
 				"Title": "Temperature observations",
 				"queryable": 1,
 				"Name": "test:opendata_temperature_numbers_mindistance_priority_none",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -2595,7 +2595,7 @@
 				"Title": "Temperature observations as coloured circles",
 				"queryable": 1,
 				"Name": "test:opendata_temperature_symbols",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -2721,7 +2721,7 @@
 				"Title": "Temperature observations as coloured circles",
 				"queryable": 1,
 				"Name": "test:opendata_temperature_symbols_mindistance",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -2847,7 +2847,7 @@
 				"Title": "Temperature observations as coloured circles",
 				"queryable": 1,
 				"Name": "test:opendata_temperature_symbols_mindistance_priority_array",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -2973,7 +2973,7 @@
 				"Title": "Temperature observations as coloured circles",
 				"queryable": 1,
 				"Name": "test:opendata_temperature_symbols_mindistance_priority_extrema",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -3099,7 +3099,7 @@
 				"Title": "Temperature observations as coloured circles",
 				"queryable": 1,
 				"Name": "test:opendata_temperature_symbols_mindistance_priority_max",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -3225,7 +3225,7 @@
 				"Title": "Temperature observations as coloured circles",
 				"queryable": 1,
 				"Name": "test:opendata_temperature_symbols_mindistance_priority_min",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -3351,7 +3351,7 @@
 				"Title": "Temperature observations as coloured circles",
 				"queryable": 1,
 				"Name": "test:opendata_temperature_symbols_mindistance_priority_none",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 18,
@@ -3478,7 +3478,7 @@
 				"queryable": 1,
 				"Name": "test:temperature_isotherm",
 				"Abstract": "Temperature isotherm",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": 9.02344115211,
@@ -3591,7 +3591,7 @@
 				"Name": "test:wind",
 				"Abstract": "Test abstract",
 				"KeywordList": ["bar","foo"],
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": -9.09870632718,
@@ -3731,7 +3731,7 @@
 				"Name": "test:windarrows",
 				"Abstract": "Test abstract",
 				"KeywordList": ["bar","foo"],
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": -9.09870632718,
@@ -3882,7 +3882,7 @@
 				"Title": "Wind demo",
 				"queryable": 1,
 				"Name": "test:windnumbers",
-				"CRS": ["CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
+				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
 				{
 					"westBoundLongitude": -9.09870632718,

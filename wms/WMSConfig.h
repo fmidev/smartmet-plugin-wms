@@ -96,7 +96,7 @@ class WMSConfig
   const std::set<std::string>& supportedWMSExceptions() const;
   const std::set<std::string>& supportedWMSGetCapabilityFormats() const;
   const std::map<std::string, WMSSupportedReference>& supportedWMSReferences() const;
-  const std::string& getCRSDefinition(const std::string& theCRS) const;
+  std::string getCRSDefinition(const std::string& theCRS) const;
   bool isValidMapFormat(const std::string& theMapFormat) const;
   bool isValidVersion(const std::string& theVersion) const;
   bool isValidLayer(const std::string& theLayer, bool theAcceptHiddenLayerFlag = false) const;
@@ -193,10 +193,11 @@ class WMSConfig
 
   std::map<std::string, WMSSupportedReference> itsWMSSupportedReferences;
 
-  // supported wms epsg references. Map from name to GDAL definition
-  // std::map<std::string, std::string> itsSupportedWMSReferences;
-  // the bounding boxes for all spatial references
-  // std::map<std::string, Engine::Gis::BBox> itsWMSBBoxes;
+  // supported length units and their conversion factor to meters
+  std::map<std::string, double> itsLengthUnits;
+
+  // supported AUTO2 spatial references
+  std::map<int, std::string> itsAutoProjections;
 
   bool itsCapabilityUpdatesDisabled = false;  // disable updates after initial scan?
   int itsCapabilityUpdateInterval = 5;        // scan interval in seconds
