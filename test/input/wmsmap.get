@@ -1,0 +1,1 @@
+GET /dali?customer=ely&product=wmsmap&time=200808050300 HTTP/1.0
