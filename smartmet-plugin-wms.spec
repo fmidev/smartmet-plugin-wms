@@ -84,6 +84,7 @@ Requires: smartmet-engine-grid >= 22.6.17
 Requires: smartmet-engine-geonames >= 22.7.27
 Requires: smartmet-server >= 22.5.24
 Requires: smartmet-library-spine >= 22.7.27
+Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -113,6 +114,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
+#TestRequires: smartmet-fonts
 #TestRequires: google-roboto-fonts
 #TestRequires: zlib-devel
 #TestRequires: cairo-devel
