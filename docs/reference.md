@@ -1,4 +1,4 @@
-Table of Contents
+uTable of Contents
 =================
 
   * [Table of Contents](#table-of-contents)
@@ -101,7 +101,7 @@ The table below shows an example of a product configuration file and the image t
            "layer_type": "map",
            "map":
           {
-            "schema": "esri",
+            "schema": "natural_earth",
             "table": "europe_country_wgs84"
            },
            "attributes":
@@ -330,7 +330,7 @@ The table below shows  a simple example on the usage of  the  map layer.
        "layer_type": "map",
        "map":
        {
-        "schema": "esri",
+        "schema": "natural_earth",
         "table": "europe_country_wgs84"
        },
        "attributes":
@@ -381,7 +381,7 @@ The table below shows  a simple example on the usage of  the location layer.
       "layer_type": "map",
       "map":
        {
-        "schema": "esri",
+        "schema": "natural_earth",
         "table": "europe_country_wgs84"
        },
        "attributes":
@@ -597,7 +597,7 @@ The table below shows a simple example  on the usage of   the isoline layer.
          "layer_type": "map",
          "map":
          {
-          "schema": "esri",
+          "schema": "natural_earth",
           "table": "europe_country_wgs84"
          },
          "attributes":
@@ -809,7 +809,7 @@ The table below shows a simple example  on the usage of   the symbol layer.
   {
       "myprojection": "json:maps/finlandprojection.json",
       "finland":  {
-       "schema": "esri",
+       "schema": "natural_earth",
        "table": "finland_country_wgs84",
        "minarea": 100,
        "mindistance": 1
@@ -823,7 +823,7 @@ The table below shows a simple example  on the usage of   the symbol layer.
     {
          "layer_type": "map",
          "map": {
-          "schema": "esri",
+          "schema": "natural_earth",
            "table": "finland_country_wgs84",
           "minarea": 80,
            "mindistance": 5
@@ -933,7 +933,7 @@ The table below shows a simple example  on the usage of   the arrow layer.
       "layer_type": "map",
       "map":
       {
-        "schema": "esri",
+        "schema": "natural_earth",
         "table": "europe_country_wgs84"
        },
        "attributes":
@@ -1026,7 +1026,7 @@ The table below shows a simple example  on the usage of   the number layer.
       "layer_type": "map",
       "map":
       {
-        "schema": "esri",
+        "schema": "natural_earth",
         "table": "europe_country_wgs84"
        },
        "attributes":
@@ -1621,7 +1621,7 @@ The table below shows a simple example  on the usage of   the PostGIS layer.
        "map":
        {
         "lines": true,
-        "schema": "esri",
+        "schema": "natural_earth",
         "table": "europe_country_wgs84",
         "minarea": 20,
         "mindistance": 5
@@ -1701,7 +1701,7 @@ The table below shows a simple example  on the usage of  the PostGIS layer.
          "map":
          {
           "lines": true,
-          "schema": "esri",
+          "schema": "natural_earth",
           "table": "europe_country_wgs84",
           "minarea": 20,
           "mindistance": 5
@@ -1793,7 +1793,7 @@ The table below shows a simple example on the usage of FinnishRoadObservationLay
                     "qid": "finland-roads",
                     "layer_type": "map",
                     "map": {
-                        "schema": "esri",
+                        "schema": "natural_earth",
                         "table": "europe_roads_eureffin",
                         "where": "cntryname='Finland'",
                         "lines": true
@@ -2089,7 +2089,7 @@ The table below shows a simple example on the usage of PresentWeatherObservation
                     "qid": "finland-roads",
                     "layer_type": "map",
                     "map": {
-                        "schema": "esri",
+                        "schema": "natural_earth",
                         "table": "europe_roads_eureffin",
                         "where": "cntryname='Finland'",
                         "lines": true
