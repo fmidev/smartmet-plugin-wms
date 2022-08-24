@@ -25,6 +25,10 @@ std::string demimetype(const std::string& theMimeType)
     return "svg";
   if (theMimeType == "application/json")
     return "json";
+  if (theMimeType == "application/geo+json")
+    return "geojson";
+  if (theMimeType == "application/vnd.google-earth.kml+xml")
+    return "kml";
   if (theMimeType == "cnf")
     return "cnf";
 
