@@ -59,7 +59,7 @@ fi
 
 if [[ "$MIME" == "application/xml" || "$MIME" == "text/xml" ]]; then
     echo -n "FAIL: XML output differs: $RESULT <> $EXPECTED"
-    echo -n "diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80"
+    echo " diff | head -n 100 | cut -c 1-80:"
     diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80
     exit 1
 fi
@@ -68,7 +68,7 @@ fi
 
 if [[ "$MIME" == "text/plain" ]]; then
     echo -n "FAIL: text output differs: $RESULT <> $EXPECTED"
-    echo -n "diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80"
+    echo " diff | head -n 100 | cut -c 1-80:"
     diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80
     exit 1
 fi
