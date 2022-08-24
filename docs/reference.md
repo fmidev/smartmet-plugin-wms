@@ -1,4 +1,4 @@
-uTable of Contents
+Table of Contents
 =================
 
   * [Table of Contents](#table-of-contents)
@@ -37,6 +37,7 @@ uTable of Contents
         * [Projection structure](#projection-structure)
         * [Defs structure](#defs-structure)
         * [Smoother structure](#smoother-structure)
+        * [Sampling structure](#sampling-structure)
         * [Heatmap structure](#heatmap-structure)
         * [Isoband structure](#isoband-structure)
         * [Intersection structure](#intersection-structure)
@@ -556,6 +557,7 @@ The table below contains a list of attributes that can be defined for the isoban
 <tr><td>multiplier</td><td>(double)</td><td>-</td><td colspan="2">A multiplier for valid data values for unit conversion purposes.</td></tr>
 <tr><td>offset</td><td>(double)</td><td>0.0</td><td colspan="2">An offset for valid data values for unit conversion purposes.</td></tr>
 <tr><td>smoother</td><td><i>Smoother</i></td><td>-</td><td colspan="2">Smoother settings for the 2D grid data.</tr>
+<tr><td>sampling</td><td><i>Sampling<i></td><td>-</td><td colspan="2">Sampling settings for the 2D grid data.</tr>
 <tr><td>extrapolation</td><td><i>int</i></td><td>0</td><td colspan="2">How many grid cells to extrapolate data into regions with unknown values</tr>
 <tr><td>minarea</td><td><i>double</i></td><td>-</td><td colspan="2">Mimimum area for polygons in km^2, including holes</tr>
 <tr><td>heatmap</td><td><i>Heatmap</i></td><td>-</td><td colspan="2">Heatmap settings.</tr>
@@ -636,6 +638,7 @@ Name|Type|Default value|Description|
 |multiplier|(double)|1.0|A multiplier for valid data values for unit conversion purposes.|
 |offset|(double)|0.0|An offset for valid data values for unit conversion purposes.|
 |smoother|_Smoother_|-|Smoother settings for the 2D grid data.|
+|sampling|_Sampling_|-|Sampling settings for the 2D grid data.|
 |extrapolation|int|0|How many grid cells to extrapolate data into regions with unknown values.|
 |minarea|double|-|Minimum area for closed linestrings in km^2.|
 |inside|_Map_|-|Intersect isoband with a map|
@@ -2533,6 +2536,17 @@ The table below contains a list of attributes used in this structure.
 |size|int|-|Size of the filter. Implies 2*N+1 adjacent points are used in the weighted mean.|
 |degree|int|-|Degree of the polynomial to fit to the data.|
 
+
+### Sampling structure
+
+Data to be contoured may be interpolated to another resolution. When used for temperature and topographic data is available, this may be used to provide higher apparent resolution by applying a lapse rate correction to the temperature. The desired resolution may be absolute or relative to the image resolution.
+
+|Name|Type|Default value|Description|
+|-----|-----|-----------|----------- |
+|resolution|double|-|Desired resolution in kilometers per pixel|
+|relativeresolution|double|-|Desired relative resolution with respect to the resolution of the image resolution.|
+|minresolution|double|-|Minimum resolution for applying sampling|
+|maxresolution|double|-|Maximum resolution for applying sampling|
 
 #### Heatmap structure
 
