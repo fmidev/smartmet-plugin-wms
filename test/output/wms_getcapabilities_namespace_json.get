@@ -76,7 +76,7 @@
 			},
 			"GetMap":
 			{
-				"Format": ["application/pdf","image/png","image/svg+xml"],
+				"Format": ["application/geo+json","application/pdf","image/png","image/svg+xml"],
 				"DCPType":
 				[
 					{
