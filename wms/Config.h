@@ -60,7 +60,7 @@ class Config : private boost::noncopyable
 
   std::string defaultTemplate(const std::string& theType) const;
 
-  double defaultPrecision(const std::string& theName) const;
+  double defaultPrecision(const std::string& theType, const std::string& theName) const;
 
   UnitConversion unitConversion(const std::string& theUnitConversion) const;
 

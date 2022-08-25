@@ -148,6 +148,9 @@ class State
   std::string getFilter(const std::string& theName) const;
   std::size_t getFilterHash(const std::string& theName) const;
 
+  // Get precision
+  double getPrecision(const std::string& theName) const;
+
   // Add attributes
   void addAttributes(CTPP::CDT& theGlobals, const Attributes& theAttributes) const;
 
@@ -242,6 +245,9 @@ class State
 
   // The image format
   std::string itsType;
+
+  // Precision
+  boost::optional<double> precision;
 
   // The request itself
   const Spine::HTTP::Request itsRequest;

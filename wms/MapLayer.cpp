@@ -40,7 +40,7 @@ void MapLayer::init(const Json::Value& theJson,
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
-    precision = theConfig.defaultPrecision("map");
+    precision = theState.getPrecision("map");
 
     // Extract all members
 

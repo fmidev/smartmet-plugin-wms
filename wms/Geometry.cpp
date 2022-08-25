@@ -2,9 +2,11 @@
 #include "State.h"
 #include <boost/move/make_unique.hpp>
 #include <engines/gis/Engine.h>
+#include <fmt/format.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
+#include <ogr_api.h>
 #include <ogr_geometry.h>
 
 namespace SmartMet
@@ -79,7 +81,8 @@ std::string name(const OGRGeometry& theGeom, const std::string& theType)
 
 std::string toGeoJSON(const OGRGeometry& theGeom,
                       const Fmi::Box& /* theBox */,
-                      const Fmi::SpatialReference& theSRS)
+                      const Fmi::SpatialReference& theSRS,
+                      double thePrecision)
 {
   // Reproject to WGS84. TODO: Optimize if theSRS == WGS84.
 
@@ -94,7 +97,13 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
   // Fix winding rule to be CCW for shells
   boost::movelib::unique_ptr<OGRGeometry> geom2(Fmi::OGR::reverseWindingOrder(*geom));
 
-  char* tmp = geom2->exportToJson();
+  // No C++ API with precision yet, must use C API
+
+  auto prec = fmt::format("COORDINATE_PRECISION={}", static_cast<int>(thePrecision));
+  char* options[] = {const_cast<char*>(prec.c_str()), nullptr};
+  auto* geom3 = const_cast<OGRGeometry*>(geom2.get());
+  char* tmp = OGR_G_ExportToJsonEx(OGRGeometry::ToHandle(geom3), options);
+
   std::string ret = tmp;
   CPLFree(tmp);
 
@@ -151,7 +160,7 @@ std::string toString(const OGRGeometry& theGeom,
                      double thePrecision)
 {
   if (theType == "geojson")
-    return toGeoJSON(theGeom, theBox, theSRS);
+    return toGeoJSON(theGeom, theBox, theSRS, thePrecision);
 
   if (theType == "kml")
     return toKML(theGeom, theBox, theSRS);

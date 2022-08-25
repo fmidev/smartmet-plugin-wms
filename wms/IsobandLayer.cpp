@@ -58,7 +58,7 @@ void IsobandLayer::init(const Json::Value& theJson,
       throw Fmi::Exception(BCP, "JSON is not a JSON object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
-    precision = theConfig.defaultPrecision("isoband");
+    precision = theState.getPrecision("isoband");
 
     // Extract member values
 

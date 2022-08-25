@@ -38,6 +38,9 @@ State::State(Plugin& thePlugin, const Spine::HTTP::Request& theRequest)
       itsRequest(theRequest),
       itsLocalTimePool(boost::make_shared<TS::LocalTimePool>())
 {
+  auto prec = theRequest.getParameter("precision");
+  if (prec)
+    precision = Fmi::stod(*prec);
 }
 
 // ----------------------------------------------------------------------
@@ -829,6 +832,20 @@ std::size_t State::getGradientHash(const std::string& theName) const
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Establish precision for coordinates
+ */
+// ----------------------------------------------------------------------
+
+double State::getPrecision(const std::string& theName) const
+{
+  if (precision)
+    return *precision;
+
+  return getConfig().defaultPrecision(getType(), theName);
 }
 
 // ----------------------------------------------------------------------

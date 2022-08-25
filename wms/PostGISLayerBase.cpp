@@ -29,7 +29,7 @@ void PostGISLayerBase::init(const Json::Value& theJson,
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
-    this->precision = theConfig.defaultPrecision("icemap");
+    this->precision = theState.getPrecision("icemap");
 
     Json::Value nulljson;
 

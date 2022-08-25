@@ -171,7 +171,21 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
     }
 
     // Special product for reading configuration files
-    if (Spine::optional_string(theRequest.getParameter("type"), "svg") == "cnf")
+
+    auto fmt = Spine::optional_string(theRequest.getParameter("type"), "svg");
+    theState.setType(fmt);
+
+    // Trivial error checks done first for speed
+
+    if (!boost::iequals(fmt, "xml") && !boost::iequals(fmt, "svg") && !boost::iequals(fmt, "png") &&
+        !boost::iequals(fmt, "pdf") && !boost::iequals(fmt, "ps") &&
+        !boost::iequals(fmt, "geojson") && !boost::iequals(fmt, "kml") &&
+        !boost::iequals(fmt, "cnf"))
+    {
+      throw Fmi::Exception(BCP, "Invalid 'type' value '" + fmt + "'!");
+    }
+
+    if (fmt == "cnf")
     {
       theResponse.setHeader("Content-Type", mimeType("cnf"));
       Json::StyledWriter writer;
@@ -183,22 +197,8 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 
     Product product;
     product.init(json, theState, itsConfig);
-
     if (product.type.empty())
-      product.type = "svg";
-
-    // Trivial error checks done first for speed
-
-    if (!boost::iequals(product.type, "xml") && !boost::iequals(product.type, "svg") &&
-        !boost::iequals(product.type, "png") && !boost::iequals(product.type, "pdf") &&
-        !boost::iequals(product.type, "ps") && !boost::iequals(product.type, "geojson") &&
-        !boost::iequals(product.type, "kml") && !boost::iequals(product.type, "cnf"))
-    {
-      throw Fmi::Exception(BCP, "Invalid 'type' value '" + product.type + "'!");
-    }
-
-    // Image format can no longer be changed by anything, provide the info to layers
-    theState.setType(product.type);
+      product.type = theState.getType();
 
     if (print_params)
       print(product.getGridParameterInfo(theState));
@@ -1559,8 +1559,16 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
         return WMSQueryStatus::OK;
       }
 
+      // Establish type forced by the query
+
+      auto fmt = Spine::optional_string(theRequest.getParameter("format"), "application/svg+xml");
+      theState.setType(demimetype(fmt));
+
       // And initialize the product specs from the JSON
+
       product.init(json, theState, itsConfig);
+      if (product.type.empty())
+        product.type = theState.getType();
 
       if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
       {
@@ -1613,9 +1621,6 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
         ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
       return handleWmsException(ex, theState, thisRequest, theResponse);
     }
-
-    // Format can no longer be changed by anything, provide the info to layers
-    theState.setType(product.type);
 
     if (print_params)
       print(product.getGridParameterInfo(theState));

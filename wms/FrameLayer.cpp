@@ -101,7 +101,7 @@ void FrameLayer::init(const Json::Value& theJson,
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
-    itsPrecision = theConfig.defaultPrecision("frame");
+    itsPrecision = theState.getPrecision("frame");
 
     // Extract member values
     Json::Value nulljson;

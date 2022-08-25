@@ -45,7 +45,7 @@ void IsolineLayer::init(const Json::Value& theJson,
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
-    precision = theConfig.defaultPrecision("isoline");
+    precision = theState.getPrecision("isoline");
 
     // Extract member values
 

@@ -274,9 +274,13 @@ std::string Config::defaultTemplate(const std::string& theType) const
   return "svg";
 }
 
-double Config::defaultPrecision(const std::string& theName) const
+double Config::defaultPrecision(const std::string& theType, const std::string& theName) const
 {
-  auto it = itsDefaultPrecisions.find(theName);
+  auto it = itsDefaultPrecisions.find(theType);
+  if (it != itsDefaultPrecisions.end())
+    return it->second;
+
+  it = itsDefaultPrecisions.find(theName);
   if (it != itsDefaultPrecisions.end())
     return it->second;
 

@@ -36,7 +36,7 @@ void WKTLayer::init(const Json::Value& theJson,
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
-    precision = theConfig.defaultPrecision("wkt");
+    precision = theState.getPrecision("wkt");
 
     // Extract member values
 
