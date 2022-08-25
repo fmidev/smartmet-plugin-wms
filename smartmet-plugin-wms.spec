@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 22.8.25
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -29,7 +29,7 @@ BuildRequires: smartmet-library-giza-devel >= 22.6.17
 BuildRequires: smartmet-library-grid-content-devel >= 22.8.24
 BuildRequires: smartmet-library-grid-files-devel >= 22.6.23
 BuildRequires: smartmet-library-macgyver-devel >= 22.8.23
-BuildRequires: smartmet-library-spine-devel >= 22.8.23
+BuildRequires: smartmet-library-spine-devel >= 22.8.25
 BuildRequires: smartmet-library-timeseries-devel >= 22.7.27
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 22.6.17
@@ -71,7 +71,7 @@ Requires: smartmet-library-grid-files >= 22.6.23
 Requires: smartmet-library-gis >= 22.7.27
 Requires: smartmet-library-trax >= 22.8.4
 Requires: smartmet-library-macgyver >= 22.8.23
-Requires: smartmet-library-spine >= 22.8.23
+Requires: smartmet-library-spine >= 22.8.25
 Requires: smartmet-library-timeseries >= 22.7.27
 Requires: smartmet-library-giza >= 22.6.17
 %if %{with authentication}
@@ -83,7 +83,7 @@ Requires: smartmet-engine-gis >= 22.8.1
 Requires: smartmet-engine-grid >= 22.8.24
 Requires: smartmet-engine-geonames >= 22.8.4
 Requires: smartmet-server >= 22.8.19
-Requires: smartmet-library-spine >= 22.8.23
+Requires: smartmet-library-spine >= 22.8.25
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
@@ -108,7 +108,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 22.6.17
 #TestRequires: smartmet-library-trax-devel >= 22.8.4
 #TestRequires: smartmet-library-newbase-devel >= 22.8.24
-#TestRequires: smartmet-library-spine-devel >= 22.8.23
+#TestRequires: smartmet-library-spine-devel >= 22.8.25
 #TestRequires: smartmet-library-timeseries-devel >= 22.7.27
 #TestRequires: smartmet-engine-grid-devel >= 22.8.24
 #TestRequires: smartmet-engine-grid-test
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Aug 25 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.8.25-2.fmi
+- Use a generic configuration exception handler
+
 * Thu Aug 25 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.8.25-1.fmi
 - GeoJSON precision is now configurable
 - Added precision querystring option

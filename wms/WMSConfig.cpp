@@ -27,6 +27,7 @@
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <spine/Convenience.h>
+#include <spine/Exceptions.h>
 #include <spine/FmiApiKey.h>
 #include <spine/Json.h>
 #include <algorithm>
@@ -755,26 +756,9 @@ WMSConfig::WMSConfig(const Config& daliConfig,
     // Parse GetCapability settings once to make sure the config file is valid
     get_capabilities(config);
   }
-  catch (const libconfig::SettingNotFoundException& e)
-  {
-    throw Fmi::Exception(BCP, "Setting not found").addParameter("Setting path", e.getPath());
-  }
-  catch (const libconfig::SettingTypeException& e)
-  {
-    throw Fmi::Exception(BCP, "Setting not found").addParameter("Setting path", e.getPath());
-  }
-  catch (const libconfig::ParseException& e)
-  {
-    throw Fmi::Exception::Trace(BCP, "WMS Configuration error!")
-        .addParameter("Line", Fmi::to_string(e.getLine()));
-  }
-  catch (const libconfig::ConfigException&)
-  {
-    throw Fmi::Exception::Trace(BCP, "WMS Configuration error!");
-  }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "WMS Configuration initialization failed!");
+    Spine::Exceptions::handle("WMS plugin");
   }
 }
 

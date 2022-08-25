@@ -8,6 +8,7 @@
 #include <boost/filesystem/path.hpp>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <spine/Exceptions.h>
 #include <stdexcept>
 
 using std::string;
@@ -172,25 +173,9 @@ Config::Config(const string& configfile)
     }
   }
 
-  catch (const libconfig::SettingNotFoundException& e)
-  {
-    throw Fmi::Exception(BCP, "Setting not found").addParameter("Setting path", e.getPath());
-  }
-  catch (const libconfig::ParseException& e)
-  {
-    throw Fmi::Exception::Trace(BCP, "Configuration error!")
-        .addParameter("Configuration file", configfile)
-        .addParameter("Line", Fmi::to_string(e.getLine()));
-  }
-  catch (const libconfig::ConfigException&)
-  {
-    throw Fmi::Exception::Trace(BCP, "Configuration error!")
-        .addParameter("Configuration file", configfile);
-  }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Configuration error!")
-        .addParameter("Configuration file", configfile);
+    Spine::Exceptions::handle("WMS plugin");
   }
 }
 
