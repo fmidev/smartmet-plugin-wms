@@ -17,6 +17,8 @@ std::string demimetype(const std::string& theMimeType)
 {
   if (theMimeType == "image/png")
     return "png";
+  if (theMimeType == "image/webp")
+    return "webp";
   if (theMimeType == "application/pdf")
     return "pdf";
   if (theMimeType == "application/postscript")
@@ -49,6 +51,8 @@ std::string mimeType(const std::string& theType)
     return "image/svg+xml; charset=UTF-8";
   if (theType == "png")
     return "image/png";
+  if (theType == "webp")
+    return "image/webp";
   if (theType == "pdf")
     return "application/pdf";
   if (theType == "ps")

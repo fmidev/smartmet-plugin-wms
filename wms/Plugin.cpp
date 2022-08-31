@@ -178,7 +178,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
     // Trivial error checks done first for speed
 
     if (!boost::iequals(fmt, "xml") && !boost::iequals(fmt, "svg") && !boost::iequals(fmt, "png") &&
-        !boost::iequals(fmt, "pdf") && !boost::iequals(fmt, "ps") &&
+        !boost::iequals(fmt, "pdf") && !boost::iequals(fmt, "ps") && !boost::iequals(fmt, "webp") &&
         !boost::iequals(fmt, "geojson") && !boost::iequals(fmt, "kml") &&
         !boost::iequals(fmt, "cnf"))
     {
@@ -351,6 +351,8 @@ void Plugin::formatResponse(const std::string &theSvg,
       boost::shared_ptr<std::string> buffer;
       if (theType == "png")
         buffer = boost::make_shared<std::string>(Giza::Svg::topng(theSvg, theProduct.png.options));
+      else if (theType == "webp")
+        buffer = boost::make_shared<std::string>(Giza::Svg::towebp(theSvg));
       else if (theType == "pdf")
         buffer = boost::make_shared<std::string>(Giza::Svg::topdf(theSvg));
       else if (theType == "ps")
@@ -1847,6 +1849,8 @@ Json::Value Dali::Plugin::getExceptionJson(const std::string &description,
   jsonStr += "\"language\": \"fi\",\n";
   if (mapFormat.find("png") != std::string::npos)
     jsonStr += "\"type\": \"png\",\n";
+  else if (mapFormat.find("webp") != std::string::npos)
+    jsonStr += "\"type\": \"webp\",\n";
   else if (mapFormat.find("pdf") != std::string::npos)
     jsonStr += "\"type\": \"pdf\",\n";
   else
