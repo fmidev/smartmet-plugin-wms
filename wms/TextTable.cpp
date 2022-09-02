@@ -72,7 +72,7 @@ text_dimension_t get_row_dimension(const RowCellInfo& rci)
 }
 }  // namespace
 
-text_style_t TableAttributes::titleTextStyle()
+text_style_t TableAttributes::titleTextStyle() const
 {
   return getTextStyle(title.text, text_style_t());
 }
@@ -95,7 +95,7 @@ text_style_t TableAttributes::columnTextStyle(unsigned int col)
   return getTextStyle(columns.text[nColumns - 1], text_style_t());
 }
 
-text_style_t TableAttributes::footerTextStyle()
+text_style_t TableAttributes::footerTextStyle() const
 {
   return getTextStyle(footer.text, text_style_t());
 }
@@ -156,9 +156,8 @@ void TextTable::addTableAttributes(const Json::Value& attributes, const std::str
         else
           itsAttributes.columns.text.clear();
 
-        for (unsigned int i = 0; i < textJson.size(); i++)
+        for (const auto& textJs : textJson)
         {
-          const Json::Value& textJs = textJson[i];
           if (!textJs.isNull())
           {
             Json::Value::Members members = textJs.getMemberNames();
@@ -185,7 +184,7 @@ void TextTable::addTableAttributes(const Json::Value& attributes, const std::str
   }
 }
 
-TextTable::TextTable(const text_style_t& theTextStyle, unsigned int theX, unsigned int theY)
+TextTable::TextTable(const text_style_t& /* theTextStyle */, unsigned int theX, unsigned int theY)
     : itsXCoord(theX), itsYCoord(theY), itsTableWidth(0), itsDataAreaHeight(0)
 {
 }
@@ -322,9 +321,8 @@ void TextTable::addContent(const Json::Value& tableDataJson)
       throw Fmi::Exception(
           BCP, "IceMapLayer: Error in configuration: table_data.data attribute must be array!");
 
-    for (unsigned int i = 0; i < dataJson.size(); i++)
+    for (const auto& rowJson : dataJson)
     {
-      auto rowJson = dataJson[i];
       if (!rowJson.isNull())
       {
         TableRow dataRow;

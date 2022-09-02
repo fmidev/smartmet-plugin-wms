@@ -17,6 +17,7 @@
 #include <engines/observation/Engine.h>
 #include <engines/observation/Settings.h>
 #include <engines/querydata/Model.h>
+#include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
@@ -426,15 +427,13 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       // Adding the bounding box information into the query.
 
-      char bbox[100];
-
       auto bl = projection.bottomLeftLatLon();
       auto tr = projection.topRightLatLon();
-      sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
+      auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
       originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
       const auto& box = projection.getBox();
-      sprintf(bbox, "%f,%f,%f,%f", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+      bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
     else
@@ -538,8 +537,8 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
     {
-      char bbox[100];
-      sprintf(bbox, "%f,%f,%f,%f", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
+      auto bbox = fmt::format(
+          "{},{},{},{}", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
 
@@ -582,19 +581,18 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // Converting the returned WKB-isolines into OGRGeometry objects.
 
     std::vector<OGRGeometryPtr> geoms;
-    for (auto param = query->mQueryParameterList.begin(); param != query->mQueryParameterList.end();
-         ++param)
+    for (const auto& param : query->mQueryParameterList)
     {
-      for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
+      for (const auto& val : param.mValueList)
       {
-        if ((*val)->mValueData.size() > 0)
+        if (val->mValueData.size() > 0)
         {
           uint c = 0;
-          for (auto wkb = (*val)->mValueData.begin(); wkb != (*val)->mValueData.end(); ++wkb)
+          for (const auto& wkb : val->mValueData)
           {
-            auto* cwkb = reinterpret_cast<unsigned char*>(wkb->data());
+            const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
             OGRGeometry* geom = nullptr;
-            OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb->size());
+            OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
             auto geomPtr = OGRGeometryPtr(geom);
             geoms.push_back(geomPtr);
             c++;
@@ -610,18 +608,18 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
             // ### Painting contours into the image:
 
-            if (param->mType == QueryServer::QueryParameter::Type::Isoband)
+            if (param.mType == QueryServer::QueryParameter::Type::Isoband)
             {
-              if (val->mValueData.size() > 0)
+              if (!val->mValueData.empty())
               {
                 uint c = 250;
                 uint step = 250 / val->mValueData.size();
 
-                for (auto it = val->mValueData.begin(); it != val->mValueData.end(); ++it)
+                for (const auto & it: val->mValueData)
                 {
-                  printf("Contour %lu\n",it->size());
+                  printf("Contour %lu\n",it.size());
                   uint col = (c << 16) + (c << 8) + c;
-                  imagePaint.paintWkb(mp,mp,180,90,*it,col);
+                  imagePaint.paintWkb(mp,mp,180,90,it,col);
                   c = c - step;
                 }
               }
@@ -910,7 +908,8 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     const auto& gis = theState.getGisEngine();
 
-    OGRGeometryPtr inshape, outshape;
+    OGRGeometryPtr inshape;
+    OGRGeometryPtr outshape;
     if (inside)
     {
       inshape = gis.getShape(&crs, inside->options);

@@ -794,7 +794,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     // validate the given options
     validate_options(itsParameters, itsConfig, theQEngine);
 
-    std::string layerName(layers.size() > 0 ? layer_name(layers.back()) : "");
+    std::string layerName(!layers.empty() ? layer_name(layers.back()) : "");
 
     // Valite authorization for the layers
     // Convert format to image type

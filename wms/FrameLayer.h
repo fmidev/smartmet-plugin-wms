@@ -46,7 +46,7 @@ struct TicInfo
 
 struct FrameScale
 {
-  FrameScale() {}
+  FrameScale() = default;
 
   FrameDimension dimension;
   boost::optional<TicInfo> smallTic;

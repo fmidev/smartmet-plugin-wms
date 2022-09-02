@@ -212,15 +212,13 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
       // Adding the bounding box information into the query.
 
-      char bbox[100];
-
       auto bl = projection.bottomLeftLatLon();
       auto tr = projection.topRightLatLon();
-      sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
+      auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
       originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
       const auto& box = projection.getBox();
-      sprintf(bbox, "%f,%f,%f,%f", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+      bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
     else
@@ -284,8 +282,8 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
     {
-      char bbox[100];
-      sprintf(bbox, "%f,%f,%f,%f", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
+      auto bbox = fmt::format(
+          "{},{},{},{}", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
 
@@ -304,7 +302,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
          param != query->mQueryParameterList.end() && p == nullptr;
          ++param)
     {
-      if (param->mParam == paramStr && param->mValueList.size() > 0)
+      if (param->mParam == paramStr && !param->mValueList.empty())
       {
         auto val = param->mValueList.begin();
         p = (*val);
@@ -571,7 +569,7 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     std::ostringstream msg;
     msg << prefix;
 
-    for (auto i = 0ul; i < timestamp.size(); i++)
+    for (auto i = 0UL; i < timestamp.size(); i++)
     {
       auto name = timestamp[i];
       auto fmt = format[i];

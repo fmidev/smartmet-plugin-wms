@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.9.1
+Version: 22.9.2
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -42,7 +42,7 @@ BuildRequires: smartmet-engine-grid-devel >= 22.8.24
 BuildRequires: smartmet-engine-geonames-devel >= 22.8.25
 BuildRequires: smartmet-engine-querydata-devel >= 22.8.24
 BuildRequires: smartmet-engine-contour-devel >= 22.7.27
-BuildRequires: smartmet-library-gis-devel >= 22.7.27
+BuildRequires: smartmet-library-gis-devel >= 22.9.1
 BuildRequires: smartmet-library-trax-devel >= 22.8.4
 BuildRequires: fmt-devel >= %{smartmet_fmt_min}, fmt-devel < %{smartmet_fmt_max}
 BuildRequires: ctpp2 >= 2.8.8
@@ -68,7 +68,7 @@ Requires: ctpp2 >= 2.8.8
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 22.8.30
 Requires: smartmet-library-grid-files >= 22.6.23
-Requires: smartmet-library-gis >= 22.7.27
+Requires: smartmet-library-gis >= 22.9.1
 Requires: smartmet-library-trax >= 22.8.4
 Requires: smartmet-library-macgyver >= 22.8.23
 Requires: smartmet-library-spine >= 22.8.25
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Fri Sep  2 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.9.2-1.fmi
+- Silenced several compiler warnings
+
 * Thu Sep  1 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.9.1-1.fmi
 - Added webp support
 

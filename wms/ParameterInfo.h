@@ -13,7 +13,7 @@ namespace Dali
 {
 struct ParameterInfo
 {
-  ParameterInfo(const std::string& p) : parameter(p) {}
+  ParameterInfo(std::string p) : parameter(std::move(p)) {}
 
   std::string parameter;
   boost::optional<std::string> producer;

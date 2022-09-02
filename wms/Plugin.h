@@ -51,9 +51,9 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
   Plugin() = delete;
   Plugin(Spine::Reactor* theReactor, const char* theConfig);
 
-  const std::string& getPluginName() const;
-  int getRequiredAPIVersion() const;
-  bool queryIsFast(const Spine::HTTP::Request& theRequest) const;
+  const std::string& getPluginName() const override;
+  int getRequiredAPIVersion() const override;
+  bool queryIsFast(const Spine::HTTP::Request& theRequest) const override;
 
   // Get the engines
   const Engine::Grid::Engine* getGridEngine() const { return itsGridEngine; }
@@ -151,11 +151,11 @@ class Plugin : public SmartMetPlugin, private boost::noncopyable
                                     State& theState,
                                     const Spine::HTTP::Request& theRequest,
                                     Spine::HTTP::Response& theResponse);
-  Json::Value getExceptionJson(const std::string& description,
-                               const std::string& mapFormat,
-                               WmsExceptionFormat format,
-                               unsigned int width,
-                               unsigned int height) const;
+  static Json::Value getExceptionJson(const std::string& description,
+                                      const std::string& mapFormat,
+                                      WmsExceptionFormat format,
+                                      unsigned int width,
+                                      unsigned int height);
 
   Fmi::Cache::CacheStatistics getCacheStats() const override;
   std::string resolveFilePath(const std::string& theCustomer,

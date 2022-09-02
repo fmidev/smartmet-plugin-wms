@@ -46,7 +46,7 @@ void Projection::init(const Json::Value& theJson,
     // Extract all the members
 
     Json::Value nulljson;
-    auto request = theState.getRequest();
+    const auto& request = theState.getRequest();
     boost::optional<std::string> v;
 
     auto json = theJson.get("crs", nulljson);
@@ -383,7 +383,10 @@ void Projection::prepareCRS() const
 
     // World XY bounding box will be calculated during the process
 
-    double XMIN, YMIN, XMAX, YMAX;
+    double XMIN = 0;
+    double YMIN = 0;
+    double XMAX = 0;
+    double YMAX = 0;
 
     // Create the Contour::Area object
 
@@ -445,7 +448,8 @@ void Projection::prepareCRS() const
         throw Fmi::Exception(BCP,
                              "xsize and ysize are required when a centered bounding box is used");
 
-      double CX = *cx, CY = *cy;
+      double CX = *cx;
+      double CY = *cy;
 
       if (latlon_center || (bboxcrs && *crs != *bboxcrs))
       {

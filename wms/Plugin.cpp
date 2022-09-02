@@ -270,7 +270,8 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
                 << hash.RecursiveDump() << std::endl;
     }
 
-    std::string output, log;
+    std::string output;
+    std::string log;
     try
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
@@ -1036,15 +1037,15 @@ Fmi::SharedFormatter Plugin::getTemplate(const std::string &theName) const
 // ----------------------------------------------------------------------
 
 std::string Plugin::getFilter(const std::string &theCustomer,
-                              const std::string &theFileName,
+                              const std::string &theName,
                               bool theWmsFlag) const
 {
   try
   {
-    if (theFileName.empty())
+    if (theName.empty())
       return "";
 
-    std::string filter_path = resolveFilePath(theCustomer, "/filters/", theFileName, theWmsFlag);
+    std::string filter_path = resolveFilePath(theCustomer, "/filters/", theName, theWmsFlag);
 
     return itsFileCache.get(filter_path);
   }
@@ -1061,15 +1062,15 @@ std::string Plugin::getFilter(const std::string &theCustomer,
 // ----------------------------------------------------------------------
 
 std::size_t Plugin::getFilterHash(const std::string &theCustomer,
-                                  const std::string &theFileName,
+                                  const std::string &theName,
                                   bool theWmsFlag) const
 {
   try
   {
-    if (theFileName.empty())
+    if (theName.empty())
       return 0;
 
-    std::string filter_path = resolveFilePath(theCustomer, "/filters/", theFileName, theWmsFlag);
+    std::string filter_path = resolveFilePath(theCustomer, "/filters/", theName, theWmsFlag);
 
     return itsFileCache.last_modified(filter_path);
   }
@@ -1797,7 +1798,8 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
     product.generate(hash, theState);
 
     // Build the template
-    std::string output, log;
+    std::string output;
+    std::string log;
     try
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
@@ -1831,7 +1833,7 @@ Json::Value Dali::Plugin::getExceptionJson(const std::string &description,
                                            const std::string &mapFormat,
                                            WmsExceptionFormat format,
                                            unsigned int width,
-                                           unsigned int height) const
+                                           unsigned int height)
 {
   std::string jsonStr;
 

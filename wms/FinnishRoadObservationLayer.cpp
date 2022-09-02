@@ -278,7 +278,7 @@ StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(
       ssp.fmisid = result_set_item.first;
       // FMISID: data independent
       const auto& longitude_result_set_vector = result_set_item.second.at(1);
-      if (longitude_result_set_vector.size() == 0)
+      if (longitude_result_set_vector.empty())
         continue;
       auto lon = get_double(longitude_result_set_vector.at(0).value);
       // Latitude: data independent

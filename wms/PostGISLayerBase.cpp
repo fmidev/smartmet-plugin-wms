@@ -130,7 +130,7 @@ std::size_t PostGISLayerBase::hash_value(const State& theState) const
 
 OGRGeometryPtr PostGISLayerBase::getShape(const State& theState,
                                           const Fmi::SpatialReference& theSR,
-                                          Engine::Gis::MapOptions& theMapOptions) const
+                                          Engine::Gis::MapOptions& theMapOptions)
 {
   try
   {
@@ -166,7 +166,7 @@ OGRGeometryPtr PostGISLayerBase::getShape(const State& theState,
 
 Fmi::Features PostGISLayerBase::getFeatures(const State& theState,
                                             const Fmi::SpatialReference& theSR,
-                                            Engine::Gis::MapOptions& theMapOptions) const
+                                            Engine::Gis::MapOptions& theMapOptions)
 {
   try
   {

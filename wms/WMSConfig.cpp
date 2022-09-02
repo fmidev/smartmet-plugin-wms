@@ -564,7 +564,7 @@ void WMSConfig::parse_references()
       const auto& group = units_settings[i];
 
       if (!group.isGroup())
-        throw Fmi::Exception(BCP, units_settings + " must be a list of groups");
+        throw Fmi::Exception(BCP, "units settings must be a list of groups");
 
       // we ignore the name of the units, it's for documentation only
       std::string unit = group["unit"];

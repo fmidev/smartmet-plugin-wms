@@ -130,7 +130,7 @@ WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
         layer_type = findLayerType(sublayers, layerRef);
         if (layer_type == WMSLayerType::MapLayer)
           continue;
-        else if (layer_type != WMSLayerType::NotWMSLayer)
+        if (layer_type != WMSLayerType::NotWMSLayer)
           return layer_type;
       }
     }
@@ -150,18 +150,16 @@ WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
       // NotWMSLayer means we should proceed to find a more significant layer
       continue;
     }
-    else if (layer_type == WMSLayerType::MapLayer)
+    if (layer_type == WMSLayerType::MapLayer)
     {
       // Map layer may be part of other layer
       mapLayers.append(layer);
       layerRef = mapLayers;
       continue;
     }
-    else
-    {
-      layerRef = layer;
-      return layer_type;
-    }
+
+    layerRef = layer;
+    return layer_type;
   }
 
   return layer_type;

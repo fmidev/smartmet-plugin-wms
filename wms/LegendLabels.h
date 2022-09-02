@@ -12,11 +12,6 @@
 
 namespace SmartMet
 {
-namespace HTTP
-{
-class Request;
-}
-
 namespace Plugin
 {
 namespace Dali

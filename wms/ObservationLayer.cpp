@@ -67,9 +67,9 @@ void ObservationLayer::init(const Json::Value& theJson,
         }
         else if (json.isArray())
         {
-          for (unsigned int i = 0; i < json.size(); i++)
+          for (const auto& j : json)
           {
-            std::string fmisid = json[i].asString();
+            std::string fmisid = j.asString();
             stationFMISIDs.push_back(Spine::TaggedFMISID(fmisid, Fmi::stoi(fmisid)));
             fmisids += fmisid;
           }
@@ -169,8 +169,8 @@ ResultSet ObservationLayer::getObservations(State& theState,
       const TS::TimeSeries& source_vector = values->at(i);
       for (const auto& item : fmisid_ranges)
       {
-        TS::TimeSeries::const_iterator iter_first = source_vector.begin() + item.second.first;
-        TS::TimeSeries::const_iterator iter_last = source_vector.begin() + item.second.second;
+        const auto iter_first = source_vector.begin() + item.second.first;
+        const auto iter_last = source_vector.begin() + item.second.second;
         TS::TimeSeries& target_vector = ret[item.first][i];
         if (iter_first == iter_last)
           target_vector.insert(target_vector.begin(), *iter_first);

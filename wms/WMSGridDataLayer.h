@@ -28,7 +28,7 @@ class WMSGridDataLayer : public WMSLayer
                    uint geometryId);
 
  protected:
-  virtual void updateLayerMetaData();
+  void updateLayerMetaData() override;
 
  private:
   const Engine::Grid::Engine* itsGridEngine;

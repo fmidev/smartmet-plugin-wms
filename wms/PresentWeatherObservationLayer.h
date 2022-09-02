@@ -23,14 +23,14 @@ class State;
 class PresentWeatherObservationLayer : public ObservationLayer
 {
  private:
-  virtual void getParameters(const boost::posix_time::ptime& requested_timestep,
-                             std::vector<SmartMet::Spine::Parameter>& parameters,
-                             boost::posix_time::ptime& starttime,
-                             boost::posix_time::ptime& endtime) const;
-  virtual StationSymbolPriorities processResultSet(
+  void getParameters(const boost::posix_time::ptime& requested_timestep,
+                     std::vector<SmartMet::Spine::Parameter>& parameters,
+                     boost::posix_time::ptime& starttime,
+                     boost::posix_time::ptime& endtime) const override;
+  StationSymbolPriorities processResultSet(
       const State& theState,
       const ResultSet& theResultSet,
-      const boost::posix_time::ptime& requested_timestep) const;
+      const boost::posix_time::ptime& requested_timestep) const override;
 };  // class PresentWeatherObservationLayer
 
 }  // namespace Dali

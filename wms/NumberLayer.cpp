@@ -145,7 +145,7 @@ PointValues read_gridForecasts(const NumberLayer& layer,
                                QueryServer::Query& query,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
-                               const boost::posix_time::time_period& /* valid_time */ _period)
+                               const boost::posix_time::time_period& /* valid_time_period */)
 {
   try
   {
@@ -183,7 +183,7 @@ PointValues read_gridForecasts(const NumberLayer& layer,
     {
       for (const auto& val : param.mValueList)
       {
-        if (val->mValueVector.size() > 0)
+        if (!val->mValueVector.empty())
         {
           originalGeometryId = val->mGeometryId;
           values = &val->mValueVector;
@@ -775,7 +775,7 @@ PointValues read_observations(const NumberLayer& layer,
 
     Fmi::CoordinateTransformation transformation("WGS84", crs);
 
-    if (layer.isFlashOrMobileProducer(*layer.producer))
+    if (Layer::isFlashOrMobileProducer(*layer.producer))
       return read_flash_observations(layer, state, crs, box, valid_time_period, transformation);
 
     if (layer.positions->layout == Positions::Layout::Station)
@@ -959,15 +959,13 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       // Adding the bounding box information into the query.
 
-      char bbox[100];
-
       auto bl = projection.bottomLeftLatLon();
       auto tr = projection.topRightLatLon();
-      sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
+      auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
       originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
       const auto& box = projection.getBox();
-      sprintf(bbox, "%f,%f,%f,%f", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+      bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
     else
@@ -1015,28 +1013,26 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Fullfilling information into the query object.
 
-    for (auto it = originalGridQuery->mQueryParameterList.begin();
-         it != originalGridQuery->mQueryParameterList.end();
-         ++it)
+    for (auto& param : originalGridQuery->mQueryParameterList)
     {
-      it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      it->mType = QueryServer::QueryParameter::Type::Vector;
-      it->mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
+      param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+      param.mType = QueryServer::QueryParameter::Type::Vector;
+      param.mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
 
       if (geometryId)
-        it->mGeometryId = *geometryId;
+        param.mGeometryId = *geometryId;
 
       if (levelId)
-        it->mParameterLevelId = *levelId;
+        param.mParameterLevelId = *levelId;
 
       if (level)
-        it->mParameterLevel = C_INT(*level);
+        param.mParameterLevel = C_INT(*level);
 
       if (forecastType)
-        it->mForecastType = C_INT(*forecastType);
+        param.mForecastType = C_INT(*forecastType);
 
       if (forecastNumber)
-        it->mForecastNumber = C_INT(*forecastNumber);
+        param.mForecastNumber = C_INT(*forecastNumber);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -1059,8 +1055,8 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
     {
-      char bbox[100];
-      sprintf(bbox, "%f,%f,%f,%f", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
+      auto bbox = fmt::format(
+          "{},{},{},{}", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
 

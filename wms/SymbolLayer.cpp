@@ -149,11 +149,11 @@ PointValues read_forecasts(const SymbolLayer& layer,
 // ----------------------------------------------------------------------
 
 PointValues read_gridForecasts(const SymbolLayer& layer,
-                               const Engine::Grid::Engine* gridEngine,
+                               const Engine::Grid::Engine* /* gridEngine */,
                                QueryServer::Query& query,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
-                               const boost::posix_time::time_period& valid_time_period)
+                               const boost::posix_time::time_period& /* valid_time_period */)
 {
   try
   {
@@ -178,15 +178,12 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
 
     T::ParamValue_vec* values = nullptr;
 
-    for (auto param = query.mQueryParameterList.begin(); param != query.mQueryParameterList.end();
-         ++param)
+    for (const auto& param : query.mQueryParameterList)
     {
-      for (auto val = param->mValueList.begin(); val != param->mValueList.end(); ++val)
+      for (const auto& val : param.mValueList)
       {
-        if ((*val)->mValueVector.size() > 0)
-        {
-          values = &(*val)->mValueVector;
-        }
+        if (!val->mValueVector.empty())
+          values = &val->mValueVector;
       }
     }
     if (layer.symbols.empty())
@@ -200,7 +197,7 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
         }
       }
     }
-    else if (values && values->size() > 0)
+    else if (values && !values->empty())
     {
       for (const auto& point : points)
       {
@@ -779,7 +776,7 @@ PointValues read_observations(const SymbolLayer& layer,
 
     Fmi::CoordinateTransformation transformation("WGS84", crs);
 
-    if (layer.isFlashOrMobileProducer(*layer.producer))
+    if (Layer::isFlashOrMobileProducer(*layer.producer))
       return read_flash_observations(layer, state, crs, box, valid_time_period, transformation);
 
     if (layer.positions->layout == Positions::Layout::Station)
@@ -913,7 +910,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 {
   try
   {
-    auto gridEngine = theState.getGridEngine();
+    auto* gridEngine = theState.getGridEngine();
     if (!gridEngine || !gridEngine->isEnabled())
       throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
@@ -985,15 +982,13 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       // Adding the bounding box information into the query.
 
-      char bbox[100];
-
       auto bl = projection.bottomLeftLatLon();
       auto tr = projection.topRightLatLon();
-      sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
+      auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
       originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
       const auto& box = projection.getBox();
-      sprintf(bbox, "%f,%f,%f,%f", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+      bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
     else

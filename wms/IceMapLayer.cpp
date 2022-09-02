@@ -19,6 +19,7 @@
 #include <macgyver/StringConversion.h>
 #include <spine/Json.h>
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <ogr_geometry.h>
 
@@ -32,16 +33,16 @@ namespace
 {
 Json::CharReaderBuilder charreaderbuilder;
 
-const char* const attribute_columns[] = {"firstname_column",
-                                         "secondname_column",
-                                         "nameposition_column",
-                                         "text_column",
-                                         "textposition_column",
-                                         "angle_column",
-                                         "labeltext_column",
-                                         "fontname_column",
-                                         "fontsize_column",
-                                         "textstring"};
+const std::array<std::string, 10> attribute_columns = {"firstname_column",
+                                                       "secondname_column",
+                                                       "nameposition_column",
+                                                       "text_column",
+                                                       "textposition_column",
+                                                       "angle_column",
+                                                       "labeltext_column",
+                                                       "fontname_column",
+                                                       "fontsize_column",
+                                                       "textstring"};
 
 class PostGISAttributeToString : public boost::static_visitor<std::string>
 {

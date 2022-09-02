@@ -31,18 +31,18 @@ struct TableAttributes
     Attributes text;
   } footer;
 
-  text_style_t titleTextStyle();
+  text_style_t titleTextStyle() const;
   text_style_t headerTextStyle(unsigned int col);
   text_style_t columnTextStyle(unsigned int col);
-  text_style_t footerTextStyle();
+  text_style_t footerTextStyle() const;
 };
 
 struct TableCell
 {
-  TableCell() : yoffset(0) {}
+  TableCell() = default;
   TableCell(const std::string& theData, const text_style_t& theTextStyle);
   text_dimension_t dimension;
-  unsigned int yoffset;
+  unsigned int yoffset = 0;
   std::vector<std::string> rows;  // there can be several rows in a cell
 };
 

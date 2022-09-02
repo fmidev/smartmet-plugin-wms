@@ -640,7 +640,7 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
   }
 }
 
-Positions::Points Positions::getDataPoints(const char* originalCrs,
+Positions::Points Positions::getDataPoints(const char* /* originalCrs */,
                                            int originalWidth,
                                            int originalHeight,
                                            uint originalGeometryId,

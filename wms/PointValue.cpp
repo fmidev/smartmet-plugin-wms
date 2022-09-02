@@ -45,11 +45,6 @@ bool mean_deviation_sort_max(const PointValueWrapper& rval1, const PointValueWra
   return (rval1.priorityValueMeanDeviation() > rval2.priorityValueMeanDeviation());
 }
 
-bool mean_deviation_sort_min(const PointValueWrapper& rval1, const PointValueWrapper& rval2)
-{
-  return (rval1.priorityValueMeanDeviation() < rval2.priorityValueMeanDeviation());
-}
-
 template <typename T>
 std::vector<T> prioritize_t(const std::vector<T>& pv, const PointValueOptions& opts)
 {
@@ -88,9 +83,8 @@ std::vector<T> prioritize_t(const std::vector<T>& pv, const PointValueOptions& o
       // Insert points to a map where points are grouped according to priority
       std::set<int> priority_categories;
       std::map<unsigned int, std::vector<PointValueWrapper>> prioritized_points;
-      for (unsigned int i = 0; i < opts.priorities->size(); i++)
+      for (auto prio_category : *opts.priorities)
       {
-        auto prio_category = opts.priorities->at(i);
         priority_categories.insert(prio_category);
         prioritized_points.insert(std::make_pair(prio_category, std::vector<PointValueWrapper>()));
       }
@@ -109,9 +103,8 @@ std::vector<T> prioritize_t(const std::vector<T>& pv, const PointValueOptions& o
       }
       points.clear();
       // First insert prioritized points
-      for (unsigned int i = 0; i < opts.priorities->size(); i++)
+      for (auto prio_category : *opts.priorities)
       {
-        auto prio_category = opts.priorities->at(i);
         auto& prio_points = prioritized_points.at(prio_category);
         if (!prio_points.empty())
         {

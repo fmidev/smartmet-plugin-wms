@@ -6,6 +6,7 @@
 #include "Projection.h"
 #include "State.h"
 #include <engines/contour/Engine.h>
+#include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
@@ -184,8 +185,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
       auto bl = theProjection.bottomLeftLatLon();
       auto tr = theProjection.topRightLatLon();
 
-      char bbox[100];
-      sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
+      auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
 
       // Adding the bounding box information into the query.
       originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
@@ -254,13 +254,11 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     if (wkt == "data" && theProjection.x1 && theProjection.y1 && theProjection.x2 &&
         theProjection.y2)
     {
-      char bbox[100];
-      sprintf(bbox,
-              "%f,%f,%f,%f",
-              *theProjection.x1,
-              *theProjection.y1,
-              *theProjection.x2,
-              *theProjection.y2);
+      auto bbox = fmt::format("{},{},{},{}",
+                              *theProjection.x1,
+                              *theProjection.y1,
+                              *theProjection.x2,
+                              *theProjection.y2);
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
 
@@ -297,7 +295,7 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     {
       for (const auto& val : param.mValueList)
       {
-        if (val->mValueData.size() > 0)
+        if (!val->mValueData.empty())
         {
           uint c = 0;
           for (const auto& wkb : val->mValueData)

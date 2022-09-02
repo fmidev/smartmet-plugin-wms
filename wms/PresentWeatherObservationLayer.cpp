@@ -6,6 +6,7 @@
 #include "State.h"
 #include "ValueTools.h"
 #include <timeseries/ParameterTools.h>
+#include <array>
 
 namespace SmartMet
 {
@@ -24,7 +25,7 @@ float convert_wawa_2_ww(float theValue)
 {
   // clang-format off
   // See https://hav.fmi.fi/hav/havainnot/index.php?page=wcodes&mode=wawa_to_ww
-  static const float wwCodeArray[100] = {
+  std::array<float, 100> wwCodeArray = {
       0,  1,  2,  3,  4,  5,  0,  0,  0,  0,
       10, 0,  13, 0,  0,  0,  0,  0,  18, 0,
       28, 21, 20, 21, 22, 24, 29, 0,  0,  0,
@@ -216,13 +217,13 @@ StationSymbolPriorities PresentWeatherObservationLayer::processResultSet(
 
     StationSymbolPriorities ssps;
     TS::Value none = TS::None();
-    for (auto& result_set_item : theResultSet)
+    for (const auto& result_set_item : theResultSet)
     {
       StationSymbolPriority ssp;
       ssp.fmisid = result_set_item.first;
       // FMISID: data independent
       const auto& longitude_result_set_vector = result_set_item.second.at(1);
-      if (longitude_result_set_vector.size() == 0)
+      if (longitude_result_set_vector.empty())
         continue;
       auto lon = get_double(longitude_result_set_vector.at(0).value);
       // Latitude: data independent

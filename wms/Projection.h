@@ -56,11 +56,6 @@ class Engine;
 }
 }  // namespace Engine
 
-namespace HTTP
-{
-class Request;
-}
-
 namespace Plugin
 {
 namespace Dali

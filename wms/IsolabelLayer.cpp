@@ -150,8 +150,12 @@ void IsolabelLayer::init(const Json::Value& theJson,
 
         // The end condition is used to make sure we do not get both 999.99999 and 1000.000 due to
         // numerical inaccuracies.
-        for (double value = iso1; value < iso2 - isostep / 2; value += isostep)
+        double value = iso1;
+        while (value < iso2 - isostep / 2)
+        {
           isovalues.push_back(value);
+          value += isostep;
+        }
         isovalues.push_back(iso2);
       }
       else
@@ -355,7 +359,6 @@ double curvature(const OGRLineString* geom, int pos, int stencil_size)
       else if (diff > 180)
         diff -= 360;
       sum += std::abs(diff);
-      last_angle = angle;
     }
 
     last_angle = angle;
@@ -1026,7 +1029,7 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
 void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
                                                const Fmi::Box& box,
                                                const State& state,
-                                               const Fmi::SpatialReference& sr_image) const
+                                               const Fmi::SpatialReference& crs) const
 {
   try
   {
@@ -1036,7 +1039,7 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
 
     auto dataServer = gridEngine->getDataServer_sptr();
 
-    Fmi::CoordinateTransformation transformation(sr_image, "WGS84");
+    Fmi::CoordinateTransformation transformation(crs, "WGS84");
 
     std::vector<T::Coordinate> pointList;
 

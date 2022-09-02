@@ -47,13 +47,13 @@ class PostGISLayerBase : public Layer
   boost::optional<std::string> time_condition;  // SQL for temporal selection
   std::vector<PostGISLayerFilter> filters;
 
-  OGRGeometryPtr getShape(const State& theState,
-                          const Fmi::SpatialReference& theSR,
-                          Engine::Gis::MapOptions& theMapOptions) const;
+  static OGRGeometryPtr getShape(const State& theState,
+                                 const Fmi::SpatialReference& theSR,
+                                 Engine::Gis::MapOptions& theMapOptions);
 
-  Fmi::Features getFeatures(const State& theState,
-                            const Fmi::SpatialReference& theSR,
-                            Engine::Gis::MapOptions& theMapOptions) const;
+  static Fmi::Features getFeatures(const State& theState,
+                                   const Fmi::SpatialReference& theSR,
+                                   Engine::Gis::MapOptions& theMapOptions);
 
 };  // class PostGISLayer
 

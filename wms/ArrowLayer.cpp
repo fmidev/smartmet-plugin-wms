@@ -877,7 +877,7 @@ PointValues read_observations(const ArrowLayer& layer,
 
     Fmi::CoordinateTransformation transformation("WGS84", crs);
 
-    if (layer.isFlashOrMobileProducer(*layer.producer))
+    if (Layer::isFlashOrMobileProducer(*layer.producer))
       throw Fmi::Exception(BCP, "Cannot use flash or mobile producer in ArrowLayer");
 
     if (layer.positions->layout == Positions::Layout::Station)
@@ -1122,15 +1122,13 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       // Adding the bounding box information into the query.
 
-      char bbox[100];
-
       auto bl = projection.bottomLeftLatLon();
       auto tr = projection.topRightLatLon();
-      sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
+      auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
       originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
       const auto& box = projection.getBox();
-      sprintf(bbox, "%f,%f,%f,%f", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+      bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
     else
@@ -1145,9 +1143,8 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     char paramBuf[1000];
     char* p = paramBuf;
 
-    for (auto parameter = paramList.begin(); parameter != paramList.end(); ++parameter)
+    for (auto& pName : paramList)
     {
-      std::string pName = *parameter;
       auto pos = pName.find(".raw");
       if (pos != std::string::npos)
       {
@@ -1161,7 +1158,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       if (!projection.projectionParameter)
         projection.projectionParameter = param;
 
-      if (param == *parameter && originalGridQuery->mProducerNameList.empty())
+      if (param == pName && originalGridQuery->mProducerNameList.empty())
       {
         gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
         if (originalGridQuery->mProducerNameList.empty())
@@ -1232,8 +1229,8 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
     {
-      char bbox[100];
-      sprintf(bbox, "%f,%f,%f,%f", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
+      auto bbox = fmt::format(
+          "{},{},{},{}", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
 

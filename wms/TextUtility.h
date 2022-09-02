@@ -20,28 +20,14 @@ struct text_dimension_t
 
 struct text_style_t
 {
-  std::string fontfamily;
-  std::string fontsize;
-  std::string fontstyle;
-  std::string fontweight;
-  std::string textanchor;
+  std::string fontfamily = "Roboto";
+  std::string fontsize = "10";
+  std::string fontstyle = "normal";
+  std::string fontweight = "normal";
+  std::string textanchor = "start";
 
-  text_style_t()
-      : fontfamily("Roboto"),
-        fontsize("10"),
-        fontstyle("normal"),
-        fontweight("normal"),
-        textanchor("start")
-  {
-  }
-  text_style_t(const text_style_t& s)
-      : fontfamily(s.fontfamily),
-        fontsize(s.fontsize),
-        fontstyle(s.fontstyle),
-        fontweight(s.fontweight),
-        textanchor(s.textanchor)
-  {
-  }
+  text_style_t() = default;
+  text_style_t(const text_style_t& s) = default;
 };
 text_dimension_t getTextDimension(const std::string& text, const text_style_t& textStyle);
 text_dimension_t getTextDimension(const std::vector<std::string>& rows,

@@ -32,8 +32,8 @@ class Title
   const std::string& translate(const boost::optional<std::string>& theLanguage) const;
 
   std::string qid;
-  int dx;
-  int dy;
+  int dx = 0;
+  int dy = 0;
   Attributes attributes;
 
  private:
