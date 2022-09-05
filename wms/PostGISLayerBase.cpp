@@ -139,7 +139,7 @@ OGRGeometryPtr PostGISLayerBase::getShape(const State& theState,
     {
       geom = gis.getShape(&theSR, theMapOptions);
 
-      if (!geom && geom->IsEmpty() == 0)
+      if (!geom)
       {
         std::string msg = "Requested map data is empty: '" + theMapOptions.schema + '.' +
                           theMapOptions.table + "'";
