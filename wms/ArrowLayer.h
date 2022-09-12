@@ -28,6 +28,7 @@ class State;
 class ArrowLayer : public Layer
 {
  public:
+  ArrowLayer() = default;
   void init(const Json::Value& theJson,
             const State& theState,
             const Config& theConfig,

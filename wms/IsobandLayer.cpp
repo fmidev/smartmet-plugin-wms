@@ -585,7 +585,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     {
       for (const auto& val : param.mValueList)
       {
-        if (val->mValueData.size() > 0)
+        if (!val->mValueData.empty())
         {
           uint c = 0;
           for (const auto& wkb : val->mValueData)

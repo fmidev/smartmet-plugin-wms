@@ -47,7 +47,7 @@ using ImageCache = Spine::SmartMetCache;
 class Plugin : public SmartMetPlugin, private boost::noncopyable
 {
  public:
-  ~Plugin() override;
+  ~Plugin();
   Plugin() = delete;
   Plugin(Spine::Reactor* theReactor, const char* theConfig);
 

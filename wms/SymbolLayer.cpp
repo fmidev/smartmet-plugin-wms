@@ -1024,10 +1024,10 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!projection.projectionParameter)
       projection.projectionParameter = param;
 
-    if (param == *parameter && originalGridQuery->mProducerNameList.size() == 0)
+    if (param == *parameter && originalGridQuery->mProducerNameList.empty())
     {
       gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-      if (originalGridQuery->mProducerNameList.size() == 0)
+      if (originalGridQuery->mProducerNameList.empty())
         originalGridQuery->mProducerNameList.push_back(producerName);
     }
 
@@ -1045,28 +1045,26 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Fullfilling information into the query object.
 
-    for (auto it = originalGridQuery->mQueryParameterList.begin();
-         it != originalGridQuery->mQueryParameterList.end();
-         ++it)
+    for (auto& param : originalGridQuery->mQueryParameterList)
     {
-      it->mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      it->mType = QueryServer::QueryParameter::Type::Vector;
-      it->mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
+      param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+      param.mType = QueryServer::QueryParameter::Type::Vector;
+      param.mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
 
       if (geometryId)
-        it->mGeometryId = *geometryId;
+        param.mGeometryId = *geometryId;
 
       if (levelId)
-        it->mParameterLevelId = *levelId;
+        param.mParameterLevelId = *levelId;
 
       if (level)
-        it->mParameterLevel = C_INT(*level);
+        param.mParameterLevel = C_INT(*level);
 
       if (forecastType)
-        it->mForecastType = C_INT(*forecastType);
+        param.mForecastType = C_INT(*forecastType);
 
       if (forecastNumber)
-        it->mForecastNumber = C_INT(*forecastNumber);
+        param.mForecastNumber = C_INT(*forecastNumber);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;

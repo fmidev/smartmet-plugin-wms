@@ -447,9 +447,9 @@ void validate_options(const tag_get_map_request_options& options,
       int interval_start = abs(options.interval_start ? *options.interval_start : 0);
       int interval_end = abs(options.interval_end ? *options.interval_end : 0);
 
-      for (unsigned int i = 0; i < options.map_info_vector.size(); i++)
+      for (const auto& map_info : options.map_info_vector)
       {
-        std::string layer(options.map_info_vector[i].name);
+        const auto& layer = map_info.name;
         if (!itsConfig.isValidInterval(layer, interval_start, interval_end))
         {
           std::string interval =
@@ -492,7 +492,7 @@ boost::posix_time::ptime parse_time(const std::string& time)
   }
 }
 
-void parse_interval_with_resolution(const std::string time_str,
+void parse_interval_with_resolution(const std::string& time_str,
                                     std::vector<boost::posix_time::ptime>& timesteps)
 {
   try
@@ -572,9 +572,8 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
           .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
 
     std::string layer_origintime;
-    for (unsigned int i = 0; i < layers.size(); i++)
+    for (const auto& layername : layers)
     {
-      std::string layername = layers[i];
       if (!itsConfig.isValidLayer(layer_name(layername)))
       {
         Fmi::Exception exception(BCP, "The requested layer is not supported!");
@@ -648,7 +647,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
 
     std::string transparent_str(
         Spine::optional_string(theRequest.getParameter("TRANSPARENT"), "FALSE"));
-    if (false == cicomp(transparent_str, "true") && false == cicomp(transparent_str, "false"))
+    if (!cicomp(transparent_str, "true") && !cicomp(transparent_str, "false"))
     {
       Fmi::Exception exception(BCP, "Invalid value for the TRANSPARENT option!");
       exception.addDetail("The TRANSPARENT option must have value 'TRUE' or 'FALSE'");
@@ -725,10 +724,10 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
         std::vector<std::string> timesteps;
         boost::algorithm::split(timesteps, time_str, boost::algorithm::is_any_of(","));
 
-        for (unsigned int i = 0; i < timesteps.size(); i++)
-          itsParameters.timesteps.push_back(cicomp(timesteps[i], "current")
+        for (auto timestep : timesteps)
+          itsParameters.timesteps.push_back(cicomp(timestep, "current")
                                                 ? boost::posix_time::second_clock::universal_time()
-                                                : parse_time(timesteps[i]));
+                                                : parse_time(timestep));
       }
       else if (time_str.find(',') == std::string::npos && time_str.find('/') != std::string::npos)
       {
@@ -741,8 +740,8 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
         std::vector<std::string> parts;
         boost::algorithm::split(parts, time_str, boost::algorithm::is_any_of(","));
 
-        for (unsigned int i = 0; i < parts.size(); i++)
-          parse_interval_with_resolution(parts[i], itsParameters.timesteps);
+        for (const auto& part : parts)
+          parse_interval_with_resolution(part, itsParameters.timesteps);
       }
       else
       {

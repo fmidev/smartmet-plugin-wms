@@ -52,13 +52,10 @@ bool is_identical(const WMSLayerHierarchy& lh1,
     if (lh2.geographicBoundingBox)
       layer2 = lh2.geographicBoundingBox->getLayer();
 
-    if ((layer1 && layer2 && layer1->identicalGeographicBoundingBox(*layer2)) ||
-        (!layer1 && !layer2))
-      return true;
-
-    return false;
+    return ((layer1 && layer2 && layer1->identicalGeographicBoundingBox(*layer2)) ||
+            (!layer1 && !layer2));
   }
-  else if (type == WMSLayerHierarchy::ElementType::proj_bbox)
+  if (type == WMSLayerHierarchy::ElementType::proj_bbox)
   {
     if (lh1.projectedBoundingBox)
       layer1 = lh1.projectedBoundingBox->getLayer();
@@ -68,7 +65,7 @@ bool is_identical(const WMSLayerHierarchy& lh1,
     return ((layer1 && layer2 && layer1->identicalProjectedBoundingBox(*layer2)) ||
             (!layer1 && !layer2));
   }
-  else if (type == WMSLayerHierarchy::ElementType::time_dim)
+  if (type == WMSLayerHierarchy::ElementType::time_dim)
   {
     if (lh1.timeDimension)
       layer1 = lh1.timeDimension->getLayer();
@@ -77,7 +74,7 @@ bool is_identical(const WMSLayerHierarchy& lh1,
 
     return ((layer1 && layer2 && layer1->identicalTimeDimension(*layer2)) || (!layer1 && !layer2));
   }
-  else if (type == WMSLayerHierarchy::ElementType::elev_dim)
+  if (type == WMSLayerHierarchy::ElementType::elev_dim)
   {
     if (lh1.elevationDimension)
       layer1 = lh1.elevationDimension->getLayer();
@@ -234,7 +231,7 @@ void add_layer_info(bool multiple_intervals,
   CTPP::CDT capa(CTPP::CDT::HASH_VAL);
 
   bool sublayer_is_reference_time_layer =
-      (lh.sublayers.size() > 0 && lh.sublayers.back()->reference_time);
+      (!lh.sublayers.empty() && lh.sublayers.back()->reference_time);
   boost::optional<CTPP::CDT> baseInfo;
   if (lh.sublayers.empty() && lh.baseInfoLayer)
   {

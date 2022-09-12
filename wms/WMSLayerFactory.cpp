@@ -180,36 +180,28 @@ WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
     // browse layers and if 'postgis'-layer is found type is WMSLayerType::PostGISLayer
     // otherwise it is WMSLayerType::QueryDataLayer
     if (views.isNull())
-    {
       throw Fmi::Exception(BCP, "No views in WMS layer definition");
-    }
-    else
-    {
-      const Json::Value& view = views[0];
 
-      Json::Value layers = view.get("layers", nulljson);
-      if (layers.isNull())
-      {
-        throw Fmi::Exception(BCP, "No layers in WMS layer definition");
-      }
-      else
-      {
-        WMSLayerType layer_type = findLayerType(layers, layerRef);  // The resolved layer type
+    const Json::Value& view = views[0];
 
-        if (layer_type != WMSLayerType::NotWMSLayer)
-          return layer_type;
+    Json::Value layers = view.get("layers", nulljson);
+    if (layers.isNull())
+      throw Fmi::Exception(BCP, "No layers in WMS layer definition");
 
-        Json::Value hidden = jsonRoot.get("hidden", nulljson);
-        if (!hidden.isNull() && hidden.asBool())
-          return WMSLayerType::QueryDataLayer;
+    WMSLayerType layer_type = findLayerType(layers, layerRef);  // The resolved layer type
 
-        // If we are here, the most significant encountered layer is a NotWMSLayer.
-        // This is currently an error, WMS layer must contain some spatio-temporal data
+    if (layer_type != WMSLayerType::NotWMSLayer)
+      return layer_type;
 
-        // Misconfigured layer is this
-        throw Fmi::Exception(BCP, "No valid Dali layer definitions in WMS layer definition");
-      }
-    }
+    Json::Value hidden = jsonRoot.get("hidden", nulljson);
+    if (!hidden.isNull() && hidden.asBool())
+      return WMSLayerType::QueryDataLayer;
+
+    // If we are here, the most significant encountered layer is a NotWMSLayer.
+    // This is currently an error, WMS layer must contain some spatio-temporal data
+
+    // Misconfigured layer is this
+    throw Fmi::Exception(BCP, "No valid Dali layer definitions in WMS layer definition");
   }
   catch (...)
   {
@@ -319,9 +311,9 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
             interval_default = json_value.asBool();
 
           if (interval_start || interval_end)
-            intervals.push_back(interval_dimension_item(interval_start ? *interval_start : 0,
-                                                        interval_end ? *interval_end : 0,
-                                                        interval_default));
+            intervals.emplace_back(interval_dimension_item(interval_start ? *interval_start : 0,
+                                                           interval_end ? *interval_end : 0,
+                                                           interval_default));
         }
       }
     }
@@ -336,7 +328,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
       if (!json.isNull())
         interval_end = json.asInt();
       if (interval_start || interval_end)
-        intervals.push_back(interval_dimension_item(
+        intervals.emplace_back(interval_dimension_item(
             interval_start ? *interval_start : 0, interval_end ? *interval_end : 0, true));
     }
 
@@ -451,8 +443,8 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         layer->keywords->insert(json.asString());
       else if (json.isArray())
       {
-        for (unsigned int i = 0; i < json.size(); i++)
-          layer->keywords->insert(json[i].asString());
+        for (const auto& j : json)
+          layer->keywords->insert(j.asString());
       }
       else
         throw Fmi::Exception(BCP,

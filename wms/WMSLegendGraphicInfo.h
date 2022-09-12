@@ -29,7 +29,7 @@ struct LegendGraphicInfoItem
     return (info.find(name) != info.end() ? info.at(name) : Json::Value());
   }
   bool exists(const std::string& name) const { return (info.find(name) != info.end()); }
-  bool empty() const { return (info.size() == 0); }
+  bool empty() const { return info.empty(); }
   void add(const std::string& name, const Json::Value& val) { info.insert(make_pair(name, val)); }
   unsigned int labelWidth(const std::string& language) const
   {

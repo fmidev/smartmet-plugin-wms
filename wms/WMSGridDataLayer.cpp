@@ -14,8 +14,8 @@ std::vector<boost::posix_time::ptime> get_ptime_vector(std::set<std::string>& co
 {
   std::vector<boost::posix_time::ptime> ret;
 
-  for (auto it = contentTimeList.begin(); it != contentTimeList.end(); ++it)
-    ret.push_back(boost::posix_time::from_time_t(utcTimeToTimeT(*it)));
+  for (const auto& time : contentTimeList)
+    ret.push_back(boost::posix_time::from_time_t(utcTimeToTimeT(time)));
 
   return ret;
 }
@@ -30,9 +30,9 @@ time_t even_timesteps(std::set<std::string>& contentTimeList)
     time_t prevTime = 0;
     time_t step = 0;
 
-    for (auto it = contentTimeList.begin(); it != contentTimeList.end(); ++it)
+    for (const auto& time : contentTimeList)
     {
-      time_t tt = utcTimeToTimeT(*it);
+      time_t tt = utcTimeToTimeT(time);
       if (prevTime != 0)
       {
         time_t s = tt - prevTime;
@@ -111,7 +111,10 @@ void WMSGridDataLayer::updateLayerMetaData()
         auto def = Identification::gridDef.getGrib2DefinitionByGeometryId(itsGeometryId);
         if (def)
         {
-          T::Coordinate topLeft, topRight, bottomLeft, bottomRight;
+          T::Coordinate topLeft;
+          T::Coordinate topRight;
+          T::Coordinate bottomLeft;
+          T::Coordinate bottomRight;
           if (def->getGridLatLonArea(topLeft, topRight, bottomLeft, bottomRight))
           {
             geographicBoundingBox.xMin = std::min(topLeft.x(), bottomLeft.x());

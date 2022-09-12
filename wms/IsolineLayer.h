@@ -23,16 +23,16 @@ class State;
 class IsolineLayer : public Layer
 {
  public:
-  virtual void init(const Json::Value& theJson,
-                    const State& theState,
-                    const Config& theConfig,
-                    const Properties& theProperties);
+  void init(const Json::Value& theJson,
+            const State& theState,
+            const Config& theConfig,
+            const Properties& theProperties) override;
 
-  virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
 
-  virtual std::size_t hash_value(const State& theState) const;
+  std::size_t hash_value(const State& theState) const override;
 
-  virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
+  void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   boost::optional<std::string> parameter;
   std::vector<Isoline> isolines;
@@ -60,7 +60,8 @@ class IsolineLayer : public Layer
   uint messageIndex = 0;
 
  private:
-  std::vector<OGRGeometryPtr> getIsolinesGrid(const std::vector<double> isovalues, State& theState);
+  std::vector<OGRGeometryPtr> getIsolinesGrid(const std::vector<double>& isovalues,
+                                              State& theState);
   std::vector<OGRGeometryPtr> getIsolinesQuerydata(const std::vector<double>& isovalues,
                                                    State& theState);
 

@@ -21,15 +21,15 @@ class Config;
 class LegendLabels
 {
  public:
-  LegendLabels();
+  LegendLabels() = default;
   void init(const Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
-  std::string type;
+  std::string type = "range";
   boost::optional<std::string> format;
-  int dx = 0;
+  int dx = 30;
   int dy = 0;
-  std::string separator;
+  std::string separator = u8"\u2013";  // endash
   std::map<std::string, std::string> conversions;
 
   Attributes attributes;

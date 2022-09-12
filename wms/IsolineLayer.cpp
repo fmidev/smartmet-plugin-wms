@@ -265,10 +265,10 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double>&
  */
 // ----------------------------------------------------------------------
 
-std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<double> isovalues,
+std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<double>& isovalues,
                                                           State& theState)
 {
-  auto gridEngine = theState.getGridEngine();
+  auto* gridEngine = theState.getGridEngine();
   if (!gridEngine || !gridEngine->isEnabled())
     throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
@@ -351,7 +351,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   if (param == *parameter && originalGridQuery->mProducerNameList.empty())
   {
     gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
-    if (originalGridQuery->mProducerNameList.size() == 0)
+    if (originalGridQuery->mProducerNameList.empty())
       originalGridQuery->mProducerNameList.push_back(producerName);
   }
 
@@ -456,7 +456,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   {
     for (const auto& val : param.mValueList)
     {
-      if (val->mValueData.size() > 0)
+      if (!val->mValueData.empty())
       {
         fileId = val->mFileId[0];
         messageIndex = val->mMessageIndex[0];
@@ -606,7 +606,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   const auto& gis = theState.getGisEngine();
 
-  OGRGeometryPtr inshape, outshape;
+  OGRGeometryPtr inshape;
+  OGRGeometryPtr outshape;
   if (inside)
   {
     inshape = gis.getShape(&crs, inside->options);

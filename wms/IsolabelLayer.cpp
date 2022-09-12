@@ -123,8 +123,8 @@ void IsolabelLayer::init(const Json::Value& theJson,
       if (json.isArray())
       {
         // [ a, b, c, d, ... ]
-        for (unsigned int i = 0; i < json.size(); i++)
-          isovalues.push_back(json[i].asDouble());
+        for (const auto& j : json)
+          isovalues.push_back(j.asDouble());
       }
       else if (json.isObject())
       {

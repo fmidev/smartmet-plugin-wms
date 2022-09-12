@@ -205,9 +205,8 @@ Json::Value set_legend_position(const Json::Value& jsonTemplate,
   Json::Value& layersJson = (legendJson.isMember("layers") ? legendJson["layers"] : nulljson);
   if (!layersJson.isNull() && layersJson.isArray())
   {
-    for (unsigned int i = 0; i < layersJson.size(); i++)
+    for (auto& layerJson : layersJson)
     {
-      Json::Value& layerJson = layersJson[i];
       if (!layerJson.isNull())
       {
         Json::Value& layerXposJson = (layerJson.isMember("x") ? layerJson["x"] : nulljson);
@@ -280,9 +279,8 @@ void process_template_layers(Json::Value& layersJson,
   if (!layersJson.isNull() && layersJson.isArray())
   {
     Json::Value nulljson;
-    for (unsigned int i = 0; i < layersJson.size(); i++)
+    for (auto& layerJson : layersJson)
     {
-      Json::Value& layerJson = layersJson[i];
       if (!layerJson.isNull())
       {
         Json::Value& isobandsJson =
@@ -318,9 +316,8 @@ void process_template_layers(Json::Value& layersJson,
 
         Json::Value& subLayersJson =
             (layerJson.isMember("layers") ? layerJson["layers"] : nulljson);
-        for (unsigned int j = 0; j < subLayersJson.size(); j++)
+        for (auto& subLayerJson : subLayersJson)
         {
-          Json::Value& subLayerJson = subLayersJson[j];
           if (!subLayerJson.isNull())
           {
             Json::Value& cssJson = (subLayerJson.isMember("css") ? subLayerJson["css"] : nulljson);
@@ -344,10 +341,6 @@ void process_template_layers(Json::Value& layersJson,
       }
     }
   }
-}
-std::string unique_id(const std::string& prefix, unsigned int& uniqueId)
-{
-  return (prefix + Fmi::to_string(uniqueId++));
 }
 
 Json::Value process_legend_json(const Json::Value& jsonTemplate,
@@ -404,9 +397,8 @@ Json::Value process_legend_json(const Json::Value& jsonTemplate,
     Json::Value& layersJson = legendJson["layers"];
     if (!layersJson.isNull() && layersJson.isArray())
     {
-      for (unsigned int i = 0; i < layersJson.size(); i++)
+      for (auto& layerJson : layersJson)
       {
-        Json::Value& layerJson = layersJson[i];
         if (!layerJson.isNull())
         {
           Json::Value& cdataJson = layerJson["cdata"];
@@ -440,9 +432,8 @@ Json::Value process_legend_json(const Json::Value& jsonTemplate,
     Json::Value& layersJson = legendJson["layers"];
     if (!layersJson.isNull() && layersJson.isArray())
     {
-      for (unsigned int i = 0; i < layersJson.size(); i++)
+      for (auto& layerJson : layersJson)
       {
-        Json::Value& layerJson = layersJson[i];
         if (!layerJson.isNull())
         {
           Json::Value& symbolJson = layerJson["symbol"];
@@ -521,9 +512,8 @@ LegendGraphicInfo get_legend_graphic_info(const Json::Value& layersJson)
   LegendGraphicInfo ret;
   Json::Value nulljson;
 
-  for (unsigned int i = 0; i < layersJson.size(); i++)
+  for (const auto& layerJson : layersJson)
   {
-    const Json::Value& layerJson = layersJson[i];
     if (!layerJson.isNull())
     {
       LegendGraphicInfoItem lgi;
@@ -562,9 +552,8 @@ LegendGraphicInfo get_legend_graphic_info(const Json::Value& layersJson)
               if (!label.isNull())
               {
                 Json::Value::Members members = label.getMemberNames();
-                for (unsigned int j = 0; j < members.size(); j++)
+                for (const auto& language : members)
                 {
-                  std::string language = members[j];
                   Json::Value translationJson = label.get(language, nulljson);
                   std::string translation =
                       (!translationJson.isNull() ? translationJson.asString() : "");
@@ -599,14 +588,13 @@ LegendGraphicInfo get_legend_graphic_info(const Json::Value& layersJson)
           Json::Value symbolGroup = WMSLayer::parseJsonString(json.toStyledString());
           if (symbolGroup.isArray())
           {
-            for (unsigned int i = 0; i < symbolGroup.size(); i++)
+            for (const auto& symbolJson : symbolGroup)
             {
               LegendGraphicInfoItem lgiSymbol;
               if (!lgi.asJsonValue("parameter_name").isNull())
                 lgiSymbol.add("parameter_name", lgi.asJsonValue("parameter_name"));
               if (!lgi.asJsonValue("layer_type").isNull())
                 lgiSymbol.add("layer_type", lgi.asJsonValue("layer_type"));
-              Json::Value& symbolJson = symbolGroup[i];
               json = symbolJson.get("symbol", nulljson);
               if (!json.isNull())
                 lgiSymbol.add("symbol", json);
@@ -655,9 +643,8 @@ void get_translations(const Json::Value& translationJson,
   {
     Json::Value nulljson;
     Json::Value::Members languages = translationJson.getMemberNames();
-    for (unsigned int j = 0; j < languages.size(); j++)
+    for (const auto& language : languages)
     {
-      std::string language = languages[j];
       Json::Value translatedJson = translationJson.get(language, nulljson);
       std::string translation = (!translatedJson.isNull() ? translatedJson.asString() : "");
       translations.insert(std::make_pair(language, translation));
@@ -681,10 +668,8 @@ void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettin
 
   auto symbolsJson = legendGraphicJson.get("symbols", nulljson);
   // symbols
-  for (unsigned int i = 0; i < symbolsJson.size(); i++)
+  for (const auto& symbolJson : symbolsJson)
   {
-    auto symbolJson = symbolsJson[i];
-
     json = symbolJson.get("name", nulljson);
     if (!json.isNull())
     {
@@ -707,10 +692,8 @@ void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettin
 
   auto parametersJson = legendGraphicJson.get("parameters", nulljson);
   // parameters
-  for (unsigned int i = 0; i < parametersJson.size(); i++)
+  for (const auto& parameterJson : parametersJson)
   {
-    auto parameterJson = parametersJson[i];
-
     std::string data_name;
     std::string name;
     std::string unit;
@@ -743,7 +726,7 @@ void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettin
       {
         settings.parameters.insert(
             std::make_pair(param_name, LegendGraphicParameter(param_name, name, unit, hide_title)));
-        if (translations.size() > 0)
+        if (!translations.empty())
           settings.parameters[param_name].translations = translations;
         for (const auto& item : translations)
         {
@@ -798,9 +781,8 @@ void get_legend_graphic_settings(const Json::Value& root, WMSLegendGraphicSettin
   if (!json.isNull())
   {
     Json::Value::Members languages = json.getMemberNames();
-    for (unsigned int j = 0; j < languages.size(); j++)
+    for (const auto& language : languages)
     {
-      std::string language = languages[j];
       Json::Value widthJson = json.get(language, nulljson);
       unsigned int l_width =
           (!widthJson.isNull() ? widthJson.asInt() : *(settings.layout.legend_width));
@@ -921,9 +903,8 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
 
     WMSLayerStyle layerStyle;
 
-    for (unsigned int i = 0; i < json.size(); i++)
+    for (const auto& style_json : json)
     {
-      const Json::Value& style_json = json[i];
       auto json_value = style_json.get("name", nulljson);
       if (!json_value.isNull())
         layerStyle.name = json_value.asString();
@@ -1039,7 +1020,6 @@ std::map<std::string, Json::Value> readLegendFiles(const std::string& wmsroot,
 WMSLayer::WMSLayer(const WMSConfig& config)
     : queryable(true),
       wmsConfig(config),
-      hidden(false),
       metadataTimestamp(boost::posix_time::not_a_date_time),
       metadataUpdateInterval(5)
 {
@@ -1082,12 +1062,12 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
       wmsConfig.getDaliConfig().rootDirectory(true), wmsConfig.getJsonCache(), customer);
   std::map<std::string, WMSLegendGraphicSettings> templateSettings;
 
-  for (auto item : templateFiles)
+  for (const auto& item : templateFiles)
   {
     WMSLegendGraphicSettings settings;
     get_legend_graphic_settings(item.second, settings);
     templateSettings.insert(std::make_pair(item.first, settings));
-    if (settings.languages.size() > 0)
+    if (!settings.languages.empty())
       languages.insert(settings.languages.begin(), settings.languages.end());
   }
 
@@ -1134,7 +1114,7 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
   }
 
   unsigned int uniqueId = 0;
-  for (const auto language : languages)
+  for (const auto& language : languages)
   {
     for (const auto& item : named_lgi)
     {
@@ -1258,12 +1238,12 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
       result.width = xpos;
 
       // Finally all symbol groups are handled
-      if (lgiSymbols.size() > 0)
+      if (!lgiSymbols.empty())
       {
-        for (auto iter = lgiSymbols.begin(); iter != lgiSymbols.end(); ++iter)
+        for (const auto& symbol : lgiSymbols)
         {
-          std::string templateName = Fmi::ascii_tolower_copy(iter->first + "_symbol");
-          if (iter->first.empty() || templateFiles.find(templateName) == templateFiles.end())
+          std::string templateName = Fmi::ascii_tolower_copy(symbol.first + "_symbol");
+          if (symbol.first.empty() || templateFiles.find(templateName) == templateFiles.end())
             templateName = "symbol";
 
           WMSLegendGraphicSettings actualSymbolSettings = actualSettings;
@@ -1275,7 +1255,7 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
           actualSymbolSettings.merge(layerSettings);
 
           Json::Value symbolTemplate = templateFiles.at(templateName);
-          const LegendGraphicInfo& legendGraphicInfo = iter->second;
+          const LegendGraphicInfo& legendGraphicInfo = symbol.second;
 
           symbolTemplate = process_symbol_group_json(symbolTemplate,
                                                      actualSymbolSettings,
@@ -1641,7 +1621,7 @@ void WMSLayer::initProjectedBBoxes()
           std::swap(x2, y2);
         }
         Engine::Gis::BBox bbox(x1, x2, y1, y2);
-        projected_bbox.insert(std::make_pair(id, std::move(bbox)));
+        projected_bbox.insert(std::make_pair(id, bbox));
       }
     }
   }
@@ -2295,7 +2275,7 @@ void WMSLayer::setCustomer(const std::string& c)
     missingTemplateFiles += ",isoband.json";
   if (legends.find("isoline") == legends.end())
     missingTemplateFiles += ",isoline.json";
-  if (missingTemplateFiles.size() > 0)
+  if (!missingTemplateFiles.empty())
   {
     if (missingTemplateFiles.at(0) == ',')
       missingTemplateFiles = missingTemplateFiles.substr(1);

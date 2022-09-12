@@ -32,9 +32,6 @@ namespace Dali
 
 State::State(Plugin& thePlugin, const Spine::HTTP::Request& theRequest)
     : itsPlugin(thePlugin),
-      itsInDefs(false),
-      itUsesTimer(false),
-      itUsesWms(false),
       itsRequest(theRequest),
       itsLocalTimePool(boost::make_shared<TS::LocalTimePool>())
 {

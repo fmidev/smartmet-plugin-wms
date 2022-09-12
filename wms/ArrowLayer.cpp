@@ -69,7 +69,10 @@ PointValues read_forecasts(const ArrowLayer& layer,
   {
     NFmiMetTime met_time = time_period.begin();
 
-    boost::optional<Spine::Parameter> dirparam, speedparam, uparam, vparam;
+    boost::optional<Spine::Parameter> dirparam;
+    boost::optional<Spine::Parameter> speedparam;
+    boost::optional<Spine::Parameter> uparam;
+    boost::optional<Spine::Parameter> vparam;
 
     if (layer.direction)
       dirparam = TS::ParameterFactory::instance().parse(*layer.direction);
