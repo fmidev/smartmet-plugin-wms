@@ -1,0 +1,63 @@
+{
+  "type": "Topology",
+  "bbox": [<TMPL_var bbox>],
+  "transform": 
+  {
+    <-TMPL_if defined(precision)>
+      "scale":[<TMPL_var precision>,<TMPL_var precision>],
+    <-TMPL_else>
+      "scale":[1.0,1.0],
+    <-/TMPL_if>    
+    "translate":[0.0,0.0]
+  },
+  "objects":
+  { 
+    <-TMPL_foreach objects as object>
+    <-TMPL_if !object.__first__>,</TMPL_if>
+    "<TMPL_var object.objectKey>":
+    {
+      "type": "GeometryCollection",
+      "geometries":
+      [
+        <-TMPL_foreach object.paths as path>
+          <-TMPL_if !path.__first__>,</TMPL_if>
+          {         
+            "type": "<TMPL_var path.type>",
+            "properties":
+            {
+              "layertype": "<TMPL_var path.layertype>"
+              <-TMPL_if defined(path.lolimit)>,
+              "lolimit": <TMPL_var path.lolimit></TMPL_if>
+              <-TMPL_if defined(path.hilimit)>,
+              "hilimit": <TMPL_var path.hilimit></TMPL_if>
+              <-TMPL_if defined(path.value)>,
+              "value": <TMPL_var path.value></TMPL_if>
+              <-TMPL_if defined(path.parameter)>,
+              "parameter": "<TMPL_var path.parameter>"</TMPL_if>
+              <-TMPL_if defined(path.time)>,
+              "time": "<TMPL_var path.time>"</TMPL_if>
+              <-TMPL_if defined(path.iri)>,
+              "iri": "<TMPL_var path.iri>"</TMPL_if>
+              <-TMPL_foreach path.presentation as presentation>,
+              "<TMPL_var presentation.__key__>": "<TMPL_var presentation.__value__>"
+              <-/TMPL_foreach>
+            }
+            <-TMPL_if defined(path.data)>,
+              "coordinates": <TMPL_var path.data>
+            <-/TMPL_if>
+            <-TMPL_if defined(path.arcs)>,
+              "arcs": <TMPL_var path.arcs>
+            <-/TMPL_if>
+          }
+        <-/TMPL_foreach>
+      ]
+    }
+    <-/TMPL_foreach>
+  },
+  "arcs" : [
+     <-TMPL_foreach arcs as arc>
+     <-TMPL_if !arc.__first__>,</TMPL_if>
+       <TMPL_var arc.data>
+     <-/TMPL_foreach>
+  ]  
+}
