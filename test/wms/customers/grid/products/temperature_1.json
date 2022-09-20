@@ -4,21 +4,6 @@
   "source": "grid",
   "producer": "pal",
   "projection": {},
-  "styles": [
-    {
-      "name": "default",
-      "title": "Temperature isobands every two degrees",
-      "abstract": "Temperature isoband width is two degrees",
-      "layers": [
-        {
-          "qid": "l1",
-          "layer_type": "isoband",
-          "isobands": "json:isobands/T-K.json",
-          "css": "isobands/temperature.css"
-        }
-      ]
-    }
-  ],
   "views": [
     {
       "layers": [
@@ -44,7 +29,7 @@
             "id": "europe_country_lines",
             "fill": "none",
             "stroke": "#222",
-            "stroke-width": "0.3px"
+            "stroke-width": "0.3"
           }
         },
         {

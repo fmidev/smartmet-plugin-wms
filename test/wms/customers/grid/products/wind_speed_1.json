@@ -107,8 +107,7 @@
           "attributes": {
             "id": "europe_country_lines",
             "fill": "none",
-            "stroke": "#222",
-            "stroke-width": "0.3px"
+            "stroke": "#222"
           }
         },
         {
