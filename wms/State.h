@@ -198,6 +198,10 @@ class State
   bool isObservation(const std::string& theProducer) const;
   TS::LocalTimePoolPtr getLocalTimePool() const { return itsLocalTimePool; }
 
+  mutable uint arcCounter = 0;
+  mutable uint insertCounter = 0;
+  mutable std::map<std::size_t,uint> arcHashMap;
+
  private:
   Plugin& itsPlugin;
   mutable std::map<Engine::Querydata::Producer, Engine::Querydata::Q> itsQCache;

@@ -2,6 +2,7 @@
 
 #include "State.h"
 #include "Plugin.h"
+#include "StyleSheet.h"
 #include <ctpp2/CDT.hpp>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
@@ -467,6 +468,27 @@ void State::addPresentationAttributes(CTPP::CDT& theLayer,
       theLayerAttributes.generatePresentation(theLayer, *this, css1);
       const auto css2 = getStyle(*theCSS, theObjectAttributes.getSelector());
       theObjectAttributes.generatePresentation(theLayer, *this, css2);
+
+      // Adding presentation attributes defined in the CSS class
+
+      if (getType() == "topojson")
+      {
+        StyleSheet styleSheet;
+        styleSheet.add(this->getStyle(*theCSS));
+
+        std::string selector = theLayerAttributes.getSelector();
+        if (selector.empty())
+          selector = theObjectAttributes.getSelector();
+
+        if (!selector.empty())
+        {
+          auto decl = styleSheet.declarations(selector);
+          for (auto it = decl.begin(); it != decl.end(); ++it)
+          {
+            theLayer["presentation"][it->first] = it->second;
+          }
+        }
+      }
     }
     else
     {

@@ -1125,13 +1125,16 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       // Adding the bounding box information into the query.
 
+      const auto& box = projection.getBox();
+      const auto clipbox = getClipBox(box);
+
       auto bl = projection.bottomLeftLatLon();
       auto tr = projection.topRightLatLon();
       auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
       originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
-      const auto& box = projection.getBox();
-      bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+      bbox = fmt::format("{},{},{},{}", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
+      //bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
     else

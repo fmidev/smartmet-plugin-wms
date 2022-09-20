@@ -33,6 +33,16 @@ std::string toString(const OGRGeometry& theGeom,
                      const Fmi::SpatialReference& theSRS,
                      double thePrecision);
 
+std::string toString(const OGRGeometry& theGeom,
+                     const std::string& theType,
+                     const Fmi::Box& theBox,
+                     const Fmi::SpatialReference& theSRS,
+                     double thePrecision,
+                     std::map<std::size_t,uint>& arcHashMap,
+                     uint& arcCounter,
+                     std::string& arcsNumbers,
+                     std::string& arcsCoordinates);
+
 }  // namespace Geometry
 }  // namespace Dali
 }  // namespace Plugin

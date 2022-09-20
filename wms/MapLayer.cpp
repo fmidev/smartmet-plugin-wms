@@ -5,6 +5,7 @@
 #include "Layer.h"
 #include "Select.h"
 #include "State.h"
+#include "StyleSheet.h"
 #include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
@@ -168,12 +169,26 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     if (!geom)
       return;
 
-    // Store the path. Note that we allow duplicate IDs since multiple views may
-    // refer to the same map.
+    if (css)
+    {
+      std::string name = theState.getCustomer() + "/" + *css;
+      theGlobals["css"][name] = theState.getStyle(*css);
+    }
 
     std::string iri = qid;
 
+    // Store the path. Note that we allow duplicate IDs since multiple views may
+    // refer to the same map.
+
     {
+      std::string arcNumbers;
+      std::string arcCoordinates;
+      std::string pointCoordinates;
+
+      CTPP::CDT object_cdt;
+      std::string objectKey = "map:" + qid;
+      object_cdt["objectKey"] = objectKey;
+
       std::string report = "Generating coordinate data finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
@@ -183,11 +198,37 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       map_cdt["iri"] = iri;
       map_cdt["type"] = Geometry::name(*geom, theState.getType());
       map_cdt["layertype"] = "map";
-      map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
+
+      pointCoordinates = Geometry::toString(*geom, theState.getType(), box, crs, precision,theState.arcHashMap,theState.arcCounter,arcNumbers,arcCoordinates);
+
+      if (!pointCoordinates.empty())
+       map_cdt["data"] = pointCoordinates;
 
       theState.addPresentationAttributes(map_cdt, css, attributes);
 
-      theGlobals["paths"][iri] = map_cdt;
+      if (theState.getType() == "topojson")
+      {
+        if (!arcNumbers.empty())
+         map_cdt["arcs"] = arcNumbers;
+
+        object_cdt["paths"][iri] = map_cdt;
+
+        if (!arcCoordinates.empty())
+        {
+          CTPP::CDT arc_cdt(CTPP::CDT::HASH_VAL);
+          arc_cdt["data"] = arcCoordinates;
+          theGlobals["arcs"][theState.insertCounter] = arc_cdt;
+          theState.insertCounter++;
+        }
+
+        theGlobals["objects"][objectKey] = object_cdt;
+        if (precision >= 1.0)
+          theGlobals["precision"] = pow(10.0,-(int)precision);
+      }
+      else
+      {
+        theGlobals["paths"][iri] = map_cdt;
+      }
     }
 
     // Do not produce a use-statement for empty data or in the header
@@ -195,11 +236,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     {
       // Update the globals
 
-      if (css)
-      {
-        std::string name = theState.getCustomer() + "/" + *css;
-        theGlobals["css"][name] = theState.getStyle(*css);
-      }
+      theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," + std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
 
       // Clip if necessary
 
