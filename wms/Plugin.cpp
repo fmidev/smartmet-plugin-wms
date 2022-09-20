@@ -179,7 +179,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 
     if (!boost::iequals(fmt, "xml") && !boost::iequals(fmt, "svg") && !boost::iequals(fmt, "png") &&
         !boost::iequals(fmt, "pdf") && !boost::iequals(fmt, "ps") && !boost::iequals(fmt, "webp") &&
-        !boost::iequals(fmt, "geojson") && !boost::iequals(fmt, "kml") &&
+        !boost::iequals(fmt, "geojson") && !boost::iequals(fmt, "topojson") && !boost::iequals(fmt, "kml") &&
         !boost::iequals(fmt, "cnf"))
     {
       throw Fmi::Exception(BCP, "Invalid 'type' value '" + fmt + "'!");
@@ -324,7 +324,7 @@ void Plugin::formatResponse(const std::string &theSvg,
   try
   {
     std::set<std::string> text_formats{
-        "xml", "svg", "image/svg+xml", "geojson", "kml", "json", "application/json", "cnf"};
+        "xml", "svg", "image/svg+xml", "geojson", "topojson", "kml", "json", "application/json", "cnf"};
 
     theResponse.setHeader("Content-Type", mimeType(theType));
 

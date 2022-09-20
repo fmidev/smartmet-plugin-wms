@@ -29,6 +29,8 @@ std::string demimetype(const std::string& theMimeType)
     return "json";
   if (theMimeType == "application/geo+json")
     return "geojson";
+  if (theMimeType == "application/topo+json")
+    return "topojson";
   if (theMimeType == "application/vnd.google-earth.kml+xml")
     return "kml";
   if (theMimeType == "cnf")
@@ -59,6 +61,8 @@ std::string mimeType(const std::string& theType)
     return "application/postscript";
   if (theType == "geojson")
     return "application/geo+json";
+  if (theType == "topojson")
+    return "application/topo+json";
   if (theType == "kml")
     return "application/vnd.google-earth.kml+xml";
   if (theType == "json" || theType == "application/json")

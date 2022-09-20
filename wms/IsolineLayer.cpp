@@ -7,6 +7,7 @@
 #include "Isoline.h"
 #include "Layer.h"
 #include "State.h"
+#include "StyleSheet.h"
 #include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
@@ -315,13 +316,16 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
     char bbox[100];
 
+    const auto& box = projection.getBox();
+    const auto clipbox = getClipBox(box);
+
     auto bl = projection.bottomLeftLatLon();
     auto tr = projection.topRightLatLon();
     sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
     originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
-    const auto& box = projection.getBox();
-    sprintf(bbox, "%f,%f,%f,%f", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+    sprintf(bbox, "%f,%f,%f,%f", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
+    //sprintf(bbox, "%f,%f,%f,%f", box.xmin(), box.ymin(), box.xmax(), box.ymax());
     originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
   }
   else
@@ -466,11 +470,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
           const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
           OGRGeometry* geom = nullptr;
           OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
-          if (geom != nullptr)
-          {
-            auto geomPtr = OGRGeometryPtr(geom);
-            geoms.push_back(geomPtr);
-          }
+          auto geomPtr = OGRGeometryPtr(geom);
+          geoms.push_back(geomPtr);
         }
       }
     }
@@ -713,11 +714,20 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     // Update the globals
 
+    bool topojson = false;
+    if (theState.getType() == "topojson")
+      topojson = true;
+
+    StyleSheet styleSheet;
     if (css)
     {
       std::string name = theState.getCustomer() + "/" + *css;
       theGlobals["css"][name] = theState.getStyle(*css);
     }
+
+    CTPP::CDT object_cdt;
+    std::string objectKey = "isoline:" + *parameter + ":" + qid;
+    object_cdt["objectKey"] = objectKey;
 
     // Clip if necessary
 
@@ -745,18 +755,44 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         if (!theState.addId(iri))
           throw Fmi::Exception(BCP, "Non-unique ID assigned to isoline").addParameter("ID", iri);
 
+
         CTPP::CDT isoline_cdt(CTPP::CDT::HASH_VAL);
         isoline_cdt["iri"] = iri;
         isoline_cdt["time"] = Fmi::to_iso_extended_string(getValidTime());
         isoline_cdt["parameter"] = *parameter;
         isoline_cdt["type"] = Geometry::name(*geom, theState.getType());
         isoline_cdt["layertype"] = "isoline";
-        isoline_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
+
+        std::string arcNumbers;
+        std::string arcCoordinates;
+        std::string pointCoordinates = Geometry::toString(*geom, theState.getType(), box, crs, precision,theState.arcHashMap,theState.arcCounter,arcNumbers,arcCoordinates);
+
+        if (!pointCoordinates.empty())
+          isoline_cdt["data"] = pointCoordinates;
+
         isoline_cdt["value"] = isoline.value;
 
         theState.addPresentationAttributes(isoline_cdt, css, attributes, isoline.attributes);
 
-        theGlobals["paths"][iri] = isoline_cdt;
+        if (topojson)
+        {
+          if (!arcNumbers.empty())
+            isoline_cdt["arcs"] = arcNumbers;
+
+          object_cdt["paths"][iri] = isoline_cdt;
+
+          if (!arcCoordinates.empty())
+          {
+            CTPP::CDT arc_cdt(CTPP::CDT::HASH_VAL);
+            arc_cdt["data"] = arcCoordinates;
+            theGlobals["arcs"][theState.insertCounter] = arc_cdt;
+            theState.insertCounter++;
+          }
+        }
+        else
+        {
+          theGlobals["paths"][iri] = isoline_cdt;
+        }
 
         // Add the SVG use element
         CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
@@ -767,6 +803,11 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         group_cdt["tags"].PushBack(tag_cdt);
       }
     }
+    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," + std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
+    theGlobals["objects"][objectKey] = object_cdt;
+    if (precision >= 1.0)
+      theGlobals["precision"] = pow(10.0,-(int)precision);
+
     // We created only this one layer
     theLayersCdt.PushBack(group_cdt);
   }

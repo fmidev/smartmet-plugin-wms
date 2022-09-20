@@ -7,6 +7,7 @@
 #include "Isoband.h"
 #include "Layer.h"
 #include "State.h"
+#include "StyleSheet.h"
 #include "ValueTools.h"
 #include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
@@ -60,6 +61,9 @@ void IsobandLayer::init(const Json::Value& theJson,
 
     Layer::init(theJson, theState, theConfig, theProperties);
     precision = theState.getPrecision("isoband");
+
+    if (theState.getType() == "topojson")
+      precision = theState.getPrecision("topojson");
 
     // Extract member values
 
@@ -338,6 +342,20 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     if (!validLayer(theState))
       return;
 
+    auto crs = projection.getCRS();
+    const auto& box = projection.getBox();
+
+    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," + std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
+    if (precision >= 1.0)
+      theGlobals["precision"] = pow(10.0,-(int)precision);
+
+    if (css)
+    {
+      std::string name = theState.getCustomer() + "/" + *css;
+      theGlobals["css"][name] = theState.getStyle(*css);
+    }
+
+
     if (source && *source == "grid")
       generate_gridEngine(theGlobals, theLayersCdt, theState);
     else
@@ -427,13 +445,17 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       // Adding the bounding box information into the query.
 
+      const auto& box = projection.getBox();
+      const auto clipbox = getClipBox(box);
+
       auto bl = projection.bottomLeftLatLon();
       auto tr = projection.topRightLatLon();
       auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
       originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
-      const auto& box = projection.getBox();
-      bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+
+      //bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+      bbox = fmt::format("{},{},{},{}", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
     else
@@ -719,11 +741,9 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     intersections.init(producer, gridEngine, projection, valid_time, theState);
 
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
+    CTPP::CDT object_cdt;
+    std::string objectKey = "isoband:" + *parameter + ":" + qid;
+    object_cdt["objectKey"] = objectKey;
 
     // Clip if necessary
 
@@ -767,10 +787,19 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
             throw Fmi::Exception(BCP, "Non-unique ID assigned to isoband").addParameter("ID", iri);
 
           CTPP::CDT isoband_cdt(CTPP::CDT::HASH_VAL);
+
+          std::string arcNumbers;
+          std::string arcCoordinates;
+          std::string pointCoordinates;
+
           isoband_cdt["iri"] = iri;
           isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
           isoband_cdt["parameter"] = *parameter;
-          isoband_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs, precision);
+          pointCoordinates = Geometry::toString(*geom2, theState.getType(), box, crs, precision,theState.arcHashMap,theState.arcCounter,arcNumbers,arcCoordinates);
+
+          if (!pointCoordinates.empty())
+            isoband_cdt["data"] = pointCoordinates;
+
           isoband_cdt["type"] = Geometry::name(*geom2, theState.getType());
           isoband_cdt["layertype"] = "isoband";
 
@@ -787,7 +816,24 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
           theState.addPresentationAttributes(isoband_cdt, css, attributes, isoband.attributes);
 
-          theGlobals["paths"][iri] = isoband_cdt;
+          if (theState.getType() == "topojson")
+          {
+            if (!arcNumbers.empty())
+              isoband_cdt["arcs"] = arcNumbers;;
+
+            if (!arcCoordinates.empty())
+            {
+              CTPP::CDT arc_cdt(CTPP::CDT::HASH_VAL);
+              arc_cdt["data"] = arcCoordinates;
+              theGlobals["arcs"][theState.insertCounter] = arc_cdt;
+              theState.insertCounter++;
+            }
+            object_cdt["paths"][iri] = isoband_cdt;
+          }
+          else
+          {
+            theGlobals["paths"][iri] = isoband_cdt;
+          }
 
           // Add the SVG use element
           CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
@@ -799,6 +845,8 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         }
       }
     }
+    theGlobals["objects"][objectKey] = object_cdt;
+
     // We created only this one layer
     theLayersCdt.PushBack(group_cdt);
   }
@@ -986,13 +1034,18 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     std::vector<OGRGeometryPtr> geoms =
         contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
 
+
+    CTPP::CDT object_cdt;
+    std::string objectKey = "isoband:" + *parameter + ":" + qid;
+    object_cdt["objectKey"] = objectKey;
+
     // Update the globals
 
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
+    //if (css)
+    //{
+    //  std::string name = theState.getCustomer() + "/" + *css;
+    //  theGlobals["css"][name] = theState.getStyle(*css);
+    // }
 
     // Clip if necessary
 
@@ -1037,11 +1090,22 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
           if (!theState.addId(iri))
             throw Fmi::Exception(BCP, "Non-unique ID assigned to isoband").addParameter("ID", iri);
 
+          std::string arcNumbers;
+          std::string arcCoordinates;
+          std::string pointCoordinates;
+
           CTPP::CDT isoband_cdt(CTPP::CDT::HASH_VAL);
           isoband_cdt["iri"] = iri;
           isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
           isoband_cdt["parameter"] = *parameter;
-          isoband_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs, precision);
+
+          pointCoordinates = Geometry::toString(*geom2, theState.getType(), box, crs, precision,theState.arcHashMap,theState.arcCounter,arcNumbers,arcCoordinates);
+
+          if (!pointCoordinates.empty())
+            isoband_cdt["data"] = pointCoordinates;
+
+          //isoband_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs, precision);
+
           isoband_cdt["type"] = Geometry::name(*geom2, theState.getType());
           isoband_cdt["layertype"] = "isoband";
 
@@ -1058,7 +1122,26 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
           theState.addPresentationAttributes(isoband_cdt, css, attributes, isoband.attributes);
 
-          theGlobals["paths"][iri] = isoband_cdt;
+          if (theState.getType() == "topojson")
+          {
+            if (!arcNumbers.empty())
+              isoband_cdt["arcs"] = arcNumbers;;
+
+            if (!arcCoordinates.empty())
+            {
+              CTPP::CDT arc_cdt(CTPP::CDT::HASH_VAL);
+              arc_cdt["data"] = arcCoordinates;
+              theGlobals["arcs"][theState.insertCounter] = arc_cdt;
+              theState.insertCounter++;
+            }
+            object_cdt["paths"][iri] = isoband_cdt;
+          }
+          else
+          {
+            theGlobals["paths"][iri] = isoband_cdt;
+          }
+
+          //theGlobals["paths"][iri] = isoband_cdt;
 
           // Add the SVG use element
           CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
@@ -1070,6 +1153,8 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
         }
       }
     }
+    theGlobals["objects"][objectKey] = object_cdt;
+
     // We created only this one layer
     theLayersCdt.PushBack(group_cdt);
   }
