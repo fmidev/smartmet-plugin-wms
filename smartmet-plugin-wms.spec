@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.9.12
+Version: 22.9.21
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -26,8 +26,8 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 22.8.31
-BuildRequires: smartmet-library-grid-content-devel >= 22.9.9
-BuildRequires: smartmet-library-grid-files-devel >= 22.6.23
+BuildRequires: smartmet-library-grid-content-devel >= 22.9.21
+BuildRequires: smartmet-library-grid-files-devel >= 22.9.21
 BuildRequires: smartmet-library-macgyver-devel >= 22.8.23
 BuildRequires: smartmet-library-spine-devel >= 22.9.5
 BuildRequires: smartmet-library-timeseries-devel >= 22.9.9
@@ -35,7 +35,7 @@ BuildRequires: smartmet-library-timeseries-devel >= 22.9.9
 BuildRequires: smartmet-engine-authentication-devel >= 22.6.17
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 22.9.9
+BuildRequires: smartmet-engine-observation-devel >= 22.9.15
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.8.25
 BuildRequires: smartmet-engine-grid-devel >= 22.9.9
@@ -66,8 +66,8 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 22.9.9
-Requires: smartmet-library-grid-files >= 22.6.23
+Requires: smartmet-library-grid-content >= 22.9.21
+Requires: smartmet-library-grid-files >= 22.9.21
 Requires: smartmet-library-gis >= 22.9.1
 Requires: smartmet-library-trax >= 22.8.4
 Requires: smartmet-library-macgyver >= 22.8.23
@@ -120,7 +120,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 22.9.9
+#TestRequires: smartmet-engine-observation-devel >= 22.9.15
 %endif
 
 %description
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Sep 21 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.9.21-1.fmi
+- Added TopoJSON support with temporary mime type application/topo+json
+
 * Mon Sep 12 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.9.12-1.fmi
 - Silenced several compiler warnings
 
