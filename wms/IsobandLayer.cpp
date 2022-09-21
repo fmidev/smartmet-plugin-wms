@@ -342,13 +342,6 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     if (!validLayer(theState))
       return;
 
-    auto crs = projection.getCRS();
-    const auto& box = projection.getBox();
-
-    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," + std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
-    if (precision >= 1.0)
-      theGlobals["precision"] = pow(10.0,-(int)precision);
-
     if (css)
     {
       std::string name = theState.getCustomer() + "/" + *css;
@@ -845,6 +838,11 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         }
       }
     }
+
+    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," + std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
+    if (precision >= 1.0)
+      theGlobals["precision"] = pow(10.0,-(int)precision);
+
     theGlobals["objects"][objectKey] = object_cdt;
 
     // We created only this one layer
@@ -1154,6 +1152,10 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       }
     }
     theGlobals["objects"][objectKey] = object_cdt;
+    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," + std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
+    if (precision >= 1.0)
+      theGlobals["precision"] = pow(10.0,-(int)precision);
+
 
     // We created only this one layer
     theLayersCdt.PushBack(group_cdt);
