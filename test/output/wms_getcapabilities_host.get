@@ -55,6 +55,7 @@
     <GetMap>
       <Format>application/geo+json</Format>
       <Format>application/pdf</Format>
+      <Format>application/topo+json</Format>
       <Format>image/png</Format>
       <Format>image/svg+xml</Format>
       <DCPType>
