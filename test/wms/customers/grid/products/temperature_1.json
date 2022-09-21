@@ -4,6 +4,21 @@
   "source": "grid",
   "producer": "pal",
   "projection": {},
+  "styles": [
+    {
+      "name": "default",
+      "title": "Temperature isobands every two degrees",
+      "abstract": "Temperature isoband width is two degrees",
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "isoband",
+          "isobands": "json:isobands/T-K.json",
+          "css": "isobands/temperature.css"
+        }
+      ]
+    }
+  ],
   "views": [
     {
       "layers": [
