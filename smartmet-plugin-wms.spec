@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.9.21
+Version: 22.9.29
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -41,9 +41,9 @@ BuildRequires: smartmet-engine-gis-devel >= 22.8.25
 BuildRequires: smartmet-engine-grid-devel >= 22.9.9
 BuildRequires: smartmet-engine-geonames-devel >= 22.8.25
 BuildRequires: smartmet-engine-querydata-devel >= 22.9.9
-BuildRequires: smartmet-engine-contour-devel >= 22.9.9
-BuildRequires: smartmet-library-gis-devel >= 22.9.1
-BuildRequires: smartmet-library-trax-devel >= 22.8.4
+BuildRequires: smartmet-engine-contour-devel >= 22.9.29
+BuildRequires: smartmet-library-gis-devel >= 22.9.28
+BuildRequires: smartmet-library-trax-devel >= 22.9.29
 BuildRequires: fmt-devel >= %{smartmet_fmt_min}, fmt-devel < %{smartmet_fmt_max}
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -68,8 +68,8 @@ Requires: ctpp2 >= 2.8.8
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 22.9.21
 Requires: smartmet-library-grid-files >= 22.9.21
-Requires: smartmet-library-gis >= 22.9.1
-Requires: smartmet-library-trax >= 22.8.4
+Requires: smartmet-library-gis >= 22.9.28
+Requires: smartmet-library-trax >= 22.9.29
 Requires: smartmet-library-macgyver >= 22.8.23
 Requires: smartmet-library-spine >= 22.9.5
 Requires: smartmet-library-timeseries >= 22.9.9
@@ -78,7 +78,7 @@ Requires: smartmet-library-giza >= 22.8.31
 Requires: smartmet-engine-authentication >= 22.6.17
 %endif
 Requires: smartmet-engine-querydata >= 22.9.9
-Requires: smartmet-engine-contour >= 22.9.9
+Requires: smartmet-engine-contour >= 22.9.29
 Requires: smartmet-engine-gis >= 22.8.25
 Requires: smartmet-engine-grid >= 22.9.9
 Requires: smartmet-engine-geonames >= 22.8.25
@@ -101,12 +101,12 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: jsoncpp-devel
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 22.9.9
+#TestRequires: smartmet-engine-contour-devel >= 22.9.29
 #TestRequires: smartmet-engine-geonames-devel >= 22.8.25
 #TestRequires: smartmet-engine-gis-devel >= 22.8.25
 #TestRequires: smartmet-engine-querydata-devel >= 22.9.9
 #TestRequires: smartmet-library-giza-devel >= 22.8.31
-#TestRequires: smartmet-library-trax-devel >= 22.8.4
+#TestRequires: smartmet-library-trax-devel >= 22.9.29
 #TestRequires: smartmet-library-newbase-devel >= 22.8.29
 #TestRequires: smartmet-library-spine-devel >= 22.9.5
 #TestRequires: smartmet-library-timeseries-devel >= 22.9.9
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Sep 29 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.9.29-1.fmi
+- Fixes to missing value contouring
+
 * Wed Sep 21 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.9.21-1.fmi
 - Added TopoJSON support with temporary mime type application/topo+json
 
