@@ -29,7 +29,7 @@ class LegendLabels
   boost::optional<std::string> format;
   int dx = 30;
   int dy = 0;
-  std::string separator = u8"\u2013";  // endash
+  std::string separator = (const char *)u8"\u2013";  // endash
   std::map<std::string, std::string> conversions;
 
   Attributes attributes;

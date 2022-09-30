@@ -475,7 +475,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
         try
         {
           auto timeinfo = to_tm(loctime->local_time());
-          msg << fmt::format(fmt, timeinfo);
+          msg << fmt::format(fmt::runtime(fmt), timeinfo);
         }
         catch (...)
         {
@@ -677,7 +677,7 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
         try
         {
           auto timeinfo = to_tm(loctime->local_time());
-          msg << fmt::format(fmt, timeinfo);
+          msg << fmt::format(fmt::runtime(fmt), timeinfo);
         }
         catch (...)
         {
