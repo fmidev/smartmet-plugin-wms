@@ -55,6 +55,8 @@ struct LegendGraphicSymbol
   {
   }
 
+  LegendGraphicSymbol& operator = (const LegendGraphicSymbol&) = default;
+
   std::string symbol_name;
   std::map<std::string, std::string> translations;
 };
