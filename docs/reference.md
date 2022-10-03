@@ -2773,6 +2773,7 @@ The table below contains a list of attributes used in the Label structure.
 |missing|string|"-"|Label for missing values. No text is output if the value is empty.|
 |precision|int|0|Number of decimals.|
 |multiple|double|0|If nonzero, round value to multiple of set value|
+|rounding|string|"tonearest"|Rounding mode: tonearest, towardzero, upward or downward.|
 |locale|string|-|Locale for printing the number, for example fi_FI.|
 |prefix|string|""|Prefix for the number.|
 |suffix|string|""|Suffix for the number, usually for units.|

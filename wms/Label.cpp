@@ -5,6 +5,7 @@
 #include <boost/format.hpp>
 #include <boost/locale.hpp>
 #include <macgyver/Exception.h>
+#include <cfenv>
 #include <cmath>
 #include <iomanip>
 #include <stdexcept>
@@ -15,6 +16,22 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+// This is thread safe
+void set_rounding(const std::string& rounding)
+{
+  if (rounding == "tonearest")
+    std::fesetround(FE_TONEAREST);
+  else if (rounding == "towardzero")
+    std::fesetround(FE_TOWARDZERO);
+  else if (rounding == "upward")
+    std::fesetround(FE_UPWARD);
+  else if (rounding == "downward")
+    std::fesetround(FE_DOWNWARD);
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Set the locale
@@ -56,27 +73,44 @@ std::string Label::print(double theValue) const
 
     double value = multiplier * theValue + offset;
 
-    if (multiple > 0)
-      value = multiple * std::round(value / multiple);
+    auto old_rounding = std::fegetround();
 
-    formatter->str("");
-
-    if (plusprefix.empty() && minusprefix.empty())
+    try
     {
-      // Standard case has no sign manipulations
-      *formatter << std::fixed << std::setprecision(precision) << value;
-      std::string ret = formatter->str();
-      if (ret == "-0")
-        ret = "0";
-      return prefix + ret + suffix;
-    }
+      set_rounding(rounding);
 
-    // Handle special sign selections
-    *formatter << std::fixed << std::setprecision(precision) << std::abs(value);
-    std::string ret = formatter->str();
-    if (value < 0)
-      return prefix + minusprefix + ret + suffix;
-    return prefix + plusprefix + ret + suffix;
+      if (multiple > 0)
+        value = multiple * std::rint(value / multiple);
+
+      formatter->str("");
+
+      if (plusprefix.empty() && minusprefix.empty())
+      {
+        // Standard case has no sign manipulations
+        *formatter << std::fixed << std::setprecision(precision) << value;
+        std::fesetround(old_rounding);
+
+        std::string ret = formatter->str();
+        if (ret == "-0")
+          ret = "0";
+
+        return prefix + ret + suffix;
+      }
+
+      // Handle special sign selections
+      *formatter << std::fixed << std::setprecision(precision) << std::abs(value);
+      std::fesetround(old_rounding);
+
+      std::string ret = formatter->str();
+      if (value < 0)
+        return prefix + minusprefix + ret + suffix;
+      return prefix + plusprefix + ret + suffix;
+    }
+    catch (...)
+    {
+      std::fesetround(old_rounding);
+      throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    }
   }
   catch (...)
   {
@@ -127,6 +161,13 @@ void Label::init(const Json::Value& theJson, const Config& theConfig)
         precision = json.asInt();
       else if (name == "multiple")
         multiple = json.asDouble();
+      else if (name == "rounding")
+      {
+        rounding = json.asString();
+        if (rounding != "tonearest" && rounding != "upward" && rounding != "downward" &&
+            rounding != "towardzero")
+          throw Fmi::Exception(BCP, "Unknown label rounding mode '" + rounding + "'");
+      }
       else if (name == "prefix")
         prefix = json.asString();
       else if (name == "suffix")
@@ -178,6 +219,7 @@ std::size_t Label::hash_value(const State& /* theState */) const
     Fmi::hash_combine(hash, Fmi::hash_value(missing));
     Fmi::hash_combine(hash, Fmi::hash_value(precision));
     Fmi::hash_combine(hash, Fmi::hash_value(multiple));
+    Fmi::hash_combine(hash, Fmi::hash_value(rounding));
     Fmi::hash_combine(hash, Fmi::hash_value(prefix));
     Fmi::hash_combine(hash, Fmi::hash_value(suffix));
     Fmi::hash_combine(hash, Fmi::hash_value(plusprefix));

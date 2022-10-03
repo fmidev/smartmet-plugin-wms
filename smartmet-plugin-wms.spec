@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.9.29
+Version: 22.10.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -26,8 +26,8 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 22.8.31
-BuildRequires: smartmet-library-grid-content-devel >= 22.9.21
-BuildRequires: smartmet-library-grid-files-devel >= 22.9.21
+BuildRequires: smartmet-library-grid-content-devel >= 22.9.29
+BuildRequires: smartmet-library-grid-files-devel >= 22.9.29
 BuildRequires: smartmet-library-macgyver-devel >= 22.8.23
 BuildRequires: smartmet-library-spine-devel >= 22.9.5
 BuildRequires: smartmet-library-timeseries-devel >= 22.9.9
@@ -43,8 +43,8 @@ BuildRequires: smartmet-engine-geonames-devel >= 22.8.25
 BuildRequires: smartmet-engine-querydata-devel >= 22.9.9
 BuildRequires: smartmet-engine-contour-devel >= 22.9.29
 BuildRequires: smartmet-library-gis-devel >= 22.9.28
-BuildRequires: smartmet-library-trax-devel >= 22.9.29
-BuildRequires: fmt-devel >= %{smartmet_fmt_min}, fmt-devel < %{smartmet_fmt_max}
+BuildRequires: smartmet-library-trax-devel >= 22.10.3
+BuildRequires: fmt-devel >= 8.1.1 fmt-devel < %{smartmet_fmt_max}
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
@@ -61,15 +61,15 @@ BuildRequires: librsvg2-devel
 #TestRequires: librsvg2-tools
 %endif
 Requires: cairo
-Requires: fmt >= %{smartmet_fmt_min}, fmt < %{smartmet_fmt_max}
+Requires: fmt >= 8.1.1 fmt < %{smartmet_fmt_max}
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 22.9.21
-Requires: smartmet-library-grid-files >= 22.9.21
+Requires: smartmet-library-grid-content >= 22.9.29
+Requires: smartmet-library-grid-files >= 22.9.29
 Requires: smartmet-library-gis >= 22.9.28
-Requires: smartmet-library-trax >= 22.9.29
+Requires: smartmet-library-trax >= 22.10.3
 Requires: smartmet-library-macgyver >= 22.8.23
 Requires: smartmet-library-spine >= 22.9.5
 Requires: smartmet-library-timeseries >= 22.9.9
@@ -106,7 +106,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-gis-devel >= 22.8.25
 #TestRequires: smartmet-engine-querydata-devel >= 22.9.9
 #TestRequires: smartmet-library-giza-devel >= 22.8.31
-#TestRequires: smartmet-library-trax-devel >= 22.9.29
+#TestRequires: smartmet-library-trax-devel >= 22.10.3
 #TestRequires: smartmet-library-newbase-devel >= 22.8.29
 #TestRequires: smartmet-library-spine-devel >= 22.9.5
 #TestRequires: smartmet-library-timeseries-devel >= 22.9.9
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Oct  3 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.10.3-1.fmi
+- Added rounding modes for labels
+
 * Thu Sep 29 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.9.29-1.fmi
 - Fixes to missing value contouring
 
