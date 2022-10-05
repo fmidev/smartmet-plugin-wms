@@ -44,11 +44,13 @@ class Filter;
 
 using ImageCache = Spine::SmartMetCache;
 
-class Plugin : public SmartMetPlugin, private boost::noncopyable
+class Plugin : public SmartMetPlugin
 {
  public:
   ~Plugin();
   Plugin() = delete;
+  Plugin(const Plugin& other) = delete;
+  Plugin& operator=(const Plugin& other) = delete;
   Plugin(Spine::Reactor* theReactor, const char* theConfig);
 
   const std::string& getPluginName() const override;

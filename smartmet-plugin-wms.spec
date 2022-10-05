@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.10.3
+Version: 22.10.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -30,18 +30,18 @@ BuildRequires: smartmet-library-grid-content-devel >= 22.9.29
 BuildRequires: smartmet-library-grid-files-devel >= 22.9.29
 BuildRequires: smartmet-library-macgyver-devel >= 22.8.23
 BuildRequires: smartmet-library-spine-devel >= 22.9.5
-BuildRequires: smartmet-library-timeseries-devel >= 22.9.9
+BuildRequires: smartmet-library-timeseries-devel >= 22.10.4
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 22.6.17
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 22.9.15
+BuildRequires: smartmet-engine-observation-devel >= 22.10.4
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 22.8.25
+BuildRequires: smartmet-engine-gis-devel >= 22.10.5
 BuildRequires: smartmet-engine-grid-devel >= 22.9.9
-BuildRequires: smartmet-engine-geonames-devel >= 22.8.25
-BuildRequires: smartmet-engine-querydata-devel >= 22.9.9
-BuildRequires: smartmet-engine-contour-devel >= 22.9.29
+BuildRequires: smartmet-engine-geonames-devel >= 22.10.5
+BuildRequires: smartmet-engine-querydata-devel >= 22.10.5
+BuildRequires: smartmet-engine-contour-devel >= 22.10.5
 BuildRequires: smartmet-library-gis-devel >= 22.9.28
 BuildRequires: smartmet-library-trax-devel >= 22.10.3
 BuildRequires: fmt-devel >= 8.1.1 fmt-devel < %{smartmet_fmt_max}
@@ -72,17 +72,17 @@ Requires: smartmet-library-gis >= 22.9.28
 Requires: smartmet-library-trax >= 22.10.3
 Requires: smartmet-library-macgyver >= 22.8.23
 Requires: smartmet-library-spine >= 22.9.5
-Requires: smartmet-library-timeseries >= 22.9.9
+Requires: smartmet-library-timeseries >= 22.10.4
 Requires: smartmet-library-giza >= 22.8.31
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 22.6.17
 %endif
-Requires: smartmet-engine-querydata >= 22.9.9
-Requires: smartmet-engine-contour >= 22.9.29
-Requires: smartmet-engine-gis >= 22.8.25
+Requires: smartmet-engine-querydata >= 22.10.5
+Requires: smartmet-engine-contour >= 22.10.5
+Requires: smartmet-engine-gis >= 22.10.5
 Requires: smartmet-engine-grid >= 22.9.9
-Requires: smartmet-engine-geonames >= 22.8.25
-Requires: smartmet-server >= 22.8.19
+Requires: smartmet-engine-geonames >= 22.10.5
+Requires: smartmet-server >= 22.10.5
 Requires: smartmet-library-spine >= 22.9.5
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
@@ -101,15 +101,15 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: jsoncpp-devel
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 22.9.29
-#TestRequires: smartmet-engine-geonames-devel >= 22.8.25
-#TestRequires: smartmet-engine-gis-devel >= 22.8.25
-#TestRequires: smartmet-engine-querydata-devel >= 22.9.9
+#TestRequires: smartmet-engine-contour-devel >= 22.10.5
+#TestRequires: smartmet-engine-geonames-devel >= 22.10.5
+#TestRequires: smartmet-engine-gis-devel >= 22.10.5
+#TestRequires: smartmet-engine-querydata-devel >= 22.10.5
 #TestRequires: smartmet-library-giza-devel >= 22.8.31
 #TestRequires: smartmet-library-trax-devel >= 22.10.3
 #TestRequires: smartmet-library-newbase-devel >= 22.8.29
 #TestRequires: smartmet-library-spine-devel >= 22.9.5
-#TestRequires: smartmet-library-timeseries-devel >= 22.9.9
+#TestRequires: smartmet-library-timeseries-devel >= 22.10.4
 #TestRequires: smartmet-engine-grid-devel >= 22.9.9
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
@@ -120,7 +120,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 22.9.15
+#TestRequires: smartmet-engine-observation-devel >= 22.10.4
 %endif
 
 %description
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Oct  5 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.10.5-1.fmi
+- Do not use boost::noncopyable
+
 * Mon Oct  3 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.10.3-1.fmi
 - Added rounding modes for labels
 

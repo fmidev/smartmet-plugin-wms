@@ -6,7 +6,6 @@
 
 #pragma once
 
-#include <boost/utility.hpp>
 #include <libconfig.h++>
 #include <map>
 #include <set>
@@ -18,7 +17,7 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config : private boost::noncopyable
+class Config
 {
  public:
   struct UnitConversion
@@ -28,6 +27,8 @@ class Config : private boost::noncopyable
   };
 
   Config() = delete;
+  Config(const Config& other) = delete;
+  Config& operator=(const Config& other) = delete;
   Config(const std::string& configfile);
 
   const std::string& defaultUrl() const;
