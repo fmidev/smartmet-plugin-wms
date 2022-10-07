@@ -93,10 +93,17 @@ fi
 
 DBZ=$((compare 2>&1 -metric PSNR $EXPECTED_PNG $RESULT_PNG /dev/null | head -1 | sed "-es/ dB//") || echo -n PNG COMPARISON FAILED && exit 1)
 
+if test $(echo $DBZ | wc -w) -ge 2 ; then
+    MATCHES="0"
+    DBZ=$(echo $DBZ | sed -e 's:\s.*$::')
+else
+    MATCHES="inf"
+fi
+
 if ! echo -n "$DBZ" | grep -Eq '^(inf|[\+\-]?[0-9][0-9]*(\.[0-9]*)?)$' ; then
     echo -n -e "FAIL\t\t$DBZ"
     exit 1
-elif [ "$DBZ" = inf ]; then
+elif [ "$DBZ" = "$MATCHES" ]; then
     echo -n -e "OK ~"
     rm -f $RESULT $RESULT_PNG $EXPECTED_PNG
     exit 0
