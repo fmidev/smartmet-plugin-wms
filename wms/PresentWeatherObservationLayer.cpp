@@ -192,8 +192,8 @@ void PresentWeatherObservationLayer::getParameters(
     starttime = requested_timestep;
 
     parameters.push_back(TS::makeParameter("fmisid"));
-    parameters.push_back(TS::makeParameter("longitude"));
-    parameters.push_back(TS::makeParameter("latitude"));
+    parameters.push_back(TS::makeParameter("stationlongitude"));
+    parameters.push_back(TS::makeParameter("stationlatitude"));
     parameters.push_back(TS::makeParameter("ww_aws"));
   }
   catch (...)

@@ -4,6 +4,7 @@
 #include "LonLatToXYTransformation.h"
 #include "State.h"
 #include "ValueTools.h"
+#include <macgyver/StringConversion.h>
 #include <timeseries/ParameterTools.h>
 #include <timeseries/TimeSeriesInclude.h>
 
@@ -101,41 +102,32 @@ int get_symbol_priority(int symbol, double t2m)
     {
       case 106:
         return 0;
-        break;
       case 53:
       case 229:
         return 1;
-        break;
       case 232:
       case 233:
       case 234:
       case 236:
       case 244:
         return 2;
-        break;
       case 225:
         return 5;
-        break;
       case 51:
       case 213:
         return 6;
-        break;
       case 209:
         return 7;
-        break;
       case 52:
       case 212:
       case 214:
       case 223:
         return 8;
-        break;
       case 219:
         return 9;
-        break;
       case 222:
       case 224:
         return 10;
-        break;
     }
   }
   else if (t2m < 10)
@@ -145,7 +137,6 @@ int get_symbol_priority(int symbol, double t2m)
     {
       case 106:
         return 0;
-        break;
       case 51:
       case 52:
       case 53:
@@ -153,7 +144,6 @@ int get_symbol_priority(int symbol, double t2m)
       case 223:
       case 225:
         return 1;  // slight
-        break;
       case 209:
       case 219:
       case 229:
@@ -162,14 +152,12 @@ int get_symbol_priority(int symbol, double t2m)
       case 236:
       case 244:
         return 2;  // moderate
-        break;
       case 212:
       case 214:
       case 222:
       case 224:
       case 232:
         return 4;  // heavy
-        break;
     }
   }
   else
@@ -181,41 +169,31 @@ int get_symbol_priority(int symbol, double t2m)
       case 52:
       case 106:
         return 0;
-        break;
       case 209:
       case 219:
         return 1;
-        break;
       case 212:
       case 222:
         return 2;
-        break;
       case 213:
         return 3;
-        break;
       case 214:
         return 4;
-        break;
       case 225:
         return 5;
-        break;
       case 53:
       case 223:
         return 6;
-        break;
       case 224:
       case 229:
         return 7;
-        break;
       case 232:
         return 8;
-        break;
       case 233:
       case 234:
       case 236:
       case 244:
         return 9;
-        break;
     }
   }
 
@@ -236,8 +214,8 @@ void FinnishRoadObservationLayer::getParameters(const boost::posix_time::ptime& 
                                24));  //  // We must calculate mean temperature from last 24 hours
 
     parameters.push_back(TS::makeParameter("fmisid"));
-    parameters.push_back(TS::makeParameter("longitude"));
-    parameters.push_back(TS::makeParameter("latitude"));
+    parameters.push_back(TS::makeParameter("stationlongitude"));
+    parameters.push_back(TS::makeParameter("stationlatitude"));
     parameters.push_back(TS::makeParameter("ILMA"));
     parameters.push_back(TS::makeParameter("SADE"));
     parameters.push_back(TS::makeParameter("RST"));
@@ -280,20 +258,25 @@ StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(
       const auto& longitude_result_set_vector = result_set_item.second.at(1);
       if (longitude_result_set_vector.empty())
         continue;
-      auto lon = get_double(longitude_result_set_vector.at(0).value);
+      const auto lon = get_double(longitude_result_set_vector.at(0).value);
       // Latitude: data independent
       const auto& latitude_result_set_vector = result_set_item.second.at(2);
-      auto lat = get_double(latitude_result_set_vector.at(0).value);
+      const auto lat = get_double(latitude_result_set_vector.at(0).value);
       // Transform to screen coordinates
-      if (transformation.transform(lon, lat))
+      double x = lon;
+      double y = lat;
+      if (transformation.transform(x, y))
       {
-        ssp.longitude = lon;
-        ssp.latitude = lat;
+        ssp.longitude = x;
+        ssp.latitude = y;
       }
       else
       {
         throw Fmi::Exception::Trace(
-            BCP, "Transforming longitude, latitude to screen coordinates failed!");
+            BCP, "Transforming longitude, latitude to screen coordinates failed!")
+            .addParameter("fmisid", Fmi::to_string(ssp.fmisid))
+            .addParameter("lon", Fmi::to_string(lon))
+            .addParameter("lat", Fmi::to_string(lat));
       }
       // ILMA: get mean of previous 24 hours
       const auto& ilma_result_set_vector = result_set_item.second.at(3);
