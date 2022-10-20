@@ -692,7 +692,7 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
   double xpos = envelope.MinX;
   double ypos = envelope.MaxY;
 
-  auto transformation = LonLatToXYTransformation(projection);
+  auto transformation = XYTransformation(projection.getCRS(), projection);
 
   if (!transformation.transform(xpos, ypos))
     return;
