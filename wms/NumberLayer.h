@@ -60,7 +60,7 @@ class NumberLayer : public Layer
 
   // default symbol
   boost::optional<std::string> symbol;
-  boost::optional<double> scale;
+  boost::optional<double> scale;  // has no effect on numbers, only on the symbol
 
   std::vector<AttributeSelection> numbers;
 
