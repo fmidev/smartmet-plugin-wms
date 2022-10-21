@@ -7,18 +7,25 @@ namespace Plugin
 namespace Dali
 {
 LonLatToXYTransformation::LonLatToXYTransformation(const Projection& projection)
-    : transformation("WGS84", projection)
+    : transformation("WGS84", projection.getCRS()), box(projection.getBox())
 {
 }
 
 bool LonLatToXYTransformation::transform(double longitude, double latitude, double& x, double& y)
 {
-  return transformation.transform(longitude, latitude, x, y);
+  if (!transformation.transform(longitude, latitude))
+    return false;
+
+  box.transform(longitude, latitude);
+  x = longitude;
+  y = latitude;
+
+  return true;
 }
 
 bool LonLatToXYTransformation::transform(double& inoutX, double& inoutY)
 {
-  return transformation.transform(inoutX, inoutY, inoutX, inoutY);
+  return transform(inoutX, inoutY, inoutX, inoutY);
 }
 
 }  // namespace Dali

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Projection.h"
-#include "XYTransformation.h"
+#include <gis/Box.h>
+#include <gis/CoordinateTransformation.h>
 
 namespace SmartMet
 {
@@ -20,7 +21,8 @@ class LonLatToXYTransformation
   bool transform(double& inoutX, double& inoutY);
 
  private:
-  XYTransformation transformation;
+  Fmi::CoordinateTransformation transformation;
+  const Fmi::Box& box;
 };
 }  // namespace Dali
 }  // namespace Plugin

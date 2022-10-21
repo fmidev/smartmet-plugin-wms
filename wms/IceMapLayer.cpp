@@ -8,6 +8,7 @@
 #include "State.h"
 #include "TextTable.h"
 #include "TextUtility.h"
+#include "XYTransformation.h"
 #include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
@@ -99,7 +100,7 @@ std::vector<std::string> getAttributeColumns(const std::map<std::string, std::st
     // mean temperature column name is determined by given date
     if (column_name == std::string("o_DD_o_MM_o") && time)
     {
-      std::string mean_temperature_column(getMeanTemperatureColumnName(*time));
+      std::string mean_temperature_column = getMeanTemperatureColumnName(*time);
 
       if (mean_temperature_column.empty())
       {
@@ -382,6 +383,8 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     const auto& projectionSR = projection.getCRS();
 
+    // Default is World Mercator used in marine maps in case the spatial reference is missing from
+    // the database
     Fmi::SpatialReference defaultSR("EPSG:3395");
 
     unsigned int mapid = 1;  // id to concatenate to iri to make it unique
@@ -398,7 +401,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
       std::vector<std::string> attribute_column_names = getAttributeColumns(itsParameters, time);
 
-      std::string layer_subtype(getParameterValue("layer_subtype"));
+      std::string layer_subtype = getParameterValue("layer_subtype");
 
       // mean temperature needs a column name (requested time must be between 21.10-21.3)
       if (attribute_column_names.empty() && layer_subtype == "mean_temperature")
@@ -481,9 +484,9 @@ void IceMapLayer::handleSymbol(const Fmi::Feature& theResultItem,
                                CTPP::CDT& theGroupCdt,
                                const State& /* theState */) const
 {
-  auto transformation = LonLatToXYTransformation(projection);
+  auto transformation = XYTransformation(projection);
 
-  std::string iri(getParameterValue("symbol"));
+  std::string iri = getParameterValue("symbol");
 
   if (theResultItem.geom && theResultItem.geom->IsEmpty() == 0)
   {
@@ -491,22 +494,21 @@ void IceMapLayer::handleSymbol(const Fmi::Feature& theResultItem,
     OGREnvelope envelope;
     theResultItem.geom->getEnvelope(&envelope);
 
-    double lon = ((envelope.MinX + envelope.MaxX) / 2);
-    double lat = ((envelope.MinY + envelope.MaxY) / 2);
+    double x = ((envelope.MinX + envelope.MaxX) / 2);
+    double y = ((envelope.MinY + envelope.MaxY) / 2);
 
-    if (!transformation.transform(lon, lat))
-      return;
+    transformation.transform(x, y);
 
-    lon -= 15;
-    lat -= 5;
+    x -= 15;
+    y -= 5;
 
     // Start generating the hash
     CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
     tag_cdt["start"] = "<use";
     tag_cdt["end"] = "/>";
     tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-    tag_cdt["attributes"]["x"] = Fmi::to_string(lround(lon));
-    tag_cdt["attributes"]["y"] = Fmi::to_string(lround(lat));
+    tag_cdt["attributes"]["x"] = Fmi::to_string(lround(x));
+    tag_cdt["attributes"]["y"] = Fmi::to_string(lround(y));
     theGroupCdt["tags"].PushBack(tag_cdt);
   }
 }
@@ -553,38 +555,37 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
                                       CTPP::CDT& theGroupCdt,
                                       State& theState) const
 {
-  auto transformation = LonLatToXYTransformation(projection);
+  auto transformation = XYTransformation(projection);
 
   if (theResultItem.geom && theResultItem.geom->IsEmpty() == 0)
   {
     const auto* point = dynamic_cast<const OGRPoint*>(theResultItem.geom.get());
 
-    double lon(point->getX());
-    double lat(point->getY());
+    double x = point->getX();
+    double y = point->getY();
 
-    if (!transformation.transform(lon, lat))
-      return;
+    transformation.transform(x, y);
 
     // Start generating the hash
     CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
     tag_cdt["start"] = "<use";
     tag_cdt["end"] = "/>";
 
-    std::string iri(getParameterValue("symbol"));
+    std::string iri = getParameterValue("symbol");
 
     if (!iri.empty())
     {
       if (theState.addId(iri))
         theGlobals["includes"][iri] = theState.getSymbol(iri);
       tag_cdt["attributes"]["xlink:href"] = "#" + iri;
-      tag_cdt["attributes"]["x"] = Fmi::to_string(lon);
-      tag_cdt["attributes"]["y"] = Fmi::to_string(lat);
+      tag_cdt["attributes"]["x"] = Fmi::to_string(x);
+      tag_cdt["attributes"]["y"] = Fmi::to_string(y);
       theGroupCdt["tags"].PushBack(tag_cdt);
     }
     // first name second name
     std::string first_name;
     std::string second_name;
-    std::string name_position("label_location");
+    std::string name_position = "label_location";
     if (itsParameters.find("firstname_column") != itsParameters.end())
       first_name =
           boost::apply_visitor(PostGISAttributeToString(),
@@ -622,8 +623,8 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
     if (arrow_angle.empty())
       arrow_angle = "-1";
 
-    addLocationName(lon,
-                    lat,
+    addLocationName(x,
+                    y,
                     first_name,
                     second_name,
                     Fmi::stoi(name_position),
@@ -651,9 +652,9 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
   text_style_t text_style;
 
   // default name of text column for a label is 'textstring'
-  std::string labeltext_column("textstring");
-  std::string fontname_column("fontname");
-  std::string fontsize_column("fontsize");
+  std::string labeltext_column = "textstring";
+  std::string fontname_column = "fontname";
+  std::string fontsize_column = "fontsize";
   if (itsParameters.find("labeltext_column") != itsParameters.end())
     labeltext_column = itsParameters.at("labeltext_column");
   if (theResultItem.attributes.find(labeltext_column) != theResultItem.attributes.end())
@@ -692,10 +693,8 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
   double xpos = envelope.MinX;
   double ypos = envelope.MaxY;
 
-  auto transformation = XYTransformation(projection.getCRS(), projection);
-
-  if (!transformation.transform(xpos, ypos))
-    return;
+  auto transformation = XYTransformation(projection);
+  transformation.transform(xpos, ypos);
 
   ypos += (text_dimension.height + 5);
 
@@ -741,7 +740,7 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
                                         CTPP::CDT& theLayersCdt,
                                         State& theState) const
 {
-  std::string col_name(getMeanTemperatureColumnName(*time));
+  std::string col_name = getMeanTemperatureColumnName(*time);
 
   // mean temperature
   std::string mean_temperature =
@@ -766,9 +765,8 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
   double xpos = point->getX();
   double ypos = point->getY();
 
-  auto transformation = LonLatToXYTransformation(projection);
-  if (!transformation.transform(xpos, ypos))
-    return;
+  auto transformation = XYTransformation(projection);
+  transformation.transform(xpos, ypos);
 
   // background ellipse
   CTPP::CDT background_ellipse_cdt(CTPP::CDT::HASH_VAL);
@@ -969,8 +967,8 @@ void IceMapLayer::addLocationName(double theXPos,
                                   CTPP::CDT& /* theGroupCdt */,
                                   State& theState)
 {
-  std::string first_name(theFirstName);
-  std::string second_name(theSecondName);
+  std::string first_name = theFirstName;
+  std::string second_name = theSecondName;
 
   boost::algorithm::trim(first_name);
   boost::algorithm::trim(second_name);
@@ -986,16 +984,16 @@ void IceMapLayer::addLocationName(double theXPos,
   boost::replace_all(second_name, "<", "&#60;");
   boost::replace_all(second_name, ">", "&#62;");
 
-  double x_coord(-1.0);
-  double y_coord_first(-1.0);
-  double y_coord_second(-1.0);
+  double x_coord = -1.0;
+  double y_coord_first = -1.0;
+  double y_coord_second = -1.0;
 
-  unsigned int x_offset(text_dimension_first.width >= text_dimension_second.width
-                            ? text_dimension_first.width
-                            : text_dimension_second.width);
-  unsigned int y_offset(text_dimension_first.height >= text_dimension_second.height
-                            ? text_dimension_first.height
-                            : text_dimension_second.height);
+  unsigned int x_offset =
+      (text_dimension_first.width >= text_dimension_second.width ? text_dimension_first.width
+                                                                 : text_dimension_second.width);
+  unsigned int y_offset =
+      (text_dimension_first.height >= text_dimension_second.height ? text_dimension_first.height
+                                                                   : text_dimension_second.height);
 
   switch (thePosition)
   {
@@ -1173,7 +1171,7 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
   // add pattern on geometry
   if (itsParameters.find("pattern") != itsParameters.end())
   {
-    std::string pattern_iri(itsParameters.at("pattern"));
+    std::string pattern_iri = itsParameters.at("pattern");
     if (theState.addId(pattern_iri))
       theGlobals["includes"][pattern_iri] = theState.getPattern(pattern_iri);
   }
@@ -1199,7 +1197,7 @@ void IceMapLayer::handleResultItem(const Fmi::Feature& theResultItem,
                                    CTPP::CDT& theGroupCdt,
                                    State& theState) const
 {
-  std::string layer_subtype(getParameterValue("layer_subtype"));
+  std::string layer_subtype = getParameterValue("layer_subtype");
 
   if (layer_subtype.find("label") == layer_subtype.size() - 5)
   {
