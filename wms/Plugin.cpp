@@ -1707,6 +1707,9 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
       Fmi::Exception e(BCP, "Failed to generate product", nullptr);
       e.addParameter("URI", theRequest.getURI());
       e.addParameter("ClientIP", theRequest.getClientIP());
+      const bool check_token = true;
+      auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
+      e.addParameter("Apikey", (apikey ? *apikey : std::string("-")));
       e.printError();
     }
 
@@ -1751,6 +1754,11 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
   // Console logging
   exception.addParameter("URI", theRequest.getURI());
   exception.addParameter("ClientIP", theRequest.getClientIP());
+
+  const bool check_token = true;
+  auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
+  exception.addParameter("Apikey", (apikey ? *apikey : std::string("-")));
+
   auto quiet = theRequest.getParameter("quiet");
   if (!quiet || (*quiet == "0" || *quiet == "false"))
     exception.printError();

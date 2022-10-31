@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.10.21
+Version: 22.10.31
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -28,9 +28,9 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 22.8.31
 BuildRequires: smartmet-library-grid-content-devel >= 22.10.20
 BuildRequires: smartmet-library-grid-files-devel >= 22.10.20
-BuildRequires: smartmet-library-macgyver-devel >= 22.10.12
+BuildRequires: smartmet-library-macgyver-devel >= 22.10.20
 BuildRequires: smartmet-library-spine-devel >= 22.9.5
-BuildRequires: smartmet-library-timeseries-devel >= 22.10.18
+BuildRequires: smartmet-library-timeseries-devel >= 22.10.25
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 22.6.17
 %endif
@@ -70,9 +70,9 @@ Requires: smartmet-library-grid-content >= 22.10.20
 Requires: smartmet-library-grid-files >= 22.10.20
 Requires: smartmet-library-gis >= 22.9.28
 Requires: smartmet-library-trax >= 22.10.3
-Requires: smartmet-library-macgyver >= 22.10.12
+Requires: smartmet-library-macgyver >= 22.10.20
 Requires: smartmet-library-spine >= 22.9.5
-Requires: smartmet-library-timeseries >= 22.10.18
+Requires: smartmet-library-timeseries >= 22.10.25
 Requires: smartmet-library-giza >= 22.8.31
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 22.6.17
@@ -109,7 +109,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 22.10.3
 #TestRequires: smartmet-library-newbase-devel >= 22.8.29
 #TestRequires: smartmet-library-spine-devel >= 22.9.5
-#TestRequires: smartmet-library-timeseries-devel >= 22.10.18
+#TestRequires: smartmet-library-timeseries-devel >= 22.10.25
 #TestRequires: smartmet-engine-grid-devel >= 22.10.20
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Oct 31 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.10.31-1.fmi
+- Add apikey to error messages
+
 * Fri Oct 21 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.10.21-1.fmi
 - Fixes to icemap layer rendering
 
