@@ -149,6 +149,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+
+* Tue Nov 1 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.11.1-2.fmi
+- Fixed FrameLayer spatial reference transformation bug (BRAINSTORM-2439)
+
 * Tue Nov  1 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.1-1.fmi
 - Allow using WMS 1.1 SRS option if CRS option is not given
 

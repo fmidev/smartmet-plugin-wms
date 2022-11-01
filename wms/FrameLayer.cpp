@@ -185,6 +185,9 @@ void FrameLayer::init(const Json::Value& theJson,
     }
 
     itsGeom = createFrameGeometry(itsInnerBorder, itsOuterBorder);
+    Fmi::SpatialReference epsg4326("EPSG:4326");
+	itsGeom->assignSpatialReference(epsg4326.get());
+	itsGeom->transformTo(projection.getCRS());
   }
   catch (...)
   {
