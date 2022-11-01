@@ -66,6 +66,20 @@ std::string get_json_element_value(const Json::Value& json, const std::string& k
   return ret;
 }
 
+std::string get_crs(const Spine::HTTP::Request& request)
+{
+  auto tmp = request.getParameter("CRS");  // WMS 1.3
+  if (tmp)
+    return *tmp;
+  tmp = request.getParameter("SRS");  // WMS 1.1
+  if (tmp)
+    return *tmp;
+
+  throw Fmi::Exception(BCP, "CRS-option has not been defined")
+      .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE)
+      .disableStackTrace();
+}
+
 void rename_json_element(const Json::Value& json,
                          const std::string& keyStr,
                          const std::string& postfix)
@@ -289,7 +303,7 @@ void check_getmap_request_options(const Spine::HTTP::Request& theHTTPRequest)
           .disableStackTrace();
     }
 
-    if (!theHTTPRequest.getParameter("CRS"))
+    if (!theHTTPRequest.getParameter("CRS") && !theHTTPRequest.getParameter("SRS"))
     {
       throw Fmi::Exception(BCP, "CRS-option has not been defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE)
@@ -635,7 +649,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       itsParameters.map_info_vector.emplace_back(tag_map_info(layerName, layerStyle));
     }
 
-    std::string crs = *(theRequest.getParameter("CRS"));  // desired CRS name
+    std::string crs = get_crs(theRequest);
 
     std::string bbox = *(theRequest.getParameter("BBOX"));
 

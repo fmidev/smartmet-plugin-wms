@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.10.31
+Version: 22.11.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Nov  1 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.1-1.fmi
+- Allow using WMS 1.1 SRS option if CRS option is not given
+
 * Mon Oct 31 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.10.31-1.fmi
 - Add apikey to error messages
 
