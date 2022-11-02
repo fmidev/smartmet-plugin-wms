@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.11.1
+Version: 22.11.2
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -29,7 +29,7 @@ BuildRequires: smartmet-library-giza-devel >= 22.8.31
 BuildRequires: smartmet-library-grid-content-devel >= 22.10.20
 BuildRequires: smartmet-library-grid-files-devel >= 22.10.20
 BuildRequires: smartmet-library-macgyver-devel >= 22.10.20
-BuildRequires: smartmet-library-spine-devel >= 22.9.5
+BuildRequires: smartmet-library-spine-devel >= 22.10.26
 BuildRequires: smartmet-library-timeseries-devel >= 22.10.25
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 22.6.17
@@ -71,7 +71,7 @@ Requires: smartmet-library-grid-files >= 22.10.20
 Requires: smartmet-library-gis >= 22.9.28
 Requires: smartmet-library-trax >= 22.10.3
 Requires: smartmet-library-macgyver >= 22.10.20
-Requires: smartmet-library-spine >= 22.9.5
+Requires: smartmet-library-spine >= 22.10.26
 Requires: smartmet-library-timeseries >= 22.10.25
 Requires: smartmet-library-giza >= 22.8.31
 %if %{with authentication}
@@ -83,7 +83,7 @@ Requires: smartmet-engine-gis >= 22.10.5
 Requires: smartmet-engine-grid >= 22.10.20
 Requires: smartmet-engine-geonames >= 22.10.5
 Requires: smartmet-server >= 22.10.5
-Requires: smartmet-library-spine >= 22.9.5
+Requires: smartmet-library-spine >= 22.10.26
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
@@ -108,7 +108,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 22.8.31
 #TestRequires: smartmet-library-trax-devel >= 22.10.3
 #TestRequires: smartmet-library-newbase-devel >= 22.8.29
-#TestRequires: smartmet-library-spine-devel >= 22.9.5
+#TestRequires: smartmet-library-spine-devel >= 22.10.26
 #TestRequires: smartmet-library-timeseries-devel >= 22.10.25
 #TestRequires: smartmet-engine-grid-devel >= 22.10.20
 #TestRequires: smartmet-engine-grid-test
@@ -150,7 +150,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 
-* Tue Nov 1 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.11.1-2.fmi
+* Wed Nov  2 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.11.2-1.fmi
 - Fixed FrameLayer spatial reference transformation bug (BRAINSTORM-2439)
 
 * Tue Nov  1 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.1-1.fmi
