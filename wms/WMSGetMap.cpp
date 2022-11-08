@@ -77,7 +77,7 @@ std::string get_crs(const Spine::HTTP::Request& request)
 
   throw Fmi::Exception(BCP, "CRS-option has not been defined")
       .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE)
-      .disableStackTrace();
+      .disableLogging();
 }
 
 void rename_json_element(const Json::Value& json,
@@ -286,56 +286,56 @@ void check_getmap_request_options(const Spine::HTTP::Request& theHTTPRequest)
     {
       throw Fmi::Exception(BCP, "Version not defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE)
-          .disableStackTrace();
+          .disableLogging();
     }
 
     if (!theHTTPRequest.getParameter("LAYERS"))
     {
       throw Fmi::Exception(BCP, "At least one layer must be defined in GetMap request")
           .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED)
-          .disableStackTrace();
+          .disableLogging();
     }
 
     if (!theHTTPRequest.getParameter("STYLES"))
     {
       throw Fmi::Exception(BCP, "STYLES-option must be defined, even if it is empty")
           .addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED)
-          .disableStackTrace();
+          .disableLogging();
     }
 
     if (!theHTTPRequest.getParameter("CRS") && !theHTTPRequest.getParameter("SRS"))
     {
       throw Fmi::Exception(BCP, "CRS-option has not been defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE)
-          .disableStackTrace();
+          .disableLogging();
     }
 
     if (!theHTTPRequest.getParameter("BBOX"))
     {
       throw Fmi::Exception(BCP, "BBOX-option has not been defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE)
-          .disableStackTrace();
+          .disableLogging();
     }
 
     if (!theHTTPRequest.getParameter("WIDTH"))
     {
       throw Fmi::Exception(BCP, "WIDTH-option has not been defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE)
-          .disableStackTrace();
+          .disableLogging();
     }
 
     if (!theHTTPRequest.getParameter("HEIGHT"))
     {
       throw Fmi::Exception(BCP, "HEIGHT-option has not been defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_MISSING_DIMENSION_VALUE)
-          .disableStackTrace();
+          .disableLogging();
     }
 
     if (!theHTTPRequest.getParameter("FORMAT"))
     {
       throw Fmi::Exception(BCP, "FORMAT-option has not been defined")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE)
-          .disableStackTrace();
+          .disableLogging();
     }
   }
   catch (...)
@@ -401,7 +401,7 @@ void validate_options(const tag_get_map_request_options& options,
               .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
               .addParameter("Requested reference time", Fmi::to_iso_string(*options.reference_time))
               .addParameter("Requested layer", layer)
-              .disableStackTrace();
+              .disableLogging();
         }
       }
 
@@ -415,7 +415,7 @@ void validate_options(const tag_get_map_request_options& options,
               .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
               .addParameter("Requested time", Fmi::to_iso_string(timestamp))
               .addParameter("Requested layer", layer)
-              .disableStackTrace();
+              .disableLogging();
         }
       }
 
@@ -428,7 +428,7 @@ void validate_options(const tag_get_map_request_options& options,
               .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
               .addParameter("Requested elevation", Fmi::to_string(*options.elevation))
               .addParameter("Requested layer", layer)
-              .disableStackTrace();
+              .disableLogging();
         }
       }
     }
@@ -472,7 +472,7 @@ void validate_options(const tag_get_map_request_options& options,
                                "Invalid interval requested for layer " + layer +
                                    "! interval_start, interval_end: " + interval)
               .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
-              .disableStackTrace();
+              .disableLogging();
         }
       }
     }

@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.11.2
+Version: 22.11.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -149,6 +149,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Nov  8 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.8-1.fmi
+- Disable logging stack traces for common user input errors
 
 * Wed Nov  2 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.11.2-1.fmi
 - Fixed FrameLayer spatial reference transformation bug (BRAINSTORM-2439)
