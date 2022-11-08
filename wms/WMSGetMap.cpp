@@ -357,7 +357,8 @@ void validate_options(const tag_get_map_request_options& options,
           .addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED)
           .addParameter("Requested version", options.version)
           .addParameter("Supported versions",
-                        boost::algorithm::join(itsConfig.supportedWMSVersions(), "','"));
+                        boost::algorithm::join(itsConfig.supportedWMSVersions(), "','"))
+          .disableLogging();
     }
 
     // check whether the requested layers, styles, CRS are valid
