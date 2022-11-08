@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 22.11.8
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -26,8 +26,8 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 22.8.31
-BuildRequires: smartmet-library-grid-content-devel >= 22.10.20
-BuildRequires: smartmet-library-grid-files-devel >= 22.10.20
+BuildRequires: smartmet-library-grid-content-devel >= 22.11.8
+BuildRequires: smartmet-library-grid-files-devel >= 22.11.8
 BuildRequires: smartmet-library-macgyver-devel >= 22.10.20
 BuildRequires: smartmet-library-spine-devel >= 22.10.26
 BuildRequires: smartmet-library-timeseries-devel >= 22.10.25
@@ -38,7 +38,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 22.6.17
 BuildRequires: smartmet-engine-observation-devel >= 22.10.12
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.10.5
-BuildRequires: smartmet-engine-grid-devel >= 22.10.20
+BuildRequires: smartmet-engine-grid-devel >= 22.11.8
 BuildRequires: smartmet-engine-geonames-devel >= 22.10.5
 BuildRequires: smartmet-engine-querydata-devel >= 22.10.5
 BuildRequires: smartmet-engine-contour-devel >= 22.10.5
@@ -66,8 +66,8 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 22.10.20
-Requires: smartmet-library-grid-files >= 22.10.20
+Requires: smartmet-library-grid-content >= 22.11.8
+Requires: smartmet-library-grid-files >= 22.11.8
 Requires: smartmet-library-gis >= 22.9.28
 Requires: smartmet-library-trax >= 22.10.3
 Requires: smartmet-library-macgyver >= 22.10.20
@@ -80,9 +80,9 @@ Requires: smartmet-engine-authentication >= 22.6.17
 Requires: smartmet-engine-querydata >= 22.10.5
 Requires: smartmet-engine-contour >= 22.10.5
 Requires: smartmet-engine-gis >= 22.10.5
-Requires: smartmet-engine-grid >= 22.10.20
+Requires: smartmet-engine-grid >= 22.11.8
 Requires: smartmet-engine-geonames >= 22.10.5
-Requires: smartmet-server >= 22.10.5
+Requires: smartmet-server >= 22.11.7
 Requires: smartmet-library-spine >= 22.10.26
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
@@ -110,7 +110,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-newbase-devel >= 22.8.29
 #TestRequires: smartmet-library-spine-devel >= 22.10.26
 #TestRequires: smartmet-library-timeseries-devel >= 22.10.25
-#TestRequires: smartmet-engine-grid-devel >= 22.10.20
+#TestRequires: smartmet-engine-grid-devel >= 22.11.8
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Nov  8 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.8-3.fmi
+- Repackaged due to base library ABI changes
+
 * Tue Nov  8 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.8-2.fmi
 - Disable logging stack traces if the requested WMS version is not supported
 
