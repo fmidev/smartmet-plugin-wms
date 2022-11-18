@@ -27,7 +27,7 @@ class WMSQueryDataLayer : public WMSLayer
   boost::posix_time::ptime itsModificationTime = boost::posix_time::from_time_t(0);
 
  protected:
-  void updateLayerMetaData() override;
+  bool updateLayerMetaData() override;
 
  public:
   WMSQueryDataLayer(const WMSConfig& config, const std::string& producer)

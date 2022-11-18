@@ -159,7 +159,7 @@ class WMSLayer
   void initLegendGraphicInfo(const Json::Value& root);
 
   // Update layer metadata for GetCapabilities (time,spatial dimensions)
-  virtual void updateLayerMetaData() = 0;
+  virtual bool updateLayerMetaData() = 0;
 
   // Debugging info
   virtual std::string info() const;

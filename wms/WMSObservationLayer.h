@@ -27,7 +27,7 @@ class WMSObservationLayer : public WMSLayer
   int itsTimestep;
 
  protected:
-  virtual void updateLayerMetaData();
+  virtual bool updateLayerMetaData();
 
  public:
   WMSObservationLayer(const WMSConfig& config, const std::string& producer, int timestep)

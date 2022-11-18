@@ -159,7 +159,7 @@ bool WMSPostGISLayer::mustUpdateLayerMetaData()
   }
 }
 
-void WMSPostGISLayer::updateLayerMetaData()
+bool WMSPostGISLayer::updateLayerMetaData()
 {
   try
   {
@@ -181,7 +181,7 @@ void WMSPostGISLayer::updateLayerMetaData()
         exception.addParameter("Layer name", name);
         exception.printError();
       }
-      return;
+      return false;
     }
 
     // bounding box
@@ -224,6 +224,8 @@ void WMSPostGISLayer::updateLayerMetaData()
     }
 
     metadataTimestamp = boost::posix_time::second_clock::universal_time();
+
+    return true;
   }
   catch (...)
   {

@@ -27,7 +27,7 @@ class WMSNonTemporalLayer : public WMSLayer
   boost::posix_time::ptime itsModificationTime = boost::posix_time::from_time_t(0);
 
  protected:
-  void updateLayerMetaData() override {}
+  bool updateLayerMetaData() override { return true; }
 
  public:
   WMSNonTemporalLayer(const WMSConfig& config) : WMSLayer(config) {}

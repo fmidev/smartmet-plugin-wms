@@ -64,28 +64,24 @@ WMSGridDataLayer::WMSGridDataLayer(const WMSConfig& config,
 {
 }
 
-void WMSGridDataLayer::updateLayerMetaData()
+bool WMSGridDataLayer::updateLayerMetaData()
 {
   try
   {
     if (!itsGridEngine || !itsGridEngine->isEnabled())
-    {
-      Fmi::Exception exception(BCP, "The grid-engine is disabled!");
-      exception.disableLogging();
-      throw exception;
-    }
+      return false;
 
     auto contentServer = itsGridEngine->getContentServer_sptr();
 
     T::ProducerInfo producerInfo;
     if (contentServer->getProducerInfoByName(0, itsProducer, producerInfo) != 0)
-      return;
+      return true;
 
     T::GenerationInfoList generationInfoList;
     if (contentServer->getGenerationInfoListByProducerId(
             0, producerInfo.mProducerId, generationInfoList) != 0 ||
         generationInfoList.getLength() == 0)
-      return;
+      return true;
 
     std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
     for (unsigned int i = 0; i < generationInfoList.getLength(); i++)
@@ -101,7 +97,7 @@ void WMSGridDataLayer::updateLayerMetaData()
         if (contentServer->getContentGeometryIdListByGenerationId(
                 0, generationInfo->mGenerationId, geometryIdList) != 0 ||
             geometryIdList.empty())
-          return;
+          return true;
 
         itsGeometryId = *geometryIdList.begin();
       }
@@ -178,7 +174,7 @@ void WMSGridDataLayer::updateLayerMetaData()
                                                                     endTime,
                                                                     0,
                                                                     contentInfoList) != 0)
-          return;
+          return true;
 
         uint len = contentInfoList.getLength();
         for (uint t = 0; t < len; t++)
@@ -192,7 +188,7 @@ void WMSGridDataLayer::updateLayerMetaData()
       {
         if (contentServer->getContentTimeListByGenerationAndGeometryId(
                 0, generationInfo->mGenerationId, itsGeometryId, contentTimeList) != 0)
-          return;
+          return true;
       }
 
       boost::shared_ptr<WMSTimeDimension> timeDimension;
@@ -202,13 +198,10 @@ void WMSGridDataLayer::updateLayerMetaData()
         timesteps.push_back(toTimeStamp(stime));
       time_intervals intervals = get_intervals(timesteps);
       if (!intervals.empty())
-      {
         timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);
-      }
       else
-      {
         timeDimension = boost::make_shared<StepTimeDimension>(timesteps);
-      }
+
       /*
   time_t step = even_timesteps(contentTimeList);
   if (step > 0)
@@ -240,10 +233,12 @@ void WMSGridDataLayer::updateLayerMetaData()
       timeDimensions = nullptr;
 
     metadataTimestamp = boost::posix_time::second_clock::universal_time();
+
+    return true;
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Failed to update querydata layer metadata!");
+    throw Fmi::Exception::Trace(BCP, "Failed to update grid layer metadata!");
   }
 }
 
