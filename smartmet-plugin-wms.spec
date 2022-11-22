@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.11.18
+Version: 22.11.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -43,7 +43,7 @@ BuildRequires: smartmet-engine-geonames-devel >= 22.10.5
 BuildRequires: smartmet-engine-querydata-devel >= 22.10.5
 BuildRequires: smartmet-engine-contour-devel >= 22.10.5
 BuildRequires: smartmet-library-gis-devel >= 22.9.28
-BuildRequires: smartmet-library-trax-devel >= 22.11.16
+BuildRequires: smartmet-library-trax-devel >= 22.11.22
 BuildRequires: fmt-devel >= 8.1.1 fmt-devel < %{smartmet_fmt_max}
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -69,7 +69,7 @@ Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 22.11.8
 Requires: smartmet-library-grid-files >= 22.11.8
 Requires: smartmet-library-gis >= 22.9.28
-Requires: smartmet-library-trax >= 22.11.16
+Requires: smartmet-library-trax >= 22.11.22
 Requires: smartmet-library-macgyver >= 22.10.20
 Requires: smartmet-library-spine >= 22.10.26
 Requires: smartmet-library-timeseries >= 22.10.25
@@ -106,7 +106,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-gis-devel >= 22.10.5
 #TestRequires: smartmet-engine-querydata-devel >= 22.10.5
 #TestRequires: smartmet-library-giza-devel >= 22.8.31
-#TestRequires: smartmet-library-trax-devel >= 22.11.16
+#TestRequires: smartmet-library-trax-devel >= 22.11.22
 #TestRequires: smartmet-library-newbase-devel >= 22.11.14
 #TestRequires: smartmet-library-spine-devel >= 22.10.26
 #TestRequires: smartmet-library-timeseries-devel >= 22.10.25
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Nov 22 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.22-1.fmi
+- Added support for logarithmic interpolation
+
 * Fri Nov 18 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.18-1.fmi
 - Do not use exceptions for normal control flow in the WMS GetCapabilities update loop
 
