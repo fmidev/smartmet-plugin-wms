@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 22.11.18
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Fri Nov 18 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.18-2.fmi
+- Fixed IsolabelLayer to assign isoline attributes for the label
+
 * Fri Nov 18 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.18-1.fmi
 - Do not use exceptions for normal control flow in the WMS GetCapabilities update loop
 
