@@ -399,8 +399,8 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     else if (interpolation == "nearest" || interpolation == "discrete" ||
              interpolation == "midpoint")
       options.interpolation = Trax::InterpolationType::Midpoint;
-    else if (interpolation == "loglinear")
-      throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'");
+    else if (interpolation == "logarithmic")
+      options.interpolation = Trax::InterpolationType::Logarithmic;
     else
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'");
 

@@ -348,7 +348,6 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       theGlobals["css"][name] = theState.getStyle(*css);
     }
 
-
     if (source && *source == "grid")
       generate_gridEngine(theGlobals, theLayersCdt, theState);
     else
@@ -446,9 +445,9 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
       originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
-
-      //bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
-      bbox = fmt::format("{},{},{},{}", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
+      // bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+      bbox = fmt::format(
+          "{},{},{},{}", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
     else
@@ -788,7 +787,15 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
           isoband_cdt["iri"] = iri;
           isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
           isoband_cdt["parameter"] = *parameter;
-          pointCoordinates = Geometry::toString(*geom2, theState.getType(), box, crs, precision,theState.arcHashMap,theState.arcCounter,arcNumbers,arcCoordinates);
+          pointCoordinates = Geometry::toString(*geom2,
+                                                theState.getType(),
+                                                box,
+                                                crs,
+                                                precision,
+                                                theState.arcHashMap,
+                                                theState.arcCounter,
+                                                arcNumbers,
+                                                arcCoordinates);
 
           if (!pointCoordinates.empty())
             isoband_cdt["data"] = pointCoordinates;
@@ -812,7 +819,8 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
           if (theState.getType() == "topojson")
           {
             if (!arcNumbers.empty())
-              isoband_cdt["arcs"] = arcNumbers;;
+              isoband_cdt["arcs"] = arcNumbers;
+            ;
 
             if (!arcCoordinates.empty())
             {
@@ -839,9 +847,10 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       }
     }
 
-    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," + std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
+    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," +
+                         std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
     if (precision >= 1.0)
-      theGlobals["precision"] = pow(10.0,-(int)precision);
+      theGlobals["precision"] = pow(10.0, -(int)precision);
 
     theGlobals["objects"][objectKey] = object_cdt;
 
@@ -1004,8 +1013,11 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     if (interpolation == "linear")
       options.interpolation = Trax::InterpolationType::Linear;
-    else if (interpolation == "nearest" || interpolation == "discrete")
+    else if (interpolation == "nearest" || interpolation == "discrete" ||
+             interpolation == "midpoint")
       options.interpolation = Trax::InterpolationType::Midpoint;
+    else if (interpolation == "logarithmic")
+      options.interpolation = Trax::InterpolationType::Logarithmic;
     else
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
 
@@ -1032,14 +1044,13 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     std::vector<OGRGeometryPtr> geoms =
         contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
 
-
     CTPP::CDT object_cdt;
     std::string objectKey = "isoband:" + *parameter + ":" + qid;
     object_cdt["objectKey"] = objectKey;
 
     // Update the globals
 
-    //if (css)
+    // if (css)
     //{
     //  std::string name = theState.getCustomer() + "/" + *css;
     //  theGlobals["css"][name] = theState.getStyle(*css);
@@ -1097,12 +1108,21 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
           isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
           isoband_cdt["parameter"] = *parameter;
 
-          pointCoordinates = Geometry::toString(*geom2, theState.getType(), box, crs, precision,theState.arcHashMap,theState.arcCounter,arcNumbers,arcCoordinates);
+          pointCoordinates = Geometry::toString(*geom2,
+                                                theState.getType(),
+                                                box,
+                                                crs,
+                                                precision,
+                                                theState.arcHashMap,
+                                                theState.arcCounter,
+                                                arcNumbers,
+                                                arcCoordinates);
 
           if (!pointCoordinates.empty())
             isoband_cdt["data"] = pointCoordinates;
 
-          //isoband_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs, precision);
+          // isoband_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs,
+          // precision);
 
           isoband_cdt["type"] = Geometry::name(*geom2, theState.getType());
           isoband_cdt["layertype"] = "isoband";
@@ -1123,7 +1143,8 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
           if (theState.getType() == "topojson")
           {
             if (!arcNumbers.empty())
-              isoband_cdt["arcs"] = arcNumbers;;
+              isoband_cdt["arcs"] = arcNumbers;
+            ;
 
             if (!arcCoordinates.empty())
             {
@@ -1139,7 +1160,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
             theGlobals["paths"][iri] = isoband_cdt;
           }
 
-          //theGlobals["paths"][iri] = isoband_cdt;
+          // theGlobals["paths"][iri] = isoband_cdt;
 
           // Add the SVG use element
           CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
@@ -1152,10 +1173,10 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       }
     }
     theGlobals["objects"][objectKey] = object_cdt;
-    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," + std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
+    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," +
+                         std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
     if (precision >= 1.0)
-      theGlobals["precision"] = pow(10.0,-(int)precision);
-
+      theGlobals["precision"] = pow(10.0, -(int)precision);
 
     // We created only this one layer
     theLayersCdt.PushBack(group_cdt);

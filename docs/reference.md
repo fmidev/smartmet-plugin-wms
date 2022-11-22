@@ -548,9 +548,8 @@ The table below contains a list of attributes that can be defined for the isoban
 <tr><td rowspan="6">interpolation</td><td rowspan="6">(string)</td><td rowspan="6">"linear"</td><td colspan="2">The interpolation method.</td></tr>
 <tr><td><b>Value</b></td><td><b>Description</b></td></tr>
 <tr><td>linear</td><td>Values are interpolated linearly.</td></tr>
-<tr><td>nearest</td><td>Nearest point value is used.</td></tr>
-<tr><td>discrete</td><td>Nearest point value is used, but corners are made smoother for more visual appeal.</td></tr>
-<tr><td>loglinear</td><td>Logarithmic interpolation. Useful mostly for logarithmic parameters such as precipitation rate, which may have sharp peaks near strong showers.</td></tr>
+<tr><td>midpoint|nearest|discrete</td><td>Nearest point value is used.</td></tr>
+<tr><td>logarithmic</td><td>Logarithmic interpolation. Useful mostly for logarithmic parameters such as precipitation rate, which may have sharp peaks near strong showers.</td></tr>
 <tr><td>isobands</td><td><i>[Isoband]</i></td><td>-</td><td colspan="2">An array if <i>Isoband</i> structures./td></tr>
 <tr><td>precision</td><td>(double)</td><td>1.0</td><td colspan="2">Precision of SVG coordinates./td></tr>
 <tr><td>unit_conversion</td><td>(string)</td><td>-</td><td colspan="2">Name of desired unit conversion defined in the configuration file.</td></tr>
@@ -632,6 +631,7 @@ Name|Type|Default value|Description|
 |-----|-----|-----------|----------- |
 |parameter|(string)|-|The parameter name for the isolines.|
 |level|(double)|-|The querydata level value. By default the first level is used.|
+|interpolation|linear|(string)|linear or logarithmic|
 |isolines|[Isoline]|-|An array of Isoline structures or set of parameters which define how array of Isoline structures are generated (see. isolines-attribute below)|
 |precision|(double)|1.0|Precision of SVG coordinates.|
 |unit_conversion|(string)|-|Name of desired unit conversion. Unit conversions are listed in the configuration file.|

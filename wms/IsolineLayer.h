@@ -36,6 +36,7 @@ class IsolineLayer : public Layer
 
   boost::optional<std::string> parameter;
   std::vector<Isoline> isolines;
+  std::string interpolation{"linear"};
   Smoother smoother;
   int extrapolation = 0;
 
