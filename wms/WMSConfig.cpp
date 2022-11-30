@@ -891,6 +891,19 @@ bool WMSConfig::validateGetMapAuthorization(const Spine::HTTP::Request& theReque
 }
 #endif
 
+void warn_layer(const std::string& badfile, std::set<std::string>& warned_files)
+{
+  if (warned_files.find(badfile) != warned_files.end())
+    return;
+
+  Fmi::Exception exception(BCP, "Failed to parse configuration!", nullptr);
+  exception.addParameter("Path", badfile);
+  exception.printError();
+
+  // Don't warn again about the same file
+  warned_files.insert(badfile);
+}
+
 void WMSConfig::updateLayerMetaData()
 {
   try
@@ -990,31 +1003,26 @@ void WMSConfig::updateLayerMetaData()
 
                     if (mustUpdate)
                     {
-                      SharedWMSLayer wmsLayer(WMSLayerFactory::createWMSLayer(
-                          pathName, theNamespace, customername, *this));
-                      itsCapabilitiesModificationTime =
-                          std::max(*itsCapabilitiesModificationTime, wmsLayer->modificationTime());
-                      if (!wmsLayer->getLegendFiles().empty())
-                        layersWithExternalLegendFile[wmsLayer] = wmsLayer->getLegendFiles();
-                      WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
-                      newProxies->insert(make_pair(fullLayername, newProxy));
+                      SharedWMSLayer wmsLayer = WMSLayerFactory::createWMSLayer(
+                          pathName, theNamespace, customername, *this);
+
+                      if (!wmsLayer)
+                        warn_layer(filename, itsWarnedFiles);
+                      else
+                      {
+                        itsCapabilitiesModificationTime = std::max(*itsCapabilitiesModificationTime,
+                                                                   wmsLayer->modificationTime());
+                        if (!wmsLayer->getLegendFiles().empty())
+                          layersWithExternalLegendFile[wmsLayer] = wmsLayer->getLegendFiles();
+                        WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
+                        newProxies->insert(make_pair(fullLayername, newProxy));
+                      }
                     }
                   }
                   catch (...)
                   {
                     // Ignore and report failed product definitions
-
-                    const auto* badfile = itr2->path().c_str();
-                    if (itsWarnedFiles.find(badfile) == itsWarnedFiles.end())
-                    {
-                      Fmi::Exception exception(BCP, "Failed to parse configuration!", nullptr);
-                      exception.addParameter("Path", itr2->path().c_str());
-                      exception.printError();
-
-                      // Don't warn again about the same file
-                      itsWarnedFiles.insert(badfile);
-                    }
-                    continue;
+                    warn_layer(filename, itsWarnedFiles);
                   }
                 }
               }

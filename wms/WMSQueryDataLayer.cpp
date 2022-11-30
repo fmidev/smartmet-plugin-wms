@@ -8,7 +8,7 @@ namespace Plugin
 {
 namespace WMS
 {
-void WMSQueryDataLayer::updateLayerMetaData()
+bool WMSQueryDataLayer::updateLayerMetaData()
 {
   try
   {
@@ -48,13 +48,10 @@ void WMSQueryDataLayer::updateLayerMetaData()
         boost::shared_ptr<WMSTimeDimension> timeDimension;
         time_intervals intervals = get_intervals(*validtimes);
         if (!intervals.empty())
-        {
           timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);
-        }
         else
-        {
           timeDimension = boost::make_shared<StepTimeDimension>(*validtimes);
-        }
+
         newTimeDimensions.insert(std::make_pair(validtimes->back(), timeDimension));
       }
     }
@@ -69,13 +66,10 @@ void WMSQueryDataLayer::updateLayerMetaData()
 
         time_intervals intervals = get_intervals(*vt);
         if (!intervals.empty())
-        {
           timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);
-        }
         else
-        {
           timeDimension = boost::make_shared<StepTimeDimension>(*vt);
-        }
+
         newTimeDimensions.insert(std::make_pair(t, timeDimension));
       }
     }
@@ -85,6 +79,8 @@ void WMSQueryDataLayer::updateLayerMetaData()
       timeDimensions = nullptr;
 
     metadataTimestamp = boost::posix_time::second_clock::universal_time();
+
+    return true;
   }
   catch (...)
   {

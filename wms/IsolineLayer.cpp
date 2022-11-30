@@ -21,6 +21,7 @@
 #include <grid-files/common/ImagePaint.h>
 #include <spine/Json.h>
 #include <timeseries/ParameterFactory.h>
+#include <trax/InterpolationType.h>
 
 namespace SmartMet
 {
@@ -134,6 +135,10 @@ void IsolineLayer::init(const Json::Value& theJson,
     json = theJson.get("smoother", nulljson);
     if (!json.isNull())
       smoother.init(json, theConfig);
+
+    json = theJson.get("interpolation", nulljson);
+    if (!json.isNull())
+      interpolation = json.asString();
 
     json = theJson.get("extrapolation", nulljson);
     if (!json.isNull())
@@ -325,7 +330,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
     originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
     sprintf(bbox, "%f,%f,%f,%f", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
-    //sprintf(bbox, "%f,%f,%f,%f", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+    // sprintf(bbox, "%f,%f,%f,%f", box.xmin(), box.ymin(), box.xmax(), box.ymax());
     originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
   }
   else
@@ -668,6 +673,13 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   options.extrapolation = extrapolation;
 
+  if (interpolation == "linear")
+    options.interpolation = Trax::InterpolationType::Linear;
+  else if (interpolation == "logarithmic")
+    options.interpolation = Trax::InterpolationType::Logarithmic;
+  else
+    throw Fmi::Exception(BCP, "Unknown isoline interpolation method '" + interpolation + "'!");
+
   // Do the actual contouring, either full grid or just
   // a sampled section
 
@@ -756,7 +768,6 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         if (!theState.addId(iri))
           throw Fmi::Exception(BCP, "Non-unique ID assigned to isoline").addParameter("ID", iri);
 
-
         CTPP::CDT isoline_cdt(CTPP::CDT::HASH_VAL);
         isoline_cdt["iri"] = iri;
         isoline_cdt["time"] = Fmi::to_iso_extended_string(getValidTime());
@@ -766,7 +777,15 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
         std::string arcNumbers;
         std::string arcCoordinates;
-        std::string pointCoordinates = Geometry::toString(*geom, theState.getType(), box, crs, precision,theState.arcHashMap,theState.arcCounter,arcNumbers,arcCoordinates);
+        std::string pointCoordinates = Geometry::toString(*geom,
+                                                          theState.getType(),
+                                                          box,
+                                                          crs,
+                                                          precision,
+                                                          theState.arcHashMap,
+                                                          theState.arcCounter,
+                                                          arcNumbers,
+                                                          arcCoordinates);
 
         if (!pointCoordinates.empty())
           isoline_cdt["data"] = pointCoordinates;
@@ -804,10 +823,11 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         group_cdt["tags"].PushBack(tag_cdt);
       }
     }
-    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," + std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
+    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," +
+                         std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
     theGlobals["objects"][objectKey] = object_cdt;
     if (precision >= 1.0)
-      theGlobals["precision"] = pow(10.0,-(int)precision);
+      theGlobals["precision"] = pow(10.0, -(int)precision);
 
     // We created only this one layer
     theLayersCdt.PushBack(group_cdt);
@@ -855,6 +875,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(parameter));
     Fmi::hash_combine(hash, Dali::hash_value(isolines, theState));
     Fmi::hash_combine(hash, Dali::hash_value(smoother, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(interpolation));
     Fmi::hash_combine(hash, Fmi::hash_value(extrapolation));
     Fmi::hash_combine(hash, Fmi::hash_value(precision));
     Fmi::hash_combine(hash, Fmi::hash_value(minarea));

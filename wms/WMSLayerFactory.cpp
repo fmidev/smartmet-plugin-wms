@@ -379,8 +379,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         throw Fmi::Exception(BCP, "WMS Layer enum not handled in WMSLayerFactory.");
     };
 
-    // Generic variables. The quiet flag must be set before
-    // updateLayerMetaData is called.
+    // Generic variables. The quiet flag must be set before updateLayerMetaData is called.
 
     layer->quiet = theWMSConfig.itsDaliConfig.quiet();
     layer->setProductFile(theFileName);
@@ -468,7 +467,8 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 
     // Update metadata from DB etc
 
-    layer->updateLayerMetaData();
+    if (!layer->updateLayerMetaData())
+      return {};
 
     // Spatial references supported by default, if applicable
     layer->refs = theWMSConfig.supportedWMSReferences();

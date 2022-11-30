@@ -42,7 +42,7 @@ class WMSPostGISLayer : public WMSLayer
   PostGISMetaDataSettings itsMetaDataSettings;
 
  protected:
-  virtual void updateLayerMetaData();
+  virtual bool updateLayerMetaData();
   virtual bool mustUpdateLayerMetaData();
 
  public:
