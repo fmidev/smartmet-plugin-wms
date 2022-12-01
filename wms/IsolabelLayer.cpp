@@ -243,7 +243,6 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
     group_cdt["start"] = "<g";
-    group_cdt["end"] = "";
 
     // Add attributes to the group, not to the labels
     theState.addAttributes(theGlobals, group_cdt, attributes);
@@ -266,6 +265,18 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       text_cdt["start"] = "<text";
       text_cdt["end"] = "</text>";
       text_cdt["cdata"] = txt;
+
+      // Assign isoline styles for the point
+      for (auto i = 0UL; i < geoms.size(); i++)
+      {
+        const Isoline& isoline = isolines[i];
+        if (isoline.value == point.isovalue)
+        {
+          theState.addPresentationAttributes(text_cdt, css, attributes, isoline.attributes);
+          theState.addAttributes(theGlobals, text_cdt, isoline.attributes);
+          break;
+        }
+      }
 
       if (label.orientation == "auto")
       {

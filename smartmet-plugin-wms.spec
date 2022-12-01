@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.11.29
+Version: 22.12.1
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -35,7 +35,7 @@ BuildRequires: smartmet-library-timeseries-devel >= 22.10.25
 BuildRequires: smartmet-engine-authentication-devel >= 22.6.17
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 22.11.29
+BuildRequires: smartmet-engine-observation-devel >= 22.11.30
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.10.5
 BuildRequires: smartmet-engine-grid-devel >= 22.11.8
@@ -120,7 +120,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 22.11.29
+#TestRequires: smartmet-engine-observation-devel >= 22.11.30
 %endif
 
 %description
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Dec  1 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.12.1-1.fmi
+- Added support for styling isolabels
+
 * Tue Nov 29 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.29-1.fmi
 - Repackaged since hash_value method for Q objects changed
 
