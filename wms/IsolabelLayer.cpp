@@ -243,10 +243,11 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
     group_cdt["start"] = "<g";
-    group_cdt["end"] = "</g>";
 
     // Add attributes to the group, not to the labels
     theState.addAttributes(theGlobals, group_cdt, attributes);
+
+    theLayersCdt.PushBack(group_cdt);
 
     for (const auto& point : candidates)
     {
@@ -266,14 +267,13 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       text_cdt["cdata"] = txt;
 
       // Assign isoline styles for the point
-      std::cout << "Handling label at " << point.isovalue << "\n";
       for (auto i = 0UL; i < geoms.size(); i++)
       {
         const Isoline& isoline = isolines[i];
         if (isoline.value == point.isovalue)
         {
-          std::cout << "\tFound matching geometry\n";
           theState.addPresentationAttributes(text_cdt, css, attributes, isoline.attributes);
+          theState.addAttributes(theGlobals, text_cdt, isoline.attributes);
           break;
         }
       }
@@ -296,12 +296,11 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
         text_cdt["attributes"]["transform"] = transform;
       }
 
-      group_cdt["tags"].PushBack(text_cdt);
+      theLayersCdt.PushBack(text_cdt);
     }
-    std::cout << "Layer:\n" << group_cdt.RecursiveDump() << "\n";
 
-    // We created only this one layer
-    theLayersCdt.PushBack(group_cdt);
+    // Close the grouping
+    theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n  </g>");
   }
   catch (...)
   {
