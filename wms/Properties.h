@@ -22,10 +22,13 @@ namespace Dali
 {
 class Config;
 class State;
+class TimeLayer;
 
 class Properties
 {
  public:
+  friend TimeLayer;  // for more fine grained control
+
   virtual ~Properties() = default;
   void init(const Json::Value& theJson, const State& theState, const Config& theConfig);
 
@@ -34,7 +37,10 @@ class Properties
             const Config& theConfig,
             const Properties& theProperties);
 
+  bool hasValidTime() const;
+  void setValidTime(const boost::posix_time::ptime& theTime);
   boost::posix_time::ptime getValidTime() const;
+  boost::posix_time::ptime getValidTime(const boost::posix_time::ptime& theDefault) const;
   boost::posix_time::time_period getValidTimePeriod() const;
   bool inside(const Fmi::Box& theBox, double theX, double theY) const;
 
@@ -53,10 +59,6 @@ class Properties
   // Wanted origintime. Use latest if omitted
   boost::optional<boost::posix_time::ptime> origintime;
 
-  // Wanted time T = time + time_offset
-  boost::optional<boost::posix_time::ptime> time;
-  boost::optional<int> time_offset;  // minutes
-
   // Timezone for time parsing
   boost::local_time::time_zone_ptr tz;
 
@@ -72,6 +74,11 @@ class Properties
   int xmargin = 0;
   int ymargin = 0;
   bool clip = false;
+
+ private:
+  // Wanted time T = time + time_offset. Making these private forces using getValidTime()
+  boost::optional<boost::posix_time::ptime> time;
+  boost::optional<int> time_offset;  // minutes
 };
 
 }  // namespace Dali

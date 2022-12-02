@@ -108,6 +108,8 @@ class IceMapLayer : public PostGISLayerBase
                         CTPP::CDT& theGroupCdt,
                         State& theState) const;
 
+  std::vector<std::string> getAttributeColumns() const;
+
 };  // class IceMapLayer
 
 }  // namespace Dali

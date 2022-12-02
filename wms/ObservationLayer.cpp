@@ -196,7 +196,8 @@ StationSymbolPriorities ObservationLayer::getProcessedData(State& theState) cons
           "Cannot use ObservationLayer when the observation engine is disabled");
 
     // If time not given take current time and find nearest previous timestep
-    auto requested_timestep = (time ? *time : boost::posix_time::second_clock::universal_time());
+
+    auto requested_timestep = getValidTime(boost::posix_time::second_clock::universal_time());
     int timestep_minutes = *timestep;
     // Revert to previous timestep
     if (timestep_minutes != 0)

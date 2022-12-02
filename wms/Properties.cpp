@@ -326,6 +326,41 @@ void Properties::init(const Json::Value& theJson,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Test whether a valid time has been set
+ */
+// ----------------------------------------------------------------------
+
+bool Properties::hasValidTime() const
+{
+  return !!time;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Set the valid time
+ */
+// ----------------------------------------------------------------------
+
+void Properties::setValidTime(const boost::posix_time::ptime& theTime)
+{
+  time = theTime;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Establish valid time if not set already
+ */
+// ----------------------------------------------------------------------
+
+boost::posix_time::ptime Properties::getValidTime(const boost::posix_time::ptime& theDefault) const
+{
+  if (!time)
+    return theDefault;
+  return getValidTime();
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Establish the time for the layer
  *
  * This method is not used by layers which require no specific time.
