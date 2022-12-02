@@ -29,7 +29,7 @@ BuildRequires: smartmet-library-giza-devel >= 22.8.31
 BuildRequires: smartmet-library-grid-content-devel >= 22.11.8
 BuildRequires: smartmet-library-grid-files-devel >= 22.11.8
 BuildRequires: smartmet-library-macgyver-devel >= 22.10.20
-BuildRequires: smartmet-library-spine-devel >= 22.11.25
+BuildRequires: smartmet-library-spine-devel >= 22.12.2
 BuildRequires: smartmet-library-timeseries-devel >= 22.10.25
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 22.6.17
@@ -83,7 +83,7 @@ Requires: smartmet-engine-gis >= 22.10.5
 Requires: smartmet-engine-grid >= 22.11.8
 Requires: smartmet-engine-geonames >= 22.10.5
 Requires: smartmet-server >= 22.11.28
-Requires: smartmet-library-spine >= 22.11.25
+Requires: smartmet-library-spine >= 22.12.2
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
@@ -108,7 +108,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 22.8.31
 #TestRequires: smartmet-library-trax-devel >= 22.11.28
 #TestRequires: smartmet-library-newbase-devel >= 22.11.14
-#TestRequires: smartmet-library-spine-devel >= 22.11.25
+#TestRequires: smartmet-library-spine-devel >= 22.12.2
 #TestRequires: smartmet-library-timeseries-devel >= 22.10.25
 #TestRequires: smartmet-engine-grid-devel >= 22.11.8
 #TestRequires: smartmet-engine-grid-test
