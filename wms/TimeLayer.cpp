@@ -241,7 +241,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     attributeList.addAttribute("param", paramStr);
 
-    std::string forecastTime = Fmi::to_iso_string(*time);
+    std::string forecastTime = Fmi::to_iso_string(getValidTime());
     attributeList.addAttribute("startTime", forecastTime);
     attributeList.addAttribute("endTime", forecastTime);
     attributeList.addAttribute("timelist", forecastTime);

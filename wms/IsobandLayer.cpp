@@ -481,7 +481,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         originalGridQuery->mProducerNameList.push_back(producerName);
     }
 
-    std::string forecastTime = Fmi::to_iso_string(*time);
+    std::string forecastTime = Fmi::to_iso_string(getValidTime());
     attributeList.addAttribute("startTime", forecastTime);
     attributeList.addAttribute("endTime", forecastTime);
     attributeList.addAttribute("timelist", forecastTime);
