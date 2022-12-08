@@ -64,9 +64,9 @@ void PostGISLayerBase::init(const Json::Value& theJson,
       lines = json.asBool();
 
     // If following does not pass, time_condition will be empty
-    if (time_column && time)
+    if (time_column && hasValidTime())
     {
-      std::string timestr = "'" + Fmi::to_iso_string(*time) + "'";
+      std::string timestr = "'" + Fmi::to_iso_string(getValidTime()) + "'";
       // time truncate is optional
       json = theJson.get("time_truncate", nulljson);
       if (!json.isNull())

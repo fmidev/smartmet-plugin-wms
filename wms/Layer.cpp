@@ -158,7 +158,7 @@ Engine::Querydata::Q Layer::getModel(const State& theState) const
 
     // otherwise we try to select the minimal amount of querydata files based on the time or the
     // time interval
-    if (!time)
+    if (!hasValidTime())
       return theState.getModel(model);
 
     return theState.getModel(model, getValidTimePeriod());

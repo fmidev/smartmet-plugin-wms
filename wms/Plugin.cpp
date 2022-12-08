@@ -122,6 +122,10 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 {
   try
   {
+    if (checkRequest(theRequest, theResponse, false)) {
+        return;
+    }
+
     int width = Spine::optional_int(theRequest.getParameter("width"), 1000);
     if (width < 20 || width > 10000)
     {

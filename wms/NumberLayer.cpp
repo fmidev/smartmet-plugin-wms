@@ -967,8 +967,9 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
       originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
-      bbox = fmt::format("{},{},{},{}", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
-      //bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+      bbox = fmt::format(
+          "{},{},{},{}", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
+      // bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
     else
@@ -1002,7 +1003,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         originalGridQuery->mProducerNameList.push_back(producerName);
     }
 
-    std::string forecastTime = Fmi::to_iso_string(*time);
+    std::string forecastTime = Fmi::to_iso_string(getValidTime());
     attributeList.addAttribute("startTime", forecastTime);
     attributeList.addAttribute("endTime", forecastTime);
     attributeList.addAttribute("timelist", forecastTime);

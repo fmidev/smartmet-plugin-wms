@@ -364,7 +364,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
       originalGridQuery->mProducerNameList.push_back(producerName);
   }
 
-  std::string forecastTime = Fmi::to_iso_string(*time);
+  std::string forecastTime = Fmi::to_iso_string(getValidTime());
   attributeList.addAttribute("startTime", forecastTime);
   attributeList.addAttribute("endTime", forecastTime);
   attributeList.addAttribute("timelist", forecastTime);

@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.11.29
-Release: 1%{?dist}.fmi
+Version: 22.12.2
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -29,13 +29,13 @@ BuildRequires: smartmet-library-giza-devel >= 22.8.31
 BuildRequires: smartmet-library-grid-content-devel >= 22.11.8
 BuildRequires: smartmet-library-grid-files-devel >= 22.11.8
 BuildRequires: smartmet-library-macgyver-devel >= 22.10.20
-BuildRequires: smartmet-library-spine-devel >= 22.11.25
+BuildRequires: smartmet-library-spine-devel >= 22.12.2
 BuildRequires: smartmet-library-timeseries-devel >= 22.10.25
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 22.6.17
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 22.11.29
+BuildRequires: smartmet-engine-observation-devel >= 22.11.30
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.10.5
 BuildRequires: smartmet-engine-grid-devel >= 22.11.8
@@ -83,7 +83,7 @@ Requires: smartmet-engine-gis >= 22.10.5
 Requires: smartmet-engine-grid >= 22.11.8
 Requires: smartmet-engine-geonames >= 22.10.5
 Requires: smartmet-server >= 22.11.28
-Requires: smartmet-library-spine >= 22.11.25
+Requires: smartmet-library-spine >= 22.12.2
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
@@ -108,7 +108,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 22.8.31
 #TestRequires: smartmet-library-trax-devel >= 22.11.28
 #TestRequires: smartmet-library-newbase-devel >= 22.11.14
-#TestRequires: smartmet-library-spine-devel >= 22.11.25
+#TestRequires: smartmet-library-spine-devel >= 22.12.2
 #TestRequires: smartmet-library-timeseries-devel >= 22.10.25
 #TestRequires: smartmet-engine-grid-devel >= 22.11.8
 #TestRequires: smartmet-engine-grid-test
@@ -120,7 +120,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 22.11.29
+#TestRequires: smartmet-engine-observation-devel >= 22.11.30
 %endif
 
 %description
@@ -149,6 +149,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Fri Dec  2 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.12.2-3.fmi
+- Check HTTP request method checking and support OPTIONS method
+
+* Fri Dec  2 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.12.2-2.fmi
+- Fixed all code to use the time_offset setting properly
+
+* Thu Dec  1 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.12.1-1.fmi
+- Added support for styling isolabels
+
 * Tue Nov 29 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.11.29-1.fmi
 - Repackaged since hash_value method for Q objects changed
 

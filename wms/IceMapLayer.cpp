@@ -59,7 +59,7 @@ class PostGISAttributeToString : public boost::static_visitor<std::string>
   }
 };
 
-std::string getMeanTemperatureColumnName(boost::posix_time::ptime t)
+std::string getMeanTemperatureColumnName(const boost::posix_time::ptime& t)
 {
   boost::posix_time::time_period summer_period(
       boost::posix_time::ptime(boost::gregorian::date(t.date().year(), boost::gregorian::Mar, 20),
@@ -83,37 +83,6 @@ std::string getMeanTemperatureColumnName(boost::posix_time::ptime t)
     day.insert(0, "0");
 
   return ("o" + day + "o" + month + "o");
-}
-
-std::vector<std::string> getAttributeColumns(const std::map<std::string, std::string>& parameters,
-                                             boost::optional<boost::posix_time::ptime> time)
-{
-  std::vector<std::string> column_name_vector;
-  for (const auto& col : attribute_columns)
-  {
-    if (parameters.find(col) == parameters.end())
-      continue;
-
-    std::string column_name = parameters.at(col);
-    boost::algorithm::trim(column_name);
-
-    // mean temperature column name is determined by given date
-    if (column_name == std::string("o_DD_o_MM_o") && time)
-    {
-      std::string mean_temperature_column = getMeanTemperatureColumnName(*time);
-
-      if (mean_temperature_column.empty())
-      {
-        column_name_vector.clear();
-        return column_name_vector;
-      }
-      column_name_vector.push_back(getMeanTemperatureColumnName(*time));
-    }
-    else
-      column_name_vector.push_back(column_name);
-  }
-
-  return column_name_vector;
 }
 
 Json::Value getJsonValue(const std::string& param_name,
@@ -235,8 +204,8 @@ void IceMapLayer::init(const Json::Value& theJson,
       itsParameters.insert(make_pair("latitude", json.asString()));
 
     // if time missing set current time
-    if (!time)
-      time = boost::posix_time::second_clock::universal_time();
+    if (!hasValidTime())
+      setValidTime(boost::posix_time::second_clock::universal_time());
 
     // table attributes
     json = theJson.get("table_attributes", nulljson);
@@ -399,7 +368,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       else if (filter.where)
         mapOptions.where = filter.where;
 
-      std::vector<std::string> attribute_column_names = getAttributeColumns(itsParameters, time);
+      std::vector<std::string> attribute_column_names = getAttributeColumns();
 
       std::string layer_subtype = getParameterValue("layer_subtype");
 
@@ -643,7 +612,7 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
                               CTPP::CDT& theLayersCdt,
                               State& theState) const
 {
-  std::vector<std::string> attribute_columns = getAttributeColumns(itsParameters, time);
+  std::vector<std::string> attribute_columns = getAttributeColumns();
 
   if (attribute_columns.empty())
     return;
@@ -740,7 +709,7 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
                                         CTPP::CDT& theLayersCdt,
                                         State& theState) const
 {
-  std::string col_name = getMeanTemperatureColumnName(*time);
+  std::string col_name = getMeanTemperatureColumnName(getValidTime());
 
   // mean temperature
   std::string mean_temperature =
@@ -1237,6 +1206,36 @@ void IceMapLayer::handleResultItem(const Fmi::Feature& theResultItem,
   {
     handleGeometry(theResultItem, theFilter, theMapId, theGlobals, theGroupCdt, theState);
   }
+}
+
+std::vector<std::string> IceMapLayer::getAttributeColumns() const
+{
+  std::vector<std::string> column_name_vector;
+  for (const auto& col : attribute_columns)
+  {
+    if (itsParameters.find(col) == itsParameters.end())
+      continue;
+
+    std::string column_name = itsParameters.at(col);
+    boost::algorithm::trim(column_name);
+
+    // mean temperature column name is determined by given date
+    if (column_name == std::string("o_DD_o_MM_o") && hasValidTime())
+    {
+      std::string mean_temperature_column = getMeanTemperatureColumnName(getValidTime());
+
+      if (mean_temperature_column.empty())
+      {
+        column_name_vector.clear();
+        return column_name_vector;
+      }
+      column_name_vector.push_back(getMeanTemperatureColumnName(getValidTime()));
+    }
+    else
+      column_name_vector.push_back(column_name);
+  }
+
+  return column_name_vector;
 }
 
 }  // namespace Dali
