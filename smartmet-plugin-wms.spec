@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.12.2
-Release: 3%{?dist}.fmi
+Version: 22.12.12
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -26,8 +26,8 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 22.8.31
-BuildRequires: smartmet-library-grid-content-devel >= 22.11.8
-BuildRequires: smartmet-library-grid-files-devel >= 22.11.8
+BuildRequires: smartmet-library-grid-content-devel >= 22.12.12
+BuildRequires: smartmet-library-grid-files-devel >= 22.12.12
 BuildRequires: smartmet-library-macgyver-devel >= 22.10.20
 BuildRequires: smartmet-library-spine-devel >= 22.12.2
 BuildRequires: smartmet-library-timeseries-devel >= 22.10.25
@@ -35,12 +35,12 @@ BuildRequires: smartmet-library-timeseries-devel >= 22.10.25
 BuildRequires: smartmet-engine-authentication-devel >= 22.6.17
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 22.11.30
+BuildRequires: smartmet-engine-observation-devel >= 22.12.8
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.10.5
-BuildRequires: smartmet-engine-grid-devel >= 22.11.8
+BuildRequires: smartmet-engine-grid-devel >= 22.12.12
 BuildRequires: smartmet-engine-geonames-devel >= 22.10.5
-BuildRequires: smartmet-engine-querydata-devel >= 22.11.29
+BuildRequires: smartmet-engine-querydata-devel >= 22.12.2
 BuildRequires: smartmet-engine-contour-devel >= 22.10.5
 BuildRequires: smartmet-library-gis-devel >= 22.9.28
 BuildRequires: smartmet-library-trax-devel >= 22.11.28
@@ -66,23 +66,23 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 22.11.8
-Requires: smartmet-library-grid-files >= 22.11.8
+Requires: smartmet-library-grid-content >= 22.12.12
+Requires: smartmet-library-grid-files >= 22.12.12
 Requires: smartmet-library-gis >= 22.9.28
 Requires: smartmet-library-trax >= 22.11.28
 Requires: smartmet-library-macgyver >= 22.10.20
-Requires: smartmet-library-spine >= 22.11.25
+Requires: smartmet-library-spine >= 22.12.2
 Requires: smartmet-library-timeseries >= 22.10.25
 Requires: smartmet-library-giza >= 22.8.31
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 22.6.17
 %endif
-Requires: smartmet-engine-querydata >= 22.11.29
+Requires: smartmet-engine-querydata >= 22.12.2
 Requires: smartmet-engine-contour >= 22.10.5
 Requires: smartmet-engine-gis >= 22.10.5
-Requires: smartmet-engine-grid >= 22.11.8
+Requires: smartmet-engine-grid >= 22.12.12
 Requires: smartmet-engine-geonames >= 22.10.5
-Requires: smartmet-server >= 22.11.28
+Requires: smartmet-server >= 22.12.5
 Requires: smartmet-library-spine >= 22.12.2
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
@@ -104,13 +104,13 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 22.10.5
 #TestRequires: smartmet-engine-geonames-devel >= 22.10.5
 #TestRequires: smartmet-engine-gis-devel >= 22.10.5
-#TestRequires: smartmet-engine-querydata-devel >= 22.11.29
+#TestRequires: smartmet-engine-querydata-devel >= 22.12.2
 #TestRequires: smartmet-library-giza-devel >= 22.8.31
 #TestRequires: smartmet-library-trax-devel >= 22.11.28
 #TestRequires: smartmet-library-newbase-devel >= 22.11.14
 #TestRequires: smartmet-library-spine-devel >= 22.12.2
 #TestRequires: smartmet-library-timeseries-devel >= 22.10.25
-#TestRequires: smartmet-engine-grid-devel >= 22.11.8
+#TestRequires: smartmet-engine-grid-devel >= 22.12.12
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -120,7 +120,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 22.11.30
+#TestRequires: smartmet-engine-observation-devel >= 22.12.8
 %endif
 
 %description
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Dec 12 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.12.12-1.fmi
+- Repackaged due to ABI changes
+
 * Fri Dec  2 2022 Andris Pavēnis <andris.pavenis@fmi.fi> 22.12.2-3.fmi
 - Check HTTP request method checking and support OPTIONS method
 
