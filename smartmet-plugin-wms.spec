@@ -151,6 +151,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Tue Dec 13 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.12.13-1.fmi
 - Fixed GetCapabilities Interval Dimension bug (BRAINSTORM-2499)
+- Enable configuring the missing symbol for observation layers, zero disables the symbol
 
 * Mon Dec 12 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.12.12-1.fmi
 - Repackaged due to ABI changes

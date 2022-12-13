@@ -2159,6 +2159,7 @@ The table below contains a list of attributes that can be defined for present we
 <tr><td>producer</td><td>string</td><td>-</td><td>"opendata"</td><td>Name of the prodcer for present weather</td></tr>
 <tr><td>timestep</td><td>int</td><td>-</td><td>10</td><td>Timestep in minutes</td></tr>
 <tr><td>mindistance</td><td>int</td><td>0</td><td>20</td><td>Minimum distance of stations on map</td></tr>
+<tr><td>missing</td><td>int</td><td>106</td><td>0</td><td>Symbol for missing data, zero disables rendering map</td></tr>
 <tr><td>keyword</td><td>string</td><td>-</td><td>"synop_fi"</td><td>Either keyword or fmisid must be defined for stations</td></tr>
 <tr><td>fmisid</td><td>string or array of string</td><td>-</td><td>"126863" or ["126863","100456",...]</td><td>Either keyword or fmisid must be defined for stations</td></tr>
 </table>

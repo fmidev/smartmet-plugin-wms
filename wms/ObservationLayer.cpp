@@ -50,7 +50,11 @@ void ObservationLayer::init(const Json::Value& theJson,
         Locus::QueryOptions options;
         auto locations = geoengine.keywordSearch(options, keyword);
         for (const auto& loc : locations)
-          stationFMISIDs.push_back(Spine::TaggedFMISID(Fmi::to_string(*loc->fmisid), *loc->fmisid));
+        {
+          if (loc->fmisid)
+            stationFMISIDs.push_back(
+                Spine::TaggedFMISID(Fmi::to_string(*loc->fmisid), *loc->fmisid));
+        }
       }
     }
 
@@ -82,6 +86,10 @@ void ObservationLayer::init(const Json::Value& theJson,
     json = theJson.get("mindistance", nulljson);
     if (!json.isNull())
       mindistance = json.asInt();
+
+    json = theJson.get("missing", nulljson);
+    if (!json.isNull())
+      missing_symbol = json.asInt();
 
     if (keyword.empty() && fmisids.empty())
       throw Fmi::Exception::Trace(
@@ -305,6 +313,10 @@ std::size_t ObservationLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(keyword));
     Fmi::hash_combine(hash, Fmi::hash_value(fmisids));
     Fmi::hash_combine(hash, Fmi::hash_value(mindistance));
+    Fmi::hash_combine(hash, Fmi::hash_value(missing_symbol));
+
+    for (const auto& station : stationFMISIDs)
+      Fmi::hash_combine(hash, Fmi::hash_value(station.fmisid));
 
     return hash;
   }
