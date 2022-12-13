@@ -31,6 +31,9 @@ class FinnishRoadObservationLayer : public ObservationLayer
       const State& theState,
       const ResultSet& theResultSet,
       const boost::posix_time::ptime& requested_timestep) const override;
+  int get_symbol(int r, int rform) const;
+  int get_symbol_priority(int symbol, double t2m) const;
+
 };  // class FinnishRoadObservationLayer
 
 }  // namespace Dali

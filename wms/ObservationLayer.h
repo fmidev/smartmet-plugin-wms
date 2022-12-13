@@ -68,7 +68,8 @@ class ObservationLayer : public Layer
 
   std::string keyword;
   std::string fmisids;
-  unsigned int mindistance{0};
+  unsigned int mindistance = 0;
+  int missing_symbol = 106;  // Use zero to disable
   SmartMet::Spine::TaggedFMISIDList stationFMISIDs;
 
  private:

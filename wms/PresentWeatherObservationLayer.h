@@ -31,6 +31,10 @@ class PresentWeatherObservationLayer : public ObservationLayer
       const State& theState,
       const ResultSet& theResultSet,
       const boost::posix_time::ptime& requested_timestep) const override;
+
+  int get_symbol(float wawa) const;
+  int get_symbol_priority(int symbol) const;
+
 };  // class PresentWeatherObservationLayer
 
 }  // namespace Dali

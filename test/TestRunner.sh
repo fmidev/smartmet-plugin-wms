@@ -24,14 +24,15 @@ export TOP_PID=$$
 
 function testerExit
 {
-    # Remove the pipes
-    rm -f $in $out
     # reset terminal colour, the plugin init sequence modifies the terminal
     if [[ $CI == "" ]]; then
 	tput sgr0
     fi
     echo ""
     echo "PluginTest has shutdown unexpectedly. A timeout for a single test may have occurred."
+
+    # Remove the pipes
+    rm -f $in $out
     exit 1
 }
 
@@ -130,6 +131,7 @@ for f in input/*.get; do
 	    if [[ "$line" == "DONE" ]]; then
 		break
 	    else
+		# FOR DEBUGGING PluginTest CRASHES:
 		# echo $line
 		if [[ -z $extralines ]]; then
 		    extralines="\t${line}"
