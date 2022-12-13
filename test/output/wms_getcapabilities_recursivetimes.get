@@ -518,6 +518,10 @@
       <BoundingBox CRS="EPSG:4326" minx="18" miny="59" maxx="33" maxy="70"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">1921-01-01T00:00:00Z/2020-01-01T00:00:00Z/PT15M</Dimension>
       
+      <Dimension name="interval_start" units="minute" default="15" multipleValues="0" nearestValue="0">15,30,0,60</Dimension>
+      
+      <Dimension name="interval_end" units="minute" default="0" multipleValues="0" nearestValue="0">0,30</Dimension>
+      
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
@@ -1756,6 +1760,10 @@
       <BoundingBox CRS="EPSG:4258" minx="-11" miny="49" maxx="34" maxy="74"/>
       <BoundingBox CRS="EPSG:4326" minx="-11" miny="49" maxx="34" maxy="74"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2019-03-25T09:00:00Z/2019-03-25T09:05:00Z/PT5M</Dimension>
+      
+      <Dimension name="interval_start" units="minute" default="5" multipleValues="0" nearestValue="0">5</Dimension>
+      
+      <Dimension name="interval_end" units="minute" default="0" multipleValues="0" nearestValue="0">0</Dimension>
       
       <Style>
         <Name>default</Name>
@@ -3140,6 +3148,10 @@
       <BoundingBox CRS="EPSG:4258" minx="-11" miny="49" maxx="34" maxy="74"/>
       <BoundingBox CRS="EPSG:4326" minx="-11" miny="49" maxx="34" maxy="74"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2019-03-25T09:00:00Z/2019-03-25T09:05:00Z/PT5M</Dimension>
+      
+      <Dimension name="interval_start" units="minute" default="5" multipleValues="0" nearestValue="0">5</Dimension>
+      
+      <Dimension name="interval_end" units="minute" default="0" multipleValues="0" nearestValue="0">0</Dimension>
       
       <Style>
         <Name>default</Name>
