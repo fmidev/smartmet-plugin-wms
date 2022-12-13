@@ -292,28 +292,34 @@ void add_layer_info(bool multiple_intervals,
   {
     // Add supported time dimension
     boost::optional<CTPP::CDT> time_dim;
+	auto wmslayer = lh.timeDimension->getLayer();
     if (sublayer_is_reference_time_layer)
     {
       // If sublayers are reference time layers, parent shows only referece time elemenent
-      time_dim = lh.timeDimension->getLayer()->getReferenceDimensionInfo();
+      time_dim = wmslayer->getReferenceDimensionInfo();
     }
     else if (lh.reference_time)
     {
       // Reference time layer
       std::string ref_time = Fmi::to_iso_string(*lh.reference_time);
-      time_dim = lh.timeDimension->getLayer()->getTimeDimensionInfo(
+      time_dim = wmslayer->getTimeDimensionInfo(
           multiple_intervals, starttime, endtime, ref_time);
     }
     else
     {
       if (!lh.parent ||
           (lh.parent && !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::time_dim)))
-        time_dim = lh.timeDimension->getLayer()->getTimeDimensionInfo(
+        time_dim = wmslayer->getTimeDimensionInfo(
             multiple_intervals, starttime, endtime, reference_time);
     }
 
     if (time_dim)
-      capa.MergeCDT(*time_dim);
+	  {
+		capa.MergeCDT(*time_dim);
+		auto interval_dim= wmslayer->getIntervalDimensionInfo();
+		if(interval_dim)
+		  capa.MergeCDT(*interval_dim);
+	  }
   }
 
   if (lh.elevationDimension)

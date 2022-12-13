@@ -138,7 +138,7 @@ class WMSLayer
       const boost::optional<std::string>& starttime,
       const boost::optional<std::string>& endtime,
       const boost::optional<std::string>& reference_time);
-
+  
   boost::optional<CTPP::CDT> getLayerBaseInfo() const;
   boost::optional<CTPP::CDT> getGeographicBoundingBoxInfo() const;
   boost::optional<CTPP::CDT> getProjectedBoundingBoxInfo() const;
@@ -147,6 +147,7 @@ class WMSLayer
       const boost::optional<std::string>& starttime,
       const boost::optional<std::string>& endtime,
       const boost::optional<std::string>& reference_time) const;
+  boost::optional<CTPP::CDT> getIntervalDimensionInfo() const;
   boost::optional<CTPP::CDT> getReferenceDimensionInfo() const;
   boost::optional<CTPP::CDT> getElevationDimensionInfo() const;
   boost::optional<CTPP::CDT> getStyleInfo() const;

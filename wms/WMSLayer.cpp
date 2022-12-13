@@ -1859,6 +1859,45 @@ boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
   }
 }
 
+boost::optional<CTPP::CDT> WMSLayer::getIntervalDimensionInfo() const
+{
+  try
+  {
+    if (hidden || !intervalDimension)
+      return {};
+
+    CTPP::CDT layer(CTPP::CDT::HASH_VAL);
+
+	CTPP::CDT interval_dimension_list(CTPP::CDT::ARRAY_VAL);
+	CTPP::CDT interval_dimension_start(CTPP::CDT::HASH_VAL);
+	
+	interval_dimension_start["name"] = "interval_start";
+	interval_dimension_start["units"] = "minute";
+	interval_dimension_start["multiple_values"] = 0;
+	interval_dimension_start["nearest_value"] = 0;
+	interval_dimension_start["default"] = intervalDimension->getDefaultStartInterval();
+	interval_dimension_start["value"] = intervalDimension->getStartIntervals();
+
+	CTPP::CDT interval_dimension_end(CTPP::CDT::HASH_VAL);
+	interval_dimension_end["name"] = "interval_end";
+	interval_dimension_end["units"] = "minute";
+	interval_dimension_end["multiple_values"] = 0;
+	interval_dimension_end["nearest_value"] = 0;
+	interval_dimension_end["default"] = intervalDimension->getDefaultEndInterval();
+	interval_dimension_end["value"] = intervalDimension->getEndIntervals();
+	
+	interval_dimension_list.PushBack(interval_dimension_start);
+	interval_dimension_list.PushBack(interval_dimension_end);
+	layer["interval_dimension"] = interval_dimension_list;
+
+    return layer;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to generate capabilities for the layer!");
+  }
+}
+
 boost::optional<CTPP::CDT> WMSLayer::getReferenceDimensionInfo() const
 {
   try
