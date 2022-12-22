@@ -84,7 +84,7 @@ void addTextField(double xPos,
                   const Attributes& attributes,
                   CTPP::CDT& globals,
                   CTPP::CDT& layersCdt,
-                  State& state)
+                  const State& state)
 {
   if (rows.empty())
     return;
@@ -131,7 +131,6 @@ void addTextField(double xPos,
   text_dimension_t textDimension = getTextDimension(rows, textStyle);
 
   double xCoord = xPos;
-  double yCoord = yPos;
   double rowHeight = textDimension.height / (1.0 * rows.size());
 
   //"text-anchor": "start"
@@ -145,7 +144,7 @@ void addTextField(double xPos,
 
   for (unsigned int i = 0; i < rows.size(); i++)
   {
-    yCoord = (yPos + (i * rowHeight));
+    double yCoord = (yPos + (i * rowHeight));
 
     const std::string& row = rows[i];
     CTPP::CDT textCdt(CTPP::CDT::HASH_VAL);

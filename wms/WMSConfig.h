@@ -54,7 +54,6 @@ namespace WMS
 class WMSConfig
 {
  public:
-  WMSConfig() = delete;
   WMSConfig(const Plugin::Dali::Config& daliConfig,
             const Spine::JsonCache& theJsonCache,
             Engine::Querydata::Engine* qEngine,
@@ -68,6 +67,12 @@ class WMSConfig
             Engine::Grid::Engine* gridEngine);
 
   virtual ~WMSConfig();
+
+  WMSConfig() = delete;
+  WMSConfig(const WMSConfig& other) = delete;
+  WMSConfig operator=(const WMSConfig& other) = delete;
+  WMSConfig(WMSConfig&& other) = delete;
+  WMSConfig operator=(WMSConfig&& other) = delete;
 
 #ifndef WITHOUT_AUTHENTICATION
   CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
@@ -112,7 +117,7 @@ class WMSConfig
   bool isValidElevation(const std::string& theLayer, int theElevation) const;
   bool isValidTime(const std::string& theLayer,
                    const boost::posix_time::ptime& theTime,
-                   const boost::optional<boost::posix_time::ptime>& reference_time) const;
+                   const boost::optional<boost::posix_time::ptime>& theReferenceTime) const;
   bool isValidReferenceTime(const std::string& theLayer,
                             const boost::posix_time::ptime& theReferenceTime) const;
 

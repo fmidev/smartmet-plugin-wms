@@ -4,7 +4,6 @@
 #include "Config.h"
 #include "Defs.h"
 #include "Hash.h"
-#include "Layer.h"
 #include "LayerFactory.h"
 #include "State.h"
 #include "View.h"
@@ -363,8 +362,8 @@ std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
 
   const int npixels = 5;
   const int minsamples = 2;
-  const int w = theBox.width() + 2 * xmargin;
-  const int h = theBox.height() + 2 * ymargin;
+  const int w = theBox.width() + 2U * xmargin;
+  const int h = theBox.height() + 2U * ymargin;
 
   // If the CRS is geographic we need only the corners
 

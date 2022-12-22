@@ -137,7 +137,7 @@ std::string untranslated_legend_text(const Isoband& theIsoband,
 
 std::string legend_text(const Isoband& theIsoband,
                         const LegendLabels& theLabels,
-                        boost::optional<std::string>& theLanguage)
+                        const boost::optional<std::string>& theLanguage)
 {
   try
   {

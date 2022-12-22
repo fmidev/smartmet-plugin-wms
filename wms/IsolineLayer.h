@@ -64,7 +64,7 @@ class IsolineLayer : public Layer
   std::vector<OGRGeometryPtr> getIsolinesGrid(const std::vector<double>& isovalues,
                                               State& theState);
   std::vector<OGRGeometryPtr> getIsolinesQuerydata(const std::vector<double>& isovalues,
-                                                   State& theState);
+                                                   const State& theState);
 
 };  // class IsolineLayer
 

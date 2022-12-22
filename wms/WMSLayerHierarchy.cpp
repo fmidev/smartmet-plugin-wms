@@ -265,8 +265,7 @@ void add_layer_info(bool multiple_intervals,
 
   if (lh.geographicBoundingBox)
   {
-    if (!lh.parent ||
-        (lh.parent && !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::geo_bbox)))
+    if (!lh.parent || !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::geo_bbox))
     {
       // Add supported geographic bounding box
       boost::optional<CTPP::CDT> geo_bbox =
@@ -277,8 +276,7 @@ void add_layer_info(bool multiple_intervals,
   }
   if (lh.projectedBoundingBox)
   {
-    if (!lh.parent ||
-        (lh.parent && !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::proj_bbox)))
+    if (!lh.parent || !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::proj_bbox))
     {
       // Add supported CRSs
       boost::optional<CTPP::CDT> projected_bbox =
@@ -292,7 +290,7 @@ void add_layer_info(bool multiple_intervals,
   {
     // Add supported time dimension
     boost::optional<CTPP::CDT> time_dim;
-	auto wmslayer = lh.timeDimension->getLayer();
+    auto wmslayer = lh.timeDimension->getLayer();
     if (sublayer_is_reference_time_layer)
     {
       // If sublayers are reference time layers, parent shows only referece time elemenent
@@ -302,30 +300,27 @@ void add_layer_info(bool multiple_intervals,
     {
       // Reference time layer
       std::string ref_time = Fmi::to_iso_string(*lh.reference_time);
-      time_dim = wmslayer->getTimeDimensionInfo(
-          multiple_intervals, starttime, endtime, ref_time);
+      time_dim = wmslayer->getTimeDimensionInfo(multiple_intervals, starttime, endtime, ref_time);
     }
     else
     {
-      if (!lh.parent ||
-          (lh.parent && !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::time_dim)))
-        time_dim = wmslayer->getTimeDimensionInfo(
-            multiple_intervals, starttime, endtime, reference_time);
+      if (!lh.parent || !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::time_dim))
+        time_dim =
+            wmslayer->getTimeDimensionInfo(multiple_intervals, starttime, endtime, reference_time);
     }
 
     if (time_dim)
-	  {
-		capa.MergeCDT(*time_dim);
-		auto interval_dim= wmslayer->getIntervalDimensionInfo();
-		if(interval_dim)
-		  capa.MergeCDT(*interval_dim);
-	  }
+    {
+      capa.MergeCDT(*time_dim);
+      auto interval_dim = wmslayer->getIntervalDimensionInfo();
+      if (interval_dim)
+        capa.MergeCDT(*interval_dim);
+    }
   }
 
   if (lh.elevationDimension)
   {
-    if (!lh.parent ||
-        (lh.parent && !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::elev_dim)))
+    if (!lh.parent || !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::elev_dim))
     {
       // Add supported elevation dimension
       boost::optional<CTPP::CDT> elev_dim =

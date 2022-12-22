@@ -293,7 +293,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
           intervals.emplace_back(interval_dimension_item(
               interval_start,
               0,
-              (interval_default ? (*interval_default == interval_start ? true : false) : i == 0)));
+              (interval_default ? (*interval_default == interval_start) : i == 0)));
         }
         else if (json[i].isObject())
         {

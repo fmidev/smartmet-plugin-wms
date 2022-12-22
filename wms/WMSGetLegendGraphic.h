@@ -23,14 +23,14 @@ struct get_legend_graphic_request_options
   std::string style;
   std::string version;
   std::string sld_version;
-  unsigned int width;
-  unsigned int height;
+  unsigned int width = 0;
+  unsigned int height = 0;
 };
 
 class WMSGetLegendGraphic
 {
  public:
-  WMSGetLegendGraphic(const WMSConfig& theConfig);
+  explicit WMSGetLegendGraphic(const WMSConfig& theConfig);
 
   void parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
                         Spine::HTTP::Request& theRequest);

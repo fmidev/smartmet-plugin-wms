@@ -43,7 +43,7 @@ class WMSTimeDimension
   bool currentValue() const { return current; }
 
  protected:
-  bool current;
+  bool current = false;
   std::set<boost::posix_time::ptime> itsTimesteps;
   std::string itsCapabilities;  // returned when querying all times
 };
@@ -51,15 +51,15 @@ class WMSTimeDimension
 class StepTimeDimension : public WMSTimeDimension
 {
  public:
-  virtual ~StepTimeDimension() = default;
+  ~StepTimeDimension() override = default;
   StepTimeDimension() = delete;
   StepTimeDimension(const std::list<boost::posix_time::ptime>& times);
   StepTimeDimension(const std::vector<boost::posix_time::ptime>& times);
   StepTimeDimension(const std::set<boost::posix_time::ptime>& times);
 
-  virtual std::string getCapabilities(bool multiple_intervals,
-                                      const boost::optional<std::string>& starttime,
-                                      const boost::optional<std::string>& endtime) const;
+  std::string getCapabilities(bool multiple_intervals,
+                              const boost::optional<std::string>& starttime,
+                              const boost::optional<std::string>& endtime) const override;
 
  private:
   std::string makeCapabilities(const boost::optional<std::string>& starttime,
@@ -77,10 +77,7 @@ struct tag_interval
       : startTime(start), endTime(end), resolution(res)
   {
   }
-  tag_interval(const tag_interval& interval)
-      : startTime(interval.startTime), endTime(interval.endTime), resolution(interval.resolution)
-  {
-  }
+  tag_interval(const tag_interval& interval) = default;
 };
 
 class IntervalTimeDimension : public WMSTimeDimension
@@ -156,7 +153,7 @@ time_intervals get_intervals(const Container& container)
     current_interval->endTime = *iter;
   }
   // If latest interval has only two timesteps, we can not use IntervalTimeDimension
-  if (ret.size() > 0 &&
+  if (!ret.empty() &&
       (current_interval->endTime - current_interval->startTime) == current_interval->resolution)
     ret.clear();
 

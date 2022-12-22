@@ -22,7 +22,7 @@ struct tag_map_info
   std::string name;  // name
   std::string style;
 
-  tag_map_info(const std::string& n, const std::string& s) : name(n), style(s) {}
+  tag_map_info(std::string n, std::string s) : name(std::move(n)), style(std::move(s)) {}
 };
 
 struct tag_get_map_request_options

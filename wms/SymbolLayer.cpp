@@ -910,7 +910,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 {
   try
   {
-    auto* gridEngine = theState.getGridEngine();
+    const auto* gridEngine = theState.getGridEngine();
     if (!gridEngine || !gridEngine->isEnabled())
       throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 

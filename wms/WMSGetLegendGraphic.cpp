@@ -25,7 +25,6 @@ void check_getlegendgraphic_request_options(const Spine::HTTP::Request& theHTTPR
   try
   {
     // check that all mandatory options has been defined
-    std::string missing_options;
 
     if (!theHTTPRequest.getParameter("VERSION"))
     {

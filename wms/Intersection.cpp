@@ -232,12 +232,12 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     auto hlimit = C_FLOAT(*hilimit);
     auto llimit = C_FLOAT(*lolimit);
 
-    for (auto& param : originalGridQuery->mQueryParameterList)
+    for (auto& p : originalGridQuery->mQueryParameterList)
     {
-      param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      param.mType = QueryServer::QueryParameter::Type::Isoband;
-      param.mContourLowValues.push_back(llimit);
-      param.mContourHighValues.push_back(hlimit);
+      p.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+      p.mType = QueryServer::QueryParameter::Type::Isoband;
+      p.mContourLowValues.push_back(llimit);
+      p.mContourHighValues.push_back(hlimit);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -291,9 +291,9 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     // Converting the returned WKB-isolines into OGRGeometry objects.
 
     std::vector<OGRGeometryPtr> isobands;
-    for (const auto& param : query->mQueryParameterList)
+    for (const auto& p : query->mQueryParameterList)
     {
-      for (const auto& val : param.mValueList)
+      for (const auto& val : p.mValueList)
       {
         if (!val->mValueData.empty())
         {

@@ -20,7 +20,7 @@ namespace WMS
 struct LegendGraphicParameter
 {
   LegendGraphicParameter() {}
-  LegendGraphicParameter(const std::string& dn) : data_name(dn) {}
+  explicit LegendGraphicParameter(const std::string& dn) : data_name(dn) {}
   LegendGraphicParameter(const std::string& dn,
                          const std::string& gn,
                          const std::string& u,
@@ -28,15 +28,7 @@ struct LegendGraphicParameter
       : data_name(dn), given_name(gn), unit(u), hide_title(ht)
   {
   }
-  LegendGraphicParameter(const LegendGraphicParameter& lgp)
-      : data_name(lgp.data_name),
-        given_name(lgp.given_name),
-        unit(lgp.unit),
-        hide_title(lgp.hide_title),
-        translations(lgp.translations),
-        text_lengths(lgp.text_lengths)
-  {
-  }
+  LegendGraphicParameter(const LegendGraphicParameter& lgp) = default;
 
   std::string data_name;
   std::string given_name;
@@ -49,13 +41,9 @@ struct LegendGraphicParameter
 struct LegendGraphicSymbol
 {
   LegendGraphicSymbol() {}
-  LegendGraphicSymbol(const std::string& sn) : symbol_name(sn) {}
-  LegendGraphicSymbol(const LegendGraphicSymbol& lgs)
-      : symbol_name(lgs.symbol_name), translations(lgs.translations)
-  {
-  }
-
-  LegendGraphicSymbol& operator = (const LegendGraphicSymbol&) = default;
+  explicit LegendGraphicSymbol(const std::string& sn) : symbol_name(sn) {}
+  LegendGraphicSymbol(const LegendGraphicSymbol& lgs) = default;
+  LegendGraphicSymbol& operator=(const LegendGraphicSymbol&) = default;
 
   std::string symbol_name;
   std::map<std::string, std::string> translations;

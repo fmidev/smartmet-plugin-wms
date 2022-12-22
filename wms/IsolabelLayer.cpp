@@ -623,7 +623,7 @@ Candidates IsolabelLayer::find_candidates(const std::vector<OGRGeometryPtr>& geo
   int id = 0;
   for (std::size_t i = 0; i < geoms.size(); i++)
   {
-    OGRGeometryPtr geom = geoms[i];
+    const OGRGeometryPtr& geom = geoms[i];
     if (geom && geom->IsEmpty() == 0)
     {
       const auto old_id = id;
@@ -760,19 +760,19 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges, std::vector<boos
 
       bool forbidden = false;
 
-      for (const auto& edge : edges)
+      for (const auto& test_edge : edges)
       {
-        if (edge.first == new_vertex)
+        if (test_edge.first == new_vertex)
         {
-          if (status[edge.second] && !edge.valid)
+          if (status[test_edge.second] && !test_edge.valid)
           {
             forbidden = true;
             break;
           }
         }
-        else if (edge.second == new_vertex)
+        else if (test_edge.second == new_vertex)
         {
-          if (status[edge.first] && !edge.valid)
+          if (status[test_edge.first] && !test_edge.valid)
           {
             forbidden = true;
             break;

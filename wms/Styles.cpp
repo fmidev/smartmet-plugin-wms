@@ -44,7 +44,7 @@ void Styles::init(const Json::Value& theJson, const Config& /* theConfig */)
       const auto members = class_json.getMemberNames();
       for (const auto& name : members)
       {
-        const Json::Value json = class_json[name];
+        const Json::Value& json = class_json[name];
 
         switch (json.type())
         {

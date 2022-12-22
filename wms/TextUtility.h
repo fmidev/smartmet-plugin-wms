@@ -39,7 +39,7 @@ void addTextField(double xPos,
                   const Attributes& attributes,
                   CTPP::CDT& globals,
                   CTPP::CDT& layersCdt,
-                  State& state);
+                  const State& state);
 void addTextField(double xPos,
                   double yPos,
                   double fieldWidth,

@@ -18,24 +18,22 @@ namespace Dali
 {
 namespace Geometry
 {
-
-
-typedef std::map<unsigned long long,unsigned long long> CoordinateCounter;
+using CoordinateCounter = std::map<unsigned long long, unsigned long long>;
 
 struct GInfo
 {
-    int precision;
-    double mp;
-    int arcCounter;
-    int coordinateCounter;
-    int globalArcCounter;
-    std::map<std::size_t,uint> *arcHashMap;
-    std::ostringstream arcNumbers;
-    std::ostringstream arcCoordinates;
-    std::ostringstream pointCoordinates;
+  int precision;
+  double mp;
+  int arcCounter;
+  int coordinateCounter;
+  int globalArcCounter;
+  std::map<std::size_t, uint>* arcHashMap;
+  std::ostringstream arcNumbers;
+  std::ostringstream arcCoordinates;
+  std::ostringstream pointCoordinates;
 };
 
-FILE *file = NULL;
+FILE* file = nullptr;
 
 // ----------------------------------------------------------------------
 /*!
@@ -110,24 +108,19 @@ std::string name(const OGRGeometry& theGeom, const std::string& theType)
   }
 }
 
+extern void extractGeometry(const OGRGeometry* theGeom, uint mode, GInfo& info);
 
-
-extern void extractGeometry(const OGRGeometry *theGeom,uint mode,GInfo& info);
-
-
-
-void extractGeometry_point(const OGRPoint *theGeom,uint mode,GInfo& info)
+void extractGeometry_point(const OGRPoint* theGeom, uint /* mode */, GInfo& info)
 {
   try
   {
     double xx = theGeom->getX();
     double yy = theGeom->getY();
 
-    long long xxi = (unsigned long long)(xx*info.mp);
-    long long yyi = (unsigned long long)(yy*info.mp);
+    long long xxi = (unsigned long long)(xx * info.mp);
+    long long yyi = (unsigned long long)(yy * info.mp);
 
     info.pointCoordinates << "[" << xxi << "," << yyi << "]";
-
   }
   catch (...)
   {
@@ -135,10 +128,7 @@ void extractGeometry_point(const OGRPoint *theGeom,uint mode,GInfo& info)
   }
 }
 
-
-
-
-void extractGeometry_lineString(const OGRLineString *lineString,uint mode,GInfo& info)
+void extractGeometry_lineString(const OGRLineString* lineString, uint /* mode */, GInfo& info)
 {
   try
   {
@@ -149,77 +139,69 @@ void extractGeometry_lineString(const OGRLineString *lineString,uint mode,GInfo&
     if (len < 2)
       return;
 
-
     double xx = lineString->getX(0);
     double yy = lineString->getY(0);
 
-    long long xxi = (unsigned long long)(xx*info.mp);
-    long long yyi = (unsigned long long)(yy*info.mp);
+    long long xxi = (unsigned long long)(xx * info.mp);
+    long long yyi = (unsigned long long)(yy * info.mp);
 
     arcCoordinates << "[";
     arcCoordinates << "[" << xxi << "," << yyi << "]";
-    //arcCoordinates << "[" << xx << "," << yy << "]";
+    // arcCoordinates << "[" << xx << "," << yy << "]";
 
-    for (int t=1; t<len; t++)
+    for (int t = 1; t < len; t++)
     {
       double x = lineString->getX(t);
       double y = lineString->getY(t);
 
-      long long xi = (unsigned long long)(x*info.mp);
-      long long yi = (unsigned long long)(y*info.mp);
+      long long xi = (unsigned long long)(x * info.mp);
+      long long yi = (unsigned long long)(y * info.mp);
 
-      long long nx = (xi-xxi);
-      long long ny = (yi-yyi);
+      long long nx = (xi - xxi);
+      long long ny = (yi - yyi);
 
       if (nx || ny)
       {
-        arcCoordinates << ",[" << (xi-xxi) << "," << (yi-yyi) << "]";
-        //arcCoordinates << ",[" << (x-xx) << "," << (y-yy) << "]";
+        arcCoordinates << ",[" << (xi - xxi) << "," << (yi - yyi) << "]";
+        // arcCoordinates << ",[" << (x-xx) << "," << (y-yy) << "]";
 
         xxi = xi;
         yyi = yi;
-        xx = x;
-        yy = y;
       }
     }
     arcCoordinates << "]";
 
+    xx = lineString->getX(len - 1);
+    yy = lineString->getY(len - 1);
 
-    xx = lineString->getX(len-1);
-    yy = lineString->getY(len-1);
-
-    xxi = (long long)(xx*info.mp);
-    yyi = (long long)(yy*info.mp);
+    xxi = (long long)(xx * info.mp);
+    yyi = (long long)(yy * info.mp);
 
     reverseArcsCoordinates << "[";
     reverseArcsCoordinates << "[" << xxi << "," << yyi << "]";
-    //reverseArcsCoordinates << "[" << xx << "," << yy << "]";
+    // reverseArcsCoordinates << "[" << xx << "," << yy << "]";
 
-    for (int t=len-2; t>=0; t--)
+    for (int t = len - 2; t >= 0; t--)
     {
       double x = lineString->getX(t);
       double y = lineString->getY(t);
 
-      long long xi = (unsigned long long)(x*info.mp);
-      long long yi = (unsigned long long)(y*info.mp);
+      long long xi = (unsigned long long)(x * info.mp);
+      long long yi = (unsigned long long)(y * info.mp);
 
-      long long nx = (xi-xxi);
-      long long ny = (yi-yyi);
+      long long nx = (xi - xxi);
+      long long ny = (yi - yyi);
 
       if (nx || ny)
       {
-        reverseArcsCoordinates << ",[" << (xi-xxi) << "," << (yi-yyi) << "]";
-        //reverseArcsCoordinates << ",[" << (x-xx) << "," << (y-yy) << "]";
+        reverseArcsCoordinates << ",[" << (xi - xxi) << "," << (yi - yyi) << "]";
+        // reverseArcsCoordinates << ",[" << (x-xx) << "," << (y-yy) << "]";
 
         xxi = xi;
         yyi = yi;
-
-        xx = x;
-        yy = y;
       }
     }
     reverseArcsCoordinates << "]";
-
 
     int archNumber = info.globalArcCounter;
 
@@ -232,7 +214,7 @@ void extractGeometry_lineString(const OGRLineString *lineString,uint mode,GInfo&
     auto it = info.arcHashMap->find(hash);
     if (it != info.arcHashMap->end())
     {
-      //printf("HASH FOUND %u\n",it->second);
+      // printf("HASH FOUND %u\n",it->second);
       archNumber = it->second;
     }
     else
@@ -240,13 +222,13 @@ void extractGeometry_lineString(const OGRLineString *lineString,uint mode,GInfo&
       it = info.arcHashMap->find(reverseHash);
       if (it != info.arcHashMap->end())
       {
-        //printf("REVERSE HASH FOUND %u\n",it->second);
-        archNumber = -(it->second+1);
+        // printf("REVERSE HASH FOUND %u\n",it->second);
+        archNumber = -(it->second + 1);
       }
       else
       {
-        info.arcHashMap->insert(std::pair<std::size_t,int>(hash,info.globalArcCounter));
-        //arcCoordinateCache.insert(std::pair<std::string,int>(str,info.globalArcCounter));
+        info.arcHashMap->insert(std::pair<std::size_t, int>(hash, info.globalArcCounter));
+        // arcCoordinateCache.insert(std::pair<std::string,int>(str,info.globalArcCounter));
 
         if (info.coordinateCounter > 0)
           info.arcCoordinates << ",\n";
@@ -270,14 +252,11 @@ void extractGeometry_lineString(const OGRLineString *lineString,uint mode,GInfo&
   }
 }
 
-
-
-
-void extractGeometry_linearRing(const OGRLinearRing *linearRing,bool exterior,uint mode,GInfo& info)
+void extractGeometry_linearRing(const OGRLinearRing* linearRing, uint mode, GInfo& info)
 {
   try
   {
-    extractGeometry_lineString(linearRing,mode,info);
+    extractGeometry_lineString(linearRing, mode, info);
   }
   catch (...)
   {
@@ -285,24 +264,22 @@ void extractGeometry_linearRing(const OGRLinearRing *linearRing,bool exterior,ui
   }
 }
 
-
-
-
-void extractGeometry_polygon(const OGRPolygon *polygon,uint mode,GInfo& info)
+void extractGeometry_polygon(const OGRPolygon* polygon, uint mode, GInfo& info)
 {
   try
   {
-    const OGRLinearRing* ring = polygon->getExteriorRing();
     if (!polygon)
       return;
 
-    extractGeometry_linearRing(ring,true,mode,info);
+    const OGRLinearRing* ring = polygon->getExteriorRing();
+
+    extractGeometry_linearRing(ring, mode, info);
 
     int len = polygon->getNumInteriorRings();
-    for (int t=0; t<len; t++)
+    for (int t = 0; t < len; t++)
     {
       ring = polygon->getInteriorRing(t);
-      extractGeometry_linearRing(ring,false,mode,info);
+      extractGeometry_linearRing(ring, mode, info);
     }
   }
   catch (...)
@@ -311,19 +288,16 @@ void extractGeometry_polygon(const OGRPolygon *polygon,uint mode,GInfo& info)
   }
 }
 
-
-
-
-void extractGeometry_multiPoint(const OGRMultiPoint *multiPoint,uint mode,GInfo& info)
+void extractGeometry_multiPoint(const OGRMultiPoint* multiPoint, uint mode, GInfo& info)
 {
   try
   {
     int len = multiPoint->getNumGeometries();
-    for (int t=0; t<len; t++)
+    for (int t = 0; t < len; t++)
     {
-      const OGRGeometry *geom = multiPoint->getGeometryRef(t);
-      const OGRPoint *point = geom->toPoint();
-      extractGeometry_point(point,mode,info);
+      const OGRGeometry* geom = multiPoint->getGeometryRef(t);
+      const OGRPoint* point = geom->toPoint();
+      extractGeometry_point(point, mode, info);
     }
   }
   catch (...)
@@ -332,19 +306,18 @@ void extractGeometry_multiPoint(const OGRMultiPoint *multiPoint,uint mode,GInfo&
   }
 }
 
-
-
-
-void extractGeometry_multiLineString(const OGRMultiLineString *multiLineString,uint mode,GInfo& info)
+void extractGeometry_multiLineString(const OGRMultiLineString* multiLineString,
+                                     uint mode,
+                                     GInfo& info)
 {
   try
   {
     int len = multiLineString->getNumGeometries();
-    for (int t=0; t<len; t++)
+    for (int t = 0; t < len; t++)
     {
-      const OGRGeometry *geom = multiLineString->getGeometryRef(t);
-      const OGRLineString *lineString = geom->toLineString();
-      extractGeometry_lineString(lineString,mode,info);
+      const OGRGeometry* geom = multiLineString->getGeometryRef(t);
+      const OGRLineString* lineString = geom->toLineString();
+      extractGeometry_lineString(lineString, mode, info);
     }
   }
   catch (...)
@@ -353,10 +326,7 @@ void extractGeometry_multiLineString(const OGRMultiLineString *multiLineString,u
   }
 }
 
-
-
-
-void extractGeometry_multiPolygon(const OGRMultiPolygon *multiPolygon,uint mode,GInfo& info)
+void extractGeometry_multiPolygon(const OGRMultiPolygon* multiPolygon, uint mode, GInfo& info)
 {
   try
   {
@@ -365,11 +335,11 @@ void extractGeometry_multiPolygon(const OGRMultiPolygon *multiPolygon,uint mode,
 
     info.arcNumbers << "[";
     int len = multiPolygon->getNumGeometries();
-    for (int t=0; t<len; t++)
+    for (int t = 0; t < len; t++)
     {
-      const OGRGeometry *geom = multiPolygon->getGeometryRef(t);
-      const OGRPolygon *polygon = geom->toPolygon();
-      extractGeometry_polygon(polygon,mode,info);
+      const OGRGeometry* geom = multiPolygon->getGeometryRef(t);
+      const OGRPolygon* polygon = geom->toPolygon();
+      extractGeometry_polygon(polygon, mode, info);
     }
     info.arcNumbers << "]";
   }
@@ -379,17 +349,17 @@ void extractGeometry_multiPolygon(const OGRMultiPolygon *multiPolygon,uint mode,
   }
 }
 
-
-
-void extractGeometry_geometryCollection(const OGRGeometryCollection *geometryCollection,uint mode,GInfo& info)
+void extractGeometry_geometryCollection(const OGRGeometryCollection* geometryCollection,
+                                        uint mode,
+                                        GInfo& info)
 {
   try
   {
     int len = geometryCollection->getNumGeometries();
-    for (int t=0; t<len; t++)
+    for (int t = 0; t < len; t++)
     {
-      const OGRGeometry *geom = geometryCollection->getGeometryRef(t);
-      extractGeometry(geom,mode,info);
+      const OGRGeometry* geom = geometryCollection->getGeometryRef(t);
+      extractGeometry(geom, mode, info);
     }
   }
   catch (...)
@@ -398,10 +368,7 @@ void extractGeometry_geometryCollection(const OGRGeometryCollection *geometryCol
   }
 }
 
-
-
-
-void extractGeometry(const OGRGeometry *geometry,uint mode,GInfo& info)
+void extractGeometry(const OGRGeometry* geometry, uint mode, GInfo& info)
 {
   try
   {
@@ -409,39 +376,39 @@ void extractGeometry(const OGRGeometry *geometry,uint mode,GInfo& info)
     switch (id)
     {
       case wkbPoint:
-        extractGeometry_point((OGRPoint*)geometry,mode,info);
+        extractGeometry_point((OGRPoint*)geometry, mode, info);
         break;
 
       case wkbLineString:
-        extractGeometry_lineString((OGRLineString*)geometry,mode,info);
+        extractGeometry_lineString((OGRLineString*)geometry, mode, info);
         break;
 
       case wkbLinearRing:
-        extractGeometry_linearRing((OGRLinearRing*)geometry,true,mode,info);
+        extractGeometry_linearRing((OGRLinearRing*)geometry, mode, info);
         break;
 
       case wkbPolygon:
-        extractGeometry_polygon((OGRPolygon*)geometry,mode,info);
+        extractGeometry_polygon((OGRPolygon*)geometry, mode, info);
         break;
 
       case wkbMultiPoint:
-        extractGeometry_multiPoint((OGRMultiPoint*)geometry,mode,info);
+        extractGeometry_multiPoint((OGRMultiPoint*)geometry, mode, info);
         break;
 
       case wkbMultiLineString:
-        extractGeometry_multiLineString((OGRMultiLineString*)geometry,mode,info);
+        extractGeometry_multiLineString((OGRMultiLineString*)geometry, mode, info);
         break;
 
       case wkbMultiPolygon:
-        extractGeometry_multiPolygon((OGRMultiPolygon*)geometry,mode,info);
+        extractGeometry_multiPolygon((OGRMultiPolygon*)geometry, mode, info);
         break;
 
       case wkbGeometryCollection:
-        extractGeometry_geometryCollection((OGRGeometryCollection*)geometry,mode,info);
+        extractGeometry_geometryCollection((OGRGeometryCollection*)geometry, mode, info);
         break;
 
       default:
-        throw Fmi::Exception(BCP,"Encountered an unknown geometry component!");
+        throw Fmi::Exception(BCP, "Encountered an unknown geometry component!");
     }
   }
   catch (...)
@@ -449,7 +416,6 @@ void extractGeometry(const OGRGeometry *geometry,uint mode,GInfo& info)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
 
 // ----------------------------------------------------------------------
 /*!
@@ -458,13 +424,13 @@ void extractGeometry(const OGRGeometry *geometry,uint mode,GInfo& info)
 // ----------------------------------------------------------------------
 
 std::string toTopoJSON(const OGRGeometry& theGeom,
-                      const Fmi::Box& /* theBox */,
-                      const Fmi::SpatialReference& theSRS,
-                      double thePrecision,
-                      std::map<std::size_t,uint>& arcHashMap,
-                      uint& arcCounter,
-                      std::string& arcNumbers,
-                      std::string& arcCoordinates)
+                       const Fmi::Box& /* theBox */,
+                       const Fmi::SpatialReference& /* theSRS */,
+                       double thePrecision,
+                       std::map<std::size_t, uint>& arcHashMap,
+                       uint& arcCounter,
+                       std::string& arcNumbers,
+                       std::string& arcCoordinates)
 {
   try
   {
@@ -472,13 +438,13 @@ std::string toTopoJSON(const OGRGeometry& theGeom,
     info.arcHashMap = &arcHashMap;
     info.precision = (int)(thePrecision);
     if (thePrecision >= 1.0)
-      info.mp = pow(10.0,info.precision);
+      info.mp = pow(10.0, info.precision);
 
     info.arcCounter = 0;
     info.coordinateCounter = 0;
     info.globalArcCounter = arcCounter;
     info.arcNumbers << "[";
-    extractGeometry(&theGeom,0,info);
+    extractGeometry(&theGeom, 0, info);
     arcCounter = info.globalArcCounter;
     info.arcNumbers << "]";
     arcCoordinates = info.arcCoordinates.str();
@@ -490,7 +456,6 @@ std::string toTopoJSON(const OGRGeometry& theGeom,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
 
 // ----------------------------------------------------------------------
 /*!
@@ -608,7 +573,6 @@ std::string toString(const OGRGeometry& theGeom,
   }
 }
 
-
 // ----------------------------------------------------------------------
 /*!
  * \brief Export the coordinates to the given format
@@ -620,7 +584,7 @@ std::string toString(const OGRGeometry& theGeom,
                      const Fmi::Box& theBox,
                      const Fmi::SpatialReference& theSRS,
                      double thePrecision,
-                     std::map<std::size_t,uint>& arcHashMap,
+                     std::map<std::size_t, uint>& arcHashMap,
                      uint& arcCounter,
                      std::string& arcNumbers,
                      std::string& arcCoordinates)
@@ -628,7 +592,14 @@ std::string toString(const OGRGeometry& theGeom,
   try
   {
     if (theType == "topojson")
-      return toTopoJSON(theGeom, theBox, theSRS, thePrecision,arcHashMap,arcCounter,arcNumbers,arcCoordinates);
+      return toTopoJSON(theGeom,
+                        theBox,
+                        theSRS,
+                        thePrecision,
+                        arcHashMap,
+                        arcCounter,
+                        arcNumbers,
+                        arcCoordinates);
 
     if (theType == "geojson")
       return toGeoJSON(theGeom, theBox, theSRS, thePrecision);
@@ -643,7 +614,6 @@ std::string toString(const OGRGeometry& theGeom,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
 
 }  // namespace Geometry
 }  // namespace Dali

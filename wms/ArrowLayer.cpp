@@ -334,14 +334,14 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
 
       for (const auto& point : points)
       {
-        double wdir = ParamValueMissing;
-        double wspeed = 0;
         if (layer.inside(box, point.x, point.y))
         {
           size_t pos = (height - point.y - 1) * width + point.x;
 
           if (pos < vValues->size())
           {
+            double wdir = ParamValueMissing;
+            double wspeed = 0;
             double v = (*vValues)[pos];
             double u = (*uValues)[pos];
             if (u != ParamValueMissing && v != ParamValueMissing)

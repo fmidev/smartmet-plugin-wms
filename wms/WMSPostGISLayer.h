@@ -42,8 +42,8 @@ class WMSPostGISLayer : public WMSLayer
   PostGISMetaDataSettings itsMetaDataSettings;
 
  protected:
-  virtual bool updateLayerMetaData();
-  virtual bool mustUpdateLayerMetaData();
+  bool updateLayerMetaData() override;
+  bool mustUpdateLayerMetaData() override;
 
  public:
   WMSPostGISLayer() = delete;

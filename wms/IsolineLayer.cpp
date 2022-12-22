@@ -105,7 +105,7 @@ void IsolineLayer::init(const Json::Value& theJson,
         std::string qidprefix = "isoline_";
         if (!json_qidprefix.isNull())
           qidprefix = json_qidprefix.asString();
-        for (double i = startvalue; i <= endvalue; i += interval)
+        for (double i = startvalue; i <= endvalue; i += interval)  // NOLINT(cert-flp30-c)
         {
           if (!except_vector.empty())
           {
@@ -274,7 +274,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double>&
 std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<double>& isovalues,
                                                           State& theState)
 {
-  auto* gridEngine = theState.getGridEngine();
+  const auto* gridEngine = theState.getGridEngine();
   if (!gridEngine || !gridEngine->isEnabled())
     throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
@@ -290,8 +290,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   // std::cout << valid_time << "TIMEZONE " << tz << "\n";
 
   T::ParamValue_vec contourValues;
-  for (const auto& value : isovalues)
-    contourValues.push_back(value);
+  std::copy(isovalues.begin(), isovalues.end(), std::back_inserter(contourValues));
 
   // Alter units if requested
   if (!unit_conversion.empty())
@@ -539,7 +538,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 // ----------------------------------------------------------------------
 
 std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector<double>& isovalues,
-                                                               State& theState)
+                                                               const State& theState)
 {
   // Establish the data. Store to member variable for IsolabelLayer use
   q = getModel(theState);
@@ -731,7 +730,6 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     if (theState.getType() == "topojson")
       topojson = true;
 
-    StyleSheet styleSheet;
     if (css)
     {
       std::string name = theState.getCustomer() + "/" + *css;

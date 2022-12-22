@@ -47,8 +47,8 @@ void LegendLabels::init(const Json::Value& theJson, const Config& theConfig)
       {
         if (!json.isObject())
           throw Fmi::Exception(BCP, "legend-layer conversions setting in a must be a map");
-        const auto members = json.getMemberNames();
-        for (const auto& name : members)
+        const auto convmembers = json.getMemberNames();
+        for (const auto& name : convmembers)
         {
           const Json::Value& label_json = json[name];
           if (label_json.isString())

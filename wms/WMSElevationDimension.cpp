@@ -9,10 +9,10 @@ namespace Plugin
 {
 namespace WMS
 {
-WMSElevationDimension::WMSElevationDimension(const std::string& level_name,
+WMSElevationDimension::WMSElevationDimension(std::string level_name,
                                              FmiLevelType level_type,
                                              const std::set<int>& elevations)
-    : itsLevelName(level_name), itsLevelType(level_type), itsElevations(elevations)
+    : itsLevelName(std::move(level_name)), itsLevelType(level_type), itsElevations(elevations)
 {
   auto comma_fold = [](std::string a, int b) { return std::move(a) + ',' + std::to_string(b); };
 
@@ -140,7 +140,7 @@ test:t2m: model - 109, levels:
   };
 }
 
-bool WMSElevationDimension::isValidElevation(const int elevation) const
+bool WMSElevationDimension::isValidElevation(int elevation) const
 {
   return itsElevations.find(elevation) != itsElevations.end();
 }
@@ -175,10 +175,7 @@ bool WMSElevationDimension::isOK() const
 {
   // If itsCapabilities is empty or '0' or level type is kFmiNoLevelType(0) dont show elevation
   // dimension
-  if (itsCapabilities.empty() || itsCapabilities == "0" || itsLevelType == kFmiNoLevelType)
-    return false;
-
-  return true;
+  return (!itsCapabilities.empty() && itsCapabilities != "0" && itsLevelType != kFmiNoLevelType);
 }
 
 bool WMSElevationDimension::isIdentical(const WMSElevationDimension& td) const
