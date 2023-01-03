@@ -605,7 +605,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       boost::algorithm::split(styles, styles_opt, boost::algorithm::is_any_of(","));
 
     // if empty STYLES definition, fill the vector with default style names
-    if (styles_opt.size() == 0)
+    if (styles_opt.empty())
       styles.insert(styles.begin(), layers.size(), "");
 
     // there must be one-to-one relationship between layers and styles
@@ -722,7 +722,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     {
       std::string time_str = Spine::optional_string(theRequest.getParameter("TIME"), "current");
 
-      if (true == cicomp(time_str, "current"))
+      if (cicomp(time_str, "current"))
       {
         // current time: send the most current data available,
         // for example current icemap can be up to 24 hours old, but it is still the most current
@@ -739,7 +739,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
         std::vector<std::string> timesteps;
         boost::algorithm::split(timesteps, time_str, boost::algorithm::is_any_of(","));
 
-        for (auto timestep : timesteps)
+        for (const auto& timestep : timesteps)
           itsParameters.timesteps.push_back(cicomp(timestep, "current")
                                                 ? boost::posix_time::second_clock::universal_time()
                                                 : parse_time(timestep));

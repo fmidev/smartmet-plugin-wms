@@ -200,7 +200,7 @@ class State
 
   mutable uint arcCounter = 0;
   mutable uint insertCounter = 0;
-  mutable std::map<std::size_t,uint> arcHashMap;
+  mutable std::map<std::size_t, uint> arcHashMap;
 
  private:
   Plugin& itsPlugin;
@@ -236,13 +236,13 @@ class State
   mutable boost::optional<boost::posix_time::ptime> itsModificationTime;
 
   // Are we in the Defs section?
-  bool itsInDefs;
+  bool itsInDefs = false;
 
   // Should we time execution?
-  bool itUsesTimer;
+  bool itUsesTimer = false;
 
   // Are we in WMS mode?
-  bool itUsesWms;
+  bool itUsesWms = false;
 
   // The customer
   std::string itsCustomer;

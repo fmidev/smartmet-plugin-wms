@@ -1609,7 +1609,7 @@ std::set<std::string> WMSConfig::getObservationProducers() const
   if (itsObsEngine != nullptr)
     return itsObsEngine->getValidStationTypes();
 
-  return std::set<std::string>();
+  return {};
 }
 #endif
 

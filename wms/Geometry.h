@@ -38,10 +38,10 @@ std::string toString(const OGRGeometry& theGeom,
                      const Fmi::Box& theBox,
                      const Fmi::SpatialReference& theSRS,
                      double thePrecision,
-                     std::map<std::size_t,uint>& arcHashMap,
+                     std::map<std::size_t, uint>& arcHashMap,
                      uint& arcCounter,
-                     std::string& arcsNumbers,
-                     std::string& arcsCoordinates);
+                     std::string& arcNumbers,
+                     std::string& arcCoordinates);
 
 }  // namespace Geometry
 }  // namespace Dali

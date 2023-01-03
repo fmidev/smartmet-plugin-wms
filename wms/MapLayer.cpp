@@ -199,17 +199,25 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       map_cdt["type"] = Geometry::name(*geom, theState.getType());
       map_cdt["layertype"] = "map";
 
-      pointCoordinates = Geometry::toString(*geom, theState.getType(), box, crs, precision,theState.arcHashMap,theState.arcCounter,arcNumbers,arcCoordinates);
+      pointCoordinates = Geometry::toString(*geom,
+                                            theState.getType(),
+                                            box,
+                                            crs,
+                                            precision,
+                                            theState.arcHashMap,
+                                            theState.arcCounter,
+                                            arcNumbers,
+                                            arcCoordinates);
 
       if (!pointCoordinates.empty())
-       map_cdt["data"] = pointCoordinates;
+        map_cdt["data"] = pointCoordinates;
 
       theState.addPresentationAttributes(map_cdt, css, attributes);
 
       if (theState.getType() == "topojson")
       {
         if (!arcNumbers.empty())
-         map_cdt["arcs"] = arcNumbers;
+          map_cdt["arcs"] = arcNumbers;
 
         object_cdt["paths"][iri] = map_cdt;
 
@@ -223,7 +231,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
         theGlobals["objects"][objectKey] = object_cdt;
         if (precision >= 1.0)
-          theGlobals["precision"] = pow(10.0,-(int)precision);
+          theGlobals["precision"] = pow(10.0, -(int)precision);
       }
       else
       {
@@ -236,7 +244,8 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     {
       // Update the globals
 
-      theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," + std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
+      theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," +
+                           std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
 
       // Clip if necessary
 
@@ -275,7 +284,9 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
  */
 // ----------------------------------------------------------------------
 
-void MapLayer::generate_styled_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
+                                   CTPP::CDT& theLayersCdt,
+                                   const State& theState)
 {
   try
   {

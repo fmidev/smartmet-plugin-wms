@@ -26,10 +26,14 @@ class Config
     double offset = 0;
   };
 
+  ~Config() = default;
+  explicit Config(const std::string& configfile);
+
   Config() = delete;
   Config(const Config& other) = delete;
   Config& operator=(const Config& other) = delete;
-  Config(const std::string& configfile);
+  Config(Config&& other) = delete;
+  Config& operator=(Config&& other) = delete;
 
   const std::string& defaultUrl() const;
   const std::string& defaultTemplate() const;

@@ -43,7 +43,7 @@ void addOrReplace(Json::Value& viewLayerJson,
   }
 }
 
-void handleStyles(std::map<std::string, Json::Value*>& viewLayers,
+void handleStyles(const std::map<std::string, Json::Value*>& viewLayers,
                   std::map<std::string, const Json::Value*>& styleLayers)
 {
   Json::Value nulljson;

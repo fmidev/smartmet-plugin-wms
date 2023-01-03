@@ -22,11 +22,11 @@ namespace WMS
 class WMSElevationDimension
 {
  public:
-  WMSElevationDimension(const std::string& level_name,
+  WMSElevationDimension(std::string level_name,
                         FmiLevelType level_type,
                         const std::set<int>& elevations);
 
-  bool isValidElevation(const int elevation) const;
+  bool isValidElevation(int elevation) const;
   std::string getDefaultElevation() const;
   const std::string& getLevelName() const;
   const std::string& getUnitSymbol() const;

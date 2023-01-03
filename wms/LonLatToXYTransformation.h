@@ -15,7 +15,7 @@ class State;
 class LonLatToXYTransformation
 {
  public:
-  LonLatToXYTransformation(const Projection& projection);
+  explicit LonLatToXYTransformation(const Projection& projection);
 
   bool transform(double longitude, double latitude, double& x, double& y);
   bool transform(double& inoutX, double& inoutY);

@@ -495,27 +495,27 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Fullfilling information into the query object.
 
-    for (auto& param : originalGridQuery->mQueryParameterList)
+    for (auto& p : originalGridQuery->mQueryParameterList)
     {
-      param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      param.mType = QueryServer::QueryParameter::Type::Isoband;
-      param.mContourLowValues = contourLowValues;
-      param.mContourHighValues = contourHighValues;
+      p.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+      p.mType = QueryServer::QueryParameter::Type::Isoband;
+      p.mContourLowValues = contourLowValues;
+      p.mContourHighValues = contourHighValues;
 
       if (geometryId)
-        param.mGeometryId = *geometryId;
+        p.mGeometryId = *geometryId;
 
       if (levelId)
-        param.mParameterLevelId = *levelId;
+        p.mParameterLevelId = *levelId;
 
       if (level)
-        param.mParameterLevel = C_INT(*level);
+        p.mParameterLevel = C_INT(*level);
 
       if (forecastType)
-        param.mForecastType = C_INT(*forecastType);
+        p.mForecastType = C_INT(*forecastType);
 
       if (forecastNumber)
-        param.mForecastNumber = C_INT(*forecastNumber);
+        p.mForecastNumber = C_INT(*forecastNumber);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;

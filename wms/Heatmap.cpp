@@ -102,8 +102,7 @@ std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> Heatmap::getStamp(u
       // The kernel call is different, passing second argument (deviation) too.
       // heatmap_stamp_load makes a copy of the stamp buffer; it must be deleted at return.
 
-      unsigned y;
-      unsigned d = 2 * r + 1;
+      unsigned long d = 2 * r + 1;
 
       auto* stamp = static_cast<float*>(std::calloc(d * d, sizeof(float)));
 
@@ -113,12 +112,11 @@ std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> Heatmap::getStamp(u
       // Safely deallocate the data in case of exceptions
       std::unique_ptr<float, decltype(free)*> delete_stamp{stamp, free};
 
-      for (y = 0; y < d; ++y)
+      for (unsigned int y = 0; y < d; ++y)
       {
         float* line = stamp + y * d;
-        unsigned x;
 
-        for (x = 0; x < d; ++x, ++line)
+        for (unsigned int x = 0; x < d; ++x, ++line)
         {
           const auto dist =
               static_cast<float>(sqrt(((x - r) * (x - r) + (y - r) * (y - r))) / (r + 1));

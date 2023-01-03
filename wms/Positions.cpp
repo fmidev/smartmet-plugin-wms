@@ -427,7 +427,7 @@ Positions::Points Positions::getPoints(const Engine::Querydata::Q& theQ,
         return getStationPoints(theQ, theCRS, theBox, forecastMode);
     }
     // Dummy to prevent g++ from complaining
-    return Points();
+    return {};
   }
   catch (...)
   {
@@ -469,7 +469,7 @@ Positions::Points Positions::getPoints(const char* originalCrs,
         return getStationPoints(nullptr, theCRS, theBox, true);
     }
     // Dummy to prevent g++ from complaining
-    return Points();
+    return {};
   }
   catch (...)
   {
@@ -1165,7 +1165,6 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
     // This loop order makes it easier to handle the poles only once
     for (const auto& station : stations.stations)
     {
-      Locus::QueryOptions options;
       options.SetFeatures("SYNOP");
       Spine::LocationList places;
 

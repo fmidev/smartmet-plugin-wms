@@ -64,11 +64,10 @@ class WMSLayer
   boost::optional<int> height;
 
   const WMSConfig& wmsConfig;
-  bool hidden{false};  // If this is true, dont show in GetCapabilities response
-  bool timeDimensionDisabled{
-      false};  // If this is true, any timestamp can be used in GetMap-request
-  boost::posix_time::ptime metadataTimestamp;
-  unsigned int metadataUpdateInterval;
+  bool hidden = false;                 // If this is true, dont show in GetCapabilities response
+  bool timeDimensionDisabled = false;  // Can any timestamp can be used in GetMap-request
+  boost::posix_time::ptime metadataTimestamp = boost::posix_time::not_a_date_time;
+  unsigned int metadataUpdateInterval = 5;
 
   Spine::BoundingBox geographicBoundingBox;
   std::map<std::string, WMSSupportedReference> refs;
@@ -138,7 +137,7 @@ class WMSLayer
       const boost::optional<std::string>& starttime,
       const boost::optional<std::string>& endtime,
       const boost::optional<std::string>& reference_time);
-  
+
   boost::optional<CTPP::CDT> getLayerBaseInfo() const;
   boost::optional<CTPP::CDT> getGeographicBoundingBoxInfo() const;
   boost::optional<CTPP::CDT> getProjectedBoundingBoxInfo() const;

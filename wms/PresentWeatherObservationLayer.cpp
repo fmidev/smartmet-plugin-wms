@@ -38,7 +38,7 @@ float convert_wawa_2_ww(float theValue)
       92, 17, 93, 96, 17, 97, 99, 0,  0,  8};
   // clang-format on
 
-  if (theValue < 100)
+  if (theValue <= 99)
     return wwCodeArray[static_cast<int>(theValue)];
   return theValue;
 }

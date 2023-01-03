@@ -391,7 +391,8 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
             result_item->geom->assignSpatialReference(defaultSR.get());
             result_item->geom->transformTo(projectionSR.get());
           }
-          sr->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+          else
+            sr->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
           handleResultItem(
               *result_item, filter, mapid, theGlobals, theLayersCdt, theGroupCdt, theState);
@@ -934,7 +935,7 @@ void IceMapLayer::addLocationName(double theXPos,
                                   CTPP::CDT& theGlobals,
                                   CTPP::CDT& theLayersCdt,
                                   CTPP::CDT& /* theGroupCdt */,
-                                  State& theState)
+                                  const State& theState)
 {
   std::string first_name = theFirstName;
   std::string second_name = theSecondName;
@@ -1114,7 +1115,7 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
                                  unsigned int& theMapId,
                                  CTPP::CDT& theGlobals,
                                  CTPP::CDT& theGroupCdt,
-                                 State& theState) const
+                                 const State& theState) const
 {
   if (!theResultItem.geom || theResultItem.geom->IsEmpty() != 0)
     return;

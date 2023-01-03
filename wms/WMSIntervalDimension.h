@@ -42,8 +42,13 @@ class WMSIntervalDimension
 {
  public:
   virtual ~WMSIntervalDimension() = default;
-  WMSIntervalDimension() = delete;
   WMSIntervalDimension(int interval_start, int interval_end, bool interval_default);
+
+  WMSIntervalDimension() = delete;
+  WMSIntervalDimension(const WMSIntervalDimension& other) = delete;
+  WMSIntervalDimension operator=(const WMSIntervalDimension& other) = delete;
+  WMSIntervalDimension(WMSIntervalDimension&& other) = delete;
+  WMSIntervalDimension operator=(WMSIntervalDimension&& other) = delete;
 
   std::string getStartIntervals() const;
   std::string getEndIntervals() const;

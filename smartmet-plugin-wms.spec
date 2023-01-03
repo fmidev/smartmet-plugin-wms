@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.12.13
+Version: 22.12.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -27,23 +27,23 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 22.8.31
 BuildRequires: smartmet-library-grid-content-devel >= 22.12.12
-BuildRequires: smartmet-library-grid-files-devel >= 22.12.12
-BuildRequires: smartmet-library-macgyver-devel >= 22.10.20
+BuildRequires: smartmet-library-grid-files-devel >= 22.12.19
+BuildRequires: smartmet-library-macgyver-devel >= 22.12.16
 BuildRequires: smartmet-library-spine-devel >= 22.12.2
 BuildRequires: smartmet-library-timeseries-devel >= 22.10.25
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 22.6.17
+BuildRequires: smartmet-engine-authentication-devel >= 22.12.16
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 22.12.8
+BuildRequires: smartmet-engine-observation-devel >= 22.12.16
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 22.10.5
+BuildRequires: smartmet-engine-gis-devel >= 22.12.21
 BuildRequires: smartmet-engine-grid-devel >= 22.12.12
-BuildRequires: smartmet-engine-geonames-devel >= 22.10.5
-BuildRequires: smartmet-engine-querydata-devel >= 22.12.2
-BuildRequires: smartmet-engine-contour-devel >= 22.10.5
-BuildRequires: smartmet-library-gis-devel >= 22.9.28
-BuildRequires: smartmet-library-trax-devel >= 22.11.28
+BuildRequires: smartmet-engine-geonames-devel >= 22.12.21
+BuildRequires: smartmet-engine-querydata-devel >= 22.12.15
+BuildRequires: smartmet-engine-contour-devel >= 22.12.19
+BuildRequires: smartmet-library-gis-devel >= 22.12.21
+BuildRequires: smartmet-library-trax-devel >= 22.12.19
 BuildRequires: fmt-devel >= 8.1.1 fmt-devel < %{smartmet_fmt_max}
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -67,21 +67,21 @@ Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 22.12.12
-Requires: smartmet-library-grid-files >= 22.12.12
-Requires: smartmet-library-gis >= 22.9.28
-Requires: smartmet-library-trax >= 22.11.28
-Requires: smartmet-library-macgyver >= 22.10.20
+Requires: smartmet-library-grid-files >= 22.12.19
+Requires: smartmet-library-gis >= 22.12.21
+Requires: smartmet-library-trax >= 22.12.19
+Requires: smartmet-library-macgyver >= 22.12.16
 Requires: smartmet-library-spine >= 22.12.2
 Requires: smartmet-library-timeseries >= 22.10.25
 Requires: smartmet-library-giza >= 22.8.31
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 22.6.17
+Requires: smartmet-engine-authentication >= 22.12.16
 %endif
-Requires: smartmet-engine-querydata >= 22.12.2
-Requires: smartmet-engine-contour >= 22.10.5
-Requires: smartmet-engine-gis >= 22.10.5
+Requires: smartmet-engine-querydata >= 22.12.15
+Requires: smartmet-engine-contour >= 22.12.19
+Requires: smartmet-engine-gis >= 22.12.21
 Requires: smartmet-engine-grid >= 22.12.12
-Requires: smartmet-engine-geonames >= 22.10.5
+Requires: smartmet-engine-geonames >= 22.12.21
 Requires: smartmet-server >= 22.12.5
 Requires: smartmet-library-spine >= 22.12.2
 Requires: smartmet-fonts
@@ -101,12 +101,12 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: jsoncpp-devel
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 22.10.5
-#TestRequires: smartmet-engine-geonames-devel >= 22.10.5
-#TestRequires: smartmet-engine-gis-devel >= 22.10.5
-#TestRequires: smartmet-engine-querydata-devel >= 22.12.2
+#TestRequires: smartmet-engine-contour-devel >= 22.12.19
+#TestRequires: smartmet-engine-geonames-devel >= 22.12.21
+#TestRequires: smartmet-engine-gis-devel >= 22.12.21
+#TestRequires: smartmet-engine-querydata-devel >= 22.12.15
 #TestRequires: smartmet-library-giza-devel >= 22.8.31
-#TestRequires: smartmet-library-trax-devel >= 22.11.28
+#TestRequires: smartmet-library-trax-devel >= 22.12.19
 #TestRequires: smartmet-library-newbase-devel >= 22.11.14
 #TestRequires: smartmet-library-spine-devel >= 22.12.2
 #TestRequires: smartmet-library-timeseries-devel >= 22.10.25
@@ -120,7 +120,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 22.12.8
+#TestRequires: smartmet-engine-observation-devel >= 22.12.16
 %endif
 
 %description
@@ -149,6 +149,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Dec 22 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.12.22-1.fmi
+- Fixed several issues found by CodeChecker
+
+* Wed Dec 21 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.12.21-1.fmi
+- Repackaged since GIS library ABI changed
+
 * Tue Dec 13 2022 Anssi Reponen <anssi.reponen@fmi.fi> - 22.12.13-1.fmi
 - Fixed GetCapabilities Interval Dimension bug (BRAINSTORM-2499)
 - Enable configuring the missing symbol for observation layers, zero disables the symbol

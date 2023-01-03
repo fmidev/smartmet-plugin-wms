@@ -100,9 +100,8 @@ OGRGeometryPtr Intersections::intersect(OGRGeometryPtr geom) const
   try
   {
     for (const auto& intersection : intersections)
-    {
       geom = intersection.intersect(geom);
-    }
+
     return geom;
   }
   catch (...)

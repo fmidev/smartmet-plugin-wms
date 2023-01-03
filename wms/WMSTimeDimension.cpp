@@ -54,7 +54,7 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
 {
   try
   {
-    if (itsTimesteps.size() == 0)
+    if (itsTimesteps.empty())
       return boost::posix_time::not_a_date_time;
 
     auto current_time = boost::posix_time::second_clock::universal_time();
@@ -86,8 +86,8 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
 
         if (duration_toprevious.total_seconds() <= duration_tonext.total_seconds())
           return *itPrevious;
-        else
-          return *it;
+
+        return *it;
       }
 
       itPrevious = it;
@@ -421,16 +421,14 @@ bool WMSTimeDimensions::isValidTime(
     const boost::posix_time::ptime& t,
     const boost::optional<boost::posix_time::ptime>& origintime) const
 {
-  if (origintime)
-  {
-    // Check for valid origintime
-    if (!isValidReferenceTime(*origintime))
-      return false;
-
-    return getTimeDimension(*origintime).isValidTime(t);
-  }
-  else
+  if (!origintime)
     return getDefaultTimeDimension().isValidTime(t);
+
+  // Check for valid origintime
+  if (!isValidReferenceTime(*origintime))
+    return false;
+
+  return getTimeDimension(*origintime).isValidTime(t);
 }
 
 boost::posix_time::ptime WMSTimeDimensions::mostCurrentTime(
@@ -438,8 +436,8 @@ boost::posix_time::ptime WMSTimeDimensions::mostCurrentTime(
 {
   if (origintime)
     return getTimeDimension(*origintime).mostCurrentTime();
-  else
-    return getDefaultTimeDimension().mostCurrentTime();
+
+  return getDefaultTimeDimension().mostCurrentTime();
 }
 
 bool WMSTimeDimensions::currentValue() const

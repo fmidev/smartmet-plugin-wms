@@ -546,13 +546,8 @@ bool State::setSymbol(const std::string& theName, const std::string& theValue) c
 {
   try
   {
-    if (itsSymbols.count(theName) > 0)
-    {
-      itsSymbols[theName] = theValue;
-      return false;  // Overriding symbols already in there
-    }
-    itsSymbols[theName] = theValue;
-    return true;
+    auto ret = itsSymbols.insert({theName, theValue});
+    return ret.second;
   }
   catch (...)
   {
@@ -569,13 +564,8 @@ bool State::setFilter(const std::string& theName, const std::string& theValue) c
 {
   try
   {
-    if (itsFilters.count(theName) > 0)
-    {
-      itsFilters[theName] = theValue;
-      return false;  // Overriding filters already in there
-    }
-    itsFilters[theName] = theValue;
-    return true;
+    auto ret = itsFilters.insert({theName, theValue});
+    return ret.second;
   }
   catch (...)
   {
@@ -592,13 +582,8 @@ bool State::setMarker(const std::string& theName, const std::string& theValue) c
 {
   try
   {
-    if (itsMarkers.count(theName) > 0)
-    {
-      itsMarkers[theName] = theValue;
-      return false;  // Overriding markers already in there
-    }
-    itsMarkers[theName] = theValue;
-    return true;
+    auto ret = itsMarkers.insert({theName, theValue});
+    return ret.second;
   }
   catch (...)
   {
@@ -615,13 +600,8 @@ bool State::setPattern(const std::string& theName, const std::string& theValue) 
 {
   try
   {
-    if (itsPatterns.count(theName) > 0)
-    {
-      itsPatterns[theName] = theValue;
-      return false;  // Overriding patterns already in there
-    }
-    itsPatterns[theName] = theValue;
-    return true;
+    auto ret = itsPatterns.insert({theName, theValue});
+    return ret.second;
   }
   catch (...)
   {
@@ -638,13 +618,8 @@ bool State::setGradient(const std::string& theName, const std::string& theValue)
 {
   try
   {
-    if (itsGradients.count(theName) > 0)
-    {
-      itsGradients[theName] = theValue;
-      return false;  // Overriding gradients already in there
-    }
-    itsGradients[theName] = theValue;
-    return true;
+    auto ret = itsGradients.insert({theName, theValue});
+    return ret.second;
   }
   catch (...)
   {

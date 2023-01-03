@@ -1257,10 +1257,10 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         auto selection = Select::attribute(numbers, value);
 
         if (selection)
+        {
           selection->attributes.remove("scale");
-
-        if (selection)
           theState.addAttributes(theGlobals, text_cdt, selection->attributes);
+        }
 
         text_cdt["attributes"]["x"] = Fmi::to_string(point.x + point.dx + label.dx);
         text_cdt["attributes"]["y"] = Fmi::to_string(point.y + point.dy + label.dy);
@@ -1485,10 +1485,10 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
         auto selection = Select::attribute(numbers, value);
 
         if (selection)
+        {
           selection->attributes.remove("scale");
-
-        if (selection)
           theState.addAttributes(theGlobals, text_cdt, selection->attributes);
+        }
 
         text_cdt["attributes"]["x"] = Fmi::to_string(point.x + point.dx + label.dx);
         text_cdt["attributes"]["y"] = Fmi::to_string(point.y + point.dy + label.dy);

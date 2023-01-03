@@ -92,14 +92,14 @@ class IceMapLayer : public PostGISLayerBase
                               CTPP::CDT& theGlobals,
                               CTPP::CDT& theLayersCdt,
                               CTPP::CDT& theGroupCdt,
-                              State& theState);
+                              const State& theState);
 
   void handleGeometry(const Fmi::Feature& theResultItem,
                       const PostGISLayerFilter& theFilter,
                       unsigned int& theMapId,
                       CTPP::CDT& theGlobals,
                       CTPP::CDT& theGroupCdt,
-                      State& theState) const;
+                      const State& theState) const;
   void handleResultItem(const Fmi::Feature& theResultItem,
                         const PostGISLayerFilter& theFilter,
                         unsigned int& theMapId,
