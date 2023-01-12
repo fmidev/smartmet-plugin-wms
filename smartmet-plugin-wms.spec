@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 22.12.22
+Version: 23.1.12
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Jan 12 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.1.12-1.fmi
+- Enable alternative styles for all relevant layer types (BRAINSTORM-2507)
+
 * Thu Dec 22 2022 Mika Heiskanen <mika.heiskanen@fmi.fi> - 22.12.22-1.fmi
 - Fixed several issues found by CodeChecker
 

@@ -43,7 +43,7 @@ struct WMSLayerStyle
 
 // Layers with optional alternative styles
 static std::set<std::string> supportedStyleLayers = {
-    "isoline", "isoband", "symbol", "arrow", "number", "isolabel"};
+  "isoline", "isoband", "symbol", "arrow", "number", "isolabel",  "map", "postgis", "wkt", "location", "finnish_road_observation", "present_weather_observation"};
 
 std::ostream& operator<<(std::ostream& ost, const WMSLayerStyle& layerStyle);
 
