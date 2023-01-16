@@ -980,6 +980,8 @@ The table below contains a list of attributes that can be defined for the arrow 
 |speed|(string)|-|The parameter name for speed, if one is needed.|
 |u|(string)|-|The parameter name for the U-component of the speed vector.|
 |v|(string)|-|The parameter name for the V-component of the speed vector.|
+|fixeddirection|(double)|-|Fixed direction value for testing purposes.|
+|fixedspeed|(double)|-|Fixed speed value for testing purposes.|
 |level|(double)|-|The querydata level value. By default the first level is used.|
 |symbol|(string)|-|The default symbol for the arrows. May be overridden in the arrows-definitions. The special value "windbarb" has not yet been implemented.|
 |scale|(double)|-|Scale factor for the symbols|

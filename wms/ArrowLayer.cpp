@@ -941,6 +941,14 @@ void ArrowLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       v = json.asString();
 
+    json = theJson.get("fixedspeed", nulljson);
+    if (!json.isNull())
+      fixedspeed = json.asDouble();
+
+    json = theJson.get("fixeddirection", nulljson);
+    if (!json.isNull())
+      fixeddirection = json.asDouble();
+
     json = theJson.get("symbol", nulljson);
     if (!json.isNull())
       symbol = json.asString();
@@ -1639,6 +1647,12 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
 
       ++valid_count;
 
+      // Fake values
+      if (fixedspeed)
+        wspd = *fixedspeed;
+      if (fixeddirection)
+        wdir = *fixeddirection;
+
       // Unit transformation
       double xmultiplier = (multiplier ? *multiplier : 1.0);
       double xoffset = (offset ? *offset : 0.0);
@@ -1831,6 +1845,8 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(speed));
     Fmi::hash_combine(hash, Fmi::hash_value(u));
     Fmi::hash_combine(hash, Fmi::hash_value(v));
+    Fmi::hash_combine(hash, Fmi::hash_value(fixedspeed));
+    Fmi::hash_combine(hash, Fmi::hash_value(fixeddirection));
     Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
     Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
     Fmi::hash_combine(hash, Fmi::hash_value(offset));
