@@ -2256,15 +2256,11 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
     // Layer scale denominators
 
-    if (false)  // NOT IMPLEMENTED
-    {
-      layer["min_scale_denominator"] = 1;
-    }
-
-    if (false)  // NOT IMPLEMENTED
-    {
-      layer["max_scale_denominator"] = 1;
-    }
+#if 0
+    // NOT IMPLEMENTED
+    layer["min_scale_denominator"] = 1;
+    layer["max_scale_denominator"] = 1;
+#endif
 
     return layer;
   }

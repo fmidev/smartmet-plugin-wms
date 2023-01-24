@@ -483,10 +483,8 @@ void State::addPresentationAttributes(CTPP::CDT& theLayer,
         if (!selector.empty())
         {
           auto decl = styleSheet.declarations(selector);
-          for (auto it = decl.begin(); it != decl.end(); ++it)
-          {
-            theLayer["presentation"][it->first] = it->second;
-          }
+          for (const auto& name_style : decl)
+            theLayer["presentation"][name_style.first] = name_style.second;
         }
       }
     }

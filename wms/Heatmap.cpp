@@ -135,7 +135,7 @@ std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> Heatmap::getStamp(u
     if (hms == nullptr)
       throw Fmi::Exception(BCP, "Heatmap stamp generation failed");
 
-    return std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)>(hms, heatmap_stamp_free);
+    return {hms, heatmap_stamp_free};
   }
   catch (...)
   {

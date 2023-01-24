@@ -30,6 +30,11 @@ class WMSTimeDimension
   virtual ~WMSTimeDimension() = default;
   WMSTimeDimension() : current(true) {}
 
+  WMSTimeDimension(const WMSTimeDimension& other) = delete;
+  WMSTimeDimension(WMSTimeDimension&& other) = delete;
+  WMSTimeDimension& operator=(const WMSTimeDimension& other) = delete;
+  WMSTimeDimension& operator=(WMSTimeDimension&& other) = delete;
+
   virtual bool isValidTime(const boost::posix_time::ptime& theTime) const;
 
   virtual boost::posix_time::ptime mostCurrentTime() const;
@@ -57,6 +62,11 @@ class StepTimeDimension : public WMSTimeDimension
   StepTimeDimension(const std::vector<boost::posix_time::ptime>& times);
   StepTimeDimension(const std::set<boost::posix_time::ptime>& times);
 
+  StepTimeDimension(const StepTimeDimension& other) = delete;
+  StepTimeDimension(StepTimeDimension&& other) = delete;
+  StepTimeDimension& operator=(const StepTimeDimension& other) = delete;
+  StepTimeDimension& operator=(StepTimeDimension&& other) = delete;
+
   std::string getCapabilities(bool multiple_intervals,
                               const boost::optional<std::string>& starttime,
                               const boost::optional<std::string>& endtime) const override;
@@ -71,13 +81,13 @@ struct tag_interval
   boost::posix_time::ptime startTime = boost::posix_time::not_a_date_time;
   boost::posix_time::ptime endTime = boost::posix_time::not_a_date_time;
   boost::posix_time::time_duration resolution = boost::posix_time::minutes(1);
-  tag_interval(const boost::posix_time::ptime& start,
-               const boost::posix_time::ptime& end,
-               const boost::posix_time::time_duration& res)
-      : startTime(start), endTime(end), resolution(res)
+
+  tag_interval(boost::posix_time::ptime start,
+               boost::posix_time::ptime end,
+               boost::posix_time::time_duration res)
+      : startTime(std::move(start)), endTime(std::move(end)), resolution(std::move(res))
   {
   }
-  tag_interval(const tag_interval& interval) = default;
 };
 
 class IntervalTimeDimension : public WMSTimeDimension
@@ -85,7 +95,12 @@ class IntervalTimeDimension : public WMSTimeDimension
  public:
   ~IntervalTimeDimension() override = default;
   IntervalTimeDimension() = delete;
-  IntervalTimeDimension(const std::vector<tag_interval>& intervals);
+  IntervalTimeDimension(std::vector<tag_interval> intervals);
+
+  IntervalTimeDimension(const IntervalTimeDimension& other) = delete;
+  IntervalTimeDimension(IntervalTimeDimension&& other) = delete;
+  IntervalTimeDimension& operator=(const IntervalTimeDimension& other) = delete;
+  IntervalTimeDimension& operator=(IntervalTimeDimension&& other) = delete;
 
   const std::vector<tag_interval>& getIntervals() const;
 
@@ -166,7 +181,7 @@ class WMSTimeDimensions
   WMSTimeDimensions(
       const std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>>& tdims);
   void addTimeDimension(const boost::posix_time::ptime& origintime,
-                        boost::shared_ptr<WMSTimeDimension> td);
+                        const boost::shared_ptr<WMSTimeDimension>& td);
   const WMSTimeDimension& getDefaultTimeDimension() const;
   const WMSTimeDimension& getTimeDimension(const boost::posix_time::ptime& origintime) const;
   bool origintimeOK(const boost::posix_time::ptime& origintime) const;

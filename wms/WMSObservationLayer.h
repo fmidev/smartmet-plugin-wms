@@ -30,10 +30,10 @@ class WMSObservationLayer : public WMSLayer
   bool updateLayerMetaData() override;
 
  public:
-  WMSObservationLayer(const WMSConfig& config, const std::string& producer, int timestep)
+  WMSObservationLayer(const WMSConfig& config, std::string producer, int timestep)
       : WMSLayer(config),
         itsObsEngine(config.obsEngine()),
-        itsProducer(producer),
+        itsProducer(std::move(producer)),
         itsTimestep(timestep)
   {
   }

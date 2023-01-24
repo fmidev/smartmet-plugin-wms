@@ -54,10 +54,12 @@ class WMSLayerHierarchy
                     HierarchyType hierarchy_type);
 #endif
 
-  WMSLayerHierarchy(const std::string& n);
-  WMSLayerHierarchy& operator=(const WMSLayerHierarchy& lh) = delete;
-  WMSLayerHierarchy(const WMSLayerHierarchy& lh) = delete;
+  WMSLayerHierarchy(std::string n);
   WMSLayerHierarchy() = delete;
+  WMSLayerHierarchy(const WMSLayerHierarchy& other) = delete;
+  WMSLayerHierarchy(WMSLayerHierarchy&& other) = delete;
+  WMSLayerHierarchy& operator=(const WMSLayerHierarchy& other) = delete;
+  WMSLayerHierarchy& operator=(WMSLayerHierarchy&& other) = delete;
 
   CTPP::CDT getCapabilities(bool multiple_intervals,
                             const boost::optional<std::string>& starttime,

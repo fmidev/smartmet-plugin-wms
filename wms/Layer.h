@@ -51,7 +51,7 @@ class View;
 class Layer : public Properties
 {
  public:
-  ~Layer() = default;
+  ~Layer() override = default;
   Layer() = default;
   Layer(const Layer& other) = delete;
   Layer(Layer&& other) = delete;

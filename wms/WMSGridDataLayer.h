@@ -23,8 +23,8 @@ class WMSGridDataLayer : public WMSLayer
 {
  public:
   WMSGridDataLayer(const WMSConfig& config,
-                   const std::string& producer,
-                   const std::string& parameter,
+                   std::string producer,
+                   std::string parameter,
                    uint geometryId);
 
  protected:

@@ -19,8 +19,8 @@ namespace WMS
 {
 struct LegendGraphicParameter
 {
-  LegendGraphicParameter() {}
   explicit LegendGraphicParameter(const std::string& dn) : data_name(dn) {}
+  LegendGraphicParameter() = default;
   LegendGraphicParameter(const std::string& dn,
                          const std::string& gn,
                          const std::string& u,
@@ -28,7 +28,6 @@ struct LegendGraphicParameter
       : data_name(dn), given_name(gn), unit(u), hide_title(ht)
   {
   }
-  LegendGraphicParameter(const LegendGraphicParameter& lgp) = default;
 
   std::string data_name;
   std::string given_name;
@@ -40,10 +39,8 @@ struct LegendGraphicParameter
 
 struct LegendGraphicSymbol
 {
-  LegendGraphicSymbol() {}
   explicit LegendGraphicSymbol(const std::string& sn) : symbol_name(sn) {}
-  LegendGraphicSymbol(const LegendGraphicSymbol& lgs) = default;
-  LegendGraphicSymbol& operator=(const LegendGraphicSymbol&) = default;
+  LegendGraphicSymbol() = default;
 
   std::string symbol_name;
   std::map<std::string, std::string> translations;

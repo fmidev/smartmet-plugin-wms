@@ -19,9 +19,9 @@ WMSMapLayer::WMSMapLayer(const WMSConfig& config, const Json::Value& json)
   if (json.isArray())
   {
     Fmi::SpatialReference sr(4326);
-    for (unsigned int i = 0; i < json.size(); i++)
+    for (const auto& j : json)
     {
-      auto map_json = json[i].get("map", nulljson);
+      const auto& map_json = j.get("map", nulljson);
 
       if (!map_json.isNull())
       {

@@ -48,7 +48,7 @@ void handleStyles(const std::map<std::string, Json::Value*>& viewLayers,
 {
   Json::Value nulljson;
 
-  for (auto& item : viewLayers)
+  for (const auto& item : viewLayers)
   {
     std::string key = item.first;
 

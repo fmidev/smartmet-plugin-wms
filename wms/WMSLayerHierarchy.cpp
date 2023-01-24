@@ -351,7 +351,7 @@ void add_layer_info(bool multiple_intervals,
 
 }  // namespace
 
-WMSLayerHierarchy::WMSLayerHierarchy(const std::string& n) : name(n) {}
+WMSLayerHierarchy::WMSLayerHierarchy(std::string n) : name(std::move(n)) {}
 
 #ifndef WITHOUT_AUTHENTICATION
 WMSLayerHierarchy::WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,

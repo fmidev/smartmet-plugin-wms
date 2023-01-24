@@ -14,6 +14,7 @@
 #include <engines/contour/Engine.h>
 #include <engines/gis/Engine.h>
 #include <engines/grid/Engine.h>
+#include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
@@ -318,18 +319,16 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
     // Adding the bounding box information into the query.
 
-    char bbox[100];
-
     const auto& box = projection.getBox();
     const auto clipbox = getClipBox(box);
 
     auto bl = projection.bottomLeftLatLon();
     auto tr = projection.topRightLatLon();
-    sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
+    auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
     originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
-    sprintf(bbox, "%f,%f,%f,%f", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
-    // sprintf(bbox, "%f,%f,%f,%f", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+    bbox =
+        fmt::format("{},{},{},{}", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
     originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
   }
   else
@@ -419,8 +418,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
   if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
   {
-    char bbox[100];
-    sprintf(bbox, "%f,%f,%f,%f", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
+    auto bbox =
+        fmt::format("{},{},{},{}", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
     originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
   }
 

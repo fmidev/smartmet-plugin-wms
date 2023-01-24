@@ -1087,8 +1087,8 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
     {
-      char bbox[100];
-      sprintf(bbox, "%f,%f,%f,%f", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
+      auto bbox = fmt::format(
+          "{},{},{},{}", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
     }
 

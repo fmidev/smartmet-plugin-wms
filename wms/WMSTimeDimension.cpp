@@ -119,7 +119,7 @@ StepTimeDimension::StepTimeDimension(const std::set<boost::posix_time::ptime>& t
   itsCapabilities = makeCapabilities(boost::none, boost::none);
 }
 
-std::string StepTimeDimension::getCapabilities(bool multiple_intervals,
+std::string StepTimeDimension::getCapabilities(bool /* multiple_intervals */,
                                                const boost::optional<std::string>& starttime,
                                                const boost::optional<std::string>& endtime) const
 {
@@ -163,8 +163,8 @@ std::string StepTimeDimension::makeCapabilities(const boost::optional<std::strin
   }
 }
 
-IntervalTimeDimension::IntervalTimeDimension(const std::vector<tag_interval>& intervals)
-    : itsIntervals(intervals)
+IntervalTimeDimension::IntervalTimeDimension(std::vector<tag_interval> intervals)
+    : itsIntervals(std::move(intervals))
 {
   itsCapabilities = makeCapabilities(boost::none, boost::none);
 }
@@ -382,7 +382,7 @@ WMSTimeDimensions::WMSTimeDimensions(
 }
 
 void WMSTimeDimensions::addTimeDimension(const boost::posix_time::ptime& origintime,
-                                         boost::shared_ptr<WMSTimeDimension> td)
+                                         const boost::shared_ptr<WMSTimeDimension>& td)
 {
   itsTimeDimensions[origintime] = td;
   if (itsDefaultOrigintime == boost::posix_time::not_a_date_time ||

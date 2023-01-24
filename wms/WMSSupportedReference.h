@@ -12,15 +12,15 @@ namespace WMS
 // A WMS reference
 struct WMSSupportedReference
 {
-  WMSSupportedReference(const std::string& p, const Engine::Gis::BBox b, bool e, bool g)
-      : proj(p), bbox(b), enabled(e), geographic(g)
+  WMSSupportedReference(std::string p, const Engine::Gis::BBox& b, bool e, bool g)
+      : proj(std::move(p)), bbox(b), enabled(e), geographic(g)
   {
   }
 
-  std::string proj{};
+  std::string proj;
   Engine::Gis::BBox bbox{};
-  bool enabled{true};
-  bool geographic{false};
+  bool enabled = true;
+  bool geographic = false;
 };
 
 }  // namespace WMS

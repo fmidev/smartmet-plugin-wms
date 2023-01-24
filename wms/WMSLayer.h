@@ -89,11 +89,15 @@ class WMSLayer
   boost::posix_time::ptime itsProductFileModificationTime;
 
   friend class WMSLayerFactory;
-  friend std::ostream& operator<<(std::ostream&, const WMSLayer&);
+  friend std::ostream& operator<<(std::ostream& os, const WMSLayer& layer);
 
  public:
   virtual ~WMSLayer() = default;
   WMSLayer(const WMSConfig& config);
+  WMSLayer(const WMSLayer& other) = delete;
+  WMSLayer(WMSLayer&& other) = delete;
+  WMSLayer& operator=(const WMSLayer& other) = delete;
+  WMSLayer& operator=(WMSLayer&& other) = delete;
 
   bool identicalRefs(const WMSLayer& layer) const;
   bool identicalGeographicBoundingBox(const WMSLayer& layer) const;

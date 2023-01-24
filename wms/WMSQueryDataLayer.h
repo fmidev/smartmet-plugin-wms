@@ -30,8 +30,8 @@ class WMSQueryDataLayer : public WMSLayer
   bool updateLayerMetaData() override;
 
  public:
-  WMSQueryDataLayer(const WMSConfig& config, const std::string& producer)
-      : WMSLayer(config), itsQEngine(config.qEngine()), itsProducer(producer)
+  WMSQueryDataLayer(const WMSConfig& config, std::string producer)
+      : WMSLayer(config), itsQEngine(config.qEngine()), itsProducer(std::move(producer))
   {
   }
 

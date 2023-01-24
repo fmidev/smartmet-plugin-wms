@@ -30,6 +30,13 @@ class Properties
   friend TimeLayer;  // for more fine grained control
 
   virtual ~Properties() = default;
+
+  Properties() = default;
+  Properties(const Properties& other) = delete;
+  Properties(const Properties&& other) = delete;
+  Properties& operator=(const Properties& other) = delete;
+  Properties& operator=(const Properties&& other) = delete;
+
   void init(const Json::Value& theJson, const State& theState, const Config& theConfig);
 
   void init(const Json::Value& theJson,

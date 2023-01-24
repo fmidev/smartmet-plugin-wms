@@ -13,6 +13,7 @@ namespace WMS
 std::vector<boost::posix_time::ptime> get_ptime_vector(std::set<std::string>& contentTimeList)
 {
   std::vector<boost::posix_time::ptime> ret;
+  ret.reserve(contentTimeList.size());
 
   for (const auto& time : contentTimeList)
     ret.push_back(boost::posix_time::from_time_t(utcTimeToTimeT(time)));
@@ -53,13 +54,13 @@ time_t even_timesteps(std::set<std::string>& contentTimeList)
 }
 
 WMSGridDataLayer::WMSGridDataLayer(const WMSConfig& config,
-                                   const std::string& producer,
-                                   const std::string& parameter,
+                                   std::string producer,
+                                   std::string parameter,
                                    uint geometryId)
     : WMSLayer(config),
       itsGridEngine(config.gridEngine()),
-      itsProducer(producer),
-      itsParameter(parameter),
+      itsProducer(std::move(producer)),
+      itsParameter(std::move(parameter)),
       itsGeometryId(geometryId)
 {
 }

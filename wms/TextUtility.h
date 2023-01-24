@@ -25,10 +25,8 @@ struct text_style_t
   std::string fontstyle = "normal";
   std::string fontweight = "normal";
   std::string textanchor = "start";
-
-  text_style_t() = default;
-  text_style_t(const text_style_t& s) = default;
 };
+
 text_dimension_t getTextDimension(const std::string& text, const text_style_t& textStyle);
 text_dimension_t getTextDimension(const std::vector<std::string>& rows,
                                   const text_style_t& textStyle);
