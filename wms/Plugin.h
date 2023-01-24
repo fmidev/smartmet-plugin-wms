@@ -119,6 +119,9 @@ class Plugin : public SmartMetPlugin
  private:
   void init() override;
   void shutdown() override;
+
+  bool authenticate(const Spine::HTTP::Request& theRequest) const;
+
   void requestHandler(Spine::Reactor& theReactor,
                       const Spine::HTTP::Request& theRequest,
                       Spine::HTTP::Response& theResponse) override;
@@ -131,6 +134,22 @@ class Plugin : public SmartMetPlugin
                           State& theState,
                           const Spine::HTTP::Request& theRequest,
                           Spine::HTTP::Response& theResponse);
+  WMSQueryStatus wmsGetCapabilitiesQuery(State& theState,
+                                         const Spine::HTTP::Request& theRequest,
+                                         Spine::HTTP::Response& theResponse);
+  void wmsPostprocessGetLegendGraphicQuery(const State& theState,
+                                           Spine::HTTP::Request& theRequest,
+                                           Product& product) const;
+  WMSQueryStatus wmsPostprocess(State& theState,
+                                const Spine::HTTP::Request& theRequest,
+                                Spine::HTTP::Response& theResponse,
+                                Product& theProduct);
+  void wmsPreprocessJSON(State& theState,
+                         const Spine::HTTP::Request& theRequest,
+                         Json::Value& theJson,
+                         bool isCnfRequest,
+                         int theStage);
+
   void formatResponse(const std::string& theSvg,
                       const std::string& theType,
                       const Spine::HTTP::Request& theRequest,
