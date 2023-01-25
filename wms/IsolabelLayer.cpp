@@ -686,11 +686,6 @@ boost::optional<std::size_t> find_tree_start_edge(const Edges& edges)
     }
   }
 
-#ifdef MYDEBUG
-  std::cout << "Start edge: " << best_edge << " from " << edges[best_edge].first << " to "
-            << edges[best_edge].second << " length=" << best_length << std::endl;
-#endif
-
   if (best_length < 0)
     return {};
   return best_edge;
@@ -713,25 +708,6 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges, std::vector<boos
 
     auto v1 = edges[i].first;
     auto v2 = edges[i].second;
-
-#ifdef MYDEBUG_DETAILS
-    std::cout << "\t\t\t\t";
-    std::cout << v1 << "=";
-    if (status[v1] == true)
-      std::cout << "T";
-    else if (status[v1] == false)
-      std::cout << "F";
-    else
-      std::cout << "?";
-    std::cout << "\t" << v2 << "=";
-    if (status[v2] == true)
-      std::cout << "T";
-    else if (status[v2] == false)
-      std::cout << "F";
-    else
-      std::cout << "?";
-    std::cout << std::endl;
-#endif
 
     // Note: tribool logic. We require one "true", one "indeterminate"
 
@@ -780,16 +756,8 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges, std::vector<boos
         }
       }
 
-#ifdef MYDEBUG_DETAILS
-      std::cout << "\t\t" << v1 << "\t" << v2 << "\tlen=" << edge.length << "\t"
-                << (forbidden ? "forbidden" : "not forbidden") << std::endl;
-#endif
-
       if (forbidden)
       {
-#ifdef MYDEBUG
-        std::cout << "Vertex " << new_vertex << " forbidden" << std::endl;
-#endif
         status[new_vertex] = false;
       }
       else
@@ -799,11 +767,6 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges, std::vector<boos
       }
     }
   }
-
-#ifdef MYDEBUG
-  std::cout << "Next edge: " << best_edge << " from " << edges[best_edge].first << " to "
-            << edges[best_edge].second << " length=" << best_length << std::endl;
-#endif
 
   if (best_length < 0)
     return {};
@@ -842,15 +805,6 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
   if (candis.empty())
     return candis;
 
-#ifdef MYDEBUG
-  for (std::size_t i = 0; i < candis.size(); i++)
-  {
-    const auto& c = candis[i];
-    std::cout << "C:\t" << c.isovalue << "\tat " << c.x << "," << c.y << "\tid= " << c.id
-              << std::endl;
-  }
-#endif
-
   // Find Euclician "minimum" spanning tree using Prim's algorithm with
   // modifications:
   //   1. Do not choose random vertex as starting point, select shortest edge satisfying distance
@@ -882,12 +836,6 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
         valid = (length >= min_distance_other);  // different isovalue or isoline segment
 
       edges.emplace_back(Edge{i, j, length, valid});
-
-#ifdef MYDEBUG
-      std::cout << "E:\t" << i << "\t" << j << "\t" << length << "\t" << candis[i].isovalue << " - "
-                << candis[j].isovalue << "\t" << candis[i].id << " - " << candis[j].id << "\t"
-                << (valid ? "OK" : "BAD") << std::endl;
-#endif
     }
 
   // Start the minimum spanning tree
@@ -908,14 +856,6 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
 
   while (true)
   {
-#ifdef MYDEBUG
-    std::cout << "\tCurrent selections: ";
-    for (std::size_t i = 0; i < candidate_status.size(); i++)
-      if (candidate_status[i] == true)
-        std::cout << i << " ";
-    std::cout << std::endl;
-#endif
-
     auto opt_next = find_next_edge(edges, candidate_status);
     if (!opt_next)
       break;
