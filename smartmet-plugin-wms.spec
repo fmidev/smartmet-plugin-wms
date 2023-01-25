@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.1.24
+Version: 23.1.25
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -27,7 +27,7 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 22.8.31
 BuildRequires: smartmet-library-grid-content-devel >= 23.1.19
-BuildRequires: smartmet-library-grid-files-devel >= 23.1.19
+BuildRequires: smartmet-library-grid-files-devel >= 23.1.24
 BuildRequires: smartmet-library-macgyver-devel >= 22.12.16
 BuildRequires: smartmet-library-spine-devel >= 23.1.16
 BuildRequires: smartmet-library-timeseries-devel >= 22.10.25
@@ -35,11 +35,11 @@ BuildRequires: smartmet-library-timeseries-devel >= 22.10.25
 BuildRequires: smartmet-engine-authentication-devel >= 22.12.16
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 23.1.11
+BuildRequires: smartmet-engine-observation-devel >= 23.1.24
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.12.21
 BuildRequires: smartmet-engine-grid-devel >= 23.1.19
-BuildRequires: smartmet-engine-geonames-devel >= 22.12.21
+BuildRequires: smartmet-engine-geonames-devel >= 23.1.18
 BuildRequires: smartmet-engine-querydata-devel >= 22.12.15
 BuildRequires: smartmet-engine-contour-devel >= 22.12.19
 BuildRequires: smartmet-library-gis-devel >= 23.1.5
@@ -67,7 +67,7 @@ Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 23.1.19
-Requires: smartmet-library-grid-files >= 23.1.19
+Requires: smartmet-library-grid-files >= 23.1.24
 Requires: smartmet-library-gis >= 23.1.5
 Requires: smartmet-library-trax >= 22.12.22
 Requires: smartmet-library-macgyver >= 22.12.16
@@ -81,7 +81,7 @@ Requires: smartmet-engine-querydata >= 22.12.15
 Requires: smartmet-engine-contour >= 22.12.19
 Requires: smartmet-engine-gis >= 22.12.21
 Requires: smartmet-engine-grid >= 23.1.19
-Requires: smartmet-engine-geonames >= 22.12.21
+Requires: smartmet-engine-geonames >= 23.1.18
 Requires: smartmet-server >= 23.1.10
 Requires: smartmet-library-spine >= 23.1.16
 Requires: smartmet-fonts
@@ -102,7 +102,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: ImageMagick
 #TestRequires: bc
 #TestRequires: smartmet-engine-contour-devel >= 22.12.19
-#TestRequires: smartmet-engine-geonames-devel >= 22.12.21
+#TestRequires: smartmet-engine-geonames-devel >= 23.1.18
 #TestRequires: smartmet-engine-gis-devel >= 22.12.21
 #TestRequires: smartmet-engine-querydata-devel >= 22.12.15
 #TestRequires: smartmet-library-giza-devel >= 22.8.31
@@ -120,7 +120,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 23.1.11
+#TestRequires: smartmet-engine-observation-devel >= 23.1.24
 %endif
 
 %description
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Jan 25 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.1.25-1.fmi
+- Fixed styles option to work when the styles are an array of JSON includes
+
 * Tue Jan 24 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.1.24-1.fmi
 - Interim beta release, refactored code and silenced many CodeChecker warnings
 

@@ -11,17 +11,13 @@
 #include "ParameterInfo.h"
 #include "Product.h"
 #include "State.h"
+#include "StyleSelection.h"
 #include "TextUtility.h"
 #include "WMSConfig.h"
 #include "WMSGetCapabilities.h"
 #include "WMSGetLegendGraphic.h"
 #include "WMSGetMap.h"
 #include "WMSRequestType.h"
-#include <macgyver/Exception.h>
-#include <spine/Convenience.h>
-#include <spine/FmiApiKey.h>
-#include <spine/Json.h>
-#include <spine/SmartMet.h>
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
@@ -39,6 +35,11 @@
 #include <json/reader.h>
 #include <json/writer.h>
 #include <macgyver/AnsiEscapeCodes.h>
+#include <macgyver/Exception.h>
+#include <spine/Convenience.h>
+#include <spine/FmiApiKey.h>
+#include <spine/Json.h>
+#include <spine/SmartMet.h>
 #include <stdexcept>
 
 using namespace boost::placeholders;
@@ -114,6 +115,214 @@ void update_legend_expiration(State &theState, int theExpirationTime)
                boost::posix_time::seconds(theExpirationTime);
     theState.updateExpirationTime(tmp);
   }
+}
+
+std::string get_json_element_value(const Json::Value &json, const std::string &keyStr)
+{
+  std::string ret;
+
+  std::vector<std::string> keys;
+  boost::algorithm::split(keys, keyStr, boost::is_any_of("."), boost::token_compress_on);
+
+  const Json::Value *jsonPtr = &json;
+  for (const auto &key : keys)
+  {
+    if (jsonPtr->isMember(key))
+    {
+      jsonPtr = &((*jsonPtr)[key]);
+      if (key == keys.back())
+        ret = jsonPtr->asString();
+    }
+  }
+
+  return ret;
+}
+
+void rename_json_element(const Json::Value &json,
+                         const std::string &keyStr,
+                         const std::string &postfix)
+{
+  std::vector<std::string> keys;
+
+  boost::algorithm::split(keys, keyStr, boost::is_any_of("."), boost::token_compress_on);
+
+  Json::Value nulljson;
+  const Json::Value *to = &json;
+  bool found = false;
+  for (const auto &key : keys)
+  {
+    found = false;
+    if (to->isMember(key))
+    {
+      Json::Value::Members members = to->getMemberNames();
+      to = &((*to)[key]);
+      found = true;
+    }
+  }
+
+  if (found)
+  {
+    auto *tototo = const_cast<Json::Value *>(to);
+    *tototo = Json::Value(to->asString() + postfix);
+  }
+}
+
+Json::Value merge_layers(const std::vector<Json::Value> &layers)
+{
+  Json::Value nulljson;
+
+  unsigned int suffix = 1;
+
+  for (const auto &layer : layers)
+  {
+    const auto &views = layer["views"];
+    if (!views.isNull() && views.isArray())
+    {
+      for (const auto &view : views)
+      {
+        // Rename qid and attributes.id of the view
+        std::string suffixString = Fmi::to_string(suffix);
+        rename_json_element(view, "qid", suffixString);
+        rename_json_element(view, "attributes.id", suffixString);
+
+        // Rename qid and attributes.id of view's layers
+        const auto &viewlayers = view["layers"];
+        for (const auto &viewlayer : viewlayers)
+        {
+          rename_json_element(viewlayer, "qid", suffixString);
+          rename_json_element(viewlayer, "attributes.id", suffixString);
+
+          // Rename qid and attributes.id of view's sublayers
+          const auto &viewsublayers = viewlayer["layers"];
+          for (const auto &viewsublayer : viewsublayers)
+          {
+            rename_json_element(viewsublayer, "qid", suffixString);
+            rename_json_element(viewsublayer, "attributes.id", suffixString);
+          }
+        }
+        suffix++;
+      }
+    }
+  }
+
+  // Merge layers. Set layer #0 to the bottom and merge rest of layers on top of that.
+  Json::Value ret = layers[0];
+  Json::Value &retViews = ret["views"];
+
+  // Set retDefsStyles to point to merged layer's styles attribute
+  // Set retDefsLayers to point to merged layer's layers vector
+  Json::Value *retDefs = nullptr;
+  if (ret.isMember("defs"))
+  {
+    retDefs = &(ret["defs"]);
+    if (!retDefs->isMember("styles"))
+      (*retDefs)["styles"] = Json::Value(Json::objectValue);
+    if (!retDefs->isMember("layers"))
+      (*retDefs)["layers"] = Json::Value(Json::arrayValue);
+  }
+  else
+  {
+    ret["defs"] = Json::Value(Json::objectValue);
+    retDefs = &(ret["defs"]);
+    (*retDefs)["styles"] = Json::Value(Json::objectValue);
+    (*retDefs)["layers"] = Json::Value(Json::arrayValue);
+  }
+  Json::Value &retDefsStyles = (*retDefs)["styles"];
+  Json::Value &retDefsLayers = (*retDefs)["layers"];
+
+  // Styles on WMS layer (can be changed in URL)
+  if (!ret.isMember("styles"))
+    ret["styles"] = Json::Value(Json::arrayValue);
+  Json::Value &retStyles = ret["styles"];
+
+  if (!ret.isMember("refs"))
+    ret["refs"] = Json::Value(Json::objectValue);
+  Json::Value &retRefs = ret["refs"];
+
+  // Store ids of layers in defs-section of first layer
+  std::set<std::string> defsLayerIdSet;
+  for (const auto &layer : retDefsLayers)
+  {
+    std::string layerId = get_json_element_value(layer, "attributes.id");
+    if (!layerId.empty())
+      defsLayerIdSet.insert(layerId);
+  }
+
+  // Iterate rest of the layers in defs-section
+  for (unsigned int i = 1; i < layers.size(); i++)
+  {
+    const Json::Value &fromLayer = layers[i];
+    // Merge defs
+    if (fromLayer.isMember("defs"))
+    {
+      Json::Value fromDefs = fromLayer.get("defs", nulljson);
+      // Merge layer styles
+      if (fromDefs.isMember("styles"))
+      {
+        Json::Value::Members currentStyleNames = retDefsStyles.getMemberNames();
+        std::set<std::string> currentStyleNameSet(currentStyleNames.begin(),
+                                                  currentStyleNames.end());
+        const Json::Value &fromDefsStyles = fromDefs["styles"];
+        Json::Value::Members fromStyleMemberNames = fromDefsStyles.getMemberNames();
+        for (const auto &stylename : fromStyleMemberNames)
+        {
+          // If style with same name does not exist add it
+          if (currentStyleNameSet.find(stylename) == currentStyleNameSet.end())
+            (retDefsStyles)[stylename] = fromDefsStyles[stylename];
+        }
+      }
+      // Merge layers inside defs, if layer with the same id exist dont merge
+      if (fromDefs.isMember("layers"))
+      {
+        const auto &defsLayers = fromDefs["layers"];
+        for (const auto &layer : defsLayers)
+        {
+          std::string layerId = get_json_element_value(layer, "attributes.id");
+          if (layerId.empty() || defsLayerIdSet.find(layerId) == defsLayerIdSet.end())
+          {
+            retDefsLayers.append(layer);
+            defsLayerIdSet.insert(layerId);
+          }
+        }
+      }
+    }
+
+    // Merge refs
+    if (fromLayer.isMember("refs"))
+    {
+      Json::Value fromRefs = fromLayer.get("refs", nulljson);
+      Json::Value::Members fromRefNames = fromRefs.getMemberNames();
+      Json::Value::Members currentRefNames = retRefs.getMemberNames();
+      std::set<std::string> currentRefNameSet(currentRefNames.begin(), currentRefNames.end());
+      for (const auto &refname : fromRefNames)
+      {
+        // If ref with same name does not exist add it
+        if (currentRefNameSet.find(refname) == currentRefNameSet.end())
+          (retRefs)[refname] = fromRefs[refname];
+      }
+    }
+
+    // Merge styles
+    if (fromLayer.isMember("styles"))
+    {
+      Json::Value fromStyles = fromLayer.get("styles", nulljson);
+      if (!fromStyles.isNull() && fromStyles.isArray())
+      {
+        for (const auto &fromStyle : fromStyles)
+          retStyles.append(fromStyle);
+      }
+    }
+
+    // Merge views, just append one after another
+    auto fromViews = fromLayer.get("views", nulljson);
+    if (!fromViews.isNull() && fromViews.isArray())
+    {
+      for (const auto &fromView : fromViews)
+        retViews.append(fromView);
+    }
+  }
+
+  return ret;
 }
 
 // ----------------------------------------------------------------------
@@ -1534,17 +1743,33 @@ WMSQueryStatus Dali::Plugin::wmsGetMapQuery(State &theState,
     // Catch other errors and handle them with handleWmsException
     try
     {
-      Json::Value json;
-
       WMS::WMSGetMap wmsGetMapRequest(*itsWMSConfig);
       wmsGetMapRequest.parseHTTPRequest(*itsQEngine, thisRequest);
-      json = wmsGetMapRequest.json();
+      auto json_layers = wmsGetMapRequest.jsons();
+      auto styles = wmsGetMapRequest.styles();
+
+      // Process the JSON layers
+
+      for (auto i = 0UL; i < json_layers.size(); i++)
+      {
+        auto &json = json_layers.at(i);
+        const auto &style = styles.at(i);
+
+        wmsPreprocessJSON(theState, thisRequest, json, cnf_request, json_stage);
+        SmartMet::Plugin::WMS::useStyle(json, style);
+      }
+
+      // Merge multiple layers into one
+
+      Json::Value json;
+      if (json_layers.size() == 1)
+        json = json_layers.back();
+      else
+        json = merge_layers(json_layers);
+
+      // Set defaults if some settings are missing
 
       init_wms_margins(json, itsWMSConfig->getMargin());
-
-      // Process the JSON
-
-      wmsPreprocessJSON(theState, thisRequest, json, cnf_request, json_stage);
 
       // Debugging
 
@@ -1930,7 +2155,12 @@ void Dali::Plugin::wmsPreprocessJSON(State &theState,
     Spine::JSON::dereference(theJson);
 
   if (!isCnfRequest || (theStage == 0 || theStage > 3))
-    Spine::JSON::expand(theJson, theRequest.getParameterMap(), "", false);
+  {
+    // Do querystring replacements, but remove dangerous substitutions first
+    auto params = theRequest.getParameterMap();
+    params.erase("styles");
+    Spine::JSON::expand(theJson, params, "", false);
+  }
 }
 
 WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,

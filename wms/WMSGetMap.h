@@ -59,7 +59,9 @@ class WMSGetMap
 
   void parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
                         Spine::HTTP::Request& theRequest);
-  Json::Value json() const;
+
+  std::vector<Json::Value> jsons() const;
+  std::vector<std::string> styles() const;
 
  private:
   tag_get_map_request_options itsParameters;
