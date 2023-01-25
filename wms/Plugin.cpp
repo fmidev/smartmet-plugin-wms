@@ -1490,6 +1490,34 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
       return WMSQueryStatus::FORBIDDEN;  // 403 FORBIDDEN
     }
 
+    if (requestType == WMS::WMSRequestType::GET_MAP)
+      return wmsGetMapQuery(theState, theRequest, theResponse);
+
+    if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
+      return wmsGetLegendGraphicQuery(theState, theRequest, theResponse);
+
+    Fmi::Exception ex(BCP, ERROR_NOT_WMS_REQUEST);
+    ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+    return handleWmsException(ex, theState, theRequest, theResponse);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Perform a WMS GetMap query
+ */
+// ----------------------------------------------------------------------
+
+WMSQueryStatus Dali::Plugin::wmsGetMapQuery(State &theState,
+                                            const Spine::HTTP::Request &theRequest,
+                                            Spine::HTTP::Response &theResponse)
+{
+  try
+  {
     // Establish debugging related variables
 
     const auto print_params = Spine::optional_bool(theRequest.getParameter("printparams"), false);
@@ -1508,23 +1536,100 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
     {
       Json::Value json;
 
-      if (requestType == WMS::WMSRequestType::GET_MAP)
-      {
-        WMS::WMSGetMap wmsGetMapRequest(*itsWMSConfig);
-        wmsGetMapRequest.parseHTTPRequest(*itsQEngine, thisRequest);
-        json = wmsGetMapRequest.json();
-      }
-      else if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
-      {
-        WMS::WMSGetLegendGraphic wmsGetLegendGraphic(*itsWMSConfig);
-        wmsGetLegendGraphic.parseHTTPRequest(*itsQEngine, thisRequest);
-        json = wmsGetLegendGraphic.json();
-        update_legend_expiration(theState, itsWMSConfig->getLegendGraphicSettings().expires);
-      }
-
-      // Set WMS product defaults before preprocessing starts
+      WMS::WMSGetMap wmsGetMapRequest(*itsWMSConfig);
+      wmsGetMapRequest.parseHTTPRequest(*itsQEngine, thisRequest);
+      json = wmsGetMapRequest.json();
 
       init_wms_margins(json, itsWMSConfig->getMargin());
+
+      // Process the JSON
+
+      wmsPreprocessJSON(theState, thisRequest, json, cnf_request, json_stage);
+
+      // Debugging
+
+      if (print_json)
+      {
+        Json::StyledWriter writer;
+        std::cout << fmt::format("Expanded Spine::JSON:\n{}\n", writer.write(json));
+      }
+
+      // Special product
+      if (cnf_request)
+      {
+        theResponse.setHeader("Content-Type", mimeType("cnf"));
+        Json::StyledWriter writer;
+        theResponse.setContent(writer.write(json));
+        return WMSQueryStatus::OK;
+      }
+
+      // Establish type forced by the query. Must not use 'thisRequest' here
+      auto fmt = Spine::optional_string(theRequest.getParameter("format"), "image/svg+xml");
+      theState.setType(demimetype(fmt));
+
+      // And initialize the product specs from the JSON
+
+      product.init(json, theState, itsConfig);
+
+      // If the desired type is not defined in the JSON, the state object knows from earlier code
+      // what format to output (HTTP request or default format), and we can not set the Product to
+      // use it.
+
+      if (product.type.empty())
+        product.type = theState.getType();
+    }
+    catch (...)
+    {
+      Fmi::Exception ex(BCP, "Operation failed!", nullptr);
+      if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+      return handleWmsException(ex, theState, thisRequest, theResponse);
+    }
+
+    if (print_params)
+      print(product.getGridParameterInfo(theState));
+
+    return wmsGenerateProduct(theState, thisRequest, theResponse, product);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Perform a WMS GetLegendGraphic query
+ */
+// ----------------------------------------------------------------------
+
+WMSQueryStatus Dali::Plugin::wmsGetLegendGraphicQuery(State &theState,
+                                                      const Spine::HTTP::Request &theRequest,
+                                                      Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+    // Establish debugging related variables
+
+    const auto print_json = Spine::optional_bool(theRequest.getParameter("printjson"), false);
+    const auto json_stage = Spine::optional_int(theRequest.getParameter("stage"), 0);
+    const auto cnf_request = Spine::optional_string(theRequest.getParameter("format"), "") == "cnf";
+
+    // WMS-functionality is handled by adjusting requests parameters accordingly
+    // Make a copy here since incoming requests are const
+
+    Product product;
+    auto thisRequest = theRequest;
+
+    // Catch other errors and handle them with handleWmsException
+    try
+    {
+      Json::Value json;
+
+      WMS::WMSGetLegendGraphic wmsGetLegendGraphic(*itsWMSConfig);
+      wmsGetLegendGraphic.parseHTTPRequest(*itsQEngine, thisRequest);
+      json = wmsGetLegendGraphic.json();
+      update_legend_expiration(theState, itsWMSConfig->getLegendGraphicSettings().expires);
 
       // Process the JSON
 
@@ -1563,8 +1668,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
       if (product.type.empty())
         product.type = theState.getType();
 
-      if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
-        wmsPostprocessGetLegendGraphicQuery(theState, thisRequest, product);
+      wmsPrepareGetLegendGraphicQuery(theState, thisRequest, product);
     }
     catch (...)
     {
@@ -1574,10 +1678,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
       return handleWmsException(ex, theState, thisRequest, theResponse);
     }
 
-    if (print_params)
-      print(product.getGridParameterInfo(theState));
-
-    return wmsPostprocess(theState, thisRequest, theResponse, product);
+    return wmsGenerateProduct(theState, thisRequest, theResponse, product);
   }
   catch (...)
   {
@@ -1630,10 +1731,10 @@ WMSQueryStatus Dali::Plugin::wmsGetCapabilitiesQuery(State &theState,
  */
 // ----------------------------------------------------------------------
 
-WMSQueryStatus Dali::Plugin::wmsPostprocess(State &theState,
-                                            const Spine::HTTP::Request &theRequest,
-                                            Spine::HTTP::Response &theResponse,
-                                            Product &theProduct)
+WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
+                                                const Spine::HTTP::Request &theRequest,
+                                                Spine::HTTP::Response &theResponse,
+                                                Product &theProduct)
 {
   // Calculate hash for the product
 
@@ -1745,9 +1846,9 @@ WMSQueryStatus Dali::Plugin::wmsPostprocess(State &theState,
  */
 // ----------------------------------------------------------------------
 
-void Dali::Plugin::wmsPostprocessGetLegendGraphicQuery(const State &theState,
-                                                       Spine::HTTP::Request &theRequest,
-                                                       Product &product) const
+void Dali::Plugin::wmsPrepareGetLegendGraphicQuery(const State &theState,
+                                                   Spine::HTTP::Request &theRequest,
+                                                   Product &product) const
 {
   auto layerOpt = theRequest.getParameter("LAYER");
   if (!layerOpt)

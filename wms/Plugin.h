@@ -134,16 +134,22 @@ class Plugin : public SmartMetPlugin
                           State& theState,
                           const Spine::HTTP::Request& theRequest,
                           Spine::HTTP::Response& theResponse);
+  WMSQueryStatus wmsGetMapQuery(State& theState,
+                                const Spine::HTTP::Request& theRequest,
+                                Spine::HTTP::Response& theResponse);
+  WMSQueryStatus wmsGetLegendGraphicQuery(State& theState,
+                                          const Spine::HTTP::Request& theRequest,
+                                          Spine::HTTP::Response& theResponse);
   WMSQueryStatus wmsGetCapabilitiesQuery(State& theState,
                                          const Spine::HTTP::Request& theRequest,
                                          Spine::HTTP::Response& theResponse);
-  void wmsPostprocessGetLegendGraphicQuery(const State& theState,
-                                           Spine::HTTP::Request& theRequest,
-                                           Product& product) const;
-  WMSQueryStatus wmsPostprocess(State& theState,
-                                const Spine::HTTP::Request& theRequest,
-                                Spine::HTTP::Response& theResponse,
-                                Product& theProduct);
+  void wmsPrepareGetLegendGraphicQuery(const State& theState,
+                                       Spine::HTTP::Request& theRequest,
+                                       Product& product) const;
+  WMSQueryStatus wmsGenerateProduct(State& theState,
+                                    const Spine::HTTP::Request& theRequest,
+                                    Spine::HTTP::Response& theResponse,
+                                    Product& theProduct);
   void wmsPreprocessJSON(State& theState,
                          const Spine::HTTP::Request& theRequest,
                          Json::Value& theJson,
