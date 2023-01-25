@@ -28,8 +28,8 @@ namespace WMS
 class WMSLayerProxy
 {
  public:
-  WMSLayerProxy(Engine::Gis::Engine* gisEngine, const SharedWMSLayer& theLayer)
-      : itsGisEngine(gisEngine), itsLayer(theLayer)
+  WMSLayerProxy(Engine::Gis::Engine* gisEngine, SharedWMSLayer theLayer)
+      : itsGisEngine(gisEngine), itsLayer(std::move(theLayer))
   {
   }
 

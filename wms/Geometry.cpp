@@ -486,7 +486,7 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
     // No C++ API with precision yet, must use C API
 
     auto prec = fmt::format("COORDINATE_PRECISION={}", static_cast<int>(thePrecision));
-    char* options[] = {const_cast<char*>(prec.c_str()), nullptr};
+    char* options[] = {const_cast<char*>(prec.c_str()), nullptr};  // NOLINT
     auto* geom3 = const_cast<OGRGeometry*>(geom2.get());
     char* tmp = OGR_G_ExportToJsonEx(OGRGeometry::ToHandle(geom3), options);
 

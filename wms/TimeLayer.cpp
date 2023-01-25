@@ -17,6 +17,7 @@
 #include <grid-files/common/GeneralFunctions.h>
 #include <macgyver/Exception.h>
 #include <spine/Json.h>
+#include <array>
 #include <ogr_spatialref.h>
 
 namespace SmartMet
@@ -462,13 +463,13 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       else if (formatter == "strftime")
       {
         auto timeinfo = to_tm(loctime->local_time());
-        char buffer[100];
-        if (strftime(static_cast<char*>(buffer), 100, fmt.c_str(), &timeinfo) == 0)
+        std::array<char, 100> buffer;
+        if (strftime(buffer.data(), 100, fmt.c_str(), &timeinfo) == 0)
         {
           throw Fmi::Exception(BCP, "Failed to format a non-empty time string with strftime")
               .addParameter("format", "'" + fmt + "'");
         }
-        msg << static_cast<char*>(buffer);
+        msg << buffer.data();
       }
       else if (formatter == "fmt")
       {

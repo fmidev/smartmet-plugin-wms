@@ -241,10 +241,9 @@ std::string IntervalTimeDimension::getCapabilities(
   }
 }
 
-std::string IntervalTimeDimension::getIntervalCapability(
-    const tag_interval& interval,
-    const boost::posix_time::ptime& requested_startt,
-    const boost::posix_time::ptime& requested_endt) const
+std::string getIntervalCapability(const tag_interval& interval,
+                                  const boost::posix_time::ptime& requested_startt,
+                                  const boost::posix_time::ptime& requested_endt)
 {
   std::string ret;
 

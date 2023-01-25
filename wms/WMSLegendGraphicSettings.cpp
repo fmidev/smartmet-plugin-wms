@@ -1,12 +1,10 @@
 #include "WMSLegendGraphicSettings.h"
-
-#include <vector>
-
-#include <algorithm>
-
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <macgyver/Exception.h>
+#include <algorithm>
+#include <string>
+#include <vector>
 
 namespace SmartMet
 {
@@ -28,8 +26,8 @@ void replace_translations(const std::map<std::string, std::string>& sourceTransl
   }
 }
 }  // namespace
-unsigned int numberOfLanguages = 193;
-const char* language_codes[] = {
+
+std::vector<std::string> language_codes = {
     "ab", "aa", "af",      "ak",      "sq", "am", "ar", "an", "hy", "as",   "av", "ae", "ay", "az",
     "bm", "ba", "eu",      "be",      "bn", "bh", "bi", "bs", "br", "bg",   "my", "ca", "ch", "ce",
     "ny", "zh", "zh-Hans", "zh-Hant", "cv", "kw", "co", "cr", "hr", "cs",   "da", "dv", "nl", "dz",
@@ -119,7 +117,7 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
           if (param.exists("translation"))
           {
             const auto& translation = param["translation"];
-            for (unsigned int k = 0; k < numberOfLanguages; k++)
+            for (unsigned int k = 0; k < language_codes.size(); k++)
             {
               if (translation.exists(language_codes[k]))
               {
@@ -158,7 +156,7 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
           if (symbol.exists("translation"))
           {
             const auto& translation = symbol["translation"];
-            for (unsigned int k = 0; k < numberOfLanguages; k++)
+            for (unsigned int k = 0; k < language_codes.size(); k++)
             {
               if (translation.exists(language_codes[k]))
               {

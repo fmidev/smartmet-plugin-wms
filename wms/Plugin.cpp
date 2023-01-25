@@ -768,13 +768,23 @@ void Plugin::init()
 
     if (!itsReactor->addContentHandler(this,
                                        itsConfig.defaultUrl(),
-                                       boost::bind(&Plugin::callRequestHandler, this, _1, _2, _3)))
+                                       [this](Spine::Reactor &theReactor,
+                                              const Spine::HTTP::Request &theRequest,
+                                              Spine::HTTP::Response &theResponse) {
+                                         callRequestHandler(theReactor, theRequest, theResponse);
+                                       }))
+
       throw Fmi::Exception(BCP, "Failed to register Dali content handler");
 
     // Register WMS content handler
 
-    if (!itsReactor->addContentHandler(
-            this, itsConfig.wmsUrl(), boost::bind(&Plugin::callRequestHandler, this, _1, _2, _3)))
+    if (!itsReactor->addContentHandler(this,
+                                       itsConfig.wmsUrl(),
+                                       [this](Spine::Reactor &theReactor,
+                                              const Spine::HTTP::Request &theRequest,
+                                              Spine::HTTP::Response &theResponse) {
+                                         callRequestHandler(theReactor, theRequest, theResponse);
+                                       }))
       throw Fmi::Exception(BCP, "Failed to register WMS content handler");
   }
   catch (...)

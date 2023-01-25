@@ -19,13 +19,10 @@ namespace WMS
 {
 struct LegendGraphicParameter
 {
-  explicit LegendGraphicParameter(const std::string& dn) : data_name(dn) {}
+  explicit LegendGraphicParameter(std::string dn) : data_name(std::move(dn)) {}
   LegendGraphicParameter() = default;
-  LegendGraphicParameter(const std::string& dn,
-                         const std::string& gn,
-                         const std::string& u,
-                         bool ht)
-      : data_name(dn), given_name(gn), unit(u), hide_title(ht)
+  LegendGraphicParameter(std::string dn, std::string gn, std::string u, bool ht)
+      : data_name(std::move(dn)), given_name(std::move(gn)), unit(std::move(u)), hide_title(ht)
   {
   }
 

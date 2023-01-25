@@ -20,8 +20,12 @@ struct PointValueBase
 {
   PointValueBase(const Positions::Point& p) : point(p) {}
   virtual ~PointValueBase() = default;
-  Positions::Point point;
   virtual double priorityValue() const = 0;
+  PointValueBase(const PointValueBase& other) = default;
+  PointValueBase(PointValueBase&& other) = default;
+  PointValueBase& operator=(const PointValueBase& other) = default;
+  PointValueBase& operator=(PointValueBase&& other) = default;
+  Positions::Point point;
 };
 
 struct PointValue : public PointValueBase
