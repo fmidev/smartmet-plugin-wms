@@ -1257,7 +1257,7 @@ std::map<std::string, std::string> Plugin::getStyle(const std::string &theCustom
         return style->declarations(theSelector);
 
       StyleSheet ss;
-      ss.add(theCSS);
+      ss.add(css);
       itsStyleSheetCache.insert(hash, ss);
       return ss.declarations(theSelector);
     }
