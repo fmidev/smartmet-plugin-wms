@@ -697,6 +697,7 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
     background_rect_cdt["attributes"]["height"] = Fmi::to_string(rectangleDimension.height);
     background_rect_cdt["attributes"]["x"] = Fmi::to_string(xpos + dx);
     background_rect_cdt["attributes"]["y"] = Fmi::to_string(ypos - text_dimension.height + dy);
+
     theState.addAttributes(theGlobals, background_rect_cdt, theFilter.attributes);
     theLayersCdt.PushBack(background_rect_cdt);
   }
@@ -1134,7 +1135,7 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
   map_cdt["type"] = Geometry::name(*theResultItem.geom, theState.getType());
   map_cdt["layertype"] = "icemap";
   map_cdt["data"] = Geometry::toString(*geom, theState.getType(), box, crs, precision);
-  theState.addPresentationAttributes(map_cdt, css, attributes);
+  theState.addPresentationAttributes(map_cdt, css, attributes, theFilter.attributes);  // NEW
   theGlobals["paths"][iri] = map_cdt;
 
   // add pattern on geometry
@@ -1151,9 +1152,9 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
     CTPP::CDT tag_cdt(CTPP::CDT::HASH_VAL);
     tag_cdt["start"] = "<use";
     tag_cdt["end"] = "/>";
-
     theState.addAttributes(theGlobals, tag_cdt, theFilter.attributes);
     tag_cdt["attributes"]["xlink:href"] = "#" + iri;
+
     theGroupCdt["tags"].PushBack(tag_cdt);
   }
 }
