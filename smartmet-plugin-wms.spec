@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.1.25
+Version: 23.1.26
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -32,7 +32,7 @@ BuildRequires: smartmet-library-macgyver-devel >= 22.12.16
 BuildRequires: smartmet-library-spine-devel >= 23.1.16
 BuildRequires: smartmet-library-timeseries-devel >= 22.10.25
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 22.12.16
+BuildRequires: smartmet-engine-authentication-devel >= 23.1.25
 %endif
 %if %{with observation}
 BuildRequires: smartmet-engine-observation-devel >= 23.1.24
@@ -41,7 +41,7 @@ BuildRequires: smartmet-engine-gis-devel >= 22.12.21
 BuildRequires: smartmet-engine-grid-devel >= 23.1.19
 BuildRequires: smartmet-engine-geonames-devel >= 23.1.18
 BuildRequires: smartmet-engine-querydata-devel >= 22.12.15
-BuildRequires: smartmet-engine-contour-devel >= 22.12.19
+BuildRequires: smartmet-engine-contour-devel >= 23.1.26
 BuildRequires: smartmet-library-gis-devel >= 23.1.5
 BuildRequires: smartmet-library-trax-devel >= 22.12.22
 BuildRequires: fmt-devel >= 8.1.1 fmt-devel < %{smartmet_fmt_max}
@@ -75,10 +75,10 @@ Requires: smartmet-library-spine >= 23.1.16
 Requires: smartmet-library-timeseries >= 22.10.25
 Requires: smartmet-library-giza >= 22.8.31
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 22.12.16
+Requires: smartmet-engine-authentication >= 23.1.25
 %endif
 Requires: smartmet-engine-querydata >= 22.12.15
-Requires: smartmet-engine-contour >= 22.12.19
+Requires: smartmet-engine-contour >= 23.1.26
 Requires: smartmet-engine-gis >= 22.12.21
 Requires: smartmet-engine-grid >= 23.1.19
 Requires: smartmet-engine-geonames >= 23.1.18
@@ -101,7 +101,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: jsoncpp-devel
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 22.12.19
+#TestRequires: smartmet-engine-contour-devel >= 23.1.26
 #TestRequires: smartmet-engine-geonames-devel >= 23.1.18
 #TestRequires: smartmet-engine-gis-devel >= 22.12.21
 #TestRequires: smartmet-engine-querydata-devel >= 22.12.15
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Jan 26 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.1.26-1.fmi
+- Repackaged due to contour-engine API changes
+
 * Wed Jan 25 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.1.25-1.fmi
 - Fixed styles option to work when the styles are an array of JSON includes
 
