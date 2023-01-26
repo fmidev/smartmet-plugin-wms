@@ -112,7 +112,10 @@
       "time": "2008-08-05T12:00:00",
       "iri": "l2.precipitation_01",
       "class": "Precipitation",
-      "id": "precipitation_isolines"
+      "fill": "none",
+      "id": "precipitation_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -130,7 +133,10 @@
       "time": "2008-08-05T12:00:00",
       "iri": "l2.precipitation_02",
       "class": "Precipitation",
-      "id": "precipitation_isolines"
+      "fill": "none",
+      "id": "precipitation_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -148,7 +154,10 @@
       "time": "2008-08-05T12:00:00",
       "iri": "l2.precipitation_05",
       "class": "Precipitation",
-      "id": "precipitation_isolines"
+      "fill": "none",
+      "id": "precipitation_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -166,7 +175,10 @@
       "time": "2008-08-05T12:00:00",
       "iri": "l2.precipitation_1",
       "class": "Precipitation",
-      "id": "precipitation_isolines"
+      "fill": "none",
+      "id": "precipitation_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    },
    {
@@ -184,7 +196,10 @@
       "time": "2008-08-05T12:00:00",
       "iri": "l2.precipitation_2",
       "class": "Precipitation",
-      "id": "precipitation_isolines"
+      "fill": "none",
+      "id": "precipitation_isolines",
+      "stroke": "#999",
+      "stroke-width": "0.4px"
     }
    }
  ]
