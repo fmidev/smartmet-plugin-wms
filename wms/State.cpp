@@ -448,7 +448,6 @@ void State::addPresentationAttributes(CTPP::CDT& theLayer,
 }
 
 // ----------------------------------------------------------------------
-// ----------------------------------------------------------------------
 /*!
  * \brief Add presentation attributes to the CDT
  */
@@ -466,6 +465,7 @@ void State::addPresentationAttributes(CTPP::CDT& theLayer,
     {
       const auto css1 = getStyle(*theCSS, theLayerAttributes.getSelector());
       theLayerAttributes.generatePresentation(theLayer, *this, css1);
+
       const auto css2 = getStyle(*theCSS, theObjectAttributes.getSelector());
       theObjectAttributes.generatePresentation(theLayer, *this, css2);
 
