@@ -470,6 +470,11 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
 {
   try
   {
+#if 0    
+    if (!theGeom.IsValid())
+      throw Fmi::Exception(BCP, "Input geometry for conversion to GeoJSON is not valid");
+#endif
+
     // Reproject to WGS84. TODO: Optimize if theSRS == WGS84.
 
     Fmi::CoordinateTransformation transformation(theSRS, "WGS84");
@@ -489,6 +494,10 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
     char* options[] = {const_cast<char*>(prec.c_str()), nullptr};  // NOLINT
     auto* geom3 = const_cast<OGRGeometry*>(geom2.get());
     char* tmp = OGR_G_ExportToJsonEx(OGRGeometry::ToHandle(geom3), options);
+
+    // GDAL does not allow empty geometries even though it is valid according to GeoJSON RFC
+    if (tmp == nullptr)
+      throw Fmi::Exception(BCP, "Failed to convert geometry to GeoJSON");
 
     std::string ret = tmp;
     CPLFree(tmp);

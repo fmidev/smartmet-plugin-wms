@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.1.26
-Release: 3%{?dist}.fmi
+Version: 23.1.31
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -30,7 +30,7 @@ BuildRequires: smartmet-library-grid-content-devel >= 23.1.19
 BuildRequires: smartmet-library-grid-files-devel >= 23.1.24
 BuildRequires: smartmet-library-macgyver-devel >= 22.12.16
 BuildRequires: smartmet-library-spine-devel >= 23.1.16
-BuildRequires: smartmet-library-timeseries-devel >= 23.1.26
+BuildRequires: smartmet-library-timeseries-devel >= 23.1.31
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 23.1.25
 %endif
@@ -72,7 +72,7 @@ Requires: smartmet-library-gis >= 23.1.5
 Requires: smartmet-library-trax >= 22.12.22
 Requires: smartmet-library-macgyver >= 22.12.16
 Requires: smartmet-library-spine >= 23.1.16
-Requires: smartmet-library-timeseries >= 23.1.26
+Requires: smartmet-library-timeseries >= 23.1.31
 Requires: smartmet-library-giza >= 22.8.31
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 23.1.25
@@ -82,7 +82,7 @@ Requires: smartmet-engine-contour >= 23.1.26
 Requires: smartmet-engine-gis >= 22.12.21
 Requires: smartmet-engine-grid >= 23.1.19
 Requires: smartmet-engine-geonames >= 23.1.18
-Requires: smartmet-server >= 23.1.10
+Requires: smartmet-server >= 23.1.30
 Requires: smartmet-library-spine >= 23.1.16
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
@@ -109,7 +109,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 22.12.22
 #TestRequires: smartmet-library-newbase-devel >= 22.11.14
 #TestRequires: smartmet-library-spine-devel >= 23.1.16
-#TestRequires: smartmet-library-timeseries-devel >= 23.1.26
+#TestRequires: smartmet-library-timeseries-devel >= 23.1.31
 #TestRequires: smartmet-engine-grid-devel >= 23.1.19
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
@@ -149,6 +149,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Jan 31 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.1.31-2.fmi
+- Fixed IceMapLayer to omit empty geometries
+
+* Tue Jan 31 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.1.31-1.fmi
+- Added error checking to GeoJSON conversion
+
 * Thu Jan 26 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.1.26-3.fmi
 - Repackaged due to engine API changes
 

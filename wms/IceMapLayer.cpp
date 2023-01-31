@@ -1127,6 +1127,9 @@ void IceMapLayer::handleGeometry(const Fmi::Feature& theResultItem,
   // Clip the data or on high zoom levels the coordinates may overflow in Cairo
   OGRGeometryPtr geom(Fmi::OGR::polyclip(*theResultItem.geom, clipbox));
 
+  if (!geom || geom->IsEmpty() != 0)
+    return;
+
   // Store the path with unique ID
   std::string iri = (qid + Fmi::to_string(theMapId++));
 
