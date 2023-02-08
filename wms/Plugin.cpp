@@ -38,6 +38,7 @@
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
+#include <spine/HostInfo.h>
 #include <spine/Json.h>
 #include <spine/SmartMet.h>
 #include <stdexcept>
@@ -751,6 +752,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       Fmi::Exception exception(BCP, "Request processing exception!", nullptr);
       exception.addParameter("URI", theRequest.getURI());
       exception.addParameter("ClientIP", theRequest.getClientIP());
+      exception.addParameter("HostName", Spine::HostInfo::getHostName(theRequest.getClientIP()));
 
       const bool check_token = true;
       auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
@@ -2025,6 +2027,7 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
     Fmi::Exception e(BCP, "Failed to generate product", nullptr);
     e.addParameter("URI", theRequest.getURI());
     e.addParameter("ClientIP", theRequest.getClientIP());
+    e.addParameter("HostName", Spine::HostInfo::getHostName(theRequest.getClientIP()));
     const bool check_token = true;
     auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
     e.addParameter("Apikey", (apikey ? *apikey : std::string("-")));

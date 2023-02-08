@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.1.31
-Release: 2%{?dist}.fmi
+Version: 23.2.8
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -29,13 +29,13 @@ BuildRequires: smartmet-library-giza-devel >= 22.8.31
 BuildRequires: smartmet-library-grid-content-devel >= 23.1.19
 BuildRequires: smartmet-library-grid-files-devel >= 23.1.24
 BuildRequires: smartmet-library-macgyver-devel >= 22.12.16
-BuildRequires: smartmet-library-spine-devel >= 23.1.16
+BuildRequires: smartmet-library-spine-devel >= 23.2.8
 BuildRequires: smartmet-library-timeseries-devel >= 23.1.31
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 23.1.25
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 23.1.26
+BuildRequires: smartmet-engine-observation-devel >= 23.2.8
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.12.21
 BuildRequires: smartmet-engine-grid-devel >= 23.1.19
@@ -71,7 +71,7 @@ Requires: smartmet-library-grid-files >= 23.1.24
 Requires: smartmet-library-gis >= 23.1.5
 Requires: smartmet-library-trax >= 22.12.22
 Requires: smartmet-library-macgyver >= 22.12.16
-Requires: smartmet-library-spine >= 23.1.16
+Requires: smartmet-library-spine >= 23.2.8
 Requires: smartmet-library-timeseries >= 23.1.31
 Requires: smartmet-library-giza >= 22.8.31
 %if %{with authentication}
@@ -82,8 +82,8 @@ Requires: smartmet-engine-contour >= 23.1.26
 Requires: smartmet-engine-gis >= 22.12.21
 Requires: smartmet-engine-grid >= 23.1.19
 Requires: smartmet-engine-geonames >= 23.1.18
-Requires: smartmet-server >= 23.1.30
-Requires: smartmet-library-spine >= 23.1.16
+Requires: smartmet-server >= 23.2.1
+Requires: smartmet-library-spine >= 23.2.8
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
@@ -108,7 +108,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 22.8.31
 #TestRequires: smartmet-library-trax-devel >= 22.12.22
 #TestRequires: smartmet-library-newbase-devel >= 22.11.14
-#TestRequires: smartmet-library-spine-devel >= 23.1.16
+#TestRequires: smartmet-library-spine-devel >= 23.2.8
 #TestRequires: smartmet-library-timeseries-devel >= 23.1.31
 #TestRequires: smartmet-engine-grid-devel >= 23.1.19
 #TestRequires: smartmet-engine-grid-test
@@ -120,7 +120,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 23.1.26
+#TestRequires: smartmet-engine-observation-devel >= 23.2.8
 %endif
 
 %description
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Feb  8 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.2.8-1.fmi
+- Add host name to stack traces
+
 * Tue Jan 31 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.1.31-2.fmi
 - Fixed IceMapLayer to omit empty geometries
 
