@@ -31,7 +31,7 @@ enum class WMSLayerType
 };
 
 static std::set<std::string> querydata_layers = {
-    "arrow", "isoband", "isoline", "isolabel", "number", "symbol", "tag", "location"};
+    "arrow", "isoband", "isoline", "isolabel", "number", "symbol", "tag", "location", "stream"};
 
 static std::set<std::string> postgis_layers = {"postgis", "icemap"};
 
