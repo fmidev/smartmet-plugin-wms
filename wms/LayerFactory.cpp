@@ -16,6 +16,7 @@
 #include "NumberLayer.h"
 #include "PostGISLayer.h"
 #include "PresentWeatherObservationLayer.h"
+#include "StreamLayer.h"
 #include "SymbolLayer.h"
 #include "TagLayer.h"
 #include "TimeLayer.h"
@@ -68,6 +69,8 @@ Layer* create(const Json::Value& theJson)
       return new MapLayer;
     if (name == "number")
       return new NumberLayer;
+    if (name == "stream")
+      return new StreamLayer;
     if (name == "symbol")
       return new SymbolLayer;
     if (name == "tag")

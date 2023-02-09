@@ -41,6 +41,7 @@ class Attributes
   std::size_t hash_value(const State& theState) const;
 
   boost::optional<std::string> getLocalIri(const std::string& theName) const;
+  bool getLocalIriAndParameters(const std::string& theName,std::string& iri,std::map<std::string,std::string>& parameters) const;
 
   bool empty() const { return attributes.empty(); }
   std::string value(const std::string& theName) const

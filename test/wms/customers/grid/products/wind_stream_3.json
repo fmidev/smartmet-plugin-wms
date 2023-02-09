@@ -1,0 +1,96 @@
+{
+  "title": "Wind streamlines",
+  "abstract": "Wind streamlines",
+  "source": "grid",
+  "producer": "pal",
+  "projection": {},
+  "styles": [
+    {
+      "name": "default",
+      "title": "Wind streamlines",
+      "abstract": "Wind streamlines",
+      "layers": [
+        {
+          "qid": "l1",
+          "layer_type": "stream"
+        }
+      ]
+    }    
+  ],
+  "views": [
+    {
+      "layers": [
+        {
+          "qid": "background",
+          "layer_type": "background",
+          "attributes":
+          {
+            "fill": "rgb(187,204,225)"
+          }
+        },
+        {
+          "qid": "europe",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries"
+          },
+          "attributes": {
+            "id": "europe_country",
+            "fill": "rgb(250,250,250)"
+          }
+        },
+        {
+          "qid": "l1",
+          "layer_type": "stream",
+          "parameter": "DD-D",
+          "levelId": 6,
+          "level": 10,
+          "maxStreamLength": 120,
+          "minStreamLength": 20,
+          "lineLength": 40,
+          "xStep": 20,
+          "yStep": 20, 
+          "attributes": {
+            "fill": "none",
+            "stroke": "#808080",
+            "stroke-width": "0.5px",
+            "marker-end" : "url(#spearhead?fill=#606060)" 
+          }
+        },
+        {
+          "qid": "l11",
+          "tag": "rect",
+          "attributes": {
+            "x": -168,
+            "y": 3,
+            "width": 155,
+            "height": 25,
+            "rx": 8,
+            "ry": 8,
+            "fill": "white",
+            "stroke": "black",
+            "stroke-width": "0.6"
+          }
+        },
+        {
+          "qid": "l12",
+          "layer_type": "time",
+          "timestamp": "validtime",
+          "timezone": "Europe/Helsinki",
+          "format": "%Y-%m-%d %H:%M",
+          "x": -20,
+          "y": 20,
+          "attributes": {
+            "text-anchor": "end",
+            "font-family": "Roboto",
+            "font-weight": "bold",
+            "font-size": 14
+          }
+        }
+      ]
+    }
+  ]
+}
+]
+}

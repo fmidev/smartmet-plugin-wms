@@ -183,7 +183,19 @@ void Attributes::generate(CTPP::CDT& theLocals, const State& theState) const
       {
         if (!text.empty())
           text += "; ";
-        text += name_value.first + ':' + name_value.second;
+
+        if (name_value.second.substr(0, 5) == "url(#")
+        {
+          auto found = name_value.second.find('?');
+          if (found != std::string::npos)
+            text += name_value.first + ':' + name_value.second.substr(0, found) + ")";
+          else
+            text += name_value.first + ':' + name_value.second;
+        }
+        else
+        {
+          text += name_value.first + ':' + name_value.second;
+        }
       }
       attrs["style"] = text;
     }
@@ -350,6 +362,49 @@ boost::optional<std::string> Attributes::getLocalIri(const std::string& theName)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+
+bool Attributes::getLocalIriAndParameters(const std::string& theName,std::string& iri,std::map<std::string,std::string>& parameters) const
+{
+  try
+  {
+    auto att = attributes.find(theName);
+    if (att == attributes.end())
+      return false;
+
+    const auto& value = att->second;
+    if (value.empty() || value.substr(0, 5) != "url(#" || value[value.size() - 1] != ')')
+      return false;
+
+    // Return the local name
+    std::string str = value.substr(5, value.size() - 6);
+
+    std::vector<std::string> list;
+    splitString(str,'?',list);
+    iri = list[0];
+    if (list.size() > 1)
+    {
+      std::vector<std::string> paramList;
+      splitString(list[1],'&',paramList);
+      for (auto it = paramList.begin(); it != paramList.end(); ++it)
+      {
+        std::vector<std::string> param;
+        splitString(*it,'=',param);
+        if (param.size() == 2)
+        {
+          parameters.insert(std::pair<std::string,std::string>(param[0],param[1]));
+          //std::cout << "PARAM [" << param[0] << "][" << param[1] << "]\n";
+        }
+      }
+    }
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 
 // ----------------------------------------------------------------------
 /*!
