@@ -60,6 +60,7 @@
    <use transform="translate(274 194) rotate(46)" xlink:href="#windbarb_10"/>
    <use transform="translate(389 207) rotate(47)" xlink:href="#windbarb_10"/>
    <use transform="translate(296 214) rotate(41)" xlink:href="#windbarb_10"/>
+   <use transform="translate(392 213) rotate(30)" xlink:href="#windbarb_5"/>
    <use transform="translate(234 225) rotate(20)" xlink:href="#windbarb_15"/>
    <use transform="translate(316 235) rotate(52)" xlink:href="#windbarb_5"/>
    <use transform="translate(376 253) rotate(45)" xlink:href="#windbarb_1"/>

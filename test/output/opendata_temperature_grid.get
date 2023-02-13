@@ -47,6 +47,7 @@
    <use transform="translate(274,194)" xlink:href="#dot"/>
    <use transform="translate(389,207)" xlink:href="#dot"/>
    <use transform="translate(296,214)" xlink:href="#dot"/>
+   <use transform="translate(392,213)" xlink:href="#dot"/>
    <use transform="translate(234,225)" xlink:href="#dot"/>
    <use transform="translate(220,236)" xlink:href="#dot"/>
    <use transform="translate(316,235)" xlink:href="#dot"/>
@@ -136,6 +137,7 @@
   <text x="279" y="199">23</text>
   <text x="394" y="212">18</text>
   <text x="301" y="219">22</text>
+  <text x="397" y="218">20</text>
   <text x="239" y="230">19</text>
   <text x="225" y="241">18</text>
   <text x="321" y="240">23</text>

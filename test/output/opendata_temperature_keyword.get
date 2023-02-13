@@ -82,6 +82,7 @@
    <use transform="translate(176,354)" xlink:href="#dot"/>
    <use transform="translate(122,349)" xlink:href="#dot"/>
    <use transform="translate(155,346)" xlink:href="#dot"/>
+   <use transform="translate(184,320)" xlink:href="#dot"/>
    <use transform="translate(234,225)" xlink:href="#dot"/>
    <use transform="translate(220,236)" xlink:href="#dot"/>
    <use transform="translate(323,186)" xlink:href="#dot"/>
@@ -113,6 +114,7 @@
    <use transform="translate(338,328)" xlink:href="#dot"/>
    <use transform="translate(117,409)" xlink:href="#dot"/>
    <use transform="translate(395,199)" xlink:href="#dot"/>
+   <use transform="translate(392,213)" xlink:href="#dot"/>
    <use transform="translate(389,207)" xlink:href="#dot"/>
    <use transform="translate(94,454)" xlink:href="#dot"/>
    <use transform="translate(271,400)" xlink:href="#dot"/>
@@ -130,7 +132,6 @@
    <use transform="translate(92,431)" xlink:href="#dot"/>
    <use transform="translate(107,325)" xlink:href="#dot"/>
    <use transform="translate(244,342)" xlink:href="#dot"/>
-   <use transform="translate(205,140)" xlink:href="#dot"/>
    <use transform="translate(218,136)" xlink:href="#dot"/>
    <use transform="translate(220,140)" xlink:href="#dot"/>
    <use transform="translate(118,308)" xlink:href="#dot"/>
@@ -266,6 +267,7 @@
   <text x="181" y="359">22</text>
   <text x="127" y="354">17</text>
   <text x="160" y="351">20</text>
+  <text x="189" y="325">23</text>
   <text x="239" y="230">19</text>
   <text x="225" y="241">18</text>
   <text x="328" y="191">23</text>
@@ -297,6 +299,7 @@
   <text x="343" y="333">21</text>
   <text x="122" y="414">19</text>
   <text x="400" y="204">22</text>
+  <text x="397" y="218">20</text>
   <text x="394" y="212">18</text>
   <text x="99" y="459">19</text>
   <text x="276" y="405">23</text>
@@ -314,7 +317,6 @@
   <text x="97" y="436">21</text>
   <text x="112" y="330">16</text>
   <text x="249" y="347">23</text>
-  <text x="210" y="145">21</text>
   <text x="223" y="141">16</text>
   <text x="225" y="145">19</text>
   <text x="123" y="313">18</text>

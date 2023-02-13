@@ -54,7 +54,7 @@
    <use transform="translate(249 431) rotate(14)" xlink:href="#windbarb_10"/>
    <use transform="translate(248 437) rotate(42)" xlink:href="#windbarb_10"/>
    <use transform="translate(248 429) rotate(27)" xlink:href="#windbarb_5"/>
-   <use transform="translate(249 428) rotate(5)" xlink:href="#windbarb_5"/>
+   <use transform="translate(249 428) rotate(345)" xlink:href="#windbarb_5"/>
    <use transform="translate(257 428) rotate(49)" xlink:href="#windbarb_10"/>
    <use transform="translate(233 398) rotate(147)" xlink:href="#windbarb_5"/>
    <use transform="translate(254 390) rotate(41)" xlink:href="#windbarb_5"/>
@@ -83,6 +83,7 @@
    <use transform="translate(165 367) rotate(79)" xlink:href="#windbarb_5"/>
    <use transform="translate(122 349) rotate(344)" xlink:href="#windbarb_15"/>
    <use transform="translate(155 346) rotate(64)" xlink:href="#windbarb_5"/>
+   <use transform="translate(184 320) rotate(50)" xlink:href="#windbarb_10"/>
    <use transform="translate(234 225) rotate(20)" xlink:href="#windbarb_15"/>
    <use transform="translate(323 186) rotate(60)" xlink:href="#windbarb_10"/>
    <use transform="translate(236 221) rotate(10)" xlink:href="#windbarb_10"/>
@@ -110,6 +111,7 @@
    <use transform="translate(348 332) rotate(69)" xlink:href="#windbarb_10"/>
    <use transform="translate(338 328) rotate(92)" xlink:href="#windbarb_5"/>
    <use transform="translate(117 409) rotate(336)" xlink:href="#windbarb_5"/>
+   <use transform="translate(392 213) rotate(30)" xlink:href="#windbarb_5"/>
    <use transform="translate(389 207) rotate(47)" xlink:href="#windbarb_10"/>
    <use transform="translate(94 454) rotate(30)" xlink:href="#windbarb_15"/>
    <use transform="translate(271 400) rotate(180)" xlink:href="#windbarb_0"/>
