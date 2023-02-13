@@ -1217,6 +1217,21 @@ std::string Plugin::resolveFilePath(const std::string &theCustomer,
   }
 }
 
+std::string Plugin::resolveSvgPath(const std::string &theCustomer,
+                                   const std::string &theSubDir,
+                                   const std::string &theFileName,
+                                   bool theWmsFlag) const
+{
+  if (theCustomer.empty() || theFileName.empty())
+    return {};
+
+  auto file = resolveFilePath(theCustomer, theSubDir, theFileName + ".svg", theWmsFlag);
+  if (boost::filesystem::exists(file))
+    return file;
+
+  return resolveFilePath(theCustomer, theSubDir, theFileName, theWmsFlag);
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Get CSS contents from the internal cache
@@ -1307,7 +1322,7 @@ std::string Plugin::getFilter(const std::string &theCustomer,
     if (theName.empty())
       return "";
 
-    std::string filter_path = resolveFilePath(theCustomer, "/filters/", theName, theWmsFlag);
+    std::string filter_path = resolveSvgPath(theCustomer, "/filters/", theName, theWmsFlag);
 
     return itsFileCache.get(filter_path);
   }
@@ -1332,7 +1347,7 @@ std::size_t Plugin::getFilterHash(const std::string &theCustomer,
     if (theName.empty())
       return 0;
 
-    std::string filter_path = resolveFilePath(theCustomer, "/filters/", theName, theWmsFlag);
+    std::string filter_path = resolveSvgPath(theCustomer, "/filters/", theName, theWmsFlag);
 
     return itsFileCache.last_modified(filter_path);
   }
@@ -1357,7 +1372,7 @@ std::string Plugin::getMarker(const std::string &theCustomer,
     if (theName.empty())
       return "";
 
-    std::string marker_path = resolveFilePath(theCustomer, "/markers/", theName, theWmsFlag);
+    std::string marker_path = resolveSvgPath(theCustomer, "/markers/", theName, theWmsFlag);
 
     return itsFileCache.get(marker_path);
   }
@@ -1382,7 +1397,7 @@ std::size_t Plugin::getMarkerHash(const std::string &theCustomer,
     if (theName.empty())
       return 0;
 
-    std::string marker_path = resolveFilePath(theCustomer, "/markers/", theName, theWmsFlag);
+    std::string marker_path = resolveSvgPath(theCustomer, "/markers/", theName, theWmsFlag);
 
     return itsFileCache.last_modified(marker_path);
   }
@@ -1407,7 +1422,7 @@ std::string Plugin::getSymbol(const std::string &theCustomer,
     if (theName.empty())
       return "";
 
-    std::string symbol_path = resolveFilePath(theCustomer, "/symbols/", theName, theWmsFlag);
+    std::string symbol_path = resolveSvgPath(theCustomer, "/symbols/", theName, theWmsFlag);
 
     return itsFileCache.get(symbol_path);
   }
@@ -1432,7 +1447,7 @@ std::size_t Plugin::getSymbolHash(const std::string &theCustomer,
     if (theName.empty())
       return 0;
 
-    std::string symbol_path = resolveFilePath(theCustomer, "/symbols/", theName, theWmsFlag);
+    std::string symbol_path = resolveSvgPath(theCustomer, "/symbols/", theName, theWmsFlag);
 
     return itsFileCache.last_modified(symbol_path);
   }
@@ -1457,7 +1472,7 @@ std::string Plugin::getPattern(const std::string &theCustomer,
     if (theName.empty())
       return "";
 
-    std::string pattern_path = resolveFilePath(theCustomer, "/patterns/", theName, theWmsFlag);
+    std::string pattern_path = resolveSvgPath(theCustomer, "/patterns/", theName, theWmsFlag);
 
     return itsFileCache.get(pattern_path);
   }
@@ -1482,7 +1497,7 @@ std::size_t Plugin::getPatternHash(const std::string &theCustomer,
     if (theName.empty())
       return 0;
 
-    std::string pattern_path = resolveFilePath(theCustomer, "/patterns/", theName, theWmsFlag);
+    std::string pattern_path = resolveSvgPath(theCustomer, "/patterns/", theName, theWmsFlag);
 
     return itsFileCache.last_modified(pattern_path);
   }
@@ -1507,7 +1522,7 @@ std::string Plugin::getGradient(const std::string &theCustomer,
     if (theName.empty())
       return "";
 
-    std::string gradient_path = resolveFilePath(theCustomer, "/gradients/", theName, theWmsFlag);
+    std::string gradient_path = resolveSvgPath(theCustomer, "/gradients/", theName, theWmsFlag);
 
     return itsFileCache.get(gradient_path);
   }
@@ -1532,7 +1547,7 @@ std::size_t Plugin::getGradientHash(const std::string &theCustomer,
     if (theName.empty())
       return 0;
 
-    std::string gradient_path = resolveFilePath(theCustomer, "/gradients/", theName, theWmsFlag);
+    std::string gradient_path = resolveSvgPath(theCustomer, "/gradients/", theName, theWmsFlag);
 
     return itsFileCache.last_modified(gradient_path);
   }

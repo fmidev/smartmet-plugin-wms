@@ -192,6 +192,10 @@ class Plugin : public SmartMetPlugin
                               const std::string& theSubDir,
                               const std::string& theFileName,
                               bool theWmsFlag) const;
+  std::string resolveSvgPath(const std::string& theCustomer,
+                             const std::string& theSubDir,
+                             const std::string& theFileName,
+                             bool theWmsFlag) const;
 
   // Plugin configuration
   const std::string itsModuleName;
