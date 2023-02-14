@@ -43,9 +43,7 @@
         {
           "qid": "l1",
           "layer_type": "stream",
-          "parameter": "DD-D",
-          "levelId": 6,
-          "level": 10,
+          "parameter": "WindDirection",
           "maxStreamLength": 50,
           "minStreamLength": 5,
           "lineLength": 40,
