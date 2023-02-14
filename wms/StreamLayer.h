@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "ParameterInfo.h"
 #include "Sampling.h"
+#include "Positions.h"
 #include "Smoother.h"
 #include <engines/querydata/Q.h>
 #include <vector>
@@ -35,28 +36,12 @@ class StreamLayer : public Layer
   void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   boost::optional<std::string> parameter;
-  std::string interpolation{"linear"};
   int minStreamLen = 5;
   int maxStreamLen = 2048;
   int lineLen = 32;
   int xStep = 20;
   int yStep = 20;
-
-  int extrapolation = 0;
-
   double precision = 1.0;
-
-  boost::optional<double> minarea;
-
-  std::string unit_conversion;
-  boost::optional<double> multiplier;
-  boost::optional<double> offset;
-
-  boost::optional<Map> outside;
-  boost::optional<Map> inside;
-
-  Sampling sampling;
-  Intersections intersections;
 
  protected:
   std::vector<OGRGeometryPtr> getStreams(State& theState);

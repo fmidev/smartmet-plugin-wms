@@ -17,6 +17,7 @@
 #include <gis/Box.h>
 #include <gis/OGR.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
+#include <gis/CoordinateTransformation.h>
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/common/GraphFunctions.h>
 #include <spine/Json.h>
@@ -57,10 +58,6 @@ void StreamLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       parameter = json.asString();
 
-    json = theJson.get("interpolation", nulljson);
-    if (!json.isNull())
-      interpolation = json.asString();
-
     json = theJson.get("maxStreamLength", nulljson);
     if (!json.isNull())
       maxStreamLen = json.asInt();
@@ -84,44 +81,6 @@ void StreamLayer::init(const Json::Value& theJson,
     json = theJson.get("precision", nulljson);
     if (!json.isNull())
       precision = json.asDouble();
-
-    json = theJson.get("minarea", nulljson);
-    if (!json.isNull())
-      minarea = json.asDouble();
-
-    json = theJson.get("unit_conversion", nulljson);
-    if (!json.isNull())
-      unit_conversion = json.asString();
-
-    json = theJson.get("multiplier", nulljson);
-    if (!json.isNull())
-      multiplier = json.asDouble();
-
-    json = theJson.get("offset", nulljson);
-    if (!json.isNull())
-      offset = json.asDouble();
-
-    json = theJson.get("outside", nulljson);
-    if (!json.isNull())
-    {
-      outside.reset(Map());
-      outside->init(json, theConfig);
-    }
-
-    json = theJson.get("inside", nulljson);
-    if (!json.isNull())
-    {
-      inside.reset(Map());
-      inside->init(json, theConfig);
-    }
-
-    json = theJson.get("sampling", nulljson);
-    if (!json.isNull())
-      sampling.init(json, theConfig);
-
-    json = theJson.get("intersect", nulljson);
-    if (!json.isNull())
-      intersections.init(json, theConfig);
   }
   catch (...)
   {
@@ -177,17 +136,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(State& theState)
     T::AttributeList attributeList;
 
     std::string producerName = gridEngine->getProducerName(*producer);
-
-    // Alter units if requested
-    if (!unit_conversion.empty())
-    {
-      auto conv = theState.getConfig().unitConversion(unit_conversion);
-      multiplier = conv.multiplier;
-      offset = conv.offset;
-    }
-
     std::string wkt = *projection.crs;
-    // std::cout << wkt << "\n";
 
     if (wkt != "data")
     {
@@ -405,147 +354,138 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(State& theState)
 
 std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theState)
 {
-  std::vector<OGRGeometryPtr> geoms;
-
-#if 0 // Under construction
-
-  // Establish the data. Store to member variable for IsolabelLayer use
-
-  auto qEngine = theState.getQEngine();
-
-  q = getModel(theState);
-
-  if (q && !(q->isGrid()))
-    throw Fmi::Exception(BCP, "Stream-layer can't use point data!");
-
-  // Establish the desired direction parameter
-
-  if (!parameter)
-    throw Fmi::Exception(BCP, "Parameter not set for stream-layer");
-
-  auto param = TS::ParameterFactory::instance().parse(*parameter);
-
-  // Establish the valid time
-
-  auto valid_time = getValidTime();
-
-  // Establish the level
-
-  if (q && !q->firstLevel())
-    throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
-
-  if (level)
+  try
   {
-    if (!q)
-      throw Fmi::Exception(BCP, "Cannot generate streamlines without gridded level data");
+    std::vector<OGRGeometryPtr> geoms;
 
-    if (!q->selectLevel(*level))
-      throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
-  }
+    q = getModel(theState);
 
-  // Get projection details
+    if (q && !(q->isGrid()))
+      throw Fmi::Exception(BCP, "Stream-layer can't use point data!");
 
-  projection.update(q);
-  const auto& crs = projection.getCRS();
-  const auto& box = projection.getBox();
-  const auto clipbox = getClipBox(box);
+    if (!parameter)
+      throw Fmi::Exception(BCP, "Parameter not set for stream-layer");
 
-  // Sample to higher resolution if necessary
+    auto param = TS::ParameterFactory::instance().parse(*parameter);
+    auto valid_time = getValidTime();
 
-  auto sampleresolution = sampling.getResolution(projection);
-  if (sampleresolution)
-  {
-    if (!q)
-      throw Fmi::Exception(BCP, "Cannot resample without gridded data");
+    if (q && !q->firstLevel())
+      throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
 
-    auto demdata = theState.getGeoEngine().dem();
-    auto landdata = theState.getGeoEngine().landCover();
-    if (!demdata || !landdata)
-      throw Fmi::Exception(
-          BCP, "Resampling data in StreamLayer requires DEM and land cover data to be available");
-
-    q = q->sample(param,
-                  valid_time,
-                  crs,
-                  box.xmin(),
-                  box.ymin(),
-                  box.xmax(),
-                  box.ymax(),
-                  *sampleresolution,
-                  *demdata,
-                  *landdata);
-  }
-
-  if (!q)
-    throw Fmi::Exception(BCP, "Cannot generate streamlines without gridded data");
-
-  // Calculate the streamlines
-
-  T::ParamValue_vec gridValues;
-  std::vector<T::Coordinate> coordinates;
-  T::ByteData_vec streamlines;
-
-  auto cm = q->CoordinateMatrix();
-  int width = cm.width();
-  int height = cm.height();
-  int sz = width * height;
-
-
-  coordinates.reserve(sz);
-  gridValues.reserve(sz);
-
-
-  boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-  boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
-
-  auto valid_time_period = getValidTimePeriod();
-  NFmiMetTime met_time = valid_time_period.begin();
-  boost::local_time::local_date_time localdatetime(met_time, utc);
-  std::string tmp;
-  auto mylocale = std::locale::classic();
-  NFmiPoint dummy;
-  TimeSeries::LocalTimePoolPtr localTimePool = nullptr;
-
-  for (int y=0; y<height; y++)
-  {
-    for (int x=0; x<width; x++)
+    if (level)
     {
-      double xx = cm.x(x,y);
-      double yy = cm.y(x,y);
+      if (!q)
+        throw Fmi::Exception(BCP, "Cannot generate streamlines without gridded level data");
 
-      coordinates.push_back(T::Coordinate(xx,yy));
+      if (!q->selectLevel(*level))
+        throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
+    }
 
-      Spine::Location loc(x,y);
+    if (!q)
+      throw Fmi::Exception(BCP, "Cannot generate streamlines without gridded data");
 
-      auto p = Engine::Querydata::ParameterOptions(param,tmp,loc,tmp,tmp,
-                 *timeformatter,tmp,tmp,mylocale,tmp,false,dummy,dummy,localTimePool);
 
-      auto res = q->value(p, localdatetime);
-      if (boost::get<double>(&res) != nullptr)
+    T::AttributeList attributeList;
+    T::Coordinate_svec latlonCoordinates;
+    uint gwidth,gheight;
+
+    std::string wkt = *projection.crs;
+    if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
+    {
+      auto crs = projection.getCRS();
+      char* out = nullptr;
+      crs.get()->exportToWkt(&out);
+      wkt = out;
+      CPLFree(out);
+    }
+
+    // Adding the bounding box information into the query.
+
+    char bbox[100];
+
+    const auto& box = projection.getBox();
+    const auto clipbox = getClipBox(box);
+
+    auto bl = projection.bottomLeftLatLon();
+    auto tr = projection.topRightLatLon();
+
+    sprintf(bbox, "%f,%f,%f,%f", bl.X(), bl.Y(), tr.X(), tr.Y());
+    attributeList.addAttribute("grid.llbox", bbox);
+
+    sprintf(bbox, "%f,%f,%f,%f", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
+    attributeList.addAttribute("grid.bbox", bbox);
+
+    attributeList.addAttribute("grid.crs", wkt);
+
+    if (projection.xsize)
+      attributeList.addAttribute("grid.width",std::to_string(*projection.xsize));
+
+    if (projection.ysize)
+      attributeList.addAttribute("grid.height",std::to_string(*projection.ysize));
+
+    // Getting coordinates for the new grid.
+    Identification::gridDef.getGridLatLonCoordinatesByGeometry(attributeList,latlonCoordinates,gwidth,gheight);
+
+    T::ParamValue_vec gridValues;
+    T::ByteData_vec streamlines;
+    int sz = gwidth * gheight;
+    gridValues.reserve(sz);
+
+    boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+    boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
+
+    auto valid_time_period = getValidTimePeriod();
+    NFmiMetTime met_time = valid_time_period.begin();
+    boost::local_time::local_date_time localdatetime(met_time, utc);
+    std::string tmp;
+    auto mylocale = std::locale::classic();
+    NFmiPoint dummy;
+    TimeSeries::LocalTimePoolPtr localTimePool = nullptr;
+
+    // Fetching values for the new grid.
+
+    uint c = 0;
+    for (uint y=0; y<gheight; y++)
+    {
+      for (uint x=0; x<gwidth; x++)
       {
-        auto direction = *boost::get<double>(&res);
-        gridValues.push_back(direction);
-      }
-      else
-      {
-        gridValues.push_back(ParamValueMissing);
+        Spine::Location loc((*latlonCoordinates)[c].x(),(*latlonCoordinates)[c].y());
+
+        auto p = Engine::Querydata::ParameterOptions(param,tmp,loc,tmp,tmp,
+                   *timeformatter,tmp,tmp,mylocale,tmp,false,dummy,dummy,localTimePool);
+
+        auto res = q->value(p, localdatetime);
+        if (boost::get<double>(&res) != nullptr)
+        {
+          auto direction = *boost::get<double>(&res);
+          gridValues.push_back(direction);
+        }
+        else
+        {
+          gridValues.push_back(ParamValueMissing);
+        }
+        c++;
       }
     }
+
+    // Calculate the streamlines
+    getStreamlines(gridValues,latlonCoordinates.get(),gwidth,gheight,minStreamLen,maxStreamLen,lineLen,xStep,yStep,streamlines);
+
+    for (const auto& wkb : streamlines)
+    {
+      const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
+      OGRGeometry* geom = nullptr;
+      OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
+      auto geomPtr = OGRGeometryPtr(geom);
+      geoms.push_back(geomPtr);
+    }
+
+    return geoms;
   }
-
-  getStreamlines(gridValues,&coordinates,width,height,minStreamLen,maxStreamLen,lineLen,xStep,yStep,streamlines);
-
-  for (const auto& wkb : streamlines)
+  catch (...)
   {
-    const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
-    OGRGeometry* geom = nullptr;
-    OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
-    auto geomPtr = OGRGeometryPtr(geom);
-    geoms.push_back(geomPtr);
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-#endif
-
-  return geoms;
 }
 
 
@@ -688,17 +628,7 @@ std::size_t StreamLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(lineLen));
     Fmi::hash_combine(hash, Fmi::hash_value(xStep));
     Fmi::hash_combine(hash, Fmi::hash_value(yStep));
-    Fmi::hash_combine(hash, Fmi::hash_value(interpolation));
-    Fmi::hash_combine(hash, Fmi::hash_value(extrapolation));
     Fmi::hash_combine(hash, Fmi::hash_value(precision));
-    Fmi::hash_combine(hash, Fmi::hash_value(minarea));
-    Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
-    Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
-    Fmi::hash_combine(hash, Fmi::hash_value(offset));
-    Fmi::hash_combine(hash, Dali::hash_value(outside, theState));
-    Fmi::hash_combine(hash, Dali::hash_value(inside, theState));
-    Fmi::hash_combine(hash, Dali::hash_value(sampling, theState));
-    Fmi::hash_combine(hash, Dali::hash_value(intersections, theState));
     return hash;
   }
   catch (...)
