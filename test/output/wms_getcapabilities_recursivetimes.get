@@ -339,6 +339,51 @@
       </Style>
       </Layer>
 
+	  
+	  <Layer queryable="1">
+      <Name>grid:wind_stream_1</Name>
+      <Title>Wind streamlines</Title>
+      <Abstract>Wind streamlines</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Wind streamlines</Title><Abstract>Wind streamlines</Abstract>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_1&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	  
+	  <Layer queryable="1">
+      <Name>grid:wind_stream_2</Name>
+      <Title>Wind streamlines</Title>
+      <Abstract>Wind streamlines</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Wind streamlines</Title><Abstract>Wind streamlines</Abstract>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_2&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	  
+	  <Layer queryable="1">
+      <Name>grid:wind_stream_3</Name>
+      <Title>Wind streamlines</Title>
+      <Abstract>Wind streamlines</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Wind streamlines</Title><Abstract>Wind streamlines</Abstract>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Awind_stream_3&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
 	  </Layer>
         <Layer queryable="0">
       <Title>test</Title>
