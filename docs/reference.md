@@ -298,7 +298,7 @@ The table below shows  a simple example on the usage of  the background layer.
        ]
      }
     ]
-}</sub></code></pre></td><td>[[images/light_blue_background.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/light_blue_background.png"></td></tr>
 </table>
 
 The background layer has no attributes than the generic Layer or Properties attributes. The layer exists merely to obtain the "xsize" and "ysize" attribute values for a rectangle element so that the background can be filled with a value.
@@ -342,7 +342,7 @@ The table below shows  a simple example on the usage of  the  map layer.
        }
     } ]
   }]
- }</sub></code></pre></td><td>[[images/map_layer_ex.png]]</td></tr>
+ }</sub></code></pre></td><td><img src="images/map_layer_ex.png"></td></tr>
 </table>
 
 
@@ -415,7 +415,7 @@ The table below shows  a simple example on the usage of  the location layer.
         }
     } ]
   } ]
-}</sub></code></pre></td><td>[[images/location_layer_ex.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/location_layer_ex.png"></td></tr>
 </table>
 
 The table below contains a list of attributes that can be defined for the location layer in addition to the common layer attributes.
@@ -472,7 +472,7 @@ The tables below show simple examples  on the usage of   the isoband layer.
        ]
      }
     ]
-}</sub></code></pre></td><td>[[images/isoband_ex.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/isoband_ex.png">/td></tr>
 </table>
 
 <table>
@@ -533,7 +533,7 @@ The tables below show simple examples  on the usage of   the isoband layer.
             }
         ]
     }]
-}</sub></code></pre></td><td>[[images/isoband_ex_hm.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/isoband_ex_hm.png"></td></tr>
 </table>
 
 
@@ -622,7 +622,7 @@ The table below shows a simple example  on the usage of   the isoline layer.
      }
     ]
 }
-}</sub></code></pre></td><td>[[images/isoline_ex.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/isoline_ex.png"></td></tr>
 </table>
 
 The table below contains a list of attributes that can be defined for the isoline layer in addition to the common layer attributes.
@@ -868,7 +868,7 @@ The table below shows a simple example  on the usage of   the symbol layer.
       }]
   }]
 
-}</sub></code></pre></td><td>[[images/symbols_ex.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/symbols_ex.png"></td></tr>
 </table>
 
 The table below contains a list of attributes that can be defined for the symbol layer in addition to the common layer attributes.
@@ -969,7 +969,7 @@ The table below shows a simple example  on the usage of   the arrow layer.
        }
     } ]
    } ]
-}</sub></code></pre></td><td>[[images/arrow_ex.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/arrow_ex.png"></td></tr>
 </table>
 
 
@@ -1061,7 +1061,7 @@ The table below shows a simple example  on the usage of   the number layer.
        }
         } ]
   } ]
-}</sub></code></pre></td><td>[[images/numbers_ex.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/numbers_ex.png"></td></tr>
 </table>
 
 
@@ -1087,6 +1087,7 @@ The table below contains a list of attributes that can be defined for the number
 
 The streamline layer is used for visualizing directional parameters such as wind direction, wave direction, ice drift direction etc.
 
+<img src="images/streamline.png">
 
 The table below contains a list of attributes that can be defined for the streamline layer in addition to the common layer attributes.
 
@@ -1176,7 +1177,7 @@ The table below shows a simple example  on the usage of   the legend layer.
       } ]
     } ]
      } ]
-}</sub></code></pre></td><td>[[images/legend_ex.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/legend_ex.png"></td></tr>
 </table>
 
 The table below contains a list of attributes that can be defined for the legend layer in addition to the common layer attributes.
@@ -1235,7 +1236,7 @@ The table below shows a simple example  on the usage of   the time layer.
        }
      } ]
    } ]
-}</sub></code></pre></td><td>[[images/time_ex.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/time_ex.png"></td></tr>
 </table>
 
 The table below contains a list of attributes that can be defined for the time layer in addition to the common layer attributes.
@@ -1305,7 +1306,7 @@ The table below shows a simple example  on the usage of   the tag layer.
          }
      } ]
     } ]
-}</sub></code></pre></td><td>[[images/tag_ex.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/tag_ex.png"></td></tr>
 <tr><td><b>Produced SVG file</b></td></tr>
 <tr><td rowspan="10">
 <pre><code><sub>
@@ -1428,7 +1429,7 @@ The table below shows a simple example  on the usage of   the WKT layer.
 }
 </sub></code></pre>
 
-[[images/wkt_ex.png]]
+<img src="images/wkt_ex.png">
 
 The table below contains a list of attributes that can be defined for the WKT layer in addition to the common layer attributes.
 
@@ -1496,8 +1497,8 @@ The table below shows a simple example  on the usage of   the translation layer.
        }
     } ]
     } ]
-}</sub></code></pre></td><td>[[images/hello_ex.png]]</td></tr>
-<tr><td>[[images/moro_ex.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/hello_ex.png"></td></tr>
+<tr><td><img src="images/moro_ex.png"></td></tr>
 </table>
 
 
@@ -1584,7 +1585,7 @@ The table below shows a simple example  on the usage of   the windrose layer.
       } ]
     } ]
   } ]
-}</sub></code></pre></td><td>[[images/windrose_ex.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/windrose_ex.png"></td></tr>
 </table>
 
 
@@ -1659,7 +1660,7 @@ The table below shows a simple example  on the usage of   the PostGIS layer.
        }
     } ]
   } ]
-}</sub></code></pre></td><td>[[images/postgis_ex.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/postgis_ex.png"></td></tr>
 </table>
 
 The table below contains a list of attributes that can be defined for the PostGIS layer in addition to the common layer attributes.
@@ -1741,7 +1742,7 @@ The table below shows a simple example  on the usage of  the PostGIS layer.
      ]
   }
  ]
-}</sub></code></pre></td><td>[[images/icemap_ex.png]]</td></tr>
+}</sub></code></pre></td><td><img src="images/icemap_ex.png"></td></tr>
 </table>
 
 
@@ -1869,7 +1870,7 @@ The table below shows a simple example on the usage of FinnishRoadObservationLay
         }
     ]
 }
-</sub></code></pre></td><td>[[images/finnish_road_observations.png]]</td></tr>
+</sub></code></pre></td><td><img src="images/finnish_road_observations.png"></td></tr>
 </table>
 
 The table below contains a list of attributes that can be defined for finnish road observation layer.
@@ -2166,7 +2167,7 @@ The table below shows a simple example on the usage of PresentWeatherObservation
         }
     ]
 }
-</sub></code></pre></td><td>[[images/present_weather_observations.png]]</td></tr>
+</sub></code></pre></td><td><img src="images/present_weather_observations.png"></td></tr>
 </table>
 
 The table below contains a list of attributes that can be defined for present weather observation layer.
