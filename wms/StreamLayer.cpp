@@ -58,23 +58,23 @@ void StreamLayer::init(const Json::Value& theJson,
     if (!json.isNull())
       parameter = json.asString();
 
-    json = theJson.get("maxStreamLength", nulljson);
+    json = theJson.get("max_length", nulljson);
     if (!json.isNull())
       maxStreamLen = json.asInt();
 
-    json = theJson.get("minStreamLength", nulljson);
+    json = theJson.get("min_length", nulljson);
     if (!json.isNull())
       minStreamLen = json.asInt();
 
-    json = theJson.get("lineLength", nulljson);
+    json = theJson.get("line_length", nulljson);
     if (!json.isNull())
       lineLen = json.asInt();
 
-    json = theJson.get("xStep", nulljson);
+    json = theJson.get("xstep", nulljson);
     if (!json.isNull())
       xStep = json.asInt();
 
-    json = theJson.get("yStep", nulljson);
+    json = theJson.get("ystep", nulljson);
     if (!json.isNull())
       yStep = json.asInt();
 
