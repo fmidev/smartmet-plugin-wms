@@ -19,6 +19,7 @@ Table of Contents
           * [mindistance and priority](#mindistance-and-priority)
         * [ArrowLayer](#arrowlayer)
         * [NumberLayer](#numberlayer)
+        * [StreamLayer](#streamlayer)
         * [LegendLayer](#legendlayer)
         * [TimeLayer](#timelayer)
         * [TagLayer](#taglayer)
@@ -245,6 +246,7 @@ All the layers share some common attributes. In addition, each layer type has it
 <tr><td>symbol</td><td>SymbolLayer</td></tr>
 <tr><td>arrow</td><td>ArrowLayer</td></tr>
 <tr><td>number</td><td>NumberLayer</td></tr>
+<tr><td>stream</td><td>StreamLayer</td></tr>
 <tr><td>legend</td><td>LegendLayer</td></tr>
 <tr><td>time</td><td>TileLayer</td></tr>
 <tr><td>tag</td><td>TagLayer</td></tr>
@@ -1080,6 +1082,25 @@ The table below contains a list of attributes that can be defined for the number
 |offset|(double)|0.0|An offset for valid data for unit conversion purposes.|
 |mindistance|int|-|Minimum distance in pixels between numbers.|
 |priority|string or integer array|-|Priority order of numbers.|
+
+#### StreamLayer
+
+The streamline layer is used for visualizing directional parameters such as wind direction, wave direction, ice drift direction etc.
+
+
+The table below contains a list of attributes that can be defined for the streamline layer in addition to the common layer attributes.
+
+<pre><b>StreamLayer </b></pre>
+|Name|Type|Default value|Description|
+|-----|-----|-----------|----------- |
+|parameter|(string)|-|The parameter name for the numbers.|
+|min_length|(int)|5|Minimum generated stream line length in pixels.|
+|max_length|(int)|2048|Maximum generated stream line length in pixels.|
+|line_length|(int)|32|Length of a stream line segment in pixels.|
+|xstep|(int)|20|Streamline start point step size in x-direction.|
+|ystep|(int)|20|Streamline start point step size in y-direction.|
+|precision|(double)|1.0|Precision of the generated coordinates.|
+
 
 #### LegendLayer
 
