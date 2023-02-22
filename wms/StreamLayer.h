@@ -36,6 +36,8 @@ class StreamLayer : public Layer
   void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   boost::optional<std::string> parameter;
+  boost::optional<std::string> u_parameter;
+  boost::optional<std::string> v_parameter;
   int minStreamLen = 5;
   int maxStreamLen = 2048;
   int lineLen = 32;
