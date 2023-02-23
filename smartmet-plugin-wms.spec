@@ -149,7 +149,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
-* Thu Jan 23 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.2.23-3.fmi
+* Thu Feb 23 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.2.23-3.fmi
 - Added CloudCeilingLayer (BRAINSTORM-2428)
 
 * Thu Feb 23 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.2.23-2.fmi
