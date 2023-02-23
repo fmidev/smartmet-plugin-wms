@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 23.2.23
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -27,7 +27,7 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 22.8.31
 BuildRequires: smartmet-library-grid-content-devel >= 23.2.20
-BuildRequires: smartmet-library-grid-files-devel >= 23.2.20
+BuildRequires: smartmet-library-grid-files-devel >= 23.2.23
 BuildRequires: smartmet-library-macgyver-devel >= 23.2.8
 BuildRequires: smartmet-library-spine-devel >= 23.2.22
 BuildRequires: smartmet-library-timeseries-devel >= 23.1.31
@@ -67,7 +67,7 @@ Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 23.2.20
-Requires: smartmet-library-grid-files >= 23.2.20
+Requires: smartmet-library-grid-files >= 23.2.23
 Requires: smartmet-library-gis >= 23.1.5
 Requires: smartmet-library-trax >= 22.12.22
 Requires: smartmet-library-macgyver >= 23.2.8
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Feb 23 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.2.23-2.fmi
+- Enable default settings for replaceable variables in SVG elements
+
 * Thu Feb 23 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.2.23-1.fmi
 - Added support for U/V components in the streamline layer
 
