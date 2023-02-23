@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.2.20
+Version: 23.2.23
 Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Jan 23 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.2.23-1.fmi
+- Added CloudCeilingLayer (BRAINSTORM-2428)
+
 * Mon Feb 20 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.2.20-2.fmi
 - Unified streamline layer parameter naming style
 

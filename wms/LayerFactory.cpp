@@ -4,6 +4,7 @@
 #include "ArrowLayer.h"
 #include "BackgroundLayer.h"
 #include "FinnishRoadObservationLayer.h"
+#include "CloudCeilingLayer.h"
 #include "FrameLayer.h"
 #include "GridLayer.h"
 #include "IceMapLayer.h"
@@ -88,6 +89,8 @@ Layer* create(const Json::Value& theJson)
       return new FinnishRoadObservationLayer;
     if (name == "present_weather_observation")
       return new PresentWeatherObservationLayer;
+    if (name == "cloud_ceiling")
+      return new CloudCeilingLayer;
 #endif
     if (name == "icemap")
       return new IceMapLayer;
