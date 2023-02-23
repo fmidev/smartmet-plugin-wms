@@ -1213,7 +1213,9 @@ The table below contains a list of attributes that can be defined for the stream
 <pre><b>StreamLayer </b></pre>
 |Name|Type|Default value|Description|
 |-----|-----|-----------|----------- |
-|parameter|(string)|-|The parameter name for the numbers.|
+|parameter|(string)|-|The parameter name for the direction.|
+|u|(string)|-|Alternative U-component parameter for the direction.|
+|v|(string)|-|Alternative V-component parameter for the direction.|
 |min_length|(int)|5|Minimum generated stream line length in pixels.|
 |max_length|(int)|2048|Maximum generated stream line length in pixels.|
 |line_length|(int)|32|Length of a stream line segment in pixels.|

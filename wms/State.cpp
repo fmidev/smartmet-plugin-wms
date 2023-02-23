@@ -390,66 +390,42 @@ void State::addAttributes(CTPP::CDT& theGlobals,
 
     if (theAttributes.getLocalIriAndParameters("filter",localIri,parameters)  &&  addId(localIri))
     {
-      if (parameters.size() == 0)
-        theGlobals["includes"][localIri] = itsPlugin.getFilter(itsCustomer, localIri, itUsesWms);
-      else
-        theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getFilter(itsCustomer, localIri, itUsesWms),parameters);
+      theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getFilter(itsCustomer, localIri, itUsesWms),parameters);
     }
 
     if (theAttributes.getLocalIriAndParameters("marker",localIri,parameters)  &&  addId(localIri))
     {
-      if (parameters.size() == 0)
-        theGlobals["includes"][localIri] = itsPlugin.getMarker(itsCustomer, localIri, itUsesWms);
-      else
-        theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getMarker(itsCustomer, localIri, itUsesWms),parameters);
+      theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getMarker(itsCustomer, localIri, itUsesWms),parameters);
     }
 
     if (theAttributes.getLocalIriAndParameters("marker-start",localIri,parameters)  &&  addId(localIri))
     {
-      if (parameters.size() == 0)
-        theGlobals["includes"][localIri] = itsPlugin.getMarker(itsCustomer, localIri, itUsesWms);
-      else
-        theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getMarker(itsCustomer, localIri, itUsesWms),parameters);
+      theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getMarker(itsCustomer, localIri, itUsesWms),parameters);
     }
 
     if (theAttributes.getLocalIriAndParameters("marker-mid",localIri,parameters)  &&  addId(localIri))
     {
-      if (parameters.size() == 0)
-        theGlobals["includes"][localIri] = itsPlugin.getMarker(itsCustomer, localIri, itUsesWms);
-      else
-        theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getMarker(itsCustomer, localIri, itUsesWms),parameters);
+      theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getMarker(itsCustomer, localIri, itUsesWms),parameters);
     }
 
     if (theAttributes.getLocalIriAndParameters("marker-end",localIri,parameters)  &&  addId(localIri))
     {
-      if (parameters.size() == 0)
-        theGlobals["includes"][localIri] = itsPlugin.getMarker(itsCustomer, localIri, itUsesWms);
-      else
-        theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getMarker(itsCustomer, localIri, itUsesWms),parameters);
+      theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getMarker(itsCustomer, localIri, itUsesWms),parameters);
     }
 
     if (theAttributes.getLocalIriAndParameters("fill",localIri,parameters)  &&  addId(localIri))
     {
-      if (parameters.size() == 0)
-        theGlobals["includes"][localIri] = itsPlugin.getPattern(itsCustomer, localIri, itUsesWms);
-      else
-        theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getPattern(itsCustomer, localIri, itUsesWms),parameters);
+      theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getPattern(itsCustomer, localIri, itUsesWms),parameters);
     }
 
     if (theAttributes.getLocalIriAndParameters("linearGradient",localIri,parameters)  &&  addId(localIri))
     {
-      if (parameters.size() == 0)
-        theGlobals["includes"][localIri] = itsPlugin.getGradient(itsCustomer, localIri, itUsesWms);
-      else
-        theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getGradient(itsCustomer, localIri, itUsesWms),parameters);
+      theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getGradient(itsCustomer, localIri, itUsesWms),parameters);
     }
 
     if (theAttributes.getLocalIriAndParameters("radialGradient",localIri,parameters)  &&  addId(localIri))
     {
-      if (parameters.size() == 0)
-        theGlobals["includes"][localIri] = itsPlugin.getGradient(itsCustomer, localIri, itUsesWms);
-      else
-        theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getGradient(itsCustomer, localIri, itUsesWms),parameters);
+      theGlobals["includes"][localIri] = replaceVariables(itsPlugin.getGradient(itsCustomer, localIri, itUsesWms),parameters);
     }
   }
   catch (...)
