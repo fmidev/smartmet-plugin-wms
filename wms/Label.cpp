@@ -94,7 +94,14 @@ std::string Label::print(double theValue) const
         if (ret == "-0")
           ret = "0";
 
-        return prefix + ret + suffix;
+		ret = (prefix + ret + suffix);
+		if(ret.length() < padding_length && padding_char != 0)
+		  {
+			auto repeat = (padding_length - ret.length());
+			ret.insert(0, repeat, padding_char);
+		  }
+		return ret;
+		  //        return prefix + ret + suffix;
       }
 
       // Handle special sign selections
@@ -183,6 +190,16 @@ void Label::init(const Json::Value& theJson, const Config& theConfig)
             orientation != "gradient")
           throw Fmi::Exception(BCP, "Unknown label orientation '" + orientation + "'");
       }
+      else if (name == "padding_char")
+		{
+		  auto padding_str = json.asString();
+		  if(!padding_str.empty())
+			padding_char = padding_str.front();
+		}
+      else if (name == "padding_length")
+		{
+		  padding_length = json.asInt();
+		}
       else
         throw Fmi::Exception(BCP, "Unknown setting '" + name + "'!");
     }
@@ -193,6 +210,7 @@ void Label::init(const Json::Value& theJson, const Config& theConfig)
       multiplier = conv.multiplier;
       offset = conv.offset;
     }
+
   }
   catch (...)
   {
@@ -224,6 +242,8 @@ std::size_t Label::hash_value(const State& /* theState */) const
     Fmi::hash_combine(hash, Fmi::hash_value(suffix));
     Fmi::hash_combine(hash, Fmi::hash_value(plusprefix));
     Fmi::hash_combine(hash, Fmi::hash_value(minusprefix));
+    Fmi::hash_combine(hash, Fmi::hash_value(padding_char));
+    Fmi::hash_combine(hash, Fmi::hash_value(padding_length));
     return hash;
   }
   catch (...)

@@ -53,7 +53,8 @@ static std::set<std::string> supportedStyleLayers = {"isoline",
                                                      "wkt",
                                                      "location",
                                                      "finnish_road_observation",
-                                                     "present_weather_observation"};
+                                                     "present_weather_observation",
+                                                     "cloud_ceiling"};
 
 std::ostream& operator<<(std::ostream& ost, const WMSLayerStyle& layerStyle);
 

@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 23.2.23
-Release: 2%{?dist}.fmi
+Release:3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Jan 23 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.2.23-3.fmi
+- Added CloudCeilingLayer (BRAINSTORM-2428)
+
 * Thu Feb 23 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.2.23-2.fmi
 - Enable default settings for replaceable variables in SVG elements
 

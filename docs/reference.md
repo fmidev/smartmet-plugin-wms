@@ -19,6 +19,7 @@ Table of Contents
           * [mindistance and priority](#mindistance-and-priority)
         * [ArrowLayer](#arrowlayer)
         * [NumberLayer](#numberlayer)
+        * [CloudCeilingLayer](#cloudceilinglayer)
         * [StreamLayer](#streamlayer)
         * [LegendLayer](#legendlayer)
         * [TimeLayer](#timelayer)
@@ -246,6 +247,7 @@ All the layers share some common attributes. In addition, each layer type has it
 <tr><td>symbol</td><td>SymbolLayer</td></tr>
 <tr><td>arrow</td><td>ArrowLayer</td></tr>
 <tr><td>number</td><td>NumberLayer</td></tr>
+<tr><td>cloudceiling</td><td>CloudCeilingLayer</td></tr>
 <tr><td>stream</td><td>StreamLayer</td></tr>
 <tr><td>legend</td><td>LegendLayer</td></tr>
 <tr><td>time</td><td>TileLayer</td></tr>
@@ -905,7 +907,7 @@ Note that assigning a proper scale for symbols with CSS or SVG attributes alone 
 |none|Symbols are treated equally, there is no priority order.|
 |[83,82,81]|Symbols with values 83,82,81 are drawn first, the rest have no priority order.|
 
-Symbols are drawn on the map starting from the highest priority. If there already is a symbol nearby on the map (mindistance parameter), the symbol is not shown. Regarding mindistance and priority parameters the same logic is applied in Arrow- and NumberLayers.
+Symbols are drawn on the map starting from the highest priority. If there already is a symbol nearby on the map (mindistance parameter), the symbol is not shown. Regarding mindistance and priority parameters the same logic is applied in Arrow-, Number- and CloudCeilingLayers.
 
 #### ArrowLayer
 
@@ -1082,6 +1084,123 @@ The table below contains a list of attributes that can be defined for the number
 |offset|(double)|0.0|An offset for valid data for unit conversion purposes.|
 |mindistance|int|-|Minimum distance in pixels between numbers.|
 |priority|string or integer array|-|Priority order of numbers.|
+
+
+#### CloudCeilingLayer
+
+The cloud_ceiling layer is used for showing cloud ceilings on the map.
+
+The table below shows a simple example on the usage of the cloud_ceiling layer.
+
+<table>
+<tr>
+<th>Product configuration file </th>
+<th> Produced image layer</th>
+<tr><td rowspan="40">
+<pre><code><sub>
+{
+    "title": "Cloud Ceiling",
+    "abstract": "Cloud ceiling from FMI's AWS-stations",
+    "producer": "observations_fmi",
+    "interval_start": 15,
+    "interval_end": 0,
+    "language": "fi",
+    "projection": {},
+    "views": [{
+	"qid": "v1",
+	"attributes": {
+	    "id": "view1"
+	},
+	"layers": [
+	    {
+		"qid": "finland",
+		"layer_type": "map",
+		"map":
+		{
+		    "schema": "natural_earth",
+		    "table": "admin_0_countries",
+		    "where": "iso_a2 IN ('FI','AX')"
+		},
+		"attributes": {
+		    "id": "finland_country",
+		    "fill": "rgb(255, 255, 204)"
+		}
+	    },
+            {
+                "qid": "finland-roads",
+                "layer_type": "map",
+                "map": {
+                    "schema": "esri",
+                    "table": "europe_roads_eureffin",
+                    "where": "cntryname='Finland'",
+                    "lines": true
+                },
+                "attributes": {
+                    "class": "Road"
+                }
+            },
+            {
+		"qid": "borders",
+		"layer_type": "map",
+		"css": "maps/map.css",
+		"map": {
+                    "lines": true,
+                    "schema": "esri",
+                    "table": "europe_country_wgs84",
+                    "mindistance": 2.5,
+                    "minarea": 10
+		},
+		"attributes": {
+                    "class": "Border",
+                    "id": "BorderMap"
+		}
+            },
+	    {
+                "qid": "cities",
+                "layer_type": "location",
+                "keyword": "ely_cities",
+                "css": "maps/map.css",
+                "symbols": {
+                    "default": [
+                        {
+                            "symbol": "city"
+                        }
+                    ]
+                }
+            },
+	    {
+		"qid": "cloud_ceiling_observations",
+		"layer_type": "cloud_ceiling",
+		"keyword": "synop_fi",
+		"priority": "min",
+		"mindistance": 35,
+		"attributes": {
+		    "fill": "rgba(0,0,255,1.00)", 
+		    "font-family": "Verdana", 
+		    "font-size": "16px", 
+		    "text-anchor": "middle", 
+		    "stroke": "#000000", 
+		    "stroke-width": 0.5
+		},		
+		"label": {		    
+		    "padding_char": "0",
+		    "padding_length": 3,
+		    "missing": "-",
+		    "multiple": 100,
+		    "dx": 6,
+		    "dy": -10,
+		    "rounding": "towardzero"
+		}
+	    }
+        ]
+    }]
+}
+</sub></code></pre></td><td><img src="images/cloud_ceiling.png"></td></tr>
+</table>
+
+The cloudceiling layer is inherited from number layer so the same attributes are available. Label object has two new attributes 'padding_char' and 'padding_length' to format numbers.
+
+
 
 #### StreamLayer
 
@@ -2807,6 +2926,9 @@ The table below contains a list of attributes used in the Label structure.
 |plusprefix|string|""|Prefix replacing the sign for non-negative numbers.|
 |minusprefix|string|""|Prefix replacing the sign for negative numbers.|
 |orientation|string|"horizontal"|Horizontal or auto. Currently used only by IsolabelLayer|
+|padding_char|string|-|Padding character for numbers.|
+|padding_length|int|-|Padding length for numbers. Padding is done if length of number is shorter than padding_length.|
+
 
 Note: signed prefixes are needed in aviation charts where negative temperatures are typically shown without a sign. In the exceptional case where positive numbers are actually needed, they are displayed using a plus sign or a "PS"-prefix.
 

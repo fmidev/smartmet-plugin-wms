@@ -52,6 +52,10 @@ class Label
   // Signed prefixes
   std::string plusprefix;   // for numbers >= 0
   std::string minusprefix;  // for numbers < 0
+  // Padding char, space is default padding char
+  char padding_char = ' ';
+  // If label is shorter than padding_length, increase size by using padding char
+  size_t padding_length = 0;
 
   void setLocale(const std::string& theLocale);
   // shared because otherwise the compiler would force definitions for all constructors
