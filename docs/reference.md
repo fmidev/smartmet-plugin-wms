@@ -1088,7 +1088,7 @@ The table below contains a list of attributes that can be defined for the number
 
 #### CloudCeilingLayer
 
-The cloud_ceiling layer is used for showing cloud ceilings on the map.
+The cloud_ceiling layer is used for cloud ceiling observations (ie. the height of the base of the lowest clouds when the cloud amount is more than falf of the sky: broken, overcast or obscured)
 
 The table below shows a simple example on the usage of the cloud_ceiling layer.
 
