@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.2.23
-Release:3%{?dist}.fmi
+Version: 23.2.24
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Fri Feb 24 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.2.24-1.fmi
+- Fixed WMS queries to report the host name
+
 * Thu Feb 23 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.2.23-3.fmi
 - Added CloudCeilingLayer (BRAINSTORM-2428)
 
