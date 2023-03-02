@@ -19,13 +19,13 @@ namespace Plugin
 {
 namespace Dali
 {
+
 using PointValues = std::vector<PointValue>;
 
-PointValues read_observations(const CloudCeilingLayer& layer,
-                              State& state,
-                              const Fmi::SpatialReference& crs,
-                              const Fmi::Box& box,
-                              const boost::posix_time::time_period& valid_time_period)
+PointValues CloudCeilingLayer::readObservations(State& state,
+												const Fmi::SpatialReference& crs,
+												const Fmi::Box& box,
+												const boost::posix_time::time_period& valid_time_period) const
 {
   try
   {
@@ -35,11 +35,11 @@ PointValues read_observations(const CloudCeilingLayer& layer,
 
     Engine::Observation::Settings settings;
     settings.allplaces = false;
-    settings.stationtype = *layer.producer;
+    settings.stationtype = *producer;
     settings.latest = true;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
-    settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
+    settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
     settings.localTimePool = state.getLocalTimePool();
 
     settings.starttimeGiven = true;
@@ -66,8 +66,40 @@ PointValues read_observations(const CloudCeilingLayer& layer,
 	auto debug = state.getRequest().getParameter("debug");
 	settings.debug_options = (debug && Fmi::stoi(*debug) > 0);
 
-	// Fmisids
-	settings.taggedFMISIDs = layer.stationFMISIDs;
+	// GetFMISIDs
+	// Check keyword
+	if(!itsKeyword.empty())
+	  {
+        const auto& geoengine = state.getGeoEngine();
+        Locus::QueryOptions options;
+        auto locations = geoengine.keywordSearch(options, itsKeyword);
+
+        for (const auto& loc : locations)
+        {
+          if (loc->fmisid)
+			{
+			  if(loc->longitude >= box.xmin() && loc->longitude <= box.xmax() &&
+				 loc->latitude >= box.ymin() && loc->latitude <= box.ymax())
+				settings.taggedFMISIDs.push_back(Spine::TaggedFMISID(Fmi::to_string(*loc->fmisid), *loc->fmisid));
+			}
+        }
+      }
+
+	// Check fmisid
+	if(settings.taggedFMISIDs.empty() && !itsFMISIDs.empty())
+	  {
+		for (const auto& fmisid : itsFMISIDs)
+		  settings.taggedFMISIDs.push_back(Spine::TaggedFMISID(Fmi::to_string(fmisid), fmisid));
+	  }
+
+	// Get stations using bounding box
+	if(settings.taggedFMISIDs.empty())
+	  {
+		// Coordinates or bounding box
+		Engine::Observation::StationSettings stationSettings;
+		stationSettings.bounding_box_settings = getClipBoundingBox(box, crs);
+		settings.taggedFMISIDs = obsengine.translateToFMISID(settings.starttime, settings.endtime, settings.stationtype, stationSettings);
+	  }
 
     auto result = obsengine.values(settings);
 
@@ -123,7 +155,7 @@ PointValues read_observations(const CloudCeilingLayer& layer,
 			  box.transform(x, y);
 			  
 			  // Skip if not inside desired area
-			  if (!layer.inside(box, x, y))
+			  if (!inside(box, x, y))
 				break;
 			  
 			  int xpos = lround(x);
@@ -171,47 +203,29 @@ void CloudCeilingLayer::init(const Json::Value& theJson,
     // Stations of the layer
     Json::Value json = theJson.get("keyword", nulljson);
     if (!json.isNull())
-    {
-      auto keyword = json.asString();
-      if (!keyword.empty())
-      {
-        const auto& geoengine = theState.getGeoEngine();
-        Locus::QueryOptions options;
-        auto locations = geoengine.keywordSearch(options, keyword);
-
-        for (const auto& loc : locations)
-        {
-          if (loc->fmisid)
-			{
-			  stationFMISIDs.push_back(
-									   Spine::TaggedFMISID(Fmi::to_string(*loc->fmisid), *loc->fmisid));
-			}
-        }
-      }
-    }
+      itsKeyword = json.asString();
+	
     // If keyword is missing try 'fmisids'
-    if (json.isNull())
-    {
-      json = theJson.get("fmisid", nulljson);
-      if (!json.isNull())
-      {
-        if (json.isString())
-        {
-          auto fmisid = json.asString();
-          stationFMISIDs.push_back(Spine::TaggedFMISID(fmisid, Fmi::stoi(fmisid)));
-        }
-        else if (json.isArray())
-        {
-          for (const auto& j : json)
-          {
-            auto fmisid = j.asString();
-            stationFMISIDs.push_back(Spine::TaggedFMISID(fmisid, Fmi::stoi(fmisid)));
-          }
-        }
-        else
-          throw Fmi::Exception(BCP, "fmisid value must be an array of strings or a string");
-      }
-    }
+    if (itsKeyword.empty())
+	  {
+		json = theJson.get("fmisid", nulljson);
+		if (!json.isNull())
+		  {
+			if (json.isString())
+			  {
+				itsFMISIDs.push_back(Fmi::stoi(json.asString()));
+			  }
+			else if (json.isArray())
+			  {
+				for (const auto& j : json)
+				  {			
+					itsFMISIDs.push_back(Fmi::stoi(j.asString()));
+				  }
+			  }
+			else
+			  throw Fmi::Exception(BCP, "fmisid value must be an array of strings or a string");
+		  }
+	  }   
   }
   catch (...)
   {
@@ -285,7 +299,7 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     PointValues pointvalues;
 
-	pointvalues = read_observations(*this, theState, crs, box, valid_time_period);
+	pointvalues = readObservations(theState, crs, box, valid_time_period);
 
     pointvalues = prioritize(pointvalues, point_value_options);
 

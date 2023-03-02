@@ -29,7 +29,16 @@ class CloudCeilingLayer : public NumberLayer
             const Properties& theProperties) override;
 
 
-  SmartMet::Spine::TaggedFMISIDList stationFMISIDs;
+  //  SmartMet::Spine::TaggedFMISIDList stationFMISIDs;
+
+private:
+  std::vector<PointValue> readObservations(State& state,
+										   const Fmi::SpatialReference& crs,
+										   const Fmi::Box& box,
+										   const boost::posix_time::time_period& valid_time_period) const;
+
+  std::string itsKeyword;
+  std::vector<int> itsFMISIDs;
 };  // class CloudCeilingLayer
 
 }  // namespace Dali
