@@ -421,9 +421,8 @@ void Intersection::init(const boost::optional<std::string>& theProducer,
     {
       if (!q->selectLevel(*options.level))
       {
-        throw Fmi::Exception(BCP,
-                             "Level value " + boost::lexical_cast<std::string>(*options.level) +
-                                 " is not available.");
+        throw Fmi::Exception(
+            BCP, "Level value " + Fmi::to_string(*options.level) + " is not available.");
       }
     }
 

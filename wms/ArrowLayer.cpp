@@ -1155,8 +1155,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Adding parameter information into the query.
 
-    char paramBuf[1000];
-    char* p = paramBuf;
+    std::string paramBuf;
 
     for (auto& pName : paramList)
     {
@@ -1180,10 +1179,10 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
           originalGridQuery->mProducerNameList.push_back(producerName);
       }
 
-      if (p != paramBuf)
-        p += sprintf(p, ",");
+      if (!paramBuf.empty())
+        paramBuf += ',';
 
-      p += sprintf(p, "%s", param.c_str());
+      paramBuf += param;
     }
 
     attributeList.addAttribute("param", paramBuf);

@@ -648,9 +648,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   {
     if (!q->selectLevel(*options.level))
     {
-      throw Fmi::Exception(
-          BCP,
-          "Level value " + boost::lexical_cast<std::string>(*options.level) + " is not available.");
+      throw Fmi::Exception(BCP,
+                           "Level value " + Fmi::to_string(*options.level) + " is not available.");
     }
   }
 

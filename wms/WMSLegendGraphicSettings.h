@@ -36,7 +36,7 @@ struct LegendGraphicParameter
 
 struct LegendGraphicSymbol
 {
-  explicit LegendGraphicSymbol(const std::string& sn) : symbol_name(sn) {}
+  explicit LegendGraphicSymbol(std::string sn) : symbol_name(std::move(sn)) {}
   LegendGraphicSymbol() = default;
 
   std::string symbol_name;

@@ -274,7 +274,7 @@ void TextTable::addData(const std::vector<std::string>& theData)
   itsDataAreaHeight += rowHeightMax;
   itsRowHeights.push_back(rowHeightMax);
 
-  unsigned int rowWidth = std::accumulate(itsColumnWidths.begin(), itsColumnWidths.end(), 0);
+  unsigned int rowWidth = std::accumulate(itsColumnWidths.begin(), itsColumnWidths.end(), 0U);
   if (rowWidth > itsTableWidth)
     itsTableWidth = rowWidth;
 }

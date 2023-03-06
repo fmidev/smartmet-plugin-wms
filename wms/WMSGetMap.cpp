@@ -405,8 +405,8 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     // width and height
     try
     {
-      itsParameters.width = boost::lexical_cast<unsigned int>(*theRequest.getParameter("width"));
-      itsParameters.height = boost::lexical_cast<unsigned int>(*theRequest.getParameter("height"));
+      itsParameters.width = Fmi::stoul(*theRequest.getParameter("width"));
+      itsParameters.height = Fmi::stoul(*theRequest.getParameter("height"));
     }
     catch (...)
     {

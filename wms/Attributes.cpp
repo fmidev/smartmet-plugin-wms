@@ -363,8 +363,9 @@ boost::optional<std::string> Attributes::getLocalIri(const std::string& theName)
   }
 }
 
-
-bool Attributes::getLocalIriAndParameters(const std::string& theName,std::string& iri,std::map<std::string,std::string>& parameters) const
+bool Attributes::getLocalIriAndParameters(const std::string& theName,
+                                          std::string& iri,
+                                          std::map<std::string, std::string>& parameters) const
 {
   try
   {
@@ -380,20 +381,20 @@ bool Attributes::getLocalIriAndParameters(const std::string& theName,std::string
     std::string str = value.substr(5, value.size() - 6);
 
     std::vector<std::string> list;
-    splitString(str,'?',list);
+    splitString(str, '?', list);
     iri = list[0];
     if (list.size() > 1)
     {
       std::vector<std::string> paramList;
-      splitString(list[1],'&',paramList);
-      for (auto it = paramList.begin(); it != paramList.end(); ++it)
+      splitString(list[1], '&', paramList);
+      for (const auto& p : paramList)
       {
         std::vector<std::string> param;
-        splitString(*it,'=',param);
+        splitString(p, '=', param);
         if (param.size() == 2)
         {
-          parameters.insert(std::pair<std::string,std::string>(param[0],param[1]));
-          //std::cout << "PARAM [" << param[0] << "][" << param[1] << "]\n";
+          parameters.insert(std::pair<std::string, std::string>(param[0], param[1]));
+          // std::cout << "PARAM [" << param[0] << "][" << param[1] << "]\n";
         }
       }
     }
@@ -404,7 +405,6 @@ bool Attributes::getLocalIriAndParameters(const std::string& theName,std::string
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
 
 // ----------------------------------------------------------------------
 /*!

@@ -1,6 +1,7 @@
 #include "TimeResolution.h"
 #include "WMSException.h"
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 
 namespace SmartMet
 {
@@ -39,9 +40,9 @@ unsigned int parse_resolution(const std::string& periodString, size_t designator
 
     try
     {
-      retval = boost::lexical_cast<unsigned int>(numberStr);
+      retval = Fmi::stoul(numberStr);
     }
-    catch (const boost::bad_lexical_cast&)
+    catch (const std::exception&)
     {
       throw Fmi::Exception::Trace(BCP, "Invalid dimension value '" + periodString + "'!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE);

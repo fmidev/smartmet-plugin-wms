@@ -82,10 +82,10 @@ struct tag_interval
   boost::posix_time::ptime endTime = boost::posix_time::not_a_date_time;
   boost::posix_time::time_duration resolution = boost::posix_time::minutes(1);
 
-  tag_interval(const boost::posix_time::ptime& start,
-               const boost::posix_time::ptime& end,
-               const boost::posix_time::time_duration& res)
-      : startTime(start), endTime(end), resolution(std::move(res))
+  tag_interval(boost::posix_time::ptime start,
+               boost::posix_time::ptime end,
+               boost::posix_time::time_duration res)
+      : startTime(std::move(start)), endTime(std::move(end)), resolution(std::move(res))
   {
   }
 };

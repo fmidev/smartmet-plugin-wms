@@ -360,15 +360,15 @@ std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
   // Establish the number of samples along each edge. We wish to sample at roughly 5 pixel
   // intervals.
 
-  const int npixels = 5;
-  const int minsamples = 2;
-  const int w = theBox.width() + 2U * xmargin;
-  const int h = theBox.height() + 2U * ymargin;
+  const std::size_t npixels = 5;
+  const std::size_t minsamples = 2;
+  const std::size_t w = theBox.width() + 2U * xmargin;
+  const std::size_t h = theBox.height() + 2U * ymargin;
 
   // If the CRS is geographic we need only the corners
 
-  int wsamples = minsamples;
-  int hsamples = minsamples;
+  std::size_t wsamples = minsamples;
+  std::size_t hsamples = minsamples;
 
   // Otherwise we need to sample the edges
   if (!theCRS.isGeographic())
@@ -382,28 +382,28 @@ std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
   std::vector<double> y;
 
   // Bottom edge
-  for (int i = 0; i < wsamples; i++)
+  for (auto i = 0UL; i < wsamples; i++)
   {
     x.push_back(clipbox.xmin() + (clipbox.xmax() - clipbox.xmin()) * i / (wsamples - 1));
     y.push_back(clipbox.ymin());
   }
 
   // Top edge
-  for (int i = 0; i < wsamples; i++)
+  for (auto i = 0UL; i < wsamples; i++)
   {
     x.push_back(clipbox.xmin() + (clipbox.xmax() - clipbox.xmin()) * i / (wsamples - 1));
     y.push_back(clipbox.ymax());
   }
 
   // Left edge
-  for (int i = 0; i < hsamples; i++)
+  for (auto i = 0UL; i < hsamples; i++)
   {
     x.push_back(clipbox.xmin());
     y.push_back(clipbox.ymin() + (clipbox.ymax() - clipbox.ymin()) * i / (hsamples - 1));
   }
 
   // Right edge
-  for (int i = 0; i < hsamples; i++)
+  for (auto i = 0UL; i < hsamples; i++)
   {
     x.push_back(clipbox.xmax());
     y.push_back(clipbox.ymin() + (clipbox.ymax() - clipbox.ymin()) * i / (hsamples - 1));
@@ -417,7 +417,7 @@ std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
 
   bool uninitialized = true;
 
-  for (std::size_t i = 0; i < x.size(); i++)
+  for (auto i = 0UL; i < x.size(); i++)
   {
     if (!theCRS.isGeographic())
       if (!transformation.transform(x[i], y[i]))
