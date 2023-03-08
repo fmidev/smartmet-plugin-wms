@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.3.6
+Version: 23.3.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Mar 8 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.3.8-1.fmi
+- Fixed variable name from CLHB5_PT1M_INSTANT to CLH5_PT1M_INSTANT
+
 * Mon Mar  6 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.3.6-1.fmi
 - Avoid using boost::lexical_cast to avoid GNU global locale locks
 - Silenced several CodeChecker warnings

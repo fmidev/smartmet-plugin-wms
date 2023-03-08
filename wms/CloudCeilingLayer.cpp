@@ -61,7 +61,7 @@ PointValues CloudCeilingLayer::readObservations(State& state,
     settings.parameters.push_back(TS::makeParameter("CLHB2_PT1M_INSTANT"));
     settings.parameters.push_back(TS::makeParameter("CLHB3_PT1M_INSTANT"));
     settings.parameters.push_back(TS::makeParameter("CLHB4_PT1M_INSTANT"));
-    settings.parameters.push_back(TS::makeParameter("CLHB5_PT1M_INSTANT"));
+    settings.parameters.push_back(TS::makeParameter("CLH5_PT1M_INSTANT"));
 
 	auto debug = state.getRequest().getParameter("debug");
 	settings.debug_options = (debug && Fmi::stoi(*debug) > 0);
