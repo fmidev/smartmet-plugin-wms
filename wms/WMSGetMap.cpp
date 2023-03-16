@@ -682,7 +682,12 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Failed to complete GetMap request!");
+    bool quiet = itsConfig.getDaliConfig().quiet();
+    Fmi::Exception ex(BCP, "Invalid GetMap input parameters", nullptr);
+    ex.disableStackTrace();  // full stack trace not useful for user input errors
+    if (quiet)
+      ex.disableLogging();  // no journaling of user errors in release servers
+    throw ex;
   }
 }
 
