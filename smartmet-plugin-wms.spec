@@ -153,6 +153,9 @@ rm -rf $RPM_BUILD_ROOT
 - Disable full GetMap stack traces on user input errors
 - Disable logging GetMap errors on user input errors in quiet mode (release servers)
 
+* Wed Mar 8 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.3.8-1.fmi
+- Fixed variable name from CLHB5_PT1M_INSTANT to CLH5_PT1M_INSTANT
+
 * Mon Mar  6 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.3.6-1.fmi
 - Avoid using boost::lexical_cast to avoid GNU global locale locks
 - Silenced several CodeChecker warnings
