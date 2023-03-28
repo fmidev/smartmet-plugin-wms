@@ -1,7 +1,7 @@
 #include "WindRose.h"
 #include "Config.h"
 #include "Hash.h"
-
+#include "JsonTools.h"
 #include <macgyver/Exception.h>
 #include <spine/Json.h>
 #include <stdexcept>
@@ -18,7 +18,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void WindRose::init(const Json::Value& theJson, const Config& theConfig)
+void WindRose::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
@@ -30,7 +30,7 @@ void WindRose::init(const Json::Value& theJson, const Config& theConfig)
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      const Json::Value& json = theJson[name];
+      Json::Value& json = theJson[name];
 
       if (name == "radius")
         radius = json.asInt();
@@ -47,7 +47,7 @@ void WindRose::init(const Json::Value& theJson, const Config& theConfig)
       else if (name == "parameter")
         parameter = json.asString();
       else if (name == "limits")
-        Spine::JSON::extract_array("limits", limits, json, theConfig);
+        JsonTools::extract_array("limits", limits, json, theConfig);
       else
         throw Fmi::Exception(BCP, "WindRose does not have a setting named '" + name + "'");
     }

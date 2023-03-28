@@ -4,6 +4,7 @@
 #include "Hash.h"
 #include "Intersections.h"
 #include "Iri.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "PointValue.h"
 #include "Select.h"
@@ -805,7 +806,7 @@ PointValues read_observations(const SymbolLayer& layer,
  */
 // ----------------------------------------------------------------------
 
-void SymbolLayer::init(const Json::Value& theJson,
+void SymbolLayer::init(Json::Value& theJson,
                        const State& theState,
                        const Config& theConfig,
                        const Properties& theProperties)
@@ -870,7 +871,7 @@ void SymbolLayer::init(const Json::Value& theJson,
 
     json = theJson.get("symbols", nulljson);
     if (!json.isNull())
-      Spine::JSON::extract_array("symbols", symbols, json, theConfig);
+      JsonTools::extract_array("symbols", symbols, json, theConfig);
 
     point_value_options.init(theJson);
   }

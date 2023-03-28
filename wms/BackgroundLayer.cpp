@@ -20,7 +20,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void BackgroundLayer::init(const Json::Value& theJson,
+void BackgroundLayer::init(Json::Value& theJson,
                            const State& theState,
                            const Config& theConfig,
                            const Properties& theProperties)

@@ -18,7 +18,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Filters::init(const Json::Value& theJson, const State& theState)
+void Filters::init(Json::Value& theJson, const State& theState)
 {
   try
   {

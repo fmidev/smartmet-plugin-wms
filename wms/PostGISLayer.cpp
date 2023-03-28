@@ -13,7 +13,7 @@ namespace Plugin
 {
 namespace Dali
 {
-void PostGISLayer::init(const Json::Value& theJson,
+void PostGISLayer::init(Json::Value& theJson,
                         const State& theState,
                         const Config& theConfig,
                         const Properties& theProperties)

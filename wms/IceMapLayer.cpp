@@ -110,7 +110,7 @@ Json::Value getJsonValue(const std::string& param_name,
  */
 // ----------------------------------------------------------------------
 
-void IceMapLayer::init(const Json::Value& theJson,
+void IceMapLayer::init(Json::Value& theJson,
                        const State& theState,
                        const Config& theConfig,
                        const Properties& theProperties)

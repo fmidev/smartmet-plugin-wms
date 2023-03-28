@@ -1,7 +1,6 @@
 #include "Connector.h"
 #include "Config.h"
 #include "Hash.h"
-
 #include <macgyver/Exception.h>
 #include <stdexcept>
 
@@ -17,7 +16,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Connector::init(const Json::Value& theJson, const Config& theConfig)
+void Connector::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
@@ -29,7 +28,7 @@ void Connector::init(const Json::Value& theJson, const Config& theConfig)
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      const Json::Value& json = theJson[name];
+      Json::Value& json = theJson[name];
 
       if (name == "startoffset")
         startoffset = json.asInt();

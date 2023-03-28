@@ -23,7 +23,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void View::init(const Json::Value& theJson,
+void View::init(Json::Value& theJson,
                 const State& theState,
                 const Config& theConfig,
                 const Properties& theProperties)

@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "Hash.h"
 #include "Iri.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "State.h"
 #include <boost/move/make_unique.hpp>
@@ -175,7 +176,7 @@ std::string legend_text(const Isoband& theIsoband,
  */
 // ----------------------------------------------------------------------
 
-void LegendLayer::init(const Json::Value& theJson,
+void LegendLayer::init(Json::Value& theJson,
                        const State& theState,
                        const Config& theConfig,
                        const Properties& theProperties)
@@ -217,7 +218,7 @@ void LegendLayer::init(const Json::Value& theJson,
 
     json = theJson.get("isobands", nulljson);
     if (!json.isNull())
-      Spine::JSON::extract_array("isobands", isobands, json, theConfig);
+      JsonTools::extract_array("isobands", isobands, json, theConfig);
   }
   catch (...)
   {

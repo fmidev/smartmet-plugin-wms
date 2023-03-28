@@ -6,6 +6,7 @@
 #include "Hash.h"
 #include "Isoband.h"
 #include "Isoline.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "State.h"
 #include <boost/logic/tribool.hpp>
@@ -49,7 +50,7 @@ using Edges = std::vector<Edge>;
  */
 // ----------------------------------------------------------------------
 
-void IsolabelLayer::init(const Json::Value& theJson,
+void IsolabelLayer::init(Json::Value& theJson,
                          const State& theState,
                          const Config& theConfig,
                          const Properties& theProperties)
@@ -107,7 +108,7 @@ void IsolabelLayer::init(const Json::Value& theJson,
     if (!json.isNull())
     {
       std::vector<Isoband> isobands;
-      Spine::JSON::extract_array("isobands", isobands, json, theConfig);
+      JsonTools::extract_array("isobands", isobands, json, theConfig);
       for (const auto& isoband : isobands)
       {
         if (isoband.lolimit)

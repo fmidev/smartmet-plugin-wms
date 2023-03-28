@@ -22,7 +22,7 @@ class Config;
 class AttributeSelection
 {
  public:
-  void init(const Json::Value& theJson, const Config& theConfig);
+  void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
   boost::optional<double> value;

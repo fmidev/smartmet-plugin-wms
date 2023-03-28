@@ -24,7 +24,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void WKTLayer::init(const Json::Value& theJson,
+void WKTLayer::init(Json::Value& theJson,
                     const State& theState,
                     const Config& theConfig,
                     const Properties& theProperties)

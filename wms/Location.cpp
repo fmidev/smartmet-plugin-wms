@@ -23,7 +23,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Location::init(const Json::Value& theJson, const Config& /* theConfig */)
+void Location::init(Json::Value& theJson, const Config& /* theConfig */)
 {
   try
   {
@@ -39,7 +39,7 @@ void Location::init(const Json::Value& theJson, const Config& /* theConfig */)
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      const Json::Value& json = theJson[name];
+      Json::Value& json = theJson[name];
 
       if (name == "longitude")
         longitude = json.asDouble();

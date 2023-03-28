@@ -17,7 +17,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Layers::init(const Json::Value& theJson,
+void Layers::init(Json::Value& theJson,
                   const State& theState,
                   const Config& theConfig,
                   const Properties& theProperties)
@@ -27,7 +27,7 @@ void Layers::init(const Json::Value& theJson,
     if (!theJson.isArray())
       throw Fmi::Exception(BCP, "Layers JSON is not a JSON array");
 
-    for (const auto& json : theJson)
+    for (auto& json : theJson)
     {
       boost::shared_ptr<Layer> layer(LayerFactory::create(json));
       layer->init(json, theState, theConfig, theProperties);

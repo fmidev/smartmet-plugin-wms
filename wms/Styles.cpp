@@ -20,7 +20,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Styles::init(const Json::Value& theJson, const Config& /* theConfig */)
+void Styles::init(Json::Value& theJson, const Config& /* theConfig */)
 {
   try
   {

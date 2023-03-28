@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "Defs.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "LayerFactory.h"
 #include "State.h"
 #include "View.h"
@@ -36,7 +37,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Layer::init(const Json::Value& theJson,
+void Layer::init(Json::Value& theJson,
                  const State& theState,
                  const Config& theConfig,
                  const Properties& theProperties)
@@ -60,11 +61,11 @@ void Layer::init(const Json::Value& theJson,
 
     json = theJson.get("enable", nulljson);
     if (!json.isNull())
-      Spine::JSON::extract_set("enable", enable, json);
+      JsonTools::extract_set("enable", enable, json);
 
     json = theJson.get("disable", nulljson);
     if (!json.isNull())
-      Spine::JSON::extract_set("disable", disable, json);
+      JsonTools::extract_set("disable", disable, json);
 
     json = theJson.get("css", nulljson);
     if (!json.isNull())

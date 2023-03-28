@@ -29,7 +29,7 @@ class State;
 class Attributes
 {
  public:
-  void init(const Json::Value& theJson, const Config& theConfig);
+  void init(Json::Value& theJson, const Config& theConfig);
   void add(const std::string& theName, const std::string& theValue);
   void add(const Attributes& theAttributes);
 

@@ -18,7 +18,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void PostGISLayerFilter::init(const Json::Value& theJson, const Config& theConfig)
+void PostGISLayerFilter::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
@@ -30,7 +30,7 @@ void PostGISLayerFilter::init(const Json::Value& theJson, const Config& theConfi
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      const Json::Value& json = theJson[name];
+      Json::Value& json = theJson[name];
 
       if (name == "where")
         where = json.asString();

@@ -67,7 +67,7 @@ class Projection
 {
  public:
   // Initialize from JSON
-  void init(const Json::Value& theJson, const State& theState, const Config& theConfig);
+  void init(Json::Value& theJson, const State& theState, const Config& theConfig);
 
   // Coordinate reference system
   boost::optional<std::string> crs;

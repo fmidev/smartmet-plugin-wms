@@ -59,7 +59,7 @@ class Layer : public Properties
   Layer& operator=(Layer&& other) = delete;
 
   using Properties::init;
-  virtual void init(const Json::Value& theJson,
+  virtual void init(Json::Value& theJson,
                     const State& theState,
                     const Config& theConfig,
                     const Properties& theProperties);

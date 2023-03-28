@@ -18,7 +18,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Symbols::init(const Json::Value& theJson, const State& theState)
+void Symbols::init(Json::Value& theJson, const State& theState)
 {
   try
   {

@@ -23,7 +23,7 @@ class Isoband
  public:
   std::string getQid(const State& theState) const;
 
-  void init(const Json::Value& theJson, const Config& theConfig);
+  void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
   // One or both may be missing. Interpretation:

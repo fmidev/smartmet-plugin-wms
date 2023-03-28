@@ -18,7 +18,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Properties::init(const Json::Value& theJson, const State& theState, const Config& theConfig)
+void Properties::init(Json::Value& theJson, const State& theState, const Config& theConfig)
 {
   try
   {
@@ -163,7 +163,7 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
  */
 // ----------------------------------------------------------------------
 
-void Properties::init(const Json::Value& theJson,
+void Properties::init(Json::Value& theJson,
                       const State& theState,
                       const Config& theConfig,
                       const Properties& theProperties)

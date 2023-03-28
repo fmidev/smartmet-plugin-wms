@@ -150,7 +150,7 @@ std::vector<T> prioritize_t(const std::vector<T>& pv, const PointValueOptions& o
 
 }  // namespace
 
-void PointValueOptions::init(const Json::Value& theJson)
+void PointValueOptions::init(Json::Value& theJson)
 {
   try
   {

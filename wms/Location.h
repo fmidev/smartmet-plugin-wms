@@ -21,7 +21,7 @@ class State;
 class Location
 {
  public:
-  void init(const Json::Value& theJson, const Config& theConfig);
+  void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
   // See also Station.h to be consistent if you're planning to expand this class

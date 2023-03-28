@@ -32,7 +32,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void TimeLayer::init(const Json::Value& theJson,
+void TimeLayer::init(Json::Value& theJson,
                      const State& theState,
                      const Config& theConfig,
                      const Properties& theProperties)

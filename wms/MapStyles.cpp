@@ -1,5 +1,6 @@
 #include "MapStyles.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "State.h"
 #include <macgyver/Exception.h>
 #include <spine/Json.h>
@@ -16,7 +17,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void MapStyles::init(const Json::Value& theJson, const Config& theConfig)
+void MapStyles::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
@@ -42,7 +43,7 @@ void MapStyles::init(const Json::Value& theJson, const Config& theConfig)
     json = theJson.get("attributes", nulljson);
     if (json.isNull())
       throw Fmi::Exception(BCP, "Attributes must be set when styling map components");
-    Spine::JSON::extract_array("attributes", data_attributes, json, theConfig);
+    JsonTools::extract_array("attributes", data_attributes, json, theConfig);
 
     // features-setting can be missing. Then we assume the feature value matches the station number
     json = theJson.get("features", nulljson);

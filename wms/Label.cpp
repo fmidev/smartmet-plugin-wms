@@ -131,7 +131,7 @@ std::string Label::print(double theValue) const
  */
 // ----------------------------------------------------------------------
 
-void Label::init(const Json::Value& theJson, const Config& theConfig)
+void Label::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
@@ -143,7 +143,7 @@ void Label::init(const Json::Value& theJson, const Config& theConfig)
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      const Json::Value& json = theJson[name];
+      Json::Value& json = theJson[name];
 
       if (name == "dx")
         dx = json.asInt();

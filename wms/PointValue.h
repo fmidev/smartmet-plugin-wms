@@ -48,7 +48,7 @@ struct WindArrowValue : public PointValueBase
 
 struct PointValueOptions
 {
-  void init(const Json::Value& theJson);
+  void init(Json::Value& theJson);
   boost::optional<double> mindistance;
   boost::optional<std::string> priority;
   boost::optional<std::vector<int>> priorities;

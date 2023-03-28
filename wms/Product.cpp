@@ -18,7 +18,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Product::init(const Json::Value& theJson, const State& theState, const Config& theConfig)
+void Product::init(Json::Value& theJson, const State& theState, const Config& theConfig)
 {
   try
   {

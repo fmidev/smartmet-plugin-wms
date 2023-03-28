@@ -31,9 +31,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Projection::init(const Json::Value& theJson,
-                      const State& theState,
-                      const Config& /* theConfig */)
+void Projection::init(Json::Value& theJson, const State& theState, const Config& /* theConfig */)
 {
   try
   {

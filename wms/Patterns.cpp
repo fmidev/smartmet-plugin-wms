@@ -18,7 +18,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Patterns::init(const Json::Value& theJson, const State& theState)
+void Patterns::init(Json::Value& theJson, const State& theState)
 {
   try
   {

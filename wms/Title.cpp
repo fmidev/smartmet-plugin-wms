@@ -17,7 +17,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Title::init(const Json::Value& theJson, const Config& theConfig)
+void Title::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
@@ -29,7 +29,7 @@ void Title::init(const Json::Value& theJson, const Config& theConfig)
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      const Json::Value& json = theJson[name];
+      Json::Value& json = theJson[name];
 
       if (name == "qid")
         qid = json.asString();

@@ -311,7 +311,7 @@ std::vector<double> calculate_rose_maxima(const TS::TimeSeries& directions,
  */
 // ----------------------------------------------------------------------
 
-void WindRoseLayer::init(const Json::Value& theJson,
+void WindRoseLayer::init(Json::Value& theJson,
                          const State& theState,
                          const Config& theConfig,
                          const Properties& theProperties)

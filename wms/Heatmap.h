@@ -26,7 +26,7 @@ class State;
 class Heatmap
 {
  public:
-  void init(const Json::Value& theJson, const Config& theConfig);
+  void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
   std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> getStamp(unsigned radius);
 

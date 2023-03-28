@@ -5,6 +5,7 @@
 #include "Geometry.h"
 #include "Hash.h"
 #include "Isoline.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "State.h"
 #include "StyleSheet.h"
@@ -36,7 +37,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void IsolineLayer::init(const Json::Value& theJson,
+void IsolineLayer::init(Json::Value& theJson,
                         const State& theState,
                         const Config& theConfig,
                         const Properties& theProperties)
@@ -64,7 +65,7 @@ void IsolineLayer::init(const Json::Value& theJson,
     {
       if (json.isArray())
       {
-        Spine::JSON::extract_array("isolines", isolines, json, theConfig);
+        JsonTools::extract_array("isolines", isolines, json, theConfig);
       }
       else
       {

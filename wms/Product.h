@@ -32,7 +32,7 @@ class State;
 class Product : public Properties
 {
  public:
-  void init(const Json::Value& theJson, const State& theState, const Config& theConfig);
+  void init(Json::Value& theJson, const State& theState, const Config& theConfig);
 
   void generate(CTPP::CDT& theGlobals, State& theState);
   std::size_t hash_value(const State& theState) const;

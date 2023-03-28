@@ -89,7 +89,7 @@ OGRGeometryPtr createFrameGeometry(const FrameDimension& inner,
  * \brief Initialize from JSON
  */
 // ----------------------------------------------------------------------
-void FrameLayer::init(const Json::Value& theJson,
+void FrameLayer::init(Json::Value& theJson,
                       const State& theState,
                       const Config& theConfig,
                       const Properties& theProperties)

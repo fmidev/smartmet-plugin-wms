@@ -3,6 +3,7 @@
 #include "LocationLayer.h"
 #include "Config.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "Select.h"
 #include "State.h"
@@ -42,7 +43,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void LocationLayer::init(const Json::Value& theJson,
+void LocationLayer::init(Json::Value& theJson,
                          const State& theState,
                          const Config& theConfig,
                          const Properties& theProperties)
@@ -68,7 +69,7 @@ void LocationLayer::init(const Json::Value& theJson,
 
     json = theJson.get("countries", nulljson);
     if (!json.isNull())
-      Spine::JSON::extract_set("countries", countries, json);
+      JsonTools::extract_set("countries", countries, json);
 
     json = theJson.get("symbol", nulljson);
     if (!json.isNull())
@@ -81,7 +82,7 @@ void LocationLayer::init(const Json::Value& theJson,
       {
         // Just a default selection is given
         std::vector<AttributeSelection> selection;
-        Spine::JSON::extract_array("symbols", selection, json, theConfig);
+        JsonTools::extract_array("symbols", selection, json, theConfig);
         symbols["default"] = selection;
       }
       else if (json.isObject())
@@ -89,14 +90,14 @@ void LocationLayer::init(const Json::Value& theJson,
         const auto features = json.getMemberNames();
         for (const auto& feature : features)
         {
-          const Json::Value& innerjson = json[feature];
+          Json::Value& innerjson = json[feature];
           if (!innerjson.isArray())
             throw Fmi::Exception(
                 BCP,
                 "LocationLayer symbols setting does not contain a hash of JSON arrays for each "
                 "feature");
           std::vector<AttributeSelection> selection;
-          Spine::JSON::extract_array("symbols", selection, innerjson, theConfig);
+          JsonTools::extract_array("symbols", selection, innerjson, theConfig);
           symbols[feature] = selection;
         }
       }

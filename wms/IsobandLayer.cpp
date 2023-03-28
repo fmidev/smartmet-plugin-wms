@@ -5,6 +5,7 @@
 #include "Geometry.h"
 #include "Hash.h"
 #include "Isoband.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "State.h"
 #include "StyleSheet.h"
@@ -49,7 +50,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void IsobandLayer::init(const Json::Value& theJson,
+void IsobandLayer::init(Json::Value& theJson,
                         const State& theState,
                         const Config& theConfig,
                         const Properties& theProperties)
@@ -75,7 +76,7 @@ void IsobandLayer::init(const Json::Value& theJson,
 
     json = theJson.get("isobands", nulljson);
     if (!json.isNull())
-      Spine::JSON::extract_array("isobands", isobands, json, theConfig);
+      JsonTools::extract_array("isobands", isobands, json, theConfig);
 
     json = theJson.get("interpolation", nulljson);
     if (!json.isNull())

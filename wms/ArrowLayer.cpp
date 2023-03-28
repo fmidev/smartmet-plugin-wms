@@ -3,6 +3,7 @@
 #include "Config.h"
 #include "Hash.h"
 #include "Iri.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "Select.h"
 #include "State.h"
@@ -909,7 +910,7 @@ PointValues read_observations(const ArrowLayer& layer,
  */
 // ----------------------------------------------------------------------
 
-void ArrowLayer::init(const Json::Value& theJson,
+void ArrowLayer::init(Json::Value& theJson,
                       const State& theState,
                       const Config& theConfig,
                       const Properties& theProperties)
@@ -1010,7 +1011,7 @@ void ArrowLayer::init(const Json::Value& theJson,
 
     json = theJson.get("arrows", nulljson);
     if (!json.isNull())
-      Spine::JSON::extract_array("arrows", arrows, json, theConfig);
+      JsonTools::extract_array("arrows", arrows, json, theConfig);
 
     point_value_options.init(theJson);
   }

@@ -31,7 +31,7 @@ class Gradients
   GradientMap gradients;
 
  public:
-  void init(const Json::Value& theJson, const State& theState);
+  void init(Json::Value& theJson, const State& theState);
 };
 
 }  // namespace Dali

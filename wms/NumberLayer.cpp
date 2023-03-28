@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "Hash.h"
 #include "Iri.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "Select.h"
 #include "State.h"
@@ -804,7 +805,7 @@ PointValues read_observations(const NumberLayer& layer,
  */
 // ----------------------------------------------------------------------
 
-void NumberLayer::init(const Json::Value& theJson,
+void NumberLayer::init(Json::Value& theJson,
                        const State& theState,
                        const Config& theConfig,
                        const Properties& theProperties)
@@ -867,7 +868,7 @@ void NumberLayer::init(const Json::Value& theJson,
 
     json = theJson.get("numbers", nulljson);
     if (!json.isNull())
-      Spine::JSON::extract_array("numbers", numbers, json, theConfig);
+      JsonTools::extract_array("numbers", numbers, json, theConfig);
 
     point_value_options.init(theJson);
   }

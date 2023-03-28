@@ -205,7 +205,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
  */
 // ----------------------------------------------------------------------
 
-void Positions::init(const Json::Value& theJson, const Config& theConfig)
+void Positions::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
@@ -217,7 +217,7 @@ void Positions::init(const Json::Value& theJson, const Config& theConfig)
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      const Json::Value& json = theJson[name];
+      Json::Value& json = theJson[name];
 
       if (name == "layout")
       {

@@ -58,7 +58,7 @@ boost::optional<std::string> AttributeSelection::remove(const std::string& theNa
  */
 // ----------------------------------------------------------------------
 
-void AttributeSelection::init(const Json::Value& theJson, const Config& theConfig)
+void AttributeSelection::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
@@ -70,7 +70,7 @@ void AttributeSelection::init(const Json::Value& theJson, const Config& theConfi
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      const Json::Value& json = theJson[name];
+      Json::Value& json = theJson[name];
 
       if (name == "value")
         value = json.asDouble();

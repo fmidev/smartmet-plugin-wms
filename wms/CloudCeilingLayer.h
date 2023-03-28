@@ -22,7 +22,7 @@ class CloudCeilingLayer : public NumberLayer
  public:
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
 
-  void init(const Json::Value& theJson,
+  void init(Json::Value& theJson,
             const State& theState,
             const Config& theConfig,
             const Properties& theProperties) override;

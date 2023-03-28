@@ -1,6 +1,7 @@
 #include "PostGISLayerBase.h"
 #include "Config.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include <engines/gis/Engine.h>
 #include <macgyver/Exception.h>
 #include <spine/Json.h>
@@ -17,7 +18,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void PostGISLayerBase::init(const Json::Value& theJson,
+void PostGISLayerBase::init(Json::Value& theJson,
                             const State& theState,
                             const Config& theConfig,
                             const Properties& theProperties)
@@ -93,7 +94,7 @@ void PostGISLayerBase::init(const Json::Value& theJson,
     // filter for query, each filter generates one PostGIS query
     json = theJson.get("filters", nulljson);
     if (!json.isNull())
-      Spine::JSON::extract_array("filters", this->filters, json, theConfig);
+      JsonTools::extract_array("filters", this->filters, json, theConfig);
   }
   catch (...)
   {

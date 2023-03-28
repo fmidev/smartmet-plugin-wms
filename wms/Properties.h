@@ -37,9 +37,9 @@ class Properties
   Properties& operator=(const Properties& other) = delete;
   Properties& operator=(const Properties&& other) = delete;
 
-  void init(const Json::Value& theJson, const State& theState, const Config& theConfig);
+  void init(Json::Value& theJson, const State& theState, const Config& theConfig);
 
-  void init(const Json::Value& theJson,
+  void init(Json::Value& theJson,
             const State& theState,
             const Config& theConfig,
             const Properties& theProperties);

@@ -18,7 +18,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void TranslationLayer::init(const Json::Value& theJson,
+void TranslationLayer::init(Json::Value& theJson,
                             const State& theState,
                             const Config& theConfig,
                             const Properties& theProperties)

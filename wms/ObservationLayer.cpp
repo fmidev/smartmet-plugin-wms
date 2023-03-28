@@ -20,7 +20,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void ObservationLayer::init(const Json::Value& theJson,
+void ObservationLayer::init(Json::Value& theJson,
                             const State& theState,
                             const Config& theConfig,
                             const Properties& theProperties)

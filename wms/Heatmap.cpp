@@ -35,7 +35,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Heatmap::init(const Json::Value& theJson, const Config& theConfig)
+void Heatmap::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
@@ -47,7 +47,7 @@ void Heatmap::init(const Json::Value& theJson, const Config& theConfig)
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      const Json::Value& json = theJson[name];
+      Json::Value& json = theJson[name];
 
       if (name == "resolution")
         resolution = json.asDouble();

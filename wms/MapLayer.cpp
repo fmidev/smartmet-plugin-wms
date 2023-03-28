@@ -29,7 +29,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void MapLayer::init(const Json::Value& theJson,
+void MapLayer::init(Json::Value& theJson,
                     const State& theState,
                     const Config& theConfig,
                     const Properties& theProperties)

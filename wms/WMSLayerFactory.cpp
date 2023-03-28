@@ -1,4 +1,5 @@
 #include "WMSLayerFactory.h"
+#include "JsonTools.h"
 #include "StyleSelection.h"
 #include "WMSGridDataLayer.h"
 #include "WMSNonTemporalLayer.h"
@@ -18,6 +19,8 @@ namespace Plugin
 {
 namespace WMS
 {
+namespace
+{
 enum class WMSLayerType
 {
   PostGISLayer,    // PostGIS layer
@@ -30,13 +33,11 @@ enum class WMSLayerType
   NotWMSLayer
 };
 
-static std::set<std::string> querydata_layers = {
+std::set<std::string> querydata_layers = {
     "arrow", "isoband", "isoline", "isolabel", "number", "symbol", "tag", "location", "stream"};
 
-static std::set<std::string> postgis_layers = {"postgis", "icemap"};
+std::set<std::string> postgis_layers = {"postgis", "icemap"};
 
-namespace
-{
 WMSLayerType getWMSLayerType(const Json::Value& layer)
 {
   try
@@ -52,19 +53,13 @@ WMSLayerType getWMSLayerType(const Json::Value& layer)
     auto type_name = layer_type.asString();
 
     if (type_name == "map")
-    {
       return WMSLayerType::MapLayer;
-    }
 
     if (postgis_layers.find(type_name) != postgis_layers.end())
-    {
       return WMSLayerType::PostGISLayer;
-    }
 
     if (querydata_layers.find(type_name) != querydata_layers.end())
-    {
       return WMSLayerType::QueryDataLayer;
-    }
 
     // No identified special layers, this is not a WMSLayer;
     return WMSLayerType::NotWMSLayer;
@@ -78,38 +73,21 @@ WMSLayerType getWMSLayerType(const Json::Value& layer)
 #if 0
 std::string getWMSLayerTypeAsString(WMSLayerType layerType)
 {
-  try
+  switch (layerType)
   {
-    std::string ret;
-
-    switch (layerType)
-    {
-      case WMSLayerType::PostGISLayer:
-        ret = "PostGISLayer";
-        break;
-      case WMSLayerType::QueryDataLayer:
-        ret = "QueryDataLayer";
-        break;
-      case WMSLayerType::MapLayer:
-        ret = "MapLayer";
-        break;
-
+    case WMSLayerType::PostGISLayer:
+      return  "PostGISLayer";
+    case WMSLayerType::QueryDataLayer:
+      return "QueryDataLayer";
+    case WMSLayerType::MapLayer:
+      return "MapLayer";
 #ifndef WITHOUT_OBSERVATION
-      case WMSLayerType::ObservationLayer:
-        ret = "ObservationLayer";
-        break;
+    case WMSLayerType::ObservationLayer:
+      return "ObservationLayer";
 #endif
-      default:
-        ret = "NotWMSLayer";
-        break;
+    default:
+      return "NotWMSLayer";
     }
-
-    return ret;
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Failed to get layer type as string!");
-  }
 }
 #endif
 
@@ -458,11 +436,11 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 
       auto j = json.get("enable", nulljson);
       if (!j.isNull())
-        Spine::JSON::extract_set("crs.enable", layer->enabled_refs, j);
+        Dali::JsonTools::extract_set("crs.enable", layer->enabled_refs, j);
 
       j = json.get("disable", nulljson);
       if (!j.isNull())
-        Spine::JSON::extract_set("crs.disable", layer->disabled_refs, j);
+        Dali::JsonTools::extract_set("crs.disable", layer->disabled_refs, j);
     }
 
     // Update metadata from DB etc
