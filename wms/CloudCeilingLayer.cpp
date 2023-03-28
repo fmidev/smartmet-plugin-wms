@@ -3,15 +3,15 @@
 
 #include "CloudCeilingLayer.h"
 #include "Config.h"
-#include "State.h"
 #include "Iri.h"
 #include "Select.h"
+#include "State.h"
 #include "ValueTools.h"
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <fmt/printf.h>
-#include <timeseries/ParameterTools.h>
 #include <gis/CoordinateTransformation.h>
+#include <timeseries/ParameterTools.h>
 
 namespace SmartMet
 {
@@ -19,13 +19,13 @@ namespace Plugin
 {
 namespace Dali
 {
-
 using PointValues = std::vector<PointValue>;
 
-PointValues CloudCeilingLayer::readObservations(State& state,
-												const Fmi::SpatialReference& crs,
-												const Fmi::Box& box,
-												const boost::posix_time::time_period& valid_time_period) const
+PointValues CloudCeilingLayer::readObservations(
+    State& state,
+    const Fmi::SpatialReference& crs,
+    const Fmi::Box& box,
+    const boost::posix_time::time_period& valid_time_period) const
 {
   try
   {
@@ -50,56 +50,58 @@ PointValues CloudCeilingLayer::readObservations(State& state,
     auto& obsengine = state.getObsEngine();
     settings.parameters.push_back(TS::makeParameter("stationlon"));
     settings.parameters.push_back(TS::makeParameter("stationlat"));
-	// Pilvikerroksen määrä
+    // Pilvikerroksen määrä
     settings.parameters.push_back(TS::makeParameter("CLA1_PT1M_ACC"));
     settings.parameters.push_back(TS::makeParameter("CLA2_PT1M_ACC"));
     settings.parameters.push_back(TS::makeParameter("CLA3_PT1M_ACC"));
     settings.parameters.push_back(TS::makeParameter("CLA4_PT1M_ACC"));
-	settings. parameters.push_back(TS::makeParameter("CLA5_PT1M_ACC"));
-	// Pilvikerroksen korkeus
+    settings.parameters.push_back(TS::makeParameter("CLA5_PT1M_ACC"));
+    // Pilvikerroksen korkeus
     settings.parameters.push_back(TS::makeParameter("CLHB1_PT1M_INSTANT"));
     settings.parameters.push_back(TS::makeParameter("CLHB2_PT1M_INSTANT"));
     settings.parameters.push_back(TS::makeParameter("CLHB3_PT1M_INSTANT"));
     settings.parameters.push_back(TS::makeParameter("CLHB4_PT1M_INSTANT"));
     settings.parameters.push_back(TS::makeParameter("CLH5_PT1M_INSTANT"));
 
-	auto debug = state.getRequest().getParameter("debug");
-	settings.debug_options = (debug && Fmi::stoi(*debug) > 0);
+    auto debug = state.getRequest().getParameter("debug");
+    settings.debug_options = (debug && Fmi::stoi(*debug) > 0);
 
-	// GetFMISIDs
-	// Check keyword
-	if(!itsKeyword.empty())
-	  {
-        const auto& geoengine = state.getGeoEngine();
-        Locus::QueryOptions options;
-        auto locations = geoengine.keywordSearch(options, itsKeyword);
+    // GetFMISIDs
+    // Check keyword
+    if (!itsKeyword.empty())
+    {
+      const auto& geoengine = state.getGeoEngine();
+      Locus::QueryOptions options;
+      auto locations = geoengine.keywordSearch(options, itsKeyword);
 
-        for (const auto& loc : locations)
+      for (const auto& loc : locations)
+      {
+        if (loc->fmisid)
         {
-          if (loc->fmisid)
-			{
-			  if(loc->longitude >= box.xmin() && loc->longitude <= box.xmax() &&
-				 loc->latitude >= box.ymin() && loc->latitude <= box.ymax())
-				settings.taggedFMISIDs.push_back(Spine::TaggedFMISID(Fmi::to_string(*loc->fmisid), *loc->fmisid));
-			}
+          if (loc->longitude >= box.xmin() && loc->longitude <= box.xmax() &&
+              loc->latitude >= box.ymin() && loc->latitude <= box.ymax())
+            settings.taggedFMISIDs.push_back(
+                Spine::TaggedFMISID(Fmi::to_string(*loc->fmisid), *loc->fmisid));
         }
       }
+    }
 
-	// Check fmisid
-	if(settings.taggedFMISIDs.empty() && !itsFMISIDs.empty())
-	  {
-		for (const auto& fmisid : itsFMISIDs)
-		  settings.taggedFMISIDs.push_back(Spine::TaggedFMISID(Fmi::to_string(fmisid), fmisid));
-	  }
+    // Check fmisid
+    if (settings.taggedFMISIDs.empty() && !itsFMISIDs.empty())
+    {
+      for (const auto& fmisid : itsFMISIDs)
+        settings.taggedFMISIDs.push_back(Spine::TaggedFMISID(Fmi::to_string(fmisid), fmisid));
+    }
 
-	// Get stations using bounding box
-	if(settings.taggedFMISIDs.empty())
-	  {
-		// Coordinates or bounding box
-		Engine::Observation::StationSettings stationSettings;
-		stationSettings.bounding_box_settings = getClipBoundingBox(box, crs);
-		settings.taggedFMISIDs = obsengine.translateToFMISID(settings.starttime, settings.endtime, settings.stationtype, stationSettings);
-	  }
+    // Get stations using bounding box
+    if (settings.taggedFMISIDs.empty())
+    {
+      // Coordinates or bounding box
+      Engine::Observation::StationSettings stationSettings;
+      stationSettings.bounding_box_settings = getClipBoundingBox(box, crs);
+      settings.taggedFMISIDs = obsengine.translateToFMISID(
+          settings.starttime, settings.endtime, settings.stationtype, stationSettings);
+    }
 
     auto result = obsengine.values(settings);
 
@@ -121,63 +123,63 @@ PointValues CloudCeilingLayer::readObservations(State& state,
     {
       double lon = get_double(values.at(0).at(row));
       double lat = get_double(values.at(1).at(row));
-	  std::vector<double> cla_values;
-	  std::vector<double> clhb_values;
-	  cla_values.push_back(get_double(values.at(2).at(row)));
-	  cla_values.push_back(get_double(values.at(3).at(row)));
-	  cla_values.push_back(get_double(values.at(4).at(row)));
-	  cla_values.push_back(get_double(values.at(5).at(row)));
-	  cla_values.push_back(get_double(values.at(6).at(row)));
-	  clhb_values.push_back(get_double(values.at(7).at(row)));
-	  clhb_values.push_back(get_double(values.at(8).at(row)));
-	  clhb_values.push_back(get_double(values.at(9).at(row)));
-	  clhb_values.push_back(get_double(values.at(10).at(row)));
-	  clhb_values.push_back(get_double(values.at(11).at(row)));
-	  for(std::size_t i = 0;i < 5; i++)
-		{
-		  auto cla_val = cla_values.at(i);
-		  auto clhb_val = clhb_values.at(i);
+      std::vector<double> cla_values;
+      std::vector<double> clhb_values;
+      cla_values.push_back(get_double(values.at(2).at(row)));
+      cla_values.push_back(get_double(values.at(3).at(row)));
+      cla_values.push_back(get_double(values.at(4).at(row)));
+      cla_values.push_back(get_double(values.at(5).at(row)));
+      cla_values.push_back(get_double(values.at(6).at(row)));
+      clhb_values.push_back(get_double(values.at(7).at(row)));
+      clhb_values.push_back(get_double(values.at(8).at(row)));
+      clhb_values.push_back(get_double(values.at(9).at(row)));
+      clhb_values.push_back(get_double(values.at(10).at(row)));
+      clhb_values.push_back(get_double(values.at(11).at(row)));
+      for (std::size_t i = 0; i < 5; i++)
+      {
+        auto cla_val = cla_values.at(i);
+        auto clhb_val = clhb_values.at(i);
 
-		  if(clhb_val == kFloatMissing)
-			continue;
-		  if(cla_val >= 5 && cla_val <= 9)
-			{
-			  auto x = lon;
-			  auto y = lat;
-			  
-			  auto value = clhb_val;
+        if (clhb_val == kFloatMissing)
+          continue;
+        if (cla_val >= 5 && cla_val <= 9)
+        {
+          auto x = lon;
+          auto y = lat;
 
-			  if (!crs.isGeographic())
-				if (!transformation.transform(x, y))
-				  break;
-			  
-			  // To pixel coordinate
-			  box.transform(x, y);
-			  
-			  // Skip if not inside desired area
-			  if (!inside(box, x, y))
-				break;
-			  
-			  int xpos = lround(x);
-			  int ypos = lround(y);
-			  
-			  Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-			  PointValue pv{point, value};
+          auto value = clhb_val;
 
-			  pointvalues.push_back(pv);
-			  break;
-			}
-		}
+          if (!crs.isGeographic())
+            if (!transformation.transform(x, y))
+              break;
+
+          // To pixel coordinate
+          box.transform(x, y);
+
+          // Skip if not inside desired area
+          if (!inside(box, x, y))
+            break;
+
+          int xpos = lround(x);
+          int ypos = lround(y);
+
+          Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
+          PointValue pv{point, value};
+
+          pointvalues.push_back(pv);
+          break;
+        }
+      }
     }
 
     return pointvalues;
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "CloudCeilingLayer failed to read observations from the database");
+    throw Fmi::Exception::Trace(BCP,
+                                "CloudCeilingLayer failed to read observations from the database");
   }
 }
-
 
 // ----------------------------------------------------------------------
 /*!
@@ -186,9 +188,9 @@ PointValues CloudCeilingLayer::readObservations(State& state,
 // ----------------------------------------------------------------------
 
 void CloudCeilingLayer::init(const Json::Value& theJson,
-							 const State& theState,
-							 const Config& theConfig,
-							 const Properties& theProperties)
+                             const State& theState,
+                             const Config& theConfig,
+                             const Properties& theProperties)
 {
   try
   {
@@ -204,28 +206,28 @@ void CloudCeilingLayer::init(const Json::Value& theJson,
     Json::Value json = theJson.get("keyword", nulljson);
     if (!json.isNull())
       itsKeyword = json.asString();
-	
+
     // If keyword is missing try 'fmisids'
     if (itsKeyword.empty())
-	  {
-		json = theJson.get("fmisid", nulljson);
-		if (!json.isNull())
-		  {
-			if (json.isString())
-			  {
-				itsFMISIDs.push_back(Fmi::stoi(json.asString()));
-			  }
-			else if (json.isArray())
-			  {
-				for (const auto& j : json)
-				  {			
-					itsFMISIDs.push_back(Fmi::stoi(j.asString()));
-				  }
-			  }
-			else
-			  throw Fmi::Exception(BCP, "fmisid value must be an array of strings or a string");
-		  }
-	  }   
+    {
+      json = theJson.get("fmisid", nulljson);
+      if (!json.isNull())
+      {
+        if (json.isString())
+        {
+          itsFMISIDs.push_back(Fmi::stoi(json.asString()));
+        }
+        else if (json.isArray())
+        {
+          for (const auto& j : json)
+          {
+            itsFMISIDs.push_back(Fmi::stoi(j.asString()));
+          }
+        }
+        else
+          throw Fmi::Exception(BCP, "fmisid value must be an array of strings or a string");
+      }
+    }
   }
   catch (...)
   {
@@ -236,8 +238,8 @@ void CloudCeilingLayer::init(const Json::Value& theJson,
 void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
 {
   try
-  {	
-	   // Time execution
+  {
+    // Time execution
 
     std::string report = "CloudCeilingLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
@@ -299,7 +301,7 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     PointValues pointvalues;
 
-	pointvalues = readObservations(theState, crs, box, valid_time_period);
+    pointvalues = readObservations(theState, crs, box, valid_time_period);
 
     pointvalues = prioritize(pointvalues, point_value_options);
 
@@ -428,7 +430,6 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     throw exception;
   }
 }
-
 
 }  // namespace Dali
 }  // namespace Plugin

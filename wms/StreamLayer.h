@@ -5,8 +5,8 @@
 #include "Layer.h"
 #include "Map.h"
 #include "ParameterInfo.h"
-#include "Sampling.h"
 #include "Positions.h"
+#include "Sampling.h"
 #include "Smoother.h"
 #include <engines/querydata/Q.h>
 #include <vector>

@@ -17,7 +17,6 @@ namespace Plugin
 {
 namespace Dali
 {
-
 class CloudCeilingLayer : public NumberLayer
 {
  public:
@@ -28,14 +27,14 @@ class CloudCeilingLayer : public NumberLayer
             const Config& theConfig,
             const Properties& theProperties) override;
 
-
   //  SmartMet::Spine::TaggedFMISIDList stationFMISIDs;
 
-private:
-  std::vector<PointValue> readObservations(State& state,
-										   const Fmi::SpatialReference& crs,
-										   const Fmi::Box& box,
-										   const boost::posix_time::time_period& valid_time_period) const;
+ private:
+  std::vector<PointValue> readObservations(
+      State& state,
+      const Fmi::SpatialReference& crs,
+      const Fmi::Box& box,
+      const boost::posix_time::time_period& valid_time_period) const;
 
   std::string itsKeyword;
   std::vector<int> itsFMISIDs;
