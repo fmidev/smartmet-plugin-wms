@@ -130,7 +130,7 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
 
       json = theJson.get("ymargin", nulljson);
       if (!json.isNull())
-        xmargin = json.asInt();
+        ymargin = json.asInt();
     }
 
     json = theJson.get("clip", nulljson);
