@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.3.16
+Version: 23.3.29
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -25,22 +25,22 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-giza-devel >= 22.8.31
+BuildRequires: smartmet-library-giza-devel >= 23.3.21
 BuildRequires: smartmet-library-grid-content-devel >= 23.3.9
 BuildRequires: smartmet-library-grid-files-devel >= 23.3.9
 BuildRequires: smartmet-library-macgyver-devel >= 23.3.3
 BuildRequires: smartmet-library-spine-devel >= 23.3.14
 BuildRequires: smartmet-library-timeseries-devel >= 23.3.15
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 23.1.25
+BuildRequires: smartmet-engine-authentication-devel >= 23.3.21
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 23.3.15
+BuildRequires: smartmet-engine-observation-devel >= 23.3.22
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.12.21
 BuildRequires: smartmet-engine-grid-devel >= 23.3.9
 BuildRequires: smartmet-engine-geonames-devel >= 23.3.16
-BuildRequires: smartmet-engine-querydata-devel >= 23.3.9
+BuildRequires: smartmet-engine-querydata-devel >= 23.3.21
 BuildRequires: smartmet-engine-contour-devel >= 23.3.9
 BuildRequires: smartmet-library-gis-devel >= 23.3.14
 BuildRequires: smartmet-library-trax-devel >= 22.12.22
@@ -73,16 +73,16 @@ Requires: smartmet-library-trax >= 22.12.22
 Requires: smartmet-library-macgyver >= 23.3.3
 Requires: smartmet-library-spine >= 23.3.14
 Requires: smartmet-library-timeseries >= 23.3.15
-Requires: smartmet-library-giza >= 22.8.31
+Requires: smartmet-library-giza >= 23.3.21
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 23.1.25
+Requires: smartmet-engine-authentication >= 23.3.21
 %endif
-Requires: smartmet-engine-querydata >= 23.3.9
+Requires: smartmet-engine-querydata >= 23.3.21
 Requires: smartmet-engine-contour >= 23.3.9
 Requires: smartmet-engine-gis >= 22.12.21
 Requires: smartmet-engine-grid >= 23.3.9
 Requires: smartmet-engine-geonames >= 23.3.16
-Requires: smartmet-server >= 23.3.6
+Requires: smartmet-server >= 23.3.21
 Requires: smartmet-library-spine >= 23.3.14
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
@@ -104,8 +104,8 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 23.3.9
 #TestRequires: smartmet-engine-geonames-devel >= 23.3.16
 #TestRequires: smartmet-engine-gis-devel >= 22.12.21
-#TestRequires: smartmet-engine-querydata-devel >= 23.3.9
-#TestRequires: smartmet-library-giza-devel >= 22.8.31
+#TestRequires: smartmet-engine-querydata-devel >= 23.3.21
+#TestRequires: smartmet-library-giza-devel >= 23.3.21
 #TestRequires: smartmet-library-trax-devel >= 22.12.22
 #TestRequires: smartmet-library-newbase-devel >= 23.2.9
 #TestRequires: smartmet-library-spine-devel >= 23.3.14
@@ -120,7 +120,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 23.3.15
+#TestRequires: smartmet-engine-observation-devel >= 23.3.22
 %endif
 
 %description
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Mar 29 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.3.29-1.fmi
+- Fixed ymargin parsing
+
 * Thu Mar 16 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.3.16-1.fmi
 - Disable full GetMap stack traces on user input errors
 - Disable logging GetMap errors on user input errors in quiet mode (release servers)
