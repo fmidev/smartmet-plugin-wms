@@ -94,7 +94,8 @@
 		    {
 			"schema": "natural_earth",
 			"table": "admin_0_countries",
-			"minarea": 100
+			"minarea": 100,
+			"lines": true
 		    },
 		    "attributes":
 		    {
