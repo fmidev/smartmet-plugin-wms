@@ -35,6 +35,9 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
 {
   try
   {
+    if (theJson.isNull())
+      return;
+
     if (!theJson.isObject())
       throw Fmi::Exception(BCP, "Projection JSON is not a JSON object (name-value pairs)");
 
