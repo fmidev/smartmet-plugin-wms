@@ -21,54 +21,69 @@ void MapStyles::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
+    if (theJson.isNull())
+      return;
+
     if (!theJson.isObject())
       throw Fmi::Exception(BCP, "MapStyles JSON is not a JSON object");
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_string(field, theJson, "field");
+    JsonTools::remove_string(parameter, theJson, "parameter");
 
-    auto json = theJson.get("field", nulljson);
-    if (!json.isNull())
-      field = json.asString();
-    else
+    if (field.empty())
       throw Fmi::Exception(BCP, "Database field must be set when maps are styled");
-
-    json = theJson.get("parameter", nulljson);
-    if (!json.isNull())
-      parameter = json.asString();
-    else
+    if (parameter.empty())
       throw Fmi::Exception(BCP, "Forecast parameter must be set when maps are styled");
 
-    json = theJson.get("attributes", nulljson);
+    auto json = JsonTools::remove(theJson, "attributes");
     if (json.isNull())
       throw Fmi::Exception(BCP, "Attributes must be set when styling map components");
     JsonTools::extract_array("attributes", data_attributes, json, theConfig);
 
     // features-setting can be missing. Then we assume the feature value matches the station number
-    json = theJson.get("features", nulljson);
+    json = JsonTools::remove(theJson, "features");
     if (!json.isNull())
     {
       if (!json.isArray())
         throw Fmi::Exception(BCP,
                              "Feature mapping from database fields to stations must be an array");
 
-      for (const auto& j : json)
+      for (auto& j : json)
       {
-        auto jvalue = j.get("value", nulljson);
-        if (jvalue.isNull())
-          throw Fmi::Exception(BCP, "'value' setting missing for a map style setting");
+        std::string name;
+        boost::optional<int> number;
 
-        auto jnumber = j.get("number", nulljson);
-        if (jnumber.isNull())
+        JsonTools::remove_string(name, j, "value");
+        JsonTools::remove_int(number, j, "number");
+
+        if (name.empty())
+          throw Fmi::Exception(BCP, "'value' setting not set for a map style setting");
+
+        if (!number)
           throw Fmi::Exception(BCP, "'number' setting missing for a map style setting");
 
-        features[jvalue.asString()] = jnumber.asInt();
+        features[name] = *number;
 
-        auto jattributes = j.get("attributes", nulljson);
+        auto jattributes = JsonTools::remove(j, "attributes");
         if (!jattributes.isNull())
-          feature_attributes[jvalue.asString()].init(jattributes, theConfig);
+          feature_attributes[name].init(jattributes, theConfig);
+
+        if (j.size() > 0)
+        {
+          auto names = j.getMemberNames();
+          auto namelist = boost::algorithm::join(names, ",");
+          throw Fmi::Exception(BCP, "Unknown mapstyles feature settings: " + namelist);
+        }
       }
+    }
+
+    if (theJson.size() > 0)
+    {
+      auto names = theJson.getMemberNames();
+      auto namelist = boost::algorithm::join(names, ",");
+      throw Fmi::Exception(BCP, "Unknown mapstyles settings: " + namelist);
     }
   }
   catch (...)

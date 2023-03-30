@@ -68,73 +68,46 @@ void IsobandLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_string(parameter, theJson, "parameter");
 
-    auto json = theJson.get("parameter", nulljson);
-    if (!json.isNull())
-      parameter = json.asString();
-
-    json = theJson.get("isobands", nulljson);
+    auto json = JsonTools::remove(theJson, "isobands");
     if (!json.isNull())
       JsonTools::extract_array("isobands", isobands, json, theConfig);
 
-    json = theJson.get("interpolation", nulljson);
-    if (!json.isNull())
-      interpolation = json.asString();
+    JsonTools::remove_string(interpolation, theJson, "interpolation");
+    JsonTools::remove_int(extrapolation, theJson, "extrapolation");
 
-    json = theJson.get("extrapolation", nulljson);
-    if (!json.isNull())
-      extrapolation = json.asInt();
+    json = JsonTools::remove(theJson, "smoother");
+    smoother.init(json, theConfig);
 
-    json = theJson.get("smoother", nulljson);
-    if (!json.isNull())
-      smoother.init(json, theConfig);
+    JsonTools::remove_double(precision, theJson, "precision");
+    JsonTools::remove_double(minarea, theJson, "minarea");
+    JsonTools::remove_string(unit_conversion, theJson, "unit_conversin");
+    JsonTools::remove_double(multiplier, theJson, "multiplier");
+    JsonTools::remove_double(offset, theJson, "offset");
 
-    json = theJson.get("precision", nulljson);
-    if (!json.isNull())
-      precision = json.asDouble();
-
-    json = theJson.get("minarea", nulljson);
-    if (!json.isNull())
-      minarea = json.asDouble();
-
-    json = theJson.get("unit_conversion", nulljson);
-    if (!json.isNull())
-      unit_conversion = json.asString();
-
-    json = theJson.get("multiplier", nulljson);
-    if (!json.isNull())
-      multiplier = json.asDouble();
-
-    json = theJson.get("offset", nulljson);
-    if (!json.isNull())
-      offset = json.asDouble();
-
-    json = theJson.get("outside", nulljson);
+    json = JsonTools::remove(theJson, "outside");
     if (!json.isNull())
     {
       outside.reset(Map());
       outside->init(json, theConfig);
     }
 
-    json = theJson.get("inside", nulljson);
+    json = JsonTools::remove(theJson, "inside");
     if (!json.isNull())
     {
       inside.reset(Map());
       inside->init(json, theConfig);
     }
 
-    json = theJson.get("sampling", nulljson);
-    if (!json.isNull())
-      sampling.init(json, theConfig);
+    json = JsonTools::remove(theJson, "sampling");
+    sampling.init(json, theConfig);
 
-    json = theJson.get("intersect", nulljson);
-    if (!json.isNull())
-      intersections.init(json, theConfig);
+    json = JsonTools::remove(theJson, "intersect");
+    intersections.init(json, theConfig);
 
-    json = theJson.get("heatmap", nulljson);
-    if (!json.isNull())
-      heatmap.init(json, theConfig);
+    json = JsonTools::remove(theJson, "heatmap");
+    heatmap.init(json, theConfig);
   }
   catch (...)
   {

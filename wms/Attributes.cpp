@@ -66,7 +66,7 @@ void Attributes::init(Json::Value& theJson, const Config& /* theConfig */)
     if (!theJson.isObject())
       throw Fmi::Exception(BCP, "Attributes JSON is not a JSON object (name-value pairs)");
 
-    // Iterate trhough all the members
+    // Iterate through all the members
 
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)

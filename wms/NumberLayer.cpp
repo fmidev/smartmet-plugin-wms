@@ -821,52 +821,28 @@ void NumberLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_string(parameter, theJson, "parameter");
+    JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
+    JsonTools::remove_double(multiplier, theJson, "multiplier");
+    JsonTools::remove_double(offset, theJson, "offset");
 
-    auto json = theJson.get("parameter", nulljson);
-    if (!json.isNull())
-      parameter = json.asString();
-
-    json = theJson.get("unit_conversion", nulljson);
-    if (!json.isNull())
-      unit_conversion = json.asString();
-
-    json = theJson.get("multiplier", nulljson);
-    if (!json.isNull())
-      multiplier = json.asDouble();
-
-    json = theJson.get("offset", nulljson);
-    if (!json.isNull())
-      offset = json.asDouble();
-
-    json = theJson.get("positions", nulljson);
+    auto json = JsonTools::remove(theJson, "positions");
     if (!json.isNull())
     {
       positions = Positions{};
       positions->init(json, theConfig);
     }
 
-    json = theJson.get("maxdistance", nulljson);
-    if (!json.isNull())
-      maxdistance = json.asDouble();
+    JsonTools::remove_double(maxdistance, theJson, "maxdistance");
+    JsonTools::remove_int(minvalues, theJson, "minvalues");
 
-    json = theJson.get("minvalues", nulljson);
-    if (!json.isNull())
-      minvalues = json.asInt();
+    json = JsonTools::remove(theJson, "label");
+    label.init(json, theConfig);
 
-    json = theJson.get("label", nulljson);
-    if (!json.isNull())
-      label.init(json, theConfig);
+    JsonTools::remove_string(symbol, theJson, "symbol");
+    JsonTools::remove_double(scale, theJson, "scale");
 
-    json = theJson.get("symbol", nulljson);
-    if (!json.isNull())
-      symbol = json.asString();
-
-    json = theJson.get("scale", nulljson);
-    if (!json.isNull())
-      scale = json.asDouble();
-
-    json = theJson.get("numbers", nulljson);
+    json = JsonTools::remove(theJson, "numbers");
     if (!json.isNull())
       JsonTools::extract_array("numbers", numbers, json, theConfig);
 

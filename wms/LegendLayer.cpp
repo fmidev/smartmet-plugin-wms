@@ -190,33 +190,18 @@ void LegendLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_int(x, theJson, "x");
+    JsonTools::remove_int(y, theJson, "y");
+    JsonTools::remove_int(dx, theJson, "dx");
+    JsonTools::remove_int(dy, theJson, "dy");
 
-    auto json = theJson.get("x", nulljson);
-    if (!json.isNull())
-      x = json.asInt();
+    auto json = JsonTools::remove(theJson, "symbols");
+    symbols.init(json, theConfig);
 
-    json = theJson.get("y", nulljson);
-    if (!json.isNull())
-      y = json.asInt();
+    json = JsonTools::remove(theJson, "labels");
+    labels.init(json, theConfig);
 
-    json = theJson.get("dx", nulljson);
-    if (!json.isNull())
-      dx = json.asInt();
-
-    json = theJson.get("dy", nulljson);
-    if (!json.isNull())
-      dy = json.asInt();
-
-    json = theJson.get("symbols", nulljson);
-    if (!json.isNull())
-      symbols.init(json, theConfig);
-
-    json = theJson.get("labels", nulljson);
-    if (!json.isNull())
-      labels.init(json, theConfig);
-
-    json = theJson.get("isobands", nulljson);
+    json = JsonTools::remove(theJson, "isobands");
     if (!json.isNull())
       JsonTools::extract_array("isobands", isobands, json, theConfig);
   }

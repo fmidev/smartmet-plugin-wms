@@ -820,56 +820,26 @@ void SymbolLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_string(parameter, theJson, "parameter");
+    JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
+    JsonTools::remove_double(multiplier, theJson, "multiplier");
+    JsonTools::remove_double(offset, theJson, "offset");
 
-    auto json = theJson.get("parameter", nulljson);
-    if (!json.isNull())
-      parameter = json.asString();
-
-    json = theJson.get("unit_conversion", nulljson);
-    if (!json.isNull())
-      unit_conversion = json.asString();
-
-    json = theJson.get("multiplier", nulljson);
-    if (!json.isNull())
-      multiplier = json.asDouble();
-
-    json = theJson.get("offset", nulljson);
-    if (!json.isNull())
-      offset = json.asDouble();
-
-    json = theJson.get("positions", nulljson);
+    auto json = JsonTools::remove(theJson, "positions");
     if (!json.isNull())
     {
       positions = Positions{};
       positions->init(json, theConfig);
     }
 
-    json = theJson.get("minvalues", nulljson);
-    if (!json.isNull())
-      minvalues = json.asInt();
+    JsonTools::remove_int(minvalues, theJson, "minvalues");
+    JsonTools::remove_double(maxdistance, theJson, "maxdistance");
+    JsonTools::remove_string(symbol, theJson, "symbol");
+    JsonTools::remove_double(scale, theJson, "scale");
+    JsonTools::remove_int(dx, theJson, "dx");
+    JsonTools::remove_int(dy, theJson, "dy");
 
-    json = theJson.get("maxdistance", nulljson);
-    if (!json.isNull())
-      maxdistance = json.asDouble();
-
-    json = theJson.get("symbol", nulljson);
-    if (!json.isNull())
-      symbol = json.asString();
-
-    json = theJson.get("scale", nulljson);
-    if (!json.isNull())
-      scale = json.asDouble();
-
-    json = theJson.get("dx", nulljson);
-    if (!json.isNull())
-      dx = json.asInt();
-
-    json = theJson.get("dy", nulljson);
-    if (!json.isNull())
-      dy = json.asInt();
-
-    json = theJson.get("symbols", nulljson);
+    json = JsonTools::remove(theJson, "symbols");
     if (!json.isNull())
       JsonTools::extract_array("symbols", symbols, json, theConfig);
 

@@ -3,6 +3,7 @@
 #include "Projection.h"
 #include "Config.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/math/constants/constants.hpp>
@@ -46,23 +47,19 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
 
     // Extract all the members
 
-    Json::Value nulljson;
     const auto& request = theState.getRequest();
     boost::optional<std::string> v;
 
-    auto json = theJson.get("crs", nulljson);
-    if (!json.isNull())
-      crs = json.asString();
+    // No longer needed here, querystring has been processed
+    std::string qid;
+    JsonTools::remove_string(qid, theJson, "qid");
 
-    json = theJson.get("bboxcrs", nulljson);
-    if (!json.isNull())
-      bboxcrs = json.asString();
+    JsonTools::remove_string(crs, theJson, "crs");
+    JsonTools::remove_string(bboxcrs, theJson, "bboxcrs");
 
     if (crs && *crs == "data")
     {
-      json = theJson.get("size", nulljson);
-      if (!json.isNull())
-        size = json.asDouble();
+      JsonTools::remove_double(size, theJson, "size");
 
       v = request.getParameter("size");
       if (v)
@@ -71,13 +68,8 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
 
     if (!size || *size <= 0)
     {
-      json = theJson.get("xsize", nulljson);
-      if (!json.isNull())
-        xsize = json.asInt();
-
-      json = theJson.get("ysize", nulljson);
-      if (!json.isNull())
-        ysize = json.asInt();
+      JsonTools::remove_int(xsize, theJson, "xsize");
+      JsonTools::remove_int(ysize, theJson, "ysize");
 
       v = request.getParameter("xsize");
       if (v)
@@ -88,37 +80,17 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
         ysize = toInt32(*v);
     }
 
-    json = theJson.get("x1", nulljson);
-    if (!json.isNull())
-      x1 = json.asDouble();
-
-    json = theJson.get("y1", nulljson);
-    if (!json.isNull())
-      y1 = json.asDouble();
-
-    json = theJson.get("x2", nulljson);
-    if (!json.isNull())
-      x2 = json.asDouble();
-
-    json = theJson.get("y2", nulljson);
-    if (!json.isNull())
-      y2 = json.asDouble();
-
-    json = theJson.get("cx", nulljson);
-    if (!json.isNull())
-      cx = json.asDouble();
-
-    json = theJson.get("cy", nulljson);
-    if (!json.isNull())
-      cy = json.asDouble();
-
-    json = theJson.get("resolution", nulljson);
-    if (!json.isNull())
-      resolution = json.asDouble();
+    JsonTools::remove_double(x1, theJson, "x1");
+    JsonTools::remove_double(y1, theJson, "y1");
+    JsonTools::remove_double(x2, theJson, "x2");
+    JsonTools::remove_double(y2, theJson, "y2");
+    JsonTools::remove_double(cx, theJson, "cx");
+    JsonTools::remove_double(cy, theJson, "cy");
+    JsonTools::remove_double(resolution, theJson, "resolution");
 
     // Note: intentionally after cx,cy parsing to enable name overrides
 
-    json = theJson.get("geoid", nulljson);
+    auto json = JsonTools::remove(theJson, "geoid");
     if (!json.isNull())
     {
       const auto& engine = theState.getGeoEngine();
@@ -133,7 +105,7 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
       cy = loc->latitude;
     }
 
-    json = theJson.get("place", nulljson);
+    json = JsonTools::remove(theJson, "place");
     if (!json.isNull())
     {
       const auto& engine = theState.getGeoEngine();
@@ -150,7 +122,7 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
 
     // Note: this must be handled after the CRS variables!
 
-    json = theJson.get("bbox", nulljson);
+    json = JsonTools::remove(theJson, "bbox");
     if (!json.isNull())
     {
       std::string bbox = json.asString();
@@ -197,6 +169,13 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
         x2 = Fmi::stod(parts[2]);
         y2 = Fmi::stod(parts[3]);
       }
+    }
+
+    if (theJson.size() > 0)
+    {
+      auto names = theJson.getMemberNames();
+      auto namelist = boost::algorithm::join(names, ",");
+      throw Fmi::Exception(BCP, "Unknown projection settings: " + namelist);
     }
   }
   catch (...)

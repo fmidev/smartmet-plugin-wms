@@ -1,4 +1,5 @@
 #include "PointValue.h"
+#include "JsonTools.h"
 #include <macgyver/Exception.h>
 #include <macgyver/NearTree.h>
 
@@ -154,13 +155,9 @@ void PointValueOptions::init(Json::Value& theJson)
 {
   try
   {
-    Json::Value nulljson;
+    JsonTools::remove_double(mindistance, theJson, "mindistance");
 
-    auto json = theJson.get("mindistance", nulljson);
-    if (!json.isNull())
-      mindistance = json.asDouble();
-
-    json = theJson.get("priority", nulljson);
+    auto json = JsonTools::remove(theJson, "priority");
     if (!json.isNull())
     {
       if (json.isArray())
@@ -170,9 +167,7 @@ void PointValueOptions::init(Json::Value& theJson)
           priorities->push_back(prio.asInt());
       }
       else
-      {
         priority = json.asString();
-      }
     }
   }
   catch (...)

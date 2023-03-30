@@ -21,6 +21,9 @@ void LegendLabels::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
+    if (theJson.isNull())
+      return;
+
     if (!theJson.isObject())
       throw Fmi::Exception(BCP, "Legend-layer labels JSON must be a map");
 

@@ -19,6 +19,9 @@ void Intersections::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
+    if (theJson.isNull())
+      return;
+
     if (theJson.isArray())
     {
       for (auto& json : theJson)

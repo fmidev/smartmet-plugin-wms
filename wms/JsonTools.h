@@ -18,6 +18,7 @@ namespace JsonTools
 {
 Json::Value remove(Json::Value& theJson, const std::string& theName);
 
+void remove_string(std::string& theValue, Json::Value& theJson, const std::string& theName);
 void remove_string(boost::optional<std::string>& theValue,
                    Json::Value& theJson,
                    const std::string& theName,
@@ -36,6 +37,7 @@ void remove_uint(boost::optional<uint>& theValue,
                  const std::string& theName,
                  const boost::optional<uint>& theDefault = {});
 
+void remove_double(double& theValue, Json::Value& theJson, const std::string& theName);
 void remove_double(boost::optional<double>& theValue,
                    Json::Value& theJson,
                    const std::string& theName,

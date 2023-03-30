@@ -44,8 +44,8 @@ class TimeLayer : public Layer
   // This may be negative and can override attributes:
   boost::optional<int> x;
   boost::optional<int> y;
-  boost::optional<int> longitude;  // longitude, latitude take precedence over x, y
-  boost::optional<int> latitude;
+  boost::optional<double> longitude;  // longitude, latitude take precedence over x, y
+  boost::optional<double> latitude;
 
   // We need a parameter definition in order to find a correct generation / origintime
   // (grid-support)

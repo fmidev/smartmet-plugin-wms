@@ -1,6 +1,7 @@
 #include "FrameLayer.h"
 #include "Config.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "LonLatToXYTransformation.h"
 #include "State.h"
@@ -104,86 +105,59 @@ void FrameLayer::init(Json::Value& theJson,
     itsPrecision = theState.getPrecision("frame");
 
     // Extract member values
-    Json::Value nulljson;
 
-    auto jsonScaleAttributes = theJson.get("scale_attributes", nulljson);
-    if (!jsonScaleAttributes.isNull())
-      itsScaleAttributes.init(jsonScaleAttributes, theConfig);
+    JsonTools::remove_double(itsPrecision, theJson, "precision");
+    JsonTools::remove_string(itsPattern, theJson, "pattern");
 
-    auto jsonDimension = theJson.get("dimension", nulljson);
-    if (jsonDimension.isNull())
+    auto json = JsonTools::remove(theJson, "scale_attributes");
+    if (!json.isNull())
+      itsScaleAttributes.init(json, theConfig);
+
+    auto jdim = JsonTools::remove(theJson, "dimension");
+    if (jdim.isNull())
       throw Fmi::Exception(BCP, "Frame-layer must have dimension element!");
 
-    auto jsonPrecision = theJson.get("precision", nulljson);
-    if (!jsonPrecision.isNull())
-      itsPrecision = jsonPrecision.asDouble();
-
-    auto json = jsonDimension.get("inner_border", nulljson);
+    json = JsonTools::remove(jdim, "inner_border");
     if (json.isNull())
       throw Fmi::Exception(BCP, "Frame-layer must have inner_border element!");
-    std::string innerBorder = json.asString();
-    readBoundingBox(innerBorder, itsInnerBorder);
+    readBoundingBox(json.asString(), itsInnerBorder);
 
-    json = theJson.get("pattern", nulljson);
-    if (!json.isNull())
-      itsPattern = json.asString();
-
-    json = jsonDimension.get("outer_border", nulljson);
+    json = JsonTools::remove(jdim, "outer_border");
     if (!json.isNull())
     {
-      std::string outerBorder = json.asString();
       itsOuterBorder = FrameDimension();
-      readBoundingBox(outerBorder, *itsOuterBorder);
+      readBoundingBox(json.asString(), *itsOuterBorder);
     }
 
-    json = jsonDimension.get("outer_border", nulljson);
+    auto jscale = JsonTools::remove(theJson, "scale");
 
-    auto jsonScale = theJson.get("scale", nulljson);
-    if (!json.isNull())
+    if (!jscale.isNull())
     {
       itsScale = FrameScale();
       itsScale->ticPosition = "outside";
-      json = jsonScale.get("tic_position", nulljson);
-      if (!json.isNull())
-        itsScale->ticPosition = json.asString();
+      JsonTools::remove_string(itsScale->ticPosition, jscale, "tic_position");
+      JsonTools::remove_double(itsScale->labelStep, jscale, "label_step");
+      JsonTools::remove_string(itsScale->labelPosition, jscale, "label_position");
 
-      json = jsonScale.get("small_tic_step", nulljson);
-      if (!json.isNull())
+      if (jscale.isMember("small_tic_step"))
       {
         itsScale->smallTic = TicInfo();
-        itsScale->smallTic->step = json.asDouble();
-        json = jsonScale.get("small_tic_length", nulljson);
-        if (!json.isNull())
-          itsScale->smallTic->length = json.asInt();
+        JsonTools::remove_double(itsScale->smallTic->step, jscale, "small_tic_step");
+        JsonTools::remove_int(itsScale->smallTic->length, jscale, "small_tic_length");
       }
-      json = jsonScale.get("intermediate_tic_step", nulljson);
-      if (!json.isNull())
+      if (jscale.isMember("intermediate_tic_step"))
       {
         itsScale->intermediateTic = TicInfo();
-        itsScale->intermediateTic->step = json.asDouble();
-        json = jsonScale.get("intermediate_tic_length", nulljson);
-        if (!json.isNull())
-          itsScale->intermediateTic->length = json.asInt();
+        JsonTools::remove_double(itsScale->intermediateTic->step, jscale, "intermediate_tic_step");
+        JsonTools::remove_int(itsScale->intermediateTic->length, jscale, "intermediate_tic_length");
       }
-      json = jsonScale.get("long_tic_step", nulljson);
-      if (!json.isNull())
+      if (jscale.isMember("long_tic_step"))
       {
         itsScale->longTic = TicInfo();
-        itsScale->longTic->step = json.asDouble();
-        json = jsonScale.get("long_tic_length", nulljson);
-        if (!json.isNull())
-          itsScale->longTic->length = json.asInt();
+        JsonTools::remove_double(itsScale->longTic->step, jscale, "long_tic_step");
+        JsonTools::remove_int(itsScale->longTic->length, jscale, "long_tic_length");
       }
-      json = jsonScale.get("label_step", nulljson);
-      if (!json.isNull())
-        itsScale->labelStep = json.asDouble();
-      json = jsonScale.get("label_position", nulljson);
-      if (!json.isNull())
-        itsScale->labelPosition = json.asString();
-      else
-        itsScale->labelPosition = "outside";
     }
-
     itsGeom = createFrameGeometry(itsInnerBorder, itsOuterBorder);
     Fmi::SpatialReference epsg4326("EPSG:4326");
     itsGeom->assignSpatialReference(epsg4326.get());

@@ -62,49 +62,20 @@ void IsolabelLayer::init(Json::Value& theJson,
 
     IsolineLayer::init(theJson, theState, theConfig, theProperties);
 
-    Json::Value nulljson;
+    auto json = JsonTools::remove(theJson, "label");
+    label.init(json, theConfig);
 
-    auto json = theJson.get("label", nulljson);
-    if (!json.isNull())
-      label.init(json, theConfig);
+    JsonTools::remove_bool(upright, theJson, "upright");
+    JsonTools::remove_double(max_angle, theJson, "max_angle");
+    JsonTools::remove_double(min_distance_edge, theJson, "min_distance_edge");
+    JsonTools::remove_double(max_distance_edge, theJson, "max_distance_edge");
+    JsonTools::remove_double(min_distance_other, theJson, "min_distance_other");
+    JsonTools::remove_double(min_distance_same, theJson, "min_distance_same");
+    JsonTools::remove_double(min_distance_self, theJson, "min_distance_self");
+    JsonTools::remove_double(max_curvature, theJson, "max_curvature");
+    JsonTools::remove_int(stencil_size, theJson, "stencil_size");
 
-    json = theJson.get("upright", nulljson);
-    if (!json.isNull())
-      upright = json.asBool();
-
-    json = theJson.get("max_angle", nulljson);
-    if (!json.isNull())
-      max_angle = json.asDouble();
-
-    json = theJson.get("min_distance_edge", nulljson);
-    if (!json.isNull())
-      min_distance_edge = json.asDouble();
-
-    json = theJson.get("max_distance_edge", nulljson);
-    if (!json.isNull())
-      max_distance_edge = json.asDouble();
-
-    json = theJson.get("min_distance_other", nulljson);
-    if (!json.isNull())
-      min_distance_other = json.asDouble();
-
-    json = theJson.get("min_distance_same", nulljson);
-    if (!json.isNull())
-      min_distance_same = json.asDouble();
-
-    json = theJson.get("min_distance_self", nulljson);
-    if (!json.isNull())
-      min_distance_self = json.asDouble();
-
-    json = theJson.get("max_curvature", nulljson);
-    if (!json.isNull())
-      max_curvature = json.asDouble();
-
-    json = theJson.get("stencil_size", nulljson);
-    if (!json.isNull())
-      stencil_size = json.asInt();
-
-    json = theJson.get("isobands", nulljson);
+    json = JsonTools::remove(theJson, "isobands");
     if (!json.isNull())
     {
       std::vector<Isoband> isobands;
@@ -118,7 +89,7 @@ void IsolabelLayer::init(Json::Value& theJson,
       }
     }
 
-    json = theJson.get("isovalues", nulljson);
+    json = JsonTools::remove(theJson, "isovalues");
     if (!json.isNull())
     {
       if (json.isArray())
@@ -131,31 +102,42 @@ void IsolabelLayer::init(Json::Value& theJson,
       {
         // { start, stop, step=1 }
 
-        auto start = json.get("start", nulljson);
-        auto stop = json.get("stop", nulljson);
-        auto step = json.get("step", nulljson);
-        if (start.isNull() || stop.isNull())
+        boost::optional<double> start;
+        boost::optional<double> stop;
+        double step = 1.0;
+        JsonTools::remove_double(start, json, "start");
+        JsonTools::remove_double(stop, json, "stop");
+        JsonTools::remove_double(step, json, "step");
+
+        if (!start || !stop)
           throw Fmi::Exception(BCP, "Isolabel-layer isovalues start or stop setting missing");
 
-        double iso1 = start.asDouble();
-        double iso2 = stop.asDouble();
-        double isostep = (step.isNull() ? 1.0 : step.asDouble());
+        if (json.size() > 0)
+        {
+          auto names = json.getMemberNames();
+          auto namelist = boost::algorithm::join(names, ",");
+          throw Fmi::Exception(
+              BCP, "Unknown member variables in Isolabel layer isovalues setting: " + namelist);
+        }
+
+        double iso1 = *stop;
+        double iso2 = *start;
 
         if (iso2 < iso1)
           throw Fmi::Exception(
               BCP, "Isolabel-layer isovalues stop value must be greater than the start value");
-        if (isostep < 0)
+        if (step < 0)
           throw Fmi::Exception(BCP, "Isolabel-layer step value must be greater than zero");
-        if ((iso2 - iso1) / isostep > 1000)
+        if ((iso2 - iso1) / step > 1000)
           throw Fmi::Exception(BCP, "Isolabel-layer generates to many isovalues (> 1000)");
 
         // The end condition is used to make sure we do not get both 999.99999 and 1000.000 due to
         // numerical inaccuracies.
         double value = iso1;
-        while (value < iso2 - isostep / 2)
+        while (value < iso2 - step / 2)
         {
           isovalues.push_back(value);
-          value += isostep;
+          value += step;
         }
         isovalues.push_back(iso2);
       }

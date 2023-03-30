@@ -22,6 +22,9 @@ void Symbols::init(Json::Value& theJson, const State& theState)
 {
   try
   {
+    if (theJson.isNull())
+      return;
+
     if (!theJson.isObject())
       throw Fmi::Exception(BCP, "Styles JSON must be a JSON object (name-value pairs)");
 

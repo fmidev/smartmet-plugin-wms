@@ -52,7 +52,7 @@ struct FrameScale
   boost::optional<TicInfo> smallTic;
   boost::optional<TicInfo> intermediateTic;
   boost::optional<TicInfo> longTic;
-  std::string ticPosition;  // inside or outside of inner frame
+  std::string ticPosition = "outside";  // inside or outside of inner frame
   boost::optional<double> labelStep;
   boost::optional<std::string> labelPosition;  // inside, outside of inner frame
 

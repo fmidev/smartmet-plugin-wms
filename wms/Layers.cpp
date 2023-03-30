@@ -24,6 +24,9 @@ void Layers::init(Json::Value& theJson,
 {
   try
   {
+    if (theJson.isNull())
+      return;
+
     if (!theJson.isArray())
       throw Fmi::Exception(BCP, "Layers JSON is not a JSON array");
 

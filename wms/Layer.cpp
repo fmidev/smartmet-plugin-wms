@@ -45,43 +45,28 @@ void Layer::init(Json::Value& theJson,
   try
   {
     Properties::init(theJson, theState, theConfig, theProperties);
-    Json::Value nulljson;
 
-    auto json = theJson.get("qid", nulljson);
-    if (!json.isNull())
-      qid = json.asString();
+    JsonTools::remove_string(qid, theJson, "qid");
+    JsonTools::remove_double(minresolution, theJson, "minresolution");
+    JsonTools::remove_double(maxresolution, theJson, "maxresolution");
 
-    json = theJson.get("minresolution", nulljson);
-    if (!json.isNull())
-      minresolution = json.asDouble();
-
-    json = theJson.get("maxresolution", nulljson);
-    if (!json.isNull())
-      maxresolution = json.asDouble();
-
-    json = theJson.get("enable", nulljson);
+    auto json = JsonTools::remove(theJson, "enable");
     if (!json.isNull())
       JsonTools::extract_set("enable", enable, json);
 
-    json = theJson.get("disable", nulljson);
+    json = JsonTools::remove(theJson, "disable");
     if (!json.isNull())
       JsonTools::extract_set("disable", disable, json);
 
-    json = theJson.get("css", nulljson);
-    if (!json.isNull())
-      css = json.asString();
+    JsonTools::remove_string(css, theJson, "css");
 
-    json = theJson.get("attributes", nulljson);
-    if (!json.isNull())
-      attributes.init(json, theConfig);
+    json = JsonTools::remove(theJson, "attributes");
+    attributes.init(json, theConfig);
 
-    json = theJson.get("layers", nulljson);
-    if (!json.isNull())
-      layers.init(json, theState, theConfig, *this);
+    json = JsonTools::remove(theJson, "layers");
+    layers.init(json, theState, theConfig, *this);
 
-    json = theJson.get("layer_type", nulljson);
-    if (!json.isNull())
-      type = json.asString();
+    JsonTools::remove_string(type, theJson, "layer_type");
 
     if (producer)
     {

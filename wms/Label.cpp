@@ -135,6 +135,9 @@ void Label::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
+    if (theJson.isNull())
+      return;
+
     if (!theJson.isObject())
       throw Fmi::Exception(BCP, "JSON is not a JSON object");
 

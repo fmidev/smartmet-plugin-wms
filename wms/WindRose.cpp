@@ -25,31 +25,28 @@ void WindRose::init(Json::Value& theJson, const Config& theConfig)
     if (!theJson.isObject())
       throw Fmi::Exception(BCP, "WindRose JSON is not a JSON hash");
 
-    // Iterate through all the members
+    JsonTools::remove_int(radius, theJson, "radius");
+    JsonTools::remove_int(minpercentage, theJson, "minpercentage");
+    JsonTools::remove_int(sectors, theJson, "sectors");
+    JsonTools::remove_string(symbol, theJson, "symbol");
+    JsonTools::remove_string(parameter, theJson, "parameter");
 
-    const auto members = theJson.getMemberNames();
-    for (const auto& name : members)
+    auto json = JsonTools::remove(theJson, "attributes");
+    attributes.init(json, theConfig);
+
+    json = JsonTools::remove(theJson, "connector");
+    if (!json.isNull())
+      (connector = Connector())->init(json, theConfig);
+
+    json = JsonTools::remove(theJson, "limits");
+    if (!json.isNull())
+      JsonTools::extract_array("limits", limits, json, theConfig);
+
+    if (theJson.size() > 0)
     {
-      Json::Value& json = theJson[name];
-
-      if (name == "radius")
-        radius = json.asInt();
-      else if (name == "minpercentage")
-        minpercentage = json.asInt();
-      else if (name == "sectors")
-        sectors = json.asInt();
-      else if (name == "symbol")
-        symbol = json.asString();
-      else if (name == "attributes")
-        attributes.init(json, theConfig);
-      else if (name == "connector")
-        (connector = Connector())->init(json, theConfig);
-      else if (name == "parameter")
-        parameter = json.asString();
-      else if (name == "limits")
-        JsonTools::extract_array("limits", limits, json, theConfig);
-      else
-        throw Fmi::Exception(BCP, "WindRose does not have a setting named '" + name + "'");
+      auto names = theJson.getMemberNames();
+      auto namelist = boost::algorithm::join(names, ",");
+      throw Fmi::Exception(BCP, "Unknown windrose settings: " + namelist);
     }
   }
   catch (...)

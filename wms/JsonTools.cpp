@@ -21,6 +21,13 @@ Json::Value remove(Json::Value& theJson, const std::string& theName)
   return value;
 }
 
+void remove_string(std::string& theValue, Json::Value& theJson, const std::string& theName)
+{
+  auto json = remove(theJson, theName);
+  if (!json.isNull())
+    theValue = json.asString();
+}
+
 void remove_string(boost::optional<std::string>& theValue,
                    Json::Value& theJson,
                    const std::string& theName,
@@ -71,6 +78,13 @@ void remove_uint(boost::optional<uint>& theValue,
     theValue = json.asUInt();
   else if (theDefault)
     theValue = theDefault;
+}
+
+void remove_double(double& theValue, Json::Value& theJson, const std::string& theName)
+{
+  auto json = remove(theJson, theName);
+  if (!json.isNull())
+    theValue = json.asDouble();
 }
 
 void remove_double(boost::optional<double>& theValue,

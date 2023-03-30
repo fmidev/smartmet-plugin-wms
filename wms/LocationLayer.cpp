@@ -57,25 +57,16 @@ void LocationLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_string(keyword, theJson, "keyword");
+    JsonTools::remove_double(mindistance, theJson, "mindistance");
 
-    auto json = theJson.get("keyword", nulljson);
-    if (!json.isNull())
-      keyword = json.asString();
-
-    json = theJson.get("mindistance", nulljson);
-    if (!json.isNull())
-      mindistance = json.asDouble();
-
-    json = theJson.get("countries", nulljson);
+    auto json = JsonTools::remove(theJson, "countries");
     if (!json.isNull())
       JsonTools::extract_set("countries", countries, json);
 
-    json = theJson.get("symbol", nulljson);
-    if (!json.isNull())
-      symbol = json.asString();
+    JsonTools::remove_string(symbol, theJson, "symbol");
 
-    json = theJson.get("symbols", nulljson);
+    json = JsonTools::remove(theJson, "symbols");
     if (!json.isNull())
     {
       if (json.isArray())

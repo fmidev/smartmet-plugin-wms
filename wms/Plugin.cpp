@@ -452,6 +452,11 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
     if (print_params)
       print(product.getGridParameterInfo(theState));
 
+    {
+      Json::StyledWriter writer;
+      std::cout << fmt::format("Expanded {} Spine::Json:\n{}\n", product_name, writer.write(json));
+    }
+
     // Calculate hash for the product
 
     auto product_hash = product.hash_value(theState);
@@ -1812,6 +1817,11 @@ WMSQueryStatus Dali::Plugin::wmsGetMapQuery(State &theState,
       // And initialize the product specs from the JSON
 
       product.init(json, theState, itsConfig);
+
+      {
+        Json::StyledWriter writer;
+        std::cout << fmt::format("Expanded Spine::JSON:\n{}\n", writer.write(json));
+      }
 
       // If the desired type is not defined in the JSON, the state object knows from earlier code
       // what format to output (HTTP request or default format), and we can not set the Product to
