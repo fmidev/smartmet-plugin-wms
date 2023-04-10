@@ -7,6 +7,7 @@
 #include "Plugin.h"
 #include "CaseInsensitiveComparator.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "Mime.h"
 #include "ParameterInfo.h"
 #include "Product.h"
@@ -82,6 +83,73 @@ const std::string &check_attack(const std::string &theName)
   }
 }
 
+// Keys accepted by Product and Properties classes:
+
+const std::set<std::string, Spine::HTTP::ParamMap::key_compare> allowed_keys = {
+    "attributes", "defs",         "forecastNumber", "forecastType", "geometryId",
+    "height",     "interval_end", "interval_start", "language",     "level",
+    "level",      "levelId",      "levelid",        "marginsclip",  "origintime",
+    "png",        "producer",     "projection",     "source",       "source",
+    "svg_tmpl",   "time",         "time_offset",    "timestep",     "title",
+    "type",       "tz",           "views",          "width",        "xmargin",
+    "ymargin"};
+
+// Keep only acceptable querystring replacements (allowed keys or names with dots)
+
+Spine::HTTP::ParamMap extract_valid_parameters(const Spine::HTTP::ParamMap &theParams)
+{
+  Spine::HTTP::ParamMap ret;
+
+  for (const auto &name_value : theParams)
+  {
+    const auto &name = name_value.first;
+    bool has_dot = (name.find('.') != std::string::npos);
+    if (has_dot || allowed_keys.find(name) != allowed_keys.end())
+      ret.insert(name_value);
+  }
+
+  return ret;
+}
+
+void check_remaining_dali_json(Json::Value &json, const std::string &name)
+{
+  std::vector<std::string> deletions{"abstract", "refs", "styles"};
+
+  for (const auto &name : deletions)
+    static_cast<void>(JsonTools::remove(json, name));
+
+  if (!json.empty())
+  {
+    Json::StyledWriter writer;
+    std::cout << fmt::format("Remaining Dali json for product {}:\n{}\n", name, writer.write(json));
+  }
+}
+
+void check_remaining_wms_json(Json::Value &json, const std::string &name)
+{
+  std::vector<std::string> deletions{"abstract",
+                                     "cascaded",
+                                     "fixed_height",
+                                     "fixed_width",
+                                     "intervals",
+                                     "keyword",
+                                     "legend_url_layer",
+                                     "no_subsets",
+                                     "opaque",
+                                     "queryable",
+                                     "refs",
+                                     "styles"};
+
+  for (const auto &name : deletions)
+    static_cast<void>(JsonTools::remove(json, name));
+
+  if (!json.empty())
+  {
+    Json::StyledWriter writer;
+    std::cout << fmt::format("Remaining WMS json for product {}:\n{}\n", name, writer.write(json));
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Init margins from config defaults if necessary
@@ -108,7 +176,7 @@ void init_wms_margins(Json::Value &json, int default_margin)
  */
 // ----------------------------------------------------------------------
 
-void update_legend_expiration(State &theState, int theExpirationTime)
+void update_legend_expiration(const State &theState, int theExpirationTime)
 {
   if (theExpirationTime > 0)
   {
@@ -409,6 +477,8 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
     std::string product_name = Spine::required_string(
         theRequest.getParameter("product"), "Product configuration option 'product' not given");
 
+    theState.setName(theState.getCustomer() + "/" + product_name);
+
     auto json = getProductJson(theRequest, theState, product_name, json_stage);
 
     // Debugging
@@ -452,10 +522,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
     if (print_params)
       print(product.getGridParameterInfo(theState));
 
-    {
-      Json::StyledWriter writer;
-      std::cout << fmt::format("Expanded {} Spine::Json:\n{}\n", product_name, writer.write(json));
-    }
+    check_remaining_dali_json(json, theState.getName());
 
     // Calculate hash for the product
 
@@ -503,10 +570,12 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
     // Build the response CDT
     CTPP::CDT hash(CTPP::CDT::HASH_VAL);
     {
-      std::string report = "Product::generate finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
+      {
+        std::string report = "Product::generate finished in %t sec CPU, %w sec real\n";
         mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      }
       product.generate(hash, theState);
     }
 
@@ -522,10 +591,12 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
     std::string log;
     try
     {
-      std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
+      {
+        std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
         mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      }
       tmpl->process(hash, output, log);
     }
     catch (const CTPP::CTPPException &e)
@@ -600,10 +671,12 @@ void Plugin::formatResponse(const std::string &theSvg,
     else
     {
       // Convert buffer content
-      std::string report = "svg_to_" + theType + " finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (usetimer)
+      {
+        std::string report = "svg_to_" + theType + " finished in %t sec CPU, %w sec real\n";
         mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      }
 
       boost::shared_ptr<std::string> buffer;
       if (theType == "png")
@@ -707,7 +780,8 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
             std::string firstMessage = wmsException.what();
             boost::algorithm::replace_all(firstMessage, "\n", " ");
-            firstMessage = firstMessage.substr(0, 300);
+            if (firstMessage.size() > 300)
+              firstMessage.resize(300);
             theResponse.setHeader("X-WMS-Error", firstMessage);
 
             if (exceptionCode == WMS_LAYER_NOT_QUERYABLE ||
@@ -783,7 +857,8 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
       std::string firstMessage = exception.what();
       boost::algorithm::replace_all(firstMessage, "\n", " ");
-      firstMessage = firstMessage.substr(0, 300);
+      if (firstMessage.size() > 300)
+        firstMessage.resize(300);
       theResponse.setHeader("X-Dali-Error", firstMessage);
     }
   }
@@ -1130,7 +1205,9 @@ Json::Value Plugin::getProductJson(const Spine::HTTP::Request &theRequest,
 
     // Replace references (json: and ref:) from query string options
 
-    Spine::JSON::replaceReferences(json, theRequest.getParameterMap());
+    auto params = extract_valid_parameters(theRequest.getParameterMap());
+
+    Spine::JSON::replaceReferences(json, params);
 
     if (stage == 2)
       return json;
@@ -1154,7 +1231,7 @@ Json::Value Plugin::getProductJson(const Spine::HTTP::Request &theRequest,
 
     // Modify variables as requested (not reference substitutions)
 
-    Spine::JSON::expand(json, theRequest.getParameterMap(), "", false);
+    Spine::JSON::expand(json, params, "", false);
 
     return json;
   }
@@ -1767,6 +1844,9 @@ WMSQueryStatus Dali::Plugin::wmsGetMapQuery(State &theState,
     {
       WMS::WMSGetMap wmsGetMapRequest(*itsWMSConfig);
       wmsGetMapRequest.parseHTTPRequest(*itsQEngine, thisRequest);
+
+      theState.setName(*thisRequest.getParameter("LAYERS"));
+
       auto json_layers = wmsGetMapRequest.jsons();
       auto styles = wmsGetMapRequest.styles();
 
@@ -1817,11 +1897,7 @@ WMSQueryStatus Dali::Plugin::wmsGetMapQuery(State &theState,
       // And initialize the product specs from the JSON
 
       product.init(json, theState, itsConfig);
-
-      {
-        Json::StyledWriter writer;
-        std::cout << fmt::format("Expanded Spine::JSON:\n{}\n", writer.write(json));
-      }
+      check_remaining_wms_json(json, theState.getName());
 
       // If the desired type is not defined in the JSON, the state object knows from earlier code
       // what format to output (HTTP request or default format), and we can not set the Product to
@@ -2064,10 +2140,12 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
   std::string log;
   try
   {
-    std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
     if (theState.useTimer())
+    {
+      std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
       mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
     tmpl->process(hash, output, log);
   }
   catch (...)
@@ -2185,8 +2263,7 @@ void Dali::Plugin::wmsPreprocessJSON(State &theState,
   if (!isCnfRequest || (theStage == 0 || theStage > 3))
   {
     // Do querystring replacements, but remove dangerous substitutions first
-    auto params = theRequest.getParameterMap();
-    params.erase("styles");
+    auto params = extract_valid_parameters(theRequest.getParameterMap());
     Spine::JSON::expand(theJson, params, "", false);
   }
 }
@@ -2265,10 +2342,12 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
     std::string log;
     try
     {
-      std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
+      {
+        std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
         mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      }
       tmpl->process(hash, output, log);
     }
     catch (...)

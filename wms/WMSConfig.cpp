@@ -161,11 +161,11 @@ bool prepareLegendGraphic(Product& theProduct)
   boost::shared_ptr<Layer> legendLayer;
 
   bool legendLayerFound = false;
-  for (auto& view : views)
+  for (const auto& view : views)
   {
     std::list<boost::shared_ptr<Layer>> layers = view->layers.layers;
 
-    for (auto& layer : layers)
+    for (const auto& layer : layers)
     {
       std::list<boost::shared_ptr<Layer>> sublayers = layer->layers.layers;
 
@@ -179,10 +179,8 @@ bool prepareLegendGraphic(Product& theProduct)
         }
       }
 
-      for (auto& sublayer : sublayers)
-      {
+      for (const auto& sublayer : sublayers)
         std::list<boost::shared_ptr<Layer>> sublayers2 = sublayer->layers.layers;
-      }
     }
     if (legendLayerFound)
       break;

@@ -55,7 +55,7 @@ class WMSLayerHierarchy
 #endif
 
   ~WMSLayerHierarchy() = default;
-  WMSLayerHierarchy(std::string n);
+  explicit WMSLayerHierarchy(std::string n);
   WMSLayerHierarchy() = delete;
   WMSLayerHierarchy(const WMSLayerHierarchy& other) = delete;
   WMSLayerHierarchy(WMSLayerHierarchy&& other) = delete;

@@ -1,5 +1,6 @@
 #include "TranslationLayer.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "State.h"
 
@@ -32,13 +33,9 @@ void TranslationLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_string(tag, theJson, "tag");
 
-    auto json = theJson.get("tag", nulljson);
-    if (!json.isNull())
-      tag = json.asString();
-
-    json = theJson.get("translations", nulljson);
+    auto json = JsonTools::remove(theJson, "translations");
     if (!json.isNull())
     {
       if (!json.isObject())

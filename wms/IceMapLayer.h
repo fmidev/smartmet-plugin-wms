@@ -48,7 +48,7 @@ class IceMapLayer : public PostGISLayerBase
                        CTPP::CDT& theGlobals,
                        CTPP::CDT& theLayersCdt,
                        CTPP::CDT& theGroupCdt,
-                       State& theState) const;
+                       const State& theState) const;
   void handleNamedLocation(const Fmi::Feature& theResultItem,
                            const PostGISLayerFilter& theFilter,
                            CTPP::CDT& theGlobals,
@@ -60,7 +60,7 @@ class IceMapLayer : public PostGISLayerBase
                    const PostGISLayerFilter& theFilter,
                    CTPP::CDT& theGlobals,
                    CTPP::CDT& theLayersCdt,
-                   State& theState) const;
+                   const State& theState) const;
 
   void handleMeanTemperature(const Fmi::Feature& theResultItem,
                              const PostGISLayerFilter& theFilter,
@@ -80,7 +80,7 @@ class IceMapLayer : public PostGISLayerBase
                     CTPP::CDT& theGlobals,
                     CTPP::CDT& theGroupCdt,
                     CTPP::CDT& theLayersCdt,
-                    State& theState) const;
+                    const State& theState) const;
 
   static void addLocationName(double theXPos,
                               double theYPos,

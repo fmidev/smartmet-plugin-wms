@@ -42,7 +42,7 @@ class Layers
                      State& theState,
                      Projection& projection);
   boost::optional<std::string> getProjectionParameter();
-  void setProjection(Projection& projection);
+  void setProjection(const Projection& projection);
 
   std::size_t hash_value(const State& theState) const;
 

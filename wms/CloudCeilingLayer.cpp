@@ -4,6 +4,7 @@
 #include "CloudCeilingLayer.h"
 #include "Config.h"
 #include "Iri.h"
+#include "JsonTools.h"
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
@@ -201,28 +202,21 @@ void CloudCeilingLayer::init(Json::Value& theJson,
 
     NumberLayer::init(theJson, theState, theConfig, theProperties);
 
-    Json::Value nulljson;
     // Stations of the layer
-    Json::Value json = theJson.get("keyword", nulljson);
-    if (!json.isNull())
-      itsKeyword = json.asString();
+    JsonTools::remove_string(itsKeyword, theJson, "keyword");
 
     // If keyword is missing try 'fmisids'
     if (itsKeyword.empty())
     {
-      json = theJson.get("fmisid", nulljson);
+      auto json = JsonTools::remove(theJson, "fmisid");
       if (!json.isNull())
       {
         if (json.isString())
-        {
           itsFMISIDs.push_back(Fmi::stoi(json.asString()));
-        }
         else if (json.isArray())
         {
           for (const auto& j : json)
-          {
             itsFMISIDs.push_back(Fmi::stoi(j.asString()));
-          }
         }
         else
           throw Fmi::Exception(BCP, "fmisid value must be an array of strings or a string");
@@ -241,14 +235,16 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
   {
     // Time execution
 
-    std::string report = "CloudCeilingLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "CloudCeilingLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Establish the data
 
-    bool use_observations = true;
+    const bool use_observations = true;
 
     // Make sure position generation is initialized
 

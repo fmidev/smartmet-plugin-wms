@@ -65,8 +65,8 @@ struct LegendGraphicLayout
 class WMSLegendGraphicSettings
 {
  public:
-  WMSLegendGraphicSettings(const libconfig::Config& config);
-  WMSLegendGraphicSettings(bool initDefaults = false);
+  explicit WMSLegendGraphicSettings(const libconfig::Config& config);
+  explicit WMSLegendGraphicSettings(bool initDefaults = false);
   void merge(const WMSLegendGraphicSettings& settings);
 
   LegendGraphicLayout layout;

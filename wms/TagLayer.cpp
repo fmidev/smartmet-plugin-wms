@@ -1,5 +1,6 @@
 #include "TagLayer.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "LonLatToXYTransformation.h"
 #include "State.h"
@@ -35,13 +36,10 @@ void TagLayer::init(Json::Value& theJson,
     // Extract member values
 
     type = "tag";
-    Json::Value nulljson;
 
-    auto json = theJson.get("tag", nulljson);
-    if (!json.isNull())
-      tag = json.asString();
+    JsonTools::remove_string(tag, theJson, "tag");
 
-    json = theJson.get("cdata", nulljson);
+    auto json = JsonTools::remove(theJson, "cdata");
     if (!json.isNull())
       (cdata = Text())->init(json, theConfig);
   }

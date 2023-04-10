@@ -9,6 +9,7 @@
 #include "WMSObservationLayer.h"
 #endif
 #include <engines/querydata/Engine.h>
+#include <fmt/format.h>
 #include <grid-files/common/GeneralFunctions.h>
 #include <macgyver/Exception.h>
 #include <set>
@@ -33,8 +34,16 @@ enum class WMSLayerType
   NotWMSLayer
 };
 
-std::set<std::string> querydata_layers = {
-    "arrow", "isoband", "isoline", "isolabel", "number", "symbol", "tag", "location", "stream"};
+std::set<std::string> querydata_layers = {"arrow",
+                                          "isoband",
+                                          "isoline",
+                                          "isolabel",
+                                          "null",
+                                          "number",
+                                          "symbol",
+                                          "tag",
+                                          "location",
+                                          "stream"};
 
 std::set<std::string> postgis_layers = {"postgis", "icemap"};
 
@@ -146,14 +155,12 @@ WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
 
 // This function deduces the WMS product type. In case of several layer definitions in the product
 // the most significant is chosen
-WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
+WMSLayerType determineProductType(const Json::Value& root, Json::Value& layerRef)
 {
   try
   {
     Json::Value nulljson;
-    Json::Value views = jsonRoot.get("views", nulljson);
-
-    Json::Value title = jsonRoot.get("title", nulljson);
+    Json::Value views = root.get("views", nulljson);
 
     // browse layers and if 'postgis'-layer is found type is WMSLayerType::PostGISLayer
     // otherwise it is WMSLayerType::QueryDataLayer
@@ -171,7 +178,7 @@ WMSLayerType determineProductType(Json::Value& jsonRoot, Json::Value& layerRef)
     if (layer_type != WMSLayerType::NotWMSLayer)
       return layer_type;
 
-    Json::Value hidden = jsonRoot.get("hidden", nulljson);
+    Json::Value hidden = root.get("hidden", nulljson);
     if (!hidden.isNull() && hidden.asBool())
       return WMSLayerType::QueryDataLayer;
 
@@ -194,6 +201,8 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 {
   try
   {
+    using namespace Dali::JsonTools;
+
     Json::Value root = theWMSConfig.getJsonCache().get(theFileName);
 
     const bool use_wms = true;
@@ -206,34 +215,35 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 
     SharedWMSLayer layer;
     Json::Value parsedLayer;
-    WMSLayerType layerType = WMSLayerType::NotWMSLayer;
 
     // producer timestep given in root level
-    std::string producer = root["producer"].asString();
-    std::string timestep = root["timestep"].asString();
+    std::string producer;
+    remove_string(producer, root, "producer");
 
-    std::set<std::string> obsProducers = theWMSConfig.getObservationProducers();
+    std::string timestep;
+    remove_string(timestep, root, "timestep");
+
+    std::string parameter;
+    remove_string(parameter, root, "parameter");
 
     // observation layer is reasoned from producer,
     // other layers from layer type as defined in product file
+
+    auto obsProducers = theWMSConfig.getObservationProducers();
+
+    WMSLayerType layerType = WMSLayerType::NotWMSLayer;
     if (obsProducers.find(producer) != obsProducers.end())
       layerType = WMSLayerType::ObservationLayer;
     else
       layerType = determineProductType(root, parsedLayer);
 
-    Json::Value nulljson;
-    boost::optional<std::string> source;
     uint geometryId = 0;
-    std::string parameter;
+    remove_uint(geometryId, root, "geometryId");
 
-    auto json = root.get("parameter", nulljson);
-    if (!json.isNull())
-      parameter = json.asString();
-
-    json = root.get("source", nulljson);
-    if (!json.isNull())
+    boost::optional<std::string> source;
+    remove_string(source, root, "source");
+    if (source)
     {
-      source = json.asString();
       if (*source == "grid")
       {
         layerType = WMSLayerType::GridDataLayer;
@@ -245,19 +255,14 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
           producer = partList[0];
           geometryId = toUInt32(partList[1]);
         }
-
-        json = root.get("geometryId", nulljson);
-        if (!json.isNull())
-          geometryId = json.asInt();
       }
     }
 
-    std::vector<interval_dimension_item> intervals;
     boost::optional<int> interval_default;
-    json = root.get("interval", nulljson);
-    if (!json.isNull())
-      interval_default = json.asInt();
-    json = root.get("intervals", nulljson);
+    remove_int(interval_default, root, "interval");
+
+    std::vector<interval_dimension_item> intervals;
+    auto json = remove(root, "intervals");
     if (!json.isNull())
     {
       if (!json.isArray())
@@ -278,15 +283,9 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
           boost::optional<int> interval_start;
           boost::optional<int> interval_end;
           bool interval_default = false;
-          auto json_value = json[i].get("interval_start", nulljson);
-          if (!json_value.isNull())
-            interval_start = json_value.asInt();
-          json_value = json[i].get("interval_end", nulljson);
-          if (!json_value.isNull())
-            interval_end = json_value.asInt();
-          json_value = json[i].get("default", nulljson);
-          if (!json_value.isNull())
-            interval_default = json_value.asBool();
+          remove_int(interval_start, json[i], "interval_start");
+          remove_int(interval_end, json[i], "interval_end");
+          remove_bool(interval_default, json[i], "default");
 
           if (interval_start || interval_end)
             intervals.emplace_back(interval_dimension_item(interval_start ? *interval_start : 0,
@@ -299,12 +298,8 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     {
       boost::optional<int> interval_start;
       boost::optional<int> interval_end;
-      json = root.get("interval_start", nulljson);
-      if (!json.isNull())
-        interval_start = json.asInt();
-      json = root.get("interval_end", nulljson);
-      if (!json.isNull())
-        interval_end = json.asInt();
+      remove_int(interval_start, root, "interval_start");
+      remove_int(interval_end, root, "interval_end");
       if (interval_start || interval_end)
         intervals.emplace_back(interval_dimension_item(
             interval_start ? *interval_start : 0, interval_end ? *interval_end : 0, true));
@@ -366,53 +361,23 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     // WMS GetCapability settings
 
     // for hiding the layer from GetCapabilities queries for example if the layer is not public
-    json = root.get("hidden", nulljson);
-    if (!json.isNull())
-      layer->hidden = json.asBool();
 
-    json = root.get("disable_wms_time_dimension", nulljson);
-    if (!json.isNull())
-      layer->timeDimensionDisabled = json.asBool();
+    Json::Value nulljson;
 
-    json = root.get("name", nulljson);
-    if (!json.isNull())
-      layer->name = json.asString();
-    else
-      layer->name = theNamespace + ":" + p.stem().string();
+    remove_bool(layer->hidden, root, "hidden");
+    remove_bool(layer->timeDimensionDisabled, root, "disable_wms_time_dimension");
+    layer->name = theNamespace + ":" + p.stem().string();
+    remove_string(layer->name, root, "name");
+    remove_string(layer->title, root, "title");
+    remove_string(layer->abstract, root, "abstract");
+    remove_int(layer->opaque, root, "opaque");
+    remove_int(layer->queryable, root, "queryable");
+    remove_int(layer->cascaded, root, "cascaded");
+    remove_int(layer->no_subsets, root, "no_subsets");
+    remove_int(layer->fixed_width, root, "fixed_width");
+    remove_int(layer->fixed_height, root, "fixed_height");
 
-    json = root.get("title", nulljson);
-    if (!json.isNull())
-      layer->title = json.asString();
-
-    json = root.get("abstract", nulljson);
-    if (!json.isNull())
-      layer->abstract = json.asString();
-
-    json = root.get("opaque", nulljson);
-    if (!json.isNull())
-      layer->opaque = json.asBool();
-
-    json = root.get("queryable", nulljson);
-    if (!json.isNull())
-      layer->queryable = json.asBool();
-
-    json = root.get("cascaded", nulljson);
-    if (!json.isNull())
-      layer->cascaded = json.asBool();
-
-    json = root.get("no_subsets", nulljson);
-    if (!json.isNull())
-      layer->no_subsets = json.asBool();
-
-    json = root.get("fixed_width", nulljson);
-    if (!json.isNull())
-      layer->fixed_width = json.asInt();
-
-    json = root.get("fixed_height", nulljson);
-    if (!json.isNull())
-      layer->fixed_height = json.asInt();
-
-    json = root.get("keyword", nulljson);
+    json = remove(root, "keyword");
     if (!json.isNull())
     {
       layer->keywords = std::set<std::string>();
@@ -420,7 +385,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         layer->keywords->insert(json.asString());
       else if (json.isArray())
       {
-        for (const auto& j : json)
+        for (auto& j : json)
           layer->keywords->insert(j.asString());
       }
       else
@@ -428,19 +393,19 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
                              p.string() + " keyword value must be an array of strings or a string");
     }
 
-    json = root.get("crs", nulljson);
+    json = remove(root, "crs");
     if (!json.isNull())
     {
       if (!json.isObject())
         throw Fmi::Exception(BCP, "top level crs setting must be a group");
 
-      auto j = json.get("enable", nulljson);
+      auto j = remove(json, "enable");
       if (!j.isNull())
-        Dali::JsonTools::extract_set("crs.enable", layer->enabled_refs, j);
+        extract_set("crs.enable", layer->enabled_refs, j);
 
-      j = json.get("disable", nulljson);
+      j = remove(json, "disable");
       if (!j.isNull())
-        Dali::JsonTools::extract_set("crs.disable", layer->disabled_refs, j);
+        extract_set("crs.disable", layer->disabled_refs, j);
     }
 
     // Update metadata from DB etc
@@ -453,8 +418,10 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 
     // And extra references supported by the layer itself
 
-    Json::Value projection = root["projection"];
-    std::string mapcrs = projection["crs"].asString();
+    auto projection = remove(root, "projection");
+
+    std::string mapcrs;
+    remove_string(mapcrs, projection, "crs");
 
 #if 0  // What's this for? All native projections should be on the supported list anyway.
     // Validate namespace
@@ -471,6 +438,18 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     // Add interval dimension
     for (const auto& item : intervals)
       layer->addIntervalDimension(item.interval_start, item.interval_end, item.interval_default);
+
+#if 0
+    // This seems useless here since initializing a WMS layer for GetCapabilities purposes
+    // does not mean all layer settings are validated. Instead, an actual load of the layer
+    // needs to happen.
+    if (!root.empty())
+    {
+      Json::StyledWriter writer;
+      std::cout << fmt::format(
+          "Remaining JSON for WMS layer {}:\n{}\n", theFileName, writer.write(root));
+    }
+#endif
 
     return layer;
   }

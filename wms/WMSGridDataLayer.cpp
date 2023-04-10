@@ -10,7 +10,7 @@ namespace Plugin
 {
 namespace WMS
 {
-std::vector<boost::posix_time::ptime> get_ptime_vector(std::set<std::string>& contentTimeList)
+std::vector<boost::posix_time::ptime> get_ptime_vector(const std::set<std::string>& contentTimeList)
 {
   std::vector<boost::posix_time::ptime> ret;
   ret.reserve(contentTimeList.size());
@@ -21,7 +21,7 @@ std::vector<boost::posix_time::ptime> get_ptime_vector(std::set<std::string>& co
   return ret;
 }
 
-time_t even_timesteps(std::set<std::string>& contentTimeList)
+time_t even_timesteps(const std::set<std::string>& contentTimeList)
 {
   try
   {

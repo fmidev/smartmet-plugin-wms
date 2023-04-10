@@ -376,35 +376,37 @@ void extractGeometry(const OGRGeometry* geometry, uint mode, GInfo& info)
     switch (id)
     {
       case wkbPoint:
-        extractGeometry_point((OGRPoint*)geometry, mode, info);
+        extractGeometry_point(dynamic_cast<const OGRPoint*>(geometry), mode, info);
         break;
 
       case wkbLineString:
-        extractGeometry_lineString((OGRLineString*)geometry, mode, info);
+        extractGeometry_lineString(dynamic_cast<const OGRLineString*>(geometry), mode, info);
         break;
 
       case wkbLinearRing:
-        extractGeometry_linearRing((OGRLinearRing*)geometry, mode, info);
+        extractGeometry_linearRing(dynamic_cast<const OGRLinearRing*>(geometry), mode, info);
         break;
 
       case wkbPolygon:
-        extractGeometry_polygon((OGRPolygon*)geometry, mode, info);
+        extractGeometry_polygon(dynamic_cast<const OGRPolygon*>(geometry), mode, info);
         break;
 
       case wkbMultiPoint:
-        extractGeometry_multiPoint((OGRMultiPoint*)geometry, mode, info);
+        extractGeometry_multiPoint(dynamic_cast<const OGRMultiPoint*>(geometry), mode, info);
         break;
 
       case wkbMultiLineString:
-        extractGeometry_multiLineString((OGRMultiLineString*)geometry, mode, info);
+        extractGeometry_multiLineString(
+            dynamic_cast<const OGRMultiLineString*>(geometry), mode, info);
         break;
 
       case wkbMultiPolygon:
-        extractGeometry_multiPolygon((OGRMultiPolygon*)geometry, mode, info);
+        extractGeometry_multiPolygon(dynamic_cast<const OGRMultiPolygon*>(geometry), mode, info);
         break;
 
       case wkbGeometryCollection:
-        extractGeometry_geometryCollection((OGRGeometryCollection*)geometry, mode, info);
+        extractGeometry_geometryCollection(
+            dynamic_cast<const OGRGeometryCollection*>(geometry), mode, info);
         break;
 
       default:

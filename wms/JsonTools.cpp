@@ -68,6 +68,13 @@ void remove_int(boost::optional<int>& theValue,
     theValue = theDefault;
 }
 
+void remove_uint(uint& theValue, Json::Value& theJson, const std::string& theName)
+{
+  auto json = remove(theJson, theName);
+  if (!json.isNull())
+    theValue = json.asUInt();
+}
+
 void remove_uint(boost::optional<uint>& theValue,
                  Json::Value& theJson,
                  const std::string& theName,
@@ -212,6 +219,7 @@ void extract_set(const std::string& theName,
  * \brief Extract a set of integers
  *
  * Allowed: int and [int1 ... ]
+ * Note that we do not allow doubles, whereas the function below for doubles allows integers.
  */
 // ----------------------------------------------------------------------
 
@@ -234,6 +242,64 @@ void extract_set(const std::string& theName, std::set<int>& theSet, const Json::
     else
       throw Fmi::Exception(
           BCP, "The '" + theName + "' setting must be an integer or an array of integers");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Extract a set of doubles
+ *
+ * Allowed: int/double and [int1/double1 ... ]
+ */
+// ----------------------------------------------------------------------
+
+void extract_set(const std::string& theName, std::set<double>& theSet, const Json::Value& theJson)
+{
+  try
+  {
+    if (theJson.isInt() || theJson.isDouble())
+      theSet.insert(theJson.asDouble());
+    else if (theJson.isArray())
+    {
+      for (const auto& json : theJson)
+        theSet.insert(json.asDouble());
+    }
+    else
+      throw Fmi::Exception(BCP,
+                           "The '" + theName + "' setting must be a double or an array of doubles");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Extract a vector of doubles
+ */
+// ----------------------------------------------------------------------
+
+void extract_vector(const std::string& theName,
+                    std::vector<double>& theVector,
+                    const Json::Value& theJson)
+{
+  try
+  {
+    if (theJson.isInt() || theJson.isDouble())
+      theVector.push_back(theJson.asDouble());
+    else if (theJson.isArray())
+    {
+      for (const auto& json : theJson)
+        theVector.push_back(json.asDouble());
+    }
+    else
+      throw Fmi::Exception(BCP,
+                           "The '" + theName + "' setting must be a double or an array of doubles");
   }
   catch (...)
   {

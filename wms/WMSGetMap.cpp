@@ -38,8 +38,9 @@ std::string layer_name(const std::string& name)
 {
   std::string ret = name;
 
-  if (ret.find(":origintime_") != std::string::npos)
-    ret = ret.substr(0, ret.find(":origintime_"));
+  auto pos = ret.find(":origintime_");
+  if (pos != std::string::npos)
+    ret.resize(pos);
 
   return ret;
 }
@@ -147,8 +148,8 @@ void validate_options(const tag_get_map_request_options& options,
     // check whether the requested layers, styles, CRS are valid
     for (unsigned int i = 0; i < options.map_info_vector.size(); i++)
     {
-      std::string layer(options.map_info_vector[i].name);
-      std::string style(options.map_info_vector[i].style);
+      std::string layer = options.map_info_vector[i].name;
+      std::string style = options.map_info_vector[i].style;
 
       // check that layer is valid (as defined in GetCapabilities response)
       if (!itsConfig.isValidLayer(layer))
@@ -417,7 +418,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
 
     for (unsigned int i = 0; i < layers.size(); i++)
     {
-      std::string layerName(layer_name(layers[i]));
+      std::string layerName = layer_name(layers[i]);
 
       if (!itsConfig.isValidLayer(layerName))
       {
@@ -427,8 +428,8 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
         throw exception;
       }
 
-      std::string layerCustomer(itsConfig.layerCustomer(layerName));
-      std::string layerStyle(styles[i]);
+      std::string layerCustomer = itsConfig.layerCustomer(layerName);
+      std::string layerStyle = styles[i];
 
       itsParameters.map_info_vector.emplace_back(tag_map_info(layerName, layerStyle));
     }

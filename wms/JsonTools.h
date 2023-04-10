@@ -32,6 +32,8 @@ void remove_int(boost::optional<int>& theValue,
                 const std::string& theName,
                 const boost::optional<int>& theDefault = {});
 
+void remove_uint(uint& theValue, Json::Value& theJson, const std::string& theName);
+
 void remove_uint(boost::optional<uint>& theValue,
                  Json::Value& theJson,
                  const std::string& theName,
@@ -71,6 +73,14 @@ void extract_set(const std::string& theName,
 
 // extract a set of integers
 void extract_set(const std::string& theName, std::set<int>& theSet, const Json::Value& theJson);
+
+// extract a set of doubles
+void extract_set(const std::string& theName, std::set<double>& theSet, const Json::Value& theJson);
+
+// extract a vector of doubles
+void extract_vector(const std::string& theName,
+                    std::vector<double>& theVector,
+                    const Json::Value& theJson);
 
 // extract an array
 template <typename Container>

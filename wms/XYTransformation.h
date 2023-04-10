@@ -14,7 +14,7 @@ class State;
 class XYTransformation
 {
  public:
-  XYTransformation(const Projection& projection);
+  explicit XYTransformation(const Projection& projection);
 
   void transform(double longitude, double latitude, double& x, double& y);
   void transform(double& inoutX, double& inoutY);

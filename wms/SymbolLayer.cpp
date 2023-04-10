@@ -886,10 +886,12 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
     // Time execution
-    std::string report = "SymbolLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "SymbolLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // A symbol must be defined either globally or for values
 

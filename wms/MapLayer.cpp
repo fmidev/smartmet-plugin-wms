@@ -2,6 +2,7 @@
 #include "Config.h"
 #include "Geometry.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "Select.h"
 #include "State.h"
@@ -45,17 +46,12 @@ void MapLayer::init(Json::Value& theJson,
 
     // Extract all members
 
-    Json::Value nulljson;
+    JsonTools::remove_double(precision, theJson, "precision");
 
-    auto json = theJson.get("map", nulljson);
-    if (!json.isNull())
-      map.init(json, theConfig);
+    auto json = JsonTools::remove(theJson, "map");
+    map.init(json, theConfig);
 
-    json = theJson.get("precision", nulljson);
-    if (!json.isNull())
-      precision = json.asDouble();
-
-    json = theJson.get("styles", nulljson);
+    json = JsonTools::remove(theJson, "styles");
     if (!json.isNull())
       (styles = MapStyles())->init(json, theConfig);
   }
@@ -78,10 +74,12 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     if (!validLayer(theState))
       return;
 
-    std::string report = "MapLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "MapLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Get projection details
 
@@ -135,10 +133,12 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     const auto& gis = theState.getGisEngine();
     {
-      std::string report = "getShape finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
+      {
+        std::string report = "getShape finished in %t sec CPU, %w sec real\n";
         mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      }
       geom = gis.getShape(&crs, map.options);
 
       if (!geom)
@@ -155,10 +155,12 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     // Clip it
 
     {
-      std::string report = "polyclip finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
+      {
+        std::string report = "polyclip finished in %t sec CPU, %w sec real\n";
         mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      }
       if (map.lines)
         geom.reset(Fmi::OGR::lineclip(*geom, clipbox));  // fast and hence not cached in gisengine
       else
@@ -189,10 +191,12 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       std::string objectKey = "map:" + qid;
       object_cdt["objectKey"] = objectKey;
 
-      std::string report = "Generating coordinate data finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
+      {
+        std::string report = "Generating coordinate data finished in %t sec CPU, %w sec real\n";
         mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      }
 
       CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
       map_cdt["iri"] = iri;
@@ -335,10 +339,12 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
 
     const auto& gis = theState.getGisEngine();
     {
-      std::string report = "getFeatures finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
+      {
+        std::string report = "getFeatures finished in %t sec CPU, %w sec real\n";
         mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      }
 
       map.options.fieldnames.insert(styles->field);
       features = gis.getFeatures(crs, map.options);

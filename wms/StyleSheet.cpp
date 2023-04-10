@@ -8,6 +8,11 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+StyleSheet::Declarations dummy;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Add CSS contents
@@ -96,9 +101,6 @@ void StyleSheet::add(const std::string& theCSS)
 
 const StyleSheet::Declarations& StyleSheet::declarations(const std::string& theSelector) const
 {
-  // static dummy so that we can return a const reference
-  static Declarations dummy{};
-
   const auto iter = itsStyleSheet.find(theSelector);
   if (iter == itsStyleSheet.end())
     return dummy;

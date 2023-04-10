@@ -75,6 +75,10 @@ void IsolabelLayer::init(Json::Value& theJson,
     JsonTools::remove_double(max_curvature, theJson, "max_curvature");
     JsonTools::remove_int(stencil_size, theJson, "stencil_size");
 
+    json = JsonTools::remove(theJson, "angles");
+    if (!json.isNull())
+      JsonTools::extract_vector("angles", angles, json);
+
     json = JsonTools::remove(theJson, "isobands");
     if (!json.isNull())
     {
@@ -176,10 +180,12 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     if (!validLayer(theState))
       return;
 
-    std::string report = "IsolabelLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "IsolabelLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     auto geoms = IsolineLayer::getIsolines(isovalues, theState);
 
@@ -977,7 +983,7 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
 
     std::vector<T::Coordinate> pointList;
 
-    for (auto& cand : candidates)
+    for (const auto& cand : candidates)
     {
       const int length = 2;  // move in pixel units in the orientation marked for the label
 

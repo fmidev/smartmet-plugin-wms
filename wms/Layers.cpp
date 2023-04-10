@@ -3,6 +3,7 @@
 #include "Layer.h"
 #include "LayerFactory.h"
 #include <ctpp2/CDT.hpp>
+#include <fmt/format.h>
 #include <macgyver/Exception.h>
 
 namespace SmartMet
@@ -11,6 +12,18 @@ namespace Plugin
 {
 namespace Dali
 {
+// GetLegendGraphic requests may create null elements which are meaningless for validation
+
+void remove_null_members(Json::Value& json)
+{
+  auto members = json.getMemberNames();
+  for (const auto& name : members)
+  {
+    if (json[name].isNull())
+      json.removeMember(name);
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize the layers from JSON
@@ -33,7 +46,19 @@ void Layers::init(Json::Value& theJson,
     for (auto& json : theJson)
     {
       boost::shared_ptr<Layer> layer(LayerFactory::create(json));
+
       layer->init(json, theState, theConfig, theProperties);
+
+      // Remove meaningless null members
+      remove_null_members(json);
+
+      if (!json.empty())
+      {
+        Json::StyledWriter writer;
+        std::cout << fmt::format(
+            "Remaining JSON for layer {}:\n{}\n", theState.getName(), writer.write(json));
+      }
+
       layers.push_back(layer);
     }
   }
@@ -43,14 +68,12 @@ void Layers::init(Json::Value& theJson,
   }
 }
 
-void Layers::setProjection(Projection& projection)
+void Layers::setProjection(const Projection& projection)
 {
   try
   {
-    for (auto& layer : layers)
-    {
+    for (const auto& layer : layers)
       layer->projection = projection;
-    }
   }
   catch (...)
   {
@@ -64,7 +87,7 @@ boost::optional<std::string> Layers::getProjectionParameter()
   {
     boost::optional<std::string> param;
 
-    for (auto& layer : layers)
+    for (const auto& layer : layers)
     {
       if (layer->projection.projectionParameter)
         return layer->projection.projectionParameter;

@@ -146,10 +146,12 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     // Time execution
 
-    std::string report = "TimeLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "TimeLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Establish the data
     // auto q = getModel(theState);
@@ -483,10 +485,12 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     // Time execution
 
-    std::string report = "TimeLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "TimeLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Establish the data
     auto q = getModel(theState);
@@ -640,13 +644,13 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       else if (formatter == "strftime")
       {
         auto timeinfo = to_tm(loctime->local_time());
-        char buffer[100];
-        if (strftime(static_cast<char*>(buffer), 100, fmt.c_str(), &timeinfo) == 0)
+        std::array<char, 101> buffer;
+        if (strftime(buffer.data(), 100, fmt.c_str(), &timeinfo) == 0)
         {
           throw Fmi::Exception(BCP, "Failed to format a non-empty time string with strftime")
               .addParameter("format", "'" + fmt + "'");
         }
-        msg << static_cast<char*>(buffer);
+        msg << buffer.data();
       }
       else if (formatter == "fmt")
       {

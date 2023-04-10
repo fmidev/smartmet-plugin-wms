@@ -38,10 +38,13 @@
   <text transform="translate(340 418) rotate(182)">1000</text>
   <text transform="translate(239 301) rotate(2)">1000</text>
   <text transform="translate(216 453) rotate(181)">1000</text>
-  <text transform="translate(60 197) rotate(-0)">1005</text>
   <text transform="translate(239 273) rotate(-0)">1005</text>
+  <text transform="translate(92 430) rotate(224)">1005</text>
+  <text transform="translate(98 216) rotate(136)">1005</text>
+  <text transform="translate(482 487) rotate(136)">1005</text>
   <text transform="translate(243 235) rotate(0)">1010</text>
   <text transform="translate(86 152) rotate(-3)">1010</text>
+  <text transform="translate(32 440) rotate(224)">1010</text>
   <text transform="translate(409 69) rotate(223)">1015</text>
   <text transform="translate(240 71) rotate(135)">1015</text>
   <text transform="translate(351 180) rotate(2)">1015</text>

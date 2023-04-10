@@ -300,7 +300,6 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
       for (const auto& point : points)
       {
         double wdir = ParamValueMissing;
-        double wspeed = 0;
         if (layer.inside(box, point.x, point.y))
         {
           size_t pos = (height - point.y - 1) * width + point.x;
@@ -308,6 +307,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
           if (pos < dirValues->size())
           {
             wdir = (*dirValues)[pos];
+            double wspeed = 0;
             if (speedValues)
               wspeed = (*speedValues)[pos];
             else
@@ -1011,10 +1011,12 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Time execution
 
-    std::string report = "ArrowLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "ArrowLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // A symbol must be defined either globally or for speed ranges
 

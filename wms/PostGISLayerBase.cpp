@@ -36,6 +36,8 @@ void PostGISLayerBase::init(Json::Value& theJson,
     JsonTools::remove_string(pgname, theJson, "pgname");
     JsonTools::remove_string(schema, theJson, "schema");
     JsonTools::remove_string(table, theJson, "table");
+    // Needed only for GetCapabilities responses
+    static_cast<void>(JsonTools::remove(theJson, "geometry_column"));
 
     if (pgname.empty())
       throw Fmi::Exception(BCP, "'pgname' must be defined for postgis layer");

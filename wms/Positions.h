@@ -194,9 +194,8 @@ class Positions
 
   // not part of the UI - not involved in the hash
   boost::posix_time::ptime time;
-  const Engine::Geonames::Engine* geonames;
-
-  const Engine::Gis::Engine* gisengine;
+  const Engine::Geonames::Engine* geonames = nullptr;
+  const Engine::Gis::Engine* gisengine = nullptr;
 
 };  // class Positions
 

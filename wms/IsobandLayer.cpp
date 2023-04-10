@@ -316,6 +316,9 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     if (!validLayer(theState))
       return;
 
+    if (isobands.empty())
+      return;
+
     if (css)
     {
       std::string name = theState.getCustomer() + "/" + *css;
@@ -349,10 +352,12 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!parameter)
       throw Fmi::Exception(BCP, "Parameter not set for isoband-layer");
 
-    std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Establish the parameter
     //
@@ -841,10 +846,12 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 {
   try
   {
-    std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Establish the data
     auto q = getModel(theState);
@@ -900,10 +907,12 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       if (heatmap.resolution)
         throw Fmi::Exception(BCP, "Isoband-layer can't use both sampling and heatmap!");
 
-      std::string report2 = "IsobandLayer::resample finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer2;
       if (theState.useTimer())
+      {
+        std::string report2 = "IsobandLayer::resample finished in %t sec CPU, %w sec real\n";
         timer2 = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report2);
+      }
 
       auto demdata = theState.getGeoEngine().dem();
       auto landdata = theState.getGeoEngine().landCover();

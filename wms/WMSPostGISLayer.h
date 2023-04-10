@@ -47,7 +47,7 @@ class WMSPostGISLayer : public WMSLayer
 
  public:
   WMSPostGISLayer() = delete;
-  WMSPostGISLayer(const WMSConfig& config, const Json::Value& json);
+  WMSPostGISLayer(const WMSConfig& config, Json::Value& json);
 };
 
 }  // namespace WMS
