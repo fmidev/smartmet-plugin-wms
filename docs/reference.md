@@ -19,6 +19,7 @@ Table of Contents
           * [mindistance and priority](#mindistance-and-priority)
         * [ArrowLayer](#arrowlayer)
         * [NumberLayer](#numberlayer)
+        * [NullLayer](#nulllayer)
         * [CloudCeilingLayer](#cloudceilinglayer)
         * [StreamLayer](#streamlayer)
         * [LegendLayer](#legendlayer)
@@ -247,6 +248,7 @@ All the layers share some common attributes. In addition, each layer type has it
 <tr><td>symbol</td><td>SymbolLayer</td></tr>
 <tr><td>arrow</td><td>ArrowLayer</td></tr>
 <tr><td>number</td><td>NumberLayer</td></tr>
+<tr><td>null</td><td>NumllLayer</td></tr>
 <tr><td>cloudceiling</td><td>CloudCeilingLayer</td></tr>
 <tr><td>stream</td><td>StreamLayer</td></tr>
 <tr><td>legend</td><td>LegendLayer</td></tr>
@@ -1085,6 +1087,14 @@ The table below contains a list of attributes that can be defined for the number
 |mindistance|int|-|Minimum distance in pixels between numbers.|
 |priority|string or integer array|-|Priority order of numbers.|
 
+#### NullLayer
+
+Null layers are merely placeholders for definitions which will be inserted into the block if a suitable STYLES option is used and the qid settings match. Sample use cases for null layers include
+
+ * enabling numbers over isobands
+ * enabling symbols over the underlying image
+ * enabling arrows over isobands
+ * enabling isolabels over isobands
 
 #### CloudCeilingLayer
 
