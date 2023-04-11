@@ -2729,6 +2729,7 @@ The table below contains a list of attributes used in the Isoband structure.
 |qid|string|-|The identifier for the isoband.|
 |lolimit|(double)|-|The low limit value for the isoband. If omitted, -infinity is implied.|
 |hilimit|(double)|-|The high limit value for the isoband. If omitted, +infinity is implied.|
+|value|(double)|-|Set both low and high limits for the isoband. Usually used for discrete data with nearest neighbour interpolation.|
 |attributes|_Attributes_|-|The SVG attributes for the isoband. Usually only a class is given.|
 |label|(_Text_)|-|Translatable label for the isoband.|
 

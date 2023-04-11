@@ -3,9 +3,9 @@
 <defs>
 <style type="text/css"><![CDATA[
 
-.SnowDriftIndex_05_15   { stroke: none; fill: yellow; }
-.SnowDriftIndex_15_25   { stroke: none; fill: orange; }
-.SnowDriftIndex_25_35   { stroke: none; fill: red; }
+.SnowDriftIndex_1   { stroke: none; fill: yellow; }
+.SnowDriftIndex_2   { stroke: none; fill: orange; }
+.SnowDriftIndex_3   { stroke: none; fill: red; }
 
  ]]>
 </style>
@@ -20,13 +20,13 @@
  <g>
   <g>
   
-   <use class="SnowDriftIndex_25_35" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#isoband_SnowDriftIndex_0" y="50"/>
+   <use class="SnowDriftIndex_3" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#isoband_SnowDriftIndex_0" y="50"/>
   
   <text x="48" y="59">High risk of snowdrift</text>
-   <use class="SnowDriftIndex_15_25" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#isoband_SnowDriftIndex_0" y="59"/>
+   <use class="SnowDriftIndex_2" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#isoband_SnowDriftIndex_0" y="59"/>
   
   <text x="48" y="68">Moderate risk of snowdrift</text>
-   <use class="SnowDriftIndex_05_15" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#isoband_SnowDriftIndex_0" y="68"/>
+   <use class="SnowDriftIndex_1" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#isoband_SnowDriftIndex_0" y="68"/>
   
   <text x="48" y="77">Low risk of snowdrift</text>
   <text class="Units" x="20" y="20">Snowdrift</text>

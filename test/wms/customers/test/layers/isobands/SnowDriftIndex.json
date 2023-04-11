@@ -1,11 +1,10 @@
 [
   {
     "attributes": {
-      "class": "SnowDriftIndex_25_35"
+      "class": "SnowDriftIndex_3"
     },
-    "hilimit": 3.5,
-    "lolimit": 2.5,
-    "qid": "SnowDriftIndex_25_35",
+    "value": 3,
+    "qid": "SnowDriftIndex_3",
     "label": {
       "fi": "Merkittävä tuiskuriski",
       "sv": "Hög risk för snödrev",
@@ -14,11 +13,10 @@
   },
   {
     "attributes": {
-      "class": "SnowDriftIndex_15_25"
+      "class": "SnowDriftIndex_2"
     },
-    "hilimit": 2.5,
-    "lolimit": 1.5,
-    "qid": "SnowDriftIndex_15_25",
+    "value": 2,
+    "qid": "SnowDriftIndex_2",
     "label": {
       "fi": "Kohtalainen tuiskuriski",
       "sv": "Måttlig risk för snödrev",
@@ -27,11 +25,10 @@
   },
   {
     "attributes": {
-      "class": "SnowDriftIndex_05_15"
+      "class": "SnowDriftIndex_1"
     },
-    "hilimit": 1.5,
-    "lolimit": 0.5,
-    "qid": "SnowDriftIndex_05_15",
+    "value": 1,
+    "qid": "SnowDriftIndex_1",
     "label": {
       "fi": "Alhainen tuiskuriski",
       "sv": "Liten risk för snödrev",

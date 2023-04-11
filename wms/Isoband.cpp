@@ -36,6 +36,11 @@ void Isoband::init(Json::Value& theJson, const Config& theConfig)
         lolimit = json.asDouble();
       else if (name == "hilimit")
         hilimit = json.asDouble();
+      else if (name == "value")
+      {
+        lolimit = json.asDouble();
+        hilimit = lolimit;
+      }
       else if (name == "attributes")
         attributes.init(json, theConfig);
       else if (name == "label")
