@@ -35,10 +35,13 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Heatmap::init(const Json::Value& theJson, const Config& theConfig)
+void Heatmap::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
+    if (theJson.isNull())
+      return;
+
     if (!theJson.isObject())
       throw Fmi::Exception(BCP, "Heatmap JSON is not map");
 
@@ -47,7 +50,7 @@ void Heatmap::init(const Json::Value& theJson, const Config& theConfig)
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      const Json::Value& json = theJson[name];
+      Json::Value& json = theJson[name];
 
       if (name == "resolution")
         resolution = json.asDouble();

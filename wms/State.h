@@ -92,6 +92,9 @@ class State
   const Spine::HTTP::Request& getRequest() const { return itsRequest; }
   Plugin& getPlugin() { return itsPlugin; }
 
+  const std::string& getName() const { return itsName; }
+  void setName(const std::string& theName) { itsName = theName; }
+
   // Customer
   const std::string& getCustomer() const { return itsCustomer; }
   void setCustomer(const std::string& theCustomer) { itsCustomer = theCustomer; }
@@ -243,6 +246,9 @@ class State
 
   // Are we in WMS mode?
   bool itUsesWms = false;
+
+  // Generic name for the requested product is either customer/product of WMS LAYERS value
+  std::string itsName;
 
   // The customer
   std::string itsCustomer;

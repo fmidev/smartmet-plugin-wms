@@ -2,6 +2,7 @@
 #include "Config.h"
 #include "Geometry.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "State.h"
 #include <boost/timer/timer.hpp>
@@ -24,7 +25,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void WKTLayer::init(const Json::Value& theJson,
+void WKTLayer::init(Json::Value& theJson,
                     const State& theState,
                     const Config& theConfig,
                     const Properties& theProperties)
@@ -40,23 +41,10 @@ void WKTLayer::init(const Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
-
-    auto json = theJson.get("wkt", nulljson);
-    if (!json.isNull())
-      wkt = json.asString();
-
-    json = theJson.get("resolution", nulljson);
-    if (!json.isNull())
-      resolution = json.asDouble();
-
-    json = theJson.get("relativeresolution", nulljson);
-    if (!json.isNull())
-      relativeresolution = json.asDouble();
-
-    json = theJson.get("precision", nulljson);
-    if (!json.isNull())
-      precision = json.asDouble();
+    JsonTools::remove_string(wkt, theJson, "wkt");
+    JsonTools::remove_double(resolution, theJson, "resolution");
+    JsonTools::remove_double(relativeresolution, theJson, "relativeresolution");
+    JsonTools::remove_double(precision, theJson, "precision");
   }
   catch (...)
   {
@@ -83,10 +71,12 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     if (resolution && relativeresolution)
       throw Fmi::Exception(BCP, "Cannot set both resolution and relativeresolution for WKT");
 
-    std::string report = "WKTLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "WKTLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Get projection details
 

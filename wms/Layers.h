@@ -31,7 +31,7 @@ class Layer;
 class Layers
 {
  public:
-  void init(const Json::Value& theJson,
+  void init(Json::Value& theJson,
             const State& theState,
             const Config& theConfig,
             const Properties& theProperties);
@@ -42,7 +42,7 @@ class Layers
                      State& theState,
                      Projection& projection);
   boost::optional<std::string> getProjectionParameter();
-  void setProjection(Projection& projection);
+  void setProjection(const Projection& projection);
 
   std::size_t hash_value(const State& theState) const;
 

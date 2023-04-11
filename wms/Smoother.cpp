@@ -17,10 +17,13 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Smoother::init(const Json::Value& theJson, const Config& /* theConfig */)
+void Smoother::init(Json::Value& theJson, const Config& /* theConfig */)
 {
   try
   {
+    if (theJson.isNull())
+      return;
+
     if (!theJson.isObject())
       throw Fmi::Exception(BCP, "Smoother JSON is not a JSON object");
 

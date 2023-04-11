@@ -23,7 +23,7 @@ namespace Dali
 class WindRose
 {
  public:
-  void init(const Json::Value& theJson, const Config& theConfig);
+  void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
   int minpercentage = 0;

@@ -5,6 +5,7 @@
 #include "Geometry.h"
 #include "Hash.h"
 #include "Isoline.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "State.h"
 #include "StyleSheet.h"
@@ -39,7 +40,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void StreamLayer::init(const Json::Value& theJson,
+void StreamLayer::init(Json::Value& theJson,
                        const State& theState,
                        const Config& theConfig,
                        const Properties& theProperties)
@@ -55,43 +56,15 @@ void StreamLayer::init(const Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
-
-    auto json = theJson.get("parameter", nulljson);
-    if (!json.isNull())
-      parameter = json.asString();
-
-    json = theJson.get("u", nulljson);
-    if (!json.isNull())
-      u_parameter = json.asString();
-
-    json = theJson.get("v", nulljson);
-    if (!json.isNull())
-      v_parameter = json.asString();
-
-    json = theJson.get("max_length", nulljson);
-    if (!json.isNull())
-      maxStreamLen = json.asInt();
-
-    json = theJson.get("min_length", nulljson);
-    if (!json.isNull())
-      minStreamLen = json.asInt();
-
-    json = theJson.get("line_length", nulljson);
-    if (!json.isNull())
-      lineLen = json.asInt();
-
-    json = theJson.get("xstep", nulljson);
-    if (!json.isNull())
-      xStep = json.asInt();
-
-    json = theJson.get("ystep", nulljson);
-    if (!json.isNull())
-      yStep = json.asInt();
-
-    json = theJson.get("precision", nulljson);
-    if (!json.isNull())
-      precision = json.asDouble();
+    JsonTools::remove_string(parameter, theJson, "parameter");
+    JsonTools::remove_string(u_parameter, theJson, "u");
+    JsonTools::remove_string(v_parameter, theJson, "v");
+    JsonTools::remove_int(maxStreamLen, theJson, "max_length");
+    JsonTools::remove_int(minStreamLen, theJson, "min_length");
+    JsonTools::remove_int(lineLen, theJson, "line_length");
+    JsonTools::remove_int(xStep, theJson, "xstep");
+    JsonTools::remove_int(yStep, theJson, "ystep");
+    JsonTools::remove_double(precision, theJson, "precision");
   }
   catch (...)
   {
@@ -688,10 +661,12 @@ void StreamLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     if (!validLayer(theState))
       return;
 
-    std::string report = "StreamLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "StreamLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     auto geoms = getStreams(theState);
 

@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "Hash.h"
 #include "Iri.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "Observations.h"
 #include "Select.h"
@@ -311,7 +312,7 @@ std::vector<double> calculate_rose_maxima(const TS::TimeSeries& directions,
  */
 // ----------------------------------------------------------------------
 
-void WindRoseLayer::init(const Json::Value& theJson,
+void WindRoseLayer::init(Json::Value& theJson,
                          const State& theState,
                          const Config& theConfig,
                          const Properties& theProperties)
@@ -325,29 +326,19 @@ void WindRoseLayer::init(const Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_string(timezone, theJson, "timezone");
+    JsonTools::remove_int(starttimeoffset, theJson, "starttimeoffset");
+    JsonTools::remove_int(endtimeoffset, theJson, "endtimeoffset");
 
-    auto json = theJson.get("timezone", nulljson);
-    if (!json.isNull())
-      timezone = json.asString();
-
-    json = theJson.get("starttimeoffset", nulljson);
-    if (!json.isNull())
-      starttimeoffset = json.asInt();
-
-    json = theJson.get("endtimeoffset", nulljson);
-    if (!json.isNull())
-      endtimeoffset = json.asInt();
-
-    json = theJson.get("windrose", nulljson);
+    auto json = JsonTools::remove(theJson, "windrose");
     if (!json.isNull())
       windrose.init(json, theConfig);
 
-    json = theJson.get("observations", nulljson);
+    json = JsonTools::remove(theJson, "observations");
     if (!json.isNull())
       observations.init(json, theConfig);
 
-    json = theJson.get("stations", nulljson);
+    json = JsonTools::remove(theJson, "stations");
     if (!json.isNull())
       stations.init(json, theConfig);
   }
@@ -390,10 +381,12 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     if (!validLayer(theState))
       return;
 
-    std::string report = "WindRoseLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "WindRoseLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Update the globals
 

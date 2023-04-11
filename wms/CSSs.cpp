@@ -18,7 +18,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void CSSs::init(const Json::Value& theJson, const State& /* theState */)
+void CSSs::init(Json::Value& theJson, const State& /* theState */)
 {
   try
   {

@@ -1,6 +1,7 @@
 #include "Product.h"
 #include "Config.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "State.h"
 #include <ctpp2/CDT.hpp>
 #include <macgyver/Exception.h>
@@ -18,7 +19,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Product::init(const Json::Value& theJson, const State& theState, const Config& theConfig)
+void Product::init(Json::Value& theJson, const State& theState, const Config& theConfig)
 {
   try
   {
@@ -27,42 +28,27 @@ void Product::init(const Json::Value& theJson, const State& theState, const Conf
 
     // Extract all members
 
-    Json::Value nulljson;
     Properties::init(theJson, theState, theConfig);
 
-    auto json = theJson.get("svg_tmpl", nulljson);
-    if (!json.isNull())
-      svg_tmpl = json.asString();
+    JsonTools::remove_string(svg_tmpl, theJson, "svg_tmpl");
+    JsonTools::remove_string(type, theJson, "type");
+    JsonTools::remove_int(width, theJson, "width");
+    JsonTools::remove_int(height, theJson, "height");
+    JsonTools::remove_string(title, theJson, "title");
 
-    json = theJson.get("type", nulljson);
-    if (!json.isNull())
-      type = json.asString();
-
-    json = theJson.get("width", nulljson);
-    if (!json.isNull())
-      width = json.asInt();
-
-    json = theJson.get("height", nulljson);
-    if (!json.isNull())
-      height = json.asInt();
-
-    json = theJson.get("title", nulljson);
-    if (!json.isNull())
-      title = json.asString();
-
-    json = theJson.get("defs", nulljson);
+    auto json = JsonTools::remove(theJson, "defs");
     if (!json.isNull())
       defs.init(json, theState, theConfig, *this);
 
-    json = theJson.get("attributes", nulljson);
+    json = JsonTools::remove(theJson, "attributes");
     if (!json.isNull())
       attributes.init(json, theConfig);
 
-    json = theJson.get("views", nulljson);
+    json = JsonTools::remove(theJson, "views");
     if (!json.isNull())
       views.init(json, theState, theConfig, *this);
 
-    json = theJson.get("png", nulljson);
+    json = JsonTools::remove(theJson, "png");
     if (!json.isNull())
       png.init(json, theConfig);
 

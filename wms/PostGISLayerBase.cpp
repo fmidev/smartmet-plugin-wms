@@ -1,7 +1,9 @@
 #include "PostGISLayerBase.h"
 #include "Config.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include <engines/gis/Engine.h>
+#include <fmt/format.h>
 #include <macgyver/Exception.h>
 #include <spine/Json.h>
 
@@ -17,7 +19,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void PostGISLayerBase::init(const Json::Value& theJson,
+void PostGISLayerBase::init(Json::Value& theJson,
                             const State& theState,
                             const Config& theConfig,
                             const Properties& theProperties)
@@ -29,59 +31,45 @@ void PostGISLayerBase::init(const Json::Value& theJson,
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
-    this->precision = theState.getPrecision("icemap");
+    precision = theState.getPrecision("icemap");
 
-    Json::Value nulljson;
+    JsonTools::remove_string(pgname, theJson, "pgname");
+    JsonTools::remove_string(schema, theJson, "schema");
+    JsonTools::remove_string(table, theJson, "table");
+    // Needed only for GetCapabilities responses
+    static_cast<void>(JsonTools::remove(theJson, "geometry_column"));
 
-    auto json = theJson.get("pgname", nulljson);
-    if (!json.isNull())
-      this->pgname = json.asString();
-    else
+    if (pgname.empty())
       throw Fmi::Exception(BCP, "'pgname' must be defined for postgis layer");
-
-    json = theJson.get("schema", nulljson);
-    if (!json.isNull())
-      this->schema = json.asString();
-    else
+    if (schema.empty())
       throw Fmi::Exception(BCP, "'schema' must be defined for postgis layer");
-
-    json = theJson.get("table", nulljson);
-    if (!json.isNull())
-      this->table = json.asString();
-    else
+    if (table.empty())
       throw Fmi::Exception(BCP, "'table' must be defined for postgis layer");
 
-    json = theJson.get("precision", nulljson);
-    if (!json.isNull())
-      this->precision = json.asDouble();
-
-    json = theJson.get("time_column", nulljson);
-    if (!json.isNull())
-      time_column = json.asString();
-
-    json = theJson.get("lines", nulljson);
-    if (!json.isNull())
-      lines = json.asBool();
+    JsonTools::remove_double(precision, theJson, "precision");
+    JsonTools::remove_string(time_column, theJson, "time_column");
+    JsonTools::remove_bool(lines, theJson, "lines");
 
     // If following does not pass, time_condition will be empty
     if (time_column && hasValidTime())
     {
       std::string timestr = "'" + Fmi::to_iso_string(getValidTime()) + "'";
       // time truncate is optional
-      json = theJson.get("time_truncate", nulljson);
-      if (!json.isNull())
+      std::string trunc;
+      JsonTools::remove_string(trunc, theJson, "time_truncate");
+      // We do not support microseconds, milliseconds, seconds nor decades etc supported by
+      // PostGreSQL
+
+      if (!trunc.empty())
       {
-        std::string time_truncate = json.asString();
-        // We do not support microseconds, milliseconds, seconds nor decades etc supported by
-        // PostGreSQL
-        if (time_truncate != "minute" && time_truncate != "hour" && time_truncate != "day" &&
-            time_truncate != "week" && time_truncate != "month" && time_truncate != "year")
+        if (trunc != "minute" && trunc != "hour" && trunc != "day" && trunc != "week" &&
+            trunc != "month" && trunc != "year")
         {
-          throw Fmi::Exception(BCP, "Invalid value for time truncation: '" + time_truncate + "'");
+          throw Fmi::Exception(BCP, "Invalid value for time truncation: '" + trunc + "'");
         }
 
-        std::string trunc = "DATE_TRUNC('" + time_truncate + "',";
-        time_condition = trunc + *time_column + ") = " + trunc + "date " + timestr + ")";
+        time_condition = fmt::format(
+            "DATE_TRUNC('{}',{}) = DATE_TRUNC('{}',date {})", trunc, *time_column, trunc, timestr);
       }
       else
       {
@@ -91,9 +79,9 @@ void PostGISLayerBase::init(const Json::Value& theJson,
     }
 
     // filter for query, each filter generates one PostGIS query
-    json = theJson.get("filters", nulljson);
+    auto json = JsonTools::remove(theJson, "filters");
     if (!json.isNull())
-      Spine::JSON::extract_array("filters", this->filters, json, theConfig);
+      JsonTools::extract_array("filters", this->filters, json, theConfig);
   }
   catch (...)
   {

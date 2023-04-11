@@ -1,6 +1,7 @@
 #include "Stations.h"
 #include "Config.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include <macgyver/Exception.h>
 #include <spine/Json.h>
 #include <stdexcept>
@@ -17,11 +18,11 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Stations::init(const Json::Value& theJson, const Config& theConfig)
+void Stations::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
-    Spine::JSON::extract_array("stations", stations, theJson, theConfig);
+    JsonTools::extract_array("stations", stations, theJson, theConfig);
   }
   catch (...)
   {

@@ -26,7 +26,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Text::init(const Json::Value& theJson, const Config& theConfig)
+void Text::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
@@ -46,7 +46,7 @@ void Text::init(const Json::Value& theJson, const Config& theConfig)
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      const Json::Value& json = theJson[name];
+      Json::Value& json = theJson[name];
 
       if (name == "attributes")
         attributes.init(json, theConfig);

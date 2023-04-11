@@ -1,6 +1,7 @@
 #include "Properties.h"
 #include "Config.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "Time.h"
 #include <grid-files/common/GeneralFunctions.h>
 #include <macgyver/Exception.h>
@@ -18,31 +19,49 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Properties::init(const Json::Value& theJson, const State& theState, const Config& theConfig)
+void Properties::init(Json::Value& theJson, const State& theState, const Config& theConfig)
 {
   try
   {
-    // if (!theJson.isObject())
-    //  return;
+    JsonTools::remove_string(language, theJson, "language", theConfig.defaultLanguage());
+    JsonTools::remove_string(producer, theJson, "producer", theConfig.defaultModel());
+    JsonTools::remove_int(timestep, theJson, "timestep");
+    JsonTools::remove_int(forecastType, theJson, "forecastType");
+    JsonTools::remove_int(forecastNumber, theJson, "forecastNumber");
+    JsonTools::remove_uint(geometryId, theJson, "geometryId");
 
-    Json::Value nulljson;
+    JsonTools::remove_time(origintime, theJson, "origintime");
+    const auto& zones = theState.getGeoEngine().getTimeZones();
+    JsonTools::remove_tz(tz, theJson, "tz", zones);
+    JsonTools::remove_time(time, theJson, "time", tz);  // after tz handling
 
-    auto json = theJson.get("language", theConfig.defaultLanguage());
-    language = json.asString();
+    JsonTools::remove_int(time_offset, theJson, "time_offset");
+    JsonTools::remove_int(interval_start, theJson, "interval_start");
+    JsonTools::remove_int(interval_end, theJson, "interval_end");
 
-    json = theJson.get("producer", theConfig.defaultModel());
-    producer = json.asString();
+    // Margin overrides xmargin and ymargin
+    JsonTools::remove_int(xmargin, theJson, "xmargin");
+    JsonTools::remove_int(ymargin, theJson, "ymargin");
 
-    json = theJson.get("timestep", nulljson);
-    if (!json.isNull())
-      timestep = json.asInt();
-
-    json = theJson.get("source", nulljson);
+    auto json = JsonTools::remove(theJson, "margin");
     if (!json.isNull())
     {
-      source = json.asString();
+      xmargin = json.asInt();
+      ymargin = xmargin;
     }
+
+    JsonTools::remove_bool(clip, theJson, "clip");
+
+    // Use external elevation if given
+    if (theState.getRequest().getParameter("elevation"))
+      level = std::stod(*theState.getRequest().getParameter("elevation"));
     else
+      JsonTools::remove_double(level, theJson, "level");
+
+    JsonTools::remove_int(levelId, theJson, "levelid");
+
+    JsonTools::remove_string(source, theJson, "source");
+    if (!source)
     {
       if (theConfig.primaryForecastSource() == "grid")
         source = "grid";
@@ -53,103 +72,11 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
           source = "grid";
       }
       else
-      {
         source = theConfig.primaryForecastSource();
-      }
     }
 
-    json = theJson.get("forecastType", nulljson);
-    if (!json.isNull())
-      forecastType = json.asInt();
-
-    json = theJson.get("forecastNumber", nulljson);
-    if (!json.isNull())
-      forecastNumber = json.asInt();
-
-    json = theJson.get("geometryId", nulljson);
-    if (!json.isNull())
-      geometryId = json.asInt();
-
-    json = theJson.get("tz", nulljson);
-    if (json.isString())
-      tz = parse_timezone(json.asString(), theState.getGeoEngine().getTimeZones());
-    else if (!json.isNull())
-      throw Fmi::Exception(BCP, "Failed to parse tz setting: '" + json.asString());
-
-    json = theJson.get("origintime", nulljson);
-    if (json.isString())
-      origintime = parse_time(json.asString());
-    else if (json.isUInt64())
-    {
-      // A timestamp may look like an integer in a query string
-      std::size_t tmp = json.asUInt64();
-      origintime = parse_time(Fmi::to_string(tmp));
-    }
-    else if (!json.isNull())
-      throw Fmi::Exception(BCP, "Failed to parse origintime setting: '" + json.asString());
-
-    json = theJson.get("time", nulljson);
-    if (json.isString())
-      time = parse_time(json.asString(), tz);
-    else if (json.isUInt64())
-    {
-      // A timestamp may look like an integer in a query string
-      std::size_t tmp = json.asUInt64();
-      time = parse_time(Fmi::to_string(tmp), tz);
-    }
-    else if (!json.isNull())
-      throw Fmi::Exception(BCP, "Failed to parse time setting: '" + json.asString());
-
-    json = theJson.get("time_offset", nulljson);
-    if (!json.isNull())
-      time_offset = json.asInt();
-
-    json = theJson.get("interval_start", nulljson);
-    if (!json.isNull())
-      interval_start = json.asInt();
-
-    json = theJson.get("interval_end", nulljson);
-    if (!json.isNull())
-      interval_end = json.asInt();
-
-    json = theJson.get("projection", nulljson);
-    if (!json.isNull())
-      projection.init(json, theState, theConfig);
-
-    json = theJson.get("margin", nulljson);
-    if (!json.isNull())
-    {
-      xmargin = json.asInt();
-      ymargin = xmargin;
-    }
-    else
-    {
-      json = theJson.get("xmargin", nulljson);
-      if (!json.isNull())
-        xmargin = json.asInt();
-
-      json = theJson.get("ymargin", nulljson);
-      if (!json.isNull())
-        ymargin = json.asInt();
-    }
-
-    json = theJson.get("clip", nulljson);
-    if (!json.isNull())
-      clip = json.asBool();
-
-    // Use external elevation if given
-    if (theState.getRequest().getParameter("elevation"))
-      level = std::stod(*theState.getRequest().getParameter("elevation"));
-    else
-    {
-      json = theJson.get("level", nulljson);
-      if (!json.isNull())
-        level = json.asDouble();
-    }
-
-    json = theJson.get("levelId", nulljson);
-    if (!json.isNull())
-      levelId = json.asInt();
+    json = JsonTools::remove(theJson, "projection");
+    projection.init(json, theState, theConfig);
   }
   catch (...)
   {
@@ -163,7 +90,7 @@ void Properties::init(const Json::Value& theJson, const State& theState, const C
  */
 // ----------------------------------------------------------------------
 
-void Properties::init(const Json::Value& theJson,
+void Properties::init(Json::Value& theJson,
                       const State& theState,
                       const Config& theConfig,
                       const Properties& theProperties)
@@ -173,150 +100,49 @@ void Properties::init(const Json::Value& theJson,
     if (!theJson.isObject())
       return;
 
-    Json::Value nulljson;
+    JsonTools::remove_string(language, theJson, "language", theProperties.language);
+    JsonTools::remove_string(source, theJson, "source", theProperties.source);
+    JsonTools::remove_string(producer, theJson, "producer", theProperties.producer);
+    JsonTools::remove_int(timestep, theJson, "timestep", theProperties.timestep);
+    JsonTools::remove_int(forecastType, theJson, "forecastType", theProperties.forecastType);
+    JsonTools::remove_int(forecastNumber, theJson, "forecastNumber", theProperties.forecastNumber);
+    JsonTools::remove_uint(geometryId, theJson, "geometryId", theProperties.geometryId);
 
-    auto json = theJson.get("language", nulljson);
-    if (json.isNull())
-      language = theProperties.language;
-    else
-      language = json.asString();
+    JsonTools::remove_time(origintime, theJson, "origintime", theProperties.origintime);
+    const auto& zones = theState.getGeoEngine().getTimeZones();
+    JsonTools::remove_tz(tz, theJson, "tz", zones, theProperties.tz);
+    JsonTools::remove_time(time, theJson, "time", tz, theProperties.time);  // after tz
 
-    json = theJson.get("source", nulljson);
-    if (json.isNull())
-      source = theProperties.source;
-    else
-      source = json.asString();
-
-    json = theJson.get("producer", nulljson);
-    if (json.isNull())
-      producer = theProperties.producer;
-    else
-      producer = json.asString();
-
-    json = theJson.get("timestep", nulljson);
-    if (json.isNull())
-      timestep = theProperties.timestep;
-    else
-      timestep = json.asInt();
-
-    json = theJson.get("forecastType", nulljson);
-    if (json.isNull())
-      forecastType = theProperties.forecastType;
-    else
-      forecastType = json.asInt();
-
-    json = theJson.get("forecastNumber", nulljson);
-    if (json.isNull())
-      forecastNumber = theProperties.forecastNumber;
-    else
-      forecastNumber = json.asInt();
-
-    json = theJson.get("tz", nulljson);
-    if (json.isString())
-      tz = parse_timezone(json.asString(), theState.getGeoEngine().getTimeZones());
-    else if (json.isNull())
-      tz = theProperties.tz;
-    else
-      throw Fmi::Exception(BCP, "Failed to parse tz setting: '" + json.asString());
-
-    json = theJson.get("origintime", nulljson);
-    if (json.isString())
-      origintime = parse_time(json.asString());
-    else if (json.isUInt64())
-    {
-      // A timestamp may look like an integer in a query string
-      std::size_t tmp = json.asUInt64();
-      origintime = parse_time(Fmi::to_string(tmp));
-    }
-    else if (json.isNull())
-      origintime = theProperties.origintime;
-    else
-      throw Fmi::Exception(BCP, "Failed to parse origintime setting: '" + json.asString());
-
-    json = theJson.get("time", nulljson);
-    if (json.isString())
-      time = parse_time(json.asString(), tz);
-    else if (json.isUInt64())
-    {
-      // A timestamp may look like an integer in a query string
-      std::size_t tmp = json.asUInt64();
-      time = parse_time(Fmi::to_string(tmp), tz);
-    }
-    else if (json.isNull())
-      time = theProperties.time;
-    else
-      throw Fmi::Exception(BCP, "Failed to parse time setting: '" + json.asString());
-
-    json = theJson.get("time_offset", nulljson);
-    if (json.isNull())
-      time_offset = theProperties.time_offset;
-    else
-      time_offset = json.asInt();
-
-    json = theJson.get("interval_start", nulljson);
-    if (json.isNull())
-      interval_start = theProperties.interval_start;
-    else
-      interval_start = json.asInt();
-
-    json = theJson.get("interval_end", nulljson);
-    if (json.isNull())
-      interval_end = theProperties.interval_end;
-    else
-      interval_end = json.asInt();
+    JsonTools::remove_int(time_offset, theJson, "time_offset", theProperties.time_offset);
+    JsonTools::remove_int(interval_start, theJson, "interval_start", theProperties.interval_start);
+    JsonTools::remove_int(interval_end, theJson, "interval_end", theProperties.interval_end);
 
     projection = theProperties.projection;
-    json = theJson.get("projection", nulljson);
+    auto json = JsonTools::remove(theJson, "projection");
     if (!json.isNull())
       projection.init(json, theState, theConfig);
 
-    // Propagating margins is a bit more complicated. Here
-    // a single margin setting overrides xmargin and ymargin.
+    // Here a single margin setting overrides xmargin and ymargin.
 
-    json = theJson.get("margin", nulljson);
+    JsonTools::remove_int(xmargin, theJson, "xmargin", theProperties.xmargin);
+    JsonTools::remove_int(ymargin, theJson, "ymargin", theProperties.ymargin);
+
+    json = JsonTools::remove(theJson, "margin");
     if (!json.isNull())
     {
       xmargin = json.asInt();
-      ymargin = json.asInt();
-    }
-    else
-    {
-      json = theJson.get("xmargin", nulljson);
-      if (json.isNull())
-        xmargin = theProperties.xmargin;
-      else
-        xmargin = json.asInt();
-
-      json = theJson.get("ymargin", nulljson);
-      if (json.isNull())
-        ymargin = theProperties.ymargin;
-      else
-        ymargin = json.asInt();
+      ymargin = xmargin;
     }
 
-    json = theJson.get("clip", nulljson);
-    if (json.isNull())
-      clip = theProperties.clip;
-    else
-      clip = json.asBool();
+    JsonTools::remove_bool(clip, theJson, "clip", theProperties.clip);
 
     // Use external elevation if given
     if (theState.getRequest().getParameter("elevation"))
       level = std::stod(*theState.getRequest().getParameter("elevation"));
     else
-    {
-      json = theJson.get("level", nulljson);
-      if (json.isNull())
-        level = theProperties.level;
-      else
-        level = json.asDouble();
-    }
+      JsonTools::remove_double(level, theJson, "level", theProperties.level);
 
-    json = theJson.get("levelId", nulljson);
-    if (json.isNull())
-      levelId = theProperties.levelId;
-    else
-      levelId = json.asInt();
+    JsonTools::remove_int(levelId, theJson, "levelId", theProperties.levelId);
   }
   catch (...)
   {

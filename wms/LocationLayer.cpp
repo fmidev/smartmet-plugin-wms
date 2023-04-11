@@ -3,6 +3,7 @@
 #include "LocationLayer.h"
 #include "Config.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "Select.h"
 #include "State.h"
@@ -42,7 +43,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void LocationLayer::init(const Json::Value& theJson,
+void LocationLayer::init(Json::Value& theJson,
                          const State& theState,
                          const Config& theConfig,
                          const Properties& theProperties)
@@ -56,32 +57,23 @@ void LocationLayer::init(const Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_string(keyword, theJson, "keyword");
+    JsonTools::remove_double(mindistance, theJson, "mindistance");
 
-    auto json = theJson.get("keyword", nulljson);
+    auto json = JsonTools::remove(theJson, "countries");
     if (!json.isNull())
-      keyword = json.asString();
+      JsonTools::extract_set("countries", countries, json);
 
-    json = theJson.get("mindistance", nulljson);
-    if (!json.isNull())
-      mindistance = json.asDouble();
+    JsonTools::remove_string(symbol, theJson, "symbol");
 
-    json = theJson.get("countries", nulljson);
-    if (!json.isNull())
-      Spine::JSON::extract_set("countries", countries, json);
-
-    json = theJson.get("symbol", nulljson);
-    if (!json.isNull())
-      symbol = json.asString();
-
-    json = theJson.get("symbols", nulljson);
+    json = JsonTools::remove(theJson, "symbols");
     if (!json.isNull())
     {
       if (json.isArray())
       {
         // Just a default selection is given
         std::vector<AttributeSelection> selection;
-        Spine::JSON::extract_array("symbols", selection, json, theConfig);
+        JsonTools::extract_array("symbols", selection, json, theConfig);
         symbols["default"] = selection;
       }
       else if (json.isObject())
@@ -89,14 +81,14 @@ void LocationLayer::init(const Json::Value& theJson,
         const auto features = json.getMemberNames();
         for (const auto& feature : features)
         {
-          const Json::Value& innerjson = json[feature];
+          Json::Value& innerjson = json[feature];
           if (!innerjson.isArray())
             throw Fmi::Exception(
                 BCP,
                 "LocationLayer symbols setting does not contain a hash of JSON arrays for each "
                 "feature");
           std::vector<AttributeSelection> selection;
-          Spine::JSON::extract_array("symbols", selection, innerjson, theConfig);
+          JsonTools::extract_array("symbols", selection, innerjson, theConfig);
           symbols[feature] = selection;
         }
       }

@@ -3,6 +3,7 @@
 #include "ObservationLayer.h"
 #include "Config.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "ValueTools.h"
 #include <ctpp2/CDT.hpp>
 #include <engines/observation/Engine.h>
@@ -20,7 +21,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void ObservationLayer::init(const Json::Value& theJson,
+void ObservationLayer::init(Json::Value& theJson,
                             const State& theState,
                             const Config& theConfig,
                             const Properties& theProperties)
@@ -37,59 +38,46 @@ void ObservationLayer::init(const Json::Value& theJson,
     if (!timestep)
       throw Fmi::Exception::Trace(BCP, "Timestep must be defined for obervation layer!");
 
-    Json::Value nulljson;
-
     // Stations of the layer
-    Json::Value json = theJson.get("keyword", nulljson);
-    if (!json.isNull())
+    std::string keyword;
+    JsonTools::remove_string(keyword, theJson, "keyword");
+    if (keyword.empty())
     {
-      keyword = json.asString();
-      if (!keyword.empty())
+      const auto& geoengine = theState.getGeoEngine();
+      Locus::QueryOptions options;
+      auto locations = geoengine.keywordSearch(options, keyword);
+      for (const auto& loc : locations)
       {
-        const auto& geoengine = theState.getGeoEngine();
-        Locus::QueryOptions options;
-        auto locations = geoengine.keywordSearch(options, keyword);
-        for (const auto& loc : locations)
-        {
-          if (loc->fmisid)
-            stationFMISIDs.push_back(
-                Spine::TaggedFMISID(Fmi::to_string(*loc->fmisid), *loc->fmisid));
-        }
+        if (loc->fmisid)
+          stationFMISIDs.push_back(Spine::TaggedFMISID(Fmi::to_string(*loc->fmisid), *loc->fmisid));
       }
     }
 
     // If keyword is missing try 'fmisids'
-    if (json.isNull())
+    auto json = JsonTools::remove(theJson, "fmisid");
+
+    if (!json.isNull())
     {
-      json = theJson.get("fmisid", nulljson);
-      if (!json.isNull())
+      if (json.isString())
       {
-        if (json.isString())
-        {
-          fmisids = json.asString();
-          stationFMISIDs.push_back(Spine::TaggedFMISID(fmisids, Fmi::stoi(fmisids)));
-        }
-        else if (json.isArray())
-        {
-          for (const auto& j : json)
-          {
-            std::string fmisid = j.asString();
-            stationFMISIDs.push_back(Spine::TaggedFMISID(fmisid, Fmi::stoi(fmisid)));
-            fmisids += fmisid;
-          }
-        }
-        else
-          throw Fmi::Exception(BCP, "fmisid value must be an array of strings or a string");
+        fmisids = json.asString();
+        stationFMISIDs.push_back(Spine::TaggedFMISID(fmisids, Fmi::stoi(fmisids)));
       }
+      else if (json.isArray())
+      {
+        for (const auto& j : json)
+        {
+          std::string fmisid = j.asString();
+          stationFMISIDs.push_back(Spine::TaggedFMISID(fmisid, Fmi::stoi(fmisid)));
+          fmisids += fmisid;
+        }
+      }
+      else
+        throw Fmi::Exception(BCP, "fmisid value must be an array of strings or a string");
     }
 
-    json = theJson.get("mindistance", nulljson);
-    if (!json.isNull())
-      mindistance = json.asInt();
-
-    json = theJson.get("missing", nulljson);
-    if (!json.isNull())
-      missing_symbol = json.asInt();
+    JsonTools::remove_uint(mindistance, theJson, "mindistance");
+    JsonTools::remove_int(missing_symbol, theJson, "missing");
 
     if (keyword.empty() && fmisids.empty())
       throw Fmi::Exception::Trace(

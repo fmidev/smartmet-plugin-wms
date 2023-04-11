@@ -3687,7 +3687,7 @@
       
     </Layer>
     
-    <Layer queryable="1" cascaded="1" opaque="0" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
+    <Layer queryable="1" cascaded="1" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
       <Name>test:wind</Name>
       <Title>Wind demo</Title>
       <Abstract>Test abstract</Abstract>
@@ -3743,7 +3743,7 @@
       </Style>
     </Layer>
     
-    <Layer queryable="1" cascaded="1" opaque="0" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
+    <Layer queryable="1" cascaded="1" noSubsets="1" fixedWidth="1234" fixedHeight="4321">
       <Name>test:windarrows</Name>
       <Title>Wind demo</Title>
       <Abstract>Test abstract</Abstract>

@@ -58,9 +58,9 @@ class StepTimeDimension : public WMSTimeDimension
  public:
   ~StepTimeDimension() override = default;
   StepTimeDimension() = delete;
-  StepTimeDimension(const std::list<boost::posix_time::ptime>& times);
-  StepTimeDimension(const std::vector<boost::posix_time::ptime>& times);
-  StepTimeDimension(const std::set<boost::posix_time::ptime>& times);
+  explicit StepTimeDimension(const std::list<boost::posix_time::ptime>& times);
+  explicit StepTimeDimension(const std::vector<boost::posix_time::ptime>& times);
+  explicit StepTimeDimension(const std::set<boost::posix_time::ptime>& times);
 
   StepTimeDimension(const StepTimeDimension& other) = delete;
   StepTimeDimension(StepTimeDimension&& other) = delete;
@@ -85,7 +85,7 @@ struct tag_interval
   tag_interval(boost::posix_time::ptime start,
                boost::posix_time::ptime end,
                boost::posix_time::time_duration res)
-      : startTime(std::move(start)), endTime(std::move(end)), resolution(std::move(res))
+      : startTime(start), endTime(end), resolution(std::move(res))
   {
   }
 };

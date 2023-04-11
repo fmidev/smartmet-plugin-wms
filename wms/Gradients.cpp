@@ -18,7 +18,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Gradients::init(const Json::Value& theJson, const State& theState)
+void Gradients::init(Json::Value& theJson, const State& theState)
 {
   try
   {

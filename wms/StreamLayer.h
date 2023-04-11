@@ -5,8 +5,8 @@
 #include "Layer.h"
 #include "Map.h"
 #include "ParameterInfo.h"
-#include "Sampling.h"
 #include "Positions.h"
+#include "Sampling.h"
 #include "Smoother.h"
 #include <engines/querydata/Q.h>
 #include <vector>
@@ -24,7 +24,7 @@ class State;
 class StreamLayer : public Layer
 {
  public:
-  void init(const Json::Value& theJson,
+  void init(Json::Value& theJson,
             const State& theState,
             const Config& theConfig,
             const Properties& theProperties) override;

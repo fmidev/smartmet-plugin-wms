@@ -55,7 +55,7 @@ struct tag_get_map_request_options
 class WMSGetMap
 {
  public:
-  WMSGetMap(const WMSConfig& theConfig);
+  explicit WMSGetMap(const WMSConfig& theConfig);
 
   void parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
                         Spine::HTTP::Request& theRequest);
@@ -65,6 +65,7 @@ class WMSGetMap
 
  private:
   tag_get_map_request_options itsParameters;
+  std::string itsFilename;
 
   const WMSConfig& itsConfig;
 };

@@ -1633,13 +1633,13 @@ boost::optional<CTPP::CDT> WMSLayer::getLayerBaseInfo() const
       layer["title"] = *title;
     if (abstract)
       layer["abstract"] = *abstract;
-    if (opaque)
+    if (opaque == 1)
       layer["opaque"] = *opaque;
-    if (queryable)
+    if (queryable == 1)
       layer["queryable"] = *queryable;
-    if (cascaded)
+    if (cascaded == 1)
       layer["cascaded"] = *cascaded;
-    if (no_subsets)
+    if (no_subsets == 1)
       layer["no_subsets"] = *no_subsets;
     if (fixed_width)
       layer["fixed_width"] = *fixed_width;
@@ -2068,13 +2068,13 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
       layer["title"] = *title;
     if (abstract)
       layer["abstract"] = *abstract;
-    if (opaque)
+    if (opaque == 1)
       layer["opaque"] = *opaque;
-    if (queryable)
+    if (queryable == 1)
       layer["queryable"] = *queryable;
-    if (cascaded)
+    if (cascaded == 1)
       layer["cascaded"] = *cascaded;
-    if (no_subsets)
+    if (no_subsets == 1)
       layer["no_subsets"] = *no_subsets;
     if (fixed_width)
       layer["fixed_width"] = *fixed_width;

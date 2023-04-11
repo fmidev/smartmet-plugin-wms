@@ -18,7 +18,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Markers::init(const Json::Value& theJson, const State& theState)
+void Markers::init(Json::Value& theJson, const State& theState)
 {
   try
   {

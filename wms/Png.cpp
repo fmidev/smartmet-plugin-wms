@@ -17,7 +17,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Png::init(const Json::Value& theJson, const Config& /* theConfig */)
+void Png::init(Json::Value& theJson, const Config& /* theConfig */)
 {
   try
   {
@@ -29,7 +29,7 @@ void Png::init(const Json::Value& theJson, const Config& /* theConfig */)
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      const Json::Value& json = theJson[name];
+      Json::Value& json = theJson[name];
 
       if (name == "quality")
         options.quality = json.asDouble();

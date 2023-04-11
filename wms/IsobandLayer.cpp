@@ -5,6 +5,7 @@
 #include "Geometry.h"
 #include "Hash.h"
 #include "Isoband.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "State.h"
 #include "StyleSheet.h"
@@ -49,7 +50,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void IsobandLayer::init(const Json::Value& theJson,
+void IsobandLayer::init(Json::Value& theJson,
                         const State& theState,
                         const Config& theConfig,
                         const Properties& theProperties)
@@ -67,73 +68,46 @@ void IsobandLayer::init(const Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_string(parameter, theJson, "parameter");
 
-    auto json = theJson.get("parameter", nulljson);
+    auto json = JsonTools::remove(theJson, "isobands");
     if (!json.isNull())
-      parameter = json.asString();
+      JsonTools::extract_array("isobands", isobands, json, theConfig);
 
-    json = theJson.get("isobands", nulljson);
-    if (!json.isNull())
-      Spine::JSON::extract_array("isobands", isobands, json, theConfig);
+    JsonTools::remove_string(interpolation, theJson, "interpolation");
+    JsonTools::remove_int(extrapolation, theJson, "extrapolation");
 
-    json = theJson.get("interpolation", nulljson);
-    if (!json.isNull())
-      interpolation = json.asString();
+    json = JsonTools::remove(theJson, "smoother");
+    smoother.init(json, theConfig);
 
-    json = theJson.get("extrapolation", nulljson);
-    if (!json.isNull())
-      extrapolation = json.asInt();
+    JsonTools::remove_double(precision, theJson, "precision");
+    JsonTools::remove_double(minarea, theJson, "minarea");
+    JsonTools::remove_string(unit_conversion, theJson, "unit_conversin");
+    JsonTools::remove_double(multiplier, theJson, "multiplier");
+    JsonTools::remove_double(offset, theJson, "offset");
 
-    json = theJson.get("smoother", nulljson);
-    if (!json.isNull())
-      smoother.init(json, theConfig);
-
-    json = theJson.get("precision", nulljson);
-    if (!json.isNull())
-      precision = json.asDouble();
-
-    json = theJson.get("minarea", nulljson);
-    if (!json.isNull())
-      minarea = json.asDouble();
-
-    json = theJson.get("unit_conversion", nulljson);
-    if (!json.isNull())
-      unit_conversion = json.asString();
-
-    json = theJson.get("multiplier", nulljson);
-    if (!json.isNull())
-      multiplier = json.asDouble();
-
-    json = theJson.get("offset", nulljson);
-    if (!json.isNull())
-      offset = json.asDouble();
-
-    json = theJson.get("outside", nulljson);
+    json = JsonTools::remove(theJson, "outside");
     if (!json.isNull())
     {
       outside.reset(Map());
       outside->init(json, theConfig);
     }
 
-    json = theJson.get("inside", nulljson);
+    json = JsonTools::remove(theJson, "inside");
     if (!json.isNull())
     {
       inside.reset(Map());
       inside->init(json, theConfig);
     }
 
-    json = theJson.get("sampling", nulljson);
-    if (!json.isNull())
-      sampling.init(json, theConfig);
+    json = JsonTools::remove(theJson, "sampling");
+    sampling.init(json, theConfig);
 
-    json = theJson.get("intersect", nulljson);
-    if (!json.isNull())
-      intersections.init(json, theConfig);
+    json = JsonTools::remove(theJson, "intersect");
+    intersections.init(json, theConfig);
 
-    json = theJson.get("heatmap", nulljson);
-    if (!json.isNull())
-      heatmap.init(json, theConfig);
+    json = JsonTools::remove(theJson, "heatmap");
+    heatmap.init(json, theConfig);
   }
   catch (...)
   {
@@ -342,6 +316,9 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     if (!validLayer(theState))
       return;
 
+    if (isobands.empty())
+      return;
+
     if (css)
     {
       std::string name = theState.getCustomer() + "/" + *css;
@@ -375,10 +352,12 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!parameter)
       throw Fmi::Exception(BCP, "Parameter not set for isoband-layer");
 
-    std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Establish the parameter
     //
@@ -867,10 +846,12 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 {
   try
   {
-    std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Establish the data
     auto q = getModel(theState);
@@ -926,10 +907,12 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       if (heatmap.resolution)
         throw Fmi::Exception(BCP, "Isoband-layer can't use both sampling and heatmap!");
 
-      std::string report2 = "IsobandLayer::resample finished in %t sec CPU, %w sec real\n";
       boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer2;
       if (theState.useTimer())
+      {
+        std::string report2 = "IsobandLayer::resample finished in %t sec CPU, %w sec real\n";
         timer2 = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report2);
+      }
 
       auto demdata = theState.getGeoEngine().dem();
       auto landdata = theState.getGeoEngine().landCover();

@@ -29,7 +29,7 @@ class State;
 class Attributes
 {
  public:
-  void init(const Json::Value& theJson, const Config& theConfig);
+  void init(Json::Value& theJson, const Config& theConfig);
   void add(const std::string& theName, const std::string& theValue);
   void add(const Attributes& theAttributes);
 
@@ -41,7 +41,9 @@ class Attributes
   std::size_t hash_value(const State& theState) const;
 
   boost::optional<std::string> getLocalIri(const std::string& theName) const;
-  bool getLocalIriAndParameters(const std::string& theName,std::string& iri,std::map<std::string,std::string>& parameters) const;
+  bool getLocalIriAndParameters(const std::string& theName,
+                                std::string& iri,
+                                std::map<std::string, std::string>& parameters) const;
 
   bool empty() const { return attributes.empty(); }
   std::string value(const std::string& theName) const

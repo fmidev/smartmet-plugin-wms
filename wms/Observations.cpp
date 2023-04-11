@@ -3,6 +3,7 @@
 #include "Observations.h"
 #include "Config.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include <spine/Json.h>
 #include <stdexcept>
 
@@ -18,11 +19,11 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Observations::init(const Json::Value& theJson, const Config& theConfig)
+void Observations::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
-    Spine::JSON::extract_array("observations", observations, theJson, theConfig);
+    JsonTools::extract_array("observations", observations, theJson, theConfig);
   }
   catch (...)
   {

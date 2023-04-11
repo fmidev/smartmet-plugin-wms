@@ -26,7 +26,7 @@ class State;
 class SymbolLayer : public Layer
 {
  public:
-  void init(const Json::Value& theJson,
+  void init(Json::Value& theJson,
             const State& theState,
             const Config& theConfig,
             const Properties& theProperties) override;

@@ -4,6 +4,7 @@
 #include "Hash.h"
 #include "Intersections.h"
 #include "Iri.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "PointValue.h"
 #include "Select.h"
@@ -805,7 +806,7 @@ PointValues read_observations(const SymbolLayer& layer,
  */
 // ----------------------------------------------------------------------
 
-void SymbolLayer::init(const Json::Value& theJson,
+void SymbolLayer::init(Json::Value& theJson,
                        const State& theState,
                        const Config& theConfig,
                        const Properties& theProperties)
@@ -819,58 +820,28 @@ void SymbolLayer::init(const Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_string(parameter, theJson, "parameter");
+    JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
+    JsonTools::remove_double(multiplier, theJson, "multiplier");
+    JsonTools::remove_double(offset, theJson, "offset");
 
-    auto json = theJson.get("parameter", nulljson);
-    if (!json.isNull())
-      parameter = json.asString();
-
-    json = theJson.get("unit_conversion", nulljson);
-    if (!json.isNull())
-      unit_conversion = json.asString();
-
-    json = theJson.get("multiplier", nulljson);
-    if (!json.isNull())
-      multiplier = json.asDouble();
-
-    json = theJson.get("offset", nulljson);
-    if (!json.isNull())
-      offset = json.asDouble();
-
-    json = theJson.get("positions", nulljson);
+    auto json = JsonTools::remove(theJson, "positions");
     if (!json.isNull())
     {
       positions = Positions{};
       positions->init(json, theConfig);
     }
 
-    json = theJson.get("minvalues", nulljson);
-    if (!json.isNull())
-      minvalues = json.asInt();
+    JsonTools::remove_int(minvalues, theJson, "minvalues");
+    JsonTools::remove_double(maxdistance, theJson, "maxdistance");
+    JsonTools::remove_string(symbol, theJson, "symbol");
+    JsonTools::remove_double(scale, theJson, "scale");
+    JsonTools::remove_int(dx, theJson, "dx");
+    JsonTools::remove_int(dy, theJson, "dy");
 
-    json = theJson.get("maxdistance", nulljson);
+    json = JsonTools::remove(theJson, "symbols");
     if (!json.isNull())
-      maxdistance = json.asDouble();
-
-    json = theJson.get("symbol", nulljson);
-    if (!json.isNull())
-      symbol = json.asString();
-
-    json = theJson.get("scale", nulljson);
-    if (!json.isNull())
-      scale = json.asDouble();
-
-    json = theJson.get("dx", nulljson);
-    if (!json.isNull())
-      dx = json.asInt();
-
-    json = theJson.get("dy", nulljson);
-    if (!json.isNull())
-      dy = json.asInt();
-
-    json = theJson.get("symbols", nulljson);
-    if (!json.isNull())
-      Spine::JSON::extract_array("symbols", symbols, json, theConfig);
+      JsonTools::extract_array("symbols", symbols, json, theConfig);
 
     point_value_options.init(theJson);
   }
@@ -915,10 +886,12 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
     // Time execution
-    std::string report = "SymbolLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "SymbolLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // A symbol must be defined either globally or for values
 

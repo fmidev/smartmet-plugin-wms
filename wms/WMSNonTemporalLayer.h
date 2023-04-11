@@ -30,7 +30,7 @@ class WMSNonTemporalLayer : public WMSLayer
   bool updateLayerMetaData() override { return true; }
 
  public:
-  WMSNonTemporalLayer(const WMSConfig& config) : WMSLayer(config) {}
+  explicit WMSNonTemporalLayer(const WMSConfig& config) : WMSLayer(config) {}
 
   const boost::posix_time::ptime& modificationTime() const override { return itsModificationTime; }
 };

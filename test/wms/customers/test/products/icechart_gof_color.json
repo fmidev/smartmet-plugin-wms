@@ -631,7 +631,7 @@
 		    }
 		},
 		{
-		    "gid": "icemap_title",
+		    "qid": "icemap_title",
 		    "layer_type": "tag",
 		    "tag": "text",
 		    "cdata": "Jääkartta   Iskarta   Ice Chart",
@@ -676,7 +676,7 @@
 			}
 		},
 		{
-		    "gid": "icemap_footer",
+		    "qid": "icemap_footer",
 		    "layer_type": "tag",
 		    "tag": "text",
 		    "cdata": "Analysis made by FMI and SMHI",
@@ -691,7 +691,7 @@
 		    }
 		},
 		{
-		    "gid": "icemap_copyright",
+		    "qid": "icemap_copyright",
 		    "layer_type": "tag",
 		    "tag": "text",
 		    "cdata": "© Copyright: Finnish Meteorological Institute",

@@ -3,6 +3,7 @@
 #include "TimeLayer.h"
 #include "Config.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "LonLatToXYTransformation.h"
 #include "State.h"
@@ -32,7 +33,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void TimeLayer::init(const Json::Value& theJson,
+void TimeLayer::init(Json::Value& theJson,
                      const State& theState,
                      const Config& theConfig,
                      const Properties& theProperties)
@@ -49,21 +50,11 @@ void TimeLayer::init(const Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_string(timezone, theJson, "timezone");
+    JsonTools::remove_string(prefix, theJson, "prefix");
+    JsonTools::remove_string(suffix, theJson, "suffix");
 
-    auto json = theJson.get("timezone", nulljson);
-    if (!json.isNull())
-      timezone = json.asString();
-
-    json = theJson.get("prefix", nulljson);
-    if (!json.isNull())
-      prefix = json.asString();
-
-    json = theJson.get("suffix", nulljson);
-    if (!json.isNull())
-      suffix = json.asString();
-
-    json = theJson.get("timestamp", nulljson);
+    auto json = JsonTools::remove(theJson, "timestamp");
     if (!json.isNull())
     {
       if (json.isArray())
@@ -75,15 +66,11 @@ void TimeLayer::init(const Json::Value& theJson,
         timestamp.push_back(json.asString());
     }
 
-    json = theJson.get("formatter", nulljson);
-    if (!json.isNull())
-    {
-      formatter = json.asString();
-      if (formatter != "boost" && formatter != "strftime" && formatter != "fmt")
-        throw Fmi::Exception(BCP, "Unknown time formatter '" + formatter + "'");
-    }
+    JsonTools::remove_string(formatter, theJson, "formatter");
+    if (formatter != "boost" && formatter != "strftime" && formatter != "fmt")
+      throw Fmi::Exception(BCP, "Unknown time formatter '" + formatter + "'");
 
-    json = theJson.get("format", nulljson);
+    json = JsonTools::remove(theJson, "format");
     if (!json.isNull())
     {
       if (json.isArray())
@@ -94,35 +81,23 @@ void TimeLayer::init(const Json::Value& theJson,
       else
         format.push_back(json.asString());
     }
-    /*
-        json = theJson.get("parameter", nulljson);
-        if (!json.isNull())
-          parameter = json.asString();
 
-    */
-    auto longitudeJson = theJson.get("longitude", nulljson);
-    auto latitudeJson = theJson.get("latitude", nulljson);
-    if (!longitudeJson.isNull() && !latitudeJson.isNull())
+    JsonTools::remove_int(x, theJson, "x");
+    JsonTools::remove_int(y, theJson, "y");
+
+    // latlon settings override x/y
+    JsonTools::remove_double(longitude, theJson, "longitude");
+    JsonTools::remove_double(latitude, theJson, "latitude");
+
+    if (longitude && latitude)
     {
-      double longitude = longitudeJson.asDouble();
-      double latitude = latitudeJson.asDouble();
       double xCoord = 0;
       double yCoord = 0;
       LonLatToXYTransformation transformation(projection);
-      if (!transformation.transform(longitude, latitude, xCoord, yCoord))
+      if (!transformation.transform(*longitude, *latitude, xCoord, yCoord))
         throw Fmi::Exception(BCP, "Invalid lonlat for timestamp");
       x = xCoord;
       y = yCoord;
-    }
-    else
-    {
-      json = theJson.get("x", nulljson);
-      if (!json.isNull())
-        x = json.asInt();
-
-      json = theJson.get("y", nulljson);
-      if (!json.isNull())
-        y = json.asInt();
     }
   }
   catch (...)
@@ -171,10 +146,12 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     // Time execution
 
-    std::string report = "TimeLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "TimeLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Establish the data
     // auto q = getModel(theState);
@@ -508,10 +485,12 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     // Time execution
 
-    std::string report = "TimeLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "TimeLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Establish the data
     auto q = getModel(theState);
@@ -665,13 +644,13 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       else if (formatter == "strftime")
       {
         auto timeinfo = to_tm(loctime->local_time());
-        char buffer[100];
-        if (strftime(static_cast<char*>(buffer), 100, fmt.c_str(), &timeinfo) == 0)
+        std::array<char, 101> buffer;
+        if (strftime(buffer.data(), 100, fmt.c_str(), &timeinfo) == 0)
         {
           throw Fmi::Exception(BCP, "Failed to format a non-empty time string with strftime")
               .addParameter("format", "'" + fmt + "'");
         }
-        msg << static_cast<char*>(buffer);
+        msg << buffer.data();
       }
       else if (formatter == "fmt")
       {

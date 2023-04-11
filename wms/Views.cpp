@@ -16,7 +16,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Views::init(const Json::Value& theJson,
+void Views::init(Json::Value& theJson,
                  const State& theState,
                  const Config& theConfig,
                  const Properties& theProperties)
@@ -26,7 +26,7 @@ void Views::init(const Json::Value& theJson,
     if (!theJson.isArray())
       throw Fmi::Exception(BCP, "Views setting must be an array");
 
-    for (const auto& json : theJson)
+    for (auto& json : theJson)
     {
       boost::shared_ptr<View> view(new View);
       view->init(json, theState, theConfig, theProperties);

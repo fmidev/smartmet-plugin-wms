@@ -30,7 +30,7 @@ class Styles
   StyleMap styles;
 
  public:
-  void init(const Json::Value& theJson, const Config& theConfig);
+  void init(Json::Value& theJson, const Config& theConfig);
   void generate(CTPP::CDT& theGlobals, State& theState) const;
   std::size_t hash_value(const State& theState) const;
 };

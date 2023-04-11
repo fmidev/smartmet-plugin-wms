@@ -3,8 +3,8 @@
 #include "LayerFactory.h"
 #include "ArrowLayer.h"
 #include "BackgroundLayer.h"
-#include "FinnishRoadObservationLayer.h"
 #include "CloudCeilingLayer.h"
+#include "FinnishRoadObservationLayer.h"
 #include "FrameLayer.h"
 #include "GridLayer.h"
 #include "IceMapLayer.h"
@@ -14,6 +14,7 @@
 #include "LegendLayer.h"
 #include "LocationLayer.h"
 #include "MapLayer.h"
+#include "NullLayer.h"
 #include "NumberLayer.h"
 #include "PostGISLayer.h"
 #include "PresentWeatherObservationLayer.h"
@@ -68,6 +69,8 @@ Layer* create(const Json::Value& theJson)
       return new LocationLayer;
     if (name == "map")
       return new MapLayer;
+    if (name == "null")
+      return new NullLayer;
     if (name == "number")
       return new NumberLayer;
     if (name == "stream")

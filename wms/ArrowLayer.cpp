@@ -3,6 +3,7 @@
 #include "Config.h"
 #include "Hash.h"
 #include "Iri.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "Select.h"
 #include "State.h"
@@ -299,7 +300,6 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
       for (const auto& point : points)
       {
         double wdir = ParamValueMissing;
-        double wspeed = 0;
         if (layer.inside(box, point.x, point.y))
         {
           size_t pos = (height - point.y - 1) * width + point.x;
@@ -307,6 +307,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
           if (pos < dirValues->size())
           {
             wdir = (*dirValues)[pos];
+            double wspeed = 0;
             if (speedValues)
               wspeed = (*speedValues)[pos];
             else
@@ -909,7 +910,7 @@ PointValues read_observations(const ArrowLayer& layer,
  */
 // ----------------------------------------------------------------------
 
-void ArrowLayer::init(const Json::Value& theJson,
+void ArrowLayer::init(Json::Value& theJson,
                       const State& theState,
                       const Config& theConfig,
                       const Properties& theProperties)
@@ -917,100 +918,43 @@ void ArrowLayer::init(const Json::Value& theJson,
   try
   {
     if (!theJson.isObject())
-      throw Fmi::Exception(BCP, "Arrow-layer JSON is not a JSON object");
+      throw Fmi::Exception(BCP, "Arrow-layer JSON is not an object");
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_string(direction, theJson, "direction");
+    JsonTools::remove_string(speed, theJson, "speed");
+    JsonTools::remove_string(u, theJson, "u");
+    JsonTools::remove_string(v, theJson, "v");
+    JsonTools::remove_double(fixedspeed, theJson, "fixedspeed");
+    JsonTools::remove_double(fixeddirection, theJson, "fixeddirection");
+    JsonTools::remove_string(symbol, theJson, "symbol");
+    JsonTools::remove_double(scale, theJson, "scale");
+    JsonTools::remove_bool(southflop, theJson, "southflop");
+    JsonTools::remove_bool(northflop, theJson, "northflop");
+    JsonTools::remove_bool(flip, theJson, "flip");
 
-    auto json = theJson.get("direction", nulljson);
-    if (!json.isNull())
-      direction = json.asString();
-
-    json = theJson.get("speed", nulljson);
-    if (!json.isNull())
-      speed = json.asString();
-
-    json = theJson.get("u", nulljson);
-    if (!json.isNull())
-      u = json.asString();
-
-    json = theJson.get("v", nulljson);
-    if (!json.isNull())
-      v = json.asString();
-
-    json = theJson.get("fixedspeed", nulljson);
-    if (!json.isNull())
-      fixedspeed = json.asDouble();
-
-    json = theJson.get("fixeddirection", nulljson);
-    if (!json.isNull())
-      fixeddirection = json.asDouble();
-
-    json = theJson.get("symbol", nulljson);
-    if (!json.isNull())
-      symbol = json.asString();
-
-    json = theJson.get("scale", nulljson);
-    if (!json.isNull())
-      scale = json.asDouble();
-
-    json = theJson.get("southflop", nulljson);
-    if (!json.isNull())
-      southflop = json.asBool();
-
-    json = theJson.get("northflop", nulljson);
-    if (!json.isNull())
-      northflop = json.asBool();
-
-    json = theJson.get("flip", nulljson);
-    if (!json.isNull())
-      flip = json.asBool();
-
-    json = theJson.get("positions", nulljson);
+    auto json = JsonTools::remove(theJson, "positions");
     if (!json.isNull())
     {
       positions = Positions{};
       positions->init(json, theConfig);
     }
 
-    json = theJson.get("dx", nulljson);
-    if (!json.isNull())
-      dx = json.asInt();
+    JsonTools::remove_int(dx, theJson, "dx");
+    JsonTools::remove_int(dy, theJson, "dy");
+    JsonTools::remove_int(minvalues, theJson, "minvalues");
+    JsonTools::remove_double(maxdistance, theJson, "maxdistance");
+    JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
+    JsonTools::remove_double(multiplier, theJson, "multiplier");
+    JsonTools::remove_double(offset, theJson, "offset");
+    JsonTools::remove_double(minrotationspeed, theJson, "minrotationspeed");
 
-    json = theJson.get("dy", nulljson);
+    json = JsonTools::remove(theJson, "arrows");
     if (!json.isNull())
-      dy = json.asInt();
-
-    json = theJson.get("minvalues", nulljson);
-    if (!json.isNull())
-      minvalues = json.asInt();
-
-    json = theJson.get("maxdistance", nulljson);
-    if (!json.isNull())
-      maxdistance = json.asDouble();
-
-    json = theJson.get("unit_conversion", nulljson);
-    if (!json.isNull())
-      unit_conversion = json.asString();
-
-    json = theJson.get("multiplier", nulljson);
-    if (!json.isNull())
-      multiplier = json.asDouble();
-
-    json = theJson.get("offset", nulljson);
-    if (!json.isNull())
-      offset = json.asDouble();
-
-    json = theJson.get("minrotationspeed", nulljson);
-    if (!json.isNull())
-      minrotationspeed = json.asDouble();
-
-    json = theJson.get("arrows", nulljson);
-    if (!json.isNull())
-      Spine::JSON::extract_array("arrows", arrows, json, theConfig);
+      JsonTools::extract_array("arrows", arrows, json, theConfig);
 
     point_value_options.init(theJson);
   }
@@ -1067,10 +1011,12 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Time execution
 
-    std::string report = "ArrowLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "ArrowLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // A symbol must be defined either globally or for speed ranges
 

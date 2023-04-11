@@ -51,7 +51,7 @@
 		    }
 		},
 		{
-		    "gid": "title_on_frame",
+		    "qid": "title_on_frame",
 		    "layer_type": "tag",
 		    "tag": "text",
 		    "cdata": "Frame with inner and outer border\n   scale is inside inner border",

@@ -1,4 +1,5 @@
 #include "WMSPostGISLayer.h"
+#include "JsonTools.h"
 #include "WMSConfig.h"
 #include <boost/move/make_unique.hpp>
 #include <gis/Host.h>
@@ -79,31 +80,29 @@ PostGISMetaDataSettings get_postgis_metadata_settings(const libconfig::Config& c
 }
 }  // anonymous namespace
 
-WMSPostGISLayer::WMSPostGISLayer(const WMSConfig& config, const Json::Value& json)
+WMSPostGISLayer::WMSPostGISLayer(const WMSConfig& config, Json::Value& json)
     : WMSLayer(config), itsGisEngine(config.gisEngine()), hasTemporalDimension(false)
 {
   try
   {
-    if (json["pgname"].isNull())
+    using namespace Dali::JsonTools;
+
+    remove_string(mdq_options.pgname, json, "pgname");
+    remove_string(mdq_options.schema, json, "schema");
+    remove_string(mdq_options.table, json, "table");
+    remove_string(mdq_options.geometry_column, json, "geometry_column");
+
+    if (mdq_options.pgname.empty())
       throw Fmi::Exception(BCP, "'pgname' must be defined for postgis layer");
-    if (json["schema"].isNull())
+    if (mdq_options.schema.empty())
       throw Fmi::Exception(BCP, "'schema' must be defined for postgis layer");
-    if (json["table"].isNull())
+    if (mdq_options.table.empty())
       throw Fmi::Exception(BCP, "'table' must be defined for postgis layer");
-    if (json["geometry_column"].isNull())
+    if (mdq_options.geometry_column.empty())
       throw Fmi::Exception(BCP, "'geometry_column' must be defined for postgis layer");
 
-    mdq_options.pgname = json["pgname"].asString();
-    mdq_options.schema = json["schema"].asString();
-    mdq_options.table = json["table"].asString();
-
-    if (!json["time_column"].isNull())
-    {
-      mdq_options.time_column = json["time_column"].asString();  // May be empty for map layers
-      hasTemporalDimension = true;
-    }
-
-    mdq_options.geometry_column = json["geometry_column"].asString();
+    hasTemporalDimension = json.isMember("time_column");
+    remove_string(mdq_options.time_column, json, "time_column");  // may be empty for map layers
 
     itsMetaDataSettings = get_postgis_metadata_settings(
         wmsConfig.getDaliConfig().getConfig(), mdq_options.pgname, mdq_options.schema);
@@ -112,7 +111,7 @@ WMSPostGISLayer::WMSPostGISLayer(const WMSConfig& config, const Json::Value& jso
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Failed to initializa PostGIS layer!");
+    throw Fmi::Exception::Trace(BCP, "Failed to initialize PostGIS layer!");
   }
 }
 

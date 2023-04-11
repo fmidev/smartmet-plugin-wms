@@ -31,7 +31,7 @@ class State;
 class Defs : public Properties
 {
  public:
-  void init(const Json::Value& theJson,
+  void init(Json::Value& theJson,
             const State& theState,
             const Config& theConfig,
             const Properties& theParent);

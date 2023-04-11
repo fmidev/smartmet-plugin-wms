@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "Hash.h"
 #include "Iri.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "State.h"
 #include <boost/move/make_unique.hpp>
@@ -175,7 +176,7 @@ std::string legend_text(const Isoband& theIsoband,
  */
 // ----------------------------------------------------------------------
 
-void LegendLayer::init(const Json::Value& theJson,
+void LegendLayer::init(Json::Value& theJson,
                        const State& theState,
                        const Config& theConfig,
                        const Properties& theProperties)
@@ -189,35 +190,20 @@ void LegendLayer::init(const Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_int(x, theJson, "x");
+    JsonTools::remove_int(y, theJson, "y");
+    JsonTools::remove_int(dx, theJson, "dx");
+    JsonTools::remove_int(dy, theJson, "dy");
 
-    auto json = theJson.get("x", nulljson);
-    if (!json.isNull())
-      x = json.asInt();
+    auto json = JsonTools::remove(theJson, "symbols");
+    symbols.init(json, theConfig);
 
-    json = theJson.get("y", nulljson);
-    if (!json.isNull())
-      y = json.asInt();
+    json = JsonTools::remove(theJson, "labels");
+    labels.init(json, theConfig);
 
-    json = theJson.get("dx", nulljson);
+    json = JsonTools::remove(theJson, "isobands");
     if (!json.isNull())
-      dx = json.asInt();
-
-    json = theJson.get("dy", nulljson);
-    if (!json.isNull())
-      dy = json.asInt();
-
-    json = theJson.get("symbols", nulljson);
-    if (!json.isNull())
-      symbols.init(json, theConfig);
-
-    json = theJson.get("labels", nulljson);
-    if (!json.isNull())
-      labels.init(json, theConfig);
-
-    json = theJson.get("isobands", nulljson);
-    if (!json.isNull())
-      Spine::JSON::extract_array("isobands", isobands, json, theConfig);
+      JsonTools::extract_array("isobands", isobands, json, theConfig);
   }
   catch (...)
   {
@@ -251,10 +237,12 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Time execution
 
-    std::string report = "LegendLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "LegendLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // A symbol must be defined
 

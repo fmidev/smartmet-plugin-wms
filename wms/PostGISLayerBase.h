@@ -26,7 +26,7 @@ class State;
 class PostGISLayerBase : public Layer
 {
  public:
-  void init(const Json::Value& theJson,
+  void init(Json::Value& theJson,
             const State& theState,
             const Config& theConfig,
             const Properties& theProperties) override;
@@ -42,6 +42,7 @@ class PostGISLayerBase : public Layer
   std::string pgname;
   std::string schema;
   std::string table;
+
   double precision = 1.0;
   boost::optional<std::string> time_column;     // Needed for GetCapabilities
   boost::optional<std::string> time_condition;  // SQL for temporal selection

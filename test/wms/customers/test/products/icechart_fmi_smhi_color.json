@@ -722,7 +722,7 @@
 		    }
 		},
 		{
-		    "gid": "icemap_title_en",
+		    "qid": "icemap_title_en",
 		    "layer_type": "tag",
 		    "tag": "text",
 		    "cdata": "ICE CHART",
@@ -738,7 +738,7 @@
 		    }
 		},
 		{
-		    "gid": "icemap_title_sv_fi",
+		    "qid": "icemap_title_sv_fi",
 		    "layer_type": "tag",
 		    "tag": "text",
 		    "cdata": "Iskarta - Jääkartta",

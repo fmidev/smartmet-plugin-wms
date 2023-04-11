@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.3.29
+Version: 23.4.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -35,7 +35,7 @@ BuildRequires: smartmet-library-timeseries-devel >= 23.3.15
 BuildRequires: smartmet-engine-authentication-devel >= 23.3.21
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 23.3.22
+BuildRequires: smartmet-engine-observation-devel >= 23.4.3
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.12.21
 BuildRequires: smartmet-engine-grid-devel >= 23.3.9
@@ -120,7 +120,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 23.3.22
+#TestRequires: smartmet-engine-observation-devel >= 23.4.3
 %endif
 
 %description
@@ -149,6 +149,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Apr 11 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.4.11-1.fmi
+- Improved JSON validation
+- Added NullLayer with layer_type=null to enable styles to add new layers in a clean manner
+- If the WMS STYLES option changes the type of a layer, the old settings will be completely erased instead of just overwritten
+- Minor fixes
+
 * Wed Mar 29 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.3.29-1.fmi
 - Fixed ymargin parsing
 

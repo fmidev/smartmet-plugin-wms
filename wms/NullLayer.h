@@ -1,6 +1,6 @@
 // ======================================================================
 /*!
- * \brief A SVG text element with translations
+ * \brief A dummy layer to make style additions easier
  */
 // ======================================================================
 
@@ -8,8 +8,6 @@
 
 #include "Attributes.h"
 #include "Layer.h"
-#include <boost/optional.hpp>
-#include <string>
 
 namespace CTPP
 {
@@ -25,7 +23,7 @@ namespace Dali
 class Config;
 class State;
 
-class TranslationLayer : public Layer
+class NullLayer : public Layer
 {
  public:
   void init(Json::Value& theJson,
@@ -37,11 +35,7 @@ class TranslationLayer : public Layer
 
   std::size_t hash_value(const State& theState) const override;
 
-  std::string tag = "text";
-  std::map<std::string, std::string> translations;
-
- private:
-};  // class TranslationLayer
+};  // class TagLayer
 
 }  // namespace Dali
 }  // namespace Plugin

@@ -5,6 +5,7 @@
 #include "Geometry.h"
 #include "Hash.h"
 #include "Isoline.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "State.h"
 #include "StyleSheet.h"
@@ -30,13 +31,52 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+bool skip_value(double value, const std::vector<double> except_vector)
+{
+  if (except_vector.empty())
+    return false;
+
+  for (const auto& except : except_vector)
+  {
+    if (except != 0.0 && std::fmod(value, except) == 0.0)
+      return true;
+  }
+  return false;
+}
+
+void generate_isolines(std::vector<Isoline>& isolines,
+                       double startvalue,
+                       double endvalue,
+                       double interval,
+                       const std::string& prefix,
+                       const std::vector<double> except_vector)
+{
+  for (double i = startvalue; i <= endvalue; i += interval)  // NOLINT(cert-flp30-c)
+  {
+    if (!skip_value(i, except_vector))
+    {
+      Isoline isoline;
+      isoline.qid = (prefix + Fmi::to_string(i));
+      isoline.value = i;
+      isolines.push_back(isoline);
+
+      if (isolines.size() > 10000)
+        throw Fmi::Exception(BCP, "Too many (> 10000) isolines");
+    }
+  }
+}
+
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize from JSON
  */
 // ----------------------------------------------------------------------
 
-void IsolineLayer::init(const Json::Value& theJson,
+void IsolineLayer::init(Json::Value& theJson,
                         const State& theState,
                         const Config& theConfig,
                         const Properties& theProperties)
@@ -52,43 +92,39 @@ void IsolineLayer::init(const Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_string(parameter, theJson, "parameter");
 
-    auto json = theJson.get("parameter", nulljson);
-    if (!json.isNull())
-      parameter = json.asString();
-
-    json = theJson.get("isolines", nulljson);
+    auto json = JsonTools::remove(theJson, "isolines");
 
     if (!json.isNull())
     {
       if (json.isArray())
-      {
-        Spine::JSON::extract_array("isolines", isolines, json, theConfig);
-      }
+        JsonTools::extract_array("isolines", isolines, json, theConfig);
+      else if (!json.isObject())
+        throw Fmi::Exception(BCP, "Isoline layer isolines setting must be an array or a group");
       else
       {
-        auto json_startvalue = json.get("startvalue", nulljson);
-        auto json_endvalue = json.get("endvalue", nulljson);
-        auto json_interval = json.get("interval", nulljson);
-        auto json_except = json.get("except", nulljson);
-        auto json_qidprefix = json.get("qidprefix", nulljson);
-        if (json_startvalue.isNull())
+        boost::optional<double> startvalue;
+        boost::optional<double> endvalue;
+        boost::optional<double> interval;
+
+        JsonTools::remove_double(startvalue, json, "startvalue");
+        JsonTools::remove_double(endvalue, json, "endvalue");
+        JsonTools::remove_double(interval, json, "interval");
+
+        if (!startvalue)
           throw Fmi::Exception(BCP, "isolines startvalue missing");
-        if (json_endvalue.isNull())
+        if (!endvalue)
           throw Fmi::Exception(BCP, "isolines endvalue missing");
-        if (json_interval.isNull())
+        if (!interval)
           throw Fmi::Exception(BCP, "isolines interval missing");
 
-        auto startvalue = json_startvalue.asDouble();
-        auto endvalue = json_endvalue.asDouble();
-        auto interval = json_interval.asDouble();
-
-        if (startvalue > endvalue)
+        if (*startvalue > *endvalue)
           throw Fmi::Exception(BCP, "isolines startvalue > endvalue");
-        if (interval <= 0)
+        if (*interval <= 0)
           throw Fmi::Exception(BCP, "isolines interval must be positive");
 
+        auto json_except = JsonTools::remove(json, "except");
         std::vector<double> except_vector;
         if (!json_except.isNull())
         {
@@ -98,94 +134,54 @@ void IsolineLayer::init(const Json::Value& theJson,
               except_vector.push_back(e_json.asDouble());
           }
           else
-          {
             except_vector.push_back(json_except.asDouble());
-          }
         }
 
         std::string qidprefix = "isoline_";
-        if (!json_qidprefix.isNull())
-          qidprefix = json_qidprefix.asString();
-        for (double i = startvalue; i <= endvalue; i += interval)  // NOLINT(cert-flp30-c)
-        {
-          if (!except_vector.empty())
-          {
-            bool skip = false;
-            for (const auto& except : except_vector)
-            {
-              if (except != 0.0 && std::fmod(i, except) == 0.0)
-              {
-                skip = true;
-                break;
-              }
-            }
-            if (skip)
-              continue;
-          }
-          Isoline isoline;
-          isoline.qid = (qidprefix + Fmi::to_string(i));
-          isoline.value = i;
-          isolines.push_back(isoline);
+        JsonTools::remove_string(qidprefix, json, "qidprefix");
 
-          if (isolines.size() > 10000)
-            throw Fmi::Exception(BCP, "Too many (> 10000) isolines");
+        if (json.size() > 0)
+        {
+          auto names = json.getMemberNames();
+          auto namelist = boost::algorithm::join(names, ",");
+          throw Fmi::Exception(
+              BCP, "Unknown member variables in Isoline layer isovalues setting: " + namelist);
         }
+
+        generate_isolines(isolines, *startvalue, *endvalue, *interval, qidprefix, except_vector);
       }
     }
 
-    json = theJson.get("smoother", nulljson);
-    if (!json.isNull())
-      smoother.init(json, theConfig);
+    json = JsonTools::remove(theJson, "smoother");
+    smoother.init(json, theConfig);
 
-    json = theJson.get("interpolation", nulljson);
-    if (!json.isNull())
-      interpolation = json.asString();
+    JsonTools::remove_string(interpolation, theJson, "interpolation");
+    JsonTools::remove_int(extrapolation, theJson, "extrapolation");
+    JsonTools::remove_double(precision, theJson, "precision");
+    JsonTools::remove_double(minarea, theJson, "minarea");
+    JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
+    JsonTools::remove_double(multiplier, theJson, "multiplier");
+    JsonTools::remove_double(offset, theJson, "offset");
 
-    json = theJson.get("extrapolation", nulljson);
-    if (!json.isNull())
-      extrapolation = json.asInt();
-
-    json = theJson.get("precision", nulljson);
-    if (!json.isNull())
-      precision = json.asDouble();
-
-    json = theJson.get("minarea", nulljson);
-    if (!json.isNull())
-      minarea = json.asDouble();
-
-    json = theJson.get("unit_conversion", nulljson);
-    if (!json.isNull())
-      unit_conversion = json.asString();
-
-    json = theJson.get("multiplier", nulljson);
-    if (!json.isNull())
-      multiplier = json.asDouble();
-
-    json = theJson.get("offset", nulljson);
-    if (!json.isNull())
-      offset = json.asDouble();
-
-    json = theJson.get("outside", nulljson);
+    json = JsonTools::remove(theJson, "outside");
     if (!json.isNull())
     {
       outside.reset(Map());
       outside->init(json, theConfig);
     }
 
-    json = theJson.get("inside", nulljson);
+    json = JsonTools::remove(theJson, "inside");
     if (!json.isNull())
     {
       inside.reset(Map());
       inside->init(json, theConfig);
     }
 
-    json = theJson.get("sampling", nulljson);
-    if (!json.isNull())
-      sampling.init(json, theConfig);
+    json = JsonTools::remove(theJson, "sampling");
+    sampling.init(json, theConfig);
 
-    json = theJson.get("intersect", nulljson);
-    if (!json.isNull())
-      intersections.init(json, theConfig);
+    json = JsonTools::remove(theJson, "intersect");
+    intersections.init(json, theConfig);
   }
   catch (...)
   {
@@ -707,10 +703,12 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     if (!validLayer(theState))
       return;
 
-    std::string report = "IsolineLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "IsolineLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     std::vector<double> isovalues;
     for (const Isoline& isoline : isolines)

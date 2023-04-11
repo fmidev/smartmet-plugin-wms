@@ -22,7 +22,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Defs::init(const Json::Value& theJson,
+void Defs::init(Json::Value& theJson,
                 const State& theState,
                 const Config& theConfig,
                 const Properties& theParent)

@@ -17,10 +17,13 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void LegendLabels::init(const Json::Value& theJson, const Config& theConfig)
+void LegendLabels::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
+    if (theJson.isNull())
+      return;
+
     if (!theJson.isObject())
       throw Fmi::Exception(BCP, "Legend-layer labels JSON must be a map");
 
@@ -29,7 +32,7 @@ void LegendLabels::init(const Json::Value& theJson, const Config& theConfig)
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      const Json::Value& json = theJson[name];
+      Json::Value& json = theJson[name];
 
       if (name == "type")
         type = json.asString();

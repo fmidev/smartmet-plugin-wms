@@ -3,6 +3,7 @@
 #include "IceMapLayer.h"
 #include "Config.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "LonLatToXYTransformation.h"
 #include "State.h"
@@ -110,7 +111,7 @@ Json::Value getJsonValue(const std::string& param_name,
  */
 // ----------------------------------------------------------------------
 
-void IceMapLayer::init(const Json::Value& theJson,
+void IceMapLayer::init(Json::Value& theJson,
                        const State& theState,
                        const Config& theConfig,
                        const Properties& theProperties)
@@ -122,116 +123,119 @@ void IceMapLayer::init(const Json::Value& theJson,
 
     PostGISLayerBase::init(theJson, theState, theConfig, theProperties);
 
-    // Extract all members
-
-    Json::Value nulljson;
-    Json::Value json;
-
     // layer_subtype specifies the final layer type, e.g. label, symbol, named_location, ...
-    json = theJson.get("layer_subtype", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("layer_subtype", json.asString()));
+    std::string subtype;
+    JsonTools::remove_string(subtype, theJson, "layer_subtype");
+    if (!subtype.empty())
+      itsParameters.insert({"layer_subtype", subtype});
 
     // name of symbol file
-    json = theJson.get("symbol", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("symbol", json.asString()));
+    std::string symbol;
+    JsonTools::remove_string(symbol, theJson, "symbol");
+    if (!symbol.empty())
+      itsParameters.insert({"symbol", symbol});
 
     // column name of first name (e.g. 'Helsinki')
-    json = theJson.get("firstname_column", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("firstname_column", json.asString()));
+    std::string firstname_column;
+    JsonTools::remove_string(firstname_column, theJson, "firstname_column");
+    if (!firstname_column.empty())
+      itsParameters.insert({"firstname_column", firstname_column});
 
     // column name of second name (e.g. 'Helsingfors')
-    json = theJson.get("secondname_column", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("secondname_column", json.asString()));
+    std::string secondname_column;
+    JsonTools::remove_string(secondname_column, theJson, "secondname_column");
+    if (!secondname_column.empty())
+      itsParameters.insert({"secondname_column", secondname_column});
 
     // name position
-    json = theJson.get("nameposition_column", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("nameposition_column", json.asString()));
+    std::string nameposition_column;
+    JsonTools::remove_string(nameposition_column, theJson, "nameposition_column");
+    if (!nameposition_column.empty())
+      itsParameters.insert({"nameposition_column", nameposition_column});
 
     // column name of text
-    json = theJson.get("text_column", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("text_column", json.asString()));
+    std::string text_column;
+    JsonTools::remove_string(text_column, theJson, "text_column");
+    if (!text_column.empty())
+      itsParameters.insert({"text_column", text_column});
 
     // text position
-    json = theJson.get("textposition_column", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("textposition_column", json.asString()));
+    std::string textposition_column;
+    JsonTools::remove_string(textposition_column, theJson, "textposition_column");
+    if (!textposition_column.empty())
+      itsParameters.insert({"textposition_column", textposition_column});
 
     // angle column
-    json = theJson.get("angle_column", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("angle_column", json.asString()));
+    std::string angle_column;
+    JsonTools::remove_string(angle_column, theJson, "angle_column");
+    if (!angle_column.empty())
+      itsParameters.insert({"angle_column", angle_column});
 
     // name of pattern file
-    json = theJson.get("pattern", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("pattern", json.asString()));
+    std::string pattern;
+    JsonTools::remove_string(pattern, theJson, "pattern");
+    if (!pattern.empty())
+      itsParameters.insert({"pattern", pattern});
 
     // labeltext_column is one of attribute colmuns
-    json = theJson.get("labeltext_column", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("labeltext_column", json.asString()));
+    std::string labeltext_column;
+    JsonTools::remove_string(labeltext_column, theJson, "labeltext_column");
+    if (!labeltext_column.empty())
+      itsParameters.insert({"labeltext_column", labeltext_column});
 
     // list of all attribute columns
-    json = theJson.get("attribute_columns", nulljson);
-
-    if (!json.isNull())
-      itsParameters.insert(make_pair("attribute_columns", json.asString()));
+    std::string attribute_columns;
+    JsonTools::remove_string(attribute_columns, theJson, "attribute_columns");
+    if (!attribute_columns.empty())
+      itsParameters.insert({"attribute_columns", attribute_columns});
 
     // fontname column of the label
-    json = theJson.get("fontname_column", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("fontname_column", json.asString()));
+    std::string fontname_column;
+    JsonTools::remove_string(fontname_column, theJson, "fontname_column");
+    if (!fontname_column.empty())
+      itsParameters.insert({"fontname_column", fontname_column});
 
     // fontsize column of the label
-    json = theJson.get("fontsize_column", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("fontsize_column", json.asString()));
+    std::string fontsize_column;
+    JsonTools::remove_string(fontsize_column, theJson, "fontsize_column");
+    if (!fontsize_column.empty())
+      itsParameters.insert({"fontsize_column", fontsize_column});
 
     // longitude, latitude
-    json = theJson.get("longitude", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("longitude", json.asString()));
+    std::string longitude;
+    JsonTools::remove_string(longitude, theJson, "longitude");
+    if (!longitude.empty())
+      itsParameters.insert({"longitude", longitude});
 
     // longitude, latitude
-    json = theJson.get("latitude", nulljson);
-    if (!json.isNull())
-      itsParameters.insert(make_pair("latitude", json.asString()));
+    std::string latitude;
+    JsonTools::remove_string(latitude, theJson, "latitude");
+    if (!latitude.empty())
+      itsParameters.insert({"latitude", latitude});
 
     // if time missing set current time
     if (!hasValidTime())
       setValidTime(boost::posix_time::second_clock::universal_time());
 
     // table attributes
-    json = theJson.get("table_attributes", nulljson);
+    auto json = JsonTools::remove(theJson, "table_attributes");
     if (!json.isNull())
-    {
-      itsParameters.insert(make_pair("table_attributes", json.toStyledString()));
-    }
+      itsParameters.insert({"table_attributes", json.toStyledString()});
 
     // table data
-    json = theJson.get("table_data", nulljson);
+    json = JsonTools::remove(theJson, "table_data");
     if (!json.isNull())
-    {
-      itsParameters.insert(make_pair("table_data", json.toStyledString()));
-    }
+      itsParameters.insert({"table_data", json.toStyledString()});
 
     // additional columns
-    json = theJson.get("additional_columns", nulljson);
-    if (!json.isNull())
+    std::string additional_columns;
+    JsonTools::remove_string(additional_columns, theJson, "additional_columns");
+    if (!additional_columns.empty())
     {
-      std::string cols = json.asString();
       std::vector<std::string> columns;
-      boost::algorithm::split(columns, cols, boost::algorithm::is_any_of(","));
+      boost::algorithm::split(columns, additional_columns, boost::algorithm::is_any_of(","));
       for (const auto& col : columns)
-      {
-        itsParameters.insert(make_pair(col, col));
-      }
+        itsParameters.insert({col, col});
     }
   }
   catch (...)
@@ -253,72 +257,60 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     if (!validLayer(theState))
       return;
 
-    std::string report = "IceMapLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "IceMapLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Get projection details
     if (!projection.crs)
       throw std::runtime_error("IceMapLayer projection not set");
 
-    if (theState.addId("spearhead"))
-      theGlobals["includes"]["marker"] = theState.getMarker("spearhead");
-    if (theState.addId("strips_and_patches"))
-      theGlobals["includes"]["strips_and_patches"] = theState.getSymbol("strips_and_patches");
-    if (theState.addId("jmdbrr"))
-      theGlobals["includes"]["jmdbrr"] = theState.getSymbol("jmdbrr");
-    if (theState.addId("icelea"))
-      theGlobals["includes"]["icelea"] = theState.getSymbol("icelea");
-    if (theState.addId("icefra"))
-      theGlobals["includes"]["icefra"] = theState.getSymbol("icefra");
-    if (theState.addId("icefra_zone"))
-      theGlobals["includes"]["icefra_zone"] = theState.getSymbol("icefra_zone");
-    if (theState.addId("flobrg"))
-      theGlobals["includes"]["flobrg"] = theState.getSymbol("flobrg");
-    if (theState.addId("ice_edge"))
-      theGlobals["includes"]["ice_edge"] = theState.getSymbol("ice_edge");
-    if (theState.addId("estimated_ice_edge"))
-      theGlobals["includes"]["estimated_ice_edge"] = theState.getSymbol("estimated_ice_edge");
-    if (theState.addId("icedft"))
-      theGlobals["includes"]["icedft"] = theState.getSymbol("icedft");
-    if (theState.addId("icerdg"))
-      theGlobals["includes"]["icerdg"] = theState.getSymbol("icerdg");
-    if (theState.addId("icerft"))
-      theGlobals["includes"]["icerft"] = theState.getSymbol("icerft");
-    if (theState.addId("sea_surface_mean_temperature"))
-      theGlobals["includes"]["sea_surface_mean_temperature"] =
-          theState.getSymbol("sea_surface_mean_temperature");
-    if (theState.addId("icecom"))
-      theGlobals["includes"]["icecom"] = theState.getSymbol("icecom");
-    if (theState.addId("watertemperature_isotherm"))
-      theGlobals["includes"]["watertemperature_isotherm"] =
-          theState.getSymbol("watertemperature_isotherm");
-    if (theState.addId("ice_thickness"))
-      theGlobals["includes"]["ice_thickness"] = theState.getSymbol("ice_thickness");
-    if (theState.addId("lighthouse"))
-      theGlobals["includes"]["lighthouse"] = theState.getSymbol("lighthouse");
+    auto& includes = theGlobals["includes"];
 
-    if (theState.addId("close_ice"))
-      theGlobals["includes"]["close_ice"] = theState.getPattern("close_ice");
-    if (theState.addId("conslidated_ice"))
-      theGlobals["includes"]["consolidated_ice"] = theState.getPattern("consolidated_ice");
-    if (theState.addId("fast_ice"))
-      theGlobals["includes"]["fast_ice"] = theState.getPattern("fast_ice");
-    if (theState.addId("grey_ice"))
-      theGlobals["includes"]["grey_ice"] = theState.getPattern("grey_ice");
-    if (theState.addId("new_ice"))
-      theGlobals["includes"]["new_ice"] = theState.getPattern("new_ice");
-    if (theState.addId("open_ice"))
-      theGlobals["includes"]["open_ice"] = theState.getPattern("open_ice");
-    if (theState.addId("open_water"))
-      theGlobals["includes"]["open_water"] = theState.getPattern("open_water");
-    if (theState.addId("rotten_fast_ice"))
-      theGlobals["includes"]["rotten_fast_ice"] = theState.getPattern("rotten_fast_ice");
-    if (theState.addId("very_close_ice"))
-      theGlobals["includes"]["very_close_ice"] = theState.getPattern("very_close_ice");
-    if (theState.addId("very_open_ice"))
-      theGlobals["includes"]["very_open_ice"] = theState.getPattern("very_open_ice");
+    std::vector<std::string> markers{"spearhead"};
+
+    std::vector<std::string> symbols{"strips_and_patches",
+                                     "jmdbrr",
+                                     "icelea",
+                                     "icefra",
+                                     "icefra_zone",
+                                     "flobrg",
+                                     "ice_edge",
+                                     "estimated_ice_edge",
+                                     "icedft",
+                                     "icerdg",
+                                     "icerft",
+                                     "sea_surface_mean_temperature",
+                                     "icecom",
+                                     "watertemperature_isotherm",
+                                     "ice_thickness",
+                                     "lighthouse"};
+
+    std::vector<std::string> patterns{"close_ice",
+                                      "consolidated_ice",
+                                      "fast_ice",
+                                      "grey_ice",
+                                      "new_ice",
+                                      "open_ice",
+                                      "open_water",
+                                      "rotten_fast_ice",
+                                      "very_close_ice",
+                                      "very_open_ice"};
+
+    for (const auto& marker : markers)
+      if (theState.addId(marker))
+        includes[marker] = theState.getMarker(marker);
+
+    for (const auto& symbol : symbols)
+      if (theState.addId(symbol))
+        includes[symbol] = theState.getSymbol(symbol);
+
+    for (const auto& pattern : patterns)
+      if (theState.addId(pattern))
+        includes[pattern] = theState.getPattern(pattern);
 
     // const auto& crs = projection.getCRS();
 
@@ -488,7 +480,7 @@ void IceMapLayer::handleTextField(const Fmi::Feature& theResultItem,
                                   CTPP::CDT& theGlobals,
                                   CTPP::CDT& theLayersCdt,
                                   CTPP::CDT& /* theGroupCdt */,
-                                  State& theState) const
+                                  const State& theState) const
 {
   // text field
   std::string text;
@@ -611,7 +603,7 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
                               const PostGISLayerFilter& theFilter,
                               CTPP::CDT& theGlobals,
                               CTPP::CDT& theLayersCdt,
-                              State& theState) const
+                              const State& theState) const
 {
   std::vector<std::string> attribute_columns = getAttributeColumns();
 
@@ -797,7 +789,7 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
                                CTPP::CDT& theGlobals,
                                CTPP::CDT& theGroupCdt,
                                CTPP::CDT& theLayersCdt,
-                               State& theState) const
+                               const State& theState) const
 {
   if (!theResultItem.geom || theResultItem.geom->IsEmpty() != 0)
     return;

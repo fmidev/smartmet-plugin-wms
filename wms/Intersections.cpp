@@ -15,13 +15,16 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Intersections::init(const Json::Value& theJson, const Config& theConfig)
+void Intersections::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {
+    if (theJson.isNull())
+      return;
+
     if (theJson.isArray())
     {
-      for (const auto& json : theJson)
+      for (auto& json : theJson)
       {
         Intersection intersection;
         intersection.init(json, theConfig);

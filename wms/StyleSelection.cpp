@@ -9,6 +9,10 @@ namespace Plugin
 {
 namespace WMS
 {
+namespace
+{
+const std::string STARTING_TAGS_KEY = "_TAGS_BEFORE_ANY_LAYER_";
+
 // Use layer qid as a key
 std::string getKey(const Json::Value& json)
 {
@@ -74,94 +78,28 @@ void handleStyles(const std::map<std::string, Json::Value*>& viewLayers,
 
     Json::Value::Members styleLayerMembers = styleLayerJson.getMemberNames();
 
+    // If the layer type changes, we remove all old settings first since the
+    // settings are most likely not compatible, and a complete layer change is wanted.
+
+    auto newLayerType = styleLayerJson.get("layer_type", nulljson);
+    if (layerType != newLayerType)
+      viewLayerJson = Json::Value(Json::objectValue);
+
+    // Then insert new style settings over the old ones, including the qid since the above
+    // code may have deleted it
     for (const auto& name : styleLayerMembers)
-    {
-      if (name != "qid")
-      {
-        addOrReplace(viewLayerJson, styleLayerJson, name);
-      }
-    }
+      addOrReplace(viewLayerJson, styleLayerJson, name);
   }
 }
 
-void handleViewLayer(Json::Value& viewLayer, std::map<std::string, Json::Value*>& viewL)
+void handleTagStyles(Json::Value& views,
+                     std::map<std::string, std::vector<const Json::Value*>>& styleLTags)
 {
-  if (viewLayer.isNull())
-    return;
-
-  std::string key = getKey(viewLayer);
-
-  if (!key.empty())
-    viewL.insert(std::make_pair(key, &viewLayer));
-
-  // Handle sublayers
-  Json::Value nulljson;
-  auto subLayers = viewLayer.get("layers", nulljson);
-  if (!subLayers.isNull() && subLayers.isArray())
-    for (auto& subLayer : viewLayer["layers"])
-      handleViewLayer(subLayer, viewL);
-}
-
-void useStyle(Json::Value& root, const Json::Value& styles)
-{
-  Json::Value nulljson;
-
-  static std::string STARTING_TAGS_KEY = "_TAGS_BEFORE_ANY_LAYER_";
-  std::map<std::string, const Json::Value*> styleL;
-  std::map<std::string, std::vector<const Json::Value*>> styleLTags;
-  std::map<std::string, Json::Value*> viewL;
-
-  if (!styles.isMember("layers"))
-    return;
-  const auto& styleLayers = styles.get("layers", nulljson);
-  std::string previous_key = STARTING_TAGS_KEY;
-  if (!styleLayers.isNull() && styleLayers.isArray())
-  {
-    for (const auto& styleLayer : styles["layers"])
-    {
-      std::string key = getKey(styleLayer);
-      if (key.empty())
-      {
-        auto tag = styleLayer.get("tag", nulljson);
-        if (!tag.isNull())
-        {
-          if (styleLTags.find(previous_key) != styleLTags.end())
-            styleLTags.at(previous_key).push_back(&styleLayer);
-          else
-          {
-            std::vector<const Json::Value*> layer_vector;
-            layer_vector.push_back(&styleLayer);
-            styleLTags.insert(std::make_pair(previous_key, layer_vector));
-          }
-        }
-        continue;
-      }
-      previous_key = key;
-
-      styleL.insert(std::make_pair(key, &styleLayer));
-    }
-  }
-
-  auto& views = root["views"];
-  if (views.isNull())
-    return;
-  for (auto& viewJson : views)
-  {
-    auto viewLayers = viewJson.get("layers", nulljson);
-    if (!viewLayers.isNull() && viewLayers.isArray())
-    {
-      for (auto& viewLayer : viewJson["layers"])
-        handleViewLayer(viewLayer, viewL);
-    }
-  }
-
-  // Data-layers (supportedStyleLayers) are handled here
-  handleStyles(viewL, styleL);
-
   if (styleLTags.empty())
     return;
 
-  // Tag-layers area handled here
+  Json::Value nulljson;
+
   for (auto& viewJson : views)
   {
     auto viewLayers = viewJson.get("layers", nulljson);
@@ -195,6 +133,106 @@ void useStyle(Json::Value& root, const Json::Value& styles)
       }
     }
   }
+}
+
+void handleViewLayer(Json::Value& viewLayer, std::map<std::string, Json::Value*>& viewL)
+{
+  if (viewLayer.isNull())
+    return;
+
+  std::string key = getKey(viewLayer);
+
+  if (!key.empty())
+    viewL.insert(std::make_pair(key, &viewLayer));
+
+  // Handle sublayers
+  Json::Value nulljson;
+  auto subLayers = viewLayer.get("layers", nulljson);
+  if (!subLayers.isNull() && subLayers.isArray())
+    for (auto& subLayer : viewLayer["layers"])
+      handleViewLayer(subLayer, viewL);
+}
+
+void collect_styles(const Json::Value& styles,
+                    std::map<std::string, const Json::Value*>& styleL,
+                    std::map<std::string, std::vector<const Json::Value*>>& styleLTags)
+{
+  Json::Value nulljson;
+
+  const auto& styleLayers = styles.get("layers", nulljson);
+  std::string previous_key = STARTING_TAGS_KEY;
+  if (styleLayers.isArray())
+  {
+    for (const auto& styleLayer : styles["layers"])
+    {
+      std::string key = getKey(styleLayer);
+      if (key.empty())
+      {
+        auto tag = styleLayer.get("tag", nulljson);
+        if (!tag.isNull())
+        {
+          if (styleLTags.find(previous_key) != styleLTags.end())
+            styleLTags.at(previous_key).push_back(&styleLayer);
+          else
+          {
+            std::vector<const Json::Value*> layer_vector;
+            layer_vector.push_back(&styleLayer);
+            styleLTags.insert(std::make_pair(previous_key, layer_vector));
+          }
+        }
+      }
+      else
+      {
+        previous_key = key;
+        styleL.insert(std::make_pair(key, &styleLayer));
+      }
+    }
+  }
+}
+
+void collect_views(Json::Value& views, std::map<std::string, Json::Value*>& viewL)
+{
+  if (views.isNull())
+    return;
+
+  Json::Value nulljson;
+
+  for (auto& viewJson : views)
+  {
+    auto viewLayers = viewJson.get("layers", nulljson);
+    if (!viewLayers.isNull() && viewLayers.isArray())
+    {
+      for (auto& viewLayer : viewJson["layers"])
+        handleViewLayer(viewLayer, viewL);
+    }
+  }
+}
+
+}  // namespace
+
+// --- Visible functions ---
+
+void useStyle(Json::Value& root, const Json::Value& styles)
+{
+  if (!styles.isMember("layers"))
+    return;
+
+  Json::Value nulljson;
+
+  std::map<std::string, const Json::Value*> data_styles;
+  std::map<std::string, std::vector<const Json::Value*>> tag_styles;
+
+  collect_styles(styles, data_styles, tag_styles);
+
+  std::map<std::string, Json::Value*> viewL;
+  auto& views = root["views"];
+  collect_views(views, viewL);
+
+  // Data-layers (supportedStyleLayers) are handled here
+  handleStyles(viewL, data_styles);
+
+  // Tag-layers area handled here
+  handleTagStyles(views, tag_styles);
 }
 
 void useStyle(Json::Value& root, const std::string& styleName)

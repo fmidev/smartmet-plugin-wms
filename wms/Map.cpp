@@ -17,10 +17,13 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Map::init(const Json::Value& theJson, const Config& /* theConfig */)
+void Map::init(Json::Value& theJson, const Config& /* theConfig */)
 {
   try
   {
+    if (theJson.isNull())
+      return;
+
     if (!theJson.isObject())
       throw Fmi::Exception(BCP, "Map JSON is not map");
 
@@ -29,7 +32,7 @@ void Map::init(const Json::Value& theJson, const Config& /* theConfig */)
     const auto members = theJson.getMemberNames();
     for (const auto& name : members)
     {
-      const Json::Value& json = theJson[name];
+      Json::Value& json = theJson[name];
 
       if (name == "lines")
         lines = json.asBool();

@@ -736,7 +736,7 @@
 		    }
 		},
 		{
-		    "gid": "icemap_title",
+		    "qid": "icemap_title",
 		    "layer_type": "tag",
 		    "tag": "text",
 		    "cdata": "Jääkartta   Iskarta  Ice Chart",
@@ -977,7 +977,7 @@
                     ]
                 },
 		{
-		    "gid": "liikennerajoitus_fi",
+		    "qid": "liikennerajoitus_fi",
 		    "layer_type": "tag",
 		    "tag": "text",
 		    "cdata": "Aluksen, joka on matkalla Pohjanlahden satamaan, jossa on voimassa liikennerajoitus, on ylittäessään\nleveysasteen 60°00’N tehtävä talviliikenneohjeen mukainen ilmoitus ICE INFO:lle VHF-kanavalla 78 tai\npuhelimitse +46 31 699 100.\nReittijakojärjestelmä Merenkurkussa on tilapäisesti poissa käytöstä jääolojen takia 18. helmikuuta alkaen.",
@@ -993,7 +993,7 @@
 		    }
 		},
 		{
-		    "gid": "liikennerajoitus_sv",
+		    "qid": "liikennerajoitus_sv",
 		    "layer_type": "tag",
 		    "tag": "text",
 		    "cdata": "Fartyg destinerade till hamnar med trafikrestriktion i Bottniska viken ska, vid passage av latituden 60°00´N,\nrapportera enligt instruktionerna för vintersjöfarten till ICE INFO på VHF-kanal 78 eller per telefon +46 31\n699 100.\nTrafiksepareringssystemet i Kvarken är tillfälligt ur bruk på grund av isförhållandena från och med den 18 februari.",
@@ -1009,7 +1009,7 @@
 		    }
 		},
 		{
-		    "gid": "liikennerajoitus_en",
+		    "qid": "liikennerajoitus_en",
 		    "layer_type": "tag",
 		    "tag": "text",
 		    "cdata": "Vessels bound for Gulf of Bothnia ports in which traffic restrictions apply shall, when passing the latitude\n60°00’N, report their nationality, name, port of destination, ETA and speed to ICE INFO on VHF channel 78.\nThis report can also be given directly by phone +46 31 699 100.\nThe traffic separation scheme in the Quark is temporarily out of use due to\\n ice conditions from 18th February.",

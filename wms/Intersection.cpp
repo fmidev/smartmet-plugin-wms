@@ -26,7 +26,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-void Intersection::init(const Json::Value& theJson, const Config& theConfig)
+void Intersection::init(Json::Value& theJson, const Config& theConfig)
 {
   try
   {

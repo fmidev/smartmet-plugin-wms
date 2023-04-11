@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "Hash.h"
 #include "Iri.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "Select.h"
 #include "State.h"
@@ -804,7 +805,7 @@ PointValues read_observations(const NumberLayer& layer,
  */
 // ----------------------------------------------------------------------
 
-void NumberLayer::init(const Json::Value& theJson,
+void NumberLayer::init(Json::Value& theJson,
                        const State& theState,
                        const Config& theConfig,
                        const Properties& theProperties)
@@ -820,54 +821,30 @@ void NumberLayer::init(const Json::Value& theJson,
 
     // Extract member values
 
-    Json::Value nulljson;
+    JsonTools::remove_string(parameter, theJson, "parameter");
+    JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
+    JsonTools::remove_double(multiplier, theJson, "multiplier");
+    JsonTools::remove_double(offset, theJson, "offset");
 
-    auto json = theJson.get("parameter", nulljson);
-    if (!json.isNull())
-      parameter = json.asString();
-
-    json = theJson.get("unit_conversion", nulljson);
-    if (!json.isNull())
-      unit_conversion = json.asString();
-
-    json = theJson.get("multiplier", nulljson);
-    if (!json.isNull())
-      multiplier = json.asDouble();
-
-    json = theJson.get("offset", nulljson);
-    if (!json.isNull())
-      offset = json.asDouble();
-
-    json = theJson.get("positions", nulljson);
+    auto json = JsonTools::remove(theJson, "positions");
     if (!json.isNull())
     {
       positions = Positions{};
       positions->init(json, theConfig);
     }
 
-    json = theJson.get("maxdistance", nulljson);
-    if (!json.isNull())
-      maxdistance = json.asDouble();
+    JsonTools::remove_double(maxdistance, theJson, "maxdistance");
+    JsonTools::remove_int(minvalues, theJson, "minvalues");
 
-    json = theJson.get("minvalues", nulljson);
-    if (!json.isNull())
-      minvalues = json.asInt();
+    json = JsonTools::remove(theJson, "label");
+    label.init(json, theConfig);
 
-    json = theJson.get("label", nulljson);
-    if (!json.isNull())
-      label.init(json, theConfig);
+    JsonTools::remove_string(symbol, theJson, "symbol");
+    JsonTools::remove_double(scale, theJson, "scale");
 
-    json = theJson.get("symbol", nulljson);
+    json = JsonTools::remove(theJson, "numbers");
     if (!json.isNull())
-      symbol = json.asString();
-
-    json = theJson.get("scale", nulljson);
-    if (!json.isNull())
-      scale = json.asDouble();
-
-    json = theJson.get("numbers", nulljson);
-    if (!json.isNull())
-      Spine::JSON::extract_array("numbers", numbers, json, theConfig);
+      JsonTools::extract_array("numbers", numbers, json, theConfig);
 
     point_value_options.init(theJson);
   }
@@ -910,10 +887,12 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Time execution
 
-    std::string report = "NumberLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "NumberLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Make sure position generation is initialized
 
@@ -1294,10 +1273,12 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
   {
     // Time execution
 
-    std::string report = "NumberLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
+    {
+      std::string report = "NumberLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
 
     // Establish the data
 

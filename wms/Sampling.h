@@ -23,7 +23,7 @@ class State;
 class Sampling
 {
  public:
-  void init(const Json::Value& theJson, const Config& theConfig);
+  void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
   boost::optional<double> getResolution(const Projection& theProjection) const;
 

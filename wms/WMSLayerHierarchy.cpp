@@ -141,7 +141,7 @@ void set_layer_elements(WMSLayerHierarchy& lh)
   if (identicalElevationDimension)
     lh.elevationDimension = first_item.elevationDimension;
 
-  for (auto& item : lh.sublayers)
+  for (const auto& item : lh.sublayers)
     set_layer_elements(*item);
 }
 
