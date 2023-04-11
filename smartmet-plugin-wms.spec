@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.4.5
+Version: 23.4.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -149,7 +149,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
-* Wed Apr  5 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.4.5-1.fmi
+* Tue Apr 11 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.4.11-1.fmi
 - Improved JSON validation
 - Added NullLayer with layer_type=null to enable styles to add new layers in a clean manner
 - If the WMS STYLES option changes the type of a layer, the old settings will be completely erased instead of just overwritten
