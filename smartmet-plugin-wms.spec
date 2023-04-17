@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.4.11
-Release: 2%{?dist}.fmi
+Version: 23.4.17
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -26,7 +26,7 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.3.21
-BuildRequires: smartmet-library-grid-content-devel >= 23.3.9
+BuildRequires: smartmet-library-grid-content-devel >= 23.4.17
 BuildRequires: smartmet-library-grid-files-devel >= 23.3.9
 BuildRequires: smartmet-library-macgyver-devel >= 23.3.3
 BuildRequires: smartmet-library-spine-devel >= 23.3.14
@@ -38,7 +38,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 23.3.21
 BuildRequires: smartmet-engine-observation-devel >= 23.4.3
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.12.21
-BuildRequires: smartmet-engine-grid-devel >= 23.3.9
+BuildRequires: smartmet-engine-grid-devel >= 23.4.17
 BuildRequires: smartmet-engine-geonames-devel >= 23.3.16
 BuildRequires: smartmet-engine-querydata-devel >= 23.3.21
 BuildRequires: smartmet-engine-contour-devel >= 23.3.9
@@ -66,7 +66,7 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 23.3.9
+Requires: smartmet-library-grid-content >= 23.4.17
 Requires: smartmet-library-grid-files >= 23.3.9
 Requires: smartmet-library-gis >= 23.3.14
 Requires: smartmet-library-trax >= 22.12.22
@@ -80,7 +80,7 @@ Requires: smartmet-engine-authentication >= 23.3.21
 Requires: smartmet-engine-querydata >= 23.3.21
 Requires: smartmet-engine-contour >= 23.3.9
 Requires: smartmet-engine-gis >= 22.12.21
-Requires: smartmet-engine-grid >= 23.3.9
+Requires: smartmet-engine-grid >= 23.4.17
 Requires: smartmet-engine-geonames >= 23.3.16
 Requires: smartmet-server >= 23.3.21
 Requires: smartmet-library-spine >= 23.3.14
@@ -110,7 +110,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-newbase-devel >= 23.2.9
 #TestRequires: smartmet-library-spine-devel >= 23.3.14
 #TestRequires: smartmet-library-timeseries-devel >= 23.3.15
-#TestRequires: smartmet-engine-grid-devel >= 23.3.9
+#TestRequires: smartmet-engine-grid-devel >= 23.4.17
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Apr 17 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.4.17-1.fmi
+- Repackaged due to GRID ABI changes
+
 * Tue Apr 11 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.4.11-2.fmi
 - Both isoband limits can now be set simultaneously with value instead of using lolimit and hilimit
 
