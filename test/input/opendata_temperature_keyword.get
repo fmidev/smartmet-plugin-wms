@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=opendata_temperature_keyword&time=20130805T1500 HTTP/1.0

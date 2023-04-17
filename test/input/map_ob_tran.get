@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=map&p.crs=%2bproj%3dob_tran%20%2bo_proj%3dmill%20%2bo_lon_p%3d40%20%2bo_lat_p%3d50%20%2blon_0%3d60&p.resolution=50 HTTP/1.0

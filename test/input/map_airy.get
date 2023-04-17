@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=map&p.crs=%2bproj%3dairy&p.resolution=25 HTTP/1.0

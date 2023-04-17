@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=t2m_p&time=200808050300&type=geojson HTTP/1.0

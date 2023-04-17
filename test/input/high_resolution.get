@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=high_resolution&time=202006051200 HTTP/1.0

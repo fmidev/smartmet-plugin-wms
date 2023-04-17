@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=t2m_p&time=200808050300&l3.attributes.display=none&optimizesize=1 HTTP/1.0

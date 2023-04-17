@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=t2m_twice&time=200808050300&v2.time_offset=1440&v2.attributes.transform=translate%28500,1%29+rotate%2830%29+scale%280.75%29&v1.attributes.filter=url%28#shadow%29&v2.attributes.filter=url%28#shadow%29 HTTP/1.0

@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=t2m_twice&time=200808050300&v2.time_offset=1440&v1.clip=1&v2.clip=1&v1.margin=5&v2.margin=10&projection.place=Helsinki&projection.resolution=1 HTTP/1.0

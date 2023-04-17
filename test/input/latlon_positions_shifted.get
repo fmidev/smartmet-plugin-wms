@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=latlon_positions_shifted&time=201503131200 HTTP/1.0

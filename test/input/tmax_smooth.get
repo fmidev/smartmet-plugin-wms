@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=tmax_smooth&time=200101011200 HTTP/1.0
