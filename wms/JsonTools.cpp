@@ -23,9 +23,16 @@ Json::Value remove(Json::Value& theJson, const std::string& theName)
 
 void remove_string(std::string& theValue, Json::Value& theJson, const std::string& theName)
 {
-  auto json = remove(theJson, theName);
-  if (!json.isNull())
-    theValue = json.asString();
+  try
+  {
+    auto json = remove(theJson, theName);
+    if (!json.isNull())
+      theValue = json.asString();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to extract JSON field '" + theName + "' as a string");
+  }
 }
 
 void remove_string(boost::optional<std::string>& theValue,
@@ -33,27 +40,50 @@ void remove_string(boost::optional<std::string>& theValue,
                    const std::string& theName,
                    const boost::optional<std::string>& theDefault)
 {
-  auto json = remove(theJson, theName);
-  if (!json.isNull())
-    theValue = json.asString();
-  else if (theDefault)
-    theValue = theDefault;
+  try
+  {
+    auto json = remove(theJson, theName);
+    if (!json.isNull())
+      theValue = json.asString();
+    else if (theDefault)
+      theValue = theDefault;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to extract JSON field '" + theName + "' as a string");
+  }
 }
 
 void remove_int(int& theValue, Json::Value& theJson, const std::string& theName)
 {
-  auto json = remove(theJson, theName);
-  if (!json.isNull())
-    theValue = json.asInt();
+  try
+  {
+    auto json = remove(theJson, theName);
+    if (!json.isNull())
+      theValue = json.asInt();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP,
+                                "Failed to extract JSON field '" + theName + "' as an integer");
+  }
 }
 
 void remove_int(int& theValue, Json::Value& theJson, const std::string& theName, int theDefault)
 {
-  auto json = remove(theJson, theName);
-  if (!json.isNull())
-    theValue = json.asInt();
-  else
-    theValue = theDefault;
+  try
+  {
+    auto json = remove(theJson, theName);
+    if (!json.isNull())
+      theValue = json.asInt();
+    else
+      theValue = theDefault;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP,
+                                "Failed to extract JSON field '" + theName + "' as an integer");
+  }
 }
 
 void remove_int(boost::optional<int>& theValue,
@@ -61,18 +91,34 @@ void remove_int(boost::optional<int>& theValue,
                 const std::string& theName,
                 const boost::optional<int>& theDefault)
 {
-  auto json = remove(theJson, theName);
-  if (!json.isNull())
-    theValue = json.asInt();
-  else if (theDefault)
-    theValue = theDefault;
+  try
+  {
+    auto json = remove(theJson, theName);
+    if (!json.isNull())
+      theValue = json.asInt();
+    else if (theDefault)
+      theValue = theDefault;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP,
+                                "Failed to extract JSON field '" + theName + "' as an integer");
+  }
 }
 
 void remove_uint(uint& theValue, Json::Value& theJson, const std::string& theName)
 {
-  auto json = remove(theJson, theName);
-  if (!json.isNull())
-    theValue = json.asUInt();
+  try
+  {
+    auto json = remove(theJson, theName);
+    if (!json.isNull())
+      theValue = json.asUInt();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(
+        BCP, "Failed to extract JSON field '" + theName + "' as an unsigned integer");
+  }
 }
 
 void remove_uint(boost::optional<uint>& theValue,
@@ -80,18 +126,33 @@ void remove_uint(boost::optional<uint>& theValue,
                  const std::string& theName,
                  const boost::optional<uint>& theDefault)
 {
-  auto json = remove(theJson, theName);
-  if (!json.isNull())
-    theValue = json.asUInt();
-  else if (theDefault)
-    theValue = theDefault;
+  try
+  {
+    auto json = remove(theJson, theName);
+    if (!json.isNull())
+      theValue = json.asUInt();
+    else if (theDefault)
+      theValue = theDefault;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(
+        BCP, "Failed to extract JSON field '" + theName + "' as an unsigned integer");
+  }
 }
 
 void remove_double(double& theValue, Json::Value& theJson, const std::string& theName)
 {
-  auto json = remove(theJson, theName);
-  if (!json.isNull())
-    theValue = json.asDouble();
+  try
+  {
+    auto json = remove(theJson, theName);
+    if (!json.isNull())
+      theValue = json.asDouble();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to extract JSON field '" + theName + "' as a double");
+  }
 }
 
 void remove_double(boost::optional<double>& theValue,
@@ -99,27 +160,48 @@ void remove_double(boost::optional<double>& theValue,
                    const std::string& theName,
                    const boost::optional<double>& theDefault)
 {
-  auto json = remove(theJson, theName);
-  if (!json.isNull())
-    theValue = json.asDouble();
-  else if (theDefault)
-    theValue = theDefault;
+  try
+  {
+    auto json = remove(theJson, theName);
+    if (!json.isNull())
+      theValue = json.asDouble();
+    else if (theDefault)
+      theValue = theDefault;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to extract JSON field '" + theName + "' as a double");
+  }
 }
 
 void remove_bool(bool& theValue, Json::Value& theJson, const std::string& theName)
 {
-  auto json = remove(theJson, theName);
-  if (!json.isNull())
-    theValue = json.asBool();
+  try
+  {
+    auto json = remove(theJson, theName);
+    if (!json.isNull())
+      theValue = json.asBool();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to extract JSON field '" + theName + "' as a boolean");
+  }
 }
 
 void remove_bool(bool& theValue, Json::Value& theJson, const std::string& theName, bool theDefault)
 {
-  auto json = remove(theJson, theName);
-  if (!json.isNull())
-    theValue = json.asBool();
-  else
-    theValue = theDefault;
+  try
+  {
+    auto json = remove(theJson, theName);
+    if (!json.isNull())
+      theValue = json.asBool();
+    else
+      theValue = theDefault;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to extract JSON field '" + theName + "' as a boolean");
+  }
 }
 
 void remove_tz(boost::local_time::time_zone_ptr& theZone,
@@ -128,13 +210,21 @@ void remove_tz(boost::local_time::time_zone_ptr& theZone,
                const Fmi::TimeZones& theTimeZones,
                const boost::local_time::time_zone_ptr& theDefault)
 {
-  auto json = remove(theJson, theName);
-  if (json.isString())
-    theZone = parse_timezone(json.asString(), theTimeZones);
-  else if (!json.isNull())
-    throw Fmi::Exception(BCP, "Failed to parse tz setting: '" + json.asString());
-  else if (theDefault)
-    theZone = theDefault;
+  try
+  {
+    auto json = remove(theJson, theName);
+    if (json.isString())
+      theZone = parse_timezone(json.asString(), theTimeZones);
+    else if (!json.isNull())
+      throw Fmi::Exception(BCP, "Failed to parse tz setting: '" + json.asString());
+    else if (theDefault)
+      theZone = theDefault;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP,
+                                "Failed to extract JSON field '" + theName + "' as a timezone");
+  }
 }
 
 void remove_time(boost::optional<boost::posix_time::ptime>& theTime,
@@ -142,19 +232,26 @@ void remove_time(boost::optional<boost::posix_time::ptime>& theTime,
                  const std::string& theName,
                  const boost::optional<boost::posix_time::ptime>& theDefault)
 {
-  auto json = remove(theJson, theName);
-  if (json.isString())
-    theTime = parse_time(json.asString());
-  else if (json.isUInt64())
+  try
   {
-    // A timestamp may look like an integer in a query string
-    std::size_t tmp = json.asUInt64();
-    theTime = parse_time(Fmi::to_string(tmp));
+    auto json = remove(theJson, theName);
+    if (json.isString())
+      theTime = parse_time(json.asString());
+    else if (json.isUInt64())
+    {
+      // A timestamp may look like an integer in a query string
+      std::size_t tmp = json.asUInt64();
+      theTime = parse_time(Fmi::to_string(tmp));
+    }
+    else if (!json.isNull())
+      throw Fmi::Exception(BCP, "Failed to parse time setting: '" + json.asString());
+    else if (theDefault)
+      theTime = theDefault;
   }
-  else if (!json.isNull())
-    throw Fmi::Exception(BCP, "Failed to parse time setting: '" + json.asString());
-  else if (theDefault)
-    theTime = theDefault;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to extract JSON field '" + theName + "' as a time");
+  }
 }
 
 void remove_time(boost::optional<boost::posix_time::ptime>& theTime,
@@ -163,19 +260,26 @@ void remove_time(boost::optional<boost::posix_time::ptime>& theTime,
                  const boost::local_time::time_zone_ptr& theZone,
                  const boost::optional<boost::posix_time::ptime>& theDefault)
 {
-  auto json = remove(theJson, theName);
-  if (json.isString())
-    theTime = parse_time(json.asString(), theZone);
-  else if (json.isUInt64())
+  try
   {
-    // A timestamp may look like an integer in a query string
-    std::size_t tmp = json.asUInt64();
-    theTime = parse_time(Fmi::to_string(tmp), theZone);
+    auto json = remove(theJson, theName);
+    if (json.isString())
+      theTime = parse_time(json.asString(), theZone);
+    else if (json.isUInt64())
+    {
+      // A timestamp may look like an integer in a query string
+      std::size_t tmp = json.asUInt64();
+      theTime = parse_time(Fmi::to_string(tmp), theZone);
+    }
+    else if (!json.isNull())
+      throw Fmi::Exception(BCP, "Failed to parse time setting: '" + json.asString());
+    else if (theDefault)
+      theTime = theDefault;
   }
-  else if (!json.isNull())
-    throw Fmi::Exception(BCP, "Failed to parse time setting: '" + json.asString());
-  else if (theDefault)
-    theTime = theDefault;
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to extract JSON field '" + theName + "' as a time");
+  }
 }
 
 // ----------------------------------------------------------------------

@@ -1,1 +1,0 @@
-GET /dali?customer=test&product=weather&time=200808050300 HTTP/1.0

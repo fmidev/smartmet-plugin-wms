@@ -155,7 +155,13 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
           multipleIntervals = false;
       }
 
+      auto language = theConfig.getDaliConfig().defaultLanguage();  // Should this be WMS specific?
+      auto query_lang = theRequest.getParameter("LANGUAGE");
+      if (query_lang)
+        language = *query_lang;
+
       configuredLayers = theConfig.getCapabilities(apikey,
+                                                   language,
                                                    starttime,
                                                    endtime,
                                                    reference_time,

@@ -223,6 +223,7 @@ void add_sublayers(WMSLayerHierarchy& lh,
 void add_layer_info(bool multiple_intervals,
                     CTPP::CDT& ctpp,
                     const WMSLayerHierarchy& lh,
+                    const std::string& language,
                     const boost::optional<std::string>& starttime,
                     const boost::optional<std::string>& endtime,
                     const boost::optional<std::string>& reference_time,
@@ -235,7 +236,7 @@ void add_layer_info(bool multiple_intervals,
   boost::optional<CTPP::CDT> baseInfo;
   if (lh.sublayers.empty() && lh.baseInfoLayer)
   {
-    baseInfo = lh.baseInfoLayer->getLayer()->getLayerBaseInfo();
+    baseInfo = lh.baseInfoLayer->getLayer()->getLayerBaseInfo(language);
     if (lh.reference_time)
     {
       std::string name = (*baseInfo)["name"].GetString();
@@ -251,7 +252,7 @@ void add_layer_info(bool multiple_intervals,
   if (baseInfo)
   {
     capa = *baseInfo;
-    boost::optional<CTPP::CDT> styles = lh.baseInfoLayer->getLayer()->getStyleInfo();
+    boost::optional<CTPP::CDT> styles = lh.baseInfoLayer->getLayer()->getStyleInfo(language);
     if (styles)
       capa.MergeCDT(*styles);
   }
@@ -340,6 +341,7 @@ void add_layer_info(bool multiple_intervals,
       add_layer_info(multiple_intervals,
                      capa["sublayers"],
                      *item,
+                     language,
                      starttime,
                      endtime,
                      reference_time,
@@ -455,6 +457,7 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
 
 CTPP::CDT WMSLayerHierarchy::getCapabilities(
     bool multiple_intervals,
+    const std::string& language,
     const boost::optional<std::string>& starttime,
     const boost::optional<std::string>& endtime,
     const boost::optional<std::string>& reference_time) const
@@ -463,7 +466,7 @@ CTPP::CDT WMSLayerHierarchy::getCapabilities(
   CTPP::CDT capa(CTPP::CDT::ARRAY_VAL);
 
   // std::cout << "CAPA:\n " << *this << std::endl;
-  add_layer_info(multiple_intervals, capa, *this, starttime, endtime, reference_time, 1);
+  add_layer_info(multiple_intervals, capa, *this, language, starttime, endtime, reference_time, 1);
 
   return capa;
 }

@@ -53,10 +53,9 @@ void Properties::init(Json::Value& theJson, const State& theState, const Config&
     JsonTools::remove_bool(clip, theJson, "clip");
 
     // Use external elevation if given
+    JsonTools::remove_double(level, theJson, "level");
     if (theState.getRequest().getParameter("elevation"))
       level = std::stod(*theState.getRequest().getParameter("elevation"));
-    else
-      JsonTools::remove_double(level, theJson, "level");
 
     JsonTools::remove_int(levelId, theJson, "levelid");
 

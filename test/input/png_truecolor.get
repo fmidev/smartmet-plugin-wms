@@ -1,1 +1,0 @@
-GET /dali?customer=test&product=t2m_p&type=png&time=200808050300&png.truecolor=1 HTTP/1.0

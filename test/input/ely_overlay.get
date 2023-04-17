@@ -1,2 +1,0 @@
-GET /dali?customer=ely&product=temperatureoverlay&time=200808080000&type=svg HTTP/1.1
-

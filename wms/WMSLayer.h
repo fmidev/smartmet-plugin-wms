@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "Text.h"
 #include "WMSElevationDimension.h"
 #include "WMSIntervalDimension.h"
 #include "WMSLayerStyle.h"
@@ -50,8 +51,8 @@ class WMSLayer
 
   // GetCapabilities settings
   std::string name;
-  boost::optional<std::string> title;
-  boost::optional<std::string> abstract;
+  boost::optional<Dali::Text> title;
+  boost::optional<Dali::Text> abstract;
   boost::optional<std::set<std::string> > keywords;
   boost::optional<int> opaque;  // Note: optional<bool> is error prone
   boost::optional<int> queryable;
@@ -59,8 +60,7 @@ class WMSLayer
   boost::optional<int> no_subsets;
   boost::optional<int> fixed_width;
   boost::optional<int> fixed_height;
-  boost::optional<int>
-      width;  // If this layer is used as a legend file width and hieght are needed here
+  boost::optional<int> width;  // If layer is used as a legend file width and height are needed here
   boost::optional<int> height;
 
   const WMSConfig& wmsConfig;
@@ -138,11 +138,12 @@ class WMSLayer
   boost::optional<CTPP::CDT> generateGetCapabilities(
       bool multiple_intervals,
       const Engine::Gis::Engine& gisengine,
+      const std::string& language,
       const boost::optional<std::string>& starttime,
       const boost::optional<std::string>& endtime,
       const boost::optional<std::string>& reference_time);
 
-  boost::optional<CTPP::CDT> getLayerBaseInfo() const;
+  boost::optional<CTPP::CDT> getLayerBaseInfo(const std::string& language) const;
   boost::optional<CTPP::CDT> getGeographicBoundingBoxInfo() const;
   boost::optional<CTPP::CDT> getProjectedBoundingBoxInfo() const;
   boost::optional<CTPP::CDT> getTimeDimensionInfo(
@@ -153,7 +154,7 @@ class WMSLayer
   boost::optional<CTPP::CDT> getIntervalDimensionInfo() const;
   boost::optional<CTPP::CDT> getReferenceDimensionInfo() const;
   boost::optional<CTPP::CDT> getElevationDimensionInfo() const;
-  boost::optional<CTPP::CDT> getStyleInfo() const;
+  boost::optional<CTPP::CDT> getStyleInfo(const std::string& language) const;
   const boost::shared_ptr<WMSTimeDimensions>& getTimeDimensions() const;
 
   // To be called after crs and crs_bbox have been initialized

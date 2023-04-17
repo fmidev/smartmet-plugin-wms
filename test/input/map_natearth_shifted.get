@@ -1,1 +1,0 @@
-GET /dali?customer=test&product=map&p.crs=%2bproj%3dnatearth%20%2blon_0%3d90&p.cx=90&p.ysize=400 HTTP/1.0

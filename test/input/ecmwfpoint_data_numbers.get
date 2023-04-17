@@ -1,1 +1,0 @@
-GET /dali?customer=test&product=ecmwfpoint_data_numbers&time=200808051200 HTTP/1.0

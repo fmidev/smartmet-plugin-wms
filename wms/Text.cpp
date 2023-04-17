@@ -11,6 +11,15 @@ namespace Plugin
 {
 namespace Dali
 {
+// Create a tagged object with no initial translations
+Text::Text(std::string name) : tag(std::move(name)) {}
+
+// Create a tagged object with just one default translation
+Text::Text(std::string name, const std::string& value) : tag(std::move(name))
+{
+  translations["default"] = value;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize from JSON
@@ -54,8 +63,9 @@ void Text::init(Json::Value& theJson, const Config& theConfig)
       {
         if (!json.isString())
           throw Fmi::Exception(BCP,
-                               "Text hash must consist of name string-value pairs, value of " +
-                                   name + " is not a string");
+                               "Text hash for " + tag +
+                                   " must consist of name string-value pairs, value of " + name +
+                                   " is not a string");
 
         translations[name] = json.asString();
       }
@@ -110,7 +120,8 @@ const std::string& Text::translate(const std::string& theLanguage) const
 
     // Error
 
-    throw Fmi::Exception(BCP, "No translation set for language '" + theLanguage + "'");
+    throw Fmi::Exception(BCP,
+                         "No translation set for '" + tag + "' in language '" + theLanguage + "'");
   }
   catch (...)
   {

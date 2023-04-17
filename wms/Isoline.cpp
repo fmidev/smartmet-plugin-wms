@@ -39,7 +39,7 @@ void Isoline::init(Json::Value& theJson, const Config& theConfig)
         attributes.init(json, theConfig);
       else if (name == "label")
       {
-        label = Text();
+        label = Text("Isoline");
         label->init(json, theConfig);
       }
       else

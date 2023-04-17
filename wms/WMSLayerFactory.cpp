@@ -368,14 +368,26 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     remove_bool(layer->timeDimensionDisabled, root, "disable_wms_time_dimension");
     layer->name = theNamespace + ":" + p.stem().string();
     remove_string(layer->name, root, "name");
-    remove_string(layer->title, root, "title");
-    remove_string(layer->abstract, root, "abstract");
     remove_int(layer->opaque, root, "opaque");
     remove_int(layer->queryable, root, "queryable");
     remove_int(layer->cascaded, root, "cascaded");
     remove_int(layer->no_subsets, root, "no_subsets");
     remove_int(layer->fixed_width, root, "fixed_width");
     remove_int(layer->fixed_height, root, "fixed_height");
+
+    json = remove(root, "title");
+    if (!json.isNull())
+    {
+      layer->title = Dali::Text("WMS layer title");
+      layer->title->init(json, theWMSConfig.itsDaliConfig);
+    }
+
+    json = remove(root, "abstract");
+    if (!json.isNull())
+    {
+      layer->abstract = Dali::Text("WMS layer abstract");
+      layer->abstract->init(json, theWMSConfig.itsDaliConfig);
+    }
 
     json = remove(root, "keyword");
     if (!json.isNull())

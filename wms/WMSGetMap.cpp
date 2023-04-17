@@ -346,6 +346,7 @@ void parse_interval_with_resolution(const std::string& time_str,
 }  // anonymous namespace
 
 WMSGetMap::WMSGetMap(const WMSConfig& theConfig) : itsConfig(theConfig) {}
+
 void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
                                  Spine::HTTP::Request& theRequest)
 {
@@ -685,7 +686,8 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
   {
     bool quiet = itsConfig.getDaliConfig().quiet();
     Fmi::Exception ex(BCP, "Invalid GetMap input parameters", nullptr);
-    ex.disableStackTrace();  // full stack trace not useful for user input errors
+    if (!itsParameters.debug)
+      ex.disableStackTrace();  // full stack trace not useful for user input errors unless debugging
     if (quiet)
       ex.disableLogging();  // no journaling of user errors in release servers
     throw ex;

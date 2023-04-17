@@ -1,1 +1,0 @@
-GET /wms?service=wms&request=GetMap&version=1.3.0&layers=grid:wind_stream_2&styles=&crs=EPSG:4326&bbox=35,-30,72,40&width=1200&height=700&format=image/svg%2Bxml&time=200808050600&producer=ecmwf_eurooppa_pinta&source=querydata HTTP/1.0

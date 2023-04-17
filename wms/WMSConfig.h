@@ -76,6 +76,7 @@ class WMSConfig
 
 #ifndef WITHOUT_AUTHENTICATION
   CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
+                            const std::string& language,
                             const boost::optional<std::string>& starttime,
                             const boost::optional<std::string>& endtime,
                             const boost::optional<std::string>& reference_time,
@@ -85,6 +86,7 @@ class WMSConfig
                             bool authenticate = true) const;
 #else
   CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
+                            const std::string& language,
                             const boost::optional<std::string>& starttime,
                             const boost::optional<std::string>& endtime,
                             const boost::optional<std::string>& reference_time,

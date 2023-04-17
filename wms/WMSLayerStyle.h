@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "Text.h"
 #include <ctpp2/CDT.hpp>
 #include <set>
 #include <string>
@@ -32,13 +33,14 @@ struct LegendURL
 
 struct WMSLayerStyle
 {
-  WMSLayerStyle() : name("default"), title("Default style") {}
+  WMSLayerStyle() = default;
 
-  std::string name;
-  std::string title;
-  std::string abstract;
+  std::string name{"default"};
+  Dali::Text title{"Style Title"};
+  Dali::Text abstract{"Style Abstract"};
+
   LegendURL legend_url;
-  CTPP::CDT getCapabilities() const;
+  CTPP::CDT getCapabilities(const std::string& language) const;
 };
 
 // Layers with optional alternative styles

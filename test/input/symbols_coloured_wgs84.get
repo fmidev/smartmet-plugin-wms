@@ -1,1 +1,0 @@
-GET /dali?customer=test&product=symbols_coloured&time=200808050300&projection.crs=WGS84 HTTP/1.0

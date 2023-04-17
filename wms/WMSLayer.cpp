@@ -873,7 +873,8 @@ std::string get_online_resource_string(const std::string& styleName, const std::
 
 std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
                                                 const std::string& layerName,
-                                                std::map<std::string, std::string>& legendFiles)
+                                                std::map<std::string, std::string>& legendFiles,
+                                                const WMSConfig& config)
 {
   std::map<std::string, WMSLayerStyle> ret;
   Json::Value nulljson;
@@ -906,10 +907,10 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
         layerStyle.name = json_value.asString();
       json_value = style_json.get("title", nulljson);
       if (!json_value.isNull())
-        layerStyle.title = json_value.asString();
+        layerStyle.title.init(json_value, config.getDaliConfig());
       json_value = style_json.get("abstract", nulljson);
       if (!json_value.isNull())
-        layerStyle.abstract = json_value.asString();
+        layerStyle.abstract.init(json_value, config.getDaliConfig());
 
       auto legend_url_json = style_json.get("legend_url", nulljson);
       if (!legend_url_json.isNull())
@@ -1064,7 +1065,7 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
   }
 
   // Get layer styles
-  itsStyles = get_styles(root, name, itsLegendFiles);
+  itsStyles = get_styles(root, name, itsLegendFiles, wmsConfig);
 
   NamedLegendGraphicInfo named_lgi;
 
@@ -1521,8 +1522,8 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
     ost << "********** "
         << "name: " << layer.name << " **********"
         << "\n"
-        << "title: " << layer.title << "\n"
-        << "abstract: " << layer.abstract << "\n"
+        << "title: " << layer.title->translate("") << "\n"
+        << "abstract: " << layer.abstract->translate("") << "\n"
         << "keywords: "
         << (!layer.keywords ? missing : boost::algorithm::join(*layer.keywords, " ")) << "\n"
         << "opaque: " << layer.opaque << "\n"
@@ -1617,7 +1618,7 @@ void WMSLayer::initProjectedBBoxes()
   }
 }
 
-boost::optional<CTPP::CDT> WMSLayer::getLayerBaseInfo() const
+boost::optional<CTPP::CDT> WMSLayer::getLayerBaseInfo(const std::string& language) const
 {
   try
   {
@@ -1630,9 +1631,9 @@ boost::optional<CTPP::CDT> WMSLayer::getLayerBaseInfo() const
     if (!name.empty())
       layer["name"] = name;
     if (title)
-      layer["title"] = *title;
+      layer["title"] = title->translate(language);
     if (abstract)
-      layer["abstract"] = *abstract;
+      layer["abstract"] = abstract->translate(language);
     if (opaque == 1)
       layer["opaque"] = *opaque;
     if (queryable == 1)
@@ -1964,7 +1965,7 @@ boost::optional<CTPP::CDT> WMSLayer::getElevationDimensionInfo() const
   }
 }
 
-boost::optional<CTPP::CDT> WMSLayer::getStyleInfo() const
+boost::optional<CTPP::CDT> WMSLayer::getStyleInfo(const std::string& language) const
 {
   try
   {
@@ -1979,7 +1980,7 @@ boost::optional<CTPP::CDT> WMSLayer::getStyleInfo() const
       CTPP::CDT layer_style_list(CTPP::CDT::ARRAY_VAL);
       for (const auto& style : itsStyles)
       {
-        layer_style_list.PushBack(style.second.getCapabilities());
+        layer_style_list.PushBack(style.second.getCapabilities(language));
       }
       if (layer_style_list.Size() > 0)
         layer["style"] = layer_style_list;
@@ -2001,6 +2002,7 @@ const boost::shared_ptr<WMSTimeDimensions>& WMSLayer::getTimeDimensions() const
 boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
     bool multiple_intervals,
     const Engine::Gis::Engine& /* gisengine */,
+    const std::string& language,
     const boost::optional<std::string>& starttime,
     const boost::optional<std::string>& endtime,
     const boost::optional<std::string>& /* reference_time */)
@@ -2065,9 +2067,9 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
     if (!name.empty())
       layer["name"] = name;
     if (title)
-      layer["title"] = *title;
+      layer["title"] = title->translate(language);
     if (abstract)
-      layer["abstract"] = *abstract;
+      layer["abstract"] = abstract->translate(language);
     if (opaque == 1)
       layer["opaque"] = *opaque;
     if (queryable == 1)
@@ -2248,7 +2250,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
       CTPP::CDT layer_style_list(CTPP::CDT::ARRAY_VAL);
       for (const auto& item : itsStyles)
       {
-        layer_style_list.PushBack(item.second.getCapabilities());
+        layer_style_list.PushBack(item.second.getCapabilities(language));
       }
       if (layer_style_list.Size() > 0)
         layer["style"] = layer_style_list;
@@ -2266,10 +2268,9 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
   }
   catch (const Fmi::Exception& wmsException)
   {
-    Fmi::Exception ex(BCP,
-                      ("Failed to generate GetCapbilities reponse for layer '" + name + "' " +
-                       std::string(wmsException.what())));
-    throw ex;
+    throw Fmi::Exception::Trace(BCP,
+                                "Failed to generate GetCapabilities reponse for layer '" + name +
+                                    "' " + wmsException.what());
   }
   catch (...)
   {

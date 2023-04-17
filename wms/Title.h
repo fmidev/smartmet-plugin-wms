@@ -37,7 +37,7 @@ class Title
   Attributes attributes;
 
  private:
-  Text text;
+  Text text{"Title"};
 
 };  // class Title
 

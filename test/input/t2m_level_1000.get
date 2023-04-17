@@ -1,1 +1,0 @@
-GET /dali?customer=test&product=t2m_pressurelevel&time=20080909T1200&level=1000 HTTP/1.0

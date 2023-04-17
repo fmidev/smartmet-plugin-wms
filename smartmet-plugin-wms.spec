@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.4.11
-Release: 2%{?dist}.fmi
+Version: 23.4.13
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Apr 13 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.4.13-1.fmi
+- Fixed Properties to handle "level" setting even when elevation is given in the query string
+
 * Tue Apr 11 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.4.11-2.fmi
 - Both isoband limits can now be set simultaneously with value instead of using lolimit and hilimit
 

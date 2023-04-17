@@ -1,6 +1,6 @@
 {
-    "title" : "Flashes",
-    "abstract" : "Flashes",
+    "title" : { "en": "Flashes", "fi": "Salamoita", "sv": "Blixten" },
+    "abstract" : { "en": "Flashes heatmap", "fi": "Salamoiden lämpökartta", "sv": "Blixtkarta" },
     "interval_start": 30,
     "interval_end": 30,
     "projection":

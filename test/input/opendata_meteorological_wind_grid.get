@@ -1,1 +1,0 @@
-GET /dali?customer=test&product=opendata_meteorological_wind_grid&time=20130805T1500 HTTP/1.0

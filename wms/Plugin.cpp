@@ -2039,14 +2039,14 @@ WMSQueryStatus Dali::Plugin::wmsGetCapabilitiesQuery(State &theState,
   catch (const Fmi::Exception &wmsException)
   {
     Fmi::Exception ex(
-        BCP, ("Error in parsing GetCapabilities response! " + std::string(wmsException.what())));
+        BCP, "Error in generating GetCapabilities response! " + std::string(wmsException.what()));
     if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
       ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     return handleWmsException(ex, theState, theRequest, theResponse);
   }
   catch (...)
   {
-    Fmi::Exception ex(BCP, ("Error in parsing GetCapabilities response!"));
+    Fmi::Exception ex(BCP, "Error in generating GetCapabilities response!");
     if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
       ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     return handleWmsException(ex, theState, theRequest, theResponse);

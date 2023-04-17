@@ -1,1 +1,0 @@
-GET /dali?customer=test&product=opendata_temperature_symbols&time=20130805T1455&interval_end=5 HTTP/1.0

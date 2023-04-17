@@ -34,9 +34,15 @@ void Product::init(Json::Value& theJson, const State& theState, const Config& th
     JsonTools::remove_string(type, theJson, "type");
     JsonTools::remove_int(width, theJson, "width");
     JsonTools::remove_int(height, theJson, "height");
-    JsonTools::remove_string(title, theJson, "title");
 
-    auto json = JsonTools::remove(theJson, "defs");
+    auto json = JsonTools::remove(theJson, "title");
+    if (!json.isNull())
+    {
+      title = Text("Product");
+      title->init(json, theConfig);
+    }
+
+    json = JsonTools::remove(theJson, "defs");
     if (!json.isNull())
       defs.init(json, theState, theConfig, *this);
 
@@ -105,7 +111,7 @@ void Product::generate(CTPP::CDT& theGlobals, State& theState)
     if (height)
       theGlobals["height"] = *height;
     if (title)
-      theGlobals["title"] = *title;
+      theGlobals["title"] = title->translate(language);
 
     // We must process the defs section before processing the
     // product attributes or views in case they refer to some
@@ -158,7 +164,7 @@ std::size_t Product::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(type));
     Fmi::hash_combine(hash, Fmi::hash_value(width));
     Fmi::hash_combine(hash, Fmi::hash_value(height));
-    Fmi::hash_combine(hash, Fmi::hash_value(title));
+    Fmi::hash_combine(hash, Dali::hash_value(title, theState));
     Fmi::hash_combine(hash, Dali::hash_value(defs, theState));
     Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
     Fmi::hash_combine(hash, Dali::hash_value(views, theState));

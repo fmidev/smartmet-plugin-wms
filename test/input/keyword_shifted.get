@@ -1,1 +1,0 @@
-GET /dali?customer=test&product=keyword_shifted&time=201503131200 HTTP/1.0

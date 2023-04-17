@@ -1,1 +1,0 @@
-GET /dali?customer=test&product=wind&time=200808050300&l3.minrotationspeed=10 HTTP/1.0

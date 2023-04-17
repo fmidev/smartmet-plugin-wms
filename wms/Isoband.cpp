@@ -45,7 +45,7 @@ void Isoband::init(Json::Value& theJson, const Config& theConfig)
         attributes.init(json, theConfig);
       else if (name == "label")
       {
-        label = Text();
+        label = Text("Isoband");
         label->init(json, theConfig);
       }
       else

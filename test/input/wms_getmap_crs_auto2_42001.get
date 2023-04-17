@@ -1,1 +1,0 @@
-GET /wms?service=wms&request=getmap&version=1.3.0&layers=ely:wmsmap&styles=&crs=AUTO2:42001,1,25,60&debug=1&bbox=221000,6660000,690000,7770000&width=500&height=500&format=image/svg%2bxml&time=200808050300 HTTP/1.0

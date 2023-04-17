@@ -11,8 +11,16 @@
 	[
 	    {
 		"name": "precipitation_red_rain_style",
-		"title": "Precipitation red rain style",
-		"abstract": "Rain drops in red colour",
+		"title":
+		{
+		    "en": "Precipitation red rain style",
+		    "fi": "Sade punaisilla symboleilla"
+		},
+		"abstract":
+		{
+		    "en": "Rain drops in red colour",
+		    "fi": "Sadepisarat punaisella värillä"
+		},
 		"layers":
 		[
 		    {
@@ -33,8 +41,16 @@
 	    },
 	    {
 		"name": "precipitation_thin_style",
-		"title": "Precipitation thin style",
-		"abstract": "Pressure isolines line width is 1 px",
+		"title":
+		{
+		    "en": "Precipitation thin style",
+		    "fi": "Sademäärä ohuella tyylillä"
+		},
+		"abstract":
+		{
+		    "en": "Pressure isolines line width is 1 px",
+		    "fi": "Sademäärän isoviivat yhden pikselin levyisinä"
+		},
 		"layers":
 		[
 		    {
@@ -59,8 +75,16 @@
 	    },
 	    {
 		"name": "precipitation_thick_style",
-		"title": "Precipitation thick style",
-		"abstract": "Pressure isolines line width is 2 px",
+		"title":
+		{
+		    "en": "Precipitation thick style",
+		    "fi": "Sademäärä paksulla tyylillä"
+		},
+		"abstract":
+		{
+		    "en": "Pressure isolines line width is 2 px",
+		    "fi": "Sademäärän isoviivat kahden pikselin levyisinä"
+		},
 		"layers":
 		[
 		    {

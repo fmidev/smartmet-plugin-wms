@@ -1,1 +1,0 @@
-GET /wms?service=wms&request=GetMap&version=1.3.0&layers=grid:temperature_1&styles=&crs=EPSG:4326&bbox=59,17,71,34&width=300&height=500&format=application/topo%2Bjson&time=200808050800 HTTP/1.0

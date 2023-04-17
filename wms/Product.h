@@ -12,6 +12,7 @@
 #include "Png.h"
 #include "Projection.h"
 #include "Properties.h"
+#include "Text.h"
 #include "Views.h"
 #include <boost/date_time/posix_time/ptime.hpp>
 #include <boost/date_time/posix_time/time_serialize.hpp>
@@ -44,7 +45,7 @@ class Product : public Properties
   std::string type;
   boost::optional<int> width;
   boost::optional<int> height;
-  boost::optional<std::string> title;
+  boost::optional<Text> title;
 
   // Defs section
   Defs defs;

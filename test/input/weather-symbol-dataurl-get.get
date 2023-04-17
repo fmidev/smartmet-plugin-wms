@@ -1,2 +1,0 @@
-GET /dali?customer=test&product=weather-base64-symbol&time=200808050300&defs.symbols.weather%2F1_II%2F1="data:;base64,PHN5bWJvbCBpZD0id2VhdGhlcl8xX0lJXzEiPgogPGNpcmNsZSBjeD0iMCIgY3k9IjAiIHI9IjE1IiBmaWxsPSJvcmFuZ2UiIHN0cm9rZS13aWR0aD0iMSIvPgo8L3N5bWJvbD4K" HTTP/1.0
-

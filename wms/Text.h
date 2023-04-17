@@ -22,6 +22,10 @@ class Config;
 class Text
 {
  public:
+  Text() = delete;
+  Text(std::string name);
+  Text(std::string name, const std::string& value);
+
   void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
@@ -31,6 +35,7 @@ class Text
   const std::string& translate(const boost::optional<std::string>& theLanguage) const;
 
  private:
+  std::string tag;
   std::map<std::string, std::string> translations;
 
 };  // class Text
