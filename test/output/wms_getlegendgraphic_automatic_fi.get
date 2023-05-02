@@ -155,7 +155,7 @@
    <use style="fill:rgb(10,155,255); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_0" y="104"/>
   
   <text x="48" y="113">0.1-0.2</text>
-  <text class="Units" x="20" y="20">Precipitation</text>
+  <text class="Units" x="20" y="20">Sademäärä</text>
   <text class="Units" x="30" y="30">mm/h</text>
   </g>
   <g>
@@ -163,42 +163,42 @@
   <g>
    <use transform="translate(180,45)" xlink:href="#isoline_Precipitation1h_1"/>
   </g>
-  <text x="170" y="20">Precipitation isoline</text>
+  <text x="170" y="20">Sademäärän isoviiva</text>
   </g>
   <g>
   
   <g>
    <use transform="translate(330,45)" xlink:href="#isoline_Pressure_2"/>
   </g>
-  <text x="320" y="20">Air Pressure isoline</text>
+  <text x="320" y="20">Ilmanpaineen isoviiva</text>
   </g>
   <g>
   
-  <text x="470" y="20">Precipitation from</text>
+  <text x="470" y="20">Sateen olomuoto</text>
   <g>
    <use transform="translate(490,45)" xlink:href="#drizzle"/>
   </g>
-  <text x="520" y="50">Drizzle</text>
+  <text x="520" y="50">Tihku</text>
   <g>
    <use transform="translate(490,80)" xlink:href="#rain"/>
   </g>
-  <text x="520" y="85">Rain</text>
+  <text x="520" y="85">Vesisade</text>
   <g>
    <use transform="translate(490,115)" xlink:href="#sleet"/>
   </g>
-  <text x="520" y="120">Sleet</text>
+  <text x="520" y="120">Räntä</text>
   <g>
    <use transform="translate(490,150)" xlink:href="#snow"/>
   </g>
-  <text x="520" y="155">Snow</text>
+  <text x="520" y="155">Lumi</text>
   <g>
    <use transform="translate(490,185)" xlink:href="#freezingdrizzle"/>
   </g>
-  <text x="520" y="190">Freezing drizzle</text>
+  <text x="520" y="190">Jäätävä tihku</text>
   <g>
    <use transform="translate(490,220)" xlink:href="#freezingrain"/>
   </g>
-  <text x="520" y="225">Freezing rain</text>
+  <text x="520" y="225">Jäätävä sade</text>
   <g>
    <use transform="translate(490,255)" xlink:href="#hail"/>
   </g>

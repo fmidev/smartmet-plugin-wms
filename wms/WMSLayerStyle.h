@@ -12,6 +12,7 @@
 #pragma once
 
 #include "Text.h"
+#include <boost/optional.hpp>
 #include <ctpp2/CDT.hpp>
 #include <set>
 #include <string>
@@ -35,9 +36,9 @@ struct WMSLayerStyle
 {
   WMSLayerStyle() = default;
 
-  std::string name{"default"};
-  Dali::Text title{"Style Title"};
-  Dali::Text abstract{"Style Abstract"};
+  std::string name = "default";
+  boost::optional<Dali::Text> title;
+  boost::optional<Dali::Text> abstract;
 
   LegendURL legend_url;
   CTPP::CDT getCapabilities(const std::string& language) const;

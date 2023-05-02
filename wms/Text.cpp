@@ -119,9 +119,9 @@ const std::string& Text::translate(const std::string& theLanguage) const
       return match2->second;
 
     // Error
-
     throw Fmi::Exception(BCP,
-                         "No translation set for '" + tag + "' in language '" + theLanguage + "'");
+                         "No translation set for '" + tag + "' in language '" + theLanguage +
+                             "' (available:" + dump() + ")");
   }
   catch (...)
   {
@@ -156,6 +156,24 @@ const std::string& Text::translate(const boost::optional<std::string>& theLangua
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Dump translations as a string for debugging purposes
+ */
+// ----------------------------------------------------------------------
+
+std::string Text::dump() const
+{
+  std::string ret;
+  for (const auto& lang_trans : translations)
+  {
+    if (!ret.empty())
+      ret += ' ';
+    ret += (lang_trans.first + "='" + lang_trans.second + "'");
+  }
+  return ret;
 }
 
 }  // namespace Dali

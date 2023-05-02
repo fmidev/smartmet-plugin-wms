@@ -13,8 +13,8 @@ namespace WMS
 std::ostream& operator<<(std::ostream& ost, const WMSLayerStyle& layerStyle)
 {
   ost << "name: " << layerStyle.name << std::endl;
-  ost << "title: " << layerStyle.title.translate("") << std::endl;
-  ost << "abstract: " << layerStyle.abstract.translate("") << std::endl;
+  ost << "title: " << (layerStyle.title ? layerStyle.title->dump() : "-") << std::endl;
+  ost << "abstract: " << (layerStyle.abstract ? layerStyle.abstract->dump() : "-") << std::endl;
   ost << "LegendURL: " << std::endl;
   ost << " format: " << layerStyle.legend_url.format << std::endl;
   ost << " online resource: " << layerStyle.legend_url.online_resource << std::endl;
@@ -32,18 +32,14 @@ CTPP::CDT WMSLayerStyle::getCapabilities(const std::string& language) const
 
     if (name.empty())
       throw Fmi::Exception::Trace(BCP, "WMS layer style must have a name!");
-
     style["name"] = name;
 
-    auto title_s = title.translate(language);
-    if (title_s.empty())
+    if (!title)
       throw Fmi::Exception::Trace(BCP, "WMS layer style must have a title!");
-    style["title"] = title_s;
+    style["title"] = title->translate(language);
 
-    auto abstract_s = abstract.translate(language);
-
-    if (!abstract_s.empty())
-      style["abstract"] = abstract_s;
+    if (abstract)
+      style["abstract"] = abstract->translate(language);
 
     // Style legend URL
 

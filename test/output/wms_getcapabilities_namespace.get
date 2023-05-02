@@ -98,6 +98,7 @@
     <Layer queryable="1">
       <Name>ely:elymap</Name>
       <Title>ELY map</Title>
+      <Abstract>ELY map</Abstract>
       <CRS>AUTO2:42001</CRS>
       <CRS>AUTO2:42002</CRS>
       <CRS>AUTO2:42003</CRS>

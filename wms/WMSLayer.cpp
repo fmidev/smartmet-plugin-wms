@@ -42,7 +42,7 @@ std::string get_legend_title_string(const LegendGraphicParameter& parameterSetti
 {
   // 1) If hide_title == true return empty string
   if (parameterSettings.hide_title)
-    return "";
+    return {};
 
   // 2) Return translation if exists
   if (parameterSettings.translations.find(language) != parameterSettings.translations.end())
@@ -886,6 +886,8 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
     WMSLayerStyle layerStyle;
     std::string name = json.asString();
     layerStyle.legend_url.online_resource = get_online_resource_string(layerStyle.name, name);
+    layerStyle.title = Dali::Text("Style Title", "Default style");
+
     legendFiles.insert(make_pair(layerStyle.name, name));
     ret.insert(std::make_pair(layerStyle.name, layerStyle));
   }
@@ -905,12 +907,19 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
       auto json_value = style_json.get("name", nulljson);
       if (!json_value.isNull())
         layerStyle.name = json_value.asString();
+
       json_value = style_json.get("title", nulljson);
       if (!json_value.isNull())
-        layerStyle.title.init(json_value, config.getDaliConfig());
+      {
+        layerStyle.title = Dali::Text("Style Title");
+        layerStyle.title->init(json_value, config.getDaliConfig());
+      }
       json_value = style_json.get("abstract", nulljson);
       if (!json_value.isNull())
-        layerStyle.abstract.init(json_value, config.getDaliConfig());
+      {
+        layerStyle.abstract = Dali::Text("Style Abstract");
+        layerStyle.abstract->init(json_value, config.getDaliConfig());
+      }
 
       auto legend_url_json = style_json.get("legend_url", nulljson);
       if (!legend_url_json.isNull())
@@ -950,6 +959,8 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
       WMSLayerStyle layerStyle;
       layerStyle.legend_url.online_resource =
           get_online_resource_string(layerStyle.name, layerName);
+      layerStyle.title = Dali::Text("Style Title", "Default style");
+
       ret.insert(std::make_pair(layerStyle.name, layerStyle));
     }
   }
@@ -959,9 +970,24 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
   {
     WMSLayerStyle layerStyle;
     layerStyle.legend_url.online_resource = get_online_resource_string(layerStyle.name, layerName);
+
+    json = root.get("title", nulljson);
+    if (!json.isNull())
+    {
+      layerStyle.title = Dali::Text("Style Title");
+      layerStyle.title->init(json, config.getDaliConfig());
+    }
+    else
+      layerStyle.title = Dali::Text("Style Title", "Default style");
+
+    json = root.get("abstract", nulljson);
+    if (!json.isNull())
+    {
+      layerStyle.abstract = Dali::Text("Style Abstract");
+      layerStyle.abstract->init(json, config.getDaliConfig());
+    }
     ret.insert(std::make_pair(layerStyle.name, layerStyle));
   }
-
   return ret;
 }
 
@@ -1519,11 +1545,12 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
   try
   {
     const std::string missing = "-";
-    ost << "********** "
-        << "name: " << layer.name << " **********"
+    const char* sep = "*******************************\n";
+    ost << sep << "name: " << layer.name << " **********"
         << "\n"
-        << "title: " << layer.title->translate("") << "\n"
-        << "abstract: " << layer.abstract->translate("") << "\n"
+        << "customer: " << (layer.customer.empty() ? "-" : layer.customer) << "\n"
+        << "title: " << (layer.title ? layer.title->dump() : "-") << "\n"
+        << "abstract: " << (layer.abstract ? layer.abstract->dump() : "-") << "\n"
         << "keywords: "
         << (!layer.keywords ? missing : boost::algorithm::join(*layer.keywords, " ")) << "\n"
         << "opaque: " << layer.opaque << "\n"
@@ -1532,32 +1559,37 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
         << "no_subsets: " << layer.no_subsets << "\n"
         << "fixed_width: " << layer.fixed_width << "\n"
         << "fixed_height:" << layer.fixed_height << "\n"
-        << "geographicBoundingBox: \n"
-        << " westBoundLongitude=" << layer.geographicBoundingBox.xMin << " "
+        << "geographicBoundingBox:\n"
+        << "   westBoundLongitude=" << layer.geographicBoundingBox.xMin << " "
         << "southBoundLatitude=" << layer.geographicBoundingBox.yMin << " "
         << "eastBoundLongitude=" << layer.geographicBoundingBox.xMax << " "
-        << "northBoundLatitude=" << layer.geographicBoundingBox.yMax << "\n"
-        << "crs:";
+        << "northBoundLatitude=" << layer.geographicBoundingBox.yMax << "\n";
+
+    ost << "crs:\n";
     for (const auto& c : layer.refs)
-      ost << c.first << "=" << c.second.proj << " ";
+    {
+      if (c.first == c.second.proj)
+        ost << "   " << c.first << '\n';
+      else
+        ost << "   " << c.first << "='" << c.second.proj << "'\n";
+    }
+
     ost << "styles:";
     for (const auto& style : layer.itsStyles)
       ost << style.first << " ";
-    if (!layer.customer.empty())
-      ost << " \ncustomer: " << layer.customer << "\n";
 
     if (layer.timeDimensions)
-      ost << "timeDimensions: " << layer.timeDimensions;
+      ost << "\ntimeDimensions: " << *layer.timeDimensions;
     else
-      ost << "timeDimensions: -";
+      ost << "\ntimeDimensions: -";
 
-    ost << "*******************************" << std::endl;
+    ost << sep;
 
     return ost;
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Printing the request failed!");
+    throw Fmi::Exception::Trace(BCP, "Printing the parsed WMS layer settings failed!");
   }
 }
 
@@ -1979,9 +2011,8 @@ boost::optional<CTPP::CDT> WMSLayer::getStyleInfo(const std::string& language) c
     {
       CTPP::CDT layer_style_list(CTPP::CDT::ARRAY_VAL);
       for (const auto& style : itsStyles)
-      {
         layer_style_list.PushBack(style.second.getCapabilities(language));
-      }
+
       if (layer_style_list.Size() > 0)
         layer["style"] = layer_style_list;
     }
@@ -2011,6 +2042,9 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
   {
     if (hidden)
       return {};
+
+    // std::cout << "________________________________________________________\n" << *this <<
+    // std::endl;
 
     CTPP::CDT layer(CTPP::CDT::HASH_VAL);
 
@@ -2248,10 +2282,10 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
     if (!itsStyles.empty())
     {
       CTPP::CDT layer_style_list(CTPP::CDT::ARRAY_VAL);
+
       for (const auto& item : itsStyles)
-      {
         layer_style_list.PushBack(item.second.getCapabilities(language));
-      }
+
       if (layer_style_list.Size() > 0)
         layer["style"] = layer_style_list;
     }

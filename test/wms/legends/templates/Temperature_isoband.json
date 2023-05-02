@@ -111,13 +111,9 @@
 		"dy": 12,
 		"conversions":
 		{
-		    "0": "GETTING WARMER",
-		    "14": "WARM",
-		    "30":
-		    {
-			"fi": "KUUMA",
-			"en": "HOT"
-		    },
+		    "0": { "fi": "LÄMPENEE", "en": "GETTING WARMER"},
+		    "14": { "fi": "LÄMMIN", "en": "WARM"},
+		    "30": { "fi": "KUUMA", "en": "HOT" },
 		    "38": "&#62; 38",
 		    "-50": "&#60; -50"
 		}

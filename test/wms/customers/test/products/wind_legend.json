@@ -71,7 +71,7 @@
 		    "layers": [
 			{
 			    "tag": "text",
-			    "cdata": "Wind speed",
+			    "cdata": { "en": "Wind speed", "fi": "Tuulennopeus" },
 			    "attributes":
 			    {
 				"x": 20,

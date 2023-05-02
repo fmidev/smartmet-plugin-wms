@@ -332,10 +332,9 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP, "Operation failed!", nullptr);
-    exception.addParameter("Producer", *producer);
-    exception.addParameter("Parameter", *parameter);
-    throw exception;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!")
+        .addParameter("Producer", *producer)
+        .addParameter("Parameter", *parameter);
   }
 }
 
