@@ -41,7 +41,7 @@ void ObservationLayer::init(Json::Value& theJson,
     // Stations of the layer
     std::string keyword;
     JsonTools::remove_string(keyword, theJson, "keyword");
-    if (keyword.empty())
+    if (!keyword.empty())
     {
       const auto& geoengine = theState.getGeoEngine();
       Locus::QueryOptions options;

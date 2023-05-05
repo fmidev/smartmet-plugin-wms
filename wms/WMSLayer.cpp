@@ -1510,28 +1510,6 @@ std::string WMSLayer::info() const
   }
 }
 
-std::ostream& operator<<(std::ostream& ost, const LegendGraphicInfoItem& lgi)
-{
-  Json::StyledWriter writer;
-  for (const auto& elem : lgi.info)
-  {
-    std::cout << elem.first << ":\n" << writer.write(elem.second) << std::endl;
-  }
-
-  return ost;
-}
-
-std::ostream& operator<<(std::ostream& ost, const LegendGraphicInfo& lgi)
-{
-  Json::StyledWriter writer;
-  for (const auto& elem : lgi)
-  {
-    std::cout << elem << std::endl;
-  }
-
-  return ost;
-}
-
 std::ostream& operator<<(std::ostream& ost, const boost::optional<int>& var)
 {
   if (!var)

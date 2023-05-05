@@ -188,8 +188,6 @@ using SharedWMSLayer = boost::shared_ptr<WMSLayer>;
 using SharedWMSLayers = std::map<std::string, SharedWMSLayer>;
 
 std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer);
-std::ostream& operator<<(std::ostream& ost, const LegendGraphicInfoItem& lgi);
-std::ostream& operator<<(std::ostream& ost, const LegendGraphicInfo& lgi);
 
 }  // namespace WMS
 }  // namespace Plugin

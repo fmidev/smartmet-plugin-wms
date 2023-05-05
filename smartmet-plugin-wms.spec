@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.4.17
-Release: 2%{?dist}.fmi
+Version: 23.5.5
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -149,8 +149,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Fri May 5 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.5.5-1.fmi
+- Added << operator functions for some data structures for debug purposes
+
 * Mon Apr 17 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.4.17-2.fmi
 - Fixed Properties to handle "level" setting even when elevation is given in the query string
+
+* Thu Apr 27 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.4.27-1.fmi
+- Repackage due to macgyver ABI changes (AsyncTask, AsyncTaskGroup)
+
+* Thu Apr 20 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.4.20-1.fmi
+- Fixed observation layer keyword handling
 
 * Mon Apr 17 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.4.17-1.fmi
 - Repackaged due to GRID ABI changes

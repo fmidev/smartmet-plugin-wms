@@ -284,6 +284,116 @@ void WMSLegendGraphicSettings::merge(const WMSLegendGraphicSettings& settings)
   }
 }
 
+std::ostream& operator<<(std::ostream& ost, const LegendGraphicLayout& layout)
+{
+  ost << "LegendGraphicLayout:\n";
+  if(layout.param_name_xoffset)
+	ost << " param_name_xoffset: " << *layout.param_name_xoffset << std::endl;
+  if(layout.param_name_xoffset)
+	ost << " param_name_yoffset: " << *layout.param_name_yoffset << std::endl;
+  if(layout.param_unit_xoffset)
+	ost << " param_unit_xoffset: " << *layout.param_unit_xoffset << std::endl;
+  if(layout.param_unit_yoffset)
+	ost << " param_unit_yoffset: " << *layout.param_unit_yoffset << std::endl;
+  if(layout.legend_xoffset)
+	ost << " legend_xoffset: " << *layout.legend_xoffset << std::endl;
+  if(layout.legend_yoffset)
+	ost << " legend_yoffset: " << *layout.legend_yoffset << std::endl;
+  if(layout.symbol_group_x_padding)
+	ost << " symbol_group_x_padding: " << *layout.symbol_group_x_padding << std::endl;
+  if(layout.symbol_group_y_padding)
+	ost << " symbol_group_y_padding: " << *layout.symbol_group_y_padding << std::endl;
+  if(layout.symbol_text_xoffset)
+	ost << " symbol_text_xoffset: " << *layout.symbol_text_xoffset << std::endl;
+  if(layout.symbol_text_yoffset)
+	ost << " symbol_text_yoffset: " << *layout.symbol_text_yoffset << std::endl;
+  if(layout.legend_width)
+	ost << " legend_width: " << *layout.legend_width << std::endl;
+  if(!layout.legend_width_per_language.empty())
+	{
+	  ost << " legend_width_per_language: " << std::endl;
+	  for(const auto& item : layout.legend_width_per_language)
+		ost << "  - " << item.first << ": " << item.second << std::endl;
+	}
+  ost << " output_doxument_width: "  << layout.output_document_width << std::endl;
+  ost << " output_doxument_height: "  << layout.output_document_height << std::endl;
+
+  return ost;
+}
+
+std::ostream& operator<<(std::ostream& ost, const LegendGraphicParameter& lgp)
+{
+  ost << "LegendGraphicParameter: " << std::endl;
+  ost << " data_name: "  << lgp.data_name << std::endl;
+  ost << " given_name: "  << lgp.given_name << std::endl;
+  ost << " unit: "  << lgp.unit << std::endl;
+  ost << " hide_title: "  << lgp.hide_title << std::endl;
+  if(!lgp.translations.empty())
+	{
+	  ost << " translations: " << std::endl;
+	  for(const auto& item : lgp.translations)
+		ost << "  - " << item.first << ": " << item.second << std::endl;
+	  
+	}
+  if(!lgp.text_lengths.empty())
+	{
+	  ost << " text_lengths: " << std::endl;
+	  for(const auto& item : lgp.text_lengths)
+		ost << "  - " << item.first << ": " << item.second << std::endl;	  
+	}
+  return ost;
+}
+
+std::ostream& operator<<(std::ostream& ost, const LegendGraphicSymbol& lgs)
+{
+  ost << "LegendGraphicSymbol: " << std::endl;
+  ost << " symbol_name: "  << lgs.symbol_name << std::endl;
+  if(!lgs.translations.empty())
+	{
+	  ost << " translations: " << std::endl;
+	  for(const auto& item : lgs.translations)
+		ost << "  - " << item.first << ": " << item.second << std::endl;
+	  
+	}
+
+  return ost;
+}
+
+std::ostream& operator<<(std::ostream& ost, const WMSLegendGraphicSettings& lgs)
+{
+  ost << "**** WMSLegendGraphicSettings begin****\n";
+  if(lgs.parameters.empty())
+	{
+	  ost << "* Parameters *\n";
+	  for(const auto& p : lgs.parameters)
+		ost << " parameter: " << p.first << std::endl << p.second << std::endl;
+	}
+  if(lgs.parameters.empty())
+	{
+	  ost << "* Symbols *\n";
+	  for(const auto& s : lgs.symbols)
+		ost << " symbol: " << s.first << std::endl << s.second << std::endl;
+	}
+  if(!lgs.symbolsToIgnore.empty())
+	{
+	  ost << "symbolsToIgnore: " << std::endl;
+	  for(const auto& s : lgs.symbolsToIgnore)
+		ost << s << std::endl;
+	}
+  if(!lgs.languages.empty())
+	{
+	  ost << "langauges: " << std::endl;
+	  for(const auto& l : lgs.languages)
+		ost << l << std::endl;
+	}
+  ost << lgs.layout;
+  ost << "expires: " << lgs.expires << std::endl;
+
+  ost << "**** WMSLegendGraphicSettings end****\n";
+	
+  return ost;
+}
+
 }  // namespace WMS
 }  // namespace Plugin
 }  // namespace SmartMet
