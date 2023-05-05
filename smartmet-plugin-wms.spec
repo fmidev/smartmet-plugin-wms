@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.4.27
+Version: 23.5.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Fri May 5 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.5.5-1.fmi
+- Added << operator functions for some data structures for debug purposes
+
 * Thu Apr 27 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.4.27-1.fmi
 - Repackage due to macgyver ABI changes (AsyncTask, AsyncTaskGroup)
 

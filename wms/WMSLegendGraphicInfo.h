@@ -54,6 +54,10 @@ struct LegendGraphicResult
 
 using LegendGraphicResultPerLanguage = std::map<std::string, LegendGraphicResult>;
 
+std::ostream& operator<<(std::ostream& ost, const LegendGraphicInfoItem& lgi);
+std::ostream& operator<<(std::ostream& ost, const NamedLegendGraphicInfo& nlgi);
+std::ostream& operator<<(std::ostream& ost, const LegendGraphicResultPerLanguage& lgr);
+
 }  // namespace WMS
 }  // namespace Plugin
 }  // namespace SmartMet
