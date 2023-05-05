@@ -1067,7 +1067,7 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
     height = json.asInt();
 
   // 1) Default settings
-  WMSLegendGraphicSettings actualSettings(true);  // Deafult values
+  WMSLegendGraphicSettings actualSettings(true);  // Default values
   // 2) Settings from wms.conf
   WMSLegendGraphicSettings configSettings = wmsConfig.getLegendGraphicSettings();
   actualSettings.merge(configSettings);
@@ -1358,6 +1358,7 @@ LegendGraphicResult WMSLayer::getLegendGraphic(const std::string& legendGraphicI
   if (itsLegendGraphicResults.find(legendGraphicID) != itsLegendGraphicResults.end())
   {
     const auto& layerLGR = itsLegendGraphicResults.at(legendGraphicID);
+
     if (layerLGR.find(language) != layerLGR.end())
       return layerLGR.at(language);
 
