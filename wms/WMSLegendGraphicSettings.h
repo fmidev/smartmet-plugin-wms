@@ -77,6 +77,11 @@ class WMSLegendGraphicSettings
   int expires;
 };
 
+std::ostream& operator<<(std::ostream& ost, const LegendGraphicParameter& lgp);
+std::ostream& operator<<(std::ostream& ost, const LegendGraphicSymbol& lgs);
+std::ostream& operator<<(std::ostream& ost, const LegendGraphicLayout& layout);
+std::ostream& operator<<(std::ostream& ost, const WMSLegendGraphicSettings& lgs);
+
 }  // namespace WMS
 }  // namespace Plugin
 }  // namespace SmartMet
