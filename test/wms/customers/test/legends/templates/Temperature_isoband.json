@@ -101,7 +101,7 @@
 		{
 		    "0": { "en": "WATER FREEZES", "fi": "VESI JÄÄTYY" },
 		    "8": { "en": "COLD BEER", "fi": "KYLMÄ OLUT" },
-		    "54": { "en": "WARM", "fi": "LÄMMIN" },
+		    "24": { "en": "WARM", "fi": "LÄMMIN" },
 		    "28": { "en": "REMEMBER SUNSCREEN", "fi": "AURINKORASVAKELI" },
 		    "-5": { "en": "OPTIMAL SKIING TEMPERATURE", "fi": "HIIHTOKELI" },
 		    "-30": { "en": "BITING COLD", "fi": "PUREVA PAKKANEN" },

@@ -1,7 +1,6 @@
 {
     "title": "How to change labels from isoband settings",
     "producer": "pal_skandinavia",
-    "language": "fi",
     "projection":
     {
 	"crs": "data",

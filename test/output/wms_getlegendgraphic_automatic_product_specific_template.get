@@ -96,13 +96,13 @@
   <text x="70" y="108">30</text>
    <use class="Temperature_28_30" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="115"/>
   
-  <text x="70" y="127">AURINKORASVAKELI</text>
+  <text x="70" y="127">REMEMBER SUNSCREEN</text>
    <use class="Temperature_26_28" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="134"/>
   
   <text x="70" y="146">26</text>
    <use class="Temperature_24_26" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="153"/>
   
-  <text x="70" y="165">24</text>
+  <text x="70" y="165">WARM</text>
    <use class="Temperature_22_24" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="172"/>
   
   <text x="70" y="184">22</text>
@@ -126,7 +126,7 @@
   <text x="70" y="298">10</text>
    <use class="Temperature_8_10" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="305"/>
   
-  <text x="70" y="317">KYLMÄ OLUT</text>
+  <text x="70" y="317">COLD BEER</text>
    <use class="Temperature_6_8" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="324"/>
   
   <text x="70" y="336">6</text>
@@ -141,7 +141,7 @@
   <text x="70" y="393">1</text>
    <use class="Temperature_0_1" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="400"/>
   
-  <text x="70" y="412">VESI JÄÄTYY</text>
+  <text x="70" y="412">WATER FREEZES</text>
    <use class="Temperature_1_0" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="419"/>
   
   <text x="70" y="431">-1</text>
@@ -156,7 +156,7 @@
   <text x="70" y="488">-4</text>
    <use class="Temperature_5_4" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="495"/>
   
-  <text x="70" y="507">HIIHTOKELI</text>
+  <text x="70" y="507">OPTIMAL SKIING TEMPERATURE</text>
    <use class="Temperature_6_5" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="514"/>
   
   <text x="70" y="526">-6</text>
@@ -195,7 +195,7 @@
   <text x="70" y="735">-28</text>
    <use class="Temperature_30_28" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="742"/>
   
-  <text x="70" y="754">PUREVA PAKKANEN</text>
+  <text x="70" y="754">BITING COLD</text>
    <use class="Temperature_32_30" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="761"/>
   
   <text x="70" y="773">-32</text>

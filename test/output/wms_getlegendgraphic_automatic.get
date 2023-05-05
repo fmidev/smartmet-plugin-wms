@@ -174,7 +174,7 @@
   </g>
   <g>
   
-  <text x="470" y="20">Precipitation from</text>
+  <text x="470" y="20">Precipitation form</text>
   <g>
    <use transform="translate(490,45)" xlink:href="#drizzle"/>
   </g>

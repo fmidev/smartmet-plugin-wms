@@ -49,7 +49,7 @@
    <use class="ModerateWind_3_5" style="stroke:black; stroke-width:0.5" x="30" xlink:href="#rect" y="103"/>
   
   <text x="48" y="112">3-5</text>
-  <text class="Units" x="20" y="13">Tuulennopeus</text>
+  <text class="Units" x="20" y="13">Wind speed</text>
   <text class="Units" x="30" y="30">m/s</text>
   </g>
  </g>

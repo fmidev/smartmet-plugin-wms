@@ -192,7 +192,7 @@
   <text x="70" y="393">-31</text>
    <use class="HiResTemperature_30_29" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="400"/>
   
-  <text x="70" y="412">PUREVA PAKKANEN</text>
+  <text x="70" y="412">BITING COLD</text>
    <use class="HiResTemperature_29_28" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="419"/>
   
   <text x="70" y="431">-29</text>
@@ -267,7 +267,7 @@
   <text x="70" y="868">-6</text>
    <use class="HiResTemperature_5_4" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="875"/>
   
-  <text x="70" y="887">HIIHTOKELI</text>
+  <text x="70" y="887">OPTIMAL SKIING TEMPERATURE</text>
    <use class="HiResTemperature_4_3" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="894"/>
   
   <text x="70" y="906">-4</text>
@@ -282,7 +282,7 @@
   <text x="70" y="963">-1</text>
    <use class="HiResTemperature_0_1" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="970"/>
   
-  <text x="70" y="982">VESI JÄÄTYY</text>
+  <text x="70" y="982">WATER FREEZES</text>
    <use class="HiResTemperature_1_2" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="989"/>
   
   <text x="70" y="1001">1</text>
@@ -306,7 +306,7 @@
   <text x="70" y="1115">7</text>
    <use class="HiResTemperature_8_9" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1122"/>
   
-  <text x="70" y="1134">KYLMÄ OLUT</text>
+  <text x="70" y="1134">COLD BEER</text>
    <use class="HiResTemperature_9_10" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1141"/>
   
   <text x="70" y="1153">9</text>
@@ -354,7 +354,7 @@
   <text x="70" y="1419">23</text>
    <use class="HiResTemperature_24_25" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1426"/>
   
-  <text x="70" y="1438">24</text>
+  <text x="70" y="1438">WARM</text>
    <use class="HiResTemperature_25_26" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1445"/>
   
   <text x="70" y="1457">25</text>
@@ -366,7 +366,7 @@
   <text x="70" y="1495">27</text>
    <use class="HiResTemperature_28_29" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1502"/>
   
-  <text x="70" y="1514">AURINKORASVAKELI</text>
+  <text x="70" y="1514">REMEMBER SUNSCREEN</text>
    <use class="HiResTemperature_29_30" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1521"/>
   
   <text x="70" y="1533">29</text>

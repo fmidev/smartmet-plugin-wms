@@ -139,7 +139,7 @@
   <text x="70" y="431">21</text>
    <use class="Temperature_24_27" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="438"/>
   
-  <text x="70" y="450">24</text>
+  <text x="70" y="450">LÄMMIN</text>
    <use class="Temperature_27_30" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="457"/>
   
   <text x="70" y="469">27</text>

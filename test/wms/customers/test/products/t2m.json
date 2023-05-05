@@ -1,7 +1,6 @@
 {
     "title": "Demo product",
     "producer": "pal_skandinavia",
-    "language": "fi",
     "projection":
     {
 	"crs": "data",
