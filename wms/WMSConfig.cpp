@@ -1093,6 +1093,7 @@ void WMSConfig::updateModificationTime()
 
 #ifndef WITHOUT_AUTHENTICATION
 CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
+                                     const std::string& language,
                                      const boost::optional<std::string>& starttime,
                                      const boost::optional<std::string>& endtime,
                                      const boost::optional<std::string>& reference_time,
@@ -1102,6 +1103,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
                                      bool authenticate) const
 #else
 CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
+                                     const std::string& language,
                                      const boost::optional<std::string>& starttime,
                                      const boost::optional<std::string>& endtime,
                                      const boost::optional<std::string>& reference_time,
@@ -1125,7 +1127,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
 
       //		std::cout << "Hierarchy:\n" << lh << std::endl;
 
-      return lh.getCapabilities(multiple_intervals, starttime, endtime, reference_time);
+      return lh.getCapabilities(multiple_intervals, language, starttime, endtime, reference_time);
     }
 
     // Return array of individual layer capabilities
@@ -1143,8 +1145,8 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
           continue;
 #endif
 
-      auto cdt =
-          iter_pair.second.getCapabilities(multiple_intervals, starttime, endtime, reference_time);
+      auto cdt = iter_pair.second.getCapabilities(
+          multiple_intervals, language, starttime, endtime, reference_time);
 
       // Note: The boost::optional is empty for hidden layers.
       if (cdt)

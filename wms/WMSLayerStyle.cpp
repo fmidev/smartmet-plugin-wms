@@ -13,8 +13,8 @@ namespace WMS
 std::ostream& operator<<(std::ostream& ost, const WMSLayerStyle& layerStyle)
 {
   ost << "name: " << layerStyle.name << std::endl;
-  ost << "title: " << layerStyle.title << std::endl;
-  ost << "abstract: " << layerStyle.abstract << std::endl;
+  ost << "title: " << (layerStyle.title ? layerStyle.title->dump() : "-") << std::endl;
+  ost << "abstract: " << (layerStyle.abstract ? layerStyle.abstract->dump() : "-") << std::endl;
   ost << "LegendURL: " << std::endl;
   ost << " format: " << layerStyle.legend_url.format << std::endl;
   ost << " online resource: " << layerStyle.legend_url.online_resource << std::endl;
@@ -22,7 +22,7 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayerStyle& layerStyle)
   return ost;
 }
 
-CTPP::CDT WMSLayerStyle::getCapabilities() const
+CTPP::CDT WMSLayerStyle::getCapabilities(const std::string& language) const
 {
   try
   {
@@ -32,14 +32,14 @@ CTPP::CDT WMSLayerStyle::getCapabilities() const
 
     if (name.empty())
       throw Fmi::Exception::Trace(BCP, "WMS layer style must have a name!");
-    if (title.empty())
-      throw Fmi::Exception::Trace(BCP, "WMS layer style must have a title!");
-
     style["name"] = name;
-    style["title"] = title;
 
-    if (!abstract.empty())
-      style["abstract"] = abstract;
+    if (!title)
+      throw Fmi::Exception::Trace(BCP, "WMS layer style must have a title!");
+    style["title"] = title->translate(language);
+
+    if (abstract)
+      style["abstract"] = abstract->translate(language);
 
     // Style legend URL
 

@@ -1,0 +1,210 @@
+<svg width="626" height="295" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>Demo product</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+.Precipitation_01_02	{ stroke: none; fill: rgb(10,155,255) }
+.Precipitation_02_05	{ stroke: none; fill: rgb(5,205,170) }
+.Precipitation_05_1	{ stroke: none; fill: rgb(140,230,20) }
+.Precipitation_1_2	{ stroke: none; fill: rgb(240,240,20) }
+.Precipitation_2_5	{ stroke: none; fill: rgb(255,205,20) }
+.Precipitation_5_10	{ stroke: none; fill: rgb(255,80,60) }
+.Precipitation_10_inf	{ stroke: none; fill: rgb(213,26,13) }
+.Precipitation	{ fill:none; stroke: #999; stroke-width: 0.4px }
+
+.Pressure	{ fill:none; stroke: #333; stroke-width: 1.5px }
+
+ ]]>
+</style>
+<symbol overflow="visible" id="drizzle">
+    <defs></defs>
+    <g id="10001000" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="scale(0.1) translate(-256,-256)">
+        <g id="tihku" transform="translate(176.000000, 250.000000)" fill="#0A95D7">
+            <g id="line-1">
+                <circle id="Oval" cx="11" cy="11" r="11"></circle>
+                <circle id="Oval" cx="11" cy="49" r="11"></circle>
+            </g>
+            <g id="line-1" transform="translate(46.000000, 0.000000)">
+                <circle id="Oval" cx="11" cy="11" r="11"></circle>
+                <circle id="Oval" cx="11" cy="49" r="11"></circle>
+            </g>
+            <g id="line-1" transform="translate(92.000000, 0.000000)">
+                <circle id="Oval" cx="11" cy="11" r="11"></circle>
+                <circle id="Oval" cx="11" cy="49" r="11"></circle>
+            </g>
+            <g id="line-1" transform="translate(138.000000, 0.000000)">
+                <circle id="Oval" cx="11" cy="11" r="11"></circle>
+                <circle id="Oval" cx="11" cy="49" r="11"></circle>
+            </g>
+        </g>
+    </g>
+</symbol>
+<symbol overflow="visible" id="freezingdrizzle">
+     <defs></defs>
+     <g id="10401000" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="scale(0.1) translate(-256,-256)">
+        <g id="tihku" transform="translate(151.000000, 240.000000)">
+            <g id="line-1" transform="translate(25.000000, 0.000000)" fill="#E3384D">
+                <circle id="Oval" cx="11" cy="11" r="11"></circle>
+                <circle id="Oval" cx="11" cy="49" r="11"></circle>
+            </g>
+            <g id="line-1" transform="translate(71.000000, 0.000000)" fill="#E3384D">
+                <circle id="Oval" cx="11" cy="11" r="11"></circle>
+                <circle id="Oval" cx="11" cy="49" r="11"></circle>
+            </g>
+            <g id="line-1" transform="translate(117.000000, 0.000000)" fill="#E3384D">
+                <circle id="Oval" cx="11" cy="11" r="11"></circle>
+                <circle id="Oval" cx="11" cy="49" r="11"></circle>
+            </g>
+            <g id="line-1" transform="translate(163.000000, 0.000000)" fill="#E3384D">
+                <circle id="Oval" cx="11" cy="11" r="11"></circle>
+                <circle id="Oval" cx="11" cy="49" r="11"></circle>
+            </g>
+            <rect id="Rectangle" fill="#0A95D7" x="0" y="75" width="210" height="20" rx="10"></rect>
+        </g>
+    </g>
+</symbol>
+<symbol overflow="visible" id="freezingrain">
+   <defs></defs>
+   <g id="10501000" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="scale(0.1) translate(-256,-256)">
+        <g id="jaatava-sade" transform="translate(167.000000, 240.000000)" fill="#E3384D">
+            <polyline id="jaatava-pisara" points="37 0 0 92 0 0"></polyline>
+            <polyline id="jaatava-pisara" points="108 0 71 92 71 0"></polyline>
+            <polyline id="jaatava-pisara" points="179 0 142 92 142 0"></polyline>
+        </g>
+    </g>
+</symbol>
+<symbol overflow="visible" id="hail">
+    <defs></defs>
+   <g id="10601080" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="scale(0.1) translate(-256,-256)">
+        <g id="raekuuro" transform="translate(172.000000, 200.000000)">
+            <g id="rae" transform="translate(62.000000, 20.000000)">
+                <polygon fill="#0A95D7" points="22 90 41.0525589 101 41.0525589 123 22 134 2.94744112 123 2.94744112 101"></polygon>
+                <rect id="line" fill="#02A9F1" x="12.5" y="0" width="20" height="76" rx="10"></rect>
+            </g>
+            <g id="rae">
+                <polygon fill="#0A95D7" points="22 90 41.0525589 101 41.0525589 123 22 134 2.94744112 123 2.94744112 101"></polygon>
+                <rect id="line" fill="#02A9F1" x="12.5" y="0" width="20" height="76" rx="10"></rect>
+            </g>
+            <g id="rae" transform="translate(124.000000, 0.000000)">
+                <polygon fill="#0A95D7" points="22 90 41.0525589 101 41.0525589 123 22 134 2.94744112 123 2.94744112 101"></polygon>
+                <rect id="line" fill="#02A9F1" x="12.5" y="0" width="20" height="76" rx="10"></rect>
+            </g>
+        </g>
+    </g>
+</symbol>
+<symbol overflow="visible" id="rain">
+    <defs></defs>
+     <g id="10111080" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="scale(0.1) translate(-256,-256)">
+        <g id="sade-1" transform="translate(228.000000, 240.000000)" fill="#0A95D7">
+            <path d="M56,62.0141412 C56,77.4703042 43.463973,90 28,90 C12.536027,90 0,77.4703042 0,62.0141412 C0,57.731701 0.962363517,53.6739193 2.68272603,50.0450575 L18.3635466,10.1506657 C23.6811768,-3.37819402 32.2985446,-3.38891537 37.6203889,10.1506657 L53.2274462,49.8573925 C55.0041025,53.5338018 56,57.657728 56,62.0141412 Z" id="pisara"></path>
+        </g>
+    </g>
+</symbol>
+<symbol overflow="visible" id="sleet">
+    <defs></defs>
+     <g id="10201080" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="scale(0.1) translate(-256,-256)">
+        <g id="rantasade-1" transform="translate(173.000000, 240.000000)" fill="#0A95D7">
+            <path d="M56,62.0141412 C56,77.4703042 43.463973,90 28,90 C12.536027,90 0,77.4703042 0,62.0141412 C0,57.731701 0.962363517,53.6739193 2.68272603,50.0450575 L18.3635466,10.1506657 C23.6811768,-3.37819402 32.2985446,-3.38891537 37.6203889,10.1506657 L53.2274462,49.8573925 C55.0041025,53.5338018 56,57.657728 56,62.0141412 Z" id="pisara"></path>
+            <path d="M134,31 L153.99193,19.0831078 C157.820418,16.8534339 162.715887,18.1766215 164.926265,22.0385298 C167.136644,25.9004381 165.824907,30.8386412 161.996419,33.068315 L142,45 L161.996419,56.931685 C165.824907,59.1613588 167.136644,64.0995619 164.926265,67.9614702 C162.715887,71.8233785 157.820418,73.1465661 153.99193,70.9168922 L134,59 L134,82.0879121 C134,86.4576376 130.418278,90 126,90 C121.581722,90 118,86.4576376 118,82.0879121 L118,59 L97.0080697,70.9168922 C93.1795818,73.1465661 88.2841132,71.8233785 86.0737347,67.9614702 C83.8633562,64.0995619 85.175093,59.1613588 89.0035809,56.931685 L109,45 L89.0035809,33.068315 C85.175093,30.8386412 83.8633562,25.9004381 86.0737347,22.0385298 C88.2841132,18.1766215 93.1795818,16.8534339 97.0080697,19.0831078 L118,31 L118,7.91208791 C118,3.54236242 121.581722,0 126,0 C130.418278,0 134,3.54236242 134,7.91208791 L134,31 Z" id="hiutale" fill-rule="nonzero"></path>
+        </g>
+    </g>
+</symbol>
+<symbol overflow="visible" id="snow">
+    <defs></defs>
+   <g id="10301080" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="scale(0.1) translate(-256,-256)">
+        <g id="lumisade-1" transform="translate(213.000000, 240.000000)" fill="#0A95D7" fill-rule="nonzero">
+            <path d="M50,35 L74.7509174,21.0060618 C78.3374203,18.934994 82.9234638,20.1640576 84.9941322,23.7512523 C87.0648006,27.338447 85.835974,31.925375 82.2494711,33.9964428 L57.9971073,48.0012523 L82.2494711,62.0060618 C85.835974,64.0771296 87.0648006,68.6640576 84.9941322,72.2512523 C82.9234638,75.838447 78.3374203,77.0675107 74.7509174,74.9964428 L50,61 L50,89.5 C50,93.6421356 46.6421356,97 42.5,97 C38.3578644,97 35,93.6421356 35,89.5 L35,61 L11.2490826,74.9964428 C7.66257967,77.0675107 3.07653619,75.838447 1.00586777,72.2512523 C-1.06480065,68.6640576 0.164026001,64.0771296 3.75052891,62.0060618 L28.0028927,48.0012523 L3.75052891,33.9964428 C0.164026001,31.925375 -1.06480065,27.338447 1.00586777,23.7512523 C3.07653619,20.1640576 7.66257967,18.934994 11.2490826,21.0060618 L35,35 L35,7.5 C35,3.35786438 38.3578644,0 42.5,0 C46.6421356,0 50,3.35786438 50,7.5 L50,35 Z" id="Combined-Shape"></path>
+        </g>
+    </g>
+</symbol>
+
+<symbol id="isoband_Precipitation1h_12">
+ <rect height="9" width="14"/>
+</symbol>
+<symbol id="isoline_Precipitation1h_13">
+ <path class="Precipitation" d="M10 10 L20 10 Z"/>
+</symbol>
+<symbol id="isoline_Pressure_14">
+ <path class="Pressure" d="M10 10 L20 10 Z"/>
+</symbol>
+
+</defs>
+
+<g>
+ <g id="view1">
+  <g>
+  
+   <use style="fill:rgb(213,26,13); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_12" y="50"/>
+  
+  <text x="48" y="59">&gt; 10</text>
+   <use style="fill:rgb(255,80,60); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_12" y="59"/>
+  
+  <text x="48" y="68">5-10</text>
+   <use style="fill:rgb(255,205,20); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_12" y="68"/>
+  
+  <text x="48" y="77">2-5</text>
+   <use style="fill:rgb(240,240,20); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_12" y="77"/>
+  
+  <text x="48" y="86">1-2</text>
+   <use style="fill:rgb(140,230,20); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_12" y="86"/>
+  
+  <text x="48" y="95">0.5-1</text>
+   <use style="fill:rgb(5,205,170); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_12" y="95"/>
+  
+  <text x="48" y="104">0.2-0.5</text>
+   <use style="fill:rgb(10,155,255); stroke:none" x="30" xlink:href="#isoband_Precipitation1h_12" y="104"/>
+  
+  <text x="48" y="113">0.1-0.2</text>
+  <text class="Units" x="20" y="20">Sademäärä</text>
+  <text class="Units" x="30" y="30">mm/h</text>
+  </g>
+  <g>
+  
+  <g>
+   <use transform="translate(180,45)" xlink:href="#isoline_Precipitation1h_13"/>
+  </g>
+  <text x="170" y="20">Sademäärä</text>
+  </g>
+  <g>
+  
+  <g>
+   <use transform="translate(330,45)" xlink:href="#isoline_Pressure_14"/>
+  </g>
+  <text x="320" y="20">Ilmanpaine</text>
+  </g>
+  <g>
+  
+  <text x="470" y="20">Sateen olomuoto</text>
+  <g>
+   <use transform="translate(490,45)" xlink:href="#drizzle"/>
+  </g>
+  <text x="520" y="50">Tihku</text>
+  <g>
+   <use transform="translate(490,80)" xlink:href="#rain"/>
+  </g>
+  <text x="520" y="85">Vesisade</text>
+  <g>
+   <use transform="translate(490,115)" xlink:href="#sleet"/>
+  </g>
+  <text x="520" y="120">Räntä</text>
+  <g>
+   <use transform="translate(490,150)" xlink:href="#snow"/>
+  </g>
+  <text x="520" y="155">Lumi</text>
+  <g>
+   <use transform="translate(490,185)" xlink:href="#freezingdrizzle"/>
+  </g>
+  <text x="520" y="190">Jäätävä tihku</text>
+  <g>
+   <use transform="translate(490,220)" xlink:href="#freezingrain"/>
+  </g>
+  <text x="520" y="225">Jäätävä vesisade</text>
+  <g>
+   <use transform="translate(490,255)" xlink:href="#hail"/>
+  </g>
+  <text x="520" y="260">Rakeita</text>
+  </g>
+ </g>
+</g>
+
+</svg>

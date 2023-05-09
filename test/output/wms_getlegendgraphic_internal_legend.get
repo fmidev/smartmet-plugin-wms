@@ -87,7 +87,7 @@
   <text x="28" y="49">32</text>
    <use class="Temperature_30_32" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#rect" y="46"/>
   
-  <text x="28" y="58">KUUMA</text>
+  <text x="28" y="58">HOT</text>
    <use class="Temperature_28_30" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#rect" y="55"/>
   
   <text x="28" y="67">28</text>

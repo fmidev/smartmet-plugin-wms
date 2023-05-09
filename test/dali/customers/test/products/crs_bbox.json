@@ -1,6 +1,6 @@
 {
-    "title": "Temperature",
-    "abstract": "Temperature",
+    "title": { "en": "Temperature", "fi": "Lämpötila", "sv": "Temperatur" },
+    "abstract": { "en": "Temperature", "fi": "Lämpötila", "sv": "Temperatur" },
     "producer": "pal_skandinavia",
     "projection":
     {

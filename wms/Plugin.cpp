@@ -2039,14 +2039,16 @@ WMSQueryStatus Dali::Plugin::wmsGetCapabilitiesQuery(State &theState,
   catch (const Fmi::Exception &wmsException)
   {
     Fmi::Exception ex(
-        BCP, ("Error in parsing GetCapabilities response! " + std::string(wmsException.what())));
+        BCP,
+        "Error in generating GetCapabilities response! " + std::string(wmsException.what()),
+        nullptr);
     if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
       ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     return handleWmsException(ex, theState, theRequest, theResponse);
   }
   catch (...)
   {
-    Fmi::Exception ex(BCP, ("Error in parsing GetCapabilities response!"));
+    Fmi::Exception ex(BCP, "Error in generating GetCapabilities response!", nullptr);
     if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
       ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     return handleWmsException(ex, theState, theRequest, theResponse);
@@ -2195,9 +2197,11 @@ void Dali::Plugin::wmsPrepareGetLegendGraphicQuery(const State &theState,
 
   // Default language from configuration file
   std::string language = itsConfig.defaultLanguage();
+
   // Language overwritten from product file
   if (product.language)
     language = *product.language;
+
   // Finally language overwritten from URL-parameter
   auto languageParam = theRequest.getParameter("LANGUAGE");
   if (languageParam)

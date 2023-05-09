@@ -868,10 +868,9 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP, "Operation failed!", nullptr);
-    exception.addParameter("Producer", *producer);
-    exception.addParameter("Parameter", *parameter);
-    throw exception;
+    throw Fmi::Exception::Trace(BCP, "Operation failed!")
+        .addParameter("Producer", *producer)
+        .addParameter("Parameter", *parameter);
   }
 }
 

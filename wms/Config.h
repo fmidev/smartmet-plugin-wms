@@ -40,6 +40,7 @@ class Config
   const std::string& defaultCustomer() const;
   const std::string& defaultModel() const;
   const std::string& defaultLanguage() const;
+  const std::set<std::string>& languages() const;
 
   const std::string& templateDirectory() const;
   const std::string& primaryForecastSource() const;
@@ -86,6 +87,7 @@ class Config
   std::string itsDefaultModel = "pal_skandinavia";
   std::string itsDefaultLanguage = "en";
   std::string itsPrimaryForecastSource = "querydata";
+  std::set<std::string> itsLanguages;
 
   std::string itsTemplateDirectory = "/etc/smartmet/plugins/dali/templates";
   std::string itsRootDirectory;

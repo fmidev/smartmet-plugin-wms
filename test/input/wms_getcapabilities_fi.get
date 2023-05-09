@@ -1,0 +1,1 @@
+GET /wms?service=wms&request=GetCapabilities&language=fi&debug=1 HTTP/1.0

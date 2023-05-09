@@ -1,5 +1,6 @@
 {
   // GetCapability test variables
+  "title": "Wind demo",
   "abstract": "Test abstract",
   "opaque": false,
   "queryable": true,
@@ -10,7 +11,6 @@
   "keyword": ["foo", "bar"],
 
   // Normal settings
-  "title": "Wind demo",
   "producer": "pal_skandinavia",
   "legend_url_layer": "test:wind_legend",
   "projection": {

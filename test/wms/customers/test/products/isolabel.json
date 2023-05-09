@@ -39,8 +39,16 @@
 	[
 	    {
 		"name": "isolabel_small_blue_text_style",
-		"title": "Isolabel with small blue font",
-		"abstract": "Isolabel with small blue font",
+		"title":
+		{
+		    "en": "Isolabel with small blue font",
+		    "fi": "Käyrälukemat pienellä sinisellä fontilla"
+		},
+		"abstract":
+		{
+		    "en": "Isolabel with small blue font",
+		    "fi": "Käyrälukemat pienellä sinisellä fontilla"
+		},
 		"layers":
 		[
 		    {
@@ -55,8 +63,16 @@
 	    },
 	    {
 		"name": "isolabel_big_red_text_style",
-		"title": "Isolabel with big red font",
-		"abstract": "Isolabel with big red font",
+		"title":
+		{
+		    "en": "Isolabel with big red font",
+		    "fi": "Käyrälukemat isolla punaisella fontilla"
+		},
+		"abstract":
+		{
+		    "en": "Isolabel with big red font",
+		    "fi": "Käyrälukemat isolla punaisella fontilla"
+		},
 		"layers":
 		[
 		    {

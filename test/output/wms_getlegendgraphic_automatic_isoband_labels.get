@@ -111,7 +111,7 @@
   <text x="28" y="121">16</text>
    <use class="Temperature_14_16" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#rect" y="118"/>
   
-  <text class="Temperature_14_16" x="28" y="130">KUUMA</text>
+  <text class="Temperature_14_16" x="28" y="130">HOT</text>
    <use class="Temperature_12_14" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#rect" y="127"/>
   
   <text x="28" y="139">12</text>
@@ -135,7 +135,7 @@
   <text x="28" y="193">1</text>
    <use class="Temperature_0_1" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#rect" y="190"/>
   
-  <text x="28" y="202">L&#142;MPENEE</text>
+  <text x="28" y="202">GETTING WARMER</text>
    <use class="Temperature_1_0" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#rect" y="199"/>
   
   <text x="28" y="211">-1</text>

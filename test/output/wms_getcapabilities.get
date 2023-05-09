@@ -98,6 +98,7 @@
     <Layer queryable="1">
       <Name>ely:elymap</Name>
       <Title>ELY map</Title>
+      <Abstract>ELY map</Abstract>
       <CRS>AUTO2:42001</CRS>
       <CRS>AUTO2:42002</CRS>
       <CRS>AUTO2:42003</CRS>
@@ -3168,30 +3169,30 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="626" height="295">
+        <LegendURL width="624" height="295">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation&amp;width=626&amp;height=295"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation&amp;width=624&amp;height=295"/>
         </LegendURL>
       </Style><Style>
         <Name>precipitation_red_rain_style</Name>
         <Title>Precipitation red rain style</Title><Abstract>Rain drops in red colour</Abstract>
-        <LegendURL width="626" height="295">
+        <LegendURL width="624" height="295">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_red_rain_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation&amp;width=626&amp;height=295"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_red_rain_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation&amp;width=624&amp;height=295"/>
         </LegendURL>
       </Style><Style>
         <Name>precipitation_thick_style</Name>
         <Title>Precipitation thick style</Title><Abstract>Pressure isolines line width is 2 px</Abstract>
-        <LegendURL width="626" height="295">
+        <LegendURL width="624" height="295">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thick_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation&amp;width=626&amp;height=295"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thick_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation&amp;width=624&amp;height=295"/>
         </LegendURL>
       </Style><Style>
         <Name>precipitation_thin_style</Name>
         <Title>Precipitation thin style</Title><Abstract>Pressure isolines line width is 1 px</Abstract>
-        <LegendURL width="626" height="295">
+        <LegendURL width="624" height="295">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thin_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation&amp;width=626&amp;height=295"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=precipitation_thin_style&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation&amp;width=624&amp;height=295"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -3305,9 +3306,9 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="626" height="330">
+        <LegendURL width="624" height="330">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_modified&amp;width=626&amp;height=330"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Aprecipitation_modified&amp;width=624&amp;height=330"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -3356,9 +3357,9 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="776" height="295">
+        <LegendURL width="774" height="295">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Apressure_isoline_groups&amp;width=776&amp;height=295"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Apressure_isoline_groups&amp;width=774&amp;height=295"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -3463,9 +3464,9 @@
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
-        <LegendURL width="196" height="97">
+        <LegendURL width="223" height="97">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asnow_drift_index&amp;width=196&amp;height=97"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Asnow_drift_index&amp;width=223&amp;height=97"/>
         </LegendURL>
       </Style>
     </Layer>

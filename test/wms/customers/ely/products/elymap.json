@@ -1,5 +1,14 @@
 {
-    "title": "ELY map",
+    "title":
+    {
+	"en": "ELY map",
+	"fi": "ELY kartta"
+    },
+    "abstract":
+    {
+	"en": "ELY map",
+	"fi": "ELY kartta"
+    },
     "refs":
     {
 	"myprojection":

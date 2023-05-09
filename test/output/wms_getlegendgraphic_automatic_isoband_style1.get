@@ -354,7 +354,7 @@
   <text x="70" y="1419">23</text>
    <use class="HiResTemperature_24_25" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1426"/>
   
-  <text x="70" y="1438">24</text>
+  <text x="70" y="1438">WARM</text>
    <use class="HiResTemperature_25_26" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="1445"/>
   
   <text x="70" y="1457">25</text>

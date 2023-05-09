@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "Text.h"
+#include <boost/optional.hpp>
 #include <ctpp2/CDT.hpp>
 #include <set>
 #include <string>
@@ -32,13 +34,14 @@ struct LegendURL
 
 struct WMSLayerStyle
 {
-  WMSLayerStyle() : name("default"), title("Default style") {}
+  WMSLayerStyle() = default;
 
-  std::string name;
-  std::string title;
-  std::string abstract;
+  std::string name = "default";
+  boost::optional<Dali::Text> title;
+  boost::optional<Dali::Text> abstract;
+
   LegendURL legend_url;
-  CTPP::CDT getCapabilities() const;
+  CTPP::CDT getCapabilities(const std::string& language) const;
 };
 
 // Layers with optional alternative styles

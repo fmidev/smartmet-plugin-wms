@@ -63,6 +63,7 @@ class WMSLayerHierarchy
   WMSLayerHierarchy& operator=(WMSLayerHierarchy&& other) = delete;
 
   CTPP::CDT getCapabilities(bool multiple_intervals,
+                            const std::string& language,
                             const boost::optional<std::string>& starttime,
                             const boost::optional<std::string>& endtime,
                             const boost::optional<std::string>& reference_time) const;

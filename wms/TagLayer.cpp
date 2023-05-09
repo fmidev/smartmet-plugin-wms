@@ -41,7 +41,7 @@ void TagLayer::init(Json::Value& theJson,
 
     auto json = JsonTools::remove(theJson, "cdata");
     if (!json.isNull())
-      (cdata = Text())->init(json, theConfig);
+      (cdata = Text("TagLayer"))->init(json, theConfig);
   }
   catch (...)
   {

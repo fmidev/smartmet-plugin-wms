@@ -102,7 +102,7 @@
   <text x="70" y="146">26</text>
    <use class="Temperature_24_26" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="153"/>
   
-  <text x="70" y="165">24</text>
+  <text x="70" y="165">WARM</text>
    <use class="Temperature_22_24" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="172"/>
   
   <text x="70" y="184">22</text>

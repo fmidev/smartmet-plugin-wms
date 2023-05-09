@@ -40,6 +40,7 @@ struct LegendGraphicSymbol
   LegendGraphicSymbol() = default;
 
   std::string symbol_name;
+
   std::map<std::string, std::string> translations;
 };
 

@@ -1,0 +1,243 @@
+<svg width="500" height="990" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>Demo product</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+.Temperature_inf_50	{ stroke:none; fill: rgb(154,8,117) }
+.Temperature_50_48	{ stroke:none; fill: rgb(198,26,155) }
+.Temperature_48_46	{ stroke:none; fill: rgb(230,62,200) }
+.Temperature_46_44	{ stroke:none; fill: rgb(230,91,251) }
+.Temperature_44_42	{ stroke:none; fill: rgb(198,77,249) }
+.Temperature_42_40	{ stroke:none; fill: rgb(164,40,235) }
+.Temperature_40_38	{ stroke:none; fill: rgb(13,0,212) }
+.Temperature_38_36	{ stroke:none; fill: rgb(95,13,189) }
+.Temperature_36_34	{ stroke:none; fill: rgb(107,27,227) }
+.Temperature_34_32	{ stroke:none; fill: rgb(117,72,250) }
+.Temperature_32_30	{ stroke:none; fill: rgb(138,121,247) }
+.Temperature_30_28	{ stroke:none; fill: rgb(4,18,179) }
+.Temperature_28_26	{ stroke:none; fill: rgb(24,49,214) }
+.Temperature_26_24	{ stroke:none; fill: rgb(56,104,235) }
+.Temperature_24_22	{ stroke:none; fill: rgb(111,154,247) }
+.Temperature_22_20	{ stroke:none; fill: rgb(148,178,242) }
+.Temperature_20_18	{ stroke:none; fill: rgb(0,80,171) }
+.Temperature_18_16	{ stroke:none; fill: rgb(6,98,196) }
+.Temperature_16_14	{ stroke:none; fill: rgb(24,122,219) }
+.Temperature_14_12	{ stroke:none; fill: rgb(17,141,250) }
+.Temperature_12_10	{ stroke:none; fill: rgb(64,169,255) }
+.Temperature_10_8	{ stroke:none; fill: rgb(101,189,247) }
+.Temperature_8_6	{ stroke:none; fill: rgb(0,103,140) }
+.Temperature_6_5	{ stroke:none; fill: rgb(2,123,163) }
+.Temperature_5_4	{ stroke:none; fill: rgb(0,155,186) }
+.Temperature_4_3	{ stroke:none; fill: rgb(34,188,212) }
+.Temperature_3_2	{ stroke:none; fill: rgb(103,219,230) }
+.Temperature_2_1	{ stroke:none; fill: rgb(163,243,247) }
+.Temperature_1_0	{ stroke:none; fill: rgb(212,255,255) }
+.Temperature_0_1	{ stroke:none; fill: rgb(5,179,138) }
+.Temperature_1_2	{ stroke:none; fill: rgb(2,212,149) }
+.Temperature_2_4	{ stroke:none; fill: rgb(138,237,187) }
+.Temperature_4_6	{ stroke:none; fill: rgb(204,255,208) }
+.Temperature_6_8	{ stroke:none; fill: rgb(235,252,207) }
+.Temperature_8_10	{ stroke:none; fill: rgb(235,255,122) }
+.Temperature_10_12	{ stroke:none; fill: rgb(255,234,128) }
+.Temperature_12_14	{ stroke:none; fill: rgb(247,212,35) }
+.Temperature_14_16	{ stroke:none; fill: rgb(245,180,0) }
+.Temperature_16_18	{ stroke:none; fill: rgb(242,149,0) }
+.Temperature_18_20	{ stroke:none; fill: rgb(240,116,0) }
+.Temperature_20_22	{ stroke:none; fill: rgb(255,83,36) }
+.Temperature_22_24	{ stroke:none; fill: rgb(247,23,7) }
+.Temperature_24_26	{ stroke:none; fill: rgb(219,10,7) }
+.Temperature_26_28	{ stroke:none; fill: rgb(189,4,4) }
+.Temperature_28_30	{ stroke:none; fill: rgb(156,2,20) }
+.Temperature_30_32	{ stroke:none; fill: rgb(196,24,98) }
+.Temperature_32_34	{ stroke:none; fill: rgb(232,39,120) }
+.Temperature_34_36	{ stroke:none; fill: rgb(245,88,174) }
+.Temperature_36_38	{ stroke:none; fill: rgb(240,144,216) }
+.Temperature_38_inf	{ stroke:none; fill: rgb(247,59,213) }
+
+ ]]>
+</style>
+<filter id="alphadilation">
+ <feMorphology in="SourceAlpha" operator="dilate" radius="3"/>
+ <feComposite in="SourceAlpha"/>
+</filter>
+<symbol id="temperature_isoband_rect">
+ <rect height="14" width="54"/>
+</symbol>
+<symbol id="temperature_isoband_uptriangle">
+ <path d="M0 14,27 0,54 14Z"/>
+</symbol>
+<symbol id="temperature_isoband_downtriangle">
+ <path d="M0 0,27 14,54 0Z"/>
+</symbol>
+
+</defs>
+
+<g>
+ <g id="view1">
+  <g>
+  
+  <text class="Units" dx="20" dy="15" x="0" y="0">Celsius &#176;C</text>
+  <g>
+  
+   <use class="Temperature_38_inf" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_uptriangle" y="20"/>
+  
+  <text x="70" y="32">&#62; 38</text>
+   <use class="Temperature_36_38" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="39"/>
+  
+  <text x="70" y="51">36</text>
+   <use class="Temperature_34_36" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="58"/>
+  
+  <text x="70" y="70">34</text>
+   <use class="Temperature_32_34" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="77"/>
+  
+  <text x="70" y="89">32</text>
+   <use class="Temperature_30_32" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="96"/>
+  
+  <text x="70" y="108">30</text>
+   <use class="Temperature_28_30" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="115"/>
+  
+  <text x="70" y="127">AURINKORASVAKELI</text>
+   <use class="Temperature_26_28" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="134"/>
+  
+  <text x="70" y="146">26</text>
+   <use class="Temperature_24_26" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="153"/>
+  
+  <text x="70" y="165">LÄMMIN</text>
+   <use class="Temperature_22_24" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="172"/>
+  
+  <text x="70" y="184">22</text>
+   <use class="Temperature_20_22" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="191"/>
+  
+  <text x="70" y="203">20</text>
+   <use class="Temperature_18_20" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="210"/>
+  
+  <text x="70" y="222">18</text>
+   <use class="Temperature_16_18" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="229"/>
+  
+  <text x="70" y="241">16</text>
+   <use class="Temperature_14_16" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="248"/>
+  
+  <text x="70" y="260">14</text>
+   <use class="Temperature_12_14" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="267"/>
+  
+  <text x="70" y="279">12</text>
+   <use class="Temperature_10_12" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="286"/>
+  
+  <text x="70" y="298">10</text>
+   <use class="Temperature_8_10" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="305"/>
+  
+  <text x="70" y="317">KYLMÄ OLUT</text>
+   <use class="Temperature_6_8" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="324"/>
+  
+  <text x="70" y="336">6</text>
+   <use class="Temperature_4_6" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="343"/>
+  
+  <text x="70" y="355">4</text>
+   <use class="Temperature_2_4" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="362"/>
+  
+  <text x="70" y="374">2</text>
+   <use class="Temperature_1_2" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="381"/>
+  
+  <text x="70" y="393">1</text>
+   <use class="Temperature_0_1" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="400"/>
+  
+  <text x="70" y="412">VESI JÄÄTYY</text>
+   <use class="Temperature_1_0" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="419"/>
+  
+  <text x="70" y="431">-1</text>
+   <use class="Temperature_2_1" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="438"/>
+  
+  <text x="70" y="450">-2</text>
+   <use class="Temperature_3_2" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="457"/>
+  
+  <text x="70" y="469">-3</text>
+   <use class="Temperature_4_3" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="476"/>
+  
+  <text x="70" y="488">-4</text>
+   <use class="Temperature_5_4" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="495"/>
+  
+  <text x="70" y="507">HIIHTOKELI</text>
+   <use class="Temperature_6_5" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="514"/>
+  
+  <text x="70" y="526">-6</text>
+   <use class="Temperature_8_6" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="533"/>
+  
+  <text x="70" y="545">-8</text>
+   <use class="Temperature_10_8" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="552"/>
+  
+  <text x="70" y="564">-10</text>
+   <use class="Temperature_12_10" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="571"/>
+  
+  <text x="70" y="583">-12</text>
+   <use class="Temperature_14_12" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="590"/>
+  
+  <text x="70" y="602">-14</text>
+   <use class="Temperature_16_14" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="609"/>
+  
+  <text x="70" y="621">-16</text>
+   <use class="Temperature_18_16" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="628"/>
+  
+  <text x="70" y="640">-18</text>
+   <use class="Temperature_20_18" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="647"/>
+  
+  <text x="70" y="659">-20</text>
+   <use class="Temperature_22_20" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="666"/>
+  
+  <text x="70" y="678">-22</text>
+   <use class="Temperature_24_22" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="685"/>
+  
+  <text x="70" y="697">-24</text>
+   <use class="Temperature_26_24" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="704"/>
+  
+  <text x="70" y="716">-26</text>
+   <use class="Temperature_28_26" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="723"/>
+  
+  <text x="70" y="735">-28</text>
+   <use class="Temperature_30_28" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="742"/>
+  
+  <text x="70" y="754">PUREVA PAKKANEN</text>
+   <use class="Temperature_32_30" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="761"/>
+  
+  <text x="70" y="773">-32</text>
+   <use class="Temperature_34_32" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="780"/>
+  
+  <text x="70" y="792">-34</text>
+   <use class="Temperature_36_34" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="799"/>
+  
+  <text x="70" y="811">-36</text>
+   <use class="Temperature_38_36" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="818"/>
+  
+  <text x="70" y="830">-38</text>
+   <use class="Temperature_40_38" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="837"/>
+  
+  <text x="70" y="849">-40</text>
+   <use class="Temperature_42_40" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="856"/>
+  
+  <text x="70" y="868">-42</text>
+   <use class="Temperature_44_42" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="875"/>
+  
+  <text x="70" y="887">-44</text>
+   <use class="Temperature_46_44" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="894"/>
+  
+  <text x="70" y="906">-46</text>
+   <use class="Temperature_48_46" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="913"/>
+  
+  <text x="70" y="925">-48</text>
+   <use class="Temperature_50_48" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_rect" y="932"/>
+  
+  <text x="70" y="944">&#60; -50</text>
+   <use class="Temperature_inf_50" style="stroke:black; stroke-width:0.5" x="10" xlink:href="#temperature_isoband_downtriangle" y="951"/>
+  
+  </g>
+  <mask id="isoband_Temperature_3">
+  
+   <rect height="100%" style="fill:white" width="100%"/>
+  
+   <use style="filter:url(#alphadilation)" xlink:href="#temperaturelegend"/>
+  
+  </mask>
+  </g>
+ </g>
+</g>
+
+</svg>
