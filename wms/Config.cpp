@@ -5,6 +5,7 @@
 // ======================================================================
 
 #include "Config.h"
+#include <boost/algorithm/string.hpp>
 #include <boost/filesystem/path.hpp>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
@@ -49,6 +50,13 @@ Config::Config(const string& configfile)
     itsConfig.lookupValue("url", itsDefaultUrl);
     itsConfig.lookupValue("model", itsDefaultModel);
     itsConfig.lookupValue("language", itsDefaultLanguage);
+
+    {
+      std::string languages;
+      itsConfig.lookupValue("languages", languages);
+      boost::algorithm::split(itsLanguages, languages, boost::is_any_of(","));
+      itsLanguages.insert(itsDefaultLanguage);
+    }
 
     itsConfig.lookupValue("primarytForecastSource", itsPrimaryForecastSource);
 
@@ -196,6 +204,10 @@ const std::string& Config::defaultModel() const
 const std::string& Config::defaultLanguage() const
 {
   return itsDefaultLanguage;
+}
+const std::set<std::string>& Config::languages() const
+{
+  return itsLanguages;
 }
 const std::string& Config::defaultTemplate() const
 {

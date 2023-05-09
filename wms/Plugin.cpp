@@ -2197,9 +2197,11 @@ void Dali::Plugin::wmsPrepareGetLegendGraphicQuery(const State &theState,
 
   // Default language from configuration file
   std::string language = itsConfig.defaultLanguage();
+
   // Language overwritten from product file
   if (product.language)
     language = *product.language;
+
   // Finally language overwritten from URL-parameter
   auto languageParam = theRequest.getParameter("LANGUAGE");
   if (languageParam)

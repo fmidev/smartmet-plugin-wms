@@ -163,14 +163,14 @@
   <g>
    <use transform="translate(180,45)" xlink:href="#isoline_Precipitation1h_4"/>
   </g>
-  <text x="170" y="20">Sateen intensiteetti isoline</text>
+  <text x="170" y="20">Sateen intensiteetti</text>
   </g>
   <g>
   
   <g>
    <use transform="translate(330,45)" xlink:href="#isoline_Pressure_5"/>
   </g>
-  <text x="320" y="20">Ilmanpaine isoline</text>
+  <text x="320" y="20">Ilmanpaine</text>
   </g>
   <g>
   

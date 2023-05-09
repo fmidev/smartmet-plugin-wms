@@ -163,14 +163,14 @@
   <g>
    <use transform="translate(180,45)" xlink:href="#isoline_Precipitation1h_7"/>
   </g>
-  <text x="170" y="20">Precipitation isoline</text>
+  <text x="170" y="20">Precipitation</text>
   </g>
   <g>
   
   <g>
    <use transform="translate(330,45)" xlink:href="#isoline_Pressure_8"/>
   </g>
-  <text x="320" y="20">Air Pressure isoline</text>
+  <text x="320" y="20">Air Pressure</text>
   </g>
   <g>
   

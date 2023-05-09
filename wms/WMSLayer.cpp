@@ -452,7 +452,8 @@ Json::Value process_legend_json(const Json::Value& jsonTemplate,
 
           if (!cdataJson.isNull())
           {
-            cdataJson = Json::Value(legendHeader + " isoline");
+            // cdataJson = Json::Value(legendHeader + " isoline"); // no translations for isoline!
+            cdataJson = Json::Value(legendHeader);
             Json::Value& attributesJson = layerJson["attributes"];
             if (!attributesJson.isNull())
             {
@@ -1037,6 +1038,53 @@ std::map<std::string, Json::Value> readLegendFiles(const std::string& wmsroot,
   return legend_templates;
 }
 
+NamedLegendGraphicInfo get_named_info(const Json::Value& root,
+                                      const std::string& name,
+                                      const std::map<std::string, WMSLayerStyle>& styles,
+                                      const std::map<std::string, std::string> legendfiles)
+{
+  NamedLegendGraphicInfo named_lgi;
+
+  for (const auto& item : styles)
+  {
+    const std::string& styleName = item.first;
+
+    // If external legend file used, no need to continue
+    // width, height is set later
+    if (legendfiles.find(styleName) != legendfiles.end())
+      continue;
+
+    std::string legendGraphicInfoName = name + "::" + styleName;
+
+    if (named_lgi.find(legendGraphicInfoName) == named_lgi.end())
+      named_lgi.insert(make_pair(legendGraphicInfoName, LegendGraphicInfo()));
+
+    // Read layer file and gather info needed for legends
+    LegendGraphicInfo& legendGraphicInfo = named_lgi[legendGraphicInfoName];
+
+    // Set right style add getCapabilities Style info
+    Json::Value modifiedLayer = root;
+    useStyle(modifiedLayer, styleName);
+
+    Json::Value nulljson;
+    auto viewsJson = modifiedLayer.get("views", nulljson);
+    if (!viewsJson.isNull() && viewsJson.isArray())
+    {
+      for (const auto& viewJson : viewsJson)
+      {
+        auto layersJson = viewJson.get("layers", nulljson);
+        if (!layersJson.isNull() && layersJson.isArray())
+        {
+          LegendGraphicInfo lgi = get_legend_graphic_info(layersJson);
+          if (!lgi.empty())
+            legendGraphicInfo.insert(legendGraphicInfo.end(), lgi.begin(), lgi.end());
+        }
+      }
+    }
+  }
+  return named_lgi;
+}
+
 }  // namespace
 
 // Remember to run updateLayerMetaData before using the layer!
@@ -1055,9 +1103,6 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
 {
   Json::Value nulljson;
 
-  std::set<std::string> languages;
-  languages.insert(wmsConfig.getDaliConfig().defaultLanguage());
-
   // Read width, height from product file
   auto json = root.get("width", nulljson);
   if (!json.isNull())
@@ -1068,12 +1113,17 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
 
   // 1) Default settings
   WMSLegendGraphicSettings actualSettings(true);  // Default values
+
   // 2) Settings from wms.conf
   WMSLegendGraphicSettings configSettings = wmsConfig.getLegendGraphicSettings();
   actualSettings.merge(configSettings);
+
   // 3) Settings from layer file (product file)
   WMSLegendGraphicSettings layerSettings;
   get_legend_graphic_settings(root, layerSettings);
+
+  // Enable languages listed in layers in addition to configured ones
+  std::set<std::string> languages = wmsConfig.getDaliConfig().languages();
   languages.insert(layerSettings.languages.begin(), layerSettings.languages.end());
 
   // 4) Read generic and parameter specifig template files and merge them
@@ -1093,43 +1143,7 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
   // Get layer styles
   itsStyles = get_styles(root, name, itsLegendFiles, wmsConfig);
 
-  NamedLegendGraphicInfo named_lgi;
-
-  //  std::map<std::string, WMSLayerStyle*> new_styles;
-  for (const auto& item : itsStyles)
-  {
-    std::string styleName = item.first;
-
-    // If external legend file used, no need to continue
-    // width, height is set later
-    if (itsLegendFiles.find(styleName) != itsLegendFiles.end())
-      continue;
-
-    std::string legendGraphicInfoName = name + "::" + styleName;
-
-    if (named_lgi.find(legendGraphicInfoName) == named_lgi.end())
-      named_lgi.insert(make_pair(legendGraphicInfoName, LegendGraphicInfo()));
-
-    // Read layer file and gather info needed for legends
-    LegendGraphicInfo& legendGraphicInfo = named_lgi[legendGraphicInfoName];
-    // Set right style add getCapabilities Style info
-    Json::Value modifiedLayer = root;
-    useStyle(modifiedLayer, styleName);
-    auto viewsJson = modifiedLayer.get("views", nulljson);
-    if (!viewsJson.isNull() && viewsJson.isArray())
-    {
-      for (const auto& viewJson : viewsJson)
-      {
-        auto layersJson = viewJson.get("layers", nulljson);
-        if (!layersJson.isNull() && layersJson.isArray())
-        {
-          LegendGraphicInfo lgi = get_legend_graphic_info(layersJson);
-          if (!lgi.empty())
-            legendGraphicInfo.insert(legendGraphicInfo.end(), lgi.begin(), lgi.end());
-        }
-      }
-    }
-  }
+  NamedLegendGraphicInfo named_lgi = get_named_info(root, name, itsStyles, itsLegendFiles);
 
   unsigned int uniqueId = 0;
   for (const auto& language : languages)
