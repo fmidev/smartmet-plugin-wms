@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.5.5
+Version: 23.5.9
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -28,19 +28,19 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.3.21
 BuildRequires: smartmet-library-grid-content-devel >= 23.4.17
 BuildRequires: smartmet-library-grid-files-devel >= 23.3.9
-BuildRequires: smartmet-library-macgyver-devel >= 23.3.3
-BuildRequires: smartmet-library-spine-devel >= 23.3.14
+BuildRequires: smartmet-library-macgyver-devel >= 23.4.27
+BuildRequires: smartmet-library-spine-devel >= 23.4.27
 BuildRequires: smartmet-library-timeseries-devel >= 23.3.15
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 23.3.21
+BuildRequires: smartmet-engine-authentication-devel >= 23.4.27
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 23.4.3
+BuildRequires: smartmet-engine-observation-devel >= 23.4.27
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.12.21
 BuildRequires: smartmet-engine-grid-devel >= 23.4.17
-BuildRequires: smartmet-engine-geonames-devel >= 23.3.16
-BuildRequires: smartmet-engine-querydata-devel >= 23.3.21
+BuildRequires: smartmet-engine-geonames-devel >= 23.4.27
+BuildRequires: smartmet-engine-querydata-devel >= 23.4.27
 BuildRequires: smartmet-engine-contour-devel >= 23.3.9
 BuildRequires: smartmet-library-gis-devel >= 23.3.14
 BuildRequires: smartmet-library-trax-devel >= 22.12.22
@@ -70,20 +70,20 @@ Requires: smartmet-library-grid-content >= 23.4.17
 Requires: smartmet-library-grid-files >= 23.3.9
 Requires: smartmet-library-gis >= 23.3.14
 Requires: smartmet-library-trax >= 22.12.22
-Requires: smartmet-library-macgyver >= 23.3.3
-Requires: smartmet-library-spine >= 23.3.14
+Requires: smartmet-library-macgyver >= 23.4.27
+Requires: smartmet-library-spine >= 23.4.27
 Requires: smartmet-library-timeseries >= 23.3.15
 Requires: smartmet-library-giza >= 23.3.21
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 23.3.21
+Requires: smartmet-engine-authentication >= 23.4.27
 %endif
-Requires: smartmet-engine-querydata >= 23.3.21
+Requires: smartmet-engine-querydata >= 23.4.27
 Requires: smartmet-engine-contour >= 23.3.9
 Requires: smartmet-engine-gis >= 22.12.21
 Requires: smartmet-engine-grid >= 23.4.17
-Requires: smartmet-engine-geonames >= 23.3.16
-Requires: smartmet-server >= 23.3.21
-Requires: smartmet-library-spine >= 23.3.14
+Requires: smartmet-engine-geonames >= 23.4.27
+Requires: smartmet-server >= 23.4.27
+Requires: smartmet-library-spine >= 23.4.27
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
@@ -102,13 +102,13 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: ImageMagick
 #TestRequires: bc
 #TestRequires: smartmet-engine-contour-devel >= 23.3.9
-#TestRequires: smartmet-engine-geonames-devel >= 23.3.16
+#TestRequires: smartmet-engine-geonames-devel >= 23.4.27
 #TestRequires: smartmet-engine-gis-devel >= 22.12.21
-#TestRequires: smartmet-engine-querydata-devel >= 23.3.21
+#TestRequires: smartmet-engine-querydata-devel >= 23.4.27
 #TestRequires: smartmet-library-giza-devel >= 23.3.21
 #TestRequires: smartmet-library-trax-devel >= 22.12.22
 #TestRequires: smartmet-library-newbase-devel >= 23.2.9
-#TestRequires: smartmet-library-spine-devel >= 23.3.14
+#TestRequires: smartmet-library-spine-devel >= 23.4.27
 #TestRequires: smartmet-library-timeseries-devel >= 23.3.15
 #TestRequires: smartmet-engine-grid-devel >= 23.4.17
 #TestRequires: smartmet-engine-grid-test
@@ -120,7 +120,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 23.4.3
+#TestRequires: smartmet-engine-observation-devel >= 23.4.27
 %endif
 
 %description
@@ -149,17 +149,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
-* Fri May 5 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.5.5-1.fmi
-- Added << operator functions for some data structures for debug purposes
-
-* Mon Apr 17 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.4.17-2.fmi
-- Fixed Properties to handle "level" setting even when elevation is given in the query string
+* Tue May  9 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.9-1.fmi
+- Improved language support for GetCapabilities and GetLegendGraphic requests
 
 * Thu Apr 27 2023 Andris Pavēnis <andris.pavenis@fmi.fi> 23.4.27-1.fmi
 - Repackage due to macgyver ABI changes (AsyncTask, AsyncTaskGroup)
 
 * Thu Apr 20 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.4.20-1.fmi
 - Fixed observation layer keyword handling
+
+* Mon Apr 17 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.4.17-2.fmi
+- Fixed Properties to handle "level" setting even when elevation is given in the query string
 
 * Mon Apr 17 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.4.17-1.fmi
 - Repackaged due to GRID ABI changes
