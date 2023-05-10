@@ -26,6 +26,7 @@ PointValues CloudCeilingLayer::readObservations(
     State& state,
     const Fmi::SpatialReference& crs,
     const Fmi::Box& box,
+    const boost::posix_time::ptime& valid_time,
     const boost::posix_time::time_period& valid_time_period) const
 {
   try
@@ -37,7 +38,7 @@ PointValues CloudCeilingLayer::readObservations(
     Engine::Observation::Settings settings;
     settings.allplaces = false;
     settings.stationtype = *producer;
-    settings.latest = true;
+    settings.wantedtime = valid_time;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
@@ -261,6 +262,7 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     // Establish the valid time
 
+    auto valid_time = getValidTime();
     auto valid_time_period = getValidTimePeriod();
 
     // Get projection details
@@ -270,7 +272,7 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(producer, projection, valid_time_period.begin(), theState);
+    positions->init(producer, projection, valid_time, theState);
 
     // Update the globals
 
@@ -297,7 +299,7 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     PointValues pointvalues;
 
-    pointvalues = readObservations(theState, crs, box, valid_time_period);
+    pointvalues = readObservations(theState, crs, box, valid_time, valid_time_period);
 
     pointvalues = prioritize(pointvalues, point_value_options);
 

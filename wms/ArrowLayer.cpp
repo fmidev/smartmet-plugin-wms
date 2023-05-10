@@ -64,11 +64,11 @@ PointValues read_forecasts(const ArrowLayer& layer,
                            const Engine::Querydata::Q& q,
                            const Fmi::SpatialReference& crs,
                            const Fmi::Box& box,
-                           const boost::posix_time::time_period& time_period)
+                           const boost::posix_time::ptime& valid_time)
 {
   try
   {
-    NFmiMetTime met_time = time_period.begin();
+    NFmiMetTime met_time = valid_time;
 
     boost::optional<Spine::Parameter> dirparam;
     boost::optional<Spine::Parameter> speedparam;
@@ -223,7 +223,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
                                boost::optional<std::string> vParam,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
-                               const boost::posix_time::time_period& /* time_period */)
+                               const boost::posix_time::ptime& valid_time)
 {
   try
   {
@@ -392,6 +392,7 @@ PointValues read_all_observations(const ArrowLayer& layer,
                                   State& state,
                                   const Fmi::SpatialReference& crs,
                                   const Fmi::Box& box,
+                                  const boost::posix_time::ptime& valid_time,
                                   const boost::posix_time::time_period& valid_time_period,
                                   const Fmi::CoordinateTransformation& transformation)
 {
@@ -400,8 +401,7 @@ PointValues read_all_observations(const ArrowLayer& layer,
     Engine::Observation::Settings settings;
     settings.allplaces = false;
     settings.stationtype = *layer.producer;
-    settings.latest = true;
-    settings.timezone = "UTC";
+    settings.wantedtime = valid_time, settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
     settings.localTimePool = state.getLocalTimePool();
@@ -537,6 +537,7 @@ PointValues read_station_observations(const ArrowLayer& layer,
                                       State& state,
                                       const Fmi::SpatialReference& crs,
                                       const Fmi::Box& box,
+                                      const boost::posix_time::ptime& valid_time,
                                       const boost::posix_time::time_period& valid_time_period,
                                       const Fmi::CoordinateTransformation& transformation)
 {
@@ -545,7 +546,7 @@ PointValues read_station_observations(const ArrowLayer& layer,
     Engine::Observation::Settings settings;
     settings.allplaces = false;
     settings.stationtype = *layer.producer;
-    settings.latest = true;
+    settings.wantedtime = valid_time;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
@@ -713,6 +714,7 @@ PointValues read_latlon_observations(const ArrowLayer& layer,
                                      State& state,
                                      const Fmi::SpatialReference& crs,
                                      const Fmi::Box& box,
+                                     const boost::posix_time::ptime& valid_time,
                                      const boost::posix_time::time_period& valid_time_period,
                                      const Fmi::CoordinateTransformation& transformation,
                                      const Positions::Points& points)
@@ -724,7 +726,7 @@ PointValues read_latlon_observations(const ArrowLayer& layer,
     settings.stationtype = *layer.producer;
     settings.timezone = "UTC";
     settings.numberofstations = 1;                    // we need only the nearest station
-    settings.latest = true;                           // we need only the newest observation
+    settings.wantedtime = valid_time;                 // we need only the closest obs in time
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
     settings.localTimePool = state.getLocalTimePool();
 
@@ -872,6 +874,7 @@ PointValues read_observations(const ArrowLayer& layer,
                               State& state,
                               const Fmi::SpatialReference& crs,
                               const Fmi::Box& box,
+                              const boost::posix_time::ptime& valid_time,
                               const boost::posix_time::time_period& valid_time_period)
 {
   try
@@ -885,7 +888,8 @@ PointValues read_observations(const ArrowLayer& layer,
       throw Fmi::Exception(BCP, "Cannot use flash or mobile producer in ArrowLayer");
 
     if (layer.positions->layout == Positions::Layout::Station)
-      return read_station_observations(layer, state, crs, box, valid_time_period, transformation);
+      return read_station_observations(
+          layer, state, crs, box, valid_time, valid_time_period, transformation);
 
     Engine::Querydata::Q q;
     const bool forecast_mode = false;
@@ -893,9 +897,10 @@ PointValues read_observations(const ArrowLayer& layer,
 
     if (!points.empty())
       return read_latlon_observations(
-          layer, state, crs, box, valid_time_period, transformation, points);
+          layer, state, crs, box, valid_time, valid_time_period, transformation, points);
 
-    return read_all_observations(layer, state, crs, box, valid_time_period, transformation);
+    return read_all_observations(
+        layer, state, crs, box, valid_time, valid_time_period, transformation);
   }
   catch (...)
   {
@@ -1056,10 +1061,11 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     std::string producerName = gridEngine->getProducerName(*producer);
 
+    auto valid_time = getValidTime();
     auto valid_time_period = getValidTimePeriod();
 
     // Do this conversion just once for speed:
-    NFmiMetTime met_time = valid_time_period.begin();
+    NFmiMetTime met_time = valid_time;
 
     std::string wkt = *projection.crs;
     if (wkt != "data")
@@ -1260,7 +1266,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(producer, projection, valid_time_period.begin(), theState);
+    positions->init(producer, projection, valid_time, theState);
 
     if (css)
     {
@@ -1283,8 +1289,8 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Establish the relevant numbers
 
-    PointValues pointvalues = read_gridForecasts(
-        *this, gridEngine, *query, direction, speed, u, v, crs, box, valid_time_period);
+    PointValues pointvalues =
+        read_gridForecasts(*this, gridEngine, *query, direction, speed, u, v, crs, box, valid_time);
 
     // Coordinate transformation from WGS84 to output SRS so that we can rotate
     // winds according to map north
@@ -1485,10 +1491,6 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
     // Add layer margins to position generation
     positions->addMargins(xmargin, ymargin);
 
-    // Establish the valid time
-
-    auto valid_time_period = getValidTimePeriod();
-
     // Establish the level
 
     if (level)
@@ -1509,9 +1511,14 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
     const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
+    // Establish the valid time
+
+    auto valid_time = getValidTime();
+    auto valid_time_period = getValidTimePeriod();
+
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(producer, projection, valid_time_period.begin(), theState);
+    positions->init(producer, projection, valid_time, theState);
 
     // The parameters. TODO: Allow metaparameters, needs better Q API
 
@@ -1548,10 +1555,10 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
     PointValues pointvalues;
 
     if (!use_observations)
-      pointvalues = read_forecasts(*this, q, crs, box, valid_time_period);
+      pointvalues = read_forecasts(*this, q, crs, box, valid_time);
 #ifndef WITHOUT_OBSERVATION
     else
-      pointvalues = read_observations(*this, theState, crs, box, valid_time_period);
+      pointvalues = read_observations(*this, theState, crs, box, valid_time, valid_time_period);
 #endif
 
     pointvalues = prioritize(pointvalues, point_value_options);

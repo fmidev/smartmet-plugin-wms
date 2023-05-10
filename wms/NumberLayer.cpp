@@ -54,7 +54,7 @@ PointValues read_forecasts(const NumberLayer& layer,
                            const Engine::Querydata::Q& q,
                            const Fmi::SpatialReference& crs,
                            const Fmi::Box& box,
-                           const boost::posix_time::time_period& valid_time_period)
+                           const boost::posix_time::ptime& valid_time)
 {
   try
   {
@@ -69,7 +69,7 @@ PointValues read_forecasts(const NumberLayer& layer,
 
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
-    boost::local_time::local_date_time localdatetime(valid_time_period.begin(), utc);
+    boost::local_time::local_date_time localdatetime(valid_time, utc);
     TS::LocalTimePoolPtr localTimePool = nullptr;
 
     PointValues pointvalues;
@@ -146,7 +146,7 @@ PointValues read_gridForecasts(const NumberLayer& layer,
                                QueryServer::Query& query,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
-                               const boost::posix_time::time_period& /* valid_time_period */)
+                               const boost::posix_time::ptime& /* valid_time */)
 {
   try
   {
@@ -259,7 +259,6 @@ PointValues read_flash_observations(const NumberLayer& layer,
     Engine::Observation::Settings settings;
     settings.allplaces = false;
     settings.stationtype = *layer.producer;
-    settings.latest = false;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.localTimePool = state.getLocalTimePool();
@@ -372,6 +371,7 @@ PointValues read_all_observations(const NumberLayer& layer,
                                   State& state,
                                   const Fmi::SpatialReference& crs,
                                   const Fmi::Box& box,
+                                  const boost::posix_time::ptime& valid_time,
                                   const boost::posix_time::time_period& valid_time_period,
                                   const Fmi::CoordinateTransformation& transformation)
 {
@@ -380,7 +380,7 @@ PointValues read_all_observations(const NumberLayer& layer,
     Engine::Observation::Settings settings;
     settings.allplaces = false;
     settings.stationtype = *layer.producer;
-    settings.latest = true;
+    settings.wantedtime = valid_time;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
@@ -487,6 +487,7 @@ PointValues read_station_observations(const NumberLayer& layer,
                                       State& state,
                                       const Fmi::SpatialReference& crs,
                                       const Fmi::Box& box,
+                                      const boost::posix_time::ptime& valid_time,
                                       const boost::posix_time::time_period& valid_time_period,
                                       const Fmi::CoordinateTransformation& transformation)
 {
@@ -495,8 +496,7 @@ PointValues read_station_observations(const NumberLayer& layer,
     Engine::Observation::Settings settings;
     settings.allplaces = false;
     settings.stationtype = *layer.producer;
-    settings.latest = true;
-    settings.timezone = "UTC";
+    settings.wantedtime = valid_time, settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
     settings.localTimePool = state.getLocalTimePool();
@@ -635,6 +635,7 @@ PointValues read_latlon_observations(const NumberLayer& layer,
                                      State& state,
                                      const Fmi::SpatialReference& crs,
                                      const Fmi::Box& box,
+                                     const boost::posix_time::ptime& valid_time,
                                      const boost::posix_time::time_period& valid_time_period,
                                      const Fmi::CoordinateTransformation& transformation,
                                      const Positions::Points& points)
@@ -646,7 +647,7 @@ PointValues read_latlon_observations(const NumberLayer& layer,
     settings.stationtype = *layer.producer;
     settings.timezone = "UTC";
     settings.numberofstations = 1;                    // we need only the nearest station
-    settings.latest = true;                           // we need only the newest observation
+    settings.wantedtime = valid_time;                 // we need only the newest observation
     settings.maxdistance = layer.maxdistance * 1000;  // obsengine uses meters
     settings.localTimePool = state.getLocalTimePool();
 
@@ -767,6 +768,7 @@ PointValues read_observations(const NumberLayer& layer,
                               State& state,
                               const Fmi::SpatialReference& crs,
                               const Fmi::Box& box,
+                              const boost::posix_time::ptime& valid_time,
                               const boost::posix_time::time_period& valid_time_period)
 {
   try
@@ -780,7 +782,8 @@ PointValues read_observations(const NumberLayer& layer,
       return read_flash_observations(layer, state, crs, box, valid_time_period, transformation);
 
     if (layer.positions->layout == Positions::Layout::Station)
-      return read_station_observations(layer, state, crs, box, valid_time_period, transformation);
+      return read_station_observations(
+          layer, state, crs, box, valid_time, valid_time_period, transformation);
 
     Engine::Querydata::Q q;
     const bool forecast_mode = false;
@@ -788,9 +791,10 @@ PointValues read_observations(const NumberLayer& layer,
 
     if (!points.empty())
       return read_latlon_observations(
-          layer, state, crs, box, valid_time_period, transformation, points);
+          layer, state, crs, box, valid_time, valid_time_period, transformation, points);
 
-    return read_all_observations(layer, state, crs, box, valid_time_period, transformation);
+    return read_all_observations(
+        layer, state, crs, box, valid_time, valid_time_period, transformation);
   }
   catch (...)
   {
@@ -912,10 +916,11 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     std::string producerName = gridEngine->getProducerName(*producer);
 
+    auto valid_time = getValidTime();
     auto valid_time_period = getValidTimePeriod();
 
     // Do this conversion just once for speed:
-    NFmiMetTime met_time = valid_time_period.begin();
+    NFmiMetTime met_time = valid_time;
 
     std::string wkt = *projection.crs;
     // std::cout << wkt << "\n";
@@ -1106,7 +1111,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(producer, projection, valid_time_period.begin(), theState);
+    positions->init(producer, projection, valid_time, theState);
 
     // Update the globals
 
@@ -1132,8 +1137,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // use_observations is true, obsengine is not disabled.
 
     PointValues pointvalues;
-    pointvalues =
-        read_gridForecasts(*this, gridEngine, *originalGridQuery, crs, box, valid_time_period);
+    pointvalues = read_gridForecasts(*this, gridEngine, *originalGridQuery, crs, box, valid_time);
 
     pointvalues = prioritize(pointvalues, point_value_options);
 
@@ -1304,10 +1308,11 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     // Establish the valid time
 
+    auto valid_time = getValidTime();
     auto valid_time_period = getValidTimePeriod();
 
     // Do this conversion just once for speed:
-    NFmiMetTime met_time = valid_time_period.begin();
+    NFmiMetTime met_time = valid_time;
 
     // Establish the level
 
@@ -1331,7 +1336,7 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(producer, projection, valid_time_period.begin(), theState);
+    positions->init(producer, projection, valid_time, theState);
 
     // Update the globals
 
@@ -1359,10 +1364,10 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     PointValues pointvalues;
 
     if (!use_observations)
-      pointvalues = read_forecasts(*this, q, crs, box, valid_time_period);
+      pointvalues = read_forecasts(*this, q, crs, box, valid_time);
 #ifndef WITHOUT_OBSERVATION
     else
-      pointvalues = read_observations(*this, theState, crs, box, valid_time_period);
+      pointvalues = read_observations(*this, theState, crs, box, valid_time, valid_time_period);
 #endif
 
     pointvalues = prioritize(pointvalues, point_value_options);
