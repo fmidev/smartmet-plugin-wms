@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.5.10
+Version: 23.5.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -35,7 +35,7 @@ BuildRequires: smartmet-library-timeseries-devel >= 23.3.15
 BuildRequires: smartmet-engine-authentication-devel >= 23.4.27
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 23.5.10
+BuildRequires: smartmet-engine-observation-devel >= 23.5.11
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.12.21
 BuildRequires: smartmet-engine-grid-devel >= 23.4.17
@@ -120,7 +120,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 23.5.10
+#TestRequires: smartmet-engine-observation-devel >= 23.5.11
 %endif
 
 %description
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu May 11 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.11-1.fmi
+- Added ObservationReader to simplify number, symbol and arrow layer code
+
 * Wed May 10 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.10-1.fmi
 - Use the latest obs engine API for looking for the desired time given a time interval
 
