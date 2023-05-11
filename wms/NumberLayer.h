@@ -10,7 +10,7 @@
 #include "Label.h"
 #include "Layer.h"
 #include "ParameterInfo.h"
-#include "PointValue.h"
+#include "PointValueOptions.h"
 #include "Positions.h"
 #include <vector>
 

@@ -7,9 +7,8 @@
 
 #pragma once
 
-#include <engines/observation/Engine.h>
-
 #include "NumberLayer.h"
+#include <engines/observation/Engine.h>
 
 namespace SmartMet
 {
@@ -30,7 +29,7 @@ class CloudCeilingLayer : public NumberLayer
   //  SmartMet::Spine::TaggedFMISIDList stationFMISIDs;
 
  private:
-  std::vector<PointValue> readObservations(
+  std::vector<PointData> readObservations(
       State& state,
       const Fmi::SpatialReference& crs,
       const Fmi::Box& box,

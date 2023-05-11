@@ -5,6 +5,7 @@
 #include "Iri.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "PointData.h"
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
@@ -51,7 +52,7 @@ namespace Dali
 
 namespace
 {
-using PointValues = std::vector<WindArrowValue>;
+using PointValues = std::vector<PointData>;
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -202,7 +203,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
       if (wdir == kFloatMissing || wspd == kFloatMissing)
         continue;
 
-      WindArrowValue value{point, wdir, wspd};
+      PointData value{point, wspd, wdir};
       pointvalues.push_back(value);
     }
 
@@ -315,7 +316,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
 
             if (wdir != ParamValueMissing && wspeed != ParamValueMissing)
             {
-              WindArrowValue value{point, wdir, wspeed};
+              PointData value{point, wspeed, wdir};
               pointvalues.push_back(value);
               // printf("POS %d,%d  %f %f\n",point.x, point.y,point.latlon.X(), point.latlon.Y());
             }
@@ -363,7 +364,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
 
             if (wdir != ParamValueMissing && wspeed != ParamValueMissing)
             {
-              WindArrowValue value{point, wdir, wspeed};
+              PointData value{point, wspeed, wdir};
               pointvalues.push_back(value);
             }
           }
@@ -521,7 +522,7 @@ PointValues read_all_observations(const ArrowLayer& layer,
       int ypos = lround(y);
 
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-      WindArrowValue pv{point, wdir, wspd};
+      PointData pv{point, wspd, wdir};
       pointvalues.push_back(pv);
     }
 
@@ -698,7 +699,7 @@ PointValues read_station_observations(const ArrowLayer& layer,
       int deltay = (station.dy ? *station.dy : 0);
 
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat), deltax, deltay};
-      WindArrowValue pv{point, wdir, wspd};
+      PointData pv{point, wspd, wdir};
       pointvalues.push_back(pv);
     }
 
@@ -858,7 +859,7 @@ PointValues read_latlon_observations(const ArrowLayer& layer,
       int ypos = lround(y);
 
       Positions::Point pp{xpos, ypos, NFmiPoint(lon, lat), point.dx, point.dy};
-      WindArrowValue pv{pp, wdir, wspd};
+      PointData pv{pp, wspd, wdir};
       pointvalues.push_back(pv);
     }
 
@@ -1062,7 +1063,6 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     std::string producerName = gridEngine->getProducerName(*producer);
 
     auto valid_time = getValidTime();
-    auto valid_time_period = getValidTimePeriod();
 
     // Do this conversion just once for speed:
     NFmiMetTime met_time = valid_time;
@@ -1314,13 +1314,13 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     for (const auto& pointvalue : pointvalues)
     {
-      const auto& point = pointvalue.point;
+      const auto& point = pointvalue.point();
 
       // Select arrow based on speed or U- and V-components, if available
       bool check_speeds = (!arrows.empty() && (speed || (u && v)));
 
-      double wdir = pointvalue.direction;
-      double wspd = pointvalue.speed;
+      double wspd = pointvalue[0];
+      double wdir = pointvalue[1];
 
       if (wdir == kFloatMissing)
         continue;
@@ -1583,13 +1583,13 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
 
     for (const auto& pointvalue : pointvalues)
     {
-      const auto& point = pointvalue.point;
+      const auto& point = pointvalue.point();
 
       // Select arrow based on speed or U- and V-components, if available
       bool check_speeds = (!arrows.empty() && (speed || (u && v)));
 
-      double wdir = pointvalue.direction;
-      double wspd = pointvalue.speed;
+      double wspd = pointvalue[0];
+      double wdir = pointvalue[1];
 
       if (wdir == kFloatMissing)
         continue;

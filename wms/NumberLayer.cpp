@@ -6,6 +6,7 @@
 #include "Iri.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "PointData.h"
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
@@ -42,7 +43,7 @@ namespace Plugin
 {
 namespace Dali
 {
-using PointValues = std::vector<PointValue>;
+using PointValues = std::vector<PointData>;
 
 // ----------------------------------------------------------------------
 /*!
@@ -103,20 +104,20 @@ PointValues read_forecasts(const NumberLayer& layer,
         if (boost::get<double>(&result) != nullptr)
         {
           double tmp = *boost::get<double>(&result);
-          pointvalues.push_back(PointValue{point, tmp});
+          pointvalues.push_back(PointData{point, tmp});
           // printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(),
           // point.latlon.Y(),tmp);
         }
         else if (boost::get<int>(&result) != nullptr)
         {
           double tmp = *boost::get<int>(&result);
-          pointvalues.push_back(PointValue{point, tmp});
+          pointvalues.push_back(PointData{point, tmp});
           // printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(),
           // point.latlon.Y(),tmp);
         }
         else
         {
-          PointValue missingvalue{point, kFloatMissing};
+          PointData missingvalue{point, kFloatMissing};
           pointvalues.push_back(missingvalue);
         }
       }
@@ -208,11 +209,11 @@ PointValues read_gridForecasts(const NumberLayer& layer,
             double tmp = (*values)[pos];
             if (tmp != ParamValueMissing)
             {
-              pointvalues.push_back(PointValue{point, tmp});
+              pointvalues.push_back(PointData{point, tmp});
             }
             else
             {
-              PointValue missingvalue{point, kFloatMissing};
+              PointData missingvalue{point, kFloatMissing};
               pointvalues.push_back(missingvalue);
             }
             // printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(),
@@ -220,7 +221,7 @@ PointValues read_gridForecasts(const NumberLayer& layer,
           }
           else
           {
-            PointValue missingvalue{point, kFloatMissing};
+            PointData missingvalue{point, kFloatMissing};
             pointvalues.push_back(missingvalue);
           }
         }
@@ -355,7 +356,7 @@ PointValues read_flash_observations(const NumberLayer& layer,
       int ypos = lround(y);
 
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-      PointValue pv{point, value};
+      PointData pv{point, value};
       pointvalues.push_back(pv);
     }
 
@@ -471,7 +472,7 @@ PointValues read_all_observations(const NumberLayer& layer,
       int ypos = lround(y);
 
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-      PointValue pv{point, value};
+      PointData pv{point, value};
       pointvalues.push_back(pv);
     }
 
@@ -619,7 +620,7 @@ PointValues read_station_observations(const NumberLayer& layer,
       int deltay = (station.dy ? *station.dy : 0);
 
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat), deltax, deltay};
-      PointValue pv{point, value};
+      PointData pv{point, value};
       pointvalues.push_back(pv);
     }
 
@@ -752,7 +753,7 @@ PointValues read_latlon_observations(const NumberLayer& layer,
       int ypos = lround(y);
 
       Positions::Point pp{xpos, ypos, NFmiPoint(lon, lat), point.dx, point.dy};
-      PointValue pv{pp, value};
+      PointData pv{pp, value};
       pointvalues.push_back(pv);
     }
 
@@ -917,7 +918,6 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     std::string producerName = gridEngine->getProducerName(*producer);
 
     auto valid_time = getValidTime();
-    auto valid_time_period = getValidTimePeriod();
 
     // Do this conversion just once for speed:
     NFmiMetTime met_time = valid_time;
@@ -1166,8 +1166,8 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       tag_cdt["start"] = "<use";
       tag_cdt["end"] = "/>";
 
-      const auto& point = pointvalue.point;
-      float value = pointvalue.value;
+      const auto& point = pointvalue.point();
+      float value = pointvalue[0];
 
       if (value != kFloatMissing)
         value = xmultiplier * value + xoffset;
@@ -1217,8 +1217,8 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     int valid_count = 0;
     for (const auto& pointvalue : pointvalues)
     {
-      const auto& point = pointvalue.point;
-      float value = pointvalue.value;
+      const auto& point = pointvalue.point();
+      float value = pointvalue[0];
 
       if (value != kFloatMissing)
       {
@@ -1397,8 +1397,8 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
       tag_cdt["start"] = "<use";
       tag_cdt["end"] = "/>";
 
-      const auto& point = pointvalue.point;
-      float value = pointvalue.value;
+      const auto& point = pointvalue.point();
+      float value = pointvalue[0];
 
       if (value != kFloatMissing)
         value = xmultiplier * value + xoffset;
@@ -1448,8 +1448,8 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     int valid_count = 0;
     for (const auto& pointvalue : pointvalues)
     {
-      const auto& point = pointvalue.point;
-      float value = pointvalue.value;
+      const auto& point = pointvalue.point();
+      float value = pointvalue[0];
 
       if (value != kFloatMissing)
       {

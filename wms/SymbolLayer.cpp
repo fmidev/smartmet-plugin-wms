@@ -6,7 +6,7 @@
 #include "Iri.h"
 #include "JsonTools.h"
 #include "Layer.h"
-#include "PointValue.h"
+#include "PointData.h"
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
@@ -50,7 +50,7 @@ namespace Dali
 
 namespace
 {
-using PointValues = std::vector<PointValue>;
+using PointValues = std::vector<PointData>;
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -94,7 +94,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
 
       if (layer.symbols.empty())
       {
-        PointValue missingvalue{point, kFloatMissing};
+        PointData missingvalue{point, kFloatMissing};
         pointvalues.push_back(missingvalue);
       }
       else
@@ -121,16 +121,16 @@ PointValues read_forecasts(const SymbolLayer& layer,
         if (boost::get<double>(&result) != nullptr)
         {
           double tmp = *boost::get<double>(&result);
-          pointvalues.push_back(PointValue{point, tmp});
+          pointvalues.push_back(PointData{point, tmp});
         }
         else if (boost::get<int>(&result) != nullptr)
         {
           double tmp = *boost::get<int>(&result);
-          pointvalues.push_back(PointValue{point, tmp});
+          pointvalues.push_back(PointData{point, tmp});
         }
         else
         {
-          PointValue missingvalue{point, kFloatMissing};
+          PointData missingvalue{point, kFloatMissing};
           pointvalues.push_back(missingvalue);
         }
       }
@@ -193,7 +193,7 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
       {
         if (layer.inside(box, point.x, point.y))
         {
-          PointValue missingvalue{point, kFloatMissing};
+          PointData missingvalue{point, kFloatMissing};
           pointvalues.push_back(missingvalue);
         }
       }
@@ -211,11 +211,11 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
             double tmp = (*values)[pos];
             if (tmp != ParamValueMissing)
             {
-              pointvalues.push_back(PointValue{point, tmp});
+              pointvalues.push_back(PointData{point, tmp});
             }
             else
             {
-              PointValue missingvalue{point, kFloatMissing};
+              PointData missingvalue{point, kFloatMissing};
               pointvalues.push_back(missingvalue);
             }
             // printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(),
@@ -223,7 +223,7 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
           }
           else
           {
-            PointValue missingvalue{point, kFloatMissing};
+            PointData missingvalue{point, kFloatMissing};
             pointvalues.push_back(missingvalue);
           }
         }
@@ -353,7 +353,7 @@ PointValues read_flash_observations(const SymbolLayer& layer,
       int ypos = lround(y);
 
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-      PointValue pv{point, value};
+      PointData pv{point, value};
       pointvalues.push_back(pv);
     }
 
@@ -470,7 +470,7 @@ PointValues read_all_observations(const SymbolLayer& layer,
       int ypos = lround(y);
 
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-      PointValue pv{point, value};
+      PointData pv{point, value};
       pointvalues.push_back(pv);
     }
 
@@ -619,7 +619,7 @@ PointValues read_station_observations(const SymbolLayer& layer,
       int deltay = (station.dy ? *station.dy : 0);
 
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat), deltax, deltay};
-      PointValue pv{point, value};
+      PointData pv{point, value};
       pointvalues.push_back(pv);
     }
 
@@ -754,7 +754,7 @@ PointValues read_latlon_observations(const SymbolLayer& layer,
       int ypos = lround(y);
 
       Positions::Point pp{xpos, ypos, NFmiPoint(lon, lat), point.dx, point.dy};
-      PointValue pv{pp, value};
+      PointData pv{pp, value};
       pointvalues.push_back(pv);
     }
 
@@ -1189,11 +1189,11 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     for (const auto& pointvalue : pointvalues)
     {
-      const auto& point = pointvalue.point;
+      const auto& point = pointvalue.point();
 
-      float value = pointvalue.value;
+      float value = pointvalue[0];
 
-      if (pointvalue.value != kFloatMissing)
+      if (value != kFloatMissing)
       {
         ++valid_count;
         value = xmultiplier * value + xoffset;
@@ -1395,14 +1395,14 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     for (const auto& pointvalue : pointvalues)
     {
-      auto value = pointvalue.value;
+      auto value = pointvalue[0];
       if (value != kFloatMissing)
       {
         ++valid_count;
         value = xmultiplier * value + xoffset;
       }
 
-      const auto& point = pointvalue.point;
+      const auto& point = pointvalue.point();
 
       // Start generating the hash
 
