@@ -13,8 +13,8 @@ class PointData
 {
  public:
   PointData() = delete;
-  // explicit PointData(Positions::Point pt) : itsPoint(std::move(pt)) {}
-  // void add(double value) { itsValues.push_back(value); }
+  explicit PointData(Positions::Point pt) : itsPoint(std::move(pt)) {}
+  void add(double value) { itsValues.push_back(value); }
 
   PointData(Positions::Point pt, double value) : itsPoint(std::move(pt)), itsValues{value} {}
 
