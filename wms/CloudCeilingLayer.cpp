@@ -5,6 +5,7 @@
 #include "Config.h"
 #include "Iri.h"
 #include "JsonTools.h"
+#include "PointData.h"
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
@@ -20,7 +21,7 @@ namespace Plugin
 {
 namespace Dali
 {
-using PointValues = std::vector<PointValue>;
+using PointValues = std::vector<PointData>;
 
 PointValues CloudCeilingLayer::readObservations(
     State& state,
@@ -166,7 +167,7 @@ PointValues CloudCeilingLayer::readObservations(
           int ypos = lround(y);
 
           Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
-          PointValue pv{point, value};
+          PointData pv{point, value};
 
           pointvalues.push_back(pv);
           break;
@@ -328,8 +329,8 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       tag_cdt["start"] = "<use";
       tag_cdt["end"] = "/>";
 
-      const auto& point = pointvalue.point;
-      float value = pointvalue.value;
+      const auto& point = pointvalue.point();
+      float value = pointvalue[0];
 
       if (value != kFloatMissing)
         value = xmultiplier * value + xoffset;
@@ -379,8 +380,8 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     int valid_count = 0;
     for (const auto& pointvalue : pointvalues)
     {
-      const auto& point = pointvalue.point;
-      float value = pointvalue.value;
+      const auto& point = pointvalue.point();
+      float value = pointvalue[0];
 
       if (value != kFloatMissing)
       {
