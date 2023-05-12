@@ -6,9 +6,10 @@
 
 #pragma once
 
-#ifndef WITHOUT_OBSERVATION
-
+#include "Label.h"
 #include "Layer.h"
+#include "Positions.h"
+#include <boost/optional.hpp>
 #include <engines/observation/Settings.h>
 
 namespace SmartMet
@@ -20,6 +21,7 @@ namespace Dali
 class Config;
 class Plugin;
 class State;
+class PointData;
 
 struct StationSymbolPriority
 {
@@ -33,9 +35,6 @@ struct StationSymbolPriority
 };
 
 using StationSymbolPriorities = std::vector<StationSymbolPriority>;
-
-// Results from DB mapped by FMISID
-using ResultSet = std::map<int, std::vector<TS::TimeSeries>>;
 
 class ObservationLayer : public Layer
 {
@@ -51,26 +50,23 @@ class ObservationLayer : public Layer
 
  protected:
   virtual StationSymbolPriorities processResultSet(
-      const State& theState,
-      const ResultSet& theResultSet,
-      const boost::posix_time::ptime& requested_timestep) const = 0;
-  virtual void getParameters(const boost::posix_time::ptime& requested_timestep,
-                             std::vector<SmartMet::Spine::Parameter>& parameters,
-                             boost::posix_time::ptime& starttime,
-                             boost::posix_time::ptime& endtime) const = 0;
+      const std::vector<PointData>& theResultSet) const = 0;
 
-  ResultSet getObservations(State& theState,
-                            const std::vector<SmartMet::Spine::Parameter>& parameters,
-                            const boost::posix_time::ptime& starttime,
-                            const boost::posix_time::ptime& endtime) const;
-  ResultSet getObservations(State& theState,
-                            const boost::posix_time::ptime& requested_timestep) const;
+  virtual std::vector<std::string> getParameters() const = 0;
 
-  std::string keyword;
-  std::string fmisids;
+  // Grid coordinate settings
+  boost::optional<Positions> positions;
+  // Stations distance limit in kilometers
+  double maxdistance = 5;
+
+  // Label settings
+  Label label;
+
   unsigned int mindistance = 0;
   int missing_symbol = 106;  // Use zero to disable
-  SmartMet::Spine::TaggedFMISIDList stationFMISIDs;
+
+  // std::string fmisids;
+  // SmartMet::Spine::TaggedFMISIDList stationFMISIDs;
 
  private:
   StationSymbolPriorities getProcessedData(State& theState) const;
@@ -80,5 +76,3 @@ class ObservationLayer : public Layer
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet
-
-#endif  // WITHOUT_OBSERVATION
