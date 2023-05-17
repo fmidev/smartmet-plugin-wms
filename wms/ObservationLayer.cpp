@@ -163,8 +163,12 @@ void ObservationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, 
       text_cdt["start"] = "<text";
       text_cdt["end"] = "</text>";
       text_cdt["cdata"] = ("&#" + Fmi::to_string(ssp.symbol) + ";");
-      text_cdt["attributes"]["x"] = Fmi::to_string(lround(ssp.longitude + label.dx));
-      text_cdt["attributes"]["y"] = Fmi::to_string(lround(ssp.latitude + label.dy));
+
+      auto xpos = lround(ssp.x() + label.dx);
+      auto ypos = lround(ssp.y() + label.dy);
+
+      text_cdt["attributes"]["x"] = Fmi::to_string(xpos);
+      text_cdt["attributes"]["y"] = Fmi::to_string(ypos);
       theLayersCdt.PushBack(text_cdt);
     }
 

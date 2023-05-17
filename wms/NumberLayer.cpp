@@ -918,8 +918,11 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
           theState.addAttributes(theGlobals, text_cdt, selection->attributes);
         }
 
-        text_cdt["attributes"]["x"] = Fmi::to_string(point.x + point.dx + label.dx);
-        text_cdt["attributes"]["y"] = Fmi::to_string(point.y + point.dy + label.dy);
+        auto xpos = lround(point.x + point.dx + label.dx);
+        auto ypos = lround(point.y + point.dy + label.dy);
+
+        text_cdt["attributes"]["x"] = Fmi::to_string(xpos);
+        text_cdt["attributes"]["y"] = Fmi::to_string(ypos);
         theLayersCdt.PushBack(text_cdt);
       }
     }
