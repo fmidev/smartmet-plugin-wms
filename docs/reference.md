@@ -2007,19 +2007,15 @@ The table below shows a simple example on the usage of FinnishRoadObservationLay
 The table below contains a list of attributes that can be defined for finnish road observation layer.
 
 <pre><b>FinnishRoadObservationLayer</b></pre>
-<table>
-<tr>
-<th>Name </th>
-<th>Type </th>
-<th>Default Value </th>
-<th>Example </th>
-<th colspan="2"> Description </th></tr>
-<tr><td>producer</td><td>string</td><td>-</td><td>"road"</td><td>Name of the prodcer for road observations</td></tr>
-<tr><td>timestep</td><td>int</td><td>-</td><td>15</td><td>Timestep in minutes</td></tr>
-<tr><td>mindistance</td><td>int</td><td>0</td><td>20</td><td>Minimum distance of stations on map</td></tr>
-<tr><td>keyword</td><td>string</td><td>-</td><td>"road_weather_stations_master"</td><td>Either keyword or fmisid must be defined for stations</td></tr>
-<tr><td>fmisid</td><td>string or array of string</td><td>-</td><td>"126863" or ["126863","100456",...]</td><td>Either keyword or fmisid must be defined for stations</td></tr>
-</table>
+
+|Name|Type|Default value|Description|
+|-----|-----|-----------|----------- |
+|positions|_Positions_|-|The positions for the symbols.|
+|label|_Label_|-|Label definitions.|
+|maxdistance|double|5|Maximum distance for a station to be accepted close enough to the position.|
+|mindistance|int|-|Minimum distance in pixels between symbols.|
+|missing|int|106|Synop-font symbol for missing observations. Zero disables showing missing values.|
+
 
 ##### Algorithm to deduce weather condition symbol
 
@@ -2304,20 +2300,14 @@ The table below shows a simple example on the usage of PresentWeatherObservation
 The table below contains a list of attributes that can be defined for present weather observation layer.
 
 <pre><b>PresentWeatherObservationLayer</b></pre>
-<table>
-<tr>
-<th>Name </th>
-<th>Type </th>
-<th>Default Value </th>
-<th>Example </th>
-<th colspan="2"> Description </th></tr>
-<tr><td>producer</td><td>string</td><td>-</td><td>"opendata"</td><td>Name of the prodcer for present weather</td></tr>
-<tr><td>timestep</td><td>int</td><td>-</td><td>10</td><td>Timestep in minutes</td></tr>
-<tr><td>mindistance</td><td>int</td><td>0</td><td>20</td><td>Minimum distance of stations on map</td></tr>
-<tr><td>missing</td><td>int</td><td>106</td><td>0</td><td>Symbol for missing data, zero disables rendering map</td></tr>
-<tr><td>keyword</td><td>string</td><td>-</td><td>"synop_fi"</td><td>Either keyword or fmisid must be defined for stations</td></tr>
-<tr><td>fmisid</td><td>string or array of string</td><td>-</td><td>"126863" or ["126863","100456",...]</td><td>Either keyword or fmisid must be defined for stations</td></tr>
-</table>
+
+|Name|Type|Default value|Description|
+|-----|-----|-----------|----------- |
+|positions|_Positions_|-|The positions for the symbols.|
+|label|_Label_|-|Label definitions.|
+|maxdistance|double|5|Maximum distance for a station to be accepted close enough to the position.|
+|mindistance|int|-|Minimum distance in pixels between symbols.|
+|missing|int|106|Synop-font symbol for missing observations. Zero disables showing missing values.|
 
 ##### Algorithm to deduce present weather symbol
 
