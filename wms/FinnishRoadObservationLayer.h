@@ -23,14 +23,11 @@ class State;
 class FinnishRoadObservationLayer : public ObservationLayer
 {
  private:
-  void getParameters(const boost::posix_time::ptime& requested_timestep,
-                     std::vector<SmartMet::Spine::Parameter>& parameters,
-                     boost::posix_time::ptime& starttime,
-                     boost::posix_time::ptime& endtime) const override;
+  std::vector<std::string> getParameters() const override;
+
   StationSymbolPriorities processResultSet(
-      const State& theState,
-      const ResultSet& theResultSet,
-      const boost::posix_time::ptime& requested_timestep) const override;
+      const std::vector<PointData>& theResultSet) const override;
+
   int get_symbol(int r, int rform) const;
   int get_symbol_priority(int symbol, double t2m) const;
 

@@ -2,6 +2,7 @@
 
 #include "FinnishRoadObservationLayer.h"
 #include "LonLatToXYTransformation.h"
+#include "PointData.h"
 #include "State.h"
 #include "ValueTools.h"
 #include <macgyver/StringConversion.h>
@@ -23,73 +24,49 @@ bool priority_sort(const StationSymbolPriority& rh1, const StationSymbolPriority
 
 }  // namespace
 
-void FinnishRoadObservationLayer::getParameters(const boost::posix_time::ptime& requested_timestep,
-                                                std::vector<SmartMet::Spine::Parameter>& parameters,
-                                                boost::posix_time::ptime& starttime,
-                                                boost::posix_time::ptime& endtime) const
+std::vector<std::string> FinnishRoadObservationLayer::getParameters() const
 {
-  try
-  {
-    endtime = requested_timestep;
-    starttime = (endtime - boost::posix_time::hours(
-                               24));  //  // We must calculate mean temperature from last 24 hours
-
-    parameters.push_back(TS::makeParameter("fmisid"));
-    parameters.push_back(TS::makeParameter("stationlongitude"));
-    parameters.push_back(TS::makeParameter("stationlatitude"));
-    parameters.push_back(TS::makeParameter("ILMA"));
-    parameters.push_back(TS::makeParameter("SADE"));
-    parameters.push_back(TS::makeParameter("RST"));
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Gettings parameters for finnish road observations failed!");
-  }
+  return {
+      "fmisid",
+      "stationlongitude",
+      "stationlatitude",
+      "ILMA",
+      "SADE",
+      "RST",
+  };
 }
 
 StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(
-    const State& theState,
-    const ResultSet& theResultSet,
-    const boost::posix_time::ptime& requested_timestep) const
+    const std::vector<PointData>& theResultSet) const
 {
   try
   {
-    auto zone = theState.getGeoEngine().getTimeZones().time_zone_from_string("UTC");
-    auto requested_local_time = boost::local_time::local_date_time(requested_timestep, zone);
-
-    // Do the aggregation and transform longitude/latitude to screen coordinates
-
-    // Functions for aggregation
-    TS::DataFunction ilma_func(TS::FunctionId::Mean, TS::FunctionType::TimeFunction);
-    ilma_func.setAggregationIntervalBehind(1440);  // 1440 minutes = 24h
-    ilma_func.setAggregationIntervalAhead(0);
-    TS::DataFunction sade_rst_func(TS::FunctionId::Nearest, TS::FunctionType::TimeFunction);
-    sade_rst_func.setAggregationIntervalBehind(20);  // 20 minutes behind
-    sade_rst_func.setAggregationIntervalAhead(20);   // 20 minutes ahead
     // Transformation object
     auto transformation = LonLatToXYTransformation(projection);
 
     StationSymbolPriorities ssps;
-    TS::Value none = TS::None();
-    for (const auto& result_set_item : theResultSet)
+
+    for (const auto& item : theResultSet)
     {
-      StationSymbolPriority ssp;
-      ssp.fmisid = result_set_item.first;
-      // FMISID: data independent
-      const auto& longitude_result_set_vector = result_set_item.second.at(1);
-      if (longitude_result_set_vector.empty())
+      auto fmisid = item[0];
+      auto lon = item[1];
+      auto lat = item[2];
+      auto t2m = item[3];
+      auto rain = item[4];
+      auto rform = item[5];
+
+      if (lon == kFloatMissing || lat == kFloatMissing || t2m == kFloatMissing ||
+          rain == kFloatMissing || rform == kFloatMissing)
         continue;
-      const auto lon = get_double(longitude_result_set_vector.at(0).value);
-      // Latitude: data independent
-      const auto& latitude_result_set_vector = result_set_item.second.at(2);
-      const auto lat = get_double(latitude_result_set_vector.at(0).value);
+
+      StationSymbolPriority ssp;
+      ssp.fmisid = fmisid;
+
       // Transform to screen coordinates
-      double x = lon;
-      double y = lat;
-      if (transformation.transform(x, y))
+      if (transformation.transform(lon, lat))
       {
-        ssp.longitude = x;
-        ssp.latitude = y;
+        ssp.longitude = lon;
+        ssp.latitude = lat;
       }
       else
       {
@@ -99,31 +76,9 @@ StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(
             .addParameter("lon", Fmi::to_string(lon))
             .addParameter("lat", Fmi::to_string(lat));
       }
-      // ILMA: get mean of previous 24 hours
-      const auto& ilma_result_set_vector = result_set_item.second.at(3);
-      auto agg_val =
-          TS::Aggregator::time_aggregate(ilma_result_set_vector, ilma_func, requested_local_time);
-      if (agg_val.value == none)
-      {
-        continue;
-      }
-      auto t2m = get_double(agg_val.value);
-      // SADE: get nearest value of previous or next 20 minutes
-      const auto& sade_result_set_vector = result_set_item.second.at(4);
-      auto sade = TS::Aggregator::time_aggregate(
-          sade_result_set_vector, sade_rst_func, requested_local_time);
-      // RST: get nearest value of previous or next 20 minutes
-      const auto& rst_result_set_vector = result_set_item.second.at(5);
-      auto rst = TS::Aggregator::time_aggregate(
-          rst_result_set_vector, sade_rst_func, requested_local_time);
-
-      if (get_double(sade.value) == kFloatMissing || get_double(rst.value) == kFloatMissing)
-      {
-        continue;
-      }
 
       // Symbol
-      ssp.symbol = get_symbol(get_double(sade.value), get_double(rst.value));
+      ssp.symbol = get_symbol(rain, rform);
       if (ssp.symbol <= 0)
         continue;
 
@@ -144,17 +99,17 @@ StationSymbolPriorities FinnishRoadObservationLayer::processResultSet(
   }
 }
 
+/*--------------------------------------------------------------------------
+ * r: 0 pouta, 1 heikko, 2 kohtalainen, 3 runsas, 4 heikko lumisade,
+ *    5 kohtalainen lumisade, 6 runsas lumisade
+ *--------------------------------------------------------------------------
+ * rform: 7 pouta, 8 hyvin heikko, 9 tihkusade, 10 vesisade, 11 lumisade,
+ *        12 märkä räntä, 13 räntäsade, 14 rakeita, 15 jääkiteitä,
+ *        16 lumijyväsiä, 17 lumirakeita, 18 jäätävä tihku, 19 jäätävä sade
+ ---------------------------------------------------------------------------*/
+
 int FinnishRoadObservationLayer::get_symbol(int r, int rform) const
 {
-  /*--------------------------------------------------------------------------
-   * r: 0 pouta, 1 heikko, 2 kohtalainen, 3 runsas, 4 heikko lumisade,
-   *    5 kohtalainen lumisade, 6 runsas lumisade
-   *--------------------------------------------------------------------------
-   * rform: 7 pouta, 8 hyvin heikko, 9 tihkusade, 10 vesisade, 11 lumisade,
-   *        12 märkä räntä, 13 räntäsade, 14 rakeita, 15 jääkiteitä,
-   *        16 lumijyväsiä, 17 lumirakeita, 18 jäätävä tihku, 19 jäätävä sade
-   ---------------------------------------------------------------------------*/
-
   if (r == 1)
   {
     if (rform == 9)

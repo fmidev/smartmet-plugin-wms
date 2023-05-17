@@ -3,6 +3,7 @@
 #include "PresentWeatherObservationLayer.h"
 #include "Config.h"
 #include "LonLatToXYTransformation.h"
+#include "PointData.h"
 #include "State.h"
 #include "ValueTools.h"
 #include <timeseries/ParameterTools.h>
@@ -45,66 +46,40 @@ float convert_wawa_2_ww(float theValue)
 
 }  // namespace
 
-void PresentWeatherObservationLayer::getParameters(
-    const boost::posix_time::ptime& requested_timestep,
-    std::vector<Spine::Parameter>& parameters,
-    boost::posix_time::ptime& starttime,
-    boost::posix_time::ptime& endtime) const
+std::vector<std::string> PresentWeatherObservationLayer::getParameters() const
 {
-  try
-  {
-    endtime = requested_timestep;
-    starttime = requested_timestep;
-
-    parameters.push_back(TS::makeParameter("fmisid"));
-    parameters.push_back(TS::makeParameter("stationlongitude"));
-    parameters.push_back(TS::makeParameter("stationlatitude"));
-    parameters.push_back(TS::makeParameter("ww_aws"));
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Gettings parameters for finnish road observations failed!");
-  }
+  return {"fmisid", "stationlongitude", "stationlatitude", "wawa"};
 }
 
 StationSymbolPriorities PresentWeatherObservationLayer::processResultSet(
-    const State& theState,
-    const ResultSet& theResultSet,
-    const boost::posix_time::ptime& requested_timestep) const
+    const std::vector<PointData>& theResultSet) const
 {
   try
   {
-    auto zone = theState.getGeoEngine().getTimeZones().time_zone_from_string("UTC");
-    auto requested_local_time = boost::local_time::local_date_time(requested_timestep, zone);
-
     // Transformation object
     auto transformation = LonLatToXYTransformation(projection);
 
     StationSymbolPriorities ssps;
-    TS::Value none = TS::None();
-    for (const auto& result_set_item : theResultSet)
+
+    for (const auto& item : theResultSet)
     {
-      const auto& wawa_result_set_vector = result_set_item.second.at(3);
-      auto wawa_val = get_double(wawa_result_set_vector.at(0).value);
+      auto fmisid = item[0];
+      auto lon = item[1];
+      auto lat = item[2];
+      auto wawa = item[3];
+
+      if (lon == kFloatMissing || lat == kFloatMissing || wawa == kFloatMissing)
+        continue;
 
       // Symbol
       StationSymbolPriority ssp;
-      ssp.symbol = get_symbol(wawa_val);
+      ssp.fmisid = fmisid;
+      ssp.symbol = get_symbol(wawa);
       if (ssp.symbol <= 0)
         continue;
 
       // Priority
       ssp.priority = get_symbol_priority(ssp.symbol);
-
-      ssp.fmisid = result_set_item.first;
-      // FMISID: data independent
-      const auto& longitude_result_set_vector = result_set_item.second.at(1);
-      if (longitude_result_set_vector.empty())
-        continue;
-      auto lon = get_double(longitude_result_set_vector.at(0).value);
-      // Latitude: data independent
-      const auto& latitude_result_set_vector = result_set_item.second.at(2);
-      auto lat = get_double(latitude_result_set_vector.at(0).value);
 
       // Transform to screen coordinates
       if (transformation.transform(lon, lat))
@@ -117,7 +92,6 @@ StationSymbolPriorities PresentWeatherObservationLayer::processResultSet(
         throw Fmi::Exception::Trace(
             BCP, "Transforming longitude, latitude to screen coordinates failed!");
       }
-
       ssps.push_back(ssp);
     }
 

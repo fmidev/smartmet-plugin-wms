@@ -23,12 +23,7 @@ double get_double(const TS::Value& value)
   if (const int* ivalue = boost::get<int>(&value))
     return *ivalue;
 
-  if (boost::get<TS::None>(&value) != nullptr)
-    return kFloatMissing;
-
-  // None, std::string, LonLat and local_date_time not accepted. See spine/TimeSeries.h
-
-  throw Fmi::Exception::Trace(BCP, "Failed to convert observation engine value to a number!");
+  return kFloatMissing;
 }
 
 // ----------------------------------------------------------------------

@@ -7,6 +7,7 @@
 #include "State.h"
 #include "ValueTools.h"
 #include <engines/observation/Engine.h>
+#include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/SpatialReference.h>
@@ -424,6 +425,18 @@ PointValues read_station_observations(State& state,
   }
 }
 
+std::size_t add_help_parameter(std::vector<Spine::Parameter>& parameters, const std::string& param)
+{
+  for (auto i = 0UL; i < parameters.size(); i++)
+  {
+    if (parameters[i].name() == param)
+      return i;
+  }
+  auto n = parameters.size();
+  parameters.push_back(TS::makeParameter(param));
+  return n;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Read specific coordinates only
@@ -442,9 +455,9 @@ PointValues read_latlon_observations(State& state,
                                      const Fmi::CoordinateTransformation& transformation,
                                      const Positions::Points& points)
 {
+  Engine::Observation::Settings settings;
   try
   {
-    Engine::Observation::Settings settings;
     settings.allplaces = false;
     settings.stationtype = *layer.producer;
     settings.timezone = "UTC";
@@ -459,14 +472,13 @@ PointValues read_latlon_observations(State& state,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(TS::makeParameter("stationlon"));
-    settings.parameters.push_back(TS::makeParameter("stationlat"));
-    settings.parameters.push_back(TS::makeParameter("fmisid"));
 
     for (const auto& p : parameters)
       settings.parameters.push_back(TS::makeParameter(p));
 
-    // settings.debug_options = Engine::Observation::Settings::DUMP_SETTINGS;
+    auto stationlon_idx = add_help_parameter(settings.parameters, "stationlon");
+    auto stationlat_idx = add_help_parameter(settings.parameters, "stationlat");
+    auto fmisid_idx = add_help_parameter(settings.parameters, "fmisid");
 
     // Request intersection parameters too - if any
     auto iparams = positions.intersections.parameters();
@@ -476,6 +488,9 @@ PointValues read_latlon_observations(State& state,
 
     for (const auto& extraparam : iparams)
       settings.parameters.push_back(TS::makeParameter(extraparam));
+
+    // settings.debug_options = Engine::Observation::Settings::DUMP_SETTINGS;
+    // std::cout << "Settings:\n" << settings << "\n";
 
     // Process the points one at a time so that we can assign dx,dy values to them
 
@@ -499,63 +514,68 @@ PointValues read_latlon_observations(State& state,
       if (opts.taggedFMISIDs.empty())
         continue;
 
-      auto result = obsengine.values(opts);
-
-      if (!result || result->empty() || (*result)[0].empty())
-        continue;
-
-      const auto& values = *result;
-
-      // We accept only the newest observation for each interval
-      // obsengine returns the data sorted by fmisid and by time
-
-      const int row = 0;
-
-      double lon = get_double(values.at(0).at(row));
-      double lat = get_double(values.at(1).at(row));
-      int fmisid = get_fmisid(values.at(2).at(row));
-
-      if (used_fmisids.find(fmisid) != used_fmisids.end())
-        continue;
-      used_fmisids.insert(fmisid);
-
-      // Collect extra values used for filtering the input
-
-      Intersections::IntersectValues ivalues;
-
-      for (std::size_t i = 0; i < iparams.size(); i++)
-        ivalues[iparams.at(i)] = get_double(values.at(firstextraparam + i).at(row));
-
-      // Convert latlon to world coordinate if needed
-
-      double x = lon;
-      double y = lat;
-
-      if (!crs.isGeographic())
-        if (!transformation.transform(x, y))
+      try
+      {
+        auto result = obsengine.values(opts);
+        if (!result || result->empty() || (*result)[0].empty())
           continue;
 
-      // To pixel coordinate
-      box.transform(x, y);
+        const auto& values = *result;
 
-      // Skip if not inside desired area
-      if (!layer.inside(box, x, y))
-        continue;
+        // We accept only the newest observation for each interval
+        // obsengine returns the data sorted by fmisid and by time
 
-      // Skip if not inside/outside desired shapes or limits of other parameters
-      if (!positions.inside(lon, lat, ivalues))
-        continue;
+        const int row = 0;
 
-      int xpos = lround(x);
-      int ypos = lround(y);
+        int fmisid = get_fmisid(values.at(fmisid_idx).at(row));
+        double lon = get_double(values.at(stationlon_idx).at(row));
+        double lat = get_double(values.at(stationlat_idx).at(row));
 
-      Positions::Point pp{xpos, ypos, NFmiPoint(lon, lat), point.dx, point.dy};
-      PointData pv{pp};
-      for (auto i = 0UL; i < parameters.size(); i++)
-        pv.add(get_double(values.at(3 + i).at(row)));  // lat,lon,fmisid shifts positions by 3
-      pointvalues.push_back(pv);
+        if (used_fmisids.find(fmisid) != used_fmisids.end())
+          continue;
+        used_fmisids.insert(fmisid);
+
+        // Collect extra values used for filtering the input
+
+        Intersections::IntersectValues ivalues;
+
+        for (std::size_t i = 0; i < iparams.size(); i++)
+          ivalues[iparams.at(i)] = get_double(values.at(firstextraparam + i).at(row));
+
+        // Convert latlon to world coordinate if needed
+
+        double x = lon;
+        double y = lat;
+
+        if (!crs.isGeographic())
+          if (!transformation.transform(x, y))
+            continue;
+
+        // To pixel coordinate
+        box.transform(x, y);
+
+        // Skip if not inside desired area
+        if (!layer.inside(box, x, y))
+          continue;
+
+        // Skip if not inside/outside desired shapes or limits of other parameters
+        if (!positions.inside(lon, lat, ivalues))
+          continue;
+
+        int xpos = lround(x);
+        int ypos = lround(y);
+
+        Positions::Point pp{xpos, ypos, NFmiPoint(lon, lat), point.dx, point.dy};
+        PointData pv{pp};
+        for (auto i = 0UL; i < parameters.size(); i++)
+          pv.add(get_double(values.at(i).at(row)));
+        pointvalues.push_back(pv);
+      }
+      catch (...)
+      {
+        throw;
+      }
     }
-
     return pointvalues;
   }
   catch (...)
