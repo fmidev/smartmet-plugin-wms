@@ -46,11 +46,12 @@ bool skip_value(double value, const std::vector<double> except_vector)
   return false;
 }
 
+// Generate isolines with a step
 void generate_isolines(std::vector<Isoline>& isolines,
                        double startvalue,
                        double endvalue,
                        double interval,
-                       const std::string& prefix,
+                       const std::string& pattern,
                        const std::vector<double> except_vector)
 {
   for (double i = startvalue; i <= endvalue; i += interval)  // NOLINT(cert-flp30-c)
@@ -58,13 +59,24 @@ void generate_isolines(std::vector<Isoline>& isolines,
     if (!skip_value(i, except_vector))
     {
       Isoline isoline;
-      isoline.qid = (prefix + Fmi::to_string(i));
+      isoline.qid = fmt::format(pattern, i);
       isoline.value = i;
       isolines.push_back(isoline);
 
       if (isolines.size() > 10000)
         throw Fmi::Exception(BCP, "Too many (> 10000) isolines");
     }
+  }
+}
+
+// Make sure all isolines have a qid if an autoqid has been defines
+void apply_autoqid(std::vector<Isoline>& isolines, const std::string& pattern)
+{
+  for (auto& isoline : isolines)
+  {
+    if (!pattern.empty() && isoline.qid.empty())
+      isoline.qid = fmt::format(pattern, isoline.value);
+    boost::replace_all(isoline.qid, ".", ",");  // replace decimal dots with ,
   }
 }
 
@@ -93,6 +105,10 @@ void IsolineLayer::init(Json::Value& theJson,
     // Extract member values
 
     JsonTools::remove_string(parameter, theJson, "parameter");
+
+    // Support old qidprefix and new autoqid commands
+    std::string autoqid;
+    JsonTools::remove_string(autoqid, theJson, "autoqid");
 
     auto json = JsonTools::remove(theJson, "isolines");
 
@@ -137,8 +153,16 @@ void IsolineLayer::init(Json::Value& theJson,
             except_vector.push_back(json_except.asDouble());
         }
 
-        std::string qidprefix = "isoline_";
+        std::string qidprefix;
         JsonTools::remove_string(qidprefix, json, "qidprefix");
+
+        if (autoqid.empty())  // use autoqid as is if it was given
+        {
+          if (!qidprefix.empty())
+            autoqid = qidprefix + "_{}";  // else use "qidprefix_{}" if qidprefix was given
+          else
+            autoqid = "isoline_{}";  // else use "isoline_{}"
+        }
 
         if (json.size() > 0)
         {
@@ -148,9 +172,12 @@ void IsolineLayer::init(Json::Value& theJson,
               BCP, "Unknown member variables in Isoline layer isovalues setting: " + namelist);
         }
 
-        generate_isolines(isolines, *startvalue, *endvalue, *interval, qidprefix, except_vector);
+        generate_isolines(isolines, *startvalue, *endvalue, *interval, autoqid, except_vector);
       }
     }
+
+    // Make sure everything has a unique qid
+    apply_autoqid(isolines, autoqid);
 
     json = JsonTools::remove(theJson, "smoother");
     smoother.init(json, theConfig);

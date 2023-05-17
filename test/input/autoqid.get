@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=autoqid&time=200808050300&format=svg HTTP/1.0

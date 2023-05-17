@@ -44,6 +44,34 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+void apply_autoqid(std::vector<Isoband>& isobands, const std::string& pattern)
+{
+  for (auto& isoband : isobands)
+  {
+    if (!pattern.empty() && isoband.qid.empty())
+    {
+      if (isoband.lolimit)
+      {
+        if (isoband.hilimit)
+          isoband.qid = fmt::format(pattern, *isoband.lolimit, *isoband.hilimit);
+        else
+          isoband.qid = fmt::format(pattern, *isoband.lolimit, "inf");
+      }
+      else
+      {
+        if (isoband.hilimit)
+          isoband.qid = fmt::format(pattern, "-inf", *isoband.hilimit);
+        else
+          isoband.qid = fmt::format(pattern, "nan", "nan");
+      }
+    }
+    boost::replace_all(isoband.qid, ".", ",");  // replace decimal dots with ,
+  }
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize from JSON
@@ -73,6 +101,10 @@ void IsobandLayer::init(Json::Value& theJson,
     auto json = JsonTools::remove(theJson, "isobands");
     if (!json.isNull())
       JsonTools::extract_array("isobands", isobands, json, theConfig);
+
+    std::string autoqid;
+    JsonTools::remove_string(autoqid, theJson, "autoqid");
+    apply_autoqid(isobands, autoqid);
 
     JsonTools::remove_string(interpolation, theJson, "interpolation");
     JsonTools::remove_int(extrapolation, theJson, "extrapolation");

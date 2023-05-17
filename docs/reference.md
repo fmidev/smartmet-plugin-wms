@@ -557,6 +557,8 @@ The table below contains a list of attributes that can be defined for the isoban
 <tr><td>midpoint|nearest|discrete</td><td>Nearest point value is used.</td></tr>
 <tr><td>logarithmic</td><td>Logarithmic interpolation. Useful mostly for logarithmic parameters such as precipitation rate, which may have sharp peaks near strong showers.</td></tr>
 <tr><td>isobands</td><td><i>[Isoband]</i></td><td>-</td><td colspan="2">An array if <i>Isoband</i> structures./td></tr>
+<tr><td>autoqid</td><td>(string)</td><td>-</td><td>Pattern for generating a qid for each isoband, for example "temperature_{}_{}"|
+
 <tr><td>precision</td><td>(double)</td><td>1.0</td><td colspan="2">Precision of SVG coordinates./td></tr>
 <tr><td>unit_conversion</td><td>(string)</td><td>-</td><td colspan="2">Name of desired unit conversion defined in the configuration file.</td></tr>
 <tr><td>multiplier</td><td>(double)</td><td>-</td><td colspan="2">A multiplier for valid data values for unit conversion purposes.</td></tr>
@@ -571,6 +573,7 @@ The table below contains a list of attributes that can be defined for the isoban
 <tr><td>intersect</td><td><i>[Intersection]</i> or <i>Intersection</i></td><td>-</td><td colspan="2">Alternate isoband(s) with which to intersect.</td></tr>
 </table>
 
+In automatic qid generation "." will be replaced by ",", since "." is reserved for JSON paths. If both the lower limit and upper limit are undefined, "nan" will be used to fill the pattern. If only the lower limit is missing, "-inf" will be used. If only the upper limit is missing, "inf" will be used.
 
 #### IsolineLayer
 
@@ -639,6 +642,7 @@ Name|Type|Default value|Description|
 |level|(double)|-|The querydata level value. By default the first level is used.|
 |interpolation|linear|(string)|linear or logarithmic|
 |isolines|[Isoline]|-|An array of Isoline structures or set of parameters which define how array of Isoline structures are generated (see. isolines-attribute below)|
+|autoqid|(string)|-|Pattern for generating a qid for each isoline, for example "temperature_{}"|
 |precision|(double)|1.0|Precision of SVG coordinates.|
 |unit_conversion|(string)|-|Name of desired unit conversion. Unit conversions are listed in the configuration file.|
 |multiplier|(double)|1.0|A multiplier for valid data values for unit conversion purposes.|
@@ -650,6 +654,8 @@ Name|Type|Default value|Description|
 |inside|_Map_|-|Intersect isoband with a map|
 |outside|_Map_|-|Substract map from isoband|
 |intersect|_[Intersect]_ or _Intersect_|-|Alternate isoband(s) with which to intersect.|
+
+In automatic qid generation "." will be replaced by ",", since "." is reserved for JSON path definitions.
 
 ##### isolines-attribute
 
