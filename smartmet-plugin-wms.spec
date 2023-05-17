@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.5.15
+Version: 23.5.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -149,8 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
-* Mon May 15 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.15-1.fmi
+* Wed May 17 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.17-1.fmi
 - Improved ObservationLayer code to handle position/label/maxdistance etc settings
+- Rewrote observation reading for speed
 
 * Thu May 11 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.11-1.fmi
 - Added ObservationReader to simplify number, symbol and arrow layer code
