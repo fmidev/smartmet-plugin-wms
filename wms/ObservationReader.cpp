@@ -23,6 +23,26 @@ namespace ObservationReader
 {
 namespace
 {
+// Add extra parameter unless it is already included
+std::size_t add_help_parameter(std::vector<Spine::Parameter>& parameters, const std::string& param)
+{
+  for (auto i = 0UL; i < parameters.size(); i++)
+  {
+    if (parameters[i].name() == param)
+      return i;
+  }
+  auto n = parameters.size();
+  parameters.push_back(TS::makeParameter(param));
+  return n;
+}
+
+struct DxDy
+{
+  DxDy(int x, int y) : dx(x), dy(y) {}
+  int dx = 0;
+  int dy = 0;
+};
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Flash data reader
@@ -55,11 +75,11 @@ PointValues read_flash_observations(State& state,
     settings.starttime = valid_time_period.begin();
     settings.endtime = valid_time_period.end();
 
-    settings.parameters.push_back(TS::makeParameter("longitude"));
-    settings.parameters.push_back(TS::makeParameter("latitude"));
-
     for (const auto& p : parameters)
       settings.parameters.push_back(TS::makeParameter(p));
+
+    auto lon_idx = add_help_parameter(settings.parameters, "longitude");
+    auto lat_idx = add_help_parameter(settings.parameters, "latitude");
 
     // Request intersection parameters too - if any
     auto iparams = positions.intersections.parameters();
@@ -99,8 +119,8 @@ PointValues read_flash_observations(State& state,
 
     for (std::size_t row = 0; row < values[0].size(); ++row)
     {
-      double lon = get_double(values.at(0).at(row));
-      double lat = get_double(values.at(1).at(row));
+      double lon = get_double(values.at(lon_idx).at(row));
+      double lat = get_double(values.at(lat_idx).at(row));
 
       // Collect extra values used for filtering the input
 
@@ -135,7 +155,7 @@ PointValues read_flash_observations(State& state,
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
       PointData pv{point};
       for (auto i = 0UL; i < parameters.size(); i++)
-        pv.add(get_double(values.at(2 + i).at(row)));  // lat,lon shifts positions by 2
+        pv.add(get_double(values.at(i).at(row)));
 
       pointvalues.push_back(pv);
     }
@@ -184,11 +204,12 @@ PointValues read_all_observations(State& state,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(TS::makeParameter("stationlon"));
-    settings.parameters.push_back(TS::makeParameter("stationlat"));
 
     for (const auto& p : parameters)
       settings.parameters.push_back(TS::makeParameter(p));
+
+    auto lon_idx = add_help_parameter(settings.parameters, "stationlon");
+    auto lat_idx = add_help_parameter(settings.parameters, "stationlat");
 
     // Request intersection parameters too - if any
     auto iparams = positions.intersections.parameters();
@@ -216,15 +237,12 @@ PointValues read_all_observations(State& state,
     if (values.empty())
       return {};
 
-    // We accept only the newest observation for each interval
-    // obsengine returns the data sorted by fmisid and by time
-
     PointValues pointvalues;
 
     for (std::size_t row = 0; row < values[0].size(); ++row)
     {
-      double lon = get_double(values.at(0).at(row));
-      double lat = get_double(values.at(1).at(row));
+      double lon = get_double(values.at(lon_idx).at(row));
+      double lat = get_double(values.at(lat_idx).at(row));
 
       // Collect extra values used for filtering the input
 
@@ -259,7 +277,7 @@ PointValues read_all_observations(State& state,
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
       PointData pv{point};
       for (auto i = 0UL; i < parameters.size(); i++)
-        pv.add(get_double(values.at(2 + i).at(row)));  // lat,lon shifts positions by 2
+        pv.add(get_double(values.at(i).at(row)));
 
       pointvalues.push_back(pv);
     }
@@ -308,11 +326,13 @@ PointValues read_station_observations(State& state,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(TS::makeParameter("stationlon"));
-    settings.parameters.push_back(TS::makeParameter("stationlat"));
 
     for (const auto& p : parameters)
       settings.parameters.push_back(TS::makeParameter(p));
+
+    auto fmisid_idx = add_help_parameter(settings.parameters, "fmisid");
+    auto lon_idx = add_help_parameter(settings.parameters, "stationlon");
+    auto lat_idx = add_help_parameter(settings.parameters, "stationlat");
 
     // Request intersection parameters too - if any
     auto iparams = positions.intersections.parameters();
@@ -323,14 +343,15 @@ PointValues read_station_observations(State& state,
     for (const auto& extraparam : iparams)
       settings.parameters.push_back(TS::makeParameter(extraparam));
 
-    // We must read the stations one at a time to preserve dx,dy values
-    PointValues pointvalues;
+    // Collect information on station dx,dy values while converting IDs to fmisid numbers
+
+    std::map<int, DxDy> fmisid_shifts;
+
+    // We do not use the same station twice
+    std::set<int> used_fmisids;
 
     for (const auto& station : positions.stations.stations)
     {
-      // Copy Oracle settings
-      auto opts = settings;
-
       Engine::Observation::StationSettings stationSettings;
 
       // Use an unique ID first if specified, ignoring the coordinates even if set
@@ -343,37 +364,57 @@ PointValues read_station_observations(State& state,
       else if (station.geoid)
       {
         stationSettings.geoid_settings.geoids.push_back(*station.geoid);
-        stationSettings.geoid_settings.maxdistance = opts.maxdistance;
-        stationSettings.geoid_settings.numberofstations = opts.numberofstations;
-        stationSettings.geoid_settings.language = opts.language;
+        stationSettings.geoid_settings.maxdistance = settings.maxdistance;
+        stationSettings.geoid_settings.numberofstations = settings.numberofstations;
+        stationSettings.geoid_settings.language = settings.language;
       }
       else if (station.longitude && station.latitude)
       {
-        stationSettings.nearest_station_settings.emplace_back(
-            *station.longitude, *station.latitude, opts.maxdistance, opts.numberofstations, "");
+        stationSettings.nearest_station_settings.emplace_back(*station.longitude,
+                                                              *station.latitude,
+                                                              settings.maxdistance,
+                                                              settings.numberofstations,
+                                                              "");
       }
       else
         throw Fmi::Exception(BCP, "Station ID or coordinate missing");
 
-      opts.taggedFMISIDs = obsengine.translateToFMISID(
+      auto tagged_fmisids = obsengine.translateToFMISID(
           settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
-      if (opts.taggedFMISIDs.empty())
+      if (tagged_fmisids.empty())
         continue;
 
-      auto result = obsengine.values(opts);
+      DxDy dxdy{station.dx ? *station.dx : 0, station.dy ? *station.dy : 0};
 
-      if (!result || result->empty() || (*result)[0].empty())
-        continue;
+      for (const auto& tagged_fmisid : tagged_fmisids)
+      {
+        auto fmisid = tagged_fmisid.fmisid;
+        if (used_fmisids.find(fmisid) != used_fmisids.end())
+          continue;
+        used_fmisids.insert(fmisid);
 
-      const auto& values = *result;
+        settings.taggedFMISIDs.push_back(tagged_fmisid);
+        fmisid_shifts.insert({fmisid, dxdy});
+      }
+    }
 
-      // We accept only the newest observation for each interval
-      // obsengine returns the data sorted by fmisid and by time,
+    // Read all the observations
 
-      const int row = 0;
-      double lon = get_double(values.at(0).at(row));
-      double lat = get_double(values.at(1).at(row));
+    auto result = obsengine.values(settings);
+
+    PointValues pointvalues;
+
+    if (!result || result->empty())
+      return pointvalues;
+
+    auto& values = *result;
+
+    for (auto row = 0UL; row < values[0].size(); ++row)
+    {
+      auto fmisid = get_double(values.at(fmisid_idx).at(row));
+      auto lon = get_double(values.at(lon_idx).at(row));
+      auto lat = get_double(values.at(lat_idx).at(row));
 
       // Collect extra values used for filtering the input
 
@@ -384,8 +425,8 @@ PointValues read_station_observations(State& state,
 
       // Convert latlon to world coordinate if needed
 
-      double x = lon;
-      double y = lat;
+      auto x = lon;
+      auto y = lat;
 
       if (!crs.isGeographic())
         if (!transformation.transform(x, y))
@@ -407,13 +448,13 @@ PointValues read_station_observations(State& state,
 
       // Keep only the latest value for each coordinate
 
-      int deltax = (station.dx ? *station.dx : 0);
-      int deltay = (station.dy ? *station.dy : 0);
+      auto deltax = fmisid_shifts.at(fmisid).dx;
+      auto deltay = fmisid_shifts.at(fmisid).dy;
 
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat), deltax, deltay};
       PointData pv{point};
       for (auto i = 0UL; i < parameters.size(); i++)
-        pv.add(get_double(values.at(2 + i).at(row)));  // lat,lon shifts positions by 2
+        pv.add(get_double(values.at(i).at(row)));
       pointvalues.push_back(pv);
     }
 
@@ -423,18 +464,6 @@ PointValues read_station_observations(State& state,
   {
     throw Fmi::Exception::Trace(BCP, "Layer failed to read observations from the database");
   }
-}
-
-std::size_t add_help_parameter(std::vector<Spine::Parameter>& parameters, const std::string& param)
-{
-  for (auto i = 0UL; i < parameters.size(); i++)
-  {
-    if (parameters[i].name() == param)
-      return i;
-  }
-  auto n = parameters.size();
-  parameters.push_back(TS::makeParameter(param));
-  return n;
 }
 
 // ----------------------------------------------------------------------
@@ -476,9 +505,9 @@ PointValues read_latlon_observations(State& state,
     for (const auto& p : parameters)
       settings.parameters.push_back(TS::makeParameter(p));
 
+    auto fmisid_idx = add_help_parameter(settings.parameters, "fmisid");
     auto stationlon_idx = add_help_parameter(settings.parameters, "stationlon");
     auto stationlat_idx = add_help_parameter(settings.parameters, "stationlat");
-    auto fmisid_idx = add_help_parameter(settings.parameters, "fmisid");
 
     // Request intersection parameters too - if any
     auto iparams = positions.intersections.parameters();
@@ -492,89 +521,94 @@ PointValues read_latlon_observations(State& state,
     // settings.debug_options = Engine::Observation::Settings::DUMP_SETTINGS;
     // std::cout << "Settings:\n" << settings << "\n";
 
-    // Process the points one at a time so that we can assign dx,dy values to them
+    // Collect information on point dx,dy values while converting IDs to fmisid numbers
 
-    PointValues pointvalues;
+    std::map<int, DxDy> fmisid_shifts;
 
     // We do not use the same station twice
     std::set<int> used_fmisids;
 
     for (const auto& point : points)
     {
-      // Copy common Oracle settings
-      auto opts = settings;
-
       Engine::Observation::StationSettings stationSettings;
       stationSettings.nearest_station_settings.emplace_back(
-          point.latlon.X(), point.latlon.Y(), opts.maxdistance, opts.numberofstations, "");
+          point.latlon.X(), point.latlon.Y(), settings.maxdistance, settings.numberofstations, "");
 
-      opts.taggedFMISIDs = obsengine.translateToFMISID(
+      auto tagged_fmisids = obsengine.translateToFMISID(
           settings.starttime, settings.endtime, settings.stationtype, stationSettings);
 
-      if (opts.taggedFMISIDs.empty())
+      if (tagged_fmisids.empty())
         continue;
 
-      try
+      DxDy dxdy{point.dx, point.dy};
+
+      for (const auto& tagged_fmisid : tagged_fmisids)
       {
-        auto result = obsengine.values(opts);
-        if (!result || result->empty() || (*result)[0].empty())
-          continue;
-
-        const auto& values = *result;
-
-        // We accept only the newest observation for each interval
-        // obsengine returns the data sorted by fmisid and by time
-
-        const int row = 0;
-
-        int fmisid = get_fmisid(values.at(fmisid_idx).at(row));
-        double lon = get_double(values.at(stationlon_idx).at(row));
-        double lat = get_double(values.at(stationlat_idx).at(row));
-
+        auto fmisid = tagged_fmisid.fmisid;
         if (used_fmisids.find(fmisid) != used_fmisids.end())
           continue;
         used_fmisids.insert(fmisid);
 
-        // Collect extra values used for filtering the input
+        settings.taggedFMISIDs.push_back(tagged_fmisid);
+        fmisid_shifts.insert({fmisid, dxdy});
+      }
+    }
 
-        Intersections::IntersectValues ivalues;
+    // Read all the observations
 
-        for (std::size_t i = 0; i < iparams.size(); i++)
-          ivalues[iparams.at(i)] = get_double(values.at(firstextraparam + i).at(row));
+    auto result = obsengine.values(settings);
 
-        // Convert latlon to world coordinate if needed
+    PointValues pointvalues;
 
-        double x = lon;
-        double y = lat;
+    if (!result || result->empty())
+      return pointvalues;
 
-        if (!crs.isGeographic())
-          if (!transformation.transform(x, y))
-            continue;
+    auto& values = *result;
 
-        // To pixel coordinate
-        box.transform(x, y);
+    for (auto row = 0UL; row < values[0].size(); ++row)
+    {
+      auto fmisid = get_double(values.at(fmisid_idx).at(row));
+      auto lon = get_double(values.at(stationlon_idx).at(row));
+      auto lat = get_double(values.at(stationlat_idx).at(row));
 
-        // Skip if not inside desired area
-        if (!layer.inside(box, x, y))
+      // Collect extra values used for filtering the input
+
+      Intersections::IntersectValues ivalues;
+
+      for (std::size_t i = 0; i < iparams.size(); i++)
+        ivalues[iparams.at(i)] = get_double(values.at(firstextraparam + i).at(row));
+
+      // Convert latlon to world coordinate if needed
+
+      double x = lon;
+      double y = lat;
+
+      if (!crs.isGeographic())
+        if (!transformation.transform(x, y))
           continue;
 
-        // Skip if not inside/outside desired shapes or limits of other parameters
-        if (!positions.inside(lon, lat, ivalues))
-          continue;
+      // To pixel coordinate
+      box.transform(x, y);
 
-        int xpos = lround(x);
-        int ypos = lround(y);
+      // Skip if not inside desired area
+      if (!layer.inside(box, x, y))
+        continue;
 
-        Positions::Point pp{xpos, ypos, NFmiPoint(lon, lat), point.dx, point.dy};
-        PointData pv{pp};
-        for (auto i = 0UL; i < parameters.size(); i++)
-          pv.add(get_double(values.at(i).at(row)));
-        pointvalues.push_back(pv);
-      }
-      catch (...)
-      {
-        throw;
-      }
+      // Skip if not inside/outside desired shapes or limits of other parameters
+      if (!positions.inside(lon, lat, ivalues))
+        continue;
+
+      int xpos = lround(x);
+      int ypos = lround(y);
+
+      auto dx = fmisid_shifts.at(fmisid).dx;
+      auto dy = fmisid_shifts.at(fmisid).dy;
+
+      Positions::Point pp{xpos, ypos, NFmiPoint(lon, lat), dx, dy};
+      PointData pv{pp};
+      for (auto i = 0UL; i < parameters.size(); i++)
+        pv.add(get_double(values.at(i).at(row)));
+      pointvalues.push_back(pv);
     }
     return pointvalues;
   }
