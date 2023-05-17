@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 23.5.17
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -149,6 +149,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed May 17 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.17-3.fmi
+- Added "autoqid" and "autoclass" settings for isobands and isolines to avoid repetitive typing
+
 * Wed May 17 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.17-2.fmi
 - Fixed PresentWeatherObservationLayer to use parameter WAWA_PT1M_RANK in order to get foreign WMS layers to work
 
