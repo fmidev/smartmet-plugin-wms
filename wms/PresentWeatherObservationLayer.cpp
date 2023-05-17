@@ -48,7 +48,7 @@ float convert_wawa_2_ww(float theValue)
 
 std::vector<std::string> PresentWeatherObservationLayer::getParameters() const
 {
-  return {"fmisid", "stationlongitude", "stationlatitude", "wawa"};
+  return {"fmisid", "stationlongitude", "stationlatitude", "WAWA_PT1M_RANK"};
 }
 
 StationSymbolPriorities PresentWeatherObservationLayer::processResultSet(
