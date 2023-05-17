@@ -46,30 +46,49 @@ namespace Dali
 {
 namespace
 {
+std::string format_auto(const Isoband& isoband, const std::string& pattern)
+{
+  if (isoband.lolimit)
+  {
+    if (isoband.hilimit)
+      return fmt::format(pattern, *isoband.lolimit, *isoband.hilimit);
+    return fmt::format(pattern, *isoband.lolimit, "inf");
+  }
+
+  if (isoband.hilimit)
+    return fmt::format(pattern, "-inf", *isoband.hilimit);
+
+  return fmt::format(pattern, "nan", "nan");
+}
+
 void apply_autoqid(std::vector<Isoband>& isobands, const std::string& pattern)
 {
   for (auto& isoband : isobands)
   {
     if (!pattern.empty() && isoband.qid.empty())
-    {
-      if (isoband.lolimit)
-      {
-        if (isoband.hilimit)
-          isoband.qid = fmt::format(pattern, *isoband.lolimit, *isoband.hilimit);
-        else
-          isoband.qid = fmt::format(pattern, *isoband.lolimit, "inf");
-      }
-      else
-      {
-        if (isoband.hilimit)
-          isoband.qid = fmt::format(pattern, "-inf", *isoband.hilimit);
-        else
-          isoband.qid = fmt::format(pattern, "nan", "nan");
-      }
-    }
+      isoband.qid = format_auto(isoband, pattern);
+
     boost::replace_all(isoband.qid, ".", ",");  // replace decimal dots with ,
   }
 }
+
+// Generate a class attribute for those missing one
+void apply_autoclass(std::vector<Isoband>& isobands, const std::string& pattern)
+{
+  if (pattern.empty())
+    return;
+
+  for (auto& isoband : isobands)
+  {
+    if (isoband.attributes.value("class").empty())
+    {
+      auto name = format_auto(isoband, pattern);
+      boost::replace_all(name, ".", ",");  // replace decimal dots with ,
+      isoband.attributes.add("class", name);
+    }
+  }
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -105,6 +124,10 @@ void IsobandLayer::init(Json::Value& theJson,
     std::string autoqid;
     JsonTools::remove_string(autoqid, theJson, "autoqid");
     apply_autoqid(isobands, autoqid);
+
+    std::string autoclass;
+    JsonTools::remove_string(autoclass, theJson, "autoclass");
+    apply_autoclass(isobands, autoclass);
 
     JsonTools::remove_string(interpolation, theJson, "interpolation");
     JsonTools::remove_int(extrapolation, theJson, "extrapolation");

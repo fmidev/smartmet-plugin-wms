@@ -80,6 +80,23 @@ void apply_autoqid(std::vector<Isoline>& isolines, const std::string& pattern)
   }
 }
 
+// Generate a class attribute for those missing one
+void apply_autoclass(std::vector<Isoline>& isolines, const std::string& pattern)
+{
+  if (pattern.empty())
+    return;
+
+  for (auto& isoline : isolines)
+  {
+    if (isoline.attributes.value("class").empty())
+    {
+      auto name = fmt::format(pattern, isoline.value);
+      boost::replace_all(name, ".", ",");  // replace decimal dots with ,
+      isoline.attributes.add("class", name);
+    }
+  }
+}
+
 }  // namespace
 
 // ----------------------------------------------------------------------
@@ -178,6 +195,10 @@ void IsolineLayer::init(Json::Value& theJson,
 
     // Make sure everything has a unique qid
     apply_autoqid(isolines, autoqid);
+
+    std::string autoclass;
+    JsonTools::remove_string(autoclass, theJson, "autoclass");
+    apply_autoclass(isolines, autoclass);
 
     json = JsonTools::remove(theJson, "smoother");
     smoother.init(json, theConfig);
