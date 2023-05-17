@@ -23,6 +23,19 @@ namespace ObservationReader
 {
 namespace
 {
+// Add extra parameter unless it is already included
+std::size_t add_help_parameter(std::vector<Spine::Parameter>& parameters, const std::string& param)
+{
+  for (auto i = 0UL; i < parameters.size(); i++)
+  {
+    if (parameters[i].name() == param)
+      return i;
+  }
+  auto n = parameters.size();
+  parameters.push_back(TS::makeParameter(param));
+  return n;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Flash data reader
@@ -55,11 +68,11 @@ PointValues read_flash_observations(State& state,
     settings.starttime = valid_time_period.begin();
     settings.endtime = valid_time_period.end();
 
-    settings.parameters.push_back(TS::makeParameter("longitude"));
-    settings.parameters.push_back(TS::makeParameter("latitude"));
-
     for (const auto& p : parameters)
       settings.parameters.push_back(TS::makeParameter(p));
+
+    auto lon_idx = add_help_parameter(settings.parameters, "longitude");
+    auto lat_idx = add_help_parameter(settings.parameters, "latitude");
 
     // Request intersection parameters too - if any
     auto iparams = positions.intersections.parameters();
@@ -99,8 +112,8 @@ PointValues read_flash_observations(State& state,
 
     for (std::size_t row = 0; row < values[0].size(); ++row)
     {
-      double lon = get_double(values.at(0).at(row));
-      double lat = get_double(values.at(1).at(row));
+      double lon = get_double(values.at(lon_idx).at(row));
+      double lat = get_double(values.at(lat_idx).at(row));
 
       // Collect extra values used for filtering the input
 
@@ -135,7 +148,7 @@ PointValues read_flash_observations(State& state,
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
       PointData pv{point};
       for (auto i = 0UL; i < parameters.size(); i++)
-        pv.add(get_double(values.at(2 + i).at(row)));  // lat,lon shifts positions by 2
+        pv.add(get_double(values.at(i).at(row)));
 
       pointvalues.push_back(pv);
     }
@@ -184,11 +197,12 @@ PointValues read_all_observations(State& state,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(TS::makeParameter("stationlon"));
-    settings.parameters.push_back(TS::makeParameter("stationlat"));
 
     for (const auto& p : parameters)
       settings.parameters.push_back(TS::makeParameter(p));
+
+    auto lon_idx = add_help_parameter(settings.parameters, "stationlon");
+    auto lat_idx = add_help_parameter(settings.parameters, "stationlat");
 
     // Request intersection parameters too - if any
     auto iparams = positions.intersections.parameters();
@@ -223,8 +237,8 @@ PointValues read_all_observations(State& state,
 
     for (std::size_t row = 0; row < values[0].size(); ++row)
     {
-      double lon = get_double(values.at(0).at(row));
-      double lat = get_double(values.at(1).at(row));
+      double lon = get_double(values.at(lon_idx).at(row));
+      double lat = get_double(values.at(lat_idx).at(row));
 
       // Collect extra values used for filtering the input
 
@@ -259,7 +273,7 @@ PointValues read_all_observations(State& state,
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat)};
       PointData pv{point};
       for (auto i = 0UL; i < parameters.size(); i++)
-        pv.add(get_double(values.at(2 + i).at(row)));  // lat,lon shifts positions by 2
+        pv.add(get_double(values.at(i).at(row)));
 
       pointvalues.push_back(pv);
     }
@@ -308,11 +322,12 @@ PointValues read_station_observations(State& state,
     settings.endtime = valid_time_period.end();
 
     auto& obsengine = state.getObsEngine();
-    settings.parameters.push_back(TS::makeParameter("stationlon"));
-    settings.parameters.push_back(TS::makeParameter("stationlat"));
 
     for (const auto& p : parameters)
       settings.parameters.push_back(TS::makeParameter(p));
+
+    auto lon_idx = add_help_parameter(settings.parameters, "stationlon");
+    auto lat_idx = add_help_parameter(settings.parameters, "stationlat");
 
     // Request intersection parameters too - if any
     auto iparams = positions.intersections.parameters();
@@ -372,8 +387,8 @@ PointValues read_station_observations(State& state,
       // obsengine returns the data sorted by fmisid and by time,
 
       const int row = 0;
-      double lon = get_double(values.at(0).at(row));
-      double lat = get_double(values.at(1).at(row));
+      double lon = get_double(values.at(lon_idx).at(row));
+      double lat = get_double(values.at(lat_idx).at(row));
 
       // Collect extra values used for filtering the input
 
@@ -413,7 +428,7 @@ PointValues read_station_observations(State& state,
       Positions::Point point{xpos, ypos, NFmiPoint(lon, lat), deltax, deltay};
       PointData pv{point};
       for (auto i = 0UL; i < parameters.size(); i++)
-        pv.add(get_double(values.at(2 + i).at(row)));  // lat,lon shifts positions by 2
+        pv.add(get_double(values.at(i).at(row)));
       pointvalues.push_back(pv);
     }
 
@@ -423,18 +438,6 @@ PointValues read_station_observations(State& state,
   {
     throw Fmi::Exception::Trace(BCP, "Layer failed to read observations from the database");
   }
-}
-
-std::size_t add_help_parameter(std::vector<Spine::Parameter>& parameters, const std::string& param)
-{
-  for (auto i = 0UL; i < parameters.size(); i++)
-  {
-    if (parameters[i].name() == param)
-      return i;
-  }
-  auto n = parameters.size();
-  parameters.push_back(TS::makeParameter(param));
-  return n;
 }
 
 // ----------------------------------------------------------------------
