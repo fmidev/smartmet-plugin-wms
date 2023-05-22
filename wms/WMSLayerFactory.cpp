@@ -459,7 +459,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     {
       Json::StyledWriter writer;
       std::cout << fmt::format(
-          "Remaining JSON for WMS layer {}:\n{}\n", theFileName, writer.write(root));
+          "{} Remaining JSON for WMS layer {}:\n{}\n", Spine::log_time_str(), theFileName, writer.write(root)) << std::flush;
     }
 #endif
 

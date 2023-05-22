@@ -5,6 +5,7 @@
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
 #include <macgyver/Exception.h>
+#include <spine/Convenience.h>
 
 namespace SmartMet
 {
@@ -55,8 +56,11 @@ void Layers::init(Json::Value& theJson,
       if (!json.empty())
       {
         Json::StyledWriter writer;
-        std::cout << fmt::format(
-            "Remaining JSON for layer {}:\n{}\n", theState.getName(), writer.write(json));
+        std::cout << fmt::format("{} Remaining JSON for layer {}:\n{}\n",
+                                 Spine::log_time_str(),
+                                 theState.getName(),
+                                 writer.write(json))
+                  << std::flush;
       }
 
       layers.push_back(layer);

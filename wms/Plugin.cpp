@@ -121,7 +121,11 @@ void check_remaining_dali_json(Json::Value &json, const std::string &name)
   if (!json.empty())
   {
     Json::StyledWriter writer;
-    std::cout << fmt::format("Remaining Dali json for product {}:\n{}\n", name, writer.write(json));
+    std::cout << fmt::format("{} Remaining Dali json for product {}:\n{}\n",
+                             Spine::log_time_str(),
+                             name,
+                             writer.write(json))
+              << std::flush;
   }
 }
 
@@ -146,7 +150,11 @@ void check_remaining_wms_json(Json::Value &json, const std::string &name)
   if (!json.empty())
   {
     Json::StyledWriter writer;
-    std::cout << fmt::format("Remaining WMS json for product {}:\n{}\n", name, writer.write(json));
+    std::cout << fmt::format("{} Remaining WMS json for product {}:\n{}\n",
+                             Spine::log_time_str(),
+                             name,
+                             writer.write(json))
+              << std::flush;
   }
 }
 
