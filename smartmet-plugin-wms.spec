@@ -50,6 +50,7 @@ BuildRequires: jsoncpp-devel
 # BuildRequires: flex-devel
 BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
+BuildRequires: libconfig17-devel
 BuildRequires: heatmap-devel
 %if %{defined el7}
 BuildRequires: librsvg2-devel = 2.40.6
@@ -64,6 +65,7 @@ Requires: cairo
 Requires: fmt >= 8.1.1 fmt < %{smartmet_fmt_max}
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
+Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 23.4.17
@@ -115,6 +117,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
 #TestRequires: smartmet-fonts
+#TestRequires: libconfig17-devel
 #TestRequires: google-roboto-fonts
 #TestRequires: zlib-devel
 #TestRequires: cairo-devel
