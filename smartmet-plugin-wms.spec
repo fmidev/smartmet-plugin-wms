@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.5.17
-Release: 3%{?dist}.fmi
+Version: 23.5.22
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -149,6 +149,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon May 22 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.22-1.fmi
+- Handle legend_url_layer removal properly
+- Added timestamps to JSON configuration error messages
+
 * Wed May 17 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.17-3.fmi
 - Added "autoqid" and "autoclass" settings for isobands and isolines to avoid repetitive typing
 
