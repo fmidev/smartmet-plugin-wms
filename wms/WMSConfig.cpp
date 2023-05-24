@@ -42,10 +42,17 @@ using SmartMet::Plugin::Dali::Product;
 using SmartMet::Plugin::Dali::State;
 using SmartMet::Plugin::Dali::View;
 
+namespace SmartMet
+{
+namespace Plugin
+{
+namespace WMS
+{
 namespace
 {
 Json::CharReaderBuilder charreaderbuilder;
 
+// Recursively find the latest modification time for a file in the given directory
 void check_modification_time(const std::string& theDir, boost::posix_time::ptime& max_time)
 {
   try
@@ -108,9 +115,10 @@ bool match_namespace_pattern(const std::string& name, const std::string& pattern
   return boost::regex_search(name, re);
 }
 
-std::string makeLayerNamespace(const std::string& customer,
-                               const std::string& productRoot,
-                               const std::string& fileDir)
+// Create layer name from customer name and the path to the configuration file
+std::string make_layer_namespace(const std::string& customer,
+                                 const std::string& productRoot,
+                                 const std::string& fileDir)
 {
   try
   {
@@ -153,8 +161,8 @@ std::string makeLayerNamespace(const std::string& customer,
   }
 }
 
-// If legend layer exixts use it directly
-// otherwise generate legend from configuration
+// If legend layer exists use it directly otherwise generate legend from configuration
+// Returns true if the product contains a legend in itself
 bool prepareLegendGraphic(Product& theProduct)
 {
   std::list<boost::shared_ptr<View>>& views = theProduct.views.views;
@@ -213,14 +221,6 @@ bool prepareLegendGraphic(Product& theProduct)
   return false;
 }
 
-}  // anonymous namespace
-
-namespace SmartMet
-{
-namespace Plugin
-{
-namespace WMS
-{
 /*
  * We must not try to read backup files since they may not be in a valid state
  */
@@ -300,6 +300,39 @@ void set_optional(CTPP::CDT& tmpl,
     return;
   set_scalar(tmpl, config, path, variable);
 }
+
+// Update last known modification times given a filename
+void update_product_modification_time(const std::string& filename,
+                                      std::map<std::string, std::time_t>& modification_times)
+{
+  const std::time_t modtime = boost::filesystem::last_write_time(filename);
+
+  auto pos = modification_times.find(filename);
+
+  if (pos == modification_times.end())
+    modification_times.insert({filename, modtime});
+  else
+  {
+    const std::time_t previous_time = pos->second;
+    if (modtime != 0 && modtime != previous_time)
+    {
+      pos->second = modtime;
+
+      // Product file is reloaded when the map is next time requested
+      auto message = Spine::log_time_str() + " File " + filename + " modified, reloading it\n";
+      std::cout << message << std::flush;
+    }
+  }
+}
+
+// Update capabilities modification time
+void update_capabilities_modification_time(boost::posix_time::ptime& mod_time,
+                                           const SharedWMSLayer& layer)
+{
+  mod_time = std::max(mod_time, layer->modificationTime());
+}
+
+}  // namespace
 
 CTPP::CDT WMSConfig::get_request(const libconfig::Config& config,
                                  const std::string& prefix,
@@ -902,19 +935,144 @@ void warn_layer(const std::string& badfile, std::set<std::string>& warned_files)
   warned_files.insert(badfile);
 }
 
+void WMSConfig::updateLayerMetaDataForCustomerLayer(
+    const boost::filesystem::recursive_directory_iterator& itr,
+    const std::string& customer,
+    const std::string& productdir,
+    const boost::shared_ptr<LayerMap>& mylayers,
+    LayerMap& newProxies,
+    std::map<SharedWMSLayer, std::map<std::string, std::string>>& externalLegends)
+{
+  if (!is_regular_file(itr->status()))
+    return;
+
+  const auto filename = itr->path().filename().string();  // used in catch block for error message
+
+  if (!looks_valid_filename(filename))
+    return;
+
+  try
+  {
+    const auto layername = itr->path().stem().string();
+
+    // Determine namespace from directory structure
+    std::string layerNamespace =
+        make_layer_namespace(customer, productdir, itr->path().parent_path().string());
+
+    const auto pathName = itr->path().string();
+    const auto fullLayername = layerNamespace + ":" + layername;
+
+    // Check for modified product files here
+
+    update_product_modification_time(pathName, itsProductFileModificationTime);
+
+    // Se if the metadata has expired and hence the layer must be created from scracth
+    // to update its available times etc
+
+    bool mustUpdate = true;
+
+    if (mylayers && mylayers->find(fullLayername) != mylayers->end())
+    {
+      const auto& oldProxy = mylayers->at(fullLayername);
+      SharedWMSLayer oldLayer = oldProxy.getLayer();
+      const auto timestamp = oldLayer->metaDataUpdateTime();
+
+      bool expired = false;
+      if (!timestamp.is_not_a_date_time())
+      {
+        const auto age = boost::posix_time::second_clock::universal_time() - timestamp;
+        expired = (age.total_seconds() >= oldLayer->metaDataUpdateInterval());
+      }
+
+      // check if metadata need to be updated
+      // for example for icemaps it is not necessary so often
+      mustUpdate = (expired || oldLayer->mustUpdateLayerMetaData());
+    }
+
+    // Insert old or recreated layer into the layers to be published next
+
+    if (!mustUpdate)
+    {
+      const auto& oldProxy = mylayers->at(fullLayername);
+      newProxies.insert({fullLayername, oldProxy});
+    }
+    else
+    {
+      SharedWMSLayer wmsLayer =
+          WMSLayerFactory::createWMSLayer(pathName, layerNamespace, customer, *this);
+
+      if (!wmsLayer)
+        warn_layer(filename, itsWarnedFiles);
+      else
+      {
+        update_capabilities_modification_time(itsCapabilitiesModificationTime, wmsLayer);
+
+        if (!wmsLayer->getLegendFiles().empty())
+          externalLegends[wmsLayer] = wmsLayer->getLegendFiles();
+
+        WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
+        newProxies.insert({fullLayername, newProxy});
+      }
+    }
+  }
+  catch (...)
+  {
+    // Ignore and report failed product definitions
+    warn_layer(filename, itsWarnedFiles);
+  }
+}
+
+void WMSConfig::updateLayerMetaDataForCustomer(
+    const boost::filesystem::directory_iterator& dir,
+    const boost::shared_ptr<LayerMap>& mylayers,
+    LayerMap& newProxies,
+    std::map<SharedWMSLayer, std::map<std::string, std::string>>& externalLegends)
+{
+  if (!is_directory(dir->status()))
+    return;
+
+  const auto productdir = dir->path().string() + "/products";
+  const auto customer = dir->path().filename().string();
+
+  boost::filesystem::recursive_directory_iterator end_prod_itr;
+
+  // Find product (layer) definitions
+  for (boost::filesystem::recursive_directory_iterator itr(productdir); itr != end_prod_itr; ++itr)
+  {
+    if (Spine::Reactor::isShuttingDown())
+      return;
+
+    try
+    {
+      updateLayerMetaDataForCustomerLayer(
+          itr, customer, productdir, mylayers, newProxies, externalLegends);
+    }
+    catch (...)
+    {
+      Fmi::Exception exception(
+          BCP,
+          "Lost " + std::string(itr->path().c_str()) + " while scanning the filesystem!",
+          nullptr);
+      exception.addParameter("Path", itr->path().c_str());
+      exception.printError();
+    }
+  }
+}
+
 void WMSConfig::updateLayerMetaData()
 {
   try
   {
-    auto mycopy = itsLayers.load();
+    auto mylayers = itsLayers.load();
 
     // New shared pointer which will be atomically set into production
-    boost::shared_ptr<LayerMap> newProxies(boost::make_shared<LayerMap>());
+    auto newProxies = boost::make_shared<LayerMap>();
 
-    const bool use_wms = true;
-    std::string customerdir(itsDaliConfig.rootDirectory(use_wms) + "/customers");
+    const auto wms_mode_on = true;
+    const auto customerdir = itsDaliConfig.rootDirectory(wms_mode_on) + "/customers";
 
-    std::map<SharedWMSLayer, std::map<std::string, std::string>> layersWithExternalLegendFile;
+    std::map<SharedWMSLayer, std::map<std::string, std::string>> externalLegends;
+
     boost::filesystem::directory_iterator end_itr;
     for (boost::filesystem::directory_iterator itr(customerdir); itr != end_itr; ++itr)
     {
@@ -923,119 +1081,7 @@ void WMSConfig::updateLayerMetaData()
 
       try
       {
-        if (is_directory(itr->status()))
-        {
-          std::string productdir(itr->path().string() + "/products");
-          std::string customername = itr->path().filename().string();
-
-          boost::filesystem::recursive_directory_iterator end_prod_itr;
-
-          // Find product (layer) definitions
-          for (boost::filesystem::recursive_directory_iterator itr2(productdir);
-               itr2 != end_prod_itr;
-               ++itr2)
-          {
-            if (Spine::Reactor::isShuttingDown())
-              return;
-
-            try
-            {
-              if (is_regular_file(itr2->status()))
-              {
-                std::string layername = itr2->path().stem().string();
-                std::string filename = itr2->path().filename().string();
-
-                if (looks_valid_filename(filename))
-                {
-                  // Determine namespace from directory structure
-                  std::string theNamespace = ::makeLayerNamespace(
-                      customername, productdir, itr2->path().parent_path().string());
-                  try
-                  {
-                    std::string pathName = itr2->path().string();
-                    std::string fullLayername = theNamespace + ":" + layername;
-
-                    // Check for modified product files here
-                    std::time_t modtime = boost::filesystem::last_write_time(pathName);
-                    if (itsProductFileModificationTime.find(pathName) ==
-                        itsProductFileModificationTime.end())
-                      itsProductFileModificationTime.insert(make_pair(pathName, modtime));
-                    else
-                    {
-                      std::time_t previousModtime = itsProductFileModificationTime.at(pathName);
-                      if (modtime != 0 && modtime != previousModtime)
-                      {
-                        // Product file is reloaded when the map is next time requested
-                        itsProductFileModificationTime[pathName] = modtime;
-                        std::string fileModifiedMsg =
-                            Spine::log_time_str() + " File " + pathName + " modified, reloading it";
-                        std::cout << fileModifiedMsg << std::endl;
-                      }
-                    }
-                    bool mustUpdate = true;
-                    if (mycopy && mycopy->find(fullLayername) != mycopy->end())
-                    {
-                      WMSLayerProxy oldProxy = mycopy->at(fullLayername);
-                      SharedWMSLayer oldLayer = oldProxy.getLayer();
-                      boost::posix_time::ptime timestamp = oldLayer->metaDataUpdateTime();
-
-                      bool metadataUpdateIntervalExpired = false;
-                      if (!timestamp.is_not_a_date_time())
-                      {
-                        boost::posix_time::time_duration diff =
-                            (boost::posix_time::second_clock::universal_time() - timestamp);
-                        unsigned int diff_seconds =
-                            ((diff.hours() * 60 * 60) + (diff.minutes() * 60) + diff.seconds());
-                        metadataUpdateIntervalExpired =
-                            diff_seconds >= oldLayer->metaDataUpdateInterval();
-                      }
-
-                      // check if metadata need to be updated
-                      // for example for icemaps it is not necessary so often
-                      mustUpdate =
-                          (metadataUpdateIntervalExpired || oldLayer->mustUpdateLayerMetaData());
-
-                      if (!mustUpdate)
-                        newProxies->insert(make_pair(fullLayername, oldProxy));
-                    }
-
-                    if (mustUpdate)
-                    {
-                      SharedWMSLayer wmsLayer = WMSLayerFactory::createWMSLayer(
-                          pathName, theNamespace, customername, *this);
-
-                      if (!wmsLayer)
-                        warn_layer(filename, itsWarnedFiles);
-                      else
-                      {
-                        itsCapabilitiesModificationTime = std::max(*itsCapabilitiesModificationTime,
-                                                                   wmsLayer->modificationTime());
-                        if (!wmsLayer->getLegendFiles().empty())
-                          layersWithExternalLegendFile[wmsLayer] = wmsLayer->getLegendFiles();
-                        WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
-                        newProxies->insert(make_pair(fullLayername, newProxy));
-                      }
-                    }
-                  }
-                  catch (...)
-                  {
-                    // Ignore and report failed product definitions
-                    warn_layer(filename, itsWarnedFiles);
-                  }
-                }
-              }
-            }
-            catch (...)
-            {
-              Fmi::Exception exception(
-                  BCP,
-                  "Lost " + std::string(itr2->path().c_str()) + " while scanning the filesystem!",
-                  nullptr);
-              exception.addParameter("Path", itr2->path().c_str());
-              exception.printError();
-            }
-          }
-        }
+        updateLayerMetaDataForCustomer(itr, mylayers, *newProxies, externalLegends);
       }
       catch (...)
       {
@@ -1048,8 +1094,8 @@ void WMSConfig::updateLayerMetaData()
       }
     }
 
-    // It external legend file is used set legend dimension here
-    for (auto& externalLegendItem : layersWithExternalLegendFile)
+    // It external legend files are used set legend dimension here
+    for (auto& externalLegendItem : externalLegends)
     {
       const auto& externalLegendItems = externalLegendItem.second;
       for (auto& proxyItem : *newProxies)
@@ -1077,12 +1123,12 @@ void WMSConfig::updateModificationTime()
 {
   try
   {
-    auto max_time = *itsCapabilitiesModificationTime;
+    auto max_time = itsCapabilitiesModificationTime;
 
     // Check all files under WMS-root
     check_modification_time(itsDaliConfig.rootDirectory(true) + "/", max_time);
 
-    if (*itsCapabilitiesModificationTime < max_time)
+    if (itsCapabilitiesModificationTime < max_time)
       itsCapabilitiesModificationTime = max_time;
   }
   catch (...)
@@ -1555,11 +1601,11 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
       throw Fmi::Exception(BCP, "Legend template file parsing failed!")
           .addParameter("Message", errors);
 
-    const bool use_wms = true;
+    const bool wms_mode_on = true;
     Spine::JSON::preprocess(
         json,
-        itsDaliConfig.rootDirectory(use_wms),
-        itsDaliConfig.rootDirectory(use_wms) + "/customers/" + customer + "/layers",
+        itsDaliConfig.rootDirectory(wms_mode_on),
+        itsDaliConfig.rootDirectory(wms_mode_on) + "/customers/" + customer + "/layers",
         itsJsonCache);
 
     Spine::JSON::dereference(json);
