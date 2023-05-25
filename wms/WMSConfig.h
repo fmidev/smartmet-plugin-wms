@@ -166,6 +166,10 @@ class WMSConfig
     return itsCapabilitiesModificationTime;
   }
 
+#ifndef WITHOUT_OBSERVATION
+  std::set<std::string> getObservationProducers() const;
+#endif
+
  private:
   void parse_references();
   CTPP::CDT get_capabilities(const libconfig::Config& config) const;
@@ -240,9 +244,6 @@ class WMSConfig
 
   void updateModificationTime();
 
-#ifndef WITHOUT_OBSERVATION
-  std::set<std::string> getObservationProducers() const;
-#endif
   // For locking purposes
   bool isValidLayerImpl(const std::string& theLayer, bool theAcceptHiddenLayerFlag = false) const;
 

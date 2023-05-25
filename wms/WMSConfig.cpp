@@ -998,20 +998,24 @@ void WMSConfig::updateLayerMetaDataForCustomerLayer(
     }
     else
     {
-      SharedWMSLayer wmsLayer =
-          WMSLayerFactory::createWMSLayer(pathName, layerNamespace, customer, *this);
+      auto newlayers = WMSLayerFactory::createWMSLayers(
+          pathName, fullLayername, layerNamespace, customer, *this);
 
-      if (!wmsLayer)
+      if (newlayers.empty())
         warn_layer(filename, itsWarnedFiles);
       else
       {
-        update_capabilities_modification_time(itsCapabilitiesModificationTime, wmsLayer);
+        for (const auto& newlayer : newlayers)
+        {
+          update_capabilities_modification_time(itsCapabilitiesModificationTime, newlayer);
 
-        if (!wmsLayer->getLegendFiles().empty())
-          externalLegends[wmsLayer] = wmsLayer->getLegendFiles();
+          if (!newlayer->getLegendFiles().empty())
+            externalLegends[newlayer] = newlayer->getLegendFiles();
 
-        WMSLayerProxy newProxy(itsGisEngine, wmsLayer);
-        newProxies.insert({fullLayername, newProxy});
+          WMSLayerProxy newProxy(itsGisEngine, newlayer);
+          auto newName = newlayer->getName();      // JSON may override layer name
+          newProxies.insert({newName, newProxy});  // so not using fullLayername here
+        }
       }
     }
   }
