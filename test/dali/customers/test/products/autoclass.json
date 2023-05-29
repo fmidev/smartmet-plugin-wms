@@ -1,0 +1,68 @@
+{
+    "producer": "kap",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views": [
+        {
+            "layers":
+	    [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+		    "autoclass": "Temperature_{}_{}",
+                    "parameter": "Temperature",
+		    "isobands":
+		    [
+			{
+			    "lolimit": 2.5
+			},
+			{
+			    "lolimit": 2,
+			    "hilimit": 2.5
+			},
+			{
+			    "lolimit": 0.5,
+			    "hilimit": 1.5
+			},
+			{
+			    "lolimit": -1.5,
+			    "hilimit": -0.5
+			},
+			{
+			    "lolimit": -2,
+			    "hilimit": -1.5
+			},
+			{
+			    "hilimit": -2
+			},
+			{
+			}
+			
+		    ]
+                },
+                {
+		    "qid": "l2",
+                    "layer_type": "isoline",
+		    "autoclass": "Temperature_{}",
+                    "parameter": "Temperature",
+                    "isolines":
+		    [
+			{
+			    "value": -1.5
+			},
+			{
+			    "value": 0
+			},
+			{
+			    "value": 1
+			}
+		    ]
+                }
+            ]
+        }
+    ]
+}
