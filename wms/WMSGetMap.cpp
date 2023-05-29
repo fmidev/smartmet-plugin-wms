@@ -421,14 +421,6 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     {
       std::string layerName = layer_name(layers[i]);
 
-      if (!itsConfig.isValidLayer(layerName))
-      {
-        Fmi::Exception exception(BCP, "The requested layer is not supported!");
-        exception.addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
-        exception.addParameter("Requested layer", layerName);
-        throw exception;
-      }
-
       std::string layerCustomer = itsConfig.layerCustomer(layerName);
       std::string layerStyle = styles[i];
 

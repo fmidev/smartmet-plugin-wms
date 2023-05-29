@@ -1555,6 +1555,8 @@ boost::posix_time::ptime WMSConfig::mostCurrentTime(
   }
 }
 
+// Get the JSON for a single WMS layer
+
 Json::Value WMSConfig::json(const std::string& theLayerName) const
 {
   try
@@ -1626,16 +1628,14 @@ bool WMSConfig::isValidLayerImpl(const std::string& theLayer,
   try
   {
     auto my_layers = itsLayers.load();
-    if (my_layers->find(theLayer) != my_layers->end())
-    {
-      if (theAcceptHiddenLayerFlag)
-        return true;
+    if (my_layers->find(theLayer) == my_layers->end())
+      return false;
 
-      WMSLayerProxy lp = my_layers->at(theLayer);
-      return !(lp.getLayer()->isHidden());
-    }
+    if (theAcceptHiddenLayerFlag)
+      return true;
 
-    return (my_layers->find(theLayer) != my_layers->end());
+    WMSLayerProxy lp = my_layers->at(theLayer);
+    return !(lp.getLayer()->isHidden());
   }
   catch (...)
   {

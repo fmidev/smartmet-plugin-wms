@@ -152,6 +152,7 @@ class Plugin : public SmartMetPlugin
                                     Product& theProduct);
   void wmsPreprocessJSON(State& theState,
                          const Spine::HTTP::Request& theRequest,
+                         const std::string& theName,
                          Json::Value& theJson,
                          bool isCnfRequest,
                          int theStage);

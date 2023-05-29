@@ -2,11 +2,8 @@
 
 #include "WMSConfig.h"
 #include "WMSGetCapabilities.h"
-
-#include <ctpp2/CDT.hpp>
-
 #include <boost/date_time/posix_time/posix_time.hpp>
-
+#include <ctpp2/CDT.hpp>
 #include <spine/HTTP.h>
 #include <spine/Value.h>
 
