@@ -197,6 +197,9 @@ class Plugin : public SmartMetPlugin
                              const std::string& theFileName,
                              bool theWmsFlag) const;
 
+  static Spine::HTTP::ParamMap extractValidParameters(const Spine::HTTP::ParamMap& theParams);
+  static void print(const ParameterInfos& infos);
+
   // Plugin configuration
   const std::string itsModuleName;
   Config itsConfig;

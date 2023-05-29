@@ -1,0 +1,32 @@
+{
+    "title": "PAL Skandinavia GroundTemperature",
+    "abstract": "PAL Ground abstract",
+    "producer": "ground",
+
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views":
+    [
+        {
+	    "qid": "v1",
+            "layers":
+	    [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+		    "parameter": "GroundTemperature",
+                    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css",
+		    "attributes":
+		    {
+			"id": "temperature_isobands"
+		    }
+                }
+            ]
+        }
+    ]
+}

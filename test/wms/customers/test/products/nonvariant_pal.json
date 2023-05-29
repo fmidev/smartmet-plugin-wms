@@ -1,26 +1,6 @@
 {
-    "variants":
-    [
-	{
-	    "name": "variant:ecmwf:temperature",
-	    "title": "EC World Temperature",
-	    "abstract": "ECMWF abstract",
-	    "producer": "ecmwf_maailma_pinta"
-	},
-	{
-	    "name": "variant:ground:groundtemperature",
-	    "title": "PAL Skandinavia GroundTemperature",
-	    "abstract": "PAL Ground abstract",
-	    "producer": "ground",
-	    "l1.parameter": "GroundTemperature"
-	},
-	{
-	    "name": "variant:pal:temperature",
-	    "title": "PAL Skandinavia Temperature",
-	    "abstract": "PAL abstract"
-	}
-    ],
-
+    "title": "PAL Skandinavia Temperature",
+    "abstract": "PAL abstract",
     "producer": "pal_skandinavia",
     "projection":
     {

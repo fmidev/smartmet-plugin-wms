@@ -4562,7 +4562,7 @@
 					{
 						"name": "time",
 						"units": "ISO8601",
-						"value": "2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H",
+						"value": "2016-04-14T00:00:00Z",
 						"multipleValues": 0,
 						"nearestValue": 0,
 						"current": 1

@@ -1908,7 +1908,7 @@
       <BoundingBox CRS="EPSG:3857" minx="-1012863.35522" miny="6674532.79847" maxx="5454655.04887" maxy="11134125.2352"/>
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="70.2"/>
-      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-05T03:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
+      <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2016-04-14T00:00:00Z</Dimension>
       <Style>
         <Name>default</Name>
         <Title>Default style</Title>
