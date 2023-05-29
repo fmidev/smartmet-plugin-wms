@@ -12,7 +12,11 @@
 #include <fmt/format.h>
 #include <grid-files/common/GeneralFunctions.h>
 #include <macgyver/Exception.h>
+#include <spine/HTTP.h>
+#include <spine/Json.h>
 #include <set>
+
+using namespace SmartMet::Plugin::Dali::JsonTools;
 
 namespace SmartMet
 {
@@ -47,7 +51,7 @@ std::set<std::string> querydata_layers = {"arrow",
 
 std::set<std::string> postgis_layers = {"postgis", "icemap"};
 
-WMSLayerType getWMSLayerType(const Json::Value& layer)
+WMSLayerType get_wms_layer_type(const Json::Value& layer)
 {
   try
   {
@@ -79,28 +83,7 @@ WMSLayerType getWMSLayerType(const Json::Value& layer)
   }
 }
 
-#if 0
-std::string getWMSLayerTypeAsString(WMSLayerType layerType)
-{
-  switch (layerType)
-  {
-    case WMSLayerType::PostGISLayer:
-      return  "PostGISLayer";
-    case WMSLayerType::QueryDataLayer:
-      return "QueryDataLayer";
-    case WMSLayerType::MapLayer:
-      return "MapLayer";
-#ifndef WITHOUT_OBSERVATION
-    case WMSLayerType::ObservationLayer:
-      return "ObservationLayer";
-#endif
-    default:
-      return "NotWMSLayer";
-    }
-}
-#endif
-
-WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
+WMSLayerType find_layer_type(const Json::Value& layers, Json::Value& layerRef)
 {
   WMSLayerType layer_type = WMSLayerType::NotWMSLayer;
   Json::Value nulljson;
@@ -114,7 +97,7 @@ WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
       // if sublayers exists examine them
       if (!sublayers.isNull())
       {
-        layer_type = findLayerType(sublayers, layerRef);
+        layer_type = find_layer_type(sublayers, layerRef);
         if (layer_type == WMSLayerType::MapLayer)
           continue;
         if (layer_type != WMSLayerType::NotWMSLayer)
@@ -130,7 +113,7 @@ WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
       continue;
     }
 
-    layer_type = getWMSLayerType(layer);
+    layer_type = get_wms_layer_type(layer);
 
     if (layer_type == WMSLayerType::NotWMSLayer)
     {
@@ -151,14 +134,22 @@ WMSLayerType findLayerType(const Json::Value& layers, Json::Value& layerRef)
 
   return layer_type;
 }
-}  // anonymous namespace
 
 // This function deduces the WMS product type. In case of several layer definitions in the product
 // the most significant is chosen
-WMSLayerType determineProductType(const Json::Value& root, Json::Value& layerRef)
+WMSLayerType determine_product_type(const WMSConfig& wmsconfig,
+                                    const std::string& producer,
+                                    const Json::Value& root,
+                                    Json::Value& layerRef)
 {
   try
   {
+#ifndef WITHOUT_OBSERVATION
+    const auto obsProducers = wmsconfig.getObservationProducers();
+    if (obsProducers.find(producer) != obsProducers.end())
+      return WMSLayerType::ObservationLayer;
+#endif
+
     Json::Value nulljson;
     Json::Value views = root.get("views", nulljson);
 
@@ -173,7 +164,7 @@ WMSLayerType determineProductType(const Json::Value& root, Json::Value& layerRef
     if (layers.isNull())
       throw Fmi::Exception(BCP, "No layers in WMS layer definition");
 
-    WMSLayerType layer_type = findLayerType(layers, layerRef);  // The resolved layer type
+    WMSLayerType layer_type = find_layer_type(layers, layerRef);  // The resolved layer type
 
     if (layer_type != WMSLayerType::NotWMSLayer)
       return layer_type;
@@ -194,75 +185,16 @@ WMSLayerType determineProductType(const Json::Value& root, Json::Value& layerRef
   }
 }
 
-SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
-                                               const std::string& theNamespace,
-                                               const std::string& theCustomer,
-                                               const WMSConfig& theWMSConfig)
+std::vector<interval_dimension_item> extract_intervals(Json::Value& root)
 {
   try
   {
-    using namespace Dali::JsonTools;
-
-    Json::Value root = theWMSConfig.getJsonCache().get(theFileName);
-
-    const bool use_wms = true;
-    Spine::JSON::preprocess(
-        root,
-        theWMSConfig.itsDaliConfig.rootDirectory(use_wms),
-        theWMSConfig.itsDaliConfig.rootDirectory(use_wms) + "/customers/" + theCustomer + "/layers",
-        theWMSConfig.itsJsonCache);
-    Spine::JSON::dereference(root);
-
-    SharedWMSLayer layer;
-    Json::Value parsedLayer;
-
-    // producer timestep given in root level
-    std::string producer;
-    remove_string(producer, root, "producer");
-
-    std::string timestep;
-    remove_string(timestep, root, "timestep");
-
-    std::string parameter;
-    remove_string(parameter, root, "parameter");
-
-    // observation layer is reasoned from producer,
-    // other layers from layer type as defined in product file
-
-    auto obsProducers = theWMSConfig.getObservationProducers();
-
-    WMSLayerType layerType = WMSLayerType::NotWMSLayer;
-    if (obsProducers.find(producer) != obsProducers.end())
-      layerType = WMSLayerType::ObservationLayer;
-    else
-      layerType = determineProductType(root, parsedLayer);
-
-    uint geometryId = 0;
-    remove_uint(geometryId, root, "geometryId");
-
-    boost::optional<std::string> source;
-    remove_string(source, root, "source");
-    if (source)
-    {
-      if (*source == "grid")
-      {
-        layerType = WMSLayerType::GridDataLayer;
-
-        std::vector<std::string> partList;
-        splitString(producer, ':', partList);
-        if (partList.size() == 2)
-        {
-          producer = partList[0];
-          geometryId = toUInt32(partList[1]);
-        }
-      }
-    }
-
     boost::optional<int> interval_default;
     remove_int(interval_default, root, "interval");
 
-    std::vector<interval_dimension_item> intervals;
     auto json = remove(root, "intervals");
+    std::vector<interval_dimension_item> intervals;
+
     if (!json.isNull())
     {
       if (!json.isArray())
@@ -304,8 +236,103 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
         intervals.emplace_back(interval_dimension_item(
             interval_start ? *interval_start : 0, interval_end ? *interval_end : 0, true));
     }
+    return intervals;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to extract layer interval settings!");
+  }
+}
 
-    boost::filesystem::path p(theFileName);
+void extract_crs(Json::Value& root,
+                 std::set<std::string>& enabled_refs,
+                 std::set<std::string>& disabled_refs)
+{
+  try
+  {
+    auto json = remove(root, "crs");
+    if (!json.isNull())
+    {
+      if (!json.isObject())
+        throw Fmi::Exception(BCP, "top level crs setting must be a group");
+
+      auto j = remove(json, "enable");
+      if (!j.isNull())
+        extract_set("crs.enable", enabled_refs, j);
+
+      j = remove(json, "disable");
+      if (!j.isNull())
+        extract_set("crs.disable", disabled_refs, j);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to extract CRS settings!");
+  }
+}
+
+void extract_keyword(Json::Value& root, boost::optional<std::set<std::string>>& keywords)
+{
+  try
+  {
+    auto json = remove(root, "keyword");
+    if (!json.isNull())
+    {
+      keywords = std::set<std::string>();
+      if (json.isString())
+        keywords->insert(json.asString());
+      else if (json.isArray())
+      {
+        for (auto& j : json)
+          keywords->insert(j.asString());
+      }
+      else
+        throw Fmi::Exception(BCP, "Keyword value must be a string or an array of strings");
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to extract keyword settings!");
+  }
+}
+
+SharedWMSLayer create_wms_layer(const WMSConfig& theWMSConfig, Json::Value& root)
+{
+  try
+  {
+    // producer timestep given in root level
+    std::string producer;
+    remove_string(producer, root, "producer");
+
+    // if no producer defined, let's use default producer
+    if (producer.empty())
+      producer = theWMSConfig.getDaliConfig().defaultModel();
+
+    Json::Value parsedLayer;
+    WMSLayerType layerType = determine_product_type(theWMSConfig, producer, root, parsedLayer);
+
+    uint geometryId = 0;
+    remove_uint(geometryId, root, "geometryId");
+
+    boost::optional<std::string> source;
+    remove_string(source, root, "source");
+    if (source)
+    {
+      if (*source == "grid")
+      {
+        layerType = WMSLayerType::GridDataLayer;
+
+        std::vector<std::string> partList;
+        splitString(producer, ':', partList);
+        if (partList.size() == 2)
+        {
+          producer = partList[0];
+          geometryId = toUInt32(partList[1]);
+        }
+      }
+    }
+
+    SharedWMSLayer layer;
 
     switch (layerType)
     {
@@ -321,23 +348,21 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
       }
       case WMSLayerType::QueryDataLayer:
       {
-        // if no producer defined, let's use default producer
-        if (producer.empty())
-          producer = theWMSConfig.itsDaliConfig.defaultModel();
         layer = boost::make_shared<WMSQueryDataLayer>(theWMSConfig, producer);
         break;
       }
       case WMSLayerType::GridDataLayer:
       {
-        // if no producer defined, let's use default producer
-        if (producer.empty())
-          producer = theWMSConfig.itsDaliConfig.defaultModel();
+        std::string parameter;
+        remove_string(parameter, root, "parameter");
         layer = boost::make_shared<WMSGridDataLayer>(theWMSConfig, producer, parameter, geometryId);
         break;
       }
       case WMSLayerType::ObservationLayer:
       {
 #ifndef WITHOUT_OBSERVATION
+        std::string timestep;
+        remove_string(timestep, root, "timestep");
         if (timestep.empty())
           timestep = "-1";
         // timestep -1 indicates that no timestep is given in product-file
@@ -347,26 +372,53 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
 #endif
         break;
       }
-      default:  // we should never end up here since determineLayerType should always return a
-                // valid layer type
+      default:  // we should never end up here
         throw Fmi::Exception(BCP, "WMS Layer enum not handled in WMSLayerFactory.");
-    };
+    }
 
-    // Generic variables. The quiet flag must be set before updateLayerMetaData is called.
+    return layer;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to create WMS layer!");
+  }
+}
 
-    layer->quiet = theWMSConfig.itsDaliConfig.quiet();
+}  // anonymous namespace
+
+SharedWMSLayer WMSLayerFactory::createWMSLayer(Json::Value& root,
+                                               const std::string& theFileName,
+                                               const std::string& theFullLayerName,
+                                               const std::string& theNamespace,
+                                               const std::string& theCustomer,
+                                               const WMSConfig& theWMSConfig)
+{
+  try
+  {
+    SharedWMSLayer layer = create_wms_layer(theWMSConfig, root);
+
+    // Generic variables.
+
+    // Note how this is given externally. It may be filename based or generated
+    // from JSON settings.
+    layer->name = theFullLayerName;
+
+    // The quiet flag must be set before updateLayerMetaData is called.
+    layer->quiet = theWMSConfig.getDaliConfig().quiet();
+
     layer->setProductFile(theFileName);
     layer->setCustomer(theCustomer);
 
-    // WMS GetCapability settings
+    std::vector<interval_dimension_item> intervals = extract_intervals(root);
 
-    // for hiding the layer from GetCapabilities queries for example if the layer is not public
+    // WMS GetCapability settings
 
     Json::Value nulljson;
 
+    // for hiding the layer from GetCapabilities queries for example if the layer is not public
     remove_bool(layer->hidden, root, "hidden");
+
     remove_bool(layer->timeDimensionDisabled, root, "disable_wms_time_dimension");
-    layer->name = theNamespace + ":" + p.stem().string();
     remove_string(layer->name, root, "name");
     remove_int(layer->opaque, root, "opaque");
     remove_int(layer->queryable, root, "queryable");
@@ -375,7 +427,7 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     remove_int(layer->fixed_width, root, "fixed_width");
     remove_int(layer->fixed_height, root, "fixed_height");
 
-    json = remove(root, "title");
+    auto json = remove(root, "title");
     if (!json.isNull())
     {
       layer->title = Dali::Text("WMS layer title");
@@ -389,36 +441,9 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
       layer->abstract->init(json, theWMSConfig.itsDaliConfig);
     }
 
-    json = remove(root, "keyword");
-    if (!json.isNull())
-    {
-      layer->keywords = std::set<std::string>();
-      if (json.isString())
-        layer->keywords->insert(json.asString());
-      else if (json.isArray())
-      {
-        for (auto& j : json)
-          layer->keywords->insert(j.asString());
-      }
-      else
-        throw Fmi::Exception(BCP,
-                             p.string() + " keyword value must be an array of strings or a string");
-    }
+    extract_keyword(root, layer->keywords);
 
-    json = remove(root, "crs");
-    if (!json.isNull())
-    {
-      if (!json.isObject())
-        throw Fmi::Exception(BCP, "top level crs setting must be a group");
-
-      auto j = remove(json, "enable");
-      if (!j.isNull())
-        extract_set("crs.enable", layer->enabled_refs, j);
-
-      j = remove(json, "disable");
-      if (!j.isNull())
-        extract_set("crs.disable", layer->disabled_refs, j);
-    }
+    extract_crs(root, layer->enabled_refs, layer->disabled_refs);
 
     // Update metadata from DB etc
 
@@ -435,12 +460,6 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     std::string mapcrs;
     remove_string(mapcrs, projection, "crs");
 
-#if 0  // What's this for? All native projections should be on the supported list anyway.
-    // Validate namespace
-    if (mapcrs.substr(0, 5) == "EPSG:" || mapcrs.substr(0, 4) == "CRS:")
-      layer->crs.insert(std::make_pair(mapcrs, mapcrs));
-#endif
-
     // Calculate projected bboxes only once to speed up GetCapabilities
     layer->initProjectedBBoxes();
 
@@ -451,24 +470,91 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(const std::string& theFileName,
     for (const auto& item : intervals)
       layer->addIntervalDimension(item.interval_start, item.interval_end, item.interval_default);
 
-#if 0
-    // This seems useless here since initializing a WMS layer for GetCapabilities purposes
-    // does not mean all layer settings are validated. Instead, an actual load of the layer
-    // needs to happen.
-    if (!root.empty())
-    {
-      Json::StyledWriter writer;
-      std::cout << fmt::format(
-          "{} Remaining JSON for WMS layer {}:\n{}\n", Spine::log_time_str(), theFileName, writer.write(root)) << std::flush;
-    }
-#endif
-
     return layer;
   }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Failed to create WMS layer!");
   }
+}
+
+std::list<SharedWMSLayer> WMSLayerFactory::createWMSLayers(const std::string& theFileName,
+                                                           const std::string& theFullLayerName,
+                                                           const std::string& theNamespace,
+                                                           const std::string& theCustomer,
+                                                           const WMSConfig& theWMSConfig)
+{
+  std::list<SharedWMSLayer> ret;
+
+  // First process the JSON
+
+  Json::Value root = theWMSConfig.getJsonCache().get(theFileName);
+
+  const bool use_wms = true;
+  const auto root_dir = theWMSConfig.getDaliConfig().rootDirectory(use_wms);
+  const auto customer_layers_dir = root_dir + "/customers/" + theCustomer + "/layers";
+
+  Spine::JSON::preprocess(root, root_dir, customer_layers_dir, theWMSConfig.itsJsonCache);
+  Spine::JSON::dereference(root);
+
+  // If there are no variants, process the layer as is
+
+  auto variants_j = remove(root, "variants");
+
+  if (variants_j.isNull())
+  {
+    auto layer = createWMSLayer(
+        root, theFileName, theFullLayerName, theNamespace, theCustomer, theWMSConfig);
+    ret.emplace_back(layer);
+    return ret;
+  }
+
+  // Process variants as if the settings were overridden by a query string.
+  // Variants must define atleast name and title, all other settings are optional.
+
+  if (!variants_j.isArray())
+    throw Fmi::Exception(
+        BCP, "WMS layer " + theFullLayerName + " variants setting must be a JSON array");
+
+  for (auto& settings_j : variants_j)
+  {
+    if (!settings_j.isObject())
+      throw Fmi::Exception(BCP,
+                           "WMS layer " + theFullLayerName +
+                               " variants setting must be a JSON array containing JSON objects");
+
+    Json::Value variant_j = root;  // deep copy for applying the changes
+
+    // Obligatory settings
+    std::string name;
+    std::string title;
+    remove_string(name, settings_j, "name");
+    remove_string(title, settings_j, "title");
+
+    if (name.empty())
+      throw Fmi::Exception(BCP, "WMS layer " + theFullLayerName + " variants must all be named");
+    if (title.empty())
+      throw Fmi::Exception(BCP, "WMS layer " + theFullLayerName + " variants must all have titles");
+
+    variant_j["title"] = title;
+
+    // Process optional settings (abstract etc)
+
+    Spine::HTTP::ParamMap substitutes;
+    const auto members = settings_j.getMemberNames();
+    for (const auto& name : members)
+      substitutes.insert({name, settings_j[name].asString()});
+
+    SmartMet::Spine::JSON::expand(variant_j, substitutes);
+
+    // Note: using variant name instead of theFullLayerName
+    auto layer =
+        createWMSLayer(variant_j, theFileName, name, theNamespace, theCustomer, theWMSConfig);
+
+    ret.emplace_back(layer);
+  }
+
+  return ret;
 }
 
 }  // namespace WMS

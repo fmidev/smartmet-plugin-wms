@@ -13,9 +13,9 @@
 
 #include "WMSConfig.h"
 #include "WMSLayer.h"
-
 #include <engines/querydata/Engine.h>
 #include <spine/Json.h>
+#include <list>
 
 namespace SmartMet
 {
@@ -26,7 +26,16 @@ namespace WMS
 class WMSLayerFactory
 {
  public:
-  static SharedWMSLayer createWMSLayer(const std::string& theFileName,
+  static std::list<SharedWMSLayer> createWMSLayers(const std::string& theFileName,
+                                                   const std::string& theFullLayerName,
+                                                   const std::string& theNamespace,
+                                                   const std::string& theCustomer,
+                                                   const WMSConfig& theWMSConfig);
+
+ private:
+  static SharedWMSLayer createWMSLayer(Json::Value& root,
+                                       const std::string& theFileName,
+                                       const std::string& theFullLayerName,
                                        const std::string& theNamespace,
                                        const std::string& theCustomer,
                                        const WMSConfig& theWMSConfig);

@@ -1,0 +1,31 @@
+{
+    "title": "PAL Skandinavia Temperature",
+    "abstract": "PAL abstract",
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views":
+    [
+        {
+	    "qid": "v1",
+            "layers":
+	    [
+                {
+		    "qid": "l1",
+                    "layer_type": "isoband",
+		    "parameter": "Temperature",
+                    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css",
+		    "attributes":
+		    {
+			"id": "temperature_isobands"
+		    }
+                }
+            ]
+        }
+    ]
+}

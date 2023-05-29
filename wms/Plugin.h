@@ -152,6 +152,7 @@ class Plugin : public SmartMetPlugin
                                     Product& theProduct);
   void wmsPreprocessJSON(State& theState,
                          const Spine::HTTP::Request& theRequest,
+                         const std::string& theName,
                          Json::Value& theJson,
                          bool isCnfRequest,
                          int theStage);
@@ -196,6 +197,9 @@ class Plugin : public SmartMetPlugin
                              const std::string& theSubDir,
                              const std::string& theFileName,
                              bool theWmsFlag) const;
+
+  static Spine::HTTP::ParamMap extractValidParameters(const Spine::HTTP::ParamMap& theParams);
+  static void print(const ParameterInfos& infos);
 
   // Plugin configuration
   const std::string itsModuleName;

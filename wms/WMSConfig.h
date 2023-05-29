@@ -163,8 +163,12 @@ class WMSConfig
   boost::posix_time::ptime getCapabilitiesExpirationTime() const;
   boost::posix_time::ptime getCapabilitiesModificationTime() const
   {
-    return *itsCapabilitiesModificationTime;
+    return itsCapabilitiesModificationTime;
   }
+
+#ifndef WITHOUT_OBSERVATION
+  std::set<std::string> getObservationProducers() const;
+#endif
 
  private:
   void parse_references();
@@ -176,7 +180,7 @@ class WMSConfig
   const Plugin::Dali::Config& itsDaliConfig;
   const Spine::JsonCache& itsJsonCache;
 
-  // Engines for GetCapabilities
+  // Engines for GetCapabilities, not owned pointers
   Engine::Querydata::Engine* itsQEngine = nullptr;
   Engine::Gis::Engine* itsGisEngine = nullptr;
   Engine::Grid::Engine* itsGridEngine = nullptr;
@@ -221,22 +225,35 @@ class WMSConfig
   std::unique_ptr<Fmi::AsyncTask> itsGetCapabilitiesTask;
 
   void capabilitiesUpdateLoop();
+
   void updateLayerMetaData();
+
+  void updateLayerMetaDataForCustomer(
+      const boost::filesystem::directory_iterator& dir,
+      const boost::shared_ptr<LayerMap>& mylayers,
+      LayerMap& newProxies,
+      std::map<SharedWMSLayer, std::map<std::string, std::string>>& externalLegends);
+
+  void updateLayerMetaDataForCustomerLayer(
+      const boost::filesystem::recursive_directory_iterator& itr,
+      const std::string& customer,
+      const std::string& productdir,
+      const boost::shared_ptr<LayerMap>& mylayers,
+      LayerMap& newProxies,
+      std::map<SharedWMSLayer, std::map<std::string, std::string>>& externalLegends);
+
   void updateModificationTime();
 
-#ifndef WITHOUT_OBSERVATION
-  std::set<std::string> getObservationProducers() const;
-#endif
   // For locking purposes
   bool isValidLayerImpl(const std::string& theLayer, bool theAcceptHiddenLayerFlag = false) const;
 
   friend class WMSLayerFactory;
 
-  // Shutdown variables
-
   std::map<std::string, Json::Value> itsLegendGraphicLayers;
+
   // configuration info for legend (parameter names, units, legend size)
   WMSLegendGraphicSettings itsLegendGraphicSettings;
+
   // Keep track of product file modification times and report if time is changed
   std::map<std::string, std::time_t> itsProductFileModificationTime;
 
@@ -245,16 +262,18 @@ class WMSConfig
   // symbol in use. Layers using bigger symbols should probably use a layer specific
   // setting so that processing other layers will not slow down unnecessarily.
   int itsMargin = 0;
+
   // Mode of layer hierarchy
   WMSLayerHierarchy::HierarchyType itsLayerHierarchyType = WMSLayerHierarchy::HierarchyType::flat;
+
   // Flag indicates if multiple intervals are allowed
   bool itsMultipleIntervals = false;
 
   // Set of files for which a warning has already been printed
   std::set<std::string> itsWarnedFiles;
 
-  boost::optional<boost::posix_time::ptime> itsCapabilitiesModificationTime =
-      boost::posix_time::from_time_t(0);
+  boost::posix_time::ptime itsCapabilitiesModificationTime = boost::posix_time::from_time_t(0);
+
 };  // class WMSConfig
 
 }  // namespace WMS
