@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.5.22
+Version: 23.5.29
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -35,7 +35,7 @@ BuildRequires: smartmet-library-timeseries-devel >= 23.3.15
 BuildRequires: smartmet-engine-authentication-devel >= 23.4.27
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 23.5.11
+BuildRequires: smartmet-engine-observation-devel >= 23.5.23
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.12.21
 BuildRequires: smartmet-engine-grid-devel >= 23.4.17
@@ -84,7 +84,7 @@ Requires: smartmet-engine-contour >= 23.3.9
 Requires: smartmet-engine-gis >= 22.12.21
 Requires: smartmet-engine-grid >= 23.4.17
 Requires: smartmet-engine-geonames >= 23.4.27
-Requires: smartmet-server >= 23.4.27
+Requires: smartmet-server >= 23.5.19
 Requires: smartmet-library-spine >= 23.4.27
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
@@ -123,7 +123,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 23.5.11
+#TestRequires: smartmet-engine-observation-devel >= 23.5.23
 %endif
 
 %description
@@ -152,6 +152,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon May 29 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.29-1.fmi
+- Added support for layer variants
+
 * Mon May 22 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.22-1.fmi
 - Handle legend_url_layer removal properly
 - Added timestamps to JSON configuration error messages
