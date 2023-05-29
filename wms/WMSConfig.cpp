@@ -1007,14 +1007,17 @@ void WMSConfig::updateLayerMetaDataForCustomerLayer(
       {
         for (const auto& newlayer : newlayers)
         {
-          update_capabilities_modification_time(itsCapabilitiesModificationTime, newlayer);
+          if (newlayer)
+          {
+            update_capabilities_modification_time(itsCapabilitiesModificationTime, newlayer);
 
-          if (!newlayer->getLegendFiles().empty())
-            externalLegends[newlayer] = newlayer->getLegendFiles();
+            if (!newlayer->getLegendFiles().empty())
+              externalLegends[newlayer] = newlayer->getLegendFiles();
 
-          WMSLayerProxy newProxy(itsGisEngine, newlayer);
-          auto newName = newlayer->getName();      // JSON may override layer name
-          newProxies.insert({newName, newProxy});  // so not using fullLayername here
+            WMSLayerProxy newProxy(itsGisEngine, newlayer);
+            auto newName = newlayer->getName();      // JSON may override layer name
+            newProxies.insert({newName, newProxy});  // so not using fullLayername here
+          }
         }
       }
     }

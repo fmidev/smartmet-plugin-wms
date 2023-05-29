@@ -484,78 +484,83 @@ std::list<SharedWMSLayer> WMSLayerFactory::createWMSLayers(const std::string& th
                                                            const std::string& theCustomer,
                                                            const WMSConfig& theWMSConfig)
 {
-  std::list<SharedWMSLayer> ret;
-
-  // First process the JSON
-
-  Json::Value root = theWMSConfig.getJsonCache().get(theFileName);
-
-  const bool use_wms = true;
-  const auto root_dir = theWMSConfig.getDaliConfig().rootDirectory(use_wms);
-  const auto customer_layers_dir = root_dir + "/customers/" + theCustomer + "/layers";
-
-  Spine::JSON::preprocess(root, root_dir, customer_layers_dir, theWMSConfig.itsJsonCache);
-  Spine::JSON::dereference(root);
-
-  // If there are no variants, process the layer as is
-
-  auto variants_j = remove(root, "variants");
-
-  if (variants_j.isNull())
+  try
   {
-    auto layer = createWMSLayer(
-        root, theFileName, theFullLayerName, theNamespace, theCustomer, theWMSConfig);
-    ret.emplace_back(layer);
+    std::list<SharedWMSLayer> ret;
+
+    // First process the JSON
+
+    Json::Value root = theWMSConfig.getJsonCache().get(theFileName);
+
+    const bool use_wms = true;
+    const auto root_dir = theWMSConfig.getDaliConfig().rootDirectory(use_wms);
+    const auto customer_layers_dir = root_dir + "/customers/" + theCustomer + "/layers";
+
+    Spine::JSON::preprocess(root, root_dir, customer_layers_dir, theWMSConfig.itsJsonCache);
+    Spine::JSON::dereference(root);
+
+    // If there are no variants, process the layer as is
+
+    auto variants_j = remove(root, "variants");
+
+    if (variants_j.isNull())
+    {
+      auto layer = createWMSLayer(
+          root, theFileName, theFullLayerName, theNamespace, theCustomer, theWMSConfig);
+      if (layer)
+        ret.emplace_back(layer);
+      return ret;
+    }
+
+    // Process variants as if the settings were overridden by a query string.
+    // Variants must define atleast name and title, all other settings are optional.
+
+    if (!variants_j.isArray())
+      throw Fmi::Exception(
+          BCP, "WMS layer " + theFullLayerName + " variants setting must be a JSON array");
+
+    for (auto& settings_j : variants_j)
+    {
+      if (!settings_j.isObject())
+        throw Fmi::Exception(BCP,
+                             "WMS layer " + theFullLayerName +
+                                 " variants setting must be a JSON array containing JSON objects");
+
+      Json::Value variant_j = root;  // deep copy for applying the changes
+
+      // Obligatory settings
+      std::string name;
+      std::string title;
+      remove_string(name, settings_j, "name");
+      remove_string(title, settings_j, "title");
+
+      if (name.empty())
+        throw Fmi::Exception(BCP, "WMS layer " + theFullLayerName + " variants must all be named");
+      if (title.empty())
+        throw Fmi::Exception(BCP,
+                             "WMS layer " + theFullLayerName + " variants must all have titles");
+
+      variant_j["title"] = title;
+
+      // Process optional settings (abstract etc)
+
+      Spine::HTTP::ParamMap substitutes;
+      const auto members = settings_j.getMemberNames();
+      for (const auto& name : members)
+        substitutes.insert({name, settings_j[name].asString()});
+
+      SmartMet::Spine::JSON::expand(variant_j, substitutes);
+
+      // Note: using variant name instead of theFullLayerName
+      auto layer =
+          createWMSLayer(variant_j, theFileName, name, theNamespace, theCustomer, theWMSConfig);
+      if (layer)
+        ret.emplace_back(layer);
+    }
+
     return ret;
+    catch (...) { throw Fmi::Exception::Trace(BCP, "Failed to create WMS layers!"); }
   }
-
-  // Process variants as if the settings were overridden by a query string.
-  // Variants must define atleast name and title, all other settings are optional.
-
-  if (!variants_j.isArray())
-    throw Fmi::Exception(
-        BCP, "WMS layer " + theFullLayerName + " variants setting must be a JSON array");
-
-  for (auto& settings_j : variants_j)
-  {
-    if (!settings_j.isObject())
-      throw Fmi::Exception(BCP,
-                           "WMS layer " + theFullLayerName +
-                               " variants setting must be a JSON array containing JSON objects");
-
-    Json::Value variant_j = root;  // deep copy for applying the changes
-
-    // Obligatory settings
-    std::string name;
-    std::string title;
-    remove_string(name, settings_j, "name");
-    remove_string(title, settings_j, "title");
-
-    if (name.empty())
-      throw Fmi::Exception(BCP, "WMS layer " + theFullLayerName + " variants must all be named");
-    if (title.empty())
-      throw Fmi::Exception(BCP, "WMS layer " + theFullLayerName + " variants must all have titles");
-
-    variant_j["title"] = title;
-
-    // Process optional settings (abstract etc)
-
-    Spine::HTTP::ParamMap substitutes;
-    const auto members = settings_j.getMemberNames();
-    for (const auto& name : members)
-      substitutes.insert({name, settings_j[name].asString()});
-
-    SmartMet::Spine::JSON::expand(variant_j, substitutes);
-
-    // Note: using variant name instead of theFullLayerName
-    auto layer =
-        createWMSLayer(variant_j, theFileName, name, theNamespace, theCustomer, theWMSConfig);
-
-    ret.emplace_back(layer);
-  }
-
-  return ret;
-}
 
 }  // namespace WMS
 }  // namespace Plugin
