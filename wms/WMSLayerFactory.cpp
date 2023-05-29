@@ -559,8 +559,12 @@ std::list<SharedWMSLayer> WMSLayerFactory::createWMSLayers(const std::string& th
     }
 
     return ret;
-    catch (...) { throw Fmi::Exception::Trace(BCP, "Failed to create WMS layers!"); }
   }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to create WMS layers!");
+  }
+}
 
 }  // namespace WMS
 }  // namespace Plugin
