@@ -95,7 +95,7 @@ class IntervalTimeDimension : public WMSTimeDimension
  public:
   ~IntervalTimeDimension() override = default;
   IntervalTimeDimension() = delete;
-  IntervalTimeDimension(std::vector<tag_interval> intervals);
+  explicit IntervalTimeDimension(std::vector<tag_interval> intervals);
 
   IntervalTimeDimension(const IntervalTimeDimension& other) = delete;
   IntervalTimeDimension(IntervalTimeDimension&& other) = delete;
@@ -175,7 +175,7 @@ time_intervals get_intervals(const Container& container)
 class WMSTimeDimensions
 {
  public:
-  WMSTimeDimensions(
+  explicit WMSTimeDimensions(
       const std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>>& tdims);
   void addTimeDimension(const boost::posix_time::ptime& origintime,
                         const boost::shared_ptr<WMSTimeDimension>& td);

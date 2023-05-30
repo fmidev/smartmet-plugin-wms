@@ -52,9 +52,9 @@ Config::Config(const string& configfile)
     itsConfig.lookupValue("language", itsDefaultLanguage);
 
     {
-      std::string languages;
-      itsConfig.lookupValue("languages", languages);
-      boost::algorithm::split(itsLanguages, languages, boost::is_any_of(","));
+      std::string langs;
+      itsConfig.lookupValue("languages", langs);
+      boost::algorithm::split(itsLanguages, langs, boost::is_any_of(","));
       itsLanguages.insert(itsDefaultLanguage);
     }
 

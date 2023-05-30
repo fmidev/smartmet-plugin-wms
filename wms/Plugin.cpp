@@ -97,8 +97,8 @@ void check_remaining_dali_json(Json::Value &json, const std::string &name)
 {
   std::vector<std::string> deletions{"abstract", "refs", "styles"};
 
-  for (const auto &name : deletions)
-    static_cast<void>(JsonTools::remove(json, name));
+  for (const auto &delete_name : deletions)
+    static_cast<void>(JsonTools::remove(json, delete_name));
 
   if (!json.empty())
   {

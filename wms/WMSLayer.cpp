@@ -624,10 +624,10 @@ LegendGraphicInfo get_legend_graphic_info(const Json::Value& layersJson)
       }
     }
 
-    auto layersJson = layerJson.get("layers", nulljson);
-    if (!layersJson.isNull() && layersJson.isArray())
+    auto layers_j = layerJson.get("layers", nulljson);
+    if (!layers_j.isNull() && layers_j.isArray())
     {
-      LegendGraphicInfo recursiveRet = get_legend_graphic_info(layersJson);
+      LegendGraphicInfo recursiveRet = get_legend_graphic_info(layers_j);
       ret.insert(ret.end(), recursiveRet.begin(), recursiveRet.end());
     }
   }
@@ -1041,7 +1041,7 @@ std::map<std::string, Json::Value> readLegendFiles(const std::string& wmsroot,
 NamedLegendGraphicInfo get_named_info(const Json::Value& root,
                                       const std::string& name,
                                       const std::map<std::string, WMSLayerStyle>& styles,
-                                      const std::map<std::string, std::string> legendfiles)
+                                      const std::map<std::string, std::string>& legendfiles)
 {
   NamedLegendGraphicInfo named_lgi;
 

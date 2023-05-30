@@ -23,7 +23,8 @@ class Text
 {
  public:
   Text() = delete;
-  Text(std::string name);
+  explicit Text(std::string name);
+  explicit Text(const char* name);
   Text(std::string name, const std::string& value);
 
   void init(Json::Value& theJson, const Config& theConfig);

@@ -344,7 +344,7 @@ void TextTable::makeTable(const Attributes& /* theFrameAttributes */,
                           const Attributes& /* theTextAttributes */,
                           CTPP::CDT& theGlobals,
                           CTPP::CDT& theLayersCdt,
-                          State& theState) const
+                          const State& theState) const
 {
   if (!itsTitleCellInfo.rows.empty())
   {

@@ -63,7 +63,7 @@ class TextTable
                  const Attributes& theTextAttributes,
                  CTPP::CDT& theGlobals,
                  CTPP::CDT& theLayersCdt,
-                 State& theState) const;
+                 const State& theState) const;
 
  private:
   void addTableAttributes(const Json::Value& attributes, const std::string& tablePart);

@@ -116,7 +116,7 @@ void IsolabelLayer::init(Json::Value& theJson,
         if (!start || !stop)
           throw Fmi::Exception(BCP, "Isolabel-layer isovalues start or stop setting missing");
 
-        if (json.size() > 0)
+        if (!json.empty())
         {
           auto names = json.getMemberNames();
           auto namelist = boost::algorithm::join(names, ",");

@@ -192,7 +192,7 @@ bool Layer::validResolution() const
   }
 }
 
-void Layer::setProjection(Projection& proj)
+void Layer::setProjection(const Projection& proj)
 {
   try
   {

@@ -71,8 +71,8 @@ void check_remaining_wms_json(Json::Value &json, const std::string &name)
       "styles",
   };
 
-  for (const auto &name : deletions)
-    static_cast<void>(JsonTools::remove(json, name));
+  for (const auto &delete_name : deletions)
+    static_cast<void>(JsonTools::remove(json, delete_name));
 
   if (!json.empty())
   {

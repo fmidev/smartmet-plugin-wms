@@ -53,7 +53,7 @@ void remove_tz(boost::local_time::time_zone_ptr& theZone,
                Json::Value& theJson,
                const std::string& theName,
                const Fmi::TimeZones& theTimeZones,
-               const boost::local_time::time_zone_ptr& = {});
+               const boost::local_time::time_zone_ptr& theDefault = {});
 
 void remove_time(boost::optional<boost::posix_time::ptime>& theTime,
                  Json::Value& theJson,

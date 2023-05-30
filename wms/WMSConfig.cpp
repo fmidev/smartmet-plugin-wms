@@ -1601,25 +1601,25 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
 
   for (const auto& legendLayer : result.legendLayers)
   {
-    Json::Value json;
+    Json::Value legend_j;
 
     std::unique_ptr<Json::CharReader> reader(charreaderbuilder.newCharReader());
     std::string errors;
     if (!reader->parse(
-            legendLayer.c_str(), legendLayer.c_str() + legendLayer.size(), &json, &errors))
+            legendLayer.c_str(), legendLayer.c_str() + legendLayer.size(), &legend_j, &errors))
       throw Fmi::Exception(BCP, "Legend template file parsing failed!")
           .addParameter("Message", errors);
 
     const bool wms_mode_on = true;
     Spine::JSON::preprocess(
-        json,
+        legend_j,
         itsDaliConfig.rootDirectory(wms_mode_on),
         itsDaliConfig.rootDirectory(wms_mode_on) + "/customers/" + customer + "/layers",
         itsJsonCache);
 
-    Spine::JSON::dereference(json);
+    Spine::JSON::dereference(legend_j);
 
-    ret.push_back(json);
+    ret.push_back(legend_j);
   }
 
   return ret;
