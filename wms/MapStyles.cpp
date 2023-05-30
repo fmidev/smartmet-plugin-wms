@@ -70,7 +70,7 @@ void MapStyles::init(Json::Value& theJson, const Config& theConfig)
         if (!jattributes.isNull())
           feature_attributes[name].init(jattributes, theConfig);
 
-        if (j.size() > 0)
+        if (!j.empty())
         {
           auto names = j.getMemberNames();
           auto namelist = boost::algorithm::join(names, ",");
@@ -79,7 +79,7 @@ void MapStyles::init(Json::Value& theJson, const Config& theConfig)
       }
     }
 
-    if (theJson.size() > 0)
+    if (!theJson.empty())
     {
       auto names = theJson.getMemberNames();
       auto namelist = boost::algorithm::join(names, ",");

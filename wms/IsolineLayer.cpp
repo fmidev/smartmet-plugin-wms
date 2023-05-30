@@ -33,7 +33,7 @@ namespace Dali
 {
 namespace
 {
-bool skip_value(double value, const std::vector<double> except_vector)
+bool skip_value(double value, const std::vector<double>& except_vector)
 {
   if (except_vector.empty())
     return false;
@@ -52,7 +52,7 @@ void generate_isolines(std::vector<Isoline>& isolines,
                        double endvalue,
                        double interval,
                        const std::string& pattern,
-                       const std::vector<double> except_vector)
+                       const std::vector<double>& except_vector)
 {
   for (double i = startvalue; i <= endvalue; i += interval)  // NOLINT(cert-flp30-c)
   {
@@ -181,7 +181,7 @@ void IsolineLayer::init(Json::Value& theJson,
             autoqid = "isoline_{}";  // else use "isoline_{}"
         }
 
-        if (json.size() > 0)
+        if (!json.empty())
         {
           auto names = json.getMemberNames();
           auto namelist = boost::algorithm::join(names, ",");

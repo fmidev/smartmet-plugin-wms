@@ -171,7 +171,7 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
       }
     }
 
-    if (theJson.size() > 0)
+    if (!theJson.empty())
     {
       auto names = theJson.getMemberNames();
       auto namelist = boost::algorithm::join(names, ",");

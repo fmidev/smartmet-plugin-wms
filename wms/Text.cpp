@@ -13,6 +13,7 @@ namespace Dali
 {
 // Create a tagged object with no initial translations
 Text::Text(std::string name) : tag(std::move(name)) {}
+Text::Text(const char* name) : tag(name) {}
 
 // Create a tagged object with just one default translation
 Text::Text(std::string name, const std::string& value) : tag(std::move(name))

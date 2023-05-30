@@ -241,9 +241,9 @@ void add_layer_info(bool multiple_intervals,
     {
       std::string name = (*baseInfo)["name"].GetString();
       std::string title = (*baseInfo)["title"].GetString();
-      std::string reference_time = boost::posix_time::to_iso_string(*(lh.reference_time));
-      name += (":origintime_" + reference_time);
-      title += (" origintime " + reference_time);
+      std::string ref_time = boost::posix_time::to_iso_string(*(lh.reference_time));
+      name += (":origintime_" + ref_time);
+      title += (" origintime " + ref_time);
       (*baseInfo)["name"] = name;
       (*baseInfo)["title"] = title;
     }

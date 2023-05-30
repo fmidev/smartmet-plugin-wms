@@ -41,9 +41,10 @@ void NullLayer::init(Json::Value& theJson,
  */
 // ----------------------------------------------------------------------
 
-void NullLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+void NullLayer::generate(CTPP::CDT& /* theGlobals */,
+                         CTPP::CDT& /* theLayersCdt */,
+                         State& /* theState */)
 {
-  return;
 }
 
 // ----------------------------------------------------------------------

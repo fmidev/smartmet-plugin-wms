@@ -42,7 +42,7 @@ void WindRose::init(Json::Value& theJson, const Config& theConfig)
     if (!json.isNull())
       JsonTools::extract_array("limits", limits, json, theConfig);
 
-    if (theJson.size() > 0)
+    if (!theJson.empty())
     {
       auto names = theJson.getMemberNames();
       auto namelist = boost::algorithm::join(names, ",");

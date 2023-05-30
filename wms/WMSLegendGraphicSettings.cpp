@@ -289,7 +289,7 @@ std::ostream& operator<<(std::ostream& ost, const LegendGraphicLayout& layout)
   ost << "LegendGraphicLayout:\n";
   if (layout.param_name_xoffset)
     ost << " param_name_xoffset: " << *layout.param_name_xoffset << std::endl;
-  if (layout.param_name_xoffset)
+  if (layout.param_name_yoffset)
     ost << " param_name_yoffset: " << *layout.param_name_yoffset << std::endl;
   if (layout.param_unit_xoffset)
     ost << " param_unit_xoffset: " << *layout.param_unit_xoffset << std::endl;

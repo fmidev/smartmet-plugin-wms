@@ -341,20 +341,16 @@ boost::optional<std::string> Attributes::getLocalIri(const std::string& theName)
 
     const auto& att = attributes.find(theName);
     if (att == attributes.end())
-    {
       return ret;
-    }
 
     // return empty value if the value does not look like a local IRI
 
-    const auto& value = att->second;
-    if (value.empty() || value.substr(0, 5) != "url(#" || value[value.size() - 1] != ')')
-    {
+    const auto& att_value = att->second;
+    if (att_value.empty() || att_value.substr(0, 5) != "url(#" || att_value.back() != ')')
       return ret;
-    }
 
     // Return the local name
-    ret = value.substr(5, value.size() - 6);
+    ret = att_value.substr(5, att_value.size() - 6);
     return ret;
   }
   catch (...)
@@ -373,12 +369,12 @@ bool Attributes::getLocalIriAndParameters(const std::string& theName,
     if (att == attributes.end())
       return false;
 
-    const auto& value = att->second;
-    if (value.empty() || value.substr(0, 5) != "url(#" || value[value.size() - 1] != ')')
+    const auto& att_value = att->second;
+    if (att_value.empty() || att_value.substr(0, 5) != "url(#" || att_value.back() != ')')
       return false;
 
     // Return the local name
-    std::string str = value.substr(5, value.size() - 6);
+    std::string str = att_value.substr(5, att_value.size() - 6);
 
     std::vector<std::string> list;
     splitString(str, '?', list);
@@ -418,9 +414,9 @@ boost::optional<std::string> Attributes::remove(const std::string& theName)
   if (pos == attributes.end())
     return {};
 
-  std::string value = pos->second;
+  auto att_value = pos->second;
   attributes.erase(pos);
-  return value;
+  return att_value;
 }
 
 }  // namespace Dali
