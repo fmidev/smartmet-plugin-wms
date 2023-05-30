@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.5.29
+Version: 23.5.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -28,7 +28,7 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.3.21
 BuildRequires: smartmet-library-grid-content-devel >= 23.4.17
 BuildRequires: smartmet-library-grid-files-devel >= 23.3.9
-BuildRequires: smartmet-library-macgyver-devel >= 23.4.27
+BuildRequires: smartmet-library-macgyver-devel >= 23.5.24
 BuildRequires: smartmet-library-spine-devel >= 23.4.27
 BuildRequires: smartmet-library-timeseries-devel >= 23.3.15
 %if %{with authentication}
@@ -72,7 +72,7 @@ Requires: smartmet-library-grid-content >= 23.4.17
 Requires: smartmet-library-grid-files >= 23.3.9
 Requires: smartmet-library-gis >= 23.3.14
 Requires: smartmet-library-trax >= 22.12.22
-Requires: smartmet-library-macgyver >= 23.4.27
+Requires: smartmet-library-macgyver >= 23.5.24
 Requires: smartmet-library-spine >= 23.4.27
 Requires: smartmet-library-timeseries >= 23.3.15
 Requires: smartmet-library-giza >= 23.3.21
@@ -153,6 +153,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue May 30 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.30-1.fmi
+- Fixed potential segfault
+
 * Mon May 29 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.29-1.fmi
 - Added support for layer variants
 
