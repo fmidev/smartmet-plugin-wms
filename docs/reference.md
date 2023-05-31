@@ -59,6 +59,8 @@ Table of Contents
         * [WindRose structure](#windrose-structure)
         * [Connector structure](#connector-structure)
         * [Filters structure](#filters-structure)
+  * [WMS GetMap and GetCapabilities configuration](#wms-configuration)
+    * [WMS layer variants](#wms-variants)
   * [Generic querystring options](#querystring-definition)
   * [Configuration](#configuration)
     * [Main configuration file](#main-configuration-file)
@@ -3038,9 +3040,84 @@ The table below contains a list of attributes used in the Filter structure.
 * `optimizesize=1` - optimize output for size
 ** remove `display=none` layers and views from the SVG output
 
+
+# WMS GetMap and GetCapabilities configuration
+
+A product definition may at the top level include the following settings which directly affect WMS GetCapabilities and GetMap requests:
+
+<pre><b>WMS settings</b></pre>
+|Name|Type|Default value|Description|
+|----|----|-------------|-----------|
+|hidden|(bool)|false|If true the WMS will not appear in GetCapabilities responses but GetMap requests continue to work.|
+|title|_Text_|-|Obligatory title for the WMS layer|
+|name|string|-|Name of the WMS layer. By default the name is deduced from the path of the configuration file.|
+|abstract|(_Text_)|-|Abstract for the layer.|
+|keywords|(list of strings)|-|Keywords for the layer.|
+|opaque|(int)|0|Is the WMS layer opaque.|
+|queryable|(int)|0|Does the layer support GetFeatureInfo requests.|
+|cascaded|(int)|0|How many times the layer has been cascaded.|
+|no_subsets|(int)|0|Can only the full bounding box be requested.|
+|fixed_width|(int)|0|Nonzero implies the size cannot be changed.|
+|fixed_height|(int)|0|Nonzero implies the size cannot be changed|
+
+## WMS layer variants
+
+In meteorology it is common to have multiple weather models with the same parameters available. For example for temperature the WMS layer settings would typically differ only in the name, title and abstract, and the product settings in the name of the producer and occasionally the name of the weather parameter (road temperature, ground temperature).
+
+In such cases one use the same JSON file for the product settings, and define how the different variants are change in the settings. Below is an example how one might define some variants. It is also possible to change individual settings deeper in the JSON structure as long as a <code>qid</code> has been set. Substitutions then work as if the setting has been changed via the <code>qid</code> using a querystring. For example if a _IsobandLayer_ layer has a <code>qid</code> with value <code>temp_layer</code>, one can change the parameter used by the layer by using <code>temp_layer.parameter=SomeTemperature</code> in the querystring, or by using <code>"temp_layer.parameter": "SomeTemperature"</code> in the variant settings.
+
+<pre>Sample variant configuration<code>
+{
+    "parameter": "Temperature", // default
+    "producer": "pal", // default
+
+    // all variants to be generated
+    "variants":
+    [
+	{
+	    "name": "fmi:pal:temperature",
+	    "title": "FMI Forecast Temperature",
+	    "abstract": "Terrain corrected temperature using atmospheric lapse rate and terrain elevation produced by FMI."
+	},
+	{
+	    "name": "fmi:pal:dailymeantemperature",
+	    "parameter": "DailyMeanTemperature",
+	    "producer": "daily00",
+	    "title": "FMI Forecast Mean Temperature",
+	    "abstract": "Daily mean temperature produced by FMI."
+	},
+	{
+	    "name": "fmi:roadmodel:roadtemperature",
+	    "parameter": "RoadTemperature",
+	    "producer": "roadmodel_skandinavia_pinta",
+	    "title":
+	    {
+    		"en": "Roadmodel Troad",
+     		"fi": "Tienpintalämpötila"
+	    },
+	    "abstract":
+	    {
+		    "en": "Road temperature produced by roadmodel",
+    		"fi": "Tiesäämallin laskema tienpintalämpötila"
+	    }
+	}
+    ],
+
+    // Common settings
+    "projection": {},
+    "styles":
+    [
+	...
+    ],
+    "views":
+    [
+	...
+    ]
+}
+</code></pre>
+
 # Configuration 
 In order to use the Dali plugin you need to edit two configuration files. These files are the main configuration file of the SmartMet Server environment and the Dali plugin specific configuration file.
-
 
 ## Main configuration file
 
