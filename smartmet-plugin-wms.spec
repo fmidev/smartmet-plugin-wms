@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 23.6.1
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -26,7 +26,7 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.3.21
-BuildRequires: smartmet-library-grid-content-devel >= 23.4.17
+BuildRequires: smartmet-library-grid-content-devel >= 23.5.26
 BuildRequires: smartmet-library-grid-files-devel >= 23.3.9
 BuildRequires: smartmet-library-macgyver-devel >= 23.5.24
 BuildRequires: smartmet-library-spine-devel >= 23.4.27
@@ -35,10 +35,10 @@ BuildRequires: smartmet-library-timeseries-devel >= 23.3.15
 BuildRequires: smartmet-engine-authentication-devel >= 23.4.27
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 23.5.23
+BuildRequires: smartmet-engine-observation-devel >= 23.6.1
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 22.12.21
-BuildRequires: smartmet-engine-grid-devel >= 23.4.17
+BuildRequires: smartmet-engine-grid-devel >= 23.5.26
 BuildRequires: smartmet-engine-geonames-devel >= 23.4.27
 BuildRequires: smartmet-engine-querydata-devel >= 23.4.27
 BuildRequires: smartmet-engine-contour-devel >= 23.3.9
@@ -68,7 +68,7 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 23.4.17
+Requires: smartmet-library-grid-content >= 23.5.26
 Requires: smartmet-library-grid-files >= 23.3.9
 Requires: smartmet-library-gis >= 23.3.14
 Requires: smartmet-library-trax >= 22.12.22
@@ -82,7 +82,7 @@ Requires: smartmet-engine-authentication >= 23.4.27
 Requires: smartmet-engine-querydata >= 23.4.27
 Requires: smartmet-engine-contour >= 23.3.9
 Requires: smartmet-engine-gis >= 22.12.21
-Requires: smartmet-engine-grid >= 23.4.17
+Requires: smartmet-engine-grid >= 23.5.26
 Requires: smartmet-engine-geonames >= 23.4.27
 Requires: smartmet-server >= 23.5.19
 Requires: smartmet-library-spine >= 23.4.27
@@ -114,7 +114,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-macgyver-devel >= 23.5.24
 #TestRequires: smartmet-library-spine-devel >= 23.4.27
 #TestRequires: smartmet-library-timeseries-devel >= 23.3.15
-#TestRequires: smartmet-engine-grid-devel >= 23.4.17
+#TestRequires: smartmet-engine-grid-devel >= 23.5.26
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -125,7 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 23.5.23
+#TestRequires: smartmet-engine-observation-devel >= 23.6.1
 %endif
 
 %description
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Jun  1 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.1-2.fmi
+- Recompiled to use to ObsEngine API with stationgroups options
+
 * Thu Jun  1 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.1-1.fmi
 - More accurate error reports on WMS layers (full paths)
 
