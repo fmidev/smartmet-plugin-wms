@@ -99,8 +99,7 @@ PointValues read_flash_observations(State& state,
     auto& obsengine = state.getObsEngine();
     Engine::Observation::StationSettings stationSettings;
     stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
-    settings.taggedFMISIDs = obsengine.translateToFMISID(
-        settings.starttime, settings.endtime, settings.stationtype, stationSettings);
+    settings.taggedFMISIDs = obsengine.translateToFMISID(settings, stationSettings);
 
     auto result = obsengine.values(settings);
 
@@ -223,8 +222,7 @@ PointValues read_all_observations(State& state,
     // Coordinates or bounding box
     Engine::Observation::StationSettings stationSettings;
     stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
-    settings.taggedFMISIDs = obsengine.translateToFMISID(
-        settings.starttime, settings.endtime, settings.stationtype, stationSettings);
+    settings.taggedFMISIDs = obsengine.translateToFMISID(settings, stationSettings);
 
     auto result = obsengine.values(settings);
 
@@ -379,8 +377,7 @@ PointValues read_station_observations(State& state,
       else
         throw Fmi::Exception(BCP, "Station ID or coordinate missing");
 
-      auto tagged_fmisids = obsengine.translateToFMISID(
-          settings.starttime, settings.endtime, settings.stationtype, stationSettings);
+      auto tagged_fmisids = obsengine.translateToFMISID(settings, stationSettings);
 
       if (tagged_fmisids.empty())
         continue;
@@ -534,8 +531,7 @@ PointValues read_latlon_observations(State& state,
       stationSettings.nearest_station_settings.emplace_back(
           point.latlon.X(), point.latlon.Y(), settings.maxdistance, settings.numberofstations, "");
 
-      auto tagged_fmisids = obsengine.translateToFMISID(
-          settings.starttime, settings.endtime, settings.stationtype, stationSettings);
+      auto tagged_fmisids = obsengine.translateToFMISID(settings, stationSettings);
 
       if (tagged_fmisids.empty())
         continue;
