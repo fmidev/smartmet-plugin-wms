@@ -111,6 +111,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 23.3.21
 #TestRequires: smartmet-library-trax-devel >= 22.12.22
 #TestRequires: smartmet-library-newbase-devel >= 23.2.9
+#TestRequires: smartmet-library-macgyver-devel >= 23.5.24
 #TestRequires: smartmet-library-spine-devel >= 23.4.27
 #TestRequires: smartmet-library-timeseries-devel >= 23.3.15
 #TestRequires: smartmet-engine-grid-devel >= 23.4.17
