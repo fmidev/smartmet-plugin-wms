@@ -2,7 +2,6 @@
 #include "Config.h"
 #include "Hash.h"
 #include <macgyver/Exception.h>
-#include <macgyver/StringConversion.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -111,13 +110,13 @@ std::string Text::translate(const std::string& theLanguage) const
     // Use exact translation if there is one
     const auto match1 = translations.find(theLanguage);
     if (match1 != translations.end())
-      return Fmi::xmlescape(match1->second);
+      return match1->second;
 
     // Return default translation if possible
 
     const auto match2 = translations.find("default");
     if (match2 != translations.end())
-      return Fmi::xmlescape(match2->second);
+      return match2->second;
 
     // Error
     throw Fmi::Exception(BCP,
@@ -147,7 +146,7 @@ std::string Text::translate(const boost::optional<std::string>& theLanguage) con
 
     const auto match = translations.find("default");
     if (match != translations.end())
-      return Fmi::xmlescape(match->second);
+      return match->second;
 
     // Error
 

@@ -173,7 +173,7 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       group_cdt["end"] = "";
       group_cdt["attributes"] = CTPP::CDT(CTPP::CDT::HASH_VAL);
       if (cdata)
-        group_cdt["cdata"] = cdata->translate(language);
+        group_cdt["cdata"] = Fmi::safexmlescape(cdata->translate(language));
       theState.addAttributes(theGlobals, group_cdt, attributes);
 
       theLayersCdt.PushBack(group_cdt);
