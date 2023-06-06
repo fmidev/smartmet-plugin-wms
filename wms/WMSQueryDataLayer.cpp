@@ -29,10 +29,10 @@ bool WMSQueryDataLayer::updateLayerMetaData()
 
     // bounding box from metadata
     Engine::Querydata::MetaData metaData(q->metaData());
-    geographicBoundingBox.xMin = std::min(metaData.ullon, metaData.bllon);
-    geographicBoundingBox.xMax = std::max(metaData.urlon, metaData.brlon);
-    geographicBoundingBox.yMin = std::min(metaData.bllat, metaData.brlat);
-    geographicBoundingBox.yMax = std::max(metaData.ullat, metaData.urlat);
+    geographicBoundingBox.xMin = metaData.wgs84Envelope.getRangeLon().getMin();
+    geographicBoundingBox.xMax = metaData.wgs84Envelope.getRangeLon().getMax();
+    geographicBoundingBox.yMin = metaData.wgs84Envelope.getRangeLat().getMin();
+    geographicBoundingBox.yMax = metaData.wgs84Envelope.getRangeLat().getMax();
 
     // time dimension is sniffed from querydata
     auto queryDataConf = itsQEngine->getProducerConfig(itsProducer);
