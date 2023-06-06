@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.6.1
-Release: 2%{?dist}.fmi
+Version: 23.6.6
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -27,8 +27,8 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.3.21
 BuildRequires: smartmet-library-grid-content-devel >= 23.5.26
-BuildRequires: smartmet-library-grid-files-devel >= 23.3.9
-BuildRequires: smartmet-library-macgyver-devel >= 23.5.24
+BuildRequires: smartmet-library-grid-files-devel >= 23.6.6
+BuildRequires: smartmet-library-macgyver-devel >= 23.6.2
 BuildRequires: smartmet-library-spine-devel >= 23.4.27
 BuildRequires: smartmet-library-timeseries-devel >= 23.3.15
 %if %{with authentication}
@@ -69,10 +69,10 @@ Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 23.5.26
-Requires: smartmet-library-grid-files >= 23.3.9
+Requires: smartmet-library-grid-files >= 23.6.6
 Requires: smartmet-library-gis >= 23.3.14
 Requires: smartmet-library-trax >= 22.12.22
-Requires: smartmet-library-macgyver >= 23.5.24
+Requires: smartmet-library-macgyver >= 23.6.2
 Requires: smartmet-library-spine >= 23.4.27
 Requires: smartmet-library-timeseries >= 23.3.15
 Requires: smartmet-library-giza >= 23.3.21
@@ -111,7 +111,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 23.3.21
 #TestRequires: smartmet-library-trax-devel >= 22.12.22
 #TestRequires: smartmet-library-newbase-devel >= 23.2.9
-#TestRequires: smartmet-library-macgyver-devel >= 23.5.24
+#TestRequires: smartmet-library-macgyver-devel >= 23.6.2
 #TestRequires: smartmet-library-spine-devel >= 23.4.27
 #TestRequires: smartmet-library-timeseries-devel >= 23.3.15
 #TestRequires: smartmet-engine-grid-devel >= 23.5.26
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Jun  6 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.6-1.fmi
+- Repackaged due to GRID ABI changes
+
 * Thu Jun  1 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.1-2.fmi
 - Recompiled to use to ObsEngine API with stationgroups options
 
