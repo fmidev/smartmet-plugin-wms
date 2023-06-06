@@ -1,7 +1,6 @@
 #include "Text.h"
 #include "Config.h"
 #include "Hash.h"
-
 #include <macgyver/Exception.h>
 #include <stdexcept>
 
@@ -104,7 +103,7 @@ std::size_t Text::hash_value(const State& theState) const
  */
 // ----------------------------------------------------------------------
 
-const std::string& Text::translate(const std::string& theLanguage) const
+std::string Text::translate(const std::string& theLanguage) const
 {
   try
   {
@@ -136,7 +135,7 @@ const std::string& Text::translate(const std::string& theLanguage) const
  */
 // ----------------------------------------------------------------------
 
-const std::string& Text::translate(const boost::optional<std::string>& theLanguage) const
+std::string Text::translate(const boost::optional<std::string>& theLanguage) const
 {
   try
   {

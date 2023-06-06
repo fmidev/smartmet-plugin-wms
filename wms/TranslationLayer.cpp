@@ -98,7 +98,7 @@ void TranslationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, 
     text_cdt["end"] = "</" + tag + ">";
     text_cdt["attributes"] = CTPP::CDT(CTPP::CDT::HASH_VAL);
     theState.addAttributes(theGlobals, text_cdt, attributes);
-    text_cdt["cdata"] = translation->second;
+    text_cdt["cdata"] = Fmi::safexmlescape(translation->second);
     theLayersCdt.PushBack(text_cdt);
   }
   catch (...)
