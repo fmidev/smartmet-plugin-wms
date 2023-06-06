@@ -1,8 +1,8 @@
 #include "Text.h"
 #include "Config.h"
 #include "Hash.h"
-
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -104,20 +104,20 @@ std::size_t Text::hash_value(const State& theState) const
  */
 // ----------------------------------------------------------------------
 
-const std::string& Text::translate(const std::string& theLanguage) const
+std::string Text::translate(const std::string& theLanguage) const
 {
   try
   {
     // Use exact translation if there is one
     const auto match1 = translations.find(theLanguage);
     if (match1 != translations.end())
-      return match1->second;
+      return Fmi::xmlescape(match1->second);
 
     // Return default translation if possible
 
     const auto match2 = translations.find("default");
     if (match2 != translations.end())
-      return match2->second;
+      return Fmi::xmlescape(match2->second);
 
     // Error
     throw Fmi::Exception(BCP,
@@ -136,7 +136,7 @@ const std::string& Text::translate(const std::string& theLanguage) const
  */
 // ----------------------------------------------------------------------
 
-const std::string& Text::translate(const boost::optional<std::string>& theLanguage) const
+std::string Text::translate(const boost::optional<std::string>& theLanguage) const
 {
   try
   {
@@ -147,7 +147,7 @@ const std::string& Text::translate(const boost::optional<std::string>& theLangua
 
     const auto match = translations.find("default");
     if (match != translations.end())
-      return match->second;
+      return Fmi::xmlescape(match->second);
 
     // Error
 

@@ -154,15 +154,15 @@ std::string legend_text(const Isoband& theIsoband,
     {
       const auto pos = theLabels.conversions.find(*theLanguage + ":" + text);
       if (pos != theLabels.conversions.end())
-        return pos->second;
+        return Fmi::xmlescape(pos->second);
     }
 
     // Try converting without a language
     const auto pos = theLabels.conversions.find(text);
     if (pos != theLabels.conversions.end())
-      return pos->second;
+      return Fmi::xmlescape(pos->second);
 
-    return text;
+    return Fmi::xmlescape(text);
   }
   catch (...)
   {

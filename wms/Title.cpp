@@ -80,7 +80,7 @@ std::size_t Title::hash_value(const State& theState) const
  */
 // ----------------------------------------------------------------------
 
-const std::string& Title::translate(const std::string& theLanguage) const
+std::string Title::translate(const std::string& theLanguage) const
 {
   try
   {
@@ -98,7 +98,7 @@ const std::string& Title::translate(const std::string& theLanguage) const
  */
 // ----------------------------------------------------------------------
 
-const std::string& Title::translate(const boost::optional<std::string>& theLanguage) const
+std::string Title::translate(const boost::optional<std::string>& theLanguage) const
 {
   try
   {

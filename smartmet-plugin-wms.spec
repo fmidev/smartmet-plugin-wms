@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.6.1
-Release: 2%{?dist}.fmi
+Version: 23.6.2
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Fri Jun  2 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.2-1.fmi
+- Added xmlescape calls to legend labels and Text objects
+
 * Thu Jun  1 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.1-2.fmi
 - Recompiled to use to ObsEngine API with stationgroups options
 
