@@ -2761,7 +2761,7 @@ The table below contains a list of attributes used in the Isoline structure.
 |Name|Type|Default value|Description|
 |-----|-----|-----------|----------- |
 |qid|string|-|The identifier for the isoline.|
-|value|double|0|The isoline value.|
+|value|double|-|The isoline value. The default is NaN, which means calculating the line between missing and valid data.|
 |attributes|_Attributes_|-|The SVG attributes for the isoline. Often omitted completely, and the _IsolineLayer_ |label|(_Text_)|-|Translatable label for the isoline.|
 level attributes are used instead commonly for all isolines.|
 
