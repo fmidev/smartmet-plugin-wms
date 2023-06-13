@@ -9,6 +9,7 @@
 #include <boost/filesystem/path.hpp>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <spine/ConfigTools.h>
 #include <spine/Exceptions.h>
 #include <stdexcept>
 
@@ -39,6 +40,7 @@ Config::Config(const string& configfile)
     itsConfig.setIncludeDir(p.c_str());
 
     itsConfig.readFile(configfile.c_str());
+    Spine::expandVariables(itsConfig);
 
     // required parameters
     std::string root = itsConfig.lookup("root");
