@@ -61,14 +61,15 @@ PointValues read_forecasts(const SymbolLayer& layer,
                            const Engine::Querydata::Q& q,
                            const Fmi::SpatialReference& crs,
                            const Fmi::Box& box,
-                           const boost::posix_time::ptime& valid_time)
+                           const boost::posix_time::ptime& valid_time,
+                           const State& state)
 {
   try
   {
     // Generate the coordinates for the symbols
 
     const bool forecast_mode = true;
-    auto points = layer.positions->getPoints(q, crs, box, forecast_mode);
+    auto points = layer.positions->getPoints(q, crs, box, forecast_mode, state);
 
     // querydata API for value() sucks
 
@@ -152,14 +153,15 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
                                QueryServer::Query& query,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
-                               const boost::posix_time::ptime& valid_time)
+                               const boost::posix_time::ptime& valid_time,
+                               const State& state)
 {
   try
   {
     // Generate the coordinates for the symbols
 
     const bool forecast_mode = true;
-    auto points = layer.positions->getPoints(nullptr, crs, box, forecast_mode);
+    auto points = layer.positions->getPoints(nullptr, crs, box, forecast_mode, state);
 
     PointValues pointvalues;
 
@@ -598,7 +600,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // Establish the numbers to draw.
 
     PointValues pointvalues;
-    pointvalues = read_gridForecasts(*this, gridEngine, *query, crs, box, valid_time);
+    pointvalues = read_gridForecasts(*this, gridEngine, *query, crs, box, valid_time, theState);
 
     pointvalues = prioritize(pointvalues, point_value_options);
 
@@ -800,7 +802,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     PointValues pointvalues;
 
     if (!use_observations)
-      pointvalues = read_forecasts(*this, q, crs, box, valid_time);
+      pointvalues = read_forecasts(*this, q, crs, box, valid_time, theState);
 #ifndef WITHOUT_OBSERVATION
     else
       pointvalues = ObservationReader::read(theState,

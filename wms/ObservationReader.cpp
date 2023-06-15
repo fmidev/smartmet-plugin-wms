@@ -94,7 +94,7 @@ PointValues read_flash_observations(State& state,
 
     Engine::Querydata::Q q;
     const bool forecast_mode = false;
-    auto points = positions.getPoints(q, crs, box, forecast_mode);
+    auto points = positions.getPoints(q, crs, box, forecast_mode, state);
 
     auto& obsengine = state.getObsEngine();
     Engine::Observation::StationSettings stationSettings;
@@ -657,7 +657,7 @@ PointValues read(State& state,
     Engine::Querydata::Q q;  // dummy for
     const bool forecast_mode = false;
 
-    auto points = positions.getPoints(q, crs, box, forecast_mode);
+    auto points = positions.getPoints(q, crs, box, forecast_mode, state);
 
     if (!points.empty())
       return read_latlon_observations(state,

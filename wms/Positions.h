@@ -80,7 +80,8 @@ class Positions
   Points getPoints(const Engine::Querydata::Q& theQ,
                    const Fmi::SpatialReference& theCRS,
                    const Fmi::Box& theBox,
-                   bool forecastMode) const;
+                   bool forecastMode,
+                   const State& theState) const;
 
   Points getPoints(const char* originalCrs,
                    int originalWidth,
@@ -154,7 +155,8 @@ class Positions
   Points getDataPoints(const Engine::Querydata::Q& theQ,
                        const Fmi::SpatialReference& theCRS,
                        const Fmi::Box& theBox,
-                       bool forecastMode) const;
+                       bool forecastMode,
+                       const State& theState) const;
 
   Points getDataPoints(const char* originalCrs,
                        int originalWidth,
