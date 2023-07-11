@@ -761,12 +761,14 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
   }
   catch (const Fmi::Exception &exception)
   {
-    auto layers = *(theRequest.getParameter("LAYERS"));
+    auto layers = theRequest.getParameter("LAYERS");
+
+    std::string msg;
+    if (layers)
+      msg = " for layer '" + *layers + "'";  // The LAYERS option may be missing
 
     Fmi::Exception ex(
-        BCP,
-        "Error in calculating hash_value for layer '" + layers + "'! " + exception.what(),
-        nullptr);
+        BCP, "Error in calculating hash_value" + msg + "! " + exception.what(), nullptr);
     ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     return handleWmsException(ex, theState, theRequest, theResponse);
   }
@@ -964,10 +966,10 @@ void Dali::Plugin::wmsPreprocessJSON(State &theState,
       Dali::JsonTools::remove_string(name, variant, "name");
       if (name == theName)
       {
-        Spine::HTTP::ParamMap substitutes;
+        std::map<std::string, Json::Value> substitutes;
         const auto members = variant.getMemberNames();
         for (const auto &member : members)
-          substitutes.insert({member, variant[member].asString()});
+          substitutes.insert({member, variant[member]});
         SmartMet::Spine::JSON::expand(theJson, substitutes);
         found = true;
         break;
