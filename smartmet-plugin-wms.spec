@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.6.15
+Version: 23.7.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -28,20 +28,20 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.3.21
 BuildRequires: smartmet-library-grid-content-devel >= 23.5.26
 BuildRequires: smartmet-library-grid-files-devel >= 23.6.6
-BuildRequires: smartmet-library-macgyver-devel >= 23.6.15
-BuildRequires: smartmet-library-spine-devel >= 23.6.13
+BuildRequires: smartmet-library-macgyver-devel >= 23.6.30
+BuildRequires: smartmet-library-spine-devel >= 23.6.21
 BuildRequires: smartmet-library-timeseries-devel >= 23.6.15
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 23.4.27
+BuildRequires: smartmet-engine-authentication-devel >= 23.7.10
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 23.6.12
+BuildRequires: smartmet-engine-observation-devel >= 23.6.21
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 23.6.13
 BuildRequires: smartmet-engine-grid-devel >= 23.6.8
-BuildRequires: smartmet-engine-geonames-devel >= 23.6.13
-BuildRequires: smartmet-engine-querydata-devel >= 23.6.15
-BuildRequires: smartmet-engine-contour-devel >= 23.6.13
+BuildRequires: smartmet-engine-geonames-devel >= 23.7.10
+BuildRequires: smartmet-engine-querydata-devel >= 23.7.11
+BuildRequires: smartmet-engine-contour-devel >= 23.7.10
 BuildRequires: smartmet-library-gis-devel >= 23.6.7
 BuildRequires: smartmet-library-trax-devel >= 23.6.9
 BuildRequires: fmt-devel >= 8.1.1 fmt-devel < %{smartmet_fmt_max}
@@ -72,20 +72,20 @@ Requires: smartmet-library-grid-content >= 23.5.26
 Requires: smartmet-library-grid-files >= 23.6.6
 Requires: smartmet-library-gis >= 23.6.7
 Requires: smartmet-library-trax >= 23.6.9
-Requires: smartmet-library-macgyver >= 23.6.15
-Requires: smartmet-library-spine >= 23.6.13
+Requires: smartmet-library-macgyver >= 23.6.30
+Requires: smartmet-library-spine >= 23.6.21
 Requires: smartmet-library-timeseries >= 23.6.15
 Requires: smartmet-library-giza >= 23.3.21
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 23.4.27
+Requires: smartmet-engine-authentication >= 23.7.10
 %endif
-Requires: smartmet-engine-querydata >= 23.6.15
-Requires: smartmet-engine-contour >= 23.6.13
+Requires: smartmet-engine-querydata >= 23.7.11
+Requires: smartmet-engine-contour >= 23.7.10
 Requires: smartmet-engine-gis >= 23.6.13
 Requires: smartmet-engine-grid >= 23.6.8
-Requires: smartmet-engine-geonames >= 23.6.13
+Requires: smartmet-engine-geonames >= 23.7.10
 Requires: smartmet-server >= 23.5.19
-Requires: smartmet-library-spine >= 23.6.13
+Requires: smartmet-library-spine >= 23.6.21
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
@@ -104,15 +104,15 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: libconfig17-devel
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 23.6.13
-#TestRequires: smartmet-engine-geonames-devel >= 23.6.13
+#TestRequires: smartmet-engine-contour-devel >= 23.7.10
+#TestRequires: smartmet-engine-geonames-devel >= 23.7.10
 #TestRequires: smartmet-engine-gis-devel >= 23.6.13
-#TestRequires: smartmet-engine-querydata-devel >= 23.6.15
+#TestRequires: smartmet-engine-querydata-devel >= 23.7.11
 #TestRequires: smartmet-library-giza-devel >= 23.3.21
 #TestRequires: smartmet-library-trax-devel >= 23.6.9
 #TestRequires: smartmet-library-newbase-devel >= 23.6.15
-#TestRequires: smartmet-library-macgyver-devel >= 23.6.15
-#TestRequires: smartmet-library-spine-devel >= 23.6.13
+#TestRequires: smartmet-library-macgyver-devel >= 23.6.30
+#TestRequires: smartmet-library-spine-devel >= 23.6.21
 #TestRequires: smartmet-library-timeseries-devel >= 23.6.15
 #TestRequires: smartmet-engine-grid-devel >= 23.6.8
 #TestRequires: smartmet-engine-grid-test
@@ -125,7 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 23.6.12
+#TestRequires: smartmet-engine-observation-devel >= 23.6.21
 %endif
 
 %description
@@ -154,6 +154,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Tue Jul 11 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.7.11-1.fmi
+- Improved error handling
+- Fixed JSON substitutions not to require JSON toString()
+- Enable generating symbols for missing values
+- Fixed handling of TIME=current requests
+
 * Thu Jun 15 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.15-1.fmi
 - Optimized Locations class for speed
 
