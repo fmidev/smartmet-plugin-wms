@@ -979,7 +979,8 @@ Json::Value Plugin::getProductJson(const Spine::HTTP::Request &theRequest,
 std::string Plugin::resolveFilePath(const std::string &theCustomer,
                                     const std::string &theSubDir,
                                     const std::string &theFileName,
-                                    bool theWmsFlag) const
+                                    bool theWmsFlag,
+                                    std::list<std::string> &theTestedPaths) const
 {
   if (theCustomer.empty() || theFileName.empty())
     return "";
@@ -989,39 +990,50 @@ std::string Plugin::resolveFilePath(const std::string &theCustomer,
     std::string file_path;
     std::string filename = theFileName;
 
-    // 1) If file name starts with '/' search from wms-root
-    // 2) else check existence of file first from customer-path then from wms-root
-    // 3) In wms-root check in the following order
-    // 3.1) wms-root
-    // 3.2) wms-root/resources/layers/<theSubDir> except for filters check
-    // wms-root/resources/filters 3.3) wms-root/resources/<theSubDir> 3.4) wms-root/resources
+    // clang-format off
+    /*
+     * 1) If file name starts with '/' search from wms-root
+     * 2) else check existence of file first from customer-path then from wms-root
+     * 3) In wms-root check in the following order
+     * 3.1) wms-root
+     * 3.2) wms-root/resources/layers/<theSubDir> except for filters check wms-root/resources/filters
+     * 3.3) wms-root/resources/<theSubDir>
+     * 3.4) wms-root/resources
+     */
+    // clang-format on
 
     if (filename[0] != '/')
     {
       file_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + check_attack(theCustomer) +
                    theSubDir + check_attack(theFileName));
+      theTestedPaths.push_back(file_path);
       if (!boost::filesystem::exists(file_path))
         filename.insert(filename.begin(), '/');
     }
     if (filename[0] == '/')
     {
       file_path = itsConfig.rootDirectory(theWmsFlag) + check_attack(filename);
+      theTestedPaths.push_back(file_path);
       if (!boost::filesystem::exists(file_path))
       {
         if (theSubDir == "/filters/")
+        {
           file_path =
               itsConfig.rootDirectory(theWmsFlag) + "/resources/filters" + check_attack(filename);
+          theTestedPaths.push_back(file_path);
+        }
         else
         {
           file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources/layers" + theSubDir +
                       check_attack(filename);
+          theTestedPaths.push_back(file_path);
           if (!boost::filesystem::exists(file_path))
             file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources" + theSubDir +
                         check_attack(filename);
+          theTestedPaths.push_back(file_path);
           if (!boost::filesystem::exists(file_path))
-          {
             file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources" + check_attack(filename);
-          }
+          theTestedPaths.push_back(file_path);
         }
       }
     }
@@ -1042,11 +1054,29 @@ std::string Plugin::resolveSvgPath(const std::string &theCustomer,
   if (theCustomer.empty() || theFileName.empty())
     return {};
 
-  auto file = resolveFilePath(theCustomer, theSubDir, theFileName + ".svg", theWmsFlag);
+  std::list<std::string> tested_paths;
+
+  auto file =
+      resolveFilePath(theCustomer, theSubDir, theFileName + ".svg", theWmsFlag, tested_paths);
   if (boost::filesystem::exists(file))
     return file;
 
-  return resolveFilePath(theCustomer, theSubDir, theFileName, theWmsFlag);
+  file = resolveFilePath(theCustomer, theSubDir, theFileName, theWmsFlag, tested_paths);
+  if (boost::filesystem::exists(file))
+    return file;
+
+  return file;
+
+#if 0
+  // Occasionally useful for debugging. We cannot require the file to exist though,
+  // a "filter(#url)" may be an internal link instead of a reference to an external file
+  
+  throw Fmi::Exception(BCP, "File does not exist")
+      .addParameter("Customer", theCustomer)
+      .addParameter("Subdirectory", theSubDir)
+      .addParameter("Name", theFileName)
+      .addDetails(tested_paths);
+#endif
 }
 
 // ----------------------------------------------------------------------
@@ -1064,13 +1094,21 @@ std::string Plugin::getStyle(const std::string &theCustomer,
     if (theCustomer.empty() || theCSS.empty())
       return "";
 
-    std::string css_path = resolveFilePath(theCustomer, "/layers/", theCSS, theWmsFlag);
+    std::list<std::string> tested_files;
+    std::string css_path =
+        resolveFilePath(theCustomer, "/layers/", theCSS, theWmsFlag, tested_files);
 
-    return itsFileCache.get(css_path);
+    if (boost::filesystem::exists(css_path))
+      return itsFileCache.get(css_path);
+
+    throw Fmi::Exception(BCP, "Failed to find CSS file").addDetails(tested_files);
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Failed to find style")
+        .addParameter("Customer", theCustomer)
+        .addParameter("CSS", theCSS);
+    ;
   }
 }
 
@@ -1100,7 +1138,10 @@ std::map<std::string, std::string> Plugin::getStyle(const std::string &theCustom
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Failed to find style")
+        .addParameter("Customer", theCustomer)
+        .addParameter("CSS", theCSS)
+        .addParameter("Selector", theSelector);
   }
 }
 
@@ -1120,7 +1161,7 @@ Fmi::SharedFormatter Plugin::getTemplate(const std::string &theName) const
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Failed to find template").addParameter("Template", theName);
   }
 }
 
@@ -1145,7 +1186,9 @@ std::string Plugin::getFilter(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Failed to find filter")
+        .addParameter("Customer", theCustomer)
+        .addParameter("Filter", theName);
   }
 }
 
@@ -1195,7 +1238,9 @@ std::string Plugin::getMarker(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Failed to find marker")
+        .addParameter("Customer", theCustomer)
+        .addParameter("Marker", theName);
   }
 }
 
@@ -1220,7 +1265,9 @@ std::size_t Plugin::getMarkerHash(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Failed to find marker hash")
+        .addParameter("Customer", theCustomer)
+        .addParameter("Marker", theName);
   }
 }
 
@@ -1245,7 +1292,9 @@ std::string Plugin::getSymbol(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Failed to find symbol!")
+        .addParameter("Customer", theCustomer)
+        .addParameter("Symbol", theName);
   }
 }
 
@@ -1295,7 +1344,9 @@ std::string Plugin::getPattern(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Failed to find pattern")
+        .addParameter("Customer", theCustomer)
+        .addParameter("Pattern", theName);
   }
 }
 
@@ -1345,7 +1396,9 @@ std::string Plugin::getGradient(const std::string &theCustomer,
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Failed to find gradient")
+        .addParameter("Customer", theCustomer)
+        .addParameter("Gradient", theName);
   }
 }
 
