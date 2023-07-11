@@ -544,12 +544,12 @@ std::list<SharedWMSLayer> WMSLayerFactory::createWMSLayers(const std::string& th
 
       // Process optional settings (abstract etc)
 
-      Spine::HTTP::ParamMap substitutes;
+      std::map<std::string, Json::Value> substitutions;
       const auto members = settings_j.getMemberNames();
       for (const auto& name : members)
-        substitutes.insert({name, settings_j[name].asString()});
+        substitutions.insert({name, settings_j[name]});
 
-      SmartMet::Spine::JSON::expand(variant_j, substitutes);
+      SmartMet::Spine::JSON::expand(variant_j, substitutions);
 
       // Note: using variant name instead of theFullLayerName
       auto layer =
