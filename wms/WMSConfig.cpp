@@ -946,6 +946,7 @@ void WMSConfig::updateLayerMetaDataForCustomerLayer(
   if (!is_regular_file(itr->status()))
     return;
 
+  const auto pathname = itr->path().string();
   const auto filename = itr->path().filename().string();  // used in catch block for error message
 
   if (!looks_valid_filename(filename))
@@ -959,12 +960,11 @@ void WMSConfig::updateLayerMetaDataForCustomerLayer(
     std::string layerNamespace =
         make_layer_namespace(customer, productdir, itr->path().parent_path().string());
 
-    const auto pathName = itr->path().string();
     const auto fullLayername = layerNamespace + ":" + layername;
 
     // Check for modified product files here
 
-    update_product_modification_time(pathName, itsProductFileModificationTime);
+    update_product_modification_time(pathname, itsProductFileModificationTime);
 
     // Se if the metadata has expired and hence the layer must be created from scracth
     // to update its available times etc
@@ -999,10 +999,10 @@ void WMSConfig::updateLayerMetaDataForCustomerLayer(
     else
     {
       auto newlayers = WMSLayerFactory::createWMSLayers(
-          pathName, fullLayername, layerNamespace, customer, *this);
+          pathname, fullLayername, layerNamespace, customer, *this);
 
       if (newlayers.empty())
-        warn_layer(filename, itsWarnedFiles);
+        warn_layer(pathname, itsWarnedFiles);
       else
       {
         for (const auto& newlayer : newlayers)
@@ -1025,7 +1025,7 @@ void WMSConfig::updateLayerMetaDataForCustomerLayer(
   catch (...)
   {
     // Ignore and report failed product definitions
-    warn_layer(filename, itsWarnedFiles);
+    warn_layer(pathname, itsWarnedFiles);
   }
 }
 

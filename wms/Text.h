@@ -33,8 +33,8 @@ class Text
 
   Attributes attributes;
 
-  const std::string& translate(const std::string& theLanguage) const;
-  const std::string& translate(const boost::optional<std::string>& theLanguage) const;
+  std::string translate(const std::string& theLanguage) const;
+  std::string translate(const boost::optional<std::string>& theLanguage) const;
 
   bool empty() const { return translations.empty(); }
   std::string dump() const;

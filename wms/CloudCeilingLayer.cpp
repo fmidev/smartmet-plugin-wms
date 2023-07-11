@@ -102,8 +102,7 @@ PointValues CloudCeilingLayer::readObservations(
       // Coordinates or bounding box
       Engine::Observation::StationSettings stationSettings;
       stationSettings.bounding_box_settings = getClipBoundingBox(box, crs);
-      settings.taggedFMISIDs = obsengine.translateToFMISID(
-          settings.starttime, settings.endtime, settings.stationtype, stationSettings);
+      settings.taggedFMISIDs = obsengine.translateToFMISID(settings, stationSettings);
     }
 
     auto result = obsengine.values(settings);

@@ -53,14 +53,15 @@ PointValues read_forecasts(const NumberLayer& layer,
                            const Engine::Querydata::Q& q,
                            const Fmi::SpatialReference& crs,
                            const Fmi::Box& box,
-                           const boost::posix_time::ptime& valid_time)
+                           const boost::posix_time::ptime& valid_time,
+                           const State& state)
 {
   try
   {
     // Generate the coordinates for the numbers
 
     const bool forecast_mode = true;
-    auto points = layer.positions->getPoints(q, crs, box, forecast_mode);
+    auto points = layer.positions->getPoints(q, crs, box, forecast_mode, state);
 
     // The parameters. This *must* be done after the call to positions generation
 
@@ -799,7 +800,7 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     PointValues pointvalues;
 
     if (!use_observations)
-      pointvalues = read_forecasts(*this, q, crs, box, valid_time);
+      pointvalues = read_forecasts(*this, q, crs, box, valid_time, theState);
 #ifndef WITHOUT_OBSERVATION
     else
       pointvalues = ObservationReader::read(theState,

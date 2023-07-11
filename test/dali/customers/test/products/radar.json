@@ -1,0 +1,85 @@
+{
+    "title": "Radar test",
+    "producer": "tutka_suomi_rr",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 800
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+		{
+		    "qid": "background",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "rgb(0,75,140)"
+		    }
+		},
+		{
+		    "qid": "europe",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries"
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country",
+			"fill": "rgb(120,120,0)"
+		    }
+		},
+		{
+		    "qid": "l1",
+		    "layer_type": "isoband",
+		    "isobands": "json:isobands/precipitation.json",
+		    "css": "isobands/precipitation.css",
+		    "parameter": "PrecipitationRate",
+		    "attributes":
+		    {
+			"id": "precipitation_isobands"
+		    }
+		},
+		{
+		    "qid": "l2",
+		    "layer_type": "isoline",
+		    "isolines":
+		    [
+			{
+			}
+		    ],
+		    "parameter": "PrecipitationRate",
+		    "attributes":
+		    {
+			"fill": "none",
+			"stroke": "#222"
+		    }
+		},
+		{
+		    "qid": "europe_lines",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries"
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country_lines",
+			"fill": "none",
+			"stroke": "black",
+			"stroke-width": "0.3px"
+		    }
+		}
+            ]
+        }
+    ]
+}

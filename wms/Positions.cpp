@@ -405,7 +405,8 @@ void Positions::addMargins(int theXMargin, int theYMargin)
 Positions::Points Positions::getPoints(const Engine::Querydata::Q& theQ,
                                        const Fmi::SpatialReference& theCRS,
                                        const Fmi::Box& theBox,
-                                       bool forecastMode) const
+                                       bool forecastMode,
+                                       const State& theState) const
 {
   try
   {
@@ -414,7 +415,7 @@ Positions::Points Positions::getPoints(const Engine::Querydata::Q& theQ,
       case Layout::Grid:
         return getGridPoints(theQ, theCRS, theBox, forecastMode);
       case Layout::Data:
-        return getDataPoints(theQ, theCRS, theBox, forecastMode);
+        return getDataPoints(theQ, theCRS, theBox, forecastMode, theState);
       case Layout::Graticule:
         return getGraticulePoints(theQ, theCRS, theBox, forecastMode);
       case Layout::GraticuleFill:
@@ -582,7 +583,8 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
 Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
                                            const Fmi::SpatialReference& theCRS,
                                            const Fmi::Box& theBox,
-                                           bool forecastMode) const
+                                           bool forecastMode,
+                                           const State& theState) const
 {
   // Cannot generate any points without any querydata. If layout=data,
   // the layers will handle stations and flashes by themselves.
@@ -592,43 +594,50 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
 
   try
   {
-    // Create the coordinate transformation from querydata world coordinates
-    // to image world coordinates
+    // We need querydata coordinates in image world coordinates (theCRS). The engine caches the
+    // result.
 
-    Fmi::CoordinateTransformation transformation(theQ->SpatialReference(), theCRS);
+    const auto& qengine = theState.getQEngine();
 
-    // Generate the grid coordinates
+    const auto latlons_ptr = qengine.getWorldCoordinates(theQ, "WGS84");
+    if (!latlons_ptr)
+      throw Fmi::Exception(BCP, "Latlon coordinates not available for the chosen data");
+    const auto& latlons = *latlons_ptr;
+
+    const auto coords_ptr = qengine.getWorldCoordinates(theQ, theCRS);
+    if (!coords_ptr)
+      throw Fmi::Exception(BCP, "Failed to get data coordinates in the chosen spatial reference");
+    const auto& coords = *coords_ptr;
+
+    // Generate the image coordinates
 
     Points points;
 
-    for (theQ->resetLocation(); theQ->nextLocation();)
-    {
-      NFmiPoint latlon = theQ->latLon();
-      NFmiPoint worldxy = theQ->worldXY();
-
-      // Date world coordinate to image world coordinate
-      double xcoord = worldxy.X();
-      double ycoord = worldxy.Y();
-
-      if (!transformation.transform(xcoord, ycoord))
-        continue;
-
-      // Image world coordinate to pixel coordinate
-      theBox.transform(xcoord, ycoord);
-
-      int deltax = 0;
-      if (dx)
-        deltax += *dx;
-      int deltay = 0;
-      if (dy)
-        deltay += *dy;
-
-      // Skip if not inside desired shapes
-      if (inside(latlon.X(), latlon.Y(), forecastMode))
+    for (auto j = 0UL; j < latlons.height(); j++)
+      for (auto i = 0UL; i < latlons.width(); i++)
       {
-        points.emplace_back(Point(xcoord, ycoord, latlon, deltax, deltay));
+        double xcoord = coords.x(i, j);
+        double ycoord = coords.y(i, j);
+
+        if (std::isnan(xcoord) || std::isnan(ycoord))
+          continue;
+
+        // Image world coordinate to pixel coordinate
+        theBox.transform(xcoord, ycoord);
+
+        int deltax = 0;
+        if (dx)
+          deltax += *dx;
+        int deltay = 0;
+        if (dy)
+          deltay += *dy;
+
+        // Skip if not inside desired shapes
+
+        NFmiPoint latlon(latlons.x(i, j), latlons.y(i, j));
+        if (inside(latlon.X(), latlon.Y(), forecastMode))
+          points.emplace_back(Point(xcoord, ycoord, latlon, deltax, deltay));
       }
-    }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
 
@@ -666,6 +675,10 @@ Positions::Points Positions::getDataPoints(const char* /* originalCrs */,
     Points points;
     if (originalCoordinates)
     {
+      // TODO: This should be optimized for speed like get above getDataPoints method
+      // by doing all the projections with one call, and preferably using an engine which
+      // could cache the results.
+
       uint pos = 0;
       uint sz = originalCoordinates->size();
       for (int y = 0; y < originalHeight; y = y + deltay)
@@ -716,13 +729,12 @@ Positions::Points Positions::getGraticulePoints(const Engine::Querydata::Q& theQ
 {
   try
   {
-    // Create the coordinate transformation from WGS84 to projection coordinates
+    // First generate the candidates so we can project them all at once for speed
 
-    Fmi::CoordinateTransformation transformation("WGS84", theCRS);
-
-    // Generate the graticule coordinates.
-
-    Points points;
+    std::vector<double> longitudes;
+    std::vector<double> latitudes;
+    longitudes.reserve(360 / step);
+    latitudes.reserve(180 / step);
 
     // This loop order makes it easier to handle the poles only once
     for (int lat = -90; lat <= 90; lat += step)
@@ -730,31 +742,46 @@ Positions::Points Positions::getGraticulePoints(const Engine::Querydata::Q& theQ
       {
         if (lon % size == 0 || lat % size == 0)
         {
-          // latlon to world coordinate
-          double xcoord = lon;
-          double ycoord = lat;
-          if (!transformation.transform(xcoord, ycoord))
-            continue;
-
-          // to pixel coordinate
-          theBox.transform(xcoord, ycoord);
-
-          int deltax = 0;
-          if (dx)
-            deltax += *dx;
-
-          int deltay = 0;
-          if (dy)
-            deltay += *dy;
-
-          // Skip if not inside desired areas
-          if (inside(lon, lat, forecastMode))
-            points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat), deltax, deltay));
+          longitudes.push_back(lon);
+          latitudes.push_back(lat);
         }
         // Handle the poles only once
         if (lat == -90 || lat == 90)
           break;
       }
+
+    // Create the coordinate transformation from WGS84 to projection coordinates
+
+    Fmi::CoordinateTransformation transformation("WGS84", theCRS);
+
+    auto xcoord = longitudes;
+    auto ycoord = latitudes;
+    transformation.transform(xcoord, ycoord);
+
+    // Generate the graticule coordinates.
+
+    Points points;
+
+    // This loop order makes it easier to handle the poles only once
+    for (auto i = 0UL; i < xcoord.size(); i++)
+    {
+      // world coordinate to pixel coordinate
+
+      theBox.transform(xcoord[i], ycoord[i]);
+
+      int deltax = 0;
+      if (dx)
+        deltax += *dx;
+
+      int deltay = 0;
+      if (dy)
+        deltay += *dy;
+
+      // Skip if not inside desired areas
+      if (inside(longitudes[i], latitudes[i], forecastMode))
+        points.emplace_back(
+            Point(xcoord[i], ycoord[i], NFmiPoint(longitudes[i], latitudes[i]), deltax, deltay));
+    }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
 
@@ -1016,27 +1043,39 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
     Locus::QueryOptions options;
     auto locations = geonames->keywordSearch(options, keyword);
 
+    // Project the coordinates just once
+
+    std::vector<double> longitudes;
+    std::vector<double> latitudes;
+    longitudes.reserve(locations.size());
+    latitudes.reserve(locations.size());
+
+    for (const auto& location : locations)
+    {
+      longitudes.push_back(location->longitude);
+      latitudes.push_back(location->latitude);
+    }
+
     // Keyword locations are in WGS84
 
     Fmi::CoordinateTransformation transformation("WGS84", theCRS);
 
+    auto xcoord = longitudes;
+    auto ycoord = latitudes;
+    transformation.transform(xcoord, ycoord);
+
     Points points;
 
-    // This loop order makes it easier to handle the poles only once
+    auto i = 0UL;
+
     for (const auto& location : locations)
     {
       // keyword location latlon
       double lon = location->longitude;
       double lat = location->latitude;
 
-      // To world coordinate
-      double xcoord = lon;
-      double ycoord = lat;
-      if (!transformation.transform(xcoord, ycoord))
-        continue;
-
-      // to pixel coordinate
-      theBox.transform(xcoord, ycoord);
+      // To pixel coordinate
+      theBox.transform(xcoord[i], ycoord[i]);
 
       int deltax = 0;
       if (dx)
@@ -1047,7 +1086,9 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
 
       // Skip if not inside desired areas
       if (inside(lon, lat, forecastMode))
-        points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat), deltax, deltay));
+        points.emplace_back(Point(xcoord[i], ycoord[i], NFmiPoint(lon, lat), deltax, deltay));
+
+      i++;
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
@@ -1078,28 +1119,34 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
     if (locations.locations.empty())
       return points;
 
-    // Create the coordinate transformation from WGS84 to projection coordinates
+    // Project the coordinates just once
 
-    Fmi::CoordinateTransformation transformation("WGS84", theCRS);
+    std::vector<double> longitudes;
+    std::vector<double> latitudes;
+    longitudes.reserve(locations.locations.size());
+    latitudes.reserve(locations.locations.size());
 
-    // This loop order makes it easier to handle the poles only once
     for (const auto& location : locations.locations)
     {
-      // keyword location latlon
       if (!location.longitude || !location.latitude)
         throw Fmi::Exception(BCP, "Incomplete location in the locations list!");
 
-      double lon = *location.longitude;
-      double lat = *location.latitude;
+      longitudes.push_back(*location.longitude);
+      latitudes.push_back(*location.latitude);
+    }
 
-      // To world coordinate
-      double xcoord = lon;
-      double ycoord = lat;
-      if (!transformation.transform(xcoord, ycoord))
-        continue;
+    Fmi::CoordinateTransformation transformation("WGS84", theCRS);
+    auto xcoord = longitudes;
+    auto ycoord = latitudes;
+    transformation.transform(xcoord, ycoord);
 
-      // to pixel coordinate
-      theBox.transform(xcoord, ycoord);
+    for (auto i = 0UL; i < locations.locations.size(); i++)
+    {
+      double lon = longitudes[i];
+      double lat = latitudes[i];
+
+      // To pixel coordinate
+      theBox.transform(xcoord[i], ycoord[i]);
 
       // Global position adjustment
       int deltax = 0;
@@ -1111,6 +1158,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
         deltay = *dy;
 
       // Individual adjustments
+      const auto& location = locations.locations[i];
       if (location.dx)
         deltax += *location.dx;
 
@@ -1119,7 +1167,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
 
       // Skip if not inside desired areas
       if (inside(lon, lat, forecastMode))
-        points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat), deltax, deltay));
+        points.emplace_back(Point(xcoord[i], ycoord[i], NFmiPoint(lon, lat), deltax, deltay));
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);

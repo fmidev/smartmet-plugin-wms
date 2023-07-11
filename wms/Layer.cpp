@@ -327,12 +327,6 @@ Fmi::Box Layer::getClipBox(const Fmi::Box& theBox) const
  * 3. project the sampled coordinates to WGS84
  * 4. establish the WGS84 bounding box from the projected coordinates
  *
- * Note: Projecting individual coordinates may fail. We project
- * one coordinate at a time to make sure we get the bounding box for
- * whatever is valid. In fact, simply expanding the box by the margins
- * may have resulted in world coordinates which are not valid. However,
- * by sampling the boundary sufficiently well such problems can be ignored.
- *
  */
 // ----------------------------------------------------------------------
 
@@ -370,61 +364,51 @@ std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
   std::vector<double> x;
   std::vector<double> y;
 
-  // Bottom edge
   for (auto i = 0UL; i < wsamples; i++)
   {
-    x.push_back(clipbox.xmin() + (clipbox.xmax() - clipbox.xmin()) * i / (wsamples - 1));
-    y.push_back(clipbox.ymin());
+    auto px = clipbox.xmin() + (clipbox.xmax() - clipbox.xmin()) * i / (wsamples - 1);
+    for (auto j = 0UL; j < hsamples; j++)
+    {
+      auto py = clipbox.ymin() + (clipbox.ymax() - clipbox.ymin()) * j / (hsamples - 1);
+      x.push_back(px);
+      y.push_back(py);
+    }
   }
 
-  // Top edge
-  for (auto i = 0UL; i < wsamples; i++)
-  {
-    x.push_back(clipbox.xmin() + (clipbox.xmax() - clipbox.xmin()) * i / (wsamples - 1));
-    y.push_back(clipbox.ymax());
-  }
+  // Project all coordinates at once
 
-  // Left edge
-  for (auto i = 0UL; i < hsamples; i++)
-  {
-    x.push_back(clipbox.xmin());
-    y.push_back(clipbox.ymin() + (clipbox.ymax() - clipbox.ymin()) * i / (hsamples - 1));
-  }
+  if (!theCRS.isGeographic())
+    if (!transformation.transform(x, y))
+      return {};
 
-  // Right edge
-  for (auto i = 0UL; i < hsamples; i++)
-  {
-    x.push_back(clipbox.xmax());
-    y.push_back(clipbox.ymin() + (clipbox.ymax() - clipbox.ymin()) * i / (hsamples - 1));
-  }
-
-  // Project one at a time and extract the latlon bounding box
   double minlat = 0;
   double minlon = 0;
   double maxlat = 0;
   double maxlon = 0;
 
-  bool uninitialized = true;
-
-  for (auto i = 0UL; i < x.size(); i++)
+  bool lon_missing = true;
+  for (auto lon : x)
   {
-    if (!theCRS.isGeographic())
-      if (!transformation.transform(x[i], y[i]))
-        continue;
-
-    minlon = (uninitialized ? x[i] : std::min(minlon, x[i]));
-    maxlon = (uninitialized ? x[i] : std::max(minlon, x[i]));
-    minlat = (uninitialized ? y[i] : std::min(minlat, y[i]));
-    maxlat = (uninitialized ? y[i] : std::max(minlat, y[i]));
-
-    uninitialized = false;
+    if (!std::isnan(lon))
+    {
+      minlon = (lon_missing ? lon : std::min(minlon, lon));
+      maxlon = (lon_missing ? lon : std::max(maxlon, lon));
+      lon_missing = false;
+    }
   }
 
-  // Return empty bounding box if unable to establish bounding box. In some cases
-  // the projection tiling is valid, and we do not wish to error. Example: projections
-  // which show the earth as a sphere, but the tiles are empty at the corners.
+  bool lat_missing = true;
+  for (auto lat : y)
+  {
+    if (!std::isnan(lat))
+    {
+      minlat = (lat_missing ? lat : std::min(minlon, lat));
+      maxlat = (lat_missing ? lat : std::max(maxlon, lat));
+      lat_missing = false;
+    }
+  }
 
-  if (uninitialized)
+  if (lon_missing || lat_missing)
     return {};
 
   // Build the result in the form wanted by obsengine
@@ -433,6 +417,7 @@ std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
   ret["maxx"] = maxlon;
   ret["miny"] = minlat;
   ret["maxy"] = maxlat;
+
   return ret;
 }
 

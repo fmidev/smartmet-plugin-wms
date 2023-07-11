@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.5.30
+Version: 23.6.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -79,13 +79,13 @@ Requires: smartmet-library-giza >= 23.3.21
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 23.4.27
 %endif
-Requires: smartmet-engine-querydata >= 23.7.10
-Requires: smartmet-engine-contour >= 23.7.11
-Requires: smartmet-engine-gis >= 23.7.10
-Requires: smartmet-engine-grid >= 23.7.11
-Requires: smartmet-engine-geonames >= 23.7.11
+Requires: smartmet-engine-querydata >= 23.6.15
+Requires: smartmet-engine-contour >= 23.6.13
+Requires: smartmet-engine-gis >= 23.6.13
+Requires: smartmet-engine-grid >= 23.6.8
+Requires: smartmet-engine-geonames >= 23.6.13
 Requires: smartmet-server >= 23.5.19
-Requires: smartmet-library-spine >= 23.7.10
+Requires: smartmet-library-spine >= 23.6.13
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
@@ -104,17 +104,17 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: libconfig17-devel
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 23.7.11
-#TestRequires: smartmet-engine-geonames-devel >= 23.7.11
-#TestRequires: smartmet-engine-gis-devel >= 23.7.10
-#TestRequires: smartmet-engine-querydata-devel >= 23.7.10
+#TestRequires: smartmet-engine-contour-devel >= 23.6.13
+#TestRequires: smartmet-engine-geonames-devel >= 23.6.13
+#TestRequires: smartmet-engine-gis-devel >= 23.6.13
+#TestRequires: smartmet-engine-querydata-devel >= 23.6.15
 #TestRequires: smartmet-library-giza-devel >= 23.3.21
-#TestRequires: smartmet-library-trax-devel >= 23.7.10
-#TestRequires: smartmet-library-newbase-devel >= 23.7.10
-#TestRequires: smartmet-library-macgyver-devel >= 23.5.24
-#TestRequires: smartmet-library-spine-devel >= 23.7.10
-#TestRequires: smartmet-library-timeseries-devel >= 23.7.10
-#TestRequires: smartmet-engine-grid-devel >= 23.7.11
+#TestRequires: smartmet-library-trax-devel >= 23.6.9
+#TestRequires: smartmet-library-newbase-devel >= 23.6.15
+#TestRequires: smartmet-library-macgyver-devel >= 23.6.15
+#TestRequires: smartmet-library-spine-devel >= 23.6.13
+#TestRequires: smartmet-library-timeseries-devel >= 23.6.15
+#TestRequires: smartmet-engine-grid-devel >= 23.6.8
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -135,7 +135,7 @@ SmartMet WMS/Dali plugin
 rm -rf $RPM_BUILD_ROOT
 
 %setup -q -n %{SPECNAME}
- 
+
 %build -q -n %{SPECNAME}
 make %{_smp_mflags} \
      %{?!with_authentication:CFLAGS=-DWITHOUT_AUTHENTICATION} \
@@ -154,6 +154,30 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Jun 15 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.15-1.fmi
+- Optimized Locations class for speed
+
+* Tue Jun 13 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.13-1.fmi
+- Support internal and environment variables in configuration files
+
+* Wed Jun  7 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.7-1.fmi
+- Fixed bounding box calculations to sample the full grid since the poles may be inside the image area
+
+* Tue Jun  6 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.6-3.fmi
+- Fixed querydata geographic bounding box to be based on all edge points instead of just the corner points (BRAINSTORM-2639)
+
+* Tue Jun  6 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.6-2.fmi
+- Added xmlescape calls where necessary to handle CDATA segments properly
+
+* Tue Jun  6 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.6-1.fmi
+- Repackaged due to GRID ABI changes
+
+* Thu Jun  1 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.1-2.fmi
+- Recompiled to use to ObsEngine API with stationgroups options
+
+* Thu Jun  1 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.6.1-1.fmi
+- More accurate error reports on WMS layers (full paths)
+
 * Tue May 30 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.5.30-1.fmi
 - Fixed potential segfault
 
