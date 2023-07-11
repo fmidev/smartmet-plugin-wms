@@ -1,4 +1,5 @@
 #include "JsonTools.h"
+#include "CaseInsensitiveComparator.h"
 #include "Time.h"
 #include <json/json.h>
 #include <macgyver/Exception.h>
@@ -236,7 +237,14 @@ void remove_time(boost::optional<boost::posix_time::ptime>& theTime,
   {
     auto json = remove(theJson, theName);
     if (json.isString())
-      theTime = parse_time(json.asString());
+    {
+      WMS::CaseInsensitiveComparator cicomp;
+      auto str = json.asString();
+      if (cicomp(str, "current"))
+        theTime = boost::posix_time::second_clock::universal_time();
+      else
+        theTime = parse_time(str);
+    }
     else if (json.isUInt64())
     {
       // A timestamp may look like an integer in a query string
@@ -264,7 +272,14 @@ void remove_time(boost::optional<boost::posix_time::ptime>& theTime,
   {
     auto json = remove(theJson, theName);
     if (json.isString())
-      theTime = parse_time(json.asString(), theZone);
+    {
+      WMS::CaseInsensitiveComparator cicomp;
+      auto str = json.asString();
+      if (cicomp(str, "current"))
+        theTime = boost::posix_time::second_clock::universal_time();
+      else
+        theTime = parse_time(str);
+    }
     else if (json.isUInt64())
     {
       // A timestamp may look like an integer in a query string
