@@ -861,9 +861,6 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
       if (!symbols.empty())
       {
-        if (value == kFloatMissing)
-          continue;
-
         auto selection = Select::attribute(symbols, value);
         if (selection)
         {
