@@ -85,13 +85,13 @@ const std::string &check_attack(const std::string &theName)
 // Keys accepted by Product and Properties classes:
 
 const std::set<std::string, Spine::HTTP::ParamMap::key_compare> allowed_keys = {
-    "attributes", "defs",         "forecastNumber", "forecastType", "geometryId",
-    "height",     "interval_end", "interval_start", "language",     "level",
-    "level",      "levelId",      "levelid",        "marginsclip",  "origintime",
-    "png",        "producer",     "projection",     "source",       "source",
-    "svg_tmpl",   "time",         "time_offset",    "timestep",     "title",
-    "type",       "tz",           "views",          "width",        "xmargin",
-    "ymargin"};
+    "attributes", "clip",     "defs",         "forecastNumber", "forecastType",
+    "geometryId", "height",   "interval_end", "interval_start", "language",
+    "level",      "level",    "levelId",      "levelid",        "margin",
+    "origintime", "png",      "producer",     "projection",     "source",
+    "source",     "svg_tmpl", "time",         "time_offset",    "timestep",
+    "title",      "type",     "tz",           "views",          "width",
+    "xmargin",    "ymargin"};
 
 void check_remaining_dali_json(Json::Value &json, const std::string &name)
 {
