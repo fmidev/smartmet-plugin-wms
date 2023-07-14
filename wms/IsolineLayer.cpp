@@ -211,6 +211,9 @@ void IsolineLayer::init(Json::Value& theJson,
     JsonTools::remove_double(multiplier, theJson, "multiplier");
     JsonTools::remove_double(offset, theJson, "offset");
 
+    JsonTools::remove_bool(strict, theJson, "strict");
+    JsonTools::remove_bool(validate, theJson, "validate");
+
     json = JsonTools::remove(theJson, "outside");
     if (!json.isNull())
     {
@@ -721,6 +724,9 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   else
     throw Fmi::Exception(BCP, "Unknown isoline interpolation method '" + interpolation + "'!");
 
+  options.strict = strict;
+  options.validate = validate;
+
   // Do the actual contouring, either full grid or just
   // a sampled section
 
@@ -749,6 +755,9 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   try
   {
     if (!validLayer(theState))
+      return;
+
+    if (isolines.empty())
       return;
 
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
@@ -928,6 +937,8 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_value(inside, theState));
     Fmi::hash_combine(hash, Dali::hash_value(sampling, theState));
     Fmi::hash_combine(hash, Dali::hash_value(intersections, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(strict));
+    Fmi::hash_combine(hash, Fmi::hash_value(validate));
     return hash;
   }
   catch (...)

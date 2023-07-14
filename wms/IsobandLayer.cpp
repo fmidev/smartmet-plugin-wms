@@ -141,6 +141,10 @@ void IsobandLayer::init(Json::Value& theJson,
     JsonTools::remove_double(multiplier, theJson, "multiplier");
     JsonTools::remove_double(offset, theJson, "offset");
 
+    JsonTools::remove_bool(closed_range, theJson, "closed_range");
+    JsonTools::remove_bool(strict, theJson, "strict");
+    JsonTools::remove_bool(validate, theJson, "validate");
+
     json = JsonTools::remove(theJson, "outside");
     if (!json.isNull())
     {
@@ -1058,6 +1062,10 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     else
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
 
+    options.closed_range = closed_range;
+    options.strict = strict;
+    options.validate = validate;
+
     // Do the actual contouring, either full grid or just
     // a sampled section
 
@@ -1276,6 +1284,9 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_value(sampling, theState));
     Fmi::hash_combine(hash, Dali::hash_value(intersections, theState));
     Fmi::hash_combine(hash, Dali::hash_value(heatmap, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(closed_range));
+    Fmi::hash_combine(hash, Fmi::hash_value(strict));
+    Fmi::hash_combine(hash, Fmi::hash_value(validate));
     return hash;
   }
   catch (...)

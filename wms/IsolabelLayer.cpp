@@ -180,6 +180,9 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     if (!validLayer(theState))
       return;
 
+    if (isolines.empty())
+      return;
+
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {

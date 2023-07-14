@@ -62,6 +62,10 @@ class IsobandLayer : public Layer
 
   Heatmap heatmap;
 
+  bool closed_range = true;
+  bool strict = false;
+  bool validate = false;
+
  private:
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
