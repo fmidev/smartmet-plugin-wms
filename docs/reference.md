@@ -576,6 +576,7 @@ The table below contains a list of attributes that can be defined for the isoban
 <tr><td>closed_range</td><td>bool<td>true</td><td>True if the last isoband is a closed interval. For example for percentages one would want range 90 <= x <= 100 instead of 90 <= x < 100.</td></tr>
 <tr><td>validate</td><td>bool</td><td>false</td><td>True if the geometries are to be validated (slow, for debugging purposes)</td></tr>
 <tr><td>strict</td><td>bool</td><td>false</td><td>In strict mode invalid geometries cause an error. Extra information will be dumped to the journal and attached to the thrown exception</td></tr>
+<tr><td>desliver</td><td>bool</td><td>false</td><td>True if sliver polygons are to be removed</td></tr>
 </table>
 
 In automatic qid and class generation "." will be replaced by ",", since "." is reserved for JSON paths. If both the lower limit and upper limit are undefined, "nan" will be used to fill the pattern. If only the lower limit is missing, "-inf" will be used. If only the upper limit is missing, "inf" will be used.
@@ -662,6 +663,7 @@ Name|Type|Default value|Description|
 |intersect|_[Intersect]_ or _Intersect_|-|Alternate isoband(s) with which to intersect.|
 |validate|bool|false|True if the geometries are to be validated (slow, for debugging purposes)|
 |strict|bool|false|In strict mode invalid geometries cause an error. Extra information will be dumped to the journal and attached to the thrown exception|
+|desliver|bool|false|True if sliver polygons are to be removed|
 
 In automatic qid/class generation "." will be replaced by ",", since "." is reserved for JSON path definitions.
 
