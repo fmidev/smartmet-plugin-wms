@@ -56,6 +56,7 @@ class IsolineLayer : public Layer
 
   bool strict = false;
   bool validate = false;
+  bool desliver = false;
 
  protected:
   std::vector<OGRGeometryPtr> getIsolines(const std::vector<double>& isovalues, State& theState);

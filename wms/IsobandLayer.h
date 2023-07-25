@@ -65,6 +65,7 @@ class IsobandLayer : public Layer
   bool closed_range = true;
   bool strict = false;
   bool validate = false;
+  bool desliver = false;
 
  private:
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);

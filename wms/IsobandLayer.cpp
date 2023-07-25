@@ -144,6 +144,7 @@ void IsobandLayer::init(Json::Value& theJson,
     JsonTools::remove_bool(closed_range, theJson, "closed_range");
     JsonTools::remove_bool(strict, theJson, "strict");
     JsonTools::remove_bool(validate, theJson, "validate");
+    JsonTools::remove_bool(desliver, theJson, "desliver");
 
     json = JsonTools::remove(theJson, "outside");
     if (!json.isNull())
@@ -1065,6 +1066,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     options.closed_range = closed_range;
     options.strict = strict;
     options.validate = validate;
+    options.desliver = desliver;
 
     // Do the actual contouring, either full grid or just
     // a sampled section
@@ -1287,6 +1289,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(closed_range));
     Fmi::hash_combine(hash, Fmi::hash_value(strict));
     Fmi::hash_combine(hash, Fmi::hash_value(validate));
+    Fmi::hash_combine(hash, Fmi::hash_value(desliver));
     return hash;
   }
   catch (...)

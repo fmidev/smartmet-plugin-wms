@@ -213,6 +213,7 @@ void IsolineLayer::init(Json::Value& theJson,
 
     JsonTools::remove_bool(strict, theJson, "strict");
     JsonTools::remove_bool(validate, theJson, "validate");
+    JsonTools::remove_bool(desliver, theJson, "desliver");
 
     json = JsonTools::remove(theJson, "outside");
     if (!json.isNull())
@@ -726,6 +727,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   options.strict = strict;
   options.validate = validate;
+  options.desliver = desliver;
 
   // Do the actual contouring, either full grid or just
   // a sampled section
@@ -939,6 +941,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_value(intersections, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(strict));
     Fmi::hash_combine(hash, Fmi::hash_value(validate));
+    Fmi::hash_combine(hash, Fmi::hash_value(desliver));
     return hash;
   }
   catch (...)
