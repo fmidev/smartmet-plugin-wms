@@ -649,6 +649,11 @@ WMSQueryStatus Dali::Plugin::wmsGetLegendGraphicQuery(State &theState,
       std::string layer_name;
       wmsPreprocessJSON(theState, thisRequest, layer_name, json, cnf_request, json_stage);
 
+	  // Legends can have alternative styles as well
+	  auto styleOpt = theRequest.getParameter("STYLE");
+	  std::string styleName = (styleOpt && !styleOpt->empty() ? *styleOpt : "default");
+	  SmartMet::Plugin::WMS::useStyle(json, styleName);
+
       // Debugging
 
       if (print_json)

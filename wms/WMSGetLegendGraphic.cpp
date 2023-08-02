@@ -84,7 +84,7 @@ void validate_options(const get_legend_graphic_request_options& options,
     if (!itsConfig.isValidStyle(options.layer, options.style))
     {
       throw Fmi::Exception(BCP,
-                           "The style is not supported by the requested layer!" + options.layer +
+                           "The style is not supported by the requested layer! " + options.layer +
                                ", " + options.style)
           .addParameter(WMS_EXCEPTION_CODE, WMS_STYLE_NOT_DEFINED)
           .addParameter("Requested style", options.style)
