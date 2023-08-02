@@ -26,8 +26,7 @@ std::string getKey(const Json::Value& json)
   if (layer_type.isNull())
     return "";
   std::string layerTypeString = layer_type.asString();
-  if (layerTypeString.empty() ||
-      supportedStyleLayers.find(layerTypeString) == supportedStyleLayers.end())
+  if (layerTypeString.empty())
     return "";
 
   return qid.asString();

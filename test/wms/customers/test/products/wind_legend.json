@@ -27,6 +27,31 @@
 	    }
 	]
     },
+  "styles":
+    [
+	{
+	    "name": "alternative_legend_style",
+	    "title": "Alternative legend style",
+	    "abstract": "Alternative legend style for test purposes",
+	    "layers":
+	    [
+		{
+		    "qid": "l1",
+		    "layer_type": "legend",
+		    "symbols":
+		    {
+			"css": "isobands/wind.css",
+			"symbol": "rect",
+			"attributes":
+			{
+			    "stroke": "black",
+			    "stroke-width": "2.5"
+			}
+		    }
+		}
+	    ]
+	}
+    ],
     "views": [
         {
 	    "qid": "v1",
@@ -37,6 +62,7 @@
             "layers": [
 		{
 		    "layer_type": "legend",
+		    "qid": "l1",
 		    "x": 30,
 		    "y": 40,
 		    "dx": 0,

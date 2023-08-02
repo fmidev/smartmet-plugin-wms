@@ -886,9 +886,12 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
   {
     WMSLayerStyle layerStyle;
     std::string name = json.asString();
+	// Alternative style defined for legend_url_layer
+	json = root.get("legend_url_layer_style", nulljson);
+	if (!json.isNull())
+	  layerStyle.name = json.asString();
     layerStyle.legend_url.online_resource = get_online_resource_string(layerStyle.name, name);
     layerStyle.title = Dali::Text("Style Title", "Default style");
-
     legendFiles.insert(make_pair(layerStyle.name, name));
     ret.insert(std::make_pair(layerStyle.name, layerStyle));
   }
@@ -1350,7 +1353,7 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
         if (itsStyles.find(styleName) != itsStyles.end())
         {
           // Width, height must be > 0
-          if (result.width == 0 || result.height == 0)
+          if ((result.width == 0 || result.height == 0) && !hidden)
           {
             itsStyles.erase(styleName);
             continue;
