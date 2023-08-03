@@ -30,9 +30,9 @@
   "styles":
     [
 	{
-	    "name": "alternative_legend_style",
-	    "title": "Alternative legend style",
-	    "abstract": "Alternative legend style for test purposes",
+	    "name": "alternative_legend_style1",
+	    "title": "Alternative legend style 1",
+	    "abstract": "Alternative legend style 1 for test purposes",
 	    "layers":
 	    [
 		{
@@ -46,6 +46,28 @@
 			{
 			    "stroke": "black",
 			    "stroke-width": "2.5"
+			}
+		    }
+		}
+	    ]
+	},
+	{
+	    "name": "alternative_legend_style2",
+	    "title": "Alternative legend style 2",
+	    "abstract": "Alternative legend style 2 for test purposes",
+	    "layers":
+	    [
+		{
+		    "qid": "l1",
+		    "layer_type": "legend",
+		    "symbols":
+		    {
+			"css": "isobands/wind.css",
+			"symbol": "rect",
+			"attributes":
+			{
+			    "stroke": "black",
+			    "stroke-width": "5.5"
 			}
 		    }
 		}

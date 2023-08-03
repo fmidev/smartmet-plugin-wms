@@ -18,6 +18,22 @@
     "xsize": 500,
     "ysize": 500
   },
+ "styles": [
+    {
+	"name": "style1",
+	"title": "Title for style1",
+	"abstract": "Abstract for style1",
+	"legend_url_layer": "test:wind_legend",
+	"legend_url_layer_style": "alternative_legend_style1"
+    },
+    {
+	"name": "style2",
+	"title": "Title for style2",
+	"abstract": "Abstract for style2",
+	"legend_url_layer": "test:wind_legend",
+	"legend_url_layer_style": "alternative_legend_style2"
+    }
+ ],
   "views": [
     {
       "qid": "v1",
