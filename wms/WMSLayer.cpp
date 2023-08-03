@@ -941,9 +941,12 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
         auto legend_url_layer_json = style_json.get("legend_url_layer", nulljson);
         if (!legend_url_layer_json.isNull())
         {
-          std::string legendLayerName = legend_url_layer_json.asString();
-          layerStyle.legend_url.online_resource =
-              get_online_resource_string("default", legendLayerName);
+          auto legendLayerName = legend_url_layer_json.asString();
+          auto legendLayerStyleName = std::string("default");
+		  auto legend_url_layer_style_json = style_json.get("legend_url_layer_style", nulljson);
+		  if (!legend_url_layer_style_json.isNull())
+			legendLayerStyleName = legend_url_layer_style_json.asString();
+          layerStyle.legend_url.online_resource = get_online_resource_string(legendLayerStyleName, legendLayerName);
           legendFiles.insert(make_pair(layerStyle.name, legendLayerName));
           ret.insert(std::make_pair(layerStyle.name, layerStyle));
         }

@@ -4011,6 +4011,42 @@
 								"height":150
 							}
 						]
+					},
+					{
+						"Name": "style1",
+						"Title": "Title for style1",
+						"Abstract": "Abstract for style1",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=alternative_legend_style1&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;width=80&amp;height=150"
+								},
+								"width":80,
+								"height":150
+							}
+						]
+					},
+					{
+						"Name": "style2",
+						"Title": "Title for style2",
+						"Abstract": "Abstract for style2",
+						"LegendURL":
+						[
+							{
+								"Format": "image/png",
+								"OnlineResource":
+								{
+									"xlink:type": "simple",
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=alternative_legend_style2&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;width=80&amp;height=150"
+								},
+								"width":80,
+								"height":150
+							}
+						]
 					}
 				]
 
@@ -4023,7 +4059,7 @@
 				"fixedWidth": 1234,
 				"fixedHeight": 4321,
 				"Name": "test:wind_alternative_legend_style",
-				"Abstract": "Test abstrac - alternative legend style",
+				"Abstract": "Test abstract - alternative legend style",
 				"KeywordList": ["bar","foo"],
 				"CRS": ["AUTO2:42001","AUTO2:42002","AUTO2:42003","AUTO2:42004","AUTO2:97001","AUTO2:97002","AUTO2:97003","CRS:27","CRS:83","CRS:84","CRS:SmartMetEurope","CRS:SmartMetScandinavia","EPSG:2393","EPSG:3035","EPSG:3047","EPSG:3067","EPSG:3857","EPSG:4258","EPSG:4326"],
 				"EX_GeographicBoundingBox":
@@ -4135,7 +4171,7 @@
 				"Style":
 				[
 					{
-						"Name": "alternative_legend_style",
+						"Name": "alternative_legend_style1",
 						"Title": "Default style",
 						"LegendURL":
 						[
@@ -4144,7 +4180,7 @@
 								"OnlineResource":
 								{
 									"xlink:type": "simple",
-									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=alternative_legend_style&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;width=80&amp;height=150"
+									"xlink:href": "http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=alternative_legend_style1&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;width=80&amp;height=150"
 								},
 								"width":80,
 								"height":150

@@ -1,7 +1,7 @@
 {
   // GetCapability test variables
   "title": "Wind demo - alternative legend style",
-  "abstract": "Test abstrac - alternative legend style",
+  "abstract": "Test abstract - alternative legend style",
   "opaque": false,
   "queryable": true,
   "cascaded": true,
@@ -13,7 +13,7 @@
   // Normal settings
   "producer": "pal_skandinavia",
   "legend_url_layer": "test:wind_legend",
-  "legend_url_layer_style": "alternative_legend_style",
+  "legend_url_layer_style": "alternative_legend_style1",
   "projection": {
     "crs": "data",
     "xsize": 500,
