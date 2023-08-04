@@ -1,0 +1,17 @@
+Edit TestRunner.sh and replace line
+
+stdbuf -oL -e0 ./PluginTest
+
+with something like (replace 'libasan.so.8' with actual shared library You have);
+
+ASAN_OPTIONS="log_path=asan.log" LD_PRELOAD=/usr/lib64/libasan.so.8 ./PluginTest
+
+or
+
+ASAN_OPTIONS="log_path=asan.log alloc_dealloc_mismatch=0" /usr/lib64/libasan.so.8 ./PluginTest
+
+After test run You will get ASAN results in file asan.log.nnnnn (nnnnn - PluginTest process PID)
+
+Perhaps one can use TSAN in the same way
+
+!!!! DO NOT COMMIT these changes to GitHub !!!!
