@@ -43,7 +43,7 @@ BuildRequires: smartmet-engine-geonames-devel >= 23.7.28
 BuildRequires: smartmet-engine-querydata-devel >= 23.7.28
 BuildRequires: smartmet-engine-contour-devel >= 23.7.28
 BuildRequires: smartmet-library-gis-devel >= 23.7.28
-BuildRequires: smartmet-library-trax-devel >= 23.7.28
+BuildRequires: smartmet-library-trax-devel >= 23.8.3
 BuildRequires: fmt-devel >= 8.1.1 fmt-devel < %{smartmet_fmt_max}
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -71,7 +71,7 @@ Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 23.7.28
 Requires: smartmet-library-grid-files >= 23.7.28
 Requires: smartmet-library-gis >= 23.7.28
-Requires: smartmet-library-trax >= 23.7.28
+Requires: smartmet-library-trax >= 23.8.3
 Requires: smartmet-library-macgyver >= 23.7.28
 Requires: smartmet-library-spine >= 23.7.31
 Requires: smartmet-library-timeseries >= 23.7.28
@@ -109,7 +109,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-gis-devel >= 23.7.28
 #TestRequires: smartmet-engine-querydata-devel >= 23.7.28
 #TestRequires: smartmet-library-giza-devel >= 23.7.28
-#TestRequires: smartmet-library-trax-devel >= 23.7.28
+#TestRequires: smartmet-library-trax-devel >= 23.8.3
 #TestRequires: smartmet-library-newbase-devel >= 23.7.31
 #TestRequires: smartmet-library-macgyver-devel >= 23.7.28
 #TestRequires: smartmet-library-spine-devel >= 23.7.31
