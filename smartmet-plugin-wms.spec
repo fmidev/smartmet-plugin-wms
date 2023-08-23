@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.8.3
+Version: 23.8.23
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Aug 23 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.8.23-1.fmi
+- Better support for symbols in legend layer (BRAINSTORM-2585)
+
 * Thu Aug 3 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.8.3-1.fmi
 - Fixed handling of styles of external legends in product file's alternative styles section (BRAINSTORM-2585, BRAINSTORM-2496)
 

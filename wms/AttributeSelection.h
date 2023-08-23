@@ -29,6 +29,7 @@ class AttributeSelection
   boost::optional<double> lolimit;
   boost::optional<double> hilimit;
   boost::optional<std::string> symbol;
+  std::map<std::string, std::string> translations;
   Attributes attributes;
 
   bool matches(double theValue) const;
