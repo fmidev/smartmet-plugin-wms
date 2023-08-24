@@ -18,7 +18,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/shared_ptr.hpp>
 #include <ctpp2/CDT.hpp>
-#include <engines/gis/BBox.h>
+#include <gis/BBox.h>
 #include <spine/Json.h>
 #include <spine/Value.h>
 #include <list>
@@ -71,7 +71,7 @@ class WMSLayer
 
   Spine::BoundingBox geographicBoundingBox;
   std::map<std::string, WMSSupportedReference> refs;
-  std::map<std::string, Engine::Gis::BBox> projected_bbox;  // final bbox for GetCapabilities output
+  std::map<std::string, Fmi::BBox> projected_bbox;  // final bbox for GetCapabilities output
 
   std::set<std::string> enabled_refs;
   std::set<std::string> disabled_refs;
