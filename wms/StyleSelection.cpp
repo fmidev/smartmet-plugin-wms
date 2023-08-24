@@ -37,13 +37,9 @@ void addOrReplace(Json::Value& viewLayerJson,
                   const Json::Value& styleLayerJson,
                   const std::string& key)
 {
-  Json::Value nulljson;
-  if (!key.empty())
-  {
-    auto styleJson = styleLayerJson.get(key, nulljson);
-    if (!styleJson.isNull())
-      viewLayerJson[key] = styleJson;
-  }
+  // Note: We allow replacements with null value on purpose so that a style can disable settings
+  if (!key.empty() && styleLayerJson.isMember(key))
+    viewLayerJson[key] = styleLayerJson[key];
 }
 
 void handleStyles(const std::map<std::string, Json::Value*>& viewLayers,
