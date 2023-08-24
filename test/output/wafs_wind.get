@@ -1218,6 +1218,7 @@
    <use class="GaleWindArrow_32_inf" transform="translate(1015 705) rotate(51)" xlink:href="#windarrow"/>
   </g>
   <g>
+   <use transform="translate(0,0)" xlink:href="#dot"/>
    <use transform="translate(3,708)" xlink:href="#dot"/>
    <use transform="translate(10,692)" xlink:href="#dot"/>
    <use transform="translate(18,676)" xlink:href="#dot"/>
