@@ -1035,6 +1035,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     Engine::Contour::Options options(param, valid_time, limits);
     options.level = level;
+    options.bbox = Fmi::BBox(box);
 
     if (!unit_conversion.empty())
     {

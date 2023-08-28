@@ -1642,7 +1642,7 @@ void WMSLayer::initProjectedBBoxes()
           std::swap(x1, y1);
           std::swap(x2, y2);
         }
-        Engine::Gis::BBox bbox(x1, x2, y1, y2);
+        Fmi::BBox bbox(x1, x2, y1, y2);
         projected_bbox.insert(std::make_pair(id, bbox));
       }
     }
@@ -2358,8 +2358,8 @@ bool WMSLayer::identicalProjectedBoundingBox(const WMSLayer& layer) const
   {
     if (layer.projected_bbox.find(item.first) == layer.projected_bbox.end())
       return false;
-    const Engine::Gis::BBox& bbox1 = item.second;
-    const Engine::Gis::BBox& bbox2 = layer.projected_bbox.at(item.first);
+    const Fmi::BBox& bbox1 = item.second;
+    const Fmi::BBox& bbox2 = layer.projected_bbox.at(item.first);
     if (bbox1.west != bbox2.west || bbox1.east != bbox2.east || bbox1.south != bbox2.south ||
         bbox1.north != bbox2.north)
       return false;

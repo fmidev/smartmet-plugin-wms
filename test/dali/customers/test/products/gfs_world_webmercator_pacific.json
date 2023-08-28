@@ -1,0 +1,38 @@
+{
+    "title": "GFS world in WebMercator",
+    "producer": "gfs",
+    "projection":
+    {
+	// "crs": "+init=EPSG:3857 +lon_0=180",
+	"crs": "EPSG:3857",
+	"x1": 0,
+	"y1": -20048966.1,
+	"x2": 40075016.68,
+	"y2": 20048966.1,
+	"xsize": 1440,
+	"ysize": 720
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+	    "layers":
+	    [
+		{
+		    "qid": "l1",
+		    "layer_type": "isoband",
+		    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css",
+		    "parameter": "Temperature",
+		    "attributes": {
+			"id": "t2m_isobands"
+		    }
+		}
+	    ]
+	}
+    ]
+}

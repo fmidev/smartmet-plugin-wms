@@ -23,6 +23,7 @@
 #include <boost/move/make_unique.hpp>
 #include <boost/regex.hpp>
 #include <fmt/format.h>
+#include <gis/EPSGInfo.h>
 #include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
@@ -616,7 +617,12 @@ void WMSConfig::parse_references()
   {
     int num = epsg_settings[i];
     std::string name = "EPSG:" + Fmi::to_string(num);
-    Engine::Gis::BBox bbox = itsGisEngine->getBBox(num);
+    auto epsginfo = Fmi::EPSGInfo::getInfo(num);
+    if (!epsginfo)
+      throw Fmi::Exception(BCP, "Unknown EPSG in WMS config EPSG list")
+          .addParameter("EPSG", Fmi::to_string(num));
+
+    const auto& bbox = epsginfo->bbox;
     bool enabled = true;
     Fmi::SpatialReference crs(name);
     bool geographic = crs.isGeographic();
@@ -657,7 +663,7 @@ void WMSConfig::parse_references()
     double east = bbox_array[1];
     double south = bbox_array[2];
     double north = bbox_array[3];
-    Engine::Gis::BBox bbox(west, east, south, north);
+    Fmi::BBox bbox(west, east, south, north);
 
     Fmi::SpatialReference crs(proj);
     bool geographic = crs.isGeographic();
@@ -688,7 +694,7 @@ void WMSConfig::parse_references()
 
       itsAutoProjections[id] = proj;
 
-      const Engine::Gis::BBox bbox(-180, 180, -90, 90);
+      const Fmi::BBox bbox(-180, 180, -90, 90);
       const bool enabled = true;
       const bool geographic = false;
       const std::string name = fmt::format("AUTO2:{}", id);
