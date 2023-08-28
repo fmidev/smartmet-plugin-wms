@@ -468,6 +468,7 @@ void Projection::prepareCRS() const
       }
     }
 
+#if 0
     if (*crs == "EPSG:3857" || *crs == "epsg:3857" || *crs == "EPSGA:3857" || *crs == "epsga:3857")
     {
       // EPSG:3857 (WebMercator) bbox according to https://epsg.io/3857 uses value 20037508.34
@@ -491,6 +492,7 @@ void Projection::prepareCRS() const
         std::cout << "WKT = " << Fmi::OGR::exportToProj(*ogr_crs) << std::endl;
       }
     }
+#endif
 
     // newbase corners calculated from world xy coordinates
 
