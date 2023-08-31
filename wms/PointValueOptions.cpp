@@ -71,45 +71,30 @@ void sort_by_priority(std::vector<PointValueWrapper>& points, const std::string&
 
 void sort_by_priorities(std::vector<PointValueWrapper>& points, const std::vector<int>& priorities)
 {
-  // Insert points to a map where points are grouped according to priority
-  std::set<int> priority_categories;
-  std::map<unsigned int, std::vector<PointValueWrapper>> prioritized_points;
-  for (auto prio_category : priorities)
+  // priorities contains an ordered list of symbol values which determine the drawing order.
+  // any symbol not in the list is drawn last in no particular order
+
+  std::unordered_map<int, int>
+      symbol_priorities;  // symbol --> priority number, zero for most important
+  for (auto i = 0; i < priorities.size(); i++)
+    symbol_priorities.insert({priorities[i], i});
+
+  // Then insert the points into a multimap for rendering
+
+  auto no_priority = std::numeric_limits<int>::max();
+  std::multimap<int, PointValueWrapper> prioritized_points;
+  for (const auto& item : points)
   {
-    priority_categories.insert(prio_category);
-    prioritized_points.insert(std::make_pair(prio_category, std::vector<PointValueWrapper>()));
+    auto symbol = item.priorityValue();
+    auto pos = symbol_priorities.find(symbol);
+    auto priority = (pos == symbol_priorities.end() ? no_priority : pos->second);
+    prioritized_points.insert({priority, item});
   }
 
-  // Non-prioritized points are inserted here
-  auto non_prioritized_category = std::numeric_limits<int>::max();
-  prioritized_points.insert(
-      std::make_pair(non_prioritized_category, std::vector<PointValueWrapper>()));
-
-  for (auto& item : points)
-  {
-    // Store as integer to get the right category
-    auto prio_category = item.priorityValue();
-    auto map_index =
-        (priority_categories.count(prio_category) > 0 ? prio_category : non_prioritized_category);
-    prioritized_points[map_index].push_back(item);
-  }
+  // And insert back into points in sorted order
   points.clear();
-
-  // First insert prioritized points
-  for (auto prio_category : priorities)
-  {
-    auto& prio_points = prioritized_points.at(prio_category);
-    if (!prio_points.empty())
-    {
-      // Sort prioritized points in descending order
-      std::sort(prio_points.begin(), prio_points.end(), max_sort);
-      points.insert(points.end(), prio_points.begin(), prio_points.end());
-    }
-  }
-  // Then Non-priorized points
-  auto& prio_points = prioritized_points.at(non_prioritized_category);
-  if (!prio_points.empty())
-    points.insert(points.end(), prio_points.begin(), prio_points.end());
+  for (const auto& priority_item : prioritized_points)
+    points.push_back(priority_item.second);
 }
 
 }  // namespace
