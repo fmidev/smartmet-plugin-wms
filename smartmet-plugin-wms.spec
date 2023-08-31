@@ -159,6 +159,7 @@ rm -rf $RPM_BUILD_ROOT
 - Symbol priority list now specifies the rendering order of the symbols, unlisted symbols have lowest priority
 - Better support for symbols in legend layer (BRAINSTORM-2585)
 - Read producer from views,layers if not found on root level in layer file (BRAINSTORM-2703)
+- Added "rendering_order = normal|reverse" for symbol, number and arrow  layers
 
 * Mon Aug 28 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.8.28-1.fmi
 - Added BBOX to Contour::Options to handle Pacific WebMercator views
