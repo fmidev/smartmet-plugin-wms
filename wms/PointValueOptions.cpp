@@ -76,7 +76,7 @@ void sort_by_priorities(std::vector<PointValueWrapper>& points, const std::vecto
 
   std::unordered_map<int, int>
       symbol_priorities;  // symbol --> priority number, zero for most important
-  for (auto i = 0; i < priorities.size(); i++)
+  for (auto i = 0UL; i < priorities.size(); i++)
     symbol_priorities.insert({priorities[i], i});
 
   // Then insert the points into a multimap for rendering
