@@ -32,6 +32,12 @@
 	"abstract": "Abstract for style2",
 	"legend_url_layer": "test:wind_legend",
 	"legend_url_layer_style": "alternative_legend_style2"
+    },
+    {
+	"name": "style3",
+	"title": "Title for style3",
+	"abstract": "Abstract for style3",
+	"legend_url_layer": "test:wind_legend2"
     }
  ],
   "views": [

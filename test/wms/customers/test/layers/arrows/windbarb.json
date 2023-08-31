@@ -1,7 +1,13 @@
 [
         {
             "hilimit": 0.5,
-	    "symbol": "windbarb_0"
+	    "symbol": "windbarb_0",
+	    "translation":
+	    {
+		"fi": "Melkin tyyntä, alle 0.5",
+		"sv": "Nästan vindlös, under  0.5",
+		"en": "Almost windless less than 0.5"
+	    }
         },
         {
 	    "lolimit": 0.5,

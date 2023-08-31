@@ -196,7 +196,15 @@ void LegendLayer::init(Json::Value& theJson,
     JsonTools::remove_int(dy, theJson, "dy");
 
     auto json = JsonTools::remove(theJson, "symbols");
-    symbols.init(json, theConfig);
+
+    if (json.isArray())
+	  {		
+		JsonTools::extract_array("symbols", symbol_vector, json, theConfig);
+	  }
+	else
+	  {
+		symbols.init(json, theConfig);
+	  }
 
     json = JsonTools::remove(theJson, "labels");
     labels.init(json, theConfig);
@@ -209,6 +217,105 @@ void LegendLayer::init(Json::Value& theJson,
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
+}
+
+std::string symbol_text(const AttributeSelection& theAttrSel, const std::string& separator, const boost::optional<std::string>& theLanguage)
+{
+  // If translation found return it
+  if(theLanguage && theAttrSel.translations.find(*theLanguage) != theAttrSel.translations.end())
+	return theAttrSel.translations.at(*theLanguage);
+
+  if(theAttrSel.value)
+	return Fmi::to_string(*theAttrSel.value);
+  if(theAttrSel.lolimit && theAttrSel.hilimit)
+	return (Fmi::to_string(*theAttrSel.lolimit) + separator + Fmi::to_string(*theAttrSel.hilimit));
+  if(theAttrSel.lolimit)
+	return (Fmi::to_string(*theAttrSel.lolimit) + separator);
+  if(theAttrSel.hilimit)
+	return (separator + Fmi::to_string(*theAttrSel.hilimit));
+
+  return {};
+}
+
+void LegendLayer::generate_from_symbol_vector(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+{
+  try
+	{
+	  if (css)
+		{
+		  std::string name = theState.getCustomer() + "/" + *css;
+		  theGlobals["css"][name] = theState.getStyle(*css);
+		}
+	  
+	  // Begin a G-group and add style to itself		  
+	  CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
+	  group_cdt["start"] = "<g";
+	  group_cdt["end"] = "";  // we will terminate the last layer separately
+	  
+	  // Add layer attributes to the legend, symbols and labels have their own attributes
+	  theState.addAttributes(theGlobals, group_cdt, attributes);
+	  
+	  theLayersCdt.PushBack(group_cdt);
+	  
+	  int xpos = x;
+	  int ypos = y;
+	  
+	  for(const auto& symbol : symbol_vector)
+		{
+		  
+		  CTPP::CDT inner_group_cdt(CTPP::CDT::HASH_VAL);
+		  inner_group_cdt["start"] = "";
+		  inner_group_cdt["end"] = "";
+		  
+		  CTPP::CDT symbol_cdt(CTPP::CDT::HASH_VAL);
+		  symbol_cdt["start"] = "<use";
+		  symbol_cdt["end"] = "/>";
+		  
+		  if(!symbol.symbol)
+			throw Fmi::Exception(BCP, "Array of symbols must define a symbol for each array member");
+		  
+		  theState.addAttributes(theGlobals, symbol_cdt, symbols.attributes);
+		  
+		  std::string iri = *symbol.symbol;
+		  std::string IRI = Iri::normalize(iri);
+		  if (theState.addId(IRI))
+			theGlobals["includes"][iri] = theState.getSymbol(iri);
+		  symbol_cdt["attributes"]["xlink:href"] = "#" + IRI;
+		  symbol_cdt["attributes"]["x"] = Fmi::to_string(xpos);
+		  symbol_cdt["attributes"]["y"] = Fmi::to_string(ypos);
+		  
+		  inner_group_cdt["tags"].PushBack(symbol_cdt);			
+		  theLayersCdt.PushBack(inner_group_cdt);
+		  
+		  auto text = symbol_text(symbol, labels.separator, language);
+		  if(!text.empty())
+			{
+			  CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
+			  text_cdt["start"] = "<text";
+			  text_cdt["end"] = "</text>";
+			  text_cdt["cdata"] = text;
+			  
+			  auto attrs = labels.attributes;				
+			  theState.addAttributes(theGlobals, text_cdt, attrs);
+			  
+			  text_cdt["attributes"]["x"] = Fmi::to_string(xpos + labels.dx);
+			  text_cdt["attributes"]["y"] = Fmi::to_string(ypos + labels.dy);
+			  theLayersCdt.PushBack(text_cdt);
+			}
+		  xpos += dx;
+		  ypos += dy;
+		}
+	  // Expand inner layers
+	  layers.generate(theGlobals, theLayersCdt, theState);
+	  
+	  // Close the grouping
+	  theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n  </g>");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+
 }
 
 // ----------------------------------------------------------------------
@@ -243,6 +350,9 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       std::string report = "LegendLayer::generate finished in %t sec CPU, %w sec real\n";
       timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
+
+	if(!symbol_vector.empty())
+	  return generate_from_symbol_vector(theGlobals, theLayersCdt, theState);
 
     // A symbol must be defined
 

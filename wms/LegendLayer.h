@@ -10,6 +10,7 @@
 #include "Layer.h"
 #include "LegendLabels.h"
 #include "LegendSymbols.h"
+#include "AttributeSelection.h"
 #include <boost/optional.hpp>
 #include <string>
 #include <vector>
@@ -45,6 +46,9 @@ class LegendLayer : public Layer
   std::vector<Isoband> isobands;
 
  private:
+  // The parameter values or ranges to be styled separately
+  std::vector<AttributeSelection> symbol_vector;
+  void generate_from_symbol_vector(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 };  // class LegendLayer
 
 }  // namespace Dali
