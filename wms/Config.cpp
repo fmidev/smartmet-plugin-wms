@@ -21,6 +21,24 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+std::size_t parse_size(const libconfig::Setting& setting, const char* name)
+{
+  switch (setting.getType())
+  {
+    case libconfig::Setting::TypeInt:
+      return static_cast<unsigned int>(setting);
+    case libconfig::Setting::TypeInt64:
+      return static_cast<unsigned long>(setting);
+    case libconfig::Setting::TypeString:
+      return Fmi::stosz(static_cast<const char*>(setting));
+    default:
+      throw Fmi::Exception(BCP, "Invalid type for size setting").addParameter("Setting", name);
+  }
+}
+
+}  // namespace
 // ----------------------------------------------------------------------
 /*!
  * \brief Constructor
@@ -67,9 +85,16 @@ Config::Config(const string& configfile)
     itsConfig.lookupValue("customer", itsDefaultCustomer);
 
     itsConfig.lookupValue("css_cache_size", itsStyleSheetCacheSize);
-    itsConfig.lookupValue("cache.memory_bytes", itsMaxMemoryCacheSize);
-    itsConfig.lookupValue("cache.filesystem_bytes", itsMaxFilesystemCacheSize);
+
     itsConfig.lookupValue("cache.directory", itsFilesystemCacheDirectory);
+
+    const char* memory_bytes = "cache.memory_bytes";
+    if (itsConfig.exists(memory_bytes))
+      itsMaxMemoryCacheSize = parse_size(itsConfig.lookup(memory_bytes), memory_bytes);
+
+    const char* filesystem_bytes = "cache.filesystem_bytes";
+    if (itsConfig.exists(filesystem_bytes))
+      itsMaxFilesystemCacheSize = parse_size(itsConfig.lookup(filesystem_bytes), filesystem_bytes);
 
     itsConfig.lookupValue("heatmap.max_points", itsMaxHeatmapPoints);
 
