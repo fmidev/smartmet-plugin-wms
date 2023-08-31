@@ -1,0 +1,51 @@
+{
+    "hidden": true,
+    "width": 300,
+    "height": 8000,
+    "projection":
+    {
+    },
+    "views": [
+        {
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers": [
+		{
+		    "qid": "l1",
+		    "x": 30,
+		    "y": 40,
+		    "dx": 0,
+		    "dy": 150,
+		    "layer_type": "legend",
+		    "css": "arrows/windbarb.css",
+		    "symbols": "json:arrows/windbarb.json",
+		    "layers": [
+			{
+			    "tag": "text",
+			    "cdata": { "sv": "Vind pil", "en": "Wind arrow", "fi": "Tuulinuoli" },
+			    "attributes":
+			    {
+				"x": 20,
+				"y": 13,
+				"class": "Units"
+			    }
+			},
+			{
+			    "tag": "text",
+			    "cdata": " ",
+			    "attributes":
+			    {
+				"x": 30,
+				"y": 30,
+				"class": "Units"
+			    }
+			}
+		    ]			
+		}
+            ]
+        }
+    ]
+}

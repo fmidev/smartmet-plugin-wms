@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.8.28
+Version: 23.8.31
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Aug 31 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.8.31-1.fmi
+- Better support for symbols in legend layer (BRAINSTORM-2585)
+- Read producer from views,layers if not found on root level in layer file (BRAINSTORM-2703)
+
 * Mon Aug 28 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.8.28-1.fmi
 - Added BBOX to Contour::Options to handle Pacific WebMercator views
 

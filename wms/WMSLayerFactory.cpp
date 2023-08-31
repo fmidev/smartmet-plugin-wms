@@ -296,17 +296,65 @@ void extract_keyword(Json::Value& root, boost::optional<std::set<std::string>>& 
   }
 }
 
+// Read producer info from 1) root-level, 2) views, 3) layers, 4) default (from config file)
+std::string determine_producer(const WMSConfig& theWMSConfig, Json::Value& root)
+{
+  try
+  {
+	std::string producer;
+	
+	// From root
+	remove_string(producer, root, "producer");
+	
+	if(!producer.empty())
+	  return producer;
+	
+	// Iterate views and layers
+	Json::Value nulljson;
+	auto views = root.get("views", nulljson);
+	if(!views.isNull())
+	  {
+		// Iterate views
+		for (unsigned int i = 0; i < views.size(); i++)
+		  {
+			auto view = views[i];
+			remove_string(producer, view, "producer");
+			if(!producer.empty())
+			  {
+				return producer;
+			  }
+			
+			auto layers = view.get("layers", nulljson);
+			if (!layers.isNull())
+			  {
+				// Iterate layers
+				for (unsigned int k = 0; k < layers.size(); k++)
+				  {
+					auto layer = layers[k];
+					remove_string(producer, layer, "producer");
+					if(!producer.empty())
+					  {
+						return producer;
+					  }
+				  }
+			  }		  
+		  }
+	  }
+	
+	// If no producer defined, let's use default producer
+	return theWMSConfig.getDaliConfig().defaultModel();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to determine prodcer!");
+  }
+}
+
 SharedWMSLayer create_wms_layer(const WMSConfig& theWMSConfig, Json::Value& root)
 {
   try
   {
-    // producer timestep given in root level
-    std::string producer;
-    remove_string(producer, root, "producer");
-
-    // if no producer defined, let's use default producer
-    if (producer.empty())
-      producer = theWMSConfig.getDaliConfig().defaultModel();
+    auto producer = determine_producer(theWMSConfig, root);
 
     Json::Value parsedLayer;
     WMSLayerType layerType = determine_product_type(theWMSConfig, producer, root, parsedLayer);
