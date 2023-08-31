@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 23.8.31
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -28,7 +28,7 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.7.28
 BuildRequires: smartmet-library-grid-content-devel >= 23.7.28
 BuildRequires: smartmet-library-grid-files-devel >= 23.8.21
-BuildRequires: smartmet-library-macgyver-devel >= 23.8.21
+BuildRequires: smartmet-library-macgyver-devel >= 23.8.31
 BuildRequires: smartmet-library-spine-devel >= 23.8.31
 BuildRequires: smartmet-library-timeseries-devel >= 23.7.28
 %if %{with authentication}
@@ -72,7 +72,7 @@ Requires: smartmet-library-grid-content >= 23.7.28
 Requires: smartmet-library-grid-files >= 23.8.21
 Requires: smartmet-library-gis >= 23.8.30
 Requires: smartmet-library-trax >= 23.8.17
-Requires: smartmet-library-macgyver >= 23.8.21
+Requires: smartmet-library-macgyver >= 23.8.31
 Requires: smartmet-library-spine >= 23.8.31
 Requires: smartmet-library-timeseries >= 23.7.28
 Requires: smartmet-library-giza >= 23.7.28
@@ -111,7 +111,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 23.7.28
 #TestRequires: smartmet-library-trax-devel >= 23.8.17
 #TestRequires: smartmet-library-newbase-devel >= 23.8.30
-#TestRequires: smartmet-library-macgyver-devel >= 23.8.21
+#TestRequires: smartmet-library-macgyver-devel >= 23.8.31
 #TestRequires: smartmet-library-spine-devel >= 23.8.31
 #TestRequires: smartmet-library-timeseries-devel >= 23.7.28
 #TestRequires: smartmet-engine-grid-devel >= 23.7.28
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Aug 31 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.8.31-2.fmi
+- Cache sizes in bytes can now be defined with strings of form "10G"
+
 * Thu Aug 31 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.8.31-1.fmi
 - A WMS style no longer needs to set layer_type
 - Symbol priority list now specifies the rendering order of the symbols, unlisted symbols have lowest priority
