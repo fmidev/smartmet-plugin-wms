@@ -20,6 +20,8 @@
 #include <ogr_spatialref.h>
 #include <stdexcept>
 
+#include <gis/OGR.h>
+
 namespace SmartMet
 {
 namespace Plugin
@@ -466,6 +468,32 @@ void Projection::prepareCRS() const
       }
     }
 
+#if 0
+    if (*crs == "EPSG:3857" || *crs == "epsg:3857" || *crs == "EPSGA:3857" || *crs == "epsga:3857")
+    {
+      // EPSG:3857 (WebMercator) bbox according to https://epsg.io/3857 uses value 20037508.34
+      // but PROJ produces a slightly larger value, hence we add 0.01
+      auto epsg_max = 20037508.35;
+      auto epsg_min = -epsg_max;
+      auto lon_0 = 0;  // default central longitude
+
+      // No support for multiple wraps atleast yet
+      if (XMIN < epsg_min)
+        lon_0 = -180;
+      else if (XMAX > epsg_max)
+        lon_0 = +180;
+
+      if (lon_0 != 0)
+      {
+        auto new_crs = fmt::format("+init={} +lon_0={}", *crs, lon_0);
+        ogr_crs = std::make_shared<Fmi::SpatialReference>(new_crs);
+
+        std::cout << "PROJ = " << ogr_crs->projStr() << std::endl;
+        std::cout << "WKT = " << Fmi::OGR::exportToProj(*ogr_crs) << std::endl;
+      }
+    }
+#endif
+
     // newbase corners calculated from world xy coordinates
 
     Fmi::CoordinateTransformation transformation(*ogr_crs, "FMI");
@@ -479,17 +507,30 @@ void Projection::prepareCRS() const
     itsTopRight = NFmiPoint(XMAX, YMAX);
 
 #if 0
-    std::cerr << std::setprecision(8) << "\nProjection:\n\n"
-              << "\nxsize=" << (xsize ? *xsize : -1) << "\nysize=" << (ysize ? *ysize : -1)
-              << "\nx1=" << (x1 ? *x1 : -1) << "\ny1=" << (y1 ? *y1 : -1)
-              << "\nx2=" << (x2 ? *x2 : -1) << "\ny2=" << (y2 ? *y2 : -1)
-              << "\ncx=" << (cx ? *cx : -1) << "\ncy=" << (cy ? *cy : -1)
-              << "\nres=" << (resolution ? *resolution : -1) << "\nbl=" << itsBottomLeft.X() << ","
-              << itsBottomLeft.Y() << "\ntr=" << itsTopRight.X() << "," << itsTopRight.Y() << "\n"
-              << "\nxmin=" << box->xmin() << "\nxmax=" << box->xmax() << "\nymin=" << box->ymin()
-              << "\nymax=" << box->ymax() << "\nwidth=" << box->width()
-              << "\nheight=" << box->height() << "\n"
-              << std::endl;
+    std::cerr << fmt::format(
+                     "\nProjection:\n\n\nxsize={}\nysize={}\nx1={}\ny1={}\nx2={}\ny2={}\ncx={}\ncy="
+                     "{}\nres={}\nbl={},{}\ntr={},{}\nxmin={}\nxmax={}\nymin={}\nymax={}\nwidth={}"
+                     "\nheight={}\n\n",
+                     xsize ? *xsize : -1,
+                     ysize ? *ysize : -1,
+                     x1 ? *x1 : -1,
+                     y1 ? *y1 : -1,
+                     x2 ? *x2 : -1,
+                     y2 ? *y2 : -1,
+                     cx ? *cx : -1,
+                     cy ? *cy : -1,
+                     resolution ? *resolution : -1,
+                     itsBottomLeft.X(),
+                     itsBottomLeft.Y(),
+                     itsTopRight.X(),
+                     itsTopRight.Y(),
+                     box->xmin(),
+                     box->xmax(),
+                     box->ymin(),
+                     box->ymax(),
+                     box->width(),
+                     box->height())
+              << std::flush;
 #endif
   }
   catch (...)

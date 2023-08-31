@@ -684,8 +684,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   Engine::Contour::Options options(param, valid_time, isovalues);
   options.level = level;
-
   options.minarea = minarea;
+  options.bbox = Fmi::BBox(box);
 
   // Set the requested level
 

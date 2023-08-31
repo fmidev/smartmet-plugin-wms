@@ -1,6 +1,6 @@
 #pragma once
 
-#include <engines/gis/BBox.h>
+#include <gis/BBox.h>
 #include <string>
 
 namespace SmartMet
@@ -12,13 +12,13 @@ namespace WMS
 // A WMS reference
 struct WMSSupportedReference
 {
-  WMSSupportedReference(std::string p, const Engine::Gis::BBox& b, bool e, bool g)
+  WMSSupportedReference(std::string p, const Fmi::BBox& b, bool e, bool g)
       : proj(std::move(p)), bbox(b), enabled(e), geographic(g)
   {
   }
 
   std::string proj;
-  Engine::Gis::BBox bbox{};
+  Fmi::BBox bbox{};
   bool enabled = true;
   bool geographic = false;
 };
