@@ -1,4 +1,5 @@
 #include "PointValueOptions.h"
+#include "Hash.h"
 #include "JsonTools.h"
 #include "PointData.h"
 #include <macgyver/Exception.h>
@@ -104,6 +105,7 @@ void PointValueOptions::init(Json::Value& theJson)
   try
   {
     JsonTools::remove_double(mindistance, theJson, "mindistance");
+    JsonTools::remove_string(rendering_order, theJson, "rendering_order");
 
     auto json = JsonTools::remove(theJson, "priority");
     if (!json.isNull())
@@ -160,11 +162,39 @@ std::vector<PointData> prioritize(const std::vector<PointData>& pv, const PointV
         ret.push_back(p.data());
     }
 
+    if (opts.rendering_order == "normal")
+      ;
+    else if (opts.rendering_order == "reverse")
+      std::reverse(ret.begin(), ret.end());
+    else
+      throw Fmi::Exception(BCP, "Unknown rendering order '" + opts.rendering_order + "'");
+
     return ret;
   }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+std::size_t PointValueOptions::hash_value() const
+{
+  try
+  {
+    auto hash = Fmi::hash_value(mindistance);
+    Fmi::hash_combine(hash, Fmi::hash_value(priority));
+    if (priorities)
+    {
+      for (auto symbol : *priorities)
+        Fmi::hash_combine(hash, Fmi::hash_value(symbol));
+    }
+    Fmi::hash_combine(hash, Fmi::hash_value(rendering_order));
+
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to calculate hash value for point value priorities!");
   }
 }
 

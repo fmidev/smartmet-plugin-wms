@@ -25,6 +25,9 @@ struct PointValueOptions
   boost::optional<double> mindistance;
   boost::optional<std::string> priority;
   boost::optional<std::vector<int>> priorities;
+  std::string rendering_order = "normal";
+
+  std::size_t hash_value() const;
 };
 
 std::vector<PointData> prioritize(const std::vector<PointData>& pv, const PointValueOptions& opts);

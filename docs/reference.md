@@ -911,6 +911,7 @@ The table below contains a list of attributes that can be defined for the symbol
 |symbols|_[AttributeSelection]_|-|The symbols for different data values.|
 |mindistance|int|-|Minimum distance in pixels between symbols.|
 |priority|string or integer array|-|Priority order of symbols.|
+|rendering_order|string|"normal"|Rendering order of the symbol is normal or reverse with respect to priority|
 
 Note that assigning a proper scale for symbols with CSS or SVG attributes alone  is difficult. Using the scale-attribute eases the  scaling of the symbols.
 
@@ -923,7 +924,7 @@ Note that assigning a proper scale for symbols with CSS or SVG attributes alone 
 |max|Symbols with biggest value are drawn first.|
 |extrema|Symbols with biggest mean deviation drawn first.|
 |none|Symbols are treated equally, there is no priority order.|
-|[83,82,81]|Symbols with values 83,82,81 are drawn first, the rest have no priority order.|
+|[83,82,81]|Symbols with values 83,82,81 are drawn first in the order given, the rest have no priority order.|
 
 Symbols are drawn on the map starting from the highest priority. If there already is a symbol nearby on the map (mindistance parameter), the symbol is not shown. Regarding mindistance and priority parameters the same logic is applied in Arrow-, Number- and CloudCeilingLayers.
 
@@ -1021,6 +1022,7 @@ The table below contains a list of attributes that can be defined for the arrow 
 |maxdistance|double|5|Maximum distance for a station to be accepted close enough to the position.|
 |arrows|_[AttributeSelection]_|-|SVG attribute selection for speed dependent arrows.|
 |mindistance|int|-|Minimum distance in pixels between arrows.|
+|rendering_order|string|"normal"|Rendering order of the symbol is normal or reverse with respect to priority|
 |priority|string or integer array|-|Priority order of arrows.|
 
 Note: A direction parameter is sufficient to draw arrows. An additional speed component may be defined to style the arrows depending on the speed. Both U- and V-components must be specified if used, but these cannot be used simultaneously with the direction and speed parameters.
@@ -1101,6 +1103,7 @@ The table below contains a list of attributes that can be defined for the number
 |multiplier|(double)|1.0|A multiplier for valid data values for unit conversion purposes.|
 |offset|(double)|0.0|An offset for valid data for unit conversion purposes.|
 |mindistance|int|-|Minimum distance in pixels between numbers.|
+|rendering_order|string|"normal"|Rendering order of the symbol is normal or reverse with respect to priority|
 |priority|string or integer array|-|Priority order of numbers.|
 
 #### NullLayer

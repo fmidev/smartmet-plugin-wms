@@ -961,13 +961,13 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
     Fmi::hash_combine(hash, Fmi::hash_value(offset));
     Fmi::hash_combine(hash, Dali::hash_value(positions, theState));
-    Fmi::hash_combine(hash, Fmi::hash_value(minvalues));
     Fmi::hash_combine(hash, Fmi::hash_value(maxdistance));
     Fmi::hash_combine(hash, Dali::hash_symbol(symbol, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(scale));
     Fmi::hash_combine(hash, Fmi::hash_value(dx));
     Fmi::hash_combine(hash, Fmi::hash_value(dy));
     Fmi::hash_combine(hash, Dali::hash_value(symbols, theState));
+    Fmi::hash_combine(hash, point_value_options.hash_value());
     return hash;
   }
   catch (...)

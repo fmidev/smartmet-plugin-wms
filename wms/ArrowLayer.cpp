@@ -1339,6 +1339,7 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(minvalues));
     Fmi::hash_combine(hash, Fmi::hash_value(maxdistance));
     Fmi::hash_combine(hash, Dali::hash_value(arrows, theState));
+    Fmi::hash_combine(hash, point_value_options.hash_value());
     return hash;
   }
   catch (...)

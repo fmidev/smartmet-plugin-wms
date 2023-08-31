@@ -995,6 +995,7 @@ std::size_t NumberLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(scale));
     Fmi::hash_combine(hash, Dali::hash_value(label, theState));
     Fmi::hash_combine(hash, Dali::hash_value(numbers, theState));
+    Fmi::hash_combine(hash, point_value_options.hash_value());
     return hash;
   }
   catch (...)
