@@ -22,12 +22,15 @@ std::string getKey(const Json::Value& json)
   if (qid.isNull())
     return "";
 
+#if 0
+  // Why repeat layer_type in styles? Just keep the old one
   auto layer_type = json.get("layer_type", nulljson);
   if (layer_type.isNull())
     return "";
   std::string layerTypeString = layer_type.asString();
   if (layerTypeString.empty())
     return "";
+#endif
 
   return qid.asString();
 }
@@ -71,17 +74,17 @@ void handleStyles(const std::map<std::string, Json::Value*>& viewLayers,
     if (layerType.isNull())
       return;
 
-    Json::Value::Members styleLayerMembers = styleLayerJson.getMemberNames();
-
     // If the layer type changes, we remove all old settings first since the
     // settings are most likely not compatible, and a complete layer change is wanted.
 
     auto newLayerType = styleLayerJson.get("layer_type", nulljson);
-    if (layerType != newLayerType)
+    if (!newLayerType.isNull() && layerType != newLayerType)
       viewLayerJson = Json::Value(Json::objectValue);
 
     // Then insert new style settings over the old ones, including the qid since the above
     // code may have deleted it
+    Json::Value::Members styleLayerMembers = styleLayerJson.getMemberNames();
+
     for (const auto& name : styleLayerMembers)
       addOrReplace(viewLayerJson, styleLayerJson, name);
   }
