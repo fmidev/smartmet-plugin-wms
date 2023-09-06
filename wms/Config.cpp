@@ -78,7 +78,7 @@ Config::Config(const string& configfile)
       itsLanguages.insert(itsDefaultLanguage);
     }
 
-    itsConfig.lookupValue("primarytForecastSource", itsPrimaryForecastSource);
+    itsConfig.lookupValue("primaryForecastSource", itsPrimaryForecastSource);
 
     itsConfig.lookupValue("template", itsDefaultTemplate);
     itsConfig.lookupValue("templatedir", itsTemplateDirectory);
