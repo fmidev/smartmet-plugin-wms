@@ -144,6 +144,13 @@ time_intervals get_intervals(const Container& container)
   iter++;
   for (; iter != container.end(); iter++)
   {
+	// If endTime missing set it and continue (this happens when resolution has changed)
+	if(current_interval->endTime.is_not_a_date_time())
+	  {
+		current_interval->endTime = *iter;
+		current_interval->resolution = (current_interval->endTime - current_interval->startTime);
+		continue;
+	  }
     boost::posix_time::time_duration latest_timestep = (*iter - current_interval->endTime);
     // Timestep length changes
     if (latest_timestep.total_seconds() != current_interval->resolution.total_seconds())
@@ -160,13 +167,16 @@ time_intervals get_intervals(const Container& container)
       // Add new interval
       ret.emplace_back(interval_start_time, interval_end_time, resolution);
       current_interval = &ret.back();
+	  // Set startTime to iter and endTime to not_a_date_time (endTime set on the next round)
+	  current_interval->startTime = *iter;
+	  current_interval->endTime = boost::posix_time::not_a_date_time;
       continue;
     }
     current_interval->endTime = *iter;
   }
   // If latest interval has only two timesteps, we can not use IntervalTimeDimension
-  if (!ret.empty() &&
-      (current_interval->endTime - current_interval->startTime) == current_interval->resolution)
+  if (!ret.empty() && (current_interval->endTime.is_not_a_date_time() ||
+					   (current_interval->endTime - current_interval->startTime) == current_interval->resolution))
     ret.clear();
 
   return ret;
