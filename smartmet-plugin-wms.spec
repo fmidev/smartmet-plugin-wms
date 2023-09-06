@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.8.31
-Release: 2%{?dist}.fmi
+Version: 23.9.6
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Sep  6 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.9.6-1.fmi
+- Fixed typo in config setting: primarytForecastSource --> primaryForecastSource
+
 * Thu Aug 31 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.8.31-2.fmi
 - Cache sizes in bytes can now be defined with strings of form "10G"
 
