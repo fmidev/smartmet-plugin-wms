@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.9.6
-Release: 2%{?dist}.fmi
+Version: 23.9.11
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -39,7 +39,7 @@ BuildRequires: smartmet-engine-observation-devel >= 23.8.9
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 23.8.28
 BuildRequires: smartmet-engine-grid-devel >= 23.7.28
-BuildRequires: smartmet-engine-geonames-devel >= 23.7.28
+BuildRequires: smartmet-engine-geonames-devel >= 23.9.6
 BuildRequires: smartmet-engine-querydata-devel >= 23.8.31
 BuildRequires: smartmet-engine-contour-devel >= 23.8.28
 BuildRequires: smartmet-library-gis-devel >= 23.8.30
@@ -83,7 +83,7 @@ Requires: smartmet-engine-querydata >= 23.8.31
 Requires: smartmet-engine-contour >= 23.8.28
 Requires: smartmet-engine-gis >= 23.8.28
 Requires: smartmet-engine-grid >= 23.7.28
-Requires: smartmet-engine-geonames >= 23.7.28
+Requires: smartmet-engine-geonames >= 23.9.6
 Requires: smartmet-server >= 23.8.30
 Requires: smartmet-library-spine >= 23.8.31
 Requires: smartmet-fonts
@@ -105,7 +105,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: ImageMagick
 #TestRequires: bc
 #TestRequires: smartmet-engine-contour-devel >= 23.8.28
-#TestRequires: smartmet-engine-geonames-devel >= 23.7.28
+#TestRequires: smartmet-engine-geonames-devel >= 23.9.6
 #TestRequires: smartmet-engine-gis-devel >= 23.8.28
 #TestRequires: smartmet-engine-querydata-devel >= 23.8.31
 #TestRequires: smartmet-library-giza-devel >= 23.7.28
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Mon Sep 11 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.9.11-1.fmi
+- Repackaged due to ABI changes in grid-files
+
 * Wed Sep  6 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.9.4-2.fmi
 - Allow gaps between time-intervals in GetCapabilities response document (BRAINSTORM-2713)
 
