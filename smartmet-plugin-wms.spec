@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.9.11
+Version: 23.9.15
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -30,7 +30,7 @@ BuildRequires: smartmet-library-grid-content-devel >= 23.9.11
 BuildRequires: smartmet-library-grid-files-devel >= 23.9.11
 BuildRequires: smartmet-library-macgyver-devel >= 23.8.31
 BuildRequires: smartmet-library-spine-devel >= 23.8.31
-BuildRequires: smartmet-library-timeseries-devel >= 23.7.28
+BuildRequires: smartmet-library-timeseries-devel >= 23.9.12
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 23.7.28
 %endif
@@ -42,7 +42,7 @@ BuildRequires: smartmet-engine-grid-devel >= 23.9.11
 BuildRequires: smartmet-engine-geonames-devel >= 23.9.6
 BuildRequires: smartmet-engine-querydata-devel >= 23.8.31
 BuildRequires: smartmet-engine-contour-devel >= 23.8.28
-BuildRequires: smartmet-library-gis-devel >= 23.8.30
+BuildRequires: smartmet-library-gis-devel >= 23.9.12
 BuildRequires: smartmet-library-trax-devel >= 23.8.17
 BuildRequires: fmt-devel >= 8.1.1 fmt-devel < %{smartmet_fmt_max}
 BuildRequires: ctpp2 >= 2.8.8
@@ -70,11 +70,11 @@ Requires: libconfig17
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 23.9.11
 Requires: smartmet-library-grid-files >= 23.9.11
-Requires: smartmet-library-gis >= 23.8.30
+Requires: smartmet-library-gis >= 23.9.12
 Requires: smartmet-library-trax >= 23.8.17
 Requires: smartmet-library-macgyver >= 23.8.31
 Requires: smartmet-library-spine >= 23.8.31
-Requires: smartmet-library-timeseries >= 23.7.28
+Requires: smartmet-library-timeseries >= 23.9.12
 Requires: smartmet-library-giza >= 23.7.28
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 23.7.28
@@ -113,7 +113,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-newbase-devel >= 23.8.30
 #TestRequires: smartmet-library-macgyver-devel >= 23.8.31
 #TestRequires: smartmet-library-spine-devel >= 23.8.31
-#TestRequires: smartmet-library-timeseries-devel >= 23.7.28
+#TestRequires: smartmet-library-timeseries-devel >= 23.9.12
 #TestRequires: smartmet-engine-grid-devel >= 23.9.11
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Fri Sep 15 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.9.15-1.fmi
+- Fixed producer, source and geometryId extraction (BRAINSTORM-2703)
+
 * Mon Sep 11 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.9.11-1.fmi
 - Repackaged due to ABI changes in grid-files
 
