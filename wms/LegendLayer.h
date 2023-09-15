@@ -6,11 +6,11 @@
 
 #pragma once
 
+#include "AttributeSelection.h"
 #include "Isoband.h"
 #include "Layer.h"
 #include "LegendLabels.h"
 #include "LegendSymbols.h"
-#include "AttributeSelection.h"
 #include <boost/optional.hpp>
 #include <string>
 #include <vector>

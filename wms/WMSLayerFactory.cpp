@@ -301,48 +301,48 @@ std::string determine_producer(const WMSConfig& theWMSConfig, Json::Value& root)
 {
   try
   {
-	std::string producer;
-	
-	// From root
-	remove_string(producer, root, "producer");
-	
-	if(!producer.empty())
-	  return producer;
-	
-	// Iterate views and layers
-	Json::Value nulljson;
-	auto views = root.get("views", nulljson);
-	if(!views.isNull())
-	  {
-		// Iterate views
-		for (unsigned int i = 0; i < views.size(); i++)
-		  {
-			auto view = views[i];
-			remove_string(producer, view, "producer");
-			if(!producer.empty())
-			  {
-				return producer;
-			  }
-			
-			auto layers = view.get("layers", nulljson);
-			if (!layers.isNull())
-			  {
-				// Iterate layers
-				for (unsigned int k = 0; k < layers.size(); k++)
-				  {
-					auto layer = layers[k];
-					remove_string(producer, layer, "producer");
-					if(!producer.empty())
-					  {
-						return producer;
-					  }
-				  }
-			  }		  
-		  }
-	  }
-	
-	// If no producer defined, let's use default producer
-	return theWMSConfig.getDaliConfig().defaultModel();
+    std::string producer;
+
+    // From root
+    remove_string(producer, root, "producer");
+
+    if (!producer.empty())
+      return producer;
+
+    // Iterate views and layers
+    Json::Value nulljson;
+    auto views = root.get("views", nulljson);
+    if (!views.isNull())
+    {
+      // Iterate views
+      for (unsigned int i = 0; i < views.size(); i++)
+      {
+        auto view = views[i];
+        remove_string(producer, view, "producer");
+        if (!producer.empty())
+        {
+          return producer;
+        }
+
+        auto layers = view.get("layers", nulljson);
+        if (!layers.isNull())
+        {
+          // Iterate layers
+          for (unsigned int k = 0; k < layers.size(); k++)
+          {
+            auto layer = layers[k];
+            remove_string(producer, layer, "producer");
+            if (!producer.empty())
+            {
+              return producer;
+            }
+          }
+        }
+      }
+    }
+
+    // If no producer defined, let's use default producer
+    return theWMSConfig.getDaliConfig().defaultModel();
   }
   catch (...)
   {
