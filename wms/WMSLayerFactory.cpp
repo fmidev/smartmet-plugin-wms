@@ -296,57 +296,142 @@ void extract_keyword(Json::Value& root, boost::optional<std::set<std::string>>& 
   }
 }
 
-// Read producer info from 1) root-level, 2) views, 3) layers, 4) default (from config file)
+// Read producer info from
+//  1) layer
+//  2) view
+//  3) product
+//  4) config file
+
 std::string determine_producer(const WMSConfig& theWMSConfig, Json::Value& root)
 {
   try
   {
-	std::string producer;
-	
-	// From root
-	remove_string(producer, root, "producer");
-	
-	if(!producer.empty())
-	  return producer;
-	
-	// Iterate views and layers
-	Json::Value nulljson;
-	auto views = root.get("views", nulljson);
-	if(!views.isNull())
-	  {
-		// Iterate views
-		for (unsigned int i = 0; i < views.size(); i++)
-		  {
-			auto view = views[i];
-			remove_string(producer, view, "producer");
-			if(!producer.empty())
-			  {
-				return producer;
-			  }
-			
-			auto layers = view.get("layers", nulljson);
-			if (!layers.isNull())
-			  {
-				// Iterate layers
-				for (unsigned int k = 0; k < layers.size(); k++)
-				  {
-					auto layer = layers[k];
-					remove_string(producer, layer, "producer");
-					if(!producer.empty())
-					  {
-						return producer;
-					  }
-				  }
-			  }		  
-		  }
-	  }
-	
-	// If no producer defined, let's use default producer
-	return theWMSConfig.getDaliConfig().defaultModel();
+    std::string producer;
+
+    // From product
+    remove_string(producer, root, "producer");
+
+    // Iterate views and layers
+    Json::Value nulljson;
+    auto views = root.get("views", nulljson);
+    if (!views.isNull())
+    {
+      // Iterate views
+      for (unsigned int i = 0; i < views.size(); i++)
+      {
+        auto view = views[i];
+        remove_string(producer, view, "producer");
+
+        auto layers = view.get("layers", nulljson);
+        if (!layers.isNull())
+        {
+          // Iterate layers
+          for (unsigned int k = 0; k < layers.size(); k++)
+          {
+            auto layer = layers[k];
+            remove_string(producer, layer, "producer");
+            if (!producer.empty())
+              return producer;
+          }
+        }
+      }
+    }
+
+    if (!producer.empty())
+      return producer;
+
+    // If no producer defined, let's use default producer
+    return theWMSConfig.getDaliConfig().defaultModel();
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Failed to determine prodcer!");
+    throw Fmi::Exception::Trace(BCP, "Failed to determine producer!");
+  }
+}
+
+boost::optional<std::string> determine_source(Json::Value& root)
+{
+  try
+  {
+    boost::optional<std::string> source;
+
+    // From product
+    remove_string(source, root, "source");
+
+    // Iterate views and layers
+    Json::Value nulljson;
+    auto views = root.get("views", nulljson);
+    if (!views.isNull())
+    {
+      // Iterate views
+      for (unsigned int i = 0; i < views.size(); i++)
+      {
+        auto view = views[i];
+        remove_string(source, view, "source");
+
+        auto layers = view.get("layers", nulljson);
+        if (!layers.isNull())
+        {
+          // Iterate layers
+          for (unsigned int k = 0; k < layers.size(); k++)
+          {
+            auto layer = layers[k];
+            remove_string(source, layer, "source");
+            if (source)
+              return source;
+          }
+        }
+      }
+    }
+
+    return source;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to determine producer!");
+  }
+}
+
+uint determine_geometryId(Json::Value& root)
+{
+  try
+  {
+    uint geometryId = 0;
+
+    // From product
+    remove_uint(geometryId, root, "geometryId");
+
+    // Iterate views and layers
+    Json::Value nulljson;
+    auto views = root.get("views", nulljson);
+    if (!views.isNull())
+    {
+      // Iterate views
+      for (unsigned int i = 0; i < views.size(); i++)
+      {
+        auto view = views[i];
+        remove_uint(geometryId, view, "geometryId");
+
+        auto layers = view.get("layers", nulljson);
+        if (!layers.isNull())
+        {
+          // Iterate layers
+          for (unsigned int k = 0; k < layers.size(); k++)
+          {
+            auto layer = layers[k];
+            remove_uint(geometryId, layer, "geometryId");
+            if (geometryId != 0)
+              return geometryId;
+          }
+        }
+      }
+    }
+
+    return geometryId;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to determine geometryId!");
   }
 }
 
@@ -355,28 +440,22 @@ SharedWMSLayer create_wms_layer(const WMSConfig& theWMSConfig, Json::Value& root
   try
   {
     auto producer = determine_producer(theWMSConfig, root);
+    uint geometryId = determine_geometryId(root);
+    boost::optional<std::string> source = determine_source(root);
 
     Json::Value parsedLayer;
     WMSLayerType layerType = determine_product_type(theWMSConfig, producer, root, parsedLayer);
 
-    uint geometryId = 0;
-    remove_uint(geometryId, root, "geometryId");
-
-    boost::optional<std::string> source;
-    remove_string(source, root, "source");
-    if (source)
+    if (source == std::string("grid"))
     {
-      if (*source == "grid")
-      {
-        layerType = WMSLayerType::GridDataLayer;
+      layerType = WMSLayerType::GridDataLayer;
 
-        std::vector<std::string> partList;
-        splitString(producer, ':', partList);
-        if (partList.size() == 2)
-        {
-          producer = partList[0];
-          geometryId = toUInt32(partList[1]);
-        }
+      std::vector<std::string> partList;
+      splitString(producer, ':', partList);
+      if (partList.size() == 2)
+      {
+        producer = partList[0];
+        geometryId = toUInt32(partList[1]);
       }
     }
 

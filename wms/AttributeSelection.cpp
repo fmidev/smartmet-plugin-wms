@@ -83,14 +83,14 @@ void AttributeSelection::init(Json::Value& theJson, const Config& theConfig)
       else if (name == "attributes")
         attributes.init(json, theConfig);
       else if (name == "translation")
-		{
-		  const auto languages = json.getMemberNames();
-		  for (const auto& language : languages)
-			{
-			  auto translation_json = json[language];
-			  translations[language] = translation_json.asString();
-			}
-		}
+      {
+        const auto languages = json.getMemberNames();
+        for (const auto& language : languages)
+        {
+          auto translation_json = json[language];
+          translations[language] = translation_json.asString();
+        }
+      }
       else if (name == "qid")
       {  // ignored so that f.ex. SymbolLayer may reuse Isobands
       }
