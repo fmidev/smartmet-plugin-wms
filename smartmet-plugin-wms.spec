@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.9.29
+Version: 23.10.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+
+* Thu Oct 5 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.10.5-1.fmi
+- Fixed layout=recursive bug when namespace-option and layer name are identical (BRAINSTORM-2742)
+
 * Fri Sep 29 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.9.29-1.fmi
 - Repackaged due to changes in grid libraries
 
@@ -168,6 +172,9 @@ rm -rf $RPM_BUILD_ROOT
 
 * Wed Sep  6 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.9.6-1.fmi
 - Fixed typo in config setting: primarytForecastSource --> primaryForecastSource
+
+* Mon Sep 4 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.9.4-1.fmi
+- Allow gaps between time-intervals in GetCapabilities response document (BRAINSTORM-2713)
 
 * Thu Aug 31 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.8.31-2.fmi
 - Cache sizes in bytes can now be defined with strings of form "10G"
