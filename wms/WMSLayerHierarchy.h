@@ -47,6 +47,7 @@ class WMSLayerHierarchy
                     const boost::optional<std::string>& wms_namespace,
                     HierarchyType hierarchy_type,
                     const boost::optional<std::string>& apikey,
+					bool auth,
                     Engine::Authentication::Engine* authEngine);
 #else
   WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
@@ -69,6 +70,7 @@ class WMSLayerHierarchy
                             const boost::optional<std::string>& reference_time) const;
 
   std::string name;
+  bool authenticate;
   // Parts that can be inhereted by sublayers
   boost::optional<const WMSLayerProxy&> baseInfoLayer;
   boost::optional<const WMSLayerProxy&> geographicBoundingBox;

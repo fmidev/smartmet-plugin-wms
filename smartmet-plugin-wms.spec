@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.9.15
+Version: 23.10.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Oct 5 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.10.5-1.fmi
+- Fixed layout=recursive bug when namespace-option and layer name are identical (BRAINSTORM-2742)
+
 * Fri Sep 15 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.9.15-1.fmi
 - Fixed producer, source and geometryId extraction (BRAINSTORM-2703)
 
