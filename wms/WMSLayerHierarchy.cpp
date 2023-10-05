@@ -29,12 +29,16 @@ bool looks_like_pattern(const std::string& pattern)
 
 bool match_namespace_pattern(const std::string& name, const std::string& pattern)
 {
+  if(name == pattern)
+	return true;
+
   if (!looks_like_pattern(pattern))
     return boost::algorithm::istarts_with(name, pattern + ":");
 
   // Strip surrounding slashes first
   const std::string re_str = pattern.substr(1, pattern.size() - 2);
   const boost::regex re(re_str, boost::regex::icase);
+
   return boost::regex_search(name, re);
 }
 
@@ -360,13 +364,14 @@ WMSLayerHierarchy::WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>&
                                      const boost::optional<std::string>& wms_namespace,
                                      HierarchyType hierarchy_type,
                                      const boost::optional<std::string>& apikey,
+									 bool auth,
                                      Engine::Authentication::Engine* authEngine)
-    : name("__root__")
+  : name("__root__"), authenticate(auth)
 #else
 WMSLayerHierarchy::WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
                                      const boost::optional<std::string>& wms_namespace,
                                      HierarchyType hierarchy_type)
-    : name("__root__")
+    : name("__root__"), authenticate(false)
 #endif
 {
 #ifndef WITHOUT_AUTHENTICATION
@@ -398,11 +403,10 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
 #ifndef WITHOUT_AUTHENTICATION
     // If authentication is requested, skip the layer if authentication fails
     const std::string wmsService = "wms";
-    if (apikey)
+	if (apikey && authenticate)
       if (authEngine == nullptr || !authEngine->authorize(*apikey, layer_name, wmsService))
         continue;
 #endif
-
     // Skip hidden layers
     if (item.second.getLayer()->isHidden())
       continue;
