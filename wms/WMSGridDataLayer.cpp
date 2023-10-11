@@ -89,7 +89,8 @@ bool WMSGridDataLayer::updateLayerMetaData()
     {
       T::GenerationInfo* generationInfo = generationInfoList.getGenerationInfoByIndex(i);
 
-      if (generationInfo == nullptr)
+      // generation must exist and be marked complete (1)
+      if (generationInfo == nullptr || generationInfo->mStatus != 1))
         continue;
 
       if (itsGeometryId <= 0)

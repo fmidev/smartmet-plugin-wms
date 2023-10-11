@@ -27,7 +27,7 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.7.28
 BuildRequires: smartmet-library-grid-content-devel >= 23.9.29
-BuildRequires: smartmet-library-grid-files-devel >= 23.9.29
+BuildRequires: smartmet-library-grid-files-devel >= 23.10.3
 BuildRequires: smartmet-library-macgyver-devel >= 23.8.31
 BuildRequires: smartmet-library-spine-devel >= 23.8.31
 BuildRequires: smartmet-library-timeseries-devel >= 23.10.11
@@ -41,7 +41,7 @@ BuildRequires: smartmet-engine-gis-devel >= 23.8.28
 BuildRequires: smartmet-engine-grid-devel >= 23.9.29
 BuildRequires: smartmet-engine-geonames-devel >= 23.9.6
 BuildRequires: smartmet-engine-querydata-devel >= 23.8.31
-BuildRequires: smartmet-engine-contour-devel >= 23.8.28
+BuildRequires: smartmet-engine-contour-devel >= 23.10.3
 BuildRequires: smartmet-library-gis-devel >= 23.9.12
 BuildRequires: smartmet-library-trax-devel >= 23.8.17
 BuildRequires: fmt-devel >= 8.1.1 fmt-devel < %{smartmet_fmt_max}
@@ -69,7 +69,7 @@ Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 23.9.29
-Requires: smartmet-library-grid-files >= 23.9.29
+Requires: smartmet-library-grid-files >= 23.10.3
 Requires: smartmet-library-gis >= 23.9.12
 Requires: smartmet-library-trax >= 23.8.17
 Requires: smartmet-library-macgyver >= 23.8.31
@@ -80,7 +80,7 @@ Requires: smartmet-library-giza >= 23.7.28
 Requires: smartmet-engine-authentication >= 23.7.28
 %endif
 Requires: smartmet-engine-querydata >= 23.8.31
-Requires: smartmet-engine-contour >= 23.8.28
+Requires: smartmet-engine-contour >= 23.10.3
 Requires: smartmet-engine-gis >= 23.8.28
 Requires: smartmet-engine-grid >= 23.9.29
 Requires: smartmet-engine-geonames >= 23.9.6
@@ -104,13 +104,13 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: libconfig17-devel
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 23.8.28
+#TestRequires: smartmet-engine-contour-devel >= 23.10.3
 #TestRequires: smartmet-engine-geonames-devel >= 23.9.6
 #TestRequires: smartmet-engine-gis-devel >= 23.8.28
 #TestRequires: smartmet-engine-querydata-devel >= 23.8.31
 #TestRequires: smartmet-library-giza-devel >= 23.7.28
 #TestRequires: smartmet-library-trax-devel >= 23.8.17
-#TestRequires: smartmet-library-newbase-devel >= 23.8.30
+#TestRequires: smartmet-library-newbase-devel >= 23.10.3
 #TestRequires: smartmet-library-macgyver-devel >= 23.8.31
 #TestRequires: smartmet-library-spine-devel >= 23.8.31
 #TestRequires: smartmet-library-timeseries-devel >= 23.10.11
@@ -156,6 +156,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Oct 11 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.10.11-1.fmi
 - Aggregation support added (BRAINSTORM-2457)
+- Fixed GetCapabilities to ignore incomplete GRIB generations
 
 * Thu Oct 5 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.10.5-1.fmi
 - Fixed layout=recursive bug when namespace-option and layer name are identical (BRAINSTORM-2742)
