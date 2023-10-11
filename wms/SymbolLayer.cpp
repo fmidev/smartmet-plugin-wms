@@ -11,6 +11,7 @@
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
+#include "AggregationUtility.h"
 #include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
@@ -74,13 +75,12 @@ PointValues read_forecasts(const SymbolLayer& layer,
     // querydata API for value() sucks
 
     boost::optional<Spine::Parameter> param;
-    if (layer.parameter)
-      param = TS::ParameterFactory::instance().parse(*layer.parameter);
+    if (layer.param_funcs)
+	  param = layer.param_funcs->parameter;
 
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
     boost::local_time::local_date_time localdatetime(valid_time, utc);
-    TS::LocalTimePoolPtr localTimePool = nullptr;
 
     PointValues pointvalues;
     auto mylocale = std::locale::classic();
@@ -114,9 +114,11 @@ PointValues read_forecasts(const SymbolLayer& layer,
                                                     false,
                                                     dummy,
                                                     dummy,
-                                                    localTimePool);
+                                                    state.getLocalTimePool());
 
-        auto result = q->value(options, localdatetime);
+		TS::Value result = AggregationUtility::get_qengine_value(q, options, localdatetime, layer.param_funcs);
+
+        //auto result = q->value(options, localdatetime);
         if (boost::get<double>(&result) != nullptr)
         {
           double tmp = *boost::get<double>(&result);
@@ -258,7 +260,29 @@ void SymbolLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-    JsonTools::remove_string(parameter, theJson, "parameter");
+	boost::optional<std::string> param;
+	JsonTools::remove_string(param, theJson, "parameter");
+	if(param)
+	{
+	  if(producer && !isFlashOrMobileProducer(*producer))
+	  {
+		try
+		{
+		  param_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*param);
+		  parameter = param;
+		}
+		catch (...)
+		{
+		  parameter = param;
+		}
+
+	  }
+	  else
+	  {
+		parameter = param;
+	  }
+	}
+
     JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
     JsonTools::remove_double(multiplier, theJson, "multiplier");
     JsonTools::remove_double(offset, theJson, "offset");

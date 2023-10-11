@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.10.5
+Version: 23.10.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -30,7 +30,7 @@ BuildRequires: smartmet-library-grid-content-devel >= 23.9.29
 BuildRequires: smartmet-library-grid-files-devel >= 23.10.3
 BuildRequires: smartmet-library-macgyver-devel >= 23.8.31
 BuildRequires: smartmet-library-spine-devel >= 23.8.31
-BuildRequires: smartmet-library-timeseries-devel >= 23.10.5
+BuildRequires: smartmet-library-timeseries-devel >= 23.10.11
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 23.7.28
 %endif
@@ -74,7 +74,7 @@ Requires: smartmet-library-gis >= 23.9.12
 Requires: smartmet-library-trax >= 23.8.17
 Requires: smartmet-library-macgyver >= 23.8.31
 Requires: smartmet-library-spine >= 23.8.31
-Requires: smartmet-library-timeseries >= 23.10.5
+Requires: smartmet-library-timeseries >= 23.10.11
 Requires: smartmet-library-giza >= 23.7.28
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 23.7.28
@@ -113,7 +113,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-newbase-devel >= 23.10.3
 #TestRequires: smartmet-library-macgyver-devel >= 23.8.31
 #TestRequires: smartmet-library-spine-devel >= 23.8.31
-#TestRequires: smartmet-library-timeseries-devel >= 23.10.5
+#TestRequires: smartmet-library-timeseries-devel >= 23.10.11
 #TestRequires: smartmet-engine-grid-devel >= 23.9.29
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Wed Oct 11 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.10.11-1.fmi
+- Aggregation support added (BRAINSTORM-2457)
+- Fixed GetCapabilities to ignore incomplete GRIB generations
 
 * Thu Oct 5 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.10.5-1.fmi
 - Fixed layout=recursive bug when namespace-option and layer name are identical (BRAINSTORM-2742)
