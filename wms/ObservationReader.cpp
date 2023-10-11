@@ -6,6 +6,7 @@
 #include "Positions.h"
 #include "State.h"
 #include "ValueTools.h"
+#include "AggregationUtility.h"
 #include <engines/observation/Engine.h>
 #include <fmt/format.h>
 #include <gis/Box.h>
@@ -194,8 +195,6 @@ PointValues read_all_observations(State& state,
     settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
     settings.localTimePool = state.getLocalTimePool();
 
-    // settings.timestep = ?;
-
     settings.starttimeGiven = true;
 
     settings.wantedtime = valid_time;
@@ -204,11 +203,24 @@ PointValues read_all_observations(State& state,
 
     auto& obsengine = state.getObsEngine();
 
+	// Store parameters and functions in paramFuncs
+	std::vector<TS::ParameterAndFunctions> paramFuncs;
     for (const auto& p : parameters)
-      settings.parameters.push_back(TS::makeParameter(p));
+	{
+	  auto paf = TS::ParameterFactory::instance().parseNameAndFunctions(p);
+	  paramFuncs.push_back(paf);
+	  settings.parameters.push_back(paf.parameter);
+	}
 
+    auto fmisid_idx = add_help_parameter(settings.parameters, "fmisid");
     auto lon_idx = add_help_parameter(settings.parameters, "stationlon");
     auto lat_idx = add_help_parameter(settings.parameters, "stationlat");
+
+	// Add fmisid, stationlon, stationlat into paramFuncs structure even if they dont have functions
+	paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("fmisid"));
+	paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("stationlon"));
+	paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("stationlat"));
+
 
     // Request intersection parameters too - if any
     auto iparams = positions.intersections.parameters();
@@ -217,14 +229,24 @@ PointValues read_all_observations(State& state,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(TS::makeParameter(extraparam));
+	  {
+		// Add extraparams into paramFuncs structure even if they dont have functions
+		auto paf = TS::ParameterFactory::instance().parseNameAndFunctions(extraparam);
+		paramFuncs.push_back(paf);
+		settings.parameters.push_back(paf.parameter);
+	  }
 
     // Coordinates or bounding box
     Engine::Observation::StationSettings stationSettings;
     stationSettings.bounding_box_settings = layer.getClipBoundingBox(box, crs);
     settings.taggedFMISIDs = obsengine.translateToFMISID(settings, stationSettings);
 
-    auto result = obsengine.values(settings);
+    // Read the observations and aggregate if requested
+	auto result = AggregationUtility::get_obsengine_values(obsengine,
+														   valid_time,
+														   paramFuncs,
+														   fmisid_idx,
+														   settings);   
 
     // Build the pointvalues
 
@@ -315,8 +337,6 @@ PointValues read_station_observations(State& state,
     settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
     settings.localTimePool = state.getLocalTimePool();
 
-    // settings.timestep = ?;
-
     settings.starttimeGiven = true;
 
     settings.wantedtime = valid_time;
@@ -325,12 +345,23 @@ PointValues read_station_observations(State& state,
 
     auto& obsengine = state.getObsEngine();
 
+	// Store parameters and functions in paramFuncs
+	std::vector<TS::ParameterAndFunctions> paramFuncs;
     for (const auto& p : parameters)
-      settings.parameters.push_back(TS::makeParameter(p));
+	{
+	  auto paf = TS::ParameterFactory::instance().parseNameAndFunctions(p);
+	  paramFuncs.push_back(paf);
+	  settings.parameters.push_back(paf.parameter);
+	}
 
     auto fmisid_idx = add_help_parameter(settings.parameters, "fmisid");
     auto lon_idx = add_help_parameter(settings.parameters, "stationlon");
     auto lat_idx = add_help_parameter(settings.parameters, "stationlat");
+
+	// Add fmisid, stationlon, stationlat into paramFuncs structure even if they dont have functions
+	paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("fmisid"));
+	paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("stationlon"));
+	paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("stationlat"));
 
     // Request intersection parameters too - if any
     auto iparams = positions.intersections.parameters();
@@ -339,7 +370,12 @@ PointValues read_station_observations(State& state,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
-      settings.parameters.push_back(TS::makeParameter(extraparam));
+	  {
+		// Add extraparams into paramFuncs structure even if they dont have functions
+		auto paf = TS::ParameterFactory::instance().parseNameAndFunctions(extraparam);
+		paramFuncs.push_back(paf);
+		settings.parameters.push_back(paf.parameter);
+	  }
 
     // Collect information on station dx,dy values while converting IDs to fmisid numbers
 
@@ -396,9 +432,12 @@ PointValues read_station_observations(State& state,
       }
     }
 
-    // Read all the observations
-
-    auto result = obsengine.values(settings);
+    // Read the observations and aggregate if requested
+	auto result = AggregationUtility::get_obsengine_values(obsengine,
+														   valid_time,
+														   paramFuncs,
+														   fmisid_idx,
+														   settings);
 
     PointValues pointvalues;
 
@@ -499,12 +538,24 @@ PointValues read_latlon_observations(State& state,
 
     auto& obsengine = state.getObsEngine();
 
+	// Store parameters and functions in paramFuncs
+	std::vector<TS::ParameterAndFunctions> paramFuncs;
     for (const auto& p : parameters)
-      settings.parameters.push_back(TS::makeParameter(p));
+	{
+	  auto paf = TS::ParameterFactory::instance().parseNameAndFunctions(p);
+	  paramFuncs.push_back(paf);
+	  settings.parameters.push_back(paf.parameter);
+	}
 
     auto fmisid_idx = add_help_parameter(settings.parameters, "fmisid");
     auto stationlon_idx = add_help_parameter(settings.parameters, "stationlon");
     auto stationlat_idx = add_help_parameter(settings.parameters, "stationlat");
+
+	// Add fmisid, stationlon, stationlat into paramFuncs structure even if they dont have functions
+	paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("fmisid"));
+	paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("stationlon"));
+	paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions("stationlat"));
+
 
     // Request intersection parameters too - if any
     auto iparams = positions.intersections.parameters();
@@ -513,10 +564,10 @@ PointValues read_latlon_observations(State& state,
         settings.parameters.size();  // which column holds the first extra parameter
 
     for (const auto& extraparam : iparams)
+	{
       settings.parameters.push_back(TS::makeParameter(extraparam));
-
-    // settings.debug_options = Engine::Observation::Settings::DUMP_SETTINGS;
-    // std::cout << "Settings:\n" << settings << "\n";
+	  paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions(extraparam));
+	}
 
     // Collect information on point dx,dy values while converting IDs to fmisid numbers
 
@@ -550,10 +601,12 @@ PointValues read_latlon_observations(State& state,
       }
     }
 
-    // Read all the observations
-
-    auto result = obsengine.values(settings);
-
+    // Read the observations and aggregate if requested
+	auto result = AggregationUtility::get_obsengine_values(obsengine,
+														   valid_time,
+														   paramFuncs,
+														   fmisid_idx,
+														   settings);
     PointValues pointvalues;
 
     if (!result || result->empty())
@@ -660,6 +713,7 @@ PointValues read(State& state,
     auto points = positions.getPoints(q, crs, box, forecast_mode, state);
 
     if (!points.empty())
+	{
       return read_latlon_observations(state,
                                       parameters,
                                       layer,
@@ -671,6 +725,7 @@ PointValues read(State& state,
                                       valid_time_period,
                                       transformation,
                                       points);
+	}
 
     return read_all_observations(state,
                                  parameters,

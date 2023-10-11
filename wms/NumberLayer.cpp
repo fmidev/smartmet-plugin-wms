@@ -11,6 +11,7 @@
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
+#include "AggregationUtility.h"
 #include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
@@ -30,9 +31,9 @@
 #include <newbase/NFmiPoint.h>
 #include <spine/Convenience.h>
 #include <spine/Json.h>
-#include <timeseries/ParameterFactory.h>
 #include <timeseries/ParameterTools.h>
 #include <timeseries/TimeSeriesOutput.h>
+#include <timeseries/TimeSeriesGeneratorCache.h>
 #include <iomanip>
 
 namespace SmartMet
@@ -58,6 +59,7 @@ PointValues read_forecasts(const NumberLayer& layer,
 {
   try
   {
+
     // Generate the coordinates for the numbers
 
     const bool forecast_mode = true;
@@ -65,12 +67,13 @@ PointValues read_forecasts(const NumberLayer& layer,
 
     // The parameters. This *must* be done after the call to positions generation
 
-    auto param = TS::ParameterFactory::instance().parse(*layer.parameter);
-
+    boost::optional<Spine::Parameter> param;
+    if (layer.param_funcs)
+	  param = layer.param_funcs->parameter;
+	  
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
     boost::local_time::local_date_time localdatetime(valid_time, utc);
-    TS::LocalTimePoolPtr localTimePool = nullptr;
 
     PointValues pointvalues;
 
@@ -84,7 +87,7 @@ PointValues read_forecasts(const NumberLayer& layer,
         Spine::Location loc(point.latlon.X(), point.latlon.Y());
 
         // Q API SUCKS!!
-        Engine::Querydata::ParameterOptions options(param,
+        Engine::Querydata::ParameterOptions options(*param,
                                                     "",
                                                     loc,
                                                     "",
@@ -97,9 +100,10 @@ PointValues read_forecasts(const NumberLayer& layer,
                                                     false,
                                                     dummy,
                                                     dummy,
-                                                    localTimePool);
+                                                    state.getLocalTimePool());	   
 
-        auto result = q->value(options, localdatetime);
+		TS::Value result = AggregationUtility::get_qengine_value(q, options, localdatetime, layer.param_funcs);
+
         if (boost::get<double>(&result) != nullptr)
         {
           double tmp = *boost::get<double>(&result);
@@ -261,8 +265,29 @@ void NumberLayer::init(Json::Value& theJson,
     Layer::init(theJson, theState, theConfig, theProperties);
 
     // Extract member values
+	boost::optional<std::string> param;
 
-    JsonTools::remove_string(parameter, theJson, "parameter");
+	JsonTools::remove_string(param, theJson, "parameter");
+	if(param)
+	{
+	  if(producer && !isFlashOrMobileProducer(*producer))
+	  {
+		try
+		{
+		  param_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*param);
+		  parameter = param;
+		}
+		catch (...)
+		{
+		  parameter = param;
+		}
+	  }
+	  else
+	  {
+		parameter = param;
+	  }
+	}
+
     JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
     JsonTools::remove_double(multiplier, theJson, "multiplier");
     JsonTools::remove_double(offset, theJson, "offset");
@@ -803,15 +828,17 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
       pointvalues = read_forecasts(*this, q, crs, box, valid_time, theState);
 #ifndef WITHOUT_OBSERVATION
     else
-      pointvalues = ObservationReader::read(theState,
-                                            {*parameter},
-                                            *this,
-                                            *positions,
-                                            maxdistance,
-                                            crs,
-                                            box,
-                                            valid_time,
-                                            valid_time_period);
+	  {
+		pointvalues = ObservationReader::read(theState,
+											  {*parameter},
+											  *this,
+											  *positions,
+											  maxdistance,
+											  crs,
+											  box,
+											  valid_time,
+											  valid_time_period);
+	  }
 #endif
 
     pointvalues = prioritize(pointvalues, point_value_options);

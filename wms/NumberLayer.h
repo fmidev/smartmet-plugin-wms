@@ -12,6 +12,7 @@
 #include "ParameterInfo.h"
 #include "PointValueOptions.h"
 #include "Positions.h"
+#include <timeseries/ParameterFactory.h>
 #include <vector>
 
 namespace SmartMet
@@ -38,6 +39,7 @@ class NumberLayer : public Layer
 
   void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
+  boost::optional<TS::ParameterAndFunctions> param_funcs;
   boost::optional<std::string> parameter;
   std::string unit_conversion;
   boost::optional<double> multiplier;
