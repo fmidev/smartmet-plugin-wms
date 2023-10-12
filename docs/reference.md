@@ -59,7 +59,8 @@ Table of Contents
         * [WindRose structure](#windrose-structure)
         * [Connector structure](#connector-structure)
         * [Filters structure](#filters-structure)
-  * [WMS GetMap and GetCapabilities configuration](#wms-configuration)
+* [Using dynamically created grids](#filters-structure)
+* [WMS GetMap and GetCapabilities configuration](#wms-configuration)
     * [WMS layer variants](#wms-variants)
   * [Generic querystring options](#querystring-definition)
   * [Configuration](#configuration)
@@ -3039,6 +3040,70 @@ The table below contains a list of attributes used in the Filter structure.
 |where|(string)||WHERE condition to be appended to the database query|
 |attributes|_Attributes_||SVG-attributes for geometry|
 |text_attributes|_Attributes_||SVG-attributes for text|
+
+
+# Using dynamically created grids
+
+### Introduction
+
+A layer usually contains the "parameter" attribute definition, which refers to the grid data that is needed in order to draw the current layer. Typically the value of the "parameter" attribute is a parameter name that points to   fixed grid data, which means that this data is pre-calculated. In this case the biggest drawback is that if we want to get grids that are calculated differently then we need a pre-calculation process that calculates these grids and stores them in such way that they can be accessed. 
+
+Luckily now there is a way to caculate new grids on the fly and use their data as they were fixed grids. The basic idea is that the "parameter" attibute can contain a function that defines how the new grid should be calculated. This feature is available only for producers that use grid-engine. 
+
+There are two different ways to create new grids:
+
+1) We can create new grids that uses data from other grids that have the same timestamp. 
+2) We can create grids that uses data from multiple timesteps. For example, calculating max temperature values for a day.
+
+### Grids with the same timestamp
+
+<b>Here are some examples that calculate a new grid from other grids that have the same timestamp:</b>
+
+The new grid contains maximum values from 3 ensemble grids (1,3,5):
+<pre>
+    "parameter" : "MAX{Temperature:MEPS:1093:6:0:3:1;Temperature:MEPS:1093:6:0:3:3;Temperature:MEPS:1093:6:0:3:5}"
+</pre>
+
+The new grid contains average values counted from 14 ensemble grids (1-14):
+<pre>
+    "parameter" : "AVG{Temperature:MEPS:1093:6:0:3:1-14}"
+</pre>
+
+The new grid contains probability percentage that the values in 14 ensemble grids (1-14) are below zero (= in range -1000 .. 0):
+<pre>
+   "parameter": "IN_PRCNT{-1000;0;Temperature:MEPS:1093:6:0:3:1-14}"
+</pre>
+	
+### Grids calculated over multiple timesteps 
+
+The basic idea is that, we can have multiple timesteps before and after the requested time. The timestep size (in minutes) can be used in order to calculate timestamp for the requested data. The requested data is expressed in timestep index range (not actual time lengths). The index number 0 refers to the requested time, the first timestep before the requested time is refered with the index number -1, and the first timestep after the requested time is refered with the index number 1. If functions require additional parameters (like value range), these parameters are added after the timestep range and timestep size defintions.
+
+<b>Here are some examples:</b>
+
+The new grid contains maximum values from the previous 24 timesteps.Timestep size = 60 minutes, range of grid indexes = [-23 .. 0] counted from the requested time.
+<pre>
+    "parameter" : "/MAX{Temperature;-23;0;60}"
+</pre>
+	
+The new grid contains probability percentage that the temperature drops below the zero (= is in range -1000..0) during the following 48 hours.
+<pre>
+    "parameter": "/IN_PRCNT{Temperature;0;47;60;-1000;0}"
+</pre>
+
+
+### Functions
+
+Dynamic grid caculation uses C++ or LUA functions for creating new grids. C++ functions are faster than LUA functions and that's why we try to implement most common functions with C++. At least the following functions are currently available for producing new grids:
+<pre>
+    AVG		=> Calculate average/mean values.
+    MAX		=> Calculate maximum values.
+    MIN		=> Calculate minimum values.
+    MUL		=> Multiplies grid values with a multiplyer. This can be used also for dividing grid values (i.e. multiplier = 1/divider).
+    SUM		=> Add 1-N grids together. If there are additional numbers in the function then these numbers are added to each grid value.
+    IN_PRCNT	=> Returns the probability percent that the value in the given grids is inside the given value range.
+    OUT_PRCNT	=> Returns the probability percent that the value in the given grids is outside the given value range.
+</pre>
+
 
 # Generic querystring options
 
