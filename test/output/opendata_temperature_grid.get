@@ -37,18 +37,18 @@
    <use transform="translate(245,147)" xlink:href="#dot"/>
    <use transform="translate(342,145)" xlink:href="#dot"/>
    <use transform="translate(405,148)" xlink:href="#dot"/>
-   <use transform="translate(303,161)" xlink:href="#dot"/>
+   <use transform="translate(305,162)" xlink:href="#dot"/>
    <use transform="translate(357,165)" xlink:href="#dot"/>
    <use transform="translate(325,175)" xlink:href="#dot"/>
-   <use transform="translate(215,185)" xlink:href="#dot"/>
+   <use transform="translate(215,184)" xlink:href="#dot"/>
    <use transform="translate(323,186)" xlink:href="#dot"/>
    <use transform="translate(373,182)" xlink:href="#dot"/>
-   <use transform="translate(237,193)" xlink:href="#dot"/>
+   <use transform="translate(238,193)" xlink:href="#dot"/>
    <use transform="translate(274,194)" xlink:href="#dot"/>
    <use transform="translate(389,207)" xlink:href="#dot"/>
    <use transform="translate(296,214)" xlink:href="#dot"/>
-   <use transform="translate(390,214)" xlink:href="#dot"/>
-   <use transform="translate(234,223)" xlink:href="#dot"/>
+   <use transform="translate(392,213)" xlink:href="#dot"/>
+   <use transform="translate(234,225)" xlink:href="#dot"/>
    <use transform="translate(220,236)" xlink:href="#dot"/>
    <use transform="translate(316,235)" xlink:href="#dot"/>
    <use transform="translate(376,253)" xlink:href="#dot"/>
@@ -61,13 +61,13 @@
    <use transform="translate(264,282)" xlink:href="#dot"/>
    <use transform="translate(362,283)" xlink:href="#dot"/>
    <use transform="translate(167,296)" xlink:href="#dot"/>
-   <use transform="translate(186,293)" xlink:href="#dot"/>
+   <use transform="translate(187,293)" xlink:href="#dot"/>
    <use transform="translate(222,294)" xlink:href="#dot"/>
    <use transform="translate(274,297)" xlink:href="#dot"/>
-   <use transform="translate(324,293)" xlink:href="#dot"/>
+   <use transform="translate(325,293)" xlink:href="#dot"/>
    <use transform="translate(118,308)" xlink:href="#dot"/>
    <use transform="translate(231,308)" xlink:href="#dot"/>
-   <use transform="translate(391,313)" xlink:href="#dot"/>
+   <use transform="translate(392,316)" xlink:href="#dot"/>
    <use transform="translate(420,312)" xlink:href="#dot"/>
    <use transform="translate(107,325)" xlink:href="#dot"/>
    <use transform="translate(122,327)" xlink:href="#dot"/>
@@ -84,7 +84,7 @@
    <use transform="translate(430,352)" xlink:href="#dot"/>
    <use transform="translate(165,367)" xlink:href="#dot"/>
    <use transform="translate(226,367)" xlink:href="#dot"/>
-   <use transform="translate(243,367)" xlink:href="#dot"/>
+   <use transform="translate(244,366)" xlink:href="#dot"/>
    <use transform="translate(287,366)" xlink:href="#dot"/>
    <use transform="translate(347,365)" xlink:href="#dot"/>
    <use transform="translate(382,363)" xlink:href="#dot"/>
@@ -97,7 +97,7 @@
    <use transform="translate(358,396)" xlink:href="#dot"/>
    <use transform="translate(370,397)" xlink:href="#dot"/>
    <use transform="translate(200,405)" xlink:href="#dot"/>
-   <use transform="translate(314,402)" xlink:href="#dot"/>
+   <use transform="translate(315,402)" xlink:href="#dot"/>
    <use transform="translate(238,416)" xlink:href="#dot"/>
    <use transform="translate(340,416)" xlink:href="#dot"/>
    <use transform="translate(53,424)" xlink:href="#dot"/>
@@ -109,7 +109,7 @@
    <use transform="translate(80,437)" xlink:href="#dot"/>
    <use transform="translate(248,437)" xlink:href="#dot"/>
    <use transform="translate(270,436)" xlink:href="#dot"/>
-   <use transform="translate(128,443)" xlink:href="#dot"/>
+   <use transform="translate(128,444)" xlink:href="#dot"/>
    <use transform="translate(181,444)" xlink:href="#dot"/>
    <use transform="translate(94,454)" xlink:href="#dot"/>
   
@@ -127,18 +127,18 @@
   <text x="250" y="152">20</text>
   <text x="347" y="150">21</text>
   <text x="410" y="153">19</text>
-  <text x="308" y="166">23</text>
+  <text x="310" y="167">23</text>
   <text x="362" y="170">22</text>
   <text x="330" y="180">20</text>
-  <text x="220" y="190">24</text>
+  <text x="220" y="189">24</text>
   <text x="328" y="191">23</text>
   <text x="378" y="187">22</text>
-  <text x="242" y="198">23</text>
+  <text x="243" y="198">23</text>
   <text x="279" y="199">23</text>
   <text x="394" y="212">18</text>
   <text x="301" y="219">22</text>
-  <text x="395" y="219">20</text>
-  <text x="239" y="228">19</text>
+  <text x="397" y="218">20</text>
+  <text x="239" y="230">19</text>
   <text x="225" y="241">18</text>
   <text x="321" y="240">23</text>
   <text x="381" y="258">22</text>
@@ -151,13 +151,13 @@
   <text x="269" y="287">25</text>
   <text x="367" y="288">22</text>
   <text x="172" y="301">18</text>
-  <text x="191" y="298">23</text>
+  <text x="192" y="298">23</text>
   <text x="227" y="299">24</text>
   <text x="279" y="302">23</text>
-  <text x="329" y="298">21</text>
+  <text x="330" y="298">21</text>
   <text x="123" y="313">18</text>
   <text x="236" y="313">24</text>
-  <text x="396" y="318">24</text>
+  <text x="397" y="321">24</text>
   <text x="425" y="317">24</text>
   <text x="112" y="330">16</text>
   <text x="127" y="332">19</text>
@@ -174,7 +174,7 @@
   <text x="435" y="357">26</text>
   <text x="170" y="372">22</text>
   <text x="231" y="372">24</text>
-  <text x="248" y="372">25</text>
+  <text x="249" y="371">25</text>
   <text x="292" y="371">20</text>
   <text x="352" y="370">22</text>
   <text x="387" y="368">25</text>
@@ -187,7 +187,7 @@
   <text x="363" y="401">23</text>
   <text x="375" y="402">24</text>
   <text x="205" y="410">25</text>
-  <text x="319" y="407">24</text>
+  <text x="320" y="407">24</text>
   <text x="243" y="421">24</text>
   <text x="345" y="421">24</text>
   <text x="58" y="429">19</text>
@@ -199,7 +199,7 @@
   <text x="85" y="442">19</text>
   <text x="253" y="442">20</text>
   <text x="275" y="441">19</text>
-  <text x="133" y="448">20</text>
+  <text x="133" y="449">20</text>
   <text x="186" y="449">21</text>
   <text x="99" y="459">19</text>
   </g>

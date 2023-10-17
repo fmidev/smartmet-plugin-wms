@@ -25,7 +25,7 @@
   <g class="Number">
    <use transform="translate(248,429)" xlink:href="#dot"/>
    <use transform="translate(79,431)" xlink:href="#dot"/>
-   <use transform="translate(128,443)" xlink:href="#dot"/>
+   <use transform="translate(128,444)" xlink:href="#dot"/>
    <use transform="translate(80,437)" xlink:href="#dot"/>
    <use transform="translate(82,429)" xlink:href="#dot"/>
    <use transform="translate(53,424)" xlink:href="#dot"/>
@@ -40,7 +40,7 @@
    <use transform="translate(155,418)" xlink:href="#dot"/>
    <use transform="translate(175,429)" xlink:href="#dot"/>
    <use transform="translate(191,441)" xlink:href="#dot"/>
-   <use transform="translate(187,422)" xlink:href="#dot"/>
+   <use transform="translate(187,421)" xlink:href="#dot"/>
    <use transform="translate(202,442)" xlink:href="#dot"/>
    <use transform="translate(205,418)" xlink:href="#dot"/>
    <use transform="translate(249,431)" xlink:href="#dot"/>
@@ -56,7 +56,7 @@
    <use transform="translate(208,381)" xlink:href="#dot"/>
    <use transform="translate(210,411)" xlink:href="#dot"/>
    <use transform="translate(243,413)" xlink:href="#dot"/>
-   <use transform="translate(272,400)" xlink:href="#dot"/>
+   <use transform="translate(271,400)" xlink:href="#dot"/>
    <use transform="translate(122,349)" xlink:href="#dot"/>
    <use transform="translate(128,375)" xlink:href="#dot"/>
    <use transform="translate(121,354)" xlink:href="#dot"/>
@@ -71,7 +71,7 @@
   
   <text x="248" y="424">22</text>
   <text x="84" y="436">20</text>
-  <text x="133" y="448">20</text>
+  <text x="133" y="449">20</text>
   <text x="85" y="442">19</text>
   <text x="87" y="434">21</text>
   <text x="58" y="429">19</text>
@@ -86,7 +86,7 @@
   <text x="160" y="423">23</text>
   <text x="180" y="434">24</text>
   <text x="196" y="446">24</text>
-  <text x="192" y="427">25</text>
+  <text x="192" y="426">25</text>
   <text x="207" y="447">20</text>
   <text x="210" y="423">25</text>
   <text x="254" y="436">20</text>
@@ -102,7 +102,7 @@
   <text x="213" y="386">24</text>
   <text x="215" y="416">24</text>
   <text x="248" y="418">23</text>
-  <text x="277" y="405">23</text>
+  <text x="276" y="405">23</text>
   <text x="127" y="354">17</text>
   <text x="133" y="380">18</text>
   <text x="126" y="359">16</text>
