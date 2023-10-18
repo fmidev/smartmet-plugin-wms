@@ -261,25 +261,15 @@ void SymbolLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-    boost::optional<std::string> param;
-    JsonTools::remove_string(param, theJson, "parameter");
-    if (param)
+    JsonTools::remove_string(parameter, theJson, "parameter");
+    if (parameter && producer && !isFlashOrMobileProducer(*producer))
     {
-      if (producer && !isFlashOrMobileProducer(*producer))
+      try
       {
-        try
-        {
-          param_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*param);
-          parameter = param;
-        }
-        catch (...)
-        {
-          parameter = param;
-        }
+        param_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*parameter);
       }
-      else
+      catch (...)
       {
-        parameter = param;
       }
     }
 

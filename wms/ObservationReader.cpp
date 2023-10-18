@@ -207,7 +207,8 @@ PointValues read_all_observations(State& state,
     std::vector<TS::ParameterAndFunctions> paramFuncs;
     for (const auto& p : parameters)
     {
-      auto paf = TS::ParameterFactory::instance().parseNameAndFunctions(p);
+      bool ignore_unknown_param = true;
+      auto paf = TS::ParameterFactory::instance().parseNameAndFunctions(p, ignore_unknown_param);
       paramFuncs.push_back(paf);
       settings.parameters.push_back(paf.parameter);
     }
@@ -230,7 +231,9 @@ PointValues read_all_observations(State& state,
     for (const auto& extraparam : iparams)
     {
       // Add extraparams into paramFuncs structure even if they dont have functions
-      auto paf = TS::ParameterFactory::instance().parseNameAndFunctions(extraparam);
+      bool ignore_unknown_param = true;
+      auto paf =
+          TS::ParameterFactory::instance().parseNameAndFunctions(extraparam, ignore_unknown_param);
       paramFuncs.push_back(paf);
       settings.parameters.push_back(paf.parameter);
     }
@@ -345,7 +348,8 @@ PointValues read_station_observations(State& state,
     std::vector<TS::ParameterAndFunctions> paramFuncs;
     for (const auto& p : parameters)
     {
-      auto paf = TS::ParameterFactory::instance().parseNameAndFunctions(p);
+      bool ignore_unknown_param = true;
+      auto paf = TS::ParameterFactory::instance().parseNameAndFunctions(p, ignore_unknown_param);
       paramFuncs.push_back(paf);
       settings.parameters.push_back(paf.parameter);
     }
@@ -368,7 +372,9 @@ PointValues read_station_observations(State& state,
     for (const auto& extraparam : iparams)
     {
       // Add extraparams into paramFuncs structure even if they dont have functions
-      auto paf = TS::ParameterFactory::instance().parseNameAndFunctions(extraparam);
+      bool ignore_unknown_param = true;
+      auto paf =
+          TS::ParameterFactory::instance().parseNameAndFunctions(extraparam, ignore_unknown_param);
       paramFuncs.push_back(paf);
       settings.parameters.push_back(paf.parameter);
     }
@@ -535,7 +541,8 @@ PointValues read_latlon_observations(State& state,
     std::vector<TS::ParameterAndFunctions> paramFuncs;
     for (const auto& p : parameters)
     {
-      auto paf = TS::ParameterFactory::instance().parseNameAndFunctions(p);
+      bool ignore_unknown_param = true;
+      auto paf = TS::ParameterFactory::instance().parseNameAndFunctions(p, ignore_unknown_param);
       paramFuncs.push_back(paf);
       settings.parameters.push_back(paf.parameter);
     }
@@ -557,8 +564,10 @@ PointValues read_latlon_observations(State& state,
 
     for (const auto& extraparam : iparams)
     {
+      bool ignore_unknown_param = true;
       settings.parameters.push_back(TS::makeParameter(extraparam));
-      paramFuncs.push_back(TS::ParameterFactory::instance().parseNameAndFunctions(extraparam));
+      paramFuncs.push_back(
+          TS::ParameterFactory::instance().parseNameAndFunctions(extraparam, ignore_unknown_param));
     }
 
     // Collect information on point dx,dy values while converting IDs to fmisid numbers
