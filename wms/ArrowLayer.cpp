@@ -1,5 +1,6 @@
 //======================================================================
 #include "ArrowLayer.h"
+#include "AggregationUtility.h"
 #include "Config.h"
 #include "Hash.h"
 #include "Iri.h"
@@ -10,7 +11,6 @@
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
-#include "AggregationUtility.h"
 #include <boost/math/constants/constants.hpp>
 #include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
@@ -70,41 +70,41 @@ PointValues read_forecasts(const ArrowLayer& layer,
   try
   {
     NFmiMetTime met_time = valid_time;
-	
+
     boost::optional<Spine::Parameter> dirparam;
     boost::optional<Spine::Parameter> speedparam;
     boost::optional<Spine::Parameter> uparam;
     boost::optional<Spine::Parameter> vparam;
 
-	boost::optional<TS::ParameterAndFunctions> speed_funcs;
-	boost::optional<TS::ParameterAndFunctions> dir_funcs;
-	boost::optional<TS::ParameterAndFunctions> u_funcs;
-	boost::optional<TS::ParameterAndFunctions> v_funcs;
+    boost::optional<TS::ParameterAndFunctions> speed_funcs;
+    boost::optional<TS::ParameterAndFunctions> dir_funcs;
+    boost::optional<TS::ParameterAndFunctions> u_funcs;
+    boost::optional<TS::ParameterAndFunctions> v_funcs;
 
     if (layer.direction)
-	  {
-		dir_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*layer.direction);
-		dirparam = dir_funcs->parameter;
-		//	dirparam = TS::ParameterFactory::instance().parse(*layer.direction);
-	  }
+    {
+      dir_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*layer.direction);
+      dirparam = dir_funcs->parameter;
+      //	dirparam = TS::ParameterFactory::instance().parse(*layer.direction);
+    }
     if (layer.speed)
-	  {
-		speed_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*layer.speed);
-		speedparam = speed_funcs->parameter;
-		//speedparam = TS::ParameterFactory::instance().parse(*layer.speed);
-	  }
+    {
+      speed_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*layer.speed);
+      speedparam = speed_funcs->parameter;
+      // speedparam = TS::ParameterFactory::instance().parse(*layer.speed);
+    }
     if (layer.u)
-	  {
-		u_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*layer.u);
-		uparam = u_funcs->parameter;
-		//		uparam = TS::ParameterFactory::instance().parse(*layer.u);
-	  }
+    {
+      u_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*layer.u);
+      uparam = u_funcs->parameter;
+      //		uparam = TS::ParameterFactory::instance().parse(*layer.u);
+    }
     if (layer.v)
-	  {
-		v_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*layer.v);
-		vparam = v_funcs->parameter;
-		//vparam = TS::ParameterFactory::instance().parse(*layer.v);
-	  }
+    {
+      v_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*layer.v);
+      vparam = v_funcs->parameter;
+      // vparam = TS::ParameterFactory::instance().parse(*layer.v);
+    }
 
     if (speedparam && !q->param(speedparam->number()))
       throw Fmi::Exception(
@@ -155,11 +155,10 @@ PointValues read_forecasts(const ArrowLayer& layer,
       // Arrow direction and speed
       double wdir = kFloatMissing;
       double wspd = 0;
-	  Spine::Location loc(point.latlon.X(), point.latlon.Y());
+      Spine::Location loc(point.latlon.X(), point.latlon.Y());
 
       if (uparam && vparam)
       {
-
         auto up = Engine::Querydata::ParameterOptions(*uparam,
                                                       tmp,
                                                       loc,
@@ -174,9 +173,9 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                       dummy,
                                                       dummy,
                                                       state.getLocalTimePool());
-		
-		auto uresult = AggregationUtility::get_qengine_value(q, up, localdatetime, u_funcs);
-		//        auto uresult = q->value(up, localdatetime);
+
+        auto uresult = AggregationUtility::get_qengine_value(q, up, localdatetime, u_funcs);
+        //        auto uresult = q->value(up, localdatetime);
 
         auto vp = Engine::Querydata::ParameterOptions(*vparam,
                                                       tmp,
@@ -193,10 +192,9 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                       dummy,
                                                       state.getLocalTimePool());
 
+        auto vresult = AggregationUtility::get_qengine_value(q, vp, localdatetime, v_funcs);
 
-		auto vresult = AggregationUtility::get_qengine_value(q, vp, localdatetime, v_funcs);
-
-		//        auto vresult = q->value(vp, localdatetime);
+        //        auto vresult = q->value(vp, localdatetime);
 
         if (boost::get<double>(&uresult) != nullptr && boost::get<double>(&vresult) != nullptr)
         {
@@ -215,61 +213,62 @@ PointValues read_forecasts(const ArrowLayer& layer,
         }
       }
       else
-      {		
-		if(dir_funcs && dir_funcs->functions.innerFunction.exists())
-		{
-		  auto dp = Engine::Querydata::ParameterOptions(*dirparam,
-														tmp,
-														loc,
-														tmp,
-														tmp,
-														*timeformatter,
-														tmp,
-														tmp,
-														mylocale,
-														tmp,
-														false,
-														dummy,
-														dummy,
-														state.getLocalTimePool());
-		  
-		  auto dir_result = AggregationUtility::get_qengine_value(q, dp, localdatetime, dir_funcs);
-		  if (boost::get<double>(&dir_result) != nullptr)
-			wdir = *boost::get<double>(&dir_result);
-		}
-		else
-		{
-		  q->param(dirparam->number());
-		  wdir = q->interpolate(point.latlon, met_time, 180);
-		}
+      {
+        if (dir_funcs && dir_funcs->functions.innerFunction.exists())
+        {
+          auto dp = Engine::Querydata::ParameterOptions(*dirparam,
+                                                        tmp,
+                                                        loc,
+                                                        tmp,
+                                                        tmp,
+                                                        *timeformatter,
+                                                        tmp,
+                                                        tmp,
+                                                        mylocale,
+                                                        tmp,
+                                                        false,
+                                                        dummy,
+                                                        dummy,
+                                                        state.getLocalTimePool());
+
+          auto dir_result = AggregationUtility::get_qengine_value(q, dp, localdatetime, dir_funcs);
+          if (boost::get<double>(&dir_result) != nullptr)
+            wdir = *boost::get<double>(&dir_result);
+        }
+        else
+        {
+          q->param(dirparam->number());
+          wdir = q->interpolate(point.latlon, met_time, 180);
+        }
         if (speedparam)
         {
-		  if(speed_funcs && speed_funcs->functions.innerFunction.exists())
-		  {
-			auto sp = Engine::Querydata::ParameterOptions(*speedparam,
-														  tmp,
-														  loc,
-														  tmp,
-														  tmp,
-														  *timeformatter,
-														  tmp,
-														  tmp,
-														  mylocale,
-														  tmp,
-														  false,
-														  dummy,
-														  dummy,
-														  state.getLocalTimePool());
-			
-			auto speed_result = AggregationUtility::get_qengine_value(q, sp, localdatetime, speed_funcs);
-			if (boost::get<double>(&speed_result) != nullptr)
-			  wspd = *boost::get<double>(&speed_result);
-		  }
-		  else
-		  {
-			q->param(speedparam->number());
-			wspd = q->interpolate(point.latlon, met_time, 180);
-		  }
+          if (speed_funcs && speed_funcs->functions.innerFunction.exists())
+          {
+            auto sp = Engine::Querydata::ParameterOptions(*speedparam,
+                                                          tmp,
+                                                          loc,
+                                                          tmp,
+                                                          tmp,
+                                                          *timeformatter,
+                                                          tmp,
+                                                          tmp,
+                                                          mylocale,
+                                                          tmp,
+                                                          false,
+                                                          dummy,
+                                                          dummy,
+                                                          state.getLocalTimePool());
+
+            auto speed_result =
+                AggregationUtility::get_qengine_value(q, sp, localdatetime, speed_funcs);
+            if (boost::get<double>(&speed_result) != nullptr)
+              wspd = *boost::get<double>(&speed_result);
+          }
+          else
+          {
+            q->param(speedparam->number());
+            wspd = q->interpolate(point.latlon, met_time, 180);
+          }
         }
       }
 

@@ -47,7 +47,7 @@ class WMSLayerHierarchy
                     const boost::optional<std::string>& wms_namespace,
                     HierarchyType hierarchy_type,
                     const boost::optional<std::string>& apikey,
-					bool auth,
+                    bool auth,
                     Engine::Authentication::Engine* authEngine);
 #else
   WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,

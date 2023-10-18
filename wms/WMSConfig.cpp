@@ -1179,12 +1179,13 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
     if (hierarchy_type != WMSLayerHierarchy::HierarchyType::flat)
     {
 #ifndef WITHOUT_AUTHENTICATION
-      WMSLayerHierarchy lh(*my_layers, wms_namespace, hierarchy_type, apikey, authenticate, itsAuthEngine);
+      WMSLayerHierarchy lh(
+          *my_layers, wms_namespace, hierarchy_type, apikey, authenticate, itsAuthEngine);
 #else
       WMSLayerHierarchy lh(*my_layers, wms_namespace, hierarchy_type);
 #endif
 
-	  //	  std::cout << "Hierarchy:\n" << lh << std::endl;
+      //	  std::cout << "Hierarchy:\n" << lh << std::endl;
 
       return lh.getCapabilities(multiple_intervals, language, starttime, endtime, reference_time);
     }

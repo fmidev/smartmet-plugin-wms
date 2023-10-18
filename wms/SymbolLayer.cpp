@@ -1,5 +1,6 @@
 //======================================================================
 #include "SymbolLayer.h"
+#include "AggregationUtility.h"
 #include "Config.h"
 #include "Hash.h"
 #include "Intersections.h"
@@ -11,7 +12,6 @@
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
-#include "AggregationUtility.h"
 #include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
@@ -76,7 +76,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
 
     boost::optional<Spine::Parameter> param;
     if (layer.param_funcs)
-	  param = layer.param_funcs->parameter;
+      param = layer.param_funcs->parameter;
 
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
@@ -116,9 +116,10 @@ PointValues read_forecasts(const SymbolLayer& layer,
                                                     dummy,
                                                     state.getLocalTimePool());
 
-		TS::Value result = AggregationUtility::get_qengine_value(q, options, localdatetime, layer.param_funcs);
+        TS::Value result =
+            AggregationUtility::get_qengine_value(q, options, localdatetime, layer.param_funcs);
 
-        //auto result = q->value(options, localdatetime);
+        // auto result = q->value(options, localdatetime);
         if (boost::get<double>(&result) != nullptr)
         {
           double tmp = *boost::get<double>(&result);
@@ -260,28 +261,27 @@ void SymbolLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-	boost::optional<std::string> param;
-	JsonTools::remove_string(param, theJson, "parameter");
-	if(param)
-	{
-	  if(producer && !isFlashOrMobileProducer(*producer))
-	  {
-		try
-		{
-		  param_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*param);
-		  parameter = param;
-		}
-		catch (...)
-		{
-		  parameter = param;
-		}
-
-	  }
-	  else
-	  {
-		parameter = param;
-	  }
-	}
+    boost::optional<std::string> param;
+    JsonTools::remove_string(param, theJson, "parameter");
+    if (param)
+    {
+      if (producer && !isFlashOrMobileProducer(*producer))
+      {
+        try
+        {
+          param_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*param);
+          parameter = param;
+        }
+        catch (...)
+        {
+          parameter = param;
+        }
+      }
+      else
+      {
+        parameter = param;
+      }
+    }
 
     JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
     JsonTools::remove_double(multiplier, theJson, "multiplier");
