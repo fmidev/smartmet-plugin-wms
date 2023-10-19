@@ -866,6 +866,10 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
     cand2 = edges[*opt_next].second;
     candidate_status[cand1] = true;
     candidate_status[cand2] = true;
+
+    // Remove the edge from further consideration by replacing it with the last element of the array
+    edges[*opt_next] = edges.back();
+    edges.pop_back();
   }
 
   Candidates ret;
