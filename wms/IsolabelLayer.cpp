@@ -734,7 +734,7 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges,
       {
         if (test_edge.first == new_vertex)
         {
-          if (status[test_edge.second] && !test_edge.valid)
+          if (status[test_edge.second])
           {
             forbidden = true;
             break;
@@ -742,7 +742,7 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges,
         }
         else if (test_edge.second == new_vertex)
         {
-          if (status[test_edge.first] && !test_edge.valid)
+          if (status[test_edge.first])
           {
             forbidden = true;
             break;

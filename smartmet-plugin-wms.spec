@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 23.10.19
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -35,12 +35,12 @@ BuildRequires: smartmet-library-timeseries-devel >= 23.10.11
 BuildRequires: smartmet-engine-authentication-devel >= 23.7.28
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 23.10.11
+BuildRequires: smartmet-engine-observation-devel >= 23.10.18
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 23.8.28
 BuildRequires: smartmet-engine-grid-devel >= 23.10.12
 BuildRequires: smartmet-engine-geonames-devel >= 23.9.6
-BuildRequires: smartmet-engine-querydata-devel >= 23.8.31
+BuildRequires: smartmet-engine-querydata-devel >= 23.10.12
 BuildRequires: smartmet-engine-contour-devel >= 23.10.3
 BuildRequires: smartmet-library-gis-devel >= 23.9.12
 BuildRequires: smartmet-library-trax-devel >= 23.8.17
@@ -68,8 +68,8 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 23.9.29
-Requires: smartmet-library-grid-files >= 23.10.3
+Requires: smartmet-library-grid-content >= 23.10.12
+Requires: smartmet-library-grid-files >= 23.10.12
 Requires: smartmet-library-gis >= 23.9.12
 Requires: smartmet-library-trax >= 23.8.17
 Requires: smartmet-library-macgyver >= 23.10.10
@@ -79,7 +79,7 @@ Requires: smartmet-library-giza >= 23.7.28
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 23.7.28
 %endif
-Requires: smartmet-engine-querydata >= 23.8.31
+Requires: smartmet-engine-querydata >= 23.10.12
 Requires: smartmet-engine-contour >= 23.10.3
 Requires: smartmet-engine-gis >= 23.8.28
 Requires: smartmet-engine-grid >= 23.10.12
@@ -107,7 +107,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 23.10.3
 #TestRequires: smartmet-engine-geonames-devel >= 23.9.6
 #TestRequires: smartmet-engine-gis-devel >= 23.8.28
-#TestRequires: smartmet-engine-querydata-devel >= 23.8.31
+#TestRequires: smartmet-engine-querydata-devel >= 23.10.12
 #TestRequires: smartmet-library-giza-devel >= 23.7.28
 #TestRequires: smartmet-library-trax-devel >= 23.8.17
 #TestRequires: smartmet-library-newbase-devel >= 23.10.11
@@ -125,7 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 23.10.11
+#TestRequires: smartmet-engine-observation-devel >= 23.10.18
 %endif
 
 %description
@@ -151,9 +151,12 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0775,root,root,0775)
 %{_datadir}/smartmet/plugins/wms.so
 %defattr(0664,root,root,0775)
-%{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
+%{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Oct 19 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.10.19-2.fmi
+- Move templates from /etc to /usr/share
+
 * Thu Oct 19 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.10.19-1.fmi
 - Optimized IsolabelLayer for speed
 
