@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.10.18
+Version: 23.10.19
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/smartmet/plugins/wms/tmpl/*.c2t
 
 %changelog
+* Thu Oct 19 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.10.19-1.fmi
+- Optimized IsolabelLayer for speed
+
 * Wed Oct 18 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.10.18-1.fmi
 - Fixed parsing of observation parameters (BRAINSTORM-2763)
 
