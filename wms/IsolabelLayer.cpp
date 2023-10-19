@@ -24,8 +24,8 @@
 #include <timeseries/ParameterFactory.h>
 #include <limits>
 
-//#define MYDEBUG 1
-//#define MYDEBUG_DETAILS 1
+// #define MYDEBUG 1
+// #define MYDEBUG_DETAILS 1
 
 namespace SmartMet
 {
@@ -689,7 +689,9 @@ boost::optional<std::size_t> find_tree_start_edge(const Edges& edges)
  */
 // ----------------------------------------------------------------------
 
-boost::optional<std::size_t> find_next_edge(const Edges& edges, std::vector<boost::tribool>& status)
+boost::optional<std::size_t> find_next_edge(const Edges& edges,
+                                            const Edges& bad_edges,
+                                            std::vector<boost::tribool>& status)
 {
   std::size_t best_edge = 0;
   double best_length = -1;
@@ -719,7 +721,7 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges, std::vector<boos
     // Now we know one must have been selected, one is indeterminate
     auto new_vertex = (status[v1] ? v2 : v1);
 
-    if (edge.valid && (best_length < 0 || edge.length < best_length))
+    if (best_length < 0 || edge.length < best_length)
     {
       // The new vertex must not be connected to any of the already selected vertices
       // by an invalid edge, or it is too close to them. If so, we disable vertex
@@ -728,7 +730,7 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges, std::vector<boos
 
       bool forbidden = false;
 
-      for (const auto& test_edge : edges)
+      for (const auto& test_edge : bad_edges)
       {
         if (test_edge.first == new_vertex)
         {
@@ -762,6 +764,7 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges, std::vector<boos
 
   if (best_length < 0)
     return {};
+
   return best_edge;
 }
 
@@ -808,18 +811,19 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
   // We assume this approximates the true solution under the distance constraints without
   // attempting to prove it does.
 
-  // Create a vector of all possible undirected edges
-
   Edges edges;
+  Edges bad_edges;
 
   const auto n = candis.size();
+
+  int invalid = 0;
 
   for (std::size_t i = 0; i < n - 1; i++)
     for (std::size_t j = i + 1; j < n; j++)
     {
       auto length = std::hypot(candis[i].x - candis[j].x, candis[i].y - candis[j].y);
 
-      bool valid;
+      bool valid = false;
       if (candis[i].id == candis[j].id)
         valid = (length >= min_distance_self);  // same isoline segment
       else if (candis[i].isovalue == candis[j].isovalue)
@@ -827,7 +831,13 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
       else
         valid = (length >= min_distance_other);  // different isovalue or isoline segment
 
-      edges.emplace_back(Edge{i, j, length, valid});
+      if (!valid)
+        ++invalid;
+
+      if (valid)
+        edges.emplace_back(Edge{i, j, length, valid});
+      else
+        bad_edges.emplace_back(Edge{i, j, length, valid});
     }
 
   // Start the minimum spanning tree
@@ -848,7 +858,7 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
 
   while (true)
   {
-    auto opt_next = find_next_edge(edges, candidate_status);
+    auto opt_next = find_next_edge(edges, bad_edges, candidate_status);
     if (!opt_next)
       break;
 
@@ -1006,8 +1016,8 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
 
       // printf("%f,%f  %f,%f\n",x1,y1,x2,y2);
 
-      pointList.emplace_back(T::Coordinate(x1, y1));
-      pointList.emplace_back(T::Coordinate(x2, y2));
+      pointList.emplace_back(x1, y1);
+      pointList.emplace_back(x2, y2);
     }
 
     T::GridValueList valueList;
