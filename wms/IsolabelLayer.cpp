@@ -43,6 +43,7 @@ struct Edge
 };
 
 using Edges = std::vector<Edge>;
+using BadEdges = std::unordered_multimap<std::size_t, Edge>;
 
 // ----------------------------------------------------------------------
 /*!
@@ -690,7 +691,7 @@ boost::optional<std::size_t> find_tree_start_edge(const Edges& edges)
 // ----------------------------------------------------------------------
 
 boost::optional<std::size_t> find_next_edge(const Edges& edges,
-                                            const Edges& bad_edges,
+                                            const BadEdges& bad_edges,
                                             std::vector<boost::tribool>& status)
 {
   std::size_t best_edge = 0;
@@ -730,30 +731,20 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges,
 
       bool forbidden = false;
 
-      for (const auto& test_edge : bad_edges)
+      auto range = bad_edges.equal_range(new_vertex);
+      for (auto it = range.first; it != range.second; ++it)
       {
-        if (test_edge.first == new_vertex)
+        const auto& test_edge = it->second;
+        if ((test_edge.first == new_vertex && status[test_edge.second]) ||
+            (test_edge.second == new_vertex && status[test_edge.first]))
         {
-          if (status[test_edge.second])
-          {
-            forbidden = true;
-            break;
-          }
-        }
-        else if (test_edge.second == new_vertex)
-        {
-          if (status[test_edge.first])
-          {
-            forbidden = true;
-            break;
-          }
+          forbidden = true;
+          break;
         }
       }
 
       if (forbidden)
-      {
         status[new_vertex] = false;
-      }
       else
       {
         best_edge = i;
@@ -812,7 +803,7 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
   // attempting to prove it does.
 
   Edges edges;
-  Edges bad_edges;
+  BadEdges bad_edges;
 
   const auto n = candis.size();
 
@@ -837,7 +828,12 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
       if (valid)
         edges.emplace_back(Edge{i, j, length, valid});
       else
-        bad_edges.emplace_back(Edge{i, j, length, valid});
+      {
+        // Index bad edges by both indices in a hash map for faster lookups
+        Edge edge{i, j, length, valid};
+        bad_edges.insert({i, edge});
+        bad_edges.insert({j, edge});
+      }
     }
 
   // Start the minimum spanning tree
