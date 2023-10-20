@@ -68,6 +68,7 @@ void IsolabelLayer::init(Json::Value& theJson,
 
     JsonTools::remove_bool(upright, theJson, "upright");
     JsonTools::remove_double(max_angle, theJson, "max_angle");
+    JsonTools::remove_double(min_isoline_length, theJson, "min_isoline_length");
     JsonTools::remove_double(min_distance_edge, theJson, "min_distance_edge");
     JsonTools::remove_double(max_distance_edge, theJson, "max_distance_edge");
     JsonTools::remove_double(min_distance_other, theJson, "min_distance_other");
@@ -377,9 +378,10 @@ void find_candidates(Candidates& candidates,
                      double sine,
                      double cosine,
                      int stencil_size,
-                     const OGRLineString* geom)
+                     const OGRLineString* geom,
+                     double min_isoline_length)
 {
-  if (geom == nullptr || geom->IsEmpty() != 0)
+  if (geom == nullptr || geom->IsEmpty() != 0 || geom->get_Length() < min_isoline_length)
     return;
 
   // Gather rotated coordinates
@@ -419,9 +421,10 @@ void find_candidates(Candidates& candidates,
                      double sine,
                      double cosine,
                      int stencil_size,
-                     const OGRLinearRing* geom)
+                     const OGRLinearRing* geom,
+                     double min_isoline_length)
 {
-  if (geom == nullptr || geom->IsEmpty() != 0)
+  if (geom == nullptr || geom->IsEmpty() != 0 || geom->get_Length() < min_isoline_length)
     return;
 
   // Gather rotated coordinates
@@ -461,11 +464,19 @@ void find_candidates(Candidates& candidates,
                      double sine,
                      double cosine,
                      int stencil_size,
-                     const OGRPolygon* geom)
+                     const OGRPolygon* geom,
+                     double min_isoline_length)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
-  find_candidates(candidates, isovalue, id, sine, cosine, stencil_size, geom->getExteriorRing());
+  find_candidates(candidates,
+                  isovalue,
+                  id,
+                  sine,
+                  cosine,
+                  stencil_size,
+                  geom->getExteriorRing(),
+                  min_isoline_length);
 }
 
 void find_candidates(Candidates& candidates,
@@ -474,27 +485,8 @@ void find_candidates(Candidates& candidates,
                      double sine,
                      double cosine,
                      int stencil_size,
-                     const OGRMultiLineString* geom)
-{
-  if (geom == nullptr || geom->IsEmpty() != 0)
-    return;
-  for (int i = 0, n = geom->getNumGeometries(); i < n; ++i)
-    find_candidates(candidates,
-                    isovalue,
-                    ++id,
-                    sine,
-                    cosine,
-                    stencil_size,
-                    dynamic_cast<const OGRLineString*>(geom->getGeometryRef(i)));
-}
-
-void find_candidates(Candidates& candidates,
-                     double isovalue,
-                     int& id,
-                     double sine,
-                     double cosine,
-                     int stencil_size,
-                     const OGRMultiPolygon* geom)
+                     const OGRMultiLineString* geom,
+                     double min_isoline_length)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
@@ -505,7 +497,8 @@ void find_candidates(Candidates& candidates,
                     sine,
                     cosine,
                     stencil_size,
-                    dynamic_cast<const OGRPolygon*>(geom->getGeometryRef(i)));
+                    dynamic_cast<const OGRLineString*>(geom->getGeometryRef(i)),
+                    min_isoline_length);
 }
 
 void find_candidates(Candidates& candidates,
@@ -514,21 +507,20 @@ void find_candidates(Candidates& candidates,
                      double sine,
                      double cosine,
                      int stencil_size,
-                     const OGRGeometry* geom);
-
-void find_candidates(Candidates& candidates,
-                     double isovalue,
-                     int& id,
-                     double sine,
-                     double cosine,
-                     int stencil_size,
-                     const OGRGeometryCollection* geom)
+                     const OGRMultiPolygon* geom,
+                     double min_isoline_length)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
   for (int i = 0, n = geom->getNumGeometries(); i < n; ++i)
-    find_candidates(
-        candidates, isovalue, ++id, sine, cosine, stencil_size, geom->getGeometryRef(i));
+    find_candidates(candidates,
+                    isovalue,
+                    ++id,
+                    sine,
+                    cosine,
+                    stencil_size,
+                    dynamic_cast<const OGRPolygon*>(geom->getGeometryRef(i)),
+                    min_isoline_length);
 }
 
 void find_candidates(Candidates& candidates,
@@ -537,7 +529,39 @@ void find_candidates(Candidates& candidates,
                      double sine,
                      double cosine,
                      int stencil_size,
-                     const OGRGeometry* geom)
+                     const OGRGeometry* geom,
+                     double min_isoline_length);
+
+void find_candidates(Candidates& candidates,
+                     double isovalue,
+                     int& id,
+                     double sine,
+                     double cosine,
+                     int stencil_size,
+                     const OGRGeometryCollection* geom,
+                     double min_isoline_length)
+{
+  if (geom == nullptr || geom->IsEmpty() != 0)
+    return;
+  for (int i = 0, n = geom->getNumGeometries(); i < n; ++i)
+    find_candidates(candidates,
+                    isovalue,
+                    ++id,
+                    sine,
+                    cosine,
+                    stencil_size,
+                    geom->getGeometryRef(i),
+                    min_isoline_length);
+}
+
+void find_candidates(Candidates& candidates,
+                     double isovalue,
+                     int& id,
+                     double sine,
+                     double cosine,
+                     int stencil_size,
+                     const OGRGeometry* geom,
+                     double min_isoline_length)
 {
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
@@ -551,7 +575,8 @@ void find_candidates(Candidates& candidates,
                              sine,
                              cosine,
                              stencil_size,
-                             dynamic_cast<const OGRLineString*>(geom));
+                             dynamic_cast<const OGRLineString*>(geom),
+                             min_isoline_length);
     case wkbLinearRing:
       return find_candidates(candidates,
                              isovalue,
@@ -559,7 +584,8 @@ void find_candidates(Candidates& candidates,
                              sine,
                              cosine,
                              stencil_size,
-                             dynamic_cast<const OGRLinearRing*>(geom));
+                             dynamic_cast<const OGRLinearRing*>(geom),
+                             min_isoline_length);
     case wkbPolygon:
       return find_candidates(candidates,
                              isovalue,
@@ -567,7 +593,8 @@ void find_candidates(Candidates& candidates,
                              sine,
                              cosine,
                              stencil_size,
-                             dynamic_cast<const OGRPolygon*>(geom));
+                             dynamic_cast<const OGRPolygon*>(geom),
+                             min_isoline_length);
     case wkbMultiLineString:
       return find_candidates(candidates,
                              isovalue,
@@ -575,7 +602,8 @@ void find_candidates(Candidates& candidates,
                              sine,
                              cosine,
                              stencil_size,
-                             dynamic_cast<const OGRMultiLineString*>(geom));
+                             dynamic_cast<const OGRMultiLineString*>(geom),
+                             min_isoline_length);
     case wkbMultiPolygon:
       return find_candidates(candidates,
                              isovalue,
@@ -583,7 +611,8 @@ void find_candidates(Candidates& candidates,
                              sine,
                              cosine,
                              stencil_size,
-                             dynamic_cast<const OGRMultiPolygon*>(geom));
+                             dynamic_cast<const OGRMultiPolygon*>(geom),
+                             min_isoline_length);
     case wkbGeometryCollection:
       return find_candidates(candidates,
                              isovalue,
@@ -591,7 +620,8 @@ void find_candidates(Candidates& candidates,
                              sine,
                              cosine,
                              stencil_size,
-                             dynamic_cast<const OGRGeometryCollection*>(geom));
+                             dynamic_cast<const OGRGeometryCollection*>(geom),
+                             min_isoline_length);
     default:
       break;
   }
@@ -609,7 +639,7 @@ void find_candidates(Candidates& candidates,
  */
 // ----------------------------------------------------------------------
 
-Candidates IsolabelLayer::find_candidates(const std::vector<OGRGeometryPtr>& geoms)
+Candidates IsolabelLayer::find_candidates(const std::vector<OGRGeometryPtr>& geoms) const
 {
   Candidates candidates;
 
@@ -627,7 +657,14 @@ Candidates IsolabelLayer::find_candidates(const std::vector<OGRGeometryPtr>& geo
         const auto cosine = cos(radians);
         const auto sine = sin(radians);
 
-        Dali::find_candidates(candidates, isovalues[i], id, sine, cosine, stencil_size, geom.get());
+        Dali::find_candidates(candidates,
+                              isovalues[i],
+                              id,
+                              sine,
+                              cosine,
+                              stencil_size,
+                              geom.get(),
+                              min_isoline_length);
       }
     }
   }
@@ -809,6 +846,10 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
 
   int invalid = 0;
 
+#if 0  
+  auto max_distance_limit = std::max({min_distance_self, min_distance_same, min_distance_other});
+#endif
+
   for (std::size_t i = 0; i < n - 1; i++)
     for (std::size_t j = i + 1; j < n; j++)
     {
@@ -826,7 +867,12 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
         ++invalid;
 
       if (valid)
+      {
+#if 0        
+        if (length < max_distance_limit * 4)
+#endif
         edges.emplace_back(Edge{i, j, length, valid});
+      }
       else
       {
         // Index bad edges by both indices in a hash map for faster lookups
@@ -835,6 +881,19 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
         bad_edges.insert({j, edge});
       }
     }
+
+#if 0  
+  for (int i = 10; i < 1000; i += 50)
+  {
+    double limit = i;
+    int count = 0;
+    for (const auto& edge : edges)
+      if (edge.length < limit)
+        ++count;
+    std::cout << fmt::format("{}\t{}\t{}\n", i, count, 100 * count / edges.size());
+  }
+  std::cout << "Total: " << edges.size() << "\n";
+#endif
 
   // Start the minimum spanning tree
 
@@ -1081,6 +1140,7 @@ std::size_t IsolabelLayer::hash_value(const State& theState) const
       Fmi::hash_combine(hash, Fmi::hash_value(angle));
     Fmi::hash_combine(hash, Fmi::hash_value(upright));
     Fmi::hash_combine(hash, Fmi::hash_value(max_angle));
+    Fmi::hash_combine(hash, Fmi::hash_value(min_isoline_length));
     Fmi::hash_combine(hash, Fmi::hash_value(min_distance_other));
     Fmi::hash_combine(hash, Fmi::hash_value(min_distance_same));
     Fmi::hash_combine(hash, Fmi::hash_value(min_distance_self));

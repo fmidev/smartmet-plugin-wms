@@ -52,6 +52,8 @@ class IsolabelLayer : public IsolineLayer
   bool upright = false;                         // force labels to be upright
   double max_angle = 60;                        // and never rotate more than +-60 degrees
 
+  double min_isoline_length = 50;  // minimum isoline length for label placement
+
   double min_distance_other = 20;  // min dist (px) to labels for other isovalues
   double min_distance_same = 50;   // min dist (px) to the same isovalue labels
   double min_distance_self = 200;  // min dist (px) to labels on the same isoline segment
@@ -66,7 +68,7 @@ class IsolabelLayer : public IsolineLayer
   std::vector<double> isovalues;  // generated from isolines, isobands and isovalues settings
 
  private:
-  Candidates find_candidates(const std::vector<OGRGeometryPtr>& geoms);
+  Candidates find_candidates(const std::vector<OGRGeometryPtr>& geoms) const;
   Candidates select_best_candidates(const Candidates& candidates, const Fmi::Box& box) const;
   void fix_orientation_gridEngine(Candidates& candidates,
                                   const Fmi::Box& box,

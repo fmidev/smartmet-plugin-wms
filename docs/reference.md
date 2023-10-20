@@ -806,6 +806,7 @@ Name|Type|Default value|Description|
 |angles|[double]|[0,-45,45,180]|Orientations in which local maxima are searched for suitable label positions.|
 |upright|bool|false|Optionally turn labels upright if their angle is outside -90...90|
 |max_angle|double|60|Allow label angles only in range -60...60|
+|min_isoline_length|double|150|Minimum length of the isoline in pixels for placing any labels|
 |min_distance_other|double|20|Minimum distance to labels on isolines with another value|
 |min_distance_same|double|50|Minimum distance to labels on isolines with the same value|
 |min_distance_same|double|200|Minimum distance to labels on the same isoline segment|
