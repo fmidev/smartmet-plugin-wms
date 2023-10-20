@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.10.19
-Release: 2%{?dist}.fmi
+Version: 23.10.20
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Oct 20 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.10.20-1.fmi
+- Added min_isoline_length setting for IsolabelLayer with default value 150 (~ radius of 24 pixels)
+
 * Thu Oct 19 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.10.19-2.fmi
 - Move templates from /etc to /usr/share
 
