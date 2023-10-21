@@ -89,7 +89,7 @@ class Config
   std::string itsPrimaryForecastSource = "querydata";
   std::set<std::string> itsLanguages;
 
-  std::string itsTemplateDirectory = "/etc/smartmet/plugins/dali/templates";
+  std::string itsTemplateDirectory = "/usr/share/smartmet/wms";
   std::string itsRootDirectory;
 
   std::string itsFilesystemCacheDirectory = "/var/smartmet/imagecache";
