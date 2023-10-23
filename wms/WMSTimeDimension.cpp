@@ -20,14 +20,17 @@ boost::posix_time::ptime parse_time(const std::string& time_string)
 }
 }  // namespace
 
-bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) const
+bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime, bool endtime_is_wall_clock_time) const
 {
   // Allow any time within the range
 
   if (itsTimesteps.empty())
     return false;
 
-  return (theTime >= *itsTimesteps.cbegin() && theTime <= *itsTimesteps.crbegin());
+  auto starttime = *itsTimesteps.cbegin();
+  auto endtime = (endtime_is_wall_clock_time ? boost::posix_time::second_clock::universal_time() : *itsTimesteps.crbegin());
+
+  return (theTime >= starttime && theTime <= endtime);
 
 #if 0
   // Allow only listed times
@@ -203,12 +206,18 @@ boost::posix_time::ptime IntervalTimeDimension::mostCurrentTime() const
   return ret;
 }
 
-bool IntervalTimeDimension::isValidTime(const boost::posix_time::ptime& theTime) const
+bool IntervalTimeDimension::isValidTime(const boost::posix_time::ptime& theTime, bool endtime_is_wall_clock_time) const
 {
   for (const auto& interval : itsIntervals)
   {
+	auto starttime = interval.startTime;
+	auto endtime = (endtime_is_wall_clock_time ? boost::posix_time::second_clock::universal_time() : interval.endTime);
+
+	return (theTime >= starttime && theTime <= endtime);
+	/*
     if (theTime >= interval.startTime && theTime <= interval.endTime)
       return true;
+	*/
   }
 
   return false;
@@ -421,13 +430,13 @@ bool WMSTimeDimensions::isValidTime(
     const boost::optional<boost::posix_time::ptime>& origintime) const
 {
   if (!origintime)
-    return getDefaultTimeDimension().isValidTime(t);
+    return getDefaultTimeDimension().isValidTime(t, itsEndTimeIsWallClockTime);
 
   // Check for valid origintime
   if (!isValidReferenceTime(*origintime))
     return false;
 
-  return getTimeDimension(*origintime).isValidTime(t);
+  return getTimeDimension(*origintime).isValidTime(t, itsEndTimeIsWallClockTime);
 }
 
 boost::posix_time::ptime WMSTimeDimensions::mostCurrentTime(

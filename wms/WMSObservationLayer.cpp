@@ -32,6 +32,7 @@ bool WMSObservationLayer::updateLayerMetaData()
     boost::posix_time::ptime origintime(boost::posix_time::not_a_date_time);
     newTimeDimensions.insert(std::make_pair(origintime, newTimeDimension));
     timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);
+	timeDimensions->useWallClockTimeAsEndTime(true);
 
     return true;
   }

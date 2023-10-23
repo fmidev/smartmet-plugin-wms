@@ -35,7 +35,7 @@ class WMSTimeDimension
   WMSTimeDimension& operator=(const WMSTimeDimension& other) = delete;
   WMSTimeDimension& operator=(WMSTimeDimension&& other) = delete;
 
-  virtual bool isValidTime(const boost::posix_time::ptime& theTime) const;
+  virtual bool isValidTime(const boost::posix_time::ptime& theTime, bool endtime_is_wall_clock_time) const;
 
   virtual boost::posix_time::ptime mostCurrentTime() const;
 
@@ -108,7 +108,7 @@ class IntervalTimeDimension : public WMSTimeDimension
                               const boost::optional<std::string>& starttime,
                               const boost::optional<std::string>& endtime) const override;
   boost::posix_time::ptime mostCurrentTime() const override;
-  bool isValidTime(const boost::posix_time::ptime& theTime) const override;
+  bool isValidTime(const boost::posix_time::ptime& theTime, bool endtime_is_wall_clock_time) const override;
 
  private:
   std::string makeCapabilitiesTimesteps(const boost::optional<std::string>& starttime,
@@ -202,11 +202,14 @@ class WMSTimeDimensions
       const boost::optional<boost::posix_time::ptime>& origintime) const;
   bool currentValue() const;
   bool isIdentical(const WMSTimeDimensions& td) const;
+  void useWallClockTimeAsEndTime(bool wall_clock = true) { itsEndTimeIsWallClockTime = wall_clock; }
+  bool endTimeFromWallClock() const { return itsEndTimeIsWallClockTime; }
 
  private:
   std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>> itsTimeDimensions;
   boost::posix_time::ptime itsDefaultOrigintime{boost::posix_time::not_a_date_time};
   std::vector<boost::posix_time::ptime> itsOrigintimes;
+  bool itsEndTimeIsWallClockTime{false};
 };
 
 std::ostream& operator<<(std::ostream& ost, const WMSTimeDimensions& timeDimensions);

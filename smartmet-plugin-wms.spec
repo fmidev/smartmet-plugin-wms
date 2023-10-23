@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.10.21
+Version: 23.10.23
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Oct 23 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.10.23-1.fmi
+- Fixed GetCapabilities endtime of observation layers (BRAINSTORM-2452)
+
 * Sat Oct 21 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.10.21-1.fmi
 - Fixed default templatedir value to /usr/share/smartmet/wms
 
