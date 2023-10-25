@@ -46,13 +46,15 @@ class WMSLayerHierarchy
   WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
                     const boost::optional<std::string>& wms_namespace,
                     HierarchyType hierarchy_type,
+					bool reveal_hidden,
                     const boost::optional<std::string>& apikey,
                     bool auth,
                     Engine::Authentication::Engine* authEngine);
 #else
   WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
                     const boost::optional<std::string>& wms_namespace,
-                    HierarchyType hierarchy_type);
+                    HierarchyType hierarchy_type,
+					bool reveal_hidden);
 #endif
 
   ~WMSLayerHierarchy() = default;
@@ -70,6 +72,7 @@ class WMSLayerHierarchy
                             const boost::optional<std::string>& reference_time) const;
 
   std::string name;
+  bool show_hidden;
   bool authenticate;
   // Parts that can be inhereted by sublayers
   boost::optional<const WMSLayerProxy&> baseInfoLayer;

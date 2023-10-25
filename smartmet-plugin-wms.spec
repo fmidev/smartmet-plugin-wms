@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.10.23
+Version: 23.10.25
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Oct 25 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.10.25-1.fmi
+- Added show_hidden option to GetCapabilities request, hidden layers can also be requested with GetMap request (BRAINSTORM-2768)
+- Improved add_sublayers algorithm in WMSLayerHierarchy.cpp file (BRAINSTORM-2766)
+
 * Mon Oct 23 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.10.23-1.fmi
 - Fixed GetCapabilities endtime of observation layers (BRAINSTORM-2452)
 

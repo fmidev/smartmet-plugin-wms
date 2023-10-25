@@ -82,6 +82,7 @@ class WMSConfig
                             const boost::optional<std::string>& reference_time,
                             const boost::optional<std::string>& wms_namespace,
                             WMSLayerHierarchy::HierarchyType hierarchy_type,
+							bool show_hidden,
                             bool multiple_intervals,
                             bool authenticate = true) const;
 #else
@@ -92,6 +93,7 @@ class WMSConfig
                             const boost::optional<std::string>& reference_time,
                             const boost::optional<std::string>& wms_namespace,
                             WMSLayerHierarchy::HierarchyType hierarchy_type,
+							bool show_hidden,
                             bool multiple_intervals) const;
 #endif
 
@@ -106,7 +108,7 @@ class WMSConfig
   std::string getCRSDefinition(const std::string& theCRS) const;
   bool isValidMapFormat(const std::string& theMapFormat) const;
   bool isValidVersion(const std::string& theVersion) const;
-  bool isValidLayer(const std::string& theLayer, bool theAcceptHiddenLayerFlag = false) const;
+  bool isValidLayer(const std::string& theLayer, bool theAcceptHiddenLayerFlag = true) const;
   bool isValidStyle(const std::string& theLayer, const std::string& theStyle) const;
   bool isValidCRS(const std::string& theLayer, const std::string& theCRS) const;
   bool isValidInterval(const std::string& theLayer, int interval_start, int interval_end) const;
@@ -245,7 +247,7 @@ class WMSConfig
   void updateModificationTime();
 
   // For locking purposes
-  bool isValidLayerImpl(const std::string& theLayer, bool theAcceptHiddenLayerFlag = false) const;
+  bool isValidLayerImpl(const std::string& theLayer, bool theAcceptHiddenLayerFlag = true) const;
 
   friend class WMSLayerFactory;
 
