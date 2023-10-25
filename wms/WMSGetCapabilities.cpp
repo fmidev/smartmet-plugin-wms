@@ -146,6 +146,10 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
       auto reference_time = theRequest.getParameter("dim_reference_time");
       auto multipleIntervals = theConfig.multipleIntervals();
       auto enableintervals = theRequest.getParameter("enableintervals");
+	  // Hidden flag can be overridden in request
+      auto hidden_flag = theRequest.getParameter("show_hidden");
+	  bool show_hidden = (hidden_flag && *hidden_flag == "1");
+
       // If request option given and it is 1 or 0 use it
       if (enableintervals)
       {
@@ -160,13 +164,14 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
       if (query_lang)
         language = *query_lang;
 
-      configuredLayers = theConfig.getCapabilities(apikey,
+	  configuredLayers = theConfig.getCapabilities(apikey,
                                                    language,
                                                    starttime,
                                                    endtime,
                                                    reference_time,
                                                    wms_namespace,
                                                    hierarchyType,
+												   show_hidden,
                                                    multipleIntervals);
     }
     catch (...)

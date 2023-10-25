@@ -1158,6 +1158,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
                                      const boost::optional<std::string>& reference_time,
                                      const boost::optional<std::string>& wms_namespace,
                                      WMSLayerHierarchy::HierarchyType hierarchy_type,
+									 bool show_hidden,
                                      bool multiple_intervals,
                                      bool authenticate) const
 #else
@@ -1168,6 +1169,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
                                      const boost::optional<std::string>& reference_time,
                                      const boost::optional<std::string>& wms_namespace,
                                      WMSLayerHierarchy::HierarchyType hierarchy_type,
+									 bool show_hidden,
                                      bool multiple_intervals) const
 #endif
 {
@@ -1176,13 +1178,12 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
     // Atomic copy of layer data
     auto my_layers = itsLayers.load();
 
-    if (hierarchy_type != WMSLayerHierarchy::HierarchyType::flat)
+	if (hierarchy_type != WMSLayerHierarchy::HierarchyType::flat)
     {
 #ifndef WITHOUT_AUTHENTICATION
-      WMSLayerHierarchy lh(
-          *my_layers, wms_namespace, hierarchy_type, apikey, authenticate, itsAuthEngine);
+      WMSLayerHierarchy lh(*my_layers, wms_namespace, hierarchy_type, show_hidden, apikey, authenticate, itsAuthEngine);
 #else
-      WMSLayerHierarchy lh(*my_layers, wms_namespace, hierarchy_type);
+      WMSLayerHierarchy lh(*my_layers, wms_namespace, hierarchy_type, show_hidden);
 #endif
 
       //	  std::cout << "Hierarchy:\n" << lh << std::endl;
@@ -1205,8 +1206,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
           continue;
 #endif
 
-      auto cdt = iter_pair.second.getCapabilities(
-          multiple_intervals, language, starttime, endtime, reference_time);
+      auto cdt = iter_pair.second.getCapabilities(multiple_intervals, show_hidden, language, starttime, endtime, reference_time);
 
       // Note: The boost::optional is empty for hidden layers.
       if (cdt)
@@ -1290,7 +1290,7 @@ bool WMSConfig::isValidVersion(const std::string& theVersion) const
 }
 
 bool WMSConfig::isValidLayer(const std::string& theLayer,
-                             bool theAcceptHiddenLayerFlag /*= false*/) const
+                             bool theAcceptHiddenLayerFlag /*= true*/) const
 {
   try
   {

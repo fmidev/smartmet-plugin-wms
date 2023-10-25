@@ -2032,6 +2032,7 @@ const boost::shared_ptr<WMSTimeDimensions>& WMSLayer::getTimeDimensions() const
 
 boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
     bool multiple_intervals,
+	bool show_hidden,
     const Engine::Gis::Engine& /* gisengine */,
     const std::string& language,
     const boost::optional<std::string>& starttime,
@@ -2040,7 +2041,7 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 {
   try
   {
-    if (hidden)
+    if (hidden && !show_hidden)
       return {};
 
     // std::cout << "________________________________________________________\n" << *this <<

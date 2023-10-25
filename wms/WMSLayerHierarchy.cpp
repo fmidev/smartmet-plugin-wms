@@ -180,33 +180,36 @@ void expand_layer(WMSLayerHierarchy& lh)
   }
 }
 
+
 // Add sublayers recursively
 void add_sublayers(WMSLayerHierarchy& lh,
-                   std::map<std::string, const WMSLayerProxy*> named_layers,
+                   const std::map<std::string, const WMSLayerProxy*>& named_layers,
                    std::set<std::string>& processed_layers,
                    WMSLayerHierarchy::HierarchyType hierarchy_type)
 {
   if (!lh.reference_time)
   {
     std::string layer_name_prefix = lh.name + ":";
-    for (const auto& item : named_layers)
-    {
-      const auto& layer_name = item.first;
 
-      if (processed_layers.find(layer_name) != processed_layers.end())
-        continue;
+	auto pos = named_layers.lower_bound(layer_name_prefix);
 
-      if (lh.name == layer_name)
-        continue;
-
+	for(; pos != named_layers.end(); ++pos)
+	{
+      const auto& layer_name = pos->first;
       if (boost::algorithm::starts_with(layer_name, layer_name_prefix))
       {
+		if (processed_layers.find(layer_name) != processed_layers.end())
+		  continue;
         processed_layers.insert(layer_name);
         lh.sublayers.push_back(boost::make_shared<WMSLayerHierarchy>(layer_name));
         lh.sublayers.back()->parent = lh;
         add_sublayers(*lh.sublayers.back(), named_layers, processed_layers, hierarchy_type);
       }
-    }
+	  else
+	  {
+		break;
+	  }
+	}
   }
 
   // Leaf layers do not have sublayers
@@ -363,15 +366,17 @@ WMSLayerHierarchy::WMSLayerHierarchy(std::string n) : name(std::move(n)) {}
 WMSLayerHierarchy::WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
                                      const boost::optional<std::string>& wms_namespace,
                                      HierarchyType hierarchy_type,
+									 bool reveal_hidden,
                                      const boost::optional<std::string>& apikey,
                                      bool auth,
                                      Engine::Authentication::Engine* authEngine)
-    : name("__root__"), authenticate(auth)
+  : name("__root__"), show_hidden(reveal_hidden), authenticate(auth)
 #else
 WMSLayerHierarchy::WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
                                      const boost::optional<std::string>& wms_namespace,
-                                     HierarchyType hierarchy_type)
-    : name("__root__"), authenticate(false)
+                                     HierarchyType hierarchy_type,
+									 bool reveal_hidden)
+  : name("__root__"), show_hidden(reveal_hidden), authenticate(false)
 #endif
 {
 #ifndef WITHOUT_AUTHENTICATION
@@ -408,7 +413,7 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
         continue;
 #endif
     // Skip hidden layers
-    if (item.second.getLayer()->isHidden())
+    if (item.second.getLayer()->isHidden() && !show_hidden)
       continue;
 
     if (wms_namespace && !match_namespace_pattern(layer_name, *wms_namespace))

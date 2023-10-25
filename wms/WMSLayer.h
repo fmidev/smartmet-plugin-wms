@@ -137,6 +137,7 @@ class WMSLayer
 
   boost::optional<CTPP::CDT> generateGetCapabilities(
       bool multiple_intervals,
+	  bool show_hidden,
       const Engine::Gis::Engine& gisengine,
       const std::string& language,
       const boost::optional<std::string>& starttime,
