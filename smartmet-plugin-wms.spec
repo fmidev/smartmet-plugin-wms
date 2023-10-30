@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.10.25
+Version: 23.10.30
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -26,19 +26,19 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.7.28
-BuildRequires: smartmet-library-grid-content-devel >= 23.10.12
-BuildRequires: smartmet-library-grid-files-devel >= 23.10.12
+BuildRequires: smartmet-library-grid-content-devel >= 23.10.30
+BuildRequires: smartmet-library-grid-files-devel >= 23.10.30
 BuildRequires: smartmet-library-macgyver-devel >= 23.10.10
-BuildRequires: smartmet-library-spine-devel >= 23.10.10
-BuildRequires: smartmet-library-timeseries-devel >= 23.10.11
+BuildRequires: smartmet-library-spine-devel >= 23.10.20
+BuildRequires: smartmet-library-timeseries-devel >= 23.10.30
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 23.7.28
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 23.10.18
+BuildRequires: smartmet-engine-observation-devel >= 23.10.30
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 23.8.28
-BuildRequires: smartmet-engine-grid-devel >= 23.10.12
+BuildRequires: smartmet-engine-grid-devel >= 23.10.30
 BuildRequires: smartmet-engine-geonames-devel >= 23.9.6
 BuildRequires: smartmet-engine-querydata-devel >= 23.10.12
 BuildRequires: smartmet-engine-contour-devel >= 23.10.3
@@ -68,13 +68,13 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 23.10.12
-Requires: smartmet-library-grid-files >= 23.10.12
+Requires: smartmet-library-grid-content >= 23.10.30
+Requires: smartmet-library-grid-files >= 23.10.30
 Requires: smartmet-library-gis >= 23.9.12
 Requires: smartmet-library-trax >= 23.8.17
 Requires: smartmet-library-macgyver >= 23.10.10
-Requires: smartmet-library-spine >= 23.10.10
-Requires: smartmet-library-timeseries >= 23.10.11
+Requires: smartmet-library-spine >= 23.10.20
+Requires: smartmet-library-timeseries >= 23.10.30
 Requires: smartmet-library-giza >= 23.7.28
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 23.7.28
@@ -82,10 +82,10 @@ Requires: smartmet-engine-authentication >= 23.7.28
 Requires: smartmet-engine-querydata >= 23.10.12
 Requires: smartmet-engine-contour >= 23.10.3
 Requires: smartmet-engine-gis >= 23.8.28
-Requires: smartmet-engine-grid >= 23.10.12
+Requires: smartmet-engine-grid >= 23.10.30
 Requires: smartmet-engine-geonames >= 23.9.6
 Requires: smartmet-server >= 23.8.30
-Requires: smartmet-library-spine >= 23.10.10
+Requires: smartmet-library-spine >= 23.10.20
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
@@ -112,9 +112,9 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 23.8.17
 #TestRequires: smartmet-library-newbase-devel >= 23.10.11
 #TestRequires: smartmet-library-macgyver-devel >= 23.10.10
-#TestRequires: smartmet-library-spine-devel >= 23.10.10
-#TestRequires: smartmet-library-timeseries-devel >= 23.10.11
-#TestRequires: smartmet-engine-grid-devel >= 23.10.12
+#TestRequires: smartmet-library-spine-devel >= 23.10.20
+#TestRequires: smartmet-library-timeseries-devel >= 23.10.30
+#TestRequires: smartmet-engine-grid-devel >= 23.10.30
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -125,7 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 23.10.18
+#TestRequires: smartmet-engine-observation-devel >= 23.10.30
 %endif
 
 %description
@@ -154,11 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
-* Wed Oct 25 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.10.25-1.fmi
+* Mon Oct 30 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.10.30-1.fmi
 - Added show_hidden option to GetCapabilities request, hidden layers can also be requested with GetMap request (BRAINSTORM-2768)
 - Improved add_sublayers algorithm in WMSLayerHierarchy.cpp file (BRAINSTORM-2766)
-
-* Mon Oct 23 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.10.23-1.fmi
 - Fixed GetCapabilities endtime of observation layers (BRAINSTORM-2452)
 
 * Sat Oct 21 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.10.21-1.fmi
