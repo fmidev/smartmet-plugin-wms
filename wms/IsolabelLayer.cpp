@@ -23,6 +23,7 @@
 #include <spine/Json.h>
 #include <timeseries/ParameterFactory.h>
 #include <limits>
+#include <vector>
 
 // #define MYDEBUG 1
 // #define MYDEBUG_DETAILS 1
@@ -42,8 +43,72 @@ struct Edge
   bool valid;
 };
 
+/*
+
+Sorting:
+
+std::vector of size of max diagonal length
+even if we weigh the 10s normally, 5s triple, doubles a further triple, etc most useless edges will
+be at the last element which is unlikely to be used at all.
+
+
+TODO:
+
+For each pair of points mark in a 2D matrix if the connection is disallowed based on distances.
+Use a status vector for each point to indicate whether the points status is unknown, accepted, or
+rejected.
+
+Sort edges based on weight
+For each edge
+  if connection is not disallowed
+    unknown-unknown: accept both if Kruskal test is ok
+    unknown-accepted: accept unknown if Kruskal test is ok
+    unknown-rejected: choosing unknown would not connect well, ignore edge
+    accepted-accepted: ignore edge
+    accepted-rejected: ignore edge
+    rejected-rejected: ignore edge
+  else connection is disallowed
+    unknown-unknown: choosing either one would not connect well, ignore edge
+    unknown-accepted: mark unknown as rejected
+    unknown-rejected: choosing unknown would not connect well, ignore edge
+    accepted-accepted: not possible
+    accepted-rejected: ignore edge
+    rejected-rejected: ignore edge
+
+
+
+ */
+
 using Edges = std::vector<Edge>;
 using BadEdges = std::unordered_multimap<std::size_t, Edge>;
+
+// Chosen candidates
+using ChosenCandidates = std::set<std::size_t>;
+
+// Distances to other candidates
+using Distances = std::multimap<double, std::size_t>;
+
+// Distances for all candidates
+using CandidateDistances = std::vector<Distances>;
+
+/*
+ * 1. reserve CandidateDistances for N candidates
+ * 2. calculate all distances for each N candidates inserting them to CandidateDistances
+ * 3. from CandidateDistances select the shortest length (N tests) edge and erase it from the
+ * multimap
+ * 4. insert the start and end vertices into ChosenCandidates
+ * 5. loop over ChosenCandidates
+ * 6.    if the shortest edge end vertex is already in use, erase it from Distances
+ * 7.    repeat until an unused end vertex is found
+ * 8.    mark it as the shortest edge so far
+ * 9     looping over the remaining chosen candidates, if the shortest distance
+ *       available is longer than the current best one, just skip the candidate
+ * 10.   if the shortest edge is shorter, keep deleting used vertices until
+ *       a shorter one is found or a length longer than current best is found
+ * 11.   keep the shorter one of the edges
+ * 12.   insert the end vertex of the shortest found edge into ChosenCandidates
+ *
+ */
 
 // ----------------------------------------------------------------------
 /*!
@@ -80,6 +145,9 @@ void IsolabelLayer::init(Json::Value& theJson,
     json = JsonTools::remove(theJson, "angles");
     if (!json.isNull())
       JsonTools::extract_vector("angles", angles, json);
+
+    // Note that from now on we generate all possible isoline values and keep the unique ones only
+    // at the end. A std::set would have been an alternative solution.
 
     json = JsonTools::remove(theJson, "isobands");
     if (!json.isNull())
@@ -723,41 +791,92 @@ boost::optional<std::size_t> find_tree_start_edge(const Edges& edges)
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Find next shortest valid edge to be added to MSP
+ * \brief Test if a vertex cannot be selected due to minimum length requirements
  */
 // ----------------------------------------------------------------------
 
-boost::optional<std::size_t> find_next_edge(const Edges& edges,
-                                            const BadEdges& bad_edges,
-                                            std::vector<boost::tribool>& status)
+bool is_vertex_too_close(std::size_t vertex,
+                         const BadEdges& bad_edges,
+                         const std::vector<boost::tribool>& status)
 {
-  std::size_t best_edge = 0;
-  double best_length = -1;
-
-  for (std::size_t i = 0; i < edges.size(); i++)
+  auto range = bad_edges.equal_range(vertex);
+  for (auto it = range.first; it != range.second; ++it)
   {
-    const auto& edge = edges[i];
+    const auto& test_edge = it->second;
+    if ((test_edge.first == vertex && status[test_edge.second]) ||
+        (test_edge.second == vertex && status[test_edge.first]))
+    {
+      return true;
+    }
+  }
+  return false;
+}
 
-    auto v1 = edges[i].first;
-    auto v2 = edges[i].second;
+// ----------------------------------------------------------------------
+/*!
+ * \brief Find an edge that would grow the minimum spanning tree
+ */
+// ----------------------------------------------------------------------
+
+std::size_t find_trial_edge(std::size_t pos,
+                            const Edges& edges,
+                            const std::vector<boost::tribool>& status)
+{
+  for (; pos < edges.size(); ++pos)
+  {
+    const auto& edge = edges[pos];
+
+    const auto v1 = edge.first;
+    const auto v2 = edge.second;
 
     // Note: tribool logic. We require one "true", one "indeterminate"
 
-    if (status[v1])
+    const auto& status1 = status[v1];
+    const auto& status2 = status[v2];
+
+    if (status1)
     {
-      if (status[v2] || !status[v2])
+      if (status2 || status2)
         continue;
     }
-    else if (status[v2])
+    else if (status2)
     {
-      if (status[v1] || !status[v1])
+      if (status1 || !status1)
         continue;
     }
     else
       continue;
+    return pos;
+  }
+  return std::string::npos;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Find next shortest valid edge to be added to MSP
+ */
+// ----------------------------------------------------------------------
+
+boost::optional<std::size_t> find_shortest_edge(const Edges& edges,
+                                                const BadEdges& bad_edges,
+                                                std::vector<boost::tribool>& status)
+{
+  std::size_t best_edge = 0;
+  double best_length = -1;
+
+  std::size_t pos = 0UL;
+
+  while (true)
+  {
+    pos = find_trial_edge(pos, edges, status);
+    if (pos == std::string::npos)
+      break;
 
     // Now we know one must have been selected, one is indeterminate
-    auto new_vertex = (status[v1] ? v2 : v1);
+    const auto& edge = edges[pos];
+    const auto v1 = edge.first;
+    const auto v2 = edge.second;
+    const auto new_vertex = (status[v1] ? v2 : v1);
 
     if (best_length < 0 || edge.length < best_length)
     {
@@ -766,28 +885,15 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges,
       // right away. It is always connected to all the vertices though, since
       // we created all possible edges.
 
-      bool forbidden = false;
-
-      auto range = bad_edges.equal_range(new_vertex);
-      for (auto it = range.first; it != range.second; ++it)
-      {
-        const auto& test_edge = it->second;
-        if ((test_edge.first == new_vertex && status[test_edge.second]) ||
-            (test_edge.second == new_vertex && status[test_edge.first]))
-        {
-          forbidden = true;
-          break;
-        }
-      }
-
-      if (forbidden)
+      if (is_vertex_too_close(new_vertex, bad_edges, status))
         status[new_vertex] = false;
       else
       {
-        best_edge = i;
+        best_edge = pos;
         best_length = edge.length;
       }
     }
+    ++pos;
   }
 
   if (best_length < 0)
@@ -805,6 +911,8 @@ boost::optional<std::size_t> find_next_edge(const Edges& edges,
 Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
                                                  const Fmi::Box& box) const
 {
+  // REFACTOR: Make this a function to remove band candidates
+
   Candidates candis;
 
   // Discard too angled labels and labels too close or far from the edges
@@ -839,6 +947,22 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
   // We assume this approximates the true solution under the distance constraints without
   // attempting to prove it does.
 
+  // TODO: Now insert here an array of multiples to be placed first: 10, 5, 2, 1 and other values
+  // Add the best multiples first to the minimum spanning tree, then the next ones etc.
+  // So once a MSP has been built for multiples of 10, all edges must be discarded, and then
+  // all edges 5-10 and 5-5 have to be added. The already chosen 10-10 edges do NOT have to
+  // be preserved, the points are in the MSP anyway, and their mutual distance no longer matters.
+  // The only thing that matters is the new 5-5 and 5-10 distances, and can their miniminum
+  // distances be satisfied.
+
+  // We wish to prefer a 10-10 connection. By multiplying the distance between 5-10 edges
+  // by 4, we can still get 5's selected between 10's, but if the distances between the 5-10
+  // edges are similar, the 10's will be chosen first.
+  //
+  // 10 -- 5 --- 10   here distance between 10's is 2+3=5, 2/3 multiplied by 4 are 8/12.
+  //    2     3                                                multiplied by 3 are 6/9
+  //
+
   Edges edges;
   BadEdges bad_edges;
 
@@ -849,6 +973,8 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
 #if 0  
   auto max_distance_limit = std::max({min_distance_self, min_distance_same, min_distance_other});
 #endif
+
+  // TODO: Separate this into a function
 
   for (std::size_t i = 0; i < n - 1; i++)
     for (std::size_t j = i + 1; j < n; j++)
@@ -913,7 +1039,7 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
 
   while (true)
   {
-    auto opt_next = find_next_edge(edges, bad_edges, candidate_status);
+    auto opt_next = find_shortest_edge(edges, bad_edges, candidate_status);
     if (!opt_next)
       break;
 
