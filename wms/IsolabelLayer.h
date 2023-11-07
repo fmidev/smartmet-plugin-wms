@@ -24,12 +24,19 @@ class State;
 // For candidate positions
 struct Candidate
 {
-  double isovalue;
-  double x;
-  double y;
-  double angle;      // degrees
-  double curvature;  // total change in degrees along path, not "circle" curvature
-  int id;            // unique feature ID for each separate isoline
+  double isovalue = 0;
+  double x = 0;
+  double y = 0;
+  double angle = 0;      // degrees
+  double curvature = 0;  // total change in degrees along path, not "circle" curvature
+  int id = 0;            // unique feature ID for each separate isoline
+  double weight = 0;
+
+  // Needed for emplace_back
+  Candidate(double p1, double p2, double p3, double p4, double p5, int p6, double p7)
+      : isovalue(p1), x(p2), y(p3), angle(p4), curvature(p5), id(p6), weight(p7)
+  {
+  }
 };
 
 using Candidates = std::vector<Candidate>;
@@ -70,6 +77,7 @@ class IsolabelLayer : public IsolineLayer
  private:
   Candidates find_candidates(const std::vector<OGRGeometryPtr>& geoms) const;
   Candidates select_best_candidates(const Candidates& candidates, const Fmi::Box& box) const;
+
   void fix_orientation_gridEngine(Candidates& candidates,
                                   const Fmi::Box& box,
                                   const State& state,

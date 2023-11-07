@@ -17,6 +17,7 @@
 #include <engines/contour/Engine.h>
 #include <engines/gis/Engine.h>
 #include <fmt/format.h>
+#include <gis/BoolMatrix.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
@@ -34,81 +35,45 @@ namespace Plugin
 {
 namespace Dali
 {
+
+// Label status
+enum class Status
+{
+  Undecided,
+  Accepted,
+  Rejected
+};
+
 // For minimum spanning tree searches
 struct Edge
 {
-  std::size_t first;
-  std::size_t second;
-  double length;
-  bool valid;
+  std::size_t first = 0;
+  std::size_t second = 0;
+  double length = 0;
+  double weight = 0;
+
+  // needed for emplace_back to work
+  Edge(std::size_t f, std::size_t s, double l, double w) : first(f), second(s), length(l), weight(w)
+  {
+  }
 };
 
-/*
-
-Sorting:
-
-std::vector of size of max diagonal length
-even if we weigh the 10s normally, 5s triple, doubles a further triple, etc most useless edges will
-be at the last element which is unlikely to be used at all.
-
-
-TODO:
-
-For each pair of points mark in a 2D matrix if the connection is disallowed based on distances.
-Use a status vector for each point to indicate whether the points status is unknown, accepted, or
-rejected.
-
-Sort edges based on weight
-For each edge
-  if connection is not disallowed
-    unknown-unknown: accept both if Kruskal test is ok
-    unknown-accepted: accept unknown if Kruskal test is ok
-    unknown-rejected: choosing unknown would not connect well, ignore edge
-    accepted-accepted: ignore edge
-    accepted-rejected: ignore edge
-    rejected-rejected: ignore edge
-  else connection is disallowed
-    unknown-unknown: choosing either one would not connect well, ignore edge
-    unknown-accepted: mark unknown as rejected
-    unknown-rejected: choosing unknown would not connect well, ignore edge
-    accepted-accepted: not possible
-    accepted-rejected: ignore edge
-    rejected-rejected: ignore edge
-
-
-
- */
+// Data structures needed for Kruskal's algorithm for minimum spanning tree:
 
 using Edges = std::vector<Edge>;
-using BadEdges = std::unordered_multimap<std::size_t, Edge>;
+using Statuses = std::vector<Status>;      // Status of each candidate
+using Parents = std::vector<std::size_t>;  // Parent for each candidate
 
-// Chosen candidates
-using ChosenCandidates = std::set<std::size_t>;
+// The algorithm here places minimum length limits for edges. For each candidate we list
+// the candidates it cannot connect to. If the candidate is selected, the ones in the
+// list will be rejected from the minimum spanning tree.
+using BadPairList = std::list<std::size_t>;
+using BadPairs = std::vector<BadPairList>;
 
-// Distances to other candidates
-using Distances = std::multimap<double, std::size_t>;
-
-// Distances for all candidates
-using CandidateDistances = std::vector<Distances>;
-
-/*
- * 1. reserve CandidateDistances for N candidates
- * 2. calculate all distances for each N candidates inserting them to CandidateDistances
- * 3. from CandidateDistances select the shortest length (N tests) edge and erase it from the
- * multimap
- * 4. insert the start and end vertices into ChosenCandidates
- * 5. loop over ChosenCandidates
- * 6.    if the shortest edge end vertex is already in use, erase it from Distances
- * 7.    repeat until an unused end vertex is found
- * 8.    mark it as the shortest edge so far
- * 9     looping over the remaining chosen candidates, if the shortest distance
- *       available is longer than the current best one, just skip the candidate
- * 10.   if the shortest edge is shorter, keep deleting used vertices until
- *       a shorter one is found or a length longer than current best is found
- * 11.   keep the shorter one of the edges
- * 12.   insert the end vertex of the shortest found edge into ChosenCandidates
- *
- */
+// If we need a fast test to see whether a particular pair of labels is disallowed,
+// we could also use a BoolMatrix of size N*N to mark individual disabled pairs
+//
+// using BadPairMatrix = Fmi::BoolMatrix;
 
 // ----------------------------------------------------------------------
 /*!
@@ -479,7 +444,7 @@ void find_candidates(Candidates& candidates,
 
     auto curv = curvature(geom, pos, stencil_size);
 
-    candidates.emplace_back(Candidate{isovalue, x2, y2, angle, curv, id});
+    candidates.emplace_back(isovalue, x2, y2, angle, curv, id, 0);
   }
 }
 
@@ -522,7 +487,7 @@ void find_candidates(Candidates& candidates,
 
     auto curv = curvature(geom, pos, stencil_size);
 
-    candidates.emplace_back(Candidate{isovalue, x2, y2, angle, curv, id});
+    candidates.emplace_back(isovalue, x2, y2, angle, curv, id, 0);
   }
 }
 
@@ -765,306 +730,6 @@ double distance(const Candidate& candidate, const Fmi::Box& box)
 
 // ----------------------------------------------------------------------
 /*!
- * Find the shortest valid edge
- */
-// ----------------------------------------------------------------------
-
-boost::optional<std::size_t> find_tree_start_edge(const Edges& edges)
-{
-  std::size_t best_edge = 0;
-  double best_length = -1;
-
-  for (std::size_t i = 0; i < edges.size(); i++)
-  {
-    const auto& edge = edges[i];
-    if (edge.valid && (best_length < 0 || edge.length < best_length))
-    {
-      best_edge = i;
-      best_length = edge.length;
-    }
-  }
-
-  if (best_length < 0)
-    return {};
-  return best_edge;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Test if a vertex cannot be selected due to minimum length requirements
- */
-// ----------------------------------------------------------------------
-
-bool is_vertex_too_close(std::size_t vertex,
-                         const BadEdges& bad_edges,
-                         const std::vector<boost::tribool>& status)
-{
-  auto range = bad_edges.equal_range(vertex);
-  for (auto it = range.first; it != range.second; ++it)
-  {
-    const auto& test_edge = it->second;
-    if ((test_edge.first == vertex && status[test_edge.second]) ||
-        (test_edge.second == vertex && status[test_edge.first]))
-    {
-      return true;
-    }
-  }
-  return false;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Find an edge that would grow the minimum spanning tree
- */
-// ----------------------------------------------------------------------
-
-std::size_t find_trial_edge(std::size_t pos,
-                            const Edges& edges,
-                            const std::vector<boost::tribool>& status)
-{
-  for (; pos < edges.size(); ++pos)
-  {
-    const auto& edge = edges[pos];
-
-    const auto v1 = edge.first;
-    const auto v2 = edge.second;
-
-    // Note: tribool logic. We require one "true", one "indeterminate"
-
-    const auto& status1 = status[v1];
-    const auto& status2 = status[v2];
-
-    if (status1)
-    {
-      if (status2 || status2)
-        continue;
-    }
-    else if (status2)
-    {
-      if (status1 || !status1)
-        continue;
-    }
-    else
-      continue;
-    return pos;
-  }
-  return std::string::npos;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Find next shortest valid edge to be added to MSP
- */
-// ----------------------------------------------------------------------
-
-boost::optional<std::size_t> find_shortest_edge(const Edges& edges,
-                                                const BadEdges& bad_edges,
-                                                std::vector<boost::tribool>& status)
-{
-  std::size_t best_edge = 0;
-  double best_length = -1;
-
-  std::size_t pos = 0UL;
-
-  while (true)
-  {
-    pos = find_trial_edge(pos, edges, status);
-    if (pos == std::string::npos)
-      break;
-
-    // Now we know one must have been selected, one is indeterminate
-    const auto& edge = edges[pos];
-    const auto v1 = edge.first;
-    const auto v2 = edge.second;
-    const auto new_vertex = (status[v1] ? v2 : v1);
-
-    if (best_length < 0 || edge.length < best_length)
-    {
-      // The new vertex must not be connected to any of the already selected vertices
-      // by an invalid edge, or it is too close to them. If so, we disable vertex
-      // right away. It is always connected to all the vertices though, since
-      // we created all possible edges.
-
-      if (is_vertex_too_close(new_vertex, bad_edges, status))
-        status[new_vertex] = false;
-      else
-      {
-        best_edge = pos;
-        best_length = edge.length;
-      }
-    }
-    ++pos;
-  }
-
-  if (best_length < 0)
-    return {};
-
-  return best_edge;
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Given candidates for each isoline select the best combination of them
- */
-// ----------------------------------------------------------------------
-
-Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
-                                                 const Fmi::Box& box) const
-{
-  // REFACTOR: Make this a function to remove band candidates
-
-  Candidates candis;
-
-  // Discard too angled labels and labels too close or far from the edges
-  for (const auto& cand : candidates)
-  {
-    // Angle condition
-    bool ok = (cand.angle >= -max_angle and cand.angle <= max_angle);
-    // Edge conditions
-    if (ok)
-    {
-      const auto dist = distance(cand, box);
-      ok = (dist >= min_distance_edge && dist <= max_distance_edge);
-    }
-    if (ok)
-      ok = (cand.curvature < max_curvature);
-
-    if (ok)
-      candis.push_back(cand);
-  }
-
-  if (candis.empty())
-    return candis;
-
-  // Find Euclician "minimum" spanning tree using Prim's algorithm with
-  // modifications:
-  //   1. Do not choose random vertex as starting point, select shortest edge satisfying distance
-  //      constraints as the first pair of points.
-  //   2. Choose the next shortest edge satisfying distance constraints to the selected points
-  //      and add the end vertex to the set of selected points.
-  //   3. Repeat until no edge satisfies the constraints
-  //
-  // We assume this approximates the true solution under the distance constraints without
-  // attempting to prove it does.
-
-  // TODO: Now insert here an array of multiples to be placed first: 10, 5, 2, 1 and other values
-  // Add the best multiples first to the minimum spanning tree, then the next ones etc.
-  // So once a MSP has been built for multiples of 10, all edges must be discarded, and then
-  // all edges 5-10 and 5-5 have to be added. The already chosen 10-10 edges do NOT have to
-  // be preserved, the points are in the MSP anyway, and their mutual distance no longer matters.
-  // The only thing that matters is the new 5-5 and 5-10 distances, and can their miniminum
-  // distances be satisfied.
-
-  // We wish to prefer a 10-10 connection. By multiplying the distance between 5-10 edges
-  // by 4, we can still get 5's selected between 10's, but if the distances between the 5-10
-  // edges are similar, the 10's will be chosen first.
-  //
-  // 10 -- 5 --- 10   here distance between 10's is 2+3=5, 2/3 multiplied by 4 are 8/12.
-  //    2     3                                                multiplied by 3 are 6/9
-  //
-
-  Edges edges;
-  BadEdges bad_edges;
-
-  const auto n = candis.size();
-
-  int invalid = 0;
-
-#if 0  
-  auto max_distance_limit = std::max({min_distance_self, min_distance_same, min_distance_other});
-#endif
-
-  // TODO: Separate this into a function
-
-  for (std::size_t i = 0; i < n - 1; i++)
-    for (std::size_t j = i + 1; j < n; j++)
-    {
-      auto length = std::hypot(candis[i].x - candis[j].x, candis[i].y - candis[j].y);
-
-      bool valid = false;
-      if (candis[i].id == candis[j].id)
-        valid = (length >= min_distance_self);  // same isoline segment
-      else if (candis[i].isovalue == candis[j].isovalue)
-        valid = (length >= min_distance_same);  // same isoline value, another segment
-      else
-        valid = (length >= min_distance_other);  // different isovalue or isoline segment
-
-      if (!valid)
-        ++invalid;
-
-      if (valid)
-      {
-#if 0        
-        if (length < max_distance_limit * 4)
-#endif
-        edges.emplace_back(Edge{i, j, length, valid});
-      }
-      else
-      {
-        // Index bad edges by both indices in a hash map for faster lookups
-        Edge edge{i, j, length, valid};
-        bad_edges.insert({i, edge});
-        bad_edges.insert({j, edge});
-      }
-    }
-
-#if 0  
-  for (int i = 10; i < 1000; i += 50)
-  {
-    double limit = i;
-    int count = 0;
-    for (const auto& edge : edges)
-      if (edge.length < limit)
-        ++count;
-    std::cout << fmt::format("{}\t{}\t{}\n", i, count, 100 * count / edges.size());
-  }
-  std::cout << "Total: " << edges.size() << "\n";
-#endif
-
-  // Start the minimum spanning tree
-
-  auto opt_start = find_tree_start_edge(edges);
-  if (!opt_start)
-    return {};
-
-  // First selected candidates
-
-  auto cand1 = edges[*opt_start].first;
-  auto cand2 = edges[*opt_start].second;
-
-  // Start building the tree
-  std::vector<boost::tribool> candidate_status(candis.size(), boost::logic::indeterminate);
-  candidate_status[cand1] = true;
-  candidate_status[cand2] = true;
-
-  while (true)
-  {
-    auto opt_next = find_shortest_edge(edges, bad_edges, candidate_status);
-    if (!opt_next)
-      break;
-
-    cand1 = edges[*opt_next].first;
-    cand2 = edges[*opt_next].second;
-    candidate_status[cand1] = true;
-    candidate_status[cand2] = true;
-
-    // Remove the edge from further consideration by replacing it with the last element of the array
-    edges[*opt_next] = edges.back();
-    edges.pop_back();
-  }
-
-  Candidates ret;
-  for (std::size_t i = 0; i < candidate_status.size(); i++)
-  {
-    if (candidate_status[i])  // fails for false|indeterminate
-      ret.push_back(candis[i]);
-  }
-
-  return ret;
-}
-
-// ----------------------------------------------------------------------
-/*!
  * Fix label orientations by peeking at querydata values
  */
 // ----------------------------------------------------------------------
@@ -1248,6 +913,283 @@ void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Remove bad candidates
+ */
+// ----------------------------------------------------------------------
+
+Candidates remove_bad_candidates(const Candidates& candidates,
+                                 const Fmi::Box& box,
+                                 double max_angle,
+                                 double min_distance_edge,
+                                 double max_distance_edge,
+                                 double max_curvature)
+{
+  Candidates candis;
+
+  // Discard too angled labels and labels too close or far from the edges
+  for (const auto& cand : candidates)
+  {
+    // Angle condition
+    bool ok = (cand.angle >= -max_angle and cand.angle <= max_angle);
+    // Edge conditions
+    if (ok)
+    {
+      const auto dist = distance(cand, box);
+      ok = (dist >= min_distance_edge && dist <= max_distance_edge);
+    }
+    if (ok)
+      ok = (cand.curvature < max_curvature);
+
+    if (ok)
+      candis.push_back(cand);
+  }
+  return candis;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \bried Create candidate edges which satisfy distance conditions
+ *
+ * Too short edges will be marked for two separate structures for speed.
+ */
+// ----------------------------------------------------------------------
+
+Edges create_possible_edges(const Candidates& candidates,
+                            BadPairs& bad_pairs,
+                            double min_distance_self,
+                            double min_distance_same,
+                            double min_distance_other)
+{
+  const auto n = candidates.size();
+  const auto max_pairs = n * (n - 1) / 2;
+
+  Edges edges;
+
+  edges.reserve(max_pairs);
+
+  for (std::size_t i = 0; i < n - 1; i++)
+  {
+    const auto& c1 = candidates[i];
+    for (std::size_t j = i + 1; j < n; j++)
+    {
+      const auto& c2 = candidates[j];
+      auto length = std::hypot(c1.x - c2.x, c1.y - c2.y);
+
+      // We ignore edges do not place labels very close and hence bring nothing to the appearance
+      if (length < 250)
+      {
+        bool allowed = false;
+        if (c1.id == c2.id)
+          allowed = (length >= min_distance_self);  // same isoline segment
+        else if (c1.isovalue == c2.isovalue)
+          allowed = (length >= min_distance_same);  // same isoline value, another segment
+        else
+          allowed = (length >= min_distance_other);  // different isovalue or isoline segment
+
+        if (allowed)
+          edges.emplace_back(i, j, length, c1.weight * c2.weight);
+
+        if (!allowed)
+        {
+          bad_pairs[i].push_back(j);
+          bad_pairs[j].push_back(i);
+        }
+      }
+    }
+  }
+  return edges;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Find root node of a subtree
+ */
+// ----------------------------------------------------------------------
+
+std::size_t find_parent(const Parents& parents, std::size_t i)
+{
+  while (parents[i] != i)
+    i = parents[i];
+  return i;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Test whether an edge would connect two different subtrees
+ */
+// ----------------------------------------------------------------------
+
+bool kruskal_test(const Edge& edge, Parents& parents)
+{
+  // test whether the edge would join two separate trees
+  auto parent1 = find_parent(parents, edge.first);
+  auto parent2 = find_parent(parents, edge.second);
+
+  if (parent1 == parent2)
+    return false;
+
+  parents[parent1] = parent2;  // merge the two trees
+  return true;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief A label was chosen, mark all others too close to it as rejected
+ */
+// ----------------------------------------------------------------------
+
+std::size_t reject_too_close_candidates(Statuses& status, const BadPairList& bad_pairs)
+{
+  std::size_t count = 0;
+  for (auto i : bad_pairs)
+    if (status[i] != Status::Rejected)
+    {
+      ++count;
+      status[i] = Status::Rejected;
+    }
+  return count;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Assign weights for candidates
+ *
+ * Normally we would build a minimum spanning tree using lengths only.
+ * However, we wish to prefer multiples of 10 over multiples over 5
+ * over multiples of 2 and then the rest.
+ *
+ * Say for example we have possible edges 10 -- 5 ---- 10.
+ * The distances are 2 and for, and 2+4=6 from 10 to 10. We wish to make
+ * sure that both 10s are selected first, and hence we scale the distances
+ * 2 and 4 by some factor. Using a factor 3 we'd get 6 and 12, which in this
+ * case might or might not be a good value. Experiments are needed.
+ */
+// ----------------------------------------------------------------------
+
+void assign_weights(Candidates& candidates)
+{
+  for (auto& c : candidates)
+  {
+    const auto isovalue = c.isovalue;
+    if (fmod(isovalue, 10) == 0)
+      c.weight = 1;
+    else if (fmod(isovalue, 5) == 0)
+      c.weight = 4;
+    else if (fmod(isovalue, 2) == 0)
+      c.weight = 16;
+    else
+      c.weight = 64;
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Given candidates for each isoline select the best combination of them
+ */
+// ----------------------------------------------------------------------
+
+Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
+                                                 const Fmi::Box& box) const
+{
+  Candidates cands = remove_bad_candidates(
+      candidates, box, max_angle, min_distance_edge, max_distance_edge, max_curvature);
+
+  if (cands.empty())
+    return cands;
+
+  assign_weights(cands);
+
+  // We wish to prefer a 10-10 connection. By multiplying the distance between 5-10 edges
+  // by 4, we can still get 5's selected between 10's, but if the distances between the 5-10
+  // edges are similar, the 10's will be chosen first.
+  //
+  // 10 -- 5 --- 10   here distance between 10's is 2+3=5, 2/3 multiplied by 4 are 8/12.
+  //    2     3                                                multiplied by 3 are 6/9
+  //
+
+  const auto n = cands.size();
+  Statuses status(n, Status::Undecided);  // nothing decided yet
+
+  BadPairs bad_pairs(n, BadPairList{});  // no edge marked as too short yet
+
+  Parents parents(n, 0UL);
+  std::iota(parents.begin(), parents.end(), 0UL);  // no parent for any candidate yet
+
+  // Create edges between all possible candidates, marking too short edges separately
+  Edges edges = create_possible_edges(
+      cands, bad_pairs, min_distance_self, min_distance_same, min_distance_other);
+
+  // Shortest edges will be processed first.
+  // NOTE: It would be possible to round the sorting criteria (weight*length) to integers
+  //       and then store the the edges into a vector of lists of edges. The vector could
+  //       be fixed to some specific size, and any overflowing edges could be stored into
+  //       a separate container which would be processed if and only if there are still
+  //       candidates left. Hence we'd mostly get rid of the O(n log n) sorting phase.
+
+  std::sort(edges.begin(),
+            edges.end(),
+            [](const Edge& a, const Edge& b) { return a.length * a.weight < b.length * b.weight; });
+
+  // Start the minimum spanning tree
+
+  std::size_t undecided = n;
+
+  for (const auto& edge : edges)
+  {
+    // No need to consider the longest edges if everything has been decided already
+    if (undecided == 0)
+      break;
+
+    const auto i = edge.first;
+    const auto j = edge.second;
+    const auto status1 = status[i];
+    const auto status2 = status[j];
+
+    // rejected candidates do not count in building the tree
+    if (status1 != Status::Rejected && status2 != Status::Rejected)
+    {
+      // nothing to do if both candidates already accepted
+      if (status1 != Status::Accepted && status2 != Status::Accepted)
+      {
+        // Now we have either undecided-undecided or accpeted-undecided, and we
+        // must do the Kruskal test to see if the edge would build up the tree
+
+        if (kruskal_test(edge, parents))
+        {
+          // Add the new candidate. Each Undecided reduces the remaining number of available
+          // candidates by one, plus the number of new candidates it rejects (some may have been
+          // rejected already, hence the size of the bad_pairs[x] container is not sufficient here,
+          // but must be explicitly counted in the function.
+
+          if (status1 == Status::Undecided)
+          {
+            status[i] = Status::Accepted;
+            --undecided;
+            undecided -= reject_too_close_candidates(status, bad_pairs[i]);
+          }
+          if (status2 == Status::Undecided)
+          {
+            status[j] = Status::Accepted;
+            --undecided;
+            undecided -= reject_too_close_candidates(status, bad_pairs[j]);
+          }
+        }
+      }
+    }
+  }
+
+  // Return accepted and undecided candidates. There may be undecided ones if the distance
+  // criteria are not really needed
+  Candidates ret;
+  for (std::size_t i = 0; i < status.size(); i++)
+    if (status[i] != Status::Rejected)
+      ret.push_back(cands[i]);
+
+  return ret;
 }
 
 // ----------------------------------------------------------------------
