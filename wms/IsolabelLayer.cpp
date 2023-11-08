@@ -952,6 +952,29 @@ Candidates remove_bad_candidates(const Candidates& candidates,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Approximate distance between labels
+ *
+ * We calculate the smallest distance between the estimated four corner
+ * locations of the label. We ignore the possibility of an overlap, since
+ * in that case the estimated distance will be below the set (sane) minimum
+ * distance requirements anyway. If the requirements are not sane, you
+ * deserve garbage output anyway.
+ */
+// ----------------------------------------------------------------------
+
+double distance(const Candidate& c1, const Candidate& c2)
+{
+  double minimum = 1e10;
+
+  for (const auto& p1 : c1.corners)
+    for (const auto& p2 : c2.corners)
+      minimum = std::min(minimum, std::hypot(p1.x - p2.x, p1.y - p2.y));
+
+  return minimum;
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \bried Create candidate edges which satisfy distance conditions
  *
  * Too short edges will be marked for two separate structures for speed.
@@ -977,7 +1000,9 @@ Edges create_possible_edges(const Candidates& candidates,
     for (std::size_t j = i + 1; j < n; j++)
     {
       const auto& c2 = candidates[j];
-      auto length = std::hypot(c1.x - c2.x, c1.y - c2.y);
+
+      // auto length = std::hypot(c1.x - c2.x, c1.y - c2.y);
+      auto length = distance(c1, c2);
 
       // We ignore edges do not place labels very close and hence bring nothing to the appearance
       if (length < 250)
@@ -1088,6 +1113,41 @@ void assign_weights(Candidates& candidates)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Calculate estimated label corner coordinates
+ *
+ * Assumptions:
+ *
+ *  label size 4 characters
+ *  font height 10 pixels
+ *  character width 8 pixels
+ */
+// ......................................................................
+
+void assign_label_coordinates(Candidates& candidates)
+{
+  const double h = 10 / 2.0;     // half height
+  const double w = 4 * 8 / 2.0;  // half width
+
+  for (auto& c : candidates)
+  {
+    const auto x = c.x;
+    const auto y = c.y;
+    const auto a = c.angle * M_PI / 180;
+    const auto cosa = cos(a);
+    const auto sina = sin(a);
+    c.corners[0].x = x - w / 2 * cosa - h / 2 * sina;
+    c.corners[0].y = y - w / 2 * sina + h / 2 * cosa;
+    c.corners[1].x = x + w / 2 * cosa - h / 2 * sina;
+    c.corners[1].y = y + w / 2 * sina + h / 2 * cosa;
+    c.corners[2].x = x - w / 2 * cosa + h / 2 * sina;
+    c.corners[2].y = y - w / 2 * sina - h / 2 * cosa;
+    c.corners[3].x = x + w / 2 * cosa + h / 2 * sina;
+    c.corners[3].y = y + w / 2 * sina - h / 2 * cosa;
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Given candidates for each isoline select the best combination of them
  */
 // ----------------------------------------------------------------------
@@ -1102,6 +1162,7 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
     return cands;
 
   assign_weights(cands);
+  assign_label_coordinates(cands);
 
   // We wish to prefer a 10-10 connection. By multiplying the distance between 5-10 edges
   // by 4, we can still get 5's selected between 10's, but if the distances between the 5-10
@@ -1182,11 +1243,10 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
     }
   }
 
-  // Return accepted and undecided candidates. There may be undecided ones if the distance
-  // criteria are not really needed
+  // Return accepted candidates only, not Undecided ones too
   Candidates ret;
   for (std::size_t i = 0; i < status.size(); i++)
-    if (status[i] != Status::Rejected)
+    if (status[i] == Status::Accepted)
       ret.push_back(cands[i]);
 
   return ret;

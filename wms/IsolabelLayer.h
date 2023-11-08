@@ -21,6 +21,16 @@ class Config;
 class Plugin;
 class State;
 
+// For label corner coordinates (estimates)
+
+struct Coordinate
+{
+  double x = 0;
+  double y = 0;
+};
+
+using Corners = std::array<Coordinate, 4>;
+
 // For candidate positions
 struct Candidate
 {
@@ -30,7 +40,8 @@ struct Candidate
   double angle = 0;      // degrees
   double curvature = 0;  // total change in degrees along path, not "circle" curvature
   int id = 0;            // unique feature ID for each separate isoline
-  double weight = 0;
+  double weight = 0;     // weight for minimum spanning tree algorithm
+  Corners corners;       // approximated label corner coordinates
 
   // Needed for emplace_back
   Candidate(double p1, double p2, double p3, double p4, double p5, int p6, double p7)
