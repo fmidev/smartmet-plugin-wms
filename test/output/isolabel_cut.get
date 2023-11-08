@@ -32,14 +32,13 @@
   <g class="Label" id="l">
   
   <text transform="translate(209 397) rotate(357)">985</text>
-  <text transform="translate(213 354) rotate(2)">990</text>
+  <text transform="translate(197 425) rotate(4)">990</text>
   <text transform="translate(231 322) rotate(-0)">995</text>
-  <text transform="translate(239 301) rotate(2)">1000</text>
-  <text transform="translate(395 457) rotate(2)">1000</text>
+  <text transform="translate(216 461) rotate(1)">1000</text>
+  <text transform="translate(60 197) rotate(-0)">1005</text>
   <text transform="translate(239 273) rotate(-0)">1005</text>
-  <text transform="translate(65 248) rotate(319)">1005</text>
   <text transform="translate(243 235) rotate(0)">1010</text>
-  <text transform="translate(287 168) rotate(1)">1015</text>
+  <text transform="translate(228 59) rotate(-0)">1015</text>
   </g>
   <mask id="isolabelmask">
   
