@@ -181,7 +181,7 @@ PointValues read_all_observations(State& state,
                                   double maxdistance,
                                   const Fmi::SpatialReference& crs,
                                   const Fmi::Box& box,
-                                  const boost::posix_time::ptime& valid_time,
+                                  const Fmi::DateTime& valid_time,
                                   const boost::posix_time::time_period& valid_time_period,
                                   const Fmi::CoordinateTransformation& transformation)
 {
@@ -322,7 +322,7 @@ PointValues read_station_observations(State& state,
                                       double maxdistance,
                                       const Fmi::SpatialReference& crs,
                                       const Fmi::Box& box,
-                                      const boost::posix_time::ptime& valid_time,
+                                      const Fmi::DateTime& valid_time,
                                       const boost::posix_time::time_period& valid_time_period,
                                       const Fmi::CoordinateTransformation& transformation)
 {
@@ -514,7 +514,7 @@ PointValues read_latlon_observations(State& state,
                                      double maxdistance,
                                      const Fmi::SpatialReference& crs,
                                      const Fmi::Box& box,
-                                     const boost::posix_time::ptime& valid_time,
+                                     const Fmi::DateTime& valid_time,
                                      const boost::posix_time::time_period& valid_time_period,
                                      const Fmi::CoordinateTransformation& transformation,
                                      const Positions::Points& points)
@@ -673,7 +673,7 @@ PointValues read(State& state,
                  double maxdistance,
                  const Fmi::SpatialReference& crs,
                  const Fmi::Box& box,
-                 const boost::posix_time::ptime& valid_time,
+                 const Fmi::DateTime& valid_time,
                  const boost::posix_time::time_period& valid_time_period)
 {
   try

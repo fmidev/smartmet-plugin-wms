@@ -17,7 +17,7 @@ namespace Dali
  */
 // ----------------------------------------------------------------------
 
-boost::posix_time::ptime parse_time(const std::string& theTime)
+Fmi::DateTime parse_time(const std::string& theTime)
 {
   try
   {
@@ -26,7 +26,7 @@ boost::posix_time::ptime parse_time(const std::string& theTime)
     if (Fmi::TimeParser::looks(theTime) != "offset")
       return t;
 
-    return {t.date(), boost::posix_time::hours(t.time_of_day().hours() + 1)};
+    return {t.date(), Fmi::Hours(t.time_of_day().hours() + 1)};
   }
   catch (...)
   {
@@ -40,8 +40,8 @@ boost::posix_time::ptime parse_time(const std::string& theTime)
  */
 // ----------------------------------------------------------------------
 
-boost::posix_time::ptime parse_time(const std::string& theTime,
-                                    const boost::local_time::time_zone_ptr& theZone)
+Fmi::DateTime parse_time(const std::string& theTime,
+                                    const Fmi::TimeZonePtr& theZone)
 {
   try
   {
@@ -53,7 +53,7 @@ boost::posix_time::ptime parse_time(const std::string& theTime,
     if (Fmi::TimeParser::looks(theTime) != "offset")
       return t;
 
-    return {t.date(), boost::posix_time::hours(t.time_of_day().hours() + 1)};
+    return {t.date(), Fmi::Hours(t.time_of_day().hours() + 1)};
   }
 
   catch (...)
@@ -68,7 +68,7 @@ boost::posix_time::ptime parse_time(const std::string& theTime,
  */
 // ----------------------------------------------------------------------
 
-boost::local_time::time_zone_ptr parse_timezone(const std::string& theName,
+Fmi::TimeZonePtr parse_timezone(const std::string& theName,
                                                 const Fmi::TimeZones& theZones)
 {
   return theZones.time_zone_from_string(theName);

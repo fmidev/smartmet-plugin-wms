@@ -11,16 +11,16 @@ namespace WMS
 {
 namespace
 {
-boost::posix_time::ptime parse_time(const std::string& time_string)
+Fmi::DateTime parse_time(const std::string& time_string)
 {
   if (time_string == "now")
-    return boost::posix_time::second_clock::universal_time();
+    return Fmi::SecondClock::universal_time();
 
   return Fmi::TimeParser::parse(time_string);
 }
 }  // namespace
 
-bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime, bool endtime_is_wall_clock_time) const
+bool WMSTimeDimension::isValidTime(const Fmi::DateTime& theTime, bool endtime_is_wall_clock_time) const
 {
   // Allow any time within the range
 
@@ -28,7 +28,7 @@ bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime, bool
     return false;
 
   auto starttime = *itsTimesteps.cbegin();
-  auto endtime = (endtime_is_wall_clock_time ? boost::posix_time::second_clock::universal_time() : *itsTimesteps.crbegin());
+  auto endtime = (endtime_is_wall_clock_time ? Fmi::SecondClock::universal_time() : *itsTimesteps.crbegin());
 
   return (theTime >= starttime && theTime <= endtime);
 
@@ -49,18 +49,18 @@ bool WMSTimeDimension::isValidTime(const boost::posix_time::ptime& theTime, bool
 #endif
 }
 
-std::set<boost::posix_time::ptime> WMSTimeDimension::getTimeSteps() const
+std::set<Fmi::DateTime> WMSTimeDimension::getTimeSteps() const
 {
   return itsTimesteps;
 }
-boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
+Fmi::DateTime WMSTimeDimension::mostCurrentTime() const
 {
   try
   {
     if (itsTimesteps.empty())
       return boost::posix_time::not_a_date_time;
 
-    auto current_time = boost::posix_time::second_clock::universal_time();
+    auto current_time = Fmi::SecondClock::universal_time();
 
     // if current time is earlier than first timestep -> return first timestep
     if (current_time <= *(itsTimesteps.begin()))
@@ -104,19 +104,19 @@ boost::posix_time::ptime WMSTimeDimension::mostCurrentTime() const
   }
 }
 
-StepTimeDimension::StepTimeDimension(const std::list<boost::posix_time::ptime>& times)
+StepTimeDimension::StepTimeDimension(const std::list<Fmi::DateTime>& times)
 {
   std::copy(times.begin(), times.end(), std::inserter(itsTimesteps, itsTimesteps.begin()));
   itsCapabilities = makeCapabilities(boost::none, boost::none);
 }
 
-StepTimeDimension::StepTimeDimension(const std::vector<boost::posix_time::ptime>& times)
+StepTimeDimension::StepTimeDimension(const std::vector<Fmi::DateTime>& times)
 {
   std::copy(times.begin(), times.end(), std::inserter(itsTimesteps, itsTimesteps.begin()));
   itsCapabilities = makeCapabilities(boost::none, boost::none);
 }
 
-StepTimeDimension::StepTimeDimension(const std::set<boost::posix_time::ptime>& times)
+StepTimeDimension::StepTimeDimension(const std::set<Fmi::DateTime>& times)
 {
   std::copy(times.begin(), times.end(), std::inserter(itsTimesteps, itsTimesteps.begin()));
   itsCapabilities = makeCapabilities(boost::none, boost::none);
@@ -172,11 +172,11 @@ IntervalTimeDimension::IntervalTimeDimension(std::vector<tag_interval> intervals
   itsCapabilities = makeCapabilities(boost::none, boost::none);
 }
 
-boost::posix_time::ptime IntervalTimeDimension::mostCurrentTime() const
+Fmi::DateTime IntervalTimeDimension::mostCurrentTime() const
 {
-  auto current_time = boost::posix_time::second_clock::universal_time();
+  auto current_time = Fmi::SecondClock::universal_time();
 
-  boost::posix_time::ptime ret = boost::posix_time::not_a_date_time;
+  Fmi::DateTime ret = boost::posix_time::not_a_date_time;
 
   for (const auto& interval : itsIntervals)
   {
@@ -206,12 +206,12 @@ boost::posix_time::ptime IntervalTimeDimension::mostCurrentTime() const
   return ret;
 }
 
-bool IntervalTimeDimension::isValidTime(const boost::posix_time::ptime& theTime, bool endtime_is_wall_clock_time) const
+bool IntervalTimeDimension::isValidTime(const Fmi::DateTime& theTime, bool endtime_is_wall_clock_time) const
 {
   for (const auto& interval : itsIntervals)
   {
 	auto starttime = interval.startTime;
-	auto endtime = (endtime_is_wall_clock_time ? boost::posix_time::second_clock::universal_time() : interval.endTime);
+	auto endtime = (endtime_is_wall_clock_time ? Fmi::SecondClock::universal_time() : interval.endTime);
 
 	return (theTime >= starttime && theTime <= endtime);
 	/*
@@ -251,20 +251,20 @@ std::string IntervalTimeDimension::getCapabilities(
 }
 
 std::string getIntervalCapability(const tag_interval& interval,
-                                  const boost::posix_time::ptime& requested_startt,
-                                  const boost::posix_time::ptime& requested_endt)
+                                  const Fmi::DateTime& requested_startt,
+                                  const Fmi::DateTime& requested_endt)
 {
   std::string ret;
 
   auto startt = interval.startTime;
   auto endt = interval.endTime;
-  auto resolution = (interval.resolution.total_seconds() == 0 ? boost::posix_time::minutes(1)
+  auto resolution = (interval.resolution.total_seconds() == 0 ? Fmi::Minutes(1)
                                                               : interval.resolution);
 
   if (startt < requested_startt)
   {
     // Time of day taken from interval startTime
-    startt = boost::posix_time::ptime(requested_startt.date(), startt.time_of_day());
+    startt = Fmi::DateTime(requested_startt.date(), startt.time_of_day());
 
     // Starttime adjusted
 
@@ -303,7 +303,7 @@ std::string IntervalTimeDimension::makeCapabilities(
 
     std::string ret;
 
-    boost::posix_time::ptime previous_interval_end_time = boost::posix_time::not_a_date_time;
+    Fmi::DateTime previous_interval_end_time = boost::posix_time::not_a_date_time;
     for (const auto& interval : itsIntervals)
     {
       boost::posix_time::time_period interval_period(interval.startTime, interval.endTime);
@@ -361,7 +361,7 @@ std::string IntervalTimeDimension::makeCapabilitiesTimesteps(
       if (!interval_period.intersects(requested_period))
         continue;
 
-      boost::posix_time::ptime timestep = interval.startTime;
+      Fmi::DateTime timestep = interval.startTime;
       while (timestep <= interval.endTime)
       {
         if (requested_period.contains(timestep))
@@ -383,13 +383,13 @@ std::string IntervalTimeDimension::makeCapabilitiesTimesteps(
 }
 
 WMSTimeDimensions::WMSTimeDimensions(
-    const std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>>& tdims)
+    const std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>>& tdims)
 {
   for (const auto& td : tdims)
     addTimeDimension(td.first, td.second);
 }
 
-void WMSTimeDimensions::addTimeDimension(const boost::posix_time::ptime& origintime,
+void WMSTimeDimensions::addTimeDimension(const Fmi::DateTime& origintime,
                                          const boost::shared_ptr<WMSTimeDimension>& td)
 {
   itsTimeDimensions[origintime] = td;
@@ -405,29 +405,29 @@ const WMSTimeDimension& WMSTimeDimensions::getDefaultTimeDimension() const
 }
 
 const WMSTimeDimension& WMSTimeDimensions::getTimeDimension(
-    const boost::posix_time::ptime& origintime) const
+    const Fmi::DateTime& origintime) const
 {
   return *itsTimeDimensions.at(origintime);
 }
 
-bool WMSTimeDimensions::origintimeOK(const boost::posix_time::ptime& origintime) const
+bool WMSTimeDimensions::origintimeOK(const Fmi::DateTime& origintime) const
 {
   return itsTimeDimensions.find(origintime) != itsTimeDimensions.end();
 }
 
-const std::vector<boost::posix_time::ptime>& WMSTimeDimensions::getOrigintimes() const
+const std::vector<Fmi::DateTime>& WMSTimeDimensions::getOrigintimes() const
 {
   return itsOrigintimes;
 }
 
-bool WMSTimeDimensions::isValidReferenceTime(const boost::posix_time::ptime& origintime) const
+bool WMSTimeDimensions::isValidReferenceTime(const Fmi::DateTime& origintime) const
 {
   return (itsTimeDimensions.find(origintime) != itsTimeDimensions.end());
 }
 
 bool WMSTimeDimensions::isValidTime(
-    const boost::posix_time::ptime& t,
-    const boost::optional<boost::posix_time::ptime>& origintime) const
+    const Fmi::DateTime& t,
+    const boost::optional<Fmi::DateTime>& origintime) const
 {
   if (!origintime)
     return getDefaultTimeDimension().isValidTime(t, itsEndTimeIsWallClockTime);
@@ -439,8 +439,8 @@ bool WMSTimeDimensions::isValidTime(
   return getTimeDimension(*origintime).isValidTime(t, itsEndTimeIsWallClockTime);
 }
 
-boost::posix_time::ptime WMSTimeDimensions::mostCurrentTime(
-    const boost::optional<boost::posix_time::ptime>& origintime) const
+Fmi::DateTime WMSTimeDimensions::mostCurrentTime(
+    const boost::optional<Fmi::DateTime>& origintime) const
 {
   if (origintime)
     return getTimeDimension(*origintime).mostCurrentTime();
@@ -512,7 +512,7 @@ std::ostream& operator<<(std::ostream& ost, const WMSTimeDimensions& timeDimensi
 {
   try
   {
-    const std::vector<boost::posix_time::ptime>& origintimes = timeDimensions.getOrigintimes();
+    const std::vector<Fmi::DateTime>& origintimes = timeDimensions.getOrigintimes();
 
     for (const auto& ot : origintimes)
     {

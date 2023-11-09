@@ -28,13 +28,13 @@ class Intersections
 
   void init(const boost::optional<std::string>& theProducer,
             const Projection& theProjection,
-            const boost::posix_time::ptime& theTime,
+            const Fmi::DateTime& theTime,
             const State& theState);
 
   void init(const boost::optional<std::string>& theProducer,
             const Engine::Grid::Engine* gridEngine,
             const Projection& theProjection,
-            const boost::posix_time::ptime& theTime,
+            const Fmi::DateTime& theTime,
             const State& theState);
 
   std::size_t hash_value(const State& theState) const;

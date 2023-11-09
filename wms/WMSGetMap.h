@@ -2,7 +2,7 @@
 
 #include "WMSConfig.h"
 #include "WMSGetCapabilities.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <macgyver/DateTime.h>
 #include <ctpp2/CDT.hpp>
 #include <spine/HTTP.h>
 #include <spine/Value.h>
@@ -38,8 +38,8 @@ struct tag_get_map_request_options
     unsigned int blue = 0;
   } bgcolor;
   std::string exceptions;
-  boost::optional<boost::posix_time::ptime> reference_time;
-  std::vector<boost::posix_time::ptime> timesteps;
+  boost::optional<Fmi::DateTime> reference_time;
+  std::vector<Fmi::DateTime> timesteps;
   boost::optional<int> elevation;
   unsigned int width = 0;
   unsigned int height = 0;

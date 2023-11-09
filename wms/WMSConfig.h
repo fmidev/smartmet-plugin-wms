@@ -120,16 +120,16 @@ class WMSConfig
 
   bool isValidElevation(const std::string& theLayer, int theElevation) const;
   bool isValidTime(const std::string& theLayer,
-                   const boost::posix_time::ptime& theTime,
-                   const boost::optional<boost::posix_time::ptime>& theReferenceTime) const;
+                   const Fmi::DateTime& theTime,
+                   const boost::optional<Fmi::DateTime>& theReferenceTime) const;
   bool isValidReferenceTime(const std::string& theLayer,
-                            const boost::posix_time::ptime& theReferenceTime) const;
+                            const Fmi::DateTime& theReferenceTime) const;
 
   bool isTemporal(const std::string& theLayer) const;
   bool currentValue(const std::string& theLayer) const;
-  boost::posix_time::ptime mostCurrentTime(
+  Fmi::DateTime mostCurrentTime(
       const std::string& theLayer,
-      const boost::optional<boost::posix_time::ptime>& reference_time) const;
+      const boost::optional<Fmi::DateTime>& reference_time) const;
   Json::Value json(const std::string& theLayerName) const;
   std::vector<Json::Value> getLegendGraphic(const std::string& theLayerName,
                                             const std::string& theStyleName,
@@ -162,8 +162,8 @@ class WMSConfig
   int getMargin() const { return itsMargin; }
   WMSLayerHierarchy::HierarchyType getLayerHierarchyType() const { return itsLayerHierarchyType; }
   bool multipleIntervals() const { return itsMultipleIntervals; }
-  boost::posix_time::ptime getCapabilitiesExpirationTime() const;
-  boost::posix_time::ptime getCapabilitiesModificationTime() const
+  Fmi::DateTime getCapabilitiesExpirationTime() const;
+  Fmi::DateTime getCapabilitiesModificationTime() const
   {
     return itsCapabilitiesModificationTime;
   }
@@ -274,7 +274,7 @@ class WMSConfig
   // Set of files for which a warning has already been printed
   std::set<std::string> itsWarnedFiles;
 
-  boost::posix_time::ptime itsCapabilitiesModificationTime = boost::posix_time::from_time_t(0);
+  Fmi::DateTime itsCapabilitiesModificationTime = boost::posix_time::from_time_t(0);
 
 };  // class WMSConfig
 

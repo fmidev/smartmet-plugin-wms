@@ -166,7 +166,7 @@ bool Properties::hasValidTime() const
  */
 // ----------------------------------------------------------------------
 
-void Properties::setValidTime(const boost::posix_time::ptime& theTime)
+void Properties::setValidTime(const Fmi::DateTime& theTime)
 {
   time = theTime;
 }
@@ -177,7 +177,7 @@ void Properties::setValidTime(const boost::posix_time::ptime& theTime)
  */
 // ----------------------------------------------------------------------
 
-boost::posix_time::ptime Properties::getValidTime(const boost::posix_time::ptime& theDefault) const
+Fmi::DateTime Properties::getValidTime(const Fmi::DateTime& theDefault) const
 {
   if (!time)
     return theDefault;
@@ -194,14 +194,14 @@ boost::posix_time::ptime Properties::getValidTime(const boost::posix_time::ptime
  */
 // ----------------------------------------------------------------------
 
-boost::posix_time::ptime Properties::getValidTime() const
+Fmi::DateTime Properties::getValidTime() const
 {
   if (!time)
     throw Fmi::Exception(BCP, "Time has not been set for all layers");
 
   auto valid_time = *time;
   if (time_offset)
-    valid_time += boost::posix_time::minutes(*time_offset);
+    valid_time += Fmi::Minutes(*time_offset);
 
   return valid_time;
 }
@@ -218,10 +218,10 @@ boost::posix_time::time_period Properties::getValidTimePeriod() const
   auto tend = tstart;
 
   if (interval_start)
-    tstart -= boost::posix_time::minutes(*interval_start);
+    tstart -= Fmi::Minutes(*interval_start);
 
   if (interval_end)
-    tend += boost::posix_time::minutes(*interval_end);
+    tend += Fmi::Minutes(*interval_end);
 
   return {tstart, tend};
 }

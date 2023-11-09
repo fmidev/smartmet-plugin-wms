@@ -54,7 +54,7 @@ PointValues read_forecasts(const NumberLayer& layer,
                            const Engine::Querydata::Q& q,
                            const Fmi::SpatialReference& crs,
                            const Fmi::Box& box,
-                           const boost::posix_time::ptime& valid_time,
+                           const Fmi::DateTime& valid_time,
                            const State& state)
 {
   try
@@ -71,8 +71,8 @@ PointValues read_forecasts(const NumberLayer& layer,
       param = layer.param_funcs->parameter;
 
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-    boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
-    boost::local_time::local_date_time localdatetime(valid_time, utc);
+    Fmi::TimeZonePtr utc(new boost::local_time::posix_time_zone("UTC"));
+    Fmi::LocalDateTime localdatetime(valid_time, utc);
 
     PointValues pointvalues;
 
@@ -150,7 +150,7 @@ PointValues read_gridForecasts(const NumberLayer& layer,
                                QueryServer::Query& query,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
-                               const boost::posix_time::ptime& /* valid_time */)
+                               const Fmi::DateTime& /* valid_time */)
 {
   try
   {

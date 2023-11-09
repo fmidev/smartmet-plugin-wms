@@ -2,7 +2,7 @@
 
 #ifndef WITHOUT_OBSERVATIONS
 
-#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <macgyver/DateTime.h>
 #include <string>
 #include <vector>
 
@@ -34,7 +34,7 @@ PointValues read(State& state,
                  double maxdistance,
                  const Fmi::SpatialReference& crs,
                  const Fmi::Box& box,
-                 const boost::posix_time::ptime& valid_time,
+                 const Fmi::DateTime& valid_time,
                  const boost::posix_time::time_period& valid_time_period);
 
 }

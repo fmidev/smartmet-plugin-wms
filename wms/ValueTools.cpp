@@ -59,7 +59,7 @@ int get_fmisid(const TS::Value& value)
   if (const std::string* svalue = boost::get<std::string>(&value))
     return Fmi::stoi(*svalue);
 
-  // None, LonLat and local_date_time not accepted. See spine/TimeSeries.h
+  // None, LonLat and Fmi::LocalDateTime not accepted. See spine/TimeSeries.h
 
   throw Fmi::Exception::Trace(BCP, "Failed to convert observation engine value to fmisid!");
 }

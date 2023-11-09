@@ -104,7 +104,7 @@ class State
   // Get Q to be used in the current product
   Engine::Querydata::Q getModel(const Engine::Querydata::Producer& theProducer) const;
   Engine::Querydata::Q getModel(const Engine::Querydata::Producer& theProducer,
-                                const boost::posix_time::ptime& theOriginTime) const;
+                                const Fmi::DateTime& theOriginTime) const;
 
   // If no origintime is set, try extracting a minimal part of multifiles for example to keep the
   // data has for old radar files the same even if newer ones have overridden the hash value for
@@ -189,12 +189,12 @@ class State
   std::string generateUniqueId() const;
 
   // Get expiration time
-  const boost::optional<boost::posix_time::ptime>& getExpirationTime() const;
-  void updateExpirationTime(const boost::posix_time::ptime& theTime) const;
+  const boost::optional<Fmi::DateTime>& getExpirationTime() const;
+  void updateExpirationTime(const Fmi::DateTime& theTime) const;
 
   // Get modification time
-  const boost::optional<boost::posix_time::ptime>& getModificationTime() const;
-  void updateModificationTime(const boost::posix_time::ptime& theTime) const;
+  const boost::optional<Fmi::DateTime>& getModificationTime() const;
+  void updateModificationTime(const Fmi::DateTime& theTime) const;
 
   // Test if producer is for observations
   bool isObservation(const boost::optional<std::string>& theProducer) const;
@@ -233,10 +233,10 @@ class State
   mutable std::size_t itsNextId = 0;
 
   // Estimated expiration time
-  mutable boost::optional<boost::posix_time::ptime> itsExpirationTime;
+  mutable boost::optional<Fmi::DateTime> itsExpirationTime;
 
   // Last modification time
-  mutable boost::optional<boost::posix_time::ptime> itsModificationTime;
+  mutable boost::optional<Fmi::DateTime> itsModificationTime;
 
   // Are we in the Defs section?
   bool itsInDefs = false;

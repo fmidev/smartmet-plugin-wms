@@ -205,11 +205,11 @@ void remove_bool(bool& theValue, Json::Value& theJson, const std::string& theNam
   }
 }
 
-void remove_tz(boost::local_time::time_zone_ptr& theZone,
+void remove_tz(Fmi::TimeZonePtr& theZone,
                Json::Value& theJson,
                const std::string& theName,
                const Fmi::TimeZones& theTimeZones,
-               const boost::local_time::time_zone_ptr& theDefault)
+               const Fmi::TimeZonePtr& theDefault)
 {
   try
   {
@@ -228,10 +228,10 @@ void remove_tz(boost::local_time::time_zone_ptr& theZone,
   }
 }
 
-void remove_time(boost::optional<boost::posix_time::ptime>& theTime,
+void remove_time(boost::optional<Fmi::DateTime>& theTime,
                  Json::Value& theJson,
                  const std::string& theName,
-                 const boost::optional<boost::posix_time::ptime>& theDefault)
+                 const boost::optional<Fmi::DateTime>& theDefault)
 {
   try
   {
@@ -241,7 +241,7 @@ void remove_time(boost::optional<boost::posix_time::ptime>& theTime,
       WMS::CaseInsensitiveComparator cicomp;
       auto str = json.asString();
       if (cicomp(str, "current"))
-        theTime = boost::posix_time::second_clock::universal_time();
+        theTime = Fmi::SecondClock::universal_time();
       else
         theTime = parse_time(str);
     }
@@ -262,11 +262,11 @@ void remove_time(boost::optional<boost::posix_time::ptime>& theTime,
   }
 }
 
-void remove_time(boost::optional<boost::posix_time::ptime>& theTime,
+void remove_time(boost::optional<Fmi::DateTime>& theTime,
                  Json::Value& theJson,
                  const std::string& theName,
-                 const boost::local_time::time_zone_ptr& theZone,
-                 const boost::optional<boost::posix_time::ptime>& theDefault)
+                 const Fmi::TimeZonePtr& theZone,
+                 const boost::optional<Fmi::DateTime>& theDefault)
 {
   try
   {
@@ -276,7 +276,7 @@ void remove_time(boost::optional<boost::posix_time::ptime>& theTime,
       WMS::CaseInsensitiveComparator cicomp;
       auto str = json.asString();
       if (cicomp(str, "current"))
-        theTime = boost::posix_time::second_clock::universal_time();
+        theTime = Fmi::SecondClock::universal_time();
       else
         theTime = parse_time(str);
     }

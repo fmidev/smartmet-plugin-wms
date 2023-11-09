@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <macgyver/DateTime.h>
 #include <boost/optional.hpp>
 #include <macgyver/Exception.h>
 
@@ -35,11 +35,11 @@ class WMSTimeDimension
   WMSTimeDimension& operator=(const WMSTimeDimension& other) = delete;
   WMSTimeDimension& operator=(WMSTimeDimension&& other) = delete;
 
-  virtual bool isValidTime(const boost::posix_time::ptime& theTime, bool endtime_is_wall_clock_time) const;
+  virtual bool isValidTime(const Fmi::DateTime& theTime, bool endtime_is_wall_clock_time) const;
 
-  virtual boost::posix_time::ptime mostCurrentTime() const;
+  virtual Fmi::DateTime mostCurrentTime() const;
 
-  std::set<boost::posix_time::ptime> getTimeSteps() const;
+  std::set<Fmi::DateTime> getTimeSteps() const;
 
   virtual std::string getCapabilities(bool multiple_intervals,
                                       const boost::optional<std::string>& starttime,
@@ -49,7 +49,7 @@ class WMSTimeDimension
 
  protected:
   bool current = false;
-  std::set<boost::posix_time::ptime> itsTimesteps;
+  std::set<Fmi::DateTime> itsTimesteps;
   std::string itsCapabilities;  // returned when querying all times
 };
 
@@ -58,9 +58,9 @@ class StepTimeDimension : public WMSTimeDimension
  public:
   ~StepTimeDimension() override = default;
   StepTimeDimension() = delete;
-  explicit StepTimeDimension(const std::list<boost::posix_time::ptime>& times);
-  explicit StepTimeDimension(const std::vector<boost::posix_time::ptime>& times);
-  explicit StepTimeDimension(const std::set<boost::posix_time::ptime>& times);
+  explicit StepTimeDimension(const std::list<Fmi::DateTime>& times);
+  explicit StepTimeDimension(const std::vector<Fmi::DateTime>& times);
+  explicit StepTimeDimension(const std::set<Fmi::DateTime>& times);
 
   StepTimeDimension(const StepTimeDimension& other) = delete;
   StepTimeDimension(StepTimeDimension&& other) = delete;
@@ -78,13 +78,13 @@ class StepTimeDimension : public WMSTimeDimension
 
 struct tag_interval
 {
-  boost::posix_time::ptime startTime = boost::posix_time::not_a_date_time;
-  boost::posix_time::ptime endTime = boost::posix_time::not_a_date_time;
-  boost::posix_time::time_duration resolution = boost::posix_time::minutes(1);
+  Fmi::DateTime startTime = boost::posix_time::not_a_date_time;
+  Fmi::DateTime endTime = boost::posix_time::not_a_date_time;
+  Fmi::TimeDuration resolution = Fmi::Minutes(1);
 
-  tag_interval(boost::posix_time::ptime start,
-               boost::posix_time::ptime end,
-               boost::posix_time::time_duration res)
+  tag_interval(Fmi::DateTime start,
+               Fmi::DateTime end,
+               Fmi::TimeDuration res)
       : startTime(start), endTime(end), resolution(std::move(res))
   {
   }
@@ -107,8 +107,8 @@ class IntervalTimeDimension : public WMSTimeDimension
   std::string getCapabilities(bool multiple_intervals,
                               const boost::optional<std::string>& starttime,
                               const boost::optional<std::string>& endtime) const override;
-  boost::posix_time::ptime mostCurrentTime() const override;
-  bool isValidTime(const boost::posix_time::ptime& theTime, bool endtime_is_wall_clock_time) const override;
+  Fmi::DateTime mostCurrentTime() const override;
+  bool isValidTime(const Fmi::DateTime& theTime, bool endtime_is_wall_clock_time) const override;
 
  private:
   std::string makeCapabilitiesTimesteps(const boost::optional<std::string>& starttime,
@@ -134,10 +134,10 @@ time_intervals get_intervals(const Container& container)
     return ret;
 
   auto iter = container.begin();
-  boost::posix_time::ptime interval_start_time = *iter;
+  Fmi::DateTime interval_start_time = *iter;
   iter++;
-  boost::posix_time::ptime interval_end_time = *iter;
-  boost::posix_time::time_duration resolution = (interval_end_time - interval_start_time);
+  Fmi::DateTime interval_end_time = *iter;
+  Fmi::TimeDuration resolution = (interval_end_time - interval_start_time);
   // Add first interval
   ret.emplace_back(interval_start_time, interval_end_time, resolution);
   tag_interval* current_interval = &ret.back();
@@ -151,7 +151,7 @@ time_intervals get_intervals(const Container& container)
       current_interval->resolution = (current_interval->endTime - current_interval->startTime);
       continue;
     }
-    boost::posix_time::time_duration latest_timestep = (*iter - current_interval->endTime);
+    Fmi::TimeDuration latest_timestep = (*iter - current_interval->endTime);
     // Timestep length changes
     if (latest_timestep.total_seconds() != current_interval->resolution.total_seconds())
     {
@@ -187,28 +187,28 @@ class WMSTimeDimensions
 {
  public:
   explicit WMSTimeDimensions(
-      const std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>>& tdims);
-  void addTimeDimension(const boost::posix_time::ptime& origintime,
+      const std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>>& tdims);
+  void addTimeDimension(const Fmi::DateTime& origintime,
                         const boost::shared_ptr<WMSTimeDimension>& td);
   const WMSTimeDimension& getDefaultTimeDimension() const;
-  const WMSTimeDimension& getTimeDimension(const boost::posix_time::ptime& origintime) const;
-  bool origintimeOK(const boost::posix_time::ptime& origintime) const;
-  const std::vector<boost::posix_time::ptime>& getOrigintimes() const;
+  const WMSTimeDimension& getTimeDimension(const Fmi::DateTime& origintime) const;
+  bool origintimeOK(const Fmi::DateTime& origintime) const;
+  const std::vector<Fmi::DateTime>& getOrigintimes() const;
 
-  bool isValidReferenceTime(const boost::posix_time::ptime& origintime) const;
-  bool isValidTime(const boost::posix_time::ptime& t,
-                   const boost::optional<boost::posix_time::ptime>& origintime) const;
-  boost::posix_time::ptime mostCurrentTime(
-      const boost::optional<boost::posix_time::ptime>& origintime) const;
+  bool isValidReferenceTime(const Fmi::DateTime& origintime) const;
+  bool isValidTime(const Fmi::DateTime& t,
+                   const boost::optional<Fmi::DateTime>& origintime) const;
+  Fmi::DateTime mostCurrentTime(
+      const boost::optional<Fmi::DateTime>& origintime) const;
   bool currentValue() const;
   bool isIdentical(const WMSTimeDimensions& td) const;
   void useWallClockTimeAsEndTime(bool wall_clock = true) { itsEndTimeIsWallClockTime = wall_clock; }
   bool endTimeFromWallClock() const { return itsEndTimeIsWallClockTime; }
 
  private:
-  std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>> itsTimeDimensions;
-  boost::posix_time::ptime itsDefaultOrigintime{boost::posix_time::not_a_date_time};
-  std::vector<boost::posix_time::ptime> itsOrigintimes;
+  std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>> itsTimeDimensions;
+  Fmi::DateTime itsDefaultOrigintime{boost::posix_time::not_a_date_time};
+  std::vector<Fmi::DateTime> itsOrigintimes;
   bool itsEndTimeIsWallClockTime{false};
 };
 

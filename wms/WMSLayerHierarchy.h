@@ -83,7 +83,7 @@ class WMSLayerHierarchy
 
   boost::optional<const WMSLayerHierarchy&> parent;
   std::list<boost::shared_ptr<WMSLayerHierarchy>> sublayers;
-  boost::optional<const boost::posix_time::ptime&> reference_time;
+  boost::optional<const Fmi::DateTime&> reference_time;
 
  private:
 #ifndef WITHOUT_AUTHENTICATION

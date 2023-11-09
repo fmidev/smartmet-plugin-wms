@@ -54,7 +54,7 @@ void Intersections::init(Json::Value& theJson, const Config& theConfig)
 
 void Intersections::init(const boost::optional<std::string>& theProducer,
                          const Projection& theProjection,
-                         const boost::posix_time::ptime& theTime,
+                         const Fmi::DateTime& theTime,
                          const State& theState)
 {
   try
@@ -73,7 +73,7 @@ void Intersections::init(const boost::optional<std::string>& theProducer,
 void Intersections::init(const boost::optional<std::string>& theProducer,
                          const Engine::Grid::Engine* gridEngine,
                          const Projection& theProjection,
-                         const boost::posix_time::ptime& theTime,
+                         const Fmi::DateTime& theTime,
                          const State& theState)
 {
   try

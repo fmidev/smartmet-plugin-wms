@@ -465,7 +465,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       State state(*this, theRequest);
       state.useTimer(Spine::optional_bool(theRequest.getParameter("timer"), false));
 
-      using boost::posix_time::ptime;
+      using Fmi::DateTime;
 
       if (theRequest.getResource() == "/wms")
       {
@@ -539,7 +539,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
       boost::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
 
-      const ptime t_now = boost::posix_time::second_clock::universal_time();
+      const Fmi::DateTime t_now = Fmi::SecondClock::universal_time();
       const auto &modification_time = state.getModificationTime();
       if (!modification_time)
         theResponse.setHeader("Last-Modified", tformat->format(t_now));
@@ -554,7 +554,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       {
         const auto &expires = state.getExpirationTime();
         if (!expires)
-          theResponse.setHeader("Expires", tformat->format(t_now + boost::posix_time::hours(1)));
+          theResponse.setHeader("Expires", tformat->format(t_now + Fmi::Hours(1)));
         else
           theResponse.setHeader("Expires", tformat->format(*expires));
       }

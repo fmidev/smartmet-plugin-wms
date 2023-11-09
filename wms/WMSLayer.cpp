@@ -1457,7 +1457,7 @@ bool WMSLayer::isValidElevation(int theElevation) const
   }
 }
 
-bool WMSLayer::isValidReferenceTime(const boost::posix_time::ptime& theReferenceTime) const
+bool WMSLayer::isValidReferenceTime(const Fmi::DateTime& theReferenceTime) const
 {
   try
   {
@@ -1472,8 +1472,8 @@ bool WMSLayer::isValidReferenceTime(const boost::posix_time::ptime& theReference
   }
 }
 
-bool WMSLayer::isValidTime(const boost::posix_time::ptime& theTime,
-                           const boost::optional<boost::posix_time::ptime>& theReferenceTime) const
+bool WMSLayer::isValidTime(const Fmi::DateTime& theTime,
+                           const boost::optional<Fmi::DateTime>& theReferenceTime) const
 {
   try
   {
@@ -1501,8 +1501,8 @@ bool WMSLayer::currentValue() const
   }
 }
 
-boost::posix_time::ptime WMSLayer::mostCurrentTime(
-    const boost::optional<boost::posix_time::ptime>& reference_time) const
+Fmi::DateTime WMSLayer::mostCurrentTime(
+    const boost::optional<Fmi::DateTime>& reference_time) const
 {
   try
   {
@@ -1808,7 +1808,7 @@ boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
     {
       if (reference_time)
       {
-        boost::posix_time::ptime ref_time = Fmi::TimeParser::parse(*reference_time);
+        Fmi::DateTime ref_time = Fmi::TimeParser::parse(*reference_time);
         // Show time dimension of reference time
 
         if (timeDimensions->origintimeOK(ref_time))
@@ -1850,7 +1850,7 @@ boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
         layer_dimension["current"] = (td.currentValue() ? 1 : 0);
         layer_dimension["value"] = dim_string;
         CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
-        const std::vector<boost::posix_time::ptime>& origintimes = timeDimensions->getOrigintimes();
+        const std::vector<Fmi::DateTime>& origintimes = timeDimensions->getOrigintimes();
         bool showOrigintimes = !origintimes.empty() && !origintimes.front().is_not_a_date_time();
         if (showOrigintimes)
         {
@@ -1934,7 +1934,7 @@ boost::optional<CTPP::CDT> WMSLayer::getReferenceDimensionInfo() const
     if (timeDimensions)
     {
       CTPP::CDT reference_time_dimension(CTPP::CDT::HASH_VAL);
-      const std::vector<boost::posix_time::ptime>& origintimes = timeDimensions->getOrigintimes();
+      const std::vector<Fmi::DateTime>& origintimes = timeDimensions->getOrigintimes();
       bool showOrigintimes = !origintimes.empty() && !origintimes.front().is_not_a_date_time();
       if (showOrigintimes)
       {
@@ -2432,7 +2432,7 @@ void WMSLayer::setProductFile(const std::string& theProductFile)
     itsProductFileModificationTime = boost::posix_time::from_time_t(modtime);
 }
 
-const boost::posix_time::ptime& WMSLayer::modificationTime() const
+const Fmi::DateTime& WMSLayer::modificationTime() const
 {
   return itsProductFileModificationTime;
 }

@@ -14,7 +14,7 @@
 #include "Properties.h"
 #include "Text.h"
 #include "Views.h"
-#include <boost/date_time/posix_time/ptime.hpp>
+#include <macgyver/DateTime.h>
 #include <boost/date_time/posix_time/time_serialize.hpp>
 #include <boost/optional.hpp>
 #include <json/json.h>

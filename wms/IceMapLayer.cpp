@@ -51,7 +51,7 @@ class PostGISAttributeToString : public boost::static_visitor<std::string>
  public:
   std::string operator()(int i) const { return Fmi::to_string(i); }
   std::string operator()(double d) const { return Fmi::to_string(d); }
-  std::string operator()(boost::posix_time::ptime t) const { return Fmi::to_iso_string(t); }
+  std::string operator()(Fmi::DateTime t) const { return Fmi::to_iso_string(t); }
   std::string operator()(const std::string& str) const
   {
     std::string ret(str);
@@ -60,13 +60,13 @@ class PostGISAttributeToString : public boost::static_visitor<std::string>
   }
 };
 
-std::string getMeanTemperatureColumnName(const boost::posix_time::ptime& t)
+std::string getMeanTemperatureColumnName(const Fmi::DateTime& t)
 {
   boost::posix_time::time_period summer_period(
-      boost::posix_time::ptime(boost::gregorian::date(t.date().year(), boost::gregorian::Mar, 20),
-                               boost::posix_time::time_duration(0, 0, 0)),
-      boost::posix_time::ptime(boost::gregorian::date(t.date().year(), boost::gregorian::Oct, 20),
-                               boost::posix_time::time_duration(23, 59, 59)));
+      Fmi::DateTime(Fmi::Date(t.date().year(), boost::gregorian::Mar, 20),
+                               Fmi::TimeDuration(0, 0, 0)),
+      Fmi::DateTime(Fmi::Date(t.date().year(), boost::gregorian::Oct, 20),
+                               Fmi::TimeDuration(23, 59, 59)));
 
   // date must be between 21.10-21.3
   if (summer_period.contains(t))
@@ -215,7 +215,7 @@ void IceMapLayer::init(Json::Value& theJson,
 
     // if time missing set current time
     if (!hasValidTime())
-      setValidTime(boost::posix_time::second_clock::universal_time());
+      setValidTime(Fmi::SecondClock::universal_time());
 
     // table attributes
     auto json = JsonTools::remove(theJson, "table_attributes");

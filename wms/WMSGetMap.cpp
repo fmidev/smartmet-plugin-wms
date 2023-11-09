@@ -191,7 +191,7 @@ void validate_options(const tag_get_map_request_options& options,
       }
 
       // check that given timesteps are valid
-      for (const boost::posix_time::ptime& timestamp : options.timesteps)
+      for (const Fmi::DateTime& timestamp : options.timesteps)
       {
         if (!itsConfig.isValidTime(layer, timestamp, options.reference_time))
         {
@@ -270,7 +270,7 @@ void validate_options(const tag_get_map_request_options& options,
 
 // if iso-string contains fractions of seconds remove them
 // so that Fmi::TimeParser knows how to parse
-boost::posix_time::ptime parse_time(const std::string& time)
+Fmi::DateTime parse_time(const std::string& time)
 {
   try
   {
@@ -292,7 +292,7 @@ boost::posix_time::ptime parse_time(const std::string& time)
 }
 
 void parse_interval_with_resolution(const std::string& time_str,
-                                    std::vector<boost::posix_time::ptime>& timesteps)
+                                    std::vector<Fmi::DateTime>& timesteps)
 {
   try
   {
@@ -309,11 +309,11 @@ void parse_interval_with_resolution(const std::string& time_str,
     }
 
     CaseInsensitiveComparator cicomp;
-    boost::posix_time::ptime startTime =
-        (cicomp(parts[0], "current") ? boost::posix_time::second_clock::universal_time()
+    Fmi::DateTime startTime =
+        (cicomp(parts[0], "current") ? Fmi::SecondClock::universal_time()
                                      : parse_time(parts[0]));
-    boost::posix_time::ptime endTime =
-        (cicomp(parts[1], "current") ? boost::posix_time::second_clock::universal_time()
+    Fmi::DateTime endTime =
+        (cicomp(parts[1], "current") ? Fmi::SecondClock::universal_time()
                                      : parse_time(parts[1]));
 
     if (endTime < startTime)
@@ -333,7 +333,7 @@ void parse_interval_with_resolution(const std::string& time_str,
       while (startTime <= endTime)
       {
         timesteps.push_back(startTime);
-        startTime += boost::posix_time::minutes(total_minutes);
+        startTime += Fmi::Minutes(total_minutes);
       }
     }
   }
@@ -518,7 +518,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
 
         for (const auto& timestep : timesteps)
           itsParameters.timesteps.push_back(cicomp(timestep, "current")
-                                                ? boost::posix_time::second_clock::universal_time()
+                                                ? Fmi::SecondClock::universal_time()
                                                 : parse_time(timestep));
       }
       else if (time_str.find(',') == std::string::npos && time_str.find('/') != std::string::npos)
@@ -657,7 +657,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
           throw exception;
         }
 
-        boost::posix_time::ptime mostCurrentTime(
+        Fmi::DateTime mostCurrentTime(
             itsConfig.mostCurrentTime(layerName, itsParameters.reference_time));
 
         if (mostCurrentTime.is_not_a_date_time())

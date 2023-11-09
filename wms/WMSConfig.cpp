@@ -54,7 +54,7 @@ namespace
 Json::CharReaderBuilder charreaderbuilder;
 
 // Recursively find the latest modification time for a file in the given directory
-void check_modification_time(const std::string& theDir, boost::posix_time::ptime& max_time)
+void check_modification_time(const std::string& theDir, Fmi::DateTime& max_time)
 {
   try
   {
@@ -327,7 +327,7 @@ void update_product_modification_time(const std::string& filename,
 }
 
 // Update capabilities modification time
-void update_capabilities_modification_time(boost::posix_time::ptime& mod_time,
+void update_capabilities_modification_time(Fmi::DateTime& mod_time,
                                            const SharedWMSLayer& layer)
 {
   mod_time = std::max(mod_time, layer->modificationTime());
@@ -986,7 +986,7 @@ void WMSConfig::updateLayerMetaDataForCustomerLayer(
       bool expired = false;
       if (!timestamp.is_not_a_date_time())
       {
-        const auto age = boost::posix_time::second_clock::universal_time() - timestamp;
+        const auto age = Fmi::SecondClock::universal_time() - timestamp;
         expired = (age.total_seconds() >= oldLayer->metaDataUpdateInterval());
       }
 
@@ -1471,7 +1471,7 @@ bool WMSConfig::isValidElevation(const std::string& theLayer, int theElevation) 
 }
 
 bool WMSConfig::isValidReferenceTime(const std::string& theLayer,
-                                     const boost::posix_time::ptime& theReferenceTime) const
+                                     const Fmi::DateTime& theReferenceTime) const
 {
   try
   {
@@ -1490,8 +1490,8 @@ bool WMSConfig::isValidReferenceTime(const std::string& theLayer,
 }
 
 bool WMSConfig::isValidTime(const std::string& theLayer,
-                            const boost::posix_time::ptime& theTime,
-                            const boost::optional<boost::posix_time::ptime>& theReferenceTime) const
+                            const Fmi::DateTime& theTime,
+                            const boost::optional<Fmi::DateTime>& theReferenceTime) const
 {
   try
   {
@@ -1545,9 +1545,9 @@ bool WMSConfig::currentValue(const std::string& theLayer) const
   }
 }
 
-boost::posix_time::ptime WMSConfig::mostCurrentTime(
+Fmi::DateTime WMSConfig::mostCurrentTime(
     const std::string& theLayer,
-    const boost::optional<boost::posix_time::ptime>& reference_time) const
+    const boost::optional<Fmi::DateTime>& reference_time) const
 {
   try
   {
@@ -1724,10 +1724,10 @@ const WMSLegendGraphicSettings& WMSConfig::getLegendGraphicSettings() const
   return itsLegendGraphicSettings;
 }
 
-boost::posix_time::ptime WMSConfig::getCapabilitiesExpirationTime() const
+Fmi::DateTime WMSConfig::getCapabilitiesExpirationTime() const
 {
-  return (boost::posix_time::second_clock::universal_time() +
-          boost::posix_time::seconds(itsCapabilityExpirationTime));
+  return (Fmi::SecondClock::universal_time() +
+          Fmi::Seconds(itsCapabilityExpirationTime));
 }
 
 }  // namespace WMS

@@ -158,7 +158,7 @@ void expand_layer(WMSLayerHierarchy& lh)
         lh.timeDimension->getLayer()->getTimeDimensions();
     if (td)
     {
-      const std::vector<boost::posix_time::ptime>& origintimes = td->getOrigintimes();
+      const std::vector<Fmi::DateTime>& origintimes = td->getOrigintimes();
 
       if (origintimes.size() <= 1)
         return;

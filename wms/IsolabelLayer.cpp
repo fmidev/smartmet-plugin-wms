@@ -749,8 +749,8 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
   auto param = TS::ParameterFactory::instance().parse(*parameter);
 
   boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-  boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
-  boost::local_time::local_date_time localdatetime(getValidTime(), utc);
+  Fmi::TimeZonePtr utc(new boost::local_time::posix_time_zone("UTC"));
+  Fmi::LocalDateTime localdatetime(getValidTime(), utc);
   auto mylocale = std::locale::classic();
   NFmiPoint dummy;
   TS::LocalTimePoolPtr localTimePool = nullptr;

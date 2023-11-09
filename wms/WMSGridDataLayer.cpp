@@ -10,9 +10,9 @@ namespace Plugin
 {
 namespace WMS
 {
-std::vector<boost::posix_time::ptime> get_ptime_vector(const std::set<std::string>& contentTimeList)
+std::vector<Fmi::DateTime> get_ptime_vector(const std::set<std::string>& contentTimeList)
 {
-  std::vector<boost::posix_time::ptime> ret;
+  std::vector<Fmi::DateTime> ret;
   ret.reserve(contentTimeList.size());
 
   for (const auto& time : contentTimeList)
@@ -84,7 +84,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
         generationInfoList.getLength() == 0)
       return true;
 
-    std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
+    std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
     for (unsigned int i = 0; i < generationInfoList.getLength(); i++)
     {
       T::GenerationInfo* generationInfo = generationInfoList.getGenerationInfoByIndex(i);
@@ -195,7 +195,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
 
       boost::shared_ptr<WMSTimeDimension> timeDimension;
       // timesteps
-      std::list<boost::posix_time::ptime> timesteps;
+      std::list<Fmi::DateTime> timesteps;
       for (const auto& stime : contentTimeList)
         timesteps.push_back(toTimeStamp(stime));
       time_intervals intervals = get_intervals(timesteps);
@@ -209,7 +209,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
   if (step > 0)
   {
     // time interval
-    boost::posix_time::time_duration timestep = boost::posix_time::seconds(step);
+    Fmi::TimeDuration timestep = Fmi::Seconds(step);
     timeDimension =
         boost::make_shared<IntervalTimeDimension>(toTimeStamp(*(contentTimeList.begin())),
                                                   toTimeStamp(*(--contentTimeList.end())),
@@ -218,7 +218,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
   else
   {
     // timesteps
-    std::list<boost::posix_time::ptime> times;
+    std::list<Fmi::DateTime> times;
     for (const auto& stime : contentTimeList)
       times.push_back(toTimeStamp(stime));
     timeDimension = boost::make_shared<StepTimeDimension>(times);
@@ -234,7 +234,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
     else
       timeDimensions = nullptr;
 
-    metadataTimestamp = boost::posix_time::second_clock::universal_time();
+    metadataTimestamp = Fmi::SecondClock::universal_time();
 
     return true;
   }

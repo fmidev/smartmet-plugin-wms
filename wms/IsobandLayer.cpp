@@ -182,7 +182,7 @@ void IsobandLayer::init(Json::Value& theJson,
 // ----------------------------------------------------------------------
 
 boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
-    const Spine::Parameter& theParameter, const boost::posix_time::ptime& theTime, State& theState)
+    const Spine::Parameter& theParameter, const Fmi::DateTime& theTime, State& theState)
 {
   try
   {

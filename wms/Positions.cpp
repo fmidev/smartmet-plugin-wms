@@ -93,7 +93,7 @@ bool overlaps(const Fmi::Box& theBox,
 
 void apply_direction_offsets(Positions::Points& thePoints,
                              const Engine::Querydata::Q& theQ,
-                             const boost::posix_time::ptime& theTime,
+                             const Fmi::DateTime& theTime,
                              int theOffset,
                              int theRotation,
                              const std::string& theDirection,
@@ -133,8 +133,8 @@ void apply_direction_offsets(Positions::Points& thePoints,
 
       // Q API SUCKS
       boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-      boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
-      boost::local_time::local_date_time localdatetime(theTime, utc);
+      Fmi::TimeZonePtr utc(new boost::local_time::posix_time_zone("UTC"));
+      Fmi::LocalDateTime localdatetime(theTime, utc);
       std::string tmp;
       auto mylocale = std::locale::classic();
       NFmiPoint dummy;
@@ -343,7 +343,7 @@ void Positions::init(Json::Value& theJson, const Config& theConfig)
 
 void Positions::init(const boost::optional<std::string>& theProducer,
                      const Projection& theProjection,
-                     const boost::posix_time::ptime& theTime,
+                     const Fmi::DateTime& theTime,
                      const State& theState)
 {
   try

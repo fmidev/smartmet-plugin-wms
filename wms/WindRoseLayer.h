@@ -47,8 +47,8 @@ class WindRoseLayer : public Layer
   Stations stations;          // which stations to use
 
   std::map<int, WindRoseData> getObservations(State& theState,
-                                              const boost::posix_time::ptime& theStartTime,
-                                              const boost::posix_time::ptime& theEndTime) const;
+                                              const Fmi::DateTime& theStartTime,
+                                              const Fmi::DateTime& theEndTime) const;
 
 };  // class WindRoseLayer
 

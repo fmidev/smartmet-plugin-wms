@@ -10,8 +10,8 @@ namespace Dali
 namespace AggregationUtility
 {
 TS::TimeSeriesGenerator::LocalTimeList get_tlist(
-    const std::list<boost::posix_time::ptime>& qengine_times,
-    const boost::posix_time::ptime& valid_time,
+    const std::list<Fmi::DateTime>& qengine_times,
+    const Fmi::DateTime& valid_time,
     unsigned int interval_behind,
     unsigned int interval_ahead)
 {
@@ -20,12 +20,12 @@ TS::TimeSeriesGenerator::LocalTimeList get_tlist(
     auto interval_start = valid_time;
     auto interval_end = valid_time;
     if (interval_behind > 0)
-      interval_start -= boost::posix_time::minutes(interval_behind);
+      interval_start -= Fmi::Minutes(interval_behind);
     if (interval_ahead > 0)
-      interval_end += boost::posix_time::minutes(interval_ahead);
+      interval_end += Fmi::Minutes(interval_ahead);
 
     TS::TimeSeriesGenerator::LocalTimeList tlist;
-    boost::local_time::time_zone_ptr utc_zone(new boost::local_time::posix_time_zone("UTC"));
+    Fmi::TimeZonePtr utc_zone(new boost::local_time::posix_time_zone("UTC"));
 
     bool add_valid_time = true;  // Flag to make sure valid_time is not added twice
     for (const auto& t : qengine_times)
@@ -52,7 +52,7 @@ TS::TimeSeriesGenerator::LocalTimeList get_tlist(
 
 TS::Value get_qengine_value(const Engine::Querydata::Q& q,
                             const Engine::Querydata::ParameterOptions options,
-                            const boost::local_time::local_date_time& valid_time,
+                            const Fmi::LocalDateTime& valid_time,
                             const boost::optional<TS::ParameterAndFunctions>& param_funcs)
 {
   try
@@ -122,11 +122,11 @@ bool set_aggregation_period(Engine::Observation::Settings& settings,
 
     if (aggregationIntervalBehind > 0)
       settings.starttime =
-          settings.starttime - boost::posix_time::minutes(aggregationIntervalBehind);
+          settings.starttime - Fmi::Minutes(aggregationIntervalBehind);
     if (aggregationIntervalAhead > 0)
-      settings.endtime = settings.endtime + boost::posix_time::minutes(aggregationIntervalAhead);
+      settings.endtime = settings.endtime + Fmi::Minutes(aggregationIntervalAhead);
     // Read all observartions
-    settings.wantedtime = boost::optional<boost::posix_time::ptime>();
+    settings.wantedtime = boost::optional<Fmi::DateTime>();
     settings.timestep = 0;
 
     return (aggregationIntervalBehind > 0 || aggregationIntervalAhead > 0);
@@ -271,12 +271,12 @@ TS::TimeSeriesVectorPtr do_aggregation(
   }
 }
 
-TS::TimeSeriesGeneratorCache::TimeList get_tlist(const boost::posix_time::ptime& valid_time)
+TS::TimeSeriesGeneratorCache::TimeList get_tlist(const Fmi::DateTime& valid_time)
 {
   try
   {
     // Only one timstep is valid for a map
-    boost::local_time::time_zone_ptr utc_zone(new boost::local_time::posix_time_zone("UTC"));
+    Fmi::TimeZonePtr utc_zone(new boost::local_time::posix_time_zone("UTC"));
     TS::TimeSeriesGeneratorOptions toptions;
     toptions.startTime = valid_time;
     toptions.endTime = valid_time;
@@ -292,7 +292,7 @@ TS::TimeSeriesGeneratorCache::TimeList get_tlist(const boost::posix_time::ptime&
 
 TS::TimeSeriesVectorPtr aggregate_data(const TS::TimeSeriesVectorPtr& raw_data,
                                        const Engine::Observation::Settings& settings,
-                                       const boost::posix_time::ptime& valid_time,
+                                       const Fmi::DateTime& valid_time,
                                        const std::vector<TS::ParameterAndFunctions>& paramFuncs,
                                        unsigned int fmisid_index)
 
@@ -346,7 +346,7 @@ TS::TimeSeriesVectorPtr aggregate_data(const TS::TimeSeriesVectorPtr& raw_data,
 
 TS::TimeSeriesVectorPtr get_obsengine_values(
     Engine::Observation::Engine& obsengine,
-    const boost::posix_time::ptime& valid_time,
+    const Fmi::DateTime& valid_time,
     const std::vector<TS::ParameterAndFunctions>& paramFuncs,
     unsigned int fmisid_index,
     Engine::Observation::Settings& settings)

@@ -1,6 +1,6 @@
 #pragma once
 #include "Config.h"
-#include <boost/date_time/local_time/local_time.hpp>
+#include <macgyver/LocalDateTime.h>
 #include <boost/optional.hpp>
 #include <json/json.h>
 #include <macgyver/Exception.h>
@@ -49,22 +49,22 @@ void remove_bool(bool& theValue, Json::Value& theJson, const std::string& theNam
 
 void remove_bool(bool& theValue, Json::Value& theJson, const std::string& theName, bool theDefault);
 
-void remove_tz(boost::local_time::time_zone_ptr& theZone,
+void remove_tz(Fmi::TimeZonePtr& theZone,
                Json::Value& theJson,
                const std::string& theName,
                const Fmi::TimeZones& theTimeZones,
-               const boost::local_time::time_zone_ptr& theDefault = {});
+               const Fmi::TimeZonePtr& theDefault = {});
 
-void remove_time(boost::optional<boost::posix_time::ptime>& theTime,
+void remove_time(boost::optional<Fmi::DateTime>& theTime,
                  Json::Value& theJson,
                  const std::string& theName,
-                 const boost::optional<boost::posix_time::ptime>& theDefault = {});
+                 const boost::optional<Fmi::DateTime>& theDefault = {});
 
-void remove_time(boost::optional<boost::posix_time::ptime>& theTime,
+void remove_time(boost::optional<Fmi::DateTime>& theTime,
                  Json::Value& theJson,
                  const std::string& theName,
-                 const boost::local_time::time_zone_ptr& theZone,
-                 const boost::optional<boost::posix_time::ptime>& theDefault = {});
+                 const Fmi::TimeZonePtr& theZone,
+                 const boost::optional<Fmi::DateTime>& theDefault = {});
 
 // extract a set of strings
 void extract_set(const std::string& theName,

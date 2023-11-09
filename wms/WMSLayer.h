@@ -15,7 +15,7 @@
 #include "WMSSupportedReference.h"
 #include "WMSTimeDimension.h"
 #include <boost/date_time/local_time/local_time.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <macgyver/DateTime.h>
 #include <boost/shared_ptr.hpp>
 #include <ctpp2/CDT.hpp>
 #include <gis/BBox.h>
@@ -66,7 +66,7 @@ class WMSLayer
   const WMSConfig& wmsConfig;
   bool hidden = false;                 // If this is true, dont show in GetCapabilities response
   bool timeDimensionDisabled = false;  // Can any timestamp can be used in GetMap-request
-  boost::posix_time::ptime metadataTimestamp = boost::posix_time::not_a_date_time;
+  Fmi::DateTime metadataTimestamp = boost::posix_time::not_a_date_time;
   unsigned int metadataUpdateInterval = 5;
 
   Spine::BoundingBox geographicBoundingBox;
@@ -86,7 +86,7 @@ class WMSLayer
   std::string productFile;  // dali product
   std::map<std::string, LegendGraphicResultPerLanguage> itsLegendGraphicResults;
   std::map<std::string, std::string> itsLegendFiles;
-  boost::posix_time::ptime itsProductFileModificationTime;
+  Fmi::DateTime itsProductFileModificationTime;
 
   friend class WMSLayerFactory;
   friend std::ostream& operator<<(std::ostream& os, const WMSLayer& layer);
@@ -118,9 +118,9 @@ class WMSLayer
   bool isValidInterval(int interval_start, int interval_end) const;
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;
-  bool isValidTime(const boost::posix_time::ptime& theTime,
-                   const boost::optional<boost::posix_time::ptime>& theReferenceTime) const;
-  bool isValidReferenceTime(const boost::posix_time::ptime& theReferenceTime) const;
+  bool isValidTime(const Fmi::DateTime& theTime,
+                   const boost::optional<Fmi::DateTime>& theReferenceTime) const;
+  bool isValidReferenceTime(const Fmi::DateTime& theReferenceTime) const;
   bool isValidElevation(int theElevation) const;
   bool isTemporal() const { return timeDimensions != nullptr; }
   bool currentValue() const;  // returns true if current value can be queried from layer
@@ -131,8 +131,8 @@ class WMSLayer
   const boost::optional<int>& getHeight() const { return height; }
 
   // returns the most current valid time for the layer
-  boost::posix_time::ptime mostCurrentTime(
-      const boost::optional<boost::posix_time::ptime>& reference_time) const;
+  Fmi::DateTime mostCurrentTime(
+      const boost::optional<Fmi::DateTime>& reference_time) const;
   // Empty for hidden layers
 
   boost::optional<CTPP::CDT> generateGetCapabilities(
@@ -171,12 +171,12 @@ class WMSLayer
   virtual std::string info() const;
 
   // returns timestamp when metadata was previous time updated
-  boost::posix_time::ptime metaDataUpdateTime() const { return metadataTimestamp; };
+  Fmi::DateTime metaDataUpdateTime() const { return metadataTimestamp; };
   // inherited layers can override this to determine weather metadata must be updated
   virtual bool mustUpdateLayerMetaData() { return true; }
   // by default interval is 5 seconds, but for some layers it could be longer
   unsigned int metaDataUpdateInterval() const { return metadataUpdateInterval; }
-  virtual const boost::posix_time::ptime& modificationTime() const;
+  virtual const Fmi::DateTime& modificationTime() const;
   // Add interval dimension
   void addIntervalDimension(int interval_start, int interval_end, bool interval_default);
 

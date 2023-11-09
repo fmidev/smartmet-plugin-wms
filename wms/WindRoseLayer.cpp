@@ -44,7 +44,7 @@ struct value_printer : public boost::static_visitor<std::string>
     return Fmi::to_string(lonlat.lon) + ',' + Fmi::to_string(lonlat.lat);
   }
 
-  std::string operator()(const boost::local_time::local_date_time& t) const
+  std::string operator()(const Fmi::LocalDateTime& t) const
   {
     return Fmi::to_iso_string(t.local_time());
   }
@@ -72,9 +72,9 @@ bool is_rose_data_valid(const TS::TimeSeries& directions,
       throw Fmi::Exception(BCP, "Internal failure in wind rose observations, data size mismatch");
 
     bool first = true;
-    boost::posix_time::ptime previous_valid_time;
+    Fmi::DateTime previous_valid_time;
 
-    boost::posix_time::time_duration timelimit(0, 60, 0, 0);
+    Fmi::TimeDuration timelimit(0, 60, 0, 0);
 
     for (std::size_t i = 0; i < directions.size(); i++)
     {
@@ -410,8 +410,8 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     auto valid_time = getValidTime();
 
     // TODO(mheiskan): use interval_start and interval_end instead
-    auto starttime = valid_time + boost::posix_time::hours(starttimeoffset);
-    auto endtime = valid_time + boost::posix_time::hours(endtimeoffset);
+    auto starttime = valid_time + Fmi::Hours(starttimeoffset);
+    auto endtime = valid_time + Fmi::Hours(endtimeoffset);
 
     auto rosedata = getObservations(theState, starttime, endtime);
 
@@ -682,8 +682,8 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
 std::map<int, WindRoseData> WindRoseLayer::getObservations(
     State& theState,
-    const boost::posix_time::ptime& theStartTime,
-    const boost::posix_time::ptime& theEndTime) const
+    const Fmi::DateTime& theStartTime,
+    const Fmi::DateTime& theEndTime) const
 {
   try
   {

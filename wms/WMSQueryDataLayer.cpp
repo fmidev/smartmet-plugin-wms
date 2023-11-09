@@ -37,7 +37,7 @@ bool WMSQueryDataLayer::updateLayerMetaData()
     // time dimension is sniffed from querydata
     auto queryDataConf = itsQEngine->getProducerConfig(itsProducer);
 
-    std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
+    std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
     // If multifile observation we want to have one timeseries and one reference time
     if (queryDataConf.ismultifile && !queryDataConf.isforecast)
     {
@@ -78,7 +78,7 @@ bool WMSQueryDataLayer::updateLayerMetaData()
     else
       timeDimensions = nullptr;
 
-    metadataTimestamp = boost::posix_time::second_clock::universal_time();
+    metadataTimestamp = Fmi::SecondClock::universal_time();
 
     return true;
   }
@@ -88,7 +88,7 @@ bool WMSQueryDataLayer::updateLayerMetaData()
   }
 }
 
-const boost::posix_time::ptime& WMSQueryDataLayer::modificationTime() const
+const Fmi::DateTime& WMSQueryDataLayer::modificationTime() const
 {
   return std::max(itsModificationTime, itsProductFileModificationTime);
 }

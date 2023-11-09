@@ -55,25 +55,25 @@ inline boost::optional<T> inherit(const boost::optional<std::string>& opt_value,
 // Prefer optional time over original one
 
 template <>
-inline boost::optional<boost::posix_time::ptime> inherit(
+inline boost::optional<Fmi::DateTime> inherit(
     const boost::optional<std::string>& opt_value,
-    const boost::optional<boost::posix_time::ptime>& original_value)
+    const boost::optional<Fmi::DateTime>& original_value)
 {
   if (opt_value)
-    return boost::optional<boost::posix_time::ptime>(parse_time(*opt_value));
+    return boost::optional<Fmi::DateTime>(parse_time(*opt_value));
   else
     return original_value;
 }
 
 // Prefer optional time over original over parent
 template <>
-inline boost::optional<boost::posix_time::ptime> inherit(
+inline boost::optional<Fmi::DateTime> inherit(
     const boost::optional<std::string>& opt_value,
-    const boost::optional<boost::posix_time::ptime>& original_value,
-    const boost::optional<boost::posix_time::ptime>& parent_value)
+    const boost::optional<Fmi::DateTime>& original_value,
+    const boost::optional<Fmi::DateTime>& parent_value)
 {
   if (opt_value)
-    return boost::optional<boost::posix_time::ptime>(parse_time(*opt_value));
+    return boost::optional<Fmi::DateTime>(parse_time(*opt_value));
   else if (original_value)
     return original_value;
   else

@@ -74,7 +74,7 @@ class Positions
 
   void init(const boost::optional<std::string>& theProducer,
             const Projection& theProjection,
-            const boost::posix_time::ptime& theTime,
+            const Fmi::DateTime& theTime,
             const State& theState);
 
   Points getPoints(const Engine::Querydata::Q& theQ,
@@ -195,7 +195,7 @@ class Positions
   std::list<OGRGeometryPtr> intersectionshapes;
 
   // not part of the UI - not involved in the hash
-  boost::posix_time::ptime time;
+  Fmi::DateTime time;
   const Engine::Geonames::Engine* geonames = nullptr;
   const Engine::Gis::Engine* gisengine = nullptr;
 

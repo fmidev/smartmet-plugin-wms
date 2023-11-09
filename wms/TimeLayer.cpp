@@ -7,8 +7,8 @@
 #include "Layer.h"
 #include "LonLatToXYTransformation.h"
 #include "State.h"
-#include <boost/date_time/local_time/local_time.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <macgyver/LocalDateTime.h>
+#include <macgyver/DateTime.h>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/grid/Engine.h>
@@ -41,7 +41,7 @@ void TimeLayer::init(Json::Value& theJson,
   try
   {
     // Initialize this variable only once!
-    now = boost::posix_time::second_clock::universal_time();
+    now = Fmi::SecondClock::universal_time();
 
     if (!theJson.isObject())
       throw Fmi::Exception(BCP, "Time-layer JSON is not a JSON object");
@@ -287,7 +287,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       }
     }
 
-    boost::optional<boost::posix_time::ptime> originTime;
+    boost::optional<Fmi::DateTime> originTime;
     if (p && p->mAnalysisTime.length() >= 15)
       originTime = Fmi::TimeParser::parse_iso(p->mAnalysisTime);
 
@@ -352,36 +352,36 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       if (fmt.empty())
         throw Fmi::Exception(BCP, "TimeLayer format setting cannot be an empty string");
 
-      boost::optional<boost::local_time::local_date_time> loctime;
-      boost::optional<boost::posix_time::time_duration> duration;
+      boost::optional<Fmi::LocalDateTime> loctime;
+      boost::optional<Fmi::TimeDuration> duration;
 
       if (name == "validtime")
       {
-        loctime = boost::local_time::local_date_time(valid_time, tz);
+        loctime = Fmi::LocalDateTime(valid_time, tz);
       }
       else if (name == "origintime")
       {
         if (!originTime)
           throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
 
-        loctime = boost::local_time::local_date_time(*originTime, tz);
+        loctime = Fmi::LocalDateTime(*originTime, tz);
       }
       else if (name == "wallclock" || name == "now")
       {
-        loctime = boost::local_time::local_date_time(now, tz);
+        loctime = Fmi::LocalDateTime(now, tz);
       }
       else if (name == "starttime")
       {
-        auto tmp = boost::local_time::local_date_time(valid_time, tz);
+        auto tmp = Fmi::LocalDateTime(valid_time, tz);
         if (interval_start)
-          tmp -= boost::posix_time::minutes(*interval_start);
+          tmp -= Fmi::Minutes(*interval_start);
         loctime = tmp;
       }
       else if (name == "endtime")
       {
-        auto tmp = boost::local_time::local_date_time(valid_time, tz);
+        auto tmp = Fmi::LocalDateTime(valid_time, tz);
         if (interval_end)
-          tmp += boost::posix_time::minutes(*interval_end);
+          tmp += Fmi::Minutes(*interval_end);
         loctime = tmp;
       }
       else if (name == "leadtime")
@@ -396,25 +396,25 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
         if (!originTime)
           throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
 
-        boost::posix_time::ptime ot = *originTime;
+        Fmi::DateTime ot = *originTime;
         duration =
-            valid_time - ot + ot.time_of_day() - boost::posix_time::hours(ot.time_of_day().hours());
+            valid_time - ot + ot.time_of_day() - Fmi::Hours(ot.time_of_day().hours());
       }
       else if (name == "time_offset")
       {
-        duration = boost::posix_time::minutes(time_offset ? *time_offset : 0);
+        duration = Fmi::Minutes(time_offset ? *time_offset : 0);
       }
       else if (name == "interval_start")
       {
-        duration = boost::posix_time::minutes(interval_start ? *interval_start : 0);
+        duration = Fmi::Minutes(interval_start ? *interval_start : 0);
       }
       else if (name == "interval_end")
       {
-        duration = boost::posix_time::minutes(interval_end ? *interval_end : 0);
+        duration = Fmi::Minutes(interval_end ? *interval_end : 0);
       }
       else
       {
-        loctime = boost::local_time::local_date_time(valid_time, tz) +
+        loctime = Fmi::LocalDateTime(valid_time, tz) +
                   Fmi::TimeParser::parse_duration(name);
       }
 
@@ -559,35 +559,35 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       if (fmt.empty())
         throw Fmi::Exception(BCP, "TimeLayer format setting cannot be an empty string");
 
-      boost::optional<boost::local_time::local_date_time> loctime;
-      boost::optional<boost::posix_time::time_duration> duration;
+      boost::optional<Fmi::LocalDateTime> loctime;
+      boost::optional<Fmi::TimeDuration> duration;
 
       if (name == "validtime")
       {
-        loctime = boost::local_time::local_date_time(valid_time, tz);
+        loctime = Fmi::LocalDateTime(valid_time, tz);
       }
       else if (name == "origintime")
       {
         if (!q)
           throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
-        loctime = boost::local_time::local_date_time(q->originTime(), tz);
+        loctime = Fmi::LocalDateTime(q->originTime(), tz);
       }
       else if (name == "wallclock" || name == "now")
       {
-        loctime = boost::local_time::local_date_time(now, tz);
+        loctime = Fmi::LocalDateTime(now, tz);
       }
       else if (name == "starttime")
       {
-        auto tmp = boost::local_time::local_date_time(valid_time, tz);
+        auto tmp = Fmi::LocalDateTime(valid_time, tz);
         if (interval_start)
-          tmp -= boost::posix_time::minutes(*interval_start);
+          tmp -= Fmi::Minutes(*interval_start);
         loctime = tmp;
       }
       else if (name == "endtime")
       {
-        auto tmp = boost::local_time::local_date_time(valid_time, tz);
+        auto tmp = Fmi::LocalDateTime(valid_time, tz);
         if (interval_end)
-          tmp += boost::posix_time::minutes(*interval_end);
+          tmp += Fmi::Minutes(*interval_end);
         loctime = tmp;
       }
       else if (name == "leadtime")
@@ -600,25 +600,25 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       {
         if (!q)
           throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
-        boost::posix_time::ptime ot = q->originTime();
+        Fmi::DateTime ot = q->originTime();
         duration =
-            valid_time - ot + ot.time_of_day() - boost::posix_time::hours(ot.time_of_day().hours());
+            valid_time - ot + ot.time_of_day() - Fmi::Hours(ot.time_of_day().hours());
       }
       else if (name == "time_offset")
       {
-        duration = boost::posix_time::minutes(time_offset ? *time_offset : 0);
+        duration = Fmi::Minutes(time_offset ? *time_offset : 0);
       }
       else if (name == "interval_start")
       {
-        duration = boost::posix_time::minutes(interval_start ? *interval_start : 0);
+        duration = Fmi::Minutes(interval_start ? *interval_start : 0);
       }
       else if (name == "interval_end")
       {
-        duration = boost::posix_time::minutes(interval_end ? *interval_end : 0);
+        duration = Fmi::Minutes(interval_end ? *interval_end : 0);
       }
       else
       {
-        loctime = boost::local_time::local_date_time(valid_time, tz) +
+        loctime = Fmi::LocalDateTime(valid_time, tz) +
                   Fmi::TimeParser::parse_duration(name);
       }
 

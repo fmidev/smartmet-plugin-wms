@@ -64,7 +64,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
                            const Engine::Querydata::Q& q,
                            const Fmi::SpatialReference& crs,
                            const Fmi::Box& box,
-                           const boost::posix_time::ptime& valid_time,
+                           const Fmi::DateTime& valid_time,
                            const State& state)
 {
   try
@@ -131,8 +131,8 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
     // Q API SUCKS
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-    boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
-    boost::local_time::local_date_time localdatetime(met_time, utc);
+    Fmi::TimeZonePtr utc(new boost::local_time::posix_time_zone("UTC"));
+    Fmi::LocalDateTime localdatetime(met_time, utc);
     std::string tmp;
     auto mylocale = std::locale::classic();
     NFmiPoint dummy;
@@ -297,7 +297,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
                                boost::optional<std::string> vParam,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
-                               const boost::posix_time::ptime& valid_time)
+                               const Fmi::DateTime& valid_time)
 {
   try
   {

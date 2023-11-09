@@ -1,5 +1,5 @@
 #include "WMSObservationLayer.h"
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <macgyver/DateTime.h>
 #include <boost/move/make_unique.hpp>
 #include <macgyver/Exception.h>
 
@@ -19,17 +19,17 @@ bool WMSObservationLayer::updateLayerMetaData()
       metaData.timestep = itsTimestep;
     geographicBoundingBox = metaData.bbox;
 
-    metadataTimestamp = boost::posix_time::second_clock::universal_time();
+    metadataTimestamp = Fmi::SecondClock::universal_time();
 
-    std::map<boost::posix_time::ptime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
+    std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
 
     tag_interval interval(metaData.period.begin(),
                           metaData.period.end(),
-                          boost::posix_time::minutes(metaData.timestep));
+                          Fmi::Minutes(metaData.timestep));
     time_intervals timeintervals{interval};
     auto newTimeDimension = boost::make_shared<IntervalTimeDimension>(timeintervals);
 
-    boost::posix_time::ptime origintime(boost::posix_time::not_a_date_time);
+    Fmi::DateTime origintime(boost::posix_time::not_a_date_time);
     newTimeDimensions.insert(std::make_pair(origintime, newTimeDimension));
     timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);
 	timeDimensions->useWallClockTimeAsEndTime(true);

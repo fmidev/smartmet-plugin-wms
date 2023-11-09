@@ -62,7 +62,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
                            const Engine::Querydata::Q& q,
                            const Fmi::SpatialReference& crs,
                            const Fmi::Box& box,
-                           const boost::posix_time::ptime& valid_time,
+                           const Fmi::DateTime& valid_time,
                            const State& state)
 {
   try
@@ -79,8 +79,8 @@ PointValues read_forecasts(const SymbolLayer& layer,
       param = layer.param_funcs->parameter;
 
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-    boost::local_time::time_zone_ptr utc(new boost::local_time::posix_time_zone("UTC"));
-    boost::local_time::local_date_time localdatetime(valid_time, utc);
+    Fmi::TimeZonePtr utc(new boost::local_time::posix_time_zone("UTC"));
+    Fmi::LocalDateTime localdatetime(valid_time, utc);
 
     PointValues pointvalues;
     auto mylocale = std::locale::classic();
@@ -156,7 +156,7 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
                                QueryServer::Query& query,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
-                               const boost::posix_time::ptime& valid_time,
+                               const Fmi::DateTime& valid_time,
                                const State& state)
 {
   try
@@ -753,7 +753,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     // Establish the valid time
 
-    const auto now = boost::posix_time::second_clock::local_time();
+    const auto now = Fmi::SecondClock::local_time();
     const auto valid_time = (!is_legend ? getValidTime() : now);
     const auto valid_time_period =
         (!is_legend ? getValidTimePeriod() : boost::posix_time::time_period(now, now));

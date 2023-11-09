@@ -8,7 +8,7 @@
 
 #include "Projection.h"
 
-#include <boost/date_time/posix_time/ptime.hpp>
+#include <macgyver/DateTime.h>
 #include <boost/optional.hpp>
 #include <gis/Box.h>
 
@@ -45,9 +45,9 @@ class Properties
             const Properties& theProperties);
 
   bool hasValidTime() const;
-  void setValidTime(const boost::posix_time::ptime& theTime);
-  boost::posix_time::ptime getValidTime() const;
-  boost::posix_time::ptime getValidTime(const boost::posix_time::ptime& theDefault) const;
+  void setValidTime(const Fmi::DateTime& theTime);
+  Fmi::DateTime getValidTime() const;
+  Fmi::DateTime getValidTime(const Fmi::DateTime& theDefault) const;
   boost::posix_time::time_period getValidTimePeriod() const;
   bool inside(const Fmi::Box& theBox, double theX, double theY) const;
 
@@ -64,10 +64,10 @@ class Properties
   boost::optional<int> timestep;
 
   // Wanted origintime. Use latest if omitted
-  boost::optional<boost::posix_time::ptime> origintime;
+  boost::optional<Fmi::DateTime> origintime;
 
   // Timezone for time parsing
-  boost::local_time::time_zone_ptr tz;
+  Fmi::TimeZonePtr tz;
 
   // An interval can be used to select the latest observation available, if any, or for example all
   // lightning observations. For forecasts the interval settings are meaningless.
@@ -84,7 +84,7 @@ class Properties
 
  private:
   // Wanted time T = time + time_offset. Making these private forces using getValidTime()
-  boost::optional<boost::posix_time::ptime> time;
+  boost::optional<Fmi::DateTime> time;
   boost::optional<int> time_offset;  // minutes
 };
 

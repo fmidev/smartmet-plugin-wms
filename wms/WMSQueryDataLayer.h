@@ -24,7 +24,7 @@ class WMSQueryDataLayer : public WMSLayer
  private:
   const Engine::Querydata::Engine* itsQEngine;
   const std::string itsProducer;
-  boost::posix_time::ptime itsModificationTime = boost::posix_time::from_time_t(0);
+  Fmi::DateTime itsModificationTime = boost::posix_time::from_time_t(0);
 
  protected:
   bool updateLayerMetaData() override;
@@ -35,7 +35,7 @@ class WMSQueryDataLayer : public WMSLayer
   {
   }
 
-  const boost::posix_time::ptime& modificationTime() const override;
+  const Fmi::DateTime& modificationTime() const override;
 };
 
 }  // namespace WMS

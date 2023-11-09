@@ -27,7 +27,7 @@ PointValues CloudCeilingLayer::readObservations(
     State& state,
     const Fmi::SpatialReference& crs,
     const Fmi::Box& box,
-    const boost::posix_time::ptime& valid_time,
+    const Fmi::DateTime& valid_time,
     const boost::posix_time::time_period& valid_time_period) const
 {
   try

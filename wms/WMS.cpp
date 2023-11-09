@@ -323,8 +323,8 @@ void update_legend_expiration(const State &theState, int theExpirationTime)
 {
   if (theExpirationTime > 0)
   {
-    auto tmp = boost::posix_time::second_clock::universal_time() +
-               boost::posix_time::seconds(theExpirationTime);
+    auto tmp = Fmi::SecondClock::universal_time() +
+               Fmi::Seconds(theExpirationTime);
     theState.updateExpirationTime(tmp);
   }
 }

@@ -219,7 +219,7 @@ Engine::Querydata::Q State::getModel(const Engine::Querydata::Producer& theProdu
 // ----------------------------------------------------------------------
 
 Engine::Querydata::Q State::getModel(const Engine::Querydata::Producer& theProducer,
-                                     const boost::posix_time::ptime& theOriginTime) const
+                                     const Fmi::DateTime& theOriginTime) const
 {
   try
   {
@@ -883,7 +883,7 @@ std::string State::generateUniqueId() const
  */
 // ----------------------------------------------------------------------
 
-const boost::optional<boost::posix_time::ptime>& State::getExpirationTime() const
+const boost::optional<Fmi::DateTime>& State::getExpirationTime() const
 {
   return itsExpirationTime;
 }
@@ -897,7 +897,7 @@ const boost::optional<boost::posix_time::ptime>& State::getExpirationTime() cons
  */
 // ----------------------------------------------------------------------
 
-void State::updateExpirationTime(const boost::posix_time::ptime& theTime) const
+void State::updateExpirationTime(const Fmi::DateTime& theTime) const
 {
   if (!itsExpirationTime)
     itsExpirationTime = theTime;
@@ -911,7 +911,7 @@ void State::updateExpirationTime(const boost::posix_time::ptime& theTime) const
  */
 // ----------------------------------------------------------------------
 
-const boost::optional<boost::posix_time::ptime>& State::getModificationTime() const
+const boost::optional<Fmi::DateTime>& State::getModificationTime() const
 {
   return itsModificationTime;
 }
@@ -925,7 +925,7 @@ const boost::optional<boost::posix_time::ptime>& State::getModificationTime() co
  */
 // ----------------------------------------------------------------------
 
-void State::updateModificationTime(const boost::posix_time::ptime& theTime) const
+void State::updateModificationTime(const Fmi::DateTime& theTime) const
 {
   if (!itsModificationTime)
     itsModificationTime = theTime;

@@ -56,7 +56,7 @@ class TimeLayer : public Layer
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 
-  boost::posix_time::ptime now;
+  Fmi::DateTime now;
 
 };  // class TimeLayer
 

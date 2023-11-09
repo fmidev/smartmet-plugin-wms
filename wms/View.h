@@ -16,7 +16,7 @@
 #include "Layers.h"
 #include "ParameterInfo.h"
 #include "Properties.h"
-#include <boost/date_time/posix_time/ptime.hpp>
+#include <macgyver/DateTime.h>
 #include <boost/date_time/posix_time/time_serialize.hpp>
 #include <boost/optional.hpp>
 #include <string>
