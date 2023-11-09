@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.10.30
+Version: 23.11.9
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -27,7 +27,7 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.7.28
 BuildRequires: smartmet-library-grid-content-devel >= 23.10.30
-BuildRequires: smartmet-library-grid-files-devel >= 23.10.30
+BuildRequires: smartmet-library-grid-files-devel >= 23.11.6
 BuildRequires: smartmet-library-macgyver-devel >= 23.10.10
 BuildRequires: smartmet-library-spine-devel >= 23.10.20
 BuildRequires: smartmet-library-timeseries-devel >= 23.10.30
@@ -35,7 +35,7 @@ BuildRequires: smartmet-library-timeseries-devel >= 23.10.30
 BuildRequires: smartmet-engine-authentication-devel >= 23.7.28
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 23.10.30
+BuildRequires: smartmet-engine-observation-devel >= 23.11.8
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 23.8.28
 BuildRequires: smartmet-engine-grid-devel >= 23.10.30
@@ -69,7 +69,7 @@ Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 23.10.30
-Requires: smartmet-library-grid-files >= 23.10.30
+Requires: smartmet-library-grid-files >= 23.11.6
 Requires: smartmet-library-gis >= 23.9.12
 Requires: smartmet-library-trax >= 23.8.17
 Requires: smartmet-library-macgyver >= 23.10.10
@@ -125,7 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 23.10.30
+#TestRequires: smartmet-engine-observation-devel >= 23.11.8
 %endif
 
 %description
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Nov  9 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.9-1.fmi
+- Improved isolabel placement for appearance and optimized for speed
+
 * Mon Oct 30 2023 Anssi Reponen <anssi.reponen@fmi.fi> - 23.10.30-1.fmi
 - Added show_hidden option to GetCapabilities request, hidden layers can also be requested with GetMap request (BRAINSTORM-2768)
 - Improved add_sublayers algorithm in WMSLayerHierarchy.cpp file (BRAINSTORM-2766)
