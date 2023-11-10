@@ -955,17 +955,16 @@ Candidates remove_bad_candidates(const Candidates& candidates,
  * \brief Approximate distance between labels
  *
  * We calculate the smallest distance between the estimated four corner
- * locations of the label. We ignore the possibility of an overlap, since
- * in that case the estimated distance will be below the set (sane) minimum
- * distance requirements anyway. If the requirements are not sane, you
- * deserve garbage output anyway.
+ * locations of the label.
  */
 // ----------------------------------------------------------------------
 
 double distance(const Candidate& c1, const Candidate& c2)
 {
-  double minimum = 1e10;
+  // Init with center point distance in case of overlap
+  double minimum = std::hypot(c1.x - c2.x, c1.y - c2.y);
 
+  // Then process rotated rectangle corners in case of no overlap
   for (const auto& p1 : c1.corners)
     for (const auto& p2 : c2.corners)
       minimum = std::min(minimum, std::hypot(p1.x - p2.x, p1.y - p2.y));
