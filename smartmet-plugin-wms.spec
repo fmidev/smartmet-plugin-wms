@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.11.10
+Version: 23.11.16
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -27,7 +27,7 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.7.28
 BuildRequires: smartmet-library-grid-content-devel >= 23.11.10
-BuildRequires: smartmet-library-grid-files-devel >= 23.11.6
+BuildRequires: smartmet-library-grid-files-devel >= 23.11.13
 BuildRequires: smartmet-library-macgyver-devel >= 23.11.8
 BuildRequires: smartmet-library-spine-devel >= 23.10.20
 BuildRequires: smartmet-library-timeseries-devel >= 23.10.30
@@ -69,7 +69,7 @@ Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 23.11.10
-Requires: smartmet-library-grid-files >= 23.11.6
+Requires: smartmet-library-grid-files >= 23.11.13
 Requires: smartmet-library-gis >= 23.9.12
 Requires: smartmet-library-trax >= 23.8.17
 Requires: smartmet-library-macgyver >= 23.11.8
@@ -110,7 +110,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-querydata-devel >= 23.10.12
 #TestRequires: smartmet-library-giza-devel >= 23.7.28
 #TestRequires: smartmet-library-trax-devel >= 23.8.17
-#TestRequires: smartmet-library-newbase-devel >= 23.10.11
+#TestRequires: smartmet-library-newbase-devel >= 23.11.14
 #TestRequires: smartmet-library-macgyver-devel >= 23.11.8
 #TestRequires: smartmet-library-spine-devel >= 23.10.20
 #TestRequires: smartmet-library-timeseries-devel >= 23.10.30
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Nov 16 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.16-1.fmi
+- Improved isolabel rectangle distance calculations by taking the center point into account
+
 * Fri Nov 10 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.10-1.fmi
 - Repackaged due to API changes in grid-content
 
