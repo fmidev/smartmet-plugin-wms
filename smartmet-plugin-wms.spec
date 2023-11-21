@@ -157,6 +157,9 @@ rm -rf $RPM_BUILD_ROOT
 * Tue Nov 21 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.21-1.fmi
 - Added a cache for calculated latlon bounding boxes corresponding to WMS input BBOX parameter (BRAINSTORM-2790)
 
+* Fri Nov 17 2023 Pertti Kinnia <pertti.kinnia@fmi.fi> - 23.11.17-1.fmi
+- Repackaged due to API changes in grid-files and grid-content
+
 * Thu Nov 16 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.16-1.fmi
 - Improved isolabel rectangle distance calculations by taking the center point into account
 
