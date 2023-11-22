@@ -13,7 +13,7 @@
 namespace Fmi
 {
 class SpatialReference;
-}
+} // namespace Fmi
 
 namespace SmartMet
 {

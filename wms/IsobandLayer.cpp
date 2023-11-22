@@ -251,7 +251,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
     NFmiGrid grid(newarea.get(), width, height);
     std::unique_ptr<heatmap_t, void (*)(heatmap_t*)> hm(nullptr, heatmap_free);
-    unsigned radius;
+    unsigned radius = 0;
 
     if (result)
     {
@@ -355,7 +355,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     Fmi::hash_combine(hash, Dali::hash_value(heatmap, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(radius));
 
-    char* tmp;
+    char* tmp = nullptr;
     crs.get()->exportToWkt(&tmp);
     Fmi::hash_combine(hash, Fmi::hash_value(tmp));
     CPLFree(tmp);
@@ -639,7 +639,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       {
         if (!val->mValueData.empty())
         {
-          uint c = 0;
           for (const auto& wkb : val->mValueData)
           {
             const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
@@ -647,7 +646,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
             OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
             auto geomPtr = OGRGeometryPtr(geom);
             geoms.push_back(geomPtr);
-            c++;
           }
 #if 0
           int width = 3600; //atoi(query.mAttributeList.getAttributeValue("grid.width"));
@@ -888,7 +886,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," +
                          std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
     if (precision >= 1.0)
-      theGlobals["precision"] = pow(10.0, -(int)precision);
+      theGlobals["precision"] = pow(10.0, -static_cast<int>(precision));
 
     theGlobals["objects"][objectKey] = object_cdt;
 
@@ -1028,10 +1026,11 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     // Calculate the isobands and store them into the template engine
 
-    std::vector<Engine::Contour::Range> limits;
     const auto& contourer = theState.getContourEngine();
-    for (const Isoband& isoband : isobands)
-      limits.emplace_back(Engine::Contour::Range(isoband.lolimit, isoband.hilimit));
+    std::vector<Engine::Contour::Range> limits;
+    limits.reserve(isobands.size());
+for (const Isoband& isoband : isobands)
+      limits.emplace_back(isoband.lolimit, isoband.hilimit);
 
     Engine::Contour::Options options(param, valid_time, limits);
     options.level = level;
@@ -1224,7 +1223,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," +
                          std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
     if (precision >= 1.0)
-      theGlobals["precision"] = pow(10.0, -(int)precision);
+      theGlobals["precision"] = pow(10.0, -static_cast<int>(precision));
 
     // We created only this one layer
     theLayersCdt.PushBack(group_cdt);

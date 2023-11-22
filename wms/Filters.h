@@ -13,7 +13,7 @@
 namespace CTPP
 {
 class CDT;
-}
+} // namespace CTPP
 
 namespace SmartMet
 {

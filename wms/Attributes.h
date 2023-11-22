@@ -49,7 +49,7 @@ class Attributes
   std::string value(const std::string& theName) const
   {
     if (attributes.find(theName) == attributes.end())
-      return "";
+      return {};
 
     return attributes.at(theName);
   }

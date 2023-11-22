@@ -25,7 +25,7 @@ rgb_color hex_string_to_rgb(const std::string& hex_string)
 
     try
     {
-      std::size_t pos;
+      std::size_t pos = 0;
       red = stoi(hex_string.substr(2, 2), &pos, 16);
       green = stoi(hex_string.substr(4, 2), &pos, 16);
       blue = stoi(hex_string.substr(6, 2), &pos, 16);
