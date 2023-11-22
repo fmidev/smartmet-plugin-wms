@@ -1126,22 +1126,23 @@ void assign_label_coordinates(Candidates& candidates)
 {
   const double h = 10 / 2.0;     // half height
   const double w = 4 * 8 / 2.0;  // half width
+  const double rads = M_PI/180;
 
   for (auto& c : candidates)
   {
     const auto x = c.x;
     const auto y = c.y;
-    const auto a = c.angle * M_PI / 180;
+    const auto a = c.angle * rads;
     const auto cosa = cos(a);
     const auto sina = sin(a);
-    c.corners[0].x = x - w / 2 * cosa - h / 2 * sina;
-    c.corners[0].y = y - w / 2 * sina + h / 2 * cosa;
-    c.corners[1].x = x + w / 2 * cosa - h / 2 * sina;
-    c.corners[1].y = y + w / 2 * sina + h / 2 * cosa;
-    c.corners[2].x = x - w / 2 * cosa + h / 2 * sina;
-    c.corners[2].y = y - w / 2 * sina - h / 2 * cosa;
-    c.corners[3].x = x + w / 2 * cosa + h / 2 * sina;
-    c.corners[3].y = y + w / 2 * sina - h / 2 * cosa;
+    c.corners[0].x = x - w * cosa - h * sina;
+    c.corners[0].y = y - w * sina + h * cosa;
+    c.corners[1].x = x + w * cosa - h * sina;
+    c.corners[1].y = y + w * sina + h * cosa;
+    c.corners[2].x = x - w * cosa + h * sina;
+    c.corners[2].y = y - w * sina - h * cosa;
+    c.corners[3].x = x + w * cosa + h * sina;
+    c.corners[3].y = y + w * sina - h * cosa;
   }
 }
 
