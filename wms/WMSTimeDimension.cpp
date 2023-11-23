@@ -20,7 +20,8 @@ Fmi::DateTime parse_time(const std::string& time_string)
 }
 }  // namespace
 
-bool WMSTimeDimension::isValidTime(const Fmi::DateTime& theTime, bool endtime_is_wall_clock_time) const
+bool WMSTimeDimension::isValidTime(const Fmi::DateTime& theTime,
+                                   bool endtime_is_wall_clock_time) const
 {
   // Allow any time within the range
 
@@ -28,7 +29,8 @@ bool WMSTimeDimension::isValidTime(const Fmi::DateTime& theTime, bool endtime_is
     return false;
 
   auto starttime = *itsTimesteps.cbegin();
-  auto endtime = (endtime_is_wall_clock_time ? Fmi::SecondClock::universal_time() : *itsTimesteps.crbegin());
+  auto endtime =
+      (endtime_is_wall_clock_time ? Fmi::SecondClock::universal_time() : *itsTimesteps.crbegin());
 
   return (theTime >= starttime && theTime <= endtime);
 
@@ -206,18 +208,18 @@ Fmi::DateTime IntervalTimeDimension::mostCurrentTime() const
   return ret;
 }
 
-bool IntervalTimeDimension::isValidTime(const Fmi::DateTime& theTime, bool endtime_is_wall_clock_time) const
+bool IntervalTimeDimension::isValidTime(const Fmi::DateTime& theTime,
+                                        bool endtime_is_wall_clock_time) const
 {
   for (const auto& interval : itsIntervals)
   {
-	auto starttime = interval.startTime;
-	auto endtime = (endtime_is_wall_clock_time ? Fmi::SecondClock::universal_time() : interval.endTime);
+    const auto& starttime = interval.startTime;
+    auto endtime =
+        (endtime_is_wall_clock_time ? Fmi::SecondClock::universal_time() : interval.endTime);
 
-	return (theTime >= starttime && theTime <= endtime);
-	/*
-    if (theTime >= interval.startTime && theTime <= interval.endTime)
+    // We allow interpolation
+    if (theTime >= starttime && theTime <= endtime)
       return true;
-	*/
   }
 
   return false;
@@ -258,8 +260,8 @@ std::string getIntervalCapability(const tag_interval& interval,
 
   auto startt = interval.startTime;
   auto endt = interval.endTime;
-  auto resolution = (interval.resolution.total_seconds() == 0 ? Fmi::Minutes(1)
-                                                              : interval.resolution);
+  auto resolution =
+      (interval.resolution.total_seconds() == 0 ? Fmi::Minutes(1) : interval.resolution);
 
   if (startt < requested_startt)
   {
@@ -404,8 +406,7 @@ const WMSTimeDimension& WMSTimeDimensions::getDefaultTimeDimension() const
   return *itsTimeDimensions.at(itsDefaultOrigintime);
 }
 
-const WMSTimeDimension& WMSTimeDimensions::getTimeDimension(
-    const Fmi::DateTime& origintime) const
+const WMSTimeDimension& WMSTimeDimensions::getTimeDimension(const Fmi::DateTime& origintime) const
 {
   return *itsTimeDimensions.at(origintime);
 }
@@ -425,9 +426,8 @@ bool WMSTimeDimensions::isValidReferenceTime(const Fmi::DateTime& origintime) co
   return (itsTimeDimensions.find(origintime) != itsTimeDimensions.end());
 }
 
-bool WMSTimeDimensions::isValidTime(
-    const Fmi::DateTime& t,
-    const boost::optional<Fmi::DateTime>& origintime) const
+bool WMSTimeDimensions::isValidTime(const Fmi::DateTime& t,
+                                    const boost::optional<Fmi::DateTime>& origintime) const
 {
   if (!origintime)
     return getDefaultTimeDimension().isValidTime(t, itsEndTimeIsWallClockTime);
