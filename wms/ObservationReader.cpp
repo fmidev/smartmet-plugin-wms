@@ -595,6 +595,21 @@ PointValues read_latlon_observations(State& state,
         auto fmisid = tagged_fmisid.fmisid;
         if (used_fmisids.find(fmisid) != used_fmisids.end())
           continue;
+
+        double x = point.latlon.X();
+        double y = point.latlon.Y();
+
+        if (!crs.isGeographic())
+          if (!transformation.transform(x, y))
+            continue;
+
+        // To pixel coordinate
+        box.transform(x, y);
+
+        // Skip if not inside desired area
+        if (!layer.inside(box, x, y))
+          continue;
+
         used_fmisids.insert(fmisid);
 
         settings.taggedFMISIDs.push_back(tagged_fmisid);
@@ -678,8 +693,7 @@ PointValues read(State& state,
 {
   try
   {
-    // Create the coordinate transformation from image world coordinates
-    // to WGS84 coordinates
+    // Create the coordinate transformation from WGS84 coordinates to image CRS
     Fmi::CoordinateTransformation transformation("WGS84", crs);
 
     // Listed stations
