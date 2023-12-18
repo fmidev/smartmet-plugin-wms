@@ -9,6 +9,7 @@
 #include "Heatmap.h"
 #include "Intersections.h"
 #include "Isoband.h"
+#include "IsolineFilter.h"
 #include "Layer.h"
 #include "Map.h"
 #include "ParameterInfo.h"
@@ -44,6 +45,7 @@ class IsobandLayer : public Layer
   std::vector<Isoband> isobands;
   std::string interpolation{"linear"};
   Smoother smoother;
+
   int extrapolation = 0;
 
   double precision = 1.0;
@@ -59,6 +61,7 @@ class IsobandLayer : public Layer
 
   Sampling sampling;
   Intersections intersections;
+  IsolineFilter filter;
 
   Heatmap heatmap;
 

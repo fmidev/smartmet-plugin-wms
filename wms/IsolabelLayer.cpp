@@ -227,9 +227,15 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     auto geoms = IsolineLayer::getIsolines(isovalues, theState);
 
-    // The above call guarantees these have been resolved:
+    // Output image CRS and BBOX
     const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
+
+    // Convert filter pixel distance to metric distance for smoothing
+    filter.bbox(box);
+
+    // Smoothen the isolines
+    filter.apply(geoms, false);
 
     // Project the geometries to pixel coordinates
     for (auto& geomptr : geoms)
@@ -1126,7 +1132,7 @@ void assign_label_coordinates(Candidates& candidates)
 {
   const double h = 10 / 2.0;     // half height
   const double w = 4 * 8 / 2.0;  // half width
-  const double rads = M_PI/180;
+  const double rads = M_PI / 180;
 
   for (auto& c : candidates)
   {

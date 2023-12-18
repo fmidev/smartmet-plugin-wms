@@ -163,6 +163,9 @@ void IsobandLayer::init(Json::Value& theJson,
     json = JsonTools::remove(theJson, "sampling");
     sampling.init(json, theConfig);
 
+    json = JsonTools::remove(theJson, "filter");
+    filter.init(json);
+
     json = JsonTools::remove(theJson, "intersect");
     intersections.init(json, theConfig);
 
@@ -1029,7 +1032,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     const auto& contourer = theState.getContourEngine();
     std::vector<Engine::Contour::Range> limits;
     limits.reserve(isobands.size());
-for (const Isoband& isoband : isobands)
+    for (const Isoband& isoband : isobands)
       limits.emplace_back(isoband.lolimit, isoband.hilimit);
 
     Engine::Contour::Options options(param, valid_time, limits);
@@ -1090,6 +1093,9 @@ for (const Isoband& isoband : isobands)
 
     std::vector<OGRGeometryPtr> geoms =
         contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
+
+    filter.bbox(box);
+    filter.apply(geoms, true);
 
     CTPP::CDT object_cdt;
     std::string objectKey = "isoband:" + *parameter + ":" + qid;
@@ -1285,6 +1291,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_value(inside, theState));
     Fmi::hash_combine(hash, Dali::hash_value(sampling, theState));
     Fmi::hash_combine(hash, Dali::hash_value(intersections, theState));
+    Fmi::hash_combine(hash, filter.hash_value());
     Fmi::hash_combine(hash, Dali::hash_value(heatmap, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(closed_range));
     Fmi::hash_combine(hash, Fmi::hash_value(strict));

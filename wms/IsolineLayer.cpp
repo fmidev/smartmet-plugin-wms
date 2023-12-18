@@ -234,6 +234,9 @@ void IsolineLayer::init(Json::Value& theJson,
 
     json = JsonTools::remove(theJson, "intersect");
     intersections.init(json, theConfig);
+
+    json = JsonTools::remove(theJson, "filter");
+    filter.init(json);
   }
   catch (...)
   {
@@ -770,20 +773,25 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     }
 
     std::vector<double> isovalues;
+    isovalues.reserve(isolines.size());
     for (const Isoline& isoline : isolines)
       isovalues.push_back(isoline.value);
 
     auto geoms = getIsolines(isovalues, theState);
 
-    // The above call guarantees these have been resolved:
+    // Output image CRS and BBOX
     const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
+    // Convert filter pixel distance to metric distance for smoothing
+    filter.bbox(box);
+
+    // Smoothen the isolines
+    filter.apply(geoms, false);
+
     // Update the globals
 
-    bool topojson = false;
-    if (theState.getType() == "topojson")
-      topojson = true;
+    const bool topojson = (theState.getType() == "topojson");
 
     if (css)
     {
@@ -939,6 +947,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_value(inside, theState));
     Fmi::hash_combine(hash, Dali::hash_value(sampling, theState));
     Fmi::hash_combine(hash, Dali::hash_value(intersections, theState));
+    Fmi::hash_combine(hash, filter.hash_value());
     Fmi::hash_combine(hash, Fmi::hash_value(strict));
     Fmi::hash_combine(hash, Fmi::hash_value(validate));
     Fmi::hash_combine(hash, Fmi::hash_value(desliver));
