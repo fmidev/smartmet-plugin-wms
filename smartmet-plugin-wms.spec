@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.12.8
+Version: 23.12.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -26,8 +26,8 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.7.28
-BuildRequires: smartmet-library-grid-content-devel >= 23.11.27
-BuildRequires: smartmet-library-grid-files-devel >= 23.12.7
+BuildRequires: smartmet-library-grid-content-devel >= 23.12.22
+BuildRequires: smartmet-library-grid-files-devel >= 23.12.22
 BuildRequires: smartmet-library-macgyver-devel >= 23.11.21
 BuildRequires: smartmet-library-spine-devel >= 23.12.5
 BuildRequires: smartmet-library-timeseries-devel >= 23.11.21
@@ -38,7 +38,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 23.7.28
 BuildRequires: smartmet-engine-observation-devel >= 23.12.4
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 23.8.28
-BuildRequires: smartmet-engine-grid-devel >= 23.11.17
+BuildRequires: smartmet-engine-grid-devel >= 23.12.22
 BuildRequires: smartmet-engine-geonames-devel >= 23.9.6
 BuildRequires: smartmet-engine-querydata-devel >= 23.12.4
 BuildRequires: smartmet-engine-contour-devel >= 23.10.3
@@ -68,8 +68,8 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 23.11.27
-Requires: smartmet-library-grid-files >= 23.12.7
+Requires: smartmet-library-grid-content >= 23.12.22
+Requires: smartmet-library-grid-files >= 23.12.22
 Requires: smartmet-library-gis >= 23.11.21
 Requires: smartmet-library-trax >= 23.8.17
 Requires: smartmet-library-macgyver >= 23.11.21
@@ -82,7 +82,7 @@ Requires: smartmet-engine-authentication >= 23.7.28
 Requires: smartmet-engine-querydata >= 23.12.4
 Requires: smartmet-engine-contour >= 23.10.3
 Requires: smartmet-engine-gis >= 23.8.28
-Requires: smartmet-engine-grid >= 23.11.17
+Requires: smartmet-engine-grid >= 23.12.22
 Requires: smartmet-engine-geonames >= 23.9.6
 Requires: smartmet-server >= 23.12.5
 Requires: smartmet-library-spine >= 23.12.5
@@ -114,7 +114,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-macgyver-devel >= 23.11.21
 #TestRequires: smartmet-library-spine-devel >= 23.12.5
 #TestRequires: smartmet-library-timeseries-devel >= 23.11.21
-#TestRequires: smartmet-engine-grid-devel >= 23.11.17
+#TestRequires: smartmet-engine-grid-devel >= 23.12.22
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Dec 22 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.12.22-1.fmi
+- Repackaged due to ThreadLock ABI changes
+
 * Fri Dec  8 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.12.8-1.fmi
 - Optimized observation reading for speed
 
