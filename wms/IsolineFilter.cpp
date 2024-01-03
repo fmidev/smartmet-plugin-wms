@@ -7,8 +7,6 @@
 #include <ogr_geometry.h>
 #include <string>
 
-#include <fmt/format.h>
-
 namespace SmartMet
 {
 namespace Plugin
@@ -35,25 +33,6 @@ IsolineFilter::Type parse_filter_name(const std::string& name)
     if (name == "tukey")
       return IsolineFilter::Type::Tukey;
     throw Fmi::Exception(BCP, "Unknown isoline filter type '" + name + "'");
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
-// Parse name given in config file into an enum type for the distance metric
-
-IsolineFilter::Metric parse_metric_name(const std::string& name)
-{
-  try
-  {
-    if (name == "euclidian")
-      return IsolineFilter::Metric::Euclidian;
-    if (name == "path")
-      return IsolineFilter::Metric::Path;
-
-    throw Fmi::Exception(BCP, "Unknown isoline filter metric '" + name + "'");
   }
   catch (...)
   {
@@ -112,32 +91,52 @@ Weight create_weight_lambda(IsolineFilter::Type type, double radius)
 class LineFilter
 {
  public:
-  LineFilter(IsolineFilter::Metric m, IsolineFilter::Type t, double r)
-      : metric(m), filter(create_weight_lambda(t, r))
+  LineFilter(IsolineFilter::Type t, double r) : filter(create_weight_lambda(t, r)) {}
+
+  void init(const OGRLineString* geom)
   {
+    init_counts(geom);
+    init_distances(geom);
   }
 
   // Start filtering from a point. Returns false if smoothing at the vertex is disabled
-  bool reset(OGRPoint* point)
+  bool reset(const OGRPoint* point, int i)
   {
+    debug = false;
+    first_pos = i;
     first_point = *point;
+    total_weight = 0;
+
+    // Caching guarantees there are no gaps between isobands simply due to the different winding
+    // order of the polygons
+    auto pos = cache.find(*point);
+    if (pos != cache.end())
+    {
+      sumX = pos->second.getX();  // Set result to be the cached value
+      sumY = pos->second.getY();
+      total_weight = 1;
+      return false;
+    }
+
     prev_point = *point;
     path_length = 0;
     sumX = 0;
     sumY = 0;
-    total_weight = 0;
-    return allowed(first_point);
+
+    return allowed(i);
   }
 
   void append(OGRLineString* geom)
   {
     if (total_weight == 0)
-      geom->addPoint(first_point.getX(), first_point.getY());
+      geom->addPoint(first_point.getX(), first_point.getY());  // filtering was not allowed
     else
     {
       auto x = sumX / total_weight;
       auto y = sumY / total_weight;
       geom->addPoint(x, y);
+
+      cache.insert(std::make_pair(first_point, OGRPoint(x, y)));
     }
   }
 
@@ -149,7 +148,7 @@ class LineFilter
   }
 
   // Add a point
-  bool add(const OGRLineString* geom, int j)
+  bool add(const OGRLineString* geom, int j, int dist_pos)
   {
     const auto n = geom->getNumPoints();
     if (j < 0)
@@ -157,12 +156,20 @@ class LineFilter
     else if (j >= n)
       j = j - n + 1;  // j=n becomes 1, 1st point is skipped as a duplicate of the last one
 
+    if (dist_pos < 0)
+      dist_pos = n + dist_pos - 1;
+    else if (dist_pos >= n)
+      dist_pos = dist_pos - n + 1;
+
     OGRPoint pt;
     geom->getPoint(j, &pt);
-    if (!allowed(pt))
+    if (!allowed(j))
       return false;
 
-    double dist = distance(pt);
+    double dist = 0.0;
+    if (j != first_pos)
+      dist = distance(dist_pos);
+
     double weight = filter(dist);
     if (weight == 0)
       return false;
@@ -172,24 +179,23 @@ class LineFilter
     total_weight += weight;
     path_length = dist;
     prev_point = pt;
+
     return true;
   }
 
   // Test whether the vertex is allowed in smoothing
-  bool allowed(const OGRPoint& pt)
+  bool allowed(int j)
   {
-    auto n = counter.getCount(pt);
-    return (n == 0 || n == 2);  // isoline or shared isoband edge
+    // n=0: isoline, since counting is then disabled
+    // n=1: unshared isoband edge, in practise grid edges or there  etc
+    // n=2: shared isoband edge
+    // n=4: shared isoband corner at a grid cell vertex
+    auto n = counts[j];
+    return (n == 0 || n == 2);
   }
 
   // Distance metric
-  double distance(const OGRPoint& pt) const
-  {
-    if (metric == IsolineFilter::Metric::Euclidian)
-      return distance(pt, first_point);
-
-    return path_length + distance(pt, prev_point);
-  }
+  double distance(int dist_pos) const { return path_length + distances[dist_pos]; }
 
   // Function to calculate the Euclidean distance between two 2D vertices
   static double distance(const OGRPoint& v1, const OGRPoint& v2)
@@ -202,15 +208,56 @@ class LineFilter
   void count(const OGRGeometry* geom) { counter.add(geom); }
 
  private:
-  VertexCounter counter;
-  IsolineFilter::Metric metric;
-  Weight filter;
+  std::unordered_map<OGRPoint, OGRPoint, OGRPointHash, OGRPointEqual> cache;  // cached results
+  VertexCounter counter;          // how many times a vertex appears in the full geometry
+  Weight filter;                  // filterer
+  std::vector<double> distances;  // distances between adjacent vertices in current polyline
+  std::vector<int> counts;        // occurrance counts for current polyline
   OGRPoint first_point{0, 0};
   OGRPoint prev_point{0, 0};
+  int first_pos = 0;
   double path_length = 0;
   double sumX = 0;
   double sumY = 0;
   double total_weight = 0;
+  bool debug = false;
+
+  // Initialize occurrance counts
+  void init_counts(const OGRLineString* geom)
+  {
+    const auto n = geom->getNumPoints();
+    counts.clear();
+    counts.reserve(n);
+
+    OGRPoint pt;
+    for (int i = 0; i < n; i++)
+    {
+      geom->getPoint(i, &pt);
+      counts.push_back(counter.getCount(pt));
+    }
+  }
+
+  // Calculate distances between vertices in OGRLineString/OGRLinearRing
+  void init_distances(const OGRLineString* geom)
+  {
+    const auto n = geom->getNumPoints();
+
+    distances.clear();
+    distances.reserve(n);
+
+    for (int i = 0; i < n - 1; i++)
+    {
+      OGRPoint v1;
+      OGRPoint v2;
+      geom->getPoint(i, &v1);
+      geom->getPoint(i + 1, &v2);
+      distances.push_back(LineFilter::distance(v1, v2));
+    }
+
+    // To simplify subsequent processing
+    if (geom->get_IsClosed())
+      distances.push_back(distances.front());
+  }
 };
 
 // Forward declaration needed since two functions call each other
@@ -225,6 +272,9 @@ OGRLineString* apply_filter(const OGRLineString* geom, LineFilter& filter, uint 
       return nullptr;
 
     const bool closed = (geom->get_IsClosed() == 1);
+
+    // To avoid repeated recalculation and unordered_map fetches
+    filter.init(geom);
 
     const OGRLineString* g = geom;
     OGRLineString* out = nullptr;
@@ -244,7 +294,7 @@ OGRLineString* apply_filter(const OGRLineString* geom, LineFilter& filter, uint 
       {
         g->getPoint(i, &v1);
 
-        if (filter.reset(&v1))
+        if (filter.reset(&v1, i))
         {
           // Make sure the filter has a symmetric number of points to prevent excessive isoline
           // shrinkage at the ends if the number of iterations is > 1. The effective smoothing
@@ -265,19 +315,20 @@ OGRLineString* apply_filter(const OGRLineString* geom, LineFilter& filter, uint 
 
           // Iterate backwards until radius is reached
           for (int j = i; j >= jmin; --j)
-            if (!filter.add(g, j))
+            if (!filter.add(g, j, j))
               break;
 
           // Iterate forwards until maxdistance is reached
           filter.resetPathLength();
           for (int j = i + 1; j <= jmax; ++j)
-            if (!filter.add(g, j))
+            if (!filter.add(g, j, j - 1))
               break;
         }
         filter.append(out);
       }
       if (closed)
-        out->closeRings();  // Make sure the ring is exactly closed, rounding errors may be present
+        out->closeRings();  // Make sure the ring is exactly closed, rounding errors may be
+                            // present
 
       if (iter > 1)
         delete g;
@@ -301,6 +352,9 @@ OGRLinearRing* apply_filter(const OGRLinearRing* geom, LineFilter& filter, uint 
     if (geom == nullptr || geom->IsEmpty() != 0)
       return nullptr;
 
+    // To avoid repeated recalculation and unordered_map fetches
+    filter.init(geom);
+
     const OGRLinearRing* g = geom;
     OGRLinearRing* out = nullptr;
 
@@ -318,19 +372,20 @@ OGRLinearRing* apply_filter(const OGRLinearRing* geom, LineFilter& filter, uint 
       {
         g->getPoint(i, &v1);
 
-        if (filter.reset(&v1))
+        if (filter.reset(&v1, i))
         {
           // Iterate backwards until max radius is reached
-          int jmin = i - max_closed_length;
+          const int jmin = i - max_closed_length;
           for (int j = i; j >= jmin; --j)
-            if (!filter.add(g, j))
+            if (!filter.add(g, j, j))
               break;
 
           // Iterate forwards until max radius is reached
+
           filter.resetPathLength();
-          int jmax = i + max_closed_length;
+          const int jmax = i + max_closed_length;
           for (int j = i + 1; j <= jmax; ++j)
-            if (!filter.add(g, j))
+            if (!filter.add(g, j, j - 1))
               break;
         }
         filter.append(out);
@@ -483,7 +538,7 @@ void IsolineFilter::apply(std::vector<OGRGeometryPtr>& geoms, bool preserve_topo
     if (type == IsolineFilter::Type::None || iterations == 0 || radius <= 0)
       return;
 
-    LineFilter filter(metric, type, radius);
+    LineFilter filter(type, radius);
 
     if (preserve_topology)
       for (const auto& geom_ptr : geoms)
@@ -518,11 +573,6 @@ void IsolineFilter::init(Json::Value& theJson)
     if (!stype.empty())
       type = parse_filter_name(stype);
 
-    std::string smetric;
-    JsonTools::remove_string(smetric, theJson, "metric");
-    if (!smetric.empty())
-      metric = parse_metric_name(smetric);
-
     // Sanity checks
     if (radius < 0)
       throw Fmi::Exception(BCP, "Isoline filter radius must be nonnegative");
@@ -555,7 +605,6 @@ std::size_t IsolineFilter::hash_value() const
   try
   {
     auto hash = Fmi::hash_value(static_cast<int>(type));
-    Fmi::hash_combine(hash, Fmi::hash_value(static_cast<int>(metric)));
     Fmi::hash_combine(hash, Fmi::hash_value(radius));
     Fmi::hash_combine(hash, Fmi::hash_value(iterations));
     return hash;

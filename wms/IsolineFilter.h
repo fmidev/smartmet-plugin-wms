@@ -37,12 +37,6 @@ class IsolineFilter
     Tukey      // moving average, weight = Tukey's biweight = (1-(distance/radius)^2)^2
   };
 
-  enum class Metric
-  {
-    Euclidian,  // 2D distance
-    Path        // 2D distance along the path
-  };
-
   void init(Json::Value& theJson);
   std::size_t hash_value() const;
 
@@ -50,8 +44,7 @@ class IsolineFilter
   void apply(std::vector<OGRGeometryPtr>& geoms, bool preserve_topology) const;
 
  private:
-  Type type = Type::None;             // no filtering done by default
-  Metric metric = Metric::Euclidian;  // distance along path
+  Type type = Type::None;  // no filtering done by default
 
   double radius = 0;    // in pixels
   uint iterations = 1;  // one pass only by default
