@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.12.22
+Version: 24.1.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -42,7 +42,7 @@ BuildRequires: smartmet-engine-grid-devel >= 23.12.22
 BuildRequires: smartmet-engine-geonames-devel >= 23.9.6
 BuildRequires: smartmet-engine-querydata-devel >= 23.12.4
 BuildRequires: smartmet-engine-contour-devel >= 23.10.3
-BuildRequires: smartmet-library-gis-devel >= 23.11.21
+BuildRequires: smartmet-library-gis-devel >= 24.1.3
 BuildRequires: smartmet-library-trax-devel >= 23.8.17
 BuildRequires: fmt-devel >= 8.1.1 fmt-devel < %{smartmet_fmt_max}
 BuildRequires: ctpp2 >= 2.8.8
@@ -70,7 +70,7 @@ Requires: libconfig17
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 23.12.22
 Requires: smartmet-library-grid-files >= 23.12.22
-Requires: smartmet-library-gis >= 23.11.21
+Requires: smartmet-library-gis >= 24.1.3
 Requires: smartmet-library-trax >= 23.8.17
 Requires: smartmet-library-macgyver >= 23.11.21
 Requires: smartmet-library-spine >= 23.12.5
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Jan  3 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.1.3-1.fmi
+- Added 'areaunit' setting for isoband/isoline 'minarea' setting with possible values km^2 and px^2
+
 * Fri Dec 22 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.12.22-1.fmi
 - Repackaged due to ThreadLock ABI changes
 
