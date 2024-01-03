@@ -207,6 +207,7 @@ void IsolineLayer::init(Json::Value& theJson,
     JsonTools::remove_int(extrapolation, theJson, "extrapolation");
     JsonTools::remove_double(precision, theJson, "precision");
     JsonTools::remove_double(minarea, theJson, "minarea");
+    JsonTools::remove_string(areaunit, theJson, "areaunit");
     JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
     JsonTools::remove_double(multiplier, theJson, "multiplier");
     JsonTools::remove_double(offset, theJson, "offset");
@@ -483,7 +484,15 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
                                                    std::to_string(*smoother.degree));
 
   if (minarea)
+  {
+    const auto& box = projection.getBox();
+
+    auto area = *minarea;
+    if (areaunit == "px^2")
+      area = box.areaFactor() * area;
+
     originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(*minarea));
+  }
 
   originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
                                                  std::to_string(extrapolation));
@@ -687,7 +696,14 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   Engine::Contour::Options options(param, valid_time, isovalues);
   options.level = level;
+
   options.minarea = minarea;
+  if (minarea)
+  {
+    if (areaunit == "px^2")
+      options.minarea = box.areaFactor() * *minarea;
+  }
+
   options.bbox = Fmi::BBox(box);
 
   // Set the requested level
