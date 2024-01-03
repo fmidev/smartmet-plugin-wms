@@ -137,7 +137,7 @@ void IsobandLayer::init(Json::Value& theJson,
 
     JsonTools::remove_double(precision, theJson, "precision");
     JsonTools::remove_double(minarea, theJson, "minarea");
-    JsonTools::remove_string(unit_conversion, theJson, "unit_conversin");
+    JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
     JsonTools::remove_double(multiplier, theJson, "multiplier");
     JsonTools::remove_double(offset, theJson, "offset");
 
