@@ -51,6 +51,7 @@ class IsobandLayer : public Layer
   double precision = 1.0;
 
   boost::optional<double> minarea;
+  std::string areaunit = "km^2";  // km^2|px^2
 
   std::string unit_conversion;
   boost::optional<double> multiplier;

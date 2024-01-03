@@ -137,6 +137,7 @@ void IsobandLayer::init(Json::Value& theJson,
 
     JsonTools::remove_double(precision, theJson, "precision");
     JsonTools::remove_double(minarea, theJson, "minarea");
+    JsonTools::remove_string(areaunit, theJson, "areaunit");
     JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
     JsonTools::remove_double(multiplier, theJson, "multiplier");
     JsonTools::remove_double(offset, theJson, "offset");
@@ -171,6 +172,9 @@ void IsobandLayer::init(Json::Value& theJson,
 
     json = JsonTools::remove(theJson, "heatmap");
     heatmap.init(json, theConfig);
+
+    if (areaunit != "km^2" && areaunit != "px^2")
+      throw Fmi::Exception(BCP, "Unknown areaunit '" + areaunit + '"');
   }
   catch (...)
   {
@@ -605,9 +609,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
                                                      std::to_string(*smoother.degree));
 
-    if (minarea)
-      originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(*minarea));
-
     originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
                                                    std::to_string(extrapolation));
 
@@ -742,6 +743,15 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();
+
+    if (minarea)
+    {
+      auto area = *minarea;
+      if (areaunit == "px^2")
+        area = box.areaFactor() * area;
+
+      originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(area));
+    }
 
     if (wkt == "data")
       return;
@@ -1050,6 +1060,11 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       options.transformation(multiplier ? *multiplier : 1.0, offset ? *offset : 0.0);
 
     options.minarea = minarea;
+    if (minarea)
+    {
+      if (areaunit == "px^2")
+        options.minarea = box.areaFactor() * *minarea;
+    }
 
     options.filter_size = smoother.size;
     options.filter_degree = smoother.degree;
@@ -1284,6 +1299,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(extrapolation));
     Fmi::hash_combine(hash, Fmi::hash_value(precision));
     Fmi::hash_combine(hash, Fmi::hash_value(minarea));
+    Fmi::hash_combine(hash, Fmi::hash_value(areaunit));
     Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
     Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
     Fmi::hash_combine(hash, Fmi::hash_value(offset));
