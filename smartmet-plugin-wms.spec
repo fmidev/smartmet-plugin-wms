@@ -122,6 +122,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: libconfig17-devel
 #TestRequires: google-roboto-fonts
 #TestRequires: zlib-devel
+#TestRequires: libcurl-devel
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
