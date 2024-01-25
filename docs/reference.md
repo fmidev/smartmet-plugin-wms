@@ -577,7 +577,8 @@ The table below contains a list of attributes that can be defined for the isoban
 <tr><td>smoother</td><td><i>Smoother</i></td><td>-</td><td colspan="2">Smoother settings for the 2D grid data.</tr>
 <tr><td>sampling</td><td><i>Sampling<i></td><td>-</td><td colspan="2">Sampling settings for the 2D grid data.</tr>
 <tr><td>extrapolation</td><td><i>int</i></td><td>0</td><td colspan="2">How many grid cells to extrapolate data into regions with unknown values</tr>
-<tr><td>minarea</td><td><i>double</i></td><td>-</td><td colspan="2">Mimimum area for polygons in km^2, including holes</tr>
+<tr><td>minarea</td><td><i>double</i></td><td>-</td><td colspan="2">Mimimum area for polygons, including holes</tr>
+<tr><td>areaunits</td><td><i>(string)</i></td><td>km^2</td><td colspan="2">Units for minarea setting. km^2 or px^2</tr>
 <tr><td>isofilter</td><td><i>Isofilter</i></td><td>-</td><td>Lowpass filter for isolines/isobands. Preferable to smoother settings when data resolution is high.</td></tr>
 <tr><td>heatmap</td><td><i>Heatmap</i></td><td>-</td><td colspan="2">Heatmap settings.</tr>
 <tr><td>inside</td><td><i>Map</i></td><td>-</td><td colspan="2">Intersect isoband with the map</tr>
@@ -668,6 +669,7 @@ The table below contains a list of attributes that can be defined for the isolin
 | sampling        | _Sampling_                   | -             | Sampling settings for the 2D grid data.                                                                                                        |
 | extrapolation   | int                          | 0             | How many grid cells to extrapolate data into regions with unknown values.                                                                      |
 | minarea         | double                       | -             | Minimum area for closed linestrings in km^2.                                                                                                   |
+|areaunits        | (string)                     | km^2          | Units for minarea setting. km^2 or px^2|
 | inside          | _Map_                        | -             | Intersect isoband with a map                                                                                                                   |
 | outside         | _Map_                        | -             | Substract map from isoband                                                                                                                     |
 | intersect       | _[Intersect]_ or _Intersect_ | -             | Alternate isoband(s) with which to intersect.                                                                                                  |
