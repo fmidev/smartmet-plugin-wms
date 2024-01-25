@@ -2796,8 +2796,8 @@ Isolines and isobands can be smoothened by postprocessing the calculated polygon
 | Name       | Type    | Default value | Description                                                                                                |
 | ---------- | ------- | ------------- | ---------------------------------------------------------------------------------------------------------- |
 | type       | string  | none          | Smoother type: none, average, linear, gaussian, tukey. Gaussian filtering seems to work best.              |
-| radius     | double  | 0             | Filtering distance along the isoline in pixels. Zero disables filtering.                                   |
-| iterations | integer | 1             | Number of passes. Using 2-3 passes tends to remove small details better than simply increasing the radius. |
+| radius     | double  | 0             | Filtering distance along the isoline in pixels. Zero disables filtering. Depending on the roughness of the data good values tend to be in the range 10-30 pixels. |
+| iterations | integer | 1             | Number of passes. Zero disables filtering. Using 2-3 passes tends to remove small details better than simply increasing the radius. |
 
 Note that zooming into an image reduces the amount of smoothing since the set radius now covers a smaller area of the original data, and hence original details can be seen better.
 
