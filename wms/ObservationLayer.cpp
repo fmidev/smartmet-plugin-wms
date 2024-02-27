@@ -177,7 +177,8 @@ void ObservationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, 
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Generating template hash for observations failed!");
+    throw Fmi::Exception::Trace(BCP, "Generating template hash for observations failed!")
+        .addParameter("qid", qid);
   }
 }
 

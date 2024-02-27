@@ -99,7 +99,7 @@ void BackgroundLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, S
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid);
   }
 }
 

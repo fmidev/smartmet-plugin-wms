@@ -35,7 +35,6 @@ namespace Plugin
 {
 namespace Dali
 {
-
 // Label status
 enum class Status
 {
@@ -337,7 +336,7 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid);
   }
 }
 

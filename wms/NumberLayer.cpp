@@ -303,6 +303,11 @@ void NumberLayer::init(Json::Value& theJson,
       JsonTools::extract_array("numbers", numbers, json, theConfig);
 
     point_value_options.init(theJson);
+
+    if (!parameter)
+      throw Fmi::Exception(BCP, "NumberLayer parameter is not set");
+    if (!producer)
+      throw Fmi::Exception(BCP, "NumberLayer producer is not set");
   }
   catch (...)
   {
@@ -325,6 +330,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!")
+        .addParameter("qid", qid)
         .addParameter("Producer", *producer)
         .addParameter("Parameter", *parameter);
   }
@@ -356,11 +362,6 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Add layer margins to position generation
     positions->addMargins(xmargin, ymargin);
-
-    // Establish the parameter
-
-    if (!parameter)
-      throw Fmi::Exception(BCP, "Parameter not set for number-layer");
 
     std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
     QueryServer::QueryConfigurator queryConfigurator;
@@ -751,11 +752,6 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     // Add layer margins to position generation
     positions->addMargins(xmargin, ymargin);
-
-    // Establish the parameter
-
-    if (!parameter)
-      throw Fmi::Exception(BCP, "Parameter not set for number-layer");
 
     // Establish the valid time
 

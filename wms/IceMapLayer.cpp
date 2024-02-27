@@ -64,9 +64,9 @@ std::string getMeanTemperatureColumnName(const Fmi::DateTime& t)
 {
   boost::posix_time::time_period summer_period(
       Fmi::DateTime(Fmi::Date(t.date().year(), boost::gregorian::Mar, 20),
-                               Fmi::TimeDuration(0, 0, 0)),
+                    Fmi::TimeDuration(0, 0, 0)),
       Fmi::DateTime(Fmi::Date(t.date().year(), boost::gregorian::Oct, 20),
-                               Fmi::TimeDuration(23, 59, 59)));
+                    Fmi::TimeDuration(23, 59, 59)));
 
   // date must be between 21.10-21.3
   if (summer_period.contains(t))
@@ -396,7 +396,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid);
   }
 }
 
