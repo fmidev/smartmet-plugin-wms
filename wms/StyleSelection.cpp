@@ -76,9 +76,11 @@ void handleStyles(const std::map<std::string, Json::Value*>& viewLayers,
 
     // If the layer type changes, we remove all old settings first since the
     // settings are most likely not compatible, and a complete layer change is wanted.
+    // An exception is a null-layer which is never rendered, and hence changing the layer
+    // type implies we want to keep any existing settings as default ones.
 
     auto newLayerType = styleLayerJson.get("layer_type", nulljson);
-    if (!newLayerType.isNull() && layerType != newLayerType)
+    if (!newLayerType.isNull() && layerType != newLayerType && layerType != "null")
       viewLayerJson = Json::Value(Json::objectValue);
 
     // Then insert new style settings over the old ones, including the qid since the above
