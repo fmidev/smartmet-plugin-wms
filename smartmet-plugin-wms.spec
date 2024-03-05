@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.2.29
+Version: 24.3.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -155,6 +155,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Mar  5 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.3.5-1.fmi
+- Added max_image_size setting with default value of 20M
+
 * Thu Feb 29 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.2.29-1.fmi
 - Selecting a style for a null layer no longer deletes the old settings since they are intentional defaults
 
