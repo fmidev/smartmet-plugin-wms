@@ -310,11 +310,9 @@ void parse_interval_with_resolution(const std::string& time_str,
 
     CaseInsensitiveComparator cicomp;
     Fmi::DateTime startTime =
-        (cicomp(parts[0], "current") ? Fmi::SecondClock::universal_time()
-                                     : parse_time(parts[0]));
+        (cicomp(parts[0], "current") ? Fmi::SecondClock::universal_time() : parse_time(parts[0]));
     Fmi::DateTime endTime =
-        (cicomp(parts[1], "current") ? Fmi::SecondClock::universal_time()
-                                     : parse_time(parts[1]));
+        (cicomp(parts[1], "current") ? Fmi::SecondClock::universal_time() : parse_time(parts[1]));
 
     if (endTime < startTime)
     {
@@ -415,6 +413,13 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       throw Fmi::Exception::Trace(BCP, "Invalid width / height value!")
           .addDetail("The WIDTH and HEIGHT options must be valid integer numbers!")
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+    }
+
+    if (itsParameters.width * itsParameters.height > itsConfig.getDaliConfig().maxImageSize())
+    {
+      Fmi::Exception exception(BCP, "Too large width*height value");
+      exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+      throw exception;
     }
 
     for (unsigned int i = 0; i < layers.size(); i++)
