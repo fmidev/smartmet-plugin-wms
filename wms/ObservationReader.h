@@ -35,7 +35,7 @@ PointValues read(State& state,
                  const Fmi::SpatialReference& crs,
                  const Fmi::Box& box,
                  const Fmi::DateTime& valid_time,
-                 const boost::posix_time::time_period& valid_time_period);
+                 const Fmi::TimePeriod& valid_time_period);
 
 }
 }  // namespace Dali

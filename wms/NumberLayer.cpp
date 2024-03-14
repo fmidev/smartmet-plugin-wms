@@ -71,8 +71,7 @@ PointValues read_forecasts(const NumberLayer& layer,
       param = layer.param_funcs->parameter;
 
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-    Fmi::TimeZonePtr utc(new boost::local_time::posix_time_zone("UTC"));
-    Fmi::LocalDateTime localdatetime(valid_time, utc);
+    Fmi::LocalDateTime localdatetime(valid_time, Fmi::TimeZonePtr::utc);
 
     PointValues pointvalues;
 

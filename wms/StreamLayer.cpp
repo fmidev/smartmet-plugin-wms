@@ -483,11 +483,10 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
     gridValues.reserve(sz);
 
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-    Fmi::TimeZonePtr utc(new boost::local_time::posix_time_zone("UTC"));
 
     auto valid_time_period = getValidTimePeriod();
     NFmiMetTime met_time = valid_time_period.begin();
-    Fmi::LocalDateTime localdatetime(met_time, utc);
+    Fmi::LocalDateTime localdatetime(met_time, Fmi::TimeZonePtr::utc);
     std::string tmp;
     auto mylocale = std::locale::classic();
     NFmiPoint dummy;

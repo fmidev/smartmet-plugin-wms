@@ -1,5 +1,6 @@
 #include "WMSTimeDimension.h"
 #include <boost/algorithm/string/join.hpp>
+#include <boost/shared_ptr.hpp>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
 
@@ -58,7 +59,7 @@ Fmi::DateTime WMSTimeDimension::mostCurrentTime() const
   try
   {
     if (itsTimesteps.empty())
-      return boost::posix_time::not_a_date_time;
+      return Fmi::DateTime::NOT_A_DATE_TIME;
 
     auto current_time = Fmi::SecondClock::universal_time();
 
@@ -96,7 +97,7 @@ Fmi::DateTime WMSTimeDimension::mostCurrentTime() const
       itPrevious = it;
     }
 
-    return boost::posix_time::not_a_date_time;
+    return Fmi::DateTime::NOT_A_DATE_TIME;
   }
   catch (...)
   {
@@ -147,8 +148,8 @@ std::string StepTimeDimension::makeCapabilities(const boost::optional<std::strin
     std::vector<std::string> ret;
     ret.reserve(itsTimesteps.size());
 
-    auto startt = (starttime ? parse_time(*starttime) : boost::posix_time::min_date_time);
-    auto endt = (endtime ? parse_time(*endtime) : boost::posix_time::max_date_time);
+    auto startt = (starttime ? parse_time(*starttime) : Fmi::DateTime::min);
+    auto endt = (endtime ? parse_time(*endtime) : Fmi::DateTime::max);
 
     for (const auto& step : itsTimesteps)
     {
@@ -176,7 +177,7 @@ Fmi::DateTime IntervalTimeDimension::mostCurrentTime() const
 {
   auto current_time = Fmi::SecondClock::universal_time();
 
-  Fmi::DateTime ret = boost::posix_time::not_a_date_time;
+  Fmi::DateTime ret = Fmi::DateTime::NOT_A_DATE_TIME;
 
   for (const auto& interval : itsIntervals)
   {
@@ -303,13 +304,13 @@ std::string IntervalTimeDimension::makeCapabilities(
 
     std::string ret;
 
-    Fmi::DateTime previous_interval_end_time = boost::posix_time::not_a_date_time;
+    Fmi::DateTime previous_interval_end_time = Fmi::DateTime::NOT_A_DATE_TIME;
     for (const auto& interval : itsIntervals)
     {
-      boost::posix_time::time_period interval_period(interval.startTime, interval.endTime);
+      Fmi::TimePeriod interval_period(interval.startTime, interval.endTime);
       auto requested_startt = (starttime ? parse_time(*starttime) : interval.startTime);
       auto requested_endt = (endtime ? parse_time(*endtime) : interval.endTime);
-      boost::posix_time::time_period requested_period(requested_startt, requested_endt);
+      Fmi::TimePeriod requested_period(requested_startt, requested_endt);
 
       if (!interval_period.intersects(requested_period))
         continue;
@@ -353,10 +354,10 @@ std::string IntervalTimeDimension::makeCapabilitiesTimesteps(
     std::string ret;
     for (const auto& interval : itsIntervals)
     {
-      boost::posix_time::time_period interval_period(interval.startTime, interval.endTime);
+      Fmi::TimePeriod interval_period(interval.startTime, interval.endTime);
       auto requested_startt = (starttime ? parse_time(*starttime) : interval.startTime);
       auto requested_endt = (endtime ? parse_time(*endtime) : interval.endTime);
-      boost::posix_time::time_period requested_period(requested_startt, requested_endt);
+      Fmi::TimePeriod requested_period(requested_startt, requested_endt);
 
       if (!interval_period.intersects(requested_period))
         continue;
@@ -393,7 +394,7 @@ void WMSTimeDimensions::addTimeDimension(const Fmi::DateTime& origintime,
                                          const boost::shared_ptr<WMSTimeDimension>& td)
 {
   itsTimeDimensions[origintime] = td;
-  if (itsDefaultOrigintime == boost::posix_time::not_a_date_time ||
+  if (itsDefaultOrigintime == Fmi::DateTime::NOT_A_DATE_TIME ||
       itsDefaultOrigintime < origintime)
     itsDefaultOrigintime = origintime;
   itsOrigintimes.push_back(origintime);

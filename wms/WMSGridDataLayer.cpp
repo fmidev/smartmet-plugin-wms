@@ -16,7 +16,7 @@ std::vector<Fmi::DateTime> get_ptime_vector(const std::set<std::string>& content
   ret.reserve(contentTimeList.size());
 
   for (const auto& time : contentTimeList)
-    ret.push_back(boost::posix_time::from_time_t(utcTimeToTimeT(time)));
+    ret.push_back(Fmi::date_time::from_time_t(utcTimeToTimeT(time)));
 
   return ret;
 }

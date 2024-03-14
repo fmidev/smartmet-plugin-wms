@@ -16,6 +16,7 @@
 #include <macgyver/Exception.h>
 
 #include <list>
+#include <map>
 #include <set>
 
 namespace SmartMet
@@ -78,8 +79,8 @@ class StepTimeDimension : public WMSTimeDimension
 
 struct tag_interval
 {
-  Fmi::DateTime startTime = boost::posix_time::not_a_date_time;
-  Fmi::DateTime endTime = boost::posix_time::not_a_date_time;
+  Fmi::DateTime startTime = Fmi::DateTime::NOT_A_DATE_TIME;
+  Fmi::DateTime endTime = Fmi::DateTime::NOT_A_DATE_TIME;
   Fmi::TimeDuration resolution = Fmi::Minutes(1);
 
   tag_interval(Fmi::DateTime start,
@@ -169,7 +170,7 @@ time_intervals get_intervals(const Container& container)
       current_interval = &ret.back();
       // Set startTime to iter and endTime to not_a_date_time (endTime set on the next round)
       current_interval->startTime = *iter;
-      current_interval->endTime = boost::posix_time::not_a_date_time;
+      current_interval->endTime = Fmi::DateTime::NOT_A_DATE_TIME;
       continue;
     }
     current_interval->endTime = *iter;
@@ -207,7 +208,7 @@ class WMSTimeDimensions
 
  private:
   std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>> itsTimeDimensions;
-  Fmi::DateTime itsDefaultOrigintime{boost::posix_time::not_a_date_time};
+  Fmi::DateTime itsDefaultOrigintime{Fmi::DateTime::NOT_A_DATE_TIME};
   std::vector<Fmi::DateTime> itsOrigintimes;
   bool itsEndTimeIsWallClockTime{false};
 };

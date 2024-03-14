@@ -212,7 +212,7 @@ Fmi::DateTime Properties::getValidTime() const
  */
 // ----------------------------------------------------------------------
 
-boost::posix_time::time_period Properties::getValidTimePeriod() const
+Fmi::TimePeriod Properties::getValidTimePeriod() const
 {
   auto tstart = getValidTime();
   auto tend = tstart;

@@ -133,8 +133,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
 
       // Q API SUCKS
       boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-      Fmi::TimeZonePtr utc(new boost::local_time::posix_time_zone("UTC"));
-      Fmi::LocalDateTime localdatetime(theTime, utc);
+      Fmi::LocalDateTime localdatetime(theTime, Fmi::TimeZonePtr::utc);
       std::string tmp;
       auto mylocale = std::locale::classic();
       NFmiPoint dummy;

@@ -25,7 +25,6 @@ TS::TimeSeriesGenerator::LocalTimeList get_tlist(
       interval_end += Fmi::Minutes(interval_ahead);
 
     TS::TimeSeriesGenerator::LocalTimeList tlist;
-    Fmi::TimeZonePtr utc_zone(new boost::local_time::posix_time_zone("UTC"));
 
     bool add_valid_time = true;  // Flag to make sure valid_time is not added twice
     for (const auto& t : qengine_times)
@@ -34,11 +33,11 @@ TS::TimeSeriesGenerator::LocalTimeList get_tlist(
       {
         if (t >= valid_time && add_valid_time)
         {
-          tlist.push_back({valid_time, utc_zone});
+            tlist.push_back({valid_time, Fmi::TimeZonePtr::utc});
           add_valid_time = false;
           continue;
         }
-        tlist.push_back({t, utc_zone});
+        tlist.push_back({t, Fmi::TimeZonePtr::utc});
       }
     }
 
@@ -276,13 +275,12 @@ TS::TimeSeriesGeneratorCache::TimeList get_tlist(const Fmi::DateTime& valid_time
   try
   {
     // Only one timstep is valid for a map
-    Fmi::TimeZonePtr utc_zone(new boost::local_time::posix_time_zone("UTC"));
     TS::TimeSeriesGeneratorOptions toptions;
     toptions.startTime = valid_time;
     toptions.endTime = valid_time;
     toptions.timeStep = 0;
     TS::TimeSeriesGeneratorCache tsc;
-    return tsc.generate(toptions, utc_zone);
+    return tsc.generate(toptions, Fmi::TimeZonePtr::utc);
   }
   catch (...)
   {

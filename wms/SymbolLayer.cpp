@@ -79,8 +79,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
       param = layer.param_funcs->parameter;
 
     boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-    Fmi::TimeZonePtr utc(new boost::local_time::posix_time_zone("UTC"));
-    Fmi::LocalDateTime localdatetime(valid_time, utc);
+    Fmi::LocalDateTime localdatetime(valid_time, Fmi::TimeZonePtr::utc);
 
     PointValues pointvalues;
     auto mylocale = std::locale::classic();
@@ -756,7 +755,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     const auto now = Fmi::SecondClock::local_time();
     const auto valid_time = (!is_legend ? getValidTime() : now);
     const auto valid_time_period =
-        (!is_legend ? getValidTimePeriod() : boost::posix_time::time_period(now, now));
+        (!is_legend ? getValidTimePeriod() : Fmi::TimePeriod(now, now));
 
     // Establish the level
 

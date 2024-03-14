@@ -213,7 +213,7 @@ bool WMSPostGISLayer::updateLayerMetaData()
           timeDimension = boost::make_shared<StepTimeDimension>(metadata.timesteps);
         }
       }
-      Fmi::DateTime origintime(boost::posix_time::not_a_date_time);
+      Fmi::DateTime origintime(Fmi::DateTime::NOT_A_DATE_TIME);
       newTimeDimensions.insert(std::make_pair(origintime, timeDimension));
       timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);
     }

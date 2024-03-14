@@ -29,7 +29,7 @@ bool WMSObservationLayer::updateLayerMetaData()
     time_intervals timeintervals{interval};
     auto newTimeDimension = boost::make_shared<IntervalTimeDimension>(timeintervals);
 
-    Fmi::DateTime origintime(boost::posix_time::not_a_date_time);
+    Fmi::DateTime origintime(Fmi::DateTime::NOT_A_DATE_TIME);
     newTimeDimensions.insert(std::make_pair(origintime, newTimeDimension));
     timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);
 	timeDimensions->useWallClockTimeAsEndTime(true);

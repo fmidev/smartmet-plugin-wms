@@ -110,7 +110,7 @@ class State
   // data has for old radar files the same even if newer ones have overridden the hash value for
   // the full multifile.
   Engine::Querydata::Q getModel(const Engine::Querydata::Producer& theProducer,
-                                const boost::posix_time::time_period& theTimePeriod) const;
+                                const Fmi::TimePeriod& theTimePeriod) const;
 
   // Require given ID to be free, and mark it used if it is free
   void requireId(const std::string& theID) const;

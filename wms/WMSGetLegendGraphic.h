@@ -5,7 +5,6 @@
 
 #include <ctpp2/CDT.hpp>
 
-#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <spine/HTTP.h>
 #include <spine/Value.h>

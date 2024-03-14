@@ -56,7 +56,7 @@ PointValues read_flash_observations(State& state,
                                     const Positions& positions,
                                     const Fmi::SpatialReference& crs,
                                     const Fmi::Box& box,
-                                    const boost::posix_time::time_period& valid_time_period,
+                                    const Fmi::TimePeriod& valid_time_period,
                                     const Fmi::CoordinateTransformation& transformation)
 {
   try
@@ -182,7 +182,7 @@ PointValues read_all_observations(State& state,
                                   const Fmi::SpatialReference& crs,
                                   const Fmi::Box& box,
                                   const Fmi::DateTime& valid_time,
-                                  const boost::posix_time::time_period& valid_time_period,
+                                  const Fmi::TimePeriod& valid_time_period,
                                   const Fmi::CoordinateTransformation& transformation)
 {
   try
@@ -323,7 +323,7 @@ PointValues read_station_observations(State& state,
                                       const Fmi::SpatialReference& crs,
                                       const Fmi::Box& box,
                                       const Fmi::DateTime& valid_time,
-                                      const boost::posix_time::time_period& valid_time_period,
+                                      const Fmi::TimePeriod& valid_time_period,
                                       const Fmi::CoordinateTransformation& transformation)
 {
   try
@@ -515,7 +515,7 @@ PointValues read_latlon_observations(State& state,
                                      const Fmi::SpatialReference& crs,
                                      const Fmi::Box& box,
                                      const Fmi::DateTime& valid_time,
-                                     const boost::posix_time::time_period& valid_time_period,
+                                     const Fmi::TimePeriod& valid_time_period,
                                      const Fmi::CoordinateTransformation& transformation,
                                      const Positions::Points& points)
 {
@@ -674,7 +674,7 @@ PointValues read(State& state,
                  const Fmi::SpatialReference& crs,
                  const Fmi::Box& box,
                  const Fmi::DateTime& valid_time,
-                 const boost::posix_time::time_period& valid_time_period)
+                 const Fmi::TimePeriod& valid_time_period)
 {
   try
   {

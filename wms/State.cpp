@@ -34,7 +34,7 @@ namespace Dali
 State::State(Plugin& thePlugin, const Spine::HTTP::Request& theRequest)
     : itsPlugin(thePlugin),
       itsRequest(theRequest),
-      itsLocalTimePool(boost::make_shared<TS::LocalTimePool>())
+      itsLocalTimePool(std::make_shared<TS::LocalTimePool>())
 {
   auto prec = theRequest.getParameter("precision");
   if (prec)
@@ -254,7 +254,7 @@ Engine::Querydata::Q State::getModel(const Engine::Querydata::Producer& theProdu
 // ----------------------------------------------------------------------
 
 Engine::Querydata::Q State::getModel(const Engine::Querydata::Producer& theProducer,
-                                     const boost::posix_time::time_period& theTimePeriod) const
+                                     const Fmi::TimePeriod& theTimePeriod) const
 {
   try
   {

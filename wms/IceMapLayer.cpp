@@ -62,7 +62,7 @@ class PostGISAttributeToString : public boost::static_visitor<std::string>
 
 std::string getMeanTemperatureColumnName(const Fmi::DateTime& t)
 {
-  boost::posix_time::time_period summer_period(
+  Fmi::TimePeriod summer_period(
       Fmi::DateTime(Fmi::Date(t.date().year(), boost::gregorian::Mar, 20),
                                Fmi::TimeDuration(0, 0, 0)),
       Fmi::DateTime(Fmi::Date(t.date().year(), boost::gregorian::Oct, 20),

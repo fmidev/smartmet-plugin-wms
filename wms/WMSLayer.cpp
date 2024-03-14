@@ -1507,7 +1507,7 @@ Fmi::DateTime WMSLayer::mostCurrentTime(
   try
   {
     return (timeDimensions ? timeDimensions->mostCurrentTime(reference_time)
-                           : boost::posix_time::not_a_date_time);
+                           : Fmi::DateTime::NOT_A_DATE_TIME);
   }
   catch (...)
   {
@@ -2429,7 +2429,7 @@ void WMSLayer::setProductFile(const std::string& theProductFile)
   boost::system::error_code ec;
   auto modtime = boost::filesystem::last_write_time(productFile, ec);
   if (ec.value() == boost::system::errc::success)
-    itsProductFileModificationTime = boost::posix_time::from_time_t(modtime);
+    itsProductFileModificationTime = Fmi::date_time::from_time_t(modtime);
 }
 
 const Fmi::DateTime& WMSLayer::modificationTime() const

@@ -48,7 +48,7 @@ class Properties
   void setValidTime(const Fmi::DateTime& theTime);
   Fmi::DateTime getValidTime() const;
   Fmi::DateTime getValidTime(const Fmi::DateTime& theDefault) const;
-  boost::posix_time::time_period getValidTimePeriod() const;
+  Fmi::TimePeriod getValidTimePeriod() const;
   bool inside(const Fmi::Box& theBox, double theX, double theY) const;
 
   std::size_t hash_value(const State& theState) const;

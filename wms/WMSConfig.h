@@ -274,7 +274,7 @@ class WMSConfig
   // Set of files for which a warning has already been printed
   std::set<std::string> itsWarnedFiles;
 
-  Fmi::DateTime itsCapabilitiesModificationTime = boost::posix_time::from_time_t(0);
+  Fmi::DateTime itsCapabilitiesModificationTime = Fmi::date_time::from_time_t(0);
 
 };  // class WMSConfig
 

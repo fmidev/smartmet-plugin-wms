@@ -14,7 +14,6 @@
 #include "WMSLegendGraphicSettings.h"
 #include "WMSSupportedReference.h"
 #include "WMSTimeDimension.h"
-#include <boost/date_time/local_time/local_time.hpp>
 #include <macgyver/DateTime.h>
 #include <boost/shared_ptr.hpp>
 #include <ctpp2/CDT.hpp>
@@ -66,7 +65,7 @@ class WMSLayer
   const WMSConfig& wmsConfig;
   bool hidden = false;                 // If this is true, dont show in GetCapabilities response
   bool timeDimensionDisabled = false;  // Can any timestamp can be used in GetMap-request
-  Fmi::DateTime metadataTimestamp = boost::posix_time::not_a_date_time;
+  Fmi::DateTime metadataTimestamp = Fmi::DateTime::NOT_A_DATE_TIME;
   unsigned int metadataUpdateInterval = 5;
 
   Spine::BoundingBox geographicBoundingBox;

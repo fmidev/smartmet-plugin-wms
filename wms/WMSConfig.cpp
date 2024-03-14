@@ -79,7 +79,7 @@ void check_modification_time(const std::string& theDir, Fmi::DateTime& max_time)
         std::time_t time_t_mod = boost::filesystem::last_write_time(filename, ec);
         if (ec.value() == boost::system::errc::success)
         {
-          auto ptime_mod = boost::posix_time::from_time_t(time_t_mod);
+          auto ptime_mod = Fmi::date_time::from_time_t(time_t_mod);
           if (max_time < ptime_mod)
             max_time = ptime_mod;
         }
@@ -1552,7 +1552,7 @@ Fmi::DateTime WMSConfig::mostCurrentTime(
   try
   {
     if (!isValidLayerImpl(theLayer))
-      return boost::posix_time::not_a_date_time;
+      return Fmi::DateTime::NOT_A_DATE_TIME;
 
     auto my_layers = itsLayers.load();
     SharedWMSLayer layer = my_layers->at(theLayer).getLayer();

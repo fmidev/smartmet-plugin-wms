@@ -22,7 +22,6 @@
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
-#include <boost/date_time/posix_time/time_formatters.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/move/make_unique.hpp>
 #include <boost/shared_ptr.hpp>
