@@ -1,71 +1,79 @@
 Table of Contents
 =================
 
-  * [Table of Contents](#table-of-contents)
-  * [Product definition](#product-definition)
-    * [Product configuration](#product-configuration)
-      * [Shared attributes](#shared-attributes)
-      * [Product level attributes](#product-level-attributes)
-      * [Views](#views)
-      * [Layers](#layers)
-        * [BackgroundLayer](#backgroundlayer)
-        * [MapLayer](#maplayer)
-        * [LocationLayer](#locationlayer)
-        * [IsobandLayer](#isobandlayer)
-        * [IsolineLayer](#isolinelayer)
-          * [isolines-attribute](#isolines-attribute)
-        * [IsolabelLayer](#isolabellayer)
-        * [SymbolLayer](#symbollayer)
-          * [mindistance and priority](#mindistance-and-priority)
-        * [ArrowLayer](#arrowlayer)
-        * [NumberLayer](#numberlayer)
-        * [NullLayer](#nulllayer)
-        * [CloudCeilingLayer](#cloudceilinglayer)
-        * [StreamLayer](#streamlayer)
-        * [LegendLayer](#legendlayer)
-        * [TimeLayer](#timelayer)
-        * [TagLayer](#taglayer)
-        * [WKTLayer](#wktlayer)
-        * [TranslationLayer](#translationlayer)
-        * [WindRoseLayer](#windroselayer)
-        * [PostGISLayer](#postgislayer)
-        * [IceMapLayer](#icemaplayer)
-        * [FinnishRoadObservationLayer](#finnishroadobservationlayer)
-          * [Algorithm to deduce weather condition symbol](#algorithm-to-deduce-weather-condition-symbol)
-        * [PresentWeatherObservationLayer](#presentweatherobservationlayer)
-          * [Algorithm to deduce present weather symbol](#algorithm-to-deduce-present-weather-symbol)
-      	* [Structure definitions](#structure-definitions)
-        * [Attribute structure](#attribute-structure)
-        * [AttributeSelection structure](#attributeselection-structure)
-        * [Projection structure](#projection-structure)
-        * [Defs structure](#defs-structure)
-        * [Smoother structure](#smoother-structure)
-        * [Sampling structure](#sampling-structure)
-        * [Heatmap structure](#heatmap-structure)
-        * [Isoband structure](#isoband-structure)
-        * [Intersection structure](#intersection-structure)
-        * [Isoline structure](#isoline-structure)
-        * [LegendLabels structure](#legendlabels-structure)
-        * [LegendSymbols structure](#legendsymbols-structure)
-        * [Text structure](#text-structure)
-        * [Map structure](#map-structure)
-        * [MapStyles structure](#mapstyles-structure)
-        * [MapFeature structure](#mapfeature-structure)
-        * [Positions structure](#positions-structure)
-        * [Label structure](#label-structure)
-        * [Location structure](#location-structure)
-        * [Observation structure](#observation-structure)
-        * [Station structure](#station-structusymbore)
-        * [WindRose structure](#windrose-structure)
-        * [Connector structure](#connector-structure)
-        * [Filters structure](#filters-structure)
-* [Using dynamically created grids](#filters-structure)
-* [WMS GetMap and GetCapabilities configuration](#wms-configuration)
-    * [WMS layer variants](#wms-variants)
-  * [Generic querystring options](#querystring-definition)
-  * [Configuration](#configuration)
-    * [Main configuration file](#main-configuration-file)
-    * [Plugin configuration file](#plugin-configuration-file)
+- [Table of Contents](#table-of-contents)
+- [Product definition](#product-definition)
+  - [Product configuration](#product-configuration)
+    - [Shared attributes](#shared-attributes)
+      - [Time intervals](#time-intervals)
+      - [Clipping and margins](#clipping-and-margins)
+      - [Output formatting](#output-formatting)
+    - [Product level attributes](#product-level-attributes)
+    - [Views](#views)
+    - [Layers](#layers)
+      - [BackgroundLayer](#backgroundlayer)
+      - [MapLayer](#maplayer)
+      - [LocationLayer](#locationlayer)
+      - [IsobandLayer](#isobandlayer)
+      - [IsolineLayer](#isolinelayer)
+        - [isolines-attribute](#isolines-attribute)
+      - [IsolabelLayer](#isolabellayer)
+      - [SymbolLayer](#symbollayer)
+        - [mindistance and priority](#mindistance-and-priority)
+      - [ArrowLayer](#arrowlayer)
+      - [NumberLayer](#numberlayer)
+      - [NullLayer](#nulllayer)
+      - [CloudCeilingLayer](#cloudceilinglayer)
+      - [StreamLayer](#streamlayer)
+      - [LegendLayer](#legendlayer)
+      - [TimeLayer](#timelayer)
+      - [TagLayer](#taglayer)
+      - [WKTLayer](#wktlayer)
+      - [TranslationLayer](#translationlayer)
+      - [WindRoseLayer](#windroselayer)
+      - [PostGISLayer](#postgislayer)
+      - [IceMapLayer](#icemaplayer)
+      - [FinnishRoadObservationLayer](#finnishroadobservationlayer)
+        - [Algorithm to deduce weather condition symbol](#algorithm-to-deduce-weather-condition-symbol)
+      - [PresentWeatherObservationLayer](#presentweatherobservationlayer)
+        - [Algorithm to deduce present weather symbol](#algorithm-to-deduce-present-weather-symbol)
+    - [Structure definitions](#structure-definitions)
+      - [Attribute structure](#attribute-structure)
+      - [AttributeSelection structure](#attributeselection-structure)
+      - [Projection structure](#projection-structure)
+      - [Defs structure](#defs-structure)
+      - [Smoother structure](#smoother-structure)
+    - [Sampling structure](#sampling-structure)
+      - [Heatmap structure](#heatmap-structure)
+      - [Isoband structure](#isoband-structure)
+      - [Intersection structure](#intersection-structure)
+      - [Isoline structure](#isoline-structure)
+      - [Isofilter structure](#isofilter-structure)
+      - [LegendLabels structure](#legendlabels-structure)
+      - [LegendSymbols structure](#legendsymbols-structure)
+      - [Text structure](#text-structure)
+      - [Map structure](#map-structure)
+      - [MapStyles structure](#mapstyles-structure)
+      - [MapFeature structure](#mapfeature-structure)
+      - [Positions structure](#positions-structure)
+      - [Label structure](#label-structure)
+      - [Location structure](#location-structure)
+      - [Observation structure](#observation-structure)
+      - [Station structure](#station-structure)
+      - [WindRose structure](#windrose-structure)
+      - [Connector structure](#connector-structure)
+      - [Filters structure](#filters-structure)
+- [Using dynamically created grids](#using-dynamically-created-grids)
+    - [Introduction](#introduction)
+    - [Grids with the same timestamp](#grids-with-the-same-timestamp)
+    - [Grids calculated over multiple timesteps](#grids-calculated-over-multiple-timesteps)
+    - [Functions](#functions)
+- [Generic querystring options](#generic-querystring-options)
+- [WMS GetMap and GetCapabilities configuration](#wms-getmap-and-getcapabilities-configuration)
+  - [WMS layer variants](#wms-layer-variants)
+- [Configuration](#configuration)
+  - [Main configuration file](#main-configuration-file)
+  - [Plugin configuration file](#plugin-configuration-file)
 
 
 # Product definition
@@ -132,14 +140,14 @@ The product configuration files are written in Java Script Object Notation (JSON
 The attribute description for each attribute  consists of the attribute name, the attribute type, the default value and a short description of the attribute usage. In the attribute description the attribute type can be defined in the following ways:
 
 
-|Type|Description|
-|----|-----------|
-|(string)|A string with no default value. Not giving a value to the string may be considered as an error if the  title for the SVG is not defined, or if no default symbol name is given for a legend.|
-|string|A string. Usually this variable needs to be defined, for example, qid to give an ID to isobands. The string may also have a default value, for example, the default separator for the  LegendLabels is an "en dash" (Unicode 2013).|
-|_Structure_|When the type is a structure name then the attribute value is defined as a structure, or the value is a reference to a such structure. For example "projection" -attribute is defined to be the type of  Projection structure, which means that it contains a list of attributes defined for the Projection structure. |
-|[_Structure_]|An array of structures. The type of the structure is defined inside the brackets. For example an attribute which type is [Layer] contains an array of Layer structures.|
-|{string:string}|A map from names to values.|
-|{string:string:string}|A map from principal names to a map of name-value pairs.|
+| Type                   | Description                                                                                                                                                                                                                                                                                                            |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| (string)               | A string with no default value. Not giving a value to the string may be considered as an error if the  title for the SVG is not defined, or if no default symbol name is given for a legend.                                                                                                                           |
+| string                 | A string. Usually this variable needs to be defined, for example, qid to give an ID to isobands. The string may also have a default value, for example, the default separator for the  LegendLabels is an "en dash" (Unicode 2013).                                                                                    |
+| _Structure_            | When the type is a structure name then the attribute value is defined as a structure, or the value is a reference to a such structure. For example "projection" -attribute is defined to be the type of  Projection structure, which means that it contains a list of attributes defined for the Projection structure. |
+| [_Structure_]          | An array of structures. The type of the structure is defined inside the brackets. For example an attribute which type is [Layer] contains an array of Layer structures.                                                                                                                                                |
+| {string:string}        | A map from names to values.                                                                                                                                                                                                                                                                                            |
+| {string:string:string} | A map from principal names to a map of name-value pairs.                                                                                                                                                                                                                                                               |
    
 
 
@@ -151,21 +159,21 @@ There are some upper level attributes that can be used also on the lower level i
 The table below contains a list of attributes that are shared from the top level to the lower levels. 
 
 <pre><b>Shared attributes </b></pre>
-|Name|Type|Default value|Description|
-|----|----|-------------|-----------|
-|language|(string)|config:language|Language code. The code does not need to follow ISO 639-1 or other similar standards, it is merely a code name.|
-|customer|(string)|config:customer|The customer name. The customer setting defines the subdirectory in the Dali configuration directory from which the JSON, CSS and SVG includes are taken, unless an absolute path is given for a JSON include.|
-|producer|(string)|config:model|The producer name to be used when querying data from QEngine.|
-|tz|(string)|UTC|The timezone used for parsing time (but not origintime)|
-|time|(string)| |The time in any string format recognized by the MacGyver time parser (ISO-format, SQL, timestamps, epoch times, offsets from current time).|
-|time_offset|(int)| |The time offset in minutes to be added to the time. The principal time is usually set at the top most level (Product), and a time_offset is then used to modify it for different views of data.|
-|interval_start|(int)| |Time in minutes backward from time+time_offset. Used for selecting an interval of observations.|
-|interval_end|(int)| |Time in minutes forward from time+time_offset. Used for selecting an interval of observations.|
-|origintime|(string)| |The querydata origintime in any string format recognized by the MacGyver time parser (ISO-format, SQL, timestamps, epoch times, offsets from current time).|
-|projection|_Projection_| |The Projection structure.|
-|xmargin|int|0|X-margin in pixels for clipping out features.|
-|ymargin|int|0|Y-margin in pixels for clipping out features.|
-|clip|bool|false|Whether each layer should be placed into a rectangular clipPath.|
+| Name           | Type         | Default value   | Description                                                                                                                                                                                                    |
+| -------------- | ------------ | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| language       | (string)     | config:language | Language code. The code does not need to follow ISO 639-1 or other similar standards, it is merely a code name.                                                                                                |
+| customer       | (string)     | config:customer | The customer name. The customer setting defines the subdirectory in the Dali configuration directory from which the JSON, CSS and SVG includes are taken, unless an absolute path is given for a JSON include. |
+| producer       | (string)     | config:model    | The producer name to be used when querying data from QEngine.                                                                                                                                                  |
+| tz             | (string)     | UTC             | The timezone used for parsing time (but not origintime)                                                                                                                                                        |
+| time           | (string)     |                 | The time in any string format recognized by the MacGyver time parser (ISO-format, SQL, timestamps, epoch times, offsets from current time).                                                                    |
+| time_offset    | (int)        |                 | The time offset in minutes to be added to the time. The principal time is usually set at the top most level (Product), and a time_offset is then used to modify it for different views of data.                |
+| interval_start | (int)        |                 | Time in minutes backward from time+time_offset. Used for selecting an interval of observations.                                                                                                                |
+| interval_end   | (int)        |                 | Time in minutes forward from time+time_offset. Used for selecting an interval of observations.                                                                                                                 |
+| origintime     | (string)     |                 | The querydata origintime in any string format recognized by the MacGyver time parser (ISO-format, SQL, timestamps, epoch times, offsets from current time).                                                    |
+| projection     | _Projection_ |                 | The Projection structure.                                                                                                                                                                                      |
+| xmargin        | int          | 0               | X-margin in pixels for clipping out features.                                                                                                                                                                  |
+| ymargin        | int          | 0               | Y-margin in pixels for clipping out features.                                                                                                                                                                  |
+| clip           | bool         | false           | Whether each layer should be placed into a rectangular clipPath.                                                                                                                                               |
 
 #### Time intervals
 
@@ -183,12 +191,12 @@ For tiled images expanding the area has no discernible effect, since the clippin
 
 PNG output formatting can be tuned using the following settings inside a top level "png" tag:
 
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|quality|(double)|10|The PNG compression level. 10=good, 20=poor|
-|errorfactor|(double)|2.0|Tuning parameter for color reduction. Must be greater than 1.0|
-|maxcolors|(int)|0|Desired maximum number of colors in the palette. Zero implies no maximum, and palette fitting will be fully adaptive|
-|truecolor|(bool)|false|Set to avoid color reduction completely|
+| Name        | Type     | Default value | Description                                                                                                          |
+| ----------- | -------- | ------------- | -------------------------------------------------------------------------------------------------------------------- |
+| quality     | (double) | 10            | The PNG compression level. 10=good, 20=poor                                                                          |
+| errorfactor | (double) | 2.0           | Tuning parameter for color reduction. Must be greater than 1.0                                                       |
+| maxcolors   | (int)    | 0             | Desired maximum number of colors in the palette. Zero implies no maximum, and palette fitting will be fully adaptive |
+| truecolor   | (bool)   | false         | Set to avoid color reduction completely                                                                              |
 
 ### Product level attributes
 
@@ -197,16 +205,16 @@ The product level is the highest structural level used in the product configurat
 The table below contains a list of attributes that can be defined for the product. 
 
 <pre><b>Product </b></pre>
-|Name|Type|Default value|Description|
-|----|----|-------------|-----------|
-|svg_tmpl|(string)|config:templates|The <a href="http://ctpp.havoc.ru/en/">CTPP2</a> template to be used for generating the SVG image. The default template is selected automatically based on the selected image format.|
-|qid|(string)|-|An identifier for the product. Usually this can be left empty.|
-|width|(int)|projection.xsize|The width of the SVG image. If the product contains only one view with no transformations, the default value will be taken from the Product projection xsize variable.|
-|height|(int)|projection.ysize|The height of the SVG image. If the product contains only one view with no transformations, the default value will be taken from the Product projection ysize variable.|
-|title|(string)|-|The title of the generated SVG image.|
-|attributes|_Attributes_|-|The SVG image attributes for the product level &lt;g&gt;...&lt;/g&gt; group.|
-|defs|_Defs_|-|The SVG image header definitions such as styles, symbols, paths not to be drawn directly etc. This information is defined as the Defs structure, which is described in the next section.|
-|views|_[View]_|-|An array of the View structures used in the SVG image. Usually a product has only one View structure which shares the projection defined on the product level. |
+| Name       | Type         | Default value    | Description                                                                                                                                                                              |
+| ---------- | ------------ | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| svg_tmpl   | (string)     | config:templates | The <a href="http://ctpp.havoc.ru/en/">CTPP2</a> template to be used for generating the SVG image. The default template is selected automatically based on the selected image format.    |
+| qid        | (string)     | -                | An identifier for the product. Usually this can be left empty.                                                                                                                           |
+| width      | (int)        | projection.xsize | The width of the SVG image. If the product contains only one view with no transformations, the default value will be taken from the Product projection xsize variable.                   |
+| height     | (int)        | projection.ysize | The height of the SVG image. If the product contains only one view with no transformations, the default value will be taken from the Product projection ysize variable.                  |
+| title      | (string)     | -                | The title of the generated SVG image.                                                                                                                                                    |
+| attributes | _Attributes_ | -                | The SVG image attributes for the product level &lt;g&gt;...&lt;/g&gt; group.                                                                                                             |
+| defs       | _Defs_       | -                | The SVG image header definitions such as styles, symbols, paths not to be drawn directly etc. This information is defined as the Defs structure, which is described in the next section. |
+| views      | _[View]_     | -                | An array of the View structures used in the SVG image. Usually a product has only one View structure which shares the projection defined on the product level.                           |
 
 
 ### Views
@@ -216,11 +224,11 @@ A product can contain several views that are merged together into single image /
 The table below contains a list of attributes that can be defined in the _View_ structure. 
 
 <pre><b>View</b></pre>
-|Name|Type|Default value|Description|
-|----|----|-------------|-----------|
-|qid|(string)|-|An identifier for the view. Normally something simple such as "view1" or "v1".|
-|attributes|_Attributes_|-|The SVG attributes for the View level <g>...</g> group.|
-|layers|_[Layer]_|-|An array of the _Layer_ structures needed in order to construct the view.|
+| Name       | Type         | Default value | Description                                                                    |
+| ---------- | ------------ | ------------- | ------------------------------------------------------------------------------ |
+| qid        | (string)     | -             | An identifier for the view. Normally something simple such as "view1" or "v1". |
+| attributes | _Attributes_ | -             | The SVG attributes for the View level <g>...</g> group.                        |
+| layers     | _[Layer]_    | -             | An array of the _Layer_ structures needed in order to construct the view.      |
 
 
 ### Layers
@@ -356,11 +364,11 @@ The table below shows  a simple example on the usage of  the  map layer.
 The table below contains a list of attributes that can be defined for the map layer in addition to the common layer attributes.
 
 <pre><b>MapLayer</b></pre>
-|Name | Type |Default value| Description|
-|-----|------|-------------|------------|
-|map  |Map   | -           |The Map structure|
-|precision|double  | 1.0   |Precision of SVG coordinates|
-|styles|[MapStyles]|-|Optional regional styling based on forecast values|
+| Name      | Type        | Default value | Description                                        |
+| --------- | ----------- | ------------- | -------------------------------------------------- |
+| map       | Map         | -             | The Map structure                                  |
+| precision | double      | 1.0           | Precision of SVG coordinates                       |
+| styles    | [MapStyles] | -             | Optional regional styling based on forecast values |
 
 #### LocationLayer
 
@@ -428,13 +436,13 @@ The table below shows  a simple example on the usage of  the location layer.
 The table below contains a list of attributes that can be defined for the location layer in addition to the common layer attributes.
 
 <pre><b>LocationLayer</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|keyword|string|-|The geonames keyword.|
-|mindistance|double|30|Minimum distance between location symbols.|
-|countries|(string) or string|-|Allowed country isocodes.|
-|symbol|(string)|-|Default symbol.|
-|symbols|[AttributeSelection] or {string:[AttributeSelection]}|-|Symbol selection based on population, or a map from feature codes to symbol selection.|
+| Name        | Type                                                  | Default value | Description                                                                            |
+| ----------- | ----------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
+| keyword     | string                                                | -             | The geonames keyword.                                                                  |
+| mindistance | double                                                | 30            | Minimum distance between location symbols.                                             |
+| countries   | (string) or string                                    | -             | Allowed country isocodes.                                                              |
+| symbol      | (string)                                              | -             | Default symbol.                                                                        |
+| symbols     | [AttributeSelection] or {string:[AttributeSelection]} | -             | Symbol selection based on population, or a map from feature codes to symbol selection. |
 
 #### IsobandLayer
 
@@ -569,7 +577,9 @@ The table below contains a list of attributes that can be defined for the isoban
 <tr><td>smoother</td><td><i>Smoother</i></td><td>-</td><td colspan="2">Smoother settings for the 2D grid data.</tr>
 <tr><td>sampling</td><td><i>Sampling<i></td><td>-</td><td colspan="2">Sampling settings for the 2D grid data.</tr>
 <tr><td>extrapolation</td><td><i>int</i></td><td>0</td><td colspan="2">How many grid cells to extrapolate data into regions with unknown values</tr>
-<tr><td>minarea</td><td><i>double</i></td><td>-</td><td colspan="2">Mimimum area for polygons in km^2, including holes</tr>
+<tr><td>minarea</td><td><i>double</i></td><td>-</td><td colspan="2">Mimimum area for polygons, including holes</tr>
+<tr><td>areaunits</td><td><i>(string)</i></td><td>km^2</td><td colspan="2">Units for minarea setting. km^2 or px^2</tr>
+<tr><td>isofilter</td><td><i>Isofilter</i></td><td>-</td><td>Lowpass filter for isolines/isobands. Preferable to smoother settings when data resolution is high.</td></tr>
 <tr><td>heatmap</td><td><i>Heatmap</i></td><td>-</td><td colspan="2">Heatmap settings.</tr>
 <tr><td>inside</td><td><i>Map</i></td><td>-</td><td colspan="2">Intersect isoband with the map</tr>
 <tr><td>outsider</td><td><i>Map</i></td><td>-</td><td colspan="2">Substract map from isoband.</tr>
@@ -643,28 +653,29 @@ The table below contains a list of attributes that can be defined for the isolin
 
 
 <pre><b>IsolineLayer</b></pre>
-Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|parameter|(string)|-|The parameter name for the isolines.|
-|level|(double)|-|The querydata level value. By default the first level is used.|
-|interpolation|linear|(string)|linear or logarithmic|
-|isolines|[Isoline]|-|An array of Isoline structures or set of parameters which define how array of Isoline structures are generated (see. isolines-attribute below)|
-|autoqid|(string)|-|Pattern for generating a qid for each isoline, for example "temperature_{}"|
-|autoclass|(string)|-|Pattern for generating a class for each isoline, for example "Temperature_{}"|
-|precision|(double)|1.0|Precision of SVG coordinates.|
-|unit_conversion|(string)|-|Name of desired unit conversion. Unit conversions are listed in the configuration file.|
-|multiplier|(double)|1.0|A multiplier for valid data values for unit conversion purposes.|
-|offset|(double)|0.0|An offset for valid data values for unit conversion purposes.|
-|smoother|_Smoother_|-|Smoother settings for the 2D grid data.|
-|sampling|_Sampling_|-|Sampling settings for the 2D grid data.|
-|extrapolation|int|0|How many grid cells to extrapolate data into regions with unknown values.|
-|minarea|double|-|Minimum area for closed linestrings in km^2.|
-|inside|_Map_|-|Intersect isoband with a map|
-|outside|_Map_|-|Substract map from isoband|
-|intersect|_[Intersect]_ or _Intersect_|-|Alternate isoband(s) with which to intersect.|
-|validate|bool|false|True if the geometries are to be validated (slow, for debugging purposes)|
-|strict|bool|false|In strict mode invalid geometries cause an error. Extra information will be dumped to the journal and attached to the thrown exception|
-|desliver|bool|false|True if sliver polygons are to be removed|
+| Name            | Type                         | Default value | Description                                                                                                                                    |
+| --------------- | ---------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| parameter       | (string)                     | -             | The parameter name for the isolines.                                                                                                           |
+| level           | (double)                     | -             | The querydata level value. By default the first level is used.                                                                                 |
+| interpolation   | linear                       | (string)      | linear or logarithmic                                                                                                                          |
+| isolines        | [Isoline]                    | -             | An array of Isoline structures or set of parameters which define how array of Isoline structures are generated (see. isolines-attribute below) |
+| autoqid         | (string)                     | -             | Pattern for generating a qid for each isoline, for example "temperature_{}"                                                                    |
+| autoclass       | (string)                     | -             | Pattern for generating a class for each isoline, for example "Temperature_{}"                                                                  |
+| precision       | (double)                     | 1.0           | Precision of SVG coordinates.                                                                                                                  |
+| unit_conversion | (string)                     | -             | Name of desired unit conversion. Unit conversions are listed in the configuration file.                                                        |
+| multiplier      | (double)                     | 1.0           | A multiplier for valid data values for unit conversion purposes.                                                                               |
+| offset          | (double)                     | 0.0           | An offset for valid data values for unit conversion purposes.                                                                                  |
+| smoother        | _Smoother_                   | -             | Smoother settings for the 2D grid data.                                                                                                        |
+| sampling        | _Sampling_                   | -             | Sampling settings for the 2D grid data.                                                                                                        |
+| extrapolation   | int                          | 0             | How many grid cells to extrapolate data into regions with unknown values.                                                                      |
+| minarea         | double                       | -             | Minimum area for closed linestrings in km^2.                                                                                                   |
+|areaunits        | (string)                     | km^2          | Units for minarea setting. km^2 or px^2|
+| inside          | _Map_                        | -             | Intersect isoband with a map                                                                                                                   |
+| outside         | _Map_                        | -             | Substract map from isoband                                                                                                                     |
+| intersect       | _[Intersect]_ or _Intersect_ | -             | Alternate isoband(s) with which to intersect.                                                                                                  |
+| validate        | bool                         | false         | True if the geometries are to be validated (slow, for debugging purposes)                                                                      |
+| strict          | bool                         | false         | In strict mode invalid geometries cause an error. Extra information will be dumped to the journal and attached to the thrown exception         |
+| desliver        | bool                         | false         | True if sliver polygons are to be removed                                                                                                      |
 
 In automatic qid/class generation "." will be replaced by ",", since "." is reserved for JSON path definitions.
 
@@ -741,13 +752,13 @@ Example:
 
 2) Define set of parameters which are used to generate Isoline structures. The following parameters must be defined:
 
-Name|Type|Description|Note|Example|
-|-----|-----|----------- |------|-------|
-|qidprefix|string|Prefix of isoline layer id.|optional, default value is 'isoline_'|qidprefix="pressure_isoline_"|
-|startvalue|int/double|Value of first Isoline.||startvalue=900|
-|endvalue|int/double|Value of last Isoline||endvalue=1100|
-|interval|int/double|The interval between two successive Isolines.||interval=10|
-|except|int/double or array of ints/doubles|The interval is not shown if it is divisible by except value(s) (modulo-operator)|optional|except=5 or except=[3,5]|
+| Name       | Type                                | Description                                                                       | Note                                  | Example                       |
+| ---------- | ----------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------- | ----------------------------- |
+| qidprefix  | string                              | Prefix of isoline layer id.                                                       | optional, default value is 'isoline_' | qidprefix="pressure_isoline_" |
+| startvalue | int/double                          | Value of first Isoline.                                                           |                                       | startvalue=900                |
+| endvalue   | int/double                          | Value of last Isoline                                                             |                                       | endvalue=1100                 |
+| interval   | int/double                          | The interval between two successive Isolines.                                     |                                       | interval=10                   |
+| except     | int/double or array of ints/doubles | The interval is not shown if it is divisible by except value(s) (modulo-operator) | optional                              | except=5 or except=[3,5]      |
 
 Example:
 
@@ -800,21 +811,21 @@ The isolabel layer is derived from the isoline layer, and thus inherits all its 
 It is also possible to refer to the isolines that would be generated by an isoband layer, or to list to generate isovalues explicitly without referring to another layer.
 
 <pre><b>IsolabelLayer</b></pre>
-Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|label|Label|-|Label settings including the orientation|
-|angles|[double]|[0,-45,45,180]|Orientations in which local maxima are searched for suitable label positions.|
-|upright|bool|false|Optionally turn labels upright if their angle is outside -90...90|
-|max_angle|double|60|Allow label angles only in range -60...60|
-|min_isoline_length|double|150|Minimum length of the isoline in pixels for placing any labels|
-|min_distance_other|double|20|Minimum distance to labels on isolines with another value|
-|min_distance_same|double|50|Minimum distance to labels on isolines with the same value|
-|min_distance_same|double|200|Minimum distance to labels on the same isoline segment|
-|max_curvature|double|90|Maximum local curvature change at the label position|
-|stencil_size|int|5|Search N adjacent points when looking for extrema and calculating the local curvature.|
-|isovalues|[double]|-|Array of isovalue to be used.|
-|isobands|[Isoband]|-|Array of isoband structures. All potential values will be extracted and inserted to the isovalues array.|
-|isolines|[Isoline]|-|Array of isoline structures. All values will be extracted and inserted to the isovalues array.|
+| Name               | Type      | Default value  | Description                                                                                              |
+| ------------------ | --------- | -------------- | -------------------------------------------------------------------------------------------------------- |
+| label              | Label     | -              | Label settings including the orientation                                                                 |
+| angles             | [double]  | [0,-45,45,180] | Orientations in which local maxima are searched for suitable label positions.                            |
+| upright            | bool      | false          | Optionally turn labels upright if their angle is outside -90...90                                        |
+| max_angle          | double    | 60             | Allow label angles only in range -60...60                                                                |
+| min_isoline_length | double    | 150            | Minimum length of the isoline in pixels for placing any labels                                           |
+| min_distance_other | double    | 20             | Minimum distance to labels on isolines with another value                                                |
+| min_distance_same  | double    | 50             | Minimum distance to labels on isolines with the same value                                               |
+| min_distance_same  | double    | 200            | Minimum distance to labels on the same isoline segment                                                   |
+| max_curvature      | double    | 90             | Maximum local curvature change at the label position                                                     |
+| stencil_size       | int       | 5              | Search N adjacent points when looking for extrema and calculating the local curvature.                   |
+| isovalues          | [double]  | -              | Array of isovalue to be used.                                                                            |
+| isobands           | [Isoband] | -              | Array of isoband structures. All potential values will be extracted and inserted to the isovalues array. |
+| isolines           | [Isoline] | -              | Array of isoline structures. All values will be extracted and inserted to the isovalues array.           |
 
 The isovalues parameter may also be a JSON object with start, stop and step (default=1) doubles.
 
@@ -896,37 +907,37 @@ The table below shows a simple example  on the usage of   the symbol layer.
 The table below contains a list of attributes that can be defined for the symbol layer in addition to the common layer attributes.
 
 <pre><b>SymbolLayer </b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|parameter|(string)|-|The parameter for the symbols.|
-|unit_conversion|(string)|-|Name of desired unit conversion. Unit conversions are listed in the configuration file.|
-|multiplier|(double)|1.0|A multiplier for valid data values for unit conversion purposes.|
-|offset|(double)|0.0|An offset for valid data for unit conversion purposes.|
-|level|(double)|-|The querydata level value. By default the first level is used.|
-|positions|_Positions_|-|The positions for the symbols.|
-|minvalues|int|0|Minimum required number of valid values (or return error response)|
-|maxdistance|double|5|Maximum distance for a station to be accepted close enough to the position.|
-|dx|(int)|-|Common positional adjustment for all symbols.|
-|dy|(int)|-|Common positional adjustment for all symbols.|
-|scale|(double)|-|Scale factor for the symbols.|
-|symbol|(string)|-|The default symbol. This is mostly useful for marking all the positions with a single symbol.|
-|symbols|_[AttributeSelection]_|-|The symbols for different data values.|
-|mindistance|int|-|Minimum distance in pixels between symbols.|
-|priority|string or integer array|-|Priority order of symbols.|
-|rendering_order|string|"normal"|Rendering order of the symbol is normal or reverse with respect to priority|
+| Name            | Type                    | Default value | Description                                                                                   |
+| --------------- | ----------------------- | ------------- | --------------------------------------------------------------------------------------------- |
+| parameter       | (string)                | -             | The parameter for the symbols.                                                                |
+| unit_conversion | (string)                | -             | Name of desired unit conversion. Unit conversions are listed in the configuration file.       |
+| multiplier      | (double)                | 1.0           | A multiplier for valid data values for unit conversion purposes.                              |
+| offset          | (double)                | 0.0           | An offset for valid data for unit conversion purposes.                                        |
+| level           | (double)                | -             | The querydata level value. By default the first level is used.                                |
+| positions       | _Positions_             | -             | The positions for the symbols.                                                                |
+| minvalues       | int                     | 0             | Minimum required number of valid values (or return error response)                            |
+| maxdistance     | double                  | 5             | Maximum distance for a station to be accepted close enough to the position.                   |
+| dx              | (int)                   | -             | Common positional adjustment for all symbols.                                                 |
+| dy              | (int)                   | -             | Common positional adjustment for all symbols.                                                 |
+| scale           | (double)                | -             | Scale factor for the symbols.                                                                 |
+| symbol          | (string)                | -             | The default symbol. This is mostly useful for marking all the positions with a single symbol. |
+| symbols         | _[AttributeSelection]_  | -             | The symbols for different data values.                                                        |
+| mindistance     | int                     | -             | Minimum distance in pixels between symbols.                                                   |
+| priority        | string or integer array | -             | Priority order of symbols.                                                                    |
+| rendering_order | string                  | "normal"      | Rendering order of the symbol is normal or reverse with respect to priority                   |
 
 Note that assigning a proper scale for symbols with CSS or SVG attributes alone  is difficult. Using the scale-attribute eases the  scaling of the symbols.
 
 ##### mindistance and priority
 
 <pre><b>Allowed priority values</b></pre>
-|Value|Description|
-|-----|----------- |
-|min|Symbols with smallest value are drawn first.|
-|max|Symbols with biggest value are drawn first.|
-|extrema|Symbols with biggest mean deviation drawn first.|
-|none|Symbols are treated equally, there is no priority order.|
-|[83,82,81]|Symbols with values 83,82,81 are drawn first in the order given, the rest have no priority order.|
+| Value      | Description                                                                                       |
+| ---------- | ------------------------------------------------------------------------------------------------- |
+| min        | Symbols with smallest value are drawn first.                                                      |
+| max        | Symbols with biggest value are drawn first.                                                       |
+| extrema    | Symbols with biggest mean deviation drawn first.                                                  |
+| none       | Symbols are treated equally, there is no priority order.                                          |
+| [83,82,81] | Symbols with values 83,82,81 are drawn first in the order given, the rest have no priority order. |
 
 Symbols are drawn on the map starting from the highest priority. If there already is a symbol nearby on the map (mindistance parameter), the symbol is not shown. Regarding mindistance and priority parameters the same logic is applied in Arrow-, Number- and CloudCeilingLayers.
 
@@ -999,33 +1010,33 @@ The table below shows a simple example  on the usage of   the arrow layer.
 The table below contains a list of attributes that can be defined for the arrow layer in addition to the common layer attributes. 
 
 <pre><b>ArrowLayer </b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|direction|(string)|-|The parameter name for the arrow direction.|
-|speed|(string)|-|The parameter name for speed, if one is needed.|
-|u|(string)|-|The parameter name for the U-component of the speed vector.|
-|v|(string)|-|The parameter name for the V-component of the speed vector.|
-|fixeddirection|(double)|-|Fixed direction value for testing purposes.|
-|fixedspeed|(double)|-|Fixed speed value for testing purposes.|
-|level|(double)|-|The querydata level value. By default the first level is used.|
-|symbol|(string)|-|The default symbol for the arrows. May be overridden in the arrows-definitions. The special value "windbarb" has not yet been implemented.|
-|scale|(double)|-|Scale factor for the symbols|
-|unit_conversion|(string)|-|Name of desired unit conversion. Unit conversions are listed in the configuration file.|
-|multiplier|(double)|-|Multiplier for the speed parameter|
-|offset|(double)|-|Offset for the speed parameter|
-|minrotationspeed|(double)|-|Minimum required speed for the arrow to be rotated at all|
-|dx|(int)|-|Common positional adjustment for all arrows.|
-|dy|(int)|-|Common positional adjustment for all arrows.|
-|southflop|boolean|false|Set to true if the arrow symbol should be flipped horizontally in the southern hemisphere (used for wind barbs).|
-|northflop|boolean|false|Set to true if the arrow symbol should be flipped horizontally in the northern hemisphere.|
-|flip|boolean|false|Set to true if the arrow symbol should always be flipped vertically.|
-|positions|_Positions_|-|Arrow position generation definitions.|
-|minvalues|int|0|Minimum required number of valid values (or return error response)|
-|maxdistance|double|5|Maximum distance for a station to be accepted close enough to the position.|
-|arrows|_[AttributeSelection]_|-|SVG attribute selection for speed dependent arrows.|
-|mindistance|int|-|Minimum distance in pixels between arrows.|
-|rendering_order|string|"normal"|Rendering order of the symbol is normal or reverse with respect to priority|
-|priority|string or integer array|-|Priority order of arrows.|
+| Name             | Type                    | Default value | Description                                                                                                                                |
+| ---------------- | ----------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| direction        | (string)                | -             | The parameter name for the arrow direction.                                                                                                |
+| speed            | (string)                | -             | The parameter name for speed, if one is needed.                                                                                            |
+| u                | (string)                | -             | The parameter name for the U-component of the speed vector.                                                                                |
+| v                | (string)                | -             | The parameter name for the V-component of the speed vector.                                                                                |
+| fixeddirection   | (double)                | -             | Fixed direction value for testing purposes.                                                                                                |
+| fixedspeed       | (double)                | -             | Fixed speed value for testing purposes.                                                                                                    |
+| level            | (double)                | -             | The querydata level value. By default the first level is used.                                                                             |
+| symbol           | (string)                | -             | The default symbol for the arrows. May be overridden in the arrows-definitions. The special value "windbarb" has not yet been implemented. |
+| scale            | (double)                | -             | Scale factor for the symbols                                                                                                               |
+| unit_conversion  | (string)                | -             | Name of desired unit conversion. Unit conversions are listed in the configuration file.                                                    |
+| multiplier       | (double)                | -             | Multiplier for the speed parameter                                                                                                         |
+| offset           | (double)                | -             | Offset for the speed parameter                                                                                                             |
+| minrotationspeed | (double)                | -             | Minimum required speed for the arrow to be rotated at all                                                                                  |
+| dx               | (int)                   | -             | Common positional adjustment for all arrows.                                                                                               |
+| dy               | (int)                   | -             | Common positional adjustment for all arrows.                                                                                               |
+| southflop        | boolean                 | false         | Set to true if the arrow symbol should be flipped horizontally in the southern hemisphere (used for wind barbs).                           |
+| northflop        | boolean                 | false         | Set to true if the arrow symbol should be flipped horizontally in the northern hemisphere.                                                 |
+| flip             | boolean                 | false         | Set to true if the arrow symbol should always be flipped vertically.                                                                       |
+| positions        | _Positions_             | -             | Arrow position generation definitions.                                                                                                     |
+| minvalues        | int                     | 0             | Minimum required number of valid values (or return error response)                                                                         |
+| maxdistance      | double                  | 5             | Maximum distance for a station to be accepted close enough to the position.                                                                |
+| arrows           | _[AttributeSelection]_  | -             | SVG attribute selection for speed dependent arrows.                                                                                        |
+| mindistance      | int                     | -             | Minimum distance in pixels between arrows.                                                                                                 |
+| rendering_order  | string                  | "normal"      | Rendering order of the symbol is normal or reverse with respect to priority                                                                |
+| priority         | string or integer array | -             | Priority order of arrows.                                                                                                                  |
 
 Note: A direction parameter is sufficient to draw arrows. An additional speed component may be defined to style the arrows depending on the speed. Both U- and V-components must be specified if used, but these cannot be used simultaneously with the direction and speed parameters.
 
@@ -1092,21 +1103,21 @@ The table below shows a simple example  on the usage of   the number layer.
 The table below contains a list of attributes that can be defined for the number layer in addition to the common layer attributes.
 
 <pre><b>NumberLayer </b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|parameter|(string)|-|The parameter name for the numbers.|
-|level|(double)|-|The querydata level value. By default the first level is used.|
-|positions|_Positions_|-|The positions for the numbers.|
-|minvalues|int|0|Minimum required number of valid values (or return error response)|
-|maxdistance|double|5|Maximum distance for a station to be accepted close enough to the position.|
-|label|_Label_|-|Label definitions.|
-|numbers|_[AttributeSelection]_|-|SVG attribute selection based on the value of the label.|
-|unit_conversion|(string)|-|Name of desired unit conversion. Unit conversions are listed in the configuration file.|
-|multiplier|(double)|1.0|A multiplier for valid data values for unit conversion purposes.|
-|offset|(double)|0.0|An offset for valid data for unit conversion purposes.|
-|mindistance|int|-|Minimum distance in pixels between numbers.|
-|rendering_order|string|"normal"|Rendering order of the symbol is normal or reverse with respect to priority|
-|priority|string or integer array|-|Priority order of numbers.|
+| Name            | Type                    | Default value | Description                                                                             |
+| --------------- | ----------------------- | ------------- | --------------------------------------------------------------------------------------- |
+| parameter       | (string)                | -             | The parameter name for the numbers.                                                     |
+| level           | (double)                | -             | The querydata level value. By default the first level is used.                          |
+| positions       | _Positions_             | -             | The positions for the numbers.                                                          |
+| minvalues       | int                     | 0             | Minimum required number of valid values (or return error response)                      |
+| maxdistance     | double                  | 5             | Maximum distance for a station to be accepted close enough to the position.             |
+| label           | _Label_                 | -             | Label definitions.                                                                      |
+| numbers         | _[AttributeSelection]_  | -             | SVG attribute selection based on the value of the label.                                |
+| unit_conversion | (string)                | -             | Name of desired unit conversion. Unit conversions are listed in the configuration file. |
+| multiplier      | (double)                | 1.0           | A multiplier for valid data values for unit conversion purposes.                        |
+| offset          | (double)                | 0.0           | An offset for valid data for unit conversion purposes.                                  |
+| mindistance     | int                     | -             | Minimum distance in pixels between numbers.                                             |
+| rendering_order | string                  | "normal"      | Rendering order of the symbol is normal or reverse with respect to priority             |
+| priority        | string or integer array | -             | Priority order of numbers.                                                              |
 
 #### NullLayer
 
@@ -1242,17 +1253,17 @@ The streamline layer is used for visualizing directional parameters such as wind
 The table below contains a list of attributes that can be defined for the streamline layer in addition to the common layer attributes.
 
 <pre><b>StreamLayer </b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|parameter|(string)|-|The parameter name for the direction.|
-|u|(string)|-|Alternative U-component parameter for the direction.|
-|v|(string)|-|Alternative V-component parameter for the direction.|
-|min_length|(int)|5|Minimum generated stream line length in pixels.|
-|max_length|(int)|2048|Maximum generated stream line length in pixels.|
-|line_length|(int)|32|Length of a stream line segment in pixels.|
-|xstep|(int)|20|Streamline start point step size in x-direction.|
-|ystep|(int)|20|Streamline start point step size in y-direction.|
-|precision|(double)|1.0|Precision of the generated coordinates.|
+| Name        | Type     | Default value | Description                                          |
+| ----------- | -------- | ------------- | ---------------------------------------------------- |
+| parameter   | (string) | -             | The parameter name for the direction.                |
+| u           | (string) | -             | Alternative U-component parameter for the direction. |
+| v           | (string) | -             | Alternative V-component parameter for the direction. |
+| min_length  | (int)    | 5             | Minimum generated stream line length in pixels.      |
+| max_length  | (int)    | 2048          | Maximum generated stream line length in pixels.      |
+| line_length | (int)    | 32            | Length of a stream line segment in pixels.           |
+| xstep       | (int)    | 20            | Streamline start point step size in x-direction.     |
+| ystep       | (int)    | 20            | Streamline start point step size in y-direction.     |
+| precision   | (double) | 1.0           | Precision of the generated coordinates.              |
 
 
 #### LegendLayer
@@ -1335,15 +1346,15 @@ The table below shows a simple example  on the usage of   the legend layer.
 The table below contains a list of attributes that can be defined for the legend layer in addition to the common layer attributes.
 
 <pre><b>LegendLayer </b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|-----------|
-|x|int|10|X-coordinate of the first legend symbol.|
-|y|int|10|Y-coordinate of the first legend symbol.|
-|dx|int|0|X-coordinate offset to the next legend symbol.|
-|dy|int|20|Y-coordinate offset to the next legend symbol.|
-|symbols|_LegendSymbols_|-|Symbols to be used in the legend.|
-|labels|_LegendLabels_|-|Label definitions for the legend.|
-|isobands|_[Isoband]_|-|An array if _Isobands_ structures from which to generate the legend|
+| Name     | Type            | Default value | Description                                                         |
+| -------- | --------------- | ------------- | ------------------------------------------------------------------- |
+| x        | int             | 10            | X-coordinate of the first legend symbol.                            |
+| y        | int             | 10            | Y-coordinate of the first legend symbol.                            |
+| dx       | int             | 0             | X-coordinate offset to the next legend symbol.                      |
+| dy       | int             | 20            | Y-coordinate offset to the next legend symbol.                      |
+| symbols  | _LegendSymbols_ | -             | Symbols to be used in the legend.                                   |
+| labels   | _LegendLabels_  | -             | Label definitions for the legend.                                   |
+| isobands | _[Isoband]_     | -             | An array if _Isobands_ structures from which to generate the legend |
 
 
 #### TimeLayer
@@ -1394,15 +1405,15 @@ The table below shows a simple example  on the usage of   the time layer.
 The table below contains a list of attributes that can be defined for the time layer in addition to the common layer attributes.
 
 <pre><b>TimeLayer </b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|timezone|(string)|UTC|The time zone for the timestamp.|
-|prefix|(string)|-|Prefix for the full string to be printed.|
-|suffix|(string)|-|Suffix for the full string to be printed.|
-|timestamp|(string) or [string]|validtime|Type of the timestamp. Valid values are "validtime", "origintime", "starttime", "endtime" and "wallclock". "now" is an alias for "wallclock". A duration can be shown instead by selecting one of "time_offset", "interval_start", "interval_end", "leadtime", "leadhour", an ISO time duration string or a signed integer with a time indicator suffix|
-|format|(string) or [string]|"%Y-%m-%d %H:%M"|Format of the timestamp. See Boost time formatting flags.|
-|x|(int)|-|X-position of the timestamp. If the value is negative then the position is counted from the right edge.|
-|y|(int)|-|Y-position of the timestamp. If the value is negative then the position is counted from the bottom edge.|
+| Name      | Type                 | Default value    | Description                                                                                                                                                                                                                                                                                                                                             |
+| --------- | -------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| timezone  | (string)             | UTC              | The time zone for the timestamp.                                                                                                                                                                                                                                                                                                                        |
+| prefix    | (string)             | -                | Prefix for the full string to be printed.                                                                                                                                                                                                                                                                                                               |
+| suffix    | (string)             | -                | Suffix for the full string to be printed.                                                                                                                                                                                                                                                                                                               |
+| timestamp | (string) or [string] | validtime        | Type of the timestamp. Valid values are "validtime", "origintime", "starttime", "endtime" and "wallclock". "now" is an alias for "wallclock". A duration can be shown instead by selecting one of "time_offset", "interval_start", "interval_end", "leadtime", "leadhour", an ISO time duration string or a signed integer with a time indicator suffix |
+| format    | (string) or [string] | "%Y-%m-%d %H:%M" | Format of the timestamp. See Boost time formatting flags.                                                                                                                                                                                                                                                                                               |
+| x         | (int)                | -                | X-position of the timestamp. If the value is negative then the position is counted from the right edge.                                                                                                                                                                                                                                                 |
+| y         | (int)                | -                | Y-position of the timestamp. If the value is negative then the position is counted from the bottom edge.                                                                                                                                                                                                                                                |
 
 Both timestamp and format may be arrays, in which case their lengths should match. The formatted strings will be concatenated to the prefix and the suffix will be appended to the result. This feature can be used to print strings such as origintime + leadtime, starttime - endtime etc.
 
@@ -1490,10 +1501,10 @@ The table below shows a simple example  on the usage of   the tag layer.
 The table below contains a list of attributes that can be defined for the tag layer in addition to the common layer attributes.
 
 <pre><b>TagLayer </b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|tag|(string)|-|The SVG tag to generate, for example "text" or "g".|
-|cdata|(string)|-|The CDATA section for the tag. This should not be used if the tag is stand-alone.|
+| Name  | Type     | Default value | Description                                                                       |
+| ----- | -------- | ------------- | --------------------------------------------------------------------------------- |
+| tag   | (string) | -             | The SVG tag to generate, for example "text" or "g".                               |
+| cdata | (string) | -             | The CDATA section for the tag. This should not be used if the tag is stand-alone. |
 
 #### WKTLayer
 
@@ -1586,12 +1597,12 @@ The table below shows a simple example  on the usage of   the WKT layer.
 The table below contains a list of attributes that can be defined for the WKT layer in addition to the common layer attributes.
 
 <pre><b>WKTLayer </b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|wkt|(string)|-|The Well Known Text for the geometry.|
-|precision|(double)|1.0|Precision of printed SVG coordinates.|
-|resolution|(double)|-|The segmentation resolution in kilometers.|
-|relativeresolution|(double)|-|The segmentation resolution in pixels.|
+| Name               | Type     | Default value | Description                                |
+| ------------------ | -------- | ------------- | ------------------------------------------ |
+| wkt                | (string) | -             | The Well Known Text for the geometry.      |
+| precision          | (double) | 1.0           | Precision of printed SVG coordinates.      |
+| resolution         | (double) | -             | The segmentation resolution in kilometers. |
+| relativeresolution | (double) | -             | The segmentation resolution in pixels.     |
 
 By default the WKT is not segmented into smaller linesegments. However, if the CRS of the image is not geographic, long straight lines in the WKT will not curve as expected unless the WKT is segmented into multiple parts in a resolution suitable for the output image. In the example above the black WKT is not segmented at all, the red one is segmented to 100 km resolution, and the green one to 20 pixel resolution.
 
@@ -1657,10 +1668,10 @@ The table below shows a simple example  on the usage of   the translation layer.
 The table below contains a list of attributes that can be defined for the translation layer in addition to the common layer attributes.
 
 <pre><b>TranslationLayer </b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|tag|string|"text"|The SVG tag to be used.|
-|translations|{string:string}|-|The text to be selected for the active language. The language code is the key, the value is the translation.|
+| Name         | Type            | Default value | Description                                                                                                  |
+| ------------ | --------------- | ------------- | ------------------------------------------------------------------------------------------------------------ |
+| tag          | string          | "text"        | The SVG tag to be used.                                                                                      |
+| translations | {string:string} | -             | The text to be selected for the active language. The language code is the key, the value is the translation. |
 
 
 #### WindRoseLayer
@@ -1744,14 +1755,14 @@ The table below shows a simple example  on the usage of   the windrose layer.
 The table below contains a list of attributes that can be defined for the windrose layer in addition to the common layer attributes.
 
 <pre><b>WindRoseLayer </b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|timezone|string|"UTC"|The time zone used for the time settings.|
-|starttimeoffset|int|0|Defines the (backward) time period with respect to the valid time of the actual time set for the layer.|
-|endtimeoffset|int|24|Defines the (backward) time period with respect to the valid time of the actual time set for the layer.|
-|windrose|_WindRose_|-|Wind rose appearance definitions.|
-|stations|_[Station]_|-|The stations to use for the observations.|
-|observations|_[Observation]_|-|The observations to be used.|
+| Name            | Type            | Default value | Description                                                                                             |
+| --------------- | --------------- | ------------- | ------------------------------------------------------------------------------------------------------- |
+| timezone        | string          | "UTC"         | The time zone used for the time settings.                                                               |
+| starttimeoffset | int             | 0             | Defines the (backward) time period with respect to the valid time of the actual time set for the layer. |
+| endtimeoffset   | int             | 24            | Defines the (backward) time period with respect to the valid time of the actual time set for the layer. |
+| windrose        | _WindRose_      | -             | Wind rose appearance definitions.                                                                       |
+| stations        | _[Station]_     | -             | The stations to use for the observations.                                                               |
+| observations    | _[Observation]_ | -             | The observations to be used.                                                                            |
 
 
 
@@ -1818,17 +1829,17 @@ The table below shows a simple example  on the usage of   the PostGIS layer.
 The table below contains a list of attributes that can be defined for the PostGIS layer in addition to the common layer attributes.
 
 <pre><b>PostGISLayer </b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|lines|boolean|false|Should the data be handled as if it would be stroked or filled. This will alter how the data will be clipped to the view - polygons will either be preserved for filling or cut into polylines for stroking.|
-|pgname|(string)|-|Identifier of PostGIS database. The GIS-engine configuration file defines connection info (host,database,username,password) for pgname.|
-|schema|(string)|-|The database schema used in the database query.|
-|table|(string)|-|The database table used in the database query.|
-|geometry_column|(string)|-|The name of the geometry column in the specified schema.table|
-|time_column|string|-|The name of the time column in the specified schema.table.|
-|time_truncate|string|-||
-|filters|_Filters_|-||
-|precision|(double)|1.0|Precision of printed SVG coordinates.|
+| Name            | Type      | Default value | Description                                                                                                                                                                                                  |
+| --------------- | --------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| lines           | boolean   | false         | Should the data be handled as if it would be stroked or filled. This will alter how the data will be clipped to the view - polygons will either be preserved for filling or cut into polylines for stroking. |
+| pgname          | (string)  | -             | Identifier of PostGIS database. The GIS-engine configuration file defines connection info (host,database,username,password) for pgname.                                                                      |
+| schema          | (string)  | -             | The database schema used in the database query.                                                                                                                                                              |
+| table           | (string)  | -             | The database table used in the database query.                                                                                                                                                               |
+| geometry_column | (string)  | -             | The name of the geometry column in the specified schema.table                                                                                                                                                |
+| time_column     | string    | -             | The name of the time column in the specified schema.table.                                                                                                                                                   |
+| time_truncate   | string    | -             |                                                                                                                                                                                                              |
+| filters         | _Filters_ | -             |                                                                                                                                                                                                              |
+| precision       | (double)  | 1.0           | Precision of printed SVG coordinates.                                                                                                                                                                        |
 
 
 
@@ -2029,13 +2040,13 @@ The table below contains a list of attributes that can be defined for finnish ro
 
 <pre><b>FinnishRoadObservationLayer</b></pre>
 
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|positions|_Positions_|-|The positions for the symbols.|
-|label|_Label_|-|Label definitions.|
-|maxdistance|double|5|Maximum distance for a station to be accepted close enough to the position.|
-|mindistance|int|-|Minimum distance in pixels between symbols.|
-|missing|int|106|Synop-font symbol for missing observations. Zero disables showing missing values.|
+| Name        | Type        | Default value | Description                                                                       |
+| ----------- | ----------- | ------------- | --------------------------------------------------------------------------------- |
+| positions   | _Positions_ | -             | The positions for the symbols.                                                    |
+| label       | _Label_     | -             | Label definitions.                                                                |
+| maxdistance | double      | 5             | Maximum distance for a station to be accepted close enough to the position.       |
+| mindistance | int         | -             | Minimum distance in pixels between symbols.                                       |
+| missing     | int         | 106           | Synop-font symbol for missing observations. Zero disables showing missing values. |
 
 
 ##### Algorithm to deduce weather condition symbol
@@ -2322,13 +2333,13 @@ The table below contains a list of attributes that can be defined for present we
 
 <pre><b>PresentWeatherObservationLayer</b></pre>
 
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|positions|_Positions_|-|The positions for the symbols.|
-|label|_Label_|-|Label definitions.|
-|maxdistance|double|5|Maximum distance for a station to be accepted close enough to the position.|
-|mindistance|int|-|Minimum distance in pixels between symbols.|
-|missing|int|106|Synop-font symbol for missing observations. Zero disables showing missing values.|
+| Name        | Type        | Default value | Description                                                                       |
+| ----------- | ----------- | ------------- | --------------------------------------------------------------------------------- |
+| positions   | _Positions_ | -             | The positions for the symbols.                                                    |
+| label       | _Label_     | -             | Label definitions.                                                                |
+| maxdistance | double      | 5             | Maximum distance for a station to be accepted close enough to the position.       |
+| mindistance | int         | -             | Minimum distance in pixels between symbols.                                       |
+| missing     | int         | 106           | Synop-font symbol for missing observations. Zero disables showing missing values. |
 
 ##### Algorithm to deduce present weather symbol
 
@@ -2539,13 +2550,13 @@ The _AttributeSelection_ structure encapsulates an _Attributes_ structure, a sym
 The table below contains a list of attributes that can be defined in the AttributeSelection structure.
 
 <pre><b>AttributeSelection </b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|value|(double)|-|The value to be matched.|
-|lolimit|(double)|-|The lower limit to be matched.|
-|hilimit|(double)|-|The upper limit to be matched.|
-|symbol|(string)|-|The symbol name to be associated with the match.|
-|attributes|_Attributes_|-|The SVG attributes associated with the match.|
+| Name       | Type         | Default value | Description                                      |
+| ---------- | ------------ | ------------- | ------------------------------------------------ |
+| value      | (double)     | -             | The value to be matched.                         |
+| lolimit    | (double)     | -             | The lower limit to be matched.                   |
+| hilimit    | (double)     | -             | The upper limit to be matched.                   |
+| symbol     | (string)     | -             | The symbol name to be associated with the match. |
+| attributes | _Attributes_ | -             | The SVG attributes associated with the match.    |
 
 <b>EXAMPLE: Selecting a precipitation symbol according to a value: </b>
 
@@ -2635,19 +2646,19 @@ The Projection structure can be used to define a projection for a product, views
 The table below contains a list of attributes that can be defined in the Projection structure. 
 
 <pre><b>Projection</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|crs|(string)|-|The projection description as understood by GDAL, or "data" implying the projection of the selected producer.|
-|bboxcrs|(string)|-|The projection description for defining the bounding box coordinates only. If not defined, the bounding box coordinates are expected to be in the same projection as the image.|
-|xsize|(int)|-|Width of the projection in pixels.|
-|ysize|(int)|-|Height of the projection in pixels.|
-|x1|(double)|-|Bottom left X-coordinate of the bounding box.|
-|y1|(double)|-|Bottom left Y-coordinate of the bounding box.|
-|x2|(double)|-|Top right X-coordinate of the bounding box.|
-|y2|(double)|-|Top right Y-coordinate of the bounding box.|
-|cx|(double)|-|Center coordinate of the bounding box.|
-|cy|(double)|-|Center coordinate of the bounding box.|
-|resolution|(double)|-|The resolution of the image in kilometers. A resolution of 2.5 means one pixel is approximately 2.5 kilometers in the projection used. The description is not valid if the projection is geographic (latlon) instead of geometric.|
+| Name       | Type     | Default value | Description                                                                                                                                                                                                                        |
+| ---------- | -------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| crs        | (string) | -             | The projection description as understood by GDAL, or "data" implying the projection of the selected producer.                                                                                                                      |
+| bboxcrs    | (string) | -             | The projection description for defining the bounding box coordinates only. If not defined, the bounding box coordinates are expected to be in the same projection as the image.                                                    |
+| xsize      | (int)    | -             | Width of the projection in pixels.                                                                                                                                                                                                 |
+| ysize      | (int)    | -             | Height of the projection in pixels.                                                                                                                                                                                                |
+| x1         | (double) | -             | Bottom left X-coordinate of the bounding box.                                                                                                                                                                                      |
+| y1         | (double) | -             | Bottom left Y-coordinate of the bounding box.                                                                                                                                                                                      |
+| x2         | (double) | -             | Top right X-coordinate of the bounding box.                                                                                                                                                                                        |
+| y2         | (double) | -             | Top right Y-coordinate of the bounding box.                                                                                                                                                                                        |
+| cx         | (double) | -             | Center coordinate of the bounding box.                                                                                                                                                                                             |
+| cy         | (double) | -             | Center coordinate of the bounding box.                                                                                                                                                                                             |
+| resolution | (double) | -             | The resolution of the image in kilometers. A resolution of 2.5 means one pixel is approximately 2.5 kilometers in the projection used. The description is not valid if the projection is geographic (latlon) instead of geometric. |
 
 The bounding box of the projection can be defined in the following ways:
 
@@ -2684,11 +2695,11 @@ The _Defs_ structure is used  to define header information such as styles, symbo
 The table below contains a list of attributes used in this structure.
 
 <pre><b>Defs</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|qid|(string)|-|An identifier for the definitions section. Usually this can be left empty, unless the query string is to be used, or some times when path data is generated into the definitions section to avoid conflicting names with the paths in the body section.|
-|styles|{string:string:string}|-|A map from CSS class names such as ".Temperature" to a map of attribute name-value pairs. This is mostly useful when testing different styles before exporting the settings to a CSS file, or if the style is so particular to the current product that it is not desirable to put it into a shared external file.|
-|layers|_[Layer]_|-|An array of Layer structures which generate content to the header only. Many layers change their behavior when defined in the definitions section. For example, normally the IsobandLayer module would generate both path data into the definitions section and a respective use-tag into the body section. In the definitions section no use-tag will be generated.|
+| Name   | Type                   | Default value | Description                                                                                                                                                                                                                                                                                                                                                          |
+| ------ | ---------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| qid    | (string)               | -             | An identifier for the definitions section. Usually this can be left empty, unless the query string is to be used, or some times when path data is generated into the definitions section to avoid conflicting names with the paths in the body section.                                                                                                              |
+| styles | {string:string:string} | -             | A map from CSS class names such as ".Temperature" to a map of attribute name-value pairs. This is mostly useful when testing different styles before exporting the settings to a CSS file, or if the style is so particular to the current product that it is not desirable to put it into a shared external file.                                                   |
+| layers | _[Layer]_              | -             | An array of Layer structures which generate content to the header only. Many layers change their behavior when defined in the definitions section. For example, normally the IsobandLayer module would generate both path data into the definitions section and a respective use-tag into the body section. In the definitions section no use-tag will be generated. |
 
 
 #### Smoother structure
@@ -2698,22 +2709,22 @@ Currently only the  2D Savitzky-Golay filters are supported. The filter is good 
 The table below contains a list of attributes used in this structure.
 
 <pre><b>Smoother</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|size|int|-|Size of the filter. Implies 2*N+1 adjacent points are used in the weighted mean.|
-|degree|int|-|Degree of the polynomial to fit to the data.|
+| Name   | Type | Default value | Description                                                                      |
+| ------ | ---- | ------------- | -------------------------------------------------------------------------------- |
+| size   | int  | -             | Size of the filter. Implies 2*N+1 adjacent points are used in the weighted mean. |
+| degree | int  | -             | Degree of the polynomial to fit to the data.                                     |
 
 
 ### Sampling structure
 
 Data to be contoured may be interpolated to another resolution. When used for temperature and topographic data is available, this may be used to provide higher apparent resolution by applying a lapse rate correction to the temperature. The desired resolution may be absolute or relative to the image resolution.
 
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|resolution|double|-|Desired resolution in kilometers per pixel|
-|relativeresolution|double|-|Desired relative resolution with respect to the resolution of the image resolution.|
-|minresolution|double|-|Minimum resolution for applying sampling|
-|maxresolution|double|-|Maximum resolution for applying sampling|
+| Name               | Type   | Default value | Description                                                                         |
+| ------------------ | ------ | ------------- | ----------------------------------------------------------------------------------- |
+| resolution         | double | -             | Desired resolution in kilometers per pixel                                          |
+| relativeresolution | double | -             | Desired relative resolution with respect to the resolution of the image resolution. |
+| minresolution      | double | -             | Minimum resolution for applying sampling                                            |
+| maxresolution      | double | -             | Maximum resolution for applying sampling                                            |
 
 #### Heatmap structure
 
@@ -2722,12 +2733,12 @@ Heatmap settings for "flash" producer's data. Currently parameter's (e.g. peak p
 The table below contains a list of attributes used in this structure.
 
 <pre><b>Heatmap</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|resolution|int|-|Heatmap resolution.|
-|radius|int|-|Stamp radius.|
-|kernel|(string)|exp|Stamp generation: linear, sqrt or exp (standard deviation).|
-|deviation|(double)|10.0|Deviation for exp.|
+| Name       | Type     | Default value | Description                                                 |
+| ---------- | -------- | ------------- | ----------------------------------------------------------- |
+| resolution | int      | -             | Heatmap resolution.                                         |
+| radius     | int      | -             | Stamp radius.                                               |
+| kernel     | (string) | exp           | Stamp generation: linear, sqrt or exp (standard deviation). |
+| deviation  | (double) | 10.0          | Deviation for exp.                                          |
 
 
 #### Isoband structure
@@ -2735,14 +2746,14 @@ The table below contains a list of attributes used in this structure.
 The table below contains a list of attributes used in the Isoband structure.
 
 <pre><b>Isoband</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|qid|string|-|The identifier for the isoband.|
-|lolimit|(double)|-|The low limit value for the isoband. If omitted, -infinity is implied.|
-|hilimit|(double)|-|The high limit value for the isoband. If omitted, +infinity is implied.|
-|value|(double)|-|Set both low and high limits for the isoband. Usually used for discrete data with nearest neighbour interpolation.|
-|attributes|_Attributes_|-|The SVG attributes for the isoband. Usually only a class is given.|
-|label|(_Text_)|-|Translatable label for the isoband.|
+| Name       | Type         | Default value | Description                                                                                                        |
+| ---------- | ------------ | ------------- | ------------------------------------------------------------------------------------------------------------------ |
+| qid        | string       | -             | The identifier for the isoband.                                                                                    |
+| lolimit    | (double)     | -             | The low limit value for the isoband. If omitted, -infinity is implied.                                             |
+| hilimit    | (double)     | -             | The high limit value for the isoband. If omitted, +infinity is implied.                                            |
+| value      | (double)     | -             | Set both low and high limits for the isoband. Usually used for discrete data with nearest neighbour interpolation. |
+| attributes | _Attributes_ | -             | The SVG attributes for the isoband. Usually only a class is given.                                                 |
+| label      | (_Text_)     | -             | Translatable label for the isoband.                                                                                |
 
 If both lolimit and hilimit are omitted, the missing values isoband will be generated.
 
@@ -2751,17 +2762,17 @@ If both lolimit and hilimit are omitted, the missing values isoband will be gene
 The table below contains a list of attributes used in the Intersection structure.
 
 <pre><b>Intersection</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|lolimit|(double)|-|The low limit value for the intersecting isoband. If omitted, -infinity is implied.|
-|hilimit|(double)|-|The high limit value for the intersecting isoband. If omitted, +infinity is implied.|
-|level|(double)|-|The level from which to pick the intersecting isoband.|
-|producer|(string)|-|The model from which to take the isoband, if not the same model as in the isoband itself.|
-|parameter|string|-|The parameter whose isoband is used to intersect the actual isoband.|
-|smoother|(Smoother)|-|How to smoothen the intersecting isoband.|
-|unit_conversion|(string)|-|Name of desired unit conversion. Unit conversions are listed in the configuration file.|
-|multiplier|(double)|1.0|A multiplier for valid data values for unit conversion purposes.|
-|offset|(double)|0.0|An offset for valid data for unit conversion purposes.|
+| Name            | Type       | Default value | Description                                                                               |
+| --------------- | ---------- | ------------- | ----------------------------------------------------------------------------------------- |
+| lolimit         | (double)   | -             | The low limit value for the intersecting isoband. If omitted, -infinity is implied.       |
+| hilimit         | (double)   | -             | The high limit value for the intersecting isoband. If omitted, +infinity is implied.      |
+| level           | (double)   | -             | The level from which to pick the intersecting isoband.                                    |
+| producer        | (string)   | -             | The model from which to take the isoband, if not the same model as in the isoband itself. |
+| parameter       | string     | -             | The parameter whose isoband is used to intersect the actual isoband.                      |
+| smoother        | (Smoother) | -             | How to smoothen the intersecting isoband.                                                 |
+| unit_conversion | (string)   | -             | Name of desired unit conversion. Unit conversions are listed in the configuration file.   |
+| multiplier      | (double)   | 1.0           | A multiplier for valid data values for unit conversion purposes.                          |
+| offset          | (double)   | 0.0           | An offset for valid data for unit conversion purposes.                                    |
 
 Note: Intersections work also for observation data. Instead of logical geometry operations the values are merely compared to the limits. For example, one may choose to render observed wind speed only when temperature is below zero.
 
@@ -2770,13 +2781,25 @@ Note: Intersections work also for observation data. Instead of logical geometry 
 The table below contains a list of attributes used in the Isoline structure.
 
 <pre><b>Isoline</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|qid|string|-|The identifier for the isoline.|
-|value|double|-|The isoline value. The default is NaN, which means calculating the line between missing and valid data.|
-|attributes|_Attributes_|-|The SVG attributes for the isoline. Often omitted completely, and the _IsolineLayer_ |label|(_Text_)|-|Translatable label for the isoline.|
-level attributes are used instead commonly for all isolines.|
+| Name                                                         | Type         | Default value | Description                                                                                             |
+| ------------------------------------------------------------ | ------------ | ------------- | ------------------------------------------------------------------------------------------------------- |
+| qid                                                          | string       | -             | The identifier for the isoline.                                                                         |
+| value                                                        | double       | -             | The isoline value. The default is NaN, which means calculating the line between missing and valid data. |
+| attributes                                                   | _Attributes_ | -             | The SVG attributes for the isoline. Often omitted completely, and the _IsolineLayer_                    | label | (_Text_) | - | Translatable label for the isoline. |
+| level attributes are used instead commonly for all isolines. |
 
+#### Isofilter structure
+
+Isolines and isobands can be smoothened by postprocessing the calculated polygons with a low pass filter.
+
+<pre><b>Isofilter</b></pre>
+| Name       | Type    | Default value | Description                                                                                                |
+| ---------- | ------- | ------------- | ---------------------------------------------------------------------------------------------------------- |
+| type       | string  | none          | Smoother type: none, average, linear, gaussian, tukey. Gaussian filtering seems to work best.              |
+| radius     | double  | 0             | Filtering distance along the isoline in pixels. Zero disables filtering. Depending on the roughness of the data good values tend to be in the range 10-30 pixels. |
+| iterations | integer | 1             | Number of passes. Zero disables filtering. Using 2-3 passes tends to remove small details better than simply increasing the radius. |
+
+Note that zooming into an image reduces the amount of smoothing since the set radius now covers a smaller area of the original data, and hence original details can be seen better.
 
 #### LegendLabels structure
 
@@ -2809,25 +2832,25 @@ The table below contains a list of attributes used in the LegendLabels structure
 The table below contains a list of attributes used in the LegendSymbols structure.
 
 <pre><b>LegendSymbols</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|css|(string)|-|External CSS file to be included for the symbols.|
-|symbol|(string)|-|The default symbol for the legend.|
-|start|(string)|-|The optional symbol to be used for the start of the legend.|
-|end|(string)|-|The optional symbol to be used for the end of the legend.|
-|missing|(string)|-|The optional symbol to be used for missing values. If not defined, no symbol will be generated for the isoband nor the respective label, meaning no translation will be necessary for the "MISSING" label.|
-|attributes|Attributes|-|The extra SVG attributes for the symbol beyond the ones defined in the isoband.|
+| Name       | Type       | Default value | Description                                                                                                                                                                                                |
+| ---------- | ---------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| css        | (string)   | -             | External CSS file to be included for the symbols.                                                                                                                                                          |
+| symbol     | (string)   | -             | The default symbol for the legend.                                                                                                                                                                         |
+| start      | (string)   | -             | The optional symbol to be used for the start of the legend.                                                                                                                                                |
+| end        | (string)   | -             | The optional symbol to be used for the end of the legend.                                                                                                                                                  |
+| missing    | (string)   | -             | The optional symbol to be used for missing values. If not defined, no symbol will be generated for the isoband nor the respective label, meaning no translation will be necessary for the "MISSING" label. |
+| attributes | Attributes | -             | The extra SVG attributes for the symbol beyond the ones defined in the isoband.                                                                                                                            |
 
 #### Text structure
 
 The text structure is used to define translatable strings with optional styling attributes. The structure may for example be used to define fixed labels for isobands.
 
 <pre><b>Text</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|(any string)|string|-|Translation for specific language|
-|default|(string)|-|The default translation|
-|attributes|Attributes|-|The extra SVG attributes for the translation|
+| Name         | Type       | Default value | Description                                  |
+| ------------ | ---------- | ------------- | -------------------------------------------- |
+| (any string) | string     | -             | Translation for specific language            |
+| default      | (string)   | -             | The default translation                      |
+| attributes   | Attributes | -             | The extra SVG attributes for the translation |
 
 #### Map structure
 
@@ -2835,14 +2858,14 @@ The table below contains a list of attributes used in the Map structure.
 
 
 <pre><b>Map</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|schema|string|""|The database schema.|
-|table|string|""|The database table.|
-|where|string|""|The optional where clause for the PostGIS query. For example "cntryname='Finland'"|
-|lines|boolean|false|Should the data be handled as if it would be stroked or filled. This will alter how the data will be clipped to the view - polygons will either be preserved for filling or cut into polylines for stroking.|
-|minarea|double|-|Minimum area for polygons in square kilometers. For Finland useful values are around 10-100.|
-|mindistance|double|-|Feature generalization tolerance in kilometers. For Finland useful values are around 1-4.|
+| Name        | Type    | Default value | Description                                                                                                                                                                                                  |
+| ----------- | ------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| schema      | string  | ""            | The database schema.                                                                                                                                                                                         |
+| table       | string  | ""            | The database table.                                                                                                                                                                                          |
+| where       | string  | ""            | The optional where clause for the PostGIS query. For example "cntryname='Finland'"                                                                                                                           |
+| lines       | boolean | false         | Should the data be handled as if it would be stroked or filled. This will alter how the data will be clipped to the view - polygons will either be preserved for filling or cut into polylines for stroking. |
+| minarea     | double  | -             | Minimum area for polygons in square kilometers. For Finland useful values are around 10-100.                                                                                                                 |
+| mindistance | double  | -             | Feature generalization tolerance in kilometers. For Finland useful values are around 1-4.                                                                                                                    |
 
 #### MapStyles structure
 
@@ -2851,12 +2874,12 @@ Individual map features can be styled based on a forecast value assigned for the
 The table below contains a list of attributes used in the MapStyles structure.
 
 <pre><b>MapStyles</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|field|string|""|The database field used to identify the region (region number or name).|
-|parameter|string|""|The forecast parameter name.|
-|features|[MapFeature]|-|Optional mapping from field names to station numbers. If omitted, database field must be a region number|
-|attributes|AttributeSelection|-|Mapping from forecast value to presentation attributes|
+| Name       | Type               | Default value | Description                                                                                              |
+| ---------- | ------------------ | ------------- | -------------------------------------------------------------------------------------------------------- |
+| field      | string             | ""            | The database field used to identify the region (region number or name).                                  |
+| parameter  | string             | ""            | The forecast parameter name.                                                                             |
+| features   | [MapFeature]       | -             | Optional mapping from field names to station numbers. If omitted, database field must be a region number |
+| attributes | AttributeSelection | -             | Mapping from forecast value to presentation attributes                                                   |
 
 Note: Optional FeatureMapping attributes override common MapLayer attributes, and attributes based on the actual data value override both.
 
@@ -2867,11 +2890,11 @@ Feature mappings are used to make database shape names to region numbers to be p
 The table below contains a list of attributes used in the MapFeature structure.
 
 <pre><b>MapFeature</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|value|string|-|The value of the database field to be mapped to a region number, typically the name of the region|
-|number|int|-|The region number to be picked from the forecast.|
-|attributes|[Attributes]|-|Region specific presentation attributes|
+| Name       | Type         | Default value | Description                                                                                       |
+| ---------- | ------------ | ------------- | ------------------------------------------------------------------------------------------------- |
+| value      | string       | -             | The value of the database field to be mapped to a region number, typically the name of the region |
+| number     | int          | -             | The region number to be picked from the forecast.                                                 |
+| attributes | [Attributes] | -             | Region specific presentation attributes                                                           |
 
 Note: Optional FeatureMapping attributes override common MapLayer attributes, and attributes based on the actual data value override both.
 
@@ -2931,25 +2954,25 @@ The table below contains a list of attributes used in the Label structure.
 
 
 <pre><b>Label</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|dx|int|0|X-coordinate offset of the number from the actual coordinate.|
-|dy|int|0|Y-coordinate offset of the number from the actual coordinate.|
-|unit_conversion|(string)|-|Name of desired unit conversion. Unit conversions are listed in the configuration file.|
-|multiplier|double|1|Multiplier for the number for unit conversion purposes.|
-|offset|double|0|Offset for the number for unit conversion purposes.|
-|missing|string|"-"|Label for missing values. No text is output if the value is empty.|
-|precision|int|0|Number of decimals.|
-|multiple|double|0|If nonzero, round value to multiple of set value|
-|rounding|string|"tonearest"|Rounding mode: tonearest, towardzero, upward or downward.|
-|locale|string|-|Locale for printing the number, for example fi_FI.|
-|prefix|string|""|Prefix for the number.|
-|suffix|string|""|Suffix for the number, usually for units.|
-|plusprefix|string|""|Prefix replacing the sign for non-negative numbers.|
-|minusprefix|string|""|Prefix replacing the sign for negative numbers.|
-|orientation|string|"horizontal"|Horizontal or auto. Currently used only by IsolabelLayer|
-|padding_char|string|-|Padding character for numbers.|
-|padding_length|int|-|Padding length for numbers. Padding is done if length of number is shorter than padding_length.|
+| Name            | Type     | Default value | Description                                                                                     |
+| --------------- | -------- | ------------- | ----------------------------------------------------------------------------------------------- |
+| dx              | int      | 0             | X-coordinate offset of the number from the actual coordinate.                                   |
+| dy              | int      | 0             | Y-coordinate offset of the number from the actual coordinate.                                   |
+| unit_conversion | (string) | -             | Name of desired unit conversion. Unit conversions are listed in the configuration file.         |
+| multiplier      | double   | 1             | Multiplier for the number for unit conversion purposes.                                         |
+| offset          | double   | 0             | Offset for the number for unit conversion purposes.                                             |
+| missing         | string   | "-"           | Label for missing values. No text is output if the value is empty.                              |
+| precision       | int      | 0             | Number of decimals.                                                                             |
+| multiple        | double   | 0             | If nonzero, round value to multiple of set value                                                |
+| rounding        | string   | "tonearest"   | Rounding mode: tonearest, towardzero, upward or downward.                                       |
+| locale          | string   | -             | Locale for printing the number, for example fi_FI.                                              |
+| prefix          | string   | ""            | Prefix for the number.                                                                          |
+| suffix          | string   | ""            | Suffix for the number, usually for units.                                                       |
+| plusprefix      | string   | ""            | Prefix replacing the sign for non-negative numbers.                                             |
+| minusprefix     | string   | ""            | Prefix replacing the sign for negative numbers.                                                 |
+| orientation     | string   | "horizontal"  | Horizontal or auto. Currently used only by IsolabelLayer                                        |
+| padding_char    | string   | -             | Padding character for numbers.                                                                  |
+| padding_length  | int      | -             | Padding length for numbers. Padding is done if length of number is shorter than padding_length. |
 
 
 Note: signed prefixes are needed in aviation charts where negative temperatures are typically shown without a sign. In the exceptional case where positive numbers are actually needed, they are displayed using a plus sign or a "PS"-prefix.
@@ -2959,12 +2982,12 @@ Note: signed prefixes are needed in aviation charts where negative temperatures 
 The table below contains a list of attributes used in the Location structure.
 
 <pre><b>Location</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|longitude|double|-|The longitude of the coordinate.|
-|latitude|double|-|The latitude of the coordinate.|
-|dx|int|-|X-coordinate adjustment for the location.|
-|dy|int|-|Y-coordinate adjustment for the location.|
+| Name      | Type   | Default value | Description                               |
+| --------- | ------ | ------------- | ----------------------------------------- |
+| longitude | double | -             | The longitude of the coordinate.          |
+| latitude  | double | -             | The latitude of the coordinate.           |
+| dx        | int    | -             | X-coordinate adjustment for the location. |
+| dy        | int    | -             | Y-coordinate adjustment for the location. |
 
 
 #### Observation structure
@@ -2972,11 +2995,11 @@ The table below contains a list of attributes used in the Location structure.
 The table below contains a list of attributes used in the Observation structure.
 
 <pre><b>Observation</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|parameter|string|-|The parameter name of the observation.|
-|label|_Label_|-|How to render the observed value.|
-|attributes|_Attributes_|-|SVG rendering attributes for the generated text.|
+| Name       | Type         | Default value | Description                                      |
+| ---------- | ------------ | ------------- | ------------------------------------------------ |
+| parameter  | string       | -             | The parameter name of the observation.           |
+| label      | _Label_      | -             | How to render the observed value.                |
+| attributes | _Attributes_ | -             | SVG rendering attributes for the generated text. |
 
 
 
@@ -2986,19 +3009,19 @@ The table below contains a list of attributes used in the Observation structure.
 The table below contains a list of attributes used in the Station structure.
 
 <pre><b>Station</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|fmisid|(int)|-|fmisid of the station.|
-|wmo|(int)|-|wmo-number of the station.|
-|lpnn|(int)|-|LPNN-number of the station (Finland only)|
-|geoid|(int)|-|geonames database identifier for the station|
-|longitude|(double)|-|The longitude for the location of the wind rose. Default is to place the wind rose at the station coordinates.|
-|latitude|(double)|-|The latitude for the location of the wind rose. Default is to place the wind rose at the station coordinates.|
-|symbol|(string)|-|An optional symbol to be placed at the station.|
-|attributes|Attributes|-|The SVG rendering attributes for the symbol|
-|title|Title|-|The title for the wind rose.|
-|dx|(int)|-|Station specific positional adjustment for the symbol attached to the station.|
-|dy|(int)|-|Station specific positional adjustment for the symbol attached to the station.|
+| Name       | Type       | Default value | Description                                                                                                    |
+| ---------- | ---------- | ------------- | -------------------------------------------------------------------------------------------------------------- |
+| fmisid     | (int)      | -             | fmisid of the station.                                                                                         |
+| wmo        | (int)      | -             | wmo-number of the station.                                                                                     |
+| lpnn       | (int)      | -             | LPNN-number of the station (Finland only)                                                                      |
+| geoid      | (int)      | -             | geonames database identifier for the station                                                                   |
+| longitude  | (double)   | -             | The longitude for the location of the wind rose. Default is to place the wind rose at the station coordinates. |
+| latitude   | (double)   | -             | The latitude for the location of the wind rose. Default is to place the wind rose at the station coordinates.  |
+| symbol     | (string)   | -             | An optional symbol to be placed at the station.                                                                |
+| attributes | Attributes | -             | The SVG rendering attributes for the symbol                                                                    |
+| title      | Title      | -             | The title for the wind rose.                                                                                   |
+| dx         | (int)      | -             | Station specific positional adjustment for the symbol attached to the station.                                 |
+| dy         | (int)      | -             | Station specific positional adjustment for the symbol attached to the station.                                 |
 
 
 #### WindRose structure
@@ -3006,16 +3029,16 @@ The table below contains a list of attributes used in the Station structure.
 The table below contains a list of attributes used in the WindRose structure.
 
 <pre><b>WindRose</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|minpercentage|int|0|Required percentage of observations for a sector to be shown. This can be used to prevent very small sectors which are irrelevant.|
-|radius|int|20|The radius of the wind rose.|
-|sectors|int|8|The number of wind direction sectors in the wind rose|
-|symbol|(string)|-|The symbol for the wind rose, usually either a circle or omitted.|
-|attributes|_Attributes_|-|The SVG attributes for the symbol.|
-|connector|_(Connector)_|-|How to connect the wind rose to the location of the station.|
-|parameter|(string)|-|The wind direction parameter name.|
-|limits|_AttributeSelection_|-|SVG styling based on the average wind speed in the sector.|
+| Name          | Type                 | Default value | Description                                                                                                                        |
+| ------------- | -------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| minpercentage | int                  | 0             | Required percentage of observations for a sector to be shown. This can be used to prevent very small sectors which are irrelevant. |
+| radius        | int                  | 20            | The radius of the wind rose.                                                                                                       |
+| sectors       | int                  | 8             | The number of wind direction sectors in the wind rose                                                                              |
+| symbol        | (string)             | -             | The symbol for the wind rose, usually either a circle or omitted.                                                                  |
+| attributes    | _Attributes_         | -             | The SVG attributes for the symbol.                                                                                                 |
+| connector     | _(Connector)_        | -             | How to connect the wind rose to the location of the station.                                                                       |
+| parameter     | (string)             | -             | The wind direction parameter name.                                                                                                 |
+| limits        | _AttributeSelection_ | -             | SVG styling based on the average wind speed in the sector.                                                                         |
 
 
 #### Connector structure
@@ -3023,11 +3046,11 @@ The table below contains a list of attributes used in the WindRose structure.
 The table below contains a list of attributes used in the Connector structure.
 
 <pre><b>Connector</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|startoffset|int|0|Start offset for the connecting line. Usually zero, unless a symbol is placed at the station.|
-|endoffset|int|0|End offset for the connecting line. Usually matches the radius of the wind rose.|
-|attributes|_Attributes_|-|The SVG rendering attributes for the connecting line.|
+| Name        | Type         | Default value | Description                                                                                   |
+| ----------- | ------------ | ------------- | --------------------------------------------------------------------------------------------- |
+| startoffset | int          | 0             | Start offset for the connecting line. Usually zero, unless a symbol is placed at the station. |
+| endoffset   | int          | 0             | End offset for the connecting line. Usually matches the radius of the wind rose.              |
+| attributes  | _Attributes_ | -             | The SVG rendering attributes for the connecting line.                                         |
 
 
 
@@ -3036,11 +3059,11 @@ The table below contains a list of attributes used in the Connector structure.
 The table below contains a list of attributes used in the Filter structure.
 
 <pre><b>Filters</b></pre>
-|Name|Type|Default value|Description|
-|-----|-----|-----------|----------- |
-|where|(string)||WHERE condition to be appended to the database query|
-|attributes|_Attributes_||SVG-attributes for geometry|
-|text_attributes|_Attributes_||SVG-attributes for text|
+| Name            | Type         | Default value | Description                                          |
+| --------------- | ------------ | ------------- | ---------------------------------------------------- |
+| where           | (string)     |               | WHERE condition to be appended to the database query |
+| attributes      | _Attributes_ |               | SVG-attributes for geometry                          |
+| text_attributes | _Attributes_ |               | SVG-attributes for text                              |
 
 
 # Using dynamically created grids
@@ -3122,19 +3145,19 @@ Dynamic grid caculation uses C++ or LUA functions for creating new grids. C++ fu
 A product definition may at the top level include the following settings which directly affect WMS GetCapabilities and GetMap requests:
 
 <pre><b>WMS settings</b></pre>
-|Name|Type|Default value|Description|
-|----|----|-------------|-----------|
-|hidden|(bool)|false|If true the WMS will not appear in GetCapabilities responses but GetMap requests continue to work.|
-|title|_Text_|-|Obligatory title for the WMS layer|
-|name|string|-|Name of the WMS layer. By default the name is deduced from the path of the configuration file.|
-|abstract|(_Text_)|-|Abstract for the layer.|
-|keywords|(list of strings)|-|Keywords for the layer.|
-|opaque|(int)|0|Is the WMS layer opaque.|
-|queryable|(int)|0|Does the layer support GetFeatureInfo requests.|
-|cascaded|(int)|0|How many times the layer has been cascaded.|
-|no_subsets|(int)|0|Can only the full bounding box be requested.|
-|fixed_width|(int)|0|Nonzero implies the size cannot be changed.|
-|fixed_height|(int)|0|Nonzero implies the size cannot be changed|
+| Name         | Type              | Default value | Description                                                                                        |
+| ------------ | ----------------- | ------------- | -------------------------------------------------------------------------------------------------- |
+| hidden       | (bool)            | false         | If true the WMS will not appear in GetCapabilities responses but GetMap requests continue to work. |
+| title        | _Text_            | -             | Obligatory title for the WMS layer                                                                 |
+| name         | string            | -             | Name of the WMS layer. By default the name is deduced from the path of the configuration file.     |
+| abstract     | (_Text_)          | -             | Abstract for the layer.                                                                            |
+| keywords     | (list of strings) | -             | Keywords for the layer.                                                                            |
+| opaque       | (int)             | 0             | Is the WMS layer opaque.                                                                           |
+| queryable    | (int)             | 0             | Does the layer support GetFeatureInfo requests.                                                    |
+| cascaded     | (int)             | 0             | How many times the layer has been cascaded.                                                        |
+| no_subsets   | (int)             | 0             | Can only the full bounding box be requested.                                                       |
+| fixed_width  | (int)             | 0             | Nonzero implies the size cannot be changed.                                                        |
+| fixed_height | (int)             | 0             | Nonzero implies the size cannot be changed                                                         |
 
 ## WMS layer variants
 

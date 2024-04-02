@@ -175,16 +175,17 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
     }
 
     int width = Spine::optional_int(theRequest.getParameter("width"), 1000);
-    if (width < 20 || width > 10000)
-    {
-      throw Fmi::Exception(BCP, "Invalid 'width' value '" + std::to_string(width) + "'!");
-    }
-
     int height = Spine::optional_int(theRequest.getParameter("height"), 1000);
+
+    if (width * height > itsConfig.maxImageSize())
+      throw Fmi::Exception(BCP, "Too large image requested")
+          .addParameter("limit", Fmi::to_string(itsConfig.maxImageSize()));
+
+    if (width < 20 || width > 10000)
+      throw Fmi::Exception(BCP, "Invalid 'width' value '" + Fmi::to_string(width) + "'!");
+
     if (height < 20 || height > 10000)
-    {
-      throw Fmi::Exception(BCP, "Invalid 'height' value '" + std::to_string(height) + "'!");
-    }
+      throw Fmi::Exception(BCP, "Invalid 'height' value '" + Fmi::to_string(height) + "'!");
 
     // Establish debugging related variables
 

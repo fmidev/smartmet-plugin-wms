@@ -18,6 +18,7 @@
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <grid-files/common/GeneralFunctions.h>
+#include <macgyver/Cache.h>
 #include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 #include <spine/Json.h>
@@ -31,6 +32,16 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+// Cache for the latlon bbox corresponding to the clipbox
+
+const int default_cache_size = 10000;
+using BBoxCache = Fmi::Cache::Cache<std::size_t, std::map<std::string, double>>;
+BBoxCache g_bbox_cache(default_cache_size);
+
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize from JSON
@@ -336,11 +347,19 @@ std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
   // Expand world coordinates by the margin settings
   const auto clipbox = getClipBox(theBox);
 
+  // Seek the cache first
+  auto hash = clipbox.hashValue();
+  Fmi::hash_combine(hash, theCRS.hashValue());
+
+  const auto& obj = g_bbox_cache.find(hash);
+  if (obj)
+    return *obj;
+
   // Observations are in WGS84 coordinates
 
   Fmi::CoordinateTransformation transformation(theCRS, "WGS84");
 
-  // Establish the number of samples along each edge. We wish to sample at roughly 5 pixel
+  // Establish the number of samples along direction. We wish to sample at roughly 5 pixel
   // intervals.
 
   const std::size_t npixels = 5;
@@ -353,23 +372,31 @@ std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
   std::size_t wsamples = minsamples;
   std::size_t hsamples = minsamples;
 
-  // Otherwise we need to sample the edges
+  // Otherwise we need to sample the full image since the poles may be inside the image
   if (!theCRS.isGeographic())
   {
     wsamples = std::max(wsamples, w / npixels);
     hsamples = std::max(hsamples, h / npixels);
   }
 
-  // Sample the edges in world coordinates
+  // Sample the image in world coordinates
   std::vector<double> x;
   std::vector<double> y;
 
+  x.reserve(wsamples * hsamples);
+  y.reserve(wsamples * hsamples);
+
+  const double dx = (clipbox.xmax() - clipbox.xmin()) / (wsamples - 1);
+  const double dy = (clipbox.ymax() - clipbox.ymin()) / (hsamples - 1);
+  const double x0 = clipbox.xmin();
+  const double y0 = clipbox.ymin();
+
   for (auto i = 0UL; i < wsamples; i++)
   {
-    auto px = clipbox.xmin() + (clipbox.xmax() - clipbox.xmin()) * i / (wsamples - 1);
+    auto px = x0 + i * dx;
     for (auto j = 0UL; j < hsamples; j++)
     {
-      auto py = clipbox.ymin() + (clipbox.ymax() - clipbox.ymin()) * j / (hsamples - 1);
+      auto py = y0 + j * dy;
       x.push_back(px);
       y.push_back(py);
     }
@@ -411,12 +438,21 @@ std::map<std::string, double> Layer::getClipBoundingBox(const Fmi::Box& theBox,
   if (lon_missing || lat_missing)
     return {};
 
+  // We may miss the poles since the sample step is 5 pixels. Include the poles explicitly when it
+  // seems to be close enough.
+  if (minlat < -89)
+    minlat = -90;
+  if (maxlat > 89)
+    maxlat = 90;
+
   // Build the result in the form wanted by obsengine
   std::map<std::string, double> ret;
   ret["minx"] = minlon;
   ret["maxx"] = maxlon;
   ret["miny"] = minlat;
   ret["maxy"] = maxlat;
+
+  g_bbox_cache.insert(hash, ret);
 
   return ret;
 }

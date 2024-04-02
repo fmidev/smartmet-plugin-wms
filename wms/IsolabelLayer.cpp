@@ -35,7 +35,6 @@ namespace Plugin
 {
 namespace Dali
 {
-
 // Label status
 enum class Status
 {
@@ -227,9 +226,15 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
     auto geoms = IsolineLayer::getIsolines(isovalues, theState);
 
-    // The above call guarantees these have been resolved:
+    // Output image CRS and BBOX
     const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
+
+    // Convert filter pixel distance to metric distance for smoothing
+    filter.bbox(box);
+
+    // Smoothen the isolines
+    filter.apply(geoms, false);
 
     // Project the geometries to pixel coordinates
     for (auto& geomptr : geoms)
@@ -331,7 +336,7 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid);
   }
 }
 
@@ -954,17 +959,16 @@ Candidates remove_bad_candidates(const Candidates& candidates,
  * \brief Approximate distance between labels
  *
  * We calculate the smallest distance between the estimated four corner
- * locations of the label. We ignore the possibility of an overlap, since
- * in that case the estimated distance will be below the set (sane) minimum
- * distance requirements anyway. If the requirements are not sane, you
- * deserve garbage output anyway.
+ * locations of the label.
  */
 // ----------------------------------------------------------------------
 
 double distance(const Candidate& c1, const Candidate& c2)
 {
-  double minimum = 1e10;
+  // Init with center point distance in case of overlap
+  double minimum = std::hypot(c1.x - c2.x, c1.y - c2.y);
 
+  // Then process rotated rectangle corners in case of no overlap
   for (const auto& p1 : c1.corners)
     for (const auto& p2 : c2.corners)
       minimum = std::min(minimum, std::hypot(p1.x - p2.x, p1.y - p2.y));
@@ -1126,22 +1130,23 @@ void assign_label_coordinates(Candidates& candidates)
 {
   const double h = 10 / 2.0;     // half height
   const double w = 4 * 8 / 2.0;  // half width
+  const double rads = M_PI / 180;
 
   for (auto& c : candidates)
   {
     const auto x = c.x;
     const auto y = c.y;
-    const auto a = c.angle * M_PI / 180;
+    const auto a = c.angle * rads;
     const auto cosa = cos(a);
     const auto sina = sin(a);
-    c.corners[0].x = x - w / 2 * cosa - h / 2 * sina;
-    c.corners[0].y = y - w / 2 * sina + h / 2 * cosa;
-    c.corners[1].x = x + w / 2 * cosa - h / 2 * sina;
-    c.corners[1].y = y + w / 2 * sina + h / 2 * cosa;
-    c.corners[2].x = x - w / 2 * cosa + h / 2 * sina;
-    c.corners[2].y = y - w / 2 * sina - h / 2 * cosa;
-    c.corners[3].x = x + w / 2 * cosa + h / 2 * sina;
-    c.corners[3].y = y + w / 2 * sina - h / 2 * cosa;
+    c.corners[0].x = x - w * cosa - h * sina;
+    c.corners[0].y = y - w * sina + h * cosa;
+    c.corners[1].x = x + w * cosa - h * sina;
+    c.corners[1].y = y + w * sina + h * cosa;
+    c.corners[2].x = x - w * cosa + h * sina;
+    c.corners[2].y = y - w * sina - h * cosa;
+    c.corners[3].x = x + w * cosa + h * sina;
+    c.corners[3].y = y + w * sina - h * cosa;
   }
 }
 

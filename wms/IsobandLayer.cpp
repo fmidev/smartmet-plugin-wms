@@ -137,7 +137,8 @@ void IsobandLayer::init(Json::Value& theJson,
 
     JsonTools::remove_double(precision, theJson, "precision");
     JsonTools::remove_double(minarea, theJson, "minarea");
-    JsonTools::remove_string(unit_conversion, theJson, "unit_conversin");
+    JsonTools::remove_string(areaunit, theJson, "areaunit");
+    JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
     JsonTools::remove_double(multiplier, theJson, "multiplier");
     JsonTools::remove_double(offset, theJson, "offset");
 
@@ -163,11 +164,17 @@ void IsobandLayer::init(Json::Value& theJson,
     json = JsonTools::remove(theJson, "sampling");
     sampling.init(json, theConfig);
 
+    json = JsonTools::remove(theJson, "filter");
+    filter.init(json);
+
     json = JsonTools::remove(theJson, "intersect");
     intersections.init(json, theConfig);
 
     json = JsonTools::remove(theJson, "heatmap");
     heatmap.init(json, theConfig);
+
+    if (areaunit != "km^2" && areaunit != "px^2")
+      throw Fmi::Exception(BCP, "Unknown areaunit '" + areaunit + '"');
   }
   catch (...)
   {
@@ -251,7 +258,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 
     NFmiGrid grid(newarea.get(), width, height);
     std::unique_ptr<heatmap_t, void (*)(heatmap_t*)> hm(nullptr, heatmap_free);
-    unsigned radius;
+    unsigned radius = 0;
 
     if (result)
     {
@@ -355,7 +362,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     Fmi::hash_combine(hash, Dali::hash_value(heatmap, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(radius));
 
-    char* tmp;
+    char* tmp = nullptr;
     crs.get()->exportToWkt(&tmp);
     Fmi::hash_combine(hash, Fmi::hash_value(tmp));
     CPLFree(tmp);
@@ -393,6 +400,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!")
+        .addParameter("qid", qid)
         .addParameter("Producer", *producer)
         .addParameter("Parameter", *parameter);
   }
@@ -602,9 +610,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
                                                      std::to_string(*smoother.degree));
 
-    if (minarea)
-      originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(*minarea));
-
     originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
                                                    std::to_string(extrapolation));
 
@@ -639,7 +644,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       {
         if (!val->mValueData.empty())
         {
-          uint c = 0;
           for (const auto& wkb : val->mValueData)
           {
             const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
@@ -647,7 +651,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
             OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
             auto geomPtr = OGRGeometryPtr(geom);
             geoms.push_back(geomPtr);
-            c++;
           }
 #if 0
           int width = 3600; //atoi(query.mAttributeList.getAttributeValue("grid.width"));
@@ -741,6 +744,15 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();
+
+    if (minarea)
+    {
+      auto area = *minarea;
+      if (areaunit == "px^2")
+        area = box.areaFactor() * area;
+
+      originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(area));
+    }
 
     if (wkt == "data")
       return;
@@ -888,7 +900,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," +
                          std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
     if (precision >= 1.0)
-      theGlobals["precision"] = pow(10.0, -(int)precision);
+      theGlobals["precision"] = pow(10.0, -static_cast<int>(precision));
 
     theGlobals["objects"][objectKey] = object_cdt;
 
@@ -1028,10 +1040,11 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     // Calculate the isobands and store them into the template engine
 
-    std::vector<Engine::Contour::Range> limits;
     const auto& contourer = theState.getContourEngine();
+    std::vector<Engine::Contour::Range> limits;
+    limits.reserve(isobands.size());
     for (const Isoband& isoband : isobands)
-      limits.emplace_back(Engine::Contour::Range(isoband.lolimit, isoband.hilimit));
+      limits.emplace_back(isoband.lolimit, isoband.hilimit);
 
     Engine::Contour::Options options(param, valid_time, limits);
     options.level = level;
@@ -1048,6 +1061,11 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       options.transformation(multiplier ? *multiplier : 1.0, offset ? *offset : 0.0);
 
     options.minarea = minarea;
+    if (minarea)
+    {
+      if (areaunit == "px^2")
+        options.minarea = box.areaFactor() * *minarea;
+    }
 
     options.filter_size = smoother.size;
     options.filter_degree = smoother.degree;
@@ -1091,6 +1109,9 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     std::vector<OGRGeometryPtr> geoms =
         contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
+
+    filter.bbox(box);
+    filter.apply(geoms, true);
 
     CTPP::CDT object_cdt;
     std::string objectKey = "isoband:" + *parameter + ":" + qid;
@@ -1224,7 +1245,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," +
                          std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
     if (precision >= 1.0)
-      theGlobals["precision"] = pow(10.0, -(int)precision);
+      theGlobals["precision"] = pow(10.0, -static_cast<int>(precision));
 
     // We created only this one layer
     theLayersCdt.PushBack(group_cdt);
@@ -1279,6 +1300,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(extrapolation));
     Fmi::hash_combine(hash, Fmi::hash_value(precision));
     Fmi::hash_combine(hash, Fmi::hash_value(minarea));
+    Fmi::hash_combine(hash, Fmi::hash_value(areaunit));
     Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
     Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
     Fmi::hash_combine(hash, Fmi::hash_value(offset));
@@ -1286,6 +1308,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_value(inside, theState));
     Fmi::hash_combine(hash, Dali::hash_value(sampling, theState));
     Fmi::hash_combine(hash, Dali::hash_value(intersections, theState));
+    Fmi::hash_combine(hash, filter.hash_value());
     Fmi::hash_combine(hash, Dali::hash_value(heatmap, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(closed_range));
     Fmi::hash_combine(hash, Fmi::hash_value(strict));

@@ -2,6 +2,7 @@
 
 #include "Intersections.h"
 #include "Isoline.h"
+#include "IsolineFilter.h"
 #include "Layer.h"
 #include "Map.h"
 #include "ParameterInfo.h"
@@ -43,6 +44,7 @@ class IsolineLayer : public Layer
   double precision = 1.0;
 
   boost::optional<double> minarea;
+  std::string areaunit = "km^2";  // km^2|px^2
 
   std::string unit_conversion;
   boost::optional<double> multiplier;
@@ -53,6 +55,7 @@ class IsolineLayer : public Layer
 
   Sampling sampling;
   Intersections intersections;
+  IsolineFilter filter;
 
   bool strict = false;
   bool validate = false;

@@ -207,6 +207,7 @@ void IsolineLayer::init(Json::Value& theJson,
     JsonTools::remove_int(extrapolation, theJson, "extrapolation");
     JsonTools::remove_double(precision, theJson, "precision");
     JsonTools::remove_double(minarea, theJson, "minarea");
+    JsonTools::remove_string(areaunit, theJson, "areaunit");
     JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
     JsonTools::remove_double(multiplier, theJson, "multiplier");
     JsonTools::remove_double(offset, theJson, "offset");
@@ -234,6 +235,9 @@ void IsolineLayer::init(Json::Value& theJson,
 
     json = JsonTools::remove(theJson, "intersect");
     intersections.init(json, theConfig);
+
+    json = JsonTools::remove(theJson, "filter");
+    filter.init(json);
   }
   catch (...)
   {
@@ -480,7 +484,15 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
                                                    std::to_string(*smoother.degree));
 
   if (minarea)
+  {
+    const auto& box = projection.getBox();
+
+    auto area = *minarea;
+    if (areaunit == "px^2")
+      area = box.areaFactor() * area;
+
     originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(*minarea));
+  }
 
   originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
                                                  std::to_string(extrapolation));
@@ -684,7 +696,14 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   Engine::Contour::Options options(param, valid_time, isovalues);
   options.level = level;
+
   options.minarea = minarea;
+  if (minarea)
+  {
+    if (areaunit == "px^2")
+      options.minarea = box.areaFactor() * *minarea;
+  }
+
   options.bbox = Fmi::BBox(box);
 
   // Set the requested level
@@ -770,20 +789,25 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     }
 
     std::vector<double> isovalues;
+    isovalues.reserve(isolines.size());
     for (const Isoline& isoline : isolines)
       isovalues.push_back(isoline.value);
 
     auto geoms = getIsolines(isovalues, theState);
 
-    // The above call guarantees these have been resolved:
+    // Output image CRS and BBOX
     const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
 
+    // Convert filter pixel distance to metric distance for smoothing
+    filter.bbox(box);
+
+    // Smoothen the isolines
+    filter.apply(geoms, false);
+
     // Update the globals
 
-    bool topojson = false;
-    if (theState.getType() == "topojson")
-      topojson = true;
+    const bool topojson = (theState.getType() == "topojson");
 
     if (css)
     {
@@ -887,7 +911,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid);
   }
 }
 
@@ -939,6 +963,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_value(inside, theState));
     Fmi::hash_combine(hash, Dali::hash_value(sampling, theState));
     Fmi::hash_combine(hash, Dali::hash_value(intersections, theState));
+    Fmi::hash_combine(hash, filter.hash_value());
     Fmi::hash_combine(hash, Fmi::hash_value(strict));
     Fmi::hash_combine(hash, Fmi::hash_value(validate));
     Fmi::hash_combine(hash, Fmi::hash_value(desliver));

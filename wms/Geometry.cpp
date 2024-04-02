@@ -22,12 +22,12 @@ using CoordinateCounter = std::map<unsigned long long, unsigned long long>;
 
 struct GInfo
 {
-  int precision;
-  double mp;
-  int arcCounter;
-  int coordinateCounter;
-  int globalArcCounter;
-  std::map<std::size_t, uint>* arcHashMap;
+  int precision = 0;
+  double mp = 0;
+  int arcCounter = 0;
+  int coordinateCounter = 0;
+  int globalArcCounter = 0;
+  std::map<std::size_t, uint>* arcHashMap{};
   std::ostringstream arcNumbers;
   std::ostringstream arcCoordinates;
   std::ostringstream pointCoordinates;
@@ -142,8 +142,8 @@ void extractGeometry_lineString(const OGRLineString* lineString, uint /* mode */
     double xx = lineString->getX(0);
     double yy = lineString->getY(0);
 
-    long long xxi = (unsigned long long)(xx * info.mp);
-    long long yyi = (unsigned long long)(yy * info.mp);
+    long long xxi = static_cast<unsigned long long>(xx * info.mp);
+    long long yyi = static_cast<unsigned long long>(yy * info.mp);
 
     arcCoordinates << "[";
     arcCoordinates << "[" << xxi << "," << yyi << "]";
@@ -154,8 +154,8 @@ void extractGeometry_lineString(const OGRLineString* lineString, uint /* mode */
       double x = lineString->getX(t);
       double y = lineString->getY(t);
 
-      long long xi = (unsigned long long)(x * info.mp);
-      long long yi = (unsigned long long)(y * info.mp);
+      long long xi = static_cast<unsigned long long>(x * info.mp);
+      long long yi = static_cast<unsigned long long>(y * info.mp);
 
       long long nx = (xi - xxi);
       long long ny = (yi - yyi);
@@ -174,8 +174,8 @@ void extractGeometry_lineString(const OGRLineString* lineString, uint /* mode */
     xx = lineString->getX(len - 1);
     yy = lineString->getY(len - 1);
 
-    xxi = (long long)(xx * info.mp);
-    yyi = (long long)(yy * info.mp);
+    xxi = static_cast<long long>(xx * info.mp);
+    yyi = static_cast<long long>(yy * info.mp);
 
     reverseArcsCoordinates << "[";
     reverseArcsCoordinates << "[" << xxi << "," << yyi << "]";
@@ -186,8 +186,8 @@ void extractGeometry_lineString(const OGRLineString* lineString, uint /* mode */
       double x = lineString->getX(t);
       double y = lineString->getY(t);
 
-      long long xi = (unsigned long long)(x * info.mp);
-      long long yi = (unsigned long long)(y * info.mp);
+      long long xi = static_cast<unsigned long long>(x * info.mp);
+      long long yi = static_cast<unsigned long long>(y * info.mp);
 
       long long nx = (xi - xxi);
       long long ny = (yi - yyi);

@@ -248,7 +248,7 @@ void add_layer_info(bool multiple_intervals,
     {
       std::string name = (*baseInfo)["name"].GetString();
       std::string title = (*baseInfo)["title"].GetString();
-      std::string ref_time = lh.reference_time->as_iso_string();
+      std::string ref_time = lh.reference_time->to_iso_string();
       name += (":origintime_" + ref_time);
       title += (" origintime " + ref_time);
       (*baseInfo)["name"] = name;

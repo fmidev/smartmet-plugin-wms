@@ -96,6 +96,8 @@ Config::Config(const string& configfile)
     if (itsConfig.exists(filesystem_bytes))
       itsMaxFilesystemCacheSize = parse_size(itsConfig.lookup(filesystem_bytes), filesystem_bytes);
 
+    itsConfig.lookupValue("max_image_size", itsMaxImageSize);
+
     itsConfig.lookupValue("heatmap.max_points", itsMaxHeatmapPoints);
 
     itsConfig.lookupValue("wms.url", itsWmsUrl);
@@ -345,6 +347,11 @@ unsigned int Config::styleSheetCacheSize() const
 bool Config::quiet() const
 {
   return itsQuiet;
+}
+
+unsigned int Config::maxImageSize() const
+{
+  return itsMaxImageSize;
 }
 
 unsigned Config::maxHeatmapPoints() const

@@ -534,6 +534,8 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
   catch (...)
   {
     Fmi::Exception exception(BCP, "Operation failed!", nullptr);
+    exception.addParameter("qid", qid);
+
     if (producer)
       exception.addParameter("Producer", *producer);
     if (direction)

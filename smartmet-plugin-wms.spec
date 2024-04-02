@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 23.11.9
+Version: 24.3.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -26,23 +26,23 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.7.28
-BuildRequires: smartmet-library-grid-content-devel >= 23.10.30
-BuildRequires: smartmet-library-grid-files-devel >= 23.11.6
-BuildRequires: smartmet-library-macgyver-devel >= 23.11.8
-BuildRequires: smartmet-library-spine-devel >= 23.10.20
-BuildRequires: smartmet-library-timeseries-devel >= 23.10.30
+BuildRequires: smartmet-library-grid-content-devel >= 24.2.23
+BuildRequires: smartmet-library-grid-files-devel >= 24.2.23
+BuildRequires: smartmet-library-macgyver-devel >= 24.1.17
+BuildRequires: smartmet-library-spine-devel >= 24.2.8
+BuildRequires: smartmet-library-timeseries-devel >= 24.2.23
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 23.7.28
+BuildRequires: smartmet-engine-authentication-devel >= 24.2.23
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 23.11.8
+BuildRequires: smartmet-engine-observation-devel >= 24.2.23
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 23.8.28
-BuildRequires: smartmet-engine-grid-devel >= 23.10.30
-BuildRequires: smartmet-engine-geonames-devel >= 23.9.6
-BuildRequires: smartmet-engine-querydata-devel >= 23.10.12
-BuildRequires: smartmet-engine-contour-devel >= 23.10.3
-BuildRequires: smartmet-library-gis-devel >= 23.9.12
+BuildRequires: smartmet-engine-gis-devel >= 24.2.23
+BuildRequires: smartmet-engine-grid-devel >= 24.2.23
+BuildRequires: smartmet-engine-geonames-devel >= 24.2.23
+BuildRequires: smartmet-engine-querydata-devel >= 24.2.23
+BuildRequires: smartmet-engine-contour-devel >= 24.2.23
+BuildRequires: smartmet-library-gis-devel >= 24.1.3
 BuildRequires: smartmet-library-trax-devel >= 23.8.17
 BuildRequires: fmt-devel >= 8.1.1 fmt-devel < %{smartmet_fmt_max}
 BuildRequires: ctpp2 >= 2.8.8
@@ -68,24 +68,24 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 23.10.30
-Requires: smartmet-library-grid-files >= 23.11.6
-Requires: smartmet-library-gis >= 23.9.12
+Requires: smartmet-library-grid-content >= 24.2.23
+Requires: smartmet-library-grid-files >= 24.2.23
+Requires: smartmet-library-gis >= 24.1.3
 Requires: smartmet-library-trax >= 23.8.17
-Requires: smartmet-library-macgyver >= 23.11.8
-Requires: smartmet-library-spine >= 23.10.20
-Requires: smartmet-library-timeseries >= 23.10.30
+Requires: smartmet-library-macgyver >= 24.1.17
+Requires: smartmet-library-spine >= 24.2.8
+Requires: smartmet-library-timeseries >= 24.2.23
 Requires: smartmet-library-giza >= 23.7.28
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 23.7.28
+Requires: smartmet-engine-authentication >= 24.2.23
 %endif
-Requires: smartmet-engine-querydata >= 23.10.12
-Requires: smartmet-engine-contour >= 23.10.3
-Requires: smartmet-engine-gis >= 23.8.28
-Requires: smartmet-engine-grid >= 23.10.30
-Requires: smartmet-engine-geonames >= 23.9.6
-Requires: smartmet-server >= 23.8.30
-Requires: smartmet-library-spine >= 23.10.20
+Requires: smartmet-engine-querydata >= 24.2.23
+Requires: smartmet-engine-contour >= 24.2.23
+Requires: smartmet-engine-gis >= 24.2.23
+Requires: smartmet-engine-grid >= 24.2.23
+Requires: smartmet-engine-geonames >= 24.2.23
+Requires: smartmet-server >= 24.2.22
+Requires: smartmet-library-spine >= 24.2.8
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
@@ -104,17 +104,17 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: libconfig17-devel
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 23.10.3
-#TestRequires: smartmet-engine-geonames-devel >= 23.9.6
-#TestRequires: smartmet-engine-gis-devel >= 23.8.28
-#TestRequires: smartmet-engine-querydata-devel >= 23.10.12
+#TestRequires: smartmet-engine-contour-devel >= 24.2.23
+#TestRequires: smartmet-engine-geonames-devel >= 24.2.23
+#TestRequires: smartmet-engine-gis-devel >= 24.2.23
+#TestRequires: smartmet-engine-querydata-devel >= 24.2.23
 #TestRequires: smartmet-library-giza-devel >= 23.7.28
 #TestRequires: smartmet-library-trax-devel >= 23.8.17
-#TestRequires: smartmet-library-newbase-devel >= 23.10.11
-#TestRequires: smartmet-library-macgyver-devel >= 23.11.8
-#TestRequires: smartmet-library-spine-devel >= 23.10.20
-#TestRequires: smartmet-library-timeseries-devel >= 23.10.30
-#TestRequires: smartmet-engine-grid-devel >= 23.10.30
+#TestRequires: smartmet-library-newbase-devel >= 24.2.23
+#TestRequires: smartmet-library-macgyver-devel >= 24.1.17
+#TestRequires: smartmet-library-spine-devel >= 24.2.8
+#TestRequires: smartmet-library-timeseries-devel >= 24.2.23
+#TestRequires: smartmet-engine-grid-devel >= 24.2.23
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -122,10 +122,11 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: libconfig17-devel
 #TestRequires: google-roboto-fonts
 #TestRequires: zlib-devel
+#TestRequires: libcurl-devel
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 23.11.8
+#TestRequires: smartmet-engine-observation-devel >= 24.2.23
 %endif
 
 %description
@@ -154,6 +155,63 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Mar  5 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.3.5-1.fmi
+- Added max_image_size setting with default value of 20M
+
+* Thu Feb 29 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.2.29-1.fmi
+- Selecting a style for a null layer no longer deletes the old settings since they are intentional defaults
+
+* Tue Feb 27 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.2.27-1.fmi
+- Improved error checking and error reports
+
+* Fri Feb 23 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> 24.2.23-1.fmi
+- Full repackaging
+
+* Tue Feb 20 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> 24.2.20-2.fmi
+- Repackaged due to grid-files ABI changes
+
+* Tue Feb 20 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> 24.2.20-1.fmi
+- Repackaged due to grid-files ABI changes
+
+* Mon Feb  5 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> 24.2.5-1.fmi
+- Repackaged due to grid-files ABI changes
+
+* Tue Jan 30 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> 24.1.30-1.fmi
+- Repackaged due to newbase ABI changes
+
+* Thu Jan  4 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.1.4-1.fmi
+- Repackaged due to TimeSeriesGeneratorOptions ABI changes
+
+* Wed Jan  3 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.1.3-1.fmi
+- Added 'areaunit' setting for isoband/isoline 'minarea' setting with possible values km^2 and px^2
+
+* Fri Dec 22 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.12.22-1.fmi
+- Repackaged due to ThreadLock ABI changes
+
+* Fri Dec  8 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.12.8-1.fmi
+- Optimized observation reading for speed
+
+* Tue Dec  5 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.12.5-1.fmi
+- Repackaged due to an ABI change in SmartMetPlugin
+
+* Mon Dec  4 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.12.4-1.fmi
+- Repackaged due to QEngine ABI changes
+
+* Thu Nov 23 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.23-1.fmi
+- Fixed GetCapabilities isValidTime test to handle data with broken intervals
+
+* Tue Nov 21 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.21-1.fmi
+- Added a cache for calculated latlon bounding boxes corresponding to WMS input BBOX parameter (BRAINSTORM-2790)
+
+* Fri Nov 17 2023 Pertti Kinnia <pertti.kinnia@fmi.fi> - 23.11.17-1.fmi
+- Repackaged due to API changes in grid-files and grid-content
+
+* Thu Nov 16 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.16-1.fmi
+- Improved isolabel rectangle distance calculations by taking the center point into account
+
+* Fri Nov 10 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.10-1.fmi
+- Repackaged due to API changes in grid-content
+
 * Thu Nov  9 2023 Mika Heiskanen <mika.heiskanen@fmi.fi> - 23.11.9-1.fmi
 - Improved isolabel placement for appearance and optimized for speed
 

@@ -7,8 +7,6 @@
 #include "Layer.h"
 #include "LonLatToXYTransformation.h"
 #include "State.h"
-#include <macgyver/LocalDateTime.h>
-#include <macgyver/DateTime.h>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/grid/Engine.h>
@@ -16,7 +14,9 @@
 #include <gis/Box.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <grid-files/common/GeneralFunctions.h>
+#include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
+#include <macgyver/LocalDateTime.h>
 #include <spine/Json.h>
 #include <array>
 #include <ogr_spatialref.h>
@@ -126,7 +126,7 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid);
   }
 }
 
@@ -397,8 +397,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
           throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
 
         Fmi::DateTime ot = *originTime;
-        duration =
-            valid_time - ot + ot.time_of_day() - Fmi::Hours(ot.time_of_day().hours());
+        duration = valid_time - ot + ot.time_of_day() - Fmi::Hours(ot.time_of_day().hours());
       }
       else if (name == "time_offset")
       {
@@ -414,8 +413,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       }
       else
       {
-        loctime = Fmi::LocalDateTime(valid_time, tz) +
-                  Fmi::TimeParser::parse_duration(name);
+        loctime = Fmi::LocalDateTime(valid_time, tz) + Fmi::TimeParser::parse_duration(name);
       }
 
       // durations are always formatted with boost
@@ -601,8 +599,7 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
         if (!q)
           throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
         Fmi::DateTime ot = q->originTime();
-        duration =
-            valid_time - ot + ot.time_of_day() - Fmi::Hours(ot.time_of_day().hours());
+        duration = valid_time - ot + ot.time_of_day() - Fmi::Hours(ot.time_of_day().hours());
       }
       else if (name == "time_offset")
       {
@@ -618,8 +615,7 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       }
       else
       {
-        loctime = Fmi::LocalDateTime(valid_time, tz) +
-                  Fmi::TimeParser::parse_duration(name);
+        loctime = Fmi::LocalDateTime(valid_time, tz) + Fmi::TimeParser::parse_duration(name);
       }
 
       // durations are always formatted with boost

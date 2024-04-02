@@ -423,6 +423,7 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Failed to generate CloudCeilingLayer!")
+        .addParameter("qid", qid)
         .addParameter("Producer", *producer)
         .addParameter("Parameter", *parameter);
   }

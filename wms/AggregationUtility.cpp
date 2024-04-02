@@ -25,6 +25,7 @@ TS::TimeSeriesGenerator::LocalTimeList get_tlist(
       interval_end += Fmi::Minutes(interval_ahead);
 
     TS::TimeSeriesGenerator::LocalTimeList tlist;
+    Fmi::TimeZonePtr utc_zone("Etc/UTC");
 
     bool add_valid_time = true;  // Flag to make sure valid_time is not added twice
     for (const auto& t : qengine_times)
@@ -33,11 +34,11 @@ TS::TimeSeriesGenerator::LocalTimeList get_tlist(
       {
         if (t >= valid_time && add_valid_time)
         {
-            tlist.push_back({valid_time, Fmi::TimeZonePtr::utc});
+          tlist.emplace_back(valid_time, utc_zone);
           add_valid_time = false;
           continue;
         }
-        tlist.push_back({t, Fmi::TimeZonePtr::utc});
+        tlist.emplace_back(t, utc_zone);
       }
     }
 
@@ -50,7 +51,7 @@ TS::TimeSeriesGenerator::LocalTimeList get_tlist(
 }
 
 TS::Value get_qengine_value(const Engine::Querydata::Q& q,
-                            const Engine::Querydata::ParameterOptions options,
+                            const Engine::Querydata::ParameterOptions& options,
                             const Fmi::LocalDateTime& valid_time,
                             const boost::optional<TS::ParameterAndFunctions>& param_funcs)
 {
@@ -192,11 +193,9 @@ TS::TimeSeriesVectorPtr prepare_data_for_aggregation(
 
     // Iterate parameters and store values for all parameters
     // into ret data structure
-    for (unsigned int i = 0; i < parameters.size(); i++)
+    for (const auto & parameter : parameters)
     {
-      const auto& parameter = parameters.at(i);
-
-      std::string paramname = parameter.name();
+      const auto& paramname = parameter.name();
       bool is_location_p = is_location_parameter(paramname);
 
       // add data fields fetched from observation
@@ -227,7 +226,7 @@ TS::TimeSeriesVectorPtr prepare_data_for_aggregation(
 
 TS::TimeSeriesVectorPtr do_aggregation(
     const TS::LocalTimePoolPtr& localTimePool,
-    const std::vector<TS::ParameterAndFunctions> paramFuncs,
+    const std::vector<TS::ParameterAndFunctions>& paramFuncs,
     const TS::TimeSeriesVectorPtr& observation_result,
     const std::map<std::string, unsigned int>& parameterResultIndexes)
 {

@@ -103,7 +103,7 @@ void TranslationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, 
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+    throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid);
   }
 }
 

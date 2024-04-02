@@ -15,7 +15,7 @@ namespace Dali
 namespace AggregationUtility
 {
 TS::Value get_qengine_value(const Engine::Querydata::Q& q,
-                            const Engine::Querydata::ParameterOptions options,
+                            const Engine::Querydata::ParameterOptions& options,
                             const Fmi::LocalDateTime& valid_time,
                             const boost::optional<TS::ParameterAndFunctions>& param_funcs);
 
