@@ -376,7 +376,7 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       {
         if (result_item->geom && result_item->geom->IsEmpty() == 0)
         {
-          OGRSpatialReference* sr = result_item->geom->getSpatialReference();
+          const OGRSpatialReference* sr = result_item->geom->getSpatialReference();
 
           if (sr == nullptr)
           {
@@ -384,7 +384,12 @@ void IceMapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
             result_item->geom->transformTo(projectionSR.get());
           }
           else
-            sr->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+          {
+            std::shared_ptr<OGRSpatialReference> newSR(
+              sr->Clone(), [] (OGRSpatialReference* ref) { ref->Release(); });
+            newSR->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+            result_item->geom->assignSpatialReference(newSR.get());
+          }
 
           handleResultItem(
               *result_item, filter, mapid, theGlobals, theLayersCdt, theGroupCdt, theState);
