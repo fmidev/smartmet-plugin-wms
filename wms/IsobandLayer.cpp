@@ -1105,7 +1105,12 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     const auto& qEngine = theState.getQEngine();
     auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
 
-    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
+    // Avoid reprojecting data when sampling has been used for better speed (and accuracy)
+    CoordinatesPtr coords;
+    if (sampleresolution)
+      coords = qEngine.getWorldCoordinates(q);
+    else
+      coords = qEngine.getWorldCoordinates(q, crs);
 
     std::vector<OGRGeometryPtr> geoms =
         contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
@@ -1137,12 +1142,18 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     // Add attributes to the group, not the isobands
     theState.addAttributes(theGlobals, group_cdt, attributes);
 
+    fmt::print("BBOX\t{}\t{}\t{}\t{}\n", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
       OGRGeometryPtr geom = geoms[i];
 
       if (geom && geom->IsEmpty() == 0)
       {
+        OGREnvelope env;
+        geom->getEnvelope(&env);
+        fmt::print("ENV1\t{}\t{}\t{}\t{}\n\n", env.MinX, env.MinY, env.MaxX, env.MaxY);
+
         OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, clipbox));
 
         const Isoband& isoband = isobands[i];

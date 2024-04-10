@@ -758,7 +758,12 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   const auto& qEngine = theState.getQEngine();
   auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
 
-  CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
+  // Avoid reprojecting data when sampling has been used for better speed (and accuracy)
+  CoordinatesPtr coords;
+  if (sampleresolution)
+    coords = qEngine.getWorldCoordinates(q);
+  else
+    coords = qEngine.getWorldCoordinates(q, crs);
 
   auto geoms = contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
 
