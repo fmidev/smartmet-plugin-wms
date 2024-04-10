@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.4.8
+Version: 24.4.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -155,6 +155,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Apr 10 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.4.10-1.fmi
+- Avoid reprojecting sampled data
+
 * Mon Apr  8 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.4.8-1.fmi
 - Repackaged since Spine::Station ABI changed
 
