@@ -59,7 +59,7 @@ void generate_isolines(std::vector<Isoline>& isolines,
     if (!skip_value(i, except_vector))
     {
       Isoline isoline;
-      isoline.qid = fmt::format(pattern, i);
+      isoline.qid = fmt::format(fmt::runtime(pattern), i);
       isoline.value = i;
       isolines.push_back(isoline);
 
@@ -75,7 +75,7 @@ void apply_autoqid(std::vector<Isoline>& isolines, const std::string& pattern)
   for (auto& isoline : isolines)
   {
     if (!pattern.empty() && isoline.qid.empty())
-      isoline.qid = fmt::format(pattern, isoline.value);
+      isoline.qid = fmt::format(fmt::runtime(pattern), isoline.value);
     boost::replace_all(isoline.qid, ".", ",");  // replace decimal dots with ,
   }
 }
@@ -90,7 +90,7 @@ void apply_autoclass(std::vector<Isoline>& isolines, const std::string& pattern)
   {
     if (isoline.attributes.value("class").empty())
     {
-      auto name = fmt::format(pattern, isoline.value);
+      auto name = fmt::format(fmt::runtime(pattern), isoline.value);
       boost::replace_all(name, ".", ",");  // replace decimal dots with ,
       isoline.attributes.add("class", name);
     }

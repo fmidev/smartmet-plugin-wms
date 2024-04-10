@@ -51,14 +51,14 @@ std::string format_auto(const Isoband& isoband, const std::string& pattern)
   if (isoband.lolimit)
   {
     if (isoband.hilimit)
-      return fmt::format(pattern, *isoband.lolimit, *isoband.hilimit);
-    return fmt::format(pattern, *isoband.lolimit, "inf");
+      return fmt::format(fmt::runtime(pattern), *isoband.lolimit, *isoband.hilimit);
+    return fmt::format(fmt::runtime(pattern), *isoband.lolimit, "inf");
   }
 
   if (isoband.hilimit)
-    return fmt::format(pattern, "-inf", *isoband.hilimit);
+    return fmt::format(fmt::runtime(pattern), "-inf", *isoband.hilimit);
 
-  return fmt::format(pattern, "nan", "nan");
+  return fmt::format(fmt::runtime(pattern), "nan", "nan");
 }
 
 void apply_autoqid(std::vector<Isoband>& isobands, const std::string& pattern)
