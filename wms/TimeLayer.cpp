@@ -421,13 +421,10 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       {
         try
         {
-          auto* facet = new boost::posix_time::time_facet(fmt.c_str());
-          msg.imbue(std::locale(msg.getloc(), facet));
-
           if (loctime)
-            msg << loctime->local_time();
+            msg << Fmi::format_time(fmt, loctime->local_time());
           else
-            msg << *duration;
+            msg << Fmi::format_time(fmt, *duration);
         }
         catch (...)
         {
@@ -623,13 +620,10 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       {
         try
         {
-          auto* facet = new boost::posix_time::time_facet(fmt.c_str());
-          msg.imbue(std::locale(msg.getloc(), facet));
-
           if (loctime)
-            msg << loctime->local_time();
+            msg << Fmi::format_time(fmt, loctime->local_time());
           else
-            msg << *duration;
+            msg << Fmi::format_time(fmt, *duration);
         }
         catch (...)
         {
