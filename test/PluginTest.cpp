@@ -6,6 +6,7 @@
 #include <smartmet/spine/HTTP.h>
 #include <smartmet/spine/Options.h>
 #include <smartmet/spine/Reactor.h>
+#include <csignal>
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
