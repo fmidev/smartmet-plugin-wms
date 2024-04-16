@@ -51,14 +51,14 @@ std::string format_auto(const Isoband& isoband, const std::string& pattern)
   if (isoband.lolimit)
   {
     if (isoband.hilimit)
-      return fmt::format(pattern, *isoband.lolimit, *isoband.hilimit);
-    return fmt::format(pattern, *isoband.lolimit, "inf");
+      return fmt::format(fmt::runtime(pattern), *isoband.lolimit, *isoband.hilimit);
+    return fmt::format(fmt::runtime(pattern), *isoband.lolimit, "inf");
   }
 
   if (isoband.hilimit)
-    return fmt::format(pattern, "-inf", *isoband.hilimit);
+    return fmt::format(fmt::runtime(pattern), "-inf", *isoband.hilimit);
 
-  return fmt::format(pattern, "nan", "nan");
+  return fmt::format(fmt::runtime(pattern), "nan", "nan");
 }
 
 void apply_autoqid(std::vector<Isoband>& isobands, const std::string& pattern)
@@ -1105,7 +1105,12 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     const auto& qEngine = theState.getQEngine();
     auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
 
-    CoordinatesPtr coords = qEngine.getWorldCoordinates(q, crs);
+    // Avoid reprojecting data when sampling has been used for better speed (and accuracy)
+    CoordinatesPtr coords;
+    if (sampleresolution)
+      coords = qEngine.getWorldCoordinates(q);
+    else
+      coords = qEngine.getWorldCoordinates(q, crs);
 
     std::vector<OGRGeometryPtr> geoms =
         contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
