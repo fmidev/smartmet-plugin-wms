@@ -263,8 +263,12 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
 
       // If omit-fmi-apikey header is provided, do not show apikey in GetCapabilities
       std::string apirepl;
-      if (!theRequest.getHeader("omit-fmi-apikey") && apikey)
-        apirepl = "/fmi-apikey/" + *apikey;
+      if (apikey)
+      {
+        auto omit = theRequest.getHeader("omit-fmi-apikey");
+        if (!omit || omit == "0" || omit == "false")
+          apirepl = "/fmi-apikey/" + *apikey;
+      }
       boost::replace_all(ret, "__apikey__", apirepl);
 
       return ret;
