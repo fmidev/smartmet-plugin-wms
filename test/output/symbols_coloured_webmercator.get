@@ -2238,6 +2238,7 @@
    <use class="Temperature_4_6" transform="translate(498,27)" xlink:href="#city"/>
    <use class="Temperature_4_6" transform="translate(498,17)" xlink:href="#city"/>
    <use class="Temperature_4_6" transform="translate(498,6)" xlink:href="#city"/>
+   <use class="Temperature_38_inf" transform="translate(0,0)" xlink:href="#city"/>
   </g>
  </g>
 </g>
