@@ -146,9 +146,9 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
       auto reference_time = theRequest.getParameter("dim_reference_time");
       auto multipleIntervals = theConfig.multipleIntervals();
       auto enableintervals = theRequest.getParameter("enableintervals");
-	  // Hidden flag can be overridden in request
+      // Hidden flag can be overridden in request
       auto hidden_flag = theRequest.getParameter("show_hidden");
-	  bool show_hidden = (hidden_flag && *hidden_flag == "1");
+      bool show_hidden = (hidden_flag && *hidden_flag == "1");
 
       // If request option given and it is 1 or 0 use it
       if (enableintervals)
@@ -164,14 +164,14 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
       if (query_lang)
         language = *query_lang;
 
-	  configuredLayers = theConfig.getCapabilities(apikey,
+      configuredLayers = theConfig.getCapabilities(apikey,
                                                    language,
                                                    starttime,
                                                    endtime,
                                                    reference_time,
                                                    wms_namespace,
                                                    hierarchyType,
-												   show_hidden,
+                                                   show_hidden,
                                                    multipleIntervals);
     }
     catch (...)
@@ -260,8 +260,17 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
       }
 
       boost::replace_all(ret, "__hostname__", protocol + hostString);
-      apikey = (apikey ? ("/fmi-apikey/" + *apikey) : "");
-      boost::replace_all(ret, "__apikey__", *apikey);
+
+      // If omit-fmi-apikey header is provided, do not show apikey in GetCapabilities
+      std::string apirepl;
+      if (apikey)
+      {
+        auto omit = theRequest.getHeader("omit-fmi-apikey");
+        if (!omit || omit == std::string("0") || omit == std::string("false"))
+          apirepl = "/fmi-apikey/" + *apikey;
+      }
+      boost::replace_all(ret, "__apikey__", apirepl);
+
       return ret;
     }
     catch (...)

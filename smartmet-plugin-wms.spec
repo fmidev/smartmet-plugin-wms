@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.4.10
+Version: 24.4.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -26,7 +26,7 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.7.28
-BuildRequires: smartmet-library-grid-content-devel >= 24.4.4
+BuildRequires: smartmet-library-grid-content-devel >= 24.4.10
 BuildRequires: smartmet-library-grid-files-devel >= 24.3.26
 BuildRequires: smartmet-library-macgyver-devel >= 24.1.17
 BuildRequires: smartmet-library-spine-devel >= 24.4.5
@@ -35,13 +35,13 @@ BuildRequires: smartmet-library-timeseries-devel >= 24.4.5
 BuildRequires: smartmet-engine-authentication-devel >= 24.2.23
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 24.4.5
+BuildRequires: smartmet-engine-observation-devel >= 24.49
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 24.2.23
+BuildRequires: smartmet-engine-gis-devel >= 24.4.17
 BuildRequires: smartmet-engine-grid-devel >= 24.4.4
 BuildRequires: smartmet-engine-geonames-devel >= 24.2.23
 BuildRequires: smartmet-engine-querydata-devel >= 24.2.23
-BuildRequires: smartmet-engine-contour-devel >= 24.2.23
+BuildRequires: smartmet-engine-contour-devel >= 24.4.17
 BuildRequires: smartmet-library-gis-devel >= 24.3.25
 BuildRequires: smartmet-library-trax-devel >= 23.8.17
 BuildRequires: fmt-devel >= 8.1.1 fmt-devel < %{smartmet_fmt_max}
@@ -68,7 +68,7 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 24.4.4
+Requires: smartmet-library-grid-content >= 24.4.10
 Requires: smartmet-library-grid-files >= 24.3.26
 Requires: smartmet-library-gis >= 24.3.25
 Requires: smartmet-library-trax >= 23.8.17
@@ -80,8 +80,8 @@ Requires: smartmet-library-giza >= 23.7.28
 Requires: smartmet-engine-authentication >= 24.2.23
 %endif
 Requires: smartmet-engine-querydata >= 24.2.23
-Requires: smartmet-engine-contour >= 24.2.23
-Requires: smartmet-engine-gis >= 24.2.23
+Requires: smartmet-engine-contour >= 24.4.17
+Requires: smartmet-engine-gis >= 24.4.17
 Requires: smartmet-engine-grid >= 24.4.4
 Requires: smartmet-engine-geonames >= 24.2.23
 Requires: smartmet-server >= 24.2.22
@@ -104,13 +104,13 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: libconfig17-devel
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 24.2.23
+#TestRequires: smartmet-engine-contour-devel >= 24.4.17
 #TestRequires: smartmet-engine-geonames-devel >= 24.2.23
-#TestRequires: smartmet-engine-gis-devel >= 24.2.23
+#TestRequires: smartmet-engine-gis-devel >= 24.4.17
 #TestRequires: smartmet-engine-querydata-devel >= 24.2.23
 #TestRequires: smartmet-library-giza-devel >= 23.7.28
 #TestRequires: smartmet-library-trax-devel >= 23.8.17
-#TestRequires: smartmet-library-newbase-devel >= 24.3.11
+#TestRequires: smartmet-library-newbase-devel >= 24.4.17
 #TestRequires: smartmet-library-macgyver-devel >= 24.1.17
 #TestRequires: smartmet-library-spine-devel >= 24.4.5
 #TestRequires: smartmet-library-timeseries-devel >= 24.4.5
@@ -126,7 +126,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 24.4.5
+#TestRequires: smartmet-engine-observation-devel >= 24.49
 %endif
 
 %description
@@ -155,6 +155,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Apr 22 2024 Mika Heiskanen <mheiskan@rhel8.dev.fmi.fi> - 24.4.22-1.fmi
+- Fixed boost::optional comparisons to use std::string instead of char *
+
+* Wed Apr 17 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.4.17-2.fmi
+- Do not show apikey in GetCapabilities if omit-fmi-apikey header is provided
+
+* Wed Apr 17 2024 Mika Heiskanen <mheiskan@rhel8.dev.fmi.fi> - 24.4.17-1.fmi
+- Work around bug in PROJ projection cloning
+
 * Wed Apr 10 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.4.10-1.fmi
 - Avoid reprojecting sampled data
 
