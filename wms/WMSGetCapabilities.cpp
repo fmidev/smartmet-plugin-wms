@@ -266,7 +266,7 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
       if (apikey)
       {
         auto omit = theRequest.getHeader("omit-fmi-apikey");
-        if (!omit || omit == "0" || omit == "false")
+        if (!omit || omit == std::string("0") || omit == std::string("false"))
           apirepl = "/fmi-apikey/" + *apikey;
       }
       boost::replace_all(ret, "__apikey__", apirepl);
