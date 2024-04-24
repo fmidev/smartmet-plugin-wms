@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.4.22
+Version: 24.4.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -26,10 +26,10 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.7.28
-BuildRequires: smartmet-library-grid-content-devel >= 24.4.10
+BuildRequires: smartmet-library-grid-content-devel >= 24.4.4
 BuildRequires: smartmet-library-grid-files-devel >= 24.3.26
 BuildRequires: smartmet-library-macgyver-devel >= 24.1.17
-BuildRequires: smartmet-library-spine-devel >= 24.4.5
+BuildRequires: smartmet-library-spine-devel >= 24.4.23
 BuildRequires: smartmet-library-timeseries-devel >= 24.4.5
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 24.2.23
@@ -42,7 +42,7 @@ BuildRequires: smartmet-engine-grid-devel >= 24.4.4
 BuildRequires: smartmet-engine-geonames-devel >= 24.2.23
 BuildRequires: smartmet-engine-querydata-devel >= 24.2.23
 BuildRequires: smartmet-engine-contour-devel >= 24.4.17
-BuildRequires: smartmet-library-gis-devel >= 24.3.25
+BuildRequires: smartmet-library-gis-devel >= 24.4.24
 BuildRequires: smartmet-library-trax-devel >= 23.8.17
 BuildRequires: fmt-devel >= 8.1.1 fmt-devel < %{smartmet_fmt_max}
 BuildRequires: ctpp2 >= 2.8.8
@@ -68,12 +68,12 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 24.4.10
+Requires: smartmet-library-grid-content >= 24.4.4
 Requires: smartmet-library-grid-files >= 24.3.26
-Requires: smartmet-library-gis >= 24.3.25
+Requires: smartmet-library-gis >= 24.4.24
 Requires: smartmet-library-trax >= 23.8.17
 Requires: smartmet-library-macgyver >= 24.1.17
-Requires: smartmet-library-spine >= 24.4.5
+Requires: smartmet-library-spine >= 24.4.23
 Requires: smartmet-library-timeseries >= 24.4.5
 Requires: smartmet-library-giza >= 23.7.28
 %if %{with authentication}
@@ -85,7 +85,7 @@ Requires: smartmet-engine-gis >= 24.4.17
 Requires: smartmet-engine-grid >= 24.4.4
 Requires: smartmet-engine-geonames >= 24.2.23
 Requires: smartmet-server >= 24.2.22
-Requires: smartmet-library-spine >= 24.4.5
+Requires: smartmet-library-spine >= 24.4.23
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
@@ -112,7 +112,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 23.8.17
 #TestRequires: smartmet-library-newbase-devel >= 24.4.17
 #TestRequires: smartmet-library-macgyver-devel >= 24.1.17
-#TestRequires: smartmet-library-spine-devel >= 24.4.5
+#TestRequires: smartmet-library-spine-devel >= 24.4.23
 #TestRequires: smartmet-library-timeseries-devel >= 24.4.5
 #TestRequires: smartmet-engine-grid-devel >= 24.4.4
 #TestRequires: smartmet-engine-grid-test
@@ -155,6 +155,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Apr 24 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.4.24-1.fmi
+- Refactored code: use GeometrySmoother from GIS-library
+
 * Mon Apr 22 2024 Mika Heiskanen <mheiskan@rhel8.dev.fmi.fi> - 24.4.22-1.fmi
 - Fixed boost::optional comparisons to use std::string instead of char *
 
