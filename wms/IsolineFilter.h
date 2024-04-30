@@ -6,10 +6,9 @@
 
 #pragma once
 
+#include <gis/GeometrySmoother.h>
 #include <gis/Types.h>
 #include <json/json.h>
-#include <newbase/NFmiInfoData.h>
-#include <cairo.h>
 #include <vector>
 
 namespace Fmi
@@ -23,20 +22,10 @@ namespace Plugin
 {
 namespace Dali
 {
-class Config;
 
 class IsolineFilter
 {
  public:
-  enum class Type
-  {
-    None,      // disabled
-    Average,   // moving average, weight = 1
-    Linear,    // moving average, weight = 1/(1+distance)
-    Gaussian,  // moving average, weight = Gaussian where stdev is selected based on radius
-    Tukey      // moving average, weight = Tukey's biweight = (1-(distance/radius)^2)^2
-  };
-
   void init(Json::Value& theJson);
   std::size_t hash_value() const;
 
@@ -44,10 +33,7 @@ class IsolineFilter
   void apply(std::vector<OGRGeometryPtr>& geoms, bool preserve_topology) const;
 
  private:
-  Type type = Type::None;  // no filtering done by default
-
-  double radius = 0;    // in pixels
-  uint iterations = 1;  // one pass only by default
+  Fmi::GeometrySmoother smoother;
 };
 
 }  // namespace Dali

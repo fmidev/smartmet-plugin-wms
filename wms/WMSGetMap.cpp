@@ -415,7 +415,8 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
-    if (itsParameters.width * itsParameters.height > itsConfig.getDaliConfig().maxImageSize())
+    if (static_cast<double>(itsParameters.width) * static_cast<double>(itsParameters.height) >
+        itsConfig.getDaliConfig().maxImageSize())
     {
       Fmi::Exception exception(BCP, "Too large width*height value");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
