@@ -121,7 +121,7 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
             {
               if (translation.exists(language_code))
               {
-                std::string tr = translation[language_code];
+                std::string tr = translation[language_code.c_str()];
                 for (const auto& p : param_names)
                 {
                   LegendGraphicParameter& lgp = parameters[p];
@@ -159,7 +159,7 @@ WMSLegendGraphicSettings::WMSLegendGraphicSettings(const libconfig::Config& conf
             {
               if (translation.exists(language_code))
               {
-                std::string tr = translation[language_code];
+                std::string tr = translation[language_code.c_str()];
                 LegendGraphicSymbol& lgs = symbols[symbol_name];
                 lgs.translations.insert(std::make_pair(language_code, tr));
               }
