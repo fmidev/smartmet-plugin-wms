@@ -60,6 +60,8 @@ class Properties
   boost::optional<int> forecastNumber;
   boost::optional<uint> geometryId;
   boost::optional<double> level;
+  boost::optional<double> height;
+  boost::optional<double> pressure;
   boost::optional<int> levelId;
   boost::optional<int> timestep;
 

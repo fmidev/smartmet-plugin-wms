@@ -552,10 +552,26 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         p.mGeometryId = *geometryId;
 
       if (levelId)
+      {
         p.mParameterLevelId = *levelId;
+      }
 
       if (level)
+      {
         p.mParameterLevel = C_INT(*level);
+      }
+      else
+      if (height)
+      {
+        p.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
+        p.mParameterLevel = C_INT(*height);
+      }
+      else
+      if (pressure)
+      {
+        p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
+        p.mParameterLevel = C_INT(*pressure);
+      }
 
       if (forecastType)
         p.mForecastType = C_INT(*forecastType);

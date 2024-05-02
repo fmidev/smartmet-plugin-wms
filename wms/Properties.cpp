@@ -57,6 +57,8 @@ void Properties::init(Json::Value& theJson, const State& theState, const Config&
     if (theState.getRequest().getParameter("elevation"))
       level = std::stod(*theState.getRequest().getParameter("elevation"));
 
+    JsonTools::remove_double(height, theJson, "height");
+    JsonTools::remove_double(pressure, theJson, "pressure");
     JsonTools::remove_int(levelId, theJson, "levelid");
 
     JsonTools::remove_string(source, theJson, "source");
@@ -141,6 +143,8 @@ void Properties::init(Json::Value& theJson,
     else
       JsonTools::remove_double(level, theJson, "level", theProperties.level);
 
+    JsonTools::remove_double(height, theJson, "height", theProperties.height);
+    JsonTools::remove_double(pressure, theJson, "pressure", theProperties.pressure);
     JsonTools::remove_int(levelId, theJson, "levelId", theProperties.levelId);
   }
   catch (...)
@@ -255,6 +259,8 @@ std::size_t Properties::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(forecastNumber));
     Fmi::hash_combine(hash, Fmi::hash_value(geometryId));
     Fmi::hash_combine(hash, Fmi::hash_value(level));
+    Fmi::hash_combine(hash, Fmi::hash_value(height));
+    Fmi::hash_combine(hash, Fmi::hash_value(pressure));
     Fmi::hash_combine(hash, Fmi::hash_value(levelId));
     Fmi::hash_combine(hash, Fmi::hash_value(origintime));
     // timezone is irrelevant, time is always in UTC timen
