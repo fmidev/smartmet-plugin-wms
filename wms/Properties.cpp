@@ -55,9 +55,14 @@ void Properties::init(Json::Value& theJson, const State& theState, const Config&
     // Use external elevation if given
     JsonTools::remove_double(level, theJson, "level");
     if (theState.getRequest().getParameter("elevation"))
+    {
       level = std::stod(*theState.getRequest().getParameter("elevation"));
+      elevation_unit = "m";
+    }
 
-    JsonTools::remove_double(height, theJson, "height");
+    if (theState.getRequest().getParameter("elevation_unit"))
+      JsonTools::remove_string(elevation_unit, theJson, "elevation_unit");
+
     JsonTools::remove_double(pressure, theJson, "pressure");
     JsonTools::remove_int(levelId, theJson, "levelid");
 
@@ -139,11 +144,16 @@ void Properties::init(Json::Value& theJson,
 
     // Use external elevation if given
     if (theState.getRequest().getParameter("elevation"))
+    {
       level = std::stod(*theState.getRequest().getParameter("elevation"));
+      elevation_unit = "m";
+    }
     else
       JsonTools::remove_double(level, theJson, "level", theProperties.level);
 
-    JsonTools::remove_double(height, theJson, "height", theProperties.height);
+    if (theState.getRequest().getParameter("elevation_unit"))
+      JsonTools::remove_string(elevation_unit, theJson, "elevation_unit");
+
     JsonTools::remove_double(pressure, theJson, "pressure", theProperties.pressure);
     JsonTools::remove_int(levelId, theJson, "levelId", theProperties.levelId);
   }
@@ -259,7 +269,7 @@ std::size_t Properties::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(forecastNumber));
     Fmi::hash_combine(hash, Fmi::hash_value(geometryId));
     Fmi::hash_combine(hash, Fmi::hash_value(level));
-    Fmi::hash_combine(hash, Fmi::hash_value(height));
+    Fmi::hash_combine(hash, Fmi::hash_value(elevation_unit));
     Fmi::hash_combine(hash, Fmi::hash_value(pressure));
     Fmi::hash_combine(hash, Fmi::hash_value(levelId));
     Fmi::hash_combine(hash, Fmi::hash_value(origintime));

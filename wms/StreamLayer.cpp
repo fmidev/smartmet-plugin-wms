@@ -227,16 +227,19 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(State& theState)
         param.mParameterLevel = C_INT(*level);
       }
       else
-      if (height)
-      {
-        param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
-        param.mParameterLevel = C_INT(*height);
-      }
-      else
       if (pressure)
       {
         param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
         param.mParameterLevel = C_INT(*pressure);
+      }
+
+      if (elevation_unit)
+      {
+        if (*elevation_unit == "m")
+          param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
+
+        if (*elevation_unit == "p")
+          param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
       }
 
       if (forecastType)
