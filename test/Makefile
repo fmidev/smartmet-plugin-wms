@@ -21,7 +21,6 @@ LIBS += $(REQUIRED_LIBS) \
 	-lsmartmet-newbase \
 	-lsmartmet-macgyver \
 	-lsmartmet-giza \
-	-lboost_date_time \
 	-lboost_thread \
 	-lboost_filesystem \
 	-lboost_regex \
