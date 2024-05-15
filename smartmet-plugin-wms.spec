@@ -87,7 +87,6 @@ Requires: smartmet-engine-geonames >= 24.5.6
 Requires: smartmet-server >= 24.5.6
 Requires: smartmet-library-spine >= 24.5.6
 Requires: smartmet-fonts
-Requires: %{smartmet_boost}-date-time
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
 Requires: %{smartmet_boost}-regex
