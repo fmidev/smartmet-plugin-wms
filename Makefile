@@ -23,7 +23,6 @@ LIBS += -L$(libdir) \
 	-lsmartmet-giza \
 	-lsmartmet-locus \
 	$(REQUIRED_LIBS) \
-	-lboost_date_time \
 	-lboost_thread \
 	-lboost_regex \
 	-lboost_iostreams \
