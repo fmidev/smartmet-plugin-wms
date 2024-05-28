@@ -30,17 +30,17 @@ BuildRequires: smartmet-library-grid-content-devel >= 24.5.8
 BuildRequires: smartmet-library-grid-files-devel >= 24.5.10
 BuildRequires: smartmet-library-macgyver-devel >= 24.5.10
 BuildRequires: smartmet-library-spine-devel >= 24.5.6
-BuildRequires: smartmet-library-timeseries-devel >= 24.5.6
+BuildRequires: smartmet-library-timeseries-devel >= 24.5.28
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 24.2.23
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 24.5.6
+BuildRequires: smartmet-engine-observation-devel >= 24.5.28
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 24.5.6
 BuildRequires: smartmet-engine-grid-devel >= 24.5.7
 BuildRequires: smartmet-engine-geonames-devel >= 24.5.6
-BuildRequires: smartmet-engine-querydata-devel >= 24.5.6
+BuildRequires: smartmet-engine-querydata-devel >= 24.5.28
 BuildRequires: smartmet-engine-contour-devel >= 24.5.7
 BuildRequires: smartmet-library-gis-devel >= 24.4.24
 BuildRequires: smartmet-library-trax-devel >= 23.8.17
@@ -74,12 +74,12 @@ Requires: smartmet-library-gis >= 24.4.24
 Requires: smartmet-library-trax >= 23.8.17
 Requires: smartmet-library-macgyver >= 24.5.10
 Requires: smartmet-library-spine >= 24.5.6
-Requires: smartmet-library-timeseries >= 24.5.6
+Requires: smartmet-library-timeseries >= 24.5.28
 Requires: smartmet-library-giza >= 23.7.28
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 24.2.23
+Requires: smartmet-engine-authentication >= 24.5.28
 %endif
-Requires: smartmet-engine-querydata >= 24.5.6
+Requires: smartmet-engine-querydata >= 24.5.28
 Requires: smartmet-engine-contour >= 24.5.7
 Requires: smartmet-engine-gis >= 24.5.6
 Requires: smartmet-engine-grid >= 24.5.7
