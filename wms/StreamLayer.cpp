@@ -509,7 +509,6 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
     std::string tmp;
     auto mylocale = std::locale::classic();
     NFmiPoint dummy;
-    TimeSeries::LocalTimePoolPtr localTimePool = nullptr;
 
     // Fetching values for the new grid.
 
@@ -537,8 +536,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
                                                        tmp,
                                                        false,
                                                        dummy,
-                                                       dummy,
-                                                       localTimePool);
+                                                       dummy);
 
           auto res = q->value(p, localdatetime);
           if (boost::get<double>(&res) != nullptr)
@@ -577,8 +575,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
                                                          tmp,
                                                          false,
                                                          dummy,
-                                                         dummy,
-                                                         localTimePool);
+                                                         dummy);
 
           auto p_v = Engine::Querydata::ParameterOptions(v_param,
                                                          tmp,
@@ -592,8 +589,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
                                                          tmp,
                                                          false,
                                                          dummy,
-                                                         dummy,
-                                                         localTimePool);
+                                                         dummy);
 
           auto res_u = q->value(p_u, localdatetime);
           auto res_v = q->value(p_v, localdatetime);

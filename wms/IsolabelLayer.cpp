@@ -757,7 +757,6 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
   Fmi::LocalDateTime localdatetime(getValidTime(), Fmi::TimeZonePtr::utc);
   auto mylocale = std::locale::classic();
   NFmiPoint dummy;
-  TS::LocalTimePoolPtr localTimePool = nullptr;
 
   // Querydata spatial reference
   Fmi::SpatialReference qcrs(q->SpatialReference());
@@ -801,8 +800,7 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
                                                   "",
                                                   false,
                                                   dummy,
-                                                  dummy,
-                                                  localTimePool);
+                                                  dummy);
 
       auto result = q->value(options, localdatetime);
 

@@ -97,8 +97,7 @@ PointValues read_forecasts(const NumberLayer& layer,
                                                     "",
                                                     false,
                                                     dummy,
-                                                    dummy,
-                                                    state.getLocalTimePool());
+                                                    dummy);
 
         TS::Value result =
             AggregationUtility::get_qengine_value(q, options, localdatetime, layer.param_funcs);

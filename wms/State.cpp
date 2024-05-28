@@ -33,8 +33,7 @@ namespace Dali
 
 State::State(Plugin& thePlugin, const Spine::HTTP::Request& theRequest)
     : itsPlugin(thePlugin),
-      itsRequest(theRequest),
-      itsLocalTimePool(std::make_shared<TS::LocalTimePool>())
+      itsRequest(theRequest)
 {
   auto prec = theRequest.getParameter("precision");
   if (prec)

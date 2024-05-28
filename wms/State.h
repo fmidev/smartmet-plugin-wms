@@ -199,7 +199,6 @@ class State
   // Test if producer is for observations
   bool isObservation(const boost::optional<std::string>& theProducer) const;
   bool isObservation(const std::string& theProducer) const;
-  TS::LocalTimePoolPtr getLocalTimePool() const { return itsLocalTimePool; }
 
   mutable uint arcCounter = 0;
   mutable uint insertCounter = 0;
@@ -261,9 +260,6 @@ class State
 
   // The request itself
   const Spine::HTTP::Request itsRequest;
-
-  // LocalTimePool for timeseries
-  TS::LocalTimePoolPtr itsLocalTimePool{nullptr};
 };
 
 }  // namespace Dali

@@ -66,7 +66,6 @@ PointValues read_flash_observations(State& state,
     settings.stationtype = *layer.producer;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
-    settings.localTimePool = state.getLocalTimePool();
 
     settings.timestep = 0;
 
@@ -193,7 +192,6 @@ PointValues read_all_observations(State& state,
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
-    settings.localTimePool = state.getLocalTimePool();
 
     settings.starttimeGiven = true;
 
@@ -334,7 +332,6 @@ PointValues read_station_observations(State& state,
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
-    settings.localTimePool = state.getLocalTimePool();
 
     settings.starttimeGiven = true;
 
@@ -527,7 +524,6 @@ PointValues read_latlon_observations(State& state,
     settings.timezone = "UTC";
     settings.numberofstations = 1;              // we need only the nearest station
     settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
-    settings.localTimePool = state.getLocalTimePool();
 
     settings.starttimeGiven = true;
 

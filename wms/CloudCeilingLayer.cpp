@@ -43,7 +43,6 @@ PointValues CloudCeilingLayer::readObservations(
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
-    settings.localTimePool = state.getLocalTimePool();
 
     settings.starttimeGiven = true;
 

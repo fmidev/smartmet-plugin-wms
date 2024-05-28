@@ -696,7 +696,6 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
     settings.stationtype = "observations_fmi";
     settings.timezone = timezone;
     settings.useCommonQueryMethod = true;
-    settings.localTimePool = theState.getLocalTimePool();
 
     auto& observation = theState.getObsEngine();
     settings.parameters.push_back(TS::makeParameter("WindDirection"));

@@ -225,7 +225,6 @@ TS::TimeSeriesVectorPtr prepare_data_for_aggregation(
 }
 
 TS::TimeSeriesVectorPtr do_aggregation(
-    const TS::LocalTimePoolPtr& localTimePool,
     const std::vector<TS::ParameterAndFunctions>& paramFuncs,
     const TS::TimeSeriesVectorPtr& observation_result,
     const std::map<std::string, unsigned int>& parameterResultIndexes)
@@ -256,7 +255,7 @@ TS::TimeSeriesVectorPtr do_aggregation(
       }
       else
       {
-        tsptr = boost::make_shared<TS::TimeSeries>(localTimePool);
+        tsptr = boost::make_shared<TS::TimeSeries>();
         *tsptr = ts;
       }
       aggregated_observation_result->push_back(*tsptr);
@@ -306,7 +305,7 @@ TS::TimeSeriesVectorPtr aggregate_data(const TS::TimeSeriesVectorPtr& raw_data,
 
     // Allocate data structure for aggregated data
     TS::TimeSeriesVectorPtr ret = boost::make_shared<TS::TimeSeriesVector>(
-        raw_data->size(), TS::TimeSeries(settings.localTimePool));
+        raw_data->size(), TS::TimeSeries());
 
     // Iterate locations and do aggregation location by location
     for (const auto& observation_result_location : result_by_location)
@@ -319,7 +318,7 @@ TS::TimeSeriesVectorPtr aggregate_data(const TS::TimeSeriesVectorPtr& raw_data,
 
       // Do aggregation
       TS::TimeSeriesVectorPtr aggregated_data =
-          do_aggregation(settings.localTimePool, paramFuncs, prepared_data, parameterResultIndexes);
+          do_aggregation(paramFuncs, prepared_data, parameterResultIndexes);
 
       // Remove redundant timesteps, only one timstep is valid for a map
       auto final_data = TS::erase_redundant_timesteps(aggregated_data, *tlist);

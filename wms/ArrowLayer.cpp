@@ -170,8 +170,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                       tmp,
                                                       false,
                                                       dummy,
-                                                      dummy,
-                                                      state.getLocalTimePool());
+                                                      dummy);
 
         auto uresult = AggregationUtility::get_qengine_value(q, up, localdatetime, u_funcs);
         //        auto uresult = q->value(up, localdatetime);
@@ -188,8 +187,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                       tmp,
                                                       false,
                                                       dummy,
-                                                      dummy,
-                                                      state.getLocalTimePool());
+                                                      dummy);
 
         auto vresult = AggregationUtility::get_qengine_value(q, vp, localdatetime, v_funcs);
 
@@ -227,8 +225,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                         tmp,
                                                         false,
                                                         dummy,
-                                                        dummy,
-                                                        state.getLocalTimePool());
+                                                        dummy);
 
           auto dir_result = AggregationUtility::get_qengine_value(q, dp, localdatetime, dir_funcs);
           if (boost::get<double>(&dir_result) != nullptr)
@@ -255,8 +252,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                           tmp,
                                                           false,
                                                           dummy,
-                                                          dummy,
-                                                          state.getLocalTimePool());
+                                                          dummy);
 
             auto speed_result =
                 AggregationUtility::get_qengine_value(q, sp, localdatetime, speed_funcs);
