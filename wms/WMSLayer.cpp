@@ -2098,6 +2098,25 @@ boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
       layer["interval_dimension"] = interval_dimension_list;
     }
 
+    if (elevationDimension)
+    {
+      auto dim_string = elevationDimension->getCapabilities();
+      if (dim_string.empty())
+        return {};
+
+      CTPP::CDT layer_dimension(CTPP::CDT::HASH_VAL);
+
+      layer_dimension["name"] = "elevation";
+      layer_dimension["units"] = elevationDimension->getUnitSymbol();
+      layer_dimension["multiple_values"] = "0";
+      layer_dimension["nearest_value"] = "0";
+      //layer_dimension["current"] = "0";
+      layer_dimension["value"] = dim_string;
+
+      layer["elevation_dimension"] = layer_dimension;
+    }
+
+
     // Layer name, title and abstract
     if (!name.empty())
       layer["name"] = name;

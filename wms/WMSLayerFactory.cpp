@@ -392,6 +392,96 @@ boost::optional<std::string> determine_source(Json::Value& root)
   }
 }
 
+
+
+std::string determine_elevation_unit(Json::Value& root)
+{
+  try
+  {
+    std::string elevation_unit;
+
+    // From product
+    remove_string(elevation_unit, root, "elevation_unit");
+
+    // Iterate views and layers
+    Json::Value nulljson;
+    auto views = root.get("views", nulljson);
+    if (!views.isNull())
+    {
+      // Iterate views
+      for (unsigned int i = 0; i < views.size(); i++)
+      {
+        auto view = views[i];
+        remove_string(elevation_unit, view, "elevation_unit");
+
+        auto layers = view.get("layers", nulljson);
+        if (!layers.isNull())
+        {
+          // Iterate layers
+          for (unsigned int k = 0; k < layers.size(); k++)
+          {
+            auto layer = layers[k];
+            remove_string(elevation_unit, layer, "elevation_unit");
+            if (!elevation_unit.empty())
+              return elevation_unit;
+          }
+        }
+      }
+    }
+
+    return elevation_unit;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to determine producer!");
+  }
+}
+
+
+std::string determine_parameter(Json::Value& root)
+{
+  try
+  {
+    std::string parameter;
+
+    // From product
+    remove_string(parameter, root, "parameter");
+
+    // Iterate views and layers
+    Json::Value nulljson;
+    auto views = root.get("views", nulljson);
+    if (!views.isNull())
+    {
+      // Iterate views
+      for (unsigned int i = 0; i < views.size(); i++)
+      {
+        auto view = views[i];
+        remove_string(parameter, view, "parameter");
+
+        auto layers = view.get("layers", nulljson);
+        if (!layers.isNull())
+        {
+          // Iterate layers
+          for (unsigned int k = 0; k < layers.size(); k++)
+          {
+            auto layer = layers[k];
+            remove_string(parameter, layer, "parameter");
+            if (!parameter.empty())
+              return parameter;
+          }
+        }
+      }
+    }
+
+    return parameter;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to determine producer!");
+  }
+}
+
+
 uint determine_geometryId(Json::Value& root)
 {
   try
@@ -480,9 +570,9 @@ SharedWMSLayer create_wms_layer(const WMSConfig& theWMSConfig, Json::Value& root
       }
       case WMSLayerType::GridDataLayer:
       {
-        std::string parameter;
-        remove_string(parameter, root, "parameter");
-        layer = boost::make_shared<WMSGridDataLayer>(theWMSConfig, producer, parameter, geometryId);
+        auto parameter = determine_parameter(root);
+        auto elevation_unit = determine_elevation_unit(root);
+        layer = boost::make_shared<WMSGridDataLayer>(theWMSConfig, producer, parameter, geometryId, elevation_unit);
         break;
       }
       case WMSLayerType::ObservationLayer:

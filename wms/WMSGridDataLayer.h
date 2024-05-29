@@ -25,7 +25,8 @@ class WMSGridDataLayer : public WMSLayer
   WMSGridDataLayer(const WMSConfig& config,
                    std::string producer,
                    std::string parameter,
-                   uint geometryId);
+                   uint geometryId,
+                   std::string elevation_unit);
 
  protected:
   bool updateLayerMetaData() override;
@@ -35,6 +36,7 @@ class WMSGridDataLayer : public WMSLayer
   const std::string itsProducer;
   const std::string itsParameter;
   uint itsGeometryId;
+  std::string itsElevationUnit;
 };
 
 }  // namespace WMS

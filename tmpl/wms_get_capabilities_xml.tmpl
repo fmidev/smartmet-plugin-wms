@@ -349,6 +349,17 @@ no attributes, the value will be stored in "variable".
       </TMPL_foreach>
       <-/TMPL_if->
 
+      <-TMPL_if defined(layer.elevation_dimension)->
+      <Dimension name="<TMPL_var elevation_dimension.name>" units="<TMPL_var elevation_dimension.units>"
+        <-TMPL_if defined(elevation_dimension.unit_symbol)    > unitSymbol="    <-TMPL_var elevation_dimension.unit_symbol>"    <-/TMPL_if->
+        <-TMPL_if defined(elevation_dimension.default)        > default="       <-TMPL_var elevation_dimension.default>"        <-/TMPL_if->
+        <-TMPL_if defined(elevation_dimension.multiple_values)> multipleValues="<-TMPL_var elevation_dimension.multiple_values>"<-/TMPL_if->
+        <-TMPL_if defined(elevation_dimension.nearest_value) > nearestValue=" <-TMPL_var elevation_dimension.nearest_value>" <-/TMPL_if->
+        <-TMPL_if defined(elevation_dimension.current)        > current="       <-TMPL_var elevation_dimension.current>"        <-/TMPL_if->>
+      <-TMPL_var elevation_dimension.value->
+      </Dimension>
+      <-/TMPL_if->
+
       <-TMPL_if defined(layer.attribution)->
       <Attribution>
         <TMPL_if defined(layer.attribution.title)><Title><TMPL_var XMLESCAPE(layer.attribution.title)><-/TMPL_if->

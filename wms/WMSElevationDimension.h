@@ -26,6 +26,12 @@ class WMSElevationDimension
                         FmiLevelType level_type,
                         const std::set<int>& elevations);
 
+  WMSElevationDimension(std::string level_name,
+                        short level_type,
+                        std::string unit_symbol,
+                        const std::set<int>& elevations,
+                        int step);
+
   bool isValidElevation(int elevation) const;
   std::string getDefaultElevation() const;
   const std::string& getLevelName() const;
@@ -36,7 +42,7 @@ class WMSElevationDimension
 
  protected:
   std::string itsLevelName;
-  FmiLevelType itsLevelType;
+  short itsLevelType;
   std::set<int> itsElevations;
   std::string itsUnitSymbol;
   std::string itsCapabilities;
