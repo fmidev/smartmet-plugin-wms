@@ -56,12 +56,14 @@ time_t even_timesteps(const std::set<std::string>& contentTimeList)
 WMSGridDataLayer::WMSGridDataLayer(const WMSConfig& config,
                                    std::string producer,
                                    std::string parameter,
-                                   uint geometryId)
+                                   uint geometryId,
+                                   std::string elevation_unit)
     : WMSLayer(config),
       itsGridEngine(config.gridEngine()),
       itsProducer(std::move(producer)),
-      itsParameter(std::move(parameter)),
-      itsGeometryId(geometryId)
+      itsParameter(parameter),
+      itsGeometryId(geometryId),
+      itsElevationUnit(elevation_unit)
 {
 }
 
@@ -73,6 +75,8 @@ bool WMSGridDataLayer::updateLayerMetaData()
       return false;
 
     auto contentServer = itsGridEngine->getContentServer_sptr();
+
+    //printf("WMSPARAM %s %s  %d\n",itsProducer.c_str(),itsParameter.c_str(),itsGeometryId);
 
     T::ProducerInfo producerInfo;
     if (contentServer->getProducerInfoByName(0, itsProducer, producerInfo) != 0)
@@ -93,6 +97,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
       if (generationInfo == nullptr || generationInfo->mStatus != 1)
         continue;
 
+      //printf("-- GENERATION %s  (geom=%d param=%s)\n",generationInfo->mName.c_str(),itsGeometryId,itsParameter.c_str());
       if (itsGeometryId <= 0)
       {
         std::set<T::GeometryId> geometryIdList;
@@ -161,6 +166,8 @@ bool WMSGridDataLayer::updateLayerMetaData()
         if (p.size() >= 7 && p[6] > "")
           forecastNumber = toInt32(p[6]);
 
+        // Trying to find content records with the given parameter name.
+
         T::ContentInfoList contentInfoList;
         if (contentServer->getContentListByParameterAndGenerationId(0,
                                                                     generationInfo->mGenerationId,
@@ -179,11 +186,85 @@ bool WMSGridDataLayer::updateLayerMetaData()
           return true;
 
         uint len = contentInfoList.getLength();
+        if (len == 0)
+        {
+          // Parameter name can be an alias name. Trying to find it from the parameter mappings.
+
+          QueryServer::ParameterMapping_vec mappings;
+          itsGridEngine->getParameterMappings(producerInfo.mName,parameterKey,itsGeometryId,parameterLevelId,minLevel,false,mappings);
+
+          if (mappings.size() == 0)
+          {
+            // We did not find any parameter mappings with the given levels. Let's try without levels.
+            itsGridEngine->getParameterMappings(producerInfo.mName,parameterKey,itsGeometryId,true,mappings);
+          }
+
+          if (mappings.size() == 0)
+            return true;
+
+          parameterKey = mappings[0].mParameterKey;
+          parameterLevelId = mappings[0].mParameterLevelId;
+
+          if (contentServer->getContentListByParameterAndGenerationId(0,
+                                                                      generationInfo->mGenerationId,
+                                                                      parameterKeyType,
+                                                                      parameterKey,
+                                                                      parameterLevelId,
+                                                                      minLevel,
+                                                                      maxLevel,
+                                                                      forecastType,
+                                                                      forecastNumber,
+                                                                      itsGeometryId,
+                                                                      startTime,
+                                                                      endTime,
+                                                                      0,
+                                                                      contentInfoList) != 0)
+            return true;
+
+          len = contentInfoList.getLength();
+        }
+
+        // Picking content times:
         for (uint t = 0; t < len; t++)
         {
           T::ContentInfo* info = contentInfoList.getContentInfoByIndex(t);
           if (contentTimeList.find(info->getForecastTime()) == contentTimeList.end())
             contentTimeList.insert(std::string(info->getForecastTime()));
+        }
+
+        // Picking levels:
+        std::set<int> levelList;
+        int step = 0;
+        if (itsElevationUnit == "m")
+        {
+          // The product is using metric levels (=> will be counted from pressure/hybrid levels)
+          levelList.insert(50);
+          levelList.insert(15000);
+          step = 50;
+        }
+        else
+        if (parameterLevelId > 0)
+        {
+          // Original levels according to levelType
+          for (uint t = 0; t < len; t++)
+          {
+            T::ContentInfo* info = contentInfoList.getContentInfoByIndex(t);
+            levelList.insert(info->mParameterLevel);
+          }
+        }
+
+        if (!elevationDimension  &&  levelList.size() > 0)
+        {
+          Identification::LevelDef levelDef;
+          if (Identification::gridDef.getFmiLevelDef(parameterLevelId,levelDef))
+          {
+            std::string unit_symbol = itsElevationUnit;
+            if (unit_symbol.empty())
+              unit_symbol = levelDef.mUnits;
+
+            WMSElevationDimension elev(levelDef.mName,levelDef.mLevelId,unit_symbol,levelList,step);
+            elevationDimension = boost::make_shared<WMSElevationDimension>(elev);
+          }
         }
       }
       else
@@ -194,36 +275,19 @@ bool WMSGridDataLayer::updateLayerMetaData()
       }
 
       boost::shared_ptr<WMSTimeDimension> timeDimension;
+
       // timesteps
       std::list<Fmi::DateTime> timesteps;
       for (const auto& stime : contentTimeList)
         timesteps.push_back(toTimeStamp(stime));
+
       time_intervals intervals = get_intervals(timesteps);
+
       if (!intervals.empty())
         timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);
       else
         timeDimension = boost::make_shared<StepTimeDimension>(timesteps);
 
-      /*
-  time_t step = even_timesteps(contentTimeList);
-  if (step > 0)
-  {
-    // time interval
-    Fmi::TimeDuration timestep = Fmi::Seconds(step);
-    timeDimension =
-        boost::make_shared<IntervalTimeDimension>(toTimeStamp(*(contentTimeList.begin())),
-                                                  toTimeStamp(*(--contentTimeList.end())),
-                                                  timestep);
-  }
-  else
-  {
-    // timesteps
-    std::list<Fmi::DateTime> times;
-    for (const auto& stime : contentTimeList)
-      times.push_back(toTimeStamp(stime));
-    timeDimension = boost::make_shared<StepTimeDimension>(times);
-  }
-      */
       if (timeDimension)
         newTimeDimensions.insert(
             std::make_pair(toTimeStamp(generationInfo->mAnalysisTime), timeDimension));
@@ -233,6 +297,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
       timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);
     else
       timeDimensions = nullptr;
+
 
     metadataTimestamp = Fmi::SecondClock::universal_time();
 
