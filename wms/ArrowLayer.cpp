@@ -349,13 +349,13 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
         {
           originalGeometryId = val->mGeometryId;
 
-          if (dirParam && param.mParameterKey == *dirParam)
+          if (dirParam && param.mParam == *dirParam)
             dirValues = &val->mValueVector;
-          else if (speedParam && param.mParameterKey == *speedParam)
+          else if (speedParam && param.mParam == *speedParam)
             speedValues = &val->mValueVector;
-          else if (vParam && param.mParameterKey == *vParam)
+          else if (vParam && param.mParam == *vParam)
             vValues = &val->mValueVector;
-          else if (uParam && param.mParameterKey == *uParam)
+          else if (uParam && param.mParam == *uParam)
             uValues = &val->mValueVector;
         }
       }
