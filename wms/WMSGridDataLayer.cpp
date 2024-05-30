@@ -238,9 +238,13 @@ bool WMSGridDataLayer::updateLayerMetaData()
         if (itsElevationUnit == "m")
         {
           // The product is using metric levels (=> will be counted from pressure/hybrid levels)
-          levelList.insert(50);
-          levelList.insert(15000);
+
+          // We have to list all available levels, because the elevation check cannot
+          // validate level ranges.
+
           step = 50;
+          for (uint t=50; t<=15000; t=t+step)
+            levelList.insert(t);
         }
         else
         if (parameterLevelId > 0)

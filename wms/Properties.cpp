@@ -54,14 +54,13 @@ void Properties::init(Json::Value& theJson, const State& theState, const Config&
 
     // Use external elevation if given
     JsonTools::remove_double(level, theJson, "level");
+    JsonTools::remove_double(level, theJson, "elevation");
     if (theState.getRequest().getParameter("elevation"))
-    {
       level = std::stod(*theState.getRequest().getParameter("elevation"));
-      //elevation_unit = "m";
-    }
 
+    JsonTools::remove_string(elevation_unit, theJson, "elevation_unit");
     if (theState.getRequest().getParameter("elevation_unit"))
-      JsonTools::remove_string(elevation_unit, theJson, "elevation_unit");
+      elevation_unit = *theState.getRequest().getParameter("elevation_unit");
 
     JsonTools::remove_double(pressure, theJson, "pressure");
     JsonTools::remove_int(levelId, theJson, "levelid");
@@ -142,17 +141,14 @@ void Properties::init(Json::Value& theJson,
 
     JsonTools::remove_bool(clip, theJson, "clip", theProperties.clip);
 
-    // Use external elevation if given
+    JsonTools::remove_double(level, theJson, "level");
+    JsonTools::remove_double(level, theJson, "elevation");
     if (theState.getRequest().getParameter("elevation"))
-    {
       level = std::stod(*theState.getRequest().getParameter("elevation"));
-      //elevation_unit = "m";
-    }
-    else
-      JsonTools::remove_double(level, theJson, "level", theProperties.level);
 
+    JsonTools::remove_string(elevation_unit, theJson, "elevation_unit");
     if (theState.getRequest().getParameter("elevation_unit"))
-      JsonTools::remove_string(elevation_unit, theJson, "elevation_unit");
+      elevation_unit = *theState.getRequest().getParameter("elevation_unit");
 
     JsonTools::remove_double(pressure, theJson, "pressure", theProperties.pressure);
     JsonTools::remove_int(levelId, theJson, "levelId", theProperties.levelId);

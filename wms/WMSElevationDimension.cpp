@@ -178,7 +178,7 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
 
       itsUnitSymbol = unit_symbol;
       char buf[100];
-      if (elevations.size() == 2  &&  step > 0)
+      if (elevations.size() > 1  &&  step > 0)
       {
         sprintf(buf,"%d/%d/%d",*elevations.begin(),*elevations.rbegin(),step);
         itsCapabilities = buf;
