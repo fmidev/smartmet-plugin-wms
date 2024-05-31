@@ -27,7 +27,14 @@ void NullLayer::init(Json::Value& theJson,
     if (!theJson.isObject())
       throw Fmi::Exception(BCP, "Null-layer JSON is not a JSON object");
 
+    // This will check for trivial configuration errors on basic properties
     Layer::init(theJson, theState, theConfig, theProperties);
+
+    // Remove all remaining settings so that the plugin will not warn on unused
+    // settings. Null layer is used to disable stuff easily, remaining settings
+    // are there to enable something easily.
+
+    theJson = Json::Value();
   }
   catch (...)
   {
