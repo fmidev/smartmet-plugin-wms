@@ -27,8 +27,8 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.7.28
 BuildRequires: smartmet-library-grid-content-devel >= 24.5.29
-BuildRequires: smartmet-library-grid-files-devel >= 24.5.30
-BuildRequires: smartmet-library-macgyver-devel >= 24.5.28
+BuildRequires: smartmet-library-grid-files-devel >= 24.5.29
+BuildRequires: smartmet-library-macgyver-devel >= 24.5.30
 BuildRequires: smartmet-library-spine-devel >= 24.5.27
 BuildRequires: smartmet-library-timeseries-devel >= 24.5.28
 %if %{with authentication}
@@ -69,10 +69,10 @@ Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 24.5.29
-Requires: smartmet-library-grid-files >= 24.5.30
+Requires: smartmet-library-grid-files >= 24.5.29
 Requires: smartmet-library-gis >= 24.5.27
 Requires: smartmet-library-trax >= 24.5.24
-Requires: smartmet-library-macgyver >= 24.5.28
+Requires: smartmet-library-macgyver >= 24.5.30
 Requires: smartmet-library-spine >= 24.5.27
 Requires: smartmet-library-timeseries >= 24.5.28
 Requires: smartmet-library-giza >= 23.7.28
@@ -110,7 +110,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-giza-devel >= 23.7.28
 #TestRequires: smartmet-library-trax-devel >= 24.5.24
 #TestRequires: smartmet-library-newbase-devel >= 24.5.17
-#TestRequires: smartmet-library-macgyver-devel >= 24.5.28
+#TestRequires: smartmet-library-macgyver-devel >= 24.5.30
 #TestRequires: smartmet-library-spine-devel >= 24.5.27
 #TestRequires: smartmet-library-timeseries-devel >= 24.5.28
 #TestRequires: smartmet-engine-grid-devel >= 24.5.16
