@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.5.30
+Version: 24.5.31
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri May 31 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.5.31-1.fmi
+- NullLayer will no longer generate warnings on unused settings
+
 * Thu May 30 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.5.30-1.fmi
 - Fixed parameter name comparison when picking query results
 - Added elevation dimension information to GetCapabilities
