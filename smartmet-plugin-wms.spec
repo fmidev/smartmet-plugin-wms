@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.5.31
+Version: 24.6.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -26,8 +26,8 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 23.7.28
-BuildRequires: smartmet-library-grid-content-devel >= 24.5.29
-BuildRequires: smartmet-library-grid-files-devel >= 24.5.29
+BuildRequires: smartmet-library-grid-content-devel >= 24.6.3
+BuildRequires: smartmet-library-grid-files-devel >= 24.5.30
 BuildRequires: smartmet-library-macgyver-devel >= 24.5.30
 BuildRequires: smartmet-library-spine-devel >= 24.5.27
 BuildRequires: smartmet-library-timeseries-devel >= 24.5.28
@@ -38,7 +38,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 24.5.16
 BuildRequires: smartmet-engine-observation-devel >= 24.5.28
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 24.5.24
-BuildRequires: smartmet-engine-grid-devel >= 24.5.16
+BuildRequires: smartmet-engine-grid-devel >= 24.6.3
 BuildRequires: smartmet-engine-geonames-devel >= 24.5.16
 BuildRequires: smartmet-engine-querydata-devel >= 24.5.29
 BuildRequires: smartmet-engine-contour-devel >= 24.5.29
@@ -68,8 +68,8 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 24.5.29
-Requires: smartmet-library-grid-files >= 24.5.29
+Requires: smartmet-library-grid-content >= 24.6.3
+Requires: smartmet-library-grid-files >= 24.5.30
 Requires: smartmet-library-gis >= 24.5.27
 Requires: smartmet-library-trax >= 24.5.24
 Requires: smartmet-library-macgyver >= 24.5.30
@@ -82,7 +82,7 @@ Requires: smartmet-engine-authentication >= 24.5.16
 Requires: smartmet-engine-querydata >= 24.5.29
 Requires: smartmet-engine-contour >= 24.5.29
 Requires: smartmet-engine-gis >= 24.5.24
-Requires: smartmet-engine-grid >= 24.5.16
+Requires: smartmet-engine-grid >= 24.6.3
 Requires: smartmet-engine-geonames >= 24.5.16
 Requires: smartmet-server >= 24.5.16
 Requires: smartmet-library-spine >= 24.5.27
@@ -113,7 +113,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-macgyver-devel >= 24.5.30
 #TestRequires: smartmet-library-spine-devel >= 24.5.27
 #TestRequires: smartmet-library-timeseries-devel >= 24.5.28
-#TestRequires: smartmet-engine-grid-devel >= 24.5.16
+#TestRequires: smartmet-engine-grid-devel >= 24.6.3
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Jun  3 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.6.3-1.fmi
+- Repackaged due to ABI changes
+
 * Fri May 31 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.5.31-1.fmi
 - NullLayer will no longer generate warnings on unused settings
 
