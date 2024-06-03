@@ -78,6 +78,46 @@ bool WMSGridDataLayer::updateLayerMetaData()
 
     //printf("WMSPARAM %s %s  %d\n",itsProducer.c_str(),itsParameter.c_str(),itsGeometryId);
 
+    T::ParamKeyType parameterKeyType = T::ParamKeyTypeValue::FMI_NAME;
+    std::string parameterKey = itsParameter;
+    T::ParamLevelId parameterLevelId = 0;
+    T::ParamLevel minLevel = 0;
+    T::ParamLevel maxLevel = 1000000000;
+    T::ForecastType forecastType = 1;
+    T::ForecastNumber forecastNumber = -1;
+    std::string startTime = "19000101T000000";
+    std::string endTime = "23000101T000000";
+
+    if (itsParameter > "")
+    {
+      std::string param = itsGridEngine->getParameterString(itsProducer, itsParameter);
+      std::vector<std::string> p;
+      splitString(param, ':', p);
+
+      parameterKey = p[0];
+
+      if (p.size() >= 3 && p[2] > "")
+      {
+        itsGeometryId = toInt32(p[2]);
+      }
+
+      if (p.size() >= 4 && p[3] > "")
+        parameterLevelId = toInt32(p[3]);
+
+      if (p.size() >= 5 && p[4] > "")
+      {
+        minLevel = toInt32(p[4]);
+        maxLevel = minLevel;
+      }
+
+      if (p.size() >= 6 && p[5] > "")
+        forecastType = toInt32(p[5]);
+
+      if (p.size() >= 7 && p[6] > "")
+        forecastNumber = toInt32(p[6]);
+    }
+
+
     T::ProducerInfo producerInfo;
     if (contentServer->getProducerInfoByName(0, itsProducer, producerInfo) != 0)
       return true;
@@ -102,9 +142,11 @@ bool WMSGridDataLayer::updateLayerMetaData()
       {
         std::set<T::GeometryId> geometryIdList;
         if (contentServer->getContentGeometryIdListByGenerationId(
-                0, generationInfo->mGenerationId, geometryIdList) != 0 ||
-            geometryIdList.empty())
+                0, generationInfo->mGenerationId, geometryIdList) != 0)
           return true;
+
+        if (geometryIdList.empty())
+          continue;
 
         itsGeometryId = *geometryIdList.begin();
       }
@@ -132,40 +174,6 @@ bool WMSGridDataLayer::updateLayerMetaData()
 
       if (itsParameter > "")
       {
-        std::string param = itsGridEngine->getParameterString(itsProducer, itsParameter);
-        std::vector<std::string> p;
-        splitString(param, ':', p);
-
-        T::ParamKeyType parameterKeyType = T::ParamKeyTypeValue::FMI_NAME;
-        std::string parameterKey = p[0];
-        T::ParamLevelId parameterLevelId = 0;
-        T::ParamLevel minLevel = 0;
-        T::ParamLevel maxLevel = 1000000000;
-        T::ForecastType forecastType = 1;
-        T::ForecastNumber forecastNumber = -1;
-        std::string startTime = "19000101T000000";
-        std::string endTime = "23000101T000000";
-
-        if (p.size() >= 3 && p[2] > "")
-        {
-          itsGeometryId = toInt32(p[2]);
-        }
-
-        if (p.size() >= 4 && p[3] > "")
-          parameterLevelId = toInt32(p[3]);
-
-        if (p.size() >= 5 && p[4] > "")
-        {
-          minLevel = toInt32(p[4]);
-          maxLevel = minLevel;
-        }
-
-        if (p.size() >= 6 && p[5] > "")
-          forecastType = toInt32(p[5]);
-
-        if (p.size() >= 7 && p[6] > "")
-          forecastNumber = toInt32(p[6]);
-
         // Trying to find content records with the given parameter name.
 
         T::ContentInfoList contentInfoList;
@@ -257,7 +265,8 @@ bool WMSGridDataLayer::updateLayerMetaData()
           }
         }
 
-        if (!elevationDimension  &&  levelList.size() > 0)
+        // Add elevation information if there is more than one level.
+        if (!elevationDimension  &&  levelList.size() > 1)
         {
           Identification::LevelDef levelDef;
           if (Identification::gridDef.getFmiLevelDef(parameterLevelId,levelDef))
