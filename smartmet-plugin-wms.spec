@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.6.3
+Version: 24.6.4
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Jun  4 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.6.4-1.fmi
+- Enable caching of SymbolLayers if the requested time is more than 5 minutes old
+- Restored level querystring parameter to work
+
 * Mon Jun  3 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.6.3-1.fmi
 - Repackaged due to ABI changes
 
