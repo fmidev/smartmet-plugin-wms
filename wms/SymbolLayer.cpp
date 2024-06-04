@@ -100,19 +100,8 @@ PointValues read_forecasts(const SymbolLayer& layer,
         Spine::Location loc(point.latlon.X(), point.latlon.Y());
 
         // Q API SUCKS!!
-        Engine::Querydata::ParameterOptions options(*param,
-                                                    "",
-                                                    loc,
-                                                    "",
-                                                    "",
-                                                    *timeformatter,
-                                                    "",
-                                                    "",
-                                                    mylocale,
-                                                    "",
-                                                    false,
-                                                    dummy,
-                                                    dummy);
+        Engine::Querydata::ParameterOptions options(
+            *param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
 
         TS::Value result =
             AggregationUtility::get_qengine_value(q, options, localdatetime, layer.param_funcs);
@@ -486,8 +475,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       {
         param.mParameterLevel = C_INT(*level);
       }
-      else
-      if (pressure)
+      else if (pressure)
       {
         param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
         param.mParameterLevel = C_INT(*pressure);
@@ -772,8 +760,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     const auto now = Fmi::SecondClock::local_time();
     const auto valid_time = (!is_legend ? getValidTime() : now);
-    const auto valid_time_period =
-        (!is_legend ? getValidTimePeriod() : Fmi::TimePeriod(now, now));
+    const auto valid_time_period = (!is_legend ? getValidTimePeriod() : Fmi::TimePeriod(now, now));
 
     // Establish the level
 
@@ -974,9 +961,13 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
 {
   try
   {
-    // Disable caching of observation layers
+    // Disable caching of very new observation layers
     if (theState.isObservation(producer))
-      return Fmi::bad_hash;
+    {
+      const auto age = Fmi::SecondClock::universal_time() - getValidTime();
+      if (age < Fmi::Minutes(5))
+        return Fmi::bad_hash;
+    }
 
     auto hash = Layer::hash_value(theState);
 

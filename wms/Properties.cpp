@@ -57,6 +57,8 @@ void Properties::init(Json::Value& theJson, const State& theState, const Config&
     JsonTools::remove_double(level, theJson, "elevation");
     if (theState.getRequest().getParameter("elevation"))
       level = std::stod(*theState.getRequest().getParameter("elevation"));
+    else if (theState.getRequest().getParameter("level"))
+      level = std::stod(*theState.getRequest().getParameter("level"));
 
     JsonTools::remove_string(elevation_unit, theJson, "elevation_unit");
     if (theState.getRequest().getParameter("elevation_unit"))
@@ -145,6 +147,8 @@ void Properties::init(Json::Value& theJson,
     JsonTools::remove_double(level, theJson, "elevation");
     if (theState.getRequest().getParameter("elevation"))
       level = std::stod(*theState.getRequest().getParameter("elevation"));
+    else if (theState.getRequest().getParameter("level"))
+      level = std::stod(*theState.getRequest().getParameter("level"));
 
     JsonTools::remove_string(elevation_unit, theJson, "elevation_unit");
     if (theState.getRequest().getParameter("elevation_unit"))

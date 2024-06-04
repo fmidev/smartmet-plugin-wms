@@ -559,8 +559,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       {
         p.mParameterLevel = C_INT(*level);
       }
-      else
-      if (pressure)
+      else if (pressure)
       {
         p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
         p.mParameterLevel = C_INT(*pressure);
