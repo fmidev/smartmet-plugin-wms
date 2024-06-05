@@ -137,7 +137,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="150" height="160">
@@ -188,7 +188,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="150" height="160">
@@ -786,7 +786,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="30" height="10">
@@ -934,7 +934,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension>
     </Layer>
     
     <Layer queryable="1">
@@ -1064,7 +1064,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="150" height="100">
@@ -1259,7 +1259,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="500" height="990">
@@ -2535,7 +2535,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="624" height="295">
@@ -2607,7 +2607,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="300" height="133">
@@ -2672,7 +2672,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="624" height="330">
@@ -2723,7 +2723,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="774" height="295">
@@ -2774,7 +2774,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="820" height="295">
@@ -2825,7 +2825,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="819" height="295">
@@ -2877,7 +2877,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="223" height="97">
@@ -2928,7 +2928,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="500" height="990">
@@ -3000,7 +3000,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="500" height="990">
@@ -3051,7 +3051,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="800" height="990">
@@ -3107,7 +3107,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="80" height="150">
@@ -3184,7 +3184,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>alternative_legend_style1</Name>
         <Title>Default style</Title>
         <LegendURL width="80" height="150">
@@ -3240,7 +3240,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="30" height="10">
@@ -3303,7 +3303,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="30" height="10">
@@ -3366,7 +3366,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="30" height="10">
@@ -3424,7 +3424,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="137" height="10">
@@ -3482,7 +3482,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="276" height="10">
@@ -3540,7 +3540,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="274" height="10">
@@ -3599,7 +3599,7 @@
       <BoundingBox CRS="EPSG:4258" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <BoundingBox CRS="EPSG:4326" minx="-9.09870632718" miny="51.3" maxx="49" maxy="72.6420840803"/>
       <Dimension name="time" units="ISO8601" multipleValues="0" nearestValue="0" current="1">2008-08-09T00:00:00Z/2008-08-09T06:00:00Z/PT1H</Dimension>
-      <Style>
+      <Dimension name="elevation" units="" multipleValues="0" nearestValue="0">0</Dimension><Style>
         <Name>default</Name>
         <Title>Default style</Title>
         <LegendURL width="500" height="990">
