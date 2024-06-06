@@ -60,7 +60,7 @@ WMSGridDataLayer::WMSGridDataLayer(const WMSConfig& config,
                                    std::string elevation_unit)
     : WMSLayer(config),
       itsGridEngine(config.gridEngine()),
-      itsProducer(std::move(producer)),
+      itsProducer(producer),
       itsParameter(parameter),
       itsGeometryId(geometryId),
       itsElevationUnit(elevation_unit)
@@ -87,19 +87,53 @@ bool WMSGridDataLayer::updateLayerMetaData()
     T::ForecastNumber forecastNumber = -1;
     std::string startTime = "19000101T000000";
     std::string endTime = "23000101T000000";
+    std::string producer = itsProducer;
+    std::string fparam;
 
     if (itsParameter > "")
     {
-      std::string param = itsGridEngine->getParameterString(itsProducer, itsParameter);
+      // Finding parameter information (it might be inside a function)
+
+      char buf[2000];
+      strcpy(buf,itsParameter.c_str());
+
+      char *startpoint = buf;
+      char *pp = buf;
+      while (*pp != '\0' &&  *pp != '}')
+      {
+        if (*pp == '{')
+          startpoint = pp+1;
+
+        pp++;
+      }
+      *pp = '\0';
+
+      //printf("PP [%s]\n",startpoint);
+
+      // Function might have several parameters. Let's pick one that is not a number.
+
+      std::vector<std::string> fp;
+      splitString(startpoint, ';', fp);
+
+      for (auto it = fp.begin(); it != fp.end()  &&  fparam.empty(); ++it)
+      {
+        const char *ps = it->c_str();
+        if (ps[0] >= 'A')
+          fparam = *it;
+      }
+
+
+      std::string param = itsGridEngine->getParameterString(producer, fparam);
       std::vector<std::string> p;
       splitString(param, ':', p);
 
       parameterKey = p[0];
 
+      if (p.size() >= 2 && p[1] > "")
+        producer = p[1];
+
       if (p.size() >= 3 && p[2] > "")
-      {
         itsGeometryId = toInt32(p[2]);
-      }
 
       if (p.size() >= 4 && p[3] > "")
         parameterLevelId = toInt32(p[3]);
@@ -117,9 +151,10 @@ bool WMSGridDataLayer::updateLayerMetaData()
         forecastNumber = toInt32(p[6]);
     }
 
+    //printf("PRODUCER [%s][%s][%s][%d]\n",producer.c_str(),itsParameter.c_str(),fparam.c_str(),itsGeometryId);
 
     T::ProducerInfo producerInfo;
-    if (contentServer->getProducerInfoByName(0, itsProducer, producerInfo) != 0)
+    if (contentServer->getProducerInfoByName(0, producer, producerInfo) != 0)
       return true;
 
     T::GenerationInfoList generationInfoList;
@@ -137,7 +172,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
       if (generationInfo == nullptr || generationInfo->mStatus != 1)
         continue;
 
-      //printf("-- GENERATION %s  (geom=%d param=%s)\n",generationInfo->mName.c_str(),itsGeometryId,itsParameter.c_str());
+      //printf("-- GENERATION %s  (geom=%d fparam=%s)\n",generationInfo->mName.c_str(),itsGeometryId,fparam.c_str());
       if (itsGeometryId <= 0)
       {
         std::set<T::GeometryId> geometryIdList;
