@@ -19,6 +19,7 @@
 */
 
 #include <optional>
+#include <vector>
 
 namespace SmartMet
 {

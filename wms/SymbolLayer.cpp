@@ -107,14 +107,14 @@ PointValues read_forecasts(const SymbolLayer& layer,
             AggregationUtility::get_qengine_value(q, options, localdatetime, layer.param_funcs);
 
         // auto result = q->value(options, localdatetime);
-        if (boost::get<double>(&result) != nullptr)
+        if (const double* ptr = std::get_if<double>(&result))
         {
-          double tmp = *boost::get<double>(&result);
+          double tmp = *ptr;
           pointvalues.push_back(PointData{point, tmp});
         }
-        else if (boost::get<int>(&result) != nullptr)
+        else if (const int* ptr = std::get_if<int>(&result))
         {
-          double tmp = *boost::get<int>(&result);
+          double tmp = *ptr;
           pointvalues.push_back(PointData{point, tmp});
         }
         else

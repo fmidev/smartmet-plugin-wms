@@ -193,10 +193,12 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
         //        auto vresult = q->value(vp, localdatetime);
 
-        if (boost::get<double>(&uresult) != nullptr && boost::get<double>(&vresult) != nullptr)
+        const double* u_ptr = std::get_if<double>(&uresult);
+        const double* v_ptr = std::get_if<double>(&vresult);
+        if (u_ptr && v_ptr)
         {
-          auto uspd = *boost::get<double>(&uresult);
-          auto vspd = *boost::get<double>(&vresult);
+          auto uspd = *u_ptr;
+          auto vspd = *v_ptr;
 
           if (uspd != kFloatMissing && vspd != kFloatMissing)
           {
@@ -228,8 +230,8 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                         dummy);
 
           auto dir_result = AggregationUtility::get_qengine_value(q, dp, localdatetime, dir_funcs);
-          if (boost::get<double>(&dir_result) != nullptr)
-            wdir = *boost::get<double>(&dir_result);
+          if (const double* ptr = std::get_if<double>(&dir_result))
+            wdir = *ptr;
         }
         else
         {
@@ -256,8 +258,8 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
             auto speed_result =
                 AggregationUtility::get_qengine_value(q, sp, localdatetime, speed_funcs);
-            if (boost::get<double>(&speed_result) != nullptr)
-              wspd = *boost::get<double>(&speed_result);
+            if (const double* ptr = std::get_if<double>(&speed_result))
+              wspd = *ptr;
           }
           else
           {

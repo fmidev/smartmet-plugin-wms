@@ -806,10 +806,10 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
 
       double tmp = cand.isovalue;
 
-      if (boost::get<double>(&result) != nullptr)
-        tmp = *boost::get<double>(&result);
-      else if (boost::get<int>(&result) != nullptr)
-        tmp = *boost::get<int>(&result);
+      if (const double* ptr = std::get_if<double>(&result))
+        tmp = *ptr;
+      else if (const int* ptr = std::get_if<int>(&result))
+        tmp = *ptr;
       else
         cand.angle = std::numeric_limits<double>::quiet_NaN();
 

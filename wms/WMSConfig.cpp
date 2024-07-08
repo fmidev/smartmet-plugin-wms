@@ -26,6 +26,7 @@
 #include <gis/EPSGInfo.h>
 #include <gis/SpatialReference.h>
 #include <macgyver/Exception.h>
+#include <macgyver/FileSystem.h>
 #include <macgyver/StringConversion.h>
 #include <spine/Convenience.h>
 #include <spine/Exceptions.h>
@@ -61,7 +62,6 @@ void check_modification_time(const std::string& theDir, Fmi::DateTime& max_time)
     if (!std::filesystem::exists(theDir) || !std::filesystem::is_directory(theDir))
       return;
 
-    boost::system::error_code ec;
     std::filesystem::directory_iterator end_itr;
     for (std::filesystem::directory_iterator itr(theDir); itr != end_itr; ++itr)
     {
@@ -76,12 +76,18 @@ void check_modification_time(const std::string& theDir, Fmi::DateTime& max_time)
       else if (is_regular_file(itr->status()))
       {
         std::string filename = (theDir + itr->path().filename().string());
-        std::time_t time_t_mod = std::filesystem::last_write_time(filename, ec);
-        if (ec.value() == boost::system::errc::success)
+        std::optional<std::time_t> time_t_mod = Fmi::last_write_time(filename);
+        if (time_t_mod)
         {
-          auto ptime_mod = Fmi::date_time::from_time_t(time_t_mod);
+          auto ptime_mod = Fmi::date_time::from_time_t(*time_t_mod);
           if (max_time < ptime_mod)
             max_time = ptime_mod;
+        }
+        else
+        {
+          Fmi::Exception err(BCP, "Failed to get file last write time");
+          err.addParameter("Path", filename);
+          throw err;
         }
       }
     }
@@ -306,23 +312,32 @@ void set_optional(CTPP::CDT& tmpl,
 void update_product_modification_time(const std::string& filename,
                                       std::map<std::string, std::time_t>& modification_times)
 {
-  const std::time_t modtime = std::filesystem::last_write_time(filename);
+  const std::optional<std::time_t> modtime = Fmi::last_write_time(filename);
 
-  auto pos = modification_times.find(filename);
+  if (modtime)
+  {
+    auto pos = modification_times.find(filename);
 
-  if (pos == modification_times.end())
-    modification_times.insert({filename, modtime});
+    if (pos == modification_times.end())
+      modification_times.insert({filename, *modtime});
+    else
+    {
+      const std::time_t previous_time = pos->second;
+      if (*modtime != 0 && *modtime != previous_time)
+      {
+        pos->second = *modtime;
+
+        // Product file is reloaded when the map is next time requested
+        auto message = Spine::log_time_str() + " File " + filename + " modified, reloading it\n";
+        std::cout << message << std::flush;
+      }
+    }
+  }
   else
   {
-    const std::time_t previous_time = pos->second;
-    if (modtime != 0 && modtime != previous_time)
-    {
-      pos->second = modtime;
-
-      // Product file is reloaded when the map is next time requested
-      auto message = Spine::log_time_str() + " File " + filename + " modified, reloading it\n";
-      std::cout << message << std::flush;
-    }
+    Fmi::Exception err(BCP, "Failed to get file last write time");
+    err.addParameter("Path", filename);
+    throw err;
   }
 }
 

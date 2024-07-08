@@ -150,14 +150,14 @@ void IsobandLayer::init(Json::Value& theJson,
     json = JsonTools::remove(theJson, "outside");
     if (!json.isNull())
     {
-      outside.reset(Map());
+      outside = Map();
       outside->init(json, theConfig);
     }
 
     json = JsonTools::remove(theJson, "inside");
     if (!json.isNull())
     {
-      inside.reset(Map());
+      inside = Map();
       inside->init(json, theConfig);
     }
 

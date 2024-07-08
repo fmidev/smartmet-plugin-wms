@@ -420,8 +420,8 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
       if (styles->features.empty())
       {
         // Assume feature value matches station number
-        if (feature_value.which() == 0)
-          station_number = boost::get<int>(feature_value);
+        if (feature_value.index() == 0)
+          station_number = std::get<int>(feature_value);
         else
           throw Fmi::Exception(BCP, "Feature type for a styled MapLayer must be int or string");
       }
@@ -429,10 +429,10 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
       {
         auto station_pos = styles->features.end();
 
-        if (feature_value.which() == 2)
-          station_pos = styles->features.find(boost::get<std::string>(feature_value));
-        else if (feature_value.which() == 0)
-          station_pos = styles->features.find(Fmi::to_string(boost::get<int>(feature_value)));
+        if (feature_value.index() == 2)
+          station_pos = styles->features.find(std::get<std::string>(feature_value));
+        else if (feature_value.index() == 0)
+          station_pos = styles->features.find(Fmi::to_string(std::get<int>(feature_value)));
         else
           throw Fmi::Exception(BCP, "Feature type for a styled MapLayer must be int or string");
 

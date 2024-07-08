@@ -13,6 +13,7 @@
 #include <fmt/format.h>
 #include <gis/CoordinateTransformation.h>
 #include <macgyver/Exception.h>
+#include <macgyver/FileSystem.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
 #include <ogr_spatialref.h>
@@ -2445,10 +2446,9 @@ void WMSLayer::setProductFile(const std::string& theProductFile)
   productFile = theProductFile;
 
   // Save modification time of product file
-  boost::system::error_code ec;
-  auto modtime = std::filesystem::last_write_time(productFile, ec);
-  if (ec.value() == boost::system::errc::success)
-    itsProductFileModificationTime = Fmi::date_time::from_time_t(modtime);
+  auto modtime = Fmi::last_write_time(productFile);
+  if (modtime)
+    itsProductFileModificationTime = Fmi::date_time::from_time_t(*modtime);
 }
 
 const Fmi::DateTime& WMSLayer::modificationTime() const

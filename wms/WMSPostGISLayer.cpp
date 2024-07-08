@@ -141,7 +141,7 @@ bool WMSPostGISLayer::mustUpdateLayerMetaData()
     {
       Fmi::FeaturePtr feature = features[0];
       Fmi::DateTime timestamp =
-          boost::get<Fmi::DateTime>(feature->attributes[itsMetaDataSettings.field]);
+          std::get<Fmi::DateTime>(feature->attributes[itsMetaDataSettings.field]);
       if (timestamp.is_not_a_date_time() || mostCurrentTimestamp.is_not_a_date_time())
         return true;
       // if the timestamp is older or the same as previous time, there is no need to update metadata

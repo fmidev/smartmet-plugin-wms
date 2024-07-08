@@ -29,7 +29,7 @@ std::optional<AttributeSelection> attribute(const std::vector<AttributeSelection
     {
       if (attrs.matches(theValue))
       {
-        ret.reset(attrs);
+        ret = attrs;
         break;
       }
     }

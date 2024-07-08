@@ -12,9 +12,7 @@
 #include "WMSLayerProxy.h"
 #include "WMSLegendGraphicSettings.h"
 #include "WMSSupportedReference.h"
-#include <boost/move/unique_ptr.hpp>
 #include <optional>
-#include <boost/smart_ptr/atomic_shared_ptr.hpp>
 #include <boost/utility.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
@@ -24,6 +22,7 @@
 #include <macgyver/AsyncTask.h>
 #include <spine/JsonCache.h>
 #include <spine/Thread.h>
+#include <macgyver/AtomicSharedPtr.h>
 #include <libconfig.h++>
 #include <map>
 #include <set>
@@ -222,7 +221,7 @@ class WMSConfig
   // and must be used via atomic_load and atomic_store, since CTPP::CDT is not thread safe.
 
   using LayerMap = std::map<std::string, WMSLayerProxy>;
-  boost::atomic_shared_ptr<LayerMap> itsLayers;
+  Fmi::AtomicSharedPtr<LayerMap> itsLayers;
 
   std::unique_ptr<Fmi::AsyncTask> itsGetCapabilitiesTask;
 

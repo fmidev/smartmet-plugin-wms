@@ -488,8 +488,7 @@ void IceMapLayer::handleTextField(const Fmi::Feature& theResultItem,
     std::string text_column = itsParameters.at("text_column");
 
     if (theResultItem.attributes.find(text_column) != theResultItem.attributes.end())
-      text = boost::apply_visitor(PostGISAttributeToString(),
-                                  theResultItem.attributes.at(text_column));
+      text = std::visit(PostGISAttributeToString(), theResultItem.attributes.at(text_column));
   }
   else
   {
@@ -548,16 +547,16 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
     std::string name_position = "label_location";
     if (itsParameters.find("firstname_column") != itsParameters.end())
       first_name =
-          boost::apply_visitor(PostGISAttributeToString(),
+          std::visit(PostGISAttributeToString(),
                                theResultItem.attributes.at(itsParameters.at("firstname_column")));
 
     if (itsParameters.find("secondname_column") != itsParameters.end())
       second_name =
-          boost::apply_visitor(PostGISAttributeToString(),
+          std::visit(PostGISAttributeToString(),
                                theResultItem.attributes.at(itsParameters.at("secondname_column")));
 
     if (itsParameters.find("nameposition_column") != itsParameters.end())
-      name_position = boost::apply_visitor(
+      name_position = std::visit(
           PostGISAttributeToString(),
           theResultItem.attributes.at(itsParameters.at("nameposition_column")));
 
@@ -573,7 +572,7 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
       if (theResultItem.attributes.find(angle_column) != theResultItem.attributes.end())
       {
         arrow_angle =
-            boost::apply_visitor(PostGISAttributeToString(),
+            std::visit(PostGISAttributeToString(),
                                  theResultItem.attributes.at(itsParameters.at("angle_column")));
       }
     }
@@ -618,7 +617,7 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
   if (itsParameters.find("labeltext_column") != itsParameters.end())
     labeltext_column = itsParameters.at("labeltext_column");
   if (theResultItem.attributes.find(labeltext_column) != theResultItem.attributes.end())
-    label_text = boost::apply_visitor(PostGISAttributeToString(),
+    label_text = std::visit(PostGISAttributeToString(),
                                       theResultItem.attributes.at(labeltext_column));
 
   boost::replace_all(label_text, "<", "&#60;");
@@ -627,13 +626,13 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
   if (itsParameters.find("fontname_column") != itsParameters.end())
     fontname_column = itsParameters.at("fontname_column");
   if (theResultItem.attributes.find(labeltext_column) != theResultItem.attributes.end())
-    text_style.fontfamily = boost::apply_visitor(PostGISAttributeToString(),
+    text_style.fontfamily = std::visit(PostGISAttributeToString(),
                                                  theResultItem.attributes.at(fontname_column));
 
   if (itsParameters.find("fontsize_column") != itsParameters.end())
     fontname_column = itsParameters.at("fontsize_column");
   if (theResultItem.attributes.find(labeltext_column) != theResultItem.attributes.end())
-    text_style.fontsize = boost::apply_visitor(PostGISAttributeToString(),
+    text_style.fontsize = std::visit(PostGISAttributeToString(),
                                                theResultItem.attributes.at(fontsize_column));
 
   // erase decimal part from fontsize
@@ -705,7 +704,7 @@ void IceMapLayer::handleMeanTemperature(const Fmi::Feature& theResultItem,
 
   // mean temperature
   std::string mean_temperature =
-      boost::apply_visitor(PostGISAttributeToString(), theResultItem.attributes.at(col_name));
+      std::visit(PostGISAttributeToString(), theResultItem.attributes.at(col_name));
 
   if (mean_temperature.empty())
     return;
@@ -872,7 +871,7 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
   std::string egg_text;
   if (theResultItem.attributes.find("textstring") != theResultItem.attributes.end())
     egg_text =
-        boost::apply_visitor(PostGISAttributeToString(), theResultItem.attributes.at("textstring"));
+        std::visit(PostGISAttributeToString(), theResultItem.attributes.at("textstring"));
 
   std::vector<std::string> rows;
   boost::algorithm::split(rows, egg_text, boost::algorithm::is_any_of("\n"));

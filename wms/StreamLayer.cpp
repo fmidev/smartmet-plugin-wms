@@ -539,9 +539,9 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
                                                        dummy);
 
           auto res = q->value(p, localdatetime);
-          if (boost::get<double>(&res) != nullptr)
+          if (const double* ptr = std::get_if<double>(&res))
           {
-            auto direction = *boost::get<double>(&res);
+            auto direction = *ptr;
             gridValues.push_back(direction);
           }
           else
@@ -594,10 +594,12 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
           auto res_u = q->value(p_u, localdatetime);
           auto res_v = q->value(p_v, localdatetime);
 
-          if (boost::get<double>(&res_u) != nullptr && boost::get<double>(&res_v) != nullptr)
+          const double* ptr_u = std::get_if<double>(&res_u);
+          const double* ptr_v = std::get_if<double>(&res_v);
+          if (ptr_u && ptr_v)
           {
-            auto uspd = *boost::get<double>(&res_u);
-            auto vspd = *boost::get<double>(&res_v);
+            auto uspd = *ptr_u;
+            auto vspd = *ptr_v;
 
             if (uspd != kFloatMissing && vspd != kFloatMissing)
             {

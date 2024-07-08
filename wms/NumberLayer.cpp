@@ -102,16 +102,15 @@ PointValues read_forecasts(const NumberLayer& layer,
         TS::Value result =
             AggregationUtility::get_qengine_value(q, options, localdatetime, layer.param_funcs);
 
-        if (boost::get<double>(&result) != nullptr)
+        if (const double* tmp = std::get_if<double>(&result))
         {
-          double tmp = *boost::get<double>(&result);
-          pointvalues.push_back(PointData{point, tmp});
+          pointvalues.push_back(PointData{point, *tmp});
           // printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(),
-          // point.latlon.Y(),tmp);
+          // point.latlon.Y(),*tmp);
         }
-        else if (boost::get<int>(&result) != nullptr)
+        else if (const int* ptr = std::get_if<int>(&result))
         {
-          double tmp = *boost::get<int>(&result);
+          double tmp = *ptr;
           pointvalues.push_back(PointData{point, tmp});
           // printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(),
           // point.latlon.Y(),tmp);
