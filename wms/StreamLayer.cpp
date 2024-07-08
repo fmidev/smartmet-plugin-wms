@@ -676,7 +676,7 @@ void StreamLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     if (!validLayer(theState))
       return;
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "StreamLayer::generate finished in %t sec CPU, %w sec real\n";

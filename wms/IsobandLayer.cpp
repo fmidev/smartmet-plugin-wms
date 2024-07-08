@@ -418,7 +418,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!parameter)
       throw Fmi::Exception(BCP, "Parameter not set for isoband-layer");
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
@@ -934,7 +934,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 {
   try
   {
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
@@ -995,7 +995,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       if (heatmap.resolution)
         throw Fmi::Exception(BCP, "Isoband-layer can't use both sampling and heatmap!");
 
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer2;
+      std::unique_ptr<boost::timer::auto_cpu_timer> timer2;
       if (theState.useTimer())
       {
         std::string report2 = "IsobandLayer::resample finished in %t sec CPU, %w sec real\n";

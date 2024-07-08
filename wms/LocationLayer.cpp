@@ -118,7 +118,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     // Time execution
 
     std::string report = "LocationLayer::generate finished in %t sec CPU, %w sec real\n";
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
       timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
 

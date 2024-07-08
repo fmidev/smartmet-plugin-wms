@@ -558,7 +558,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Time execution
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "ArrowLayer::generate finished in %t sec CPU, %w sec real\n";
@@ -1024,7 +1024,7 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
     // Time execution
 
     std::string report = "ArrowLayer::generate finished in %t sec CPU, %w sec real\n";
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
       timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
 

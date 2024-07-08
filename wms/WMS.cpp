@@ -834,7 +834,7 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
   std::string log;
   try
   {
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
     if (theState.useTimer())
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
@@ -1066,7 +1066,7 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
     std::string log;
     try
     {
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
       {
         std::string report = "Template processing finished in %t sec CPU, %w sec real\n";

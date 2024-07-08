@@ -74,7 +74,7 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     if (!validLayer(theState))
       return;
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "MapLayer::generate finished in %t sec CPU, %w sec real\n";
@@ -133,7 +133,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     const auto& gis = theState.getGisEngine();
     {
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
       {
         std::string report = "getShape finished in %t sec CPU, %w sec real\n";
@@ -155,7 +155,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     // Clip it
 
     {
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
       {
         std::string report = "polyclip finished in %t sec CPU, %w sec real\n";
@@ -191,7 +191,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       std::string objectKey = "map:" + qid;
       object_cdt["objectKey"] = objectKey;
 
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
       {
         std::string report = "Generating coordinate data finished in %t sec CPU, %w sec real\n";
@@ -339,7 +339,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
 
     const auto& gis = theState.getGisEngine();
     {
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
       {
         std::string report = "getFeatures finished in %t sec CPU, %w sec real\n";
