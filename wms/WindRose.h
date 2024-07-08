@@ -9,7 +9,7 @@
 #include "AttributeSelection.h"
 #include "Attributes.h"
 #include "Connector.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 #include <string>
 #include <vector>
@@ -29,10 +29,10 @@ class WindRose
   int minpercentage = 0;
   int radius = 20;  // readable size
   int sectors = 8;  // N, NE ... SW, W, NW
-  boost::optional<std::string> symbol;
+  std::optional<std::string> symbol;
   Attributes attributes;
-  boost::optional<Connector> connector;
-  boost::optional<std::string> parameter;
+  std::optional<Connector> connector;
+  std::optional<std::string> parameter;
   std::vector<AttributeSelection> limits;
 
  private:

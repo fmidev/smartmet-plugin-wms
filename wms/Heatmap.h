@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 #include <memory>
 #include <string>
@@ -30,10 +30,10 @@ class Heatmap
   std::size_t hash_value(const State& theState) const;
   std::unique_ptr<heatmap_stamp_t, void (*)(heatmap_stamp_t*)> getStamp(unsigned radius);
 
-  boost::optional<double> resolution;
-  boost::optional<double> radius;
-  boost::optional<std::string> kernel;
-  boost::optional<double> deviation;
+  std::optional<double> resolution;
+  std::optional<double> radius;
+  std::optional<std::string> kernel;
+  std::optional<double> deviation;
 
   unsigned max_points;                          // Configured or default max heatmap size
   const unsigned max_max_points = 2000 * 2000;  // Max allowed heatmap size

@@ -66,11 +66,11 @@ PointValues read_forecasts(const NumberLayer& layer,
 
     // The parameters. This *must* be done after the call to positions generation
 
-    boost::optional<Spine::Parameter> param;
+    std::optional<Spine::Parameter> param;
     if (layer.param_funcs)
       param = layer.param_funcs->parameter;
 
-    boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+    std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     Fmi::LocalDateTime localdatetime(valid_time, Fmi::TimeZonePtr::utc);
 
     PointValues pointvalues;
@@ -350,7 +350,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (theState.useTimer())
     {
       std::string report = "NumberLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // Make sure position generation is initialized
@@ -650,7 +650,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         iri = *selection->symbol;
 
       // librsvg cannot handle scale + transform, must move former into latter
-      boost::optional<double> rescale;
+      std::optional<double> rescale;
       if (selection)
       {
         auto scaleattr = selection->attributes.remove("scale");
@@ -749,7 +749,7 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     if (theState.useTimer())
     {
       std::string report = "NumberLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // Establish the data
@@ -886,7 +886,7 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
         iri = *selection->symbol;
 
       // librsvg cannot handle scale + transform, must move former into latter
-      boost::optional<double> rescale;
+      std::optional<double> rescale;
       if (selection)
       {
         auto scaleattr = selection->attributes.remove("scale");

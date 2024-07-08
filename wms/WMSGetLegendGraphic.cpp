@@ -267,7 +267,7 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
           throw exception;
         }
 
-        const boost::optional<Fmi::DateTime> reference_time;
+        const std::optional<Fmi::DateTime> reference_time;
         Fmi::DateTime mostCurrentTime(
             itsConfig.mostCurrentTime(layerName, reference_time));
         if (mostCurrentTime.is_not_a_date_time())

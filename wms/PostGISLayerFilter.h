@@ -23,7 +23,7 @@ class PostGISLayerFilter
   void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
-  boost::optional<std::string> where;
+  std::optional<std::string> where;
   // SVG attributes for geometry (id, class, style, ...)
   Attributes attributes;
   // SVG attributes for text

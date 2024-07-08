@@ -92,14 +92,14 @@ void Layer::init(Json::Value& theJson,
 
     const auto& request = theState.getRequest();
 
-    boost::optional<std::string> v = request.getParameter("geometryId");
+    std::optional<std::string> v = request.getParameter("geometryId");
     if (v)
       geometryId = toInt32(*v);
 
     // Not used in plain requests
     json = JsonTools::remove(theJson, "legend_url_layer");
 
-    // boost::optional<std::string> v = request.getParameter("producerId");
+    // std::optional<std::string> v = request.getParameter("producerId");
     // if (v)
     //  geometryId = toInt32(*v);
   }

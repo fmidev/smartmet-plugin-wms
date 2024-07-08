@@ -188,7 +188,7 @@ void IsobandLayer::init(Json::Value& theJson,
  */
 // ----------------------------------------------------------------------
 
-boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
+std::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     const Spine::Parameter& theParameter, const Fmi::DateTime& theTime, State& theState)
 {
   try
@@ -333,7 +333,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     // Then create the new querydata
 
     NFmiFastQueryInfo info(pdesc, tdesc, hdesc, vdesc);
-    boost::shared_ptr<NFmiQueryData> data(NFmiQueryDataUtil::CreateEmptyData(info));
+    std::shared_ptr<NFmiQueryData> data(NFmiQueryDataUtil::CreateEmptyData(info));
     if (data == nullptr)
       throw Fmi::Exception(BCP, "Failed to create heatmap");
 
@@ -366,8 +366,8 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     Fmi::hash_combine(hash, Fmi::hash_value(tmp));
     CPLFree(tmp);
 
-    auto model = boost::make_shared<Engine::Querydata::Model>(data, hash);
-    return boost::make_shared<Engine::Querydata::QImpl>(model);
+    auto model = std::make_shared<Engine::Querydata::Model>(data, hash);
+    return std::make_shared<Engine::Querydata::QImpl>(model);
   }
   catch (...)
   {
@@ -422,7 +422,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (theState.useTimer())
     {
       std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // Establish the parameter
@@ -938,7 +938,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     if (theState.useTimer())
     {
       std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // Establish the data
@@ -999,7 +999,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       if (theState.useTimer())
       {
         std::string report2 = "IsobandLayer::resample finished in %t sec CPU, %w sec real\n";
-        timer2 = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report2);
+        timer2 = std::make_unique<boost::timer::auto_cpu_timer>(2, report2);
       }
 
       auto demdata = theState.getGeoEngine().dem();

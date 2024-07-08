@@ -11,7 +11,7 @@
 #include "State.h"
 #include <boost/logic/tribool.hpp>
 #include <boost/move/make_unique.hpp>
-#include <boost/optional.hpp>
+#include <optional>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
@@ -140,8 +140,8 @@ void IsolabelLayer::init(Json::Value& theJson,
       {
         // { start, stop, step=1 }
 
-        boost::optional<double> start;
-        boost::optional<double> stop;
+        std::optional<double> start;
+        std::optional<double> stop;
         double step = 1.0;
         JsonTools::remove_double(start, json, "start");
         JsonTools::remove_double(stop, json, "stop");
@@ -221,7 +221,7 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     if (theState.useTimer())
     {
       std::string report = "IsolabelLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     auto geoms = IsolineLayer::getIsolines(isovalues, theState);
@@ -753,7 +753,7 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
   // The parameter being used
   auto param = TS::ParameterFactory::instance().parse(*parameter);
 
-  boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+  std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
   Fmi::LocalDateTime localdatetime(getValidTime(), Fmi::TimeZonePtr::utc);
   auto mylocale = std::locale::classic();
   NFmiPoint dummy;

@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 
 namespace SmartMet
@@ -25,12 +25,12 @@ class Location
   std::size_t hash_value(const State& theState) const;
 
   // See also Station.h to be consistent if you're planning to expand this class
-  boost::optional<double> longitude;
-  boost::optional<double> latitude;
+  std::optional<double> longitude;
+  std::optional<double> latitude;
 
   // Optional position shifts
-  boost::optional<int> dx;
-  boost::optional<int> dy;
+  std::optional<int> dx;
+  std::optional<int> dy;
 
 };  // class Location
 

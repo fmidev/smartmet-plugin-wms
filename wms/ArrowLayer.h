@@ -12,7 +12,7 @@
 #include "PointValueOptions.h"
 #include "Positions.h"
 #include "Projection.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <vector>
 
 namespace SmartMet
@@ -41,29 +41,29 @@ class ArrowLayer : public Layer
   void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   // Direction and speed parameters
-  boost::optional<std::string> direction;
-  boost::optional<std::string> speed;
+  std::optional<std::string> direction;
+  std::optional<std::string> speed;
   // U- and V-components, mutually exclusive with above settings
-  boost::optional<std::string> u;
-  boost::optional<std::string> v;
+  std::optional<std::string> u;
+  std::optional<std::string> v;
 
-  boost::optional<double> fixedspeed;
-  boost::optional<double> fixeddirection;
+  std::optional<double> fixedspeed;
+  std::optional<double> fixeddirection;
 
   std::string unit_conversion;
-  boost::optional<double> multiplier;
-  boost::optional<double> offset;
-  boost::optional<double> minrotationspeed;
-  boost::optional<std::string> symbol;
-  boost::optional<double> scale;
+  std::optional<double> multiplier;
+  std::optional<double> offset;
+  std::optional<double> minrotationspeed;
+  std::optional<std::string> symbol;
+  std::optional<double> scale;
   bool southflop = false;
   bool northflop = false;
   bool flip = false;
 
   // Arrow position generator
-  boost::optional<Positions> positions;
-  boost::optional<int> dx;
-  boost::optional<int> dy;
+  std::optional<Positions> positions;
+  std::optional<int> dx;
+  std::optional<int> dy;
 
   // Require at least this many valid valies
   int minvalues = 0;

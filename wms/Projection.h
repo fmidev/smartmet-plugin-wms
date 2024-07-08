@@ -35,7 +35,7 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <engines/querydata/Q.h>
 #include <gis/SpatialReference.h>
 #include <json/json.h>
@@ -70,31 +70,31 @@ class Projection
   void init(Json::Value& theJson, const State& theState, const Config& theConfig);
 
   // Coordinate reference system
-  boost::optional<std::string> crs;
+  std::optional<std::string> crs;
 
   // The parameter used for the projection (grid-suport)
-  boost::optional<std::string> projectionParameter;
+  std::optional<std::string> projectionParameter;
 
   // If this is set then the original grid size is multiplied by this value.
-  boost::optional<double> size;
+  std::optional<double> size;
 
   // At least one of these must be given, both if cx & cy are used:
-  boost::optional<int> xsize;
-  boost::optional<int> ysize;
+  std::optional<int> xsize;
+  std::optional<int> ysize;
 
   // Bounding box with corners:
-  boost::optional<double> x1;
-  boost::optional<double> y1;
-  boost::optional<double> x2;
-  boost::optional<double> y2;
+  std::optional<double> x1;
+  std::optional<double> y1;
+  std::optional<double> x2;
+  std::optional<double> y2;
 
   // OR Bounding box with center and resolution:
-  boost::optional<double> cx;
-  boost::optional<double> cy;
-  mutable boost::optional<double> resolution;
+  std::optional<double> cx;
+  std::optional<double> cy;
+  mutable std::optional<double> resolution;
 
   // Optional spatial reference for the bounding box coordinates:
-  boost::optional<std::string> bboxcrs;
+  std::optional<std::string> bboxcrs;
 
   std::size_t hash_value(const State& theState) const;
 

@@ -80,7 +80,7 @@ std::string legend_number(double theValue, const LegendLabels& theLabels)
 
 std::string untranslated_legend_text(const Isoband& theIsoband,
                                      const LegendLabels& theLabels,
-                                     const boost::optional<std::string>& theLanguage)
+                                     const std::optional<std::string>& theLanguage)
 {
   try
   {
@@ -138,7 +138,7 @@ std::string untranslated_legend_text(const Isoband& theIsoband,
 
 std::string legend_text(const Isoband& theIsoband,
                         const LegendLabels& theLabels,
-                        const boost::optional<std::string>& theLanguage)
+                        const std::optional<std::string>& theLanguage)
 {
   try
   {
@@ -221,7 +221,7 @@ void LegendLayer::init(Json::Value& theJson,
 
 std::string symbol_text(const AttributeSelection& theAttrSel,
                         const std::string& separator,
-                        const boost::optional<std::string>& theLanguage)
+                        const std::optional<std::string>& theLanguage)
 {
   // If translation found return it
   if (theLanguage && theAttrSel.translations.find(*theLanguage) != theAttrSel.translations.end())
@@ -350,7 +350,7 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     if (theState.useTimer())
     {
       std::string report = "LegendLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     if (!symbol_vector.empty())

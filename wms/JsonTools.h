@@ -1,7 +1,7 @@
 #pragma once
 #include "Config.h"
 #include <macgyver/LocalDateTime.h>
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 #include <macgyver/Exception.h>
 #include <macgyver/TimeZones.h>
@@ -19,31 +19,31 @@ namespace JsonTools
 Json::Value remove(Json::Value& theJson, const std::string& theName);
 
 void remove_string(std::string& theValue, Json::Value& theJson, const std::string& theName);
-void remove_string(boost::optional<std::string>& theValue,
+void remove_string(std::optional<std::string>& theValue,
                    Json::Value& theJson,
                    const std::string& theName,
-                   const boost::optional<std::string>& theDefault = {});
+                   const std::optional<std::string>& theDefault = {});
 
 void remove_int(int& theValue, Json::Value& theJson, const std::string& theName);
 void remove_int(int& theValue, Json::Value& theJson, const std::string& theName, int theDefault);
 
-void remove_int(boost::optional<int>& theValue,
+void remove_int(std::optional<int>& theValue,
                 Json::Value& theJson,
                 const std::string& theName,
-                const boost::optional<int>& theDefault = {});
+                const std::optional<int>& theDefault = {});
 
 void remove_uint(uint& theValue, Json::Value& theJson, const std::string& theName);
 
-void remove_uint(boost::optional<uint>& theValue,
+void remove_uint(std::optional<uint>& theValue,
                  Json::Value& theJson,
                  const std::string& theName,
-                 const boost::optional<uint>& theDefault = {});
+                 const std::optional<uint>& theDefault = {});
 
 void remove_double(double& theValue, Json::Value& theJson, const std::string& theName);
-void remove_double(boost::optional<double>& theValue,
+void remove_double(std::optional<double>& theValue,
                    Json::Value& theJson,
                    const std::string& theName,
-                   const boost::optional<double>& theDefault = {});
+                   const std::optional<double>& theDefault = {});
 
 void remove_bool(bool& theValue, Json::Value& theJson, const std::string& theName);
 
@@ -55,16 +55,16 @@ void remove_tz(Fmi::TimeZonePtr& theZone,
                const Fmi::TimeZones& theTimeZones,
                const Fmi::TimeZonePtr& theDefault = {});
 
-void remove_time(boost::optional<Fmi::DateTime>& theTime,
+void remove_time(std::optional<Fmi::DateTime>& theTime,
                  Json::Value& theJson,
                  const std::string& theName,
-                 const boost::optional<Fmi::DateTime>& theDefault = {});
+                 const std::optional<Fmi::DateTime>& theDefault = {});
 
-void remove_time(boost::optional<Fmi::DateTime>& theTime,
+void remove_time(std::optional<Fmi::DateTime>& theTime,
                  Json::Value& theJson,
                  const std::string& theName,
                  const Fmi::TimeZonePtr& theZone,
-                 const boost::optional<Fmi::DateTime>& theDefault = {});
+                 const std::optional<Fmi::DateTime>& theDefault = {});
 
 // extract a set of strings
 void extract_set(const std::string& theName,

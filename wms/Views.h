@@ -8,7 +8,7 @@
 
 #include "ParameterInfo.h"
 #include "View.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <json/json.h>
 #include <list>
 
@@ -39,7 +39,7 @@ class Views
 
   void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
-  std::list<boost::shared_ptr<View> > views;
+  std::list<std::shared_ptr<View> > views;
 };
 
 }  // namespace Dali

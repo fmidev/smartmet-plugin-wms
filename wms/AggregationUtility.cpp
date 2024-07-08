@@ -53,7 +53,7 @@ TS::TimeSeriesGenerator::LocalTimeList get_tlist(
 TS::Value get_qengine_value(const Engine::Querydata::Q& q,
                             const Engine::Querydata::ParameterOptions& options,
                             const Fmi::LocalDateTime& valid_time,
-                            const boost::optional<TS::ParameterAndFunctions>& param_funcs)
+                            const std::optional<TS::ParameterAndFunctions>& param_funcs)
 {
   try
   {
@@ -126,7 +126,7 @@ bool set_aggregation_period(Engine::Observation::Settings& settings,
     if (aggregationIntervalAhead > 0)
       settings.endtime = settings.endtime + Fmi::Minutes(aggregationIntervalAhead);
     // Read all observartions
-    settings.wantedtime = boost::optional<Fmi::DateTime>();
+    settings.wantedtime = std::optional<Fmi::DateTime>();
     settings.timestep = 0;
 
     return (aggregationIntervalBehind > 0 || aggregationIntervalAhead > 0);
@@ -255,7 +255,7 @@ TS::TimeSeriesVectorPtr do_aggregation(
       }
       else
       {
-        tsptr = boost::make_shared<TS::TimeSeries>();
+        tsptr = std::make_shared<TS::TimeSeries>();
         *tsptr = ts;
       }
       aggregated_observation_result->push_back(*tsptr);
@@ -304,7 +304,7 @@ TS::TimeSeriesVectorPtr aggregate_data(const TS::TimeSeriesVectorPtr& raw_data,
         TS::get_timeseries_by_fmisid(settings.stationtype, raw_data, tlist, fmisid_index);
 
     // Allocate data structure for aggregated data
-    TS::TimeSeriesVectorPtr ret = boost::make_shared<TS::TimeSeriesVector>(
+    TS::TimeSeriesVectorPtr ret = std::make_shared<TS::TimeSeriesVector>(
         raw_data->size(), TS::TimeSeries());
 
     // Iterate locations and do aggregation location by location

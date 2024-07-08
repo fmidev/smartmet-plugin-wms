@@ -8,7 +8,7 @@
 
 #include "Attributes.h"
 #include "Text.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 #include <string>
 
@@ -29,7 +29,7 @@ class Title
   std::size_t hash_value(const State& theState) const;
 
   std::string translate(const std::string& theLanguage) const;
-  std::string translate(const boost::optional<std::string>& theLanguage) const;
+  std::string translate(const std::optional<std::string>& theLanguage) const;
 
   std::string qid;
   int dx = 0;

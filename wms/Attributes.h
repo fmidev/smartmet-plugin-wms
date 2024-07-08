@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 #include <map>
 #include <set>
@@ -40,7 +40,7 @@ class Attributes
   std::string getSelector() const;
   std::size_t hash_value(const State& theState) const;
 
-  boost::optional<std::string> getLocalIri(const std::string& theName) const;
+  std::optional<std::string> getLocalIri(const std::string& theName) const;
   bool getLocalIriAndParameters(const std::string& theName,
                                 std::string& iri,
                                 std::map<std::string, std::string>& parameters) const;
@@ -54,7 +54,7 @@ class Attributes
     return attributes.at(theName);
   }
 
-  boost::optional<std::string> remove(const std::string& theName);
+  std::optional<std::string> remove(const std::string& theName);
 
  private:
   std::map<std::string, std::string> attributes;

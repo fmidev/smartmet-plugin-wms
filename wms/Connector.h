@@ -7,7 +7,7 @@
 #pragma once
 
 #include "Attributes.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 
 namespace SmartMet

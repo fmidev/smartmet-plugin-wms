@@ -74,11 +74,11 @@ PointValues read_forecasts(const SymbolLayer& layer,
 
     // querydata API for value() sucks
 
-    boost::optional<Spine::Parameter> param;
+    std::optional<Spine::Parameter> param;
     if (layer.param_funcs)
       param = layer.param_funcs->parameter;
 
-    boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+    std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     Fmi::LocalDateTime localdatetime(valid_time, Fmi::TimeZonePtr::utc);
 
     PointValues pointvalues;
@@ -329,7 +329,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (theState.useTimer())
     {
       std::string report = "SymbolLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // A symbol must be defined either globally or for values
@@ -663,7 +663,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         iri = *symbol;
 
       // librsvg cannot handle scale + transform, must move former into latter
-      boost::optional<double> rescale;
+      std::optional<double> rescale;
 
       if (!symbols.empty())
       {
@@ -728,7 +728,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     std::string report = "SymbolLayer::generate finished in %t sec CPU, %w sec real\n";
     boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
     // A symbol must be defined either globally or for values
 
@@ -875,7 +875,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
         iri = *symbol;
 
       // librsvg cannot handle scale + transform, must move former into latter
-      boost::optional<double> rescale;
+      std::optional<double> rescale;
 
       if (!symbols.empty())
       {

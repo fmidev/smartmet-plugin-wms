@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
+#include <optional>
+#include <memory>
 #include <json/json.h>
 #include <sstream>
 #include <string>
@@ -59,7 +59,7 @@ class Label
 
   void setLocale(const std::string& theLocale);
   // shared because otherwise the compiler would force definitions for all constructors
-  boost::shared_ptr<std::ostringstream> formatter{new std::ostringstream};
+  std::shared_ptr<std::ostringstream> formatter{new std::ostringstream};
 
 };  // class Label
 

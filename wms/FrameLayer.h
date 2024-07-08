@@ -9,7 +9,7 @@
 #include "Attributes.h"
 #include "Layer.h"
 #include "Text.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <gis/Types.h>
 #include <string>
 
@@ -49,12 +49,12 @@ struct FrameScale
   FrameScale() = default;
 
   FrameDimension dimension;
-  boost::optional<TicInfo> smallTic;
-  boost::optional<TicInfo> intermediateTic;
-  boost::optional<TicInfo> longTic;
+  std::optional<TicInfo> smallTic;
+  std::optional<TicInfo> intermediateTic;
+  std::optional<TicInfo> longTic;
   std::string ticPosition = "outside";  // inside or outside of inner frame
-  boost::optional<double> labelStep;
-  boost::optional<std::string> labelPosition;  // inside, outside of inner frame
+  std::optional<double> labelStep;
+  std::optional<std::string> labelPosition;  // inside, outside of inner frame
 
   std::size_t hash_value() const;
 };
@@ -73,9 +73,9 @@ class FrameLayer : public Layer
 
  private:
   FrameDimension itsInnerBorder;
-  boost::optional<FrameDimension> itsOuterBorder;
-  boost::optional<std::string> itsPattern;
-  boost::optional<FrameScale> itsScale;
+  std::optional<FrameDimension> itsOuterBorder;
+  std::optional<std::string> itsPattern;
+  std::optional<FrameScale> itsScale;
   double itsPrecision = 1.0;
   OGRGeometryPtr itsGeom;
   Attributes itsScaleAttributes;

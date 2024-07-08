@@ -1,6 +1,6 @@
 #include "WMSTimeDimension.h"
 #include <boost/algorithm/string/join.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
 
@@ -126,8 +126,8 @@ StepTimeDimension::StepTimeDimension(const std::set<Fmi::DateTime>& times)
 }
 
 std::string StepTimeDimension::getCapabilities(bool /* multiple_intervals */,
-                                               const boost::optional<std::string>& starttime,
-                                               const boost::optional<std::string>& endtime) const
+                                               const std::optional<std::string>& starttime,
+                                               const std::optional<std::string>& endtime) const
 {
   try
   {
@@ -142,8 +142,8 @@ std::string StepTimeDimension::getCapabilities(bool /* multiple_intervals */,
   }
 }
 
-std::string StepTimeDimension::makeCapabilities(const boost::optional<std::string>& starttime,
-                                                const boost::optional<std::string>& endtime) const
+std::string StepTimeDimension::makeCapabilities(const std::optional<std::string>& starttime,
+                                                const std::optional<std::string>& endtime) const
 {
   try
   {
@@ -233,8 +233,8 @@ const std::vector<tag_interval>& IntervalTimeDimension::getIntervals() const
 
 std::string IntervalTimeDimension::getCapabilities(
     bool multiple_intervals,
-    const boost::optional<std::string>& starttime,
-    const boost::optional<std::string>& endtime) const
+    const std::optional<std::string>& starttime,
+    const std::optional<std::string>& endtime) const
 {
   try
   {
@@ -295,8 +295,8 @@ std::string getIntervalCapability(const tag_interval& interval,
 }
 
 std::string IntervalTimeDimension::makeCapabilities(
-    const boost::optional<std::string>& starttime,
-    const boost::optional<std::string>& endtime) const
+    const std::optional<std::string>& starttime,
+    const std::optional<std::string>& endtime) const
 {
   try
   {
@@ -344,8 +344,8 @@ std::string IntervalTimeDimension::makeCapabilities(
 }
 
 std::string IntervalTimeDimension::makeCapabilitiesTimesteps(
-    const boost::optional<std::string>& starttime,
-    const boost::optional<std::string>& endtime) const
+    const std::optional<std::string>& starttime,
+    const std::optional<std::string>& endtime) const
 {
   try
   {
@@ -386,14 +386,14 @@ std::string IntervalTimeDimension::makeCapabilitiesTimesteps(
 }
 
 WMSTimeDimensions::WMSTimeDimensions(
-    const std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>>& tdims)
+    const std::map<Fmi::DateTime, std::shared_ptr<WMSTimeDimension>>& tdims)
 {
   for (const auto& td : tdims)
     addTimeDimension(td.first, td.second);
 }
 
 void WMSTimeDimensions::addTimeDimension(const Fmi::DateTime& origintime,
-                                         const boost::shared_ptr<WMSTimeDimension>& td)
+                                         const std::shared_ptr<WMSTimeDimension>& td)
 {
   itsTimeDimensions[origintime] = td;
   if (itsDefaultOrigintime == Fmi::DateTime::NOT_A_DATE_TIME ||
@@ -428,7 +428,7 @@ bool WMSTimeDimensions::isValidReferenceTime(const Fmi::DateTime& origintime) co
 }
 
 bool WMSTimeDimensions::isValidTime(const Fmi::DateTime& t,
-                                    const boost::optional<Fmi::DateTime>& origintime) const
+                                    const std::optional<Fmi::DateTime>& origintime) const
 {
   if (!origintime)
     return getDefaultTimeDimension().isValidTime(t, itsEndTimeIsWallClockTime);
@@ -441,7 +441,7 @@ bool WMSTimeDimensions::isValidTime(const Fmi::DateTime& t,
 }
 
 Fmi::DateTime WMSTimeDimensions::mostCurrentTime(
-    const boost::optional<Fmi::DateTime>& origintime) const
+    const std::optional<Fmi::DateTime>& origintime) const
 {
   if (origintime)
     return getTimeDimension(*origintime).mostCurrentTime();
@@ -461,10 +461,10 @@ bool WMSTimeDimensions::isIdentical(const WMSTimeDimensions& td) const
     if (td.itsTimeDimensions.find(item.first) == td.itsTimeDimensions.end())
       return false;
 
-    const boost::shared_ptr<WMSTimeDimension>& tdim1 = item.second;
-    const boost::shared_ptr<WMSTimeDimension>& tdim2 = td.itsTimeDimensions.at(item.first);
+    const std::shared_ptr<WMSTimeDimension>& tdim1 = item.second;
+    const std::shared_ptr<WMSTimeDimension>& tdim2 = td.itsTimeDimensions.at(item.first);
 
-    boost::optional<std::string> missing_time;
+    std::optional<std::string> missing_time;
     if (tdim1->getCapabilities(false, missing_time, missing_time) !=
         tdim2->getCapabilities(false, missing_time, missing_time))
       return false;

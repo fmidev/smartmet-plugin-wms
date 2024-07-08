@@ -135,7 +135,7 @@ std::string Text::translate(const std::string& theLanguage) const
  */
 // ----------------------------------------------------------------------
 
-std::string Text::translate(const boost::optional<std::string>& theLanguage) const
+std::string Text::translate(const std::optional<std::string>& theLanguage) const
 {
   try
   {

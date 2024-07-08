@@ -28,7 +28,7 @@ void Views::init(Json::Value& theJson,
 
     for (auto& json : theJson)
     {
-      boost::shared_ptr<View> view(new View);
+      std::shared_ptr<View> view(new View);
       view->init(json, theState, theConfig, theProperties);
       views.push_back(view);
     }

@@ -501,7 +501,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
     std::size_t sz = gwidth * gheight;
     gridValues.reserve(sz);
 
-    boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+    std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
 
     auto valid_time_period = getValidTimePeriod();
     NFmiMetTime met_time = valid_time_period.begin();
@@ -680,7 +680,7 @@ void StreamLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     if (theState.useTimer())
     {
       std::string report = "StreamLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     auto geoms = getStreams(theState);

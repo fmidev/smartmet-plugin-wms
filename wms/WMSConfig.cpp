@@ -58,12 +58,12 @@ void check_modification_time(const std::string& theDir, Fmi::DateTime& max_time)
 {
   try
   {
-    if (!boost::filesystem::exists(theDir) || !boost::filesystem::is_directory(theDir))
+    if (!std::filesystem::exists(theDir) || !std::filesystem::is_directory(theDir))
       return;
 
     boost::system::error_code ec;
-    boost::filesystem::directory_iterator end_itr;
-    for (boost::filesystem::directory_iterator itr(theDir); itr != end_itr; ++itr)
+    std::filesystem::directory_iterator end_itr;
+    for (std::filesystem::directory_iterator itr(theDir); itr != end_itr; ++itr)
     {
       if (SmartMet::Spine::Reactor::isShuttingDown())
         return;
@@ -76,7 +76,7 @@ void check_modification_time(const std::string& theDir, Fmi::DateTime& max_time)
       else if (is_regular_file(itr->status()))
       {
         std::string filename = (theDir + itr->path().filename().string());
-        std::time_t time_t_mod = boost::filesystem::last_write_time(filename, ec);
+        std::time_t time_t_mod = std::filesystem::last_write_time(filename, ec);
         if (ec.value() == boost::system::errc::success)
         {
           auto ptime_mod = Fmi::date_time::from_time_t(time_t_mod);
@@ -166,17 +166,17 @@ std::string make_layer_namespace(const std::string& customer,
 // Returns true if the product contains a legend in itself
 bool prepareLegendGraphic(Product& theProduct)
 {
-  std::list<boost::shared_ptr<View>>& views = theProduct.views.views;
-  boost::shared_ptr<Layer> legendLayer;
+  std::list<std::shared_ptr<View>>& views = theProduct.views.views;
+  std::shared_ptr<Layer> legendLayer;
 
   bool legendLayerFound = false;
   for (const auto& view : views)
   {
-    std::list<boost::shared_ptr<Layer>> layers = view->layers.layers;
+    std::list<std::shared_ptr<Layer>> layers = view->layers.layers;
 
     for (const auto& layer : layers)
     {
-      std::list<boost::shared_ptr<Layer>> sublayers = layer->layers.layers;
+      std::list<std::shared_ptr<Layer>> sublayers = layer->layers.layers;
 
       if (layer->type)
       {
@@ -189,7 +189,7 @@ bool prepareLegendGraphic(Product& theProduct)
       }
 
       for (const auto& sublayer : sublayers)
-        std::list<boost::shared_ptr<Layer>> sublayers2 = sublayer->layers.layers;
+        std::list<std::shared_ptr<Layer>> sublayers2 = sublayer->layers.layers;
     }
     if (legendLayerFound)
       break;
@@ -306,7 +306,7 @@ void set_optional(CTPP::CDT& tmpl,
 void update_product_modification_time(const std::string& filename,
                                       std::map<std::string, std::time_t>& modification_times)
 {
-  const std::time_t modtime = boost::filesystem::last_write_time(filename);
+  const std::time_t modtime = std::filesystem::last_write_time(filename);
 
   auto pos = modification_times.find(filename);
 
@@ -942,10 +942,10 @@ void warn_layer(const std::string& badfile, std::set<std::string>& warned_files)
 }
 
 void WMSConfig::updateLayerMetaDataForCustomerLayer(
-    const boost::filesystem::recursive_directory_iterator& itr,
+    const std::filesystem::recursive_directory_iterator& itr,
     const std::string& customer,
     const std::string& productdir,
-    const boost::shared_ptr<LayerMap>& mylayers,
+    const std::shared_ptr<LayerMap>& mylayers,
     LayerMap& newProxies,
     std::map<SharedWMSLayer, std::map<std::string, std::string>>& externalLegends)
 {
@@ -1036,8 +1036,8 @@ void WMSConfig::updateLayerMetaDataForCustomerLayer(
 }
 
 void WMSConfig::updateLayerMetaDataForCustomer(
-    const boost::filesystem::directory_iterator& dir,
-    const boost::shared_ptr<LayerMap>& mylayers,
+    const std::filesystem::directory_iterator& dir,
+    const std::shared_ptr<LayerMap>& mylayers,
     LayerMap& newProxies,
     std::map<SharedWMSLayer, std::map<std::string, std::string>>& externalLegends)
 {
@@ -1047,10 +1047,10 @@ void WMSConfig::updateLayerMetaDataForCustomer(
   const auto productdir = dir->path().string() + "/products";
   const auto customer = dir->path().filename().string();
 
-  boost::filesystem::recursive_directory_iterator end_prod_itr;
+  std::filesystem::recursive_directory_iterator end_prod_itr;
 
   // Find product (layer) definitions
-  for (boost::filesystem::recursive_directory_iterator itr(productdir); itr != end_prod_itr; ++itr)
+  for (std::filesystem::recursive_directory_iterator itr(productdir); itr != end_prod_itr; ++itr)
   {
     if (Spine::Reactor::isShuttingDown())
       return;
@@ -1079,15 +1079,15 @@ void WMSConfig::updateLayerMetaData()
     auto mylayers = itsLayers.load();
 
     // New shared pointer which will be atomically set into production
-    auto newProxies = boost::make_shared<LayerMap>();
+    auto newProxies = std::make_shared<LayerMap>();
 
     const auto wms_mode_on = true;
     const auto customerdir = itsDaliConfig.rootDirectory(wms_mode_on) + "/customers";
 
     std::map<SharedWMSLayer, std::map<std::string, std::string>> externalLegends;
 
-    boost::filesystem::directory_iterator end_itr;
-    for (boost::filesystem::directory_iterator itr(customerdir); itr != end_itr; ++itr)
+    std::filesystem::directory_iterator end_itr;
+    for (std::filesystem::directory_iterator itr(customerdir); itr != end_itr; ++itr)
     {
       if (Spine::Reactor::isShuttingDown())
         return;
@@ -1151,23 +1151,23 @@ void WMSConfig::updateModificationTime()
 }
 
 #ifndef WITHOUT_AUTHENTICATION
-CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
+CTPP::CDT WMSConfig::getCapabilities(const std::optional<std::string>& apikey,
                                      const std::string& language,
-                                     const boost::optional<std::string>& starttime,
-                                     const boost::optional<std::string>& endtime,
-                                     const boost::optional<std::string>& reference_time,
-                                     const boost::optional<std::string>& wms_namespace,
+                                     const std::optional<std::string>& starttime,
+                                     const std::optional<std::string>& endtime,
+                                     const std::optional<std::string>& reference_time,
+                                     const std::optional<std::string>& wms_namespace,
                                      WMSLayerHierarchy::HierarchyType hierarchy_type,
 									 bool show_hidden,
                                      bool multiple_intervals,
                                      bool authenticate) const
 #else
-CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
+CTPP::CDT WMSConfig::getCapabilities(const std::optional<std::string>& apikey,
                                      const std::string& language,
-                                     const boost::optional<std::string>& starttime,
-                                     const boost::optional<std::string>& endtime,
-                                     const boost::optional<std::string>& reference_time,
-                                     const boost::optional<std::string>& wms_namespace,
+                                     const std::optional<std::string>& starttime,
+                                     const std::optional<std::string>& endtime,
+                                     const std::optional<std::string>& reference_time,
+                                     const std::optional<std::string>& wms_namespace,
                                      WMSLayerHierarchy::HierarchyType hierarchy_type,
 									 bool show_hidden,
                                      bool multiple_intervals) const
@@ -1208,7 +1208,7 @@ CTPP::CDT WMSConfig::getCapabilities(const boost::optional<std::string>& apikey,
 
       auto cdt = iter_pair.second.getCapabilities(multiple_intervals, show_hidden, language, starttime, endtime, reference_time);
 
-      // Note: The boost::optional is empty for hidden layers.
+      // Note: The std::optional is empty for hidden layers.
       if (cdt)
       {
         if (!wms_namespace)
@@ -1491,7 +1491,7 @@ bool WMSConfig::isValidReferenceTime(const std::string& theLayer,
 
 bool WMSConfig::isValidTime(const std::string& theLayer,
                             const Fmi::DateTime& theTime,
-                            const boost::optional<Fmi::DateTime>& theReferenceTime) const
+                            const std::optional<Fmi::DateTime>& theReferenceTime) const
 {
   try
   {
@@ -1547,7 +1547,7 @@ bool WMSConfig::currentValue(const std::string& theLayer) const
 
 Fmi::DateTime WMSConfig::mostCurrentTime(
     const std::string& theLayer,
-    const boost::optional<Fmi::DateTime>& reference_time) const
+    const std::optional<Fmi::DateTime>& reference_time) const
 {
   try
   {
@@ -1690,11 +1690,11 @@ void WMSConfig::getLegendGraphic(const std::string& theLayerName,
   theProduct.height = height;
 
   Json::Value nulljson;
-  boost::shared_ptr<View> view = *(theProduct.views.views.begin());
+  std::shared_ptr<View> view = *(theProduct.views.views.begin());
 
   for (auto& legendL : legendLayers)
   {
-    boost::shared_ptr<Layer> legendLayer(Dali::LayerFactory::create(legendL));
+    std::shared_ptr<Layer> legendLayer(Dali::LayerFactory::create(legendL));
     legendLayer->init(legendL, theState, itsDaliConfig, theProduct);
     view->layers.layers.push_back(legendLayer);
 
@@ -1709,7 +1709,7 @@ void WMSConfig::getLegendGraphic(const std::string& theLayerName,
         {
           if (!defLayerJson.isNull())
           {
-            boost::shared_ptr<Layer> defLayer(Dali::LayerFactory::create(defLayerJson));
+            std::shared_ptr<Layer> defLayer(Dali::LayerFactory::create(defLayerJson));
             defLayer->init(defLayerJson, theState, itsDaliConfig, theProduct);
             theProduct.defs.layers.layers.push_back(defLayer);
           }

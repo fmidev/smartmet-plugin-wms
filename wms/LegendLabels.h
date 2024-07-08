@@ -7,7 +7,7 @@
 #pragma once
 
 #include "Attributes.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <string>
 
 namespace SmartMet
@@ -26,7 +26,7 @@ class LegendLabels
   std::size_t hash_value(const State& theState) const;
 
   std::string type = "range";
-  boost::optional<std::string> format;
+  std::optional<std::string> format;
   int dx = 30;
   int dy = 0;
   std::string separator = (const char*)u8"\u2013";  // endash

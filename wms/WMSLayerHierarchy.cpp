@@ -154,7 +154,7 @@ void expand_layer(WMSLayerHierarchy& lh)
 {
   if (lh.timeDimension)
   {
-    const boost::shared_ptr<WMSTimeDimensions>& td =
+    const std::shared_ptr<WMSTimeDimensions>& td =
         lh.timeDimension->getLayer()->getTimeDimensions();
     if (td)
     {
@@ -166,7 +166,7 @@ void expand_layer(WMSLayerHierarchy& lh)
       // Create one layer for each origintime
       for (const auto& ot : origintimes)
       {
-        lh.sublayers.push_back(boost::make_shared<WMSLayerHierarchy>(lh.name));
+        lh.sublayers.push_back(std::make_shared<WMSLayerHierarchy>(lh.name));
         WMSLayerHierarchy& reference_time_layer = *lh.sublayers.back();
         reference_time_layer.parent = lh;
         reference_time_layer.baseInfoLayer = lh.baseInfoLayer;
@@ -201,7 +201,7 @@ void add_sublayers(WMSLayerHierarchy& lh,
 		if (processed_layers.find(layer_name) != processed_layers.end())
 		  continue;
         processed_layers.insert(layer_name);
-        lh.sublayers.push_back(boost::make_shared<WMSLayerHierarchy>(layer_name));
+        lh.sublayers.push_back(std::make_shared<WMSLayerHierarchy>(layer_name));
         lh.sublayers.back()->parent = lh;
         add_sublayers(*lh.sublayers.back(), named_layers, processed_layers, hierarchy_type);
       }
@@ -231,16 +231,16 @@ void add_layer_info(bool multiple_intervals,
                     CTPP::CDT& ctpp,
                     const WMSLayerHierarchy& lh,
                     const std::string& language,
-                    const boost::optional<std::string>& starttime,
-                    const boost::optional<std::string>& endtime,
-                    const boost::optional<std::string>& reference_time,
+                    const std::optional<std::string>& starttime,
+                    const std::optional<std::string>& endtime,
+                    const std::optional<std::string>& reference_time,
                     unsigned int level)
 {
   CTPP::CDT capa(CTPP::CDT::HASH_VAL);
 
   bool sublayer_is_reference_time_layer =
       (!lh.sublayers.empty() && lh.sublayers.back()->reference_time);
-  boost::optional<CTPP::CDT> baseInfo;
+  std::optional<CTPP::CDT> baseInfo;
   if (lh.sublayers.empty() && lh.baseInfoLayer)
   {
     baseInfo = lh.baseInfoLayer->getLayer()->getLayerBaseInfo(language);
@@ -259,7 +259,7 @@ void add_layer_info(bool multiple_intervals,
   if (baseInfo)
   {
     capa = *baseInfo;
-    boost::optional<CTPP::CDT> styles = lh.baseInfoLayer->getLayer()->getStyleInfo(language);
+    std::optional<CTPP::CDT> styles = lh.baseInfoLayer->getLayer()->getStyleInfo(language);
     if (styles)
       capa.MergeCDT(*styles);
   }
@@ -276,7 +276,7 @@ void add_layer_info(bool multiple_intervals,
     if (!lh.parent || !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::geo_bbox))
     {
       // Add supported geographic bounding box
-      boost::optional<CTPP::CDT> geo_bbox =
+      std::optional<CTPP::CDT> geo_bbox =
           lh.geographicBoundingBox->getLayer()->getGeographicBoundingBoxInfo();
       if (geo_bbox)
         capa.MergeCDT(*geo_bbox);
@@ -287,7 +287,7 @@ void add_layer_info(bool multiple_intervals,
     if (!lh.parent || !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::proj_bbox))
     {
       // Add supported CRSs
-      boost::optional<CTPP::CDT> projected_bbox =
+      std::optional<CTPP::CDT> projected_bbox =
           lh.projectedBoundingBox->getLayer()->getProjectedBoundingBoxInfo();
       if (projected_bbox)
         capa.MergeCDT(*projected_bbox);
@@ -297,7 +297,7 @@ void add_layer_info(bool multiple_intervals,
   if (lh.timeDimension)
   {
     // Add supported time dimension
-    boost::optional<CTPP::CDT> time_dim;
+    std::optional<CTPP::CDT> time_dim;
     auto wmslayer = lh.timeDimension->getLayer();
     if (sublayer_is_reference_time_layer)
     {
@@ -331,7 +331,7 @@ void add_layer_info(bool multiple_intervals,
     if (!lh.parent || !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::elev_dim))
     {
       // Add supported elevation dimension
-      boost::optional<CTPP::CDT> elev_dim =
+      std::optional<CTPP::CDT> elev_dim =
           lh.elevationDimension->getLayer()->getElevationDimensionInfo();
       if (elev_dim)
         capa.MergeCDT(*elev_dim);
@@ -364,16 +364,16 @@ WMSLayerHierarchy::WMSLayerHierarchy(std::string n) : name(std::move(n)) {}
 
 #ifndef WITHOUT_AUTHENTICATION
 WMSLayerHierarchy::WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
-                                     const boost::optional<std::string>& wms_namespace,
+                                     const std::optional<std::string>& wms_namespace,
                                      HierarchyType hierarchy_type,
 									 bool reveal_hidden,
-                                     const boost::optional<std::string>& apikey,
+                                     const std::optional<std::string>& apikey,
                                      bool auth,
                                      Engine::Authentication::Engine* authEngine)
   : name("__root__"), show_hidden(reveal_hidden), authenticate(auth)
 #else
 WMSLayerHierarchy::WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
-                                     const boost::optional<std::string>& wms_namespace,
+                                     const std::optional<std::string>& wms_namespace,
                                      HierarchyType hierarchy_type,
 									 bool reveal_hidden)
   : name("__root__"), show_hidden(reveal_hidden), authenticate(false)
@@ -388,13 +388,13 @@ WMSLayerHierarchy::WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>&
 
 #ifndef WITHOUT_AUTHENTICATION
 void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>& layerMap,
-                                      const boost::optional<std::string>& wms_namespace,
+                                      const std::optional<std::string>& wms_namespace,
                                       HierarchyType hierarchy_type,
-                                      const boost::optional<std::string>& apikey,
+                                      const std::optional<std::string>& apikey,
                                       Engine::Authentication::Engine* authEngine)
 #else
 void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>& layerMap,
-                                      const boost::optional<std::string>& wms_namespace,
+                                      const std::optional<std::string>& wms_namespace,
                                       HierarchyType hierarchy_type)
 #endif
 {
@@ -421,7 +421,7 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
 
     if (hierarchy_type == HierarchyType::flat)
     {
-      auto hierarchy = boost::make_shared<WMSLayerHierarchy>(layer_name);
+      auto hierarchy = std::make_shared<WMSLayerHierarchy>(layer_name);
       const WMSLayerProxy& layer_to_use = item.second;
       hierarchy->baseInfoLayer = layer_to_use;
       hierarchy->geographicBoundingBox = layer_to_use;
@@ -457,7 +457,7 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
   for (const auto& name : top_level_layers)
   {
     // Add top layer and its sublayers
-    auto hierarchy = boost::make_shared<WMSLayerHierarchy>(name);
+    auto hierarchy = std::make_shared<WMSLayerHierarchy>(name);
     add_sublayers(*hierarchy, named_layers, processed_layers, hierarchy_type);
     set_layer_elements(*hierarchy);
     sublayers.push_back(hierarchy);
@@ -467,9 +467,9 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
 CTPP::CDT WMSLayerHierarchy::getCapabilities(
     bool multiple_intervals,
     const std::string& language,
-    const boost::optional<std::string>& starttime,
-    const boost::optional<std::string>& endtime,
-    const boost::optional<std::string>& reference_time) const
+    const std::optional<std::string>& starttime,
+    const std::optional<std::string>& endtime,
+    const std::optional<std::string>& reference_time) const
 {
   // Return array of individual layer capabilities
   CTPP::CDT capa(CTPP::CDT::ARRAY_VAL);

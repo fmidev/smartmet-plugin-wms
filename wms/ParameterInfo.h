@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -16,14 +16,14 @@ struct ParameterInfo
   explicit ParameterInfo(std::string p) : parameter(std::move(p)) {}
 
   std::string parameter;
-  boost::optional<std::string> producer;
-  boost::optional<double> level;
+  std::optional<std::string> producer;
+  std::optional<double> level;
 
 #if 0
-  boost::optional<int> levelId;
-  boost::optional<int> forecastType;
-  boost::optional<int> forecastNumber;
-  boost::optional<int> geometryId;
+  std::optional<int> levelId;
+  std::optional<int> forecastType;
+  std::optional<int> forecastNumber;
+  std::optional<int> geometryId;
 #endif
 };
 

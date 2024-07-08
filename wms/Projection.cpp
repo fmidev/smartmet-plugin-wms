@@ -50,7 +50,7 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
     // Extract all the members
 
     const auto& request = theState.getRequest();
-    boost::optional<std::string> v;
+    std::optional<std::string> v;
 
     // No longer needed here, querystring has been processed
     std::string qid;

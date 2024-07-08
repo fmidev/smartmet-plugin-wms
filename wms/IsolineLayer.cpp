@@ -137,9 +137,9 @@ void IsolineLayer::init(Json::Value& theJson,
         throw Fmi::Exception(BCP, "Isoline layer isolines setting must be an array or a group");
       else
       {
-        boost::optional<double> startvalue;
-        boost::optional<double> endvalue;
-        boost::optional<double> interval;
+        std::optional<double> startvalue;
+        std::optional<double> endvalue;
+        std::optional<double> interval;
 
         JsonTools::remove_double(startvalue, json, "startvalue");
         JsonTools::remove_double(endvalue, json, "endvalue");
@@ -810,7 +810,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     if (theState.useTimer())
     {
       std::string report = "IsolineLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     std::vector<double> isovalues;

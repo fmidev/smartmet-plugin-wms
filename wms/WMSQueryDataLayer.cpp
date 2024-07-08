@@ -25,7 +25,7 @@ bool WMSQueryDataLayer::updateLayerMetaData()
       elevations.insert(q->levelValue());
     if (!elevations.empty())
       elevationDimension =
-          boost::make_shared<WMSElevationDimension>(level_name, level_type, elevations);
+          std::make_shared<WMSElevationDimension>(level_name, level_type, elevations);
 
     // bounding box from metadata
     Engine::Querydata::MetaData metaData(q->metaData());
@@ -37,20 +37,20 @@ bool WMSQueryDataLayer::updateLayerMetaData()
     // time dimension is sniffed from querydata
     auto queryDataConf = itsQEngine->getProducerConfig(itsProducer);
 
-    std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
+    std::map<Fmi::DateTime, std::shared_ptr<WMSTimeDimension>> newTimeDimensions;
     // If multifile observation we want to have one timeseries and one reference time
     if (queryDataConf.ismultifile && !queryDataConf.isforecast)
     {
-      boost::shared_ptr<Engine::Querydata::ValidTimeList> validtimes = q->validTimes();
+      std::shared_ptr<Engine::Querydata::ValidTimeList> validtimes = q->validTimes();
 
       if (!validtimes->empty())
       {
-        boost::shared_ptr<WMSTimeDimension> timeDimension;
+        std::shared_ptr<WMSTimeDimension> timeDimension;
         time_intervals intervals = get_intervals(*validtimes);
         if (!intervals.empty())
-          timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);
+          timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
         else
-          timeDimension = boost::make_shared<StepTimeDimension>(*validtimes);
+          timeDimension = std::make_shared<StepTimeDimension>(*validtimes);
 
         newTimeDimensions.insert(std::make_pair(validtimes->back(), timeDimension));
       }
@@ -61,20 +61,20 @@ bool WMSQueryDataLayer::updateLayerMetaData()
       for (const auto& t : origintimes)
       {
         q = itsQEngine->get(itsProducer, t);
-        boost::shared_ptr<Engine::Querydata::ValidTimeList> vt = q->validTimes();
-        boost::shared_ptr<WMSTimeDimension> timeDimension;
+        std::shared_ptr<Engine::Querydata::ValidTimeList> vt = q->validTimes();
+        std::shared_ptr<WMSTimeDimension> timeDimension;
 
         time_intervals intervals = get_intervals(*vt);
         if (!intervals.empty())
-          timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);
+          timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
         else
-          timeDimension = boost::make_shared<StepTimeDimension>(*vt);
+          timeDimension = std::make_shared<StepTimeDimension>(*vt);
 
         newTimeDimensions.insert(std::make_pair(t, timeDimension));
       }
     }
     if (!newTimeDimensions.empty())
-      timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);
+      timeDimensions = std::make_shared<WMSTimeDimensions>(newTimeDimensions);
     else
       timeDimensions = nullptr;
 

@@ -239,7 +239,7 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     if (theState.useTimer())
     {
       std::string report = "CloudCeilingLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // Establish the data
@@ -342,7 +342,7 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
         iri = *selection->symbol;
 
       // librsvg cannot handle scale + transform, must move former into latter
-      boost::optional<double> rescale;
+      std::optional<double> rescale;
       if (selection)
       {
         auto scaleattr = selection->attributes.remove("scale");

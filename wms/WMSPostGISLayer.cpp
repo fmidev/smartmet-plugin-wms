@@ -132,7 +132,7 @@ bool WMSPostGISLayer::mustUpdateLayerMetaData()
     moptions.fieldnames.insert(itsMetaDataSettings.field);
     moptions.where = itsMetaDataSettings.where;
 
-    const boost::optional<Fmi::DateTime> reference_time;
+    const std::optional<Fmi::DateTime> reference_time;
     Fmi::DateTime mostCurrentTimestamp = mostCurrentTime(reference_time);
 
     // fetch the latest publicationdate of icemap
@@ -191,31 +191,31 @@ bool WMSPostGISLayer::updateLayerMetaData()
 
     if (hasTemporalDimension && !timeDimensionDisabled)
     {
-      std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
-      boost::shared_ptr<WMSTimeDimension> timeDimension = nullptr;
+      std::map<Fmi::DateTime, std::shared_ptr<WMSTimeDimension>> newTimeDimensions;
+      std::shared_ptr<WMSTimeDimension> timeDimension = nullptr;
       if (metadata.timeinterval)
       {
         tag_interval interval(metadata.timeinterval->starttime,
                               metadata.timeinterval->endtime,
                               metadata.timeinterval->timestep);
         time_intervals timeintervals{interval};
-        timeDimension = boost::make_shared<IntervalTimeDimension>(timeintervals);
+        timeDimension = std::make_shared<IntervalTimeDimension>(timeintervals);
       }
       else
       {
         time_intervals intervals = get_intervals(metadata.timesteps);
         if (!intervals.empty())
         {
-          timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);
+          timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
         }
         else
         {
-          timeDimension = boost::make_shared<StepTimeDimension>(metadata.timesteps);
+          timeDimension = std::make_shared<StepTimeDimension>(metadata.timesteps);
         }
       }
       Fmi::DateTime origintime(Fmi::DateTime::NOT_A_DATE_TIME);
       newTimeDimensions.insert(std::make_pair(origintime, timeDimension));
-      timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);
+      timeDimensions = std::make_shared<WMSTimeDimensions>(newTimeDimensions);
     }
     else
     {

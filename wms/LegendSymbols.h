@@ -7,7 +7,7 @@
 #pragma once
 
 #include "Attributes.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <string>
 
 namespace SmartMet
@@ -24,11 +24,11 @@ class LegendSymbols
   void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
-  boost::optional<std::string> css;
-  boost::optional<std::string> symbol;
-  boost::optional<std::string> start;
-  boost::optional<std::string> end;
-  boost::optional<std::string> missing;
+  std::optional<std::string> css;
+  std::optional<std::string> symbol;
+  std::optional<std::string> start;
+  std::optional<std::string> end;
+  std::optional<std::string> missing;
   Attributes attributes;
 };
 

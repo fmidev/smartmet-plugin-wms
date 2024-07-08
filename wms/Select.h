@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------------
 
 #include "AttributeSelection.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <vector>
 
 namespace SmartMet
@@ -16,7 +16,7 @@ namespace Dali
 {
 namespace Select
 {
-boost::optional<AttributeSelection> attribute(const std::vector<AttributeSelection> &theSelection,
+std::optional<AttributeSelection> attribute(const std::vector<AttributeSelection> &theSelection,
                                               double theValue);
 }  // namespace Select
 }  // namespace Dali

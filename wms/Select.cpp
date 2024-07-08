@@ -18,12 +18,12 @@ namespace Select
  */
 // ----------------------------------------------------------------------
 
-boost::optional<AttributeSelection> attribute(const std::vector<AttributeSelection>& theSelection,
+std::optional<AttributeSelection> attribute(const std::vector<AttributeSelection>& theSelection,
                                               double theValue)
 {
   try
   {
-    boost::optional<AttributeSelection> ret;
+    std::optional<AttributeSelection> ret;
 
     for (const auto& attrs : theSelection)
     {

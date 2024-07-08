@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 #include <string>
 
@@ -25,13 +25,13 @@ class Sampling
  public:
   void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
-  boost::optional<double> getResolution(const Projection& theProjection) const;
+  std::optional<double> getResolution(const Projection& theProjection) const;
 
-  boost::optional<double> maxresolution;
-  boost::optional<double> minresolution;
+  std::optional<double> maxresolution;
+  std::optional<double> minresolution;
 
-  boost::optional<double> resolution;
-  boost::optional<double> relativeresolution;
+  std::optional<double> resolution;
+  std::optional<double> relativeresolution;
 
  private:
 };  // class Sampling

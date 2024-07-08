@@ -32,7 +32,7 @@ class TimeLayer : public Layer
 
   std::size_t hash_value(const State& theState) const override;
 
-  boost::optional<std::string> timezone;
+  std::optional<std::string> timezone;
 
   std::vector<std::string> timestamp;  // these two should be of equal size
   std::vector<std::string> format;
@@ -42,15 +42,15 @@ class TimeLayer : public Layer
   std::string suffix;
 
   // This may be negative and can override attributes:
-  boost::optional<int> x;
-  boost::optional<int> y;
-  boost::optional<double> longitude;  // longitude, latitude take precedence over x, y
-  boost::optional<double> latitude;
+  std::optional<int> x;
+  std::optional<int> y;
+  std::optional<double> longitude;  // longitude, latitude take precedence over x, y
+  std::optional<double> latitude;
 
   // We need a parameter definition in order to find a correct generation / origintime
   // (grid-support)
   /*
-  boost::optional<std::string> parameter;
+  std::optional<std::string> parameter;
 */
  private:
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);

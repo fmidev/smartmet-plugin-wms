@@ -132,7 +132,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
       auto vparam = TS::ParameterFactory::instance().parse(theV);
 
       // Q API SUCKS
-      boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+      std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
       Fmi::LocalDateTime localdatetime(theTime, Fmi::TimeZonePtr::utc);
       std::string tmp;
       auto mylocale = std::locale::classic();
@@ -337,7 +337,7 @@ void Positions::init(Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-void Positions::init(const boost::optional<std::string>& theProducer,
+void Positions::init(const std::optional<std::string>& theProducer,
                      const Projection& theProjection,
                      const Fmi::DateTime& theTime,
                      const State& theState)

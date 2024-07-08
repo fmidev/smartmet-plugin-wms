@@ -98,7 +98,7 @@ std::string Title::translate(const std::string& theLanguage) const
  */
 // ----------------------------------------------------------------------
 
-std::string Title::translate(const boost::optional<std::string>& theLanguage) const
+std::string Title::translate(const std::optional<std::string>& theLanguage) const
 {
   try
   {

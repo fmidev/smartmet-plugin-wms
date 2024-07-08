@@ -59,7 +59,7 @@ void Sampling::init(Json::Value& theJson, const Config& /* theConfig */)
  */
 // ----------------------------------------------------------------------
 
-boost::optional<double> Sampling::getResolution(const Projection& theProjection) const
+std::optional<double> Sampling::getResolution(const Projection& theProjection) const
 {
   try
   {
