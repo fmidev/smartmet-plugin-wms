@@ -110,19 +110,19 @@ Fmi::DateTime WMSTimeDimension::mostCurrentTime() const
 StepTimeDimension::StepTimeDimension(const std::list<Fmi::DateTime>& times)
 {
   std::copy(times.begin(), times.end(), std::inserter(itsTimesteps, itsTimesteps.begin()));
-  itsCapabilities = makeCapabilities(boost::none, boost::none);
+  itsCapabilities = makeCapabilities(std::nullopt, std::nullopt);
 }
 
 StepTimeDimension::StepTimeDimension(const std::vector<Fmi::DateTime>& times)
 {
   std::copy(times.begin(), times.end(), std::inserter(itsTimesteps, itsTimesteps.begin()));
-  itsCapabilities = makeCapabilities(boost::none, boost::none);
+  itsCapabilities = makeCapabilities(std::nullopt, std::nullopt);
 }
 
 StepTimeDimension::StepTimeDimension(const std::set<Fmi::DateTime>& times)
 {
   std::copy(times.begin(), times.end(), std::inserter(itsTimesteps, itsTimesteps.begin()));
-  itsCapabilities = makeCapabilities(boost::none, boost::none);
+  itsCapabilities = makeCapabilities(std::nullopt, std::nullopt);
 }
 
 std::string StepTimeDimension::getCapabilities(bool /* multiple_intervals */,
@@ -172,7 +172,7 @@ std::string StepTimeDimension::makeCapabilities(const std::optional<std::string>
 IntervalTimeDimension::IntervalTimeDimension(std::vector<tag_interval> intervals)
     : itsIntervals(std::move(intervals))
 {
-  itsCapabilities = makeCapabilities(boost::none, boost::none);
+  itsCapabilities = makeCapabilities(std::nullopt, std::nullopt);
 }
 
 Fmi::DateTime IntervalTimeDimension::mostCurrentTime() const
