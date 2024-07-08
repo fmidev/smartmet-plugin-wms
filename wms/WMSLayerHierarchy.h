@@ -75,15 +75,15 @@ class WMSLayerHierarchy
   bool show_hidden;
   bool authenticate;
   // Parts that can be inhereted by sublayers
-  std::optional<const WMSLayerProxy&> baseInfoLayer;
-  std::optional<const WMSLayerProxy&> geographicBoundingBox;
-  std::optional<const WMSLayerProxy&> projectedBoundingBox;
-  std::optional<const WMSLayerProxy&> timeDimension;
-  std::optional<const WMSLayerProxy&> elevationDimension;
+  const WMSLayerProxy* baseInfoLayer = nullptr;
+  const WMSLayerProxy* geographicBoundingBox = nullptr;
+  const WMSLayerProxy* projectedBoundingBox = nullptr;
+  const WMSLayerProxy* timeDimension = nullptr;
+  const WMSLayerProxy* elevationDimension = nullptr;
 
-  std::optional<const WMSLayerHierarchy&> parent;
+  const WMSLayerHierarchy* parent = nullptr;
   std::list<std::shared_ptr<WMSLayerHierarchy>> sublayers;
-  std::optional<const Fmi::DateTime&> reference_time;
+  Fmi::DateTime reference_time;
 
  private:
 #ifndef WITHOUT_AUTHENTICATION
