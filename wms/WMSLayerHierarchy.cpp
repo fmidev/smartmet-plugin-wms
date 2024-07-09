@@ -1,5 +1,4 @@
 #include "WMSLayerHierarchy.h"
-#include <boost/make_shared.hpp>
 #include <boost/regex.hpp>
 #include <macgyver/StringConversion.h>
 #ifndef WITHOUT_AUTHENTICATION

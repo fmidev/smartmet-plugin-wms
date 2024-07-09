@@ -12,7 +12,6 @@
 #include "Stations.h"
 #include "WindRose.h"
 #include <boost/math/constants/constants.hpp>
-#include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>

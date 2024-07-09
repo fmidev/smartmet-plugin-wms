@@ -1,5 +1,4 @@
 #include "WMSGridDataLayer.h"
-#include <boost/move/make_unique.hpp>
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/identification/GridDef.h>
 #include <macgyver/Exception.h>

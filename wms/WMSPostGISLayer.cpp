@@ -1,7 +1,6 @@
 #include "WMSPostGISLayer.h"
 #include "JsonTools.h"
 #include "WMSConfig.h"
-#include <boost/move/make_unique.hpp>
 #include <gis/Host.h>
 #include <gis/OGR.h>
 #include <macgyver/Exception.h>

@@ -1,6 +1,5 @@
 #include "WMSObservationLayer.h"
 #include <macgyver/DateTime.h>
-#include <boost/move/make_unique.hpp>
 #include <macgyver/Exception.h>
 
 namespace SmartMet

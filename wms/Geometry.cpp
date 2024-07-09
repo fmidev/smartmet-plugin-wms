@@ -1,7 +1,6 @@
 #include "Geometry.h"
 #include "Hash.h"
 #include "State.h"
-#include <boost/move/make_unique.hpp>
 #include <engines/gis/Engine.h>
 #include <fmt/format.h>
 #include <gis/CoordinateTransformation.h>

@@ -11,7 +11,6 @@
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
-#include <boost/move/make_unique.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
 #include <gis/Box.h>

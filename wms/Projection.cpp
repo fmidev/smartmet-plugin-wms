@@ -5,7 +5,6 @@
 #include "Hash.h"
 #include "JsonTools.h"
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem/operations.hpp>
 #include <boost/math/constants/constants.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <engines/gis/Engine.h>

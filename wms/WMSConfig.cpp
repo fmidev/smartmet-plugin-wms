@@ -83,12 +83,6 @@ void check_modification_time(const std::string& theDir, Fmi::DateTime& max_time)
           if (max_time < ptime_mod)
             max_time = ptime_mod;
         }
-        else
-        {
-          Fmi::Exception err(BCP, "Failed to get file last write time");
-          err.addParameter("Path", filename);
-          throw err;
-        }
       }
     }
   }

@@ -10,7 +10,6 @@
 #include "TextTable.h"
 #include "TextUtility.h"
 #include "XYTransformation.h"
-#include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <gis/Box.h>

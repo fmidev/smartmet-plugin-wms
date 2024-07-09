@@ -22,8 +22,6 @@
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
-#include <boost/filesystem/operations.hpp>
-#include <boost/move/make_unique.hpp>
 #include <memory>
 #include <boost/timer/timer.hpp>
 #include <boost/utility.hpp>

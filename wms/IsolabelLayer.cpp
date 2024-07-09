@@ -10,7 +10,6 @@
 #include "Layer.h"
 #include "State.h"
 #include <boost/logic/tribool.hpp>
-#include <boost/move/make_unique.hpp>
 #include <optional>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
