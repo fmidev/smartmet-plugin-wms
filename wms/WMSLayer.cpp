@@ -2445,9 +2445,10 @@ void WMSLayer::setProductFile(const std::string& theProductFile)
   productFile = theProductFile;
 
   // Save modification time of product file
-  auto modtime = Fmi::last_write_time(productFile);
-  if (modtime)
-    itsProductFileModificationTime = Fmi::date_time::from_time_t(*modtime);
+  std::error_code ec;
+  const std::time_t modtime = Fmi::last_write_time(productFile, ec);
+  if (!ec)
+    itsProductFileModificationTime = Fmi::date_time::from_time_t(modtime);
 }
 
 const Fmi::DateTime& WMSLayer::modificationTime() const
