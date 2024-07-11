@@ -8,6 +8,7 @@
 
 #include "WMSLayerProxy.h"
 #include <memory>
+#include <optional>
 
 namespace SmartMet
 {
@@ -75,15 +76,15 @@ class WMSLayerHierarchy
   bool show_hidden;
   bool authenticate;
   // Parts that can be inhereted by sublayers
-  const WMSLayerProxy* baseInfoLayer = nullptr;
-  const WMSLayerProxy* geographicBoundingBox = nullptr;
-  const WMSLayerProxy* projectedBoundingBox = nullptr;
-  const WMSLayerProxy* timeDimension = nullptr;
-  const WMSLayerProxy* elevationDimension = nullptr;
+  std::optional<WMSLayerProxy> baseInfoLayer;
+  std::optional<WMSLayerProxy> geographicBoundingBox;
+  std::optional<WMSLayerProxy> projectedBoundingBox;
+  std::optional<WMSLayerProxy> timeDimension;
+  std::optional<WMSLayerProxy> elevationDimension;
 
-  const WMSLayerHierarchy* parent = nullptr;
-  std::list<std::shared_ptr<WMSLayerHierarchy>> sublayers;
-  Fmi::DateTime reference_time;
+  const WMSLayerHierarchy* parent;
+  std::list<boost::shared_ptr<WMSLayerHierarchy>> sublayers;
+  std::optional<Fmi::DateTime> reference_time;
 
  private:
 #ifndef WITHOUT_AUTHENTICATION

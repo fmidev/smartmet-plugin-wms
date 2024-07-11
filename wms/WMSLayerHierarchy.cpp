@@ -1,4 +1,5 @@
 #include "WMSLayerHierarchy.h"
+#include <memory>
 #include <boost/regex.hpp>
 #include <macgyver/StringConversion.h>
 #ifndef WITHOUT_AUTHENTICATION
@@ -165,7 +166,7 @@ void expand_layer(WMSLayerHierarchy& lh)
       // Create one layer for each origintime
       for (const auto& ot : origintimes)
       {
-        lh.sublayers.push_back(std::make_shared<WMSLayerHierarchy>(lh.name));
+        lh.sublayers.push_back(boost::make_shared<WMSLayerHierarchy>(lh.name));
         WMSLayerHierarchy& reference_time_layer = *lh.sublayers.back();
         reference_time_layer.parent = &lh;
         reference_time_layer.baseInfoLayer = lh.baseInfoLayer;
@@ -186,7 +187,7 @@ void add_sublayers(WMSLayerHierarchy& lh,
                    std::set<std::string>& processed_layers,
                    WMSLayerHierarchy::HierarchyType hierarchy_type)
 {
-  if (!lh.reference_time.is_special())
+  if (!lh.reference_time)
   {
     std::string layer_name_prefix = lh.name + ":";
 
@@ -200,7 +201,7 @@ void add_sublayers(WMSLayerHierarchy& lh,
 		if (processed_layers.find(layer_name) != processed_layers.end())
 		  continue;
         processed_layers.insert(layer_name);
-        lh.sublayers.push_back(std::make_shared<WMSLayerHierarchy>(layer_name));
+        lh.sublayers.push_back(boost::make_shared<WMSLayerHierarchy>(layer_name));
         lh.sublayers.back()->parent = &lh;
         add_sublayers(*lh.sublayers.back(), named_layers, processed_layers, hierarchy_type);
       }
@@ -216,11 +217,11 @@ void add_sublayers(WMSLayerHierarchy& lh,
   {
     processed_layers.insert(lh.name);
     const WMSLayerProxy& layer_to_use = *named_layers.at(lh.name);
-    lh.baseInfoLayer = &layer_to_use;
-    lh.geographicBoundingBox = &layer_to_use;
-    lh.projectedBoundingBox = &layer_to_use;
-    lh.timeDimension = &layer_to_use;
-    lh.elevationDimension = &layer_to_use;
+    lh.baseInfoLayer = layer_to_use;
+    lh.geographicBoundingBox = layer_to_use;
+    lh.projectedBoundingBox = layer_to_use;
+    lh.timeDimension = layer_to_use;
+    lh.elevationDimension = layer_to_use;
     if (hierarchy_type == WMSLayerHierarchy::HierarchyType::recursivetimes)
       expand_layer(lh);
   }
@@ -238,16 +239,16 @@ void add_layer_info(bool multiple_intervals,
   CTPP::CDT capa(CTPP::CDT::HASH_VAL);
 
   bool sublayer_is_reference_time_layer =
-      (!lh.sublayers.empty() && !lh.sublayers.back()->reference_time.is_special());
+      (!lh.sublayers.empty() && lh.sublayers.back()->reference_time);
   std::optional<CTPP::CDT> baseInfo;
   if (lh.sublayers.empty() && lh.baseInfoLayer)
   {
     baseInfo = lh.baseInfoLayer->getLayer()->getLayerBaseInfo(language);
-    if (!lh.reference_time.is_special())
+    if (lh.reference_time)
     {
       std::string name = (*baseInfo)["name"].GetString();
       std::string title = (*baseInfo)["title"].GetString();
-      std::string ref_time = lh.reference_time.to_iso_string();
+      std::string ref_time = lh.reference_time->to_iso_string();
       name += (":origintime_" + ref_time);
       title += (" origintime " + ref_time);
       (*baseInfo)["name"] = name;
@@ -303,10 +304,10 @@ void add_layer_info(bool multiple_intervals,
       // If sublayers are reference time layers, parent shows only referece time elemenent
       time_dim = wmslayer->getReferenceDimensionInfo();
     }
-    else if (!lh.reference_time.is_special())
+    else if (lh.reference_time)
     {
       // Reference time layer
-      std::string ref_time = Fmi::to_iso_string(lh.reference_time);
+      std::string ref_time = Fmi::to_iso_string(*lh.reference_time);
       time_dim = wmslayer->getTimeDimensionInfo(multiple_intervals, starttime, endtime, ref_time);
     }
     else
@@ -359,7 +360,11 @@ void add_layer_info(bool multiple_intervals,
 
 }  // namespace
 
-WMSLayerHierarchy::WMSLayerHierarchy(std::string n) : name(std::move(n)) {}
+WMSLayerHierarchy::WMSLayerHierarchy(std::string n)
+ : name(std::move(n))
+ , parent(nullptr)
+{
+}
 
 #ifndef WITHOUT_AUTHENTICATION
 WMSLayerHierarchy::WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
@@ -420,8 +425,8 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
 
     if (hierarchy_type == HierarchyType::flat)
     {
-      auto hierarchy = std::make_shared<WMSLayerHierarchy>(layer_name);
-      const WMSLayerProxy* layer_to_use = &item.second;
+      auto hierarchy = boost::make_shared<WMSLayerHierarchy>(layer_name);
+      const WMSLayerProxy& layer_to_use = item.second;
       hierarchy->baseInfoLayer = layer_to_use;
       hierarchy->geographicBoundingBox = layer_to_use;
       hierarchy->projectedBoundingBox = layer_to_use;
@@ -456,7 +461,7 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
   for (const auto& name : top_level_layers)
   {
     // Add top layer and its sublayers
-    auto hierarchy = std::make_shared<WMSLayerHierarchy>(name);
+    auto hierarchy = boost::make_shared<WMSLayerHierarchy>(name);
     add_sublayers(*hierarchy, named_layers, processed_layers, hierarchy_type);
     set_layer_elements(*hierarchy);
     sublayers.push_back(hierarchy);
