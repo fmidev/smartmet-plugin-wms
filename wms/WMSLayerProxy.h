@@ -33,6 +33,9 @@ class WMSLayerProxy
   {
   }
 
+  WMSLayerProxy(const WMSLayerProxy& other) = default;
+  WMSLayerProxy& operator=(const WMSLayerProxy& other) = default;
+
   SharedWMSLayer getLayer() const { return itsLayer; }
 
   std::optional<CTPP::CDT> getCapabilities(
