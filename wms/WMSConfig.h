@@ -12,9 +12,7 @@
 #include "WMSLayerProxy.h"
 #include "WMSLegendGraphicSettings.h"
 #include "WMSSupportedReference.h"
-#include <boost/move/unique_ptr.hpp>
-#include <boost/optional.hpp>
-#include <boost/smart_ptr/atomic_shared_ptr.hpp>
+#include <optional>
 #include <boost/utility.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
@@ -24,6 +22,7 @@
 #include <macgyver/AsyncTask.h>
 #include <spine/JsonCache.h>
 #include <spine/Thread.h>
+#include <macgyver/AtomicSharedPtr.h>
 #include <libconfig.h++>
 #include <map>
 #include <set>
@@ -75,23 +74,23 @@ class WMSConfig
   WMSConfig operator=(WMSConfig&& other) = delete;
 
 #ifndef WITHOUT_AUTHENTICATION
-  CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
+  CTPP::CDT getCapabilities(const std::optional<std::string>& apikey,
                             const std::string& language,
-                            const boost::optional<std::string>& starttime,
-                            const boost::optional<std::string>& endtime,
-                            const boost::optional<std::string>& reference_time,
-                            const boost::optional<std::string>& wms_namespace,
+                            const std::optional<std::string>& starttime,
+                            const std::optional<std::string>& endtime,
+                            const std::optional<std::string>& reference_time,
+                            const std::optional<std::string>& wms_namespace,
                             WMSLayerHierarchy::HierarchyType hierarchy_type,
 							bool show_hidden,
                             bool multiple_intervals,
                             bool authenticate = true) const;
 #else
-  CTPP::CDT getCapabilities(const boost::optional<std::string>& apikey,
+  CTPP::CDT getCapabilities(const std::optional<std::string>& apikey,
                             const std::string& language,
-                            const boost::optional<std::string>& starttime,
-                            const boost::optional<std::string>& endtime,
-                            const boost::optional<std::string>& reference_time,
-                            const boost::optional<std::string>& wms_namespace,
+                            const std::optional<std::string>& starttime,
+                            const std::optional<std::string>& endtime,
+                            const std::optional<std::string>& reference_time,
+                            const std::optional<std::string>& wms_namespace,
                             WMSLayerHierarchy::HierarchyType hierarchy_type,
 							bool show_hidden,
                             bool multiple_intervals) const;
@@ -121,7 +120,7 @@ class WMSConfig
   bool isValidElevation(const std::string& theLayer, int theElevation) const;
   bool isValidTime(const std::string& theLayer,
                    const Fmi::DateTime& theTime,
-                   const boost::optional<Fmi::DateTime>& theReferenceTime) const;
+                   const std::optional<Fmi::DateTime>& theReferenceTime) const;
   bool isValidReferenceTime(const std::string& theLayer,
                             const Fmi::DateTime& theReferenceTime) const;
 
@@ -129,7 +128,7 @@ class WMSConfig
   bool currentValue(const std::string& theLayer) const;
   Fmi::DateTime mostCurrentTime(
       const std::string& theLayer,
-      const boost::optional<Fmi::DateTime>& reference_time) const;
+      const std::optional<Fmi::DateTime>& reference_time) const;
   Json::Value json(const std::string& theLayerName) const;
   std::vector<Json::Value> getLegendGraphic(const std::string& theLayerName,
                                             const std::string& theStyleName,
@@ -222,7 +221,7 @@ class WMSConfig
   // and must be used via atomic_load and atomic_store, since CTPP::CDT is not thread safe.
 
   using LayerMap = std::map<std::string, WMSLayerProxy>;
-  boost::atomic_shared_ptr<LayerMap> itsLayers;
+  Fmi::AtomicSharedPtr<LayerMap> itsLayers;
 
   std::unique_ptr<Fmi::AsyncTask> itsGetCapabilitiesTask;
 
@@ -231,16 +230,16 @@ class WMSConfig
   void updateLayerMetaData();
 
   void updateLayerMetaDataForCustomer(
-      const boost::filesystem::directory_iterator& dir,
-      const boost::shared_ptr<LayerMap>& mylayers,
+      const std::filesystem::directory_iterator& dir,
+      const std::shared_ptr<LayerMap>& mylayers,
       LayerMap& newProxies,
       std::map<SharedWMSLayer, std::map<std::string, std::string>>& externalLegends);
 
   void updateLayerMetaDataForCustomerLayer(
-      const boost::filesystem::recursive_directory_iterator& itr,
+      const std::filesystem::recursive_directory_iterator& itr,
       const std::string& customer,
       const std::string& productdir,
-      const boost::shared_ptr<LayerMap>& mylayers,
+      const std::shared_ptr<LayerMap>& mylayers,
       LayerMap& newProxies,
       std::map<SharedWMSLayer, std::map<std::string, std::string>>& externalLegends);
 

@@ -15,7 +15,7 @@
 #include "Text.h"
 #include "Views.h"
 #include <macgyver/DateTime.h>
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 #include <string>
 #include <vector>
@@ -40,11 +40,11 @@ class Product : public Properties
   ParameterInfos getGridParameterInfo(const State& theState) const;
 
   // Element specific:
-  boost::optional<std::string> svg_tmpl;
+  std::optional<std::string> svg_tmpl;
   std::string type;
-  boost::optional<int> width;
-  boost::optional<int> height;
-  boost::optional<Text> title;
+  std::optional<int> width;
+  std::optional<int> height;
+  std::optional<Text> title;
 
   // Defs section
   Defs defs;

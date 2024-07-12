@@ -331,11 +331,11 @@ std::size_t Attributes::hash_value(const State& theState) const
  */
 // ----------------------------------------------------------------------
 
-boost::optional<std::string> Attributes::getLocalIri(const std::string& theName) const
+std::optional<std::string> Attributes::getLocalIri(const std::string& theName) const
 {
   try
   {
-    boost::optional<std::string> ret;
+    std::optional<std::string> ret;
 
     // return empty value if there is no such attribute
 
@@ -408,7 +408,7 @@ bool Attributes::getLocalIriAndParameters(const std::string& theName,
  */
 // ----------------------------------------------------------------------
 
-boost::optional<std::string> Attributes::remove(const std::string& theName)
+std::optional<std::string> Attributes::remove(const std::string& theName)
 {
   auto pos = attributes.find(theName);
   if (pos == attributes.end())

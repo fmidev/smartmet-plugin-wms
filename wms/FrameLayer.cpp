@@ -52,7 +52,7 @@ void readBoundingBox(const std::string& bbox, FrameDimension& dimension)
 }
 
 OGRGeometryPtr createFrameGeometry(const FrameDimension& inner,
-                                   boost::optional<FrameDimension> outer)
+                                   std::optional<FrameDimension> outer)
 {
   OGRGeometryPtr pFrameGeom;
 

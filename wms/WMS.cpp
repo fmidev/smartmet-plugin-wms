@@ -22,9 +22,7 @@
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
-#include <boost/filesystem/operations.hpp>
-#include <boost/move/make_unique.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/timer/timer.hpp>
 #include <boost/utility.hpp>
 #include <ctpp2/CDT.hpp>
@@ -834,11 +832,11 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
   std::string log;
   try
   {
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
     if (theState.useTimer())
     {
       std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
-      mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
     tmpl->process(hash, output, log);
   }
@@ -1036,8 +1034,8 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
     throw exception;
   }
 
-  boost::optional<std::string> width = theRequest.getParameter("WIDTH");
-  boost::optional<std::string> height = theRequest.getParameter("HEIGHT");
+  std::optional<std::string> width = theRequest.getParameter("WIDTH");
+  std::optional<std::string> height = theRequest.getParameter("HEIGHT");
 
   Json::Value json = getExceptionJson(exception.what(),
                                       mapFormat,
@@ -1066,11 +1064,11 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
     std::string log;
     try
     {
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
       {
         std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
-        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+        mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
       }
       tmpl->process(hash, output, log);
     }

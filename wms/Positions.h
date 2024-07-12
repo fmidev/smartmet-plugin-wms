@@ -9,7 +9,7 @@
 #include "Locations.h"
 #include "Map.h"
 #include "Stations.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <engines/geonames/Engine.h>
 #include <gis/Box.h>
 #include <json/json.h>
@@ -72,7 +72,7 @@ class Positions
   void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
-  void init(const boost::optional<std::string>& theProducer,
+  void init(const std::optional<std::string>& theProducer,
             const Projection& theProjection,
             const Fmi::DateTime& theTime,
             const State& theState);
@@ -101,11 +101,11 @@ class Positions
 
   // Grid layout settings. dx,dy offsets for Keyword and Latlon settings
 
-  boost::optional<int> x;    // start location for grid layout
-  boost::optional<int> y;    //
-  boost::optional<int> dx;   // location stepsizes in pixel units
-  boost::optional<int> dy;   // or offset from location for other algorithms
-  boost::optional<int> ddx;  // horizontal stagger for the next row
+  std::optional<int> x;    // start location for grid layout
+  std::optional<int> y;    //
+  std::optional<int> dx;   // location stepsizes in pixel units
+  std::optional<int> dy;   // or offset from location for other algorithms
+  std::optional<int> ddx;  // horizontal stagger for the next row
 
   // Graticule/GraticuleFill layout settings:
 
@@ -138,8 +138,8 @@ class Positions
   std::string v;
 
   // Optional regional requirements (map names)
-  boost::optional<Map> outsidemap;
-  boost::optional<Map> insidemap;
+  std::optional<Map> outsidemap;
+  std::optional<Map> insidemap;
   Intersections intersections;
 
   // Extra clipping margins

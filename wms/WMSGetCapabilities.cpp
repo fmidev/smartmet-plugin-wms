@@ -5,7 +5,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/algorithm/copy.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <ctpp2/CTPP2Logger.hpp>  // logging level defines
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
@@ -97,7 +97,7 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
 {
   try
   {
-    boost::optional<std::string> apikey;
+    std::optional<std::string> apikey;
     try
     {
       // Deduce apikey for layer filtering

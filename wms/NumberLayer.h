@@ -39,14 +39,14 @@ class NumberLayer : public Layer
 
   void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
-  boost::optional<TS::ParameterAndFunctions> param_funcs;
-  boost::optional<std::string> parameter;
+  std::optional<TS::ParameterAndFunctions> param_funcs;
+  std::optional<std::string> parameter;
   std::string unit_conversion;
-  boost::optional<double> multiplier;
-  boost::optional<double> offset;
+  std::optional<double> multiplier;
+  std::optional<double> offset;
 
   // Grid coordinate settings
-  boost::optional<Positions> positions;
+  std::optional<Positions> positions;
 
   // Require at least this many valid valies
   int minvalues = 0;
@@ -61,8 +61,8 @@ class NumberLayer : public Layer
   Label label;
 
   // default symbol
-  boost::optional<std::string> symbol;
-  boost::optional<double> scale;  // has no effect on numbers, only on the symbol
+  std::optional<std::string> symbol;
+  std::optional<double> scale;  // has no effect on numbers, only on the symbol
 
   std::vector<AttributeSelection> numbers;
 

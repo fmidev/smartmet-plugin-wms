@@ -7,7 +7,8 @@
 #pragma once
 
 #include "WMSLayerProxy.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
+#include <optional>
 
 namespace SmartMet
 {
@@ -44,15 +45,15 @@ class WMSLayerHierarchy
 
 #ifndef WITHOUT_AUTHENTICATION
   WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
-                    const boost::optional<std::string>& wms_namespace,
+                    const std::optional<std::string>& wms_namespace,
                     HierarchyType hierarchy_type,
 					bool reveal_hidden,
-                    const boost::optional<std::string>& apikey,
+                    const std::optional<std::string>& apikey,
                     bool auth,
                     Engine::Authentication::Engine* authEngine);
 #else
   WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
-                    const boost::optional<std::string>& wms_namespace,
+                    const std::optional<std::string>& wms_namespace,
                     HierarchyType hierarchy_type,
 					bool reveal_hidden);
 #endif
@@ -67,34 +68,34 @@ class WMSLayerHierarchy
 
   CTPP::CDT getCapabilities(bool multiple_intervals,
                             const std::string& language,
-                            const boost::optional<std::string>& starttime,
-                            const boost::optional<std::string>& endtime,
-                            const boost::optional<std::string>& reference_time) const;
+                            const std::optional<std::string>& starttime,
+                            const std::optional<std::string>& endtime,
+                            const std::optional<std::string>& reference_time) const;
 
   std::string name;
   bool show_hidden;
   bool authenticate;
   // Parts that can be inhereted by sublayers
-  boost::optional<const WMSLayerProxy&> baseInfoLayer;
-  boost::optional<const WMSLayerProxy&> geographicBoundingBox;
-  boost::optional<const WMSLayerProxy&> projectedBoundingBox;
-  boost::optional<const WMSLayerProxy&> timeDimension;
-  boost::optional<const WMSLayerProxy&> elevationDimension;
+  std::optional<WMSLayerProxy> baseInfoLayer;
+  std::optional<WMSLayerProxy> geographicBoundingBox;
+  std::optional<WMSLayerProxy> projectedBoundingBox;
+  std::optional<WMSLayerProxy> timeDimension;
+  std::optional<WMSLayerProxy> elevationDimension;
 
-  boost::optional<const WMSLayerHierarchy&> parent;
+  const WMSLayerHierarchy* parent;
   std::list<boost::shared_ptr<WMSLayerHierarchy>> sublayers;
-  boost::optional<const Fmi::DateTime&> reference_time;
+  std::optional<Fmi::DateTime> reference_time;
 
  private:
 #ifndef WITHOUT_AUTHENTICATION
   void processLayers(const std::map<std::string, WMSLayerProxy>& layerMap,
-                     const boost::optional<std::string>& wms_namespace,
+                     const std::optional<std::string>& wms_namespace,
                      HierarchyType hierarchy_type,
-                     const boost::optional<std::string>& apikey,
+                     const std::optional<std::string>& apikey,
                      Engine::Authentication::Engine* authEngine);
 #else
   void processLayers(const std::map<std::string, WMSLayerProxy>& layerMap,
-                     const boost::optional<std::string>& wms_namespace,
+                     const std::optional<std::string>& wms_namespace,
                      HierarchyType hierarchy_type);
 #endif
 };

@@ -189,7 +189,7 @@ std::vector<interval_dimension_item> extract_intervals(Json::Value& root)
 {
   try
   {
-    boost::optional<int> interval_default;
+    std::optional<int> interval_default;
     remove_int(interval_default, root, "interval");
 
     auto json = remove(root, "intervals");
@@ -212,8 +212,8 @@ std::vector<interval_dimension_item> extract_intervals(Json::Value& root)
         }
         else if (json[i].isObject())
         {
-          boost::optional<int> interval_start;
-          boost::optional<int> interval_end;
+          std::optional<int> interval_start;
+          std::optional<int> interval_end;
           bool interval_default = false;
           remove_int(interval_start, json[i], "interval_start");
           remove_int(interval_end, json[i], "interval_end");
@@ -228,8 +228,8 @@ std::vector<interval_dimension_item> extract_intervals(Json::Value& root)
     }
     else
     {
-      boost::optional<int> interval_start;
-      boost::optional<int> interval_end;
+      std::optional<int> interval_start;
+      std::optional<int> interval_end;
       remove_int(interval_start, root, "interval_start");
       remove_int(interval_end, root, "interval_end");
       if (interval_start || interval_end)
@@ -271,7 +271,7 @@ void extract_crs(Json::Value& root,
   }
 }
 
-void extract_keyword(Json::Value& root, boost::optional<std::set<std::string>>& keywords)
+void extract_keyword(Json::Value& root, std::optional<std::set<std::string>>& keywords)
 {
   try
   {
@@ -349,11 +349,11 @@ std::string determine_producer(const WMSConfig& theWMSConfig, Json::Value& root)
   }
 }
 
-boost::optional<std::string> determine_source(Json::Value& root)
+std::optional<std::string> determine_source(Json::Value& root)
 {
   try
   {
-    boost::optional<std::string> source;
+    std::optional<std::string> source;
 
     // From product
     remove_string(source, root, "source");
@@ -531,7 +531,7 @@ SharedWMSLayer create_wms_layer(const WMSConfig& theWMSConfig, Json::Value& root
   {
     auto producer = determine_producer(theWMSConfig, root);
     uint geometryId = determine_geometryId(root);
-    boost::optional<std::string> source = determine_source(root);
+    std::optional<std::string> source = determine_source(root);
 
     Json::Value parsedLayer;
     WMSLayerType layerType = determine_product_type(theWMSConfig, producer, root, parsedLayer);
@@ -555,24 +555,24 @@ SharedWMSLayer create_wms_layer(const WMSConfig& theWMSConfig, Json::Value& root
     {
       case WMSLayerType::MapLayer:
       {
-        layer = boost::make_shared<WMSMapLayer>(theWMSConfig, parsedLayer);
+        layer = std::make_shared<WMSMapLayer>(theWMSConfig, parsedLayer);
         break;
       }
       case WMSLayerType::PostGISLayer:
       {
-        layer = boost::make_shared<WMSPostGISLayer>(theWMSConfig, parsedLayer);
+        layer = std::make_shared<WMSPostGISLayer>(theWMSConfig, parsedLayer);
         break;
       }
       case WMSLayerType::QueryDataLayer:
       {
-        layer = boost::make_shared<WMSQueryDataLayer>(theWMSConfig, producer);
+        layer = std::make_shared<WMSQueryDataLayer>(theWMSConfig, producer);
         break;
       }
       case WMSLayerType::GridDataLayer:
       {
         auto parameter = determine_parameter(root);
         auto elevation_unit = determine_elevation_unit(root);
-        layer = boost::make_shared<WMSGridDataLayer>(theWMSConfig, producer, parameter, geometryId, elevation_unit);
+        layer = std::make_shared<WMSGridDataLayer>(theWMSConfig, producer, parameter, geometryId, elevation_unit);
         break;
       }
       case WMSLayerType::ObservationLayer:
@@ -585,7 +585,7 @@ SharedWMSLayer create_wms_layer(const WMSConfig& theWMSConfig, Json::Value& root
         // timestep -1 indicates that no timestep is given in product-file
         // in that case timestep is read from obsengine configuration file (default value is 1min)
         layer =
-            boost::make_shared<WMSObservationLayer>(theWMSConfig, producer, std::stoi(timestep));
+            std::make_shared<WMSObservationLayer>(theWMSConfig, producer, std::stoi(timestep));
 #endif
         break;
       }

@@ -35,7 +35,7 @@ class IsolineLayer : public Layer
 
   void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
-  boost::optional<std::string> parameter;
+  std::optional<std::string> parameter;
   std::vector<Isoline> isolines;
   std::string interpolation{"linear"};
   Smoother smoother;
@@ -43,15 +43,15 @@ class IsolineLayer : public Layer
 
   double precision = 1.0;
 
-  boost::optional<double> minarea;
+  std::optional<double> minarea;
   std::string areaunit = "km^2";  // km^2|px^2
 
   std::string unit_conversion;
-  boost::optional<double> multiplier;
-  boost::optional<double> offset;
+  std::optional<double> multiplier;
+  std::optional<double> offset;
 
-  boost::optional<Map> outside;
-  boost::optional<Map> inside;
+  std::optional<Map> outside;
+  std::optional<Map> inside;
 
   Sampling sampling;
   Intersections intersections;

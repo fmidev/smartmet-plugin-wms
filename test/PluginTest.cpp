@@ -1,6 +1,6 @@
 #include "Plugin.h"
 #include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <boost/foreach.hpp>
 #include <macgyver/Exception.h>
 #include <smartmet/spine/HTTP.h>
@@ -48,11 +48,11 @@ std::vector<std::string> read_file(const std::string& fn)
 
 // ----------------------------------------------------------------------
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 // ----------------------------------------------------------------------
 
-std::string get_file_contents(const boost::filesystem::path& filename)
+std::string get_file_contents(const std::filesystem::path& filename)
 {
   std::string content;
   std::ifstream in(filename.c_str());
@@ -63,7 +63,7 @@ std::string get_file_contents(const boost::filesystem::path& filename)
 
 // ----------------------------------------------------------------------
 
-void put_file_contents(const boost::filesystem::path& filename, const std::string& data)
+void put_file_contents(const std::filesystem::path& filename, const std::string& data)
 {
   std::ofstream out(filename.c_str());
   if (out)
@@ -125,7 +125,7 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
       if (command == "quit")
         break;
 
-      using boost::filesystem::path;
+      using std::filesystem::path;
       using std::cout;
       using std::endl;
       using std::string;
@@ -152,7 +152,7 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
       auto query = SmartMet::Spine::HTTP::parseRequest(input);
 
       path resultfile = path("failures") / command;
-      boost::filesystem::create_directories(resultfile.parent_path());
+      std::filesystem::create_directories(resultfile.parent_path());
 
       if (query.first == SmartMet::Spine::HTTP::ParsingStatus::COMPLETE)
       {

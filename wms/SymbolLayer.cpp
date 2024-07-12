@@ -12,7 +12,6 @@
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
-#include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
@@ -74,11 +73,11 @@ PointValues read_forecasts(const SymbolLayer& layer,
 
     // querydata API for value() sucks
 
-    boost::optional<Spine::Parameter> param;
+    std::optional<Spine::Parameter> param;
     if (layer.param_funcs)
       param = layer.param_funcs->parameter;
 
-    boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+    std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     Fmi::LocalDateTime localdatetime(valid_time, Fmi::TimeZonePtr::utc);
 
     PointValues pointvalues;
@@ -107,14 +106,14 @@ PointValues read_forecasts(const SymbolLayer& layer,
             AggregationUtility::get_qengine_value(q, options, localdatetime, layer.param_funcs);
 
         // auto result = q->value(options, localdatetime);
-        if (boost::get<double>(&result) != nullptr)
+        if (const double* ptr = std::get_if<double>(&result))
         {
-          double tmp = *boost::get<double>(&result);
+          double tmp = *ptr;
           pointvalues.push_back(PointData{point, tmp});
         }
-        else if (boost::get<int>(&result) != nullptr)
+        else if (const int* ptr = std::get_if<int>(&result))
         {
-          double tmp = *boost::get<int>(&result);
+          double tmp = *ptr;
           pointvalues.push_back(PointData{point, tmp});
         }
         else
@@ -325,11 +324,11 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
     // Time execution
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "SymbolLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // A symbol must be defined either globally or for values
@@ -663,7 +662,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         iri = *symbol;
 
       // librsvg cannot handle scale + transform, must move former into latter
-      boost::optional<double> rescale;
+      std::optional<double> rescale;
 
       if (!symbols.empty())
       {
@@ -726,9 +725,9 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
   {
     // Time execution
     std::string report = "SymbolLayer::generate finished in %t sec CPU, %w sec real\n";
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
     // A symbol must be defined either globally or for values
 
@@ -875,7 +874,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
         iri = *symbol;
 
       // librsvg cannot handle scale + transform, must move former into latter
-      boost::optional<double> rescale;
+      std::optional<double> rescale;
 
       if (!symbols.empty())
       {

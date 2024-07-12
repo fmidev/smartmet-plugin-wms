@@ -46,7 +46,7 @@ void Layers::init(Json::Value& theJson,
 
     for (auto& json : theJson)
     {
-      boost::shared_ptr<Layer> layer(LayerFactory::create(json));
+      std::shared_ptr<Layer> layer(LayerFactory::create(json));
 
       layer->init(json, theState, theConfig, theProperties);
 
@@ -85,11 +85,11 @@ void Layers::setProjection(const Projection& projection)
   }
 }
 
-boost::optional<std::string> Layers::getProjectionParameter()
+std::optional<std::string> Layers::getProjectionParameter()
 {
   try
   {
-    boost::optional<std::string> param;
+    std::optional<std::string> param;
 
     for (const auto& layer : layers)
     {

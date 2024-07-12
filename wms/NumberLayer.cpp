@@ -12,7 +12,6 @@
 #include "Select.h"
 #include "State.h"
 #include "ValueTools.h"
-#include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
@@ -66,11 +65,11 @@ PointValues read_forecasts(const NumberLayer& layer,
 
     // The parameters. This *must* be done after the call to positions generation
 
-    boost::optional<Spine::Parameter> param;
+    std::optional<Spine::Parameter> param;
     if (layer.param_funcs)
       param = layer.param_funcs->parameter;
 
-    boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+    std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     Fmi::LocalDateTime localdatetime(valid_time, Fmi::TimeZonePtr::utc);
 
     PointValues pointvalues;
@@ -102,16 +101,15 @@ PointValues read_forecasts(const NumberLayer& layer,
         TS::Value result =
             AggregationUtility::get_qengine_value(q, options, localdatetime, layer.param_funcs);
 
-        if (boost::get<double>(&result) != nullptr)
+        if (const double* tmp = std::get_if<double>(&result))
         {
-          double tmp = *boost::get<double>(&result);
-          pointvalues.push_back(PointData{point, tmp});
+          pointvalues.push_back(PointData{point, *tmp});
           // printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(),
-          // point.latlon.Y(),tmp);
+          // point.latlon.Y(),*tmp);
         }
-        else if (boost::get<int>(&result) != nullptr)
+        else if (const int* ptr = std::get_if<int>(&result))
         {
-          double tmp = *boost::get<int>(&result);
+          double tmp = *ptr;
           pointvalues.push_back(PointData{point, tmp});
           // printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(),
           // point.latlon.Y(),tmp);
@@ -346,11 +344,11 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Time execution
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "NumberLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // Make sure position generation is initialized
@@ -650,7 +648,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         iri = *selection->symbol;
 
       // librsvg cannot handle scale + transform, must move former into latter
-      boost::optional<double> rescale;
+      std::optional<double> rescale;
       if (selection)
       {
         auto scaleattr = selection->attributes.remove("scale");
@@ -745,11 +743,11 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
   {
     // Time execution
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "NumberLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // Establish the data
@@ -886,7 +884,7 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
         iri = *selection->symbol;
 
       // librsvg cannot handle scale + transform, must move former into latter
-      boost::optional<double> rescale;
+      std::optional<double> rescale;
       if (selection)
       {
         auto scaleattr = selection->attributes.remove("scale");

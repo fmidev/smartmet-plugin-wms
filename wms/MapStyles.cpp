@@ -53,7 +53,7 @@ void MapStyles::init(Json::Value& theJson, const Config& theConfig)
       for (auto& j : json)
       {
         std::string name;
-        boost::optional<int> number;
+        std::optional<int> number;
 
         JsonTools::remove_string(name, j, "value");
         JsonTools::remove_int(number, j, "number");

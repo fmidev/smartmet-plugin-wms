@@ -9,7 +9,7 @@
 #include "Label.h"
 #include "Layer.h"
 #include "Positions.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <engines/observation/Settings.h>
 
 namespace SmartMet
@@ -55,7 +55,7 @@ class ObservationLayer : public Layer
   virtual std::vector<std::string> getParameters() const = 0;
 
   // Grid coordinate settings
-  boost::optional<Positions> positions;
+  std::optional<Positions> positions;
   // Stations distance limit in kilometers
   double maxdistance = 5;
 

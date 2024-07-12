@@ -36,10 +36,10 @@ void remove_string(std::string& theValue, Json::Value& theJson, const std::strin
   }
 }
 
-void remove_string(boost::optional<std::string>& theValue,
+void remove_string(std::optional<std::string>& theValue,
                    Json::Value& theJson,
                    const std::string& theName,
-                   const boost::optional<std::string>& theDefault)
+                   const std::optional<std::string>& theDefault)
 {
   try
   {
@@ -87,10 +87,10 @@ void remove_int(int& theValue, Json::Value& theJson, const std::string& theName,
   }
 }
 
-void remove_int(boost::optional<int>& theValue,
+void remove_int(std::optional<int>& theValue,
                 Json::Value& theJson,
                 const std::string& theName,
-                const boost::optional<int>& theDefault)
+                const std::optional<int>& theDefault)
 {
   try
   {
@@ -122,10 +122,10 @@ void remove_uint(uint& theValue, Json::Value& theJson, const std::string& theNam
   }
 }
 
-void remove_uint(boost::optional<uint>& theValue,
+void remove_uint(std::optional<uint>& theValue,
                  Json::Value& theJson,
                  const std::string& theName,
-                 const boost::optional<uint>& theDefault)
+                 const std::optional<uint>& theDefault)
 {
   try
   {
@@ -156,10 +156,10 @@ void remove_double(double& theValue, Json::Value& theJson, const std::string& th
   }
 }
 
-void remove_double(boost::optional<double>& theValue,
+void remove_double(std::optional<double>& theValue,
                    Json::Value& theJson,
                    const std::string& theName,
-                   const boost::optional<double>& theDefault)
+                   const std::optional<double>& theDefault)
 {
   try
   {
@@ -228,10 +228,10 @@ void remove_tz(Fmi::TimeZonePtr& theZone,
   }
 }
 
-void remove_time(boost::optional<Fmi::DateTime>& theTime,
+void remove_time(std::optional<Fmi::DateTime>& theTime,
                  Json::Value& theJson,
                  const std::string& theName,
-                 const boost::optional<Fmi::DateTime>& theDefault)
+                 const std::optional<Fmi::DateTime>& theDefault)
 {
   try
   {
@@ -262,11 +262,11 @@ void remove_time(boost::optional<Fmi::DateTime>& theTime,
   }
 }
 
-void remove_time(boost::optional<Fmi::DateTime>& theTime,
+void remove_time(std::optional<Fmi::DateTime>& theTime,
                  Json::Value& theJson,
                  const std::string& theName,
                  const Fmi::TimeZonePtr& theZone,
-                 const boost::optional<Fmi::DateTime>& theDefault)
+                 const std::optional<Fmi::DateTime>& theDefault)
 {
   try
   {

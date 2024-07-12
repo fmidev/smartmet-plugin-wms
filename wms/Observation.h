@@ -8,7 +8,7 @@
 
 #include "Attributes.h"
 #include "Label.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 #include <string>
 

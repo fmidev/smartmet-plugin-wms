@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <engines/gis/MapOptions.h>
 #include <json/json.h>
 #include <string>

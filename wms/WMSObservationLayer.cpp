@@ -1,6 +1,5 @@
 #include "WMSObservationLayer.h"
 #include <macgyver/DateTime.h>
-#include <boost/move/make_unique.hpp>
 #include <macgyver/Exception.h>
 
 namespace SmartMet
@@ -21,17 +20,17 @@ bool WMSObservationLayer::updateLayerMetaData()
 
     metadataTimestamp = Fmi::SecondClock::universal_time();
 
-    std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
+    std::map<Fmi::DateTime, std::shared_ptr<WMSTimeDimension>> newTimeDimensions;
 
     tag_interval interval(metaData.period.begin(),
                           metaData.period.end(),
                           Fmi::Minutes(metaData.timestep));
     time_intervals timeintervals{interval};
-    auto newTimeDimension = boost::make_shared<IntervalTimeDimension>(timeintervals);
+    auto newTimeDimension = std::make_shared<IntervalTimeDimension>(timeintervals);
 
     Fmi::DateTime origintime(Fmi::DateTime::NOT_A_DATE_TIME);
     newTimeDimensions.insert(std::make_pair(origintime, newTimeDimension));
-    timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);
+    timeDimensions = std::make_shared<WMSTimeDimensions>(newTimeDimensions);
 	timeDimensions->useWallClockTimeAsEndTime(true);
 
     return true;

@@ -7,7 +7,7 @@
 #pragma once
 
 #include "Attributes.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 #include <string>
 
@@ -25,15 +25,15 @@ class AttributeSelection
   void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
-  boost::optional<double> value;
-  boost::optional<double> lolimit;
-  boost::optional<double> hilimit;
-  boost::optional<std::string> symbol;
+  std::optional<double> value;
+  std::optional<double> lolimit;
+  std::optional<double> hilimit;
+  std::optional<std::string> symbol;
   std::map<std::string, std::string> translations;
   Attributes attributes;
 
   bool matches(double theValue) const;
-  boost::optional<std::string> remove(const std::string& theName);
+  std::optional<std::string> remove(const std::string& theName);
 
  private:
 };  // class AttributeSelection

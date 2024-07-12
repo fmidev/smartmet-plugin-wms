@@ -9,7 +9,7 @@
 #include "Attributes.h"
 #include "Layer.h"
 #include "Text.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <string>
 
 namespace CTPP
@@ -38,12 +38,12 @@ class WKTLayer : public Layer
 
   std::size_t hash_value(const State& theState) const override;
 
-  boost::optional<std::string> tag;
+  std::optional<std::string> tag;
 
  private:
   std::string wkt;
-  boost::optional<double> resolution;
-  boost::optional<double> relativeresolution;
+  std::optional<double> resolution;
+  std::optional<double> relativeresolution;
   double precision = 1.0;
 
 };  // class WKTLayer

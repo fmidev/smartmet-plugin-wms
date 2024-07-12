@@ -3,7 +3,7 @@
 #include <dtl/dtl.hpp>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <thor/json.h>
 #include <fstream>
 #include <sstream>
@@ -38,7 +38,7 @@ void show_diff(const std::string& src, const std::string& dest)
   std::cout << ret;
 }
 
-std::string get_file_contents(const boost::filesystem::path& filename)
+std::string get_file_contents(const std::filesystem::path& filename)
 {
   std::string content;
   std::ifstream in(filename.c_str());
@@ -47,7 +47,7 @@ std::string get_file_contents(const boost::filesystem::path& filename)
   return content;
 }
 
-void put_file_contents(const boost::filesystem::path& filename, const std::string& data)
+void put_file_contents(const std::filesystem::path& filename, const std::string& data)
 {
   std::ofstream out(filename.c_str());
   if (out)

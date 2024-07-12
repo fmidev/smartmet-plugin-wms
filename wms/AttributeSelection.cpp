@@ -47,7 +47,7 @@ bool AttributeSelection::matches(double theValue) const
  */
 // ----------------------------------------------------------------------
 
-boost::optional<std::string> AttributeSelection::remove(const std::string& theName)
+std::optional<std::string> AttributeSelection::remove(const std::string& theName)
 {
   return attributes.remove(theName);
 }

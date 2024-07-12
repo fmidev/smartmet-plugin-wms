@@ -37,7 +37,7 @@ class LocationLayer : public Layer
   std::set<std::string> countries;
 
   // the name of the default symbol
-  boost::optional<std::string> symbol;
+  std::optional<std::string> symbol;
 
   // Feature code dependent symbol and attribute selection
   std::map<std::string, std::vector<AttributeSelection> > symbols;

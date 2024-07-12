@@ -8,7 +8,7 @@
 
 #include "ParameterInfo.h"
 #include "Projection.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <json/json.h>
 #include <list>
 
@@ -41,7 +41,7 @@ class Layers
                      CTPP::CDT& theLayersCdt,
                      State& theState,
                      Projection& projection);
-  boost::optional<std::string> getProjectionParameter();
+  std::optional<std::string> getProjectionParameter();
   void setProjection(const Projection& projection);
 
   std::size_t hash_value(const State& theState) const;
@@ -50,7 +50,7 @@ class Layers
 
   void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
-  std::list<boost::shared_ptr<Layer> > layers;
+  std::list<std::shared_ptr<Layer> > layers;
 };
 
 }  // namespace Dali

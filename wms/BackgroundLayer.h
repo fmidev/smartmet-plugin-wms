@@ -9,7 +9,7 @@
 #include "Attributes.h"
 #include "Layer.h"
 #include "Projection.h"
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace SmartMet
 {

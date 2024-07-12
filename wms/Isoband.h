@@ -8,7 +8,7 @@
 
 #include "Attributes.h"
 #include "Text.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 #include <string>
 
@@ -32,13 +32,13 @@ class Isoband
   // null,null  --> missing values
 
   std::string qid;
-  boost::optional<double> lolimit;
-  boost::optional<double> hilimit;
+  std::optional<double> lolimit;
+  std::optional<double> hilimit;
 
   // SVG attributes (id, class, style, ...)
   Attributes attributes;
 
-  boost::optional<Text> label;
+  std::optional<Text> label;
 
  private:
   mutable std::string generated_qid;

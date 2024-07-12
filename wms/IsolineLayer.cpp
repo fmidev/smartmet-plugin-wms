@@ -9,7 +9,6 @@
 #include "Layer.h"
 #include "State.h"
 #include "StyleSheet.h"
-#include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
@@ -137,9 +136,9 @@ void IsolineLayer::init(Json::Value& theJson,
         throw Fmi::Exception(BCP, "Isoline layer isolines setting must be an array or a group");
       else
       {
-        boost::optional<double> startvalue;
-        boost::optional<double> endvalue;
-        boost::optional<double> interval;
+        std::optional<double> startvalue;
+        std::optional<double> endvalue;
+        std::optional<double> interval;
 
         JsonTools::remove_double(startvalue, json, "startvalue");
         JsonTools::remove_double(endvalue, json, "endvalue");
@@ -219,14 +218,14 @@ void IsolineLayer::init(Json::Value& theJson,
     json = JsonTools::remove(theJson, "outside");
     if (!json.isNull())
     {
-      outside.reset(Map());
+      outside = Map();
       outside->init(json, theConfig);
     }
 
     json = JsonTools::remove(theJson, "inside");
     if (!json.isNull())
     {
-      inside.reset(Map());
+      inside = Map();
       inside->init(json, theConfig);
     }
 
@@ -806,11 +805,11 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     if (isolines.empty())
       return;
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "IsolineLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     std::vector<double> isovalues;

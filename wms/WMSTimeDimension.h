@@ -12,7 +12,7 @@
 #pragma once
 
 #include <macgyver/DateTime.h>
-#include <boost/optional.hpp>
+#include <optional>
 #include <macgyver/Exception.h>
 
 #include <list>
@@ -43,8 +43,8 @@ class WMSTimeDimension
   std::set<Fmi::DateTime> getTimeSteps() const;
 
   virtual std::string getCapabilities(bool multiple_intervals,
-                                      const boost::optional<std::string>& starttime,
-                                      const boost::optional<std::string>& endtime) const = 0;
+                                      const std::optional<std::string>& starttime,
+                                      const std::optional<std::string>& endtime) const = 0;
 
   bool currentValue() const { return current; }
 
@@ -69,12 +69,12 @@ class StepTimeDimension : public WMSTimeDimension
   StepTimeDimension& operator=(StepTimeDimension&& other) = delete;
 
   std::string getCapabilities(bool multiple_intervals,
-                              const boost::optional<std::string>& starttime,
-                              const boost::optional<std::string>& endtime) const override;
+                              const std::optional<std::string>& starttime,
+                              const std::optional<std::string>& endtime) const override;
 
  private:
-  std::string makeCapabilities(const boost::optional<std::string>& starttime,
-                               const boost::optional<std::string>& endtime) const;
+  std::string makeCapabilities(const std::optional<std::string>& starttime,
+                               const std::optional<std::string>& endtime) const;
 };
 
 struct tag_interval
@@ -106,17 +106,17 @@ class IntervalTimeDimension : public WMSTimeDimension
   const std::vector<tag_interval>& getIntervals() const;
 
   std::string getCapabilities(bool multiple_intervals,
-                              const boost::optional<std::string>& starttime,
-                              const boost::optional<std::string>& endtime) const override;
+                              const std::optional<std::string>& starttime,
+                              const std::optional<std::string>& endtime) const override;
   Fmi::DateTime mostCurrentTime() const override;
   bool isValidTime(const Fmi::DateTime& theTime, bool endtime_is_wall_clock_time) const override;
 
  private:
-  std::string makeCapabilitiesTimesteps(const boost::optional<std::string>& starttime,
-                                        const boost::optional<std::string>& endtime) const;
+  std::string makeCapabilitiesTimesteps(const std::optional<std::string>& starttime,
+                                        const std::optional<std::string>& endtime) const;
 
-  std::string makeCapabilities(const boost::optional<std::string>& starttime,
-                               const boost::optional<std::string>& endtime) const;
+  std::string makeCapabilities(const std::optional<std::string>& starttime,
+                               const std::optional<std::string>& endtime) const;
 
   std::vector<tag_interval> itsIntervals;
 };
@@ -188,9 +188,9 @@ class WMSTimeDimensions
 {
  public:
   explicit WMSTimeDimensions(
-      const std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>>& tdims);
+      const std::map<Fmi::DateTime, std::shared_ptr<WMSTimeDimension>>& tdims);
   void addTimeDimension(const Fmi::DateTime& origintime,
-                        const boost::shared_ptr<WMSTimeDimension>& td);
+                        const std::shared_ptr<WMSTimeDimension>& td);
   const WMSTimeDimension& getDefaultTimeDimension() const;
   const WMSTimeDimension& getTimeDimension(const Fmi::DateTime& origintime) const;
   bool origintimeOK(const Fmi::DateTime& origintime) const;
@@ -198,16 +198,16 @@ class WMSTimeDimensions
 
   bool isValidReferenceTime(const Fmi::DateTime& origintime) const;
   bool isValidTime(const Fmi::DateTime& t,
-                   const boost::optional<Fmi::DateTime>& origintime) const;
+                   const std::optional<Fmi::DateTime>& origintime) const;
   Fmi::DateTime mostCurrentTime(
-      const boost::optional<Fmi::DateTime>& origintime) const;
+      const std::optional<Fmi::DateTime>& origintime) const;
   bool currentValue() const;
   bool isIdentical(const WMSTimeDimensions& td) const;
   void useWallClockTimeAsEndTime(bool wall_clock = true) { itsEndTimeIsWallClockTime = wall_clock; }
   bool endTimeFromWallClock() const { return itsEndTimeIsWallClockTime; }
 
  private:
-  std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>> itsTimeDimensions;
+  std::map<Fmi::DateTime, std::shared_ptr<WMSTimeDimension>> itsTimeDimensions;
   Fmi::DateTime itsDefaultOrigintime{Fmi::DateTime::NOT_A_DATE_TIME};
   std::vector<Fmi::DateTime> itsOrigintimes;
   bool itsEndTimeIsWallClockTime{false};

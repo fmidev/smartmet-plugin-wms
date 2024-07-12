@@ -18,7 +18,8 @@
 #include <set>
 */
 
-#include <boost/optional.hpp>
+#include <optional>
+#include <vector>
 
 namespace SmartMet
 {

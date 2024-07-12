@@ -41,7 +41,7 @@ class IsobandLayer : public Layer
 
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
-  boost::optional<std::string> parameter;
+  std::optional<std::string> parameter;
   std::vector<Isoband> isobands;
   std::string interpolation{"linear"};
   Smoother smoother;
@@ -50,15 +50,15 @@ class IsobandLayer : public Layer
 
   double precision = 1.0;
 
-  boost::optional<double> minarea;
+  std::optional<double> minarea;
   std::string areaunit = "km^2";  // km^2|px^2
 
   std::string unit_conversion;
-  boost::optional<double> multiplier;
-  boost::optional<double> offset;
+  std::optional<double> multiplier;
+  std::optional<double> offset;
 
-  boost::optional<Map> outside;
-  boost::optional<Map> inside;
+  std::optional<Map> outside;
+  std::optional<Map> inside;
 
   Sampling sampling;
   Intersections intersections;
@@ -75,7 +75,7 @@ class IsobandLayer : public Layer
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 
-  boost::shared_ptr<Engine::Querydata::QImpl> buildHeatmap(const Spine::Parameter& theParameter,
+  std::shared_ptr<Engine::Querydata::QImpl> buildHeatmap(const Spine::Parameter& theParameter,
                                                            const Fmi::DateTime& theTime,
                                                            State& theState);
 

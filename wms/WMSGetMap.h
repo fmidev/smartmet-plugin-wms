@@ -38,13 +38,13 @@ struct tag_get_map_request_options
     unsigned int blue = 0;
   } bgcolor;
   std::string exceptions;
-  boost::optional<Fmi::DateTime> reference_time;
+  std::optional<Fmi::DateTime> reference_time;
   std::vector<Fmi::DateTime> timesteps;
-  boost::optional<int> elevation;
+  std::optional<int> elevation;
   unsigned int width = 0;
   unsigned int height = 0;
-  boost::optional<int> interval_start;
-  boost::optional<int> interval_end;
+  std::optional<int> interval_start;
+  std::optional<int> interval_end;
 
   bool debug;
 };

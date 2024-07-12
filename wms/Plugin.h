@@ -20,7 +20,6 @@
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
-#include <boost/move/unique_ptr.hpp>
 #include <macgyver/TemplateFactory.h>
 #include <spine/FileCache.h>
 #include <spine/HTTP.h>
@@ -28,6 +27,7 @@
 #include <spine/Reactor.h>
 #include <spine/SmartMetCache.h>
 #include <spine/SmartMetPlugin.h>
+#include <memory>
 
 namespace SmartMet
 {
@@ -228,10 +228,10 @@ class Plugin : public SmartMetPlugin
   Fmi::Cache::Cache<std::size_t, StyleSheet> itsStyleSheetCache;
 
   // Cache results
-  mutable boost::movelib::unique_ptr<ImageCache> itsImageCache;
+  mutable std::unique_ptr<ImageCache> itsImageCache;
 
   // WMS configuration
-  boost::movelib::unique_ptr<WMS::WMSConfig> itsWMSConfig;
+  std::unique_ptr<WMS::WMSConfig> itsWMSConfig;
 
 };  // class Plugin
 

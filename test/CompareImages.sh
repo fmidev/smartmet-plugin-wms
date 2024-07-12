@@ -3,6 +3,9 @@
 RESULT=$1
 EXPECTED=$2
 
+if [ -z $MAX_LINES ] ; then MAX_LINES=100; fi
+if [ -z $CUT_LINES ] ; then CUT_LINES=80; fi
+
 # Basename for the test
 
 NAME=$(basename $(basename $1 .get) .post)
@@ -59,8 +62,8 @@ fi
 
 if [[ "$MIME" == "application/xml" || "$MIME" == "text/xml" ]]; then
     echo -n "FAIL: XML output differs: $RESULT <> $EXPECTED"
-    echo " diff | head -n 100 | cut -c 1-80:"
-    diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80
+    echo " diff -U4 | head -n $MAX_LINES | cut -c 1-$CUT_LINES:"
+    diff -U4 $EXPECTED $RESULT | head -n 100 | cut -c 1-$CUT_LINES
     exit 1
 fi
 
@@ -68,8 +71,8 @@ fi
 
 if [[ "$MIME" == "text/plain" ]]; then
     echo -n "FAIL: text output differs: $RESULT <> $EXPECTED"
-    echo " diff | head -n 100 | cut -c 1-80:"
-    diff $EXPECTED $RESULT | head -n 100 | cut -c 1-80
+    echo " diff -U4 | head -n $MAX_LINES | cut -c 1-$CUT_LINES:"
+    diff -U4 $EXPECTED $RESULT | head -n 100 | cut -c 1-$CUT_LINES
     exit 1
 fi
 

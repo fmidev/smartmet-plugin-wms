@@ -7,12 +7,12 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <boost/algorithm/string/split.hpp>
-#include <boost/make_shared.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <engines/gis/Engine.h>
 #include <fmt/format.h>
 #include <gis/CoordinateTransformation.h>
 #include <macgyver/Exception.h>
+#include <macgyver/FileSystem.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
 #include <ogr_spatialref.h>
@@ -1004,11 +1004,11 @@ std::map<std::string, Json::Value> readLegendDirectory(const std::string& legend
 {
   std::map<std::string, Json::Value> ret;
 
-  boost::filesystem::path p(legendDirectory);
-  if (boost::filesystem::exists(p) && boost::filesystem::is_directory(p))
+  std::filesystem::path p(legendDirectory);
+  if (std::filesystem::exists(p) && std::filesystem::is_directory(p))
   {
-    boost::filesystem::directory_iterator end_itr;
-    for (boost::filesystem::directory_iterator itr(legendDirectory); itr != end_itr; ++itr)
+    std::filesystem::directory_iterator end_itr;
+    for (std::filesystem::directory_iterator itr(legendDirectory); itr != end_itr; ++itr)
     {
       if (is_regular_file(itr->status()))
       {
@@ -1473,7 +1473,7 @@ bool WMSLayer::isValidReferenceTime(const Fmi::DateTime& theReferenceTime) const
 }
 
 bool WMSLayer::isValidTime(const Fmi::DateTime& theTime,
-                           const boost::optional<Fmi::DateTime>& theReferenceTime) const
+                           const std::optional<Fmi::DateTime>& theReferenceTime) const
 {
   try
   {
@@ -1502,7 +1502,7 @@ bool WMSLayer::currentValue() const
 }
 
 Fmi::DateTime WMSLayer::mostCurrentTime(
-    const boost::optional<Fmi::DateTime>& reference_time) const
+    const std::optional<Fmi::DateTime>& reference_time) const
 {
   try
   {
@@ -1531,7 +1531,7 @@ std::string WMSLayer::info() const
   }
 }
 
-std::ostream& operator<<(std::ostream& ost, const boost::optional<int>& var)
+std::ostream& operator<<(std::ostream& ost, const std::optional<int>& var)
 {
   if (!var)
     ost << "-";
@@ -1650,7 +1650,7 @@ void WMSLayer::initProjectedBBoxes()
   }
 }
 
-boost::optional<CTPP::CDT> WMSLayer::getLayerBaseInfo(const std::string& language) const
+std::optional<CTPP::CDT> WMSLayer::getLayerBaseInfo(const std::string& language) const
 {
   try
   {
@@ -1694,7 +1694,7 @@ boost::optional<CTPP::CDT> WMSLayer::getLayerBaseInfo(const std::string& languag
   }
 }
 
-boost::optional<CTPP::CDT> WMSLayer::getGeographicBoundingBoxInfo() const
+std::optional<CTPP::CDT> WMSLayer::getGeographicBoundingBoxInfo() const
 {
   try
   {
@@ -1719,7 +1719,7 @@ boost::optional<CTPP::CDT> WMSLayer::getGeographicBoundingBoxInfo() const
   }
 }
 
-boost::optional<CTPP::CDT> WMSLayer::getProjectedBoundingBoxInfo() const
+std::optional<CTPP::CDT> WMSLayer::getProjectedBoundingBoxInfo() const
 {
   try
   {
@@ -1790,11 +1790,11 @@ boost::optional<CTPP::CDT> WMSLayer::getProjectedBoundingBoxInfo() const
   }
 }
 
-boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
+std::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
     bool multiple_intervals,
-    const boost::optional<std::string>& starttime,
-    const boost::optional<std::string>& endtime,
-    const boost::optional<std::string>& reference_time) const
+    const std::optional<std::string>& starttime,
+    const std::optional<std::string>& endtime,
+    const std::optional<std::string>& reference_time) const
 {
   try
   {
@@ -1862,7 +1862,7 @@ boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
           reference_time_dimension["current"] = 1;
           reference_time_dimension["default"] =
               (Fmi::to_iso_extended_string(orgintimesDimension.mostCurrentTime()) + "Z");
-          boost::optional<std::string> t;
+          std::optional<std::string> t;
           reference_time_dimension["value"] = orgintimesDimension.getCapabilities(false, t, t);
         }
         layer_dimension_list.PushBack(layer_dimension);
@@ -1882,7 +1882,7 @@ boost::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
   }
 }
 
-boost::optional<CTPP::CDT> WMSLayer::getIntervalDimensionInfo() const
+std::optional<CTPP::CDT> WMSLayer::getIntervalDimensionInfo() const
 {
   try
   {
@@ -1921,7 +1921,7 @@ boost::optional<CTPP::CDT> WMSLayer::getIntervalDimensionInfo() const
   }
 }
 
-boost::optional<CTPP::CDT> WMSLayer::getReferenceDimensionInfo() const
+std::optional<CTPP::CDT> WMSLayer::getReferenceDimensionInfo() const
 {
   try
   {
@@ -1946,7 +1946,7 @@ boost::optional<CTPP::CDT> WMSLayer::getReferenceDimensionInfo() const
         reference_time_dimension["current"] = 1;
         reference_time_dimension["default"] =
             (Fmi::to_iso_extended_string(orgintimesDimension.mostCurrentTime()) + "Z");
-        boost::optional<std::string> t;
+        std::optional<std::string> t;
         reference_time_dimension["value"] = orgintimesDimension.getCapabilities(false, t, t);
         layer_dimension_list.PushBack(reference_time_dimension);
       }
@@ -1963,7 +1963,7 @@ boost::optional<CTPP::CDT> WMSLayer::getReferenceDimensionInfo() const
   }
 }
 
-boost::optional<CTPP::CDT> WMSLayer::getElevationDimensionInfo() const
+std::optional<CTPP::CDT> WMSLayer::getElevationDimensionInfo() const
 {
   try
   {
@@ -1997,7 +1997,7 @@ boost::optional<CTPP::CDT> WMSLayer::getElevationDimensionInfo() const
   }
 }
 
-boost::optional<CTPP::CDT> WMSLayer::getStyleInfo(const std::string& language) const
+std::optional<CTPP::CDT> WMSLayer::getStyleInfo(const std::string& language) const
 {
   try
   {
@@ -2025,19 +2025,19 @@ boost::optional<CTPP::CDT> WMSLayer::getStyleInfo(const std::string& language) c
   }
 }
 
-const boost::shared_ptr<WMSTimeDimensions>& WMSLayer::getTimeDimensions() const
+const std::shared_ptr<WMSTimeDimensions>& WMSLayer::getTimeDimensions() const
 {
   return timeDimensions;
 }
 
-boost::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
+std::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
     bool multiple_intervals,
 	bool show_hidden,
     const Engine::Gis::Engine& /* gisengine */,
     const std::string& language,
-    const boost::optional<std::string>& starttime,
-    const boost::optional<std::string>& endtime,
-    const boost::optional<std::string>& /* reference_time */)
+    const std::optional<std::string>& starttime,
+    const std::optional<std::string>& endtime,
+    const std::optional<std::string>& /* reference_time */)
 {
   try
   {
@@ -2445,9 +2445,9 @@ void WMSLayer::setProductFile(const std::string& theProductFile)
   productFile = theProductFile;
 
   // Save modification time of product file
-  boost::system::error_code ec;
-  auto modtime = boost::filesystem::last_write_time(productFile, ec);
-  if (ec.value() == boost::system::errc::success)
+  std::error_code ec;
+  const std::time_t modtime = Fmi::last_write_time(productFile, ec);
+  if (!ec)
     itsProductFileModificationTime = Fmi::date_time::from_time_t(modtime);
 }
 
@@ -2460,7 +2460,7 @@ void WMSLayer::addIntervalDimension(int interval_start, int interval_end, bool i
 {
   if (!intervalDimension)
     intervalDimension =
-        boost::make_shared<WMSIntervalDimension>(interval_start, interval_end, interval_default);
+        std::make_shared<WMSIntervalDimension>(interval_start, interval_end, interval_default);
   else
     intervalDimension->addInterval(interval_start, interval_end, interval_default);
 }

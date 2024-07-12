@@ -9,7 +9,7 @@
 #include "Attributes.h"
 #include "Layer.h"
 #include "PostGISLayerFilter.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <engines/gis/MapOptions.h>
 #include <gis/Types.h>
 
@@ -44,8 +44,8 @@ class PostGISLayerBase : public Layer
   std::string table;
 
   double precision = 1.0;
-  boost::optional<std::string> time_column;     // Needed for GetCapabilities
-  boost::optional<std::string> time_condition;  // SQL for temporal selection
+  std::optional<std::string> time_column;     // Needed for GetCapabilities
+  std::optional<std::string> time_condition;  // SQL for temporal selection
   std::vector<PostGISLayerFilter> filters;
 
   static OGRGeometryPtr getShape(const State& theState,

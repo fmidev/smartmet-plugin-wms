@@ -146,11 +146,11 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     // Time execution
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "TimeLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // Establish the data
@@ -287,7 +287,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       }
     }
 
-    boost::optional<Fmi::DateTime> originTime;
+    std::optional<Fmi::DateTime> originTime;
     if (p && p->mAnalysisTime.length() >= 15)
       originTime = Fmi::TimeParser::parse_iso(p->mAnalysisTime);
 
@@ -352,8 +352,8 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       if (fmt.empty())
         throw Fmi::Exception(BCP, "TimeLayer format setting cannot be an empty string");
 
-      boost::optional<Fmi::LocalDateTime> loctime;
-      boost::optional<Fmi::TimeDuration> duration;
+      std::optional<Fmi::LocalDateTime> loctime;
+      std::optional<Fmi::TimeDuration> duration;
 
       if (name == "validtime")
       {
@@ -480,11 +480,11 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     // Time execution
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "TimeLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // Establish the data
@@ -554,8 +554,8 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       if (fmt.empty())
         throw Fmi::Exception(BCP, "TimeLayer format setting cannot be an empty string");
 
-      boost::optional<Fmi::LocalDateTime> loctime;
-      boost::optional<Fmi::TimeDuration> duration;
+      std::optional<Fmi::LocalDateTime> loctime;
+      std::optional<Fmi::TimeDuration> duration;
 
       if (name == "validtime")
       {
