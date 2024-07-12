@@ -25,25 +25,25 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-giza-devel >= 23.7.28
-BuildRequires: smartmet-library-grid-content-devel >= 24.6.3
-BuildRequires: smartmet-library-grid-files-devel >= 24.5.30
-BuildRequires: smartmet-library-macgyver-devel >= 24.5.30
-BuildRequires: smartmet-library-spine-devel >= 24.5.27
-BuildRequires: smartmet-library-timeseries-devel >= 24.5.28
+BuildRequires: smartmet-library-giza-devel >= 24.7.12
+BuildRequires: smartmet-library-grid-content-devel >= 24.7.12
+BuildRequires: smartmet-library-grid-files-devel >= 24.7.12
+BuildRequires: smartmet-library-macgyver-devel >= 24.7.12
+BuildRequires: smartmet-library-spine-devel >= 24.7.12
+BuildRequires: smartmet-library-timeseries-devel >= 24.7.12
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 24.5.16
+BuildRequires: smartmet-engine-authentication-devel >= 24.7.12
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 24.5.28
+BuildRequires: smartmet-engine-observation-devel >= 24.7.12
 %endif
-BuildRequires: smartmet-engine-gis-devel >= 24.5.24
-BuildRequires: smartmet-engine-grid-devel >= 24.6.3
-BuildRequires: smartmet-engine-geonames-devel >= 24.5.16
-BuildRequires: smartmet-engine-querydata-devel >= 24.5.29
-BuildRequires: smartmet-engine-contour-devel >= 24.5.29
-BuildRequires: smartmet-library-gis-devel >= 24.5.27
-BuildRequires: smartmet-library-trax-devel >= 24.5.24
+BuildRequires: smartmet-engine-gis-devel >= 24.7.12
+BuildRequires: smartmet-engine-grid-devel >= 24.7.12
+BuildRequires: smartmet-engine-geonames-devel >= 24.7.12
+BuildRequires: smartmet-engine-querydata-devel >= 24.7.12
+BuildRequires: smartmet-engine-contour-devel >= 24.7.12
+BuildRequires: smartmet-library-gis-devel >= 24.7.12
+BuildRequires: smartmet-library-trax-devel >= 24.7.12
 BuildRequires: fmt-devel >= 8.1.1 fmt-devel < %{smartmet_fmt_max}
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -68,24 +68,24 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 24.6.3
-Requires: smartmet-library-grid-files >= 24.5.30
-Requires: smartmet-library-gis >= 24.5.27
-Requires: smartmet-library-trax >= 24.5.24
-Requires: smartmet-library-macgyver >= 24.5.30
-Requires: smartmet-library-spine >= 24.5.27
-Requires: smartmet-library-timeseries >= 24.5.28
-Requires: smartmet-library-giza >= 23.7.28
+Requires: smartmet-library-grid-content >= 24.7.12
+Requires: smartmet-library-grid-files >= 24.7.12
+Requires: smartmet-library-gis >= 24.7.12
+Requires: smartmet-library-trax >= 24.7.12
+Requires: smartmet-library-macgyver >= 24.7.12
+Requires: smartmet-library-spine >= 24.7.12
+Requires: smartmet-library-timeseries >= 24.7.12
+Requires: smartmet-library-giza >= 24.7.12
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 24.5.16
+Requires: smartmet-engine-authentication >= 24.7.12
 %endif
-Requires: smartmet-engine-querydata >= 24.5.29
-Requires: smartmet-engine-contour >= 24.5.29
-Requires: smartmet-engine-gis >= 24.5.24
-Requires: smartmet-engine-grid >= 24.6.3
-Requires: smartmet-engine-geonames >= 24.5.16
-Requires: smartmet-server >= 24.5.16
-Requires: smartmet-library-spine >= 24.5.27
+Requires: smartmet-engine-querydata >= 24.7.12
+Requires: smartmet-engine-contour >= 24.7.12
+Requires: smartmet-engine-gis >= 24.7.12
+Requires: smartmet-engine-grid >= 24.7.12
+Requires: smartmet-engine-geonames >= 24.7.12
+Requires: smartmet-server >= 24.7.12
+Requires: smartmet-library-spine >= 24.7.12
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -103,17 +103,17 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: libconfig17-devel
 #TestRequires: ImageMagick
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 24.5.29
-#TestRequires: smartmet-engine-geonames-devel >= 24.5.16
-#TestRequires: smartmet-engine-gis-devel >= 24.5.24
-#TestRequires: smartmet-engine-querydata-devel >= 24.5.29
-#TestRequires: smartmet-library-giza-devel >= 23.7.28
-#TestRequires: smartmet-library-trax-devel >= 24.5.24
-#TestRequires: smartmet-library-newbase-devel >= 24.5.17
-#TestRequires: smartmet-library-macgyver-devel >= 24.5.30
-#TestRequires: smartmet-library-spine-devel >= 24.5.27
-#TestRequires: smartmet-library-timeseries-devel >= 24.5.28
-#TestRequires: smartmet-engine-grid-devel >= 24.6.3
+#TestRequires: smartmet-engine-contour-devel >= 24.7.12
+#TestRequires: smartmet-engine-geonames-devel >= 24.7.12
+#TestRequires: smartmet-engine-gis-devel >= 24.7.12
+#TestRequires: smartmet-engine-querydata-devel >= 24.7.12
+#TestRequires: smartmet-library-giza-devel >= 24.7.12
+#TestRequires: smartmet-library-trax-devel >= 24.7.12
+#TestRequires: smartmet-library-newbase-devel >= 24.7.12
+#TestRequires: smartmet-library-macgyver-devel >= 24.7.12
+#TestRequires: smartmet-library-spine-devel >= 24.7.12
+#TestRequires: smartmet-library-timeseries-devel >= 24.7.12
+#TestRequires: smartmet-engine-grid-devel >= 24.7.12
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -125,7 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 24.5.28
+#TestRequires: smartmet-engine-observation-devel >= 24.7.12
 %endif
 
 %description
