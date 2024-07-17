@@ -26,7 +26,6 @@ LIBS += -L$(libdir) \
 	-lboost_thread \
 	-lboost_regex \
 	-lboost_iostreams \
-	-lboost_filesystem \
 	-lboost_system \
 	-lbz2 -lz \
 	-lheatmap
