@@ -1,7 +1,6 @@
 #include "Plugin.h"
 #include <boost/algorithm/string.hpp>
 #include <filesystem>
-#include <boost/foreach.hpp>
 #include <macgyver/Exception.h>
 #include <smartmet/spine/HTTP.h>
 #include <smartmet/spine/Options.h>
