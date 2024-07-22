@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.7.17
+Version: 24.7.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Jul 22 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.7.22-1.fmi
+- Rebuild dues to smartmet-library-macgyver changes
+
 * Wed Jul 17 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.7.17-1.fmi
 - Do not link with libboost_filesystem
 
