@@ -15,7 +15,8 @@ INCLUDES += \
 
 LIBS += 
 
-LIBS += $(REQUIRED_LIBS) \
+LIBS += $(PREFIX_LDFLAGS) \
+	$(REQUIRED_LIBS) \
 	-lsmartmet-grid-files \
 	-lsmartmet-spine  \
 	-lsmartmet-newbase \

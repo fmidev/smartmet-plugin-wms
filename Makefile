@@ -13,7 +13,7 @@ FLAGS += -Wno-maybe-uninitialized -Wno-variadic-macros -Wno-deprecated-declarati
 
 DEFINES = -DUNIX -D_REENTRANT
 
-LIBS += -L$(libdir) \
+LIBS += $(PREFIX_LDFLAGS) \
 	-lsmartmet-grid-content \
 	-lsmartmet-timeseries \
 	-lsmartmet-spine \
