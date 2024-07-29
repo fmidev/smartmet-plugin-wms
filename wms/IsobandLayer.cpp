@@ -626,6 +626,15 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
                                                      std::to_string(*smoother.degree));
 
+    if (minarea)
+    {
+      auto area = *minarea;
+      if (areaunit == "px^2")
+        area = box.areaFactor() * area;
+
+      originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(area));
+    }
+
     originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
                                                    std::to_string(extrapolation));
 
@@ -760,15 +769,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     auto crs = projection.getCRS();
     const auto& box = projection.getBox();
-
-    if (minarea)
-    {
-      auto area = *minarea;
-      if (areaunit == "px^2")
-        area = box.areaFactor() * area;
-
-      originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(area));
-    }
 
     if (wkt == "data")
       return;
