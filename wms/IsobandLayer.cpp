@@ -462,6 +462,10 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       offset = conv.offset;
     }
 
+    auto crs = projection.getCRS();
+    const auto& box = projection.getBox();
+    const auto clipbox = getClipBox(box);
+
     std::string wkt = *projection.crs;
 
     if (wkt != "data")
@@ -480,9 +484,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       // std::cout << wkt << "\n";
 
       // Adding the bounding box information into the query.
-
-      const auto& box = projection.getBox();
-      const auto clipbox = getClipBox(box);
 
       auto bl = projection.bottomLeftLatLon();
       auto tr = projection.topRightLatLon();
@@ -720,6 +721,12 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       }
     }
 
+    // Convert filter pixel distance to metric distance for smoothing
+    filter.bbox(box);
+
+    // Smoothen the isobands
+    filter.apply(geoms, true);
+
     // Extracting the projection information from the query result.
 
     if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
@@ -767,14 +774,8 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       }
     }
 
-    auto crs = projection.getCRS();
-    const auto& box = projection.getBox();
-
     if (wkt == "data")
       return;
-
-    // And the box needed for clipping
-    const auto clipbox = getClipBox(box);
 
     const auto& gis = theState.getGisEngine();
 
