@@ -10,8 +10,8 @@
 #include <macgyver/NearTree.h>
 #include <spine/Convenience.h>
 #include <timeseries/ParameterFactory.h>
-#include <memory>
 #include <iomanip>
+#include <memory>
 #include <stdexcept>
 
 namespace SmartMet
@@ -531,7 +531,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
     // the margins had a logic error
     xstart -= deltaxx;
 
-    for (int ypos = ystart; ypos < (height + ymargin); ypos += deltay)
+    for (int ypos = ystart; ypos <= (height + ymargin); ypos += deltay)
     {
       // Stagger every other row
       if (row++ % 2 == 0)
@@ -539,7 +539,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
       else
         xstart -= deltaxx;
 
-      for (int xpos = xstart; xpos < (width + xmargin); xpos += deltax)
+      for (int xpos = xstart; xpos <= (width + xmargin); xpos += deltax)
       {
         // Convert pixel coordinate to world coordinate (or latlon for geographic spatial
         // references)
