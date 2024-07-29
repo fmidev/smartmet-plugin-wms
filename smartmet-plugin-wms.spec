@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 24.7.29
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -154,6 +154,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Jul 29 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.7.29-2.fmi
+- Fixed GRIB contours to apply the fiter settings
+- Fixed location of minarea code
+
 * Mon Jul 29 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.7.29-1.fmi
 - Fixed margin to define a closed range instead of a half open one
 
