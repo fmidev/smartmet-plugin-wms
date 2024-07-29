@@ -30,7 +30,7 @@ BuildRequires: smartmet-library-grid-content-devel >= 24.7.12
 BuildRequires: smartmet-library-grid-files-devel >= 24.7.12
 BuildRequires: smartmet-library-macgyver-devel >= 24.7.12
 BuildRequires: smartmet-library-spine-devel >= 24.7.12
-BuildRequires: smartmet-library-timeseries-devel >= 24.7.12
+BuildRequires: smartmet-library-timeseries-devel >= 24.7.15
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 24.7.12
 %endif
@@ -38,7 +38,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 24.7.12
 BuildRequires: smartmet-engine-observation-devel >= 24.7.12
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 24.7.12
-BuildRequires: smartmet-engine-grid-devel >= 24.7.12
+BuildRequires: smartmet-engine-grid-devel >= 24.7.17
 BuildRequires: smartmet-engine-geonames-devel >= 24.7.12
 BuildRequires: smartmet-engine-querydata-devel >= 24.7.12
 BuildRequires: smartmet-engine-contour-devel >= 24.7.12
@@ -74,7 +74,7 @@ Requires: smartmet-library-gis >= 24.7.12
 Requires: smartmet-library-trax >= 24.7.12
 Requires: smartmet-library-macgyver >= 24.7.12
 Requires: smartmet-library-spine >= 24.7.12
-Requires: smartmet-library-timeseries >= 24.7.12
+Requires: smartmet-library-timeseries >= 24.7.15
 Requires: smartmet-library-giza >= 24.7.12
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 24.7.12
@@ -82,7 +82,7 @@ Requires: smartmet-engine-authentication >= 24.7.12
 Requires: smartmet-engine-querydata >= 24.7.12
 Requires: smartmet-engine-contour >= 24.7.12
 Requires: smartmet-engine-gis >= 24.7.12
-Requires: smartmet-engine-grid >= 24.7.12
+Requires: smartmet-engine-grid >= 24.7.17
 Requires: smartmet-engine-geonames >= 24.7.12
 Requires: smartmet-server >= 24.7.12
 Requires: smartmet-library-spine >= 24.7.12
@@ -112,8 +112,8 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-newbase-devel >= 24.7.12
 #TestRequires: smartmet-library-macgyver-devel >= 24.7.12
 #TestRequires: smartmet-library-spine-devel >= 24.7.12
-#TestRequires: smartmet-library-timeseries-devel >= 24.7.12
-#TestRequires: smartmet-engine-grid-devel >= 24.7.12
+#TestRequires: smartmet-library-timeseries-devel >= 24.7.15
+#TestRequires: smartmet-engine-grid-devel >= 24.7.17
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
