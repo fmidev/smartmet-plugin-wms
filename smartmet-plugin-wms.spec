@@ -40,7 +40,7 @@ BuildRequires: smartmet-engine-observation-devel >= 24.7.22
 BuildRequires: smartmet-engine-gis-devel >= 24.7.22
 BuildRequires: smartmet-engine-grid-devel >= 24.7.17
 BuildRequires: smartmet-engine-geonames-devel >= 24.7.12
-BuildRequires: smartmet-engine-querydata-devel >= 24.7.22
+BuildRequires: smartmet-engine-querydata-devel >= 24.7.30
 BuildRequires: smartmet-engine-contour-devel >= 24.7.12
 BuildRequires: smartmet-library-gis-devel >= 24.7.12
 BuildRequires: smartmet-library-trax-devel >= 24.7.12
@@ -79,7 +79,7 @@ Requires: smartmet-library-giza >= 24.7.12
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 24.7.12
 %endif
-Requires: smartmet-engine-querydata >= 24.7.22
+Requires: smartmet-engine-querydata >= 24.7.30
 Requires: smartmet-engine-contour >= 24.7.12
 Requires: smartmet-engine-gis >= 24.7.22
 Requires: smartmet-engine-grid >= 24.7.17
@@ -106,7 +106,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 24.7.12
 #TestRequires: smartmet-engine-geonames-devel >= 24.7.12
 #TestRequires: smartmet-engine-gis-devel >= 24.7.22
-#TestRequires: smartmet-engine-querydata-devel >= 24.7.22
+#TestRequires: smartmet-engine-querydata-devel >= 24.7.30
 #TestRequires: smartmet-library-giza-devel >= 24.7.12
 #TestRequires: smartmet-library-trax-devel >= 24.7.12
 #TestRequires: smartmet-library-newbase-devel >= 24.7.12
