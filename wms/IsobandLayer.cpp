@@ -365,7 +365,7 @@ std::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     Fmi::hash_combine(hash, Fmi::hash_value(tmp));
     CPLFree(tmp);
 
-    auto model = std::make_shared<Engine::Querydata::Model>(data, hash);
+    auto model = Engine::Querydata::Model::create(data, hash);
     return std::make_shared<Engine::Querydata::QImpl>(model);
   }
   catch (...)
