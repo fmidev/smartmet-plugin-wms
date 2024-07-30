@@ -15,8 +15,8 @@
 #include "Layers.h"
 #include "ParameterInfo.h"
 #include "Properties.h"
-#include <optional>
 #include <json/json.h>
+#include <optional>
 #include <set>
 #include <string>
 #include <vector>
@@ -63,6 +63,8 @@ class Layer : public Properties
                     const State& theState,
                     const Config& theConfig,
                     const Properties& theProperties);
+
+  virtual void check_warnings(Warnings& warnings) const;
 
   virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) = 0;
 

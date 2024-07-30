@@ -166,6 +166,25 @@ bool Layers::getProjection(CTPP::CDT& theGlobals,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Generate warnings if needed
+ */
+// ----------------------------------------------------------------------
+
+void Layers::check_warnings(Warnings& warnings) const
+{
+  try
+  {
+    for (const auto& layer : layers)
+      layer->check_warnings(warnings);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the definitions into the template hash tables
  */
 // ----------------------------------------------------------------------

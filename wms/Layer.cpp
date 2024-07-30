@@ -489,6 +489,25 @@ void Layer::addGridParameterInfo(ParameterInfos& infos, const State& theState) c
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Generate warnings if needed
+ */
+// ----------------------------------------------------------------------
+
+void Layer::check_warnings(Warnings& warnings) const
+{
+  try
+  {
+    if (!qid.empty())
+      ++warnings.qid_counts[qid];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the hash for the layer
  */
 // ----------------------------------------------------------------------

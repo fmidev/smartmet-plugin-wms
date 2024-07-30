@@ -31,6 +31,8 @@ class NullLayer : public Layer
             const Config& theConfig,
             const Properties& theProperties) override;
 
+  void check_warnings(Warnings& warnings) const override;
+
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
 
   std::size_t hash_value(const State& theState) const override;

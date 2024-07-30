@@ -44,6 +44,17 @@ void NullLayer::init(Json::Value& theJson,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Generate warnings if needed
+ */
+// ----------------------------------------------------------------------
+
+void NullLayer::check_warnings(Warnings& warnings) const
+{
+  // No warnings on qid since nothing is generated
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the layer details into the template hash
  */
 // ----------------------------------------------------------------------

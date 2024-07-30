@@ -8,9 +8,10 @@
 
 #include "ParameterInfo.h"
 #include "View.h"
-#include <memory>
+#include "Warnings.h"
 #include <json/json.h>
 #include <list>
+#include <memory>
 
 namespace CTPP
 {
@@ -32,6 +33,8 @@ class Views
             const State& theState,
             const Config& theConfig,
             const Properties& theProperties);
+
+  void check_warnings(Warnings& warnings) const;
 
   void generate(CTPP::CDT& theGlobals, State& theState);
 

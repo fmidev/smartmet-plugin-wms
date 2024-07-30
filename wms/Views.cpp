@@ -41,6 +41,25 @@ void Views::init(Json::Value& theJson,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Generate warnings if needed
+ */
+// ----------------------------------------------------------------------
+
+void Views::check_warnings(Warnings& warnings) const
+{
+  try
+  {
+    for (const auto& view : views)
+      view->check_warnings(warnings);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the content
  */
 // ----------------------------------------------------------------------

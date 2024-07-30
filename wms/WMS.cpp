@@ -22,7 +22,6 @@
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
-#include <memory>
 #include <boost/timer/timer.hpp>
 #include <boost/utility.hpp>
 #include <ctpp2/CDT.hpp>
@@ -39,6 +38,7 @@
 #include <spine/HostInfo.h>
 #include <spine/Json.h>
 #include <spine/SmartMet.h>
+#include <memory>
 #include <stdexcept>
 
 using namespace boost::placeholders;
@@ -320,8 +320,7 @@ void update_legend_expiration(const State &theState, int theExpirationTime)
 {
   if (theExpirationTime > 0)
   {
-    auto tmp = Fmi::SecondClock::universal_time() +
-               Fmi::Seconds(theExpirationTime);
+    auto tmp = Fmi::SecondClock::universal_time() + Fmi::Seconds(theExpirationTime);
     theState.updateExpirationTime(tmp);
   }
 }
@@ -581,6 +580,8 @@ WMSQueryStatus Dali::Plugin::wmsGetMapQuery(State &theState,
       product.init(json, theState, itsConfig);
       check_remaining_wms_json(json, theState.getName());
 
+      product.check_errors(theRequest.getURI());
+
       // If the desired type is not defined in the JSON, the state object knows from earlier code
       // what format to output (HTTP request or default format), and we can not set the Product to
       // use it.
@@ -676,6 +677,8 @@ WMSQueryStatus Dali::Plugin::wmsGetLegendGraphicQuery(State &theState,
       // And initialize the product specs from the JSON
 
       product.init(json, theState, itsConfig);
+
+      product.check_errors(theRequest.getURI());
 
       // If the desired type is not defined in the JSON, the state object knows from earlier code
       // what format to output (HTTP request or default format), and we can not set the Product to
@@ -1048,6 +1051,8 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
     Product product;
     // Initialize the product specs from the JSON
     product.init(json, theState, itsConfig);
+
+    product.check_errors(theRequest.getURI());
 
     if (!product.svg_tmpl)
       product.svg_tmpl = itsConfig.defaultTemplate(product.type);
