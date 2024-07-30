@@ -8,9 +8,10 @@
 
 #include "ParameterInfo.h"
 #include "Projection.h"
-#include <memory>
+#include "Warnings.h"
 #include <json/json.h>
 #include <list>
+#include <memory>
 
 namespace CTPP
 {
@@ -35,6 +36,8 @@ class Layers
             const State& theState,
             const Config& theConfig,
             const Properties& theProperties);
+
+  void check_warnings(Warnings& warnings) const;
 
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   bool getProjection(CTPP::CDT& theGlobals,

@@ -16,6 +16,7 @@
 #include "Layers.h"
 #include "ParameterInfo.h"
 #include "Properties.h"
+#include "Warnings.h"
 #include <macgyver/DateTime.h>
 #include <optional>
 #include <string>
@@ -38,6 +39,8 @@ class View : public Properties
             const State& theState,
             const Config& theConfig,
             const Properties& theProperties);
+
+  void check_warnings(Warnings& warnings) const;
 
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theViewCdt, State& theState);
 

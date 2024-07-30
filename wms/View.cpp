@@ -63,6 +63,30 @@ void View::init(Json::Value& theJson,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Generate warnings if needed
+ */
+// ----------------------------------------------------------------------
+
+void View::check_warnings(Warnings& warnings) const
+{
+  try
+  {
+    if (attributes.value("display") == "none")
+      return;
+
+    if (!qid.empty())
+      ++warnings.qid_counts[qid];
+
+    layers.check_warnings(warnings);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the view into the template hash tables
  */
 // ----------------------------------------------------------------------

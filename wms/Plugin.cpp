@@ -22,7 +22,6 @@
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
-#include <memory>
 #include <boost/timer/timer.hpp>
 #include <boost/utility.hpp>
 #include <ctpp2/CDT.hpp>
@@ -39,6 +38,7 @@
 #include <spine/HostInfo.h>
 #include <spine/Json.h>
 #include <spine/SmartMet.h>
+#include <memory>
 #include <stdexcept>
 
 using namespace boost::placeholders;
@@ -258,6 +258,8 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       print(product.getGridParameterInfo(theState));
 
     check_remaining_dali_json(json, theState.getName());
+
+    product.check_errors(theRequest.getURI());
 
     // Calculate hash for the product
 
@@ -657,8 +659,8 @@ void Plugin::init()
     // Imagecache
 
     itsImageCache = std::make_unique<ImageCache>(itsConfig.maxMemoryCacheSize(),
-                                                            itsConfig.maxFilesystemCacheSize(),
-                                                            itsConfig.filesystemCacheDirectory());
+                                                 itsConfig.maxFilesystemCacheSize(),
+                                                 itsConfig.filesystemCacheDirectory());
 
     // StyleSheet cache
     itsStyleSheetCache.resize(itsConfig.styleSheetCacheSize());
@@ -750,12 +752,12 @@ void Plugin::init()
 // WMS configurations
 #ifndef WITHOUT_OBSERVATION
       itsWMSConfig = std::make_unique<WMS::WMSConfig>(itsConfig,
-                                                                 itsJsonCache,
-                                                                 itsQEngine,
-                                                                 authEngine,
-                                                                 itsObsEngine,
-                                                                 itsGisEngine,
-                                                                 itsGridEngine);
+                                                      itsJsonCache,
+                                                      itsQEngine,
+                                                      authEngine,
+                                                      itsObsEngine,
+                                                      itsGisEngine,
+                                                      itsGridEngine);
 #else
       itsWMSConfig = std::make_unique<WMS::WMSConfig>(
           itsConfig, itsJsonCache, itsQEngine, authEngine, itsGisEngine);

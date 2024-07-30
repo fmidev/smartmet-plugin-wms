@@ -3,7 +3,9 @@
 #include "Hash.h"
 #include "JsonTools.h"
 #include "State.h"
+#include "Warnings.h"
 #include <ctpp2/CDT.hpp>
+#include <fmt/format.h>
 #include <macgyver/Exception.h>
 #include <spine/HTTP.h>
 
@@ -128,6 +130,47 @@ void Product::generate(CTPP::CDT& theGlobals, State& theState)
     if (!defs.csss.csss.empty())
       for (const auto& e : defs.csss.csss)
         theGlobals["css"][e.first + ".css"] = e.second;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Check for configuration errors
+ */
+// ----------------------------------------------------------------------
+
+void Product::check_errors(const std::string& name) const
+{
+  try
+  {
+    // For now these checks are not comprehensive. The qids used by Isoband, Isoline and Title
+    // objects are not included in the check. The checks can be added if it turns out JSON
+    // developers make too frequent mistakes on them too.
+
+    Warnings warnings;
+    defs.check_warnings(warnings);
+    views.check_warnings(warnings);
+
+    std::list<std::string> errors;
+    for (const auto& qid_count : warnings.qid_counts)
+    {
+      const auto& qid = qid_count.first;
+      int count = qid_count.second;
+      if (count > 1)
+        errors.emplace_back(fmt::format("- qid '{}' used {} times", qid, count));
+    }
+    if (!errors.empty())
+    {
+      std::string message = fmt::format("Product '{}' has the following errors:", name);
+      for (const auto& err : errors)
+        message += "\n" + err;
+      message += '\n';
+      std::cerr << message;
+    }
   }
   catch (...)
   {
