@@ -112,7 +112,7 @@
 		    }
 		},
 		{
-		    "qid": "l2",
+		    "qid": "l3",
 		    "layer_type": "symbol",
 		    "css": "symbols/dot.css",
 		    "symbol": "dot",
