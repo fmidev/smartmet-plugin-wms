@@ -249,6 +249,11 @@ try
     exit(1);
 
   signal(SIGALRM, alarmhandler);
+
+  // Set stdout to line buffered and stderr to unbuffered
+  setvbuf(stdout, nullptr, _IOLBF, 0);
+  setvbuf(stderr, nullptr, _IONBF, 0);
+
   SmartMet::MyTest::test(options, prelude);
 
   return 0;
