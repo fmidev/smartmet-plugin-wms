@@ -2,6 +2,7 @@
 #include <boost/algorithm/string.hpp>
 #include <filesystem>
 #include <macgyver/Exception.h>
+#include <macgyver/StaticCleanup.h>
 #include <smartmet/spine/HTTP.h>
 #include <smartmet/spine/Options.h>
 #include <smartmet/spine/Reactor.h>
@@ -106,6 +107,7 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
 {
   try
   {
+    Fmi::StaticCleanup::AtExit cleanup;
     options.parseConfig();
     auto* reactor = new SmartMet::Spine::Reactor(options);
     reactor->init();
