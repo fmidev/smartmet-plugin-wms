@@ -204,7 +204,9 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
         put_file_contents(resultfile, "");
 
       cout << "DONE" << endl;
+
     }
+    reactor->shutdown();
   }
   catch (...)
   {
