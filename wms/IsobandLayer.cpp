@@ -1004,9 +1004,6 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
       auto demdata = theState.getGeoEngine().dem();
       auto landdata = theState.getGeoEngine().landCover();
-      if (!demdata || !landdata)
-        throw Fmi::Exception(BCP,
-                             "Resampling data requires DEM and land cover data to be available!");
 
       q = q->sample(param,
                     valid_time,
@@ -1016,8 +1013,8 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
                     box.xmax(),
                     box.ymax(),
                     *sampleresolution,
-                    *demdata,
-                    *landdata);
+                    demdata,
+                    landdata);
     }
     else if (heatmap.resolution)
     {

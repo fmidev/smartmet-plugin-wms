@@ -445,8 +445,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
     {
       param.mParameterLevel = C_INT(*level);
     }
-    else
-    if (pressure)
+    else if (pressure)
     {
       param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
       param.mParameterLevel = C_INT(*pressure);
@@ -460,7 +459,6 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
       if (*elevation_unit == "p")
         param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
     }
-
 
     if (forecastType)
       param.mForecastType = C_INT(*forecastType);
@@ -666,9 +664,6 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
     auto demdata = theState.getGeoEngine().dem();
     auto landdata = theState.getGeoEngine().landCover();
-    if (!demdata || !landdata)
-      throw Fmi::Exception(
-          BCP, "Resampling data in IsolineLayer requires DEM and land cover data to be available");
 
     q = q->sample(param,
                   valid_time,
@@ -678,8 +673,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
                   box.xmax(),
                   box.ymax(),
                   *sampleresolution,
-                  *demdata,
-                  *landdata);
+                  demdata,
+                  landdata);
   }
 
   if (!q)
