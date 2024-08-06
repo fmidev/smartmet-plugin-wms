@@ -18,7 +18,7 @@
 #pragma once
 
 #include "Attributes.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <engines/geonames/Engine.h>
 #include <engines/grid/Engine.h>
 #include <engines/querydata/Q.h>
@@ -164,11 +164,11 @@ class State
   // Add presentation attributes
 
   void addPresentationAttributes(CTPP::CDT& theLayer,
-                                 const boost::optional<std::string>& theCSS,
+                                 const std::optional<std::string>& theCSS,
                                  const Attributes& theAttributes) const;
 
   void addPresentationAttributes(CTPP::CDT& theLayer,
-                                 const boost::optional<std::string>& theCSS,
+                                 const std::optional<std::string>& theCSS,
                                  const Attributes& theLayerAttributes,
                                  const Attributes& theObjectAttributes) const;
 
@@ -189,15 +189,15 @@ class State
   std::string generateUniqueId() const;
 
   // Get expiration time
-  const boost::optional<Fmi::DateTime>& getExpirationTime() const;
+  const std::optional<Fmi::DateTime>& getExpirationTime() const;
   void updateExpirationTime(const Fmi::DateTime& theTime) const;
 
   // Get modification time
-  const boost::optional<Fmi::DateTime>& getModificationTime() const;
+  const std::optional<Fmi::DateTime>& getModificationTime() const;
   void updateModificationTime(const Fmi::DateTime& theTime) const;
 
   // Test if producer is for observations
-  bool isObservation(const boost::optional<std::string>& theProducer) const;
+  bool isObservation(const std::optional<std::string>& theProducer) const;
   bool isObservation(const std::string& theProducer) const;
 
   mutable uint arcCounter = 0;
@@ -232,10 +232,10 @@ class State
   mutable std::size_t itsNextId = 0;
 
   // Estimated expiration time
-  mutable boost::optional<Fmi::DateTime> itsExpirationTime;
+  mutable std::optional<Fmi::DateTime> itsExpirationTime;
 
   // Last modification time
-  mutable boost::optional<Fmi::DateTime> itsModificationTime;
+  mutable std::optional<Fmi::DateTime> itsModificationTime;
 
   // Are we in the Defs section?
   bool itsInDefs = false;
@@ -256,7 +256,7 @@ class State
   std::string itsType;
 
   // Precision
-  boost::optional<double> precision;
+  std::optional<double> precision;
 
   // The request itself
   const Spine::HTTP::Request itsRequest;

@@ -81,6 +81,25 @@ void Defs::init(Json::Value& theJson,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Generate warnings if needed
+ */
+// ----------------------------------------------------------------------
+
+void Defs::check_warnings(Warnings& warnings) const
+{
+  try
+  {
+    if (!qid.empty())
+      ++warnings.qid_counts[qid];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the definitions into the template hash tables
  */
 // ----------------------------------------------------------------------

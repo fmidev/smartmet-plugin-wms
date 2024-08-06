@@ -14,9 +14,9 @@
 #include "Properties.h"
 #include "Text.h"
 #include "Views.h"
-#include <macgyver/DateTime.h>
-#include <boost/optional.hpp>
 #include <json/json.h>
+#include <macgyver/DateTime.h>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -33,6 +33,7 @@ class Product : public Properties
 {
  public:
   void init(Json::Value& theJson, const State& theState, const Config& theConfig);
+  void check_errors(const std::string& name) const;
 
   void generate(CTPP::CDT& theGlobals, State& theState);
   std::size_t hash_value(const State& theState) const;
@@ -40,11 +41,11 @@ class Product : public Properties
   ParameterInfos getGridParameterInfo(const State& theState) const;
 
   // Element specific:
-  boost::optional<std::string> svg_tmpl;
+  std::optional<std::string> svg_tmpl;
   std::string type;
-  boost::optional<int> width;
-  boost::optional<int> height;
-  boost::optional<Text> title;
+  std::optional<int> width;
+  std::optional<int> height;
+  std::optional<Text> title;
 
   // Defs section
   Defs defs;

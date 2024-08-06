@@ -8,9 +8,10 @@
 
 #include "ParameterInfo.h"
 #include "View.h"
-#include <boost/shared_ptr.hpp>
+#include "Warnings.h"
 #include <json/json.h>
 #include <list>
+#include <memory>
 
 namespace CTPP
 {
@@ -33,13 +34,15 @@ class Views
             const Config& theConfig,
             const Properties& theProperties);
 
+  void check_warnings(Warnings& warnings) const;
+
   void generate(CTPP::CDT& theGlobals, State& theState);
 
   std::size_t hash_value(const State& theState) const;
 
   void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
-  std::list<boost::shared_ptr<View> > views;
+  std::list<std::shared_ptr<View> > views;
 };
 
 }  // namespace Dali

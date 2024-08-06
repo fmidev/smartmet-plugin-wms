@@ -2,7 +2,6 @@
 #include "Config.h"
 #include "Hash.h"
 #include "Projection.h"
-#include <boost/move/make_unique.hpp>
 #include <engines/querydata/ParameterOptions.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
@@ -12,6 +11,7 @@
 #include <spine/Convenience.h>
 #include <timeseries/ParameterFactory.h>
 #include <iomanip>
+#include <memory>
 #include <stdexcept>
 
 namespace SmartMet
@@ -132,7 +132,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
       auto vparam = TS::ParameterFactory::instance().parse(theV);
 
       // Q API SUCKS
-      boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+      std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
       Fmi::LocalDateTime localdatetime(theTime, Fmi::TimeZonePtr::utc);
       std::string tmp;
       auto mylocale = std::locale::classic();
@@ -174,10 +174,12 @@ void apply_direction_offsets(Positions::Points& thePoints,
                                                       dummy);
         auto vresult = q.value(vp, localdatetime);
 
-        if (boost::get<double>(&uresult) != nullptr && boost::get<double>(&vresult) != nullptr)
+        const double* u_ptr = std::get_if<double>(&uresult);
+        const double* v_ptr = std::get_if<double>(&vresult);
+        if (u_ptr && v_ptr)
         {
-          auto uspd = *boost::get<double>(&uresult);
-          auto vspd = *boost::get<double>(&vresult);
+          auto uspd = *u_ptr;
+          auto vspd = *v_ptr;
 
           if (uspd != kFloatMissing && vspd != kFloatMissing && (uspd != 0 || vspd != 0))
           {
@@ -282,12 +284,12 @@ void Positions::init(Json::Value& theJson, const Config& theConfig)
 
       else if (name == "outside")
       {
-        outsidemap.reset(Map());
+        outsidemap = Map();
         outsidemap->init(json, theConfig);
       }
       else if (name == "inside")
       {
-        insidemap.reset(Map());
+        insidemap = Map();
         insidemap->init(json, theConfig);
       }
       else if (name == "intersect")
@@ -337,7 +339,7 @@ void Positions::init(Json::Value& theJson, const Config& theConfig)
  */
 // ----------------------------------------------------------------------
 
-void Positions::init(const boost::optional<std::string>& theProducer,
+void Positions::init(const std::optional<std::string>& theProducer,
                      const Projection& theProjection,
                      const Fmi::DateTime& theTime,
                      const State& theState)
@@ -529,7 +531,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
     // the margins had a logic error
     xstart -= deltaxx;
 
-    for (int ypos = ystart; ypos < (height + ymargin); ypos += deltay)
+    for (int ypos = ystart; ypos <= (height + ymargin); ypos += deltay)
     {
       // Stagger every other row
       if (row++ % 2 == 0)
@@ -537,7 +539,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
       else
         xstart -= deltaxx;
 
-      for (int xpos = xstart; xpos < (width + xmargin); xpos += deltax)
+      for (int xpos = xstart; xpos <= (width + xmargin); xpos += deltax)
       {
         // Convert pixel coordinate to world coordinate (or latlon for geographic spatial
         // references)

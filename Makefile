@@ -13,7 +13,7 @@ FLAGS += -Wno-maybe-uninitialized -Wno-variadic-macros -Wno-deprecated-declarati
 
 DEFINES = -DUNIX -D_REENTRANT
 
-LIBS += -L$(libdir) \
+LIBS += $(PREFIX_LDFLAGS) \
 	-lsmartmet-grid-content \
 	-lsmartmet-timeseries \
 	-lsmartmet-spine \
@@ -26,7 +26,6 @@ LIBS += -L$(libdir) \
 	-lboost_thread \
 	-lboost_regex \
 	-lboost_iostreams \
-	-lboost_filesystem \
 	-lboost_system \
 	-lbz2 -lz \
 	-lheatmap

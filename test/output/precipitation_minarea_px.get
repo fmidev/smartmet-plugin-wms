@@ -148,12 +148,14 @@
    <use transform="translate(460,105)" xlink:href="#rain"/>
    <use transform="translate(465,125)" xlink:href="#rain"/>
    <use transform="translate(480,145)" xlink:href="#rain"/>
+   <use transform="translate(500,145)" xlink:href="#rain"/>
    <use transform="translate(5,165)" xlink:href="#rain"/>
    <use transform="translate(445,165)" xlink:href="#rain"/>
    <use transform="translate(485,165)" xlink:href="#rain"/>
    <use transform="translate(20,185)" xlink:href="#rain"/>
    <use transform="translate(40,185)" xlink:href="#rain"/>
    <use transform="translate(480,185)" xlink:href="#rain"/>
+   <use transform="translate(500,185)" xlink:href="#rain"/>
    <use transform="translate(5,205)" xlink:href="#rain"/>
    <use transform="translate(5,245)" xlink:href="#rain"/>
    <use transform="translate(45,245)" xlink:href="#rain"/>
@@ -229,6 +231,7 @@
    <use transform="translate(420,345)" xlink:href="#rain"/>
    <use transform="translate(460,345)" xlink:href="#rain"/>
    <use transform="translate(480,345)" xlink:href="#rain"/>
+   <use transform="translate(500,345)" xlink:href="#rain"/>
    <use transform="translate(45,365)" xlink:href="#rain"/>
    <use transform="translate(65,365)" xlink:href="#rain"/>
    <use transform="translate(85,365)" xlink:href="#rain"/>
@@ -270,6 +273,7 @@
    <use transform="translate(440,385)" xlink:href="#rain"/>
    <use transform="translate(460,385)" xlink:href="#rain"/>
    <use transform="translate(480,385)" xlink:href="#rain"/>
+   <use transform="translate(500,385)" xlink:href="#rain"/>
    <use transform="translate(25,405)" xlink:href="#rain"/>
    <use transform="translate(45,405)" xlink:href="#rain"/>
    <use transform="translate(65,405)" xlink:href="#rain"/>
@@ -308,6 +312,7 @@
    <use transform="translate(440,425)" xlink:href="#rain"/>
    <use transform="translate(460,425)" xlink:href="#rain"/>
    <use transform="translate(480,425)" xlink:href="#rain"/>
+   <use transform="translate(500,425)" xlink:href="#rain"/>
    <use transform="translate(45,445)" xlink:href="#rain"/>
    <use transform="translate(65,445)" xlink:href="#rain"/>
    <use transform="translate(105,445)" xlink:href="#rain"/>

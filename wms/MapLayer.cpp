@@ -7,7 +7,6 @@
 #include "Select.h"
 #include "State.h"
 #include "StyleSheet.h"
-#include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
@@ -74,11 +73,11 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     if (!validLayer(theState))
       return;
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "MapLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // Get projection details
@@ -133,11 +132,11 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     const auto& gis = theState.getGisEngine();
     {
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
       {
         std::string report = "getShape finished in %t sec CPU, %w sec real\n";
-        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+        mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
       }
       geom = gis.getShape(&crs, map.options);
 
@@ -155,11 +154,11 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     // Clip it
 
     {
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
       {
         std::string report = "polyclip finished in %t sec CPU, %w sec real\n";
-        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+        mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
       }
       if (map.lines)
         geom.reset(Fmi::OGR::lineclip(*geom, clipbox));  // fast and hence not cached in gisengine
@@ -191,11 +190,11 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       std::string objectKey = "map:" + qid;
       object_cdt["objectKey"] = objectKey;
 
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
       {
         std::string report = "Generating coordinate data finished in %t sec CPU, %w sec real\n";
-        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+        mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
       }
 
       CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
@@ -339,11 +338,11 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
 
     const auto& gis = theState.getGisEngine();
     {
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
       {
         std::string report = "getFeatures finished in %t sec CPU, %w sec real\n";
-        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+        mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
       }
 
       map.options.fieldnames.insert(styles->field);
@@ -411,7 +410,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
 
       // Establish station to pick from querydata
 
-      boost::optional<std::string> station_name;
+      std::optional<std::string> station_name;
       int station_number = -1;
 
       const auto& feature_value =
@@ -420,8 +419,8 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
       if (styles->features.empty())
       {
         // Assume feature value matches station number
-        if (feature_value.which() == 0)
-          station_number = boost::get<int>(feature_value);
+        if (feature_value.index() == 0)
+          station_number = std::get<int>(feature_value);
         else
           throw Fmi::Exception(BCP, "Feature type for a styled MapLayer must be int or string");
       }
@@ -429,10 +428,10 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
       {
         auto station_pos = styles->features.end();
 
-        if (feature_value.which() == 2)
-          station_pos = styles->features.find(boost::get<std::string>(feature_value));
-        else if (feature_value.which() == 0)
-          station_pos = styles->features.find(Fmi::to_string(boost::get<int>(feature_value)));
+        if (feature_value.index() == 2)
+          station_pos = styles->features.find(std::get<std::string>(feature_value));
+        else if (feature_value.index() == 0)
+          station_pos = styles->features.find(Fmi::to_string(std::get<int>(feature_value)));
         else
           throw Fmi::Exception(BCP, "Feature type for a styled MapLayer must be int or string");
 

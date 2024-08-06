@@ -22,9 +22,6 @@
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
-#include <boost/filesystem/operations.hpp>
-#include <boost/move/make_unique.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/timer/timer.hpp>
 #include <boost/utility.hpp>
 #include <ctpp2/CDT.hpp>
@@ -41,6 +38,7 @@
 #include <spine/HostInfo.h>
 #include <spine/Json.h>
 #include <spine/SmartMet.h>
+#include <memory>
 #include <stdexcept>
 
 using namespace boost::placeholders;
@@ -261,6 +259,8 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 
     check_remaining_dali_json(json, theState.getName());
 
+    product.check_errors(theRequest.getURI());
+
     // Calculate hash for the product
 
     auto product_hash = product.hash_value(theState);
@@ -279,7 +279,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
         const auto &expires = theState.getExpirationTime();
         if (expires)
         {
-          boost::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
+          std::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
           theResponse.setHeader("Expires", tformat->format(*expires));
         }
 
@@ -307,11 +307,11 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
     // Build the response CDT
     CTPP::CDT hash(CTPP::CDT::HASH_VAL);
     {
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
       {
         std::string report = "Product::generate finished in %t sec CPU, %w sec real\n";
-        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+        mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
       }
       product.generate(hash, theState);
     }
@@ -328,11 +328,11 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
     std::string log;
     try
     {
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
       {
         std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
-        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+        mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
       }
       tmpl->process(hash, output, log);
     }
@@ -408,22 +408,22 @@ void Plugin::formatResponse(const std::string &theSvg,
     else
     {
       // Convert buffer content
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (usetimer)
       {
         std::string report = "svg_to_" + theType + " finished in %t sec CPU, %w sec real\n";
-        mytimer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+        mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
       }
 
-      boost::shared_ptr<std::string> buffer;
+      std::shared_ptr<std::string> buffer;
       if (theType == "png")
-        buffer = boost::make_shared<std::string>(Giza::Svg::topng(theSvg, theProduct.png.options));
+        buffer = std::make_shared<std::string>(Giza::Svg::topng(theSvg, theProduct.png.options));
       else if (theType == "webp")
-        buffer = boost::make_shared<std::string>(Giza::Svg::towebp(theSvg));
+        buffer = std::make_shared<std::string>(Giza::Svg::towebp(theSvg));
       else if (theType == "pdf")
-        buffer = boost::make_shared<std::string>(Giza::Svg::topdf(theSvg));
+        buffer = std::make_shared<std::string>(Giza::Svg::topdf(theSvg));
       else if (theType == "ps")
-        buffer = boost::make_shared<std::string>(Giza::Svg::tops(theSvg));
+        buffer = std::make_shared<std::string>(Giza::Svg::tops(theSvg));
       else
         throw Fmi::Exception(BCP, "Cannot convert SVG to unknown format '" + theType + "'");
 
@@ -539,7 +539,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
       // Adding headers
 
-      boost::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
+      std::shared_ptr<Fmi::TimeFormatter> tformat(Fmi::TimeFormatter::create("http"));
 
       const Fmi::DateTime t_now = Fmi::SecondClock::universal_time();
       const auto &modification_time = state.getModificationTime();
@@ -658,9 +658,9 @@ void Plugin::init()
   {
     // Imagecache
 
-    itsImageCache = boost::movelib::make_unique<ImageCache>(itsConfig.maxMemoryCacheSize(),
-                                                            itsConfig.maxFilesystemCacheSize(),
-                                                            itsConfig.filesystemCacheDirectory());
+    itsImageCache = std::make_unique<ImageCache>(itsConfig.maxMemoryCacheSize(),
+                                                 itsConfig.maxFilesystemCacheSize(),
+                                                 itsConfig.filesystemCacheDirectory());
 
     // StyleSheet cache
     itsStyleSheetCache.resize(itsConfig.styleSheetCacheSize());
@@ -751,35 +751,35 @@ void Plugin::init()
 
 // WMS configurations
 #ifndef WITHOUT_OBSERVATION
-      itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(itsConfig,
-                                                                 itsJsonCache,
-                                                                 itsQEngine,
-                                                                 authEngine,
-                                                                 itsObsEngine,
-                                                                 itsGisEngine,
-                                                                 itsGridEngine);
+      itsWMSConfig = std::make_unique<WMS::WMSConfig>(itsConfig,
+                                                      itsJsonCache,
+                                                      itsQEngine,
+                                                      authEngine,
+                                                      itsObsEngine,
+                                                      itsGisEngine,
+                                                      itsGridEngine);
 #else
-      itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
+      itsWMSConfig = std::make_unique<WMS::WMSConfig>(
           itsConfig, itsJsonCache, itsQEngine, authEngine, itsGisEngine);
 #endif
     }
     else
     {
 #ifndef WITHOUT_OBSERVATION
-      itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
+      itsWMSConfig = std::make_unique<WMS::WMSConfig>(
           itsConfig, itsJsonCache, itsQEngine, nullptr, itsObsEngine, itsGisEngine, itsGridEngine);
 #else
-      itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
+      itsWMSConfig = std::make_unique<WMS::WMSConfig>(
           itsConfig, itsJsonCache, itsQEngine, nullptr, itsGisEngine);
 #endif
     }
 
 #else
 #ifndef WITHOUT_OBSERVATION
-    itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
+    itsWMSConfig = std::make_unique<WMS::WMSConfig>(
         itsConfig, itsJsonCache, itsQEngine, itsObsEngine, itsGisEngine, itsGridEngine);
 #else
-    itsWMSConfig = boost::movelib::make_unique<WMS::WMSConfig>(
+    itsWMSConfig = std::make_unique<WMS::WMSConfig>(
         itsConfig, itsJsonCache, itsQEngine, itsGisEngine, itsGridEngine);
 #endif
 #endif
@@ -920,7 +920,7 @@ Json::Value Plugin::getProductJson(const Spine::HTTP::Request &theRequest,
 
     std::string product_path = customer_root + "/products/" + theName + ".json";
 
-    if (!boost::filesystem::exists(product_path))
+    if (!std::filesystem::exists(product_path))
     {
       throw Fmi::Exception(BCP, "Product file not found!").addParameter("File", product_path);
     }
@@ -1009,14 +1009,14 @@ std::string Plugin::resolveFilePath(const std::string &theCustomer,
       file_path = (itsConfig.rootDirectory(theWmsFlag) + "/customers/" + check_attack(theCustomer) +
                    theSubDir + check_attack(theFileName));
       theTestedPaths.push_back(file_path);
-      if (!boost::filesystem::exists(file_path))
+      if (!std::filesystem::exists(file_path))
         filename.insert(filename.begin(), '/');
     }
     if (filename[0] == '/')
     {
       file_path = itsConfig.rootDirectory(theWmsFlag) + check_attack(filename);
       theTestedPaths.push_back(file_path);
-      if (!boost::filesystem::exists(file_path))
+      if (!std::filesystem::exists(file_path))
       {
         if (theSubDir == "/filters/")
         {
@@ -1029,11 +1029,11 @@ std::string Plugin::resolveFilePath(const std::string &theCustomer,
           file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources/layers" + theSubDir +
                       check_attack(filename);
           theTestedPaths.push_back(file_path);
-          if (!boost::filesystem::exists(file_path))
+          if (!std::filesystem::exists(file_path))
             file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources" + theSubDir +
                         check_attack(filename);
           theTestedPaths.push_back(file_path);
-          if (!boost::filesystem::exists(file_path))
+          if (!std::filesystem::exists(file_path))
             file_path = itsConfig.rootDirectory(theWmsFlag) + "/resources" + check_attack(filename);
           theTestedPaths.push_back(file_path);
         }
@@ -1060,11 +1060,11 @@ std::string Plugin::resolveSvgPath(const std::string &theCustomer,
 
   auto file =
       resolveFilePath(theCustomer, theSubDir, theFileName + ".svg", theWmsFlag, tested_paths);
-  if (boost::filesystem::exists(file))
+  if (std::filesystem::exists(file))
     return file;
 
   file = resolveFilePath(theCustomer, theSubDir, theFileName, theWmsFlag, tested_paths);
-  if (boost::filesystem::exists(file))
+  if (std::filesystem::exists(file))
     return file;
 
   return file;
@@ -1100,7 +1100,7 @@ std::string Plugin::getStyle(const std::string &theCustomer,
     std::string css_path =
         resolveFilePath(theCustomer, "/layers/", theCSS, theWmsFlag, tested_files);
 
-    if (boost::filesystem::exists(css_path))
+    if (std::filesystem::exists(css_path))
       return itsFileCache.get(css_path);
 
     throw Fmi::Exception(BCP, "Failed to find CSS file").addDetails(tested_files);

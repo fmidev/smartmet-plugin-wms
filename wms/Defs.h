@@ -15,6 +15,7 @@
 #include "Properties.h"
 #include "Styles.h"
 #include "Symbols.h"
+#include "Warnings.h"
 #include <map>
 #include <string>
 #include <vector>
@@ -36,6 +37,7 @@ class Defs : public Properties
             const Config& theConfig,
             const Properties& theParent);
 
+  void check_warnings(Warnings& warnings) const;
   void generate(CTPP::CDT& theGlobals, State& theState);
   std::size_t hash_value(const State& theState) const;
 

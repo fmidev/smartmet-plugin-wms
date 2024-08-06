@@ -28,10 +28,29 @@ void Views::init(Json::Value& theJson,
 
     for (auto& json : theJson)
     {
-      boost::shared_ptr<View> view(new View);
+      std::shared_ptr<View> view(new View);
       view->init(json, theState, theConfig, theProperties);
       views.push_back(view);
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate warnings if needed
+ */
+// ----------------------------------------------------------------------
+
+void Views::check_warnings(Warnings& warnings) const
+{
+  try
+  {
+    for (const auto& view : views)
+      view->check_warnings(warnings);
   }
   catch (...)
   {

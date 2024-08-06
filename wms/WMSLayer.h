@@ -15,7 +15,7 @@
 #include "WMSSupportedReference.h"
 #include "WMSTimeDimension.h"
 #include <macgyver/DateTime.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <ctpp2/CDT.hpp>
 #include <gis/BBox.h>
 #include <spine/Json.h>
@@ -50,17 +50,17 @@ class WMSLayer
 
   // GetCapabilities settings
   std::string name;
-  boost::optional<Dali::Text> title;
-  boost::optional<Dali::Text> abstract;
-  boost::optional<std::set<std::string> > keywords;
-  boost::optional<int> opaque;  // Note: optional<bool> is error prone
-  boost::optional<int> queryable;
-  boost::optional<int> cascaded;
-  boost::optional<int> no_subsets;
-  boost::optional<int> fixed_width;
-  boost::optional<int> fixed_height;
-  boost::optional<int> width;  // If layer is used as a legend file width and height are needed here
-  boost::optional<int> height;
+  std::optional<Dali::Text> title;
+  std::optional<Dali::Text> abstract;
+  std::optional<std::set<std::string> > keywords;
+  std::optional<int> opaque;  // Note: optional<bool> is error prone
+  std::optional<int> queryable;
+  std::optional<int> cascaded;
+  std::optional<int> no_subsets;
+  std::optional<int> fixed_width;
+  std::optional<int> fixed_height;
+  std::optional<int> width;  // If layer is used as a legend file width and height are needed here
+  std::optional<int> height;
 
   const WMSConfig& wmsConfig;
   bool hidden = false;                 // If this is true, dont show in GetCapabilities response
@@ -76,10 +76,10 @@ class WMSLayer
   std::set<std::string> disabled_refs;
 
   std::map<std::string, WMSLayerStyle> itsStyles;
-  boost::shared_ptr<WMSTimeDimensions> timeDimensions{
+  std::shared_ptr<WMSTimeDimensions> timeDimensions{
       nullptr};  // Optional, may be empty for non-temporal postgis layers
-  boost::shared_ptr<WMSElevationDimension> elevationDimension{nullptr};  // Optional
-  boost::shared_ptr<WMSIntervalDimension> intervalDimension{nullptr};    // Optional
+  std::shared_ptr<WMSElevationDimension> elevationDimension{nullptr};  // Optional
+  std::shared_ptr<WMSIntervalDimension> intervalDimension{nullptr};    // Optional
 
   std::string customer;
   std::string productFile;  // dali product
@@ -118,7 +118,7 @@ class WMSLayer
   bool isValidCRS(const std::string& theCRS) const;
   bool isValidStyle(const std::string& theStyle) const;
   bool isValidTime(const Fmi::DateTime& theTime,
-                   const boost::optional<Fmi::DateTime>& theReferenceTime) const;
+                   const std::optional<Fmi::DateTime>& theReferenceTime) const;
   bool isValidReferenceTime(const Fmi::DateTime& theReferenceTime) const;
   bool isValidElevation(int theElevation) const;
   bool isTemporal() const { return timeDimensions != nullptr; }
@@ -126,36 +126,36 @@ class WMSLayer
                               // (time=current)
   // Legend width, height is read from separate file
   void setLegendDimension(const WMSLayer& legendLayer, const std::string& styleName);
-  const boost::optional<int>& getWidth() const { return width; }
-  const boost::optional<int>& getHeight() const { return height; }
+  const std::optional<int>& getWidth() const { return width; }
+  const std::optional<int>& getHeight() const { return height; }
 
   // returns the most current valid time for the layer
   Fmi::DateTime mostCurrentTime(
-      const boost::optional<Fmi::DateTime>& reference_time) const;
+      const std::optional<Fmi::DateTime>& reference_time) const;
   // Empty for hidden layers
 
-  boost::optional<CTPP::CDT> generateGetCapabilities(
+  std::optional<CTPP::CDT> generateGetCapabilities(
       bool multiple_intervals,
 	  bool show_hidden,
       const Engine::Gis::Engine& gisengine,
       const std::string& language,
-      const boost::optional<std::string>& starttime,
-      const boost::optional<std::string>& endtime,
-      const boost::optional<std::string>& reference_time);
+      const std::optional<std::string>& starttime,
+      const std::optional<std::string>& endtime,
+      const std::optional<std::string>& reference_time);
 
-  boost::optional<CTPP::CDT> getLayerBaseInfo(const std::string& language) const;
-  boost::optional<CTPP::CDT> getGeographicBoundingBoxInfo() const;
-  boost::optional<CTPP::CDT> getProjectedBoundingBoxInfo() const;
-  boost::optional<CTPP::CDT> getTimeDimensionInfo(
+  std::optional<CTPP::CDT> getLayerBaseInfo(const std::string& language) const;
+  std::optional<CTPP::CDT> getGeographicBoundingBoxInfo() const;
+  std::optional<CTPP::CDT> getProjectedBoundingBoxInfo() const;
+  std::optional<CTPP::CDT> getTimeDimensionInfo(
       bool multiple_intervals,
-      const boost::optional<std::string>& starttime,
-      const boost::optional<std::string>& endtime,
-      const boost::optional<std::string>& reference_time) const;
-  boost::optional<CTPP::CDT> getIntervalDimensionInfo() const;
-  boost::optional<CTPP::CDT> getReferenceDimensionInfo() const;
-  boost::optional<CTPP::CDT> getElevationDimensionInfo() const;
-  boost::optional<CTPP::CDT> getStyleInfo(const std::string& language) const;
-  const boost::shared_ptr<WMSTimeDimensions>& getTimeDimensions() const;
+      const std::optional<std::string>& starttime,
+      const std::optional<std::string>& endtime,
+      const std::optional<std::string>& reference_time) const;
+  std::optional<CTPP::CDT> getIntervalDimensionInfo() const;
+  std::optional<CTPP::CDT> getReferenceDimensionInfo() const;
+  std::optional<CTPP::CDT> getElevationDimensionInfo() const;
+  std::optional<CTPP::CDT> getStyleInfo(const std::string& language) const;
+  const std::shared_ptr<WMSTimeDimensions>& getTimeDimensions() const;
 
   // To be called after crs and crs_bbox have been initialized
   void initProjectedBBoxes();
@@ -184,7 +184,7 @@ class WMSLayer
   static Json::Value parseJsonString(const std::string& theJsonString);
 };
 
-using SharedWMSLayer = boost::shared_ptr<WMSLayer>;
+using SharedWMSLayer = std::shared_ptr<WMSLayer>;
 using SharedWMSLayers = std::map<std::string, SharedWMSLayer>;
 
 std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer);

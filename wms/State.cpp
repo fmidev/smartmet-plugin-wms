@@ -453,7 +453,7 @@ void State::addAttributes(CTPP::CDT& theGlobals,
 // ----------------------------------------------------------------------
 
 void State::addPresentationAttributes(CTPP::CDT& theLayer,
-                                      const boost::optional<std::string>& theCSS,
+                                      const std::optional<std::string>& theCSS,
                                       const Attributes& theAttributes) const
 {
   try
@@ -477,7 +477,7 @@ void State::addPresentationAttributes(CTPP::CDT& theLayer,
 // ----------------------------------------------------------------------
 
 void State::addPresentationAttributes(CTPP::CDT& theLayer,
-                                      const boost::optional<std::string>& theCSS,
+                                      const std::optional<std::string>& theCSS,
                                       const Attributes& theLayerAttributes,
                                       const Attributes& theObjectAttributes) const
 {
@@ -882,7 +882,7 @@ std::string State::generateUniqueId() const
  */
 // ----------------------------------------------------------------------
 
-const boost::optional<Fmi::DateTime>& State::getExpirationTime() const
+const std::optional<Fmi::DateTime>& State::getExpirationTime() const
 {
   return itsExpirationTime;
 }
@@ -910,7 +910,7 @@ void State::updateExpirationTime(const Fmi::DateTime& theTime) const
  */
 // ----------------------------------------------------------------------
 
-const boost::optional<Fmi::DateTime>& State::getModificationTime() const
+const std::optional<Fmi::DateTime>& State::getModificationTime() const
 {
   return itsModificationTime;
 }
@@ -953,7 +953,7 @@ std::string State::makeQid(const std::string& thePrefix) const
  */
 // ----------------------------------------------------------------------
 
-bool State::isObservation(const boost::optional<std::string>& theProducer) const
+bool State::isObservation(const std::optional<std::string>& theProducer) const
 {
   std::string model = (theProducer ? *theProducer : getConfig().defaultModel());
   return isObservation(model);

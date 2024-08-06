@@ -7,7 +7,7 @@
 #pragma once
 
 #include "Attributes.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 #include <string>
 
@@ -34,7 +34,7 @@ class Text
   Attributes attributes;
 
   std::string translate(const std::string& theLanguage) const;
-  std::string translate(const boost::optional<std::string>& theLanguage) const;
+  std::string translate(const std::optional<std::string>& theLanguage) const;
 
   bool empty() const { return translations.empty(); }
   std::string dump() const;

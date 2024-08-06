@@ -123,7 +123,7 @@
 		    ]
 		},
 		{ // arvioitu jään reuna
-		    "qid": "ice_edge",
+		    "qid": "ice_edge_estimate",
 		    "layer_type": "icemap",
 		    "pgname": "icemap",
 		    "schema" : "icemap",

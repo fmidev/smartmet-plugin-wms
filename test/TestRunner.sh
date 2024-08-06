@@ -41,13 +41,13 @@ trap testerExit SIGUSR1
 # Actually start the plugintest in background
 function pluginTestRun
 {
-    # Here we force output to be buffered one line at a time so we can display other messages while waiting for an OK
     # We also force the killing of the main test runner
-    stdbuf -oL -e0 ./PluginTest
+    ./PluginTest
     ret=$?
     if [ "$ret" != "0" ] ; then
 	# Kill this main script, pid is recorded in environment before fork
 	# Use /bin/kill- internal shell kill doesn't work with signames
+    sleep 5
 	/bin/kill -s SIGUSR1 $TOP_PID
 	exit $ret
     fi

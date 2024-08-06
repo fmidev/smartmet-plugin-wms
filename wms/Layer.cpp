@@ -11,7 +11,6 @@
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
-#include <boost/move/make_unique.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
 #include <gis/Box.h>
@@ -92,14 +91,14 @@ void Layer::init(Json::Value& theJson,
 
     const auto& request = theState.getRequest();
 
-    boost::optional<std::string> v = request.getParameter("geometryId");
+    std::optional<std::string> v = request.getParameter("geometryId");
     if (v)
       geometryId = toInt32(*v);
 
     // Not used in plain requests
     json = JsonTools::remove(theJson, "legend_url_layer");
 
-    // boost::optional<std::string> v = request.getParameter("producerId");
+    // std::optional<std::string> v = request.getParameter("producerId");
     // if (v)
     //  geometryId = toInt32(*v);
   }
@@ -486,6 +485,25 @@ Parameter Layer::getParameter() const
 void Layer::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
 {
   // By default a layer uses no parameters
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate warnings if needed
+ */
+// ----------------------------------------------------------------------
+
+void Layer::check_warnings(Warnings& warnings) const
+{
+  try
+  {
+    if (!qid.empty())
+      ++warnings.qid_counts[qid];
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------

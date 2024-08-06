@@ -15,8 +15,8 @@
 #include "Layers.h"
 #include "ParameterInfo.h"
 #include "Properties.h"
-#include <boost/optional.hpp>
 #include <json/json.h>
+#include <optional>
 #include <set>
 #include <string>
 #include <vector>
@@ -64,6 +64,8 @@ class Layer : public Properties
                     const Config& theConfig,
                     const Properties& theProperties);
 
+  virtual void check_warnings(Warnings& warnings) const;
+
   virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) = 0;
 
   // Base provides a reasonable default!
@@ -97,15 +99,15 @@ class Layer : public Properties
   std::string qid;
 
   // Resolution range
-  boost::optional<double> minresolution;
-  boost::optional<double> maxresolution;
+  std::optional<double> minresolution;
+  std::optional<double> maxresolution;
 
   // Allowed and disallowed formats
   std::set<std::string> enable;
   std::set<std::string> disable;
 
   // External style sheet
-  boost::optional<std::string> css;
+  std::optional<std::string> css;
 
   // SVG attributes (id, class, style, transform, filter...)
   Attributes attributes;
@@ -113,7 +115,7 @@ class Layer : public Properties
   // Inner layers
   Layers layers;
 
-  boost::optional<std::string> type;
+  std::optional<std::string> type;
 
   static bool isFlashOrMobileProducer(const std::string& producer);
 

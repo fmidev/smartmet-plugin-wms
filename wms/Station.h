@@ -8,7 +8,7 @@
 
 #include "Attributes.h"
 #include "Title.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 #include <string>
 
@@ -26,18 +26,18 @@ class Station
   void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
-  boost::optional<int> fmisid;
-  boost::optional<int> lpnn;
-  boost::optional<int> wmo;
-  boost::optional<int> geoid;
-  boost::optional<double> longitude;
-  boost::optional<double> latitude;
-  boost::optional<std::string> symbol;
+  std::optional<int> fmisid;
+  std::optional<int> lpnn;
+  std::optional<int> wmo;
+  std::optional<int> geoid;
+  std::optional<double> longitude;
+  std::optional<double> latitude;
+  std::optional<std::string> symbol;
   Attributes attributes;
-  boost::optional<Title> title;
+  std::optional<Title> title;
 
-  boost::optional<int> dx;
-  boost::optional<int> dy;
+  std::optional<int> dx;
+  std::optional<int> dy;
 
 };  // class Station
 

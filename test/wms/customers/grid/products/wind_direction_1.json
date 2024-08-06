@@ -89,7 +89,7 @@
         */
         
         {
-          "qid": "l4",
+          "qid": "l6",
           "layer_type": "map",
           "map": {
             "schema": "natural_earth",

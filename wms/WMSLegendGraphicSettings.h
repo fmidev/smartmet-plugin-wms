@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <libconfig.h++>
 #include <map>
 #include <set>
@@ -46,17 +46,17 @@ struct LegendGraphicSymbol
 
 struct LegendGraphicLayout
 {
-  boost::optional<int> param_name_xoffset;  // parameter name
-  boost::optional<int> param_name_yoffset;
-  boost::optional<int> param_unit_xoffset;  // unit
-  boost::optional<int> param_unit_yoffset;
-  boost::optional<int> legend_xoffset;  // legend
-  boost::optional<int> legend_yoffset;
-  boost::optional<unsigned int> symbol_group_x_padding;  // space between symbols in symbol-group
-  boost::optional<unsigned int> symbol_group_y_padding;
-  boost::optional<unsigned int> symbol_text_xoffset;              // x offset of symbol text
-  boost::optional<unsigned int> symbol_text_yoffset;              // y offset of symbol text
-  boost::optional<unsigned int> legend_width;                     // width of one legend
+  std::optional<int> param_name_xoffset;  // parameter name
+  std::optional<int> param_name_yoffset;
+  std::optional<int> param_unit_xoffset;  // unit
+  std::optional<int> param_unit_yoffset;
+  std::optional<int> legend_xoffset;  // legend
+  std::optional<int> legend_yoffset;
+  std::optional<unsigned int> symbol_group_x_padding;  // space between symbols in symbol-group
+  std::optional<unsigned int> symbol_group_y_padding;
+  std::optional<unsigned int> symbol_text_xoffset;              // x offset of symbol text
+  std::optional<unsigned int> symbol_text_yoffset;              // y offset of symbol text
+  std::optional<unsigned int> legend_width;                     // width of one legend
   std::map<std::string, unsigned int> legend_width_per_language;  // legend width per langauge
   unsigned int
       output_document_width;  // size of non-automatically generated documents, default 500*500

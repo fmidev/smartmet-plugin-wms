@@ -9,7 +9,7 @@
 #include "Projection.h"
 
 #include <macgyver/DateTime.h>
-#include <boost/optional.hpp>
+#include <optional>
 #include <gis/Box.h>
 
 #include <string>
@@ -53,20 +53,20 @@ class Properties
 
   std::size_t hash_value(const State& theState) const;
 
-  boost::optional<std::string> language;
-  boost::optional<std::string> producer;
-  boost::optional<std::string> source;
-  boost::optional<int> forecastType;
-  boost::optional<int> forecastNumber;
-  boost::optional<uint> geometryId;
-  boost::optional<double> level;
-  boost::optional<std::string> elevation_unit;
-  boost::optional<double> pressure;
-  boost::optional<int> levelId;
-  boost::optional<int> timestep;
+  std::optional<std::string> language;
+  std::optional<std::string> producer;
+  std::optional<std::string> source;
+  std::optional<int> forecastType;
+  std::optional<int> forecastNumber;
+  std::optional<uint> geometryId;
+  std::optional<double> level;
+  std::optional<std::string> elevation_unit;
+  std::optional<double> pressure;
+  std::optional<int> levelId;
+  std::optional<int> timestep;
 
   // Wanted origintime. Use latest if omitted
-  boost::optional<Fmi::DateTime> origintime;
+  std::optional<Fmi::DateTime> origintime;
 
   // Timezone for time parsing
   Fmi::TimeZonePtr tz;
@@ -74,8 +74,8 @@ class Properties
   // An interval can be used to select the latest observation available, if any, or for example all
   // lightning observations. For forecasts the interval settings are meaningless.
 
-  boost::optional<int> interval_start;  // minutes
-  boost::optional<int> interval_end;    // minutes
+  std::optional<int> interval_start;  // minutes
+  std::optional<int> interval_end;    // minutes
 
   Projection projection;
 
@@ -86,8 +86,8 @@ class Properties
 
  private:
   // Wanted time T = time + time_offset. Making these private forces using getValidTime()
-  boost::optional<Fmi::DateTime> time;
-  boost::optional<int> time_offset;  // minutes
+  std::optional<Fmi::DateTime> time;
+  std::optional<int> time_offset;  // minutes
 };
 
 }  // namespace Dali

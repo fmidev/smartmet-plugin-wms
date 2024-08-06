@@ -1,7 +1,6 @@
 #include "Geometry.h"
 #include "Hash.h"
 #include "State.h"
-#include <boost/move/make_unique.hpp>
 #include <engines/gis/Engine.h>
 #include <fmt/format.h>
 #include <gis/CoordinateTransformation.h>
@@ -482,13 +481,13 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
     Fmi::CoordinateTransformation transformation(theSRS, "WGS84");
 
     // Reproject a clone
-    boost::movelib::unique_ptr<OGRGeometry> geom(theGeom.clone());
+    std::unique_ptr<OGRGeometry> geom(theGeom.clone());
     auto err = geom->transform(transformation.get());
     if (err != OGRERR_NONE)
       throw Fmi::Exception(BCP, "Failed to project geometry to WGS84 GeoJSON");
 
     // Fix winding rule to be CCW for shells
-    boost::movelib::unique_ptr<OGRGeometry> geom2(Fmi::OGR::reverseWindingOrder(*geom));
+    std::unique_ptr<OGRGeometry> geom2(Fmi::OGR::reverseWindingOrder(*geom));
 
     // No C++ API with precision yet, must use C API
 
@@ -537,7 +536,7 @@ std::string toKML(const OGRGeometry& theGeom,
     Fmi::CoordinateTransformation transformation(theSRS, "WGS84");
 
     // Reproject a clone
-    boost::movelib::unique_ptr<OGRGeometry> geom(theGeom.clone());
+    std::unique_ptr<OGRGeometry> geom(theGeom.clone());
     auto err = geom->transform(transformation.get());
     if (err != OGRERR_NONE)
       throw Fmi::Exception(BCP, "Failed to project geometry to WGS84 KML");

@@ -12,10 +12,10 @@ WMSMapLayer::WMSMapLayer(const WMSConfig& config, const Json::Value& json)
 {
   Json::Value nulljson;
 
-  boost::optional<double> xMin;
-  boost::optional<double> xMax;
-  boost::optional<double> yMin;
-  boost::optional<double> yMax;
+  std::optional<double> xMin;
+  std::optional<double> xMax;
+  std::optional<double> yMin;
+  std::optional<double> yMax;
   if (json.isArray())
   {
     Fmi::SpatialReference sr(4326);

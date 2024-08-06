@@ -10,7 +10,6 @@
 #include "State.h"
 #include "StyleSheet.h"
 #include "ValueTools.h"
-#include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
@@ -150,14 +149,14 @@ void IsobandLayer::init(Json::Value& theJson,
     json = JsonTools::remove(theJson, "outside");
     if (!json.isNull())
     {
-      outside.reset(Map());
+      outside = Map();
       outside->init(json, theConfig);
     }
 
     json = JsonTools::remove(theJson, "inside");
     if (!json.isNull())
     {
-      inside.reset(Map());
+      inside = Map();
       inside->init(json, theConfig);
     }
 
@@ -188,7 +187,7 @@ void IsobandLayer::init(Json::Value& theJson,
  */
 // ----------------------------------------------------------------------
 
-boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
+std::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     const Spine::Parameter& theParameter, const Fmi::DateTime& theTime, State& theState)
 {
   try
@@ -333,7 +332,7 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     // Then create the new querydata
 
     NFmiFastQueryInfo info(pdesc, tdesc, hdesc, vdesc);
-    boost::shared_ptr<NFmiQueryData> data(NFmiQueryDataUtil::CreateEmptyData(info));
+    std::shared_ptr<NFmiQueryData> data(NFmiQueryDataUtil::CreateEmptyData(info));
     if (data == nullptr)
       throw Fmi::Exception(BCP, "Failed to create heatmap");
 
@@ -366,8 +365,8 @@ boost::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     Fmi::hash_combine(hash, Fmi::hash_value(tmp));
     CPLFree(tmp);
 
-    auto model = boost::make_shared<Engine::Querydata::Model>(data, hash);
-    return boost::make_shared<Engine::Querydata::QImpl>(model);
+    auto model = Engine::Querydata::Model::create(data, hash);
+    return std::make_shared<Engine::Querydata::QImpl>(model);
   }
   catch (...)
   {
@@ -418,11 +417,11 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!parameter)
       throw Fmi::Exception(BCP, "Parameter not set for isoband-layer");
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // Establish the parameter
@@ -463,6 +462,10 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       offset = conv.offset;
     }
 
+    auto crs = projection.getCRS();
+    const auto& box = projection.getBox();
+    const auto clipbox = getClipBox(box);
+
     std::string wkt = *projection.crs;
 
     if (wkt != "data")
@@ -481,9 +484,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       // std::cout << wkt << "\n";
 
       // Adding the bounding box information into the query.
-
-      const auto& box = projection.getBox();
-      const auto clipbox = getClipBox(box);
 
       auto bl = projection.bottomLeftLatLon();
       auto tr = projection.topRightLatLon();
@@ -627,6 +627,15 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
                                                      std::to_string(*smoother.degree));
 
+    if (minarea)
+    {
+      auto area = *minarea;
+      if (areaunit == "px^2")
+        area = box.areaFactor() * area;
+
+      originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(area));
+    }
+
     originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
                                                    std::to_string(extrapolation));
 
@@ -712,6 +721,12 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       }
     }
 
+    // Convert filter pixel distance to metric distance for smoothing
+    filter.bbox(box);
+
+    // Smoothen the isobands
+    filter.apply(geoms, true);
+
     // Extracting the projection information from the query result.
 
     if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
@@ -759,23 +774,8 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       }
     }
 
-    auto crs = projection.getCRS();
-    const auto& box = projection.getBox();
-
-    if (minarea)
-    {
-      auto area = *minarea;
-      if (areaunit == "px^2")
-        area = box.areaFactor() * area;
-
-      originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(area));
-    }
-
     if (wkt == "data")
       return;
-
-    // And the box needed for clipping
-    const auto clipbox = getClipBox(box);
 
     const auto& gis = theState.getGisEngine();
 
@@ -934,11 +934,11 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 {
   try
   {
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "IsobandLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // Establish the data
@@ -995,18 +995,15 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       if (heatmap.resolution)
         throw Fmi::Exception(BCP, "Isoband-layer can't use both sampling and heatmap!");
 
-      boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer2;
+      std::unique_ptr<boost::timer::auto_cpu_timer> timer2;
       if (theState.useTimer())
       {
         std::string report2 = "IsobandLayer::resample finished in %t sec CPU, %w sec real\n";
-        timer2 = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report2);
+        timer2 = std::make_unique<boost::timer::auto_cpu_timer>(2, report2);
       }
 
       auto demdata = theState.getGeoEngine().dem();
       auto landdata = theState.getGeoEngine().landCover();
-      if (!demdata || !landdata)
-        throw Fmi::Exception(BCP,
-                             "Resampling data requires DEM and land cover data to be available!");
 
       q = q->sample(param,
                     valid_time,
@@ -1016,8 +1013,8 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
                     box.xmax(),
                     box.ymax(),
                     *sampleresolution,
-                    *demdata,
-                    *landdata);
+                    demdata,
+                    landdata);
     }
     else if (heatmap.resolution)
     {

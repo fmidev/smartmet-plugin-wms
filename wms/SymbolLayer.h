@@ -38,13 +38,13 @@ class SymbolLayer : public Layer
 
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
-  boost::optional<TS::ParameterAndFunctions> param_funcs;
-  boost::optional<std::string> parameter;
+  std::optional<TS::ParameterAndFunctions> param_funcs;
+  std::optional<std::string> parameter;
   std::string unit_conversion;
-  boost::optional<double> multiplier;
-  boost::optional<double> offset;
+  std::optional<double> multiplier;
+  std::optional<double> offset;
 
-  boost::optional<Positions> positions;
+  std::optional<Positions> positions;
 
   // Require at least this many valid valies
   int minvalues = 0;
@@ -53,12 +53,12 @@ class SymbolLayer : public Layer
   double maxdistance = 5;
 
   // the name of the default symbol
-  boost::optional<std::string> symbol;
-  boost::optional<double> scale;
+  std::optional<std::string> symbol;
+  std::optional<double> scale;
 
   // optional adjustment for all symbols
-  boost::optional<int> dx;
-  boost::optional<int> dy;
+  std::optional<int> dx;
+  std::optional<int> dy;
 
   // The parameter values or ranges to be styled separately
   std::vector<AttributeSelection> symbols;

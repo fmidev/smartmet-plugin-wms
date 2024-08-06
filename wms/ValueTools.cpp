@@ -17,10 +17,10 @@ namespace Dali
 
 double get_double(const TS::Value& value)
 {
-  if (const double* dvalue = boost::get<double>(&value))
+  if (const double* dvalue = std::get_if<double>(&value))
     return *dvalue;
 
-  if (const int* ivalue = boost::get<int>(&value))
+  if (const int* ivalue = std::get_if<int>(&value))
     return *ivalue;
 
   return kFloatMissing;
@@ -50,13 +50,13 @@ double get_double(const TS::TimedValue& timedvalue)
 
 int get_fmisid(const TS::Value& value)
 {
-  if (const double* dvalue = boost::get<double>(&value))
+  if (const double* dvalue = std::get_if<double>(&value))
     return static_cast<int>(*dvalue);
 
-  if (const int* ivalue = boost::get<int>(&value))
+  if (const int* ivalue = std::get_if<int>(&value))
     return *ivalue;
 
-  if (const std::string* svalue = boost::get<std::string>(&value))
+  if (const std::string* svalue = std::get_if<std::string>(&value))
     return Fmi::stoi(*svalue);
 
   // None, LonLat and Fmi::LocalDateTime not accepted. See spine/TimeSeries.h

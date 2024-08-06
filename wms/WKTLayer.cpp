@@ -71,11 +71,11 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     if (resolution && relativeresolution)
       throw Fmi::Exception(BCP, "Cannot set both resolution and relativeresolution for WKT");
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "WKTLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // Get projection details

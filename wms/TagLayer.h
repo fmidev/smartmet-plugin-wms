@@ -9,7 +9,7 @@
 #include "Attributes.h"
 #include "Layer.h"
 #include "Text.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <string>
 
 namespace CTPP
@@ -38,10 +38,10 @@ class TagLayer : public Layer
 
   std::size_t hash_value(const State& theState) const override;
 
-  boost::optional<std::string> tag;
+  std::optional<std::string> tag;
 
  private:
-  boost::optional<Text> cdata;
+  std::optional<Text> cdata;
 
 };  // class TagLayer
 

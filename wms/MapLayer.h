@@ -10,7 +10,7 @@
 #include "Layer.h"
 #include "Map.h"
 #include "MapStyles.h"
-#include <boost/optional.hpp>
+#include <optional>
 
 namespace SmartMet
 {
@@ -37,7 +37,7 @@ class MapLayer : public Layer
   Map map;
   double precision = 1.0;
 
-  boost::optional<MapStyles> styles;
+  std::optional<MapStyles> styles;
 
  private:
   void generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);

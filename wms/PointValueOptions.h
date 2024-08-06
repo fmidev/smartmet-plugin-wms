@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <spine/Json.h>
 #include <string>
 #include <vector>
@@ -22,9 +22,9 @@ class PointData;
 struct PointValueOptions
 {
   void init(Json::Value& theJson);
-  boost::optional<double> mindistance;
-  boost::optional<std::string> priority;
-  boost::optional<std::vector<int>> priorities;
+  std::optional<double> mindistance;
+  std::optional<std::string> priority;
+  std::optional<std::vector<int>> priorities;
   std::string rendering_order = "normal";
 
   std::size_t hash_value() const;

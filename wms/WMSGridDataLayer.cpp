@@ -1,5 +1,4 @@
 #include "WMSGridDataLayer.h"
-#include <boost/move/make_unique.hpp>
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/identification/GridDef.h>
 #include <macgyver/Exception.h>
@@ -163,7 +162,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
         generationInfoList.getLength() == 0)
       return true;
 
-    std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
+    std::map<Fmi::DateTime, std::shared_ptr<WMSTimeDimension>> newTimeDimensions;
     for (unsigned int i = 0; i < generationInfoList.getLength(); i++)
     {
       T::GenerationInfo* generationInfo = generationInfoList.getGenerationInfoByIndex(i);
@@ -311,7 +310,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
               unit_symbol = levelDef.mUnits;
 
             WMSElevationDimension elev(levelDef.mName,levelDef.mLevelId,unit_symbol,levelList,step);
-            elevationDimension = boost::make_shared<WMSElevationDimension>(elev);
+            elevationDimension = std::make_shared<WMSElevationDimension>(elev);
           }
         }
       }
@@ -322,7 +321,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
           return true;
       }
 
-      boost::shared_ptr<WMSTimeDimension> timeDimension;
+      std::shared_ptr<WMSTimeDimension> timeDimension;
 
       // timesteps
       std::list<Fmi::DateTime> timesteps;
@@ -332,9 +331,9 @@ bool WMSGridDataLayer::updateLayerMetaData()
       time_intervals intervals = get_intervals(timesteps);
 
       if (!intervals.empty())
-        timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);
+        timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
       else
-        timeDimension = boost::make_shared<StepTimeDimension>(timesteps);
+        timeDimension = std::make_shared<StepTimeDimension>(timesteps);
 
       if (timeDimension)
         newTimeDimensions.insert(
@@ -342,7 +341,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
     }
 
     if (!newTimeDimensions.empty())
-      timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);
+      timeDimensions = std::make_shared<WMSTimeDimensions>(newTimeDimensions);
     else
       timeDimensions = nullptr;
 

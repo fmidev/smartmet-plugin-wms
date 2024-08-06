@@ -52,7 +52,7 @@
 		    "layer_type": "time",	
 		    "timestamp": "time_offset",
 		    "prefix": "Offset: ",
-                    "format": "%+%H:%M",
+                    "format": "%H:%M",
 		    "x": -20,
 		    "y": 60
 		},
@@ -60,7 +60,7 @@
 		    "layer_type": "time",	
 		    "timestamp": "leadtime",
 		    "prefix": "Lead time: ",
-                    "format": "%+%H:%M",
+                    "format": "%H:%M",
 		    "x": -20,
 		    "y": 80
 		},
@@ -68,7 +68,7 @@
 		    "layer_type": "time",	
 		    "timestamp": "leadhour",
 		    "prefix": "Lead hour: ",
-                    "format": "%+%H:%M",
+                    "format": "%H:%M",
 		    "x": -20,
 		    "y": 100
 		},

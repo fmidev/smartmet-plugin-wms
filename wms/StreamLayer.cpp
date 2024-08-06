@@ -9,7 +9,6 @@
 #include "Layer.h"
 #include "State.h"
 #include "StyleSheet.h"
-#include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
@@ -501,7 +500,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
     std::size_t sz = gwidth * gheight;
     gridValues.reserve(sz);
 
-    boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+    std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
 
     auto valid_time_period = getValidTimePeriod();
     NFmiMetTime met_time = valid_time_period.begin();
@@ -539,9 +538,9 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
                                                        dummy);
 
           auto res = q->value(p, localdatetime);
-          if (boost::get<double>(&res) != nullptr)
+          if (const double* ptr = std::get_if<double>(&res))
           {
-            auto direction = *boost::get<double>(&res);
+            auto direction = *ptr;
             gridValues.push_back(direction);
           }
           else
@@ -594,10 +593,12 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
           auto res_u = q->value(p_u, localdatetime);
           auto res_v = q->value(p_v, localdatetime);
 
-          if (boost::get<double>(&res_u) != nullptr && boost::get<double>(&res_v) != nullptr)
+          const double* ptr_u = std::get_if<double>(&res_u);
+          const double* ptr_v = std::get_if<double>(&res_v);
+          if (ptr_u && ptr_v)
           {
-            auto uspd = *boost::get<double>(&res_u);
-            auto vspd = *boost::get<double>(&res_v);
+            auto uspd = *ptr_u;
+            auto vspd = *ptr_v;
 
             if (uspd != kFloatMissing && vspd != kFloatMissing)
             {
@@ -676,11 +677,11 @@ void StreamLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     if (!validLayer(theState))
       return;
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "StreamLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     auto geoms = getStreams(theState);

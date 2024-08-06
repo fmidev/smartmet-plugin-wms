@@ -7,7 +7,7 @@
 #pragma once
 
 #include "Smoother.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <engines/gis/Engine.h>
 #include <engines/grid/Engine.h>
 #include <engines/querydata/Engine.h>
@@ -29,12 +29,12 @@ class Intersection
  public:
   void init(Json::Value& theJson, const Config& theConfig);
 
-  void init(const boost::optional<std::string>& theProducer,
+  void init(const std::optional<std::string>& theProducer,
             const Projection& theProjection,
             const Fmi::DateTime& theTime,
             const State& theState);
 
-  void init(const boost::optional<std::string>& theProducer,
+  void init(const std::optional<std::string>& theProducer,
             const Engine::Grid::Engine* gridEngine,
             const Projection& theProjection,
             const Fmi::DateTime& theTime,
@@ -50,21 +50,21 @@ class Intersection
   // value,null --> value,inf
   // null,null  --> missing values
 
-  boost::optional<double> lolimit;
-  boost::optional<double> hilimit;
-  boost::optional<double> value;  // special case used for observations
+  std::optional<double> lolimit;
+  std::optional<double> hilimit;
+  std::optional<double> value;  // special case used for observations
 
-  boost::optional<double> level;
-  boost::optional<std::string> producer;
-  boost::optional<std::string> parameter;
+  std::optional<double> level;
+  std::optional<std::string> producer;
+  std::optional<std::string> parameter;
 
   std::string interpolation{"linear"};
 
   Smoother smoother;
 
   std::string unit_conversion;
-  boost::optional<double> multiplier;
-  boost::optional<double> offset;
+  std::optional<double> multiplier;
+  std::optional<double> offset;
 
   // Note: No inside/outside here, use them on the Layer level instead
 

@@ -1,7 +1,6 @@
 #include "WMSPostGISLayer.h"
 #include "JsonTools.h"
 #include "WMSConfig.h"
-#include <boost/move/make_unique.hpp>
 #include <gis/Host.h>
 #include <gis/OGR.h>
 #include <macgyver/Exception.h>
@@ -132,7 +131,7 @@ bool WMSPostGISLayer::mustUpdateLayerMetaData()
     moptions.fieldnames.insert(itsMetaDataSettings.field);
     moptions.where = itsMetaDataSettings.where;
 
-    const boost::optional<Fmi::DateTime> reference_time;
+    const std::optional<Fmi::DateTime> reference_time;
     Fmi::DateTime mostCurrentTimestamp = mostCurrentTime(reference_time);
 
     // fetch the latest publicationdate of icemap
@@ -141,7 +140,7 @@ bool WMSPostGISLayer::mustUpdateLayerMetaData()
     {
       Fmi::FeaturePtr feature = features[0];
       Fmi::DateTime timestamp =
-          boost::get<Fmi::DateTime>(feature->attributes[itsMetaDataSettings.field]);
+          std::get<Fmi::DateTime>(feature->attributes[itsMetaDataSettings.field]);
       if (timestamp.is_not_a_date_time() || mostCurrentTimestamp.is_not_a_date_time())
         return true;
       // if the timestamp is older or the same as previous time, there is no need to update metadata
@@ -191,31 +190,31 @@ bool WMSPostGISLayer::updateLayerMetaData()
 
     if (hasTemporalDimension && !timeDimensionDisabled)
     {
-      std::map<Fmi::DateTime, boost::shared_ptr<WMSTimeDimension>> newTimeDimensions;
-      boost::shared_ptr<WMSTimeDimension> timeDimension = nullptr;
+      std::map<Fmi::DateTime, std::shared_ptr<WMSTimeDimension>> newTimeDimensions;
+      std::shared_ptr<WMSTimeDimension> timeDimension = nullptr;
       if (metadata.timeinterval)
       {
         tag_interval interval(metadata.timeinterval->starttime,
                               metadata.timeinterval->endtime,
                               metadata.timeinterval->timestep);
         time_intervals timeintervals{interval};
-        timeDimension = boost::make_shared<IntervalTimeDimension>(timeintervals);
+        timeDimension = std::make_shared<IntervalTimeDimension>(timeintervals);
       }
       else
       {
         time_intervals intervals = get_intervals(metadata.timesteps);
         if (!intervals.empty())
         {
-          timeDimension = boost::make_shared<IntervalTimeDimension>(intervals);
+          timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
         }
         else
         {
-          timeDimension = boost::make_shared<StepTimeDimension>(metadata.timesteps);
+          timeDimension = std::make_shared<StepTimeDimension>(metadata.timesteps);
         }
       }
       Fmi::DateTime origintime(Fmi::DateTime::NOT_A_DATE_TIME);
       newTimeDimensions.insert(std::make_pair(origintime, timeDimension));
-      timeDimensions = boost::make_shared<WMSTimeDimensions>(newTimeDimensions);
+      timeDimensions = std::make_shared<WMSTimeDimensions>(newTimeDimensions);
     }
     else
     {

@@ -12,7 +12,6 @@
 #include "State.h"
 #include "ValueTools.h"
 #include <boost/math/constants/constants.hpp>
-#include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
@@ -71,15 +70,15 @@ PointValues read_forecasts(const ArrowLayer& layer,
   {
     NFmiMetTime met_time = valid_time;
 
-    boost::optional<Spine::Parameter> dirparam;
-    boost::optional<Spine::Parameter> speedparam;
-    boost::optional<Spine::Parameter> uparam;
-    boost::optional<Spine::Parameter> vparam;
+    std::optional<Spine::Parameter> dirparam;
+    std::optional<Spine::Parameter> speedparam;
+    std::optional<Spine::Parameter> uparam;
+    std::optional<Spine::Parameter> vparam;
 
-    boost::optional<TS::ParameterAndFunctions> speed_funcs;
-    boost::optional<TS::ParameterAndFunctions> dir_funcs;
-    boost::optional<TS::ParameterAndFunctions> u_funcs;
-    boost::optional<TS::ParameterAndFunctions> v_funcs;
+    std::optional<TS::ParameterAndFunctions> speed_funcs;
+    std::optional<TS::ParameterAndFunctions> dir_funcs;
+    std::optional<TS::ParameterAndFunctions> u_funcs;
+    std::optional<TS::ParameterAndFunctions> v_funcs;
 
     if (layer.direction)
     {
@@ -130,7 +129,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
     PointValues pointvalues;
 
     // Q API SUCKS
-    boost::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+    std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     Fmi::LocalDateTime localdatetime(met_time, Fmi::TimeZonePtr::utc);
     std::string tmp;
     auto mylocale = std::locale::classic();
@@ -193,10 +192,12 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
         //        auto vresult = q->value(vp, localdatetime);
 
-        if (boost::get<double>(&uresult) != nullptr && boost::get<double>(&vresult) != nullptr)
+        const double* u_ptr = std::get_if<double>(&uresult);
+        const double* v_ptr = std::get_if<double>(&vresult);
+        if (u_ptr && v_ptr)
         {
-          auto uspd = *boost::get<double>(&uresult);
-          auto vspd = *boost::get<double>(&vresult);
+          auto uspd = *u_ptr;
+          auto vspd = *v_ptr;
 
           if (uspd != kFloatMissing && vspd != kFloatMissing)
           {
@@ -228,8 +229,8 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                         dummy);
 
           auto dir_result = AggregationUtility::get_qengine_value(q, dp, localdatetime, dir_funcs);
-          if (boost::get<double>(&dir_result) != nullptr)
-            wdir = *boost::get<double>(&dir_result);
+          if (const double* ptr = std::get_if<double>(&dir_result))
+            wdir = *ptr;
         }
         else
         {
@@ -256,8 +257,8 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
             auto speed_result =
                 AggregationUtility::get_qengine_value(q, sp, localdatetime, speed_funcs);
-            if (boost::get<double>(&speed_result) != nullptr)
-              wspd = *boost::get<double>(&speed_result);
+            if (const double* ptr = std::get_if<double>(&speed_result))
+              wspd = *ptr;
           }
           else
           {
@@ -286,10 +287,10 @@ PointValues read_forecasts(const ArrowLayer& layer,
 PointValues read_gridForecasts(const ArrowLayer& layer,
                                const Engine::Grid::Engine* gridEngine,
                                QueryServer::Query& query,
-                               boost::optional<std::string> dirParam,
-                               boost::optional<std::string> speedParam,
-                               boost::optional<std::string> uParam,
-                               boost::optional<std::string> vParam,
+                               std::optional<std::string> dirParam,
+                               std::optional<std::string> speedParam,
+                               std::optional<std::string> uParam,
+                               std::optional<std::string> vParam,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
                                const Fmi::DateTime& valid_time)
@@ -558,11 +559,11 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Time execution
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "ArrowLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // A symbol must be defined either globally or for speed ranges
@@ -583,10 +584,10 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     std::vector<std::string> paramList;
 
-    boost::optional<std::string> dirparam;
-    boost::optional<std::string> speedparam;
-    boost::optional<std::string> uparam;
-    boost::optional<std::string> vparam;
+    std::optional<std::string> dirparam;
+    std::optional<std::string> speedparam;
+    std::optional<std::string> uparam;
+    std::optional<std::string> vparam;
 
     if (direction)
       paramList.push_back(*direction);
@@ -919,7 +920,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       // librsvg cannot handle scale + transform, must move former into latter
 
-      boost::optional<double> rescale;
+      std::optional<double> rescale;
 
       // Determine the symbol to be used
       std::string iri;
@@ -1024,9 +1025,9 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
     // Time execution
 
     std::string report = "ArrowLayer::generate finished in %t sec CPU, %w sec real\n";
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
 
     // A symbol must be defined either globally or for speed ranges
 
@@ -1248,7 +1249,7 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
 
       // librsvg cannot handle scale + transform, must move former into latter
 
-      boost::optional<double> rescale;
+      std::optional<double> rescale;
 
       // Determine the symbol to be used
       std::string iri;

@@ -2,7 +2,7 @@
 
 #include "IsolineLayer.h"
 #include "Label.h"
-#include <boost/optional.hpp>
+#include <optional>
 #include <vector>
 
 namespace Fmi

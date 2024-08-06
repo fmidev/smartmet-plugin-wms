@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <boost/optional.hpp>
+#include <optional>
 #include <json/json.h>
 #include <string>
 
@@ -25,8 +25,8 @@ class Smoother
   void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
-  boost::optional<double> size;
-  boost::optional<double> degree;
+  std::optional<double> size;
+  std::optional<double> degree;
 
  private:
 };  // class Smoother

@@ -12,7 +12,6 @@
 #include "Stations.h"
 #include "WindRose.h"
 #include <boost/math/constants/constants.hpp>
-#include <boost/move/make_unique.hpp>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
@@ -79,14 +78,14 @@ bool is_rose_data_valid(const TS::TimeSeries& directions,
     for (std::size_t i = 0; i < directions.size(); i++)
     {
       const auto t = directions[i].time.utc_time();
-      const double* dir = boost::get<double>(&directions[i].value);
-      const double* spd = boost::get<double>(&speeds[i].value);
-      const double* t2m = boost::get<double>(&temperatures[i].value);
+      const double* dir = std::get_if<double>(&directions[i].value);
+      const double* spd = std::get_if<double>(&speeds[i].value);
+      const double* t2m = std::get_if<double>(&temperatures[i].value);
 
       if (dir != nullptr && spd != nullptr && t2m != nullptr &&
-          boost::get<double>(directions[i].value) != kFloatMissing &&
-          boost::get<double>(speeds[i].value) != kFloatMissing &&
-          boost::get<double>(temperatures[i].value) != kFloatMissing)
+          *dir != kFloatMissing &&
+          *spd != kFloatMissing &&
+          *t2m != kFloatMissing)
       {
         if (first)
           first = false;
@@ -124,7 +123,7 @@ double mean(const TS::TimeSeries& tseries)
     int count = 0;
     for (const auto& tv : tseries)
     {
-      const double* value = boost::get<double>(&tv.value);
+      const double* value = std::get_if<double>(&tv.value);
       if (value != nullptr && *value != kFloatMissing)
       {
         sum += *value;
@@ -155,7 +154,7 @@ double max(const TS::TimeSeries& tseries)
     bool valid = false;
     for (const auto& tv : tseries)
     {
-      const double* value = boost::get<double>(&tv.value);
+      const double* value = std::get_if<double>(&tv.value);
       if (value != nullptr && *value != kFloatMissing)
       {
         if (!valid)
@@ -250,7 +249,7 @@ std::vector<double> calculate_rose_distribution(const TS::TimeSeries& directions
 
     for (const auto& tv : directions)
     {
-      const double* value = boost::get<double>(&tv.value);
+      const double* value = std::get_if<double>(&tv.value);
 
       if (value != nullptr && *value != kFloatMissing)
       {
@@ -289,8 +288,8 @@ std::vector<double> calculate_rose_maxima(const TS::TimeSeries& directions,
 
     for (std::size_t i = 0; i < directions.size(); i++)
     {
-      const double* dir = boost::get<double>(&directions[i].value);
-      const double* spd = boost::get<double>(&speeds[i].value);
+      const double* dir = std::get_if<double>(&directions[i].value);
+      const double* spd = std::get_if<double>(&speeds[i].value);
       if (dir != nullptr && spd != nullptr && *dir != kFloatMissing && *spd != kFloatMissing)
       {
         int sector = rose_sector(sectors, *dir);
@@ -381,11 +380,11 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
     if (!validLayer(theState))
       return;
 
-    boost::movelib::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
     if (theState.useTimer())
     {
       std::string report = "WindRoseLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = boost::movelib::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
     // Update the globals
@@ -745,8 +744,8 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(
       rosedata.max_wind = max(speeds);
       rosedata.mean_temperature = mean((*res)[2]);
 
-      rosedata.longitude = boost::get<double>(longitudes[0].value);
-      rosedata.latitude = boost::get<double>(latitudes[0].value);
+      rosedata.longitude = std::get<double>(longitudes[0].value);
+      rosedata.latitude = std::get<double>(latitudes[0].value);
 
       rosedata.percentages = calculate_rose_distribution(directions, windrose.sectors);
       rosedata.max_winds = calculate_rose_maxima(directions, speeds, windrose.sectors);
