@@ -17,8 +17,8 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 %define smartmet_boost boost
 %endif
 
-%define smartmet_fmt_min 8.1.1
-%define smartmet_fmt_max 8.2.0
+%define smartmet_fmt_min 11.0.0
+%define smartmet_fmt_max 12.0.0
 
 BuildRequires: rpm-build
 BuildRequires: gcc-c++
@@ -62,7 +62,7 @@ BuildRequires: librsvg2-devel
 #TestRequires: librsvg2-tools
 %endif
 Requires: cairo
-Requires: fmt >= 8.1.1 fmt < %{smartmet_fmt_max}
+Requires: fmt-libs >= %{smartmet_fmt_min} fmt-libs < %{smartmet_fmt_max}
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
