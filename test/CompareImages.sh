@@ -6,6 +6,12 @@ EXPECTED=$2
 if [ -z $MAX_LINES ] ; then MAX_LINES=100; fi
 if [ -z $CUT_LINES ] ; then CUT_LINES=80; fi
 
+if [ -x /usr/bin/magick ] ; then
+    CONVERT=/usr/bin/magick
+else
+    CONVERT=convert
+fi
+
 # Basename for the test
 
 NAME=$(basename $(basename $1 .get) .post)
@@ -37,7 +43,7 @@ DIFFERENCE_PNG="failures/${NAME}_difference.png"
 if [[ "$MIME" == "text/html" || "$MIME" == "text/x-asm" ]]; then
     rsvg-convert -u -b white -f png -o $RESULT_PNG $RESULT
 elif [[ "$MIME" == "application/pdf" ]]; then
-    convert -quiet $RESULT $RESULT_PNG 
+    $CONVERT -quiet $RESULT $RESULT_PNG
 elif [[ "$MIME" == "image/png" ]]; then
     cp $RESULT $RESULT_PNG
 fi
@@ -84,7 +90,7 @@ if [[ "$MIME" == "text/html" || "$MIME" == "text/x-asm" || "$MIME" == "image/svg
     rsvg-convert -u -b white -f png -o $RESULT_PNG $RESULT
 
 elif [[ "$MIME" == "application/pdf" ]]; then
-    convert -quiet $EXPECTED $EXPECTED_PNG
+    $CONVERT -quiet $EXPECTED $EXPECTED_PNG
 elif [[ "$MIME" == "image/png" ]]; then
     cp $EXPECTED $EXPECTED_PNG
 else
@@ -113,16 +119,16 @@ elif [ "$DBZ" = "$MATCHES" ]; then
 elif [ $(echo "$DBZ >= 50" | bc) = 1 ]; then
     echo -n -e "OK\t\tPNSR = $DBZ dB"
     composite $EXPECTED_PNG $RESULT_PNG -compose DIFFERENCE png:- | \
-	convert -quiet - -contrast-stretch 0 $DIFFERENCE_PNG
+	$CONVERT -quiet - -contrast-stretch 0 $DIFFERENCE_PNG
     exit 0
 elif [ $(echo "$DBZ >= 20" | bc) = 1 ]; then
     echo -n -e "WARNING\t\tPNSR = $DBZ dB (< 50 dB)"
     composite $EXPECTED_PNG $RESULT_PNG -compose DIFFERENCE png:- | \
-	convert -quiet - -contrast-stretch 0 $DIFFERENCE_PNG
+	$CONVERT -quiet - -contrast-stretch 0 $DIFFERENCE_PNG
     exit 0
 else
     echo -n -e "FAIL\t\tPNSR = $DBZ (< 20 dB)"
     composite $EXPECTED_PNG $RESULT_PNG -compose DIFFERENCE png:- | \
-	convert -quiet - -contrast-stretch 0 $DIFFERENCE_PNG
+	$CONVERT -quiet - -contrast-stretch 0 $DIFFERENCE_PNG
     exit 1
 fi
