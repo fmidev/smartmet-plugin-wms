@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.8.7
+Version: 24.8.29
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -27,15 +27,15 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 24.8.7
 BuildRequires: smartmet-library-grid-content-devel >= 24.8.7
-BuildRequires: smartmet-library-grid-files-devel >= 24.8.7
+BuildRequires: smartmet-library-grid-files-devel >= 24.8.21
 BuildRequires: smartmet-library-macgyver-devel >= 24.8.7
-BuildRequires: smartmet-library-spine-devel >= 24.8.7
+BuildRequires: smartmet-library-spine-devel >= 24.8.12
 BuildRequires: smartmet-library-timeseries-devel >= 24.8.7
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 24.8.7
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 24.8.7
+BuildRequires: smartmet-engine-observation-devel >= 24.8.9
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 24.8.7
 BuildRequires: smartmet-engine-grid-devel >= 24.8.7
@@ -69,11 +69,11 @@ Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 24.8.7
-Requires: smartmet-library-grid-files >= 24.8.7
+Requires: smartmet-library-grid-files >= 24.8.21
 Requires: smartmet-library-gis >= 24.8.7
 Requires: smartmet-library-trax >= 24.8.7
 Requires: smartmet-library-macgyver >= 24.8.7
-Requires: smartmet-library-spine >= 24.8.7
+Requires: smartmet-library-spine >= 24.8.12
 Requires: smartmet-library-timeseries >= 24.8.7
 Requires: smartmet-library-giza >= 24.8.7
 %if %{with authentication}
@@ -85,7 +85,7 @@ Requires: smartmet-engine-gis >= 24.8.7
 Requires: smartmet-engine-grid >= 24.8.7
 Requires: smartmet-engine-geonames >= 24.8.7
 Requires: smartmet-server >= 24.8.7
-Requires: smartmet-library-spine >= 24.8.7
+Requires: smartmet-library-spine >= 24.8.12
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -111,7 +111,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 24.8.7
 #TestRequires: smartmet-library-newbase-devel >= 24.8.7
 #TestRequires: smartmet-library-macgyver-devel >= 24.8.7
-#TestRequires: smartmet-library-spine-devel >= 24.8.7
+#TestRequires: smartmet-library-spine-devel >= 24.8.12
 #TestRequires: smartmet-library-timeseries-devel >= 24.8.7
 #TestRequires: smartmet-engine-grid-devel >= 24.8.7
 #TestRequires: smartmet-engine-grid-test
@@ -125,7 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 24.8.7
+#TestRequires: smartmet-engine-observation-devel >= 24.8.9
 %endif
 
 %description
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Aug 29 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.8.29-1.fmi
+- Warn only once on duplicate qids per URL to remove repeated error messages
+
 * Wed Aug  7 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.8.7-1.fmi
 - Update to gdal-3.8, geos-3.12, proj-94 and fmt-11
 
