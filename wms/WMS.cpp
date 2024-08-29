@@ -580,7 +580,7 @@ WMSQueryStatus Dali::Plugin::wmsGetMapQuery(State &theState,
       product.init(json, theState, itsConfig);
       check_remaining_wms_json(json, theState.getName());
 
-      product.check_errors(theRequest.getURI());
+      product.check_errors(theRequest.getURI(), itsWarnedURLs);
 
       // If the desired type is not defined in the JSON, the state object knows from earlier code
       // what format to output (HTTP request or default format), and we can not set the Product to
@@ -678,7 +678,7 @@ WMSQueryStatus Dali::Plugin::wmsGetLegendGraphicQuery(State &theState,
 
       product.init(json, theState, itsConfig);
 
-      product.check_errors(theRequest.getURI());
+      product.check_errors(theRequest.getURI(), itsWarnedURLs);
 
       // If the desired type is not defined in the JSON, the state object knows from earlier code
       // what format to output (HTTP request or default format), and we can not set the Product to
@@ -1052,7 +1052,7 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
     // Initialize the product specs from the JSON
     product.init(json, theState, itsConfig);
 
-    product.check_errors(theRequest.getURI());
+    product.check_errors(theRequest.getURI(), itsWarnedURLs);
 
     if (!product.svg_tmpl)
       product.svg_tmpl = itsConfig.defaultTemplate(product.type);

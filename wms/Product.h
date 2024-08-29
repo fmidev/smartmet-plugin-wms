@@ -33,7 +33,7 @@ class Product : public Properties
 {
  public:
   void init(Json::Value& theJson, const State& theState, const Config& theConfig);
-  void check_errors(const std::string& name) const;
+  void check_errors(const std::string& name, std::set<std::string>& warnedURLs) const;
 
   void generate(CTPP::CDT& theGlobals, State& theState);
   std::size_t hash_value(const State& theState) const;

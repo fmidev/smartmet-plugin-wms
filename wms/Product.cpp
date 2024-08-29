@@ -143,10 +143,13 @@ void Product::generate(CTPP::CDT& theGlobals, State& theState)
  */
 // ----------------------------------------------------------------------
 
-void Product::check_errors(const std::string& name) const
+void Product::check_errors(const std::string& name, std::set<std::string>& warnedURLs) const
 {
   try
   {
+    if (warnedURLs.find(name) != warnedURLs.end())
+      return;
+
     // For now these checks are not comprehensive. The qids used by Isoband, Isoline and Title
     // objects are not included in the check. The checks can be added if it turns out JSON
     // developers make too frequent mistakes on them too.
@@ -170,6 +173,8 @@ void Product::check_errors(const std::string& name) const
         message += "\n" + err;
       message += '\n';
       std::cerr << message;
+
+      warnedURLs.insert(name);
     }
   }
   catch (...)

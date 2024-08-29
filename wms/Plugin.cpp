@@ -259,7 +259,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 
     check_remaining_dali_json(json, theState.getName());
 
-    product.check_errors(theRequest.getURI());
+    product.check_errors(theRequest.getURI(), itsWarnedURLs);
 
     // Calculate hash for the product
 

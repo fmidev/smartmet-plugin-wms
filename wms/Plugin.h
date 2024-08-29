@@ -233,6 +233,10 @@ class Plugin : public SmartMetPlugin
   // WMS configuration
   std::unique_ptr<WMS::WMSConfig> itsWMSConfig;
 
+  // URLs which have already generated a warning or qid duplicates or on some other problem. We do
+  // not wish to fill the logs with the same warnings again and again.
+  std::set<std::string> itsWarnedURLs;
+
 };  // class Plugin
 
 }  // namespace Dali
