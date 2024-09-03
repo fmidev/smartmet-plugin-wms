@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.8.29
+Version: 24.9.3
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Sep  3 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.9.3-1.fmi
+- Repackage due smartmlibrary-grid-data and smartmet-engine-querydata changes
+
 * Thu Aug 29 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.8.29-1.fmi
 - Warn only once on duplicate qids per URL to remove repeated error messages
 
