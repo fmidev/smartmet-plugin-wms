@@ -82,74 +82,76 @@
   </g>
   <g class="Number" id="wind_numbers">
   
-  <text x="-5" y="-2">-</text>
-  <text x="15" y="-2">-</text>
-  <text x="35" y="-2">-</text>
-  <text x="55" y="-2">-</text>
-  <text x="75" y="-2">-</text>
-  <text x="95" y="-2">-</text>
-  <text x="115" y="-2">-</text>
-  <text x="135" y="-2">-</text>
-  <text x="155" y="-2">-</text>
-  <text x="175" y="-2">-</text>
-  <text x="195" y="-2">-</text>
-  <text x="215" y="-2">-</text>
-  <text x="235" y="-2">-</text>
-  <text x="255" y="-2">-</text>
-  <text x="275" y="-2">-</text>
-  <text x="295" y="-2">-</text>
-  <text x="5" y="18">282</text>
+  <text x="-5" y="-2">282</text>
+  <text x="15" y="-2">281</text>
+  <text x="35" y="-2">281</text>
+  <text x="55" y="-2">281</text>
+  <text x="75" y="-2">281</text>
+  <text x="95" y="-2">281</text>
+  <text x="115" y="-2">281</text>
+  <text x="135" y="-2">280</text>
+  <text x="155" y="-2">280</text>
+  <text x="175" y="-2">280</text>
+  <text x="195" y="-2">280</text>
+  <text x="215" y="-2">281</text>
+  <text x="235" y="-2">281</text>
+  <text x="255" y="-2">281</text>
+  <text x="275" y="-2">281</text>
+  <text x="295" y="-2">281</text>
+  <text x="-15" y="18">282</text>
+  <text x="5" y="18">281</text>
   <text x="25" y="18">281</text>
   <text x="45" y="18">281</text>
   <text x="65" y="18">281</text>
-  <text x="85" y="18">281</text>
-  <text x="105" y="18">281</text>
-  <text x="125" y="18">282</text>
-  <text x="145" y="18">281</text>
-  <text x="165" y="18">281</text>
-  <text x="185" y="18">281</text>
-  <text x="205" y="18">282</text>
-  <text x="225" y="18">281</text>
-  <text x="245" y="18">281</text>
+  <text x="85" y="18">282</text>
+  <text x="105" y="18">283</text>
+  <text x="125" y="18">284</text>
+  <text x="145" y="18">284</text>
+  <text x="165" y="18">283</text>
+  <text x="185" y="18">283</text>
+  <text x="205" y="18">284</text>
+  <text x="225" y="18">283</text>
+  <text x="245" y="18">282</text>
   <text x="265" y="18">281</text>
   <text x="285" y="18">281</text>
-  <text x="305" y="18">282</text>
-  <text x="-5" y="38">281</text>
+  <text x="305" y="18">281</text>
+  <text x="-5" y="38">282</text>
   <text x="15" y="38">282</text>
-  <text x="35" y="38">281</text>
-  <text x="55" y="38">281</text>
-  <text x="75" y="38">282</text>
-  <text x="95" y="38">285</text>
-  <text x="115" y="38">286</text>
+  <text x="35" y="38">282</text>
+  <text x="55" y="38">282</text>
+  <text x="75" y="38">284</text>
+  <text x="95" y="38">287</text>
+  <text x="115" y="38">287</text>
   <text x="135" y="38">287</text>
-  <text x="155" y="38">285</text>
-  <text x="175" y="38">286</text>
-  <text x="195" y="38">286</text>
+  <text x="155" y="38">287</text>
+  <text x="175" y="38">287</text>
+  <text x="195" y="38">287</text>
   <text x="215" y="38">285</text>
-  <text x="235" y="38">283</text>
-  <text x="255" y="38">281</text>
+  <text x="235" y="38">284</text>
+  <text x="255" y="38">282</text>
   <text x="275" y="38">281</text>
   <text x="295" y="38">281</text>
-  <text x="5" y="58">283</text>
-  <text x="25" y="58">283</text>
-  <text x="45" y="58">284</text>
-  <text x="65" y="58">284</text>
+  <text x="-15" y="58">283</text>
+  <text x="5" y="58">284</text>
+  <text x="25" y="58">286</text>
+  <text x="45" y="58">287</text>
+  <text x="65" y="58">286</text>
   <text x="85" y="58">287</text>
   <text x="105" y="58">288</text>
   <text x="125" y="58">288</text>
   <text x="145" y="58">288</text>
   <text x="165" y="58">288</text>
   <text x="185" y="58">288</text>
-  <text x="205" y="58">287</text>
-  <text x="225" y="58">284</text>
-  <text x="245" y="58">282</text>
-  <text x="265" y="58">281</text>
+  <text x="205" y="58">288</text>
+  <text x="225" y="58">286</text>
+  <text x="245" y="58">283</text>
+  <text x="265" y="58">282</text>
   <text x="285" y="58">281</text>
-  <text x="305" y="58">283</text>
-  <text x="-5" y="78">281</text>
-  <text x="15" y="78">287</text>
+  <text x="305" y="58">281</text>
+  <text x="-5" y="78">285</text>
+  <text x="15" y="78">289</text>
   <text x="35" y="78">289</text>
-  <text x="55" y="78">288</text>
+  <text x="55" y="78">287</text>
   <text x="75" y="78">287</text>
   <text x="95" y="78">287</text>
   <text x="115" y="78">288</text>
@@ -157,14 +159,15 @@
   <text x="155" y="78">288</text>
   <text x="175" y="78">288</text>
   <text x="195" y="78">288</text>
-  <text x="215" y="78">287</text>
-  <text x="235" y="78">286</text>
-  <text x="255" y="78">284</text>
-  <text x="275" y="78">282</text>
-  <text x="295" y="78">281</text>
-  <text x="5" y="98">287</text>
-  <text x="25" y="98">287</text>
-  <text x="45" y="98">287</text>
+  <text x="215" y="78">288</text>
+  <text x="235" y="78">287</text>
+  <text x="255" y="78">285</text>
+  <text x="275" y="78">284</text>
+  <text x="295" y="78">282</text>
+  <text x="-15" y="98">288</text>
+  <text x="5" y="98">288</text>
+  <text x="25" y="98">286</text>
+  <text x="45" y="98">286</text>
   <text x="65" y="98">286</text>
   <text x="85" y="98">287</text>
   <text x="105" y="98">288</text>
@@ -174,14 +177,14 @@
   <text x="185" y="98">288</text>
   <text x="205" y="98">288</text>
   <text x="225" y="98">288</text>
-  <text x="245" y="98">287</text>
-  <text x="265" y="98">285</text>
-  <text x="285" y="98">283</text>
-  <text x="305" y="98">286</text>
-  <text x="-5" y="118">282</text>
-  <text x="15" y="118">287</text>
+  <text x="245" y="98">288</text>
+  <text x="265" y="98">286</text>
+  <text x="285" y="98">284</text>
+  <text x="305" y="98">282</text>
+  <text x="-5" y="118">287</text>
+  <text x="15" y="118">285</text>
   <text x="35" y="118">284</text>
-  <text x="55" y="118">286</text>
+  <text x="55" y="118">287</text>
   <text x="75" y="118">287</text>
   <text x="95" y="118">288</text>
   <text x="115" y="118">288</text>
@@ -190,13 +193,14 @@
   <text x="175" y="118">288</text>
   <text x="195" y="118">288</text>
   <text x="215" y="118">288</text>
-  <text x="235" y="118">287</text>
-  <text x="255" y="118">285</text>
-  <text x="275" y="118">283</text>
-  <text x="295" y="118">282</text>
-  <text x="5" y="138">286</text>
-  <text x="25" y="138">284</text>
-  <text x="45" y="138">284</text>
+  <text x="235" y="118">288</text>
+  <text x="255" y="118">286</text>
+  <text x="275" y="118">284</text>
+  <text x="295" y="118">283</text>
+  <text x="-15" y="138">287</text>
+  <text x="5" y="138">285</text>
+  <text x="25" y="138">283</text>
+  <text x="45" y="138">285</text>
   <text x="65" y="138">287</text>
   <text x="85" y="138">288</text>
   <text x="105" y="138">288</text>
@@ -206,13 +210,13 @@
   <text x="185" y="138">288</text>
   <text x="205" y="138">288</text>
   <text x="225" y="138">287</text>
-  <text x="245" y="138">286</text>
-  <text x="265" y="138">284</text>
-  <text x="285" y="138">282</text>
-  <text x="305" y="138">286</text>
-  <text x="-5" y="158">285</text>
+  <text x="245" y="138">287</text>
+  <text x="265" y="138">285</text>
+  <text x="285" y="138">284</text>
+  <text x="305" y="138">282</text>
+  <text x="-5" y="158">283</text>
   <text x="15" y="158">283</text>
-  <text x="35" y="158">284</text>
+  <text x="35" y="158">285</text>
   <text x="55" y="158">286</text>
   <text x="75" y="158">287</text>
   <text x="95" y="158">288</text>
@@ -222,13 +226,14 @@
   <text x="175" y="158">288</text>
   <text x="195" y="158">288</text>
   <text x="215" y="158">287</text>
-  <text x="235" y="158">286</text>
+  <text x="235" y="158">287</text>
   <text x="255" y="158">286</text>
-  <text x="275" y="158">285</text>
-  <text x="295" y="158">284</text>
-  <text x="5" y="178">283</text>
+  <text x="275" y="158">286</text>
+  <text x="295" y="158">285</text>
+  <text x="-15" y="178">284</text>
+  <text x="5" y="178">284</text>
   <text x="25" y="178">285</text>
-  <text x="45" y="178">286</text>
+  <text x="45" y="178">287</text>
   <text x="65" y="178">287</text>
   <text x="85" y="178">287</text>
   <text x="105" y="178">288</text>
@@ -237,12 +242,12 @@
   <text x="165" y="178">288</text>
   <text x="185" y="178">288</text>
   <text x="205" y="178">287</text>
-  <text x="225" y="178">287</text>
+  <text x="225" y="178">286</text>
   <text x="245" y="178">287</text>
   <text x="265" y="178">286</text>
   <text x="285" y="178">285</text>
-  <text x="305" y="178">283</text>
-  <text x="-5" y="198">284</text>
+  <text x="305" y="178">285</text>
+  <text x="-5" y="198">285</text>
   <text x="15" y="198">286</text>
   <text x="35" y="198">286</text>
   <text x="55" y="198">287</text>
@@ -256,14 +261,15 @@
   <text x="215" y="198">286</text>
   <text x="235" y="198">286</text>
   <text x="255" y="198">286</text>
-  <text x="275" y="198">285</text>
+  <text x="275" y="198">286</text>
   <text x="295" y="198">284</text>
-  <text x="5" y="218">285</text>
+  <text x="-15" y="218">284</text>
+  <text x="5" y="218">286</text>
   <text x="25" y="218">286</text>
   <text x="45" y="218">287</text>
-  <text x="65" y="218">287</text>
+  <text x="65" y="218">288</text>
   <text x="85" y="218">288</text>
-  <text x="105" y="218">288</text>
+  <text x="105" y="218">287</text>
   <text x="125" y="218">288</text>
   <text x="145" y="218">288</text>
   <text x="165" y="218">287</text>
@@ -272,9 +278,9 @@
   <text x="225" y="218">286</text>
   <text x="245" y="218">286</text>
   <text x="265" y="218">286</text>
-  <text x="285" y="218">285</text>
-  <text x="305" y="218">285</text>
-  <text x="-5" y="238">284</text>
+  <text x="285" y="218">286</text>
+  <text x="305" y="218">284</text>
+  <text x="-5" y="238">285</text>
   <text x="15" y="238">286</text>
   <text x="35" y="238">286</text>
   <text x="55" y="238">286</text>
@@ -288,12 +294,13 @@
   <text x="215" y="238">286</text>
   <text x="235" y="238">286</text>
   <text x="255" y="238">286</text>
-  <text x="275" y="238">286</text>
-  <text x="295" y="238">284</text>
+  <text x="275" y="238">285</text>
+  <text x="295" y="238">285</text>
+  <text x="-15" y="258">286</text>
   <text x="5" y="258">286</text>
   <text x="25" y="258">287</text>
-  <text x="45" y="258">288</text>
-  <text x="65" y="258">287</text>
+  <text x="45" y="258">287</text>
+  <text x="65" y="258">288</text>
   <text x="85" y="258">287</text>
   <text x="105" y="258">287</text>
   <text x="125" y="258">287</text>
@@ -305,8 +312,8 @@
   <text x="245" y="258">286</text>
   <text x="265" y="258">286</text>
   <text x="285" y="258">285</text>
-  <text x="305" y="258">286</text>
-  <text x="-5" y="278">285</text>
+  <text x="305" y="258">285</text>
+  <text x="-5" y="278">288</text>
   <text x="15" y="278">287</text>
   <text x="35" y="278">288</text>
   <text x="55" y="278">288</text>
@@ -315,19 +322,20 @@
   <text x="115" y="278">287</text>
   <text x="135" y="278">288</text>
   <text x="155" y="278">288</text>
-  <text x="175" y="278">287</text>
+  <text x="175" y="278">288</text>
   <text x="195" y="278">287</text>
   <text x="215" y="278">287</text>
   <text x="235" y="278">286</text>
   <text x="255" y="278">286</text>
   <text x="275" y="278">286</text>
-  <text x="295" y="278">285</text>
+  <text x="295" y="278">286</text>
+  <text x="-15" y="298">289</text>
   <text x="5" y="298">289</text>
   <text x="25" y="298">289</text>
   <text x="45" y="298">289</text>
   <text x="65" y="298">289</text>
   <text x="85" y="298">287</text>
-  <text x="105" y="298">289</text>
+  <text x="105" y="298">288</text>
   <text x="125" y="298">289</text>
   <text x="145" y="298">288</text>
   <text x="165" y="298">288</text>
@@ -335,13 +343,13 @@
   <text x="205" y="298">288</text>
   <text x="225" y="298">287</text>
   <text x="245" y="298">286</text>
-  <text x="265" y="298">286</text>
+  <text x="265" y="298">285</text>
   <text x="285" y="298">286</text>
-  <text x="305" y="298">289</text>
-  <text x="-5" y="318">286</text>
+  <text x="305" y="298">286</text>
+  <text x="-5" y="318">290</text>
   <text x="15" y="318">290</text>
   <text x="35" y="318">289</text>
-  <text x="55" y="318">289</text>
+  <text x="55" y="318">288</text>
   <text x="75" y="318">288</text>
   <text x="95" y="318">290</text>
   <text x="115" y="318">290</text>
@@ -354,6 +362,7 @@
   <text x="255" y="318">286</text>
   <text x="275" y="318">286</text>
   <text x="295" y="318">286</text>
+  <text x="-15" y="338">288</text>
   <text x="5" y="338">289</text>
   <text x="25" y="338">289</text>
   <text x="45" y="338">289</text>
@@ -368,15 +377,15 @@
   <text x="225" y="338">289</text>
   <text x="245" y="338">288</text>
   <text x="265" y="338">287</text>
-  <text x="285" y="338">287</text>
-  <text x="305" y="338">289</text>
-  <text x="-5" y="358">287</text>
-  <text x="15" y="358">290</text>
+  <text x="285" y="338">286</text>
+  <text x="305" y="338">287</text>
+  <text x="-5" y="358">289</text>
+  <text x="15" y="358">289</text>
   <text x="35" y="358">289</text>
   <text x="55" y="358">289</text>
-  <text x="75" y="358">290</text>
+  <text x="75" y="358">291</text>
   <text x="95" y="358">291</text>
-  <text x="115" y="358">291</text>
+  <text x="115" y="358">290</text>
   <text x="135" y="358">290</text>
   <text x="155" y="358">290</text>
   <text x="175" y="358">289</text>
@@ -384,8 +393,9 @@
   <text x="215" y="358">289</text>
   <text x="235" y="358">289</text>
   <text x="255" y="358">289</text>
-  <text x="275" y="358">287</text>
+  <text x="275" y="358">288</text>
   <text x="295" y="358">287</text>
+  <text x="-15" y="378">289</text>
   <text x="5" y="378">289</text>
   <text x="25" y="378">289</text>
   <text x="45" y="378">289</text>
@@ -399,10 +409,10 @@
   <text x="205" y="378">290</text>
   <text x="225" y="378">289</text>
   <text x="245" y="378">290</text>
-  <text x="265" y="378">288</text>
+  <text x="265" y="378">289</text>
   <text x="285" y="378">287</text>
-  <text x="305" y="378">289</text>
-  <text x="-5" y="398">288</text>
+  <text x="305" y="378">287</text>
+  <text x="-5" y="398">290</text>
   <text x="15" y="398">290</text>
   <text x="35" y="398">290</text>
   <text x="55" y="398">290</text>
@@ -414,11 +424,12 @@
   <text x="175" y="398">290</text>
   <text x="195" y="398">290</text>
   <text x="215" y="398">290</text>
-  <text x="235" y="398">289</text>
+  <text x="235" y="398">290</text>
   <text x="255" y="398">289</text>
   <text x="275" y="398">289</text>
-  <text x="295" y="398">288</text>
-  <text x="5" y="418">288</text>
+  <text x="295" y="398">287</text>
+  <text x="-15" y="418">288</text>
+  <text x="5" y="418">289</text>
   <text x="25" y="418">290</text>
   <text x="45" y="418">290</text>
   <text x="65" y="418">291</text>
@@ -429,75 +440,77 @@
   <text x="165" y="418">290</text>
   <text x="185" y="418">290</text>
   <text x="205" y="418">290</text>
-  <text x="225" y="418">289</text>
+  <text x="225" y="418">290</text>
   <text x="245" y="418">289</text>
-  <text x="265" y="418">290</text>
+  <text x="265" y="418">289</text>
   <text x="285" y="418">290</text>
-  <text x="305" y="418">288</text>
-  <text x="-5" y="438">290</text>
-  <text x="15" y="438">286</text>
-  <text x="35" y="438">289</text>
+  <text x="305" y="418">289</text>
+  <text x="-5" y="438">286</text>
+  <text x="15" y="438">289</text>
+  <text x="35" y="438">290</text>
   <text x="55" y="438">290</text>
-  <text x="75" y="438">290</text>
-  <text x="95" y="438">289</text>
+  <text x="75" y="438">291</text>
+  <text x="95" y="438">290</text>
   <text x="115" y="438">289</text>
-  <text x="135" y="438">288</text>
-  <text x="155" y="438">289</text>
+  <text x="135" y="438">289</text>
+  <text x="155" y="438">290</text>
   <text x="175" y="438">289</text>
   <text x="195" y="438">289</text>
-  <text x="215" y="438">289</text>
+  <text x="215" y="438">290</text>
   <text x="235" y="438">289</text>
-  <text x="255" y="438">290</text>
-  <text x="275" y="438">291</text>
-  <text x="295" y="438">290</text>
+  <text x="255" y="438">289</text>
+  <text x="275" y="438">290</text>
+  <text x="295" y="438">291</text>
+  <text x="-15" y="458">286</text>
   <text x="5" y="458">286</text>
-  <text x="25" y="458">286</text>
+  <text x="25" y="458">287</text>
   <text x="45" y="458">289</text>
   <text x="65" y="458">289</text>
   <text x="85" y="458">289</text>
-  <text x="105" y="458">289</text>
+  <text x="105" y="458">288</text>
   <text x="125" y="458">288</text>
   <text x="145" y="458">288</text>
-  <text x="165" y="458">287</text>
-  <text x="185" y="458">288</text>
+  <text x="165" y="458">288</text>
+  <text x="185" y="458">289</text>
   <text x="205" y="458">289</text>
-  <text x="225" y="458">290</text>
-  <text x="245" y="458">291</text>
+  <text x="225" y="458">289</text>
+  <text x="245" y="458">290</text>
   <text x="265" y="458">291</text>
   <text x="285" y="458">291</text>
-  <text x="305" y="458">286</text>
-  <text x="-5" y="478">290</text>
-  <text x="15" y="478">287</text>
+  <text x="305" y="458">290</text>
+  <text x="-5" y="478">286</text>
+  <text x="15" y="478">288</text>
   <text x="35" y="478">289</text>
   <text x="55" y="478">290</text>
   <text x="75" y="478">290</text>
   <text x="95" y="478">290</text>
   <text x="115" y="478">289</text>
   <text x="135" y="478">287</text>
-  <text x="155" y="478">285</text>
-  <text x="175" y="478">285</text>
-  <text x="195" y="478">285</text>
-  <text x="215" y="478">285</text>
-  <text x="235" y="478">288</text>
+  <text x="155" y="478">286</text>
+  <text x="175" y="478">286</text>
+  <text x="195" y="478">287</text>
+  <text x="215" y="478">287</text>
+  <text x="235" y="478">289</text>
   <text x="255" y="478">290</text>
   <text x="275" y="478">291</text>
-  <text x="295" y="478">290</text>
+  <text x="295" y="478">291</text>
+  <text x="-15" y="498">287</text>
   <text x="5" y="498">288</text>
   <text x="25" y="498">290</text>
   <text x="45" y="498">291</text>
-  <text x="65" y="498">291</text>
-  <text x="85" y="498">291</text>
-  <text x="105" y="498">291</text>
-  <text x="125" y="498">289</text>
-  <text x="145" y="498">287</text>
-  <text x="165" y="498">286</text>
-  <text x="185" y="498">285</text>
+  <text x="65" y="498">290</text>
+  <text x="85" y="498">290</text>
+  <text x="105" y="498">289</text>
+  <text x="125" y="498">288</text>
+  <text x="145" y="498">286</text>
+  <text x="165" y="498">285</text>
+  <text x="185" y="498">284</text>
   <text x="205" y="498">284</text>
   <text x="225" y="498">284</text>
-  <text x="245" y="498">285</text>
-  <text x="265" y="498">288</text>
-  <text x="285" y="498">289</text>
-  <text x="305" y="498">288</text>
+  <text x="245" y="498">286</text>
+  <text x="265" y="498">289</text>
+  <text x="285" y="498">290</text>
+  <text x="305" y="498">290</text>
   </g>
    <use id="europe_country_lines" style="fill:none; stroke:#222; stroke-width:0.3" xlink:href="#l10"/>
   

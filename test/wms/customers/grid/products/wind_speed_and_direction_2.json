@@ -24,8 +24,8 @@
           "layer_type": "arrow",
           "arrows": "json:arrows/wind.json",
           "css": "arrows/windarrow.css",
-          "direction": "DD-D",
-          "speed": "FF-MS",
+          "u": "U-MS",
+          "v": "V-MS",
           "symbol": "windarrow",
           "attributes": {
             "id": "wind_arrows"
@@ -43,7 +43,7 @@
           "layer_type": "symbol",
           "symbol": "dot",
           "css": "symbols/dot.css",
-          "parameter": "FF-MS",
+          "parameter": "U-MS",
           "attributes": {
             "class": "Dot",
             "id": "wind_markers"

@@ -146,88 +146,43 @@ PointValues read_gridForecasts(const NumberLayer& layer,
                                QueryServer::Query& query,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
-                               const Fmi::DateTime& /* valid_time */)
+                               const Fmi::DateTime& valid_time,
+                               const State& state)
 {
   try
   {
-    // Generate the coordinates for the numbers
+    // Generate the coordinates for the symbols
+
+    const bool forecast_mode = true;
+    auto points = layer.positions->getPoints(nullptr, crs, box, forecast_mode, state);
 
     PointValues pointvalues;
-
-    int width = 0;
-    int height = 0;
-    int originalWidth = 0;
-    int originalHeight = 0;
-
-    const char* widthStr = query.mAttributeList.getAttributeValue("grid.width");
-    const char* heightStr = query.mAttributeList.getAttributeValue("grid.height");
-    const char* originalCrs = query.mAttributeList.getAttributeValue("grid.original.crs");
-    const char* originalWidthStr = query.mAttributeList.getAttributeValue("grid.original.width");
-    const char* originalHeightStr = query.mAttributeList.getAttributeValue("grid.original.height");
-
-    if (widthStr)
-      width = Fmi::stoi(widthStr);
-
-    if (heightStr)
-      height = Fmi::stoi(heightStr);
-
-    if (originalWidthStr)
-      originalWidth = Fmi::stoi(originalWidthStr);
-
-    if (originalHeightStr)
-      originalHeight = Fmi::stoi(originalHeightStr);
-
-    T::ParamValue_vec* values = nullptr;
-    uint originalGeometryId = 0;
-
+    T::GridValueList* values = nullptr;
     for (const auto& param : query.mQueryParameterList)
     {
       for (const auto& val : param.mValueList)
       {
-        if (!val->mValueVector.empty())
-        {
-          originalGeometryId = val->mGeometryId;
-          values = &val->mValueVector;
-        }
+        if (val->mValueList.getLength() == points.size())
+          values = &val->mValueList;
       }
     }
 
-    auto points = layer.positions->getPoints(
-        originalCrs, originalWidth, originalHeight, originalGeometryId, crs, box);
-
-    if (values && !values->empty())
+    if (values && values->getLength())
     {
-      for (const auto& point : points)
+      uint len = values->getLength();
+      for (uint t=0; t<len; t++)
       {
-        if (layer.inside(box, point.x, point.y))
-        {
-          size_t pos = (height - point.y - 1) * width + point.x;
+        T::GridValue *rec = values->getGridValuePtrByIndex(t);
+        auto point = points[t];
 
-          if (pos < values->size())
-          {
-            double tmp = (*values)[pos];
-            if (tmp != ParamValueMissing)
-            {
-              pointvalues.push_back(PointData{point, tmp});
-            }
-            else
-            {
-              PointData missingvalue{point, kFloatMissing};
-              pointvalues.push_back(missingvalue);
-            }
-            // printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(),
-            // point.latlon.Y(),tmp);
-          }
-          else
-          {
-            PointData missingvalue{point, kFloatMissing};
-            pointvalues.push_back(missingvalue);
-          }
+        if (rec->mValue != ParamValueMissing)
+        {
+          pointvalues.push_back(PointData{point,rec->mValue});
         }
         else
         {
-          // printf("Not inside %d,%d  => %f,%f  = %ld,%ld\n",point.x,point.y,point.latlon.X(),
-          // point.latlon.Y(),box.width(),box.height());
+          PointData missingvalue{point, kFloatMissing};
+          pointvalues.push_back(missingvalue);
         }
       }
     }
@@ -239,6 +194,7 @@ PointValues read_gridForecasts(const NumberLayer& layer,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
 
 // ----------------------------------------------------------------------
 /*!
@@ -402,6 +358,8 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
           "{},{},{},{}", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
       // bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+
+      positions->init(producer, projection, valid_time, theState);
     }
     else
     {
@@ -417,7 +375,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (pos != std::string::npos)
     {
       attributeList.addAttribute("areaInterpolationMethod",
-                                 std::to_string(T::AreaInterpolationMethod::Linear));
+                                 std::to_string(T::AreaInterpolationMethod::Nearest));
       pName.erase(pos, 4);
     }
 
@@ -448,11 +406,33 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Fullfilling information into the query object.
 
+    if (positions)
+    {
+      const bool forecast_mode = true;
+      const auto& box = projection.getBox();
+      auto points = positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
+
+      T::Coordinate_vec coordinates;
+      for (const auto& point : points)
+        coordinates.emplace_back(point.latlon.X(),point.latlon.Y());
+
+      originalGridQuery->mAreaCoordinates.push_back(coordinates);
+      originalGridQuery->mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
+    }
+
     for (auto& param : originalGridQuery->mQueryParameterList)
     {
-      param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      param.mType = QueryServer::QueryParameter::Type::Vector;
-      param.mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
+      if (positions)
+      {
+        param.mLocationType = QueryServer::QueryParameter::LocationType::Point;
+        param.mType = QueryServer::QueryParameter::Type::PointValues;
+      }
+      else
+      {
+        param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+        param.mType = QueryServer::QueryParameter::Type::Vector;
+        param.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
+      }
 
       if (geometryId)
         param.mGeometryId = *geometryId;
@@ -604,7 +584,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // use_observations is true, obsengine is not disabled.
 
     PointValues pointvalues;
-    pointvalues = read_gridForecasts(*this, gridEngine, *originalGridQuery, crs, box, valid_time);
+    pointvalues = read_gridForecasts(*this, gridEngine, *originalGridQuery, crs, box, valid_time, theState);
 
     pointvalues = prioritize(pointvalues, point_value_options);
 
