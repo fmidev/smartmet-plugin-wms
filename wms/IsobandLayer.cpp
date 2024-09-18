@@ -509,7 +509,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (pos != std::string::npos)
     {
       attributeList.addAttribute("areaInterpolationMethod",
-                                 std::to_string(T::AreaInterpolationMethod::Linear));
+                                 std::to_string(T::AreaInterpolationMethod::Nearest));
       pName.erase(pos, 4);
     }
 

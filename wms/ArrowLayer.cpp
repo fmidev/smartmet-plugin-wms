@@ -284,6 +284,8 @@ PointValues read_forecasts(const ArrowLayer& layer,
   }
 }  // namespace Dali
 
+
+
 PointValues read_gridForecasts(const ArrowLayer& layer,
                                const Engine::Grid::Engine* gridEngine,
                                QueryServer::Query& query,
@@ -293,8 +295,10 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
                                std::optional<std::string> vParam,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
-                               const Fmi::DateTime& valid_time)
+                               const Fmi::DateTime& valid_time,
+                               const State& state)
 {
+
   try
   {
     if (!gridEngine || !gridEngine->isEnabled())
@@ -302,141 +306,120 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
 
     // Generate the coordinates for the symbols
 
-    // const bool forecast_mode = true;
-    // auto points = layer.positions->getPoints(nullptr, crs, box, forecast_mode);
+    const bool forecast_mode = true;
+    auto points = layer.positions->getPoints(nullptr, crs, box, forecast_mode, state);
 
     PointValues pointvalues;
 
-    int width = 0;
-    int height = 0;
-    int originalWidth = 0;
-    int originalHeight = 0;
-    int relativeUV = 0;
-
-    const char* widthStr = query.mAttributeList.getAttributeValue("grid.width");
-    const char* heightStr = query.mAttributeList.getAttributeValue("grid.height");
-    const char* originalCrs = query.mAttributeList.getAttributeValue("grid.original.crs");
-    const char* originalRelativeUVStr =
-        query.mAttributeList.getAttributeValue("grid.original.relativeUV");
-    const char* originalWidthStr = query.mAttributeList.getAttributeValue("grid.original.width");
-    const char* originalHeightStr = query.mAttributeList.getAttributeValue("grid.original.height");
-
-    if (widthStr)
-      width = Fmi::stoi(widthStr);
-
-    if (heightStr)
-      height = Fmi::stoi(heightStr);
-
-    if (originalRelativeUVStr)
-      relativeUV = Fmi::stoi(originalRelativeUVStr);
-
-    if (originalWidthStr)
-      originalWidth = Fmi::stoi(originalWidthStr);
-
-    if (originalHeightStr)
-      originalHeight = Fmi::stoi(originalHeightStr);
-
-    T::ParamValue_vec* dirValues = nullptr;
-    T::ParamValue_vec* speedValues = nullptr;
-    T::ParamValue_vec* vValues = nullptr;
-    T::ParamValue_vec* uValues = nullptr;
-    uint originalGeometryId = 0;
+    T::GridValueList* dirValues = nullptr;
+    T::GridValueList* speedValues = nullptr;
+    T::GridValueList* vValues = nullptr;
+    T::GridValueList* uValues = nullptr;
+    //uint originalGeometryId = 0;
 
     for (const auto& param : query.mQueryParameterList)
     {
       for (const auto& val : param.mValueList)
       {
-        if (!val->mValueVector.empty())
+        if (val->mValueList.getLength() == points.size())
         {
-          originalGeometryId = val->mGeometryId;
+          //originalGeometryId = val->mGeometryId;
 
           if (dirParam && param.mParam == *dirParam)
-            dirValues = &val->mValueVector;
+            dirValues = &val->mValueList;
           else if (speedParam && param.mParam == *speedParam)
-            speedValues = &val->mValueVector;
+            speedValues = &val->mValueList;
           else if (vParam && param.mParam == *vParam)
-            vValues = &val->mValueVector;
+            vValues = &val->mValueList;
           else if (uParam && param.mParam == *uParam)
-            uValues = &val->mValueVector;
+            uValues = &val->mValueList;
         }
       }
     }
 
-    auto points = layer.positions->getPoints(
-        originalCrs, originalWidth, originalHeight, originalGeometryId, crs, box);
-
-    if (dirValues && !dirValues->empty())
+    if (dirValues && dirValues->getLength())
     {
-      for (const auto& point : points)
+      uint len = dirValues->getLength();
+      for (uint t=0; t<len; t++)
       {
-        double wdir = ParamValueMissing;
-        if (layer.inside(box, point.x, point.y))
-        {
-          size_t pos = (height - point.y - 1) * width + point.x;
+        auto point = points[t];
+        T::GridValue *rec = dirValues->getGridValuePtrByIndex(t);
+        T::ParamValue wdir = rec->mValue;
 
-          if (pos < dirValues->size())
+        if (wdir != ParamValueMissing)
+        {
+          T::ParamValue wspeed = 0;
+          if (speedValues)
           {
-            wdir = (*dirValues)[pos];
-            double wspeed = 0;
-            if (speedValues)
-              wspeed = (*speedValues)[pos];
+            T::GridValue *srec = speedValues->getGridValuePtrByIndex(t);
+            if (srec)
+              wspeed = srec->mValue;
             else
               wspeed = 10;
+          }
+          else
+            wspeed = 10;
 
-            if (wdir != ParamValueMissing && wspeed != ParamValueMissing)
-            {
-              PointData value{point, wspeed, wdir};
-              pointvalues.push_back(value);
-              // printf("POS %d,%d  %f %f\n",point.x, point.y,point.latlon.X(), point.latlon.Y());
-            }
+          if (wspeed != ParamValueMissing)
+          {
+            PointData value{point, wspeed, wdir};
+            pointvalues.push_back(value);
+             // printf("POS %d,%d  %f %f\n",point.x, point.y,point.latlon.X(), point.latlon.Y());
           }
         }
       }
       return pointvalues;
     }
 
-    if (uValues && vValues && uValues->size() == vValues->size())
+    if (uValues && vValues && uValues->getLength() && vValues->getLength())
     {
+
+      int relativeUV = 0;
+      const char* originalRelativeUVStr = query.mAttributeList.getAttributeValue("grid.original.relativeUV");
+      const char* originalCrs = query.mAttributeList.getAttributeValue("grid.original.crs");
+
+      if (originalRelativeUVStr)
+        relativeUV = Fmi::stoi(originalRelativeUVStr);
+
+
       // We may need to convert relative U/V components to true north
       std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
 
       if (relativeUV && originalCrs)
         uvtransformation.reset(new Fmi::CoordinateTransformation("WGS84", originalCrs));
 
-      for (const auto& point : points)
+      uint len = vValues->getLength();
+      for (uint t=0; t<len; t++)
       {
-        if (layer.inside(box, point.x, point.y))
+        auto point = points[t];
+        T::GridValue *vrec = vValues->getGridValuePtrByIndex(t);
+        T::ParamValue v = vrec->mValue;
+
+        T::GridValue *urec = uValues->getGridValuePtrByIndex(t);
+        T::ParamValue u = urec->mValue;
+
+        double wdir = ParamValueMissing;
+        double wspeed = 0;
+
+        if (v != ParamValueMissing  &&  u != ParamValueMissing)
         {
-          size_t pos = (height - point.y - 1) * width + point.x;
+          wspeed = sqrt(u * u + v * v);
 
-          if (pos < vValues->size())
+          if (!uvtransformation)
+            wdir = fmod(180 + 180 / pi * atan2(u, v), 360);
+          else
           {
-            double wdir = ParamValueMissing;
-            double wspeed = 0;
-            double v = (*vValues)[pos];
-            double u = (*uValues)[pos];
-            if (u != ParamValueMissing && v != ParamValueMissing)
-            {
-              wspeed = sqrt(u * u + v * v);
-
-              if (!uvtransformation)
-                wdir = fmod(180 + 180 / pi * atan2(u, v), 360);
-              else
-              {
-                auto rot =
-                    Fmi::OGR::gridNorth(*uvtransformation, point.latlon.X(), point.latlon.Y());
-                if (!rot)
-                  continue;
-                wdir = fmod(180 - *rot + 180 / pi * atan2(u, v), 360);
-              }
-            }
-
-            if (wdir != ParamValueMissing && wspeed != ParamValueMissing)
-            {
-              PointData value{point, wspeed, wdir};
-              pointvalues.push_back(value);
-            }
+            auto rot = Fmi::OGR::gridNorth(*uvtransformation, point.latlon.X(), point.latlon.Y());
+            if (!rot)
+              continue;
+            wdir = fmod(180 - *rot + 180 / pi * atan2(u, v), 360);
           }
+        }
+
+        if (wdir != ParamValueMissing && wspeed != ParamValueMissing)
+        {
+          PointData value{point, wspeed, wdir};
+          pointvalues.push_back(value);
         }
       }
       return pointvalues;
@@ -449,6 +432,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
     throw Fmi::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
   }
 }
+
 
 // ----------------------------------------------------------------------
 /*!
@@ -639,6 +623,8 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
           "{},{},{},{}", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
       // bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+
+      positions->init(producer, projection, valid_time, theState);
     }
     else
     {
@@ -646,6 +632,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       // that we we do not know the actual projection yet and we have to wait that the grid-engine
       // delivers us the requested data and the projection information of the current data.
     }
+
 
     // Adding parameter information into the query.
 
@@ -657,7 +644,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       if (pos != std::string::npos)
       {
         attributeList.addAttribute("areaInterpolationMethod",
-                                   std::to_string(T::AreaInterpolationMethod::Linear));
+                                   std::to_string(T::AreaInterpolationMethod::Nearest));
         pName.erase(pos, 4);
       }
 
@@ -695,11 +682,33 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Filling information into the query object.
 
+    if (positions)
+    {
+      const bool forecast_mode = true;
+      const auto& box = projection.getBox();
+      auto points = positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
+
+      T::Coordinate_vec coordinates;
+      for (const auto& point : points)
+        coordinates.emplace_back(point.latlon.X(),point.latlon.Y());
+
+      originalGridQuery->mAreaCoordinates.push_back(coordinates);
+      originalGridQuery->mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
+    }
+
     for (auto& param : originalGridQuery->mQueryParameterList)
     {
-      param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      param.mType = QueryServer::QueryParameter::Type::Vector;
-      param.mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
+      if (positions)
+      {
+        param.mLocationType = QueryServer::QueryParameter::LocationType::Point;
+        param.mType = QueryServer::QueryParameter::Type::PointValues;
+      }
+      else
+      {
+        param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+        param.mType = QueryServer::QueryParameter::Type::Vector;
+        param.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
+      }
 
       if (geometryId)
         param.mGeometryId = *geometryId;
@@ -851,7 +860,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // Establish the relevant numbers
 
     PointValues pointvalues =
-        read_gridForecasts(*this, gridEngine, *query, direction, speed, u, v, crs, box, valid_time);
+        read_gridForecasts(*this, gridEngine, *query, direction, speed, u, v, crs, box, valid_time, theState);
 
     // Coordinate transformation from WGS84 to output SRS so that we can rotate
     // winds according to map north

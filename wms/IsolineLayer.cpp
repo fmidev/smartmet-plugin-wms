@@ -396,7 +396,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   if (pos != std::string::npos)
   {
     attributeList.addAttribute("areaInterpolationMethod",
-                               std::to_string(T::AreaInterpolationMethod::Linear));
+                               std::to_string(T::AreaInterpolationMethod::Nearest));
     pName.erase(pos, 4);
   }
 

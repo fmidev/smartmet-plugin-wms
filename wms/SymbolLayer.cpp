@@ -153,29 +153,16 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
     auto points = layer.positions->getPoints(nullptr, crs, box, forecast_mode, state);
 
     PointValues pointvalues;
-
-    int width = 0;
-    int height = 0;
-
-    const char* widthStr = query.mAttributeList.getAttributeValue("grid.width");
-    const char* heightStr = query.mAttributeList.getAttributeValue("grid.height");
-
-    if (widthStr)
-      width = Fmi::stoi(widthStr);
-
-    if (heightStr)
-      height = Fmi::stoi(heightStr);
-
-    T::ParamValue_vec* values = nullptr;
-
+    T::GridValueList* values = nullptr;
     for (const auto& param : query.mQueryParameterList)
     {
       for (const auto& val : param.mValueList)
       {
-        if (!val->mValueVector.empty())
-          values = &val->mValueVector;
+        if (val->mValueList.getLength() == points.size())
+          values = &val->mValueList;
       }
     }
+
     if (layer.symbols.empty())
     {
       for (const auto& point : points)
@@ -187,34 +174,22 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
         }
       }
     }
-    else if (values && !values->empty())
+    else if (values && values->getLength())
     {
-      for (const auto& point : points)
+      uint len = values->getLength();
+      for (uint t=0; t<len; t++)
       {
-        if (layer.inside(box, point.x, point.y))
-        {
-          size_t pos = (height - point.y - 1) * width + point.x;
+        T::GridValue *rec = values->getGridValuePtrByIndex(t);
+        auto point = points[t];
 
-          if (pos < values->size())
-          {
-            double tmp = (*values)[pos];
-            if (tmp != ParamValueMissing)
-            {
-              pointvalues.push_back(PointData{point, tmp});
-            }
-            else
-            {
-              PointData missingvalue{point, kFloatMissing};
-              pointvalues.push_back(missingvalue);
-            }
-            // printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(),
-            // point.latlon.Y(),tmp);
-          }
-          else
-          {
-            PointData missingvalue{point, kFloatMissing};
-            pointvalues.push_back(missingvalue);
-          }
+        if (rec->mValue != ParamValueMissing)
+        {
+          pointvalues.push_back(PointData{point,rec->mValue});
+        }
+        else
+        {
+          PointData missingvalue{point, kFloatMissing};
+          pointvalues.push_back(missingvalue);
         }
       }
     }
@@ -226,6 +201,7 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
 
 // ----------------------------------------------------------------------
 /*!
@@ -401,6 +377,8 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       const auto& box = projection.getBox();
       bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+
+      positions->init(producer, projection, valid_time, theState);
     }
     else
     {
@@ -425,7 +403,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (pos != std::string::npos)
     {
       attributeList.addAttribute("areaInterpolationMethod",
-                                 std::to_string(T::AreaInterpolationMethod::Linear));
+                                 std::to_string(T::AreaInterpolationMethod::Nearest));
       pName.erase(pos, 4);
     }
 
@@ -456,11 +434,35 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Fullfilling information into the query object.
 
+
+    if (positions)
+    {
+      const bool forecast_mode = true;
+      const auto& box = projection.getBox();
+      auto points = positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
+
+      T::Coordinate_vec coordinates;
+      for (const auto& point : points)
+        coordinates.emplace_back(point.latlon.X(),point.latlon.Y());
+
+      originalGridQuery->mAreaCoordinates.push_back(coordinates);
+      originalGridQuery->mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
+    }
+
     for (auto& param : originalGridQuery->mQueryParameterList)
     {
-      param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-      param.mType = QueryServer::QueryParameter::Type::Vector;
-      param.mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
+      if (positions)
+      {
+        param.mLocationType = QueryServer::QueryParameter::LocationType::Point;
+        param.mType = QueryServer::QueryParameter::Type::PointValues;
+      }
+      else
+      {
+        param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+        param.mType = QueryServer::QueryParameter::Type::Vector;
+        param.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
+        //param.mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
+      }
 
       if (geometryId)
         param.mGeometryId = *geometryId;
@@ -522,13 +524,13 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     }
 
     // The Query object before the query execution.
-    // query.print(std::cout,0,0);
+    // originalGridQuery->print(std::cout,0,0);
 
     // Executing the query.
     std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
 
     // The Query object after the query execution.
-    // query.print(std::cout,0,0);
+    //query->print(std::cout,0,0);
 
     // Extracting the projection information from the query result.
 
