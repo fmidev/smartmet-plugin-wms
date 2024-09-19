@@ -65,7 +65,7 @@ void Properties::init(Json::Value& theJson, const State& theState, const Config&
       elevation_unit = *theState.getRequest().getParameter("elevation_unit");
 
     JsonTools::remove_double(pressure, theJson, "pressure");
-    JsonTools::remove_int(levelId, theJson, "levelid");
+    JsonTools::remove_int(levelId, theJson, "levelId");
 
     JsonTools::remove_string(source, theJson, "source");
     if (!source)
