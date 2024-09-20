@@ -253,6 +253,11 @@ void Positions::init(Json::Value& theJson, const Config& theConfig)
         xmargin = json.asInt();
       else if (name == "ymargin")
         ymargin = json.asInt();
+      else if (name == "margin")
+      {
+        xmargin = json.asInt();
+        ymargin = xmargin;
+      }
 
       else if (name == "directionoffset")
         directionoffset = json.asInt();

@@ -2920,7 +2920,8 @@ The table below contains a list of attributes used in this structure.
 <tr><td>latlon</td><td>This layout places symbols at the locations listed by the user.</td></tr>
 <tr><td>graticule</td><td>This layout places symbols along the edges of a NxN graticule grid with a fixed step size in degrees.</td></tr>
 <tr><td>graticulefill</td><td>This layout places symbols along the edges of a NxN graticule grid plus inside the graticule cell while satisfying the set minimum distance condition. This layout is recommended for arrow-layers.</td></tr>
-
+<tr><td>xmargin</td><td>uint</td><td>0</td><td colspan="2">Extra margin for coordinate generation</td></tr>
+<tr><td>ymargin</td><td>uint</td><td>0</td><td colspan="2">Extra margin for coordinate generation</td></tr>
 <tr><td>x</td><td>uint</td><td>5</td><td colspan="2">Grid layout: X-coordinate of the first number</td></tr>
 <tr><td>y</td><td>uint</td><td>5</td><td colspan="2">Grid layout: Y-coordinate of the first number</td></tr>
 <tr><td>dx</td><td>uint</td><td>20</td><td colspan="2">Grid layout: X-coordinate offset to the next number on the same row</td></tr>
@@ -2947,6 +2948,8 @@ The table below contains a list of attributes used in this structure.
 Note: The direction is positive for wind. For currents one may use "rotate"=90 or a negative "directionoffset". If an extra rotation is desired, it is recommended to use a negative offset.
 
 If the layout is not "data" and the producer refers to observations, the generated candidate locations will be snapped to the nearest stations if the "maxdistance" condition set for the layer is satisfied. This way one may for example place candidate points into a grid and get an evenly distributed sample of the full set of stations.
+
+The margins can be used to generate point locations outside the image area. This is useful for example if the symbols to be placed at the locations can be expected to overflow to adjacent WMS tiles. xmargin and ymargin can be set simultaneously using the "margin" setting.
 
 #### Label structure 
 
