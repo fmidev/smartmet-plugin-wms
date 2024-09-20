@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.9.3
+Version: 24.9.20
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -35,7 +35,7 @@ BuildRequires: smartmet-library-timeseries-devel >= 24.8.7
 BuildRequires: smartmet-engine-authentication-devel >= 24.8.7
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 24.8.9
+BuildRequires: smartmet-engine-observation-devel >= 24.9.12
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 24.8.7
 BuildRequires: smartmet-engine-grid-devel >= 24.9.3
@@ -109,7 +109,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-querydata-devel >= 24.9.2
 #TestRequires: smartmet-library-giza-devel >= 24.8.7
 #TestRequires: smartmet-library-trax-devel >= 24.8.7
-#TestRequires: smartmet-library-newbase-devel >= 24.8.7
+#TestRequires: smartmet-library-newbase-devel >= 24.9.17
 #TestRequires: smartmet-library-macgyver-devel >= 24.8.7
 #TestRequires: smartmet-library-spine-devel >= 24.8.12
 #TestRequires: smartmet-library-timeseries-devel >= 24.8.7
@@ -125,7 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 24.8.9
+#TestRequires: smartmet-engine-observation-devel >= 24.9.12
 %endif
 
 %description
@@ -154,6 +154,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Sep 20 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.9.20-1.fmi
+- Fix to levelId handling
+- Fixes to location generation for symbol/number/arrow layers
+
 * Tue Sep  3 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.9.3-1.fmi
 - Repackage due smartmlibrary-grid-data and smartmet-engine-querydata changes
 
