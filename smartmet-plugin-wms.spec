@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 24.9.20
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Sep 20 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.9.20-2.fmi
+- Added a "margin" setting for Positions
+
 * Fri Sep 20 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.9.20-1.fmi
 - Fix to levelId handling
 - Fixes to location generation for symbol/number/arrow layers
