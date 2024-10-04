@@ -425,6 +425,29 @@ int determine_uint(Json::Value& root, const std::string& name)
   }
 }
 
+std::string determine_parameter(Json::Value& root)
+{
+  try
+  {
+    // Normally we use 'parameter', but arrow layers may use 'direction' and 'speed' or 'u' and 'v'
+    std::vector<std::string> names = {"parameter", "direction", "u"};
+
+    for (const auto& name : names)
+    {
+      std::string value = determine_string(root, name);
+
+      if (!value.empty())
+        return value;
+    }
+
+    return {};
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to determine producer!");
+  }
+}
+
 // Read producer info from
 //  1) layer
 //  2) view
@@ -494,7 +517,7 @@ SharedWMSLayer create_wms_layer(const WMSConfig& theWMSConfig, Json::Value& root
       }
       case WMSLayerType::GridDataLayer:
       {
-        auto parameter = determine_string(root, "parameter");
+        auto parameter = determine_parameter(root);
         auto elevation_unit = determine_string(root, "elevation_unit");
         int levelId = determine_int(root, "levelId");
         int forecastType = determine_int(root, "forecastType");
