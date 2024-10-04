@@ -296,20 +296,14 @@ void extract_keyword(Json::Value& root, std::optional<std::set<std::string>>& ke
   }
 }
 
-// Read producer info from
-//  1) layer
-//  2) view
-//  3) product
-//  4) config file
-
-std::string determine_producer(const WMSConfig& theWMSConfig, Json::Value& root)
+std::string determine_string(Json::Value& root, const std::string& name)
 {
   try
   {
-    std::string producer;
+    std::string value;
 
     // From product
-    remove_string(producer, root, "producer");
+    remove_string(value, root, name);
 
     // Iterate views and layers
     Json::Value nulljson;
@@ -320,7 +314,7 @@ std::string determine_producer(const WMSConfig& theWMSConfig, Json::Value& root)
       for (unsigned int i = 0; i < views.size(); i++)
       {
         auto view = views[i];
-        remove_string(producer, view, "producer");
+        remove_string(value, view, name);
 
         auto layers = view.get("layers", nulljson);
         if (!layers.isNull())
@@ -329,13 +323,119 @@ std::string determine_producer(const WMSConfig& theWMSConfig, Json::Value& root)
           for (unsigned int k = 0; k < layers.size(); k++)
           {
             auto layer = layers[k];
-            remove_string(producer, layer, "producer");
-            if (!producer.empty())
-              return producer;
+            remove_string(value, layer, name);
+            if (!value.empty())
+              return value;
           }
         }
       }
     }
+
+    return value;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to determine producer!");
+  }
+}
+
+int determine_int(Json::Value& root, const std::string& name)
+{
+  try
+  {
+    int value = -1;  // allow all levels, types etc, zero would be a requirement
+
+    // From product
+    remove_int(value, root, name);
+
+    // Iterate views and layers
+    Json::Value nulljson;
+    auto views = root.get("views", nulljson);
+    if (!views.isNull())
+    {
+      // Iterate views
+      for (unsigned int i = 0; i < views.size(); i++)
+      {
+        auto view = views[i];
+        remove_int(value, view, name);
+
+        auto layers = view.get("layers", nulljson);
+        if (!layers.isNull())
+        {
+          // Iterate layers
+          for (unsigned int k = 0; k < layers.size(); k++)
+          {
+            auto layer = layers[k];
+            remove_int(value, layer, name);
+            if (value != 0)
+              return value;
+          }
+        }
+      }
+    }
+
+    return value;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to determine " + name);
+  }
+}
+
+int determine_uint(Json::Value& root, const std::string& name)
+{
+  try
+  {
+    uint value = 0;
+
+    // From product
+    remove_uint(value, root, name);
+
+    // Iterate views and layers
+    Json::Value nulljson;
+    auto views = root.get("views", nulljson);
+    if (!views.isNull())
+    {
+      // Iterate views
+      for (unsigned int i = 0; i < views.size(); i++)
+      {
+        auto view = views[i];
+        remove_uint(value, view, name);
+
+        auto layers = view.get("layers", nulljson);
+        if (!layers.isNull())
+        {
+          // Iterate layers
+          for (unsigned int k = 0; k < layers.size(); k++)
+          {
+            auto layer = layers[k];
+            remove_uint(value, layer, name);
+            if (value != 0)
+              return value;
+          }
+        }
+      }
+    }
+
+    return value;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to determine " + name);
+  }
+}
+
+// Read producer info from
+//  1) layer
+//  2) view
+//  3) product
+//  4) config file
+
+std::string determine_producer(const WMSConfig& theWMSConfig, Json::Value& root)
+{
+  try
+  {
+    std::string producer = determine_string(root, "producer");
 
     if (!producer.empty())
       return producer;
@@ -349,194 +449,18 @@ std::string determine_producer(const WMSConfig& theWMSConfig, Json::Value& root)
   }
 }
 
-std::optional<std::string> determine_source(Json::Value& root)
-{
-  try
-  {
-    std::optional<std::string> source;
-
-    // From product
-    remove_string(source, root, "source");
-
-    // Iterate views and layers
-    Json::Value nulljson;
-    auto views = root.get("views", nulljson);
-    if (!views.isNull())
-    {
-      // Iterate views
-      for (unsigned int i = 0; i < views.size(); i++)
-      {
-        auto view = views[i];
-        remove_string(source, view, "source");
-
-        auto layers = view.get("layers", nulljson);
-        if (!layers.isNull())
-        {
-          // Iterate layers
-          for (unsigned int k = 0; k < layers.size(); k++)
-          {
-            auto layer = layers[k];
-            remove_string(source, layer, "source");
-            if (source)
-              return source;
-          }
-        }
-      }
-    }
-
-    return source;
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Failed to determine producer!");
-  }
-}
-
-
-
-std::string determine_elevation_unit(Json::Value& root)
-{
-  try
-  {
-    std::string elevation_unit;
-
-    // From product
-    remove_string(elevation_unit, root, "elevation_unit");
-
-    // Iterate views and layers
-    Json::Value nulljson;
-    auto views = root.get("views", nulljson);
-    if (!views.isNull())
-    {
-      // Iterate views
-      for (unsigned int i = 0; i < views.size(); i++)
-      {
-        auto view = views[i];
-        remove_string(elevation_unit, view, "elevation_unit");
-
-        auto layers = view.get("layers", nulljson);
-        if (!layers.isNull())
-        {
-          // Iterate layers
-          for (unsigned int k = 0; k < layers.size(); k++)
-          {
-            auto layer = layers[k];
-            remove_string(elevation_unit, layer, "elevation_unit");
-            if (!elevation_unit.empty())
-              return elevation_unit;
-          }
-        }
-      }
-    }
-
-    return elevation_unit;
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Failed to determine producer!");
-  }
-}
-
-
-std::string determine_parameter(Json::Value& root)
-{
-  try
-  {
-    std::string parameter;
-
-    // From product
-    remove_string(parameter, root, "parameter");
-
-    // Iterate views and layers
-    Json::Value nulljson;
-    auto views = root.get("views", nulljson);
-    if (!views.isNull())
-    {
-      // Iterate views
-      for (unsigned int i = 0; i < views.size(); i++)
-      {
-        auto view = views[i];
-        remove_string(parameter, view, "parameter");
-
-        auto layers = view.get("layers", nulljson);
-        if (!layers.isNull())
-        {
-          // Iterate layers
-          for (unsigned int k = 0; k < layers.size(); k++)
-          {
-            auto layer = layers[k];
-            remove_string(parameter, layer, "parameter");
-            if (!parameter.empty())
-              return parameter;
-          }
-        }
-      }
-    }
-
-    return parameter;
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Failed to determine producer!");
-  }
-}
-
-
-uint determine_geometryId(Json::Value& root)
-{
-  try
-  {
-    uint geometryId = 0;
-
-    // From product
-    remove_uint(geometryId, root, "geometryId");
-
-    // Iterate views and layers
-    Json::Value nulljson;
-    auto views = root.get("views", nulljson);
-    if (!views.isNull())
-    {
-      // Iterate views
-      for (unsigned int i = 0; i < views.size(); i++)
-      {
-        auto view = views[i];
-        remove_uint(geometryId, view, "geometryId");
-
-        auto layers = view.get("layers", nulljson);
-        if (!layers.isNull())
-        {
-          // Iterate layers
-          for (unsigned int k = 0; k < layers.size(); k++)
-          {
-            auto layer = layers[k];
-            remove_uint(geometryId, layer, "geometryId");
-            if (geometryId != 0)
-              return geometryId;
-          }
-        }
-      }
-    }
-
-    return geometryId;
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Failed to determine geometryId!");
-  }
-}
-
 SharedWMSLayer create_wms_layer(const WMSConfig& theWMSConfig, Json::Value& root)
 {
   try
   {
     auto producer = determine_producer(theWMSConfig, root);
-    uint geometryId = determine_geometryId(root);
-    std::optional<std::string> source = determine_source(root);
+    uint geometryId = determine_uint(root, "geometryId");
+    std::string source = determine_string(root, "source");
 
     Json::Value parsedLayer;
     WMSLayerType layerType = determine_product_type(theWMSConfig, producer, root, parsedLayer);
 
-    if (source == std::string("grid"))
+    if (source == "grid")
     {
       layerType = WMSLayerType::GridDataLayer;
 
@@ -570,9 +494,12 @@ SharedWMSLayer create_wms_layer(const WMSConfig& theWMSConfig, Json::Value& root
       }
       case WMSLayerType::GridDataLayer:
       {
-        auto parameter = determine_parameter(root);
-        auto elevation_unit = determine_elevation_unit(root);
-        layer = std::make_shared<WMSGridDataLayer>(theWMSConfig, producer, parameter, geometryId, elevation_unit);
+        auto parameter = determine_string(root, "parameter");
+        auto elevation_unit = determine_string(root, "elevation_unit");
+        int levelId = determine_int(root, "levelId");
+        int forecastType = determine_int(root, "forecastType");
+        layer = std::make_shared<WMSGridDataLayer>(
+            theWMSConfig, producer, parameter, forecastType, geometryId, levelId, elevation_unit);
         break;
       }
       case WMSLayerType::ObservationLayer:
@@ -584,8 +511,7 @@ SharedWMSLayer create_wms_layer(const WMSConfig& theWMSConfig, Json::Value& root
           timestep = "-1";
         // timestep -1 indicates that no timestep is given in product-file
         // in that case timestep is read from obsengine configuration file (default value is 1min)
-        layer =
-            std::make_shared<WMSObservationLayer>(theWMSConfig, producer, std::stoi(timestep));
+        layer = std::make_shared<WMSObservationLayer>(theWMSConfig, producer, std::stoi(timestep));
 #endif
         break;
       }

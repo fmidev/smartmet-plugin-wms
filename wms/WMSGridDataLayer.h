@@ -25,7 +25,9 @@ class WMSGridDataLayer : public WMSLayer
   WMSGridDataLayer(const WMSConfig& config,
                    std::string producer,
                    std::string parameter,
+                   int forecastType,
                    uint geometryId,
+                   int levelId,
                    std::string elevation_unit);
 
  protected:
@@ -35,7 +37,9 @@ class WMSGridDataLayer : public WMSLayer
   const Engine::Grid::Engine* itsGridEngine;
   const std::string itsProducer;
   const std::string itsParameter;
-  uint itsGeometryId;
+  int itsForecastType = 0;
+  uint itsGeometryId = 0;
+  int itsLevelId = 0;
   std::string itsElevationUnit;
 };
 
