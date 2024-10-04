@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.9.20
-Release: 2%{?dist}.fmi
+Version: 24.10.4
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -154,6 +154,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Oct  4 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.10.4-1.fmi
+- Fixed GetCapabilities to handle levelId, forecastType and geometryId settings properly
+- Fixed GetCapabilities to handle arrow layer parameters
+
 * Fri Sep 20 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.9.20-2.fmi
 - Added a "margin" setting for Positions
 
