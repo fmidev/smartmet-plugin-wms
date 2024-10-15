@@ -662,19 +662,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
     if (!q)
       throw Fmi::Exception(BCP, "Cannot resample without gridded data");
 
-    auto demdata = theState.getGeoEngine().dem();
-    auto landdata = theState.getGeoEngine().landCover();
-
-    q = q->sample(param,
-                  valid_time,
-                  crs,
-                  box.xmin(),
-                  box.ymin(),
-                  box.xmax(),
-                  box.ymax(),
-                  *sampleresolution,
-                  demdata,
-                  landdata);
+    q = q->sample(
+        param, valid_time, crs, box.xmin(), box.ymin(), box.xmax(), box.ymax(), *sampleresolution);
   }
 
   if (!q)

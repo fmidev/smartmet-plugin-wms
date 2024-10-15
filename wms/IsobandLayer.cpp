@@ -1002,9 +1002,6 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
         timer2 = std::make_unique<boost::timer::auto_cpu_timer>(2, report2);
       }
 
-      auto demdata = theState.getGeoEngine().dem();
-      auto landdata = theState.getGeoEngine().landCover();
-
       q = q->sample(param,
                     valid_time,
                     crs,
@@ -1012,9 +1009,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
                     box.ymin(),
                     box.xmax(),
                     box.ymax(),
-                    *sampleresolution,
-                    demdata,
-                    landdata);
+                    *sampleresolution);
     }
     else if (heatmap.resolution)
     {
