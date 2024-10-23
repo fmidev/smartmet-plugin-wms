@@ -1,13 +1,13 @@
 #include "Plugin.h"
 #include <boost/algorithm/string.hpp>
-#include <filesystem>
 #include <macgyver/Exception.h>
 #include <macgyver/StaticCleanup.h>
 #include <smartmet/spine/HTTP.h>
 #include <smartmet/spine/Options.h>
 #include <smartmet/spine/Reactor.h>
-#include <csignal>
 #include <algorithm>
+#include <csignal>
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <stdexcept>
@@ -126,10 +126,10 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
       if (command == "quit")
         break;
 
-      using std::filesystem::path;
       using std::cout;
       using std::endl;
       using std::string;
+      using std::filesystem::path;
 
       path inputfile("input");
       inputfile /= command;
@@ -206,7 +206,6 @@ void test(SmartMet::Spine::Options& options, PreludeFunction prelude)
         put_file_contents(resultfile, "");
 
       cout << "DONE" << endl;
-
     }
     reactor->shutdown();
   }
