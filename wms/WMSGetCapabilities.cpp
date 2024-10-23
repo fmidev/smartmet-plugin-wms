@@ -5,12 +5,13 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/range/adaptor/map.hpp>
 #include <boost/range/algorithm/copy.hpp>
-#include <memory>
 #include <ctpp2/CTPP2Logger.hpp>  // logging level defines
+#include <fmt/printf.h>
 #include <macgyver/Exception.h>
 #include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
 #include <algorithm>
+#include <memory>
 
 namespace SmartMet
 {
@@ -217,6 +218,10 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
             .addParameter("protocol", protocol);
       }
     }
+
+    const bool print_hash = Spine::optional_bool(theRequest.getParameter("printhash"), false);
+    if (print_hash)
+      fmt::print("Generated GetCapabilities CDT:\n{}\n", hash.RecursiveDump());
 
     std::string ret;
     std::string log;
