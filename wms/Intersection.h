@@ -7,12 +7,12 @@
 #pragma once
 
 #include "Smoother.h"
-#include <optional>
 #include <engines/gis/Engine.h>
 #include <engines/grid/Engine.h>
 #include <engines/querydata/Engine.h>
 #include <grid-content/queryServer/definition/Query.h>
 #include <json/json.h>
+#include <optional>
 #include <string>
 
 namespace SmartMet

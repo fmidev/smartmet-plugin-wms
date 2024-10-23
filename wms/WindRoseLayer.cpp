@@ -82,10 +82,8 @@ bool is_rose_data_valid(const TS::TimeSeries& directions,
       const double* spd = std::get_if<double>(&speeds[i].value);
       const double* t2m = std::get_if<double>(&temperatures[i].value);
 
-      if (dir != nullptr && spd != nullptr && t2m != nullptr &&
-          *dir != kFloatMissing &&
-          *spd != kFloatMissing &&
-          *t2m != kFloatMissing)
+      if (dir != nullptr && spd != nullptr && t2m != nullptr && *dir != kFloatMissing &&
+          *spd != kFloatMissing && *t2m != kFloatMissing)
       {
         if (first)
           first = false;
@@ -679,10 +677,9 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
  */
 // ----------------------------------------------------------------------
 
-std::map<int, WindRoseData> WindRoseLayer::getObservations(
-    State& theState,
-    const Fmi::DateTime& theStartTime,
-    const Fmi::DateTime& theEndTime) const
+std::map<int, WindRoseData> WindRoseLayer::getObservations(State& theState,
+                                                           const Fmi::DateTime& theStartTime,
+                                                           const Fmi::DateTime& theEndTime) const
 {
   try
   {

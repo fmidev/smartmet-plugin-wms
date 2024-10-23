@@ -29,12 +29,11 @@ class CloudCeilingLayer : public NumberLayer
   //  SmartMet::Spine::TaggedFMISIDList stationFMISIDs;
 
  private:
-  std::vector<PointData> readObservations(
-      State& state,
-      const Fmi::SpatialReference& crs,
-      const Fmi::Box& box,
-      const Fmi::DateTime& valid_time,
-      const Fmi::TimePeriod& valid_time_period) const;
+  std::vector<PointData> readObservations(State& state,
+                                          const Fmi::SpatialReference& crs,
+                                          const Fmi::Box& box,
+                                          const Fmi::DateTime& valid_time,
+                                          const Fmi::TimePeriod& valid_time_period) const;
 
   std::string itsKeyword;
   std::vector<int> itsFMISIDs;

@@ -1,7 +1,7 @@
 #include "WMSLayerHierarchy.h"
-#include <memory>
 #include <boost/regex.hpp>
 #include <macgyver/StringConversion.h>
+#include <memory>
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
@@ -180,7 +180,6 @@ void expand_layer(WMSLayerHierarchy& lh)
   }
 }
 
-
 // Add sublayers recursively
 void add_sublayers(WMSLayerHierarchy& lh,
                    const std::map<std::string, const WMSLayerProxy*>& named_layers,
@@ -191,25 +190,25 @@ void add_sublayers(WMSLayerHierarchy& lh,
   {
     std::string layer_name_prefix = lh.name + ":";
 
-	auto pos = named_layers.lower_bound(layer_name_prefix);
+    auto pos = named_layers.lower_bound(layer_name_prefix);
 
-	for(; pos != named_layers.end(); ++pos)
-	{
+    for (; pos != named_layers.end(); ++pos)
+    {
       const auto& layer_name = pos->first;
       if (boost::algorithm::starts_with(layer_name, layer_name_prefix))
       {
-		if (processed_layers.find(layer_name) != processed_layers.end())
-		  continue;
+        if (processed_layers.find(layer_name) != processed_layers.end())
+          continue;
         processed_layers.insert(layer_name);
         lh.sublayers.push_back(boost::make_shared<WMSLayerHierarchy>(layer_name));
         lh.sublayers.back()->parent = &lh;
         add_sublayers(*lh.sublayers.back(), named_layers, processed_layers, hierarchy_type);
       }
-	  else
-	  {
-		break;
-	  }
-	}
+      else
+      {
+        break;
+      }
+    }
   }
 
   // Leaf layers do not have sublayers
@@ -360,27 +359,23 @@ void add_layer_info(bool multiple_intervals,
 
 }  // namespace
 
-WMSLayerHierarchy::WMSLayerHierarchy(std::string n)
- : name(std::move(n))
- , parent(nullptr)
-{
-}
+WMSLayerHierarchy::WMSLayerHierarchy(std::string n) : name(std::move(n)), parent(nullptr) {}
 
 #ifndef WITHOUT_AUTHENTICATION
 WMSLayerHierarchy::WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
                                      const std::optional<std::string>& wms_namespace,
                                      HierarchyType hierarchy_type,
-									 bool reveal_hidden,
+                                     bool reveal_hidden,
                                      const std::optional<std::string>& apikey,
                                      bool auth,
                                      Engine::Authentication::Engine* authEngine)
-  : name("__root__"), show_hidden(reveal_hidden), authenticate(auth)
+    : name("__root__"), show_hidden(reveal_hidden), authenticate(auth)
 #else
 WMSLayerHierarchy::WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
                                      const std::optional<std::string>& wms_namespace,
                                      HierarchyType hierarchy_type,
-									 bool reveal_hidden)
-  : name("__root__"), show_hidden(reveal_hidden), authenticate(false)
+                                     bool reveal_hidden)
+    : name("__root__"), show_hidden(reveal_hidden), authenticate(false)
 #endif
 {
 #ifndef WITHOUT_AUTHENTICATION
@@ -468,12 +463,11 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
   }
 }
 
-CTPP::CDT WMSLayerHierarchy::getCapabilities(
-    bool multiple_intervals,
-    const std::string& language,
-    const std::optional<std::string>& starttime,
-    const std::optional<std::string>& endtime,
-    const std::optional<std::string>& reference_time) const
+CTPP::CDT WMSLayerHierarchy::getCapabilities(bool multiple_intervals,
+                                             const std::string& language,
+                                             const std::optional<std::string>& starttime,
+                                             const std::optional<std::string>& endtime,
+                                             const std::optional<std::string>& reference_time) const
 {
   // Return array of individual layer capabilities
   CTPP::CDT capa(CTPP::CDT::ARRAY_VAL);

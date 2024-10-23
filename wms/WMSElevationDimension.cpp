@@ -1,9 +1,9 @@
 #include "WMSElevationDimension.h"
 #include <macgyver/Exception.h>
 #include <functional>
+#include <iostream>
 #include <numeric>
 #include <string.h>
-#include <iostream>
 
 namespace SmartMet
 {
@@ -149,28 +149,29 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
   }
 }
 
-
-
 WMSElevationDimension::WMSElevationDimension(std::string level_name,
-                      short level_type,
-                      std::string unit_symbol,
-                      const std::set<int>& elevations,int step)
-: itsLevelName(level_name), itsLevelType(level_type), itsElevations(elevations)
+                                             short level_type,
+                                             std::string unit_symbol,
+                                             const std::set<int>& elevations,
+                                             int step)
+    : itsLevelName(level_name), itsLevelType(level_type), itsElevations(elevations)
 {
   try
   {
     auto comma_fold = [](std::string a, int b) { return std::move(a) + ',' + std::to_string(b); };
 
-    if (strcasecmp(itsLevelName.c_str(),"PRESSURE") == 0)
+    if (strcasecmp(itsLevelName.c_str(), "PRESSURE") == 0)
     {
-      if (*elevations.begin() <= 1000 || (*elevations.rbegin() <= 1000  &&  elevations.size() > 1))
+      if (*elevations.begin() <= 1000 || (*elevations.rbegin() <= 1000 && elevations.size() > 1))
         itsUnitSymbol = "hPa";
       else
         itsUnitSymbol = "Pa";
 
       // start with last element
-      itsCapabilities = std::accumulate(std::next(elevations.rbegin()),elevations.rend(),
-          std::to_string(*elevations.rbegin()),comma_fold);
+      itsCapabilities = std::accumulate(std::next(elevations.rbegin()),
+                                        elevations.rend(),
+                                        std::to_string(*elevations.rbegin()),
+                                        comma_fold);
     }
     else
     {
@@ -178,35 +179,34 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
 
       itsUnitSymbol = unit_symbol;
       char buf[100];
-      if (elevations.size() > 1  &&  step > 0)
+      if (elevations.size() > 1 && step > 0)
       {
-        sprintf(buf,"%d/%d/%d",*elevations.begin(),*elevations.rbegin(),step);
+        sprintf(buf, "%d/%d/%d", *elevations.begin(), *elevations.rbegin(), step);
+        itsCapabilities = buf;
+      }
+      else if (elevations.size() > 1 &&
+               (int)(*elevations.begin() + elevations.size() - 1) == *elevations.rbegin())
+      {
+        sprintf(buf, "%d/%d/1", *elevations.begin(), *elevations.rbegin());
         itsCapabilities = buf;
       }
       else
-      if (elevations.size() > 1  &&  (int)(*elevations.begin() + elevations.size() - 1) == *elevations.rbegin())
       {
-        sprintf(buf,"%d/%d/1",*elevations.begin(),*elevations.rbegin());
-        itsCapabilities = buf;
-      }
-      else
-      {
-        itsCapabilities = std::accumulate(std::next(elevations.begin()),elevations.end(),
-                        std::to_string(*elevations.begin()), comma_fold);
+        itsCapabilities = std::accumulate(std::next(elevations.begin()),
+                                          elevations.end(),
+                                          std::to_string(*elevations.begin()),
+                                          comma_fold);
       }
     }
 
-    //std::cout << "CAPABILITIES : " << itsLevelName << " : " << itsUnitSymbol << " : " << itsCapabilities << "\n";
+    // std::cout << "CAPABILITIES : " << itsLevelName << " : " << itsUnitSymbol << " : " <<
+    // itsCapabilities << "\n";
   }
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Checking GetLegendGraphic options failed!");
   }
 }
-
-
-
-
 
 bool WMSElevationDimension::isValidElevation(int elevation) const
 {
@@ -218,7 +218,7 @@ std::string WMSElevationDimension::getDefaultElevation() const
   if (itsElevations.empty())
     return "";
 
-  if (itsLevelType == kFmiPressureLevel  || itsLevelType == 2)
+  if (itsLevelType == kFmiPressureLevel || itsLevelType == 2)
     return std::to_string(*itsElevations.rbegin());
 
   return std::to_string(*itsElevations.begin());

@@ -225,8 +225,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(State& theState)
       {
         param.mParameterLevel = C_INT(*level);
       }
-      else
-      if (pressure)
+      else if (pressure)
       {
         param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
         param.mParameterLevel = C_INT(*pressure);

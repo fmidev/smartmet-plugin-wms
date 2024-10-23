@@ -6,8 +6,8 @@
 
 #pragma once
 
-#include <optional>
 #include <json/json.h>
+#include <optional>
 
 namespace SmartMet
 {

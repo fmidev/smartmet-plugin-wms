@@ -14,14 +14,14 @@
 #include "WMSLegendGraphicSettings.h"
 #include "WMSSupportedReference.h"
 #include "WMSTimeDimension.h"
-#include <macgyver/DateTime.h>
-#include <memory>
 #include <ctpp2/CDT.hpp>
 #include <gis/BBox.h>
+#include <macgyver/DateTime.h>
 #include <spine/Json.h>
 #include <spine/Value.h>
 #include <list>
 #include <map>
+#include <memory>
 #include <set>
 
 namespace SmartMet
@@ -130,13 +130,12 @@ class WMSLayer
   const std::optional<int>& getHeight() const { return height; }
 
   // returns the most current valid time for the layer
-  Fmi::DateTime mostCurrentTime(
-      const std::optional<Fmi::DateTime>& reference_time) const;
+  Fmi::DateTime mostCurrentTime(const std::optional<Fmi::DateTime>& reference_time) const;
   // Empty for hidden layers
 
   std::optional<CTPP::CDT> generateGetCapabilities(
       bool multiple_intervals,
-	  bool show_hidden,
+      bool show_hidden,
       const Engine::Gis::Engine& gisengine,
       const std::string& language,
       const std::optional<std::string>& starttime,

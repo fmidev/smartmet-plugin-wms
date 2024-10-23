@@ -9,11 +9,10 @@ namespace Dali
 {
 namespace AggregationUtility
 {
-TS::TimeSeriesGenerator::LocalTimeList get_tlist(
-    const std::list<Fmi::DateTime>& qengine_times,
-    const Fmi::DateTime& valid_time,
-    unsigned int interval_behind,
-    unsigned int interval_ahead)
+TS::TimeSeriesGenerator::LocalTimeList get_tlist(const std::list<Fmi::DateTime>& qengine_times,
+                                                 const Fmi::DateTime& valid_time,
+                                                 unsigned int interval_behind,
+                                                 unsigned int interval_ahead)
 {
   try
   {
@@ -121,8 +120,7 @@ bool set_aggregation_period(Engine::Observation::Settings& settings,
       return false;
 
     if (aggregationIntervalBehind > 0)
-      settings.starttime =
-          settings.starttime - Fmi::Minutes(aggregationIntervalBehind);
+      settings.starttime = settings.starttime - Fmi::Minutes(aggregationIntervalBehind);
     if (aggregationIntervalAhead > 0)
       settings.endtime = settings.endtime + Fmi::Minutes(aggregationIntervalAhead);
     // Read all observartions
@@ -193,7 +191,7 @@ TS::TimeSeriesVectorPtr prepare_data_for_aggregation(
 
     // Iterate parameters and store values for all parameters
     // into ret data structure
-    for (const auto & parameter : parameters)
+    for (const auto& parameter : parameters)
     {
       const auto& paramname = parameter.name();
       bool is_location_p = is_location_parameter(paramname);
@@ -304,8 +302,8 @@ TS::TimeSeriesVectorPtr aggregate_data(const TS::TimeSeriesVectorPtr& raw_data,
         TS::get_timeseries_by_fmisid(settings.stationtype, raw_data, tlist, fmisid_index);
 
     // Allocate data structure for aggregated data
-    TS::TimeSeriesVectorPtr ret = std::make_shared<TS::TimeSeriesVector>(
-        raw_data->size(), TS::TimeSeries());
+    TS::TimeSeriesVectorPtr ret =
+        std::make_shared<TS::TimeSeriesVector>(raw_data->size(), TS::TimeSeries());
 
     // Iterate locations and do aggregation location by location
     for (const auto& observation_result_location : result_by_location)

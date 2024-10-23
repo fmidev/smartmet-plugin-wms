@@ -12,7 +12,6 @@
 #include "WMSLayerProxy.h"
 #include "WMSLegendGraphicSettings.h"
 #include "WMSSupportedReference.h"
-#include <optional>
 #include <boost/utility.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
@@ -20,11 +19,12 @@
 #include <engines/observation/Engine.h>
 #include <engines/querydata/Engine.h>
 #include <macgyver/AsyncTask.h>
+#include <macgyver/AtomicSharedPtr.h>
 #include <spine/JsonCache.h>
 #include <spine/Thread.h>
-#include <macgyver/AtomicSharedPtr.h>
 #include <libconfig.h++>
 #include <map>
+#include <optional>
 #include <set>
 #include <string>
 #include <vector>
@@ -81,7 +81,7 @@ class WMSConfig
                             const std::optional<std::string>& reference_time,
                             const std::optional<std::string>& wms_namespace,
                             WMSLayerHierarchy::HierarchyType hierarchy_type,
-							bool show_hidden,
+                            bool show_hidden,
                             bool multiple_intervals,
                             bool authenticate = true) const;
 #else
@@ -92,7 +92,7 @@ class WMSConfig
                             const std::optional<std::string>& reference_time,
                             const std::optional<std::string>& wms_namespace,
                             WMSLayerHierarchy::HierarchyType hierarchy_type,
-							bool show_hidden,
+                            bool show_hidden,
                             bool multiple_intervals) const;
 #endif
 
@@ -126,9 +126,8 @@ class WMSConfig
 
   bool isTemporal(const std::string& theLayer) const;
   bool currentValue(const std::string& theLayer) const;
-  Fmi::DateTime mostCurrentTime(
-      const std::string& theLayer,
-      const std::optional<Fmi::DateTime>& reference_time) const;
+  Fmi::DateTime mostCurrentTime(const std::string& theLayer,
+                                const std::optional<Fmi::DateTime>& reference_time) const;
   Json::Value json(const std::string& theLayerName) const;
   std::vector<Json::Value> getLegendGraphic(const std::string& theLayerName,
                                             const std::string& theStyleName,
@@ -162,10 +161,7 @@ class WMSConfig
   WMSLayerHierarchy::HierarchyType getLayerHierarchyType() const { return itsLayerHierarchyType; }
   bool multipleIntervals() const { return itsMultipleIntervals; }
   Fmi::DateTime getCapabilitiesExpirationTime() const;
-  Fmi::DateTime getCapabilitiesModificationTime() const
-  {
-    return itsCapabilitiesModificationTime;
-  }
+  Fmi::DateTime getCapabilitiesModificationTime() const { return itsCapabilitiesModificationTime; }
 
 #ifndef WITHOUT_OBSERVATION
   std::set<std::string> getObservationProducers() const;

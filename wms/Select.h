@@ -17,7 +17,7 @@ namespace Dali
 namespace Select
 {
 std::optional<AttributeSelection> attribute(const std::vector<AttributeSelection> &theSelection,
-                                              double theValue);
+                                            double theValue);
 }  // namespace Select
 }  // namespace Dali
 }  // namespace Plugin

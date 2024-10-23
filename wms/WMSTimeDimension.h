@@ -12,8 +12,8 @@
 #pragma once
 
 #include <macgyver/DateTime.h>
-#include <optional>
 #include <macgyver/Exception.h>
+#include <optional>
 
 #include <list>
 #include <map>
@@ -83,9 +83,7 @@ struct tag_interval
   Fmi::DateTime endTime = Fmi::DateTime::NOT_A_DATE_TIME;
   Fmi::TimeDuration resolution = Fmi::Minutes(1);
 
-  tag_interval(Fmi::DateTime start,
-               Fmi::DateTime end,
-               Fmi::TimeDuration res)
+  tag_interval(Fmi::DateTime start, Fmi::DateTime end, Fmi::TimeDuration res)
       : startTime(start), endTime(end), resolution(std::move(res))
   {
   }
@@ -197,10 +195,8 @@ class WMSTimeDimensions
   const std::vector<Fmi::DateTime>& getOrigintimes() const;
 
   bool isValidReferenceTime(const Fmi::DateTime& origintime) const;
-  bool isValidTime(const Fmi::DateTime& t,
-                   const std::optional<Fmi::DateTime>& origintime) const;
-  Fmi::DateTime mostCurrentTime(
-      const std::optional<Fmi::DateTime>& origintime) const;
+  bool isValidTime(const Fmi::DateTime& t, const std::optional<Fmi::DateTime>& origintime) const;
+  Fmi::DateTime mostCurrentTime(const std::optional<Fmi::DateTime>& origintime) const;
   bool currentValue() const;
   bool isIdentical(const WMSTimeDimensions& td) const;
   void useWallClockTimeAsEndTime(bool wall_clock = true) { itsEndTimeIsWallClockTime = wall_clock; }

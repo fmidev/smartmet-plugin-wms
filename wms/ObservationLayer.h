@@ -9,8 +9,8 @@
 #include "Label.h"
 #include "Layer.h"
 #include "Positions.h"
-#include <optional>
 #include <engines/observation/Settings.h>
+#include <optional>
 
 namespace SmartMet
 {

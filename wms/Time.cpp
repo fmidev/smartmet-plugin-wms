@@ -40,8 +40,7 @@ Fmi::DateTime parse_time(const std::string& theTime)
  */
 // ----------------------------------------------------------------------
 
-Fmi::DateTime parse_time(const std::string& theTime,
-                                    const Fmi::TimeZonePtr& theZone)
+Fmi::DateTime parse_time(const std::string& theTime, const Fmi::TimeZonePtr& theZone)
 {
   try
   {
@@ -68,8 +67,7 @@ Fmi::DateTime parse_time(const std::string& theTime,
  */
 // ----------------------------------------------------------------------
 
-Fmi::TimeZonePtr parse_timezone(const std::string& theName,
-                                                const Fmi::TimeZones& theZones)
+Fmi::TimeZonePtr parse_timezone(const std::string& theName, const Fmi::TimeZones& theZones)
 {
   return theZones.time_zone_from_string(theName);
 }

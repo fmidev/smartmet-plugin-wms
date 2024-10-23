@@ -7,8 +7,8 @@
 #pragma once
 
 #include "WMSLayer.h"
-#include <memory>
 #include <ctpp2/CDT.hpp>
+#include <memory>
 #include <string>
 
 namespace SmartMet
@@ -38,15 +38,20 @@ class WMSLayerProxy
 
   SharedWMSLayer getLayer() const { return itsLayer; }
 
-  std::optional<CTPP::CDT> getCapabilities(
-      bool multiple_intervals,
-	  bool show_hidden,
-      const std::string& language,
-      const std::optional<std::string>& starttime,
-      const std::optional<std::string>& endtime,
-      const std::optional<std::string>& reference_time) const
+  std::optional<CTPP::CDT> getCapabilities(bool multiple_intervals,
+                                           bool show_hidden,
+                                           const std::string& language,
+                                           const std::optional<std::string>& starttime,
+                                           const std::optional<std::string>& endtime,
+                                           const std::optional<std::string>& reference_time) const
   {
-    return itsLayer->generateGetCapabilities(multiple_intervals, show_hidden, *itsGisEngine, language, starttime, endtime, reference_time);
+    return itsLayer->generateGetCapabilities(multiple_intervals,
+                                             show_hidden,
+                                             *itsGisEngine,
+                                             language,
+                                             starttime,
+                                             endtime,
+                                             reference_time);
   }
 
  private:

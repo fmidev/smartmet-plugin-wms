@@ -284,8 +284,6 @@ PointValues read_forecasts(const ArrowLayer& layer,
   }
 }  // namespace Dali
 
-
-
 PointValues read_gridForecasts(const ArrowLayer& layer,
                                const Engine::Grid::Engine* gridEngine,
                                QueryServer::Query& query,
@@ -298,7 +296,6 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
                                const Fmi::DateTime& valid_time,
                                const State& state)
 {
-
   try
   {
     if (!gridEngine || !gridEngine->isEnabled())
@@ -315,7 +312,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
     T::GridValueList* speedValues = nullptr;
     T::GridValueList* vValues = nullptr;
     T::GridValueList* uValues = nullptr;
-    //uint originalGeometryId = 0;
+    // uint originalGeometryId = 0;
 
     for (const auto& param : query.mQueryParameterList)
     {
@@ -323,7 +320,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
       {
         if (val->mValueList.getLength() == points.size())
         {
-          //originalGeometryId = val->mGeometryId;
+          // originalGeometryId = val->mGeometryId;
 
           if (dirParam && param.mParam == *dirParam)
             dirValues = &val->mValueList;
@@ -340,10 +337,10 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
     if (dirValues && dirValues->getLength())
     {
       uint len = dirValues->getLength();
-      for (uint t=0; t<len; t++)
+      for (uint t = 0; t < len; t++)
       {
         auto point = points[t];
-        T::GridValue *rec = dirValues->getGridValuePtrByIndex(t);
+        T::GridValue* rec = dirValues->getGridValuePtrByIndex(t);
         T::ParamValue wdir = rec->mValue;
 
         if (wdir != ParamValueMissing)
@@ -351,7 +348,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
           T::ParamValue wspeed = 0;
           if (speedValues)
           {
-            T::GridValue *srec = speedValues->getGridValuePtrByIndex(t);
+            T::GridValue* srec = speedValues->getGridValuePtrByIndex(t);
             if (srec)
               wspeed = srec->mValue;
             else
@@ -364,7 +361,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
           {
             PointData value{point, wspeed, wdir};
             pointvalues.push_back(value);
-             // printf("POS %d,%d  %f %f\n",point.x, point.y,point.latlon.X(), point.latlon.Y());
+            // printf("POS %d,%d  %f %f\n",point.x, point.y,point.latlon.X(), point.latlon.Y());
           }
         }
       }
@@ -373,14 +370,13 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
 
     if (uValues && vValues && uValues->getLength() && vValues->getLength())
     {
-
       int relativeUV = 0;
-      const char* originalRelativeUVStr = query.mAttributeList.getAttributeValue("grid.original.relativeUV");
+      const char* originalRelativeUVStr =
+          query.mAttributeList.getAttributeValue("grid.original.relativeUV");
       const char* originalCrs = query.mAttributeList.getAttributeValue("grid.original.crs");
 
       if (originalRelativeUVStr)
         relativeUV = Fmi::stoi(originalRelativeUVStr);
-
 
       // We may need to convert relative U/V components to true north
       std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
@@ -389,19 +385,19 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
         uvtransformation.reset(new Fmi::CoordinateTransformation("WGS84", originalCrs));
 
       uint len = vValues->getLength();
-      for (uint t=0; t<len; t++)
+      for (uint t = 0; t < len; t++)
       {
         auto point = points[t];
-        T::GridValue *vrec = vValues->getGridValuePtrByIndex(t);
+        T::GridValue* vrec = vValues->getGridValuePtrByIndex(t);
         T::ParamValue v = vrec->mValue;
 
-        T::GridValue *urec = uValues->getGridValuePtrByIndex(t);
+        T::GridValue* urec = uValues->getGridValuePtrByIndex(t);
         T::ParamValue u = urec->mValue;
 
         double wdir = ParamValueMissing;
         double wspeed = 0;
 
-        if (v != ParamValueMissing  &&  u != ParamValueMissing)
+        if (v != ParamValueMissing && u != ParamValueMissing)
         {
           wspeed = sqrt(u * u + v * v);
 
@@ -432,7 +428,6 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
     throw Fmi::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
   }
 }
-
 
 // ----------------------------------------------------------------------
 /*!
@@ -633,7 +628,6 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       // delivers us the requested data and the projection information of the current data.
     }
 
-
     // Adding parameter information into the query.
 
     std::string paramBuf;
@@ -686,11 +680,12 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     {
       const bool forecast_mode = true;
       const auto& box = projection.getBox();
-      auto points = positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
+      auto points =
+          positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
 
       T::Coordinate_vec coordinates;
       for (const auto& point : points)
-        coordinates.emplace_back(point.latlon.X(),point.latlon.Y());
+        coordinates.emplace_back(point.latlon.X(), point.latlon.Y());
 
       originalGridQuery->mAreaCoordinates.push_back(coordinates);
       originalGridQuery->mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
@@ -722,8 +717,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       {
         param.mParameterLevel = C_INT(*level);
       }
-      else
-      if (pressure)
+      else if (pressure)
       {
         param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
         param.mParameterLevel = C_INT(*pressure);
@@ -859,8 +853,8 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Establish the relevant numbers
 
-    PointValues pointvalues =
-        read_gridForecasts(*this, gridEngine, *query, direction, speed, u, v, crs, box, valid_time, theState);
+    PointValues pointvalues = read_gridForecasts(
+        *this, gridEngine, *query, direction, speed, u, v, crs, box, valid_time, theState);
 
     // Coordinate transformation from WGS84 to output SRS so that we can rotate
     // winds according to map north

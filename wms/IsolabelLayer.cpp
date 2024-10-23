@@ -10,7 +10,6 @@
 #include "Layer.h"
 #include "State.h"
 #include <boost/logic/tribool.hpp>
-#include <optional>
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/contour/Engine.h>
@@ -23,6 +22,7 @@
 #include <spine/Json.h>
 #include <timeseries/ParameterFactory.h>
 #include <limits>
+#include <optional>
 #include <vector>
 
 // #define MYDEBUG 1
@@ -787,19 +787,8 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
 
       // Q API SUCKS!!
       Spine::Location loc(latlon.X(), latlon.Y());
-      Engine::Querydata::ParameterOptions options(param,
-                                                  "",
-                                                  loc,
-                                                  "",
-                                                  "",
-                                                  *timeformatter,
-                                                  "",
-                                                  "",
-                                                  mylocale,
-                                                  "",
-                                                  false,
-                                                  dummy,
-                                                  dummy);
+      Engine::Querydata::ParameterOptions options(
+          param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
 
       auto result = q->value(options, localdatetime);
 

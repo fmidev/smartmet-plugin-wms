@@ -19,7 +19,7 @@ namespace Select
 // ----------------------------------------------------------------------
 
 std::optional<AttributeSelection> attribute(const std::vector<AttributeSelection>& theSelection,
-                                              double theValue)
+                                            double theValue)
 {
   try
   {

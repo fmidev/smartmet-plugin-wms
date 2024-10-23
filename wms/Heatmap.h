@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <optional>
 #include <json/json.h>
 #include <memory>
+#include <optional>
 #include <string>
 
 #include <heatmap/heatmap.h>

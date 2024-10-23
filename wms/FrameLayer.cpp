@@ -51,8 +51,7 @@ void readBoundingBox(const std::string& bbox, FrameDimension& dimension)
   dimension.topLatitude = Fmi::stod(parts[1]);
 }
 
-OGRGeometryPtr createFrameGeometry(const FrameDimension& inner,
-                                   std::optional<FrameDimension> outer)
+OGRGeometryPtr createFrameGeometry(const FrameDimension& inner, std::optional<FrameDimension> outer)
 {
   OGRGeometryPtr pFrameGeom;
 

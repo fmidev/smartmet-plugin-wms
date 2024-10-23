@@ -61,11 +61,10 @@ class PostGISAttributeToString : public boost::static_visitor<std::string>
 
 std::string getMeanTemperatureColumnName(const Fmi::DateTime& t)
 {
-  Fmi::TimePeriod summer_period(
-      Fmi::DateTime(Fmi::Date(t.date().year(), boost::gregorian::Mar, 20),
-                    Fmi::TimeDuration(0, 0, 0)),
-      Fmi::DateTime(Fmi::Date(t.date().year(), boost::gregorian::Oct, 20),
-                    Fmi::TimeDuration(23, 59, 59)));
+  Fmi::TimePeriod summer_period(Fmi::DateTime(Fmi::Date(t.date().year(), boost::gregorian::Mar, 20),
+                                              Fmi::TimeDuration(0, 0, 0)),
+                                Fmi::DateTime(Fmi::Date(t.date().year(), boost::gregorian::Oct, 20),
+                                              Fmi::TimeDuration(23, 59, 59)));
 
   // date must be between 21.10-21.3
   if (summer_period.contains(t))
@@ -545,19 +544,17 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
     std::string second_name;
     std::string name_position = "label_location";
     if (itsParameters.find("firstname_column") != itsParameters.end())
-      first_name =
-          std::visit(PostGISAttributeToString(),
-                               theResultItem.attributes.at(itsParameters.at("firstname_column")));
+      first_name = std::visit(PostGISAttributeToString(),
+                              theResultItem.attributes.at(itsParameters.at("firstname_column")));
 
     if (itsParameters.find("secondname_column") != itsParameters.end())
-      second_name =
-          std::visit(PostGISAttributeToString(),
+      second_name = std::visit(PostGISAttributeToString(),
                                theResultItem.attributes.at(itsParameters.at("secondname_column")));
 
     if (itsParameters.find("nameposition_column") != itsParameters.end())
-      name_position = std::visit(
-          PostGISAttributeToString(),
-          theResultItem.attributes.at(itsParameters.at("nameposition_column")));
+      name_position =
+          std::visit(PostGISAttributeToString(),
+                     theResultItem.attributes.at(itsParameters.at("nameposition_column")));
 
     if (name_position.empty() ||
         !(std::all_of(name_position.begin(), name_position.end(), ::isdigit)))
@@ -570,8 +567,7 @@ void IceMapLayer::handleNamedLocation(const Fmi::Feature& theResultItem,
       std::string angle_column = itsParameters.at("angle_column");
       if (theResultItem.attributes.find(angle_column) != theResultItem.attributes.end())
       {
-        arrow_angle =
-            std::visit(PostGISAttributeToString(),
+        arrow_angle = std::visit(PostGISAttributeToString(),
                                  theResultItem.attributes.at(itsParameters.at("angle_column")));
       }
     }
@@ -616,8 +612,8 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
   if (itsParameters.find("labeltext_column") != itsParameters.end())
     labeltext_column = itsParameters.at("labeltext_column");
   if (theResultItem.attributes.find(labeltext_column) != theResultItem.attributes.end())
-    label_text = std::visit(PostGISAttributeToString(),
-                                      theResultItem.attributes.at(labeltext_column));
+    label_text =
+        std::visit(PostGISAttributeToString(), theResultItem.attributes.at(labeltext_column));
 
   boost::replace_all(label_text, "<", "&#60;");
   boost::replace_all(label_text, ">", "&#62;");
@@ -625,14 +621,14 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
   if (itsParameters.find("fontname_column") != itsParameters.end())
     fontname_column = itsParameters.at("fontname_column");
   if (theResultItem.attributes.find(labeltext_column) != theResultItem.attributes.end())
-    text_style.fontfamily = std::visit(PostGISAttributeToString(),
-                                                 theResultItem.attributes.at(fontname_column));
+    text_style.fontfamily =
+        std::visit(PostGISAttributeToString(), theResultItem.attributes.at(fontname_column));
 
   if (itsParameters.find("fontsize_column") != itsParameters.end())
     fontname_column = itsParameters.at("fontsize_column");
   if (theResultItem.attributes.find(labeltext_column) != theResultItem.attributes.end())
-    text_style.fontsize = std::visit(PostGISAttributeToString(),
-                                               theResultItem.attributes.at(fontsize_column));
+    text_style.fontsize =
+        std::visit(PostGISAttributeToString(), theResultItem.attributes.at(fontsize_column));
 
   // erase decimal part from fontsize
   if (text_style.fontsize.find('.') != std::string::npos)
@@ -869,8 +865,7 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
   // Then add the content to the egg
   std::string egg_text;
   if (theResultItem.attributes.find("textstring") != theResultItem.attributes.end())
-    egg_text =
-        std::visit(PostGISAttributeToString(), theResultItem.attributes.at("textstring"));
+    egg_text = std::visit(PostGISAttributeToString(), theResultItem.attributes.at("textstring"));
 
   std::vector<std::string> rows;
   boost::algorithm::split(rows, egg_text, boost::algorithm::is_any_of("\n"));

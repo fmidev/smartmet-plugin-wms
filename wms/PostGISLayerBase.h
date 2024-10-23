@@ -9,9 +9,9 @@
 #include "Attributes.h"
 #include "Layer.h"
 #include "PostGISLayerFilter.h"
-#include <optional>
 #include <engines/gis/MapOptions.h>
 #include <gis/Types.h>
+#include <optional>
 
 namespace SmartMet
 {

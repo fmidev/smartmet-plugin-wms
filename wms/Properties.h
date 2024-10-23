@@ -8,9 +8,9 @@
 
 #include "Projection.h"
 
+#include <gis/Box.h>
 #include <macgyver/DateTime.h>
 #include <optional>
-#include <gis/Box.h>
 
 #include <string>
 

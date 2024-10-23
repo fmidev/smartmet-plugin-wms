@@ -7,8 +7,8 @@
 #pragma once
 
 #include "AttributeSelection.h"
-#include <optional>
 #include <map>
+#include <optional>
 #include <vector>
 
 namespace SmartMet

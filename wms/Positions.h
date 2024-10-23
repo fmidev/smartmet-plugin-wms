@@ -9,11 +9,11 @@
 #include "Locations.h"
 #include "Map.h"
 #include "Stations.h"
-#include <optional>
 #include <engines/geonames/Engine.h>
 #include <gis/Box.h>
 #include <json/json.h>
 #include <cstddef>
+#include <optional>
 
 namespace Fmi
 {

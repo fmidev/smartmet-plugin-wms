@@ -9,14 +9,14 @@
 #include "Attributes.h"
 #include "Layer.h"
 #include "Text.h"
-#include <optional>
 #include <gis/Types.h>
+#include <optional>
 #include <string>
 
 namespace CTPP
 {
 class CDT;
-} // namespace CTPP
+}  // namespace CTPP
 
 namespace SmartMet
 {

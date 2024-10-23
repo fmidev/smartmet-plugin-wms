@@ -12,8 +12,8 @@
 #pragma once
 
 #include "Text.h"
-#include <optional>
 #include <ctpp2/CDT.hpp>
+#include <optional>
 #include <set>
 #include <string>
 

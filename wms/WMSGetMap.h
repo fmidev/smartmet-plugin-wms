@@ -2,8 +2,8 @@
 
 #include "WMSConfig.h"
 #include "WMSGetCapabilities.h"
-#include <macgyver/DateTime.h>
 #include <ctpp2/CDT.hpp>
+#include <macgyver/DateTime.h>
 #include <spine/HTTP.h>
 #include <spine/Value.h>
 

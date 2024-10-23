@@ -1501,8 +1501,7 @@ bool WMSLayer::currentValue() const
   }
 }
 
-Fmi::DateTime WMSLayer::mostCurrentTime(
-    const std::optional<Fmi::DateTime>& reference_time) const
+Fmi::DateTime WMSLayer::mostCurrentTime(const std::optional<Fmi::DateTime>& reference_time) const
 {
   try
   {
@@ -2032,7 +2031,7 @@ const std::shared_ptr<WMSTimeDimensions>& WMSLayer::getTimeDimensions() const
 
 std::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
     bool multiple_intervals,
-	bool show_hidden,
+    bool show_hidden,
     const Engine::Gis::Engine& /* gisengine */,
     const std::string& language,
     const std::optional<std::string>& starttime,
@@ -2110,12 +2109,11 @@ std::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
       layer_dimension["units"] = elevationDimension->getUnitSymbol();
       layer_dimension["multiple_values"] = "0";
       layer_dimension["nearest_value"] = "0";
-      //layer_dimension["current"] = "0";
+      // layer_dimension["current"] = "0";
       layer_dimension["value"] = dim_string;
 
       layer["elevation_dimension"] = layer_dimension;
     }
-
 
     // Layer name, title and abstract
     if (!name.empty())

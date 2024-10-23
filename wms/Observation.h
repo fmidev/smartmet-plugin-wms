@@ -8,8 +8,8 @@
 
 #include "Attributes.h"
 #include "Label.h"
-#include <optional>
 #include <json/json.h>
+#include <optional>
 #include <string>
 
 namespace SmartMet

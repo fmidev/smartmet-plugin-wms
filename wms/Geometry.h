@@ -6,14 +6,14 @@
 
 #pragma once
 
-#include <memory>
 #include <gis/OGR.h>
+#include <memory>
 #include <string>
 
 namespace Fmi
 {
 class SpatialReference;
-} // namespace Fmi
+}  // namespace Fmi
 
 namespace SmartMet
 {

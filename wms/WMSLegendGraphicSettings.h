@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include <optional>
 #include <libconfig.h++>
 #include <map>
+#include <optional>
 #include <set>
 
 namespace SmartMet
@@ -54,9 +54,9 @@ struct LegendGraphicLayout
   std::optional<int> legend_yoffset;
   std::optional<unsigned int> symbol_group_x_padding;  // space between symbols in symbol-group
   std::optional<unsigned int> symbol_group_y_padding;
-  std::optional<unsigned int> symbol_text_xoffset;              // x offset of symbol text
-  std::optional<unsigned int> symbol_text_yoffset;              // y offset of symbol text
-  std::optional<unsigned int> legend_width;                     // width of one legend
+  std::optional<unsigned int> symbol_text_xoffset;                // x offset of symbol text
+  std::optional<unsigned int> symbol_text_yoffset;                // y offset of symbol text
+  std::optional<unsigned int> legend_width;                       // width of one legend
   std::map<std::string, unsigned int> legend_width_per_language;  // legend width per langauge
   unsigned int
       output_document_width;  // size of non-automatically generated documents, default 500*500

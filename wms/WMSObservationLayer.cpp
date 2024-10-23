@@ -22,16 +22,15 @@ bool WMSObservationLayer::updateLayerMetaData()
 
     std::map<Fmi::DateTime, std::shared_ptr<WMSTimeDimension>> newTimeDimensions;
 
-    tag_interval interval(metaData.period.begin(),
-                          metaData.period.end(),
-                          Fmi::Minutes(metaData.timestep));
+    tag_interval interval(
+        metaData.period.begin(), metaData.period.end(), Fmi::Minutes(metaData.timestep));
     time_intervals timeintervals{interval};
     auto newTimeDimension = std::make_shared<IntervalTimeDimension>(timeintervals);
 
     Fmi::DateTime origintime(Fmi::DateTime::NOT_A_DATE_TIME);
     newTimeDimensions.insert(std::make_pair(origintime, newTimeDimension));
     timeDimensions = std::make_shared<WMSTimeDimensions>(newTimeDimensions);
-	timeDimensions->useWallClockTimeAsEndTime(true);
+    timeDimensions->useWallClockTimeAsEndTime(true);
 
     return true;
   }

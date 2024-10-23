@@ -1,8 +1,8 @@
 #include "WMSTimeDimension.h"
 #include <boost/algorithm/string/join.hpp>
-#include <memory>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
+#include <memory>
 
 namespace SmartMet
 {
@@ -231,10 +231,9 @@ const std::vector<tag_interval>& IntervalTimeDimension::getIntervals() const
   return itsIntervals;
 }
 
-std::string IntervalTimeDimension::getCapabilities(
-    bool multiple_intervals,
-    const std::optional<std::string>& starttime,
-    const std::optional<std::string>& endtime) const
+std::string IntervalTimeDimension::getCapabilities(bool multiple_intervals,
+                                                   const std::optional<std::string>& starttime,
+                                                   const std::optional<std::string>& endtime) const
 {
   try
   {
@@ -294,9 +293,8 @@ std::string getIntervalCapability(const tag_interval& interval,
   return ret;
 }
 
-std::string IntervalTimeDimension::makeCapabilities(
-    const std::optional<std::string>& starttime,
-    const std::optional<std::string>& endtime) const
+std::string IntervalTimeDimension::makeCapabilities(const std::optional<std::string>& starttime,
+                                                    const std::optional<std::string>& endtime) const
 {
   try
   {
@@ -344,8 +342,7 @@ std::string IntervalTimeDimension::makeCapabilities(
 }
 
 std::string IntervalTimeDimension::makeCapabilitiesTimesteps(
-    const std::optional<std::string>& starttime,
-    const std::optional<std::string>& endtime) const
+    const std::optional<std::string>& starttime, const std::optional<std::string>& endtime) const
 {
   try
   {
@@ -396,8 +393,7 @@ void WMSTimeDimensions::addTimeDimension(const Fmi::DateTime& origintime,
                                          const std::shared_ptr<WMSTimeDimension>& td)
 {
   itsTimeDimensions[origintime] = td;
-  if (itsDefaultOrigintime == Fmi::DateTime::NOT_A_DATE_TIME ||
-      itsDefaultOrigintime < origintime)
+  if (itsDefaultOrigintime == Fmi::DateTime::NOT_A_DATE_TIME || itsDefaultOrigintime < origintime)
     itsDefaultOrigintime = origintime;
   itsOrigintimes.push_back(origintime);
 }

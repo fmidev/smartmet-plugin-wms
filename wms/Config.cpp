@@ -6,11 +6,11 @@
 
 #include "Config.h"
 #include <boost/algorithm/string.hpp>
-#include <filesystem>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <spine/ConfigTools.h>
 #include <spine/Exceptions.h>
+#include <filesystem>
 #include <stdexcept>
 
 using std::string;

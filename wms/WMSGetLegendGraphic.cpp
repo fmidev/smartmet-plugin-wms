@@ -268,8 +268,7 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
         }
 
         const std::optional<Fmi::DateTime> reference_time;
-        Fmi::DateTime mostCurrentTime(
-            itsConfig.mostCurrentTime(layerName, reference_time));
+        Fmi::DateTime mostCurrentTime(itsConfig.mostCurrentTime(layerName, reference_time));
         if (mostCurrentTime.is_not_a_date_time())
           theRequest.removeParameter("time");
         else

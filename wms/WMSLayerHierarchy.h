@@ -47,7 +47,7 @@ class WMSLayerHierarchy
   WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
                     const std::optional<std::string>& wms_namespace,
                     HierarchyType hierarchy_type,
-					bool reveal_hidden,
+                    bool reveal_hidden,
                     const std::optional<std::string>& apikey,
                     bool auth,
                     Engine::Authentication::Engine* authEngine);
@@ -55,7 +55,7 @@ class WMSLayerHierarchy
   WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
                     const std::optional<std::string>& wms_namespace,
                     HierarchyType hierarchy_type,
-					bool reveal_hidden);
+                    bool reveal_hidden);
 #endif
 
   ~WMSLayerHierarchy() = default;

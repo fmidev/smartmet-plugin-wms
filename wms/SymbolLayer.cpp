@@ -177,14 +177,14 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
     else if (values && values->getLength())
     {
       uint len = values->getLength();
-      for (uint t=0; t<len; t++)
+      for (uint t = 0; t < len; t++)
       {
-        T::GridValue *rec = values->getGridValuePtrByIndex(t);
+        T::GridValue* rec = values->getGridValuePtrByIndex(t);
         auto point = points[t];
 
         if (rec->mValue != ParamValueMissing)
         {
-          pointvalues.push_back(PointData{point,rec->mValue});
+          pointvalues.push_back(PointData{point, rec->mValue});
         }
         else
         {
@@ -201,7 +201,6 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
 
 // ----------------------------------------------------------------------
 /*!
@@ -434,16 +433,16 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Fullfilling information into the query object.
 
-
     if (positions)
     {
       const bool forecast_mode = true;
       const auto& box = projection.getBox();
-      auto points = positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
+      auto points =
+          positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
 
       T::Coordinate_vec coordinates;
       for (const auto& point : points)
-        coordinates.emplace_back(point.latlon.X(),point.latlon.Y());
+        coordinates.emplace_back(point.latlon.X(), point.latlon.Y());
 
       originalGridQuery->mAreaCoordinates.push_back(coordinates);
       originalGridQuery->mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
@@ -461,7 +460,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
         param.mType = QueryServer::QueryParameter::Type::Vector;
         param.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
-        //param.mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
+        // param.mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
       }
 
       if (geometryId)
@@ -530,7 +529,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
 
     // The Query object after the query execution.
-    //query->print(std::cout,0,0);
+    // query->print(std::cout,0,0);
 
     // Extracting the projection information from the query result.
 

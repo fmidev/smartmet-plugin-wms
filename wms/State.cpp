@@ -32,8 +32,7 @@ namespace Dali
 // ----------------------------------------------------------------------
 
 State::State(Plugin& thePlugin, const Spine::HTTP::Request& theRequest)
-    : itsPlugin(thePlugin),
-      itsRequest(theRequest)
+    : itsPlugin(thePlugin), itsRequest(theRequest)
 {
   auto prec = theRequest.getParameter("precision");
   if (prec)

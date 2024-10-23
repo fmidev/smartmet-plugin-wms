@@ -76,8 +76,8 @@ class IsobandLayer : public Layer
   virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 
   std::shared_ptr<Engine::Querydata::QImpl> buildHeatmap(const Spine::Parameter& theParameter,
-                                                           const Fmi::DateTime& theTime,
-                                                           State& theState);
+                                                         const Fmi::DateTime& theTime,
+                                                         State& theState);
 
 };  // class IsobandLayer
 

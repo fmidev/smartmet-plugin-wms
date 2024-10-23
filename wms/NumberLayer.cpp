@@ -84,19 +84,8 @@ PointValues read_forecasts(const NumberLayer& layer,
         Spine::Location loc(point.latlon.X(), point.latlon.Y());
 
         // Q API SUCKS!!
-        Engine::Querydata::ParameterOptions options(*param,
-                                                    "",
-                                                    loc,
-                                                    "",
-                                                    "",
-                                                    *timeformatter,
-                                                    "",
-                                                    "",
-                                                    mylocale,
-                                                    "",
-                                                    false,
-                                                    dummy,
-                                                    dummy);
+        Engine::Querydata::ParameterOptions options(
+            *param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
 
         TS::Value result =
             AggregationUtility::get_qengine_value(q, options, localdatetime, layer.param_funcs);
@@ -170,14 +159,14 @@ PointValues read_gridForecasts(const NumberLayer& layer,
     if (values && values->getLength())
     {
       uint len = values->getLength();
-      for (uint t=0; t<len; t++)
+      for (uint t = 0; t < len; t++)
       {
-        T::GridValue *rec = values->getGridValuePtrByIndex(t);
+        T::GridValue* rec = values->getGridValuePtrByIndex(t);
         auto point = points[t];
 
         if (rec->mValue != ParamValueMissing)
         {
-          pointvalues.push_back(PointData{point,rec->mValue});
+          pointvalues.push_back(PointData{point, rec->mValue});
         }
         else
         {
@@ -194,7 +183,6 @@ PointValues read_gridForecasts(const NumberLayer& layer,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
 
 // ----------------------------------------------------------------------
 /*!
@@ -410,11 +398,12 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     {
       const bool forecast_mode = true;
       const auto& box = projection.getBox();
-      auto points = positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
+      auto points =
+          positions->getPoints(nullptr, projection.getCRS(), box, forecast_mode, theState);
 
       T::Coordinate_vec coordinates;
       for (const auto& point : points)
-        coordinates.emplace_back(point.latlon.X(),point.latlon.Y());
+        coordinates.emplace_back(point.latlon.X(), point.latlon.Y());
 
       originalGridQuery->mAreaCoordinates.push_back(coordinates);
       originalGridQuery->mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
@@ -446,8 +435,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       {
         param.mParameterLevel = C_INT(*level);
       }
-      else
-      if (pressure)
+      else if (pressure)
       {
         param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
         param.mParameterLevel = C_INT(*pressure);
@@ -584,7 +572,8 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // use_observations is true, obsengine is not disabled.
 
     PointValues pointvalues;
-    pointvalues = read_gridForecasts(*this, gridEngine, *originalGridQuery, crs, box, valid_time, theState);
+    pointvalues =
+        read_gridForecasts(*this, gridEngine, *originalGridQuery, crs, box, valid_time, theState);
 
     pointvalues = prioritize(pointvalues, point_value_options);
 
