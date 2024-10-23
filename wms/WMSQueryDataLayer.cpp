@@ -37,8 +37,9 @@ bool WMSQueryDataLayer::updateLayerMetaData()
     auto queryDataConf = itsQEngine->getProducerConfig(itsProducer);
 
     std::map<Fmi::DateTime, std::shared_ptr<WMSTimeDimension>> newTimeDimensions;
-    // If multifile observation we want to have one timeseries and one reference time
-    if (queryDataConf.ismultifile && !queryDataConf.isforecast)
+
+    // We do not want a reference time for multifiles
+    if (queryDataConf.ismultifile)
     {
       std::shared_ptr<Engine::Querydata::ValidTimeList> validtimes = q->validTimes();
 
@@ -51,7 +52,7 @@ bool WMSQueryDataLayer::updateLayerMetaData()
         else
           timeDimension = std::make_shared<StepTimeDimension>(*validtimes);
 
-        newTimeDimensions.insert(std::make_pair(validtimes->back(), timeDimension));
+        newTimeDimensions.insert(std::make_pair(Fmi::DateTime::NOT_A_DATE_TIME, timeDimension));
       }
     }
     else
