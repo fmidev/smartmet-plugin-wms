@@ -493,9 +493,9 @@ void Projection::prepareCRS() const
     }
 #endif
 
-    // newbase corners calculated from world xy coordinates
+    // WGS84 latlon corners calculated from world xy coordinates
 
-    Fmi::CoordinateTransformation transformation(*ogr_crs, "FMI");
+    Fmi::CoordinateTransformation transformation(*ogr_crs, "WGS84");
 
     // Calculate bottom left and top right coordinates
 

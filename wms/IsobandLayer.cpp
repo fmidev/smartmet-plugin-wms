@@ -485,15 +485,18 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       // Adding the bounding box information into the query.
 
+      auto bbox = fmt::format(
+          "{},{},{},{}", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
       auto bl = projection.bottomLeftLatLon();
       auto tr = projection.topRightLatLon();
-      auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
-      originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
-      // bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
-      bbox = fmt::format(
-          "{},{},{},{}", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
+      // # Testing if the target grid is defined as latlon:
+      if (projection.x1 == bl.X() && projection.y1 == bl.Y() && projection.x2 == tr.X() &&
+          projection.y2 == tr.Y())
+        originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
+
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+      originalGridQuery->mAttributeList.addAttribute("grid.countSize", "1");
     }
     else
     {

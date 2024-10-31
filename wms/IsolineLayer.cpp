@@ -352,6 +352,9 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
     offset = conv.offset;
   }
 
+  const auto& box = projection.getBox();
+  const auto clipbox = getClipBox(box);
+
   std::string wkt = *projection.crs;
   // std::cout << wkt << "\n";
 
@@ -370,17 +373,18 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
     // Adding the bounding box information into the query.
 
-    const auto& box = projection.getBox();
-    const auto clipbox = getClipBox(box);
-
+    auto bbox =
+        fmt::format("{},{},{},{}", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
     auto bl = projection.bottomLeftLatLon();
     auto tr = projection.topRightLatLon();
-    auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
-    originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
-    bbox =
-        fmt::format("{},{},{},{}", clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
+    // # Testing if the target grid is defined as latlon:
+    if (projection.x1 == bl.X() && projection.y1 == bl.Y() && projection.x2 == tr.X() &&
+        projection.y2 == tr.Y())
+      originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
+
     originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+    originalGridQuery->mAttributeList.addAttribute("grid.countSize", "1");
   }
   else
   {
