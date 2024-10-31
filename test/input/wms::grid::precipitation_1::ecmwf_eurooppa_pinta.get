@@ -1,1 +1,1 @@
-GET /wms?service=wms&request=GetMap&version=1.3.0&layers=grid:wind_speed_2&styles=&crs=EPSG:4326&bbox=34,-12,74,40&width=500&height=500&format=image/svg%2Bxml&time=200808050700&producer=ecmwf_eurooppa_pinta HTTP/1.0
+GET /wms?service=wms&request=GetMap&version=1.3.0&layers=grid:precipitation_1&styles=&crs=EPSG:4326&bbox=34,-12,74,40&width=500&height=500&format=image/svg%2Bxml&time=200808050600&producer=ecmwf_eurooppa_pinta HTTP/1.0
