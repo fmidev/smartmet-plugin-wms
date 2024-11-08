@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.10.31
+Version: 24.11.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Nov  8 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.11.8-1.fmi
+- Repackage due to smartmet-library-spine ABI changes
+
 * Thu Oct 31 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.10.31-1.fmi
 - Improved contouring speed for GRIB files
 
