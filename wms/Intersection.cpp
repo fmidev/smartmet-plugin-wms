@@ -175,10 +175,7 @@ void Intersection::init(const std::optional<std::string>& theProducer,
       // Getting WKT and the bounding box of the requested projection.
 
       const auto& crs = theProjection.getCRS();
-      char* out = nullptr;
-      crs.get()->exportToWkt(&out);
-      wkt = out;
-      CPLFree(out);
+      wkt = crs.WKT();
 
       // std::cout << wkt << "\n";
 

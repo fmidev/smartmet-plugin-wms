@@ -356,13 +356,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       // Getting WKT and the bounding box of the requested projection.
 
       if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
-      {
-        auto crs = projection.getCRS();
-        char* out = nullptr;
-        crs.get()->exportToWkt(&out);
-        wkt = out;
-        CPLFree(out);
-      }
+        wkt = projection.getCRS().WKT();
 
       // std::cout << wkt << "\n";
 

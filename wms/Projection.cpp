@@ -488,7 +488,7 @@ void Projection::prepareCRS() const
         ogr_crs = std::make_shared<Fmi::SpatialReference>(new_crs);
 
         std::cout << "PROJ = " << ogr_crs->projStr() << std::endl;
-        std::cout << "WKT = " << Fmi::OGR::exportToProj(*ogr_crs) << std::endl;
+        std::cout << "WKT = " << ogr_crs->WKT() << std::endl;
       }
     }
 #endif

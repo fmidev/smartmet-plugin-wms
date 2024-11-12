@@ -359,11 +359,7 @@ std::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     Fmi::hash_combine(hash, Fmi::hash_value(box.ymax()));
     Fmi::hash_combine(hash, Dali::hash_value(heatmap, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(radius));
-
-    char* tmp = nullptr;
-    crs.get()->exportToWkt(&tmp);
-    Fmi::hash_combine(hash, Fmi::hash_value(tmp));
-    CPLFree(tmp);
+    Fmi::hash_combine(hash, crs.hashValue());
 
     auto model = Engine::Querydata::Model::create(data, hash);
     return std::make_shared<Engine::Querydata::QImpl>(model);
@@ -473,13 +469,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       // Getting WKT and the bounding box of the requested projection.
 
       if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
-      {
-        auto crs = projection.getCRS();
-        char* out = nullptr;
-        crs.get()->exportToWkt(&out);
-        wkt = out;
-        CPLFree(out);
-      }
+        wkt = crs.WKT();
 
       // std::cout << wkt << "\n";
 
