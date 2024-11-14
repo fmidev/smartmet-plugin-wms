@@ -73,8 +73,8 @@ class WMSLayerHierarchy
                             const std::optional<std::string>& reference_time) const;
 
   std::string name;
-  bool show_hidden;
-  bool authenticate;
+  bool show_hidden = false;
+  bool authenticate = false;
   // Parts that can be inhereted by sublayers
   std::optional<WMSLayerProxy> baseInfoLayer;
   std::optional<WMSLayerProxy> geographicBoundingBox;
@@ -82,7 +82,7 @@ class WMSLayerHierarchy
   std::optional<WMSLayerProxy> timeDimension;
   std::optional<WMSLayerProxy> elevationDimension;
 
-  const WMSLayerHierarchy* parent;
+  const WMSLayerHierarchy* parent = nullptr;
   std::list<boost::shared_ptr<WMSLayerHierarchy>> sublayers;
   std::optional<Fmi::DateTime> reference_time;
 
