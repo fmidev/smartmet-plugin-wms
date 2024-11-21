@@ -70,7 +70,7 @@ TS::Value get_qengine_value(const Engine::Querydata::Q& q,
       // QEngine query
       auto raw_data = q->values(options, tlist);
       // Aggregate data
-      auto aggregated_data = TS::Aggregator::aggregate(*raw_data, param_funcs->functions);
+      auto aggregated_data = TS::Aggregator::aggregate(*raw_data, param_funcs->functions, tlist);
       // Remove redundant timesteps, only one timstep is valid for a map
       tlist.clear();
       tlist.push_back(valid_time);
@@ -247,7 +247,7 @@ TS::TimeSeriesVectorPtr do_aggregation(
       // If inner function exists aggregation happens
       if (pfunc.innerFunction.exists())
       {
-        tsptr = TS::Aggregator::aggregate(ts, pfunc);
+        tsptr = TS::Aggregator::aggregate(ts, pfunc, ts.getTimes());
         if (tsptr->empty())
           continue;
       }
