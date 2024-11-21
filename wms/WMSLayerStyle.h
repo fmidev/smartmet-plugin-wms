@@ -41,7 +41,7 @@ struct WMSLayerStyle
   std::optional<Dali::Text> abstract;
 
   LegendURL legend_url;
-  CTPP::CDT getCapabilities(const std::string& language) const;
+  CTPP::CDT getCapabilities(const std::string& language, const std::string& defaultLanguage) const;
 };
 
 // Layers with optional alternative styles

@@ -618,7 +618,8 @@ void WindRoseLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
         CTPP::CDT title_cdt(CTPP::CDT::HASH_VAL);
         title_cdt["start"] = "<text";
         title_cdt["end"] = "</text>";
-        title_cdt["cdata"] = station.title->translate(language);
+        title_cdt["cdata"] =
+            station.title->translate(language, theState.getConfig().defaultLanguage());
 
         theState.addAttributes(theGlobals, title_cdt, station.title->attributes);
         title_cdt["attributes"]["x"] = Fmi::to_string(xrose + station.title->dx);

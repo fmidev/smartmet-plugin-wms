@@ -1202,7 +1202,12 @@ CTPP::CDT WMSConfig::getCapabilities(const std::optional<std::string>& apikey,
 
       //	  std::cout << "Hierarchy:\n" << lh << std::endl;
 
-      return lh.getCapabilities(multiple_intervals, language, starttime, endtime, reference_time);
+      return lh.getCapabilities(multiple_intervals,
+                                language,
+                                itsDaliConfig.defaultLanguage(),
+                                starttime,
+                                endtime,
+                                reference_time);
     }
 
     // Return array of individual layer capabilities
@@ -1220,8 +1225,13 @@ CTPP::CDT WMSConfig::getCapabilities(const std::optional<std::string>& apikey,
           continue;
 #endif
 
-      auto cdt = iter_pair.second.getCapabilities(
-          multiple_intervals, show_hidden, language, starttime, endtime, reference_time);
+      auto cdt = iter_pair.second.getCapabilities(multiple_intervals,
+                                                  show_hidden,
+                                                  language,
+                                                  itsDaliConfig.defaultLanguage(),
+                                                  starttime,
+                                                  endtime,
+                                                  reference_time);
 
       // Note: The std::optional is empty for hidden layers.
       if (cdt)

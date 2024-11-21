@@ -113,7 +113,7 @@ void Product::generate(CTPP::CDT& theGlobals, State& theState)
     if (height)
       theGlobals["height"] = *height;
     if (title)
-      theGlobals["title"] = title->translate(language);
+      theGlobals["title"] = title->translate(language, theState.getConfig().defaultLanguage());
 
     // We must process the defs section before processing the
     // product attributes or views in case they refer to some

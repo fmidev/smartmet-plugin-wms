@@ -79,7 +79,8 @@ std::string legend_number(double theValue, const LegendLabels& theLabels)
 
 std::string untranslated_legend_text(const Isoband& theIsoband,
                                      const LegendLabels& theLabels,
-                                     const std::optional<std::string>& theLanguage)
+                                     const std::optional<std::string>& theLanguage,
+                                     const std::string& theDefaultLanguage)
 {
   try
   {
@@ -90,7 +91,7 @@ std::string untranslated_legend_text(const Isoband& theIsoband,
 
     // Isoband specific override handled first
     if (theIsoband.label)
-      return theIsoband.label->translate(theLanguage);
+      return theIsoband.label->translate(theLanguage, theDefaultLanguage);
 
     // Then generic processing
     if (theLabels.type == "lolimit")
@@ -137,14 +138,16 @@ std::string untranslated_legend_text(const Isoband& theIsoband,
 
 std::string legend_text(const Isoband& theIsoband,
                         const LegendLabels& theLabels,
-                        const std::optional<std::string>& theLanguage)
+                        const std::optional<std::string>& theLanguage,
+                        const std::string& theDefaultLanguage)
 {
   try
   {
     // Note: The text may actually already be translated, if there are isoband
     // specific translations in the Isoband object itself.
 
-    std::string text = untranslated_legend_text(theIsoband, theLabels, theLanguage);
+    std::string text =
+        untranslated_legend_text(theIsoband, theLabels, theLanguage, theDefaultLanguage);
     if (text.empty())
       return text;
 
@@ -436,7 +439,8 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
       // Then the text
 
-      std::string text = legend_text(isoband, labels, language);
+      std::string text =
+          legend_text(isoband, labels, language, theState.getConfig().defaultLanguage());
 
       if (!text.empty())
       {

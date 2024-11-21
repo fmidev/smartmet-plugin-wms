@@ -196,7 +196,7 @@ bool is_identical(const WMSLayerHierarchy& lh1,
     case WMSLayerHierarchy::ElementType::elev_dim:
       return is_identical_elev_dim(lh1, lh2);
   }
-  // return false;
+  return false;
 }
 
 std::list<const WMSLayerHierarchy*> get_leaf_layers(const WMSLayerHierarchy& lh)
@@ -260,6 +260,7 @@ void add_layer_info(bool multiple_intervals,
                     CTPP::CDT& ctpp,
                     const WMSLayerHierarchy& lh,
                     const std::string& language,
+                    const std::string& defaultLanguage,
                     const std::optional<std::string>& starttime,
                     const std::optional<std::string>& endtime,
                     const std::optional<std::string>& reference_time,
@@ -272,7 +273,7 @@ void add_layer_info(bool multiple_intervals,
   std::optional<CTPP::CDT> baseInfo;
   if (lh.sublayers.empty() && lh.baseInfoLayer)
   {
-    baseInfo = lh.baseInfoLayer->getLayer()->getLayerBaseInfo(language);
+    baseInfo = lh.baseInfoLayer->getLayer()->getLayerBaseInfo(language, defaultLanguage);
     if (lh.reference_time)
     {
       std::string name = (*baseInfo)["name"].GetString();
@@ -288,7 +289,8 @@ void add_layer_info(bool multiple_intervals,
   if (baseInfo)
   {
     capa = *baseInfo;
-    std::optional<CTPP::CDT> styles = lh.baseInfoLayer->getLayer()->getStyleInfo(language);
+    std::optional<CTPP::CDT> styles =
+        lh.baseInfoLayer->getLayer()->getStyleInfo(language, defaultLanguage);
     if (styles)
       capa.MergeCDT(*styles);
   }
@@ -380,6 +382,7 @@ void add_layer_info(bool multiple_intervals,
                      capa["sublayers"],
                      *item,
                      language,
+                     defaultLanguage,
                      starttime,
                      endtime,
                      reference_time,
@@ -503,6 +506,7 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
 
 CTPP::CDT WMSLayerHierarchy::getCapabilities(bool multiple_intervals,
                                              const std::string& language,
+                                             const std::string& defaultLanguage,
                                              const std::optional<std::string>& starttime,
                                              const std::optional<std::string>& endtime,
                                              const std::optional<std::string>& reference_time) const
@@ -511,7 +515,15 @@ CTPP::CDT WMSLayerHierarchy::getCapabilities(bool multiple_intervals,
   CTPP::CDT capa(CTPP::CDT::ARRAY_VAL);
 
   // std::cout << "CAPA:\n " << *this << std::endl;
-  add_layer_info(multiple_intervals, capa, *this, language, starttime, endtime, reference_time, 1);
+  add_layer_info(multiple_intervals,
+                 capa,
+                 *this,
+                 language,
+                 defaultLanguage,
+                 starttime,
+                 endtime,
+                 reference_time,
+                 1);
 
   return capa;
 }

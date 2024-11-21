@@ -28,8 +28,10 @@ class Title
   void init(Json::Value& theJson, const Config& theConfig);
   std::size_t hash_value(const State& theState) const;
 
-  std::string translate(const std::string& theLanguage) const;
-  std::string translate(const std::optional<std::string>& theLanguage) const;
+  std::string translate(const std::string& theLanguage,
+                        const std::string& theDefaultLanguage) const;
+  std::string translate(const std::optional<std::string>& theLanguage,
+                        const std::string& theDefaultLanguage) const;
 
   std::string qid;
   int dx = 0;

@@ -41,6 +41,7 @@ class WMSLayerProxy
   std::optional<CTPP::CDT> getCapabilities(bool multiple_intervals,
                                            bool show_hidden,
                                            const std::string& language,
+                                           const std::string& defaultLanguage,
                                            const std::optional<std::string>& starttime,
                                            const std::optional<std::string>& endtime,
                                            const std::optional<std::string>& reference_time) const
@@ -49,6 +50,7 @@ class WMSLayerProxy
                                              show_hidden,
                                              *itsGisEngine,
                                              language,
+                                             defaultLanguage,
                                              starttime,
                                              endtime,
                                              reference_time);

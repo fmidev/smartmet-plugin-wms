@@ -68,6 +68,7 @@ class WMSLayerHierarchy
 
   CTPP::CDT getCapabilities(bool multiple_intervals,
                             const std::string& language,
+                            const std::string& defaultLanguage,
                             const std::optional<std::string>& starttime,
                             const std::optional<std::string>& endtime,
                             const std::optional<std::string>& reference_time) const;

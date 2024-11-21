@@ -103,20 +103,25 @@ std::size_t Text::hash_value(const State& theState) const
  */
 // ----------------------------------------------------------------------
 
-std::string Text::translate(const std::string& theLanguage) const
+std::string Text::translate(const std::string& theLanguage,
+                            const std::string& theDefaultLanguage) const
 {
   try
   {
     // Use exact translation if there is one
-    const auto match1 = translations.find(theLanguage);
-    if (match1 != translations.end())
-      return match1->second;
+    auto match = translations.find(theLanguage);
+    if (match != translations.end())
+      return match->second;
+
+    // Default language
+    match = translations.find(theDefaultLanguage);
+    if (match != translations.end())
+      return match->second;
 
     // Return default translation if possible
-
-    const auto match2 = translations.find("default");
-    if (match2 != translations.end())
-      return match2->second;
+    match = translations.find("default");
+    if (match != translations.end())
+      return match->second;
 
     // Error
     throw Fmi::Exception(BCP,
@@ -135,16 +140,21 @@ std::string Text::translate(const std::string& theLanguage) const
  */
 // ----------------------------------------------------------------------
 
-std::string Text::translate(const std::optional<std::string>& theLanguage) const
+std::string Text::translate(const std::optional<std::string>& theLanguage,
+                            const std::string& theDefaultLanguage) const
 {
   try
   {
     if (theLanguage)
-      return translate(*theLanguage);
+      return translate(*theLanguage, theDefaultLanguage);
+
+    auto match = translations.find(theDefaultLanguage);
+    if (match != translations.end())
+      return match->second;
 
     // Return default translation if possible
 
-    const auto match = translations.find("default");
+    match = translations.find("default");
     if (match != translations.end())
       return match->second;
 

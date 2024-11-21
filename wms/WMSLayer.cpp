@@ -1649,7 +1649,8 @@ void WMSLayer::initProjectedBBoxes()
   }
 }
 
-std::optional<CTPP::CDT> WMSLayer::getLayerBaseInfo(const std::string& language) const
+std::optional<CTPP::CDT> WMSLayer::getLayerBaseInfo(const std::string& language,
+                                                    const std::string& defaultLanguage) const
 {
   try
   {
@@ -1662,9 +1663,9 @@ std::optional<CTPP::CDT> WMSLayer::getLayerBaseInfo(const std::string& language)
     if (!name.empty())
       layer["name"] = name;
     if (title)
-      layer["title"] = title->translate(language);
+      layer["title"] = title->translate(language, defaultLanguage);
     if (abstract)
-      layer["abstract"] = abstract->translate(language);
+      layer["abstract"] = abstract->translate(language, defaultLanguage);
     if (opaque == 1)
       layer["opaque"] = *opaque;
     if (queryable == 1)
@@ -1996,7 +1997,8 @@ std::optional<CTPP::CDT> WMSLayer::getElevationDimensionInfo() const
   }
 }
 
-std::optional<CTPP::CDT> WMSLayer::getStyleInfo(const std::string& language) const
+std::optional<CTPP::CDT> WMSLayer::getStyleInfo(const std::string& language,
+                                                const std::string& defaultLanguage) const
 {
   try
   {
@@ -2010,7 +2012,7 @@ std::optional<CTPP::CDT> WMSLayer::getStyleInfo(const std::string& language) con
     {
       CTPP::CDT layer_style_list(CTPP::CDT::ARRAY_VAL);
       for (const auto& style : itsStyles)
-        layer_style_list.PushBack(style.second.getCapabilities(language));
+        layer_style_list.PushBack(style.second.getCapabilities(language, defaultLanguage));
 
       if (layer_style_list.Size() > 0)
         layer["style"] = layer_style_list;
@@ -2034,6 +2036,7 @@ std::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
     bool show_hidden,
     const Engine::Gis::Engine& /* gisengine */,
     const std::string& language,
+    const std::string& defaultLanguage,
     const std::optional<std::string>& starttime,
     const std::optional<std::string>& endtime,
     const std::optional<std::string>& /* reference_time */)
@@ -2119,9 +2122,9 @@ std::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
     if (!name.empty())
       layer["name"] = name;
     if (title)
-      layer["title"] = title->translate(language);
+      layer["title"] = title->translate(language, defaultLanguage);
     if (abstract)
-      layer["abstract"] = abstract->translate(language);
+      layer["abstract"] = abstract->translate(language, defaultLanguage);
     if (opaque == 1)
       layer["opaque"] = *opaque;
     if (queryable == 1)
@@ -2302,7 +2305,7 @@ std::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
       CTPP::CDT layer_style_list(CTPP::CDT::ARRAY_VAL);
 
       for (const auto& item : itsStyles)
-        layer_style_list.PushBack(item.second.getCapabilities(language));
+        layer_style_list.PushBack(item.second.getCapabilities(language, defaultLanguage));
 
       if (layer_style_list.Size() > 0)
         layer["style"] = layer_style_list;

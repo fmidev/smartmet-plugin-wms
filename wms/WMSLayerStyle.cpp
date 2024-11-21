@@ -22,7 +22,8 @@ std::ostream& operator<<(std::ostream& ost, const WMSLayerStyle& layerStyle)
   return ost;
 }
 
-CTPP::CDT WMSLayerStyle::getCapabilities(const std::string& language) const
+CTPP::CDT WMSLayerStyle::getCapabilities(const std::string& language,
+                                         const std::string& defaultLanguage) const
 {
   try
   {
@@ -36,10 +37,10 @@ CTPP::CDT WMSLayerStyle::getCapabilities(const std::string& language) const
 
     if (!title)
       throw Fmi::Exception::Trace(BCP, "WMS layer style must have a title!");
-    style["title"] = title->translate(language);
+    style["title"] = title->translate(language, defaultLanguage);
 
     if (abstract)
-      style["abstract"] = abstract->translate(language);
+      style["abstract"] = abstract->translate(language, defaultLanguage);
 
     // Style legend URL
 

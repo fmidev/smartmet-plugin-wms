@@ -80,11 +80,12 @@ std::size_t Title::hash_value(const State& theState) const
  */
 // ----------------------------------------------------------------------
 
-std::string Title::translate(const std::string& theLanguage) const
+std::string Title::translate(const std::string& theLanguage,
+                             const std::string& theDefaultLanguage) const
 {
   try
   {
-    return text.translate(theLanguage);
+    return text.translate(theLanguage, theDefaultLanguage);
   }
   catch (...)
   {
@@ -98,11 +99,12 @@ std::string Title::translate(const std::string& theLanguage) const
  */
 // ----------------------------------------------------------------------
 
-std::string Title::translate(const std::optional<std::string>& theLanguage) const
+std::string Title::translate(const std::optional<std::string>& theLanguage,
+                             const std::string& theDefaultLanguage) const
 {
   try
   {
-    return text.translate(theLanguage);
+    return text.translate(theLanguage, theDefaultLanguage);
   }
   catch (...)
   {

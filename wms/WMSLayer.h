@@ -138,11 +138,13 @@ class WMSLayer
       bool show_hidden,
       const Engine::Gis::Engine& gisengine,
       const std::string& language,
+      const std::string& defaultLanguage,
       const std::optional<std::string>& starttime,
       const std::optional<std::string>& endtime,
       const std::optional<std::string>& reference_time);
 
-  std::optional<CTPP::CDT> getLayerBaseInfo(const std::string& language) const;
+  std::optional<CTPP::CDT> getLayerBaseInfo(const std::string& language,
+                                            const std::string& defaultLanguage) const;
   std::optional<CTPP::CDT> getGeographicBoundingBoxInfo() const;
   std::optional<CTPP::CDT> getProjectedBoundingBoxInfo() const;
   std::optional<CTPP::CDT> getTimeDimensionInfo(
@@ -153,7 +155,8 @@ class WMSLayer
   std::optional<CTPP::CDT> getIntervalDimensionInfo() const;
   std::optional<CTPP::CDT> getReferenceDimensionInfo() const;
   std::optional<CTPP::CDT> getElevationDimensionInfo() const;
-  std::optional<CTPP::CDT> getStyleInfo(const std::string& language) const;
+  std::optional<CTPP::CDT> getStyleInfo(const std::string& language,
+                                        const std::string& defaultLanguage) const;
   const std::shared_ptr<WMSTimeDimensions>& getTimeDimensions() const;
 
   // To be called after crs and crs_bbox have been initialized
