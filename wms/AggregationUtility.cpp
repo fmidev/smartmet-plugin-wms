@@ -70,10 +70,10 @@ TS::Value get_qengine_value(const Engine::Querydata::Q& q,
       // QEngine query
       auto raw_data = q->values(options, tlist);
       // Aggregate data
-      auto aggregated_data = TS::Aggregator::aggregate(*raw_data, param_funcs->functions, tlist);
-      // Remove redundant timesteps, only one timstep is valid for a map
       tlist.clear();
       tlist.push_back(valid_time);
+      auto aggregated_data = TS::Aggregator::aggregate(*raw_data, param_funcs->functions, tlist);
+      // Remove redundant timesteps, only one timstep is valid for a map
       auto final_data = TS::erase_redundant_timesteps(aggregated_data, tlist);
 
       // Only one timestep remains
