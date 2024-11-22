@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.11.21
+Version: 24.11.22
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Nov 22 2024 Andris Pavēnis <andris.pavenis@fmi.fi> 24.11.22-1.fmi
+- Update TimeSeries aggregation according smartmet-library-timeseries ABI changes
+
 * Thu Nov 21 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.11.21-1.fmi
 - Fixed GetCapabilities to use default language when needed
 
