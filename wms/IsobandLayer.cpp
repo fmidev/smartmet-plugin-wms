@@ -501,7 +501,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     auto pos = pName.find(".raw");
     if (pos != std::string::npos)
     {
-      attributeList.addAttribute("areaInterpolationMethod",
+      attributeList.addAttribute("grid.areaInterpolationMethod",
                                  std::to_string(T::AreaInterpolationMethod::Nearest));
       pName.erase(pos, 4);
     }
@@ -619,6 +619,16 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (smoother.degree)
       originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
                                                      std::to_string(*smoother.degree));
+
+    if (interpolation == "linear")
+      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",std::to_string((int)Trax::InterpolationType::Linear));
+    else if (interpolation == "nearest" || interpolation == "discrete" ||
+             interpolation == "midpoint")
+      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",std::to_string((int)Trax::InterpolationType::Midpoint));
+    else if (interpolation == "logarithmic")
+      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",std::to_string((int)Trax::InterpolationType::Logarithmic));
+    else
+      throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
 
     if (minarea)
     {
