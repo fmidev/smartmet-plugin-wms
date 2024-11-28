@@ -393,7 +393,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   auto pos = pName.find(".raw");
   if (pos != std::string::npos)
   {
-    attributeList.addAttribute("areaInterpolationMethod",
+    attributeList.addAttribute("grid.areaInterpolationMethod",
                                std::to_string(T::AreaInterpolationMethod::Nearest));
     pName.erase(pos, 4);
   }
@@ -489,6 +489,13 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
         fmt::format("{},{},{},{}", *projection.x1, *projection.y1, *projection.x2, *projection.y2);
     originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
   }
+
+  if (interpolation == "linear")
+    originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type", std::to_string((int)Trax::InterpolationType::Linear));
+  else if (interpolation == "logarithmic")
+    originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type", std::to_string((int)Trax::InterpolationType::Logarithmic));
+  else
+    throw Fmi::Exception(BCP, "Unknown isoline interpolation method '" + interpolation + "'!");
 
   if (smoother.size)
     originalGridQuery->mAttributeList.addAttribute("contour.smooth.size",

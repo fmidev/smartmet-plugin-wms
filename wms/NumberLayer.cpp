@@ -356,7 +356,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     auto pos = pName.find(".raw");
     if (pos != std::string::npos)
     {
-      attributeList.addAttribute("areaInterpolationMethod",
+      attributeList.addAttribute("grid.areaInterpolationMethod",
                                  std::to_string(T::AreaInterpolationMethod::Nearest));
       pName.erase(pos, 4);
     }
