@@ -152,6 +152,51 @@ void rename_json_element(const Json::Value &json,
   }
 }
 
+void relocate_producer_to_view(const std::string &layername, Json::Value &root)
+{
+  // settings which should not be at the top level if different layers are merged
+  // are moved to the view level unless the view already has the setting
+
+  const std::vector<std::string> vars = {"producer",
+                                         "source",
+                                         "forecastType",
+                                         "forecastNumber,"
+                                         "geometryId",
+                                         "level",
+                                         "elevation_unit,"
+                                         "pressure",
+                                         "levelId",
+                                         "timestep"};
+
+  // Nothing to do? Looks like invalid config but we let other code do the checks
+
+  Json::Value nulljson;
+  if (!root.isMember("views"))
+    return;
+
+  auto &views = root["views"];
+  if (views.isNull() || !views.isArray())
+    return;
+
+  // Move the settings from top level to views
+
+  for (const auto &var : vars)
+  {
+    const auto &value = root.get(var, nulljson);
+    if (!value.isNull())
+    {
+      for (unsigned int i = 0; i < views.size(); i++)
+      {
+        auto &view = views[i];
+        auto view_value = view.get(var, nulljson);
+        if (view_value.isNull())
+          view[var] = value;  // add to each view where not set yet
+      }
+      JsonTools::remove(root, var);  // remove from top level
+    }
+  }
+}
+
 Json::Value merge_layers(const std::vector<Json::Value> &layers)
 {
   Json::Value nulljson;
@@ -532,6 +577,8 @@ WMSQueryStatus Dali::Plugin::wmsGetMapQuery(State &theState,
 
       // Process the JSON layers
 
+      bool has_many_layers = (json_layers.size() > 1);
+
       for (auto i = 0UL; i < json_layers.size(); i++)
       {
         auto &json = json_layers.at(i);
@@ -540,15 +587,17 @@ WMSQueryStatus Dali::Plugin::wmsGetMapQuery(State &theState,
 
         wmsPreprocessJSON(theState, thisRequest, name, json, cnf_request, json_stage);
         SmartMet::Plugin::WMS::useStyle(json, style);
+        if (has_many_layers)
+          relocate_producer_to_view(name, json);
       }
 
       // Merge multiple layers into one
 
       Json::Value json;
-      if (json_layers.size() == 1)
-        json = json_layers.back();
-      else
+      if (has_many_layers)
         json = merge_layers(json_layers);
+      else
+        json = json_layers.back();
 
       // Set defaults if some settings are missing
 
