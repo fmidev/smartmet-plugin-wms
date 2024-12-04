@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.11.28
+Version: 24.12.4
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -30,17 +30,17 @@ BuildRequires: smartmet-library-grid-content-devel >= 24.11.28
 BuildRequires: smartmet-library-grid-files-devel >= 24.11.28
 BuildRequires: smartmet-library-macgyver-devel >= 24.11.27
 BuildRequires: smartmet-library-spine-devel >= 24.11.27
-BuildRequires: smartmet-library-timeseries-devel >= 24.11.28
+BuildRequires: smartmet-library-timeseries-devel >= 24.12.3
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 24.11.8
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 24.11.26
+BuildRequires: smartmet-engine-observation-devel >= 24.11.30
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 24.11.8
 BuildRequires: smartmet-engine-grid-devel >= 24.11.8
 BuildRequires: smartmet-engine-geonames-devel >= 24.11.19
-BuildRequires: smartmet-engine-querydata-devel >= 24.11.13
+BuildRequires: smartmet-engine-querydata-devel >= 24.11.30
 BuildRequires: smartmet-engine-contour-devel >= 24.11.8
 BuildRequires: smartmet-library-gis-devel >= 24.11.12
 BuildRequires: smartmet-library-trax-devel >= 24.8.7
@@ -74,12 +74,12 @@ Requires: smartmet-library-gis >= 24.11.12
 Requires: smartmet-library-trax >= 24.8.7
 Requires: smartmet-library-macgyver >= 24.11.27
 Requires: smartmet-library-spine >= 24.11.27
-Requires: smartmet-library-timeseries >= 24.11.28
+Requires: smartmet-library-timeseries >= 24.12.3
 Requires: smartmet-library-giza >= 24.8.7
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 24.11.8
 %endif
-Requires: smartmet-engine-querydata >= 24.11.13
+Requires: smartmet-engine-querydata >= 24.11.30
 Requires: smartmet-engine-contour >= 24.11.8
 Requires: smartmet-engine-gis >= 24.11.8
 Requires: smartmet-engine-grid >= 24.11.8
@@ -106,13 +106,13 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 24.11.8
 #TestRequires: smartmet-engine-geonames-devel >= 24.11.19
 #TestRequires: smartmet-engine-gis-devel >= 24.11.8
-#TestRequires: smartmet-engine-querydata-devel >= 24.11.13
+#TestRequires: smartmet-engine-querydata-devel >= 24.11.30
 #TestRequires: smartmet-library-giza-devel >= 24.8.7
 #TestRequires: smartmet-library-trax-devel >= 24.8.7
-#TestRequires: smartmet-library-newbase-devel >= 24.11.6
+#TestRequires: smartmet-library-newbase-devel >= 24.12.3
 #TestRequires: smartmet-library-macgyver-devel >= 24.11.27
 #TestRequires: smartmet-library-spine-devel >= 24.11.27
-#TestRequires: smartmet-library-timeseries-devel >= 24.11.28
+#TestRequires: smartmet-library-timeseries-devel >= 24.12.3
 #TestRequires: smartmet-engine-grid-devel >= 24.11.8
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
@@ -125,7 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 24.11.26
+#TestRequires: smartmet-engine-observation-devel >= 24.11.30
 %endif
 
 %description
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Dec  4 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.12.4-1.fmi
+- Make it easier to overlay layers by automatically moving producer settings to the view level
+
 * Thu Nov 28 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.11.28-1.fmi
 - Separate GRID-engine area and contour interpolation methods
 
