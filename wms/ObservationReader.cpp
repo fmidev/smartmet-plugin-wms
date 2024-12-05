@@ -71,6 +71,9 @@ PointValues read_flash_observations(State& state,
 
     settings.starttimeGiven = true;
 
+    if (Spine::optional_bool(state.getRequest().getParameter("debug"), false))
+      settings.debug_options = Engine::Observation::Settings::DUMP_SETTINGS;
+
     // Note: wantedtime is not set, we want all the flashes from the time period
     settings.starttime = valid_time_period.begin();
     settings.endtime = valid_time_period.end();
@@ -198,6 +201,9 @@ PointValues read_all_observations(State& state,
     settings.wantedtime = valid_time;
     settings.starttime = valid_time_period.begin();
     settings.endtime = valid_time_period.end();
+
+    if (Spine::optional_bool(state.getRequest().getParameter("debug"), false))
+      settings.debug_options = Engine::Observation::Settings::DUMP_SETTINGS;
 
     auto& obsengine = state.getObsEngine();
 
@@ -338,6 +344,9 @@ PointValues read_station_observations(State& state,
     settings.wantedtime = valid_time;
     settings.starttime = valid_time_period.begin();
     settings.endtime = valid_time_period.end();
+
+    if (Spine::optional_bool(state.getRequest().getParameter("debug"), false))
+      settings.debug_options = Engine::Observation::Settings::DUMP_SETTINGS;
 
     auto& obsengine = state.getObsEngine();
 
@@ -530,6 +539,9 @@ PointValues read_latlon_observations(State& state,
     settings.wantedtime = valid_time;
     settings.starttime = valid_time_period.begin();
     settings.endtime = valid_time_period.end();
+
+    if (Spine::optional_bool(state.getRequest().getParameter("debug"), false))
+      settings.debug_options = Engine::Observation::Settings::DUMP_SETTINGS;
 
     auto& obsengine = state.getObsEngine();
 
