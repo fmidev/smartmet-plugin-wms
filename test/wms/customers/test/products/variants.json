@@ -3,8 +3,16 @@
     [
 	{
 	    "name": "variant:ecmwf:temperature",
-	    "title": "EC World Temperature",
-	    "abstract": "ECMWF abstract",
+	    "title":
+	    {
+		"en": "EC Title",
+		"fi": "EC Otsikko"
+	    },
+	    "abstract":
+	    {
+		"en": "ECMWF abstract",
+		"fi": "ECMWF abstrakti"
+	    },
 	    "producer": "ecmwf_maailma_pinta"
 	},
 	{
@@ -16,18 +24,16 @@
 	},
 	{
 	    "name": "variant:pal:temperature",
-	    "title": "PAL Skandinavia Temperature",
+	    "title":
+	    {
+		"en": "PAL Title",
+		"fi": "PAL Otsikko"
+	    },
 	    "abstract": "PAL abstract"
 	}
     ],
 
     "producer": "pal_skandinavia",
-    "projection":
-    {
-	"crs": "data",
-	"xsize": 500,
-	"ysize": 500
-    },
     "views":
     [
         {
