@@ -11488,7 +11488,7 @@
 
 			},
 			{
-				"Title": "EC World Temperature",
+				"Title": "EC Title",
 				"queryable": 1,
 				"Name": "variant:ecmwf:temperature",
 				"Abstract": "ECMWF abstract",
@@ -11756,7 +11756,7 @@
 
 			},
 			{
-				"Title": "PAL Skandinavia Temperature",
+				"Title": "PAL Title",
 				"queryable": 1,
 				"Name": "variant:pal:temperature",
 				"Abstract": "PAL abstract",

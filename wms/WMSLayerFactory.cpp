@@ -694,18 +694,16 @@ std::list<SharedWMSLayer> WMSLayerFactory::createWMSLayers(const std::string& th
 
       Json::Value variant_j = root;  // deep copy for applying the changes
 
-      // Obligatory settings
+      // Process obligatory settings name and title:
       std::string name;
-      std::string title;
       remove_string(name, settings_j, "name");
-      remove_string(title, settings_j, "title");
-
       if (name.empty())
         throw Fmi::Exception(BCP, "WMS layer " + theFullLayerName + " variants must all be named");
-      if (title.empty())
+
+      auto title = remove(settings_j, "title");
+      if (title.isNull())
         throw Fmi::Exception(BCP,
                              "WMS layer " + theFullLayerName + " variants must all have titles");
-
       variant_j["title"] = title;
 
       // Process optional settings (abstract etc)

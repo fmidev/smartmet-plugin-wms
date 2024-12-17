@@ -3594,7 +3594,7 @@
     
     <Layer queryable="1">
       <Name>variant:pal:temperature</Name>
-      <Title>PAL Skandinavia Temperature</Title>
+      <Title>PAL Title</Title>
       <Abstract>PAL abstract</Abstract>
       <CRS>AUTO2:42001</CRS>
       <CRS>AUTO2:42002</CRS>
