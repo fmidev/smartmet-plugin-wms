@@ -502,7 +502,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (pos != std::string::npos)
     {
       attributeList.addAttribute("grid.areaInterpolationMethod",
-                                 std::to_string(T::AreaInterpolationMethod::Nearest));
+                                 Fmi::to_string(T::AreaInterpolationMethod::Nearest));
       pName.erase(pos, 4);
     }
 
@@ -579,31 +579,31 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     if (projection.size && *projection.size > 0)
     {
-      originalGridQuery->mAttributeList.addAttribute("grid.size", std::to_string(*projection.size));
+      originalGridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
     }
     else
     {
       if (projection.xsize)
         originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                       std::to_string(*projection.xsize));
+                                                       Fmi::to_string(*projection.xsize));
 
       if (projection.ysize)
         originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                       std::to_string(*projection.ysize));
+                                                       Fmi::to_string(*projection.ysize));
     }
 
     if (projection.bboxcrs)
       originalGridQuery->mAttributeList.addAttribute("grid.bboxcrs", *projection.bboxcrs);
 
     if (projection.cx)
-      originalGridQuery->mAttributeList.addAttribute("grid.cx", std::to_string(*projection.cx));
+      originalGridQuery->mAttributeList.addAttribute("grid.cx", Fmi::to_string(*projection.cx));
 
     if (projection.cy)
-      originalGridQuery->mAttributeList.addAttribute("grid.cy", std::to_string(*projection.cy));
+      originalGridQuery->mAttributeList.addAttribute("grid.cy", Fmi::to_string(*projection.cy));
 
     if (projection.resolution)
       originalGridQuery->mAttributeList.addAttribute("grid.resolution",
-                                                     std::to_string(*projection.resolution));
+                                                     Fmi::to_string(*projection.resolution));
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
     {
@@ -614,19 +614,19 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     if (smoother.size)
       originalGridQuery->mAttributeList.addAttribute("contour.smooth.size",
-                                                     std::to_string(*smoother.size));
+                                                     Fmi::to_string(*smoother.size));
 
     if (smoother.degree)
       originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
-                                                     std::to_string(*smoother.degree));
+                                                     Fmi::to_string(*smoother.degree));
 
     if (interpolation == "linear")
-      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",std::to_string((int)Trax::InterpolationType::Linear));
+      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",Fmi::to_string((int)Trax::InterpolationType::Linear));
     else if (interpolation == "nearest" || interpolation == "discrete" ||
              interpolation == "midpoint")
-      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",std::to_string((int)Trax::InterpolationType::Midpoint));
+      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",Fmi::to_string((int)Trax::InterpolationType::Midpoint));
     else if (interpolation == "logarithmic")
-      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",std::to_string((int)Trax::InterpolationType::Logarithmic));
+      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",Fmi::to_string((int)Trax::InterpolationType::Logarithmic));
     else
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
 
@@ -636,24 +636,24 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       if (areaunit == "px^2")
         area = box.areaFactor() * area;
 
-      originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(area));
+      originalGridQuery->mAttributeList.addAttribute("contour.minArea", Fmi::to_string(area));
     }
 
     originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
-                                                   std::to_string(extrapolation));
+                                                   Fmi::to_string(extrapolation));
 
     if (extrapolation)
       originalGridQuery->mAttributeList.addAttribute("contour.multiplier",
-                                                     std::to_string(*multiplier));
+                                                     Fmi::to_string(*multiplier));
 
     if (offset)
-      originalGridQuery->mAttributeList.addAttribute("contour.offset", std::to_string(*offset));
+      originalGridQuery->mAttributeList.addAttribute("contour.offset", Fmi::to_string(*offset));
 
     originalGridQuery->mAttributeList.setAttribute(
         "contour.coordinateType",
-        std::to_string(static_cast<int>(T::CoordinateTypeValue::ORIGINAL_COORDINATES)));
-    // query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::LATLON_COORDINATES));
-    // query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
+        Fmi::to_string(static_cast<int>(T::CoordinateTypeValue::ORIGINAL_COORDINATES)));
+    // query.mAttributeList.setAttribute("contour.coordinateType",Fmi::to_string(T::CoordinateTypeValue::LATLON_COORDINATES));
+    // query.mAttributeList.setAttribute("contour.coordinateType",Fmi::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
 
     // The Query object before the query execution.
     // query.print(std::cout,0,0);
@@ -917,8 +917,8 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       }
     }
 
-    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," +
-                         std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
+    theGlobals["bbox"] = Fmi::to_string(box.xmin()) + "," + Fmi::to_string(box.ymin()) + "," +
+                         Fmi::to_string(box.xmax()) + "," + Fmi::to_string(box.ymax());
     if (precision >= 1.0)
       theGlobals["precision"] = pow(10.0, -static_cast<int>(precision));
 
@@ -1259,8 +1259,8 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       }
     }
     theGlobals["objects"][objectKey] = object_cdt;
-    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," +
-                         std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
+    theGlobals["bbox"] = Fmi::to_string(box.xmin()) + "," + Fmi::to_string(box.ymin()) + "," +
+                         Fmi::to_string(box.xmax()) + "," + Fmi::to_string(box.ymax());
     if (precision >= 1.0)
       theGlobals["precision"] = pow(10.0, -static_cast<int>(precision));
 

@@ -239,17 +239,17 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     if (projection.size && *projection.size > 0)
     {
-      originalGridQuery->mAttributeList.addAttribute("grid.size", std::to_string(*projection.size));
+      originalGridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
     }
     else
     {
       if (projection.xsize)
         originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                       std::to_string(*projection.xsize));
+                                                       Fmi::to_string(*projection.xsize));
 
       if (projection.ysize)
         originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                       std::to_string(*projection.ysize));
+                                                       Fmi::to_string(*projection.ysize));
     }
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)

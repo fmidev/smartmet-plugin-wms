@@ -396,7 +396,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (pos != std::string::npos)
     {
       attributeList.addAttribute("grid.areaInterpolationMethod",
-                                 std::to_string(T::AreaInterpolationMethod::Nearest));
+                                 Fmi::to_string(T::AreaInterpolationMethod::Nearest));
       pName.erase(pos, 4);
     }
 
@@ -496,17 +496,17 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     if (projection.size && *projection.size > 0)
     {
-      originalGridQuery->mAttributeList.addAttribute("grid.size", std::to_string(*projection.size));
+      originalGridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
     }
     else
     {
       if (projection.xsize)
         originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                       std::to_string(*projection.xsize));
+                                                       Fmi::to_string(*projection.xsize));
 
       if (projection.ysize)
         originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                       std::to_string(*projection.ysize));
+                                                       Fmi::to_string(*projection.ysize));
     }
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
@@ -702,8 +702,8 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     if (valid_count < minvalues)
       throw Fmi::Exception(BCP, "Too few valid values in symbol layer")
-          .addParameter("valid values", std::to_string(valid_count))
-          .addParameter("minimum count", std::to_string(minvalues));
+          .addParameter("valid values", Fmi::to_string(valid_count))
+          .addParameter("minimum count", Fmi::to_string(minvalues));
 
     // We created only this one layer
     theLayersCdt.PushBack(group_cdt);
@@ -914,8 +914,8 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     if (valid_count < minvalues)
       throw Fmi::Exception(BCP, "Too few valid values in symbol layer")
-          .addParameter("valid values", std::to_string(valid_count))
-          .addParameter("minimum count", std::to_string(minvalues));
+          .addParameter("valid values", Fmi::to_string(valid_count))
+          .addParameter("minimum count", Fmi::to_string(minvalues));
 
     // We created only this one layer
     theLayersCdt.PushBack(group_cdt);

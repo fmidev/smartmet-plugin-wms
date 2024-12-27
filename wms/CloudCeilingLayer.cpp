@@ -412,8 +412,8 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     if (valid_count < minvalues)
       throw Fmi::Exception(BCP, "Too few valid values in number layer")
-          .addParameter("valid values", std::to_string(valid_count))
-          .addParameter("minimum count", std::to_string(minvalues));
+          .addParameter("valid values", Fmi::to_string(valid_count))
+          .addParameter("minimum count", Fmi::to_string(minvalues));
 
     // Close the grouping
     theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n  </g>");

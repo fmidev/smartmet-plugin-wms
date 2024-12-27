@@ -246,17 +246,17 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(State& theState)
 
     if (projection.size && *projection.size > 0)
     {
-      originalGridQuery->mAttributeList.addAttribute("grid.size", std::to_string(*projection.size));
+      originalGridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
     }
     else
     {
       if (projection.xsize)
         originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                       std::to_string(*projection.xsize));
+                                                       Fmi::to_string(*projection.xsize));
 
       if (projection.ysize)
         originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                       std::to_string(*projection.ysize));
+                                                       Fmi::to_string(*projection.ysize));
     }
 
     if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
@@ -268,7 +268,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(State& theState)
 
     originalGridQuery->mAttributeList.setAttribute(
         "grid.coordinateType",
-        std::to_string(static_cast<int>(T::CoordinateTypeValue::LATLON_COORDINATES)));
+        Fmi::to_string(static_cast<int>(T::CoordinateTypeValue::LATLON_COORDINATES)));
 
     // The Query object before the query execution.
     // query.print(std::cout,0,0);
@@ -479,10 +479,10 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
     attributeList.addAttribute("grid.crs", wkt);
 
     if (projection.xsize)
-      attributeList.addAttribute("grid.width", std::to_string(*projection.xsize));
+      attributeList.addAttribute("grid.width", Fmi::to_string(*projection.xsize));
 
     if (projection.ysize)
-      attributeList.addAttribute("grid.height", std::to_string(*projection.ysize));
+      attributeList.addAttribute("grid.height", Fmi::to_string(*projection.ysize));
 
     // Getting coordinates for the new grid.
     Identification::gridDef.getGridLatLonCoordinatesByGeometry(
@@ -722,7 +722,7 @@ void StreamLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
       {
         // Store the path with unique QID
         std::string iri =
-            qid + (qid.empty() ? "" : ".") + std::to_string(i);  // isoline.getQid(theState);
+            qid + (qid.empty() ? "" : ".") + Fmi::to_string(i);  // isoline.getQid(theState);
 
         if (!theState.addId(iri))
           throw Fmi::Exception(BCP, "Non-unique ID assigned to streamline").addParameter("ID", iri);
@@ -745,8 +745,8 @@ void StreamLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     }
 
     theGlobals["includes"][qid] = pathOut.str();
-    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," +
-                         std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
+    theGlobals["bbox"] = Fmi::to_string(box.xmin()) + "," + Fmi::to_string(box.ymin()) + "," +
+                         Fmi::to_string(box.xmax()) + "," + Fmi::to_string(box.ymax());
     theGlobals["objects"][objectKey] = object_cdt;
     if (precision >= 1.0)
       theGlobals["precision"] = pow(10.0, -(int)precision);

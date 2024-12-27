@@ -100,10 +100,10 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
         const auto& box = projection.getBox();
 
         if (xx < 0)
-          attributes.add("x", std::to_string(box.width() + xx));
+          attributes.add("x", Fmi::to_string(box.width() + xx));
 
         if (yy < 0)
-          attributes.add("y", std::to_string(box.height() + yy));
+          attributes.add("y", Fmi::to_string(box.height() + yy));
       }
     }
 
