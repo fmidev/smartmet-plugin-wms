@@ -29,6 +29,9 @@ Table of Contents
       - [TimeLayer](#timelayer)
       - [TagLayer](#taglayer)
       - [WKTLayer](#wktlayer)
+      - [CircleLayer](#circlelayer)
+        - [CircleLayer settings](#circlelayer-settings)
+        - [Circle settings](#circle-settings)
       - [TranslationLayer](#translationlayer)
       - [WindRoseLayer](#windroselayer)
       - [PostGISLayer](#postgislayer)
@@ -1510,7 +1513,7 @@ The table below contains a list of attributes that can be defined for the tag la
 
 The WKT layer can be used insert an arbitrary geometry into the image in the Well Known Text format.
 
-The table below shows a simple example  on the usage of   the WKT layer.
+The table below shows a simple example  on the usage of the WKT layer.
 
 <pre><code><sub>
 {
@@ -1605,6 +1608,109 @@ The table below contains a list of attributes that can be defined for the WKT la
 | relativeresolution | (double) | -             | The segmentation resolution in pixels.     |
 
 By default the WKT is not segmented into smaller linesegments. However, if the CRS of the image is not geographic, long straight lines in the WKT will not curve as expected unless the WKT is segmented into multiple parts in a resolution suitable for the output image. In the example above the black WKT is not segmented at all, the red one is segmented to 100 km resolution, and the green one to 20 pixel resolution.
+
+#### CircleLayer
+
+The circle layer is typically used to draw circles of specific radius around airports to indicate a specific area of interest.
+
+A sample configuration from the plugin tests:
+
+<pre><code><sub>
+{
+    "title": "Circles",
+
+    "projection":
+    {
+        "xsize": 500,
+        "ysize": 500,
+        "crs": "EPSG:3035",
+        "bboxcrs": "WGS84",
+        "cx": 25,
+        "cy": 60,
+        "resolution": 1
+    },
+    
+    "views": [
+        {
+            "qid": "v1",
+            "layers": [
+                {
+                    "qid": "mymap",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "minarea": 50,
+                        "table": "admin_0_countries"
+                    },
+                    "attributes":
+                    {
+                        "id": "europe",
+                        "stroke": "#333",
+                        "stroke-width": "0.5px",
+                        "fill": "none"
+                    }
+                },
+                {
+                    "layer_type": "circle",
+                    "qid": "c",
+                    "places":
+                    [
+                        "Helsinki",
+                        "Tampere",
+                        "Turku"
+                    ],
+                    "circles":
+                    [
+                        {
+                            "radius": 20,
+                            "attributes":
+                            {
+                                "stroke": "black",
+                                "stroke-width": 1.5
+                            }
+                        },
+                        {
+                            "radius": 50,
+                            "attributes":
+                            {
+                                "stroke": "black",
+                                "stroke-width": 0.5
+                            }
+                        }
+                    ],
+                    "attributes":
+                    {
+                        "fill": "none"
+                    }
+                }
+            ]
+        }
+    ]
+}
+
+</sub></code></pre>
+
+The image generated from the configuration file:
+
+<img src="images/circles.png">
+
+##### CircleLayer settings
+ |Name|Type|Default value|Description|
+ |----|----|-------------|-----------|
+ |places|[string]|-|List of location names|
+ |keyword|(string)|-|Keyword for the database list of location names|
+ |circles|Circle/[Circle]|-|One or several circle definitions|
+
+##### Circle settings
+
+ |Name|Type|Default value|Description|
+ |----|----|-------------|-----------|
+ |radius|(double)|-|Circle radius in kilometers|
+ |attributes|(Attributes)|-|Presentation attributes for the circle|
+ 
+
 
 #### TranslationLayer
 
