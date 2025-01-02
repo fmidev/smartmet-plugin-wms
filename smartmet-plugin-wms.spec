@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 24.12.17
+Version: 25.1.2
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Jan  2 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.1.2-1.fmi
+- Added CircleLayer for drawing circles around airports etc
+
 * Tue Dec 17 2024 Mika Heiskanen <mika.heiskanen@fmi.fi> - 24.12.17-1.fmi
 - Fixed variant title translations
 
