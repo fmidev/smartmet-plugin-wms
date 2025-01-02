@@ -3,6 +3,7 @@
 #include "LayerFactory.h"
 #include "ArrowLayer.h"
 #include "BackgroundLayer.h"
+#include "CircleLayer.h"
 #include "CloudCeilingLayer.h"
 #include "FinnishRoadObservationLayer.h"
 #include "FrameLayer.h"
@@ -101,6 +102,8 @@ Layer* create(const Json::Value& theJson)
       return new FrameLayer;
     if (name == "grid")
       return new GridLayer;
+    if (name == "circle")
+      return new CircleLayer;
 
     throw Fmi::Exception(BCP, "Unknown layer type '" + name + "'");
   }
