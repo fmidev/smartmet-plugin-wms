@@ -2025,13 +2025,13 @@ The table below contains a list of attributes that can be defined for the ice ma
 <th>Default Value </th>
 <th colspan="2"> Description </th></tr>
 <tr><td>attribute_columns</td><td>(string)</td><td>-</td><td colspan="2">Comma-separated list of columns in specified schema.table.</td></tr>
-<tr><td>first_name_column</td><td>string</td><td>-</td><td colspan="2">Column name in specified schema.table. Primary name of the location, e.g. 'Helsinki'. This is used by 'named_location'-layer.</td></tr>
-<tr><td>second_name_column</td><td>(string)</td><td>-</td><td colspan="2">Column name in specified schema.table.Secondary name of the location, e.g. 'Helsingfors'. This is used by 'named_location'-layer.</td></tr>
+<tr><td>firstname_column</td><td>string</td><td>-</td><td colspan="2">Column name in specified schema.table. Primary name of the location, e.g. 'Helsinki'. This is used by 'named_location'-layer.</td></tr>
+<tr><td>secondname_column</td><td>(string)</td><td>-</td><td colspan="2">Column name in specified schema.table.Secondary name of the location, e.g. 'Helsingfors'. This is used by 'named_location'-layer.</td></tr>
 <tr><td>symbol</td><td>A symbol. Position of symbol is fetched from database</td><td></td><td colspan="2">The first parameter for PostGreSQL DATE_TRUNC-function. Supported values are 'minute', 'hour', 'day', 'week' ,'month', 'year'. If time_truncate is defined it is applied to requested datetime.</td></tr>
 <tr><td rowspan="9">layer_subtype</td><td rowspan="9">(string)</td><td rowspan="9">"geometry"</td><td colspan="2">Specifies the actual layer type. Full list of supported types is listed in the table below. If layer_subtype is missing geometry type is assumed.</td></tr>
 <tr><td><b>Name</b></td><td><b>Description</b></td></tr>
 <tr><td>symbol</td><td>A symbol. Position of symbol is fetched from database.</td></tr>
-<tr><td>named_location</td><td>Location with name. Position of location is fetched from database. symbol-property can be defined to mark the location on map. first_name_column, second_name_column can be defined to show location name on map.</td></tr>
+<tr><td>named_location</td><td>Location with name. Position of location is fetched from database. symbol-property can be defined to mark the location on map. firstname_column, secondname_column can be defined to show location name on map.</td></tr>
 <tr><td>coordinate_grid</td><td>Coordinate grid. Grid is drawn on requested geometry. If result set contains no geometry, grid is drawn on whole.</td></tr>
 <tr><td>degree_of_pressure</td><td>Degree of pressure for ice.</td></tr>
 <tr><td>mean_temperature</td><td>Ellipse type of label, where we have background ellipse and text written on .</td></tr>
