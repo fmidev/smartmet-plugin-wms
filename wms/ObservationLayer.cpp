@@ -184,6 +184,17 @@ void ObservationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, 
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void ObservationLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+{
+  // TODO();
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value
  */
 // ----------------------------------------------------------------------

@@ -132,6 +132,17 @@ void View::addGridParameterInfo(ParameterInfos& infos, const State& theState) co
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void View::info(CTPP::CDT& theInfo, const State& theState)
+{
+  layers.info(theInfo, theState);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value = combined hash from all layers
  *
  * Other members are ignored, their hash comes from the hash

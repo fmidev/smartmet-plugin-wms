@@ -781,6 +781,17 @@ void StreamLayer::addGridParameterInfo(ParameterInfos& infos, const State& theSt
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void StreamLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+{
+  // TODO();
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value for the layer
  */
 // ----------------------------------------------------------------------

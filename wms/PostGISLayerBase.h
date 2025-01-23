@@ -32,6 +32,7 @@ class PostGISLayerBase : public Layer
             const Properties& theProperties) override;
 
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override = 0;
+  void info(CTPP::CDT& theInfo, const State& theState) override = 0;
 
   std::size_t hash_value(const State& theState) const override;
 

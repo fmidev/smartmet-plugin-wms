@@ -204,6 +204,17 @@ ParameterInfos Product::getGridParameterInfo(const State& theState) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void Product::info(CTPP::CDT& theInfo, const State& theState)
+{
+  views.info(theInfo, theState);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value
  */
 // ----------------------------------------------------------------------

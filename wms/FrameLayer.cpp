@@ -481,6 +481,17 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& /* theState */)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void FrameLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+{
+  // no info available
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value
  */
 // ----------------------------------------------------------------------

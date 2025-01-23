@@ -285,6 +285,18 @@ void Layers::addGridParameterInfo(ParameterInfos& infos, const State& theState) 
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void Layers::info(CTPP::CDT& theInfo, const State& theState)
+{
+  for (const auto& layer : layers)
+    layer->info(theInfo, theState);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value = combined hash from all layers
  */
 // ----------------------------------------------------------------------

@@ -1,0 +1,18 @@
+<html>
+ <head>
+  <title>SmartMet Server GetFeatureInfo output</title>
+ </head>
+ <body>
+  <table class="featureInfo">
+  <tr><td>X</td><td><TMPL_var x></td></tr>
+  <tr><td>Y</td><td><TMPL_var y></td></tr>
+  <TMPL_if defined(longitude)><tr><td>Longitude</td><td><TMPL_var longitude></td></tr></TMPL_if>
+  <TMPL_if defined(latitude)><tr><td>Latitude</td><td><TMPL_var latitude></td></tr></TMPL_if>
+  <-TMPL_if defined(features)>
+  <-TMPL_foreach features as f>
+  <tr><td><TMPL_var f.__key__></td><td><TMPL_var f.__value__></td></tr>
+  <-/TMPL_foreach>
+  <-/TMPL_if>
+  </table>
+ </body>
+</html>

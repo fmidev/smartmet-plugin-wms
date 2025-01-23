@@ -40,6 +40,8 @@ class Layers
   void check_warnings(Warnings& warnings) const;
 
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+  void info(CTPP::CDT& theInfo, const State& theState);
+
   bool getProjection(CTPP::CDT& theGlobals,
                      CTPP::CDT& theLayersCdt,
                      State& theState,

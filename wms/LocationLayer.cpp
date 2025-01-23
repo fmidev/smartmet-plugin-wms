@@ -275,6 +275,17 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void LocationLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+{
+  // no info available
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value
  */
 // ----------------------------------------------------------------------

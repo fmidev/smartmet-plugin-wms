@@ -109,6 +109,17 @@ void TranslationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, 
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void TranslationLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+{
+  // no info available
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value
  */
 // ----------------------------------------------------------------------

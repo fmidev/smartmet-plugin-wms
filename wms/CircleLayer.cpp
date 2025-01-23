@@ -551,6 +551,17 @@ void CircleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void CircleLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+{
+  // no info available
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value
  */
 // ----------------------------------------------------------------------

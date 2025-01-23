@@ -942,6 +942,17 @@ void SymbolLayer::addGridParameterInfo(ParameterInfos& infos, const State& theSt
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void SymbolLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+{
+  // TODO();
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value for the layer
  */
 // ----------------------------------------------------------------------

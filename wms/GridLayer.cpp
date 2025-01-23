@@ -159,6 +159,17 @@ void GridLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void GridLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+{
+  // no info available
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value
  */
 // ----------------------------------------------------------------------

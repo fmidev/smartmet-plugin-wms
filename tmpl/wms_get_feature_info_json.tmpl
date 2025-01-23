@@ -1,0 +1,15 @@
+{
+"x": <TMPL_if defined(x)><TMPL_var x><TMPL_else>null</TMPL_if>,
+"y": <TMPL_if defined(y)><TMPL_var y><TMPL_else>null</TMPL_if>,
+<TMPL_if defined(longitude)>"longitude": <TMPL_var longitude>,</TMPL_if>
+<TMPL_if defined(latitude)>"latitude": <TMPL_var latitude>,</TMPL_if>
+"features":
+{
+  <-TMPL_if defined(features)>
+  <-TMPL_foreach features as f>
+   <-TMPL_if !f.__first__>,</TMPL_if>
+"<-TMPL_var f.__key__>": <TMPL_var f.__value__>
+  <-/TMPL_foreach>
+  <-/TMPL_if>
+}
+}

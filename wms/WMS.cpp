@@ -505,13 +505,6 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
       return handleWmsException(ex, theState, theRequest, theResponse);
     }
 
-    if (requestType == WMS::WMSRequestType::GET_FEATURE_INFO)
-    {
-      Fmi::Exception ex(BCP, ERROR_GETFEATUREINFO_NOT_SUPPORTED);
-      ex.addParameter(WMS_EXCEPTION_CODE, WMS_OPERATION_NOT_SUPPORTED);
-      return handleWmsException(ex, theState, theRequest, theResponse);
-    }
-
     // Handle GetCapabilities separately
 
     if (requestType == WMS::WMSRequestType::GET_CAPABILITIES)
@@ -530,6 +523,9 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
 
     if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
       return wmsGetLegendGraphicQuery(theState, theRequest, theResponse);
+
+    if (requestType == WMS::WMSRequestType::GET_FEATURE_INFO)
+      return wmsGetFeatureInfoQuery(theState, theRequest, theResponse);
 
     Fmi::Exception ex(BCP, ERROR_NOT_WMS_REQUEST);
     ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
@@ -760,6 +756,126 @@ WMSQueryStatus Dali::Plugin::wmsGetLegendGraphicQuery(State &theState,
     }
 
     return wmsGenerateProduct(theState, thisRequest, theResponse, product);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Perform a WMS GetFeatureInfo query
+ *
+ * This is a simplified version of wmsGetMapQuery, some calls have just been
+ * removed.
+ */
+// ----------------------------------------------------------------------
+
+WMSQueryStatus Dali::Plugin::wmsGetFeatureInfoQuery(State &theState,
+                                                    const Spine::HTTP::Request &theRequest,
+                                                    Spine::HTTP::Response &theResponse)
+{
+  try
+  {
+    // WMS-functionality is handled by adjusting requests parameters accordingly
+    // Make a copy here since incoming requests are const
+
+    Product product;
+    auto thisRequest = theRequest;
+
+    // Catch other errors and handle them with handleWmsException
+    try
+    {
+      if (!theRequest.getParameter("QUERY_LAYERS"))
+      {
+        throw Fmi::Exception(BCP, "QUERY_LAYERS option has not been specified")
+            .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED)
+            .disableLogging();
+      }
+
+      if (!theRequest.getParameter("X") || !theRequest.getParameter("Y"))
+      {
+        throw Fmi::Exception(BCP, "X and Y must be specified")
+            .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED)
+            .disableLogging();
+      }
+
+      WMS::WMSGetMap wmsGetMapRequest(*itsWMSConfig);
+      wmsGetMapRequest.parseHTTPRequest(*itsQEngine, thisRequest);
+
+      // Annoying standard requires LAYERS to be specified, and QUERY_LAYERS to list
+      // only the layers we're interested in. Since we merge JSON settings, some
+      // information is lost unless we store original layer names into the JSON.
+      // A simpler solution is to just remove the layers not listed in QUERY_LAYERS
+      // as well as the corresponding STYLES elements.
+
+      theState.setName(*thisRequest.getParameter("LAYERS"));
+
+      std::vector<std::string> names;
+      boost::algorithm::split(names, theState.getName(), boost::is_any_of(","));
+
+      auto json_layers = wmsGetMapRequest.jsons();
+      auto styles = wmsGetMapRequest.styles();
+
+      // Now we remove layers not listed in QUERY_LAYERS
+
+      // TODO
+      // keep_only_query_layers(names, json_layers, styles,
+      // *thisRequest.getParameter("QUERY_LAYERS"));
+
+      // Process the JSON layers
+
+      bool has_many_layers = (json_layers.size() > 1);
+
+      for (auto i = 0UL; i < json_layers.size(); i++)
+      {
+        auto &json = json_layers.at(i);
+        const auto &style = styles.at(i);
+        const auto &name = names.at(i);
+
+        const bool cnf_request = false;
+        const int json_stage = 0;
+        wmsPreprocessJSON(theState, thisRequest, name, json, cnf_request, json_stage);
+        SmartMet::Plugin::WMS::useStyle(json, style);
+        if (has_many_layers)
+          relocate_producer_to_view(name, json);
+      }
+
+      // Merge multiple layers into one
+
+      Json::Value json;
+      if (has_many_layers)
+        json = merge_layers(json_layers);
+      else
+        json = json_layers.back();
+
+      // Establish type forced by the query. Must not use 'thisRequest' here
+      // Note the parameter is INFO_FORMAT and not FORMAT as for GetMap requests.
+
+      auto fmt = Spine::optional_string(theRequest.getParameter("INFO_FORMAT"), "application/json");
+      theState.setType(demimetype(fmt));
+
+      // And initialize the product specs from the JSON
+
+      product.init(json, theState, itsConfig);
+
+      // If the desired type is not defined in the JSON, the state object knows from earlier code
+      // what format to output (HTTP request or default format), and we can not set the Product to
+      // use it.
+
+      if (product.type.empty())
+        product.type = theState.getType();
+    }
+    catch (...)
+    {
+      Fmi::Exception ex(BCP, "Operation failed!", nullptr);
+      if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+      return handleWmsException(ex, theState, thisRequest, theResponse);
+    }
+
+    return wmsGenerateFeatureInfo(theState, thisRequest, theResponse, product);
   }
   catch (...)
   {
@@ -1063,6 +1179,74 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
 
     // Removing the animation file
     remove(fname);
+  }
+
+  return WMSQueryStatus::OK;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Process a GetFeatureInfo query
+ */
+// ----------------------------------------------------------------------
+
+WMSQueryStatus Dali::Plugin::wmsGenerateFeatureInfo(State &theState,
+                                                    const Spine::HTTP::Request &theRequest,
+                                                    Spine::HTTP::Response &theResponse,
+                                                    Product &theProduct)
+{
+  // We do not cache the results
+  // std::size_t product_hash = 0;
+
+  CTPP::CDT info(CTPP::CDT::HASH_VAL);
+  try
+  {
+    double x = Fmi::stod(*theRequest.getParameter("X"));  // validated earlier to exist
+    double y = Fmi::stod(*theRequest.getParameter("Y"));
+
+    info["x"] = x;
+    info["y"] = y;
+
+    info["features"] = CTPP::CDT(CTPP::CDT::HASH_VAL);
+
+    theProduct.info(info, theState);
+    std::cout << fmt::format("Generated CDT:\n{}\n", info.RecursiveDump());
+
+    auto tmpl_name = "wms_get_feature_info_" + theState.getType();
+    auto tmpl = getTemplate(tmpl_name);
+
+    std::string output;
+    std::string log;
+    try
+    {
+      tmpl->process(info, output, log);
+      std::cout << "Response: " << output << "\n";
+      formatResponse(output,
+                     theState.getType(),  // not theProduct.type!
+                     theRequest,
+                     theResponse,
+                     theState.useTimer(),
+                     theProduct,
+                     Fmi::bad_hash);
+    }
+    catch (...)
+    {
+      Fmi::Exception ex(BCP, "Error in processing the template '" + tmpl_name + "'!", nullptr);
+      if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+      return handleWmsException(ex, theState, theRequest, theResponse);
+    }
+  }
+  catch (...)
+  {
+    Fmi::Exception e(BCP, "Failed to generate FeatureInfo", nullptr);
+    e.addParameter("URI", theRequest.getURI());
+    e.addParameter("ClientIP", theRequest.getClientIP());
+    e.addParameter("HostName", Spine::HostInfo::getHostName(theRequest.getClientIP()));
+    const bool check_token = true;
+    auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
+    e.addParameter("Apikey", (apikey ? *apikey : std::string("-")));
+    e.printError();
   }
 
   return WMSQueryStatus::OK;

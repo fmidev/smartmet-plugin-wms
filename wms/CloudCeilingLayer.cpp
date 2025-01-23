@@ -426,6 +426,17 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void CloudCeilingLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+{
+  // TODO();
+}
+
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet

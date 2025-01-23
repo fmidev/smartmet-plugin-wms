@@ -1330,6 +1330,17 @@ std::vector<std::string> IceMapLayer::getAttributeColumns() const
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void IceMapLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+{
+  // no info available at least not yet
+}
+
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet

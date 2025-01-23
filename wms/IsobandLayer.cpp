@@ -1,6 +1,7 @@
 //======================================================================
 
 #include "IsobandLayer.h"
+#include "AggregationUtility.h"
 #include "Config.h"
 #include "Geometry.h"
 #include "Hash.h"
@@ -20,6 +21,7 @@
 #include <engines/querydata/Model.h>
 #include <fmt/format.h>
 #include <gis/Box.h>
+#include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <grid-files/common/GeneralFunctions.h>
@@ -188,7 +190,7 @@ void IsobandLayer::init(Json::Value& theJson,
 // ----------------------------------------------------------------------
 
 std::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
-    const Spine::Parameter& theParameter, const Fmi::DateTime& theTime, State& theState)
+    const Spine::Parameter& theParameter, const Fmi::DateTime& theTime, const State& theState)
 {
   try
   {
@@ -1313,6 +1315,165 @@ void IsobandLayer::addGridParameterInfo(ParameterInfos& infos, const State& theS
     info.producer = paraminfo.producer;
     info.level = paraminfo.level;
     add(infos, info);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void IsobandLayer::info(CTPP::CDT& theInfo, const State& theState)
+{
+  try
+  {
+    if (!validLayer(theState))
+      return;
+
+    if (source && *source == "grid")
+      infoGrid(theInfo, theState);
+    else
+      infoQuerydata(theInfo, theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "GetFeatureInfo operation failed!")
+        .addParameter("qid", qid)
+        .addParameter("Producer", *producer)
+        .addParameter("Parameter", *parameter);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void IsobandLayer::infoGrid(CTPP::CDT& theInfo, const State& theState)
+{
+  try
+  {
+    std::cerr << "GRID LAYER INFO\n";
+    // TODO
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "GetFeatureInfo operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void IsobandLayer::infoQuerydata(CTPP::CDT& theInfo, const State& theState)
+{
+  try
+  {
+    // The code here is a drastically reduced version of the respective GetMap code
+
+    std::cerr << "SQD LAYER INFO\n";
+
+    // Sanity checks for isoband data
+    if (theState.isObservation(producer))
+      return;
+    if (!parameter)
+      return;
+
+    // Establish the data
+    auto q = getModel(theState);
+    if (!q)
+      return;
+    if (!q->isGrid())
+      return;
+
+    // Extract optional parameter aggregation settings
+    std::optional<TS::ParameterAndFunctions> param_funcs;
+    param_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*parameter);
+
+    // Establish the valid time
+    auto valid_time = getValidTime();
+
+    // Establish the level
+    if (!q->firstLevel())
+      return;
+    if (level)
+    {
+      if (!q->selectLevel(*level))
+        return;
+      theInfo["level"] = *level;
+    }
+
+    // Get projection details
+    projection.update(q);
+    const auto& crs = projection.getCRS();
+    const auto& box = projection.getBox();
+
+    // Pixel coordinate to latlon
+    Fmi::CoordinateTransformation transformation(crs, "WGS84");
+    double lon = theInfo["x"].GetFloat();
+    double lat = theInfo["y"].GetFloat();
+    box.itransform(lon, lat);
+    if (!transformation.transform(lon, lat))
+      return;
+
+    // Apply unit conversion named in the configuration file
+    if (!unit_conversion.empty())
+    {
+      auto conv = theState.getConfig().unitConversion(unit_conversion);
+      multiplier = conv.multiplier;
+      offset = conv.offset;
+    }
+
+    // Q API sucks (copy paste this everywhere)
+
+    std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+    Fmi::LocalDateTime localdatetime(valid_time, Fmi::TimeZonePtr::utc);
+    auto mylocale = std::locale::classic();
+    NFmiPoint dummy;
+
+    Spine::Location loc(lon, lat);
+    Engine::Querydata::ParameterOptions options(param_funcs->parameter,
+                                                "",
+                                                loc,
+                                                "",
+                                                "",
+                                                *timeformatter,
+                                                "",
+                                                "",
+                                                mylocale,
+                                                "",
+                                                false,
+                                                dummy,
+                                                dummy);
+
+    TS::Value result =
+        AggregationUtility::get_qengine_value(q, options, localdatetime, param_funcs);
+
+    // Extract variant content
+    double value = std::numeric_limits<double>::quiet_NaN();
+    if (const double* tmp = std::get_if<double>(&result))
+      value = *tmp;
+    else if (const int* ptr = std::get_if<int>(&result))
+      value = *ptr;
+
+    // Final unit conversion
+    auto mult = (multiplier ? *multiplier : 1.0);
+    auto off = (offset ? *offset : 0.0);
+    value = mult * value + off;
+
+    // Output results
+    theInfo["features"][*parameter] = value;
+    theInfo["longitude"] = lon;
+    theInfo["latitude"] = lat;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "GetFeatureInfo operation failed!");
   }
 }
 

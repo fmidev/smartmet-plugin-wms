@@ -68,6 +68,7 @@ class Layer : public Properties
   virtual void check_warnings(Warnings& warnings) const;
 
   virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) = 0;
+  virtual void info(CTPP::CDT& theInfo, const State& theState) = 0;
 
   // Base provides a reasonable default!
   virtual std::size_t hash_value(const State& theState) const;

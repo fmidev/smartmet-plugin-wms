@@ -147,6 +147,9 @@ class Plugin : public SmartMetPlugin
   WMSQueryStatus wmsGetLegendGraphicQuery(State& theState,
                                           const Spine::HTTP::Request& theRequest,
                                           Spine::HTTP::Response& theResponse);
+  WMSQueryStatus wmsGetFeatureInfoQuery(State& theState,
+                                        const Spine::HTTP::Request& theRequest,
+                                        Spine::HTTP::Response& theResponse);
   WMSQueryStatus wmsGetCapabilitiesQuery(State& theState,
                                          const Spine::HTTP::Request& theRequest,
                                          Spine::HTTP::Response& theResponse);
@@ -157,6 +160,10 @@ class Plugin : public SmartMetPlugin
                                     const Spine::HTTP::Request& theRequest,
                                     Spine::HTTP::Response& theResponse,
                                     Product& theProduct);
+  WMSQueryStatus wmsGenerateFeatureInfo(State& theState,
+                                        const Spine::HTTP::Request& theRequest,
+                                        Spine::HTTP::Response& theResponse,
+                                        Product& theProduct);
   void wmsPreprocessJSON(State& theState,
                          const Spine::HTTP::Request& theRequest,
                          const std::string& theName,

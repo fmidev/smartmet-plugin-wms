@@ -381,6 +381,7 @@ void Plugin::formatResponse(const std::string &theSvg,
                                        "topojson",
                                        "kml",
                                        "json",
+                                       "html",
                                        "application/json",
                                        "cnf"};
 

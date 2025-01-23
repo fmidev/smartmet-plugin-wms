@@ -95,6 +95,18 @@ void Views::addGridParameterInfo(ParameterInfos& infos, const State& theState) c
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void Views::info(CTPP::CDT& theInfo, const State& theState)
+{
+  for (const auto& view : views)
+    view->info(theInfo, theState);
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value = combined hash from all views
  */
 // ----------------------------------------------------------------------
