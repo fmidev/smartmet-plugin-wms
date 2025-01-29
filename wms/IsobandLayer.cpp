@@ -8,6 +8,7 @@
 #include "Isoband.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "PointData.h"
 #include "State.h"
 #include "StyleSheet.h"
 #include "ValueTools.h"
@@ -87,6 +88,66 @@ void apply_autoclass(std::vector<Isoband>& isobands, const std::string& pattern)
       boost::replace_all(name, ".", ",");  // replace decimal dots with ,
       isoband.attributes.add("class", name);
     }
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Grid Forecast reader
+ */
+// ----------------------------------------------------------------------
+
+PointData read_gridForecasts(const IsobandLayer& layer,
+                             const Engine::Grid::Engine* /* gridEngine */,
+                             QueryServer::Query& query,
+                             const Fmi::SpatialReference& crs,
+                             const Fmi::Box& box,
+                             const Fmi::DateTime& valid_time,
+                             const State& state)
+{
+  try
+  {
+    // Generate the coordinates for the symbols
+
+    const bool forecast_mode = true;
+    auto points = layer.positions->getPoints(nullptr, crs, box, forecast_mode, state);
+
+    PointValues pointvalues;
+    T::GridValueList* values = nullptr;
+    for (const auto& param : query.mQueryParameterList)
+    {
+      for (const auto& val : param.mValueList)
+      {
+        if (val->mValueList.getLength() == points.size())
+          values = &val->mValueList;
+      }
+    }
+
+    if (values && values->getLength())
+    {
+      uint len = values->getLength();
+      for (uint t = 0; t < len; t++)
+      {
+        T::GridValue* rec = values->getGridValuePtrByIndex(t);
+        auto point = points[t];
+
+        if (rec->mValue != ParamValueMissing)
+        {
+          pointvalues.push_back(PointData{point, rec->mValue});
+        }
+        else
+        {
+          PointData missingvalue{point, kFloatMissing};
+          pointvalues.push_back(missingvalue);
+        }
+      }
+    }
+
+    return pointvalues;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 
@@ -1331,6 +1392,12 @@ void IsobandLayer::info(CTPP::CDT& theInfo, const State& theState)
     if (!validLayer(theState))
       return;
 
+    // Sanity checks
+    if (theState.isObservation(producer))
+      return;
+    if (!parameter)
+      return;
+
     if (source && *source == "grid")
       infoGrid(theInfo, theState);
     else
@@ -1356,7 +1423,211 @@ void IsobandLayer::infoGrid(CTPP::CDT& theInfo, const State& theState)
   try
   {
     std::cerr << "GRID LAYER INFO\n";
-    // TODO
+
+    const auto* gridEngine = theState.getGridEngine();
+    if (!gridEngine || !gridEngine->isEnabled())
+      return;
+
+    std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
+    QueryServer::QueryConfigurator queryConfigurator;
+    T::AttributeList attributeList;
+
+    std::string producerName = gridEngine->getProducerName(*producer);
+
+    auto valid_time = getValidTime();
+
+    // Do this conversion just once for speed:
+    NFmiMetTime met_time = valid_time;
+
+    std::string wkt = *projection.crs;
+    // std::cout << wkt << "\n";
+
+    // Getting WKT and the bounding box of the requested projection.
+    // WMS does not support CRS=data, no need to handle it
+
+    if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
+      wkt = projection.getCRS().WKT();
+
+    // std::cout << wkt << "\n";
+
+    // Adding the bounding box information into the query.
+
+    const auto& box = projection.getBox();
+
+    auto bl = projection.bottomLeftLatLon();
+    auto tr = projection.topRightLatLon();
+    auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
+    originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
+
+    bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+    originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+
+    // Adding parameter information into the query.
+
+    std::string pName = *parameter;
+    auto pos = pName.find(".raw");
+    if (pos != std::string::npos)
+    {
+      attributeList.addAttribute("grid.areaInterpolationMethod",
+                                 Fmi::to_string(T::AreaInterpolationMethod::Nearest));
+      pName.erase(pos, 4);
+    }
+
+    std::string param = gridEngine->getParameterString(producerName, pName);
+    attributeList.addAttribute("param", param);
+
+    if (!projection.projectionParameter)
+      projection.projectionParameter = param;
+
+    if (param == *parameter && originalGridQuery->mProducerNameList.empty())
+    {
+      gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
+      if (originalGridQuery->mProducerNameList.empty())
+        originalGridQuery->mProducerNameList.push_back(producerName);
+    }
+
+    std::string forecastTime = Fmi::to_iso_string(getValidTime());
+    attributeList.addAttribute("startTime", forecastTime);
+    attributeList.addAttribute("endTime", forecastTime);
+    attributeList.addAttribute("timelist", forecastTime);
+    attributeList.addAttribute("timezone", "UTC");
+
+    if (origintime)
+      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+
+    // Tranforming information from the attribute list into the query object.
+    queryConfigurator.configure(*originalGridQuery, attributeList);
+
+    // Fullfilling information into the query object.
+
+    originalGridQuery->mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
+
+    for (auto& param : originalGridQuery->mQueryParameterList)
+    {
+      param.mLocationType = QueryServer::QueryParameter::LocationType::Point;
+      param.mType = QueryServer::QueryParameter::Type::PointValues;
+
+      if (geometryId)
+        param.mGeometryId = *geometryId;
+
+      if (levelId)
+        param.mParameterLevelId = *levelId;
+
+      if (level)
+        param.mParameterLevel = C_INT(*level);
+      else if (pressure)
+      {
+        param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
+        param.mParameterLevel = C_INT(*pressure);
+      }
+
+      if (elevation_unit)
+      {
+        if (*elevation_unit == "m")
+          param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
+
+        if (*elevation_unit == "p")
+          param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
+      }
+
+      if (forecastType)
+        param.mForecastType = C_INT(*forecastType);
+
+      if (forecastNumber)
+        param.mForecastNumber = C_INT(*forecastNumber);
+    }
+
+    originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
+    originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
+
+    if (projection.size && *projection.size > 0)
+    {
+      originalGridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
+    }
+    else
+    {
+      if (projection.xsize)
+        originalGridQuery->mAttributeList.addAttribute("grid.width",
+                                                       Fmi::to_string(*projection.xsize));
+
+      if (projection.ysize)
+        originalGridQuery->mAttributeList.addAttribute("grid.height",
+                                                       Fmi::to_string(*projection.ysize));
+    }
+
+    // The Query object before the query execution.
+    // query.print(std::cout,0,0);
+
+    // Executing the query.
+    std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
+
+    // The Query object after the query execution.
+    // query.print(std::cout,0,0);
+
+    // Extracting the projection information from the query result.
+    if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
+    {
+      const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
+      const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
+
+      if (widthStr != nullptr)
+        projection.xsize = Fmi::stoi(widthStr);
+
+      if (heightStr != nullptr)
+        projection.ysize = Fmi::stoi(heightStr);
+    }
+
+    if (!projection.xsize && !projection.ysize)
+      throw Fmi::Exception(BCP, "The projection size is unknown!");
+
+    auto crs = projection.getCRS();
+
+    if (wkt == "data")
+      return;
+
+    // Pixel coordinate to latlon
+    Fmi::CoordinateTransformation transformation(crs, "WGS84");
+    double lon = theInfo["x"].GetFloat();
+    double lat = theInfo["y"].GetFloat();
+    box.itransform(lon, lat);
+    if (!transformation.transform(lon, lat))
+      return;
+
+    T::Coordinate_vec coordinates;
+    coordinates.emplace_back(lon, lat);
+    originalGridQuery->mAreaCoordinates.push_back(coordinates);
+
+    // Data conversion settings
+
+    if (!unit_conversion.empty())
+    {
+      auto conv = theState.getConfig().unitConversion(unit_conversion);
+      multiplier = conv.multiplier;
+      offset = conv.offset;
+    }
+
+    double xmultiplier = (multiplier ? *multiplier : 1.0);
+    double xoffset = (offset ? *offset : 0.0);
+
+    // Establish the numbers to draw. At this point we know that if
+    // use_observations is true, obsengine is not disabled.
+
+    auto pointvalues =
+        read_gridForecasts(*this, gridEngine, *originalGridQuery, crs, box, valid_time, theState);
+
+    if (pointvalues.size() == 1)
+    {
+      float value = pointvalue[0];
+
+      if (value == kFloatMissing)
+        value = std::numeric_limits<double>::quiet_NaN();
+      value = xmultiplier * value + xoffset;
+
+      // Output results
+      theInfo["features"][*parameter] = value;
+      theInfo["longitude"] = lon;
+      theInfo["latitude"] = lat;
+    }
   }
   catch (...)
   {
@@ -1377,12 +1648,6 @@ void IsobandLayer::infoQuerydata(CTPP::CDT& theInfo, const State& theState)
     // The code here is a drastically reduced version of the respective GetMap code
 
     std::cerr << "SQD LAYER INFO\n";
-
-    // Sanity checks for isoband data
-    if (theState.isObservation(producer))
-      return;
-    if (!parameter)
-      return;
 
     // Establish the data
     auto q = getModel(theState);
