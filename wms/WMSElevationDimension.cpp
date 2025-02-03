@@ -1,5 +1,6 @@
 #include "WMSElevationDimension.h"
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <functional>
 #include <iostream>
 #include <numeric>
@@ -18,19 +19,19 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
 {
   try
   {
-    auto comma_fold = [](std::string a, int b) { return std::move(a) + ',' + std::to_string(b); };
+    auto comma_fold = [](std::string a, int b) { return std::move(a) + ',' + Fmi::to_string(b); };
 
     if (itsLevelType == kFmiPressureLevel)
       itsCapabilities =
           std::accumulate(std::next(elevations.rbegin()),
                           elevations.rend(),
-                          std::to_string(*elevations.rbegin()),  // start with last element
+                          Fmi::to_string(*elevations.rbegin()),  // start with last element
                           comma_fold);
     else
       itsCapabilities =
           std::accumulate(std::next(elevations.begin()),
                           elevations.end(),
-                          std::to_string(*elevations.begin()),  // start with first element
+                          Fmi::to_string(*elevations.begin()),  // start with first element
                           comma_fold);
 
     /*
@@ -158,7 +159,7 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
 {
   try
   {
-    auto comma_fold = [](std::string a, int b) { return std::move(a) + ',' + std::to_string(b); };
+    auto comma_fold = [](std::string a, int b) { return std::move(a) + ',' + Fmi::to_string(b); };
 
     if (strcasecmp(itsLevelName.c_str(), "PRESSURE") == 0)
     {
@@ -170,7 +171,7 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
       // start with last element
       itsCapabilities = std::accumulate(std::next(elevations.rbegin()),
                                         elevations.rend(),
-                                        std::to_string(*elevations.rbegin()),
+                                        Fmi::to_string(*elevations.rbegin()),
                                         comma_fold);
     }
     else
@@ -194,7 +195,7 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
       {
         itsCapabilities = std::accumulate(std::next(elevations.begin()),
                                           elevations.end(),
-                                          std::to_string(*elevations.begin()),
+                                          Fmi::to_string(*elevations.begin()),
                                           comma_fold);
       }
     }
@@ -219,9 +220,9 @@ std::string WMSElevationDimension::getDefaultElevation() const
     return "";
 
   if (itsLevelType == kFmiPressureLevel || itsLevelType == 2)
-    return std::to_string(*itsElevations.rbegin());
+    return Fmi::to_string(*itsElevations.rbegin());
 
-  return std::to_string(*itsElevations.begin());
+  return Fmi::to_string(*itsElevations.begin());
 }
 
 const std::string& WMSElevationDimension::getUnitSymbol() const

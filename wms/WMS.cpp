@@ -1178,8 +1178,8 @@ Json::Value Dali::Plugin::getExceptionJson(const std::string &description,
   jsonStr += "\"projection\":\n";
   jsonStr += "{\n";
   jsonStr += "   \"crs\": \"data\",\n";
-  jsonStr += "   \"xsize\": " + std::to_string(pictureWidth) + ",\n";
-  jsonStr += "   \"ysize\": " + std::to_string(pictureHeight) + "\n";
+  jsonStr += "   \"xsize\": " + Fmi::to_string(pictureWidth) + ",\n";
+  jsonStr += "   \"ysize\": " + Fmi::to_string(pictureHeight) + "\n";
   jsonStr += "},\n";
   jsonStr += "\"views\": [\n";
   jsonStr += "    {\n";
@@ -1206,7 +1206,7 @@ Json::Value Dali::Plugin::getExceptionJson(const std::string &description,
     jsonStr += "     \"attributes\":\n";
     jsonStr += "     {\n";
     jsonStr += "           \"x\": \"5\",\n";
-    jsonStr += "           \"y\": \"" + std::to_string(textDimension.height) + "\",\n";
+    jsonStr += "           \"y\": \"" + Fmi::to_string(textDimension.height) + "\",\n";
     jsonStr += "           \"font-family\": \"" + textStyle.fontfamily + "\",\n";
     jsonStr += "           \"font-weight\": \"" + textStyle.fontweight + "\",\n";
     jsonStr += "           \"font-size\": \"" + textStyle.fontsize + "\",\n";

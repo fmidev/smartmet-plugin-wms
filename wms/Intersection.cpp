@@ -195,7 +195,7 @@ void Intersection::init(const std::optional<std::string>& theProducer,
     if (pos != std::string::npos)
     {
       attributeList.addAttribute("grid.areaInterpolationMethod",
-                                 std::to_string(T::AreaInterpolationMethod::Nearest));
+                                 Fmi::to_string(T::AreaInterpolationMethod::Nearest));
       pName.erase(pos, 4);
     }
 
@@ -242,11 +242,11 @@ void Intersection::init(const std::optional<std::string>& theProducer,
 
     if (theProjection.xsize)
       originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                     std::to_string(*theProjection.xsize));
+                                                     Fmi::to_string(*theProjection.xsize));
 
     if (theProjection.ysize)
       originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                     std::to_string(*theProjection.ysize));
+                                                     Fmi::to_string(*theProjection.ysize));
 
     if (wkt == "data" && theProjection.x1 && theProjection.y1 && theProjection.x2 &&
         theProjection.y2)
@@ -261,29 +261,29 @@ void Intersection::init(const std::optional<std::string>& theProducer,
 
     if (smoother.size)
       originalGridQuery->mAttributeList.addAttribute("contour.smooth.size",
-                                                     std::to_string(*smoother.size));
+                                                     Fmi::to_string(*smoother.size));
 
     if (smoother.degree)
       originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
-                                                     std::to_string(*smoother.degree));
+                                                     Fmi::to_string(*smoother.degree));
     if (interpolation == "linear")
-      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",std::to_string((int)Trax::InterpolationType::Linear));
+      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",Fmi::to_string((int)Trax::InterpolationType::Linear));
     else if (interpolation == "nearest" || interpolation == "discrete" ||
              interpolation == "midpoint")
-      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",std::to_string((int)Trax::InterpolationType::Midpoint));
+      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",Fmi::to_string((int)Trax::InterpolationType::Midpoint));
     else if (interpolation == "logarithmic")
-      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",std::to_string((int)Trax::InterpolationType::Logarithmic));
+      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",Fmi::to_string((int)Trax::InterpolationType::Logarithmic));
     else
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
 
     if (offset)
-      originalGridQuery->mAttributeList.addAttribute("contour.offset", std::to_string(*offset));
+      originalGridQuery->mAttributeList.addAttribute("contour.offset", Fmi::to_string(*offset));
 
     originalGridQuery->mAttributeList.setAttribute(
         "contour.coordinateType",
-        std::to_string(static_cast<int>(T::CoordinateTypeValue::ORIGINAL_COORDINATES)));
-    // query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::LATLON_COORDINATES));
-    // query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
+        Fmi::to_string(static_cast<int>(T::CoordinateTypeValue::ORIGINAL_COORDINATES)));
+    // query.mAttributeList.setAttribute("contour.coordinateType",Fmi::to_string(T::CoordinateTypeValue::LATLON_COORDINATES));
+    // query.mAttributeList.setAttribute("contour.coordinateType",Fmi::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
 
     // The Query object before the query execution.
     // query.print(std::cout,0,0);

@@ -247,8 +247,8 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
     {
       // Update the globals
 
-      theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," +
-                           std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
+      theGlobals["bbox"] = Fmi::to_string(box.xmin()) + "," + Fmi::to_string(box.ymin()) + "," +
+                           Fmi::to_string(box.xmax()) + "," + Fmi::to_string(box.ymax());
 
       // Clip if necessary
 

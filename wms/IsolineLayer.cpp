@@ -394,7 +394,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   if (pos != std::string::npos)
   {
     attributeList.addAttribute("grid.areaInterpolationMethod",
-                               std::to_string(T::AreaInterpolationMethod::Nearest));
+                               Fmi::to_string(T::AreaInterpolationMethod::Nearest));
     pName.erase(pos, 4);
   }
 
@@ -470,17 +470,17 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
   if (projection.size && *projection.size > 0)
   {
-    originalGridQuery->mAttributeList.addAttribute("grid.size", std::to_string(*projection.size));
+    originalGridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
   }
   else
   {
     if (projection.xsize)
       originalGridQuery->mAttributeList.addAttribute("grid.width",
-                                                     std::to_string(*projection.xsize));
+                                                     Fmi::to_string(*projection.xsize));
 
     if (projection.ysize)
       originalGridQuery->mAttributeList.addAttribute("grid.height",
-                                                     std::to_string(*projection.ysize));
+                                                     Fmi::to_string(*projection.ysize));
   }
 
   if (wkt == "data" && projection.x1 && projection.y1 && projection.x2 && projection.y2)
@@ -491,19 +491,19 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   }
 
   if (interpolation == "linear")
-    originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type", std::to_string((int)Trax::InterpolationType::Linear));
+    originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Linear));
   else if (interpolation == "logarithmic")
-    originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type", std::to_string((int)Trax::InterpolationType::Logarithmic));
+    originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Logarithmic));
   else
     throw Fmi::Exception(BCP, "Unknown isoline interpolation method '" + interpolation + "'!");
 
   if (smoother.size)
     originalGridQuery->mAttributeList.addAttribute("contour.smooth.size",
-                                                   std::to_string(*smoother.size));
+                                                   Fmi::to_string(*smoother.size));
 
   if (smoother.degree)
     originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
-                                                   std::to_string(*smoother.degree));
+                                                   Fmi::to_string(*smoother.degree));
 
   if (minarea)
   {
@@ -513,24 +513,24 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
     if (areaunit == "px^2")
       area = box.areaFactor() * area;
 
-    originalGridQuery->mAttributeList.addAttribute("contour.minArea", std::to_string(*minarea));
+    originalGridQuery->mAttributeList.addAttribute("contour.minArea", Fmi::to_string(*minarea));
   }
 
   originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
-                                                 std::to_string(extrapolation));
+                                                 Fmi::to_string(extrapolation));
 
   if (extrapolation)
     originalGridQuery->mAttributeList.addAttribute("contour.multiplier",
-                                                   std::to_string(*multiplier));
+                                                   Fmi::to_string(*multiplier));
 
   if (offset)
-    originalGridQuery->mAttributeList.addAttribute("contour.offset", std::to_string(*offset));
+    originalGridQuery->mAttributeList.addAttribute("contour.offset", Fmi::to_string(*offset));
 
   originalGridQuery->mAttributeList.setAttribute(
       "contour.coordinateType",
-      std::to_string(static_cast<int>(T::CoordinateTypeValue::ORIGINAL_COORDINATES)));
-  // query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::LATLON_COORDINATES));
-  // query.mAttributeList.setAttribute("contour.coordinateType",std::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
+      Fmi::to_string(static_cast<int>(T::CoordinateTypeValue::ORIGINAL_COORDINATES)));
+  // query.mAttributeList.setAttribute("contour.coordinateType",Fmi::to_string(T::CoordinateTypeValue::LATLON_COORDINATES));
+  // query.mAttributeList.setAttribute("contour.coordinateType",Fmi::to_string(T::CoordinateTypeValue::GRID_COORDINATES));
 
   // The Query object before the query execution.
   // query.print(std::cout,0,0);
@@ -913,8 +913,8 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         group_cdt["tags"].PushBack(tag_cdt);
       }
     }
-    theGlobals["bbox"] = std::to_string(box.xmin()) + "," + std::to_string(box.ymin()) + "," +
-                         std::to_string(box.xmax()) + "," + std::to_string(box.ymax());
+    theGlobals["bbox"] = Fmi::to_string(box.xmin()) + "," + Fmi::to_string(box.ymin()) + "," +
+                         Fmi::to_string(box.xmax()) + "," + Fmi::to_string(box.ymax());
     theGlobals["objects"][objectKey] = object_cdt;
     if (precision >= 1.0)
       theGlobals["precision"] = pow(10.0, -(int)precision);

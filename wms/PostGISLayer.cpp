@@ -91,7 +91,7 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         if (geom && geom->IsEmpty() == 0)
         {
           // Store the path
-          std::string iri = (qid + std::to_string(mapid++));
+          std::string iri = (qid + Fmi::to_string(mapid++));
 
           CTPP::CDT map_cdt(CTPP::CDT::HASH_VAL);
           map_cdt["iri"] = iri;

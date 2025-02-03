@@ -234,10 +234,10 @@ void validate_options(const tag_get_map_request_options& options,
       throw Fmi::Exception(BCP, "Invalid BBOX definition!")
           .addDetail("'xMin' must be smaller than 'xMax' and 'yMin' must be smaller than 'yMax'.")
           .addParameter(WMS_EXCEPTION_CODE, WMS_INVALID_DIMENSION_VALUE)
-          .addParameter("xMin", std::to_string(options.bbox.xMin))
-          .addParameter("yMin", std::to_string(options.bbox.yMin))
-          .addParameter("xMax", std::to_string(options.bbox.xMax))
-          .addParameter("yMax", std::to_string(options.bbox.yMax));
+          .addParameter("xMin", Fmi::to_string(options.bbox.xMin))
+          .addParameter("yMin", Fmi::to_string(options.bbox.yMin))
+          .addParameter("xMax", Fmi::to_string(options.bbox.xMax))
+          .addParameter("yMax", Fmi::to_string(options.bbox.yMax));
     }
 
     // check interval dimesion
@@ -397,8 +397,8 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     {
       Fmi::Exception exception(BCP, "LAYERS and STYLES amount mismatch");
       exception.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      exception.addParameter("Layers", std::to_string(layers.size()));
-      exception.addParameter("Styles", std::to_string(styles.size()));
+      exception.addParameter("Layers", Fmi::to_string(layers.size()));
+      exception.addParameter("Styles", Fmi::to_string(styles.size()));
       throw exception;
     }
 
