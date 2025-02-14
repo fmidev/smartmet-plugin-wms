@@ -110,6 +110,9 @@ PointData read_gridForecasts(const IsobandLayer& layer,
     // Generate the coordinates for the symbols
 
     const bool forecast_mode = true;
+
+    SHIT();
+
     auto points = layer.positions->getPoints(nullptr, crs, box, forecast_mode, state);
 
     PointValues pointvalues;
