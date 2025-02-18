@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.1.29
+Version: 25.2.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Feb 18 2025 Andris Pavēnis <andris.pavenis@fmi.fi> 25.2.18-1.fmi
+- Update to gdal-3.10, geos-3.13 and proj-9.5
+
 * Wed Jan 29 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.1.29-1.fmi
 - Repackaged due to ABI changes
 
