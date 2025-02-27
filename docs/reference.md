@@ -1701,6 +1701,8 @@ The image generated from the configuration file:
  |----|----|-------------|-----------|
  |places|[string]|-|List of location names|
  |keyword|(string)|-|Keyword for the database list of location names|
+ |features|(string)|-|List of feature names such as SYNOP,PPL etc|
+ |lines|(bool)|true|Treat the circles as polylines or as polygons|
  |circles|Circle/[Circle]|-|One or several circle definitions|
 
 ##### Circle settings
