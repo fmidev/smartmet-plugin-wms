@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.2.18
+Version: 25.2.27
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -26,7 +26,7 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 25.2.18
-BuildRequires: smartmet-library-grid-content-devel >= 25.2.18
+BuildRequires: smartmet-library-grid-content-devel >= 25.2.20
 BuildRequires: smartmet-library-grid-files-devel >= 25.2.18
 BuildRequires: smartmet-library-macgyver-devel >= 25.2.18
 BuildRequires: smartmet-library-spine-devel >= 25.2.18
@@ -38,7 +38,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 25.2.18
 BuildRequires: smartmet-engine-observation-devel >= 25.2.18
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 25.2.18
-BuildRequires: smartmet-engine-grid-devel >= 25.2.18
+BuildRequires: smartmet-engine-grid-devel >= 25.2.20
 BuildRequires: smartmet-engine-geonames-devel >= 25.2.18
 BuildRequires: smartmet-engine-querydata-devel >= 25.2.18
 BuildRequires: smartmet-engine-contour-devel >= 25.2.18
@@ -68,7 +68,7 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 25.2.18
+Requires: smartmet-library-grid-content >= 25.2.20
 Requires: smartmet-library-grid-files >= 25.2.18
 Requires: smartmet-library-gis >= 25.2.18
 Requires: smartmet-library-trax >= 25.2.18
@@ -82,7 +82,7 @@ Requires: smartmet-engine-authentication >= 25.2.18
 Requires: smartmet-engine-querydata >= 25.2.18
 Requires: smartmet-engine-contour >= 25.2.18
 Requires: smartmet-engine-gis >= 25.2.18
-Requires: smartmet-engine-grid >= 25.2.18
+Requires: smartmet-engine-grid >= 25.2.20
 Requires: smartmet-engine-geonames >= 25.2.18
 Requires: smartmet-server >= 25.2.18
 Requires: smartmet-library-spine >= 25.2.18
@@ -113,7 +113,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-macgyver-devel >= 25.2.18
 #TestRequires: smartmet-library-spine-devel >= 25.2.18
 #TestRequires: smartmet-library-timeseries-devel >= 25.2.18
-#TestRequires: smartmet-engine-grid-devel >= 25.2.18
+#TestRequires: smartmet-engine-grid-devel >= 25.2.20
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -154,6 +154,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Feb 27 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.2.27-1.fmi
+- Added "features" and "lines" settings to CircleLayer
+- Remove duplicate locations from CircleLayer name searches
+
 * Tue Feb 18 2025 Andris Pavēnis <andris.pavenis@fmi.fi> 25.2.18-1.fmi
 - Update to gdal-3.10, geos-3.13 and proj-9.5
 
