@@ -39,6 +39,7 @@ enum class WMSLayerType
 };
 
 std::set<std::string> querydata_layers = {"arrow",
+                                          "circle",
                                           "isoband",
                                           "isoline",
                                           "isolabel",

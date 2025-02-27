@@ -124,7 +124,9 @@ void CircleLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-    JsonTools::remove_string(keyword, theJson, "");
+    JsonTools::remove_string(keyword, theJson, "keyword");
+    JsonTools::remove_string(features, theJson, "features");
+    JsonTools::remove_bool(lines, theJson, "lines");
 
     auto json = JsonTools::remove(theJson, "places");
     if (!json.isNull())
@@ -190,14 +192,21 @@ void CircleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     const auto& geoengine = theState.getGeoEngine();
 
     Locus::QueryOptions options;
+
     if (!keyword.empty())
       auto locations = geoengine.keywordSearch(options, keyword);
 
     if (!places.empty())
     {
+      if (!features.empty())
+        options.SetFeatures(features);
       for (const auto& place : places)
       {
         auto newlocations = geoengine.nameSearch(options, place);
+
+        if (newlocations.size() > 1)  // use only the first match
+          newlocations.resize(1);
+
         locations.splice(locations.end(), newlocations);
       }
     }
@@ -246,7 +255,11 @@ void CircleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         if (!geom || geom->IsEmpty() != 0)
           continue;
 
-        geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
+        if (lines)
+          geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
+        else
+          geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
+
         if (!geom || geom->IsEmpty() != 0)
           continue;
 
