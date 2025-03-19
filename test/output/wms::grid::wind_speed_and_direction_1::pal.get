@@ -34,12 +34,12 @@
    <rect height="500" style="fill:rgb(255,255,255)" width="300"/>
   
   <g id="wind_arrows">
-   <use class="ModerateWindArrow_5_7" transform="translate(0 0) rotate(235)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(10 0) rotate(238)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(0 0) rotate(240)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(10 0) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(20 0) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(30 0) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(40 0) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(50 0) rotate(238)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(50 0) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(60 0) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(70 0) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(80 0) rotate(230)" xlink:href="#windarrow"/>
@@ -48,52 +48,52 @@
    <use class="ModerateWindArrow_5_7" transform="translate(110 0) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(120 0) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(130 0) rotate(230)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(140 0) rotate(226)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(140 0) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(210 0) rotate(120)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(220 0) rotate(120)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(230 0) rotate(127)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(240 0) rotate(125)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(250 0) rotate(122)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(230 0) rotate(130)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(240 0) rotate(120)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(250 0) rotate(120)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(260 0) rotate(120)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(270 0) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(280 0) rotate(130)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(290 0) rotate(137)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(300 0) rotate(141)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(290 0) rotate(140)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(300 0) rotate(140)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(-5 10) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(5 10) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(15 10) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(25 10) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(35 10) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(45 10) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(55 10) rotate(234)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(55 10) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(65 10) rotate(230)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(75 10) rotate(226)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(85 10) rotate(226)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(95 10) rotate(227)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(105 10) rotate(227)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(115 10) rotate(225)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(125 10) rotate(228)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(75 10) rotate(230)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(85 10) rotate(230)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(95 10) rotate(230)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(105 10) rotate(230)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(115 10) rotate(230)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(125 10) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(215 10) rotate(120)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(225 10) rotate(128)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(225 10) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(235 10) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(245 10) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(255 10) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(265 10) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(275 10) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(285 10) rotate(130)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(295 10) rotate(133)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(295 10) rotate(130)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(0 20) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(10 20) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(20 20) rotate(233)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(20 20) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(30 20) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(40 20) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(50 20) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(60 20) rotate(220)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(70 20) rotate(220)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(80 20) rotate(212)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(90 20) rotate(209)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(100 20) rotate(328)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(220 20) rotate(123)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(80 20) rotate(210)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(90 20) rotate(210)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(100 20) rotate(200)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(220 20) rotate(120)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(230 20) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(240 20) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(250 20) rotate(130)" xlink:href="#windarrow"/>
@@ -101,35 +101,35 @@
    <use class="ModerateWindArrow_5_7" transform="translate(270 20) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(280 20) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(290 20) rotate(130)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(300 20) rotate(139)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(-5 30) rotate(235)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(300 20) rotate(140)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(-5 30) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(5 30) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(15 30) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(25 30) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(35 30) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(45 30) rotate(230)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(55 30) rotate(229)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(65 30) rotate(222)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(55 30) rotate(230)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(65 30) rotate(220)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(245 30) rotate(130)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(255 30) rotate(131)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(255 30) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(265 30) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(275 30) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(285 30) rotate(130)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(295 30) rotate(136)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(0 40) rotate(238)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(295 30) rotate(140)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(0 40) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(10 40) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(20 40) rotate(234)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(20 40) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(30 40) rotate(230)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(40 40) rotate(232)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(250 40) rotate(149)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(260 40) rotate(134)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(40 40) rotate(230)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(250 40) rotate(150)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(260 40) rotate(140)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(270 40) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(280 40) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(290 40) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(300 40) rotate(130)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(-5 50) rotate(241)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(5 50) rotate(243)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(255 50) rotate(145)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(-5 50) rotate(240)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(5 50) rotate(240)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(255 50) rotate(150)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(265 50) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(275 50) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(285 50) rotate(130)" xlink:href="#windarrow"/>
@@ -147,35 +147,35 @@
    <use class="ModerateWindArrow_3_5" transform="translate(260 80) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(270 80) rotate(130)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(280 80) rotate(130)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(290 80) rotate(134)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(300 80) rotate(131)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(275 90) rotate(136)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(285 90) rotate(137)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(290 80) rotate(130)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(300 80) rotate(130)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(275 90) rotate(140)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(285 90) rotate(140)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(295 90) rotate(140)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(250 100) rotate(140)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(270 100) rotate(140)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(280 100) rotate(140)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(290 100) rotate(140)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(300 100) rotate(140)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(185 110) rotate(138)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(185 110) rotate(140)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(285 110) rotate(140)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(295 110) rotate(140)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(190 120) rotate(150)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(200 120) rotate(152)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(200 120) rotate(150)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(210 120) rotate(160)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(220 120) rotate(162)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(240 120) rotate(159)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(250 120) rotate(154)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(260 120) rotate(151)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(270 120) rotate(148)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(-5 130) rotate(303)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(220 120) rotate(160)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(240 120) rotate(160)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(250 120) rotate(150)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(260 120) rotate(150)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(270 120) rotate(150)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(-5 130) rotate(300)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(5 130) rotate(300)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(15 130) rotate(300)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(25 130) rotate(308)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(35 130) rotate(314)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(205 130) rotate(164)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(25 130) rotate(310)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(35 130) rotate(310)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(205 130) rotate(160)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(225 130) rotate(170)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(235 130) rotate(163)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(235 130) rotate(160)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(245 130) rotate(160)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(255 130) rotate(160)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(265 130) rotate(160)" xlink:href="#windarrow"/>
@@ -185,141 +185,141 @@
    <use class="ModerateWindArrow_3_5" transform="translate(10 140) rotate(300)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(20 140) rotate(300)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(30 140) rotate(310)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(200 140) rotate(150)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(220 140) rotate(176)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(230 140) rotate(172)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(240 140) rotate(162)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(200 140) rotate(170)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(220 140) rotate(180)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(230 140) rotate(170)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(240 140) rotate(160)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(250 140) rotate(160)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(260 140) rotate(160)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(270 140) rotate(167)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(270 140) rotate(170)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(280 140) rotate(160)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(300 140) rotate(151)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(300 140) rotate(150)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(-5 150) rotate(310)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(5 150) rotate(310)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(15 150) rotate(303)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(15 150) rotate(300)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(215 150) rotate(190)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(225 150) rotate(190)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(235 150) rotate(179)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(245 150) rotate(176)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(255 150) rotate(173)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(235 150) rotate(180)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(245 150) rotate(180)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(255 150) rotate(170)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(265 150) rotate(170)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(275 150) rotate(160)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(0 160) rotate(310)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(10 160) rotate(310)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(220 160) rotate(197)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(230 160) rotate(279)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(240 160) rotate(96)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(220 160) rotate(200)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(230 160) rotate(190)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(240 160) rotate(180)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(250 160) rotate(180)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(260 160) rotate(175)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(260 160) rotate(170)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(-5 170) rotate(310)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(5 170) rotate(302)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(215 170) rotate(201)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(225 170) rotate(198)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(5 170) rotate(300)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(215 170) rotate(200)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(225 170) rotate(200)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(235 170) rotate(190)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(255 170) rotate(180)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(0 180) rotate(300)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(10 180) rotate(288)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(10 180) rotate(290)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(220 180) rotate(210)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(230 180) rotate(201)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(260 180) rotate(110)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(-5 190) rotate(299)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(230 180) rotate(200)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(260 180) rotate(180)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(-5 190) rotate(300)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(5 190) rotate(290)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(225 190) rotate(210)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(235 190) rotate(207)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(295 190) rotate(176)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(0 200) rotate(287)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(235 190) rotate(210)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(295 190) rotate(180)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(0 200) rotate(290)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(10 200) rotate(280)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(210 200) rotate(220)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(250 200) rotate(200)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(300 200) rotate(139)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(-5 210) rotate(285)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(5 210) rotate(279)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(300 200) rotate(180)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(-5 210) rotate(290)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(5 210) rotate(280)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(15 210) rotate(270)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(215 210) rotate(220)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(245 210) rotate(208)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(0 220) rotate(277)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(10 220) rotate(271)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(20 220) rotate(264)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(245 210) rotate(210)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(0 220) rotate(280)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(10 220) rotate(270)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(20 220) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(90 220) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(100 220) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(110 220) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(120 220) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(130 220) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(140 220) rotate(233)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(-5 230) rotate(277)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(5 230) rotate(269)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(15 230) rotate(268)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(25 230) rotate(256)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(140 220) rotate(230)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(-5 230) rotate(280)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(5 230) rotate(270)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(15 230) rotate(270)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(25 230) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(35 230) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(45 230) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(55 230) rotate(246)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(55 230) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(65 230) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(85 230) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(95 230) rotate(242)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(95 230) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(105 230) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(115 230) rotate(244)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(115 230) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(125 230) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(135 230) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(145 230) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(0 240) rotate(262)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(10 240) rotate(254)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(20 240) rotate(251)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(0 240) rotate(260)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(10 240) rotate(250)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(20 240) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(30 240) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(40 240) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(50 240) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(60 240) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(70 240) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(80 240) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(90 240) rotate(249)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(90 240) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(100 240) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(110 240) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(120 240) rotate(246)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(120 240) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(130 240) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(140 240) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(150 240) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(-5 250) rotate(265)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(-5 250) rotate(270)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(5 250) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(15 250) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(25 250) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(35 250) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(45 250) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(55 250) rotate(245)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(55 250) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(65 250) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(75 250) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(85 250) rotate(246)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(85 250) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(95 250) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(105 250) rotate(249)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(115 250) rotate(246)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(125 250) rotate(243)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(105 250) rotate(250)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(115 250) rotate(250)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(125 250) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(135 250) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(145 250) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(245 250) rotate(226)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(0 260) rotate(258)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(245 250) rotate(230)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(0 260) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(10 260) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(20 260) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(30 260) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(40 260) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(50 260) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(60 260) rotate(245)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(70 260) rotate(245)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(80 260) rotate(244)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(60 260) rotate(240)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(70 260) rotate(240)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(80 260) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(90 260) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(100 260) rotate(247)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(100 260) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(110 260) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(120 260) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(130 260) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(140 260) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(300 260) rotate(212)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(-5 270) rotate(252)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(300 260) rotate(210)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(-5 270) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(5 270) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(15 270) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(25 270) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(35 270) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(45 270) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(55 270) rotate(245)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(55 270) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(65 270) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(75 270) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(85 270) rotate(242)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(85 270) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(95 270) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(105 270) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(115 270) rotate(240)" xlink:href="#windarrow"/>
@@ -331,44 +331,44 @@
    <use class="ModerateWindArrow_3_5" transform="translate(10 280) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(20 280) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(30 280) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(40 280) rotate(242)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(40 280) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(50 280) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(60 280) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(70 280) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(80 280) rotate(242)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(80 280) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(90 280) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(100 280) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(110 280) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(120 280) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(130 280) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(140 280) rotate(246)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(140 280) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(150 280) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(180 280) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(190 280) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(200 280) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(230 280) rotate(242)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(230 280) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(240 280) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(250 280) rotate(236)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(250 280) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(260 280) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(270 280) rotate(230)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(280 280) rotate(228)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(280 280) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(290 280) rotate(220)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(300 280) rotate(213)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(300 280) rotate(210)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(-5 290) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(5 290) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(15 290) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(25 290) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(35 290) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(45 290) rotate(247)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(55 290) rotate(245)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(65 290) rotate(243)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(75 290) rotate(243)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(45 290) rotate(250)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(55 290) rotate(250)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(65 290) rotate(240)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(75 290) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(85 290) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(95 290) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(105 290) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(115 290) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(125 290) rotate(243)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(135 290) rotate(241)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(125 290) rotate(240)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(135 290) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(145 290) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(155 290) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(165 290) rotate(250)" xlink:href="#windarrow"/>
@@ -381,10 +381,10 @@
    <use class="ModerateWindArrow_3_5" transform="translate(235 290) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(245 290) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(255 290) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(265 290) rotate(237)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(265 290) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(275 290) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(285 290) rotate(220)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(295 290) rotate(217)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(295 290) rotate(220)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(0 300) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(10 300) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(20 300) rotate(250)" xlink:href="#windarrow"/>
@@ -397,7 +397,7 @@
    <use class="FreshWindArrow_7_10" transform="translate(90 300) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(100 300) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(110 300) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(120 300) rotate(243)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(120 300) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(130 300) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(140 300) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(150 300) rotate(250)" xlink:href="#windarrow"/>
@@ -409,12 +409,12 @@
    <use class="ModerateWindArrow_3_5" transform="translate(210 300) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(220 300) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(230 300) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(240 300) rotate(241)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(240 300) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(250 300) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(260 300) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(270 300) rotate(232)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(270 300) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(280 300) rotate(230)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(290 300) rotate(222)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(290 300) rotate(220)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(300 300) rotate(210)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(-5 310) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(5 310) rotate(250)" xlink:href="#windarrow"/>
@@ -428,7 +428,7 @@
    <use class="FreshWindArrow_7_10" transform="translate(85 310) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(95 310) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(105 310) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(115 310) rotate(249)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(115 310) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(125 310) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(135 310) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(145 310) rotate(250)" xlink:href="#windarrow"/>
@@ -440,17 +440,17 @@
    <use class="ModerateWindArrow_3_5" transform="translate(205 310) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(215 310) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(225 310) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(235 310) rotate(247)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(235 310) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(245 310) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(255 310) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(265 310) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(275 310) rotate(235)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(285 310) rotate(227)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(295 310) rotate(219)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(275 310) rotate(230)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(285 310) rotate(230)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(295 310) rotate(220)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(0 320) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(10 320) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(20 320) rotate(250)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(30 320) rotate(242)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(30 320) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(40 320) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(50 320) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(60 320) rotate(240)" xlink:href="#windarrow"/>
@@ -458,7 +458,7 @@
    <use class="FreshWindArrow_7_10" transform="translate(80 320) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(90 320) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(100 320) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(110 320) rotate(249)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(110 320) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(120 320) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(130 320) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(140 320) rotate(250)" xlink:href="#windarrow"/>
@@ -476,12 +476,12 @@
    <use class="ModerateWindArrow_3_5" transform="translate(260 320) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(270 320) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(280 320) rotate(230)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(290 320) rotate(223)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(300 320) rotate(218)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(290 320) rotate(220)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(300 320) rotate(220)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(-5 330) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(5 330) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(15 330) rotate(250)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(25 330) rotate(241)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(25 330) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(35 330) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(45 330) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(55 330) rotate(240)" xlink:href="#windarrow"/>
@@ -492,8 +492,8 @@
    <use class="ModerateWindArrow_3_5" transform="translate(105 330) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(115 330) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(125 330) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(135 330) rotate(254)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(145 330) rotate(257)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(135 330) rotate(250)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(145 330) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(155 330) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(165 330) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(175 330) rotate(250)" xlink:href="#windarrow"/>
@@ -506,7 +506,7 @@
    <use class="ModerateWindArrow_3_5" transform="translate(245 330) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(255 330) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(265 330) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(275 330) rotate(232)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(275 330) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(285 330) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(295 330) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(0 340) rotate(240)" xlink:href="#windarrow"/>
@@ -518,15 +518,15 @@
    <use class="FreshWindArrow_10_14" transform="translate(60 340) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(70 340) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(80 340) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(90 340) rotate(241)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(90 340) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(100 340) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(110 340) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(120 340) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(130 340) rotate(256)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(130 340) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(140 340) rotate(260)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(150 340) rotate(256)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(160 340) rotate(254)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(170 340) rotate(252)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(150 340) rotate(260)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(160 340) rotate(250)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(170 340) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(180 340) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(190 340) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(200 340) rotate(250)" xlink:href="#windarrow"/>
@@ -535,9 +535,9 @@
    <use class="ModerateWindArrow_3_5" transform="translate(230 340) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(240 340) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(250 340) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(260 340) rotate(245)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(260 340) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(270 340) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(280 340) rotate(234)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(280 340) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(290 340) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(300 340) rotate(220)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(-5 350) rotate(240)" xlink:href="#windarrow"/>
@@ -559,7 +559,7 @@
    <use class="ModerateWindArrow_3_5" transform="translate(155 350) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(165 350) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(175 350) rotate(260)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(185 350) rotate(258)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(185 350) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(195 350) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(205 350) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(215 350) rotate(250)" xlink:href="#windarrow"/>
@@ -567,10 +567,10 @@
    <use class="ModerateWindArrow_3_5" transform="translate(235 350) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(245 350) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(255 350) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(265 350) rotate(248)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(265 350) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(275 350) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(285 350) rotate(233)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(295 350) rotate(228)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(285 350) rotate(230)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(295 350) rotate(230)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(0 360) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(10 360) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(20 360) rotate(240)" xlink:href="#windarrow"/>
@@ -579,7 +579,7 @@
    <use class="FreshWindArrow_10_14" transform="translate(50 360) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(60 360) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(70 360) rotate(240)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(80 360) rotate(243)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(80 360) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(90 360) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(100 360) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(110 360) rotate(250)" xlink:href="#windarrow"/>
@@ -591,7 +591,7 @@
    <use class="ModerateWindArrow_3_5" transform="translate(170 360) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(180 360) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(190 360) rotate(260)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(200 360) rotate(257)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(200 360) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(210 360) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(220 360) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(230 360) rotate(250)" xlink:href="#windarrow"/>
@@ -600,7 +600,7 @@
    <use class="ModerateWindArrow_3_5" transform="translate(260 360) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(270 360) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(280 360) rotate(240)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(290 360) rotate(238)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(290 360) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(300 360) rotate(230)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(-5 370) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(5 370) rotate(240)" xlink:href="#windarrow"/>
@@ -625,17 +625,17 @@
    <use class="ModerateWindArrow_5_7" transform="translate(195 370) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(205 370) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(215 370) rotate(260)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(225 370) rotate(256)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(225 370) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(235 370) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(245 370) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(255 370) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(265 370) rotate(245)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(265 370) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(275 370) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(285 370) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(295 370) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(0 380) rotate(230)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(10 380) rotate(230)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(20 380) rotate(236)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(20 380) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(30 380) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(40 380) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(50 380) rotate(240)" xlink:href="#windarrow"/>
@@ -646,7 +646,7 @@
    <use class="ModerateWindArrow_5_7" transform="translate(100 380) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(110 380) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(120 380) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(130 380) rotate(252)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(130 380) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(140 380) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(150 380) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(160 380) rotate(260)" xlink:href="#windarrow"/>
@@ -661,18 +661,18 @@
    <use class="ModerateWindArrow_3_5" transform="translate(250 380) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(260 380) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(270 380) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(280 380) rotate(245)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(280 380) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(290 380) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(300 380) rotate(240)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(-5 390) rotate(230)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(5 390) rotate(230)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(15 390) rotate(230)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(25 390) rotate(236)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(25 390) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(35 390) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(45 390) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(55 390) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(65 390) rotate(240)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_10_14" transform="translate(75 390) rotate(244)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_10_14" transform="translate(75 390) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(85 390) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(95 390) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(105 390) rotate(250)" xlink:href="#windarrow"/>
@@ -687,13 +687,13 @@
    <use class="FreshWindArrow_7_10" transform="translate(195 390) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(205 390) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(215 390) rotate(260)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(225 390) rotate(255)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(225 390) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(235 390) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(245 390) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(255 390) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(265 390) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(275 390) rotate(250)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_3_5" transform="translate(285 390) rotate(245)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(285 390) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(295 390) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(0 400) rotate(230)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(10 400) rotate(230)" xlink:href="#windarrow"/>
@@ -720,7 +720,7 @@
    <use class="ModerateWindArrow_5_7" transform="translate(220 400) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(230 400) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(240 400) rotate(260)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(250 400) rotate(252)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(250 400) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(260 400) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(270 400) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(280 400) rotate(250)" xlink:href="#windarrow"/>
@@ -728,19 +728,19 @@
    <use class="ModerateWindArrow_3_5" transform="translate(300 400) rotate(240)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(-5 410) rotate(230)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(5 410) rotate(230)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(15 410) rotate(233)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(25 410) rotate(239)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(15 410) rotate(230)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(25 410) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(35 410) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(45 410) rotate(240)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(55 410) rotate(244)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(65 410) rotate(248)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_10_14" transform="translate(75 410) rotate(249)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(55 410) rotate(250)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(65 410) rotate(250)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_10_14" transform="translate(75 410) rotate(250)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(85 410) rotate(250)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(95 410) rotate(250)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(105 410) rotate(253)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(115 410) rotate(256)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(125 410) rotate(257)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(135 410) rotate(259)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(105 410) rotate(250)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(115 410) rotate(260)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(125 410) rotate(260)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(135 410) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(145 410) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(155 410) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(165 410) rotate(260)" xlink:href="#windarrow"/>
@@ -754,15 +754,15 @@
    <use class="FreshWindArrow_7_10" transform="translate(245 410) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(255 410) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(265 410) rotate(260)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(275 410) rotate(259)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(275 410) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(285 410) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_3_5" transform="translate(295 410) rotate(250)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(0 420) rotate(227)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(0 420) rotate(230)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(10 420) rotate(230)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(20 420) rotate(240)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(30 420) rotate(242)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(40 420) rotate(246)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(50 420) rotate(246)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(30 420) rotate(240)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(40 420) rotate(250)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(50 420) rotate(250)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(60 420) rotate(250)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(70 420) rotate(250)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(80 420) rotate(250)" xlink:href="#windarrow"/>
@@ -785,14 +785,14 @@
    <use class="FreshWindArrow_7_10" transform="translate(250 420) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(260 420) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(270 420) rotate(260)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(280 420) rotate(256)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(280 420) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(290 420) rotate(250)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(300 420) rotate(250)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(-5 430) rotate(220)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_10_14" transform="translate(5 430) rotate(223)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(15 430) rotate(233)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(25 430) rotate(237)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(35 430) rotate(247)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_10_14" transform="translate(5 430) rotate(220)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(15 430) rotate(230)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(25 430) rotate(240)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(35 430) rotate(250)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(45 430) rotate(250)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(55 430) rotate(250)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(65 430) rotate(250)" xlink:href="#windarrow"/>
@@ -805,7 +805,7 @@
    <use class="FreshWindArrow_7_10" transform="translate(135 430) rotate(250)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(145 430) rotate(250)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(155 430) rotate(250)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(165 430) rotate(259)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(165 430) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(175 430) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(185 430) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(195 430) rotate(260)" xlink:href="#windarrow"/>
@@ -821,8 +821,8 @@
    <use class="ModerateWindArrow_5_7" transform="translate(295 430) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(0 440) rotate(210)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(10 440) rotate(220)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_10_14" transform="translate(20 440) rotate(223)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(30 440) rotate(234)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_10_14" transform="translate(20 440) rotate(220)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(30 440) rotate(230)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(40 440) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(50 440) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(60 440) rotate(250)" xlink:href="#windarrow"/>
@@ -835,7 +835,7 @@
    <use class="FreshWindArrow_7_10" transform="translate(130 440) rotate(250)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(140 440) rotate(250)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(150 440) rotate(250)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(160 440) rotate(251)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(160 440) rotate(250)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(170 440) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(180 440) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(190 440) rotate(260)" xlink:href="#windarrow"/>
@@ -852,12 +852,12 @@
    <use class="ModerateWindArrow_5_7" transform="translate(300 440) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(-5 450) rotate(210)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(5 450) rotate(210)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(15 450) rotate(214)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(15 450) rotate(210)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(25 450) rotate(230)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(35 450) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(45 450) rotate(240)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(55 450) rotate(241)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(65 450) rotate(247)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(55 450) rotate(240)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(65 450) rotate(250)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(75 450) rotate(250)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(85 450) rotate(250)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(95 450) rotate(250)" xlink:href="#windarrow"/>
@@ -879,13 +879,13 @@
    <use class="FreshWindArrow_7_10" transform="translate(255 450) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(265 450) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(275 450) rotate(260)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(285 450) rotate(263)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(285 450) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(295 450) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(0 460) rotate(210)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(10 460) rotate(210)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(20 460) rotate(220)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_10_14" transform="translate(30 460) rotate(227)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(40 460) rotate(236)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_10_14" transform="translate(30 460) rotate(220)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(40 460) rotate(230)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(50 460) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(60 460) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(70 460) rotate(250)" xlink:href="#windarrow"/>
@@ -908,25 +908,25 @@
    <use class="ModerateWindArrow_5_7" transform="translate(240 460) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(250 460) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(260 460) rotate(260)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(270 460) rotate(262)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(280 460) rotate(265)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(270 460) rotate(260)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(280 460) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(290 460) rotate(270)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(300 460) rotate(270)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(-5 470) rotate(209)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(-5 470) rotate(210)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(5 470) rotate(210)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(15 470) rotate(210)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(25 470) rotate(212)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(25 470) rotate(210)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(35 470) rotate(230)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(45 470) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(55 470) rotate(240)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_17_21" transform="translate(65 470) rotate(248)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_17_21" transform="translate(65 470) rotate(250)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(75 470) rotate(250)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(85 470) rotate(250)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(95 470) rotate(250)" xlink:href="#windarrow"/>
    <use class="StormWindArrow_21_26" transform="translate(105 470) rotate(250)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(115 470) rotate(250)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_17_21" transform="translate(125 470) rotate(259)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_17_21" transform="translate(135 470) rotate(258)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_17_21" transform="translate(125 470) rotate(260)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_17_21" transform="translate(135 470) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(145 470) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(155 470) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(165 470) rotate(260)" xlink:href="#windarrow"/>
@@ -943,19 +943,19 @@
    <use class="ModerateWindArrow_5_7" transform="translate(275 470) rotate(270)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(285 470) rotate(270)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(295 470) rotate(270)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(0 480) rotate(201)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(10 480) rotate(209)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(20 480) rotate(212)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_10_14" transform="translate(30 480) rotate(222)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_17_21" transform="translate(40 480) rotate(233)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_17_21" transform="translate(50 480) rotate(245)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(0 480) rotate(200)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(10 480) rotate(210)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(20 480) rotate(210)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_10_14" transform="translate(30 480) rotate(220)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_17_21" transform="translate(40 480) rotate(230)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_17_21" transform="translate(50 480) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(60 480) rotate(250)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(70 480) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(80 480) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(90 480) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(100 480) rotate(260)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_17_21" transform="translate(110 480) rotate(259)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_17_21" transform="translate(120 480) rotate(258)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_17_21" transform="translate(110 480) rotate(260)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_17_21" transform="translate(120 480) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(130 480) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(140 480) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(150 480) rotate(260)" xlink:href="#windarrow"/>
@@ -969,7 +969,7 @@
    <use class="FreshWindArrow_7_10" transform="translate(230 480) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(240 480) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(250 480) rotate(260)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(260 480) rotate(269)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(260 480) rotate(270)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(270 480) rotate(270)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(280 480) rotate(270)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(290 480) rotate(270)" xlink:href="#windarrow"/>
@@ -977,14 +977,14 @@
    <use class="FreshWindArrow_7_10" transform="translate(-5 490) rotate(200)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(5 490) rotate(200)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(15 490) rotate(210)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_10_14" transform="translate(25 490) rotate(221)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_17_21" transform="translate(35 490) rotate(232)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_10_14" transform="translate(25 490) rotate(220)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_17_21" transform="translate(35 490) rotate(230)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(45 490) rotate(240)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_17_21" transform="translate(55 490) rotate(255)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_17_21" transform="translate(55 490) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(65 490) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(75 490) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(85 490) rotate(260)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_17_21" transform="translate(95 490) rotate(261)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_17_21" transform="translate(95 490) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(105 490) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(115 490) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(125 490) rotate(260)" xlink:href="#windarrow"/>
@@ -1000,16 +1000,16 @@
    <use class="FreshWindArrow_7_10" transform="translate(225 490) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(235 490) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(245 490) rotate(260)" xlink:href="#windarrow"/>
-   <use class="ModerateWindArrow_5_7" transform="translate(255 490) rotate(265)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(255 490) rotate(260)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(265 490) rotate(270)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(275 490) rotate(270)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(285 490) rotate(270)" xlink:href="#windarrow"/>
    <use class="ModerateWindArrow_5_7" transform="translate(295 490) rotate(270)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(0 500) rotate(200)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(10 500) rotate(208)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(10 500) rotate(210)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_10_14" transform="translate(20 500) rotate(220)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(30 500) rotate(231)" xlink:href="#windarrow"/>
-   <use class="HardWindArrow_14_17" transform="translate(40 500) rotate(243)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(30 500) rotate(230)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(40 500) rotate(240)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_14_17" transform="translate(50 500) rotate(250)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(60 500) rotate(260)" xlink:href="#windarrow"/>
    <use class="HardWindArrow_17_21" transform="translate(70 500) rotate(260)" xlink:href="#windarrow"/>
@@ -1031,7 +1031,7 @@
    <use class="FreshWindArrow_7_10" transform="translate(230 500) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(240 500) rotate(260)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(250 500) rotate(260)" xlink:href="#windarrow"/>
-   <use class="FreshWindArrow_7_10" transform="translate(260 500) rotate(268)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(260 500) rotate(270)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(270 500) rotate(270)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(280 500) rotate(270)" xlink:href="#windarrow"/>
    <use class="FreshWindArrow_7_10" transform="translate(290 500) rotate(270)" xlink:href="#windarrow"/>
@@ -1457,7 +1457,7 @@
   </g>
    <use id="europe_country_lines" style="fill:none; stroke:#222; stroke-width:0.3" xlink:href="#l6"/>
   
-   <rect height="25" rx="8" ry="8" style="fill:white; stroke:black; stroke-width:0.6" width="155" x="132.000000" y="3"/>
+   <rect height="25" rx="8" ry="8" style="fill:white; stroke:black; stroke-width:0.6" width="155" x="132" y="3"/>
   
   <text font-family="Roboto" font-size="14" font-weight="bold" style="text-anchor:end" x="280" y="20">2008-08-05 11:00</text>
  </g>

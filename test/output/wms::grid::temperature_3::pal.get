@@ -516,7 +516,7 @@
   </g>
    <use id="europe_country_lines" style="fill:none; stroke:#222; stroke-width:0.3" xlink:href="#l10"/>
   
-   <rect height="25" rx="8" ry="8" style="fill:white; stroke:black; stroke-width:0.6" width="155" x="132.000000" y="3"/>
+   <rect height="25" rx="8" ry="8" style="fill:white; stroke:black; stroke-width:0.6" width="155" x="132" y="3"/>
   
   <text font-family="Roboto" font-size="14" font-weight="bold" style="text-anchor:end" x="280" y="20">2008-08-05 13:00</text>
  </g>
