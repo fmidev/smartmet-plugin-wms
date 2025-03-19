@@ -92,6 +92,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
     std::string endTime = "23000101T000000";
     std::string producer = itsProducer;
     std::string fparam;
+    std::string lastParam;
 
     if (!itsParameter.empty())
     {
@@ -113,7 +114,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
 
       // printf("PP [%s]\n",startpoint);
 
-      // Function might have several parameters. Let's pick one that is not a number.
+      // Function might have several parameters.
 
       std::vector<std::string> fp;
       splitString(startpoint, ';', fp);
@@ -121,8 +122,24 @@ bool WMSGridDataLayer::updateLayerMetaData()
       for (auto it = fp.begin(); it != fp.end() && fparam.empty(); ++it)
       {
         const char* ps = it->c_str();
+
         if (ps[0] >= 'A')
-          fparam = *it;
+          lastParam = *it;
+
+        if (!producer.empty())
+        {
+          // The produce is not empty. Let's try to find a parameter with the same producer.
+          std::vector<std::string> p;
+          splitString(ps, ':', p);
+          if (p.size() >= 2 && strcasecmp(p[1].c_str(),producer.c_str()) == 0)
+            fparam = *it;
+        }
+      }
+
+      if (fparam.empty())
+      {
+        // No parameter with the given producer found. Let's use the last parameter.
+        fparam = lastParam;
       }
 
       std::string param = itsGridEngine->getParameterString(producer, fparam);
@@ -153,8 +170,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
         forecastNumber = toInt32(p[6]);
     }
 
-    // printf("PRODUCER
-    // [%s][%s][%s][%d]\n",producer.c_str(),itsParameter.c_str(),fparam.c_str(),itsGeometryId);
+    // printf("PRODUCER [%s][%s][%s][%d]\n",producer.c_str(),itsParameter.c_str(),fparam.c_str(),itsGeometryId);
 
     T::ProducerInfo producerInfo;
     if (contentServer->getProducerInfoByName(0, producer, producerInfo) != 0)
