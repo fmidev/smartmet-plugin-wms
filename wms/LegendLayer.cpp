@@ -77,10 +77,10 @@ std::string legend_number(double theValue, const LegendLabels& theLabels)
  */
 // ----------------------------------------------------------------------
 
-std::string untranslated_legend_text(const Isoband& theIsoband,
-                                     const LegendLabels& theLabels,
-                                     const std::optional<std::string>& theLanguage,
-                                     const std::string& theDefaultLanguage)
+std::string nonconverted_isoband_text(const Isoband& theIsoband,
+                                      const LegendLabels& theLabels,
+                                      const std::optional<std::string>& theLanguage,
+                                      const std::string& theDefaultLanguage)
 {
   try
   {
@@ -132,6 +132,42 @@ std::string untranslated_legend_text(const Isoband& theIsoband,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Apply possible legend text conversions
+ */
+// ----------------------------------------------------------------------
+
+std::string apply_text_conversions(const std::string& theText,
+                                   const LegendLabels& theLabels,
+                                   const std::optional<std::string>& theLanguage)
+{
+  try
+  {
+    if (theText.empty())
+      return theText;
+
+    // Try converting with a language
+    if (theLanguage)
+    {
+      const auto pos = theLabels.conversions.find(*theLanguage + ":" + theText);
+      if (pos != theLabels.conversions.end())
+        return Fmi::safexmlescape(pos->second);
+    }
+
+    // Try converting without a language
+    const auto pos = theLabels.conversions.find(theText);
+    if (pos != theLabels.conversions.end())
+      return Fmi::safexmlescape(pos->second);
+
+    return Fmi::safexmlescape(theText);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Select the text for the layer, apply language if necessary
  */
 // ----------------------------------------------------------------------
@@ -147,24 +183,9 @@ std::string legend_text(const Isoband& theIsoband,
     // specific translations in the Isoband object itself.
 
     std::string text =
-        untranslated_legend_text(theIsoband, theLabels, theLanguage, theDefaultLanguage);
-    if (text.empty())
-      return text;
+        nonconverted_isoband_text(theIsoband, theLabels, theLanguage, theDefaultLanguage);
 
-    // Try converting with a language
-    if (theLanguage)
-    {
-      const auto pos = theLabels.conversions.find(*theLanguage + ":" + text);
-      if (pos != theLabels.conversions.end())
-        return Fmi::safexmlescape(pos->second);
-    }
-
-    // Try converting without a language
-    const auto pos = theLabels.conversions.find(text);
-    if (pos != theLabels.conversions.end())
-      return Fmi::safexmlescape(pos->second);
-
-    return Fmi::safexmlescape(text);
+    return apply_text_conversions(text, theLabels, theLanguage);
   }
   catch (...)
   {
@@ -221,10 +242,12 @@ void LegendLayer::init(Json::Value& theJson,
   }
 }
 
-std::string symbol_text(const AttributeSelection& theAttrSel,
-                        const std::string& separator,
-                        const std::optional<std::string>& theLanguage)
+std::string nonconverted_symbol_text(const AttributeSelection& theAttrSel,
+                                     const LegendLabels& theLabels,
+                                     const std::optional<std::string>& theLanguage)
 {
+  const auto& separator = theLabels.separator;
+
   // If translation found return it
   if (theLanguage && theAttrSel.translations.find(*theLanguage) != theAttrSel.translations.end())
     return theAttrSel.translations.at(*theLanguage);
@@ -239,6 +262,14 @@ std::string symbol_text(const AttributeSelection& theAttrSel,
     return (separator + Fmi::to_string(*theAttrSel.hilimit));
 
   return {};
+}
+
+std::string symbol_text(const AttributeSelection& theAttrSel,
+                        const LegendLabels& theLabels,
+                        const std::optional<std::string>& theLanguage)
+{
+  auto text = nonconverted_symbol_text(theAttrSel, theLabels, theLanguage);
+  return apply_text_conversions(text, theLabels, theLanguage);
 }
 
 void LegendLayer::generate_from_symbol_vector(CTPP::CDT& theGlobals,
@@ -292,7 +323,7 @@ void LegendLayer::generate_from_symbol_vector(CTPP::CDT& theGlobals,
       inner_group_cdt["tags"].PushBack(symbol_cdt);
       theLayersCdt.PushBack(inner_group_cdt);
 
-      auto text = symbol_text(symbol, labels.separator, language);
+      auto text = symbol_text(symbol, labels, language);
       if (!text.empty())
       {
         CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
