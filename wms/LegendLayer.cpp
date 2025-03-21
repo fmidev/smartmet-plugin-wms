@@ -132,6 +132,36 @@ std::string nonconverted_isoband_text(const Isoband& theIsoband,
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Select the text for a legend symbol
+ */
+// ----------------------------------------------------------------------
+
+std::string nonconverted_isoline_text(const Isoline& theIsoline,
+                                      const LegendLabels& theLabels,
+                                      const std::optional<std::string>& theLanguage,
+                                      const std::string& theDefaultLanguage)
+{
+  try
+  {
+    static std::string empty;
+
+    if (theLabels.type == "none")
+      return empty;
+
+    // Isoline specific override handled first
+    if (theIsoline.label)
+      return theIsoline.label->translate(theLanguage, theDefaultLanguage);
+
+    return legend_number(theIsoline.value, theLabels);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Apply possible legend text conversions
  */
 // ----------------------------------------------------------------------
@@ -168,7 +198,7 @@ std::string apply_text_conversions(const std::string& theText,
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Select the text for the layer, apply language if necessary
+ * \brief Select the text for the isoband, apply language if necessary
  */
 // ----------------------------------------------------------------------
 
@@ -184,6 +214,33 @@ std::string legend_text(const Isoband& theIsoband,
 
     std::string text =
         nonconverted_isoband_text(theIsoband, theLabels, theLanguage, theDefaultLanguage);
+
+    return apply_text_conversions(text, theLabels, theLanguage);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Select the text for the isoline, apply language if necessary
+ */
+// ----------------------------------------------------------------------
+
+std::string legend_text(const Isoline& theIsoline,
+                        const LegendLabels& theLabels,
+                        const std::optional<std::string>& theLanguage,
+                        const std::string& theDefaultLanguage)
+{
+  try
+  {
+    // Note: The text may actually already be translated, if there are isoband
+    // specific translations in the Isoband object itself.
+
+    std::string text =
+        nonconverted_isoline_text(theIsoline, theLabels, theLanguage, theDefaultLanguage);
 
     return apply_text_conversions(text, theLabels, theLanguage);
   }
@@ -221,13 +278,9 @@ void LegendLayer::init(Json::Value& theJson,
     auto json = JsonTools::remove(theJson, "symbols");
 
     if (json.isArray())
-    {
       JsonTools::extract_array("symbols", symbol_vector, json, theConfig);
-    }
     else
-    {
       symbols.init(json, theConfig);
-    }
 
     json = JsonTools::remove(theJson, "labels");
     labels.init(json, theConfig);
@@ -235,6 +288,10 @@ void LegendLayer::init(Json::Value& theJson,
     json = JsonTools::remove(theJson, "isobands");
     if (!json.isNull())
       JsonTools::extract_array("isobands", isobands, json, theConfig);
+
+    json = JsonTools::remove(theJson, "isolines");
+    if (!json.isNull())
+      JsonTools::extract_array("isolines", isolines, json, theConfig);
   }
   catch (...)
   {
@@ -483,6 +540,71 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
         auto attrs = labels.attributes;
         if (isoband.label)
           attrs.add(isoband.label->attributes);  // isoband specific attrs override
+
+        theState.addAttributes(theGlobals, text_cdt, attrs);
+
+        text_cdt["attributes"]["x"] = Fmi::to_string(xpos + labels.dx);
+        text_cdt["attributes"]["y"] = Fmi::to_string(ypos + labels.dy);
+        theLayersCdt.PushBack(text_cdt);
+      }
+
+      // Update position
+
+      xpos += dx;
+      ypos += dy;
+    }
+
+    // Process all isolines
+
+    for (std::size_t num = 0; num < isolines.size(); ++num)
+    {
+      const Isoline& isoline = isolines[num];
+
+      // First the symbol
+
+      {
+        CTPP::CDT inner_group_cdt(CTPP::CDT::HASH_VAL);
+        inner_group_cdt["start"] = "";
+        inner_group_cdt["end"] = "";
+
+        CTPP::CDT symbol_cdt(CTPP::CDT::HASH_VAL);
+        symbol_cdt["start"] = "<use";
+        symbol_cdt["end"] = "/>";
+
+        theState.addAttributes(theGlobals, symbol_cdt, isoline.attributes);
+        theState.addAttributes(theGlobals, symbol_cdt, symbols.attributes);
+
+        symbol_cdt["attributes"]["x"] = Fmi::to_string(xpos);
+        symbol_cdt["attributes"]["y"] = Fmi::to_string(ypos);
+
+        std::string iri = *symbols.symbol;
+
+        std::string IRI = Iri::normalize(iri);
+        if (theState.addId(IRI))
+          theGlobals["includes"][iri] = theState.getSymbol(iri);
+
+        symbol_cdt["attributes"]["xlink:href"] = "#" + IRI;
+
+        inner_group_cdt["tags"].PushBack(symbol_cdt);
+
+        theLayersCdt.PushBack(inner_group_cdt);
+      }
+
+      // Then the text
+
+      std::string text =
+          legend_text(isoline, labels, language, theState.getConfig().defaultLanguage());
+
+      if (!text.empty())
+      {
+        CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
+        text_cdt["start"] = "<text";
+        text_cdt["end"] = "</text>";
+        text_cdt["cdata"] = text;
+
+        auto attrs = labels.attributes;
+        if (isoline.label)
+          attrs.add(isoline.label->attributes);  // isoline specific attrs override
 
         theState.addAttributes(theGlobals, text_cdt, attrs);
 

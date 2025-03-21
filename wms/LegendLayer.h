@@ -8,6 +8,7 @@
 
 #include "AttributeSelection.h"
 #include "Isoband.h"
+#include "Isoline.h"
 #include "Layer.h"
 #include "LegendLabels.h"
 #include "LegendSymbols.h"
@@ -44,6 +45,7 @@ class LegendLayer : public Layer
   LegendSymbols symbols;
   LegendLabels labels;
   std::vector<Isoband> isobands;
+  std::vector<Isoline> isolines;
 
  private:
   // The parameter values or ranges to be styled separately
