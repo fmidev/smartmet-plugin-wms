@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.3.19
+Version: 25.3.21
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -35,7 +35,7 @@ BuildRequires: smartmet-library-timeseries-devel >= 25.2.18
 BuildRequires: smartmet-engine-authentication-devel >= 25.2.18
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 25.2.28
+BuildRequires: smartmet-engine-observation-devel >= 25.3.21
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 25.2.18
 BuildRequires: smartmet-engine-grid-devel >= 25.3.19
@@ -109,7 +109,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-querydata-devel >= 25.2.18
 #TestRequires: smartmet-library-giza-devel >= 25.2.18
 #TestRequires: smartmet-library-trax-devel >= 25.2.18
-#TestRequires: smartmet-library-newbase-devel >= 25.2.18
+#TestRequires: smartmet-library-newbase-devel >= 25.3.20
 #TestRequires: smartmet-library-macgyver-devel >= 25.2.18
 #TestRequires: smartmet-library-spine-devel >= 25.3.3
 #TestRequires: smartmet-library-timeseries-devel >= 25.2.18
@@ -125,7 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 25.2.28
+#TestRequires: smartmet-engine-observation-devel >= 25.3.21
 %endif
 
 %description
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Mar 21 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.3.21-1.fmi
+- Better support for symbol/isoline layer label conversions
+
 * Wed Mar 19 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.3.19-1.fmi
 - Improved producer's name search inside a function parameter
 
