@@ -66,7 +66,7 @@ WMSLayerType get_wms_layer_type(const Json::Value& layer)
 
     auto type_name = layer_type.asString();
 
-    if (type_name == "map")
+    if (type_name == "map" || type_name == "graticule")
       return WMSLayerType::MapLayer;
 
     if (postgis_layers.find(type_name) != postgis_layers.end())

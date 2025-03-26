@@ -7,6 +7,7 @@
 #include "CloudCeilingLayer.h"
 #include "FinnishRoadObservationLayer.h"
 #include "FrameLayer.h"
+#include "GraticuleLayer.h"
 #include "GridLayer.h"
 #include "IceMapLayer.h"
 #include "IsobandLayer.h"
@@ -104,6 +105,8 @@ Layer* create(const Json::Value& theJson)
       return new GridLayer;
     if (name == "circle")
       return new CircleLayer;
+    if (name == "graticule")
+      return new GraticuleLayer;
 
     throw Fmi::Exception(BCP, "Unknown layer type '" + name + "'");
   }
