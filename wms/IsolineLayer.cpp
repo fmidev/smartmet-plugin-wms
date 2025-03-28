@@ -399,6 +399,13 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   }
 
   std::string param = gridEngine->getParameterString(producerName, pName);
+
+  if (multiplier && *multiplier != 1.0)
+    param = "MUL{" + param + ";" + std::to_string(*multiplier) + "}";
+
+  if (offset && *offset)
+    param = "SUM{" + param + ";" + std::to_string(*offset) + "}";
+
   attributeList.addAttribute("param", param);
 
   if (!projection.projectionParameter)
