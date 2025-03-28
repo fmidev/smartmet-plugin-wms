@@ -41,6 +41,7 @@ class GraticuleLayer : public Layer
     std::vector<int> except;  // ignored multiples (for example 10 if 1x1 graticule is generated)
     unsigned int length = 5;  // tick length
     GraticuleLabels labels;   // settings for labels
+    Attributes attributes;    // settings for lines
   };
 
  private:

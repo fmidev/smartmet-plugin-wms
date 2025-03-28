@@ -73,6 +73,8 @@ void Attributes::init(Json::Value& theJson, const Config& /* theConfig */)
     {
       Json::Value& json = theJson[name];
 
+      std::cout << "Parsing " << name << "\n";
+
       switch (json.type())
       {
         case Json::nullValue:
@@ -100,11 +102,13 @@ void Attributes::init(Json::Value& theJson, const Config& /* theConfig */)
         }
         case Json::arrayValue:
         {
-          throw Fmi::Exception(BCP, "Arrays are not allowed as an Attribute value");
+          throw Fmi::Exception(BCP, "JSON arrays are not allowed as attribute values for SVG")
+              .addParameter("Attribute name", name);
         }
         case Json::objectValue:
         {
-          throw Fmi::Exception(BCP, "Maps are not allowed as an Attribute value");
+          throw Fmi::Exception(BCP, "JSON objects are not allowed as attribute values for SVG")
+              .addParameter("Attribute name", name);
         }
       }
     }
