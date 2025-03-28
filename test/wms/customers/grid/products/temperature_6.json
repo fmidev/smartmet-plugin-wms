@@ -4,21 +4,6 @@
   "source": "grid",
   "producer": "pal",
   "projection": {},
-  "styles": [
-    {
-      "name": "default",
-      "title": "Temperature isobands every two degrees",
-      "abstract": "Temperature isoband width is two degrees",
-      "layers": [
-        {
-          "qid": "l1",
-          "layer_type": "isoband",
-          "isobands": "json:isobands/temperature.json",
-          "css": "isobands/temperature.css"
-        }
-      ]
-    }
-  ],
   "views": [
     {
       "layers": [
@@ -26,11 +11,24 @@
           "qid": "l1",
           "layer_type": "isoband",
           "parameter": "temperature",
+          "multiplier" : 1.2,
           "isobands": "json:isobands/temperature.json",
           "css": "isobands/temperature.css",
           "smoother": {
             "degree": 1,
             "size": 1
+          }
+        },
+        {
+          "qid": "l2",
+          "layer_type": "isoline",
+          "isolines": "json:isolines/temperature.json",
+          "css": "isolines/temperature.css",
+          "parameter": "temperature",
+          "multiplier" : 1.2,
+          "attributes": {
+            "id": "temperature_isolines",
+            "class": "Temperature"
           }
         },
         {
@@ -76,10 +74,8 @@
             "font-weight": "bold",
             "font-size": 14
           }
-        }
+        }        
       ]
     }
   ]
-}
-]
 }
