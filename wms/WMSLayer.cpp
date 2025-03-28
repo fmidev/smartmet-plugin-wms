@@ -909,8 +909,10 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
     for (const auto& style_json : json)
     {
       auto json_value = style_json.get("name", nulljson);
-      if (!json_value.isNull())
-        layerStyle.name = json_value.asString();
+      if (json_value.isNull())
+        throw Fmi::Exception(BCP, "WMSLayer styles must have a name");
+
+      layerStyle.name = json_value.asString();
 
       json_value = style_json.get("title", nulljson);
       if (!json_value.isNull())

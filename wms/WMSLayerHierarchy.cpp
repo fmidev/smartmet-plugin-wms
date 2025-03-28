@@ -274,10 +274,10 @@ void add_layer_info(bool multiple_intervals,
   if (lh.sublayers.empty() && lh.baseInfoLayer)
   {
     baseInfo = lh.baseInfoLayer->getLayer()->getLayerBaseInfo(language, defaultLanguage);
+    std::string name = (*baseInfo)["name"].GetString();
+    std::string title = (*baseInfo)["title"].GetString();
     if (lh.reference_time)
     {
-      std::string name = (*baseInfo)["name"].GetString();
-      std::string title = (*baseInfo)["title"].GetString();
       std::string ref_time = lh.reference_time->to_iso_string();
       name += (":origintime_" + ref_time);
       title += (" origintime " + ref_time);
