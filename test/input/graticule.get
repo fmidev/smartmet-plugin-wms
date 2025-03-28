@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=graticules HTTP/1.0
