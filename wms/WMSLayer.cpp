@@ -967,7 +967,12 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
       WMSLayerStyle layerStyle;
       layerStyle.legend_url.online_resource =
           get_online_resource_string(layerStyle.name, layerName);
-      layerStyle.title = Dali::Text("Style Title", "Default style");
+
+      json = root.get("title", nulljson);
+      if (!json.isNull())
+        layerStyle.title->init(json, config.getDaliConfig());
+      else
+        layerStyle.title = Dali::Text("Style Title", "Default style");
 
       ret.insert(std::make_pair(layerStyle.name, layerStyle));
     }
