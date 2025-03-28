@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.3.21
+Version: 25.3.28
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Mar 28 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.3.28-1.fmi
+- Fixed CircleLayer styles to work
+
 * Fri Mar 21 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.3.21-1.fmi
 - Better support for symbol/isoline layer label conversions
 
