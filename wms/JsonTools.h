@@ -82,6 +82,16 @@ void extract_vector(const std::string& theName,
                     std::vector<double>& theVector,
                     const Json::Value& theJson);
 
+// extract a vector of integers
+void extract_vector(const std::string& theName,
+                    std::vector<int>& theVector,
+                    const Json::Value& theJson);
+
+// extract a vector of unsigned integers
+void extract_vector(const std::string& theName,
+                    std::vector<unsigned int>& theVector,
+                    const Json::Value& theJson);
+
 // extract an array
 template <typename Container>
 void extract_array(const std::string& theName,

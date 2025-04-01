@@ -73,8 +73,6 @@ void Attributes::init(Json::Value& theJson, const Config& /* theConfig */)
     {
       Json::Value& json = theJson[name];
 
-      std::cout << "Parsing " << name << "\n";
-
       switch (json.type())
       {
         case Json::nullValue:

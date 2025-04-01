@@ -1,1 +1,1 @@
-GET /dali?customer=test&product=graticules HTTP/1.0
+GET /dali?customer=test&product=graticule HTTP/1.0

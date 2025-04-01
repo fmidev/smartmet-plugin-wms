@@ -31,7 +31,8 @@ class GraticuleLayer : public Layer
     bool minus_sign = true;       // use negative sign (&minus;) or append N/S/W/E
     int dx = 0;                   // offset in x/y direction or along normal in tangent mode
     int dy = 0;                   // in edges/left_bottom mode these are offsets from the edges
-    Attributes attributes;
+    Attributes attributes;        // for all labels
+    Attributes textattributes;    // for individual text elements
   };
 
   struct Graticule
