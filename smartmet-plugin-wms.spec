@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.3.28
+Version: 25.4.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -26,10 +26,10 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 25.2.18
-BuildRequires: smartmet-library-grid-content-devel >= 25.3.19
-BuildRequires: smartmet-library-grid-files-devel >= 25.3.19
+BuildRequires: smartmet-library-grid-content-devel >= 25.4.8
+BuildRequires: smartmet-library-grid-files-devel >= 25.4.8
 BuildRequires: smartmet-library-macgyver-devel >= 25.2.18
-BuildRequires: smartmet-library-spine-devel >= 25.3.3
+BuildRequires: smartmet-library-spine-devel >= 25.3.24
 BuildRequires: smartmet-library-timeseries-devel >= 25.2.18
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 25.2.18
@@ -38,7 +38,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 25.2.18
 BuildRequires: smartmet-engine-observation-devel >= 25.3.21
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 25.2.18
-BuildRequires: smartmet-engine-grid-devel >= 25.3.19
+BuildRequires: smartmet-engine-grid-devel >= 25.4.8
 BuildRequires: smartmet-engine-geonames-devel >= 25.2.18
 BuildRequires: smartmet-engine-querydata-devel >= 25.2.18
 BuildRequires: smartmet-engine-contour-devel >= 25.2.18
@@ -68,12 +68,12 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 25.3.19
-Requires: smartmet-library-grid-files >= 25.3.19
+Requires: smartmet-library-grid-content >= 25.4.8
+Requires: smartmet-library-grid-files >= 25.4.8
 Requires: smartmet-library-gis >= 25.2.18
 Requires: smartmet-library-trax >= 25.2.18
 Requires: smartmet-library-macgyver >= 25.2.18
-Requires: smartmet-library-spine >= 25.3.3
+Requires: smartmet-library-spine >= 25.3.24
 Requires: smartmet-library-timeseries >= 25.2.18
 Requires: smartmet-library-giza >= 25.2.18
 %if %{with authentication}
@@ -82,10 +82,10 @@ Requires: smartmet-engine-authentication >= 25.2.18
 Requires: smartmet-engine-querydata >= 25.2.18
 Requires: smartmet-engine-contour >= 25.2.18
 Requires: smartmet-engine-gis >= 25.2.18
-Requires: smartmet-engine-grid >= 25.3.19
+Requires: smartmet-engine-grid >= 25.4.8
 Requires: smartmet-engine-geonames >= 25.2.18
 Requires: smartmet-server >= 25.2.18
-Requires: smartmet-library-spine >= 25.3.3
+Requires: smartmet-library-spine >= 25.3.24
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -111,9 +111,9 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 25.2.18
 #TestRequires: smartmet-library-newbase-devel >= 25.3.20
 #TestRequires: smartmet-library-macgyver-devel >= 25.2.18
-#TestRequires: smartmet-library-spine-devel >= 25.3.3
+#TestRequires: smartmet-library-spine-devel >= 25.3.24
 #TestRequires: smartmet-library-timeseries-devel >= 25.2.18
-#TestRequires: smartmet-engine-grid-devel >= 25.3.19
+#TestRequires: smartmet-engine-grid-devel >= 25.4.8
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Apr  8 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.4.8-1.fmi
+- Using geometry groups for generating time steps for producers that have multiple geometries
+
 * Fri Mar 28 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.3.28-1.fmi
 - Fixed CircleLayer styles to work
 
