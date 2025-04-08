@@ -38,7 +38,7 @@ class WMSGridDataLayer : public WMSLayer
   const std::string itsProducer;
   const std::string itsParameter;
   int itsForecastType = 0;
-  uint itsGeometryId = 0;
+  int itsGeometryId = 0;
   int itsLevelId = 0;
   std::string itsElevationUnit;
 };
