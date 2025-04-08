@@ -170,7 +170,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
         forecastNumber = toInt32(p[6]);
     }
 
-    // printf("PRODUCER [%s][%s][%s][%d]\n",producer.c_str(),itsParameter.c_str(),fparam.c_str(),itsGeometryId);
+    //printf("PRODUCER [%s][%s][%s][%d]\n",producer.c_str(),itsParameter.c_str(),fparam.c_str(),itsGeometryId);
 
     T::ProducerInfo producerInfo;
     if (contentServer->getProducerInfoByName(0, producer, producerInfo) != 0)
@@ -182,6 +182,27 @@ bool WMSGridDataLayer::updateLayerMetaData()
         generationInfoList.getLength() == 0)
       return true;
 
+    std::set<int> validGeometries;
+
+    if (itsGeometryId <= 0)
+    {
+      Identification::FmiGeometryGroupDef geometryGroupDef;
+      if (Identification::gridDef.getFmiGeometryGroupDef(producerInfo.mName.c_str(),1,geometryGroupDef))
+      {
+        for (auto aIt = geometryGroupDef.mGeometryIdList.begin(); aIt != geometryGroupDef.mGeometryIdList.end(); ++aIt)
+        {
+          printf("--- validGM %u\n",*aIt);
+          validGeometries.insert(*aIt);
+        }
+      }
+      itsGeometryId = -1;
+    }
+    else
+    {
+      validGeometries.insert(itsGeometryId);
+    }
+
+
     std::map<Fmi::DateTime, std::shared_ptr<WMSTimeDimension>> newTimeDimensions;
     for (unsigned int i = 0; i < generationInfoList.getLength(); i++)
     {
@@ -191,19 +212,19 @@ bool WMSGridDataLayer::updateLayerMetaData()
       if (generationInfo == nullptr || generationInfo->mStatus != 1)
         continue;
 
-      // printf("-- GENERATION %s  (geom=%d
-      // fparam=%s)\n",generationInfo->mName.c_str(),itsGeometryId,fparam.c_str());
-      if (itsGeometryId <= 0)
+      //printf("-- GENERATION %s %u  (geom=%d fparam=%s  itsParam=%s geoms=%ld)\n",generationInfo->mName.c_str(),generationInfo->mGenerationId,itsGeometryId,fparam.c_str(),itsParameter.c_str(),validGeometries.size());
+      if (itsGeometryId <= 0 && validGeometries.size() == 0)
       {
         std::set<T::GeometryId> geometryIdList;
-        if (contentServer->getContentGeometryIdListByGenerationId(
-                0, generationInfo->mGenerationId, geometryIdList) != 0)
+        if (contentServer->getContentGeometryIdListByGenerationId(0, generationInfo->mGenerationId, geometryIdList) != 0)
           return true;
 
         if (geometryIdList.empty())
           continue;
 
         itsGeometryId = *geometryIdList.begin();
+        validGeometries.insert(itsGeometryId);
+
       }
 
       if (itsGeometryId > 0)
@@ -299,8 +320,11 @@ bool WMSGridDataLayer::updateLayerMetaData()
         for (uint t = 0; t < len; t++)
         {
           T::ContentInfo* info = contentInfoList.getContentInfoByIndex(t);
-          if (contentTimeList.find(info->getForecastTime()) == contentTimeList.end())
-            contentTimeList.insert(std::string(info->getForecastTime()));
+          if (validGeometries.find(info->mGeometryId) != validGeometries.end())
+          {
+            if (contentTimeList.find(info->getForecastTime()) == contentTimeList.end())
+              contentTimeList.insert(std::string(info->getForecastTime()));
+          }
         }
 
         // Picking levels:
