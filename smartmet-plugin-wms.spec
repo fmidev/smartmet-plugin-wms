@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.4.8
+Version: 25.4.9
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -29,7 +29,7 @@ BuildRequires: smartmet-library-giza-devel >= 25.2.18
 BuildRequires: smartmet-library-grid-content-devel >= 25.4.8
 BuildRequires: smartmet-library-grid-files-devel >= 25.4.8
 BuildRequires: smartmet-library-macgyver-devel >= 25.2.18
-BuildRequires: smartmet-library-spine-devel >= 25.3.24
+BuildRequires: smartmet-library-spine-devel >= 25.4.9
 BuildRequires: smartmet-library-timeseries-devel >= 25.2.18
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 25.2.18
@@ -73,7 +73,7 @@ Requires: smartmet-library-grid-files >= 25.4.8
 Requires: smartmet-library-gis >= 25.2.18
 Requires: smartmet-library-trax >= 25.2.18
 Requires: smartmet-library-macgyver >= 25.2.18
-Requires: smartmet-library-spine >= 25.3.24
+Requires: smartmet-library-spine >= 25.4.9
 Requires: smartmet-library-timeseries >= 25.2.18
 Requires: smartmet-library-giza >= 25.2.18
 %if %{with authentication}
@@ -85,7 +85,7 @@ Requires: smartmet-engine-gis >= 25.2.18
 Requires: smartmet-engine-grid >= 25.4.8
 Requires: smartmet-engine-geonames >= 25.2.18
 Requires: smartmet-server >= 25.2.18
-Requires: smartmet-library-spine >= 25.3.24
+Requires: smartmet-library-spine >= 25.4.9
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -111,7 +111,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 25.2.18
 #TestRequires: smartmet-library-newbase-devel >= 25.3.20
 #TestRequires: smartmet-library-macgyver-devel >= 25.2.18
-#TestRequires: smartmet-library-spine-devel >= 25.3.24
+#TestRequires: smartmet-library-spine-devel >= 25.4.9
 #TestRequires: smartmet-library-timeseries-devel >= 25.2.18
 #TestRequires: smartmet-engine-grid-devel >= 25.4.8
 #TestRequires: smartmet-engine-grid-test
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Apr  9 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.4.9-1.fmi
+- Improved GRID geometry selection algorithm
+
 * Tue Apr  8 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.4.8-1.fmi
 - Using geometry groups for generating time steps for producers that have multiple geometries
 
