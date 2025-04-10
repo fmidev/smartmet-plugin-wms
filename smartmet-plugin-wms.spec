@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.4.9
+Version: 25.4.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Apr 10 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.4.10-1.fmi
+- Added GraticuleLayer
+
 * Wed Apr  9 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.4.9-1.fmi
 - Improved GRID geometry selection algorithm
 
