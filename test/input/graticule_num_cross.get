@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=graticule_num_cross HTTP/1.0

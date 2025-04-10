@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=graticule_ticks HTTP/1.0

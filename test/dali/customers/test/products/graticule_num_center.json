@@ -1,0 +1,81 @@
+{
+    "title": "Graticule demo",
+    "producer": "kap",
+    "language": "fi",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views":
+    [
+        {
+	    "qid": "v1",
+            "layers":
+	    [
+		{
+		    "qid": "l1",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"minarea": 100
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country_lines",
+			"fill": "none",
+			"stroke": "#222",
+			"stroke-width": "1px"
+		    }
+		},
+		{
+		    "qid": "l2",
+		    "layer_type": "graticule",
+		    "attributes":
+		    {
+			"font-family": "Roboto",
+			"font-size": 10,
+			"text-anchor": "middle"
+		    },
+		    "graticules":
+		    [
+			{
+			    "layout": "grid",
+			    "step": 1,
+			    "except": 10,
+			    "attributes":
+			    {
+				"fill": "none",
+				"stroke": "#888",
+				"stroke-width": "0.2px"
+			    }
+			},
+			{
+			    "layout": "grid",
+			    "step": 10,
+			    "attributes":
+			    {
+				"fill": "none",
+				"stroke": "#000",
+				"stroke-width": "0.5px"
+			    },
+			    "labels":
+			    {
+				"layout": "center",
+				"dy": 5,
+				"attributes":
+				{
+				    "filter": "url(#halo?color=white&radius=3&sdev=2)",
+				    "fill": "blue"
+				}
+			    }
+			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}

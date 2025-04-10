@@ -1,0 +1,29 @@
+<filter id="rectbackground" x="-10%" y="-30%" width="120%" height="160%">
+ <!-- Step 1: Create a bounding box from the text -->
+ <feComponentTransfer in="SourceAlpha">
+  <feFuncA type="table" tableValues="1 1"/>
+ </feComponentTransfer>
+ 
+ <!-- Step 2: Get the outer bounds by blurring and thresholding -->
+ <feGaussianBlur stdDeviation="1" result="blur"/>
+ <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 10 -5" result="mask"/>
+ 
+ <!-- Step 3: Convert to a rectangle by using morphology to make it rectangular -->
+ <feMorphology operator="dilate" radius="5 5" result="dilated"/>
+ 
+ <!-- Step 4: Create the border stroke rectangle -->
+ <feFlood flood-color="$(border=black)" result="borderFlood"/>
+ <feComposite in="borderFlood" in2="dilated" operator="in" result="borderRect"/>
+ 
+ <!-- Step 5: Create slightly smaller back rectangle for the fill -->
+ <feMorphology in="dilated" operator="erode" radius="$(borderwidth=1)" result="eroded"/>
+ <feFlood flood-color="$(background=white)" result="backFlood"/>
+ <feComposite in="backFlood" in2="eroded" operator="in" result="backRect"/>
+ 
+ <!-- Step 6: Combine all elements -->
+ <feMerge>
+  <feMergeNode in="borderRect"/>
+  <feMergeNode in="backRect"/>
+  <feMergeNode in="SourceGraphic"/>
+ </feMerge>
+</filter>

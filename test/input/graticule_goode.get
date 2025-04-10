@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=graticule_goode HTTP/1.0

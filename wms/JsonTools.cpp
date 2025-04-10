@@ -409,6 +409,9 @@ void extract_vector(const std::string& theName,
 {
   try
   {
+    if (theJson.isNull())
+      return;
+
     if (theJson.isInt() || theJson.isDouble())
       theVector.push_back(theJson.asDouble());
     else if (theJson.isArray())
@@ -419,6 +422,72 @@ void extract_vector(const std::string& theName,
     else
       throw Fmi::Exception(BCP,
                            "The '" + theName + "' setting must be a double or an array of doubles");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Extract a vector of integers
+ */
+// ----------------------------------------------------------------------
+
+void extract_vector(const std::string& theName,
+                    std::vector<int>& theVector,
+                    const Json::Value& theJson)
+{
+  try
+  {
+    if (theJson.isNull())
+      return;
+
+    if (theJson.isInt())
+      theVector.push_back(theJson.asInt());
+    else if (theJson.isArray())
+    {
+      for (const auto& json : theJson)
+        theVector.push_back(json.asInt());
+    }
+    else
+      throw Fmi::Exception(
+          BCP, "The '" + theName + "' setting must be an integer or an array of integers");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Extract a vector of unsigned integers
+ */
+// ----------------------------------------------------------------------
+
+void extract_vector(const std::string& theName,
+                    std::vector<unsigned int>& theVector,
+                    const Json::Value& theJson)
+{
+  try
+  {
+    if (theJson.isNull())
+      return;
+
+    if (theJson.isUInt())
+      theVector.push_back(theJson.asUInt());
+    else if (theJson.isArray())
+    {
+      for (const auto& json : theJson)
+        theVector.push_back(json.asUInt());
+    }
+    else
+      throw Fmi::Exception(
+          BCP,
+          "The '" + theName +
+              "' setting must be an unsigned integer or an array of unsigned integers");
   }
   catch (...)
   {

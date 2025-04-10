@@ -1,0 +1,10 @@
+<filter id="halo" x="-10%" y="-10%" width="110%" height="110%">
+ <feMorphology operator="dilate" radius="$(radius=3)" in="SourceAlpha" result="expanded"/>
+ <feGaussianBlur in="expanded" stdDeviation="$(sdev=2)" result="blurred"/>
+ <feFlood flood-color="$(color=white)" result="haloColor"/>
+ <feComposite in="haloColor" in2="blurred" operator="in" result="haloBlur"/>
+ <feMerge>
+  <feMergeNode in="haloBlur"/>
+  <feMergeNode in="SourceGraphic"/>
+ </feMerge>
+</filter>

@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=graticule_num_edge_center HTTP/1.0
