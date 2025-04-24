@@ -1381,10 +1381,7 @@ void GraticuleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
         theState.addAttributes(theGlobals, num_cdt, graticule.labels.attributes);
         theLayersCdt.PushBack(num_cdt);
 
-#if 0        
-        if (graticule.labels.orientation == "auto")
-          fix_angles(labels);
-#endif
+        bool horizontal = (graticule.labels.orientation == "horizontal");
 
         for (const auto& label : labels)
         {
@@ -1396,7 +1393,7 @@ void GraticuleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
           auto xpos = lround(label.x + graticule.labels.dx);
           auto ypos = lround(label.y + graticule.labels.dy);
 
-          if (label.angle == 0)
+          if (horizontal || label.angle == 0)
           {
             text_cdt["attributes"]["x"] = Fmi::to_string(xpos);
             text_cdt["attributes"]["y"] = Fmi::to_string(ypos);
