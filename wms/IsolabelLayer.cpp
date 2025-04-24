@@ -109,6 +109,9 @@ void IsolabelLayer::init(Json::Value& theJson,
     if (!json.isNull())
       JsonTools::extract_vector("angles", angles, json);
 
+    json = JsonTools::remove(theJson, "textattributes");
+    textattributes.init(json, theConfig);
+
     // Note that from now on we generate all possible isoline values and keep the unique ones only
     // at the end. A std::set would have been an alternative solution.
 
@@ -296,6 +299,8 @@ void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
       text_cdt["start"] = "<text";
       text_cdt["end"] = "</text>";
       text_cdt["cdata"] = txt;
+
+      theState.addAttributes(theGlobals, text_cdt, textattributes);
 
       // Assign isoline styles for the point
       for (auto i = 0UL; i < geoms.size(); i++)
@@ -1267,6 +1272,7 @@ std::size_t IsolabelLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(max_curvature));
     Fmi::hash_combine(hash, Fmi::hash_value(stencil_size));
     Fmi::hash_combine(hash, Fmi::hash_value(isovalues));
+    Fmi::hash_combine(hash, textattributes.hash_value(theState));
     return hash;
   }
   catch (...)

@@ -85,6 +85,8 @@ class IsolabelLayer : public IsolineLayer
 
   std::vector<double> isovalues;  // generated from isolines, isobands and isovalues settings
 
+  Attributes textattributes;
+
  private:
   Candidates find_candidates(const std::vector<OGRGeometryPtr>& geoms) const;
   Candidates select_best_candidates(const Candidates& candidates, const Fmi::Box& box) const;
