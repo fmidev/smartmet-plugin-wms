@@ -36,6 +36,8 @@ const std::set<std::string> valid_label_layouts = {
 
 const std::set<std::string> valid_line_layouts = {"grid", "ticks"};
 
+const std::set<std::string> valid_orientations = {"auto", "horizontal"};
+
 using Graticule = GraticuleLayer::Graticule;
 using GraticuleLabels = GraticuleLayer::GraticuleLabels;
 
@@ -139,6 +141,7 @@ OGRLineString* tick(double x1,
   auto* line = new OGRLineString;
   line->addPoint(x, y);
   line->addPoint(x_end, y_end);
+
   return line;
 }
 
@@ -238,6 +241,20 @@ std::string get_lat_label(const GraticuleLabels& label, int lat)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Calculate upright direction
+ */
+// ----------------------------------------------------------------------
+
+double get_angle(double lon, double lat, const Fmi::CoordinateTransformation& wgs84tocrs)
+{
+  auto angle = Fmi::OGR::gridNorth(wgs84tocrs, lon, lat);
+  if (angle)
+    return *angle;
+  return 0.0;  // default is not to rotate at all
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate graticule labels at the centers of graticule lines
  */
 // ----------------------------------------------------------------------
@@ -253,6 +270,8 @@ Labels generate_labels_center(const Graticule& g,
 
     // Generate the latlon coordinates first
 
+    std::vector<double> lons;
+    std::vector<double> lats;
     std::vector<double> x;
     std::vector<double> y;
     std::vector<std::string> txt;
@@ -261,8 +280,8 @@ Labels generate_labels_center(const Graticule& g,
     for (int lon = -180; lon <= 180; lon += l.step)
       for (int lat = -90; lat < 90; lat += l.step)
       {
-        x.push_back(lon);
-        y.push_back(lat + l.step / 2.0);
+        lons.push_back(lon);
+        lats.push_back(lat + l.step / 2.0);
         txt.push_back(get_lon_label(l, lon));
       }
 
@@ -270,13 +289,15 @@ Labels generate_labels_center(const Graticule& g,
     for (int lat = -90 + l.step; lat < 90; lat += l.step)
       for (int lon = -180; lon <= 180; lon += l.step)
       {
-        x.push_back(lon + l.step / 2.0);
-        y.push_back(lat);
+        lons.push_back(lon + l.step / 2.0);
+        lats.push_back(lat);
         txt.emplace_back(get_lat_label(l, lat));
       }
 
     // Convert to world coordinates
     Fmi::CoordinateTransformation transformation("WGS84", crs);
+    x = lons;
+    y = lats;
     transformation.transform(x, y);
 
     // Convert to pixel coordinates
@@ -288,9 +309,11 @@ Labels generate_labels_center(const Graticule& g,
     for (auto i = 0UL; i < x.size(); i++)
     {
       if (x[i] > 0 && x[i] < box.width() && y[i] > 0 && y[i] < box.height())
-        labels.emplace_back(txt[i], x[i], y[i], 0);
+      {
+        auto angle = get_angle(lons[i], lats[i], transformation);
+        labels.emplace_back(txt[i], x[i], y[i], angle);
+      }
     }
-
     return labels;
   }
   catch (...)
@@ -319,6 +342,8 @@ Labels generate_labels_edge_center(const Graticule& g,
 
     Fmi::CoordinateTransformation transformation("WGS84", crs);
 
+    std::vector<double> lons;
+    std::vector<double> lats;
     std::vector<double> x;
     std::vector<double> y;
 
@@ -328,6 +353,8 @@ Labels generate_labels_edge_center(const Graticule& g,
       // latlon coordinates
       for (int lat = -90; lat < 90; lat += l.step)
       {
+        lons.push_back(lon);
+        lats.push_back(lat);
         x.push_back(lon);
         y.push_back(lat + l.step / 2.0);
       }
@@ -356,12 +383,18 @@ Labels generate_labels_edge_center(const Graticule& g,
       if (minpos != std::string::npos)
       {
         auto txt = get_lon_label(l, lon);
-        labels.push_back({txt, x[minpos], y[minpos], 0});
+        auto angle = get_angle(lons[minpos], lats[minpos], transformation);
+        labels.push_back({txt, x[minpos], y[minpos], angle});
 
         if (minpos != maxpos)
-          labels.emplace_back(txt, x[maxpos], y[maxpos], 0);
+        {
+          angle = get_angle(lons[maxpos], lats[maxpos], transformation);
+          labels.emplace_back(txt, x[maxpos], y[maxpos], angle);
+        }
       }
 
+      lons.clear();
+      lats.clear();
       x.clear();
       y.clear();
     }
@@ -371,6 +404,8 @@ Labels generate_labels_edge_center(const Graticule& g,
     {
       for (int lon = -180; lon < 180; lon += l.step)
       {
+        lons.push_back(lon);
+        lats.push_back(lat);
         x.push_back(lon + l.step / 2.0);
         y.push_back(lat);
       }
@@ -399,12 +434,18 @@ Labels generate_labels_edge_center(const Graticule& g,
       if (minpos != std::string::npos)
       {
         auto txt = get_lat_label(l, lat);
-        labels.push_back({txt, x[minpos], y[minpos], 0});
+        auto angle = get_angle(lons[minpos], lats[minpos], transformation);
+        labels.push_back({txt, x[minpos], y[minpos], angle});
 
         if (minpos != maxpos)
-          labels.emplace_back(txt, x[maxpos], y[maxpos], 0);
+        {
+          angle = get_angle(lons[maxpos], lats[maxpos], transformation);
+          labels.emplace_back(txt, x[maxpos], y[maxpos], angle);
+        }
       }
 
+      lons.clear();
+      lats.clear();
       x.clear();
       y.clear();
     }
@@ -437,11 +478,14 @@ Labels generate_labels_cross(const Graticule& g,
     std::vector<double> x_best;
     std::vector<double> y_best;
     std::vector<std::string> txt_best;
+    std::vector<double> angle_best;
 
     // Choose longitude containing most valid label positions at centers of lines
 
     for (int lon = -180; lon <= 180; lon += l.step)
     {
+      std::vector<double> lons;
+      std::vector<double> lats;
       std::vector<double> x;
       std::vector<double> y;
       std::vector<std::string> txt;
@@ -449,6 +493,8 @@ Labels generate_labels_cross(const Graticule& g,
       // latlon coordinates
       for (int lat = -90; lat < 90; lat += l.step)
       {
+        lons.push_back(lon);
+        lats.push_back(lat);
         x.push_back(lon + l.step / 2.0);
         y.push_back(lat);
         txt.emplace_back(get_lat_label(l, lat));
@@ -466,6 +512,7 @@ Labels generate_labels_cross(const Graticule& g,
       std::vector<double> valid_x;
       std::vector<double> valid_y;
       std::vector<std::string> valid_txt;
+      std::vector<double> valid_angle;
 
       for (auto i = 0UL; i < x.size(); i++)
       {
@@ -474,6 +521,7 @@ Labels generate_labels_cross(const Graticule& g,
           valid_x.push_back(x[i]);
           valid_y.push_back(y[i]);
           valid_txt.emplace_back(txt[i]);
+          valid_angle.push_back(get_angle(lons[i], lats[i], transformation));
         }
       }
 
@@ -483,27 +531,33 @@ Labels generate_labels_cross(const Graticule& g,
         x_best = std::move(valid_x);
         y_best = std::move(valid_y);
         txt_best = std::move(valid_txt);
+        angle_best = std::move(valid_angle);
       }
     }
 
     // Keep the selected longitude
     for (auto i = 0UL; i < x_best.size(); i++)
-      labels.emplace_back(txt_best[i], x_best[i], y_best[i], 0);
+      labels.emplace_back(txt_best[i], x_best[i], y_best[i], angle_best[i]);
 
     x_best.clear();
     y_best.clear();
     txt_best.clear();
+    angle_best.clear();
 
     // Choose latitude containing most valid label positions at centers of lines
 
     for (int lat = -90 + l.step; lat < 90; lat += l.step)
     {
+      std::vector<double> lons;
+      std::vector<double> lats;
       std::vector<double> x;
       std::vector<double> y;
       std::vector<std::string> txt;
 
       for (int lon = -180; lon < 180; lon += l.step)
       {
+        lons.push_back(lon);
+        lats.push_back(lat);
         x.push_back(lon);
         y.push_back(lat + l.step / 2.0);
         txt.emplace_back(get_lon_label(l, lon));
@@ -521,6 +575,7 @@ Labels generate_labels_cross(const Graticule& g,
       std::vector<double> valid_x;
       std::vector<double> valid_y;
       std::vector<std::string> valid_txt;
+      std::vector<double> valid_angle;
 
       for (auto i = 0UL; i < x.size(); i++)
       {
@@ -529,6 +584,7 @@ Labels generate_labels_cross(const Graticule& g,
           valid_x.push_back(x[i]);
           valid_y.push_back(y[i]);
           valid_txt.emplace_back(txt[i]);
+          valid_angle.push_back(get_angle(lons[i], lats[i], transformation));
         }
       }
 
@@ -538,12 +594,13 @@ Labels generate_labels_cross(const Graticule& g,
         x_best = std::move(valid_x);
         y_best = std::move(valid_y);
         txt_best = std::move(valid_txt);
+        angle_best = std::move(valid_angle);
       }
     }
 
     // Keep the selected longitude
     for (auto i = 0UL; i < x_best.size(); i++)
-      labels.emplace_back(txt_best[i], x_best[i], y_best[i], 0);
+      labels.emplace_back(txt_best[i], x_best[i], y_best[i], angle_best[i]);
 
     return labels;
   }
@@ -576,6 +633,8 @@ Labels generate_labels_ticks(const Graticule& g,
     // produce ~1 km errors
     const double linestep = 1.0;
 
+    std::vector<double> lons;
+    std::vector<double> lats;
     std::vector<double> x;
     std::vector<double> y;
 
@@ -593,11 +652,13 @@ Labels generate_labels_ticks(const Graticule& g,
         auto lat = -90.0 + i * linestep;
         if (lat > 90)
           break;
-        x.push_back(lon);
-        y.push_back(lat);
+        lons.push_back(lon);
+        lats.push_back(lat);
       }
 
       // CRS coordinates
+      x = lons;
+      y = lats;
       transformation.transform(x, y);
 
       // Find intersections with bbox
@@ -627,13 +688,14 @@ Labels generate_labels_ticks(const Graticule& g,
           else
             y2 += l.dy;
 
-          labels.emplace_back(txt, x2, y2, 0);
+          auto angle = get_angle(lons[i], lats[i], transformation);
+          labels.emplace_back(txt, x2, y2, angle);
           OGRFree(line);
           line = nullptr;
         }
       }
-      x.clear();
-      y.clear();
+      lons.clear();
+      lats.clear();
     }
 
     // Add horizontal ticks only at left and right edges
@@ -650,11 +712,13 @@ Labels generate_labels_ticks(const Graticule& g,
         auto lon = -180 + i * linestep;
         if (lon > 180)
           break;
-        x.push_back(lon);
-        y.push_back(lat);
+        lons.push_back(lon);
+        lats.push_back(lat);
       }
 
       // CRS coordinates
+      x = lons;
+      y = lats;
       transformation.transform(x, y);
 
       // Find intersections with bbox
@@ -680,13 +744,14 @@ Labels generate_labels_ticks(const Graticule& g,
 
           y2 -= l.dy;  // because baseline setting does not work properly at least in librsvg
 
-          labels.emplace_back(txt, x2, y2, 0);
+          auto angle = get_angle(lons[i], lats[i], transformation);
+          labels.emplace_back(txt, x2, y2, angle);
           OGRFree(line);
           line = nullptr;
         }
       }
-      x.clear();
-      y.clear();
+      lons.clear();
+      lats.clear();
     }
 
     return labels;
@@ -1053,7 +1118,7 @@ Graticule remove_graticule(Json::Value& theJson, const Config& theConfig)
 
       JsonTools::remove_string(l.layout, json, "layout");
       JsonTools::remove_uint(l.step, json, "step");
-      JsonTools::remove_bool(l.upright, json, "upright");
+      JsonTools::remove_string(l.orientation, json, "orientation");
       JsonTools::remove_bool(l.degree_sign, json, "degree_sign");
       JsonTools::remove_bool(l.minus_sign, json, "minus_sign");
       JsonTools::remove_int(l.dx, json, "dx");
@@ -1085,6 +1150,10 @@ Graticule remove_graticule(Json::Value& theJson, const Config& theConfig)
     if (valid_label_layouts.find(l.layout) == valid_label_layouts.end())
       throw Fmi::Exception(BCP, "graticule labels layout must be none|edge|grid|center|edge_center")
           .addParameter("layout", l.layout);
+
+    if (valid_orientations.find(l.orientation) == valid_orientations.end())
+      throw Fmi::Exception(BCP, "graticule labels orientation must be horizontal|auto")
+          .addParameter("orientation", l.orientation);
 
     if (l.layout != "none")
     {
@@ -1312,6 +1381,11 @@ void GraticuleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
         theState.addAttributes(theGlobals, num_cdt, graticule.labels.attributes);
         theLayersCdt.PushBack(num_cdt);
 
+#if 0        
+        if (graticule.labels.orientation == "auto")
+          fix_angles(labels);
+#endif
+
         for (const auto& label : labels)
         {
           CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
@@ -1319,11 +1393,21 @@ void GraticuleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
           text_cdt["end"] = "</text>";
           text_cdt["cdata"] = label.text;
 
-          auto xpos = lround(label.x + graticule.labels.dx);  // TODO: upright & angle
+          auto xpos = lround(label.x + graticule.labels.dx);
           auto ypos = lround(label.y + graticule.labels.dy);
 
-          text_cdt["attributes"]["x"] = Fmi::to_string(xpos);
-          text_cdt["attributes"]["y"] = Fmi::to_string(ypos);
+          if (label.angle == 0)
+          {
+            text_cdt["attributes"]["x"] = Fmi::to_string(xpos);
+            text_cdt["attributes"]["y"] = Fmi::to_string(ypos);
+          }
+          else
+          {
+            auto transform =
+                fmt::format("translate({} {}) rotate({})", xpos, ypos, std::round(label.angle));
+            text_cdt["attributes"]["transform"] = transform;
+          }
+
           theState.addAttributes(theGlobals, text_cdt, graticule.labels.textattributes);
 
           theLayersCdt.PushBack(text_cdt);
@@ -1366,7 +1450,7 @@ std::size_t GraticuleLayer::hash_value(const State& theState) const
       Fmi::hash_combine(hash, g.attributes.hash_value(theState));
       Fmi::hash_combine(hash, Fmi::hash_value(g.labels.layout));
       Fmi::hash_combine(hash, Fmi::hash_value(g.labels.step));
-      Fmi::hash_combine(hash, Fmi::hash_value(g.labels.upright));
+      Fmi::hash_combine(hash, Fmi::hash_value(g.labels.orientation));
       Fmi::hash_combine(hash, Fmi::hash_value(g.labels.degree_sign));
       Fmi::hash_combine(hash, Fmi::hash_value(g.labels.minus_sign));
       Fmi::hash_combine(hash, Fmi::hash_value(g.labels.dx));

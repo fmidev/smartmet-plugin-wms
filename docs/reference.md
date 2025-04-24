@@ -1736,7 +1736,6 @@ The generated image is:
 |----|----|-------------|-----------|
 |layout|(string)|"none"|Label layout algorithm: none|edges|grid|center|left_bottom|cross|
 |step|int|-|Desired multiples in degrees, by default inherited from Graticule settings|
-|upright|bool|false|Turn upside-down labels 180 degrees|
 |orientation|(string)|"horizontal"|Label orientation: horizontal|auto|
 |degree_sign|(bool)|true|If true, a degree sign will be appended to the number|
 |minus_sign|(bool)|true|If false, N/S/W/E will be appended at the end|
