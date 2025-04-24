@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 25.4.24
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Apr 24 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.4.24-2.fmi
+- Removed 'upright' setting and added 'orientation' setting for GraticuleLayer
+
 * Thu Apr 24 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.4.24-1.fmi
 - Added 'textattributes' setting for IsolabelLayer
 
