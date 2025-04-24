@@ -24,15 +24,15 @@ class GraticuleLayer : public Layer
 
   struct GraticuleLabels
   {
-    std::string layout = "none";  // none, edges, grid, center, left_bottom
-    unsigned int step = 10;       // desired multiples in degrees
-    bool upright = false;         // upright or along tangent
-    bool degree_sign = true;      // append degree sign (&deg;)
-    bool minus_sign = true;       // use negative sign (&minus;) or append N/S/W/E
-    int dx = 0;                   // offset in x/y direction or along normal in tangent mode
-    int dy = 0;                   // in edges/left_bottom mode these are offsets from the edges
-    Attributes attributes;        // for all labels
-    Attributes textattributes;    // for individual text elements
+    std::string layout = "none";             // none, edges, grid, center, left_bottom
+    unsigned int step = 10;                  // desired multiples in degrees
+    std::string orientation = "horizontal";  // horizontal|auto
+    bool degree_sign = true;                 // append degree sign (&deg;)
+    bool minus_sign = true;                  // use negative sign (&minus;) or append N/S/W/E
+    int dx = 0;                 // offset in x/y direction or along normal in tangent mode
+    int dy = 0;                 // in edges/left_bottom mode these are offsets from the edges
+    Attributes attributes;      // for all labels
+    Attributes textattributes;  // for individual text elements
   };
 
   struct Graticule

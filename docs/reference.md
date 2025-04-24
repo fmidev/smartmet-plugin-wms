@@ -29,6 +29,10 @@ Table of Contents
       - [TimeLayer](#timelayer)
       - [TagLayer](#taglayer)
       - [WKTLayer](#wktlayer)
+      - [GraticuleLayer](#graticulelayer)
+        - [GraticuleLayer settings](#graticulelayer-settings)
+        - [Graticule settings](#graticule-settings)
+        - [GraticuleLabels](#graticulelabels)
       - [CircleLayer](#circlelayer)
         - [CircleLayer settings](#circlelayer-settings)
         - [Circle settings](#circle-settings)
@@ -1609,6 +1613,136 @@ The table below contains a list of attributes that can be defined for the WKT la
 | relativeresolution | (double) | -             | The segmentation resolution in pixels.     |
 
 By default the WKT is not segmented into smaller linesegments. However, if the CRS of the image is not geographic, long straight lines in the WKT will not curve as expected unless the WKT is segmented into multiple parts in a resolution suitable for the output image. In the example above the black WKT is not segmented at all, the red one is segmented to 100 km resolution, and the green one to 20 pixel resolution.
+
+#### GraticuleLayer
+
+The graticule layer is used to draw a latitude-longitude grid.
+
+A sample configuration from the tests (graticule_num_cross):
+
+<pre><code><sub>
+{
+    "title": "Graticule demo",
+    "producer": "kap",
+    "language": "fi",
+    "projection":
+    {
+        "crs": "data",
+        "xsize": 500,
+        "ysize": 500
+    },
+    "views":
+    [
+        {
+            "qid": "v1",
+            "layers":
+            [
+                {
+                    "qid": "l1",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 100
+                    },
+                    "attributes":
+                    {
+                        "id": "europe_country_lines",
+                        "fill": "none",
+                        "stroke": "#222",
+                        "stroke-width": "1px"
+                    }
+                },
+                {
+                    "qid": "l2",
+                    "layer_type": "graticule",
+                    "attributes":
+                    {
+                        "font-family": "Roboto",
+                        "font-size": 10,
+                        "text-anchor": "middle"
+                    },
+                    "graticules":
+                    [
+                        {
+                            "layout": "grid",
+                            "step": 1,
+                            "except": 10,
+                            "attributes":
+                            {
+                                "fill": "none",
+                                "stroke": "#888",
+                                "stroke-width": "0.2px"
+                            }
+                        },
+                        {
+                            "layout": "grid",
+                            "step": 10,
+                            "attributes":
+                            {
+                                "fill": "none",
+                                "stroke": "#000",
+                                "stroke-width": "0.5px"
+                            },
+                            "labels":
+                            {
+                                "layout": "cross",
+                                "dy": 5,
+                                "attributes":
+                                {
+                                    "fill": "black"
+                                },
+                                "textattributes":
+                                {
+                                    "filter": "url(#rectbackground?border=black&background=white&borderwidth=1)"
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+</sub></code></pre>
+
+The generated image is:
+<img src="images/graticule.png">
+
+##### GraticuleLayer settings
+ |Name|Type|Default value|Description|
+ |----|----|-------------|-----------|
+ |graticules|[Graticule]|-|Vector of graticule definitions|
+ |mask      |(string)   |-|Optional mask to be used (for example "url(#alphadilation)"|
+ |mask_id   |(string)   |-|If empty, qid+mask will be used|
+ |precision |(double)   |1.0|Coordinate output precision|
+
+##### Graticule settings
+
+ |Name|Type|Default value|Description|
+ |----|----|-------------|-----------|
+ |layout|(string)|"grid"|Normal "grid" or "ticks" at the image edges|
+ |step  |(integer)|10   |Desired multiples in degrees|
+ |except|([int)]) |-    |Undesired multiples in degrees|
+ |length|int      |5    |Tick length in pixels when layout=ticks|
+ |attributes|(Attributes)|-|Presentation attributes for the lines|
+ |labels|(GraticuleLabels)|-|Optional label definitions for the lines|
+
+ ##### GraticuleLabels
+
+|Name|Type|Default value|Description|
+|----|----|-------------|-----------|
+|layout|(string)|"none"|Label layout algorithm: none|edges|grid|center|left_bottom|cross|
+|step|int|-|Desired multiples in degrees, by default inherited from Graticule settings|
+|orientation|(string)|"horizontal"|Label orientation: horizontal|auto|
+|degree_sign|(bool)|true|If true, a degree sign will be appended to the number|
+|minus_sign|(bool)|true|If false, N/S/W/E will be appended at the end|
+|dx|(int)|0|X-offset when applicable in the selected layout|
+|dy|(int)|0|Y-offset when applicable in the selected layout|
+|attributes|(Attributes)|-|Presentation attributes for the group of labels|
+|textattributes|(Attributes)|-|Presentation attributes for individual labels|
 
 #### CircleLayer
 
