@@ -1,0 +1,88 @@
+{
+    "title": "Circles",
+
+    "projection":
+    {
+	"xsize": 500,
+	"ysize": 500,
+	"crs": "EPSG:3035",
+	"bboxcrs": "WGS84",
+	"cx": 24,
+	"cy": 61,
+	"resolution": 0.75
+    },
+    
+    "views": [
+        {
+	    "qid": "v1",
+            "layers": [
+		{
+		    "qid": "mymap",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"lines": true,
+			"schema": "natural_earth",
+			"minarea": 50,
+			"table": "admin_0_countries"
+		    },
+		    "attributes":
+		    {
+			"id": "europe",
+			"stroke": "#333",
+			"stroke-width": "0.5px",
+			"fill": "none"
+		    }
+		},
+		{
+		    "layer_type": "circle",
+		    "qid": "c",
+		    "places":
+		    [
+			"Helsinki",
+			"Tampere",
+			"Turku"
+		    ],
+		    "circles":
+		    [
+			{
+			    "radius": 20,
+			    "attributes":
+			    {
+				"stroke": "black",
+				"stroke-width": 1.5
+			    }
+			},
+			{
+			    "radius": 50,
+			    "attributes":
+			    {
+				"stroke": "black",
+				"stroke-width": 0.5
+			    }
+			}
+		    ],
+		    "attributes":
+		    {
+			"fill": "none"
+		    },
+		    "labels":
+		    {
+			"layout": ["west", "south"],
+			"prefix": "R=",
+			"suffix": "km",
+			"dx": 0,
+			"dy": 5,
+			"attributes":
+			{
+			    "text-anchor": "middle",
+			    "font-family": "Roboto",
+			    "font-weight": "bold",
+			    "font-size": 10
+			}
+		    }
+		}
+            ]
+        }
+    ]
+}

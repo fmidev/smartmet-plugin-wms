@@ -8,6 +8,7 @@
 
 #include "Attributes.h"
 #include "Circle.h"
+#include "CircleLabels.h"
 #include "Layer.h"
 #include <optional>
 #include <string>
@@ -41,9 +42,10 @@ class CircleLayer : public Layer
  private:
   std::string keyword;           // locations from database
   std::set<std::string> places;  // locations from database
-  std::string features;  // optional comma separated list of feature codes for "places" searches
-  bool lines = true;     // render as polylines or as polygons
-  std::vector<Circle> circles;  // actual circle definitions
+  std::string features;          // optional comma separated list of feature codes
+  bool lines = true;             // render as polylines or as polygons
+  std::vector<Circle> circles;   // actual circle definitions
+  CircleLabels labels;           // optional radius labels
 
 };  // class CircleLayer
 

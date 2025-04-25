@@ -87,9 +87,9 @@ std::pair<double, double> coordinate_at_distance(double lon,
 
 // Create a circle with a specific radius in km using a reasonably accurate formula for distances
 
-std::unique_ptr<OGRPolygon> create_circle(double lon, double lat, double kilometers)
+OGRGeometryPtr create_circle(double lon, double lat, double kilometers)
 {
-  auto circle = std::make_unique<OGRPolygon>();
+  auto circle = std::make_shared<OGRPolygon>();
   auto* ring = new OGRLinearRing;
 
   for (int theta = 0; theta < 360; ++theta)
@@ -103,7 +103,96 @@ std::unique_ptr<OGRPolygon> create_circle(double lon, double lat, double kilomet
   return circle;
 }
 
+void find_top_point(double& x, double& y, const OGRGeometryPtr& geom)
+{
+  if (!geom || geom->IsEmpty() == 1)
+    return;
+  const auto* poly = dynamic_cast<const OGRPolygon*>(&*geom);
+  if (poly == nullptr)
+    return;
+  const auto* ring = poly->getExteriorRing();
+  if (ring->IsEmpty() == 1)
+    return;
+  x = ring->getX(0);
+  y = ring->getY(0);
+  for (int i = 1; i < ring->getNumPoints(); i++)
+  {
+    if (ring->getY(i) > y)
+    {
+      x = ring->getX(i);
+      y = ring->getY(i);
+    }
+  }
+}
+
+void find_bottom_point(double& x, double& y, const OGRGeometryPtr& geom)
+{
+  if (!geom || geom->IsEmpty() == 1)
+    return;
+  const auto* poly = dynamic_cast<const OGRPolygon*>(&*geom);
+  if (poly == nullptr)
+    return;
+  const auto* ring = poly->getExteriorRing();
+  if (ring->IsEmpty() == 1)
+    return;
+  x = ring->getX(0);
+  y = ring->getY(0);
+  for (int i = 1; i < ring->getNumPoints(); i++)
+  {
+    if (ring->getY(i) < y)
+    {
+      x = ring->getX(i);
+      y = ring->getY(i);
+    }
+  }
+}
+
+void find_left_point(double& x, double& y, const OGRGeometryPtr& geom)
+{
+  if (!geom || geom->IsEmpty() == 1)
+    return;
+  const auto* poly = dynamic_cast<const OGRPolygon*>(&*geom);
+  if (poly == nullptr)
+    return;
+  const auto* ring = poly->getExteriorRing();
+  if (ring->IsEmpty() == 1)
+    return;
+  x = ring->getX(0);
+  y = ring->getY(0);
+  for (int i = 1; i < ring->getNumPoints(); i++)
+  {
+    if (ring->getX(i) < x)
+    {
+      x = ring->getX(i);
+      y = ring->getY(i);
+    }
+  }
+}
+
+void find_right_point(double& x, double& y, const OGRGeometryPtr& geom)
+{
+  if (!geom || geom->IsEmpty() == 1)
+    return;
+  const auto* poly = dynamic_cast<const OGRPolygon*>(&*geom);
+  if (poly == nullptr)
+    return;
+  const auto* ring = poly->getExteriorRing();
+  if (ring->IsEmpty() == 1)
+    return;
+  x = ring->getX(0);
+  y = ring->getY(0);
+  for (int i = 1; i < ring->getNumPoints(); i++)
+  {
+    if (ring->getX(i) > x)
+    {
+      x = ring->getX(i);
+      y = ring->getY(i);
+    }
+  }
+}
+
 }  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize from JSON
@@ -154,6 +243,9 @@ void CircleLayer::init(Json::Value& theJson,
     else
       throw Fmi::Exception(
           BCP, "Circle-layer circles setting must define a circle or an array of circles");
+
+    json = JsonTools::remove(theJson, "labels");
+    labels.init(json, theConfig);
   }
   catch (...)
   {
@@ -228,6 +320,105 @@ void CircleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     Fmi::SpatialReference wgs84("WGS84");
     Fmi::CoordinateTransformation transformation(wgs84, *crs);
 
+    // First generate the circles in WorldXY coordinates without clipping so that we can
+    // pick min/max x/y coordinates for label placements
+
+    std::vector<OGRGeometryPtr> all_circles;
+
+    for (const auto& location : locations)
+    {
+      auto lon = location->longitude;
+      auto lat = location->latitude;
+      for (const auto& circle : circles)
+      {
+        auto polygon = create_circle(lon, lat, circle.radius);
+        if (polygon && polygon->IsEmpty() == 0)
+          polygon.reset(transformation.transformGeometry(*polygon));
+        all_circles.push_back(polygon);
+      }
+    }
+
+    // Generate a <g> group of labels
+
+    if (!labels.empty())
+    {
+      std::string labels_iri = theState.makeQid("circle-labels-");
+      if (!theState.addId(labels_iri))
+        throw Fmi::Exception(BCP, "Non-unique ID assigned to circle radius labels")
+            .addParameter("ID", labels_iri);
+
+      CTPP::CDT labels_cdt(CTPP::CDT::HASH_VAL);
+      labels_cdt["attributes"]["id"] = labels_iri;
+      labels_cdt["start"] = "<g";
+      labels_cdt["end"] = "";
+      theState.addAttributes(theGlobals, labels_cdt, labels.attributes);
+      theLayersCdt.PushBack(labels_cdt);
+
+      const std::map<std::string, double> directions = {
+          {"north", 90}, {"south", -90}, {"west", -180}, {"east", 180}};
+
+      auto current_circle = all_circles.begin();
+      for (const auto& location : locations)
+      {
+        auto lon = location->longitude;
+        auto lat = location->latitude;
+        for (const auto& circle : circles)
+        {
+          auto txt = labels.format(circle.radius);
+
+          for (const auto& direction : labels.layout)
+          {
+            double x = 0;
+            double y = 0;
+
+            auto dir = directions.find(direction);
+            if (dir != directions.end())
+            {
+              auto angle = dir->second;
+              auto lonlat = coordinate_at_distance(lon, lat, angle, circle.radius * 1000);
+
+              x = lonlat.first;
+              y = lonlat.second;
+              transformation.transform(x, y);  // latlon -> world xy
+            }
+            else
+            {
+              if (direction == "top")
+                find_top_point(x, y, *current_circle);
+              else if (direction == "bottom")
+                find_bottom_point(x, y, *current_circle);
+              else if (direction == "left")
+                find_left_point(x, y, *current_circle);
+              else if (direction == "right")
+                find_right_point(x, y, *current_circle);
+            }
+
+            if (clipbox.position(x, y) == Fmi::Box::Inside)
+            {
+              box.transform(x, y);  // world xy -> pixel
+
+              auto xpos = lround(x + labels.dx);
+              auto ypos = lround(y + labels.dy);
+
+              CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
+              text_cdt["start"] = " <text";
+              text_cdt["end"] = "</text>";
+              text_cdt["cdata"] = txt;
+
+              text_cdt["attributes"]["x"] = Fmi::to_string(xpos);
+              text_cdt["attributes"]["y"] = Fmi::to_string(ypos);
+
+              theState.addAttributes(theGlobals, text_cdt, labels.textattributes);
+              theLayersCdt.PushBack(text_cdt);
+            }
+          }
+          ++current_circle;
+        }
+      }
+      // Close labels_cdt
+      theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n  </g>");
+    }
+
     // Generate a <g> group of circles
 
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
@@ -241,17 +432,16 @@ void CircleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     const auto precision = theState.getPrecision("circle");
 
+    auto current_circle = all_circles.begin();
     for (const auto& location : locations)
     {
       auto lon = location->longitude;
       auto lat = location->latitude;
       for (const auto& circle : circles)
       {
-        auto polygon = create_circle(lon, lat, circle.radius);
-        if (!polygon || polygon->IsEmpty() != 0)
-          continue;
+        auto geom = *current_circle;
+        ++current_circle;
 
-        OGRGeometryPtr geom(transformation.transformGeometry(*polygon));
         if (!geom || geom->IsEmpty() != 0)
           continue;
 
@@ -357,6 +547,7 @@ std::size_t CircleLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(places));
     for (const auto& circle : circles)
       Fmi::hash_combine(hash, circle.hash_value(theState));
+    Fmi::hash_combine(hash, labels.hash_value(theState));
     return hash;
   }
   catch (...)
