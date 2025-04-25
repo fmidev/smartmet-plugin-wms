@@ -267,12 +267,15 @@ void Intersection::init(const std::optional<std::string>& theProducer,
       originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
                                                      Fmi::to_string(*smoother.degree));
     if (interpolation == "linear")
-      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",Fmi::to_string((int)Trax::InterpolationType::Linear));
+      originalGridQuery->mAttributeList.addAttribute(
+          "contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Linear));
     else if (interpolation == "nearest" || interpolation == "discrete" ||
              interpolation == "midpoint")
-      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",Fmi::to_string((int)Trax::InterpolationType::Midpoint));
+      originalGridQuery->mAttributeList.addAttribute(
+          "contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Midpoint));
     else if (interpolation == "logarithmic")
-      originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type",Fmi::to_string((int)Trax::InterpolationType::Logarithmic));
+      originalGridQuery->mAttributeList.addAttribute(
+          "contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Logarithmic));
     else
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
 

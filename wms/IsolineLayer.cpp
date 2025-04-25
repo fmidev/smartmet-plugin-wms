@@ -498,9 +498,11 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   }
 
   if (interpolation == "linear")
-    originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Linear));
+    originalGridQuery->mAttributeList.addAttribute(
+        "contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Linear));
   else if (interpolation == "logarithmic")
-    originalGridQuery->mAttributeList.addAttribute("contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Logarithmic));
+    originalGridQuery->mAttributeList.addAttribute(
+        "contour.interpolation.type", Fmi::to_string((int)Trax::InterpolationType::Logarithmic));
   else
     throw Fmi::Exception(BCP, "Unknown isoline interpolation method '" + interpolation + "'!");
 
