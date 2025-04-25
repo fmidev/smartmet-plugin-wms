@@ -677,9 +677,9 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // Converting the returned WKB-isolines into OGRGeometry objects.
 
     std::vector<OGRGeometryPtr> geoms;
-    for (const auto& param : query->mQueryParameterList)
+    for (const auto& query_param : query->mQueryParameterList)
     {
-      for (const auto& val : param.mValueList)
+      for (const auto& val : query_param.mValueList)
       {
         if (!val->mValueData.empty())
         {
@@ -702,7 +702,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
             // ### Painting contours into the image:
 
-            if (param.mType == QueryServer::QueryParameter::Type::Isoband)
+            if (query_param.mType == QueryServer::QueryParameter::Type::Isoband)
             {
               if (!val->mValueData.empty())
               {

@@ -293,7 +293,6 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
                                std::optional<std::string> vParam,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
-                               const Fmi::DateTime& valid_time,
                                const State& state)
 {
   try
@@ -847,8 +846,8 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Establish the relevant numbers
 
-    PointValues pointvalues = read_gridForecasts(
-        *this, gridEngine, *query, direction, speed, u, v, crs, box, valid_time, theState);
+    PointValues pointvalues =
+        read_gridForecasts(*this, gridEngine, *query, direction, speed, u, v, crs, box, theState);
 
     // Coordinate transformation from WGS84 to output SRS so that we can rotate
     // winds according to map north

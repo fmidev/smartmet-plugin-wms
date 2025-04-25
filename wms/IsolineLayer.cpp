@@ -432,44 +432,44 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
   // Fullfilling information into the query object.
 
-  for (auto& param : originalGridQuery->mQueryParameterList)
+  for (auto& query_param : originalGridQuery->mQueryParameterList)
   {
-    param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-    param.mType = QueryServer::QueryParameter::Type::Isoline;
-    param.mContourLowValues = contourValues;
+    query_param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+    query_param.mType = QueryServer::QueryParameter::Type::Isoline;
+    query_param.mContourLowValues = contourValues;
 
     if (geometryId)
-      param.mGeometryId = *geometryId;
+      query_param.mGeometryId = *geometryId;
 
     if (levelId)
     {
-      param.mParameterLevelId = *levelId;
+      query_param.mParameterLevelId = *levelId;
     }
 
     if (level)
     {
-      param.mParameterLevel = C_INT(*level);
+      query_param.mParameterLevel = C_INT(*level);
     }
     else if (pressure)
     {
-      param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-      param.mParameterLevel = C_INT(*pressure);
+      query_param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
+      query_param.mParameterLevel = C_INT(*pressure);
     }
 
     if (elevation_unit)
     {
       if (*elevation_unit == "m")
-        param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
+        query_param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
 
       if (*elevation_unit == "p")
-        param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
+        query_param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
     }
 
     if (forecastType)
-      param.mForecastType = C_INT(*forecastType);
+      query_param.mForecastType = C_INT(*forecastType);
 
     if (forecastNumber)
-      param.mForecastNumber = C_INT(*forecastNumber);
+      query_param.mForecastNumber = C_INT(*forecastNumber);
   }
 
   originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -522,7 +522,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
     if (areaunit == "px^2")
       area = box.areaFactor() * area;
 
-    originalGridQuery->mAttributeList.addAttribute("contour.minArea", Fmi::to_string(*minarea));
+    originalGridQuery->mAttributeList.addAttribute("contour.minArea", Fmi::to_string(area));
   }
 
   originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",

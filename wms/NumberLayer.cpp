@@ -403,52 +403,52 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       originalGridQuery->mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
     }
 
-    for (auto& param : originalGridQuery->mQueryParameterList)
+    for (auto& queryparam : originalGridQuery->mQueryParameterList)
     {
       if (positions)
       {
-        param.mLocationType = QueryServer::QueryParameter::LocationType::Point;
-        param.mType = QueryServer::QueryParameter::Type::PointValues;
+        queryparam.mLocationType = QueryServer::QueryParameter::LocationType::Point;
+        queryparam.mType = QueryServer::QueryParameter::Type::PointValues;
       }
       else
       {
-        param.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
-        param.mType = QueryServer::QueryParameter::Type::Vector;
-        param.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
+        queryparam.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+        queryparam.mType = QueryServer::QueryParameter::Type::Vector;
+        queryparam.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
       }
 
       if (geometryId)
-        param.mGeometryId = *geometryId;
+        queryparam.mGeometryId = *geometryId;
 
       if (levelId)
       {
-        param.mParameterLevelId = *levelId;
+        queryparam.mParameterLevelId = *levelId;
       }
 
       if (level)
       {
-        param.mParameterLevel = C_INT(*level);
+        queryparam.mParameterLevel = C_INT(*level);
       }
       else if (pressure)
       {
-        param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        param.mParameterLevel = C_INT(*pressure);
+        queryparam.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
+        queryparam.mParameterLevel = C_INT(*pressure);
       }
 
       if (elevation_unit)
       {
         if (*elevation_unit == "m")
-          param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
+          queryparam.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
 
         if (*elevation_unit == "p")
-          param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
+          queryparam.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
       }
 
       if (forecastType)
-        param.mForecastType = C_INT(*forecastType);
+        queryparam.mForecastType = C_INT(*forecastType);
 
       if (forecastNumber)
-        param.mForecastNumber = C_INT(*forecastNumber);
+        queryparam.mForecastNumber = C_INT(*forecastNumber);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;

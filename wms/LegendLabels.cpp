@@ -51,11 +51,11 @@ void LegendLabels::init(Json::Value& theJson, const Config& theConfig)
         if (!json.isObject())
           throw Fmi::Exception(BCP, "legend-layer conversions setting in a must be a map");
         const auto convmembers = json.getMemberNames();
-        for (const auto& name : convmembers)
+        for (const auto& convname : convmembers)
         {
-          const Json::Value& label_json = json[name];
+          const Json::Value& label_json = json[convname];
           if (label_json.isString())
-            conversions[name] = label_json.asString();
+            conversions[convname] = label_json.asString();
           else if (label_json.isObject())
           {
             const auto languages = label_json.getMemberNames();
@@ -63,15 +63,15 @@ void LegendLabels::init(Json::Value& theJson, const Config& theConfig)
             {
               const Json::Value& lang_json = label_json[lang];
               if (!lang_json.isString())
-                throw Fmi::Exception(
-                    BCP,
-                    "Legend layer conversion '" + name + "' value for a language must be a string");
-              conversions[lang + ":" + name] = lang_json.asString();
+                throw Fmi::Exception(BCP,
+                                     "Legend layer conversion '" + convname +
+                                         "' value for a language must be a string");
+              conversions[lang + ":" + convname] = lang_json.asString();
             }
           }
           else
             throw Fmi::Exception(
-                BCP, "Legend layer conversion '" + name + "' value must be a string or a map");
+                BCP, "Legend layer conversion '" + convname + "' value must be a string or a map");
         }
       }
       else

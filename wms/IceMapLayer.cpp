@@ -50,7 +50,7 @@ class PostGISAttributeToString : public boost::static_visitor<std::string>
  public:
   std::string operator()(int i) const { return Fmi::to_string(i); }
   std::string operator()(double d) const { return Fmi::to_string(d); }
-  std::string operator()(Fmi::DateTime t) const { return Fmi::to_iso_string(t); }
+  std::string operator()(const Fmi::DateTime& t) const { return Fmi::to_iso_string(t); }
   std::string operator()(const std::string& str) const
   {
     std::string ret(str);
@@ -625,7 +625,7 @@ void IceMapLayer::handleLabel(const Fmi::Feature& theResultItem,
         std::visit(PostGISAttributeToString(), theResultItem.attributes.at(fontname_column));
 
   if (itsParameters.find("fontsize_column") != itsParameters.end())
-    fontname_column = itsParameters.at("fontsize_column");
+    fontsize_column = itsParameters.at("fontsize_column");
   if (theResultItem.attributes.find(labeltext_column) != theResultItem.attributes.end())
     text_style.fontsize =
         std::visit(PostGISAttributeToString(), theResultItem.attributes.at(fontsize_column));
@@ -753,7 +753,7 @@ void IceMapLayer::handleTrafficRestrictions(const Fmi::Feature& /* theResultItem
                                             const PostGISLayerFilter& theFilter,
                                             CTPP::CDT& theGlobals,
                                             CTPP::CDT& theLayersCdt,
-                                            State& theState) const
+                                            const State& theState) const
 {
   double xpos = Fmi::stod(itsParameters.at("longitude"));
   double ypos = Fmi::stod(itsParameters.at("latitude"));

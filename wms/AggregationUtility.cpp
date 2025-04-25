@@ -58,9 +58,13 @@ TS::Value get_qengine_value(const Engine::Querydata::Q& q,
   {
     TS::Value result;
 
-    bool do_aggregation = (param_funcs && param_funcs->functions.innerFunction.exists());
+    bool must_aggregate = (param_funcs && param_funcs->functions.innerFunction.exists());
 
-    if (do_aggregation)
+    if (!must_aggregate)
+    {
+      result = q->value(options, valid_time);
+    }
+    else
     {
       auto qengine_times = q->validTimes();
       auto interval_behind = param_funcs->functions.innerFunction.getAggregationIntervalBehind();
@@ -78,10 +82,6 @@ TS::Value get_qengine_value(const Engine::Querydata::Q& q,
 
       // Only one timestep remains
       result = final_data->front().value;
-    }
-    else
-    {
-      result = q->value(options, valid_time);
     }
 
     return result;
@@ -178,8 +178,7 @@ void fill_missing_location_params(TS::TimeSeries& ts)
 }
 
 TS::TimeSeriesVectorPtr prepare_data_for_aggregation(
-    const std::string& producer,
-    const std::vector<Spine::Parameter> parameters,
+    const std::vector<Spine::Parameter>& parameters,
     const TS::TimeSeriesVectorPtr& observation_result,
     std::map<std::string, unsigned int>& parameterResultIndexes)
 {
@@ -312,7 +311,7 @@ TS::TimeSeriesVectorPtr aggregate_data(const TS::TimeSeriesVectorPtr& raw_data,
       std::map<std::string, unsigned int> parameterResultIndexes;
       // Prepare data for aggregation
       TS::TimeSeriesVectorPtr prepared_data = prepare_data_for_aggregation(
-          settings.stationtype, settings.parameters, observation_result, parameterResultIndexes);
+          settings.parameters, observation_result, parameterResultIndexes);
 
       // Do aggregation
       TS::TimeSeriesVectorPtr aggregated_data =

@@ -72,7 +72,7 @@ class IceMapLayer : public PostGISLayerBase
                                  const PostGISLayerFilter& theFilter,
                                  CTPP::CDT& theGlobals,
                                  CTPP::CDT& theLayersCdt,
-                                 State& theState) const;
+                                 const State& theState) const;
 
   void handleIceEgg(const Fmi::Feature& theResultItem,
                     const PostGISLayerFilter& theFilter,

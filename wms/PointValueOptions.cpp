@@ -16,7 +16,7 @@ namespace
 class PointValueWrapper
 {
  public:
-  PointValueWrapper(const PointData& pv) : itsPointData(pv) {}
+  PointValueWrapper(PointData pv) : itsPointData(std::move(pv)) {}
 
   double x() const { return itsPointData.point().x; }
   double y() const { return itsPointData.point().y; }
@@ -133,7 +133,7 @@ std::vector<PointData> prioritize(const std::vector<PointData>& pv, const PointV
     std::vector<PointValueWrapper> points;
     points.reserve(pv.size());
     for (const auto& item : pv)
-      points.push_back(item);
+      points.emplace_back(item);
 
     if (opts.priority)
       sort_by_priority(points, *opts.priority);

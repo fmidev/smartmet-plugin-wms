@@ -306,7 +306,6 @@ void Intersection::init(const std::optional<std::string>& theProducer,
       {
         if (!val->mValueData.empty())
         {
-          uint c = 0;
           for (const auto& wkb : val->mValueData)
           {
             const auto* cwkb = reinterpret_cast<const unsigned char*>(wkb.data());
@@ -314,7 +313,6 @@ void Intersection::init(const std::optional<std::string>& theProducer,
             OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
             auto geomPtr = OGRGeometryPtr(geom);
             isobands.push_back(geomPtr);
-            c++;
           }
         }
       }
