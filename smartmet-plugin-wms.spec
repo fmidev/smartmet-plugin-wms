@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.4.24
-Release: 2%{?dist}.fmi
+Version: 25.4.25
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -154,6 +154,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Fri Apr 25 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.4.25-1.fmi
+- Added optional labels for CircleLayer
+- Fixed icemap fontsize_column handling, it was assigned incorrectly to fontname_column
+- Fixed areaunits to work for minarea settings in GRID queries
+- Silenced some compiler warnings
+
 * Thu Apr 24 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.4.24-2.fmi
 - Removed 'upright' setting and added 'orientation' setting for GraticuleLayer
 
