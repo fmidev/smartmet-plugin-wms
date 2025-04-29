@@ -36,6 +36,7 @@ Table of Contents
       - [CircleLayer](#circlelayer)
         - [CircleLayer settings](#circlelayer-settings)
         - [Circle settings](#circle-settings)
+        - [CircleLabels settings](#circlelabels-settings)
       - [TranslationLayer](#translationlayer)
       - [WindRoseLayer](#windroselayer)
       - [PostGISLayer](#postgislayer)
@@ -1839,6 +1840,7 @@ The image generated from the configuration file:
  |features|(string)|-|List of feature names such as SYNOP,PPL etc|
  |lines|(bool)|true|Treat the circles as polylines or as polygons|
  |circles|Circle/[Circle]|-|One or several circle definitions|
+ |labels|(CircleLabels)|-|Optional circle radius labels|
 
 ##### Circle settings
 
@@ -1846,6 +1848,19 @@ The image generated from the configuration file:
  |----|----|-------------|-----------|
  |radius|(double)|-|Circle radius in kilometers|
  |attributes|(Attributes)|-|Presentation attributes for the circle|
+ 
+
+##### CircleLabels settings
+
+ |Name|Type|Default value|Description|
+ |----|----|-------------|-----------|
+ |layout|[string]|-|Positions for labels (top, left, right, bottom, east, west, north, south)|
+ |attributes|(Attributes)|-|Common attributes for all labels|
+ |textattributes|(Attributes)|-|Attributes for individual labels|
+ |dx|(int)|0|Coordinate adjustment|
+ |dy|(int)|0|Coordinate adjustment|
+ |prefix|(string)|-|Prefix for the label, for example "R="|
+ |suffix|(string)|-|Suffix for the label, for example " km"|
  
 
 
