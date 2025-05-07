@@ -716,10 +716,19 @@ std::list<SharedWMSLayer> WMSLayerFactory::createWMSLayers(const std::string& th
       SmartMet::Spine::JSON::expand(variant_j, substitutions);
 
       // Note: using variant name instead of theFullLayerName
-      auto layer =
-          createWMSLayer(variant_j, theFileName, name, theNamespace, theCustomer, theWMSConfig);
-      if (layer)
-        ret.emplace_back(layer);
+      try
+      {
+        auto layer =
+            createWMSLayer(variant_j, theFileName, name, theNamespace, theCustomer, theWMSConfig);
+        if (layer)
+          ret.emplace_back(layer);
+      }
+      catch (...)
+      {
+        // Some variant may require data that is not available. We do not wish it to stop other
+        // variants from working. However, you will not get a warning into the journal with
+        // this solution like you would for normal (non-variant) files.
+      }
     }
 
     return ret;
