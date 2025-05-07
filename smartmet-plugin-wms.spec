@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.4.25
+Version: 25.5.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed May  7 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.5.7-1.fmi
+- Do not stop producing variant WMS layers if one of them for example lacks required data
+
 * Fri Apr 25 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.4.25-1.fmi
 - Added optional labels for CircleLayer
 - Fixed icemap fontsize_column handling, it was assigned incorrectly to fontname_column
