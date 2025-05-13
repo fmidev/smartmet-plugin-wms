@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.5.7
+Version: 25.5.13
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue May 13 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.5.13-1.fmi
+- Fixed CircleLayer keyword setting
+- Added CircleLayer geoids setting
+
 * Wed May  7 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.5.7-1.fmi
 - Do not stop producing variant WMS layers if one of them for example lacks required data
 
