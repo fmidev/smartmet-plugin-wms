@@ -1836,8 +1836,9 @@ The image generated from the configuration file:
  |Name|Type|Default value|Description|
  |----|----|-------------|-----------|
  |places|[string]|-|List of location names|
+ |geoids|[int]|-|List of geonames.org IDs|
  |keyword|(string)|-|Keyword for the database list of location names|
- |features|(string)|-|List of feature names such as SYNOP,PPL etc|
+ |features|(string)|-|List of feature names such as SYNOP,PPL etc (applies to places search only)|
  |lines|(bool)|true|Treat the circles as polylines or as polygons|
  |circles|Circle/[Circle]|-|One or several circle definitions|
  |labels|(CircleLabels)|-|Optional circle radius labels|

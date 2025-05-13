@@ -42,10 +42,11 @@ class CircleLayer : public Layer
  private:
   std::string keyword;           // locations from database
   std::set<std::string> places;  // locations from database
-  std::string features;          // optional comma separated list of feature codes
-  bool lines = true;             // render as polylines or as polygons
-  std::vector<Circle> circles;   // actual circle definitions
-  CircleLabels labels;           // optional radius labels
+  std::set<int> geoids;          // locations from database
+  std::string features;  // optional comma separated list of feature codes for the places search
+  bool lines = true;     // render as polylines or as polygons
+  std::vector<Circle> circles;  // actual circle definitions
+  CircleLabels labels;          // optional radius labels
 
 };  // class CircleLayer
 

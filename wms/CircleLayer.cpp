@@ -221,6 +221,10 @@ void CircleLayer::init(Json::Value& theJson,
     if (!json.isNull())
       JsonTools::extract_set("places", places, json);
 
+    json = JsonTools::remove(theJson, "geoids");
+    if (!json.isNull())
+      JsonTools::extract_set("geoids", geoids, json);
+
     json = JsonTools::remove(theJson, "circles");
     if (json.isNull())
       throw Fmi::Exception(BCP, "Circle-layer must define at least one circle");
@@ -279,19 +283,32 @@ void CircleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     Spine::LocationList locations;
 
-    // Resolve keyword & places
+    // Resolve keyword, places, geoids
 
     const auto& geoengine = theState.getGeoEngine();
 
     Locus::QueryOptions options;
 
     if (!keyword.empty())
-      auto locations = geoengine.keywordSearch(options, keyword);
+      locations = geoengine.keywordSearch(options, keyword);
+
+    if (!geoids.empty())
+    {
+      for (const auto& geoid : geoids)
+      {
+        auto newlocations = geoengine.idSearch(options, geoid);
+
+        if (newlocations.size() > 1)  // use only the first match
+          newlocations.resize(1);
+
+        locations.splice(locations.end(), newlocations);
+      }
+    }
 
     if (!places.empty())
     {
       if (!features.empty())
-        options.SetFeatures(features);
+        options.SetFeatures(features);  // done only for places
       for (const auto& place : places)
       {
         auto newlocations = geoengine.nameSearch(options, place);
@@ -545,6 +562,7 @@ std::size_t CircleLayer::hash_value(const State& theState) const
     auto hash = Layer::hash_value(theState);
     Fmi::hash_combine(hash, Fmi::hash_value(keyword));
     Fmi::hash_combine(hash, Fmi::hash_value(places));
+    Fmi::hash_combine(hash, Fmi::hash_value(geoids));
     for (const auto& circle : circles)
       Fmi::hash_combine(hash, circle.hash_value(theState));
     Fmi::hash_combine(hash, labels.hash_value(theState));
