@@ -52,6 +52,8 @@ class Properties
   bool inside(const Fmi::Box& theBox, double theX, double theY) const;
 
   std::size_t hash_value(const State& theState) const;
+  std::size_t getProducerHash(const State& theState,std::optional<std::string> prod) const;
+  std::size_t countParameterHash(const State& theState,std::optional<std::string> param) const;
 
   std::optional<std::string> language;
   std::optional<std::string> producer;

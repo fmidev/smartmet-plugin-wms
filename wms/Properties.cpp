@@ -252,6 +252,116 @@ bool Properties::inside(const Fmi::Box& theBox, double theX, double theY) const
           (theY <= theBox.height() + ymargin));
 }
 
+
+
+void getProducersFromParameter(const char *param,std::set<std::string>& producers)
+{
+  try
+  {
+    char st[2000];
+    strcpy(st, param);
+
+    char *field[100];
+    uint c = 1;
+    field[0] = st;
+    char *p = st;
+    while (*p != '\0'  &&  c < 100)
+    {
+      if ((*p == ';' || *p == '{' || *p == '}' || *p == '\n'))
+      {
+        *p = '\0';
+        p++;
+        field[c] = p;
+        c++;
+      }
+      else
+      {
+        p++;
+      }
+    }
+
+    for (uint t=0; t<c; t++)
+    {
+      //printf("[%d][%s]\n",t,field[t]);
+      std::vector<std::string> partList;
+      splitString(field[t],':',partList);
+      if (partList.size() > 1)
+      {
+        producers.insert(partList[1]);
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
+
+
+
+std::size_t Properties::getProducerHash(const State& theState,std::optional<std::string> prod) const
+{
+  try
+  {
+    if (source && *source == "grid")
+    {
+      const auto* gridEngine = theState.getGridEngine();
+      if (!gridEngine || !gridEngine->isEnabled())
+        throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
+      std::string producerName = gridEngine->getProducerName(*prod);
+      auto pHash = gridEngine->getProducerHash(producerName);
+      return Fmi::hash_value(pHash);
+    }
+
+    return Fmi::hash_value(prod);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to calculate hash value for layer properties!");
+  }
+}
+
+
+
+std::size_t Properties::countParameterHash(const State& theState,std::optional<std::string> param) const
+{
+  try
+  {
+    if (param  &&  source && *source == "grid")
+    {
+      const auto* gridEngine = theState.getGridEngine();
+      if (!gridEngine || !gridEngine->isEnabled())
+        throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
+
+      std::set<std::string> producers;
+      getProducersFromParameter(param->c_str(),producers);
+
+      std::size_t hash = Fmi::hash_value(param);
+
+      for (auto it=producers.begin();it!=producers.end();++it)
+      {
+        //std::cout << "* " << *it << "\n";
+        std::string producerName = gridEngine->getProducerName(*it);
+        auto pHash = gridEngine->getProducerHash(producerName);
+        Fmi::hash_combine(hash, pHash);
+      }
+      return hash;
+    }
+
+    return Fmi::hash_value(param);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to calculate hash value for layer properties!");
+  }
+}
+
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Hash value
@@ -263,7 +373,7 @@ std::size_t Properties::hash_value(const State& theState) const
   try
   {
     auto hash = Fmi::hash_value(language);
-    Fmi::hash_combine(hash, Fmi::hash_value(producer));
+    Fmi::hash_combine(hash, getProducerHash(theState,producer));
     Fmi::hash_combine(hash, Fmi::hash_value(source));
     Fmi::hash_combine(hash, Fmi::hash_value(forecastType));
     Fmi::hash_combine(hash, Fmi::hash_value(forecastNumber));
@@ -282,17 +392,6 @@ std::size_t Properties::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(ymargin));
     Fmi::hash_combine(hash, Fmi::hash_value(clip));
     Fmi::hash_combine(hash, Dali::hash_value(projection, theState));
-
-    if (source && *source == "grid")
-    {
-      const auto* gridEngine = theState.getGridEngine();
-      if (!gridEngine || !gridEngine->isEnabled())
-        throw Fmi::Exception(BCP, "The grid-engine is disabled!");
-
-      std::string producerName = gridEngine->getProducerName(*producer);
-      auto pHash = gridEngine->getProducerHash(producerName);
-      Fmi::hash_combine(hash, Fmi::hash_value(pHash));
-    }
 
     return hash;
   }

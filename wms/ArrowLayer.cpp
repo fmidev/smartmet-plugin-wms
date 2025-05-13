@@ -1405,10 +1405,10 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
         Fmi::hash_combine(hash, Engine::Querydata::hash_value(q));
     }
 
-    Fmi::hash_combine(hash, Fmi::hash_value(direction));
-    Fmi::hash_combine(hash, Fmi::hash_value(speed));
-    Fmi::hash_combine(hash, Fmi::hash_value(u));
-    Fmi::hash_combine(hash, Fmi::hash_value(v));
+    Fmi::hash_combine(hash, countParameterHash(theState,direction));
+    Fmi::hash_combine(hash, countParameterHash(theState,speed));
+    Fmi::hash_combine(hash, countParameterHash(theState,u));
+    Fmi::hash_combine(hash, countParameterHash(theState,v));
     Fmi::hash_combine(hash, Fmi::hash_value(fixedspeed));
     Fmi::hash_combine(hash, Fmi::hash_value(fixeddirection));
     Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));

@@ -971,7 +971,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     if (!(source && *source == "grid"))
       Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
-    Fmi::hash_combine(hash, Fmi::hash_value(parameter));
+    Fmi::hash_combine(hash, countParameterHash(theState,parameter));
     Fmi::hash_combine(hash, Dali::hash_value(isolines, theState));
     Fmi::hash_combine(hash, Dali::hash_value(smoother, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(interpolation));

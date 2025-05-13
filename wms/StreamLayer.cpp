@@ -798,7 +798,7 @@ std::size_t StreamLayer::hash_value(const State& theState) const
     // The hash value of the grid producer is already added
     // in the "Properties" class.
 
-    Fmi::hash_combine(hash, Fmi::hash_value(parameter));
+    Fmi::hash_combine(hash, countParameterHash(theState,parameter));
     Fmi::hash_combine(hash, Fmi::hash_value(minStreamLen));
     Fmi::hash_combine(hash, Fmi::hash_value(maxStreamLen));
     Fmi::hash_combine(hash, Fmi::hash_value(lineLen));
