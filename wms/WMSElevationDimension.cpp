@@ -19,6 +19,14 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
 {
   try
   {
+    if (!itsElevations.empty())
+    {
+      if (itsLevelType == kFmiPressureLevel || itsLevelType == 2)
+        itsDefaultElevation = Fmi::to_string(*itsElevations.rbegin());
+      else
+        itsDefaultElevation = Fmi::to_string(*itsElevations.begin());
+    }
+
     auto comma_fold = [](std::string a, int b) { return std::move(a) + ',' + Fmi::to_string(b); };
 
     if (itsLevelType == kFmiPressureLevel)
@@ -90,7 +98,7 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
         break;
       default:
         itsUnitSymbol = "";
-    };
+    }
 
     switch (level_type)
     {
@@ -142,7 +150,7 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
       case kFmiRoadClass3:
         itsLevelName = "AurausmallinKunnossapitoluokka3";
         break;
-    };
+    }
   }
   catch (...)
   {
@@ -214,17 +222,6 @@ bool WMSElevationDimension::isValidElevation(int elevation) const
   return itsElevations.find(elevation) != itsElevations.end();
 }
 
-std::string WMSElevationDimension::getDefaultElevation() const
-{
-  if (itsElevations.empty())
-    return "";
-
-  if (itsLevelType == kFmiPressureLevel || itsLevelType == 2)
-    return Fmi::to_string(*itsElevations.rbegin());
-
-  return Fmi::to_string(*itsElevations.begin());
-}
-
 const std::string& WMSElevationDimension::getUnitSymbol() const
 {
   return itsUnitSymbol;
@@ -249,7 +246,8 @@ bool WMSElevationDimension::isOK() const
 
 bool WMSElevationDimension::isIdentical(const WMSElevationDimension& td) const
 {
-  return (td.itsCapabilities == itsCapabilities && td.itsUnitSymbol == itsUnitSymbol);
+  return (td.itsCapabilities == itsCapabilities && td.itsUnitSymbol == itsUnitSymbol &&
+          td.getDefaultElevation() == getDefaultElevation());
 }
 
 }  // namespace WMS

@@ -2376,6 +2376,12 @@ void WMSLayer::setCustomer(const std::string& c)
   }
 }
 
+void WMSLayer::setDefaultElevation(int level)
+{
+  if (elevationDimension)
+    elevationDimension->setDefaultElevation(level);
+}
+
 bool WMSLayer::identicalGeographicBoundingBox(const WMSLayer& layer) const
 {
   return geographicBoundingBox == layer.geographicBoundingBox;

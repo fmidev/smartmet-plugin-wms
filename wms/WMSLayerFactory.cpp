@@ -636,6 +636,11 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(Json::Value& root,
     for (const auto& item : intervals)
       layer->addIntervalDimension(item.interval_start, item.interval_end, item.interval_default);
 
+    // Add default layer
+    json = remove(root, "level");
+    if (!json.isNull())
+      layer->setDefaultElevation(json.asInt());
+
     return layer;
   }
   catch (...)

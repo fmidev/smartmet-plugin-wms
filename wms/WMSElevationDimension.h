@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <macgyver/StringConversion.h>
 #include <newbase/NFmiLevelType.h>
 #include <set>
 #include <string>
@@ -33,7 +34,8 @@ class WMSElevationDimension
                         int step);
 
   bool isValidElevation(int elevation) const;
-  std::string getDefaultElevation() const;
+  const std::string& getDefaultElevation() const { return itsDefaultElevation; }
+  void setDefaultElevation(int level) { itsDefaultElevation = Fmi::to_string(level); }
   const std::string& getLevelName() const;
   const std::string& getUnitSymbol() const;
   const std::string& getCapabilities() const;
@@ -42,6 +44,7 @@ class WMSElevationDimension
 
  protected:
   std::string itsLevelName;
+  std::string itsDefaultElevation;
   short itsLevelType;
   std::set<int> itsElevations;
   std::string itsUnitSymbol;

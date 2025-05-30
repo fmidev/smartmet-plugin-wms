@@ -143,6 +143,7 @@ void Properties::init(Json::Value& theJson,
 
     JsonTools::remove_bool(clip, theJson, "clip", theProperties.clip);
 
+    level = theProperties.level;
     JsonTools::remove_double(level, theJson, "level");
     JsonTools::remove_double(level, theJson, "elevation");
     if (theState.getRequest().getParameter("elevation"))
@@ -252,20 +253,18 @@ bool Properties::inside(const Fmi::Box& theBox, double theX, double theY) const
           (theY <= theBox.height() + ymargin));
 }
 
-
-
-void getProducersFromParameter(const char *param,std::set<std::string>& producers)
+void getProducersFromParameter(const char* param, std::set<std::string>& producers)
 {
   try
   {
     char st[2000];
     strcpy(st, param);
 
-    char *field[100];
+    char* field[100];
     uint c = 1;
     field[0] = st;
-    char *p = st;
-    while (*p != '\0'  &&  c < 100)
+    char* p = st;
+    while (*p != '\0' && c < 100)
     {
       if ((*p == ';' || *p == '{' || *p == '}' || *p == '\n'))
       {
@@ -280,11 +279,11 @@ void getProducersFromParameter(const char *param,std::set<std::string>& producer
       }
     }
 
-    for (uint t=0; t<c; t++)
+    for (uint t = 0; t < c; t++)
     {
-      //printf("[%d][%s]\n",t,field[t]);
+      // printf("[%d][%s]\n",t,field[t]);
       std::vector<std::string> partList;
-      splitString(field[t],':',partList);
+      splitString(field[t], ':', partList);
       if (partList.size() > 1)
       {
         producers.insert(partList[1]);
@@ -297,12 +296,8 @@ void getProducersFromParameter(const char *param,std::set<std::string>& producer
   }
 }
 
-
-
-
-
-
-std::size_t Properties::getProducerHash(const State& theState,std::optional<std::string> prod) const
+std::size_t Properties::getProducerHash(const State& theState,
+                                        std::optional<std::string> prod) const
 {
   try
   {
@@ -325,27 +320,25 @@ std::size_t Properties::getProducerHash(const State& theState,std::optional<std:
   }
 }
 
-
-
-std::size_t Properties::countParameterHash(const State& theState,std::optional<std::string> param) const
+std::size_t Properties::countParameterHash(const State& theState,
+                                           std::optional<std::string> param) const
 {
   try
   {
-    if (param  &&  source && *source == "grid")
+    if (param && source && *source == "grid")
     {
       const auto* gridEngine = theState.getGridEngine();
       if (!gridEngine || !gridEngine->isEnabled())
         throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
-
       std::set<std::string> producers;
-      getProducersFromParameter(param->c_str(),producers);
+      getProducersFromParameter(param->c_str(), producers);
 
       std::size_t hash = Fmi::hash_value(param);
 
-      for (auto it=producers.begin();it!=producers.end();++it)
+      for (auto it = producers.begin(); it != producers.end(); ++it)
       {
-        //std::cout << "* " << *it << "\n";
+        // std::cout << "* " << *it << "\n";
         std::string producerName = gridEngine->getProducerName(*it);
         auto pHash = gridEngine->getProducerHash(producerName);
         Fmi::hash_combine(hash, pHash);
@@ -361,7 +354,6 @@ std::size_t Properties::countParameterHash(const State& theState,std::optional<s
   }
 }
 
-
 // ----------------------------------------------------------------------
 /*!
  * \brief Hash value
@@ -373,7 +365,7 @@ std::size_t Properties::hash_value(const State& theState) const
   try
   {
     auto hash = Fmi::hash_value(language);
-    Fmi::hash_combine(hash, getProducerHash(theState,producer));
+    Fmi::hash_combine(hash, getProducerHash(theState, producer));
     Fmi::hash_combine(hash, Fmi::hash_value(source));
     Fmi::hash_combine(hash, Fmi::hash_value(forecastType));
     Fmi::hash_combine(hash, Fmi::hash_value(forecastNumber));

@@ -76,10 +76,10 @@ class WMSLayer
   std::set<std::string> disabled_refs;
 
   std::map<std::string, WMSLayerStyle> itsStyles;
-  std::shared_ptr<WMSTimeDimensions> timeDimensions{
-      nullptr};  // Optional, may be empty for non-temporal postgis layers
-  std::shared_ptr<WMSElevationDimension> elevationDimension{nullptr};  // Optional
-  std::shared_ptr<WMSIntervalDimension> intervalDimension{nullptr};    // Optional
+  std::shared_ptr<WMSTimeDimensions>
+      timeDimensions;  // Optional, may be empty for non-temporal postgis layers
+  std::shared_ptr<WMSElevationDimension> elevationDimension;  // Optional
+  std::shared_ptr<WMSIntervalDimension> intervalDimension;    // Optional
 
   std::string customer;
   std::string productFile;  // dali product
@@ -113,6 +113,8 @@ class WMSLayer
                                        const std::string& language) const;
   const std::map<std::string, std::string>& getLegendFiles() const { return itsLegendFiles; }
   std::pair<std::string, std::string> getDefaultInterval() const;
+
+  void setDefaultElevation(int level);
 
   bool isValidInterval(int interval_start, int interval_end) const;
   bool isValidCRS(const std::string& theCRS) const;
