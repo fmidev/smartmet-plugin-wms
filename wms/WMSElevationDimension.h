@@ -43,6 +43,8 @@ class WMSElevationDimension
   bool isIdentical(const WMSElevationDimension& td) const;
 
  protected:
+  void initDefaultElevation();
+
   std::string itsLevelName;
   std::string itsDefaultElevation;
   short itsLevelType;

@@ -19,13 +19,7 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
 {
   try
   {
-    if (!itsElevations.empty())
-    {
-      if (itsLevelType == kFmiPressureLevel || itsLevelType == 2)
-        itsDefaultElevation = Fmi::to_string(*itsElevations.rbegin());
-      else
-        itsDefaultElevation = Fmi::to_string(*itsElevations.begin());
-    }
+    initDefaultElevation();
 
     auto comma_fold = [](std::string a, int b) { return std::move(a) + ',' + Fmi::to_string(b); };
 
@@ -167,6 +161,8 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
 {
   try
   {
+    initDefaultElevation();
+
     auto comma_fold = [](std::string a, int b) { return std::move(a) + ',' + Fmi::to_string(b); };
 
     if (strcasecmp(itsLevelName.c_str(), "PRESSURE") == 0)
@@ -215,6 +211,17 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
   {
     throw Fmi::Exception::Trace(BCP, "Checking GetLegendGraphic options failed!");
   }
+}
+
+void WMSElevationDimension::initDefaultElevation()
+{
+  if (itsElevations.empty())
+    return;
+
+  if (itsLevelType == kFmiPressureLevel || itsLevelType == 2)
+    itsDefaultElevation = Fmi::to_string(*itsElevations.rbegin());
+  else
+    itsDefaultElevation = Fmi::to_string(*itsElevations.begin());
 }
 
 bool WMSElevationDimension::isValidElevation(int elevation) const
