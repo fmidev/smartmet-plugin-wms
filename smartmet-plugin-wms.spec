@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.5.30
+Version: 25.5.31
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat May 31 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.5.31-1.fmi
+- Fixed WMSElevationDimension to initialize the default elevation in both constructors
+
 * Fri May 30 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.5.30-1.fmi
 - Define WMS default elevation from the JSON configuration if set
 
