@@ -6,6 +6,7 @@ Dependencies*
 obj/
 *Test
 .sconsign.dblite
+/.vscode
 *.pb.h
 *.pb.cpp
 *.c2t
@@ -13,3 +14,4 @@ compile_commands.json
 .gdb_history
 /smartmet-plugin-wms.tar.gz
 local.conf
+§
