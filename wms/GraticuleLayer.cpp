@@ -690,7 +690,7 @@ Labels generate_labels_ticks(const Graticule& g,
 
           auto angle = get_angle(lons[i], lats[i], transformation);
           labels.emplace_back(txt, x2, y2, angle);
-          OGRFree(line);
+          delete line;
           line = nullptr;
         }
       }
@@ -746,7 +746,7 @@ Labels generate_labels_ticks(const Graticule& g,
 
           auto angle = get_angle(lons[i], lats[i], transformation);
           labels.emplace_back(txt, x2, y2, angle);
-          OGRFree(line);
+          delete line;
           line = nullptr;
         }
       }
