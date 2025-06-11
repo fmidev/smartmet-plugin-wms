@@ -1,10 +1,10 @@
 #include "WMSElevationDimension.h"
+#include <fmt/format.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <functional>
 #include <iostream>
 #include <numeric>
-#include <string.h>
 
 namespace SmartMet
 {
@@ -12,6 +12,36 @@ namespace Plugin
 {
 namespace WMS
 {
+
+namespace
+{
+// Try to detect a constant positive step size or return -1
+int detect_step(const std::set<int>& values)
+{
+  // We prefer a,b,c instead of a/c/step in GetCapabilities, so we require at least 4 values.
+  if (values.size() < 4)
+    return -1;
+
+  int step = -1;
+  int previous_value = 0;
+  for (auto value : values)
+  {
+    if (step < 0)                             // first value?
+      step = 0;                               // indicate second value coming up
+    else if (step == 0)                       // second value?
+      step = value - previous_value;          // then first step in the data
+    else if (value - previous_value != step)  // following values must have the same step
+      return -1;
+    previous_value = value;
+  }
+
+  return step;
+}
+
+auto comma_fold = [](std::string a, int b) { return std::move(a) + ',' + Fmi::to_string(b); };
+
+}  // namespace
+
 WMSElevationDimension::WMSElevationDimension(std::string level_name,
                                              FmiLevelType level_type,
                                              const std::set<int>& elevations)
@@ -21,20 +51,30 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
   {
     initDefaultElevation();
 
-    auto comma_fold = [](std::string a, int b) { return std::move(a) + ',' + Fmi::to_string(b); };
-
     if (itsLevelType == kFmiPressureLevel)
-      itsCapabilities =
-          std::accumulate(std::next(elevations.rbegin()),
-                          elevations.rend(),
-                          Fmi::to_string(*elevations.rbegin()),  // start with last element
-                          comma_fold);
+    {
+      // for pressure list highest pressure (closest to surface) first
+      itsCapabilities = std::accumulate(std::next(elevations.rbegin()),
+                                        elevations.rend(),
+                                        Fmi::to_string(*elevations.rbegin()),
+                                        comma_fold);
+    }
     else
-      itsCapabilities =
-          std::accumulate(std::next(elevations.begin()),
-                          elevations.end(),
-                          Fmi::to_string(*elevations.begin()),  // start with first element
-                          comma_fold);
+    {
+      auto step = detect_step(elevations);
+      if (step > 0)
+      {
+        itsCapabilities = fmt::format("{}/{}/{}", *elevations.begin(), *elevations.rbegin(), step);
+      }
+      else
+      {
+        // comma separated values in ascending order
+        itsCapabilities = std::accumulate(std::next(elevations.begin()),
+                                          elevations.end(),
+                                          Fmi::to_string(*elevations.begin()),
+                                          comma_fold);
+      }
+    }
 
     /*
   kFmiNoLevelType = 0,      //!< This is error or no initialized leveltype value
@@ -155,15 +195,12 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
 WMSElevationDimension::WMSElevationDimension(std::string level_name,
                                              short level_type,
                                              std::string unit_symbol,
-                                             const std::set<int>& elevations,
-                                             int step)
+                                             const std::set<int>& elevations)
     : itsLevelName(level_name), itsLevelType(level_type), itsElevations(elevations)
 {
   try
   {
     initDefaultElevation();
-
-    auto comma_fold = [](std::string a, int b) { return std::move(a) + ',' + Fmi::to_string(b); };
 
     if (strcasecmp(itsLevelName.c_str(), "PRESSURE") == 0)
     {
@@ -183,20 +220,14 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
       // start with first element
 
       itsUnitSymbol = unit_symbol;
-      char buf[100];
-      if (elevations.size() > 1 && step > 0)
+      auto step = detect_step(elevations);
+      if (step > 0)
       {
-        sprintf(buf, "%d/%d/%d", *elevations.begin(), *elevations.rbegin(), step);
-        itsCapabilities = buf;
-      }
-      else if (elevations.size() > 1 &&
-               (int)(*elevations.begin() + elevations.size() - 1) == *elevations.rbegin())
-      {
-        sprintf(buf, "%d/%d/1", *elevations.begin(), *elevations.rbegin());
-        itsCapabilities = buf;
+        itsCapabilities = fmt::format("{}/{}/{}", *elevations.begin(), *elevations.rbegin(), step);
       }
       else
       {
+        // comma separated values in ascending order
         itsCapabilities = std::accumulate(std::next(elevations.begin()),
                                           elevations.end(),
                                           Fmi::to_string(*elevations.begin()),

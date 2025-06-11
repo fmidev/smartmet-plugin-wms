@@ -30,8 +30,16 @@ class WMSElevationDimension
   WMSElevationDimension(std::string level_name,
                         short level_type,
                         std::string unit_symbol,
-                        const std::set<int>& elevations,
+                        const std::set<int>& elevations);
+
+#if 0  
+  WMSElevationDimension(std::string level_name,
+                        short level_type,
+                        std::string unit_symbol,
+                        int lolimit,
+                        int hilimit,
                         int step);
+#endif
 
   bool isValidElevation(int elevation) const;
   const std::string& getDefaultElevation() const { return itsDefaultElevation; }

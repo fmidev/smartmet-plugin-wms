@@ -393,9 +393,8 @@ bool WMSGridDataLayer::updateLayerMetaData()
             if (unit_symbol.empty())
               unit_symbol = levelDef.mUnits;
 
-            WMSElevationDimension elev(
-                levelDef.mName, levelDef.mLevelId, unit_symbol, levelList, step);
-            elevationDimension = std::make_shared<WMSElevationDimension>(elev);
+            elevationDimension = std::make_shared<WMSElevationDimension>(
+                levelDef.mName, levelDef.mLevelId, unit_symbol, levelList);
           }
         }
       }
