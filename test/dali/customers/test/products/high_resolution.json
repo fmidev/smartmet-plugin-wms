@@ -1,0 +1,101 @@
+{
+    // "producer": "meps",
+    // "producer": "ecmwf_maailma_pinta",
+    // "producer": "ecmwf_local",
+    // "producer": "gem",
+    // "producer": "gfstest",
+    // "producer": "copernicus",
+    // "producer": "wrf",
+    "producer": "pal_aland",
+    "language": "fi",
+    "projection":
+    {
+	// "crs": "EPSG:2393",
+	"crs": "EPSG:3035",
+	// "crs": "+proj=stere +lat_0=90 +lat_ts=60 +lon_0=20 +R=6371229 +units=m +towgs84=0,0,0",
+	// "crs": "+proj=stere +datum=WGS84 +lat_0=90 +lat_ts=60 +lon_0=20 +units=m",
+	// "crs": "+proj=eqc +R=6371229 +towgs84=0,0,0",
+	// "crs": "WGS84",
+	"bboxcrs": "EPSG:4326",
+	"cx": 20,
+	"cy": 60,
+	"resolution": 0.2,
+	"xsize": 800,
+	"ysize": 800
+    },
+    "defs":
+    {
+        "styles":
+        {
+            ".City":
+            {
+                "stroke": "black",
+                "stroke-width": "1px"
+            }
+        }
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers":
+	    [
+		{
+		    "qid": "l1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/temperature.json",
+		    "css": "isobands/temperature.css",
+                    "parameter": "Temperature.raw",
+		    "attributes":
+		    {
+			"id": "temperature_isobands"
+		    }
+		},
+		{
+		    "qid": "l2",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"pgname": "gemini_gis",
+			"schema": "mml_gadm",
+			"table": "countries_low"
+		    },
+		    "attributes":
+		    {
+			"fill": "none",
+			"stroke": "#222",
+			"stroke-width": "0.3px"
+		    }
+		},
+		{
+		    "qid": "lsymbol",
+		    "layer_type": "symbol",
+                    "symbol": "city",
+                    "parameter": "Temperature.raw",
+                    "symbols": "json:isobands/temperature.json",
+                    "positions":
+                    {
+                        "layout": "data"
+                    }
+		}
+//		{
+//		    "qid": "lsymbol",
+//		    "layer_type": "symbol",
+//                    "symbol": "city",
+//                    "parameter": "Temperature.raw",
+//                    "symbols": "json:isobands/temperature.json",
+//                    "positions":
+//                    {
+//                        "layout": "grid",
+//			"dx": 20,
+//			"dy": 20
+//                    }
+//		}
+            ]
+	}
+    ]
+}
