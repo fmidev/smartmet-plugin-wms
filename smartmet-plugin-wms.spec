@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.5.31
+Version: 25.6.11
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -27,10 +27,10 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 25.2.18
 BuildRequires: smartmet-library-grid-content-devel >= 25.5.22
-BuildRequires: smartmet-library-grid-files-devel >= 25.5.22
+BuildRequires: smartmet-library-grid-files-devel >= 25.5.30
 BuildRequires: smartmet-library-macgyver-devel >= 25.5.30
 BuildRequires: smartmet-library-spine-devel >= 25.5.13
-BuildRequires: smartmet-library-timeseries-devel >= 25.5.22
+BuildRequires: smartmet-library-timeseries-devel >= 25.6.9
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 25.2.18
 %endif
@@ -38,7 +38,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 25.2.18
 BuildRequires: smartmet-engine-observation-devel >= 25.5.22
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 25.2.18
-BuildRequires: smartmet-engine-grid-devel >= 25.5.30
+BuildRequires: smartmet-engine-grid-devel >= 25.6.3
 BuildRequires: smartmet-engine-geonames-devel >= 25.2.18
 BuildRequires: smartmet-engine-querydata-devel >= 25.5.22
 BuildRequires: smartmet-engine-contour-devel >= 25.2.18
@@ -69,12 +69,12 @@ Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 25.5.22
-Requires: smartmet-library-grid-files >= 25.5.22
+Requires: smartmet-library-grid-files >= 25.5.30
 Requires: smartmet-library-gis >= 25.2.18
 Requires: smartmet-library-trax >= 25.4.11
 Requires: smartmet-library-macgyver >= 25.5.30
 Requires: smartmet-library-spine >= 25.5.13
-Requires: smartmet-library-timeseries >= 25.5.22
+Requires: smartmet-library-timeseries >= 25.6.9
 Requires: smartmet-library-giza >= 25.2.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 25.2.18
@@ -82,7 +82,7 @@ Requires: smartmet-engine-authentication >= 25.2.18
 Requires: smartmet-engine-querydata >= 25.5.22
 Requires: smartmet-engine-contour >= 25.2.18
 Requires: smartmet-engine-gis >= 25.2.18
-Requires: smartmet-engine-grid >= 25.5.30
+Requires: smartmet-engine-grid >= 25.6.3
 Requires: smartmet-engine-geonames >= 25.2.18
 Requires: smartmet-server >= 25.5.13
 Requires: smartmet-library-spine >= 25.5.13
@@ -112,8 +112,8 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-newbase-devel >= 25.3.20
 #TestRequires: smartmet-library-macgyver-devel >= 25.5.30
 #TestRequires: smartmet-library-spine-devel >= 25.5.13
-#TestRequires: smartmet-library-timeseries-devel >= 25.5.22
-#TestRequires: smartmet-engine-grid-devel >= 25.5.30
+#TestRequires: smartmet-library-timeseries-devel >= 25.6.9
+#TestRequires: smartmet-engine-grid-devel >= 25.6.3
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-test-db
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Jun 11 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.6.11-1.fmi
+- Automatically detect constant step in GetCapabilities elevation dimension output
+
 * Sat May 31 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.5.31-1.fmi
 - Fixed WMSElevationDimension to initialize the default elevation in both constructors
 
