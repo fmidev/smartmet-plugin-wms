@@ -323,11 +323,11 @@ bool WMSGridDataLayer::updateLayerMetaData()
             // printf("## MAPPINGS %ld\n",mappings.size());
           }
 
-          if (mappings.size() == 0)
-            return true;
-
-          parameterKey = mappings[0].mParameterKey;
-          parameterLevelId = mappings[0].mParameterLevelId;
+          if (mappings.size() > 0)
+          {
+            parameterKey = mappings[0].mParameterKey;
+            parameterLevelId = mappings[0].mParameterLevelId;
+          }
 
           if (contentServer->getContentListByParameterAndGenerationId(0,
                                                                       generationInfo->mGenerationId,
@@ -405,23 +405,26 @@ bool WMSGridDataLayer::updateLayerMetaData()
           return true;
       }
 
-      std::shared_ptr<WMSTimeDimension> timeDimension;
+      if (contentTimeList.size() > 0)
+      {
+        std::shared_ptr<WMSTimeDimension> timeDimension;
 
-      // timesteps
-      std::list<Fmi::DateTime> timesteps;
-      for (const auto& stime : contentTimeList)
-        timesteps.push_back(toTimeStamp(stime));
+        // timesteps
+        std::list<Fmi::DateTime> timesteps;
+        for (const auto& stime : contentTimeList)
+          timesteps.push_back(toTimeStamp(stime));
 
-      time_intervals intervals = get_intervals(timesteps);
+        time_intervals intervals = get_intervals(timesteps);
 
-      if (!intervals.empty())
-        timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
-      else
-        timeDimension = std::make_shared<StepTimeDimension>(timesteps);
+        if (!intervals.empty())
+          timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
+        else
+          timeDimension = std::make_shared<StepTimeDimension>(timesteps);
 
-      if (timeDimension)
-        newTimeDimensions.insert(
-            std::make_pair(toTimeStamp(generationInfo->mAnalysisTime), timeDimension));
+        if (timeDimension)
+          newTimeDimensions.insert(
+              std::make_pair(toTimeStamp(generationInfo->mAnalysisTime), timeDimension));
+      }
     }
 
     if (!newTimeDimensions.empty())
