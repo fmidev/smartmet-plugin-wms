@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 25.6.18
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -35,12 +35,12 @@ BuildRequires: smartmet-library-timeseries-devel >= 25.6.9
 BuildRequires: smartmet-engine-authentication-devel >= 25.2.18
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 25.5.22
+BuildRequires: smartmet-engine-observation-devel >= 25.6.16
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 25.2.18
 BuildRequires: smartmet-engine-grid-devel >= 25.6.3
 BuildRequires: smartmet-engine-geonames-devel >= 25.2.18
-BuildRequires: smartmet-engine-querydata-devel >= 25.5.22
+BuildRequires: smartmet-engine-querydata-devel >= 25.6.17
 BuildRequires: smartmet-engine-contour-devel >= 25.2.18
 BuildRequires: smartmet-library-gis-devel >= 25.2.18
 BuildRequires: smartmet-library-trax-devel >= 25.4.11
@@ -79,7 +79,7 @@ Requires: smartmet-library-giza >= 25.2.18
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 25.2.18
 %endif
-Requires: smartmet-engine-querydata >= 25.5.22
+Requires: smartmet-engine-querydata >= 25.6.17
 Requires: smartmet-engine-contour >= 25.2.18
 Requires: smartmet-engine-gis >= 25.2.18
 Requires: smartmet-engine-grid >= 25.6.3
@@ -106,7 +106,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 25.2.18
 #TestRequires: smartmet-engine-geonames-devel >= 25.2.18
 #TestRequires: smartmet-engine-gis-devel >= 25.2.18
-#TestRequires: smartmet-engine-querydata-devel >= 25.5.22
+#TestRequires: smartmet-engine-querydata-devel >= 25.6.17
 #TestRequires: smartmet-library-giza-devel >= 25.2.18
 #TestRequires: smartmet-library-trax-devel >= 25.4.11
 #TestRequires: smartmet-library-newbase-devel >= 25.3.20
@@ -125,7 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 25.5.22
+#TestRequires: smartmet-engine-observation-devel >= 25.6.16
 %endif
 
 %description
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Jun 18 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.6.18-3.fmi
+- Added a safety check for the number of requested layers
+
 * Wed Jun 18 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.6.18-2.fmi
 - Fixed typo
 
