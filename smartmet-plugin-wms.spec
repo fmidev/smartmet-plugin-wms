@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.6.12
+Version: 25.6.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Jun 18 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.6.18-1.fmi
+- Added more sanity checks for requested image size
+
 * Thu Jun 12 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.6.12-1.fmi
 - Ignore GRID generations that do not contain timesteps for the requested parameter in GetCapabilities responses
 
