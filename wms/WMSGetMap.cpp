@@ -415,6 +415,9 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
           .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     }
 
+    if (itsParameters.width < 2 || itsParameters.height < 2)
+      throw Fmi::Exception(BCP, "Image size must be at least 2x2");
+
     if (static_cast<double>(itsParameters.width) * static_cast<double>(itsParameters.height) >
         itsConfig.getDaliConfig().maxImageSize())
     {

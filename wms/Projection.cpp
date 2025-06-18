@@ -81,6 +81,9 @@ void Projection::init(Json::Value& theJson, const State& theState, const Config&
         ysize = toInt32(*v);
     }
 
+    if ((xsize && *xsize < 2) || (ysize && *ysize < 2))
+      throw Fmi::Exception(BCP; "Image size must be atleast 2x2");
+
     JsonTools::remove_double(x1, theJson, "x1");
     JsonTools::remove_double(y1, theJson, "y1");
     JsonTools::remove_double(x2, theJson, "x2");
