@@ -97,6 +97,7 @@ Config::Config(const string& configfile)
       itsMaxFilesystemCacheSize = parse_size(itsConfig.lookup(filesystem_bytes), filesystem_bytes);
 
     itsConfig.lookupValue("max_image_size", itsMaxImageSize);
+    itsConfig.lookupValue("wms.max_layers", itsMaxWMSLayers);
 
     itsConfig.lookupValue("heatmap.max_points", itsMaxHeatmapPoints);
 
@@ -352,6 +353,11 @@ bool Config::quiet() const
 unsigned int Config::maxImageSize() const
 {
   return itsMaxImageSize;
+}
+
+unsigned int Config::maxWMSLayers() const
+{
+  return itsMaxWMSLayers;
 }
 
 unsigned Config::maxHeatmapPoints() const

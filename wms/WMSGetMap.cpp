@@ -402,6 +402,14 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       throw exception;
     }
 
+    // Prevent DDOS attacks by layering the same thing thousands of times
+
+    const auto layer_limit = itsConfig.getDaliConfig().maxWMSLayers();
+    if (layers.size() > layer_limit)
+      throw Fmi::Exception(BCP, "Too many layers requested")
+          .addParameter("Requested layers", Fmi::to_string(layers.size()))
+          .addParameter("Limit", Fmi::to_string(layer_limit));
+
     // width and height
     try
     {

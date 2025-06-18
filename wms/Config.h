@@ -58,6 +58,7 @@ class Config
   unsigned int styleSheetCacheSize() const;
 
   unsigned int maxImageSize() const;
+  unsigned int maxWMSLayers() const;
 
   const std::string& filesystemCacheDirectory() const;
 
@@ -101,6 +102,7 @@ class Config
   unsigned int itsStyleSheetCacheSize = 1000;                // 1000 objects
 
   unsigned int itsMaxImageSize = 20 * 1024 * 1024;  // 20M pixels
+  unsigned int itsMaxWMSLayers = 10;                // no more than 10 layers, ddos protection
   unsigned itsMaxHeatmapPoints = 2000 * 2000;
 
   std::string itsWmsUrl = "/wms";
