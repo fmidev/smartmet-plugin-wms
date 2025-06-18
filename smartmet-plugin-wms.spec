@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 25.6.18
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -154,6 +154,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Jun 18 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.6.18-2.fmi
+- Fixed typo
+
 * Wed Jun 18 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.6.18-1.fmi
 - Added more sanity checks for requested image size
 
