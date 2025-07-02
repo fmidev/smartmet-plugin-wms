@@ -39,7 +39,7 @@ BuildRequires: smartmet-library-macgyver-devel >= 25.5.30
 BuildRequires: smartmet-library-spine-devel >= 25.5.13
 BuildRequires: smartmet-library-timeseries-devel >= 25.6.9
 %if %{with authentication}
-BuildRequires: smartmet-engine-authentication-devel >= 25.2.18
+BuildRequires: smartmet-engine-authentication-devel >= 25.7.2
 %endif
 %if %{with observation}
 BuildRequires: smartmet-engine-observation-devel >= 25.6.16
@@ -84,7 +84,7 @@ Requires: smartmet-library-spine >= 25.5.13
 Requires: smartmet-library-timeseries >= 25.6.9
 Requires: smartmet-library-giza >= 25.2.18
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 25.2.18
+Requires: smartmet-engine-authentication >= 25.7.2
 %endif
 Requires: smartmet-engine-querydata >= 25.6.17
 Requires: smartmet-engine-contour >= 25.2.18

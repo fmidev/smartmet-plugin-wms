@@ -747,7 +747,11 @@ void Plugin::init()
       engine = itsReactor->getSingleton("Authentication", nullptr);
       if (engine == nullptr)
         throw Fmi::Exception(BCP, "Authentication unavailable");
-      auto *authEngine = reinterpret_cast<Engine::Authentication::Engine *>(engine);
+      auto *authEngine = dynamic_cast<Engine::Authentication::Engine *>(engine);
+      if (authEngine == nullptr)
+        throw Fmi::Exception(BCP, "Authentication engine is not of type Engine::Authentication::Engine");
+      if (!authEngine->isEnabled())
+        throw Fmi::Exception(BCP, "Authentication engine is disabled");
 
 // WMS configurations
 #ifndef WITHOUT_OBSERVATION
