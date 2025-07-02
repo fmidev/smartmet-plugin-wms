@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.6.18
-Release: 3%{?dist}.fmi
+Version: 25.7.2
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -161,6 +161,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Jul  2 2025 Andris Pavēnis <andris.pavenis@fmi.fi> 25.7.2-1.fmi
+- Update according to smartmet-engine-authentication ABI changes
+
 * Wed Jun 18 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.6.18-3.fmi
 - Added a safety check for the number of requested layers
 
