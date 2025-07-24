@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.7.2
+Version: 25.7.24
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -35,7 +35,7 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 25.2.18
 BuildRequires: smartmet-library-grid-content-devel >= 25.5.22
 BuildRequires: smartmet-library-grid-files-devel >= 25.5.30
-BuildRequires: smartmet-library-macgyver-devel >= 25.5.30
+BuildRequires: smartmet-library-macgyver-devel >= 25.6.19
 BuildRequires: smartmet-library-spine-devel >= 25.5.13
 BuildRequires: smartmet-library-timeseries-devel >= 25.6.9
 %if %{with authentication}
@@ -49,8 +49,8 @@ BuildRequires: smartmet-engine-grid-devel >= 25.6.3
 BuildRequires: smartmet-engine-geonames-devel >= 25.2.18
 BuildRequires: smartmet-engine-querydata-devel >= 25.6.17
 BuildRequires: smartmet-engine-contour-devel >= 25.2.18
-BuildRequires: smartmet-library-gis-devel >= 25.2.18
-BuildRequires: smartmet-library-trax-devel >= 25.4.11
+BuildRequires: smartmet-library-gis-devel >= 25.7.24
+BuildRequires: smartmet-library-trax-devel >= 25.6.19
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -77,9 +77,9 @@ Requires: libconfig17
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 25.5.22
 Requires: smartmet-library-grid-files >= 25.5.30
-Requires: smartmet-library-gis >= 25.2.18
-Requires: smartmet-library-trax >= 25.4.11
-Requires: smartmet-library-macgyver >= 25.5.30
+Requires: smartmet-library-gis >= 25.7.24
+Requires: smartmet-library-trax >= 25.6.19
+Requires: smartmet-library-macgyver >= 25.6.19
 Requires: smartmet-library-spine >= 25.5.13
 Requires: smartmet-library-timeseries >= 25.6.9
 Requires: smartmet-library-giza >= 25.2.18
@@ -115,9 +115,9 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-gis-devel >= 25.2.18
 #TestRequires: smartmet-engine-querydata-devel >= 25.6.17
 #TestRequires: smartmet-library-giza-devel >= 25.2.18
-#TestRequires: smartmet-library-trax-devel >= 25.4.11
+#TestRequires: smartmet-library-trax-devel >= 25.6.19
 #TestRequires: smartmet-library-newbase-devel >= 25.3.20
-#TestRequires: smartmet-library-macgyver-devel >= 25.5.30
+#TestRequires: smartmet-library-macgyver-devel >= 25.6.19
 #TestRequires: smartmet-library-spine-devel >= 25.5.13
 #TestRequires: smartmet-library-timeseries-devel >= 25.6.9
 #TestRequires: smartmet-engine-grid-devel >= 25.6.3
@@ -161,6 +161,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Jul 24 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.7.24-1.fmi
+- Small improvement to handling global data views
+
 * Wed Jul  2 2025 Andris Pavēnis <andris.pavenis@fmi.fi> 25.7.2-1.fmi
 - Update according to smartmet-engine-authentication ABI changes
 
