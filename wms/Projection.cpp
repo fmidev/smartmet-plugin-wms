@@ -389,10 +389,35 @@ void Projection::prepareCRS() const
         Fmi::CoordinateTransformation transformation(*bboxcrs, *ogr_crs);
         transformation.transform(XMIN, YMIN);
         transformation.transform(XMAX, YMAX);
+
+        // Projecting some longitudes is not safe with PROJ since we cannot express the intent of
+        // the BBOX when projecting multiple coordinates. For example -180...180 or 0...360 may
+        // lead to xmin==xmax.
+
+        if (XMIN == XMAX && *x1 != *x2)
+        {
+          XMIN = *x1;
+          YMIN = *y1;
+          XMAX = *x2;
+          YMAX = *y2;
+          // kludge to avoid wraparounds with hopefully unnoticeable effects
+          XMAX *= 0.99999;
+
+          transformation.transform(XMIN, YMIN);
+          transformation.transform(XMAX, YMAX);
+        }
       }
 
       if (XMIN == XMAX || YMIN == YMAX)
-        throw Fmi::Exception(BCP, "Bounding box size is zero!");
+        throw Fmi::Exception(BCP, "Bounding box size is zero!")
+            .addParameter("bbox x1", Fmi::to_string(*x1))
+            .addParameter("bbox x2", Fmi::to_string(*x2))
+            .addParameter("bbox y1", Fmi::to_string(*y1))
+            .addParameter("bbox y2", Fmi::to_string(*y2))
+            .addParameter("projected x1", Fmi::to_string(XMIN))
+            .addParameter("projected x2", Fmi::to_string(XMAX))
+            .addParameter("projected y1", Fmi::to_string(YMIN))
+            .addParameter("projected y2", Fmi::to_string(YMAX));
 
       if (!xsize)
       {
