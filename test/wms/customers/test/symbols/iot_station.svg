@@ -1,4 +1,4 @@
-<symbol id="iot_station">
+<symbol id="iot_station" overflow="visible">
  <desc>Simple IoT Station marker</desc>
  <circle cx="0" cy="0" r="3" stroke="black" stroke-width="0.5"/>
 </symbol>
