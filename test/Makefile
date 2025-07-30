@@ -38,6 +38,9 @@ TEST_PREPARE_TARGETS := \
 	cnf/observation.conf \
 	start-redis-db
 
+PLUGIN_TEST_SRC := PluginTest.cpp
+PLUGIN_TEST_OBJS := $(patsubst %.cpp,obj/%.o,$(PLUGIN_TEST_SRC))
+
 TEST_FINISH_TARGETS := stop-redis-db
 
 TEST_DB_DIR := $(shell pwd)/tmp-geonames-db
@@ -58,7 +61,7 @@ clean:	clean-redis
 	rm -f $(PROG) *~
 	rm -f cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf
 	-if [ -f tmp-geonames-db/postmaster.pid ] ; then $(MAKE) stop-geonames-db; fi
-	rm -rf tmp-geonames-db*
+	rm -rf tmp-geonames-db* obj
 
 test: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
@@ -120,7 +123,15 @@ cnf/observation.conf: cnf/observation.conf.in
 templates:
 	$(MAKE) -C .. $@
 
-$(PROG) : % : %.cpp Makefile ../wms.so
-	$(CXX) $(CFLAGS) -o $@ $@.cpp $(INCLUDES) $(LIBS)
+PluginTest : $(PLUGIN_TEST_OBJS)
+	$(CXX) $(CFLAGS) $(PLUGIN_TEST_OBJS) -o $@ $(LIBS)
+
+obj/%.o: %.cpp objdir
+	$(CXX) -c $(CFLAGS) -MD -MF $(patsubst obj/%.o, obj/%.d, $@) -MT $@ -o $@ $< $(INCLUDES) $(LIBS)
+
+objdir:
+	mkdir -p $(objdir)
 
 .PHONY: cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf dummy
+
+-include $(wildcard obj/*.d)
