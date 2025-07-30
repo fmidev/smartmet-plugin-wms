@@ -91,6 +91,7 @@ dots='......................................................................'
 
 ntests=0
 nfailures=0
+failed_tests=()
 for f in input/*.get; do
     request_name=$(basename $f)
     name=$(basename $(basename $request_name .get) .post)
@@ -129,13 +130,17 @@ for f in input/*.get; do
 	done
 	end_time=$(date +%s.%3N)
 	elapsed=$(echo "scale=3; $end_time - $start_time" | bc)
-	
+
 	ntests=$((ntests+1))
 	if [[ -z  "$result" ]]; then
 	    nfailures=$((nfailures+1))
+        failed_tests+=("$request_name")
 	    echo -e "FAIL - NO OUTPUT\t$elapsed sec"
 	else
-	    ./CompareImages.sh $result $expected || nfailures=$((nfailures+1))
+	    if ! ./CompareImages.sh $result $expected ; then
+	        nfailures=$((nfailures+1))
+	        failed_tests+=("$request_name")
+	    fi
 	    echo -e "\t$elapsed sec"
 	fi
 
@@ -157,6 +162,16 @@ if [[ $nfailures -eq 0 ]]; then
     echo -e "\n*** All $ntests tests passed"
 else
     echo -e "\n*** $nfailures tests out of $ntests failed"
+
+    # List the failed tests if there are not too many
+    if [ $nfailures -lt 32 ]; then
+        echo -e ""
+        echo -e "Failed tests:"
+        for test in "${failed_tests[@]}"; do
+            echo -e "\t$test"
+        done
+        echo -e ""
+    fi
 fi
 
 exit $nfailures
