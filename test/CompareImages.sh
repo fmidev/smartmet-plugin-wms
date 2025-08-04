@@ -64,10 +64,35 @@ if [[ $? -eq 0 ]]; then
     exit 0
 fi
 
+# Support alternative expected files with numbered suffixes for
+# XML and JSON
+
+case "$MIME" in
+    application/xml | text/xml | application/json | text/json)
+        for index in $(seq 1 9); do
+            if test -e $EXPECTED.$index ; then
+                if cmp $RESULT $EXPECTED.$index ; then
+                    echo -n "OK"
+                    rm -f $RESULT
+                    exit 0
+                fi
+            fi
+        done
+        ;;
+esac
+
 # Handle XML failures
 
 if [[ "$MIME" == "application/xml" || "$MIME" == "text/xml" ]]; then
     echo -n "FAIL: XML output differs: $RESULT <> $EXPECTED"
+    echo " diff -U4 | head -n $MAX_LINES | cut -c 1-$CUT_LINES:"
+    diff -U4 $EXPECTED $RESULT | head -n 100 | cut -c 1-$CUT_LINES
+    exit 1
+fi
+
+# Handle JSON failures
+if [[ "$MIME" == "application/json" || "$MIME" == "text/json" ]]; then
+    echo -n "FAIL: JSON output differs: $RESULT <> $EXPECTED"
     echo " diff -U4 | head -n $MAX_LINES | cut -c 1-$CUT_LINES:"
     diff -U4 $EXPECTED $RESULT | head -n 100 | cut -c 1-$CUT_LINES
     exit 1
