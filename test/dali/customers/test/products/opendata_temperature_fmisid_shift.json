@@ -1,0 +1,87 @@
+{
+    "title": "Temperature at fmisid stations",
+    "producer": "opendata",
+    "projection":
+    {
+	"crs": "EPSG:4326",
+	"cx" : 25,
+	"cy" : 65,
+	"resolution" : 3,
+	"xsize": 500,
+	"ysize": 500
+    },
+    "views":
+    [
+	{
+	    "qid": "v1",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+	    "layers":
+	    [
+		{
+		    "qid": "sea",
+		    "layer_type": "background",
+		    "attributes":
+		    {
+			"fill": "white"
+		    }
+		},
+		{
+                    "qid": "l1",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 100
+                    },
+                    "attributes":
+                    {
+                        "id": "europe_country_lines",
+                        "fill": "none",
+                        "stroke": "#222",
+                        "stroke-width": "0.3px"
+                    }
+                },
+		{
+		    "qid": "l2",
+		    "layer_type": "number",
+		    "css": "numbers/integers.css",
+		    "parameter": "Temperature",
+		    "minvalues": 20,
+		    "label":
+		    {
+			"dx": 5,
+			"dy": 5,
+			"missing": "-"
+		    },
+		    "attributes":
+		    {
+			"class": "Number"
+		    },
+		    "symbol": "dot",
+		    "positions":
+		    {
+			"layout": "station",
+			"stations":
+			[
+			    {
+				// Helsinki shifted to new latlon in Tallinn
+				"fmisid": 100971,
+				"longitude": 24.7,
+				"latitude": 59.4
+			    },
+			    100539,100540,100907,100908,100909,100917,100919,100921,100924,100928,
+			    100932,100934,100945,100946,100947,100949,100951,100953,100955,100965,
+			    100967,100996,101003,101004,101007,101044,101059,101061,101064,
+			    101065,101103,101104,101118,101124,101128,101130,101152,101256,101267,
+			    101268,101272,101289,101291,101310,101311,101339,101462,101464,101479
+			]
+		    }
+		}
+	    ]
+	}
+    ]
+}

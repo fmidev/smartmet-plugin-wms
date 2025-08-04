@@ -389,6 +389,9 @@ PointValues read_station_observations(State& state,
 
     std::map<int, DxDy> fmisid_shifts;
 
+    // Collection information on alternate lon,lat placements
+    std::map<int, NFmiPoint> fmisid_alternate_lonlats;
+
     // We do not use the same station twice
     std::set<int> used_fmisids;
 
@@ -437,6 +440,11 @@ PointValues read_station_observations(State& state,
 
         settings.taggedFMISIDs.push_back(tagged_fmisid);
         fmisid_shifts.insert({fmisid, dxdy});
+
+        // Alternate placement given via lonlat to a station with an ID?
+        if ((station.fmisid || station.wmo || station.lpnn || station.geoid) && station.longitude &&
+            station.latitude)
+          fmisid_alternate_lonlats[fmisid] = NFmiPoint(*station.longitude, *station.latitude);
       }
     }
 
@@ -468,6 +476,13 @@ PointValues read_station_observations(State& state,
 
       auto x = lon;
       auto y = lat;
+
+      auto alt_lonlat = fmisid_alternate_lonlats.find(fmisid);
+      if (alt_lonlat != fmisid_alternate_lonlats.end())
+      {
+        x = alt_lonlat->second.X();
+        y = alt_lonlat->second.Y();
+      }
 
       if (!crs.isGeographic())
         if (!transformation.transform(x, y))
