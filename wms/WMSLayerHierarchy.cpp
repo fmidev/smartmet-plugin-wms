@@ -261,9 +261,9 @@ void add_layer_info(bool multiple_intervals,
                     const WMSLayerHierarchy& lh,
                     const std::string& language,
                     const std::string& defaultLanguage,
-                    const std::optional<std::string>& starttime,
-                    const std::optional<std::string>& endtime,
-                    const std::optional<std::string>& reference_time,
+                    const std::optional<Fmi::DateTime>& starttime,
+                    const std::optional<Fmi::DateTime>& endtime,
+                    const std::optional<Fmi::DateTime>& reference_time,
                     unsigned int level)
 {
   CTPP::CDT capa(CTPP::CDT::HASH_VAL);
@@ -338,8 +338,8 @@ void add_layer_info(bool multiple_intervals,
     else if (lh.reference_time)
     {
       // Reference time layer
-      std::string ref_time = Fmi::to_iso_string(*lh.reference_time);
-      time_dim = wmslayer->getTimeDimensionInfo(multiple_intervals, starttime, endtime, ref_time);
+      time_dim = wmslayer->getTimeDimensionInfo(
+          multiple_intervals, starttime, endtime, *lh.reference_time);
     }
     else
     {
@@ -504,12 +504,13 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
 // GENERATING GETCAPABILITIES
 // ----------------------------------------------------------------------
 
-CTPP::CDT WMSLayerHierarchy::getCapabilities(bool multiple_intervals,
-                                             const std::string& language,
-                                             const std::string& defaultLanguage,
-                                             const std::optional<std::string>& starttime,
-                                             const std::optional<std::string>& endtime,
-                                             const std::optional<std::string>& reference_time) const
+CTPP::CDT WMSLayerHierarchy::getCapabilities(
+    bool multiple_intervals,
+    const std::string& language,
+    const std::string& defaultLanguage,
+    const std::optional<Fmi::DateTime>& starttime,
+    const std::optional<Fmi::DateTime>& endtime,
+    const std::optional<Fmi::DateTime>& reference_time) const
 {
   // Return array of individual layer capabilities
   CTPP::CDT capa(CTPP::CDT::ARRAY_VAL);

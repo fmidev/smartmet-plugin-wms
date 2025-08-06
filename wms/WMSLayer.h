@@ -141,9 +141,9 @@ class WMSLayer
       const Engine::Gis::Engine& gisengine,
       const std::string& language,
       const std::string& defaultLanguage,
-      const std::optional<std::string>& starttime,
-      const std::optional<std::string>& endtime,
-      const std::optional<std::string>& reference_time);
+      const std::optional<Fmi::DateTime>& starttime,
+      const std::optional<Fmi::DateTime>& endtime,
+      const std::optional<Fmi::DateTime>& reference_time);
 
   std::optional<CTPP::CDT> getLayerBaseInfo(const std::string& language,
                                             const std::string& defaultLanguage) const;
@@ -151,9 +151,9 @@ class WMSLayer
   std::optional<CTPP::CDT> getProjectedBoundingBoxInfo() const;
   std::optional<CTPP::CDT> getTimeDimensionInfo(
       bool multiple_intervals,
-      const std::optional<std::string>& starttime,
-      const std::optional<std::string>& endtime,
-      const std::optional<std::string>& reference_time) const;
+      const std::optional<Fmi::DateTime>& starttime,
+      const std::optional<Fmi::DateTime>& endtime,
+      const std::optional<Fmi::DateTime>& reference_time) const;
   std::optional<CTPP::CDT> getIntervalDimensionInfo() const;
   std::optional<CTPP::CDT> getReferenceDimensionInfo() const;
   std::optional<CTPP::CDT> getElevationDimensionInfo() const;

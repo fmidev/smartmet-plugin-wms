@@ -1799,9 +1799,9 @@ std::optional<CTPP::CDT> WMSLayer::getProjectedBoundingBoxInfo() const
 
 std::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
     bool multiple_intervals,
-    const std::optional<std::string>& starttime,
-    const std::optional<std::string>& endtime,
-    const std::optional<std::string>& reference_time) const
+    const std::optional<Fmi::DateTime>& starttime,
+    const std::optional<Fmi::DateTime>& endtime,
+    const std::optional<Fmi::DateTime>& reference_time) const
 {
   try
   {
@@ -1815,12 +1815,11 @@ std::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
     {
       if (reference_time)
       {
-        Fmi::DateTime ref_time = Fmi::TimeParser::parse(*reference_time);
         // Show time dimension of reference time
 
-        if (timeDimensions->origintimeOK(ref_time))
+        if (timeDimensions->origintimeOK(*reference_time))
         {
-          const WMSTimeDimension& td = timeDimensions->getTimeDimension(ref_time);
+          const WMSTimeDimension& td = timeDimensions->getTimeDimension(*reference_time);
           auto dim_string = td.getCapabilities(multiple_intervals, starttime, endtime);
           if (dim_string.empty())
             return {};
@@ -1837,7 +1836,7 @@ std::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
           reference_time_dimension["units"] = "ISO8601";
           reference_time_dimension["multiple_values"] = 0;
           reference_time_dimension["nearest_value"] = 0;
-          reference_time_dimension["value"] = (Fmi::to_iso_extended_string(ref_time) + "Z");
+          reference_time_dimension["value"] = Fmi::to_iso_extended_string(*reference_time) + "Z";
           layer_dimension_list.PushBack(layer_dimension);
           layer_dimension_list.PushBack(reference_time_dimension);
         }
@@ -1869,7 +1868,7 @@ std::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
           reference_time_dimension["current"] = 1;
           reference_time_dimension["default"] =
               (Fmi::to_iso_extended_string(orgintimesDimension.mostCurrentTime()) + "Z");
-          std::optional<std::string> t;
+          std::optional<Fmi::DateTime> t;
           reference_time_dimension["value"] = orgintimesDimension.getCapabilities(false, t, t);
         }
         layer_dimension_list.PushBack(layer_dimension);
@@ -1953,7 +1952,7 @@ std::optional<CTPP::CDT> WMSLayer::getReferenceDimensionInfo() const
         reference_time_dimension["current"] = 1;
         reference_time_dimension["default"] =
             (Fmi::to_iso_extended_string(orgintimesDimension.mostCurrentTime()) + "Z");
-        std::optional<std::string> t;
+        std::optional<Fmi::DateTime> t;
         reference_time_dimension["value"] = orgintimesDimension.getCapabilities(false, t, t);
         layer_dimension_list.PushBack(reference_time_dimension);
       }
@@ -2044,9 +2043,9 @@ std::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
     const Engine::Gis::Engine& /* gisengine */,
     const std::string& language,
     const std::string& defaultLanguage,
-    const std::optional<std::string>& starttime,
-    const std::optional<std::string>& endtime,
-    const std::optional<std::string>& /* reference_time */)
+    const std::optional<Fmi::DateTime>& starttime,
+    const std::optional<Fmi::DateTime>& endtime,
+    const std::optional<Fmi::DateTime>& /* reference_time */)
 {
   try
   {

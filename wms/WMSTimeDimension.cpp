@@ -10,16 +10,6 @@ namespace Plugin
 {
 namespace WMS
 {
-namespace
-{
-Fmi::DateTime parse_time(const std::string& time_string)
-{
-  if (time_string == "now")
-    return Fmi::SecondClock::universal_time();
-
-  return Fmi::TimeParser::parse(time_string);
-}
-}  // namespace
 
 bool WMSTimeDimension::isValidTime(const Fmi::DateTime& theTime,
                                    bool endtime_is_wall_clock_time) const
@@ -126,8 +116,8 @@ StepTimeDimension::StepTimeDimension(const std::set<Fmi::DateTime>& times)
 }
 
 std::string StepTimeDimension::getCapabilities(bool /* multiple_intervals */,
-                                               const std::optional<std::string>& starttime,
-                                               const std::optional<std::string>& endtime) const
+                                               const std::optional<Fmi::DateTime>& starttime,
+                                               const std::optional<Fmi::DateTime>& endtime) const
 {
   try
   {
@@ -142,16 +132,16 @@ std::string StepTimeDimension::getCapabilities(bool /* multiple_intervals */,
   }
 }
 
-std::string StepTimeDimension::makeCapabilities(const std::optional<std::string>& starttime,
-                                                const std::optional<std::string>& endtime) const
+std::string StepTimeDimension::makeCapabilities(const std::optional<Fmi::DateTime>& starttime,
+                                                const std::optional<Fmi::DateTime>& endtime) const
 {
   try
   {
     std::vector<std::string> ret;
     ret.reserve(itsTimesteps.size());
 
-    auto startt = (starttime ? parse_time(*starttime) : Fmi::DateTime::min);
-    auto endt = (endtime ? parse_time(*endtime) : Fmi::DateTime::max);
+    auto startt = (starttime ? *starttime : Fmi::DateTime::min);
+    auto endt = (endtime ? *endtime : Fmi::DateTime::max);
 
     for (const auto& step : itsTimesteps)
     {
@@ -231,9 +221,10 @@ const std::vector<tag_interval>& IntervalTimeDimension::getIntervals() const
   return itsIntervals;
 }
 
-std::string IntervalTimeDimension::getCapabilities(bool multiple_intervals,
-                                                   const std::optional<std::string>& starttime,
-                                                   const std::optional<std::string>& endtime) const
+std::string IntervalTimeDimension::getCapabilities(
+    bool multiple_intervals,
+    const std::optional<Fmi::DateTime>& starttime,
+    const std::optional<Fmi::DateTime>& endtime) const
 {
   try
   {
@@ -293,12 +284,13 @@ std::string getIntervalCapability(const tag_interval& interval,
   return ret;
 }
 
-std::string IntervalTimeDimension::makeCapabilities(const std::optional<std::string>& starttime,
-                                                    const std::optional<std::string>& endtime) const
+std::string IntervalTimeDimension::makeCapabilities(
+    const std::optional<Fmi::DateTime>& starttime,
+    const std::optional<Fmi::DateTime>& endtime) const
 {
   try
   {
-    if ((starttime && endtime) && parse_time(*starttime) > parse_time(*endtime))
+    if ((starttime && endtime) && *starttime > *endtime)
       throw Fmi::Exception::Trace(BCP,
                                   "Requested starttime must be earlier than requested endtime!");
 
@@ -308,8 +300,8 @@ std::string IntervalTimeDimension::makeCapabilities(const std::optional<std::str
     for (const auto& interval : itsIntervals)
     {
       Fmi::TimePeriod interval_period(interval.startTime, interval.endTime);
-      auto requested_startt = (starttime ? parse_time(*starttime) : interval.startTime);
-      auto requested_endt = (endtime ? parse_time(*endtime) : interval.endTime);
+      auto requested_startt = (starttime ? *starttime : interval.startTime);
+      auto requested_endt = (endtime ? *endtime : interval.endTime);
       Fmi::TimePeriod requested_period(requested_startt, requested_endt);
 
       if (!interval_period.intersects(requested_period))
@@ -342,11 +334,12 @@ std::string IntervalTimeDimension::makeCapabilities(const std::optional<std::str
 }
 
 std::string IntervalTimeDimension::makeCapabilitiesTimesteps(
-    const std::optional<std::string>& starttime, const std::optional<std::string>& endtime) const
+    const std::optional<Fmi::DateTime>& starttime,
+    const std::optional<Fmi::DateTime>& endtime) const
 {
   try
   {
-    if ((starttime && endtime) && parse_time(*starttime) > parse_time(*endtime))
+    if ((starttime && endtime) && *starttime > *endtime)
       throw Fmi::Exception::Trace(BCP,
                                   "Requested starttime must be earlier than requested endtime!");
 
@@ -354,8 +347,8 @@ std::string IntervalTimeDimension::makeCapabilitiesTimesteps(
     for (const auto& interval : itsIntervals)
     {
       Fmi::TimePeriod interval_period(interval.startTime, interval.endTime);
-      auto requested_startt = (starttime ? parse_time(*starttime) : interval.startTime);
-      auto requested_endt = (endtime ? parse_time(*endtime) : interval.endTime);
+      auto requested_startt = (starttime ? *starttime : interval.startTime);
+      auto requested_endt = (endtime ? *endtime : interval.endTime);
       Fmi::TimePeriod requested_period(requested_startt, requested_endt);
 
       if (!interval_period.intersects(requested_period))
@@ -460,7 +453,7 @@ bool WMSTimeDimensions::isIdentical(const WMSTimeDimensions& td) const
     const std::shared_ptr<WMSTimeDimension>& tdim1 = item.second;
     const std::shared_ptr<WMSTimeDimension>& tdim2 = td.itsTimeDimensions.at(item.first);
 
-    std::optional<std::string> missing_time;
+    std::optional<Fmi::DateTime> missing_time;
     if (tdim1->getCapabilities(false, missing_time, missing_time) !=
         tdim2->getCapabilities(false, missing_time, missing_time))
       return false;
