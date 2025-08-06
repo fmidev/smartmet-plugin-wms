@@ -1797,6 +1797,34 @@ std::optional<CTPP::CDT> WMSLayer::getProjectedBoundingBoxInfo() const
   }
 }
 
+std::pair<std::optional<Fmi::DateTime>, std::optional<Fmi::DateTime>>
+WMSLayer::getLimitedCapabilitiesInterval(const std::optional<Fmi::DateTime>& starttime,
+                                         const std::optional<Fmi::DateTime>& endtime) const
+{
+  auto now = Fmi::SecondClock::universal_time();
+
+  auto t1 = starttime;
+  auto t2 = endtime;
+
+  if (capabilities_start)
+  {
+    auto alt1 = now - *capabilities_start;
+    if (!t1)
+      t1 = alt1;
+    else
+      t1 = std::max(*t1, alt1);
+  }
+  if (capabilities_end)
+  {
+    auto alt2 = now + *capabilities_end;
+    if (!t2)
+      t2 = alt2;
+    else
+      t2 = std::min(*t2, alt2);
+  }
+  return {t1, t2};
+}
+
 std::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
     bool multiple_intervals,
     const std::optional<Fmi::DateTime>& starttime,
@@ -1807,6 +1835,8 @@ std::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
   {
     if (hidden)
       return {};
+
+    auto [time1, time2] = getLimitedCapabilitiesInterval(starttime, endtime);
 
     CTPP::CDT layer(CTPP::CDT::HASH_VAL);
 
@@ -1820,7 +1850,7 @@ std::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
         if (timeDimensions->origintimeOK(*reference_time))
         {
           const WMSTimeDimension& td = timeDimensions->getTimeDimension(*reference_time);
-          auto dim_string = td.getCapabilities(multiple_intervals, starttime, endtime);
+          auto dim_string = td.getCapabilities(multiple_intervals, time1, time2);
           if (dim_string.empty())
             return {};
 
@@ -1844,7 +1874,7 @@ std::optional<CTPP::CDT> WMSLayer::getTimeDimensionInfo(
       else
       {
         const WMSTimeDimension& td = timeDimensions->getDefaultTimeDimension();
-        auto dim_string = td.getCapabilities(multiple_intervals, starttime, endtime);
+        auto dim_string = td.getCapabilities(multiple_intervals, time1, time2);
         if (dim_string.empty())
           return {};
 
@@ -2061,9 +2091,11 @@ std::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
 
     if (timeDimensions)
     {
+      auto [time1, time2] = getLimitedCapabilitiesInterval(starttime, endtime);
+
       const WMSTimeDimension& td = timeDimensions->getDefaultTimeDimension();
 
-      auto dim_string = td.getCapabilities(multiple_intervals, starttime, endtime);
+      auto dim_string = td.getCapabilities(multiple_intervals, time1, time2);
       if (dim_string.empty())
         return {};
 

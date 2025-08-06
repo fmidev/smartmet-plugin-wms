@@ -52,7 +52,7 @@ class WMSLayer
   std::string name;
   std::optional<Dali::Text> title;
   std::optional<Dali::Text> abstract;
-  std::optional<std::set<std::string> > keywords;
+  std::optional<std::set<std::string>> keywords;
   std::optional<int> opaque;  // Note: optional<bool> is error prone
   std::optional<int> queryable;
   std::optional<int> cascaded;
@@ -65,6 +65,15 @@ class WMSLayer
   const WMSConfig& wmsConfig;
   bool hidden = false;                 // If this is true, dont show in GetCapabilities response
   bool timeDimensionDisabled = false;  // Can any timestamp can be used in GetMap-request
+
+  // These can be used to limit capabilities from current time, since
+  // we may have observations available since early 1900s, but we do
+  // not wish to show some WMS layers for them if the layer is
+  // intended for latest observations only. Large GetCapabilities
+  // responses mess up most GUIs.
+  std::optional<Fmi::TimeDuration> capabilities_start;
+  std::optional<Fmi::TimeDuration> capabilities_end;
+
   Fmi::DateTime metadataTimestamp = Fmi::DateTime::NOT_A_DATE_TIME;
   unsigned int metadataUpdateInterval = 5;
 
@@ -160,6 +169,10 @@ class WMSLayer
   std::optional<CTPP::CDT> getStyleInfo(const std::string& language,
                                         const std::string& defaultLanguage) const;
   const std::shared_ptr<WMSTimeDimensions>& getTimeDimensions() const;
+
+  std::pair<std::optional<Fmi::DateTime>, std::optional<Fmi::DateTime>>
+  getLimitedCapabilitiesInterval(const std::optional<Fmi::DateTime>& starttime,
+                                 const std::optional<Fmi::DateTime>& endtime) const;
 
   // To be called after crs and crs_bbox have been initialized
   void initProjectedBBoxes();

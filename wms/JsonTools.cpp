@@ -4,6 +4,7 @@
 #include <json/json.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <macgyver/TimeParser.h>
 #include <set>
 #include <string>
 
@@ -294,6 +295,27 @@ void remove_time(std::optional<Fmi::DateTime>& theTime,
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Failed to extract JSON field '" + theName + "' as a time");
+  }
+}
+
+void remove_duration(std::optional<Fmi::TimeDuration>& theDuration,
+                     Json::Value& theJson,
+                     const std::string& theName)
+{
+  try
+  {
+    auto json = remove(theJson, theName);
+    if (json.isString())
+      theDuration = Fmi::TimeParser::parse_duration(json.asString());
+    else if (json.isUInt64())
+      theDuration = Fmi::Minutes(json.asUInt64());
+    else if (!json.isNull())
+      throw Fmi::Exception(BCP, "Failed to parse time duration setting: '" + json.asString());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(
+        BCP, "Failed to extract JSON field '" + theName + "' as a time duration");
   }
 }
 

@@ -66,6 +66,10 @@ void remove_time(std::optional<Fmi::DateTime>& theTime,
                  const Fmi::TimeZonePtr& theZone,
                  const std::optional<Fmi::DateTime>& theDefault = {});
 
+void remove_duration(std::optional<Fmi::TimeDuration>& theDuration,
+                     Json::Value& theJson,
+                     const std::string& theName);
+
 // extract a set of strings
 void extract_set(const std::string& theName,
                  std::set<std::string>& theSet,
