@@ -108,6 +108,8 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: gcc-c++
 #TestRequires: jsoncpp-devel
 #TestRequires: libconfig17-devel
+#TestRequires: libxml2
+#TestRequires: jq
 #TestRequires: ImageMagick
 #TestRequires: bc
 #TestRequires: smartmet-engine-contour-devel >= 25.2.18
@@ -123,6 +125,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-grid-devel >= 25.6.3
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
+#TestRequires: smartmet-utils-devel >= 25.8.6
 #TestRequires: smartmet-test-db
 #TestRequires: smartmet-fonts
 #TestRequires: libconfig17-devel
