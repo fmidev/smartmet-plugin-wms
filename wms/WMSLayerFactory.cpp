@@ -584,6 +584,10 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(Json::Value& root,
     // for hiding the layer from GetCapabilities queries for example if the layer is not public
     remove_bool(layer->hidden, root, "hidden");
 
+    // Optional limits for GetCapabilities responses
+    remove_duration(layer->capabilities_start, root, "capabilities_start");
+    remove_duration(layer->capabilities_end, root, "capabilities_end");
+
     remove_bool(layer->timeDimensionDisabled, root, "disable_wms_time_dimension");
     remove_string(layer->name, root, "name");
     remove_int(layer->opaque, root, "opaque");

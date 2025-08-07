@@ -91,6 +91,22 @@ void patch_protocols(CTPP::CDT& dcptypes, const std::string& newprotocol)
   }
 }
 
+/*
+ * Parse an optional time option
+ */
+
+std::optional<Fmi::DateTime> parse_optional_time(const std::optional<std::string>& time_string)
+{
+  if (!time_string)
+    return {};
+
+  // Special case for legacy reasons
+  if (*time_string == "now" || *time_string == "NOW")
+    return Fmi::SecondClock::universal_time();
+
+  return Fmi::TimeParser::parse(*time_string);
+}
+
 std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatter,
                                          const Spine::HTTP::Request& theRequest,
                                          const Engine::Querydata::Engine& /* theQEngine */,
@@ -142,9 +158,11 @@ std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatte
     try
     {
       auto wms_namespace = theRequest.getParameter("namespace");
-      auto starttime = theRequest.getParameter("starttime");
-      auto endtime = theRequest.getParameter("endtime");
-      auto reference_time = theRequest.getParameter("dim_reference_time");
+
+      auto starttime = parse_optional_time(theRequest.getParameter("starttime"));
+      auto endtime = parse_optional_time(theRequest.getParameter("endtime"));
+      auto reference_time = parse_optional_time(theRequest.getParameter("dim_reference_time"));
+
       auto multipleIntervals = theConfig.multipleIntervals();
       auto enableintervals = theRequest.getParameter("enableintervals");
       // Hidden flag can be overridden in request

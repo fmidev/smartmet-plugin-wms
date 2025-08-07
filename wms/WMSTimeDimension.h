@@ -13,10 +13,9 @@
 
 #include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
-#include <optional>
-
 #include <list>
 #include <map>
+#include <optional>
 #include <set>
 
 namespace SmartMet
@@ -43,8 +42,8 @@ class WMSTimeDimension
   std::set<Fmi::DateTime> getTimeSteps() const;
 
   virtual std::string getCapabilities(bool multiple_intervals,
-                                      const std::optional<std::string>& starttime,
-                                      const std::optional<std::string>& endtime) const = 0;
+                                      const std::optional<Fmi::DateTime>& starttime,
+                                      const std::optional<Fmi::DateTime>& endtime) const = 0;
 
   bool currentValue() const { return current; }
 
@@ -69,12 +68,12 @@ class StepTimeDimension : public WMSTimeDimension
   StepTimeDimension& operator=(StepTimeDimension&& other) = delete;
 
   std::string getCapabilities(bool multiple_intervals,
-                              const std::optional<std::string>& starttime,
-                              const std::optional<std::string>& endtime) const override;
+                              const std::optional<Fmi::DateTime>& starttime,
+                              const std::optional<Fmi::DateTime>& endtime) const override;
 
  private:
-  std::string makeCapabilities(const std::optional<std::string>& starttime,
-                               const std::optional<std::string>& endtime) const;
+  std::string makeCapabilities(const std::optional<Fmi::DateTime>& starttime,
+                               const std::optional<Fmi::DateTime>& endtime) const;
 };
 
 struct tag_interval
@@ -104,17 +103,17 @@ class IntervalTimeDimension : public WMSTimeDimension
   const std::vector<tag_interval>& getIntervals() const;
 
   std::string getCapabilities(bool multiple_intervals,
-                              const std::optional<std::string>& starttime,
-                              const std::optional<std::string>& endtime) const override;
+                              const std::optional<Fmi::DateTime>& starttime,
+                              const std::optional<Fmi::DateTime>& endtime) const override;
   Fmi::DateTime mostCurrentTime() const override;
   bool isValidTime(const Fmi::DateTime& theTime, bool endtime_is_wall_clock_time) const override;
 
  private:
-  std::string makeCapabilitiesTimesteps(const std::optional<std::string>& starttime,
-                                        const std::optional<std::string>& endtime) const;
+  std::string makeCapabilitiesTimesteps(const std::optional<Fmi::DateTime>& starttime,
+                                        const std::optional<Fmi::DateTime>& endtime) const;
 
-  std::string makeCapabilities(const std::optional<std::string>& starttime,
-                               const std::optional<std::string>& endtime) const;
+  std::string makeCapabilities(const std::optional<Fmi::DateTime>& starttime,
+                               const std::optional<Fmi::DateTime>& endtime) const;
 
   std::vector<tag_interval> itsIntervals;
 };
