@@ -137,7 +137,7 @@ for f in input/*.get; do
         failed_tests+=("$request_name")
 	    echo -e "FAIL - NO OUTPUT\t$elapsed sec"
 	else
-	    if ! ./CompareImages.sh $result $expected ; then
+	    if ! ./CompareImages.pl $result $expected ; then
 	        nfailures=$((nfailures+1))
 	        failed_tests+=("$request_name")
 	    fi
