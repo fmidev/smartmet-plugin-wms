@@ -34,7 +34,7 @@ sub ReadJsonFile {
 
 sub CreateAnimatedGif {
     my ($gif_name, @png_files) = @_;
-    my $cmd = "$CONVERT -delay 50 @png_files -set dispose previous $gif_name";
+    my $cmd = "$CONVERT -quiet -delay 50 @png_files -set dispose previous $gif_name";
     system($cmd) == 0 or die "Failed to create animated GIF '$gif_name': $!";
 }
 
@@ -69,7 +69,7 @@ if ($MIME eq 'text/html' || $MIME eq 'text/x-asm')
 }
 elsif ($MIME eq 'application/pdf')
 {
-    my $cmd = "$CONVERT $RESULT $RESULT_PNG";
+    my $cmd = "$CONVERT -quiet $RESULT $RESULT_PNG";
     system($cmd) == 0
         or die "$cmd: Failed to convert result $RESULT to PNG: $!";
 }
@@ -232,7 +232,7 @@ if ("$MIME" eq "text/html" || "$MIME" eq "text/x-asm" || "$MIME" eq "image/svg" 
 }
 elsif ($MIME eq 'application/pdf')
 {
-    my $cmd = "$CONVERT $EXPECTED $EXPECTED_PNG";
+    my $cmd = "$CONVERT -quiet $EXPECTED $EXPECTED_PNG";
     system($cmd) == 0
         or die "$cmd: Failed to convert expected $EXPECTED to PNG: $!";
 }
