@@ -3285,6 +3285,8 @@ The table below contains a list of attributes used in the Station structure.
 | dx         | (int)      | -             | Station specific positional adjustment for the symbol attached to the station.                                 |
 | dy         | (int)      | -             | Station specific positional adjustment for the symbol attached to the station.                                 |
 
+Note that both longitude and latitude have to be specified in order to alter the location where a number or something else will be displayed instead of the station coordinates.
+
 
 #### WindRose structure
 
@@ -3420,6 +3422,19 @@ A product definition may at the top level include the following settings which d
 | no_subsets   | (int)             | 0             | Can only the full bounding box be requested.                                                       |
 | fixed_width  | (int)             | 0             | Nonzero implies the size cannot be changed.                                                        |
 | fixed_height | (int)             | 0             | Nonzero implies the size cannot be changed                                                         |
+| capabilities_start | (duration)  | -             | Limit start time of GetCapabilities                                                                |
+| capabilities_end   | (duration)  | -             | Limit end time of GetCapabilities                                                                  |
+
+The GetCapabilities list of available times occasionally needs to be limited. For example, one might have weather observations for more than one hunder years, and one would not want to generate a full many or time slider for all available times. Typically the observation engine provides metadata for observation producers which are more useful for example for time series requests than WMS requests.
+
+The time duration can be
+
+ * an integer, which are understood to be minutes
+ * a string with an ISO-8601 time duration such as "P10D", "P1Y", "PT24H" etc
+ * an integer string not starting with P, and ending with a time suffix such as "100d"
+
+Using ISO-8601 is recommended, the other syntaxes are supported mostly for backward compatibility as the same time duration parser is used in several other places.
+
 
 ## WMS layer variants
 
