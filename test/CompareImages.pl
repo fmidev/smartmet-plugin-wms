@@ -14,6 +14,8 @@ use File::Copy;
 my $RESULT = $ARGV[0];
 my $EXPECTED = $ARGV[1];
 
+my $CONVERT = -e '/usr/bin/magick' ? '/usr/bin/magick' : '/usr/bin/convert';
+
 sub ReadXmlFile {
     my ($file) = @_;
     open my $fh, "xmllint --format $file|" or die "Could not open '$file' $!";
@@ -28,6 +30,12 @@ sub ReadJsonFile {
     my @lines = <$fh>;
     close $fh;
     return @lines;
+}
+
+sub CreateAnimatedGif {
+    my ($gif_name, @png_files) = @_;
+    my $cmd = "$CONVERT -delay 50 @png_files -set dispose previous $gif_name";
+    system($cmd) == 0 or die "Failed to create animated GIF '$gif_name': $!";
 }
 
 if (!defined $RESULT || !defined $RESULT) {
@@ -45,8 +53,6 @@ chomp $MIME;
 my $EXPECTED_PNG = "failures/${NAME}_expected.png";
 my $RESULT_PNG = "failures/${NAME}_result.png";
 my $DIFFERENCE_PNG = "failures/${NAME}_difference.png";
-
-my $CONVERT = -e '/usr/bin/magick' ? '/usr/bin/magick' : '/usr/bin/convert';
 
 sub Cleanup {
     unlink $EXPECTED_PNG if -e $EXPECTED_PNG;
@@ -266,6 +272,7 @@ else
     if ($dbz >= 20)
     {
         print "WARNING  PSNR = $dbz dB (< 50 dB)";
+        CreateAnimatedGif("failures/${NAME}.gif", $EXPECTED_PNG, $RESULT_PNG);
         exit (0);
     }
 else
