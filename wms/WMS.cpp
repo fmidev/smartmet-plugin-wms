@@ -55,6 +55,8 @@ void check_remaining_wms_json(Json::Value &json, const std::string &name)
 {
   std::vector<std::string> deletions{
       "abstract",
+      "capabilities_start",
+      "capabilities_end",
       "cascaded",
       "fixed_height",
       "fixed_width",
