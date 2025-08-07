@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.8.4
+Version: 25.8.7
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -42,7 +42,7 @@ BuildRequires: smartmet-library-timeseries-devel >= 25.8.1
 BuildRequires: smartmet-engine-authentication-devel >= 25.7.2
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 25.8.4
+BuildRequires: smartmet-engine-observation-devel >= 25.8.5
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 25.2.18
 BuildRequires: smartmet-engine-grid-devel >= 25.6.3
@@ -132,7 +132,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 25.8.4
+#TestRequires: smartmet-engine-observation-devel >= 25.8.5
 %endif
 
 %description
@@ -161,6 +161,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Aug  7 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.8.7-1.fmi
+- Added capabilities_start and _end settings to enable limiting the size of GetCapabilities responses
+
 * Mon Aug  4 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.8.4-1.fmi
 - Enabled shifting stations observations to another latlon (BRAINSTORM-3221)
 
