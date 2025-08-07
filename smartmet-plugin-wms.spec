@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 25.8.7
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -161,6 +161,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Aug  7 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.8.7-2.fmi
+- Improved capabilities_start and _end handling
+
 * Thu Aug  7 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.8.7-1.fmi
 - Added capabilities_start and _end settings to enable limiting the size of GetCapabilities responses
 
