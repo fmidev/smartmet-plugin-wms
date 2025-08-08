@@ -1,0 +1,69 @@
+<svg width="300" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>Wind demo</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+.ModerateWindArrow_3_5	{ stroke: black; stroke-width: 0.2px; fill: rgb(0,229,255) }
+.ModerateWindArrow_5_7	{ stroke: black; stroke-width: 0.2px; fill: rgb(0,195,255) }
+.FreshWindArrow_7_10	{ stroke: black; stroke-width: 0.2px; fill: rgb(0,110,255) }
+.FreshWindArrow_10_14	{ stroke: black; stroke-width: 0.2px; fill: rgb(0,26,255) }
+.HardWindArrow_14_17	{ stroke: black; stroke-width: 0.2px; fill: rgb(212,0,255) }
+.HardWindArrow_17_21	{ stroke: black; stroke-width: 0.2px; fill: rgb(179,0,149) }
+.StormWindArrow_21_26	{ stroke: black; stroke-width: 0.2px; fill: rgb(255,0,0) }
+.GaleWindArrow_32_inf	{ stroke: black; stroke-width: 0.2px; fill: rgb(255,170,0) }
+
+
+ ]]>
+</style>
+<symbol id="windarrow" overflow="visible">
+ <desc>Plain wind arrow (north wind)</desc>
+ <path d="M0 -6 -3 -2 -1 -2 -1 4 1 4 1 -2 3 -2Z"/>
+</symbol>
+
+
+</defs>
+
+<g>
+ <g id="view1">
+   <rect height="500" style="fill:rgb(0,75,140)" width="300"/>
+  
+  <g id="wind_arrows">
+   <use class="ModerateWindArrow_5_7" transform="translate(0 0) rotate(230) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(50 0) rotate(230) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(100 0) rotate(229) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(200 0) rotate(130) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(250 0) rotate(140) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(300 0) rotate(151) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(-5 50) rotate(240) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(245 50) rotate(186) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(295 50) rotate(138) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(300 200) rotate(216) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(-5 250) rotate(230) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(95 250) rotate(254) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(145 250) rotate(250) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(100 300) rotate(250) scale(3)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_10_14" transform="translate(45 350) rotate(250) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(0 400) rotate(226) scale(3)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(50 400) rotate(250) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(100 400) rotate(250) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(150 400) rotate(260) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(200 400) rotate(260) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(250 400) rotate(249) scale(3)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(-5 450) rotate(220) scale(3)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(45 450) rotate(250) scale(3)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_10_14" transform="translate(95 450) rotate(260) scale(3)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(145 450) rotate(260) scale(3)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(195 450) rotate(260) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(245 450) rotate(270) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(0 500) rotate(210) scale(3)" xlink:href="#windarrow"/>
+   <use class="HardWindArrow_14_17" transform="translate(50 500) rotate(288) scale(3)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_10_14" transform="translate(100 500) rotate(260) scale(3)" xlink:href="#windarrow"/>
+   <use class="FreshWindArrow_7_10" transform="translate(150 500) rotate(260) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_5_7" transform="translate(200 500) rotate(270) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(250 500) rotate(260) scale(3)" xlink:href="#windarrow"/>
+   <use class="ModerateWindArrow_3_5" transform="translate(300 500) rotate(260) scale(3)" xlink:href="#windarrow"/>
+  </g>
+ </g>
+</g>
+
+</svg>
