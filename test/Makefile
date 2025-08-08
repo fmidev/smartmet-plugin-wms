@@ -61,7 +61,7 @@ clean:	clean-redis
 	rm -f $(PROG) *~
 	rm -f cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf
 	-if [ -f tmp-geonames-db/postmaster.pid ] ; then $(MAKE) stop-geonames-db; fi
-	rm -rf tmp-geonames-db* obj
+	rm -rf tmp-geonames-db* obj failures
 
 test: $(PROG) $(TEST_PREPARE_TARGETS)
 	@rm -f failures/*
