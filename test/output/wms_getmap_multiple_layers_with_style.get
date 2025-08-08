@@ -21,13 +21,13 @@
 
  ]]>
 </style>
-<symbol id="alandcity">
+<symbol id="alandcity" overflow="visible">
  <polygon points="-2,-2 -2,2 2,2 2,-2" class="Alandcity"/>
 </symbol>
-<symbol id="bigcity">
+<symbol id="bigcity" overflow="visible">
  <circle cx="0" cy="0" r="3" class="BigCity"/>
 </symbol>
-<symbol id="city">
+<symbol id="city" overflow="visible">
  <circle cx="0" cy="0" r="2" class="City"/>
 </symbol>
 

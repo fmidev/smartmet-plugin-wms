@@ -1,4 +1,4 @@
-<symbol id="windbarb_200">
+<symbol overflow="visible" id="windbarb_200">
  <line x1="0" y1="0" x2="0" y2="56.4" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>

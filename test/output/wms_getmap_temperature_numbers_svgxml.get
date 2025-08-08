@@ -7,7 +7,7 @@
 
  ]]>
 </style>
-<symbol id="dot">
+<symbol id="dot" overflow="visible">
  <desc>Simple round marker</desc>
  <circle cx="0" cy="0" r="1"/>
 </symbol>
