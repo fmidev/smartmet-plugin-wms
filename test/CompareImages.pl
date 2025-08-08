@@ -58,7 +58,6 @@ sub Cleanup {
     unlink $EXPECTED_PNG if -e $EXPECTED_PNG;
     unlink $RESULT_PNG if -e $RESULT_PNG;
     unlink $DIFFERENCE_PNG if -e $DIFFERENCE_PNG;
-    unlink $RESULT if -e $RESULT;
 }
 
 # Create result images before exiting of EXPECTED image is missing
