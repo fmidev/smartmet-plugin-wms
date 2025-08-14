@@ -111,6 +111,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: libxml2
 #TestRequires: jq
 #TestRequires: ImageMagick
+#TestRequires: ImageMagick-perl
 #TestRequires: bc
 #TestRequires: smartmet-engine-contour-devel >= 25.2.18
 #TestRequires: smartmet-engine-geonames-devel >= 25.2.18

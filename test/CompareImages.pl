@@ -8,7 +8,7 @@ use strict;
 use warnings;
 use File::Basename;
 use File::Compare;
-#use Image::Magick;
+use Image::Magick;
 use File::Copy;
 
 my $RESULT = $ARGV[0];
@@ -32,10 +32,27 @@ sub ReadJsonFile {
     return @lines;
 }
 
-sub CreateAnimatedGif {
-    my ($gif_name, @png_files) = @_;
-    my $cmd = "$CONVERT -quiet -delay 50 @png_files -set dispose previous $gif_name";
-    system($cmd) == 0 or die "Failed to create animated GIF '$gif_name': $!";
+sub CreateWebp {
+    my ($webp_name, @png_files) = @_;
+    return unless @png_files;
+    my $image = Image::Magick->new;
+    map { $image->Read($_) } @png_files;
+    my $width = $image->[0]->Get('width');
+    my $height = $image->[0]->Get('height');
+    if ($width > 16383 || $height > 16383) {
+        # WebP has a limit of 16383x16383 pixels. Crop image if necessary
+        $width = 16383 if $width > 16383;
+        $height = 16383 if $height > 16383;
+        $image->Crop(geometry => "${width}x${height}");
+    }
+    $image->Set(magick => 'WebP');
+    $image->Set(quality => 95);
+    $image->Set(delay => 50);
+    $image->Set(dispose => 'background');
+    my $status = $image->Write($webp_name);
+    if ($status) {
+        die "Failed to create WEBP file '$webp_name': $status";
+    }
 }
 
 if (!defined $RESULT || !defined $RESULT) {
@@ -54,6 +71,8 @@ my $EXPECTED_PNG = "failures/${NAME}_expected.png";
 my $RESULT_PNG = "failures/${NAME}_result.png";
 my $DIFFERENCE_PNG = "failures/${NAME}_difference.png";
 
+my $rsvg_params = "--unlimited --width=1024 --keep-aspect-ratio --background-color=white --format=png";
+
 sub Cleanup {
     unlink $EXPECTED_PNG if -e $EXPECTED_PNG;
     unlink $RESULT_PNG if -e $RESULT_PNG;
@@ -63,14 +82,20 @@ sub Cleanup {
 # Create result images before exiting of EXPECTED image is missing
 if ($MIME eq 'text/html' || $MIME eq 'text/x-asm')
 {
-    system("rsvg-convert -u -b white -f png -o $RESULT_PNG $RESULT") == 0
+    system("rsvg-convert $rsvg_params -o $RESULT_PNG $RESULT") == 0
         or die "Failed to convert result $RESULT to PNG: $!";
 }
 elsif ($MIME eq 'application/pdf')
 {
-    my $cmd = "$CONVERT -quiet $RESULT $RESULT_PNG";
-    system($cmd) == 0
-        or die "$cmd: Failed to convert result $RESULT to PNG: $!";
+    my $image = Image::Magick->new;
+    my $status = $image->Read($RESULT);
+    if ($status) {
+        die "Failed to read PDF file '$RESULT': $status";
+    }
+    $image->Set(magick => 'PNG');
+    $image->Set(depth => 8);  # Set depth to 8 bits per channel
+    $image->Set(ColorSpace => 'RGB');
+    $image->Write($RESULT_PNG); # Write the image to PNG format. Discard errors if any.
 }
 elsif ($MIME eq 'image/png' || $MIME eq 'image/jpeg') {
     File::Copy::copy($RESULT, $RESULT_PNG)
@@ -224,16 +249,22 @@ if ($MIME eq 'application/json' || $MIME eq 'text/json')
 
 if ("$MIME" eq "text/html" || "$MIME" eq "text/x-asm" || "$MIME" eq "image/svg" || "$MIME" eq "image/svg+xml" )
 {
-    system("rsvg-convert -u -b white -f png -o $EXPECTED_PNG $EXPECTED") == 0
+    system("rsvg-convert $rsvg_params -o $EXPECTED_PNG $EXPECTED") == 0
         or die "Failed to convert expected $EXPECTED to PNG: $!";
-    system("rsvg-convert -u -b white -f png -o $RESULT_PNG $RESULT") == 0
+    system("rsvg-convert $rsvg_params -o $RESULT_PNG $RESULT") == 0
         or die "Failed to convert result $RESULT to PNG: $!";
 }
 elsif ($MIME eq 'application/pdf')
 {
-    my $cmd = "$CONVERT -quiet $EXPECTED $EXPECTED_PNG";
-    system($cmd) == 0
-        or die "$cmd: Failed to convert expected $EXPECTED to PNG: $!";
+    my $image = Image::Magick->new;
+    my $status = $image->Read($RESULT);
+    if ($status) {
+        die "Failed to read PDF file '$RESULT': $status";
+    }
+    $image->Set(magick => 'PNG');
+    $image->Set(depth => 8);  # Set depth to 8 bits per channel
+    $image->Set(ColorSpace => 'RGB');
+    $image->Write($RESULT_PNG); # Write the image to PNG format. Discard errors if any.
 }
 elsif ($MIME eq 'image/png' || $MIME eq 'image/jpeg')
 {
@@ -271,12 +302,13 @@ else
     if ($dbz >= 20)
     {
         print "WARNING  PSNR = $dbz dB (< 50 dB)";
-        CreateAnimatedGif("failures/${NAME}.gif", $EXPECTED_PNG, $RESULT_PNG);
+        CreateWebp("failures/${NAME}_error.webp", $EXPECTED_PNG, $RESULT_PNG);
         exit (0);
     }
 else
     {
         print "FAIL     PSNR = $dbz dB (< 20 dB)";
+        CreateWebp("failures/${NAME}_warning.webp", $EXPECTED_PNG, $RESULT_PNG);
         exit (1);
     }
 }
