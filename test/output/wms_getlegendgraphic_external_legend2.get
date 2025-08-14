@@ -9,46 +9,46 @@
 
  ]]>
 </style>
-<symbol id="windbarb_0">
+<symbol overflow="visible" id="windbarb_0">
  <circle cx="0" cy="0" r="4" class="BarbLine"/>
-</symbol><symbol id="windbarb_1">
+</symbol><symbol overflow="visible" id="windbarb_1">
  <line x1="0" y1="0" x2="0" y2="21.6" class="BarbLine"/>
-</symbol><symbol id="windbarb_10">
+</symbol><symbol overflow="visible" id="windbarb_10">
  <line x1="0" y1="0" x2="0" y2="21.6" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
 </symbol>
-<symbol id="windbarb_100">
+<symbol overflow="visible" id="windbarb_100">
  <line x1="0" y1="0" x2="0" y2="42" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_105">
+<symbol overflow="visible" id="windbarb_105">
  <line x1="0" y1="0" x2="0" y2="42" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-3.6373066958946" y2="23.7" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_110">
+<symbol overflow="visible" id="windbarb_110">
  <line x1="0" y1="0" x2="0" y2="42" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_115">
+<symbol overflow="visible" id="windbarb_115">
  <line x1="0" y1="0" x2="0" y2="42" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-3.6373066958946" y2="20.1" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_120">
+<symbol overflow="visible" id="windbarb_120">
  <line x1="0" y1="0" x2="0" y2="42" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_125">
+<symbol overflow="visible" id="windbarb_125">
  <line x1="0" y1="0" x2="0" y2="42" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -56,7 +56,7 @@
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_130">
+<symbol overflow="visible" id="windbarb_130">
  <line x1="0" y1="0" x2="0" y2="42" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -64,7 +64,7 @@
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_135">
+<symbol overflow="visible" id="windbarb_135">
  <line x1="0" y1="0" x2="0" y2="42" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -73,7 +73,7 @@
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_140">
+<symbol overflow="visible" id="windbarb_140">
  <line x1="0" y1="0" x2="0" y2="42" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -82,7 +82,7 @@
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_145">
+<symbol overflow="visible" id="windbarb_145">
  <line x1="0" y1="0" x2="0" y2="42" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -92,32 +92,32 @@
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_15">
+<symbol overflow="visible" id="windbarb_15">
  <line x1="0" y1="0" x2="0" y2="21.6" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-3.6373066958946" y2="20.1" class="BarbLine"/>
 </symbol>
-<symbol id="windbarb_150">
+<symbol overflow="visible" id="windbarb_150">
  <line x1="0" y1="0" x2="0" y2="49.2" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_155">
+<symbol overflow="visible" id="windbarb_155">
  <line x1="0" y1="0" x2="0" y2="49.2" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-3.6373066958946" y2="23.7" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_160">
+<symbol overflow="visible" id="windbarb_160">
  <line x1="0" y1="0" x2="0" y2="49.2" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_165">
+<symbol overflow="visible" id="windbarb_165">
  <line x1="0" y1="0" x2="0" y2="49.2" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-3.6373066958946" y2="20.1" class="BarbLine"/>
@@ -125,7 +125,7 @@
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_170">
+<symbol overflow="visible" id="windbarb_170">
  <line x1="0" y1="0" x2="0" y2="49.2" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -133,7 +133,7 @@
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_175">
+<symbol overflow="visible" id="windbarb_175">
  <line x1="0" y1="0" x2="0" y2="49.2" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -142,7 +142,7 @@
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_180">
+<symbol overflow="visible" id="windbarb_180">
  <line x1="0" y1="0" x2="0" y2="49.2" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -151,7 +151,7 @@
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_185">
+<symbol overflow="visible" id="windbarb_185">
  <line x1="0" y1="0" x2="0" y2="49.2" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -161,7 +161,7 @@
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_190">
+<symbol overflow="visible" id="windbarb_190">
  <line x1="0" y1="0" x2="0" y2="49.2" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -171,7 +171,7 @@
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_195">
+<symbol overflow="visible" id="windbarb_195">
  <line x1="0" y1="0" x2="0" y2="49.2" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -182,19 +182,19 @@
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_20">
+<symbol overflow="visible" id="windbarb_20">
  <line x1="0" y1="0" x2="0" y2="21.6" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
 </symbol>
-<symbol id="windbarb_200">
+<symbol overflow="visible" id="windbarb_200">
  <line x1="0" y1="0" x2="0" y2="56.4" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
  <polygon points="0,46.8 -7.2746133917893,51 0,54" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_205">
+<symbol overflow="visible" id="windbarb_205">
  <line x1="0" y1="0" x2="0" y2="56.4" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-3.6373066958946" y2="23.7" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
@@ -202,7 +202,7 @@
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
  <polygon points="0,46.8 -7.2746133917893,51 0,54" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_210">
+<symbol overflow="visible" id="windbarb_210">
  <line x1="0" y1="0" x2="0" y2="56.4" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
@@ -210,7 +210,7 @@
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
  <polygon points="0,46.8 -7.2746133917893,51 0,54" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_215">
+<symbol overflow="visible" id="windbarb_215">
  <line x1="0" y1="0" x2="0" y2="56.4" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-3.6373066958946" y2="20.1" class="BarbLine"/>
@@ -219,7 +219,7 @@
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
  <polygon points="0,46.8 -7.2746133917893,51 0,54" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_220">
+<symbol overflow="visible" id="windbarb_220">
  <line x1="0" y1="0" x2="0" y2="56.4" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -228,7 +228,7 @@
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
  <polygon points="0,46.8 -7.2746133917893,51 0,54" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_225">
+<symbol overflow="visible" id="windbarb_225">
  <line x1="0" y1="0" x2="0" y2="56.4" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -238,7 +238,7 @@
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
  <polygon points="0,46.8 -7.2746133917893,51 0,54" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_235">
+<symbol overflow="visible" id="windbarb_235">
  <line x1="0" y1="0" x2="0" y2="56.4" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -249,7 +249,7 @@
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
  <polygon points="0,46.8 -7.2746133917893,51 0,54" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_240">
+<symbol overflow="visible" id="windbarb_240">
  <line x1="0" y1="0" x2="0" y2="56.4" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -260,7 +260,7 @@
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
  <polygon points="0,46.8 -7.2746133917893,51 0,54" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_245">
+<symbol overflow="visible" id="windbarb_245">
  <line x1="0" y1="0" x2="0" y2="56.4" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -272,13 +272,13 @@
  <polygon points="0,39.6 -7.2746133917893,43.8 0,46.8" class="BarbFill"/>
  <polygon points="0,46.8 -7.2746133917893,51 0,54" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_25">
+<symbol overflow="visible" id="windbarb_25">
  <line x1="0" y1="0" x2="0" y2="21.6" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
  <line x1="0" y1="14.4" x2="-3.6373066958946" y2="16.5" class="BarbLine"/>
 </symbol>
-<symbol id="windbarb_250">
+<symbol overflow="visible" id="windbarb_250">
  <line x1="0" y1="0" x2="0" y2="63.6" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
  <polygon points="0,32.4 -7.2746133917893,36.6 0,39.6" class="BarbFill"/>
@@ -286,27 +286,27 @@
  <polygon points="0,46.8 -7.2746133917893,51 0,54" class="BarbFill"/>
  <polygon points="0,54 -7.2746133917893,58.2 0,61.2" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_30">
+<symbol overflow="visible" id="windbarb_30">
  <line x1="0" y1="0" x2="0" y2="21.6" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
  <line x1="0" y1="14.4" x2="-7.2746133917893" y2="18.6" class="BarbLine"/>
 </symbol>
-<symbol id="windbarb_35">
+<symbol overflow="visible" id="windbarb_35">
  <line x1="0" y1="0" x2="0" y2="21.6" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
  <line x1="0" y1="14.4" x2="-7.2746133917893" y2="18.6" class="BarbLine"/>
  <line x1="0" y1="10.8" x2="-3.6373066958946" y2="12.9" class="BarbLine"/>
 </symbol>
-<symbol id="windbarb_40">
+<symbol overflow="visible" id="windbarb_40">
  <line x1="0" y1="0" x2="0" y2="21.6" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
  <line x1="0" y1="14.4" x2="-7.2746133917893" y2="18.6" class="BarbLine"/>
  <line x1="0" y1="10.8" x2="-7.2746133917893" y2="15" class="BarbLine"/>
 </symbol>
-<symbol id="windbarb_45">
+<symbol overflow="visible" id="windbarb_45">
  <line x1="0" y1="0" x2="0" y2="21.6" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -314,50 +314,50 @@
  <line x1="0" y1="10.8" x2="-7.2746133917893" y2="15" class="BarbLine"/>
  <line x1="0" y1="7.2" x2="-3.6373066958946" y2="9.3" class="BarbLine"/>
 </symbol>
-<symbol id="windbarb_5">
+<symbol overflow="visible" id="windbarb_5">
  <line x1="0" y1="0" x2="0" y2="21.6" class="BarbLine"/>
  <line x1="0" y1="18" x2="-3.6373066958946" y2="20.1" class="BarbLine"/>
-</symbol><symbol id="windbarb_50">
+</symbol><symbol overflow="visible" id="windbarb_50">
  <line x1="0" y1="0" x2="0" y2="34.8" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_55">
+<symbol overflow="visible" id="windbarb_55">
  <line x1="0" y1="0" x2="0" y2="34.8" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-3.6373066958946" y2="23.7" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_60">
+<symbol overflow="visible" id="windbarb_60">
  <line x1="0" y1="0" x2="0" y2="34.8" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_65">
+<symbol overflow="visible" id="windbarb_65">
  <line x1="0" y1="0" x2="0" y2="34.8" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-3.6373066958946" y2="20.1" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_70">
+<symbol overflow="visible" id="windbarb_70">
  <line x1="0" y1="0" x2="0" y2="34.8" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_75">
+<symbol overflow="visible" id="windbarb_75">
  <line x1="0" y1="0" x2="0" y2="34.8" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
  <line x1="0" y1="14.4" x2="-3.6373066958946" y2="16.5" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_80">
+<symbol overflow="visible" id="windbarb_80">
  <line x1="0" y1="0" x2="0" y2="34.8" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
  <line x1="0" y1="14.4" x2="-7.2746133917893" y2="18.6" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_85">
+<symbol overflow="visible" id="windbarb_85">
  <line x1="0" y1="0" x2="0" y2="34.8" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -365,7 +365,7 @@
  <line x1="0" y1="10.8" x2="-3.6373066958946" y2="12.9" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_90">
+<symbol overflow="visible" id="windbarb_90">
  <line x1="0" y1="0" x2="0" y2="34.8" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
@@ -373,7 +373,7 @@
  <line x1="0" y1="10.8" x2="-7.2746133917893" y2="15" class="BarbLine"/>
  <polygon points="0,25.2 -7.2746133917893,29.4 0,32.4" class="BarbFill"/>
 </symbol>
-<symbol id="windbarb_95">
+<symbol overflow="visible" id="windbarb_95">
  <line x1="0" y1="0" x2="0" y2="34.8" class="BarbLine"/>
  <line x1="0" y1="21.6" x2="-7.2746133917893" y2="25.8" class="BarbLine"/>
  <line x1="0" y1="18" x2="-7.2746133917893" y2="22.2" class="BarbLine"/>
