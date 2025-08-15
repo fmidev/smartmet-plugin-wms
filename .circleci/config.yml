@@ -40,9 +40,11 @@ jobs:
           name: Copy generated WEBP files from test/failures
           command: |
             sudo mkdir -p /failures
-            for webp in $(find /test/failures -name '*.webp'); do
-              sudo cp "$webp" /failures/
-            done
+            if [ -d /test/failures ]; then
+              for webp in $(find /test/failures -name '*.webp'); do
+                sudo cp "$webp" /failures/
+              done
+            fi
           when: always
       - store_test_results:
           path: /failures
