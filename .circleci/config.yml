@@ -36,6 +36,14 @@ jobs:
       - run:
           name: Test
           command: ci-build test
+      - run:
+          name: Copy generated WEBP files from test/failures
+          command: |
+            sudo mkdir -p /failures
+            sudo cp -r /test/failures/*.webp /failures/
+          when: always
+      - store_test_results:
+          path: /failures
       - store_artifacts:
           path: /dist
           destination: dist/
