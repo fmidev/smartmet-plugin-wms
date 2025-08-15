@@ -89,7 +89,7 @@ elsif ($MIME eq 'application/pdf')
 {
     my $image = Image::Magick->new;
     my $status = $image->Read($RESULT);
-    if ($status) {
+    if (defined $status and $status >= 400) { # Check for error status, ignore warnings
         die "Failed to read PDF file '$RESULT': $status";
     }
     $image->Set(magick => 'PNG');
@@ -257,14 +257,17 @@ if ("$MIME" eq "text/html" || "$MIME" eq "text/x-asm" || "$MIME" eq "image/svg" 
 elsif ($MIME eq 'application/pdf')
 {
     my $image = Image::Magick->new;
-    my $status = $image->Read($RESULT);
-    if ($status) {
+    my $status = $image->Read($EXPECTED);
+    if (defined $status and $status >= 400) { # Check for error status, ignore warnings
         die "Failed to read PDF file '$RESULT': $status";
     }
     $image->Set(magick => 'PNG');
     $image->Set(depth => 8);  # Set depth to 8 bits per channel
     $image->Set(ColorSpace => 'RGB');
-    $image->Write($RESULT_PNG); # Write the image to PNG format. Discard errors if any.
+    $status = $image->Write($EXPECTED_PNG); # Write the image to PNG format. Discard errors if any.
+    if (defined $status && $status >= 400) { # Check for error status, ignore warnings
+        die "Failed to write PNG file '$EXPECTED_PNG': $status";
+    }
 }
 elsif ($MIME eq 'image/png' || $MIME eq 'image/jpeg')
 {
