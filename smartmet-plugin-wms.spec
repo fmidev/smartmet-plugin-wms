@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.8.7
-Release: 2%{?dist}.fmi
+Version: 25.8.17
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -42,7 +42,7 @@ BuildRequires: smartmet-library-timeseries-devel >= 25.8.1
 BuildRequires: smartmet-engine-authentication-devel >= 25.7.2
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 25.8.5
+BuildRequires: smartmet-engine-observation-devel >= 25.8.17
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 25.2.18
 BuildRequires: smartmet-engine-grid-devel >= 25.6.3
@@ -136,7 +136,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 25.8.5
+#TestRequires: smartmet-engine-observation-devel >= 25.8.17
 %endif
 
 %description
@@ -165,6 +165,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sun Aug 17 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.8.17-1.fmi
+- Repackaged due to ObsEngine ABI changes
+
 * Thu Aug  7 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.8.7-2.fmi
 - Improved capabilities_start and _end handling
 
