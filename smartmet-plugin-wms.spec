@@ -84,7 +84,7 @@ Requires: smartmet-library-spine >= 25.5.13
 Requires: smartmet-library-timeseries >= 25.8.1
 Requires: smartmet-library-giza >= 25.2.18
 %if %{with authentication}
-Requires: smartmet-engine-authentication >= 25.7.2
+Requires: smartmet-engine-authentication >= 25.8.22
 %endif
 Requires: smartmet-engine-querydata >= 25.6.17
 Requires: smartmet-engine-contour >= 25.2.18
@@ -136,7 +136,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 25.8.17
+#TestRequires: smartmet-engine-observation-devel >= 25.8.22
 %endif
 
 %description
