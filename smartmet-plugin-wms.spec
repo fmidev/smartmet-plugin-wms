@@ -33,8 +33,8 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 25.2.18
-BuildRequires: smartmet-library-grid-content-devel >= 25.5.22
-BuildRequires: smartmet-library-grid-files-devel >= 25.7.24
+BuildRequires: smartmet-library-grid-content-devel >= 25.8.25
+BuildRequires: smartmet-library-grid-files-devel >= 25.8.25
 BuildRequires: smartmet-library-macgyver-devel >= 25.7.28
 BuildRequires: smartmet-library-spine-devel >= 25.5.13
 BuildRequires: smartmet-library-timeseries-devel >= 25.8.1
@@ -45,7 +45,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 25.7.2
 BuildRequires: smartmet-engine-observation-devel >= 25.8.17
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 25.2.18
-BuildRequires: smartmet-engine-grid-devel >= 25.6.3
+BuildRequires: smartmet-engine-grid-devel >= 25.8.25
 BuildRequires: smartmet-engine-geonames-devel >= 25.2.18
 BuildRequires: smartmet-engine-querydata-devel >= 25.6.17
 BuildRequires: smartmet-engine-contour-devel >= 25.2.18
@@ -75,8 +75,8 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 25.5.22
-Requires: smartmet-library-grid-files >= 25.7.24
+Requires: smartmet-library-grid-content >= 25.8.25
+Requires: smartmet-library-grid-files >= 25.8.25
 Requires: smartmet-library-gis >= 25.7.24
 Requires: smartmet-library-trax >= 25.6.19
 Requires: smartmet-library-macgyver >= 25.7.28
@@ -89,7 +89,7 @@ Requires: smartmet-engine-authentication >= 25.8.22
 Requires: smartmet-engine-querydata >= 25.6.17
 Requires: smartmet-engine-contour >= 25.2.18
 Requires: smartmet-engine-gis >= 25.2.18
-Requires: smartmet-engine-grid >= 25.6.3
+Requires: smartmet-engine-grid >= 25.8.25
 Requires: smartmet-engine-geonames >= 25.2.18
 Requires: smartmet-server >= 25.5.13
 Requires: smartmet-library-spine >= 25.5.13
@@ -123,7 +123,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-macgyver-devel >= 25.7.28
 #TestRequires: smartmet-library-spine-devel >= 25.5.13
 #TestRequires: smartmet-library-timeseries-devel >= 25.8.1
-#TestRequires: smartmet-engine-grid-devel >= 25.6.3
+#TestRequires: smartmet-engine-grid-devel >= 25.8.25
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-utils-devel >= 25.8.6
