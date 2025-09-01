@@ -167,11 +167,6 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 {
   try
   {
-    if (checkRequest(theRequest, theResponse, false))
-    {
-      return;
-    }
-
     int width = Spine::optional_int(theRequest.getParameter("width"), 1000);
     int height = Spine::optional_int(theRequest.getParameter("height"), 1000);
 

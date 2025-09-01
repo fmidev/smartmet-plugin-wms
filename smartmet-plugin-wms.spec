@@ -80,7 +80,7 @@ Requires: smartmet-library-grid-files >= 25.8.25
 Requires: smartmet-library-gis >= 25.7.24
 Requires: smartmet-library-trax >= 25.6.19
 Requires: smartmet-library-macgyver >= 25.7.28
-Requires: smartmet-library-spine >= 25.5.13
+Requires: smartmet-library-spine >= 25.9.1
 Requires: smartmet-library-timeseries >= 25.8.1
 Requires: smartmet-library-giza >= 25.2.18
 %if %{with authentication}
@@ -92,7 +92,7 @@ Requires: smartmet-engine-gis >= 25.2.18
 Requires: smartmet-engine-grid >= 25.8.25
 Requires: smartmet-engine-geonames >= 25.2.18
 Requires: smartmet-server >= 25.5.13
-Requires: smartmet-library-spine >= 25.5.13
+Requires: smartmet-library-spine >= 25.9.1
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -121,7 +121,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-trax-devel >= 25.6.19
 #TestRequires: smartmet-library-newbase-devel >= 25.3.20
 #TestRequires: smartmet-library-macgyver-devel >= 25.7.28
-#TestRequires: smartmet-library-spine-devel >= 25.5.13
+#TestRequires: smartmet-library-spine-devel >= 25.9.1
 #TestRequires: smartmet-library-timeseries-devel >= 25.8.1
 #TestRequires: smartmet-engine-grid-devel >= 25.8.25
 #TestRequires: smartmet-engine-grid-test
