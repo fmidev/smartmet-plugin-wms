@@ -115,6 +115,12 @@ class Plugin : public SmartMetPlugin
   std::size_t getGradientHash(const std::string& theCustomer,
                               const std::string& theName,
                               bool theWmsFlag) const;
+  std::string getColorMap(const std::string& theCustomer,
+                          const std::string& theName,
+                          bool theWmsFlag) const;
+  std::size_t getColorMapHash(const std::string& theCustomer,
+                              const std::string& theName,
+                              bool theWmsFlag) const;
 
  private:
   void init() override;

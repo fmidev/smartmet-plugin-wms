@@ -490,6 +490,8 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
         catch (const Fmi::Exception &wmsException)
         {
+          wmsException.printError();
+
           // The default for most responses:
           theResponse.setStatus(Spine::HTTP::Status::bad_request);
 
@@ -570,7 +572,7 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       exception.addParameter("Apikey", (apikey ? *apikey : std::string("-")));
 
       auto quiet = theRequest.getParameter("quiet");
-      if (!quiet || (*quiet == "0" && *quiet == "false"))
+      //if (!quiet || (*quiet == "0" && *quiet == "false"))
         exception.printError();
 
       if (isdebug)
@@ -1427,6 +1429,65 @@ std::size_t Plugin::getGradientHash(const std::string &theCustomer,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get ColorMap contents from the internal cache
+ */
+// ----------------------------------------------------------------------
+
+std::string Plugin::getColorMap(const std::string &theCustomer,
+                                const std::string &theName,
+                                bool theWmsFlag) const
+{
+  try
+  {
+    if (theName.empty())
+      return "";
+
+    std::list<std::string> tested_files;
+    std::string colormap_path = resolveFilePath(theCustomer, "/colormaps/", theName + ".csv", theWmsFlag, tested_files);
+
+    if (std::filesystem::exists(colormap_path))
+      return itsFileCache.get(colormap_path);
+
+    throw Fmi::Exception(BCP, "Failed to find ColorMap file").addDetails(tested_files);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to find colormap")
+        .addParameter("Customer", theCustomer)
+        .addParameter("ColorMap", theName);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get ColorMap hash
+ */
+// ----------------------------------------------------------------------
+
+std::size_t Plugin::getColorMapHash(const std::string &theCustomer,
+                                    const std::string &theName,
+                                    bool theWmsFlag) const
+{
+  try
+  {
+    if (theName.empty())
+      return 0;
+
+    std::string colormap_path = resolveSvgPath(theCustomer, "/colormaps/", theName, theWmsFlag);
+
+    return itsFileCache.last_modified(colormap_path);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 
 // ----------------------------------------------------------------------
 /*!

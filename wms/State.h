@@ -146,6 +146,11 @@ class State
   std::string getGradient(const std::string& theName) const;
   std::size_t getGradientHash(const std::string& theName) const;
 
+  // Fetch colormap contents
+  bool setColorMap(const std::string& theName, const std::string& theValue) const;
+  std::string getColorMap(const std::string& theName) const;
+  std::size_t getColorMapHash(const std::string& theName) const;
+
   // Fetch filter contents
   bool setFilter(const std::string& theName, const std::string& theValue) const;
   std::string getFilter(const std::string& theName) const;
@@ -224,6 +229,8 @@ class State
   mutable std::map<std::string, std::string> itsPatterns;
   // Gradients we already know of
   mutable std::map<std::string, std::string> itsGradients;
+  // Colormaps we already know of
+  mutable std::map<std::string, std::string> itsColorMaps;
 
   // Unique Qids created by us
   mutable std::map<std::string, std::size_t> itsQids;

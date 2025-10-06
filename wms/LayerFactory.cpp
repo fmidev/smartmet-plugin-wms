@@ -20,6 +20,7 @@
 #include "NumberLayer.h"
 #include "PostGISLayer.h"
 #include "PresentWeatherObservationLayer.h"
+#include "RasterLayer.h"
 #include "StreamLayer.h"
 #include "SymbolLayer.h"
 #include "TagLayer.h"
@@ -75,6 +76,8 @@ Layer* create(const Json::Value& theJson)
       return new NullLayer;
     if (name == "number")
       return new NumberLayer;
+    if (name == "raster")
+      return new RasterLayer;
     if (name == "stream")
       return new StreamLayer;
     if (name == "symbol")
