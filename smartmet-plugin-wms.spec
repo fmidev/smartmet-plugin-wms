@@ -36,7 +36,7 @@ BuildRequires: smartmet-library-giza-devel >= 25.2.18
 BuildRequires: smartmet-library-grid-content-devel >= 25.8.25
 BuildRequires: smartmet-library-grid-files-devel >= 25.10.6
 BuildRequires: smartmet-library-macgyver-devel >= 25.9.30
-BuildRequires: smartmet-library-spine-devel >= 25.9.166
+BuildRequires: smartmet-library-spine-devel >= 25.9.1
 BuildRequires: smartmet-library-timeseries-devel >= 25.8.1
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 25.9.29
@@ -80,7 +80,7 @@ Requires: smartmet-library-grid-files >= 25.10.6
 Requires: smartmet-library-gis >= 25.9.15
 Requires: smartmet-library-trax >= 25.9.29
 Requires: smartmet-library-macgyver >= 25.9.30
-Requires: smartmet-library-spine >= 25.9.166
+Requires: smartmet-library-spine >= 25.9.1
 Requires: smartmet-library-timeseries >= 25.8.1
 Requires: smartmet-library-giza >= 25.2.18
 %if %{with authentication}
@@ -92,7 +92,7 @@ Requires: smartmet-engine-gis >= 25.9.29
 Requires: smartmet-engine-grid >= 25.8.25
 Requires: smartmet-engine-geonames >= 25.9.29
 Requires: smartmet-server >= 25.9.9
-Requires: smartmet-library-spine >= 25.9.166
+Requires: smartmet-library-spine >= 25.9.1
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
