@@ -47,6 +47,7 @@ std::set<std::string> querydata_layers = {"arrow",
                                           "symbol",
                                           "tag",
                                           "location",
+                                          "raster",
                                           "stream"};
 
 std::set<std::string> postgis_layers = {"postgis", "icemap"};

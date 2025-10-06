@@ -1,0 +1,16 @@
+# This file defines ARGB colors for different values. When using smooth colors, each color 
+# component (A,R,G,B) is linearly interpolated between the lower and the upper color by using
+# the given value. Otherwise, the lower color is used for all values that are smaller than 
+# the upper value.
+
+# value; ARGB-color
+# -----------------
+0.0;000a9bff
+0.1;ff0a9bff 
+0.2;ff05cdaa
+0.5;ff8ce614
+1.0;fff0f014
+2.0;ffffcd14
+5.0;ffff503c
+10.0;ffd51a0c
+99.0;ffd51a0c

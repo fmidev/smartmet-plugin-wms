@@ -848,6 +848,66 @@ std::size_t State::getGradientHash(const std::string& theName) const
   }
 }
 
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Fetch ColorMap from the cache
+ */
+// ----------------------------------------------------------------------
+
+std::string State::getColorMap(const std::string& theName) const
+{
+  try
+  {
+    if (itsColorMaps.count(theName) > 0)
+      return itsColorMaps[theName];
+    return itsPlugin.getColorMap(itsCustomer, theName, itUsesWms);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Fetch gradient hash value
+ */
+// ----------------------------------------------------------------------
+
+std::size_t State::getColorMapHash(const std::string& theName) const
+{
+  try
+  {
+    if (itsColorMaps.count(theName) > 0)
+      return Fmi::hash_value(itsColorMaps[theName]);
+    return itsPlugin.getColorMapHash(itsCustomer, theName, itUsesWms);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Store ColorMap to state object, overriding any lower layer data
+ */
+// ----------------------------------------------------------------------
+bool State::setColorMap(const std::string& theName, const std::string& theValue) const
+{
+  try
+  {
+    auto ret = itsColorMaps.insert({theName, theValue});
+    return ret.second;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Establish precision for coordinates
