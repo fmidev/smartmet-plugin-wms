@@ -218,6 +218,51 @@
 
 	  
 	  <Layer queryable="1">
+      <Name>grid:raster_1</Name>
+      <Title>Temperature</Title>
+      <Abstract>Temperature raster</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_1&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	  
+	  <Layer queryable="1">
+      <Name>grid:raster_2</Name>
+      <Title>Clouds</Title>
+      <Abstract>Clouds raster</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_2&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	  
+	  <Layer queryable="1">
+      <Name>grid:raster_3</Name>
+      <Title>Precipitation</Title>
+      <Abstract>Precipitation raster</Abstract>
+      <Style>
+        <Name>default</Name>
+        <Title>Default style</Title>
+        <LegendURL width="30" height="10">
+          <Format>image/png</Format>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=grid%3Araster_3&amp;width=30&amp;height=10"/>
+        </LegendURL>
+      </Style>
+      </Layer>
+
+	  
+	  <Layer queryable="1">
       <Name>grid:temperature_1</Name>
       <Title>Temperature</Title>
       <Abstract>Temperature</Abstract>
