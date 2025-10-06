@@ -25,6 +25,7 @@ Table of Contents
       - [NullLayer](#nulllayer)
       - [CloudCeilingLayer](#cloudceilinglayer)
       - [StreamLayer](#streamlayer)
+      - [RasterLayer](#rasterlayer)
       - [LegendLayer](#legendlayer)
       - [TimeLayer](#timelayer)
       - [TagLayer](#taglayer)
@@ -1273,6 +1274,44 @@ The table below contains a list of attributes that can be defined for the stream
 | xstep       | (int)    | 20            | Streamline start point step size in x-direction.     |
 | ystep       | (int)    | 20            | Streamline start point step size in y-direction.     |
 | precision   | (double) | 1.0           | Precision of the generated coordinates.              |
+
+
+#### RasterLayer
+
+The core concept of a raster layer is to render an image from a set of grid-based values, where each grid cell corresponds to a pixel in the resulting raster image. The color of each pixel is determined by mapping its associated value to a position within a predefined color map. This color map is essentially a list of value-color pairs, allowing for the identification of lower and upper bounds for each input value, along with their associated colors. By default, the final color is computed via linear interpolation between these bounds on a per-channel basis (A, R, G, B), resulting in a smooth color gradient. This technique eliminates hard boundaries between value regions, yielding a more continuous and visually intuitive representation.
+
+The value-to-color mapping is handled by so-called painter elements, which can vary in type. The current implementation supports two painter types. The first, named "default", utilizes a full value-to-color list to perform interpolation across multiple defined intervals. The second, called "range", functions similarly but operates over a single continuous value range. It is configured using only the minimum and maximum values of the dataset, along with their corresponding colors. It assumes that all grid values fall within this range and performs a direct linear interpolation between the defined endpoint colors.
+
+<img src="images/raster.png">
+
+The table below contains a list of attributes that can be defined for the raster layer in addition to the common layer attributes.
+
+<pre><b>RasterLayer </b></pre>
+| Name          | Type     | Default value | Description                                                                    |
+| ------------- | -------- | ------------- | ------------------------------------------------------------------------------ |
+| parameter     | (string) | -             | The parameter name for the direction.                                          |
+| compression   | (int)    | 1             | Compression rate (1 = fast,low compression, 9 = slow, high compression.        |
+| interpolation | (string) | linear        | Interpolation method when fetching grid pixels (linear / nearest).             |
+| painter       | (string) | default       | Painter element (default / range).                                             |
+
+Attributes for the painter "default".
+
+| Name          | Type     | Default value | Description                                                                     |
+| ------------- | -------- | ------------- | ------------------------------------------------------------------------------- |
+| colormap      | (string) |               | Name of the colormap for "default" painter. This refers to a colormap file.     |
+| smooth        | (bool)   | true          | Should the painter use "smooth colors" i.e. linarly interpolate colors.         |
+
+Attributes for the painter "range".
+
+| Name          | Type     | Default value | Description                                                                     |
+| ------------- | -------- | ------------- | ------------------------------------------------------------------------------- |
+| min_value     | (float)  |               | The minimum value of the value range.                                           |
+| max_value     | (float)  |               | The maximum value of the value range.                                           |
+| min_color     | (ARGB)   | 00000000      | The color used with the minimum value (min_value).                              |
+| max_color     | (ARGB)   | 00000000      | The color used with the maximum value (max_value).                              |
+| low_color     | (ARGB)   | 00000000      | The color used with values that are smaller than the minimum value (min_value). |
+| high_color    | (ARGB)   | 00000000      | The color used with values that are bigger than the maximum value (max_value).  |
+
 
 
 #### LegendLayer
