@@ -31,7 +31,7 @@ class ColorMap
 
     void              getValuesAndColors(std::vector<float>& values,std::vector<unsigned int>& colors);
 
-    void              print(std::ostream& stream,uint level,uint optionFlags);
+    void              print(std::ostream& stream,unsigned int level,unsigned int optionFlags);
 
   protected:
 
