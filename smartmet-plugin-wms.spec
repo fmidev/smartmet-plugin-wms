@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.10.6
+Version: 25.10.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -165,6 +165,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Oct  8 2025 Andris Pavēnis <andris.pavenis@fmi.fi> 25.10.8-1.fmi
+- ColorMap: use 'unsigned int' instead of 'uint'
+
 * Mon Oct  6 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> - 25.10.6-1.fmi
 - Added RasterLayer
 
