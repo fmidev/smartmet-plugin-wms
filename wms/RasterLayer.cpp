@@ -25,6 +25,7 @@
 #include <gis/OGR.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <grid-files/common/GeneralFunctions.h>
+#include <grid-files/common/ImageFunctions.h>
 #include <grid-files/common/ImagePaint.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>

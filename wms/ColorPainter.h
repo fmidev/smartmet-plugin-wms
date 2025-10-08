@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <sys/types.h>
 
 
 namespace SmartMet
