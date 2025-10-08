@@ -18,24 +18,24 @@ typedef std::map<float,unsigned int> Colors;
 class ColorMap
 {
   public:
-                      ColorMap();
-                      ColorMap(const ColorMap& colorMap);
-    virtual           ~ColorMap();
+                         ColorMap();
+                         ColorMap(const ColorMap& colorMap);
+    virtual              ~ColorMap();
 
-    virtual void      setColors(Colors& colors);
+    virtual void         setColors(Colors& colors);
 
-    virtual uint      getColor(double value);
-    virtual void      getColors(std::vector<float>& values,std::vector<unsigned int>& colors);
-    virtual uint      getSmoothColor(double value);
-    virtual void      getSmoothColors(std::vector<float>& values,std::vector<unsigned int>& colors);
+    virtual unsigned int getColor(double value);
+    virtual void         getColors(std::vector<float>& values,std::vector<unsigned int>& colors);
+    virtual unsigned int getSmoothColor(double value);
+    virtual void         getSmoothColors(std::vector<float>& values,std::vector<unsigned int>& colors);
 
-    void              getValuesAndColors(std::vector<float>& values,std::vector<unsigned int>& colors);
+    void                 getValuesAndColors(std::vector<float>& values,std::vector<unsigned int>& colors);
 
-    void              print(std::ostream& stream,unsigned int level,unsigned int optionFlags);
+    void                 print(std::ostream& stream,unsigned int level,unsigned int optionFlags);
 
   protected:
 
-    Colors            mColors;
+    Colors               mColors;
 };
 
 

@@ -131,7 +131,7 @@ void ColorMap::getSmoothColors(std::vector<float>& values,std::vector<unsigned i
 
 
 
-uint ColorMap::getColor(double value)
+unsigned int ColorMap::getColor(double value)
 {
   try
   {
@@ -165,7 +165,7 @@ uint ColorMap::getColor(double value)
 
 
 
-uint ColorMap::getSmoothColor(double value)
+unsigned int ColorMap::getSmoothColor(double value)
 {
   try
   {
