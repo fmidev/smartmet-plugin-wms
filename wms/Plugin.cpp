@@ -692,7 +692,7 @@ void Plugin::init()
     // GRID ENGINE
     if (!itsConfig.gridEngineDisabled())
     {
-      itsGridEngine = itsReactor->getEngine<Engine::Grid::Engine>("Grid", nullptr);
+      itsGridEngine = itsReactor->getEngine<Engine::Grid::Engine>("grid", nullptr);
       itsGridEngine->setDem(itsGeoEngine->dem());
       itsGridEngine->setLandCover(itsGeoEngine->landCover());
     }
@@ -723,21 +723,21 @@ void Plugin::init()
 #ifndef WITHOUT_OBSERVATION
       itsWMSConfig = std::make_unique<WMS::WMSConfig>(itsConfig,
                                                       itsJsonCache,
-                                                      itsQEngine,
-                                                      authEngine,
-                                                      itsObsEngine,
-                                                      itsGisEngine,
-                                                      itsGridEngine);
+                                                      itsQEngine.get(),
+                                                      authEngine.get(),
+                                                      itsObsEngine.get(),
+                                                      itsGisEngine.get(),
+                                                      itsGridEngine.get());
 #else
       itsWMSConfig = std::make_unique<WMS::WMSConfig>(
-          itsConfig, itsJsonCache, itsQEngine, authEngine, itsGisEngine);
+          itsConfig, itsJsonCache, itsQEngine.get(), authEngine.get(), itsGisEngine.get());
 #endif
     }
     else
     {
 #ifndef WITHOUT_OBSERVATION
       itsWMSConfig = std::make_unique<WMS::WMSConfig>(
-          itsConfig, itsJsonCache, itsQEngine, nullptr, itsObsEngine, itsGisEngine, itsGridEngine);
+          itsConfig, itsJsonCache, itsQEngine.get(), nullptr, itsObsEngine.get(), itsGisEngine.get(), itsGridEngine.get());
 #else
       itsWMSConfig = std::make_unique<WMS::WMSConfig>(
           itsConfig, itsJsonCache, itsQEngine, nullptr, itsGisEngine);
@@ -747,10 +747,10 @@ void Plugin::init()
 #else
 #ifndef WITHOUT_OBSERVATION
     itsWMSConfig = std::make_unique<WMS::WMSConfig>(
-        itsConfig, itsJsonCache, itsQEngine, itsObsEngine, itsGisEngine, itsGridEngine);
+        itsConfig, itsJsonCache, itsQEngine.get(), itsObsEngine.get(), itsGisEngine.get(), itsGridEngine.get());
 #else
     itsWMSConfig = std::make_unique<WMS::WMSConfig>(
-        itsConfig, itsJsonCache, itsQEngine, itsGisEngine, itsGridEngine);
+        itsConfig, itsJsonCache, itsQEngine.get(), itsGisEngine.get(), itsGridEngine.get());
 #endif
 #endif
 
