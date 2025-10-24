@@ -667,53 +667,32 @@ void Plugin::init()
     if (Spine::Reactor::isShuttingDown())
       return;
 
-    auto *engine = itsReactor->getSingleton("Contour", nullptr);
-    if (engine == nullptr)
-      throw Fmi::Exception(BCP, "Contour engine unavailable");
-    itsContourEngine = reinterpret_cast<Engine::Contour::Engine *>(engine);
+    itsContourEngine = itsReactor->getEngine<Engine::Contour::Engine>("Contour", nullptr);
     if (Spine::Reactor::isShuttingDown())
       return;
 
     // GIS
 
-    if (Spine::Reactor::isShuttingDown())
-      return;
-
-    engine = itsReactor->getSingleton("Gis", nullptr);
-    if (engine == nullptr)
-      throw Fmi::Exception(BCP, "Gis engine unavailable");
-    itsGisEngine = reinterpret_cast<Engine::Gis::Engine *>(engine);
+    itsGisEngine = itsReactor->getEngine<Engine::Gis::Engine>("Gis", nullptr);
     if (Spine::Reactor::isShuttingDown())
       return;
 
     // QUERYDATA
 
-    if (Spine::Reactor::isShuttingDown())
-      return;
-
-    engine = itsReactor->getSingleton("Querydata", nullptr);
-    if (engine == nullptr)
-      throw Fmi::Exception(BCP, "Querydata engine unavailable");
-    itsQEngine = reinterpret_cast<Engine::Querydata::Engine *>(engine);
+    itsQEngine = itsReactor->getEngine<Engine::Querydata::Engine>("Querydata", nullptr);
     if (Spine::Reactor::isShuttingDown())
       return;
 
     // GEONAMES
 
-    engine = itsReactor->getSingleton("Geonames", nullptr);
-    if (engine == nullptr)
-      throw Fmi::Exception(BCP, "Geonames engine unavailable");
-    itsGeoEngine = reinterpret_cast<Engine::Geonames::Engine *>(engine);
+    itsGeoEngine = itsReactor->getEngine<Engine::Geonames::Engine>("Geonames", nullptr);
     if (Spine::Reactor::isShuttingDown())
       return;
 
     // GRID ENGINE
     if (!itsConfig.gridEngineDisabled())
     {
-      engine = itsReactor->getSingleton("grid", nullptr);
-      if (engine == nullptr)
-        throw Fmi::Exception(BCP, "Grid engine unavailable");
-      itsGridEngine = reinterpret_cast<Engine::Grid::Engine *>(engine);
+      itsGridEngine = itsReactor->getEngine<Engine::Grid::Engine>("Grid", nullptr);
       itsGridEngine->setDem(itsGeoEngine->dem());
       itsGridEngine->setLandCover(itsGeoEngine->landCover());
     }
@@ -726,10 +705,7 @@ void Plugin::init()
 #ifndef WITHOUT_OBSERVATION
     if (!itsConfig.obsEngineDisabled())
     {
-      engine = itsReactor->getSingleton("Observation", nullptr);
-      if (engine == nullptr)
-        throw Fmi::Exception(BCP, "Observation engine unavailable");
-      itsObsEngine = reinterpret_cast<Engine::Observation::Engine *>(engine);
+      itsObsEngine = itsReactor->getEngine<Engine::Observation::Engine>("Observation", nullptr);
     }
 #endif
 
@@ -741,14 +717,7 @@ void Plugin::init()
     // AUTHENTICATION
     if (itsConfig.authenticate())
     {
-      engine = itsReactor->getSingleton("Authentication", nullptr);
-      if (engine == nullptr)
-        throw Fmi::Exception(BCP, "Authentication unavailable");
-      auto *authEngine = dynamic_cast<Engine::Authentication::Engine *>(engine);
-      if (authEngine == nullptr)
-        throw Fmi::Exception(BCP, "Authentication engine is not of type Engine::Authentication::Engine");
-      if (!authEngine->isEnabled())
-        throw Fmi::Exception(BCP, "Authentication engine is disabled");
+      authEngine = itsReactor->getEngine<Engine::Authentication::Engine>("Authentication", nullptr);
 
 // WMS configurations
 #ifndef WITHOUT_OBSERVATION

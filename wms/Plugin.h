@@ -61,7 +61,7 @@ class Plugin : public SmartMetPlugin
   bool queryIsFast(const Spine::HTTP::Request& theRequest) const override;
 
   // Get the engines
-  const Engine::Grid::Engine* getGridEngine() const { return itsGridEngine; }
+  const Engine::Grid::Engine* getGridEngine() const { return itsGridEngine.get(); }
   const Engine::Querydata::Engine& getQEngine() const { return *itsQEngine; }
   const Engine::Contour::Engine& getContourEngine() const { return *itsContourEngine; }
   const Engine::Gis::Engine& getGisEngine() const { return *itsGisEngine; }
@@ -214,13 +214,14 @@ class Plugin : public SmartMetPlugin
 
   // Cache server and engine instances
   Spine::Reactor* itsReactor;
-  Engine::Grid::Engine* itsGridEngine;
-  Engine::Querydata::Engine* itsQEngine;
-  Engine::Contour::Engine* itsContourEngine;
-  Engine::Gis::Engine* itsGisEngine;
-  Engine::Geonames::Engine* itsGeoEngine;
+  std::shared_ptr<Engine::Grid::Engine> itsGridEngine;
+  std::shared_ptr<Engine::Querydata::Engine> itsQEngine;
+  std::shared_ptr<Engine::Contour::Engine> itsContourEngine;
+  std::shared_ptr<Engine::Gis::Engine> itsGisEngine;
+  std::shared_ptr<Engine::Geonames::Engine> itsGeoEngine;
+  std::shared_ptr<Engine::Authentication::Engine> authEngine;
 #ifndef WITHOUT_OBSERVATION
-  Engine::Observation::Engine* itsObsEngine;
+  std::shared_ptr<Engine::Observation::Engine> itsObsEngine;
 #endif
 
   // Cache templates
