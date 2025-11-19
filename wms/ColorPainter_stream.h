@@ -12,15 +12,16 @@ namespace Dali
 {
 
 
-class ColorPainter_ARGB : public ColorPainter
+class ColorPainter_stream : public ColorPainter
 {
   public:
-                  ColorPainter_ARGB();
-    virtual       ~ColorPainter_ARGB();
+                  ColorPainter_stream();
+    virtual       ~ColorPainter_stream();
 
     virtual void  addColorMap(std::string name,ColorMap_sptr colorMap);
     virtual void  addColorMap(std::string name,std::string& colorMap);
     virtual void  setImageColors(uint width,uint height,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters);
+    virtual void  setImageColors(uint width,uint height,uint *image,std::vector<float>& land,std::vector<float>& values1,std::vector<float>& values2,Parameters& parameters);
 
   protected:
 

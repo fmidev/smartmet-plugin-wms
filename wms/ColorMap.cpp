@@ -42,6 +42,93 @@ ColorMap::ColorMap(const ColorMap& colorMap)
 
 
 
+ColorMap::ColorMap(std::string& colorMap)
+{
+  try
+  {
+    Colors colors;
+    std::vector<std::string> lines;
+
+    const char *p = colorMap.c_str();
+    char buf[1000];
+    uint c = 0;
+    bool ok = false;
+    while (*p != '\0'  &&  c < 1000)
+    {
+      if (*p == '\n')
+      {
+        buf[c] = '\0';
+        if (c > 5  &&  ok)
+          lines.push_back(std::string(buf));
+
+        c = 0;
+        ok = false;
+      }
+      else
+      {
+        if (*p == ';')
+          ok = true;
+
+        buf[c] = *p;
+        c++;
+      }
+      p++;
+    }
+
+    for (auto it = lines.begin(); it != lines.end(); ++it)
+    {
+      strcpy(buf,it->c_str());
+      char *n = strstr(buf,"#");
+      if (n)
+        *n = '\0';
+
+      std::vector<std::string> pair;
+      splitString(buf,';',pair);
+      if (pair.size() == 2)
+      {
+        float val = toDouble(pair[0]);
+        std::vector<uint> v;
+        splitString(pair[1].c_str(),',',v);
+        uint col = 0;
+        if (v.size() == 1)
+        {
+          // RGB or ARGB in hex format
+
+          if (pair[1].length() == 6)
+          {
+            col = 0xFF000000 + strtoul(pair[1].c_str(),nullptr,16);
+          }
+          else
+          if (pair[1].length() == 8)
+          {
+            col = strtoul(pair[1].c_str(),nullptr,16);
+          }
+        }
+        else
+        if (v.size() == 3)
+        {
+          // RGB (a,r,g,b)
+          col = 0xFF000000 + (v[0] <<  16) + (v[1] <<  8) + v[2];
+        }
+        else
+        if (v.size() == 4)
+        {
+          // ARGB (a,r,g,b)
+          col = (v[0] <<  24) + (v[1] <<  16) + (v[2] <<  8) + v[3];
+        }
+        mColors.insert(std::pair<float,unsigned int>(val,col));
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Constructor failed!");
+  }
+}
+
+
+
+
 ColorMap::~ColorMap()
 {
   try
@@ -169,6 +256,9 @@ uint ColorMap::getSmoothColor(double value)
 {
   try
   {
+    if (mColors.size() == 0)
+      return 0;
+
     auto it = mColors.find(value);
     if (it != mColors.end())
       return it->second;

@@ -22,7 +22,8 @@ class ColorPainter
                   ColorPainter() {}
     virtual       ~ColorPainter() {}
 
-    virtual void  setImageColors(uint width,uint height,uint *image,std::vector<float>& values,Parameters& parameters) {}
+    virtual void  setImageColors(uint width,uint height,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters) {}
+    virtual void  setImageColors(uint width,uint height,uint *image,std::vector<float>& land,std::vector<float>& values1,std::vector<float>& values2,Parameters& parameters) {}
 };
 
 

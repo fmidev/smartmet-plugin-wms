@@ -1,0 +1,85 @@
+{
+  "title": "Wind",
+  "abstract": "Wind",
+  "source": "grid",
+  "producer": "ec",
+  "projection": {},
+  "views": [
+    {
+      "layers": [
+        {
+          "qid"                  : "windspeed",
+          "layer_type"           : "raster",
+          "compression"          : 9,				/* 1 = fast, low compression, 9 = slow, high compression */
+          "parameter"            : "WindSpeedMS",
+          "interpolation"        : "linear",
+          "painter"              : "default",
+          "opacity_land"         : "0.0",  			
+          "opacity_sea"          : "1.0",  
+          "colormap"             : "wind",
+          "smooth"               : true,
+          
+          "land_position"        : "top",           /* Position compared to the data layer (none,bottom,top) */
+          "land_color"           : "FFD0D0D0",
+          "sea_position"         : "bottom",		/* Position compared to the data layer (none,bottom,top) */
+          "sea_color"            : "FFFFFFFF",
+
+          "landShading_position" : "top",			/* Position compared to the data layer (none,bottom,top) */
+          "landShading_light"    : 64,				/* Light multiplier */
+          "landShading_shadow"   : 384,				/* Shadow multiplier */
+
+          "seaShading_position"  : "none",			/* Position compared to the data layer (none,bottom,top) */
+          "seaShading_light"     : 128,				/* Light multiplier */
+          "seaShading_shadow"    : 384				/* Shadow multiplier */
+        }
+        ,
+        {
+          "qid"                  : "windstreams",
+          "layer_type"           : "raster",
+          "compression"          : 9,
+          "painter"              : "stream",
+          "parameter"            : "WindDirection",
+          "opacity_land"         : "0.0",  
+          "opacity_sea"          : "1.0",  
+          "stream_color"         : "F0F0F0",
+          "stream_step_x"        : 10,
+          "stream_step_y"        : 10,
+          "stream_min_length"    : 10,
+          "stream_max_length"    : 64,
+                    
+          "land_position"        : "none",
+          "land_color"           : "40FFFFFF",
+          "sea_position"         : "none",
+          "sea_color"            : "FFCAF0F8",
+
+          "landShading_position" : "none",
+          "landShading_light"    : 128,
+          "landShading_shadow"   : 384,
+          
+          "seaShading_position"  : "none",
+          "seaShading_light"     : 128,
+          "seaShading_shadow"    : 384
+        }
+        ,
+        {
+          "qid"			  : "black-border",
+          "layer_type"    : "map",
+          "map": 
+          {
+            "schema"      : "natural_earth",
+            "table"       : "admin_0_countries"
+          },
+          "attributes": 
+          {
+            "id"          : "europe_country_lines",
+            "fill"        : "none",
+            "stroke"      : "#000000",
+            "stroke-width": "1.0"
+          }
+        }
+      ]
+    }
+  ]
+}
+]
+}
