@@ -27,7 +27,6 @@ LIBS += $(PREFIX_LDFLAGS) \
 	-lboost_regex \
 	-lboost_iostreams \
 	-lboost_serialization \
-	-lboost_system \
 	-lbz2 -lz -lpthread -ldl
 
 TEST_PREPARE_TARGETS := \
