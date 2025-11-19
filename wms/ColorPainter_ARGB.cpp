@@ -1,6 +1,7 @@
 #include "ColorPainter_ARGB.h"
 #include <macgyver/Exception.h>
 #include <grid-files/common/GeneralFunctions.h>
+#include <grid-files/common/ImageFunctions.h>
 
 namespace SmartMet
 {
@@ -14,41 +15,6 @@ ColorPainter_ARGB::ColorPainter_ARGB()
 {
   try
   {
-/*
-    Colors colors;
-    colors.insert(std::pair<float,unsigned int>(0.0,0x00000000));
-    colors.insert(std::pair<float,unsigned int>(1.0,0x80FFFFFF));
-    ColorMap_sptr colorMap(new ColorMap());
-    colorMap->setColors(colors);
-    colorMaps.insert(std::pair<std::string,ColorMap_sptr>("percent",colorMap));
-
-
-    colors.clear();
-    colors.insert(std::pair<float,unsigned int>(0.0,0xFF739EC9));
-    colors.insert(std::pair<float,unsigned int>(0.1,0x00739EC9));
-    colors.insert(std::pair<float,unsigned int>(1.0,0x00000000));
-    ColorMap_sptr colorMap2(new ColorMap());
-    colorMap2->setColors(colors);
-    colorMaps.insert(std::pair<std::string,ColorMap_sptr>("sea",colorMap2));
-
-
-    colors.clear();
-    colors.insert(std::pair<float,unsigned int>(0.0,0x00000000));
-    colors.insert(std::pair<float,unsigned int>(0.099,0x00A8BBA3));
-    colors.insert(std::pair<float,unsigned int>(0.1,0xFFA8BBA3));
-    colors.insert(std::pair<float,unsigned int>(1.0,0xFFA8BBA3));
-    ColorMap_sptr colorMap3(new ColorMap());
-    colorMap3->setColors(colors);
-    colorMaps.insert(std::pair<std::string,ColorMap_sptr>("land",colorMap3));
-
-    colors.clear();
-    colors.insert(std::pair<float,unsigned int>(0.0,0x20000000));
-    colors.insert(std::pair<float,unsigned int>(0.1,0x00000000));
-    colors.insert(std::pair<float,unsigned int>(1.0,0x00000000));
-    ColorMap_sptr colorMap4(new ColorMap());
-    colorMap4->setColors(colors);
-    colorMaps.insert(std::pair<std::string,ColorMap_sptr>("sea2",colorMap4));
-*/
   }
   catch (...)
   {
@@ -57,9 +23,13 @@ ColorPainter_ARGB::ColorPainter_ARGB()
 }
 
 
+
+
 ColorPainter_ARGB::~ColorPainter_ARGB()
 {
 }
+
+
 
 
 void ColorPainter_ARGB::addColorMap(std::string name,ColorMap_sptr colorMap)
@@ -81,64 +51,7 @@ void ColorPainter_ARGB::addColorMap(std::string name,std::string& colorMap)
 {
   try
   {
-    Colors colors;
-    ColorMap_sptr cm = std::shared_ptr<ColorMap>(new ColorMap());
-
-    uint c = 0;
-    char buf[1000];
-    const char *p = colorMap.c_str();
-    uint s = 0;
-    uint cc = 0;
-    while (*p != '\0')
-    {
-      if (*p == ';')
-      {
-        buf[c] = '\0';
-        c++;
-        s = c;
-        cc = 0;
-      }
-      else
-      if (*p == '\n' || *p == '#')
-      {
-        buf[c] = '\0';
-        c = 0;
-        if (s != 0)
-        {
-          float val = toDouble(buf);
-          uint col = 0;
-          if (cc == 3)
-          {
-            std::vector<uint> v;
-            splitString(buf + s,',',v);
-            if (v.size() == 4)
-            {
-              // ARGB (a,r,g,b)
-              col = (v[0] <<  24) + (v[1] <<  16) + (v[2] <<  8) + v[3];
-            }
-          }
-          else
-          {
-            // ARGB (Hex)
-            col = strtoul(buf + s,nullptr,16);
-          }
-          colors.insert(std::pair<float,unsigned int>(val,col));
-        }
-        s = 0;
-        cc = 0;
-      }
-      else
-      {
-        if (*p == ',')
-          cc++;
-
-        buf[c] = *p;
-        c++;
-      }
-      p++;
-    }
-
-    cm->setColors(colors);
+    ColorMap_sptr cm = std::shared_ptr<ColorMap>(new ColorMap(colorMap));
     colorMaps.insert(std::pair<std::string,ColorMap_sptr>(name,cm));
   }
   catch (...)
@@ -150,14 +63,21 @@ void ColorPainter_ARGB::addColorMap(std::string name,std::string& colorMap)
 
 
 
-void ColorPainter_ARGB::setImageColors(uint width,uint height,uint *image,std::vector<float>& values,Parameters& parameters)
+void ColorPainter_ARGB::setImageColors(uint width,uint height,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters)
 {
   try
   {
     uint sz = width*height;
-    if (sz != values.size() || sz == 0)
+    if (sz == 0)
     {
       Fmi::Exception exception(BCP, "The image size is zero!");
+      throw exception;
+    }
+
+    if (sz != values.size())
+    {
+      Fmi::Exception exception(BCP, "Invalid number of values!");
+      exception.addParameter("values",std::to_string(values.size()));
       throw exception;
     }
 
@@ -176,6 +96,16 @@ void ColorPainter_ARGB::setImageColors(uint width,uint height,uint *image,std::v
       throw exception;
     }
 
+    double opacity_land = 1.0;
+    auto opacity_value_land = parameters.find("opacity_land");
+    if (opacity_value_land != parameters.end())
+      opacity_land = toDouble(opacity_value_land->second);
+
+    double opacity_sea = 1.0;
+    auto opacity_value_sea = parameters.find("opacity_sea");
+    if (opacity_value_sea != parameters.end())
+      opacity_sea = toDouble(opacity_value_sea->second);
+
     ColorMap_sptr cm = cmRec->second;
     uint c = 0;
 
@@ -188,12 +118,53 @@ void ColorPainter_ARGB::setImageColors(uint width,uint height,uint *image,std::v
         uint p = yy * width;
         for (uint x = 0; x < width; x++)
         {
+          uint oldcol = image[c];
           uint cc = p + x;
           float val = values[cc];
+          float landval = land[cc];
           if (val != ParamValueMissing)
-            image[c] = cm->getColor(val);
-          else
-            image[c] = 0x00000000;
+          {
+            uint valcol = cm->getColor(val);
+            if (landval > 0.9)
+            {
+              if (opacity_land != 1.0)
+              {
+                uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_land);
+                if (op > 255)
+                  op = 0xFF000000;
+                else
+                  op = (op & 0xFF) << 24;
+
+                uint nv = op + (valcol & 0x00FFFFFF);
+                image[c] = merge_ARGB(nv,oldcol);
+              }
+              else
+              {
+                image[c] = merge_ARGB(valcol,oldcol);
+              }
+            }
+            else
+            {
+              if (opacity_sea != 1.0)
+              {
+                uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_sea);
+                if (op > 255)
+                  op = 0xFF000000;
+                else
+                  op = (op & 0xFF) << 24;
+
+                uint nv = op + (valcol & 0x00FFFFFF);
+                image[c] = merge_ARGB(nv,oldcol);
+              }
+              else
+              {
+                image[c] = merge_ARGB(valcol,oldcol);
+              }
+            }
+          }
+          //else
+          //  image[c] = 0xFF00FF00;
+
           c++;
         }
       }
@@ -206,12 +177,50 @@ void ColorPainter_ARGB::setImageColors(uint width,uint height,uint *image,std::v
         uint p = yy * width;
         for (uint x = 0; x < width; x++)
         {
+          uint oldcol = image[c];
           uint cc = p + x;
           float val = values[cc];
+          float landval = land[cc];
           if (val != ParamValueMissing)
-            image[c] = cm->getSmoothColor(val);
-          else
-            image[c] = 0x00000000;
+          {
+            uint valcol = cm->getSmoothColor(val);
+            if (landval > 0.9)
+            {
+              if (opacity_land != 1.0)
+              {
+                uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_land);
+                if (op > 255)
+                  op = 0xFF000000;
+                else
+                  op = (op & 0xFF) << 24;
+
+                uint nv = op + (valcol & 0x00FFFFFF);
+                image[c] = merge_ARGB(nv,oldcol);
+              }
+              else
+              {
+                image[c] = merge_ARGB(valcol,oldcol);
+              }
+            }
+            else
+            {
+              if (opacity_sea != 1.0)
+              {
+                uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_sea);
+                if (op > 255)
+                  op = 0xFF000000;
+                else
+                  op = (op & 0xFF) << 24;
+
+                uint nv = op + (valcol & 0x00FFFFFF);
+                image[c] = merge_ARGB(nv,oldcol);
+              }
+              else
+              {
+                image[c] = merge_ARGB(valcol,oldcol);
+              }
+            }
+          }
           c++;
         }
       }

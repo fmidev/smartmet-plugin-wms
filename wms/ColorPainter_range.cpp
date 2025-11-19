@@ -1,6 +1,7 @@
 #include "ColorPainter_range.h"
 #include <macgyver/Exception.h>
 #include <grid-files/common/GeneralFunctions.h>
+#include <grid-files/common/ImageFunctions.h>
 
 namespace SmartMet
 {
@@ -27,14 +28,21 @@ ColorPainter_range::~ColorPainter_range()
 }
 
 
-void ColorPainter_range::setImageColors(uint width,uint height,uint *image,std::vector<float>& values,Parameters& parameters)
+void ColorPainter_range::setImageColors(uint width,uint height,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters)
 {
   try
   {
     uint sz = width*height;
-    if (sz != values.size() || sz == 0)
+    if (sz == 0)
     {
       Fmi::Exception exception(BCP, "The image size is zero!");
+      throw exception;
+    }
+
+    if (sz != values.size())
+    {
+      Fmi::Exception exception(BCP, "Invalid number of values!");
+      exception.addParameter("values",std::to_string(values.size()));
       throw exception;
     }
 
@@ -65,6 +73,16 @@ void ColorPainter_range::setImageColors(uint width,uint height,uint *image,std::
       Fmi::Exception exception(BCP, "Cannot find the 'max_color' parameter!");
       throw exception;
     }
+
+    double opacity_land = 1.0;
+    auto opacity_value_land = parameters.find("opacity_land");
+    if (opacity_value_land != parameters.end())
+      opacity_land = toDouble(opacity_value_land->second);
+
+    double opacity_sea = 1.0;
+    auto opacity_value_sea = parameters.find("opacity_sea");
+    if (opacity_value_sea != parameters.end())
+      opacity_sea = toDouble(opacity_value_sea->second);
 
     uint lowCol = 0x00000000;
     auto low_color = parameters.find("low_color");
@@ -97,14 +115,17 @@ void ColorPainter_range::setImageColors(uint width,uint height,uint *image,std::
       for (uint x = 0; x < width; x++)
       {
         uint cc = p + x;
+        uint oldcol = image[c];
+        uint valcol = 0;
         float val = values[cc];
+        float landval = land[cc];
         if (val != ParamValueMissing)
         {
           if (val < minVal)
-            image[c] = lowCol;
+            valcol = lowCol;
           else
           if (val > maxVal)
-            image[c] = highCol;
+            valcol = highCol;
           else
           {
             double vv = (val - minVal) / dv;
@@ -113,11 +134,45 @@ void ColorPainter_range::setImageColors(uint width,uint height,uint *image,std::
               int d = ((int)b[t] - (int)a[t]) * vv;
               n[t] = a[t] + d;
             }
-            image[c] = newCol;
+            valcol = newCol;
+          }
+          if (landval > 0.9)
+          {
+            if (opacity_land != 1.0)
+            {
+              uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_land);
+              if (op > 255)
+                op = 0xFF000000;
+              else
+                op = (op & 0xFF) << 24;
+
+              uint nv = op + (valcol & 0x00FFFFFF);
+              image[c] = merge_ARGB(nv,oldcol);
+            }
+            else
+            {
+              image[c] = merge_ARGB(valcol,oldcol);
+            }
+          }
+          else
+          {
+            if (opacity_sea != 1.0)
+            {
+              uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_sea);
+              if (op > 255)
+                op = 0xFF000000;
+              else
+                op = (op & 0xFF) << 24;
+
+              uint nv = op + (valcol & 0x00FFFFFF);
+              image[c] = merge_ARGB(nv,oldcol);
+            }
+            else
+            {
+              image[c] = merge_ARGB(valcol,oldcol);
+            }
           }
         }
-        else
-          image[c] = 0x00000000;
         c++;
       }
     }

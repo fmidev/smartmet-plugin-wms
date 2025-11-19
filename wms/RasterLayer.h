@@ -16,6 +16,7 @@
 #include "ParameterInfo.h"
 #include "Sampling.h"
 #include "Smoother.h"
+#include "ColorPainter_shading.h"
 #include <vector>
 
 namespace SmartMet
@@ -43,6 +44,8 @@ class RasterLayer : public Layer
     virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
     std::optional<std::string> parameter;
+    std::optional<std::string> direction;
+    std::optional<std::string> speed;
     std::vector<Isoband> isobands;
     std::string interpolation{"linear"};
 
@@ -50,6 +53,20 @@ class RasterLayer : public Layer
     int compression;
     std::string painter;
     Parameters painterParameters;
+    ColorPainter_shading shadingPainter;
+
+    std::string land_color;
+    std::string land_position;
+
+    std::string sea_color;
+    std::string sea_position;
+
+    std::string landShading_position;
+    Parameters landShading_parameters;
+
+    std::string seaShading_position;
+    Parameters seaShading_parameters;
+
     std::optional<double> multiplier;
     std::optional<double> offset;
     ColorPainter_sptr_map colorPainters;

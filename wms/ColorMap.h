@@ -21,6 +21,7 @@ class ColorMap
   public:
                       ColorMap();
                       ColorMap(const ColorMap& colorMap);
+                      ColorMap(std::string& colorMap);
     virtual           ~ColorMap();
 
     virtual void      setColors(Colors& colors);

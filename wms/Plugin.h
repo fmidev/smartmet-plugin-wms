@@ -17,6 +17,7 @@
 #include <engines/gis/Engine.h>
 #include <engines/grid/Engine.h>
 #include <engines/querydata/Engine.h>
+#include <engines/authentication/Engine.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
