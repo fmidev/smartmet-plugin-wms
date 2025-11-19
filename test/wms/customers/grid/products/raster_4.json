@@ -1,0 +1,54 @@
+{
+  "title": "Temperature",
+  "abstract": "Temperature",
+  "source": "grid",
+  "producer": "ec",
+  "projection": {},
+  "views": 
+  [
+    {
+      "layers": [
+        {
+          "qid"                  : "t",
+          "layer_type"           : "raster",
+          "compression"          : 9,				/* 1 = fast, low compression, 9 = slow, high compression */
+          "parameter"            : "temperature",
+          "interpolation"        : "linear",		/* linear,nearest */
+          "painter"              : "default",		/* default,range,stream,shading */
+          "opacity_land"         : "1.0",  			/* 0.0 - 1.0 */
+          "opacity_sea"   		 : "1.0",  			/* 0.0 - 1.0 */
+          "colormap"      		 : "temperature",
+          "smooth"        		 : true,			
+          
+          "land_position"        : "none",          /* Position compared to the data layer (none,bottom,top) */
+          "land_color"           : "FFE0E0E0",
+          "sea_position"         : "none",			/* Position compared to the data layer (none,bottom,top) */
+          "sea_color"            : "FFCAF0F8",
+
+          "landShading_position" : "top",			/* Position compared to the data layer (none,bottom,top) */
+          "landShading_light"    : 128,				/* Light multiplier */
+          "landShading_shadow"   : 384,				/* Shadow multiplier */
+
+          "seaShading_position"  : "top",			/* Position compared to the data layer (none,bottom,top) */
+          "seaShading_light"     : 128,				/* Light multiplier */
+          "seaShading_shadow"    : 384				/* Shadow multiplier */
+        }
+        ,
+        {
+          "qid": "map-border-black",
+          "layer_type": "map",
+          "map": {
+            "schema": "natural_earth",
+            "table": "admin_0_countries"
+          },
+          "attributes": {
+            "id": "europe_country_lines3",
+            "fill": "none",
+            "stroke": "#000000",
+            "stroke-width": "1.0"
+          }
+        }
+      ]
+    }
+  ]
+}
