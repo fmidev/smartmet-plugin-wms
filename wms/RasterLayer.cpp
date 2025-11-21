@@ -29,7 +29,7 @@
 #include <grid-files/common/GeneralFunctions.h>
 #include <grid-files/common/ImageFunctions.h>
 #include <grid-files/common/ImagePaint.h>
-#include <grid-files/map/Topology.h>
+#include <grid-files/map/Topography.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <newbase/NFmiQueryData.h>
@@ -618,7 +618,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
 
       if (coordinates)
       {
-        SmartMet::Map::topology.getLand(*coordinates,land);
+        SmartMet::Map::topography.getLand(*coordinates,land);
 
         if (sea_position == "bottom" &&  sea_backcol)
         {
@@ -643,14 +643,14 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
 
         if (seaShading_position == "bottom")
         {
-          SmartMet::Map::topology.getSeaShading(*coordinates,seaShadings);
+          SmartMet::Map::topography.getSeaShading(*coordinates,seaShadings);
           seaShading_parameters.insert(std::pair<std::string,std::string>("rotate",std::to_string(rotate)));
           shadingPainter.setImageColors(width,height,image,land,seaShadings,seaShading_parameters);
         }
 
         if (landShading_position == "bottom")
         {
-          SmartMet::Map::topology.getLandShading(*coordinates,landShadings);
+          SmartMet::Map::topography.getLandShading(*coordinates,landShadings);
           landShading_parameters.insert(std::pair<std::string,std::string>("rotate",std::to_string(rotate)));
           shadingPainter.setImageColors(width,height,image,land,landShadings,landShading_parameters);
         }
@@ -688,7 +688,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
         if (seaShading_position == "top")
         {
           if (seaShadings.size() == 0)
-             SmartMet::Map::topology.getSeaShading(*coordinates,seaShadings);
+             SmartMet::Map::topography.getSeaShading(*coordinates,seaShadings);
 
           seaShading_parameters.insert(std::pair<std::string,std::string>("shading_position","top"));
           seaShading_parameters.insert(std::pair<std::string,std::string>("rotate",std::to_string(rotate)));
@@ -698,7 +698,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
         if (landShading_position == "top")
         {
           if (landShadings.size() == 0)
-            SmartMet::Map::topology.getLandShading(*coordinates,landShadings);
+            SmartMet::Map::topography.getLandShading(*coordinates,landShadings);
 
           landShading_parameters.insert(std::pair<std::string,std::string>("shading_position","top"));
           landShading_parameters.insert(std::pair<std::string,std::string>("rotate",std::to_string(rotate)));
