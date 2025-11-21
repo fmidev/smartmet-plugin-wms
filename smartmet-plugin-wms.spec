@@ -117,6 +117,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-geonames-devel >= 25.9.29
 #TestRequires: smartmet-engine-gis-devel >= 25.9.29
 #TestRequires: smartmet-engine-querydata-devel >= 25.9.17
+#TestRequires: smartmet-engine-authentication-devel >= 25.10.8
 #TestRequires: smartmet-library-giza-devel >= 25.2.18
 #TestRequires: smartmet-library-trax-devel >= 25.9.29
 #TestRequires: smartmet-library-newbase-devel >= 25.3.20
