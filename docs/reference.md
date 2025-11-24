@@ -1284,6 +1284,48 @@ The value-to-color mapping is handled by so-called painter elements, which can v
 
 <img src="images/raster.png">
 
+<pre><b>Product configuration file</b></pre>
+<pre><code><sub> {
+  "title": "Temperature",
+  "abstract": "Temperature",
+  "source": "grid",
+  "producer": "ec",
+  "projection": {},
+  "views": 
+  [
+    {
+      "layers": [
+        {
+          "qid"                  : "t",
+          "layer_type"           : "raster",
+          "compression"          : 9,               /* 1 = fast, low compression, 9 = slow, high compression */
+          "parameter"            : "temperature",
+          "interpolation"        : "linear",        /* linear,nearest */
+          "painter"              : "default",       /* default,range,stream */
+          "opacity_land"         : "1.0",           /* 0.0 - 1.0 */
+          "opacity_sea"   		 : "1.0",           /* 0.0 - 1.0 */
+          "colormap"      		 : "temperature",
+          "smooth"        		 : true,			
+          
+          "land_position"        : "none",          /* Position compared to the data layer (none,bottom,top) */
+          "land_color"           : "FFE0E0E0",
+          "sea_position"         : "top",           /* Position compared to the data layer (none,bottom,top) */
+          "sea_color"            : "FFCAF0F8",
+
+          "landShading_position" : "top",           /* Position compared to the data layer (none,bottom,top) */
+          "landShading_light"    : 128,             /* Light multiplier */
+          "landShading_shadow"   : 384,             /* Shadow multiplier */
+
+          "seaShading_position"  : "top",           /* Position compared to the data layer (none,bottom,top) */
+          "seaShading_light"     : 128,             /* Light multiplier */
+          "seaShading_shadow"    : 384              /* Shadow multiplier */
+        }
+      ]
+    }
+  ]
+} </sub></code></pre>
+
+
 The table below contains a list of attributes that can be defined for the raster layer in addition to the common layer attributes.
 
 <pre><b>RasterLayer </b></pre>
