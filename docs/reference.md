@@ -1280,7 +1280,7 @@ The table below contains a list of attributes that can be defined for the stream
 
 The core concept of a raster layer is to render an image from a set of grid-based values, where each grid cell corresponds to a pixel in the resulting raster image. The color of each pixel is determined by mapping its associated value to a position within a predefined color map. This color map is essentially a list of value-color pairs, allowing for the identification of lower and upper bounds for each input value, along with their associated colors. By default, the final color is computed via linear interpolation between these bounds on a per-channel basis (A, R, G, B), resulting in a smooth color gradient. This technique eliminates hard boundaries between value regions, yielding a more continuous and visually intuitive representation.
 
-The value-to-color mapping is handled by so-called painter elements, which can vary in type. The current implementation supports two painter types. The first, named "default", utilizes a full value-to-color list to perform interpolation across multiple defined intervals. The second, called "range", functions similarly but operates over a single continuous value range. It is configured using only the minimum and maximum values of the dataset, along with their corresponding colors. It assumes that all grid values fall within this range and performs a direct linear interpolation between the defined endpoint colors.
+The value-to-color mapping is handled by so-called painter elements, which can vary in type. The current implementation supports three painter types. The first, named "default", utilizes a full value-to-color list to perform interpolation across multiple defined intervals. The second, called "range", functions similarly but operates over a single continuous value range. It is configured using only the minimum and maximum values of the dataset, along with their corresponding colors. It assumes that all grid values fall within this range and performs a direct linear interpolation between the defined endpoint colors. The third painter, called "stream", has the same idea as the Stream Layer, but the stream lines are drawn by using raster points. The direction of the stream lines are indicated by using the variation of the alfa channel. 
 
 <img src="images/raster.png">
 
@@ -1290,9 +1290,31 @@ The table below contains a list of attributes that can be defined for the raster
 | Name          | Type     | Default value | Description                                                                    |
 | ------------- | -------- | ------------- | ------------------------------------------------------------------------------ |
 | parameter     | (string) | -             | The parameter name for the direction.                                          |
-| compression   | (int)    | 1             | Compression rate (1 = fast,low compression, 9 = slow, high compression.        |
+| compression   | (int)    | 1             | Compression rate (1 = fast,low compression, 9 = slow, high compression).       |
 | interpolation | (string) | linear        | Interpolation method when fetching grid pixels (linear / nearest).             |
-| painter       | (string) | default       | Painter element (default / range).                                             |
+| painter       | (string) | default       | Painter element (default / range / stream).                                    |
+| opacity_land  | (double) | 1.0           | Opacity of the painted parameter over the land (0 .. 1).                       |
+| opacity_sea   | (double) | 1.0           | Opacity of the painted parameter over the sea (0 .. 1).                        |
+
+The raster layer can paint land and sea colors above or below of the painted parameter. This allows you to create some nice effects. For example, if you want to make sea areas darker than the land areas the you can paint sea areas above the parameter layer by using colors with some transparency (for example 20000000).
+
+| Name          | Type     | Default value | Description                                                                    |
+| ------------- | -------- | ------------- | ------------------------------------------------------------------------------ |
+| land_position | (string) | none          | Land layer position compared to the painted parameter (none,bottom,top).       |
+| land_color    | (ARGB)   | 00000000      | Land layer color.                                                              |
+| sea_position  | (string) | none          | Sea layer position compared to the painted parameter (none,bottom,top).        |
+| sea_color     | (ARGB)   | 00000000      | Sea layer color.                                                               |
+
+The raster layer can paint topographical shadings above or below the painted parameter. 
+
+| Name                 | Type     | Default value | Description                                                                      |
+| -------------------- | -------- | ------------- | -------------------------------------------------------------------------------- |
+| landShading_position | (string) | none          | Land shading layer position compared to the painted parameter (none,bottom,top). |
+| landShading_light    | (int)    | 0             | Multiplier for light areas (0..1000).                                            |
+| landShading_shadow   | (int)    | 0             | Multiplier for shadow areas (0..1000).                                           |
+| seaShading_position  | (string) | none          | Sea shading layer position compared to the painted parameter (none,bottom,top).  |
+| seaShading_light     | (int)    | 0             | Multiplier for light areas (0..1000). Bigger value inceases the lightness.       |
+| seaShading_shadow    | (int)    | 0             | Multiplier for shadow areas (0..1000). Bigger value inceases the darkness.       | 
 
 Attributes for the painter "default".
 
@@ -1312,6 +1334,23 @@ Attributes for the painter "range".
 | low_color     | (ARGB)   | 00000000      | The color used with values that are smaller than the minimum value (min_value). |
 | high_color    | (ARGB)   | 00000000      | The color used with values that are bigger than the maximum value (max_value).  |
 
+Attributes for the painter "stream".
+
+| Name              | Type     | Default value | Description                                                                 |
+| ----------------- | -------- | ------------- | --------------------------------------------------------------------------- |
+| stream_color      | (RGB)    | 000000        | The color used for stream lines.                                            |
+| stream_min_length | (int)    | 5             | Minimum generated stream length in pixels.                                  |
+| stream_max_length | (int)    | 2048          | Maximum generated stream length in pixels.                                  |
+| stream_step_x     | (int)    | 10            | Streamline start point step size in x-direction.                            |
+| stream_step_y     | (int)    | 10            | Streamline start point step size in y-direction.                            |
+
+Stream lines can use colors for indicating the speed of the stream. In this case the 'parameter' attribute is replaced with 'speed' and 'direction' attributes. In addition, the 'colormap' attribute is used for selecting stream color according to the speed value.
+
+| Name          | Type     | Default value | Description                                                                 |
+| ------------- | -------- | ------------- | --------------------------------------------------------------------------- |
+| direction     | (string) | -             | The parameter name for the direction.                                       |
+| speed         | (string) | -             | The parameter name for the speed.                                           |
+| colormap      | (string) |               | Name of the colormap for "default" painter. This refers to a colormap file. |
 
 
 #### LegendLayer
