@@ -34,7 +34,7 @@ BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 25.2.18
 BuildRequires: smartmet-library-grid-content-devel >= 25.10.15
-BuildRequires: smartmet-library-grid-files-devel >= 25.10.15
+BuildRequires: smartmet-library-grid-files-devel >= 25.11.27
 BuildRequires: smartmet-library-macgyver-devel >= 25.9.30
 BuildRequires: smartmet-library-spine-devel >= 25.10.27
 BuildRequires: smartmet-library-timeseries-devel >= 25.8.1
@@ -45,7 +45,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 25.10.8
 BuildRequires: smartmet-engine-observation-devel >= 25.10.27
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 25.9.29
-BuildRequires: smartmet-engine-grid-devel >= 25.10.15
+BuildRequires: smartmet-engine-grid-devel >= 25.11.27
 BuildRequires: smartmet-engine-geonames-devel >= 25.9.29
 BuildRequires: smartmet-engine-querydata-devel >= 25.9.17
 BuildRequires: smartmet-engine-contour-devel >= 25.2.18
@@ -76,7 +76,7 @@ Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 25.10.15
-Requires: smartmet-library-grid-files >= 25.10.15
+Requires: smartmet-library-grid-files >= 25.11.27
 Requires: smartmet-library-gis >= 25.9.15
 Requires: smartmet-library-trax >= 25.9.29
 Requires: smartmet-library-macgyver >= 25.9.30
@@ -89,7 +89,7 @@ Requires: smartmet-engine-authentication >= 25.10.8
 Requires: smartmet-engine-querydata >= 25.9.17
 Requires: smartmet-engine-contour >= 25.2.18
 Requires: smartmet-engine-gis >= 25.9.29
-Requires: smartmet-engine-grid >= 25.10.15
+Requires: smartmet-engine-grid >= 25.11.27
 Requires: smartmet-engine-geonames >= 25.9.29
 Requires: smartmet-server >= 25.10.27
 Requires: smartmet-library-spine >= 25.10.27
@@ -124,7 +124,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-macgyver-devel >= 25.9.30
 #TestRequires: smartmet-library-spine-devel >= 25.10.27
 #TestRequires: smartmet-library-timeseries-devel >= 25.8.1
-#TestRequires: smartmet-engine-grid-devel >= 25.10.15
+#TestRequires: smartmet-engine-grid-devel >= 25.11.27
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-utils-devel >= 25.10.10
