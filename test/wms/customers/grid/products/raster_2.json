@@ -1,97 +1,109 @@
 {
-  "title": "Clouds",
-  "abstract": "Clouds raster",
-  "source": "grid",
-  "producer": "pal",
-  "projection": {},
+  "title"      : "Clouds",
+  "abstract"   : "Clouds raster",
+  "source"     : "grid",
+  "producer"   : "pal",
+  "projection" : {},
   "views": 
   [
     {
       "layers": [
         {
-          "qid": "background",
-          "layer_type": "background",
-          "attributes": {
-            "fill": "#739EC9"
+          "qid"            : "background",
+          "layer_type"     : "background",
+          "attributes": 
+          {
+            "fill"         : "#739EC9"
           }
         },
         {
-          "qid": "map1",
-          "layer_type": "map",
-          "map": {
-            "schema": "natural_earth",
-            "table": "admin_0_countries"
+          "qid"            : "map1",
+          "layer_type"     : "map",
+          "map": 
+          {
+            "schema"       : "natural_earth",
+            "table"        : "admin_0_countries"
           },
-          "attributes": {
-            "id": "europe_country_lines",
-            "fill": "#A8BBA3",
-            "stroke": "none",
-            "stroke-width": "0.5"
+          "attributes": 
+          {
+            "id"           : "europe_country_lines",
+            "fill"         : "#A8BBA3",
+            "stroke"       : "none",
+            "stroke-width" : "0.5"
           }
         }
         
         ,
         {
-          "qid"           : "l4",
-          "layer_type"    : "raster",
-          "compression"   : 1,           /* 1 = fast, low compression, 9 = slow, high compression */         
-          "parameter"     : "NL-PRCNT",
-          "interpolation" : "linear",    /* linear/nearest */
-          "painter"       : "range",
-          "min_color"     : "00FFFFFF",
-          "max_color"     : "FFFFFFFF",
-          "low_color"     : "00000000",  /* Color when value < min_value */
-          "high_color"    : "FFFFFFFF",  /* Color when value > max_value */
-          "min_value"     : 0.0,
-          "max_value"     : 100.0
-          
+          "qid"            : "l4",
+          "layer_type"     : "raster",
+          "compression"    : 1,           /* 1 = fast, low compression, 9 = slow, high compression */         
+          "parameter"      : "NL-PRCNT",
+          "interpolation"  : "linear",    /* linear/nearest */
+          "data_painter"   : "range",        
+          "ranges" : [
+            {
+              "value_min"  : 0,
+              "value_max"  : 100,
+              "color_min"  : "00FFFFFF",
+              "color_max"  : "FFFFFFFF",
+              "color_low"  : "00000000",
+              "color_high" : "FFFFFFFF"
+            }
+          ]
         }
         
         ,
         {
-          "qid"           : "l5",
-          "layer_type"    : "raster",
-          "compression"   : 1,
-          "parameter"     : "NM-PRCNT",
-          "interpolation" : "linear",
-          "painter"       : "range",
-          "min_color"     : "00F0F0F0",
-          "max_color"     : "FFF0F0F0",
-          "low_color"     : "00000000",
-          "high_color"    : "FFF0F0F0",
-          "min_value"     : 0.0,
-          "max_value"     : 100.0
-          
+          "qid"            : "l5",
+          "layer_type"     : "raster",
+          "compression"    : 1,
+          "parameter"      : "NM-PRCNT",
+          "interpolation"  : "linear",
+          "data_painter"   : "range",
+          "ranges" : [
+            {
+              "value_min"  : 0,
+              "value_max"  : 100,
+              "color_min"  : "00F0F0F0",
+              "color_max"  : "FFF0F0F0",
+              "color_low"  : "00000000",
+              "color_high" : "FFF0F0F0"
+            }
+          ]
         }
         ,
         {
-          "qid"           : "l6",
-          "layer_type"    : "raster",
-          "compression"   : 1,
-          "parameter"     : "NH-PRCNT",
-          "interpolation" : "linear",
-          "painter"       : "range",
-          "min_color"     : "00E0E0E0",
-          "max_color"     : "FFE0E0E0",
-          "low_color"     : "00000000",
-          "high_color"    : "FFE0E0E0",
-          "min_value"     : 0.0,
-          "max_value"     : 100.0
-          
+          "qid"            : "l6",
+          "layer_type"     : "raster",
+          "compression"    : 1,
+          "parameter"      : "NH-PRCNT",
+          "interpolation"  : "linear",
+          "data_painter"   : "range",
+          "ranges" : [
+            {
+              "value_min"  : 0,
+              "value_max"  : 100,
+              "color_min"  : "00E0E0E0",
+              "color_max"  : "FFE0E0E0",
+              "color_low"  : "00000000",
+              "color_high" : "FFE0E0E0"
+            }
+          ]
         }
         ,
         {
           "qid": "map2",
-          "layer_type": "map",
+          "layer_type"     : "map",
           "map": {
-            "schema": "natural_earth",
-            "table": "admin_0_countries"
+            "schema"       : "natural_earth",
+            "table"        : "admin_0_countries"
           },
           "attributes": {
-            "id": "europe_country_lines2",
-            "fill": "none",
-            "stroke": "#000000",
-            "stroke-width": "0.3"
+            "id"           : "europe_country_lines2",
+            "fill"         : "none",
+            "stroke"       : "#000000",
+            "stroke-width" : "0.3"
           }
         }
       ]
