@@ -1,0 +1,229 @@
+{
+  "title"     : "Wind and rain animation demo 1",
+  "abstract"  : "Wind and rain animation with multiple timesteps (no loopsteps).",
+  "source"    : "grid",
+  "producer"  : "ec",
+
+  "animation" :
+  {
+    "enabled"           : true,   // Enables/disables the animation
+    "timesteps"         : 24,     // Number of animation timesteps
+    "timestep_interval" : 90,     // Frame interval time (= milliseconds) between timesteps
+    "data_timestep"     : 20,     // Timestep length (= minutes)in in the actual data
+    "loopsteps"         : 1,      // Number of animation steps inside the same timestep
+    "loopstep_interval" : 70      // Frame interval time (=milliseconds) between loopsteps
+  },
+
+  "projection": {},
+  "views": [
+    {
+      "layers":
+      [
+        {
+          // ************************************************************
+          //  Wind speed isobands
+          // ************************************************************
+          //  This demonstrates the usage of the "default" data painter,
+          //  which paints data values according to color definitions
+          //  specified in the "colormap" file.
+          // ************************************************************
+
+          "layer_type"            : "raster",
+          "qid"                   : "windspeed-colors-1",
+          "visible"               : true,
+          "compression"           : 1,
+          "parameter"             : "WindSpeedMS",
+          "interpolation"         : "linear",
+          "data_painter"          : "default",
+          "data_opacity_land"     : 0.0,
+          "data_opacity_sea"      : 0.3,
+          "colormap"              : "windspeed",
+          "smooth_colors"         : true,
+
+          "land_position"         : "none",
+          "land_color"            : "FF404040",
+
+          "sea_position"          : "bottom",
+          "sea_color"             : "FFFFFFFF",
+
+          "land_border_position"  : "top",
+          "land_border_color"     : "80000000",
+          "sea_border_color"      : "80FFFFFF",
+
+          "land_shading_position" : "bottom",
+          "land_shading_light"    : 256,
+          "land_shading_shadow"   : 384,
+
+          "sea_shading_position"  : "bottom",
+          "sea_shading_light"     : 128,
+          "sea_shading_shadow"    : 384
+        }
+        ,
+        {
+          // ************************************************************
+          //  Wind speed streams
+          // ************************************************************
+          //  This demonstrates the usage of the "stream" data painter,
+          //  which paints stream lines according to color definitions
+          //  specified in the "colormap" file. The current painter is
+          //  also an animation painter, which means that it can paint
+          //  stream lines differently in all animation loopsteps. It
+          //  can also animate stream lines so that they look to have
+          //  different speeds according to their speed data values.
+          //  in this case there must be a list of speed ranges with
+          //  minimum and maximum data values. Notice that the line
+          //  colors comes from the colormap file also in this case.
+          // ************************************************************
+
+          "layer_type"            : "raster",
+          "qid"                   : "wind-streams-1",
+          "visible"               : true,
+          "compression"           : 1,
+          "direction"             : "WindDirection",
+          "speed"                 : "WindSpeedMS",
+          "data_painter"          : "stream",
+          "data_opacity_land"     : 0.0,
+          "data_opacity_sea"      : 0.3,
+
+          "stream" :
+          {
+            "trace_step_x"        : 10,
+            "trace_step_y"        : 10,
+            "trace_length_min"    : 10,
+            "trace_length_max"    : 180,
+            "line_length"         : 20,
+            "colormap"            : "windspeed"
+          }
+          ,
+          "land_position"         : "none",
+          "land_color"            : "FF808080",
+
+          "sea_position"          : "none",
+          "sea_color"             : "FFFFFFFF",
+
+          "land_border_position"  : "none",
+          "land_border_color"     : "80000000",
+          "sea_border_color"      : "80FFFFFF",
+
+          "land_shading_position" : "none",
+          "land_shading_light"    : 256,
+          "land_shading_shadow"   : 256,
+
+          "sea_shading_position"  : "none",
+          "sea_shading_light"     : 128,
+          "sea_shading_shadow"    : 384
+        }
+        ,
+        {
+          // ************************************************************
+          //  Precipitation
+          // ************************************************************
+          //  This demonstrates the usage of the "default" data painter,
+          //  which paints data values according to color definitions
+          //  specified in the "colormap" file.
+          //
+          //  It also demonstates the usage of shadows that are calculate
+          //  from the same data. The idea is that shadows are painted
+          //  if they are in the given interval. In this case the actual
+          //  shadow color is scaled according to the given color interval.
+          //  Usually shadow is created by using black color with some
+          //  tranparency (i.e. the color range is given in ARGB).
+          // ************************************************************
+
+          "layer_type"            : "raster",
+          "qid"                   : "precipitation-1",
+          "visible"               : true,
+          "compression"           : 1,
+          "parameter"             : "RRR-KGM2",
+          "interpolation"         : "transfer",
+          "data_painter"          : "default",
+          "data_opacity_land"     : 0.7,
+          "data_opacity_sea"      : 0.7,
+          "colormap"              : "precipitation",
+          "data_shadows" : [
+            {
+              "value_min"         : 0.2,
+              "value_max"         : 100.0,
+              "color_min"         : "50000000",
+              "color_max"         : "50000000",
+              "dx"                : 5,
+              "dy"                : 5
+            }
+          ]
+          ,
+          "land_position"         : "none",
+          "land_color"            : "FF808080",
+
+          "sea_position"          : "none",
+          "sea_color"             : "FFCCE0F8",
+
+          "land_border_position"  : "none",
+          "land_border_color"     : "20000000",
+          "sea_border_color"      : "20FFFFFF",
+
+          "land_shading_position" : "none",
+          "land_shading_light"    : 128,
+          "land_shading_shadow"   : 384,
+
+          "sea_shading_position"  : "none",
+          "sea_shading_light"     : 128,
+          "sea_shading_shadow"    : 384
+        }
+        ,
+        {
+          // ************************************************************
+          //  Group
+          // ************************************************************
+          //  This demonstrates the usage of the group layer. This is 
+          //  an easy way to group different layers together. In this
+          //  example we have white box and time layer in the same group,
+          //  but this is also useful for example when using isolabels
+          //  and isolines, because they depend on each other.
+          //
+          //  Notice that in this case the "visible" attributes controls 
+          //  the visibility of the all group layers.
+          // ************************************************************
+
+          "layer_type"            : "group",
+          "qid"                   : "time-box-1",
+          "visible"               : true,
+          "layers": 
+          [        
+	        {
+	          "tag"               : "rect",
+	          "qid"               : "rectangle-1",
+	          "attributes":
+	          {
+	            "x"               : -168,
+	            "y"               : 3,
+	            "width"           : 155,
+	            "height"          : 25,
+	            "rx"              : 8,
+	            "ry"              : 8,
+	            "fill"            : "white",
+	            "stroke"          : "black",
+	            "stroke-width"    : "0.6"
+	          }
+	        },
+	        {
+	          "layer_type"        : "time",
+	          "qid"               : "time-1",
+	          "timestamp"         : "validtime",
+	          "timezone"          : "Europe/Helsinki",
+	          "format"            : "%Y-%m-%d %H:%M",
+	          "x"                 : -20,
+	          "y"                 : 20,
+	          "attributes":
+	          {
+	            "text-anchor"     : "end",
+	            "font-family"     : "Roboto",
+	            "font-weight"     : "bold",
+	            "font-size"       : 14
+	          }
+	        }
+	      ]
+	    }
+      ]
+    }
+  ]
+}
