@@ -16,7 +16,11 @@
 #include "ParameterInfo.h"
 #include "Sampling.h"
 #include "Smoother.h"
+#include "ColorPainter_border.h"
+#include "ColorPainter_range.h"
+#include "ColorPainter_shadow.h"
 #include "ColorPainter_shading.h"
+#include <grid-files/common/ImageFunctions.h>
 #include <vector>
 
 namespace SmartMet
@@ -46,37 +50,44 @@ class RasterLayer : public Layer
     std::optional<std::string> parameter;
     std::optional<std::string> direction;
     std::optional<std::string> speed;
-    std::vector<Isoband> isobands;
-    std::string interpolation{"linear"};
 
-    std::string unit_conversion;
-    int compression;
-    std::string painter;
-    Parameters painterParameters;
-    ColorPainter_shading shadingPainter;
+    std::string           interpolation{"linear"};
 
-    std::string land_color;
-    std::string land_position;
+    std::string           unit_conversion;
+    int                   compression;
+    std::string           painter;
+    Parameters            painterParameters;
 
-    std::string sea_color;
-    std::string sea_position;
+    ColorPainter_range    landPainter;
+    ColorPainter_border   landBorderPainter;
+    ColorPainter_range    seaPainter;
+    ColorPainter_sptr     dataPainter;
+    ColorPainter_border   dataBorderPainter;
+    ColorPainter_shadow   dataShadowPainter;
+    ColorPainter_shading  shadingPainter;
 
-    std::string landShading_position;
-    Parameters landShading_parameters;
+    std::string           land_position;
+    std::string           sea_position;
+    std::string           land_border_position;
+    std::string           land_shading_position;
+    std::string           sea_shading_position;
 
-    std::string seaShading_position;
-    Parameters seaShading_parameters;
+    Parameters            land_shading_parameters;
+    Parameters            sea_shading_parameters;
 
     std::optional<double> multiplier;
     std::optional<double> offset;
-    ColorPainter_sptr_map colorPainters;
+
+    std::string           svg_image;
 
   private:
-    virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
-    virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
 
-    //void setColors_1(uint width,uint height,uint *image,std::vector<float>& values,uint alfa);
-    //void setColors(uint width,uint height,uint *image,std::vector<float>& values,ColorMap& colorMap,uint alfa);
+    void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+    void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+    void generate_output(CTPP::CDT &theGlobals, CTPP::CDT &theLayersCdt, State &theState,const T::Coordinate_vec *coordinates,std::vector<float>& values1,std::vector<float>& values2);
+    void generate_image(int loopstep,int loopsteps,const T::Coordinate_vec *coordinates,std::vector<float>& values1,std::vector<float>& values2,CImage& cimage);
+    bool isNewImageRequired(State &theState);
+
 
 };  // class RasterLayer
 

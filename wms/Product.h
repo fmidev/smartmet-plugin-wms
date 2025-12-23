@@ -14,6 +14,7 @@
 #include "Properties.h"
 #include "Text.h"
 #include "Views.h"
+#include "Animation.h"
 #include <json/json.h>
 #include <macgyver/DateTime.h>
 #include <optional>
@@ -46,6 +47,9 @@ class Product : public Properties
   std::optional<int> width;
   std::optional<int> height;
   std::optional<Text> title;
+
+  // Animation settings
+  Animation animation;
 
   // Defs section
   Defs defs;

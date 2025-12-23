@@ -486,7 +486,8 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
-      originalGridQuery->mAttributeList.addAttribute("grid.countSize", "1");
+      if (!theState.animation_enabled)
+        originalGridQuery->mAttributeList.addAttribute("grid.countSize", "1");
     }
     else
     {

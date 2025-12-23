@@ -12,48 +12,48 @@ namespace Dali
 {
 
 
-class ColorPainter_range : public ColorPainter
+class ColorPainter_shadow : public ColorPainter
 {
   public:
 
-    class Range
+    class Shadow
     {
       public:
 
-        Range()
+        Shadow()
         {
           value_min = 0;
           value_max = 0;
           color_min = 0x00000000;
-          color_max = 0x00000000;
-          color_low = 0x00000000;
-          color_high = 0x00000000;
+          color_max = 0x40000000;
+          dx = 10;
+          dy = 10;
         }
 
         double value_min;
         double value_max;
         uint color_min;
         uint color_max;
-        uint color_low;
-        uint color_high;
+        int dx;
+        int dy;
     };
 
   public:
-                  ColorPainter_range();
-    virtual       ~ColorPainter_range();
+                  ColorPainter_shadow();
+    virtual       ~ColorPainter_shadow();
 
     void          init(Json::Value &theJson,const State& theState);
-    void          initRanges(Json::Value &theJson,const State& theState);
-    void          initRange(Json::Value &theJson,const State& theState);
+    void          initShadows(Json::Value &theJson,const State& theState);
+    void          initShadow(Json::Value &theJson,const State& theState);
 
-    void          addRange(Range& range);
-    int           getRangeCount() {return ranges.size();}
+    void          addShadow(Shadow& shadow);
+    int           getShadowCount() {return shadows.size();}
     void          setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters);
     std::size_t   hash_value(const State &theState) const;
 
   protected:
 
-    std::vector<Range> ranges;
+    std::vector<Shadow> shadows;
 };
 
 

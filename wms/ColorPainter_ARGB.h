@@ -18,13 +18,16 @@ class ColorPainter_ARGB : public ColorPainter
                   ColorPainter_ARGB();
     virtual       ~ColorPainter_ARGB();
 
-    virtual void  addColorMap(std::string name,ColorMap_sptr colorMap);
-    virtual void  addColorMap(std::string name,std::string& colorMap);
-    virtual void  setImageColors(uint width,uint height,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters);
+    void          init(Json::Value &theJson,const State& theState);
+    void          setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters);
+    std::size_t   hash_value(const State &theState) const;
 
   protected:
 
-    ColorMap_sptr_map colorMaps;
+    ColorMap_sptr colormap;
+    std::string   colormap_name;
+    std::size_t   colormap_hash;
+    bool          smooth_colors;
 };
 
 

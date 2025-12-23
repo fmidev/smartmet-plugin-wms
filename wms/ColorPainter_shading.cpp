@@ -31,7 +31,7 @@ ColorPainter_shading::~ColorPainter_shading()
 
 
 
-void ColorPainter_shading::setImageColors(uint width,uint height,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters)
+void ColorPainter_shading::setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters)
 {
   try
   {
@@ -54,25 +54,6 @@ void ColorPainter_shading::setImageColors(uint width,uint height,uint *image,std
     auto rotate_val = parameters.find("rotate");
     if (rotate_val != parameters.end())
       rotate = (bool)toInt64(rotate_val->second);
-
-    /*
-    bool top = false;
-    auto position_value = parameters.find("shading_position");
-    if (position_value != parameters.end()  &&  position_value->second == "top")
-      top = true;
-
-    uint bgCol = 0x00000000;
-    bool bgSet = false;
-    auto bg_color = parameters.find("shading_background");
-    if (bg_color != parameters.end())
-    {
-      if (!bg_color->second.empty())
-      {
-        bgSet = true;
-        bgCol = strtoul(bg_color->second.c_str(),nullptr,16);
-      }
-    }
-    */
 
     double light = 0;
     auto shading_light = parameters.find("shading_light");
@@ -100,19 +81,6 @@ void ColorPainter_shading::setImageColors(uint width,uint height,uint *image,std
 
         if (m != ParamValueMissing)
         {
-          /*
-          if (bgSet)
-          {
-            if (!top)
-            {
-              if (bgCol == 0x00FFFFFF)
-                oldcol = 0x00000000;
-              else
-                oldcol = merge_ARGB(bgCol,oldcol);
-            }
-          }
-*/
-
           if (m < 0)
           {
             uint pp = (uint)(-(double)shadow*m);

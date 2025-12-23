@@ -11,6 +11,7 @@
 #include "StyleSheet.h"
 #include "ValueTools.h"
 #include "ColorPainter_ARGB.h"
+#include "ColorPainter_border.h"
 #include "ColorPainter_range.h"
 #include "ColorPainter_shading.h"
 #include "ColorPainter_stream.h"
@@ -27,7 +28,6 @@
 #include <gis/OGR.h>
 #include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <grid-files/common/GeneralFunctions.h>
-#include <grid-files/common/ImageFunctions.h>
 #include <grid-files/common/ImagePaint.h>
 #include <grid-files/map/Topography.h>
 #include <macgyver/Exception.h>
@@ -72,168 +72,139 @@ void RasterLayer::init(Json::Value &theJson, const State &theState, const Config
     JsonTools::remove_string(direction, theJson, "direction");
     JsonTools::remove_string(speed, theJson, "speed");
 
-
     painter = "default";
-    JsonTools::remove_string(painter, theJson, "painter");
+    JsonTools::remove_string(painter, theJson, "data_painter");
 
-    ColorPainter_ARGB *colorPainter_argb = new ColorPainter_ARGB();
-    colorPainters.insert(std::pair<std::string,ColorPainter_sptr>("default",ColorPainter_sptr(colorPainter_argb)));
-
-    ColorPainter_stream *colorPainter_stream = new ColorPainter_stream();
-    colorPainters.insert(std::pair<std::string,ColorPainter_sptr>("stream",ColorPainter_sptr(colorPainter_stream)));
-
-    std::string opacity_land = "1.0";
-    JsonTools::remove_string(opacity_land, theJson, "opacity_land");
-    painterParameters.insert(std::pair<std::string,std::string>("opacity_land",opacity_land));
-
-    std::string opacity_sea = "1.0";
-    JsonTools::remove_string(opacity_sea, theJson, "opacity_sea");
-    painterParameters.insert(std::pair<std::string,std::string>("opacity_sea",opacity_sea));
-
+    if (painter == "null")
+    {
+      dataPainter.reset(new ColorPainter());
+      dataPainter->init(theJson,theState);
+    }
+    else
     if (painter == "default")
     {
-
-      std::string colormap;
-      JsonTools::remove_string(colormap, theJson, "colormap");
-      painterParameters.insert(std::pair<std::string,std::string>("colormap",colormap));
-
-      std::string smooth;
-      JsonTools::remove_string(smooth, theJson, "smooth");
-      painterParameters.insert(std::pair<std::string,std::string>("smooth",smooth));
-
-      if (!colormap.empty())
-      {
-        std::string cmap = theState.getColorMap(colormap);
-        if (!cmap.empty())
-        {
-          colorPainter_argb->addColorMap(colormap,cmap);
-        }
-        else
-        {
-          Fmi::Exception exception(BCP, "Cannot find the colormap!");
-          exception.addParameter("colormap",colormap);
-          throw exception;
-        }
-      }
+      dataPainter.reset(new ColorPainter_ARGB());
+      dataPainter->init(theJson,theState);
     }
-
+    else
     if (painter == "range")
     {
-      std::string min_value = "0.0";
-      JsonTools::remove_string(min_value, theJson, "min_value");
-      painterParameters.insert(std::pair<std::string,std::string>("min_value",min_value));
-
-      std::string max_value = "1.0";
-      JsonTools::remove_string(max_value, theJson, "max_value");
-      painterParameters.insert(std::pair<std::string,std::string>("max_value",max_value));
-
-      std::string min_color = "00FFFF00";
-      JsonTools::remove_string(min_color, theJson, "min_color");
-      painterParameters.insert(std::pair<std::string,std::string>("min_color",min_color));
-
-      std::string max_color = "FFFFFF00";
-      JsonTools::remove_string(max_color, theJson, "max_color");
-      painterParameters.insert(std::pair<std::string,std::string>("max_color",max_color));
-
-      std::string low_color = "00000000";
-      JsonTools::remove_string(low_color, theJson, "low_color");
-      painterParameters.insert(std::pair<std::string,std::string>("low_color",low_color));
-
-      std::string high_color = "00000000";
-      JsonTools::remove_string(high_color, theJson, "high_color");
-      painterParameters.insert(std::pair<std::string,std::string>("high_color",high_color));
+      dataPainter.reset(new ColorPainter_range());
+      dataPainter->init(theJson,theState);
     }
-
-
+    else
     if (painter == "stream")
     {
-      std::string stream_color = "00FFFFFF";
-      JsonTools::remove_string(stream_color, theJson, "stream_color");
-      painterParameters.insert(std::pair<std::string,std::string>("stream_color",stream_color));
-
-      std::string stream_min_length = "10";
-      JsonTools::remove_string(stream_min_length, theJson, "stream_min_length");
-      painterParameters.insert(std::pair<std::string,std::string>("stream_min_length",stream_min_length));
-
-      std::string stream_max_length = "10";
-      JsonTools::remove_string(stream_max_length, theJson, "stream_max_length");
-      painterParameters.insert(std::pair<std::string,std::string>("stream_max_length",stream_max_length));
-
-      std::string stream_step_x = "10";
-      JsonTools::remove_string(stream_step_x, theJson, "stream_step_x");
-      painterParameters.insert(std::pair<std::string,std::string>("stream_step_x",stream_step_x));
-
-      std::string stream_step_y = "10";
-      JsonTools::remove_string(stream_step_y, theJson, "stream_step_y");
-      painterParameters.insert(std::pair<std::string,std::string>("stream_step_y",stream_step_y));
-
-      std::string colormap;
-      JsonTools::remove_string(colormap, theJson, "colormap");
-      painterParameters.insert(std::pair<std::string,std::string>("colormap",colormap));
-
-      std::string smooth;
-      JsonTools::remove_string(smooth, theJson, "smooth");
-      painterParameters.insert(std::pair<std::string,std::string>("smooth",smooth));
-
-      if (!colormap.empty())
-      {
-        std::string cmap = theState.getColorMap(colormap);
-        if (!cmap.empty())
-        {
-          colorPainter_stream->addColorMap(colormap,cmap);
-        }
-        else
-        {
-          Fmi::Exception exception(BCP, "Cannot find the colormap!");
-          exception.addParameter("colormap",colormap);
-          throw exception;
-        }
-      }
+      dataPainter.reset(new ColorPainter_stream());
+      dataPainter->init(theJson,theState);
+    }
+    else
+    if (painter == "border")
+    {
+      dataPainter.reset(new ColorPainter_border());
+      dataPainter->init(theJson,theState);
+    }
+    else
+    if (painter == "shadow")
+    {
+      dataPainter.reset(new ColorPainter_shadow());
+      dataPainter->init(theJson,theState);
     }
 
+
+    // **** LAND PAINTING PARAMETERS
 
     land_position = "none";
     JsonTools::remove_string(land_position, theJson, "land_position");
 
+    std::string land_color = "00000000";
     JsonTools::remove_string(land_color, theJson, "land_color");
-    //landShading_parameters.insert(std::pair<std::string,std::string>("shading_background",landShading_background));
+
+    ColorPainter_range::Range range;
+    range.value_min = 0.9;
+    range.value_max = 1.1;
+    range.color_min = argb(land_color);
+    range.color_max = range.color_min;
+    landPainter.addRange(range);
 
 
-    landShading_position = "none";
-    JsonTools::remove_string(landShading_position, theJson, "landShading_position");
-
-    std::string landShading_light = "128";
-    JsonTools::remove_string(landShading_light, theJson, "landShading_light");
-    landShading_parameters.insert(std::pair<std::string,std::string>("shading_light",landShading_light));
-
-    std::string landShading_shadow = "384";
-    JsonTools::remove_string(landShading_shadow, theJson, "landShading_shadow");
-    landShading_parameters.insert(std::pair<std::string,std::string>("shading_shadow",landShading_shadow));
-
-
+    // **** SEA PAINTING PARAMETERS
 
     sea_position = "none";
     JsonTools::remove_string(sea_position, theJson, "sea_position");
 
+    std::string sea_color = "00000000";
     JsonTools::remove_string(sea_color, theJson, "sea_color");
-    //seaShading_parameters.insert(std::pair<std::string,std::string>("shading_background",seaShading_background));
 
-    seaShading_position = "none";
-    JsonTools::remove_string(seaShading_position, theJson, "seaShading_position");
+    range.value_min = -0.1;
+    range.value_max = 0.1;
+    range.color_min = argb(sea_color);
+    range.color_max = range.color_min;
+    seaPainter.addRange(range);
 
-    std::string seaShading_light = "128";
-    JsonTools::remove_string(seaShading_light, theJson, "seaShading_light");
-    seaShading_parameters.insert(std::pair<std::string,std::string>("shading_light",seaShading_light));
 
-    std::string seaShading_shadow = "384";
-    JsonTools::remove_string(seaShading_shadow, theJson, "seaShading_shadow");
-    seaShading_parameters.insert(std::pair<std::string,std::string>("shading_shadow",seaShading_shadow));
+    // **** LAND/SEA BORDER PARAMETERS
+
+    land_border_position = "none";
+    JsonTools::remove_string(land_border_position, theJson, "land_border_position");
+
+    std::string land_border_color = "FF000000";
+    JsonTools::remove_string(land_border_color, theJson, "land_border_color");
+
+    std::string sea_border_color = "FFFFFFFF";
+    JsonTools::remove_string(sea_border_color, theJson, "sea_border_color");
+
+    ColorPainter_border::Border border;
+    border.inside_value_min = 0.9;
+    border.inside_color = argb(land_border_color);
+    border.outside_color = argb(sea_border_color);
+    landBorderPainter.addBorder(border);
+
+
+    // **** LAND SHADING PARAMETERS
+
+    land_shading_position = "none";
+    JsonTools::remove_string(land_shading_position, theJson, "land_shading_position");
+
+    std::string land_shading_light = "128";
+    JsonTools::remove_string(land_shading_light, theJson, "land_shading_light");
+    land_shading_parameters.insert(std::pair<std::string,std::string>("shading_light",land_shading_light));
+
+    std::string land_shading_shadow = "384";
+    JsonTools::remove_string(land_shading_shadow, theJson, "land_shading_shadow");
+    land_shading_parameters.insert(std::pair<std::string,std::string>("shading_shadow",land_shading_shadow));
+
+
+    // **** SEA SHADING PARAMETERS
+
+    sea_shading_position = "none";
+    JsonTools::remove_string(sea_shading_position, theJson, "sea_shading_position");
+
+    std::string sea_shading_light = "128";
+    JsonTools::remove_string(sea_shading_light, theJson, "sea_shading_light");
+    sea_shading_parameters.insert(std::pair<std::string,std::string>("shading_light",sea_shading_light));
+
+    std::string sea_shading_shadow = "384";
+    JsonTools::remove_string(sea_shading_shadow, theJson, "sea_shading_shadow");
+    sea_shading_parameters.insert(std::pair<std::string,std::string>("shading_shadow",sea_shading_shadow));
+
+
+    // **** DATA BORDER PARAMETERS
+
+    auto json = JsonTools::remove(theJson, "data_borders");
+    if (!json.isNull())
+      dataBorderPainter.initBorders(json,theState);
+
+
+    // **** DATA SHADOW PARAMETERS
+
+    json = JsonTools::remove(theJson, "data_shadows");
+    if (!json.isNull())
+      dataShadowPainter.initShadows(json,theState);
 
 
     compression = 1;
     JsonTools::remove_int(compression, theJson, "compression");
-
-    colorPainters.insert(std::pair<std::string,ColorPainter_sptr>("range",ColorPainter_sptr(new ColorPainter_range())));
 
     JsonTools::remove_string(interpolation, theJson, "interpolation");
     JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
@@ -261,6 +232,14 @@ void RasterLayer::generate(CTPP::CDT &theGlobals, CTPP::CDT &theLayersCdt, State
       theGlobals["css"][name] = theState.getStyle(*css);
     }
 
+    if (!isNewImageRequired(theState))
+    {
+      // We do not need a new image so there is no need to fetch data
+      std::vector<float> emptyVector;
+      generate_output(theGlobals,theLayersCdt,theState,NULL,emptyVector,emptyVector);
+      return;
+    }
+
     if (source && *source == "grid")
       generate_gridEngine(theGlobals, theLayersCdt, theState);
     else
@@ -271,6 +250,238 @@ void RasterLayer::generate(CTPP::CDT &theGlobals, CTPP::CDT &theLayersCdt, State
     throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid).addParameter("Producer", *producer);
   }
 }
+
+
+
+
+
+void RasterLayer::generate_image(int loopstep,int loopsteps,const T::Coordinate_vec *coordinates,std::vector<float>& values1,std::vector<float>& values2,CImage& cimage)
+{
+  try
+  {
+   // *********************  DATA SOURCE INDEPENDNT PAINTING *********
+
+    if (!values1.size())
+      return;
+
+    int width = *projection.xsize;
+    int height = *projection.ysize;
+    uint sz = width * height;
+
+    int rotate = 0;
+    if (coordinates && coordinates->size() > C_UINT(10*width)  &&  (*coordinates)[0].y() < (*coordinates)[10*width].y())
+      rotate = 1;
+
+    std::vector<float> land_shadings;
+    std::vector<float> sea_shadings;
+    std::vector<float> land;
+
+
+    Parameters seaParameters;
+    Parameters landParameters;
+    Parameters landBorderParameters;
+
+    if (coordinates)
+    {
+      SmartMet::Map::topography.getLand(*coordinates,land);
+
+      sea_shading_parameters.insert(std::pair<std::string,std::string>("rotate",std::to_string(rotate)));
+      land_shading_parameters.insert(std::pair<std::string,std::string>("rotate",std::to_string(rotate)));
+    }
+
+    uint *image = new uint[sz];
+    memset(image,0x00,sz*4);
+
+    cimage.width = width;
+    cimage.height = height;
+    cimage.pixel = image;
+    Parameters emptyParameters;
+
+    //int idx = theState.animation_loopstep;
+    //int loopsteps = theState.animation_loopsteps;
+
+    // Painting sea
+    if (sea_position == "bottom"  &&  land.size())
+      seaPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land,seaParameters);
+
+    // Painting land
+    if (land_position == "bottom" &&  land.size())
+      landPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land,landParameters);
+
+    // Painting sea topography
+    if (sea_shading_position == "bottom"  &&  sea_shadings.size() &&  coordinates)
+    {
+      if (sea_shadings.size() == 0)
+        SmartMet::Map::topography.getSeaShading(*coordinates,sea_shadings);
+
+      shadingPainter.setImageColors(width,height,loopstep,loopsteps,image,land,sea_shadings,sea_shading_parameters);
+    }
+
+    // Painting land topography
+    if (land_shading_position == "bottom"  &&  coordinates)
+    {
+      if (land_shadings.size() == 0)
+        SmartMet::Map::topography.getLandShading(*coordinates,land_shadings);
+
+      shadingPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land_shadings,land_shading_parameters);
+    }
+
+    // Painting land sea border
+    if (land_border_position == "bottom" &&  land.size())
+      landBorderPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land,landBorderParameters);
+
+
+    if (dataShadowPainter.getShadowCount())
+      dataShadowPainter.setImageColors(width,height,loopstep,loopsteps,image,land,values1,emptyParameters);
+
+    // Painting the actual parameter
+    if (dataPainter)
+    {
+      if (!values2.size())
+        dataPainter->setImageColors(width,height,loopstep,loopsteps,image,land,values1,painterParameters);
+      else
+        dataPainter->setImageColors(width,height,loopstep,loopsteps,image,land,values1,values2,painterParameters);
+    }
+
+
+    if (dataBorderPainter.getBorderCount())
+      dataBorderPainter.setImageColors(width,height,loopstep,loopsteps,image,land,values1,emptyParameters);
+
+    // Painting sea
+    if (sea_position == "top" &&  land.size())
+      seaPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land,seaParameters);
+
+    // Painting land
+    if (land_position == "top" &&  land.size())
+      landPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land,landParameters);
+
+
+    // Painting sea topography
+    if (sea_shading_position == "top"  &&  coordinates)
+    {
+      if (sea_shadings.size() == 0)
+        SmartMet::Map::topography.getSeaShading(*coordinates,sea_shadings);
+
+      shadingPainter.setImageColors(width,height,loopstep,loopsteps,image,land,sea_shadings,sea_shading_parameters);
+    }
+
+    // Painting land topography
+    if (land_shading_position == "top"  &&  coordinates)
+    {
+      if (land_shadings.size() == 0)
+        SmartMet::Map::topography.getLandShading(*coordinates,land_shadings);
+
+      shadingPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land_shadings,land_shading_parameters);
+    }
+
+    // Painting land sea border
+    if (land_border_position == "top" &&  land.size())
+      landBorderPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land,landBorderParameters);
+
+    std::ostringstream svgImage;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
+bool RasterLayer::isNewImageRequired(State &theState)
+{
+  try
+  {
+    if (!theState.animation_enabled)
+      return true;
+
+    if (svg_image.length() == 0)
+      return true;
+
+    if (dataPainter)
+    {
+      if (dataPainter->isAnimator())
+        return true;
+
+      if (theState.animation_loopstep == 0)
+        return true;
+    }
+    return false;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
+void RasterLayer::generate_output(CTPP::CDT &theGlobals, CTPP::CDT &theLayersCdt, State &theState,const T::Coordinate_vec *coordinates,std::vector<float>& values1,std::vector<float>& values2)
+{
+  try
+  {
+    // *********************  DATA SOURCE INDEPENDENT PAINTING *********
+
+    if (isNewImageRequired(theState) && visible)
+    {
+      CImage cimage;
+      generate_image(theState.animation_loopstep,theState.animation_loopsteps,coordinates,values1,values2,cimage);
+
+      std::ostringstream svgImage;
+
+      int comp = compression;
+      if (theState.animation_enabled)
+        comp = 1;
+
+      int sz = cimage.width * cimage.height;
+      int bsz = sz*4 + 10000;
+      char *buffer = new char[bsz];
+      int nsz = png_saveMem(buffer,bsz,cimage.pixel,cimage.width,cimage.height,comp);
+      svgImage << "<image id=\"" << qid << "\" href=\"data:image/png;base64,";
+      svgImage << base64_encode((unsigned char*)buffer,nsz);
+      svgImage << "\" x=\"0\" y=\"0\" width=\"" << cimage.width << "\" height=\"" << cimage.height << "\" />\n\n";
+      delete [] buffer;
+
+      svg_image = svgImage.str();
+    }
+
+    CTPP::CDT object_cdt;
+    std::string objectKey;
+    const auto &box = projection.getBox();
+
+    if (parameter)
+      objectKey = "raster:" + *parameter + ":" + qid;
+
+    object_cdt["objectKey"] = objectKey;
+
+    // Clip if necessary
+    // addClipRect(theLayersCdt, theGlobals, box, theState);
+
+    // Generate streamlines as use tags statements inside <g>..</g>
+    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
+    group_cdt["start"] = "<g";
+    group_cdt["end"] = "</g>";
+
+    std::ostringstream useOut;
+    useOut << "<use xlink:href=\"#" << qid << "\"/>\n";
+
+    if (visible  &&  svg_image.length())
+      theGlobals["includes"][qid] = svg_image;
+
+    theGlobals["bbox"] = Fmi::to_string(box.xmin()) + "," + Fmi::to_string(box.ymin()) + "," +
+                         Fmi::to_string(box.xmax()) + "," + Fmi::to_string(box.ymax());
+    theGlobals["objects"][objectKey] = object_cdt;
+
+    // We created only this one layer
+    group_cdt["cdata"] = useOut.str();
+    theLayersCdt.PushBack(group_cdt);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 
 
 
@@ -292,6 +503,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
       timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
     }
 
+
     std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
@@ -300,21 +512,6 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
 
     // Establish the valid time
     auto valid_time = getValidTime();
-
-    T::ParamValue_vec contourLowValues;
-    T::ParamValue_vec contourHighValues;
-    for (const Isoband &isoband : isobands)
-    {
-      if (isoband.lolimit)
-        contourLowValues.push_back(*isoband.lolimit);
-      else
-        contourLowValues.push_back(-1000000000.0);
-
-      if (isoband.hilimit)
-        contourHighValues.push_back(*isoband.hilimit);
-      else
-        contourHighValues.push_back(1000000000);
-    }
 
     // Alter units if requested
     if (!unit_conversion.empty())
@@ -326,8 +523,6 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
 
     auto crs = projection.getCRS();
     const auto &box = projection.getBox();
-    //const auto clipbox = getClipBox(box);
-
     std::string wkt = *projection.crs;
 
     if (wkt != "data")
@@ -351,7 +546,6 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
         originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
-      //originalGridQuery->mAttributeList.addAttribute("grid.countSize", "1");
     }
     else
     {
@@ -361,7 +555,6 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
     }
 
     // Adding parameter information into the query.
-
 
     if (parameter)
     {
@@ -413,6 +606,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
     }
 
     std::string forecastTime = Fmi::to_iso_string(getValidTime());
+    //printf("FORECAST TIME %s\n",forecastTime.c_str());
     attributeList.addAttribute("startTime", forecastTime);
     attributeList.addAttribute("endTime", forecastTime);
     attributeList.addAttribute("timelist", forecastTime);
@@ -436,7 +630,18 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
         p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Nearest;
       else
       if (interpolation == "linear")
+      {
         p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Linear;
+        p.mTimeInterpolationMethod = T::TimeInterpolationMethod::Linear;
+        p.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
+      }
+
+      if (interpolation == "transfer")
+      {
+        p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Linear;
+        p.mTimeInterpolationMethod = 15;
+        p.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
+      }
 
       if (geometryId)
         p.mGeometryId = *geometryId;
@@ -565,191 +770,34 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
     if (wkt == "data")
       return;
 
-    int width = *projection.xsize;
-    int height = *projection.ysize;
-
-    uint sz = width * height;
-    uint *image = new uint[sz];
-    memset(image,0x00,sz*4);
-
-    std::ostringstream svgImage;
-
-
     const T::Coordinate_vec *coordinates = nullptr;
     std::shared_ptr<SmartMet::QueryServer::ParameterValues> p[2];
-    ColorPainter_range rangePainter;
 
     uint c = 0;
-
-    auto painterRec = colorPainters.find(painter);
-    if (painterRec != colorPainters.end())
+    for (const auto &query_param : query->mQueryParameterList)
     {
-      auto painter = painterRec->second;
-      for (const auto &query_param : query->mQueryParameterList)
+      for (const auto &val : query_param.mValueList)
       {
-        for (const auto &val : query_param.mValueList)
+        if (!val->mValueVector.empty()  &&  c < 2)
         {
-          if (!val->mValueVector.empty()  &&  c < 2)
-          {
-            p[c] = val;
-            if (query_param.mCoordinates.size())
-              coordinates = &query_param.mCoordinates;
-            c++;
-          }
+          p[c] = val;
+          if (query_param.mCoordinates.size())
+            coordinates = &query_param.mCoordinates;
+          c++;
         }
       }
-
-      int rotate = 0;
-      if (coordinates && coordinates->size() > C_UINT(10*width)  &&  (*coordinates)[0].y() < (*coordinates)[10*width].y())
-        rotate = 1;
-
-
-      std::vector<float> landShadings;
-      std::vector<float> seaShadings;
-      std::vector<float> land;
-
-      uint sea_backcol = 0;
-      if (!sea_color.empty())
-        sea_backcol = strtoul(sea_color.c_str(),nullptr,16);
-
-      uint land_backcol = 0;
-      if (!land_color.empty())
-        land_backcol = strtoul(land_color.c_str(),nullptr,16);
-
-      if (coordinates)
-      {
-        SmartMet::Map::topography.getLand(*coordinates,land);
-
-        if (sea_position == "bottom" &&  sea_backcol)
-        {
-          Parameters parameters;
-          parameters.insert(std::pair<std::string,std::string>("min_value",std::to_string(-0.1)));
-          parameters.insert(std::pair<std::string,std::string>("min_color",sea_color));
-          parameters.insert(std::pair<std::string,std::string>("max_value",std::to_string(0.1)));
-          parameters.insert(std::pair<std::string,std::string>("max_color",sea_color));
-          rangePainter.setImageColors(width,height,image,land,land,parameters);
-        }
-
-        if (land_position == "bottom" &&  land_backcol)
-        {
-          Parameters parameters;
-          parameters.insert(std::pair<std::string,std::string>("min_value",std::to_string(0.9)));
-          parameters.insert(std::pair<std::string,std::string>("min_color",land_color));
-          parameters.insert(std::pair<std::string,std::string>("max_value",std::to_string(1.1)));
-          parameters.insert(std::pair<std::string,std::string>("max_color",land_color));
-
-          rangePainter.setImageColors(width,height,image,land,land,parameters);
-        }
-
-        if (seaShading_position == "bottom")
-        {
-          SmartMet::Map::topography.getSeaShading(*coordinates,seaShadings);
-          seaShading_parameters.insert(std::pair<std::string,std::string>("rotate",std::to_string(rotate)));
-          shadingPainter.setImageColors(width,height,image,land,seaShadings,seaShading_parameters);
-        }
-
-        if (landShading_position == "bottom")
-        {
-          SmartMet::Map::topography.getLandShading(*coordinates,landShadings);
-          landShading_parameters.insert(std::pair<std::string,std::string>("rotate",std::to_string(rotate)));
-          shadingPainter.setImageColors(width,height,image,land,landShadings,landShading_parameters);
-        }
-      }
-
-      if (c == 1)
-        painter->setImageColors(width,height,image,land,p[0]->mValueVector,painterParameters);
-      else
-      if (c == 2)
-        painter->setImageColors(width,height,image,land,p[0]->mValueVector,p[1]->mValueVector,painterParameters);
-
-      if (coordinates)
-      {
-        if (sea_position == "top" &&  sea_backcol)
-        {
-          Parameters parameters;
-          parameters.insert(std::pair<std::string,std::string>("min_value",std::to_string(-0.1)));
-          parameters.insert(std::pair<std::string,std::string>("min_color",sea_color));
-          parameters.insert(std::pair<std::string,std::string>("max_value",std::to_string(0.1)));
-          parameters.insert(std::pair<std::string,std::string>("max_color",sea_color));
-          rangePainter.setImageColors(width,height,image,land,land,parameters);
-        }
-
-        if (land_position == "top" &&  land_backcol)
-        {
-          Parameters parameters;
-          parameters.insert(std::pair<std::string,std::string>("min_value",std::to_string(0.9)));
-          parameters.insert(std::pair<std::string,std::string>("min_color",land_color));
-          parameters.insert(std::pair<std::string,std::string>("max_value",std::to_string(1.1)));
-          parameters.insert(std::pair<std::string,std::string>("max_color",land_color));
-
-          rangePainter.setImageColors(width,height,image,land,land,parameters);
-        }
-
-        if (seaShading_position == "top")
-        {
-          if (seaShadings.size() == 0)
-             SmartMet::Map::topography.getSeaShading(*coordinates,seaShadings);
-
-          seaShading_parameters.insert(std::pair<std::string,std::string>("shading_position","top"));
-          seaShading_parameters.insert(std::pair<std::string,std::string>("rotate",std::to_string(rotate)));
-          shadingPainter.setImageColors(width,height,image,land,seaShadings,seaShading_parameters);
-        }
-
-        if (landShading_position == "top")
-        {
-          if (landShadings.size() == 0)
-            SmartMet::Map::topography.getLandShading(*coordinates,landShadings);
-
-          landShading_parameters.insert(std::pair<std::string,std::string>("shading_position","top"));
-          landShading_parameters.insert(std::pair<std::string,std::string>("rotate",std::to_string(rotate)));
-          shadingPainter.setImageColors(width,height,image,land,landShadings,landShading_parameters);
-        }
-      }
-
-      int bsz = sz*4 + 10000;
-      char *buffer = new char[bsz];
-      int nsz = png_saveMem(buffer,bsz,image,width,height,compression);
-
-      svgImage << "<image id=\"" << qid << "\" href=\"data:image/png;base64,";
-      svgImage << base64_encode((unsigned char*)buffer,nsz);
-      svgImage << "\" x=\"0\" y=\"0\" width=\"" << width << "\" height=\"" << height << "\" />\n\n";
-
-      delete [] buffer;
     }
 
-    if (image)
+   // *********************  DATA SOURCE INDEPENDNT PAINTING *********
+
+    if (p[0]  && !p[1])
     {
-      delete [] image;
-      image = NULL;
+      std::vector<float> emptyVector;
+      generate_output(theGlobals,theLayersCdt,theState,coordinates,p[0]->mValueVector,emptyVector);
     }
-
-    CTPP::CDT object_cdt;
-    std::string objectKey;
-
-    if (parameter)
-      objectKey = "raster:" + *parameter + ":" + qid;
-
-    object_cdt["objectKey"] = objectKey;
-
-    // Clip if necessary
-    addClipRect(theLayersCdt, theGlobals, box, theState);
-
-    // Generate streamlines as use tags statements inside <g>..</g>
-    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
-    group_cdt["start"] = "<g";
-    group_cdt["end"] = "</g>";
-
-    std::ostringstream useOut;
-    useOut << "<use xlink:href=\"#" << qid << "\"/>\n";
-
-    theGlobals["includes"][qid] = svgImage.str();
-    theGlobals["bbox"] = Fmi::to_string(box.xmin()) + "," + Fmi::to_string(box.ymin()) + "," +
-                         Fmi::to_string(box.xmax()) + "," + Fmi::to_string(box.ymax());
-    theGlobals["objects"][objectKey] = object_cdt;
-
-    // We created only this one layer
-    group_cdt["cdata"] = useOut.str();
-    theLayersCdt.PushBack(group_cdt);
+    else
+    if (p[0]  && p[1])
+      generate_output(theGlobals,theLayersCdt,theState,coordinates,p[0]->mValueVector,p[1]->mValueVector);
   }
   catch (...)
   {
@@ -757,10 +805,22 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
   }
 }
 
+
+
 void RasterLayer::generate_qEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayersCdt, State &theState)
 {
   try
   {
+    // ToDo:
+
+    // 1. Initialize project information.
+    // 2. Fetch data according to "parameter" (=>valueVector1) or
+    //    according to "direction"  (=>valueVector1) and "speed"  (=>valueVector2).
+    // 3. Fetch coordinates of the current grid.
+    // 4. Call the following function.
+    //
+    //    generate_output(theGlobals,theLayersCdt,theState,coordinates,valueVector1,valueVector2);
+
   }
   catch (...)
   {
@@ -804,13 +864,45 @@ std::size_t RasterLayer::hash_value(const State &theState) const
       Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
     Fmi::hash_combine(hash, countParameterHash(theState, parameter));
-    Fmi::hash_combine(hash, Dali::hash_value(isobands, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(interpolation));
     Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
     Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
     Fmi::hash_combine(hash, Fmi::hash_value(offset));
+    Fmi::hash_combine(hash, Fmi::hash_value(land_position));
+    Fmi::hash_combine(hash, Fmi::hash_value(sea_position));
+    Fmi::hash_combine(hash, Fmi::hash_value(land_border_position));
+    Fmi::hash_combine(hash, Fmi::hash_value(land_shading_position));
+    Fmi::hash_combine(hash, Fmi::hash_value(sea_shading_position));
     Fmi::hash_combine(hash, Fmi::hash_value(painter));
+
+    Fmi::hash_combine(hash, landPainter.hash_value(theState));
+    Fmi::hash_combine(hash, seaPainter.hash_value(theState));
+    Fmi::hash_combine(hash, landBorderPainter.hash_value(theState));
+    Fmi::hash_combine(hash, dataShadowPainter.hash_value(theState));
+    Fmi::hash_combine(hash, dataBorderPainter.hash_value(theState));
+
+    if (dataPainter)
+      Fmi::hash_combine(hash, dataPainter->hash_value(theState));
+
     Fmi::hash_combine(hash, Fmi::hash_value(compression));
+
+    for (auto it = painterParameters.begin();it != painterParameters.end();++it)
+    {
+      Fmi::hash_combine(hash, Fmi::hash_value(it->first));
+      Fmi::hash_combine(hash, Fmi::hash_value(it->second));
+    }
+
+    for (auto it = land_shading_parameters.begin();it != land_shading_parameters.end();++it)
+    {
+      Fmi::hash_combine(hash, Fmi::hash_value(it->first));
+      Fmi::hash_combine(hash, Fmi::hash_value(it->second));
+    }
+
+    for (auto it = sea_shading_parameters.begin();it != sea_shading_parameters.end();++it)
+    {
+      Fmi::hash_combine(hash, Fmi::hash_value(it->first));
+      Fmi::hash_combine(hash, Fmi::hash_value(it->second));
+    }
     return hash;
   }
   catch (...)

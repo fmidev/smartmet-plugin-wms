@@ -1,5 +1,6 @@
 #include "ColorMap.h"
 #include <grid-files/common/GeneralFunctions.h>
+#include <grid-files/common/ImageFunctions.h>
 
 
 namespace SmartMet
@@ -87,35 +88,7 @@ ColorMap::ColorMap(std::string& colorMap)
       if (pair.size() == 2)
       {
         float val = toDouble(pair[0]);
-        std::vector<uint> v;
-        splitString(pair[1].c_str(),',',v);
-        uint col = 0;
-        if (v.size() == 1)
-        {
-          // RGB or ARGB in hex format
-
-          if (pair[1].length() == 6)
-          {
-            col = 0xFF000000 + strtoul(pair[1].c_str(),nullptr,16);
-          }
-          else
-          if (pair[1].length() == 8)
-          {
-            col = strtoul(pair[1].c_str(),nullptr,16);
-          }
-        }
-        else
-        if (v.size() == 3)
-        {
-          // RGB (a,r,g,b)
-          col = 0xFF000000 + (v[0] <<  16) + (v[1] <<  8) + v[2];
-        }
-        else
-        if (v.size() == 4)
-        {
-          // ARGB (a,r,g,b)
-          col = (v[0] <<  24) + (v[1] <<  16) + (v[2] <<  8) + v[3];
-        }
+        uint col = argb(pair[1].c_str());
         mColors.insert(std::pair<float,unsigned int>(val,col));
       }
     }
@@ -125,7 +98,6 @@ ColorMap::ColorMap(std::string& colorMap)
     throw Fmi::Exception::Trace(BCP, "Constructor failed!");
   }
 }
-
 
 
 
@@ -180,6 +152,21 @@ void ColorMap::getValuesAndColors(std::vector<float>& values,std::vector<unsigne
 
 
 
+void ColorMap::addColor(float value,unsigned int color)
+{
+  try
+  {
+    mColors.insert(std::pair<float,unsigned int>(value,color));
+  }
+  catch (...)
+  {
+    throw Fmi::Exception(BCP, "Constructor failed!", nullptr);
+  }
+}
+
+
+
+
 void ColorMap::getColors(std::vector<float>& values,std::vector<unsigned int>& colors)
 {
   try
@@ -216,7 +203,7 @@ void ColorMap::getSmoothColors(std::vector<float>& values,std::vector<unsigned i
 }
 
 
-
+/* => Inline
 
 uint ColorMap::getColor(double value)
 {
@@ -328,7 +315,7 @@ uint ColorMap::getSmoothColor(double value)
     throw Fmi::Exception(BCP, "Operation failed!", nullptr);
   }
 }
-
+*/
 
 
 

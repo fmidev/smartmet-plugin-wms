@@ -16,6 +16,15 @@ ColorPainter_stream::ColorPainter_stream()
 {
   try
   {
+    colormap_hash = 0;
+    trace_step_x = 10;
+    trace_step_y = 10;
+    trace_length_min = 10;
+    trace_length_max = 128;
+    line_length = 16;
+    line_color_land = 0xFF000000;
+    line_color_sea = 0xFF000000;
+    smooth_colors = true;
   }
   catch (...)
   {
@@ -32,12 +41,18 @@ ColorPainter_stream::~ColorPainter_stream()
 
 
 
-
-void ColorPainter_stream::addColorMap(std::string name,ColorMap_sptr colorMap)
+void ColorPainter_stream::init(Json::Value &theJson,const State& theState)
 {
   try
   {
-    colorMaps.insert(std::pair<std::string,ColorMap_sptr>(name,colorMap));
+    if (theJson.isNull())
+      return;
+
+    ColorPainter::init(theJson,theState);
+
+    auto json = JsonTools::remove(theJson, "stream");
+    if (!json.isNull())
+      initStream(json,theState);
   }
   catch (...)
   {
@@ -48,12 +63,63 @@ void ColorPainter_stream::addColorMap(std::string name,ColorMap_sptr colorMap)
 
 
 
-void ColorPainter_stream::addColorMap(std::string name,std::string& colorMap)
+
+void ColorPainter_stream::initStream(Json::Value &theJson,const State& theState)
 {
   try
   {
-    ColorMap_sptr cm = std::shared_ptr<ColorMap>(new ColorMap(colorMap));
-    colorMaps.insert(std::pair<std::string,ColorMap_sptr>(name,cm));
+    if (theJson.isNull())
+      return;
+
+    JsonTools::remove_int(trace_step_x, theJson, "trace_step_x");
+    JsonTools::remove_int(trace_step_y, theJson, "trace_step_y");
+    JsonTools::remove_int(trace_length_min, theJson, "trace_length_min");
+    JsonTools::remove_int(trace_length_max, theJson, "trace_length_max");
+
+    JsonTools::remove_int(line_length, theJson, "line_length");
+
+    auto json = JsonTools::remove(theJson, "speeds");
+    if (!json.isNull())
+      initStreamSpeeds(json,theState);
+
+    if (streamSpeeds.size() == 0)
+    {
+      StreamSpeed speed;
+      addStreamSpeed(speed);
+    }
+
+    std::string col = "FF000000";
+    JsonTools::remove_string(col, theJson, "line_color_land");
+    line_color_sea = argb(col.c_str());
+
+    col = "FF000000";
+    JsonTools::remove_string(col, theJson, "line_color_sea");
+    line_color_sea = argb(col.c_str());
+
+    JsonTools::remove_string(colormap_name, theJson, "colormap");
+
+    std::string smooth = "true";
+    JsonTools::remove_string(smooth, theJson, "smooth");
+    if (smooth != "true")
+      smooth_colors = false;
+
+    JsonTools::remove_bool(smooth_colors, theJson, "smooth_colors");
+
+    if (!colormap_name.empty())
+    {
+      std::string cmap = theState.getColorMap(colormap_name);
+      if (!cmap.empty())
+      {
+        colormap_hash = Fmi::hash(cmap);
+        colormap = std::shared_ptr<ColorMap>(new ColorMap(cmap));
+      }
+      else
+      {
+        Fmi::Exception exception(BCP, "Cannot find the colormap!");
+        exception.addParameter("colormap_name",colormap_name);
+        throw exception;
+      }
+    }
   }
   catch (...)
   {
@@ -64,7 +130,74 @@ void ColorPainter_stream::addColorMap(std::string name,std::string& colorMap)
 
 
 
-void ColorPainter_stream::setImageColors(uint width,uint height,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters)
+
+void ColorPainter_stream::initStreamSpeeds(Json::Value &theJson, const State &theState)
+{
+  try
+  {
+    if (theJson.isNull())
+      return;
+
+    if (!theJson.isArray())
+      throw Fmi::Exception(BCP, "StreamSpeed JSON is not a JSON array");
+
+    for (auto& json : theJson)
+    {
+      if (!json.isNull())
+        initStreamSpeed(json,theState);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
+
+
+void ColorPainter_stream::initStreamSpeed(Json::Value &theJson, const State &theState)
+{
+  try
+  {
+    if (theJson.isNull())
+      return;
+
+    StreamSpeed streamSpeed;
+
+    JsonTools::remove_double(streamSpeed.speed, theJson, "speed");
+    JsonTools::remove_double(streamSpeed.value_min, theJson, "value_min");
+    JsonTools::remove_double(streamSpeed.value_max, theJson, "value_max");
+
+
+    addStreamSpeed(streamSpeed);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
+
+void ColorPainter_stream::addStreamSpeed(StreamSpeed& speed)
+{
+  try
+  {
+    streamSpeeds.push_back(speed);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
+
+void ColorPainter_stream::setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters)
 {
   try
   {
@@ -82,41 +215,6 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint *image,std:
       throw exception;
     }
 
-    uint stream_color = 0x00FFFFFF;
-    auto scolor = parameters.find("stream_color");
-    if (scolor != parameters.end())
-      stream_color = strtoul(scolor->second.c_str(),nullptr,16);
-
-    uint stream_step_x = 10;
-    auto stepx = parameters.find("stream_step_x");
-    if (stepx != parameters.end())
-      stream_step_x = strtoul(stepx->second.c_str(),nullptr,16);
-
-    uint stream_step_y = 10;
-    auto stepy = parameters.find("stream_step_y");
-    if (stepy != parameters.end())
-      stream_step_y = strtoul(stepy->second.c_str(),nullptr,16);
-
-    uint stream_minLength = 10;
-    auto min = parameters.find("stream_min_length");
-    if (min != parameters.end())
-      stream_minLength = strtoul(min->second.c_str(),nullptr,16);
-
-    uint stream_maxLength = 64;
-    auto max = parameters.find("stream_max_length");
-    if (max != parameters.end())
-      stream_maxLength = strtoul(max->second.c_str(),nullptr,16);
-
-    double opacity_land = 1.0;
-    auto opacity_value_land = parameters.find("opacity_land");
-    if (opacity_value_land != parameters.end())
-      opacity_land = toDouble(opacity_value_land->second);
-
-    double opacity_sea = 1.0;
-    auto opacity_value_sea = parameters.find("opacity_sea");
-    if (opacity_value_sea != parameters.end())
-      opacity_sea = toDouble(opacity_value_sea->second);
-
     // Rotate
 
     float *direction = new float[sz];
@@ -133,28 +231,29 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint *image,std:
     }
 
     uint *streamImage = new uint[sz];
-    getStreamlineImage(direction,nullptr,streamImage,width,height,stream_step_x,stream_step_y,stream_minLength,stream_maxLength);
+    getStreamlineImage(direction,nullptr,streamImage,width,height,trace_step_x,trace_step_y,trace_length_min,trace_length_max);
 
     uint alphamax = 0xFF;
-    uint lcolors = 16;
-    uint color_land[lcolors];
-    uint color_sea[lcolors];
+    uint color_land[line_length];
+    uint color_sea[line_length];
 
-    double mp = (double)alphamax / (double)lcolors;
+    double mp = (double)alphamax / (double)line_length;
+    double vm = (double)line_length / (double)loop_steps;
+    int step = (int)(vm * loop_step);
 
-    for (uint t=0; t<lcolors; t++)
+    for (int t=0; t<line_length; t++)
     {
       uint cc = (alphamax - (uint)(t*mp))*opacity_land;
       if (cc > alphamax)
         cc = alphamax;
 
-      color_land[t] = (cc << 24) + stream_color;
+      color_land[t] = (cc << 24) + line_color_land;
 
       cc = (alphamax - (uint)(t*mp))*opacity_sea;
       if (cc > alphamax)
         cc = alphamax;
 
-      color_sea[t] = (cc << 24) + stream_color;
+      color_sea[t] = (cc << 24) + line_color_sea;
     }
 
 
@@ -171,9 +270,10 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint *image,std:
         float landval = land[cc];
         if (val != 0)
         {
+          int stp = (step+val) % line_length;
           if (landval > 0.9)
           {
-            uint valcol = color_land[(val-1) % lcolors];
+            uint valcol = color_land[stp];
             if (opacity_land != 1.0)
             {
               uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_land);
@@ -192,7 +292,7 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint *image,std:
           }
           else
           {
-            uint valcol = color_sea[(val-1) % lcolors];
+            uint valcol = color_sea[stp];
             if (opacity_sea != 1.0)
             {
               uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_sea);
@@ -210,24 +310,10 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint *image,std:
             }
           }
         }
-        //else
-        //  image[c] = 0xFF00FF00;
-
         c++;
       }
     }
 
-
-/*
-    for (uint t=0; t<sz; t++)
-    {
-      uint sval = streamImage[t];
-      if (sval != 0)
-      {
-        image[t] = merge_ARGB(color[(sval-1) % lcolors],image[t]);
-      }
-    }
-*/
     delete [] direction;
     delete [] streamImage;
   }
@@ -239,7 +325,7 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint *image,std:
 
 
 
-void ColorPainter_stream::setImageColors(uint width,uint height,uint *image,std::vector<float>& land,std::vector<float>& values1,std::vector<float>& values2,Parameters& parameters)
+void ColorPainter_stream::setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values1,std::vector<float>& values2,Parameters& parameters)
 {
   try
   {
@@ -264,53 +350,6 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint *image,std:
       throw exception;
     }
 
-    uint stream_step_x = 10;
-    auto stepx = parameters.find("stream_step_x");
-    if (stepx != parameters.end())
-      stream_step_x = strtoul(stepx->second.c_str(),nullptr,16);
-
-    uint stream_step_y = 10;
-    auto stepy = parameters.find("stream_step_y");
-    if (stepy != parameters.end())
-      stream_step_y = strtoul(stepy->second.c_str(),nullptr,16);
-
-    uint stream_minLength = 10;
-    auto min = parameters.find("stream_min_length");
-    if (min != parameters.end())
-      stream_minLength = strtoul(min->second.c_str(),nullptr,16);
-
-    uint stream_maxLength = 64;
-    auto max = parameters.find("stream_max_length");
-    if (max != parameters.end())
-      stream_maxLength = strtoul(max->second.c_str(),nullptr,16);
-
-    double opacity_land = 1.0;
-    auto opacity_value_land = parameters.find("opacity_land");
-    if (opacity_value_land != parameters.end())
-      opacity_land = toDouble(opacity_value_land->second);
-
-    double opacity_sea = 1.0;
-    auto opacity_value_sea = parameters.find("opacity_sea");
-    if (opacity_value_sea != parameters.end())
-      opacity_sea = toDouble(opacity_value_sea->second);
-
-    auto cmap = parameters.find("colormap");
-    if (cmap == parameters.end())
-    {
-      Fmi::Exception exception(BCP, "Cannot find the 'colormap' parameter!");
-      throw exception;
-    }
-
-    auto cmRec = colorMaps.find(cmap->second);
-    if (cmRec == colorMaps.end())
-    {
-      Fmi::Exception exception(BCP, "Cannot find the colormap!");
-      exception.addParameter("colormap",cmap->second);
-      throw exception;
-    }
-
-    ColorMap_sptr cm = cmRec->second;
-
     // Rotate
 
     float *direction = new float[sz];
@@ -329,106 +368,82 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint *image,std:
     }
 
     uint *streamImage = new uint[sz];
-    getStreamlineImage(direction,nullptr,streamImage,width,height,stream_step_x,stream_step_y,stream_minLength,stream_maxLength);
+    getStreamlineImage(direction,nullptr,streamImage,width,height,trace_step_x,trace_step_y,trace_length_min,trace_length_max);
 
-    uint alphamax = 0xFF;
-    uint lcolors = 16;
-    uint alpha_land[lcolors];
-    uint alpha_sea[lcolors];
-
-    double mp = (double)alphamax / (double)lcolors;
-
-    for (uint t=0; t<lcolors; t++)
+    if (!colormap)
     {
-      uint cc = (alphamax - (uint)(t*mp))*opacity_land;
-      if (cc > alphamax)
-        cc = alphamax;
-
-      alpha_land[t] = (cc << 24);
-
-      cc = (alphamax - (uint)(t*mp))*opacity_sea;
-      if (cc > alphamax)
-        cc = alphamax;
-
-      alpha_sea[t] = (cc << 24);
+      //printf("No colormap\n");
+      return;
     }
 
-    uint c = 0;
-    for (uint y = 0; y < height; y++)
+    double alphamax = 1.0;
+    double alpha_land[line_length];
+    double alpha_sea[line_length];
+
+    double mp = (double)alphamax / (double)line_length;
+    double vm = (double)line_length / (double)loop_steps;
+
+    for (int t=0; t<line_length; t++)
     {
-      uint yy = height - y -1;
-      uint p = yy * width;
-      for (uint x = 0; x < width; x++)
+      double cc = (alphamax - (t*mp))*opacity_land;
+      if (cc > alphamax)
+        cc = alphamax;
+
+      alpha_land[t] = cc;
+
+      cc = (alphamax - (t*mp))*opacity_sea;
+      if (cc > alphamax)
+        cc = alphamax;
+
+      alpha_sea[t] = cc;
+    }
+
+    for (auto streamSpeed = streamSpeeds.begin(); streamSpeed != streamSpeeds.end(); ++streamSpeed)
+    {
+      int step = (int)(vm * loop_step * streamSpeed->speed);
+
+      uint c = 0;
+      for (uint y = 0; y < height; y++)
       {
-        uint oldcol = image[c];
-        uint cc = p + x;
-        uint val = streamImage[c];
-        float landval = land[cc];
-        if (val != 0)
+        uint yy = height - y -1;
+        uint p = yy * width;
+        for (uint x = 0; x < width; x++)
         {
-          if (landval > 0.9)
+          uint oldcol = image[c];
+          uint cc = p + x;
+          uint val = streamImage[c];
+          float landval = land[cc];
+          if (val != 0)
           {
-            uint speedcol = (cm->getSmoothColor(speed[c]) & 0x00FFFFFF);
-            uint valcol = alpha_land[(val-1) % lcolors] + speedcol;
-
-            if (opacity_land != 1.0)
+            if (speed[c] >= streamSpeed->value_min  &&  speed[c] <= streamSpeed->value_max)
             {
-              uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_land);
-              if (op > 255)
-                op = 0xFF000000;
+              uint speedcol = colormap->getColor(speed[c],smooth_colors);
+              uint speedAlpha = (speedcol >> 24);
+              uint newAlpha = 0xFF;
+
+              int stp = (step+val) % line_length;
+              if (landval > 0.9)
+              {
+                newAlpha = (uint)(alpha_land[stp] * speedAlpha);
+              }
               else
-                op = (op & 0xFF) << 24;
+              {
+                newAlpha = (uint)(alpha_sea[stp] * speedAlpha);
+              }
 
-              uint nv = op + (valcol & 0x00FFFFFF);
-              image[c] = merge_ARGB(nv,oldcol);
-            }
-            else
-            {
+              if (newAlpha > 0xFF)
+                newAlpha = 0xFF;
+
+              uint valcol = (newAlpha << 24) + (speedcol & 0x00FFFFFF);
               image[c] = merge_ARGB(valcol,oldcol);
             }
           }
-          else
-          {
-            uint speedcol = (cm->getSmoothColor(speed[c]) & 0x00FFFFFF);
-            uint valcol = alpha_sea[(val-1) % lcolors] + speedcol;
 
-            if (opacity_sea != 1.0)
-            {
-              uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_sea);
-              if (op > 255)
-                op = 0xFF000000;
-              else
-                op = (op & 0xFF) << 24;
-
-              uint nv = op + (valcol & 0x00FFFFFF);
-              image[c] = merge_ARGB(nv,oldcol);
-            }
-            else
-            {
-              image[c] = merge_ARGB(valcol,oldcol);
-            }
-          }
+          c++;
         }
-        //else
-        //  image[c] = 0xFF00FF00;
-
-        c++;
       }
     }
 
-
-    /*
-    for (uint t=0; t<sz; t++)
-    {
-      uint sval = streamImage[t];
-      if (sval != 0)
-      {
-        uint speedcol = (cm->getSmoothColor(speed[t]) & 0x00FFFFFF);
-        uint newcol = alpha[(sval-1) % lcolors] + speedcol;
-        image[t] = merge_ARGB(newcol,image[t]);
-      }
-    }
-    */
     delete [] speed;
     delete [] direction;
     delete [] streamImage;
@@ -438,6 +453,42 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint *image,std:
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+
+
+std::size_t ColorPainter_stream::hash_value(const State &theState) const
+{
+  try
+  {
+    std::size_t hash = ColorPainter::hash_value(theState);
+
+    Fmi::hash_combine(hash,trace_step_x);
+    Fmi::hash_combine(hash,trace_step_y);
+    Fmi::hash_combine(hash,trace_length_min);
+    Fmi::hash_combine(hash,trace_length_max);
+
+    Fmi::hash_combine(hash,line_length);
+    Fmi::hash_combine(hash,line_color_land);
+    Fmi::hash_combine(hash,line_color_sea);
+
+    Fmi::hash_combine(hash,Fmi::hash(colormap_name));
+    Fmi::hash_combine(hash,colormap_hash);
+    Fmi::hash_combine(hash,smooth_colors);
+
+    for (auto streamSpeed = streamSpeeds.begin(); streamSpeed != streamSpeeds.end(); ++streamSpeed)
+    {
+      Fmi::hash_combine(hash,streamSpeed->speed);
+      Fmi::hash_combine(hash,streamSpeed->value_min);
+      Fmi::hash_combine(hash,streamSpeed->value_max);
+    }
+    return hash;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 
 
 }  // namespace Dali

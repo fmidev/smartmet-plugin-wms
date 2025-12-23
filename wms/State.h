@@ -26,6 +26,8 @@
 #include <map>
 #include <optional>
 #include <set>
+#include <vector>
+#include <grid-files/common/ImageFunctions.h>
 
 namespace CTPP
 {
@@ -208,6 +210,12 @@ class State
   mutable uint arcCounter = 0;
   mutable uint insertCounter = 0;
   mutable std::map<std::size_t, uint> arcHashMap;
+  mutable bool animation_enabled = false;
+  mutable int animation_timestep = 0;
+  mutable int animation_loopstep = 0;
+  mutable int animation_timesteps = 0;
+  mutable int animation_loopsteps = 0;
+
 
  private:
   Plugin& itsPlugin;
