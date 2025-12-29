@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.11.27
+Version: 25.12.29
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -32,24 +32,24 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-giza-devel >= 25.2.18
-BuildRequires: smartmet-library-grid-content-devel >= 25.10.15
-BuildRequires: smartmet-library-grid-files-devel >= 25.11.27
-BuildRequires: smartmet-library-macgyver-devel >= 25.9.30
-BuildRequires: smartmet-library-spine-devel >= 25.10.27
-BuildRequires: smartmet-library-timeseries-devel >= 25.8.1
+BuildRequires: smartmet-library-giza-devel >= 25.12.29
+BuildRequires: smartmet-library-grid-content-devel >= 25.12.29
+BuildRequires: smartmet-library-grid-files-devel >= 25.12.29
+BuildRequires: smartmet-library-macgyver-devel >= 25.12.2
+BuildRequires: smartmet-library-spine-devel >= 25.12.12
+BuildRequires: smartmet-library-timeseries-devel >= 25.12.29
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 25.10.8
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 25.10.27
+BuildRequires: smartmet-engine-observation-devel >= 25.12.29
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 25.9.29
-BuildRequires: smartmet-engine-grid-devel >= 25.11.27
-BuildRequires: smartmet-engine-geonames-devel >= 25.9.29
-BuildRequires: smartmet-engine-querydata-devel >= 25.9.17
+BuildRequires: smartmet-engine-grid-devel >= 25.12.29
+BuildRequires: smartmet-engine-geonames-devel >= 25.12.2
+BuildRequires: smartmet-engine-querydata-devel >= 25.12.29
 BuildRequires: smartmet-engine-contour-devel >= 25.2.18
-BuildRequires: smartmet-library-gis-devel >= 25.9.15
+BuildRequires: smartmet-library-gis-devel >= 25.12.29
 BuildRequires: smartmet-library-trax-devel >= 25.9.29
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
@@ -75,24 +75,24 @@ Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 25.10.15
-Requires: smartmet-library-grid-files >= 25.11.27
-Requires: smartmet-library-gis >= 25.9.15
+Requires: smartmet-library-grid-content >= 25.12.29
+Requires: smartmet-library-grid-files >= 25.12.29
+Requires: smartmet-library-gis >= 25.12.29
 Requires: smartmet-library-trax >= 25.9.29
-Requires: smartmet-library-macgyver >= 25.9.30
-Requires: smartmet-library-spine >= 25.10.27
-Requires: smartmet-library-timeseries >= 25.8.1
-Requires: smartmet-library-giza >= 25.2.18
+Requires: smartmet-library-macgyver >= 25.12.2
+Requires: smartmet-library-spine >= 25.12.12
+Requires: smartmet-library-timeseries >= 25.12.29
+Requires: smartmet-library-giza >= 25.12.29
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 25.10.8
 %endif
-Requires: smartmet-engine-querydata >= 25.9.17
+Requires: smartmet-engine-querydata >= 25.12.29
 Requires: smartmet-engine-contour >= 25.2.18
 Requires: smartmet-engine-gis >= 25.9.29
-Requires: smartmet-engine-grid >= 25.11.27
-Requires: smartmet-engine-geonames >= 25.9.29
-Requires: smartmet-server >= 25.10.27
-Requires: smartmet-library-spine >= 25.10.27
+Requires: smartmet-engine-grid >= 25.12.29
+Requires: smartmet-engine-geonames >= 25.12.2
+Requires: smartmet-server >= 25.12.2
+Requires: smartmet-library-spine >= 25.12.12
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -114,20 +114,20 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: ImageMagick-perl
 #TestRequires: bc
 #TestRequires: smartmet-engine-contour-devel >= 25.2.18
-#TestRequires: smartmet-engine-geonames-devel >= 25.9.29
+#TestRequires: smartmet-engine-geonames-devel >= 25.12.2
 #TestRequires: smartmet-engine-gis-devel >= 25.9.29
-#TestRequires: smartmet-engine-querydata-devel >= 25.9.17
+#TestRequires: smartmet-engine-querydata-devel >= 25.12.29
 #TestRequires: smartmet-engine-authentication-devel >= 25.10.8
-#TestRequires: smartmet-library-giza-devel >= 25.2.18
+#TestRequires: smartmet-library-giza-devel >= 25.12.29
 #TestRequires: smartmet-library-trax-devel >= 25.9.29
 #TestRequires: smartmet-library-newbase-devel >= 25.3.20
-#TestRequires: smartmet-library-macgyver-devel >= 25.9.30
-#TestRequires: smartmet-library-spine-devel >= 25.10.27
-#TestRequires: smartmet-library-timeseries-devel >= 25.8.1
-#TestRequires: smartmet-engine-grid-devel >= 25.11.27
+#TestRequires: smartmet-library-macgyver-devel >= 25.12.2
+#TestRequires: smartmet-library-spine-devel >= 25.12.12
+#TestRequires: smartmet-library-timeseries-devel >= 25.12.29
+#TestRequires: smartmet-engine-grid-devel >= 25.12.29
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
-#TestRequires: smartmet-utils-devel >= 25.10.10
+#TestRequires: smartmet-utils-devel >= 25.11.27
 #TestRequires: smartmet-test-db
 #TestRequires: smartmet-fonts
 #TestRequires: libconfig17-devel
@@ -137,7 +137,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 25.10.27
+#TestRequires: smartmet-engine-observation-devel >= 25.12.29
 %endif
 
 %description
@@ -166,6 +166,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Dec 29 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> 25.12.29-1.fmi
+- Improved raster layer support including animations
+
 * Thu Nov 27 2025 Andris Pavēnis <andris.pavenis@fmi.fi> 25.11.27-1.fmi
 - Update according to grid-files changes
 
