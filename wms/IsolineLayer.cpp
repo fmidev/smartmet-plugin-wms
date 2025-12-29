@@ -378,7 +378,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
       originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
 
     originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
-    originalGridQuery->mAttributeList.addAttribute("grid.countSize", "1");
+    if (!theState.animation_enabled)
+      originalGridQuery->mAttributeList.addAttribute("grid.countSize", "1");
   }
   else
   {
@@ -864,7 +865,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         // Store the path with unique QID
         std::string iri = qid + (qid.empty() ? "" : ".") + isoline.getQid(theState);
 
-        if (!theState.addId(iri))
+        if (!theState.addId(iri)  &&  !theState.animation_enabled)
           throw Fmi::Exception(BCP, "Non-unique ID assigned to isoline").addParameter("ID", iri);
 
         CTPP::CDT isoline_cdt(CTPP::CDT::HASH_VAL);
@@ -933,7 +934,10 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   }
   catch (...)
   {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid);
+    Fmi::Exception exception(BCP, "Operation failed!",NULL);
+    exception.printError();
+    throw exception;
+    //throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid);
   }
 }
 

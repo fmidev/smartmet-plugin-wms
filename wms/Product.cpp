@@ -64,6 +64,10 @@ void Product::init(Json::Value& theJson, const State& theState, const Config& th
 
     // If SVG sizes are missing, take them from the top level projection if possible
 
+    json = JsonTools::remove(theJson, "animation");
+    if (!json.isNull())
+      animation.init(json, theConfig);
+
     if (!width && projection.xsize)
       width = projection.xsize;
 
@@ -217,6 +221,7 @@ std::size_t Product::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
     Fmi::hash_combine(hash, Dali::hash_value(views, theState));
     Fmi::hash_combine(hash, Dali::hash_value(png, theState));
+    Fmi::hash_combine(hash, animation.hash_value(theState));
     return hash;
   }
   catch (...)

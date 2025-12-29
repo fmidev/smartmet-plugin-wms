@@ -98,9 +98,7 @@ void Layer::init(Json::Value& theJson,
     // Not used in plain requests
     json = JsonTools::remove(theJson, "legend_url_layer");
 
-    // std::optional<std::string> v = request.getParameter("producerId");
-    // if (v)
-    //  geometryId = toInt32(*v);
+    JsonTools::remove_bool(visible,theJson, "visible");
   }
   catch (...)
   {
@@ -525,6 +523,7 @@ std::size_t Layer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_css(css, theState));
     Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
     Fmi::hash_combine(hash, Dali::hash_value(layers, theState));
+    Fmi::hash_combine(hash, Fmi::hash_value(visible));
     return hash;
   }
   catch (...)

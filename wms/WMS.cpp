@@ -3,7 +3,6 @@
  * \brief SmartMet WMS plugin implementation
  */
 // ======================================================================
-
 #include "CaseInsensitiveComparator.h"
 #include "Hash.h"
 #include "JsonTools.h"
@@ -19,6 +18,7 @@
 #include "WMSGetLegendGraphic.h"
 #include "WMSGetMap.h"
 #include "WMSRequestType.h"
+#include "Layer.h"
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
@@ -38,6 +38,8 @@
 #include <spine/HostInfo.h>
 #include <spine/Json.h>
 #include <spine/SmartMet.h>
+#include <grid-files/common/ImageFunctions.h>
+#include <grid-files/common/ImagePaint.h>
 #include <memory>
 #include <stdexcept>
 
@@ -53,22 +55,9 @@ namespace
 {
 void check_remaining_wms_json(Json::Value &json, const std::string &name)
 {
-  std::vector<std::string> deletions{
-      "abstract",
-      "capabilities_start",
-      "capabilities_end",
-      "cascaded",
-      "fixed_height",
-      "fixed_width",
-      "intervals",
-      "keyword",
-      "legend_url_layer",
-      "no_subsets",
-      "opaque",
-      "queryable",
-      "refs",
-      "styles",
-  };
+  std::vector<std::string> deletions
+    { "abstract", "capabilities_start", "capabilities_end", "cascaded", "fixed_height", "fixed_width", "intervals", "keyword", "legend_url_layer", "no_subsets", "opaque",
+        "queryable", "refs", "styles", };
 
   for (const auto &delete_name : deletions)
     static_cast<void>(JsonTools::remove(json, delete_name));
@@ -76,11 +65,7 @@ void check_remaining_wms_json(Json::Value &json, const std::string &name)
   if (!json.empty())
   {
     Json::StyledWriter writer;
-    std::cout << fmt::format("{} Remaining WMS json for product {}:\n{}\n",
-                             Spine::log_time_str(),
-                             name,
-                             writer.write(json))
-              << std::flush;
+    std::cout << fmt::format("{} Remaining WMS json for product {}:\n{}\n", Spine::log_time_str(), name, writer.write(json)) << std::flush;
   }
 }
 
@@ -89,7 +74,6 @@ void check_remaining_wms_json(Json::Value &json, const std::string &name)
  * \brief Init margins from config defaults if necessary
  */
 // ----------------------------------------------------------------------
-
 void init_wms_margins(Json::Value &json, int default_margin)
 {
   if (default_margin == 0)
@@ -125,9 +109,7 @@ std::string get_json_element_value(const Json::Value &json, const std::string &k
   return ret;
 }
 
-void rename_json_element(const Json::Value &json,
-                         const std::string &keyStr,
-                         const std::string &postfix)
+void rename_json_element(const Json::Value &json, const std::string &keyStr, const std::string &postfix)
 {
   std::vector<std::string> keys;
 
@@ -149,7 +131,7 @@ void rename_json_element(const Json::Value &json,
 
   if (found)
   {
-    auto *tototo = const_cast<Json::Value *>(to);
+    auto *tototo = const_cast<Json::Value*>(to);
     *tototo = Json::Value(to->asString() + postfix);
   }
 }
@@ -159,16 +141,10 @@ void relocate_producer_to_view(const std::string &layername, Json::Value &root)
   // settings which should not be at the top level if different layers are merged
   // are moved to the view level unless the view already has the setting
 
-  const std::vector<std::string> vars = {"producer",
-                                         "source",
-                                         "forecastType",
-                                         "forecastNumber,"
-                                         "geometryId",
-                                         "level",
-                                         "elevation_unit,"
-                                         "pressure",
-                                         "levelId",
-                                         "timestep"};
+  const std::vector<std::string> vars =
+    { "producer", "source", "forecastType", "forecastNumber,"
+        "geometryId", "level", "elevation_unit,"
+        "pressure", "levelId", "timestep" };
 
   // Nothing to do? Looks like invalid config but we let other code do the checks
 
@@ -292,8 +268,7 @@ Json::Value merge_layers(const std::vector<Json::Value> &layers)
       if (fromDefs.isMember("styles"))
       {
         Json::Value::Members currentStyleNames = retDefsStyles.getMemberNames();
-        std::set<std::string> currentStyleNameSet(currentStyleNames.begin(),
-                                                  currentStyleNames.end());
+        std::set<std::string> currentStyleNameSet(currentStyleNames.begin(), currentStyleNames.end());
         const Json::Value &fromDefsStyles = fromDefs["styles"];
         Json::Value::Members fromStyleMemberNames = fromDefsStyles.getMemberNames();
         for (const auto &stylename : fromStyleMemberNames)
@@ -362,7 +337,6 @@ Json::Value merge_layers(const std::vector<Json::Value> &layers)
  * \brief Set Legend expiration time if so configured
  */
 // ----------------------------------------------------------------------
-
 void update_legend_expiration(const State &theState, int theExpirationTime)
 {
   if (theExpirationTime > 0)
@@ -398,12 +372,8 @@ std::string Dali::Plugin::getCapabilityFormat(const std::string &theFormat) cons
   return "xml";
 }
 
-void Dali::Plugin::formatWmsExceptionResponse(Fmi::Exception &wmsException,
-                                              const std::string &theFormat,
-                                              bool isdebug,
-                                              const Spine::HTTP::Request &theRequest,
-                                              Spine::HTTP::Response &theResponse,
-                                              bool usetimer)
+void Dali::Plugin::formatWmsExceptionResponse(Fmi::Exception &wmsException, const std::string &theFormat, bool isdebug, const Spine::HTTP::Request &theRequest,
+    Spine::HTTP::Response &theResponse, bool usetimer)
 {
   auto msg = parseWMSException(wmsException, theFormat, isdebug);
   formatResponse(msg, getExceptionFormat(theFormat), theRequest, theResponse, usetimer);
@@ -414,10 +384,7 @@ void Dali::Plugin::formatWmsExceptionResponse(Fmi::Exception &wmsException,
  * \brief Parses WMS exception
  */
 // ----------------------------------------------------------------------
-
-std::string Dali::Plugin::parseWMSException(Fmi::Exception &wmsException,
-                                            const std::string &theFormat,
-                                            bool isdebug) const
+std::string Dali::Plugin::parseWMSException(Fmi::Exception &wmsException, const std::string &theFormat, bool isdebug) const
 {
   try
   {
@@ -466,7 +433,6 @@ std::string Dali::Plugin::parseWMSException(Fmi::Exception &wmsException,
  * \brief Authenticate a query
  */
 // ----------------------------------------------------------------------
-
 bool Dali::Plugin::authenticate(const Spine::HTTP::Request &theRequest) const
 {
 #ifdef WITHOUT_AUTHENTICATION
@@ -483,11 +449,7 @@ bool Dali::Plugin::authenticate(const Spine::HTTP::Request &theRequest) const
  * \brief Perform a WMS query
  */
 // ----------------------------------------------------------------------
-
-WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
-                                      State &theState,
-                                      const Spine::HTTP::Request &theRequest,
-                                      Spine::HTTP::Response &theResponse)
+WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor& /* theReactor */, State &theState, const Spine::HTTP::Request &theRequest, Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -543,10 +505,7 @@ WMSQueryStatus Dali::Plugin::wmsQuery(Spine::Reactor & /* theReactor */,
  * \brief Perform a WMS GetMap query
  */
 // ----------------------------------------------------------------------
-
-WMSQueryStatus Dali::Plugin::wmsGetMapQuery(State &theState,
-                                            const Spine::HTTP::Request &theRequest,
-                                            Spine::HTTP::Response &theResponse)
+WMSQueryStatus Dali::Plugin::wmsGetMapQuery(State &theState, const Spine::HTTP::Request &theRequest, Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -664,10 +623,7 @@ WMSQueryStatus Dali::Plugin::wmsGetMapQuery(State &theState,
  * \brief Perform a WMS GetLegendGraphic query
  */
 // ----------------------------------------------------------------------
-
-WMSQueryStatus Dali::Plugin::wmsGetLegendGraphicQuery(State &theState,
-                                                      const Spine::HTTP::Request &theRequest,
-                                                      Spine::HTTP::Response &theResponse)
+WMSQueryStatus Dali::Plugin::wmsGetLegendGraphicQuery(State &theState, const Spine::HTTP::Request &theRequest, Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -761,10 +717,7 @@ WMSQueryStatus Dali::Plugin::wmsGetLegendGraphicQuery(State &theState,
  * \brief Perform a WMS GetCapabilities query
  */
 // ----------------------------------------------------------------------
-
-WMSQueryStatus Dali::Plugin::wmsGetCapabilitiesQuery(State &theState,
-                                                     const Spine::HTTP::Request &theRequest,
-                                                     Spine::HTTP::Response &theResponse)
+WMSQueryStatus Dali::Plugin::wmsGetCapabilitiesQuery(State &theState, const Spine::HTTP::Request &theRequest, Spine::HTTP::Response &theResponse)
 {
   try
   {
@@ -780,10 +733,7 @@ WMSQueryStatus Dali::Plugin::wmsGetCapabilitiesQuery(State &theState,
   }
   catch (const Fmi::Exception &wmsException)
   {
-    Fmi::Exception ex(
-        BCP,
-        "Error in generating GetCapabilities response! " + std::string(wmsException.what()),
-        nullptr);
+    Fmi::Exception ex(BCP, "Error in generating GetCapabilities response! " + std::string(wmsException.what()), nullptr);
     if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
       ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     return handleWmsException(ex, theState, theRequest, theResponse);
@@ -802,11 +752,7 @@ WMSQueryStatus Dali::Plugin::wmsGetCapabilitiesQuery(State &theState,
  * \brief Postprocess a successfully handled GetMap/GetLegendGraphic product
  */
 // ----------------------------------------------------------------------
-
-WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
-                                                const Spine::HTTP::Request &theRequest,
-                                                Spine::HTTP::Response &theResponse,
-                                                Product &theProduct)
+WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState, const Spine::HTTP::Request &theRequest, Spine::HTTP::Response &theResponse, Product &theProduct)
 {
   // Calculate hash for the product
 
@@ -823,8 +769,7 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
     if (layers)
       msg = " for layer '" + *layers + "'";  // The LAYERS option may be missing
 
-    Fmi::Exception ex(
-        BCP, "Error in calculating hash_value" + msg + "! " + exception.what(), nullptr);
+    Fmi::Exception ex(BCP, "Error in calculating hash_value" + msg + "! " + exception.what(), nullptr);
     ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
     return handleWmsException(ex, theState, theRequest, theResponse);
   }
@@ -846,8 +791,7 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
   }
 
   auto obj = itsImageCache->find(product_hash);
-
-  if (obj)
+  if (obj  &&  !theProduct.animation.enabled)
   {
     theResponse.setHeader("Content-Type", mimeType(theProduct.type));
     theResponse.setContent(obj);
@@ -865,55 +809,194 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
   if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
     hash["legend"] = "true";
 
-  try
-  {
-    theProduct.generate(hash, theState);
-  }
-  catch (...)
-  {
-    Fmi::Exception e(BCP, "Failed to generate product", nullptr);
-    e.addParameter("URI", theRequest.getURI());
-    e.addParameter("ClientIP", theRequest.getClientIP());
-    e.addParameter("HostName", Spine::HostInfo::getHostName(theRequest.getClientIP()));
-    const bool check_token = true;
-    auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
-    e.addParameter("Apikey", (apikey ? *apikey : std::string("-")));
-    e.printError();
-  }
 
-  // Build the template
-  std::string output;
-  std::string log;
-  try
+  // ####################### NO ANIMATION ############################################
+
+  if (!theProduct.animation.enabled)
   {
-    std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
-    if (theState.useTimer())
+    try
     {
-      std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
-      mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      theProduct.generate(hash, theState);
     }
-    tmpl->process(hash, output, log);
+    catch (...)
+    {
+      Fmi::Exception e(BCP, "Failed to generate product", nullptr);
+      e.addParameter("URI", theRequest.getURI());
+      e.addParameter("ClientIP", theRequest.getClientIP());
+      e.addParameter("HostName", Spine::HostInfo::getHostName(theRequest.getClientIP()));
+      const bool check_token = true;
+      auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest, check_token);
+      e.addParameter("Apikey", (apikey ? *apikey : std::string("-")));
+      e.printError();
+    }
+
+    // Build the template
+    std::string output;
+    std::string log;
+    try
+    {
+      std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+      if (theState.useTimer())
+      {
+        std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
+        mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
+      }
+      tmpl->process(hash, output, log);
+    }
+    catch (...)
+    {
+      Fmi::Exception ex(BCP, "Error in processing the template '" + *theProduct.svg_tmpl + "'!", nullptr);
+      if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+        ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+      return handleWmsException(ex, theState, theRequest, theResponse);
+    }
+
+    const auto print_hash = Spine::optional_bool(theRequest.getParameter("printhash"), false);
+    if (print_hash)
+      std::cout << fmt::format("Generated CDT:\n{}\n", hash.RecursiveDump());
+
+    formatResponse(output, theProduct.type, theRequest, theResponse, theState.useTimer(), theProduct, product_hash);
+
+    return WMSQueryStatus::OK;
   }
-  catch (...)
+
+  // ####################### ANIMATION ENABLED #######################################
+
+  if (theProduct.animation.enabled)
   {
-    Fmi::Exception ex(
-        BCP, "Error in processing the template '" + *theProduct.svg_tmpl + "'!", nullptr);
-    if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
-      ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-    return handleWmsException(ex, theState, theRequest, theResponse);
+    theState.animation_enabled = true;
+
+    int animation_timesteps = theProduct.animation.timesteps;
+    int data_timestep = theProduct.animation.data_timestep;
+    int animation_loopsteps = theProduct.animation.loopsteps;
+    int frameCount = animation_timesteps * animation_loopsteps;
+    uint width = *theProduct.width;
+    uint height = *theProduct.height;
+    std::vector < std::shared_ptr < CImage >> images;
+
+
+    for (int tt = 0; tt < animation_timesteps; tt++)
+    {
+      theState.animation_timestep = tt;
+      theState.animation_timesteps = animation_timesteps;
+
+      for (int loop = 0; loop < animation_loopsteps; loop++)
+      {
+        CTPP::CDT hash(CTPP::CDT::HASH_VAL);
+        //if (requestType == WMS::WMSRequestType::GET_LEGEND_GRAPHIC)
+        //  hash["legend"] = "true";
+
+        theState.animation_loopstep = loop;
+        theState.animation_loopsteps = animation_loopsteps;
+
+        try
+        {
+          theProduct.generate(hash, theState);
+        }
+        catch (...)
+        {
+        }
+
+        std::string output;
+        std::string log;
+        try
+        {
+          std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
+          if (theState.useTimer())
+          {
+            std::string report = "Template processing finished in %t sec CPU, %w sec real\n";
+            mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
+          }
+          tmpl->process(hash, output, log);
+        }
+        catch (...)
+        {
+          Fmi::Exception ex(BCP, "Error in processing the template '" + *theProduct.svg_tmpl + "'!", nullptr);
+          if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
+            ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+          return handleWmsException(ex, theState, theRequest, theResponse);
+        }
+
+        const auto print_hash = Spine::optional_bool(theRequest.getParameter("printhash"), false);
+        if (print_hash)
+          std::cout << fmt::format("Generated CDT:\n{}\n", hash.RecursiveDump());
+
+        // Converting SVG to ARGB-image:
+        uint *vectorImage = Giza::Svg::toargb(output);
+        if (vectorImage)
+        {
+          std::shared_ptr<CImage> sImage(new CImage(width, height, vectorImage));
+          images.push_back(sImage);
+        }
+
+        /* Saving animation frame for debugging
+
+        char fname[100];
+        sprintf(fname, "/tmp/WMS_animation_%d_%llu_%u_%u.svg", getpid(), getTime(),tt,loop);
+        FILE *file = fopen(fname,"w");
+        fprintf(file,"%s",output.c_str());
+        fclose(file);
+        */
+      }
+
+      if (animation_timesteps > 1)
+      {
+        // This is time animation so we have to changing the time of the layers.
+        // There is probably an easier way to do this.
+
+        for (auto view = theProduct.views.views.begin(); view != theProduct.views.views.end(); ++view)
+        {
+          for (auto layer = (*view)->layers.layers.begin(); layer != (*view)->layers.layers.end(); ++layer)
+          {
+            auto tm = (*layer)->getValidTime();
+            tm += Fmi::Minutes(data_timestep);
+            (*layer)->setValidTime(tm);
+
+            for (auto ilayer = (*layer)->layers.layers.begin(); ilayer != (*layer)->layers.layers.end(); ++ilayer)
+            {
+              (*ilayer)->setValidTime(tm);
+            }
+          }
+        }
+      }
+    }
+
+    // *** Creating the animation file:
+
+    std::vector<int> timeVect;
+    uint *image[frameCount];
+    for (int tt = 0; tt < animation_timesteps; tt++)
+    {
+      for (int t = 0; t < animation_loopsteps; t++)
+      {
+        uint idx = tt * animation_loopsteps + t;
+        auto cimage = images[idx];
+        image[idx] = cimage->pixel;
+        if (animation_loopsteps > 0)
+          timeVect.push_back(theProduct.animation.loopstep_interval);
+      }
+      timeVect.push_back(theProduct.animation.timestep_interval);
+    }
+
+    char fname[100];
+    sprintf(fname, "/tmp/WMS_animation_%d_%llu.webp", getpid(), getTime());
+    webp_anim_save_ARGB(fname, image, width, height, frameCount, timeVect);
+    images.clear();
+
+    theResponse.setHeader("Content-Type", "image/webp");
+
+    std::string content;
+    std::ifstream in(fname);
+    if (!in)
+      throw Fmi::Exception(BCP, "Failed to open '" + std::string(fname) + "' for reading!");
+
+    content.assign(std::istreambuf_iterator<char>(in), std::istreambuf_iterator<char>());
+    theResponse.setContent(content);
+
+    // Removing the animation file
+    remove(fname);
   }
 
-  const auto print_hash = Spine::optional_bool(theRequest.getParameter("printhash"), false);
-  if (print_hash)
-    std::cout << fmt::format("Generated CDT:\n{}\n", hash.RecursiveDump());
-
-  formatResponse(output,
-                 theProduct.type,
-                 theRequest,
-                 theResponse,
-                 theState.useTimer(),
-                 theProduct,
-                 product_hash);
   return WMSQueryStatus::OK;
 }
 
@@ -922,16 +1005,12 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
  * \brief Alter the product to be a legend graphic query
  */
 // ----------------------------------------------------------------------
-
-void Dali::Plugin::wmsPrepareGetLegendGraphicQuery(const State &theState,
-                                                   Spine::HTTP::Request &theRequest,
-                                                   Product &product) const
+void Dali::Plugin::wmsPrepareGetLegendGraphicQuery(const State &theState, Spine::HTTP::Request &theRequest, Product &product) const
 {
   auto layerOpt = theRequest.getParameter("LAYER");
   if (!layerOpt)
   {
-    throw Fmi::Exception(BCP, "Layer must be defined in GetLegendGraphic request")
-        .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
+    throw Fmi::Exception(BCP, "Layer must be defined in GetLegendGraphic request").addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
   }
   std::string layerName = *layerOpt;
 
@@ -976,36 +1055,26 @@ void Dali::Plugin::wmsPrepareGetLegendGraphicQuery(const State &theState,
  * \brief Preprocess product JSON
  */
 // ----------------------------------------------------------------------
-
-void Dali::Plugin::wmsPreprocessJSON(State &theState,
-                                     const Spine::HTTP::Request &theRequest,
-                                     const std::string &theName,
-                                     Json::Value &theJson,
-                                     bool isCnfRequest,
-                                     int theStage)
+void Dali::Plugin::wmsPreprocessJSON(State &theState, const Spine::HTTP::Request &theRequest, const std::string &theName, Json::Value &theJson, bool isCnfRequest, int theStage)
 {
   // Define the customer. Note that parseHTTPRequest may have set a customer
   // for the layer, so this needs to be done after parsing the request
 
-  auto customer =
-      Spine::optional_string(theRequest.getParameter("customer"), itsConfig.defaultCustomer());
+  auto customer = Spine::optional_string(theRequest.getParameter("customer"), itsConfig.defaultCustomer());
 
   if (customer.empty())
-    throw Fmi::Exception(BCP, ERROR_NO_CUSTOMER)
-        .addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
+    throw Fmi::Exception(BCP, ERROR_NO_CUSTOMER).addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
 
   theState.setCustomer(customer);
 
   // Preprocess
 
-  std::string customer_root =
-      (itsConfig.rootDirectory(theState.useWms()) + "/customers/" + customer);
+  std::string customer_root = (itsConfig.rootDirectory(theState.useWms()) + "/customers/" + customer);
 
   std::string layers_root = customer_root + "/layers/";
 
   if (!isCnfRequest || (theStage == 0 || theStage > 1))
-    Spine::JSON::preprocess(
-        theJson, itsConfig.rootDirectory(theState.useWms()), layers_root, itsJsonCache);
+    Spine::JSON::preprocess(theJson, itsConfig.rootDirectory(theState.useWms()), layers_root, itsJsonCache);
 
   if (!isCnfRequest || (theStage == 0 || theStage > 2))
     Spine::JSON::dereference(theJson);
@@ -1025,15 +1094,15 @@ void Dali::Plugin::wmsPreprocessJSON(State &theState,
         std::map<std::string, Json::Value> substitutes;
         const auto members = variant.getMemberNames();
         for (const auto &member : members)
-          substitutes.insert({member, variant[member]});
+          substitutes.insert(
+            { member, variant[member] });
         SmartMet::Spine::JSON::expand(theJson, substitutes);
         found = true;
         break;
       }
     }
     if (!found)
-      throw Fmi::Exception(BCP, "Desired WMS layer variant not found")
-          .addParameter("name", theName);
+      throw Fmi::Exception(BCP, "Desired WMS layer variant not found").addParameter("name", theName);
   }
 
   if (!isCnfRequest || (theStage == 0 || theStage > 3))
@@ -1044,10 +1113,7 @@ void Dali::Plugin::wmsPreprocessJSON(State &theState,
   }
 }
 
-WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
-                                                State &theState,
-                                                const Spine::HTTP::Request &theRequest,
-                                                Spine::HTTP::Response &theResponse)
+WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception, State &theState, const Spine::HTTP::Request &theRequest, Spine::HTTP::Response &theResponse)
 {
   // Console logging
   exception.addParameter("URI", theRequest.getURI());
@@ -1064,8 +1130,7 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
 
   WMS::CaseInsensitiveComparator cicomp;
   WmsExceptionFormat exceptionFormat = WmsExceptionFormat::XML;
-  std::string exceptionFormatStr =
-      Spine::optional_string(theRequest.getParameter("EXCEPTIONS"), "XML");
+  std::string exceptionFormatStr = Spine::optional_string(theRequest.getParameter("EXCEPTIONS"), "XML");
   if (cicomp(exceptionFormatStr, "INIMAGE"))
     exceptionFormat = WmsExceptionFormat::INIMAGE;
   else if (cicomp(exceptionFormatStr, "BLANK"))
@@ -1077,13 +1142,11 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
 
   bool isdebug = Spine::optional_bool(theRequest.getParameter("debug"), false);
 
-  if (exceptionFormat != WmsExceptionFormat::INIMAGE &&
-      exceptionFormat != WmsExceptionFormat::BLANK)
+  if (exceptionFormat != WmsExceptionFormat::INIMAGE && exceptionFormat != WmsExceptionFormat::BLANK)
   {
     if (exceptionFormat == WmsExceptionFormat::JSON)
       mapFormat = "application/json";
-    formatWmsExceptionResponse(
-        exception, mapFormat, isdebug, theRequest, theResponse, theState.useTimer());
+    formatWmsExceptionResponse(exception, mapFormat, isdebug, theRequest, theResponse, theState.useTimer());
     // Note: a simple throw is not sufficient, the exception object may not have been thrown
     throw exception;
   }
@@ -1091,11 +1154,7 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
   std::optional<std::string> width = theRequest.getParameter("WIDTH");
   std::optional<std::string> height = theRequest.getParameter("HEIGHT");
 
-  Json::Value json = getExceptionJson(exception.what(),
-                                      mapFormat,
-                                      exceptionFormat,
-                                      Fmi::stoi(width ? *width : "0"),
-                                      Fmi::stoi(height ? *height : "0"));
+  Json::Value json = getExceptionJson(exception.what(), mapFormat, exceptionFormat, Fmi::stoi(width ? *width : "0"), Fmi::stoi(height ? *height : "0"));
 
   try
   {
@@ -1130,16 +1189,13 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
     }
     catch (...)
     {
-      Fmi::Exception ex(
-          BCP, "Error in processing the template '" + *product.svg_tmpl + "'!", nullptr);
+      Fmi::Exception ex(BCP, "Error in processing the template '" + *product.svg_tmpl + "'!", nullptr);
       if (ex.getExceptionByParameterName(WMS_EXCEPTION_CODE) == nullptr)
         ex.addParameter(WMS_EXCEPTION_CODE, WMS_VOID_EXCEPTION_CODE);
-      formatWmsExceptionResponse(
-          ex, mapFormat, isdebug, theRequest, theResponse, theState.useTimer());
+      formatWmsExceptionResponse(ex, mapFormat, isdebug, theRequest, theResponse, theState.useTimer());
       throw ex;
     }
-    formatResponse(
-        output, product.type, theRequest, theResponse, theState.useTimer(), product, Fmi::bad_hash);
+    formatResponse(output, product.type, theRequest, theResponse, theState.useTimer(), product, Fmi::bad_hash);
 
     return WMSQueryStatus::OK;
   }
@@ -1149,19 +1205,14 @@ WMSQueryStatus Dali::Plugin::handleWmsException(Fmi::Exception &exception,
   }
 }
 
-Json::Value Dali::Plugin::getExceptionJson(const std::string &description,
-                                           const std::string &mapFormat,
-                                           WmsExceptionFormat format,
-                                           unsigned int width,
-                                           unsigned int height)
+Json::Value Dali::Plugin::getExceptionJson(const std::string &description, const std::string &mapFormat, WmsExceptionFormat format, unsigned int width, unsigned int height)
 {
   std::string jsonStr;
 
   std::string errorString = "Error: " + description;
   SmartMet::Plugin::Dali::text_style_t textStyle;
   textStyle.fontsize = "26";
-  SmartMet::Plugin::Dali::text_dimension_t textDimension =
-      SmartMet::Plugin::Dali::getTextDimension(errorString, textStyle);
+  SmartMet::Plugin::Dali::text_dimension_t textDimension = SmartMet::Plugin::Dali::getTextDimension(errorString, textStyle);
 
   unsigned int pictureWidth = (width > 0 ? width : textDimension.width + 20);
   unsigned int pictureHeight = (height > 0 ? height : textDimension.height + 10);

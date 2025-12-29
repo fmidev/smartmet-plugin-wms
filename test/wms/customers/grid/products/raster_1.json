@@ -13,9 +13,9 @@
           "compression"   : 1,
           "parameter"     : "temperature",
           "interpolation" : "linear",
-          "painter"       : "default",
+          "data_painter"  : "default",
           "colormap"      : "temperature",
-          "smooth"        : true
+          "smooth_colors" : true
         }
         ,
         {

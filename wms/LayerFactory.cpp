@@ -9,6 +9,7 @@
 #include "FrameLayer.h"
 #include "GraticuleLayer.h"
 #include "GridLayer.h"
+#include "GroupLayer.h"
 #include "IceMapLayer.h"
 #include "IsobandLayer.h"
 #include "IsolabelLayer.h"
@@ -58,6 +59,8 @@ Layer* create(const Json::Value& theJson)
       return new ArrowLayer;
     if (name == "background")
       return new BackgroundLayer;
+    if (name == "group")
+      return new GroupLayer;
     if (name == "postgis")
       return new PostGISLayer;
     if (name == "isoband")

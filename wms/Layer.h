@@ -102,6 +102,11 @@ class Layer : public Properties
   std::optional<double> minresolution;
   std::optional<double> maxresolution;
 
+  // Setting the layer visible / invisible. This is useful when
+  // testing layers. I.e. you might have several layers in the same
+  // file and you just turn them on/off with this attribute.
+  bool visible = true;
+
   // Allowed and disallowed formats
   std::set<std::string> enable;
   std::set<std::string> disable;

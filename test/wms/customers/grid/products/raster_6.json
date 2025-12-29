@@ -10,27 +10,27 @@
         {
           "qid"                  : "t",
           "layer_type"           : "raster",
-          "compression"          : 9,				/* 1 = fast, low compression, 9 = slow, high compression */
+          "compression"          : 9,               /* 1 = fast, low compression, 9 = slow, high compression */
           "parameter"            : "temperature",
-          "interpolation"        : "linear",		/* linear,nearest */
-          "painter"              : "default",		/* default,range,stream,shading */
-          "opacity_land"         : "0.7",  			/* 0.0 - 1.0 */
-          "opacity_sea"   		 : "0.0",  			/* 0.0 - 1.0 */
-          "colormap"      		 : "temperature",
-          "smooth"        		 : true,			
+          "interpolation"        : "linear",        /* linear,nearest */
+          "data_painter"         : "default",       /* default,range,stream,shading */
+          "data_opacity_land"    : 0.7,             /* 0.0 - 1.0 */
+          "data_opacity_sea"     : 0.0,             /* 0.0 - 1.0 */
+          "colormap"             : "temperature",
+          "smooth_colors"        : true,      
           
-          "land_position"        : "none",           /* Position compared to the data layer (none,bottom,top) */
+          "land_position"        : "none",          /* Position compared to the data layer (none,bottom,top) */
           "land_color"           : "FFE0E0E0",
-          "sea_position"         : "none",			/* Position compared to the data layer (none,bottom,top) */
+          "sea_position"         : "none",          /* Position compared to the data layer (none,bottom,top) */
           "sea_color"            : "FFCAF0F8",
 
-          "landShading_position" : "top",			/* Position compared to the data layer (none,bottom,top) */
-          "landShading_light"    : 128,				/* Light multiplier */
-          "landShading_shadow"   : 384,				/* Shadow multiplier */
+          "land_shading_position" : "top",          /* Position compared to the data layer (none,bottom,top) */
+          "land_shading_light"    : 128,            /* Light multiplier */
+          "land_shading_shadow"   : 384,            /* Shadow multiplier */
 
-          "seaShading_position"  : "top",			/* Position compared to the data layer (none,bottom,top) */
-          "seaShading_light"     : 128,				/* Light multiplier */
-          "seaShading_shadow"    : 384				/* Shadow multiplier */
+          "sea_shading_position"  : "top",          /* Position compared to the data layer (none,bottom,top) */
+          "sea_shading_light"     : 128,            /* Light multiplier */
+          "sea_shading_shadow"    : 384             /* Shadow multiplier */
         }
         ,
        
@@ -40,56 +40,61 @@
           "compression"          : 9,
           "parameter"            : "WindSpeedMS",
           "interpolation"        : "linear",
-          "painter"              : "default",
-          "opacity_land"         : "0.0",  
-          "opacity_sea"          : "0.7",  
+          "data_painter"         : "default",
+          "data_opacity_land"    : 0.0,  
+          "data_opacity_sea"     : 0.7,  
           "colormap"             : "wind",
-          "smooth"               : true,
+          "smooth_colors"        : true,
           
           "land_position"        : "none",
           "land_color"           : "10000000",
           "sea_position"         : "bottom",
           "sea_color"            : "FFCAF0F8",
 
-          "landShading_position" : "none",
-          "landShading_light"    : 128,
-          "landShading_shadow"   : 384,
+          "land_shading_position" : "none",
+          "land_shading_light"    : 128,
+          "land_shading_shadow"   : 384,
 
-          "seaShading_position"  : "none",
-          "seaShading_light"     : 128,
-          "seaShading_shadow"    : 384
+          "sea_shading_position"  : "none",
+          "sea_shading_light"     : 128,
+          "sea_shading_shadow"    : 384
         }
         ,
         {
           "qid"                  : "windstreams",
           "layer_type"           : "raster",
           "compression"          : 9,
-          "painter"              : "stream",
+          "data_painter"         : "stream",
           "parameter"            : "WindDirection",
-          "opacity_land"         : "0.0",  
-          "opacity_sea"          : "1.0",  
-          "stream_color"         : "FFFFFF",
-          "stream_step_x"        : 10,
-          "stream_step_y"        : 10,
-          "stream_min_length"    : 4,
-          "stream_max_length"    : 32,
+          "data_opacity_land"    : 0.0,  
+          "data_opacity_sea"     : 1.0,
+          
+          "stream" :
+          {
+            "trace_step_x"        : 10,
+            "trace_step_y"        : 10,
+            "trace_length_min"    : 4,
+            "trace_length_max"    : 32,
+            "line_length"         : 16,
+            "line_color"          : "FFFFFF"
+          },
                     
           "land_position"        : "none",
           "land_color"           : "40FFFFFF",
           "sea_position"         : "none",
           "sea_color"            : "FFCAF0F8",
 
-          "landShading_position" : "none",
-          "landShading_light"    : 128,
-          "landShading_shadow"   : 384,
+          "land_shading_position" : "none",
+          "land_shading_light"    : 128,
+          "land_shading_shadow"   : 384,
           
-          "seaShading_position"  : "none",
-          "seaShading_light"     : 128,
-          "seaShading_shadow"    : 384
+          "sea_shading_position"  : "none",
+          "sea_shading_light"     : 128,
+          "sea_shading_shadow"    : 384
         }
         ,
         {
-          "qid"			  : "black-border",
+          "qid"           : "black-border",
           "layer_type"    : "map",
           "map": 
           {

@@ -10,11 +10,12 @@ namespace Plugin
 namespace Dali
 {
 
-
 ColorPainter_ARGB::ColorPainter_ARGB()
 {
   try
   {
+    smooth_colors = true;
+    colormap_hash = 0;
   }
   catch (...)
   {
@@ -32,11 +33,40 @@ ColorPainter_ARGB::~ColorPainter_ARGB()
 
 
 
-void ColorPainter_ARGB::addColorMap(std::string name,ColorMap_sptr colorMap)
+
+void ColorPainter_ARGB::init(Json::Value &theJson, const State &theState)
 {
   try
   {
-    colorMaps.insert(std::pair<std::string,ColorMap_sptr>(name,colorMap));
+    if (theJson.isNull())
+      return;
+
+    ColorPainter::init(theJson,theState);
+
+    std::string smooth = "true";
+    JsonTools::remove_string(smooth, theJson, "smooth");
+    if (smooth != "true")
+      smooth_colors = false;
+
+    JsonTools::remove_bool(smooth_colors, theJson, "smooth_colors");
+
+    JsonTools::remove_string(colormap_name, theJson, "colormap");
+
+    if (!colormap_name.empty())
+    {
+      std::string cmap = theState.getColorMap(colormap_name);
+      if (!cmap.empty())
+      {
+        colormap_hash = Fmi::hash(cmap);
+        colormap = std::shared_ptr < ColorMap > (new ColorMap(cmap));
+      }
+      else
+      {
+        Fmi::Exception exception(BCP, "Cannot find the colormap!");
+        exception.addParameter("colormap_name", colormap_name);
+        throw exception;
+      }
+    }
   }
   catch (...)
   {
@@ -46,28 +76,12 @@ void ColorPainter_ARGB::addColorMap(std::string name,ColorMap_sptr colorMap)
 
 
 
-
-void ColorPainter_ARGB::addColorMap(std::string name,std::string& colorMap)
+void ColorPainter_ARGB::setImageColors(uint width, uint height, uint loop_step, uint loop_steps, uint *image, std::vector<float> &land,
+    std::vector<float> &values, Parameters &parameters)
 {
   try
   {
-    ColorMap_sptr cm = std::shared_ptr<ColorMap>(new ColorMap(colorMap));
-    colorMaps.insert(std::pair<std::string,ColorMap_sptr>(name,cm));
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
-
-
-
-void ColorPainter_ARGB::setImageColors(uint width,uint height,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters)
-{
-  try
-  {
-    uint sz = width*height;
+    uint sz = width * height;
     if (sz == 0)
     {
       Fmi::Exception exception(BCP, "The image size is zero!");
@@ -77,154 +91,87 @@ void ColorPainter_ARGB::setImageColors(uint width,uint height,uint *image,std::v
     if (sz != values.size())
     {
       Fmi::Exception exception(BCP, "Invalid number of values!");
-      exception.addParameter("values",std::to_string(values.size()));
+      exception.addParameter("values", std::to_string(values.size()));
       throw exception;
     }
 
-    auto cmap = parameters.find("colormap");
-    if (cmap == parameters.end())
-    {
-      Fmi::Exception exception(BCP, "Cannot find the 'colormap' parameter!");
-      throw exception;
-    }
+    if (!colormap)
+      return;
 
-    auto cmRec = colorMaps.find(cmap->second);
-    if (cmRec == colorMaps.end())
-    {
-      Fmi::Exception exception(BCP, "Cannot find the colormap!");
-      exception.addParameter("colormap",cmap->second);
-      throw exception;
-    }
-
-    double opacity_land = 1.0;
-    auto opacity_value_land = parameters.find("opacity_land");
-    if (opacity_value_land != parameters.end())
-      opacity_land = toDouble(opacity_value_land->second);
-
-    double opacity_sea = 1.0;
-    auto opacity_value_sea = parameters.find("opacity_sea");
-    if (opacity_value_sea != parameters.end())
-      opacity_sea = toDouble(opacity_value_sea->second);
-
-    ColorMap_sptr cm = cmRec->second;
     uint c = 0;
-
-    auto smooth = parameters.find("smooth");
-    if (smooth != parameters.end()  &&  smooth->second == "false")
+    for (uint y = 0; y < height; y++)
     {
-      for (uint y = 0; y < height; y++)
+      uint yy = height - y - 1;
+      uint p = yy * width;
+      for (uint x = 0; x < width; x++)
       {
-        uint yy = height - y -1;
-        uint p = yy * width;
-        for (uint x = 0; x < width; x++)
+        uint oldcol = image[c];
+        uint cc = p + x;
+        float val = values[cc];
+        float landval = land[cc];
+        if (val != ParamValueMissing)
         {
-          uint oldcol = image[c];
-          uint cc = p + x;
-          float val = values[cc];
-          float landval = land[cc];
-          if (val != ParamValueMissing)
+          uint valcol = colormap->getColor(val, smooth_colors);
+          if (landval > 0.9)
           {
-            uint valcol = cm->getColor(val);
-            if (landval > 0.9)
+            if (opacity_land != 1.0)
             {
-              if (opacity_land != 1.0)
-              {
-                uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_land);
-                if (op > 255)
-                  op = 0xFF000000;
-                else
-                  op = (op & 0xFF) << 24;
-
-                uint nv = op + (valcol & 0x00FFFFFF);
-                image[c] = merge_ARGB(nv,oldcol);
-              }
+              uint op = (uint) ((double) ((valcol & 0xFF000000) >> 24) * opacity_land);
+              if (op > 255)
+                op = 0xFF000000;
               else
-              {
-                image[c] = merge_ARGB(valcol,oldcol);
-              }
+                op = (op & 0xFF) << 24;
+
+              uint nv = op + (valcol & 0x00FFFFFF);
+              image[c] = merge_ARGB(nv, oldcol);
             }
             else
             {
-              if (opacity_sea != 1.0)
-              {
-                uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_sea);
-                if (op > 255)
-                  op = 0xFF000000;
-                else
-                  op = (op & 0xFF) << 24;
-
-                uint nv = op + (valcol & 0x00FFFFFF);
-                image[c] = merge_ARGB(nv,oldcol);
-              }
-              else
-              {
-                image[c] = merge_ARGB(valcol,oldcol);
-              }
+              image[c] = merge_ARGB(valcol, oldcol);
             }
           }
-          //else
-          //  image[c] = 0xFF00FF00;
-
-          c++;
-        }
-      }
-    }
-    else
-    {
-      for (uint y = 0; y < height; y++)
-      {
-        uint yy = height - y -1;
-        uint p = yy * width;
-        for (uint x = 0; x < width; x++)
-        {
-          uint oldcol = image[c];
-          uint cc = p + x;
-          float val = values[cc];
-          float landval = land[cc];
-          if (val != ParamValueMissing)
+          else
           {
-            uint valcol = cm->getSmoothColor(val);
-            if (landval > 0.9)
+            if (opacity_sea != 1.0)
             {
-              if (opacity_land != 1.0)
-              {
-                uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_land);
-                if (op > 255)
-                  op = 0xFF000000;
-                else
-                  op = (op & 0xFF) << 24;
-
-                uint nv = op + (valcol & 0x00FFFFFF);
-                image[c] = merge_ARGB(nv,oldcol);
-              }
+              uint op = (uint) ((double) ((valcol & 0xFF000000) >> 24) * opacity_sea);
+              if (op > 255)
+                op = 0xFF000000;
               else
-              {
-                image[c] = merge_ARGB(valcol,oldcol);
-              }
+                op = (op & 0xFF) << 24;
+
+              uint nv = op + (valcol & 0x00FFFFFF);
+              image[c] = merge_ARGB(nv, oldcol);
             }
             else
             {
-              if (opacity_sea != 1.0)
-              {
-                uint op = (uint)((double)((valcol & 0xFF000000) >> 24) * opacity_sea);
-                if (op > 255)
-                  op = 0xFF000000;
-                else
-                  op = (op & 0xFF) << 24;
-
-                uint nv = op + (valcol & 0x00FFFFFF);
-                image[c] = merge_ARGB(nv,oldcol);
-              }
-              else
-              {
-                image[c] = merge_ARGB(valcol,oldcol);
-              }
+              image[c] = merge_ARGB(valcol, oldcol);
             }
           }
-          c++;
         }
+        c++;
       }
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+
+
+std::size_t ColorPainter_ARGB::hash_value(const State &theState) const
+{
+  try
+  {
+    std::size_t hash = ColorPainter::hash_value(theState);
+
+    Fmi::hash_combine(hash,Fmi::hash(colormap_name));
+    Fmi::hash_combine(hash,colormap_hash);
+    Fmi::hash_combine(hash,smooth_colors);
+
+    return hash;
   }
   catch (...)
   {

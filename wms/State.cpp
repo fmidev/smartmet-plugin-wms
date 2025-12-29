@@ -293,7 +293,7 @@ void State::requireId(const std::string& theID) const
 {
   try
   {
-    if (!addId(theID))
+    if (!addId(theID)  &&  !animation_enabled)
       throw Fmi::Exception(BCP, ("ID '" + theID + "' is defined more than once"));
   }
   catch (...)

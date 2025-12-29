@@ -18,7 +18,7 @@ class ColorPainter_shading : public ColorPainter
                   ColorPainter_shading();
     virtual       ~ColorPainter_shading();
 
-    virtual void  setImageColors(uint width,uint height,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters);
+    virtual void  setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters);
 };
 
 

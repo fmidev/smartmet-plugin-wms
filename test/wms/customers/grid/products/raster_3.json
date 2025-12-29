@@ -1,55 +1,58 @@
 {
-  "title": "Precipitation",
-  "abstract": "Precipitation raster",
-  "source": "grid",
-  "producer": "pal",
-  "projection": {},
+  "title"      : "Precipitation",
+  "abstract"   : "Precipitation raster",
+  "source"     : "grid",
+  "producer"   : "pal",
+  "projection" : {},
   "views": 
   [
     {
       "layers": [
         {
-          "qid": "background",
-          "layer_type": "background",
-          "attributes": {
-            "fill": "#EFEFFF"
+          "qid"            : "background",
+          "layer_type"     : "background",
+          "attributes": 
+          {
+            "fill"         : "#EFEFFF"
           }
         },
         {
-          "qid": "map1",
-          "layer_type": "map",
-          "map": {
-            "schema": "natural_earth",
-            "table": "admin_0_countries"
+          "qid"            : "map1",
+          "layer_type"     : "map",
+          "map": 
+          {
+            "schema"       : "natural_earth",
+            "table"        : "admin_0_countries"
           },
-          "attributes": {
-            "id": "europe_country_lines",
-            "fill": "#E0E0E0",
-            "stroke": "none",
-            "stroke-width": "0.5"
+          "attributes": 
+          {
+            "id"           : "europe_country_lines",
+            "fill"         : "#E0E0E0",
+            "stroke"       : "none",
+            "stroke-width" : "0.5"
           }
         },
         {
-          "qid"         : "l1",
-          "layer_type"  : "raster",
-          "compression" : 1,
-          "parameter"   :  "RRR-KGM2",
-          "painter"     : "range",
-          "painter"     : "default",
-          "colormap"    : "precipitation"
+          "qid"          : "l1",
+          "layer_type"   : "raster",
+          "compression"  : 1,
+          "parameter"    :  "RRR-KGM2",
+          "data_painter" : "default",
+          "colormap"     : "precipitation"
         }
         ,
         {
-          "qid": "map2",
-          "layer_type": "map",
+          "qid"         : "map2",
+          "layer_type"  : "map",
           "map": {
-            "schema": "natural_earth",
-            "table": "admin_0_countries"
+            "schema"    : "natural_earth",
+            "table"     : "admin_0_countries"
           },
-          "attributes": {
-            "id": "europe_country_lines2",
-            "fill": "none",
-            "stroke": "#000000",
+          "attributes": 
+          {
+            "id"          : "europe_country_lines2",
+            "fill"        : "none",
+            "stroke"      : "#000000",
             "stroke-width": "0.3"
           }
         }

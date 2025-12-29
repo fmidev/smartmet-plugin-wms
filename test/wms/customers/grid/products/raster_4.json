@@ -11,27 +11,27 @@
         {
           "qid"                  : "t",
           "layer_type"           : "raster",
-          "compression"          : 9,				/* 1 = fast, low compression, 9 = slow, high compression */
+          "compression"          : 9,              /* 1 = fast, low compression, 9 = slow, high compression */
           "parameter"            : "temperature",
-          "interpolation"        : "linear",		/* linear,nearest */
-          "painter"              : "default",		/* default,range,stream,shading */
-          "opacity_land"         : "1.0",  			/* 0.0 - 1.0 */
-          "opacity_sea"   		 : "1.0",  			/* 0.0 - 1.0 */
-          "colormap"      		 : "temperature",
-          "smooth"        		 : true,			
+          "interpolation"        : "linear",       /* linear,nearest */
+          "data_painter"         : "default",      /* default,range,stream,shading */
+          "data_opacity_land"    : 1.0,            /* 0.0 - 1.0 */
+          "data_opacity_sea"     : 1.0,            /* 0.0 - 1.0 */
+          "colormap"             : "temperature",
+          "smooth_colors"        : true,      
           
-          "land_position"        : "none",          /* Position compared to the data layer (none,bottom,top) */
+          "land_position"        : "none",         /* Position compared to the data layer (none,bottom,top) */
           "land_color"           : "FFE0E0E0",
-          "sea_position"         : "none",			/* Position compared to the data layer (none,bottom,top) */
+          "sea_position"         : "none",         /* Position compared to the data layer (none,bottom,top) */
           "sea_color"            : "FFCAF0F8",
 
-          "landShading_position" : "top",			/* Position compared to the data layer (none,bottom,top) */
-          "landShading_light"    : 128,				/* Light multiplier */
-          "landShading_shadow"   : 384,				/* Shadow multiplier */
+          "land_shading_position" : "top",         /* Position compared to the data layer (none,bottom,top) */
+          "land_shading_light"    : 128,           /* Light multiplier */
+          "land_shading_shadow"   : 384,           /* Shadow multiplier */
 
-          "seaShading_position"  : "top",			/* Position compared to the data layer (none,bottom,top) */
-          "seaShading_light"     : 128,				/* Light multiplier */
-          "seaShading_shadow"    : 384				/* Shadow multiplier */
+          "sea_shading_position"  : "top",         /* Position compared to the data layer (none,bottom,top) */
+          "sea_shading_light"     : 128,           /* Light multiplier */
+          "sea_shading_shadow"    : 384            /* Shadow multiplier */
         }
         ,
         {
