@@ -200,9 +200,10 @@ void ColorPainter_border::setImageColors(uint width,uint height,uint loop_step,u
 
       for (uint t=0; t<steps; t++)
       {
-        bool prevInsideY[width] = {false};
-        uint prevInsidePos[width] = {false};
-        double prevLandVal[width] = {0.0};
+        std::vector<bool> prevInsideY(width, false);
+        std::vector<uint> prevInsidePos(width, 0);
+        std::vector<double> prevLandVal(width, 0.0);
+        
         uint c = 0;
         for (uint y = 0; y < height; y++)
         {

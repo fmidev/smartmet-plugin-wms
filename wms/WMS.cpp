@@ -964,7 +964,7 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState, const Spine::HT
     // *** Creating the animation file:
 
     std::vector<int> timeVect;
-    uint *image[frameCount];
+    std::vector<uint *> image(frameCount,nullptr); // does this leak memory???
     for (int tt = 0; tt < animation_timesteps; tt++)
     {
       for (int t = 0; t < animation_loopsteps; t++)
@@ -980,7 +980,7 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState, const Spine::HT
 
     char fname[100];
     sprintf(fname, "/tmp/WMS_animation_%d_%llu.webp", getpid(), getTime());
-    webp_anim_save_ARGB(fname, image, width, height, frameCount, timeVect);
+    webp_anim_save_ARGB(fname, image.data(), width, height, frameCount, timeVect);
     images.clear();
 
     theResponse.setHeader("Content-Type", "image/webp");
