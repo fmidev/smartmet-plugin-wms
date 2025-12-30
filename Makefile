@@ -2,7 +2,7 @@ SUBNAME = wms
 SPEC = smartmet-plugin-$(SUBNAME)
 INCDIR = smartmet/plugins/$(SUBNAME)
 
-REQUIRES = gdal jsoncpp cairo fmt librsvg ctpp2 configpp
+REQUIRES = gdal jsoncpp cairo fmt librsvg ctpp2 configpp webp
 
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 sysconfdir ?= /etc
