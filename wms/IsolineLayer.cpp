@@ -934,7 +934,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP, "Operation failed!", NULL);
+    Fmi::Exception exception(BCP, "Operation failed!", nullptr);
     exception.printError();
     throw exception;
     // throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid);

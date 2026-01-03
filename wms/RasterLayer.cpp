@@ -236,7 +236,7 @@ void RasterLayer::generate(CTPP::CDT &theGlobals, CTPP::CDT &theLayersCdt, State
     {
       // We do not need a new image so there is no need to fetch data
       std::vector<float> emptyVector;
-      generate_output(theGlobals,theLayersCdt,theState,NULL,emptyVector,emptyVector);
+      generate_output(theGlobals,theLayersCdt,theState,nullptr,emptyVector,emptyVector);
       return;
     }
 
