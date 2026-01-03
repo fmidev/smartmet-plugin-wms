@@ -288,70 +288,70 @@ std::ostream& operator<<(std::ostream& ost, const LegendGraphicLayout& layout)
 {
   ost << "LegendGraphicLayout:\n";
   if (layout.param_name_xoffset)
-    ost << " param_name_xoffset: " << *layout.param_name_xoffset << std::endl;
+    ost << " param_name_xoffset: " << *layout.param_name_xoffset << '\n';
   if (layout.param_name_yoffset)
-    ost << " param_name_yoffset: " << *layout.param_name_yoffset << std::endl;
+    ost << " param_name_yoffset: " << *layout.param_name_yoffset << '\n';
   if (layout.param_unit_xoffset)
-    ost << " param_unit_xoffset: " << *layout.param_unit_xoffset << std::endl;
+    ost << " param_unit_xoffset: " << *layout.param_unit_xoffset << '\n';
   if (layout.param_unit_yoffset)
-    ost << " param_unit_yoffset: " << *layout.param_unit_yoffset << std::endl;
+    ost << " param_unit_yoffset: " << *layout.param_unit_yoffset << '\n';
   if (layout.legend_xoffset)
-    ost << " legend_xoffset: " << *layout.legend_xoffset << std::endl;
+    ost << " legend_xoffset: " << *layout.legend_xoffset << '\n';
   if (layout.legend_yoffset)
-    ost << " legend_yoffset: " << *layout.legend_yoffset << std::endl;
+    ost << " legend_yoffset: " << *layout.legend_yoffset << '\n';
   if (layout.symbol_group_x_padding)
-    ost << " symbol_group_x_padding: " << *layout.symbol_group_x_padding << std::endl;
+    ost << " symbol_group_x_padding: " << *layout.symbol_group_x_padding << '\n';
   if (layout.symbol_group_y_padding)
-    ost << " symbol_group_y_padding: " << *layout.symbol_group_y_padding << std::endl;
+    ost << " symbol_group_y_padding: " << *layout.symbol_group_y_padding << '\n';
   if (layout.symbol_text_xoffset)
-    ost << " symbol_text_xoffset: " << *layout.symbol_text_xoffset << std::endl;
+    ost << " symbol_text_xoffset: " << *layout.symbol_text_xoffset << '\n';
   if (layout.symbol_text_yoffset)
-    ost << " symbol_text_yoffset: " << *layout.symbol_text_yoffset << std::endl;
+    ost << " symbol_text_yoffset: " << *layout.symbol_text_yoffset << '\n';
   if (layout.legend_width)
-    ost << " legend_width: " << *layout.legend_width << std::endl;
+    ost << " legend_width: " << *layout.legend_width << '\n';
   if (!layout.legend_width_per_language.empty())
   {
-    ost << " legend_width_per_language: " << std::endl;
+    ost << " legend_width_per_language: \n";
     for (const auto& item : layout.legend_width_per_language)
-      ost << "  - " << item.first << ": " << item.second << std::endl;
+      ost << "  - " << item.first << ": " << item.second << '\n';
   }
-  ost << " output_doxument_width: " << layout.output_document_width << std::endl;
-  ost << " output_doxument_height: " << layout.output_document_height << std::endl;
+  ost << " output_doxument_width: " << layout.output_document_width << '\n';
+  ost << " output_doxument_height: " << layout.output_document_height << '\n';
 
   return ost;
 }
 
 std::ostream& operator<<(std::ostream& ost, const LegendGraphicParameter& lgp)
 {
-  ost << "LegendGraphicParameter: " << std::endl;
-  ost << " data_name: " << lgp.data_name << std::endl;
-  ost << " given_name: " << lgp.given_name << std::endl;
-  ost << " unit: " << lgp.unit << std::endl;
-  ost << " hide_title: " << lgp.hide_title << std::endl;
+  ost << "LegendGraphicParameter: \n";
+  ost << " data_name: " << lgp.data_name << '\n';
+  ost << " given_name: " << lgp.given_name << '\n';
+  ost << " unit: " << lgp.unit << '\n';
+  ost << " hide_title: " << lgp.hide_title << '\n';
   if (!lgp.translations.empty())
   {
-    ost << " translations: " << std::endl;
+    ost << " translations: \n";
     for (const auto& item : lgp.translations)
-      ost << "  - " << item.first << ": " << item.second << std::endl;
+      ost << "  - " << item.first << ": " << item.second << '\n';
   }
   if (!lgp.text_lengths.empty())
   {
-    ost << " text_lengths: " << std::endl;
+    ost << " text_lengths: \n";
     for (const auto& item : lgp.text_lengths)
-      ost << "  - " << item.first << ": " << item.second << std::endl;
+      ost << "  - " << item.first << ": " << item.second << '\n';
   }
   return ost;
 }
 
 std::ostream& operator<<(std::ostream& ost, const LegendGraphicSymbol& lgs)
 {
-  ost << "LegendGraphicSymbol: " << std::endl;
-  ost << " symbol_name: " << lgs.symbol_name << std::endl;
+  ost << "LegendGraphicSymbol: \n";
+  ost << " symbol_name: " << lgs.symbol_name << '\n';
   if (!lgs.translations.empty())
   {
-    ost << " translations: " << std::endl;
+    ost << " translations: \n";
     for (const auto& item : lgs.translations)
-      ost << "  - " << item.first << ": " << item.second << std::endl;
+      ost << "  - " << item.first << ": " << item.second << '\n';
   }
 
   return ost;
@@ -364,28 +364,28 @@ std::ostream& operator<<(std::ostream& ost, const WMSLegendGraphicSettings& lgs)
   {
     ost << "* Parameters *\n";
     for (const auto& p : lgs.parameters)
-      ost << " parameter: " << p.first << std::endl << p.second << std::endl;
+      ost << " parameter: " << p.first << '\n' << p.second << '\n';
   }
   if (!lgs.symbols.empty())
   {
     ost << "* Symbols *\n";
     for (const auto& s : lgs.symbols)
-      ost << " symbol: " << s.first << std::endl << s.second << std::endl;
+      ost << " symbol: " << s.first << '\n' << s.second << '\n';
   }
   if (!lgs.symbolsToIgnore.empty())
   {
-    ost << "symbolsToIgnore: " << std::endl;
+    ost << "symbolsToIgnore: \n";
     for (const auto& s : lgs.symbolsToIgnore)
-      ost << s << std::endl;
+      ost << s << '\n';
   }
   if (!lgs.languages.empty())
   {
-    ost << "langauges: " << std::endl;
+    ost << "langauges: \n";
     for (const auto& l : lgs.languages)
-      ost << l << std::endl;
+      ost << l << '\n';
   }
   ost << lgs.layout;
-  ost << "expires: " << lgs.expires << std::endl;
+  ost << "expires: " << lgs.expires << '\n';
 
   ost << "**** WMSLegendGraphicSettings end****\n";
 

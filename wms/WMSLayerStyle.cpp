@@ -12,12 +12,12 @@ namespace WMS
 {
 std::ostream& operator<<(std::ostream& ost, const WMSLayerStyle& layerStyle)
 {
-  ost << "name: " << layerStyle.name << std::endl;
-  ost << "title: " << (layerStyle.title ? layerStyle.title->dump() : "-") << std::endl;
-  ost << "abstract: " << (layerStyle.abstract ? layerStyle.abstract->dump() : "-") << std::endl;
-  ost << "LegendURL: " << std::endl;
-  ost << " format: " << layerStyle.legend_url.format << std::endl;
-  ost << " online resource: " << layerStyle.legend_url.online_resource << std::endl;
+  ost << "name: " << layerStyle.name << '\n';
+  ost << "title: " << (layerStyle.title ? layerStyle.title->dump() : "-") << '\n';
+  ost << "abstract: " << (layerStyle.abstract ? layerStyle.abstract->dump() : "-") << '\n';
+  ost << "LegendURL: \n";
+  ost << " format: " << layerStyle.legend_url.format << '\n';
+  ost << " online resource: " << layerStyle.legend_url.online_resource << '\n';
 
   return ost;
 }

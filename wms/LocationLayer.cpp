@@ -210,7 +210,7 @@ void LocationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Sta
             << lon << "," << lat
             << " --> "
             << x << "," << y
-            << " priority " << location->priority << std::endl;
+            << " priority " << location->priority << '\n';
 #endif
 
       // Skip the location if it is too close to previous points

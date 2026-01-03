@@ -732,7 +732,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(State& theState,
           directions.empty())
       {
         // No data for this station, continue to the next
-        std::cerr << "No data for " << *station.fmisid << std::endl;
+        std::cerr << "No data for " << *station.fmisid << '\n';
 
         continue;
       }

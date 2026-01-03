@@ -15,7 +15,7 @@ std::ostream& operator<<(std::ostream& ost, const LegendGraphicInfoItem& lgi)
   {
     ost << " info: \n";
     for (const auto& item : lgi.info)
-      ost << " " << item.first << " ->\n" << item.second.toStyledString() << std::endl;
+      ost << " " << item.first << " ->\n" << item.second.toStyledString() << '\n';
   }
   if (lgi.text_lengths.empty())
     ost << " text_lengths: -";
@@ -23,7 +23,7 @@ std::ostream& operator<<(std::ostream& ost, const LegendGraphicInfoItem& lgi)
   {
     ost << " text_lengths: \n";
     for (const auto& item : lgi.text_lengths)
-      ost << " " << item.first << ": " << item.second << std::endl;
+      ost << " " << item.first << ": " << item.second << '\n';
   }
 
   return ost;
@@ -40,7 +40,7 @@ std::ostream& operator<<(std::ostream& ost, const NamedLegendGraphicInfo& nlgi)
     {
       ost << " " << item.first << ":\n";
       for (const auto& item2 : item.second)
-        ost << item2 << std::endl;
+        ost << item2 << '\n';
     }
   }
 
@@ -57,11 +57,11 @@ std::ostream& operator<<(std::ostream& ost, const LegendGraphicResultPerLanguage
     for (const auto& item : lgr)
     {
       ost << " " << item.first << ":\n";
-      ost << " width: " << item.second.width << std::endl;
-      ost << " height: " << item.second.height << std::endl;
+      ost << " width: " << item.second.width << '\n';
+      ost << " height: " << item.second.height << '\n';
       for (const auto& item2 : item.second.legendLayers)
       {
-        ost << " legendLayer: " << item2 << std::endl;
+        ost << " legendLayer: " << item2 << '\n';
       }
     }
   }

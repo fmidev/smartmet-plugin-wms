@@ -154,7 +154,7 @@ void ObservationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, 
       chr.append(1, ssp.symbol);
       if (chr.empty())
       {
-        std::cout << "No symbol for station: " << ssp.fmisid << std::endl;
+        std::cout << "No symbol for station: " << ssp.fmisid << '\n';
         continue;
       }
 

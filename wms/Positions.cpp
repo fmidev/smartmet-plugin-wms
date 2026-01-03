@@ -1225,15 +1225,14 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
         places = geonames->nameSearch(options, Fmi::to_string(*station.fmisid));
         if (places.empty())
           std::cerr << Spine::log_time_str() << " WMS could not find fmisid " << *station.fmisid
-                    << std::endl;
+                    << '\n';
       }
       else if (station.wmo)
       {
         options.SetLanguage("wmo");
         places = geonames->nameSearch(options, Fmi::to_string(*station.wmo));
         if (places.empty())
-          std::cerr << Spine::log_time_str() << " WMS could not find wmo " << *station.wmo
-                    << std::endl;
+          std::cerr << Spine::log_time_str() << " WMS could not find wmo " << *station.wmo << '\n';
       }
       else if (station.lpnn)
       {
@@ -1241,14 +1240,14 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
         places = geonames->nameSearch(options, Fmi::to_string(*station.lpnn));
         if (places.empty())
           std::cerr << Spine::log_time_str() << " WMS could not find lpnn " << *station.lpnn
-                    << std::endl;
+                    << '\n';
       }
       else if (station.geoid)
       {
         places = geonames->idSearch(options, *station.geoid);
         if (places.empty())
           std::cerr << Spine::log_time_str() << " WMS could not find geoid " << *station.geoid
-                    << std::endl;
+                    << '\n';
       }
       else if (station.longitude || station.latitude)
       {

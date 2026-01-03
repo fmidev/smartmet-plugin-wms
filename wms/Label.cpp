@@ -160,8 +160,7 @@ void Label::init(Json::Value& theJson, const Config& theConfig)
         offset = json.asDouble();
       else if (name == "format")
       {
-        std::cerr << "Warning: label.format has been deprecated, use label.precision instead"
-                  << std::endl;
+        std::cerr << "Warning: label.format has been deprecated, use label.precision instead\n";
       }
       else if (name == "missing")
         missing = json.asString();

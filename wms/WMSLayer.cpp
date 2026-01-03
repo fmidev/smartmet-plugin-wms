@@ -2083,7 +2083,7 @@ std::optional<CTPP::CDT> WMSLayer::generateGetCapabilities(
       return {};
 
     // std::cout << "________________________________________________________\n" << *this <<
-    // std::endl;
+    // '\n';
 
     CTPP::CDT layer(CTPP::CDT::HASH_VAL);
 

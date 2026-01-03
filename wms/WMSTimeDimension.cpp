@@ -471,7 +471,7 @@ std::ostream& operator<<(std::ostream& ost, const StepTimeDimension& timeDimensi
     for (const auto& step : timesteps)
       ost << step << " ";
 
-    ost << std::endl;
+    ost << '\n';
 
     return ost;
   }
@@ -487,8 +487,8 @@ std::ostream& operator<<(std::ostream& ost, const IntervalTimeDimension& timeDim
   {
     auto intervals = timeDimension.getIntervals();
     for (const auto& interval : intervals)
-      ost << interval.startTime << " - " << interval.endTime << " : " << interval.resolution << " "
-          << std::endl;
+      ost << interval.startTime << " - " << interval.endTime << " : " << interval.resolution
+          << '\n';
 
     return ost;
   }
@@ -507,12 +507,12 @@ std::ostream& operator<<(std::ostream& ost, const WMSTimeDimensions& timeDimensi
     for (const auto& ot : origintimes)
     {
       if (!ot.is_not_a_date_time())
-        ost << "Time dimension for origintime " << ot << " -> " << std::endl;
+        ost << "Time dimension for origintime " << ot << " -> \n";
       const WMSTimeDimension* td = &timeDimensions.getTimeDimension(ot);
       if (dynamic_cast<const IntervalTimeDimension*>(td) != nullptr)
-        ost << *(dynamic_cast<const IntervalTimeDimension*>(td)) << std::endl;
+        ost << *(dynamic_cast<const IntervalTimeDimension*>(td)) << '\n';
       else if (dynamic_cast<const StepTimeDimension*>(td) != nullptr)
-        ost << *(dynamic_cast<const StepTimeDimension*>(td)) << std::endl;
+        ost << *(dynamic_cast<const StepTimeDimension*>(td)) << '\n';
     }
 
     return ost;

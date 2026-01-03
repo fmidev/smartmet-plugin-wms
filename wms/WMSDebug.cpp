@@ -17,122 +17,122 @@ std::ostream& operator<<(std::ostream& ost, const Spine::HTTP::Request& theHTTPR
 
     ost << "SERVICE = "
         << (theHTTPRequest.getParameter("service") ? *(theHTTPRequest.getParameter("service")) : "")
-        << std::endl;
+        << '\n';
     ost << "VERSION = "
         << (theHTTPRequest.getParameter("version") ? *(theHTTPRequest.getParameter("version")) : "")
-        << std::endl;
-    ost << "REQUEST = " << wmsRequest << std::endl;
+        << '\n';
+    ost << "REQUEST = " << wmsRequest << '\n';
     if (wmsRequest == "GetCapabilities")
     {
       ost << "FORMAT = "
           << (theHTTPRequest.getParameter("format") ? *(theHTTPRequest.getParameter("format")) : "")
-          << std::endl;
+          << '\n';
       ost << "UPDATESEQUENCE = "
           << (theHTTPRequest.getParameter("updatesequence")
                   ? *(theHTTPRequest.getParameter("updatesequence"))
                   : "")
-          << std::endl;
+          << '\n';
     }
     else if (wmsRequest == "GetMap")
     {
       ost << "LAYERS = "
           << (theHTTPRequest.getParameter("layers") ? *(theHTTPRequest.getParameter("layers")) : "")
-          << std::endl;
+          << '\n';
       ost << "STYLES = "
           << (theHTTPRequest.getParameter("styles") ? *(theHTTPRequest.getParameter("styles")) : "")
-          << std::endl;
+          << '\n';
       ost << "CRS = "
           << (theHTTPRequest.getParameter("crs") ? *(theHTTPRequest.getParameter("crs")) : "")
-          << std::endl;
+          << '\n';
       ost << "BBOX = "
           << (theHTTPRequest.getParameter("bbox") ? *(theHTTPRequest.getParameter("bbox")) : "")
-          << std::endl;
+          << '\n';
       ost << "WIDTH = "
           << (theHTTPRequest.getParameter("width") ? *(theHTTPRequest.getParameter("width")) : "")
-          << std::endl;
+          << '\n';
       ost << "HEIGHT = "
           << (theHTTPRequest.getParameter("height") ? *(theHTTPRequest.getParameter("height")) : "")
-          << std::endl;
+          << '\n';
       ost << "FORMAT = "
           << (theHTTPRequest.getParameter("format") ? *(theHTTPRequest.getParameter("format")) : "")
-          << std::endl;
+          << '\n';
       ost << "TRANSPARENT = "
           << (theHTTPRequest.getParameter("transparent")
                   ? *(theHTTPRequest.getParameter("transparent"))
                   : "")
-          << std::endl;
+          << '\n';
       ost << "BGCOLOR = "
           << (theHTTPRequest.getParameter("bgcolor") ? *(theHTTPRequest.getParameter("bgcolor"))
                                                      : "")
-          << std::endl;
+          << '\n';
       ost << "EXCEPTIONS = "
           << (theHTTPRequest.getParameter("exceptions")
                   ? *(theHTTPRequest.getParameter("exceptions"))
                   : "")
-          << std::endl;
+          << '\n';
       ost << "TIME = "
           << (theHTTPRequest.getParameter("time") ? *(theHTTPRequest.getParameter("time")) : "")
-          << std::endl;
+          << '\n';
       ost << "ELEVATION = "
           << (theHTTPRequest.getParameter("elevation") ? *(theHTTPRequest.getParameter("elevation"))
                                                        : "")
-          << std::endl;
+          << '\n';
     }
     else if (wmsRequest == "GetLegendGraphic")
     {
       ost << "LAYER = "
           << (theHTTPRequest.getParameter("layer") ? *(theHTTPRequest.getParameter("layer")) : "")
-          << std::endl;
+          << '\n';
       ost << "STYLE = "
           << (theHTTPRequest.getParameter("style") ? *(theHTTPRequest.getParameter("style")) : "")
-          << std::endl;
+          << '\n';
       ost << "REMOTE_OWS_TYPE = "
           << (theHTTPRequest.getParameter("remote_ows_type")
                   ? *(theHTTPRequest.getParameter("remote_ows_type"))
                   : "")
-          << std::endl;
+          << '\n';
       ost << "REMOTE_OWS_URL = "
           << (theHTTPRequest.getParameter("remote_ows_url")
                   ? *(theHTTPRequest.getParameter("remote_ows_url"))
                   : "")
-          << std::endl;
+          << '\n';
       ost << "FEATURETYPE = "
           << (theHTTPRequest.getParameter("featuretype")
                   ? *(theHTTPRequest.getParameter("featuretype"))
                   : "")
-          << std::endl;
+          << '\n';
       ost << "COVERAGE = "
           << (theHTTPRequest.getParameter("coverage") ? *(theHTTPRequest.getParameter("coverage"))
                                                       : "")
-          << std::endl;
+          << '\n';
       ost << "RULE = "
           << (theHTTPRequest.getParameter("rule") ? *(theHTTPRequest.getParameter("rule")) : "")
-          << std::endl;
+          << '\n';
       ost << "SCALE = "
           << (theHTTPRequest.getParameter("scale") ? *(theHTTPRequest.getParameter("scale")) : "")
-          << std::endl;
+          << '\n';
       ost << "SLD = "
           << (theHTTPRequest.getParameter("sld") ? *(theHTTPRequest.getParameter("sld")) : "")
-          << std::endl;
+          << '\n';
       ost << "FORMAT = "
           << (theHTTPRequest.getParameter("format") ? *(theHTTPRequest.getParameter("format")) : "")
-          << std::endl;
+          << '\n';
       ost << "WIDTH = "
           << (theHTTPRequest.getParameter("width") ? *(theHTTPRequest.getParameter("width")) : "")
-          << std::endl;
+          << '\n';
       ost << "HEIGHT = "
           << (theHTTPRequest.getParameter("height") ? *(theHTTPRequest.getParameter("height")) : "")
-          << std::endl;
+          << '\n';
       ost << "EXCEPIONS = "
           << (theHTTPRequest.getParameter("exceptions")
                   ? *(theHTTPRequest.getParameter("exceptions"))
                   : "")
-          << std::endl;
+          << '\n';
       ost << "SLD_VERSION = "
           << (theHTTPRequest.getParameter("sld_version")
                   ? *(theHTTPRequest.getParameter("sld_version"))
                   : "")
-          << std::endl;
+          << '\n';
     }
 
     return ost;

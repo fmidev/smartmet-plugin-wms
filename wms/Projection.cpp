@@ -515,8 +515,8 @@ void Projection::prepareCRS() const
         auto new_crs = fmt::format("+init={} +lon_0={}", *crs, lon_0);
         ogr_crs = std::make_shared<Fmi::SpatialReference>(new_crs);
 
-        std::cout << "PROJ = " << ogr_crs->projStr() << std::endl;
-        std::cout << "WKT = " << ogr_crs->WKT() << std::endl;
+        std::cout << "PROJ = " << ogr_crs->projStr() << '\n';
+        std::cout << "WKT = " << ogr_crs->WKT() << '\n';
       }
     }
 #endif

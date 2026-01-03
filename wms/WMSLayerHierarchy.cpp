@@ -516,7 +516,7 @@ CTPP::CDT WMSLayerHierarchy::getCapabilities(
   // Return array of individual layer capabilities
   CTPP::CDT capa(CTPP::CDT::ARRAY_VAL);
 
-  // std::cout << "CAPA:\n " << *this << std::endl;
+  // std::cout << "CAPA:\n " << *this << '\n';
   add_layer_info(multiple_intervals,
                  capa,
                  *this,
@@ -541,7 +541,7 @@ void printHierarchy(const std::string& prefix,
 {
   ost << prefix << lh.name << "(L#" << level << (lh.sublayers.empty() ? "-Leaf)" : ") ")
       << (lh.geographicBoundingBox ? "1" : "0") << (lh.projectedBoundingBox ? "1" : "0")
-      << (lh.timeDimension ? "1" : "0") << (lh.elevationDimension ? "1" : "0") << std::endl;
+      << (lh.timeDimension ? "1" : "0") << (lh.elevationDimension ? "1" : "0") << '\n';
 
   unsigned int nextLevel = level + 1;
   for (const auto& item : lh.sublayers)

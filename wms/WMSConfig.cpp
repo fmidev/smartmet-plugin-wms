@@ -811,8 +811,7 @@ WMSConfig::~WMSConfig()
 {
   if (itsGetCapabilitiesTask)
   {
-    std::cout << "ERROR [WMS][WMSConfig]: Missing call to WMSConfig::shutdown(). Terminating..."
-              << std::endl;
+    std::cout << "ERROR [WMS][WMSConfig]: Missing call to WMSConfig::shutdown(). Terminating...\n";
     abort();
   }
 }
@@ -1200,7 +1199,7 @@ CTPP::CDT WMSConfig::getCapabilities(const std::optional<std::string>& apikey,
       WMSLayerHierarchy lh(*my_layers, wms_namespace, hierarchy_type, show_hidden);
 #endif
 
-      //	  std::cout << "Hierarchy:\n" << lh << std::endl;
+      //	  std::cout << "Hierarchy:\n" << lh << '\n';
 
       return lh.getCapabilities(multiple_intervals,
                                 language,
@@ -1623,7 +1622,7 @@ std::vector<Json::Value> WMSConfig::getLegendGraphic(const std::string& layerNam
 
   std::string legendGraphicID = layerName + "::" + styleName;
 
-  //  std::cout << "legendGraphicID: " << legendGraphicID << std::endl;
+  //  std::cout << "legendGraphicID: " << legendGraphicID << '\n';
 
   LegendGraphicResult result =
       my_layers->at(layerName).getLayer()->getLegendGraphic(legendGraphicID, language);
