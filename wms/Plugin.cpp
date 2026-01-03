@@ -63,12 +63,12 @@ Json::CharReaderBuilder charreaderbuilder;
  */
 // ----------------------------------------------------------------------
 
-const std::string &check_attack(const std::string &theName)
+std::string check_attack(std::string theName)
 {
   try
   {
     if (theName.find("./") == std::string::npos)
-      return theName;
+      return theName;  // cannot take const reference as input due to this line
 
     throw Fmi::Exception(
         BCP, "Attack IRI detected, relative paths upwards are not safe: '" + theName + "'");
