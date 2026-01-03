@@ -1361,10 +1361,8 @@ void GraticuleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
     labels_cdt["end"] = "";
     theLayersCdt.PushBack(labels_cdt);
 
-    for (auto i = 0UL; i < graticules.size(); i++)
+    for (const auto& graticule : graticules)
     {
-      const auto& graticule = graticules.at(i);
-
       auto labels = generate_labels(graticule, crs, box);
 
       if (!labels.empty())

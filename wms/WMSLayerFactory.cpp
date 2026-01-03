@@ -312,18 +312,16 @@ std::string determine_string(Json::Value& root, const std::string& name)
     if (!views.isNull())
     {
       // Iterate views
-      for (unsigned int i = 0; i < views.size(); i++)
+      for (auto view : views)
       {
-        auto view = views[i];
         remove_string(value, view, name);
 
         auto layers = view.get("layers", nulljson);
         if (!layers.isNull())
         {
           // Iterate layers
-          for (unsigned int k = 0; k < layers.size(); k++)
+          for (auto layer : layers)
           {
-            auto layer = layers[k];
             remove_string(value, layer, name);
             if (!value.empty())
               return value;
@@ -355,18 +353,16 @@ int determine_int(Json::Value& root, const std::string& name)
     if (!views.isNull())
     {
       // Iterate views
-      for (unsigned int i = 0; i < views.size(); i++)
+      for (auto view : views)
       {
-        auto view = views[i];
         remove_int(value, view, name);
 
         auto layers = view.get("layers", nulljson);
         if (!layers.isNull())
         {
           // Iterate layers
-          for (unsigned int k = 0; k < layers.size(); k++)
+          for (auto layer : layers)
           {
-            auto layer = layers[k];
             remove_int(value, layer, name);
             if (value != 0)
               return value;
@@ -398,18 +394,16 @@ int determine_uint(Json::Value& root, const std::string& name)
     if (!views.isNull())
     {
       // Iterate views
-      for (unsigned int i = 0; i < views.size(); i++)
+      for (auto view : views)
       {
-        auto view = views[i];
         remove_uint(value, view, name);
 
         auto layers = view.get("layers", nulljson);
         if (!layers.isNull())
         {
           // Iterate layers
-          for (unsigned int k = 0; k < layers.size(); k++)
+          for (auto layer : layers)
           {
-            auto layer = layers[k];
             remove_uint(value, layer, name);
             if (value != 0)
               return value;

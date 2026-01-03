@@ -76,9 +76,9 @@ ColorMap::ColorMap(std::string& colorMap)
       p++;
     }
 
-    for (auto it = lines.begin(); it != lines.end(); ++it)
+    for (const auto& line : lines)
     {
-      strcpy(buf,it->c_str());
+      strcpy(buf,line.c_str());
       char *n = strstr(buf,"#");
       if (n)
         *n = '\0';
@@ -172,9 +172,9 @@ void ColorMap::getColors(std::vector<float>& values,std::vector<unsigned int>& c
   try
   {
     colors.reserve(values.size());
-    for (auto it = values.begin(); it != values.end(); ++it)
+    for (auto c : values)
     {
-      colors.emplace_back(getColor(*it));
+      colors.emplace_back(getColor(c));
     }
   }
   catch (...)
@@ -191,9 +191,9 @@ void ColorMap::getSmoothColors(std::vector<float>& values,std::vector<unsigned i
   try
   {
     colors.reserve(values.size());
-    for (auto it = values.begin(); it != values.end(); ++it)
+    for (auto c : values)
     {
-      colors.emplace_back(getSmoothColor(*it));
+      colors.emplace_back(getSmoothColor(c));
     }
   }
   catch (...)

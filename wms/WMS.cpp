@@ -188,9 +188,8 @@ void relocate_producer_to_view(const std::string &layername, Json::Value &root)
     const auto &value = root.get(var, nulljson);
     if (!value.isNull())
     {
-      for (unsigned int i = 0; i < views.size(); i++)
+      for (auto &view : views)
       {
-        auto &view = views[i];
         auto view_value = view.get(var, nulljson);
         if (view_value.isNull())
           view[var] = value;  // add to each view where not set yet
@@ -998,22 +997,16 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
         // This is time animation so we have to changing the time of the layers.
         // There is probably an easier way to do this.
 
-        for (auto view = theProduct.views.views.begin(); view != theProduct.views.views.end();
-             ++view)
+        for (const auto &view : theProduct.views.views)
         {
-          for (auto layer = (*view)->layers.layers.begin(); layer != (*view)->layers.layers.end();
-               ++layer)
+          for (auto &layer : view->layers.layers)
           {
-            auto tm = (*layer)->getValidTime();
+            auto tm = layer->getValidTime();
             tm += Fmi::Minutes(data_timestep);
-            (*layer)->setValidTime(tm);
+            layer->setValidTime(tm);
 
-            for (auto ilayer = (*layer)->layers.layers.begin();
-                 ilayer != (*layer)->layers.layers.end();
-                 ++ilayer)
-            {
-              (*ilayer)->setValidTime(tm);
-            }
+            for (auto &ilayer : layer->layers.layers)
+              ilayer->setValidTime(tm);
           }
         }
       }

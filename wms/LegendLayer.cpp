@@ -556,10 +556,8 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     // Process all isolines
 
-    for (std::size_t num = 0; num < isolines.size(); ++num)
+    for (const auto& isoline : isolines)
     {
-      const Isoline& isoline = isolines[num];
-
       // First the symbol
 
       {

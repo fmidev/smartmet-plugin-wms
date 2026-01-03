@@ -336,10 +336,10 @@ std::size_t Properties::countParameterHash(const State& theState,
 
       std::size_t hash = Fmi::hash_value(param);
 
-      for (auto it = producers.begin(); it != producers.end(); ++it)
+      for (const auto& producer : producers)
       {
         // std::cout << "* " << *it << "\n";
-        std::string producerName = gridEngine->getProducerName(*it);
+        std::string producerName = gridEngine->getProducerName(producer);
         auto pHash = gridEngine->getProducerHash(producerName);
         Fmi::hash_combine(hash, pHash);
       }
