@@ -380,7 +380,7 @@ std::ostream& operator<<(std::ostream& ost, const WMSLegendGraphicSettings& lgs)
   }
   if (!lgs.languages.empty())
   {
-    ost << "langauges: \n";
+    ost << "languages: \n";
     for (const auto& l : lgs.languages)
       ost << l << '\n';
   }
