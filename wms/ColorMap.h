@@ -38,7 +38,7 @@ class ColorMap
 
   public:
 
-    inline uint getColor(double value, bool smooth)
+    uint getColor(double value, bool smooth)
     {
       if (smooth)
         return getSmoothColor(value);
@@ -46,7 +46,7 @@ class ColorMap
       return getColor(value);
     }
 
-    inline uint getColor(double value)
+    uint getColor(double value)
     {
       auto it = mColors.find(value);
       if (it != mColors.end())
@@ -70,7 +70,7 @@ class ColorMap
       return 0x00000000;
     }
 
-    inline uint getSmoothColor(double value)
+    uint getSmoothColor(double value)
     {
       if (mColors.size() == 0)
         return 0;
