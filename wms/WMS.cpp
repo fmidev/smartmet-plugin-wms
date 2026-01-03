@@ -163,10 +163,10 @@ void relocate_producer_to_view(const std::string &layername, Json::Value &root)
   const std::vector<std::string> vars = {"producer",
                                          "source",
                                          "forecastType",
-                                         "forecastNumber,"
+                                         "forecastNumber",
                                          "geometryId",
                                          "level",
-                                         "elevation_unit,"
+                                         "elevation_unit",
                                          "pressure",
                                          "levelId",
                                          "timestep"};
