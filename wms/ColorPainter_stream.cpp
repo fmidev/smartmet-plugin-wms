@@ -380,7 +380,7 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint loop_step,u
     double alpha_land[line_length];
     double alpha_sea[line_length];
 
-    double mp = (double)alphamax / (double)line_length;
+    double mp = alphamax / line_length;
     double vm = (double)line_length / (double)loop_steps;
 
     for (int t=0; t<line_length; t++)

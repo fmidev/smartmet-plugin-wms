@@ -161,7 +161,7 @@ void ColorPainter_border::setImageColors(uint width,uint height,uint /* loop_ste
 
       if (opacity_land != 1.0)
       {
-        uint op = (uint) o * opacity_land;
+        uint op = o * opacity_land;
         if (op > 255)
           op = 0xFF000000;
         else
@@ -169,7 +169,7 @@ void ColorPainter_border::setImageColors(uint width,uint height,uint /* loop_ste
 
         outsideCol_land = op + (outsideCol & 0x00FFFFFF);
 
-        op = (uint) i * opacity_land;
+        op = i * opacity_land;
         if (op > 255)
           op = 0xFF000000;
         else
@@ -180,7 +180,7 @@ void ColorPainter_border::setImageColors(uint width,uint height,uint /* loop_ste
 
       if (opacity_sea != 1.0)
       {
-        uint op = (uint) o * opacity_sea;
+        uint op = o * opacity_sea;
         if (op > 255)
           op = 0xFF000000;
         else
@@ -188,7 +188,7 @@ void ColorPainter_border::setImageColors(uint width,uint height,uint /* loop_ste
 
         outsideCol_sea = op + (outsideCol & 0x00FFFFFF);
 
-        op = (uint) i * opacity_sea;
+        op = i * opacity_sea;
         if (op > 255)
           op = 0xFF000000;
         else
