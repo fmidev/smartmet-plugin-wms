@@ -187,7 +187,7 @@ class WMSLayer
   virtual std::string info() const;
 
   // returns timestamp when metadata was previous time updated
-  Fmi::DateTime metaDataUpdateTime() const { return metadataTimestamp; };
+  Fmi::DateTime metaDataUpdateTime() const { return metadataTimestamp; }
   // inherited layers can override this to determine weather metadata must be updated
   virtual bool mustUpdateLayerMetaData() { return true; }
   // by default interval is 5 seconds, but for some layers it could be longer

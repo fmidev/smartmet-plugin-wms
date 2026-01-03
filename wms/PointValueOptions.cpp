@@ -26,7 +26,7 @@ class PointValueWrapper
   {
     itsMeanDeviation = abs(mean - itsPointData.priorityValue());
   }
-  const PointData& data() const { return itsPointData; };
+  const PointData& data() const { return itsPointData; }
 
  private:
   double itsMeanDeviation = 0.0;
