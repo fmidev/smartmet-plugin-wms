@@ -901,7 +901,6 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
           {
             if (!arcNumbers.empty())
               isoband_cdt["arcs"] = arcNumbers;
-            ;
 
             if (!arcCoordinates.empty())
             {
@@ -1241,7 +1240,6 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
           {
             if (!arcNumbers.empty())
               isoband_cdt["arcs"] = arcNumbers;
-            ;
 
             if (!arcCoordinates.empty())
             {

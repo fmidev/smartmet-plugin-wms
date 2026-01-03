@@ -1089,7 +1089,6 @@ std::string Plugin::getStyle(const std::string &theCustomer,
     throw Fmi::Exception::Trace(BCP, "Failed to find style")
         .addParameter("Customer", theCustomer)
         .addParameter("CSS", theCSS);
-    ;
   }
 }
 

@@ -168,7 +168,6 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     std::string producerName = gridEngine->getProducerName(*producer);
 
     auto valid_time = getValidTime();
-    ;
 
     std::string wkt = *projection.crs;
     // std::cout << wkt << "\n";
