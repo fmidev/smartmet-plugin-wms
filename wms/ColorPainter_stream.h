@@ -33,18 +33,18 @@ class ColorPainter_stream : public ColorPainter
     };
 
                   ColorPainter_stream();
-    virtual       ~ColorPainter_stream();
+                  ~ColorPainter_stream() override;
 
-    void          init(Json::Value &theJson,const State& theState);
+    void          init(Json::Value &theJson,const State& theState) override;
     void          initStream(Json::Value &theJson,const State& theState);
     void          initStreamSpeeds(Json::Value &theJson,const State& theState);
     void          initStreamSpeed(Json::Value &theJson,const State& theState);
 
     void          addStreamSpeed(StreamSpeed& speed);
-    bool          isAnimator() {return true;}
-    void          setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters);
-    void          setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values1,std::vector<float>& values2,Parameters& parameters);
-    std::size_t   hash_value(const State &theState) const;
+    bool          isAnimator() override {return true;}
+    void          setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters) override;
+    void          setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values1,std::vector<float>& values2,Parameters& parameters) override;
+    std::size_t   hash_value(const State &theState) const override;
 
   protected:
 

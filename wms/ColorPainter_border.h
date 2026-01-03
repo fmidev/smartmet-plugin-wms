@@ -38,16 +38,16 @@ class ColorPainter_border : public ColorPainter
 
   public:
                   ColorPainter_border();
-    virtual       ~ColorPainter_border();
+                  ~ColorPainter_border() override;
 
-    void          init(Json::Value &theJson,const State& theState);
+    void          init(Json::Value &theJson,const State& theState) override;
     void          initBorders(Json::Value &theJson,const State& theState);
     void          initBorder(Json::Value &theJson,const State& theState);
 
     void          addBorder(Border& border);
     int           getBorderCount() {return borders.size();}
-    void          setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters);
-    std::size_t   hash_value(const State &theState) const;
+    void          setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters) override;
+    std::size_t   hash_value(const State &theState) const override;
 
   protected:
 
