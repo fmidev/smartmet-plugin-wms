@@ -155,7 +155,7 @@ void rename_json_element(const Json::Value &json,
   }
 }
 
-void relocate_producer_to_view(const std::string &layername, Json::Value &root)
+void relocate_producer_to_view(const std::string & /* layername */, Json::Value &root)
 {
   // settings which should not be at the top level if different layers are merged
   // are moved to the view level unless the view already has the setting

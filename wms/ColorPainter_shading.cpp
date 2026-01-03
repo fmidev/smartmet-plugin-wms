@@ -31,7 +31,7 @@ ColorPainter_shading::~ColorPainter_shading()
 
 
 
-void ColorPainter_shading::setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters)
+void ColorPainter_shading::setImageColors(uint width,uint height,uint /* loop_step */,uint /* loop_steps */,uint *image,std::vector<float>& /* land */,std::vector<float>& values,Parameters& parameters)
 {
   try
   {

@@ -135,7 +135,7 @@ PointValues read_gridForecasts(const NumberLayer& layer,
                                QueryServer::Query& query,
                                const Fmi::SpatialReference& crs,
                                const Fmi::Box& box,
-                               const Fmi::DateTime& valid_time,
+                               const Fmi::DateTime& /* valid_time */,
                                const State& state)
 {
   try

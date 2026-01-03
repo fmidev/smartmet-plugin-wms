@@ -157,7 +157,7 @@ void ColorPainter_stream::initStreamSpeeds(Json::Value &theJson, const State &th
 
 
 
-void ColorPainter_stream::initStreamSpeed(Json::Value &theJson, const State &theState)
+void ColorPainter_stream::initStreamSpeed(Json::Value &theJson, const State & /* theState */)
 {
   try
   {
@@ -197,7 +197,7 @@ void ColorPainter_stream::addStreamSpeed(StreamSpeed& speed)
 
 
 
-void ColorPainter_stream::setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters)
+void ColorPainter_stream::setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& /* parameters */)
 {
   try
   {
@@ -325,7 +325,7 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint loop_step,u
 
 
 
-void ColorPainter_stream::setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values1,std::vector<float>& values2,Parameters& parameters)
+void ColorPainter_stream::setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values1,std::vector<float>& values2,Parameters& /* parameters */)
 {
   try
   {

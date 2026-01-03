@@ -550,7 +550,7 @@ SharedWMSLayer create_wms_layer(const WMSConfig& theWMSConfig, Json::Value& root
 SharedWMSLayer WMSLayerFactory::createWMSLayer(Json::Value& root,
                                                const std::string& theFileName,
                                                const std::string& theFullLayerName,
-                                               const std::string& theNamespace,
+                                               const std::string& /* theNamespace */,
                                                const std::string& theCustomer,
                                                const WMSConfig& theWMSConfig)
 {

@@ -33,7 +33,7 @@ ColorPainter::~ColorPainter()
 
 
 
-void ColorPainter::init(Json::Value &theJson, const State &theState)
+void ColorPainter::init(Json::Value &theJson, const State &/* theState */)
 {
   try
   {

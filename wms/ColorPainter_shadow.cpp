@@ -127,7 +127,7 @@ void ColorPainter_shadow::addShadow(Shadow& shadow)
 
 
 
-void ColorPainter_shadow::setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters)
+void ColorPainter_shadow::setImageColors(uint width,uint height,uint /* loop_step */,uint /* loop_steps */,uint *image,std::vector<float>& /* land */,std::vector<float>& values,Parameters& /* parameters */)
 {
   try
   {

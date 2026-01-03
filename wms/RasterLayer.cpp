@@ -807,7 +807,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
 
 
 
-void RasterLayer::generate_qEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayersCdt, State &theState)
+void RasterLayer::generate_qEngine(CTPP::CDT & /* theGlobals */, CTPP::CDT & /* theLayersCdt */, State & /*theState */)
 {
   try
   {

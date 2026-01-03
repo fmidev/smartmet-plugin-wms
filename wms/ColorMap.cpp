@@ -320,7 +320,7 @@ uint ColorMap::getSmoothColor(double value)
 
 
 
-void ColorMap::print(std::ostream& stream,uint level,uint optionFlags)
+void ColorMap::print(std::ostream& /* stream */,uint /* level */,uint /* optionFlags */)
 {
   try
   {

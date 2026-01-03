@@ -76,8 +76,8 @@ void ColorPainter_ARGB::init(Json::Value &theJson, const State &theState)
 
 
 
-void ColorPainter_ARGB::setImageColors(uint width, uint height, uint loop_step, uint loop_steps, uint *image, std::vector<float> &land,
-    std::vector<float> &values, Parameters &parameters)
+void ColorPainter_ARGB::setImageColors(uint width, uint height, uint /* loop_step */, uint /* loop_steps */, uint *image, std::vector<float> &land,
+                                       std::vector<float> &values, Parameters & /* parameters */)
 {
   try
   {

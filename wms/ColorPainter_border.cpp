@@ -78,7 +78,7 @@ void ColorPainter_border::initBorders(Json::Value &theJson, const State &theStat
 
 
 
-void ColorPainter_border::initBorder(Json::Value &theJson, const State &theState)
+void ColorPainter_border::initBorder(Json::Value &theJson, const State & /* theState */)
 {
   try
   {
@@ -125,7 +125,7 @@ void ColorPainter_border::addBorder(Border& border)
 
 
 
-void ColorPainter_border::setImageColors(uint width,uint height,uint loop_step,uint loop_steps,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& parameters)
+void ColorPainter_border::setImageColors(uint width,uint height,uint /* loop_step */,uint /* loop_steps */,uint *image,std::vector<float>& land,std::vector<float>& values,Parameters& /* parameters */)
 {
   try
   {
