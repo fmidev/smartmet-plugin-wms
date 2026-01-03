@@ -206,10 +206,10 @@ std::vector<interval_dimension_item> extract_intervals(Json::Value& root)
         if (json[i].isInt())
         {
           int interval_start = json[i].asInt();
-          intervals.emplace_back(interval_dimension_item(
+          intervals.emplace_back(
               interval_start,
               0,
-              (interval_default ? (*interval_default == interval_start) : i == 0)));
+              (interval_default ? (*interval_default == interval_start) : i == 0));
         }
         else if (json[i].isObject())
         {
@@ -221,9 +221,9 @@ std::vector<interval_dimension_item> extract_intervals(Json::Value& root)
           remove_bool(interval_default, json[i], "default");
 
           if (interval_start || interval_end)
-            intervals.emplace_back(interval_dimension_item(interval_start ? *interval_start : 0,
-                                                           interval_end ? *interval_end : 0,
-                                                           interval_default));
+            intervals.emplace_back(interval_start ? *interval_start : 0,
+                                   interval_end ? *interval_end : 0,
+                                   interval_default);
         }
       }
     }
@@ -234,8 +234,8 @@ std::vector<interval_dimension_item> extract_intervals(Json::Value& root)
       remove_int(interval_start, root, "interval_start");
       remove_int(interval_end, root, "interval_end");
       if (interval_start || interval_end)
-        intervals.emplace_back(interval_dimension_item(
-            interval_start ? *interval_start : 0, interval_end ? *interval_end : 0, true));
+        intervals.emplace_back(
+            interval_start ? *interval_start : 0, interval_end ? *interval_end : 0, true);
     }
     return intervals;
   }

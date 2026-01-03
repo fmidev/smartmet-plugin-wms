@@ -81,8 +81,7 @@ PointValues CloudCeilingLayer::readObservations(State& state,
         {
           if (loc->longitude >= box.xmin() && loc->longitude <= box.xmax() &&
               loc->latitude >= box.ymin() && loc->latitude <= box.ymax())
-            settings.taggedFMISIDs.push_back(
-                Spine::TaggedFMISID(Fmi::to_string(*loc->fmisid), *loc->fmisid));
+            settings.taggedFMISIDs.emplace_back(Fmi::to_string(*loc->fmisid), *loc->fmisid);
         }
       }
     }
@@ -91,7 +90,7 @@ PointValues CloudCeilingLayer::readObservations(State& state,
     if (settings.taggedFMISIDs.empty() && !itsFMISIDs.empty())
     {
       for (const auto& fmisid : itsFMISIDs)
-        settings.taggedFMISIDs.push_back(Spine::TaggedFMISID(Fmi::to_string(fmisid), fmisid));
+        settings.taggedFMISIDs.emplace_back(Fmi::to_string(fmisid), fmisid);
     }
 
     // Get stations using bounding box

@@ -13,14 +13,12 @@ WMSIntervalDimension::WMSIntervalDimension(int interval_start,
                                            int interval_end,
                                            bool interval_default)
 {
-  itsIntervals.emplace_back(
-      interval_dimension_item(interval_start, interval_end, interval_default));
+  itsIntervals.emplace_back(interval_start, interval_end, interval_default);
 }
 
 void WMSIntervalDimension::addInterval(int interval_start, int interval_end, bool interval_default)
 {
-  itsIntervals.emplace_back(
-      interval_dimension_item(interval_start, interval_end, interval_default));
+  itsIntervals.emplace_back(interval_start, interval_end, interval_default);
 }
 
 std::string WMSIntervalDimension::getStartIntervals() const

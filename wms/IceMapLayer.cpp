@@ -817,7 +817,7 @@ void IceMapLayer::handleIceEgg(const Fmi::Feature& theResultItem,
     double rad = angle / 57.2957795;
     double x = xMiddle + rx * cos(rad);
     double y = yMiddle + ry * sin(rad);
-    points.push_back(std::pair<double, double>(x, y));
+    points.emplace_back(x, y);
     angle += 2.0;
   }
 

@@ -441,7 +441,7 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
       std::string layerCustomer = itsConfig.layerCustomer(layerName);
       std::string layerStyle = styles[i];
 
-      itsParameters.map_info_vector.emplace_back(tag_map_info(layerName, layerStyle));
+      itsParameters.map_info_vector.emplace_back(layerName, layerStyle);
     }
 
     std::string crs = get_crs(theRequest);

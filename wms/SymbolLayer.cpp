@@ -28,6 +28,7 @@
 #include <grid-files/common/ImagePaint.h>
 #include <macgyver/Exception.h>
 #include <newbase/NFmiArea.h>
+#include <newbase/NFmiGlobals.h>
 #include <newbase/NFmiPoint.h>
 #include <spine/Json.h>
 #include <timeseries/ParameterFactory.h>
@@ -109,12 +110,12 @@ PointValues read_forecasts(const SymbolLayer& layer,
         if (const double* ptr = std::get_if<double>(&result))
         {
           double tmp = *ptr;
-          pointvalues.push_back(PointData{point, tmp});
+          pointvalues.emplace_back(point, tmp);
         }
         else if (const int* ptr = std::get_if<int>(&result))
         {
           double tmp = *ptr;
-          pointvalues.push_back(PointData{point, tmp});
+          pointvalues.emplace_back(point, tmp);
         }
         else
         {
@@ -168,10 +169,7 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
       for (const auto& point : points)
       {
         if (layer.inside(box, point.x, point.y))
-        {
-          PointData missingvalue{point, kFloatMissing};
-          pointvalues.push_back(missingvalue);
-        }
+          pointvalues.emplace_back(point, kFloatMissing);
       }
     }
     else if (values && values->getLength())
@@ -183,14 +181,9 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
         auto point = points[t];
 
         if (rec->mValue != ParamValueMissing)
-        {
-          pointvalues.push_back(PointData{point, rec->mValue});
-        }
+          pointvalues.emplace_back(point, rec->mValue);
         else
-        {
-          PointData missingvalue{point, kFloatMissing};
-          pointvalues.push_back(missingvalue);
-        }
+          pointvalues.emplace_back(point, kFloatMissing);
       }
     }
 

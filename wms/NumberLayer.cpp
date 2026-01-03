@@ -92,14 +92,14 @@ PointValues read_forecasts(const NumberLayer& layer,
 
         if (const double* tmp = std::get_if<double>(&result))
         {
-          pointvalues.push_back(PointData{point, *tmp});
+          pointvalues.emplace_back(point, *tmp);
           // printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(),
           // point.latlon.Y(),*tmp);
         }
         else if (const int* ptr = std::get_if<int>(&result))
         {
           double tmp = *ptr;
-          pointvalues.push_back(PointData{point, tmp});
+          pointvalues.emplace_back(point, tmp);
           // printf("Point %d,%d  => %f,%f  = %f\n",point.x,point.y,point.latlon.X(),
           // point.latlon.Y(),tmp);
         }
@@ -165,14 +165,9 @@ PointValues read_gridForecasts(const NumberLayer& layer,
         auto point = points[t];
 
         if (rec->mValue != ParamValueMissing)
-        {
-          pointvalues.push_back(PointData{point, rec->mValue});
-        }
+          pointvalues.emplace_back(point, rec->mValue);
         else
-        {
-          PointData missingvalue{point, kFloatMissing};
-          pointvalues.push_back(missingvalue);
-        }
+          pointvalues.emplace_back(point, kFloatMissing);
       }
     }
 

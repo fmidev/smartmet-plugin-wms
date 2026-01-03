@@ -384,7 +384,7 @@ Labels generate_labels_edge_center(const Graticule& g,
       {
         auto txt = get_lon_label(l, lon);
         auto angle = get_angle(lons[minpos], lats[minpos], transformation);
-        labels.push_back({txt, x[minpos], y[minpos], angle});
+        labels.emplace_back(txt, x[minpos], y[minpos], angle);
 
         if (minpos != maxpos)
         {
@@ -435,7 +435,7 @@ Labels generate_labels_edge_center(const Graticule& g,
       {
         auto txt = get_lat_label(l, lat);
         auto angle = get_angle(lons[minpos], lats[minpos], transformation);
-        labels.push_back({txt, x[minpos], y[minpos], angle});
+        labels.emplace_back(txt, x[minpos], y[minpos], angle);
 
         if (minpos != maxpos)
         {

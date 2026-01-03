@@ -563,7 +563,7 @@ Positions::Points Positions::getGridPoints(const Engine::Querydata::Q& theQ,
         if (!transformation.transform(xcoord, ycoord))
           continue;
 
-        points.emplace_back(Point(xpos, ypos, NFmiPoint(xcoord, ycoord)));
+        points.emplace_back(xpos, ypos, NFmiPoint(xcoord, ycoord));
       }
     }
 
@@ -639,7 +639,7 @@ Positions::Points Positions::getDataPoints(const Engine::Querydata::Q& theQ,
 
         NFmiPoint latlon(latlons.x(i, j), latlons.y(i, j));
         if (inside(latlon.X(), latlon.Y(), forecastMode))
-          points.emplace_back(Point(xcoord, ycoord, latlon, deltax, deltay));
+          points.emplace_back(xcoord, ycoord, latlon, deltax, deltay);
       }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
@@ -705,7 +705,7 @@ Positions::Points Positions::getDataPoints(const char* /* originalCrs */,
               theBox.transform(xp, yp);
 
               NFmiPoint coordinate(cc.x(), cc.y());
-              points.emplace_back(Point(xp, yp, coordinate, deltax, deltay));
+              points.emplace_back(xp, yp, coordinate, deltax, deltay);
             }
           }
         }
@@ -783,7 +783,7 @@ Positions::Points Positions::getGraticulePoints(const Engine::Querydata::Q& theQ
       // Skip if not inside desired areas
       if (inside(longitudes[i], latitudes[i], forecastMode))
         points.emplace_back(
-            Point(xcoord[i], ycoord[i], NFmiPoint(longitudes[i], latitudes[i]), deltax, deltay));
+            xcoord[i], ycoord[i], NFmiPoint(longitudes[i], latitudes[i]), deltax, deltay);
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
@@ -909,7 +909,7 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
             auto match = selected_coordinates.nearest(xy, mindistance);
             if (!match)
             {
-              points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
+              points.emplace_back(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay);
               selected_coordinates.insert(xy);
             }
           }
@@ -1008,7 +1008,7 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
         auto match = selected_coordinates.nearest(xy, mindistance);
         if (!match)
         {
-          points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
+          points.emplace_back(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay);
           selected_coordinates.insert(xy);
         }
       }
@@ -1089,7 +1089,7 @@ Positions::Points Positions::getKeywordPoints(const Engine::Querydata::Q& theQ,
 
       // Skip if not inside desired areas
       if (inside(lon, lat, forecastMode))
-        points.emplace_back(Point(xcoord[i], ycoord[i], NFmiPoint(lon, lat), deltax, deltay));
+        points.emplace_back(xcoord[i], ycoord[i], NFmiPoint(lon, lat), deltax, deltay);
 
       i++;
     }
@@ -1170,7 +1170,7 @@ Positions::Points Positions::getLatLonPoints(const Engine::Querydata::Q& theQ,
 
       // Skip if not inside desired areas
       if (inside(lon, lat, forecastMode))
-        points.emplace_back(Point(xcoord[i], ycoord[i], NFmiPoint(lon, lat), deltax, deltay));
+        points.emplace_back(xcoord[i], ycoord[i], NFmiPoint(lon, lat), deltax, deltay);
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
@@ -1296,7 +1296,7 @@ Positions::Points Positions::getStationPoints(const Engine::Querydata::Q& theQ,
 
       // Skip if not inside desired areas
       if (inside(lon, lat, forecastMode))
-        points.emplace_back(Point(xcoord, ycoord, NFmiPoint(lon, lat), deltax, deltay));
+        points.emplace_back(xcoord, ycoord, NFmiPoint(lon, lat), deltax, deltay);
     }
 
     apply_direction_offsets(points, theQ, time, directionoffset, rotate, direction, u, v);
