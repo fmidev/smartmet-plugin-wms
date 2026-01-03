@@ -865,7 +865,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         // Store the path with unique QID
         std::string iri = qid + (qid.empty() ? "" : ".") + isoline.getQid(theState);
 
-        if (!theState.addId(iri)  &&  !theState.animation_enabled)
+        if (!theState.addId(iri) && !theState.animation_enabled)
           throw Fmi::Exception(BCP, "Non-unique ID assigned to isoline").addParameter("ID", iri);
 
         CTPP::CDT isoline_cdt(CTPP::CDT::HASH_VAL);
@@ -934,10 +934,10 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   }
   catch (...)
   {
-    Fmi::Exception exception(BCP, "Operation failed!",NULL);
+    Fmi::Exception exception(BCP, "Operation failed!", NULL);
     exception.printError();
     throw exception;
-    //throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid);
+    // throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid);
   }
 }
 
@@ -975,7 +975,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     if (!(source && *source == "grid"))
       Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
-    Fmi::hash_combine(hash, countParameterHash(theState,parameter));
+    Fmi::hash_combine(hash, countParameterHash(theState, parameter));
     Fmi::hash_combine(hash, Dali::hash_value(isolines, theState));
     Fmi::hash_combine(hash, Dali::hash_value(smoother, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(interpolation));

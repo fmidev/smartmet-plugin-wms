@@ -1321,7 +1321,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     if (!theState.isObservation(producer) && !(source && *source == "grid"))
       Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
-    Fmi::hash_combine(hash, countParameterHash(theState,parameter));
+    Fmi::hash_combine(hash, countParameterHash(theState, parameter));
     Fmi::hash_combine(hash, Dali::hash_value(isobands, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(interpolation));
     Fmi::hash_combine(hash, Dali::hash_value(smoother, theState));

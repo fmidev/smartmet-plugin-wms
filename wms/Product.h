@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "Animation.h"
 #include "Attributes.h"
 #include "Defs.h"
 #include "ParameterInfo.h"
@@ -14,7 +15,6 @@
 #include "Properties.h"
 #include "Text.h"
 #include "Views.h"
-#include "Animation.h"
 #include <json/json.h>
 #include <macgyver/DateTime.h>
 #include <optional>

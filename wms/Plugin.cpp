@@ -82,13 +82,13 @@ const std::string &check_attack(const std::string &theName)
 // Keys accepted by Product and Properties classes:
 
 const std::set<std::string, Spine::HTTP::ParamMap::key_compare> allowed_keys = {
-    "animation",   "attributes", "clip",         "defs",         "forecastNumber",
-    "forecastType","geometryId", "height",       "interval_end", "interval_start",
-    "language",    "level",      "levelId",      "levelid",       "margin",
-    "origintime",  "png",        "producer",     "projection",    "source",
-    "source",      "svg_tmpl",   "time",         "time_offset",   "timestep",
-    "title",       "type",       "tz",           "views",         "width",
-    "xmargin",     "ymargin"};
+    "animation",    "attributes", "clip",     "defs",         "forecastNumber",
+    "forecastType", "geometryId", "height",   "interval_end", "interval_start",
+    "language",     "level",      "levelId",  "levelid",      "margin",
+    "origintime",   "png",        "producer", "projection",   "source",
+    "source",       "svg_tmpl",   "time",     "time_offset",  "timestep",
+    "title",        "type",       "tz",       "views",        "width",
+    "xmargin",      "ymargin"};
 
 void check_remaining_dali_json(Json::Value &json, const std::string &name)
 {
@@ -572,8 +572,8 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
       exception.addParameter("Apikey", (apikey ? *apikey : std::string("-")));
 
       auto quiet = theRequest.getParameter("quiet");
-      //if (!quiet || (*quiet == "0" && *quiet == "false"))
-        exception.printError();
+      // if (!quiet || (*quiet == "0" && *quiet == "false"))
+      exception.printError();
 
       if (isdebug)
       {
@@ -736,8 +736,13 @@ void Plugin::init()
     else
     {
 #ifndef WITHOUT_OBSERVATION
-      itsWMSConfig = std::make_unique<WMS::WMSConfig>(
-          itsConfig, itsJsonCache, itsQEngine.get(), nullptr, itsObsEngine.get(), itsGisEngine.get(), itsGridEngine.get());
+      itsWMSConfig = std::make_unique<WMS::WMSConfig>(itsConfig,
+                                                      itsJsonCache,
+                                                      itsQEngine.get(),
+                                                      nullptr,
+                                                      itsObsEngine.get(),
+                                                      itsGisEngine.get(),
+                                                      itsGridEngine.get());
 #else
       itsWMSConfig = std::make_unique<WMS::WMSConfig>(
           itsConfig, itsJsonCache, itsQEngine, nullptr, itsGisEngine);
@@ -746,8 +751,12 @@ void Plugin::init()
 
 #else
 #ifndef WITHOUT_OBSERVATION
-    itsWMSConfig = std::make_unique<WMS::WMSConfig>(
-        itsConfig, itsJsonCache, itsQEngine.get(), itsObsEngine.get(), itsGisEngine.get(), itsGridEngine.get());
+    itsWMSConfig = std::make_unique<WMS::WMSConfig>(itsConfig,
+                                                    itsJsonCache,
+                                                    itsQEngine.get(),
+                                                    itsObsEngine.get(),
+                                                    itsGisEngine.get(),
+                                                    itsGridEngine.get());
 #else
     itsWMSConfig = std::make_unique<WMS::WMSConfig>(
         itsConfig, itsJsonCache, itsQEngine.get(), itsGisEngine.get(), itsGridEngine.get());
@@ -764,25 +773,25 @@ void Plugin::init()
 
     // Register dali content handler
 
-    if (!itsReactor->addContentHandler(this,
-                                       itsConfig.defaultUrl(),
-                                       [this](Spine::Reactor &theReactor,
-                                              const Spine::HTTP::Request &theRequest,
-                                              Spine::HTTP::Response &theResponse) {
-                                         callRequestHandler(theReactor, theRequest, theResponse);
-                                       }))
+    if (!itsReactor->addContentHandler(
+            this,
+            itsConfig.defaultUrl(),
+            [this](Spine::Reactor &theReactor,
+                   const Spine::HTTP::Request &theRequest,
+                   Spine::HTTP::Response &theResponse)
+            { callRequestHandler(theReactor, theRequest, theResponse); }))
 
       throw Fmi::Exception(BCP, "Failed to register Dali content handler");
 
     // Register WMS content handler
 
-    if (!itsReactor->addContentHandler(this,
-                                       itsConfig.wmsUrl(),
-                                       [this](Spine::Reactor &theReactor,
-                                              const Spine::HTTP::Request &theRequest,
-                                              Spine::HTTP::Response &theResponse) {
-                                         callRequestHandler(theReactor, theRequest, theResponse);
-                                       }))
+    if (!itsReactor->addContentHandler(
+            this,
+            itsConfig.wmsUrl(),
+            [this](Spine::Reactor &theReactor,
+                   const Spine::HTTP::Request &theRequest,
+                   Spine::HTTP::Response &theResponse)
+            { callRequestHandler(theReactor, theRequest, theResponse); }))
       throw Fmi::Exception(BCP, "Failed to register WMS content handler");
   }
   catch (...)
@@ -1399,8 +1408,6 @@ std::size_t Plugin::getGradientHash(const std::string &theCustomer,
   }
 }
 
-
-
 // ----------------------------------------------------------------------
 /*!
  * \brief Get ColorMap contents from the internal cache
@@ -1417,7 +1424,8 @@ std::string Plugin::getColorMap(const std::string &theCustomer,
       return "";
 
     std::list<std::string> tested_files;
-    std::string colormap_path = resolveFilePath(theCustomer, "/colormaps/", theName + ".csv", theWmsFlag, tested_files);
+    std::string colormap_path =
+        resolveFilePath(theCustomer, "/colormaps/", theName + ".csv", theWmsFlag, tested_files);
 
     if (std::filesystem::exists(colormap_path))
       return itsFileCache.get(colormap_path);
@@ -1456,7 +1464,6 @@ std::size_t Plugin::getColorMapHash(const std::string &theCustomer,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
 
 // ----------------------------------------------------------------------
 /*!

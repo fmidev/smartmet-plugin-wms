@@ -1,15 +1,15 @@
 #include "GroupLayer.h"
 #include "Config.h"
 #include "Hash.h"
+#include "JsonTools.h"
 #include "Layer.h"
 #include "RasterLayer.h"
 #include "State.h"
-#include "JsonTools.h"
 #include <ctpp2/CDT.hpp>
 #include <gis/Box.h>
+#include <grid-files/common/ImageFunctions.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
-#include <grid-files/common/ImageFunctions.h>
 
 namespace SmartMet
 {
@@ -24,9 +24,9 @@ namespace Dali
 // ----------------------------------------------------------------------
 
 void GroupLayer::init(Json::Value& theJson,
-                           const State& theState,
-                           const Config& theConfig,
-                           const Properties& theProperties)
+                      const State& theState,
+                      const Config& theConfig,
+                      const Properties& theProperties)
 {
   try
   {

@@ -1,7 +1,7 @@
 #include "WMSLayerHierarchy.h"
+#include <boost/make_shared.hpp>
 #include <boost/regex.hpp>
 #include <macgyver/StringConversion.h>
-#include <boost/make_shared.hpp>
 #include <memory>
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>

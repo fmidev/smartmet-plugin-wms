@@ -975,7 +975,7 @@ std::size_t NumberLayer::hash_value(const State& theState) const
         Fmi::hash_combine(hash, Engine::Querydata::hash_value(q));
     }
 
-    Fmi::hash_combine(hash, countParameterHash(theState,parameter));
+    Fmi::hash_combine(hash, countParameterHash(theState, parameter));
     Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
     Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
     Fmi::hash_combine(hash, Fmi::hash_value(offset));

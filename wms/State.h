@@ -21,13 +21,13 @@
 #include <engines/geonames/Engine.h>
 #include <engines/grid/Engine.h>
 #include <engines/querydata/Q.h>
+#include <grid-files/common/ImageFunctions.h>
 #include <spine/HTTP.h>
 #include <timeseries/TimeSeriesInclude.h>
 #include <map>
 #include <optional>
 #include <set>
 #include <vector>
-#include <grid-files/common/ImageFunctions.h>
 
 namespace CTPP
 {
@@ -215,7 +215,6 @@ class State
   mutable int animation_loopstep = 0;
   mutable int animation_timesteps = 0;
   mutable int animation_loopsteps = 0;
-
 
  private:
   Plugin& itsPlugin;

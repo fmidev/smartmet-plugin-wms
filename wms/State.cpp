@@ -293,7 +293,7 @@ void State::requireId(const std::string& theID) const
 {
   try
   {
-    if (!addId(theID)  &&  !animation_enabled)
+    if (!addId(theID) && !animation_enabled)
       throw Fmi::Exception(BCP, ("ID '" + theID + "' is defined more than once"));
   }
   catch (...)
@@ -848,7 +848,6 @@ std::size_t State::getGradientHash(const std::string& theName) const
   }
 }
 
-
 // ----------------------------------------------------------------------
 /*!
  * \brief Fetch ColorMap from the cache
@@ -888,7 +887,6 @@ std::size_t State::getColorMapHash(const std::string& theName) const
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
 
 // ----------------------------------------------------------------------
 /*!

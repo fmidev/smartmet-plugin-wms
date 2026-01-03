@@ -98,7 +98,7 @@ void Layer::init(Json::Value& theJson,
     // Not used in plain requests
     json = JsonTools::remove(theJson, "legend_url_layer");
 
-    JsonTools::remove_bool(visible,theJson, "visible");
+    JsonTools::remove_bool(visible, theJson, "visible");
   }
   catch (...)
   {

@@ -206,7 +206,8 @@ void Layers::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& the
 
     Projection projection;
     auto first = layers.begin();
-    if ((*first).get() != nullptr && (*first)->source && *(*first)->source == "grid"  &&  (*first)->visible)
+    if ((*first).get() != nullptr && (*first)->source && *(*first)->source == "grid" &&
+        (*first)->visible)
     {
       if ((*first)->projection.crs && *(*first)->projection.crs == "data")
       {
