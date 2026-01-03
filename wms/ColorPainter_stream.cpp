@@ -373,6 +373,9 @@ void ColorPainter_stream::setImageColors(uint width,uint height,uint loop_step,u
     if (!colormap)
     {
       //printf("No colormap\n");
+      delete [] speed;
+      delete [] direction;
+      delete [] streamImage;
       return;
     }
 
