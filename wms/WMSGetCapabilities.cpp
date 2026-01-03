@@ -35,7 +35,7 @@ std::string resolveGetMapURI(const Spine::HTTP::Request& theRequest)
     auto host_protocol = theRequest.getProtocol();
     std::string protocol((host_protocol ? *host_protocol : "http") + "://");
 
-    std::string host = *host_header;
+    const auto& host = *host_header;
     if (host == "data.fmi.fi" || host == "wms.fmi.fi")  // These should be configurable
     {
       // These hosts need apikey in order to work

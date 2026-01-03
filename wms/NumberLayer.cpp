@@ -74,7 +74,7 @@ PointValues read_forecasts(const NumberLayer& layer,
 
     PointValues pointvalues;
 
-    auto mylocale = std::locale::classic();
+    const auto& mylocale = std::locale::classic();
     NFmiPoint dummy;
 
     for (const auto& point : points)

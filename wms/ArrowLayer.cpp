@@ -132,7 +132,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
     std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
     Fmi::LocalDateTime localdatetime(met_time, Fmi::TimeZonePtr::utc);
     std::string tmp;
-    auto mylocale = std::locale::classic();
+    const auto& mylocale = std::locale::classic();
     NFmiPoint dummy;
 
     if (speedparam && !q->param(speedparam->number()))

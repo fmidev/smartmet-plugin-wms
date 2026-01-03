@@ -499,7 +499,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
     NFmiMetTime met_time = valid_time_period.begin();
     Fmi::LocalDateTime localdatetime(met_time, Fmi::TimeZonePtr::utc);
     std::string tmp;
-    auto mylocale = std::locale::classic();
+    const auto& mylocale = std::locale::classic();
     NFmiPoint dummy;
 
     // Fetching values for the new grid.
@@ -716,7 +716,7 @@ void StreamLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
-      OGRGeometryPtr geom = geoms[i];
+      const OGRGeometryPtr& geom = geoms[i];
 
       if (geom && geom->IsEmpty() == 0)
       {

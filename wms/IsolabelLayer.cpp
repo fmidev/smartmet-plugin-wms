@@ -759,7 +759,7 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
 
   std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
   Fmi::LocalDateTime localdatetime(getValidTime(), Fmi::TimeZonePtr::utc);
-  auto mylocale = std::locale::classic();
+  const auto& mylocale = std::locale::classic();
   NFmiPoint dummy;
 
   // Querydata spatial reference

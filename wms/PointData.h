@@ -13,15 +13,12 @@ class PointData
 {
  public:
   PointData() = delete;
-  explicit PointData(Positions::Point pt) : itsPoint(std::move(pt)) {}
+  explicit PointData(Positions::Point pt) : itsPoint(pt) {}
   void add(double value) { itsValues.push_back(value); }
 
-  PointData(Positions::Point pt, double value) : itsPoint(std::move(pt)), itsValues{value} {}
+  PointData(Positions::Point pt, double value) : itsPoint(pt), itsValues{value} {}
 
-  PointData(Positions::Point pt, double val1, double val2)
-      : itsPoint(std::move(pt)), itsValues{val1, val2}
-  {
-  }
+  PointData(Positions::Point pt, double val1, double val2) : itsPoint(pt), itsValues{val1, val2} {}
 
   bool empty() const { return itsValues.empty(); }
   std::size_t size() const { return itsValues.size(); }

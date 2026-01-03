@@ -82,8 +82,8 @@ struct tag_interval
   Fmi::DateTime endTime = Fmi::DateTime::NOT_A_DATE_TIME;
   Fmi::TimeDuration resolution = Fmi::Minutes(1);
 
-  tag_interval(Fmi::DateTime start, Fmi::DateTime end, Fmi::TimeDuration res)
-      : startTime(start), endTime(end), resolution(std::move(res))
+  tag_interval(const Fmi::DateTime& start, const Fmi::DateTime& end, const Fmi::TimeDuration& res)
+      : startTime(start), endTime(end), resolution(res)
   {
   }
 };

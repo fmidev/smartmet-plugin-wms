@@ -29,7 +29,7 @@ class WMSElevationDimension
 
   WMSElevationDimension(std::string level_name,
                         short level_type,
-                        std::string unit_symbol,
+                        const std::string& unit_symbol,
                         const std::set<int>& elevations);
 
 #if 0  

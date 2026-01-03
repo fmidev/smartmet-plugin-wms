@@ -832,7 +832,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
-      OGRGeometryPtr geom = geoms[i];
+      const OGRGeometryPtr& geom = geoms[i];
       if (geom && geom->IsEmpty() == 0)
       {
         OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, clipbox));
@@ -1166,7 +1166,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
-      OGRGeometryPtr geom = geoms[i];
+      const OGRGeometryPtr& geom = geoms[i];
 
       if (geom && geom->IsEmpty() == 0)
       {

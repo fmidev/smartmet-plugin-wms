@@ -82,7 +82,7 @@ PointValues read_forecasts(const SymbolLayer& layer,
     Fmi::LocalDateTime localdatetime(valid_time, Fmi::TimeZonePtr::utc);
 
     PointValues pointvalues;
-    auto mylocale = std::locale::classic();
+    const auto& mylocale = std::locale::classic();
     NFmiPoint dummy;
 
     for (const auto& point : points)

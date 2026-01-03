@@ -1021,7 +1021,7 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
       for (int t = 0; t < animation_loopsteps; t++)
       {
         uint idx = tt * animation_loopsteps + t;
-        auto cimage = images[idx];
+        const auto &cimage = images[idx];
         image[idx] = cimage->pixel;
         if (animation_loopsteps > 0)
           timeVect.push_back(theProduct.animation.loopstep_interval);
@@ -1066,7 +1066,7 @@ void Dali::Plugin::wmsPrepareGetLegendGraphicQuery(const State &theState,
     throw Fmi::Exception(BCP, "Layer must be defined in GetLegendGraphic request")
         .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED);
   }
-  std::string layerName = *layerOpt;
+  const auto &layerName = *layerOpt;
 
   // Style is optional.
   auto styleOpt = theRequest.getParameter("STYLE");

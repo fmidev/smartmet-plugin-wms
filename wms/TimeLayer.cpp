@@ -389,7 +389,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
         if (!originTime)
           throw Fmi::Exception(BCP, "Origintime not avaible for TimeLayer");
 
-        Fmi::DateTime ot = *originTime;
+        const auto& ot = *originTime;
         duration = valid_time - ot + ot.time_of_day() - Fmi::Hours(ot.time_of_day().hours());
       }
       else if (name == "time_offset")

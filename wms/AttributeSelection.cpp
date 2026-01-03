@@ -87,7 +87,7 @@ void AttributeSelection::init(Json::Value& theJson, const Config& theConfig)
         const auto languages = json.getMemberNames();
         for (const auto& language : languages)
         {
-          auto translation_json = json[language];
+          const auto& translation_json = json[language];
           translations[language] = translation_json.asString();
         }
       }

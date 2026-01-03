@@ -194,9 +194,9 @@ WMSElevationDimension::WMSElevationDimension(std::string level_name,
 
 WMSElevationDimension::WMSElevationDimension(std::string level_name,
                                              short level_type,
-                                             std::string unit_symbol,
+                                             const std::string& unit_symbol,
                                              const std::set<int>& elevations)
-    : itsLevelName(level_name), itsLevelType(level_type), itsElevations(elevations)
+    : itsLevelName(std::move(level_name)), itsLevelType(level_type), itsElevations(elevations)
 {
   try
   {

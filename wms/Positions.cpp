@@ -135,7 +135,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
       std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
       Fmi::LocalDateTime localdatetime(theTime, Fmi::TimeZonePtr::utc);
       std::string tmp;
-      auto mylocale = std::locale::classic();
+      const auto& mylocale = std::locale::classic();
       NFmiPoint dummy;
 
       for (auto& point : thePoints)

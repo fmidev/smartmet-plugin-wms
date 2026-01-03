@@ -196,7 +196,7 @@ TS::TimeSeriesVectorPtr prepare_data_for_aggregation(
       bool is_location_p = is_location_parameter(paramname);
 
       // add data fields fetched from observation
-      auto result = *observation_result;
+      const auto& result = *observation_result;
       if (result[obs_result_field_index].empty())
         continue;
 

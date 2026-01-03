@@ -61,12 +61,12 @@ WMSGridDataLayer::WMSGridDataLayer(const WMSConfig& config,
                                    std::string elevation_unit)
     : WMSLayer(config),
       itsGridEngine(config.gridEngine()),
-      itsProducer(producer),
-      itsParameter(parameter),
+      itsProducer(std::move(producer)),
+      itsParameter(std::move(parameter)),
       itsForecastType(forecastType),
       itsGeometryId(geometryId),
       itsLevelId(levelId),
-      itsElevationUnit(elevation_unit)
+      itsElevationUnit(std::move(elevation_unit))
 {
 }
 

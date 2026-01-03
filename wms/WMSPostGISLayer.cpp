@@ -138,7 +138,7 @@ bool WMSPostGISLayer::mustUpdateLayerMetaData()
     Fmi::Features features = itsGisEngine->getFeatures(moptions);
     if (!features.empty())
     {
-      Fmi::FeaturePtr feature = features[0];
+      const Fmi::FeaturePtr& feature = features[0];
       Fmi::DateTime timestamp =
           std::get<Fmi::DateTime>(feature->attributes[itsMetaDataSettings.field]);
       if (timestamp.is_not_a_date_time() || mostCurrentTimestamp.is_not_a_date_time())

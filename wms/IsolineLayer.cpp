@@ -856,7 +856,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
-      OGRGeometryPtr geom = geoms[i];
+      const OGRGeometryPtr& geom = geoms[i];
 
       if (geom && geom->IsEmpty() == 0)
       {
