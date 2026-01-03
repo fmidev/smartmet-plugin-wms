@@ -266,7 +266,7 @@ Labels generate_labels_center(const Graticule& g,
   try
   {
     Labels labels;
-    const auto& l = g.labels;
+    const auto& label = g.labels;
 
     // Generate the latlon coordinates first
 
@@ -277,21 +277,21 @@ Labels generate_labels_center(const Graticule& g,
     std::vector<std::string> txt;
 
     // Centers of vertical lines
-    for (int lon = -180; lon <= 180; lon += l.step)
-      for (int lat = -90; lat < 90; lat += l.step)
+    for (int lon = -180; lon <= 180; lon += label.step)
+      for (int lat = -90; lat < 90; lat += label.step)
       {
         lons.push_back(lon);
-        lats.push_back(lat + l.step / 2.0);
-        txt.push_back(get_lon_label(l, lon));
+        lats.push_back(lat + label.step / 2.0);
+        txt.push_back(get_lon_label(label, lon));
       }
 
     // Centers of horizontal lines
-    for (int lat = -90 + l.step; lat < 90; lat += l.step)
-      for (int lon = -180; lon <= 180; lon += l.step)
+    for (int lat = -90 + label.step; lat < 90; lat += label.step)
+      for (int lon = -180; lon <= 180; lon += label.step)
       {
-        lons.push_back(lon + l.step / 2.0);
+        lons.push_back(lon + label.step / 2.0);
         lats.push_back(lat);
-        txt.emplace_back(get_lat_label(l, lat));
+        txt.emplace_back(get_lat_label(label, lat));
       }
 
     // Convert to world coordinates
@@ -338,7 +338,7 @@ Labels generate_labels_edge_center(const Graticule& g,
   try
   {
     Labels labels;
-    const auto& l = g.labels;
+    const auto& label = g.labels;
 
     Fmi::CoordinateTransformation transformation("WGS84", crs);
 
@@ -348,15 +348,15 @@ Labels generate_labels_edge_center(const Graticule& g,
     std::vector<double> y;
 
     // Centers of vertical lines
-    for (int lon = -180; lon <= 180; lon += l.step)
+    for (int lon = -180; lon <= 180; lon += label.step)
     {
       // latlon coordinates
-      for (int lat = -90; lat < 90; lat += l.step)
+      for (int lat = -90; lat < 90; lat += label.step)
       {
         lons.push_back(lon);
         lats.push_back(lat);
         x.push_back(lon);
-        y.push_back(lat + l.step / 2.0);
+        y.push_back(lat + label.step / 2.0);
       }
 
       // Convert to world coordinates
@@ -382,7 +382,7 @@ Labels generate_labels_edge_center(const Graticule& g,
 
       if (minpos != std::string::npos)
       {
-        auto txt = get_lon_label(l, lon);
+        auto txt = get_lon_label(label, lon);
         auto angle = get_angle(lons[minpos], lats[minpos], transformation);
         labels.emplace_back(txt, x[minpos], y[minpos], angle);
 
@@ -400,13 +400,13 @@ Labels generate_labels_edge_center(const Graticule& g,
     }
 
     // Centers of horizontal lines
-    for (int lat = -90 + l.step; lat < 90; lat += l.step)
+    for (int lat = -90 + label.step; lat < 90; lat += label.step)
     {
-      for (int lon = -180; lon < 180; lon += l.step)
+      for (int lon = -180; lon < 180; lon += label.step)
       {
         lons.push_back(lon);
         lats.push_back(lat);
-        x.push_back(lon + l.step / 2.0);
+        x.push_back(lon + label.step / 2.0);
         y.push_back(lat);
       }
 
@@ -433,7 +433,7 @@ Labels generate_labels_edge_center(const Graticule& g,
 
       if (minpos != std::string::npos)
       {
-        auto txt = get_lat_label(l, lat);
+        auto txt = get_lat_label(label, lat);
         auto angle = get_angle(lons[minpos], lats[minpos], transformation);
         labels.emplace_back(txt, x[minpos], y[minpos], angle);
 
@@ -471,7 +471,7 @@ Labels generate_labels_cross(const Graticule& g,
   try
   {
     Labels labels;
-    const auto& l = g.labels;
+    const auto& label = g.labels;
 
     Fmi::CoordinateTransformation transformation("WGS84", crs);
 
@@ -482,7 +482,7 @@ Labels generate_labels_cross(const Graticule& g,
 
     // Choose longitude containing most valid label positions at centers of lines
 
-    for (int lon = -180; lon <= 180; lon += l.step)
+    for (int lon = -180; lon <= 180; lon += label.step)
     {
       std::vector<double> lons;
       std::vector<double> lats;
@@ -491,13 +491,13 @@ Labels generate_labels_cross(const Graticule& g,
       std::vector<std::string> txt;
 
       // latlon coordinates
-      for (int lat = -90; lat < 90; lat += l.step)
+      for (int lat = -90; lat < 90; lat += label.step)
       {
         lons.push_back(lon);
         lats.push_back(lat);
-        x.push_back(lon + l.step / 2.0);
+        x.push_back(lon + label.step / 2.0);
         y.push_back(lat);
-        txt.emplace_back(get_lat_label(l, lat));
+        txt.emplace_back(get_lat_label(label, lat));
       }
 
       // Convert to world coordinates
@@ -546,7 +546,7 @@ Labels generate_labels_cross(const Graticule& g,
 
     // Choose latitude containing most valid label positions at centers of lines
 
-    for (int lat = -90 + l.step; lat < 90; lat += l.step)
+    for (int lat = -90 + label.step; lat < 90; lat += label.step)
     {
       std::vector<double> lons;
       std::vector<double> lats;
@@ -554,13 +554,13 @@ Labels generate_labels_cross(const Graticule& g,
       std::vector<double> y;
       std::vector<std::string> txt;
 
-      for (int lon = -180; lon < 180; lon += l.step)
+      for (int lon = -180; lon < 180; lon += label.step)
       {
         lons.push_back(lon);
         lats.push_back(lat);
         x.push_back(lon);
-        y.push_back(lat + l.step / 2.0);
-        txt.emplace_back(get_lon_label(l, lon));
+        y.push_back(lat + label.step / 2.0);
+        txt.emplace_back(get_lon_label(label, lon));
       }
 
       // Convert to world coordinates
@@ -623,7 +623,7 @@ Labels generate_labels_ticks(const Graticule& g,
   try
   {
     Labels labels;
-    const auto& l = g.labels;
+    const auto& label = g.labels;
 
     // Similar code as in generate_ticks, we just shift the label based on dx,dy
 
@@ -675,7 +675,7 @@ Labels generate_labels_ticks(const Graticule& g,
 
         if (line)
         {
-          auto txt = get_lon_label(l, lon);
+          auto txt = get_lon_label(label, lon);
           auto x1 = line->getX(0);
           auto y1 = line->getY(0);
           auto x2 = line->getX(1);
@@ -684,9 +684,9 @@ Labels generate_labels_ticks(const Graticule& g,
           box.transform(x2, y2);
 
           if (bottom)  // because baseline setting does not work properly at least in librsvg
-            y2 -= l.dy;
+            y2 -= label.dy;
           else
-            y2 += l.dy;
+            y2 += label.dy;
 
           auto angle = get_angle(lons[i], lats[i], transformation);
           labels.emplace_back(txt, x2, y2, angle);
@@ -734,7 +734,7 @@ Labels generate_labels_ticks(const Graticule& g,
 
         if (line)
         {
-          auto txt = get_lat_label(l, lat);
+          auto txt = get_lat_label(label, lat);
           auto x1 = line->getX(0);
           auto y1 = line->getY(0);
           auto x2 = line->getX(1);
@@ -742,7 +742,7 @@ Labels generate_labels_ticks(const Graticule& g,
           box.transform(x1, y1);
           box.transform(x2, y2);
 
-          y2 -= l.dy;  // because baseline setting does not work properly at least in librsvg
+          y2 -= label.dy;  // because baseline setting does not work properly at least in librsvg
 
           auto angle = get_angle(lons[i], lats[i], transformation);
           labels.emplace_back(txt, x2, y2, angle);
@@ -1092,7 +1092,7 @@ Graticule remove_graticule(Json::Value& theJson, const Config& theConfig)
       throw Fmi::Exception(BCP, "graticules settings must be JSON objects");
 
     Graticule g;
-    auto& l = g.labels;  // shorthand
+    auto& label = g.labels;  // shorthand
 
     JsonTools::remove_string(g.layout, theJson, "layout");
     JsonTools::remove_uint(g.step, theJson, "step");
@@ -1101,7 +1101,7 @@ Graticule remove_graticule(Json::Value& theJson, const Config& theConfig)
     g.attributes.init(json, theConfig);
 
     // By default labels are with the same step
-    l.step = g.step;
+    label.step = g.step;
 
     // exceptions to the given step
     json = JsonTools::remove(theJson, "except");
@@ -1116,19 +1116,19 @@ Graticule remove_graticule(Json::Value& theJson, const Config& theConfig)
       if (!json.isObject())
         throw Fmi::Exception(BCP, "graticule labels setting must be a JSON object");
 
-      JsonTools::remove_string(l.layout, json, "layout");
-      JsonTools::remove_uint(l.step, json, "step");
-      JsonTools::remove_string(l.orientation, json, "orientation");
-      JsonTools::remove_bool(l.degree_sign, json, "degree_sign");
-      JsonTools::remove_bool(l.minus_sign, json, "minus_sign");
-      JsonTools::remove_int(l.dx, json, "dx");
-      JsonTools::remove_int(l.dy, json, "dy");
+      JsonTools::remove_string(label.layout, json, "layout");
+      JsonTools::remove_uint(label.step, json, "step");
+      JsonTools::remove_string(label.orientation, json, "orientation");
+      JsonTools::remove_bool(label.degree_sign, json, "degree_sign");
+      JsonTools::remove_bool(label.minus_sign, json, "minus_sign");
+      JsonTools::remove_int(label.dx, json, "dx");
+      JsonTools::remove_int(label.dy, json, "dy");
 
       auto j = JsonTools::remove(json, "attributes");
-      l.attributes.init(j, theConfig);
+      label.attributes.init(j, theConfig);
 
       j = JsonTools::remove(json, "textattributes");
-      l.textattributes.init(j, theConfig);
+      label.textattributes.init(j, theConfig);
     }
 
     // Sanity checks
@@ -1147,23 +1147,23 @@ Graticule remove_graticule(Json::Value& theJson, const Config& theConfig)
     if (g.layout == "ticks" && g.length < 1)
       throw Fmi::Exception(BCP, "graticule tick length must be at least 1");
 
-    if (valid_label_layouts.find(l.layout) == valid_label_layouts.end())
+    if (valid_label_layouts.find(label.layout) == valid_label_layouts.end())
       throw Fmi::Exception(BCP, "graticule labels layout must be none|edge|grid|center|edge_center")
-          .addParameter("layout", l.layout);
+          .addParameter("layout", label.layout);
 
-    if (valid_orientations.find(l.orientation) == valid_orientations.end())
+    if (valid_orientations.find(label.orientation) == valid_orientations.end())
       throw Fmi::Exception(BCP, "graticule labels orientation must be horizontal|auto")
-          .addParameter("orientation", l.orientation);
+          .addParameter("orientation", label.orientation);
 
-    if (l.layout != "none")
+    if (label.layout != "none")
     {
-      if (l.step < 1)
+      if (label.step < 1)
         throw Fmi::Exception(BCP, "graticule label step must be at least 1")
-            .addParameter("step", Fmi::to_string(l.step));
+            .addParameter("step", Fmi::to_string(label.step));
 
-      if (180 % l.step != 0)
+      if (180 % label.step != 0)
         throw Fmi::Exception(BCP, "graticule label step should divide 180 evenly")
-            .addParameter("step", Fmi::to_string(l.step));
+            .addParameter("step", Fmi::to_string(label.step));
     }
 
     return g;

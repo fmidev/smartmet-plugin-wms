@@ -51,7 +51,8 @@ struct Edge
   double weight = 0;
 
   // needed for emplace_back to work
-  Edge(std::size_t f, std::size_t s, double l, double w) : first(f), second(s), length(l), weight(w)
+  Edge(std::size_t f, std::size_t s, double len, double w)
+      : first(f), second(s), length(len), weight(w)
   {
   }
 };
