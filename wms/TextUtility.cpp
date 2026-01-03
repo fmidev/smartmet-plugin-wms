@@ -3,6 +3,8 @@
 #include <macgyver/StringConversion.h>
 #include <cairo.h>
 
+#include <algorithm>
+
 namespace SmartMet
 {
 namespace Plugin
@@ -48,8 +50,7 @@ text_dimension_t getTextDimension(const std::vector<std::string>& rows,
   for (const auto& row : rows)
   {
     text_dimension_t textDim = getTextDimension(row, textStyle);
-    if (textDim.width > ret.width)
-      ret.width = textDim.width;
+    ret.width = std::max(textDim.width, ret.width);
   }
   ret.height = ((ret.height + 5) * rows.size());
 

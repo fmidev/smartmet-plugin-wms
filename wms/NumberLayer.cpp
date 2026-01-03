@@ -41,6 +41,10 @@ namespace Plugin
 {
 namespace Dali
 {
+
+namespace
+{
+
 using PointValues = std::vector<PointData>;
 
 // ----------------------------------------------------------------------
@@ -178,6 +182,8 @@ PointValues read_gridForecasts(const NumberLayer& layer,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!

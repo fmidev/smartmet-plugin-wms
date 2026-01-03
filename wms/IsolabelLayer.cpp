@@ -34,6 +34,9 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+
 // Label status
 enum class Status
 {
@@ -73,277 +76,6 @@ using BadPairs = std::vector<BadPairList>;
 // we could also use a BoolMatrix of size N*N to mark individual disabled pairs
 //
 // using BadPairMatrix = Fmi::BoolMatrix;
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Initialize from JSON
- */
-// ----------------------------------------------------------------------
-
-void IsolabelLayer::init(Json::Value& theJson,
-                         const State& theState,
-                         const Config& theConfig,
-                         const Properties& theProperties)
-{
-  try
-  {
-    if (!theJson.isObject())
-      throw Fmi::Exception(BCP, "Isolabel-layer JSON is not a JSON object");
-
-    IsolineLayer::init(theJson, theState, theConfig, theProperties);
-
-    auto json = JsonTools::remove(theJson, "label");
-    label.init(json, theConfig);
-
-    JsonTools::remove_bool(upright, theJson, "upright");
-    JsonTools::remove_double(max_angle, theJson, "max_angle");
-    JsonTools::remove_double(min_isoline_length, theJson, "min_isoline_length");
-    JsonTools::remove_double(min_distance_edge, theJson, "min_distance_edge");
-    JsonTools::remove_double(max_distance_edge, theJson, "max_distance_edge");
-    JsonTools::remove_double(min_distance_other, theJson, "min_distance_other");
-    JsonTools::remove_double(min_distance_same, theJson, "min_distance_same");
-    JsonTools::remove_double(min_distance_self, theJson, "min_distance_self");
-    JsonTools::remove_double(max_curvature, theJson, "max_curvature");
-    JsonTools::remove_int(stencil_size, theJson, "stencil_size");
-
-    json = JsonTools::remove(theJson, "angles");
-    if (!json.isNull())
-      JsonTools::extract_vector("angles", angles, json);
-
-    json = JsonTools::remove(theJson, "textattributes");
-    textattributes.init(json, theConfig);
-
-    // Note that from now on we generate all possible isoline values and keep the unique ones only
-    // at the end. A std::set would have been an alternative solution.
-
-    json = JsonTools::remove(theJson, "isobands");
-    if (!json.isNull())
-    {
-      std::vector<Isoband> isobands;
-      JsonTools::extract_array("isobands", isobands, json, theConfig);
-      for (const auto& isoband : isobands)
-      {
-        if (isoband.lolimit)
-          isovalues.push_back(*isoband.lolimit);
-        if (isoband.hilimit)
-          isovalues.push_back(*isoband.hilimit);
-      }
-    }
-
-    json = JsonTools::remove(theJson, "isovalues");
-    if (!json.isNull())
-    {
-      if (json.isArray())
-      {
-        // [ a, b, c, d, ... ]
-        for (const auto& j : json)
-          isovalues.push_back(j.asDouble());
-      }
-      else if (json.isObject())
-      {
-        // { start, stop, step=1 }
-
-        std::optional<double> start;
-        std::optional<double> stop;
-        double step = 1.0;
-        JsonTools::remove_double(start, json, "start");
-        JsonTools::remove_double(stop, json, "stop");
-        JsonTools::remove_double(step, json, "step");
-
-        if (!start || !stop)
-          throw Fmi::Exception(BCP, "Isolabel-layer isovalues start or stop setting missing");
-
-        if (!json.empty())
-        {
-          auto names = json.getMemberNames();
-          auto namelist = boost::algorithm::join(names, ",");
-          throw Fmi::Exception(
-              BCP, "Unknown member variables in Isolabel layer isovalues setting: " + namelist);
-        }
-
-        double iso1 = *stop;
-        double iso2 = *start;
-
-        if (iso2 < iso1)
-          throw Fmi::Exception(
-              BCP, "Isolabel-layer isovalues stop value must be greater than the start value");
-        if (step < 0)
-          throw Fmi::Exception(BCP, "Isolabel-layer step value must be greater than zero");
-        if ((iso2 - iso1) / step > 1000)
-          throw Fmi::Exception(BCP, "Isolabel-layer generates to many isovalues (> 1000)");
-
-        // The end condition is used to make sure we do not get both 999.99999 and 1000.000 due to
-        // numerical inaccuracies.
-        double value = iso1;
-        while (value < iso2 - step / 2)
-        {
-          isovalues.push_back(value);
-          value += step;
-        }
-        isovalues.push_back(iso2);
-      }
-      else
-        throw Fmi::Exception(
-            BCP, "Isolabel-layer isovalues setting must be an object or a vector of numbers");
-    }
-
-    // Add isovalues from the parent IsolineLayer class
-
-    for (const auto& isoline : isolines)
-      isovalues.push_back(isoline.value);
-
-    // Make sure there are only unique isovalues since there are multiple ways to define them.
-    // In particular using "isobands" will almost certainly produce duplicates
-
-    std::sort(isovalues.begin(), isovalues.end());
-    isovalues.erase(std::unique(isovalues.begin(), isovalues.end()), isovalues.end());
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Generate the layer details into the template hash
- */
-// ----------------------------------------------------------------------
-
-void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
-{
-  try
-  {
-    if (!validLayer(theState))
-      return;
-
-    if (isolines.empty())
-      return;
-
-    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
-    if (theState.useTimer())
-    {
-      std::string report = "IsolabelLayer::generate finished in %t sec CPU, %w sec real\n";
-      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
-    }
-
-    auto geoms = IsolineLayer::getIsolines(isovalues, theState);
-
-    // Output image CRS and BBOX
-    const auto& crs = projection.getCRS();
-    const auto& box = projection.getBox();
-
-    // Convert filter pixel distance to metric distance for smoothing
-    filter.bbox(box);
-
-    // Smoothen the isolines
-    filter.apply(geoms, false);
-
-    // Project the geometries to pixel coordinates
-    for (auto& geomptr : geoms)
-    {
-      if (geomptr && geomptr->IsEmpty() == 0)
-        Fmi::OGR::transform(*geomptr, box);
-    }
-
-    // Generate candidate locations from the isolines
-
-    auto candidates = find_candidates(geoms);
-
-    // Select the actual label locations from the candidates
-
-    candidates = select_best_candidates(candidates, box);
-
-    // Fix the label orientations so numbers indicate in which direction the values increase.
-    // In practise we just rotate the numbers 180 degrees if they seem to point to the wrong
-    // direction, and then also apply "upright" condition if so requested.
-
-    if (label.orientation == "auto")
-      fix_orientation(candidates, box, theState, crs);
-
-    // Update the globals
-
-    if (css)
-    {
-      std::string name = theState.getCustomer() + "/" + *css;
-      theGlobals["css"][name] = theState.getStyle(*css);
-    }
-
-    // Clip if necessary
-
-    addClipRect(theLayersCdt, theGlobals, box, theState);
-
-    // Generate isolabels as use tags statements inside <g>..</g>, but we add the </g> only after
-    // the labels
-
-    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
-    group_cdt["start"] = "<g";
-
-    // Add attributes to the group, not to the labels
-    theState.addAttributes(theGlobals, group_cdt, attributes);
-
-    theLayersCdt.PushBack(group_cdt);
-
-    for (const auto& point : candidates)
-    {
-      const auto txt = label.print(point.isovalue);
-
-      if (txt.empty())
-        continue;
-
-      // Generate a text tag for each point
-
-      if (std::isnan(point.angle))
-        continue;
-
-      CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
-      text_cdt["start"] = "<text";
-      text_cdt["end"] = "</text>";
-      text_cdt["cdata"] = txt;
-
-      theState.addAttributes(theGlobals, text_cdt, textattributes);
-
-      // Assign isoline styles for the point
-      for (auto i = 0UL; i < geoms.size(); i++)
-      {
-        const Isoline& isoline = isolines[i];
-        if (isoline.value == point.isovalue)
-        {
-          theState.addPresentationAttributes(text_cdt, css, attributes, isoline.attributes);
-          theState.addAttributes(theGlobals, text_cdt, isoline.attributes);
-          break;
-        }
-      }
-
-      if (label.orientation == "auto")
-      {
-        const auto radians = point.angle * M_PI / 180;
-        const auto srad = sin(radians);
-        const auto crad = cos(radians);
-        auto transform = fmt::format("translate({} {}) rotate({})",
-                                     std::round(point.x + label.dx * crad + label.dy * srad),
-                                     std::round(point.y + label.dx * srad - label.dy * crad),
-                                     std::round(point.angle));
-        text_cdt["attributes"]["transform"] = transform;
-      }
-      else
-      {
-        auto transform = fmt::format(
-            "translate({} {})", std::round(point.x + label.dx), std::round(point.y - label.dy));
-        text_cdt["attributes"]["transform"] = transform;
-      }
-
-      theLayersCdt.PushBack(text_cdt);
-    }
-
-    // Close the grouping
-    theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n  </g>");
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid);
-  }
-}
 
 // ----------------------------------------------------------------------
 
@@ -672,51 +404,6 @@ void find_candidates(Candidates& candidates,
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Given geometries select candidate locations for labels
- *
- * For all selected angles, rotate the isoline by the angle, and find
- * locations of local min/max in the Y-coordinate.
- *
- * The angles are in order of preference, hence we select candidates
- * for the first angle first.
- */
-// ----------------------------------------------------------------------
-
-Candidates IsolabelLayer::find_candidates(const std::vector<OGRGeometryPtr>& geoms) const
-{
-  Candidates candidates;
-
-  int id = 0;
-  for (std::size_t i = 0; i < geoms.size(); i++)
-  {
-    const OGRGeometryPtr& geom = geoms[i];
-    if (geom && geom->IsEmpty() == 0)
-    {
-      const auto old_id = id;
-      for (auto angle : angles)
-      {
-        id = old_id;  // use same id for different angles
-        const auto radians = angle * M_PI / 180;
-        const auto cosine = cos(radians);
-        const auto sine = sin(radians);
-
-        Dali::find_candidates(candidates,
-                              isovalues[i],
-                              id,
-                              sine,
-                              cosine,
-                              stencil_size,
-                              geom.get(),
-                              min_isoline_length);
-      }
-    }
-  }
-
-  return candidates;
-}
-
-// ----------------------------------------------------------------------
-/*!
  * \brief Distance of candidate to image edge
  *
  * We assume the candidate is inside the image so that we do not bother
@@ -736,179 +423,6 @@ double distance(const Candidate& candidate, const Fmi::Box& box)
   const auto dy = std::min(dtop, dbottom);
 
   return std::min(dx, dy);
-}
-
-// ----------------------------------------------------------------------
-/*!
- * Fix label orientations by peeking at querydata values
- */
-// ----------------------------------------------------------------------
-
-void IsolabelLayer::fix_orientation(Candidates& candidates,
-                                    const Fmi::Box& box,
-                                    const State& state,
-                                    const Fmi::SpatialReference& crs) const
-{
-  if (source && *source == "grid")
-  {
-    fix_orientation_gridEngine(candidates, box, state, crs);
-    return;
-  }
-
-  // The parameter being used
-  auto param = TS::ParameterFactory::instance().parse(*parameter);
-
-  std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
-  Fmi::LocalDateTime localdatetime(getValidTime(), Fmi::TimeZonePtr::utc);
-  const auto& mylocale = std::locale::classic();
-  NFmiPoint dummy;
-
-  // Querydata spatial reference
-  Fmi::SpatialReference qcrs(q->SpatialReference());
-
-  // From image world coordinates to querydata world coordinates
-
-  Fmi::CoordinateTransformation transformation(crs, qcrs);
-
-  // Check and fix orientations for each isovalue
-
-  for (auto& cand : candidates)
-  {
-    const int length = 2;  // move in pixel units in the orientation marked for the label
-
-    auto x = cand.x + length * sin(cand.angle * M_PI / 180);
-    auto y = cand.y - length * cos(cand.angle * M_PI / 180);
-
-    box.itransform(x, y);  // world xy coordinate in image crs
-
-    if (!transformation.transform(x, y))
-    {
-      cand.angle = std::numeric_limits<double>::quiet_NaN();
-    }
-    else
-    {
-      // Must convert to native geocentric coordinates since the API does not support WorldXY
-      // interpolation
-      NFmiPoint latlon = q->area().WorldXYToLatLon(NFmiPoint(x, y));
-
-      // Q API SUCKS!!
-      Spine::Location loc(latlon.X(), latlon.Y());
-      Engine::Querydata::ParameterOptions options(
-          param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
-
-      auto result = q->value(options, localdatetime);
-
-      double tmp = cand.isovalue;
-
-      if (const double* ptr = std::get_if<double>(&result))
-        tmp = *ptr;
-      else if (const int* ptr = std::get_if<int>(&result))
-        tmp = *ptr;
-      else
-        cand.angle = std::numeric_limits<double>::quiet_NaN();
-
-      if (tmp < cand.isovalue)
-      {
-        cand.angle = cand.angle + 180;
-        if (cand.angle > 360)
-          cand.angle -= 360;
-      }
-
-      // Force labels upright if so requested
-      if (upright && (cand.angle < -90 || cand.angle > 90))
-      {
-        cand.angle += 180;
-        if (cand.angle > 360)
-          cand.angle -= 360;
-      }
-    }
-  }
-}
-
-void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
-                                               const Fmi::Box& box,
-                                               const State& state,
-                                               const Fmi::SpatialReference& crs) const
-{
-  try
-  {
-    const auto* gridEngine = state.getGridEngine();
-    if (!gridEngine || !gridEngine->isEnabled())
-      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
-
-    auto dataServer = gridEngine->getDataServer_sptr();
-
-    Fmi::CoordinateTransformation transformation(crs, "WGS84");
-
-    std::vector<T::Coordinate> pointList;
-
-    for (const auto& cand : candidates)
-    {
-      const int length = 2;  // move in pixel units in the orientation marked for the label
-
-      auto x1 = cand.x;
-      auto y1 = cand.y;
-
-      auto x2 = cand.x + length * sin(cand.angle * M_PI / 180);
-      auto y2 = cand.y - length * cos(cand.angle * M_PI / 180);
-
-      // printf("%f,%f  %f,%f => ",x1,y1,x2,y2);
-
-      box.itransform(x1, y1);
-      box.itransform(x2, y2);
-
-      transformation.transform(x1, y1);
-      transformation.transform(x2, y2);
-
-      // printf("%f,%f  %f,%f\n",x1,y1,x2,y2);
-
-      pointList.emplace_back(x1, y1);
-      pointList.emplace_back(x2, y2);
-    }
-
-    T::GridValueList valueList;
-    uint modificationOperation = 0;
-    double_vec modificationParameters;
-    dataServer->getGridValueListByPointList(0,
-                                            fileId,
-                                            messageIndex,
-                                            T::CoordinateTypeValue::LATLON_COORDINATES,
-                                            pointList,
-                                            T::AreaInterpolationMethod::Linear,
-                                            modificationOperation,
-                                            modificationParameters,
-                                            valueList);
-
-    if (valueList.getLength() == pointList.size())
-    {
-      uint i = 0;
-      for (auto& cand : candidates)
-      {
-        T::GridValue* val1 = valueList.getGridValuePtrByIndex(i);
-        T::GridValue* val2 = valueList.getGridValuePtrByIndex(i + 1);
-        i = i + 2;
-
-        if (val1 != nullptr && val2 != nullptr && val1->mValue > val2->mValue)
-        {
-          cand.angle = cand.angle + 180;
-          if (cand.angle > 360)
-            cand.angle -= 360;
-        }
-
-        // Force labels upright if so requested
-        if (upright && (cand.angle < -90 || cand.angle > 90))
-        {
-          cand.angle += 180;
-          if (cand.angle > 360)
-            cand.angle -= 360;
-        }
-      }
-    }
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
 }
 
 // ----------------------------------------------------------------------
@@ -1139,6 +653,497 @@ void assign_label_coordinates(Candidates& candidates)
     c.corners[2].y = y - w * sina - h * cosa;
     c.corners[3].x = x + w * cosa + h * sina;
     c.corners[3].y = y + w * sina - h * cosa;
+  }
+}
+
+}  // namespace
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Initialize from JSON
+ */
+// ----------------------------------------------------------------------
+
+void IsolabelLayer::init(Json::Value& theJson,
+                         const State& theState,
+                         const Config& theConfig,
+                         const Properties& theProperties)
+{
+  try
+  {
+    if (!theJson.isObject())
+      throw Fmi::Exception(BCP, "Isolabel-layer JSON is not a JSON object");
+
+    IsolineLayer::init(theJson, theState, theConfig, theProperties);
+
+    auto json = JsonTools::remove(theJson, "label");
+    label.init(json, theConfig);
+
+    JsonTools::remove_bool(upright, theJson, "upright");
+    JsonTools::remove_double(max_angle, theJson, "max_angle");
+    JsonTools::remove_double(min_isoline_length, theJson, "min_isoline_length");
+    JsonTools::remove_double(min_distance_edge, theJson, "min_distance_edge");
+    JsonTools::remove_double(max_distance_edge, theJson, "max_distance_edge");
+    JsonTools::remove_double(min_distance_other, theJson, "min_distance_other");
+    JsonTools::remove_double(min_distance_same, theJson, "min_distance_same");
+    JsonTools::remove_double(min_distance_self, theJson, "min_distance_self");
+    JsonTools::remove_double(max_curvature, theJson, "max_curvature");
+    JsonTools::remove_int(stencil_size, theJson, "stencil_size");
+
+    json = JsonTools::remove(theJson, "angles");
+    if (!json.isNull())
+      JsonTools::extract_vector("angles", angles, json);
+
+    json = JsonTools::remove(theJson, "textattributes");
+    textattributes.init(json, theConfig);
+
+    // Note that from now on we generate all possible isoline values and keep the unique ones only
+    // at the end. A std::set would have been an alternative solution.
+
+    json = JsonTools::remove(theJson, "isobands");
+    if (!json.isNull())
+    {
+      std::vector<Isoband> isobands;
+      JsonTools::extract_array("isobands", isobands, json, theConfig);
+      for (const auto& isoband : isobands)
+      {
+        if (isoband.lolimit)
+          isovalues.push_back(*isoband.lolimit);
+        if (isoband.hilimit)
+          isovalues.push_back(*isoband.hilimit);
+      }
+    }
+
+    json = JsonTools::remove(theJson, "isovalues");
+    if (!json.isNull())
+    {
+      if (json.isArray())
+      {
+        // [ a, b, c, d, ... ]
+        for (const auto& j : json)
+          isovalues.push_back(j.asDouble());
+      }
+      else if (json.isObject())
+      {
+        // { start, stop, step=1 }
+
+        std::optional<double> start;
+        std::optional<double> stop;
+        double step = 1.0;
+        JsonTools::remove_double(start, json, "start");
+        JsonTools::remove_double(stop, json, "stop");
+        JsonTools::remove_double(step, json, "step");
+
+        if (!start || !stop)
+          throw Fmi::Exception(BCP, "Isolabel-layer isovalues start or stop setting missing");
+
+        if (!json.empty())
+        {
+          auto names = json.getMemberNames();
+          auto namelist = boost::algorithm::join(names, ",");
+          throw Fmi::Exception(
+              BCP, "Unknown member variables in Isolabel layer isovalues setting: " + namelist);
+        }
+
+        double iso1 = *stop;
+        double iso2 = *start;
+
+        if (iso2 < iso1)
+          throw Fmi::Exception(
+              BCP, "Isolabel-layer isovalues stop value must be greater than the start value");
+        if (step < 0)
+          throw Fmi::Exception(BCP, "Isolabel-layer step value must be greater than zero");
+        if ((iso2 - iso1) / step > 1000)
+          throw Fmi::Exception(BCP, "Isolabel-layer generates to many isovalues (> 1000)");
+
+        // The end condition is used to make sure we do not get both 999.99999 and 1000.000 due to
+        // numerical inaccuracies.
+        double value = iso1;
+        while (value < iso2 - step / 2)
+        {
+          isovalues.push_back(value);
+          value += step;
+        }
+        isovalues.push_back(iso2);
+      }
+      else
+        throw Fmi::Exception(
+            BCP, "Isolabel-layer isovalues setting must be an object or a vector of numbers");
+    }
+
+    // Add isovalues from the parent IsolineLayer class
+
+    for (const auto& isoline : isolines)
+      isovalues.push_back(isoline.value);
+
+    // Make sure there are only unique isovalues since there are multiple ways to define them.
+    // In particular using "isobands" will almost certainly produce duplicates
+
+    std::sort(isovalues.begin(), isovalues.end());
+    isovalues.erase(std::unique(isovalues.begin(), isovalues.end()), isovalues.end());
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate the layer details into the template hash
+ */
+// ----------------------------------------------------------------------
+
+void IsolabelLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
+{
+  try
+  {
+    if (!validLayer(theState))
+      return;
+
+    if (isolines.empty())
+      return;
+
+    std::unique_ptr<boost::timer::auto_cpu_timer> timer;
+    if (theState.useTimer())
+    {
+      std::string report = "IsolabelLayer::generate finished in %t sec CPU, %w sec real\n";
+      timer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
+    }
+
+    auto geoms = IsolineLayer::getIsolines(isovalues, theState);
+
+    // Output image CRS and BBOX
+    const auto& crs = projection.getCRS();
+    const auto& box = projection.getBox();
+
+    // Convert filter pixel distance to metric distance for smoothing
+    filter.bbox(box);
+
+    // Smoothen the isolines
+    filter.apply(geoms, false);
+
+    // Project the geometries to pixel coordinates
+    for (auto& geomptr : geoms)
+    {
+      if (geomptr && geomptr->IsEmpty() == 0)
+        Fmi::OGR::transform(*geomptr, box);
+    }
+
+    // Generate candidate locations from the isolines
+
+    auto candidates = find_candidates(geoms);
+
+    // Select the actual label locations from the candidates
+
+    candidates = select_best_candidates(candidates, box);
+
+    // Fix the label orientations so numbers indicate in which direction the values increase.
+    // In practise we just rotate the numbers 180 degrees if they seem to point to the wrong
+    // direction, and then also apply "upright" condition if so requested.
+
+    if (label.orientation == "auto")
+      fix_orientation(candidates, box, theState, crs);
+
+    // Update the globals
+
+    if (css)
+    {
+      std::string name = theState.getCustomer() + "/" + *css;
+      theGlobals["css"][name] = theState.getStyle(*css);
+    }
+
+    // Clip if necessary
+
+    addClipRect(theLayersCdt, theGlobals, box, theState);
+
+    // Generate isolabels as use tags statements inside <g>..</g>, but we add the </g> only after
+    // the labels
+
+    CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
+    group_cdt["start"] = "<g";
+
+    // Add attributes to the group, not to the labels
+    theState.addAttributes(theGlobals, group_cdt, attributes);
+
+    theLayersCdt.PushBack(group_cdt);
+
+    for (const auto& point : candidates)
+    {
+      const auto txt = label.print(point.isovalue);
+
+      if (txt.empty())
+        continue;
+
+      // Generate a text tag for each point
+
+      if (std::isnan(point.angle))
+        continue;
+
+      CTPP::CDT text_cdt(CTPP::CDT::HASH_VAL);
+      text_cdt["start"] = "<text";
+      text_cdt["end"] = "</text>";
+      text_cdt["cdata"] = txt;
+
+      theState.addAttributes(theGlobals, text_cdt, textattributes);
+
+      // Assign isoline styles for the point
+      for (auto i = 0UL; i < geoms.size(); i++)
+      {
+        const Isoline& isoline = isolines[i];
+        if (isoline.value == point.isovalue)
+        {
+          theState.addPresentationAttributes(text_cdt, css, attributes, isoline.attributes);
+          theState.addAttributes(theGlobals, text_cdt, isoline.attributes);
+          break;
+        }
+      }
+
+      if (label.orientation == "auto")
+      {
+        const auto radians = point.angle * M_PI / 180;
+        const auto srad = sin(radians);
+        const auto crad = cos(radians);
+        auto transform = fmt::format("translate({} {}) rotate({})",
+                                     std::round(point.x + label.dx * crad + label.dy * srad),
+                                     std::round(point.y + label.dx * srad - label.dy * crad),
+                                     std::round(point.angle));
+        text_cdt["attributes"]["transform"] = transform;
+      }
+      else
+      {
+        auto transform = fmt::format(
+            "translate({} {})", std::round(point.x + label.dx), std::round(point.y - label.dy));
+        text_cdt["attributes"]["transform"] = transform;
+      }
+
+      theLayersCdt.PushBack(text_cdt);
+    }
+
+    // Close the grouping
+    theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n  </g>");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!").addParameter("qid", qid);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Given geometries select candidate locations for labels
+ *
+ * For all selected angles, rotate the isoline by the angle, and find
+ * locations of local min/max in the Y-coordinate.
+ *
+ * The angles are in order of preference, hence we select candidates
+ * for the first angle first.
+ */
+// ----------------------------------------------------------------------
+
+Candidates IsolabelLayer::find_candidates(const std::vector<OGRGeometryPtr>& geoms) const
+{
+  Candidates candidates;
+
+  int id = 0;
+  for (std::size_t i = 0; i < geoms.size(); i++)
+  {
+    const OGRGeometryPtr& geom = geoms[i];
+    if (geom && geom->IsEmpty() == 0)
+    {
+      const auto old_id = id;
+      for (auto angle : angles)
+      {
+        id = old_id;  // use same id for different angles
+        const auto radians = angle * M_PI / 180;
+        const auto cosine = cos(radians);
+        const auto sine = sin(radians);
+
+        Dali::find_candidates(candidates,
+                              isovalues[i],
+                              id,
+                              sine,
+                              cosine,
+                              stencil_size,
+                              geom.get(),
+                              min_isoline_length);
+      }
+    }
+  }
+
+  return candidates;
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * Fix label orientations by peeking at querydata values
+ */
+// ----------------------------------------------------------------------
+
+void IsolabelLayer::fix_orientation(Candidates& candidates,
+                                    const Fmi::Box& box,
+                                    const State& state,
+                                    const Fmi::SpatialReference& crs) const
+{
+  if (source && *source == "grid")
+  {
+    fix_orientation_gridEngine(candidates, box, state, crs);
+    return;
+  }
+
+  // The parameter being used
+  auto param = TS::ParameterFactory::instance().parse(*parameter);
+
+  std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+  Fmi::LocalDateTime localdatetime(getValidTime(), Fmi::TimeZonePtr::utc);
+  const auto& mylocale = std::locale::classic();
+  NFmiPoint dummy;
+
+  // Querydata spatial reference
+  Fmi::SpatialReference qcrs(q->SpatialReference());
+
+  // From image world coordinates to querydata world coordinates
+
+  Fmi::CoordinateTransformation transformation(crs, qcrs);
+
+  // Check and fix orientations for each isovalue
+
+  for (auto& cand : candidates)
+  {
+    const int length = 2;  // move in pixel units in the orientation marked for the label
+
+    auto x = cand.x + length * sin(cand.angle * M_PI / 180);
+    auto y = cand.y - length * cos(cand.angle * M_PI / 180);
+
+    box.itransform(x, y);  // world xy coordinate in image crs
+
+    if (!transformation.transform(x, y))
+    {
+      cand.angle = std::numeric_limits<double>::quiet_NaN();
+    }
+    else
+    {
+      // Must convert to native geocentric coordinates since the API does not support WorldXY
+      // interpolation
+      NFmiPoint latlon = q->area().WorldXYToLatLon(NFmiPoint(x, y));
+
+      // Q API SUCKS!!
+      Spine::Location loc(latlon.X(), latlon.Y());
+      Engine::Querydata::ParameterOptions options(
+          param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
+
+      auto result = q->value(options, localdatetime);
+
+      double tmp = cand.isovalue;
+
+      if (const double* ptr = std::get_if<double>(&result))
+        tmp = *ptr;
+      else if (const int* ptr = std::get_if<int>(&result))
+        tmp = *ptr;
+      else
+        cand.angle = std::numeric_limits<double>::quiet_NaN();
+
+      if (tmp < cand.isovalue)
+      {
+        cand.angle = cand.angle + 180;
+        if (cand.angle > 360)
+          cand.angle -= 360;
+      }
+
+      // Force labels upright if so requested
+      if (upright && (cand.angle < -90 || cand.angle > 90))
+      {
+        cand.angle += 180;
+        if (cand.angle > 360)
+          cand.angle -= 360;
+      }
+    }
+  }
+}
+
+void IsolabelLayer::fix_orientation_gridEngine(Candidates& candidates,
+                                               const Fmi::Box& box,
+                                               const State& state,
+                                               const Fmi::SpatialReference& crs) const
+{
+  try
+  {
+    const auto* gridEngine = state.getGridEngine();
+    if (!gridEngine || !gridEngine->isEnabled())
+      throw Fmi::Exception(BCP, "The grid-engine is disabled!");
+
+    auto dataServer = gridEngine->getDataServer_sptr();
+
+    Fmi::CoordinateTransformation transformation(crs, "WGS84");
+
+    std::vector<T::Coordinate> pointList;
+
+    for (const auto& cand : candidates)
+    {
+      const int length = 2;  // move in pixel units in the orientation marked for the label
+
+      auto x1 = cand.x;
+      auto y1 = cand.y;
+
+      auto x2 = cand.x + length * sin(cand.angle * M_PI / 180);
+      auto y2 = cand.y - length * cos(cand.angle * M_PI / 180);
+
+      // printf("%f,%f  %f,%f => ",x1,y1,x2,y2);
+
+      box.itransform(x1, y1);
+      box.itransform(x2, y2);
+
+      transformation.transform(x1, y1);
+      transformation.transform(x2, y2);
+
+      // printf("%f,%f  %f,%f\n",x1,y1,x2,y2);
+
+      pointList.emplace_back(x1, y1);
+      pointList.emplace_back(x2, y2);
+    }
+
+    T::GridValueList valueList;
+    uint modificationOperation = 0;
+    double_vec modificationParameters;
+    dataServer->getGridValueListByPointList(0,
+                                            fileId,
+                                            messageIndex,
+                                            T::CoordinateTypeValue::LATLON_COORDINATES,
+                                            pointList,
+                                            T::AreaInterpolationMethod::Linear,
+                                            modificationOperation,
+                                            modificationParameters,
+                                            valueList);
+
+    if (valueList.getLength() == pointList.size())
+    {
+      uint i = 0;
+      for (auto& cand : candidates)
+      {
+        T::GridValue* val1 = valueList.getGridValuePtrByIndex(i);
+        T::GridValue* val2 = valueList.getGridValuePtrByIndex(i + 1);
+        i = i + 2;
+
+        if (val1 != nullptr && val2 != nullptr && val1->mValue > val2->mValue)
+        {
+          cand.angle = cand.angle + 180;
+          if (cand.angle > 360)
+            cand.angle -= 360;
+        }
+
+        // Force labels upright if so requested
+        if (upright && (cand.angle < -90 || cand.angle > 90))
+        {
+          cand.angle += 180;
+          if (cand.angle > 360)
+            cand.angle -= 360;
+        }
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
 

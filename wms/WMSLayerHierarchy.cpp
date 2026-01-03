@@ -15,6 +15,23 @@ namespace WMS
 {
 namespace
 {
+// ----------------------------------------------------------------------
+// HELPER FUNCTIONS FOR DEBUGGING
+// ----------------------------------------------------------------------
+
+void printHierarchy(const std::string& prefix,
+                    unsigned int level,
+                    std::ostream& ost,
+                    const WMSLayerHierarchy& lh)
+{
+  ost << prefix << lh.name << "(L#" << level << (lh.sublayers.empty() ? "-Leaf)" : ") ")
+      << (lh.geographicBoundingBox ? "1" : "0") << (lh.projectedBoundingBox ? "1" : "0")
+      << (lh.timeDimension ? "1" : "0") << (lh.elevationDimension ? "1" : "0") << '\n';
+
+  unsigned int nextLevel = level + 1;
+  for (const auto& item : lh.sublayers)
+    printHierarchy(prefix + " ", nextLevel, ost, *item);
+}
 
 // ----------------------------------------------------------------------
 // HELPER FUNCTIONS FOR PROCESSING THE WMS LAYERS INTO A DATA STRUCTURE
@@ -528,24 +545,6 @@ CTPP::CDT WMSLayerHierarchy::getCapabilities(
                  1);
 
   return capa;
-}
-
-// ----------------------------------------------------------------------
-// HELPER FUNCTIONS FOR DEBUGGING
-// ----------------------------------------------------------------------
-
-void printHierarchy(const std::string& prefix,
-                    unsigned int level,
-                    std::ostream& ost,
-                    const WMSLayerHierarchy& lh)
-{
-  ost << prefix << lh.name << "(L#" << level << (lh.sublayers.empty() ? "-Leaf)" : ") ")
-      << (lh.geographicBoundingBox ? "1" : "0") << (lh.projectedBoundingBox ? "1" : "0")
-      << (lh.timeDimension ? "1" : "0") << (lh.elevationDimension ? "1" : "0") << '\n';
-
-  unsigned int nextLevel = level + 1;
-  for (const auto& item : lh.sublayers)
-    printHierarchy(prefix + " ", nextLevel, ost, *item);
 }
 
 std::ostream& operator<<(std::ostream& ost, const WMSLayerHierarchy& lh)

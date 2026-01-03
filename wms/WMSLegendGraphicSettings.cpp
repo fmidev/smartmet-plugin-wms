@@ -25,7 +25,6 @@ void replace_translations(const std::map<std::string, std::string>& sourceTransl
       targetTranslations[tr.first] = tr.second;
   }
 }
-}  // namespace
 
 std::vector<std::string> language_codes = {
     "ab", "aa", "af",      "ak",      "sq", "am", "ar", "an", "hy", "as",   "av", "ae", "ay", "az",
@@ -42,6 +41,8 @@ std::vector<std::string> language_codes = {
     "sl", "so", "nr",      "es",      "su", "sw", "ss", "sv", "tl", "ty",   "tg", "ta", "tt", "te",
     "th", "bo", "ti",      "to",      "ts", "tr", "tk", "tw", "ug", "uk",   "ur", "uz", "ve", "vi",
     "vo", "wa", "cy",      "wo",      "fy", "xh", "yi", "ji", "yo", "za",   "zu"};
+
+}  // namespace
 
 WMSLegendGraphicSettings::WMSLegendGraphicSettings(bool initDefaults /*= false*/)
 {

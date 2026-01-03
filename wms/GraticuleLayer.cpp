@@ -1076,8 +1076,6 @@ GraticuleLines generate_lines(const Graticule& g,
   }
 }
 
-}  // namespace
-
 // ----------------------------------------------------------------------
 /*!
  * \brief Generate a single Graticule definition
@@ -1173,6 +1171,8 @@ Graticule remove_graticule(Json::Value& theJson, const Config& theConfig)
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!

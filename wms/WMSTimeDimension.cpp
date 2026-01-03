@@ -11,6 +11,50 @@ namespace Plugin
 namespace WMS
 {
 
+namespace
+{
+std::string getIntervalCapability(const tag_interval& interval,
+                                  const Fmi::DateTime& requested_startt,
+                                  const Fmi::DateTime& requested_endt)
+{
+  std::string ret;
+
+  auto startt = interval.startTime;
+  auto endt = interval.endTime;
+  auto resolution =
+      (interval.resolution.total_seconds() == 0 ? Fmi::Minutes(1) : interval.resolution);
+
+  if (startt < requested_startt)
+  {
+    // Time of day taken from interval startTime
+    startt = Fmi::DateTime(requested_startt.date(), startt.time_of_day());
+
+    // Starttime adjusted
+
+    while (startt > requested_startt)
+      startt -= resolution;
+    while (startt < requested_startt)
+      startt += resolution;
+  }
+
+  // Endtime adjusted
+  while (endt > requested_endt)
+    endt -= resolution;
+
+  ret = Fmi::to_iso_extended_string(startt) + "Z/" + Fmi::to_iso_extended_string(endt) + "Z/PT";
+  if (resolution.hours() == 0 && resolution.minutes() <= 60)
+    ret += Fmi::to_string(resolution.minutes()) + "M";
+  else
+  {
+    ret += Fmi::to_string(resolution.hours()) + "H";
+    if (resolution.minutes() > 0)
+      ret += Fmi::to_string(resolution.minutes()) + "M";
+  }
+
+  return ret;
+}
+}  // namespace
+
 bool WMSTimeDimension::isValidTime(const Fmi::DateTime& theTime,
                                    bool endtime_is_wall_clock_time) const
 {
@@ -241,47 +285,6 @@ std::string IntervalTimeDimension::getCapabilities(
   {
     throw Fmi::Exception::Trace(BCP, "Failed to generate time dimension capabilities!");
   }
-}
-
-std::string getIntervalCapability(const tag_interval& interval,
-                                  const Fmi::DateTime& requested_startt,
-                                  const Fmi::DateTime& requested_endt)
-{
-  std::string ret;
-
-  auto startt = interval.startTime;
-  auto endt = interval.endTime;
-  auto resolution =
-      (interval.resolution.total_seconds() == 0 ? Fmi::Minutes(1) : interval.resolution);
-
-  if (startt < requested_startt)
-  {
-    // Time of day taken from interval startTime
-    startt = Fmi::DateTime(requested_startt.date(), startt.time_of_day());
-
-    // Starttime adjusted
-
-    while (startt > requested_startt)
-      startt -= resolution;
-    while (startt < requested_startt)
-      startt += resolution;
-  }
-
-  // Endtime adjusted
-  while (endt > requested_endt)
-    endt -= resolution;
-
-  ret = Fmi::to_iso_extended_string(startt) + "Z/" + Fmi::to_iso_extended_string(endt) + "Z/PT";
-  if (resolution.hours() == 0 && resolution.minutes() <= 60)
-    ret += Fmi::to_string(resolution.minutes()) + "M";
-  else
-  {
-    ret += Fmi::to_string(resolution.hours()) + "H";
-    if (resolution.minutes() > 0)
-      ret += Fmi::to_string(resolution.minutes()) + "M";
-  }
-
-  return ret;
 }
 
 std::string IntervalTimeDimension::makeCapabilities(

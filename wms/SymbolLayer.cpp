@@ -41,16 +41,16 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Holder for data values
  */
 // ----------------------------------------------------------------------
 
-namespace
-{
 using PointValues = std::vector<PointData>;
-}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
@@ -194,6 +194,8 @@ PointValues read_gridForecasts(const SymbolLayer& layer,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!

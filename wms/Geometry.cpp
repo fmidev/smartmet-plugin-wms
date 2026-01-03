@@ -17,6 +17,10 @@ namespace Dali
 {
 namespace Geometry
 {
+
+namespace
+{
+
 using CoordinateCounter = std::map<unsigned long long, unsigned long long>;
 
 struct GInfo
@@ -75,31 +79,6 @@ std::string name_geojson(const OGRGeometry& theGeom)
     }
 
     throw Fmi::Exception(BCP, "Unknown geometry type when extracting geometry name");
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
-// ----------------------------------------------------------------------
-/*!
- * \brief Get the geometry name for the given format
- */
-// ----------------------------------------------------------------------
-
-std::string name(const OGRGeometry& theGeom, const std::string& theType)
-{
-  try
-  {
-    if (theType == "geojson")
-      return name_geojson(theGeom);
-
-    if (theType == "topojson")
-      return name_geojson(theGeom);
-
-    // By default we use WKT names
-    return theGeom.getGeometryName();
   }
   catch (...)
   {
@@ -555,6 +534,8 @@ std::string toKML(const OGRGeometry& theGeom,
   }
 }
 
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Export the coordinates to the given format
@@ -618,6 +599,31 @@ std::string toString(const OGRGeometry& theGeom,
       return toKML(theGeom, theBox, theSRS);
 
     return Fmi::OGR::exportToSvg(theGeom, theBox, thePrecision);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get the geometry name for the given format
+ */
+// ----------------------------------------------------------------------
+
+std::string name(const OGRGeometry& theGeom, const std::string& theType)
+{
+  try
+  {
+    if (theType == "geojson")
+      return name_geojson(theGeom);
+
+    if (theType == "topojson")
+      return name_geojson(theGeom);
+
+    // By default we use WKT names
+    return theGeom.getGeometryName();
   }
   catch (...)
   {

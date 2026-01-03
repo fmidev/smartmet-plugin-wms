@@ -21,6 +21,9 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Pretty print a number with given precision
@@ -250,6 +253,38 @@ std::string legend_text(const Isoline& theIsoline,
   }
 }
 
+std::string nonconverted_symbol_text(const AttributeSelection& theAttrSel,
+                                     const LegendLabels& theLabels,
+                                     const std::optional<std::string>& theLanguage)
+{
+  const auto& separator = theLabels.separator;
+
+  // If translation found return it
+  if (theLanguage && theAttrSel.translations.find(*theLanguage) != theAttrSel.translations.end())
+    return theAttrSel.translations.at(*theLanguage);
+
+  if (theAttrSel.value)
+    return Fmi::to_string(*theAttrSel.value);
+  if (theAttrSel.lolimit && theAttrSel.hilimit)
+    return (Fmi::to_string(*theAttrSel.lolimit) + separator + Fmi::to_string(*theAttrSel.hilimit));
+  if (theAttrSel.lolimit)
+    return (Fmi::to_string(*theAttrSel.lolimit) + separator);
+  if (theAttrSel.hilimit)
+    return (separator + Fmi::to_string(*theAttrSel.hilimit));
+
+  return {};
+}
+
+std::string symbol_text(const AttributeSelection& theAttrSel,
+                        const LegendLabels& theLabels,
+                        const std::optional<std::string>& theLanguage)
+{
+  auto text = nonconverted_symbol_text(theAttrSel, theLabels, theLanguage);
+  return apply_text_conversions(text, theLabels, theLanguage);
+}
+
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize from JSON
@@ -297,36 +332,6 @@ void LegendLayer::init(Json::Value& theJson,
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
-}
-
-std::string nonconverted_symbol_text(const AttributeSelection& theAttrSel,
-                                     const LegendLabels& theLabels,
-                                     const std::optional<std::string>& theLanguage)
-{
-  const auto& separator = theLabels.separator;
-
-  // If translation found return it
-  if (theLanguage && theAttrSel.translations.find(*theLanguage) != theAttrSel.translations.end())
-    return theAttrSel.translations.at(*theLanguage);
-
-  if (theAttrSel.value)
-    return Fmi::to_string(*theAttrSel.value);
-  if (theAttrSel.lolimit && theAttrSel.hilimit)
-    return (Fmi::to_string(*theAttrSel.lolimit) + separator + Fmi::to_string(*theAttrSel.hilimit));
-  if (theAttrSel.lolimit)
-    return (Fmi::to_string(*theAttrSel.lolimit) + separator);
-  if (theAttrSel.hilimit)
-    return (separator + Fmi::to_string(*theAttrSel.hilimit));
-
-  return {};
-}
-
-std::string symbol_text(const AttributeSelection& theAttrSel,
-                        const LegendLabels& theLabels,
-                        const std::optional<std::string>& theLanguage)
-{
-  auto text = nonconverted_symbol_text(theAttrSel, theLabels, theLanguage);
-  return apply_text_conversions(text, theLabels, theLanguage);
 }
 
 void LegendLayer::generate_from_symbol_vector(CTPP::CDT& theGlobals,

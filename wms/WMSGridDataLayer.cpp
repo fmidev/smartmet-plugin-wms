@@ -9,6 +9,9 @@ namespace Plugin
 {
 namespace WMS
 {
+namespace
+{
+
 std::vector<Fmi::DateTime> get_ptime_vector(const std::set<std::string>& contentTimeList)
 {
   std::vector<Fmi::DateTime> ret;
@@ -51,6 +54,8 @@ time_t even_timesteps(const std::set<std::string>& contentTimeList)
     throw Fmi::Exception::Trace(BCP, "Failed to update querydata layer metadata!");
   }
 }
+
+} // namespace
 
 WMSGridDataLayer::WMSGridDataLayer(const WMSConfig& config,
                                    std::string producer,

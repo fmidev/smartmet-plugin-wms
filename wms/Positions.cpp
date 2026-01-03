@@ -20,6 +20,10 @@ namespace Plugin
 {
 namespace Dali
 {
+
+namespace
+{
+
 // For NearTree calculations
 class XY
 {
@@ -196,6 +200,8 @@ void apply_direction_offsets(Positions::Points& thePoints,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!

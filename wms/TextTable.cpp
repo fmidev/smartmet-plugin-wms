@@ -1,6 +1,7 @@
 #include "TextTable.h"
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
+#include <algorithm>
 #include <numeric>
 
 namespace SmartMet
@@ -34,10 +35,8 @@ text_dimension_t get_cell_dimension(const std::vector<std::string>& strings,
 
     text_dimension_t tdim = getTextDimension(text, text_style);
 
-    if (tdim.width * 1.2 > cell_dimension.width)
-      cell_dimension.width = (tdim.width * 1.2);
-    if (tdim.height * 1.2 > cell_dimension.height)
-      cell_dimension.height = tdim.height * 1.2;
+    cell_dimension.width = std::max<double>(tdim.width * 1.2, cell_dimension.width);
+    cell_dimension.height = std::max<double>(tdim.height * 1.2, cell_dimension.height);
   }
   cell_dimension.height *= nRows;
 
@@ -247,8 +246,7 @@ void TextTable::addHeader(const std::vector<std::string>& theData)
       itsColumnWidths.push_back(cellInfo.dimension.width);
     }
   }
-  if (rowWidth > itsTableWidth)
-    itsTableWidth = rowWidth;
+  itsTableWidth = std::max(rowWidth, itsTableWidth);
 }
 
 void TextTable::addData(const std::vector<std::string>& theData)
@@ -264,8 +262,7 @@ void TextTable::addData(const std::vector<std::string>& theData)
     cellInfo.yoffset = itsDataAreaHeight + (cellInfo.dimension.height / cellInfo.rows.size());
     itsTableContent.insert(
         std::make_pair(std::pair<unsigned int, unsigned int>(row, column), cellInfo));
-    if (cellInfo.dimension.height > rowHeightMax)
-      rowHeightMax = cellInfo.dimension.height;
+    rowHeightMax = std::max(cellInfo.dimension.height, rowHeightMax);
     if (row == 0 && column >= itsColumnWidths.size())  // first row
       itsColumnWidths.push_back(cellInfo.dimension.width);
     if (cellInfo.dimension.width > itsColumnWidths[column])
@@ -275,8 +272,7 @@ void TextTable::addData(const std::vector<std::string>& theData)
   itsRowHeights.push_back(rowHeightMax);
 
   unsigned int rowWidth = std::accumulate(itsColumnWidths.begin(), itsColumnWidths.end(), 0U);
-  if (rowWidth > itsTableWidth)
-    itsTableWidth = rowWidth;
+  itsTableWidth = std::max(rowWidth, itsTableWidth);
 }
 
 void TextTable::addContent(const Json::Value& tableDataJson)

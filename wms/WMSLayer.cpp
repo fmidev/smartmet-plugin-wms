@@ -15,6 +15,7 @@
 #include <macgyver/FileSystem.h>
 #include <macgyver/StringConversion.h>
 #include <macgyver/TimeParser.h>
+#include <algorithm>
 #include <ogr_spatialref.h>
 
 namespace SmartMet
@@ -259,15 +260,13 @@ void get_legend_dimension(const Json::Value& json,
     if (!XJson.isNull())
     {
       unsigned int x = XJson.asInt();
-      if (x + textLen > xpos)
-        xpos = x + textLen;
+      xpos = std::max(x + textLen, xpos);
     }
     auto YJson = xposYposJson.get("y", nulljson);
     if (!YJson.isNull())
     {
       unsigned int y = YJson.asInt();
-      if (y > ypos)
-        ypos = y;
+      ypos = std::max(y, ypos);
     }
   }
 }
@@ -849,8 +848,7 @@ unsigned int isoband_legend_height(const Json::Value& json)
       for (const auto& layer : layersJson)
       {
         unsigned int sizeOfIsobands = isoband_legend_height(layer);
-        if (sizeOfIsobands > size)
-          size = sizeOfIsobands;
+        size = std::max(sizeOfIsobands, size);
       }
       ret = size;
     }
@@ -1269,10 +1267,7 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
           labelHeight = ypos + (*actualSettings.layout.legend_yoffset * 2);
         }
 
-        if (labelHeight > result.height)
-        {
-          result.height = labelHeight;
-        }
+        result.height = std::max(result.height, labelHeight);
 
         result.legendLayers.push_back(legendJson.toStyledString());
 
@@ -1537,6 +1532,8 @@ std::string WMSLayer::info() const
   }
 }
 
+namespace
+{
 std::ostream& operator<<(std::ostream& ost, const std::optional<int>& var)
 {
   if (!var)
@@ -1545,6 +1542,7 @@ std::ostream& operator<<(std::ostream& ost, const std::optional<int>& var)
     ost << *var;
   return ost;
 }
+}  // namespace
 
 std::ostream& operator<<(std::ostream& ost, const WMSLayer& layer)
 {

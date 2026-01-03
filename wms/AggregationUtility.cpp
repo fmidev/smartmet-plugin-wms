@@ -9,6 +9,10 @@ namespace Dali
 {
 namespace AggregationUtility
 {
+
+namespace
+{
+
 TS::TimeSeriesGenerator::LocalTimeList get_tlist(const std::list<Fmi::DateTime>& qengine_times,
                                                  const Fmi::DateTime& valid_time,
                                                  unsigned int interval_behind,
@@ -42,49 +46,6 @@ TS::TimeSeriesGenerator::LocalTimeList get_tlist(const std::list<Fmi::DateTime>&
     }
 
     return tlist;
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
-}
-
-TS::Value get_qengine_value(const Engine::Querydata::Q& q,
-                            const Engine::Querydata::ParameterOptions& options,
-                            const Fmi::LocalDateTime& valid_time,
-                            const std::optional<TS::ParameterAndFunctions>& param_funcs)
-{
-  try
-  {
-    TS::Value result;
-
-    bool must_aggregate = (param_funcs && param_funcs->functions.innerFunction.exists());
-
-    if (!must_aggregate)
-    {
-      result = q->value(options, valid_time);
-    }
-    else
-    {
-      auto qengine_times = q->validTimes();
-      auto interval_behind = param_funcs->functions.innerFunction.getAggregationIntervalBehind();
-      auto interval_ahead = param_funcs->functions.innerFunction.getAggregationIntervalAhead();
-      auto tlist =
-          get_tlist(*qengine_times, valid_time.utc_time(), interval_behind, interval_ahead);
-      // QEngine query
-      auto raw_data = q->values(options, tlist);
-      // Aggregate data
-      tlist.clear();
-      tlist.push_back(valid_time);
-      auto aggregated_data = TS::Aggregator::aggregate(*raw_data, param_funcs->functions, tlist);
-      // Remove redundant timesteps, only one timstep is valid for a map
-      auto final_data = TS::erase_redundant_timesteps(aggregated_data, tlist);
-
-      // Only one timestep remains
-      result = final_data->front().value;
-    }
-
-    return result;
   }
   catch (...)
   {
@@ -330,6 +291,51 @@ TS::TimeSeriesVectorPtr aggregate_data(const TS::TimeSeriesVectorPtr& raw_data,
     }
 
     return ret;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+}  // namespace
+
+TS::Value get_qengine_value(const Engine::Querydata::Q& q,
+                            const Engine::Querydata::ParameterOptions& options,
+                            const Fmi::LocalDateTime& valid_time,
+                            const std::optional<TS::ParameterAndFunctions>& param_funcs)
+{
+  try
+  {
+    TS::Value result;
+
+    bool must_aggregate = (param_funcs && param_funcs->functions.innerFunction.exists());
+
+    if (!must_aggregate)
+    {
+      result = q->value(options, valid_time);
+    }
+    else
+    {
+      auto qengine_times = q->validTimes();
+      auto interval_behind = param_funcs->functions.innerFunction.getAggregationIntervalBehind();
+      auto interval_ahead = param_funcs->functions.innerFunction.getAggregationIntervalAhead();
+      auto tlist =
+          get_tlist(*qengine_times, valid_time.utc_time(), interval_behind, interval_ahead);
+      // QEngine query
+      auto raw_data = q->values(options, tlist);
+      // Aggregate data
+      tlist.clear();
+      tlist.push_back(valid_time);
+      auto aggregated_data = TS::Aggregator::aggregate(*raw_data, param_funcs->functions, tlist);
+      // Remove redundant timesteps, only one timstep is valid for a map
+      auto final_data = TS::erase_redundant_timesteps(aggregated_data, tlist);
+
+      // Only one timestep remains
+      result = final_data->front().value;
+    }
+
+    return result;
   }
   catch (...)
   {

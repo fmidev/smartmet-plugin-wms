@@ -13,6 +13,54 @@ namespace Plugin
 {
 namespace Dali
 {
+
+namespace
+{
+
+void getProducersFromParameter(const char* param, std::set<std::string>& producers)
+{
+  try
+  {
+    char st[2000];
+    strcpy(st, param);
+
+    char* field[100];
+    uint c = 1;
+    field[0] = st;
+    char* p = st;
+    while (*p != '\0' && c < 100)
+    {
+      if ((*p == ';' || *p == '{' || *p == '}' || *p == '\n'))
+      {
+        *p = '\0';
+        p++;
+        field[c] = p;
+        c++;
+      }
+      else
+      {
+        p++;
+      }
+    }
+
+    for (uint t = 0; t < c; t++)
+    {
+      // printf("[%d][%s]\n",t,field[t]);
+      std::vector<std::string> partList;
+      splitString(field[t], ':', partList);
+      if (partList.size() > 1)
+      {
+        producers.insert(partList[1]);
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+}  // namespace
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize a JSON attribute
@@ -251,49 +299,6 @@ bool Properties::inside(const Fmi::Box& theBox, double theX, double theY) const
 {
   return ((theX >= -xmargin) && (theX <= theBox.width() + xmargin) && (theY >= -ymargin) &&
           (theY <= theBox.height() + ymargin));
-}
-
-void getProducersFromParameter(const char* param, std::set<std::string>& producers)
-{
-  try
-  {
-    char st[2000];
-    strcpy(st, param);
-
-    char* field[100];
-    uint c = 1;
-    field[0] = st;
-    char* p = st;
-    while (*p != '\0' && c < 100)
-    {
-      if ((*p == ';' || *p == '{' || *p == '}' || *p == '\n'))
-      {
-        *p = '\0';
-        p++;
-        field[c] = p;
-        c++;
-      }
-      else
-      {
-        p++;
-      }
-    }
-
-    for (uint t = 0; t < c; t++)
-    {
-      // printf("[%d][%s]\n",t,field[t]);
-      std::vector<std::string> partList;
-      splitString(field[t], ':', partList);
-      if (partList.size() > 1)
-      {
-        producers.insert(partList[1]);
-      }
-    }
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Operation failed!");
-  }
 }
 
 std::size_t Properties::getProducerHash(const State& theState,

@@ -19,6 +19,9 @@ namespace Plugin
 {
 namespace WMS
 {
+namespace
+{
+
 std::string resolveGetMapURI(const Spine::HTTP::Request& theRequest)
 {
   try
@@ -106,6 +109,8 @@ std::optional<Fmi::DateTime> parse_optional_time(const std::optional<std::string
 
   return Fmi::TimeParser::parse(*time_string);
 }
+
+}  // namespace
 
 std::string WMSGetCapabilities::response(const Fmi::SharedFormatter& theFormatter,
                                          const Spine::HTTP::Request& theRequest,

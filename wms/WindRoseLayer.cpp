@@ -34,6 +34,9 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+
 struct value_printer : public boost::static_visitor<std::string>
 {
   std::string operator()(const std::string& str) const { return str; }
@@ -302,6 +305,8 @@ std::vector<double> calculate_rose_maxima(const TS::TimeSeries& directions,
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
+
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!

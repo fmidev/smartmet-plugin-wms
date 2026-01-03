@@ -341,6 +341,19 @@ void update_capabilities_modification_time(Fmi::DateTime& mod_time, const Shared
   mod_time = std::max(mod_time, layer->modificationTime());
 }
 
+void warn_layer(const std::string& badfile, std::set<std::string>& warned_files)
+{
+  if (warned_files.find(badfile) != warned_files.end())
+    return;
+
+  Fmi::Exception exception(BCP, "Failed to parse configuration!", nullptr);
+  exception.addParameter("Path", badfile);
+  exception.printError();
+
+  // Don't warn again about the same file
+  warned_files.insert(badfile);
+}
+
 }  // namespace
 
 CTPP::CDT WMSConfig::get_request(const libconfig::Config& config,
@@ -934,19 +947,6 @@ bool WMSConfig::validateGetMapAuthorization(const Spine::HTTP::Request& theReque
   }
 }
 #endif
-
-void warn_layer(const std::string& badfile, std::set<std::string>& warned_files)
-{
-  if (warned_files.find(badfile) != warned_files.end())
-    return;
-
-  Fmi::Exception exception(BCP, "Failed to parse configuration!", nullptr);
-  exception.addParameter("Path", badfile);
-  exception.printError();
-
-  // Don't warn again about the same file
-  warned_files.insert(badfile);
-}
 
 void WMSConfig::updateLayerMetaDataForCustomerLayer(
     const std::filesystem::recursive_directory_iterator& itr,

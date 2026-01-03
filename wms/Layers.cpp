@@ -13,6 +13,9 @@ namespace Plugin
 {
 namespace Dali
 {
+namespace
+{
+
 // GetLegendGraphic requests may create null elements which are meaningless for validation
 
 void remove_null_members(Json::Value& json)
@@ -24,6 +27,8 @@ void remove_null_members(Json::Value& json)
       json.removeMember(name);
   }
 }
+
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
