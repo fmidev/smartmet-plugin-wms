@@ -78,7 +78,7 @@ void ColorPainter_shadow::initShadows(Json::Value &theJson, const State &theStat
 
 
 
-void ColorPainter_shadow::initShadow(Json::Value &theJson, const State &theState)
+void ColorPainter_shadow::initShadow(Json::Value &theJson, const State & /* theState */)
 {
   try
   {

@@ -53,7 +53,7 @@ void ColorPainter::init(Json::Value &theJson, const State &/* theState */)
 
 
 
-std::size_t ColorPainter::hash_value(const State &theState) const
+std::size_t ColorPainter::hash_value(const State & /* theState */) const
 {
   try
   {
