@@ -53,9 +53,10 @@ void generate_isolines(std::vector<Isoline>& isolines,
                        const std::string& pattern,
                        const std::vector<double>& except_vector)
 {
-  for (double isovalue = startvalue; isovalue <= endvalue;
-       isovalue += interval)  // NOLINT(cert-flp30-c)
+  // endvalue >= startvalue and interval>0 has already been checked
+  for (auto i = 0UL;; ++i)
   {
+    double isovalue = startvalue + i * interval;
     if (!skip_value(isovalue, except_vector))
     {
       Isoline isoline;
