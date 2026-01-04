@@ -53,13 +53,14 @@ void generate_isolines(std::vector<Isoline>& isolines,
                        const std::string& pattern,
                        const std::vector<double>& except_vector)
 {
-  for (double i = startvalue; i <= endvalue; i += interval)  // NOLINT(cert-flp30-c)
+  for (double isovalue = startvalue; isovalue <= endvalue;
+       isovalue += interval)  // NOLINT(cert-flp30-c)
   {
-    if (!skip_value(i, except_vector))
+    if (!skip_value(isovalue, except_vector))
     {
       Isoline isoline;
-      isoline.qid = fmt::format(fmt::runtime(pattern), i);
-      isoline.value = i;
+      isoline.qid = fmt::format(fmt::runtime(pattern), isovalue);
+      isoline.value = isovalue;
       isolines.push_back(isoline);
 
       if (isolines.size() > 10000)
