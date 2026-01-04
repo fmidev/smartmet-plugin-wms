@@ -341,62 +341,32 @@ void find_candidates(Candidates& candidates,
   if (geom == nullptr || geom->IsEmpty() != 0)
     return;
 
+  // Helper to shorten code
+  auto dispatch = [&](auto const* g)
+  {
+    find_candidates(candidates, isovalue, ++id, sine, cosine, stencil_size, g, min_isoline_length);
+  };
+
   switch (geom->getGeometryType())
   {
     case wkbLineString:
-      return find_candidates(candidates,
-                             isovalue,
-                             ++id,
-                             sine,
-                             cosine,
-                             stencil_size,
-                             dynamic_cast<const OGRLineString*>(geom),
-                             min_isoline_length);
+      dispatch(dynamic_cast<const OGRLineString*>(geom));
+      break;
     case wkbLinearRing:
-      return find_candidates(candidates,
-                             isovalue,
-                             ++id,
-                             sine,
-                             cosine,
-                             stencil_size,
-                             dynamic_cast<const OGRLinearRing*>(geom),
-                             min_isoline_length);
+      dispatch(dynamic_cast<const OGRLinearRing*>(geom));
+      break;
     case wkbPolygon:
-      return find_candidates(candidates,
-                             isovalue,
-                             ++id,
-                             sine,
-                             cosine,
-                             stencil_size,
-                             dynamic_cast<const OGRPolygon*>(geom),
-                             min_isoline_length);
+      dispatch(dynamic_cast<const OGRPolygon*>(geom));
+      break;
     case wkbMultiLineString:
-      return find_candidates(candidates,
-                             isovalue,
-                             ++id,
-                             sine,
-                             cosine,
-                             stencil_size,
-                             dynamic_cast<const OGRMultiLineString*>(geom),
-                             min_isoline_length);
+      dispatch(dynamic_cast<const OGRMultiLineString*>(geom));
+      break;
     case wkbMultiPolygon:
-      return find_candidates(candidates,
-                             isovalue,
-                             ++id,
-                             sine,
-                             cosine,
-                             stencil_size,
-                             dynamic_cast<const OGRMultiPolygon*>(geom),
-                             min_isoline_length);
+      dispatch(dynamic_cast<const OGRMultiPolygon*>(geom));
+      break;
     case wkbGeometryCollection:
-      return find_candidates(candidates,
-                             isovalue,
-                             ++id,
-                             sine,
-                             cosine,
-                             stencil_size,
-                             dynamic_cast<const OGRGeometryCollection*>(geom),
-                             min_isoline_length);
+      dispatch(dynamic_cast<const OGRGeometryCollection*>(geom));
+      break;
     default:
       break;
   }
