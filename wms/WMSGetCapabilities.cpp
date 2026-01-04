@@ -22,6 +22,7 @@ namespace WMS
 namespace
 {
 
+#if 0
 std::string resolveGetMapURI(const Spine::HTTP::Request& theRequest)
 {
   try
@@ -58,6 +59,7 @@ std::string resolveGetMapURI(const Spine::HTTP::Request& theRequest)
     throw Fmi::Exception::Trace(BCP, "Resolving GetMap URI failed!");
   }
 }
+#endif
 
 /*
  * Patch protocol for HTTP/GET or HTTP/POST online resources

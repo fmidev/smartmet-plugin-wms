@@ -9,53 +9,6 @@ namespace Plugin
 {
 namespace WMS
 {
-namespace
-{
-
-std::vector<Fmi::DateTime> get_ptime_vector(const std::set<std::string>& contentTimeList)
-{
-  std::vector<Fmi::DateTime> ret;
-  ret.reserve(contentTimeList.size());
-
-  for (const auto& time : contentTimeList)
-    ret.push_back(Fmi::date_time::from_time_t(utcTimeToTimeT(time)));
-
-  return ret;
-}
-
-time_t even_timesteps(const std::set<std::string>& contentTimeList)
-{
-  try
-  {
-    if (contentTimeList.size() < 2)
-      return 0;
-
-    time_t prevTime = 0;
-    time_t step = 0;
-
-    for (const auto& time : contentTimeList)
-    {
-      time_t tt = utcTimeToTimeT(time);
-      if (prevTime != 0)
-      {
-        time_t s = tt - prevTime;
-        if (step != 0 && s != step)
-          return 0;
-
-        step = s;
-      }
-      prevTime = tt;
-    }
-
-    return step;
-  }
-  catch (...)
-  {
-    throw Fmi::Exception::Trace(BCP, "Failed to update querydata layer metadata!");
-  }
-}
-
-} // namespace
 
 WMSGridDataLayer::WMSGridDataLayer(const WMSConfig& config,
                                    std::string producer,

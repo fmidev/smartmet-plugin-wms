@@ -37,6 +37,7 @@ namespace Dali
 namespace
 {
 
+#if 0
 struct value_printer : public boost::static_visitor<std::string>
 {
   std::string operator()(const std::string& str) const { return str; }
@@ -51,6 +52,7 @@ struct value_printer : public boost::static_visitor<std::string>
     return Fmi::to_iso_string(t.local_time());
   }
 };
+#endif
 
 // ----------------------------------------------------------------------
 /*!
