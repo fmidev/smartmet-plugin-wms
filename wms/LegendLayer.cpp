@@ -449,7 +449,10 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     }
 
     if (!symbol_vector.empty())
-      return generate_from_symbol_vector(theGlobals, theLayersCdt, theState);
+    {
+      generate_from_symbol_vector(theGlobals, theLayersCdt, theState);
+      return;
+    }
 
     // A symbol must be defined
 
