@@ -272,7 +272,7 @@ void find_candidates(Candidates& candidates,
                     sine,
                     cosine,
                     stencil_size,
-                    dynamic_cast<const OGRLineString*>(geom->getGeometryRef(i)),
+                    geom->getGeometryRef(i),
                     min_isoline_length);
 }
 
@@ -294,7 +294,7 @@ void find_candidates(Candidates& candidates,
                     sine,
                     cosine,
                     stencil_size,
-                    dynamic_cast<const OGRPolygon*>(geom->getGeometryRef(i)),
+                    geom->getGeometryRef(i),
                     min_isoline_length);
 }
 
