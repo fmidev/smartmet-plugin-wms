@@ -64,7 +64,6 @@ void check_getmap_request_options(const Spine::HTTP::Request& theHTTPRequest)
   try
   {
     // check that all mandatory options has been defined
-    std::string missing_options;
 
     if (!theHTTPRequest.getParameter("VERSION"))
     {
@@ -438,7 +437,6 @@ void WMSGetMap::parseHTTPRequest(const Engine::Querydata::Engine& theQEngine,
     {
       std::string layerName = layer_name(layers[i]);
 
-      std::string layerCustomer = itsConfig.layerCustomer(layerName);
       std::string layerStyle = styles[i];
 
       itsParameters.map_info_vector.emplace_back(layerName, layerStyle);
