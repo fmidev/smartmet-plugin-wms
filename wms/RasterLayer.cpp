@@ -359,7 +359,7 @@ void RasterLayer::generate_image(int loopstep,int loopsteps,const T::Coordinate_
     // Painting sea topography
     if (sea_shading_position == "top"  &&  coordinates)
     {
-      if (sea_shadings.size() == 0)
+      if (sea_shadings.empty())
         SmartMet::Map::topography.getSeaShading(*coordinates,sea_shadings);
 
       shadingPainter.setImageColors(width,height,loopstep,loopsteps,image,land,sea_shadings,sea_shading_parameters);
@@ -368,7 +368,7 @@ void RasterLayer::generate_image(int loopstep,int loopsteps,const T::Coordinate_
     // Painting land topography
     if (land_shading_position == "top"  &&  coordinates)
     {
-      if (land_shadings.size() == 0)
+      if (land_shadings.empty())
         SmartMet::Map::topography.getLandShading(*coordinates,land_shadings);
 
       shadingPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land_shadings,land_shading_parameters);
