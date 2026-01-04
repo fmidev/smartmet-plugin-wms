@@ -947,7 +947,7 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
             auto match = selected_coordinates.nearest(xy, mindistance);
             if (!match)
             {
-              points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
+              points.emplace_back(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay);
               selected_coordinates.insert(xy);
             }
           }
@@ -985,7 +985,7 @@ Positions::Points Positions::getGraticuleFillPoints(const Engine::Querydata::Q& 
               auto match = selected_coordinates.nearest(xy, mindistance);
               if (!match)
               {
-                points.emplace_back(Point(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay));
+                points.emplace_back(newx, newy, NFmiPoint(newlon, newlat), deltax, deltay);
                 selected_coordinates.insert(xy);
               }
             }
