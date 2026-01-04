@@ -960,8 +960,8 @@ void IceMapLayer::addLocationName(double theXPos,
         y_coord_second = theYPos + (text_dimension_first.height * 0.1);
       if (second_name.empty())
         y_coord_first = theYPos + (text_dimension_first.height * 0.1);
+      break;
     }
-    break;
     case 1:  // oikea
     {
       x_coord = theXPos + 5;
@@ -972,8 +972,8 @@ void IceMapLayer::addLocationName(double theXPos,
         y_coord_second = theYPos + (text_dimension_first.height * 0.3);
       if (second_name.empty())
         y_coord_first = theYPos + (text_dimension_first.height * 0.3);
+      break;
     }
-    break;
     case 2:  // ylä
     {
       x_coord = theXPos - (x_offset * 0.5);
@@ -982,8 +982,8 @@ void IceMapLayer::addLocationName(double theXPos,
 
       if (second_name.empty())
         y_coord_first = y_coord_second;
+      break;
     }
-    break;
     case 3:  // ala
     {
       x_coord = theXPos - (x_offset * 0.5);
@@ -992,8 +992,8 @@ void IceMapLayer::addLocationName(double theXPos,
 
       if (first_name.empty())
         y_coord_second = y_coord_first;
+      break;
     }
-    break;
     case 4:  // alaoikea
     {
       x_coord = theXPos + 3.0;
@@ -1002,8 +1002,8 @@ void IceMapLayer::addLocationName(double theXPos,
 
       if (first_name.empty())
         y_coord_second = y_coord_first;
+      break;
     }
-    break;
     case 5:  // alavasen
     {
       x_coord = theXPos - x_offset;
@@ -1012,8 +1012,8 @@ void IceMapLayer::addLocationName(double theXPos,
 
       if (first_name.empty())
         y_coord_second = y_coord_first;
+      break;
     }
-    break;
     case 6:  // ylävasen
     {
       x_coord = theXPos - x_offset;
@@ -1022,8 +1022,8 @@ void IceMapLayer::addLocationName(double theXPos,
 
       if (second_name.empty())
         y_coord_first = y_coord_second;
+      break;
     }
-    break;
     case 7:  // yläoikea
     {
       x_coord = theXPos + 3;
@@ -1032,9 +1032,10 @@ void IceMapLayer::addLocationName(double theXPos,
 
       if (second_name.empty())
         y_coord_first = y_coord_second;
+      break;
     }
-    break;
     case 8:  // dont add name
+    default:
       break;
   }
 

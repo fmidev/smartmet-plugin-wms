@@ -230,9 +230,9 @@ int PresentWeatherObservationLayer::get_symbol_priority(int symbol) const
     case 255:
     case 48:
       return 10;
+    default:
+      return 0;
   }
-
-  return 0;
 }
 
 }  // namespace Dali

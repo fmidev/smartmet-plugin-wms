@@ -207,9 +207,12 @@ int FinnishRoadObservationLayer::get_symbol_priority(int symbol, double t2m) con
       case 222:
       case 224:
         return 10;
+      default:
+        return 0;
     }
   }
-  else if (t2m < 10)
+
+  if (t2m < 10)
   {
     // SPRING OR AUTUMN: 0 > t2m < 10
     switch (symbol)
@@ -235,45 +238,45 @@ int FinnishRoadObservationLayer::get_symbol_priority(int symbol, double t2m) con
       case 224:
       case 232:
         return 4;  // heavy
-    }
-  }
-  else
-  {
-    // SUMMER: t2m >= 10
-    switch (symbol)
-    {
-      case 51:
-      case 52:
+      default:
         return 0;
-      case 209:
-      case 219:
-        return 1;
-      case 212:
-      case 222:
-        return 2;
-      case 213:
-        return 3;
-      case 214:
-        return 4;
-      case 225:
-        return 5;
-      case 53:
-      case 223:
-        return 6;
-      case 224:
-      case 229:
-        return 7;
-      case 232:
-        return 8;
-      case 233:
-      case 234:
-      case 236:
-      case 244:
-        return 9;
     }
   }
 
-  return 0;
+  // SUMMER: t2m >= 10
+  switch (symbol)
+  {
+    case 51:
+    case 52:
+      return 0;
+    case 209:
+    case 219:
+      return 1;
+    case 212:
+    case 222:
+      return 2;
+    case 213:
+      return 3;
+    case 214:
+      return 4;
+    case 225:
+      return 5;
+    case 53:
+    case 223:
+      return 6;
+    case 224:
+    case 229:
+      return 7;
+    case 232:
+      return 8;
+    case 233:
+    case 234:
+    case 236:
+    case 244:
+      return 9;
+    default:
+      return 0;
+  }
 }
 
 }  // namespace Dali
