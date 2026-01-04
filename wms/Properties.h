@@ -29,7 +29,7 @@ class Properties
  public:
   friend TimeLayer;  // for more fine grained control
 
-  virtual ~Properties() = default;
+  virtual ~Properties();
 
   Properties() = default;
   Properties(const Properties& other) = delete;

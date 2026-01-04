@@ -35,6 +35,8 @@ class State;
 class View : public Properties
 {
  public:
+  ~View() override;
+
   void init(Json::Value& theJson,
             const State& theState,
             const Config& theConfig,

@@ -42,7 +42,7 @@ struct interval_dimension_item
 class WMSIntervalDimension
 {
  public:
-  virtual ~WMSIntervalDimension() = default;
+  virtual ~WMSIntervalDimension();
   WMSIntervalDimension(int interval_start, int interval_end, bool interval_default);
 
   WMSIntervalDimension() = delete;

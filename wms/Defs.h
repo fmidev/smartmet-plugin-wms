@@ -32,6 +32,7 @@ class State;
 class Defs : public Properties
 {
  public:
+  ~Defs() override;
   void init(Json::Value& theJson,
             const State& theState,
             const Config& theConfig,

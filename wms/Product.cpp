@@ -15,6 +15,8 @@ namespace Plugin
 {
 namespace Dali
 {
+Product::~Product() = default;
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize the product from JSON

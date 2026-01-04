@@ -61,6 +61,10 @@ void getProducersFromParameter(const char* param, std::set<std::string>& produce
 }
 }  // namespace
 
+// Out of line destructor to avoid vtable copies
+
+Properties::~Properties() = default;
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize a JSON attribute

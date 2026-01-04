@@ -9,6 +9,8 @@ namespace Plugin
 {
 namespace WMS
 {
+WMSIntervalDimension::~WMSIntervalDimension() = default;
+
 WMSIntervalDimension::WMSIntervalDimension(int interval_start,
                                            int interval_end,
                                            bool interval_default)

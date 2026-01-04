@@ -33,6 +33,7 @@ class State;
 class Product : public Properties
 {
  public:
+  ~Product() override;
   void init(Json::Value& theJson, const State& theState, const Config& theConfig);
   void check_errors(const std::string& name, std::set<std::string>& warnedURLs) const;
 

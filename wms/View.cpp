@@ -17,6 +17,10 @@ namespace Plugin
 {
 namespace Dali
 {
+
+// out of line destructor to avoid vtable copies
+View::~View() = default;
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Initialize the view from JSON
