@@ -58,7 +58,7 @@ void ColorPainter_ARGB::init(Json::Value &theJson, const State &theState)
       if (!cmap.empty())
       {
         colormap_hash = Fmi::hash(cmap);
-        colormap = std::shared_ptr < ColorMap > (new ColorMap(cmap));
+        colormap = std::make_shared<ColorMap>(cmap);
       }
       else
       {

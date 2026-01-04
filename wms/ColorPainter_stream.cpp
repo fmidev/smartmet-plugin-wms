@@ -82,7 +82,7 @@ void ColorPainter_stream::initStream(Json::Value &theJson,const State& theState)
     if (!json.isNull())
       initStreamSpeeds(json,theState);
 
-    if (streamSpeeds.size() == 0)
+    if (streamSpeeds.empty())
     {
       StreamSpeed speed;
       addStreamSpeed(speed);
@@ -111,7 +111,7 @@ void ColorPainter_stream::initStream(Json::Value &theJson,const State& theState)
       if (!cmap.empty())
       {
         colormap_hash = Fmi::hash(cmap);
-        colormap = std::shared_ptr<ColorMap>(new ColorMap(cmap));
+        colormap = std::make_shared<ColorMap>(cmap);
       }
       else
       {

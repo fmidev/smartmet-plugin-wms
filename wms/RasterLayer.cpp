@@ -77,37 +77,37 @@ void RasterLayer::init(Json::Value &theJson, const State &theState, const Config
 
     if (painter == "null")
     {
-      dataPainter.reset(new ColorPainter());
+      dataPainter = std::make_shared<ColorPainter>();
       dataPainter->init(theJson,theState);
     }
     else
     if (painter == "default")
     {
-      dataPainter.reset(new ColorPainter_ARGB());
+      dataPainter = std::make_shared<ColorPainter_ARGB>();
       dataPainter->init(theJson,theState);
     }
     else
     if (painter == "range")
     {
-      dataPainter.reset(new ColorPainter_range());
+      dataPainter = std::make_shared<ColorPainter_range>();
       dataPainter->init(theJson,theState);
     }
     else
     if (painter == "stream")
     {
-      dataPainter.reset(new ColorPainter_stream());
+      dataPainter = std::make_shared<ColorPainter_stream>();
       dataPainter->init(theJson,theState);
     }
     else
     if (painter == "border")
     {
-      dataPainter.reset(new ColorPainter_border());
+      dataPainter = std::make_shared<ColorPainter_border>();
       dataPainter->init(theJson,theState);
     }
     else
     if (painter == "shadow")
     {
-      dataPainter.reset(new ColorPainter_shadow());
+      dataPainter = std::make_shared<ColorPainter_shadow>();
       dataPainter->init(theJson,theState);
     }
 
@@ -261,7 +261,7 @@ void RasterLayer::generate_image(int loopstep,int loopsteps,const T::Coordinate_
   {
    // *********************  DATA SOURCE INDEPENDNT PAINTING *********
 
-    if (!values1.size())
+    if (values1.empty())
       return;
 
     int width = *projection.xsize;
@@ -301,17 +301,17 @@ void RasterLayer::generate_image(int loopstep,int loopsteps,const T::Coordinate_
     //int loopsteps = theState.animation_loopsteps;
 
     // Painting sea
-    if (sea_position == "bottom"  &&  land.size())
+    if (sea_position == "bottom"  &&  !land.empty())
       seaPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land,seaParameters);
 
     // Painting land
-    if (land_position == "bottom" &&  land.size())
+    if (land_position == "bottom" &&  !land.empty())
       landPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land,landParameters);
 
     // Painting sea topography
-    if (sea_shading_position == "bottom"  &&  sea_shadings.size() &&  coordinates)
+    if (sea_shading_position == "bottom"  &&  !sea_shadings.empty() &&  coordinates)
     {
-      if (sea_shadings.size() == 0)
+      if (sea_shadings.empty())
         SmartMet::Map::topography.getSeaShading(*coordinates,sea_shadings);
 
       shadingPainter.setImageColors(width,height,loopstep,loopsteps,image,land,sea_shadings,sea_shading_parameters);
@@ -320,14 +320,14 @@ void RasterLayer::generate_image(int loopstep,int loopsteps,const T::Coordinate_
     // Painting land topography
     if (land_shading_position == "bottom"  &&  coordinates)
     {
-      if (land_shadings.size() == 0)
+      if (land_shadings.empty())
         SmartMet::Map::topography.getLandShading(*coordinates,land_shadings);
 
       shadingPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land_shadings,land_shading_parameters);
     }
 
     // Painting land sea border
-    if (land_border_position == "bottom" &&  land.size())
+    if (land_border_position == "bottom" &&  !land.empty())
       landBorderPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land,landBorderParameters);
 
 
@@ -337,7 +337,7 @@ void RasterLayer::generate_image(int loopstep,int loopsteps,const T::Coordinate_
     // Painting the actual parameter
     if (dataPainter)
     {
-      if (!values2.size())
+      if (values2.empty())
         dataPainter->setImageColors(width,height,loopstep,loopsteps,image,land,values1,painterParameters);
       else
         dataPainter->setImageColors(width,height,loopstep,loopsteps,image,land,values1,values2,painterParameters);
@@ -348,11 +348,11 @@ void RasterLayer::generate_image(int loopstep,int loopsteps,const T::Coordinate_
       dataBorderPainter.setImageColors(width,height,loopstep,loopsteps,image,land,values1,emptyParameters);
 
     // Painting sea
-    if (sea_position == "top" &&  land.size())
+    if (sea_position == "top" &&  !land.empty())
       seaPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land,seaParameters);
 
     // Painting land
-    if (land_position == "top" &&  land.size())
+    if (land_position == "top" &&  !land.empty())
       landPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land,landParameters);
 
 
@@ -375,7 +375,7 @@ void RasterLayer::generate_image(int loopstep,int loopsteps,const T::Coordinate_
     }
 
     // Painting land sea border
-    if (land_border_position == "top" &&  land.size())
+    if (land_border_position == "top" &&  !land.empty())
       landBorderPainter.setImageColors(width,height,loopstep,loopsteps,image,land,land,landBorderParameters);
 
     std::ostringstream svgImage;
@@ -395,7 +395,7 @@ bool RasterLayer::isNewImageRequired(State &theState)
     if (!theState.animation_enabled)
       return true;
 
-    if (svg_image.length() == 0)
+    if (svg_image.empty())
       return true;
 
     if (dataPainter)
@@ -465,7 +465,7 @@ void RasterLayer::generate_output(CTPP::CDT &theGlobals, CTPP::CDT &theLayersCdt
     std::ostringstream useOut;
     useOut << "<use xlink:href=\"#" << qid << "\"/>\n";
 
-    if (visible  &&  svg_image.length())
+    if (visible  &&  !svg_image.empty())
       theGlobals["includes"][qid] = svg_image;
 
     theGlobals["bbox"] = Fmi::to_string(box.xmin()) + "," + Fmi::to_string(box.ymin()) + "," +
@@ -781,7 +781,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals, CTPP::CDT &theLayer
         if (!val->mValueVector.empty()  &&  c < 2)
         {
           p[c] = val;
-          if (query_param.mCoordinates.size())
+          if (!query_param.mCoordinates.empty())
             coordinates = &query_param.mCoordinates;
           c++;
         }

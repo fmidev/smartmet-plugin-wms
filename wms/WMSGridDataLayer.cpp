@@ -169,7 +169,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
     // printf("VALIDGEOMS %ld   FUNC %ld
     // geomId=%d\n",validGeometries.size(),functionGeometries.size(),itsGeometryId);
 
-    if (validGeometries.size() == 0 && functionGeometries.size() > 0)
+    if (validGeometries.empty() && !functionGeometries.empty())
       validGeometries = functionGeometries;
 
     std::map<Fmi::DateTime, std::shared_ptr<WMSTimeDimension>> newTimeDimensions;
@@ -183,7 +183,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
 
       // printf("-- GENERATION %s %u  (geom=%d fparam=%s  itsParam=%s
       // geoms=%ld)\n",generationInfo->mName.c_str(),generationInfo->mGenerationId,itsGeometryId,fparam.c_str(),itsParameter.c_str(),validGeometries.size());
-      if (itsGeometryId <= 0 && validGeometries.size() == 0)
+      if (itsGeometryId <= 0 && validGeometries.empty())
       {
         std::set<T::GeometryId> geometryIdList;
         if (contentServer->getContentGeometryIdListByGenerationId(
@@ -197,11 +197,11 @@ bool WMSGridDataLayer::updateLayerMetaData()
         validGeometries.insert(itsGeometryId);
       }
 
-      if (validGeometries.size() == 0)
+      if (validGeometries.empty())
         validGeometries.insert(itsGeometryId);
 
       int tmpGeometryId = itsGeometryId;
-      if (tmpGeometryId <= 0 && validGeometries.size() > 0)
+      if (tmpGeometryId <= 0 && !validGeometries.empty())
         tmpGeometryId = *validGeometries.begin();
 
       if (tmpGeometryId > 0)
@@ -265,7 +265,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
                                               mappings);
 
           // printf("MAPPINGS %ld\n",mappings.size());
-          if (mappings.size() == 0)
+          if (mappings.empty())
           {
             // Trying to find parameter mappings without levels.
 
@@ -273,7 +273,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
                 producerInfo.mName, parameterKey, tmpGeometryId, true, mappings);
 
             // printf("# MAPPINGS %ld\n",mappings.size());
-            if (mappings.size() == 0)
+            if (mappings.empty())
             {
               // Trying to find parameter mappings without geometry.
               itsGridEngine->getParameterMappings(producerInfo.mName, parameterKey, true, mappings);
@@ -281,7 +281,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
             // printf("## MAPPINGS %ld\n",mappings.size());
           }
 
-          if (mappings.size() > 0)
+          if (!mappings.empty())
           {
             parameterKey = mappings[0].mParameterKey;
             parameterLevelId = mappings[0].mParameterLevelId;
@@ -363,7 +363,7 @@ bool WMSGridDataLayer::updateLayerMetaData()
           return true;
       }
 
-      if (contentTimeList.size() > 0)
+      if (!contentTimeList.empty())
       {
         std::shared_ptr<WMSTimeDimension> timeDimension;
 

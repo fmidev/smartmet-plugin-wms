@@ -72,7 +72,7 @@ class ColorMap
 
     uint getSmoothColor(double value)
     {
-      if (mColors.size() == 0)
+      if (mColors.empty())
         return 0;
 
       auto it = mColors.find(value);

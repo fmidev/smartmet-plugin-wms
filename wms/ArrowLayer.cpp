@@ -118,7 +118,8 @@ PointValues read_forecasts(const ArrowLayer& layer,
 
     std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
     if (uparam && vparam && q->isRelativeUV())
-      uvtransformation.reset(new Fmi::CoordinateTransformation("WGS84", q->SpatialReference()));
+      uvtransformation =
+          std::make_shared<Fmi::CoordinateTransformation>("WGS84", q->SpatialReference());
 
     // Generate the coordinates for the arrows
 
@@ -382,7 +383,7 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
       std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
 
       if (relativeUV && originalCrs)
-        uvtransformation.reset(new Fmi::CoordinateTransformation("WGS84", originalCrs));
+        uvtransformation = std::make_shared<Fmi::CoordinateTransformation>("WGS84", originalCrs);
 
       uint len = vValues->getLength();
       for (uint t = 0; t < len; t++)
