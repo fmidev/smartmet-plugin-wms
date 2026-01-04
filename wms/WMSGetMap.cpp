@@ -724,6 +724,7 @@ std::vector<std::string> WMSGetMap::styles() const
   try
   {
     std::vector<std::string> ret;
+    ret.reserve(itsParameters.map_info_vector.size());
     for (const auto& map_info : itsParameters.map_info_vector)
       ret.push_back(map_info.style);
     return ret;
