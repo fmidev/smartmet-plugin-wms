@@ -36,8 +36,6 @@ struct GInfo
   std::ostringstream pointCoordinates;
 };
 
-FILE* file = nullptr;
-
 // ----------------------------------------------------------------------
 /*!
  * \brief Get the GeoJSON specific geometry name
