@@ -284,8 +284,6 @@ PointValues read_forecasts(const ArrowLayer& layer,
   }
 }  // namespace Dali
 
-}  // namespace
-
 PointValues read_gridForecasts(const ArrowLayer& layer,
                                const Engine::Grid::Engine* gridEngine,
                                QueryServer::Query& query,
@@ -429,6 +427,8 @@ PointValues read_gridForecasts(const ArrowLayer& layer,
     throw Fmi::Exception::Trace(BCP, "ArrowLayer failed to read observations from the database");
   }
 }
+
+}  // namespace
 
 // ----------------------------------------------------------------------
 /*!
