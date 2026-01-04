@@ -1259,8 +1259,7 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
           if (actualSettings.layout.legend_xoffset)
             localizedWidth += *(actualSettings.layout.legend_xoffset);
 
-          if (localizedWidth > isobandWidth)
-            isobandWidth = localizedWidth;
+          isobandWidth = std::max(isobandWidth, localizedWidth);
         }
         else if (layerType == "isoline")
         {

@@ -63,8 +63,7 @@ text_dimension_t get_row_dimension(const RowCellInfo& rci)
   for (const auto& ci : rci)
   {
     ret.width += ci.dimension.width;
-    if (ci.dimension.height > ret.height)
-      ret.height = ci.dimension.height;
+    ret.height = std::max(ret.height, ci.dimension.height);
   }
 
   return ret;
@@ -213,8 +212,7 @@ void TextTable::addTitle(const std::string& theData)
   itsTitleCellInfo.dimension =
       get_cell_dimension(itsTitleCellInfo.rows, itsAttributes.titleTextStyle());
   itsTitleCellInfo.yoffset = 0;
-  if (itsTitleCellInfo.dimension.width > itsTableWidth)
-    itsTableWidth = itsTitleCellInfo.dimension.width;
+  itsTableWidth = std::max(itsTableWidth, itsTitleCellInfo.dimension.width);
 }
 
 void TextTable::addFooter(const std::string& theData)
@@ -223,8 +221,7 @@ void TextTable::addFooter(const std::string& theData)
   itsFooterCellInfo.dimension =
       get_cell_dimension(itsFooterCellInfo.rows, itsAttributes.footerTextStyle());
   itsFooterCellInfo.yoffset = 0;
-  if (itsFooterCellInfo.dimension.width > itsTableWidth)
-    itsTableWidth = itsFooterCellInfo.dimension.width;
+  itsTableWidth = std::max(itsTableWidth, itsFooterCellInfo.dimension.width);
 }
 
 void TextTable::addHeader(const std::vector<std::string>& theData)
@@ -237,14 +234,9 @@ void TextTable::addHeader(const std::vector<std::string>& theData)
     itsHeaderCellInfo.push_back(cellInfo);
     rowWidth += cellInfo.dimension.width;
     if (column < itsColumnWidths.size())
-    {
-      if (cellInfo.dimension.width > itsColumnWidths[column])
-        itsColumnWidths[column] = cellInfo.dimension.width;
-    }
+      itsColumnWidths[column] = std::max(itsColumnWidths[column], cellInfo.dimension.width);
     else
-    {
       itsColumnWidths.push_back(cellInfo.dimension.width);
-    }
   }
   itsTableWidth = std::max(rowWidth, itsTableWidth);
 }
