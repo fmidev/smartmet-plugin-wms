@@ -190,6 +190,34 @@
 
 	
 	  <Layer queryable="1">
+      <Name>grid:animation</Name>
+      <Title>Animation demo</Title>
+      <Abstract>Demonstration of some animation features</Abstract>
+      </Layer>
+
+	  
+	  <Layer queryable="1">
+      <Name>grid:animation_1</Name>
+      <Title>Wind animation demo 1</Title>
+      <Abstract>Wind animation with single timestep</Abstract>
+      </Layer>
+
+	  
+	  <Layer queryable="1">
+      <Name>grid:animation_2</Name>
+      <Title>Wind and rain animation demo 1</Title>
+      <Abstract>Wind and rain animation with multiple timesteps (no loopsteps).</Abstract>
+      </Layer>
+
+	  
+	  <Layer queryable="1">
+      <Name>grid:animation_3</Name>
+      <Title>Wind and rain animation demo 1</Title>
+      <Abstract>Wind and rain animation with multiple timesteps (no loopsteps).</Abstract>
+      </Layer>
+
+	  
+	  <Layer queryable="1">
       <Name>grid:precipitation_1</Name>
       <Title>Demo product</Title>
       <Style>
