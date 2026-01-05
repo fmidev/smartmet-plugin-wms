@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 25.12.29
+Version: 26.1.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -166,6 +166,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Jan  5 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.1.5-1.fmi
+- Fixed potential memory leaks
+- Fixed typing errors in a list of tokens to check
+- Silenced several compiler warnings
+
 * Mon Dec 29 2025 Mika Heiskanen <mika.heiskanen@fmi.fi> 25.12.29-1.fmi
 - Improved raster layer support including animations
 
