@@ -58,6 +58,7 @@ BuildRequires: jsoncpp-devel
 BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
 BuildRequires: libconfig17-devel
+BuildRequires: libwebp13-devel
 BuildRequires: heatmap-devel
 %if %{defined el7}
 BuildRequires: librsvg2-devel = 2.40.6
@@ -73,6 +74,7 @@ Requires: %{smartmet_fmt}
 Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
+Requires: libwebp13
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 25.12.29
