@@ -57,6 +57,8 @@ void generate_isolines(std::vector<Isoline>& isolines,
   for (auto i = 0UL;; ++i)
   {
     double isovalue = startvalue + i * interval;
+    if (isovalue > endvalue)
+      break;
     if (!skip_value(isovalue, except_vector))
     {
       Isoline isoline;
