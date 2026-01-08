@@ -145,7 +145,7 @@ The table below shows an example of a product configuration file and the image t
 
 The product configuration files are written in Java Script Object Notation (JSON). In order to create your own product configuration files you just need to know what attributes are used on different configuration levels, i.e.,  what attributes can be given on the product level, on the view level and on the layer level. These attributes are described flater in this chapter. 
 
-
+	
 The attribute description for each attribute  consists of the attribute name, the attribute type, the default value and a short description of the attribute usage. In the attribute description the attribute type can be defined in the following ways:
 
 
@@ -1280,7 +1280,24 @@ The table below contains a list of attributes that can be defined for the stream
 
 The core concept of a raster layer is to render an image from a set of grid-based values, where each grid cell corresponds to a pixel in the resulting raster image. The color of each pixel is determined by mapping its associated value to a position within a predefined color map. This color map is essentially a list of value-color pairs, allowing for the identification of lower and upper bounds for each input value, along with their associated colors. By default, the final color is computed via linear interpolation between these bounds on a per-channel basis (A, R, G, B), resulting in a smooth color gradient. This technique eliminates hard boundaries between value regions, yielding a more continuous and visually intuitive representation.
 
-The value-to-color mapping is handled by so-called painter elements, which can vary in type. The current implementation supports three painter types. The first, named "default", utilizes a full value-to-color list to perform interpolation across multiple defined intervals. The second, called "range", functions similarly but operates over a single continuous value range. It is configured using only the minimum and maximum values of the dataset, along with their corresponding colors. It assumes that all grid values fall within this range and performs a direct linear interpolation between the defined endpoint colors. The third painter, called "stream", has the same idea as the Stream Layer, but the stream lines are drawn by using raster points. The direction of the stream lines are indicated by using the variation of the alfa channel. 
+The value-to-color mapping is handled by so-called painter elements, which can vary in type. The current implementation supports the following painter types. 
+
+1. Painter: "default"    
+The "default" painter, utilizes a full value-to-color list to perform interpolation across multiple defined intervals. The relationships between values and the colors are defined in the colormap file. It is also possible to use colors without interpolation (smooth_colors=false), which makes them look like the vector based isobands.
+
+2. Painter: "range"
+The "range" painter functions almost similarly as the "default" painter. The difference is that the value ranges are part of the layer definition. Each range contains the minimum and maximum values of the dataset, along with their corresponding colors. In addition a range definition can contain colors that should be used above or below the given range. Usually this is the fastest way to define simple color ranges. For example, clouds can be painted so that only the opacity of the white color is changed according to the cloud coverage percent.
+
+3. Painter: "stream"
+The "stream" painter has the same idea as the Stream Layer, but the stream lines are drawn by using raster points. The direction of the stream lines are painted by using the variation of the alfa channel. Notice that the "stream" painter is capable for painting animation steps, which means that it can paint stream lines differently in each loop steps. This creates a moving effect when multiple images are put into the same animation file (WebP -file). It is also possible to make stream lines move faster in certain areas and this way simulate different stream speeds in different areas.
+
+4. Painter: "border"
+The "border" painter can be used for painting different kinds of border lines (like isolines). The current painter paints each border by using two colors: inside color and the outside color. This improves their visibility. For example, if the inside color is white and the outside color is black, then the border should be visible almost everywhere, because the background color cannot be dark and light at the same time. Notice that the "border" painter is also used as an additional painter for each layer. This means that in spite of that we have selected the "master painter" to be "default","range" or "stream", we can use the "border" painter with the same parameter. For example, if we use the "range" painter to paint clouds, we might want to make cloud borders more visible by using "data_borders" definition with the current painter. This definition contains the same attributes that would be given normally to the "border" painter.
+
+5. Painter: "shadow"
+The "shadow" painter can be used for painting shadows for the actual data. For example, we can paint shadows for clouds or raining areas. The basic idea is that we pick data ranges from the actual and paint this data with party transparent colors. In addition we shift these areas so that they are painter a little bit different location than the original data. This creates quite nice shadow effects. Notice that the "shadow" painter is also used as an additional painter for each layer. This means that in spite of that we have selected the "master painter" to be "default","range" or "stream", we can use the "shadow" painter with the same parameter. For example, if we use the "range" painter to paint clouds, we might want to create some shadows for these cloud by using "data_shadows" definition with the current painter. This definition contains the same attributes that would be given normally to the "shadow" painter.
+
+   
 
 <img src="images/raster.png">
 
@@ -1291,34 +1308,128 @@ The value-to-color mapping is handled by so-called painter elements, which can v
   "source": "grid",
   "producer": "ec",
   "projection": {},
+  "animation" :
+  {
+    "enabled"           : false,  // Enables/disables the animation
+    "timesteps"         : 24,     // Number of animation timesteps
+    "timestep_interval" : 90,     // Frame interval time (= milliseconds) between timesteps
+    "data_timestep"     : 20,     // Timestep length (= minutes)in in the actual data
+    "loopsteps"         : 1,      // Number of animation steps inside the same timestep
+    "loopstep_interval" : 70      // Frame interval time (=milliseconds) between loopsteps
+  },
+
   "views": 
   [
     {
-      "layers": [
+      "layers":
+      [
         {
-          "qid"                  : "t",
-          "layer_type"           : "raster",
-          "compression"          : 9,               /* 1 = fast, low compression, 9 = slow, high compression */
-          "parameter"            : "temperature",
-          "interpolation"        : "linear",        /* linear,nearest */
-          "painter"              : "default",       /* default,range,stream */
-          "opacity_land"         : "1.0",           /* 0.0 - 1.0 */
-          "opacity_sea"   		 : "1.0",           /* 0.0 - 1.0 */
-          "colormap"      		 : "temperature",
-          "smooth"        		 : true,			
-          
-          "land_position"        : "none",          /* Position compared to the data layer (none,bottom,top) */
-          "land_color"           : "FFE0E0E0",
-          "sea_position"         : "top",           /* Position compared to the data layer (none,bottom,top) */
-          "sea_color"            : "FFCAF0F8",
+          // ************************************************************
+          //  Temperature
+          // ************************************************************
+          //  This demonstrates the usage of the "default" data painter,
+          //  which paints data values according to color definitions
+          //  specified in the "colormap" file.
+          // ************************************************************
 
-          "landShading_position" : "top",           /* Position compared to the data layer (none,bottom,top) */
-          "landShading_light"    : 128,             /* Light multiplier */
-          "landShading_shadow"   : 384,             /* Shadow multiplier */
+          "layer_type"            : "raster",
+          "qid"                   : "temperature-1",
+          "compression"           : 1,
+          "visible"               : true,
+          "parameter"             : "temperature",
+          "interpolation"         : "linear",
+          "data_painter"          : "default",
+          "data_opacity_land"     : 1.0,
+          "data_opacity_sea"      : 1.0,
+          "colormap"              : "temperature",
+          "smooth_colors"         : true,
 
-          "seaShading_position"  : "top",           /* Position compared to the data layer (none,bottom,top) */
-          "seaShading_light"     : 128,             /* Light multiplier */
-          "seaShading_shadow"    : 384              /* Shadow multiplier */
+          "land_position"         : "bottom",
+          "land_color"            : "FFD0D0D0",
+
+          "sea_position"          : "top",
+          "sea_color"             : "FFCCE0F8",
+
+          "land_border_position"  : "none",
+          "land_border_color"     : "80000000",
+          "sea_border_color"      : "80FFFFFF",
+
+          "land_shading_position" : "top",
+          "land_shading_light"    : 128,
+          "land_shading_shadow"   : 384,
+
+          "sea_shading_position"  : "top",
+          "sea_shading_light"     : 128,
+          "sea_shading_shadow"    : 384
+        }
+        ,
+        {
+          // ************************************************************
+          //  High clouds 
+          // ************************************************************
+          //  This demonstrates the usage of the "range" data painter,
+          //  which is almost the same as the "default" data painter. The
+          //  main diffence is that it does not have colormaps, but it
+          //  defines similar color ranges in the "ranges" array. In 
+          //  addition it can define colors that are outside of the given
+          //  range (color_low,color_high). This is a fast way to define
+          //  colors for data that does not require many color ranges.
+          //
+          //  Notice that in this example we use interpolation method
+          //  "transfer" that tries to calculate cloud transitions
+          //  with a different algorithm (i.e. it does not use linear
+          //  interpolation. The same algorithm can be used with rain.
+          // ************************************************************
+
+          "layer_type"            : "raster",
+          "qid"                   : "high-clouds-1",
+          "visible"               : true,
+          "compression"           : 1,
+          "parameter"             : "NH-PRCNT:ECGMTA:1008:6:0:1",
+          "interpolation"         : "transfer",
+          "data_painter"          : "range",
+          "data_opacity_land"     : 1.0,
+          "data_opacity_sea"      : 1.0,
+
+          "ranges" : [
+            {
+              "value_min"         : 10,
+              "value_max"         : 100,
+              "color_min"         : "20FFFFFF",
+              "color_max"         : "FFFFFFFF",
+              "color_low"         : "00000000",
+              "color_high"        : "00000000"
+            }
+          ]
+          ,
+          "data_shadows" : [
+            {
+              "value_min"         : 20,
+              "value_max"         : 100,
+              "color_min"         : "30000000",
+              "color_max"         : "30000000",
+              "dx"                : 5,
+              "dy"                : 5
+            }
+          ]
+          ,
+          "land_position"         : "none",
+          "land_color"            : "FF404040",
+
+          "sea_position"          : "none",
+          "sea_color"             : "FFCCE0F8",
+
+          "land_border_position"  : "top",
+          "land_border_color"     : "20000000",
+          "sea_border_color"      : "20FFFFFF",
+
+          "land_shading_position" : "none",
+          "land_shading_light"    : 256,
+          "land_shading_shadow"   : 384,
+
+          "sea_shading_position"  : "none",
+          "sea_shading_light"     : 128,
+          "sea_shading_shadow"    : 384
         }
       ]
     }
@@ -1329,62 +1440,85 @@ The value-to-color mapping is handled by so-called painter elements, which can v
 The table below contains a list of attributes that can be defined for the raster layer in addition to the common layer attributes.
 
 <pre><b>RasterLayer </b></pre>
-| Name          | Type     | Default value | Description                                                                    |
-| ------------- | -------- | ------------- | ------------------------------------------------------------------------------ |
-| parameter     | (string) | -             | The parameter name for the direction.                                          |
-| compression   | (int)    | 1             | Compression rate (1 = fast,low compression, 9 = slow, high compression).       |
-| interpolation | (string) | linear        | Interpolation method when fetching grid pixels (linear / nearest).             |
-| painter       | (string) | default       | Painter element (default / range / stream).                                    |
-| opacity_land  | (double) | 1.0           | Opacity of the painted parameter over the land (0 .. 1).                       |
-| opacity_sea   | (double) | 1.0           | Opacity of the painted parameter over the sea (0 .. 1).                        |
+| Name               | Type     | Default value | Description                                                                    |
+| ------------------ | -------- | ------------- | ------------------------------------------------------------------------------ |
+| parameter          | (string) | -             | The parameter name for the direction.                                          |
+| compression        | (int)    | 1             | Compression rate (1 = fast,low compression, 9 = slow, high compression).       |
+| interpolation      | (string) | linear        | Interpolation method when fetching grid pixels (linear / nearest / transfer).  |
+| data_painter       | (string) | default       | Painter element (default / range / stream / border / shadow / null).           |
+| data_opacity_land  | (double) | 1.0           | Opacity of the painted parameter over the land (0 .. 1).                       |
+| data_opacity_sea   | (double) | 1.0           | Opacity of the painted parameter over the sea (0 .. 1).                        |
 
 The raster layer can paint land and sea colors above or below of the painted parameter. This allows you to create some nice effects. For example, if you want to make sea areas darker than the land areas the you can paint sea areas above the parameter layer by using colors with some transparency (for example 20000000).
 
-| Name          | Type     | Default value | Description                                                                    |
-| ------------- | -------- | ------------- | ------------------------------------------------------------------------------ |
-| land_position | (string) | none          | Land layer position compared to the painted parameter (none,bottom,top).       |
-| land_color    | (ARGB)   | 00000000      | Land layer color.                                                              |
-| sea_position  | (string) | none          | Sea layer position compared to the painted parameter (none,bottom,top).        |
-| sea_color     | (ARGB)   | 00000000      | Sea layer color.                                                               |
+| Name                 | Type     | Default value | Description                                                                    |
+| -------------------- | -------- | ------------- | ------------------------------------------------------------------------------ |
+| land_position        | (string) | none          | Land layer position compared to the painted parameter (none,bottom,top).       |
+| land_color           | (ARGB)   | 00000000      | Land layer color.                                                              |
+| sea_position         | (string) | none          | Sea layer position compared to the painted parameter (none,bottom,top).        |
+| sea_color            | (ARGB)   | 00000000      | Sea layer color.                                                               |
+| land_border_position | (string) | none          | Land border position compared to the painted parameter (none,bottom,top).      |
+| land_border_color    | (ARGB)   | 00000000      | Land border color.                                                             |
+| sea_border_color     | (ARGB)   | 00000000      | Sea border color.                                                              |
 
 The raster layer can paint topographical shadings above or below the painted parameter. 
 
-| Name                 | Type     | Default value | Description                                                                      |
-| -------------------- | -------- | ------------- | -------------------------------------------------------------------------------- |
-| landShading_position | (string) | none          | Land shading layer position compared to the painted parameter (none,bottom,top). |
-| landShading_light    | (int)    | 0             | Multiplier for light areas (0..1000).                                            |
-| landShading_shadow   | (int)    | 0             | Multiplier for shadow areas (0..1000).                                           |
-| seaShading_position  | (string) | none          | Sea shading layer position compared to the painted parameter (none,bottom,top).  |
-| seaShading_light     | (int)    | 0             | Multiplier for light areas (0..1000). Bigger value inceases the lightness.       |
-| seaShading_shadow    | (int)    | 0             | Multiplier for shadow areas (0..1000). Bigger value inceases the darkness.       | 
+| Name                  | Type     | Default value | Description                                                                      |
+| --------------------- | -------- | ------------- | -------------------------------------------------------------------------------- |
+| land_shading_position | (string) | none          | Land shading layer position compared to the painted parameter (none,bottom,top). |
+| land_shading_light    | (int)    | 0             | Multiplier for light areas (0..1000).                                            |
+| land_shading_shadow   | (int)    | 0             | Multiplier for shadow areas (0..1000).                                           |
+| sea_shading_position  | (string) | none          | Sea shading layer position compared to the painted parameter (none,bottom,top).  |
+| sea_shading_light     | (int)    | 0             | Multiplier for light areas (0..1000). Bigger value inceases the lightness.       |
+| sea_shading_shadow    | (int)    | 0             | Multiplier for shadow areas (0..1000). Bigger value inceases the darkness.       | 
+
+The raster layer can create borders for the actual parameter. Technically this uses the "border" painter functionality, but in this case is more like an addition to the current painter.
+
+| Name                  | Type     | Default value | Description                                                                      |
+| --------------------- | -------- | ------------- | -------------------------------------------------------------------------------- |
+| data_borders          | (struct) |               | This is a structure that contain same attributes as the "border" painter uses.   |
+
+The raster layer can create shadows for the actual parameter. Technically this uses the "shadow" painter functionality, but in this case is more like an addition to the current painter.
+
+| Name                  | Type     | Default value | Description                                                                      |
+| --------------------- | -------- | ------------- | -------------------------------------------------------------------------------- |
+| data_shadows          | (struct) |               | This is a structure that contain same attributes as the "shadow" painter uses.   |
+
 
 Attributes for the painter "default".
 
 | Name          | Type     | Default value | Description                                                                     |
 | ------------- | -------- | ------------- | ------------------------------------------------------------------------------- |
 | colormap      | (string) |               | Name of the colormap for "default" painter. This refers to a colormap file.     |
-| smooth        | (bool)   | true          | Should the painter use "smooth colors" i.e. linarly interpolate colors.         |
+| smooth_colors | (bool)   | true          | Should the painter use "smooth colors" i.e. linarly interpolate colors.         |
 
 Attributes for the painter "range".
 
 | Name          | Type     | Default value | Description                                                                     |
 | ------------- | -------- | ------------- | ------------------------------------------------------------------------------- |
-| min_value     | (float)  |               | The minimum value of the value range.                                           |
-| max_value     | (float)  |               | The maximum value of the value range.                                           |
-| min_color     | (ARGB)   | 00000000      | The color used with the minimum value (min_value).                              |
-| max_color     | (ARGB)   | 00000000      | The color used with the maximum value (max_value).                              |
-| low_color     | (ARGB)   | 00000000      | The color used with values that are smaller than the minimum value (min_value). |
-| high_color    | (ARGB)   | 00000000      | The color used with values that are bigger than the maximum value (max_value).  |
+| ranges        | (array)  |               | Array of range structures.                                                      |
+
+Attributes for the "range" structure.
+
+| Name          | Type     | Default value | Description                                                                     |
+| ------------- | -------- | ------------- | ------------------------------------------------------------------------------- |
+| value_min     | (float)  |               | The minimum value of the value range.                                           |
+| value_max     | (float)  |               | The maximum value of the value range.                                           |
+| color_min     | (ARGB)   | 00000000      | The color used with the minimum value (min_value).                              |
+| color_max     | (ARGB)   | 00000000      | The color used with the maximum value (max_value).                              |
+| color_low     | (ARGB)   | 00000000      | The color used with values that are smaller than the minimum value (min_value). |
+| color_high    | (ARGB)   | 00000000      | The color used with values that are bigger than the maximum value (max_value).  |
 
 Attributes for the painter "stream".
 
 | Name              | Type     | Default value | Description                                                                 |
 | ----------------- | -------- | ------------- | --------------------------------------------------------------------------- |
 | stream_color      | (RGB)    | 000000        | The color used for stream lines.                                            |
-| stream_min_length | (int)    | 5             | Minimum generated stream length in pixels.                                  |
-| stream_max_length | (int)    | 2048          | Maximum generated stream length in pixels.                                  |
-| stream_step_x     | (int)    | 10            | Streamline start point step size in x-direction.                            |
-| stream_step_y     | (int)    | 10            | Streamline start point step size in y-direction.                            |
+| trace_length_min  | (int)    | 10            | Minimum trace length of the stream line.                                    |
+| trace_length_max  | (int)    | 128           | Maximum trace length of the steram line.                                    |
+| trace_step_x      | (int)    | 10            | Stream line trace start point step size in x-direction.                     |
+| trace_step_y      | (int)    | 10            | Stream line trace start point step size in y-direction.                     |
+| line_length       | (int)    | 16            | Length of the line segment.                     |
 
 Stream lines can use colors for indicating the speed of the stream. In this case the 'parameter' attribute is replaced with 'speed' and 'direction' attributes. In addition, the 'colormap' attribute is used for selecting stream color according to the speed value.
 
@@ -1393,6 +1527,48 @@ Stream lines can use colors for indicating the speed of the stream. In this case
 | direction     | (string) | -             | The parameter name for the direction.                                       |
 | speed         | (string) | -             | The parameter name for the speed.                                           |
 | colormap      | (string) |               | Name of the colormap for "default" painter. This refers to a colormap file. |
+| smooth_colors | (bool)   | true          | Should the painter use "smooth colors" i.e. linarly interpolate colors.     |
+
+If the data is given as 'parameter' attribute (without speed information) then the painter needs line colors. 
+
+| Name             | Type     | Default value | Description                                                              |
+| ---------------- | -------- | ------------- | ------------------------------------------------------------------------ |
+| line_color_land  | (ARGB)   | FF000000      | The stream line color on the land area.                                  |
+| line_color_sea   | (ARGB)   | FF000000      | The stream line color on the sea area.                                   |
+
+Attributes for the "border" painter.
+
+| Name              | Type     | Default value | Description                                                             |
+| ----------------- | -------- | ------------- | ----------------------------------------------------------------------- |
+| borders           | (array)  |               | The array of "border" structures.                                       |
+
+Attributes for the "border" structure.
+
+| Name              | Type     | Default value | Description                                                             |
+| ----------------- | -------- | ------------- | ----------------------------------------------------------------------- |
+| inside_value_min  | (float)  |               | The values bigger than this are inside the given border.                |
+| steps             | (int)    |               | The number of steps (we can paint multiple borders by using steps).     |
+| step_increase     | (float)  |               | After each step the "inside_value_min" is increased with this number.   |
+| inside_color      | (ARGB)   | 00000000      | The border color inside the curren area.                                |
+| outside_color     | (ARGB)   | 00000000      | The border color outside the current area.                              |
+
+Attributes for the "shadow" painter.
+
+| Name              | Type     | Default value | Description                                                             |
+| ----------------- | -------- | ------------- | ----------------------------------------------------------------------- |
+| shadows           | (array)  |               | The array of "shadow" structures.                                       |
+
+Attributes for the "shadow" structure.
+
+| Name          | Type     | Default value | Description                                                                 |
+| --------------| -------- | ------------- | --------------------------------------------------------------------------- |
+| value_min     | (float)  |               | The minimum value of the value range.                                       |
+| value_max     | (float)  |               | The maximum value of the value range.                                       |
+| color_min     | (ARGB)   | 00000000      | The color used with the minimum value (min_value).                          |
+| color_max     | (ARGB)   | 40000000      | The color used with the maximum value (max_value).                          |
+| dx            | (int)    | 10            | The number of pixels that the shadow painting is shifted in x-direction .   |
+| dy            | (int)    | 10            | The number of pixels that the shadow painting is shifted in y-direction .   |
+
 
 
 #### LegendLayer
