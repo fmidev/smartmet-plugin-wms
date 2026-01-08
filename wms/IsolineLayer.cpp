@@ -356,6 +356,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
     offset = conv.offset;
   }
 
+  auto crs = projection.getCRS();
   const auto& box = projection.getBox();
   const auto clipbox = getClipBox(box);
 
@@ -518,7 +519,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   if (smoother.degree)
     originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
                                                    Fmi::to_string(*smoother.degree));
-
+/*
   if (minarea)
   {
     const auto& box = projection.getBox();
@@ -529,6 +530,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
     originalGridQuery->mAttributeList.addAttribute("contour.minArea", Fmi::to_string(area));
   }
+*/
 
   originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
                                                  Fmi::to_string(extrapolation));
@@ -570,7 +572,22 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
           OGRGeometry* geom = nullptr;
           OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
           auto geomPtr = OGRGeometryPtr(geom);
-          geoms.push_back(geomPtr);
+
+          if (geomPtr  &&  minarea  &&  crs.get())
+          {
+            auto area = *minarea;
+            if (areaunit == "px^2")
+              area = box.areaFactor() * area;
+
+            OGRGeometryPtr tmp(geomPtr);
+            tmp->assignSpatialReference(crs.get());
+            tmp.reset(Fmi::OGR::despeckle(*tmp, area));
+            geoms.push_back(tmp);
+          }
+          else
+          {
+            geoms.push_back(geomPtr);
+          }
         }
       }
     }

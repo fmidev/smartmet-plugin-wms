@@ -641,6 +641,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     else
       throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
 
+    /*
     if (minarea)
     {
       auto area = *minarea;
@@ -649,6 +650,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
       originalGridQuery->mAttributeList.addAttribute("contour.minArea", Fmi::to_string(area));
     }
+    */
 
     originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
                                                    Fmi::to_string(extrapolation));
@@ -690,7 +692,21 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
             OGRGeometry* geom = nullptr;
             OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
             auto geomPtr = OGRGeometryPtr(geom);
-            geoms.push_back(geomPtr);
+            if (geomPtr  &&  minarea  &&  crs.get())
+            {
+              auto area = *minarea;
+              if (areaunit == "px^2")
+                area = box.areaFactor() * area;
+
+              OGRGeometryPtr tmp(geomPtr);
+              tmp->assignSpatialReference(crs.get());
+              tmp.reset(Fmi::OGR::despeckle(*tmp, area));
+              geoms.push_back(tmp);
+            }
+            else
+            {
+              geoms.push_back(geomPtr);
+            }
           }
 #if 0
           int width = 3600; //atoi(query.mAttributeList.getAttributeValue("grid.width"));
