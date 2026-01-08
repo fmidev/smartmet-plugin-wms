@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.1.5
+Version: 26.1.8
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -32,7 +32,7 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
-BuildRequires: smartmet-library-giza-devel >= 25.12.29
+BuildRequires: smartmet-library-giza-devel >= 26.1.5
 BuildRequires: smartmet-library-grid-content-devel >= 25.12.29
 BuildRequires: smartmet-library-grid-files-devel >= 25.12.29
 BuildRequires: smartmet-library-macgyver-devel >= 25.12.2
@@ -84,7 +84,7 @@ Requires: smartmet-library-trax >= 25.9.29
 Requires: smartmet-library-macgyver >= 25.12.2
 Requires: smartmet-library-spine >= 25.12.12
 Requires: smartmet-library-timeseries >= 25.12.29
-Requires: smartmet-library-giza >= 25.12.29
+Requires: smartmet-library-giza >= 26.1.5
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 25.10.8
 %endif
@@ -93,7 +93,7 @@ Requires: smartmet-engine-contour >= 25.2.18
 Requires: smartmet-engine-gis >= 25.9.29
 Requires: smartmet-engine-grid >= 25.12.29
 Requires: smartmet-engine-geonames >= 25.12.2
-Requires: smartmet-server >= 25.12.2
+Requires: smartmet-server >= 26.1.2
 Requires: smartmet-library-spine >= 25.12.12
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
@@ -120,9 +120,9 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-gis-devel >= 25.9.29
 #TestRequires: smartmet-engine-querydata-devel >= 25.12.29
 #TestRequires: smartmet-engine-authentication-devel >= 25.10.8
-#TestRequires: smartmet-library-giza-devel >= 25.12.29
+#TestRequires: smartmet-library-giza-devel >= 26.1.5
 #TestRequires: smartmet-library-trax-devel >= 25.9.29
-#TestRequires: smartmet-library-newbase-devel >= 25.3.20
+#TestRequires: smartmet-library-newbase-devel >= 26.1.7
 #TestRequires: smartmet-library-macgyver-devel >= 25.12.2
 #TestRequires: smartmet-library-spine-devel >= 25.12.12
 #TestRequires: smartmet-library-timeseries-devel >= 25.12.29
@@ -168,6 +168,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Jan  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.1.8-1.fmi
+- Added minarea support for GRID data
+
 * Mon Jan  5 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.1.5-1.fmi
 - Fixed potential memory leaks
 - Fixed typing errors in a list of tokens to check
