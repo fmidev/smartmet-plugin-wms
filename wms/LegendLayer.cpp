@@ -655,6 +655,8 @@ std::size_t LegendLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_value(symbols, theState));
     Fmi::hash_combine(hash, Dali::hash_value(labels, theState));
     Fmi::hash_combine(hash, Dali::hash_value(isobands, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(isolines, theState));
+    Fmi::hash_combine(hash, Dali::hash_value(symbol_vector, theState));
     return hash;
   }
   catch (...)
