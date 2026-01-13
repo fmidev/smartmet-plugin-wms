@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.1.8
+Version: 26.1.13
 Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -42,7 +42,7 @@ BuildRequires: smartmet-library-timeseries-devel >= 25.12.29
 BuildRequires: smartmet-engine-authentication-devel >= 25.10.8
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 25.12.29
+BuildRequires: smartmet-engine-observation-devel >= 26.1.13
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 25.9.29
 BuildRequires: smartmet-engine-grid-devel >= 25.12.29
@@ -139,7 +139,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 25.12.29
+#TestRequires: smartmet-engine-observation-devel >= 26.1.13
 %endif
 
 %description
@@ -168,6 +168,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Jan 13 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.1.13-1.fmi
+- Repackage due to smartmet-engine-observation changes
+
 * Thu Jan  8 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.1.8-2.fmi
 - Fixed hash value calculation of legends
 
