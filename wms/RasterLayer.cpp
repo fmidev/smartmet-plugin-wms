@@ -12,6 +12,7 @@
 #include "ValueTools.h"
 #include "ColorPainter_ARGB.h"
 #include "ColorPainter_border.h"
+#include "ColorPainter_rain.h"
 #include "ColorPainter_range.h"
 #include "ColorPainter_shading.h"
 #include "ColorPainter_stream.h"
@@ -96,6 +97,12 @@ void RasterLayer::init(Json::Value &theJson, const State &theState, const Config
     if (painter == "stream")
     {
       dataPainter = std::make_shared<ColorPainter_stream>();
+      dataPainter->init(theJson,theState);
+    }
+    else
+    if (painter == "rain")
+    {
+      dataPainter = std::make_shared<ColorPainter_rain>();
       dataPainter->init(theJson,theState);
     }
     else
@@ -268,6 +275,12 @@ void RasterLayer::generate_image(int loopstep,int loopsteps,const T::Coordinate_
     int height = *projection.ysize;
     uint sz = width * height;
 
+    // If the animation is not enabled on this layer, then we should return
+    // the same image in all loopsteps.
+
+    if (!animation_enabled)
+      loopstep = 0;
+
     int rotate = 0;
     if (coordinates && coordinates->size() > C_UINT(10*width)  &&  (*coordinates)[0].y() < (*coordinates)[10*width].y())
       rotate = 1;
@@ -296,9 +309,6 @@ void RasterLayer::generate_image(int loopstep,int loopsteps,const T::Coordinate_
     cimage.height = height;
     cimage.pixel = image;
     Parameters emptyParameters;
-
-    //int idx = theState.animation_loopstep;
-    //int loopsteps = theState.animation_loopsteps;
 
     // Painting sea
     if (sea_position == "bottom"  &&  !land.empty())
@@ -422,7 +432,15 @@ void RasterLayer::generate_output(CTPP::CDT &theGlobals, CTPP::CDT &theLayersCdt
   {
     // *********************  DATA SOURCE INDEPENDENT PAINTING *********
 
-    if (isNewImageRequired(theState) && visible)
+    bool vis = true;
+    if (theState.animation_enabled)
+    {
+      vis = isAnimationStepVisible(theState);
+      if (!vis)
+       svg_image = "";
+    }
+
+    if (isNewImageRequired(theState) && visible  &&  vis)
     {
       CImage cimage;
       generate_image(theState.animation_loopstep,theState.animation_loopsteps,coordinates,values1,values2,cimage);

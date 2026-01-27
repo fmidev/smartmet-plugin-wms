@@ -99,6 +99,12 @@ void Layer::init(Json::Value& theJson,
     json = JsonTools::remove(theJson, "legend_url_layer");
 
     JsonTools::remove_bool(visible, theJson, "visible");
+    JsonTools::remove_bool(animation_enabled, theJson, "animation_enabled");
+
+    json = JsonTools::remove(theJson, "animation_effects");
+    if (!json.isNull())
+      animation_effects.init(json);
+
   }
   catch (...)
   {
@@ -536,6 +542,30 @@ bool Layer::isFlashOrMobileProducer(const std::string& producer)
 {
   return (producer == "flash" || producer == "roadcloud" || producer == "netatmo");
 }
+
+
+
+bool Layer::isAnimationStepVisible(const State& theState) const
+{
+  try
+  {
+    if (theState.animation_enabled)
+    {
+      for (auto it = animation_effects.effects.begin(); it != animation_effects.effects.end(); ++it)
+      {
+        if (it->effect == "hide"  &&  theState.animation_loopstep >= it->start_step  && theState.animation_loopstep <= it->end_step)
+          return false;
+      }
+    }
+
+    return true;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
 
 }  // namespace Dali
 }  // namespace Plugin
