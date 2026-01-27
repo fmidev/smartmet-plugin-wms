@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.1.13
-Release: 2%{?dist}.fmi
+Version: 26.1.27
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -35,7 +35,7 @@ BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 26.1.5
 BuildRequires: smartmet-library-grid-content-devel >= 25.12.29
 BuildRequires: smartmet-library-grid-files-devel >= 25.12.29
-BuildRequires: smartmet-library-macgyver-devel >= 26.1.8
+BuildRequires: smartmet-library-macgyver-devel >= 26.1.26
 BuildRequires: smartmet-library-spine-devel >= 26.1.8
 BuildRequires: smartmet-library-timeseries-devel >= 25.12.29
 %if %{with authentication}
@@ -47,7 +47,7 @@ BuildRequires: smartmet-engine-observation-devel >= 26.1.13
 BuildRequires: smartmet-engine-gis-devel >= 25.9.29
 BuildRequires: smartmet-engine-grid-devel >= 25.12.29
 BuildRequires: smartmet-engine-geonames-devel >= 25.12.2
-BuildRequires: smartmet-engine-querydata-devel >= 25.12.29
+BuildRequires: smartmet-engine-querydata-devel >= 26.1.19
 BuildRequires: smartmet-engine-contour-devel >= 25.2.18
 BuildRequires: smartmet-library-gis-devel >= 25.12.29
 BuildRequires: smartmet-library-trax-devel >= 25.9.29
@@ -81,14 +81,14 @@ Requires: smartmet-library-grid-content >= 25.12.29
 Requires: smartmet-library-grid-files >= 25.12.29
 Requires: smartmet-library-gis >= 25.12.29
 Requires: smartmet-library-trax >= 25.9.29
-Requires: smartmet-library-macgyver >= 26.1.8
+Requires: smartmet-library-macgyver >= 26.1.26
 Requires: smartmet-library-spine >= 26.1.8
 Requires: smartmet-library-timeseries >= 25.12.29
 Requires: smartmet-library-giza >= 26.1.5
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 25.10.8
 %endif
-Requires: smartmet-engine-querydata >= 25.12.29
+Requires: smartmet-engine-querydata >= 26.1.19
 Requires: smartmet-engine-contour >= 25.2.18
 Requires: smartmet-engine-gis >= 25.9.29
 Requires: smartmet-engine-grid >= 25.12.29
@@ -118,12 +118,12 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-contour-devel >= 25.2.18
 #TestRequires: smartmet-engine-geonames-devel >= 25.12.2
 #TestRequires: smartmet-engine-gis-devel >= 25.9.29
-#TestRequires: smartmet-engine-querydata-devel >= 25.12.29
+#TestRequires: smartmet-engine-querydata-devel >= 26.1.19
 #TestRequires: smartmet-engine-authentication-devel >= 25.10.8
 #TestRequires: smartmet-library-giza-devel >= 26.1.5
 #TestRequires: smartmet-library-trax-devel >= 25.9.29
 #TestRequires: smartmet-library-newbase-devel >= 26.1.7
-#TestRequires: smartmet-library-macgyver-devel >= 26.1.8
+#TestRequires: smartmet-library-macgyver-devel >= 26.1.26
 #TestRequires: smartmet-library-spine-devel >= 26.1.8
 #TestRequires: smartmet-library-timeseries-devel >= 25.12.29
 #TestRequires: smartmet-engine-grid-devel >= 25.12.29
@@ -168,6 +168,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Jan 27 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> 26.1.27-1.fmi
+- New animation effects
+
 * Tue Jan 13 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.1.13-1.fmi
 - Repackage due to smartmet-engine-observation changes
 
