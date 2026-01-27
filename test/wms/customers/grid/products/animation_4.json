@@ -1,6 +1,6 @@
 {
-  "title"     : "Wind animation demo 1",
-  "abstract"  : "Wind animation with single timestep",
+  "title"     : "Rain animation demo 4",
+  "abstract"  : "Rain animation with single timestep",
   "source"    : "grid",
   "producer"  : "ec",
 
@@ -10,8 +10,8 @@
     "timesteps"         : 1,      // Number of animation timesteps
     "timestep_interval" : 90,     // Frame interval time (= milliseconds) between timesteps
     "data_timestep"     : 20,     // Timestep length (= minutes)in in the actual data
-    "loopsteps"         : 15,     // Number of animation steps inside the same timestep
-    "loopstep_interval" : 70      // Frame interval time (=milliseconds) between loopsteps
+    "loopsteps"         : 16,     // Number of animation steps inside the same timestep
+    "loopstep_interval" : 60      // Frame interval time (=milliseconds) between loopsteps
   },
 
   "projection": {},
@@ -21,7 +21,7 @@
       [
         {
           // ************************************************************
-          //  Wind speed isobands
+          //  Rain isobands
           // ************************************************************
           //  This demonstrates the usage of the "default" data painter,
           //  which paints data values according to color definitions
@@ -29,22 +29,32 @@
           // ************************************************************
 
           "layer_type"            : "raster",
-          "qid"                   : "windspeed-colors-1",
+          "qid"                   : "rain-colors-1",
           "visible"               : true,
           "compression"           : 1,
-          "parameter"             : "WindSpeedMS",
+          "parameter"             : "RRR-KGM2",
           "interpolation"         : "linear",
           "data_painter"          : "default",
-          "data_opacity_land"     : 0.0,
-          "data_opacity_sea"      : 0.3,
-          "colormap"              : "windspeed",
+          "data_opacity_land"     : 0.9,
+          "data_opacity_sea"      : 0.9,
+          "colormap"              : "precipitation",
           "smooth_colors"         : true,
+          
+          "data_shadows" : [
+            {
+              "value_min"         : 0.2,
+              "value_max"         : 100.0,
+              "color_min"         : "30000000",
+              "color_max"         : "30000000",
+              "dx"                : 5,
+              "dy"                : 5
+            }
+          ],
 
-          "land_position"         : "none",
-          "land_color"            : "FF404040",
-
-          "sea_position"          : "bottom",
-          "sea_color"             : "FFFFFFFF",
+          "land_position"        : "bottom",       
+          "land_color"           : "FFF0F0F0",
+          "sea_position"         : "bottom",       
+          "sea_color"            : "FFCAF0F8",
 
           "land_border_position"  : "top",
           "land_border_color"     : "80000000",
@@ -61,14 +71,14 @@
         ,
         {
           // ************************************************************
-          //  Wind speed streams
+          //  Rain 
           // ************************************************************
-          //  This demonstrates the usage of the "stream" data painter,
-          //  which paints stream lines according to color definitions
+          //  This demonstrates the usage of the "rain" data painter,
+          //  which paints rain dropping according to color definitions
           //  specified in the "colormap" file. The current painter is
           //  also an animation painter, which means that it can paint
-          //  stream lines differently in all animation loopsteps. It
-          //  can also animate stream lines so that they look to have
+          //  rain dropping differently in all animation loopsteps. It
+          //  can also animate rain dropping so that they look to have
           //  different speeds according to their speed data values.
           //  in this case there must be a list of speed ranges with
           //  minimum and maximum data values. Notice that the line
@@ -76,34 +86,32 @@
           // ************************************************************
 
           "layer_type"            : "raster",
-          "qid"                   : "wind-streams-1",
+          "qid"                   : "rain-streams-1",
           "visible"               : true,
           "compression"           : 1,
-          "direction"             : "WindDirection",
-          "speed"                 : "WindSpeedMS",
-          "data_painter"          : "stream",
-          "data_opacity_land"     : 0.0,
-          "data_opacity_sea"      : 0.7,
-
+          "parameter"             : "RRR-KGM2",
+          "data_painter"          : "rain",
+          "data_opacity_land"     : 1.0,
+          "data_opacity_sea"      : 1.0,
+          
           "stream" :
           {
-            "trace_step_x"        : 10,
-            "trace_step_y"        : 10,
-            "trace_length_min"    : 10,
-            "trace_length_max"    : 180,
-            "line_length"         : 20,
-            "colormap"            : "windspeed",
+            "line_length"         : 16,
+            "colormap"            : "precipitation2",
+            "step_x"              : 2,
 
             "speeds" : [
-              {"speed":0.5,  "value_min":0,  "value_max":3},
-              {"speed":1.0,  "value_min":3,  "value_max":5},
-              {"speed":2.0,  "value_min":5,  "value_max":7},
-              {"speed":2.0,  "value_min":7,  "value_max":10},
-              {"speed":3.0,  "value_min":10, "value_max":14},
-              {"speed":4.0,  "value_min":14, "value_max":20},
-              {"speed":5.0,  "value_min":20, "value_max":100}
+              {"speed":0.5,  "value_min":0.0,  "value_max":0.1},
+              {"speed":1.0,  "value_min":0.1,  "value_max":0.2},
+              {"speed":1.0,  "value_min":0.2,  "value_max":0.5},
+              {"speed":2.0,  "value_min":0.5,  "value_max":1.0},
+              {"speed":2.0,  "value_min":1.0,  "value_max":2.0},
+              {"speed":3.0,  "value_min":2.0,  "value_max":5.0},
+              {"speed":3.0,  "value_min":5.0,  "value_max":10.0},
+              {"speed":4.0,  "value_min":10.0, "value_max":100.0}
             ]
           }
+          
           ,
           "land_position"         : "none",
           "land_color"            : "FF808080",
@@ -126,34 +134,40 @@
         ,
         {
           // ************************************************************
-          //  Pressure isolines
+          //  Thunder 
           // ************************************************************
-          //  This demonstrates the usage of the "border" data painter,
-          //  which paints borders inside and outside of the given data
-          //  area. There can be multiple border defintions and it is
-          //  also possible to define multiple borders with a singe 
-          //  border definition. In this case there should be number
-          //  of steps and "step_increase" value that define how much
-          //  the "inside_value_min" is changed between each step. 
+          //  This demonstrates the usage of the "blinking" effect in
+          //  animation. The idea is that we can hide the current layer
+          //  during the certain animation steps, which makes it blinking.
           // ************************************************************
 
           "layer_type"            : "raster",
-          "qid"                   : "pressure-1",
+          "qid"                   : "thunder-1",
           "visible"               : true,
           "compression"           : 1,
-          "parameter"             : "P-PA",
-          "interpolation"         : "linear",
-          "data_painter"          : "border",
-          "data_opacity_land"     : 0.5,
+          "parameter"             : "POT-PRCNT:ECGMTA:1007:6:0:1",
+          "data_opacity_land"     : 1.0,
           "data_opacity_sea"      : 1.0,
-
-          "borders" : [
+          
+          "data_painter"   : "range",
+          "ranges" : [
             {
-              "inside_value_min"  : 97000,
-              "inside_color"      : "A0000000",
-              "outside_color"     : "FFFFFFFF",
-              "steps"             : 150,
-              "step_increase"     : 150
+              "value_min"  : 10,
+              "value_max"  : 100,
+              "color_min"  : "80FFFF00",
+              "color_max"  : "FFFFFF00",
+              "color_low"  : "00000000",
+              "color_high" : "FFFFFF00"
+            }
+          ]
+          ,
+          "animation_effects" :
+          [
+            {
+              "enabled"    : true,
+              "effect"     : "hide",
+              "start_step" : 5,
+              "end_step"   : 1000
             }
           ]
           ,
@@ -161,15 +175,15 @@
           "land_color"            : "FF808080",
 
           "sea_position"          : "none",
-          "sea_color"             : "FFCCE0F8",
+          "sea_color"             : "FFFFFFFF",
 
           "land_border_position"  : "none",
-          "land_border_color"     : "20000000",
-          "sea_border_color"      : "20FFFFFF",
+          "land_border_color"     : "80000000",
+          "sea_border_color"      : "80FFFFFF",
 
           "land_shading_position" : "none",
-          "land_shading_light"    : 128,
-          "land_shading_shadow"   : 384,
+          "land_shading_light"    : 256,
+          "land_shading_shadow"   : 256,
 
           "sea_shading_position"  : "none",
           "sea_shading_light"     : 128,

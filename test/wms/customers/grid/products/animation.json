@@ -251,13 +251,13 @@
 
           "layer_type"            : "raster",
           "qid"                   : "precipitation-1",
-          "visible"               : false,
+          "visible"               : true,
           "compression"           : 1,
           "parameter"             : "RRR-KGM2",
           "interpolation"         : "transfer",
           "data_painter"          : "default",
-          "data_opacity_land"     : 0.7,
-          "data_opacity_sea"      : 0.7,
+          "data_opacity_land"     : 0.9,
+          "data_opacity_sea"      : 0.9,
           "colormap"              : "precipitation",
           "data_shadows" : [
             {
@@ -283,6 +283,127 @@
           "land_shading_position" : "none",
           "land_shading_light"    : 128,
           "land_shading_shadow"   : 384,
+
+          "sea_shading_position"  : "none",
+          "sea_shading_light"     : 128,
+          "sea_shading_shadow"    : 384
+        }
+        ,
+        {
+          // ************************************************************
+          //  Rain 
+          // ************************************************************
+          //  This demonstrates the usage of the "rain" data painter,
+          //  which paints rain dropping according to color definitions
+          //  specified in the "colormap" file. The current painter is
+          //  also an animation painter, which means that it can paint
+          //  rain dropping differently in all animation loopsteps. It
+          //  can also animate rain dropping so that they look to have
+          //  different speeds according to their speed data values.
+          //  in this case there must be a list of speed ranges with
+          //  minimum and maximum data values. Notice that the line
+          //  colors comes from the colormap file also in this case.
+          // ************************************************************
+
+          "layer_type"            : "raster",
+          "qid"                   : "rain-streams-1",
+          "visible"               : true,
+          "compression"           : 1,
+          "parameter"             : "RRR-KGM2",
+          "data_painter"          : "rain",
+          "data_opacity_land"     : 1.0,
+          "data_opacity_sea"      : 1.0,
+          
+          "stream" :
+          {
+            "line_length"         : 16,
+            "colormap"            : "precipitation2",
+            "step_x"              : 2,
+
+            "speeds" : [
+              {"speed":0.5,  "value_min":0.0,  "value_max":0.1},
+              {"speed":1.0,  "value_min":0.1,  "value_max":0.2},
+              {"speed":1.0,  "value_min":0.2,  "value_max":0.5},
+              {"speed":2.0,  "value_min":0.5,  "value_max":1.0},
+              {"speed":2.0,  "value_min":1.0,  "value_max":2.0},
+              {"speed":3.0,  "value_min":2.0,  "value_max":5.0},
+              {"speed":3.0,  "value_min":5.0,  "value_max":10.0},
+              {"speed":4.0,  "value_min":10.0, "value_max":100.0}
+            ]
+          }
+          
+          ,
+          "land_position"         : "none",
+          "land_color"            : "FF808080",
+
+          "sea_position"          : "none",
+          "sea_color"             : "FFFFFFFF",
+
+          "land_border_position"  : "none",
+          "land_border_color"     : "80000000",
+          "sea_border_color"      : "80FFFFFF",
+
+          "land_shading_position" : "none",
+          "land_shading_light"    : 256,
+          "land_shading_shadow"   : 256,
+
+          "sea_shading_position"  : "none",
+          "sea_shading_light"     : 128,
+          "sea_shading_shadow"    : 384
+        }
+        ,
+        {
+          // ************************************************************
+          //  Thunder 
+          // ************************************************************
+          //  This demonstrates the usage of the "blinking" effect in
+          //  animation. The idea is that we can hide the current layer
+          //  during the certain animation steps, which makes it blinking.
+          // ************************************************************
+
+          "layer_type"            : "raster",
+          "qid"                   : "thunder-1",
+          "visible"               : true,
+          "compression"           : 1,
+          "parameter"             : "POT-PRCNT:ECGMTA:1007:6:0:1",
+          "data_opacity_land"     : 1.0,
+          "data_opacity_sea"      : 1.0,
+          
+          "data_painter"   : "range",
+          "ranges" : [
+            {
+              "value_min"  : 10,
+              "value_max"  : 100,
+              "color_min"  : "80FFFF00",
+              "color_max"  : "FFFFFF00",
+              "color_low"  : "00000000",
+              "color_high" : "FFFFFF00"
+            }
+          ]
+          ,
+          "animation_effects" :
+          [
+            {
+              "enabled"    : true,
+              "effect"     : "hide",
+              "start_step" : 5,
+              "end_step"   : 1000
+            }
+          ]
+          ,
+          "land_position"         : "none",
+          "land_color"            : "FF808080",
+
+          "sea_position"          : "none",
+          "sea_color"             : "FFFFFFFF",
+
+          "land_border_position"  : "none",
+          "land_border_color"     : "80000000",
+          "sea_border_color"      : "80FFFFFF",
+
+          "land_shading_position" : "none",
+          "land_shading_light"    : 256,
+          "land_shading_shadow"   : 256,
 
           "sea_shading_position"  : "none",
           "sea_shading_light"     : 128,
@@ -318,7 +439,7 @@
               "inside_color"      : "A0000000",
               "outside_color"     : "FFFFFFFF",
               "steps"             : 150,
-              "step_increase"     : 80
+              "step_increase"     : 150
             }
           ]
           ,
