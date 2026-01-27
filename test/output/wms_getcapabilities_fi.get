@@ -295,6 +295,33 @@
     </Layer>
     
     <Layer queryable="1">
+      <Name>grid:animation_4</Name>
+      <Title>Rain animation demo 4</Title>
+      <Abstract>Rain animation with single timestep</Abstract>
+      <CRS>AUTO2:42001</CRS>
+      <CRS>AUTO2:42002</CRS>
+      <CRS>AUTO2:42003</CRS>
+      <CRS>AUTO2:42004</CRS>
+      <CRS>AUTO2:97001</CRS>
+      <CRS>AUTO2:97002</CRS>
+      <CRS>AUTO2:97003</CRS>
+      <CRS>CRS:27</CRS>
+      <CRS>CRS:83</CRS>
+      <CRS>CRS:84</CRS>
+      <CRS>EPSG:4326</CRS>
+      <EX_GeographicBoundingBox>
+        <westBoundLongitude>0</westBoundLongitude>
+        <eastBoundLongitude>0</eastBoundLongitude>
+        <southBoundLatitude>0</southBoundLatitude>
+        <northBoundLatitude>0</northBoundLatitude>
+      </EX_GeographicBoundingBox>
+      <BoundingBox CRS="CRS:27" minx="0" miny="0" maxx="0" maxy="0"/>
+      <BoundingBox CRS="CRS:83" minx="0" miny="0" maxx="0" maxy="0"/>
+      <BoundingBox CRS="CRS:84" minx="0" miny="0" maxx="0" maxy="0"/>
+      <BoundingBox CRS="EPSG:4326" minx="0" miny="0" maxx="0" maxy="0"/>
+    </Layer>
+    
+    <Layer queryable="1">
       <Name>grid:precipitation_1</Name>
       <Title>Demo product</Title>
       <CRS>AUTO2:42001</CRS>

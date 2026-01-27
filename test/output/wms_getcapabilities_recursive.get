@@ -218,6 +218,13 @@
 
 	  
 	  <Layer queryable="1">
+      <Name>grid:animation_4</Name>
+      <Title>Rain animation demo 4</Title>
+      <Abstract>Rain animation with single timestep</Abstract>
+      </Layer>
+
+	  
+	  <Layer queryable="1">
       <Name>grid:precipitation_1</Name>
       <Title>Demo product</Title>
       <Style>
