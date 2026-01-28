@@ -21,6 +21,7 @@ struct get_legend_graphic_request_options
   std::string style;
   std::string version;
   std::string sld_version;
+  std::string source_layer;
   unsigned int width = 0;
   unsigned int height = 0;
 };

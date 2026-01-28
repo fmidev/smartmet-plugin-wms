@@ -85,6 +85,8 @@ class WMSLayer
   std::set<std::string> disabled_refs;
 
   std::map<std::string, WMSLayerStyle> itsStyles;
+  std::map<std::string, Json::Value> itsSubstitutions;  // variant overrides
+
   std::shared_ptr<WMSTimeDimensions>
       timeDimensions;  // Optional, may be empty for non-temporal postgis layers
   std::shared_ptr<WMSElevationDimension> elevationDimension;  // Optional
@@ -153,6 +155,8 @@ class WMSLayer
       const std::optional<Fmi::DateTime>& starttime,
       const std::optional<Fmi::DateTime>& endtime,
       const std::optional<Fmi::DateTime>& reference_time);
+
+  std::map<std::string, Json::Value> getSubstitutions() const { return itsSubstitutions; }
 
   std::optional<CTPP::CDT> getLayerBaseInfo(const std::string& language,
                                             const std::string& defaultLanguage) const;

@@ -870,6 +870,40 @@ std::string get_online_resource_string(const std::string& styleName, const std::
   return ret;
 }
 
+std::string get_online_resource_string(const std::string& styleName,
+                                       const std::string& layerName,
+                                       const std::string& originalLayerName)
+{
+  auto ret = get_online_resource_string(styleName, layerName);
+  ret += "&amp;sourcelayer=";
+  ret += Spine::HTTP::urlencode(originalLayerName);
+
+  return ret;
+}
+
+std::map<std::string, Json::Value> get_substitutions(const Json::Value& root,
+                                                     const std::string& layerName)
+{
+  std::map<std::string, Json::Value> ret;
+
+  if (layerName.empty())  // safety check
+    return ret;
+
+  Json::Value nulljson;
+  Json::Value legend = root.get("legend", nulljson);
+
+  if (legend.isNull() || !legend.isObject())
+    return ret;
+
+  // Matching variant legend substitutions found, store them
+
+  const auto members = legend.getMemberNames();
+  for (const auto& member : members)
+    ret.insert({member, legend[member]});
+
+  return ret;
+}
+
 std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
                                                 const std::string& layerName,
                                                 std::map<std::string, std::string>& legendFiles,
@@ -888,7 +922,9 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
     json = root.get("legend_url_layer_style", nulljson);
     if (!json.isNull())
       layerStyle.name = json.asString();
-    layerStyle.legend_url.online_resource = get_online_resource_string(layerStyle.name, name);
+    layerStyle.legend_url.online_resource =
+        get_online_resource_string(layerStyle.name, name, layerName);
+
     layerStyle.title = Dali::Text("Style Title", "Default style");
     legendFiles.insert(make_pair(layerStyle.name, name));
     ret.insert(std::make_pair(layerStyle.name, layerStyle));
@@ -934,6 +970,7 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
         json_value = legend_url_json.get("online_resource", nulljson);
         if (!json_value.isNull())
           layerStyle.legend_url.online_resource = json_value.asString();
+
         ret.insert(std::make_pair(layerStyle.name, layerStyle));
       }
       else
@@ -947,7 +984,7 @@ std::map<std::string, WMSLayerStyle> get_styles(const Json::Value& root,
           if (!legend_url_layer_style_json.isNull())
             legendLayerStyleName = legend_url_layer_style_json.asString();
           layerStyle.legend_url.online_resource =
-              get_online_resource_string(legendLayerStyleName, legendLayerName);
+              get_online_resource_string(legendLayerStyleName, legendLayerName, layerName);
           legendFiles.insert(make_pair(layerStyle.name, legendLayerName));
           ret.insert(std::make_pair(layerStyle.name, layerStyle));
         }
@@ -1154,6 +1191,7 @@ void WMSLayer::initLegendGraphicInfo(const Json::Value& root)
 
   // Get layer styles
   itsStyles = get_styles(root, name, itsLegendFiles, wmsConfig);
+  itsSubstitutions = get_substitutions(root, name);
 
   NamedLegendGraphicInfo named_lgi = get_named_info(root, name, itsStyles, itsLegendFiles);
 

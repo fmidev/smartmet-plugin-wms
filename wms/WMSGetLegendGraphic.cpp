@@ -209,6 +209,7 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
 
     // parse the request
     std::string layerName = *(theRequest.getParameter("LAYER"));
+
     std::string styleName;
     if (theRequest.getParameter("STYLE"))
       styleName = *(theRequest.getParameter("STYLE"));
@@ -222,6 +223,11 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
     itsParameters.format = *(theRequest.getParameter("FORMAT"));
     itsParameters.version = *(theRequest.getParameter("VERSION"));
     itsParameters.sld_version = *(theRequest.getParameter("SLD_VERSION"));
+
+    // Name of the layer defining the get_legend_url for variant processing
+    auto opt_sourcelayer = theRequest.getParameter("SOURCELAYER");
+    if (opt_sourcelayer)
+      itsParameters.source_layer = *opt_sourcelayer;
 
     // validate the given options
     validate_options(itsParameters, itsConfig, theQEngine);

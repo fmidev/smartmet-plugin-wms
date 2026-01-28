@@ -1588,6 +1588,22 @@ Fmi::DateTime WMSConfig::mostCurrentTime(const std::string& theLayer,
   }
 }
 
+SharedWMSLayer WMSConfig::getLayer(const std::string& theLayer) const
+{
+  try
+  {
+    if (!isValidLayerImpl(theLayer))
+      return {};
+
+    auto my_layers = itsLayers.load();
+    return my_layers->at(theLayer).getLayer();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Getting layer JSON failed!");
+  }
+}
+
 // Get the JSON for a single WMS layer
 
 Json::Value WMSConfig::json(const std::string& theLayerName) const
