@@ -12,6 +12,7 @@
 #pragma once
 
 #include "Attributes.h"
+#include "AnimationEffects.h"
 #include "Layers.h"
 #include "ParameterInfo.h"
 #include "Properties.h"
@@ -76,6 +77,8 @@ class Layer : public Properties
   // Does the layer satisfy resolution etc constraints?
   bool validLayer(const State& theState) const;
 
+  bool isAnimationStepVisible(const State& theState) const;
+
   void setProjection(const Projection& proj);
 
   // Get the model data
@@ -106,6 +109,11 @@ class Layer : public Properties
   // testing layers. I.e. you might have several layers in the same
   // file and you just turn them on/off with this attribute.
   bool visible = true;
+
+  // Controlling animiation on the layer level
+  bool animation_enabled = true;
+  std::string animation_effect;
+  AnimationEffects animation_effects;
 
   // Allowed and disallowed formats
   std::set<std::string> enable;

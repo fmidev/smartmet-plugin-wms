@@ -209,6 +209,7 @@ void WMSGetLegendGraphic::parseHTTPRequest(const Engine::Querydata::Engine& theQ
 
     // parse the request
     std::string layerName = *(theRequest.getParameter("LAYER"));
+
     std::string styleName;
     if (theRequest.getParameter("STYLE"))
       styleName = *(theRequest.getParameter("STYLE"));

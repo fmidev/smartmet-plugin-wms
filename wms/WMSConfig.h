@@ -129,6 +129,9 @@ class WMSConfig
   Fmi::DateTime mostCurrentTime(const std::string& theLayer,
                                 const std::optional<Fmi::DateTime>& reference_time) const;
   Json::Value json(const std::string& theLayerName) const;
+
+  SharedWMSLayer getLayer(const std::string& theLayerName) const;
+
   std::vector<Json::Value> getLegendGraphic(const std::string& theLayerName,
                                             const std::string& theStyleName,
                                             std::size_t& width,

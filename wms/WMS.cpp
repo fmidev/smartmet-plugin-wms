@@ -64,6 +64,7 @@ void check_remaining_wms_json(Json::Value &json, const std::string &name)
       "fixed_width",
       "intervals",
       "keyword",
+      "legend",
       "legend_url_layer",
       "no_subsets",
       "opaque",
@@ -686,6 +687,16 @@ WMSQueryStatus Dali::Plugin::wmsGetLegendGraphicQuery(State &theState,
       wmsGetLegendGraphic.parseHTTPRequest(*itsQEngine, thisRequest);
       json = wmsGetLegendGraphic.json();
       update_legend_expiration(theState, itsWMSConfig->getLegendGraphicSettings().expires);
+
+      // Add variant information to the JSON so that variants can change legend titles etc
+
+      const auto opt_sourcelayer = thisRequest.getParameter("SOURCELAYER");
+      if (opt_sourcelayer)
+      {
+        auto shared_layer = itsWMSConfig->getLayer(*opt_sourcelayer);
+        if (shared_layer)
+          SmartMet::Spine::JSON::expand(json, shared_layer->getSubstitutions());
+      }
 
       // Process the JSON
 

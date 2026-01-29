@@ -146,9 +146,10 @@ if ($MIME eq 'application/xml' || $MIME eq 'text/xml')
                 if ($expected_line =~ m/.*?<LegendURL\s+width="(\d+)"\s*height="(\d+)".*?>/) {
                     $expected_width = $1;
                     $expected_height = $2;
-
-                    if (abs($result_width - $expected_width) <= 3 &&
-                        abs($result_height - $expected_height) <= 3)
+		    my $wdiff = abs($result_width - $expected_width);
+		    my $hdiff = abs($result_height - $expected_height);
+		    if( (($wdiff > 0) && ($wdiff <= 3)) ||
+			(($hdiff > 0) && ($hdiff <= 3)) )
                     {
                         next;  # Width and height differences are acceptable
                     }
@@ -162,9 +163,10 @@ if ($MIME eq 'application/xml' || $MIME eq 'text/xml')
                 {
                     $expected_width = $1;
                     $expected_height = $2;
-
-                    if (abs($result_width - $expected_width) <= 3 &&
-                        abs($result_height - $expected_height) <= 3)
+		    my $wdiff = abs($result_width - $expected_width);
+		    my $hdiff = abs($result_height - $expected_height);
+		    if( (($wdiff > 0) && ($wdiff <= 3)) ||
+			(($hdiff > 0) && ($hdiff <= 3)) )
                     {
                         next;  # Width and height differences are acceptable
                     }
