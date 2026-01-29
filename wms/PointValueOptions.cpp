@@ -35,17 +35,29 @@ class PointValueWrapper
 
 bool max_sort(const PointValueWrapper& rval1, const PointValueWrapper& rval2)
 {
-  return (rval1.priorityValue() > rval2.priorityValue());
+  auto lhs = rval1.priorityValue();
+  auto rhs = rval2.priorityValue();
+  if (!std::isnan(lhs) && !std::isnan(rhs))
+    return (rval1.priorityValue() > rval2.priorityValue());
+  return !std::isnan(lhs);
 }
 
 bool min_sort(const PointValueWrapper& rval1, const PointValueWrapper& rval2)
 {
-  return (rval1.priorityValue() < rval2.priorityValue());
+  auto lhs = rval1.priorityValue();
+  auto rhs = rval2.priorityValue();
+  if (!std::isnan(lhs) && !std::isnan(rhs))
+    return (rval1.priorityValue() < rval2.priorityValue());
+  return !std::isnan(lhs);
 }
 
 bool mean_deviation_sort_max(const PointValueWrapper& rval1, const PointValueWrapper& rval2)
 {
-  return (rval1.priorityValueMeanDeviation() > rval2.priorityValueMeanDeviation());
+  auto lhs = rval1.priorityValueMeanDeviation();
+  auto rhs = rval2.priorityValueMeanDeviation();
+  if (!std::isnan(lhs) && !std::isnan(rhs))
+    return (rval1.priorityValue() > rval2.priorityValue());
+  return !std::isnan(lhs);
 }
 
 void sort_by_priority(std::vector<PointValueWrapper>& points, const std::string& priority)
@@ -56,13 +68,25 @@ void sort_by_priority(std::vector<PointValueWrapper>& points, const std::string&
     std::sort(points.begin(), points.end(), min_sort);
   else if (priority == "extrema")
   {
+    // Calculate mean of non NaN values
     double sum = 0;
+    int n = 0;
     for (const auto& item : points)
-      sum += item.priorityValue();
-    double mean = (sum / points.size());
-    for (auto& item : points)
-      item.setMeanDeviation(mean);
-    std::sort(points.begin(), points.end(), mean_deviation_sort_max);
+    {
+      if (!std::isnan(item.priorityValue()))
+      {
+        sum += item.priorityValue();
+        ++n;
+      }
+    }
+    // sort only if there are non NaN values
+    if (n > 0)
+    {
+      auto mean = sum / n;
+      for (auto& item : points)
+        item.setMeanDeviation(mean);
+      std::sort(points.begin(), points.end(), mean_deviation_sort_max);
+    }
   }
   else if (priority != "none")
   {
