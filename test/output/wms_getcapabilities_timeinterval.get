@@ -3224,28 +3224,28 @@
         <Title>Default style</Title>
         <LegendURL width="80" height="150">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;width=80&amp;height=150"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;sourcelayer=test%3Awind&amp;width=80&amp;height=150"/>
         </LegendURL>
       </Style><Style>
         <Name>style1</Name>
         <Title>Title for style1</Title><Abstract>Abstract for style1</Abstract>
         <LegendURL width="80" height="150">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=alternative_legend_style1&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;width=80&amp;height=150"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=alternative_legend_style1&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;sourcelayer=test%3Awind&amp;width=80&amp;height=150"/>
         </LegendURL>
       </Style><Style>
         <Name>style2</Name>
         <Title>Title for style2</Title><Abstract>Abstract for style2</Abstract>
         <LegendURL width="80" height="150">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=alternative_legend_style2&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;width=80&amp;height=150"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=alternative_legend_style2&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;sourcelayer=test%3Awind&amp;width=80&amp;height=150"/>
         </LegendURL>
       </Style><Style>
         <Name>style3</Name>
         <Title>Title for style3</Title><Abstract>Abstract for style3</Abstract>
         <LegendURL width="300" height="8000">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Awind_legend2&amp;width=300&amp;height=8000"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=default&amp;format=image%2Fpng&amp;layer=test%3Awind_legend2&amp;sourcelayer=test%3Awind&amp;width=300&amp;height=8000"/>
         </LegendURL>
       </Style>
     </Layer>
@@ -3295,7 +3295,7 @@
         <Title>Default style</Title>
         <LegendURL width="80" height="150">
           <Format>image/png</Format>
-          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=alternative_legend_style1&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;width=80&amp;height=150"/>
+          <OnlineResource xlink:type="simple" xlink:href="http://smartmet.fmi.fi/wms?service=WMS&amp;request=GetLegendGraphic&amp;version=1.3.0&amp;sld_version=1.1.0&amp;style=alternative_legend_style1&amp;format=image%2Fpng&amp;layer=test%3Awind_legend&amp;sourcelayer=test%3Awind_alternative_legend_style&amp;width=80&amp;height=150"/>
         </LegendURL>
       </Style>
     </Layer>
