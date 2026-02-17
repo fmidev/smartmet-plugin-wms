@@ -9,6 +9,23 @@ namespace Plugin
 {
 namespace WMS
 {
+namespace
+{
+  void apply_timestep(std::list<Fmi::DateTime>& timelist, std::optional<int> timestep)
+  {
+    if(!timestep || timestep <= 0)
+      return;
+
+    timelist.remove_if([&](const Fmi::DateTime& t) {
+        // Anchor to UTC midnight of that day
+	// auto midnight = floor<Fmi::Days>(t);
+	auto midnight = Fmi::DateTime(t.date(), Fmi::Minutes(0));
+
+        auto since_midnight = (t - midnight).minutes();
+        return (since_midnight % *timestep) != 0;
+    });
+  }
+}
 
 WMSGridDataLayer::WMSGridDataLayer(const WMSConfig& config,
                                    std::string producer,
@@ -372,6 +389,8 @@ bool WMSGridDataLayer::updateLayerMetaData()
         for (const auto& stime : contentTimeList)
           timesteps.push_back(toTimeStamp(stime));
 
+	apply_timestep(timesteps, timestep);
+	
         time_intervals intervals = get_intervals(timesteps);
 
         if (!intervals.empty())

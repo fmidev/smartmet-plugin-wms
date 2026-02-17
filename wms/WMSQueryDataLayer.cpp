@@ -7,6 +7,24 @@ namespace Plugin
 {
 namespace WMS
 {
+namespace
+{
+  void apply_timestep(Engine::Querydata::ValidTimeList& timelist, std::optional<int> timestep)
+  {
+    if(!timestep || timestep <= 0)
+      return;
+
+    timelist.remove_if([&](const Fmi::DateTime& t) {
+        // Anchor to UTC midnight of that day
+	// auto midnight = floor<Fmi::Days>(t);
+	auto midnight = Fmi::DateTime(t.date(), Fmi::Minutes(0));
+
+        auto since_midnight = (t - midnight).minutes();
+        return (since_midnight % *timestep) != 0;
+    });
+  }
+}
+  
 bool WMSQueryDataLayer::updateLayerMetaData()
 {
   try
@@ -45,6 +63,7 @@ bool WMSQueryDataLayer::updateLayerMetaData()
 
       if (!validtimes->empty())
       {
+	apply_timestep(*validtimes, timestep);
         std::shared_ptr<WMSTimeDimension> timeDimension;
         time_intervals intervals = get_intervals(*validtimes);
         if (!intervals.empty())
@@ -62,8 +81,10 @@ bool WMSQueryDataLayer::updateLayerMetaData()
       {
         q = itsQEngine->get(itsProducer, t);
         std::shared_ptr<Engine::Querydata::ValidTimeList> vt = q->validTimes();
-        std::shared_ptr<WMSTimeDimension> timeDimension;
+	if(vt)
+	  apply_timestep(*vt, timestep);
 
+        std::shared_ptr<WMSTimeDimension> timeDimension;
         time_intervals intervals = get_intervals(*vt);
         if (!intervals.empty())
           timeDimension = std::make_shared<IntervalTimeDimension>(intervals);
