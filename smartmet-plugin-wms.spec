@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.2.4
+Version: 26.2.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -44,7 +44,7 @@ BuildRequires: smartmet-engine-grid-devel >= 26.2.4
 BuildRequires: smartmet-engine-geonames-devel >= 26.2.4
 BuildRequires: smartmet-engine-querydata-devel >= 26.2.4
 BuildRequires: smartmet-engine-contour-devel >= 26.2.4
-BuildRequires: smartmet-library-gis-devel >= 26.2.4
+BuildRequires: smartmet-library-gis-devel >= 26.2.5
 BuildRequires: smartmet-library-trax-devel >= 26.2.4
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
@@ -74,7 +74,7 @@ Requires: libwebp13
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 26.2.4
 Requires: smartmet-library-grid-files >= 26.2.4
-Requires: smartmet-library-gis >= 26.2.4
+Requires: smartmet-library-gis >= 26.2.5
 Requires: smartmet-library-trax >= 26.2.4
 Requires: smartmet-library-macgyver >= 26.2.4
 Requires: smartmet-library-spine >= 26.2.4
@@ -163,6 +163,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Feb 17 2026 Mika Heiskanen <heiskanenm@rhel8.dev.fmi.fi> - 26.2.17-1.fmi
+- Apply timestep to gridded data too, not just point observations
+
 * Wed Feb  4 2026 Andris Pavēnis <andris.pavenis@fmi.fi> 26.2.4-1.fmi
 - Update to proj-9.7, gdal-3.12, fmt-12
 
