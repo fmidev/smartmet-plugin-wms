@@ -523,13 +523,9 @@ SharedWMSLayer create_wms_layer(const WMSConfig& theWMSConfig, Json::Value& root
       case WMSLayerType::ObservationLayer:
       {
 #ifndef WITHOUT_OBSERVATION
-        std::string timestep;
-        remove_string(timestep, root, "timestep");
-        if (timestep.empty())
-          timestep = "-1";
         // timestep -1 indicates that no timestep is given in product-file
         // in that case timestep is read from obsengine configuration file (default value is 1min)
-        layer = std::make_shared<WMSObservationLayer>(theWMSConfig, producer, std::stoi(timestep));
+        layer = std::make_shared<WMSObservationLayer>(theWMSConfig, producer);
 #endif
         break;
       }
@@ -591,7 +587,8 @@ SharedWMSLayer WMSLayerFactory::createWMSLayer(Json::Value& root,
     remove_int(layer->no_subsets, root, "no_subsets");
     remove_int(layer->fixed_width, root, "fixed_width");
     remove_int(layer->fixed_height, root, "fixed_height");
-
+    remove_int(layer->timestep, root, "timestep");
+    
     auto json = remove(root, "title");
     if (!json.isNull())
     {

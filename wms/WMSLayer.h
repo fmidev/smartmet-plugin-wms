@@ -62,6 +62,8 @@ class WMSLayer
   std::optional<int> width;  // If layer is used as a legend file width and height are needed here
   std::optional<int> height;
 
+  std::optional<int> timestep; // minutes
+  
   const WMSConfig& wmsConfig;
   bool hidden = false;                 // If this is true, dont show in GetCapabilities response
   bool timeDimensionDisabled = false;  // Can any timestamp can be used in GetMap-request

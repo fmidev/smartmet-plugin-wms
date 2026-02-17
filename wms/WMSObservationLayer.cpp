@@ -14,8 +14,8 @@ bool WMSObservationLayer::updateLayerMetaData()
   {
     // bounding box from metadata
     Engine::Observation::MetaData metaData(itsObsEngine->metaData(itsProducer));
-    if (itsTimestep > -1)
-      metaData.timestep = itsTimestep;
+    if (timestep  > -1)
+      metaData.timestep = *timestep;
     geographicBoundingBox = metaData.bbox;
 
     metadataTimestamp = Fmi::SecondClock::universal_time();

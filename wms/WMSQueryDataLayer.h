@@ -31,7 +31,7 @@ class WMSQueryDataLayer : public WMSLayer
 
  public:
   WMSQueryDataLayer(const WMSConfig& config, std::string producer)
-      : WMSLayer(config), itsQEngine(config.qEngine()), itsProducer(std::move(producer))
+    : WMSLayer(config), itsQEngine(config.qEngine()), itsProducer(std::move(producer))
   {
   }
 
