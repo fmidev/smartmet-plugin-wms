@@ -35,7 +35,6 @@ class IsolineLayer : public Layer
 
   void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
-  std::optional<std::string> parameter;
   std::vector<Isoline> isolines;
   std::string interpolation{"linear"};
   Smoother smoother;

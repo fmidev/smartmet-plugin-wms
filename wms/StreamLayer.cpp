@@ -55,7 +55,7 @@ void StreamLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-    JsonTools::remove_string(parameter, theJson, "parameter");
+    JsonTools::remove_string(paraminfo.parameter, theJson, "parameter");
     JsonTools::remove_string(u_parameter, theJson, "u");
     JsonTools::remove_string(v_parameter, theJson, "v");
     JsonTools::remove_int(maxStreamLen, theJson, "max_length");
@@ -82,7 +82,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreams(State& theState)
   try
   {
     std::vector<OGRGeometryPtr> geoms;
-    if (source && *source == "grid")
+    if (paraminfo.source == std::string("grid"))
       geoms = getStreamsGrid(theState);
     else
       geoms = getStreamsQuerydata(theState);
@@ -116,7 +116,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(State& theState)
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
 
-    std::string producerName = gridEngine->getProducerName(*producer);
+    std::string producerName = gridEngine->getProducerName(*paraminfo.producer);
     std::string wkt = *projection.crs;
 
     if (wkt != "data")
@@ -149,15 +149,15 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(State& theState)
 
     // Adding parameter information into the query.
 
-    if (parameter)
+    if (!paraminfo.parameter.empty())
     {
-      std::string param = gridEngine->getParameterString(producerName, *parameter);
+      std::string param = gridEngine->getParameterString(producerName, paraminfo.parameter);
       attributeList.addAttribute("param", param);
 
       if (!projection.projectionParameter)
         projection.projectionParameter = param;
 
-      if (param == *parameter && originalGridQuery->mProducerNameList.empty())
+      if (param == paraminfo.parameter && originalGridQuery->mProducerNameList.empty())
       {
         gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
         if (originalGridQuery->mProducerNameList.empty())
@@ -207,38 +207,36 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsGrid(State& theState)
       param.mType = QueryServer::QueryParameter::Type::Vector;
       param.mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
 
-      if (geometryId)
-        param.mGeometryId = *geometryId;
+      if (paraminfo.geometryId)
+        param.mGeometryId = *paraminfo.geometryId;
 
-      if (levelId)
-      {
-        param.mParameterLevelId = *levelId;
-      }
+      if (paraminfo.levelId)
+        param.mParameterLevelId = *paraminfo.levelId;
 
-      if (level)
+      if (paraminfo.level)
       {
-        param.mParameterLevel = C_INT(*level);
+        param.mParameterLevel = C_INT(*paraminfo.level);
       }
-      else if (pressure)
+      else if (paraminfo.pressure)
       {
         param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        param.mParameterLevel = C_INT(*pressure);
+        param.mParameterLevel = C_INT(*paraminfo.pressure);
       }
 
-      if (elevation_unit)
+      if (paraminfo.elevation_unit)
       {
-        if (*elevation_unit == "m")
+        if (paraminfo.elevation_unit == std::string("m"))
           param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
 
-        if (*elevation_unit == "p")
+        if (paraminfo.elevation_unit == std::string("p"))
           param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
       }
 
-      if (forecastType)
-        param.mForecastType = C_INT(*forecastType);
+      if (paraminfo.forecastType)
+        param.mForecastType = C_INT(*paraminfo.forecastType);
 
-      if (forecastNumber)
-        param.mForecastNumber = C_INT(*forecastNumber);
+      if (paraminfo.forecastNumber)
+        param.mForecastNumber = C_INT(*paraminfo.forecastNumber);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -434,13 +432,14 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
     if (q && !q->firstLevel())
       throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
 
-    if (level)
+    if (paraminfo.level)
     {
       if (!q)
         throw Fmi::Exception(BCP, "Cannot generate streamlines without gridded level data");
 
-      if (!q->selectLevel(*level))
-        throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
+      if (!q->selectLevel(*paraminfo.level))
+        throw Fmi::Exception(
+            BCP, "Level value " + Fmi::to_string(*paraminfo.level) + " is not available!");
     }
 
     if (!q)
@@ -506,9 +505,9 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
 
     uint c = 0;
 
-    if (parameter)
+    if (!paraminfo.parameter.empty())
     {
-      auto param = TS::ParameterFactory::instance().parse(*parameter);
+      auto param = TS::ParameterFactory::instance().parse(paraminfo.parameter);
 
       for (uint y = 0; y < gheight; y++)
       {
@@ -693,8 +692,8 @@ void StreamLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     CTPP::CDT object_cdt;
     std::string objectKey;
 
-    if (parameter)
-      objectKey = "streamline:" + *parameter + ":" + qid;
+    if (!paraminfo.parameter.empty())
+      objectKey = "streamline:" + paraminfo.parameter + ":" + qid;
     else if (u_parameter && v_parameter)
       objectKey = "streamline:" + *u_parameter + "_" + *v_parameter + ":" + qid;
 
@@ -769,13 +768,13 @@ void StreamLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 
 void StreamLayer::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
 {
-  if (theState.isObservation(producer))
+  if (theState.isObservation(paraminfo.producer))
     return;
-  if (parameter)
+  if (!paraminfo.parameter.empty())
   {
-    ParameterInfo info(*parameter);
-    info.producer = producer;
-    info.level = level;
+    ParameterInfo info(paraminfo.parameter);
+    info.producer = paraminfo.producer;
+    info.level = paraminfo.level;
     add(infos, info);
   }
 }
@@ -792,13 +791,13 @@ std::size_t StreamLayer::hash_value(const State& theState) const
   {
     auto hash = Layer::hash_value(theState);
 
-    if (!(source && *source == "grid"))
+    if (paraminfo.source != std::string("grid"))
       Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
     // The hash value of the grid producer is already added
     // in the "Properties" class.
 
-    Fmi::hash_combine(hash, countParameterHash(theState, parameter));
+    Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
     Fmi::hash_combine(hash, Fmi::hash_value(minStreamLen));
     Fmi::hash_combine(hash, Fmi::hash_value(maxStreamLen));
     Fmi::hash_combine(hash, Fmi::hash_value(lineLen));

@@ -39,7 +39,6 @@ class SymbolLayer : public Layer
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   std::optional<TS::ParameterAndFunctions> param_funcs;
-  std::optional<std::string> parameter;
   std::string unit_conversion;
   std::optional<double> multiplier;
   std::optional<double> offset;

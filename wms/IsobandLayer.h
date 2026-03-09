@@ -41,7 +41,6 @@ class IsobandLayer : public Layer
 
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
-  std::optional<std::string> parameter;
   std::vector<Isoband> isobands;
   std::string interpolation{"linear"};
   Smoother smoother;

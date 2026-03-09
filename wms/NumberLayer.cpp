@@ -207,12 +207,13 @@ void NumberLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-    JsonTools::remove_string(parameter, theJson, "parameter");
-    if (parameter && producer && !isFlashOrMobileProducer(*producer))
+    JsonTools::remove_string(paraminfo.parameter, theJson, "parameter");
+    if (!paraminfo.parameter.empty() && paraminfo.producer &&
+        !isFlashOrMobileProducer(*paraminfo.producer))
     {
       try
       {
-        param_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*parameter);
+        param_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(paraminfo.parameter);
       }
       catch (...)
       {
@@ -245,9 +246,9 @@ void NumberLayer::init(Json::Value& theJson,
 
     point_value_options.init(theJson);
 
-    if (!parameter)
+    if (paraminfo.parameter.empty())
       throw Fmi::Exception(BCP, "NumberLayer parameter is not set");
-    if (!producer)
+    if (!paraminfo.producer)
       throw Fmi::Exception(BCP, "NumberLayer producer is not set");
   }
   catch (...)
@@ -263,7 +264,7 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     // if (!validLayer(theState))
     //      return;
 
-    if (source && *source == "grid")
+    if (paraminfo.source == std::string("grid"))
       generate_gridEngine(theGlobals, theLayersCdt, theState);
     else
       generate_qEngine(theGlobals, theLayersCdt, theState);
@@ -272,8 +273,8 @@ void NumberLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!")
         .addParameter("qid", qid)
-        .addParameter("Producer", *producer)
-        .addParameter("Parameter", *parameter);
+        .addParameter("Producer", *paraminfo.producer)
+        .addParameter("Parameter", paraminfo.parameter);
   }
 }
 
@@ -308,7 +309,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
 
-    std::string producerName = gridEngine->getProducerName(*producer);
+    std::string producerName = gridEngine->getProducerName(*paraminfo.producer);
 
     auto valid_time = getValidTime();
 
@@ -342,7 +343,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       // bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
 
-      positions->init(producer, projection, valid_time, theState);
+      positions->init(paraminfo.producer, projection, valid_time, theState);
     }
     else
     {
@@ -353,7 +354,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Adding parameter information into the query.
 
-    std::string pName = *parameter;
+    std::string pName = paraminfo.parameter;
     auto pos = pName.find(".raw");
     if (pos != std::string::npos)
     {
@@ -368,7 +369,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!projection.projectionParameter)
       projection.projectionParameter = param;
 
-    if (param == *parameter && originalGridQuery->mProducerNameList.empty())
+    if (param == paraminfo.parameter && originalGridQuery->mProducerNameList.empty())
     {
       gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
       if (originalGridQuery->mProducerNameList.empty())
@@ -418,38 +419,36 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         queryparam.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
       }
 
-      if (geometryId)
-        queryparam.mGeometryId = *geometryId;
+      if (paraminfo.geometryId)
+        queryparam.mGeometryId = *paraminfo.geometryId;
 
-      if (levelId)
-      {
-        queryparam.mParameterLevelId = *levelId;
-      }
+      if (paraminfo.levelId)
+        queryparam.mParameterLevelId = *paraminfo.levelId;
 
-      if (level)
+      if (paraminfo.level)
       {
-        queryparam.mParameterLevel = C_INT(*level);
+        queryparam.mParameterLevel = C_INT(*paraminfo.level);
       }
-      else if (pressure)
+      else if (paraminfo.pressure)
       {
         queryparam.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        queryparam.mParameterLevel = C_INT(*pressure);
+        queryparam.mParameterLevel = C_INT(*paraminfo.pressure);
       }
 
-      if (elevation_unit)
+      if (paraminfo.elevation_unit)
       {
-        if (*elevation_unit == "m")
+        if (*paraminfo.elevation_unit == "m")
           queryparam.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
 
-        if (*elevation_unit == "p")
+        if (*paraminfo.elevation_unit == "p")
           queryparam.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
       }
 
-      if (forecastType)
-        queryparam.mForecastType = C_INT(*forecastType);
+      if (paraminfo.forecastType)
+        queryparam.mForecastType = C_INT(*paraminfo.forecastType);
 
-      if (forecastNumber)
-        queryparam.mForecastNumber = C_INT(*forecastNumber);
+      if (paraminfo.forecastNumber)
+        queryparam.mForecastNumber = C_INT(*paraminfo.forecastNumber);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -541,7 +540,7 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(producer, projection, valid_time, theState);
+    positions->init(paraminfo.producer, projection, valid_time, theState);
 
     // Update the globals
 
@@ -716,7 +715,7 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     // Establish the data
 
-    bool use_observations = theState.isObservation(producer);
+    bool use_observations = theState.isObservation(paraminfo.producer);
     auto q = getModel(theState);
 
     // Make sure position generation is initialized
@@ -745,13 +744,14 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     if (q && !q->firstLevel())
       throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
 
-    if (level)
+    if (paraminfo.level)
     {
       if (use_observations)
         throw std::runtime_error("Cannot set level value for observations in NumberLayer");
 
-      if (!q->selectLevel(*level))
-        throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
+      if (!q->selectLevel(*paraminfo.level))
+        throw Fmi::Exception(
+            BCP, "Level value " + Fmi::to_string(*paraminfo.level) + " is not available!");
     }
 
     // Get projection details
@@ -762,7 +762,7 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(producer, projection, valid_time, theState);
+    positions->init(paraminfo.producer, projection, valid_time, theState);
 
     // Update the globals
 
@@ -795,7 +795,7 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     else
     {
       pointvalues = ObservationReader::read(theState,
-                                            {*parameter},
+                                            {paraminfo.parameter},
                                             *this,
                                             *positions,
                                             maxdistance,
@@ -942,13 +942,13 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
 void NumberLayer::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
 {
-  if (theState.isObservation(producer))
+  if (theState.isObservation(paraminfo.producer))
     return;
-  if (parameter)
+  if (!paraminfo.parameter.empty())
   {
-    ParameterInfo info(*parameter);
-    info.producer = producer;
-    info.level = level;
+    ParameterInfo info(paraminfo.parameter);
+    info.producer = paraminfo.producer;
+    info.level = paraminfo.level;
     add(infos, info);
   }
 }
@@ -964,19 +964,19 @@ std::size_t NumberLayer::hash_value(const State& theState) const
   try
   {
     // Disable caching of observation layers
-    if (theState.isObservation(producer))
+    if (theState.isObservation(paraminfo.producer))
       return Fmi::bad_hash;
 
     auto hash = Layer::hash_value(theState);
 
-    if (!(source && *source == "grid"))
+    if (paraminfo.source != std::string("grid"))
     {
       auto q = getModel(theState);
       if (q)
         Fmi::hash_combine(hash, Engine::Querydata::hash_value(q));
     }
 
-    Fmi::hash_combine(hash, countParameterHash(theState, parameter));
+    Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
     Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
     Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
     Fmi::hash_combine(hash, Fmi::hash_value(offset));

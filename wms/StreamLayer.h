@@ -35,7 +35,7 @@ class StreamLayer : public Layer
 
   void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
-  std::optional<std::string> parameter;
+  // std::optional<std::string> parameter;
   std::optional<std::string> u_parameter;
   std::optional<std::string> v_parameter;
   int minStreamLen = 5;

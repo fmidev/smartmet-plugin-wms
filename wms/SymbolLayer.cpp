@@ -217,12 +217,13 @@ void SymbolLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-    JsonTools::remove_string(parameter, theJson, "parameter");
-    if (parameter && producer && !isFlashOrMobileProducer(*producer))
+    JsonTools::remove_string(paraminfo.parameter, theJson, "parameter");
+    if (!paraminfo.parameter.empty() && paraminfo.producer &&
+        !isFlashOrMobileProducer(*paraminfo.producer))
     {
       try
       {
-        param_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*parameter);
+        param_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(paraminfo.parameter);
       }
       catch (...)
       {
@@ -272,7 +273,7 @@ void SymbolLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
     if (!validLayer(theState))
       return;
 
-    if (source && *source == "grid")
+    if (paraminfo.source == std::string("grid"))
       generate_gridEngine(theGlobals, theLayersCdt, theState);
     else
       generate_qEngine(theGlobals, theLayersCdt, theState);
@@ -309,7 +310,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
           "Must define default symbol with 'symbol' or several 'symbols' for specific values in a "
           "symbol-layer");
 
-    if (*projection.crs == "data" && !parameter)
+    if (*projection.crs == "data" && paraminfo.parameter.empty())
       return;
 
     // Establish the data
@@ -328,7 +329,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     if (!symbols.empty())
     {
-      if (!parameter)
+      if (paraminfo.parameter.empty())
         throw Fmi::Exception(BCP, "Parameter not set for symbol-layer");
     }
 
@@ -336,7 +337,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
 
-    std::string producerName = gridEngine->getProducerName(*producer);
+    std::string producerName = gridEngine->getProducerName(*paraminfo.producer);
 
     auto valid_time = getValidTime();
 
@@ -366,7 +367,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
 
-      positions->init(producer, projection, valid_time, theState);
+      positions->init(paraminfo.producer, projection, valid_time, theState);
     }
     else
     {
@@ -377,13 +378,13 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Adding parameter information into the query.
 
-    if (!parameter && !projection.projectionParameter)
+    if (paraminfo.parameter.empty() && !projection.projectionParameter)
       return;
 
     std::string pName;
 
-    if (parameter)
-      pName = *parameter;
+    if (!paraminfo.parameter.empty())
+      pName = paraminfo.parameter;
     else
       pName = *projection.projectionParameter;
 
@@ -401,7 +402,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!projection.projectionParameter)
       projection.projectionParameter = param;
 
-    if (param == *parameter && originalGridQuery->mProducerNameList.empty())
+    if (param == paraminfo.parameter && originalGridQuery->mProducerNameList.empty())
     {
       gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
       if (originalGridQuery->mProducerNameList.empty())
@@ -452,38 +453,36 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         // param.mFlags = QueryServer::QueryParameter::Flags::ReturnCoordinates;
       }
 
-      if (geometryId)
-        param.mGeometryId = *geometryId;
+      if (paraminfo.geometryId)
+        param.mGeometryId = *paraminfo.geometryId;
 
-      if (levelId)
-      {
-        param.mParameterLevelId = *levelId;
-      }
+      if (paraminfo.levelId)
+        param.mParameterLevelId = *paraminfo.levelId;
 
-      if (level)
+      if (paraminfo.level)
       {
-        param.mParameterLevel = C_INT(*level);
+        param.mParameterLevel = C_INT(*paraminfo.level);
       }
-      else if (pressure)
+      else if (paraminfo.pressure)
       {
         param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        param.mParameterLevel = C_INT(*pressure);
+        param.mParameterLevel = C_INT(*paraminfo.pressure);
       }
 
-      if (elevation_unit)
+      if (paraminfo.elevation_unit)
       {
-        if (*elevation_unit == "m")
+        if (*paraminfo.elevation_unit == "m")
           param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
 
-        if (*elevation_unit == "p")
+        if (*paraminfo.elevation_unit == "p")
           param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
       }
 
-      if (forecastType)
-        param.mForecastType = C_INT(*forecastType);
+      if (paraminfo.forecastType)
+        param.mForecastType = C_INT(*paraminfo.forecastType);
 
-      if (forecastNumber)
-        param.mForecastNumber = C_INT(*forecastNumber);
+      if (paraminfo.forecastNumber)
+        param.mForecastNumber = C_INT(*paraminfo.forecastNumber);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -575,7 +574,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(producer, projection, valid_time, theState);
+    positions->init(paraminfo.producer, projection, valid_time, theState);
 
     // Update the globals
 
@@ -600,7 +599,7 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     // Set the proper symbol on if it is needed
     if (!symbols.empty())
     {
-      if (!parameter)
+      if (paraminfo.parameter.empty())
         throw Fmi::Exception(
             BCP, "Parameter not set for SymbolLayer even though multiple symbols are in use");
     }
@@ -730,7 +729,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     // Establish the data
 
     bool is_legend = theGlobals.Exists("legend");
-    bool use_observations = theState.isObservation(producer) && !is_legend;
+    bool use_observations = theState.isObservation(paraminfo.producer) && !is_legend;
     auto q = getModel(theState);
 
     // Make sure position generation is initialized
@@ -756,13 +755,14 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     if (q && !q->firstLevel())
       throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
 
-    if (level)
+    if (paraminfo.level)
     {
       if (!q)
         throw Fmi::Exception(BCP, "Cannot generate isobands without gridded level data");
 
-      if (!q->selectLevel(*level))
-        throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
+      if (!q->selectLevel(*paraminfo.level))
+        throw Fmi::Exception(
+            BCP, "Level value " + Fmi::to_string(*paraminfo.level) + " is not available!");
     }
 
     // Get projection details
@@ -774,7 +774,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     // Set the proper symbol on if it is needed
     if (!symbols.empty())
     {
-      if (!parameter)
+      if (paraminfo.parameter.empty())
         throw Fmi::Exception(
             BCP, "Parameter not set for SymbolLayer even though multiple symbols are in use");
     }
@@ -801,7 +801,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(producer, projection, valid_time, theState);
+    positions->init(paraminfo.producer, projection, valid_time, theState);
 
     // Establish the numbers to draw. At this point we know that if
     // use_observations is true, obsengine is not disabled.
@@ -813,7 +813,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 #ifndef WITHOUT_OBSERVATION
     else
       pointvalues = ObservationReader::read(theState,
-                                            {*parameter},
+                                            {paraminfo.parameter},
                                             *this,
                                             *positions,
                                             maxdistance,
@@ -929,13 +929,13 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
 void SymbolLayer::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
 {
-  if (theState.isObservation(producer))
+  if (theState.isObservation(paraminfo.producer))
     return;
-  if (parameter)
+  if (!paraminfo.parameter.empty())
   {
-    ParameterInfo info(*parameter);
-    info.producer = producer;
-    info.level = level;
+    ParameterInfo info(paraminfo.parameter);
+    info.producer = paraminfo.producer;
+    info.level = paraminfo.level;
     add(infos, info);
   }
 }
@@ -951,7 +951,7 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
   try
   {
     // Disable caching of very new observation layers
-    if (theState.isObservation(producer))
+    if (theState.isObservation(paraminfo.producer))
     {
       const auto age = Fmi::SecondClock::universal_time() - getValidTime();
       if (age < Fmi::Minutes(5))
@@ -960,14 +960,14 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
 
     auto hash = Layer::hash_value(theState);
 
-    if (!(source && *source == "grid"))
+    if (!(paraminfo.source == std::string("grid")))
     {
       auto q = getModel(theState);
       if (q)
         Fmi::hash_combine(hash, Engine::Querydata::hash_value(q));
     }
 
-    Fmi::hash_combine(hash, countParameterHash(theState, parameter));
+    Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
     Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
     Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
     Fmi::hash_combine(hash, Fmi::hash_value(offset));

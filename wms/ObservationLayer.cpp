@@ -36,7 +36,7 @@ void ObservationLayer::init(Json::Value& theJson,
 
     Layer::init(theJson, theState, theConfig, theProperties);
 
-    if (!producer)
+    if (!paraminfo.producer)
       throw Fmi::Exception::Trace(BCP, "Producer must be defined for obervation layer!");
     if (!timestep)
       throw Fmi::Exception::Trace(BCP, "Timestep must be defined for obervation layer!");
@@ -59,7 +59,7 @@ void ObservationLayer::init(Json::Value& theJson,
       if (!positions)
       {
         positions = Positions{};
-        positions->init(producer, projection, getValidTime(), theState);
+        positions->init(paraminfo.producer, projection, getValidTime(), theState);
       }
       positions->layout = Positions::Layout::Keyword;
       positions->keyword = keyword;

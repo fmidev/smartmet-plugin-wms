@@ -37,7 +37,7 @@ PointValues CloudCeilingLayer::readObservations(State& state,
 
     Engine::Observation::Settings settings;
     settings.allplaces = false;
-    settings.stationtype = *producer;
+    settings.stationtype = *paraminfo.producer;
     settings.wantedtime = valid_time;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
@@ -269,7 +269,7 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(producer, projection, valid_time, theState);
+    positions->init(paraminfo.producer, projection, valid_time, theState);
 
     // Update the globals
 
@@ -421,8 +421,8 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
   {
     throw Fmi::Exception::Trace(BCP, "Failed to generate CloudCeilingLayer!")
         .addParameter("qid", qid)
-        .addParameter("Producer", *producer)
-        .addParameter("Parameter", *parameter);
+        .addParameter("Producer", *paraminfo.producer)
+        .addParameter("Parameter", paraminfo.parameter);
   }
 }
 

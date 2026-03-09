@@ -119,7 +119,7 @@ void TimeLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
     if (!validLayer(theState))
       return;
 
-    if (source && *source == "grid")
+    if (paraminfo.source == std::string("grid"))
       generate_gridEngine(theGlobals, theLayersCdt, theState);
     else
       generate_qEngine(theGlobals, theLayersCdt, theState);
@@ -165,7 +165,7 @@ void TimeLayer::generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
 
-    std::string producerName = gridEngine->getProducerName(*producer);
+    std::string producerName = gridEngine->getProducerName(*paraminfo.producer);
 
     auto valid_time = getValidTime();
 
@@ -675,7 +675,7 @@ std::size_t TimeLayer::hash_value(const State& theState) const
   {
     auto hash = Layer::hash_value(theState);
 
-    if (!(source && *source == "grid"))
+    if (paraminfo.source != std::string("grid"))
       Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
     Fmi::hash_combine(hash, Fmi::hash_value(timezone));

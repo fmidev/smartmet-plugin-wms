@@ -955,14 +955,14 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
                                     const State& state,
                                     const Fmi::SpatialReference& crs) const
 {
-  if (source && *source == "grid")
+  if (paraminfo.source && *paraminfo.source == "grid")
   {
     fix_orientation_gridEngine(candidates, box, state, crs);
     return;
   }
 
   // The parameter being used
-  auto param = TS::ParameterFactory::instance().parse(*parameter);
+  auto param = TS::ParameterFactory::instance().parse(paraminfo.parameter);
 
   std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
   Fmi::LocalDateTime localdatetime(getValidTime(), Fmi::TimeZonePtr::utc);

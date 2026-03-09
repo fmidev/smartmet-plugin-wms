@@ -55,23 +55,29 @@ namespace
 {
 void check_remaining_wms_json(Json::Value &json, const std::string &name)
 {
-  std::vector<std::string> deletions{
-      "abstract",
-      "capabilities_start",
-      "capabilities_end",
-      "cascaded",
-      "fixed_height",
-      "fixed_width",
-      "intervals",
-      "keyword",
-      "legend",
-      "legend_url_layer",
-      "no_subsets",
-      "opaque",
-      "queryable",
-      "refs",
-      "styles",
-  };
+  std::vector<std::string> deletions{"abstract",
+                                     "capabilities_start",
+                                     "capabilities_end",
+                                     "cascaded",
+                                     "fixed_height",
+                                     "fixed_width",
+                                     "intervals",
+                                     "keyword",
+                                     "legend",
+                                     "legend_url_layer",
+                                     "no_subsets",
+                                     "opaque",
+                                     "queryable",
+                                     "refs",
+                                     "styles",
+
+                                     // parameter specific inheritable extensions from ParameterInfo
+                                     "forecasttype",
+                                     "levelid",
+                                     "forecastnumber",
+                                     "geometryid",
+                                     "levelid",
+                                     "elevation_unit"};
 
   for (const auto &delete_name : deletions)
     static_cast<void>(JsonTools::remove(json, delete_name));

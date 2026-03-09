@@ -87,7 +87,7 @@ void MapLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
     // Update projection from querydata if necessary
     if (has_data_proj)
     {
-      if (!source || *source != "grid")
+      if (!paraminfo.source || *paraminfo.source != "grid")
       {
         // Establish the data
         auto q = getModel(theState);
@@ -293,12 +293,12 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
 {
   try
   {
-    if (!producer)
+    if (!paraminfo.producer)
       throw Fmi::Exception(BCP, "MapLayer producer not set for styling");
 
-    if (theState.isObservation(producer))
+    if (theState.isObservation(paraminfo.producer))
       throw Fmi::Exception(BCP, "Observations not supported in MapLayer")
-          .addParameter("producer", *producer);
+          .addParameter("producer", *paraminfo.producer);
 
     // Establish data
 
@@ -507,7 +507,7 @@ std::size_t MapLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_value(styles, theState));
 
     // Add data hash
-    if (styles && !theState.isObservation(producer))
+    if (styles && !theState.isObservation(paraminfo.producer))
       Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
     return hash;

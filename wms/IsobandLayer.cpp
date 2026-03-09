@@ -114,7 +114,7 @@ void IsobandLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-    JsonTools::remove_string(parameter, theJson, "parameter");
+    JsonTools::remove_string(paraminfo.parameter, theJson, "parameter");
 
     auto json = JsonTools::remove(theJson, "isobands");
     if (!json.isNull())
@@ -192,7 +192,7 @@ std::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
 {
   try
   {
-    if (!isFlashOrMobileProducer(*producer))
+    if (!isFlashOrMobileProducer(*paraminfo.producer))
       throw Fmi::Exception(BCP, "Heatmap requires flash or mobile data!");
 
     auto valid_time_period = getValidTimePeriod();
@@ -203,14 +203,14 @@ std::shared_ptr<Engine::Querydata::QImpl> IsobandLayer::buildHeatmap(
     settings.starttime = valid_time_period.begin();
     settings.endtime = valid_time_period.end();
     settings.starttimeGiven = true;
-    settings.stationtype = *producer;
+    settings.stationtype = *paraminfo.producer;
     settings.timezone = "UTC";
 
     // Get actual data (flash coordinates plus parameter column values)
     auto& obsengine = theState.getObsEngine();
     settings.parameters.push_back(TS::makeParameter("longitude"));
     settings.parameters.push_back(TS::makeParameter("latitude"));
-    settings.parameters.push_back(TS::makeParameter(*parameter));
+    settings.parameters.push_back(TS::makeParameter(paraminfo.parameter));
 
     settings.boundingBox = getClipBoundingBox(box, crs);
 
@@ -386,7 +386,7 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
       theGlobals["css"][name] = theState.getStyle(*css);
     }
 
-    if (source && *source == "grid")
+    if (paraminfo.source == std::string("grid"))
       generate_gridEngine(theGlobals, theLayersCdt, theState);
     else
       generate_qEngine(theGlobals, theLayersCdt, theState);
@@ -395,8 +395,8 @@ void IsobandLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!")
         .addParameter("qid", qid)
-        .addParameter("Producer", *producer)
-        .addParameter("Parameter", *parameter);
+        .addParameter("Producer", *paraminfo.producer)
+        .addParameter("Parameter", paraminfo.parameter);
   }
 }
 
@@ -410,7 +410,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!gridEngine || !gridEngine->isEnabled())
       throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
-    if (!parameter)
+    if (paraminfo.parameter.empty())
       throw Fmi::Exception(BCP, "Parameter not set for isoband-layer");
 
     std::unique_ptr<boost::timer::auto_cpu_timer> timer;
@@ -430,7 +430,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
 
-    std::string producerName = gridEngine->getProducerName(*producer);
+    std::string producerName = gridEngine->getProducerName(*paraminfo.producer);
 
     // Establish the valid time
     auto valid_time = getValidTime();
@@ -498,7 +498,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Adding parameter information into the query.
 
-    std::string pName = *parameter;
+    std::string pName = paraminfo.parameter;
     auto pos = pName.find(".raw");
     if (pos != std::string::npos)
     {
@@ -520,7 +520,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     if (!projection.projectionParameter)
       projection.projectionParameter = param;
 
-    if (param == *parameter && originalGridQuery->mProducerNameList.empty())
+    if (param == paraminfo.parameter && originalGridQuery->mProducerNameList.empty())
     {
       gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
       if (originalGridQuery->mProducerNameList.empty())
@@ -548,38 +548,36 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       p.mContourLowValues = contourLowValues;
       p.mContourHighValues = contourHighValues;
 
-      if (geometryId)
-        p.mGeometryId = *geometryId;
+      if (paraminfo.geometryId)
+        p.mGeometryId = *paraminfo.geometryId;
 
-      if (levelId)
-      {
-        p.mParameterLevelId = *levelId;
-      }
+      if (paraminfo.levelId)
+        p.mParameterLevelId = *paraminfo.levelId;
 
-      if (level)
+      if (paraminfo.level)
       {
-        p.mParameterLevel = C_INT(*level);
+        p.mParameterLevel = C_INT(*paraminfo.level);
       }
-      else if (pressure)
+      else if (paraminfo.pressure)
       {
         p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        p.mParameterLevel = C_INT(*pressure);
+        p.mParameterLevel = C_INT(*paraminfo.pressure);
       }
 
-      if (elevation_unit)
+      if (paraminfo.elevation_unit)
       {
-        if (*elevation_unit == "m")
+        if (*paraminfo.elevation_unit == "m")
           p.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
 
-        if (*elevation_unit == "p")
+        if (*paraminfo.elevation_unit == "p")
           p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
       }
 
-      if (forecastType)
-        p.mForecastType = C_INT(*forecastType);
+      if (paraminfo.forecastType)
+        p.mForecastType = C_INT(*paraminfo.forecastType);
 
-      if (forecastNumber)
-        p.mForecastNumber = C_INT(*forecastNumber);
+      if (paraminfo.forecastNumber)
+        p.mForecastNumber = C_INT(*paraminfo.forecastNumber);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -692,7 +690,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
             OGRGeometry* geom = nullptr;
             OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
             auto geomPtr = OGRGeometryPtr(geom);
-            if (geomPtr  &&  minarea  &&  crs.get())
+            if (geomPtr && minarea && crs.get())
             {
               auto area = *minarea;
               if (areaunit == "px^2")
@@ -828,10 +826,10 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Logical operations with isobands are initialized before hand
 
-    intersections.init(producer, gridEngine, projection, valid_time, theState);
+    intersections.init(paraminfo.producer, gridEngine, projection, valid_time, theState);
 
     CTPP::CDT object_cdt;
-    std::string objectKey = "isoband:" + *parameter + ":" + qid;
+    std::string objectKey = "isoband:" + paraminfo.parameter + ":" + qid;
     object_cdt["objectKey"] = objectKey;
 
     // Clip if necessary
@@ -883,7 +881,7 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
           isoband_cdt["iri"] = iri;
           isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
-          isoband_cdt["parameter"] = *parameter;
+          isoband_cdt["parameter"] = paraminfo.parameter;
           pointCoordinates = Geometry::toString(*geom2,
                                                 theState.getType(),
                                                 box,
@@ -979,12 +977,12 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     // Establish the parameter
     //
     // Heatmap does not use the parameter currently (only flash or mobile coordinates)
-    bool allowUnknownParam = (theState.isObservation(producer) &&
-                              isFlashOrMobileProducer(*producer) && heatmap.resolution);
+    bool allowUnknownParam = (theState.isObservation(paraminfo.producer) &&
+                              isFlashOrMobileProducer(*paraminfo.producer) && heatmap.resolution);
 
-    if (!parameter)
+    if (paraminfo.parameter.empty())
       throw Fmi::Exception(BCP, "Parameter not set for isoband-layer!");
-    auto param = TS::ParameterFactory::instance().parse(*parameter, allowUnknownParam);
+    auto param = TS::ParameterFactory::instance().parse(paraminfo.parameter, allowUnknownParam);
 
     // Establish the valid time
 
@@ -995,13 +993,14 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     if (q && !q->firstLevel())
       throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
 
-    if (level)
+    if (paraminfo.level)
     {
       if (!q)
         throw Fmi::Exception(BCP, "Cannot generate isobands without gridded level data");
 
-      if (!q->selectLevel(*level))
-        throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
+      if (!q->selectLevel(*paraminfo.level))
+        throw Fmi::Exception(
+            BCP, "Level value " + Fmi::to_string(*paraminfo.level) + " is not available!");
     }
 
     // Get projection details
@@ -1044,7 +1043,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     {
       q = buildHeatmap(param, valid_time, theState);
     }
-    else if (theState.isObservation(producer))
+    else if (theState.isObservation(paraminfo.producer))
       throw Fmi::Exception(
           BCP, "Can't produce isobandlayer from observation data without heatmap configuration!");
 
@@ -1074,7 +1073,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     // Logical operations with isobands are initialized before hand
 
-    intersections.init(producer, projection, valid_time, theState);
+    intersections.init(paraminfo.producer, projection, valid_time, theState);
 
     // Calculate the isobands and store them into the template engine
 
@@ -1085,7 +1084,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       limits.emplace_back(isoband.lolimit, isoband.hilimit);
 
     Engine::Contour::Options options(param, valid_time, limits);
-    options.level = level;
+    options.level = paraminfo.level;
     options.bbox = Fmi::BBox(box);
 
     if (!unit_conversion.empty())
@@ -1157,7 +1156,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     filter.apply(geoms, true);
 
     CTPP::CDT object_cdt;
-    std::string objectKey = "isoband:" + *parameter + ":" + qid;
+    std::string objectKey = "isoband:" + paraminfo.parameter + ":" + qid;
     object_cdt["objectKey"] = objectKey;
 
     // Update the globals
@@ -1218,7 +1217,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
           CTPP::CDT isoband_cdt(CTPP::CDT::HASH_VAL);
           isoband_cdt["iri"] = iri;
           isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
-          isoband_cdt["parameter"] = *parameter;
+          isoband_cdt["parameter"] = paraminfo.parameter;
 
           pointCoordinates = Geometry::toString(*geom2,
                                                 theState.getType(),
@@ -1306,13 +1305,13 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
 void IsobandLayer::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
 {
-  if (theState.isObservation(producer))
+  if (theState.isObservation(paraminfo.producer))
     return;
-  if (parameter)
+  if (!paraminfo.parameter.empty())
   {
-    ParameterInfo info(*parameter);
-    info.producer = producer;
-    info.level = level;
+    ParameterInfo info(paraminfo.parameter);
+    info.producer = paraminfo.producer;
+    info.level = paraminfo.level;
     add(infos, info);
   }
 }
@@ -1327,15 +1326,15 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
 {
   try
   {
-    // if (source && *source == "grid")
+    // if (paraminfo.source == std::string("grid"))
     // return Fmi::bad_hash;
 
     auto hash = Layer::hash_value(theState);
 
-    if (!theState.isObservation(producer) && !(source && *source == "grid"))
+    if (!theState.isObservation(paraminfo.producer) && !(paraminfo.source == std::string("grid")))
       Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
-    Fmi::hash_combine(hash, countParameterHash(theState, parameter));
+    Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
     Fmi::hash_combine(hash, Dali::hash_value(isobands, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(interpolation));
     Fmi::hash_combine(hash, Dali::hash_value(smoother, theState));
