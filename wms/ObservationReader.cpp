@@ -63,7 +63,7 @@ PointValues read_flash_observations(State& state,
   {
     Engine::Observation::Settings settings;
     settings.allplaces = false;
-    settings.stationtype = *layer.producer;
+    settings.stationtype = *layer.paraminfo.producer;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
 
@@ -191,7 +191,7 @@ PointValues read_all_observations(State& state,
   {
     Engine::Observation::Settings settings;
     settings.allplaces = false;
-    settings.stationtype = *layer.producer;
+    settings.stationtype = *layer.paraminfo.producer;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
@@ -334,7 +334,7 @@ PointValues read_station_observations(State& state,
   {
     Engine::Observation::Settings settings;
     settings.allplaces = false;
-    settings.stationtype = *layer.producer;
+    settings.stationtype = *layer.paraminfo.producer;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
     settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
@@ -544,7 +544,7 @@ PointValues read_latlon_observations(State& state,
   try
   {
     settings.allplaces = false;
-    settings.stationtype = *layer.producer;
+    settings.stationtype = *layer.paraminfo.producer;
     settings.timezone = "UTC";
     settings.numberofstations = 1;              // we need only the nearest station
     settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
@@ -736,7 +736,7 @@ PointValues read(State& state,
 
     // We assume that for example ArrowLayer has already checked that the selected producer is valid
     // and does not provide just flash observations
-    if (Layer::isFlashOrMobileProducer(*layer.producer))
+    if (Layer::isFlashOrMobileProducer(*layer.paraminfo.producer))
     {
       return read_flash_observations(
           state, parameters, layer, positions, crs, box, valid_time_period, transformation);

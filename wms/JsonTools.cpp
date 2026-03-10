@@ -37,6 +37,25 @@ void remove_string(std::string& theValue, Json::Value& theJson, const std::strin
   }
 }
 
+void remove_string(std::string& theValue,
+                   Json::Value& theJson,
+                   const std::string& theName,
+                   const std::string& theDefault)
+{
+  try
+  {
+    auto json = remove(theJson, theName);
+    if (!json.isNull())
+      theValue = json.asString();
+    else
+      theValue = theDefault;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to extract JSON field '" + theName + "' as a string");
+  }
+}
+
 void remove_string(std::optional<std::string>& theValue,
                    Json::Value& theJson,
                    const std::string& theName,

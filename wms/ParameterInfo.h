@@ -13,18 +13,21 @@ namespace Dali
 {
 struct ParameterInfo
 {
+  ParameterInfo() = default;
   explicit ParameterInfo(std::string p) : parameter(std::move(p)) {}
+  std::size_t hash_value() const;
+  std::string to_string() const;
 
   std::string parameter;
+  std::optional<std::string> source;
   std::optional<std::string> producer;
-  std::optional<double> level;
-
-#if 0
-  std::optional<int> levelId;
   std::optional<int> forecastType;
   std::optional<int> forecastNumber;
-  std::optional<int> geometryId;
-#endif
+  std::optional<uint> geometryId;
+  std::optional<int> levelId;
+  std::optional<double> level;
+  std::optional<double> pressure;
+  std::optional<std::string> elevation_unit;
 };
 
 using ParameterInfos = std::vector<ParameterInfo>;

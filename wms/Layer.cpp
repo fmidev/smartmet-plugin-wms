@@ -78,14 +78,14 @@ void Layer::init(Json::Value& theJson,
 
     JsonTools::remove_string(type, theJson, "layer_type");
 
-    if (producer)
+    if (paraminfo.producer)
     {
       std::vector<std::string> partList;
-      splitString(*producer, ':', partList);
+      splitString(*paraminfo.producer, ':', partList);
       if (partList.size() == 2)
       {
-        producer = partList[0];
-        geometryId = toUInt32(partList[1]);
+        paraminfo.producer = partList[0];
+        paraminfo.geometryId = toUInt32(partList[1]);
       }
     }
 
@@ -93,7 +93,7 @@ void Layer::init(Json::Value& theJson,
 
     std::optional<std::string> v = request.getParameter("geometryId");
     if (v)
-      geometryId = toInt32(*v);
+      paraminfo.geometryId = toInt32(*v);
 
     // Not used in plain requests
     json = JsonTools::remove(theJson, "legend_url_layer");
@@ -104,7 +104,6 @@ void Layer::init(Json::Value& theJson,
     json = JsonTools::remove(theJson, "animation_effects");
     if (!json.isNull())
       animation_effects.init(json);
-
   }
   catch (...)
   {
@@ -145,12 +144,13 @@ Engine::Querydata::Q Layer::getModel(const State& theState) const
 {
   try
   {
-    std::string model = (producer ? *producer : theState.getConfig().defaultModel());
+    std::string model =
+        (paraminfo.producer ? *paraminfo.producer : theState.getConfig().defaultModel());
 
     if (theState.isObservation(model))
       return {};
 
-    if (source && *source == "grid")
+    if (paraminfo.source == std::string("grid"))
       return {};
 
     // chosen valid time is not relevant here if an origintime is set, the data may or may not
@@ -543,8 +543,6 @@ bool Layer::isFlashOrMobileProducer(const std::string& producer)
   return (producer == "flash" || producer == "roadcloud" || producer == "netatmo");
 }
 
-
-
 bool Layer::isAnimationStepVisible(const State& theState) const
 {
   try
@@ -553,7 +551,8 @@ bool Layer::isAnimationStepVisible(const State& theState) const
     {
       for (auto it = animation_effects.effects.begin(); it != animation_effects.effects.end(); ++it)
       {
-        if (it->effect == "hide"  &&  theState.animation_loopstep >= it->start_step  && theState.animation_loopstep <= it->end_step)
+        if (it->effect == "hide" && theState.animation_loopstep >= it->start_step &&
+            theState.animation_loopstep <= it->end_step)
           return false;
       }
     }
@@ -565,7 +564,6 @@ bool Layer::isAnimationStepVisible(const State& theState) const
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
   }
 }
-
 
 }  // namespace Dali
 }  // namespace Plugin

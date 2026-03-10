@@ -124,7 +124,7 @@ void IsolineLayer::init(Json::Value& theJson,
 
     // Extract member values
 
-    JsonTools::remove_string(parameter, theJson, "parameter");
+    JsonTools::remove_string(paraminfo.parameter, theJson, "parameter");
 
     // Support old qidprefix and new autoqid commands
     std::string autoqid;
@@ -260,7 +260,8 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double>&
                                                       State& theState)
 {
   std::vector<OGRGeometryPtr> geoms;
-  if (source && *source == "grid")
+
+  if (paraminfo.source == std::string("grid"))
     geoms = getIsolinesGrid(isovalues, theState);
   else
     geoms = getIsolinesQuerydata(isovalues, theState);
@@ -294,7 +295,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double>&
   }
 
   // Logical operations with isobands are initialized before hand
-  intersections.init(producer, projection, valid_time, theState);
+  intersections.init(paraminfo.producer, projection, valid_time, theState);
 
   // Perform polygon operations
   for (auto& geom : geoms)
@@ -334,14 +335,14 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   if (!gridEngine || !gridEngine->isEnabled())
     throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
-  if (!parameter)
+  if (paraminfo.parameter.empty())
     throw Fmi::Exception(BCP, "Parameter not set for isoline-layer");
 
   std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
   QueryServer::QueryConfigurator queryConfigurator;
   T::AttributeList attributeList;
 
-  std::string producerName = gridEngine->getProducerName(*producer);
+  std::string producerName = gridEngine->getProducerName(*paraminfo.producer);
 
   // std::cout << valid_time << "TIMEZONE " << tz << "\n";
 
@@ -395,7 +396,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
   // Adding parameter information into the query.
 
-  std::string pName = *parameter;
+  std::string pName = paraminfo.parameter;
   auto pos = pName.find(".raw");
   if (pos != std::string::npos)
   {
@@ -417,7 +418,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   if (!projection.projectionParameter)
     projection.projectionParameter = param;
 
-  if (param == *parameter && originalGridQuery->mProducerNameList.empty())
+  if (param == paraminfo.parameter && originalGridQuery->mProducerNameList.empty())
   {
     gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
     if (originalGridQuery->mProducerNameList.empty())
@@ -444,38 +445,36 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
     query_param.mType = QueryServer::QueryParameter::Type::Isoline;
     query_param.mContourLowValues = contourValues;
 
-    if (geometryId)
-      query_param.mGeometryId = *geometryId;
+    if (paraminfo.geometryId)
+      query_param.mGeometryId = *paraminfo.geometryId;
 
-    if (levelId)
-    {
-      query_param.mParameterLevelId = *levelId;
-    }
+    if (paraminfo.levelId)
+      query_param.mParameterLevelId = *paraminfo.levelId;
 
-    if (level)
+    if (paraminfo.level)
     {
-      query_param.mParameterLevel = C_INT(*level);
+      query_param.mParameterLevel = C_INT(*paraminfo.level);
     }
-    else if (pressure)
+    else if (paraminfo.pressure)
     {
       query_param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-      query_param.mParameterLevel = C_INT(*pressure);
+      query_param.mParameterLevel = C_INT(*paraminfo.pressure);
     }
 
-    if (elevation_unit)
+    if (paraminfo.elevation_unit)
     {
-      if (*elevation_unit == "m")
+      if (*paraminfo.elevation_unit == "m")
         query_param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
 
-      if (*elevation_unit == "p")
+      if (*paraminfo.elevation_unit == "p")
         query_param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
     }
 
-    if (forecastType)
-      query_param.mForecastType = C_INT(*forecastType);
+    if (paraminfo.forecastType)
+      query_param.mForecastType = C_INT(*paraminfo.forecastType);
 
-    if (forecastNumber)
-      query_param.mForecastNumber = C_INT(*forecastNumber);
+    if (paraminfo.forecastNumber)
+      query_param.mForecastNumber = C_INT(*paraminfo.forecastNumber);
   }
 
   originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -519,18 +518,18 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   if (smoother.degree)
     originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
                                                    Fmi::to_string(*smoother.degree));
-/*
-  if (minarea)
-  {
-    const auto& box = projection.getBox();
+  /*
+    if (minarea)
+    {
+      const auto& box = projection.getBox();
 
-    auto area = *minarea;
-    if (areaunit == "px^2")
-      area = box.areaFactor() * area;
+      auto area = *minarea;
+      if (areaunit == "px^2")
+        area = box.areaFactor() * area;
 
-    originalGridQuery->mAttributeList.addAttribute("contour.minArea", Fmi::to_string(area));
-  }
-*/
+      originalGridQuery->mAttributeList.addAttribute("contour.minArea", Fmi::to_string(area));
+    }
+  */
 
   originalGridQuery->mAttributeList.addAttribute("contour.extrapolation",
                                                  Fmi::to_string(extrapolation));
@@ -573,7 +572,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
           OGRGeometryFactory::createFromWkb(cwkb, nullptr, &geom, wkb.size());
           auto geomPtr = OGRGeometryPtr(geom);
 
-          if (geomPtr  &&  minarea  &&  crs.get())
+          if (geomPtr && minarea && crs.get())
           {
             auto area = *minarea;
             if (areaunit == "px^2")
@@ -660,10 +659,10 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   // Establish the desired direction parameter
 
-  if (!parameter)
+  if (paraminfo.parameter.empty())
     throw Fmi::Exception(BCP, "Parameter not set for isoline-layer");
 
-  auto param = TS::ParameterFactory::instance().parse(*parameter);
+  auto param = TS::ParameterFactory::instance().parse(paraminfo.parameter);
 
   // Establish the valid time
 
@@ -674,13 +673,14 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   if (q && !q->firstLevel())
     throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
 
-  if (level)
+  if (paraminfo.level)
   {
     if (!q)
       throw Fmi::Exception(BCP, "Cannot generate isobands without gridded level data");
 
-    if (!q->selectLevel(*level))
-      throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available!");
+    if (!q->selectLevel(*paraminfo.level))
+      throw Fmi::Exception(
+          BCP, "Level value " + Fmi::to_string(*paraminfo.level) + " is not available!");
   }
 
   // Get projection details
@@ -726,7 +726,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   }
 
   // Logical operations with isobands are initialized before hand
-  intersections.init(producer, projection, valid_time, theState);
+  intersections.init(paraminfo.producer, projection, valid_time, theState);
 
   // Calculate the isolines and store them into the template engine
 
@@ -734,7 +734,7 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   const auto& contourer = theState.getContourEngine();
 
   Engine::Contour::Options options(param, valid_time, isovalues);
-  options.level = level;
+  options.level = paraminfo.level;
 
   options.minarea = minarea;
   if (minarea)
@@ -860,7 +860,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
     }
 
     CTPP::CDT object_cdt;
-    std::string objectKey = "isoline:" + *parameter + ":" + qid;
+    std::string objectKey = "isoline:" + paraminfo.parameter + ":" + qid;
     object_cdt["objectKey"] = objectKey;
 
     // Clip if necessary
@@ -892,7 +892,7 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
         CTPP::CDT isoline_cdt(CTPP::CDT::HASH_VAL);
         isoline_cdt["iri"] = iri;
         isoline_cdt["time"] = Fmi::to_iso_extended_string(getValidTime());
-        isoline_cdt["parameter"] = *parameter;
+        isoline_cdt["parameter"] = paraminfo.parameter;
         isoline_cdt["type"] = Geometry::name(*geom, theState.getType());
         isoline_cdt["layertype"] = "isoline";
 
@@ -970,13 +970,13 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
 void IsolineLayer::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
 {
-  if (theState.isObservation(producer))
+  if (theState.isObservation(paraminfo.producer))
     return;
-  if (parameter)
+  if (!paraminfo.parameter.empty())
   {
-    ParameterInfo info(*parameter);
-    info.producer = producer;
-    info.level = level;
+    ParameterInfo info(paraminfo.parameter);
+    info.producer = paraminfo.producer;
+    info.level = paraminfo.level;
     add(infos, info);
   }
 }
@@ -993,10 +993,10 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
   {
     auto hash = Layer::hash_value(theState);
 
-    if (!(source && *source == "grid"))
+    if (!(paraminfo.source == std::string("grid")))
       Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
-    Fmi::hash_combine(hash, countParameterHash(theState, parameter));
+    Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
     Fmi::hash_combine(hash, Dali::hash_value(isolines, theState));
     Fmi::hash_combine(hash, Dali::hash_value(smoother, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(interpolation));

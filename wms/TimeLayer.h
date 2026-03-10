@@ -49,9 +49,9 @@ class TimeLayer : public Layer
 
   // We need a parameter definition in order to find a correct generation / origintime
   // (grid-support)
-  /*
-  std::optional<std::string> parameter;
-*/
+  //
+  //  std::optional<std::string> parameter;
+
  private:
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);

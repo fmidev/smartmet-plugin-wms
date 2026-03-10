@@ -55,15 +55,11 @@ void BackgroundLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, S
     // Update projection from querydata if necessary
     if (has_data_proj)
     {
-      if (!source || *source != "grid")
-      {
-        auto q = getModel(theState);
-        projection.update(q);
-      }
-      else
-      {
+      if (paraminfo.source == std::string("grid"))
         return;
-      }
+
+      auto q = getModel(theState);
+      projection.update(q);
     }
 
     // const auto& crs = projection.getCRS();

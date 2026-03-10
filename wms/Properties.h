@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "ParameterInfo.h"
 #include "Projection.h"
 
 #include <gis/Box.h>
@@ -56,16 +57,27 @@ class Properties
   std::size_t countParameterHash(const State& theState, std::optional<std::string> param) const;
 
   std::optional<std::string> language;
-  std::optional<std::string> producer;
+
+#if 1
+  ParameterInfo paraminfo;
+#else
   std::optional<std::string> source;
+  std::optional<std::string> producer;
   std::optional<int> forecastType;
   std::optional<int> forecastNumber;
   std::optional<uint> geometryId;
-  std::optional<double> level;
-  std::optional<std::string> elevation_unit;
-  std::optional<double> pressure;
   std::optional<int> levelId;
-  std::optional<int> timestep;
+  std::optional<double> level;
+  std::optional<double> pressure;
+  std::optional<std::string> elevation_unit;
+#endif
+
+  Projection projection;
+
+  // Clipping margins
+  int xmargin = 0;
+  int ymargin = 0;
+  bool clip = false;
 
   // Wanted origintime. Use latest if omitted
   std::optional<Fmi::DateTime> origintime;
@@ -79,12 +91,7 @@ class Properties
   std::optional<int> interval_start;  // minutes
   std::optional<int> interval_end;    // minutes
 
-  Projection projection;
-
-  // Clipping margins
-  int xmargin = 0;
-  int ymargin = 0;
-  bool clip = false;
+  std::optional<int> timestep;
 
  private:
   // Wanted time T = time + time_offset. Making these private forces using getValidTime()

@@ -76,14 +76,10 @@ void Properties::init(Json::Value& theJson, const State& theState, const Config&
   try
   {
     JsonTools::remove_string(language, theJson, "language", theConfig.defaultLanguage());
-    JsonTools::remove_string(producer, theJson, "producer", theConfig.defaultModel());
-    JsonTools::remove_int(timestep, theJson, "timestep");
-    JsonTools::remove_int(forecastType, theJson, "forecastType");
-    JsonTools::remove_int(forecastNumber, theJson, "forecastNumber");
-    JsonTools::remove_uint(geometryId, theJson, "geometryId");
 
     JsonTools::remove_time(origintime, theJson, "origintime");
     const auto& zones = theState.getGeoEngine().getTimeZones();
+    JsonTools::remove_int(timestep, theJson, "timestep");
     JsonTools::remove_tz(tz, theJson, "tz", zones);
     JsonTools::remove_time(time, theJson, "time", tz);  // after tz handling
 
@@ -104,34 +100,42 @@ void Properties::init(Json::Value& theJson, const State& theState, const Config&
 
     JsonTools::remove_bool(clip, theJson, "clip");
 
+    JsonTools::remove_string(paraminfo.parameter, theJson, "parameter");
+    JsonTools::remove_string(paraminfo.producer, theJson, "producer", theConfig.defaultModel());
+    JsonTools::remove_int(paraminfo.forecastType, theJson, "forecastType");
+    JsonTools::remove_int(paraminfo.forecastNumber, theJson, "forecastNumber");
+    JsonTools::remove_uint(paraminfo.geometryId, theJson, "geometryId");
+
     // Use external elevation if given
-    JsonTools::remove_double(level, theJson, "level");
-    JsonTools::remove_double(level, theJson, "elevation");
+
+    JsonTools::remove_double(paraminfo.level, theJson, "level");
+    JsonTools::remove_double(paraminfo.level, theJson, "elevation");
     if (theState.getRequest().getParameter("elevation"))
-      level = std::stod(*theState.getRequest().getParameter("elevation"));
+      paraminfo.level = std::stod(*theState.getRequest().getParameter("elevation"));
     else if (theState.getRequest().getParameter("level"))
-      level = std::stod(*theState.getRequest().getParameter("level"));
+      paraminfo.level = std::stod(*theState.getRequest().getParameter("level"));
 
-    JsonTools::remove_string(elevation_unit, theJson, "elevation_unit");
+    JsonTools::remove_string(paraminfo.elevation_unit, theJson, "elevation_unit");
     if (theState.getRequest().getParameter("elevation_unit"))
-      elevation_unit = *theState.getRequest().getParameter("elevation_unit");
+      paraminfo.elevation_unit = *theState.getRequest().getParameter("elevation_unit");
 
-    JsonTools::remove_double(pressure, theJson, "pressure");
-    JsonTools::remove_int(levelId, theJson, "levelId");
+    JsonTools::remove_double(paraminfo.pressure, theJson, "pressure");
+    JsonTools::remove_int(paraminfo.levelId, theJson, "levelId");
 
-    JsonTools::remove_string(source, theJson, "source");
-    if (!source)
+    JsonTools::remove_string(paraminfo.source, theJson, "source");
+    if (!paraminfo.source)
     {
       if (theConfig.primaryForecastSource() == "grid")
-        source = "grid";
-      else if (theConfig.primaryForecastSource().empty() && producer)
+        paraminfo.source = "grid";
+      else if (theConfig.primaryForecastSource().empty() && paraminfo.producer)
       {
         const auto* gridEngine = theState.getGridEngine();
-        if (gridEngine && gridEngine->isEnabled() && gridEngine->isGridProducer(*producer))
-          source = "grid";
+        if (gridEngine && gridEngine->isEnabled() &&
+            gridEngine->isGridProducer(*paraminfo.producer))
+          paraminfo.source = "grid";
       }
       else
-        source = theConfig.primaryForecastSource();
+        paraminfo.source = theConfig.primaryForecastSource();
     }
 
     json = JsonTools::remove(theJson, "projection");
@@ -159,22 +163,43 @@ void Properties::init(Json::Value& theJson,
     if (!theJson.isObject())
       return;
 
+    const auto& extinfo = theProperties.paraminfo;
+
     JsonTools::remove_string(language, theJson, "language", theProperties.language);
-    JsonTools::remove_string(source, theJson, "source", theProperties.source);
-    JsonTools::remove_string(producer, theJson, "producer", theProperties.producer);
-    JsonTools::remove_int(timestep, theJson, "timestep", theProperties.timestep);
-    JsonTools::remove_int(forecastType, theJson, "forecastType", theProperties.forecastType);
-    JsonTools::remove_int(forecastNumber, theJson, "forecastNumber", theProperties.forecastNumber);
-    JsonTools::remove_uint(geometryId, theJson, "geometryId", theProperties.geometryId);
 
     JsonTools::remove_time(origintime, theJson, "origintime", theProperties.origintime);
     const auto& zones = theState.getGeoEngine().getTimeZones();
     JsonTools::remove_tz(tz, theJson, "tz", zones, theProperties.tz);
     JsonTools::remove_time(time, theJson, "time", tz, theProperties.time);  // after tz
+    JsonTools::remove_int(timestep, theJson, "timestep", theProperties.timestep);
 
     JsonTools::remove_int(time_offset, theJson, "time_offset", theProperties.time_offset);
     JsonTools::remove_int(interval_start, theJson, "interval_start", theProperties.interval_start);
     JsonTools::remove_int(interval_end, theJson, "interval_end", theProperties.interval_end);
+
+    JsonTools::remove_string(paraminfo.parameter, theJson, "parameter", extinfo.parameter);
+    JsonTools::remove_string(paraminfo.source, theJson, "source", extinfo.source);
+    JsonTools::remove_string(paraminfo.producer, theJson, "producer", extinfo.producer);
+    JsonTools::remove_int(paraminfo.forecastType, theJson, "forecastType", extinfo.forecastType);
+    JsonTools::remove_int(
+        paraminfo.forecastNumber, theJson, "forecastNumber", extinfo.forecastNumber);
+    JsonTools::remove_uint(paraminfo.geometryId, theJson, "geometryId", extinfo.geometryId);
+
+    paraminfo.level = extinfo.level;
+
+    JsonTools::remove_double(paraminfo.level, theJson, "level");
+    JsonTools::remove_double(paraminfo.level, theJson, "elevation");
+    if (theState.getRequest().getParameter("elevation"))
+      paraminfo.level = std::stod(*theState.getRequest().getParameter("elevation"));
+    else if (theState.getRequest().getParameter("level"))
+      paraminfo.level = std::stod(*theState.getRequest().getParameter("level"));
+
+    JsonTools::remove_string(paraminfo.elevation_unit, theJson, "elevation_unit");
+    if (theState.getRequest().getParameter("elevation_unit"))
+      paraminfo.elevation_unit = *theState.getRequest().getParameter("elevation_unit");
+
+    JsonTools::remove_double(paraminfo.pressure, theJson, "pressure", extinfo.pressure);
+    JsonTools::remove_int(paraminfo.levelId, theJson, "levelId", extinfo.levelId);
 
     projection = theProperties.projection;
     auto json = JsonTools::remove(theJson, "projection");
@@ -194,21 +219,6 @@ void Properties::init(Json::Value& theJson,
     }
 
     JsonTools::remove_bool(clip, theJson, "clip", theProperties.clip);
-
-    level = theProperties.level;
-    JsonTools::remove_double(level, theJson, "level");
-    JsonTools::remove_double(level, theJson, "elevation");
-    if (theState.getRequest().getParameter("elevation"))
-      level = std::stod(*theState.getRequest().getParameter("elevation"));
-    else if (theState.getRequest().getParameter("level"))
-      level = std::stod(*theState.getRequest().getParameter("level"));
-
-    JsonTools::remove_string(elevation_unit, theJson, "elevation_unit");
-    if (theState.getRequest().getParameter("elevation_unit"))
-      elevation_unit = *theState.getRequest().getParameter("elevation_unit");
-
-    JsonTools::remove_double(pressure, theJson, "pressure", theProperties.pressure);
-    JsonTools::remove_int(levelId, theJson, "levelId", theProperties.levelId);
   }
   catch (...)
   {
@@ -310,7 +320,7 @@ std::size_t Properties::getProducerHash(const State& theState,
 {
   try
   {
-    if (source && *source == "grid")
+    if (paraminfo.source && *paraminfo.source == "grid")
     {
       const auto* gridEngine = theState.getGridEngine();
       if (!gridEngine || !gridEngine->isEnabled())
@@ -334,7 +344,7 @@ std::size_t Properties::countParameterHash(const State& theState,
 {
   try
   {
-    if (param && source && *source == "grid")
+    if (param && paraminfo.source && *paraminfo.source == "grid")
     {
       const auto* gridEngine = theState.getGridEngine();
       if (!gridEngine || !gridEngine->isEnabled())
@@ -374,15 +384,10 @@ std::size_t Properties::hash_value(const State& theState) const
   try
   {
     auto hash = Fmi::hash_value(language);
-    Fmi::hash_combine(hash, getProducerHash(theState, producer));
-    Fmi::hash_combine(hash, Fmi::hash_value(source));
-    Fmi::hash_combine(hash, Fmi::hash_value(forecastType));
-    Fmi::hash_combine(hash, Fmi::hash_value(forecastNumber));
-    Fmi::hash_combine(hash, Fmi::hash_value(geometryId));
-    Fmi::hash_combine(hash, Fmi::hash_value(level));
-    Fmi::hash_combine(hash, Fmi::hash_value(elevation_unit));
-    Fmi::hash_combine(hash, Fmi::hash_value(pressure));
-    Fmi::hash_combine(hash, Fmi::hash_value(levelId));
+    Fmi::hash_combine(hash, getProducerHash(theState, paraminfo.producer));
+
+    Fmi::hash_combine(hash, paraminfo.hash_value());
+
     Fmi::hash_combine(hash, Fmi::hash_value(origintime));
     // timezone is irrelevant, time is always in UTC timen
     Fmi::hash_combine(hash, Fmi::hash_value(time));

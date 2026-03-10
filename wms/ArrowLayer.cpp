@@ -503,7 +503,7 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     // if (!validLayer(theState))
     //  return;
 
-    if (source && *source == "grid")
+    if (paraminfo.source == std::string("grid"))
       generate_gridEngine(theGlobals, theLayersCdt, theState);
     else
       generate_qEngine(theGlobals, theLayersCdt, theState);
@@ -513,8 +513,8 @@ void ArrowLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     Fmi::Exception exception(BCP, "Operation failed!", nullptr);
     exception.addParameter("qid", qid);
 
-    if (producer)
-      exception.addParameter("Producer", *producer);
+    if (paraminfo.producer)
+      exception.addParameter("Producer", *paraminfo.producer);
     if (direction)
       exception.addParameter("Direction", *direction);
     if (speed)
@@ -582,7 +582,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     QueryServer::QueryConfigurator queryConfigurator;
     T::AttributeList attributeList;
 
-    std::string producerName = gridEngine->getProducerName(*producer);
+    std::string producerName = gridEngine->getProducerName(*paraminfo.producer);
 
     auto valid_time = getValidTime();
 
@@ -614,7 +614,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       // bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
       originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
 
-      positions->init(producer, projection, valid_time, theState);
+      positions->init(paraminfo.producer, projection, valid_time, theState);
     }
     else
     {
@@ -700,38 +700,36 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
         param.mFlags = QueryServer::QueryParameter::Flags::NoReturnValues;
       }
 
-      if (geometryId)
-        param.mGeometryId = *geometryId;
+      if (paraminfo.geometryId)
+        param.mGeometryId = *paraminfo.geometryId;
 
-      if (levelId)
-      {
-        param.mParameterLevelId = *levelId;
-      }
+      if (paraminfo.levelId)
+        param.mParameterLevelId = *paraminfo.levelId;
 
-      if (level)
+      if (paraminfo.level)
       {
-        param.mParameterLevel = C_INT(*level);
+        param.mParameterLevel = C_INT(*paraminfo.level);
       }
-      else if (pressure)
+      else if (paraminfo.pressure)
       {
         param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
-        param.mParameterLevel = C_INT(*pressure);
+        param.mParameterLevel = C_INT(*paraminfo.pressure);
       }
 
-      if (elevation_unit)
+      if (paraminfo.elevation_unit)
       {
-        if (*elevation_unit == "m")
+        if (*paraminfo.elevation_unit == "m")
           param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
 
-        if (*elevation_unit == "p")
+        if (*paraminfo.elevation_unit == "p")
           param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
       }
 
-      if (forecastType)
-        param.mForecastType = C_INT(*forecastType);
+      if (paraminfo.forecastType)
+        param.mForecastType = C_INT(*paraminfo.forecastType);
 
-      if (forecastNumber)
-        param.mForecastNumber = C_INT(*forecastNumber);
+      if (paraminfo.forecastNumber)
+        param.mForecastNumber = C_INT(*paraminfo.forecastNumber);
     }
 
     originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
@@ -825,7 +823,7 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(producer, projection, valid_time, theState);
+    positions->init(paraminfo.producer, projection, valid_time, theState);
 
     if (css)
     {
@@ -1035,7 +1033,7 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
 
     // Establish the data
 
-    bool use_observations = theState.isObservation(producer);
+    bool use_observations = theState.isObservation(paraminfo.producer);
     Engine::Querydata::Q q = getModel(theState);
 
     // Make sure position generation is initialized
@@ -1052,16 +1050,17 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
 
     // Establish the level
 
-    if (level)
+    if (paraminfo.level)
     {
       if (use_observations)
         throw std::runtime_error("Cannot set level value for observations in NumberLayer");
 
       bool match = false;
       for (q->resetLevel(); !match && q->nextLevel();)
-        match = (q->levelValue() == *level);
+        match = (q->levelValue() == *paraminfo.level);
       if (!match)
-        throw Fmi::Exception(BCP, "Level value " + Fmi::to_string(*level) + " is not available");
+        throw Fmi::Exception(
+            BCP, "Level value " + Fmi::to_string(*paraminfo.level) + " is not available");
     }
 
     // Get projection details
@@ -1077,7 +1076,7 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
 
     // Initialize inside/outside shapes and intersection isobands
 
-    positions->init(producer, projection, valid_time, theState);
+    positions->init(paraminfo.producer, projection, valid_time, theState);
 
     // The parameters. TODO: Allow metaparameters, needs better Q API
 
@@ -1118,7 +1117,7 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
 #ifndef WITHOUT_OBSERVATION
     else
     {
-      if (Layer::isFlashOrMobileProducer(*producer))
+      if (Layer::isFlashOrMobileProducer(*paraminfo.producer))
         throw Fmi::Exception(BCP, "Cannot use flash or mobile producer in ArrowLayer");
 
       bool use_uv_components = (u && v);
@@ -1351,35 +1350,35 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
 
 void ArrowLayer::addGridParameterInfo(ParameterInfos& infos, const State& theState) const
 {
-  if (theState.isObservation(producer))
+  if (theState.isObservation(paraminfo.producer))
     return;
 
   if (direction)
   {
     ParameterInfo info(*direction);
-    info.producer = producer;
-    info.level = level;
+    info.producer = paraminfo.producer;
+    info.level = paraminfo.level;
     add(infos, info);
   }
   if (speed)
   {
     ParameterInfo info(*speed);
-    info.producer = producer;
-    info.level = level;
+    info.producer = paraminfo.producer;
+    info.level = paraminfo.level;
     add(infos, info);
   }
   if (u)
   {
     ParameterInfo info(*u);
-    info.producer = producer;
-    info.level = level;
+    info.producer = paraminfo.producer;
+    info.level = paraminfo.level;
     add(infos, info);
   }
   if (v)
   {
     ParameterInfo info(*v);
-    info.producer = producer;
-    info.level = level;
+    info.producer = paraminfo.producer;
+    info.level = paraminfo.level;
     add(infos, info);
   }
 }
@@ -1395,12 +1394,12 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
   try
   {
     // Disable caching of observation layers
-    if (theState.isObservation(producer))
+    if (theState.isObservation(paraminfo.producer))
       return Fmi::bad_hash;
 
     auto hash = Layer::hash_value(theState);
 
-    if (!(source && *source == "grid"))
+    if (paraminfo.source != std::string("grid"))
     {
       auto q = getModel(theState);
       if (q)

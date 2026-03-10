@@ -19,6 +19,10 @@ namespace JsonTools
 Json::Value remove(Json::Value& theJson, const std::string& theName);
 
 void remove_string(std::string& theValue, Json::Value& theJson, const std::string& theName);
+void remove_string(std::string& theValue,
+                   Json::Value& theJson,
+                   const std::string& theName,
+                   const std::string& theDefault);
 void remove_string(std::optional<std::string>& theValue,
                    Json::Value& theJson,
                    const std::string& theName,
