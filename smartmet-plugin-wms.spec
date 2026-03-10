@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.2.17
+Version: 26.3.10
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -163,6 +163,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Mar 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.10-1.fmi
+- Enabled more parameter specific settings to be inherited from product/view levels to layers (BRAINSTORM-3348)
+
 * Tue Feb 17 2026 Mika Heiskanen <heiskanenm@rhel8.dev.fmi.fi> - 26.2.17-1.fmi
 - Apply timestep to gridded data too, not just point observations
 
