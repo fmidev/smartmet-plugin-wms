@@ -44,7 +44,7 @@ BuildRequires: smartmet-engine-grid-devel >= 26.2.4
 BuildRequires: smartmet-engine-geonames-devel >= 26.2.10
 BuildRequires: smartmet-engine-querydata-devel >= 26.2.4
 BuildRequires: smartmet-engine-contour-devel >= 26.2.4
-BuildRequires: smartmet-library-gis-devel >= 26.2.17
+BuildRequires: smartmet-library-gis-devel >= 26.2.5
 BuildRequires: smartmet-library-trax-devel >= 26.2.4
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
@@ -74,7 +74,7 @@ Requires: libwebp13
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 26.2.4
 Requires: smartmet-library-grid-files >= 26.2.4
-Requires: smartmet-library-gis >= 26.2.17
+Requires: smartmet-library-gis >= 26.2.5
 Requires: smartmet-library-trax >= 26.2.4
 Requires: smartmet-library-macgyver >= 26.2.4
 Requires: smartmet-library-spine >= 26.3.9
