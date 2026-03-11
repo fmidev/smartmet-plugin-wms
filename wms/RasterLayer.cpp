@@ -71,7 +71,6 @@ void RasterLayer::init(Json::Value &theJson,
 
     // Extract member values
 
-    JsonTools::remove_string(parameter, theJson, "parameter");
     JsonTools::remove_string(direction, theJson, "direction");
     JsonTools::remove_string(speed, theJson, "speed");
 
@@ -480,8 +479,8 @@ void RasterLayer::generate_output(CTPP::CDT &theGlobals,
     std::string objectKey;
     const auto &box = projection.getBox();
 
-    if (parameter)
-      objectKey = "raster:" + *parameter + ":" + qid;
+    if (!paraminfo.parameter.empty())
+      objectKey = "raster:" + paraminfo.parameter + ":" + qid;
 
     object_cdt["objectKey"] = objectKey;
 
@@ -523,7 +522,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
     if (!gridEngine || !gridEngine->isEnabled())
       throw Fmi::Exception(BCP, "The grid-engine is disabled!");
 
-    if (!parameter && !(direction && speed))
+    if (paraminfo.parameter.empty() && !(direction && speed))
       throw Fmi::Exception(BCP, "Parameter not set for raster-layer");
 
     std::unique_ptr<boost::timer::auto_cpu_timer> timer;
@@ -587,9 +586,9 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
 
     // Adding parameter information into the query.
 
-    if (parameter)
+    if (!paraminfo.parameter.empty())
     {
-      std::string pName = *parameter;
+      std::string pName = paraminfo.parameter;
       auto pos = pName.find(".raw");
       if (pos != std::string::npos)
       {
@@ -611,7 +610,7 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
       if (!projection.projectionParameter)
         projection.projectionParameter = param;
 
-      if (param == *parameter && originalGridQuery->mProducerNameList.empty())
+      if (param == paraminfo.parameter && originalGridQuery->mProducerNameList.empty())
       {
         gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
         if (originalGridQuery->mProducerNameList.empty())
@@ -895,7 +894,7 @@ std::size_t RasterLayer::hash_value(const State &theState) const
     if (!theState.isObservation(paraminfo.producer) && (paraminfo.source != std::string("grid")))
       Fmi::hash_combine(hash, Engine::Querydata::hash_value(getModel(theState)));
 
-    Fmi::hash_combine(hash, countParameterHash(theState, parameter));
+    Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
     Fmi::hash_combine(hash, Fmi::hash_value(interpolation));
     Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
     Fmi::hash_combine(hash, Fmi::hash_value(multiplier));

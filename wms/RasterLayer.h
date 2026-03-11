@@ -47,7 +47,6 @@ class RasterLayer : public Layer
 
     virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
-    std::optional<std::string> parameter;
     std::optional<std::string> direction;
     std::optional<std::string> speed;
 
