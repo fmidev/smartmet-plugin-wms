@@ -50,8 +50,14 @@ class RasterLayer : public Layer
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     std::optional<std::string> direction;
     std::optional<std::string> speed;
+=======
+  std::optional<std::string> parameter;
+  std::optional<std::string> direction;
+  std::optional<std::string> speed;
+>>>>>>> Stashed changes
 =======
   std::optional<std::string> parameter;
   std::optional<std::string> direction;
