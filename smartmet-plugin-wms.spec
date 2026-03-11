@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.3.10
+Version: 26.3.16
 Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -163,6 +163,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Mon Mar 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.16-2.fmi
+- Added GetFeatureInfo support (arrow data not supported yet)
+
 * Tue Mar 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.10-2.fmi
 - Improved error handling in IceMapLayer
 

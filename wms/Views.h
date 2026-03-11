@@ -37,7 +37,7 @@ class Views
   void check_warnings(Warnings& warnings) const;
 
   void generate(CTPP::CDT& theGlobals, State& theState);
-  void info(CTPP::CDT& theInfo, const State& theState);
+  void getFeatureInfo(CTPP::CDT& theInfo, const State& theState);
 
   std::size_t hash_value(const State& theState) const;
 

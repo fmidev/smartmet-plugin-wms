@@ -30,7 +30,7 @@ class IsolineLayer : public Layer
             const Properties& theProperties) override;
 
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
-  void info(CTPP::CDT& theInfo, const State& theState) override;
+  void getFeatureInfo(CTPP::CDT& theInfo, const State& theState) override;
 
   std::size_t hash_value(const State& theState) const override;
 
@@ -45,10 +45,6 @@ class IsolineLayer : public Layer
 
   std::optional<double> minarea;
   std::string areaunit = "km^2";  // km^2|px^2
-
-  std::string unit_conversion;
-  std::optional<double> multiplier;
-  std::optional<double> offset;
 
   std::optional<Map> outside;
   std::optional<Map> inside;

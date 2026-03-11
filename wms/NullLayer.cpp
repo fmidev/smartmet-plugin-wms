@@ -71,7 +71,7 @@ void NullLayer::generate(CTPP::CDT& /* theGlobals */,
  */
 // ----------------------------------------------------------------------
 
-void NullLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void NullLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // no info available
 }

@@ -198,7 +198,7 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
  */
 // ----------------------------------------------------------------------
 
-void WKTLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void WKTLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // no info available
 }

@@ -27,7 +27,7 @@ using PointValues = std::vector<PointData>;
 
 namespace ObservationReader
 {
-PointValues read(State& state,
+PointValues read(const State& state,
                  const std::vector<std::string>& parameters,
                  const Layer& layer,
                  const Positions& positions,

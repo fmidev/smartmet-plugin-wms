@@ -41,7 +41,7 @@ PointValues CloudCeilingLayer::readObservations(State& state,
     settings.wantedtime = valid_time;
     settings.timezone = "UTC";
     settings.numberofstations = 1;
-    settings.maxdistance = maxdistance * 1000;  // obsengine uses meters
+    settings.maxdistance = maxdistance_km * 1000;  // obsengine uses meters
 
     settings.starttimeGiven = true;
 
@@ -279,18 +279,6 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
       theGlobals["css"][name] = theState.getStyle(*css);
     }
 
-    // Data conversion settings
-
-    if (!unit_conversion.empty())
-    {
-      auto conv = theState.getConfig().unitConversion(unit_conversion);
-      multiplier = conv.multiplier;
-      offset = conv.offset;
-    }
-
-    double xmultiplier = (multiplier ? *multiplier : 1.0);
-    double xoffset = (offset ? *offset : 0.0);
-
     // Establish the numbers to draw. At this point we know that if
     // use_observations is true, obsengine is not disabled.
 
@@ -314,6 +302,11 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     // Add attributes to the group, not the text tags
     theState.addAttributes(theGlobals, group_cdt, attributes);
+
+    // Data conversion settings
+
+    double xmultiplier = (multiplier ? *multiplier : 1.0);
+    double xoffset = (offset ? *offset : 0.0);
 
     // Symbols first
 
@@ -432,7 +425,7 @@ void CloudCeilingLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
  */
 // ----------------------------------------------------------------------
 
-void CloudCeilingLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void CloudCeilingLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // TODO();
 }

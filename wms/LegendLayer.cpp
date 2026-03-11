@@ -643,7 +643,7 @@ void LegendLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
  */
 // ----------------------------------------------------------------------
 
-void LegendLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void LegendLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // no info available
 }

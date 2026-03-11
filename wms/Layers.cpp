@@ -289,10 +289,10 @@ void Layers::addGridParameterInfo(ParameterInfos& infos, const State& theState) 
  */
 // ----------------------------------------------------------------------
 
-void Layers::info(CTPP::CDT& theInfo, const State& theState)
+void Layers::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
 {
   for (const auto& layer : layers)
-    layer->info(theInfo, theState);
+    layer->getFeatureInfo(theInfo, theState);
 }
 
 // ----------------------------------------------------------------------

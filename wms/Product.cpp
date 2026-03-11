@@ -208,9 +208,9 @@ ParameterInfos Product::getGridParameterInfo(const State& theState) const
  */
 // ----------------------------------------------------------------------
 
-void Product::info(CTPP::CDT& theInfo, const State& theState)
+void Product::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
 {
-  views.info(theInfo, theState);
+  views.getFeatureInfo(theInfo, theState);
 }
 
 // ----------------------------------------------------------------------

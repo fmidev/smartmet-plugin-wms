@@ -669,7 +669,7 @@ void TimeLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
  */
 // ----------------------------------------------------------------------
 
-void TimeLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void TimeLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // no info available
 }

@@ -99,10 +99,10 @@ void Views::addGridParameterInfo(ParameterInfos& infos, const State& theState) c
  */
 // ----------------------------------------------------------------------
 
-void Views::info(CTPP::CDT& theInfo, const State& theState)
+void Views::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
 {
   for (const auto& view : views)
-    view->info(theInfo, theState);
+    view->getFeatureInfo(theInfo, theState);
 }
 
 // ----------------------------------------------------------------------

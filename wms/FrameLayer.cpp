@@ -485,7 +485,7 @@ void FrameLayer::addScale(CTPP::CDT& theLayersCdt, const State& /* theState */)
  */
 // ----------------------------------------------------------------------
 
-void FrameLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void FrameLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // no info available
 }

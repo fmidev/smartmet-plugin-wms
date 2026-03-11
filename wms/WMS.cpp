@@ -794,9 +794,9 @@ WMSQueryStatus Dali::Plugin::wmsGetFeatureInfoQuery(State &theState,
             .disableLogging();
       }
 
-      if (!theRequest.getParameter("X") || !theRequest.getParameter("Y"))
+      if (!theRequest.getParameter("I") || !theRequest.getParameter("J"))
       {
-        throw Fmi::Exception(BCP, "X and Y must be specified")
+        throw Fmi::Exception(BCP, "I and J must be specified")
             .addParameter(WMS_EXCEPTION_CODE, WMS_LAYER_NOT_DEFINED)
             .disableLogging();
       }
@@ -1201,16 +1201,14 @@ WMSQueryStatus Dali::Plugin::wmsGenerateFeatureInfo(State &theState,
   CTPP::CDT info(CTPP::CDT::HASH_VAL);
   try
   {
-    double x = Fmi::stod(*theRequest.getParameter("X"));  // validated earlier to exist
-    double y = Fmi::stod(*theRequest.getParameter("Y"));
-
-    info["x"] = x;
-    info["y"] = y;
+    // WMS 1.3.0 says the parameters are i and j, but we use x,y in code
+    info["x"] = Fmi::stod(*theRequest.getParameter("i"));
+    info["y"] = Fmi::stod(*theRequest.getParameter("j"));
 
     info["features"] = CTPP::CDT(CTPP::CDT::HASH_VAL);
 
-    theProduct.info(info, theState);
-    std::cout << fmt::format("Generated CDT:\n{}\n", info.RecursiveDump());
+    theProduct.getFeatureInfo(info, theState);
+    // std::cout << fmt::format("Generated CDT:\n{}\n", info.RecursiveDump());
 
     auto tmpl_name = "wms_get_feature_info_" + theState.getType();
     auto tmpl = getTemplate(tmpl_name);
@@ -1220,7 +1218,7 @@ WMSQueryStatus Dali::Plugin::wmsGenerateFeatureInfo(State &theState,
     try
     {
       tmpl->process(info, output, log);
-      std::cout << "Response: " << output << "\n";
+      // std::cout << "Response: " << output << "\n";
       formatResponse(output,
                      theState.getType(),  // not theProduct.type!
                      theRequest,

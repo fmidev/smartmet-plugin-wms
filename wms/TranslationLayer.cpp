@@ -113,7 +113,7 @@ void TranslationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, 
  */
 // ----------------------------------------------------------------------
 
-void TranslationLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void TranslationLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // no info available
 }

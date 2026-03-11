@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include "Attributes.h"
 #include "AnimationEffects.h"
+#include "Attributes.h"
 #include "Layers.h"
 #include "ParameterInfo.h"
 #include "Properties.h"
@@ -68,7 +68,7 @@ class Layer : public Properties
   virtual void check_warnings(Warnings& warnings) const;
 
   virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) = 0;
-  virtual void info(CTPP::CDT& theInfo, const State& theState) = 0;
+  virtual void getFeatureInfo(CTPP::CDT& theInfo, const State& theState) = 0;
 
   // Base provides a reasonable default!
   virtual std::size_t hash_value(const State& theState) const;
@@ -120,6 +120,14 @@ class Layer : public Properties
   std::set<std::string> enable;
   std::set<std::string> disable;
 
+  // Unit conversion if applicable to the layer data
+  std::string unit_conversion;
+  std::optional<double> multiplier;
+  std::optional<double> offset;
+
+  // Max distance to nearest station if applicable to the layer data
+  double maxdistance_km = 5;
+
   // External style sheet
   std::optional<std::string> css;
 
@@ -133,9 +141,18 @@ class Layer : public Properties
 
   static bool isFlashOrMobileProducer(const std::string& producer);
 
+ protected:
+  void getFeatureValue(CTPP::CDT& theInfo, const State& theState);
+
  private:
   bool validResolution() const;
   bool validType(const std::string& theType) const;
+
+  void getObservationValue(CTPP::CDT& theInfo, const State& theState);
+
+  void getQuerydataValue(CTPP::CDT& theInfo, const State& theState);
+
+  void getGridValue(CTPP::CDT& theInfo, const State& theState);
 
 };  // class Layer
 

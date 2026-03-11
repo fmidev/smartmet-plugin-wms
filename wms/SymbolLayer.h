@@ -33,24 +33,18 @@ class SymbolLayer : public Layer
             const Properties& theProperties) override;
 
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
-  void info(CTPP::CDT& theInfo, const State& theState) override;
+  void getFeatureInfo(CTPP::CDT& theInfo, const State& theState) override;
 
   std::size_t hash_value(const State& theState) const override;
 
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   std::optional<TS::ParameterAndFunctions> param_funcs;
-  std::string unit_conversion;
-  std::optional<double> multiplier;
-  std::optional<double> offset;
 
   std::optional<Positions> positions;
 
   // Require at least this many valid valies
   int minvalues = 0;
-
-  // Station distance limit in kilometers
-  double maxdistance = 5;
 
   // the name of the default symbol
   std::optional<std::string> symbol;

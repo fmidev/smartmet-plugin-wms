@@ -50,7 +50,7 @@ struct DxDy
  */
 // ----------------------------------------------------------------------
 
-PointValues read_flash_observations(State& state,
+PointValues read_flash_observations(const State& state,
                                     const std::vector<std::string>& parameters,
                                     const Layer& layer,
                                     const Positions& positions,
@@ -176,7 +176,7 @@ PointValues read_flash_observations(State& state,
  */
 // ----------------------------------------------------------------------
 
-PointValues read_all_observations(State& state,
+PointValues read_all_observations(const State& state,
                                   const std::vector<std::string>& parameters,
                                   const Layer& layer,
                                   const Positions& positions,
@@ -319,7 +319,7 @@ PointValues read_all_observations(State& state,
  */
 // ----------------------------------------------------------------------
 
-PointValues read_station_observations(State& state,
+PointValues read_station_observations(const State& state,
                                       const std::vector<std::string>& parameters,
                                       const Layer& layer,
                                       const Positions& positions,
@@ -528,7 +528,7 @@ PointValues read_station_observations(State& state,
  */
 // ----------------------------------------------------------------------
 
-PointValues read_latlon_observations(State& state,
+PointValues read_latlon_observations(const State& state,
                                      const std::vector<std::string>& parameters,
                                      const Layer& layer,
                                      const Positions& positions,
@@ -704,7 +704,7 @@ PointValues read_latlon_observations(State& state,
 }
 }  // namespace
 
-PointValues read(State& state,
+PointValues read(const State& state,
                  const std::vector<std::string>& parameters,
                  const Layer& layer,
                  const Positions& positions,

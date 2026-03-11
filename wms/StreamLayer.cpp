@@ -785,7 +785,7 @@ void StreamLayer::addGridParameterInfo(ParameterInfos& infos, const State& theSt
  */
 // ----------------------------------------------------------------------
 
-void StreamLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void StreamLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // TODO();
 }

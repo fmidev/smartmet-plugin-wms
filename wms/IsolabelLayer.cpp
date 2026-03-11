@@ -1229,10 +1229,10 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
  */
 // ----------------------------------------------------------------------
 
-void IsolabelLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
-{
-  // no info available, always associated with isolines which provide info
-}
+// void IsolabelLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
+// {
+// no info available, always associated with isolines which provide info
+// }
 
 // ----------------------------------------------------------------------
 /*!

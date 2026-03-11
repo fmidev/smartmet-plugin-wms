@@ -211,9 +211,6 @@ void IsolineLayer::init(Json::Value& theJson,
     JsonTools::remove_double(precision, theJson, "precision");
     JsonTools::remove_double(minarea, theJson, "minarea");
     JsonTools::remove_string(areaunit, theJson, "areaunit");
-    JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
-    JsonTools::remove_double(multiplier, theJson, "multiplier");
-    JsonTools::remove_double(offset, theJson, "offset");
 
     JsonTools::remove_bool(strict, theJson, "strict");
     JsonTools::remove_bool(validate, theJson, "validate");
@@ -348,14 +345,6 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
 
   T::ParamValue_vec contourValues;
   std::copy(isovalues.begin(), isovalues.end(), std::back_inserter(contourValues));
-
-  // Alter units if requested
-  if (!unit_conversion.empty())
-  {
-    auto conv = theState.getConfig().unitConversion(unit_conversion);
-    multiplier = conv.multiplier;
-    offset = conv.offset;
-  }
 
   auto crs = projection.getCRS();
   const auto& box = projection.getBox();
@@ -761,13 +750,6 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
 
   // Alter units if requested
 
-  if (!unit_conversion.empty())
-  {
-    auto conv = theState.getConfig().unitConversion(unit_conversion);
-    multiplier = conv.multiplier;
-    offset = conv.offset;
-  }
-
   if (multiplier || offset)
     options.transformation(multiplier ? *multiplier : 1.0, offset ? *offset : 0.0);
 
@@ -987,9 +969,25 @@ void IsolineLayer::addGridParameterInfo(ParameterInfos& infos, const State& theS
  */
 // ----------------------------------------------------------------------
 
-void IsolineLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void IsolineLayer::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
 {
-  // TODO();
+  try
+  {
+    // Sanity checks
+    if (!validLayer(theState))
+      return;
+    if (paraminfo.parameter.empty())
+      return;
+
+    Layer::getFeatureValue(theInfo, theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "GetFeatureInfo operation failed!")
+        .addParameter("qid", qid)
+        .addParameter("Producer", *paraminfo.producer)
+        .addParameter("Parameter", paraminfo.parameter);
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -1014,9 +1012,6 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(extrapolation));
     Fmi::hash_combine(hash, Fmi::hash_value(precision));
     Fmi::hash_combine(hash, Fmi::hash_value(minarea));
-    Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
-    Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
-    Fmi::hash_combine(hash, Fmi::hash_value(offset));
     Fmi::hash_combine(hash, Dali::hash_value(outside, theState));
     Fmi::hash_combine(hash, Dali::hash_value(inside, theState));
     Fmi::hash_combine(hash, Dali::hash_value(sampling, theState));

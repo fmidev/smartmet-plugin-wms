@@ -205,9 +205,6 @@ void RasterLayer::init(Json::Value &theJson,
     JsonTools::remove_int(compression, theJson, "compression");
 
     JsonTools::remove_string(interpolation, theJson, "interpolation");
-    JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
-    JsonTools::remove_double(multiplier, theJson, "multiplier");
-    JsonTools::remove_double(offset, theJson, "offset");
   }
   catch (...)
   {
@@ -541,14 +538,6 @@ void RasterLayer::generate_gridEngine(CTPP::CDT &theGlobals,
     // Establish the valid time
     auto valid_time = getValidTime();
 
-    // Alter units if requested
-    if (!unit_conversion.empty())
-    {
-      auto conv = theState.getConfig().unitConversion(unit_conversion);
-      multiplier = conv.multiplier;
-      offset = conv.offset;
-    }
-
     auto crs = projection.getCRS();
     const auto &box = projection.getBox();
     std::string wkt = *projection.crs;
@@ -879,6 +868,17 @@ void RasterLayer::addGridParameterInfo(ParameterInfos &infos, const State &theSt
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void RasterLayer::getFeatureInfo(CTPP::CDT & /* theInfo */, const State & /* theState */)
+{
+  // not implemented yet
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value for the layer
  */
 // ----------------------------------------------------------------------
@@ -896,9 +896,6 @@ std::size_t RasterLayer::hash_value(const State &theState) const
 
     Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
     Fmi::hash_combine(hash, Fmi::hash_value(interpolation));
-    Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
-    Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
-    Fmi::hash_combine(hash, Fmi::hash_value(offset));
     Fmi::hash_combine(hash, Fmi::hash_value(land_position));
     Fmi::hash_combine(hash, Fmi::hash_value(sea_position));
     Fmi::hash_combine(hash, Fmi::hash_value(land_border_position));

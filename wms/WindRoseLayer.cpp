@@ -773,7 +773,7 @@ std::map<int, WindRoseData> WindRoseLayer::getObservations(State& theState,
  */
 // ----------------------------------------------------------------------
 
-void WindRoseLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void WindRoseLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // no info available
 }

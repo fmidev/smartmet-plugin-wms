@@ -35,7 +35,7 @@ class ArrowLayer : public Layer
             const Properties& theProperties) override;
 
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
-  void info(CTPP::CDT& theInfo, const State& theState) override;
+  void getFeatureInfo(CTPP::CDT& theInfo, const State& theState) override;
 
   std::size_t hash_value(const State& theState) const override;
 
@@ -51,9 +51,6 @@ class ArrowLayer : public Layer
   std::optional<double> fixedspeed;
   std::optional<double> fixeddirection;
 
-  std::string unit_conversion;
-  std::optional<double> multiplier;
-  std::optional<double> offset;
   std::optional<double> minrotationspeed;
   std::optional<std::string> symbol;
   std::optional<double> scale;
@@ -68,9 +65,6 @@ class ArrowLayer : public Layer
 
   // Require at least this many valid valies
   int minvalues = 0;
-
-  // Station distance limit in kilometers
-  double maxdistance = 5;
 
   // The speed parameter and the ranges to be styled separately
   std::vector<AttributeSelection> arrows;

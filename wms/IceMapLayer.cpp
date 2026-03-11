@@ -1336,7 +1336,7 @@ std::vector<std::string> IceMapLayer::getAttributeColumns() const
  */
 // ----------------------------------------------------------------------
 
-void IceMapLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void IceMapLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // no info available at least not yet
 }

@@ -163,7 +163,7 @@ void GridLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& 
  */
 // ----------------------------------------------------------------------
 
-void GridLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void GridLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // no info available
 }

@@ -126,7 +126,7 @@ void PostGISLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
  */
 // ----------------------------------------------------------------------
 
-void PostGISLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void PostGISLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // no info available, atleast not yet
 }

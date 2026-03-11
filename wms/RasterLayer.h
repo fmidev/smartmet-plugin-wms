@@ -42,32 +42,14 @@ class RasterLayer : public Layer
             const Properties& theProperties) override;
 
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
-  void info(CTPP::CDT& theInfo, const State& theState) override;
+  void getFeatureInfo(CTPP::CDT& theInfo, const State& theState) override;
 
   std::size_t hash_value(const State& theState) const override;
 
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    std::optional<std::string> direction;
-    std::optional<std::string> speed;
-=======
-  std::optional<std::string> parameter;
   std::optional<std::string> direction;
   std::optional<std::string> speed;
->>>>>>> Stashed changes
-=======
-  std::optional<std::string> parameter;
-  std::optional<std::string> direction;
-  std::optional<std::string> speed;
->>>>>>> Stashed changes
-=======
-  std::optional<std::string> parameter;
-  std::optional<std::string> direction;
-  std::optional<std::string> speed;
->>>>>>> Stashed changes
 
   std::string interpolation{"linear"};
 

@@ -1426,6 +1426,17 @@ void GraticuleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, St
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void GraticuleLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
+{
+  // no interesting info to return
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value for the graticule definitions
  */
 // ----------------------------------------------------------------------

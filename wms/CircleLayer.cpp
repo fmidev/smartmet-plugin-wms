@@ -555,7 +555,7 @@ void CircleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
  */
 // ----------------------------------------------------------------------
 
-void CircleLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void CircleLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // no info available
 }

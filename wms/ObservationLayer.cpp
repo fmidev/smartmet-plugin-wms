@@ -9,6 +9,7 @@
 #include "ValueTools.h"
 #include <ctpp2/CDT.hpp>
 #include <engines/observation/Engine.h>
+#include <gis/CoordinateTransformation.h>
 #include <gis/SpatialReference.h>
 #include <timeseries/TimeSeriesInclude.h>
 
@@ -47,7 +48,6 @@ void ObservationLayer::init(Json::Value& theJson,
       positions = Positions{};
       positions->init(json, theConfig);
     }
-    JsonTools::remove_double(maxdistance, theJson, "maxdistance");
     json = JsonTools::remove(theJson, "label");
     label.init(json, theConfig);
 
@@ -90,7 +90,7 @@ StationSymbolPriorities ObservationLayer::getProcessedData(State& theState) cons
                                                parameters,
                                                *this,
                                                *positions,
-                                               maxdistance,
+                                               maxdistance_km,
                                                crs,
                                                box,
                                                valid_time,
@@ -188,9 +188,85 @@ void ObservationLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, 
  */
 // ----------------------------------------------------------------------
 
-void ObservationLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void ObservationLayer::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
 {
-  // TODO();
+  try
+  {
+    // Establish the valid time
+    auto valid_time = getValidTime();
+    auto valid_time_period = getValidTimePeriod();
+
+    // Get projection details
+
+    const auto& crs = projection.getCRS();
+    const auto& box = projection.getBox();
+
+    // Pixel coordinate to latlon
+    Fmi::CoordinateTransformation transformation(crs, "WGS84");
+    double x = theInfo["x"].GetFloat();
+    double y = theInfo["y"].GetFloat();
+    double lon = x;
+    double lat = y;
+    box.itransform(lon, lat);
+    if (!transformation.transform(lon, lat))
+      return;
+
+    // Create list of stations to read
+    Station station;
+    station.longitude = lon;
+    station.latitude = lat;
+
+    Positions positions;
+    positions.layout = Positions::Layout::Station;
+    positions.stations.stations.emplace_back(station);
+
+    // Fetch observations for the single coordinate
+
+    auto params = getParameters();
+
+    auto pointvalues = ObservationReader::read(theState,
+                                               params,
+                                               *this,
+                                               positions,
+                                               maxdistance_km,
+                                               crs,
+                                               box,
+                                               valid_time,
+                                               valid_time_period);
+
+    auto results = processResultSet(pointvalues);
+
+    if (results.size() >= 1)
+    {
+      const auto& result = results.front();
+      const auto fmisid = result.fmisid;
+
+      // Output results
+      theInfo["time"] = Fmi::to_iso_string(valid_time);
+      theInfo["longitude"] = std::round(result.longitude * 1e5) / 1e5;
+      theInfo["latitude"] = std::round(result.latitude * 1e5) / 1e5;
+      theInfo["features"]["Value"] = result.symbol;
+      theInfo["features"]["Fmisid"] = fmisid;
+      theInfo["features"]["URL"] = "https://hav.fmi.fi/hav/asema/?fmisid=" + std::to_string(fmisid);
+
+      // Add more station information
+      Engine::Observation::Settings settings;
+      settings.maxdistance = maxdistance_km * 1000;
+      settings.taggedFMISIDs.emplace_back("tag", fmisid);
+
+      Spine::Stations stations;
+      theState.getObsEngine().getStations(stations, settings);
+      if (stations.size() >= 1 && stations.front().fmisid == fmisid)
+      {
+        const auto& s = stations.front();
+        theInfo["features"]["StationName"] = s.formal_name_fi;
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -206,7 +282,6 @@ std::size_t ObservationLayer::hash_value(const State& theState) const
     auto hash = Layer::hash_value(theState);
 
     Fmi::hash_combine(hash, Dali::hash_value(positions, theState));
-    Fmi::hash_combine(hash, Fmi::hash_value(maxdistance));
     Fmi::hash_combine(hash, Dali::hash_value(label, theState));
 
     Fmi::hash_combine(hash, Fmi::hash_value(mindistance));

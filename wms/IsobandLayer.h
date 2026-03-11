@@ -36,7 +36,7 @@ class IsobandLayer : public Layer
             const Properties& theProperties) override;
 
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
-  void info(CTPP::CDT& theInfo, const State& theState) override;
+  void getFeatureInfo(CTPP::CDT& theInfo, const State& theState) override;
 
   std::size_t hash_value(const State& theState) const override;
 
@@ -52,10 +52,6 @@ class IsobandLayer : public Layer
 
   std::optional<double> minarea;
   std::string areaunit = "km^2";  // km^2|px^2
-
-  std::string unit_conversion;
-  std::optional<double> multiplier;
-  std::optional<double> offset;
 
   std::optional<Map> outside;
   std::optional<Map> inside;
@@ -74,9 +70,6 @@ class IsobandLayer : public Layer
  private:
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
-
-  void infoGrid(CTPP::CDT& theInfo, const State& theState);
-  void infoQuerydata(CTPP::CDT& theInfo, const State& theState);
 
   std::shared_ptr<Engine::Querydata::QImpl> buildHeatmap(const Spine::Parameter& theParameter,
                                                          const Fmi::DateTime& theTime,

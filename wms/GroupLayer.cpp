@@ -65,6 +65,17 @@ void GroupLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief GetFeatureInfo
+ */
+// ----------------------------------------------------------------------
+
+void GroupLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
+{
+  // not implemented yet
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Hash value
  */
 // ----------------------------------------------------------------------

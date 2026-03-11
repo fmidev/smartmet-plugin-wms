@@ -1,11 +1,14 @@
 // ======================================================================
 
 #include "Layer.h"
+#include "AggregationUtility.h"
 #include "Config.h"
 #include "Defs.h"
 #include "Hash.h"
 #include "JsonTools.h"
 #include "LayerFactory.h"
+#include "ObservationReader.h"
+#include "PointData.h"
 #include "State.h"
 #include "View.h"
 #ifndef WITHOUT_OBSERVATION
@@ -16,6 +19,7 @@
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
+#include <grid-content/queryServer/definition/QueryConfigurator.h>
 #include <grid-files/common/GeneralFunctions.h>
 #include <macgyver/Cache.h>
 #include <macgyver/Exception.h>
@@ -38,6 +42,63 @@ namespace
 const int default_cache_size = 10000;
 using BBoxCache = Fmi::Cache::Cache<std::size_t, std::map<std::string, double>>;
 BBoxCache g_bbox_cache(default_cache_size);
+
+using PointValues = std::vector<PointData>;
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Grid Forecast reader
+ */
+// ----------------------------------------------------------------------
+
+PointValues read_gridForecasts(const Positions::Point& point,
+                               const Engine::Grid::Engine* /* gridEngine */,
+                               QueryServer::Query& query,
+                               const Fmi::SpatialReference& crs,
+                               const Fmi::Box& box,
+                               const Fmi::DateTime& valid_time,
+                               const State& state)
+{
+  try
+  {
+    // Generate the coordinates for the symbols
+
+    Positions::Points points;
+    points.push_back(point);
+
+    PointValues pointvalues;
+    T::GridValueList* values = nullptr;
+    for (const auto& param : query.mQueryParameterList)
+    {
+      for (const auto& val : param.mValueList)
+      {
+        if (val->mValueList.getLength() == points.size())
+          values = &val->mValueList;
+      }
+    }
+
+    if (values && values->getLength())
+    {
+      uint len = values->getLength();
+      for (uint t = 0; t < len; t++)
+      {
+        T::GridValue* rec = values->getGridValuePtrByIndex(t);
+        auto point = points[t];
+
+        if (rec->mValue != ParamValueMissing)
+          pointvalues.emplace_back(point, rec->mValue);
+        else
+          pointvalues.emplace_back(point, kFloatMissing);
+      }
+    }
+
+    return pointvalues;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
 
 }  // namespace
 
@@ -77,6 +138,20 @@ void Layer::init(Json::Value& theJson,
     layers.init(json, theState, theConfig, *this);
 
     JsonTools::remove_string(type, theJson, "layer_type");
+
+    JsonTools::remove_double(multiplier, theJson, "multiplier");
+    JsonTools::remove_double(offset, theJson, "offset");
+
+    // Alter units if requested
+    JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
+    if (!unit_conversion.empty())
+    {
+      auto conv = theState.getConfig().unitConversion(unit_conversion);
+      multiplier = conv.multiplier;
+      offset = conv.offset;
+    }
+
+    JsonTools::remove_double(maxdistance_km, theJson, "maxdistance");
 
     if (paraminfo.producer)
     {
@@ -512,6 +587,435 @@ void Layer::check_warnings(Warnings& warnings) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Get data value for the given pixel or NaN
+ */
+// ----------------------------------------------------------------------
+
+void Layer::getFeatureValue(CTPP::CDT& theInfo, const State& theState)
+{
+  try
+  {
+    if (theState.isObservation(paraminfo.producer))
+      getObservationValue(theInfo, theState);
+    else if (paraminfo.source == std::string("grid"))
+      getGridValue(theInfo, theState);
+    else
+      getQuerydataValue(theInfo, theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get data value for the given pixel or NaN
+ */
+// ----------------------------------------------------------------------
+
+void Layer::getQuerydataValue(CTPP::CDT& theInfo, const State& theState)
+{
+  try
+  {
+    // The code here is a drastically reduced version of the respective GetMap code
+
+    // Establish the data
+    auto q = getModel(theState);
+    if (!q)
+      return;
+    if (!q->isGrid())
+      return;
+
+    // Extract optional parameter aggregation settings
+    std::optional<TS::ParameterAndFunctions> param_funcs;
+    param_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(paraminfo.parameter);
+
+    // Establish the valid time
+    auto valid_time = getValidTime();
+
+    // Establish the level
+    if (!q->firstLevel())
+      return;
+    if (paraminfo.level)
+    {
+      if (!q->selectLevel(*paraminfo.level))
+        return;
+    }
+
+    // Get projection details
+    projection.update(q);
+    const auto& crs = projection.getCRS();
+    const auto& box = projection.getBox();
+
+    // Pixel coordinate to latlon
+    Fmi::CoordinateTransformation transformation(crs, "WGS84");
+    double x = theInfo["x"].GetFloat();
+    double y = theInfo["y"].GetFloat();
+    double lon = x;
+    double lat = y;
+    box.itransform(lon, lat);
+    if (!transformation.transform(lon, lat))
+      return;
+
+    // Q API sucks (copy paste this everywhere)
+
+    std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+    Fmi::LocalDateTime localdatetime(valid_time, Fmi::TimeZonePtr::utc);
+    auto mylocale = std::locale::classic();
+    NFmiPoint dummy;
+
+    Spine::Location loc(lon, lat);
+    Engine::Querydata::ParameterOptions options(param_funcs->parameter,
+                                                "",
+                                                loc,
+                                                "",
+                                                "",
+                                                *timeformatter,
+                                                "",
+                                                "",
+                                                mylocale,
+                                                "",
+                                                false,
+                                                dummy,
+                                                dummy);
+
+    TS::Value result =
+        AggregationUtility::get_qengine_value(q, options, localdatetime, param_funcs);
+
+    // Extract variant content
+    double value = std::numeric_limits<double>::quiet_NaN();
+    if (const double* tmp = std::get_if<double>(&result))
+      value = *tmp;
+    if (const int* ptr = std::get_if<int>(&result))
+      value = *ptr;
+
+    const double xmul = (multiplier ? *multiplier : 1.0);
+    const double xoff = (offset ? *offset : 0.0);
+    value = xmul * value + xoff;
+
+    theInfo["features"][paraminfo.parameter] = value;
+    theInfo["time"] = Fmi::to_iso_string(valid_time);
+    theInfo["longitude"] = std::round(lon * 1e5) / 1e5;
+    theInfo["latitude"] = std::round(lat * 1e5) / 1e5;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get data value for the given pixel or NaN
+ */
+// ----------------------------------------------------------------------
+
+void Layer::getGridValue(CTPP::CDT& theInfo, const State& theState)
+{
+  try
+  {
+    const auto* gridEngine = theState.getGridEngine();
+    if (!gridEngine || !gridEngine->isEnabled())
+      return;
+
+    std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
+    QueryServer::QueryConfigurator queryConfigurator;
+    T::AttributeList attributeList;
+
+    std::string producerName = gridEngine->getProducerName(*paraminfo.producer);
+
+    auto valid_time = getValidTime();
+
+    // Do this conversion just once for speed:
+    NFmiMetTime met_time = valid_time;
+
+    std::string wkt = *projection.crs;
+    // std::cout << wkt << "\n";
+
+    // Getting WKT and the bounding box of the requested projection.
+    // WMS does not support CRS=data, no need to handle it
+
+    if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
+      wkt = projection.getCRS().WKT();
+
+    // std::cout << wkt << "\n";
+
+    // Adding the bounding box information into the query.
+
+    const auto& box = projection.getBox();
+
+    auto bl = projection.bottomLeftLatLon();
+    auto tr = projection.topRightLatLon();
+    auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
+    originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
+
+    bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+    originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+
+    // Adding parameter information into the query.
+
+    std::string pName = paraminfo.parameter;
+    auto pos = pName.find(".raw");
+    if (pos != std::string::npos)
+    {
+      attributeList.addAttribute("grid.areaInterpolationMethod",
+                                 Fmi::to_string(T::AreaInterpolationMethod::Nearest));
+      pName.erase(pos, 4);
+    }
+
+    std::string param = gridEngine->getParameterString(producerName, pName);
+    attributeList.addAttribute("param", param);
+
+    if (!projection.projectionParameter)
+      projection.projectionParameter = param;
+
+    if (param == paraminfo.parameter && originalGridQuery->mProducerNameList.empty())
+    {
+      gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
+      if (originalGridQuery->mProducerNameList.empty())
+        originalGridQuery->mProducerNameList.push_back(producerName);
+    }
+
+    std::string forecastTime = Fmi::to_iso_string(getValidTime());
+    attributeList.addAttribute("startTime", forecastTime);
+    attributeList.addAttribute("endTime", forecastTime);
+    attributeList.addAttribute("timelist", forecastTime);
+    attributeList.addAttribute("timezone", "UTC");
+
+    if (origintime)
+      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+
+    // Tranforming information from the attribute list into the query object.
+    queryConfigurator.configure(*originalGridQuery, attributeList);
+
+    // Fullfilling information into the query object.
+
+    originalGridQuery->mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
+
+    // Requested point: convert from pixel coordinate to latlon
+
+    auto crs = projection.getCRS();
+
+    Fmi::CoordinateTransformation transformation(crs, "WGS84");
+    double x = theInfo["x"].GetFloat();
+    double y = theInfo["y"].GetFloat();
+
+    double lon = x;
+    double lat = y;
+    box.itransform(lon, lat);
+    if (!transformation.transform(lon, lat))
+      return;
+
+    T::Coordinate_vec coordinates;
+    coordinates.emplace_back(lon, lat);
+    originalGridQuery->mAreaCoordinates.push_back(coordinates);
+    originalGridQuery->mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
+
+    for (auto& param : originalGridQuery->mQueryParameterList)
+    {
+      param.mLocationType = QueryServer::QueryParameter::LocationType::Point;
+      param.mType = QueryServer::QueryParameter::Type::PointValues;
+
+      if (paraminfo.geometryId)
+        param.mGeometryId = *paraminfo.geometryId;
+
+      if (paraminfo.levelId)
+        param.mParameterLevelId = *paraminfo.levelId;
+
+      if (paraminfo.level)
+        param.mParameterLevel = C_INT(*paraminfo.level);
+      else if (paraminfo.pressure)
+      {
+        param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
+        param.mParameterLevel = C_INT(*paraminfo.pressure);
+      }
+
+      if (paraminfo.elevation_unit)
+      {
+        if (*paraminfo.elevation_unit == "m")
+          param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
+
+        if (*paraminfo.elevation_unit == "p")
+          param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
+      }
+
+      if (paraminfo.forecastType)
+        param.mForecastType = C_INT(*paraminfo.forecastType);
+
+      if (paraminfo.forecastNumber)
+        param.mForecastNumber = C_INT(*paraminfo.forecastNumber);
+    }
+
+    originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
+    originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
+
+    if (projection.size && *projection.size > 0)
+    {
+      originalGridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
+    }
+    else
+    {
+      if (projection.xsize)
+        originalGridQuery->mAttributeList.addAttribute("grid.width",
+                                                       Fmi::to_string(*projection.xsize));
+
+      if (projection.ysize)
+        originalGridQuery->mAttributeList.addAttribute("grid.height",
+                                                       Fmi::to_string(*projection.ysize));
+    }
+
+    // The Query object before the query execution.
+    // query.print(std::cout,0,0);
+
+    // Executing the query.
+    std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
+
+    // The Query object after the query execution.
+    // query.print(std::cout,0,0);
+
+    // Extracting the projection information from the query result.
+    if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
+    {
+      const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
+      const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
+
+      if (widthStr != nullptr)
+        projection.xsize = Fmi::stoi(widthStr);
+
+      if (heightStr != nullptr)
+        projection.ysize = Fmi::stoi(heightStr);
+    }
+
+    if (!projection.xsize && !projection.ysize)
+      throw Fmi::Exception(BCP, "The projection size is unknown!");
+
+    // Establish the numbers
+
+    Positions::Point point(x, y, {lon, lat});
+
+    auto pointvalues =
+        read_gridForecasts(point, gridEngine, *originalGridQuery, crs, box, valid_time, theState);
+
+    if (pointvalues.size() >= 1)
+    {
+      float value = pointvalues.front()[0];
+
+      const double xmul = (multiplier ? *multiplier : 1.0);
+      const double xoff = (offset ? *offset : 0.0);
+
+      if (value == kFloatMissing)
+        value = std::numeric_limits<double>::quiet_NaN();
+      value = xmul * value + xoff;
+
+      // Output results
+      theInfo["time"] = Fmi::to_iso_string(valid_time);
+      theInfo["features"][paraminfo.parameter] = value;
+      theInfo["longitude"] = std::round(lon * 1e5) / 1e5;
+      theInfo["latitude"] = std::round(lat * 1e5) / 1e5;
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get data value for the given pixel or NaN
+ */
+// ----------------------------------------------------------------------
+
+void Layer::getObservationValue(CTPP::CDT& theInfo, const State& theState)
+{
+  try
+  {
+    // Establish the valid time
+    auto valid_time = getValidTime();
+    auto valid_time_period = getValidTimePeriod();
+
+    // Get projection details
+
+    const auto& crs = projection.getCRS();
+    const auto& box = projection.getBox();
+
+    // Pixel coordinate to latlon
+    Fmi::CoordinateTransformation transformation(crs, "WGS84");
+    double x = theInfo["x"].GetFloat();
+    double y = theInfo["y"].GetFloat();
+    double lon = x;
+    double lat = y;
+    box.itransform(lon, lat);
+    if (!transformation.transform(lon, lat))
+      return;
+
+    // Create list of stations to read
+    Station station;
+    station.longitude = lon;
+    station.latitude = lat;
+
+    Positions positions;
+    positions.layout = Positions::Layout::Station;
+    positions.stations.stations.emplace_back(station);
+
+    // Fetch observations for the single coordinate
+
+    std::vector<std::string> params{paraminfo.parameter, "fmisid"};
+
+    auto pointvalues = ObservationReader::read(theState,
+                                               params,
+                                               *this,
+                                               positions,
+                                               maxdistance_km,
+                                               crs,
+                                               box,
+                                               valid_time,
+                                               valid_time_period);
+
+    if (pointvalues.size() >= 1)
+    {
+      const auto& values = pointvalues.front();
+
+      const double xmul = (multiplier ? *multiplier : 1.0);
+      const double xoff = (offset ? *offset : 0.0);
+
+      double value = values[0];
+      if (value == kFloatMissing)
+        value = std::numeric_limits<double>::quiet_NaN();
+      value = xmul * value + xoff;
+      int fmisid = values[1];
+
+      // Output results
+      theInfo["time"] = Fmi::to_iso_string(valid_time);
+      theInfo["longitude"] = std::round(lon * 1e5) / 1e5;
+      theInfo["latitude"] = std::round(lat * 1e5) / 1e5;
+      theInfo["features"][paraminfo.parameter] = value;
+      theInfo["features"]["Fmisid"] = fmisid;
+      theInfo["features"]["URL"] = "https://hav.fmi.fi/hav/asema/?fmisid=" + std::to_string(fmisid);
+
+      // Add more station information
+      Engine::Observation::Settings settings;
+      settings.maxdistance = maxdistance_km * 1000;
+      settings.taggedFMISIDs.emplace_back("tag", values[1]);
+
+      Spine::Stations stations;
+      theState.getObsEngine().getStations(stations, settings);
+      if (stations.size() >= 1 && stations.front().fmisid == fmisid)
+      {
+        const auto& s = stations.front();
+        theInfo["features"]["StationName"] = s.formal_name_fi;
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Generate the hash for the layer
  */
 // ----------------------------------------------------------------------
@@ -526,6 +1030,10 @@ std::size_t Layer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(maxresolution));
     Fmi::hash_combine(hash, Fmi::hash_value(enable));
     Fmi::hash_combine(hash, Fmi::hash_value(disable));
+    Fmi::hash_combine(hash, Fmi::hash_value(maxdistance_km));
+    Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
+    Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
+    Fmi::hash_combine(hash, Fmi::hash_value(offset));
     Fmi::hash_combine(hash, Dali::hash_css(css, theState));
     Fmi::hash_combine(hash, Dali::hash_value(attributes, theState));
     Fmi::hash_combine(hash, Dali::hash_value(layers, theState));

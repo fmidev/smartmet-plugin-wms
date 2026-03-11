@@ -472,10 +472,6 @@ void ArrowLayer::init(Json::Value& theJson,
     JsonTools::remove_int(dx, theJson, "dx");
     JsonTools::remove_int(dy, theJson, "dy");
     JsonTools::remove_int(minvalues, theJson, "minvalues");
-    JsonTools::remove_double(maxdistance, theJson, "maxdistance");
-    JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
-    JsonTools::remove_double(multiplier, theJson, "multiplier");
-    JsonTools::remove_double(offset, theJson, "offset");
     JsonTools::remove_double(minrotationspeed, theJson, "minrotationspeed");
 
     json = JsonTools::remove(theJson, "arrows");
@@ -854,15 +850,6 @@ void ArrowLayer::generate_gridEngine(CTPP::CDT& theGlobals,
 
     Fmi::CoordinateTransformation transformation("WGS84", crs);
 
-    // Alter units if requested
-
-    if (!unit_conversion.empty())
-    {
-      auto conv = theState.getConfig().unitConversion(unit_conversion);
-      multiplier = conv.multiplier;
-      offset = conv.offset;
-    }
-
     pointvalues = prioritize(pointvalues, point_value_options);
 
     // Render the collected values
@@ -1127,7 +1114,7 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
                                               {*u, *v},
                                               *this,
                                               *positions,
-                                              maxdistance,
+                                              maxdistance_km,
                                               crs,
                                               box,
                                               valid_time,
@@ -1140,7 +1127,7 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
                                               {*speed, *direction},
                                               *this,
                                               *positions,
-                                              maxdistance,
+                                              maxdistance_km,
                                               crs,
                                               box,
                                               valid_time,
@@ -1180,15 +1167,6 @@ void ArrowLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt
     // winds according to map north
 
     Fmi::CoordinateTransformation transformation("WGS84", crs);
-
-    // Alter units if requested
-
-    if (!unit_conversion.empty())
-    {
-      auto conv = theState.getConfig().unitConversion(unit_conversion);
-      multiplier = conv.multiplier;
-      offset = conv.offset;
-    }
 
     // Render the collected values
 
@@ -1389,7 +1367,7 @@ void ArrowLayer::addGridParameterInfo(ParameterInfos& infos, const State& theSta
  */
 // ----------------------------------------------------------------------
 
-void ArrowLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void ArrowLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // TODO();
 }
@@ -1423,9 +1401,6 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, countParameterHash(theState, v));
     Fmi::hash_combine(hash, Fmi::hash_value(fixedspeed));
     Fmi::hash_combine(hash, Fmi::hash_value(fixeddirection));
-    Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
-    Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
-    Fmi::hash_combine(hash, Fmi::hash_value(offset));
     Fmi::hash_combine(hash, Fmi::hash_value(minrotationspeed));
     Fmi::hash_combine(hash, Dali::hash_symbol(symbol, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(scale));
@@ -1436,7 +1411,6 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(dx));
     Fmi::hash_combine(hash, Fmi::hash_value(dy));
     Fmi::hash_combine(hash, Fmi::hash_value(minvalues));
-    Fmi::hash_combine(hash, Fmi::hash_value(maxdistance));
     Fmi::hash_combine(hash, Dali::hash_value(arrows, theState));
     Fmi::hash_combine(hash, point_value_options.hash_value());
     return hash;

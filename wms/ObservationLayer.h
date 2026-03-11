@@ -45,7 +45,7 @@ class ObservationLayer : public Layer
             const Properties& theProperties) override;
 
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
-  void info(CTPP::CDT& theInfo, const State& theState) override;
+  void getFeatureInfo(CTPP::CDT& theInfo, const State& theState) override;
 
   std::size_t hash_value(const State& theState) const override;
 
@@ -57,8 +57,6 @@ class ObservationLayer : public Layer
 
   // Grid coordinate settings
   std::optional<Positions> positions;
-  // Stations distance limit in kilometers
-  double maxdistance = 5;
 
   // Label settings
   Label label;

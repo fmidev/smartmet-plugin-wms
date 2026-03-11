@@ -230,10 +230,6 @@ void SymbolLayer::init(Json::Value& theJson,
       }
     }
 
-    JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
-    JsonTools::remove_double(multiplier, theJson, "multiplier");
-    JsonTools::remove_double(offset, theJson, "offset");
-
     auto json = JsonTools::remove(theJson, "positions");
     if (!json.isNull())
     {
@@ -242,7 +238,6 @@ void SymbolLayer::init(Json::Value& theJson,
     }
 
     JsonTools::remove_int(minvalues, theJson, "minvalues");
-    JsonTools::remove_double(maxdistance, theJson, "maxdistance");
     JsonTools::remove_string(symbol, theJson, "symbol");
     JsonTools::remove_double(scale, theJson, "scale");
     JsonTools::remove_int(dx, theJson, "dx");
@@ -584,18 +579,6 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       theGlobals["css"][name] = theState.getStyle(*css);
     }
 
-    // Data conversion settings
-
-    if (!unit_conversion.empty())
-    {
-      auto conv = theState.getConfig().unitConversion(unit_conversion);
-      multiplier = conv.multiplier;
-      offset = conv.offset;
-    }
-
-    double xmultiplier = (multiplier ? *multiplier : 1.0);
-    double xoffset = (offset ? *offset : 0.0);
-
     // Set the proper symbol on if it is needed
     if (!symbols.empty())
     {
@@ -620,6 +603,11 @@ void SymbolLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
     group_cdt["start"] = "<g";
     group_cdt["end"] = "</g>";
+
+    // Data conversion settings
+
+    double xmultiplier = (multiplier ? *multiplier : 1.0);
+    double xoffset = (offset ? *offset : 0.0);
 
     // Add layer attributes to the group, not to the symbols
 
@@ -787,18 +775,6 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
       theGlobals["css"][name] = theState.getStyle(*css);
     }
 
-    // Data conversion settings
-
-    if (!unit_conversion.empty())
-    {
-      auto conv = theState.getConfig().unitConversion(unit_conversion);
-      multiplier = conv.multiplier;
-      offset = conv.offset;
-    }
-
-    double xmultiplier = (multiplier ? *multiplier : 1.0);
-    double xoffset = (offset ? *offset : 0.0);
-
     // Initialize inside/outside shapes and intersection isobands
 
     positions->init(paraminfo.producer, projection, valid_time, theState);
@@ -816,7 +792,7 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
                                             {paraminfo.parameter},
                                             *this,
                                             *positions,
-                                            maxdistance,
+                                            maxdistance_km,
                                             crs,
                                             box,
                                             valid_time,
@@ -834,6 +810,11 @@ void SymbolLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
     group_cdt["start"] = "<g";
     group_cdt["end"] = "</g>";
+
+    // Data conversion settings
+
+    double xmultiplier = (multiplier ? *multiplier : 1.0);
+    double xoffset = (offset ? *offset : 0.0);
 
     // Add layer attributes to the group, not to the symbols
 
@@ -946,9 +927,24 @@ void SymbolLayer::addGridParameterInfo(ParameterInfos& infos, const State& theSt
  */
 // ----------------------------------------------------------------------
 
-void SymbolLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void SymbolLayer::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
 {
-  // TODO();
+  try
+  {
+    // Sanity checks
+    if (!validLayer(theState))
+      return;
+    if (paraminfo.parameter.empty())
+      return;
+    Layer::getFeatureValue(theInfo, theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "GetFeatureInfo operation failed!")
+        .addParameter("qid", qid)
+        .addParameter("Producer", *paraminfo.producer)
+        .addParameter("Parameter", paraminfo.parameter);
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -979,11 +975,7 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
     }
 
     Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
-    Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
-    Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
-    Fmi::hash_combine(hash, Fmi::hash_value(offset));
     Fmi::hash_combine(hash, Dali::hash_value(positions, theState));
-    Fmi::hash_combine(hash, Fmi::hash_value(maxdistance));
     Fmi::hash_combine(hash, Dali::hash_symbol(symbol, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(scale));
     Fmi::hash_combine(hash, Fmi::hash_value(dx));

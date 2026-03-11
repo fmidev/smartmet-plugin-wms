@@ -136,9 +136,9 @@ void View::addGridParameterInfo(ParameterInfos& infos, const State& theState) co
  */
 // ----------------------------------------------------------------------
 
-void View::info(CTPP::CDT& theInfo, const State& theState)
+void View::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
 {
-  layers.info(theInfo, theState);
+  layers.getFeatureInfo(theInfo, theState);
 }
 
 // ----------------------------------------------------------------------

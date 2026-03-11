@@ -213,7 +213,7 @@ void TagLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
  */
 // ----------------------------------------------------------------------
 
-void TagLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void TagLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // no info available
 }

@@ -34,7 +34,7 @@ class NumberLayer : public Layer
             const Properties& theProperties) override;
 
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
-  void info(CTPP::CDT& theInfo, const State& theState) override;
+  void getFeatureInfo(CTPP::CDT& theInfo, const State& theState) override;
 
   std::size_t hash_value(const State& theState) const override;
 
@@ -50,9 +50,6 @@ class NumberLayer : public Layer
 
   // Require at least this many valid valies
   int minvalues = 0;
-
-  // Station distance limit in kilometers
-  double maxdistance = 5;
 
   // Minimum distance, priorities of numbers
   PointValueOptions point_value_options;

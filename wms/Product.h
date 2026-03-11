@@ -39,7 +39,7 @@ class Product : public Properties
 
   void generate(CTPP::CDT& theGlobals, State& theState);
   std::size_t hash_value(const State& theState) const;
-  void info(CTPP::CDT& theInfo, const State& theState);
+  void getFeatureInfo(CTPP::CDT& theInfo, const State& theState);
 
   ParameterInfos getGridParameterInfo(const State& theState) const;
 

@@ -220,10 +220,6 @@ void NumberLayer::init(Json::Value& theJson,
       }
     }
 
-    JsonTools::remove_string(unit_conversion, theJson, "unit_conversion");
-    JsonTools::remove_double(multiplier, theJson, "multiplier");
-    JsonTools::remove_double(offset, theJson, "offset");
-
     auto json = JsonTools::remove(theJson, "positions");
     if (!json.isNull())
     {
@@ -231,7 +227,6 @@ void NumberLayer::init(Json::Value& theJson,
       positions->init(json, theConfig);
     }
 
-    JsonTools::remove_double(maxdistance, theJson, "maxdistance");
     JsonTools::remove_int(minvalues, theJson, "minvalues");
 
     json = JsonTools::remove(theJson, "label");
@@ -550,18 +545,6 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       theGlobals["css"][name] = theState.getStyle(*css);
     }
 
-    // Data conversion settings
-
-    if (!unit_conversion.empty())
-    {
-      auto conv = theState.getConfig().unitConversion(unit_conversion);
-      multiplier = conv.multiplier;
-      offset = conv.offset;
-    }
-
-    double xmultiplier = (multiplier ? *multiplier : 1.0);
-    double xoffset = (offset ? *offset : 0.0);
-
     // Establish the numbers to draw. At this point we know that if
     // use_observations is true, obsengine is not disabled.
 
@@ -582,6 +565,11 @@ void NumberLayer::generate_gridEngine(CTPP::CDT& theGlobals,
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
     group_cdt["start"] = "<g";
     group_cdt["end"] = "";
+
+    // Data conversion settings
+
+    double xmultiplier = (multiplier ? *multiplier : 1.0);
+    double xoffset = (offset ? *offset : 0.0);
 
     // Add attributes to the group, not the text tags
     theState.addAttributes(theGlobals, group_cdt, attributes);
@@ -772,18 +760,6 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
       theGlobals["css"][name] = theState.getStyle(*css);
     }
 
-    // Data conversion settings
-
-    if (!unit_conversion.empty())
-    {
-      auto conv = theState.getConfig().unitConversion(unit_conversion);
-      multiplier = conv.multiplier;
-      offset = conv.offset;
-    }
-
-    double xmultiplier = (multiplier ? *multiplier : 1.0);
-    double xoffset = (offset ? *offset : 0.0);
-
     // Establish the numbers to draw. At this point we know that if
     // use_observations is true, obsengine is not disabled.
 
@@ -798,7 +774,7 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
                                             {paraminfo.parameter},
                                             *this,
                                             *positions,
-                                            maxdistance,
+                                            maxdistance_km,
                                             crs,
                                             box,
                                             valid_time,
@@ -822,6 +798,11 @@ void NumberLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCd
 
     // Add attributes to the group, not the text tags
     theState.addAttributes(theGlobals, group_cdt, attributes);
+
+    // Data conversion settings
+
+    double xmultiplier = (multiplier ? *multiplier : 1.0);
+    double xoffset = (offset ? *offset : 0.0);
 
     // Symbols first
 
@@ -959,9 +940,25 @@ void NumberLayer::addGridParameterInfo(ParameterInfos& infos, const State& theSt
  */
 // ----------------------------------------------------------------------
 
-void NumberLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void NumberLayer::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
 {
-  // TODO();
+  try
+  {
+    // Sanity checks
+    if (!validLayer(theState))
+      return;
+    if (paraminfo.parameter.empty())
+      return;
+
+    Layer::getFeatureValue(theInfo, theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "GetFeatureInfo operation failed!")
+        .addParameter("qid", qid)
+        .addParameter("Producer", *paraminfo.producer)
+        .addParameter("Parameter", paraminfo.parameter);
+  }
 }
 
 // ----------------------------------------------------------------------
@@ -988,12 +985,8 @@ std::size_t NumberLayer::hash_value(const State& theState) const
     }
 
     Fmi::hash_combine(hash, countParameterHash(theState, paraminfo.parameter));
-    Fmi::hash_combine(hash, Fmi::hash_value(unit_conversion));
-    Fmi::hash_combine(hash, Fmi::hash_value(multiplier));
-    Fmi::hash_combine(hash, Fmi::hash_value(offset));
     Fmi::hash_combine(hash, Dali::hash_value(positions, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(minvalues));
-    Fmi::hash_combine(hash, Fmi::hash_value(maxdistance));
     Fmi::hash_combine(hash, Dali::hash_symbol(symbol, theState));
     Fmi::hash_combine(hash, Fmi::hash_value(scale));
     Fmi::hash_combine(hash, Dali::hash_value(label, theState));

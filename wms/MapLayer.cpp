@@ -497,7 +497,7 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
  */
 // ----------------------------------------------------------------------
 
-void MapLayer::info(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void MapLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // no map detail info at least not yet
 }
