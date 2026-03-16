@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.3.16
-Release: 2%{?dist}.fmi
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -163,7 +163,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
-* Mon Mar 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.16-2.fmi
+* Mon Mar 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.16-1.fmi
 - Added GetFeatureInfo support (arrow data not supported yet)
 
 * Tue Mar 10 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.10-2.fmi
