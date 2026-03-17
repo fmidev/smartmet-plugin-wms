@@ -1367,9 +1367,353 @@ void ArrowLayer::addGridParameterInfo(ParameterInfos& infos, const State& theSta
  */
 // ----------------------------------------------------------------------
 
-void ArrowLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
+void ArrowLayer::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
 {
-  // TODO();
+  try
+  {
+    std::cerr << "ArrowLayer::getFeatureInfo\n";
+
+    // Sanity checks
+    if (!validLayer(theState))
+      return;
+
+    // Must have direction or u&v
+    if (!direction && (!u || !v))
+      return;
+
+    if (theState.isObservation(paraminfo.producer))
+      getObservationValue(theInfo, theState);
+    else if (paraminfo.source == std::string("grid"))
+      getGridValue(theInfo, theState);
+    else
+      getQuerydataValue(theInfo, theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get data value for the given pixel or NaN
+ */
+// ----------------------------------------------------------------------
+
+void ArrowLayer::getQuerydataValue(CTPP::CDT& theInfo, const State& theState)
+{
+  try
+  {
+    // The code here is a drastically reduced version of the respective GetMap code
+
+    // Establish the data
+    auto q = getModel(theState);
+    if (!q)
+      return;
+    if (!q->isGrid())
+      return;
+
+    std::optional<Spine::Parameter> dirparam;
+    std::optional<Spine::Parameter> speedparam;
+    std::optional<Spine::Parameter> uparam;
+    std::optional<Spine::Parameter> vparam;
+
+    std::optional<TS::ParameterAndFunctions> speed_funcs;
+    std::optional<TS::ParameterAndFunctions> dir_funcs;
+    std::optional<TS::ParameterAndFunctions> u_funcs;
+    std::optional<TS::ParameterAndFunctions> v_funcs;
+
+    if (direction)
+    {
+      dir_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*direction);
+      dirparam = dir_funcs->parameter;
+    }
+    if (speed)
+    {
+      speed_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*speed);
+      speedparam = speed_funcs->parameter;
+    }
+    if (u)
+    {
+      u_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*u);
+      uparam = u_funcs->parameter;
+    }
+    if (v)
+    {
+      v_funcs = TS::ParameterFactory::instance().parseNameAndFunctions(*v);
+      vparam = v_funcs->parameter;
+    }
+
+    if (speedparam && !q->param(speedparam->number()))
+      return;
+
+    if (dirparam && !q->param(dirparam->number()))
+      return;
+
+    // WindUMS and WindVMS are metaparameters, cannot check their existence here
+
+    // We may need to convert relative U/V components to true north
+
+    std::shared_ptr<Fmi::CoordinateTransformation> uvtransformation;
+    if (uparam && vparam && q->isRelativeUV())
+      uvtransformation =
+          std::make_shared<Fmi::CoordinateTransformation>("WGS84", q->SpatialReference());
+
+    // Establish the valid time
+    auto valid_time = getValidTime();
+
+    // Establish the level
+    if (!q->firstLevel())
+      return;
+    if (paraminfo.level)
+    {
+      if (!q->selectLevel(*paraminfo.level))
+        return;
+    }
+
+    // Get projection details
+    projection.update(q);
+    const auto& crs = projection.getCRS();
+    const auto& box = projection.getBox();
+
+    // Pixel coordinate to latlon
+    Fmi::CoordinateTransformation transformation(crs, "WGS84");
+    double x = theInfo["x"].GetFloat();
+    double y = theInfo["y"].GetFloat();
+    double lon = x;
+    double lat = y;
+    box.itransform(lon, lat);
+    if (!transformation.transform(lon, lat))
+      return;
+
+    // Q API sucks (copy paste this everywhere)
+
+    // Arrow direction and speed
+    double wdir = kFloatMissing;
+    double wspd = 0;
+    Spine::Location loc(lon, lat);
+
+    // Q API sucks (copy paste this everywhere)
+
+    std::shared_ptr<Fmi::TimeFormatter> timeformatter(Fmi::TimeFormatter::create("iso"));
+    Fmi::LocalDateTime localdatetime(valid_time, Fmi::TimeZonePtr::utc);
+    auto mylocale = std::locale::classic();
+    NFmiPoint dummy;
+
+    if (uparam && vparam)
+    {
+      auto up = Engine::Querydata::ParameterOptions(
+          *uparam, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
+
+      auto uresult = AggregationUtility::get_qengine_value(q, up, localdatetime, u_funcs);
+      //        auto uresult = q->value(up, localdatetime);
+
+      auto vp = Engine::Querydata::ParameterOptions(
+          *vparam, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
+
+      auto vresult = AggregationUtility::get_qengine_value(q, vp, localdatetime, v_funcs);
+
+      //        auto vresult = q->value(vp, localdatetime);
+
+      const double* u_ptr = std::get_if<double>(&uresult);
+      const double* v_ptr = std::get_if<double>(&vresult);
+      if (u_ptr && v_ptr)
+      {
+        auto uspd = *u_ptr;
+        auto vspd = *v_ptr;
+
+        if (uspd != kFloatMissing && vspd != kFloatMissing)
+        {
+          wspd = sqrt(uspd * uspd + vspd * vspd);
+          if (uspd != 0 || vspd != 0)
+          {
+            // Note: qengine fixes orientation automatically
+            wdir = fmod(180 + 180 / pi * atan2(uspd, vspd), 360);
+          }
+        }
+      }
+    }
+    else
+    {
+      if (dir_funcs && dir_funcs->functions.innerFunction.exists())
+      {
+        auto dp = Engine::Querydata::ParameterOptions(
+            *dirparam, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
+
+        auto dir_result = AggregationUtility::get_qengine_value(q, dp, localdatetime, dir_funcs);
+        if (const double* ptr = std::get_if<double>(&dir_result))
+          wdir = *ptr;
+      }
+      else
+      {
+        q->param(dirparam->number());
+        wdir = q->interpolate(NFmiPoint(lon, lat), valid_time, 180);
+      }
+      if (speedparam)
+      {
+        if (speed_funcs && speed_funcs->functions.innerFunction.exists())
+        {
+          auto sp = Engine::Querydata::ParameterOptions(*speedparam,
+                                                        "",
+                                                        loc,
+                                                        "",
+                                                        "",
+                                                        *timeformatter,
+                                                        "",
+                                                        "",
+                                                        mylocale,
+                                                        "",
+                                                        false,
+                                                        dummy,
+                                                        dummy);
+
+          auto speed_result =
+              AggregationUtility::get_qengine_value(q, sp, localdatetime, speed_funcs);
+          if (const double* ptr = std::get_if<double>(&speed_result))
+            wspd = *ptr;
+        }
+        else
+        {
+          q->param(speedparam->number());
+          wspd = q->interpolate(NFmiPoint(lon, lat), valid_time, 180);
+        }
+      }
+    }
+
+    if (wdir == kFloatMissing || wspd == kFloatMissing)
+      return;
+
+    const double xmul = (multiplier ? *multiplier : 1.0);
+    const double xoff = (offset ? *offset : 0.0);
+    wspd = xmul * wspd + xoff;
+
+    theInfo["features"]["Speed"] = wspd;
+    theInfo["features"]["Direction"] = wdir;
+    theInfo["time"] = Fmi::to_iso_string(valid_time);
+    theInfo["longitude"] = std::round(lon * 1e5) / 1e5;
+    theInfo["latitude"] = std::round(lat * 1e5) / 1e5;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get data value for the given pixel or NaN
+ */
+// ----------------------------------------------------------------------
+
+void ArrowLayer::getGridValue(CTPP::CDT& theInfo, const State& theState)
+{
+  try
+  {
+    return;  // TODO
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Get data value for the given pixel or NaN
+ */
+// ----------------------------------------------------------------------
+
+void ArrowLayer::getObservationValue(CTPP::CDT& theInfo, const State& theState)
+{
+  try
+  {
+    if (!speed || !direction)
+      return;
+
+    // Establish the valid time
+    auto valid_time = getValidTime();
+    auto valid_time_period = getValidTimePeriod();
+
+    // Get projection details
+
+    const auto& crs = projection.getCRS();
+    const auto& box = projection.getBox();
+
+    // Pixel coordinate to latlon
+    Fmi::CoordinateTransformation transformation(crs, "WGS84");
+    double x = theInfo["x"].GetFloat();
+    double y = theInfo["y"].GetFloat();
+    double lon = x;
+    double lat = y;
+    box.itransform(lon, lat);
+    if (!transformation.transform(lon, lat))
+      return;
+
+    // Create list of stations to read
+    Station station;
+    station.longitude = lon;
+    station.latitude = lat;
+
+    Positions positions;
+    positions.layout = Positions::Layout::Station;
+    positions.stations.stations.emplace_back(station);
+
+    // Fetch observations for the single coordinate
+
+    std::vector<std::string> params{*speed, *direction, "fmisid"};
+
+    auto pointvalues = ObservationReader::read(theState,
+                                               params,
+                                               *this,
+                                               positions,
+                                               maxdistance_km,
+                                               crs,
+                                               box,
+                                               valid_time,
+                                               valid_time_period);
+
+    if (pointvalues.size() >= 1)
+    {
+      const auto& values = pointvalues.front();
+
+      const double xmul = (multiplier ? *multiplier : 1.0);
+      const double xoff = (offset ? *offset : 0.0);
+
+      double value = values[0];
+      if (value == kFloatMissing)
+        value = std::numeric_limits<double>::quiet_NaN();
+      value = xmul * value + xoff;
+
+      double dir = values[1];
+      int fmisid = values[2];
+
+      // Output results
+      theInfo["time"] = Fmi::to_iso_string(valid_time);
+      theInfo["longitude"] = std::round(lon * 1e5) / 1e5;
+      theInfo["latitude"] = std::round(lat * 1e5) / 1e5;
+      theInfo["features"]["Speed"] = value;
+      theInfo["features"]["Direction"] = dir;
+      theInfo["features"]["Fmisid"] = fmisid;
+      theInfo["features"]["URL"] = "https://hav.fmi.fi/hav/asema/?fmisid=" + std::to_string(fmisid);
+
+      // Add more station information
+      Engine::Observation::Settings settings;
+      settings.maxdistance = maxdistance_km * 1000;
+      settings.taggedFMISIDs.emplace_back("tag", values[1]);
+
+      Spine::Stations stations;
+      theState.getObsEngine().getStations(stations, settings);
+      if (stations.size() >= 1 && stations.front().fmisid == fmisid)
+      {
+        const auto& s = stations.front();
+        theInfo["features"]["StationName"] = s.formal_name_fi;
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
 }
 
 // ----------------------------------------------------------------------

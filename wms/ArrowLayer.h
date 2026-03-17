@@ -75,6 +75,11 @@ class ArrowLayer : public Layer
  private:
   void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
+
+  void getObservationValue(CTPP::CDT& theInfo, const State& theState);
+  void getQuerydataValue(CTPP::CDT& theInfo, const State& theState);
+  void getGridValue(CTPP::CDT& theInfo, const State& theState);
+
 };  // class ArrowLayer
 
 }  // namespace Dali
