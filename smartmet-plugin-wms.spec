@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.3.17
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -163,6 +163,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Mar 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.17-2.fmi
+- Added GetFeatureInfo support for grid-data arrow layers
+
 * Tue Mar 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.17-1.fmi
 - Fixed unit conversions in NumberLayer and RasterLayer
 - Added GetFeatureInfo support for querydata and observations (grid-support still missing)
