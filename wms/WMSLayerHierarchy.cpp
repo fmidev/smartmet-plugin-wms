@@ -2,6 +2,8 @@
 #include <boost/make_shared.hpp>
 #include <boost/regex.hpp>
 #include <macgyver/StringConversion.h>
+#include <cmath>
+#include <limits>
 #include <memory>
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
@@ -15,8 +17,9 @@ namespace WMS
 {
 namespace
 {
+
 // ----------------------------------------------------------------------
-// HELPER FUNCTIONS FOR DEBUGGING
+// DEBUGGING
 // ----------------------------------------------------------------------
 
 void printHierarchy(const std::string& prefix,
@@ -27,47 +30,38 @@ void printHierarchy(const std::string& prefix,
   ost << prefix << lh.name << "(L#" << level << (lh.sublayers.empty() ? "-Leaf)" : ") ")
       << (lh.geographicBoundingBox ? "1" : "0") << (lh.projectedBoundingBox ? "1" : "0")
       << (lh.timeDimension ? "1" : "0") << (lh.elevationDimension ? "1" : "0") << '\n';
-
-  unsigned int nextLevel = level + 1;
   for (const auto& item : lh.sublayers)
-    printHierarchy(prefix + " ", nextLevel, ost, *item);
+    printHierarchy(prefix + " ", level + 1, ost, *item);
 }
 
 // ----------------------------------------------------------------------
-// HELPER FUNCTIONS FOR PROCESSING THE WMS LAYERS INTO A DATA STRUCTURE
+// LAYER TREE CONSTRUCTION
 // ----------------------------------------------------------------------
 
-// Expand layer info into separate ones for each origintime if there are more than one
 void expand_layer(WMSLayerHierarchy& lh)
 {
   if (!lh.timeDimension)
     return;
-
-  const std::shared_ptr<WMSTimeDimensions>& td = lh.timeDimension->getLayer()->getTimeDimensions();
+  const auto& td = lh.timeDimension->getLayer()->getTimeDimensions();
   if (!td)
     return;
-
-  const std::vector<Fmi::DateTime>& origintimes = td->getOrigintimes();
-
+  const auto& origintimes = td->getOrigintimes();
   if (origintimes.size() <= 1)
     return;
-
-  // Create one layer for each origintime
   for (const auto& ot : origintimes)
   {
     lh.sublayers.push_back(boost::make_shared<WMSLayerHierarchy>(lh.name));
-    WMSLayerHierarchy& reference_time_layer = *lh.sublayers.back();
-    reference_time_layer.parent = &lh;
-    reference_time_layer.baseInfoLayer = lh.baseInfoLayer;
-    reference_time_layer.geographicBoundingBox = lh.geographicBoundingBox;
-    reference_time_layer.projectedBoundingBox = lh.projectedBoundingBox;
-    reference_time_layer.elevationDimension = lh.elevationDimension;
-    reference_time_layer.timeDimension = lh.timeDimension;
-    reference_time_layer.reference_time = ot;
+    auto& rt = *lh.sublayers.back();
+    rt.parent = &lh;
+    rt.baseInfoLayer = lh.baseInfoLayer;
+    rt.geographicBoundingBox = lh.geographicBoundingBox;
+    rt.projectedBoundingBox = lh.projectedBoundingBox;
+    rt.elevationDimension = lh.elevationDimension;
+    rt.timeDimension = lh.timeDimension;
+    rt.reference_time = ot;
   }
 }
 
-// Add sublayers recursively
 void add_sublayers(WMSLayerHierarchy& lh,
                    const std::map<std::string, const WMSLayerProxy*>& named_layers,
                    std::set<std::string>& processed_layers,
@@ -75,204 +69,346 @@ void add_sublayers(WMSLayerHierarchy& lh,
 {
   if (!lh.reference_time)
   {
-    std::string layer_name_prefix = lh.name + ":";
-
-    auto pos = named_layers.lower_bound(layer_name_prefix);
-
-    for (; pos != named_layers.end(); ++pos)
+    std::string pfx = lh.name + ":";
+    for (auto pos = named_layers.lower_bound(pfx); pos != named_layers.end(); ++pos)
     {
-      const auto& layer_name = pos->first;
-      if (boost::algorithm::starts_with(layer_name, layer_name_prefix))
-      {
-        if (processed_layers.find(layer_name) != processed_layers.end())
-          continue;
-        processed_layers.insert(layer_name);
-        lh.sublayers.push_back(boost::make_shared<WMSLayerHierarchy>(layer_name));
-        lh.sublayers.back()->parent = &lh;
-        add_sublayers(*lh.sublayers.back(), named_layers, processed_layers, hierarchy_type);
-      }
-      else
-      {
+      if (!boost::algorithm::starts_with(pos->first, pfx))
         break;
-      }
+      if (processed_layers.count(pos->first))
+        continue;
+      processed_layers.insert(pos->first);
+      lh.sublayers.push_back(boost::make_shared<WMSLayerHierarchy>(pos->first));
+      lh.sublayers.back()->parent = &lh;
+      add_sublayers(*lh.sublayers.back(), named_layers, processed_layers, hierarchy_type);
     }
   }
-
-  // Leaf layers do not have sublayers
   if (lh.sublayers.empty())
   {
     processed_layers.insert(lh.name);
-    const WMSLayerProxy& layer_to_use = *named_layers.at(lh.name);
-    lh.baseInfoLayer = layer_to_use;
-    lh.geographicBoundingBox = layer_to_use;
-    lh.projectedBoundingBox = layer_to_use;
-    lh.timeDimension = layer_to_use;
-    lh.elevationDimension = layer_to_use;
+    const WMSLayerProxy& p = *named_layers.at(lh.name);
+    lh.baseInfoLayer = p;
+    lh.geographicBoundingBox = p;
+    lh.projectedBoundingBox = p;
+    lh.timeDimension = p;
+    lh.elevationDimension = p;
     if (hierarchy_type == WMSLayerHierarchy::HierarchyType::recursivetimes)
       expand_layer(lh);
   }
 }
 
 // ----------------------------------------------------------------------
-// HELPER FUNCTIONS FOR GENERATING A GETCAPABILITIES RESPONSE FROM THE INTERNAL DATA STRUCTURE
+// NAMESPACE FILTERING
 // ----------------------------------------------------------------------
 
-/*
- * namespace patterns look like "/..../"
- */
-
-bool looks_like_pattern(const std::string& pattern)
+bool looks_like_pattern(const std::string& s)
 {
-  return (boost::algorithm::starts_with(pattern, "/") && boost::algorithm::ends_with(pattern, "/"));
+  return boost::algorithm::starts_with(s, "/") && boost::algorithm::ends_with(s, "/");
 }
-
-/*
- * Apply namespace filtering as in GeoServer with regex extension
- */
-
 bool match_namespace_pattern(const std::string& name, const std::string& pattern)
 {
   if (name == pattern)
     return true;
-
   if (!looks_like_pattern(pattern))
     return boost::algorithm::istarts_with(name, pattern + ":");
-
-  // Strip surrounding slashes first
   const std::string re_str = pattern.substr(1, pattern.size() - 2);
-  const boost::regex re(re_str, boost::regex::icase);
-
-  return boost::regex_search(name, re);
+  return boost::regex_search(name, boost::regex(re_str, boost::regex::icase));
 }
 
-// Test if two layer hierarchies have identical elements of the given type (bbox, dimension etc)
-// TODO: What we actually should do is extract common elements to the root level
-
-bool is_identical_geo_bbox(const WMSLayerHierarchy& lh1, const WMSLayerHierarchy& lh2)
-{
-  SharedWMSLayer layer1;
-  SharedWMSLayer layer2;
-  if (lh1.geographicBoundingBox)
-    layer1 = lh1.geographicBoundingBox->getLayer();
-  if (lh2.geographicBoundingBox)
-    layer2 = lh2.geographicBoundingBox->getLayer();
-
-  return ((layer1 && layer2 && layer1->identicalGeographicBoundingBox(*layer2)) ||
-          (!layer1 && !layer2));
-}
-
-bool is_identical_proj_bbox(const WMSLayerHierarchy& lh1, const WMSLayerHierarchy& lh2)
-{
-  SharedWMSLayer layer1;
-  SharedWMSLayer layer2;
-  if (lh1.projectedBoundingBox)
-    layer1 = lh1.projectedBoundingBox->getLayer();
-  if (lh2.projectedBoundingBox)
-    layer2 = lh2.projectedBoundingBox->getLayer();
-
-  return ((layer1 && layer2 && layer1->identicalProjectedBoundingBox(*layer2)) ||
-          (!layer1 && !layer2));
-}
-
-bool is_identical_time_dim(const WMSLayerHierarchy& lh1, const WMSLayerHierarchy& lh2)
-{
-  SharedWMSLayer layer1;
-  SharedWMSLayer layer2;
-  if (lh1.timeDimension)
-    layer1 = lh1.timeDimension->getLayer();
-  if (lh2.timeDimension)
-    layer2 = lh2.timeDimension->getLayer();
-
-  return ((layer1 && layer2 && layer1->identicalTimeDimension(*layer2)) || (!layer1 && !layer2));
-}
-
-bool is_identical_elev_dim(const WMSLayerHierarchy& lh1, const WMSLayerHierarchy& lh2)
-{
-  SharedWMSLayer layer1;
-  SharedWMSLayer layer2;
-  if (lh1.elevationDimension)
-    layer1 = lh1.elevationDimension->getLayer();
-  if (lh2.elevationDimension)
-    layer2 = lh2.elevationDimension->getLayer();
-
-  return ((layer1 && layer2 && layer1->identicalElevationDimension(*layer2)) ||
-          (!layer1 && !layer2));
-}
-
-bool is_identical(const WMSLayerHierarchy& lh1,
-                  const WMSLayerHierarchy& lh2,
-                  WMSLayerHierarchy::ElementType type)
-{
-  switch (type)
-  {
-    case WMSLayerHierarchy::ElementType::geo_bbox:
-      return is_identical_geo_bbox(lh1, lh2);
-    case WMSLayerHierarchy::ElementType::proj_bbox:
-      return is_identical_proj_bbox(lh1, lh2);
-    case WMSLayerHierarchy::ElementType::time_dim:
-      return is_identical_time_dim(lh1, lh2);
-    case WMSLayerHierarchy::ElementType::elev_dim:
-      return is_identical_elev_dim(lh1, lh2);
-  }
-  return false;
-}
+// ----------------------------------------------------------------------
+// LEAF COLLECTION
+// ----------------------------------------------------------------------
 
 std::list<const WMSLayerHierarchy*> get_leaf_layers(const WMSLayerHierarchy& lh)
 {
-  std::list<const WMSLayerHierarchy*> leaf_layers;
-
+  std::list<const WMSLayerHierarchy*> out;
   if (lh.sublayers.empty())
-    leaf_layers.push_back(&lh);
-  else
   {
-    for (const auto& item : lh.sublayers)
+    out.push_back(&lh);
+    return out;
+  }
+  for (const auto& c : lh.sublayers)
+  {
+    auto sub = get_leaf_layers(*c);
+    out.insert(out.end(), sub.begin(), sub.end());
+  }
+  return out;
+}
+
+// ----------------------------------------------------------------------
+// LAYER ATTRIBUTE KEYS
+//
+// Each "key" is a canonical string representation of one layer attribute
+// (geo bbox, time dim, elev dim, projected bbox).  Equal strings mean
+// equal values.  We use these strings in the "already declared" search
+// tree (InheritedState) to decide whether to suppress output.
+// ----------------------------------------------------------------------
+
+constexpr double EPS = 1e-9;
+
+std::string geo_key(const WMSLayerHierarchy& lh)
+{
+  if (!lh.geographicBoundingBox)
+    return "";
+  auto info = lh.geographicBoundingBox->getLayer()->getGeographicBoundingBoxInfo();
+  if (!info || !info->Exists("ex_geographic_bounding_box"))
+    return "";
+  auto& bb = (*info)["ex_geographic_bounding_box"];
+  auto r = [](double v) { return std::round(v * 1e9) / 1e9; };
+  return std::to_string(r(bb["west_bound_longitude"].GetDouble())) + "," +
+         std::to_string(r(bb["east_bound_longitude"].GetDouble())) + "," +
+         std::to_string(r(bb["south_bound_latitude"].GetDouble())) + "," +
+         std::to_string(r(bb["north_bound_latitude"].GetDouble()));
+}
+
+std::string time_key(const WMSLayerHierarchy& lh)
+{
+  if (!lh.timeDimension)
+    return "";
+  auto info = lh.timeDimension->getLayer()->getTimeDimensionInfo(false, {}, {}, {});
+  if (!info || !info->Exists("time_dimension"))
+    return "";
+  // Use the raw CTPP dump as a stable key
+  return (*info)["time_dimension"].RecursiveDump();
+}
+
+std::string elev_key(const WMSLayerHierarchy& lh)
+{
+  if (!lh.elevationDimension)
+    return "";
+  auto info = lh.elevationDimension->getLayer()->getElevationDimensionInfo();
+  if (!info || !info->Exists("elevation_dimension"))
+    return "";
+  return (*info)["elevation_dimension"].RecursiveDump();
+}
+
+// For projected bbox, produce a map crs_id -> "minx,miny,maxx,maxy"
+// so we can suppress individual CRS entries already declared above.
+using ProjMap = std::map<std::string, std::string>;
+
+ProjMap proj_map(const WMSLayerHierarchy& lh)
+{
+  ProjMap out;
+  if (!lh.projectedBoundingBox)
+    return out;
+  auto info = lh.projectedBoundingBox->getLayer()->getProjectedBoundingBoxInfo();
+  if (!info)
+    return out;
+
+  auto r = [](double v) { return std::round(v * 1e9) / 1e9; };
+
+  // CRS entries without bbox (AUTO2 etc.)
+  if (info->Exists("crs"))
+  {
+    auto& arr = (*info)["crs"];
+    for (std::size_t i = 0; i < arr.Size(); ++i)
+      out[arr[i].GetString()] = "__present__";
+  }
+  // Override with actual bbox values
+  if (info->Exists("bounding_box"))
+  {
+    auto& arr = (*info)["bounding_box"];
+    for (std::size_t i = 0; i < arr.Size(); ++i)
     {
-      std::list<const WMSLayerHierarchy*> list_to_add = get_leaf_layers(*item);
-      if (!list_to_add.empty())
-        leaf_layers.insert(leaf_layers.end(), list_to_add.begin(), list_to_add.end());
+      auto& bb = arr[i];
+      if (!bb.Exists("crs"))
+        continue;
+      std::string crs = bb["crs"].GetString();
+      out[crs] = std::to_string(r(bb["minx"].GetDouble())) + "," +
+                 std::to_string(r(bb["miny"].GetDouble())) + "," +
+                 std::to_string(r(bb["maxx"].GetDouble())) + "," +
+                 std::to_string(r(bb["maxy"].GetDouble()));
     }
   }
-
-  return leaf_layers;
+  return out;
 }
 
-void set_layer_elements(WMSLayerHierarchy& lh)
+// ----------------------------------------------------------------------
+// GROUPING ALGORITHM
+//
+// For a set of direct children (leaf or sub-namespace), we group them
+// by shared attributes in priority order:
+//   1. geographic bbox
+//   2. time dimension
+//   3. elevation dimension
+//   4. projected bbox (per CRS)
+//
+// Each group shares those attributes and can declare them once at the
+// group's virtual parent level.  Within a group, further splits happen
+// on the remaining attributes.
+//
+// Implementation: we don't actually create new hierarchy nodes.
+// Instead, during output generation we collect the "group header"
+// (shared attributes) and emit it once before the group's children.
+// We pass it down as InheritedState so children suppress matching
+// entries.
+// ----------------------------------------------------------------------
+
+// InheritedState: what has already been declared by ancestors.
+// Keyed by canonical strings so lookup is O(log n).
+struct InheritedState
 {
-  std::list<const WMSLayerHierarchy*> leaf_layers = get_leaf_layers(lh);
+  std::string geoKey;           // empty = not yet declared
+  std::string timeKey;          // empty = not yet declared
+  std::string elevKey;          // empty = not yet declared
+  ProjMap projDeclared;         // crs_id -> bbox_key already declared
+  SharedWMSLayer timeDimLayer;  // for actual CTPP output
+  SharedWMSLayer elevDimLayer;  // for actual CTPP output
+};
 
-  if (leaf_layers.empty())
-    return;
+// ----------------------------------------------------------------------
+// GROUP DESCRIPTOR
+//
+// Describes a set of sibling layers that share the same geo/time/elev
+// values and for which we emit a virtual group node declaring those
+// shared values once.
+// ----------------------------------------------------------------------
 
-  const WMSLayerHierarchy& first_item = *leaf_layers.front();
-  bool identicalGeographicBoundingBox = true;
-  bool identicalProjectedBoundingBox = true;
-  bool identicalTimeDimension = true;
-  bool identicalElevationDimension = true;
+struct LayerGroup
+{
+  std::string geoKey;
+  std::string timeKey;
+  std::string elevKey;
+  // The representative layer for each shared attribute
+  const WMSLayerHierarchy* geoSource = nullptr;
+  const WMSLayerHierarchy* timeSource = nullptr;
+  const WMSLayerHierarchy* elevSource = nullptr;
+  // Per-CRS entries shared by all members
+  ProjMap sharedProj;
+  // Members of this group
+  std::vector<const WMSLayerHierarchy*> members;
+};
 
-  for (const auto& item : leaf_layers)
+// Group a flat list of child nodes by geo+time+elev, then find the
+// projected bbox entries common to ALL members of each group.
+std::vector<LayerGroup> group_children(
+    const std::list<boost::shared_ptr<WMSLayerHierarchy>>& sublayers)
+{
+  // Collect (geo,time,elev) tuples
+  std::map<std::tuple<std::string, std::string, std::string>, LayerGroup> groups;
+
+  for (const auto& child : sublayers)
   {
-    if (!is_identical(first_item, *item, WMSLayerHierarchy::ElementType::geo_bbox))
-      identicalGeographicBoundingBox = false;
-    if (!is_identical(first_item, *item, WMSLayerHierarchy::ElementType::proj_bbox))
-      identicalProjectedBoundingBox = false;
-    if (!is_identical(first_item, *item, WMSLayerHierarchy::ElementType::time_dim))
-      identicalTimeDimension = false;
-    if (!is_identical(first_item, *item, WMSLayerHierarchy::ElementType::elev_dim))
-      identicalElevationDimension = false;
+    // For intermediate children, aggregate keys across all their leaves
+    // by using the most common value (for time/elev) or unanimous value
+    // (for geo/proj).
+    auto leaves = get_leaf_layers(*child);
+
+    // geo: unanimous only
+    std::string g;
+    bool geo_unanimous = true;
+    for (const auto* leaf : leaves)
+    {
+      std::string k = geo_key(*leaf);
+      if (g.empty())
+        g = k;
+      else if (k != g)
+      {
+        geo_unanimous = false;
+        break;
+      }
+    }
+    std::string child_geo = geo_unanimous ? g : "";
+
+    // time: most common across leaves
+    std::map<std::string, int> time_counts;
+    for (const auto* leaf : leaves)
+      time_counts[time_key(*leaf)]++;
+    std::string child_time;
+    int best = 0;
+    for (const auto& [k, v] : time_counts)
+      if (v > best)
+      {
+        best = v;
+        child_time = k;
+      }
+
+    // elev: most common across leaves
+    std::map<std::string, int> elev_counts;
+    for (const auto* leaf : leaves)
+      elev_counts[elev_key(*leaf)]++;
+    std::string child_elev;
+    best = 0;
+    for (const auto& [k, v] : elev_counts)
+      if (v > best)
+      {
+        best = v;
+        child_elev = k;
+      }
+
+    auto key = std::make_tuple(child_geo, child_time, child_elev);
+    auto& grp = groups[key];
+    grp.geoKey = child_geo;
+    grp.timeKey = child_time;
+    grp.elevKey = child_elev;
+    if (!child_geo.empty() && !grp.geoSource)
+      grp.geoSource = child.get();
+    if (!child_time.empty() && !grp.timeSource)
+      grp.timeSource = child.get();
+    if (!child_elev.empty() && !grp.elevSource)
+      grp.elevSource = child.get();
+    grp.members.push_back(child.get());
   }
 
-  if (identicalGeographicBoundingBox)
-    lh.geographicBoundingBox = first_item.geographicBoundingBox;
-  if (identicalProjectedBoundingBox)
-    lh.projectedBoundingBox = first_item.projectedBoundingBox;
-  if (identicalTimeDimension)
-    lh.timeDimension = first_item.timeDimension;
-  if (identicalElevationDimension)
-    lh.elevationDimension = first_item.elevationDimension;
+  // For each group, find projected bbox entries unanimous across all members
+  std::vector<LayerGroup> result;
+  for (auto& [key, grp] : groups)
+  {
+    // Seed shared proj from first member
+    bool first = true;
+    for (const auto* member : grp.members)
+    {
+      // Collect the unanimous proj map for this member's subtree
+      ProjMap member_pm;
+      auto leaves = get_leaf_layers(*member);
+      bool pm_first = true;
+      for (const auto* leaf : leaves)
+      {
+        ProjMap leaf_pm = proj_map(*leaf);
+        if (pm_first)
+        {
+          member_pm = leaf_pm;
+          pm_first = false;
+        }
+        else
+        {
+          std::vector<std::string> remove;
+          for (const auto& [crs, val] : member_pm)
+          {
+            auto it = leaf_pm.find(crs);
+            if (it == leaf_pm.end() || it->second != val)
+              remove.push_back(crs);
+          }
+          for (const auto& c : remove)
+            member_pm.erase(c);
+        }
+      }
 
-  for (const auto& item : lh.sublayers)
-    set_layer_elements(*item);
+      if (first)
+      {
+        grp.sharedProj = member_pm;
+        first = false;
+      }
+      else
+      {
+        std::vector<std::string> remove;
+        for (const auto& [crs, val] : grp.sharedProj)
+        {
+          auto it = member_pm.find(crs);
+          if (it == member_pm.end() || it->second != val)
+            remove.push_back(crs);
+        }
+        for (const auto& c : remove)
+          grp.sharedProj.erase(c);
+      }
+    }
+    result.push_back(std::move(grp));
+  }
+  return result;
 }
+
+// ----------------------------------------------------------------------
+// GETCAPABILITIES OUTPUT — forward declaration
+// ----------------------------------------------------------------------
 
 void add_layer_info(bool multiple_intervals,
                     CTPP::CDT& ctpp,
@@ -282,136 +418,367 @@ void add_layer_info(bool multiple_intervals,
                     const std::optional<Fmi::DateTime>& starttime,
                     const std::optional<Fmi::DateTime>& endtime,
                     const std::optional<Fmi::DateTime>& reference_time,
-                    unsigned int level)
+                    const InheritedState& inh);
+
+// Emit geo bbox CDT if not already declared
+void emit_geo(CTPP::CDT& capa, const WMSLayerHierarchy& src, const InheritedState& inh)
+{
+  std::string k = geo_key(src);
+  if (k.empty() || k == inh.geoKey)
+    return;
+  auto info = src.geographicBoundingBox->getLayer()->getGeographicBoundingBoxInfo();
+  if (info)
+    capa.MergeCDT(*info);
+}
+
+// Emit time dimension CDT if not already declared
+void emit_time(CTPP::CDT& capa,
+               const WMSLayerHierarchy& src,
+               bool multiple_intervals,
+               const std::optional<Fmi::DateTime>& starttime,
+               const std::optional<Fmi::DateTime>& endtime,
+               const std::optional<Fmi::DateTime>& reference_time,
+               bool sublayer_is_reference_time_layer,
+               const InheritedState& inh)
+{
+  if (!src.timeDimension)
+    return;
+  std::string k = time_key(src);
+  if (!k.empty() && k == inh.timeKey)
+    return;
+
+  auto wmslayer = src.timeDimension->getLayer();
+  std::optional<CTPP::CDT> time_dim;
+  if (sublayer_is_reference_time_layer)
+    time_dim = wmslayer->getReferenceDimensionInfo();
+  else if (src.reference_time)
+    time_dim =
+        wmslayer->getTimeDimensionInfo(multiple_intervals, starttime, endtime, *src.reference_time);
+  else
+    time_dim =
+        wmslayer->getTimeDimensionInfo(multiple_intervals, starttime, endtime, reference_time);
+
+  if (time_dim)
+  {
+    capa.MergeCDT(*time_dim);
+    auto iv = wmslayer->getIntervalDimensionInfo();
+    if (iv)
+      capa.MergeCDT(*iv);
+  }
+}
+
+// Emit elevation dimension CDT if not already declared
+void emit_elev(CTPP::CDT& capa, const WMSLayerHierarchy& src, const InheritedState& inh)
+{
+  if (!src.elevationDimension)
+    return;
+  std::string k = elev_key(src);
+  if (!k.empty() && k == inh.elevKey)
+    return;
+  auto info = src.elevationDimension->getLayer()->getElevationDimensionInfo();
+  if (info)
+    capa.MergeCDT(*info);
+}
+
+// Emit projected bbox delta (only CRS entries not already in inh.projDeclared)
+void emit_proj_delta(CTPP::CDT& capa, const ProjMap& pm, const InheritedState& inh)
+{
+  if (pm.empty())
+    return;
+
+  CTPP::CDT delta_crs(CTPP::CDT::ARRAY_VAL);
+  CTPP::CDT delta_bbox(CTPP::CDT::ARRAY_VAL);
+
+  for (const auto& [crs_id, val] : pm)
+  {
+    auto it = inh.projDeclared.find(crs_id);
+    if (it != inh.projDeclared.end() && it->second == val)
+      continue;
+
+    delta_crs.PushBack(crs_id);
+    if (val != "__present__")
+    {
+      // Parse "minx,miny,maxx,maxy"
+      std::vector<double> nums;
+      std::istringstream ss(val);
+      std::string tok;
+      while (std::getline(ss, tok, ','))
+        nums.push_back(std::stod(tok));
+      if (nums.size() == 4)
+      {
+        CTPP::CDT bb(CTPP::CDT::HASH_VAL);
+        bb["crs"] = crs_id;
+        bb["minx"] = nums[0];
+        bb["miny"] = nums[1];
+        bb["maxx"] = nums[2];
+        bb["maxy"] = nums[3];
+        delta_bbox.PushBack(bb);
+      }
+    }
+  }
+
+  if (delta_crs.Size() > 0)
+  {
+    CTPP::CDT p(CTPP::CDT::HASH_VAL);
+    p["crs"] = delta_crs;
+    if (delta_bbox.Size() > 0)
+      p["bounding_box"] = delta_bbox;
+    capa.MergeCDT(p);
+  }
+}
+
+// ----------------------------------------------------------------------
+// VIRTUAL GROUP NODE OUTPUT
+//
+// When a group has >1 member and shares geo/time/elev/proj attributes,
+// we emit those shared attributes into an anonymous (title-only)
+// intermediate layer and recurse with an updated InheritedState.
+// If a group has exactly 1 member, no virtual node is needed.
+// ----------------------------------------------------------------------
+
+void emit_group(bool multiple_intervals,
+                CTPP::CDT& ctpp,
+                const LayerGroup& grp,
+                const std::string& language,
+                const std::string& defaultLanguage,
+                const std::optional<Fmi::DateTime>& starttime,
+                const std::optional<Fmi::DateTime>& endtime,
+                const std::optional<Fmi::DateTime>& reference_time,
+                const InheritedState& inh)
+{
+  // Build the child inherited state for members of this group
+  InheritedState child_inh = inh;
+
+  bool need_virtual_node =
+      (grp.members.size() > 1) && (!grp.geoKey.empty() || !grp.timeKey.empty() ||
+                                   !grp.elevKey.empty() || !grp.sharedProj.empty());
+
+  CTPP::CDT* target = &ctpp;  // where to push children
+  CTPP::CDT virtual_node(CTPP::CDT::HASH_VAL);
+
+  if (need_virtual_node)
+  {
+    // Emit shared attributes into virtual_node
+    if (grp.geoSource && !grp.geoKey.empty() && grp.geoKey != inh.geoKey)
+    {
+      emit_geo(virtual_node, *grp.geoSource, inh);
+      child_inh.geoKey = grp.geoKey;
+    }
+    if (grp.timeSource && !grp.timeKey.empty() && grp.timeKey != inh.timeKey)
+    {
+      bool ref_time_children = false;  // virtual nodes never have reference_time sublayers directly
+      emit_time(virtual_node,
+                *grp.timeSource,
+                multiple_intervals,
+                starttime,
+                endtime,
+                reference_time,
+                ref_time_children,
+                inh);
+      child_inh.timeKey = grp.timeKey;
+      child_inh.timeDimLayer =
+          grp.timeSource->timeDimension ? grp.timeSource->timeDimension->getLayer() : nullptr;
+    }
+    if (grp.elevSource && !grp.elevKey.empty() && grp.elevKey != inh.elevKey)
+    {
+      emit_elev(virtual_node, *grp.elevSource, inh);
+      child_inh.elevKey = grp.elevKey;
+      child_inh.elevDimLayer = grp.elevSource->elevationDimension
+                                   ? grp.elevSource->elevationDimension->getLayer()
+                                   : nullptr;
+    }
+    if (!grp.sharedProj.empty())
+    {
+      emit_proj_delta(virtual_node, grp.sharedProj, inh);
+      for (const auto& [crs, val] : grp.sharedProj)
+        child_inh.projDeclared[crs] = val;
+    }
+
+    bool has_content = virtual_node.Exists("ex_geographic_bounding_box") ||
+                       virtual_node.Exists("time_dimension") ||
+                       virtual_node.Exists("elevation_dimension") || virtual_node.Exists("crs");
+
+    if (has_content)
+    {
+      // Use title of first member's common prefix as the group title
+      // (just the namespace prefix — don't add a queryable layer name)
+      virtual_node["title"] = grp.members.front()->name;
+      virtual_node["queryable"] = 0;
+      virtual_node["sublayers"] = CTPP::CDT(CTPP::CDT::ARRAY_VAL);
+      ctpp.PushBack(virtual_node);
+      // Children go into the virtual node's sublayers
+      target = &(ctpp[ctpp.Size() - 1]["sublayers"]);
+    }
+    else
+    {
+      need_virtual_node = false;
+    }
+  }
+
+  // Recurse into members
+  for (const auto* member : grp.members)
+    add_layer_info(multiple_intervals,
+                   *target,
+                   *member,
+                   language,
+                   defaultLanguage,
+                   starttime,
+                   endtime,
+                   reference_time,
+                   child_inh);
+}
+
+// ----------------------------------------------------------------------
+// MAIN OUTPUT FUNCTION
+// ----------------------------------------------------------------------
+
+void add_layer_info(bool multiple_intervals,
+                    CTPP::CDT& ctpp,
+                    const WMSLayerHierarchy& lh,
+                    const std::string& language,
+                    const std::string& defaultLanguage,
+                    const std::optional<Fmi::DateTime>& starttime,
+                    const std::optional<Fmi::DateTime>& endtime,
+                    const std::optional<Fmi::DateTime>& reference_time,
+                    const InheritedState& inh)
 {
   CTPP::CDT capa(CTPP::CDT::HASH_VAL);
 
   bool sublayer_is_reference_time_layer =
       (!lh.sublayers.empty() && lh.sublayers.back()->reference_time);
-  std::optional<CTPP::CDT> baseInfo;
+
+  // ---- base info ----
   if (lh.sublayers.empty() && lh.baseInfoLayer)
   {
-    baseInfo = lh.baseInfoLayer->getLayer()->getLayerBaseInfo(language, defaultLanguage);
-    std::string name = (*baseInfo)["name"].GetString();
-    std::string title = (*baseInfo)["title"].GetString();
-    if (lh.reference_time)
+    auto baseInfo = lh.baseInfoLayer->getLayer()->getLayerBaseInfo(language, defaultLanguage);
+    if (baseInfo)
     {
-      std::string ref_time = lh.reference_time->to_iso_string();
-      name += (":origintime_" + ref_time);
-      title += (" origintime " + ref_time);
-      (*baseInfo)["name"] = name;
-      (*baseInfo)["title"] = title;
+      if (lh.reference_time)
+      {
+        std::string rt = lh.reference_time->to_iso_string();
+        (*baseInfo)["name"] = (*baseInfo)["name"].GetString() + ":origintime_" + rt;
+        (*baseInfo)["title"] = (*baseInfo)["title"].GetString() + " origintime " + rt;
+      }
+      capa = *baseInfo;
+      auto styles = lh.baseInfoLayer->getLayer()->getStyleInfo(language, defaultLanguage);
+      if (styles)
+        capa.MergeCDT(*styles);
     }
-  }
-
-  if (baseInfo)
-  {
-    capa = *baseInfo;
-    std::optional<CTPP::CDT> styles =
-        lh.baseInfoLayer->getLayer()->getStyleInfo(language, defaultLanguage);
-    if (styles)
-      capa.MergeCDT(*styles);
   }
   else
   {
-    // From spec: "If the layer has a Title but no Name, then that layer is only a category title
-    // for all the layers nested within."
     capa["title"] = lh.name;
     capa["queryable"] = 0;
   }
 
+  // ---- geographic bounding box ----
+  if (lh.geographicBoundingBox)
+    emit_geo(capa, lh, inh);
+
+  // ---- time dimension ----
+  if (lh.timeDimension)
+    emit_time(capa,
+              lh,
+              multiple_intervals,
+              starttime,
+              endtime,
+              reference_time,
+              sublayer_is_reference_time_layer,
+              inh);
+
+  // ---- elevation dimension ----
+  if (lh.elevationDimension)
+    emit_elev(capa, lh, inh);
+
+  // ---- projected bbox ----
+  if (lh.projectedBoundingBox)
+  {
+    ProjMap pm = proj_map(lh);
+    emit_proj_delta(capa, pm, inh);
+  }
+
+  // ---- recurse ----
+  if (lh.sublayers.empty())
+  {
+    ctpp.PushBack(capa);
+    return;
+  }
+
+  // For intermediate nodes, group direct children and emit groups
+  capa["sublayers"] = CTPP::CDT(CTPP::CDT::ARRAY_VAL);
+  ctpp.PushBack(capa);
+  CTPP::CDT& sublayer_target = ctpp[ctpp.Size() - 1]["sublayers"];
+
+  // Build updated InheritedState for children based on what we just emitted
+  InheritedState child_inh = inh;
   if (lh.geographicBoundingBox)
   {
-    if (!lh.parent || !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::geo_bbox))
+    std::string k = geo_key(lh);
+    if (!k.empty() && k != inh.geoKey)
+      child_inh.geoKey = k;
+  }
+  if (lh.timeDimension)
+  {
+    std::string k = time_key(lh);
+    if (!k.empty() && k != inh.timeKey)
     {
-      // Add supported geographic bounding box
-      std::optional<CTPP::CDT> geo_bbox =
-          lh.geographicBoundingBox->getLayer()->getGeographicBoundingBoxInfo();
-      if (geo_bbox)
-        capa.MergeCDT(*geo_bbox);
+      child_inh.timeKey = k;
+      child_inh.timeDimLayer = lh.timeDimension->getLayer();
+    }
+  }
+  if (lh.elevationDimension)
+  {
+    std::string k = elev_key(lh);
+    if (!k.empty() && k != inh.elevKey)
+    {
+      child_inh.elevKey = k;
+      child_inh.elevDimLayer = lh.elevationDimension->getLayer();
     }
   }
   if (lh.projectedBoundingBox)
   {
-    if (!lh.parent || !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::proj_bbox))
-    {
-      // Add supported CRSs
-      std::optional<CTPP::CDT> projected_bbox =
-          lh.projectedBoundingBox->getLayer()->getProjectedBoundingBoxInfo();
-      if (projected_bbox)
-        capa.MergeCDT(*projected_bbox);
-    }
+    ProjMap pm = proj_map(lh);
+    for (const auto& [crs, val] : pm)
+      child_inh.projDeclared[crs] = val;
   }
 
-  if (lh.timeDimension)
+  // Group children and emit, possibly with virtual group nodes
+  auto groups = group_children(lh.sublayers);
+
+  if (groups.size() == 1 && groups[0].members.size() == lh.sublayers.size())
   {
-    // Add supported time dimension
-    std::optional<CTPP::CDT> time_dim;
-    auto wmslayer = lh.timeDimension->getLayer();
-    if (sublayer_is_reference_time_layer)
-    {
-      // If sublayers are reference time layers, parent shows only referece time elemenent
-      time_dim = wmslayer->getReferenceDimensionInfo();
-    }
-    else if (lh.reference_time)
-    {
-      // Reference time layer
-      time_dim = wmslayer->getTimeDimensionInfo(
-          multiple_intervals, starttime, endtime, *lh.reference_time);
-    }
-    else
-    {
-      if (!lh.parent || !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::time_dim))
-        time_dim =
-            wmslayer->getTimeDimensionInfo(multiple_intervals, starttime, endtime, reference_time);
-    }
-
-    if (time_dim)
-    {
-      capa.MergeCDT(*time_dim);
-      auto interval_dim = wmslayer->getIntervalDimensionInfo();
-      if (interval_dim)
-        capa.MergeCDT(*interval_dim);
-    }
+    // All children in one group — emit group's shared attributes as a
+    // virtual node only if there is something new to declare
+    emit_group(multiple_intervals,
+               sublayer_target,
+               groups[0],
+               language,
+               defaultLanguage,
+               starttime,
+               endtime,
+               reference_time,
+               child_inh);
   }
-
-  if (lh.elevationDimension)
-  {
-    if (!lh.parent || !is_identical(lh, *lh.parent, WMSLayerHierarchy::ElementType::elev_dim))
-    {
-      // Add supported elevation dimension
-      std::optional<CTPP::CDT> elev_dim =
-          lh.elevationDimension->getLayer()->getElevationDimensionInfo();
-      if (elev_dim)
-        capa.MergeCDT(*elev_dim);
-    }
-  }
-
-  if (lh.sublayers.empty())
-    ctpp.PushBack(capa);
   else
   {
-    // Add sublayers
-    capa["sublayers"] = CTPP::CDT(CTPP::CDT::ARRAY_VAL);
-    ctpp.PushBack(capa);
-    unsigned int nextLevel = level + 1;
-    for (const auto& item : lh.sublayers)
-      add_layer_info(multiple_intervals,
-                     capa["sublayers"],
-                     *item,
-                     language,
-                     defaultLanguage,
-                     starttime,
-                     endtime,
-                     reference_time,
-                     nextLevel);
+    // Multiple groups — emit each group (possibly with virtual nodes)
+    for (const auto& grp : groups)
+      emit_group(multiple_intervals,
+                 sublayer_target,
+                 grp,
+                 language,
+                 defaultLanguage,
+                 starttime,
+                 endtime,
+                 reference_time,
+                 child_inh);
   }
 }
 
 }  // namespace
 
 // ----------------------------------------------------------------------
-// CONSTRUCTING A HIERARCHY
+// CONSTRUCTORS
 // ----------------------------------------------------------------------
 
 WMSLayerHierarchy::WMSLayerHierarchy(std::string n) : name(std::move(n)), parent(nullptr) {}
@@ -453,53 +820,46 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
 #endif
 {
   std::map<std::string, const WMSLayerProxy*> named_layers;
-
   std::set<std::string> top_level_layers;
+
   for (const auto& item : layerMap)
   {
     const auto& layer_name = item.first;
-
 #ifndef WITHOUT_AUTHENTICATION
-    // If authentication is requested, skip the layer if authentication fails
     const std::string wmsService = "wms";
     if (apikey && authenticate)
       if (authEngine == nullptr || !authEngine->authorize(*apikey, layer_name, wmsService))
         continue;
 #endif
-    // Skip hidden layers
     if (item.second.getLayer()->isHidden() && !show_hidden)
       continue;
-
     if (wms_namespace && !match_namespace_pattern(layer_name, *wms_namespace))
       continue;
 
     if (hierarchy_type == HierarchyType::flat)
     {
-      auto hierarchy = boost::make_shared<WMSLayerHierarchy>(layer_name);
-      const WMSLayerProxy& layer_to_use = item.second;
-      hierarchy->baseInfoLayer = layer_to_use;
-      hierarchy->geographicBoundingBox = layer_to_use;
-      hierarchy->projectedBoundingBox = layer_to_use;
-      hierarchy->timeDimension = layer_to_use;
-      hierarchy->elevationDimension = layer_to_use;
-      sublayers.push_back(hierarchy);
+      auto h = boost::make_shared<WMSLayerHierarchy>(layer_name);
+      const WMSLayerProxy& p = item.second;
+      h->baseInfoLayer = p;
+      h->geographicBoundingBox = p;
+      h->projectedBoundingBox = p;
+      h->timeDimension = p;
+      h->elevationDimension = p;
+      sublayers.push_back(h);
     }
     else
     {
-      // Sort out name hierarchy
       std::vector<std::string> tokens;
       boost::algorithm::split(tokens, layer_name, boost::is_any_of(":"), boost::token_compress_on);
-
-      std::string name;
-      for (const auto& token_item : tokens)
+      std::string nm;
+      for (const auto& t : tokens)
       {
-        if (!name.empty())
-          name += ":";
-        name += token_item;
-        named_layers[name] = &item.second;
-
-        if (name.find(':') == std::string::npos)
-          top_level_layers.insert(name);
+        if (!nm.empty())
+          nm += ":";
+        nm += t;
+        named_layers[nm] = &item.second;
+        if (nm.find(':') == std::string::npos)
+          top_level_layers.insert(nm);
       }
     }
   }
@@ -508,18 +868,16 @@ void WMSLayerHierarchy::processLayers(const std::map<std::string, WMSLayerProxy>
     return;
 
   std::set<std::string> processed_layers;
-  for (const auto& name : top_level_layers)
+  for (const auto& nm : top_level_layers)
   {
-    // Add top layer and its sublayers
-    auto hierarchy = boost::make_shared<WMSLayerHierarchy>(name);
-    add_sublayers(*hierarchy, named_layers, processed_layers, hierarchy_type);
-    set_layer_elements(*hierarchy);
-    sublayers.push_back(hierarchy);
+    auto h = boost::make_shared<WMSLayerHierarchy>(nm);
+    add_sublayers(*h, named_layers, processed_layers, hierarchy_type);
+    sublayers.push_back(h);
   }
 }
 
 // ----------------------------------------------------------------------
-// GENERATING GETCAPABILITIES
+// getCapabilities
 // ----------------------------------------------------------------------
 
 CTPP::CDT WMSLayerHierarchy::getCapabilities(
@@ -528,12 +886,10 @@ CTPP::CDT WMSLayerHierarchy::getCapabilities(
     const std::string& defaultLanguage,
     const std::optional<Fmi::DateTime>& starttime,
     const std::optional<Fmi::DateTime>& endtime,
-    const std::optional<Fmi::DateTime>& reference_time) const
+    const std::optional<Fmi::DateTime>& reference_time) const const
 {
-  // Return array of individual layer capabilities
   CTPP::CDT capa(CTPP::CDT::ARRAY_VAL);
-
-  // std::cout << "CAPA:\n " << *this << '\n';
+  InheritedState inh;
   add_layer_info(multiple_intervals,
                  capa,
                  *this,
@@ -542,15 +898,13 @@ CTPP::CDT WMSLayerHierarchy::getCapabilities(
                  starttime,
                  endtime,
                  reference_time,
-                 1);
-
+                 inh);
   return capa;
 }
 
 std::ostream& operator<<(std::ostream& ost, const WMSLayerHierarchy& lh)
 {
   printHierarchy("", 1, ost, lh);
-
   return ost;
 }
 

@@ -35,13 +35,6 @@ class WMSLayerHierarchy
     recursive,
     recursivetimes
   };
-  enum class ElementType
-  {
-    geo_bbox,
-    proj_bbox,
-    time_dim,
-    elev_dim
-  };
 
 #ifndef WITHOUT_AUTHENTICATION
   WMSLayerHierarchy(const std::map<std::string, WMSLayerProxy>& layerMap,
@@ -76,7 +69,8 @@ class WMSLayerHierarchy
   std::string name;
   bool show_hidden = false;
   bool authenticate = false;
-  // Parts that can be inhereted by sublayers
+
+  // Per-leaf data sources (set during tree construction)
   std::optional<WMSLayerProxy> baseInfoLayer;
   std::optional<WMSLayerProxy> geographicBoundingBox;
   std::optional<WMSLayerProxy> projectedBoundingBox;

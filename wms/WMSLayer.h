@@ -62,8 +62,8 @@ class WMSLayer
   std::optional<int> width;  // If layer is used as a legend file width and height are needed here
   std::optional<int> height;
 
-  std::optional<int> timestep; // minutes
-  
+  std::optional<int> timestep;  // minutes
+
   const WMSConfig& wmsConfig;
   bool hidden = false;                 // If this is true, dont show in GetCapabilities response
   bool timeDimensionDisabled = false;  // Can any timestamp can be used in GetMap-request
@@ -116,6 +116,12 @@ class WMSLayer
   bool identicalProjectedBoundingBox(const WMSLayer& layer) const;
   bool identicalTimeDimension(const WMSLayer& layer) const;
   bool identicalElevationDimension(const WMSLayer& layer) const;
+  bool identicalKeywords(const WMSLayer& layer) const;
+
+  // Returns projected bounding box / CRS entries that differ from
+  // `inherited`.  If all entries are identical returns an empty optional.
+  // Used by WMSLayerHierarchy to emit only the delta vs an ancestor.
+  std::optional<CTPP::CDT> getProjectedBoundingBoxDelta(const WMSLayer& inherited) const;
 
   bool isHidden() const { return hidden; }
   void setCustomer(const std::string& c);

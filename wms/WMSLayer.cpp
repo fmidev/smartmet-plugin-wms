@@ -2495,6 +2495,118 @@ bool WMSLayer::identicalElevationDimension(const WMSLayer& layer) const
   return layer.elevationDimension->isIdentical(*elevationDimension);
 }
 
+bool WMSLayer::identicalKeywords(const WMSLayer& layer) const
+{
+  // Both have no keywords
+  if (!keywords && !layer.keywords)
+    return true;
+  // One has keywords, the other doesn't
+  if (!keywords || !layer.keywords)
+    return false;
+  // Both have keywords: compare sets
+  return *keywords == *layer.keywords;
+}
+
+// Returns only the CRS entries (and their projected bboxes) that are
+// absent from or different in `inherited`.  This lets a child layer
+// emit only what changes rather than the full list.
+//
+// Rules:
+//   • A CRS present in `inherited` with an identical bbox  → omitted
+//   • A CRS present in `inherited` with a different bbox   → emitted (override)
+//   • A CRS not present in `inherited` at all              → emitted (new)
+//   • Returns {} when nothing differs (fully inherited)
+std::optional<CTPP::CDT> WMSLayer::getProjectedBoundingBoxDelta(const WMSLayer& inherited) const
+{
+  try
+  {
+    if (hidden)
+      return {};
+
+    CTPP::CDT layer(CTPP::CDT::HASH_VAL);
+    CTPP::CDT delta_crs_list(CTPP::CDT::ARRAY_VAL);
+    CTPP::CDT delta_bbox_list(CTPP::CDT::ARRAY_VAL);
+
+    for (const auto& id_ref : refs)
+    {
+      const auto& id = id_ref.first;
+      const auto& ref = id_ref.second;
+
+      if (!isValidCRS(id))
+        continue;
+
+      // ---- Check what the inherited layer has for this CRS ----
+
+      // Is the CRS even valid in the inherited layer?
+      bool inherited_has_crs = inherited.isValidCRS(id);
+
+      if (ref.geographic)
+      {
+        // Geographic CRS: compare the geographic bbox
+        bool same = inherited_has_crs && inherited.identicalGeographicBoundingBox(*this);
+        if (same)
+          continue;  // fully inherited, skip
+
+        delta_crs_list.PushBack(id);
+        CTPP::CDT bb(CTPP::CDT::HASH_VAL);
+        bb["crs"] = id;
+        bb["minx"] = geographicBoundingBox.xMin;
+        bb["miny"] = geographicBoundingBox.yMin;
+        bb["maxx"] = geographicBoundingBox.xMax;
+        bb["maxy"] = geographicBoundingBox.yMax;
+        delta_bbox_list.PushBack(bb);
+      }
+      else if (boost::algorithm::starts_with(id, "AUTO2:"))
+      {
+        // AUTO2: no bbox, just the CRS name; skip if already inherited
+        if (inherited_has_crs)
+          continue;
+        delta_crs_list.PushBack(id);
+      }
+      else
+      {
+        auto my_pos = projected_bbox.find(id);
+        if (my_pos == projected_bbox.end())
+          continue;  // we have no bbox for it either way
+
+        if (inherited_has_crs)
+        {
+          auto inh_pos = inherited.projected_bbox.find(id);
+          if (inh_pos != inherited.projected_bbox.end())
+          {
+            const Fmi::BBox& mb = my_pos->second;
+            const Fmi::BBox& ib = inh_pos->second;
+            if (mb.west == ib.west && mb.east == ib.east && mb.south == ib.south &&
+                mb.north == ib.north)
+              continue;  // identical bbox — fully inherited, skip
+          }
+        }
+
+        // New or changed — include in delta
+        delta_crs_list.PushBack(id);
+        CTPP::CDT bb(CTPP::CDT::HASH_VAL);
+        bb["crs"] = id;
+        bb["minx"] = my_pos->second.west;
+        bb["miny"] = my_pos->second.south;
+        bb["maxx"] = my_pos->second.east;
+        bb["maxy"] = my_pos->second.north;
+        delta_bbox_list.PushBack(bb);
+      }
+    }
+
+    if (delta_crs_list.Size() == 0)
+      return {};  // nothing new to say
+
+    layer["crs"] = delta_crs_list;
+    layer["bounding_box"] = delta_bbox_list;
+    return layer;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Failed to generate projected bbox delta for layer!");
+  }
+}
+
 // When external legend file used this is called to set dimension
 void WMSLayer::setLegendDimension(const WMSLayer& legendLayer, const std::string& styleLayerName)
 {
