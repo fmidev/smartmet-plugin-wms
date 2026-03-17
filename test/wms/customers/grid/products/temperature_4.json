@@ -23,7 +23,6 @@
           "layer_type": "number",
           "css": "numbers/integers.css",
           "parameter": "temperature",
-          "offset" : 273.15,
           "attributes": {
             "class": "Number",
             "id": "wind_numbers"
