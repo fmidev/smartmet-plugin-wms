@@ -1371,8 +1371,6 @@ void ArrowLayer::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
 {
   try
   {
-    std::cerr << "ArrowLayer::getFeatureInfo\n";
-
     // Sanity checks
     if (!validLayer(theState))
       return;
@@ -1609,7 +1607,260 @@ void ArrowLayer::getGridValue(CTPP::CDT& theInfo, const State& theState)
 {
   try
   {
-    return;  // TODO
+    const auto* gridEngine = theState.getGridEngine();
+    if (!gridEngine || !gridEngine->isEnabled())
+      return;
+
+    // Must have direction or u&v
+    if (!direction && (!u || !v))
+      return;
+
+    std::shared_ptr<QueryServer::Query> originalGridQuery(new QueryServer::Query());
+    QueryServer::QueryConfigurator queryConfigurator;
+    T::AttributeList attributeList;
+
+    std::string producerName = gridEngine->getProducerName(*paraminfo.producer);
+
+    auto valid_time = getValidTime();
+
+    std::string wkt = *projection.crs;
+    if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
+      wkt = projection.getCRS().WKT();
+
+    // Adding the bounding box information into the query.
+    const auto& box = projection.getBox();
+
+    auto bl = projection.bottomLeftLatLon();
+    auto tr = projection.topRightLatLon();
+    auto bbox = fmt::format("{},{},{},{}", bl.X(), bl.Y(), tr.X(), tr.Y());
+    originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
+
+    bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+    originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+
+    // Build the parameter list: either direction+speed or u+v
+    std::vector<std::string> paramNames;
+    std::optional<std::string> dirParam;
+    std::optional<std::string> speedParam;
+    std::optional<std::string> uParam;
+    std::optional<std::string> vParam;
+
+    if (direction)
+    {
+      dirParam = *direction;
+      paramNames.push_back(*direction);
+    }
+    if (speed)
+    {
+      speedParam = *speed;
+      paramNames.push_back(*speed);
+    }
+    if (u)
+    {
+      uParam = *u;
+      paramNames.push_back(*u);
+    }
+    if (v)
+    {
+      vParam = *v;
+      paramNames.push_back(*v);
+    }
+
+    // Build the comma-separated parameter string, resolving each through the grid engine
+    std::string paramBuf;
+    for (auto& pName : paramNames)
+    {
+      auto pos = pName.find(".raw");
+      if (pos != std::string::npos)
+      {
+        attributeList.addAttribute("grid.areaInterpolationMethod",
+                                   Fmi::to_string(T::AreaInterpolationMethod::Nearest));
+        pName.erase(pos, 4);
+      }
+
+      std::string param = gridEngine->getParameterString(producerName, pName);
+
+      if (!projection.projectionParameter)
+        projection.projectionParameter = param;
+
+      if (param == pName && originalGridQuery->mProducerNameList.empty())
+      {
+        gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
+        if (originalGridQuery->mProducerNameList.empty())
+          originalGridQuery->mProducerNameList.push_back(producerName);
+      }
+
+      if (!paramBuf.empty())
+        paramBuf += ',';
+      paramBuf += param;
+    }
+
+    attributeList.addAttribute("param", paramBuf);
+
+    std::string forecastTime = Fmi::to_iso_string(valid_time);
+    attributeList.addAttribute("startTime", forecastTime);
+    attributeList.addAttribute("endTime", forecastTime);
+    attributeList.addAttribute("timelist", forecastTime);
+    attributeList.addAttribute("timezone", "UTC");
+
+    if (origintime)
+      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+
+    queryConfigurator.configure(*originalGridQuery, attributeList);
+
+    // Convert the requested pixel coordinate to latlon
+    auto crs = projection.getCRS();
+    Fmi::CoordinateTransformation transformation(crs, "WGS84");
+    double x = theInfo["x"].GetFloat();
+    double y = theInfo["y"].GetFloat();
+    double lon = x;
+    double lat = y;
+    box.itransform(lon, lat);
+    if (!transformation.transform(lon, lat))
+      return;
+
+    // Single-point query
+    T::Coordinate_vec coordinates;
+    coordinates.emplace_back(lon, lat);
+    originalGridQuery->mAreaCoordinates.push_back(coordinates);
+    originalGridQuery->mFlags |= QueryServer::Query::Flags::GeometryHitNotRequired;
+
+    for (auto& param : originalGridQuery->mQueryParameterList)
+    {
+      param.mLocationType = QueryServer::QueryParameter::LocationType::Point;
+      param.mType = QueryServer::QueryParameter::Type::PointValues;
+
+      if (paraminfo.geometryId)
+        param.mGeometryId = *paraminfo.geometryId;
+
+      if (paraminfo.levelId)
+        param.mParameterLevelId = *paraminfo.levelId;
+
+      if (paraminfo.level)
+        param.mParameterLevel = C_INT(*paraminfo.level);
+      else if (paraminfo.pressure)
+      {
+        param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
+        param.mParameterLevel = C_INT(*paraminfo.pressure);
+      }
+
+      if (paraminfo.elevation_unit)
+      {
+        if (*paraminfo.elevation_unit == "m")
+          param.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
+        if (*paraminfo.elevation_unit == "p")
+          param.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
+      }
+
+      if (paraminfo.forecastType)
+        param.mForecastType = C_INT(*paraminfo.forecastType);
+
+      if (paraminfo.forecastNumber)
+        param.mForecastNumber = C_INT(*paraminfo.forecastNumber);
+    }
+
+    originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
+    originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
+
+    if (projection.size && *projection.size > 0)
+      originalGridQuery->mAttributeList.addAttribute("grid.size", Fmi::to_string(*projection.size));
+    else
+    {
+      if (projection.xsize)
+        originalGridQuery->mAttributeList.addAttribute("grid.width",
+                                                       Fmi::to_string(*projection.xsize));
+      if (projection.ysize)
+        originalGridQuery->mAttributeList.addAttribute("grid.height",
+                                                       Fmi::to_string(*projection.ysize));
+    }
+
+    std::shared_ptr<QueryServer::Query> query = gridEngine->executeQuery(originalGridQuery);
+
+    // Collect the single-point results per parameter name
+    T::ParamValue dirValue = ParamValueMissing;
+    T::ParamValue speedValue = ParamValueMissing;
+    T::ParamValue uValue = ParamValueMissing;
+    T::ParamValue vValue = ParamValueMissing;
+
+    for (const auto& param : query->mQueryParameterList)
+    {
+      for (const auto& val : param.mValueList)
+      {
+        if (val->mValueList.getLength() != 1)
+          continue;
+
+        T::GridValue* rec = val->mValueList.getGridValuePtrByIndex(0);
+        if (!rec)
+          continue;
+
+        if (dirParam && param.mParam == *dirParam)
+          dirValue = rec->mValue;
+        else if (speedParam && param.mParam == *speedParam)
+          speedValue = rec->mValue;
+        else if (uParam && param.mParam == *uParam)
+          uValue = rec->mValue;
+        else if (vParam && param.mParam == *vParam)
+          vValue = rec->mValue;
+      }
+    }
+
+    // Derive speed and direction from whichever pair of parameters was provided
+    double wspd = ParamValueMissing;
+    double wdir = ParamValueMissing;
+
+    if (uParam && vParam)
+    {
+      if (uValue != ParamValueMissing && vValue != ParamValueMissing)
+      {
+        wspd = sqrt(uValue * uValue + vValue * vValue);
+
+        // Check whether U/V are relative to the grid and need rotating to true north
+        int relativeUV = 0;
+        const char* relativeUVStr =
+            query->mAttributeList.getAttributeValue("grid.original.relativeUV");
+        const char* originalCrs = query->mAttributeList.getAttributeValue("grid.original.crs");
+
+        if (relativeUVStr)
+          relativeUV = Fmi::stoi(relativeUVStr);
+
+        if (relativeUV && originalCrs)
+        {
+          Fmi::CoordinateTransformation uvtransformation("WGS84", originalCrs);
+          auto rot = Fmi::OGR::gridNorth(uvtransformation, lon, lat);
+          if (!rot)
+            return;
+          wdir = fmod(180 - *rot + 180 / pi * atan2(uValue, vValue), 360);
+        }
+        else
+        {
+          if (uValue != 0 || vValue != 0)
+            wdir = fmod(180 + 180 / pi * atan2(uValue, vValue), 360);
+          else
+            wdir = 0;
+        }
+      }
+    }
+    else
+    {
+      // Direct direction + optional speed
+      if (dirValue != ParamValueMissing)
+        wdir = dirValue;
+      if (speedValue != ParamValueMissing)
+        wspd = speedValue;
+    }
+
+    if (wdir == ParamValueMissing || wspd == ParamValueMissing)
+      return;
+
+    const double xmul = (multiplier ? *multiplier : 1.0);
+    const double xoff = (offset ? *offset : 0.0);
+    wspd = xmul * wspd + xoff;
+
+    theInfo["features"]["Speed"] = wspd;
+    theInfo["features"]["Direction"] = wdir;
+    theInfo["time"] = Fmi::to_iso_string(valid_time);
+    theInfo["longitude"] = std::round(lon * 1e5) / 1e5;
+    theInfo["latitude"] = std::round(lat * 1e5) / 1e5;
   }
   catch (...)
   {
