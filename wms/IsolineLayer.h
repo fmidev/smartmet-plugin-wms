@@ -60,8 +60,8 @@ class IsolineLayer : public Layer
  protected:
   std::vector<OGRGeometryPtr> getIsolines(const std::vector<double>& isovalues, State& theState);
   Engine::Querydata::Q q;  // Make used data available to derived IsolabelLayer
-  uint fileId = 0;
-  uint messageIndex = 0;
+  T::FileId fileId = 0;
+  T::MessageIndex messageIndex = 0;
 
  private:
   std::vector<OGRGeometryPtr> getIsolinesGrid(const std::vector<double>& isovalues,
