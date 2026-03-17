@@ -30,7 +30,7 @@ class CDT;
 namespace Fmi
 {
 class Box;
-class Spatialreference;
+class SpatialReference;
 }  // namespace Fmi
 
 namespace SmartMet
@@ -48,6 +48,7 @@ class Defs;
 class Plugin;
 class State;
 class View;
+class Positions;
 
 class Layer : public Properties
 {
@@ -70,7 +71,7 @@ class Layer : public Properties
   virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) = 0;
   virtual void getFeatureInfo(CTPP::CDT& theInfo, const State& theState) = 0;
 
-  // Base provides a reasonable default!
+  // Base provides a reasonable default
   virtual std::size_t hash_value(const State& theState) const;
 
   void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
@@ -92,7 +93,6 @@ class Layer : public Properties
                    const State& theState);
 
   // Generate bounding box for clipping paths and testing point insidedness
-
   Fmi::Box getClipBox(const Fmi::Box& theBox) const;
 
   // Generate bounding box for fetching observations
@@ -111,7 +111,7 @@ class Layer : public Properties
   // file and you just turn them on/off with this attribute.
   bool visible = true;
 
-  // Controlling animiation on the layer level
+  // Controlling animation on the layer level
   bool animation_enabled = true;
   std::string animation_effect;
   AnimationEffects animation_effects;
@@ -144,14 +144,24 @@ class Layer : public Properties
  protected:
   void getFeatureValue(CTPP::CDT& theInfo, const State& theState);
 
+  // Convert a pixel coordinate in theInfo["x"]/["y"] to WGS84 lon/lat.
+  // Returns nullopt if the transformation fails.
+  std::optional<std::pair<double, double>> pixel_to_lonlat(const CTPP::CDT& theInfo,
+                                                           const Fmi::Box& box,
+                                                           const Fmi::SpatialReference& crs) const;
+
+  // Fill station metadata (Fmisid, URL, StationName) into theInfo["features"].
+  void enrich_with_station_info(CTPP::CDT& theInfo, const State& theState, int fmisid) const;
+
+  // Build a single-station Positions object for a given coordinate.
+  static Positions make_single_station_positions(double lon, double lat);
+
  private:
   bool validResolution() const;
   bool validType(const std::string& theType) const;
 
   void getObservationValue(CTPP::CDT& theInfo, const State& theState);
-
   void getQuerydataValue(CTPP::CDT& theInfo, const State& theState);
-
   void getGridValue(CTPP::CDT& theInfo, const State& theState);
 
 };  // class Layer

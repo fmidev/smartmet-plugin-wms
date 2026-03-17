@@ -63,7 +63,7 @@ class ArrowLayer : public Layer
   std::optional<int> dx;
   std::optional<int> dy;
 
-  // Require at least this many valid valies
+  // Require at least this many valid values
   int minvalues = 0;
 
   // The speed parameter and the ranges to be styled separately
@@ -79,6 +79,18 @@ class ArrowLayer : public Layer
   void getObservationValue(CTPP::CDT& theInfo, const State& theState);
   void getQuerydataValue(CTPP::CDT& theInfo, const State& theState);
   void getGridValue(CTPP::CDT& theInfo, const State& theState);
+
+  // Shared helpers
+  void render_arrows(CTPP::CDT& theGlobals,
+                     CTPP::CDT& group_cdt,
+                     const std::vector<PointData>& pointvalues,
+                     const Fmi::CoordinateTransformation& transformation,
+                     State& theState,
+                     int& valid_count);
+
+  std::shared_ptr<QueryServer::Query> build_grid_query(const std::vector<std::string>& paramNames,
+                                                       const T::Coordinate_vec& coordinates,
+                                                       const State& theState);
 
 };  // class ArrowLayer
 
