@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.3.16
+Version: 26.3.17
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -163,6 +163,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Mar 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.17-1.fmi
+- Fixed unit conversions in NumberLayer and RasterLayer
+- Added GetFeatureInfo support for querydata and observations (grid-support still missing)
+
 * Mon Mar 16 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.16-1.fmi
 - Added GetFeatureInfo support (arrow data not supported yet)
 
