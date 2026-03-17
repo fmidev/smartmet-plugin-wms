@@ -41,9 +41,6 @@ class NumberLayer : public Layer
   void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
   std::optional<TS::ParameterAndFunctions> param_funcs;
-  std::string unit_conversion;
-  std::optional<double> multiplier;
-  std::optional<double> offset;
 
   // Grid coordinate settings
   std::optional<Positions> positions;

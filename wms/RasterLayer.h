@@ -53,7 +53,6 @@ class RasterLayer : public Layer
 
   std::string interpolation{"linear"};
 
-  std::string unit_conversion;
   int compression;
   std::string painter;
   Parameters painterParameters;
@@ -74,9 +73,6 @@ class RasterLayer : public Layer
 
   Parameters land_shading_parameters;
   Parameters sea_shading_parameters;
-
-  std::optional<double> multiplier;
-  std::optional<double> offset;
 
   std::string svg_image;
 
