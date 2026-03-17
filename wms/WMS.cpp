@@ -1041,7 +1041,7 @@ WMSQueryStatus Dali::Plugin::wmsGenerateProduct(State &theState,
     }
 
     char fname[100];
-    sprintf(fname, "/tmp/WMS_animation_%d_%llu.webp", getpid(), getTime());
+    sprintf(fname, "/tmp/WMS_animation_%d_%lu.webp", getpid(), getTime());
     webp_anim_save_ARGB(fname, image.data(), width, height, frameCount, timeVect);
     images.clear();
 
