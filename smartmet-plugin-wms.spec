@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.3.17
-Release: 2%{?dist}.fmi
+Version: 26.3.18
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -163,6 +163,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Mar 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.18-1.fmi
+- Improved recursive GetCapablities response to group shared information better
+
 * Tue Mar 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.17-2.fmi
 - Added GetFeatureInfo support for grid-data arrow layers
 
