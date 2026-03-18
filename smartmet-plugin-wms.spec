@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.3.18
-Release: 1%{?dist}.fmi
+Release: 2%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -28,8 +28,8 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-giza-devel >= 26.2.4
-BuildRequires: smartmet-library-grid-content-devel >= 26.2.4
-BuildRequires: smartmet-library-grid-files-devel >= 26.2.4
+BuildRequires: smartmet-library-grid-content-devel >= 26.3.18
+BuildRequires: smartmet-library-grid-files-devel >= 26.3.18
 BuildRequires: smartmet-library-macgyver-devel >= 26.2.4
 BuildRequires: smartmet-library-spine-devel >= 26.3.13
 BuildRequires: smartmet-library-timeseries-devel >= 26.2.4
@@ -40,7 +40,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 26.2.4
 BuildRequires: smartmet-engine-observation-devel >= 26.2.4
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 26.2.4
-BuildRequires: smartmet-engine-grid-devel >= 26.2.4
+BuildRequires: smartmet-engine-grid-devel >= 26.3.18
 BuildRequires: smartmet-engine-geonames-devel >= 26.3.10
 BuildRequires: smartmet-engine-querydata-devel >= 26.2.4
 BuildRequires: smartmet-engine-contour-devel >= 26.2.4
@@ -72,8 +72,8 @@ Requires: libconfig17
 Requires: libwebp13
 # Default font for some layers:
 Requires: google-roboto-fonts
-Requires: smartmet-library-grid-content >= 26.2.4
-Requires: smartmet-library-grid-files >= 26.2.4
+Requires: smartmet-library-grid-content >= 26.3.18
+Requires: smartmet-library-grid-files >= 26.3.18
 Requires: smartmet-library-gis >= 26.2.17
 Requires: smartmet-library-trax >= 26.2.4
 Requires: smartmet-library-macgyver >= 26.2.4
@@ -86,7 +86,7 @@ Requires: smartmet-engine-authentication >= 26.2.4
 Requires: smartmet-engine-querydata >= 26.2.4
 Requires: smartmet-engine-contour >= 26.2.4
 Requires: smartmet-engine-gis >= 26.2.4
-Requires: smartmet-engine-grid >= 26.2.4
+Requires: smartmet-engine-grid >= 26.3.18
 Requires: smartmet-engine-geonames >= 26.3.10
 Requires: smartmet-server >= 26.3.9
 Requires: smartmet-library-spine >= 26.3.13
@@ -121,7 +121,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-library-macgyver-devel >= 26.2.4
 #TestRequires: smartmet-library-spine-devel >= 26.3.13
 #TestRequires: smartmet-library-timeseries-devel >= 26.2.4
-#TestRequires: smartmet-engine-grid-devel >= 26.2.4
+#TestRequires: smartmet-engine-grid-devel >= 26.3.18
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-utils-devel >= 26.2.4
@@ -163,6 +163,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Mar 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.18-2.fmi
+- Added support for multiple content sources
+
 * Wed Mar 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.18-1.fmi
 - Improved recursive GetCapablities response to group shared information better
 
