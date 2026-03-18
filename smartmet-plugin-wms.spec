@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.3.18
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -44,7 +44,7 @@ BuildRequires: smartmet-engine-grid-devel >= 26.3.18
 BuildRequires: smartmet-engine-geonames-devel >= 26.3.10
 BuildRequires: smartmet-engine-querydata-devel >= 26.2.4
 BuildRequires: smartmet-engine-contour-devel >= 26.2.4
-BuildRequires: smartmet-library-gis-devel >= 26.2.17
+BuildRequires: smartmet-library-gis-devel >= 26.2.5
 BuildRequires: smartmet-library-trax-devel >= 26.2.4
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
@@ -74,7 +74,7 @@ Requires: libwebp13
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 26.3.18
 Requires: smartmet-library-grid-files >= 26.3.18
-Requires: smartmet-library-gis >= 26.2.17
+Requires: smartmet-library-gis >= 26.2.5
 Requires: smartmet-library-trax >= 26.2.4
 Requires: smartmet-library-macgyver >= 26.2.4
 Requires: smartmet-library-spine >= 26.3.13
@@ -163,7 +163,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
-* Wed Mar 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.18-2.fmi
+* Wed Mar 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.18-3.fmi
 - Added support for multiple content sources
 
 * Wed Mar 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.18-1.fmi
