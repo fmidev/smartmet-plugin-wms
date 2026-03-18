@@ -154,10 +154,10 @@ std::string geo_key(const WMSLayerHierarchy& lh)
     return "";
   auto& bb = (*info)["ex_geographic_bounding_box"];
   auto r = [](double v) { return std::round(v * 1e9) / 1e9; };
-  return std::to_string(r(bb["west_bound_longitude"].GetDouble())) + "," +
-         std::to_string(r(bb["east_bound_longitude"].GetDouble())) + "," +
-         std::to_string(r(bb["south_bound_latitude"].GetDouble())) + "," +
-         std::to_string(r(bb["north_bound_latitude"].GetDouble()));
+  return std::to_string(r(bb["west_bound_longitude"].GetFloat())) + "," +
+         std::to_string(r(bb["east_bound_longitude"].GetFloat())) + "," +
+         std::to_string(r(bb["south_bound_latitude"].GetFloat())) + "," +
+         std::to_string(r(bb["north_bound_latitude"].GetFloat()));
 }
 
 std::string time_key(const WMSLayerHierarchy& lh)
@@ -213,10 +213,10 @@ ProjMap proj_map(const WMSLayerHierarchy& lh)
       if (!bb.Exists("crs"))
         continue;
       std::string crs = bb["crs"].GetString();
-      out[crs] = std::to_string(r(bb["minx"].GetDouble())) + "," +
-                 std::to_string(r(bb["miny"].GetDouble())) + "," +
-                 std::to_string(r(bb["maxx"].GetDouble())) + "," +
-                 std::to_string(r(bb["maxy"].GetDouble()));
+      out[crs] = std::to_string(r(bb["minx"].GetFloat())) + "," +
+                 std::to_string(r(bb["miny"].GetFloat())) + "," +
+                 std::to_string(r(bb["maxx"].GetFloat())) + "," +
+                 std::to_string(r(bb["maxy"].GetFloat()));
     }
   }
   return out;
@@ -886,7 +886,7 @@ CTPP::CDT WMSLayerHierarchy::getCapabilities(
     const std::string& defaultLanguage,
     const std::optional<Fmi::DateTime>& starttime,
     const std::optional<Fmi::DateTime>& endtime,
-    const std::optional<Fmi::DateTime>& reference_time) const const
+    const std::optional<Fmi::DateTime>& reference_time) const
 {
   CTPP::CDT capa(CTPP::CDT::ARRAY_VAL);
   InheritedState inh;
