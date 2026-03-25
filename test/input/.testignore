@@ -7,18 +7,10 @@ t2m_p_kml.get
 ; PROJ.7 code seems to have the interrupts at wrong locations
 map_isea.get
 
-; Stopped working
-map_sterea.get
-
-; Clipping problems
-map_tmerc.get
-
-; Difficulties getting the globe right, requires a lot of sampling
-map_laea.get
-
 ; Maps not working - given up on them
 map_aeqd.get
 map_bertin1953.get
+map_bipc.get
 map_ccon.get
 map_chamb.get
 map_gnom.get
@@ -31,5 +23,8 @@ map_ob_tran.get
 map_omerc.get
 map_pconic.get
 map_peirce_q.get
+map_roteqc.get
+map_rotlatlon.get
 map_tcc.get
 map_tcea.get
+

@@ -8,6 +8,7 @@
 #include <boost/timer/timer.hpp>
 #include <ctpp2/CDT.hpp>
 #include <gis/CoordinateTransformation.h>
+#include <gis/GeometryProjector.h>
 #include <gis/OGR.h>
 #include <gis/Types.h>
 #include <macgyver/Exception.h>
@@ -102,9 +103,11 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
       ogeom->swapXY();
 
     OGRGeometryPtr geom(ogeom);
+    Fmi::OGR::normalizeWindingOrder(geom.get());  // to make sure clipping works
 
     // Resample to get more accuracy if so requested
 
+#if 0    
     if (resolution || relativeresolution)
     {
       if (!projection.resolution)
@@ -125,17 +128,23 @@ void WKTLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& t
 
       geom->segmentize(delta);
     }
+#endif
 
     // Establish coordinate transformation from WGS84 to image
 
     Fmi::CoordinateTransformation transformation(wgs84, *crs);
 
-    // Perhaps this should be customizable instead of being fixed to one degree?
-    const double maximum_segment_length = 1;
-    geom.reset(transformation.transformGeometry(*geom, maximum_segment_length));
+    Fmi::GeometryProjector projector(wgs84.get(), crs.get());
+    projector.setProjectedBounds(clipbox.xmin(), clipbox.ymin(), clipbox.xmax(), clipbox.ymax());
+
+    geom.reset(transformation.transformGeometry(*geom, projector));
+    // if (geom) std::cout << "WKT: " << Fmi::OGR::exportToWkt(*geom) << "\n";
 
     if (!geom || geom->IsEmpty())
+    {
+      std::cerr << "Empty WKT result!\n";
       return;
+    }
 
     // Clip the geometry to the bounding box
 

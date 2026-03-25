@@ -153,6 +153,7 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
 
     // Clip it
 
+#if 1
     {
       std::unique_ptr<boost::timer::auto_cpu_timer> mytimer;
       if (theState.useTimer())
@@ -160,11 +161,17 @@ void MapLayer::generate_full_map(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt,
         std::string report = "polyclip finished in %t sec CPU, %w sec real\n";
         mytimer = std::make_unique<boost::timer::auto_cpu_timer>(2, report);
       }
+      geom.reset(geom->clone());
+      Fmi::OGR::normalizeWindingOrder(geom.get());
+
       if (map.lines)
         geom.reset(Fmi::OGR::lineclip(*geom, clipbox));  // fast and hence not cached in gisengine
       else
         geom.reset(Fmi::OGR::polyclip(*geom, clipbox));  // fast and hence not cached in gisengine
     }
+#else
+    geom.reset(geom->clone());
+#endif
 
     // We might zoom in so close that some geometry becomes invisible - just don't generate anything
     if (!geom)
