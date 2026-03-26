@@ -5,6 +5,7 @@
 #include "Projection.h"
 #include "State.h"
 #include <ctpp2/CDT.hpp>
+#include <macgyver/CacheStats.h>
 
 namespace SmartMet
 {
