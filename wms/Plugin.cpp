@@ -262,12 +262,11 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 
     if (product_hash != Fmi::bad_hash)
     {
-      theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
-
       // If request was ETag request, respond accordingly
       if (theRequest.getHeader("X-Request-ETag"))
       {
         theResponse.setHeader("Content-Type", mimeType(product.type));
+        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
         theResponse.setStatus(Spine::HTTP::Status::no_content);
 
         // Add updated expiration time if available
@@ -399,6 +398,8 @@ void Plugin::formatResponse(const std::string &theSvg,
       else
       {
         theResponse.setContent(theSvg);
+        auto etag = (theHash != Fmi::bad_hash) ? theHash : Fmi::hash_value(theSvg);
+        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", etag));
       }
     }
     else
@@ -423,13 +424,11 @@ void Plugin::formatResponse(const std::string &theSvg,
       else
         throw Fmi::Exception(BCP, "Cannot convert SVG to unknown format '" + theType + "'");
 
-      if (theHash != Fmi::bad_hash)
-      {
-        itsImageCache->insert(theHash, buffer);
+      auto etag = (theHash != Fmi::bad_hash) ? theHash : Fmi::hash_value(*buffer);
+      itsImageCache->insert(etag, buffer);
 
-        // For frontend caching
-        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", theHash));
-      }
+      // For frontend caching
+      theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", etag));
 
       theResponse.setContent(buffer);
     }
