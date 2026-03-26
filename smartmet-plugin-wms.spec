@@ -5,7 +5,7 @@
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
 Version: 26.3.26
-Release: 2%{?dist}.fmi
+Release: 3%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -163,6 +163,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Mar 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.26-3.fmi
+- Added a cache for text extents, and a mutex for calculating them safely (BRAINSTORM-3388)
+
 * Thu Mar 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.26-2.fmi
 - Add ETag to all WMS responses
 
