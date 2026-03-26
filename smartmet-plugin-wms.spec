@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.3.18
-Release: 3%{?dist}.fmi
+Version: 26.3.26
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -37,14 +37,14 @@ BuildRequires: smartmet-library-timeseries-devel >= 26.2.4
 BuildRequires: smartmet-engine-authentication-devel >= 26.2.4
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 26.2.4
+BuildRequires: smartmet-engine-observation-devel >= 26.3.23
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 26.2.4
 BuildRequires: smartmet-engine-grid-devel >= 26.3.18
 BuildRequires: smartmet-engine-geonames-devel >= 26.3.10
 BuildRequires: smartmet-engine-querydata-devel >= 26.2.4
 BuildRequires: smartmet-engine-contour-devel >= 26.2.4
-BuildRequires: smartmet-library-gis-devel >= 26.2.5
+BuildRequires: smartmet-library-gis-devel >= 26.3.26
 BuildRequires: smartmet-library-trax-devel >= 26.2.4
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
@@ -74,7 +74,7 @@ Requires: libwebp13
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 26.3.18
 Requires: smartmet-library-grid-files >= 26.3.18
-Requires: smartmet-library-gis >= 26.2.5
+Requires: smartmet-library-gis >= 26.3.26
 Requires: smartmet-library-trax >= 26.2.4
 Requires: smartmet-library-macgyver >= 26.2.4
 Requires: smartmet-library-spine >= 26.3.13
@@ -134,7 +134,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 26.2.4
+#TestRequires: smartmet-engine-observation-devel >= 26.3.23
 %endif
 
 %description
@@ -163,6 +163,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Thu Mar 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.26-1.fmi
+- Use new GeometryProjector to handle difficult projections
+
 * Wed Mar 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.18-3.fmi
 - Added support for multiple content sources
 
