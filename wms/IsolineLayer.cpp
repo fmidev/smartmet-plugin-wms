@@ -299,7 +299,10 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolines(const std::vector<double>&
   {
     if (geom && geom->IsEmpty() == 0)
     {
-      OGRGeometryPtr geom2(Fmi::OGR::lineclip(*geom, clipbox));
+      OGRGeometryPtr geom1(geom->clone());
+      Fmi::OGR::normalizeWindingOrder(geom1.get());
+
+      OGRGeometryPtr geom2(Fmi::OGR::lineclip(*geom1, clipbox));
 
       // Do intersections if so requested
 

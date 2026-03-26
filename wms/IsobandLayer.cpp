@@ -841,7 +841,9 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
       const OGRGeometryPtr& geom = geoms[i];
       if (geom && geom->IsEmpty() == 0)
       {
-        OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, clipbox));
+        OGRGeometryPtr geom1(geom->clone());
+        Fmi::OGR::normalizeWindingOrder(geom1.get());
+        OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom1, clipbox));
         const Isoband& isoband = isobands[i];
 
         // Do intersections if so requested
@@ -1166,11 +1168,13 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     for (unsigned int i = 0; i < geoms.size(); i++)
     {
-      const OGRGeometryPtr& geom = geoms[i];
+      OGRGeometryPtr& geom = geoms[i];
 
       if (geom && geom->IsEmpty() == 0)
       {
-        OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom, clipbox));
+        OGRGeometryPtr geom1(geom->clone());
+        Fmi::OGR::normalizeWindingOrder(geom1.get());
+        OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom1, clipbox));
 
         const Isoband& isoband = isobands[i];
 

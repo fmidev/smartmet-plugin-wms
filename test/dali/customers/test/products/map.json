@@ -48,7 +48,21 @@
   			"stroke": "#222",
   			"stroke-width": "0.3px"
                     }
- 		}
+ 		},
+		{
+		    "qid": "graticule",
+		    "layer_type": "graticule",
+		    "graticules":
+		    {
+			"step": 10,
+			"attributes":
+			{
+			    "fill": "none",
+			    "stroke": "#ddd",
+			    "stroke-width": "0.2px"
+			}
+		    }
+		}
 	    ]
 	}
     ]

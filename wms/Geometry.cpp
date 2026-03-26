@@ -463,15 +463,12 @@ std::string toGeoJSON(const OGRGeometry& theGeom,
     if (err != OGRERR_NONE)
       throw Fmi::Exception(BCP, "Failed to project geometry to WGS84 GeoJSON");
 
-    // Fix winding rule to be CCW for shells
-    std::unique_ptr<OGRGeometry> geom2(Fmi::OGR::reverseWindingOrder(*geom));
-
     // No C++ API with precision yet, must use C API
 
     auto prec = fmt::format("COORDINATE_PRECISION={}", static_cast<int>(thePrecision));
     char* options[] = {const_cast<char*>(prec.c_str()), nullptr};  // NOLINT
-    auto* geom3 = const_cast<OGRGeometry*>(geom2.get());
-    char* tmp = OGR_G_ExportToJsonEx(OGRGeometry::ToHandle(geom3), options);
+    auto* geom2 = const_cast<OGRGeometry*>(geom.get());
+    char* tmp = OGR_G_ExportToJsonEx(OGRGeometry::ToHandle(geom2), options);
 
     // GDAL does not allow empty geometries even though it is valid according to GeoJSON RFC
     if (tmp == nullptr)
