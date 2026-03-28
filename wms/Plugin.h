@@ -9,9 +9,7 @@
 #include "Config.h"
 #include "Product.h"
 #include "StyleSheet.h"
-#include "WMSConfig.h"
-#include "WMSException.h"
-#include "WMSQueryStatus.h"
+#include "wms/Handler.h"
 #include <engines/authentication/Engine.h>
 #include <engines/contour/Engine.h>
 #include <engines/geonames/Engine.h>
@@ -29,6 +27,7 @@
 #include <spine/SmartMetCache.h>
 #include <spine/SmartMetPlugin.h>
 #include <memory>
+#include <set>
 
 namespace SmartMet
 {
@@ -123,11 +122,23 @@ class Plugin : public SmartMetPlugin
                               const std::string& theName,
                               bool theWmsFlag) const;
 
+  void formatResponse(const std::string& theSvg,
+                      const std::string& theType,
+                      const Spine::HTTP::Request& theRequest,
+                      Spine::HTTP::Response& theResponse,
+                      bool usetimer,
+                      const Product& theProduct = Product(),
+                      std::size_t theHash = 0);
+
+  std::shared_ptr<std::string> findInImageCache(std::size_t hash) const;
+
+  static Spine::HTTP::ParamMap extractValidParameters(const Spine::HTTP::ParamMap& theParams);
+
  private:
+  friend class WMS::Handler;
+
   void init() override;
   void shutdown() override;
-
-  bool authenticate(const Spine::HTTP::Request& theRequest) const;
 
   void requestHandler(Spine::Reactor& theReactor,
                       const Spine::HTTP::Request& theRequest,
@@ -137,70 +148,6 @@ class Plugin : public SmartMetPlugin
                  State& theState,
                  const Spine::HTTP::Request& theRequest,
                  Spine::HTTP::Response& theResponse);
-  WMSQueryStatus wmsQuery(Spine::Reactor& theReactor,
-                          State& theState,
-                          const Spine::HTTP::Request& theRequest,
-                          Spine::HTTP::Response& theResponse);
-  WMSQueryStatus wmsGetMapQuery(State& theState,
-                                const Spine::HTTP::Request& theRequest,
-                                Spine::HTTP::Response& theResponse);
-  WMSQueryStatus wmsGetLegendGraphicQuery(State& theState,
-                                          const Spine::HTTP::Request& theRequest,
-                                          Spine::HTTP::Response& theResponse);
-  WMSQueryStatus wmsGetFeatureInfoQuery(State& theState,
-                                        const Spine::HTTP::Request& theRequest,
-                                        Spine::HTTP::Response& theResponse);
-  WMSQueryStatus wmsGetCapabilitiesQuery(State& theState,
-                                         const Spine::HTTP::Request& theRequest,
-                                         Spine::HTTP::Response& theResponse);
-  void wmsPrepareGetLegendGraphicQuery(const State& theState,
-                                       Spine::HTTP::Request& theRequest,
-                                       Product& product) const;
-  WMSQueryStatus wmsGenerateProduct(State& theState,
-                                    const Spine::HTTP::Request& theRequest,
-                                    Spine::HTTP::Response& theResponse,
-                                    Product& theProduct);
-  WMSQueryStatus wmsGenerateFeatureInfo(State& theState,
-                                        const Spine::HTTP::Request& theRequest,
-                                        Spine::HTTP::Response& theResponse,
-                                        Product& theProduct);
-  void wmsPreprocessJSON(State& theState,
-                         const Spine::HTTP::Request& theRequest,
-                         const std::string& theName,
-                         Json::Value& theJson,
-                         bool isCnfRequest,
-                         int theStage);
-
-  void formatResponse(const std::string& theSvg,
-                      const std::string& theType,
-                      const Spine::HTTP::Request& theRequest,
-                      Spine::HTTP::Response& theResponse,
-                      bool usetimer,
-                      const Product& theProduct = Product(),
-                      std::size_t theHash = 0);
-
-  std::string getExceptionFormat(const std::string& theFormat) const;
-  std::string getCapabilityFormat(const std::string& theFormat) const;
-
-  std::string parseWMSException(Fmi::Exception& wmsException,
-                                const std::string& theFormat,
-                                bool isdebug) const;
-
-  void formatWmsExceptionResponse(Fmi::Exception& wmsException,
-                                  const std::string& theFormat,
-                                  bool isdebug,
-                                  const Spine::HTTP::Request& theRequest,
-                                  Spine::HTTP::Response& theResponse,
-                                  bool usetimer);
-  WMSQueryStatus handleWmsException(Fmi::Exception& exception,
-                                    State& theState,
-                                    const Spine::HTTP::Request& theRequest,
-                                    Spine::HTTP::Response& theResponse);
-  static Json::Value getExceptionJson(const std::string& description,
-                                      const std::string& mapFormat,
-                                      WmsExceptionFormat format,
-                                      unsigned int width,
-                                      unsigned int height);
 
   Fmi::Cache::CacheStatistics getCacheStats() const override;
   std::string resolveFilePath(const std::string& theCustomer,
@@ -213,7 +160,6 @@ class Plugin : public SmartMetPlugin
                              const std::string& theFileName,
                              bool theWmsFlag) const;
 
-  static Spine::HTTP::ParamMap extractValidParameters(const Spine::HTTP::ParamMap& theParams);
   static void print(const ParameterInfos& infos);
 
   // Plugin configuration
@@ -245,8 +191,8 @@ class Plugin : public SmartMetPlugin
   // Cache results
   mutable std::unique_ptr<ImageCache> itsImageCache;
 
-  // WMS configuration
-  std::unique_ptr<WMS::WMSConfig> itsWMSConfig;
+  // WMS handler (owns WMS configuration and state)
+  std::unique_ptr<WMS::Handler> itsWMSHandler;
 
   // URLs which have already generated a warning or qid duplicates or on some other problem. We do
   // not wish to fill the logs with the same warnings again and again.

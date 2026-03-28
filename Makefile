@@ -49,6 +49,11 @@ SRCS = $(wildcard $(SUBNAME)/*.cpp)
 HDRS = $(wildcard $(SUBNAME)/*.h)
 OBJS = $(patsubst %.cpp, obj/%.o, $(notdir $(SRCS)))
 
+WMS_SRCS = $(wildcard $(SUBNAME)/wms/*.cpp)
+WMS_OBJS = $(patsubst $(SUBNAME)/wms/%.cpp, obj/wms/%.o, $(WMS_SRCS))
+
+OBJS += $(WMS_OBJS)
+
 INCLUDES := -I$(SUBNAME) $(INCLUDES)
 
 .PHONY: test rpm
@@ -91,7 +96,7 @@ clean:
 
 
 format:
-	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp test/*.cpp
+	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp $(SUBNAME)/wms/*.h $(SUBNAME)/wms/*.cpp test/*.cpp
 
 install:
 	@mkdir -p $(plugindir)
@@ -105,7 +110,7 @@ test: configtest
 	cd test && make test
 
 objdir:
-	@mkdir -p $(objdir)
+	@mkdir -p $(objdir) $(objdir)/wms
 
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
@@ -118,9 +123,13 @@ rpm: clean $(SPEC).spec
 obj/%.o: %.cpp
 	$(CXX) $(CFLAGS) $(INCLUDES) -c -MD -MF $(patsubst obj/%.o, obj/%.d, $@) -MT $@ -o $@ $<
 
+obj/wms/%.o: $(SUBNAME)/wms/%.cpp
+	$(CXX) $(CFLAGS) $(INCLUDES) -c -MD -MF obj/wms/$*.d -MT $@ -o $@ $<
+
 templates: $(BYTECODES)
 
 %.c2t:	%.tmpl
 	ctpp2c $< $@
 
 -include $(wildcard obj/*.d)
+-include $(wildcard obj/wms/*.d)

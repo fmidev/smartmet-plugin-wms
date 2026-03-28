@@ -1,5 +1,5 @@
 #include "Colour.h"
-#include "WMSException.h"
+#include "wms/Exception.h"
 #include <macgyver/Exception.h>
 
 namespace SmartMet

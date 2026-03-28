@@ -12,13 +12,9 @@
 #include "ParameterInfo.h"
 #include "Product.h"
 #include "State.h"
-#include "StyleSelection.h"
 #include "TextUtility.h"
-#include "WMSConfig.h"
-#include "WMSGetCapabilities.h"
-#include "WMSGetLegendGraphic.h"
-#include "WMSGetMap.h"
-#include "WMSRequestType.h"
+#include "wms/Config.h"
+#include "wms/Exception.h"
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
@@ -473,16 +469,16 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
         // may modify HTTP status set above
         try
         {
-          WMSQueryStatus status = wmsQuery(theReactor, state, theRequest, theResponse);
+          WMS::QueryStatus status = itsWMSHandler->query(theReactor, state, theRequest, theResponse);
 
           switch (status)
           {
-            case WMSQueryStatus::FORBIDDEN:
+            case WMS::QueryStatus::FORBIDDEN:
             {
               theResponse.setStatus(Spine::HTTP::Status::forbidden, true);
               break;
             }
-            case WMSQueryStatus::OK:
+            case WMS::QueryStatus::OK:
             default:
               break;
           }
@@ -715,61 +711,65 @@ void Plugin::init()
 #ifndef WITHOUT_AUTHENTICATION
 
     // AUTHENTICATION
+    std::unique_ptr<WMS::Config> wmsConfig;
     if (itsConfig.authenticate())
     {
       authEngine = itsReactor->getEngine<Engine::Authentication::Engine>("Authentication", nullptr);
 
 // WMS configurations
 #ifndef WITHOUT_OBSERVATION
-      itsWMSConfig = std::make_unique<WMS::WMSConfig>(itsConfig,
-                                                      itsJsonCache,
-                                                      itsQEngine.get(),
-                                                      authEngine.get(),
-                                                      itsObsEngine.get(),
-                                                      itsGisEngine.get(),
-                                                      itsGridEngine.get());
+      wmsConfig = std::make_unique<WMS::Config>(itsConfig,
+                                                itsJsonCache,
+                                                itsQEngine.get(),
+                                                authEngine.get(),
+                                                itsObsEngine.get(),
+                                                itsGisEngine.get(),
+                                                itsGridEngine.get());
 #else
-      itsWMSConfig = std::make_unique<WMS::WMSConfig>(
+      wmsConfig = std::make_unique<WMS::Config>(
           itsConfig, itsJsonCache, itsQEngine.get(), authEngine.get(), itsGisEngine.get());
 #endif
     }
     else
     {
 #ifndef WITHOUT_OBSERVATION
-      itsWMSConfig = std::make_unique<WMS::WMSConfig>(itsConfig,
-                                                      itsJsonCache,
-                                                      itsQEngine.get(),
-                                                      nullptr,
-                                                      itsObsEngine.get(),
-                                                      itsGisEngine.get(),
-                                                      itsGridEngine.get());
+      wmsConfig = std::make_unique<WMS::Config>(itsConfig,
+                                                itsJsonCache,
+                                                itsQEngine.get(),
+                                                nullptr,
+                                                itsObsEngine.get(),
+                                                itsGisEngine.get(),
+                                                itsGridEngine.get());
 #else
-      itsWMSConfig = std::make_unique<WMS::WMSConfig>(
+      wmsConfig = std::make_unique<WMS::Config>(
           itsConfig, itsJsonCache, itsQEngine, nullptr, itsGisEngine);
 #endif
     }
 
 #else
 #ifndef WITHOUT_OBSERVATION
-    itsWMSConfig = std::make_unique<WMS::WMSConfig>(itsConfig,
-                                                    itsJsonCache,
-                                                    itsQEngine.get(),
-                                                    itsObsEngine.get(),
-                                                    itsGisEngine.get(),
-                                                    itsGridEngine.get());
+    std::unique_ptr<WMS::Config> wmsConfig = std::make_unique<WMS::Config>(itsConfig,
+                                                                            itsJsonCache,
+                                                                            itsQEngine.get(),
+                                                                            itsObsEngine.get(),
+                                                                            itsGisEngine.get(),
+                                                                            itsGridEngine.get());
 #else
-    itsWMSConfig = std::make_unique<WMS::WMSConfig>(
+    std::unique_ptr<WMS::Config> wmsConfig = std::make_unique<WMS::Config>(
         itsConfig, itsJsonCache, itsQEngine.get(), itsGisEngine.get(), itsGridEngine.get());
 #endif
 #endif
 
     if (Spine::Reactor::isShuttingDown())
-      itsWMSConfig->shutdown();
+      wmsConfig->shutdown();
 
-    itsWMSConfig->init();  // heavy initializations
+    wmsConfig->init();  // heavy initializations
 
     if (Spine::Reactor::isShuttingDown())
-      itsWMSConfig->shutdown();
+      wmsConfig->shutdown();
+
+    itsWMSHandler = std::make_unique<WMS::Handler>(itsConfig, itsJsonCache);
+    itsWMSHandler->init(std::move(wmsConfig));
 
     // Register dali content handler
 
@@ -815,8 +815,8 @@ void Plugin::shutdown()
     if (itsImageCache != nullptr)
       itsImageCache->shutdown();
 
-    if (itsWMSConfig != nullptr)
-      itsWMSConfig->shutdown();  // will wait for threads to finish
+    if (itsWMSHandler != nullptr)
+      itsWMSHandler->shutdown();  // will wait for threads to finish
   }
   catch (...)
   {
@@ -854,8 +854,21 @@ Plugin::~Plugin()
   if (itsImageCache != nullptr)
     itsImageCache->shutdown();
 
-  if (itsWMSConfig != nullptr)
-    itsWMSConfig->shutdown();
+  if (itsWMSHandler != nullptr)
+    itsWMSHandler->shutdown();
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Cache lookup for binary image formats
+ */
+// ----------------------------------------------------------------------
+
+std::shared_ptr<std::string> Plugin::findInImageCache(std::size_t hash) const
+{
+  if (!itsImageCache)
+    return {};
+  return itsImageCache->find(hash);
 }
 
 // ----------------------------------------------------------------------
