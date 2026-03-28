@@ -10,6 +10,7 @@
 #include "Product.h"
 #include "StyleSheet.h"
 #include "wms/Handler.h"
+#include "wmts/Handler.h"
 #include <engines/authentication/Engine.h>
 #include <engines/contour/Engine.h>
 #include <engines/geonames/Engine.h>
@@ -193,6 +194,10 @@ class Plugin : public SmartMetPlugin
 
   // WMS handler (owns WMS configuration and state)
   std::unique_ptr<WMS::Handler> itsWMSHandler;
+  WMS::Config* itsWMSConfig = nullptr;  // non-owning pointer into itsWMSHandler
+
+  // WMTS handler (shares WMS layer registry via itsWMSConfig)
+  std::unique_ptr<WMTS::Handler> itsWMTSHandler;
 
   // URLs which have already generated a warning or qid duplicates or on some other problem. We do
   // not wish to fill the logs with the same warnings again and again.

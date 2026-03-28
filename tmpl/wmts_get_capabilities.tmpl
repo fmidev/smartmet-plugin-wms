@@ -1,0 +1,120 @@
+<TMPL_comment>
+WMTS 1.0.0 GetCapabilities response template.
+OGC 07-057r7 Annex D (XML encoding, REST binding).
+
+CDT variables populated by WMTS::Handler::handleGetCapabilities():
+  version              - "1.0.0"
+  service.title        - service title
+  service.abstract     - service abstract (may be empty)
+  wmts_url             - base WMTS URL, e.g. https://host/wmts
+  formats[]            - array of supported MIME types
+  layers[]             - array of layer objects:
+    .identifier        - layer name
+    .title             - human-readable title
+    .abstract          - description (optional)
+    .bbox_min_x/y      - WGS84 bounding box
+    .bbox_max_x/y
+    .styles[]          - array of style objects:
+      .identifier      - style name (at least "default")
+      .title
+    .formats[]         - supported MIME types for this layer
+    .tile_matrix_set_links[] - TileMatrixSet identifiers
+  tile_matrix_sets[]   - array of TileMatrixSet objects:
+    .identifier        - e.g. "EPSG:3857"
+    .crs               - CRS identifier
+    .well_known_scale_set - optional OGC URI
+    .tile_matrices[]   - ordered from coarsest to finest:
+      .identifier      - zoom level (e.g. "0")
+      .scale_denominator
+      .top_left_corner - "x y" string
+      .tile_width      - usually 256
+      .tile_height     - usually 256
+      .matrix_width    - tiles horizontally
+      .matrix_height   - tiles vertically
+</TMPL_comment><?xml version="1.0" encoding="UTF-8"?>
+<Capabilities xmlns="http://www.opengis.net/wmts/1.0"
+              xmlns:ows="http://www.opengis.net/ows/1.1"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd"
+              version="<TMPL_var version>">
+  <ows:ServiceIdentification>
+    <ows:Title><TMPL_var XMLESCAPE(service.title)></ows:Title>
+    <-TMPL_if defined(service.abstract)>
+    <ows:Abstract><TMPL_var XMLESCAPE(service.abstract)></ows:Abstract>
+    <-/TMPL_if>
+    <ows:ServiceType>OGC WMTS</ows:ServiceType>
+    <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+  </ows:ServiceIdentification>
+
+  <Contents>
+    <-TMPL_foreach layers as layer>
+    <Layer>
+      <ows:Title><TMPL_if defined(layer.title)><TMPL_var XMLESCAPE(layer.title)></TMPL_if></ows:Title>
+      <-TMPL_if defined(layer.abstract)>
+      <ows:Abstract><TMPL_var XMLESCAPE(layer.abstract)></ows:Abstract>
+      <-/TMPL_if>
+      <ows:Identifier><TMPL_var XMLESCAPE(layer.identifier)></ows:Identifier>
+
+      <-TMPL_if defined(layer.bbox_min_x)>
+      <ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+        <ows:LowerCorner><TMPL_var layer.bbox_min_x> <TMPL_var layer.bbox_min_y></ows:LowerCorner>
+        <ows:UpperCorner><TMPL_var layer.bbox_max_x> <TMPL_var layer.bbox_max_y></ows:UpperCorner>
+      </ows:WGS84BoundingBox>
+      <-/TMPL_if>
+
+      <-TMPL_foreach layer.styles as style>
+      <Style>
+        <ows:Identifier><TMPL_var XMLESCAPE(style.identifier)></ows:Identifier>
+        <ows:Title><TMPL_if defined(style.title)><TMPL_var XMLESCAPE(style.title)><TMPL_else><TMPL_var XMLESCAPE(style.identifier)></TMPL_if></ows:Title>
+        <-TMPL_if defined(style.legend_url)>
+        <-TMPL_foreach style.legend_url as legend_url>
+        <LegendURL format="<TMPL_var legend_url.format>" xlink:href="<TMPL_var legend_url.online_resource>"/>
+        <-/TMPL_foreach>
+        <-/TMPL_if>
+      </Style>
+      <-/TMPL_foreach>
+
+      <-TMPL_foreach layer.formats as fmt>
+      <Format><TMPL_var fmt></Format>
+      <-/TMPL_foreach>
+
+      <-TMPL_foreach layer.tile_matrix_set_links as tms_id>
+      <TileMatrixSetLink>
+        <TileMatrixSet><TMPL_var tms_id></TileMatrixSet>
+      </TileMatrixSetLink>
+      <-/TMPL_foreach>
+
+      <ResourceURL format="image/png"
+                   resourceType="tile"
+                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+      <ResourceURL format="image/webp"
+                   resourceType="tile"
+                   template="<TMPL_var wmts_url>/1.0.0/<TMPL_var layer.identifier>/{Style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.webp"/>
+    </Layer>
+    <-/TMPL_foreach>
+
+    <-TMPL_foreach tile_matrix_sets as tms>
+    <TileMatrixSet>
+      <ows:Identifier><TMPL_var XMLESCAPE(tms.identifier)></ows:Identifier>
+      <ows:SupportedCRS><TMPL_var XMLESCAPE(tms.crs)></ows:SupportedCRS>
+      <-TMPL_if defined(tms.well_known_scale_set)>
+      <WellKnownScaleSet><TMPL_var tms.well_known_scale_set></WellKnownScaleSet>
+      <-/TMPL_if>
+      <-TMPL_foreach tms.tile_matrices as tm>
+      <TileMatrix>
+        <ows:Identifier><TMPL_var XMLESCAPE(tm.identifier)></ows:Identifier>
+        <ScaleDenominator><TMPL_var tm.scale_denominator></ScaleDenominator>
+        <TopLeftCorner><TMPL_var tm.top_left_corner></TopLeftCorner>
+        <TileWidth><TMPL_var tm.tile_width></TileWidth>
+        <TileHeight><TMPL_var tm.tile_height></TileHeight>
+        <MatrixWidth><TMPL_var tm.matrix_width></MatrixWidth>
+        <MatrixHeight><TMPL_var tm.matrix_height></MatrixHeight>
+      </TileMatrix>
+      <-/TMPL_foreach>
+    </TileMatrixSet>
+    <-/TMPL_foreach>
+  </Contents>
+
+  <ServiceMetadataURL xlink:href="<TMPL_var wmts_url>/1.0.0/WMTSCapabilities.xml"/>
+</Capabilities>

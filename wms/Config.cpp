@@ -102,6 +102,7 @@ Config::Config(const string& configfile)
     itsConfig.lookupValue("heatmap.max_points", itsMaxHeatmapPoints);
 
     itsConfig.lookupValue("wms.url", itsWmsUrl);
+    itsConfig.lookupValue("wmts.url", itsWmtsUrl);
     itsConfig.lookupValue("wms.quiet", itsQuiet);
 
 #ifndef WITHOUT_AUHTENTICATION
@@ -330,6 +331,10 @@ Config::UnitConversion Config::unitConversion(const std::string& theUnitConversi
 const std::string& Config::wmsUrl() const
 {
   return itsWmsUrl;
+}
+const std::string& Config::wmtsUrl() const
+{
+  return itsWmtsUrl;
 }
 unsigned long long Config::maxMemoryCacheSize() const
 {

@@ -15,6 +15,7 @@
 #include "TextUtility.h"
 #include "wms/Config.h"
 #include "wms/Exception.h"
+#include "wmts/Config.h"
 #include "ogc/QueryStatus.h"
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
@@ -461,7 +462,9 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
 
       using Fmi::DateTime;
 
-      if (theRequest.getResource() == "/wms")
+      const std::string& resource = theRequest.getResource();
+
+      if (resource == "/wms")
       {
         state.useWms(true);
 
@@ -522,6 +525,13 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
             }
           }
         }
+      }
+      else if (resource.size() >= 5 && resource.substr(0, 5) == "/wmts")
+      {
+        // WMTS REST interface — uses same product file tree as WMS
+        state.useWms(true);
+        theResponse.setStatus(Spine::HTTP::Status::ok);
+        itsWMTSHandler->query(theReactor, state, theRequest, theResponse);
       }
       else
       {
@@ -769,8 +779,16 @@ void Plugin::init()
     if (Spine::Reactor::isShuttingDown())
       wmsConfig->shutdown();
 
+    // Save raw pointer before transferring ownership to WMS::Handler
+    itsWMSConfig = wmsConfig.get();
+
     itsWMSHandler = std::make_unique<WMS::Handler>(itsConfig, itsJsonCache);
     itsWMSHandler->init(std::move(wmsConfig));
+
+    // Initialize WMTS handler — shares layer registry with WMS via itsWMSConfig
+    auto wmtsConfig = std::make_unique<WMTS::Config>(itsConfig, *itsWMSConfig);
+    itsWMTSHandler = std::make_unique<WMTS::Handler>(itsConfig);
+    itsWMTSHandler->init(std::move(wmtsConfig));
 
     // Register dali content handler
 
@@ -794,6 +812,19 @@ void Plugin::init()
                    Spine::HTTP::Response &theResponse)
             { callRequestHandler(theReactor, theRequest, theResponse); }))
       throw Fmi::Exception(BCP, "Failed to register WMS content handler");
+
+    // Register WMTS content handler (prefix match: /wmts/... matches all REST paths)
+
+    if (!itsReactor->addContentHandler(
+            this,
+            itsConfig.wmtsUrl(),
+            [this](Spine::Reactor &theReactor,
+                   const Spine::HTTP::Request &theRequest,
+                   Spine::HTTP::Response &theResponse)
+            { callRequestHandler(theReactor, theRequest, theResponse); },
+            {},    // supportedPostContentTypes
+            true /* handlesUriPrefix */))
+      throw Fmi::Exception(BCP, "Failed to register WMTS content handler");
   }
   catch (...)
   {
@@ -816,6 +847,10 @@ void Plugin::shutdown()
     if (itsImageCache != nullptr)
       itsImageCache->shutdown();
 
+    // Shut down WMTS before WMS since WMTS holds a raw pointer into WMS::Config
+    if (itsWMTSHandler != nullptr)
+      itsWMTSHandler->shutdown();
+
     if (itsWMSHandler != nullptr)
       itsWMSHandler->shutdown();  // will wait for threads to finish
   }
@@ -836,7 +871,8 @@ bool Plugin::queryIsFast(const Spine::HTTP::Request &theRequest) const
   try
   {
     // WMS requests should be handled ASAP, others, not so much
-    return (theRequest.getResource() == "/wms");
+    const std::string& res = theRequest.getResource();
+    return (res == "/wms" || (res.size() >= 5 && res.substr(0, 5) == "/wmts"));
   }
   catch (...)
   {

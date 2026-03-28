@@ -50,6 +50,7 @@ class Config
   bool isValidAttribute(const std::string& theName) const;
 
   const std::string& wmsUrl() const;
+  const std::string& wmtsUrl() const;
 
   const std::string& rootDirectory(bool theWmsFlag) const;
 
@@ -106,6 +107,7 @@ class Config
   unsigned itsMaxHeatmapPoints = 2000 * 2000;
 
   std::string itsWmsUrl = "/wms";
+  std::string itsWmtsUrl = "/wmts";
   std::string itsWmsRootDirectory;
 
   std::set<std::string> itsRegularAttributes;

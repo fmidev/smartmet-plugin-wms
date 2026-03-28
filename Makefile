@@ -55,7 +55,10 @@ WMS_OBJS = $(patsubst $(SUBNAME)/wms/%.cpp, obj/wms/%.o, $(WMS_SRCS))
 OGC_SRCS = $(wildcard $(SUBNAME)/ogc/*.cpp)
 OGC_OBJS = $(patsubst $(SUBNAME)/ogc/%.cpp, obj/ogc/%.o, $(OGC_SRCS))
 
-OBJS += $(WMS_OBJS) $(OGC_OBJS)
+WMTS_SRCS = $(wildcard $(SUBNAME)/wmts/*.cpp)
+WMTS_OBJS = $(patsubst $(SUBNAME)/wmts/%.cpp, obj/wmts/%.o, $(WMTS_SRCS))
+
+OBJS += $(WMS_OBJS) $(OGC_OBJS) $(WMTS_OBJS)
 
 INCLUDES := -I$(SUBNAME) $(INCLUDES)
 
@@ -99,7 +102,7 @@ clean:
 
 
 format:
-	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp $(SUBNAME)/wms/*.h $(SUBNAME)/wms/*.cpp $(SUBNAME)/wms/ogc/*.h $(SUBNAME)/wms/ogc/*.cpp test/*.cpp
+	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp $(SUBNAME)/wms/*.h $(SUBNAME)/wms/*.cpp $(SUBNAME)/ogc/*.h $(SUBNAME)/ogc/*.cpp $(SUBNAME)/wmts/*.h $(SUBNAME)/wmts/*.cpp test/*.cpp
 
 install:
 	@mkdir -p $(plugindir)
@@ -113,7 +116,7 @@ test: configtest
 	cd test && make test
 
 objdir:
-	@mkdir -p $(objdir) $(objdir)/wms $(objdir)/ogc
+	@mkdir -p $(objdir) $(objdir)/wms $(objdir)/ogc $(objdir)/wmts
 
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
@@ -132,6 +135,9 @@ obj/wms/%.o: $(SUBNAME)/wms/%.cpp
 obj/ogc/%.o: $(SUBNAME)/ogc/%.cpp
 	$(CXX) $(CFLAGS) $(INCLUDES) -c -MD -MF obj/ogc/$*.d -MT $@ -o $@ $<
 
+obj/wmts/%.o: $(SUBNAME)/wmts/%.cpp
+	$(CXX) $(CFLAGS) $(INCLUDES) -c -MD -MF obj/wmts/$*.d -MT $@ -o $@ $<
+
 templates: $(BYTECODES)
 
 %.c2t:	%.tmpl
@@ -140,3 +146,4 @@ templates: $(BYTECODES)
 -include $(wildcard obj/*.d)
 -include $(wildcard obj/wms/*.d)
 -include $(wildcard obj/ogc/*.d)
+-include $(wildcard obj/wmts/*.d)
