@@ -1,0 +1,30 @@
+#pragma once
+
+#include <gis/BBox.h>
+#include <string>
+
+namespace SmartMet
+{
+namespace Plugin
+{
+namespace OGC
+{
+// A WMS reference
+struct SupportedReference
+{
+  SupportedReference(std::string p, const Fmi::BBox& b, bool e, bool g)
+      : proj(std::move(p)), bbox(b), enabled(e), geographic(g)
+  {
+  }
+
+  std::string proj;
+  Fmi::BBox bbox{};
+  bool enabled = true;
+  bool geographic = false;
+};
+
+}  // namespace OGC
+}  // namespace Plugin
+}  // namespace SmartMet
+
+// ======================================================================

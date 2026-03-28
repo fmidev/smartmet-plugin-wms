@@ -14,7 +14,7 @@
 #include "../Product.h"
 #include "../State.h"
 #include "../TextUtility.h"
-#include "StyleSelection.h"
+#include "../ogc/StyleSelection.h"
 #include "GetCapabilities.h"
 #include "GetLegendGraphic.h"
 #include "GetMap.h"
@@ -53,6 +53,7 @@ namespace WMS
 {
 using Dali::demimetype;
 using Dali::mimeType;
+using OGC::useStyle;
 namespace
 {
 void check_remaining_wms_json(Json::Value &json, const std::string &name)
@@ -1513,7 +1514,7 @@ Json::Value Handler::getExceptionJson(const std::string &description,
   jsonStr += "       ]\n";
   jsonStr += "}\n";
 
-  return SmartMet::Plugin::WMS::Layer::parseJsonString(jsonStr);
+  return OGC::Layer::parseJsonString(jsonStr);
 }
 
 }  // namespace WMS

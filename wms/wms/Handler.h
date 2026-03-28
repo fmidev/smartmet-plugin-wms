@@ -8,7 +8,7 @@
 
 #include "Config.h"
 #include "Exception.h"
-#include "QueryStatus.h"
+#include "../ogc/QueryStatus.h"
 #include <json/value.h>
 #include <macgyver/Exception.h>
 #include <spine/HTTP.h>
@@ -33,6 +33,8 @@ class State;
 }
 namespace WMS
 {
+using OGC::QueryStatus;
+
 class Handler
 {
  public:

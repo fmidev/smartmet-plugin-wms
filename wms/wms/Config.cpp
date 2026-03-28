@@ -8,8 +8,8 @@
 #include "../State.h"
 #include "../View.h"
 #include "Exception.h"
-#include "LayerFactory.h"
-#include "LayerHierarchy.h"
+#include "../ogc/LayerFactory.h"
+#include "../ogc/LayerHierarchy.h"
 
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
@@ -50,6 +50,7 @@ namespace Plugin
 {
 namespace WMS
 {
+using namespace OGC;
 namespace
 {
 Json::CharReaderBuilder charreaderbuilder;
@@ -1011,8 +1012,8 @@ void Config::updateLayerMetaDataForCustomerLayer(
     }
     else
     {
-      auto newlayers = LayerFactory::createLayers(
-          pathname, fullLayername, layerNamespace, customer, *this);
+      auto newlayers = OGC::LayerFactory::createLayers(
+          pathname, fullLayername, layerNamespace, customer, layerConfig());
 
       if (newlayers.empty())
         warn_layer(pathname, itsWarnedFiles);
@@ -1766,6 +1767,24 @@ const LegendGraphicSettings& Config::getLegendGraphicSettings() const
 Fmi::DateTime Config::getCapabilitiesExpirationTime() const
 {
   return (Fmi::SecondClock::universal_time() + Fmi::Seconds(itsCapabilityExpirationTime));
+}
+
+OGC::LayerConfig Config::layerConfig() const
+{
+  OGC::LayerConfig lc;
+  lc.setDaliConfig(itsDaliConfig)
+    .setJsonCache(itsJsonCache)
+    .setLegendGraphicSettings(itsLegendGraphicSettings)
+    .setQEngine(itsQEngine)
+    .setGisEngine(itsGisEngine)
+    .setGridEngine(itsGridEngine)
+    .setSupportedReferences(itsSupportedReferences);
+#ifndef WITHOUT_OBSERVATION
+  lc.setObsEngine(itsObsEngine);
+  if (itsObsEngine != nullptr)
+    lc.setObservationProducers(itsObsEngine->getValidStationTypes());
+#endif
+  return lc;
 }
 
 }  // namespace WMS

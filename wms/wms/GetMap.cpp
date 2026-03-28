@@ -2,7 +2,7 @@
 #include "../CaseInsensitiveComparator.h"
 #include "../Colour.h"
 #include "../Mime.h"
-#include "TimeResolution.h"
+#include "../ogc/TimeResolution.h"
 #include "Exception.h"
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/property_tree/json_parser.hpp>
@@ -20,6 +20,8 @@ namespace Plugin
 {
 namespace WMS
 {
+using OGC::resolution_in_minutes;
+
 namespace
 {
 bool is_number(const std::string& str)

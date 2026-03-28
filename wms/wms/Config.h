@@ -7,11 +7,12 @@
 #pragma once
 
 #include "../Config.h"
-#include "Layer.h"
-#include "LayerHierarchy.h"
-#include "LayerProxy.h"
-#include "LegendGraphicSettings.h"
-#include "SupportedReference.h"
+#include "../ogc/Layer.h"
+#include "../ogc/LayerConfig.h"
+#include "../ogc/LayerHierarchy.h"
+#include "../ogc/LayerProxy.h"
+#include "../ogc/LegendGraphicSettings.h"
+#include "../ogc/SupportedReference.h"
 #include <boost/utility.hpp>
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
@@ -43,6 +44,10 @@ class Engine;
 
 namespace Plugin
 {
+namespace OGC
+{
+class LayerFactory;
+}  // namespace OGC
 namespace Dali
 {
 class Product;
@@ -50,6 +55,12 @@ class State;
 }  // namespace Dali
 namespace WMS
 {
+using OGC::SharedLayer;
+using OGC::LayerProxy;
+using OGC::LayerHierarchy;
+using OGC::LegendGraphicSettings;
+using OGC::SupportedReference;
+
 class Config
 {
  public:
@@ -159,6 +170,7 @@ class Config
 #endif
 
   const LegendGraphicSettings& getLegendGraphicSettings() const;
+  OGC::LayerConfig layerConfig() const;
 
   int getMargin() const { return itsMargin; }
   LayerHierarchy::HierarchyType getLayerHierarchyType() const { return itsLayerHierarchyType; }
@@ -247,7 +259,7 @@ class Config
   // For locking purposes
   bool isValidLayerImpl(const std::string& theLayer, bool theAcceptHiddenLayerFlag = true) const;
 
-  friend class LayerFactory;
+  friend class OGC::LayerFactory;
 
   std::map<std::string, Json::Value> itsLegendGraphicLayers;
 

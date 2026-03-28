@@ -15,6 +15,7 @@
 #include "TextUtility.h"
 #include "wms/Config.h"
 #include "wms/Exception.h"
+#include "ogc/QueryStatus.h"
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
 #endif
@@ -469,16 +470,16 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
         // may modify HTTP status set above
         try
         {
-          WMS::QueryStatus status = itsWMSHandler->query(theReactor, state, theRequest, theResponse);
+          OGC::QueryStatus status = itsWMSHandler->query(theReactor, state, theRequest, theResponse);
 
           switch (status)
           {
-            case WMS::QueryStatus::FORBIDDEN:
+            case OGC::QueryStatus::FORBIDDEN:
             {
               theResponse.setStatus(Spine::HTTP::Status::forbidden, true);
               break;
             }
-            case WMS::QueryStatus::OK:
+            case OGC::QueryStatus::OK:
             default:
               break;
           }

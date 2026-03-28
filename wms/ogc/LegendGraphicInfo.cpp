@@ -1,0 +1,74 @@
+#include "LegendGraphicInfo.h"
+
+namespace SmartMet
+{
+namespace Plugin
+{
+namespace OGC
+{
+std::ostream& operator<<(std::ostream& ost, const LegendGraphicInfoItem& lgi)
+{
+  ost << "LegendGraphicInfo:\n";
+  if (lgi.info.empty())
+    ost << " info: -";
+  else
+  {
+    ost << " info: \n";
+    for (const auto& item : lgi.info)
+      ost << " " << item.first << " ->\n" << item.second.toStyledString() << '\n';
+  }
+  if (lgi.text_lengths.empty())
+    ost << " text_lengths: -";
+  else
+  {
+    ost << " text_lengths: \n";
+    for (const auto& item : lgi.text_lengths)
+      ost << " " << item.first << ": " << item.second << '\n';
+  }
+
+  return ost;
+}
+
+std::ostream& operator<<(std::ostream& ost, const NamedLegendGraphicInfo& nlgi)
+{
+  if (nlgi.empty())
+    ost << "NamedLegendGraphicInfo: - \n";
+  else
+  {
+    ost << "NamedLegendGraphicInfo:\n";
+    for (const auto& item : nlgi)
+    {
+      ost << " " << item.first << ":\n";
+      for (const auto& item2 : item.second)
+        ost << item2 << '\n';
+    }
+  }
+
+  return ost;
+}
+
+std::ostream& operator<<(std::ostream& ost, const LegendGraphicResultPerLanguage& lgr)
+{
+  if (lgr.empty())
+    ost << "LegendGraphicResultPerLanguage: - \n";
+  else
+  {
+    ost << "LegendGraphicResultPerLanguage:\n";
+    for (const auto& item : lgr)
+    {
+      ost << " " << item.first << ":\n";
+      ost << " width: " << item.second.width << '\n';
+      ost << " height: " << item.second.height << '\n';
+      for (const auto& item2 : item.second.legendLayers)
+      {
+        ost << " legendLayer: " << item2 << '\n';
+      }
+    }
+  }
+
+  return ost;
+}
+
+}  // namespace OGC
+}  // namespace Plugin
+}  // namespace SmartMet
