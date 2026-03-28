@@ -51,6 +51,7 @@ class Config
 
   const std::string& wmsUrl() const;
   const std::string& wmtsUrl() const;
+  const std::string& tilesUrl() const;
 
   const std::string& rootDirectory(bool theWmsFlag) const;
 
@@ -108,6 +109,7 @@ class Config
 
   std::string itsWmsUrl = "/wms";
   std::string itsWmtsUrl = "/wmts";
+  std::string itsTilesUrl = "/tiles";
   std::string itsWmsRootDirectory;
 
   std::set<std::string> itsRegularAttributes;

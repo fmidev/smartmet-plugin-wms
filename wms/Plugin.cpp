@@ -16,6 +16,7 @@
 #include "wms/Config.h"
 #include "wms/Exception.h"
 #include "wmts/Config.h"
+#include "tiles/Config.h"
 #include "ogc/QueryStatus.h"
 #ifndef WITHOUT_AUTHENTICATION
 #include <engines/authentication/Engine.h>
@@ -533,6 +534,13 @@ void Plugin::requestHandler(Spine::Reactor &theReactor,
         theResponse.setStatus(Spine::HTTP::Status::ok);
         itsWMTSHandler->query(theReactor, state, theRequest, theResponse);
       }
+      else if (resource.size() >= 6 && resource.substr(0, 6) == "/tiles")
+      {
+        // OGC API - Tiles interface — uses same product file tree as WMS
+        state.useWms(true);
+        theResponse.setStatus(Spine::HTTP::Status::ok);
+        itsTilesHandler->query(theReactor, state, theRequest, theResponse);
+      }
       else
       {
         state.useWms(false);
@@ -790,6 +798,11 @@ void Plugin::init()
     itsWMTSHandler = std::make_unique<WMTS::Handler>(itsConfig);
     itsWMTSHandler->init(std::move(wmtsConfig));
 
+    // Initialize OGC API - Tiles handler — shares layer registry with WMS via itsWMSConfig
+    auto tilesConfig = std::make_unique<Tiles::Config>(itsConfig, *itsWMSConfig);
+    itsTilesHandler = std::make_unique<Tiles::Handler>(itsConfig);
+    itsTilesHandler->init(std::move(tilesConfig));
+
     // Register dali content handler
 
     if (!itsReactor->addContentHandler(
@@ -825,6 +838,19 @@ void Plugin::init()
             {},    // supportedPostContentTypes
             true /* handlesUriPrefix */))
       throw Fmi::Exception(BCP, "Failed to register WMTS content handler");
+
+    // Register OGC API - Tiles content handler (prefix match: /tiles/... matches all REST paths)
+
+    if (!itsReactor->addContentHandler(
+            this,
+            itsConfig.tilesUrl(),
+            [this](Spine::Reactor &theReactor,
+                   const Spine::HTTP::Request &theRequest,
+                   Spine::HTTP::Response &theResponse)
+            { callRequestHandler(theReactor, theRequest, theResponse); },
+            {},    // supportedPostContentTypes
+            true /* handlesUriPrefix */))
+      throw Fmi::Exception(BCP, "Failed to register OGC API - Tiles content handler");
   }
   catch (...)
   {
@@ -847,7 +873,10 @@ void Plugin::shutdown()
     if (itsImageCache != nullptr)
       itsImageCache->shutdown();
 
-    // Shut down WMTS before WMS since WMTS holds a raw pointer into WMS::Config
+    // Shut down WMTS and Tiles before WMS since they hold raw pointers into WMS::Config
+    if (itsTilesHandler != nullptr)
+      itsTilesHandler->shutdown();
+
     if (itsWMTSHandler != nullptr)
       itsWMTSHandler->shutdown();
 
@@ -870,9 +899,10 @@ bool Plugin::queryIsFast(const Spine::HTTP::Request &theRequest) const
 {
   try
   {
-    // WMS requests should be handled ASAP, others, not so much
+    // WMS/WMTS/Tiles requests should be handled ASAP, others, not so much
     const std::string& res = theRequest.getResource();
-    return (res == "/wms" || (res.size() >= 5 && res.substr(0, 5) == "/wmts"));
+    return (res == "/wms" || (res.size() >= 5 && res.substr(0, 5) == "/wmts") ||
+            (res.size() >= 6 && res.substr(0, 6) == "/tiles"));
   }
   catch (...)
   {

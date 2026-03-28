@@ -58,7 +58,10 @@ OGC_OBJS = $(patsubst $(SUBNAME)/ogc/%.cpp, obj/ogc/%.o, $(OGC_SRCS))
 WMTS_SRCS = $(wildcard $(SUBNAME)/wmts/*.cpp)
 WMTS_OBJS = $(patsubst $(SUBNAME)/wmts/%.cpp, obj/wmts/%.o, $(WMTS_SRCS))
 
-OBJS += $(WMS_OBJS) $(OGC_OBJS) $(WMTS_OBJS)
+TILES_SRCS = $(wildcard $(SUBNAME)/tiles/*.cpp)
+TILES_OBJS = $(patsubst $(SUBNAME)/tiles/%.cpp, obj/tiles/%.o, $(TILES_SRCS))
+
+OBJS += $(WMS_OBJS) $(OGC_OBJS) $(WMTS_OBJS) $(TILES_OBJS)
 
 INCLUDES := -I$(SUBNAME) $(INCLUDES)
 
@@ -102,7 +105,7 @@ clean:
 
 
 format:
-	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp $(SUBNAME)/wms/*.h $(SUBNAME)/wms/*.cpp $(SUBNAME)/ogc/*.h $(SUBNAME)/ogc/*.cpp $(SUBNAME)/wmts/*.h $(SUBNAME)/wmts/*.cpp test/*.cpp
+	clang-format -i -style=file $(SUBNAME)/*.h $(SUBNAME)/*.cpp $(SUBNAME)/wms/*.h $(SUBNAME)/wms/*.cpp $(SUBNAME)/ogc/*.h $(SUBNAME)/ogc/*.cpp $(SUBNAME)/wmts/*.h $(SUBNAME)/wmts/*.cpp $(SUBNAME)/tiles/*.h $(SUBNAME)/tiles/*.cpp test/*.cpp
 
 install:
 	@mkdir -p $(plugindir)
@@ -116,7 +119,7 @@ test: configtest
 	cd test && make test
 
 objdir:
-	@mkdir -p $(objdir) $(objdir)/wms $(objdir)/ogc $(objdir)/wmts
+	@mkdir -p $(objdir) $(objdir)/wms $(objdir)/ogc $(objdir)/wmts $(objdir)/tiles
 
 rpm: clean $(SPEC).spec
 	rm -f $(SPEC).tar.gz # Clean a possible leftover from previous attempt
@@ -138,6 +141,9 @@ obj/ogc/%.o: $(SUBNAME)/ogc/%.cpp
 obj/wmts/%.o: $(SUBNAME)/wmts/%.cpp
 	$(CXX) $(CFLAGS) $(INCLUDES) -c -MD -MF obj/wmts/$*.d -MT $@ -o $@ $<
 
+obj/tiles/%.o: $(SUBNAME)/tiles/%.cpp
+	$(CXX) $(CFLAGS) $(INCLUDES) -c -MD -MF obj/tiles/$*.d -MT $@ -o $@ $<
+
 templates: $(BYTECODES)
 
 %.c2t:	%.tmpl
@@ -147,3 +153,4 @@ templates: $(BYTECODES)
 -include $(wildcard obj/wms/*.d)
 -include $(wildcard obj/ogc/*.d)
 -include $(wildcard obj/wmts/*.d)
+-include $(wildcard obj/tiles/*.d)

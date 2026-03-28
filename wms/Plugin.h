@@ -11,6 +11,7 @@
 #include "StyleSheet.h"
 #include "wms/Handler.h"
 #include "wmts/Handler.h"
+#include "tiles/Handler.h"
 #include <engines/authentication/Engine.h>
 #include <engines/contour/Engine.h>
 #include <engines/geonames/Engine.h>
@@ -198,6 +199,9 @@ class Plugin : public SmartMetPlugin
 
   // WMTS handler (shares WMS layer registry via itsWMSConfig)
   std::unique_ptr<WMTS::Handler> itsWMTSHandler;
+
+  // OGC API - Tiles handler (shares WMS layer registry via itsWMSConfig)
+  std::unique_ptr<Tiles::Handler> itsTilesHandler;
 
   // URLs which have already generated a warning or qid duplicates or on some other problem. We do
   // not wish to fill the logs with the same warnings again and again.

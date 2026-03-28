@@ -103,6 +103,7 @@ Config::Config(const string& configfile)
 
     itsConfig.lookupValue("wms.url", itsWmsUrl);
     itsConfig.lookupValue("wmts.url", itsWmtsUrl);
+    itsConfig.lookupValue("tiles.url", itsTilesUrl);
     itsConfig.lookupValue("wms.quiet", itsQuiet);
 
 #ifndef WITHOUT_AUHTENTICATION
@@ -335,6 +336,10 @@ const std::string& Config::wmsUrl() const
 const std::string& Config::wmtsUrl() const
 {
   return itsWmtsUrl;
+}
+const std::string& Config::tilesUrl() const
+{
+  return itsTilesUrl;
 }
 unsigned long long Config::maxMemoryCacheSize() const
 {
