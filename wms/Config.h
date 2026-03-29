@@ -62,6 +62,10 @@ class Config
   unsigned int maxImageSize() const;
   unsigned int maxWMSLayers() const;
 
+  // Tile dimensions for WMTS and OGC API - Tiles responses (default 1024×1024).
+  unsigned int wmtsTileWidth() const;
+  unsigned int wmtsTileHeight() const;
+
   const std::string& filesystemCacheDirectory() const;
 
   unsigned maxHeatmapPoints() const;
@@ -106,6 +110,8 @@ class Config
   unsigned int itsMaxImageSize = 20 * 1024 * 1024;  // 20M pixels
   unsigned int itsMaxWMSLayers = 10;                // no more than 10 layers, ddos protection
   unsigned itsMaxHeatmapPoints = 2000 * 2000;
+  unsigned int itsWmtsTileWidth = 1024;
+  unsigned int itsWmtsTileHeight = 1024;
 
   std::string itsWmsUrl = "/wms";
   std::string itsWmtsUrl = "/wmts";

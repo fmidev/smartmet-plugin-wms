@@ -98,6 +98,8 @@ Config::Config(const string& configfile)
 
     itsConfig.lookupValue("max_image_size", itsMaxImageSize);
     itsConfig.lookupValue("wms.max_layers", itsMaxWMSLayers);
+    itsConfig.lookupValue("wmts.tile_width", itsWmtsTileWidth);
+    itsConfig.lookupValue("wmts.tile_height", itsWmtsTileHeight);
 
     itsConfig.lookupValue("heatmap.max_points", itsMaxHeatmapPoints);
 
@@ -368,6 +370,16 @@ unsigned int Config::maxImageSize() const
 unsigned int Config::maxWMSLayers() const
 {
   return itsMaxWMSLayers;
+}
+
+unsigned int Config::wmtsTileWidth() const
+{
+  return itsWmtsTileWidth;
+}
+
+unsigned int Config::wmtsTileHeight() const
+{
+  return itsWmtsTileHeight;
 }
 
 unsigned Config::maxHeatmapPoints() const

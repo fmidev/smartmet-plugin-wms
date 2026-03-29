@@ -3,6 +3,10 @@
  * \brief WMTS TileMatrix and TileMatrixSet data structures
  *
  * Implements OGC WMTS 1.0.0 (OGC 07-057r7) tile coordinate geometry.
+ *
+ * Also provides buildTileMatrixSets() for constructing TileMatrixSets
+ * from a list of configured EPSG identifiers, shared by both the WMTS
+ * and OGC API - Tiles handlers.
  */
 // ======================================================================
 
@@ -66,6 +70,18 @@ TileBBox computeTileBBox(const TileMatrixSet& tms,
                          const TileMatrix& tm,
                          unsigned tile_row,
                          unsigned tile_col);
+
+// Build TileMatrixSets for the given EPSG codes at the specified tile dimensions.
+// EPSGs in the built-in registry (3857, 4326, 3035, 3067) use OGC-standard parameters.
+// Other EPSGs enabled in the WMS configuration have their parameters derived from the
+// PROJ database (Fmi::EPSGInfo), producing best-effort tile matrix sets.
+// EPSGs unknown to PROJ are skipped with a warning.
+// Scale denominators are adjusted proportionally when tile_width differs from 256:
+//   scale0_actual = scale0_256 * (256.0 / tile_width)
+// Shared by both the WMTS and OGC API - Tiles handlers.
+std::vector<TileMatrixSet> buildTileMatrixSets(const std::vector<int>& epsg_ids,
+                                               unsigned tile_width = 256,
+                                               unsigned tile_height = 256);
 
 }  // namespace WMTS
 }  // namespace Plugin
