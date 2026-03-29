@@ -89,10 +89,19 @@ done
 
 dots='......................................................................'
 
+# If arguments are given, test only those files; otherwise test all.
+if [ $# -gt 0 ]; then
+    declare -a TEST_FILES=("$@")
+else
+    declare -a TEST_FILES=(input/*.get)
+fi
+
 ntests=0
 nfailures=0
 failed_tests=()
-for f in input/*.get; do
+for f in "${TEST_FILES[@]}"; do
+    # Skip if the file does not exist (e.g. empty wildcard expansion passed as literal)
+    [ -f "$f" ] || continue
     request_name=$(basename $f)
     name=$(basename $(basename $request_name .get) .post)
 

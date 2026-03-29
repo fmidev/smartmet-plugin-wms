@@ -29,6 +29,13 @@ LIBS += $(PREFIX_LDFLAGS) \
 	-lboost_serialization \
 	-lbz2 -lz -lpthread -ldl
 
+# Test input groups (resolved at parse time so filter-out works correctly)
+ALL_TESTS   := $(wildcard input/*.get)
+WMS_TESTS   := $(wildcard input/wms_*.get)
+WMTS_TESTS  := $(wildcard input/wmts_*.get)
+TILES_TESTS := $(wildcard input/tiles_*.get)
+DALI_TESTS  := $(filter-out $(WMS_TESTS) $(WMTS_TESTS) $(TILES_TESTS), $(ALL_TESTS))
+
 TEST_PREPARE_TARGETS := \
 	templates \
 	cnf/authentication.conf \
@@ -79,6 +86,56 @@ test: $(PROG) $(TEST_PREPARE_TARGETS)
 	   cat failures/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
 	fi; \
 	$$ok
+
+test-dali: $(PROG) $(TEST_PREPARE_TARGETS)
+	@rm -f failures/*
+	@if [ -z "$(DALI_TESTS)" ]; then \
+		echo "No Dali tests found."; $(MAKE) $(TEST_FINISH_TARGETS); \
+	elif ./TestRunner.sh $(DALI_TESTS); then \
+		$(MAKE) $(TEST_FINISH_TARGETS); \
+	else \
+		$(MAKE) $(TEST_FINISH_TARGETS); false; \
+	fi
+
+test-wms: $(PROG) $(TEST_PREPARE_TARGETS)
+	@rm -f failures/*
+	@if [ -z "$(WMS_TESTS)" ]; then \
+		echo "No WMS tests found."; $(MAKE) $(TEST_FINISH_TARGETS); \
+	elif ./TestRunner.sh $(WMS_TESTS); then \
+		ok=true; $(MAKE) $(TEST_FINISH_TARGETS); \
+	else \
+		ok=false; $(MAKE) $(TEST_FINISH_TARGETS); \
+	fi; \
+	if [ -e output/wms_getcapabilities.get ]; then \
+	   echo Validating output/wms_getcapabilities.get; \
+	   cat output/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
+	fi; \
+	rm -f wms-access-log; \
+	if [ -e failures/wms_getcapabilities.get ]; then \
+	   echo Validating failures/wms_getcapabilities.get; \
+	   cat failures/wms_getcapabilities.get | sed '/<inspire_vs:ExtendedCapabilities>/,/<\/inspire_vs:ExtendedCapabilities>/d' | xmllint -o /dev/null --schema http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd -; \
+	fi; \
+	$${ok:-true}
+
+test-wmts: $(PROG) $(TEST_PREPARE_TARGETS)
+	@rm -f failures/*
+	@if [ -z "$(WMTS_TESTS)" ]; then \
+		echo "No WMTS tests found."; $(MAKE) $(TEST_FINISH_TARGETS); \
+	elif ./TestRunner.sh $(WMTS_TESTS); then \
+		$(MAKE) $(TEST_FINISH_TARGETS); \
+	else \
+		$(MAKE) $(TEST_FINISH_TARGETS); false; \
+	fi
+
+test-tiles: $(PROG) $(TEST_PREPARE_TARGETS)
+	@rm -f failures/*
+	@if [ -z "$(TILES_TESTS)" ]; then \
+		echo "No OGC Tiles tests found."; $(MAKE) $(TEST_FINISH_TARGETS); \
+	elif ./TestRunner.sh $(TILES_TESTS); then \
+		$(MAKE) $(TEST_FINISH_TARGETS); \
+	else \
+		$(MAKE) $(TEST_FINISH_TARGETS); false; \
+	fi
 
 geonames-database:
 	@-$(MAKE) stop-geonames-db
@@ -131,6 +188,7 @@ obj/%.o: %.cpp objdir
 objdir:
 	mkdir -p $(objdir)
 
-.PHONY: cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf dummy
+.PHONY: cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf dummy \
+        test test-dali test-wms test-wmts test-tiles
 
 -include $(wildcard obj/*.d)
