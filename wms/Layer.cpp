@@ -1,6 +1,7 @@
 // ======================================================================
 
 #include "Layer.h"
+#include "MapboxVectorTile.h"
 #include "AggregationUtility.h"
 #include "Config.h"
 #include "Defs.h"
@@ -579,6 +580,13 @@ void Layer::check_warnings(Warnings& warnings) const
 std::string Layer::generateGeoTiff(State& /*theState*/)
 {
   return {};
+}
+
+void Layer::addMVTLayer(MVTTileBuilder& builder, State& theState)
+{
+  // Default: recurse into child layers (handles group/tag wrapper layers).
+  for (const auto& child : layers.layers)
+    child->addMVTLayer(builder, theState);
 }
 
 // ----------------------------------------------------------------------

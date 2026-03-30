@@ -89,6 +89,44 @@ sub Cleanup {
     unlink $DIFFERENCE_PNG if -e $DIFFERENCE_PNG;
 }
 
+# Mapbox Vector Tile: decode with protoc and compare as text proto.
+# The raw binary differs between runs due to map ordering, but the decoded
+# text form is stable for identical input data.
+if ($MIME eq 'application/vnd.mapbox-vector-tile' || $MIME eq 'application/octet-stream')
+{
+    # Try to detect MVT by file extension or by checking if the expected output
+    # is a text file (protoc-decoded form) while the result is binary.
+    my $is_mvt = ($MIME eq 'application/vnd.mapbox-vector-tile')
+              || ($RESULT =~ /\.(mvt|pbf)$/)
+              || ($MIME eq 'application/octet-stream' && -e $EXPECTED && -T $EXPECTED);
+    if ($is_mvt)
+    {
+        my $PROTO_DIR  = '../wms';
+        my $PROTO_FILE = "$PROTO_DIR/vector_tile.proto";
+        my $decoded_result = `protoc --decode=vector_tile.Tile --proto_path=$PROTO_DIR $PROTO_FILE < $RESULT 2>/dev/null`;
+        open my $efh, '<', $EXPECTED or die "Cannot open '$EXPECTED': $!";
+        my $decoded_expected = do { local $/; <$efh> };
+        close $efh;
+
+        if ($decoded_result eq $decoded_expected) {
+            print "OK     ";
+            Cleanup();
+            exit(0);
+        }
+
+        # Show diff on failure
+        my $tmpfile = "/tmp/mvt_result_$$.txt";
+        open my $tmpfh, '>', $tmpfile or die "Cannot write '$tmpfile': $!";
+        print $tmpfh $decoded_result;
+        close $tmpfh;
+
+        print "FAIL: MVT output differs: $RESULT <> $EXPECTED\n";
+        system("diff -U4 $EXPECTED $tmpfile | head -n 100 | cut -c 1-128");
+        unlink $tmpfile;
+        exit(1);
+    }
+}
+
 # GeoTiff: compare metadata via gdalinfo (binary TIFF bodies differ due to timestamps,
 # so we extract human-readable metadata and compare that as text instead).
 if ($MIME eq 'image/tiff')

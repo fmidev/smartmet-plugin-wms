@@ -5,6 +5,7 @@
 #include "Config.h"
 #include "Geometry.h"
 #include "GridDataGeoTiff.h"
+#include "MapboxVectorTile.h"
 #include "Hash.h"
 #include "Isoband.h"
 #include "JsonTools.h"
@@ -1385,6 +1386,197 @@ std::string IsobandLayer::generateGeoTiff(State& theState)
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "IsobandLayer::generateGeoTiff failed!");
+  }
+}
+
+void IsobandLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
+{
+  try
+  {
+    if (!validLayer(theState))
+      return;
+    if (paraminfo.parameter.empty())
+      return;
+    if (isobands.empty())
+      return;
+
+    // Grid engine source is not yet supported for MVT output
+    if (paraminfo.source == std::string("grid"))
+      return;
+
+    // Establish the data
+    auto q = getModel(theState);
+
+    if (q && !(q->isGrid()))
+      throw Fmi::Exception(BCP, "IsobandLayer::addMVTLayer: can't use point data!");
+
+    bool allowUnknownParam = (theState.isObservation(paraminfo.producer) &&
+                              isFlashOrMobileProducer(*paraminfo.producer) && heatmap.resolution);
+
+    auto param = TS::ParameterFactory::instance().parse(paraminfo.parameter, allowUnknownParam);
+    auto valid_time = getValidTime();
+
+    if (q && !q->firstLevel())
+      throw Fmi::Exception(BCP, "Unable to set first level in querydata.");
+
+    if (paraminfo.level)
+    {
+      if (!q)
+        throw Fmi::Exception(BCP, "Cannot generate isobands without gridded level data");
+      if (!q->selectLevel(*paraminfo.level))
+        throw Fmi::Exception(
+            BCP, "Level value " + Fmi::to_string(*paraminfo.level) + " is not available!");
+    }
+
+    projection.update(q);
+    const auto& crs = projection.getCRS();
+    const auto& box = projection.getBox();
+    const auto clipbox = getClipBox(box);
+
+    // Sampling support
+    auto sampleresolution = sampling.getResolution(projection);
+    if (sampleresolution)
+    {
+      if (!q)
+        throw Fmi::Exception(BCP, "Cannot resample without gridded data");
+      q = q->sample(param,
+                    valid_time,
+                    crs,
+                    box.xmin(),
+                    box.ymin(),
+                    box.xmax(),
+                    box.ymax(),
+                    *sampleresolution);
+    }
+    else if (heatmap.resolution)
+    {
+      q = buildHeatmap(param, valid_time, theState);
+    }
+    else if (theState.isObservation(paraminfo.producer))
+      throw Fmi::Exception(
+          BCP, "Can't produce isobandlayer from observation data without heatmap configuration!");
+
+    if (!q)
+      throw Fmi::Exception(BCP, "Cannot generate isobands without gridded data");
+
+    // Logical operations with maps require shapes
+    const auto& gis = theState.getGisEngine();
+
+    OGRGeometryPtr inshape;
+    OGRGeometryPtr outshape;
+    if (inside)
+    {
+      inshape = gis.getShape(&crs, inside->options);
+      if (!inshape)
+        throw Fmi::Exception(BCP, "Received empty inside-shape from database!");
+      inshape.reset(Fmi::OGR::polyclip(*inshape, clipbox));
+    }
+    if (outside)
+    {
+      outshape = gis.getShape(&crs, outside->options);
+      if (outshape)
+        outshape.reset(Fmi::OGR::polyclip(*outshape, clipbox));
+    }
+
+    intersections.init(paraminfo.producer, projection, valid_time, theState);
+
+    // Build contour options
+    const auto& contourer = theState.getContourEngine();
+    std::vector<Engine::Contour::Range> limits;
+    limits.reserve(isobands.size());
+    for (const Isoband& isoband : isobands)
+      limits.emplace_back(isoband.lolimit, isoband.hilimit);
+
+    Engine::Contour::Options options(param, valid_time, limits);
+    options.level = paraminfo.level;
+    options.bbox = Fmi::BBox(box);
+
+    if (multiplier || offset)
+      options.transformation(multiplier ? *multiplier : 1.0, offset ? *offset : 0.0);
+
+    options.minarea = minarea;
+    if (minarea && areaunit == "px^2")
+      options.minarea = box.areaFactor() * *minarea;
+
+    options.filter_size = smoother.size;
+    options.filter_degree = smoother.degree;
+    options.extrapolation = extrapolation;
+
+    if (interpolation == "linear")
+      options.interpolation = Trax::InterpolationType::Linear;
+    else if (interpolation == "nearest" || interpolation == "discrete" ||
+             interpolation == "midpoint")
+      options.interpolation = Trax::InterpolationType::Midpoint;
+    else if (interpolation == "logarithmic")
+      options.interpolation = Trax::InterpolationType::Logarithmic;
+    else
+      throw Fmi::Exception(BCP, "Unknown isoband interpolation method '" + interpolation + "'!");
+
+    options.closed_range = closed_range;
+    options.strict = strict;
+    options.validate = validate;
+    options.desliver = desliver;
+
+    std::size_t qhash = Engine::Querydata::hash_value(q);
+    auto valueshash = qhash;
+    Fmi::hash_combine(valueshash, options.data_hash_value());
+
+    const auto& qEngine = theState.getQEngine();
+    auto matrix = qEngine.getValues(q, options.parameter, valueshash, options.time);
+
+    CoordinatesPtr coords;
+    if (sampleresolution)
+      coords = qEngine.getWorldCoordinates(q);
+    else
+      coords = qEngine.getWorldCoordinates(q, crs);
+
+    std::vector<OGRGeometryPtr> geoms =
+        contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
+
+    filter.bbox(box);
+    filter.apply(geoms, true);
+
+    const std::string layerName = qid.empty() ? paraminfo.parameter : qid;
+    auto& mvtLayer = theBuilder.layer(layerName);
+
+    for (size_t i = 0; i < geoms.size() && i < isobands.size(); i++)
+    {
+      OGRGeometryPtr& geom = geoms[i];
+      if (!geom || geom->IsEmpty())
+        continue;
+
+      OGRGeometryPtr geom1(geom->clone());
+      Fmi::OGR::normalizeWindingOrder(geom1.get());
+      OGRGeometryPtr geom2(Fmi::OGR::polyclip(*geom1, clipbox));
+
+      const Isoband& isoband = isobands[i];
+
+      if (geom2 && geom2->IsEmpty() == 0 && inshape)
+        geom2.reset(geom2->Intersection(inshape.get()));
+      if (geom2 && geom2->IsEmpty() == 0 && outshape)
+        geom2.reset(geom2->Difference(outshape.get()));
+
+      geom2 = intersections.intersect(geom2);
+
+      if (!geom2 || geom2->IsEmpty())
+        continue;
+
+      std::vector<std::pair<std::string, MVTValue>> attrs;
+      attrs.emplace_back("parameter", paraminfo.parameter);
+      if (isoband.lolimit)
+        attrs.emplace_back("lolimit", *isoband.lolimit);
+      if (isoband.hilimit)
+        attrs.emplace_back("hilimit", *isoband.hilimit);
+      const auto cls = isoband.attributes.value("class");
+      if (!cls.empty())
+        attrs.emplace_back("class", cls);
+
+      mvtLayer.addFeature(*geom2, attrs);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "IsobandLayer::addMVTLayer failed!");
   }
 }
 

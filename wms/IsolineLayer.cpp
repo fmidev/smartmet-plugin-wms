@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "Geometry.h"
 #include "GridDataGeoTiff.h"
+#include "MapboxVectorTile.h"
 #include "Hash.h"
 #include "Isoline.h"
 #include "JsonTools.h"
@@ -1041,6 +1042,54 @@ std::string IsolineLayer::generateGeoTiff(State& theState)
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "IsolineLayer::generateGeoTiff failed!");
+  }
+}
+
+void IsolineLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
+{
+  try
+  {
+    if (!validLayer(theState))
+      return;
+    if (paraminfo.parameter.empty())
+      return;
+    if (isolines.empty())
+      return;
+
+    std::vector<double> isovalues;
+    isovalues.reserve(isolines.size());
+    for (const Isoline& isoline : isolines)
+      isovalues.push_back(isoline.value);
+
+    auto geoms = getIsolines(isovalues, theState);
+
+    const auto& box = projection.getBox();
+    filter.bbox(box);
+    filter.apply(geoms, false);
+
+    const std::string layerName = qid.empty() ? paraminfo.parameter : qid;
+    auto& mvtLayer = theBuilder.layer(layerName);
+
+    for (size_t i = 0; i < geoms.size() && i < isolines.size(); i++)
+    {
+      const OGRGeometryPtr& geom = geoms[i];
+      if (!geom || geom->IsEmpty())
+        continue;
+
+      const Isoline& isoline = isolines[i];
+      std::vector<std::pair<std::string, MVTValue>> attrs;
+      attrs.emplace_back("parameter", paraminfo.parameter);
+      attrs.emplace_back("value", isoline.value);
+      const auto cls = isoline.attributes.value("class");
+      if (!cls.empty())
+        attrs.emplace_back("class", cls);
+
+      mvtLayer.addFeature(*geom, attrs);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "IsolineLayer::addMVTLayer failed!");
   }
 }
 

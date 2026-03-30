@@ -75,6 +75,10 @@ class Layer : public Properties
   // Returns empty string if the layer does not support GeoTiff output.
   virtual std::string generateGeoTiff(State& theState);
 
+  // Add this layer's features to a Mapbox Vector Tile being assembled.
+  // The default implementation is a no-op (layer contributes nothing).
+  virtual void addMVTLayer(class MVTTileBuilder& builder, State& theState);
+
   // Base provides a reasonable default
   virtual std::size_t hash_value(const State& theState) const;
 

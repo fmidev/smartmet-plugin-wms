@@ -47,6 +47,10 @@ class Product : public Properties
   // Throws if no geotiff layer is found or the grid engine is unavailable.
   std::string generateGeoTiff(State& theState);
 
+  // Assembles a Mapbox Vector Tile from all layers that support MVT output.
+  // Returns the serialized protobuf bytes.
+  std::string generateMVT(State& theState);
+
   // Element specific:
   std::optional<std::string> svg_tmpl;
   std::string type;

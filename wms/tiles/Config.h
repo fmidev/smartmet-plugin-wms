@@ -72,7 +72,11 @@ class Config
   const WMS::Config& itsWMSConfig;
 
   std::vector<WMTS::TileMatrixSet> itsTileMatrixSets;
-  std::set<std::string> itsSupportedFormats{"image/png", "image/webp", "image/svg+xml", "image/tiff"};
+  std::set<std::string> itsSupportedFormats{"image/png",
+                                            "image/webp",
+                                            "image/svg+xml",
+                                            "image/tiff",
+                                            "application/vnd.mapbox-vector-tile"};
 };
 
 }  // namespace Tiles

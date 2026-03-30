@@ -27,7 +27,8 @@ LIBS += $(PREFIX_LDFLAGS) \
 	-lboost_regex \
 	-lboost_iostreams \
 	-lbz2 -lz \
-	-lheatmap
+	-lheatmap \
+	-lprotobuf
 
 # Templates
 
@@ -63,16 +64,33 @@ TILES_OBJS = $(patsubst $(SUBNAME)/tiles/%.cpp, obj/tiles/%.o, $(TILES_SRCS))
 
 OBJS += $(WMS_OBJS) $(OGC_OBJS) $(WMTS_OBJS) $(TILES_OBJS)
 
+# Protobuf-generated sources (.cc extension, not caught by the *.cpp wildcard)
+PROTO_SRCS = $(SUBNAME)/vector_tile.pb.cc
+PROTO_OBJS = obj/vector_tile.pb.o
+OBJS += $(PROTO_OBJS)
+
 INCLUDES := -I$(SUBNAME) $(INCLUDES)
 
 .PHONY: test test-dali test-wms test-wmts test-tiles update-outputs rpm
 
 # The rules
 
-all: objdir $(LIBFILE) templates
+all: objdir proto $(LIBFILE) templates
 debug: all
 release: all
 profile: all
+
+.PHONY: proto
+proto: $(SUBNAME)/vector_tile.pb.h $(SUBNAME)/vector_tile.pb.cc
+
+$(SUBNAME)/vector_tile.pb.cc $(SUBNAME)/vector_tile.pb.h: $(SUBNAME)/vector_tile.proto
+	protoc --cpp_out=$(SUBNAME) --proto_path=$(SUBNAME) $<
+
+$(PROTO_OBJS): $(PROTO_SRCS) | objdir
+	$(CXX) $(CFLAGS) $(INCLUDES) -Wno-error -c -MD -MF obj/vector_tile.pb.d -MT $@ -o $@ $<
+
+# Ensure proto header is generated before any TU that includes it
+$(OBJS): | $(SUBNAME)/vector_tile.pb.h
 
 $(LIBFILE): $(OBJS)
 	$(CXX) $(LDFLAGS) -shared -rdynamic -o $(LIBFILE) $(OBJS) $(LIBS)
@@ -97,6 +115,7 @@ jsontest:
 clean:
 	rm -f $(LIBFILE)
 	rm -rf $(objdir)
+	rm -f $(SUBNAME)/vector_tile.pb.h $(SUBNAME)/vector_tile.pb.cc
 	find . -name '*~' -exec rm -f {} ';'
 	find . -name '*.c2t' -exec rm -f {} ';'
 	find . -name '*.d' -exec rm -f {} ';'
@@ -157,3 +176,4 @@ templates: $(BYTECODES)
 -include $(wildcard obj/ogc/*.d)
 -include $(wildcard obj/wmts/*.d)
 -include $(wildcard obj/tiles/*.d)
+-include obj/vector_tile.pb.d

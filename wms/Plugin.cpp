@@ -229,7 +229,7 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
         !boost::iequals(fmt, "pdf") && !boost::iequals(fmt, "ps") && !boost::iequals(fmt, "webp") &&
         !boost::iequals(fmt, "geojson") && !boost::iequals(fmt, "topojson") &&
         !boost::iequals(fmt, "kml") && !boost::iequals(fmt, "cnf") &&
-        !boost::iequals(fmt, "geotiff"))
+        !boost::iequals(fmt, "geotiff") && !boost::iequals(fmt, "mvt"))
     {
       throw Fmi::Exception(BCP, "Invalid 'type' value '" + fmt + "'!");
     }
@@ -298,6 +298,19 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       auto buffer = std::make_shared<std::string>(std::move(bytes));
       itsImageCache->insert(product_hash, buffer);
       theResponse.setHeader("Content-Type", mimeType("geotiff"));
+      if (product_hash != Fmi::bad_hash)
+        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
+      theResponse.setContent(buffer);
+      return;
+    }
+
+    // MVT: bypass CTPP/SVG pipeline and return protobuf-encoded vector tile
+    if (product.type == "mvt")
+    {
+      auto bytes = product.generateMVT(theState);
+      auto buffer = std::make_shared<std::string>(std::move(bytes));
+      itsImageCache->insert(product_hash, buffer);
+      theResponse.setHeader("Content-Type", mimeType("mvt"));
       if (product_hash != Fmi::bad_hash)
         theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setContent(buffer);

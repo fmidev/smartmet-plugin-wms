@@ -112,6 +112,8 @@ std::string extensionOrParamToMime(const std::string& f)
     return "image/svg+xml";
   if (f == "tiff" || f == "geotiff" || f == "image/tiff")
     return "image/tiff";
+  if (f == "mvt" || f == "pbf" || f == "application/vnd.mapbox-vector-tile")
+    return "application/vnd.mapbox-vector-tile";
   return {};
 }
 
@@ -884,6 +886,17 @@ QueryStatus Handler::generateTile(Dali::State& theState,
       auto buffer = std::make_shared<std::string>(std::move(bytes));
       theState.getPlugin().insertInImageCache(product_hash, buffer);
       theResponse.setHeader("Content-Type", mimeType("geotiff"));
+      theResponse.setContent(buffer);
+      return QueryStatus::OK;
+    }
+
+    // MVT: bypass CTPP/SVG pipeline and return protobuf-encoded vector tile
+    if (theProduct.type == "mvt")
+    {
+      auto bytes = theProduct.generateMVT(theState);
+      auto buffer = std::make_shared<std::string>(std::move(bytes));
+      theState.getPlugin().insertInImageCache(product_hash, buffer);
+      theResponse.setHeader("Content-Type", mimeType("mvt"));
       theResponse.setContent(buffer);
       return QueryStatus::OK;
     }

@@ -3,6 +3,7 @@
 #include "Hash.h"
 #include "Layer.h"
 #include "JsonTools.h"
+#include "MapboxVectorTile.h"
 #include "State.h"
 #include "Warnings.h"
 #include <ctpp2/CDT.hpp>
@@ -268,6 +269,31 @@ std::string Product::generateGeoTiff(State& theState)
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Product::generateGeoTiff failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Assemble a Mapbox Vector Tile from all MVT-capable layers
+ */
+// ----------------------------------------------------------------------
+
+std::string Product::generateMVT(State& theState)
+{
+  try
+  {
+    const auto& box = projection.getBox();
+    MVTTileBuilder tile(box.xmin(), box.ymin(), box.xmax(), box.ymax());
+
+    for (const auto& view : views.views)
+      for (const auto& layer : view->layers.layers)
+        layer->addMVTLayer(tile, theState);
+
+    return tile.serialize();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Product::generateMVT failed!");
   }
 }
 

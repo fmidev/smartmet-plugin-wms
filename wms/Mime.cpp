@@ -39,6 +39,8 @@ std::string demimetype(const std::string& theMimeType)
     return "cnf";
   if (theMimeType == "image/tiff")
     return "geotiff";
+  if (theMimeType == "application/vnd.mapbox-vector-tile")
+    return "mvt";
 
   throw Fmi::Exception(BCP, "Unknown mime type requested: '" + theMimeType + "'");
 }
@@ -77,6 +79,8 @@ std::string mimeType(const std::string& theType)
     return "application/json";
   if (theType == "geotiff")
     return "image/tiff";
+  if (theType == "mvt")
+    return "application/vnd.mapbox-vector-tile";
 
   throw Fmi::Exception(BCP, "Unknown image format '" + theType + "'");
 }
