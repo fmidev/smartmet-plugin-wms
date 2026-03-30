@@ -4,6 +4,7 @@
 #include "AggregationUtility.h"
 #include "Config.h"
 #include "Geometry.h"
+#include "GridDataGeoTiff.h"
 #include "Hash.h"
 #include "Isoband.h"
 #include "JsonTools.h"
@@ -1372,6 +1373,18 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+std::string IsobandLayer::generateGeoTiff(State& theState)
+{
+  try
+  {
+    return gridDataGeoTiff(*this, paraminfo.parameter, "linear", theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "IsobandLayer::generateGeoTiff failed!");
   }
 }
 

@@ -71,6 +71,10 @@ class Layer : public Properties
   virtual void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) = 0;
   virtual void getFeatureInfo(CTPP::CDT& theInfo, const State& theState) = 0;
 
+  // Generate GeoTiff output by querying the grid engine for raw float data.
+  // Returns empty string if the layer does not support GeoTiff output.
+  virtual std::string generateGeoTiff(State& theState);
+
   // Base provides a reasonable default
   virtual std::size_t hash_value(const State& theState) const;
 

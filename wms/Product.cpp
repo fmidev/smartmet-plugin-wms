@@ -1,7 +1,7 @@
 #include "Product.h"
 #include "Config.h"
-#include "RasterLayer.h"
 #include "Hash.h"
+#include "Layer.h"
 #include "JsonTools.h"
 #include "State.h"
 #include "Warnings.h"
@@ -258,12 +258,12 @@ std::string Product::generateGeoTiff(State& theState)
     {
       for (const auto& layer : view->layers.layers)
       {
-        auto* rl = dynamic_cast<RasterLayer*>(layer.get());
-        if (rl)
-          return rl->generateGeoTiff(theState);
+        auto bytes = layer->generateGeoTiff(theState);
+        if (!bytes.empty())
+          return bytes;
       }
     }
-    throw Fmi::Exception(BCP, "No raster/geotiff layer found in product for GeoTiff generation");
+    throw Fmi::Exception(BCP, "No layer supporting GeoTiff output found in product");
   }
   catch (...)
   {

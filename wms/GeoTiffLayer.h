@@ -31,8 +31,7 @@ class GeoTiffLayer : public RasterLayer
   // generate() is intentionally a no-op: geotiff products bypass the CTPP pipeline
   void generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState) override;
 
-  // Core entry point: fetches grid data and returns GeoTiff bytes
-  std::string generateGeoTiff(State& theState);
+  // generateGeoTiff() is inherited from RasterLayer
 };
 
 }  // namespace Dali

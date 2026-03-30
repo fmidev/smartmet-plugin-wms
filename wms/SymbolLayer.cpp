@@ -2,6 +2,7 @@
 #include "SymbolLayer.h"
 #include "AggregationUtility.h"
 #include "Config.h"
+#include "GridDataGeoTiff.h"
 #include "Hash.h"
 #include "Intersections.h"
 #include "Iri.h"
@@ -987,6 +988,18 @@ std::size_t SymbolLayer::hash_value(const State& theState) const
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+std::string SymbolLayer::generateGeoTiff(State& theState)
+{
+  try
+  {
+    return gridDataGeoTiff(*this, paraminfo.parameter, "linear", theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "SymbolLayer::generateGeoTiff failed!");
   }
 }
 

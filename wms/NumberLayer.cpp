@@ -3,6 +3,7 @@
 #include "NumberLayer.h"
 #include "AggregationUtility.h"
 #include "Config.h"
+#include "GridDataGeoTiff.h"
 #include "Hash.h"
 #include "Iri.h"
 #include "JsonTools.h"
@@ -997,6 +998,18 @@ std::size_t NumberLayer::hash_value(const State& theState) const
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Calculating hash_value for the layer failed!");
+  }
+}
+
+std::string NumberLayer::generateGeoTiff(State& theState)
+{
+  try
+  {
+    return gridDataGeoTiff(*this, paraminfo.parameter, "linear", theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "NumberLayer::generateGeoTiff failed!");
   }
 }
 

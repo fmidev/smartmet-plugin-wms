@@ -3,6 +3,7 @@
 #include "IsolineLayer.h"
 #include "Config.h"
 #include "Geometry.h"
+#include "GridDataGeoTiff.h"
 #include "Hash.h"
 #include "Isoline.h"
 #include "JsonTools.h"
@@ -1028,6 +1029,18 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+std::string IsolineLayer::generateGeoTiff(State& theState)
+{
+  try
+  {
+    return gridDataGeoTiff(*this, paraminfo.parameter, "linear", theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "IsolineLayer::generateGeoTiff failed!");
   }
 }
 

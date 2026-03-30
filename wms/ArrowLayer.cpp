@@ -2,6 +2,7 @@
 #include "ArrowLayer.h"
 #include "AggregationUtility.h"
 #include "Config.h"
+#include "GridDataGeoTiff.h"
 #include "Hash.h"
 #include "Iri.h"
 #include "JsonTools.h"
@@ -1578,6 +1579,24 @@ std::size_t ArrowLayer::hash_value(const State& theState) const
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+std::string ArrowLayer::generateGeoTiff(State& theState)
+{
+  try
+  {
+    // For GeoTiff output, dump the scalar wind speed (most useful for analysis).
+    // Fall back to direction, u-component, or the base parameter in that order.
+    const std::string& paramName = speed      ? *speed
+                                   : direction ? *direction
+                                   : u         ? *u
+                                               : paraminfo.parameter;
+    return gridDataGeoTiff(*this, paramName, "linear", theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "ArrowLayer::generateGeoTiff failed!");
   }
 }
 

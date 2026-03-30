@@ -571,6 +571,18 @@ void Layer::check_warnings(Warnings& warnings) const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Default GeoTiff generation — layers that do not support GeoTiff
+ *        output return an empty string.
+ */
+// ----------------------------------------------------------------------
+
+std::string Layer::generateGeoTiff(State& /*theState*/)
+{
+  return {};
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Get data value for the given pixel (dispatch)
  */
 // ----------------------------------------------------------------------
