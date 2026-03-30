@@ -137,6 +137,18 @@ test-tiles: $(PROG) $(TEST_PREPARE_TARGETS)
 		$(MAKE) $(TEST_FINISH_TARGETS); false; \
 	fi
 
+# Copy actual test outputs from failures/ to output/ to accept them as new expected outputs.
+# Workflow: run the tests, inspect failures/, then run this target to accept correct results.
+update-outputs:
+	@if ls failures/*.get 2>/dev/null | grep -q .; then \
+		for f in failures/*.get; do \
+			cp "$$f" "output/$$(basename $$f)"; \
+			echo "Accepted output/$$(basename $$f)"; \
+		done; \
+	else \
+		echo "No failures to accept."; \
+	fi
+
 geonames-database:
 	@-$(MAKE) stop-geonames-db
 	rm -rf tmp-geonames-db
@@ -189,6 +201,6 @@ objdir:
 	mkdir -p $(objdir)
 
 .PHONY: cnf/authentication.conf cnf/geonames.conf cnf/gis.conf cnf/observation.conf dummy \
-        test test-dali test-wms test-wmts test-tiles
+        test test-dali test-wms test-wmts test-tiles update-outputs
 
 -include $(wildcard obj/*.d)

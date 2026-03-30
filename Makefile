@@ -65,7 +65,7 @@ OBJS += $(WMS_OBJS) $(OGC_OBJS) $(WMTS_OBJS) $(TILES_OBJS)
 
 INCLUDES := -I$(SUBNAME) $(INCLUDES)
 
-.PHONY: test test-dali test-wms test-wmts test-tiles rpm
+.PHONY: test test-dali test-wms test-wmts test-tiles update-outputs rpm
 
 # The rules
 
@@ -118,7 +118,7 @@ install:
 test: configtest
 	cd test && make test
 
-test-dali test-wms test-wmts test-tiles:
+test-dali test-wms test-wmts test-tiles update-outputs:
 	cd test && make $@
 
 objdir:

@@ -67,6 +67,15 @@ my $NAME = basename($RESULT, ('.get', '.post'));
 my $MIME = `file --brief --mime-type $RESULT`;
 chomp $MIME;
 
+# Detect if text/html is actual HTML (GetFeatureInfo output) vs SVG misdetected as text/html
+my $is_plain_html = 0;
+if ($MIME eq 'text/html' || $MIME eq 'text/x-asm') {
+    open my $fh, '<', $RESULT or die "Cannot open '$RESULT': $!";
+    my $first_line = <$fh>;
+    close $fh;
+    $is_plain_html = 1 if defined $first_line && $first_line =~ /^<html/i;
+}
+
 my $EXPECTED_PNG = "failures/${NAME}_expected.png";
 my $RESULT_PNG = "failures/${NAME}_result.png";
 my $DIFFERENCE_PNG = "failures/${NAME}_difference.png";
@@ -80,7 +89,7 @@ sub Cleanup {
 }
 
 # Create result images before exiting of EXPECTED image is missing
-if ($MIME eq 'text/html' || $MIME eq 'text/x-asm')
+if (($MIME eq 'text/html' || $MIME eq 'text/x-asm') && !$is_plain_html)
 {
     system("rsvg-convert $rsvg_params -o $RESULT_PNG $RESULT") == 0
         or die "Failed to convert result $RESULT to PNG: $!";
@@ -118,6 +127,34 @@ elsif ($cmp == 0) {
     print "OK     ";
     Cleanup();
     exit(0);
+}
+
+# Plain HTML (e.g. GetFeatureInfo text/html output) - line-by-line text comparison
+if ($is_plain_html)
+{
+    open my $rfh, '<', $RESULT   or die "Cannot open '$RESULT': $!";
+    open my $efh, '<', $EXPECTED or die "Cannot open '$EXPECTED': $!";
+    my @result_lines   = <$rfh>;
+    my @expected_lines = <$efh>;
+    close $rfh;
+    close $efh;
+
+    my $match = (scalar(@result_lines) == scalar(@expected_lines));
+    if ($match) {
+        for my $i (0..$#result_lines) {
+            (my $r = $result_lines[$i]) =~ s/\s+$//;
+            (my $e = $expected_lines[$i]) =~ s/\s+$//;
+            if ($r ne $e) { $match = 0; last; }
+        }
+    }
+    if ($match) {
+        print "OK     ";
+        Cleanup();
+        exit(0);
+    }
+    print "FAIL: HTML output differs: $RESULT <> $EXPECTED\n";
+    system("diff -U4 $EXPECTED $RESULT | head -n 100 | cut -c 1-128");
+    exit(1);
 }
 
 #  We need special handling for XML (there could be small accepted differences)

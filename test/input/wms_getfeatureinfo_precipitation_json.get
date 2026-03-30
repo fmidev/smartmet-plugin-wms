@@ -1,0 +1,1 @@
+GET /wms?service=wms&request=GetFeatureInfo&version=1.3.0&layers=test:precipitation_areas&query_layers=test:precipitation_areas&styles=&crs=EPSG:4326&bbox=59,17,71,34&width=300&height=500&format=image/svg%2Bxml&i=150&j=250&info_format=application/json&time=20080805120000 HTTP/1.0

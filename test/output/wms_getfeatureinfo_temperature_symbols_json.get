@@ -1,0 +1,12 @@
+{
+"time": 20130805T150000,
+"longitude": 25.5,
+"latitude": 65,
+"features":
+{
+"Fmisid": 101794,
+"StationName": Oulu Vihreäsaari satama,
+"Temperature": 20.8,
+"URL": https://hav.fmi.fi/hav/asema/?fmisid=101794
+}
+}

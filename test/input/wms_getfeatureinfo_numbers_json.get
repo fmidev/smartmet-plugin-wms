@@ -1,0 +1,1 @@
+GET /wms?service=wms&request=GetFeatureInfo&version=1.3.0&layers=test:opendata_temperature_numbers_max&query_layers=test:opendata_temperature_numbers_max&styles=&crs=EPSG:4326&bbox=59,17,71,34&width=600&height=1000&format=image/png&i=300&j=500&info_format=application/json&time=20130805T1500 HTTP/1.0
