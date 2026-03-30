@@ -21,6 +21,7 @@
 #include <macgyver/StringConversion.h>
 #include <spine/Convenience.h>
 #include <spine/FmiApiKey.h>
+#include <spine/Json.h>
 
 namespace SmartMet
 {
@@ -401,8 +402,12 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     auto thisRequest = theRequest;
     theState.setType(demimetype(format));
 
-    std::string bbox_str = fmt::format("{},{},{},{}",
-                                       bbox.min_x, bbox.min_y, bbox.max_x, bbox.max_y);
+    // For geographic CRS (EPSG:4326), Projection::init() expects bbox in lat,lon order
+    // (EPSGTreatsAsLatLong() returns true, so it reads parts as y1,x1,y2,x2).
+    // computeTileBBox() always returns min_x=longitude, min_y=latitude, so we must swap.
+    std::string bbox_str = tms->is_geographic
+        ? fmt::format("{},{},{},{}", bbox.min_y, bbox.min_x, bbox.max_y, bbox.max_x)
+        : fmt::format("{},{},{},{}", bbox.min_x, bbox.min_y, bbox.max_x, bbox.max_y);
     thisRequest.addParameter("projection.bbox",  bbox_str);
     thisRequest.addParameter("projection.xsize", Fmi::to_string(tm->tile_width));
     thisRequest.addParameter("projection.ysize", Fmi::to_string(tm->tile_height));
@@ -423,8 +428,17 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
         thisRequest.addParameter("time", Fmi::to_iso_string(current_time));
     }
 
-    // Load product JSON and apply style
+    // Load product JSON, preprocess json: references and query params, then apply style
     Json::Value json = wmsConfig.json(layer);
+    {
+      const std::string customer = wmsConfig.layerCustomer(layer);
+      const std::string root = itsDaliConfig.rootDirectory(true);
+      const std::string layers_root = root + "/customers/" + customer + "/layers/";
+      Spine::JSON::preprocess(json, root, layers_root, wmsConfig.getJsonCache());
+      Spine::JSON::dereference(json);
+      auto params = Dali::Plugin::extractValidParameters(thisRequest.getParameterMap());
+      Spine::JSON::expand(json, params, "", false);
+    }
     useStyle(json, style);
 
     // Apply margin defaults if not already set in the product JSON
@@ -434,6 +448,7 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
       json["ymargin"] = wmsConfig.getMargin();
 
     theState.setName(layer);
+    theState.setCustomer(wmsConfig.layerCustomer(layer));
 
     Dali::Product product;
     product.init(json, theState, itsDaliConfig);
