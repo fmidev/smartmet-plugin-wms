@@ -4,6 +4,7 @@
 #include "Hash.h"
 #include "JsonTools.h"
 #include "Layer.h"
+#include "MapboxVectorTile.h"
 #include "Select.h"
 #include "State.h"
 #include "StyleSheet.h"
@@ -495,6 +496,91 @@ void MapLayer::generate_styled_map(CTPP::CDT& theGlobals,
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate MVT layer
+ */
+// ----------------------------------------------------------------------
+
+void MapLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
+{
+  try
+  {
+    if (!validLayer(theState))
+      return;
+
+    const auto& crs = projection.getCRS();
+    const Fmi::Box& box = projection.getBox();
+    const auto clipbox = getClipBox(box);
+
+    const std::string layerName = qid.empty() ? map.options.table : qid;
+
+    const auto& gis = theState.getGisEngine();
+
+    if (!styles)
+    {
+      // Full map: single unified geometry, no per-feature attributes
+      OGRGeometryPtr geom = gis.getShape(&crs, map.options);
+      if (!geom)
+        return;
+
+      geom.reset(geom->clone());
+      Fmi::OGR::normalizeWindingOrder(geom.get());
+      if (map.lines)
+        geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
+      else
+        geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
+
+      if (!geom || geom->IsEmpty())
+        return;
+
+      auto& mvtLayer = theBuilder.layer(layerName);
+      mvtLayer.addFeature(*geom, {});
+    }
+    else
+    {
+      // Styled map: per-feature geometry + field attribute value
+      map.options.fieldnames.insert(styles->field);
+      Fmi::Features features = gis.getFeatures(crs, map.options);
+
+      auto& mvtLayer = theBuilder.layer(layerName);
+
+      for (const auto& feature : features)
+      {
+        if (!feature->geom || feature->geom->IsEmpty() != 0)
+          continue;
+
+        OGRGeometryPtr geom = feature->geom;
+        if (map.lines)
+          geom.reset(Fmi::OGR::lineclip(*geom, clipbox));
+        else
+          geom.reset(Fmi::OGR::polyclip(*geom, clipbox));
+
+        if (!geom || geom->IsEmpty())
+          continue;
+
+        // Convert feature field value to MVTValue
+        const auto& fval = feature->attributes.at(styles->field);
+        MVTValue attrVal;
+        if (fval.index() == 0)
+          attrVal = static_cast<int64_t>(std::get<int>(fval));
+        else if (fval.index() == 1)
+          attrVal = std::get<double>(fval);
+        else if (fval.index() == 2)
+          attrVal = std::get<std::string>(fval);
+        else
+          attrVal = std::string{};  // time or unknown: skip or empty
+
+        mvtLayer.addFeature(*geom, {{styles->field, attrVal}});
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "MapLayer::addMVTLayer failed!");
   }
 }
 
