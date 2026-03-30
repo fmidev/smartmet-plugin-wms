@@ -1,0 +1,45 @@
+Driver: GTiff/GeoTIFF
+Size is 1024, 1024
+Coordinate System is:
+GEOGCRS["WGS 84",
+    ENSEMBLE["World Geodetic System 1984 ensemble",
+        MEMBER["World Geodetic System 1984 (Transit)"],
+        MEMBER["World Geodetic System 1984 (G730)"],
+        MEMBER["World Geodetic System 1984 (G873)"],
+        MEMBER["World Geodetic System 1984 (G1150)"],
+        MEMBER["World Geodetic System 1984 (G1674)"],
+        MEMBER["World Geodetic System 1984 (G1762)"],
+        MEMBER["World Geodetic System 1984 (G2139)"],
+        MEMBER["World Geodetic System 1984 (G2296)"],
+        ELLIPSOID["WGS 84",6378137,298.257223563,
+            LENGTHUNIT["metre",1]],
+        ENSEMBLEACCURACY[2.0]],
+    PRIMEM["Greenwich",0,
+        ANGLEUNIT["degree",0.0174532925199433]],
+    CS[ellipsoidal,2],
+        AXIS["geodetic latitude (Lat)",north,
+            ORDER[1],
+            ANGLEUNIT["degree",0.0174532925199433]],
+        AXIS["geodetic longitude (Lon)",east,
+            ORDER[2],
+            ANGLEUNIT["degree",0.0174532925199433]],
+    USAGE[
+        SCOPE["Horizontal component of 3D system."],
+        AREA["World."],
+        BBOX[-90,-180,90,180]],
+    ID["EPSG",4326]]
+Data axis to CRS axis mapping: 2,1
+Origin = (22.499999999999972,67.500000000000000)
+Pixel Size = (0.005493164062500,-0.005493164062500)
+Corner Coordinates:
+Upper Left  (  22.5000000,  67.5000000) ( 22d30' 0.00"E, 67d30' 0.00"N)
+Lower Left  (  22.5000000,  61.8750000) ( 22d30' 0.00"E, 61d52'30.00"N)
+Upper Right (  28.1250000,  67.5000000) ( 28d 7'30.00"E, 67d30' 0.00"N)
+Lower Right (  28.1250000,  61.8750000) ( 28d 7'30.00"E, 61d52'30.00"N)
+Center      (  25.3125000,  64.6875000) ( 25d18'45.00"E, 64d41'15.00"N)
+Band 1 Block=1024x1 Type=Float32, ColorInterp=Gray
+  Minimum=10.000, Maximum=99.411, Mean=62.698, StdDev=11.582
+  NoData Value=-16777216
+Band 2 Block=1024x1 Type=Float32, ColorInterp=Undefined
+  Minimum=0.785, Maximum=7.066, Mean=3.695, StdDev=1.399
+  NoData Value=-16777216

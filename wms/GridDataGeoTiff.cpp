@@ -22,6 +22,124 @@ namespace Plugin
 namespace Dali
 {
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Write pre-computed north-up float bands as a deflate-compressed
+ *        multi-band Float32 GeoTiff and return the raw bytes.
+ */
+// ----------------------------------------------------------------------
+
+std::string writeGeoTiffBands(const Projection& projection,
+                               const std::string& wkt,
+                               const std::vector<std::vector<float>>& bands)
+{
+  try
+  {
+    if (bands.empty())
+      throw Fmi::Exception(BCP, "writeGeoTiffBands: no bands provided");
+
+    if (!projection.xsize || !projection.ysize)
+      throw Fmi::Exception(BCP, "writeGeoTiffBands: projection dimensions not set");
+
+    const int width = *projection.xsize;
+    const int height = *projection.ysize;
+    const int numBands = static_cast<int>(bands.size());
+
+    for (int b = 0; b < numBands; ++b)
+      if (static_cast<int>(bands[b].size()) != width * height)
+        throw Fmi::Exception(BCP,
+                             "writeGeoTiffBands: band " + Fmi::to_string(b + 1) +
+                                 " size mismatch: got " + Fmi::to_string(bands[b].size()) +
+                                 " expected " + Fmi::to_string(width * height));
+
+    GDALAllRegister();
+
+    // North-up GeoTransform
+    const auto& box = projection.getBox();
+    double gt[6] = {
+        box.xmin(),
+        (box.xmax() - box.xmin()) / width,
+        0.0,
+        box.ymax(),
+        0.0,
+        -(box.ymax() - box.ymin()) / height};
+
+    auto* memDrv = GetGDALDriverManager()->GetDriverByName("MEM");
+    if (!memDrv)
+      throw Fmi::Exception(BCP, "GDAL MEM driver not available");
+
+    auto* memDs = memDrv->Create("", width, height, numBands, GDT_Float32, nullptr);
+    if (!memDs)
+      throw Fmi::Exception(BCP, "Failed to create GDAL MEM dataset");
+
+    memDs->SetGeoTransform(gt);
+
+    OGRSpatialReference oSRS;
+    oSRS.importFromWkt(wkt.c_str());
+    memDs->SetSpatialRef(&oSRS);
+
+    const auto nodata = static_cast<double>(ParamValueMissing);
+
+    for (int b = 0; b < numBands; ++b)
+    {
+      auto* band = memDs->GetRasterBand(b + 1);
+      band->SetNoDataValue(nodata);
+      // RasterIO requires non-const data pointer
+      auto* data = const_cast<float*>(bands[b].data());
+      if (band->RasterIO(GF_Write, 0, 0, width, height, data, width, height, GDT_Float32, 0, 0) !=
+          CE_None)
+      {
+        GDALClose(memDs);
+        throw Fmi::Exception(BCP,
+                             "Failed to write band " + Fmi::to_string(b + 1) + " to GDAL MEM");
+      }
+    }
+
+    auto* tiffDrv = GetGDALDriverManager()->GetDriverByName("GTiff");
+    if (!tiffDrv)
+    {
+      GDALClose(memDs);
+      throw Fmi::Exception(BCP, "GDAL GTiff driver not available");
+    }
+
+    static std::atomic<uint64_t> seq{0};
+    const std::string vsimem_path = fmt::format("/vsimem/geotiff_{}.tif", ++seq);
+    const char* opts[] = {"COMPRESS=DEFLATE", "WRITE_DATETIME_METADATA=NO", nullptr};
+    auto* tiffDs = tiffDrv->CreateCopy(
+        vsimem_path.c_str(), memDs, 0, const_cast<char**>(opts), nullptr, nullptr);
+    GDALClose(memDs);
+
+    if (!tiffDs)
+    {
+      VSIUnlink(vsimem_path.c_str());
+      throw Fmi::Exception(BCP, "GDAL CreateCopy to GTiff failed");
+    }
+    GDALClose(tiffDs);
+
+    vsi_l_offset file_size = 0;
+    GByte* raw = VSIGetMemFileBuffer(vsimem_path.c_str(), &file_size, FALSE);
+    if (!raw)
+    {
+      VSIUnlink(vsimem_path.c_str());
+      throw Fmi::Exception(BCP, "Failed to read GeoTiff bytes from GDAL virtual filesystem");
+    }
+
+    std::string result(reinterpret_cast<char*>(raw), static_cast<size_t>(file_size));
+    VSIUnlink(vsimem_path.c_str());
+    return result;
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "writeGeoTiffBands failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Query a single grid parameter and write it as a single-band GeoTiff.
+ */
+// ----------------------------------------------------------------------
+
 std::string gridDataGeoTiff(Layer& layer,
                              const std::string& parameterName,
                              const std::string& interpolation,
@@ -236,77 +354,7 @@ std::string gridDataGeoTiff(Layer& layer,
       ordered = values;
     }
 
-    // ---- Write GeoTiff via GDAL ----
-
-    GDALAllRegister();
-
-    // North-up GeoTransform: (upper-left X, pixel width, 0, upper-left Y, 0, -pixel height)
-    const auto& final_box = layer.projection.getBox();
-    double gt[6] = {
-        final_box.xmin(),
-        (final_box.xmax() - final_box.xmin()) / width,
-        0.0,
-        final_box.ymax(),
-        0.0,
-        -(final_box.ymax() - final_box.ymin()) / height};
-
-    auto* memDrv = GetGDALDriverManager()->GetDriverByName("MEM");
-    if (!memDrv)
-      throw Fmi::Exception(BCP, "GDAL MEM driver not available");
-
-    auto* memDs = memDrv->Create("", width, height, 1, GDT_Float32, nullptr);
-    if (!memDs)
-      throw Fmi::Exception(BCP, "Failed to create GDAL MEM dataset");
-
-    memDs->SetGeoTransform(gt);
-
-    OGRSpatialReference oSRS;
-    oSRS.importFromWkt(wkt.c_str());
-    memDs->SetSpatialRef(&oSRS);
-
-    const auto nodata = static_cast<double>(ParamValueMissing);
-    auto* band = memDs->GetRasterBand(1);
-    band->SetNoDataValue(nodata);
-    if (band->RasterIO(
-            GF_Write, 0, 0, width, height, ordered.data(), width, height, GDT_Float32, 0, 0) !=
-        CE_None)
-    {
-      GDALClose(memDs);
-      throw Fmi::Exception(BCP, "Failed to write data to GDAL MEM band");
-    }
-
-    auto* tiffDrv = GetGDALDriverManager()->GetDriverByName("GTiff");
-    if (!tiffDrv)
-    {
-      GDALClose(memDs);
-      throw Fmi::Exception(BCP, "GDAL GTiff driver not available");
-    }
-
-    static std::atomic<uint64_t> seq{0};
-    const std::string vsimem_path = fmt::format("/vsimem/geotiff_{}.tif", ++seq);
-    const char* opts[] = {"COMPRESS=DEFLATE", "WRITE_DATETIME_METADATA=NO", nullptr};
-    auto* tiffDs = tiffDrv->CreateCopy(
-        vsimem_path.c_str(), memDs, 0, const_cast<char**>(opts), nullptr, nullptr);
-    GDALClose(memDs);
-
-    if (!tiffDs)
-    {
-      VSIUnlink(vsimem_path.c_str());
-      throw Fmi::Exception(BCP, "GDAL CreateCopy to GTiff failed");
-    }
-    GDALClose(tiffDs);
-
-    vsi_l_offset file_size = 0;
-    GByte* raw = VSIGetMemFileBuffer(vsimem_path.c_str(), &file_size, FALSE);
-    if (!raw)
-    {
-      VSIUnlink(vsimem_path.c_str());
-      throw Fmi::Exception(BCP, "Failed to read GeoTiff bytes from GDAL virtual filesystem");
-    }
-
-    std::string result(reinterpret_cast<char*>(raw), static_cast<size_t>(file_size));
-    VSIUnlink(vsimem_path.c_str());
-    return result;
+    return writeGeoTiffBands(layer.projection, wkt, {ordered});
   }
   catch (...)
   {

@@ -1586,13 +1586,233 @@ std::string ArrowLayer::generateGeoTiff(State& theState)
 {
   try
   {
-    // For GeoTiff output, dump the scalar wind speed (most useful for analysis).
-    // Fall back to direction, u-component, or the base parameter in that order.
-    const std::string& paramName = speed      ? *speed
-                                   : direction ? *direction
-                                   : u         ? *u
-                                               : paraminfo.parameter;
-    return gridDataGeoTiff(*this, paramName, "linear", theState);
+    // Single-parameter cases: delegate to the shared utility.
+    if (!direction && !speed && !u && !v)
+      return gridDataGeoTiff(*this, paraminfo.parameter, "linear", theState);
+    if (direction && !speed)
+      return gridDataGeoTiff(*this, *direction, "linear", theState);
+    if (speed && !direction && !u && !v)
+      return gridDataGeoTiff(*this, *speed, "linear", theState);
+
+    // Two-parameter case: direction+speed  OR  u+v (converted to direction+speed).
+    // Build a geometry-mode grid query for both parameters.
+
+    const auto* gridEngine = theState.getGridEngine();
+    if (!gridEngine || !gridEngine->isEnabled())
+      throw Fmi::Exception(BCP, "GeoTiff output requires the grid engine to be enabled");
+    if (!paraminfo.producer)
+      throw Fmi::Exception(BCP, "Producer not set for GeoTiff generation");
+    if (!projection.crs || *projection.crs == "data")
+      throw Fmi::Exception(BCP, "GeoTiff output requires an explicit CRS");
+
+    std::string producerName = gridEngine->getProducerName(*paraminfo.producer);
+    auto crs_ref = projection.getCRS();
+    const auto& box = projection.getBox();
+    std::string wkt = *projection.crs;
+    if (strstr(wkt.c_str(), "+proj") != wkt.c_str())
+      wkt = crs_ref.WKT();
+
+    auto originalGridQuery = std::make_shared<QueryServer::Query>();
+    QueryServer::QueryConfigurator queryConfigurator;
+    T::AttributeList attributeList;
+
+    auto bbox = fmt::format("{},{},{},{}", box.xmin(), box.ymin(), box.xmax(), box.ymax());
+    auto bl = projection.bottomLeftLatLon();
+    auto tr = projection.topRightLatLon();
+    if (projection.x1 == bl.X() && projection.y1 == bl.Y() &&
+        projection.x2 == tr.X() && projection.y2 == tr.Y())
+      originalGridQuery->mAttributeList.addAttribute("grid.llbox", bbox);
+    originalGridQuery->mAttributeList.addAttribute("grid.bbox", bbox);
+
+    const bool uv_mode = static_cast<bool>(u && v);
+    const std::string& p1name = uv_mode ? *u : *direction;
+    const std::string& p2name = uv_mode ? *v : *speed;
+
+    auto param1 = gridEngine->getParameterString(producerName, p1name);
+    auto param2 = gridEngine->getParameterString(producerName, p2name);
+
+    if (!projection.projectionParameter)
+      projection.projectionParameter = param1;
+
+    if (param1 == p1name && originalGridQuery->mProducerNameList.empty())
+    {
+      gridEngine->getProducerNameList(producerName, originalGridQuery->mProducerNameList);
+      if (originalGridQuery->mProducerNameList.empty())
+        originalGridQuery->mProducerNameList.push_back(producerName);
+    }
+
+    attributeList.addAttribute("param", param1 + "," + param2);
+
+    std::string forecastTime = Fmi::to_iso_string(getValidTime());
+    attributeList.addAttribute("startTime", forecastTime);
+    attributeList.addAttribute("endTime", forecastTime);
+    attributeList.addAttribute("timelist", forecastTime);
+    attributeList.addAttribute("timezone", "UTC");
+    if (origintime)
+      attributeList.addAttribute("analysisTime", Fmi::to_iso_string(*origintime));
+
+    queryConfigurator.configure(*originalGridQuery, attributeList);
+
+    for (auto& p : originalGridQuery->mQueryParameterList)
+    {
+      p.mLocationType = QueryServer::QueryParameter::LocationType::Geometry;
+      p.mType = QueryServer::QueryParameter::Type::Vector;
+      p.mFlags |= QueryServer::QueryParameter::Flags::ReturnCoordinates;
+      p.mAreaInterpolationMethod = T::AreaInterpolationMethod::Linear;
+      p.mTimeInterpolationMethod = T::TimeInterpolationMethod::Linear;
+      p.mLevelInterpolationMethod = T::LevelInterpolationMethod::Linear;
+
+      if (paraminfo.geometryId)
+        p.mGeometryId = *paraminfo.geometryId;
+      if (paraminfo.levelId)
+        p.mParameterLevelId = *paraminfo.levelId;
+      if (paraminfo.level)
+        p.mParameterLevel = C_INT(*paraminfo.level);
+      else if (paraminfo.pressure)
+      {
+        p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
+        p.mParameterLevel = C_INT(*paraminfo.pressure);
+      }
+      if (paraminfo.elevation_unit)
+      {
+        if (*paraminfo.elevation_unit == "m")
+          p.mFlags |= QueryServer::QueryParameter::Flags::MetricLevels;
+        if (*paraminfo.elevation_unit == "p")
+          p.mFlags |= QueryServer::QueryParameter::Flags::PressureLevels;
+      }
+      if (paraminfo.forecastType)
+        p.mForecastType = C_INT(*paraminfo.forecastType);
+      if (paraminfo.forecastNumber)
+        p.mForecastNumber = C_INT(*paraminfo.forecastNumber);
+    }
+
+    originalGridQuery->mSearchType = QueryServer::Query::SearchType::TimeSteps;
+    originalGridQuery->mAttributeList.addAttribute("grid.crs", wkt);
+
+    if (projection.size && *projection.size > 0)
+      originalGridQuery->mAttributeList.addAttribute("grid.size",
+                                                      Fmi::to_string(*projection.size));
+    else
+    {
+      if (projection.xsize)
+        originalGridQuery->mAttributeList.addAttribute("grid.width",
+                                                        Fmi::to_string(*projection.xsize));
+      if (projection.ysize)
+        originalGridQuery->mAttributeList.addAttribute("grid.height",
+                                                        Fmi::to_string(*projection.ysize));
+    }
+
+    if (projection.bboxcrs)
+      originalGridQuery->mAttributeList.addAttribute("grid.bboxcrs", *projection.bboxcrs);
+
+    auto query = gridEngine->executeQuery(originalGridQuery);
+
+    // Update projection dimensions from result if needed
+    if ((projection.size && *projection.size > 0) || (!projection.xsize && !projection.ysize))
+    {
+      const char* widthStr = query->mAttributeList.getAttributeValue("grid.width");
+      const char* heightStr = query->mAttributeList.getAttributeValue("grid.height");
+      if (widthStr)
+        projection.xsize = Fmi::stoi(widthStr);
+      if (heightStr)
+        projection.ysize = Fmi::stoi(heightStr);
+    }
+
+    if (!projection.xsize || !projection.ysize)
+      throw Fmi::Exception(BCP, "Grid size is unknown after query");
+
+    const int width = *projection.xsize;
+    const int height = *projection.ysize;
+
+    // Extract value vectors for both parameters
+    std::shared_ptr<QueryServer::ParameterValues> pval1, pval2;
+    const T::Coordinate_vec* coordinates = nullptr;
+
+    for (const auto& qp : query->mQueryParameterList)
+    {
+      for (const auto& val : qp.mValueList)
+      {
+        if (!val->mValueVector.empty())
+        {
+          if (!pval1)
+          {
+            pval1 = val;
+            if (!qp.mCoordinates.empty())
+              coordinates = &qp.mCoordinates;
+          }
+          else if (!pval2)
+          {
+            pval2 = val;
+          }
+          break;
+        }
+      }
+    }
+
+    if (!pval1 || pval1->mValueVector.empty())
+      throw Fmi::Exception(BCP, "No data returned for first parameter in GeoTiff generation");
+    if (!pval2 || pval2->mValueVector.empty())
+      throw Fmi::Exception(BCP, "No data returned for second parameter in GeoTiff generation");
+
+    if (static_cast<int>(pval1->mValueVector.size()) != width * height ||
+        static_cast<int>(pval2->mValueVector.size()) != width * height)
+      throw Fmi::Exception(BCP, "Value vector size mismatch in GeoTiff generation");
+
+    // Detect row order from coordinates
+    const bool south_up = (coordinates &&
+                           static_cast<int>(coordinates->size()) > 10 * width &&
+                           (*coordinates)[0].y() < (*coordinates)[10 * width].y());
+
+    const float nodata = static_cast<float>(ParamValueMissing);
+
+    std::vector<float> band1(width * height);
+    std::vector<float> band2(width * height);
+
+    for (int row = 0; row < height; ++row)
+    {
+      const int src_row = south_up ? (height - 1 - row) : row;
+      for (int col = 0; col < width; ++col)
+      {
+        const int src = src_row * width + col;
+        const int dst = row * width + col;
+        const float v1 = pval1->mValueVector[src];
+        const float v2 = pval2->mValueVector[src];
+
+        if (uv_mode)
+        {
+          // u/v → meteorological direction (band 1) + speed (band 2)
+          if (v1 == nodata || v2 == nodata)
+          {
+            band1[dst] = nodata;
+            band2[dst] = nodata;
+          }
+          else
+          {
+            band2[dst] = static_cast<float>(std::sqrt(double(v1) * v1 + double(v2) * v2));
+            band1[dst] = static_cast<float>(
+                std::fmod(180.0 + 180.0 / pi * std::atan2(double(v1), double(v2)), 360.0));
+          }
+        }
+        else
+        {
+          // direction (band 1) + speed (band 2) with optional unit conversion on speed
+          band1[dst] = v1;
+          if (v2 == nodata)
+            band2[dst] = nodata;
+          else
+          {
+            double spd = v2;
+            if (multiplier && *multiplier != 1.0)
+              spd *= *multiplier;
+            if (offset && *offset)
+              spd += *offset;
+            band2[dst] = static_cast<float>(spd);
+          }
+        }
+      }
+    }
+
+    return writeGeoTiffBands(projection, wkt, {band1, band2});
   }
   catch (...)
   {
