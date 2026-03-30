@@ -260,7 +260,8 @@ Json::Value merge_layers(const std::vector<Json::Value> &layers)
     std::string layerId = get_json_element_value(layer, "attributes.id");
 
     for (const auto &prop :
-         {"title", "abstract", "language", "projection", "margin", "xmargin", "ymargin"})
+         {"title", "abstract", "language", "projection", "margin", "xmargin", "ymargin",
+          "time", "origintime", "timestep", "interval_start", "interval_end", "tz"})
     {
       const auto propStr = std::string(prop);
       if (!ret.isMember(propStr) && layer.isMember(propStr))
