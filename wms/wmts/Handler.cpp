@@ -80,6 +80,7 @@ std::string extensionToMimeType(const std::string& ext)
   if (ext == "png")  return "image/png";
   if (ext == "webp") return "image/webp";
   if (ext == "svg")  return "image/svg+xml";
+  if (ext == "tiff" || ext == "tif") return "image/tiff";
   return {};
 }
 
@@ -493,6 +494,17 @@ QueryStatus Handler::generateTile(Dali::State& theState,
     {
       theResponse.setHeader("Content-Type", mimeType(theProduct.type));
       theResponse.setContent(cached);
+      return QueryStatus::OK;
+    }
+
+    // GeoTiff: bypass CTPP/SVG pipeline entirely and return raw grid data
+    if (theProduct.type == "geotiff")
+    {
+      auto bytes = theProduct.generateGeoTiff(theState);
+      auto buffer = std::make_shared<std::string>(std::move(bytes));
+      theState.getPlugin().insertInImageCache(product_hash, buffer);
+      theResponse.setHeader("Content-Type", mimeType("geotiff"));
+      theResponse.setContent(buffer);
       return QueryStatus::OK;
     }
 

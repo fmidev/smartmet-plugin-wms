@@ -228,7 +228,8 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
     if (!boost::iequals(fmt, "xml") && !boost::iequals(fmt, "svg") && !boost::iequals(fmt, "png") &&
         !boost::iequals(fmt, "pdf") && !boost::iequals(fmt, "ps") && !boost::iequals(fmt, "webp") &&
         !boost::iequals(fmt, "geojson") && !boost::iequals(fmt, "topojson") &&
-        !boost::iequals(fmt, "kml") && !boost::iequals(fmt, "cnf"))
+        !boost::iequals(fmt, "kml") && !boost::iequals(fmt, "cnf") &&
+        !boost::iequals(fmt, "geotiff"))
     {
       throw Fmi::Exception(BCP, "Invalid 'type' value '" + fmt + "'!");
     }
@@ -287,6 +288,19 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       theResponse.setHeader("Content-Type", mimeType(product.type));
       theResponse.setHeader("X-Backend-Cache", "1");
       theResponse.setContent(obj);
+      return;
+    }
+
+    // GeoTiff: bypass CTPP/SVG pipeline entirely and return raw grid data
+    if (product.type == "geotiff")
+    {
+      auto bytes = product.generateGeoTiff(theState);
+      auto buffer = std::make_shared<std::string>(std::move(bytes));
+      itsImageCache->insert(product_hash, buffer);
+      theResponse.setHeader("Content-Type", mimeType("geotiff"));
+      if (product_hash != Fmi::bad_hash)
+        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
+      theResponse.setContent(buffer);
       return;
     }
 
@@ -936,6 +950,12 @@ std::shared_ptr<std::string> Plugin::findInImageCache(std::size_t hash) const
   if (!itsImageCache)
     return {};
   return itsImageCache->find(hash);
+}
+
+void Plugin::insertInImageCache(std::size_t hash, std::shared_ptr<std::string> data)
+{
+  if (itsImageCache && hash != Fmi::bad_hash)
+    itsImageCache->insert(hash, std::move(data));
 }
 
 // ----------------------------------------------------------------------

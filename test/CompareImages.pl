@@ -15,6 +15,7 @@ my $RESULT = $ARGV[0];
 my $EXPECTED = $ARGV[1];
 
 my $CONVERT = -e '/usr/bin/magick' ? '/usr/bin/magick' : '/usr/bin/convert';
+my $GDALINFO = -e '/usr/gdal312/bin/gdalinfo' ? '/usr/gdal312/bin/gdalinfo' : 'gdalinfo';
 
 sub ReadXmlFile {
     my ($file) = @_;
@@ -86,6 +87,33 @@ sub Cleanup {
     unlink $EXPECTED_PNG if -e $EXPECTED_PNG;
     unlink $RESULT_PNG if -e $RESULT_PNG;
     unlink $DIFFERENCE_PNG if -e $DIFFERENCE_PNG;
+}
+
+# GeoTiff: compare metadata via gdalinfo (binary TIFF bodies differ due to timestamps,
+# so we extract human-readable metadata and compare that as text instead).
+if ($MIME eq 'image/tiff')
+{
+    my $meta_result = `$GDALINFO -nofl -nomd -stats $RESULT 2>/dev/null`;
+    open my $efh, '<', $EXPECTED or die "Cannot open '$EXPECTED': $!";
+    my $meta_expected = do { local $/; <$efh> };
+    close $efh;
+
+    if ($meta_result eq $meta_expected) {
+        print "OK     ";
+        Cleanup();
+        exit(0);
+    }
+
+    # Show diff on failure
+    my $tmpfile = "/tmp/geotiff_result_meta_$$.txt";
+    open my $tmpfh, '>', $tmpfile or die "Cannot write '$tmpfile': $!";
+    print $tmpfh $meta_result;
+    close $tmpfh;
+
+    print "FAIL: GeoTiff metadata differs: $RESULT <> $EXPECTED\n";
+    system("diff -U4 $EXPECTED $tmpfile | head -n 100 | cut -c 1-128");
+    unlink $tmpfile;
+    exit(1);
 }
 
 # Create result images before exiting of EXPECTED image is missing

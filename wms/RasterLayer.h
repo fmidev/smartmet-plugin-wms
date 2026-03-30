@@ -48,6 +48,9 @@ class RasterLayer : public Layer
 
   virtual void addGridParameterInfo(ParameterInfos& infos, const State& theState) const;
 
+  // Fetch grid data and return GeoTiff bytes directly (bypasses the SVG/Cairo pipeline)
+  std::string generateGeoTiff(State& theState);
+
   std::optional<std::string> direction;
   std::optional<std::string> speed;
 

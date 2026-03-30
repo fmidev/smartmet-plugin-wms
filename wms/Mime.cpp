@@ -37,6 +37,8 @@ std::string demimetype(const std::string& theMimeType)
     return "html";
   if (theMimeType == "cnf")
     return "cnf";
+  if (theMimeType == "image/tiff")
+    return "geotiff";
 
   throw Fmi::Exception(BCP, "Unknown mime type requested: '" + theMimeType + "'");
 }
@@ -73,6 +75,8 @@ std::string mimeType(const std::string& theType)
     return "text/html";
   if (theType == "cnf")
     return "application/json";
+  if (theType == "geotiff")
+    return "image/tiff";
 
   throw Fmi::Exception(BCP, "Unknown image format '" + theType + "'");
 }

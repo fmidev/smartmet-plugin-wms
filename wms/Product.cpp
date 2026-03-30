@@ -1,5 +1,6 @@
 #include "Product.h"
 #include "Config.h"
+#include "RasterLayer.h"
 #include "Hash.h"
 #include "JsonTools.h"
 #include "State.h"
@@ -240,6 +241,33 @@ std::size_t Product::hash_value(const State& theState) const
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate GeoTiff output by finding the first geotiff layer
+ */
+// ----------------------------------------------------------------------
+
+std::string Product::generateGeoTiff(State& theState)
+{
+  try
+  {
+    for (const auto& view : views.views)
+    {
+      for (const auto& layer : view->layers.layers)
+      {
+        auto* rl = dynamic_cast<RasterLayer*>(layer.get());
+        if (rl)
+          return rl->generateGeoTiff(theState);
+      }
+    }
+    throw Fmi::Exception(BCP, "No raster/geotiff layer found in product for GeoTiff generation");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Product::generateGeoTiff failed!");
   }
 }
 

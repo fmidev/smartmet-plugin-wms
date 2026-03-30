@@ -43,6 +43,10 @@ class Product : public Properties
 
   ParameterInfos getGridParameterInfo(const State& theState) const;
 
+  // Returns GeoTiff bytes by finding the first geotiff layer in the product.
+  // Throws if no geotiff layer is found or the grid engine is unavailable.
+  std::string generateGeoTiff(State& theState);
+
   // Element specific:
   std::optional<std::string> svg_tmpl;
   std::string type;
