@@ -1,5 +1,6 @@
 //======================================================================
 #include "ArrowLayer.h"
+#include "MapboxVectorTile.h"
 #include "AggregationUtility.h"
 #include "Config.h"
 #include "GridDataGeoTiff.h"
@@ -1817,6 +1818,111 @@ std::string ArrowLayer::generateGeoTiff(State& theState)
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "ArrowLayer::generateGeoTiff failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate MVT layer with point features (qEngine path only).
+ *
+ * Each point is emitted as a POINT feature with speed, direction, and
+ * optionally symbol attributes.  PointData[0] = speed, [1] = direction,
+ * matching the convention in read_forecasts().
+ */
+// ----------------------------------------------------------------------
+
+void ArrowLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
+{
+  try
+  {
+    if (!validLayer(theState))
+      return;
+
+    // Skip observations — no qEngine model available for them
+    if (theState.isObservation(paraminfo.producer))
+      return;
+
+    // gridEngine path not yet supported for MVT; fall back to qEngine data
+    if (paraminfo.source == std::string("grid"))
+      return;
+
+    auto q = getModel(theState);
+    if (!q)
+      return;
+
+    if (!positions)
+      positions = Positions{};
+    positions->addMargins(xmargin, ymargin);
+
+    if (paraminfo.level)
+    {
+      bool match = false;
+      for (q->resetLevel(); !match && q->nextLevel();)
+        match = (q->levelValue() == *paraminfo.level);
+      if (!match)
+        throw Fmi::Exception(
+            BCP, "Level value " + Fmi::to_string(*paraminfo.level) + " is not available");
+    }
+
+    projection.update(q);
+    const auto& crs = projection.getCRS();
+    const auto& box = projection.getBox();
+
+    const auto valid_time = getValidTime();
+    positions->init(paraminfo.producer, projection, valid_time, theState);
+
+    auto pointvalues = read_forecasts(*this, q, crs, box, valid_time, theState);
+    pointvalues = prioritize(pointvalues, point_value_options);
+
+    if (pointvalues.empty())
+      return;
+
+    Fmi::CoordinateTransformation xform("WGS84", crs);
+
+    const std::string layerName = qid.empty()
+                                      ? (speed ? *speed : direction ? *direction : std::string("arrows"))
+                                      : qid;
+    auto& mvtLayer = theBuilder.layer(layerName);
+
+    for (const auto& pointvalue : pointvalues)
+    {
+      if (pointvalue.size() < 2)
+        continue;
+
+      const double wspd = pointvalue[0];
+      const double wdir = pointvalue[1];
+
+      if (wspd == kFloatMissing || wdir == kFloatMissing)
+        continue;
+
+      double x = pointvalue.point().latlon.X();
+      double y = pointvalue.point().latlon.Y();
+      if (!xform.transform(x, y))
+        continue;
+
+      OGRPoint pt(x, y);
+
+      std::vector<std::pair<std::string, MVTValue>> attrs;
+      attrs.emplace_back("speed", wspd);
+      attrs.emplace_back("direction", wdir);
+
+      if (!arrows.empty())
+      {
+        auto selection = Select::attribute(arrows, wspd);
+        if (selection && selection->symbol)
+          attrs.emplace_back("symbol", *selection->symbol);
+      }
+      else if (symbol)
+      {
+        attrs.emplace_back("symbol", *symbol);
+      }
+
+      mvtLayer.addFeature(pt, attrs);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "ArrowLayer::addMVTLayer failed!");
   }
 }
 

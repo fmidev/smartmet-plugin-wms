@@ -2,6 +2,7 @@
 
 #include "NumberLayer.h"
 #include "AggregationUtility.h"
+#include "MapboxVectorTile.h"
 #include "Config.h"
 #include "GridDataGeoTiff.h"
 #include "Hash.h"
@@ -959,6 +960,87 @@ void NumberLayer::getFeatureInfo(CTPP::CDT& theInfo, const State& theState)
         .addParameter("qid", qid)
         .addParameter("Producer", *paraminfo.producer)
         .addParameter("Parameter", paraminfo.parameter);
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate MVT layer with point features (qEngine path only).
+ */
+// ----------------------------------------------------------------------
+
+void NumberLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
+{
+  try
+  {
+    if (!validLayer(theState))
+      return;
+    if (paraminfo.parameter.empty())
+      return;
+
+    // Skip observations — no qEngine model available for them
+    if (theState.isObservation(paraminfo.producer))
+      return;
+
+    // gridEngine path not yet supported for MVT; fall back to qEngine data
+    if (paraminfo.source == std::string("grid"))
+      return;
+
+    auto q = getModel(theState);
+    if (!q)
+      return;
+
+    if (!positions)
+      positions = Positions{};
+    positions->addMargins(xmargin, ymargin);
+
+    projection.update(q);
+    const auto& crs = projection.getCRS();
+    const auto& box = projection.getBox();
+
+    const auto valid_time = getValidTime();
+    positions->init(paraminfo.producer, projection, valid_time, theState);
+
+    auto pointvalues = read_forecasts(*this, q, crs, box, valid_time, theState);
+    pointvalues = prioritize(pointvalues, point_value_options);
+
+    if (pointvalues.empty())
+      return;
+
+    Fmi::CoordinateTransformation xform("WGS84", crs);
+
+    const std::string layerName = qid.empty() ? paraminfo.parameter : qid;
+    auto& mvtLayer = theBuilder.layer(layerName);
+
+    const double xmultiplier = (multiplier ? *multiplier : 1.0);
+    const double xoffset = (offset ? *offset : 0.0);
+
+    for (const auto& pointvalue : pointvalues)
+    {
+      auto value = pointvalue[0];
+      if (value == kFloatMissing)
+        continue;
+
+      value = xmultiplier * value + xoffset;
+
+      double x = pointvalue.point().latlon.X();
+      double y = pointvalue.point().latlon.Y();
+      if (!xform.transform(x, y))
+        continue;
+
+      OGRPoint pt(x, y);
+
+      std::vector<std::pair<std::string, MVTValue>> attrs;
+      attrs.emplace_back("parameter", paraminfo.parameter);
+      attrs.emplace_back("value", value);
+      attrs.emplace_back("text", label.print(static_cast<float>(value)));
+
+      mvtLayer.addFeature(pt, attrs);
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "NumberLayer::addMVTLayer failed!");
   }
 }
 

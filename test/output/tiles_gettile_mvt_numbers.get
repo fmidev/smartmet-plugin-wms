@@ -1,0 +1,6812 @@
+layers {
+  name: "l1"
+  features {
+    tags: 0
+    tags: 0
+    tags: 1
+    tags: 1
+    tags: 2
+    tags: 2
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 3
+    tags: 1
+    tags: 4
+    tags: 2
+    tags: 5
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 6
+    tags: 1
+    tags: 7
+    tags: 2
+    tags: 8
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 9
+    tags: 1
+    tags: 10
+    tags: 2
+    tags: 11
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 12
+    tags: 1
+    tags: 13
+    tags: 2
+    tags: 14
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 15
+    tags: 1
+    tags: 16
+    tags: 2
+    tags: 17
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 18
+    tags: 1
+    tags: 19
+    tags: 2
+    tags: 20
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 21
+    tags: 1
+    tags: 22
+    tags: 2
+    tags: 23
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 24
+    tags: 1
+    tags: 25
+    tags: 2
+    tags: 26
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 27
+    tags: 1
+    tags: 28
+    tags: 2
+    tags: 29
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 30
+    tags: 1
+    tags: 31
+    tags: 2
+    tags: 32
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 33
+    tags: 1
+    tags: 34
+    tags: 2
+    tags: 35
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 36
+    tags: 1
+    tags: 37
+    tags: 2
+    tags: 38
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 39
+    tags: 1
+    tags: 40
+    tags: 2
+    tags: 41
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 42
+    tags: 1
+    tags: 43
+    tags: 2
+    tags: 44
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 45
+    tags: 1
+    tags: 46
+    tags: 2
+    tags: 47
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 48
+    tags: 1
+    tags: 49
+    tags: 2
+    tags: 50
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 51
+    tags: 1
+    tags: 52
+    tags: 2
+    tags: 53
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 40
+  }
+  features {
+    tags: 0
+    tags: 54
+    tags: 1
+    tags: 55
+    tags: 2
+    tags: 56
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 57
+    tags: 1
+    tags: 58
+    tags: 2
+    tags: 59
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 60
+    tags: 1
+    tags: 61
+    tags: 2
+    tags: 62
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 63
+    tags: 1
+    tags: 64
+    tags: 2
+    tags: 65
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 66
+    tags: 1
+    tags: 67
+    tags: 2
+    tags: 68
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 69
+    tags: 1
+    tags: 70
+    tags: 2
+    tags: 71
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 72
+    tags: 1
+    tags: 73
+    tags: 2
+    tags: 74
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 75
+    tags: 1
+    tags: 76
+    tags: 2
+    tags: 77
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 78
+    tags: 1
+    tags: 79
+    tags: 2
+    tags: 80
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 81
+    tags: 1
+    tags: 82
+    tags: 2
+    tags: 83
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 84
+    tags: 1
+    tags: 85
+    tags: 2
+    tags: 86
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 87
+    tags: 1
+    tags: 88
+    tags: 2
+    tags: 89
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 90
+    tags: 1
+    tags: 91
+    tags: 2
+    tags: 92
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 93
+    tags: 1
+    tags: 94
+    tags: 2
+    tags: 95
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 96
+    tags: 1
+    tags: 97
+    tags: 2
+    tags: 98
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 99
+    tags: 1
+    tags: 100
+    tags: 2
+    tags: 101
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 102
+    tags: 1
+    tags: 103
+    tags: 2
+    tags: 104
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 105
+    tags: 1
+    tags: 106
+    tags: 2
+    tags: 107
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 520
+  }
+  features {
+    tags: 0
+    tags: 108
+    tags: 1
+    tags: 109
+    tags: 2
+    tags: 110
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 111
+    tags: 1
+    tags: 112
+    tags: 2
+    tags: 113
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 114
+    tags: 1
+    tags: 115
+    tags: 2
+    tags: 116
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 117
+    tags: 1
+    tags: 118
+    tags: 2
+    tags: 119
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 120
+    tags: 1
+    tags: 121
+    tags: 2
+    tags: 122
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 123
+    tags: 1
+    tags: 124
+    tags: 2
+    tags: 125
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 126
+    tags: 1
+    tags: 127
+    tags: 2
+    tags: 128
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 129
+    tags: 1
+    tags: 130
+    tags: 2
+    tags: 131
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 132
+    tags: 1
+    tags: 133
+    tags: 2
+    tags: 134
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 135
+    tags: 1
+    tags: 136
+    tags: 2
+    tags: 137
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 138
+    tags: 1
+    tags: 139
+    tags: 2
+    tags: 140
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 141
+    tags: 1
+    tags: 142
+    tags: 2
+    tags: 143
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 144
+    tags: 1
+    tags: 145
+    tags: 2
+    tags: 146
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 147
+    tags: 1
+    tags: 148
+    tags: 2
+    tags: 149
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 150
+    tags: 1
+    tags: 151
+    tags: 2
+    tags: 152
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 153
+    tags: 1
+    tags: 154
+    tags: 2
+    tags: 155
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 156
+    tags: 1
+    tags: 157
+    tags: 2
+    tags: 158
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 159
+    tags: 1
+    tags: 160
+    tags: 2
+    tags: 161
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 1000
+  }
+  features {
+    tags: 0
+    tags: 162
+    tags: 1
+    tags: 163
+    tags: 2
+    tags: 164
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 165
+    tags: 1
+    tags: 166
+    tags: 2
+    tags: 167
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 168
+    tags: 1
+    tags: 169
+    tags: 2
+    tags: 170
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 171
+    tags: 1
+    tags: 172
+    tags: 2
+    tags: 173
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 174
+    tags: 1
+    tags: 175
+    tags: 2
+    tags: 176
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 177
+    tags: 1
+    tags: 178
+    tags: 2
+    tags: 179
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 180
+    tags: 1
+    tags: 181
+    tags: 2
+    tags: 182
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 183
+    tags: 1
+    tags: 184
+    tags: 2
+    tags: 185
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 186
+    tags: 1
+    tags: 187
+    tags: 2
+    tags: 188
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 189
+    tags: 1
+    tags: 190
+    tags: 2
+    tags: 191
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 192
+    tags: 1
+    tags: 193
+    tags: 2
+    tags: 194
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 195
+    tags: 1
+    tags: 196
+    tags: 2
+    tags: 197
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 198
+    tags: 1
+    tags: 199
+    tags: 2
+    tags: 200
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 201
+    tags: 1
+    tags: 202
+    tags: 2
+    tags: 203
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 204
+    tags: 1
+    tags: 205
+    tags: 2
+    tags: 206
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 207
+    tags: 1
+    tags: 208
+    tags: 2
+    tags: 209
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 210
+    tags: 1
+    tags: 211
+    tags: 2
+    tags: 212
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 213
+    tags: 1
+    tags: 214
+    tags: 2
+    tags: 215
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 1480
+  }
+  features {
+    tags: 0
+    tags: 216
+    tags: 1
+    tags: 217
+    tags: 2
+    tags: 218
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 219
+    tags: 1
+    tags: 220
+    tags: 2
+    tags: 221
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 222
+    tags: 1
+    tags: 223
+    tags: 2
+    tags: 224
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 225
+    tags: 1
+    tags: 226
+    tags: 2
+    tags: 227
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 228
+    tags: 1
+    tags: 229
+    tags: 2
+    tags: 230
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 231
+    tags: 1
+    tags: 232
+    tags: 2
+    tags: 233
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 234
+    tags: 1
+    tags: 235
+    tags: 2
+    tags: 236
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 237
+    tags: 1
+    tags: 238
+    tags: 2
+    tags: 239
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 240
+    tags: 1
+    tags: 241
+    tags: 2
+    tags: 242
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 243
+    tags: 1
+    tags: 244
+    tags: 2
+    tags: 245
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 246
+    tags: 1
+    tags: 247
+    tags: 2
+    tags: 248
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 249
+    tags: 1
+    tags: 250
+    tags: 2
+    tags: 251
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 252
+    tags: 1
+    tags: 253
+    tags: 2
+    tags: 254
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 255
+    tags: 1
+    tags: 256
+    tags: 2
+    tags: 257
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 258
+    tags: 1
+    tags: 259
+    tags: 2
+    tags: 260
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 261
+    tags: 1
+    tags: 262
+    tags: 2
+    tags: 263
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 264
+    tags: 1
+    tags: 265
+    tags: 2
+    tags: 266
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 267
+    tags: 1
+    tags: 268
+    tags: 2
+    tags: 269
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 1960
+  }
+  features {
+    tags: 0
+    tags: 270
+    tags: 1
+    tags: 271
+    tags: 2
+    tags: 272
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 273
+    tags: 1
+    tags: 274
+    tags: 2
+    tags: 275
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 276
+    tags: 1
+    tags: 277
+    tags: 2
+    tags: 278
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 279
+    tags: 1
+    tags: 280
+    tags: 2
+    tags: 281
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 282
+    tags: 1
+    tags: 283
+    tags: 2
+    tags: 284
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 285
+    tags: 1
+    tags: 286
+    tags: 2
+    tags: 287
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 288
+    tags: 1
+    tags: 289
+    tags: 2
+    tags: 290
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 291
+    tags: 1
+    tags: 292
+    tags: 2
+    tags: 293
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 294
+    tags: 1
+    tags: 295
+    tags: 2
+    tags: 296
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 297
+    tags: 1
+    tags: 298
+    tags: 2
+    tags: 299
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 300
+    tags: 1
+    tags: 301
+    tags: 2
+    tags: 302
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 303
+    tags: 1
+    tags: 304
+    tags: 2
+    tags: 305
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 306
+    tags: 1
+    tags: 307
+    tags: 2
+    tags: 308
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 309
+    tags: 1
+    tags: 310
+    tags: 2
+    tags: 311
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 312
+    tags: 1
+    tags: 313
+    tags: 2
+    tags: 314
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 315
+    tags: 1
+    tags: 316
+    tags: 2
+    tags: 317
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 318
+    tags: 1
+    tags: 319
+    tags: 2
+    tags: 320
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 321
+    tags: 1
+    tags: 322
+    tags: 2
+    tags: 323
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 2440
+  }
+  features {
+    tags: 0
+    tags: 324
+    tags: 1
+    tags: 325
+    tags: 2
+    tags: 326
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 327
+    tags: 1
+    tags: 328
+    tags: 2
+    tags: 329
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 330
+    tags: 1
+    tags: 331
+    tags: 2
+    tags: 332
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 333
+    tags: 1
+    tags: 334
+    tags: 2
+    tags: 335
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 336
+    tags: 1
+    tags: 337
+    tags: 2
+    tags: 338
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 339
+    tags: 1
+    tags: 340
+    tags: 2
+    tags: 341
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 342
+    tags: 1
+    tags: 343
+    tags: 2
+    tags: 344
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 345
+    tags: 1
+    tags: 346
+    tags: 2
+    tags: 347
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 348
+    tags: 1
+    tags: 349
+    tags: 2
+    tags: 350
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 351
+    tags: 1
+    tags: 352
+    tags: 2
+    tags: 353
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 354
+    tags: 1
+    tags: 355
+    tags: 2
+    tags: 356
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 357
+    tags: 1
+    tags: 358
+    tags: 2
+    tags: 359
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 360
+    tags: 1
+    tags: 361
+    tags: 2
+    tags: 362
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 363
+    tags: 1
+    tags: 364
+    tags: 2
+    tags: 365
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 366
+    tags: 1
+    tags: 367
+    tags: 2
+    tags: 368
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 369
+    tags: 1
+    tags: 370
+    tags: 2
+    tags: 371
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 372
+    tags: 1
+    tags: 373
+    tags: 2
+    tags: 374
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 375
+    tags: 1
+    tags: 376
+    tags: 2
+    tags: 377
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 2920
+  }
+  features {
+    tags: 0
+    tags: 378
+    tags: 1
+    tags: 379
+    tags: 2
+    tags: 380
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 381
+    tags: 1
+    tags: 382
+    tags: 2
+    tags: 383
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 384
+    tags: 1
+    tags: 385
+    tags: 2
+    tags: 386
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 387
+    tags: 1
+    tags: 388
+    tags: 2
+    tags: 389
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 390
+    tags: 1
+    tags: 391
+    tags: 2
+    tags: 392
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 393
+    tags: 1
+    tags: 394
+    tags: 2
+    tags: 395
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 396
+    tags: 1
+    tags: 397
+    tags: 2
+    tags: 398
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 399
+    tags: 1
+    tags: 400
+    tags: 2
+    tags: 401
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 402
+    tags: 1
+    tags: 403
+    tags: 2
+    tags: 404
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 405
+    tags: 1
+    tags: 406
+    tags: 2
+    tags: 407
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 408
+    tags: 1
+    tags: 409
+    tags: 2
+    tags: 410
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 411
+    tags: 1
+    tags: 412
+    tags: 2
+    tags: 413
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 414
+    tags: 1
+    tags: 415
+    tags: 2
+    tags: 416
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 417
+    tags: 1
+    tags: 418
+    tags: 2
+    tags: 419
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 420
+    tags: 1
+    tags: 421
+    tags: 2
+    tags: 422
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 423
+    tags: 1
+    tags: 424
+    tags: 2
+    tags: 425
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 426
+    tags: 1
+    tags: 427
+    tags: 2
+    tags: 428
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 429
+    tags: 1
+    tags: 430
+    tags: 2
+    tags: 431
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 3400
+  }
+  features {
+    tags: 0
+    tags: 432
+    tags: 1
+    tags: 433
+    tags: 2
+    tags: 434
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 435
+    tags: 1
+    tags: 436
+    tags: 2
+    tags: 437
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 438
+    tags: 1
+    tags: 439
+    tags: 2
+    tags: 440
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 441
+    tags: 1
+    tags: 442
+    tags: 2
+    tags: 443
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 444
+    tags: 1
+    tags: 445
+    tags: 2
+    tags: 446
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 447
+    tags: 1
+    tags: 448
+    tags: 2
+    tags: 449
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 450
+    tags: 1
+    tags: 451
+    tags: 2
+    tags: 452
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 453
+    tags: 1
+    tags: 454
+    tags: 2
+    tags: 455
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 456
+    tags: 1
+    tags: 457
+    tags: 2
+    tags: 458
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 459
+    tags: 1
+    tags: 460
+    tags: 2
+    tags: 461
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 462
+    tags: 1
+    tags: 463
+    tags: 2
+    tags: 464
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 465
+    tags: 1
+    tags: 466
+    tags: 2
+    tags: 467
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 468
+    tags: 1
+    tags: 469
+    tags: 2
+    tags: 470
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 471
+    tags: 1
+    tags: 472
+    tags: 2
+    tags: 473
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 474
+    tags: 1
+    tags: 475
+    tags: 2
+    tags: 476
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 477
+    tags: 1
+    tags: 478
+    tags: 2
+    tags: 479
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 480
+    tags: 1
+    tags: 481
+    tags: 2
+    tags: 482
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 483
+    tags: 1
+    tags: 484
+    tags: 2
+    tags: 485
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 3880
+  }
+  features {
+    tags: 0
+    tags: 486
+    tags: 1
+    tags: 487
+    tags: 2
+    tags: 488
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 489
+    tags: 1
+    tags: 490
+    tags: 2
+    tags: 491
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 492
+    tags: 1
+    tags: 493
+    tags: 2
+    tags: 494
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 495
+    tags: 1
+    tags: 496
+    tags: 2
+    tags: 497
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 498
+    tags: 1
+    tags: 499
+    tags: 2
+    tags: 500
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 501
+    tags: 1
+    tags: 502
+    tags: 2
+    tags: 503
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 504
+    tags: 1
+    tags: 505
+    tags: 2
+    tags: 506
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 507
+    tags: 1
+    tags: 508
+    tags: 2
+    tags: 509
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 510
+    tags: 1
+    tags: 511
+    tags: 2
+    tags: 512
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 513
+    tags: 1
+    tags: 514
+    tags: 2
+    tags: 515
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 516
+    tags: 1
+    tags: 517
+    tags: 2
+    tags: 518
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 519
+    tags: 1
+    tags: 520
+    tags: 2
+    tags: 521
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 522
+    tags: 1
+    tags: 523
+    tags: 2
+    tags: 524
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 525
+    tags: 1
+    tags: 526
+    tags: 2
+    tags: 527
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 528
+    tags: 1
+    tags: 529
+    tags: 2
+    tags: 530
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 531
+    tags: 1
+    tags: 532
+    tags: 2
+    tags: 533
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 534
+    tags: 1
+    tags: 535
+    tags: 2
+    tags: 536
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 537
+    tags: 1
+    tags: 538
+    tags: 2
+    tags: 539
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 4360
+  }
+  features {
+    tags: 0
+    tags: 540
+    tags: 1
+    tags: 541
+    tags: 2
+    tags: 542
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 543
+    tags: 1
+    tags: 544
+    tags: 2
+    tags: 545
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 546
+    tags: 1
+    tags: 547
+    tags: 2
+    tags: 548
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 549
+    tags: 1
+    tags: 550
+    tags: 2
+    tags: 551
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 552
+    tags: 1
+    tags: 553
+    tags: 2
+    tags: 554
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 555
+    tags: 1
+    tags: 556
+    tags: 2
+    tags: 557
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 558
+    tags: 1
+    tags: 559
+    tags: 2
+    tags: 560
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 561
+    tags: 1
+    tags: 562
+    tags: 2
+    tags: 563
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 564
+    tags: 1
+    tags: 565
+    tags: 2
+    tags: 566
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 567
+    tags: 1
+    tags: 568
+    tags: 2
+    tags: 569
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 570
+    tags: 1
+    tags: 571
+    tags: 2
+    tags: 572
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 573
+    tags: 1
+    tags: 574
+    tags: 2
+    tags: 575
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 576
+    tags: 1
+    tags: 577
+    tags: 2
+    tags: 578
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 579
+    tags: 1
+    tags: 580
+    tags: 2
+    tags: 581
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 582
+    tags: 1
+    tags: 583
+    tags: 2
+    tags: 584
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 585
+    tags: 1
+    tags: 586
+    tags: 2
+    tags: 587
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 588
+    tags: 1
+    tags: 589
+    tags: 2
+    tags: 590
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 591
+    tags: 1
+    tags: 592
+    tags: 2
+    tags: 593
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 4840
+  }
+  features {
+    tags: 0
+    tags: 594
+    tags: 1
+    tags: 595
+    tags: 2
+    tags: 596
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 597
+    tags: 1
+    tags: 598
+    tags: 2
+    tags: 599
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 600
+    tags: 1
+    tags: 601
+    tags: 2
+    tags: 602
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 603
+    tags: 1
+    tags: 604
+    tags: 2
+    tags: 605
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 606
+    tags: 1
+    tags: 607
+    tags: 2
+    tags: 608
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 609
+    tags: 1
+    tags: 610
+    tags: 2
+    tags: 611
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 612
+    tags: 1
+    tags: 613
+    tags: 2
+    tags: 614
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 615
+    tags: 1
+    tags: 616
+    tags: 2
+    tags: 617
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 618
+    tags: 1
+    tags: 619
+    tags: 2
+    tags: 620
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 621
+    tags: 1
+    tags: 622
+    tags: 2
+    tags: 623
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 624
+    tags: 1
+    tags: 625
+    tags: 2
+    tags: 626
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 627
+    tags: 1
+    tags: 628
+    tags: 2
+    tags: 629
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 630
+    tags: 1
+    tags: 631
+    tags: 2
+    tags: 632
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 633
+    tags: 1
+    tags: 634
+    tags: 2
+    tags: 635
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 636
+    tags: 1
+    tags: 637
+    tags: 2
+    tags: 638
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 639
+    tags: 1
+    tags: 640
+    tags: 2
+    tags: 641
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 642
+    tags: 1
+    tags: 643
+    tags: 2
+    tags: 644
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 645
+    tags: 1
+    tags: 646
+    tags: 2
+    tags: 647
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 5320
+  }
+  features {
+    tags: 0
+    tags: 648
+    tags: 1
+    tags: 649
+    tags: 2
+    tags: 650
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 651
+    tags: 1
+    tags: 652
+    tags: 2
+    tags: 653
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 654
+    tags: 1
+    tags: 655
+    tags: 2
+    tags: 656
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 657
+    tags: 1
+    tags: 658
+    tags: 2
+    tags: 659
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 660
+    tags: 1
+    tags: 661
+    tags: 2
+    tags: 662
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 663
+    tags: 1
+    tags: 664
+    tags: 2
+    tags: 665
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 666
+    tags: 1
+    tags: 667
+    tags: 2
+    tags: 668
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 669
+    tags: 1
+    tags: 670
+    tags: 2
+    tags: 671
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 672
+    tags: 1
+    tags: 673
+    tags: 2
+    tags: 674
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 675
+    tags: 1
+    tags: 676
+    tags: 2
+    tags: 677
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 678
+    tags: 1
+    tags: 679
+    tags: 2
+    tags: 680
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 681
+    tags: 1
+    tags: 682
+    tags: 2
+    tags: 683
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 684
+    tags: 1
+    tags: 685
+    tags: 2
+    tags: 686
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 687
+    tags: 1
+    tags: 688
+    tags: 2
+    tags: 689
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 690
+    tags: 1
+    tags: 691
+    tags: 2
+    tags: 692
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 693
+    tags: 1
+    tags: 694
+    tags: 2
+    tags: 695
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 696
+    tags: 1
+    tags: 697
+    tags: 2
+    tags: 698
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 699
+    tags: 1
+    tags: 700
+    tags: 2
+    tags: 701
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 5800
+  }
+  features {
+    tags: 0
+    tags: 702
+    tags: 1
+    tags: 703
+    tags: 2
+    tags: 704
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 705
+    tags: 1
+    tags: 706
+    tags: 2
+    tags: 707
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 708
+    tags: 1
+    tags: 709
+    tags: 2
+    tags: 710
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 711
+    tags: 1
+    tags: 712
+    tags: 2
+    tags: 713
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 714
+    tags: 1
+    tags: 715
+    tags: 2
+    tags: 716
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 717
+    tags: 1
+    tags: 718
+    tags: 2
+    tags: 719
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 720
+    tags: 1
+    tags: 721
+    tags: 2
+    tags: 722
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 723
+    tags: 1
+    tags: 724
+    tags: 2
+    tags: 725
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 726
+    tags: 1
+    tags: 727
+    tags: 2
+    tags: 728
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 729
+    tags: 1
+    tags: 730
+    tags: 2
+    tags: 731
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 732
+    tags: 1
+    tags: 733
+    tags: 2
+    tags: 734
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 735
+    tags: 1
+    tags: 736
+    tags: 2
+    tags: 737
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 738
+    tags: 1
+    tags: 739
+    tags: 2
+    tags: 740
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 741
+    tags: 1
+    tags: 742
+    tags: 2
+    tags: 743
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 744
+    tags: 1
+    tags: 745
+    tags: 2
+    tags: 746
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 747
+    tags: 1
+    tags: 748
+    tags: 2
+    tags: 749
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 750
+    tags: 1
+    tags: 751
+    tags: 2
+    tags: 752
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 753
+    tags: 1
+    tags: 754
+    tags: 2
+    tags: 755
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 6280
+  }
+  features {
+    tags: 0
+    tags: 756
+    tags: 1
+    tags: 757
+    tags: 2
+    tags: 758
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 759
+    tags: 1
+    tags: 760
+    tags: 2
+    tags: 761
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 762
+    tags: 1
+    tags: 763
+    tags: 2
+    tags: 764
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 765
+    tags: 1
+    tags: 766
+    tags: 2
+    tags: 767
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 768
+    tags: 1
+    tags: 769
+    tags: 2
+    tags: 770
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 771
+    tags: 1
+    tags: 772
+    tags: 2
+    tags: 773
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 774
+    tags: 1
+    tags: 775
+    tags: 2
+    tags: 776
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 777
+    tags: 1
+    tags: 778
+    tags: 2
+    tags: 779
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 780
+    tags: 1
+    tags: 781
+    tags: 2
+    tags: 782
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 783
+    tags: 1
+    tags: 784
+    tags: 2
+    tags: 785
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 786
+    tags: 1
+    tags: 787
+    tags: 2
+    tags: 788
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 789
+    tags: 1
+    tags: 790
+    tags: 2
+    tags: 791
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 792
+    tags: 1
+    tags: 793
+    tags: 2
+    tags: 794
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 795
+    tags: 1
+    tags: 796
+    tags: 2
+    tags: 797
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 798
+    tags: 1
+    tags: 799
+    tags: 2
+    tags: 800
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 801
+    tags: 1
+    tags: 802
+    tags: 2
+    tags: 803
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 804
+    tags: 1
+    tags: 805
+    tags: 2
+    tags: 806
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 807
+    tags: 1
+    tags: 808
+    tags: 2
+    tags: 809
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 6760
+  }
+  features {
+    tags: 0
+    tags: 810
+    tags: 1
+    tags: 811
+    tags: 2
+    tags: 812
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 813
+    tags: 1
+    tags: 814
+    tags: 2
+    tags: 815
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 816
+    tags: 1
+    tags: 817
+    tags: 2
+    tags: 818
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 819
+    tags: 1
+    tags: 820
+    tags: 2
+    tags: 821
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 822
+    tags: 1
+    tags: 823
+    tags: 2
+    tags: 824
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 825
+    tags: 1
+    tags: 826
+    tags: 2
+    tags: 827
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 828
+    tags: 1
+    tags: 829
+    tags: 2
+    tags: 830
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 831
+    tags: 1
+    tags: 832
+    tags: 2
+    tags: 833
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 834
+    tags: 1
+    tags: 835
+    tags: 2
+    tags: 836
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 837
+    tags: 1
+    tags: 838
+    tags: 2
+    tags: 839
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 840
+    tags: 1
+    tags: 841
+    tags: 2
+    tags: 842
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 843
+    tags: 1
+    tags: 844
+    tags: 2
+    tags: 845
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 846
+    tags: 1
+    tags: 847
+    tags: 2
+    tags: 848
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 849
+    tags: 1
+    tags: 850
+    tags: 2
+    tags: 851
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 852
+    tags: 1
+    tags: 853
+    tags: 2
+    tags: 854
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 855
+    tags: 1
+    tags: 856
+    tags: 2
+    tags: 857
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 858
+    tags: 1
+    tags: 859
+    tags: 2
+    tags: 860
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 861
+    tags: 1
+    tags: 862
+    tags: 2
+    tags: 863
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 7240
+  }
+  features {
+    tags: 0
+    tags: 864
+    tags: 1
+    tags: 865
+    tags: 2
+    tags: 866
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 867
+    tags: 1
+    tags: 868
+    tags: 2
+    tags: 869
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 870
+    tags: 1
+    tags: 871
+    tags: 2
+    tags: 872
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 873
+    tags: 1
+    tags: 874
+    tags: 2
+    tags: 875
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 876
+    tags: 1
+    tags: 877
+    tags: 2
+    tags: 878
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 879
+    tags: 1
+    tags: 880
+    tags: 2
+    tags: 881
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 882
+    tags: 1
+    tags: 883
+    tags: 2
+    tags: 884
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 885
+    tags: 1
+    tags: 886
+    tags: 2
+    tags: 887
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 888
+    tags: 1
+    tags: 889
+    tags: 2
+    tags: 890
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 891
+    tags: 1
+    tags: 892
+    tags: 2
+    tags: 893
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 894
+    tags: 1
+    tags: 895
+    tags: 2
+    tags: 896
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 897
+    tags: 1
+    tags: 898
+    tags: 2
+    tags: 899
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 900
+    tags: 1
+    tags: 901
+    tags: 2
+    tags: 902
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 903
+    tags: 1
+    tags: 904
+    tags: 2
+    tags: 905
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 906
+    tags: 1
+    tags: 907
+    tags: 2
+    tags: 908
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 909
+    tags: 1
+    tags: 910
+    tags: 2
+    tags: 911
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 912
+    tags: 1
+    tags: 913
+    tags: 2
+    tags: 914
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 915
+    tags: 1
+    tags: 916
+    tags: 2
+    tags: 917
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 7720
+  }
+  features {
+    tags: 0
+    tags: 918
+    tags: 1
+    tags: 919
+    tags: 2
+    tags: 920
+    type: POINT
+    geometry: 9
+    geometry: 40
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 921
+    tags: 1
+    tags: 922
+    tags: 2
+    tags: 923
+    type: POINT
+    geometry: 9
+    geometry: 520
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 924
+    tags: 1
+    tags: 925
+    tags: 2
+    tags: 926
+    type: POINT
+    geometry: 9
+    geometry: 1000
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 927
+    tags: 1
+    tags: 928
+    tags: 2
+    tags: 929
+    type: POINT
+    geometry: 9
+    geometry: 1480
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 930
+    tags: 1
+    tags: 931
+    tags: 2
+    tags: 932
+    type: POINT
+    geometry: 9
+    geometry: 1960
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 933
+    tags: 1
+    tags: 934
+    tags: 2
+    tags: 935
+    type: POINT
+    geometry: 9
+    geometry: 2440
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 936
+    tags: 1
+    tags: 937
+    tags: 2
+    tags: 938
+    type: POINT
+    geometry: 9
+    geometry: 2920
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 939
+    tags: 1
+    tags: 940
+    tags: 2
+    tags: 941
+    type: POINT
+    geometry: 9
+    geometry: 3400
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 942
+    tags: 1
+    tags: 943
+    tags: 2
+    tags: 944
+    type: POINT
+    geometry: 9
+    geometry: 3880
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 945
+    tags: 1
+    tags: 946
+    tags: 2
+    tags: 947
+    type: POINT
+    geometry: 9
+    geometry: 4360
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 948
+    tags: 1
+    tags: 949
+    tags: 2
+    tags: 950
+    type: POINT
+    geometry: 9
+    geometry: 4840
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 951
+    tags: 1
+    tags: 952
+    tags: 2
+    tags: 953
+    type: POINT
+    geometry: 9
+    geometry: 5320
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 954
+    tags: 1
+    tags: 955
+    tags: 2
+    tags: 956
+    type: POINT
+    geometry: 9
+    geometry: 5800
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 957
+    tags: 1
+    tags: 958
+    tags: 2
+    tags: 959
+    type: POINT
+    geometry: 9
+    geometry: 6280
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 960
+    tags: 1
+    tags: 961
+    tags: 2
+    tags: 962
+    type: POINT
+    geometry: 9
+    geometry: 6760
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 963
+    tags: 1
+    tags: 964
+    tags: 2
+    tags: 965
+    type: POINT
+    geometry: 9
+    geometry: 7240
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 966
+    tags: 1
+    tags: 967
+    tags: 2
+    tags: 968
+    type: POINT
+    geometry: 9
+    geometry: 7720
+    geometry: 8200
+  }
+  features {
+    tags: 0
+    tags: 969
+    tags: 1
+    tags: 970
+    tags: 2
+    tags: 971
+    type: POINT
+    geometry: 9
+    geometry: 8200
+    geometry: 8200
+  }
+  keys: "parameter"
+  keys: "value"
+  keys: "text"
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.033754825592041
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.6702089309692383
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.1491260528564453
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.3741154670715332
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.3074984550476074
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.65318489074707
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.53044319152832
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.2579536437988281
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.94856595993042
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.9145231246948242
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.025606632232666
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.82630729675293
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.737339973449707
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.5602288246154785
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.7332887649536133
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.3986592292785645
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.77587890625
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.9922442436218262
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.7931044101715088
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.955864429473877
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.3404843807220459
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.635263204574585
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.0603599548339844
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.0327444076538086
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.4094710350036621
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.406104564666748
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.2963118553161621
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.3794431686401367
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.9738726615905762
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.8900084495544434
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.52072811126709
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.994117259979248
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.2021818161010742
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.18245267868042
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.7492513656616211
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.0235066413879395
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.6432352066040039
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.3520529270172119
+  }
+  values {
+    string_value: "2"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.1195828914642334
+  }
+  values {
+    string_value: "2"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 1.5046408176422119
+  }
+  values {
+    string_value: "2"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.2090277671813965
+  }
+  values {
+    string_value: "2"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.6529026031494141
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.912569522857666
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.3118240833282471
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.6135537624359131
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.5427699089050293
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.893437385559082
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.9898061752319336
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.5345773696899414
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.7323498725891113
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.6132469177246094
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.3887405395507812
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.1843647956848145
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.422694206237793
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.0973267555236816
+  }
+  values {
+    string_value: "2"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.5574891567230225
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.35723876953125
+  }
+  values {
+    string_value: "2"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.1362955570220947
+  }
+  values {
+    string_value: "2"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.4409148693084717
+  }
+  values {
+    string_value: "2"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.3918001651763916
+  }
+  values {
+    string_value: "2"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.5091304779052734
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.6025068759918213
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.7393901348114014
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.3169817924499512
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.0855917930603027
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.3370046615600586
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.4375119209289551
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.9484777450561523
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.0805983543396
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.1572561264038086
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.0961198806762695
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.8391008377075195
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 1.6080844402313232
+  }
+  values {
+    string_value: "2"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.3908464908599854
+  }
+  values {
+    string_value: "2"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.426079273223877
+  }
+  values {
+    string_value: "2"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.706179141998291
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.2509922981262207
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.3670177459716797
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.4610657691955566
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.5361087322235107
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.2980937957763672
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.9155488014221191
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.9835755825042725
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.85170841217041
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.947871208190918
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.6045007705688477
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.1509132385253906
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.8121218681335449
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.8822455406188965
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.7602691650390625
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.0300230979919434
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.8003311157226562
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.8288893699646
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.8814558982849121
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.9798297882080078
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.8695077896118164
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.9065546989440918
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.9261322021484375
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.4704313278198242
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.1289818286895752
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.7842869758605957
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 2.8060100078582764
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.2472517490386963
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.9309399127960205
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.5828356742858887
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.47715425491333
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.0354738235473633
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.0775852203369141
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 11.665759086608887
+  }
+  values {
+    string_value: "12"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 12.139589309692383
+  }
+  values {
+    string_value: "12"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 12.048784255981445
+  }
+  values {
+    string_value: "12"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 11.643501281738281
+  }
+  values {
+    string_value: "12"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 11.195476531982422
+  }
+  values {
+    string_value: "11"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 10.54185676574707
+  }
+  values {
+    string_value: "11"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 9.6538839340209961
+  }
+  values {
+    string_value: "10"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.5831584930419922
+  }
+  values {
+    string_value: "9"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.888237476348877
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.9026093482971191
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.7139627933502197
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.25006103515625
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.0495016574859619
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.06477689743042
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.6667239665985107
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.5819339752197266
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.1682987213134766
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.5653390884399414
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 12.56999397277832
+  }
+  values {
+    string_value: "13"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 12.246899604797363
+  }
+  values {
+    string_value: "12"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 11.870430946350098
+  }
+  values {
+    string_value: "12"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 11.444517135620117
+  }
+  values {
+    string_value: "11"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 11.00428295135498
+  }
+  values {
+    string_value: "11"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 10.405867576599121
+  }
+  values {
+    string_value: "10"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 9.2857065200805664
+  }
+  values {
+    string_value: "9"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.1556587219238281
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.6102128028869629
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.9404520988464355
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.1283025741577148
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.5043509006500244
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.0734384059906006
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.086134672164917
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.3157718181610107
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.7170398235321045
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.251528263092041
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.7457971572875977
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 11.943882942199707
+  }
+  values {
+    string_value: "12"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 11.429884910583496
+  }
+  values {
+    string_value: "11"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 10.82152271270752
+  }
+  values {
+    string_value: "11"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 10.2296724319458
+  }
+  values {
+    string_value: "10"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 9.5632305145263672
+  }
+  values {
+    string_value: "10"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.6499834060668945
+  }
+  values {
+    string_value: "9"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.1280026435852051
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.1710300445556641
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.0170192718505859
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.7873024940490723
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.6191363334655762
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.0827498435974121
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.6461119651794434
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.2582998275756836
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.2344515323638916
+  }
+  values {
+    string_value: "3"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.5113980770111084
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.7435081005096436
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.6818654537200928
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 11.356359481811523
+  }
+  values {
+    string_value: "11"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 10.567864418029785
+  }
+  values {
+    string_value: "11"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 9.6596403121948242
+  }
+  values {
+    string_value: "10"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.7843418121337891
+  }
+  values {
+    string_value: "9"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.5422515869140625
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.9023127555847168
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.5112442970275879
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.0533528327941895
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.9403178691864014
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.0246477127075195
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.0007576942443848
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.8072855472564697
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.7117078304290771
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.298698902130127
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.4473886489868164
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.6601443290710449
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.6491687297821045
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.6959912776947021
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 10.766706466674805
+  }
+  values {
+    string_value: "11"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 9.5810050964355469
+  }
+  values {
+    string_value: "10"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.9783825874328613
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.1002049446105957
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.673100471496582
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.0569367408752441
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.1172900199890137
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.1917595863342285
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.9690916538238525
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.8857431411743164
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.0635280609130859
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.3486695289611816
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.5921354293823242
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.9385261535644531
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.2929306030273438
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.1157736778259277
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.8910970687866211
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.97951602935791
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 9.3482456207275391
+  }
+  values {
+    string_value: "9"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.5474457740783691
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.844059944152832
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.7953524589538574
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.2721705436706543
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.9195072650909424
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 3.8711044788360596
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.06132173538208
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.2500219345092773
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.20058536529541
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.202545166015625
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.5088472366333008
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.044426441192627
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.3843603134155273
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.6558027267456055
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.9255232810974121
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.13277530670166
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.4073305130004883
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.74358606338501
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.6840100288391113
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.3288040161132812
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.1772174835205078
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.8418560028076172
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.4227900505065918
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.28195858001709
+  }
+  values {
+    string_value: "4"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.5773568153381348
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.7735443115234375
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.180305004119873
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.4769635200500488
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.2696647644042969
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.3647828102111816
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.5518045425415039
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.7417721748352051
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.8004493713378906
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.8671207427978516
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.0363497734069824
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.1920623779296875
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.8247909545898438
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.5999374389648438
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.8469753265380859
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.5460782051086426
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.9541187286376953
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 4.9255218505859375
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.2743186950683594
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.5152115821838379
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.7072525024414062
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.0717949867248535
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.6348695755004883
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.0171365737915039
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.9564456939697266
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.9561114311218262
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.9665641784667969
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.4112167358398438
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.164034366607666
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.6735820770263672
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.4437165260314941
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.1319365501403809
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.92826509475708
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.5665764808654785
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.3591313362121582
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.3490948677062988
+  }
+  values {
+    string_value: "5"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.8043923377990723
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.2402939796447754
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.7647008895874023
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.72544527053833
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.2159032821655273
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.3408088684082031
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.5507078170776367
+  }
+  values {
+    string_value: "9"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.6942434310913086
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.96791934967041
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.4840230941772461
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.4909095764160156
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.7145819664001465
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.7361326217651367
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.6175575256347656
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.4560403823852539
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.1586074829101562
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.05829381942749
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.82415771484375
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.5894918441772461
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.6031346321105957
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 5.8920168876647949
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.5780234336853027
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.3538804054260254
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.7255048751831055
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.2372474670410156
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.2203474044799805
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.9572353363037109
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.37745475769043
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.976898193359375
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.8644366264343262
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.7686905860900879
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.7739624977111816
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.8270916938781738
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.3568844795227051
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.2855195999145508
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.0326676368713379
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.7499942779541016
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.3238673210144043
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.2663345336914062
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.9307069778442383
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.7409892082214355
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.3377828598022461
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.4903316497802734
+  }
+  values {
+    string_value: "6"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 6.9640111923217773
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.4212126731872559
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.1900424957275391
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 9.1840877532958984
+  }
+  values {
+    string_value: "9"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.0735683441162109
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.0396366119384766
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.05666446685791
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.97314977645874
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.09432315826416
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.7522411346435547
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.5781550407409668
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.5385661125183105
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.7898578643798828
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.6103906631469727
+  }
+  values {
+    string_value: "9"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.9784436225891113
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.5378899574279785
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.0568637847900391
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.992332935333252
+  }
+  values {
+    string_value: "8"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.3042492866516113
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.0947651863098145
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 7.4681367874145508
+  }
+  values {
+    string_value: "7"
+  }
+  values {
+    string_value: "Temperature"
+  }
+  values {
+    double_value: 8.0743589401245117
+  }
+  values {
+    string_value: "8"
+  }
+  extent: 4096
+  version: 2
+}
