@@ -1,5 +1,6 @@
 #include "CircleLayer.h"
 #include "Config.h"
+#include "MapboxVectorTile.h"
 #include "Geometry.h"
 #include "Hash.h"
 #include "JsonTools.h"
@@ -558,6 +559,107 @@ void CircleLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State
 void CircleLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // no info available
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate MVT layer: one POLYGON feature per circle per location.
+ *
+ * Each circle polygon is transformed to the tile CRS, clipped to the
+ * tile bbox, and added with "radius" (km) and "name" attributes.
+ */
+// ----------------------------------------------------------------------
+
+void CircleLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
+{
+  try
+  {
+    if (!validLayer(theState))
+      return;
+    if (circles.empty())
+      return;
+
+    // Resolve locations from geo engine
+    Spine::LocationList locations;
+    const auto& geoengine = theState.getGeoEngine();
+    Locus::QueryOptions options;
+
+    if (!keyword.empty())
+      locations = geoengine.keywordSearch(options, keyword);
+
+    for (const auto& geoid : geoids)
+    {
+      auto locs = geoengine.idSearch(options, geoid);
+      if (locs.size() > 1)
+        locs.resize(1);
+      locations.splice(locations.end(), locs);
+    }
+
+    if (!places.empty())
+    {
+      if (!features.empty())
+        options.SetFeatures(features);
+      for (const auto& place : places)
+      {
+        auto locs = geoengine.nameSearch(options, place);
+        if (locs.size() > 1)
+          locs.resize(1);
+        locations.splice(locations.end(), locs);
+      }
+    }
+
+    if (locations.empty())
+      return;
+
+    auto q = getModel(theState);
+    projection.update(q);
+    const auto& crs = projection.getCRS();
+    const auto& box = projection.getBox();
+    const auto clipbox = getClipBox(box);
+
+    Fmi::SpatialReference wgs84("WGS84");
+    Fmi::CoordinateTransformation transformation(wgs84, crs);
+
+    const std::string layerName = qid.empty() ? std::string("circles") : qid;
+    auto& mvtLayer = theBuilder.layer(layerName);
+
+    for (const auto& location : locations)
+    {
+      const double lon = location->longitude;
+      const double lat = location->latitude;
+      const std::string name = location->name;
+
+      for (const auto& circle : circles)
+      {
+        auto polygon = create_circle(lon, lat, circle.radius);
+        if (!polygon || polygon->IsEmpty() != 0)
+          continue;
+
+        polygon.reset(transformation.transformGeometry(*polygon));
+        if (!polygon || polygon->IsEmpty() != 0)
+          continue;
+
+        OGRGeometryPtr clipped;
+        if (lines)
+          clipped.reset(Fmi::OGR::lineclip(*polygon, clipbox));
+        else
+          clipped.reset(Fmi::OGR::polyclip(*polygon, clipbox));
+
+        if (!clipped || clipped->IsEmpty())
+          continue;
+
+        std::vector<std::pair<std::string, MVTValue>> attrs;
+        attrs.emplace_back("radius", circle.radius);
+        attrs.emplace_back("name", name);
+
+        mvtLayer.addFeature(*clipped, attrs);
+      }
+    }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "CircleLayer::addMVTLayer failed!");
+  }
 }
 
 // ----------------------------------------------------------------------

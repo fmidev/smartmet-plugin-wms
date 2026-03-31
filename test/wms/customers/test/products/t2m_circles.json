@@ -1,0 +1,37 @@
+{
+    "title": "Temperature with circles",
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 256,
+	"ysize": 256
+    },
+    "views": [
+        {
+	    "qid": "v1",
+            "layers": [
+                {
+		    "qid": "l1",
+                    "layer_type": "circle",
+		    "places":
+		    [
+			"Helsinki",
+			"Tampere"
+		    ],
+		    "circles":
+		    [
+			{
+			    "radius": 50,
+			    "attributes":
+			    {
+				"stroke": "black",
+				"stroke-width": 1.5
+			    }
+			}
+		    ]
+                }
+            ]
+        }
+    ]
+}
