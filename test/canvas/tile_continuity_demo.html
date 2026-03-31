@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tile Continuity Demo</title>
+<style>
+  body { margin: 0; background: #0e1220; display: flex; flex-direction: column;
+         align-items: center; justify-content: center; min-height: 100vh;
+         font-family: sans-serif; color: #ccc; gap: 12px; }
+  h2 { margin: 0; font-size: 15px; color: #aac; font-weight: normal; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 300px);
+    grid-template-rows:    repeat(2, 300px);
+    /* NO gap — tiles must be flush */
+    gap: 0;
+    border: 2px solid #555;
+  }
+  canvas { display: block; }
+  .info {
+    font-size: 12px; color: #789; max-width: 620px; text-align: center; line-height: 1.6;
+  }
+  .controls {
+    display: flex; gap: 18px; align-items: center; font-size: 13px;
+    flex-wrap: wrap; justify-content: center;
+  }
+  label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
+  button {
+    padding: 5px 14px; background: #2a3550; color: #ccc; border: 1px solid #445;
+    border-radius: 4px; cursor: pointer; font-size: 13px;
+  }
+  button:hover { background: #3a4a70; }
+  .mode-naive  { border: 2px solid #c84; }
+  .mode-world  { border: 2px solid #4c8; }
+  .badge {
+    position: absolute; top: 4px; left: 4px; font-size: 10px;
+    padding: 1px 4px; border-radius: 2px; pointer-events: none;
+  }
+  .tile-wrap { position: relative; }
+</style>
+</head>
+<body>
+
+<h2>Tile Continuity — world-space deterministic seeding</h2>
+
+<div style="display:flex; gap:32px; align-items:flex-start">
+
+  <!-- NAIVE APPROACH -->
+  <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+    <div style="font-size:12px;color:#c84;letter-spacing:1px">NAIVE — per-tile random seeds</div>
+    <div class="grid mode-naive" id="naiveGrid">
+      <canvas id="n00" width="300" height="300"></canvas>
+      <canvas id="n10" width="300" height="300"></canvas>
+      <canvas id="n01" width="300" height="300"></canvas>
+      <canvas id="n11" width="300" height="300"></canvas>
+    </div>
+    <div style="font-size:11px;color:#888">Each tile seeds its own particles →
+      gaps and density jumps at boundaries</div>
+  </div>
+
+  <!-- WORLD-SPACE APPROACH -->
+  <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+    <div style="font-size:12px;color:#4c8;letter-spacing:1px">WORLD-SPACE — shared deterministic seeds</div>
+    <div class="grid mode-world" id="worldGrid">
+      <canvas id="w00" width="300" height="300"></canvas>
+      <canvas id="w10" width="300" height="300"></canvas>
+      <canvas id="w01" width="300" height="300"></canvas>
+      <canvas id="w11" width="300" height="300"></canvas>
+    </div>
+    <div style="font-size:11px;color:#888">All tiles share one particle system →
+      seamless crossing at every boundary</div>
+  </div>
+
+</div>
+
+<div class="controls">
+  <label><input type="checkbox" id="showBounds" checked> Show tile boundaries</label>
+  <label><input type="checkbox" id="showSpawns"> Show spawn points</label>
+  <label>Wind ←→
+    <input type="range" id="wind" min="-0.20" max="0.20" value="0.09" step="0.01"
+           style="width:90px">
+    <span id="windVal">0.09</span>
+  </label>
+  <label>Intensity
+    <input type="range" id="count" min="100" max="1200" value="500" step="50"
+           style="width:90px">
+    <span id="countVal">500</span>
+  </label>
+</div>
+
+<div class="info">
+  The world is 600×600 px. The four tiles each cover a 300×300 quadrant.
+  <strong>Left</strong>: naive approach — each tile independently picks random particle positions,
+  causing visible density jumps (double-density or gaps) at every boundary crossing.
+  <strong>Right</strong>: world-space approach — one <code>RainSystem</code> shared by all four
+  tiles; each tile renders only particles whose current position falls inside its viewport.
+  Particles crossing boundaries are seamless because position is a pure function of
+  (particle_id, time) evaluated identically by every tile.
+</div>
+
+<script src="WeatherParticles.js"></script>
+<script>
+// ── World dimensions ──────────────────────────────────────────────────────
+const WORLD_W = 600, WORLD_H = 600;
+const TILE_W  = 300, TILE_H  = 300;
+
+// Tile viewports in world coordinates
+const TILES = [
+  { id: 'w00', x: 0,      y: 0 },
+  { id: 'w10', x: TILE_W, y: 0 },
+  { id: 'w01', x: 0,      y: TILE_H },
+  { id: 'w11', x: TILE_W, y: TILE_H },
+];
+
+// ── Shared world-space system (THE CORRECT APPROACH) ─────────────────────
+let worldRain = new RainSystem({
+  worldWidth: WORLD_W, worldHeight: WORLD_H,
+  count: 500, fallSpeed: 0.26, windU: 0.09,
+});
+
+// ── Naive: four independent systems, each with count/4 particles ──────────
+// They use the same count/4, so total density looks similar — but the seeding
+// is per-tile, so particles don't align at boundaries.
+function makeNaiveSystem(tileIndex) {
+  // Give each tile's system a different seed by offsetting particle IDs
+  // (We simulate this by subclassing and adding an id offset.)
+  const naive = new RainSystem({
+    worldWidth: TILE_W, worldHeight: TILE_H,
+    count: Math.round(worldRain.count / 4),
+    fallSpeed: worldRain.fallSpeed,
+    windU: worldRain.windU,
+  });
+  // Offset the hash seed so different tiles have different particles
+  naive._tileOffset = tileIndex * 100000;
+  const origState = naive._state.bind(naive);
+  naive._state = (i, t) => origState(i + naive._tileOffset, t);
+  return naive;
+}
+
+const naiveSystems = [0,1,2,3].map(makeNaiveSystem);
+const naiveViewports = [
+  { x: 0, y: 0, width: TILE_W, height: TILE_H },  // always (0,0) in local tile space
+  { x: 0, y: 0, width: TILE_W, height: TILE_H },
+  { x: 0, y: 0, width: TILE_W, height: TILE_H },
+  { x: 0, y: 0, width: TILE_W, height: TILE_H },
+];
+
+// ── UI state ─────────────────────────────────────────────────────────────
+let showBounds = true;
+let showSpawns = false;
+
+document.getElementById('showBounds').addEventListener('change', e => showBounds = e.target.checked);
+document.getElementById('showSpawns').addEventListener('change', e => showSpawns = e.target.checked);
+
+document.getElementById('wind').addEventListener('input', function() {
+  const v = +this.value;
+  document.getElementById('windVal').textContent = v.toFixed(2);
+  worldRain.windU = v;
+  naiveSystems.forEach(s => s.windU = v);
+});
+document.getElementById('count').addEventListener('input', function() {
+  const v = +this.value;
+  document.getElementById('countVal').textContent = v;
+  worldRain.count = v;
+  naiveSystems.forEach(s => s.count = Math.round(v / 4));
+});
+
+// ── Rendering helpers ─────────────────────────────────────────────────────
+
+function drawTileBorder(ctx) {
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,80,80,0.5)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.strokeRect(0.5, 0.5, TILE_W - 1, TILE_H - 1);
+  ctx.restore();
+}
+
+/** Draw spawn points for the world-space system (within this tile's viewport) */
+function drawSpawnPoints(ctx, vp) {
+  ctx.save();
+  ctx.fillStyle = 'rgba(255,255,0,0.4)';
+  for (let i = 0; i < worldRain.count; i++) {
+    const x0 = (i * 4 + 0) * 0;  // avoid calling private — reconstruct spawn
+    // Access spawn from hash directly
+    const sx = (ihash(i * 4 + 0) / 0x100000000) * WORLD_W;
+    const sy = (ihash(i * 4 + 1) / 0x100000000) * WORLD_H;
+    if (sx < vp.x || sx > vp.x + vp.width) continue;
+    if (sy < vp.y || sy > vp.y + vp.height) continue;
+    ctx.beginPath();
+    ctx.arc(sx - vp.x, sy - vp.y, 2, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+// Expose ihash globally for drawSpawnPoints
+function ihash(n) {
+  n = Math.imul(n ^ (n >>> 16), 0x45d9f3b);
+  n = Math.imul(n ^ (n >>> 16), 0x45d9f3b);
+  return (n ^ (n >>> 16)) >>> 0;
+}
+
+// ── Animation loop ────────────────────────────────────────────────────────
+function frame(t) {
+  const bg = '#0e1220';
+
+  // Draw world-space tiles (correct approach)
+  TILES.forEach(tile => {
+    const cv  = document.getElementById(tile.id);
+    const ctx = cv.getContext('2d');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, TILE_W, TILE_H);
+
+    const vp = { x: tile.x, y: tile.y, width: TILE_W, height: TILE_H };
+    worldRain.draw(ctx, vp, t);
+
+    if (showSpawns) drawSpawnPoints(ctx, vp);
+    if (showBounds) drawTileBorder(ctx);
+  });
+
+  // Draw naive tiles (broken approach)
+  const naiveIds = ['n00','n10','n01','n11'];
+  naiveIds.forEach((id, idx) => {
+    const cv  = document.getElementById(id);
+    const ctx = cv.getContext('2d');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, TILE_W, TILE_H);
+
+    naiveSystems[idx].draw(ctx, naiveViewports[idx], t);
+    if (showBounds) drawTileBorder(ctx);
+  });
+
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

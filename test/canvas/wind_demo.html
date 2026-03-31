@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Wind Particle Demo</title>
+<style>
+  body { margin: 0; background: #111520; display: flex; flex-direction: column;
+         align-items: center; justify-content: center; height: 100vh;
+         font-family: sans-serif; color: #ccc; }
+  canvas { border: 1px solid #333; }
+  .controls { margin-top: 12px; display: flex; gap: 20px; font-size: 13px; align-items: center; }
+  label { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+  input[type=range] { width: 100px; }
+  .legend { font-size: 11px; color: #888; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div style="font-size:14px;color:#aaa;margin-bottom:8px">
+  Wind — Lagrangian particles following a synthetic vortex field
+</div>
+<canvas id="cv" width="700" height="500"></canvas>
+<div class="legend">
+  Colour: <span style="color:hsl(220,80%,65%)">■</span> slow &nbsp;→&nbsp;
+          <span style="color:hsl(180,80%,65%)">■</span> medium &nbsp;→&nbsp;
+          <span style="color:hsl(60,80%,65%)">■</span> fast
+</div>
+<div class="controls">
+  <label>Particles <input type="range" id="count" min="50" max="500" value="200" step="10">
+    <span id="countVal">200</span></label>
+  <label>Trail length <input type="range" id="trail" min="5" max="40" value="20" step="1">
+    <span id="trailVal">20</span></label>
+  <label>Speed scale <input type="range" id="scale" min="0.2" max="3.0" value="1.0" step="0.1">
+    <span id="scaleVal">1.0</span></label>
+  <label>Vortex <input type="range" id="vortex" min="0" max="0.15" value="0.05" step="0.005">
+    <span id="vortexVal">0.050</span></label>
+  <label>Show field <input type="checkbox" id="showField"></label>
+</div>
+
+<script src="WeatherParticles.js"></script>
+<script>
+const cv  = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const W   = cv.width, H = cv.height;
+
+let fieldCfg = { cols: 24, rows: 18, worldWidth: W, worldHeight: H,
+                 uniformU: 0.04, uniformV: 0.01, vortexStrength: 0.05 };
+let field = WindField.makeSynthetic(fieldCfg);
+
+let sys = new WindParticleSystem({
+  field, worldWidth: W, worldHeight: H,
+  count: 200, lifetime: 3500, trailSteps: 20, stepMs: 16, speedScale: 1.0,
+});
+
+let showField = false;
+
+function rebuildField() {
+  field = WindField.makeSynthetic(fieldCfg);
+  sys.field = field;
+}
+
+function bind(id, valId, update) {
+  const el = document.getElementById(id);
+  const vl = document.getElementById(valId);
+  el.addEventListener('input', () => {
+    if (vl) vl.textContent = (+el.value).toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+    update(+el.value);
+  });
+}
+
+bind('count',  'countVal',  v => sys.count      = v);
+bind('trail',  'trailVal',  v => sys.trailSteps  = v);
+bind('scale',  'scaleVal',  v => sys.speedScale  = v);
+bind('vortex', 'vortexVal', v => { fieldCfg.vortexStrength = v; rebuildField(); });
+document.getElementById('showField').addEventListener('change', e => showField = e.target.checked);
+
+/** Draw background wind field as a dim arrow grid */
+function drawField() {
+  ctx.save();
+  ctx.globalAlpha = 0.18;
+  ctx.strokeStyle = '#88aaff';
+  ctx.lineWidth = 1;
+  const gx = 40, gy = 40;
+  for (let c = gx/2; c < W; c += gx) {
+    for (let r = gy/2; r < H; r += gy) {
+      const { u, v } = field.sample(c, r);
+      const spd = Math.sqrt(u*u + v*v);
+      const scale = Math.min(15, spd * 150);
+      const nx = u / (spd || 1), ny = v / (spd || 1);
+      ctx.beginPath();
+      ctx.moveTo(c, r);
+      ctx.lineTo(c + nx * scale, r + ny * scale);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+function frame(t) {
+  ctx.fillStyle = '#111520';
+  ctx.fillRect(0, 0, W, H);
+
+  if (showField) drawField();
+
+  sys.draw(ctx, { x: 0, y: 0, width: W, height: H }, t);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

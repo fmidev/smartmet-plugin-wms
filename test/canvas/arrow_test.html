@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ArrowLayer Canvas Test — Finland/Baltic Region</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d1018; color: #ccd; font-family: 'Segoe UI', sans-serif;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 12px; gap: 10px; min-height: 100vh;
+  }
+  h1 { font-size: 13px; color: #88a; font-weight: normal; letter-spacing: 1px; }
+
+  /* ── Map area ────────────────────────────────────────────────── */
+  #mapWrap {
+    position: relative; border: 1px solid #334;
+    /* Canvas is 510×720 */
+  }
+  #mapWrap canvas { display: block; }
+  #overlayCanvas {
+    position: absolute; top: 0; left: 0; pointer-events: none;
+  }
+
+  /* ── Timeline bar ────────────────────────────────────────────── */
+  #timelineBar {
+    width: 510px; background: #151c28; border: 1px solid #334;
+    border-radius: 4px; padding: 8px 12px; display: flex;
+    flex-direction: column; gap: 6px;
+  }
+  #frameLabels {
+    display: flex; justify-content: space-between; font-size: 10px; color: #667;
+  }
+  #progressTrack {
+    height: 6px; background: #222; border-radius: 3px; position: relative; cursor: pointer;
+  }
+  #progressFill {
+    height: 100%; background: linear-gradient(90deg, #4488cc, #88ccff);
+    border-radius: 3px; width: 0%; transition: none;
+  }
+  #progressHead {
+    position: absolute; top: -3px; width: 12px; height: 12px;
+    background: #88ccff; border-radius: 50%; transform: translateX(-50%);
+    box-shadow: 0 0 6px #88ccff88;
+  }
+  #frameLabel {
+    font-size: 12px; color: #aac; text-align: center; letter-spacing: 0.5px;
+  }
+
+  /* ── Controls ────────────────────────────────────────────────── */
+  #controls {
+    width: 510px; display: flex; gap: 10px; align-items: center;
+    flex-wrap: wrap; justify-content: center;
+  }
+  button {
+    padding: 4px 12px; background: #1e2a3a; color: #aac; border: 1px solid #334;
+    border-radius: 3px; cursor: pointer; font-size: 12px;
+  }
+  button:hover { background: #253040; }
+  button.active { background: #2a4060; border-color: #4488cc; color: #88ccff; }
+  .ctrl-group {
+    display: flex; gap: 6px; align-items: center; font-size: 12px; color: #889;
+  }
+  input[type=range] { width: 80px; accent-color: #4488cc; }
+  select { background: #1e2a3a; color: #aac; border: 1px solid #334;
+           border-radius: 3px; font-size: 12px; padding: 2px 4px; }
+
+  /* ── Speed legend ─────────────────────────────────────────────── */
+  #legend {
+    width: 510px; display: flex; gap: 8px; align-items: center;
+    font-size: 10px; color: #667; flex-wrap: wrap;
+  }
+  .swatch { width: 16px; height: 8px; display: inline-block;
+            border-radius: 2px; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<h1>ARROW LAYER CANVAS TEST — Finland/Baltic Region (59–71°N, 17–34°E)</h1>
+
+<!-- Map -->
+<div id="mapWrap">
+  <canvas id="baseCanvas"    width="510" height="720"></canvas>
+  <canvas id="overlayCanvas" width="510" height="720"></canvas>
+</div>
+
+<!-- Timeline progress bar -->
+<div id="timelineBar">
+  <div id="frameLabels"></div>
+  <div id="progressTrack">
+    <div id="progressFill"></div>
+    <div id="progressHead" style="left:0%"></div>
+  </div>
+  <div id="frameLabel">T+0h  2008-08-05 03:00</div>
+</div>
+
+<!-- Playback controls -->
+<div id="controls">
+  <button id="btnPrev">◀ Prev</button>
+  <button id="btnPlay" class="active">⏸ Pause</button>
+  <button id="btnNext">Next ▶</button>
+
+  <div class="ctrl-group">Speed
+    <input type="range" id="speed" min="0.3" max="4" step="0.1" value="1">
+    <span id="speedVal">1.0×</span>
+  </div>
+  <div class="ctrl-group">Trans
+    <input type="range" id="trans" min="100" max="1500" step="100" value="600">
+    <span id="transVal">600ms</span>
+  </div>
+
+  <button id="btnArrows"  class="active">Arrows</button>
+  <button id="btnWind"    class="active">Wind particles</button>
+  <button id="btnPrecip"  class="active">Rain/Snow</button>
+</div>
+
+<!-- Speed colour legend (matching ArrowLayer CSS) -->
+<div id="legend">
+  Wind speed:
+  <span class="swatch" style="background:rgb(0,229,255)"></span>3–5
+  <span class="swatch" style="background:rgb(0,195,255)"></span>5–7
+  <span class="swatch" style="background:rgb(0,110,255)"></span>7–10
+  <span class="swatch" style="background:rgb(0,26,255)"></span>10–14
+  <span class="swatch" style="background:rgb(212,0,255)"></span>14–17
+  <span class="swatch" style="background:rgb(179,0,149)"></span>17–21
+  <span class="swatch" style="background:rgb(255,0,0)"></span>21–26
+  <span class="swatch" style="background:rgb(255,170,0)"></span>&gt;32 m/s
+</div>
+
+<script src="WeatherParticles.js"></script>
+<script src="WeatherTimeline.js"></script>
+<script>
+'use strict';
+
+// ═══════════════════════════════════════════════════════════════
+// 1. COORDINATE SYSTEM
+// ═══════════════════════════════════════════════════════════════
+// Canvas: 510 × 720 px, equirectangular projection
+// Bbox: lon 17–34°E (17° wide), lat 59–71°N (12° tall)
+const CV_W  = 510, CV_H = 720;
+const LON0  = 17,  LON1 = 34;
+const LAT0  = 59,  LAT1 = 71;
+
+function lonToX(lon) { return (lon - LON0) / (LON1 - LON0) * CV_W; }
+function latToY(lat) { return (LAT1 - lat) / (LAT1 - LAT0) * CV_H; }
+function xToLon(x)   { return LON0 + x / CV_W * (LON1 - LON0); }
+function yToLat(y)   { return LAT1 - y / CV_H * (LAT1 - LAT0); }
+
+// ═══════════════════════════════════════════════════════════════
+// 2. SYNTHETIC FORECAST FRAMES
+//    Grid: 34×24 points at 0.5° resolution (lon 17–34, lat 59–71)
+// ═══════════════════════════════════════════════════════════════
+const GRID_COLS = 35;   // 17.0 to 34.0 inclusive at 0.5°
+const GRID_ROWS = 25;   // 59.0 to 71.0 inclusive at 0.5°
+const GRID_N    = GRID_COLS * GRID_ROWS;
+
+const GRID_INFO = {
+  cols: GRID_COLS, rows: GRID_ROWS,
+  worldX: 0, worldY: 0,
+  worldWidth: CV_W, worldHeight: CV_H,
+};
+
+/**
+ * Generate U, V wind components from a superposition of:
+ *   - uniform background flow (bgU, bgV)
+ *   - one cyclonic vortex (counterclockwise, Northern Hemisphere)
+ * Returns { windU, windV, windSpeed, windDir, precipRate, precipType }
+ */
+function makeFrame({ label, bgU, bgV, vortex, rain, snow }) {
+  const windU      = new Float32Array(GRID_N);
+  const windV      = new Float32Array(GRID_N);
+  const precipRate = new Float32Array(GRID_N);
+  const precipType = new Uint8Array(GRID_N);
+
+  for (let r = 0; r < GRID_ROWS; r++) {
+    for (let c = 0; c < GRID_COLS; c++) {
+      const lon = LON0 + c * 0.5;
+      const lat = LAT0 + r * 0.5;
+      const idx = r * GRID_COLS + c;
+
+      let u = bgU, v = bgV;
+
+      // Add vortex contributions
+      for (const vor of (vortex || [])) {
+        const dlon = lon - vor.lon;
+        const dlat = lat - vor.lat;
+        // Convert to rough km for physical scaling (1° lat ≈ 111 km)
+        const dx = dlon * 70;   // cos(65°) ≈ 0.42, avg for Finland
+        const dy = dlat * 111;
+        const dist = Math.sqrt(dx*dx + dy*dy) + 1;
+        const str  = vor.strength / (1 + (dist / vor.radius) ** 2);
+        // Cyclonic = counterclockwise: rotate velocity vector 90° left of radial
+        u += -dy / dist * str;
+        v +=  dx / dist * str;
+      }
+
+      windU[idx] = u;
+      windV[idx] = v;
+
+      // Precipitation: Gaussian blobs
+      let rate = 0;
+      let type = 0;
+      for (const blob of (rain || [])) {
+        const dx = (lon - blob.lon) / blob.radLon;
+        const dy = (lat - blob.lat) / blob.radLat;
+        const r2 = dx*dx + dy*dy;
+        rate = Math.max(rate, blob.intensity * Math.exp(-r2));
+        if (rate > 0.05) type = 1;
+      }
+      for (const blob of (snow || [])) {
+        const dx = (lon - blob.lon) / blob.radLon;
+        const dy = (lat - blob.lat) / blob.radLat;
+        const r2 = dx*dx + dy*dy;
+        const sr  = blob.intensity * Math.exp(-r2);
+        if (sr > rate) { rate = sr; type = 2; }
+        else if (sr > 0.05 && type === 0) type = 2;
+      }
+      precipRate[idx] = Math.min(1, rate);
+      precipType[idx] = type;
+    }
+  }
+
+  return { label, windU, windV, precipRate, precipType };
+}
+
+// Three forecast frames: SW flow → frontal passage → post-frontal NW
+const FRAMES = [
+  makeFrame({
+    label:   'T+0h  2008-08-05 03:00',
+    bgU: 4,  bgV: 3,   // SW background (m/s, canvas-px-scale applied later)
+    vortex: [
+      { lon: 20.5, lat: 58.5, strength: 28, radius: 400 }, // Baltic Low
+    ],
+    rain: [
+      { lon: 22, lat: 61.5, radLon: 3.5, radLat: 2.0, intensity: 1.0 }, // Gulf of Finland front
+      { lon: 20, lat: 63.0, radLon: 2.5, radLat: 1.5, intensity: 0.6 },
+    ],
+    snow: [
+      { lon: 26, lat: 68.0, radLon: 3.0, radLat: 1.5, intensity: 0.7 }, // Northern Lapland
+    ],
+  }),
+
+  makeFrame({
+    label:   'T+3h  2008-08-05 06:00',
+    bgU: 6,  bgV: 0.5, // Westerly
+    vortex: [
+      { lon: 24, lat: 61.5, strength: 22, radius: 350 }, // Low moves NE
+    ],
+    rain: [
+      { lon: 25, lat: 63.5, radLon: 3.0, radLat: 2.0, intensity: 0.9 }, // Rain band moves NE
+      { lon: 22, lat: 65.0, radLon: 2.0, radLat: 1.5, intensity: 0.5 },
+    ],
+    snow: [
+      { lon: 27, lat: 69.0, radLon: 3.5, radLat: 1.5, intensity: 0.8 },
+    ],
+  }),
+
+  makeFrame({
+    label:   'T+6h  2008-08-05 09:00',
+    bgU: 5,  bgV: -4,  // Post-frontal NW
+    vortex: [
+      { lon: 28, lat: 64.5, strength: 14, radius: 300 }, // Weakening low in Karelia
+    ],
+    rain: [
+      { lon: 19, lat: 65.5, radLon: 2.0, radLat: 1.5, intensity: 0.6 }, // NW shower area
+    ],
+    snow: [
+      { lon: 25, lat: 69.5, radLon: 4.0, radLat: 1.2, intensity: 0.9 }, // Snow pushes south
+      { lon: 28, lat: 68.0, radLon: 2.5, radLat: 1.8, intensity: 0.5 },
+    ],
+  }),
+];
+
+// Populate frame labels in timeline bar
+const frameLabelEl = document.getElementById('frameLabels');
+FRAMES.forEach((f, i) => {
+  const span = document.createElement('span');
+  span.textContent = `T+${i*3}h`;
+  frameLabelEl.appendChild(span);
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 3. TIMELINE
+// ═══════════════════════════════════════════════════════════════
+const timeline = new WeatherTimeline({
+  frames:          FRAMES,
+  frameIntervalMs: 2500,
+  transitionMs:    600,
+  gridInfo:        GRID_INFO,
+});
+timeline.play();
+
+// ═══════════════════════════════════════════════════════════════
+// 4. PARTICLE SYSTEMS
+//    World space = canvas pixels (0..510, 0..720)
+// ═══════════════════════════════════════════════════════════════
+
+// Wind particle system — field is updated from timeline each frame
+const windField0 = FRAMES[0];
+const initField  = new WindField({
+  ...GRID_INFO,
+  u: FRAMES[0].windU,
+  v: FRAMES[0].windV,
+});
+
+// Scale: wind is in m/s; convert to canvas-px/ms for plausible visual speed.
+// At 0.5° grid, Finland ≈ ~30px per degree → 1° = 60px for 0.5° grid cell.
+// A 10 m/s wind should cross ~300px in ~5 seconds → 0.06 px/ms per m/s unit.
+const WIND_SCALE = 0.006;  // px/ms per (m/s unit in our synthetic data)
+
+const windSys = new WindParticleSystem({
+  field:       initField,
+  worldWidth:  CV_W,
+  worldHeight: CV_H,
+  count:       180,
+  lifetime:    4000,
+  trailSteps:  22,
+  stepMs:      16,
+  speedScale:  WIND_SCALE * 16,  // px per integration step
+});
+
+// Rain and snow use the full canvas as world space, with precip field modulation.
+const rainSys = new RainSystem({
+  worldWidth:  CV_W,
+  worldHeight: CV_H,
+  count:       700,
+  fallSpeed:   0.22,    // px/ms — constant, not affected by timestep
+  windU:       0,       // will be overridden per-frame from mean wind
+  minLength:   6,
+  maxLength:   14,
+  color:       '130,180,255',
+});
+
+const snowSys = new SnowSystem({
+  worldWidth:    CV_W,
+  worldHeight:   CV_H,
+  count:         280,
+  fallSpeed:     0.06,
+  windU:         0,
+  swayAmplitude: 14,
+  swayPeriod:    5000,
+  minRadius:     2,
+  maxRadius:     4.5,
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 5. WIND ARROW RENDERING
+// ═══════════════════════════════════════════════════════════════
+
+// Arrow symbol path from ArrowLayer test (windarrow.css / symbol definition)
+// M0 -6 -3 -2 -1 -2 -1 4 1 4 1 -2 3 -2 Z
+// Points north when unrotated; rotate by met DD (clockwise from N).
+const ARROW_PTS = [
+  [0,-6], [-3,-2], [-1,-2], [-1,4], [1,4], [1,-2], [3,-2],
+];
+
+// Speed → colour mapping from windarrow.css
+function speedColor(spd) {
+  if (spd < 3)  return null;  // calm, no arrow
+  if (spd < 5)  return 'rgb(0,229,255)';
+  if (spd < 7)  return 'rgb(0,195,255)';
+  if (spd < 10) return 'rgb(0,110,255)';
+  if (spd < 14) return 'rgb(0,26,255)';
+  if (spd < 17) return 'rgb(212,0,255)';
+  if (spd < 21) return 'rgb(179,0,149)';
+  if (spd < 26) return 'rgb(255,0,0)';
+  return 'rgb(255,170,0)';
+}
+
+/**
+ * Draw arrow at canvas position (cx, cy), wind from direction `dir` degrees
+ * (met: 0=from N, 90=from E, 180=from S, 270=from W), speed in raw units.
+ */
+function drawArrow(ctx, cx, cy, dir, speed, alpha = 1) {
+  const color = speedColor(speed);
+  if (!color) return;
+
+  const scale = 1.8 + Math.min(1, (speed - 3) / 20) * 0.8;  // 1.8..2.6
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(dir * Math.PI / 180);
+  ctx.scale(scale, scale);
+
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle   = color;
+  ctx.beginPath();
+  ctx.moveTo(ARROW_PTS[0][0], ARROW_PTS[0][1]);
+  for (let i = 1; i < ARROW_PTS.length; i++) ctx.lineTo(ARROW_PTS[i][0], ARROW_PTS[i][1]);
+  ctx.closePath();
+  ctx.fill();
+
+  // Subtle outline
+  ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+  ctx.lineWidth   = 0.5 / scale;
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+/**
+ * Draw all wind arrows for the given blended field.
+ * Arrow grid spacing: every 1° (two grid cells at 0.5° resolution).
+ */
+function drawAllArrows(ctx, blended) {
+  // Arrow spacing: every 1° lon / 1° lat
+  const lonStep = 1.0, latStep = 1.0;
+
+  for (let lat = LAT0 + 0.5; lat <= LAT1 - 0.5; lat += latStep) {
+    for (let lon = LON0 + 0.5; lon <= LON1 - 0.5; lon += lonStep) {
+
+      // Sample blended U/V from the field (nearest grid cell)
+      const gc = Math.round((lon - LON0) / 0.5);
+      const gr = Math.round((lat - LAT0) / 0.5);
+      const gi = Math.min(GRID_ROWS - 1, gr) * GRID_COLS + Math.min(GRID_COLS - 1, gc);
+
+      const u = blended.windU[gi];
+      const v = blended.windV[gi];
+
+      // Speed and meteorological direction
+      const speed = Math.sqrt(u * u + v * v);
+      // Met convention: direction FROM which wind blows
+      // U=east, V=north → from direction = atan2(-U, -V)
+      let dir = Math.atan2(-u, -v) * 180 / Math.PI;
+      if (dir < 0) dir += 360;
+
+      const cx = lonToX(lon);
+      const cy = latToY(lat);
+      drawArrow(ctx, cx, cy, dir, speed);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// 6. BASE MAP — drawn once on baseCanvas
+//    Simplified land/sea background for the Finland/Baltic region
+// ═══════════════════════════════════════════════════════════════
+const baseCtx = document.getElementById('baseCanvas').getContext('2d');
+
+function drawBaseMap() {
+  // Ocean / sea background
+  baseCtx.fillStyle = '#1a2c40';
+  baseCtx.fillRect(0, 0, CV_W, CV_H);
+
+  // Land fill (simplified polygons for Scandinavia + Finland + Russia)
+  baseCtx.fillStyle = '#2a3628';
+  baseCtx.strokeStyle = '#3a4a38';
+  baseCtx.lineWidth = 0.8;
+
+  // Finland + Karelia (very simplified outline, clockwise)
+  // Key points: approximate coast + eastern border
+  const finland = [
+    [22.0,59.8],[23.0,59.9],[24.0,60.2],[24.5,60.0],[25.0,60.2],
+    [26.5,60.4],[27.5,60.5],[28.8,60.9],[29.5,61.2],[30.0,61.5],
+    [29.5,62.0],[29.0,62.5],[29.5,63.0],[29.0,63.5],[28.5,64.0],
+    [28.0,64.5],[27.5,65.0],[26.5,65.5],[26.0,66.0],[25.5,66.5],
+    [25.5,67.0],[26.5,67.5],[26.5,68.5],[27.5,69.0],[28.0,69.5],
+    [28.5,70.0],[29.5,70.5],[30.0,71.0],
+    // Top edge → west
+    [17.0,71.0],
+    // West side (Swedish border + coast, very rough)
+    [17.0,68.5],[18.0,68.0],[18.5,67.0],[18.0,66.0],[17.5,65.5],
+    [17.5,64.5],[18.5,63.5],[19.5,63.0],[20.0,62.5],[20.0,61.5],
+    [20.5,61.0],[21.0,60.5],[21.5,60.0],[22.0,59.8],
+  ];
+  drawPoly(baseCtx, finland);
+
+  // Russia east of border (rough Eastern Finland + Karelia patch)
+  const russia = [
+    [30.0,61.5],[31.0,62.0],[32.0,62.5],[33.0,63.0],[34.0,63.5],
+    [34.0,71.0],[30.0,71.0],[29.5,70.5],[29.0,69.5],[28.5,68.5],
+    [29.0,67.0],[29.5,65.0],[29.0,63.5],[29.5,62.5],[30.0,61.5],
+  ];
+  drawPoly(baseCtx, russia);
+
+  // Estonia + Latvia + Lithuania (south of Gulf of Finland)
+  const baltics = [
+    [22.0,57.5],[23.5,57.5],[24.0,57.8],[24.5,57.5],[26.0,57.5],
+    [27.5,57.5],[28.0,57.8],[28.0,58.5],[27.0,59.0],[26.0,59.5],
+    [25.0,59.5],[24.0,59.0],[23.0,58.5],[22.5,58.0],[22.0,57.5],
+  ];
+  drawPoly(baseCtx, baltics);
+
+  // Sweden (eastern coast, rough)
+  const sweden = [
+    [17.0,59.5],[18.0,59.3],[19.0,59.0],[19.5,59.5],[20.0,60.5],
+    [20.0,61.5],[20.0,62.5],[19.5,63.0],[18.5,63.5],[18.0,64.5],
+    [17.5,65.5],[18.0,66.0],[18.5,67.0],[18.0,68.0],[17.0,68.5],
+    [17.0,59.5],
+  ];
+  drawPoly(baseCtx, sweden);
+
+  // Grid lines
+  baseCtx.strokeStyle = 'rgba(80,100,130,0.25)';
+  baseCtx.lineWidth = 0.5;
+  baseCtx.setLineDash([3, 6]);
+  for (let lon = 18; lon <= 34; lon += 2) {
+    baseCtx.beginPath();
+    baseCtx.moveTo(lonToX(lon), 0);
+    baseCtx.lineTo(lonToX(lon), CV_H);
+    baseCtx.stroke();
+  }
+  for (let lat = 60; lat <= 70; lat += 2) {
+    baseCtx.beginPath();
+    baseCtx.moveTo(0,    latToY(lat));
+    baseCtx.lineTo(CV_W, latToY(lat));
+    baseCtx.stroke();
+  }
+  baseCtx.setLineDash([]);
+
+  // Axis labels
+  baseCtx.fillStyle = 'rgba(100,130,160,0.7)';
+  baseCtx.font = '9px monospace';
+  baseCtx.textAlign = 'center';
+  for (let lon = 18; lon <= 34; lon += 2) {
+    baseCtx.fillText(lon + '°E', lonToX(lon), CV_H - 3);
+  }
+  baseCtx.textAlign = 'right';
+  for (let lat = 60; lat <= 70; lat += 2) {
+    baseCtx.fillText(lat + '°N', 28, latToY(lat) + 3);
+  }
+}
+
+function drawPoly(ctx, latLonPts) {
+  ctx.beginPath();
+  const [lon0, lat0] = latLonPts[0];
+  ctx.moveTo(lonToX(lon0), latToY(lat0));
+  for (let i = 1; i < latLonPts.length; i++) {
+    ctx.lineTo(lonToX(latLonPts[i][0]), latToY(latLonPts[i][1]));
+  }
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+}
+
+drawBaseMap();
+
+// ═══════════════════════════════════════════════════════════════
+// 7. TOGGLE STATE
+// ═══════════════════════════════════════════════════════════════
+let showArrows = true, showWind = true, showPrecip = true;
+
+function toggle(flag, btnId) {
+  const el = document.getElementById(btnId);
+  el.addEventListener('click', () => {
+    flag = !flag;
+    el.classList.toggle('active', flag);
+    return flag;
+  });
+  return () => flag;
+}
+// Need mutable references — use object
+const vis = { arrows: true, wind: true, precip: true };
+['arrows','wind','precip'].forEach(k => {
+  document.getElementById('btn' + k[0].toUpperCase() + k.slice(1))
+    .addEventListener('click', function() {
+      vis[k] = !vis[k];
+      this.classList.toggle('active', vis[k]);
+    });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 8. CONTROLS
+// ═══════════════════════════════════════════════════════════════
+const btnPlay = document.getElementById('btnPlay');
+btnPlay.addEventListener('click', () => {
+  timeline.toggle();
+  btnPlay.textContent = timeline.playing ? '⏸ Pause' : '▶ Play';
+  btnPlay.classList.toggle('active', timeline.playing);
+});
+document.getElementById('btnPrev').addEventListener('click', () => timeline.step(-1));
+document.getElementById('btnNext').addEventListener('click', () => timeline.step(+1));
+
+document.getElementById('speed').addEventListener('input', function() {
+  timeline.speed = +this.value;
+  document.getElementById('speedVal').textContent = (+this.value).toFixed(1) + '×';
+});
+document.getElementById('trans').addEventListener('input', function() {
+  timeline.transitionMs = +this.value;
+  document.getElementById('transVal').textContent = this.value + 'ms';
+});
+
+// ═══════════════════════════════════════════════════════════════
+// 9. MAIN RENDER LOOP
+// ═══════════════════════════════════════════════════════════════
+const overlayCtx = document.getElementById('overlayCanvas').getContext('2d');
+const vp = { x: 0, y: 0, width: CV_W, height: CV_H };
+
+// Build a WindField from the blended precip rate, for spatial modulation.
+// Re-uses the WindField bilinear sampler — conceptually the "value" stored
+// in u is just the precipitation rate, v is unused.
+function makePrecipField(blended, snowFrac) {
+  // Mix rain and snow rates weighted by snow fraction at each point
+  const rate = new Float32Array(GRID_N);
+  for (let i = 0; i < GRID_N; i++) {
+    rate[i] = blended.precipRate[i] * (snowFrac !== null ? 1 : 1); // same total rate
+  }
+  return new WindField({ ...GRID_INFO, u: blended.precipRate, v: blended.precipRate });
+}
+
+function makeSnowPrecipField(blended) {
+  const rate = new Float32Array(GRID_N);
+  for (let i = 0; i < GRID_N; i++) {
+    rate[i] = blended.precipRate[i] * blended.snowFraction(i);
+  }
+  return new WindField({ ...GRID_INFO, u: rate, v: rate });
+}
+
+function makeRainPrecipField(blended) {
+  const rate = new Float32Array(GRID_N);
+  for (let i = 0; i < GRID_N; i++) {
+    rate[i] = blended.precipRate[i] * (1 - blended.snowFraction(i));
+  }
+  return new WindField({ ...GRID_INFO, u: rate, v: rate });
+}
+
+// Compute mean wind from the blended field (for setting rain drift angle)
+function meanWind(blended) {
+  let sumU = 0, sumV = 0;
+  for (let i = 0; i < GRID_N; i++) { sumU += blended.windU[i]; sumV += blended.windV[i]; }
+  return { u: sumU / GRID_N, v: sumV / GRID_N };
+}
+
+function frame() {
+  const t        = performance.now();
+  const blended  = timeline.getBlended();
+
+  // Update wind system field each frame — this is the key to continuous
+  // particle motion through timestep changes.  Particles already in flight
+  // gradually follow new streamlines without any reset or respawn.
+  windSys.field = blended.makeWindField(GRID_INFO);
+
+  // Update mean drift for rain/snow (canvas-space px/ms)
+  const mw = meanWind(blended);
+  rainSys.windU = mw.u * WIND_SCALE;
+  snowSys.windU = mw.u * WIND_SCALE * 0.4;  // snow drifts less
+
+  overlayCtx.clearRect(0, 0, CV_W, CV_H);
+
+  // ── Precipitation (rain + snow) ──────────────────────────────
+  if (vis.precip) {
+    const rainField = makeRainPrecipField(blended);
+    const snowField = makeSnowPrecipField(blended);
+    rainSys.draw(overlayCtx, vp, t, rainField);
+    snowSys.draw(overlayCtx, vp, t, snowField);
+  }
+
+  // ── Wind arrows ───────────────────────────────────────────────
+  if (vis.arrows) {
+    drawAllArrows(overlayCtx, blended);
+  }
+
+  // ── Wind particles ────────────────────────────────────────────
+  if (vis.wind) {
+    windSys.draw(overlayCtx, vp, t);
+  }
+
+  // ── Timeline UI ───────────────────────────────────────────────
+  const prog = timeline.progress;
+  document.getElementById('progressFill').style.width  = (prog * 100) + '%';
+  document.getElementById('progressHead').style.left   = (prog * 100) + '%';
+  document.getElementById('frameLabel').textContent    = FRAMES[blended.frameIndex].label;
+
+  // Dim frame labels to highlight active one
+  const labels = frameLabelEl.children;
+  for (let i = 0; i < labels.length; i++) {
+    labels[i].style.color = i === blended.frameIndex ? '#88ccff' : '#445';
+  }
+
+  requestAnimationFrame(frame);
+}
+
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

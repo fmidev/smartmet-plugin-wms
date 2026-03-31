@@ -8,6 +8,7 @@ obj/
 .sconsign.dblite
 /.vscode
 *.pb.h
+*.pb.cc
 *.pb.cpp
 *.c2t
 compile_commands.json

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Rain Animation Demo</title>
+<style>
+  body { margin: 0; background: #1a1f2e; display: flex; flex-direction: column;
+         align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; color: #ccc; }
+  canvas { border: 1px solid #444; }
+  .controls { margin-top: 12px; display: flex; gap: 20px; align-items: center; font-size: 13px; }
+  label { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+  input[type=range] { width: 100px; }
+  .title { font-size: 14px; color: #aaa; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="title">Rain — world-space deterministic particles</div>
+<canvas id="cv" width="700" height="500"></canvas>
+<div class="controls">
+  <label>Intensity <input type="range" id="density" min="100" max="1500" value="600" step="50">
+    <span id="densityVal">600</span></label>
+  <label>Wind ← → <input type="range" id="wind" min="-0.25" max="0.25" value="0.07" step="0.01">
+    <span id="windVal">0.07</span></label>
+  <label>Fall speed <input type="range" id="speed" min="0.1" max="0.6" value="0.28" step="0.01">
+    <span id="speedVal">0.28</span></label>
+  <label>Background
+    <select id="bg">
+      <option value="#1a1f2e">Night</option>
+      <option value="#3a5068">Dusk</option>
+      <option value="#c8d8e8">Day</option>
+    </select>
+  </label>
+</div>
+
+<script src="WeatherParticles.js"></script>
+<script>
+const cv    = document.getElementById('cv');
+const ctx   = cv.getContext('2d');
+const W     = cv.width;
+const H     = cv.height;
+
+let rain = new RainSystem({
+  worldWidth: W, worldHeight: H,
+  count: 600, fallSpeed: 0.28, windU: 0.07,
+});
+
+let bgColor = '#1a1f2e';
+
+// Controls
+function bind(id, valId, onChange) {
+  const el = document.getElementById(id);
+  const vl = document.getElementById(valId);
+  el.addEventListener('input', () => { if (vl) vl.textContent = el.value; onChange(el.value); });
+}
+
+bind('density', 'densityVal', v => { rain.count     = +v; });
+bind('wind',    'windVal',    v => { rain.windU      = +v; });
+bind('speed',   'speedVal',   v => { rain.fallSpeed  = +v; });
+document.getElementById('bg').addEventListener('change', e => { bgColor = e.target.value; });
+
+function frame(t) {
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, W, H);
+  rain.draw(ctx, { x: 0, y: 0, width: W, height: H }, t);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
