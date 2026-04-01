@@ -33,6 +33,11 @@ class LegendLabels
   std::map<std::string, std::string> conversions;
 
   Attributes attributes;
+
+  // Format a numeric value as a string (respecting format setting) and look up in conversions.
+  // Returns the converted text, or empty string if no conversion is found.
+  std::string findConversion(double theValue,
+                             const std::optional<std::string>& theLanguage) const;
 };
 
 }  // namespace Dali

@@ -1,0 +1,40 @@
+{
+    "title": "Precipitation legend",
+    "hidden": true,
+    "projection": {},
+    "views": [
+        {
+            "layers": [
+                {
+                    "layer_type": "legend",
+                    "isobands": [
+                        {
+                            "lolimit": 0,
+                            "hilimit": 0,
+                            "attributes": { "class": "Precipitation_0" }
+                        },
+                        {
+                            "lolimit": 0.1,
+                            "hilimit": 1,
+                            "attributes": { "class": "Precipitation_01" }
+                        },
+                        {
+                            "lolimit": 1,
+                            "attributes": { "class": "Precipitation_1" }
+                        }
+                    ],
+                    "labels": {
+                        "type": "lolimit",
+                        "conversions": {
+                            "0": "No precipitation",
+                            "0.1": "Very light precipitation",
+                            "1": "Light precipitation",
+                            "5": "Moderate precipitation",
+                            "10": "Heavy precipitation"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

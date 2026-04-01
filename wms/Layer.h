@@ -139,6 +139,9 @@ class Layer : public Properties
   // External style sheet
   std::optional<std::string> css;
 
+  // Optional legend URL layer used to look up text labels in GetFeatureInfo responses
+  std::optional<std::string> legend_url_layer;
+
   // SVG attributes (id, class, style, transform, filter...)
   Attributes attributes;
 
@@ -167,6 +170,10 @@ class Layer : public Properties
  private:
   bool validResolution() const;
   bool validType(const std::string& theType) const;
+
+  // Look up text label for a numeric value using the associated legend_url_layer.
+  // Returns empty string if no conversion is found or legend cannot be read.
+  std::string getLegendLabelText(double theValue, const State& theState) const;
 
   void getObservationValue(CTPP::CDT& theInfo, const State& theState);
   void getQuerydataValue(CTPP::CDT& theInfo, const State& theState);

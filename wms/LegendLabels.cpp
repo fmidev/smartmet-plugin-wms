@@ -2,7 +2,9 @@
 #include "Config.h"
 #include "Hash.h"
 
+#include <fmt/printf.h>
 #include <macgyver/Exception.h>
+#include <macgyver/StringConversion.h>
 #include <stdexcept>
 
 namespace SmartMet
@@ -77,6 +79,65 @@ void LegendLabels::init(Json::Value& theJson, const Config& theConfig)
       else
         throw Fmi::Exception(BCP, "Legend-layer labels do not have a setting named '" + name + "'");
     }
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Format a value and look it up in conversions
+ */
+// ----------------------------------------------------------------------
+
+std::string LegendLabels::findConversion(double theValue,
+                                         const std::optional<std::string>& theLanguage) const
+{
+  try
+  {
+    if (conversions.empty())
+      return {};
+
+    // Format the value the same way as LegendLayer does for label text
+    std::string text;
+    if (!format)
+    {
+      text = Fmi::to_string(theValue);
+    }
+    else
+    {
+      // Format and strip trailing zeros (mirrors LegendLayer::pretty())
+      std::string ret = fmt::sprintf(format->c_str(), theValue);
+      std::size_t pos = ret.size();
+      while (pos > 0 && ret[--pos] == '0')
+      {
+      }
+      if (ret[pos] != ',' && ret[pos] != '.')
+        text = ret;
+      else
+      {
+        text = ret.substr(0, pos);
+        if (text == "-0")
+          text = "0";
+      }
+    }
+
+    // Try language-specific conversion first
+    if (theLanguage)
+    {
+      const auto it = conversions.find(*theLanguage + ":" + text);
+      if (it != conversions.end())
+        return it->second;
+    }
+
+    // Fall back to language-neutral conversion
+    const auto it = conversions.find(text);
+    if (it != conversions.end())
+      return it->second;
+
+    return {};
   }
   catch (...)
   {

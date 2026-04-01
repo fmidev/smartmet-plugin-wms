@@ -1,6 +1,7 @@
 // ======================================================================
 
 #include "Layer.h"
+#include "LegendLabels.h"
 #include "MapboxVectorTile.h"
 #include "AggregationUtility.h"
 #include "Config.h"
@@ -17,6 +18,8 @@
 #endif
 #include <ctpp2/CDT.hpp>
 #include <engines/gis/Engine.h>
+#include <algorithm>
+#include <fstream>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
 #include <gis/OGR.h>
@@ -163,8 +166,7 @@ void Layer::init(Json::Value& theJson,
     if (v)
       paraminfo.geometryId = toInt32(*v);
 
-    // Not used in plain requests
-    json = JsonTools::remove(theJson, "legend_url_layer");
+    JsonTools::remove_string(legend_url_layer, theJson, "legend_url_layer");
 
     JsonTools::remove_bool(visible, theJson, "visible");
     JsonTools::remove_bool(animation_enabled, theJson, "animation_enabled");
@@ -591,6 +593,102 @@ void Layer::addMVTLayer(MVTTileBuilder& builder, State& theState)
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Look up text label for a numeric value using the legend_url_layer conversions
+ */
+// ----------------------------------------------------------------------
+
+std::string Layer::getLegendLabelText(double theValue, const State& theState) const
+{
+  try
+  {
+    if (!legend_url_layer)
+      return {};
+
+    // Parse customer and product path from legend_url_layer.
+    // Format: "customer:path:to:product" (all colons after the first become slashes).
+    std::string customer;
+    std::string product_path;
+    const auto colon_pos = legend_url_layer->find(':');
+    if (colon_pos != std::string::npos)
+    {
+      customer = legend_url_layer->substr(0, colon_pos);
+      product_path = legend_url_layer->substr(colon_pos + 1);
+      std::replace(product_path.begin(), product_path.end(), ':', '/');
+    }
+    else
+    {
+      customer = theState.getCustomer();
+      product_path = *legend_url_layer;
+    }
+
+    // Construct the path to the legend product JSON file
+    const auto& config = theState.getConfig();
+    const std::string legend_path = config.rootDirectory(theState.useWms()) +
+                                    "/customers/" + customer +
+                                    "/products/" + product_path + ".json";
+
+    // Read the file
+    std::ifstream file(legend_path);
+    if (!file.is_open())
+      return {};
+
+    const std::string json_text((std::istreambuf_iterator<char>(file)),
+                                std::istreambuf_iterator<char>());
+
+    // Parse JSON (allow C-style comments since product files use them)
+    Json::Value root;
+    Json::CharReaderBuilder builder;
+    builder["allowComments"] = true;
+    std::string errors;
+    std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
+    if (!reader->parse(json_text.c_str(), json_text.c_str() + json_text.size(), &root, &errors))
+      return {};
+
+    // Walk views[*].layers[*] looking for a legend layer with labels.conversions
+    Json::Value nulljson;
+    const auto& views = root.get("views", nulljson);
+    if (views.isNull() || !views.isArray())
+      return {};
+
+    for (const auto& view : views)
+    {
+      const auto& layers_json = view.get("layers", nulljson);
+      if (layers_json.isNull() || !layers_json.isArray())
+        continue;
+
+      for (const auto& layer_json : layers_json)
+      {
+        if (!layer_json.isObject())
+          continue;
+        const auto layer_type = layer_json.get("layer_type", nulljson);
+        if (!layer_type.isString() || layer_type.asString() != "legend")
+          continue;
+
+        const auto& labels_json = layer_json.get("labels", nulljson);
+        if (labels_json.isNull() || !labels_json.isObject())
+          continue;
+
+        LegendLabels labels;
+        Json::Value labels_copy = labels_json;
+        labels.init(labels_copy, config);
+
+        const auto text = labels.findConversion(theValue, language);
+        if (!text.empty())
+          return text;
+      }
+    }
+
+    return {};
+  }
+  catch (...)
+  {
+    // Legend lookup is supplementary — do not propagate errors
+    return {};
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Get data value for the given pixel (dispatch)
  */
 // ----------------------------------------------------------------------
@@ -676,6 +774,9 @@ void Layer::getQuerydataValue(CTPP::CDT& theInfo, const State& theState)
     value = multiplier.value_or(1.0) * value + offset.value_or(0.0);
 
     theInfo["features"][paraminfo.parameter] = value;
+    const auto label = getLegendLabelText(value, theState);
+    if (!label.empty())
+      theInfo["features"][paraminfo.parameter + "_label"] = "\"" + label + "\"";
     theInfo["time"] = Fmi::to_iso_string(valid_time);
     theInfo["longitude"] = std::round(lon * 1e5) / 1e5;
     theInfo["latitude"] = std::round(lat * 1e5) / 1e5;
@@ -846,6 +947,9 @@ void Layer::getGridValue(CTPP::CDT& theInfo, const State& theState)
 
     theInfo["time"] = Fmi::to_iso_string(valid_time);
     theInfo["features"][paraminfo.parameter] = value;
+    const auto label = getLegendLabelText(value, theState);
+    if (!label.empty())
+      theInfo["features"][paraminfo.parameter + "_label"] = "\"" + label + "\"";
     theInfo["longitude"] = std::round(lon * 1e5) / 1e5;
     theInfo["latitude"] = std::round(lat * 1e5) / 1e5;
   }

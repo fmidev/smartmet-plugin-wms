@@ -1,0 +1,35 @@
+{
+    "title": "Precipitation form symbols with legend labels",
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+        "xsize": 300,
+        "ysize": 550,
+        "crs": "EPSG:2393",
+        "bboxcrs": "EPSG:4326",
+        "cy": 64.8,
+        "cx": 25.4,
+        "resolution": 2.5
+    },
+    "views": [
+        {
+            "qid": "v1",
+            "layers": [
+                {
+                    "qid": "l1",
+                    "layer_type": "symbol",
+                    "parameter": "Precipitation1h",
+                    "legend_url_layer": "test:legends:precipitation",
+                    "symbol": "dot",
+                    "positions":
+                    {
+                        "x": 30,
+                        "y": 30,
+                        "dx": 30,
+                        "dy": 30
+                    }
+                }
+            ]
+        }
+    ]
+}
