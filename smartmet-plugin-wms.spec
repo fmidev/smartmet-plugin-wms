@@ -4,8 +4,8 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.3.26
-Release: 2%{?dist}.fmi
+Version: 26.4.1
+Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
 URL: https://github.com/fmidev/smartmet-plugin-wms
@@ -32,20 +32,20 @@ BuildRequires: smartmet-library-grid-content-devel >= 26.3.18
 BuildRequires: smartmet-library-grid-files-devel >= 26.3.18
 BuildRequires: smartmet-library-macgyver-devel >= 26.2.4
 BuildRequires: smartmet-library-spine-devel >= 26.3.13
-BuildRequires: smartmet-library-timeseries-devel >= 26.2.4
+BuildRequires: smartmet-library-timeseries-devel >= 26.4.1
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.2.4
 %endif
 %if %{with observation}
-BuildRequires: smartmet-engine-observation-devel >= 26.3.23
+BuildRequires: smartmet-engine-observation-devel >= 26.4.1
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 26.2.4
 BuildRequires: smartmet-engine-grid-devel >= 26.3.18
 BuildRequires: smartmet-engine-geonames-devel >= 26.3.10
 BuildRequires: smartmet-engine-querydata-devel >= 26.2.4
 BuildRequires: smartmet-engine-contour-devel >= 26.2.4
-BuildRequires: smartmet-library-gis-devel >= 26.3.26
-BuildRequires: smartmet-library-trax-devel >= 26.2.4
+BuildRequires: smartmet-library-gis-devel >= 26.3.30
+BuildRequires: smartmet-library-trax-devel >= 26.4.1
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
@@ -74,11 +74,11 @@ Requires: libwebp13
 Requires: google-roboto-fonts
 Requires: smartmet-library-grid-content >= 26.3.18
 Requires: smartmet-library-grid-files >= 26.3.18
-Requires: smartmet-library-gis >= 26.3.26
-Requires: smartmet-library-trax >= 26.2.4
+Requires: smartmet-library-gis >= 26.3.30
+Requires: smartmet-library-trax >= 26.4.1
 Requires: smartmet-library-macgyver >= 26.2.4
 Requires: smartmet-library-spine >= 26.3.13
-Requires: smartmet-library-timeseries >= 26.2.4
+Requires: smartmet-library-timeseries >= 26.4.1
 Requires: smartmet-library-giza >= 26.2.4
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 26.2.4
@@ -116,11 +116,11 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-querydata-devel >= 26.2.4
 #TestRequires: smartmet-engine-authentication-devel >= 26.2.4
 #TestRequires: smartmet-library-giza-devel >= 26.2.4
-#TestRequires: smartmet-library-trax-devel >= 26.2.4
+#TestRequires: smartmet-library-trax-devel >= 26.4.1
 #TestRequires: smartmet-library-newbase-devel >= 26.2.4
 #TestRequires: smartmet-library-macgyver-devel >= 26.2.4
 #TestRequires: smartmet-library-spine-devel >= 26.3.13
-#TestRequires: smartmet-library-timeseries-devel >= 26.2.4
+#TestRequires: smartmet-library-timeseries-devel >= 26.4.1
 #TestRequires: smartmet-engine-grid-devel >= 26.3.18
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
@@ -134,7 +134,7 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: cairo-devel
 #TestRequires: redis
 %if %{with observation}
-#TestRequires: smartmet-engine-observation-devel >= 26.3.23
+#TestRequires: smartmet-engine-observation-devel >= 26.4.1
 %endif
 
 %description
@@ -163,6 +163,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Wed Apr  1 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.4.1-1.fmi
+- Fixed test input symbols to use overflow=visible
+- Fixed merging of defs section when querying multiple WMS layers simultaneously
+- Add symbol/isoband legend texts to GetFeatureInfo queries if available
+- Added Canvas weather animations
+- Added Mapbox Vector Tile support
+- Added GeoTiff output support
+- Implemented WMTS support
+- Implemented OGC Tiles supported
+- Improved thread safety when calculating text extents using Cairo/Freetype
+
 * Thu Mar 26 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.3.26-2.fmi
 - Add ETag to all WMS responses
 
