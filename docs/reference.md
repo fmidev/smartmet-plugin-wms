@@ -48,6 +48,7 @@ Table of Contents
         - [Algorithm to deduce weather condition symbol](#algorithm-to-deduce-weather-condition-symbol)
       - [PresentWeatherObservationLayer](#presentweatherobservationlayer)
         - [Algorithm to deduce present weather symbol](#algorithm-to-deduce-present-weather-symbol)
+      - [MetarLayer](#metarlayer)
     - [Structure definitions](#structure-definitions)
       - [Attribute structure](#attribute-structure)
       - [AttributeSelection structure](#attributeselection-structure)
@@ -285,6 +286,7 @@ All the layers share some common attributes. In addition, each layer type has it
 <tr><td>tag</td><td>TagLayer</td></tr>
 <tr><td>translation</td><td>TranslationLayer</td></tr>
 <tr><td>windrose</td><td>WindRoseLayer</td></tr>
+<tr><td>metar</td><td>MetarLayer</td></tr>
 <tr><td>osm</td><td>OSMLayer</td></tr>
 <tr><td>postgis</td><td>PostGISLayer</td></tr>
 <tr><td>icemap</td><td>IceMApLayer</td></tr>
@@ -3620,6 +3622,90 @@ int get_symbol_priority(int symbol)
   return 0;
 }
 </pre>
+#### MetarLayer
+
+MetarLayer renders METAR aviation weather observations as standard meteorological station plots, one plot per airport. It queries raw TAC METAR (or SPECI) messages from the AVI engine and decodes them directly, so no pre-processing pipeline is required.
+
+Each station plot can include:
+- **Wind barb** — direction and speed in knots with standard meteorological barb notation
+- **Temperature / dew point** — displayed in METAR convention (e.g. `03` / `M02`)
+- **Visibility** — in metres, capped at 9999
+- **Present weather** — raw TAC tokens (e.g. `-RA`, `TSRA`, `+SN`)
+- **Sky condition** — cloud layers as amount+base (e.g. `BKN025`) or `CAVOK`/`SKC`
+- **QNH pressure** — in hPa
+- **Wind gust** — in knots when reported
+- **Aviation status box** — colour-coded LIFR / IFR / MVFR / VFR category
+
+> **Requires:** The AVI engine (`engines/avi`) must be configured and loaded. MetarLayer is compiled out when `WITHOUT_AVI` is defined.
+
+**Aviation flight rule categories**
+
+The status box colour is derived from ceiling and visibility:
+
+| Category | Colour | Ceiling | Visibility |
+|---|---|---|---|
+| LIFR (Low IFR) | magenta | < 500 ft | < 1600 m |
+| IFR | red | 500–999 ft | 1600–4999 m |
+| MVFR (Marginal VFR) | blue | 1000–2999 ft | 5000–7999 m |
+| VFR | green | ≥ 3000 ft | ≥ 8000 m |
+
+**Sample configuration**
+
+```json
+{
+  "qid": "metar_obs",
+  "layer_type": "metar",
+  "message_type": "METAR",
+  "exclude_specis": true,
+  "font_size": 10,
+  "plot_size": 60,
+  "mindistance": 50,
+  "show_temperature": true,
+  "show_dewpoint": true,
+  "show_visibility": true,
+  "show_wind": true,
+  "show_pressure": true,
+  "show_gust": true,
+  "show_weather": true,
+  "show_sky_info": true,
+  "show_status": true,
+  "attributes": { "id": "metar_layer" }
+}
+```
+
+To restrict the plot to specific airports or countries:
+
+```json
+{
+  "layer_type": "metar",
+  "icaos": ["EFHK", "ESSA", "EKCH"],
+  "countries": ["FI", "SE", "NO", "DK"]
+}
+```
+
+<pre><b>MetarLayer</b></pre>
+
+| Name              | Type       | Default    | Description |
+| ----------------- | ---------- | ---------- | ----------- |
+| message_type      | string     | `"METAR"`  | AVI message type to query: `"METAR"`, `"SPECI"`, `"AWSMETAR"`, etc. |
+| message_format    | string     | `"TAC"`    | Message format. Currently only `"TAC"` (raw METAR text) is supported. |
+| exclude_specis    | boolean    | `true`     | Skip SPECI (special) reports when `message_type` is `"METAR"`. |
+| font_size         | int        | `10`       | Base font size in pixels for all text elements in the station plot. |
+| plot_size         | int        | `0`        | Bounding-box side length in pixels. `0` = auto (6 × `font_size`). |
+| show_temperature  | boolean    | `true`     | Show temperature in the upper-left quadrant of the station plot. |
+| show_dewpoint     | boolean    | `true`     | Show dew point below the temperature. |
+| show_visibility   | boolean    | `true`     | Show visibility in metres in the lower-left quadrant. |
+| show_wind         | boolean    | `true`     | Draw a wind barb at the station centre. |
+| show_pressure     | boolean    | `true`     | Show QNH pressure (hPa) in the upper-right quadrant. |
+| show_gust         | boolean    | `true`     | Show wind gust speed (kt) below the pressure when reported. |
+| show_weather      | boolean    | `true`     | Show present-weather TAC tokens (e.g. `-RA`, `TSRA`) below the station symbol. |
+| show_sky_info     | boolean    | `true`     | Show sky-condition string (`CAVOK`, `SKC`, or cloud layer list) in the lower-right quadrant. |
+| show_status       | boolean    | `true`     | Draw a colour-coded aviation status box (LIFR/IFR/MVFR/VFR) at the station centre. |
+| color             | string     | -          | Override all element colours with a single SVG colour value. When omitted each element uses its default colour. |
+| mindistance       | int        | `0`        | Minimum pixel distance between rendered station plots. Plots closer than this threshold are suppressed (most-recent observation wins). |
+| icaos             | [string]   | -          | Restrict rendering to the listed ICAO station codes. All stations are shown when omitted. |
+| countries         | [string]   | -          | Restrict rendering to stations in the listed ISO 3166-1 alpha-2 country codes (e.g. `"FI"`, `"SE"`). All countries are shown when omitted. |
+
 ### Structure definitions 
 
 The product, view and layer definitions contain several attributes of type  structure. This section  defines attributes used in these structures.  
