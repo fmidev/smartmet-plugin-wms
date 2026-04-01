@@ -1912,23 +1912,191 @@ The table below contains a list of attributes that can be defined for the WKT la
 
 By default the WKT is not segmented into smaller linesegments. However, if the CRS of the image is not geographic, long straight lines in the WKT will not curve as expected unless the WKT is segmented into multiple parts in a resolution suitable for the output image. In the example above the black WKT is not segmented at all, the red one is segmented to 100 km resolution, and the green one to 20 pixel resolution.
 
+#### WeatherFrontsLayer
+
+The `fronts` layer renders cold, warm, occluded, and stationary fronts as SVG paths decorated
+with meteorological symbols (triangles and semi-circles) at even arc-length intervals.  The
+symbols are rendered using a `<textPath>` element referencing a **weather-font** that maps
+specific characters to the standard front glyphs.
+
+Two data sources are supported via the `source` field:
+
+| `source`      | Description |
+| ------------- | ----------- |
+| `"synthetic"` | Curves defined inline in the product JSON (default). Useful for testing and for manually drawn analyses. |
+| `"grid"`      | Fronts detected on the fly from querydata using Hewson's Thermal Front Parameter (TFP) method. |
+
+##### Front types
+
+| Type          | JSON string    | Default line class | Default glyph characters |
+| ------------- | -------------- | ------------------ | ------------------------ |
+| Cold front    | `"cold"`       | `coldfront`        | `C` / `c`                |
+| Warm front    | `"warm"`       | `warmfront`        | `W` / `w`                |
+| Occluded      | `"occluded"`   | `occludedfront`    | `O` / `o`                |
+| Stationary    | `"stationary"` | `stationaryfront`  | `S` / `s`                |
+| Trough        | `"trough"`     | `trough`           | `T` / `t`                |
+| Ridge         | `"ridge"`      | `ridge`            | `R` / `r`                |
+
+The weather font must define these uppercase characters as the "facing right" symbol and the
+lowercase characters as the "facing left" symbol.  The layer automatically places alternating
+glyphs along the path using the spacing parameters below.
+
+##### WeatherFrontsLayer settings
+
+| Name     | Type   | Default      | Description |
+| -------- | ------ | ------------ | ----------- |
+| source   | string | `"synthetic"` | Data source: `"synthetic"` or `"grid"`. |
+| fronts   | array  | `[]`         | Front curve definitions (used when `source` is `"synthetic"`). See below. |
+| grid     | object | –            | Grid-detection configuration (used when `source` is `"grid"`). See below. |
+| styles   | object | –            | Per-type style overrides. Keys are front type strings (e.g. `"cold"`). See below. |
+
+##### `fronts` array (synthetic source)
+
+Each element in the `fronts` array defines one front curve:
+
+| Name   | Type   | Default  | Description |
+| ------ | ------ | -------- | ----------- |
+| type   | string | `"cold"` | Front type: `"cold"`, `"warm"`, `"occluded"`, `"stationary"`, `"trough"`, or `"ridge"`. |
+| side   | string | `"left"` | Which side the symbols face: `"left"` or `"right"`. |
+| points | array  | –        | Array of `[longitude, latitude]` pairs (WGS84) defining the front path. Required. |
+
+##### `grid` object (grid source)
+
+Fronts are detected by computing Hewson's Thermal Front Parameter (TFP):
+
+```
+TFP = -∇(|∇θ|) · (∇θ / |∇θ|)
+```
+
+Zero-crossings of TFP with `|∇θ|` above `min_gradient` are extracted as isolines and
+classified as cold or warm fronts based on the sign of the low-level temperature advection
+`V · ∇θ` at 850 hPa.
+
+| Name            | Type   | Default                  | Description |
+| --------------- | ------ | ------------------------ | ----------- |
+| producer        | string | (default producer)       | Querydata producer name. |
+| theta_param     | string | `"PotentialTemperature"` | Potential temperature (or temperature) parameter name. |
+| u_param         | string | `"WindUMS"`              | U-component of wind parameter name. |
+| v_param         | string | `"WindVMS"`              | V-component of wind parameter name. |
+| level           | double | `850.0`                  | Pressure level in hPa. |
+| min_gradient    | double | `2e-6`                   | Minimum `|∇θ|` threshold (K/m). Grid points below this are masked as missing before contouring. |
+| min_length_px   | double | `20.0`                   | Minimum front segment length in screen pixels. Shorter segments are discarded. |
+
+##### `styles` object
+
+The `styles` object maps front type names to style overrides.  Any omitted field keeps its
+default value.
+
+| Name       | Type   | Default                | Description |
+| ---------- | ------ | ---------------------- | ----------- |
+| line_css   | string | (type-specific)        | CSS class name applied to the `<use>` stroke path. |
+| glyph_css  | string | (type-specific)        | CSS class name applied to the `<text>` glyph group. |
+| glyph1     | string | (type-specific)        | Character rendered at odd-numbered symbol positions. |
+| glyph2     | string | (type-specific)        | Character rendered at even-numbered symbol positions. |
+| font_size  | double | `30.0`                 | Glyph font size in pixels. |
+| spacing    | double | `60.0`                 | Arc-length spacing between glyph centres in pixels. |
+
+##### Example 1 – synthetic cold and warm fronts
+
+```json
+{
+    "title": "Manual front analysis",
+    "projection": { "crs": "EPSG:3857", "xsize": 800, "ysize": 600 },
+    "views": [{
+        "layers": [{
+            "layer_type": "fronts",
+            "source": "synthetic",
+            "css": "fronts/fronts.css",
+            "fronts": [
+                {
+                    "type": "cold",
+                    "side": "left",
+                    "points": [[20.0, 60.0], [22.0, 58.5], [25.0, 57.0]]
+                },
+                {
+                    "type": "warm",
+                    "side": "right",
+                    "points": [[20.0, 60.0], [18.0, 61.5], [15.0, 62.0]]
+                }
+            ]
+        }]
+    }]
+}
+```
+
+##### Example 2 – automatic front detection from querydata
+
+```json
+{
+    "title": "NWP front analysis 850 hPa",
+    "producer": "ecmwf_skandinavia_painepinta",
+    "projection": { "crs": "EPSG:3857", "xsize": 800, "ysize": 600 },
+    "views": [{
+        "layers": [
+            { "layer_type": "map", "map": "finland" },
+            {
+                "layer_type": "fronts",
+                "source": "grid",
+                "css": "fronts/fronts.css",
+                "grid": {
+                    "producer": "ecmwf_skandinavia_painepinta",
+                    "theta_param": "PotentialTemperature",
+                    "u_param": "WindUMS",
+                    "v_param": "WindVMS",
+                    "level": 850,
+                    "min_gradient": 2e-6,
+                    "min_length_px": 30
+                },
+                "styles": {
+                    "cold": { "font_size": 24, "spacing": 48 },
+                    "warm": { "font_size": 24, "spacing": 48 }
+                }
+            }
+        ]
+    }]
+}
+```
+
+The CSS file (`fronts/fronts.css`) must define the front line classes and load the weather font:
+
+```css
+@font-face {
+    font-family: "WeatherFont";
+    src: url("fonts/weather.ttf");
+}
+.coldfront        { stroke: #0000ff; stroke-width: 2; fill: none; }
+.warmfront        { stroke: #ff0000; stroke-width: 2; fill: none; }
+.occludedfront    { stroke: #800080; stroke-width: 2; fill: none; }
+.stationaryfront  { stroke: #800080; stroke-width: 2; fill: none; }
+.trough           { stroke: #996600; stroke-width: 1.5; fill: none; stroke-dasharray: 6 4; }
+.ridge            { stroke: #006600; stroke-width: 1.5; fill: none; stroke-dasharray: 6 4; }
+.coldfront-glyphs   { font-family: "WeatherFont"; font-size: 30px; fill: #0000ff; }
+.warmfront-glyphs   { font-family: "WeatherFont"; font-size: 30px; fill: #ff0000; }
+.occluded-glyphs    { font-family: "WeatherFont"; font-size: 30px; fill: #800080; }
+.stationary-glyphs  { font-family: "WeatherFont"; font-size: 30px; fill: #800080; }
+```
+
 #### HovmoellerLayer
 
-A Hovmöller layer renders a two-dimensional time–space cross-section as a grid of coloured
-rectangles inside an ordinary SVG product.  Unlike all other layers the coordinate axes are
-**not** a geographic map projection: one axis is always time and the other is a spatial or
-vertical coordinate sampled from the querydata.  Three slice geometries are supported:
+A Hovmöller layer renders a two-dimensional time–space cross-section (or vertical cross-section)
+as a grid of coloured rectangles inside an ordinary SVG product.  Unlike all other layers the
+coordinate axes are **not** a geographic map projection.  Five slice geometries are supported:
 
-| `direction`   | X axis (columns)               | Y axis (rows) | Fixed coordinate(s)          |
-| ------------- | ------------------------------ | ------------- | ---------------------------- |
-| `time_lon`    | Longitude, evenly spaced       | Time steps    | Latitude, pressure level     |
-| `time_lat`    | Latitude, evenly spaced        | Time steps    | Longitude, pressure level    |
-| `time_level`  | Pressure levels (data order)   | Time steps    | Latitude + longitude         |
+| `direction`   | X axis (columns)               | Y axis (rows)       | Fixed coordinate(s)          |
+| ------------- | ------------------------------ | ------------------- | ---------------------------- |
+| `time_lon`    | Longitude, evenly spaced       | Time steps          | Latitude, pressure level     |
+| `time_lat`    | Latitude, evenly spaced        | Time steps          | Longitude, pressure level    |
+| `time_level`  | Pressure levels                | Time steps          | Latitude + longitude         |
+| `lon_level`   | Longitude, evenly spaced       | Pressure levels     | Latitude + valid time        |
+| `lat_level`   | Latitude, evenly spaced        | Pressure levels     | Longitude + valid time       |
 
-The layer iterates **all** time steps available in the querydata; the `time` query-string
-parameter is ignored.  Each cell is coloured by matching the interpolated value against the
-first matching `Isoband` definition, using the same isoband JSON and CSS files as
-`IsobandLayer`.
+The three `time_*` directions (true Hovmöller diagrams) iterate **all** time steps available in
+the querydata; the `time` query-string parameter is ignored for those.  The two `*_level`
+directions are vertical cross-sections (not strictly Hovmöller diagrams) that render the single
+time step selected by the standard `time=` request parameter.
+
+Each cell is coloured by matching the interpolated value against the first matching `Isoband`
+definition, using the same isoband JSON and CSS files as `IsobandLayer`.
 
 The canvas pixel dimensions are taken from the product-level `projection.xsize` /
 `projection.ysize`.  No geographic `crs` is required in the projection block.
@@ -1939,23 +2107,27 @@ The canvas pixel dimensions are taken from the product-level `projection.xsize` 
 | ----------- | -------- | --------- | ----------- |
 | parameter   | string   | –         | Parameter name, e.g. `"GeopHeight"` or `"Temperature"`. Required. |
 | level       | double   | –         | Pressure level in hPa for `time_lon` and `time_lat`. Inherited from the shared `Properties` block so it can also be set via the `level=` query-string parameter. |
-| direction   | string   | `time_lon`| Slice geometry: `time_lon`, `time_lat`, or `time_level`. |
-| latitude    | double   | `60.0`    | Fixed latitude for `time_lon` and `time_level`. |
-| longitude   | double   | `25.0`    | Fixed longitude for `time_lat` and `time_level`. |
-| lon_min     | double   | `5.0`     | Western longitude bound for `time_lon`. |
-| lon_max     | double   | `35.0`    | Eastern longitude bound for `time_lon`. |
-| lat_min     | double   | `55.0`    | Southern latitude bound for `time_lat`. |
-| lat_max     | double   | `70.0`    | Northern latitude bound for `time_lat`. |
-| nx          | integer  | `50`      | Number of evenly-spaced sample points along the space axis. Ignored for `time_level` (the number of levels in the data is used). |
-| isobands    | string   | –         | Path to the isoband colour definitions, e.g. `"json:isobands/geoph500.json"`. |
-| css         | string   | –         | Path to the CSS stylesheet for the isoband classes. |
+| direction       | string   | `time_lon` | Slice geometry: `time_lon`, `time_lat`, `time_level`, `lon_level`, or `lat_level`. |
+| latitude        | double   | `60.0`     | Fixed latitude for `time_lon`, `time_level`, `lon_level`. |
+| longitude       | double   | `25.0`     | Fixed longitude for `time_lat`, `time_level`, `lat_level`. |
+| lon_min         | double   | `5.0`      | Western longitude bound for `time_lon` and `lon_level`. |
+| lon_max         | double   | `35.0`     | Eastern longitude bound for `time_lon` and `lon_level`. |
+| lat_min         | double   | `55.0`     | Southern latitude bound for `time_lat` and `lat_level`. |
+| lat_max         | double   | `70.0`     | Northern latitude bound for `time_lat` and `lat_level`. |
+| nx              | integer  | `50`       | Number of evenly-spaced sample points along the space axis. Ignored for `time_level` (the number of levels in the data is used). |
+| time_ascending  | boolean  | `true`     | `true` = oldest time at the top (classic Hovmöller convention, time increases downward). `false` = newest time at the top. Has no effect on `*_level` directions. |
+| level_ascending | boolean  | `false`    | `false` = surface (high hPa) on the left / top (meteorological convention). `true` = surface on the right / bottom. Applies to all `*_level` directions. |
+| isobands        | string   | –          | Path to the isoband colour definitions, e.g. `"json:isobands/geoph500.json"`. |
+| css             | string   | –          | Path to the CSS stylesheet for the isoband classes. |
 
-**Notes on sparse level data**
+**Notes on level ordering and sparse data**
 
-For `time_level` the X axis contains exactly the pressure levels stored in the querydata,
-in data order (typically descending: 1000, 925, 850, 700, 500, 300 hPa).  With only six
-levels the columns are wide and the diagram is more schematic than meteorologically detailed,
-but it clearly shows the vertical thermal evolution at a fixed point.  Finer vertical
+For all `*_level` directions the levels are drawn with surface (high hPa) on the left / top by
+default (`level_ascending=false`).  The data is commonly stored in ascending pressure order
+(300, 500 … 1000 hPa); the layer reverses this automatically so 1000 hPa appears first.
+
+With only six pressure levels (as in the test data) the cells are wide and the diagram is more
+schematic than meteorologically detailed, but it clearly shows the vertical structure.  Finer
 resolution requires model-level or high-density pressure-level querydata.
 
 ##### Example 1 – time × longitude (classic Hovmöller)
