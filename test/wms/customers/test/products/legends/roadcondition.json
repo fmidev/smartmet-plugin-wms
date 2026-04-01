@@ -1,0 +1,32 @@
+{
+    "title": "Road condition legend",
+    "hidden": true,
+    "projection": {},
+    "views":
+    [
+        {
+            "layers":
+            [
+                {
+                    "layer_type": "legend",
+                    "isobands": "json:isobands/roadcondition.json",
+                    "labels":
+                    {
+                        "type": "lolimit",
+                        "conversions":
+                        {
+                            "1": "Dry",
+                            "2": "Moist",
+                            "3": "Wet",
+                            "4": "Snow",
+                            "5": "Slush",
+                            "6": "Frost",
+                            "7": "Partially icy",
+                            "8": "Icy"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,67 @@
+[
+    // 1=Dry, 2=Moist, 3=Wet, 4=Snow, 5=Slush, 6=Frost, 7=Partially icy, 8=Icy
+    {
+        "lolimit": 8,
+        "hilimit": 8,
+        "attributes":
+        {
+            "class": "RoadIcy"
+        }
+    },
+    {
+        "lolimit": 7,
+        "hilimit": 7,
+        "attributes":
+        {
+            "class": "RoadPartiallyIcy"
+        }
+    },
+    {
+        "lolimit": 6,
+        "hilimit": 6,
+        "attributes":
+        {
+            "class": "RoadFrost"
+        }
+    },
+    {
+        "lolimit": 5,
+        "hilimit": 5,
+        "attributes":
+        {
+            "class": "RoadSlush"
+        }
+    },
+    {
+        "lolimit": 4,
+        "hilimit": 4,
+        "attributes":
+        {
+            "class": "RoadSnow"
+        }
+    },
+    {
+        "lolimit": 3,
+        "hilimit": 3,
+        "attributes":
+        {
+            "class": "RoadWet"
+        }
+    },
+    {
+        "lolimit": 2,
+        "hilimit": 2,
+        "attributes":
+        {
+            "class": "RoadMoist"
+        }
+    },
+    {
+        "lolimit": 1,
+        "hilimit": 1,
+        "attributes":
+        {
+            "class": "RoadDry"
+        }
+    }
+]

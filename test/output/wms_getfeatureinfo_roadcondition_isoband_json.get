@@ -1,0 +1,10 @@
+{
+"time": 20260331T180000,
+"longitude": 25.5,
+"latitude": 65,
+"features":
+{
+"RoadCondition": 1,
+"RoadCondition_label": "Dry"
+}
+}

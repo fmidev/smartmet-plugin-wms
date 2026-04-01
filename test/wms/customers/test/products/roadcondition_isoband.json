@@ -1,0 +1,27 @@
+{
+    "title": "Road condition isobands with legend labels",
+    "producer": "roadcondition",
+    "projection":
+    {
+        "crs": "data",
+        "xsize": 400,
+        "ysize": 600
+    },
+    "views":
+    [
+        {
+            "qid": "v1",
+            "layers":
+            [
+                {
+                    "qid": "l1",
+                    "layer_type": "isoband",
+                    "parameter": "RoadCondition",
+                    "legend_url_layer": "test:legends:roadcondition",
+                    "isobands": "json:isobands/roadcondition.json",
+                    "css": "isobands/roadcondition.css"
+                }
+            ]
+        }
+    ]
+}
