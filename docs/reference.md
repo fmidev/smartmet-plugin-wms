@@ -41,6 +41,7 @@ Table of Contents
         - [CircleLabels settings](#circlelabels-settings)
       - [TranslationLayer](#translationlayer)
       - [WindRoseLayer](#windroselayer)
+      - [OSMLayer](#osmlayer)
       - [PostGISLayer](#postgislayer)
       - [IceMapLayer](#icemaplayer)
       - [FinnishRoadObservationLayer](#finnishroadobservationlayer)
@@ -78,12 +79,19 @@ Table of Contents
     - [Grids with the same timestamp](#grids-with-the-same-timestamp)
     - [Grids calculated over multiple timesteps](#grids-calculated-over-multiple-timesteps)
     - [Functions](#functions)
-- [Generic querystring options](#generic-querystring-options)
+- [JSON references and includes](#json-references-and-includes)
+- [Symbol substitutions via URI](#symbol-substitutions-via-uri)
+- [Dali querystring parameters](#dali-querystring-parameters)
+  - [Product modification via querystring](#product-modification-via-querystring)
+  - [Template selection](#template-selection)
+  - [Debugging parameters](#debugging-parameters)
+- [WMS querystring parameters](#wms-querystring-parameters)
 - [WMS GetMap and GetCapabilities configuration](#wms-getmap-and-getcapabilities-configuration)
   - [WMS layer variants](#wms-layer-variants)
 - [Configuration](#configuration)
   - [Main configuration file](#main-configuration-file)
   - [Plugin configuration file](#plugin-configuration-file)
+    - [Sample configuration file](#sample-configuration-file)
 
 
 # Product definition
@@ -277,6 +285,7 @@ All the layers share some common attributes. In addition, each layer type has it
 <tr><td>tag</td><td>TagLayer</td></tr>
 <tr><td>translation</td><td>TranslationLayer</td></tr>
 <tr><td>windrose</td><td>WindRoseLayer</td></tr>
+<tr><td>osm</td><td>OSMLayer</td></tr>
 <tr><td>postgis</td><td>PostGISLayer</td></tr>
 <tr><td>icemap</td><td>IceMApLayer</td></tr>
 <tr><td>minresolution</td><td>(double)</td><td>-</td><td colspan="2">Minimum resolution of the projection for the layer to be generated at all.</td></tr>
@@ -2665,6 +2674,150 @@ The table below contains a list of attributes that can be defined for the windro
 
 
 
+#### OSMLayer
+
+The OSM layer renders OpenStreetMap data loaded into PostGIS via `osm2pgsql`. It supports polygon features (landuse, water, buildings), linear features (roads, coastlines, administrative boundaries) and place-name labels. Each layer response carries an HTTP ETag derived from the OSM data age, enabling efficient HTTP caching. The OGC API – Tiles endpoint also supports Mapbox Vector Tile (MVT/PBF) output via the `addMVTLayer` mechanism.
+
+**Data setup**
+
+OSM data is not bundled; it must be downloaded and imported separately:
+
+| Region | Recommended source | Approx. size |
+|---|---|---|
+| Scandinavia (high-res local) | `scandinavia-latest.osm.pbf` from Geofabrik | ~350 MB |
+| Global (low-res background) | Simplified OSM planet extract (e.g. `planet-latest-simplified.osm.pbf`) | varies |
+
+Import command using `osm2pgsql`:
+```sh
+osm2pgsql -d smartmet -U smartmet \
+  --schema osm_scandinavia \
+  --middle-schema osm_scandinavia \
+  --output flex --style osm2pgsql-flex-config.lua \
+  scandinavia-latest.osm.pbf
+```
+
+`osm2pgsql` creates the standard tables `planet_osm_polygon`, `planet_osm_line`, `planet_osm_point` and `planet_osm_roads` inside the configured schema.
+
+**ETag / caching**
+
+Configure a `timestamp_file` path. After each `osm2pgsql` import, touch that file:
+```sh
+touch /var/smartmet/osm/scandinavia.timestamp
+```
+The layer uses the file's modification time as the data version. All tile responses for the same viewport return HTTP `304 Not Modified` until the file is touched again.
+
+**Multi-resolution strategy**
+
+Use the existing `minresolution`/`maxresolution` layer attributes together with a `group` layer to serve different schemas at different zoom levels:
+
+| Schema | Tables | Coverage | Intended use |
+|---|---|---|---|
+| `osm_global` | `planet_osm_*` (simplified) | World | Coarse zoom (≤ ~1 km/px) |
+| `osm_scandinavia` | `planet_osm_*` (full) | lon 4–32, lat 54–72 | Detailed zoom |
+
+**Sample configuration**
+
+```json
+{
+  "layer_type": "group",
+  "layers": [
+    {
+      "layer_type": "osm",
+      "maxresolution": 5.0,
+      "timestamp_file": "/var/smartmet/osm/global.timestamp",
+      "feature_sets": [
+        {
+          "pgname": "postgis",
+          "schema": "osm_global",
+          "table": "planet_osm_polygon",
+          "where": "natural = 'water'",
+          "mvt_layer_name": "water",
+          "css": "osm_water"
+        }
+      ]
+    },
+    {
+      "layer_type": "osm",
+      "minresolution": 0,
+      "maxresolution": 0.5,
+      "timestamp_file": "/var/smartmet/osm/scandinavia.timestamp",
+      "feature_sets": [
+        {
+          "pgname": "postgis",
+          "schema": "osm_scandinavia",
+          "table": "planet_osm_polygon",
+          "where": "natural = 'water'",
+          "mvt_layer_name": "water",
+          "css": "osm_water"
+        },
+        {
+          "pgname": "postgis",
+          "schema": "osm_scandinavia",
+          "table": "planet_osm_polygon",
+          "where": "landuse IN ('forest','wood')",
+          "mvt_layer_name": "landuse_forest",
+          "css": "osm_forest"
+        },
+        {
+          "pgname": "postgis",
+          "schema": "osm_scandinavia",
+          "table": "planet_osm_line",
+          "where": "highway IN ('motorway','trunk','primary','secondary')",
+          "lines": true,
+          "mvt_layer_name": "roads_major",
+          "css": "osm_roads_major"
+        },
+        {
+          "pgname": "postgis",
+          "schema": "osm_scandinavia",
+          "table": "planet_osm_point",
+          "where": "place IN ('city','town','village')",
+          "fieldnames": ["name", "place"],
+          "labels": true,
+          "mvt_layer_name": "place_labels",
+          "css": "osm_places"
+        }
+      ]
+    }
+  ]
+}
+```
+
+> **Note:** A rendered sample image will be added once OSM data has been imported. See the data setup instructions above.
+
+OSMLayer supports two backends. The `backend` attribute selects which one is used; the required companion attributes differ between them.
+
+**PostGIS backend** (`"backend": "postgis"`, default): renders from `osm2pgsql`-imported PostGIS tables via the GIS engine. Requires `feature_sets`.
+
+**PMTiles backend** (`"backend": "pmtiles"`): renders from a memory-mapped `.pmtiles` file managed by the OSM engine (`engines/osm`). Requires the OSM engine to be configured and loaded. For OGC Tiles / MVT requests the raw pre-encoded tile bytes are passed through directly — zero decoding or re-encoding. For WMS/SVG requests the tile is decoded via OGR. Requires `source` (the OSM engine source name).
+
+The table below lists OSMLayer-specific attributes (in addition to the common layer attributes).
+
+<pre><b>OSMLayer</b></pre>
+| Name             | Type              | Default      | Description |
+| ---------------- | ----------------- | ------------ | ----------- |
+| backend          | string            | `"postgis"`  | Data backend: `"postgis"` (via GIS engine) or `"pmtiles"` (via OSM engine mmap). |
+| source           | string            | -            | **Required for pmtiles backend.** Source name as defined in the OSM engine configuration (e.g. `"scandinavia"`). |
+| timestamp_file   | string            | -            | **PostGIS backend only.** Path to a file whose modification time represents the OSM data age. Touch after each `osm2pgsql` import to invalidate HTTP ETags. For the pmtiles backend the ETag is derived from the `.pmtiles` file's own modification time automatically. |
+| precision        | double            | 1.0          | Coordinate precision for SVG path output (PostGIS backend only). |
+| feature_sets     | _[FeatureSet]_    | -            | **Required for postgis backend.** Array of feature set definitions (see below). |
+
+<pre><b>OSMLayer FeatureSet</b></pre>
+| Name             | Type              | Default         | Description |
+| ---------------- | ----------------- | --------------- | ----------- |
+| pgname           | string            | -               | **Required.** PostGIS connection name as defined in the GIS engine configuration. |
+| schema           | string            | -               | **Required.** Database schema (e.g. `osm_scandinavia`). |
+| table            | string            | -               | **Required.** Table within the schema (e.g. `planet_osm_polygon`, `planet_osm_line`, `planet_osm_point`). |
+| where            | string            | -               | Optional SQL WHERE clause to filter rows (e.g. `"natural = 'water'"`). |
+| fieldnames       | [string]          | []              | OSM tag columns to fetch and include as MVT feature attributes (e.g. `["name","highway"]`). `"name"` is added automatically when `labels` is true. |
+| lines            | boolean           | false           | `true` → apply line clipping (for road/river geometries); `false` → apply polygon clipping. |
+| labels           | boolean           | false           | Render the `name` attribute as SVG `<text>` labels. Simple pixel-distance collision avoidance skips overlapping labels. In MVT output the `name` attribute is always included as a feature property for client-side label rendering. |
+| minarea          | double            | -               | Minimum polygon area (m²) filter passed to the GIS engine. |
+| mindistance      | double            | -               | Minimum distance simplification filter passed to the GIS engine. |
+| mvt_layer_name   | string            | table name      | Name of the layer in MVT output. Defaults to the `table` value. |
+| css              | string            | -               | CSS stylesheet name to apply to this feature set in SVG output. |
+| attributes       | _Attributes_      | -               | SVG attributes for the `<g>` group containing this feature set. |
+
 #### PostGISLayer
 
 The PostGIS layer can be used  to create image layers based on data queried from the PostGIS database. 
@@ -4033,15 +4186,310 @@ Dynamic grid caculation uses C++ or LUA functions for creating new grids. C++ fu
 </pre>
 
 
-# Generic querystring options
+# JSON references and includes
 
-* `format=svg|png|pdf|ps|xml|geojson|kml image/png|image/svg+xml|text/xml` - output format for Dali or WMS
-* `quiet=1` - do not print stack traces on errors
-* `debug=1` - debug mode
-* `printjson=1` - print fully expanded JSON to the terminal
-* `printhash=1` - print generated CTPP2 object to the terminal
-* `optimizesize=1` - optimize output for size
-** remove `display=none` layers and views from the SVG output
+Product JSON files support four mechanisms for composing and reusing configuration fragments.
+
+## `json:` value references
+
+Any JSON string value that starts with `json:` causes the corresponding file to be loaded and
+the string replaced with the parsed JSON content.  Paths are resolved relative to the customer
+`layers/` directory (e.g. `<root>/customers/<customer>/layers/`), or if the path starts with
+`/`, relative to the Dali root directory.
+
+```json
+{
+    "isobands": "json:isobands/temperature.json",
+    "label":    "json:numbers/integers.json"
+}
+```
+
+When a `json:` value appears as an element of an array, the loaded JSON replaces that element
+(useful for including complete layer definitions):
+
+```json
+"layers": [
+    "json:paths/legendmask.json",
+    { "layer_type": "map", "..." }
+]
+```
+
+## `ref:` cross-references
+
+Any string value of the form `ref:<dotted.path>` is replaced with the value found by following
+the dotted path in the current JSON document.  The top-level `refs` object is a conventional
+place to collect reusable fragments:
+
+```json
+{
+    "refs": {
+        "finland": {
+            "schema": "natural_earth",
+            "table":  "admin_0_countries",
+            "where":  "iso_a2 IN ('FI','AX')"
+        },
+        "myprojection": "json:maps/finlandprojection.json"
+    },
+    "projection": "ref:refs.myprojection",
+    "views": [{
+        "layers": [{
+            "layer_type": "isoband",
+            "inside": "ref:refs.finland"
+        }]
+    }]
+}
+```
+
+## JSON Pointer (`$ref`) dereferencing
+
+Standard JSON Pointer references of the form `{"$ref": "#/path/to/value"}` are resolved after
+`json:` and `ref:` substitution.  This follows the JSON Reference / JSON Schema convention.
+
+## Processing pipeline
+
+The product JSON goes through the following stages, which can be inspected individually
+by adding `stage=<n>` to the request:
+
+| Stage | `stage=` value | Operation |
+|-------|---------------|-----------|
+| Raw JSON | `1` | File loaded as-is, no substitution |
+| Reference substitution | `2` | Query-string `json:` and `ref:` replacements applied |
+| Include expansion | `3` | `json:` and `ref:` values resolved from files |
+| JSON Pointer dereferencing | `4` | `$ref` pointers resolved |
+| Variable expansion | (default) | Query-string variable overrides applied |
+
+
+# Symbol substitutions via URI
+
+SVG resources referenced via `url(#name)` — markers, fill patterns, filters, and gradients —
+can be parameterised by appending a query string to the fragment identifier:
+
+```
+url(#<symbol-name>?<param1>=<value1>&<param2>=<value2>)
+```
+
+The plugin loads the SVG resource file, substitutes every `$(variableName=defaultValue)`
+placeholder with the supplied value (or the default if the parameter is absent), and injects
+the result into the SVG `<defs>` section.
+
+**Example — coloured spearhead marker:**
+
+In the JSON attributes:
+```json
+"marker-end": "url(#spearhead?fill=#606060)"
+```
+
+In the marker SVG file (`markers/spearhead.svg`):
+```svg
+<marker id="spearhead" markerWidth="9" markerHeight="9"
+        viewBox="0 0 10 10" orient="auto" refX="1" refY="5">
+  <path d="M 0 0 L 10 5 L 0 10 z" fill="$(fill=black)"/>
+</marker>
+```
+
+The placeholder `$(fill=black)` is replaced with `#606060`.  If `fill` is not supplied in the
+URL, the default value `black` is used.
+
+Multiple parameters are separated by `&`:
+```json
+"filter": "url(#rectbackground?border=black&background=white&borderwidth=1)"
+```
+
+**Supported SVG attributes for parameterised references:**
+
+| Attribute | Resource type |
+|-----------|--------------|
+| `filter` | SVG filter element |
+| `marker` | SVG marker element |
+| `marker-start` | SVG marker element |
+| `marker-mid` | SVG marker element |
+| `marker-end` | SVG marker element |
+| `fill` | SVG pattern element |
+| `linearGradient` | SVG linearGradient element |
+| `radialGradient` | SVG radialGradient element |
+
+Each resource is included in the `<defs>` block only once per unique name, regardless of how
+many times it is referenced.  If the same symbol name is used with different parameters in the
+same product, only the first reference wins — use distinct names in that case.
+
+**File search order** for SVG resources:
+
+1. `<root>/customers/<customer>/<subdir>/<name>.svg`
+2. `<root>/<name>.svg`
+3. `<root>/resources/layers/<subdir>/<name>.svg`
+4. `<root>/resources/<subdir>/<name>.svg`
+5. `<root>/resources/<name>.svg`
+
+The `<subdir>` is `markers/`, `patterns/`, `filters/`, or `gradients/` depending on the
+attribute type.  An absolute path (starting with `/`) skips the customer directory and
+searches from the Dali root directly.
+
+
+# Dali querystring parameters
+
+The Dali endpoint (default URL `/dali`) accepts the following query parameters.
+
+**Required parameter:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `product` | string | Path to the product JSON file relative to `customers/<customer>/products/`. Example: `product=temperature` loads `.../products/temperature.json`. |
+
+**Content and data selection:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `customer` | string | config default | Customer name; selects the sub-tree under `<root>/customers/`. |
+| `type` | string | `svg` | Output format: `svg`, `png`, `pdf`, `ps`, `xml`, `geojson`, `topojson`, `kml`, `geotiff`, `mvt`. |
+| `producer` | string | config default | Data producer (querydata model name). |
+| `time` | string | latest | Valid time in any format accepted by the MacGyver time parser (ISO 8601, SQL, epoch, offset from now). |
+| `time_offset` | int | 0 | Minutes added to `time`. |
+| `origintime` | string | latest | Querydata origin time (model run time). |
+| `interval_start` | int | – | Start of observation time interval in minutes before `time + time_offset`. |
+| `interval_end` | int | – | End of observation time interval in minutes after `time + time_offset`. |
+| `timestep` | int | – | Timestep in minutes. |
+| `level` | double | – | Pressure level in hPa. |
+| `levelId` / `levelid` | int | – | Level type ID. |
+| `forecastNumber` | int | – | Ensemble member number. |
+| `forecastType` | int | – | Forecast type. |
+| `geometryId` | int | – | Grid geometry ID. |
+| `source` | string | config default | Primary forecast source override. |
+| `language` | string | config default | Language code, e.g. `fi`, `en`, `sv`. |
+| `tz` | string | `UTC` | Timezone used when parsing `time`. |
+
+**Layout and clipping:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `width` | int | 1000 | Image width in pixels (20–10000). |
+| `height` | int | 1000 | Image height in pixels (20–10000). |
+| `margin` | int | – | Sets both `xmargin` and `ymargin`. |
+| `xmargin` | int | 0 | X-margin for symbol clipping (pixels). |
+| `ymargin` | int | 0 | Y-margin for symbol clipping (pixels). |
+| `clip` | bool | false | Wrap each layer in a `<clipPath>`. |
+
+**Overriding JSON structure fields:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `title` | string | Override the product `title` field. |
+| `projection` | JSON | Override the top-level `projection` block. |
+| `views` | JSON | Override the top-level `views` array. |
+| `defs` | JSON | Override the top-level `defs` block. |
+| `attributes` | JSON | Override the top-level `attributes` block. |
+| `animation` | JSON | Override the `animation` block. |
+| `png` | JSON | Override the `png` output options block. |
+| `svg_tmpl` | string | Select a CTPP2 template by name (see [Template selection](#template-selection)). |
+
+## Product modification via querystring
+
+Any field inside the product JSON can be overridden at request time by using dotted
+`qid.fieldname` parameter names.  A `qid` must first be assigned to the layer or object to
+be modified.
+
+**Example:** override the weather parameter and producer of a layer whose `qid` is `"temp_layer"`:
+
+```
+GET /dali?product=temperature&temp_layer.parameter=DailyMeanTemperature&temp_layer.producer=daily00
+```
+
+This is equivalent to editing the JSON as:
+```json
+{ "qid": "temp_layer", "parameter": "DailyMeanTemperature", "producer": "daily00", "..." }
+```
+
+Dotted parameters work at any nesting depth as long as each intermediate object has a `qid`.
+
+## Template selection
+
+Products are rendered through a CTPP2 template.  The template is selected in the following
+order of precedence:
+
+1. The `svg_tmpl` query-string parameter.
+2. The `svg_tmpl` field in the product JSON.
+3. The entry in the `templates` config block matching the requested `type` (e.g. `geojson`,
+   `topojson`, `kml`).
+4. The `templates.default` config entry.
+5. Hard-coded fallback: `"svg"`.
+
+Template files are `.c2t` files stored in the directory configured by `templatedir` (default
+`/usr/share/smartmet/wms`).
+
+**Example `templates` block in the plugin configuration:**
+
+```
+templates:
+{
+    default  = "svg";
+    geojson  = "geojson";
+    topojson = "topojson";
+    kml      = "kml";
+}
+```
+
+## Debugging parameters
+
+The following parameters are useful during development and are silently ignored in production
+or stripped by the allowed-parameter filter if not in the `allowed_keys` set.
+
+| Parameter | Description |
+|-----------|-------------|
+| `printjson=1` | Print the fully expanded product JSON to the server console. |
+| `printhash=1` | Print the CTPP2 CDT object to the server console. |
+| `printparams=1` | Print the grid parameter list used by the product. |
+| `timer=1` | Print timing information per product generation stage. |
+| `stage=1`–`4` | Return the intermediate JSON at the given [pipeline stage](#processing-pipeline) instead of rendering. |
+
+
+# WMS querystring parameters
+
+The WMS endpoint (default URL `/wms`) implements OGC WMS 1.3.0.
+
+### GetCapabilities
+
+```
+GET /wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+```
+
+Returns the capabilities XML document listing all available layers, CRS, and formats.
+The optional `FORMAT` parameter selects `text/xml` (default) or `application/json`.
+
+### GetMap
+
+Required parameters:
+
+| Parameter | Description |
+|-----------|-------------|
+| `SERVICE=WMS` | Must be `WMS`. |
+| `VERSION=1.3.0` | WMS version (also `1.1.1` / `1.1.0` are accepted for backward compatibility). |
+| `REQUEST=GetMap` | Request type. |
+| `LAYERS` | Comma-separated list of layer names. |
+| `STYLES` | Comma-separated list of styles (may be empty: `STYLES=`). |
+| `CRS` (WMS 1.3) or `SRS` (WMS 1.1) | Coordinate reference system identifier, e.g. `EPSG:4326`. |
+| `BBOX` | Bounding box: `minx,miny,maxx,maxy`. Axis order follows the CRS definition in WMS 1.3. |
+| `WIDTH` | Image width in pixels. |
+| `HEIGHT` | Image height in pixels. |
+| `FORMAT` | MIME type: `image/png`, `image/svg+xml`, `application/pdf`, `application/geo+json`, `application/topo+json`. |
+
+Optional parameters:
+
+| Parameter | Description |
+|-----------|-------------|
+| `TRANSPARENT=TRUE\|FALSE` | Whether the background is transparent. |
+| `BGCOLOR=0xRRGGBB` | Background colour (used only when `TRANSPARENT=FALSE`). |
+| `EXCEPTIONS=XML\|application/json` | Exception reporting format. |
+| `TIME` | ISO 8601 time value or comma-separated list of times. |
+| `ELEVATION` | Elevation value (forwarded to the layer as the `level` parameter). |
+| `INTERVAL_START` | Extension: start of observation time interval in minutes before `TIME`. |
+| `INTERVAL_END` | Extension: end of observation time interval in minutes after `TIME`. |
+
+### GetLegendGraphic
+
+```
+GET /wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&LAYER=<name>&FORMAT=image/png
+```
+
+Returns a legend image for the named layer.
 
 
 # WMS GetMap and GetCapabilities configuration
@@ -4168,30 +4616,189 @@ In order to use the Dali plugin you need to do the following steps:
 
 
 ## Plugin configuration file
- As described in the previous section, the filename and the location of the Dali configuration file was defined in the main configuration file. 
 
-The table below describes the configuration attributes that we can define in this file.
+The plugin configuration file uses libconfig++ syntax.  The path to this file is set in
+`smartmet.conf` under the `dali.configfile` key.
 
-<table>
-<tr>
-<th colspan="2">Attribute</th>
-<th> Description </th></tr>
-<tr><td  colspan="2">url</td><td>The URL (or actually the URL path) of the native interface (for example "/dali")</td></tr>
-<tr><td  colspan="2">model</td><td>The default value for the "model" attribute if this is not defined in the product configuration file or given in the HTTP request</td></tr>
-<tr><td  colspan="2">language</td><td>The default value for the "language" attribute if this is not defined in the product configuration file or given in the HTTP request. </td><td>
-<tr><td  colspan="2">customer</td><td>The default value for the "customer" attribute if this is not defined in the HTTP request</td></tr>
-<tr><td colspan="2">root</td><td>The root directory of the Dali product information</td></tr>
-<tr><td colspan="2">templatedir</td><td>The directory of the CTTP template files</td></tr>
-<tr><td colspan="2" >template</td><td>The name of the CTTP template file (without the ".c2t" ending)</td></tr>
-<tr><td colspan="2">wmsurl</td><td>The URL (or actually the URL path) of the WMS interface (for example "/wms")</td></tr>
-<tr><td colspan="2">wmsroot</td><td>The root directory of the WMS product information</td></tr>
-<tr><td colspan="2">wmsversion</td><td>The WMS version number (e.g., "1.3.0")</td></tr>
-<tr><td colspan="2">wmsmapformats</td><td>The WMS format definition (e.g.,, "image/svg+xml,image/png")</td></tr>
-<tr><td colspan="2">unit_conversion</td><td>Map of unit conversion names to multiplier/offset values</td></tr>
-<tr><td colspan="2">regular_attributes</td><td>The list of the supported SVG attributes</td></tr>
-<tr><td colspan="2">presentation_attributes</td><td>The list of the supported SVG presentation attributes</td></tr>
-<tr><td rowspan="3">cache</td><td>memory_bytes</td><td>The maximum size of the memory cache (in bytes)</td></tr>
-<tr><td>filesystem_bytes</td><td>The maximum size of the file cache (in bytes)</td></tr>
-<tr><td>directory</td><td></td></tr>
-</table>
+### Required settings
+
+| Setting | Description |
+|---------|-------------|
+| `root` | Root directory for Dali product files.  Customer-specific content lives under `<root>/customers/<customer>/`. |
+| `wms.root` | Root directory for WMS product files.  Separate from `root` to allow different access controls. |
+| `templates` | Group mapping output type names to CTPP2 template base names (without `.c2t`).  A `default` entry is required. |
+| `regular_attributes` | Array of allowed SVG regular attribute names (see the SVG specification appendix). |
+| `presentation_attributes` | Array of allowed SVG presentation attribute names. |
+
+### Optional settings
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `url` | `/dali` | URL path of the native Dali endpoint. |
+| `model` | – | Default querydata producer name. |
+| `language` | – | Default language code. |
+| `languages` | – | Comma-separated list of supported language codes. |
+| `customer` | – | Default customer name. |
+| `primaryForecastSource` | – | Default primary forecast source (`querydata` or `grid`). |
+| `template` | `svg` | Default CTPP2 template base name (deprecated in favour of `templates.default`). |
+| `templatedir` | `/usr/share/smartmet/wms` | Directory containing CTPP2 `.c2t` template files. |
+| `css_cache_size` | 1000 | Maximum number of cached CSS stylesheets. |
+| `max_image_size` | – | Maximum allowed image area in pixels (width × height). |
+| `wms.url` | `/wms` | URL path of the WMS endpoint. |
+| `wms.max_layers` | 10 | Maximum number of WMS layers per GetMap request (DDoS protection). |
+| `wms.quiet` | `false` | If true, suppress WMS error stack traces in the log. |
+| `wmts.url` | `/wmts` | URL path of the WMTS endpoint. |
+| `wmts.tile_width` | 1024 | Default WMTS tile width. |
+| `wmts.tile_height` | 1024 | Default WMTS tile height. |
+| `tiles.url` | `/tiles` | URL path of the native tile endpoint. |
+| `authenticate` | `false` | Enable API-key authentication (requires the authentication engine). |
+| `observation_disabled` | `false` | Disable the observation engine (for deployments without ObsEngine). |
+| `gridengine_disabled` | `false` | Disable the grid engine (for deployments without GridEngine). |
+| `heatmap.max_points` | – | Maximum number of points in a heatmap layer. |
+
+### `cache` group
+
+Controls the image cache used for binary formats (PNG, WebP, PDF).
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| `cache.directory` | – | Filesystem cache directory path. |
+| `cache.memory_bytes` | – | Maximum memory cache size in bytes (also accepts strings like `"100M"`). |
+| `cache.filesystem_bytes` | – | Maximum filesystem cache size in bytes. |
+
+### `templates` group
+
+Maps product type strings to CTPP2 template names.  The `default` entry is used when no
+specific entry matches.
+
+```
+templates:
+{
+    default  = "svg";
+    geojson  = "geojson";
+    topojson = "topojson";
+    kml      = "kml";
+}
+```
+
+### `precision` group
+
+Overrides the default SVG coordinate precision (number of decimal places) per layer type.
+The key `default` sets the fallback.
+
+```
+precision:
+{
+    default  = 0.3;
+    geojson  = 5.0;
+    topojson = 5.0;
+}
+```
+
+### `unit_conversion` group
+
+Defines named unit conversions that can be referenced in product JSON.  Each conversion
+applies `output = input * multiplier + offset`.
+
+```
+unit_conversion:
+{
+    ms_to_knots:          { multiplier = 1.94384449244; }
+    celsius_to_fahrenheit:{ multiplier = 1.8; offset = 32.0; }
+    celsius_to_kelvin:    { offset = 273.15; }
+}
+```
+
+### `wms` group
+
+The `wms` group contains a `get_capabilities` sub-group for configuring the
+`GetCapabilities` response (service metadata, contact information, supported CRS list,
+supported output formats, INSPIRE extended capabilities, etc.) and a `get_legend_graphic`
+sub-group for legend layout and symbol translations.  See the test configuration file for
+a fully annotated example.
+
+### Sample configuration file
+
+Below is a minimal but complete plugin configuration file:
+
+```
+// Dali plugin configuration
+
+url       = "/dali";
+model     = "pal_skandinavia";
+language  = "en";
+languages = "en,fi,sv";
+customer  = "default";
+
+root = "/var/smartmet/dali";
+
+templatedir = "/usr/share/smartmet/wms";
+
+templates:
+{
+    default  = "svg";
+    geojson  = "geojson";
+    topojson = "topojson";
+    kml      = "kml";
+}
+
+precision:
+{
+    default  = 0.3;
+    geojson  = 5.0;
+    topojson = 5.0;
+}
+
+cache:
+{
+    directory        = "/var/cache/smartmet/dali";
+    memory_bytes     = "100M";
+    filesystem_bytes = "500M";
+}
+
+max_image_size = 20971520;  // 20 M pixels
+
+unit_conversion:
+{
+    ms_to_knots:           { multiplier = 1.94384449244; }
+    celsius_to_fahrenheit: { multiplier = 1.8; offset = 32.0; }
+    celsius_to_kelvin:     { offset = 273.15; }
+}
+
+// WMS endpoint settings
+wms:
+{
+    url        = "/wms";
+    root       = "/var/smartmet/wms";
+    max_layers = 10;
+    quiet      = false;
+
+    get_capabilities:
+    {
+        version         = "1.3.0";
+        disable_updates = false;
+        expiration_time = 60;
+
+        service:
+        {
+            title = "SmartMet Web Map Service";
+        };
+
+        capability:
+        {
+            request:
+            {
+                getcapabilities: { format = ["text/xml"]; dcptype: ({ http: { get: { online_resource = "https://example.com/wms"; }; }; }); };
+                getmap:          { format = ["image/png", "image/svg+xml"]; dcptype: ({ http: { get: { online_resource = "https://example.com/wms"; }; }; }); };
+            };
+            exception = ["XML"];
+            master_layer: { title = "SmartMet WMS"; queryable = 0; opaque = 1; };
+        };
+    };
+};
+
+// SVG attribute white-lists (abbreviated; full lists in the standard configuration)
+regular_attributes      = ["id", "class", "width", "height", "viewBox", "transform", /* ... */];
+presentation_attributes = ["fill", "stroke", "stroke-width", "opacity", "font-size", /* ... */];
+```
 
