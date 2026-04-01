@@ -15,4 +15,4 @@ compile_commands.json
 .gdb_history
 /smartmet-plugin-wms.tar.gz
 local.conf
-§
+§.cache
