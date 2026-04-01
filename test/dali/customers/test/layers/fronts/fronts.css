@@ -1,0 +1,24 @@
+/* Weather fronts layer styles.
+   Front symbols are rendered as positioned SVG shapes (no custom font required).
+   The glyph groups inherit fill from the CSS class below. */
+
+.front-coldfront        { }
+.front-warmfront        { }
+.front-occludedfront    { }
+.front-stationaryfront  { }
+.front-trough           { }
+.front-ridge            { }
+
+.coldfront       { fill: none; stroke: #0044cc; stroke-width: 2.5; }
+.warmfront       { fill: none; stroke: #cc2200; stroke-width: 2.5; }
+.occludedfront   { fill: none; stroke: #880088; stroke-width: 2.5; }
+.stationaryfront { fill: none; stroke: #444444; stroke-width: 2.0; }
+.trough          { fill: none; stroke: #996600; stroke-width: 1.5; stroke-dasharray: 6 3; }
+.ridge           { fill: none; stroke: #006622; stroke-width: 1.5; stroke-dasharray: 6 3; }
+
+.coldfrontglyph       { fill: #0044cc; stroke: none; }
+.warmfrontglyph       { fill: #cc2200; stroke: none; }
+.occludedfrontglyph   { fill: #880088; stroke: none; }
+.stationaryfrontglyph { fill: #444444; stroke: none; }
+.troughglyph          { display: none; }
+.ridgeglyph           { display: none; }

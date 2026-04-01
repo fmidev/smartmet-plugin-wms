@@ -32,8 +32,8 @@ namespace Dali
 class SyntheticFrontSource : public FrontSource
 {
  public:
-  // Parse the "fronts" array from the layer JSON.
-  explicit SyntheticFrontSource(const Json::Value& theJson);
+  // Parse the "fronts" array (the array itself, not the parent object).
+  explicit SyntheticFrontSource(const Json::Value& frontsArray);
 
   std::vector<FrontCurve> getFronts(const Fmi::DateTime& validTime) const override;
 

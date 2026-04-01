@@ -1937,9 +1937,20 @@ Two data sources are supported via the `source` field:
 | Trough        | `"trough"`     | `trough`           | `T` / `t`                |
 | Ridge         | `"ridge"`      | `ridge`            | `R` / `r`                |
 
-The weather font must define these uppercase characters as the "facing right" symbol and the
-lowercase characters as the "facing left" symbol.  The layer automatically places alternating
-glyphs along the path using the spacing parameters below.
+Symbols are rendered as inline SVG shapes (filled triangles and semicircles) — no external
+font is required.  Uppercase glyph characters produce symbols on the **left** side of the
+directed path; lowercase on the **right** side.  The layer places alternating symbols at
+even arc-length intervals using the spacing parameters below.
+
+| Glyph char | Shape |
+| ---------- | ----- |
+| `C` | Filled triangle pointing left of path (cold front active side) |
+| `c` | Filled triangle pointing right of path (cold front passive side) |
+| `W` | Filled semicircle bulging left of path (warm front active side) |
+| `w` | Filled semicircle bulging right of path (warm front passive side) |
+
+Compound glyphs (`"CW"`, `"Cw"`, etc.) place multiple shapes at the same position, used for
+occluded and stationary fronts.
 
 ##### WeatherFrontsLayer settings
 
@@ -1996,30 +2007,49 @@ default value.
 | font_size  | double | `30.0`                 | Glyph font size in pixels. |
 | spacing    | double | `60.0`                 | Arc-length spacing between glyph centres in pixels. |
 
-##### Example 1 – synthetic cold and warm fronts
+##### Example 1 – synthetic fronts (cold, warm, occluded, stationary)
+
+<img src="images/fronts_ex.png">
+
+The product JSON that produced the image above:
 
 ```json
 {
-    "title": "Manual front analysis",
-    "projection": { "crs": "EPSG:3857", "xsize": 800, "ysize": 600 },
+    "title": "Weather fronts – synthetic example",
+    "projection": {
+        "xsize": 700, "ysize": 500,
+        "crs": "EPSG:3857", "bboxcrs": "WGS84",
+        "x1": -2, "y1": 47, "x2": 42, "y2": 67
+    },
     "views": [{
-        "layers": [{
-            "layer_type": "fronts",
-            "source": "synthetic",
-            "css": "fronts/fronts.css",
-            "fronts": [
-                {
-                    "type": "cold",
-                    "side": "left",
-                    "points": [[20.0, 60.0], [22.0, 58.5], [25.0, 57.0]]
-                },
-                {
-                    "type": "warm",
-                    "side": "right",
-                    "points": [[20.0, 60.0], [18.0, 61.5], [15.0, 62.0]]
-                }
-            ]
-        }]
+        "qid": "v1",
+        "layers": [
+            { "layer_type": "background",
+              "attributes": { "fill": "rgb(190,230,255)" } },
+            { "qid": "land", "layer_type": "map",
+              "map": { "schema": "natural_earth", "table": "admin_0_countries", "minarea": 50 },
+              "attributes": { "fill": "rgb(220,220,210)", "stroke": "none" } },
+            { "qid": "borders", "layer_type": "map",
+              "map": { "lines": true, "schema": "natural_earth",
+                       "table": "admin_0_countries", "minarea": 50 },
+              "attributes": { "fill": "none", "stroke": "#555", "stroke-width": "0.5px" } },
+            {
+                "qid": "wf",
+                "layer_type": "fronts",
+                "css": "fronts/fronts.css",
+                "source": "synthetic",
+                "fronts": [
+                    { "type": "cold", "side": "left",
+                      "points": [[6,56.5],[8.5,55.5],[11,54.5],[14.5,54],[18,54.5],[21.5,55.5],[24.5,57],[27,59]] },
+                    { "type": "warm", "side": "right",
+                      "points": [[6,56.5],[5.5,58.5],[6,60.5],[7.5,62.5],[9,64],[11,65]] },
+                    { "type": "occluded", "side": "left",
+                      "points": [[6,56.5],[5,54.5],[4.5,52],[5,50],[7,48.5]] },
+                    { "type": "stationary", "side": "left",
+                      "points": [[27,59],[30,59.5],[33,60.5],[36,62],[38,63.5]] }
+                ]
+            }
+        ]
     }]
 }
 ```
@@ -2057,23 +2087,23 @@ default value.
 }
 ```
 
-The CSS file (`fronts/fronts.css`) must define the front line classes and load the weather font:
+The CSS file (`fronts/fronts.css`) defines the stroke colours for the front lines and the
+fill colour for the symbol shapes:
 
 ```css
-@font-face {
-    font-family: "WeatherFont";
-    src: url("fonts/weather.ttf");
-}
-.coldfront        { stroke: #0000ff; stroke-width: 2; fill: none; }
-.warmfront        { stroke: #ff0000; stroke-width: 2; fill: none; }
-.occludedfront    { stroke: #800080; stroke-width: 2; fill: none; }
-.stationaryfront  { stroke: #800080; stroke-width: 2; fill: none; }
-.trough           { stroke: #996600; stroke-width: 1.5; fill: none; stroke-dasharray: 6 4; }
-.ridge            { stroke: #006600; stroke-width: 1.5; fill: none; stroke-dasharray: 6 4; }
-.coldfront-glyphs   { font-family: "WeatherFont"; font-size: 30px; fill: #0000ff; }
-.warmfront-glyphs   { font-family: "WeatherFont"; font-size: 30px; fill: #ff0000; }
-.occluded-glyphs    { font-family: "WeatherFont"; font-size: 30px; fill: #800080; }
-.stationary-glyphs  { font-family: "WeatherFont"; font-size: 30px; fill: #800080; }
+.coldfront       { fill: none; stroke: #0044cc; stroke-width: 2.5; }
+.warmfront       { fill: none; stroke: #cc2200; stroke-width: 2.5; }
+.occludedfront   { fill: none; stroke: #880088; stroke-width: 2.5; }
+.stationaryfront { fill: none; stroke: #444444; stroke-width: 2.0; }
+.trough          { fill: none; stroke: #996600; stroke-width: 1.5; stroke-dasharray: 6 3; }
+.ridge           { fill: none; stroke: #006622; stroke-width: 1.5; stroke-dasharray: 6 3; }
+
+.coldfrontglyph       { fill: #0044cc; stroke: none; }
+.warmfrontglyph       { fill: #cc2200; stroke: none; }
+.occludedfrontglyph   { fill: #880088; stroke: none; }
+.stationaryfrontglyph { fill: #444444; stroke: none; }
+.troughglyph          { display: none; }
+.ridgeglyph           { display: none; }
 ```
 
 #### HovmoellerLayer
@@ -2159,6 +2189,10 @@ over 10 days.
 
 Request: `GET /dali?customer=…&product=hovmoeller_geoph500`
 
+![Hovmöller time × longitude – 500 hPa geopotential height](images/hovmoeller_geoph500.png)
+
+*Time increases downward (oldest at top). X axis: 5°E–35°E along 60°N. Colour scale: blue = trough / low GPH, red = ridge / high GPH.*
+
 ##### Example 2 – time × latitude
 
 Shows the meridional propagation of the 500 hPa ridge/trough pattern along 20°E.
@@ -2187,6 +2221,10 @@ Shows the meridional propagation of the 500 hPa ridge/trough pattern along 20°E
 
 Request: `GET /dali?customer=…&product=hovmoeller_geoph500_time_lat`
 
+![Hovmöller time × latitude – 500 hPa geopotential height](images/hovmoeller_geoph500_time_lat.png)
+
+*Time increases downward (oldest at top). X axis: 52°N–70°N along 20°E.*
+
 ##### Example 3 – time × pressure level
 
 Shows the vertical thermal evolution at a fixed location (60°N, 20°E) over the forecast
@@ -2212,6 +2250,10 @@ period.  All levels in the querydata are used automatically.
 ```
 
 Request: `GET /dali?customer=…&product=hovmoeller_temperature_time_level`
+
+![Hovmöller time × pressure level – temperature at 60°N 20°E](images/hovmoeller_temperature_time_level.png)
+
+*Time increases downward (oldest at top). X axis: pressure levels from surface (1000 hPa, left) to upper troposphere (300 hPa, right). Colour scale: red = warm (surface, low levels), blue = cold (upper troposphere).*
 
 #### GraticuleLayer
 

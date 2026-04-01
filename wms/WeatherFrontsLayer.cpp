@@ -43,7 +43,7 @@ const std::map<FrontType, WeatherFrontsLayer::FrontStyle> kDefaultStyles = {
     {FrontType::Cold,       {"coldfront",       "coldfrontglyph",       "C",  "c",  30.0, 60.0}},
     {FrontType::Warm,       {"warmfront",       "warmfrontglyph",       "W",  "w",  30.0, 60.0}},
     {FrontType::Occluded,   {"occludedfront",   "occludedfrontglyph",   "CW", "cw", 30.0, 60.0}},
-    {FrontType::Stationary, {"stationaryfront", "stationaryfrontglyph", "CW", "CW", 30.0, 60.0}},
+    {FrontType::Stationary, {"stationaryfront", "stationaryfrontglyph", "Cw", "Cw", 30.0, 60.0}},
     {FrontType::Trough,     {"trough",          "troughglyph",          "t",  "T",  30.0,  0.0}},
     {FrontType::Ridge,      {"ridge",           "ridgeglyph",           "r",  "R",  30.0,  0.0}},
 };
@@ -78,39 +78,105 @@ double pathLength(const std::vector<std::pair<double, double>>& pts)
   return len;
 }
 
-// Build the glyph group SVG (textPath elements at even intervals).
+// Compute (x, y, angle_deg) positions at even arc-length intervals along a polyline.
 // Algorithm adapted from frontier::SvgRenderer::render_front().
-std::string buildGlyphGroup(const std::string& iri,
+std::vector<std::tuple<double, double, double>> symbolPositions(
+    const std::vector<std::pair<double, double>>& pts,
+    double spacing)
+{
+  std::vector<std::tuple<double, double, double>> result;
+  if (pts.size() < 2 || spacing <= 0.0)
+    return result;
+
+  double len = pathLength(pts);
+  if (len < spacing * 0.5)
+    return result;
+
+  const int n        = std::max(1, static_cast<int>(std::floor(len / spacing + 0.5)));
+  const double step  = len / n;
+  double target      = step * 0.5;
+
+  double walked = 0.0;
+  for (std::size_t i = 0; i + 1 < pts.size() && result.size() < static_cast<std::size_t>(n); ++i)
+  {
+    const double dx  = pts[i + 1].first  - pts[i].first;
+    const double dy  = pts[i + 1].second - pts[i].second;
+    const double seg = std::sqrt(dx * dx + dy * dy);
+    if (seg < 1e-9) continue;
+
+    while (target < walked + seg + 1e-9 &&
+           result.size() < static_cast<std::size_t>(n))
+    {
+      const double t     = (target - walked) / seg;
+      const double x     = pts[i].first  + t * dx;
+      const double y     = pts[i].second + t * dy;
+      const double angle = std::atan2(dy, dx) * 180.0 / M_PI;
+      result.emplace_back(x, y, angle);
+      target += step;
+    }
+    walked += seg;
+  }
+  return result;
+}
+
+// SVG snippet for a single meteorological glyph character.
+//   r  = base half-width (≈ fontSize/3)
+//   h  = symbol height   (≈ fontSize*0.6)
+// Uppercase = symbol points to the left of the directed path (-y in local space).
+// Lowercase = symbol points to the right (+y in local space).
+std::string glyphShape(char ch, double r, double h)
+{
+  switch (ch)
+  {
+  case 'C':  // cold-front triangle, left side
+    return fmt::format("<polygon points=\"{:.1f},0 {:.1f},0 0,{:.1f}\"/>", -r, r, -h);
+  case 'c':  // cold-front triangle, right side
+    return fmt::format("<polygon points=\"{:.1f},0 {:.1f},0 0,{:.1f}\"/>", -r, r, h);
+  case 'W':  // warm-front semicircle, left side (arc sweeps toward -y)
+    return fmt::format(
+        "<path d=\"M {:.1f},0 A {:.1f},{:.1f} 0 0 0 {:.1f},0 Z\"/>", -r, r, r, r);
+  case 'w':  // warm-front semicircle, right side (arc sweeps toward +y)
+    return fmt::format(
+        "<path d=\"M {:.1f},0 A {:.1f},{:.1f} 0 0 1 {:.1f},0 Z\"/>", -r, r, r, r);
+  default:
+    return "";
+  }
+}
+
+// Build the glyph group SVG (positioned shapes at even arc-length intervals).
+// Uses SVG translate+rotate transforms so no font is required.
+std::string buildGlyphGroup(const std::vector<std::pair<double, double>>& screenPts,
                             const std::string& glyphClass,
                             const std::string& glyph1,
                             const std::string& glyph2,
                             double fontSize,
-                            double spacing,
-                            double len)
+                            double spacing)
 {
   if (glyph1.empty() && glyph2.empty())
     return {};
-  const double textlength = 0.5 * static_cast<double>(glyph1.size() + glyph2.size());
-  if (textlength <= 0.0 || len <= 0.0)
+  if (fontSize <= 0.0 || spacing <= 0.0)
     return {};
 
-  const int intervals =
-      static_cast<int>(std::floor(len / (fontSize * textlength + spacing) + 0.5));
-  if (intervals <= 0)
+  const auto positions = symbolPositions(screenPts, spacing);
+  if (positions.empty())
     return {};
 
-  const double interval   = len / intervals;
-  const double startpoint = interval / 2.0;
+  const double r = fontSize / 3.0;
+  const double h = fontSize * 0.6;
 
   std::ostringstream out;
   out << fmt::format("\n<g class=\"{}\">", glyphClass);
-  for (int j = 0; j < intervals; ++j)
+  for (std::size_t j = 0; j < positions.size(); ++j)
   {
-    const double offset = startpoint + j * interval;
-    const auto& glyph   = (j % 2 == 0) ? glyph1 : glyph2;
-    out << fmt::format(
-        "\n <text><textPath xlink:href=\"#{}\" startOffset=\"{:.1f}\">{}</textPath></text>",
-        iri, offset, glyph);
+    const auto& [x, y, angle] = positions[j];
+    const std::string& glyph  = (j % 2 == 0) ? glyph1 : glyph2;
+    if (glyph.empty()) continue;
+
+    out << fmt::format("\n <g transform=\"translate({:.1f},{:.1f}) rotate({:.1f})\">",
+                       x, y, angle);
+    for (char ch : glyph)
+      out << glyphShape(ch, r, h);
+    out << "\n </g>";
   }
   out << "\n</g>";
   return out.str();
@@ -351,7 +417,8 @@ void WeatherFrontsLayer::init(Json::Value& theJson,
 
     if (itsSourceType == "synthetic")
     {
-      itsSource = std::make_unique<SyntheticFrontSource>(theJson);
+      auto frontsJson = JsonTools::remove(theJson, "fronts");
+      itsSource = std::make_unique<SyntheticFrontSource>(frontsJson);
     }
     else if (itsSourceType == "grid")
     {
@@ -408,6 +475,9 @@ void WeatherFrontsLayer::generate_synthetic(CTPP::CDT& theGlobals,
   if (!itsSource)
     return;
 
+  if (css)
+    theGlobals["css"][theState.getCustomer() + "/" + *css] = theState.getStyle(*css);
+
   const auto& box = projection.getBox();
   auto crs = projection.getCRS();
   Fmi::CoordinateTransformation transformation("WGS84", crs);
@@ -458,6 +528,9 @@ void WeatherFrontsLayer::generate_qEngine(CTPP::CDT& theGlobals,
 {
   if (!itsGridConfig)
     return;
+
+  if (css)
+    theGlobals["css"][theState.getCustomer() + "/" + *css] = theState.getStyle(*css);
 
   const auto& cfg = *itsGridConfig;
 
@@ -599,9 +672,8 @@ void WeatherFrontsLayer::renderFrontLine(const std::vector<std::pair<double, dou
   pathCdt["layertype"] = "front";
   theGlobals["paths"][iri] = pathCdt;
 
-  const double len = pathLength(screenPts);
   const std::string glyphs = buildGlyphGroup(
-      iri, style.glyph_css, style.glyph1, style.glyph2, style.font_size, style.spacing, len);
+      screenPts, style.glyph_css, style.glyph1, style.glyph2, style.font_size, style.spacing);
 
   CTPP::CDT frontCdt(CTPP::CDT::HASH_VAL);
   frontCdt["start"]                   = "<g";

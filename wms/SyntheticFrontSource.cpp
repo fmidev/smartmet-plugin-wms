@@ -37,15 +37,14 @@ FrontSide parseFrontSide(const std::string& s)
 
 }  // namespace
 
-SyntheticFrontSource::SyntheticFrontSource(const Json::Value& theJson)
+SyntheticFrontSource::SyntheticFrontSource(const Json::Value& frontsArray)
 {
   try
   {
-    const auto& frontsJson = theJson["fronts"];
-    if (frontsJson.isNull() || !frontsJson.isArray())
+    if (frontsArray.isNull() || !frontsArray.isArray())
       return;
 
-    for (const auto& item : frontsJson)
+    for (const auto& item : frontsArray)
     {
       FrontCurve curve;
 
