@@ -1,0 +1,84 @@
+[
+  {
+    "qid": "geoph500_5800_inf",
+    "lolimit": 5800,
+    "attributes": { "class": "Geoph500_5800_inf" }
+  },
+  {
+    "qid": "geoph500_5750_5800",
+    "lolimit": 5750,
+    "hilimit": 5800,
+    "attributes": { "class": "Geoph500_5750_5800" }
+  },
+  {
+    "qid": "geoph500_5700_5750",
+    "lolimit": 5700,
+    "hilimit": 5750,
+    "attributes": { "class": "Geoph500_5700_5750" }
+  },
+  {
+    "qid": "geoph500_5650_5700",
+    "lolimit": 5650,
+    "hilimit": 5700,
+    "attributes": { "class": "Geoph500_5650_5700" }
+  },
+  {
+    "qid": "geoph500_5600_5650",
+    "lolimit": 5600,
+    "hilimit": 5650,
+    "attributes": { "class": "Geoph500_5600_5650" }
+  },
+  {
+    "qid": "geoph500_5550_5600",
+    "lolimit": 5550,
+    "hilimit": 5600,
+    "attributes": { "class": "Geoph500_5550_5600" }
+  },
+  {
+    "qid": "geoph500_5500_5550",
+    "lolimit": 5500,
+    "hilimit": 5550,
+    "attributes": { "class": "Geoph500_5500_5550" }
+  },
+  {
+    "qid": "geoph500_5450_5500",
+    "lolimit": 5450,
+    "hilimit": 5500,
+    "attributes": { "class": "Geoph500_5450_5500" }
+  },
+  {
+    "qid": "geoph500_5400_5450",
+    "lolimit": 5400,
+    "hilimit": 5450,
+    "attributes": { "class": "Geoph500_5400_5450" }
+  },
+  {
+    "qid": "geoph500_5350_5400",
+    "lolimit": 5350,
+    "hilimit": 5400,
+    "attributes": { "class": "Geoph500_5350_5400" }
+  },
+  {
+    "qid": "geoph500_5300_5350",
+    "lolimit": 5300,
+    "hilimit": 5350,
+    "attributes": { "class": "Geoph500_5300_5350" }
+  },
+  {
+    "qid": "geoph500_5250_5300",
+    "lolimit": 5250,
+    "hilimit": 5300,
+    "attributes": { "class": "Geoph500_5250_5300" }
+  },
+  {
+    "qid": "geoph500_5200_5250",
+    "lolimit": 5200,
+    "hilimit": 5250,
+    "attributes": { "class": "Geoph500_5200_5250" }
+  },
+  {
+    "qid": "geoph500_inf_5200",
+    "hilimit": 5200,
+    "attributes": { "class": "Geoph500_inf_5200" }
+  }
+]

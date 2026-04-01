@@ -1,0 +1,32 @@
+{
+    "title": "Hovmoeller Temperature – time vs pressure level",
+    "producer": "ecmwf_skandinavia_painepinta",
+    "projection":
+    {
+        "xsize": 700,
+        "ysize": 500
+    },
+    "views":
+    [
+        {
+            "qid": "v1",
+            "layers":
+            [
+                {
+                    "qid": "l1",
+                    "layer_type": "hovmoeller",
+                    "parameter": "Temperature",
+                    "direction": "time_level",
+                    "latitude": 60.0,
+                    "longitude": 20.0,
+                    "isobands": "json:isobands/temperature_levels.json",
+                    "css": "isobands/temperature_levels.css",
+                    "attributes":
+                    {
+                        "id": "hovmoeller"
+                    }
+                }
+            ]
+        }
+    ]
+}

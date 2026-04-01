@@ -1,0 +1,20 @@
+[
+  { "qid": "t_30_inf",   "lolimit":  30, "attributes": { "class": "TLev_30_inf"   } },
+  { "qid": "t_25_30",    "lolimit":  25, "hilimit":  30, "attributes": { "class": "TLev_25_30"    } },
+  { "qid": "t_20_25",    "lolimit":  20, "hilimit":  25, "attributes": { "class": "TLev_20_25"    } },
+  { "qid": "t_15_20",    "lolimit":  15, "hilimit":  20, "attributes": { "class": "TLev_15_20"    } },
+  { "qid": "t_10_15",    "lolimit":  10, "hilimit":  15, "attributes": { "class": "TLev_10_15"    } },
+  { "qid": "t_5_10",     "lolimit":   5, "hilimit":  10, "attributes": { "class": "TLev_5_10"     } },
+  { "qid": "t_0_5",      "lolimit":   0, "hilimit":   5, "attributes": { "class": "TLev_0_5"      } },
+  { "qid": "t_5_0",      "lolimit":  -5, "hilimit":   0, "attributes": { "class": "TLev_5_0"      } },
+  { "qid": "t_10_5",     "lolimit": -10, "hilimit":  -5, "attributes": { "class": "TLev_10_5"     } },
+  { "qid": "t_15_10",    "lolimit": -15, "hilimit": -10, "attributes": { "class": "TLev_15_10"    } },
+  { "qid": "t_20_15",    "lolimit": -20, "hilimit": -15, "attributes": { "class": "TLev_20_15"    } },
+  { "qid": "t_25_20",    "lolimit": -25, "hilimit": -20, "attributes": { "class": "TLev_25_20"    } },
+  { "qid": "t_30_25",    "lolimit": -30, "hilimit": -25, "attributes": { "class": "TLev_30_25"    } },
+  { "qid": "t_35_30",    "lolimit": -35, "hilimit": -30, "attributes": { "class": "TLev_35_30"    } },
+  { "qid": "t_40_35",    "lolimit": -40, "hilimit": -35, "attributes": { "class": "TLev_40_35"    } },
+  { "qid": "t_45_40",    "lolimit": -45, "hilimit": -40, "attributes": { "class": "TLev_45_40"    } },
+  { "qid": "t_50_45",    "lolimit": -50, "hilimit": -45, "attributes": { "class": "TLev_50_45"    } },
+  { "qid": "t_inf_50",   "hilimit": -50,                 "attributes": { "class": "TLev_inf_50"   } }
+]

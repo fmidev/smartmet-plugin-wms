@@ -1,0 +1,35 @@
+{
+    "title": "Hovmoeller GeopHeight 500 hPa",
+    "producer": "ecmwf_skandinavia_painepinta",
+    "projection":
+    {
+        "xsize": 700,
+        "ysize": 500
+    },
+    "views":
+    [
+        {
+            "qid": "v1",
+            "layers":
+            [
+                {
+                    "qid": "l1",
+                    "layer_type": "hovmoeller",
+                    "parameter": "GeopHeight",
+                    "level": 500,
+                    "direction": "time_lon",
+                    "latitude": 60.0,
+                    "lon_min": 5.0,
+                    "lon_max": 35.0,
+                    "nx": 53,
+                    "isobands": "json:isobands/geoph500.json",
+                    "css": "isobands/geoph500.css",
+                    "attributes":
+                    {
+                        "id": "hovmoeller"
+                    }
+                }
+            ]
+        }
+    ]
+}

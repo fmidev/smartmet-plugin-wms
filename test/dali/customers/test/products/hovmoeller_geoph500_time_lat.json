@@ -1,0 +1,35 @@
+{
+    "title": "Hovmoeller GeopHeight 500 hPa – time vs latitude",
+    "producer": "ecmwf_skandinavia_painepinta",
+    "projection":
+    {
+        "xsize": 700,
+        "ysize": 500
+    },
+    "views":
+    [
+        {
+            "qid": "v1",
+            "layers":
+            [
+                {
+                    "qid": "l1",
+                    "layer_type": "hovmoeller",
+                    "parameter": "GeopHeight",
+                    "level": 500,
+                    "direction": "time_lat",
+                    "longitude": 20.0,
+                    "lat_min": 52.0,
+                    "lat_max": 70.0,
+                    "nx": 57,
+                    "isobands": "json:isobands/geoph500.json",
+                    "css": "isobands/geoph500.css",
+                    "attributes":
+                    {
+                        "id": "hovmoeller"
+                    }
+                }
+            ]
+        }
+    ]
+}

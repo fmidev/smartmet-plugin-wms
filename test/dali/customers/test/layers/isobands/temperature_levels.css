@@ -1,0 +1,19 @@
+/* Temperature across all pressure levels – red (warm, low levels) → blue (cold, upper levels) */
+.TLev_30_inf  { stroke:none; fill: rgb(180,0,0)   }
+.TLev_25_30   { stroke:none; fill: rgb(220,30,0)   }
+.TLev_20_25   { stroke:none; fill: rgb(255,80,0)   }
+.TLev_15_20   { stroke:none; fill: rgb(255,140,0)  }
+.TLev_10_15   { stroke:none; fill: rgb(255,200,0)  }
+.TLev_5_10    { stroke:none; fill: rgb(255,240,100) }
+.TLev_0_5     { stroke:none; fill: rgb(255,255,200) }
+.TLev_5_0     { stroke:none; fill: rgb(210,240,255) }
+.TLev_10_5    { stroke:none; fill: rgb(150,210,255) }
+.TLev_15_10   { stroke:none; fill: rgb(90,175,255)  }
+.TLev_20_15   { stroke:none; fill: rgb(40,130,240)  }
+.TLev_25_20   { stroke:none; fill: rgb(0,90,210)    }
+.TLev_30_25   { stroke:none; fill: rgb(0,55,185)    }
+.TLev_35_30   { stroke:none; fill: rgb(0,30,160)    }
+.TLev_40_35   { stroke:none; fill: rgb(0,10,140)    }
+.TLev_45_40   { stroke:none; fill: rgb(30,0,120)    }
+.TLev_50_45   { stroke:none; fill: rgb(70,0,100)    }
+.TLev_inf_50  { stroke:none; fill: rgb(110,0,80)    }

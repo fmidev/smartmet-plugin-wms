@@ -30,6 +30,7 @@ Table of Contents
       - [TimeLayer](#timelayer)
       - [TagLayer](#taglayer)
       - [WKTLayer](#wktlayer)
+      - [HovmoellerLayer](#hovmoellerlayer)
       - [GraticuleLayer](#graticulelayer)
         - [GraticuleLayer settings](#graticulelayer-settings)
         - [Graticule settings](#graticule-settings)
@@ -1910,6 +1911,135 @@ The table below contains a list of attributes that can be defined for the WKT la
 | relativeresolution | (double) | -             | The segmentation resolution in pixels.     |
 
 By default the WKT is not segmented into smaller linesegments. However, if the CRS of the image is not geographic, long straight lines in the WKT will not curve as expected unless the WKT is segmented into multiple parts in a resolution suitable for the output image. In the example above the black WKT is not segmented at all, the red one is segmented to 100 km resolution, and the green one to 20 pixel resolution.
+
+#### HovmoellerLayer
+
+A Hovmöller layer renders a two-dimensional time–space cross-section as a grid of coloured
+rectangles inside an ordinary SVG product.  Unlike all other layers the coordinate axes are
+**not** a geographic map projection: one axis is always time and the other is a spatial or
+vertical coordinate sampled from the querydata.  Three slice geometries are supported:
+
+| `direction`   | X axis (columns)               | Y axis (rows) | Fixed coordinate(s)          |
+| ------------- | ------------------------------ | ------------- | ---------------------------- |
+| `time_lon`    | Longitude, evenly spaced       | Time steps    | Latitude, pressure level     |
+| `time_lat`    | Latitude, evenly spaced        | Time steps    | Longitude, pressure level    |
+| `time_level`  | Pressure levels (data order)   | Time steps    | Latitude + longitude         |
+
+The layer iterates **all** time steps available in the querydata; the `time` query-string
+parameter is ignored.  Each cell is coloured by matching the interpolated value against the
+first matching `Isoband` definition, using the same isoband JSON and CSS files as
+`IsobandLayer`.
+
+The canvas pixel dimensions are taken from the product-level `projection.xsize` /
+`projection.ysize`.  No geographic `crs` is required in the projection block.
+
+##### HovmoellerLayer settings
+
+| Name        | Type     | Default   | Description |
+| ----------- | -------- | --------- | ----------- |
+| parameter   | string   | –         | Parameter name, e.g. `"GeopHeight"` or `"Temperature"`. Required. |
+| level       | double   | –         | Pressure level in hPa for `time_lon` and `time_lat`. Inherited from the shared `Properties` block so it can also be set via the `level=` query-string parameter. |
+| direction   | string   | `time_lon`| Slice geometry: `time_lon`, `time_lat`, or `time_level`. |
+| latitude    | double   | `60.0`    | Fixed latitude for `time_lon` and `time_level`. |
+| longitude   | double   | `25.0`    | Fixed longitude for `time_lat` and `time_level`. |
+| lon_min     | double   | `5.0`     | Western longitude bound for `time_lon`. |
+| lon_max     | double   | `35.0`    | Eastern longitude bound for `time_lon`. |
+| lat_min     | double   | `55.0`    | Southern latitude bound for `time_lat`. |
+| lat_max     | double   | `70.0`    | Northern latitude bound for `time_lat`. |
+| nx          | integer  | `50`      | Number of evenly-spaced sample points along the space axis. Ignored for `time_level` (the number of levels in the data is used). |
+| isobands    | string   | –         | Path to the isoband colour definitions, e.g. `"json:isobands/geoph500.json"`. |
+| css         | string   | –         | Path to the CSS stylesheet for the isoband classes. |
+
+**Notes on sparse level data**
+
+For `time_level` the X axis contains exactly the pressure levels stored in the querydata,
+in data order (typically descending: 1000, 925, 850, 700, 500, 300 hPa).  With only six
+levels the columns are wide and the diagram is more schematic than meteorologically detailed,
+but it clearly shows the vertical thermal evolution at a fixed point.  Finer vertical
+resolution requires model-level or high-density pressure-level querydata.
+
+##### Example 1 – time × longitude (classic Hovmöller)
+
+Shows how 500 hPa geopotential height ridges and troughs propagate eastward along 60°N
+over 10 days.
+
+```json
+{
+    "title": "Hovmoeller GeopHeight 500 hPa",
+    "producer": "ecmwf_skandinavia_painepinta",
+    "projection": { "xsize": 700, "ysize": 500 },
+    "views": [{
+        "layers": [{
+            "layer_type": "hovmoeller",
+            "parameter": "GeopHeight",
+            "level": 500,
+            "direction": "time_lon",
+            "latitude": 60.0,
+            "lon_min": 5.0,
+            "lon_max": 35.0,
+            "nx": 53,
+            "isobands": "json:isobands/geoph500.json",
+            "css": "isobands/geoph500.css"
+        }]
+    }]
+}
+```
+
+Request: `GET /dali?customer=…&product=hovmoeller_geoph500`
+
+##### Example 2 – time × latitude
+
+Shows the meridional propagation of the 500 hPa ridge/trough pattern along 20°E.
+
+```json
+{
+    "title": "Hovmoeller GeopHeight 500 hPa – time vs latitude",
+    "producer": "ecmwf_skandinavia_painepinta",
+    "projection": { "xsize": 700, "ysize": 500 },
+    "views": [{
+        "layers": [{
+            "layer_type": "hovmoeller",
+            "parameter": "GeopHeight",
+            "level": 500,
+            "direction": "time_lat",
+            "longitude": 20.0,
+            "lat_min": 52.0,
+            "lat_max": 70.0,
+            "nx": 57,
+            "isobands": "json:isobands/geoph500.json",
+            "css": "isobands/geoph500.css"
+        }]
+    }]
+}
+```
+
+Request: `GET /dali?customer=…&product=hovmoeller_geoph500_time_lat`
+
+##### Example 3 – time × pressure level
+
+Shows the vertical thermal evolution at a fixed location (60°N, 20°E) over the forecast
+period.  All levels in the querydata are used automatically.
+
+```json
+{
+    "title": "Hovmoeller Temperature – time vs pressure level",
+    "producer": "ecmwf_skandinavia_painepinta",
+    "projection": { "xsize": 700, "ysize": 500 },
+    "views": [{
+        "layers": [{
+            "layer_type": "hovmoeller",
+            "parameter": "Temperature",
+            "direction": "time_level",
+            "latitude": 60.0,
+            "longitude": 20.0,
+            "isobands": "json:isobands/temperature_levels.json",
+            "css": "isobands/temperature_levels.css"
+        }]
+    }]
+}
+```
+
+Request: `GET /dali?customer=…&product=hovmoeller_temperature_time_level`
 
 #### GraticuleLayer
 

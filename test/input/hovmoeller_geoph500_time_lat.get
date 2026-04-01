@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=hovmoeller_geoph500_time_lat HTTP/1.0

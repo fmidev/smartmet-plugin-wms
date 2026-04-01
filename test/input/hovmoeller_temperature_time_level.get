@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=hovmoeller_temperature_time_level HTTP/1.0

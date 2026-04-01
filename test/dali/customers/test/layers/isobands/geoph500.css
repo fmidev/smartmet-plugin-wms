@@ -1,0 +1,15 @@
+/* GeopHeight at 500 hPa – blue (trough) → white (mean ~5600m) → red (ridge) */
+.Geoph500_5800_inf  { stroke:none; fill: rgb(140,0,0) }
+.Geoph500_5750_5800 { stroke:none; fill: rgb(210,30,0) }
+.Geoph500_5700_5750 { stroke:none; fill: rgb(255,100,0) }
+.Geoph500_5650_5700 { stroke:none; fill: rgb(255,180,0) }
+.Geoph500_5600_5650 { stroke:none; fill: rgb(255,230,100) }
+.Geoph500_5550_5600 { stroke:none; fill: rgb(255,250,210) }
+.Geoph500_5500_5550 { stroke:none; fill: rgb(210,240,255) }
+.Geoph500_5450_5500 { stroke:none; fill: rgb(150,210,255) }
+.Geoph500_5400_5450 { stroke:none; fill: rgb(80,170,255) }
+.Geoph500_5350_5400 { stroke:none; fill: rgb(20,120,240) }
+.Geoph500_5300_5350 { stroke:none; fill: rgb(0,70,210) }
+.Geoph500_5250_5300 { stroke:none; fill: rgb(0,30,180) }
+.Geoph500_5200_5250 { stroke:none; fill: rgb(0,0,150) }
+.Geoph500_inf_5200  { stroke:none; fill: rgb(0,0,100) }
