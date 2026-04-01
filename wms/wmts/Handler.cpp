@@ -468,6 +468,18 @@ QueryStatus Handler::handleGetTile(Dali::State& theState,
     theState.setName(layer);
     theState.setCustomer(wmsConfig.layerCustomer(layer));
 
+    // Store tile z/x/y in State so PMTiles-backed OSMLayers can do direct passthrough.
+    // tm_id is the zoom level identifier ("0"-"21"); tile_col=x, tile_row=y.
+    try
+    {
+      const auto zoom = static_cast<uint8_t>(Fmi::stoul(tm_id));
+      theState.setTileCoords(
+          zoom, static_cast<uint32_t>(tile_col), static_cast<uint32_t>(tile_row));
+    }
+    catch (...)
+    { /* non-numeric tm_id — no tile coords set, passthrough disabled */
+    }
+
     Dali::Product product;
     product.init(json, theState, itsDaliConfig);
     if (product.type.empty())

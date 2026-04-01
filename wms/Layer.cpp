@@ -591,6 +591,11 @@ void Layer::addMVTLayer(MVTTileBuilder& builder, State& theState)
     child->addMVTLayer(builder, theState);
 }
 
+std::optional<std::string> Layer::getRawMVTBytes(const State& /*theState*/) const
+{
+  return std::nullopt;
+}
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Look up text label for a numeric value using the legend_url_layer conversions

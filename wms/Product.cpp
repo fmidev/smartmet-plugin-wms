@@ -282,6 +282,21 @@ std::string Product::generateMVT(State& theState)
 {
   try
   {
+    // Fast path: if any layer provides pre-encoded MVT bytes (e.g. PMTiles
+    // backend), return them directly without going through the tile builder.
+    // This is only used when the product consists of a single PMTiles layer
+    // and tile coordinates have been stored in State by the request handler.
+    if (theState.hasTileCoords())
+    {
+      for (const auto& view : views.views)
+        for (const auto& layer : view->layers.layers)
+        {
+          auto raw = layer->getRawMVTBytes(theState);
+          if (raw)
+            return std::move(*raw);
+        }
+    }
+
     const auto& box = projection.getBox();
     MVTTileBuilder tile(box.xmin(), box.ymin(), box.xmax(), box.ymax());
 

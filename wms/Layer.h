@@ -79,6 +79,12 @@ class Layer : public Properties
   // The default implementation is a no-op (layer contributes nothing).
   virtual void addMVTLayer(class MVTTileBuilder& builder, State& theState);
 
+  // For layers backed by a pre-encoded tile file (e.g. PMTiles), return the raw
+  // MVT protobuf bytes for the current tile without going through MVTTileBuilder.
+  // Returns std::nullopt if this layer does not support direct byte passthrough.
+  // Called by Product::generateMVT() before the builder path as an optimisation.
+  virtual std::optional<std::string> getRawMVTBytes(const State& theState) const;
+
   // Base provides a reasonable default
   virtual std::size_t hash_value(const State& theState) const;
 

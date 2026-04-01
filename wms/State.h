@@ -84,6 +84,7 @@ class State
   const Engine::Contour::Engine& getContourEngine() const;
   const Engine::Gis::Engine& getGisEngine() const;
   const Engine::Geonames::Engine& getGeoEngine() const;
+  Engine::OSM::Engine* getOSMEngine() const;  // nullptr if engine not loaded
 #ifndef WITHOUT_OBSERVATION
   Engine::Observation::Engine& getObsEngine() const;
 #endif
@@ -207,6 +208,18 @@ class State
   bool isObservation(const std::optional<std::string>& theProducer) const;
   bool isObservation(const std::string& theProducer) const;
 
+  // Set tile z/x/y when serving an OGC Tiles or WMTS request (for PMTiles passthrough)
+  void setTileCoords(uint8_t z, uint32_t x, uint32_t y)
+  {
+    itsTileZ = z;
+    itsTileX = x;
+    itsTileY = y;
+  }
+  bool hasTileCoords() const { return itsTileZ.has_value(); }
+  uint8_t getTileZ() const { return *itsTileZ; }
+  uint32_t getTileX() const { return *itsTileX; }
+  uint32_t getTileY() const { return *itsTileY; }
+
   mutable uint arcCounter = 0;
   mutable uint insertCounter = 0;
   mutable std::map<std::size_t, uint> arcHashMap;
@@ -274,6 +287,11 @@ class State
 
   // The request itself
   const Spine::HTTP::Request itsRequest;
+
+  // Tile z/x/y coordinates (set only during OGC Tiles / WMTS tile requests)
+  std::optional<uint8_t> itsTileZ;
+  std::optional<uint32_t> itsTileX;
+  std::optional<uint32_t> itsTileY;
 };
 
 }  // namespace Dali

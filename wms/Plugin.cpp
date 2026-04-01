@@ -719,6 +719,11 @@ void Plugin::init()
     if (Spine::Reactor::isShuttingDown())
       return;
 
+    // OSM (optional — only loaded when the engine is configured)
+    itsOSMEngine = itsReactor->getEngine<Engine::OSM::Engine>("OSM", nullptr);
+    if (Spine::Reactor::isShuttingDown())
+      return;
+
     // QUERYDATA
 
     itsQEngine = itsReactor->getEngine<Engine::Querydata::Engine>("Querydata", nullptr);

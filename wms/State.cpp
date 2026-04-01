@@ -113,6 +113,17 @@ const Engine::Gis::Engine& State::getGisEngine() const
 
 // ----------------------------------------------------------------------
 /*!
+ * \brief Get the OSM engine (optional, returns nullptr if not loaded)
+ */
+// ----------------------------------------------------------------------
+
+Engine::OSM::Engine* State::getOSMEngine() const
+{
+  return itsPlugin.getOSMEngine();
+}
+
+// ----------------------------------------------------------------------
+/*!
  * \brief Get the GEO engine
  */
 // ----------------------------------------------------------------------

@@ -252,7 +252,10 @@ void HovmoellerLayer::generate(CTPP::CDT& theGlobals,
     // ---- CSS ----
 
     if (css)
-      theGlobals["css"].PushBack(theState.getStyle(*css));
+    {
+      std::string name = theState.getCustomer() + "/" + *css;
+      theGlobals["css"][name] = theState.getStyle(*css);
+    }
 
     // ---- assemble CDT layer entry ----
 
