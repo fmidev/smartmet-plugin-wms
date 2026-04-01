@@ -25,6 +25,7 @@
 #include "PresentWeatherObservationLayer.h"
 #include "GeoTiffLayer.h"
 #include "HovmoellerLayer.h"
+#include "MetarLayer.h"
 #include "RasterLayer.h"
 #include "StreamLayer.h"
 #include "SymbolLayer.h"
@@ -121,6 +122,10 @@ Layer* create(const Json::Value& theJson)
       return new FrameLayer;
     if (name == "fronts")
       return new WeatherFrontsLayer;
+#ifndef WITHOUT_AVI
+    if (name == "metar")
+      return new MetarLayer;
+#endif
     if (name == "grid")
       return new GridLayer;
     if (name == "circle")

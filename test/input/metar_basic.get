@@ -1,0 +1,2 @@
+GET /dali?customer=test&product=metar_basic&time=201511170020&format=svg HTTP/1.0
+

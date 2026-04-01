@@ -756,6 +756,10 @@ void Plugin::init()
     }
 #endif
 
+#ifndef WITHOUT_AVI
+    itsAviEngine = itsReactor->getEngine<Engine::Avi::Engine>("Avi", nullptr);
+#endif
+
     if (Spine::Reactor::isShuttingDown())
       return;
 

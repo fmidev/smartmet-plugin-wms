@@ -1,0 +1,41 @@
+{
+  "title": "METAR Basic Test",
+  "projection": {
+    "crs": "EPSG:4326",
+    "x1": 18.0,
+    "y1": 58.0,
+    "x2": 32.0,
+    "y2": 70.0,
+    "xsize": 700,
+    "ysize": 600
+  },
+  "views": [
+    {
+      "qid": "v1",
+      "layers": [
+        {
+          "qid": "metar_obs",
+          "layer_type": "metar",
+          "message_type": "METAR",
+          "message_format": "TAC",
+          "exclude_specis": true,
+          "font_size": 10,
+          "plot_size": 60,
+          "show_temperature": true,
+          "show_dewpoint": true,
+          "show_visibility": true,
+          "show_status": true,
+          "show_wind": true,
+          "show_pressure": true,
+          "show_gust": true,
+          "show_weather": true,
+          "show_sky_info": true,
+          "mindistance": 50,
+          "attributes": {
+            "id": "metar_layer"
+          }
+        }
+      ]
+    }
+  ]
+}

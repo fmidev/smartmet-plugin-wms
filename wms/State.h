@@ -60,6 +60,12 @@ namespace Observation
 class Engine;
 }
 #endif
+#ifndef WITHOUT_AVI
+namespace Avi
+{
+class Engine;
+}
+#endif
 }  // namespace Engine
 
 namespace Plugin
@@ -87,6 +93,9 @@ class State
   Engine::OSM::Engine* getOSMEngine() const;  // nullptr if engine not loaded
 #ifndef WITHOUT_OBSERVATION
   Engine::Observation::Engine& getObsEngine() const;
+#endif
+#ifndef WITHOUT_AVI
+  Engine::Avi::Engine& getAviEngine() const;
 #endif
 
   // Give access to configuration variables

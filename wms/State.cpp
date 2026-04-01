@@ -160,6 +160,20 @@ Engine::Observation::Engine& State::getObsEngine() const
 }
 #endif
 
+#ifndef WITHOUT_AVI
+Engine::Avi::Engine& State::getAviEngine() const
+{
+  try
+  {
+    return itsPlugin.getAviEngine();
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Operation failed!");
+  }
+}
+#endif
+
 // ----------------------------------------------------------------------
 /*!
  * \brief Get the configuration object

@@ -22,6 +22,9 @@
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
 #endif
+#ifndef WITHOUT_AVI
+#include <engines/avi/Engine.h>
+#endif
 #include <macgyver/TemplateFactory.h>
 #include <spine/FileCache.h>
 #include <spine/HTTP.h>
@@ -72,6 +75,9 @@ class Plugin : public SmartMetPlugin
   const Engine::Geonames::Engine& getGeoEngine() const { return *itsGeoEngine; }
 #ifndef WITHOUT_OBSERVATION
   Engine::Observation::Engine& getObsEngine() const { return *itsObsEngine; }
+#endif
+#ifndef WITHOUT_AVI
+  Engine::Avi::Engine& getAviEngine() const { return *itsAviEngine; }
 #endif
   // Plugin specific public API:
 
@@ -182,6 +188,9 @@ class Plugin : public SmartMetPlugin
   std::shared_ptr<Engine::Authentication::Engine> authEngine;
 #ifndef WITHOUT_OBSERVATION
   std::shared_ptr<Engine::Observation::Engine> itsObsEngine;
+#endif
+#ifndef WITHOUT_AVI
+  std::shared_ptr<Engine::Avi::Engine> itsAviEngine;
 #endif
 
   // Cache templates
