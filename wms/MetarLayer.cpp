@@ -19,7 +19,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <map>
 #include <regex>
 #include <sstream>
 
@@ -30,43 +29,14 @@ namespace Plugin
 namespace Dali
 {
 
+// ======================================================================
+// METAR TAC parser implementation
+// ======================================================================
+
 namespace
 {
 
-// ======================================================================
-// Weather code lookup table (ww numeric code → METAR text)
-// Source: PDF section "Avi W → teksti konvertointitaulukko"
-// ======================================================================
-
-const std::map<int, std::string> ww_to_text = {
-    {4, "FU"},      {5, "HZ"},      {6, "DU"},       {7, "BLSA"},    {8, "PO"},
-    {9, "VCDS"},    {10, "BR"},     {11, "BCFG"},     {12, "MIFG"},   {13, "VCTS"},
-    {16, "VCSH"},   {17, "TS"},     {18, "SQ"},       {19, "FC"},     {31, "DS"},
-    {36, "DRSN"},   {37, "+DRSN"},  {38, "BLSN"},     {39, "+BLSN"},  {40, "VCFG"},
-    {41, "PRFG"},   {49, "FG"},     {51, "-DZ"},      {53, "DZ"},     {55, "+DZ"},
-    {56, "-FZDZ"},  {57, "FZDZ"},   {58, "-RADZ"},    {59, "RADZ"},   {61, "-RA"},
-    {63, "RA"},     {66, "-FZRA"},  {67, "FZRA"},     {68, "-RASN"},  {69, "RASN"},
-    {71, "-SN"},    {73, "SN"},     {75, "+SN"},      {76, "IC"},     {77, "SG"},
-    {79, "PL"},     {80, "-SHRA"},  {81, "SHRA"},     {82, "+SHRA"},  {83, "-SHRASN"},
-    {84, "SHRASN"}, {85, "-SHSN"},  {86, "SHSN"},     {87, "SHGS"},   {88, "SHGS"},
-    {89, "-SHGR"},  {90, "SHGR"},   {95, "TSRA"},     {96, "TSGR"},   {97, "+TSRA"},
-    {99, "+TSGR"},
-};
-
-// ======================================================================
-// Reverse: METAR weather group text → ww code (for status/string output)
-// Only used to reconstruct weather text from METAR groups in parseTAC
-// ======================================================================
-
-// Map present-weather METAR tokens to ww codes for internal use.
-// We store up to 3 tokens from the raw message rather than converting
-// to/from ww codes; the text is taken directly from the TAC token.
-
-// ======================================================================
-// Parse a cloud layer token: FEW/SCT/BKN/OVC + 3-digit hundreds-of-feet
-// plus optional CB/TCU suffix.  Returns true on success.
-// ======================================================================
-
+// Parse a cloud-layer token: FEW|SCT|BKN|OVC + 3-digit base-hft + optional CB/TCU
 bool parseCloudToken(const std::string& tok, MetarData::CloudLayer& layer)
 {
   static const std::regex re(R"(^(FEW|SCT|BKN|OVC)(\d{3})(CB|TCU)?$)");
@@ -74,22 +44,22 @@ bool parseCloudToken(const std::string& tok, MetarData::CloudLayer& layer)
   if (!std::regex_match(tok, m, re))
     return false;
 
-  const auto& amount_str = m[1].str();
-  if (amount_str == "FEW")
-    layer.amount = 2;  // 1-2 oktas representatively stored as 2
-  else if (amount_str == "SCT")
-    layer.amount = 4;
-  else if (amount_str == "BKN")
-    layer.amount = 6;
+  const std::string& amt = m[1].str();
+  if (amt == "FEW")
+    layer.amount_oktas = 2;
+  else if (amt == "SCT")
+    layer.amount_oktas = 4;
+  else if (amt == "BKN")
+    layer.amount_oktas = 6;
   else
-    layer.amount = 8;  // OVC
+    layer.amount_oktas = 8;  // OVC
 
   layer.base_hft = std::stoi(m[2].str());
 
-  const auto& type_str = m[3].str();
-  if (type_str == "TCU")
+  const std::string& tp = m[3].str();
+  if (tp == "TCU")
     layer.type = 1;
-  else if (type_str == "CB")
+  else if (tp == "CB")
     layer.type = 2;
   else
     layer.type = 0;
@@ -97,49 +67,37 @@ bool parseCloudToken(const std::string& tok, MetarData::CloudLayer& layer)
   return true;
 }
 
-// ======================================================================
-// Determine whether a token looks like a weather group
-// (METAR wx qualifier/descriptor/phenomena pattern)
-// ======================================================================
-
+// Returns true if the token looks like a METAR present-weather group.
+// Handles optional intensity (+/-), optional VC prefix, optional descriptor
+// (MI PR BC DR BL SH TS FZ), and phenomena.
 bool isWeatherToken(const std::string& tok)
 {
-  // Match optional intensity prefix, optional VC, optional descriptor, phenomena
+  if (tok.empty())
+    return false;
   static const std::regex re(
-      R"(^[+-]?"
-      R"((?:VC)?"
-      R"((?:MI|PR|BC|DR|BL|SH|TS|FZ)?"
-      R"((?:DZ|RA|SN|SG|IC|PL|GR|GS|UP|BR|FG|FU|VA|DU|SA|HZ|PY|PO|SQ|FC|SS|DS|TSRA|TSGR|RASN|SHRA|SHSN|SHGR|SHGS|FZRA|FZDZ|RADZ|DRSN|BLSN|BLSA|BCFG|MIFG|PRFG|VCFG|VCSH|VCDS|VCTS|VCSH)+)$)");
+      R"(^[+-]?(?:VC)?(?:MI|PR|BC|DR|BL|SH|TS|FZ)?)"
+      R"((?:DZ|RA|SN|SG|IC|PL|GR|GS|UP|BR|FG|FU|VA|DU|SA|HZ|PO|SQ|FC|SS|DS)+$)");
   return std::regex_match(tok, re);
 }
 
-}  // anonymous namespace
+}  // namespace
 
 // ======================================================================
-// MetarData helper methods
+// MetarLayer static helpers
 // ======================================================================
 
 // static
 std::string MetarLayer::formatTemp(int t)
 {
-  // negative → "M|value|", single digit → leading zero
-  std::string result;
   if (t < 0)
-  {
-    result = "M" + (std::abs(t) < 10 ? std::string("0") : std::string()) +
-             Fmi::to_string(std::abs(t));
-  }
-  else
-  {
-    result = (t < 10 ? std::string("0") : std::string()) + Fmi::to_string(t);
-  }
-  return result;
+    return "M" + (std::abs(t) < 10 ? std::string("0") : std::string{}) +
+           Fmi::to_string(std::abs(t));
+  return (t < 10 ? std::string("0") : std::string{}) + Fmi::to_string(t);
 }
 
 // static
 std::string MetarLayer::formatCloudBase(int base_hft)
 {
-  // 3-digit hundreds of feet with leading zeros
   if (base_hft < 10)
     return "00" + Fmi::to_string(base_hft);
   if (base_hft < 100)
@@ -148,13 +106,13 @@ std::string MetarLayer::formatCloudBase(int base_hft)
 }
 
 // static
-std::string MetarLayer::cloudAmountCode(int oktas)
+std::string MetarLayer::cloudAmountCode(int amount_oktas)
 {
-  if (oktas <= 2)
+  if (amount_oktas <= 2)
     return "FEW";
-  if (oktas <= 4)
+  if (amount_oktas <= 4)
     return "SCT";
-  if (oktas <= 7)
+  if (amount_oktas <= 7)
     return "BKN";
   return "OVC";
 }
@@ -166,7 +124,21 @@ std::string MetarLayer::cloudTypeStr(int type)
     return "TCU";
   if (type == 2)
     return "CB";
-  return "";
+  return {};
+}
+
+// static
+std::string MetarLayer::weatherString(const MetarData& d)
+{
+  // Join the raw TAC weather tokens with spaces
+  std::string result;
+  for (const auto& tok : d.weather_tokens)
+  {
+    if (!result.empty())
+      result += ' ';
+    result += tok;
+  }
+  return result;
 }
 
 // static
@@ -177,50 +149,21 @@ std::string MetarLayer::skyInfoString(const MetarData& d)
   if (d.is_skc)
     return "SKC";
 
-  // Vertical visibility overrides cloud info
+  // Vertical visibility overrides cloud layers
   if (d.has_vertical_vis)
-  {
-    std::string hft_str;
-    if (d.vertical_vis_hft < 10)
-      hft_str = "00" + Fmi::to_string(d.vertical_vis_hft);
-    else if (d.vertical_vis_hft < 100)
-      hft_str = "0" + Fmi::to_string(d.vertical_vis_hft);
-    else
-      hft_str = Fmi::to_string(d.vertical_vis_hft);
-    return "VV" + hft_str;
-  }
+    return "VV" + formatCloudBase(d.vertical_vis_hft);
 
   if (d.clouds.empty())
     return {};
 
-  // Build layers from lowest to highest (in the PDF the lowest cloud is at the
-  // bottom of the plot text block, but we render them as separate text lines
-  // going downward, so we output lowest first = topmost line visually).
+  // One cloud layer per line, lowest first (closest to ground = first element)
   std::string result;
   for (const auto& cl : d.clouds)
   {
     if (!result.empty())
-      result += "\n";
-    result += cloudAmountCode(cl.amount) + formatCloudBase(cl.base_hft) + cloudTypeStr(cl.type);
-  }
-  return result;
-}
-
-// static
-std::string MetarLayer::weatherString(const MetarData& d)
-{
-  if (d.weather_codes.empty())
-    return {};
-  std::string result;
-  for (int code : d.weather_codes)
-  {
-    auto it = ww_to_text.find(code);
-    if (it != ww_to_text.end())
-    {
-      if (!result.empty())
-        result += " ";
-      result += it->second;
-    }
+      result += '\n';
+    result += cloudAmountCode(cl.amount_oktas) + formatCloudBase(cl.base_hft) +
+              cloudTypeStr(cl.type);
   }
   return result;
 }
@@ -228,52 +171,42 @@ std::string MetarLayer::weatherString(const MetarData& d)
 // static
 std::string MetarLayer::statusColor(const MetarData& d)
 {
-  // Determine effective cloud base: prefer vertical visibility, then cloud base 1
-  int base = -1;
+  // Effective ceiling: vertical vis preferred, else lowest cloud base
+  int base_ft = -1;
   if (d.has_vertical_vis)
-    base = d.vertical_vis_hft * 100;  // convert hft → ft
+    base_ft = d.vertical_vis_hft * 100;
   else if (!d.clouds.empty())
-    base = d.clouds.front().base_hft * 100;
+    base_ft = d.clouds.front().base_hft * 100;
 
-  int vis = d.has_visibility ? d.visibility : -1;
+  int vis_m = -1;
   if (d.is_cavok)
-    vis = 9999;
+    vis_m = 9999;
+  else if (d.has_visibility)
+    vis_m = d.visibility;
 
-  if (vis < 0 && base < 0)
-    return {};  // no data → no status box
+  if (vis_m < 0 && base_ft < 0)
+    return {};  // insufficient data
 
-  bool lowVis = (vis >= 0 && vis < 800);
-  bool lowBase = (base >= 0 && base < 200);
-  if (lowVis || lowBase)
-    return "#FF0000";  // red
+  auto lt = [](int v, int limit) { return v >= 0 && v < limit; };
 
-  lowVis = (vis >= 0 && vis < 1600);
-  lowBase = (base >= 0 && base < 300);
-  if (lowVis || lowBase)
-    return "#FF8C00";  // orange
-
-  lowVis = (vis >= 0 && vis < 3700);
-  lowBase = (base >= 0 && base < 700);
-  if (lowVis || lowBase)
+  if (lt(vis_m, 800) || lt(base_ft, 200))
+    return "#FF0000";  // red   – LIFR
+  if (lt(vis_m, 1600) || lt(base_ft, 300))
+    return "#FF8C00";  // orange – IFR low
+  if (lt(vis_m, 3700) || lt(base_ft, 700))
     return "#FFFF00";  // yellow
-
-  lowVis = (vis >= 0 && vis < 5000);
-  lowBase = (base >= 0 && base < 1500);
-  if (lowVis || lowBase)
-    return "#00CC00";  // green
-
-  lowVis = (vis >= 0 && vis < 8000);
-  lowBase = (base >= 0 && base < 2500);
-  if (lowVis || lowBase)
+  if (lt(vis_m, 5000) || lt(base_ft, 1500))
+    return "#00CC00";  // green  – MVFR
+  if (lt(vis_m, 8000) || lt(base_ft, 2500))
     return "#FFFFFF";  // white
-
-  return "#0066FF";  // blue (best conditions)
+  return "#0066FF";    // blue   – VFR
 }
 
 // ======================================================================
 // Wind barb SVG path
-// Shaft points toward wind source direction.
-// north_dx/north_dy: unit vector for geographic north in screen coords.
+// Shaft points FROM the station TOWARD the wind source (upwind direction).
+// north_dx/north_dy: unit vector pointing toward geographic north in screen coords.
+// In screen coords Y increases downward, so north_dy is typically negative.
 // ======================================================================
 
 // static
@@ -288,82 +221,73 @@ std::string MetarLayer::windBarbPath(int direction_deg,
 {
   if (speed_kt < 3)
   {
-    // Calm: small circle around station
+    // Calm: small open circle centred on station
     double r = barb_len * 0.5;
-    return fmt::format("M {:.1f} {:.1f} m -{:.1f} 0 a {:.1f} {:.1f} 0 1 0 {:.1f} 0 a {:.1f} "
-                       "{:.1f} 0 1 0 -{:.1f} 0",
-                       cx,
-                       cy,
-                       r,
-                       r,
-                       r,
-                       2 * r,
-                       r,
-                       r,
-                       2 * r);
+    return fmt::format(
+        "M {:.1f} {:.1f} m -{:.1f} 0 "
+        "a {:.1f} {:.1f} 0 1 0 {:.1f} 0 "
+        "a {:.1f} {:.1f} 0 1 0 -{:.1f} 0",
+        cx, cy, r, r, r, 2 * r, r, r, 2 * r);
   }
 
-  // Rotate north vector clockwise by direction_deg to get wind-from direction
-  // In screen coords (y down), clockwise rotation by θ from north:
-  // shaft_dx = north_dx*cos(θ) - north_dy*sin(θ)
-  // shaft_dy = north_dx*sin(θ) + north_dy*cos(θ)
-  double theta = direction_deg * M_PI / 180.0;
-  double sdx = north_dx * std::cos(theta) - north_dy * std::sin(theta);
-  double sdy = north_dx * std::sin(theta) + north_dy * std::cos(theta);
+  // Direction vector for the shaft (from station toward wind source).
+  // In screen space, rotating the north direction vector clockwise by
+  // direction_deg gives the wind-from direction.  Because screen Y is
+  // flipped relative to math Y, a clockwise geographic rotation maps to
+  // the CCW formula: x' = x·cosθ - y·sinθ, y' = x·sinθ + y·cosθ.
+  const double theta = direction_deg * M_PI / 180.0;
+  const double sdx = north_dx * std::cos(theta) - north_dy * std::sin(theta);
+  const double sdy = north_dx * std::sin(theta) + north_dy * std::cos(theta);
 
-  // Tip of shaft (toward wind source)
-  double tx = cx + sdx * shaft_len;
-  double ty = cy + sdy * shaft_len;
+  // Shaft tip (barbs are drawn here)
+  const double tx = cx + sdx * shaft_len;
+  const double ty = cy + sdy * shaft_len;
 
-  // Right-perpendicular to shaft (barbs branch off to the right when
-  // looking from station toward source, i.e. left in typical screen orientation)
-  double pdx = -sdy;
-  double pdy = sdx;
+  // Right-perpendicular to shaft when looking from station toward tip
+  const double pdx = -sdy;
+  const double pdy = sdx;
 
   std::ostringstream path;
   path.precision(1);
   path << std::fixed;
 
-  // Draw shaft
+  // Main shaft
   path << "M " << cx << " " << cy << " L " << tx << " " << ty;
 
-  // Count barbs from tip backward
   int kt = speed_kt;
-  int pennants = kt / 50;
-  kt -= pennants * 50;
-  int full_barbs = kt / 10;
-  kt -= full_barbs * 10;
+  int pennants  = kt / 50;  kt -= pennants * 50;
+  int full_barbs = kt / 10;  kt -= full_barbs * 10;
   int half_barbs = kt / 5;
 
-  double spacing = shaft_len / std::max(1, pennants + full_barbs + half_barbs + 1);
-  spacing = std::min(spacing, barb_len * 0.8);
+  int n_barbs = pennants + full_barbs + half_barbs;
+  double spacing = (n_barbs > 0) ? std::min(shaft_len / (n_barbs + 1), barb_len * 0.9) : 0.0;
 
   double bx = tx;
   double by = ty;
 
   for (int i = 0; i < pennants; i++)
   {
-    // Filled triangle: base at bx,by; tip one spacing back along shaft
     double b2x = bx - sdx * spacing;
     double b2y = by - sdy * spacing;
-    path << " M " << bx << " " << by << " L " << (bx + pdx * barb_len) << " "
-         << (by + pdy * barb_len) << " L " << b2x << " " << b2y << " Z";
+    path << " M " << bx << " " << by
+         << " L " << (bx + pdx * barb_len) << " " << (by + pdy * barb_len)
+         << " L " << b2x << " " << b2y << " Z";
     bx = b2x;
     by = b2y;
   }
 
   for (int i = 0; i < full_barbs; i++)
   {
-    path << " M " << bx << " " << by << " L " << (bx + pdx * barb_len) << " "
-         << (by + pdy * barb_len);
+    path << " M " << bx << " " << by
+         << " L " << (bx + pdx * barb_len) << " " << (by + pdy * barb_len);
     bx -= sdx * spacing;
     by -= sdy * spacing;
   }
 
   for (int i = 0; i < half_barbs; i++)
   {
-    path << " M " << bx << " " << by << " L " << (bx + pdx * barb_len * 0.5) << " "
-         << (by + pdy * barb_len * 0.5);
+    path << " M " << bx << " " << by
+         << " L " << (bx + pdx * barb_len * 0.5) << " " << (by + pdy * barb_len * 0.5);
     bx -= sdx * spacing;
     by -= sdy * spacing;
   }
@@ -373,7 +297,6 @@ std::string MetarLayer::windBarbPath(int direction_deg,
 
 // ======================================================================
 // METAR TAC parser
-// Parses a raw METAR/SPECI TAC message string.
 // ======================================================================
 
 // static
@@ -397,76 +320,72 @@ MetarData MetarLayer::parseTAC(const std::string& message,
   if (tokens.empty())
     return d;
 
-  // Skip METAR/SPECI/AUTO prefix and station ICAO
   std::size_t idx = 0;
+
+  // Skip type prefix: METAR / SPECI / AUTO / COR
   if (idx < tokens.size() &&
-      (tokens[idx] == "METAR" || tokens[idx] == "SPECI" || tokens[idx] == "AUTO"))
+      (tokens[idx] == "METAR" || tokens[idx] == "SPECI"))
     ++idx;
-  // ICAO (4-char alpha)
+  while (idx < tokens.size() &&
+         (tokens[idx] == "AUTO" || tokens[idx] == "COR" || tokens[idx] == "NIL"))
+    ++idx;
+
+  // Station ICAO
   if (idx < tokens.size() && tokens[idx].size() == 4 && std::isalpha(tokens[idx][0]))
   {
     d.icao = tokens[idx];
     ++idx;
   }
-  // Time: DDHHMMz (optional)
+
+  // Time group: DDHHMMz
   if (idx < tokens.size())
   {
     static const std::regex time_re(R"(^\d{6}Z$)");
     if (std::regex_match(tokens[idx], time_re))
       ++idx;
   }
-  // AUTO/COR flags
-  while (idx < tokens.size() && (tokens[idx] == "AUTO" || tokens[idx] == "COR"))
+
+  // Possibly more AUTO/COR/NIL
+  while (idx < tokens.size() &&
+         (tokens[idx] == "AUTO" || tokens[idx] == "COR" || tokens[idx] == "NIL"))
     ++idx;
 
-  // Now parse groups
-  enum class State
-  {
-    Wind,
-    Vis,
-    RVR,
-    WX,
-    Clouds,
-    TempDew,
-    Done
-  };
-  State state = State::Wind;
-
+  // Compiled regexes for token identification
   static const std::regex wind_re(R"(^(VRB|\d{3})(\d{2,3})(G(\d{2,3}))?KT$)");
-  static const std::regex vis_re(R"(^(\d{4})$)");
-  static const std::regex rvr_re(R"(^R\d{2}[LCR]?/.*$)");
+  static const std::regex vis4_re(R"(^(\d{4})$)");
+  static const std::regex rvr_re(R"(^R\d{2}[LCR]?/.+$)");
   static const std::regex cloud_re(R"(^(FEW|SCT|BKN|OVC)(\d{3})(CB|TCU)?$)");
   static const std::regex vv_re(R"(^VV(\d{3}|///)$)");
   static const std::regex tempdew_re(R"(^(M?\d{2})/(M?\d{2})$)");
   static const std::regex qnh_re(R"(^Q(\d{4})$)");
   static const std::regex alt_re(R"(^A(\d{4})$)");
-  // Weather: optional intensity (+/-), optional VC, optional descriptor, phenomena
-  static const std::regex wx_re(
-      R"(^[+-]?(?:VC)?(?:MI|PR|BC|DR|BL|SH|TS|FZ)?)"
-      R"((?:DZ|RA|SN|SG|IC|PL|GR|GS|UP|BR|FG|FU|VA|DU|SA|HZ|PY|PO|SQ|FC|SS|DS)+$)");
+  static const std::regex varwind_re(R"(^\d{3}V\d{3}$)");
 
-  for (; idx < tokens.size() && state != State::Done; ++idx)
+  // State machine
+  enum class S { Wind, Vis, RVR, WX, Clouds, TempDew, Done };
+  S state = S::Wind;
+
+  std::smatch m;
+
+  for (; idx < tokens.size(); ++idx)
   {
     const std::string& t = tokens[idx];
 
-    // Terminator
-    if (t == "NOSIG" || t == "BECMG" || t == "TEMPO" || t == "RMK" || t == "=")
-    {
-      state = State::Done;
+    // Hard terminators
+    if (t == "NOSIG" || t == "BECMG" || t == "TEMPO" || t == "RMK" || t == "=" ||
+        t == "INTER")
       break;
-    }
-
-    std::smatch m;
 
     switch (state)
     {
-      case State::Wind:
+      // ----------------------------------------------------------
+      case S::Wind:
         if (t == "CAVOK")
         {
           d.is_cavok = true;
           d.has_visibility = true;
           d.visibility = 9999;
-          state = State::TempDew;
+          state = S::TempDew;
           break;
         }
         if (std::regex_match(t, m, wind_re))
@@ -481,63 +400,56 @@ MetarData MetarLayer::parseTAC(const std::string& message,
             d.has_gust = true;
             d.wind_gust = std::stoi(m[4].str());
           }
-          state = State::Vis;
+          state = S::Vis;
           break;
         }
-        // Wind direction variability (e.g. 200V270) – skip
-        {
-          static const std::regex var_re(R"(^\d{3}V\d{3}$)");
-          if (std::regex_match(t, var_re))
-            break;
-        }
-        // Allow falling through if token doesn't match expected wind
-        state = State::Vis;
+        if (std::regex_match(t, varwind_re))
+          break;  // wind direction variability group, skip
+        // Token doesn't look like wind – fall through to Vis
+        state = S::Vis;
         [[fallthrough]];
 
-      case State::Vis:
+      // ----------------------------------------------------------
+      case S::Vis:
         if (t == "CAVOK")
         {
           d.is_cavok = true;
           d.has_visibility = true;
           d.visibility = 9999;
-          state = State::TempDew;
+          state = S::TempDew;
           break;
         }
         if (t == "9999")
         {
           d.has_visibility = true;
           d.visibility = 9999;
-          state = State::RVR;
+          state = S::RVR;
           break;
         }
-        if (std::regex_match(t, m, vis_re))
+        if (std::regex_match(t, m, vis4_re))
         {
           d.has_visibility = true;
           d.visibility = std::min(std::stoi(m[1].str()), 9999);
-          state = State::RVR;
+          state = S::RVR;
           break;
         }
-        // Could be "NVIS" or a fraction visibility — treat as unknown and move on
-        state = State::RVR;
+        // Unrecognised visibility token; advance state and fall through
+        state = S::RVR;
         [[fallthrough]];
 
-      case State::RVR:
+      // ----------------------------------------------------------
+      case S::RVR:
         if (std::regex_match(t, rvr_re))
           break;  // skip RVR groups
-        state = State::WX;
+        state = S::WX;
         [[fallthrough]];
 
-      case State::WX:
-        // Check for temperature/dew before weather to handle unusual ordering
-        if (std::regex_match(t, tempdew_re))
-        {
-          state = State::TempDew;
-          goto handle_tempdew;
-        }
+      // ----------------------------------------------------------
+      case S::WX:
         if (t == "SKC" || t == "CLR" || t == "NSC" || t == "NCD")
         {
           d.is_skc = true;
-          state = State::Clouds;
+          state = S::Clouds;
           break;
         }
         if (std::regex_match(t, m, vv_re))
@@ -548,41 +460,33 @@ MetarData MetarLayer::parseTAC(const std::string& message,
             d.has_vertical_vis = true;
             d.vertical_vis_hft = std::stoi(vv);
           }
-          state = State::TempDew;
+          state = S::TempDew;
           break;
         }
         if (std::regex_match(t, cloud_re))
         {
-          state = State::Clouds;
-          goto handle_cloud;
-        }
-        if (std::regex_match(t, wx_re))
-        {
-          // Store as a raw text token; look up ww code if available
-          // For display we iterate ww_to_text and find matching text
-          for (auto& [code, text] : ww_to_text)
-          {
-            if (text == t && d.weather_codes.size() < 3)
-            {
-              d.weather_codes.push_back(code);
-              break;
-            }
-          }
-          // Also push -1 as placeholder if no exact match, so count is maintained
-          if (d.weather_codes.empty() ||
-              (d.weather_codes.size() < 3 && ww_to_text.count(d.weather_codes.back()) == 0))
-          {
-            // Store token directly – handled via separate raw_weather vector
-            // For simplicity: attempt partial mapping
-          }
+          state = S::Clouds;
+          MetarData::CloudLayer cl;
+          parseCloudToken(t, cl);
+          d.clouds.push_back(cl);
           break;
         }
-        // Unrecognised in WX, try clouds/temp
-        state = State::Clouds;
+        if (std::regex_match(t, tempdew_re))
+        {
+          state = S::TempDew;
+          goto handle_tempdew;
+        }
+        if (isWeatherToken(t) && d.weather_tokens.size() < 3)
+        {
+          d.weather_tokens.push_back(t);
+          break;
+        }
+        // Might be a cloud or temp group appearing without expected WX
+        state = S::Clouds;
         [[fallthrough]];
 
-      case State::Clouds:
-      handle_cloud:
+      // ----------------------------------------------------------
+      case S::Clouds:
         if (t == "SKC" || t == "CLR" || t == "NSC" || t == "NCD")
         {
           d.is_skc = true;
@@ -596,27 +500,41 @@ MetarData MetarLayer::parseTAC(const std::string& message,
             d.has_vertical_vis = true;
             d.vertical_vis_hft = std::stoi(vv);
           }
-          state = State::TempDew;
+          state = S::TempDew;
           break;
         }
-        if (std::regex_match(t, m, cloud_re))
+        if (std::regex_match(t, cloud_re))
         {
           MetarData::CloudLayer cl;
           parseCloudToken(t, cl);
           d.clouds.push_back(cl);
           break;
         }
-        // Check for temp/dew – could appear right after clouds
+        // Check for temp/dew appearing right after clouds
         if (std::regex_match(t, tempdew_re))
         {
-          state = State::TempDew;
+          state = S::TempDew;
           goto handle_tempdew;
         }
-        // Otherwise move to TempDew state and reprocess
-        state = State::TempDew;
+        // Try QNH too
+        if (std::regex_match(t, m, qnh_re))
+        {
+          d.has_pressure = true;
+          d.pressure = std::stoi(m[1].str());
+          break;
+        }
+        if (std::regex_match(t, m, alt_re))
+        {
+          double inHg = std::stod(m[1].str()) / 100.0;
+          d.has_pressure = true;
+          d.pressure = static_cast<int>(std::round(inHg * 33.8639));
+          break;
+        }
+        state = S::TempDew;
         [[fallthrough]];
 
-      case State::TempDew:
+      // ----------------------------------------------------------
+      case S::TempDew:
       handle_tempdew:
         if (std::regex_match(t, m, tempdew_re))
         {
@@ -629,7 +547,7 @@ MetarData MetarLayer::parseTAC(const std::string& message,
           d.temperature = parse_td(m[1].str());
           d.has_dewpoint = true;
           d.dewpoint = parse_td(m[2].str());
-          state = State::Done;
+          state = S::Done;
           break;
         }
         if (std::regex_match(t, m, qnh_re))
@@ -640,7 +558,6 @@ MetarData MetarLayer::parseTAC(const std::string& message,
         }
         if (std::regex_match(t, m, alt_re))
         {
-          // Convert altimeter setting (hundredths of inHg) to hPa
           double inHg = std::stod(m[1].str()) / 100.0;
           d.has_pressure = true;
           d.pressure = static_cast<int>(std::round(inHg * 33.8639));
@@ -648,26 +565,38 @@ MetarData MetarLayer::parseTAC(const std::string& message,
         }
         break;
 
-      default:
+      // ----------------------------------------------------------
+      case S::Done:
+        // Check for QNH that appears after temp/dew
+        if (std::regex_match(t, m, qnh_re))
+        {
+          d.has_pressure = true;
+          d.pressure = std::stoi(m[1].str());
+        }
+        else if (std::regex_match(t, m, alt_re))
+        {
+          double inHg = std::stod(m[1].str()) / 100.0;
+          d.has_pressure = true;
+          d.pressure = static_cast<int>(std::round(inHg * 33.8639));
+        }
         break;
     }
   }
 
-  // Second pass for QNH (often comes after temp/dew)
+  // Final sweep for QNH in case it appeared in an unexpected position
   if (!d.has_pressure)
   {
     for (const auto& token : tokens)
     {
-      std::smatch m2;
-      if (std::regex_match(token, m2, qnh_re))
+      if (std::regex_match(token, m, qnh_re))
       {
         d.has_pressure = true;
-        d.pressure = std::stoi(m2[1].str());
+        d.pressure = std::stoi(m[1].str());
         break;
       }
-      if (std::regex_match(token, m2, alt_re))
+      if (std::regex_match(token, m, alt_re))
       {
-        double inHg = std::stod(m2[1].str()) / 100.0;
+        double inHg = std::stod(m[1].str()) / 100.0;
         d.has_pressure = true;
         d.pressure = static_cast<int>(std::round(inHg * 33.8639));
         break;
@@ -708,7 +637,6 @@ void MetarLayer::init(Json::Value& theJson,
     JsonTools::remove_string(color, theJson, "color");
     JsonTools::remove_int(mindistance, theJson, "mindistance");
 
-    // Optional ICAO and country filter arrays
     auto icao_json = JsonTools::remove(theJson, "icaos");
     if (!icao_json.isNull() && icao_json.isArray())
       for (const auto& j : icao_json)
@@ -763,12 +691,11 @@ std::size_t MetarLayer::hash_value(const State& theState) const
 }
 
 // ======================================================================
-// getFeatureInfo
+// getFeatureInfo (stub)
 // ======================================================================
 
 void MetarLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
-  // Not implemented
 }
 
 // ======================================================================
@@ -789,26 +716,20 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     if (!validLayer(theState))
       return;
 
-    // ------------------------------------------------------------------
-    // Get valid time
-    // ------------------------------------------------------------------
-    auto valid_time = getValidTime();
-
-    // ------------------------------------------------------------------
+    // ----------------------------------------------------------------
     // Projection and coordinate transformation
-    // ------------------------------------------------------------------
+    // ----------------------------------------------------------------
     const auto& crs = projection.getCRS();
     const auto& box = projection.getBox();
-
     Fmi::CoordinateTransformation trans("WGS84", crs);
 
-    // Map bounding box in WGS84 for the AVI engine query
+    // Map corners in WGS84 for the AVI engine bbox query
     const auto& sw = projection.bottomLeftLatLon();
     const auto& ne = projection.topRightLatLon();
 
-    // ------------------------------------------------------------------
-    // Build AVI engine query options
-    // ------------------------------------------------------------------
+    // ----------------------------------------------------------------
+    // Build AVI engine query
+    // ----------------------------------------------------------------
     Engine::Avi::QueryOptions opts;
 
     opts.itsParameters.emplace_back("icao");
@@ -821,8 +742,9 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     opts.itsMessageTypes.push_back(message_type);
     opts.itsMessageFormat = message_format;
 
-    // Time: format valid_time as PostgreSQL timestamptz literal
-    std::string ts = Fmi::to_iso_string(valid_time);  // e.g. "20151117T002000"
+    // Time: format as PostgreSQL timestamptz literal accepted by the AVI engine
+    auto valid_time = getValidTime();
+    std::string ts = Fmi::to_iso_string(valid_time);  // "YYYYMMDDTHHmmSS"
     opts.itsTimeOptions.itsObservationTime = "timestamptz '" + ts + "Z'";
     opts.itsTimeOptions.itsTimeFormat = "iso";
     opts.itsTimeOptions.itsMessageTimeChecks = false;
@@ -834,7 +756,7 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     opts.itsMaxMessageStations = -1;
     opts.itsMaxMessageRows = -1;
 
-    // Location: configured ICAOs/countries override map bbox
+    // Location filtering: explicit ICAOs or countries override map bbox
     if (!icaos.empty())
     {
       for (const auto& ic : icaos)
@@ -847,20 +769,20 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     }
     else
     {
-      // Use map bounding box (expand slightly to avoid clipping border stations)
+      // Use map bounding box, expanded slightly to capture border stations
       Engine::Avi::BBox avibox(sw.X() - 0.5, ne.X() + 0.5, sw.Y() - 0.5, ne.Y() + 0.5);
       opts.itsLocationOptions.itsBBoxes.push_back(avibox);
     }
 
-    // ------------------------------------------------------------------
-    // Execute AVI query
-    // ------------------------------------------------------------------
+    // ----------------------------------------------------------------
+    // Execute query
+    // ----------------------------------------------------------------
     auto& aviEngine = theState.getAviEngine();
     auto aviData = aviEngine.queryStationsAndMessages(opts);
 
-    // ------------------------------------------------------------------
+    // ----------------------------------------------------------------
     // Parse messages and transform to pixel coordinates
-    // ------------------------------------------------------------------
+    // ----------------------------------------------------------------
     struct StationPlot
     {
       int x = 0;
@@ -875,21 +797,22 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
     {
       auto& vals = aviData.itsValues[stationId];
 
-      // Require longitude and latitude columns
-      if (vals.find("longitude") == vals.end() || vals.find("latitude") == vals.end())
+      if (vals.find("longitude") == vals.end() ||
+          vals.find("latitude") == vals.end() ||
+          vals.find("message") == vals.end())
         continue;
-      if (vals.find("message") == vals.end())
+
+      if (vals.at("longitude").empty() || vals.at("latitude").empty() ||
+          vals.at("message").empty())
         continue;
 
       double lon = std::get<double>(*vals.at("longitude").cbegin());
       double lat = std::get<double>(*vals.at("latitude").cbegin());
 
       const auto& msg_val = *vals.at("message").cbegin();
-      std::string raw_message;
-      if (std::holds_alternative<std::string>(msg_val))
-        raw_message = std::get<std::string>(msg_val);
-      else
+      if (!std::holds_alternative<std::string>(msg_val))
         continue;
+      const std::string& raw_message = std::get<std::string>(msg_val);
 
       std::string icao_str;
       if (vals.count("icao") && !vals.at("icao").empty())
@@ -899,14 +822,11 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
           icao_str = std::get<std::string>(iv);
       }
 
-      // Transform to pixel coordinates
+      // Transform to pixel
       double px = lon;
       double py = lat;
-      if (!crs.isGeographic())
-      {
-        if (!trans.transform(px, py))
-          continue;
-      }
+      if (!crs.isGeographic() && !trans.transform(px, py))
+        continue;
       box.transform(px, py);
 
       if (!inside(box, px, py))
@@ -918,11 +838,11 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
                        std::move(d)});
     }
 
-    // ------------------------------------------------------------------
-    // Declutter: remove stations too close to already-rendered ones
-    // Sort by ICAO (major airports tend to have shorter codes) – a more
-    // sophisticated priority system could be added later.
-    // ------------------------------------------------------------------
+    // ----------------------------------------------------------------
+    // Declutter: drop stations whose bounding box overlaps an already-
+    // rendered one.  Sort by ICAO so well-known airports (shorter/earlier
+    // codes) tend to be drawn first.
+    // ----------------------------------------------------------------
     std::sort(plots.begin(), plots.end(), [](const StationPlot& a, const StationPlot& b) {
       return a.data.icao < b.data.icao;
     });
@@ -947,32 +867,32 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
         rendered.push_back(p);
     }
 
-    // ------------------------------------------------------------------
+    // ----------------------------------------------------------------
     // CSS
-    // ------------------------------------------------------------------
+    // ----------------------------------------------------------------
     if (css)
     {
       std::string name = theState.getCustomer() + "/" + *css;
       theGlobals["css"][name] = theState.getStyle(*css);
     }
 
-    // ------------------------------------------------------------------
-    // Generate SVG output
-    // ------------------------------------------------------------------
+    // ----------------------------------------------------------------
+    // SVG generation
+    // ----------------------------------------------------------------
     addClipRect(theLayersCdt, theGlobals, box, theState);
 
-    // Outer group element
+    // Outer SVG group
     CTPP::CDT group_cdt(CTPP::CDT::HASH_VAL);
     group_cdt["start"] = "<g";
     group_cdt["end"] = "";
     theState.addAttributes(theGlobals, group_cdt, attributes);
     theLayersCdt.PushBack(group_cdt);
 
-    const std::string default_text_color = color.empty() ? "black" : color;
+    const std::string txt_color = color.empty() ? "black" : color;
     const double shaft_len = B * 0.32;
-    const double barb_len = B * 0.14;
-    const int status_box_size = std::max(4, font_size - 2);
-    const int line_height = static_cast<int>(font_size * 1.25);
+    const double barb_len  = B * 0.14;
+    const int    box_sz    = std::max(4, font_size - 2);
+    const int    line_h    = static_cast<int>(font_size * 1.25);
 
     for (const auto& p : rendered)
     {
@@ -980,234 +900,153 @@ void MetarLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State&
       const int sy = p.y;
       const auto& d = p.data;
 
-      // Compute geographic-north direction in screen space for wind barb correction
-      double north_dx = 0.0;
-      double north_dy = -1.0;
+      // Compute geographic-north direction in screen coordinates for
+      // true-north correction of the wind barb.
+      double north_dx = 0.0, north_dy = -1.0;
       {
-        double x1 = d.longitude;
-        double y1 = d.latitude;
-        double x2 = d.longitude;
-        double y2 = d.latitude + 0.1;
+        double x1 = d.longitude, y1 = d.latitude;
+        double x2 = d.longitude, y2 = d.latitude + 0.1;
+        bool ok = true;
         if (!crs.isGeographic())
+          ok = trans.transform(x1, y1) && trans.transform(x2, y2);
+        if (ok)
         {
-          trans.transform(x1, y1);
-          trans.transform(x2, y2);
-        }
-        box.transform(x1, y1);
-        box.transform(x2, y2);
-        double dx = x2 - x1;
-        double dy = y2 - y1;
-        double len = std::sqrt(dx * dx + dy * dy);
-        if (len > 1e-6)
-        {
-          north_dx = dx / len;
-          north_dy = dy / len;
+          box.transform(x1, y1);
+          box.transform(x2, y2);
+          double dx = x2 - x1, dy = y2 - y1;
+          double len = std::sqrt(dx * dx + dy * dy);
+          if (len > 1e-6)
+          {
+            north_dx = dx / len;
+            north_dy = dy / len;
+          }
         }
       }
 
-      // Pixel offsets from station point for each element (from PDF layout)
-      // Relative coords (rel_x, rel_y) with station at (0.5,0.5) in a [0,1] box.
-      // pixel_offset = (rel - 0.5) * B, y-flipped: offset_y = (0.5 - rel_y) * B
-      //
-      // T:       rel (0.35, 0.9)  → dx=-0.15*B, dy=-0.4*B
-      // Td:      rel (0.35, 0.45) → dx=-0.15*B, dy=+0.05*B
-      // Vis:     rel (0.35, 0.675)→ dx=-0.15*B, dy=-0.175*B
-      // Status:  rel (0.5,  0.5)  → dx=0,       dy=0
-      // Wind:    rel (0.5,  0.5)  → dx=0,       dy=0
-      // P:       rel (0.6,  0.9)  → dx=+0.1*B,  dy=-0.4*B
-      // Gust:    rel (0.6,  0.675)→ dx=+0.1*B,  dy=-0.175*B
-      // AviW:    rel (0.6,  0.45) → dx=+0.1*B,  dy=+0.05*B
-      // Sky:     rel (0.5,  0.25) → dx=0,        dy=+0.25*B
+      // Plot-layout offsets (from PDF, relative coords 0-1, station at 0.5,0.5):
+      //   T:       (0.35, 0.9)  → dx = -0.15*B, dy = -0.40*B  right-aligned
+      //   Vis:     (0.35, 0.675)→ dx = -0.15*B, dy = -0.175*B right-aligned
+      //   Td:      (0.35, 0.45) → dx = -0.15*B, dy = +0.05*B  right-aligned
+      //   Status+Wind at centre (0, 0)
+      //   P:       (0.6,  0.9)  → dx = +0.10*B, dy = -0.40*B  left-aligned
+      //   Gust:    (0.6,  0.675)→ dx = +0.10*B, dy = -0.175*B left-aligned
+      //   Weather: (0.6,  0.45) → dx = +0.10*B, dy = +0.05*B  left-aligned
+      //   Sky:     (0.5,  0.25) → dx = 0,        dy = +0.25*B  centre-aligned
 
-      // Status colour box (centred on station)
+      auto ox = [&](double rel) { return sx + static_cast<int>(std::lround(rel * B)); };
+      auto oy = [&](double rel) { return sy + static_cast<int>(std::lround(rel * B)); };
+
+      // -- Status colour box (centred on station) --
       if (show_status)
       {
         std::string sc = statusColor(d);
         if (!sc.empty())
         {
-          CTPP::CDT rect_cdt(CTPP::CDT::HASH_VAL);
-          rect_cdt["start"] = "<rect";
-          rect_cdt["end"] = "/>";
-          rect_cdt["attributes"]["x"] = Fmi::to_string(sx - status_box_size / 2);
-          rect_cdt["attributes"]["y"] = Fmi::to_string(sy - status_box_size / 2);
-          rect_cdt["attributes"]["width"] = Fmi::to_string(status_box_size);
-          rect_cdt["attributes"]["height"] = Fmi::to_string(status_box_size);
-          rect_cdt["attributes"]["fill"] = (color.empty() ? sc : color);
-          rect_cdt["attributes"]["stroke"] = "black";
-          rect_cdt["attributes"]["stroke-width"] = "0.5";
-          theLayersCdt.PushBack(rect_cdt);
+          CTPP::CDT r(CTPP::CDT::HASH_VAL);
+          r["start"] = "<rect";
+          r["end"] = "/>";
+          r["attributes"]["x"] = Fmi::to_string(sx - box_sz / 2);
+          r["attributes"]["y"] = Fmi::to_string(sy - box_sz / 2);
+          r["attributes"]["width"] = Fmi::to_string(box_sz);
+          r["attributes"]["height"] = Fmi::to_string(box_sz);
+          r["attributes"]["fill"] = (color.empty() ? sc : color);
+          r["attributes"]["stroke"] = "black";
+          r["attributes"]["stroke-width"] = "0.5";
+          theLayersCdt.PushBack(r);
         }
       }
 
-      // Wind barb
+      // -- Wind barb --
       if (show_wind && d.has_wind)
       {
-        std::string barb_path = windBarbPath(
-            d.wind_variable ? 0 : d.wind_direction,
-            d.wind_variable ? 0 : d.wind_speed,  // VRB → calm circle
-            north_dx,
-            north_dy,
-            static_cast<double>(sx),
-            static_cast<double>(sy),
-            shaft_len,
-            barb_len);
-
-        if (!barb_path.empty())
+        int spd = d.wind_variable ? 0 : d.wind_speed;
+        int dir = d.wind_variable ? 0 : d.wind_direction;
+        std::string bp =
+            windBarbPath(dir, spd, north_dx, north_dy,
+                         static_cast<double>(sx), static_cast<double>(sy),
+                         shaft_len, barb_len);
+        if (!bp.empty())
         {
-          CTPP::CDT path_cdt(CTPP::CDT::HASH_VAL);
-          path_cdt["start"] = "<path";
-          path_cdt["end"] = "/>";
-          path_cdt["attributes"]["d"] = barb_path;
-          path_cdt["attributes"]["stroke"] = default_text_color;
-          path_cdt["attributes"]["stroke-width"] = "1.5";
-          path_cdt["attributes"]["fill"] = default_text_color;
-          path_cdt["attributes"]["stroke-linecap"] = "round";
-          theLayersCdt.PushBack(path_cdt);
+          CTPP::CDT pc(CTPP::CDT::HASH_VAL);
+          pc["start"] = "<path";
+          pc["end"] = "/>";
+          pc["attributes"]["d"] = bp;
+          pc["attributes"]["stroke"] = txt_color;
+          pc["attributes"]["stroke-width"] = "1.5";
+          pc["attributes"]["fill"] = txt_color;
+          pc["attributes"]["stroke-linecap"] = "round";
+          theLayersCdt.PushBack(pc);
         }
       }
 
-      // Temperature (upper left, right-aligned)
+      // Helper: push a single <text> CDT
+      auto push_text = [&](const std::string& text_val,
+                           int x,
+                           int y,
+                           const std::string& anchor)
+      {
+        CTPP::CDT tc(CTPP::CDT::HASH_VAL);
+        tc["start"] = "<text";
+        tc["end"] = "</text>";
+        tc["cdata"] = text_val;
+        tc["attributes"]["x"] = Fmi::to_string(x);
+        tc["attributes"]["y"] = Fmi::to_string(y);
+        tc["attributes"]["text-anchor"] = anchor;
+        tc["attributes"]["font-size"] = Fmi::to_string(font_size);
+        tc["attributes"]["fill"] = txt_color;
+        theLayersCdt.PushBack(tc);
+      };
+
+      // -- Temperature (upper left, right-aligned) --
       if (show_temperature && d.has_temperature)
-      {
-        int tx = sx + static_cast<int>(std::lround(-0.15 * B));
-        int ty = sy + static_cast<int>(std::lround(-0.4 * B));
-        CTPP::CDT t_cdt(CTPP::CDT::HASH_VAL);
-        t_cdt["start"] = "<text";
-        t_cdt["end"] = "</text>";
-        t_cdt["cdata"] = formatTemp(d.temperature);
-        t_cdt["attributes"]["x"] = Fmi::to_string(tx);
-        t_cdt["attributes"]["y"] = Fmi::to_string(ty);
-        t_cdt["attributes"]["text-anchor"] = "end";
-        t_cdt["attributes"]["font-size"] = Fmi::to_string(font_size);
-        t_cdt["attributes"]["fill"] = default_text_color;
-        theLayersCdt.PushBack(t_cdt);
-      }
+        push_text(formatTemp(d.temperature), ox(-0.15), oy(-0.40), "end");
 
-      // Dew point (lower left, right-aligned)
-      if (show_dewpoint && d.has_dewpoint)
-      {
-        int tx = sx + static_cast<int>(std::lround(-0.15 * B));
-        int ty = sy + static_cast<int>(std::lround(0.05 * B));
-        CTPP::CDT td_cdt(CTPP::CDT::HASH_VAL);
-        td_cdt["start"] = "<text";
-        td_cdt["end"] = "</text>";
-        td_cdt["cdata"] = formatTemp(d.dewpoint);
-        td_cdt["attributes"]["x"] = Fmi::to_string(tx);
-        td_cdt["attributes"]["y"] = Fmi::to_string(ty);
-        td_cdt["attributes"]["text-anchor"] = "end";
-        td_cdt["attributes"]["font-size"] = Fmi::to_string(font_size);
-        td_cdt["attributes"]["fill"] = default_text_color;
-        theLayersCdt.PushBack(td_cdt);
-      }
-
-      // Visibility (middle left, right-aligned)
+      // -- Visibility (middle left, right-aligned) --
       if (show_visibility && d.has_visibility && !d.is_cavok && !d.is_skc)
-      {
-        int tx = sx + static_cast<int>(std::lround(-0.15 * B));
-        int ty = sy + static_cast<int>(std::lround(-0.175 * B));
-        CTPP::CDT vis_cdt(CTPP::CDT::HASH_VAL);
-        vis_cdt["start"] = "<text";
-        vis_cdt["end"] = "</text>";
-        vis_cdt["cdata"] = Fmi::to_string(d.visibility);
-        vis_cdt["attributes"]["x"] = Fmi::to_string(tx);
-        vis_cdt["attributes"]["y"] = Fmi::to_string(ty);
-        vis_cdt["attributes"]["text-anchor"] = "end";
-        vis_cdt["attributes"]["font-size"] = Fmi::to_string(font_size);
-        vis_cdt["attributes"]["fill"] = default_text_color;
-        theLayersCdt.PushBack(vis_cdt);
-      }
+        push_text(Fmi::to_string(d.visibility), ox(-0.15), oy(-0.175), "end");
 
-      // QNH pressure (upper right, left-aligned)
+      // -- Dew point (lower left, right-aligned) --
+      if (show_dewpoint && d.has_dewpoint)
+        push_text(formatTemp(d.dewpoint), ox(-0.15), oy(+0.05), "end");
+
+      // -- QNH pressure (upper right, left-aligned) --
       if (show_pressure && d.has_pressure)
-      {
-        int tx = sx + static_cast<int>(std::lround(0.1 * B));
-        int ty = sy + static_cast<int>(std::lround(-0.4 * B));
-        CTPP::CDT p_cdt(CTPP::CDT::HASH_VAL);
-        p_cdt["start"] = "<text";
-        p_cdt["end"] = "</text>";
-        p_cdt["cdata"] = Fmi::to_string(d.pressure);
-        p_cdt["attributes"]["x"] = Fmi::to_string(tx);
-        p_cdt["attributes"]["y"] = Fmi::to_string(ty);
-        p_cdt["attributes"]["text-anchor"] = "start";
-        p_cdt["attributes"]["font-size"] = Fmi::to_string(font_size);
-        p_cdt["attributes"]["fill"] = default_text_color;
-        theLayersCdt.PushBack(p_cdt);
-      }
+        push_text(Fmi::to_string(d.pressure), ox(+0.10), oy(-0.40), "start");
 
-      // Wind gust (middle right, left-aligned)
-      // PDF: gust in knots, prefixed with "G"
+      // -- Wind gust (middle right, left-aligned) --
       if (show_gust && d.has_gust)
+        push_text("G" + Fmi::to_string(d.wind_gust), ox(+0.10), oy(-0.175), "start");
+
+      // -- Present weather (lower right, left-aligned) --
+      if (show_weather && !d.weather_tokens.empty())
       {
-        int tx = sx + static_cast<int>(std::lround(0.1 * B));
-        int ty = sy + static_cast<int>(std::lround(-0.175 * B));
-        CTPP::CDT g_cdt(CTPP::CDT::HASH_VAL);
-        g_cdt["start"] = "<text";
-        g_cdt["end"] = "</text>";
-        g_cdt["cdata"] = "G" + Fmi::to_string(d.wind_gust);
-        g_cdt["attributes"]["x"] = Fmi::to_string(tx);
-        g_cdt["attributes"]["y"] = Fmi::to_string(ty);
-        g_cdt["attributes"]["text-anchor"] = "start";
-        g_cdt["attributes"]["font-size"] = Fmi::to_string(font_size);
-        g_cdt["attributes"]["fill"] = default_text_color;
-        theLayersCdt.PushBack(g_cdt);
+        const std::string wx = weatherString(d);
+        if (!wx.empty())
+          push_text(wx, ox(+0.10), oy(+0.05), "start");
       }
 
-      // Present weather (lower right, left-aligned)
-      if (show_weather && !d.weather_codes.empty())
-      {
-        std::string wx_text = weatherString(d);
-        if (!wx_text.empty())
-        {
-          int tx = sx + static_cast<int>(std::lround(0.1 * B));
-          int ty = sy + static_cast<int>(std::lround(0.05 * B));
-          CTPP::CDT wx_cdt(CTPP::CDT::HASH_VAL);
-          wx_cdt["start"] = "<text";
-          wx_cdt["end"] = "</text>";
-          wx_cdt["cdata"] = wx_text;
-          wx_cdt["attributes"]["x"] = Fmi::to_string(tx);
-          wx_cdt["attributes"]["y"] = Fmi::to_string(ty);
-          wx_cdt["attributes"]["text-anchor"] = "start";
-          wx_cdt["attributes"]["font-size"] = Fmi::to_string(font_size);
-          wx_cdt["attributes"]["fill"] = default_text_color;
-          theLayersCdt.PushBack(wx_cdt);
-        }
-      }
-
-      // Sky info (below centre, centre-aligned, one line per cloud layer)
+      // -- Sky info (below centre, centre-aligned, one line per layer) --
       if (show_sky_info)
       {
-        std::string sky = skyInfoString(d);
+        const std::string sky = skyInfoString(d);
         if (!sky.empty())
         {
           int tx = sx;
-          int ty = sy + static_cast<int>(std::lround(0.25 * B));
-
-          // Split on newline and emit one <text> per line
+          int ty = oy(+0.25);
           std::istringstream sky_ss(sky);
-          std::string sky_line;
-          int line_no = 0;
-          while (std::getline(sky_ss, sky_line))
+          std::string line;
+          int n = 0;
+          while (std::getline(sky_ss, line))
           {
-            if (!sky_line.empty())
-            {
-              CTPP::CDT sky_cdt(CTPP::CDT::HASH_VAL);
-              sky_cdt["start"] = "<text";
-              sky_cdt["end"] = "</text>";
-              sky_cdt["cdata"] = sky_line;
-              sky_cdt["attributes"]["x"] = Fmi::to_string(tx);
-              sky_cdt["attributes"]["y"] = Fmi::to_string(ty + line_no * line_height);
-              sky_cdt["attributes"]["text-anchor"] = "middle";
-              sky_cdt["attributes"]["font-size"] = Fmi::to_string(font_size);
-              sky_cdt["attributes"]["fill"] = default_text_color;
-              theLayersCdt.PushBack(sky_cdt);
-            }
-            ++line_no;
+            if (!line.empty())
+              push_text(line, tx, ty + n * line_h, "middle");
+            ++n;
           }
         }
       }
-    }  // for each station
+    }  // for each rendered station
 
-    // Close the outer group
+    // Close the outer <g> by appending to the last CDT's "end" field
     theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n</g>");
   }
   catch (...)
