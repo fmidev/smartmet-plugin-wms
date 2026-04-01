@@ -13,6 +13,7 @@
 #include "../ogc/LayerHierarchy.h"
 #include "../ogc/StyleSelection.h"
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <ctpp2/CDT.hpp>
 #include <fmt/format.h>
@@ -203,6 +204,8 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
     std::string protocol = host_protocol ? (*host_protocol + "://") : "http://";
     auto host_header = theRequest.getHeader("Host");
     std::string host = host_header ? *host_header : "localhost";
+    if (host.size() >= 4 && host.substr(host.size() - 4) == "/wms")
+      host = host.substr(0, host.size() - 4);
 
     auto apikey = Spine::FmiApiKey::getFmiApiKey(theRequest);
     std::string apikey_path;
@@ -318,6 +321,19 @@ QueryStatus Handler::handleGetCapabilities(Dali::State& theState,
     std::string output;
     std::string log;
     tmpl->process(hash, output, log);
+
+    // Replace __hostname__ and __apikey__ placeholders that come from WMS layer LegendURL values
+    boost::replace_all(output, "__hostname__", protocol + host);
+    {
+      std::string apirepl;
+      if (apikey)
+      {
+        auto omit = theRequest.getHeader("omit-fmi-apikey");
+        if (!omit || omit == std::string("0") || omit == std::string("false"))
+          apirepl = "/fmi-apikey/" + *apikey;
+      }
+      boost::replace_all(output, "__apikey__", apirepl);
+    }
 
     theResponse.setHeader("Content-Type", "application/xml; charset=UTF-8");
     theResponse.setContent(output);
