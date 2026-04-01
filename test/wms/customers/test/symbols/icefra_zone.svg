@@ -1,10 +1,9 @@
-<symbol id="icefra_zone">
-<svg xml:space="preserve" width="6mm" height="6mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-viewBox="0 0 1000 1000">
+<symbol id="icefra_zone" overflow="visible">
+  <svg xml:space="preserve" width="6mm" height="6mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" viewBox="0 0 1000 1000">
  <g id="Layer_x0020_1">
-   <line style="stroke:black;stroke-width:50;stroke-linecap:round;fill:none" x1="553" y1="312" x2="25" y2= "834" />
-   <line style="stroke:black;stroke-width:50;stroke-linecap:round;fill:none" x1="553" y1="317" x2="447" y2= "683" />
-   <line style="stroke:black;stroke-width:50;stroke-linecap:round;fill:none" x1="975" y1="166" x2="447" y2= "688" />
+   <line style="stroke:black;stroke-width:50;stroke-linecap:round;fill:none" x1="553" y1="312" x2="25" y2="834"/>
+   <line style="stroke:black;stroke-width:50;stroke-linecap:round;fill:none" x1="553" y1="317" x2="447" y2="683"/>
+   <line style="stroke:black;stroke-width:50;stroke-linecap:round;fill:none" x1="975" y1="166" x2="447" y2="688"/>
  </g>
 </svg>
 </symbol>

@@ -1,23 +1,23 @@
 <symbol overflow="visible" id="drizzle">
-    <defs></defs>
-    <g id="10001000" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="scale(0.1) translate(-256,-256)">
-        <g id="tihku" transform="translate(176.000000, 250.000000)" fill="#0A95D7">
-            <g id="line-1">
-                <circle id="Oval" cx="11" cy="11" r="11"></circle>
-                <circle id="Oval" cx="11" cy="49" r="11"></circle>
-            </g>
-            <g id="line-1" transform="translate(46.000000, 0.000000)">
-                <circle id="Oval" cx="11" cy="11" r="11"></circle>
-                <circle id="Oval" cx="11" cy="49" r="11"></circle>
-            </g>
-            <g id="line-1" transform="translate(92.000000, 0.000000)">
-                <circle id="Oval" cx="11" cy="11" r="11"></circle>
-                <circle id="Oval" cx="11" cy="49" r="11"></circle>
-            </g>
-            <g id="line-1" transform="translate(138.000000, 0.000000)">
-                <circle id="Oval" cx="11" cy="11" r="11"></circle>
-                <circle id="Oval" cx="11" cy="49" r="11"></circle>
-            </g>
-        </g>
+  <defs/>
+  <g id="10001000" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="scale(0.1) translate(-256,-256)">
+    <g id="tihku" transform="translate(176.000000, 250.000000)" fill="#0A95D7">
+      <g id="line-1">
+        <circle id="Oval" cx="11" cy="11" r="11"/>
+        <circle id="Oval" cx="11" cy="49" r="11"/>
+      </g>
+      <g id="line-1" transform="translate(46.000000, 0.000000)">
+        <circle id="Oval" cx="11" cy="11" r="11"/>
+        <circle id="Oval" cx="11" cy="49" r="11"/>
+      </g>
+      <g id="line-1" transform="translate(92.000000, 0.000000)">
+        <circle id="Oval" cx="11" cy="11" r="11"/>
+        <circle id="Oval" cx="11" cy="49" r="11"/>
+      </g>
+      <g id="line-1" transform="translate(138.000000, 0.000000)">
+        <circle id="Oval" cx="11" cy="11" r="11"/>
+        <circle id="Oval" cx="11" cy="49" r="11"/>
+      </g>
     </g>
+  </g>
 </symbol>
