@@ -284,6 +284,32 @@ Json::Value merge_layers(const std::vector<Json::Value> &layers)
       for (const auto &fromView : fromViews)
         retViews.append(fromView);
     }
+
+    // Merge defs: arrays are appended, objects are merged (first-seen wins), scalars use first-seen
+    const auto &fromDefs = layer.get("defs", nulljson);
+    if (!fromDefs.isNull() && fromDefs.isObject())
+    {
+      auto &retDefs = ret["defs"];
+      for (const auto &key : fromDefs.getMemberNames())
+      {
+        const auto &fromVal = fromDefs[key];
+        if (!retDefs.isMember(key))
+        {
+          retDefs[key] = fromVal;
+        }
+        else if (fromVal.isArray() && retDefs[key].isArray())
+        {
+          for (const auto &item : fromVal)
+            retDefs[key].append(item);
+        }
+        else if (fromVal.isObject() && retDefs[key].isObject())
+        {
+          for (const auto &subkey : fromVal.getMemberNames())
+            if (!retDefs[key].isMember(subkey))
+              retDefs[key][subkey] = fromVal[subkey];
+        }
+      }
+    }
   }
 
   return ret;
