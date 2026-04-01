@@ -1,0 +1,62 @@
+/*
+ * OSM Bright style for SmartMet Dali OSMLayer
+ *
+ * Ported from OpenMapTiles OSM Bright GL style
+ * Source: https://github.com/openmaptiles/osm-bright-gl-style
+ * License: BSD 3-Clause  (https://github.com/openmaptiles/osm-bright-gl-style/blob/master/LICENSE.md)
+ *
+ * Usage: set "css": "osm/osm-bright" on each feature_set and
+ * "attributes": { "class": "<feature-class>" } to select the style.
+ *
+ * NOTE: Not tested — requires OSM data imported into PostGIS.
+ */
+
+/* ---------- Land cover ---------- */
+
+.water       { fill: #a5bfdd; stroke: none; }
+.forest      { fill: #aedfa3; stroke: none; }
+.scrub       { fill: #c8d7ab; stroke: none; }
+.grass       { fill: #cdebb0; stroke: none; }
+.beach       { fill: #f5e9d4; stroke: none; }
+.glacier     { fill: #ddeeff; stroke: none; }
+
+/* ---------- Landuse ---------- */
+
+.residential { fill: #e0dfdf; stroke: none; }
+.commercial  { fill: #ffd6d1; stroke: none; }
+.industrial  { fill: #ebdbe8; stroke: none; }
+.park        { fill: #d2edcb; stroke: none; }
+.hospital    { fill: #fde3e3; stroke: none; }
+.school      { fill: #f0e8f8; stroke: none; }
+.airport     { fill: #e9e9e9; stroke: none; }
+
+/* ---------- Buildings ---------- */
+
+.buildings   { fill: #d9d0c9; stroke: #cfc6bb; stroke-width: 0.5; }
+
+/* ---------- Roads ---------- */
+
+.motorway    { fill: none; stroke: #e892a2; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.trunk       { fill: none; stroke: #f9b29c; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.primary     { fill: none; stroke: #fcd354; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.secondary   { fill: none; stroke: #f7fabf; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.tertiary    { fill: none; stroke: #ffffff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.road        { fill: none; stroke: #ffffff; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.service_road { fill: none; stroke: #f5f5f3; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+.footway     { fill: none; stroke: #d9d9d9; stroke-width: 0.75; stroke-dasharray: 3 2; }
+
+/* ---------- Railways ---------- */
+
+.railway         { fill: none; stroke: #bbbbbb; stroke-width: 1.5; stroke-dasharray: 6 3; }
+.railway_transit { fill: none; stroke: #c8c8c8; stroke-width: 1; stroke-dasharray: 4 2; }
+
+/* ---------- Boundaries ---------- */
+
+.coastline      { fill: none; stroke: #a5bfdd; stroke-width: 1; }
+.admin_country  { fill: none; stroke: #9e9cab; stroke-width: 1.5; stroke-dasharray: 8 3; }
+.admin_state    { fill: none; stroke: #b0adb8; stroke-width: 0.75; stroke-dasharray: 4 2; }
+
+/* ---------- Labels ---------- */
+
+.place_label { font-family: sans-serif; font-size: 12px; fill: #333333; stroke: #ffffff; stroke-width: 3; paint-order: stroke; }
+.road_label  { font-family: sans-serif; font-size: 9px; fill: #666666; stroke: #ffffff; stroke-width: 2; paint-order: stroke; }

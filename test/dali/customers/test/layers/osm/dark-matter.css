@@ -1,0 +1,66 @@
+/*
+ * Dark Matter style for SmartMet Dali OSMLayer
+ *
+ * Ported from CartoDB Dark Matter
+ * Source: https://github.com/CartoDB/basemap-styles
+ * License: CC BY 3.0  (https://creativecommons.org/licenses/by/3.0/)
+ * Attribution: Map tiles by CartoDB, under CC BY 3.0.
+ *              Data by OpenStreetMap, under ODbL.
+ *
+ * Usage: set "css": "osm/dark-matter" on each feature_set and
+ * "attributes": { "class": "<feature-class>" } to select the style.
+ *
+ * Character: dark/night style — high contrast for coloured data overlays on a dark background.
+ *
+ * NOTE: Not tested — requires OSM data imported into PostGIS.
+ */
+
+/* ---------- Land cover ---------- */
+
+.water       { fill: #1b2d40; stroke: none; }
+.forest      { fill: #1b2b25; stroke: none; }
+.scrub       { fill: #1e2a22; stroke: none; }
+.grass       { fill: #1e2b20; stroke: none; }
+.beach       { fill: #2e2c24; stroke: none; }
+.glacier     { fill: #2a3040; stroke: none; }
+
+/* ---------- Landuse ---------- */
+
+.residential { fill: #252525; stroke: none; }
+.commercial  { fill: #2a2625; stroke: none; }
+.industrial  { fill: #272027; stroke: none; }
+.park        { fill: #1e2b20; stroke: none; }
+.hospital    { fill: #2a2025; stroke: none; }
+.school      { fill: #25222a; stroke: none; }
+.airport     { fill: #252525; stroke: none; }
+
+/* ---------- Buildings ---------- */
+
+.buildings   { fill: #333332; stroke: #3a3a38; stroke-width: 0.5; }
+
+/* ---------- Roads ---------- */
+
+.motorway    { fill: none; stroke: #60696a; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.trunk       { fill: none; stroke: #585e5e; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.primary     { fill: none; stroke: #505858; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.secondary   { fill: none; stroke: #484e4e; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.tertiary    { fill: none; stroke: #424848; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.road        { fill: none; stroke: #3c4040; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.service_road { fill: none; stroke: #383838; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; }
+.footway     { fill: none; stroke: #383838; stroke-width: 0.5; stroke-dasharray: 2 2; }
+
+/* ---------- Railways ---------- */
+
+.railway         { fill: none; stroke: #424242; stroke-width: 1.5; stroke-dasharray: 6 3; }
+.railway_transit { fill: none; stroke: #3c3c3c; stroke-width: 1; stroke-dasharray: 4 2; }
+
+/* ---------- Boundaries ---------- */
+
+.coastline      { fill: none; stroke: #1b2d40; stroke-width: 1; }
+.admin_country  { fill: none; stroke: #3b3b4e; stroke-width: 1.5; stroke-dasharray: 8 3; }
+.admin_state    { fill: none; stroke: #333340; stroke-width: 0.75; stroke-dasharray: 4 2; }
+
+/* ---------- Labels ---------- */
+
+.place_label { font-family: sans-serif; font-size: 12px; fill: #b3b3b3; stroke: #1e1e1e; stroke-width: 3; paint-order: stroke; }
+.road_label  { font-family: sans-serif; font-size: 9px; fill: #808080; stroke: #1e1e1e; stroke-width: 2; paint-order: stroke; }

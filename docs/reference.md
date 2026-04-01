@@ -2678,14 +2678,18 @@ The table below contains a list of attributes that can be defined for the windro
 
 The OSM layer renders OpenStreetMap data loaded into PostGIS via `osm2pgsql`. It supports polygon features (landuse, water, buildings), linear features (roads, coastlines, administrative boundaries) and place-name labels. Each layer response carries an HTTP ETag derived from the OSM data age, enabling efficient HTTP caching. The OGC API – Tiles endpoint also supports Mapbox Vector Tile (MVT/PBF) output via the `addMVTLayer` mechanism.
 
-**Data setup**
+**Data setup and scale guidance**
 
-OSM data is not bundled; it must be downloaded and imported separately:
+OSM data is not bundled; it must be downloaded and imported separately. The appropriate data source depends heavily on the target map scale:
 
-| Region | Recommended source | Approx. size |
+| Scale (km/px) | Recommended layer | Notes |
 |---|---|---|
-| Scandinavia (high-res local) | `scandinavia-latest.osm.pbf` from Geofabrik | ~350 MB |
-| Global (low-res background) | Simplified OSM planet extract (e.g. `planet-latest-simplified.osm.pbf`) | varies |
+| > 5 km/px (continental/global) | `MapLayer` with Natural Earth | Natural Earth is already part of the GIS engine; no extra import needed. Better generalised than OSM for small-scale overviews. |
+| 1–5 km/px (global overview) | Natural Earth or simplified OSM planet | A simplified OSM planet extract (e.g. osmdata.xyz land polygons, ~400 MB) is usable here but offers no significant advantage over Natural Earth. Full planet.osm.pbf (~80 GB uncompressed) is needed for global coverage below ~5 km/px. |
+| 0.1–1 km/px (regional) | Regional Geofabrik extract | E.g. `scandinavia-latest.osm.pbf` (~350 MB). OSM PostGIS starts paying off in detail and feature richness below ~500 m/px. |
+| < 0.1 km/px (city/local) | Full local OSM extract | Geofabrik city or sub-region extract; can include buildings, POIs, fine road network. |
+
+> **Note:** A simplified OSM planet extract is NOT a good substitute for Natural Earth at global scales (> 5 km/px). Its generalisation is inconsistent and file sizes are large for the quality achieved. Use Natural Earth (via `MapLayer`) for global/continental backgrounds and reserve OSM PostGIS for regional or local detail layers.
 
 Import command using `osm2pgsql`:
 ```sh
@@ -2708,38 +2712,43 @@ The layer uses the file's modification time as the data version. All tile respon
 
 **Multi-resolution strategy**
 
-Use the existing `minresolution`/`maxresolution` layer attributes together with a `group` layer to serve different schemas at different zoom levels:
+Use `MapLayer` (Natural Earth) for global context and switch to OSMLayer for regional/local detail:
 
-| Schema | Tables | Coverage | Intended use |
+| Resolution range | Layer type | Data source | Purpose |
 |---|---|---|---|
-| `osm_global` | `planet_osm_*` (simplified) | World | Coarse zoom (≤ ~1 km/px) |
-| `osm_scandinavia` | `planet_osm_*` (full) | lon 4–32, lat 54–72 | Detailed zoom |
+| > 5 km/px | `map` (Natural Earth) | Built-in GIS engine | Global/continental background |
+| 0.5–5 km/px | `osm` (simplified extract) | osmdata.xyz land polygons or similar | Coarse regional overview |
+| < 0.5 km/px | `osm` (full regional extract) | Geofabrik regional `.osm.pbf` | Detailed local map |
+
+**CSS styling and themes**
+
+The `css` field of each feature set specifies the stylesheet file to load. The `attributes.class` field selects which CSS class from that stylesheet applies to the SVG elements rendered for that feature set. This means one CSS theme file can style all feature types:
+
+```json
+{ "css": "osm/osm-bright", "attributes": { "class": "water" } }
+```
+
+See the [OSM style themes](#osm-style-themes) section below for ready-made CSS files.
 
 **Sample configuration**
+
+The example below combines Natural Earth (global background) with an OSM PostGIS layer (regional detail). Both feature sets use the `osm-bright` theme from `osm/osm-bright.css`.
 
 ```json
 {
   "layer_type": "group",
   "layers": [
     {
-      "layer_type": "osm",
-      "maxresolution": 5.0,
-      "timestamp_file": "/var/smartmet/osm/global.timestamp",
-      "feature_sets": [
-        {
-          "pgname": "postgis",
-          "schema": "osm_global",
-          "table": "planet_osm_polygon",
-          "where": "natural = 'water'",
-          "mvt_layer_name": "water",
-          "css": "osm_water"
-        }
-      ]
+      "comment": "Global background from Natural Earth — no OSM import needed",
+      "layer_type": "map",
+      "minresolution": 2.0,
+      "map": { "schema": "natural_earth", "table": "admin_0_countries", "minarea": 50 },
+      "attributes": { "fill": "rgb(220,220,210)", "stroke": "none" }
     },
     {
+      "comment": "Regional OSM detail — requires osm_scandinavia PostGIS schema",
       "layer_type": "osm",
-      "minresolution": 0,
-      "maxresolution": 0.5,
+      "maxresolution": 2.0,
       "timestamp_file": "/var/smartmet/osm/scandinavia.timestamp",
       "feature_sets": [
         {
@@ -2748,7 +2757,8 @@ Use the existing `minresolution`/`maxresolution` layer attributes together with 
           "table": "planet_osm_polygon",
           "where": "natural = 'water'",
           "mvt_layer_name": "water",
-          "css": "osm_water"
+          "css": "osm/osm-bright",
+          "attributes": { "class": "water" }
         },
         {
           "pgname": "postgis",
@@ -2756,7 +2766,8 @@ Use the existing `minresolution`/`maxresolution` layer attributes together with 
           "table": "planet_osm_polygon",
           "where": "landuse IN ('forest','wood')",
           "mvt_layer_name": "landuse_forest",
-          "css": "osm_forest"
+          "css": "osm/osm-bright",
+          "attributes": { "class": "forest" }
         },
         {
           "pgname": "postgis",
@@ -2765,7 +2776,8 @@ Use the existing `minresolution`/`maxresolution` layer attributes together with 
           "where": "highway IN ('motorway','trunk','primary','secondary')",
           "lines": true,
           "mvt_layer_name": "roads_major",
-          "css": "osm_roads_major"
+          "css": "osm/osm-bright",
+          "attributes": { "class": "primary" }
         },
         {
           "pgname": "postgis",
@@ -2775,7 +2787,8 @@ Use the existing `minresolution`/`maxresolution` layer attributes together with 
           "fieldnames": ["name", "place"],
           "labels": true,
           "mvt_layer_name": "place_labels",
-          "css": "osm_places"
+          "css": "osm/osm-bright",
+          "attributes": { "class": "place_label" }
         }
       ]
     }
@@ -2815,8 +2828,59 @@ The table below lists OSMLayer-specific attributes (in addition to the common la
 | minarea          | double            | -               | Minimum polygon area (m²) filter passed to the GIS engine. |
 | mindistance      | double            | -               | Minimum distance simplification filter passed to the GIS engine. |
 | mvt_layer_name   | string            | table name      | Name of the layer in MVT output. Defaults to the `table` value. |
-| css              | string            | -               | CSS stylesheet name to apply to this feature set in SVG output. |
-| attributes       | _Attributes_      | -               | SVG attributes for the `<g>` group containing this feature set. |
+| css              | string            | -               | CSS stylesheet file to load for this feature set. Combine with `attributes.class` to select which class from the file is applied to SVG elements. |
+| attributes       | _Attributes_      | -               | SVG attributes for the `<g>` group containing this feature set. Use `"class"` here to name the CSS class from the stylesheet; other attributes (e.g. `"opacity"`) override or supplement the CSS. |
+
+**OSM style themes**
+
+Several ready-made CSS theme files are provided under `layers/osm/`. Each file defines CSS classes for common OSM feature types. Reference the same file in every feature set and set `attributes.class` to the appropriate feature class name.
+
+Available themes (see file headers for full attribution):
+
+| File | Based on | Character |
+|---|---|---|
+| `osm/osm-bright.css` | OpenMapTiles OSM Bright | Colorful, classic cartographic style with coloured road hierarchy |
+| `osm/positron.css` | CartoDB Positron | Very light, minimal greyscale — designed as a neutral data backdrop |
+| `osm/dark-matter.css` | CartoDB Dark Matter | Dark/night style — high contrast for coloured overlays on dark background |
+| `osm/osm-liberty.css` | OSM Liberty | Free OSM Bright alternative; slightly cooler tones, same class names |
+
+> **Note:** These CSS files define the visual style but cannot be tested until OSM data has been imported into PostGIS. Class names are identical across all themes so switching themes is a one-line change (edit the `css` field).
+
+**CSS class reference**
+
+All theme files define the following CSS classes:
+
+| Class | OSM source | Geometry |
+|---|---|---|
+| `water` | `natural=water`, `waterway=*` | Polygon |
+| `forest` | `landuse=forest`, `landuse=wood`, `natural=wood` | Polygon |
+| `scrub` | `natural=scrub`, `natural=heath` | Polygon |
+| `grass` | `landuse=grass`, `landuse=meadow`, `natural=grassland` | Polygon |
+| `beach` | `natural=beach`, `natural=sand` | Polygon |
+| `glacier` | `natural=glacier` | Polygon |
+| `residential` | `landuse=residential` | Polygon |
+| `commercial` | `landuse=commercial`, `landuse=retail` | Polygon |
+| `industrial` | `landuse=industrial` | Polygon |
+| `park` | `leisure=park`, `leisure=recreation_ground`, `leisure=nature_reserve` | Polygon |
+| `hospital` | `amenity=hospital` | Polygon |
+| `school` | `amenity=school`, `amenity=university`, `amenity=college` | Polygon |
+| `airport` | `aeroway=aerodrome` | Polygon |
+| `buildings` | `building=*` | Polygon |
+| `motorway` | `highway=motorway` | Line |
+| `trunk` | `highway=trunk` | Line |
+| `primary` | `highway=primary` | Line |
+| `secondary` | `highway=secondary` | Line |
+| `tertiary` | `highway=tertiary` | Line |
+| `road` | `highway IN (residential, unclassified, living_street)` | Line |
+| `service_road` | `highway IN (service, track)` | Line |
+| `footway` | `highway IN (footway, cycleway, path)` | Line |
+| `railway` | `railway=rail` | Line |
+| `railway_transit` | `railway IN (subway, light_rail, tram)` | Line |
+| `coastline` | `natural=coastline` | Line |
+| `admin_country` | `boundary=administrative AND admin_level=2` | Line |
+| `admin_state` | `boundary=administrative AND admin_level IN (3,4)` | Line |
+| `place_label` | `place IN (city, town, village, suburb)` | Point / label |
+| `road_label` | Road labels | Line / label |
 
 #### PostGISLayer
 
