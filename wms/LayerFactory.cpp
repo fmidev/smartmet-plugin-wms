@@ -7,6 +7,7 @@
 #include "CloudCeilingLayer.h"
 #include "FinnishRoadObservationLayer.h"
 #include "FrameLayer.h"
+#include "WeatherFrontsLayer.h"
 #include "GraticuleLayer.h"
 #include "GridLayer.h"
 #include "GroupLayer.h"
@@ -22,6 +23,7 @@
 #include "PostGISLayer.h"
 #include "PresentWeatherObservationLayer.h"
 #include "GeoTiffLayer.h"
+#include "HovmoellerLayer.h"
 #include "RasterLayer.h"
 #include "StreamLayer.h"
 #include "SymbolLayer.h"
@@ -86,6 +88,8 @@ Layer* create(const Json::Value& theJson)
       return new RasterLayer;
     if (name == "geotiff")
       return new GeoTiffLayer;
+    if (name == "hovmoeller")
+      return new HovmoellerLayer;
     if (name == "stream")
       return new StreamLayer;
     if (name == "symbol")
@@ -112,6 +116,8 @@ Layer* create(const Json::Value& theJson)
       return new IceMapLayer;
     if (name == "frame")
       return new FrameLayer;
+    if (name == "fronts")
+      return new WeatherFrontsLayer;
     if (name == "grid")
       return new GridLayer;
     if (name == "circle")
