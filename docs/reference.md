@@ -4952,3 +4952,4187 @@ regular_attributes      = ["id", "class", "width", "height", "viewBox", "transfo
 presentation_attributes = ["fill", "stroke", "stroke-width", "opacity", "font-size", /* ... */];
 ```
 
+
+---
+
+# Map Projections
+
+Any PROJ projection string can be supplied as the `p.crs` URL parameter on the `/dali` endpoint.  The test suite exercises the full set of projections supported by the installed PROJ library using the `map` test product.
+
+## Test Product
+
+The `map` product ([`test/dali/customers/test/products/map.json`](../test/dali/customers/test/products/map.json)) renders:
+
+- A blue ocean polygon covering the full world extent
+- Natural Earth `admin_0_countries` coastlines and land fills
+- A 10° graticule grid
+
+Additional per-test parameters override the projection's center (`p.cx`, `p.cy`), output size (`p.xsize`, `p.ysize`), and resolution (`p.resolution`, in km/pixel).  Test inputs are in [`test/input/map_*.get`](../test/input/) and PNG renderings in [`docs/images/maps/`](images/maps/).
+
+## Unsupported Projections
+
+The following projections are listed in [`test/input/.testignore`](../test/input/.testignore) and excluded from the test suite.
+
+**PROJ 7 rendering defect** (interrupts placed at wrong locations):
+
+| Test | PROJ String |
+|------|-------------|
+| `map_isea` | `+proj=isea` |
+
+**Not working — given up on:**
+
+| Test | PROJ String |
+|------|-------------|
+| `map_aeqd` | `+proj=aeqd` |
+| `map_bertin1953` | `+proj=bertin1953` |
+| `map_bipc` | `+proj=bipc +ns` |
+| `map_ccon` | `+proj=ccon +lat_1=60 +lat_2=70` |
+| `map_chamb` | `+proj=chamb +lat_1=45 +lon_1=-30 +lon_2=30` |
+| `map_gnom` | `+proj=gnom` |
+| `map_imw_p` | `+proj=imw_p +lat_1=30 +lat_2=60` |
+| `map_lsat` | `+proj=lsat +lsat=1 +path=1` |
+| `map_murd2` | `+proj=murd2 +lat_1=30 +lat_2=50` |
+| `map_nicol` | `+proj=nicol` |
+| `map_nsper` | `+proj=nsper +h=1000000 +lat_0=60 +lon_0=25` |
+| `map_ob_tran` | `+proj=ob_tran +o_proj=latlong +o_lat_p=45 +o_lon_p=0 +lon_0=0` |
+| `map_omerc` | `+proj=omerc +lat_0=45 +lonc=20 +alpha=15 +k=1 +x_0=0 +y_0=0` |
+| `map_pconic` | `+proj=pconic +lat_1=30 +lat_2=60` |
+| `map_peirce_q` | `+proj=peirce_q` |
+| `map_roteqc` | `+proj=ob_tran +o_proj=eqc +o_lon_p=0 +o_lat_p=30 +lon_0=0` |
+| `map_rotlatlon` | `+proj=ob_tran +o_proj=longlat +o_lon_p=0 +o_lat_p=30 +lon_0=0` |
+| `map_tcc` | `+proj=tcc` |
+| `map_tcea` | `+proj=tcea` |
+
+Note: `map_bipc`, `map_roteqc`, and `map_rotlatlon` do produce PNG output (shown in the alphabetical index below) but their rendering is not considered reliable.
+
+---
+
+## Projections by Type
+
+### Cylindrical
+
+Cylindrical projections map the sphere onto a cylinder.
+
+| Test | PROJ String / EPSG | Description | Output |
+|------|-------------------|-------------|--------|
+| `map_merc` | `+proj=merc` | [Mercator](https://proj.org/en/stable/operations/projections/merc.html) — conformal, shapes preserved, area greatly distorted near poles | ![map_merc](images/maps/map_merc.png) |
+| `map_webmercator` | `EPSG:3857` | [Web Mercator](https://proj.org/en/stable/operations/projections/merc.html) — de-facto standard for web tile services | ![map_webmercator](images/maps/map_webmercator.png) |
+| `map_tmerc` | `+proj=tmerc` | [Transverse Mercator](https://proj.org/en/stable/operations/projections/tmerc.html) — conformal, accurate along a central meridian | ![map_tmerc](images/maps/map_tmerc.png) |
+| `map_gstmerc` | `+proj=gstmerc` | [Gauss-Schreiber Transverse Mercator](https://proj.org/en/stable/operations/projections/gstmerc.html) | ![map_gstmerc](images/maps/map_gstmerc.png) |
+| `map_tobmerc` | `+proj=tobmerc` | [Tobler-Mercator](https://proj.org/en/stable/operations/projections/tobmerc.html) — variation with reduced polar distortion | ![map_tobmerc](images/maps/map_tobmerc.png) |
+| `map_eqc` | `EPSG:4087` | [Equidistant Cylindrical](https://proj.org/en/stable/operations/projections/eqc.html) — plate carrée variant, meridians and parallels equally spaced | ![map_eqc](images/maps/map_eqc.png) |
+| `map_cc` | `+proj=cc` | [Central Cylindrical](https://proj.org/en/stable/operations/projections/cc.html) — perspective projection from the Earth's centre onto a cylinder | ![map_cc](images/maps/map_cc.png) |
+| `map_cea` | `+proj=cea` | [Equal-Area Cylindrical](https://proj.org/en/stable/operations/projections/cea.html) — Lambert cylindrical, preserves area | ![map_cea](images/maps/map_cea.png) |
+| `map_mill` | `+proj=mill` | [Miller Cylindrical](https://proj.org/en/stable/operations/projections/mill.html) — compromise between Mercator and equal-area | ![map_mill](images/maps/map_mill.png) |
+| `map_comill` | `+proj=comill` | [Compact Miller](https://proj.org/en/stable/operations/projections/comill.html) — reduced polar extent | ![map_comill](images/maps/map_comill.png) |
+| `map_gall` | `+proj=gall` | [Gall Stereographic](https://proj.org/en/stable/operations/projections/gall.html) — cylindrical with standard parallels at ±45° | ![map_gall](images/maps/map_gall.png) |
+| `map_patterson` | `+proj=patterson` | [Patterson Cylindrical](https://proj.org/en/stable/operations/projections/patterson.html) — modern compromise projection | ![map_patterson](images/maps/map_patterson.png) |
+| `map_ocea` | `+proj=ocea` | [Oblique Cylindrical Equal-Area](https://proj.org/en/stable/operations/projections/ocea.html) | ![map_ocea](images/maps/map_ocea.png) |
+
+---
+
+### Conic
+
+Conic projections are well-suited for mid-latitude regions.
+
+| Test | PROJ String | Description | Output |
+|------|------------|-------------|--------|
+| `map_lcc` | `+proj=lcc +lon_0=-90 +lat_1=33 +lat_2=45` | [Lambert Conformal Conic](https://proj.org/en/stable/operations/projections/lcc.html) — conformal, standard for aviation and NWP | ![map_lcc](images/maps/map_lcc.png) |
+| `map_lcca` | `+proj=lcca +lat_0=35` | [Lambert Conformal Conic Alternative](https://proj.org/en/stable/operations/projections/lcca.html) | ![map_lcca](images/maps/map_lcca.png) |
+| `map_aea` | `+proj=aea +lat_1=29.5 +lat_2=42.5` | [Albers Equal-Area Conic](https://proj.org/en/stable/operations/projections/aea.html) — equal-area, used for US thematic maps | ![map_aea](images/maps/map_aea.png) |
+| `map_leac` | `+proj=leac` | [Lambert Equal-Area Conic](https://proj.org/en/stable/operations/projections/leac.html) | ![map_leac](images/maps/map_leac.png) |
+| `map_eqdc` | `+proj=eqdc +lat_1=55 +lat_2=60` | [Equidistant Conic](https://proj.org/en/stable/operations/projections/eqdc.html) — preserves distances along meridians | ![map_eqdc](images/maps/map_eqdc.png) |
+| `map_bonne` | `+proj=bonne +lat_1=10` | [Bonne](https://proj.org/en/stable/operations/projections/bonne.html) — pseudo-conic equal-area | ![map_bonne](images/maps/map_bonne.png) |
+| `map_cass` | `+proj=cass` | [Cassini-Soldner](https://proj.org/en/stable/operations/projections/cass.html) — transverse equidistant cylindrical | ![map_cass](images/maps/map_cass.png) |
+| `map_poly` | `+proj=poly` | [American Polyconic](https://proj.org/en/stable/operations/projections/poly.html) | ![map_poly](images/maps/map_poly.png) |
+| `map_rpoly` | `+proj=rpoly` | [Rectangular Polyconic](https://proj.org/en/stable/operations/projections/rpoly.html) | ![map_rpoly](images/maps/map_rpoly.png) |
+| `map_euler` | `+proj=euler +lat_1=67 +lat_2=75` | [Euler](https://proj.org/en/stable/operations/projections/euler.html) | ![map_euler](images/maps/map_euler.png) |
+| `map_tissot` | `+proj=tissot +lat_1=60 +lat_2=65` | [Tissot Conic](https://proj.org/en/stable/operations/projections/tissot.html) | ![map_tissot](images/maps/map_tissot.png) |
+| `map_murd1` | `+proj=murd1 +lat_1=30 +lat_2=50` | [Murdoch I](https://proj.org/en/stable/operations/projections/murd1.html) | ![map_murd1](images/maps/map_murd1.png) |
+| `map_murd3` | `+proj=murd3 +lat_1=30 +lat_2=50` | [Murdoch III](https://proj.org/en/stable/operations/projections/murd3.html) | ![map_murd3](images/maps/map_murd3.png) |
+
+---
+
+### Azimuthal
+
+Azimuthal projections preserve directions from the projection centre.
+
+| Test | PROJ String / EPSG | Description | Output |
+|------|-------------------|-------------|--------|
+| `map_laea` | `+proj=laea` | [Lambert Azimuthal Equal-Area](https://proj.org/en/stable/operations/projections/laea.html) — equal-area, used for continental maps | ![map_laea](images/maps/map_laea.png) |
+| `map_stere` | `+proj=stere +lat_0=90 +lat_ts=75` | [Polar Stereographic](https://proj.org/en/stable/operations/projections/stere.html) — conformal, standard for polar regions | ![map_stere](images/maps/map_stere.png) |
+| `map_sterea` | `+proj=sterea +lat_0=90` | [Oblique Stereographic Alternative](https://proj.org/en/stable/operations/projections/sterea.html) — Dutch variant used for the Netherlands | ![map_sterea](images/maps/map_sterea.png) |
+| `map_arctic` | `EPSG:3995` | [Arctic Polar Stereographic](https://proj.org/en/stable/operations/projections/stere.html) — standard for Arctic products | ![map_arctic](images/maps/map_arctic.png) |
+| `map_antarctic` | `EPSG:3031` | [Antarctic Polar Stereographic](https://proj.org/en/stable/operations/projections/stere.html) — standard for Antarctic products | ![map_antarctic](images/maps/map_antarctic.png) |
+| `map_ups` | `+proj=ups` | [Universal Polar Stereographic](https://proj.org/en/stable/operations/projections/ups.html) — polar component of the UPS military system | ![map_ups](images/maps/map_ups.png) |
+| `map_ortho` | `+proj=ortho` | [Orthographic](https://proj.org/en/stable/operations/projections/ortho.html) — perspective view from infinity; globe appearance | ![map_ortho](images/maps/map_ortho.png) |
+| `map_airy` | `+proj=airy` | [Airy](https://proj.org/en/stable/operations/projections/airy.html) — minimum-error azimuthal | ![map_airy](images/maps/map_airy.png) |
+| `map_rouss` | `+proj=rouss` | [Roussilhe Stereographic](https://proj.org/en/stable/operations/projections/rouss.html) | ![map_rouss](images/maps/map_rouss.png) |
+| `map_tpers` | `+proj=tpers +h=5500000 +lat_0=40` | [Tilted Perspective](https://proj.org/en/stable/operations/projections/tpers.html) — satellite view from finite altitude with tilt | ![map_tpers](images/maps/map_tpers.png) |
+| `map_tpeqd` | `+proj=tpeqd +lat_1=60 +lat_2=65` | [Two-Point Equidistant](https://proj.org/en/stable/operations/projections/tpeqd.html) | ![map_tpeqd](images/maps/map_tpeqd.png) |
+| `map_aitoff` | `+proj=aitoff` | [Aitoff](https://proj.org/en/stable/operations/projections/aitoff.html) — modified azimuthal, world map | ![map_aitoff](images/maps/map_aitoff.png) |
+| `map_hammer` | `+proj=hammer` | [Hammer & Eckert-Greifendorff](https://proj.org/en/stable/operations/projections/hammer.html) — equal-area modified azimuthal | ![map_hammer](images/maps/map_hammer.png) |
+
+---
+
+### Pseudocylindrical
+
+Pseudocylindrical projections have straight parallels but curved meridians.
+
+| Test | PROJ String | Description | Output |
+|------|------------|-------------|--------|
+| `map_sinu` | `+proj=sinu` | [Sinusoidal (Sanson-Flamsteed)](https://proj.org/en/stable/operations/projections/sinu.html) — equal-area, simple formula | ![map_sinu](images/maps/map_sinu.png) |
+| `map_moll` | `+proj=moll` | [Mollweide](https://proj.org/en/stable/operations/projections/moll.html) — equal-area ellipse | ![map_moll](images/maps/map_moll.png) |
+| `map_robin` | `+proj=robin` | [Robinson](https://proj.org/en/stable/operations/projections/robin.html) — compromise, formerly used by National Geographic | ![map_robin](images/maps/map_robin.png) |
+| `map_natearth` | `+proj=natearth` | [Natural Earth](https://proj.org/en/stable/operations/projections/natearth.html) — smooth compromise, widely used for thematic maps | ![map_natearth](images/maps/map_natearth.png) |
+| `map_natearth2` | `+proj=natearth2` | [Natural Earth II](https://proj.org/en/stable/operations/projections/natearth2.html) — variation with flatter poles | ![map_natearth2](images/maps/map_natearth2.png) |
+| `map_natearth_shifted` | `+proj=natearth +lon_0=90` | Natural Earth (Pacific-centred) | ![map_natearth_shifted](images/maps/map_natearth_shifted.png) |
+| `map_eqearth` | `+proj=eqearth` | [Equal Earth](https://proj.org/en/stable/operations/projections/eqearth.html) — equal-area, published 2018 | ![map_eqearth](images/maps/map_eqearth.png) |
+| `map_wintri` | `+proj=wintri` | [Winkel Tripel](https://proj.org/en/stable/operations/projections/wintri.html) — compromise minimising distance/area/angle distortions; used by National Geographic since 1998 | ![map_wintri](images/maps/map_wintri.png) |
+| `map_wink1` | `+proj=wink1` | [Winkel I](https://proj.org/en/stable/operations/projections/wink1.html) | ![map_wink1](images/maps/map_wink1.png) |
+| `map_wink2` | `+proj=wink2` | [Winkel II](https://proj.org/en/stable/operations/projections/wink2.html) | ![map_wink2](images/maps/map_wink2.png) |
+| `map_eck1` | `+proj=eck1` | [Eckert I](https://proj.org/en/stable/operations/projections/eck1.html) | ![map_eck1](images/maps/map_eck1.png) |
+| `map_eck2` | `+proj=eck2` | [Eckert II](https://proj.org/en/stable/operations/projections/eck2.html) | ![map_eck2](images/maps/map_eck2.png) |
+| `map_eck3` | `+proj=eck3` | [Eckert III](https://proj.org/en/stable/operations/projections/eck3.html) | ![map_eck3](images/maps/map_eck3.png) |
+| `map_eck4` | `+proj=eck4` | [Eckert IV](https://proj.org/en/stable/operations/projections/eck4.html) — equal-area | ![map_eck4](images/maps/map_eck4.png) |
+| `map_eck5` | `+proj=eck5` | [Eckert V](https://proj.org/en/stable/operations/projections/eck5.html) | ![map_eck5](images/maps/map_eck5.png) |
+| `map_eck6` | `+proj=eck6` | [Eckert VI](https://proj.org/en/stable/operations/projections/eck6.html) — equal-area | ![map_eck6](images/maps/map_eck6.png) |
+| `map_wag1` | `+proj=wag1` | [Wagner I](https://proj.org/en/stable/operations/projections/wag1.html) — equal-area | ![map_wag1](images/maps/map_wag1.png) |
+| `map_wag2` | `+proj=wag2` | [Wagner II](https://proj.org/en/stable/operations/projections/wag2.html) | ![map_wag2](images/maps/map_wag2.png) |
+| `map_wag3` | `+proj=wag3` | [Wagner III](https://proj.org/en/stable/operations/projections/wag3.html) | ![map_wag3](images/maps/map_wag3.png) |
+| `map_wag4` | `+proj=wag4` | [Wagner IV](https://proj.org/en/stable/operations/projections/wag4.html) — equal-area | ![map_wag4](images/maps/map_wag4.png) |
+| `map_wag5` | `+proj=wag5` | [Wagner V](https://proj.org/en/stable/operations/projections/wag5.html) | ![map_wag5](images/maps/map_wag5.png) |
+| `map_wag6` | `+proj=wag6` | [Wagner VI](https://proj.org/en/stable/operations/projections/wag6.html) | ![map_wag6](images/maps/map_wag6.png) |
+| `map_wag7` | `+proj=wag7` | [Wagner VII](https://proj.org/en/stable/operations/projections/wag7.html) — equal-area azimuthal hybrid | ![map_wag7](images/maps/map_wag7.png) |
+| `map_kav5` | `+proj=kav5` | [Kavraiskiy V](https://proj.org/en/stable/operations/projections/kav5.html) | ![map_kav5](images/maps/map_kav5.png) |
+| `map_kav7` | `+proj=kav7` | [Kavraiskiy VII](https://proj.org/en/stable/operations/projections/kav7.html) | ![map_kav7](images/maps/map_kav7.png) |
+| `map_crast` | `+proj=crast` | [Craster Parabolic](https://proj.org/en/stable/operations/projections/crast.html) — equal-area | ![map_crast](images/maps/map_crast.png) |
+| `map_boggs` | `+proj=boggs` | [Boggs Eumorphic](https://proj.org/en/stable/operations/projections/boggs.html) — equal-area | ![map_boggs](images/maps/map_boggs.png) |
+| `map_hatano` | `+proj=hatano` | [Hatano Asymmetrical Equal-Area](https://proj.org/en/stable/operations/projections/hatano.html) — different standard parallels in N and S hemispheres | ![map_hatano](images/maps/map_hatano.png) |
+| `map_fouc` | `+proj=fouc` | [Foucaut](https://proj.org/en/stable/operations/projections/fouc.html) — equal-area | ![map_fouc](images/maps/map_fouc.png) |
+| `map_fouc_s` | `+proj=fouc_s` | [Foucaut Sinusoidal](https://proj.org/en/stable/operations/projections/fouc_s.html) — blend of sinusoidal and cylindrical | ![map_fouc_s](images/maps/map_fouc_s.png) |
+| `map_qua_aut` | `+proj=qua_aut` | [Quartic Authalic](https://proj.org/en/stable/operations/projections/qua_aut.html) — equal-area | ![map_qua_aut](images/maps/map_qua_aut.png) |
+| `map_nell` | `+proj=nell` | [Nell](https://proj.org/en/stable/operations/projections/nell.html) | ![map_nell](images/maps/map_nell.png) |
+| `map_nell_h` | `+proj=nell_h` | [Nell-Hammer](https://proj.org/en/stable/operations/projections/nell_h.html) | ![map_nell_h](images/maps/map_nell_h.png) |
+| `map_loxim` | `+proj=loxim` | [Loximuthal](https://proj.org/en/stable/operations/projections/loxim.html) | ![map_loxim](images/maps/map_loxim.png) |
+| `map_putp1` | `+proj=putp1` | [Putnins P1](https://proj.org/en/stable/operations/projections/putp1.html) | ![map_putp1](images/maps/map_putp1.png) |
+| `map_putp2` | `+proj=putp2` | [Putnins P2](https://proj.org/en/stable/operations/projections/putp2.html) | ![map_putp2](images/maps/map_putp2.png) |
+| `map_putp3` | `+proj=putp3` | [Putnins P3](https://proj.org/en/stable/operations/projections/putp3.html) | ![map_putp3](images/maps/map_putp3.png) |
+| `map_putp3p` | `+proj=putp3p` | [Putnins P3'](https://proj.org/en/stable/operations/projections/putp3p.html) | ![map_putp3p](images/maps/map_putp3p.png) |
+| `map_putp4p` | `+proj=putp4p` | [Putnins P4'](https://proj.org/en/stable/operations/projections/putp4p.html) | ![map_putp4p](images/maps/map_putp4p.png) |
+| `map_putp5` | `+proj=putp5` | [Putnins P5](https://proj.org/en/stable/operations/projections/putp5.html) | ![map_putp5](images/maps/map_putp5.png) |
+| `map_putp5p` | `+proj=putp5p` | [Putnins P5'](https://proj.org/en/stable/operations/projections/putp5p.html) | ![map_putp5p](images/maps/map_putp5p.png) |
+| `map_putp6` | `+proj=putp6` | [Putnins P6](https://proj.org/en/stable/operations/projections/putp6.html) | ![map_putp6](images/maps/map_putp6.png) |
+| `map_putp6p` | `+proj=putp6p` | [Putnins P6'](https://proj.org/en/stable/operations/projections/putp6p.html) | ![map_putp6p](images/maps/map_putp6p.png) |
+| `map_collg` | `+proj=collg` | [Collignon](https://proj.org/en/stable/operations/projections/collg.html) — equal-area triangle shape | ![map_collg](images/maps/map_collg.png) |
+| `map_denoy` | `+proj=denoy` | [Denoyer Semi-Elliptical](https://proj.org/en/stable/operations/projections/denoy.html) | ![map_denoy](images/maps/map_denoy.png) |
+| `map_fahey` | `+proj=fahey` | [Fahey](https://proj.org/en/stable/operations/projections/fahey.html) | ![map_fahey](images/maps/map_fahey.png) |
+| `map_gn_sinu` | `+proj=gn_sinu +m=2 +n=3` | [General Sinusoidal Series](https://proj.org/en/stable/operations/projections/gn_sinu.html) | ![map_gn_sinu](images/maps/map_gn_sinu.png) |
+| `map_urmfps` | `+proj=urmfps +n=0.5` | [Urmaev Flat-Polar Sinusoidal](https://proj.org/en/stable/operations/projections/urmfps.html) | ![map_urmfps](images/maps/map_urmfps.png) |
+| `map_urm5` | `+proj=urm5 +n=0.9 +alpha=2 +q=4` | [Urmaev V](https://proj.org/en/stable/operations/projections/urm5.html) | ![map_urm5](images/maps/map_urm5.png) |
+| `map_weren` | `+proj=weren` | [Werenskiold I](https://proj.org/en/stable/operations/projections/weren.html) | ![map_weren](images/maps/map_weren.png) |
+| `map_larr` | `+proj=larr` | [Larrivée](https://proj.org/en/stable/operations/projections/larr.html) | ![map_larr](images/maps/map_larr.png) |
+| `map_lask` | `+proj=lask` | [Laskowski](https://proj.org/en/stable/operations/projections/lask.html) | ![map_lask](images/maps/map_lask.png) |
+| `map_times` | `+proj=times` | [Times](https://proj.org/en/stable/operations/projections/times.html) | ![map_times](images/maps/map_times.png) |
+| `map_mbt_fps` | `+proj=mbt_fps` | [McBryde-Thomas Flat-Polar Sinusoidal](https://proj.org/en/stable/operations/projections/mbt_fps.html) — equal-area | ![map_mbt_fps](images/maps/map_mbt_fps.png) |
+| `map_mbtfps` | `+proj=mbtfps` | [McBryde-Thomas Flat-Polar Sinusoidal (alt.)](https://proj.org/en/stable/operations/projections/mbtfps.html) — equal-area | ![map_mbtfps](images/maps/map_mbtfps.png) |
+| `map_mbt_s` | `+proj=mbt_s` | [McBryde-Thomas Flat-Polar Sinusoidal (var.)](https://proj.org/en/stable/operations/projections/mbt_s.html) — equal-area | ![map_mbt_s](images/maps/map_mbt_s.png) |
+| `map_mbtfpp` | `+proj=mbtfpp` | [McBryde-Thomas Flat-Polar Parabolic](https://proj.org/en/stable/operations/projections/mbtfpp.html) — equal-area | ![map_mbtfpp](images/maps/map_mbtfpp.png) |
+| `map_mbtfpq` | `+proj=mbtfpq` | [McBryde-Thomas Flat-Polar Quartic](https://proj.org/en/stable/operations/projections/mbtfpq.html) — equal-area | ![map_mbtfpq](images/maps/map_mbtfpq.png) |
+
+---
+
+### Globular and Polyhedral
+
+These projections use unconventional boundaries for artistic or special purposes.
+
+| Test | PROJ String | Description | Output |
+|------|------------|-------------|--------|
+| `map_adams_hemi` | `+proj=adams_hemi` | [Adams Hemisphere-in-a-Square](https://proj.org/en/stable/operations/projections/adams_hemi.html) — conformal, entire hemisphere in a square | ![map_adams_hemi](images/maps/map_adams_hemi.png) |
+| `map_adams_ws1` | `+proj=adams_ws1` | [Adams World in a Square I](https://proj.org/en/stable/operations/projections/adams_ws1.html) — conformal world map in a square | ![map_adams_ws1](images/maps/map_adams_ws1.png) |
+| `map_adams_ws2` | `+proj=adams_ws2` | [Adams World in a Square II](https://proj.org/en/stable/operations/projections/adams_ws2.html) | ![map_adams_ws2](images/maps/map_adams_ws2.png) |
+| `map_apian` | `+proj=apian` | [Apian Globular I](https://proj.org/en/stable/operations/projections/apian.html) | ![map_apian](images/maps/map_apian.png) |
+| `map_bacon` | `+proj=bacon` | [Bacon Globular](https://proj.org/en/stable/operations/projections/bacon.html) | ![map_bacon](images/maps/map_bacon.png) |
+| `map_ortel` | `+proj=ortel` | [Ortelius Oval](https://proj.org/en/stable/operations/projections/ortel.html) | ![map_ortel](images/maps/map_ortel.png) |
+| `map_august` | `+proj=august` | [August Epicycloidal](https://proj.org/en/stable/operations/projections/august.html) — conformal world-in-a-circle | ![map_august](images/maps/map_august.png) |
+| `map_lagrng` | `+proj=lagrng` | [Lagrange](https://proj.org/en/stable/operations/projections/lagrng.html) — conformal in a circle | ![map_lagrng](images/maps/map_lagrng.png) |
+| `map_gins8` | `+proj=gins8` | [Ginsburg VIII](https://proj.org/en/stable/operations/projections/gins8.html) | ![map_gins8](images/maps/map_gins8.png) |
+| `map_healpix` | `+proj=healpix` | [HEALPix](https://proj.org/en/stable/operations/projections/healpix.html) — hierarchical equal-area pixelization; used in astrophysics and CMB analysis | ![map_healpix](images/maps/map_healpix.png) |
+
+---
+
+### Van der Grinten
+
+| Test | PROJ String | Description | Output |
+|------|------------|-------------|--------|
+| `map_vandg` | `+proj=vandg` | [Van der Grinten I](https://proj.org/en/stable/operations/projections/vandg.html) — world in a circle | ![map_vandg](images/maps/map_vandg.png) |
+| `map_vandg2` | `+proj=vandg2` | [Van der Grinten II](https://proj.org/en/stable/operations/projections/vandg2.html) | ![map_vandg2](images/maps/map_vandg2.png) |
+| `map_vandg3` | `+proj=vandg3` | [Van der Grinten III](https://proj.org/en/stable/operations/projections/vandg3.html) | ![map_vandg3](images/maps/map_vandg3.png) |
+| `map_vandg4` | `+proj=vandg4` | [Van der Grinten IV](https://proj.org/en/stable/operations/projections/vandg4.html) | ![map_vandg4](images/maps/map_vandg4.png) |
+
+---
+
+### Interrupted
+
+Interrupted projections break the map along selected meridians to reduce distortion in landmasses or oceans.
+
+| Test | PROJ String | Description | Output |
+|------|------------|-------------|--------|
+| `map_igh` | `+proj=igh` | [Goode Interrupted Homolosine](https://proj.org/en/stable/operations/projections/igh.html) — equal-area, interrupts over oceans | ![map_igh](images/maps/map_igh.png) |
+| `map_igh_o` | `+proj=igh_o +lon_0=-160` | [Goode Interrupted Homolosine (Oceans)](https://proj.org/en/stable/operations/projections/igh_o.html) — interrupts over land, shows ocean continuity | ![map_igh_o](images/maps/map_igh_o.png) |
+| `map_igh_shifted` | `+proj=igh +lon_0=90` | Goode Interrupted Homolosine (shifted 90° E) | ![map_igh_shifted](images/maps/map_igh_shifted.png) |
+| `map_goode` | `+proj=goode` | [Goode Homolosine (uninterrupted)](https://proj.org/en/stable/operations/projections/goode.html) | ![map_goode](images/maps/map_goode.png) |
+
+---
+
+### Satellite and Perspective
+
+| Test | PROJ String | Description | Output |
+|------|------------|-------------|--------|
+| `map_geos` | `+proj=geos +h=35785831 +lon_0=-60 +sweep=y` | [Geostationary Satellite View](https://proj.org/en/stable/operations/projections/geos.html) — view from 35786 km altitude over the Atlantic | ![map_geos](images/maps/map_geos.png) |
+| `map_tpers` | `+proj=tpers +h=5500000 +lat_0=40` | [Tilted Perspective](https://proj.org/en/stable/operations/projections/tpers.html) — view from 5500 km altitude with tilt | ![map_tpers](images/maps/map_tpers.png) |
+| `map_mil_os` | `+proj=mil_os` | [Miller Oblated Stereographic](https://proj.org/en/stable/operations/projections/mil_os.html) — used for European maps | ![map_mil_os](images/maps/map_mil_os.png) |
+
+---
+
+## Alphabetical Index
+
+| Test | PROJ String / EPSG | PROJ Docs |
+|------|-------------------|-----------|
+| `map_adams_hemi` | `+proj=adams_hemi` | [Adams Hemisphere-in-a-Square](https://proj.org/en/stable/operations/projections/adams_hemi.html) |
+| `map_adams_ws1` | `+proj=adams_ws1` | [Adams World in a Square I](https://proj.org/en/stable/operations/projections/adams_ws1.html) |
+| `map_adams_ws2` | `+proj=adams_ws2` | [Adams World in a Square II](https://proj.org/en/stable/operations/projections/adams_ws2.html) |
+| `map_aea` | `+proj=aea +lat_1=29.5 +lat_2=42.5` | [Albers Equal-Area Conic](https://proj.org/en/stable/operations/projections/aea.html) |
+| `map_airy` | `+proj=airy` | [Airy](https://proj.org/en/stable/operations/projections/airy.html) |
+| `map_aitoff` | `+proj=aitoff` | [Aitoff](https://proj.org/en/stable/operations/projections/aitoff.html) |
+| `map_antarctic` | `EPSG:3031` | [Polar Stereographic (South)](https://proj.org/en/stable/operations/projections/stere.html) |
+| `map_apian` | `+proj=apian` | [Apian Globular I](https://proj.org/en/stable/operations/projections/apian.html) |
+| `map_arctic` | `EPSG:3995` | [Arctic Polar Stereographic](https://proj.org/en/stable/operations/projections/stere.html) |
+| `map_august` | `+proj=august` | [August Epicycloidal](https://proj.org/en/stable/operations/projections/august.html) |
+| `map_bacon` | `+proj=bacon` | [Bacon Globular](https://proj.org/en/stable/operations/projections/bacon.html) |
+| `map_bipc` ⚠ | `+proj=bipc +ns` | [Bipolar Conic of Western Hemisphere](https://proj.org/en/stable/operations/projections/bipc.html) |
+| `map_boggs` | `+proj=boggs` | [Boggs Eumorphic](https://proj.org/en/stable/operations/projections/boggs.html) |
+| `map_bonne` | `+proj=bonne +lat_1=10` | [Bonne](https://proj.org/en/stable/operations/projections/bonne.html) |
+| `map_cass` | `+proj=cass` | [Cassini-Soldner](https://proj.org/en/stable/operations/projections/cass.html) |
+| `map_cc` | `+proj=cc` | [Central Cylindrical](https://proj.org/en/stable/operations/projections/cc.html) |
+| `map_cea` | `+proj=cea` | [Equal-Area Cylindrical](https://proj.org/en/stable/operations/projections/cea.html) |
+| `map_collg` | `+proj=collg` | [Collignon](https://proj.org/en/stable/operations/projections/collg.html) |
+| `map_comill` | `+proj=comill` | [Compact Miller](https://proj.org/en/stable/operations/projections/comill.html) |
+| `map_crast` | `+proj=crast` | [Craster Parabolic](https://proj.org/en/stable/operations/projections/crast.html) |
+| `map_denoy` | `+proj=denoy` | [Denoyer Semi-Elliptical](https://proj.org/en/stable/operations/projections/denoy.html) |
+| `map_eck1` | `+proj=eck1` | [Eckert I](https://proj.org/en/stable/operations/projections/eck1.html) |
+| `map_eck2` | `+proj=eck2` | [Eckert II](https://proj.org/en/stable/operations/projections/eck2.html) |
+| `map_eck3` | `+proj=eck3` | [Eckert III](https://proj.org/en/stable/operations/projections/eck3.html) |
+| `map_eck4` | `+proj=eck4` | [Eckert IV](https://proj.org/en/stable/operations/projections/eck4.html) |
+| `map_eck5` | `+proj=eck5` | [Eckert V](https://proj.org/en/stable/operations/projections/eck5.html) |
+| `map_eck6` | `+proj=eck6` | [Eckert VI](https://proj.org/en/stable/operations/projections/eck6.html) |
+| `map_eqc` | `EPSG:4087` | [Equidistant Cylindrical](https://proj.org/en/stable/operations/projections/eqc.html) |
+| `map_eqdc` | `+proj=eqdc +lat_1=55 +lat_2=60` | [Equidistant Conic](https://proj.org/en/stable/operations/projections/eqdc.html) |
+| `map_eqearth` | `+proj=eqearth` | [Equal Earth](https://proj.org/en/stable/operations/projections/eqearth.html) |
+| `map_euler` | `+proj=euler +lat_1=67 +lat_2=75` | [Euler](https://proj.org/en/stable/operations/projections/euler.html) |
+| `map_fahey` | `+proj=fahey` | [Fahey](https://proj.org/en/stable/operations/projections/fahey.html) |
+| `map_fouc` | `+proj=fouc` | [Foucaut](https://proj.org/en/stable/operations/projections/fouc.html) |
+| `map_fouc_s` | `+proj=fouc_s` | [Foucaut Sinusoidal](https://proj.org/en/stable/operations/projections/fouc_s.html) |
+| `map_gall` | `+proj=gall` | [Gall Stereographic](https://proj.org/en/stable/operations/projections/gall.html) |
+| `map_geos` | `+proj=geos +h=35785831 +lon_0=-60 +sweep=y` | [Geostationary Satellite View](https://proj.org/en/stable/operations/projections/geos.html) |
+| `map_gins8` | `+proj=gins8` | [Ginsburg VIII](https://proj.org/en/stable/operations/projections/gins8.html) |
+| `map_gn_sinu` | `+proj=gn_sinu +m=2 +n=3` | [General Sinusoidal Series](https://proj.org/en/stable/operations/projections/gn_sinu.html) |
+| `map_goode` | `+proj=goode` | [Goode Homolosine](https://proj.org/en/stable/operations/projections/goode.html) |
+| `map_gstmerc` | `+proj=gstmerc` | [Gauss-Schreiber Transverse Mercator](https://proj.org/en/stable/operations/projections/gstmerc.html) |
+| `map_hammer` | `+proj=hammer` | [Hammer & Eckert-Greifendorff](https://proj.org/en/stable/operations/projections/hammer.html) |
+| `map_hatano` | `+proj=hatano` | [Hatano Asymmetrical Equal-Area](https://proj.org/en/stable/operations/projections/hatano.html) |
+| `map_healpix` | `+proj=healpix` | [HEALPix](https://proj.org/en/stable/operations/projections/healpix.html) |
+| `map_igh` | `+proj=igh` | [Goode Interrupted Homolosine](https://proj.org/en/stable/operations/projections/igh.html) |
+| `map_igh_o` | `+proj=igh_o +lon_0=-160` | [Goode Interrupted Homolosine (Oceans)](https://proj.org/en/stable/operations/projections/igh_o.html) |
+| `map_igh_shifted` | `+proj=igh +lon_0=90` | [Goode Interrupted Homolosine (shifted)](https://proj.org/en/stable/operations/projections/igh.html) |
+| `map_isea` ⚠ | `+proj=isea` | [Icosahedral Snyder Equal-Area](https://proj.org/en/stable/operations/projections/isea.html) |
+| `map_kav5` | `+proj=kav5` | [Kavraiskiy V](https://proj.org/en/stable/operations/projections/kav5.html) |
+| `map_kav7` | `+proj=kav7` | [Kavraiskiy VII](https://proj.org/en/stable/operations/projections/kav7.html) |
+| `map_laea` | `+proj=laea` | [Lambert Azimuthal Equal-Area](https://proj.org/en/stable/operations/projections/laea.html) |
+| `map_lagrng` | `+proj=lagrng` | [Lagrange](https://proj.org/en/stable/operations/projections/lagrng.html) |
+| `map_larr` | `+proj=larr` | [Larrivée](https://proj.org/en/stable/operations/projections/larr.html) |
+| `map_lask` | `+proj=lask` | [Laskowski](https://proj.org/en/stable/operations/projections/lask.html) |
+| `map_lcc` | `+proj=lcc +lon_0=-90 +lat_1=33 +lat_2=45` | [Lambert Conformal Conic](https://proj.org/en/stable/operations/projections/lcc.html) |
+| `map_lcca` | `+proj=lcca +lat_0=35` | [Lambert Conformal Conic Alternative](https://proj.org/en/stable/operations/projections/lcca.html) |
+| `map_leac` | `+proj=leac` | [Lambert Equal-Area Conic](https://proj.org/en/stable/operations/projections/leac.html) |
+| `map_loxim` | `+proj=loxim` | [Loximuthal](https://proj.org/en/stable/operations/projections/loxim.html) |
+| `map_mbt_fps` | `+proj=mbt_fps` | [McBryde-Thomas Flat-Polar Sinusoidal](https://proj.org/en/stable/operations/projections/mbt_fps.html) |
+| `map_mbt_s` | `+proj=mbt_s` | [McBryde-Thomas Flat-Polar Sinusoidal (var.)](https://proj.org/en/stable/operations/projections/mbt_s.html) |
+| `map_mbtfpp` | `+proj=mbtfpp` | [McBryde-Thomas Flat-Polar Parabolic](https://proj.org/en/stable/operations/projections/mbtfpp.html) |
+| `map_mbtfpq` | `+proj=mbtfpq` | [McBryde-Thomas Flat-Polar Quartic](https://proj.org/en/stable/operations/projections/mbtfpq.html) |
+| `map_mbtfps` | `+proj=mbtfps` | [McBryde-Thomas Flat-Polar Sinusoidal (alt.)](https://proj.org/en/stable/operations/projections/mbtfps.html) |
+| `map_merc` | `+proj=merc` | [Mercator](https://proj.org/en/stable/operations/projections/merc.html) |
+| `map_mil_os` | `+proj=mil_os` | [Miller Oblated Stereographic](https://proj.org/en/stable/operations/projections/mil_os.html) |
+| `map_mill` | `+proj=mill` | [Miller Cylindrical](https://proj.org/en/stable/operations/projections/mill.html) |
+| `map_moll` | `+proj=moll` | [Mollweide](https://proj.org/en/stable/operations/projections/moll.html) |
+| `map_murd1` | `+proj=murd1 +lat_1=30 +lat_2=50` | [Murdoch I](https://proj.org/en/stable/operations/projections/murd1.html) |
+| `map_murd3` | `+proj=murd3 +lat_1=30 +lat_2=50` | [Murdoch III](https://proj.org/en/stable/operations/projections/murd3.html) |
+| `map_natearth` | `+proj=natearth` | [Natural Earth](https://proj.org/en/stable/operations/projections/natearth.html) |
+| `map_natearth2` | `+proj=natearth2` | [Natural Earth II](https://proj.org/en/stable/operations/projections/natearth2.html) |
+| `map_natearth_shifted` | `+proj=natearth +lon_0=90` | Natural Earth (Pacific-centred) |
+| `map_nell` | `+proj=nell` | [Nell](https://proj.org/en/stable/operations/projections/nell.html) |
+| `map_nell_h` | `+proj=nell_h` | [Nell-Hammer](https://proj.org/en/stable/operations/projections/nell_h.html) |
+| `map_ocea` | `+proj=ocea` | [Oblique Cylindrical Equal-Area](https://proj.org/en/stable/operations/projections/ocea.html) |
+| `map_ortel` | `+proj=ortel` | [Ortelius Oval](https://proj.org/en/stable/operations/projections/ortel.html) |
+| `map_ortho` | `+proj=ortho` | [Orthographic](https://proj.org/en/stable/operations/projections/ortho.html) |
+| `map_patterson` | `+proj=patterson` | [Patterson Cylindrical](https://proj.org/en/stable/operations/projections/patterson.html) |
+| `map_poly` | `+proj=poly` | [American Polyconic](https://proj.org/en/stable/operations/projections/poly.html) |
+| `map_putp1` | `+proj=putp1` | [Putnins P1](https://proj.org/en/stable/operations/projections/putp1.html) |
+| `map_putp2` | `+proj=putp2` | [Putnins P2](https://proj.org/en/stable/operations/projections/putp2.html) |
+| `map_putp3` | `+proj=putp3` | [Putnins P3](https://proj.org/en/stable/operations/projections/putp3.html) |
+| `map_putp3p` | `+proj=putp3p` | [Putnins P3'](https://proj.org/en/stable/operations/projections/putp3p.html) |
+| `map_putp4p` | `+proj=putp4p` | [Putnins P4'](https://proj.org/en/stable/operations/projections/putp4p.html) |
+| `map_putp5` | `+proj=putp5` | [Putnins P5](https://proj.org/en/stable/operations/projections/putp5.html) |
+| `map_putp5p` | `+proj=putp5p` | [Putnins P5'](https://proj.org/en/stable/operations/projections/putp5p.html) |
+| `map_putp6` | `+proj=putp6` | [Putnins P6](https://proj.org/en/stable/operations/projections/putp6.html) |
+| `map_putp6p` | `+proj=putp6p` | [Putnins P6'](https://proj.org/en/stable/operations/projections/putp6p.html) |
+| `map_qua_aut` | `+proj=qua_aut` | [Quartic Authalic](https://proj.org/en/stable/operations/projections/qua_aut.html) |
+| `map_robin` | `+proj=robin` | [Robinson](https://proj.org/en/stable/operations/projections/robin.html) |
+| `map_roteqc` ⚠ | `+proj=ob_tran +o_proj=eqc +o_lon_p=0 +o_lat_p=30 +lon_0=0` | [Rotated Equidistant Cylindrical](https://proj.org/en/stable/operations/projections/ob_tran.html) |
+| `map_rotlatlon` ⚠ | `+proj=ob_tran +o_proj=longlat +o_lon_p=0 +o_lat_p=30 +lon_0=0` | [Rotated Geographic](https://proj.org/en/stable/operations/projections/ob_tran.html) |
+| `map_rouss` | `+proj=rouss` | [Roussilhe Stereographic](https://proj.org/en/stable/operations/projections/rouss.html) |
+| `map_rpoly` | `+proj=rpoly` | [Rectangular Polyconic](https://proj.org/en/stable/operations/projections/rpoly.html) |
+| `map_sinu` | `+proj=sinu` | [Sinusoidal (Sanson-Flamsteed)](https://proj.org/en/stable/operations/projections/sinu.html) |
+| `map_stere` | `+proj=stere +lat_0=90 +lat_ts=75` | [Stereographic (polar, true scale at 75°N)](https://proj.org/en/stable/operations/projections/stere.html) |
+| `map_sterea` | `+proj=sterea +lat_0=90` | [Oblique Stereographic Alternative](https://proj.org/en/stable/operations/projections/sterea.html) |
+| `map_times` | `+proj=times` | [Times](https://proj.org/en/stable/operations/projections/times.html) |
+| `map_tissot` | `+proj=tissot +lat_1=60 +lat_2=65` | [Tissot Conic](https://proj.org/en/stable/operations/projections/tissot.html) |
+| `map_tmerc` | `+proj=tmerc` | [Transverse Mercator](https://proj.org/en/stable/operations/projections/tmerc.html) |
+| `map_tobmerc` | `+proj=tobmerc` | [Tobler-Mercator](https://proj.org/en/stable/operations/projections/tobmerc.html) |
+| `map_tpeqd` | `+proj=tpeqd +lat_1=60 +lat_2=65` | [Two-Point Equidistant](https://proj.org/en/stable/operations/projections/tpeqd.html) |
+| `map_tpers` | `+proj=tpers +h=5500000 +lat_0=40` | [Tilted Perspective](https://proj.org/en/stable/operations/projections/tpers.html) |
+| `map_ups` | `+proj=ups` | [Universal Polar Stereographic](https://proj.org/en/stable/operations/projections/ups.html) |
+| `map_urm5` | `+proj=urm5 +n=0.9 +alpha=2 +q=4` | [Urmaev V](https://proj.org/en/stable/operations/projections/urm5.html) |
+| `map_urmfps` | `+proj=urmfps +n=0.5` | [Urmaev Flat-Polar Sinusoidal](https://proj.org/en/stable/operations/projections/urmfps.html) |
+| `map_vandg` | `+proj=vandg` | [Van der Grinten I](https://proj.org/en/stable/operations/projections/vandg.html) |
+| `map_vandg2` | `+proj=vandg2` | [Van der Grinten II](https://proj.org/en/stable/operations/projections/vandg2.html) |
+| `map_vandg3` | `+proj=vandg3` | [Van der Grinten III](https://proj.org/en/stable/operations/projections/vandg3.html) |
+| `map_vandg4` | `+proj=vandg4` | [Van der Grinten IV](https://proj.org/en/stable/operations/projections/vandg4.html) |
+| `map_wag1` | `+proj=wag1` | [Wagner I](https://proj.org/en/stable/operations/projections/wag1.html) |
+| `map_wag2` | `+proj=wag2` | [Wagner II](https://proj.org/en/stable/operations/projections/wag2.html) |
+| `map_wag3` | `+proj=wag3` | [Wagner III](https://proj.org/en/stable/operations/projections/wag3.html) |
+| `map_wag4` | `+proj=wag4` | [Wagner IV](https://proj.org/en/stable/operations/projections/wag4.html) |
+| `map_wag5` | `+proj=wag5` | [Wagner V](https://proj.org/en/stable/operations/projections/wag5.html) |
+| `map_wag6` | `+proj=wag6` | [Wagner VI](https://proj.org/en/stable/operations/projections/wag6.html) |
+| `map_wag7` | `+proj=wag7` | [Wagner VII](https://proj.org/en/stable/operations/projections/wag7.html) |
+| `map_webmercator` | `EPSG:3857` | [Web Mercator](https://proj.org/en/stable/operations/projections/merc.html) |
+| `map_weren` | `+proj=weren` | [Werenskiold I](https://proj.org/en/stable/operations/projections/weren.html) |
+| `map_wink1` | `+proj=wink1` | [Winkel I](https://proj.org/en/stable/operations/projections/wink1.html) |
+| `map_wink2` | `+proj=wink2` | [Winkel II](https://proj.org/en/stable/operations/projections/wink2.html) |
+| `map_wintri` | `+proj=wintri` | [Winkel Tripel](https://proj.org/en/stable/operations/projections/wintri.html) |
+
+⚠ = listed in `.testignore`; output may be rendered but is not considered reliable.
+
+---
+
+# Dali Test Examples
+
+The Dali tests exercise the `/dali` endpoint directly, bypassing the WMS/WMTS layers.  Test inputs are `.get` files in [`test/input/`](../test/input/) and expected outputs in [`test/output/`](../test/output/).  Product JSON configurations are under [`test/dali/customers/`](../test/dali/customers/).
+
+Each request URL is decomposed into a table showing every query parameter and its effect.  Layer-specific URL overrides follow the pattern `l.{qid}.{setting}` and view overrides follow `v{n}.{setting}`.
+
+---
+
+## Output Formats
+
+Dali can produce SVG (default), PNG, PDF, GeoJSON, and KML from the same product definition.
+
+### t2m_p — SVG (default)
+
+**Input:** [`test/input/t2m_p.get`](../test/input/t2m_p.get)
+
+```
+GET /dali?customer=test&product=t2m_p&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `customer` | `test` | Customer directory |
+| `product` | `t2m_p` | Product JSON: [`test/dali/customers/test/products/t2m_p.json`](../test/dali/customers/test/products/t2m_p.json) |
+| `time` | `200808050300` | Valid time: 2008-08-05 03:00 UTC |
+
+Renders Scandinavian temperature isobands and isolines from the `kap` producer in the data's native CRS (500×500 px).  The product uses a `defs` block to define SVG symbols and CSS styles.  Output is SVG (default when no `type` is specified).
+
+**Output:**
+
+![t2m_p](images/dali/t2m_p.png)
+
+---
+
+### png — PNG output
+
+**Input:** [`test/input/png.get`](../test/input/png.get)
+
+```
+GET /dali?customer=test&product=t2m_p&type=png&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `customer` | `test` | Customer directory |
+| `product` | `t2m_p` | Same product as above |
+| `type` | `png` | Forces 8-bit palette PNG raster output |
+| `time` | `200808050300` | Valid time: 2008-08-05 03:00 UTC |
+
+Any product can be rasterised to PNG by supplying `type=png`.  Output is 500×500 px, 8-bit colour-mapped PNG (default ≤256 colours).
+
+**Output:**
+
+![png](images/dali/png.png)
+
+---
+
+### png_truecolor — 24-bit PNG
+
+**Input:** [`test/input/png_truecolor.get`](../test/input/png_truecolor.get)
+
+```
+GET /dali?customer=test&product=t2m_p&type=png&time=200808050300&png.truecolor=1 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `type` | `png` | PNG output |
+| `png.truecolor` | `1` | Forces 24-bit true-colour PNG instead of palette |
+
+**Output:**
+
+![png_truecolor](images/dali/png_truecolor.png)
+
+---
+
+### png_maxcolors_20 — Limited palette PNG
+
+**Input:** [`test/input/png_maxcolors_20.get`](../test/input/png_maxcolors_20.get)
+
+```
+GET /dali?customer=test&product=t2m_p&type=png&time=200808050300&png.maxcolors=20 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `type` | `png` | PNG output |
+| `png.maxcolors` | `20` | Caps the palette at 20 colours; reduces file size but introduces posterisation |
+
+**Output:**
+
+![png_maxcolors_20](images/dali/png_maxcolors_20.png)
+
+---
+
+### pdf — PDF output
+
+**Input:** [`test/input/pdf.get`](../test/input/pdf.get)
+
+```
+GET /dali?customer=test&product=t2m_p&time=200808050300&type=pdf HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `type` | `pdf` | Produces a vector PDF document |
+
+Output is a scalable PDF (no rasterisation).
+
+---
+
+### t2m_p_geojson — GeoJSON output
+
+**Input:** [`test/input/t2m_p_geojson.get`](../test/input/t2m_p_geojson.get)
+
+```
+GET /dali?customer=test&product=t2m_p&time=200808050300&type=geojson HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `type` | `geojson` | Exports isoband/isoline geometries as GeoJSON |
+
+Polygon and line features are reprojected to WGS84 (EPSG:4326) in the output.
+
+---
+
+### t2m_p_kml — KML output
+
+**Input:** [`test/input/t2m_p_kml.get`](../test/input/t2m_p_kml.get)
+
+```
+GET /dali?customer=test&product=t2m_p&time=200808050300&type=kml HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `type` | `kml` | Exports isoband/isoline geometries as KML (Google Earth) |
+
+Note: listed in `.testignore` — output precision can vary between RHEL 7 and RHEL 8 environments.
+
+---
+
+### autoclass — Automatic CSS class names
+
+**Input:** [`test/input/autoclass.get`](../test/input/autoclass.get)
+
+```
+GET /dali?customer=test&product=autoclass&time=200808050300&type=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `autoclass` | Product JSON: [`test/dali/customers/test/products/autoclass.json`](../test/dali/customers/test/products/autoclass.json) |
+| `type` | `svg` | Forces SVG output |
+
+The `autoclass` feature generates CSS class names automatically from isoband/isoline limit values using a template such as `"Temperature_{}_{}"`; the lower and upper limits substitute the placeholders (using `None` for open-ended bands).  This eliminates the need to assign class names manually in every isoband specification.
+
+**Output:**
+
+![autoclass](images/dali/autoclass.png)
+
+---
+
+### autoqid — Automatic query IDs
+
+**Input:** [`test/input/autoqid.get`](../test/input/autoqid.get)
+
+```
+GET /dali?customer=test&product=autoqid&time=200808050300&format=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `autoqid` | Product JSON: [`test/dali/customers/test/products/autoqid.json`](../test/dali/customers/test/products/autoqid.json) |
+| `format` | `svg` | Alternative to `type=svg` for specifying SVG output |
+
+The `autoqid` feature auto-generates `qid` values for each isoband/isoline from the band limits using a template such as `"temperature_{}_{}"`; the resulting `qid` can then be referenced in URL parameter overrides.  Unlike `autoclass` (which generates CSS class names), `autoqid` generates the query IDs used for URL-based overrides.
+
+**Output:**
+
+![autoqid](images/dali/autoqid.png)
+
+---
+
+### disable_svg — Conditionally disabled layer
+
+**Input:** [`test/input/disable_svg.get`](../test/input/disable_svg.get)
+
+```
+GET /dali?customer=test&product=disable_svg&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `disable_svg` | Product JSON: [`test/dali/customers/test/products/disable_svg.json`](../test/dali/customers/test/products/disable_svg.json) |
+
+A layer carrying `"disable": "svg"` is skipped entirely when rendering to SVG but rendered for PNG/PDF.  Useful for layers (e.g. pressure isolines) that are visually acceptable as vector but are too slow or heavy in SVG.
+
+**Output:**
+
+![disable_svg](images/dali/disable_svg.png)
+
+---
+
+### enable_png — Conditionally enabled layer
+
+**Input:** [`test/input/enable_png.get`](../test/input/enable_png.get)
+
+```
+GET /dali?customer=test&product=enable_png&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `enable_png` | Product JSON: [`test/dali/customers/test/products/enable_png.json`](../test/dali/customers/test/products/enable_png.json) |
+
+A layer carrying `"enable": ["png","pdf"]` is rendered only for those output formats and suppressed for SVG.  The product adds pressure isolines only for raster/PDF output.
+
+**Output:**
+
+![enable_png](images/dali/enable_png.png)
+
+---
+
+## Isoband and Isoline
+
+### feelslike — FeelsLike parameter
+
+**Input:** [`test/input/feelslike.get`](../test/input/feelslike.get)
+
+```
+GET /dali?customer=test&product=feelslike&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `feelslike` | Product JSON: [`test/dali/customers/test/products/feelslike.json`](../test/dali/customers/test/products/feelslike.json) |
+
+Renders isobands and isolines of the `FeelsLike` apparent-temperature parameter from the `pal_skandinavia` producer, using the same colour scale as regular temperature.
+
+**Output:**
+
+![feelslike](images/dali/feelslike.png)
+
+---
+
+### precipitation — Precipitation isobands
+
+**Input:** [`test/input/precipitation.get`](../test/input/precipitation.get)
+
+```
+GET /dali?customer=test&product=precipitation&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `precipitation` | Product JSON: [`test/dali/customers/test/products/precipitation.json`](../test/dali/customers/test/products/precipitation.json) |
+
+Renders precipitation isobands and isolines from `pal_skandinavia` in the data's native CRS.
+
+**Output:**
+
+![precipitation](images/dali/precipitation.png)
+
+---
+
+### precipitation_warm — Precipitation warm season
+
+**Input:** [`test/input/precipitation_warm.get`](../test/input/precipitation_warm.get)
+
+```
+GET /dali?customer=test&product=precipitation_warm&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `precipitation_warm` | Product JSON: [`test/dali/customers/test/products/precipitation_warm.json`](../test/dali/customers/test/products/precipitation_warm.json) |
+
+Uses a warm-season precipitation colour scale with finer class resolution in the low-intensity range.
+
+**Output:**
+
+![precipitation_warm](images/dali/precipitation_warm.png)
+
+---
+
+### precipitation_minarea — Suppress small polygons (geographic area)
+
+**Input:** [`test/input/precipitation_minarea.get`](../test/input/precipitation_minarea.get)
+
+```
+GET /dali?customer=test&product=precipitation&time=200808050300&l1.minarea=5000&l2.minarea=5000 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `l1.minarea` | `5000` | Drops isoband polygons smaller than 5000 m² for layer `l1` |
+| `l2.minarea` | `5000` | Same for layer `l2` |
+
+The `minarea` setting removes noise from scattered small polygons.  The default unit is m².
+
+**Output:**
+
+![precipitation_minarea](images/dali/precipitation_minarea.png)
+
+---
+
+### precipitation_minarea_px — Suppress small polygons (pixel area)
+
+**Input:** [`test/input/precipitation_minarea_px.get`](../test/input/precipitation_minarea_px.get)
+
+```
+GET /dali?customer=test&product=precipitation&time=200808050300&l1.minarea=1000&l2.minarea=1000&l1.areaunit=px^2&l2.areaunit=px^2 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `l1.minarea` | `1000` | Minimum polygon area threshold for layer `l1` |
+| `l1.areaunit` | `px^2` | Interprets the area threshold in pixels² (screen-space) instead of m² |
+
+Using `areaunit=px^2` makes the filter resolution-independent: useful when the product may be rendered at different map scales.
+
+**Output:**
+
+![precipitation_minarea_px](images/dali/precipitation_minarea_px.png)
+
+---
+
+### radar — Radar precipitation
+
+**Input:** [`test/input/radar.get`](../test/input/radar.get)
+
+```
+GET /dali?customer=test&product=radar&time=20130910T1000 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `radar` | Product JSON: [`test/dali/customers/test/products/radar.json`](../test/dali/customers/test/products/radar.json) |
+| `time` | `20130910T1000` | Valid time: 2013-09-10 10:00 UTC |
+
+Renders radar-derived precipitation rate (`PrecipitationRate`) from the `tutka_suomi_rr` producer with a blue sea background and country-fill.  Demonstrates isoband rendering on a 500×800 px product in the data's native CRS.
+
+**Output:**
+
+![radar](images/dali/radar.png)
+
+---
+
+### tmax_smooth — Smoothed maximum temperature
+
+**Input:** [`test/input/tmax_smooth.get`](../test/input/tmax_smooth.get)
+
+```
+GET /dali?customer=test&product=tmax_smooth&time=200101011200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `tmax_smooth` | Product JSON: [`test/dali/customers/test/products/tmax_smooth.json`](../test/dali/customers/test/products/tmax_smooth.json) |
+
+Applies a contouring smoother (`"smoother": {"degree": 1, "size": 1}`) to maximum temperature before rendering isobands; reduces jagged edges in coarse-resolution data.
+
+**Output:**
+
+![tmax_smooth](images/dali/tmax_smooth.png)
+
+---
+
+### t2m_p_smooth — Smoothed temperature
+
+**Input:** [`test/input/t2m_p_smooth.get`](../test/input/t2m_p_smooth.get)
+
+```
+GET /dali?customer=test&product=t2m_p_smooth&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `t2m_p_smooth` | Product JSON: [`test/dali/customers/test/products/t2m_p_smooth.json`](../test/dali/customers/test/products/t2m_p_smooth.json) |
+
+Same as `t2m_p` but with a stronger smoother applied to the temperature field, producing fewer and smoother contours.
+
+**Output:**
+
+![t2m_p_smooth](images/dali/t2m_p_smooth.png)
+
+---
+
+### crs_bbox — CRS bounding box handling
+
+**Input:** [`test/input/crs_bbox.get`](../test/input/crs_bbox.get)
+
+```
+GET /dali?customer=test&product=crs_bbox&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `crs_bbox` | Product JSON: [`test/dali/customers/test/products/crs_bbox.json`](../test/dali/customers/test/products/crs_bbox.json) |
+
+Tests that the bounding box specified in the product is interpreted correctly in the product's CRS.  The product uses `"crs": "data"` with a smoother applied.
+
+**Output:**
+
+![crs_bbox](images/dali/crs_bbox.png)
+
+---
+
+### t2m_p_noqid — Layers without qid
+
+**Input:** [`test/input/t2m_p_noqid.get`](../test/input/t2m_p_noqid.get)
+
+```
+GET /dali?customer=test&product=t2m_p_noqid&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `t2m_p_noqid` | Product JSON: [`test/dali/customers/test/products/t2m_p_noqid.json`](../test/dali/customers/test/products/t2m_p_noqid.json) |
+
+Like `t2m_p` but the layers omit `qid` fields.  Without a `qid`, layers cannot be overridden via URL parameters but the product still renders correctly.
+
+**Output:**
+
+![t2m_p_noqid](images/dali/t2m_p_noqid.png)
+
+---
+
+## Isoband Labels
+
+Labels can be placed along isolines using the dedicated `isolabel` layer type, or directly in the isoband definition with `t2m_isoband_labels`.
+
+### t2m_isoband_labels — Labels embedded in isoband layer
+
+**Input:** [`test/input/t2m_isoband_labels.get`](../test/input/t2m_isoband_labels.get)
+
+```
+GET /dali?customer=test&product=t2m_isoband_labels&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `t2m_isoband_labels` | Product JSON: [`test/dali/customers/test/products/t2m_isoband_labels.json`](../test/dali/customers/test/products/t2m_isoband_labels.json) |
+
+Demonstrates value labels embedded directly in the isoband layer specification.  Labels are drawn along the contour lines at a configured spacing.
+
+**Output:**
+
+![t2m_isoband_labels](images/dali/t2m_isoband_labels.png)
+
+---
+
+### isolabel — Basic isolabels
+
+**Input:** [`test/input/isolabel.get`](../test/input/isolabel.get)
+
+```
+GET /dali?customer=test&product=isolabel&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `isolabel` | Product JSON: [`test/dali/customers/test/products/isolabel.json`](../test/dali/customers/test/products/isolabel.json) |
+
+Uses the dedicated `isolabel` layer type to draw contour labels at a fixed spacing along isoline paths.
+
+**Output:**
+
+![isolabel](images/dali/isolabel.png)
+
+---
+
+### isolabel_angles — Angle-following labels
+
+**Input:** [`test/input/isolabel_angles.get`](../test/input/isolabel_angles.get)
+
+```
+GET /dali?customer=test&product=isolabel_angles&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `isolabel_angles` | Product JSON: [`test/dali/customers/test/products/isolabel_angles.json`](../test/dali/customers/test/products/isolabel_angles.json) |
+
+Labels are rotated to follow the tangent direction of the isoline.
+
+**Output:**
+
+![isolabel_angles](images/dali/isolabel_angles.png)
+
+---
+
+### isolabel_horizontal — Horizontal labels only
+
+**Input:** [`test/input/isolabel_horizontal.get`](../test/input/isolabel_horizontal.get)
+
+```
+GET /dali?customer=test&product=isolabel_horizontal&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `isolabel_horizontal` | Product JSON: [`test/dali/customers/test/products/isolabel_horizontal.json`](../test/dali/customers/test/products/isolabel_horizontal.json) |
+
+All labels are rendered horizontally regardless of isoline orientation; suitable when readability is prioritised over alignment with the contour.
+
+**Output:**
+
+![isolabel_horizontal](images/dali/isolabel_horizontal.png)
+
+---
+
+### isolabel_cut — Cut-through labels
+
+**Input:** [`test/input/isolabel_cut.get`](../test/input/isolabel_cut.get)
+
+```
+GET /dali?customer=test&product=isolabel_cut&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `isolabel_cut` | Product JSON: [`test/dali/customers/test/products/isolabel_cut.json`](../test/dali/customers/test/products/isolabel_cut.json) |
+
+The isoline is cut at each label position so the label appears embedded in the line rather than on top of it.
+
+**Output:**
+
+![isolabel_cut](images/dali/isolabel_cut.png)
+
+---
+
+### isolabel_styles — Multiple label styles
+
+**Input:** [`test/input/isolabel_styles.get`](../test/input/isolabel_styles.get)
+
+```
+GET /dali?customer=test&product=isolabel_styles&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `isolabel_styles` | Product JSON: [`test/dali/customers/test/products/isolabel_styles.json`](../test/dali/customers/test/products/isolabel_styles.json) |
+
+Demonstrates per-isoline label styling: each contour level can have its own font size, colour, and background.
+
+**Output:**
+
+![isolabel_styles](images/dali/isolabel_styles.png)
+
+---
+
+## SVG Customisation
+
+### t2m_p_shadow — SVG drop shadow
+
+**Input:** [`test/input/t2m_p_shadow.get`](../test/input/t2m_p_shadow.get)
+
+```
+GET /dali?customer=test&product=t2m_p_shadow&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `t2m_p_shadow` | Product JSON: [`test/dali/customers/test/products/t2m_p_shadow.json`](../test/dali/customers/test/products/t2m_p_shadow.json) |
+
+Adds an SVG `<filter>` drop-shadow (`feDropShadow`) to the product's root element via the top-level `"attributes": {"filter": "url(#shadow)"}` setting.
+
+**Output:**
+
+![t2m_p_shadow](images/dali/t2m_p_shadow.png)
+
+---
+
+### t2m_p_display_none — Hidden layer with optimizesize
+
+**Input:** [`test/input/t2m_p_display_none.get`](../test/input/t2m_p_display_none.get)
+
+```
+GET /dali?customer=test&product=t2m_p&time=200808050300&l3.attributes.display=none&optimizesize=1 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `l3.attributes.display` | `none` | Sets `display=none` on layer `l3` via URL override, making it invisible |
+| `optimizesize` | `1` | When set, layers with `display=none` are omitted from the output entirely (reducing file size) |
+
+The `optimizesize` flag strips out hidden layers rather than leaving them as invisible elements in the SVG.
+
+**Output:**
+
+![t2m_p_display_none](images/dali/t2m_p_display_none.png)
+
+---
+
+### t2m_pattern — SVG pattern fill
+
+**Input:** [`test/input/t2m_pattern.get`](../test/input/t2m_pattern.get)
+
+```
+GET /dali?customer=test&product=t2m_pattern&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `t2m_pattern` | Product JSON: [`test/dali/customers/test/products/t2m_pattern.json`](../test/dali/customers/test/products/t2m_pattern.json) |
+
+Uses SVG `<pattern>` elements defined in the `defs` section to fill isoband polygons with a hatching or repeat pattern rather than a solid colour.
+
+**Output:**
+
+![t2m_pattern](images/dali/t2m_pattern.png)
+
+---
+
+### defs_circle — SVG defs with reusable shapes
+
+**Input:** [`test/input/defs_circle.get`](../test/input/defs_circle.get)
+
+```
+GET /dali?customer=test&product=defs_circle&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `defs_circle` | Product JSON: [`test/dali/customers/test/products/defs_circle.json`](../test/dali/customers/test/products/defs_circle.json) |
+
+Shows how `defs.layers` can define reusable SVG elements (filters, named circles, clip paths, text nodes) that are referenced later via `xlink:href`.
+
+**Output:**
+
+![defs_circle](images/dali/defs_circle.png)
+
+---
+
+### clip — Explicit clipPath layer
+
+**Input:** [`test/input/clip.get`](../test/input/clip.get)
+
+```
+GET /dali?customer=test&product=clip&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `clip` | Product JSON: [`test/dali/customers/test/products/clip.json`](../test/dali/customers/test/products/clip.json) |
+
+Uses a `tag: "clipPath"` layer containing a `tag: "circle"` to create an SVG `<clipPath>` element inline.  A `tag: "g"` wrapper layer with `clip-path: url(#mycircle)` then applies it to the isoband layers, while the product-level `filter: url(#shadow)` adds a drop shadow.
+
+**Output:**
+
+![clip](images/dali/clip.png)
+
+---
+
+### circle — Circular clip with isobands
+
+**Input:** [`test/input/circle.get`](../test/input/circle.get)
+
+```
+GET /dali?customer=test&product=circle&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `circle` | Product JSON: [`test/dali/customers/test/products/circle.json`](../test/dali/customers/test/products/circle.json) |
+| `time` | `200808050300` | Valid time: 2008-08-05 03:00 UTC |
+
+Projects Scandinavian temperature data using the data's own native CRS, renders temperature isobands and isolines, and clips the output with an SVG `<circle>` element centred at (250, 250) with radius 250.
+
+**Output:**
+
+![circle](images/dali/circle.png)
+
+---
+
+## Clipping to Geographic Boundaries
+
+### t2m_inside_finland — Clip to country polygon
+
+**Input:** [`test/input/t2m_inside_finland.get`](../test/input/t2m_inside_finland.get)
+
+```
+GET /dali?customer=test&product=t2m_inside_finland&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `t2m_inside_finland` | Product JSON: [`test/dali/customers/test/products/t2m_inside_finland.json`](../test/dali/customers/test/products/t2m_inside_finland.json) |
+
+Uses `"inside"` on the isoband layer referencing a PostGIS query for the Finland border (`iso_a2='FI'`) to clip the rendered isobands to inside Finland.
+
+**Output:**
+
+![t2m_inside_finland](images/dali/t2m_inside_finland.png)
+
+---
+
+### t2m_inside_simplified_finland — Clip to simplified country polygon
+
+**Input:** [`test/input/t2m_inside_simplified_finland.get`](../test/input/t2m_inside_simplified_finland.get)
+
+```
+GET /dali?customer=test&product=t2m_inside_simplified_finland&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `t2m_inside_simplified_finland` | Product JSON: [`test/dali/customers/test/products/t2m_inside_simplified_finland.json`](../test/dali/customers/test/products/t2m_inside_simplified_finland.json) |
+
+Same as above but uses a `mindistance` tolerance to simplify the clip polygon, producing a smoother (less precise) boundary and faster rendering.
+
+**Output:**
+
+![t2m_inside_simplified_finland](images/dali/t2m_inside_simplified_finland.png)
+
+---
+
+### t2m_outside_finland — Clip to outside country
+
+**Input:** [`test/input/t2m_outside_finland.get`](../test/input/t2m_outside_finland.get)
+
+```
+GET /dali?customer=test&product=t2m_outside_finland&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `t2m_outside_finland` | Product JSON: [`test/dali/customers/test/products/t2m_outside_finland.json`](../test/dali/customers/test/products/t2m_outside_finland.json) |
+
+Uses `"outside"` to clip isobands to the area outside Finland — the inverse of `t2m_inside_finland`.
+
+**Output:**
+
+![t2m_outside_finland](images/dali/t2m_outside_finland.png)
+
+---
+
+### t2m_inside_rain — Clip isobands to rain area
+
+**Input:** [`test/input/t2m_inside_rain.get`](../test/input/t2m_inside_rain.get)
+
+```
+GET /dali?customer=test&product=t2m_inside_rain&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `t2m_inside_rain` | Product JSON: [`test/dali/customers/test/products/t2m_inside_rain.json`](../test/dali/customers/test/products/t2m_inside_rain.json) |
+
+Clips temperature isobands to areas where precipitation exceeds 0 mm/h (the rain area).  The `inside` polygon is derived dynamically from another data layer rather than from a static geographic boundary.
+
+**Output:**
+
+![t2m_inside_rain](images/dali/t2m_inside_rain.png)
+
+---
+
+### t2m_lines_inside_rain — Isolines clipped to rain area
+
+**Input:** [`test/input/t2m_lines_inside_rain.get`](../test/input/t2m_lines_inside_rain.get)
+
+```
+GET /dali?customer=test&product=t2m_lines_inside_rain&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `t2m_lines_inside_rain` | Product JSON: [`test/dali/customers/test/products/t2m_lines_inside_rain.json`](../test/dali/customers/test/products/t2m_lines_inside_rain.json) |
+
+Temperature isolines (not isobands) are clipped to the rain area.  Shows that the `inside` clipping mechanism works equally for line layers.
+
+**Output:**
+
+![t2m_lines_inside_rain](images/dali/t2m_lines_inside_rain.png)
+
+---
+
+### frost_inside_simplified_finland — Frost probability inside Finland
+
+**Input:** [`test/input/frost_inside_simplified_finland.get`](../test/input/frost_inside_simplified_finland.get)
+
+```
+GET /dali?customer=test&product=frost_inside_simplified_finland&time=201604140000 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `frost_inside_simplified_finland` | Product JSON: [`test/dali/customers/test/products/frost_inside_simplified_finland.json`](../test/dali/customers/test/products/frost_inside_simplified_finland.json) |
+| `time` | `201604140000` | Valid time: 2016-04-14 00:00 UTC |
+
+Renders `FrostProbability` isobands from the `ground` producer at 1200×1200 px in EPSG:4326.  Uses `"inside": "ref:refs.finland"` where the `refs.finland` entry queries the Natural Earth countries table with `iso_a2 IN ('FI','AX')` and a `mindistance` simplification tolerance.
+
+**Output:**
+
+![frost_inside_simplified_finland](images/dali/frost_inside_simplified_finland.png)
+
+---
+
+## Pressure Level and Elevation Selection
+
+### t2m_level_* — Named pressure levels
+
+**Input files:** [`test/input/t2m_level_1000.get`](../test/input/t2m_level_1000.get), [`test/input/t2m_level_850.get`](../test/input/t2m_level_850.get), [`test/input/t2m_level_300.get`](../test/input/t2m_level_300.get)
+
+```
+GET /dali?customer=test&product=t2m_pressurelevel&time=20080909T1200&level=1000 HTTP/1.0
+GET /dali?customer=test&product=t2m_pressurelevel&time=20080909T1200&level=850  HTTP/1.0
+GET /dali?customer=test&product=t2m_pressurelevel&time=20080909T1200&level=300  HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `t2m_pressurelevel` | Product JSON: [`test/dali/customers/test/products/t2m_pressurelevel.json`](../test/dali/customers/test/products/t2m_pressurelevel.json) |
+| `time` | `20080909T1200` | Valid time: 2008-09-09 12:00 UTC |
+| `level` | `1000` / `850` / `300` | Selects the pressure level in hPa from the `ecmwf_skandinavia_painepinta` producer |
+
+The `level` parameter selects a pressure level slice; the producer must have data for that level.
+
+| Level | Output |
+|-------|--------|
+| 1000 hPa | ![t2m_level_1000](images/dali/t2m_level_1000.png) |
+| 850 hPa | ![t2m_level_850](images/dali/t2m_level_850.png) |
+| 300 hPa | ![t2m_level_300](images/dali/t2m_level_300.png) |
+
+---
+
+### t2m_elevation_* — Elevation in metres
+
+**Input files:** [`test/input/t2m_elevation_1000.get`](../test/input/t2m_elevation_1000.get), [`test/input/t2m_elevation_850.get`](../test/input/t2m_elevation_850.get), [`test/input/t2m_elevation_300.get`](../test/input/t2m_elevation_300.get)
+
+```
+GET /dali?customer=test&product=t2m_pressurelevel&time=20080909T1200&elevation=1000 HTTP/1.0
+GET /dali?customer=test&product=t2m_pressurelevel&time=20080909T1200&elevation=850  HTTP/1.0
+GET /dali?customer=test&product=t2m_pressurelevel&time=20080909T1200&elevation=300  HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `elevation` | `1000` / `850` / `300` | Selects the level using the `elevation` parameter (in metres or hPa depending on data convention) |
+
+The `elevation` parameter is an alternative to `level`; which one is applicable depends on the data source's level type convention.
+
+| Elevation | Output |
+|-----------|--------|
+| 1000 m | ![t2m_elevation_1000](images/dali/t2m_elevation_1000.png) |
+| 850 m | ![t2m_elevation_850](images/dali/t2m_elevation_850.png) |
+| 300 m | ![t2m_elevation_300](images/dali/t2m_elevation_300.png) |
+
+---
+
+### high_resolution — High resolution rendering
+
+**Input:** [`test/input/high_resolution.get`](../test/input/high_resolution.get)
+
+```
+GET /dali?customer=test&product=high_resolution&time=202006051200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `high_resolution` | Product JSON: [`test/dali/customers/test/products/high_resolution.json`](../test/dali/customers/test/products/high_resolution.json) |
+| `time` | `202006051200` | Valid time: 2020-06-05 12:00 UTC |
+
+Tests rendering of a high-resolution model grid (e.g. HARMONIE/AROME).  Listed in `.testignore` as a debugging test case with non-deterministic output in CI.
+
+*No reference output image available.*
+
+---
+
+## Multiple Views and Side-by-Side Products
+
+### t2m_twice — Two views side by side
+
+**Input:** [`test/input/t2m_twice.get`](../test/input/t2m_twice.get)
+
+```
+GET /dali?customer=test&product=t2m_twice&time=200808050300&v2.time_offset=1440 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `t2m_twice` | Product JSON: [`test/dali/customers/test/products/t2m_twice.json`](../test/dali/customers/test/products/t2m_twice.json) |
+| `v2.time_offset` | `1440` | Advances the valid time of view 2 by 1440 minutes (24 hours) |
+
+The product defines two 500×500 px views (`v1`, `v2`) side by side in a 1030×520 canvas.  Each view includes temperature isobands, isolines, and a time label.  The URL overrides `v2.time_offset` to show T+24 h in the second panel.
+
+**Output:**
+
+![t2m_twice](images/dali/t2m_twice.png)
+
+---
+
+### t2m_twice_altered — Transformed second view
+
+**Input:** [`test/input/t2m_twice_altered.get`](../test/input/t2m_twice_altered.get)
+
+```
+GET /dali?customer=test&product=t2m_twice&time=200808050300
+    &v2.time_offset=1440
+    &v2.attributes.transform=translate%28500,1%29+rotate%2830%29+scale%280.75%29
+    &v1.attributes.filter=url%28#shadow%29
+    &v2.attributes.filter=url%28#shadow%29 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `v2.attributes.transform` | `translate(500,1) rotate(30) scale(0.75)` | Applies an SVG transform to view 2: shifted, rotated 30°, scaled 75% |
+| `v1.attributes.filter` | `url(#shadow)` | Adds a drop-shadow filter to view 1 |
+| `v2.attributes.filter` | `url(#shadow)` | Adds a drop-shadow filter to view 2 |
+
+Demonstrates that SVG attributes (including `transform` and `filter`) can be set on any view via URL overrides.  The URL-encoded values `%28` = `(`, `%29` = `)`.
+
+**Output:**
+
+![t2m_twice_altered](images/dali/t2m_twice_altered.png)
+
+---
+
+### t2m_twice_margins — Views with margins (unclipped)
+
+**Input:** [`test/input/t2m_twice_margins.get`](../test/input/t2m_twice_margins.get)
+
+```
+GET /dali?customer=test&product=t2m_twice&time=200808050300
+    &v2.time_offset=1440
+    &v1.clip=0&v2.clip=0
+    &v1.margin=5&v2.margin=10
+    &projection.place=Helsinki&projection.resolution=1 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `v1.clip` | `0` | Disables clipping for view 1 (data may extend beyond the view boundary) |
+| `v2.clip` | `0` | Disables clipping for view 2 |
+| `v1.margin` | `5` | Adds a 5-pixel margin around view 1's data extent |
+| `v2.margin` | `10` | Adds a 10-pixel margin around view 2's data extent |
+| `projection.place` | `Helsinki` | Centres the projection on Helsinki |
+| `projection.resolution` | `1` | Sets projection resolution to 1 km/px |
+
+**Output:**
+
+![t2m_twice_margins](images/dali/t2m_twice_margins.png)
+
+---
+
+### t2m_twice_margins_clipped — Views with margins (clipped)
+
+**Input:** [`test/input/t2m_twice_margins_clipped.get`](../test/input/t2m_twice_margins_clipped.get)
+
+```
+GET /dali?customer=test&product=t2m_twice&time=200808050300
+    &v2.time_offset=1440
+    &v1.clip=1&v2.clip=1
+    &v1.margin=5&v2.margin=10
+    &projection.place=Helsinki&projection.resolution=1 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `v1.clip` | `1` | Enables clipping for view 1 |
+| `v2.clip` | `1` | Enables clipping for view 2 |
+
+Same as `t2m_twice_margins` but clipping is re-enabled.  Layers are clipped to the view boundary even though a margin is specified.
+
+**Output:**
+
+![t2m_twice_margins_clipped](images/dali/t2m_twice_margins_clipped.png)
+
+---
+
+### resolution — View-level projection resolution
+
+**Input:** [`test/input/resolution.get`](../test/input/resolution.get)
+
+```
+GET /dali?customer=test&product=resolution&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `resolution` | Product JSON: [`test/dali/customers/test/products/resolution.json`](../test/dali/customers/test/products/resolution.json) |
+
+Two 500×500 views centred on Finland are placed side by side, each with a different `resolution` setting in their `projection` block (2.5 and 1.5 km/px).  Map layers use `minresolution` and `maxresolution` to select detail levels: coarse data is shown in black for coarse resolutions, fine data in red for fine resolutions.
+
+**Output:**
+
+![resolution](images/dali/resolution.png)
+
+---
+
+### ely_overlay — Multi-customer overlay
+
+**Input:** [`test/input/ely_overlay.get`](../test/input/ely_overlay.get)
+
+```
+GET /dali?customer=ely&product=temperatureoverlay&time=200808080000&type=svg HTTP/1.1
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `customer` | `ely` | Selects the `ely` customer directory (separate from `test`) |
+| `product` | `temperatureoverlay` | Product JSON: [`test/dali/customers/ely/products/temperatureoverlay.json`](../test/dali/customers/ely/products/temperatureoverlay.json) |
+| `type` | `svg` | SVG output |
+
+A second customer (`ely`) demonstrating that multiple customer configurations can coexist.  This overlay product uses a `number` layer with a masked legend background.
+
+**Output:**
+
+![ely_overlay](images/dali/ely_overlay.png)
+
+---
+
+## Time Layer and Timezone
+
+### timelayer — Time annotation
+
+**Input:** [`test/input/timelayer.get`](../test/input/timelayer.get)
+
+```
+GET /dali?customer=test&product=timelayer&time=200808051200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `timelayer` | Product JSON: [`test/dali/customers/test/products/timelayer.json`](../test/dali/customers/test/products/timelayer.json) |
+| `time` | `200808051200` | Valid time: 2008-08-05 12:00 UTC |
+
+The `time` layer renders the product's valid time as formatted text (e.g. `"%Y-%m-%d %H:%M"`) at a specified position in the SVG.  The product uses `"timestamp": "validtime"` and `"timezone": "UTC"`.
+
+**Output:**
+
+![timelayer](images/dali/timelayer.png)
+
+---
+
+### timezone — Time in local timezone
+
+**Input:** [`test/input/timezone.get`](../test/input/timezone.get)
+
+```
+GET /dali?customer=test&product=timelayer&time=200808051500&tz=Europe/Helsinki HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `time` | `200808051500` | Valid time: 2008-08-05 15:00 UTC |
+| `tz` | `Europe/Helsinki` | Overrides the display timezone for the time layer; 15:00 UTC → 18:00 EEST |
+
+The `tz` URL parameter overrides the product's timezone for all `time` layer annotations in the response.
+
+**Output:**
+
+![timezone](images/dali/timezone.png)
+
+---
+
+## Observation Numbers
+
+### temperature_fmisid — Station temperatures by FMI ID
+
+**Input:** [`test/input/temperature_fmisid.get`](../test/input/temperature_fmisid.get)
+
+```
+GET /dali?customer=test&product=temperature_fmisid&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `temperature_fmisid` | Product JSON: [`test/dali/customers/test/products/temperature_fmisid.json`](../test/dali/customers/test/products/temperature_fmisid.json) |
+| `time` | `200808050300` | Valid time: 2008-08-05 03:00 UTC |
+
+Plots temperature observations at a hand-picked list of FMI station IDs (`fmisid`).  Individual stations may override the default label offset (`dx`, `dy`).  Background: white fill + Natural Earth country borders.
+
+**Output:**
+
+![temperature_fmisid](images/dali/temperature_fmisid.png)
+
+---
+
+### opendata_temperature_fmisid — Opendata station temperatures
+
+**Input:** [`test/input/opendata_temperature_fmisid.get`](../test/input/opendata_temperature_fmisid.get)
+
+```
+GET /dali?customer=test&product=opendata_temperature_fmisid&time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `opendata_temperature_fmisid` | Product JSON: [`test/dali/customers/test/products/opendata_temperature_fmisid.json`](../test/dali/customers/test/products/opendata_temperature_fmisid.json) |
+| `time` | `20130805T1500` | Valid time: 2013-08-05 15:00 UTC (ISO 8601 compact format) |
+
+Same concept as `temperature_fmisid` but using the `opendata` producer from the Finnish Meteorological Institute.
+
+**Output:**
+
+![opendata_temperature_fmisid](images/dali/opendata_temperature_fmisid.png)
+
+---
+
+### opendata_temperature_fmisid_shift — Station numbers with label offset
+
+**Input:** [`test/input/opendata_temperature_fmisid_shift.get`](../test/input/opendata_temperature_fmisid_shift.get)
+
+```
+GET /dali?customer=test&product=opendata_temperature_fmisid_shift&time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `opendata_temperature_fmisid_shift` | Product JSON: [`test/dali/customers/test/products/opendata_temperature_fmisid_shift.json`](../test/dali/customers/test/products/opendata_temperature_fmisid_shift.json) |
+
+Station labels are systematically shifted (`dx`, `dy`) to reduce overlap with symbols.
+
+**Output:**
+
+![opendata_temperature_fmisid_shift](images/dali/opendata_temperature_fmisid_shift.png)
+
+---
+
+### opendata_temperature_grid — Grid-spaced observation numbers
+
+**Input:** [`test/input/opendata_temperature_grid.get`](../test/input/opendata_temperature_grid.get)
+
+```
+GET /dali?customer=test&product=opendata_temperature_grid&time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `opendata_temperature_grid` | Product JSON: [`test/dali/customers/test/products/opendata_temperature_grid.json`](../test/dali/customers/test/products/opendata_temperature_grid.json) |
+
+Uses `"positions": {"layout": "grid", "dx": 30, "dy": 30}` to place observation values at regular pixel intervals, thinning dense station networks.
+
+**Output:**
+
+![opendata_temperature_grid](images/dali/opendata_temperature_grid.png)
+
+---
+
+### opendata_temperature_keyword — Keyword-selected stations
+
+**Input:** [`test/input/opendata_temperature_keyword.get`](../test/input/opendata_temperature_keyword.get)
+
+```
+GET /dali?customer=test&product=opendata_temperature_keyword&time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `opendata_temperature_keyword` | Product JSON: [`test/dali/customers/test/products/opendata_temperature_keyword.json`](../test/dali/customers/test/products/opendata_temperature_keyword.json) |
+
+Selects stations by keyword (administrative classification such as county or municipality) rather than by explicit FMI station IDs.
+
+**Output:**
+
+![opendata_temperature_keyword](images/dali/opendata_temperature_keyword.png)
+
+---
+
+### ecmwf_data_numbers — ECMWF grid point values
+
+**Input:** [`test/input/ecmwf_data_numbers.get`](../test/input/ecmwf_data_numbers.get)
+
+```
+GET /dali?customer=test&product=ecmwf_data_numbers&time=201503131200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `ecmwf_data_numbers` | Product JSON: [`test/dali/customers/test/products/ecmwf_data_numbers.json`](../test/dali/customers/test/products/ecmwf_data_numbers.json) |
+| `time` | `201503131200` | Valid time: 2015-03-13 12:00 UTC |
+
+Plots temperature values at regular grid intervals from the ECMWF surface analysis (`ecmwf_maailma_pinta`) over Europe.
+
+**Output:**
+
+![ecmwf_data_numbers](images/dali/ecmwf_data_numbers.png)
+
+---
+
+### ecmwfpoint_data_numbers — ECMWF point values
+
+**Input:** [`test/input/ecmwfpoint_data_numbers.get`](../test/input/ecmwfpoint_data_numbers.get)
+
+```
+GET /dali?customer=test&product=ecmwfpoint_data_numbers&time=200808051200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `ecmwfpoint_data_numbers` | Product JSON: [`test/dali/customers/test/products/ecmwfpoint_data_numbers.json`](../test/dali/customers/test/products/ecmwfpoint_data_numbers.json) |
+| `time` | `200808051200` | Valid time: 2008-08-05 12:00 UTC |
+
+Plots ECMWF model values at specific geographic point locations rather than a regular grid.
+
+**Output:**
+
+![ecmwfpoint_data_numbers](images/dali/ecmwfpoint_data_numbers.png)
+
+---
+
+### ecmwf_world_numbers — ECMWF global grid values
+
+**Input:** [`test/input/ecmwf_world_numbers.get`](../test/input/ecmwf_world_numbers.get)
+
+```
+GET /dali?customer=test&product=ecmwf_world_numbers&time=201503131200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `ecmwf_world_numbers` | Product JSON: [`test/dali/customers/test/products/ecmwf_world_numbers.json`](../test/dali/customers/test/products/ecmwf_world_numbers.json) |
+
+Plots ECMWF global surface temperature values at grid intervals on a world map.
+
+**Output:**
+
+![ecmwf_world_numbers](images/dali/ecmwf_world_numbers.png)
+
+---
+
+### aviation_numbers — Aviation temperature numbers
+
+**Input:** [`test/input/aviation_numbers.get`](../test/input/aviation_numbers.get)
+
+```
+GET /dali?customer=test&product=aviation_numbers&time=201503131200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `aviation_numbers` | Product JSON: [`test/dali/customers/test/products/aviation_numbers.json`](../test/dali/customers/test/products/aviation_numbers.json) |
+| `time` | `201503131200` | Valid time: 2015-03-13 12:00 UTC |
+
+Renders ECMWF temperature isobands over the North Atlantic aviation area (EPSG:4326, 62.5–75°N, 15°W–37.5°E) and overlays integer temperature values at a 20×20 px grid with alternating 10-pixel row offsets (`ddx`).
+
+**Output:**
+
+![aviation_numbers](images/dali/aviation_numbers.png)
+
+---
+
+### aviation_numbers_multiple5 — Rounded-to-5 numbers
+
+**Input:** [`test/input/aviation_numbers_multiple5.get`](../test/input/aviation_numbers_multiple5.get)
+
+```
+GET /dali?customer=test&product=aviation_numbers_multiple5&time=201503131200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `aviation_numbers_multiple5` | Product JSON: [`test/dali/customers/test/products/aviation_numbers_multiple5.json`](../test/dali/customers/test/products/aviation_numbers_multiple5.json) |
+
+Like `aviation_numbers` but values are rounded to the nearest 5 (ICAO convention: temperatures reported in multiples of 5°C on SIGWX charts).
+
+**Output:**
+
+![aviation_numbers_multiple5](images/dali/aviation_numbers_multiple5.png)
+
+---
+
+### synop_numbers — SYNOP observation values
+
+**Input:** [`test/input/synop_numbers.get`](../test/input/synop_numbers.get)
+
+```
+GET /dali?customer=test&product=synop_numbers&time=20081201T1200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `synop_numbers` | Product JSON: [`test/dali/customers/test/products/synop_numbers.json`](../test/dali/customers/test/products/synop_numbers.json) |
+| `time` | `20081201T1200` | Valid time: 2008-12-01 12:00 UTC |
+
+Plots SYNOP observation values from the `pal_skandinavia` producer at station locations.
+
+**Output:**
+
+![synop_numbers](images/dali/synop_numbers.png)
+
+---
+
+### monitoring — Health monitoring text
+
+**Input:** [`test/input/monitoring.get`](../test/input/monitoring.get)
+
+```
+GET /dali?customer=test&product=monitoring HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `monitoring` | Product JSON: [`test/dali/customers/test/products/monitoring.json`](../test/dali/customers/test/products/monitoring.json) |
+
+A minimal product that outputs a plain-text "OK" health-check response without requiring any weather data.  Used for liveness/readiness probes.
+
+**Output:**
+
+![monitoring](images/dali/monitoring.png)
+
+---
+
+## Observation Positions and Keyword Selection
+
+### latlon_positions — Lat/lon coordinate list
+
+**Input:** [`test/input/latlon_positions.get`](../test/input/latlon_positions.get)
+
+```
+GET /dali?customer=test&product=latlon_positions&time=201503131200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `latlon_positions` | Product JSON: [`test/dali/customers/test/products/latlon_positions.json`](../test/dali/customers/test/products/latlon_positions.json) |
+
+Plots observation values at positions specified as explicit latitude/longitude coordinate pairs in the product JSON.
+
+**Output:**
+
+![latlon_positions](images/dali/latlon_positions.png)
+
+---
+
+### latlon_positions_shifted — Positions with per-station label offset
+
+**Input:** [`test/input/latlon_positions_shifted.get`](../test/input/latlon_positions_shifted.get)
+
+```
+GET /dali?customer=test&product=latlon_positions_shifted&time=201503131200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `latlon_positions_shifted` | Product JSON: [`test/dali/customers/test/products/latlon_positions_shifted.json`](../test/dali/customers/test/products/latlon_positions_shifted.json) |
+
+Each coordinate entry includes an individual `dx`/`dy` offset for its label, allowing crowded stations to be legible without overlapping.
+
+**Output:**
+
+![latlon_positions_shifted](images/dali/latlon_positions_shifted.png)
+
+---
+
+### keyword — Keyword-based station selection
+
+**Input:** [`test/input/keyword.get`](../test/input/keyword.get)
+
+```
+GET /dali?customer=test&product=keyword&time=201503131200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `keyword` | Product JSON: [`test/dali/customers/test/products/keyword.json`](../test/dali/customers/test/products/keyword.json) |
+
+Selects stations using a `keyword` field (e.g. a municipality or region name) instead of numeric IDs.  The server resolves the keyword to matching stations.
+
+**Output:**
+
+![keyword](images/dali/keyword.png)
+
+---
+
+### keyword_shifted — Keyword stations with shifted labels
+
+**Input:** [`test/input/keyword_shifted.get`](../test/input/keyword_shifted.get)
+
+```
+GET /dali?customer=test&product=keyword_shifted&time=201503131200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `keyword_shifted` | Product JSON: [`test/dali/customers/test/products/keyword_shifted.json`](../test/dali/customers/test/products/keyword_shifted.json) |
+
+Same as `keyword` but with per-station label offsets (`dx`, `dy`) defined for each keyword entry.
+
+**Output:**
+
+![keyword_shifted](images/dali/keyword_shifted.png)
+
+---
+
+## Weather Symbols
+
+### opendata_temperature_symbols — SmartMet symbols
+
+**Input:** [`test/input/opendata_temperature_symbols.get`](../test/input/opendata_temperature_symbols.get)
+
+```
+GET /dali?customer=test&product=opendata_temperature_symbols&time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `opendata_temperature_symbols` | Product JSON: [`test/dali/customers/test/products/opendata_temperature_symbols.json`](../test/dali/customers/test/products/opendata_temperature_symbols.json) |
+| `time` | `20130805T1500` | Valid time: 2013-08-05 15:00 UTC |
+
+Plots SmartMet weather symbols at station locations combined with temperature numbers.
+
+**Output:**
+
+![opendata_temperature_symbols](images/dali/opendata_temperature_symbols.png)
+
+---
+
+### opendata_temperature_symbols_oddmitime — Odd-minute valid time
+
+**Input:** [`test/input/opendata_temperature_symbols_oddmitime.get`](../test/input/opendata_temperature_symbols_oddmitime.get)
+
+```
+GET /dali?customer=test&product=opendata_temperature_symbols&time=20130805T1502 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `time` | `20130805T1502` | Valid time: 15:02 UTC — not on the hour; tests nearest-time matching |
+
+Tests that the system correctly snaps to the nearest available observation when the requested time is between observation steps.
+
+**Output:**
+
+![opendata_temperature_symbols_oddmitime](images/dali/opendata_temperature_symbols_oddmitime.png)
+
+---
+
+### opendata_temperature_symbols_oddmitime_interval_back — Time interval backward
+
+**Input:** [`test/input/opendata_temperature_symbols_oddmitime_interval_back.get`](../test/input/opendata_temperature_symbols_oddmitime_interval_back.get)
+
+```
+GET /dali?customer=test&product=opendata_temperature_symbols&time=20130805T1502&interval_start=2 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `time` | `20130805T1502` | Non-round valid time |
+| `interval_start` | `2` | Accept data up to 2 minutes before the requested time |
+
+The `interval_start` parameter widens the time-matching window backward, useful for observations that arrive with a slight delay.
+
+**Output:**
+
+![opendata_temperature_symbols_oddmitime_interval_back](images/dali/opendata_temperature_symbols_oddmitime_interval_back.png)
+
+---
+
+### opendata_temperature_symbols_oddmitime_interval_forward — Time interval forward
+
+**Input:** [`test/input/opendata_temperature_symbols_oddmitime_interval_forward.get`](../test/input/opendata_temperature_symbols_oddmitime_interval_forward.get)
+
+```
+GET /dali?customer=test&product=opendata_temperature_symbols&time=20130805T1455&interval_end=5 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `time` | `20130805T1455` | Non-round valid time: 5 minutes before 15:00 |
+| `interval_end` | `5` | Accept data up to 5 minutes after the requested time |
+
+The `interval_end` parameter widens the window forward, allowing a request before the hour to still display the on-the-hour data.
+
+**Output:**
+
+![opendata_temperature_symbols_oddmitime_interval_forward](images/dali/opendata_temperature_symbols_oddmitime_interval_forward.png)
+
+---
+
+### smartsymbol — SmartMet numeric symbol codes
+
+**Input:** [`test/input/smartsymbol.get`](../test/input/smartsymbol.get)
+
+```
+GET /dali?customer=test&product=smartsymbol&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `smartsymbol` | Product JSON: [`test/dali/customers/test/products/smartsymbol.json`](../test/dali/customers/test/products/smartsymbol.json) |
+
+Renders the `SmartSymbol` parameter (integer code) as SVG symbol graphics at station locations.  Each code maps to an SVG symbol ID loaded from the symbol set.
+
+**Output:**
+
+![smartsymbol](images/dali/smartsymbol.png)
+
+---
+
+### smartsymbolnumber — Symbol codes as numbers
+
+**Input:** [`test/input/smartsymbolnumber.get`](../test/input/smartsymbolnumber.get)
+
+```
+GET /dali?customer=test&product=smartsymbolnumber&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `smartsymbolnumber` | Product JSON: [`test/dali/customers/test/products/smartsymbolnumber.json`](../test/dali/customers/test/products/smartsymbolnumber.json) |
+
+Plots the numeric `SmartSymbol` code as a text label (for debugging).
+
+**Output:**
+
+![smartsymbolnumber](images/dali/smartsymbolnumber.png)
+
+---
+
+### weather — Standard weather symbols
+
+**Input:** [`test/input/weather.get`](../test/input/weather.get)
+
+```
+GET /dali?customer=test&product=weather&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `weather` | Product JSON: [`test/dali/customers/test/products/weather.json`](../test/dali/customers/test/products/weather.json) |
+
+Renders a set of weather symbols loaded from SVG symbol files.  The product combines a map background with symbol layer.
+
+**Output:**
+
+![weather](images/dali/weather.png)
+
+---
+
+### weather-cssdef — Inline CSS override via URL
+
+**Input:** [`test/input/weather-cssdef.get`](../test/input/weather-cssdef.get)
+
+```
+GET /dali?customer=test&product=weather&time=200808050300
+    &defs.css.test%2Fsymbols%2Fdot=data:,.Dot%20%7B%20fill%3A%20yellow%3B%20stroke%3A%20none%20%7D%0A HTTP/1.0
+```
+
+| Parameter | Value (URL-decoded) | Description |
+|-----------|---------------------|-------------|
+| `defs.css.test/symbols/dot` | `data:,.Dot { fill: yellow; stroke: none }` | Inlines a CSS rule for the `dot` symbol class via a data-URL; overrides the file-based CSS |
+
+The `defs.css.{name}=data:,...` pattern allows injecting arbitrary CSS rules through the URL without modifying product files.
+
+**Output:**
+
+![weather-cssdef](images/dali/weather-cssdef.png)
+
+---
+
+### weather-symbol-dataurl-get — Inline SVG symbol override
+
+**Input:** [`test/input/weather-symbol-dataurl-get.get`](../test/input/weather-symbol-dataurl-get.get)
+
+```
+GET /dali?customer=test&product=weather-base64-symbol&time=200808050300
+    &defs.symbols.weather%2F1_II%2F1="data:;base64,PHN5bWJvbC..." HTTP/1.0
+```
+
+| Parameter | Value (URL-decoded) | Description |
+|-----------|---------------------|-------------|
+| `defs.symbols.weather/1_II/1` | `data:;base64,<base64-SVG>` | Replaces the SVG symbol `weather/1_II/1` with an inline base64-encoded SVG symbol (an orange circle) |
+
+Allows runtime replacement of individual symbols through the URL, e.g. for A/B testing or custom client-specific iconography.
+
+**Output:**
+
+![weather-symbol-dataurl-get](images/dali/weather-symbol-dataurl-get.png)
+
+---
+
+### weather-base64json-symbol — Base64 symbol from JSON
+
+**Input:** [`test/input/weather-base64json-symbol.get`](../test/input/weather-base64json-symbol.get)
+
+```
+GET /dali?customer=test&product=weather-base64-symbol&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `weather-base64-symbol` | Product JSON: [`test/dali/customers/test/products/weather-base64-symbol.json`](../test/dali/customers/test/products/weather-base64-symbol.json) |
+
+The product JSON itself specifies symbols using `data:;base64,…` data URLs (base64-encoded SVG), bypassing the filesystem symbol store.  Tests that the server can decode and embed inline symbols from the product definition.
+
+**Output:**
+
+![weather-base64json-symbol](images/dali/weather-base64json-symbol.png)
+
+---
+
+### symbols_coloured — Weather symbols in multiple projections
+
+The same `symbols_coloured` product is rendered in four different projections using the `projection.crs` URL override:
+
+**Inputs:**
+- [`test/input/symbols_coloured_native.get`](../test/input/symbols_coloured_native.get) — data native CRS
+- [`test/input/symbols_coloured_fin.get`](../test/input/symbols_coloured_fin.get) — `projection.crs=EPSG:3067`
+- [`test/input/symbols_coloured_webmercator.get`](../test/input/symbols_coloured_webmercator.get) — `projection.crs=EPSG:3857`
+- [`test/input/symbols_coloured_wgs84.get`](../test/input/symbols_coloured_wgs84.get) — `projection.crs=WGS84`
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `symbols_coloured` | Product JSON: [`test/dali/customers/test/products/symbols_coloured.json`](../test/dali/customers/test/products/symbols_coloured.json) |
+| `projection.crs` | *(varies)* | Overrides the product's CRS on-the-fly |
+
+Demonstrates that `projection.crs` can reproject any product at request time without modifying the JSON.
+
+| Projection | Output |
+|------------|--------|
+| Native CRS | ![symbols_coloured_native](images/dali/symbols_coloured_native.png) |
+| EPSG:3067 (ETRS-TM35FIN) | ![symbols_coloured_fin](images/dali/symbols_coloured_fin.png) |
+| EPSG:3857 (WebMercator) | ![symbols_coloured_webmercator](images/dali/symbols_coloured_webmercator.png) |
+| WGS84 | ![symbols_coloured_wgs84](images/dali/symbols_coloured_wgs84.png) |
+
+---
+
+## Flash and Lightning Symbols
+
+### flash_symbols — Combined flash symbols
+
+**Input:** [`test/input/flash_symbols.get`](../test/input/flash_symbols.get)
+
+```
+GET /dali?customer=test&product=flash_symbols&time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `flash_symbols` | Product JSON: [`test/dali/customers/test/products/flash_symbols.json`](../test/dali/customers/test/products/flash_symbols.json) |
+| `time` | `20130805T1500` | Valid time: 2013-08-05 15:00 UTC |
+
+Plots all flash (lightning) strike locations (cloud-to-ground and cloud-to-cloud) as symbols from the `flash` producer.
+
+**Output:**
+
+![flash_symbols](images/dali/flash_symbols.png)
+
+---
+
+### flash_cloud_symbols — Cloud flash only
+
+**Input:** [`test/input/flash_cloud_symbols.get`](../test/input/flash_cloud_symbols.get)
+
+```
+GET /dali?customer=test&product=flash_cloud_symbols&time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `flash_cloud_symbols` | Product JSON: [`test/dali/customers/test/products/flash_cloud_symbols.json`](../test/dali/customers/test/products/flash_cloud_symbols.json) |
+
+Plots only intra-cloud (IC) lightning flashes, filtering out cloud-to-ground (CG) strikes.
+
+**Output:**
+
+![flash_cloud_symbols](images/dali/flash_cloud_symbols.png)
+
+---
+
+### flash_ground_symbols — Ground flash only
+
+**Input:** [`test/input/flash_ground_symbols.get`](../test/input/flash_ground_symbols.get)
+
+```
+GET /dali?customer=test&product=flash_ground_symbols&time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `flash_ground_symbols` | Product JSON: [`test/dali/customers/test/products/flash_ground_symbols.json`](../test/dali/customers/test/products/flash_ground_symbols.json) |
+
+Plots only cloud-to-ground (CG) lightning strikes.
+
+**Output:**
+
+![flash_ground_symbols](images/dali/flash_ground_symbols.png)
+
+---
+
+### flash_cloud_and_ground_symbols — Separate symbol types
+
+**Input:** [`test/input/flash_cloud_and_ground_symbols.get`](../test/input/flash_cloud_and_ground_symbols.get)
+
+```
+GET /dali?customer=test&product=flash_cloud_and_ground_symbols&time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `flash_cloud_and_ground_symbols` | Product JSON: [`test/dali/customers/test/products/flash_cloud_and_ground_symbols.json`](../test/dali/customers/test/products/flash_cloud_and_ground_symbols.json) |
+
+Uses two symbol layers (one for IC, one for CG) with distinct symbol shapes and colours in a single product.
+
+**Output:**
+
+![flash_cloud_and_ground_symbols](images/dali/flash_cloud_and_ground_symbols.png)
+
+---
+
+## Wind Arrows
+
+### wind — Basic wind arrows
+
+**Input:** [`test/input/wind.get`](../test/input/wind.get)
+
+```
+GET /dali?customer=test&product=wind&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `wind` | Product JSON: [`test/dali/customers/test/products/wind.json`](../test/dali/customers/test/products/wind.json) |
+
+Renders wind direction arrows from `pal_skandinavia` using `"direction"` and `"speed"` parameters.  Arrow length scales with wind speed.
+
+**Output:**
+
+![wind](images/dali/wind.png)
+
+---
+
+### wind_margin — Wind arrows with map margin
+
+**Input:** [`test/input/wind_margin.get`](../test/input/wind_margin.get)
+
+```
+GET /dali?customer=test&product=wind_margin&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `wind_margin` | Product JSON: [`test/dali/customers/test/products/wind_margin.json`](../test/dali/customers/test/products/wind_margin.json) |
+
+Same wind arrows but with a map area `margin` setting that extends the data area outside the nominal bounding box.
+
+**Output:**
+
+![wind_margin](images/dali/wind_margin.png)
+
+---
+
+### wind_minrotationspeed — Arrow rotation threshold
+
+**Input:** [`test/input/wind_minrotationspeed.get`](../test/input/wind_minrotationspeed.get)
+
+```
+GET /dali?customer=test&product=wind&time=200808050300&l3.minrotationspeed=10 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `l3.minrotationspeed` | `10` | Arrows for layer `l3` are only rotated (to point in the wind direction) when wind speed exceeds 10 m/s; calmer arrows remain pointing north |
+
+The `minrotationspeed` threshold prevents cluttered arrow directions at very low wind speeds.
+
+**Output:**
+
+![wind_minrotationspeed](images/dali/wind_minrotationspeed.png)
+
+---
+
+### wind_scaled — Scaled wind arrows
+
+**Input:** [`test/input/wind_scaled.get`](../test/input/wind_scaled.get)
+
+```
+GET /dali?customer=test&product=wind_scaled&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `wind_scaled` | Product JSON: [`test/dali/customers/test/products/wind_scaled.json`](../test/dali/customers/test/products/wind_scaled.json) |
+
+Uses an explicit `"scale"` factor to map wind speed to arrow length.
+
+**Output:**
+
+![wind_scaled](images/dali/wind_scaled.png)
+
+---
+
+### wind_without_speed — Direction-only arrows
+
+**Input:** [`test/input/wind_without_speed.get`](../test/input/wind_without_speed.get)
+
+```
+GET /dali?customer=test&product=wind_without_speed&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `wind_without_speed` | Product JSON: [`test/dali/customers/test/products/wind_without_speed.json`](../test/dali/customers/test/products/wind_without_speed.json) |
+
+Arrows show direction only; all arrows are rendered at the same fixed length since no speed parameter is provided.
+
+**Output:**
+
+![wind_without_speed](images/dali/wind_without_speed.png)
+
+---
+
+### hirlam_wind — HIRLAM wind (direction + speed)
+
+**Input:** [`test/input/hirlam_wind.get`](../test/input/hirlam_wind.get)
+
+```
+GET /dali?customer=test&product=hirlam_wind&time=201804060600 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `hirlam_wind` | Product JSON: [`test/dali/customers/test/products/hirlam_wind.json`](../test/dali/customers/test/products/hirlam_wind.json) |
+| `time` | `201804060600` | Valid time: 2018-04-06 06:00 UTC |
+
+Arrow layer using meteorological `"direction": "WindDirection"` and `"speed": "WindSpeedMS"` parameters from the HIRLAM NWP model.
+
+**Output:**
+
+![hirlam_wind](images/dali/hirlam_wind.png)
+
+---
+
+### hirlam_uv — HIRLAM wind (U/V components)
+
+**Input:** [`test/input/hirlam_uv.get`](../test/input/hirlam_uv.get)
+
+```
+GET /dali?customer=test&product=hirlam_uv&time=201804060600 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `hirlam_uv` | Product JSON: [`test/dali/customers/test/products/hirlam_uv.json`](../test/dali/customers/test/products/hirlam_uv.json) |
+
+Arrow layer using Cartesian wind components `"u": "WindUMS"` and `"v": "WindVMS"` instead of direction/speed.  The server converts U/V to direction and magnitude internally.
+
+**Output:**
+
+![hirlam_uv](images/dali/hirlam_uv.png)
+
+---
+
+## Wind Barbs and Wind Roses
+
+### windbarb — Classic wind barbs
+
+**Input:** [`test/input/windbarb.get`](../test/input/windbarb.get)
+
+```
+GET /dali?customer=test&product=windbarb&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `windbarb` | Product JSON: [`test/dali/customers/test/products/windbarb.json`](../test/dali/customers/test/products/windbarb.json) |
+
+Renders standard meteorological wind barbs (staff + barbs/pennants encoding speed in knots).
+
+**Output:**
+
+![windbarb](images/dali/windbarb.png)
+
+---
+
+### windrose — Wind roses at stations
+
+**Input:** [`test/input/windrose.get`](../test/input/windrose.get)
+
+```
+GET /dali?customer=test&product=windrose&time=2013-08-05 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `windrose` | Product JSON: [`test/dali/customers/test/products/windrose.json`](../test/dali/customers/test/products/windrose.json) |
+| `time` | `2013-08-05` | Valid date: 2013-08-05 (ISO 8601 date-only format) |
+
+Renders wind roses at named coastal stations showing frequency distribution of wind direction and speed classes.  Each rose uses `starttimeoffset`/`endtimeoffset` to aggregate over a 24-hour window.  Station titles and connectors are customisable via CSS classes.
+
+**Output:**
+
+![windrose](images/dali/windrose.png)
+
+---
+
+## WAFS Aviation Charts
+
+WAFS (World Area Forecast System) products use ICAO aviation weather data at pressure levels.
+
+### wafs_temperature — Upper-level temperature
+
+**Input:** [`test/input/wafs_temperature.get`](../test/input/wafs_temperature.get)
+
+```
+GET /dali?customer=test&product=wafs_temperature&time=201601191800 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `wafs_temperature` | Product JSON: [`test/dali/customers/test/products/wafs_temperature.json`](../test/dali/customers/test/products/wafs_temperature.json) |
+| `time` | `201601191800` | Valid time: 2016-01-19 18:00 UTC |
+
+Temperature isobands at a WAFS pressure level (flight level) over the North Atlantic aviation area.
+
+**Output:**
+
+![wafs_temperature](images/dali/wafs_temperature.png)
+
+---
+
+### wafs_wind — Upper-level wind arrows
+
+**Input:** [`test/input/wafs_wind.get`](../test/input/wafs_wind.get)
+
+```
+GET /dali?customer=test&product=wafs_wind&time=201601191800 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `wafs_wind` | Product JSON: [`test/dali/customers/test/products/wafs_wind.json`](../test/dali/customers/test/products/wafs_wind.json) |
+
+Wind arrows at WAFS pressure level overlaid on a base map.
+
+**Output:**
+
+![wafs_wind](images/dali/wafs_wind.png)
+
+---
+
+### wafs_leveldata — Level data display
+
+**Input:** [`test/input/wafs_leveldata.get`](../test/input/wafs_leveldata.get)
+
+```
+GET /dali?customer=test&product=wafs_leveldata&time=201601191800 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `wafs_leveldata` | Product JSON: [`test/dali/customers/test/products/wafs_leveldata.json`](../test/dali/customers/test/products/wafs_leveldata.json) |
+
+Displays numeric values at grid points for WAFS level data.
+
+**Output:**
+
+![wafs_leveldata](images/dali/wafs_leveldata.png)
+
+---
+
+### wafs_windbarb — WAFS wind barbs
+
+**Input:** [`test/input/wafs_windbarb.get`](../test/input/wafs_windbarb.get)
+
+```
+GET /dali?customer=test&product=wafs_windbarb&time=201601191800 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `wafs_windbarb` | Product JSON: [`test/dali/customers/test/products/wafs_windbarb.json`](../test/dali/customers/test/products/wafs_windbarb.json) |
+
+Standard wind barbs at a WAFS flight level.
+
+**Output:**
+
+![wafs_windbarb](images/dali/wafs_windbarb.png)
+
+---
+
+### wafs_windbarb_shifted — Wind barbs with label offset
+
+**Input:** [`test/input/wafs_windbarb_shifted.get`](../test/input/wafs_windbarb_shifted.get)
+
+```
+GET /dali?customer=test&product=wafs_windbarb_shifted&time=201601191800 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `wafs_windbarb_shifted` | Product JSON: [`test/dali/customers/test/products/wafs_windbarb_shifted.json`](../test/dali/customers/test/products/wafs_windbarb_shifted.json) |
+
+WAFS wind barbs with a global label offset (`dx`, `dy`) applied to all barb positions.
+
+**Output:**
+
+![wafs_windbarb_shifted](images/dali/wafs_windbarb_shifted.png)
+
+---
+
+### wafs_windbarb_graticulefill — Wind barbs with graticule fill
+
+**Input:** [`test/input/wafs_windbarb_graticulefill.get`](../test/input/wafs_windbarb_graticulefill.get)
+
+```
+GET /dali?customer=test&product=wafs_windbarb_graticulefill&time=201601191800 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `wafs_windbarb_graticulefill` | Product JSON: [`test/dali/customers/test/products/wafs_windbarb_graticulefill.json`](../test/dali/customers/test/products/wafs_windbarb_graticulefill.json) |
+
+Adds temperature-coloured filled rectangles in the graticule grid cells behind the wind barbs — a compact SIGWX-style layout.
+
+**Output:**
+
+![wafs_windbarb_graticulefill](images/dali/wafs_windbarb_graticulefill.png)
+
+---
+
+## Observations with Wind and Temperature
+
+### opendata_meteorological_wind_keyword — Wind by keyword
+
+**Input:** [`test/input/opendata_meteorological_wind_keyword.get`](../test/input/opendata_meteorological_wind_keyword.get)
+
+```
+GET /dali?customer=test&product=opendata_meteorological_wind_keyword&time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `opendata_meteorological_wind_keyword` | Product JSON: [`test/dali/customers/test/products/opendata_meteorological_wind_keyword.json`](../test/dali/customers/test/products/opendata_meteorological_wind_keyword.json) |
+
+Wind arrows at keyword-selected stations from the `opendata` producer.
+
+**Output:**
+
+![opendata_meteorological_wind_keyword](images/dali/opendata_meteorological_wind_keyword.png)
+
+---
+
+### opendata_meteorological_wind_keyword_plustemperatures — Wind + temperature
+
+**Input:** [`test/input/opendata_meteorological_wind_keyword_plustemperatures.get`](../test/input/opendata_meteorological_wind_keyword_plustemperatures.get)
+
+```
+GET /dali?customer=test&product=opendata_meteorological_wind_keyword_plustemperatures&time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `opendata_meteorological_wind_keyword_plustemperatures` | Product JSON: [`test/dali/customers/test/products/opendata_meteorological_wind_keyword_plustemperatures.json`](../test/dali/customers/test/products/opendata_meteorological_wind_keyword_plustemperatures.json) |
+
+Combines wind arrows and temperature numbers at keyword-selected stations.
+
+**Output:**
+
+![opendata_meteorological_wind_keyword_plustemperatures](images/dali/opendata_meteorological_wind_keyword_plustemperatures.png)
+
+---
+
+### opendata_meteorological_wind_grid — Wind on grid
+
+**Input:** [`test/input/opendata_meteorological_wind_grid.get`](../test/input/opendata_meteorological_wind_grid.get)
+
+```
+GET /dali?customer=test&product=opendata_meteorological_wind_grid&time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `opendata_meteorological_wind_grid` | Product JSON: [`test/dali/customers/test/products/opendata_meteorological_wind_grid.json`](../test/dali/customers/test/products/opendata_meteorological_wind_grid.json) |
+
+Wind arrows placed at regular pixel-grid intervals (`layout: "grid"`), thinning the station network for legibility.
+
+**Output:**
+
+![opendata_meteorological_wind_grid](images/dali/opendata_meteorological_wind_grid.png)
+
+---
+
+### opendata_meteorological_wind_data_plustemperatures — Wind + temperature data
+
+**Input:** [`test/input/opendata_meteorological_wind_data_plustemperatures.get`](../test/input/opendata_meteorological_wind_data_plustemperatures.get)
+
+```
+GET /dali?customer=test&product=opendata_meteorological_wind_data_plustemperatures&time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `opendata_meteorological_wind_data_plustemperatures` | Product JSON: [`test/dali/customers/test/products/opendata_meteorological_wind_data_plustemperatures.json`](../test/dali/customers/test/products/opendata_meteorological_wind_data_plustemperatures.json) |
+
+Combines wind arrows and temperature numbers sourced from the same OpenData observation query.
+
+**Output:**
+
+![opendata_meteorological_wind_data_plustemperatures](images/dali/opendata_meteorological_wind_data_plustemperatures.png)
+
+---
+
+### opendata_meteorological_wind_data_plustemperatures_aggregate_max — Time-aggregated max wind
+
+**Input:** [`test/input/opendata_meteorological_wind_data_plustemperatures_aggregate_max.get`](../test/input/opendata_meteorological_wind_data_plustemperatures_aggregate_max.get)
+
+```
+GET /dali?customer=test&product=opendata_meteorological_wind_data_plustemperatures_aggregate_max&time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `opendata_meteorological_wind_data_plustemperatures_aggregate_max` | Product JSON: [`test/dali/customers/test/products/opendata_meteorological_wind_data_plustemperatures_aggregate_max.json`](../test/dali/customers/test/products/opendata_meteorological_wind_data_plustemperatures_aggregate_max.json) |
+
+Uses SmartMet time-aggregation function syntax to compute maximum wind speed over a trailing 12-hour window: `"speed": "nanmax_t(WindSpeedMS:12h:0h)"`.  The `nanmax_t` function aggregates over the time range ignoring NaN values.
+
+**Output:**
+
+![opendata_meteorological_wind_data_plustemperatures_aggregate_max](images/dali/opendata_meteorological_wind_data_plustemperatures_aggregate_max.png)
+
+---
+
+## Heatmap
+
+### heatmap — Kernel-density heatmap
+
+**Input:** [`test/input/heatmap.get`](../test/input/heatmap.get)
+
+```
+GET /dali?customer=test&product=heatmap&time=20130805T1500&l.heatmap.kernel=exp&l.heatmap.radius=40&l.heatmap.deviation=4 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `heatmap` | Product JSON: [`test/dali/customers/test/products/heatmap.json`](../test/dali/customers/test/products/heatmap.json) |
+| `time` | `20130805T1500` | Valid time: 2013-08-05 15:00 UTC |
+| `l.heatmap.kernel` | `exp` | Kernel function for density estimation (`exp` = exponential decay) |
+| `l.heatmap.radius` | `40` | Override: kernel radius in pixels (product default is 20) |
+| `l.heatmap.deviation` | `4` | Override: kernel deviation parameter (product default is 10.0) |
+
+The heatmap is generated by an `isoband` layer with a `"heatmap"` sub-block specifying `resolution`, `radius`, `kernel`, and `deviation`.  A kernel-density surface is computed from the observation point locations and then rendered as isobands.
+
+**Output:**
+
+![heatmap](images/dali/heatmap.png)
+
+---
+
+## Hovmoeller Diagrams
+
+Hovmoeller diagrams show a meteorological parameter plotted over two axes, one of which is time.
+
+### hovmoeller_geoph500 — Geopotential: time × longitude
+
+**Input:** [`test/input/hovmoeller_geoph500.get`](../test/input/hovmoeller_geoph500.get)
+
+```
+GET /dali?customer=test&product=hovmoeller_geoph500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `hovmoeller_geoph500` | Product JSON: [`test/dali/customers/test/products/hovmoeller_geoph500.json`](../test/dali/customers/test/products/hovmoeller_geoph500.json) |
+
+`"direction": "time_lon"` — time on Y-axis, longitude on X-axis at fixed `"latitude": 60.0`.  Plots 500 hPa geopotential height isobands over `lon_min`/`lon_max` = 5°–35°E.
+
+**Output:**
+
+![hovmoeller_geoph500](images/dali/hovmoeller_geoph500.png)
+
+---
+
+### hovmoeller_geoph500_time_lat — Geopotential: time × latitude
+
+**Input:** [`test/input/hovmoeller_geoph500_time_lat.get`](../test/input/hovmoeller_geoph500_time_lat.get)
+
+```
+GET /dali?customer=test&product=hovmoeller_geoph500_time_lat HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `hovmoeller_geoph500_time_lat` | Product JSON: [`test/dali/customers/test/products/hovmoeller_geoph500_time_lat.json`](../test/dali/customers/test/products/hovmoeller_geoph500_time_lat.json) |
+
+`"direction": "time_lat"` — time on Y-axis, latitude on X-axis at fixed `"longitude": 20.0`.
+
+**Output:**
+
+![hovmoeller_geoph500_time_lat](images/dali/hovmoeller_geoph500_time_lat.png)
+
+---
+
+### hovmoeller_temperature_time_level — Temperature: time × pressure level
+
+**Input:** [`test/input/hovmoeller_temperature_time_level.get`](../test/input/hovmoeller_temperature_time_level.get)
+
+```
+GET /dali?customer=test&product=hovmoeller_temperature_time_level HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `hovmoeller_temperature_time_level` | Product JSON: [`test/dali/customers/test/products/hovmoeller_temperature_time_level.json`](../test/dali/customers/test/products/hovmoeller_temperature_time_level.json) |
+
+`"direction": "time_level"` — time on X-axis, pressure level on Y-axis at a fixed geographic point.  Shows the vertical temperature structure over time (a time-height cross-section).
+
+**Output:**
+
+![hovmoeller_temperature_time_level](images/dali/hovmoeller_temperature_time_level.png)
+
+---
+
+## Graticule
+
+### graticule — Basic lat/lon grid
+
+**Input:** [`test/input/graticule.get`](../test/input/graticule.get)
+
+```
+GET /dali?customer=test&product=graticule HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `graticule` | Product JSON: [`test/dali/customers/test/products/graticule.json`](../test/dali/customers/test/products/graticule.json) |
+
+Two overlapping grids: a fine 1° grid (light, 0.2 px) skipping 10° multiples, and a coarse 10° grid (dark, 0.5 px).  Projection is inferred from the `kap` producer's native CRS.
+
+**Output:**
+
+![graticule](images/dali/graticule.png)
+
+---
+
+### graticule_goode — Graticule in Goode projection
+
+**Input:** [`test/input/graticule_goode.get`](../test/input/graticule_goode.get)
+
+```
+GET /dali?customer=test&product=graticule_goode HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `graticule_goode` | Product JSON: [`test/dali/customers/test/products/graticule_goode.json`](../test/dali/customers/test/products/graticule_goode.json) |
+
+A 10° graticule in the [Goode Interrupted Homolosine](https://proj.org/en/stable/operations/projections/igh.html) projection (`+proj=igh`).  Tests correct handling across the projection's interior discontinuities.
+
+**Output:**
+
+![graticule_goode](images/dali/graticule_goode.png)
+
+---
+
+### graticule_num_center — Centred labels
+
+**Input:** [`test/input/graticule_num_center.get`](../test/input/graticule_num_center.get)
+
+```
+GET /dali?customer=test&product=graticule_num_center HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `graticule_num_center` | Product JSON: [`test/dali/customers/test/products/graticule_num_center.json`](../test/dali/customers/test/products/graticule_num_center.json) |
+
+Graticule with `"labels": {"layout": "center"}` — degree values placed at the centres of grid lines with a rectangle background.
+
+**Output:**
+
+![graticule_num_center](images/dali/graticule_num_center.png)
+
+---
+
+### graticule_num_center_edge — Edge-centred labels
+
+**Input:** [`test/input/graticule_num_center_edge.get`](../test/input/graticule_num_center_edge.get)
+
+```
+GET /dali?customer=test&product=graticule_num_edge_center HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `graticule_num_edge_center` | Product JSON: [`test/dali/customers/test/products/graticule_num_edge_center.json`](../test/dali/customers/test/products/graticule_num_edge_center.json) |
+
+Graticule with `"layout": "edge_center"` — labels placed at the mid-point of each grid line where it intersects the map edge (frame), with a bordered rectangle background.
+
+**Output:**
+
+![graticule_num_center_edge](images/dali/graticule_num_center_edge.png)
+
+---
+
+### graticule_num_cross — Crossing-point labels
+
+**Input:** [`test/input/graticule_num_cross.get`](../test/input/graticule_num_cross.get)
+
+```
+GET /dali?customer=test&product=graticule_num_cross HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `graticule_num_cross` | Product JSON: [`test/dali/customers/test/products/graticule_num_cross.json`](../test/dali/customers/test/products/graticule_num_cross.json) |
+
+Graticule with `"layout": "cross"` — labels placed at every intersection of latitude and longitude grid lines.
+
+**Output:**
+
+![graticule_num_cross](images/dali/graticule_num_cross.png)
+
+---
+
+### graticule_ticks — Tick marks at frame
+
+**Input:** [`test/input/graticule_ticks.get`](../test/input/graticule_ticks.get)
+
+```
+GET /dali?customer=test&product=graticule_ticks HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `graticule_ticks` | Product JSON: [`test/dali/customers/test/products/graticule_ticks.json`](../test/dali/customers/test/products/graticule_ticks.json) |
+
+Uses `"layout": "ticks"` to draw only short tick marks at the map border where grid lines intersect, without drawing the full grid lines across the map.
+
+**Output:**
+
+![graticule_ticks](images/dali/graticule_ticks.png)
+
+---
+
+## Circles Layer
+
+The `circle` layer type draws SVG circles at named geographic locations.
+
+### circles — Concentric circles at cities
+
+**Input:** [`test/input/circles.get`](../test/input/circles.get)
+
+```
+GET /dali?customer=test&product=circles&time=201503131200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `circles` | Product JSON: [`test/dali/customers/test/products/circles.json`](../test/dali/customers/test/products/circles.json) |
+| `time` | `201503131200` | Valid time: 2015-03-13 12:00 UTC |
+
+Draws concentric rings around named cities (Helsinki, Tampere, Turku) over a Natural Earth map in EPSG:3035 (ETRS-LAEA).  Each `circle` layer entry specifies a `name` (resolved to coordinates via a geocoder) and a radius.
+
+**Output:**
+
+![circles](images/dali/circles.png)
+
+---
+
+### circles_labels_sw — Circle labels (SW anchor)
+
+**Input:** [`test/input/circles_labels_sw.get`](../test/input/circles_labels_sw.get)
+
+```
+GET /dali?customer=test&product=circles_labels_sw&time=201503131200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `circles_labels_sw` | Product JSON: [`test/dali/customers/test/products/circles_labels_sw.json`](../test/dali/customers/test/products/circles_labels_sw.json) |
+
+Adds city name labels to the circles, anchored at the south-west corner of each station.
+
+**Output:**
+
+![circles_labels_sw](images/dali/circles_labels_sw.png)
+
+---
+
+### circles_labels_tr — Circle labels (TR anchor)
+
+**Input:** [`test/input/circles_labels_tr.get`](../test/input/circles_labels_tr.get)
+
+```
+GET /dali?customer=test&product=circles_labels_tr&time=201503131200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `circles_labels_tr` | Product JSON: [`test/dali/customers/test/products/circles_labels_tr.json`](../test/dali/customers/test/products/circles_labels_tr.json) |
+
+Same as `circles_labels_sw` but labels are anchored at the top-right corner.
+
+**Output:**
+
+![circles_labels_tr](images/dali/circles_labels_tr.png)
+
+---
+
+## Fronts
+
+### fronts — Weather fronts
+
+**Input:** [`test/input/fronts.get`](../test/input/fronts.get)
+
+```
+GET /dali?customer=test&product=fronts&type=png&time=201503131200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `fronts` | Product JSON: [`test/dali/customers/test/products/fronts.json`](../test/dali/customers/test/products/fronts.json) |
+| `type` | `png` | Rasterised PNG output (700×500 px, 8-bit palette) |
+
+Renders weather fronts (cold, warm, occluded, stationary) in EPSG:3857 over a background map.  Uses the `fronts` layer type with CSS styling.
+
+**Output:**
+
+![fronts](images/dali/fronts.png)
+
+---
+
+## PostGIS Layer
+
+### ice — Ice chart from PostGIS
+
+**Input:** [`test/input/ice.get`](../test/input/ice.get)
+
+```
+GET /dali?customer=test&product=ice HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `ice` | Product JSON: [`test/dali/customers/test/products/ice.json`](../test/dali/customers/test/products/ice.json) |
+
+Renders Baltic Sea ice chart polygons from the `icemap` PostGIS database using `"layer_type": "postgis"`.  The PostGIS layer can read any geometry type (Polygon, MultiPolygon, LineString) and apply CSS fill/stroke styling.
+
+**Output:**
+
+![ice](images/dali/ice.png)
+
+---
+
+## WKT Layer
+
+### wkt — Well-Known Text geometry
+
+**Input:** [`test/input/wkt.get`](../test/input/wkt.get)
+
+```
+GET /dali?customer=test&product=wkt&time=201503131200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `wkt` | Product JSON: [`test/dali/customers/test/products/wkt.json`](../test/dali/customers/test/products/wkt.json) |
+| `time` | `201503131200` | Valid time: 2015-03-13 12:00 UTC |
+
+The `wkt` layer type renders arbitrary WKT (Well-Known Text) geometry strings (e.g. polygons, lines) stored in the product definition.  Geometries are projected to the map CRS and styled with CSS.
+
+**Output:**
+
+![wkt](images/dali/wkt.png)
+
+---
+
+## METAR Layer
+
+### metar_basic — Aviation METAR observations
+
+**Input:** [`test/input/metar_basic.get`](../test/input/metar_basic.get)
+
+```
+GET /dali?customer=test&product=metar_basic&time=201511170020&format=svg HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `metar_basic` | Product JSON: [`test/dali/customers/test/products/metar_basic.json`](../test/dali/customers/test/products/metar_basic.json) |
+| `time` | `201511170020` | Valid time: 2015-11-17 00:20 UTC |
+| `format` | `svg` | SVG output format |
+
+Uses `"layer_type": "metar"` with `"message_type": "METAR"` and `"message_format": "TAC"` to decode raw METAR reports stored as TAC (Traditional Alphanumeric Code) weather tokens.  Controls which elements to display: `show_station`, `show_wind`, `show_visibility`, `show_present_weather`, `show_sky_condition`, `show_temperature`.
+
+*No reference output image available (no test output file generated in CI).*
+
+---
+
+## Fire Weather
+
+### forestfire — Forest Fire Index isobands
+
+**Input:** [`test/input/forestfire.get`](../test/input/forestfire.get)
+
+```
+GET /dali?product=forestfire&time=20190207T0600 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `forestfire` | No `customer` specified — uses the default customer directory |
+| `time` | `20190207T0600` | Valid time: 2019-02-07 06:00 UTC |
+
+Renders `ForestFireIndex` isobands using `"extrapolation": 2` to fill in missing data near the domain boundaries.  The product uses the `forestfire` producer (separate from general synoptic producers).
+
+**Output:**
+
+![forestfire](images/dali/forestfire.png)
+
+---
+
+### grassfire — Grassfire risk by named region
+
+**Input:** [`test/input/grassfire.get`](../test/input/grassfire.get)
+
+```
+GET /dali?product=grassfire&time=20181212T0600 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `grassfire` | Uses default customer |
+| `time` | `20181212T0600` | Valid time: 2018-12-12 06:00 UTC |
+
+Renders grassfire risk levels using the `grassfire` layer type.  Regions are matched by named feature attributes (e.g. `"value": "Uusimaa"` matches the Uusimaa administrative area).
+
+**Output:**
+
+![grassfire](images/dali/grassfire.png)
+
+---
+
+### grassfire_automatic — Grassfire risk by attribute range
+
+**Input:** [`test/input/grassfire_automatic.get`](../test/input/grassfire_automatic.get)
+
+```
+GET /dali?product=grassfire_automatic&time=20181212T0600 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `grassfire_automatic` | Uses default customer |
+
+Like `grassfire` but regions are matched by numeric attribute ranges instead of named values — more flexible for data with numeric risk-class codes.
+
+*No reference output image available.*
+
+---
+
+## Text Layer
+
+### text — SVG text layer
+
+**Input:** [`test/input/text.get`](../test/input/text.get)
+
+```
+GET /dali?customer=test&product=text&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `text` | Product JSON: [`test/dali/customers/test/products/text.json`](../test/dali/customers/test/products/text.json) |
+
+The `text` layer type renders static or parameterised text strings as SVG `<text>` elements.  The product also demonstrates how `tag: "clipPath"` and `tag: "g"` layers are used to create inline clip regions.
+
+**Output:**
+
+![text](images/dali/text.png)
+
+---
+
+## World Map Products
+
+These products render global-scale model data in various projections.  Each family (ECMWF, GFS) covers a standard set of projections; Pacific-centred views are available for equidistant cylindrical and WGS84 projections.
+
+### ECMWF global temperature
+
+All EC world products use the `ecmwf_maailma_pinta` producer and a 1440×720 px canvas:
+
+| Test | Projection | CRS | Input |
+|------|-----------|-----|-------|
+| `ec_world_eqc` | Equidistant Cylindrical (Atlantic) | `EPSG:4087` | [`ec_world_eqc.get`](../test/input/ec_world_eqc.get) |
+| `ec_world_eqc_pacific` | Equidistant Cylindrical (Pacific, lon₀=180°) | `+init=epsg:4087 +lon_0=180` | [`ec_world_eqc_pacific.get`](../test/input/ec_world_eqc_pacific.get) |
+| `ec_world_webmercator` | Web Mercator | `EPSG:3857` | [`ec_world_webmercator.get`](../test/input/ec_world_webmercator.get) |
+| `ec_world_wgs84_atlantic` | Geographic WGS84 (Atlantic) | `+init=epsg:4326` | [`ec_world_wgs84_atlantic.get`](../test/input/ec_world_wgs84_atlantic.get) |
+| `ec_world_wgs84_pacific` | Geographic WGS84 (Pacific, lon_wrap=180) | `+init=epsg:4326 +lon_wrap=180` | [`ec_world_wgs84_pacific.get`](../test/input/ec_world_wgs84_pacific.get) |
+
+The `+lon_wrap=180` modifier shifts the longitude seam to the antimeridian so that the Pacific Ocean is unbroken.
+
+| Projection | Output |
+|-----------|--------|
+| EQC Atlantic | ![ec_world_eqc](images/dali/ec_world_eqc.png) |
+| EQC Pacific | ![ec_world_eqc_pacific](images/dali/ec_world_eqc_pacific.png) |
+| Web Mercator | ![ec_world_webmercator](images/dali/ec_world_webmercator.png) |
+| WGS84 Atlantic | ![ec_world_wgs84_atlantic](images/dali/ec_world_wgs84_atlantic.png) |
+| WGS84 Pacific | ![ec_world_wgs84_pacific](images/dali/ec_world_wgs84_pacific.png) |
+
+---
+
+### GFS global temperature
+
+All GFS world products use the `gfs` producer.  In addition to the five standard projections, GFS also includes polar, Goode, Natural Earth, and Near-side Perspective views:
+
+| Test | Projection | CRS |
+|------|-----------|-----|
+| `gfs_world_eqc` | EQC Atlantic | `+init=epsg:4087` |
+| `gfs_world_eqc_pacific` | EQC Pacific (lon₀=180°) | `+init=epsg:4087 +lon_0=180` |
+| `gfs_world_webmercator` | Web Mercator (Atlantic) | `EPSG:3857` |
+| `gfs_world_webmercator_pacific` | Web Mercator (Pacific bbox) | `EPSG:3857` |
+| `gfs_world_wgs84_atlantic` | Geographic WGS84 Atlantic | `+init=epsg:4326` |
+| `gfs_world_wgs84_pacific` | Geographic WGS84 Pacific | `+init=epsg:4326 +lon_wrap=180` |
+| `gfs_world_arctic` | Polar Stereographic (N) | `+proj=stere +lat_0=90` |
+| `gfs_world_antarctic` | Polar Stereographic (S) | `+proj=stere +lat_0=-90` |
+| `gfs_world_goode` | Goode Homolosine | `+proj=igh +lon_0=0` |
+| `gfs_world_natural_earth` | Natural Earth | `+proj=natearth` |
+| `gfs_world_perspective` | Near-side Perspective (h=3000 km) | `+proj=nsper +h=3000000 +lat_0=60 +lon_0=25` |
+| `gfs_world_stereographic` | Polar Stereographic (Europe) | `+proj=stere +lat_0=90 +lat_ts=60 +lon_0=20` |
+
+| Projection | Output |
+|-----------|--------|
+| EQC Atlantic | ![gfs_world_eqc](images/dali/gfs_world_eqc.png) |
+| EQC Pacific | ![gfs_world_eqc_pacific](images/dali/gfs_world_eqc_pacific.png) |
+| Web Mercator | ![gfs_world_webmercator](images/dali/gfs_world_webmercator.png) |
+| Web Mercator Pacific | ![gfs_world_webmercator_pacific](images/dali/gfs_world_webmercator_pacific.png) |
+| WGS84 Atlantic | ![gfs_world_wgs84_atlantic](images/dali/gfs_world_wgs84_atlantic.png) |
+| WGS84 Pacific | ![gfs_world_wgs84_pacific](images/dali/gfs_world_wgs84_pacific.png) |
+| Arctic | ![gfs_world_arctic](images/dali/gfs_world_arctic.png) |
+| Antarctic | ![gfs_world_antarctic](images/dali/gfs_world_antarctic.png) |
+| Goode Homolosine | ![gfs_world_goode](images/dali/gfs_world_goode.png) |
+| Natural Earth | ![gfs_world_natural_earth](images/dali/gfs_world_natural_earth.png) |
+| Perspective (h=3000 km) | ![gfs_world_perspective](images/dali/gfs_world_perspective.png) |
+| Stereographic (Europe) | ![gfs_world_stereographic](images/dali/gfs_world_stereographic.png) |
+
+---
+
+# WMS Test Examples
+
+The WMS tests exercise the `/wms` endpoint.  Test inputs are in [`test/input/wms_*.get`](../test/input/) and expected outputs in [`test/output/wms_*.get`](../test/output/).  Product configurations are under [`test/wms/customers/`](../test/wms/customers/).
+
+## GetCapabilities
+
+### wms_getcapabilities
+
+**Input:** [`test/input/wms_getcapabilities.get`](../test/input/wms_getcapabilities.get)
+
+```
+GET /wms?service=wms&request=GetCapabilities&debug=1 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `service` | `wms` | OGC WMS service identifier (case-insensitive) |
+| `request` | `GetCapabilities` | Returns the service metadata XML document |
+| `debug` | `1` | Adds layer-level debug information to the response |
+
+Returns a WMS 1.3.0 XML capabilities document listing all advertised layers, styles, CRS support, output formats, and service metadata.
+
+**Output:** [`test/output/wms_getcapabilities.get`](../test/output/wms_getcapabilities.get) — XML
+
+### wms_getcapabilities_fi
+
+**Input:** [`test/input/wms_getcapabilities_fi.get`](../test/input/wms_getcapabilities_fi.get)
+
+```
+GET /wms?service=wms&request=GetCapabilities&language=fi&debug=1 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `language` | `fi` | Returns layer titles and abstracts in Finnish |
+| `debug` | `1` | Adds layer-level debug information |
+
+Demonstrates multi-language support in GetCapabilities: layer titles and abstracts are returned in the requested language when translations are defined in the product JSON.
+
+**Output:** [`test/output/wms_getcapabilities_fi.get`](../test/output/wms_getcapabilities_fi.get) — XML
+
+### wms_getcapabilities_json
+
+**Input:** [`test/input/wms_getcapabilities_json.get`](../test/input/wms_getcapabilities_json.get)
+
+```
+GET /wms?service=wms&request=GetCapabilities&format=application/json&debug=1 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `format` | `application/json` | Returns capabilities as a JSON document instead of XML |
+| `debug` | `1` | Adds layer-level debug information |
+
+Returns the same layer metadata as the XML capabilities but in JSON format, suitable for programmatic consumption.
+
+**Output:** [`test/output/wms_getcapabilities_json.get`](../test/output/wms_getcapabilities_json.get) — JSON
+
+### wms_getcapabilities_namespace
+
+**Input:** [`test/input/wms_getcapabilities_namespace.get`](../test/input/wms_getcapabilities_namespace.get)
+
+```
+GET /wms?service=wms&request=GetCapabilities&namespace=ely HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `namespace` | `ely` | Filters the capabilities response to only include layers in the `ely` customer namespace |
+
+Returns a capabilities document scoped to a single customer namespace.
+
+**Output:** [`test/output/wms_getcapabilities_namespace.get`](../test/output/wms_getcapabilities_namespace.get) — XML
+
+### wms_getcapabilities_recursive
+
+**Input:** [`test/input/wms_getcapabilities_recursive.get`](../test/input/wms_getcapabilities_recursive.get)
+
+```
+GET /wms?service=wms&request=GetCapabilities&debug=1&layout=recursive HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layout` | `recursive` | Groups layers recursively by customer namespace in the capabilities XML |
+
+**Output:** [`test/output/wms_getcapabilities_recursive.get`](../test/output/wms_getcapabilities_recursive.get) — XML
+
+### wms_getcapabilities_timeinterval
+
+**Input:** [`test/input/wms_getcapabilities_timeinterval.get`](../test/input/wms_getcapabilities_timeinterval.get)
+
+```
+GET /wms?service=wms&request=GetCapabilities&starttime=2008-08-09T00:00:00Z&endtime=2008-08-09T06:00:00Z&debug=1 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `starttime` | `2008-08-09T00:00:00Z` | Restricts time dimension listings to this start |
+| `endtime` | `2008-08-09T06:00:00Z` | Restricts time dimension listings to this end |
+
+Returns capabilities with time dimension values limited to the specified interval.
+
+**Output:** [`test/output/wms_getcapabilities_timeinterval.get`](../test/output/wms_getcapabilities_timeinterval.get) — XML
+
+---
+
+## GetMap — Isoband styles
+
+All three tests render temperature isobands for the `test:t2m` layer over Scandinavia (EPSG:4326, bbox 59–71°N, 17–34°E, 300×500 px, PNG).  They differ only in the `styles` parameter, which selects the isoband interval width.
+
+### wms_getmap_isoband_style1
+
+**Input:** [`test/input/wms_getmap_isoband_style1.get`](../test/input/wms_getmap_isoband_style1.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:t2m
+    &styles=temperature_one_degrees
+    &crs=EPSG:4326
+    &bbox=59,17,71,34
+    &width=300&height=500
+    &format=image/png
+    &time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `service` | `wms` | OGC WMS service |
+| `request` | `GetMap` | Render a map image |
+| `version` | `1.3.0` | WMS version |
+| `layers` | `test:t2m` | Layer `t2m` in customer `test` |
+| `styles` | `temperature_one_degrees` | 1°C isoband width style |
+| `crs` | `EPSG:4326` | WGS 84 geographic CRS |
+| `bbox` | `59,17,71,34` | Bounding box: minLat, minLon, maxLat, maxLon (WMS 1.3.0 axis order for EPSG:4326) |
+| `width` / `height` | `300` / `500` | Output image dimensions in pixels |
+| `format` | `image/png` | PNG output |
+| `time` | `200808050300` | Valid time: 2008-08-05 03:00 UTC |
+
+Product config: [`test/wms/customers/test/products/t2m.json`](../test/wms/customers/test/products/t2m.json)
+
+![wms_getmap_isoband_style1](images/wms/wms_getmap_isoband_style1.png)
+
+### wms_getmap_isoband_style2
+
+**Input:** [`test/input/wms_getmap_isoband_style2.get`](../test/input/wms_getmap_isoband_style2.get)
+
+Same as above with `styles=temperature_two_degrees` (2°C isoband width).
+
+![wms_getmap_isoband_style2](images/wms/wms_getmap_isoband_style2.png)
+
+### wms_getmap_isoband_style3
+
+**Input:** [`test/input/wms_getmap_isoband_style3.get`](../test/input/wms_getmap_isoband_style3.get)
+
+Same as above with `styles=temperature_three_degrees` (3°C isoband width).
+
+![wms_getmap_isoband_style3](images/wms/wms_getmap_isoband_style3.png)
+
+### wms_getmap_isoband_tile
+
+**Input:** [`test/input/wms_getmap_isoband_tile.get`](../test/input/wms_getmap_isoband_tile.get)
+
+Renders the same `test:t2m` layer cropped to a WMS tile-compatible bounding box, verifying that isobands are properly clipped to tile boundaries.
+
+![wms_getmap_isoband_tile](images/wms/wms_getmap_isoband_tile.png)
+
+---
+
+## GetMap — Isoline styles
+
+### wms_getmap_isoline_style1
+
+**Input:** [`test/input/wms_getmap_isoline_style1.get`](../test/input/wms_getmap_isoline_style1.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:precipitation
+    &styles=precipitation_thin_style
+    &crs=EPSG:4326
+    &bbox=59,17,71,34
+    &width=300&height=500
+    &format=image/png
+    &time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:precipitation` | Precipitation isobands + isoline layer |
+| `styles` | `precipitation_thin_style` | Thin (1 px) isoline style |
+
+Product config: [`test/wms/customers/test/products/precipitation_areas.json`](../test/wms/customers/test/products/precipitation_areas.json)
+
+![wms_getmap_isoline_style1](images/wms/wms_getmap_isoline_style1.png)
+
+### wms_getmap_isoline_style2
+
+**Input:** [`test/input/wms_getmap_isoline_style2.get`](../test/input/wms_getmap_isoline_style2.get)
+
+Same request with `styles=precipitation_thick_style` (2 px isoline width).
+
+![wms_getmap_isoline_style2](images/wms/wms_getmap_isoline_style2.png)
+
+### wms_getmap_isoline_groups
+
+**Input:** [`test/input/wms_getmap_isoline_groups.get`](../test/input/wms_getmap_isoline_groups.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:pressure_isoline_groups
+    &styles=
+    &crs=EPSG:4326
+    &bbox=59,17,71,34
+    &width=300&height=500
+    &format=image/png
+    &time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:pressure_isoline_groups` | Pressure isolines with grouped rendering |
+| `styles` | _(empty)_ | Default style |
+
+Demonstrates the `isoline_groups` feature: isolines are organised into named groups (e.g. every 5 hPa vs every 1 hPa), which can be styled and filtered independently.
+
+Product config: [`test/wms/customers/test/products/pressure_isoline_groups.json`](../test/wms/customers/test/products/pressure_isoline_groups.json)
+
+![wms_getmap_isoline_groups](images/wms/wms_getmap_isoline_groups.png)
+
+The `_aggregate_min` and `_aggregate_max` variants (`wms_getmap_isoline_groups_aggregate_min`, `wms_getmap_isoline_groups_aggregate_max`) test time-aggregation modes.
+
+---
+
+## GetMap — Isolabel styles
+
+### wms_getmap_isolabel_style1
+
+**Input:** [`test/input/wms_getmap_isolabel_style1.get`](../test/input/wms_getmap_isolabel_style1.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:isolabel
+    &styles=isolabel_small_blue_text_style
+    &crs=EPSG:4326
+    &bbox=59,17,71,34
+    &width=300&height=500
+    &format=image/png
+    &time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:isolabel` | Layer with isoline labels |
+| `styles` | `isolabel_small_blue_text_style` | Small (24 px), blue Roboto font labels |
+
+The `isolabel` layer type places text annotations directly on isolines at computed placement positions.
+
+Product config: [`test/wms/customers/test/products/isolabel.json`](../test/wms/customers/test/products/isolabel.json)
+
+![wms_getmap_isolabel_style1](images/wms/wms_getmap_isolabel_style1.png)
+
+### wms_getmap_isolabel_style2
+
+**Input:** [`test/input/wms_getmap_isolabel_style2.get`](../test/input/wms_getmap_isolabel_style2.get)
+
+Same request with `styles=isolabel_big_red_text_style` (36 px red Roboto font).
+
+![wms_getmap_isolabel_style2](images/wms/wms_getmap_isolabel_style2.png)
+
+---
+
+## GetMap — Temperature numbers
+
+### wms_getmap_temperature_numbers
+
+**Input:** [`test/input/wms_getmap_temperature_numbers.get`](../test/input/wms_getmap_temperature_numbers.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:opendata_temperature_numbers
+    &styles=
+    &crs=EPSG:4326
+    &bbox=59,17,71,34
+    &width=600&height=1000
+    &format=image/png
+    &time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:opendata_temperature_numbers` | Temperature observations as numeric labels |
+| `width` / `height` | `600` / `1000` | Higher resolution for readable numbers |
+| `time` | `20130805T1500` | ISO 8601 time format |
+
+Renders temperature observations from the `opendata` producer at FMI station positions over a background map.
+
+Product config: [`test/wms/customers/test/products/opendata_temperature_numbers.json`](../test/wms/customers/test/products/opendata_temperature_numbers.json)
+
+![wms_getmap_temperature_numbers](images/wms/wms_getmap_temperature_numbers.png)
+
+### Mindistance and priority variants
+
+The following tests verify label collision avoidance and priority selection for dense station networks:
+
+| Test | `mindistance` | `priority` | Description |
+|------|---------------|------------|-------------|
+| `wms_getmap_temperature_numbers_mindistance` | set | — | Filter stations closer than `mindistance` pixels |
+| `wms_getmap_temperature_numbers_mindistance_priority_none` | set | `none` | No priority: arbitrary station is kept |
+| `wms_getmap_temperature_numbers_mindistance_priority_min` | set | `min` | Keep station with minimum value |
+| `wms_getmap_temperature_numbers_mindistance_priority_max` | set | `max` | Keep station with maximum value |
+| `wms_getmap_temperature_numbers_mindistance_priority_extrema` | set | `extrema` | Keep both min and max within the area |
+| `wms_getmap_temperature_numbers_mindistance_priority_array` | set | array | User-defined priority list |
+| `wms_getmap_temperature_numbers_aggregate_min` | — | — | Time-aggregate: minimum over interval |
+| `wms_getmap_temperature_numbers_aggregate_max` | — | — | Time-aggregate: maximum over interval |
+
+---
+
+## GetMap — Meteorological wind arrows
+
+### wms_getmap_meteorological_windarrows
+
+**Input:** [`test/input/wms_getmap_meteorological_windarrows.get`](../test/input/wms_getmap_meteorological_windarrows.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:opendata_meteorological_windarrows
+    &styles=
+    &crs=EPSG:4326
+    &bbox=59,17,71,34
+    &width=600&height=1000
+    &format=image/png
+    &time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:opendata_meteorological_windarrows` | Wind observations as meteorological barb symbols |
+
+Renders wind barbs at FMI observation stations, scaled to knots (`multiplier=1.94384449244`).  Wind barbs face the wind direction with the `southflop` option ensuring correct hemisphere rendering.
+
+Product config: [`test/wms/customers/test/products/opendata_meteorological_windarrows.json`](../test/wms/customers/test/products/opendata_meteorological_windarrows.json)
+
+![wms_getmap_meteorological_windarrows](images/wms/wms_getmap_meteorological_windarrows.png)
+
+The mindistance and aggregate variants follow the same pattern as temperature numbers (see table above).
+
+---
+
+## GetMap — Wind arrows (model data)
+
+### wms_getmap_windarrows
+
+**Input:** [`test/input/wms_getmap_windarrows.get`](../test/input/wms_getmap_windarrows.get)
+
+```
+GET /wms?servicE=wms&requesT=GetMap&versioN=1.3.0
+    &layerS=test:windarrows
+    &styleS=
+    &crS=EPSG:4326
+    &bboX=59,17,71,34
+    &widtH=300&heighT=500
+    &formaT=image/svg%2Bxml
+    &timE=200808050300 HTTP/1.0
+```
+
+Note: parameter names use mixed case (e.g. `layerS`, `crS`) — this tests that the WMS handler is case-insensitive for all WMS standard parameters.
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:windarrows` | Model wind arrows at a regular grid layout |
+| `format` | `image/svg+xml` | SVG output |
+
+Product config: [`test/wms/customers/test/products/windarrows.json`](../test/wms/customers/test/products/windarrows.json)
+
+![wms_getmap_windarrows](images/wms/wms_getmap_windarrows.png)
+
+### wms_getmap_windarrows_style
+
+**Input:** [`test/input/wms_getmap_windarrows_style.get`](../test/input/wms_getmap_windarrows_style.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:windarrows
+    &styles=windarrows_sparse_style
+    &crs=EPSG:4326&bbox=59,17,71,34
+    &width=300&height=500
+    &format=image/png&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `styles` | `windarrows_sparse_style` | Sparser grid layout (50×50 px spacing) |
+
+![wms_getmap_windarrows_style](images/wms/wms_getmap_windarrows_style.png)
+
+The `_aggregate_min` and `_aggregate_max` variants test temporal aggregation.
+
+---
+
+## GetMap — Wind numbers
+
+### wms_getmap_windnumbers_style1
+
+**Input:** [`test/input/wms_getmap_windnumbers_style1.get`](../test/input/wms_getmap_windnumbers_style1.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:windnumbers
+    &styles=
+    &crs=EPSG:4326&bbox=59,17,71,34
+    &width=300&height=500
+    &format=image/png&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:windnumbers` | Wind speed as numeric annotations at a regular grid |
+| `styles` | _(empty)_ | Default style (fine grid: 20×20 px) |
+
+Product config: [`test/wms/customers/test/products/windnumbers.json`](../test/wms/customers/test/products/windnumbers.json)
+
+![wms_getmap_windnumbers_style1](images/wms/wms_getmap_windnumbers_style1.png)
+
+### wms_getmap_windnumbers_style2
+
+Same with `styles=windnumbers_sparse_style` (60×60 px grid).
+
+![wms_getmap_windnumbers_style2](images/wms/wms_getmap_windnumbers_style2.png)
+
+The `_aggregate_min` and `_aggregate_max` variants test temporal aggregation.
+
+---
+
+## GetMap — Temperature symbols
+
+### wms_getmap_temperature_symbols
+
+**Input:** [`test/input/wms_getmap_temperature_symbols.get`](../test/input/wms_getmap_temperature_symbols.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:opendata_temperature_symbols
+    &styles=
+    &crs=EPSG:4326&bbox=59,17,71,34
+    &width=600&height=1000
+    &format=image/svg%2Bxml
+    &time=20130805T1500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:opendata_temperature_symbols` | Temperature observations as colour-coded SVG symbols |
+
+Renders temperature observations as coloured circle symbols using the `symbol` layer type.
+
+![wms_getmap_temperature_symbols](images/wms/wms_getmap_temperature_symbols.png)
+
+Mindistance and priority variants follow the same pattern as temperature numbers (see above).
+
+---
+
+## GetMap — Multiple layers
+
+### wms_getmap_multiple_layers
+
+**Input:** [`test/input/wms_getmap_multiple_layers.get`](../test/input/wms_getmap_multiple_layers.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:backgroundmap,test:precipitation_areas,test:cities
+    &styles=
+    &crs=EPSG:4326&bbox=59,17,71,34
+    &width=300&height=500
+    &format=image/svg%2Bxml
+    &time=20080805120000 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:backgroundmap,test:precipitation_areas,test:cities` | Comma-separated layer list rendered bottom-to-top |
+| `styles` | _(empty)_ | Default styles for all layers |
+
+Demonstrates composite multi-layer rendering: a background map, precipitation isobands/isolines, and city symbol overlay are merged into a single SVG response.
+
+![wms_getmap_multiple_layers](images/wms/wms_getmap_multiple_layers.png)
+
+### wms_getmap_multiple_layers_with_style
+
+**Input:** [`test/input/wms_getmap_multiple_layers_with_style.get`](../test/input/wms_getmap_multiple_layers_with_style.get)
+
+```
+GET /wms?...&layers=test:backgroundmap,test:precipitation_areas,test:cities
+    &styles=,precipitation_thick_style, HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `styles` | `,precipitation_thick_style,` | Per-layer styles: empty for 1st and 3rd layers, explicit style for 2nd |
+
+The `styles` list must have the same number of comma-separated entries as `layers`; empty entries use the default style.
+
+![wms_getmap_multiple_layers_with_style](images/wms/wms_getmap_multiple_layers_with_style.png)
+
+---
+
+## GetMap — CRS variants
+
+### wms_getmap_png (EPSG:4326, PNG)
+
+**Input:** [`test/input/wms_getmap_png.get`](../test/input/wms_getmap_png.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=ely:wmsmap&styles=
+    &crs=EPSG:4326&bbox=59,17,71,34
+    &width=300&height=500
+    &format=image/png&time=200808050300 HTTP/1.0
+```
+
+Standard WMS GetMap request using EPSG:4326 with PNG output.
+
+Product config: [`test/wms/customers/ely/products/wmsmap.json`](../test/wms/customers/ely/products/wmsmap.json)
+
+![wms_getmap_png](images/wms/wms_getmap_png.png)
+
+### wms_getmap_svgxml (case-insensitive parameters)
+
+**Input:** [`test/input/wms_getmap_svgxml.get`](../test/input/wms_getmap_svgxml.get)
+
+Same request with mixed-case parameter names (`servicE`, `requesT`, etc.) and `format=image/svg+xml`.  Verifies that all WMS standard parameters are parsed case-insensitively.
+
+![wms_getmap_svgxml](images/wms/wms_getmap_svgxml.png)
+
+### wms_getmap_crs_auto2_42001 (AUTO2 UTM zone)
+
+**Input:** [`test/input/wms_getmap_crs_auto2_42001.get`](../test/input/wms_getmap_crs_auto2_42001.get)
+
+```
+GET /wms?service=wms&request=getmap&version=1.3.0
+    &layers=ely:wmsmap&styles=
+    &crs=AUTO2:42001,1,25,60
+    &debug=1
+    &bbox=221000,6660000,690000,7770000
+    &width=500&height=500
+    &format=image/svg%2bxml
+    &time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `crs` | `AUTO2:42001,1,25,60` | OGC AUTO2 Universal Transverse Mercator; zone determined by `lon=25°E, lat=60°N` |
+| `bbox` | `221000,6660000,690000,7770000` | Bounding box in metres (AUTO2 projected coordinates) |
+
+OGC AUTO2 CRS codes automatically derive a projection from supplied reference coordinates.  `42001` = UTM.
+
+![wms_getmap_crs_auto2_42001](images/wms/wms_getmap_crs_auto2_42001.png)
+
+### wms_getmap_crs_auto2_42004
+
+Same but with `AUTO2:42004` (Equidistant Cylindrical).
+
+![wms_getmap_crs_auto2_42004](images/wms/wms_getmap_crs_auto2_42004.png)
+
+### wms_getmap_crs_scandinavia (named CRS)
+
+**Input:** [`test/input/wms_getmap_crs_scandinavia.get`](../test/input/wms_getmap_crs_scandinavia.get)
+
+```
+GET /wms?...&crs=CRS:SmartMetScandinavia
+    &bbox=-1010040,-4051052,1005949,-1814781
+    &width=500&height=500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `crs` | `CRS:SmartMetScandinavia` | Named CRS defined in the server's GIS configuration |
+| `bbox` | (metres) | Bounding box in the named CRS's projected coordinate system |
+
+Demonstrates the use of server-defined named CRS strings in addition to standard EPSG/AUTO2 codes.
+
+![wms_getmap_crs_scandinavia](images/wms/wms_getmap_crs_scandinavia.png)
+
+---
+
+## GetMap — Time interpolation
+
+### wms_getmap_svgxml_interpolated_time
+
+**Input:** [`test/input/wms_getmap_svgxml_interpolated_time.get`](../test/input/wms_getmap_svgxml_interpolated_time.get)
+
+```
+GET /wms?...&layers=ely:wmsmap&time=200808050330 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `time` | `200808050330` | 03:30 UTC — halfway between data timesteps at 03:00 and 04:00 |
+
+Tests that the server correctly interpolates or snaps to the nearest available data timestep when the requested time does not exactly match a data timestep.
+
+![wms_getmap_svgxml_interpolated_time](images/wms/wms_getmap_svgxml_interpolated_time.png)
+
+---
+
+## GetMap — Time intervals
+
+The `flash15min` layer stores data in 15-minute slots.  The `time` parameter can specify either a point in time or an interval using ISO 8601 duration syntax.
+
+| Test | `time` value | Description |
+|------|-------------|-------------|
+| `wms_getmap_interval_default` | `201308051200` | Point in time; server uses the default aggregation interval |
+| `wms_getmap_interval_start_30m` | `201308051200/PT30M` | 30-minute window starting at 12:00 |
+| `wms_getmap_interval_end_30m` | `PT30M/201308051200` | 30-minute window ending at 12:00 |
+| `wms_getmap_interval_30m30m` | `PT30M/201308051200/PT30M` | 30-minute window centred at 12:00 |
+
+![wms_getmap_interval_default](images/wms/wms_getmap_interval_default.png)
+
+---
+
+## GetMap — GeoJSON output
+
+### wms_getmap_geojson
+
+**Input:** [`test/input/wms_getmap_geojson.get`](../test/input/wms_getmap_geojson.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0
+    &layers=test:precipitation_areas&styles=
+    &crs=EPSG:4326&bbox=59,17,71,34
+    &width=300&height=500
+    &format=application/geo%2Bjson
+    &time=20080805120000 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `format` | `application/geo+json` | Returns isoband geometry as a GeoJSON FeatureCollection |
+
+Isobands are returned as GeoJSON MultiPolygon features with the band's lower/upper limits as properties.  Used for programmatic access to contour geometry.
+
+**Output:** [`test/output/wms_getmap_geojson.get`](../test/output/wms_getmap_geojson.get) — GeoJSON
+
+### wms_getmap_geojson_precision
+
+Same but tests that coordinate precision is controlled by the `precision` configuration setting.
+
+**Output:** [`test/output/wms_getmap_geojson_precision.get`](../test/output/wms_getmap_geojson_precision.get) — GeoJSON
+
+---
+
+## GetMap — PDF output
+
+### wms_getmap_pdf
+
+**Input:** [`test/input/wms_getmap_pdf.get`](../test/input/wms_getmap_pdf.get)
+
+```
+GET /wms?...&layers=ely:wmsmap&format=application/pdf&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `format` | `application/pdf` | Returns the map as a PDF vector document |
+
+**Output:** [`test/output/wms_getmap_pdf.get`](../test/output/wms_getmap_pdf.get) — PDF
+
+---
+
+## GetMap — Observation data
+
+### wms_getmap_netatmo_observations
+
+**Input:** [`test/input/wms_getmap_netatmo_observations.get`](../test/input/wms_getmap_netatmo_observations.get)
+
+```
+GET /wms?...&layers=test:netatmo5min&crs=EPSG:4326
+    &bbox=53.5,3.5,72,33&width=600&height=800
+    &format=image/png&time=20190325090500 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:netatmo5min` | Netatmo citizen weather station observations |
+| `time` | `20190325090500` | Observation time (5-minute data) |
+
+Renders crowd-sourced Netatmo temperature observations as coloured dots.
+
+![wms_getmap_netatmo_observations](images/wms/wms_getmap_netatmo_observations.png)
+
+### wms_getmap_roadcloud_observations
+
+Same pattern for RoadCloud road-condition sensor data.
+
+![wms_getmap_roadcloud_observations](images/wms/wms_getmap_roadcloud_observations.png)
+
+---
+
+## GetMap — Variants
+
+The `variant` layer prefix selects an alternative data producer using the variant layer syntax `variant:{variant_name}:{layer_name}`.
+
+| Test | `layers` | Description |
+|------|----------|-------------|
+| `wms_getmap_variant_pal` | `variant:pal:temperature` | Temperature layer using the `pal` data producer variant |
+| `wms_getmap_variant_ground` | `variant:ground:groundtemperature` | Ground temperature from the `ground` variant |
+| `wms_getmap_nonvariant_pal` | `test:nonvariant_pal` | Same data but as a regular (non-variant) layer |
+| `wms_getmap_nonvariant_ground` | `test:nonvariant_ground` | Same data but as a regular (non-variant) layer |
+
+---
+
+## GetMap — Frame layer
+
+### wms_getmap_frame
+
+**Input:** [`test/input/wms_getmap_frame.get`](../test/input/wms_getmap_frame.get)
+
+```
+GET /wms?...&layers=test:frame_layer&crs=EPSG:4326
+    &bbox=51,8,68,32&width=1800&height=2500
+    &format=image/svg%2Bxml&time=current HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:frame_layer` | Ice-map style frame with inner/outer borders and tick-mark scale |
+| `bbox` | `51,8,68,32` | Geographic bounding box (lat/lon) |
+| `time` | `current` | Use the most recent available data timestep |
+
+The `frame` layer type draws a decorative border with inner and outer rectangular frames and a graduated scale with tick marks and labels.
+
+Product config: [`test/wms/customers/test/products/frame_layer.json`](../test/wms/customers/test/products/frame_layer.json)
+
+![wms_getmap_frame](images/wms/wms_getmap_frame.png)
+
+---
+
+## GetMap — Ice chart
+
+### wms_icechart_fmi_color
+
+**Input:** [`test/input/wms_icechart_fmi_color.get`](../test/input/wms_icechart_fmi_color.get)
+
+```
+GET /wms?...&layers=test:icechart_fmi_color&crs=EPSG:4326
+    &bbox=51,6,69,33&width=2000&height=2500
+    &format=image/svg%2Bxml&time=20120227142200 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:icechart_fmi_color` | Baltic Sea ice chart with FMI colour scheme |
+| `time` | `20120227142200` | Winter 2012 ice analysis time |
+
+Renders Baltic Sea ice coverage using the FMI ice-chart color conventions.
+
+![wms_icechart_fmi_color](images/wms/wms_icechart_fmi_color.png)
+
+### wms_icechart_areas
+
+**Input:** [`test/input/wms_icechart_areas.get`](../test/input/wms_icechart_areas.get)
+
+Same ice chart data rendered as named area polygons rather than coloured fills.
+
+![wms_icechart_areas](images/wms/wms_icechart_areas.png)
+
+---
+
+## GetMap — Symbol style
+
+### wms_getmap_symbol_style
+
+**Input:** [`test/input/wms_getmap_symbol_style.get`](../test/input/wms_getmap_symbol_style.get)
+
+```
+GET /wms?...&layers=test:precipitation&styles=precipitation_red_rain_style
+    &crs=EPSG:4326&bbox=59,17,71,34&width=300&height=500
+    &format=image/png&time=200808050300 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `test:precipitation` | Precipitation layer |
+| `styles` | `precipitation_red_rain_style` | Custom style that uses a rain SVG symbol instead of filled isobands |
+
+Demonstrates that an isoband layer can be rendered as repeated SVG symbols rather than filled polygons by specifying a symbol-based style.
+
+![wms_getmap_symbol_style](images/wms/wms_getmap_symbol_style.png)
+
+---
+
+## GetMap — Error handling
+
+When a request contains invalid parameters the server returns either an XML service exception (default) or an in-image error (when `EXCEPTIONS=INIMAGE` or format-specific variants are used).
+
+| Test | Error | Response format |
+|------|-------|-----------------|
+| `wms_getmap_invalid_crs` | Unknown CRS | XML exception |
+| `wms_getmap_invalid_crs_inimage_blank` | Unknown CRS | Blank PNG image |
+| `wms_getmap_invalid_crs_inimage_png` | Unknown CRS | Error message PNG |
+| `wms_getmap_invalid_crs_json` | Unknown CRS | JSON exception |
+| `wms_getmap_invalid_layer` | Unknown layer | XML exception |
+| `wms_getmap_invalid_layer_inimage_pdf` | Unknown layer | Error PDF |
+| `wms_getmap_invalid_layer_json` | Unknown layer | JSON exception |
+| `wms_getmap_invalid_style` | Unknown style | XML exception |
+| `wms_getmap_invalid_style_inimage_png` | Unknown style | Error PNG |
+| `wms_getmap_invalid_style_json` | Unknown style | JSON exception |
+| `wms_getmap_invalid_time` | Invalid time | XML exception |
+| `wms_getmap_invalid_time_inimage_pdf` | Invalid time | Error PDF |
+| `wms_getmap_invalid_time_json` | Invalid time | JSON exception |
+| `wms_getmap_invalid_version` | Unsupported version | XML exception |
+| `wms_getmap_invalid_version_inimage_svg` | Unsupported version | Error SVG |
+| `wms_getmap_invalid_version_json` | Unsupported version | JSON exception |
+| `wms_getmap_invalid_format` | Unsupported format | XML exception |
+| `wms_getmap_invalid_format_inimage_svg` | Unsupported format | Error SVG |
+
+---
+
+## GetFeatureInfo
+
+GetFeatureInfo returns data values at a specified pixel location within a previously rendered map.
+
+### wms_getfeatureinfo_json
+
+**Input:** [`test/input/wms_getfeatureinfo_json.get`](../test/input/wms_getfeatureinfo_json.get)
+
+```
+GET /wms?service=wms&request=GetFeatureInfo&version=1.3.0
+    &layers=test:frame_layer
+    &query_layers=test:frame_layer
+    &styles=
+    &crs=EPSG:4326&bbox=51,8,68,32
+    &width=1800&height=2500
+    &format=image/svg%2Bxml
+    &i=900&j=1250
+    &info_format=application/json
+    &time=current HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `request` | `GetFeatureInfo` | Returns data at a pixel position |
+| `query_layers` | `test:frame_layer` | Layers to query (must be a subset of `layers`) |
+| `i` | `900` | Pixel column in the image (0-based from left) |
+| `j` | `1250` | Pixel row in the image (0-based from top) |
+| `info_format` | `application/json` | Return data as JSON |
+
+**Output:** [`test/output/wms_getfeatureinfo_json.get`](../test/output/wms_getfeatureinfo_json.get) — JSON
+
+### wms_getfeatureinfo_html
+
+Same request with `info_format=text/html`.
+
+**Output:** [`test/output/wms_getfeatureinfo_html.get`](../test/output/wms_getfeatureinfo_html.get) — HTML
+
+### wms_getfeatureinfo_precipitation_json
+
+**Input:** [`test/input/wms_getfeatureinfo_precipitation_json.get`](../test/input/wms_getfeatureinfo_precipitation_json.get)
+
+```
+GET /wms?...&layers=test:precipitation_areas&query_layers=test:precipitation_areas
+    &bbox=59,17,71,34&width=300&height=500
+    &i=150&j=250&info_format=application/json
+    &time=20080805120000 HTTP/1.0
+```
+
+Queries the precipitation isoband value at pixel (150, 250) — the centre of the map.
+
+**Output:** [`test/output/wms_getfeatureinfo_precipitation_json.get`](../test/output/wms_getfeatureinfo_precipitation_json.get) — JSON
+
+### wms_getfeatureinfo_numbers_json
+
+**Input:** [`test/input/wms_getfeatureinfo_numbers_json.get`](../test/input/wms_getfeatureinfo_numbers_json.get)
+
+Queries the temperature value at a station position from the `opendata_temperature_numbers_max` layer (uses the time-maximum aggregate).
+
+**Output:** [`test/output/wms_getfeatureinfo_numbers_json.get`](../test/output/wms_getfeatureinfo_numbers_json.get) — JSON
+
+Additional GetFeatureInfo tests:
+- `wms_getfeatureinfo_missing_query_layers` — error when `query_layers` is omitted
+- `wms_getfeatureinfo_precipitationform_symbols_json` — queries precipitation form symbols
+- `wms_getfeatureinfo_precipitation_isoband_labels_json` — queries isoband label values
+- `wms_getfeatureinfo_roadcondition_isoband_json` — queries road condition isobands
+- `wms_getfeatureinfo_temperature_symbols_json` — queries temperature symbol data
+
+---
+
+## GetLegendGraphic
+
+GetLegendGraphic returns a legend image for a given layer and style.
+
+### wms_getlegendgraphic_automatic
+
+**Input:** [`test/input/wms_getlegendgraphic_automatic.get`](../test/input/wms_getlegendgraphic_automatic.get)
+
+```
+GET /wms?service=WMS&request=GetLegendGraphic&version=1.3.0&sld_version=1.1.0
+    &layer=test:precipitation&style=
+    &format=image/svg%2Bxml HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `request` | `GetLegendGraphic` | Returns a legend image for the named layer/style |
+| `layer` | `test:precipitation` | Layer to generate legend for |
+| `style` | _(empty)_ | Default style |
+| `sld_version` | `1.1.0` | SLD version (required) |
+| `format` | `image/svg+xml` | SVG legend output |
+
+Generates an automatic legend by reading isoband colour definitions from the product CSS.
+
+![wms_getlegendgraphic_automatic](images/wms/wms_getlegendgraphic_automatic.png)
+
+### wms_getlegendgraphic_automatic_isoband_style1
+
+**Input:** [`test/input/wms_getlegendgraphic_automatic_isoband_style1.get`](../test/input/wms_getlegendgraphic_automatic_isoband_style1.get)
+
+```
+GET /wms?...&layer=test:t2m&style=temperature_one_degrees&format=image/svg%2Bxml HTTP/1.0
+```
+
+Legend for the `temperature_one_degrees` style (1°C isoband intervals).
+
+![wms_getlegendgraphic_automatic_isoband_style1](images/wms/wms_getlegendgraphic_automatic_isoband_style1.png)
+
+### wms_getlegendgraphic_internal_legend
+
+**Input:** [`test/input/wms_getlegendgraphic_internal_legend.get`](../test/input/wms_getlegendgraphic_internal_legend.get)
+
+```
+GET /wms?...&layer=test:t2m_p&style=&format=image/svg%2Bxml HTTP/1.0
+```
+
+Uses an internally embedded legend definition from the product JSON instead of the automatic CSS-derived legend.
+
+![wms_getlegendgraphic_internal_legend](images/wms/wms_getlegendgraphic_internal_legend.png)
+
+### wms_getlegendgraphic_external_legend
+
+**Input:** [`test/input/wms_getlegendgraphic_external_legend.get`](../test/input/wms_getlegendgraphic_external_legend.get)
+
+```
+GET /wms?...&layer=test:wind_legend&style=&format=image/svg%2Bxml HTTP/1.0
+```
+
+Uses an external SVG file as the legend image.
+
+![wms_getlegendgraphic_external_legend](images/wms/wms_getlegendgraphic_external_legend.png)
+
+Additional GetLegendGraphic tests cover: Finnish (`_fi`) and other language translations, modified legends, product-specific legend templates, isoband label legends, and isoline style legends.  See [`test/input/wms_getlegendgraphic_*.get`](../test/input/).
+
+---
+
+# WMTS Test Examples
+
+The WMTS tests exercise the `/wmts` endpoint, which implements OGC Web Map Tile Service 1.0.0.  The REST-KVP hybrid URL path has the form:
+
+```
+/wmts/1.0.0/{layer}/{style}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.{format}
+```
+
+Test inputs are in [`test/input/wmts_*.get`](../test/input/) and expected outputs in [`test/output/wmts_*.get`](../test/output/).
+
+## wmts_getcapabilities
+
+**Input:** [`test/input/wmts_getcapabilities.get`](../test/input/wmts_getcapabilities.get)
+
+```
+GET /wmts/1.0.0/WMTSCapabilities.xml HTTP/1.0
+```
+
+Returns the WMTS 1.0.0 capabilities document listing all available tile layers, tile matrix sets, styles, and supported output formats.  Each layer advertises tile matrix sets for EPSG:3035, EPSG:3067, EPSG:3857, and EPSG:4326.
+
+**Output:** [`test/output/wmts_getcapabilities.get`](../test/output/wmts_getcapabilities.get) — XML
+
+## wmts_gettile_isoband
+
+**Input:** [`test/input/wmts_gettile_isoband.get`](../test/input/wmts_gettile_isoband.get)
+
+```
+GET /wmts/1.0.0/test:t2m/temperature_one_degrees/EPSG:4326/5/4/36.png?TIME=20080805T030000 HTTP/1.0
+```
+
+| Path segment | Value | Description |
+|--------------|-------|-------------|
+| `test:t2m` | Layer | Temperature isoband layer in customer `test` |
+| `temperature_one_degrees` | Style | 1°C isoband interval style |
+| `EPSG:4326` | TileMatrixSet | WGS 84 tile grid |
+| `5` | TileMatrix | Zoom level 5 |
+| `4` | TileRow | Row 4 within the tile grid |
+| `36` | TileCol | Column 36 within the tile grid |
+| `.png` | Format | PNG output |
+| `TIME` | `20080805T030000` | Valid time query parameter |
+
+Returns a 1024×1024 PNG tile of temperature isobands.
+
+**Output:** [`test/output/wmts_gettile_isoband.get`](../test/output/wmts_gettile_isoband.get) — PNG (1024×1024)
+
+![wmts_gettile_isoband](images/wmts/wmts_gettile_isoband.png)
+
+## wmts_gettile_temperature_numbers
+
+**Input:** [`test/input/wmts_gettile_temperature_numbers.get`](../test/input/wmts_gettile_temperature_numbers.get)
+
+```
+GET /wmts/1.0.0/test:opendata_temperature_numbers/default/EPSG:4326/5/4/36.svg?TIME=20130805T1500 HTTP/1.0
+```
+
+| Path segment | Value | Description |
+|--------------|-------|-------------|
+| `test:opendata_temperature_numbers` | Layer | Temperature observation numbers |
+| `default` | Style | Default style |
+| `.svg` | Format | SVG output (vector tiles) |
+| `TIME` | `20130805T1500` | Valid time |
+
+Returns a 1024×1024 SVG tile containing temperature number annotations as vector graphics.
+
+**Output:** [`test/output/wmts_gettile_temperature_numbers.get`](../test/output/wmts_gettile_temperature_numbers.get) — SVG
+
+![wmts_gettile_temperature_numbers](images/wmts/wmts_gettile_temperature_numbers.png)
+
+## wmts_gettile_geotiff
+
+**Input:** [`test/input/wmts_gettile_geotiff.get`](../test/input/wmts_gettile_geotiff.get)
+
+```
+GET /wmts/1.0.0/grid:raster_1/default/EPSG:4326/5/4/36.tiff?TIME=20080805T080000 HTTP/1.0
+```
+
+| Path segment | Value | Description |
+|--------------|-------|-------------|
+| `grid:raster_1` | Layer | Raw gridded raster data layer |
+| `.tiff` | Format | GeoTIFF raster tile |
+| `TIME` | `20080805T080000` | Valid time |
+
+Returns a GeoTIFF tile containing raw numerical grid data (not rendered colour).  Used for programmatic access to model data in raster form.
+
+**Output:** [`test/output/wmts_gettile_geotiff.get`](../test/output/wmts_gettile_geotiff.get) — GeoTIFF (metadata/header only in the test)
+
+---
+
+# OGC Tiles Test Examples
+
+The OGC Tiles tests exercise the `/tiles` endpoint, which implements the OGC API — Tiles standard.  This is the RESTful successor to WMTS using the collections model.  The URL path structure is:
+
+```
+/tiles/collections/{collection}/tiles/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}?f={format}&TIME={time}
+```
+
+Test inputs are in [`test/input/tiles_*.get`](../test/input/) and expected outputs in [`test/output/tiles_*.get`](../test/output/).
+
+## tiles_getcollections
+
+**Input:** [`test/input/tiles_getcollections.get`](../test/input/tiles_getcollections.get)
+
+```
+GET /tiles/collections HTTP/1.0
+```
+
+Returns a catalogue of all available tile collections (layers), with their identifiers, titles, extent, and supported tile matrix sets and formats.
+
+**Output:** [`test/output/tiles_getcollections.get`](../test/output/tiles_getcollections.get) — XML/JSON
+
+## tiles_gettile_isoband
+
+**Input:** [`test/input/tiles_gettile_isoband.get`](../test/input/tiles_gettile_isoband.get)
+
+```
+GET /tiles/collections/test:t2m/tiles/EPSG:4326/5/4/36?f=png&TIME=20080805T030000 HTTP/1.0
+```
+
+| Query segment | Value | Description |
+|---------------|-------|-------------|
+| `test:t2m` | Collection | Temperature isoband layer |
+| `EPSG:4326` | TileMatrixSet | WGS 84 tile grid |
+| `5/4/36` | TileMatrix/Row/Col | Tile coordinates |
+| `f` | `png` | Output format as query parameter (vs. file extension in WMTS) |
+| `TIME` | `20080805T030000` | Valid time |
+
+Returns a 1024×1024 PNG isoband tile.  Functionally equivalent to the WMTS `wmts_gettile_isoband` test.
+
+**Output:** [`test/output/tiles_gettile_isoband.get`](../test/output/tiles_gettile_isoband.get) — PNG (1024×1024)
+
+![tiles_gettile_isoband](images/tiles/tiles_gettile_isoband.png)
+
+## tiles_gettile_temperature_numbers
+
+**Input:** [`test/input/tiles_gettile_temperature_numbers.get`](../test/input/tiles_gettile_temperature_numbers.get)
+
+```
+GET /tiles/collections/test:opendata_temperature_numbers/tiles/EPSG:4326/5/4/36?f=svg&TIME=20130805T1500 HTTP/1.0
+```
+
+Returns a 1024×1024 SVG tile of temperature number annotations.
+
+**Output:** [`test/output/tiles_gettile_temperature_numbers.get`](../test/output/tiles_gettile_temperature_numbers.get) — SVG
+
+![tiles_gettile_temperature_numbers](images/tiles/tiles_gettile_temperature_numbers.png)
+
+## tiles_gettile_geotiff
+
+**Input:** [`test/input/tiles_gettile_geotiff.get`](../test/input/tiles_gettile_geotiff.get)
+
+```
+GET /tiles/collections/grid:raster_1/tiles/EPSG:4326/5/4/36?f=tiff&TIME=20080805T080000 HTTP/1.0
+```
+
+Returns a GeoTIFF tile of raw numerical grid data.
+
+**Output:** [`test/output/tiles_gettile_geotiff.get`](../test/output/tiles_gettile_geotiff.get) — GeoTIFF
+
+## tiles_gettile_geotiff_wind_speed_and_direction_1 and _2
+
+These tests retrieve GeoTIFF tiles for a multi-band wind product (`grid:wind_speed_and_direction`).  Two variants test different band configurations:
+
+```
+GET /tiles/collections/grid:wind_speed_and_direction_1/tiles/EPSG:4326/5/4/36?f=tiff&TIME=20080805T080000 HTTP/1.0
+GET /tiles/collections/grid:wind_speed_and_direction_2/tiles/EPSG:4326/5/4/36?f=tiff&TIME=20080805T080000 HTTP/1.0
+```
+
+Wind speed and direction are encoded in separate GeoTIFF bands, allowing clients to reconstruct vector wind fields.
+
+**Output:** [`test/output/tiles_gettile_geotiff_wind_speed_and_direction_1.get`](../test/output/tiles_gettile_geotiff_wind_speed_and_direction_1.get) / [`_2`](../test/output/tiles_gettile_geotiff_wind_speed_and_direction_2.get) — GeoTIFF
+
+## Mapbox Vector Tile (MVT) outputs
+
+MVT is a compact binary format for encoding vector geometry data in tiles, widely used by Mapbox, OpenLayers, and other mapping clients.
+
+### tiles_gettile_mvt_isoband
+
+**Input:** [`test/input/tiles_gettile_mvt_isoband.get`](../test/input/tiles_gettile_mvt_isoband.get)
+
+```
+GET /tiles/collections/test:t2m/tiles/EPSG:4326/5/4/36?f=mvt&TIME=20080805T030000 HTTP/1.0
+```
+
+| Query segment | Value | Description |
+|---------------|-------|-------------|
+| `f` | `mvt` | Mapbox Vector Tile binary format |
+
+Returns temperature isoband polygons encoded as an MVT tile.  The isoband geometry is quantised and delta-encoded per the MVT specification.
+
+**Output:** [`test/output/tiles_gettile_mvt_isoband.get`](../test/output/tiles_gettile_mvt_isoband.get) — MVT (binary)
+
+### tiles_gettile_mvt_isoline
+
+**Input:** [`test/input/tiles_gettile_mvt_isoline.get`](../test/input/tiles_gettile_mvt_isoline.get)
+
+```
+GET /tiles/collections/test:t2m_p/tiles/EPSG:4326/5/4/36?f=mvt&TIME=20080805T030000 HTTP/1.0
+```
+
+Returns temperature isolines as MVT `LineString` features.
+
+**Output:** [`test/output/tiles_gettile_mvt_isoline.get`](../test/output/tiles_gettile_mvt_isoline.get) — MVT (binary)
+
+### tiles_gettile_mvt_numbers
+
+**Input:** [`test/input/tiles_gettile_mvt_numbers.get`](../test/input/tiles_gettile_mvt_numbers.get)
+
+```
+GET /tiles/collections/test:t2m_numbers/tiles/EPSG:4326/5/4/36?f=mvt&TIME=20080805T030000 HTTP/1.0
+```
+
+Returns temperature number positions and values as MVT `Point` features with the numeric value as an attribute.
+
+**Output:** [`test/output/tiles_gettile_mvt_numbers.get`](../test/output/tiles_gettile_mvt_numbers.get) — MVT (binary)
+
+### tiles_gettile_mvt_circles
+
+**Input:** [`test/input/tiles_gettile_mvt_circles.get`](../test/input/tiles_gettile_mvt_circles.get)
+
+```
+GET /tiles/collections/test:t2m_circles/tiles/EPSG:4326/5/4/36?f=mvt&TIME=20080805T030000 HTTP/1.0
+```
+
+Returns circle-layer data (station point positions with radius attributes) as MVT `Point` features.
+
+**Output:** [`test/output/tiles_gettile_mvt_circles.get`](../test/output/tiles_gettile_mvt_circles.get) — MVT (binary)
