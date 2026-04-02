@@ -1,11 +1,8 @@
-# SmartMet Server
+# smartmet-plugin-wms
 
-[SmartMet Server](https://github.com/fmidev/smartmet-server) is a data and product server for MetOcean data. It
-provides a high capacity and high availability data and product server
-for MetOcean data. The server is written in C++, since 2008 it has
-been in operational use by the Finnish Meteorological Institute FMI.
+Part of [SmartMet Server](https://github.com/fmidev/smartmet-server). See the [SmartMet Server documentation](https://github.com/fmidev/smartmet-server) for a full overview of the ecosystem.
 
-# Introduction
+## Introduction
  
 A Web Map Service (WMS) is a standard protocol developed by the <a
 href="http://www.opengeospatial.org">Open Geospatial Consortium</a>
@@ -20,7 +17,7 @@ using the HTTP protocol. These images can be delivered in several
 formats such as Scalable Vector Graphics(SVG), Portable Network
 Graphics(PNG) and JPEG. As special cases GeoJSON and KML can be requested too, in which case all parts of the generated image apart from the actual geometries will be dropped from the response. The WMS/Dali plugin fetches the image data from the SmartMet Server engines such as QEngine, ObsEngine, GeoEngine, etc.
 
-# WMS plugin 
+## WMS plugin 
 
 The <a
 href="http://docs.geoserver.org/stable/en/user/services/wms/">Web Map
@@ -38,7 +35,7 @@ also provides the possibility to mask content based on other
 parameters, for example, draw precipitation areas where wind gusts are
 over 8 m/s.
 
-# Dali plugin 
+## Dali plugin 
 
 The Dali plugin implements the Web Map Server (WMS)
 interface specified by the Open Geospatial Consortium. In addition, it
@@ -54,7 +51,7 @@ radius of 200 kms.
 In this document we concentrate on  describing the
 usage of the Dali specific interface.
 
-## Dali request
+### Dali request
 
 A typical Dali request contains the following parameters:
 
@@ -73,17 +70,17 @@ http://data.fmi.fi/dali?customer=customerX&product=temperature&time=201605020900
 ![](docs/images/lampotila.png)
 
 
-The request query starts with a “service location?” (here
+The request query starts with a "service location?" (here
 http://data.fmi.fi/dali), and is followed by one or more parameters
 given as name-value pairs separated by the ampersand (&)
 character. The format of the parameters is similar to that of HTTP GET
 request.
 
 If the request processing fails for some reason then the Dali plugin
-returns an HTTP error message such as “Bad Request”, “Wrong
-parameters”, etc.  to the client.
+returns an HTTP error message such as "Bad Request", "Wrong
+parameters", etc.  to the client.
 
-## Customer and product
+### Customer and product
 
 
 When requesting an image from the Dali plugin we are actually
@@ -109,12 +106,12 @@ A product can contain several views that are merged together into a single image
 
 The requested product is defined by the "product" parameter in the HTTP request. Usually the value of this parameter refers to a product file stored into the customer product directory.
 
-# Product configuration
+## Product configuration
 
 The [WMS and Dali reference](docs/reference.md) descibes how to
 configure both products and the plugin itself.
 
-# Tutorial
+## Tutorial
 
 ![](docs/images/world-with-borders.png)
 
@@ -146,7 +143,7 @@ This tells us that we have data which
 
 This tutorial show how to configure the WMS plugin to visualize the given data.
 
-## Plugin configuration
+### Plugin configuration
 
 The WMS configuration root directory is defined in the plugin configuration. The WMS related parts are particularly
 ```
@@ -173,7 +170,7 @@ cache =
 
 The example cache uses 4 GB of system memory and 2 GB of file cache at `/var/smartmet/imagecache`.
 
-## Layer configuration and directory structure
+### Layer configuration and directory structure
 
 The layer configuration uses JSON and CSS to define the appearance and properties of the layer. See the [full reference manual](https://github.com/fmidev/smartmet-plugin-wms/wiki/Smartmet-plugin-WMS-(Dali-&-WMS)) for all supported configuration options.
 
@@ -184,16 +181,16 @@ The example configuration directory tree is arranged as follows. The root direct
 └── customers
     └── ecmwf
         ├── layers
-        │   └── era15
-        │       └── temperature
-        │           └── isobands
-        │               ├── Temperature.css
-        │               └── Temperature.json
+        │   └── era15
+        │       └── temperature
+        │           └── isobands
+        │               ├── Temperature.css
+        │               └── Temperature.json
         ├── markers
         ├── patterns
         ├── products
-        │   └── era15
-        │       └── temperature.json
+        │   └── era15
+        │       └── temperature.json
         └── symbols
 ```
 
@@ -295,7 +292,7 @@ We are using WMS request *GetMap* for the layer `ecmwf:era15:temperature` which 
 
 ![](docs/images/world-without-borders.png)
 
-## Map layers
+### Map layers
 
 WMS plugin is able to use shapefiles stored in a PostGIS database to draw for example country borders over an isoband layer. For database layers usage we need to have
 * The PostGIS database which has the shape information.
