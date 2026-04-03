@@ -1,0 +1,95 @@
+{
+    "title": "LocationLayer — fixed label placement",
+
+    // Projection: Finland in YKJ (EPSG:2393), same as the existing cities test
+    "projection":
+    {
+        "xsize": 400,
+        "ysize": 700,
+        "crs": "EPSG:2393",
+        "bboxcrs": "EPSG:4326",
+        "cy": 64.8,
+        "cx": 25.4,
+        "resolution": 2.5
+    },
+
+    "defs":
+    {
+        "layers":
+        [
+            {
+                "tag": "symbol",
+                "attributes": { "id": "dot" },
+                "layers":
+                [
+                    {
+                        "tag": "circle",
+                        "attributes": { "r": "3", "cx": "0", "cy": "0" }
+                    }
+                ]
+            }
+        ]
+    },
+
+    "views":
+    [
+        {
+            "qid": "v1",
+            "layers":
+            [
+                {
+                    "qid": "background",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 10
+                    },
+                    "attributes":
+                    {
+                        "fill": "#e8e8e8",
+                        "stroke": "#aaa",
+                        "stroke-width": "0.5"
+                    }
+                },
+                {
+                    "qid": "cities",
+                    "layer_type": "location",
+                    "keyword": "municipalities_fi",
+                    "countries": "fi",
+                    // mindistance keeps symbol density manageable
+                    "mindistance": 25,
+                    "symbols":
+                    {
+                        "default":
+                        [
+                            { "hilimit": 50000, "symbol": "dot" },
+                            { "lolimit": 50000, "symbol": "dot" }
+                        ]
+                    },
+                    "attributes":
+                    {
+                        "fill": "#c00000",
+                        "stroke": "none"
+                    },
+                    // Fixed placement: every label goes NE of its symbol.
+                    // No conflict detection — useful for debugging or very
+                    // sparse data where overlaps are unlikely.
+                    "label":
+                    {
+                        "algorithm": "fixed",
+                        "fixed_position": "ne",
+                        "offset": 4,
+                        "font_family": "sans-serif",
+                        "font_size": 10,
+                        "fill": "#333333",
+                        "stroke": "white",
+                        "stroke_width": 2,
+                        "stroke_opacity": 0.8
+                    }
+                }
+            ]
+        }
+    ]
+}

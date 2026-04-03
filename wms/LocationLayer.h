@@ -7,6 +7,7 @@
 #pragma once
 
 #include "AttributeSelection.h"
+#include "LabelPlacement.h"
 #include "Layer.h"
 #include <vector>
 
@@ -42,6 +43,9 @@ class LocationLayer : public Layer
 
   // Feature code dependent symbol and attribute selection
   std::map<std::string, std::vector<AttributeSelection> > symbols;
+
+  // Optional text label placement
+  LabelConfig label_config;
 
  private:
 };  // class LocationLayer
