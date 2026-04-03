@@ -16,3 +16,4 @@ compile_commands.json
 /smartmet-plugin-wms.tar.gz
 local.conf
 §.cache
+test/unit/test_label_placement

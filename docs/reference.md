@@ -14,6 +14,7 @@ Table of Contents
       - [BackgroundLayer](#backgroundlayer)
       - [MapLayer](#maplayer)
       - [LocationLayer](#locationlayer)
+        - [LabelConfig settings](#labelconfig-settings)
       - [IsobandLayer](#isobandlayer)
       - [IsolineLayer](#isolinelayer)
         - [isolines-attribute](#isolines-attribute)
@@ -69,6 +70,7 @@ Table of Contents
       - [MapFeature structure](#mapfeature-structure)
       - [Positions structure](#positions-structure)
       - [Label structure](#label-structure)
+      - [LabelConfig structure](#labelconfig-structure)
       - [Location structure](#location-structure)
       - [Observation structure](#observation-structure)
       - [Station structure](#station-structure)
@@ -399,77 +401,163 @@ The table below contains a list of attributes that can be defined for the map la
 
 #### LocationLayer
 
-The location layer can be used  to point specific locations in the image. For example, we can create an image layer that shows all important cities by using predefined symbols. It is also possible to use different symbols based on some information. For example, we can use a red square symbol for  cities with  population  over a million and a red circle symbol for  cities with  population  less than a million, but more than fifty thousand. 
+The location layer renders point symbols at geographic positions retrieved from the geonames database. Typical use: city dots on a weather map so the viewer can locate the weather data. Location names are **context** for the weather information — weather symbols always take visual priority.
 
+Symbols are selected by population and geonames feature code using the [`AttributeSelection`](#attributeselection-structure) mechanism. An optional `label` block renders the location name as an SVG text element next to the symbol using one of several cartographic label-placement algorithms.
 
-The table below shows  a simple example on the usage of  the location layer.
+**Layer ordering and weather priority.** Because location labels are context rather than primary data, place the location layer *before* weather layers in the `views.layers` array so that weather symbols render on top. The label halo (white stroke) keeps text legible even when a weather symbol overlaps it.
+
+The table below shows a simple example of the location layer with greedy label placement.
 
 <table>
 <tr>
-<th>Product configuration file </th>
-<th> Produced image layer</th>
-<tr><td rowspan="40">
+<th>Product configuration file</th>
+<th>Produced image layer</th>
+<tr><td rowspan="60">
 <pre><code><sub>
 { // *** Product
-      "title": "MyCities",
-   "projection":
-  {
-      "xsize": 300, "ysize": 550, "crs": "EPSG:2393",
-      "bboxcrs": "EPSG:4326", "cy": 64.8, "cx": 25.4,
-      "resolution": 2.5
-   },
-   "views": [
-     { // *** View 1
-     "attributes": {   "id": "view1" },
-     "layers": [
-    { // *** Layer 1 : Map
+  "title": "MyCities",
+  "projection": {
+    "xsize": 300, "ysize": 550, "crs": "EPSG:2393",
+    "bboxcrs": "EPSG:4326", "cy": 64.8, "cx": 25.4,
+    "resolution": 2.5
+  },
+  "views": [ { "layers": [
+    { // *** Layer 1: Map background
       "layer_type": "map",
-      "map":
-       {
+      "map": {
         "schema": "natural_earth",
         "table": "europe_country_wgs84"
-       },
-       "attributes":
-       {
-        "class": "Europe"
-       }
+      },
+      "attributes": { "class": "Europe" }
     },
-    { // *** Layer 2: Cities
+    { // *** Layer 2: Cities with labels
       "qid": "cities",
-       "layer_type": "location",
-        "keyword" : "ely_cities",
-           "css": "maps/map.css",
-        "symbols":
-       {
-          "default": [
-         {
-            "hilimit": 1000000,
-            "symbol": "city"
-         },
-         {
-            "lolimit": 1000000,
-            "symbol": "bigcity"
-         }],
-         "PPLC": [
-         {
-            "symbol": "capital"
-         } ]
-        }
-    } ]
-  } ]
+      "layer_type": "location",
+      "keyword": "ely_cities",
+      "css": "maps/map.css",
+      "mindistance": 20,
+      "symbols": {
+        "default": [
+          { "hilimit": 1000000, "symbol": "city" },
+          { "lolimit": 1000000, "symbol": "bigcity" }
+        ],
+        "PPLC": [ { "symbol": "capital" } ]
+      },
+      "label": {
+        "algorithm": "greedy",
+        "candidates": 8,
+        "offset": 4,
+        "font_family": "sans-serif",
+        "font_size": 10,
+        "fill": "#333333",
+        "stroke": "white",
+        "stroke_width": 2,
+        "stroke_opacity": 0.8,
+        "classes": [
+          { "lolimit": 500000,
+            "font_size": 13, "font_weight": "bold" }
+        ]
+      }
+    }
+  ] } ]
 }</sub></code></pre></td><td><img src="images/location_layer_ex.png"></td></tr>
 </table>
 
-The table below contains a list of attributes that can be defined for the location layer in addition to the common layer attributes.
+The table below lists the attributes that can be defined for the location layer in addition to the common layer attributes.
 
 <pre><b>LocationLayer</b></pre>
 | Name        | Type                                                  | Default value | Description                                                                            |
 | ----------- | ----------------------------------------------------- | ------------- | -------------------------------------------------------------------------------------- |
-| keyword     | string                                                | -             | The geonames keyword.                                                                  |
-| mindistance | double                                                | 30            | Minimum distance between location symbols.                                             |
-| countries   | (string) or string                                    | -             | Allowed country isocodes.                                                              |
-| symbol      | (string)                                              | -             | Default symbol.                                                                        |
-| symbols     | [AttributeSelection] or {string:[AttributeSelection]} | -             | Symbol selection based on population, or a map from feature codes to symbol selection. |
+| keyword     | string                                                | -             | The geonames keyword identifying the set of locations to render.                       |
+| mindistance | double                                                | 30            | Minimum pixel distance between symbol anchor points. Locations closer than this to an already-placed symbol are skipped (in geonames priority order). |
+| countries   | (string) or string                                    | -             | One or more ISO 3166-1 alpha-2 country codes to restrict the result set.               |
+| symbol      | (string)                                              | -             | Default symbol IRI used when `symbols` is absent.                                      |
+| symbols     | [AttributeSelection] or {string:[AttributeSelection]} | -             | Symbol selection by population, or a map from geonames feature codes (e.g. `PPLC`, `ADM2`) to per-code selections. |
+| label       | [LabelConfig](#labelconfig-settings)                  | -             | Optional text label placement. Omitting this key disables labels entirely (backward-compatible). |
+
+##### LabelConfig settings
+
+The `label` object configures how location names are placed as SVG text next to their symbols. All label rendering happens inside the same SVG group as the symbols, so labels appear above symbols within the group but below layers placed after the location layer in the product.
+
+The placement algorithms come from the cartographic literature. For most weather map use cases `greedy` (k=8) gives the best quality-to-cost ratio. Use `simulated-annealing` when label density is high and overlap quality matters more than rendering time.
+
+<pre><b>LabelConfig — common settings</b></pre>
+| Name            | Type     | Default       | Description                                                                                                     |
+| --------------- | -------- | ------------- | --------------------------------------------------------------------------------------------------------------- |
+| algorithm       | string   | `"none"`      | Placement algorithm. One of `none`, `fixed`, `greedy`, `priority-greedy`, `simulated-annealing`.                |
+| candidates      | int      | 8             | Number of candidate positions tried per label: 4, 8, or 16. Positions follow Imhof (1975) preference order (NE best, S worst). |
+| offset          | double   | 5.0           | Pixel gap between the symbol anchor and the label bounding box edge.                                            |
+| font_family     | string   | `"sans-serif"`| SVG `font-family` attribute.                                                                                    |
+| font_size       | double   | 11            | Default font size in pixels.                                                                                    |
+| font_weight     | string   | `"normal"`    | Default font weight (`"normal"` or `"bold"`).                                                                   |
+| fill            | string   | `"#333333"`   | Default label text colour.                                                                                      |
+| stroke          | string   | `"white"`     | Halo colour rendered as a thick stroke behind the text. Set to `""` to disable the halo.                       |
+| stroke_width    | double   | 2.0           | Halo stroke width in pixels.                                                                                    |
+| stroke_opacity  | double   | 0.75          | Halo stroke opacity (0 = transparent, 1 = opaque).                                                             |
+| max_labels      | int      | 200           | Hard cap on the number of labels processed. Applied before placement; the highest-priority (geonames sort order) locations are kept. |
+| classes         | array    | `[]`          | Population-based style overrides; see table below. First matching class wins.                                   |
+
+**`classes` array entries** (population-range style overrides):
+
+| Name        | Type   | Default | Description                                                  |
+| ----------- | ------ | ------- | ------------------------------------------------------------ |
+| lolimit     | double | -       | Inclusive lower population bound for this class to apply.    |
+| hilimit     | double | -       | Exclusive upper population bound for this class to apply.    |
+| font_size   | double | 0       | Font size override (0 = inherit LabelConfig default).        |
+| font_weight | string | `""`    | Font weight override (`""` = inherit).                       |
+| fill        | string | `""`    | Text colour override (`""` = inherit).                       |
+
+**Algorithm-specific settings:**
+
+`fixed` — Places every label at a single predetermined position relative to its symbol. No conflict detection; labels may overlap.
+
+| Name           | Type   | Default | Description                                                                              |
+| -------------- | ------ | ------- | ---------------------------------------------------------------------------------------- |
+| fixed_position | string | `"ne"`  | One of `n`, `ne`, `e`, `se`, `s`, `sw`, `w`, `nw`. Follows Imhof preference naming.    |
+
+`greedy` — For each location in geonames priority order (highest-priority city first), tries up to `candidates` positions and places the label at the first position that does not overlap any already-placed label and fits within the map bounds. Dropped labels have no text rendered. This is the recommended algorithm for most weather map use cases.
+
+`priority-greedy` — Identical to `greedy` but the input is re-sorted by population descending before placement. Use this when you need to guarantee that the largest cities get labels regardless of their geonames autocomplete rank.
+
+`simulated-annealing` — Global near-optimum placement based on Christensen, Marks & Shieber (1995). Minimises total label-overlap area across all labels simultaneously. Slower than greedy (configurable number of iterations) but produces noticeably better results for dense urban areas. The RNG seed is fixed, so output is deterministic and the HTTP response cache works correctly.
+
+<pre><b>LabelConfig — simulated-annealing sub-object</b></pre>
+| Name                | Type   | Default | Description                                                                                |
+| ------------------- | ------ | ------- | ------------------------------------------------------------------------------------------ |
+| iterations          | int    | 2000    | Number of SA steps. 2000 is sufficient for maps with up to ~150 labels.                   |
+| initial_temperature | double | 1.0     | Starting temperature T₀. Higher values allow more uphill moves early in the search.       |
+| cooling_rate        | double | 0.99    | Geometric cooling factor applied each iteration: T ← T × cooling_rate.                   |
+| overlap_weight      | double | 1.0     | Energy weight for label–label overlap area (in pixels²).                                  |
+| position_weight     | double | 0.2     | Energy weight for position preference (index in Imhof order). Keeps labels near NE.       |
+
+**Example — simulated annealing with population-scaled labels:**
+
+```json
+"label": {
+  "algorithm": "simulated-annealing",
+  "candidates": 8,
+  "offset": 4,
+  "font_family": "sans-serif",
+  "font_size": 10,
+  "fill": "#222222",
+  "stroke": "white",
+  "stroke_width": 2.5,
+  "stroke_opacity": 0.75,
+  "max_labels": 150,
+  "simulated_annealing": {
+    "iterations": 2000,
+    "initial_temperature": 1.0,
+    "cooling_rate": 0.99,
+    "overlap_weight": 1.0,
+    "position_weight": 0.2
+  },
+  "classes": [
+    { "lolimit": 500000, "font_size": 13, "font_weight": "bold", "fill": "#111111" },
+    { "lolimit":  50000, "font_size": 11 }
+  ]
+}
+```
 
 #### IsobandLayer
 
@@ -4187,6 +4275,30 @@ The table below contains a list of attributes used in the Label structure.
 
 
 Note: signed prefixes are needed in aviation charts where negative temperatures are typically shown without a sign. In the exceptional case where positive numbers are actually needed, they are displayed using a plus sign or a "PS"-prefix.
+
+#### LabelConfig structure
+
+The `LabelConfig` structure is used by [LocationLayer](#locationlayer) to place location name labels next to point symbols. See [LabelConfig settings](#labelconfig-settings) for the complete reference including algorithm-specific parameters and the `classes` population-override array.
+
+The key fields are summarised here for quick reference:
+
+<pre><b>LabelConfig (summary)</b></pre>
+| Name            | Type     | Default         | Description                                                                   |
+| --------------- | -------- | --------------- | ----------------------------------------------------------------------------- |
+| algorithm       | string   | `"none"`        | `none` \| `fixed` \| `greedy` \| `priority-greedy` \| `simulated-annealing`  |
+| candidates      | int      | 8               | Candidate positions per label: 4, 8, or 16 (Imhof preference order).         |
+| offset          | double   | 5.0             | Pixel gap between symbol anchor and label.                                    |
+| font_family     | string   | `"sans-serif"`  | SVG font family.                                                              |
+| font_size       | double   | 11              | Base font size in pixels.                                                     |
+| font_weight     | string   | `"normal"`      | `"normal"` or `"bold"`.                                                       |
+| fill            | string   | `"#333333"`     | Label text colour.                                                            |
+| stroke          | string   | `"white"`       | Halo colour (empty string = no halo).                                         |
+| stroke_width    | double   | 2.0             | Halo width in pixels.                                                         |
+| stroke_opacity  | double   | 0.75            | Halo opacity.                                                                 |
+| max_labels      | int      | 200             | Hard cap on labels processed.                                                 |
+| fixed_position  | string   | `"ne"`          | Fixed-algorithm position: `n` `ne` `e` `se` `s` `sw` `w` `nw`.               |
+| simulated_annealing | object | -             | SA sub-object: `iterations`, `initial_temperature`, `cooling_rate`, `overlap_weight`, `position_weight`. |
+| classes         | array    | `[]`            | Population-range style overrides (lolimit, hilimit, font_size, font_weight, fill). |
 
 #### Location structure
 
