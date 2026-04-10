@@ -66,6 +66,10 @@ namespace Avi
 class Engine;
 }
 #endif
+namespace OSM
+{
+class Engine;
+}
 }  // namespace Engine
 
 namespace Plugin

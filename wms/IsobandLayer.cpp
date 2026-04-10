@@ -878,15 +878,26 @@ void IsobandLayer::generate_gridEngine(CTPP::CDT& theGlobals,
           isoband_cdt["iri"] = iri;
           isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
           isoband_cdt["parameter"] = paraminfo.parameter;
-          pointCoordinates = Geometry::toString(*geom2,
-                                                theState.getType(),
-                                                box,
-                                                crs,
-                                                precision,
-                                                theState.arcHashMap,
-                                                theState.arcCounter,
-                                                arcNumbers,
-                                                arcCoordinates);
+
+          // Use Bezier SVG for SVG output when enabled
+          if (filter.bezierEnabled() && theState.getType() != "topojson" &&
+              theState.getType() != "geojson" && theState.getType() != "kml")
+          {
+            pointCoordinates = filter.toBezierSvg(*geom2, box, precision);
+          }
+
+          if (pointCoordinates.empty())
+          {
+            pointCoordinates = Geometry::toString(*geom2,
+                                                  theState.getType(),
+                                                  box,
+                                                  crs,
+                                                  precision,
+                                                  theState.arcHashMap,
+                                                  theState.arcCounter,
+                                                  arcNumbers,
+                                                  arcCoordinates);
+          }
 
           if (!pointCoordinates.empty())
             isoband_cdt["data"] = pointCoordinates;
@@ -1210,21 +1221,28 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
           isoband_cdt["time"] = Fmi::to_iso_extended_string(valid_time);
           isoband_cdt["parameter"] = paraminfo.parameter;
 
-          pointCoordinates = Geometry::toString(*geom2,
-                                                theState.getType(),
-                                                box,
-                                                crs,
-                                                precision,
-                                                theState.arcHashMap,
-                                                theState.arcCounter,
-                                                arcNumbers,
-                                                arcCoordinates);
+          // Use Bezier SVG for SVG output when enabled
+          if (filter.bezierEnabled() && theState.getType() != "topojson" &&
+              theState.getType() != "geojson" && theState.getType() != "kml")
+          {
+            pointCoordinates = filter.toBezierSvg(*geom2, box, precision);
+          }
+
+          if (pointCoordinates.empty())
+          {
+            pointCoordinates = Geometry::toString(*geom2,
+                                                  theState.getType(),
+                                                  box,
+                                                  crs,
+                                                  precision,
+                                                  theState.arcHashMap,
+                                                  theState.arcCounter,
+                                                  arcNumbers,
+                                                  arcCoordinates);
+          }
 
           if (!pointCoordinates.empty())
             isoband_cdt["data"] = pointCoordinates;
-
-          // isoband_cdt["data"] = Geometry::toString(*geom2, theState.getType(), box, crs,
-          // precision);
 
           isoband_cdt["type"] = Geometry::name(*geom2, theState.getType());
           isoband_cdt["layertype"] = "isoband";

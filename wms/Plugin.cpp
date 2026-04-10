@@ -720,7 +720,14 @@ void Plugin::init()
       return;
 
     // OSM (optional — only loaded when the engine is configured)
-    itsOSMEngine = itsReactor->getEngine<Engine::OSM::Engine>("OSM", nullptr);
+    try
+    {
+      itsOSMEngine = itsReactor->getEngine<Engine::OSM::Engine>("OSM", nullptr);
+    }
+    catch (...)
+    {
+      itsOSMEngine = nullptr;
+    }
     if (Spine::Reactor::isShuttingDown())
       return;
 

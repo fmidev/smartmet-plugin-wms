@@ -885,15 +885,27 @@ void IsolineLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, Stat
 
         std::string arcNumbers;
         std::string arcCoordinates;
-        std::string pointCoordinates = Geometry::toString(*geom,
-                                                          theState.getType(),
-                                                          box,
-                                                          crs,
-                                                          precision,
-                                                          theState.arcHashMap,
-                                                          theState.arcCounter,
-                                                          arcNumbers,
-                                                          arcCoordinates);
+        std::string pointCoordinates;
+
+        // Use Bezier SVG for SVG output when enabled
+        if (filter.bezierEnabled() && !topojson && theState.getType() != "geojson" &&
+            theState.getType() != "kml")
+        {
+          pointCoordinates = filter.toBezierSvg(*geom, box, precision);
+        }
+
+        if (pointCoordinates.empty())
+        {
+          pointCoordinates = Geometry::toString(*geom,
+                                                theState.getType(),
+                                                box,
+                                                crs,
+                                                precision,
+                                                theState.arcHashMap,
+                                                theState.arcCounter,
+                                                arcNumbers,
+                                                arcCoordinates);
+        }
 
         if (!pointCoordinates.empty())
           isoline_cdt["data"] = pointCoordinates;

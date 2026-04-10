@@ -1,0 +1,66 @@
+[
+    {
+        "qid": "pressure_1050_inf",
+        "lolimit": 1050,
+        "attributes": { "class": "Pressure_1050_inf" }
+    },
+    {
+        "qid": "pressure_1040_1050",
+        "lolimit": 1040,
+        "hilimit": 1050,
+        "attributes": { "class": "Pressure_1040_1050" }
+    },
+    {
+        "qid": "pressure_1030_1040",
+        "lolimit": 1030,
+        "hilimit": 1040,
+        "attributes": { "class": "Pressure_1030_1040" }
+    },
+    {
+        "qid": "pressure_1020_1030",
+        "lolimit": 1020,
+        "hilimit": 1030,
+        "attributes": { "class": "Pressure_1020_1030" }
+    },
+    {
+        "qid": "pressure_1010_1020",
+        "lolimit": 1010,
+        "hilimit": 1020,
+        "attributes": { "class": "Pressure_1010_1020" }
+    },
+    {
+        "qid": "pressure_1000_1010",
+        "lolimit": 1000,
+        "hilimit": 1010,
+        "attributes": { "class": "Pressure_1000_1010" }
+    },
+    {
+        "qid": "pressure_990_1000",
+        "lolimit": 990,
+        "hilimit": 1000,
+        "attributes": { "class": "Pressure_990_1000" }
+    },
+    {
+        "qid": "pressure_980_990",
+        "lolimit": 980,
+        "hilimit": 990,
+        "attributes": { "class": "Pressure_980_990" }
+    },
+    {
+        "qid": "pressure_970_980",
+        "lolimit": 970,
+        "hilimit": 980,
+        "attributes": { "class": "Pressure_970_980" }
+    },
+    {
+        "qid": "pressure_960_970",
+        "lolimit": 960,
+        "hilimit": 970,
+        "attributes": { "class": "Pressure_960_970" }
+    },
+    {
+        "qid": "pressure_inf_960",
+        "hilimit": 960,
+        "attributes": { "class": "Pressure_inf_960" }
+    }
+]

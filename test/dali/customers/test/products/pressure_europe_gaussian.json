@@ -1,0 +1,73 @@
+{
+    "title": "Pressure over Europe, Gaussian filter",
+    "producer": "pal_skandinavia",
+    "projection":
+    {
+        "crs": "data",
+        "xsize": 800,
+        "ysize": 800
+    },
+    "views": [
+        {
+            "qid": "v1",
+            "attributes":
+            {
+                "id": "view1"
+            },
+            "layers": [
+                {
+                    "qid": "b1",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/pressure.json",
+                    "css": "isobands/pressure.css",
+                    "parameter": "Pressure",
+                    "filter":
+                    {
+                        "type": "gaussian",
+                        "radius": 5.0,
+                        "iterations": 2
+                    },
+                    "attributes":
+                    {
+                        "id": "pressure_isobands"
+                    }
+                },
+                {
+                    "qid": "l1",
+                    "layer_type": "isoline",
+                    "isolines": "json:isolines/pressure.json",
+                    "css": "isolines/pressure.css",
+                    "parameter": "Pressure",
+                    "filter":
+                    {
+                        "type": "gaussian",
+                        "radius": 5.0,
+                        "iterations": 2
+                    },
+                    "attributes":
+                    {
+                        "id": "pressure_isolines",
+                        "class": "Pressure"
+                    }
+                },
+                {
+                    "qid": "m1",
+                    "layer_type": "map",
+                    "map":
+                    {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 100
+                    },
+                    "attributes":
+                    {
+                        "id": "europe_coastlines",
+                        "fill": "none",
+                        "stroke": "#222",
+                        "stroke-width": "0.3px"
+                    }
+                }
+            ]
+        }
+    ]
+}
