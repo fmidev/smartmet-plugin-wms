@@ -1000,7 +1000,7 @@ void IsolabelLayer::fix_orientation(Candidates& candidates,
       // Q API SUCKS!!
       Spine::Location loc(latlon.X(), latlon.Y());
       Engine::Querydata::ParameterOptions options(
-          param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
+          param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, 0, dummy);
 
       auto result = q->value(options, localdatetime);
 

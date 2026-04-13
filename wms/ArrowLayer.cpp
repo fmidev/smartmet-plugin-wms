@@ -218,7 +218,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                       mylocale,
                                                       tmp,
                                                       false,
-                                                      dummy,
+                                                      0,
                                                       dummy);
         auto vp = Engine::Querydata::ParameterOptions(*vparam,
                                                       tmp,
@@ -231,7 +231,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                       mylocale,
                                                       tmp,
                                                       false,
-                                                      dummy,
+                                                      0,
                                                       dummy);
 
         auto uresult = AggregationUtility::get_qengine_value(q, up, localdatetime, u_funcs);
@@ -266,7 +266,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                         mylocale,
                                                         tmp,
                                                         false,
-                                                        dummy,
+                                                        0,
                                                         dummy);
           auto dir_result = AggregationUtility::get_qengine_value(q, dp, localdatetime, dir_funcs);
           if (const double* ptr = std::get_if<double>(&dir_result))
@@ -293,7 +293,7 @@ PointValues read_forecasts(const ArrowLayer& layer,
                                                           mylocale,
                                                           tmp,
                                                           false,
-                                                          dummy,
+                                                          0,
                                                           dummy);
             auto speed_result =
                 AggregationUtility::get_qengine_value(q, sp, localdatetime, speed_funcs);
@@ -1236,9 +1236,9 @@ void ArrowLayer::getQuerydataValue(CTPP::CDT& theInfo, const State& theState)
     if (uparam && vparam)
     {
       auto up = Engine::Querydata::ParameterOptions(
-          *uparam, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
+          *uparam, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, 0, dummy);
       auto vp = Engine::Querydata::ParameterOptions(
-          *vparam, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
+          *vparam, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, 0, dummy);
 
       auto uresult = AggregationUtility::get_qengine_value(q, up, localdatetime, u_funcs);
       auto vresult = AggregationUtility::get_qengine_value(q, vp, localdatetime, v_funcs);
@@ -1260,7 +1260,7 @@ void ArrowLayer::getQuerydataValue(CTPP::CDT& theInfo, const State& theState)
       if (dir_funcs && dir_funcs->functions.innerFunction.exists())
       {
         auto dp = Engine::Querydata::ParameterOptions(
-            *dirparam, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
+            *dirparam, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, 0, dummy);
         auto dir_result = AggregationUtility::get_qengine_value(q, dp, localdatetime, dir_funcs);
         if (const double* ptr = std::get_if<double>(&dir_result))
           wdir = *ptr;
@@ -1286,7 +1286,7 @@ void ArrowLayer::getQuerydataValue(CTPP::CDT& theInfo, const State& theState)
                                                         mylocale,
                                                         "",
                                                         false,
-                                                        dummy,
+                                                        0,
                                                         dummy);
           auto speed_result =
               AggregationUtility::get_qengine_value(q, sp, localdatetime, speed_funcs);

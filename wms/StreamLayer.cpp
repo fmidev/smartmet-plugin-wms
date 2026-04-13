@@ -526,7 +526,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
                                                        mylocale,
                                                        tmp,
                                                        false,
-                                                       dummy,
+                                                       0,
                                                        dummy);
 
           auto res = q->value(p, localdatetime);
@@ -565,7 +565,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
                                                          mylocale,
                                                          tmp,
                                                          false,
-                                                         dummy,
+                                                         0,
                                                          dummy);
 
           auto p_v = Engine::Querydata::ParameterOptions(v_param,
@@ -579,7 +579,7 @@ std::vector<OGRGeometryPtr> StreamLayer::getStreamsQuerydata(const State& theSta
                                                          mylocale,
                                                          tmp,
                                                          false,
-                                                         dummy,
+                                                         0,
                                                          dummy);
 
           auto res_u = q->value(p_u, localdatetime);

@@ -159,7 +159,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
                                                       mylocale,
                                                       tmp,
                                                       false,
-                                                      dummy,
+                                                      0,
                                                       dummy);
         auto uresult = q.value(up, localdatetime);
 
@@ -174,7 +174,7 @@ void apply_direction_offsets(Positions::Points& thePoints,
                                                       mylocale,
                                                       tmp,
                                                       false,
-                                                      dummy,
+                                                      0,
                                                       dummy);
         auto vresult = q.value(vp, localdatetime);
 

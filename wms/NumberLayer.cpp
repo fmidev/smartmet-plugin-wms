@@ -91,7 +91,7 @@ PointValues read_forecasts(const NumberLayer& layer,
 
         // Q API SUCKS!!
         Engine::Querydata::ParameterOptions options(
-            *param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, dummy, dummy);
+            *param, "", loc, "", "", *timeformatter, "", "", mylocale, "", false, 0, dummy);
 
         TS::Value result =
             AggregationUtility::get_qengine_value(q, options, localdatetime, layer.param_funcs);

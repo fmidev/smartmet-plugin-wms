@@ -764,7 +764,7 @@ void Layer::getQuerydataValue(CTPP::CDT& theInfo, const State& theState)
                                                 mylocale,
                                                 "",
                                                 false,
-                                                dummy,
+                                                0,
                                                 dummy);
 
     TS::Value result =
