@@ -4,7 +4,7 @@ REQUIRES = gdal jsoncpp configpp ctpp2 fmt librsvg libpqxx
 
 include $(shell echo $${PREFIX-/usr})/share/smartmet/devel/makefile.inc
 
-CFLAGS = -DUNIX -O0 -g $(FLAGS) -Wno-unknown-pragmas
+CFLAGS = -DUNIX -O0 -g $(FLAGS) -Wno-unknown-pragmas -DWITHOUT_OSM
 
 INCLUDES += \
 	-I../wms \
