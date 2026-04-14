@@ -108,8 +108,21 @@ The requested product is defined by the "product" parameter in the HTTP request.
 
 ## Product configuration
 
-The [WMS and Dali reference](docs/reference.md) descibes how to
+The [WMS and Dali reference](docs/reference.md) describes how to
 configure both products and the plugin itself.
+
+### Illustrated examples
+
+The test suite doubles as a gallery of worked examples — each page
+shows the HTTP request, the product JSON, and the rendered output:
+
+| Guide | Contents |
+|-------|----------|
+| [Map Projections](docs/examples/maps.md) | All PROJ-supported projections tested via the `/dali` `map` product |
+| [Dali Examples](docs/examples/dali.md) | All `/dali` endpoint test cases: output formats, isobands, isolabels, symbols, wind, METAR, Hovmoeller, fire weather, world projections, and more |
+| [WMS Examples](docs/examples/wms.md) | `/wms` GetMap, GetCapabilities, GetFeatureInfo, and GetLegendGraphic test cases |
+| [WMTS Examples](docs/examples/wmts.md) | `/wmts` GetCapabilities, GetTile (isoband and temperature numbers) |
+| [OGC Tiles Examples](docs/examples/tiles.md) | `/tiles` GetCollections and GetTile test cases |
 
 ## Tutorial
 
