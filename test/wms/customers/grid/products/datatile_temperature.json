@@ -1,18 +1,10 @@
 {
   "title": "Temperature datatile",
+  "abstract": "Temperature encoded as RGBA datatile",
   "source": "grid",
   "producer": "pal",
   "type": "datatile",
-  "projection": {
-    "crs": "EPSG:4326",
-    "xsize": 64,
-    "ysize": 64,
-    "bboxcrs": "EPSG:4326",
-    "x1": -12,
-    "y1": 34,
-    "x2": 40,
-    "y2": 74
-  },
+  "projection": {},
   "views": [
     {
       "layers": [

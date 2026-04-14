@@ -1,6 +1,7 @@
 {
   "title": "Wind datatile",
-  "producer": "SMARTMET",
+  "source": "grid",
+  "producer": "pal",
   "type": "datatile",
   "projection": {
     "crs": "EPSG:4326",
