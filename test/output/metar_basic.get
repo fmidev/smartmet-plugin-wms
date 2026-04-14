@@ -1,0 +1,232 @@
+<svg width="700" height="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<title>METAR Basic Test</title>
+<defs>
+<style type="text/css"><![CDATA[
+
+
+ ]]>
+</style>
+
+
+</defs>
+
+<g>
+ <g>
+  <g id="metar_layer">
+  
+  <rect fill="#FFFF00" height="8" stroke="black" stroke-width="0.5" width="8" x="338" y="525">
+  />
+  <path d="M 342.0 529.0 L 351.6 545.6 M 351.6 545.6 L 348.0 547.7" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="333" y="505">05</text>
+  <text fill="black" font-size="10" text-anchor="end" x="333" y="518">9000</text>
+  <text fill="black" font-size="10" text-anchor="end" x="333" y="532">05</text>
+  <text fill="black" font-size="10" text-anchor="start" x="348" y="505">1004</text>
+  <text fill="black" font-size="10" text-anchor="start" x="348" y="532">-RADZ</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="342" y="544">OVC005</text>
+  <path d="M 271.0 82.0 L 285.7 94.3" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="262" y="58">M04</text>
+  <text fill="black" font-size="10" text-anchor="end" x="262" y="85">M04</text>
+  <path d="M 340.0 407.0 L 354.7 419.3 M 354.7 419.3 L 352.0 422.6" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="331" y="383">03</text>
+  <text fill="black" font-size="10" text-anchor="end" x="331" y="410">03</text>
+  <rect fill="#00CC00" height="8" stroke="black" stroke-width="0.5" width="8" x="467" y="65">
+  />
+  <path d="M 471.0 69.0 m -4.2 0 a 4.2 4.2 0 1 0 8.4 0 a 4.2 4.2 0 1 0 -8.4 0" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="462" y="45">M04</text>
+  <text fill="black" font-size="10" text-anchor="end" x="462" y="58">9999</text>
+  <text fill="black" font-size="10" text-anchor="end" x="462" y="72">M05</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="471" y="84">FEW014</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="471" y="96">OVC022</text>
+  <path d="M 581.0 367.0 L 597.6 376.6 M 597.6 376.6 L 595.5 380.2" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="572" y="343">M02</text>
+  <text fill="black" font-size="10" text-anchor="end" x="572" y="370">M02</text>
+  <rect fill="#FFFF00" height="8" stroke="black" stroke-width="0.5" width="8" x="325" y="207">
+  />
+  <path d="M 329.0 211.0 L 341.3 225.7 M 341.3 225.7 L 338.1 228.4" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="320" y="187">01</text>
+  <text fill="black" font-size="10" text-anchor="end" x="320" y="200">5000</text>
+  <text fill="black" font-size="10" text-anchor="end" x="320" y="214">00</text>
+  <text fill="black" font-size="10" text-anchor="start" x="335" y="214">-RA</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="329" y="226">OVC005</text>
+  <path d="M 484.0 286.0 L 496.3 300.7 M 496.3 300.7 L 493.1 303.4" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="475" y="262">00</text>
+  <text fill="black" font-size="10" text-anchor="end" x="475" y="289">M01</text>
+  <rect fill="#FFFF00" height="8" stroke="black" stroke-width="0.5" width="8" x="253" y="310">
+  />
+  <path d="M 257.0 314.0 L 273.6 323.6 M 273.6 323.6 L 271.5 327.2" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="248" y="290">02</text>
+  <text fill="black" font-size="10" text-anchor="end" x="248" y="303">9999</text>
+  <text fill="black" font-size="10" text-anchor="end" x="248" y="317">01</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="257" y="329">SCT006</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="257" y="341">OVC008</text>
+  <rect fill="#FFFF00" height="8" stroke="black" stroke-width="0.5" width="8" x="557" y="196">
+  />
+  <path d="M 561.0 200.0 L 573.3 214.7 M 573.3 214.7 L 570.1 217.4" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="552" y="176">M04</text>
+  <text fill="black" font-size="10" text-anchor="end" x="552" y="189">9999</text>
+  <text fill="black" font-size="10" text-anchor="end" x="552" y="203">M04</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="561" y="215">OVC004</text>
+  <rect fill="#FFFF00" height="8" stroke="black" stroke-width="0.5" width="8" x="339" y="111">
+  />
+  <path d="M 343.0 115.0 L 361.9 118.3" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="334" y="91">M04</text>
+  <text fill="black" font-size="10" text-anchor="end" x="334" y="104">9000</text>
+  <text fill="black" font-size="10" text-anchor="end" x="334" y="118">M04</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="343" y="130">OVC003</text>
+  <rect fill="#00CC00" height="8" stroke="black" stroke-width="0.5" width="8" x="486" y="346">
+  />
+  <path d="M 490.0 350.0 L 502.3 364.7 M 502.3 364.7 L 495.9 370.1" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="481" y="326">00</text>
+  <text fill="black" font-size="10" text-anchor="end" x="481" y="339">9999</text>
+  <text fill="black" font-size="10" text-anchor="end" x="481" y="353">00</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="490" y="365">OVC008</text>
+  <path d="M 508.0 448.0 L 526.0 454.6 M 526.0 454.6 L 524.6 458.5" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="499" y="424">M01</text>
+  <text fill="black" font-size="10" text-anchor="end" x="499" y="451">M01</text>
+  <rect fill="#00CC00" height="8" stroke="black" stroke-width="0.5" width="8" x="91" y="490">
+  />
+  <path d="M 95.0 494.0 L 85.4 510.6 M 85.4 510.6 L 78.1 506.4" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="86" y="470">09</text>
+  <text fill="black" font-size="10" text-anchor="end" x="86" y="483">9999</text>
+  <text fill="black" font-size="10" text-anchor="end" x="86" y="497">08</text>
+  <text fill="black" font-size="10" text-anchor="start" x="101" y="497">-SHRA</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="95" y="509">BKN008</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="95" y="521">OVC058</text>
+  <rect fill="#0066FF" height="8" stroke="black" stroke-width="0.5" width="8" x="185" y="423">
+  />
+  <path d="M 189.0 427.0 L 205.6 436.6 M 205.6 436.6 L 201.4 443.9 M 200.1 433.4 L 198.0 437.0" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="180" y="403">05</text>
+  <text fill="black" font-size="10" text-anchor="end" x="180" y="416">9999</text>
+  <text fill="black" font-size="10" text-anchor="end" x="180" y="430">04</text>
+  <text fill="black" font-size="10" text-anchor="start" x="195" y="430">-RA</text>
+  <rect fill="#FF8C00" height="8" stroke="black" stroke-width="0.5" width="8" x="387" y="168">
+  />
+  <path d="M 391.0 172.0 L 405.7 184.3 M 405.7 184.3 L 403.0 187.6" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="382" y="148">M01</text>
+  <text fill="black" font-size="10" text-anchor="end" x="382" y="161">1600</text>
+  <text fill="black" font-size="10" text-anchor="end" x="382" y="175">M01</text>
+  <text fill="black" font-size="10" text-anchor="start" x="397" y="175">BR</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="391" y="187">VV002</text>
+  <rect fill="#00CC00" height="8" stroke="black" stroke-width="0.5" width="8" x="238" y="362">
+  />
+  <path d="M 242.0 366.0 L 256.7 378.3 M 256.7 378.3 L 251.3 384.8" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="233" y="342">04</text>
+  <text fill="black" font-size="10" text-anchor="end" x="233" y="355">9999</text>
+  <text fill="black" font-size="10" text-anchor="end" x="233" y="369">03</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="242" y="381">BKN009</text>
+  <rect fill="#FFFF00" height="8" stroke="black" stroke-width="0.5" width="8" x="277" y="425">
+  />
+  <path d="M 281.0 429.0 L 297.6 438.6 M 297.6 438.6 L 293.4 445.9" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="272" y="405">04</text>
+  <text fill="black" font-size="10" text-anchor="end" x="272" y="418">9999</text>
+  <text fill="black" font-size="10" text-anchor="end" x="272" y="432">04</text>
+  <text fill="black" font-size="10" text-anchor="start" x="287" y="432">-RA</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="281" y="444">FEW005</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="281" y="456">SCT007</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="281" y="468">BKN009</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="281" y="480">OVC015</text>
+  <rect fill="#FF8C00" height="8" stroke="black" stroke-width="0.5" width="8" x="443" y="451">
+  />
+  <path d="M 447.0 455.0 L 465.0 461.6 M 465.0 461.6 L 463.6 465.5" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="438" y="431">02</text>
+  <text fill="black" font-size="10" text-anchor="end" x="438" y="444">5000</text>
+  <text fill="black" font-size="10" text-anchor="end" x="438" y="458">02</text>
+  <text fill="black" font-size="10" text-anchor="start" x="453" y="458">-SHRA</text>
+  <text fill="black" font-size="10" text-anchor="middle" x="447" y="470">VV002</text>
+  <rect fill="#0066FF" height="8" stroke="black" stroke-width="0.5" width="8" x="184" y="343">
+  />
+  <path d="M 188.0 347.0 L 202.7 359.3 M 202.7 359.3 L 197.3 365.8" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="179" y="323">02</text>
+  <text fill="black" font-size="10" text-anchor="end" x="179" y="336">9999</text>
+  <text fill="black" font-size="10" text-anchor="end" x="179" y="350">01</text>
+  <text fill="black" font-size="10" text-anchor="start" x="194" y="323">999</text>
+  <text fill="black" font-size="10" text-anchor="start" x="194" y="350">-RA</text>
+  <path d="M 269.0 1.0 L 269.0 20.2 M 269.0 20.2 L 264.8 20.2" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="260" y="-23">M01</text>
+  <text fill="black" font-size="10" text-anchor="end" x="260" y="4">M05</text>
+  <text fill="black" font-size="10" text-anchor="start" x="275" y="-23">1001</text>
+  <path d="M 595.0 14.0 L 601.6 32.0 M 601.6 32.0 L 597.6 33.5" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="586" y="-10">M04</text>
+  <text fill="black" font-size="10" text-anchor="end" x="586" y="17">M06</text>
+  <text fill="black" font-size="10" text-anchor="start" x="601" y="-10">1005</text>
+  <rect fill="#FFFF00" height="8" stroke="black" stroke-width="0.5" width="8" x="137" y="139">
+  />
+  <path d="M 141.0 143.0 m -4.2 0 a 4.2 4.2 0 1 0 8.4 0 a 4.2 4.2 0 1 0 -8.4 0" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="132" y="119">M06</text>
+  <text fill="black" font-size="10" text-anchor="end" x="132" y="132">2500</text>
+  <text fill="black" font-size="10" text-anchor="end" x="132" y="146">M06</text>
+  <text fill="black" font-size="10" text-anchor="start" x="147" y="119">1000</text>
+  <text fill="black" font-size="10" text-anchor="start" x="147" y="146">-SN</text>
+  <rect fill="#FFFF00" height="8" stroke="black" stroke-width="0.5" width="8" x="32" y="269">
+  />
+  <path d="M 36.0 273.0 L 54.9 276.3 M 54.9 276.3 L 53.4 284.6" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="27" y="249">00</text>
+  <text fill="black" font-size="10" text-anchor="end" x="27" y="262">2100</text>
+  <text fill="black" font-size="10" text-anchor="end" x="27" y="276">M02</text>
+  <text fill="black" font-size="10" text-anchor="start" x="42" y="276">-SN</text>
+  <rect fill="#FFFF00" height="8" stroke="black" stroke-width="0.5" width="8" x="45" y="326">
+  />
+  <path d="M 49.0 330.0 L 65.6 339.6 M 65.6 339.6 L 61.4 346.9" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="40" y="306">04</text>
+  <text fill="black" font-size="10" text-anchor="end" x="40" y="319">2200</text>
+  <text fill="black" font-size="10" text-anchor="end" x="40" y="333">04</text>
+  <text fill="black" font-size="10" text-anchor="start" x="55" y="333">-RA</text>
+  <rect fill="#0066FF" height="8" stroke="black" stroke-width="0.5" width="8" x="150" y="265">
+  />
+  <path d="M 154.0 269.0 L 172.0 262.4" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="145" y="245">00</text>
+  <text fill="black" font-size="10" text-anchor="end" x="145" y="258">9999</text>
+  <text fill="black" font-size="10" text-anchor="end" x="145" y="272">00</text>
+  <path d="M 64.0 220.0 L 82.9 223.3 M 82.9 223.3 L 82.2 227.5" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="55" y="196">M03</text>
+  <text fill="black" font-size="10" text-anchor="end" x="55" y="223">M03</text>
+  <text fill="black" font-size="10" text-anchor="start" x="70" y="196">998</text>
+  <rect fill="#00CC00" height="8" stroke="black" stroke-width="0.5" width="8" x="202" y="219">
+  />
+  <path d="M 206.0 223.0 m -4.2 0 a 4.2 4.2 0 1 0 8.4 0 a 4.2 4.2 0 1 0 -8.4 0" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="197" y="199">00</text>
+  <text fill="black" font-size="10" text-anchor="end" x="197" y="212">4500</text>
+  <text fill="black" font-size="10" text-anchor="end" x="197" y="226">00</text>
+  <rect fill="#FFFFFF" height="8" stroke="black" stroke-width="0.5" width="8" x="249" y="134">
+  />
+  <path d="M 253.0 138.0 m -4.2 0 a 4.2 4.2 0 1 0 8.4 0 a 4.2 4.2 0 1 0 -8.4 0" fill="black" stroke="black" stroke-linecap="round" stroke-width="1.5">
+  />
+  <text fill="black" font-size="10" text-anchor="end" x="244" y="114">M02</text>
+  <text fill="black" font-size="10" text-anchor="end" x="244" y="127">6000</text>
+  <text fill="black" font-size="10" text-anchor="end" x="244" y="141">M03</text>
+  <text fill="black" font-size="10" text-anchor="start" x="259" y="141">-SN</text>
+  <text fill="black" font-size="10" text-anchor="end" x="604" y="486">M01</text>
+  <text fill="black" font-size="10" text-anchor="end" x="604" y="513">M01</text>
+  <text fill="black" font-size="10" text-anchor="start" x="619" y="486">1012</text>
+</g>
+ </g>
+</g>
+
+</svg>
