@@ -14,6 +14,8 @@
 
 #pragma once
 
+#ifndef WITHOUT_OSM
+
 #include "Attributes.h"
 #include "Layer.h"
 #include <engines/gis/MapOptions.h>
@@ -92,3 +94,5 @@ class OSMLayer : public Layer
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet
+
+#endif  // WITHOUT_OSM

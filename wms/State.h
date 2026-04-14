@@ -66,10 +66,12 @@ namespace Avi
 class Engine;
 }
 #endif
+#ifndef WITHOUT_OSM
 namespace OSM
 {
 class Engine;
 }
+#endif
 }  // namespace Engine
 
 namespace Plugin
@@ -94,7 +96,9 @@ class State
   const Engine::Contour::Engine& getContourEngine() const;
   const Engine::Gis::Engine& getGisEngine() const;
   const Engine::Geonames::Engine& getGeoEngine() const;
+#ifndef WITHOUT_OSM
   Engine::OSM::Engine* getOSMEngine() const;  // nullptr if engine not loaded
+#endif
 #ifndef WITHOUT_OBSERVATION
   Engine::Observation::Engine& getObsEngine() const;
 #endif

@@ -111,6 +111,7 @@ const Engine::Gis::Engine& State::getGisEngine() const
   }
 }
 
+#ifndef WITHOUT_OSM
 // ----------------------------------------------------------------------
 /*!
  * \brief Get the OSM engine (optional, returns nullptr if not loaded)
@@ -121,6 +122,7 @@ Engine::OSM::Engine* State::getOSMEngine() const
 {
   return itsPlugin.getOSMEngine();
 }
+#endif
 
 // ----------------------------------------------------------------------
 /*!

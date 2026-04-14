@@ -719,6 +719,7 @@ void Plugin::init()
     if (Spine::Reactor::isShuttingDown())
       return;
 
+#ifndef WITHOUT_OSM
     // OSM (optional — only loaded when the engine is configured)
     try
     {
@@ -730,6 +731,7 @@ void Plugin::init()
     }
     if (Spine::Reactor::isShuttingDown())
       return;
+#endif
 
     // QUERYDATA
 

@@ -20,7 +20,9 @@
 #include "MapLayer.h"
 #include "NullLayer.h"
 #include "NumberLayer.h"
+#ifndef WITHOUT_OSM
 #include "OSMLayer.h"
+#endif
 #include "PostGISLayer.h"
 #include "PresentWeatherObservationLayer.h"
 #include "GeoTiffLayer.h"
@@ -84,8 +86,10 @@ Layer* create(const Json::Value& theJson)
       return new MapLayer;
     if (name == "null")
       return new NullLayer;
+#ifndef WITHOUT_OSM
     if (name == "osm")
       return new OSMLayer;
+#endif
     if (name == "number")
       return new NumberLayer;
     if (name == "raster")

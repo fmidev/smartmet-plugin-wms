@@ -4,6 +4,8 @@
  */
 // ======================================================================
 
+#ifndef WITHOUT_OSM
+
 #include "OSMLayer.h"
 #include "Config.h"
 #include "Geometry.h"
@@ -701,3 +703,5 @@ std::size_t OSMLayer::hash_value(const State& theState) const
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet
+
+#endif  // WITHOUT_OSM

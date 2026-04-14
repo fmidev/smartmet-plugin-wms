@@ -17,7 +17,9 @@
 #include <engines/geonames/Engine.h>
 #include <engines/gis/Engine.h>
 #include <engines/grid/Engine.h>
+#ifndef WITHOUT_OSM
 #include <engines/osm/Engine.h>
+#endif
 #include <engines/querydata/Engine.h>
 #ifndef WITHOUT_OBSERVATION
 #include <engines/observation/Engine.h>
@@ -71,7 +73,9 @@ class Plugin : public SmartMetPlugin
   const Engine::Querydata::Engine& getQEngine() const { return *itsQEngine; }
   const Engine::Contour::Engine& getContourEngine() const { return *itsContourEngine; }
   const Engine::Gis::Engine& getGisEngine() const { return *itsGisEngine; }
+#ifndef WITHOUT_OSM
   Engine::OSM::Engine* getOSMEngine() const { return itsOSMEngine.get(); }
+#endif
   const Engine::Geonames::Engine& getGeoEngine() const { return *itsGeoEngine; }
 #ifndef WITHOUT_OBSERVATION
   Engine::Observation::Engine& getObsEngine() const { return *itsObsEngine; }
@@ -183,7 +187,9 @@ class Plugin : public SmartMetPlugin
   std::shared_ptr<Engine::Querydata::Engine> itsQEngine;
   std::shared_ptr<Engine::Contour::Engine> itsContourEngine;
   std::shared_ptr<Engine::Gis::Engine> itsGisEngine;
+#ifndef WITHOUT_OSM
   std::shared_ptr<Engine::OSM::Engine> itsOSMEngine;
+#endif
   std::shared_ptr<Engine::Geonames::Engine> itsGeoEngine;
   std::shared_ptr<Engine::Authentication::Engine> authEngine;
 #ifndef WITHOUT_OBSERVATION
