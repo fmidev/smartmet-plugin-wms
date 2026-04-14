@@ -51,6 +51,9 @@ class RasterLayer : public Layer
   // Fetch grid data and return GeoTiff bytes directly (bypasses the SVG/Cairo pipeline)
   std::string generateGeoTiff(State& theState) override;
 
+  // Fetch grid data and return RGBA-encoded PNG (bypasses the SVG/Cairo pipeline)
+  std::string generateDataTile(State& theState) override;
+
   std::optional<std::string> direction;
   std::optional<std::string> speed;
 

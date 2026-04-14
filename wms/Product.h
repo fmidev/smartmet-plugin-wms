@@ -51,6 +51,10 @@ class Product : public Properties
   // Returns the serialized protobuf bytes.
   std::string generateMVT(State& theState);
 
+  // Generates datatile PNG output by finding the first datatile-capable layer.
+  // Returns raw PNG bytes with RGBA-encoded float data.
+  std::string generateDataTile(State& theState);
+
   // Element specific:
   std::optional<std::string> svg_tmpl;
   std::string type;

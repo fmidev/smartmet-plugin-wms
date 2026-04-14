@@ -35,6 +35,8 @@ std::string demimetype(const std::string& theMimeType)
     return "kml";
   if (theMimeType == "text/html")
     return "html";
+  if (theMimeType == "application/x-datatile+png")
+    return "datatile";
   if (theMimeType == "cnf")
     return "cnf";
   if (theMimeType == "image/tiff")
@@ -75,6 +77,8 @@ std::string mimeType(const std::string& theType)
     return "application/json";
   if (theType == "html")
     return "text/html";
+  if (theType == "datatile")
+    return "image/png";
   if (theType == "cnf")
     return "application/json";
   if (theType == "geotiff")

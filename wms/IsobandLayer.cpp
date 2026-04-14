@@ -4,6 +4,7 @@
 #include "AggregationUtility.h"
 #include "Config.h"
 #include "Geometry.h"
+#include "DataTile.h"
 #include "GridDataGeoTiff.h"
 #include "MapboxVectorTile.h"
 #include "Hash.h"
@@ -1404,6 +1405,18 @@ std::string IsobandLayer::generateGeoTiff(State& theState)
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "IsobandLayer::generateGeoTiff failed!");
+  }
+}
+
+std::string IsobandLayer::generateDataTile(State& theState)
+{
+  try
+  {
+    return gridDataTile(*this, paraminfo.parameter, "linear", theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "IsobandLayer::generateDataTile failed!");
   }
 }
 

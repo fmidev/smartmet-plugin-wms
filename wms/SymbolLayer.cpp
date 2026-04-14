@@ -3,6 +3,7 @@
 #include "AggregationUtility.h"
 #include "Config.h"
 #include "MapboxVectorTile.h"
+#include "DataTile.h"
 #include "GridDataGeoTiff.h"
 #include "Hash.h"
 #include "Intersections.h"
@@ -1092,6 +1093,18 @@ std::string SymbolLayer::generateGeoTiff(State& theState)
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "SymbolLayer::generateGeoTiff failed!");
+  }
+}
+
+std::string SymbolLayer::generateDataTile(State& theState)
+{
+  try
+  {
+    return gridDataTile(*this, paraminfo.parameter, "linear", theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "SymbolLayer::generateDataTile failed!");
   }
 }
 

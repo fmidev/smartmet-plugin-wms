@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-The WMS/Dali plugin for SmartMet Server. It implements OGC Web Map Service (WMS 1.3.0), WMTS, and OGC API - Tiles, plus a richer non-standard "Dali" interface for meteorological map product rendering. Produces SVG, PNG, WebP, PDF, GeoJSON, KML, GeoTIFF, and Mapbox Vector Tiles (MVT).
+The WMS/Dali plugin for SmartMet Server. It implements OGC Web Map Service (WMS 1.3.0), WMTS, and OGC API - Tiles, plus a richer non-standard "Dali" interface for meteorological map product rendering. Produces SVG, PNG, WebP, PDF, GeoJSON, KML, GeoTIFF, Mapbox Vector Tiles (MVT), and DataTiles (RGBA-encoded float data in PNG for client-side weather animations).
 
 ## Build and test commands
 
@@ -67,6 +67,8 @@ test/             # Integration test suite
 
 Protobuf: `wms/vector_tile.proto` is compiled during build to `vector_tile.pb.{h,cc}` for MVT encoding.
 
+DataTile: `wms/DataTile.{h,cpp}` provides RGBA-encoded PNG output for client-side weather animations. Uses libpng directly, embeds scale/offset in PNG tEXt chunks. The `test/canvas/` directory contains standalone browser demos (rain, snow, wind particle systems) that consume this kind of data.
+
 ## Architecture
 
 ### Rendering pipeline
@@ -76,14 +78,17 @@ HTTP request
   -> Plugin::requestHandler() routes by URL path (/wms, /wmts, /tiles, /dali)
     -> Handler parses request into JSON product definition
       -> Product::init() parses JSON, creates Views and Layers via LayerFactory
-        -> Product::generate() builds CTPP2 CDT tree
+        -> [SVG path] Product::generate() builds CTPP2 CDT tree
           -> Each Layer::generate() produces SVG elements
-        -> CTPP2 template processes CDT into SVG string
-          -> formatResponse() converts SVG to final format (PNG/WebP/PDF via Giza/Cairo)
-            -> Result cached by content hash, ETag set
+            -> CTPP2 template processes CDT into SVG string
+              -> formatResponse() converts SVG to final format (PNG/WebP/PDF via Giza/Cairo)
+        -> [GeoTIFF path] Product::generateGeoTiff() -> Layer::generateGeoTiff() -> GDAL
+        -> [MVT path] Product::generateMVT() -> Layer::addMVTLayer() -> protobuf
+        -> [DataTile path] Product::generateDataTile() -> Layer::generateDataTile() -> PNG
+          -> Result cached by content hash, ETag set
 ```
 
-WMS GetMap requests are translated into Dali product JSON internally -- the WMS protocol is a thin wrapper around the Dali engine.
+WMS GetMap requests are translated into Dali product JSON internally -- the WMS protocol is a thin wrapper around the Dali engine. Three output types (GeoTIFF, MVT, DataTile) bypass the SVG pipeline entirely and query the grid engine directly.
 
 ### Key classes
 
@@ -91,7 +96,7 @@ WMS GetMap requests are translated into Dali product JSON internally -- the WMS 
 - **State** (`State.h`): Per-request context carrying engine references, caches, producer/time selection. Passed through the entire rendering stack.
 - **Product** (`Product.h`): Top-level rendering unit. Contains views, defs (shared SVG resources), output format settings.
 - **View** (`View.h`): A single map panel within a product. Contains layers and projection.
-- **Layer** (`Layer.h`): Abstract base for all renderable layer types (~30 subclasses). Key virtuals: `init()`, `generate()`, `getFeatureInfo()`, `hash_value()`.
+- **Layer** (`Layer.h`): Abstract base for all renderable layer types (~30 subclasses). Key virtuals: `init()`, `generate()`, `getFeatureInfo()`, `hash_value()`, `generateGeoTiff()`, `generateDataTile()`, `addMVTLayer()`.
 - **LayerFactory** (`LayerFactory.h`): Creates layer instances from JSON `layer_type` field.
 - **WMS::Handler** (`wms/Handler.h`): Dispatches WMS operations by `REQUEST` parameter.
 - **WMS::Config** (`wms/Config.h`): WMS layer registry and GetCapabilities metadata.

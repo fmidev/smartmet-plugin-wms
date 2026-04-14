@@ -1,6 +1,7 @@
 //======================================================================
 
 #include "RasterLayer.h"
+#include "DataTile.h"
 #include "GridDataGeoTiff.h"
 #include <cpl_vsi.h>
 #include <gdal_priv.h>
@@ -963,6 +964,24 @@ std::string RasterLayer::generateGeoTiff(State& theState)
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "RasterLayer::generateGeoTiff failed!");
+  }
+}
+
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate datatile output for a single scalar parameter
+ */
+// ----------------------------------------------------------------------
+
+std::string RasterLayer::generateDataTile(State& theState)
+{
+  try
+  {
+    return gridDataTile(*this, paraminfo.parameter, interpolation, theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "RasterLayer::generateDataTile failed!");
   }
 }
 

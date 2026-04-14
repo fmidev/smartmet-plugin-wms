@@ -87,6 +87,7 @@ Table of Contents
 - [Dali querystring parameters](#dali-querystring-parameters)
   - [Product modification via querystring](#product-modification-via-querystring)
   - [Template selection](#template-selection)
+  - [DataTile output](#datatile-output)
   - [Debugging parameters](#debugging-parameters)
 - [WMS querystring parameters](#wms-querystring-parameters)
 - [WMS GetMap and GetCapabilities configuration](#wms-getmap-and-getcapabilities-configuration)
@@ -215,6 +216,11 @@ For observations any point inside the expanded area will be included. Typically 
 For tiled images expanding the area has no discernible effect, since the clipping will be automatic since the rendered image is still the expected size and does not include the margins. However, if one has multiple views in a single image, one should set "clip" to true to make sure none of the layers leak outside their respective areas. Using a clipPath slows rendering down a little, hence it is not on by default.
 
 #### Output formatting
+
+Most output types (`svg`, `png`, `pdf`, `ps`, `geojson`, `topojson`, `kml`) are rendered
+through the CTPP/SVG pipeline.  Three output types bypass this pipeline entirely: `geotiff`
+returns raw float data via GDAL, `mvt` returns protobuf-encoded Mapbox Vector Tiles, and
+`datatile` returns RGBA-encoded float data as standard PNG (see [DataTile output](#datatile-output)).
 
 PNG output formatting can be tuned using the following settings inside a top level "png" tag:
 
@@ -4608,7 +4614,7 @@ The Dali endpoint (default URL `/dali`) accepts the following query parameters.
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `customer` | string | config default | Customer name; selects the sub-tree under `<root>/customers/`. |
-| `type` | string | `svg` | Output format: `svg`, `png`, `pdf`, `ps`, `xml`, `geojson`, `topojson`, `kml`, `geotiff`, `mvt`. |
+| `type` | string | `svg` | Output format: `svg`, `png`, `pdf`, `ps`, `xml`, `geojson`, `topojson`, `kml`, `geotiff`, `mvt`, `datatile`. |
 | `producer` | string | config default | Data producer (querydata model name). |
 | `time` | string | latest | Valid time in any format accepted by the MacGyver time parser (ISO 8601, SQL, epoch, offset from now). |
 | `time_offset` | int | 0 | Minutes added to `time`. |
@@ -4693,6 +4699,110 @@ templates:
     topojson = "topojson";
     kml      = "kml";
 }
+```
+
+## DataTile output
+
+The `datatile` output type produces a standard PNG where pixel RGBA values encode raw
+float data rather than visual colours.  This is the standard technique used by web
+weather visualisation platforms to deliver gridded meteorological fields to browser-side
+JavaScript that renders particle animations, interpolated overlays, and similar effects.
+
+Unlike GeoTIFF output (which carries full float32 precision but requires GDAL on the
+client), datatile PNGs can be loaded by any browser as a normal image and decoded in a
+few lines of JavaScript.
+
+### Requesting datatile output
+
+Via the Dali endpoint, set `type=datatile` in the query string or in the product JSON:
+
+```
+GET /dali?customer=grid&type=datatile&product=datatile_temperature&time=200808050800
+```
+
+Via WMS GetMap, use the MIME type `application/x-datatile+png` as the FORMAT:
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0&layers=grid:datatile_temperature&styles=&crs=EPSG:4326&bbox=34,-12,74,40&width=64&height=64&format=application/x-datatile%2Bpng&time=200808050800
+```
+
+Via WMTS and OGC API Tiles, use `datatile` as the format extension or `f=` parameter.
+
+### Encoding schemes
+
+The encoding scheme is described in PNG `tEXt` metadata chunks embedded in the
+output, so clients can self-discover the scale and offset.
+
+**Single-band encoding** (one scalar parameter such as temperature or precipitation):
+
+| Channel | Meaning |
+|---------|---------|
+| R       | High byte of 16-bit quantised value |
+| G       | Low byte of 16-bit quantised value |
+| B       | 0 (reserved) |
+| A       | 255 = valid, 0 = missing/nodata |
+
+PNG tEXt chunks: `datatile:bands=1`, `datatile:min`, `datatile:max`,
+`datatile:encoding=uint16`.
+
+Client-side decode:
+
+```javascript
+value = (R * 256 + G) / 65535.0 * (max - min) + min;
+```
+
+**Dual-band encoding** (two parameters, e.g. wind U + V or direction + speed):
+
+| Channel | Meaning |
+|---------|---------|
+| R       | High byte of 16-bit quantised band 1 |
+| G       | Low byte of 16-bit quantised band 1 |
+| B       | High byte of 16-bit quantised band 2 |
+| A       | Low byte of 16-bit quantised band 2 |
+
+Valid values are quantised to [1, 65535]; a pixel with all four bytes zero indicates
+missing data.
+
+PNG tEXt chunks: `datatile:bands=2`, `datatile:min1`, `datatile:max1`,
+`datatile:min2`, `datatile:max2`, `datatile:encoding=uint16`.
+
+Client-side decode:
+
+```javascript
+value1 = (R * 256 + G - 1) / 65534.0 * (max1 - min1) + min1;
+value2 = (B * 256 + A - 1) / 65534.0 * (max2 - min2) + min2;
+```
+
+### Supported layer types
+
+Any layer that supports GeoTIFF output also supports datatile output.  The first
+datatile-capable layer found in the product is used:
+
+| Layer type    | Bands | Notes |
+|---------------|-------|-------|
+| `isoband`     | 1     | Scalar parameter |
+| `isoline`     | 1     | Scalar parameter |
+| `raster`      | 1     | Scalar parameter |
+| `number`      | 1     | Scalar parameter |
+| `symbol`      | 1     | Scalar parameter |
+| `arrow`       | 1 or 2 | Single-param (speed or direction only) yields 1 band; combined direction+speed or U+V yields dual-band |
+
+For `arrow` layers in U+V mode, the raw U and V components are encoded directly
+(not converted to direction and speed), since client-side particle systems need
+the original vector components.
+
+### Pipeline
+
+The datatile output bypasses the SVG/CTPP rendering pipeline entirely, following
+the same architecture as GeoTIFF and MVT outputs.  The data flow is:
+
+```
+Request → Product::generateDataTile()
+          → Layer::generateDataTile()
+            → Grid engine query (same as GeoTIFF path)
+              → Float values quantised to RGBA pixels
+                → PNG encoded with tEXt metadata
+                  → Cached and returned
 ```
 
 ## Debugging parameters

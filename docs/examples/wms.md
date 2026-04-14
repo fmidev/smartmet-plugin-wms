@@ -666,6 +666,29 @@ GET /wms?...&layers=ely:wmsmap&format=application/pdf&time=200808050300 HTTP/1.0
 
 ---
 
+## GetMap — DataTile output
+
+### wms_getmap_datatile
+
+**Input:** [`test/input/wms_getmap_datatile.get`](../../test/input/wms_getmap_datatile.get)
+
+```
+GET /wms?service=wms&request=GetMap&version=1.3.0&layers=grid:datatile_temperature&styles=&crs=EPSG:4326&bbox=34,-12,74,40&width=64&height=64&format=application/x-datatile%2Bpng&time=200808050800 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `layers` | `grid:datatile_temperature` | Temperature datatile product from the grid customer |
+| `format` | `application/x-datatile+png` | Requests RGBA-encoded float data PNG instead of a visual image |
+| `width` / `height` | `64` | Tile dimensions |
+| `bbox` | `34,-12,74,40` | Bounding box covering Europe |
+
+Returns a datatile PNG where pixel values encode temperature data for client-side processing (particle animations, colour ramps, etc.).  The MIME type `application/x-datatile+png` triggers the datatile pipeline, which bypasses SVG rendering entirely and queries the grid engine directly.
+
+**Output:** [`test/output/wms_getmap_datatile.get`](../../test/output/wms_getmap_datatile.get) — PNG (binary, not a visual image)
+
+---
+
 ## GetMap — Observation data
 
 ### wms_getmap_netatmo_observations

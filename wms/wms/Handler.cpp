@@ -982,6 +982,17 @@ QueryStatus Handler::wmsGenerateProduct(Dali::State &theState,
     return QueryStatus::OK;
   }
 
+  // DataTile: bypass CTPP/SVG pipeline and return RGBA-encoded float data PNG
+  if (theProduct.type == "datatile")
+  {
+    auto bytes = theProduct.generateDataTile(theState);
+    auto buffer = std::make_shared<std::string>(std::move(bytes));
+    theState.getPlugin().insertInImageCache(product_hash, buffer);
+    theResponse.setHeader("Content-Type", mimeType("datatile"));
+    theResponse.setContent(buffer);
+    return QueryStatus::OK;
+  }
+
   if (!theProduct.svg_tmpl)
     theProduct.svg_tmpl = itsDaliConfig.defaultTemplate(theProduct.type);
 

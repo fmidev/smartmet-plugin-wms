@@ -312,6 +312,33 @@ std::string Product::generateMVT(State& theState)
   }
 }
 
+// ----------------------------------------------------------------------
+/*!
+ * \brief Generate datatile output by finding the first datatile layer
+ */
+// ----------------------------------------------------------------------
+
+std::string Product::generateDataTile(State& theState)
+{
+  try
+  {
+    for (const auto& view : views.views)
+    {
+      for (const auto& layer : view->layers.layers)
+      {
+        auto bytes = layer->generateDataTile(theState);
+        if (!bytes.empty())
+          return bytes;
+      }
+    }
+    throw Fmi::Exception(BCP, "No layer supporting datatile output found in product");
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "Product::generateDataTile failed!");
+  }
+}
+
 }  // namespace Dali
 }  // namespace Plugin
 }  // namespace SmartMet

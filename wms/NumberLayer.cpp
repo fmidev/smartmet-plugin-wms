@@ -4,6 +4,7 @@
 #include "AggregationUtility.h"
 #include "MapboxVectorTile.h"
 #include "Config.h"
+#include "DataTile.h"
 #include "GridDataGeoTiff.h"
 #include "Hash.h"
 #include "Iri.h"
@@ -1092,6 +1093,18 @@ std::string NumberLayer::generateGeoTiff(State& theState)
   catch (...)
   {
     throw Fmi::Exception::Trace(BCP, "NumberLayer::generateGeoTiff failed!");
+  }
+}
+
+std::string NumberLayer::generateDataTile(State& theState)
+{
+  try
+  {
+    return gridDataTile(*this, paraminfo.parameter, "linear", theState);
+  }
+  catch (...)
+  {
+    throw Fmi::Exception::Trace(BCP, "NumberLayer::generateDataTile failed!");
   }
 }
 

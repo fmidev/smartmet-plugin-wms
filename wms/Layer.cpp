@@ -584,6 +584,11 @@ std::string Layer::generateGeoTiff(State& /*theState*/)
   return {};
 }
 
+std::string Layer::generateDataTile(State& /*theState*/)
+{
+  return {};
+}
+
 void Layer::addMVTLayer(MVTTileBuilder& builder, State& theState)
 {
   // Default: recurse into child layers (handles group/tag wrapper layers).

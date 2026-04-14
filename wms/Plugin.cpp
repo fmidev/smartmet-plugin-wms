@@ -229,7 +229,8 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
         !boost::iequals(fmt, "pdf") && !boost::iequals(fmt, "ps") && !boost::iequals(fmt, "webp") &&
         !boost::iequals(fmt, "geojson") && !boost::iequals(fmt, "topojson") &&
         !boost::iequals(fmt, "kml") && !boost::iequals(fmt, "cnf") &&
-        !boost::iequals(fmt, "geotiff") && !boost::iequals(fmt, "mvt"))
+        !boost::iequals(fmt, "geotiff") && !boost::iequals(fmt, "mvt") &&
+        !boost::iequals(fmt, "datatile"))
     {
       throw Fmi::Exception(BCP, "Invalid 'type' value '" + fmt + "'!");
     }
@@ -311,6 +312,19 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
       auto buffer = std::make_shared<std::string>(std::move(bytes));
       itsImageCache->insert(product_hash, buffer);
       theResponse.setHeader("Content-Type", mimeType("mvt"));
+      if (product_hash != Fmi::bad_hash)
+        theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
+      theResponse.setContent(buffer);
+      return;
+    }
+
+    // DataTile: bypass CTPP/SVG pipeline and return RGBA-encoded float data PNG
+    if (product.type == "datatile")
+    {
+      auto bytes = product.generateDataTile(theState);
+      auto buffer = std::make_shared<std::string>(std::move(bytes));
+      itsImageCache->insert(product_hash, buffer);
+      theResponse.setHeader("Content-Type", mimeType("datatile"));
       if (product_hash != Fmi::bad_hash)
         theResponse.setHeader("ETag", fmt::sprintf("\"%x\"", product_hash));
       theResponse.setContent(buffer);

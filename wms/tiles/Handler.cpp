@@ -114,6 +114,8 @@ std::string extensionOrParamToMime(const std::string& f)
     return "image/tiff";
   if (f == "mvt" || f == "pbf" || f == "application/vnd.mapbox-vector-tile")
     return "application/vnd.mapbox-vector-tile";
+  if (f == "datatile" || f == "application/x-datatile+png")
+    return "application/x-datatile+png";
   return {};
 }
 
@@ -908,6 +910,17 @@ QueryStatus Handler::generateTile(Dali::State& theState,
       auto buffer = std::make_shared<std::string>(std::move(bytes));
       theState.getPlugin().insertInImageCache(product_hash, buffer);
       theResponse.setHeader("Content-Type", mimeType("mvt"));
+      theResponse.setContent(buffer);
+      return QueryStatus::OK;
+    }
+
+    // DataTile: bypass CTPP/SVG pipeline and return RGBA-encoded float data PNG
+    if (theProduct.type == "datatile")
+    {
+      auto bytes = theProduct.generateDataTile(theState);
+      auto buffer = std::make_shared<std::string>(std::move(bytes));
+      theState.getPlugin().insertInImageCache(product_hash, buffer);
+      theResponse.setHeader("Content-Type", mimeType("datatile"));
       theResponse.setContent(buffer);
       return QueryStatus::OK;
     }

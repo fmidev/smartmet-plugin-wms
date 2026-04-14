@@ -75,6 +75,10 @@ class Layer : public Properties
   // Returns empty string if the layer does not support GeoTiff output.
   virtual std::string generateGeoTiff(State& theState);
 
+  // Generate datatile output: PNG with RGBA-encoded float data for
+  // client-side weather animations.  Returns empty string if not supported.
+  virtual std::string generateDataTile(State& theState);
+
   // Add this layer's features to a Mapbox Vector Tile being assembled.
   // The default implementation is a no-op (layer contributes nothing).
   virtual void addMVTLayer(class MVTTileBuilder& builder, State& theState);

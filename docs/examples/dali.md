@@ -8,7 +8,7 @@ Each request URL is decomposed into a table showing every query parameter and it
 
 ## Output Formats
 
-Dali can produce SVG (default), PNG, PDF, GeoJSON, and KML from the same product definition.
+Dali can produce SVG (default), PNG, PDF, GeoJSON, KML, GeoTIFF, MVT, and DataTile from the same product definition.
 
 ### t2m_p — SVG (default)
 
@@ -138,6 +138,69 @@ GET /dali?customer=test&product=t2m_p&time=200808050300&type=kml HTTP/1.0
 | `type` | `kml` | Exports isoband/isoline geometries as KML (Google Earth) |
 
 Note: listed in `.testignore` — output precision can vary between RHEL 7 and RHEL 8 environments.
+
+---
+
+### datatile_temperature — DataTile: single-band temperature
+
+**Input:** [`test/input/datatile_temperature.get`](../../test/input/datatile_temperature.get)
+
+```
+GET /dali?customer=grid&type=datatile&product=datatile_temperature&time=200808050800 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `customer` | `grid` | Grid data customer directory |
+| `type` | `datatile` | RGBA-encoded float data PNG (bypasses SVG pipeline) |
+| `product` | `datatile_temperature` | Product JSON: [`test/dali/customers/grid/products/datatile_temperature.json`](../../test/dali/customers/grid/products/datatile_temperature.json) |
+| `time` | `200808050800` | Valid time: 2008-08-05 08:00 UTC |
+
+Returns a 64x64 PNG tile where each pixel encodes a temperature value (parameter `T-K`) as a 16-bit quantised value in the R and G channels.  The A channel is 255 for valid pixels, 0 for missing data.  Scale and offset metadata are embedded in PNG `tEXt` chunks (`datatile:min`, `datatile:max`).
+
+**Output:** [`test/output/datatile_temperature.get`](../../test/output/datatile_temperature.get) — PNG (binary, not a visual image)
+
+---
+
+### datatile_wind — DataTile: dual-band wind direction + speed
+
+**Input:** [`test/input/datatile_wind.get`](../../test/input/datatile_wind.get)
+
+```
+GET /dali?customer=grid&type=datatile&product=datatile_wind&time=200808050800 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `customer` | `grid` | Grid data customer directory |
+| `type` | `datatile` | RGBA-encoded float data PNG |
+| `product` | `datatile_wind` | Product JSON: [`test/dali/customers/grid/products/datatile_wind.json`](../../test/dali/customers/grid/products/datatile_wind.json) |
+| `time` | `200808050800` | Valid time: 2008-08-05 08:00 UTC |
+
+Returns a 64x64 PNG tile with two bands encoded in the RGBA channels: wind direction (DD-D) in R+G and wind speed (FF-MS) in B+A.  This is the dual-band encoding where valid values occupy [1, 65535] and 0 indicates missing data.  Metadata chunks include `datatile:min1/max1` (direction) and `datatile:min2/max2` (speed).
+
+**Output:** [`test/output/datatile_wind.get`](../../test/output/datatile_wind.get) — PNG (binary)
+
+---
+
+### datatile_precipitation — DataTile: single-band precipitation (RasterLayer)
+
+**Input:** [`test/input/datatile_precipitation.get`](../../test/input/datatile_precipitation.get)
+
+```
+GET /dali?customer=grid&type=datatile&product=datatile_precipitation&time=200808050800 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `customer` | `grid` | Grid data customer directory |
+| `type` | `datatile` | RGBA-encoded float data PNG |
+| `product` | `datatile_precipitation` | Product JSON: [`test/dali/customers/grid/products/datatile_precipitation.json`](../../test/dali/customers/grid/products/datatile_precipitation.json) |
+| `time` | `200808050800` | Valid time: 2008-08-05 08:00 UTC |
+
+Returns a 64x64 PNG tile with 1-hour precipitation (PRECIP1H-KGM2) encoded as a single-band datatile via the `raster` layer type.
+
+**Output:** [`test/output/datatile_precipitation.get`](../../test/output/datatile_precipitation.get) — PNG (binary)
 
 ---
 
