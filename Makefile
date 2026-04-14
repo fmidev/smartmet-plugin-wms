@@ -11,7 +11,7 @@ sysconfdir ?= /etc
 
 FLAGS += -Wno-maybe-uninitialized -Wno-variadic-macros -Wno-deprecated-declarations
 
-DEFINES = -DUNIX -D_REENTRANT
+DEFINES = -DUNIX -D_REENTRANT -DWITHOUT_OSM
 
 LIBS += $(PREFIX_LDFLAGS) \
 	-lsmartmet-grid-content \
