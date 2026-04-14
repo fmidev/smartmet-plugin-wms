@@ -1,6 +1,5 @@
 %bcond_without authentication
 %bcond_without observation
-%bcond_with osm
 %define DIRNAME wms
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
@@ -149,8 +148,7 @@ rm -rf $RPM_BUILD_ROOT
 %build -q -n %{SPECNAME}
 make %{_smp_mflags} \
      %{?!with_authentication:CFLAGS=-DWITHOUT_AUTHENTICATION} \
-     %{?!with_observation:CFLAGS=-DWITHOUT_OBSERVATION} \
-     %{?!with_osm:CFLAGS=-DWITHOUT_OSM}
+     %{?!with_observation:CFLAGS=-DWITHOUT_OBSERVATION}
 
 %install
 %makeinstall

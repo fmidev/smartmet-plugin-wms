@@ -6,6 +6,7 @@
 
 #include "Config.h"
 #include <boost/algorithm/string.hpp>
+#include <gis/EPSGInfo.h>
 #include <macgyver/Exception.h>
 #include <macgyver/StringConversion.h>
 #include <spine/ConfigTools.h>
