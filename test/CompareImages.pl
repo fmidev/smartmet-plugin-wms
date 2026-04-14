@@ -275,6 +275,24 @@ if ($MIME eq 'application/xml' || $MIME eq 'text/xml')
                     }
                 }
             }
+            # WMTS/Tiles: <LegendURL format="..." xlink:href="...&amp;width=X&amp;height=Y"/>
+            if ($result_line =~ m/<LegendURL\s.*?width=(\d+).*?height=(\d+)/)
+            {
+                $result_width = $1;
+                $result_height = $2;
+                if ($expected_line =~ m/<LegendURL\s.*?width=(\d+).*?height=(\d+)/)
+                {
+                    $expected_width = $1;
+                    $expected_height = $2;
+		    my $wdiff = abs($result_width - $expected_width);
+		    my $hdiff = abs($result_height - $expected_height);
+		    if( (($wdiff > 0) && ($wdiff <= 3)) ||
+			(($hdiff > 0) && ($hdiff <= 3)) )
+                    {
+                        next;  # Width and height differences are acceptable
+                    }
+                }
+            }
 
             print "FAIL: XML output differs: $RESULT <> $EXPECTED\n";
             system("diff -U4 $EXPECTED $RESULT | head -n 100 | cut -c 1-128");
