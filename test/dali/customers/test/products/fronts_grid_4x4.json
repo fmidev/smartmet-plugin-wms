@@ -59,7 +59,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -72,7 +72,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -138,7 +139,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -151,7 +152,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -217,7 +219,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -230,7 +232,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -296,7 +299,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -309,7 +312,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -375,7 +379,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -388,7 +392,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -454,7 +459,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -467,7 +472,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -533,7 +539,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -546,7 +552,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -612,7 +619,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -625,7 +632,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -691,7 +699,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -704,7 +712,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -770,7 +779,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -783,7 +792,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -849,7 +859,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -862,7 +872,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -928,7 +939,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -941,7 +952,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -1007,7 +1019,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -1020,7 +1032,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -1086,7 +1099,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -1099,7 +1112,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -1165,7 +1179,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -1178,7 +1192,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,
@@ -1244,7 +1259,7 @@
                     "front_source": "grid",
                     "grid": {
                         "level": 850,
-                        "min_gradient": 2e-06,
+                        "min_gradient": 1e-05,
                         "min_length_px": 30,
                         "temporal_smoothing": {
                             "offsets_minutes": [
@@ -1257,7 +1272,8 @@
                                 0.5,
                                 0.25
                             ]
-                        }
+                        },
+                        "smoothing_passes": 3
                     },
                     "radius": 2,
                     "iterations": 2,

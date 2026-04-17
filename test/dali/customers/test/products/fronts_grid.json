@@ -53,7 +53,8 @@
                     "grid":
                     {
                         "level": 850,
-                        "min_gradient": 2e-6,
+                        "smoothing_passes": 3,
+                        "min_gradient": 1e-5,
                         "min_length_px": 40,
                         "temporal_smoothing":
                         {

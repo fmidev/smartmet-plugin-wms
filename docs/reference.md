@@ -2101,8 +2101,10 @@ classified as cold or warm fronts based on the sign of the low-level temperature
 | u_param         | string | `"WindUMS"`              | U-component of wind parameter name. |
 | v_param         | string | `"WindVMS"`              | V-component of wind parameter name. |
 | level           | double | `850.0`                  | Pressure level in hPa. |
-| min_gradient    | double | `2e-6`                   | Minimum `|∇θ|` threshold (K/m). Grid points below this are masked as missing before contouring. |
+| smoothing_passes | int    | `3`                      | 1-2-1 binomial smoother passes applied to θ before TFP. Essential because TFP is a second derivative and amplifies grid-scale θ noise. |
+| min_gradient    | double | `1e-5`                   | Minimum `|∇θ|` threshold (K/m). Grid points below this are masked as missing before contouring; real synoptic fronts typically exceed 1–3 × 10⁻⁵ K/m. |
 | min_length_px   | double | `20.0`                   | Minimum front segment length in screen pixels. Shorter segments are discarded. |
+| drop_closed     | bool   | `true`                   | Discard closed TFP zero-contours. Real fronts are open curves; closed rings are almost always noise islands around a local `|∇θ|` maximum. |
 
 ##### `styles` object
 

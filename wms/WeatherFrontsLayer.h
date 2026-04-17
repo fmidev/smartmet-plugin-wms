@@ -69,9 +69,16 @@ class WeatherFrontsLayer : public Layer
     std::string u_param = "WindUMS";                   // U-component parameter name
     std::string v_param = "WindVMS";                   // V-component parameter name
     double level = 850.0;                              // pressure level (hPa)
-    double min_gradient = 2e-6;                        // |∇θ| threshold (K/m); below this
-                                                       // TFP is masked as missing data
+    int smoothing_passes = 3;                          // 1-2-1 binomial passes applied to θ
+                                                       // before TFP; suppresses grid-scale
+                                                       // noise that a second derivative would
+                                                       // otherwise amplify
+    double min_gradient = 1e-5;                        // |∇θ| threshold (K/m); TFP masked
+                                                       // below this so contouring only fires
+                                                       // where real thermal gradients exist
     double min_length_px = 20.0;                       // discard isolines shorter than this
+    bool drop_closed = true;                           // discard closed TFP rings (noise
+                                                       // islands — real fronts are open)
     std::optional<TemporalSmoothing> temporal;         // unset = single-frame detection
   };
 

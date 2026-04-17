@@ -198,6 +198,55 @@ void parseStyle(WeatherFrontsLayer::FrontStyle& style, Json::Value json)
 // TFP detection helpers
 // -----------------------------------------------------------------------
 
+// Smooth a θ matrix with N separable 1-2-1 binomial passes. Each pass is
+// equivalent to convolution with (1,2,1)/(2,4,2)/(1,2,1) / 16 in 2D; the
+// effective Gaussian σ grows as √N cells. Missing neighbours collapse the
+// local kernel onto the present weights. A few passes are essential before
+// feeding θ into a second-derivative detector such as TFP.
+NFmiDataMatrix<float> smoothTheta(const NFmiDataMatrix<float>& theta, int passes)
+{
+  if (passes <= 0)
+    return theta;
+  const std::size_t W = theta.NX();
+  const std::size_t H = theta.NY();
+  NFmiDataMatrix<float> a = theta;
+  NFmiDataMatrix<float> b(W, H, kFloatMissing);
+  for (int p = 0; p < passes; ++p)
+  {
+    for (std::size_t j = 0; j < H; ++j)
+    {
+      for (std::size_t i = 0; i < W; ++i)
+      {
+        double sum = 0.0;
+        double wsum = 0.0;
+        const int iw[3] = {1, 2, 1};
+        const int jw[3] = {1, 2, 1};
+        for (int dj = -1; dj <= 1; ++dj)
+        {
+          const std::ptrdiff_t jj = static_cast<std::ptrdiff_t>(j) + dj;
+          if (jj < 0 || jj >= static_cast<std::ptrdiff_t>(H))
+            continue;
+          for (int di = -1; di <= 1; ++di)
+          {
+            const std::ptrdiff_t ii = static_cast<std::ptrdiff_t>(i) + di;
+            if (ii < 0 || ii >= static_cast<std::ptrdiff_t>(W))
+              continue;
+            const float v = a[ii][jj];
+            if (v == kFloatMissing)
+              continue;
+            const double w = iw[di + 1] * jw[dj + 1];
+            sum += w * v;
+            wsum += w;
+          }
+        }
+        b[i][j] = (wsum > 0.0) ? static_cast<float>(sum / wsum) : kFloatMissing;
+      }
+    }
+    std::swap(a, b);
+  }
+  return a;
+}
+
 // Holds the θ-gradient field computed in the first TFP pass.
 struct GradField
 {
@@ -429,8 +478,10 @@ void WeatherFrontsLayer::init(Json::Value& theJson,
         JsonTools::remove_string(cfg.u_param, gridJson, "u_param");
         JsonTools::remove_string(cfg.v_param, gridJson, "v_param");
         JsonTools::remove_double(cfg.level, gridJson, "level");
+        JsonTools::remove_int(cfg.smoothing_passes, gridJson, "smoothing_passes");
         JsonTools::remove_double(cfg.min_gradient, gridJson, "min_gradient");
         JsonTools::remove_double(cfg.min_length_px, gridJson, "min_length_px");
+        JsonTools::remove_bool(cfg.drop_closed, gridJson, "drop_closed");
 
         auto tsJson = JsonTools::remove(gridJson, "temporal_smoothing");
         if (!tsJson.isNull())
@@ -713,7 +764,11 @@ void WeatherFrontsLayer::generate_qEngine(CTPP::CDT& theGlobals,
     return;
 
   // ---- 4. Compute TFP field -------------------------------------------
-  auto [tfp, grad] = computeTFP(*theta_used, *coords_wgs84, cfg.min_gradient);
+  // Smooth θ spatially first. TFP is a second derivative of θ, so any
+  // grid-scale noise in θ produces spurious zero-crossings; a few 1-2-1
+  // binomial passes (≈ Gaussian with σ ≈ √N cells) cleans this up.
+  const auto theta_for_tfp = smoothTheta(*theta_used, cfg.smoothing_passes);
+  auto [tfp, grad] = computeTFP(theta_for_tfp, *coords_wgs84, cfg.min_gradient);
 
   // ---- 5. Extract TFP=0 isolines via ContourEngine ---------------------
   const auto& contourer = theState.getContourEngine();
@@ -771,6 +826,13 @@ void WeatherFrontsLayer::generate_qEngine(CTPP::CDT& theGlobals,
     for (const OGRLineString* line : lines)
     {
       if (!line || line->getNumPoints() < 2)
+        continue;
+
+      // Closed TFP zero-contours almost always wrap a noise feature
+      // (local |∇θ| maximum) rather than a real front. Real fronts are
+      // open curves that begin and end at the data edge or at a |∇θ|
+      // minimum.
+      if (cfg.drop_closed && line->get_IsClosed())
         continue;
 
       auto screenPts = lineStringToScreen(line, box);
@@ -864,12 +926,19 @@ std::size_t WeatherFrontsLayer::hash_value(const State& theState) const
     if (itsSourceType == "grid")
     {
       Fmi::hash_combine(seed, Engine::Querydata::hash_value(getModel(theState)));
-      if (itsGridConfig && itsGridConfig->temporal)
+      if (itsGridConfig)
       {
-        for (int off : itsGridConfig->temporal->offsets_minutes)
-          Fmi::hash_combine(seed, Fmi::hash_value(off));
-        for (double w : itsGridConfig->temporal->weights)
-          Fmi::hash_combine(seed, Fmi::hash_value(w));
+        Fmi::hash_combine(seed, Fmi::hash_value(itsGridConfig->smoothing_passes));
+        Fmi::hash_combine(seed, Fmi::hash_value(itsGridConfig->min_gradient));
+        Fmi::hash_combine(seed, Fmi::hash_value(itsGridConfig->min_length_px));
+        Fmi::hash_combine(seed, Fmi::hash_value(itsGridConfig->drop_closed));
+        if (itsGridConfig->temporal)
+        {
+          for (int off : itsGridConfig->temporal->offsets_minutes)
+            Fmi::hash_combine(seed, Fmi::hash_value(off));
+          for (double w : itsGridConfig->temporal->weights)
+            Fmi::hash_combine(seed, Fmi::hash_value(w));
+        }
       }
     }
     return seed;
