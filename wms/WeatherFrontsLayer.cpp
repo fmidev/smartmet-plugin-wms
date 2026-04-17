@@ -700,8 +700,14 @@ void WeatherFrontsLayer::generate_qEngine(CTPP::CDT& theGlobals,
   }
 
   // ---- 3. Coordinates for gradient computation (WGS84) and ContourEngine
-  auto coords_wgs84 = qEngine.getWorldCoordinates(q);     // native lon/lat
-  auto coords_crs = qEngine.getWorldCoordinates(q, crs);  // target CRS
+  // The gradient metric in computeTFP assumes lon/lat degrees, but
+  // getWorldCoordinates(q) returns the data's native world-XY (which is
+  // meters for polar-stereographic and other projected grids), so request
+  // WGS84 explicitly. For the contour step we need the target CRS coords
+  // so the resulting geometries are already in the view's projection.
+  static const Fmi::SpatialReference wgs84("WGS84");
+  auto coords_wgs84 = qEngine.getWorldCoordinates(q, wgs84);
+  auto coords_crs = qEngine.getWorldCoordinates(q, crs);
 
   if (!coords_wgs84 || !coords_crs)
     return;

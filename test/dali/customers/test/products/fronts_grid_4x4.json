@@ -1,11 +1,9 @@
 {
-    "title": "Weather fronts – 4x4 continuity demo (48h at 3h steps)",
+    "title": "Weather fronts - 4x4 continuity demo (48h at 3h steps)",
     "producer": "ecmwf_skandinavia_painepinta",
     "width": 1250,
     "height": 850,
-
-    "projection":
-    {
+    "projection": {
         "xsize": 300,
         "ysize": 200,
         "crs": "EPSG:3857",
@@ -15,49 +13,65 @@
         "x2": 45,
         "y2": 70
     },
-
     "views": [
         {
-            "qid": "v",
+            "qid": "v0",
+            "time_offset": 0,
+            "attributes": {
+                "transform": "translate(10,10)"
+            },
             "layers": [
                 {
                     "layer_type": "background",
-                    "attributes": { "fill": "rgb(190,230,255)" }
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
                 },
                 {
                     "layer_type": "map",
-                    "map":
-                    {
+                    "map": {
                         "schema": "natural_earth",
                         "table": "admin_0_countries",
                         "minarea": 50
                     },
-                    "attributes": { "fill": "rgb(220,220,210)", "stroke": "none" }
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
                 },
                 {
                     "layer_type": "map",
-                    "map":
-                    {
+                    "map": {
                         "lines": true,
                         "schema": "natural_earth",
                         "table": "admin_0_countries",
                         "minarea": 50
                     },
-                    "attributes": { "fill": "none", "stroke": "#555", "stroke-width": "0.4px" }
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
                 },
                 {
                     "layer_type": "fronts",
                     "css": "fronts/fronts.css",
                     "front_source": "grid",
-                    "grid":
-                    {
+                    "grid": {
                         "level": 850,
-                        "min_gradient": 2e-6,
+                        "min_gradient": 2e-06,
                         "min_length_px": 30,
-                        "temporal_smoothing":
-                        {
-                            "offsets_minutes": [-180, 0, 180],
-                            "weights": [0.25, 0.5, 0.25]
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
                         }
                     },
                     "radius": 2,
@@ -71,31 +85,1197 @@
                     "format": "%m-%d %H UTC",
                     "x": 6,
                     "y": 16,
-                    "attributes":
-                    {
+                    "attributes": {
                         "font-family": "Roboto",
                         "font-weight": "bold",
                         "font-size": 11
                     }
                 }
-            ],
-            "repeat": [
-                { "time_offset":    0, "attributes": { "transform": "translate(10,10)" } },
-                { "time_offset":  180, "attributes": { "transform": "translate(320,10)" } },
-                { "time_offset":  360, "attributes": { "transform": "translate(630,10)" } },
-                { "time_offset":  540, "attributes": { "transform": "translate(940,10)" } },
-                { "time_offset":  720, "attributes": { "transform": "translate(10,220)" } },
-                { "time_offset":  900, "attributes": { "transform": "translate(320,220)" } },
-                { "time_offset": 1080, "attributes": { "transform": "translate(630,220)" } },
-                { "time_offset": 1260, "attributes": { "transform": "translate(940,220)" } },
-                { "time_offset": 1440, "attributes": { "transform": "translate(10,430)" } },
-                { "time_offset": 1620, "attributes": { "transform": "translate(320,430)" } },
-                { "time_offset": 1800, "attributes": { "transform": "translate(630,430)" } },
-                { "time_offset": 1980, "attributes": { "transform": "translate(940,430)" } },
-                { "time_offset": 2160, "attributes": { "transform": "translate(10,640)" } },
-                { "time_offset": 2340, "attributes": { "transform": "translate(320,640)" } },
-                { "time_offset": 2520, "attributes": { "transform": "translate(630,640)" } },
-                { "time_offset": 2700, "attributes": { "transform": "translate(940,640)" } }
+            ]
+        },
+        {
+            "qid": "v1",
+            "time_offset": 180,
+            "attributes": {
+                "transform": "translate(320,10)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
+            ]
+        },
+        {
+            "qid": "v2",
+            "time_offset": 360,
+            "attributes": {
+                "transform": "translate(630,10)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
+            ]
+        },
+        {
+            "qid": "v3",
+            "time_offset": 540,
+            "attributes": {
+                "transform": "translate(940,10)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
+            ]
+        },
+        {
+            "qid": "v4",
+            "time_offset": 720,
+            "attributes": {
+                "transform": "translate(10,220)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
+            ]
+        },
+        {
+            "qid": "v5",
+            "time_offset": 900,
+            "attributes": {
+                "transform": "translate(320,220)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
+            ]
+        },
+        {
+            "qid": "v6",
+            "time_offset": 1080,
+            "attributes": {
+                "transform": "translate(630,220)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
+            ]
+        },
+        {
+            "qid": "v7",
+            "time_offset": 1260,
+            "attributes": {
+                "transform": "translate(940,220)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
+            ]
+        },
+        {
+            "qid": "v8",
+            "time_offset": 1440,
+            "attributes": {
+                "transform": "translate(10,430)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
+            ]
+        },
+        {
+            "qid": "v9",
+            "time_offset": 1620,
+            "attributes": {
+                "transform": "translate(320,430)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
+            ]
+        },
+        {
+            "qid": "v10",
+            "time_offset": 1800,
+            "attributes": {
+                "transform": "translate(630,430)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
+            ]
+        },
+        {
+            "qid": "v11",
+            "time_offset": 1980,
+            "attributes": {
+                "transform": "translate(940,430)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
+            ]
+        },
+        {
+            "qid": "v12",
+            "time_offset": 2160,
+            "attributes": {
+                "transform": "translate(10,640)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
+            ]
+        },
+        {
+            "qid": "v13",
+            "time_offset": 2340,
+            "attributes": {
+                "transform": "translate(320,640)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
+            ]
+        },
+        {
+            "qid": "v14",
+            "time_offset": 2520,
+            "attributes": {
+                "transform": "translate(630,640)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
+            ]
+        },
+        {
+            "qid": "v15",
+            "time_offset": 2700,
+            "attributes": {
+                "transform": "translate(940,640)"
+            },
+            "layers": [
+                {
+                    "layer_type": "background",
+                    "attributes": {
+                        "fill": "rgb(190,230,255)"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "rgb(220,220,210)",
+                        "stroke": "none"
+                    }
+                },
+                {
+                    "layer_type": "map",
+                    "map": {
+                        "lines": true,
+                        "schema": "natural_earth",
+                        "table": "admin_0_countries",
+                        "minarea": 50
+                    },
+                    "attributes": {
+                        "fill": "none",
+                        "stroke": "#555",
+                        "stroke-width": "0.4px"
+                    }
+                },
+                {
+                    "layer_type": "fronts",
+                    "css": "fronts/fronts.css",
+                    "front_source": "grid",
+                    "grid": {
+                        "level": 850,
+                        "min_gradient": 2e-06,
+                        "min_length_px": 30,
+                        "temporal_smoothing": {
+                            "offsets_minutes": [
+                                -180,
+                                0,
+                                180
+                            ],
+                            "weights": [
+                                0.25,
+                                0.5,
+                                0.25
+                            ]
+                        }
+                    },
+                    "radius": 2,
+                    "iterations": 2,
+                    "bezier": 2.0
+                },
+                {
+                    "layer_type": "time",
+                    "timestamp": "validtime",
+                    "timezone": "UTC",
+                    "format": "%m-%d %H UTC",
+                    "x": 6,
+                    "y": 16,
+                    "attributes": {
+                        "font-family": "Roboto",
+                        "font-weight": "bold",
+                        "font-size": 11
+                    }
+                }
             ]
         }
     ]
