@@ -33,7 +33,7 @@
                         "smoothing_passes": 3
                     },
                     "css": "isobands/tfp.css",
-                    "isobands": "json:isobands/tfp"
+                    "isobands": "json:isobands/tfp.json"
                 },
                 {
                     "qid": "borders",
