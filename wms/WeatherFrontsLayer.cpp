@@ -16,14 +16,17 @@
 #include <fmt/format.h>
 #include <gis/Box.h>
 #include <gis/CoordinateTransformation.h>
+#include <macgyver/DateTime.h>
 #include <macgyver/Exception.h>
 #include <macgyver/Hash.h>
 #include <newbase/NFmiDataMatrix.h>
 #include <newbase/NFmiGlobals.h>
 #include <timeseries/ParameterFactory.h>
 #include <trax/InterpolationType.h>
+#include <algorithm>
 #include <cmath>
 #include <limits>
+#include <numeric>
 #include <sstream>
 
 namespace SmartMet
@@ -40,12 +43,12 @@ namespace
 // Upper-case glyph = symbol on the left side of the directed path;
 // lower-case = right side (determined by the weather font design).
 const std::map<FrontType, WeatherFrontsLayer::FrontStyle> kDefaultStyles = {
-    {FrontType::Cold,       {"coldfront",       "coldfrontglyph",       "C",  "c",  30.0, 60.0}},
-    {FrontType::Warm,       {"warmfront",       "warmfrontglyph",       "W",  "w",  30.0, 60.0}},
-    {FrontType::Occluded,   {"occludedfront",   "occludedfrontglyph",   "CW", "cw", 30.0, 60.0}},
+    {FrontType::Cold, {"coldfront", "coldfrontglyph", "C", "c", 30.0, 60.0}},
+    {FrontType::Warm, {"warmfront", "warmfrontglyph", "W", "w", 30.0, 60.0}},
+    {FrontType::Occluded, {"occludedfront", "occludedfrontglyph", "CW", "cw", 30.0, 60.0}},
     {FrontType::Stationary, {"stationaryfront", "stationaryfrontglyph", "Cw", "Cw", 30.0, 60.0}},
-    {FrontType::Trough,     {"trough",          "troughglyph",          "t",  "T",  30.0,  0.0}},
-    {FrontType::Ridge,      {"ridge",           "ridgeglyph",           "r",  "R",  30.0,  0.0}},
+    {FrontType::Trough, {"trough", "troughglyph", "t", "T", 30.0, 0.0}},
+    {FrontType::Ridge, {"ridge", "ridgeglyph", "r", "R", 30.0, 0.0}},
 };
 
 // -----------------------------------------------------------------------
@@ -71,7 +74,7 @@ double pathLength(const std::vector<std::pair<double, double>>& pts)
   double len = 0.0;
   for (std::size_t i = 1; i < pts.size(); ++i)
   {
-    const double dx = pts[i].first  - pts[i - 1].first;
+    const double dx = pts[i].first - pts[i - 1].first;
     const double dy = pts[i].second - pts[i - 1].second;
     len += std::sqrt(dx * dx + dy * dy);
   }
@@ -81,8 +84,7 @@ double pathLength(const std::vector<std::pair<double, double>>& pts)
 // Compute (x, y, angle_deg) positions at even arc-length intervals along a polyline.
 // Algorithm adapted from frontier::SvgRenderer::render_front().
 std::vector<std::tuple<double, double, double>> symbolPositions(
-    const std::vector<std::pair<double, double>>& pts,
-    double spacing)
+    const std::vector<std::pair<double, double>>& pts, double spacing)
 {
   std::vector<std::tuple<double, double, double>> result;
   if (pts.size() < 2 || spacing <= 0.0)
@@ -92,24 +94,24 @@ std::vector<std::tuple<double, double, double>> symbolPositions(
   if (len < spacing * 0.5)
     return result;
 
-  const int n        = std::max(1, static_cast<int>(std::floor(len / spacing + 0.5)));
-  const double step  = len / n;
-  double target      = step * 0.5;
+  const int n = std::max(1, static_cast<int>(std::floor(len / spacing + 0.5)));
+  const double step = len / n;
+  double target = step * 0.5;
 
   double walked = 0.0;
   for (std::size_t i = 0; i + 1 < pts.size() && result.size() < static_cast<std::size_t>(n); ++i)
   {
-    const double dx  = pts[i + 1].first  - pts[i].first;
-    const double dy  = pts[i + 1].second - pts[i].second;
+    const double dx = pts[i + 1].first - pts[i].first;
+    const double dy = pts[i + 1].second - pts[i].second;
     const double seg = std::sqrt(dx * dx + dy * dy);
-    if (seg < 1e-9) continue;
+    if (seg < 1e-9)
+      continue;
 
-    while (target < walked + seg + 1e-9 &&
-           result.size() < static_cast<std::size_t>(n))
+    while (target < walked + seg + 1e-9 && result.size() < static_cast<std::size_t>(n))
     {
-      const double t     = (target - walked) / seg;
-      const double x     = pts[i].first  + t * dx;
-      const double y     = pts[i].second + t * dy;
+      const double t = (target - walked) / seg;
+      const double x = pts[i].first + t * dx;
+      const double y = pts[i].second + t * dy;
       const double angle = std::atan2(dy, dx) * 180.0 / M_PI;
       result.emplace_back(x, y, angle);
       target += step;
@@ -128,18 +130,16 @@ std::string glyphShape(char ch, double r, double h)
 {
   switch (ch)
   {
-  case 'C':  // cold-front triangle, left side
-    return fmt::format("<polygon points=\"{:.1f},0 {:.1f},0 0,{:.1f}\"/>", -r, r, -h);
-  case 'c':  // cold-front triangle, right side
-    return fmt::format("<polygon points=\"{:.1f},0 {:.1f},0 0,{:.1f}\"/>", -r, r, h);
-  case 'W':  // warm-front semicircle, left side (arc sweeps toward -y)
-    return fmt::format(
-        "<path d=\"M {:.1f},0 A {:.1f},{:.1f} 0 0 0 {:.1f},0 Z\"/>", -r, r, r, r);
-  case 'w':  // warm-front semicircle, right side (arc sweeps toward +y)
-    return fmt::format(
-        "<path d=\"M {:.1f},0 A {:.1f},{:.1f} 0 0 1 {:.1f},0 Z\"/>", -r, r, r, r);
-  default:
-    return "";
+    case 'C':  // cold-front triangle, left side
+      return fmt::format("<polygon points=\"{:.1f},0 {:.1f},0 0,{:.1f}\"/>", -r, r, -h);
+    case 'c':  // cold-front triangle, right side
+      return fmt::format("<polygon points=\"{:.1f},0 {:.1f},0 0,{:.1f}\"/>", -r, r, h);
+    case 'W':  // warm-front semicircle, left side (arc sweeps toward -y)
+      return fmt::format("<path d=\"M {:.1f},0 A {:.1f},{:.1f} 0 0 0 {:.1f},0 Z\"/>", -r, r, r, r);
+    case 'w':  // warm-front semicircle, right side (arc sweeps toward +y)
+      return fmt::format("<path d=\"M {:.1f},0 A {:.1f},{:.1f} 0 0 1 {:.1f},0 Z\"/>", -r, r, r, r);
+    default:
+      return "";
   }
 }
 
@@ -169,11 +169,11 @@ std::string buildGlyphGroup(const std::vector<std::pair<double, double>>& screen
   for (std::size_t j = 0; j < positions.size(); ++j)
   {
     const auto& [x, y, angle] = positions[j];
-    const std::string& glyph  = (j % 2 == 0) ? glyph1 : glyph2;
-    if (glyph.empty()) continue;
+    const std::string& glyph = (j % 2 == 0) ? glyph1 : glyph2;
+    if (glyph.empty())
+      continue;
 
-    out << fmt::format("\n <g transform=\"translate({:.1f},{:.1f}) rotate({:.1f})\">",
-                       x, y, angle);
+    out << fmt::format("\n <g transform=\"translate({:.1f},{:.1f}) rotate({:.1f})\">", x, y, angle);
     for (char ch : glyph)
       out << glyphShape(ch, r, h);
     out << "\n </g>";
@@ -186,12 +186,12 @@ void parseStyle(WeatherFrontsLayer::FrontStyle& style, Json::Value json)
 {
   if (json.isNull() || !json.isObject())
     return;
-  JsonTools::remove_string(style.line_css,  json, "line_css");
+  JsonTools::remove_string(style.line_css, json, "line_css");
   JsonTools::remove_string(style.glyph_css, json, "glyph_css");
-  JsonTools::remove_string(style.glyph1,    json, "glyph1");
-  JsonTools::remove_string(style.glyph2,    json, "glyph2");
+  JsonTools::remove_string(style.glyph1, json, "glyph1");
+  JsonTools::remove_string(style.glyph2, json, "glyph2");
   JsonTools::remove_double(style.font_size, json, "font_size");
-  JsonTools::remove_double(style.spacing,   json, "spacing");
+  JsonTools::remove_double(style.spacing, json, "spacing");
 }
 
 // -----------------------------------------------------------------------
@@ -201,23 +201,22 @@ void parseStyle(WeatherFrontsLayer::FrontStyle& style, Json::Value json)
 // Holds the θ-gradient field computed in the first TFP pass.
 struct GradField
 {
-  NFmiDataMatrix<float> dTdx;   // ∂θ/∂x (K/m)
-  NFmiDataMatrix<float> dTdy;   // ∂θ/∂y (K/m)
-  NFmiDataMatrix<float> M;      // |∇θ| (K/m)
+  NFmiDataMatrix<float> dTdx;  // ∂θ/∂x (K/m)
+  NFmiDataMatrix<float> dTdy;  // ∂θ/∂y (K/m)
+  NFmiDataMatrix<float> M;     // |∇θ| (K/m)
 };
 
 // Compute the TFP field and the gradient components from a θ matrix.
 // Coordinates in coords are WGS84 lon/lat (degrees); metric dx/dy are
 // derived using the spherical Earth approximation.
 // Grid points where |∇θ| < minGradient are set to kFloatMissing.
-std::pair<NFmiDataMatrix<float>, GradField> computeTFP(
-    const NFmiDataMatrix<float>& theta,
-    const Fmi::CoordinateMatrix& coords,
-    double minGradient)
+std::pair<NFmiDataMatrix<float>, GradField> computeTFP(const NFmiDataMatrix<float>& theta,
+                                                       const Fmi::CoordinateMatrix& coords,
+                                                       double minGradient)
 {
   const std::size_t W = theta.NX();
   const std::size_t H = theta.NY();
-  constexpr double kDegToM = 111319.5;   // metres per degree latitude
+  constexpr double kDegToM = 111319.5;  // metres per degree latitude
   constexpr double kPi = M_PI;
 
   GradField grad{
@@ -236,8 +235,7 @@ std::pair<NFmiDataMatrix<float>, GradField> computeTFP(
       const float tB = theta[i][j - 1];
       const float tT = theta[i][j + 1];
 
-      if (tL == kFloatMissing || tR == kFloatMissing ||
-          tB == kFloatMissing || tT == kFloatMissing)
+      if (tL == kFloatMissing || tR == kFloatMissing || tB == kFloatMissing || tT == kFloatMissing)
         continue;
 
       const double lat = coords.y(i, j);
@@ -254,11 +252,11 @@ std::pair<NFmiDataMatrix<float>, GradField> computeTFP(
 
       const double dTdx = (tR - tL) / (2.0 * dx_m);
       const double dTdy = (tT - tB) / (2.0 * dy_m);
-      const double m    = std::sqrt(dTdx * dTdx + dTdy * dTdy);
+      const double m = std::sqrt(dTdx * dTdx + dTdy * dTdy);
 
       grad.dTdx[i][j] = static_cast<float>(dTdx);
       grad.dTdy[i][j] = static_cast<float>(dTdy);
-      grad.M[i][j]    = static_cast<float>(m);
+      grad.M[i][j] = static_cast<float>(m);
     }
   }
 
@@ -278,11 +276,10 @@ std::pair<NFmiDataMatrix<float>, GradField> computeTFP(
       const float mB = grad.M[i][j - 1];
       const float mT = grad.M[i][j + 1];
 
-      if (mL == kFloatMissing || mR == kFloatMissing ||
-          mB == kFloatMissing || mT == kFloatMissing)
+      if (mL == kFloatMissing || mR == kFloatMissing || mB == kFloatMissing || mT == kFloatMissing)
         continue;
 
-      const double lat  = coords.y(i, j);
+      const double lat = coords.y(i, j);
       const double lonL = coords.x(i - 1, j);
       const double lonR = coords.x(i + 1, j);
       const double latB = coords.y(i, j - 1);
@@ -294,8 +291,8 @@ std::pair<NFmiDataMatrix<float>, GradField> computeTFP(
       if (std::abs(dx_m) < 1.0 || std::abs(dy_m) < 1.0)
         continue;
 
-      const double dMdx  = (mR - mL) / (2.0 * dx_m);
-      const double dMdy  = (mT - mB) / (2.0 * dy_m);
+      const double dMdx = (mR - mL) / (2.0 * dx_m);
+      const double dMdy = (mT - mB) / (2.0 * dy_m);
       const double value = -(dMdx * grad.dTdx[i][j] + dMdy * grad.dTdy[i][j]) / m;
 
       tfp[i][j] = static_cast<float>(value);
@@ -335,7 +332,7 @@ FrontType classifyFront(const OGRLineString* line,
     {
       const double dx = coordsCrs.x(i, j) - mx;
       const double dy = coordsCrs.y(i, j) - my;
-      const double d  = dx * dx + dy * dy;
+      const double d = dx * dx + dy * dy;
       if (d < minDist)
       {
         minDist = d;
@@ -345,17 +342,17 @@ FrontType classifyFront(const OGRLineString* line,
     }
   }
 
-  const float uVal  = u[bestI][bestJ];
-  const float vVal  = v[bestI][bestJ];
-  const float dtdx  = grad.dTdx[bestI][bestJ];
-  const float dtdy  = grad.dTdy[bestI][bestJ];
+  const float uVal = u[bestI][bestJ];
+  const float vVal = v[bestI][bestJ];
+  const float dtdx = grad.dTdx[bestI][bestJ];
+  const float dtdy = grad.dTdy[bestI][bestJ];
 
-  if (uVal == kFloatMissing || vVal == kFloatMissing ||
-      dtdx == kFloatMissing || dtdy == kFloatMissing)
+  if (uVal == kFloatMissing || vVal == kFloatMissing || dtdx == kFloatMissing ||
+      dtdy == kFloatMissing)
     return FrontType::Cold;  // default when data unavailable
 
   const double advection = uVal * dtdx + vVal * dtdy;
-  constexpr double kAdvThreshold = 1e-8;   // K/(m·s) — near-zero → stationary
+  constexpr double kAdvThreshold = 1e-8;  // K/(m·s) — near-zero → stationary
   if (advection > kAdvThreshold)
     return FrontType::Warm;
   if (advection < -kAdvThreshold)
@@ -426,13 +423,51 @@ void WeatherFrontsLayer::init(Json::Value& theJson,
       auto gridJson = JsonTools::remove(theJson, "grid");
       if (!gridJson.isNull())
       {
-        JsonTools::remove_string(cfg.producer,     gridJson, "producer");
-        JsonTools::remove_string(cfg.theta_param,  gridJson, "theta_param");
-        JsonTools::remove_string(cfg.u_param,      gridJson, "u_param");
-        JsonTools::remove_string(cfg.v_param,      gridJson, "v_param");
-        JsonTools::remove_double(cfg.level,        gridJson, "level");
+        JsonTools::remove_string(cfg.producer, gridJson, "producer");
+        JsonTools::remove_string(cfg.theta_param, gridJson, "theta_param");
+        JsonTools::remove_string(cfg.u_param, gridJson, "u_param");
+        JsonTools::remove_string(cfg.v_param, gridJson, "v_param");
+        JsonTools::remove_double(cfg.level, gridJson, "level");
         JsonTools::remove_double(cfg.min_gradient, gridJson, "min_gradient");
         JsonTools::remove_double(cfg.min_length_px, gridJson, "min_length_px");
+
+        auto tsJson = JsonTools::remove(gridJson, "temporal_smoothing");
+        if (!tsJson.isNull())
+        {
+          if (!tsJson.isObject())
+            throw Fmi::Exception(BCP, "temporal_smoothing must be a JSON object");
+
+          TemporalSmoothing ts;
+          const auto& offsetsJson = tsJson["offsets_minutes"];
+          if (!offsetsJson.isArray() || offsetsJson.empty())
+            throw Fmi::Exception(BCP,
+                                 "temporal_smoothing.offsets_minutes must be a non-empty array");
+          ts.offsets_minutes.reserve(offsetsJson.size());
+          for (const auto& v : offsetsJson)
+            ts.offsets_minutes.push_back(v.asInt());
+
+          const auto& weightsJson = tsJson["weights"];
+          if (weightsJson.isNull())
+          {
+            ts.weights.assign(ts.offsets_minutes.size(),
+                              1.0 / static_cast<double>(ts.offsets_minutes.size()));
+          }
+          else
+          {
+            if (!weightsJson.isArray() || weightsJson.size() != ts.offsets_minutes.size())
+              throw Fmi::Exception(BCP,
+                                   "temporal_smoothing.weights length must match offsets_minutes");
+            ts.weights.reserve(weightsJson.size());
+            for (const auto& v : weightsJson)
+            {
+              const double w = v.asDouble();
+              if (w < 0.0)
+                throw Fmi::Exception(BCP, "temporal_smoothing.weights must be nonnegative");
+              ts.weights.push_back(w);
+            }
+          }
+          cfg.temporal = std::move(ts);
+        }
       }
       itsGridConfig = cfg;
     }
@@ -440,6 +475,10 @@ void WeatherFrontsLayer::init(Json::Value& theJson,
     {
       throw Fmi::Exception(BCP, "Unknown front source '" + itsSourceType + "'");
     }
+
+    // Optional polyline smoother + Bezier fitting. Consumes the JSON keys
+    // "type", "radius", "iterations" and "bezier" from the layer object.
+    itsFilter.init(theJson);
   }
   catch (...)
   {
@@ -449,9 +488,7 @@ void WeatherFrontsLayer::init(Json::Value& theJson,
 
 // ======================================================================
 
-void WeatherFrontsLayer::generate(CTPP::CDT& theGlobals,
-                                  CTPP::CDT& theLayersCdt,
-                                  State& theState)
+void WeatherFrontsLayer::generate(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState)
 {
   try
   {
@@ -488,7 +525,7 @@ void WeatherFrontsLayer::generate_synthetic(CTPP::CDT& theGlobals,
 
   CTPP::CDT layerGroup(CTPP::CDT::HASH_VAL);
   layerGroup["start"] = "<g";
-  layerGroup["end"]   = "";
+  layerGroup["end"] = "";
   if (!qid.empty())
     layerGroup["attributes"]["id"] = qid;
   layerGroup["attributes"]["class"] = "weatherfronts";
@@ -514,7 +551,7 @@ void WeatherFrontsLayer::generate_synthetic(CTPP::CDT& theGlobals,
       box.transform(x, y);
       screenPts.emplace_back(x, y);
     }
-    renderFrontLine(screenPts, curve.type, theGlobals, theLayersCdt, theState);
+    renderFrontLine(screenPts, {}, curve.type, theGlobals, theLayersCdt, theState);
   }
 
   theLayersCdt[theLayersCdt.Size() - 1]["end"].Concat("\n</g>");
@@ -542,45 +579,122 @@ void WeatherFrontsLayer::generate_qEngine(CTPP::CDT& theGlobals,
   if (!q->firstLevel())
     throw Fmi::Exception(BCP, "WeatherFrontsLayer: unable to set first level");
   if (!q->selectLevel(cfg.level))
-    throw Fmi::Exception(BCP, "WeatherFrontsLayer: level " +
-                               Fmi::to_string(cfg.level) + " hPa not available");
+    throw Fmi::Exception(
+        BCP, "WeatherFrontsLayer: level " + Fmi::to_string(cfg.level) + " hPa not available");
 
   projection.update(q);
-  const auto& crs     = projection.getCRS();
-  const auto& box     = projection.getBox();
-  const auto clipbox  = getClipBox(box);
-  auto valid_time     = getValidTime();
+  const auto& crs = projection.getCRS();
+  const auto& box = projection.getBox();
+  const auto clipbox = getClipBox(box);
+  auto valid_time = getValidTime();
 
   // ---- 2. Fetch θ, U, V -----------------------------------------------
   const auto& qEngine = theState.getQEngine();
-  std::size_t qhash   = Engine::Querydata::hash_value(q);
+  std::size_t qhash = Engine::Querydata::hash_value(q);
 
   auto param_theta = TS::ParameterFactory::instance().parse(cfg.theta_param);
-  auto param_u     = TS::ParameterFactory::instance().parse(cfg.u_param);
-  auto param_v     = TS::ParameterFactory::instance().parse(cfg.v_param);
+  auto param_u = TS::ParameterFactory::instance().parse(cfg.u_param);
+  auto param_v = TS::ParameterFactory::instance().parse(cfg.v_param);
 
-  auto makeHash = [&](const Spine::Parameter& p) {
+  auto makeHash = [&](const Spine::Parameter& p, const Fmi::DateTime& t)
+  {
     auto h = qhash;
     Fmi::hash_combine(h, p.hashValue());
+    Fmi::hash_combine(h, Fmi::hash_value(t));
     return h;
   };
 
-  auto matrix_theta = qEngine.getValues(q, param_theta, makeHash(param_theta), valid_time);
-  auto matrix_u     = qEngine.getValues(q, param_u,     makeHash(param_u),     valid_time);
-  auto matrix_v     = qEngine.getValues(q, param_v,     makeHash(param_v),     valid_time);
+  auto matrix_theta =
+      qEngine.getValues(q, param_theta, makeHash(param_theta, valid_time), valid_time);
+  auto matrix_u = qEngine.getValues(q, param_u, makeHash(param_u, valid_time), valid_time);
+  auto matrix_v = qEngine.getValues(q, param_v, makeHash(param_v, valid_time), valid_time);
 
   if (!matrix_theta || matrix_theta->NX() < 3 || matrix_theta->NY() < 3)
     return;
 
+  // Optional temporal smoothing of θ. Weights get renormalized over the
+  // subset of offsets whose absolute time is present in the data, so the
+  // kernel degrades gracefully at the endpoints of the model run.
+  NFmiDataMatrix<float> theta_smoothed;
+  const NFmiDataMatrix<float>* theta_used = matrix_theta.get();
+
+  if (cfg.temporal)
+  {
+    const auto& ts = *cfg.temporal;
+    auto valid_times = q->validTimes();
+    if (!valid_times)
+      throw Fmi::Exception(BCP, "WeatherFrontsLayer: producer has no valid times");
+
+    std::vector<Fmi::DateTime> chosen_times;
+    std::vector<double> chosen_weights;
+    chosen_times.reserve(ts.offsets_minutes.size());
+    chosen_weights.reserve(ts.offsets_minutes.size());
+
+    for (std::size_t k = 0; k < ts.offsets_minutes.size(); ++k)
+    {
+      const Fmi::DateTime t = valid_time + Fmi::Minutes(ts.offsets_minutes[k]);
+      const bool present =
+          std::find(valid_times->begin(), valid_times->end(), t) != valid_times->end();
+      if (present)
+      {
+        chosen_times.push_back(t);
+        chosen_weights.push_back(ts.weights[k]);
+      }
+    }
+
+    double wsum = std::accumulate(chosen_weights.begin(), chosen_weights.end(), 0.0);
+    if (!chosen_times.empty() && wsum > 0.0)
+    {
+      for (auto& w : chosen_weights)
+        w /= wsum;
+
+      const std::size_t W = matrix_theta->NX();
+      const std::size_t H = matrix_theta->NY();
+      theta_smoothed = NFmiDataMatrix<float>(W, H, kFloatMissing);
+
+      std::vector<std::shared_ptr<NFmiDataMatrix<float>>> frames;
+      frames.reserve(chosen_times.size());
+      for (const auto& t : chosen_times)
+      {
+        auto m = qEngine.getValues(q, param_theta, makeHash(param_theta, t), t);
+        if (!m || m->NX() != W || m->NY() != H)
+          continue;
+        frames.push_back(m);
+      }
+
+      // Accumulate weighted sum per cell, skipping missing values and
+      // renormalizing over the frames that actually contribute to that cell.
+      for (std::size_t j = 0; j < H; ++j)
+      {
+        for (std::size_t i = 0; i < W; ++i)
+        {
+          double sum = 0.0;
+          double wtot = 0.0;
+          for (std::size_t f = 0; f < frames.size(); ++f)
+          {
+            const float v = (*frames[f])[i][j];
+            if (v == kFloatMissing)
+              continue;
+            sum += chosen_weights[f] * v;
+            wtot += chosen_weights[f];
+          }
+          if (wtot > 0.0)
+            theta_smoothed[i][j] = static_cast<float>(sum / wtot);
+        }
+      }
+      theta_used = &theta_smoothed;
+    }
+  }
+
   // ---- 3. Coordinates for gradient computation (WGS84) and ContourEngine
-  auto coords_wgs84 = qEngine.getWorldCoordinates(q);         // native lon/lat
-  auto coords_crs   = qEngine.getWorldCoordinates(q, crs);    // target CRS
+  auto coords_wgs84 = qEngine.getWorldCoordinates(q);     // native lon/lat
+  auto coords_crs = qEngine.getWorldCoordinates(q, crs);  // target CRS
 
   if (!coords_wgs84 || !coords_crs)
     return;
 
   // ---- 4. Compute TFP field -------------------------------------------
-  auto [tfp, grad] = computeTFP(*matrix_theta, *coords_wgs84, cfg.min_gradient);
+  auto [tfp, grad] = computeTFP(*theta_used, *coords_wgs84, cfg.min_gradient);
 
   // ---- 5. Extract TFP=0 isolines via ContourEngine ---------------------
   const auto& contourer = theState.getContourEngine();
@@ -594,8 +708,8 @@ void WeatherFrontsLayer::generate_qEngine(CTPP::CDT& theGlobals,
   Fmi::hash_combine(tfpHash, Fmi::hash_value(std::string("TFP")));
 
   Engine::Contour::Options options(param_theta, valid_time, std::vector<double>{0.0});
-  options.level         = cfg.level;
-  options.bbox          = Fmi::BBox(box);
+  options.level = cfg.level;
+  options.bbox = Fmi::BBox(box);
   options.interpolation = Trax::InterpolationType::Linear;
 
   auto geoms = contourer.contour(tfpHash, crs, tfp, *coords_crs, clipbox, options);
@@ -603,10 +717,15 @@ void WeatherFrontsLayer::generate_qEngine(CTPP::CDT& theGlobals,
   if (geoms.empty())
     return;
 
+  // Apply polyline smoother (and populate the Bezier vertex counter if enabled).
+  // Smoothing operates on CRS coordinates; bbox() converts pixel radius to metric.
+  itsFilter.bbox(box);
+  itsFilter.apply(geoms, false);
+
   // ---- 6. Emit outer group, classify and render each isoline ----------
   CTPP::CDT layerGroup(CTPP::CDT::HASH_VAL);
   layerGroup["start"] = "<g";
-  layerGroup["end"]   = "";
+  layerGroup["end"] = "";
   if (!qid.empty())
     layerGroup["attributes"]["id"] = qid;
   layerGroup["attributes"]["class"] = "weatherfronts";
@@ -640,10 +759,17 @@ void WeatherFrontsLayer::generate_qEngine(CTPP::CDT& theGlobals,
         continue;
 
       const FrontType type = (matrix_u && matrix_v)
-          ? classifyFront(line, *matrix_u, *matrix_v, grad, *coords_crs)
-          : FrontType::Cold;
+                                 ? classifyFront(line, *matrix_u, *matrix_v, grad, *coords_crs)
+                                 : FrontType::Cold;
 
-      renderFrontLine(screenPts, type, theGlobals, theLayersCdt, theState);
+      // When Bezier fitting is enabled, emit a cubic path for the stroke.
+      // Glyph positions are still computed from the (smoothed) polyline, so
+      // markers stay evenly spaced even when the stroke follows a curve.
+      std::string bezierPath;
+      if (itsFilter.bezierEnabled())
+        bezierPath = itsFilter.toBezierSvg(*line, box, itsPrecision);
+
+      renderFrontLine(screenPts, bezierPath, type, theGlobals, theLayersCdt, theState);
     }
   }
 
@@ -653,6 +779,7 @@ void WeatherFrontsLayer::generate_qEngine(CTPP::CDT& theGlobals,
 // ======================================================================
 
 void WeatherFrontsLayer::renderFrontLine(const std::vector<std::pair<double, double>>& screenPts,
+                                         const std::string& bezierPath,
                                          FrontType type,
                                          CTPP::CDT& theGlobals,
                                          CTPP::CDT& theLayersCdt,
@@ -667,8 +794,8 @@ void WeatherFrontsLayer::renderFrontLine(const std::vector<std::pair<double, dou
     throw Fmi::Exception(BCP, "Non-unique ID for front path").addParameter("ID", iri);
 
   CTPP::CDT pathCdt(CTPP::CDT::HASH_VAL);
-  pathCdt["iri"]       = iri;
-  pathCdt["data"]      = buildPathData(screenPts);
+  pathCdt["iri"] = iri;
+  pathCdt["data"] = !bezierPath.empty() ? bezierPath : buildPathData(screenPts);
   pathCdt["layertype"] = "front";
   theGlobals["paths"][iri] = pathCdt;
 
@@ -676,13 +803,13 @@ void WeatherFrontsLayer::renderFrontLine(const std::vector<std::pair<double, dou
       screenPts, style.glyph_css, style.glyph1, style.glyph2, style.font_size, style.spacing);
 
   CTPP::CDT frontCdt(CTPP::CDT::HASH_VAL);
-  frontCdt["start"]                   = "<g";
-  frontCdt["attributes"]["class"]     = "front-" + style.line_css;
+  frontCdt["start"] = "<g";
+  frontCdt["attributes"]["class"] = "front-" + style.line_css;
 
   CTPP::CDT useCdt(CTPP::CDT::HASH_VAL);
-  useCdt["start"]                    = "<use";
-  useCdt["end"]                      = "/>";
-  useCdt["attributes"]["class"]      = style.line_css;
+  useCdt["start"] = "<use";
+  useCdt["end"] = "/>";
+  useCdt["attributes"]["class"] = style.line_css;
   useCdt["attributes"]["xlink:href"] = "#" + iri;
   frontCdt["tags"].PushBack(useCdt);
 
@@ -702,8 +829,7 @@ const WeatherFrontsLayer::FrontStyle& WeatherFrontsLayer::styleFor(FrontType typ
 
 // ======================================================================
 
-void WeatherFrontsLayer::getFeatureInfo(CTPP::CDT& /* theInfo */,
-                                        const State& /* theState */)
+void WeatherFrontsLayer::getFeatureInfo(CTPP::CDT& /* theInfo */, const State& /* theState */)
 {
   // Front curves do not expose per-pixel feature info.
 }
@@ -715,8 +841,18 @@ std::size_t WeatherFrontsLayer::hash_value(const State& theState) const
   try
   {
     auto seed = Layer::hash_value(theState);
+    Fmi::hash_combine(seed, itsFilter.hash_value());
     if (itsSourceType == "grid")
+    {
       Fmi::hash_combine(seed, Engine::Querydata::hash_value(getModel(theState)));
+      if (itsGridConfig && itsGridConfig->temporal)
+      {
+        for (int off : itsGridConfig->temporal->offsets_minutes)
+          Fmi::hash_combine(seed, Fmi::hash_value(off));
+        for (double w : itsGridConfig->temporal->weights)
+          Fmi::hash_combine(seed, Fmi::hash_value(w));
+      }
+    }
     return seed;
   }
   catch (...)
