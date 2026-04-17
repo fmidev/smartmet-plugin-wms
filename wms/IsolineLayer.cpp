@@ -812,6 +812,14 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
     {
       auto smoothed = ComputedFields::smoothScalar(*matrix, tfp->smoothing_passes);
       auto tfp_field = ComputedFields::computeTFP(smoothed, *coords_wgs84, tfp->min_gradient);
+      if (tfp->scale != 1.0)
+      {
+        const float s = static_cast<float>(tfp->scale);
+        for (std::size_t j = 0; j < tfp_field.NY(); ++j)
+          for (std::size_t i = 0; i < tfp_field.NX(); ++i)
+            if (tfp_field[i][j] != kFloatMissing)
+              tfp_field[i][j] *= s;
+      }
       matrix = std::make_shared<NFmiDataMatrix<float>>(std::move(tfp_field));
       Fmi::hash_combine(qhash, Fmi::hash_value(std::string("TFP")));
       ComputedFields::hashTfpOptions(qhash, *tfp);

@@ -1,10 +1,10 @@
 [
-    { "lolimit":  4e-10,                   "attributes": { "class": "TFP_pos_4"      } },
-    { "lolimit":  1e-10, "hilimit": 4e-10, "attributes": { "class": "TFP_pos_1_4"    } },
-    { "lolimit":  3e-11, "hilimit": 1e-10, "attributes": { "class": "TFP_pos_03_1"   } },
-    { "lolimit":  1e-11, "hilimit": 3e-11, "attributes": { "class": "TFP_pos_01_03"  } },
-    { "lolimit": -3e-11, "hilimit": -1e-11, "attributes": { "class": "TFP_neg_01_03" } },
-    { "lolimit": -1e-10, "hilimit": -3e-11, "attributes": { "class": "TFP_neg_03_1"  } },
-    { "lolimit": -4e-10, "hilimit": -1e-10, "attributes": { "class": "TFP_neg_1_4"   } },
-    {                    "hilimit": -4e-10, "attributes": { "class": "TFP_neg_4"     } }
+    { "lolimit":  4.0,                 "attributes": { "class": "TFP_pos_4"     } },
+    { "lolimit":  1.0, "hilimit":  4.0, "attributes": { "class": "TFP_pos_1_4"   } },
+    { "lolimit":  0.3, "hilimit":  1.0, "attributes": { "class": "TFP_pos_03_1"  } },
+    { "lolimit":  0.1, "hilimit":  0.3, "attributes": { "class": "TFP_pos_01_03" } },
+    { "lolimit": -0.3, "hilimit": -0.1, "attributes": { "class": "TFP_neg_01_03" } },
+    { "lolimit": -1.0, "hilimit": -0.3, "attributes": { "class": "TFP_neg_03_1"  } },
+    { "lolimit": -4.0, "hilimit": -1.0, "attributes": { "class": "TFP_neg_1_4"   } },
+    {                  "hilimit": -4.0, "attributes": { "class": "TFP_neg_4"     } }
 ]

@@ -30,7 +30,8 @@
                     "tfp":
                     {
                         "field": "WindSpeedMS",
-                        "smoothing_passes": 3
+                        "smoothing_passes": 6,
+                        "scale": 1e10
                     },
                     "css": "isobands/tfp.css",
                     "isobands": "json:isobands/tfp.json"

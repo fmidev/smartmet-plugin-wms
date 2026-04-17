@@ -30,7 +30,8 @@
                     "tfp":
                     {
                         "field": "Humidity",
-                        "smoothing_passes": 3
+                        "smoothing_passes": 3,
+                        "scale": 1e9
                     },
                     "css": "isobands/tfp.css",
                     "isobands": "json:isobands/tfp.json"

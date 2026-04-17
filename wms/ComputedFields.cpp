@@ -37,6 +37,7 @@ TfpOptions parseTfpOptions(Json::Value& tfpJson)
   JsonTools::remove_string(opts.field, tfpJson, "field");
   JsonTools::remove_int(opts.smoothing_passes, tfpJson, "smoothing_passes");
   JsonTools::remove_double(opts.min_gradient, tfpJson, "min_gradient");
+  JsonTools::remove_double(opts.scale, tfpJson, "scale");
   if (opts.smoothing_passes < 0)
     throw Fmi::Exception(BCP, "tfp.smoothing_passes must be nonnegative");
   if (opts.min_gradient < 0)
@@ -49,6 +50,7 @@ void hashTfpOptions(std::size_t& seed, const TfpOptions& opts)
   Fmi::hash_combine(seed, Fmi::hash_value(opts.field));
   Fmi::hash_combine(seed, Fmi::hash_value(opts.smoothing_passes));
   Fmi::hash_combine(seed, Fmi::hash_value(opts.min_gradient));
+  Fmi::hash_combine(seed, Fmi::hash_value(opts.scale));
 }
 
 NFmiDataMatrix<float> smoothScalar(const NFmiDataMatrix<float>& field, int passes)
@@ -95,61 +97,95 @@ NFmiDataMatrix<float> smoothScalar(const NFmiDataMatrix<float>& field, int passe
   return a;
 }
 
+namespace
+{
+// Differentiate a scalar matrix at cell (i, j) in x and y with centered
+// differences where possible, falling back to one-sided (forward or
+// backward) differences at grid edges so the output matches the full
+// input shape.
+//
+// Returns true if both partial derivatives were computable; false if any
+// required neighbour was missing or the grid spacing collapsed to zero.
+bool gradientAt(const NFmiDataMatrix<float>& f,
+                const Fmi::CoordinateMatrix& coords,
+                std::size_t i,
+                std::size_t j,
+                double& gx,
+                double& gy)
+{
+  constexpr double kDegToM = 111319.5;
+  constexpr double kPi = M_PI;
+
+  const std::size_t W = f.NX();
+  const std::size_t H = f.NY();
+  if (W < 2 || H < 2)
+    return false;
+
+  // Centered difference where possible; at the edges fall back to a
+  // one-sided pair. Both pairs span the same number of cells, so we just
+  // divide (fR - fL) by the actual metric distance between coords(iL)
+  // and coords(iR) without worrying about whether it's 1 cell or 2.
+  const std::size_t iL = (i == 0) ? 0 : i - 1;
+  const std::size_t iR = (i + 1 >= W) ? W - 1 : i + 1;
+  const std::size_t jB = (j == 0) ? 0 : j - 1;
+  const std::size_t jT = (j + 1 >= H) ? H - 1 : j + 1;
+  if (iL == iR || jB == jT)
+    return false;
+
+  const float fL = f[iL][j];
+  const float fR = f[iR][j];
+  const float fB = f[i][jB];
+  const float fT = f[i][jT];
+  if (fL == kFloatMissing || fR == kFloatMissing || fB == kFloatMissing ||
+      fT == kFloatMissing)
+    return false;
+
+  const double lat = coords.y(i, j);
+  const double dx_m = (coords.x(iR, j) - coords.x(iL, j)) * std::cos(lat * kPi / 180.0) * kDegToM;
+  const double dy_m = (coords.y(i, jT) - coords.y(i, jB)) * kDegToM;
+  if (std::abs(dx_m) < 1.0 || std::abs(dy_m) < 1.0)
+    return false;
+
+  gx = (fR - fL) / dx_m;
+  gy = (fT - fB) / dy_m;
+  return true;
+}
+}  // namespace
+
 NFmiDataMatrix<float> computeTFP(const NFmiDataMatrix<float>& field,
                                  const Fmi::CoordinateMatrix& coords,
                                  double min_gradient)
 {
   const std::size_t W = field.NX();
   const std::size_t H = field.NY();
-  constexpr double kDegToM = 111319.5;  // metres per degree latitude
-  constexpr double kPi = M_PI;
 
-  // First pass: ∂F/∂x, ∂F/∂y, |∇F|
+  // First pass: ∂F/∂x, ∂F/∂y, |∇F| over the full grid, using one-sided
+  // differences at edges so the TFP result has the same coverage as the
+  // input rather than a missing border.
   NFmiDataMatrix<float> dFdx(W, H, kFloatMissing);
   NFmiDataMatrix<float> dFdy(W, H, kFloatMissing);
   NFmiDataMatrix<float> M(W, H, kFloatMissing);
 
-  for (std::size_t j = 1; j + 1 < H; ++j)
+  for (std::size_t j = 0; j < H; ++j)
   {
-    for (std::size_t i = 1; i + 1 < W; ++i)
+    for (std::size_t i = 0; i < W; ++i)
     {
-      const float fL = field[i - 1][j];
-      const float fR = field[i + 1][j];
-      const float fB = field[i][j - 1];
-      const float fT = field[i][j + 1];
-
-      if (fL == kFloatMissing || fR == kFloatMissing || fB == kFloatMissing ||
-          fT == kFloatMissing)
+      double gx, gy;
+      if (!gradientAt(field, coords, i, j, gx, gy))
         continue;
-
-      const double lat = coords.y(i, j);
-      const double lonL = coords.x(i - 1, j);
-      const double lonR = coords.x(i + 1, j);
-      const double latB = coords.y(i, j - 1);
-      const double latT = coords.y(i, j + 1);
-
-      const double dx_m = (lonR - lonL) * 0.5 * std::cos(lat * kPi / 180.0) * kDegToM;
-      const double dy_m = (latT - latB) * 0.5 * kDegToM;
-
-      if (std::abs(dx_m) < 1.0 || std::abs(dy_m) < 1.0)
-        continue;
-
-      const double gx = (fR - fL) / (2.0 * dx_m);
-      const double gy = (fT - fB) / (2.0 * dy_m);
-      const double m = std::sqrt(gx * gx + gy * gy);
-
       dFdx[i][j] = static_cast<float>(gx);
       dFdy[i][j] = static_cast<float>(gy);
-      M[i][j] = static_cast<float>(m);
+      M[i][j] = static_cast<float>(std::sqrt(gx * gx + gy * gy));
     }
   }
 
-  // Second pass: TFP = -(∂M/∂x * ∂F/∂x + ∂M/∂y * ∂F/∂y) / M
+  // Second pass: TFP = -∇(|∇F|) · ∇F / |∇F|, again full-grid with
+  // one-sided differences at edges.
   NFmiDataMatrix<float> tfp(W, H, kFloatMissing);
 
-  for (std::size_t j = 1; j + 1 < H; ++j)
+  for (std::size_t j = 0; j < H; ++j)
   {
-    for (std::size_t i = 1; i + 1 < W; ++i)
+    for (std::size_t i = 0; i < W; ++i)
     {
       const float m = M[i][j];
       if (m == kFloatMissing)
@@ -157,29 +193,10 @@ NFmiDataMatrix<float> computeTFP(const NFmiDataMatrix<float>& field,
       if (min_gradient > 0.0 && m < static_cast<float>(min_gradient))
         continue;
 
-      const float mL = M[i - 1][j];
-      const float mR = M[i + 1][j];
-      const float mB = M[i][j - 1];
-      const float mT = M[i][j + 1];
-
-      if (mL == kFloatMissing || mR == kFloatMissing || mB == kFloatMissing ||
-          mT == kFloatMissing)
+      double dMdx, dMdy;
+      if (!gradientAt(M, coords, i, j, dMdx, dMdy))
         continue;
 
-      const double lat = coords.y(i, j);
-      const double lonL = coords.x(i - 1, j);
-      const double lonR = coords.x(i + 1, j);
-      const double latB = coords.y(i, j - 1);
-      const double latT = coords.y(i, j + 1);
-
-      const double dx_m = (lonR - lonL) * 0.5 * std::cos(lat * kPi / 180.0) * kDegToM;
-      const double dy_m = (latT - latB) * 0.5 * kDegToM;
-
-      if (std::abs(dx_m) < 1.0 || std::abs(dy_m) < 1.0)
-        continue;
-
-      const double dMdx = (mR - mL) / (2.0 * dx_m);
-      const double dMdy = (mT - mB) / (2.0 * dy_m);
       tfp[i][j] = static_cast<float>(-(dMdx * dFdx[i][j] + dMdy * dFdy[i][j]) / m);
     }
   }

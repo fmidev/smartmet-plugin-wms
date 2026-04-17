@@ -47,6 +47,10 @@ struct TfpOptions
   std::string field = "PotentialTemperature";  // underlying scalar
   int smoothing_passes = 3;                    // 1-2-1 binomial passes before TFP
   double min_gradient = 0.0;                   // mask TFP where |∇field| < this (0 = no mask)
+  double scale = 1.0;                          // multiply TFP result by this factor
+                                               // before contouring; use to bring different
+                                               // underlying fields onto a shared colour scale
+                                               // (e.g. 1e10 for θ, 1e9 for humidity)
 };
 
 // Conventional metaparameter name recognised by the isoband/isoline layers.
