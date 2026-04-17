@@ -67,7 +67,7 @@ test/             # Integration test suite
 
 Protobuf: `wms/vector_tile.proto` is compiled during build to `vector_tile.pb.{h,cc}` for MVT encoding.
 
-DataTile: `wms/DataTile.{h,cpp}` provides RGBA-encoded PNG output for client-side weather animations. Uses libpng directly, embeds scale/offset in PNG tEXt chunks. The `test/canvas/` directory contains standalone browser demos (rain, snow, wind particle systems) that consume this kind of data.
+DataTile: `wms/DataTile.{h,cpp}` provides RGBA-encoded PNG output for client-side weather animations. Uses libpng directly, embeds scale/offset in PNG tEXt chunks. The `test/canvas/` directory contains standalone browser demos (rain, snow, wind particle systems) that consume this kind of data. The particle system libraries (`WeatherParticles.js`, `WeatherTimeline.js`) are also used by `~/hub/leaflet-fmi` for Leaflet map integration.
 
 ## Architecture
 
