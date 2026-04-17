@@ -409,8 +409,9 @@ void WeatherFrontsLayer::init(Json::Value& theJson,
         parseStyle(itsStyles.at(type), styleJson);
     }
 
-    // Create the data source.
-    JsonTools::remove_string(itsSourceType, theJson, "source");
+    // Create the data source. Key is "front_source" rather than "source"
+    // because Properties::init already consumes "source" for paraminfo.
+    JsonTools::remove_string(itsSourceType, theJson, "front_source");
 
     if (itsSourceType == "synthetic")
     {

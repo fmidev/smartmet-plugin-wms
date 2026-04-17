@@ -48,7 +48,7 @@
                 {
                     "layer_type": "fronts",
                     "css": "fronts/fronts.css",
-                    "source": "grid",
+                    "front_source": "grid",
                     "grid":
                     {
                         "level": 850,

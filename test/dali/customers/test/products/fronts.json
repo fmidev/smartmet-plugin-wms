@@ -48,7 +48,7 @@
                     "qid": "wf",
                     "layer_type": "fronts",
                     "css": "fronts/fronts.css",
-                    "source": "synthetic",
+                    "front_source": "synthetic",
                     "fronts": [
                         {
                             "type": "cold",

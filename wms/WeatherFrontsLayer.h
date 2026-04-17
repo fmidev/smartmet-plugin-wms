@@ -6,7 +6,7 @@
  * using the SVG textPath + weather-font glyph technique taken from the
  * Frontier rendering engine.
  *
- * Two data sources are supported via the "source" field:
+ * Two data sources are supported via the "front_source" field:
  *
  *   "synthetic"  — curves defined inline in the layer JSON (default)
  *   "grid"       — fronts detected on the fly from querydata using

@@ -2067,9 +2067,9 @@ occluded and stationary fronts.
 
 | Name     | Type   | Default      | Description |
 | -------- | ------ | ------------ | ----------- |
-| source   | string | `"synthetic"` | Data source: `"synthetic"` or `"grid"`. |
-| fronts   | array  | `[]`         | Front curve definitions (used when `source` is `"synthetic"`). See below. |
-| grid     | object | –            | Grid-detection configuration (used when `source` is `"grid"`). See below. |
+| front_source | string | `"synthetic"` | Data source: `"synthetic"` or `"grid"`. (Named `front_source` rather than `source` because the latter is reserved for the paraminfo data source.) |
+| fronts   | array  | `[]`         | Front curve definitions (used when `front_source` is `"synthetic"`). See below. |
+| grid     | object | –            | Grid-detection configuration (used when `front_source` is `"grid"`). See below. |
 | styles   | object | –            | Per-type style overrides. Keys are front type strings (e.g. `"cold"`). See below. |
 
 ##### `fronts` array (synthetic source)
@@ -2148,7 +2148,7 @@ The product JSON that produced the image above:
                 "qid": "wf",
                 "layer_type": "fronts",
                 "css": "fronts/fronts.css",
-                "source": "synthetic",
+                "front_source": "synthetic",
                 "fronts": [
                     { "type": "cold", "side": "left",
                       "points": [[6,56.5],[8.5,55.5],[11,54.5],[14.5,54],[18,54.5],[21.5,55.5],[24.5,57],[27,59]] },
@@ -2177,7 +2177,7 @@ The product JSON that produced the image above:
             { "layer_type": "map", "map": "finland" },
             {
                 "layer_type": "fronts",
-                "source": "grid",
+                "front_source": "grid",
                 "css": "fronts/fronts.css",
                 "grid": {
                     "producer": "ecmwf_skandinavia_painepinta",
