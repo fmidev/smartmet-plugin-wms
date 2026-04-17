@@ -241,6 +241,10 @@ void IsolineLayer::init(Json::Value& theJson,
 
     json = JsonTools::remove(theJson, "filter");
     filter.init(json);
+
+    json = JsonTools::remove(theJson, "tfp");
+    if (!json.isNull())
+      tfp = ComputedFields::parseTfpOptions(json);
   }
   catch (...)
   {
@@ -652,12 +656,16 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
   if (q && !(q->isGrid()))
     throw Fmi::Exception(BCP, "Isoline-layer can't use point data!");
 
-  // Establish the desired direction parameter
+  // Establish the desired direction parameter. When the layer is
+  // configured as a TFP metaparameter, fetch the underlying scalar
+  // field instead and we'll compute TFP on the result further down.
 
   if (paraminfo.parameter.empty())
     throw Fmi::Exception(BCP, "Parameter not set for isoline-layer");
 
-  auto param = TS::ParameterFactory::instance().parse(paraminfo.parameter);
+  const bool tfp_mode = tfp && ComputedFields::isTfpParameter(paraminfo.parameter);
+  const std::string& fetch_name = tfp_mode ? tfp->field : paraminfo.parameter;
+  auto param = TS::ParameterFactory::instance().parse(fetch_name);
 
   // Establish the valid time
 
@@ -791,6 +799,24 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
     coords = qEngine.getWorldCoordinates(q);
   else
     coords = qEngine.getWorldCoordinates(q, crs);
+
+  // When TFP mode is active, replace the fetched underlying field with
+  // its Thermal Front Parameter derivative before contouring. The contour
+  // cache key gets salted with the TFP options so different TFP configs
+  // don't share cache entries.
+  if (tfp_mode && matrix)
+  {
+    static const Fmi::SpatialReference wgs84("WGS84");
+    auto coords_wgs84 = qEngine.getWorldCoordinates(q, wgs84);
+    if (coords_wgs84)
+    {
+      auto smoothed = ComputedFields::smoothScalar(*matrix, tfp->smoothing_passes);
+      auto tfp_field = ComputedFields::computeTFP(smoothed, *coords_wgs84, tfp->min_gradient);
+      matrix = std::make_shared<NFmiDataMatrix<float>>(std::move(tfp_field));
+      Fmi::hash_combine(qhash, Fmi::hash_value(std::string("TFP")));
+      ComputedFields::hashTfpOptions(qhash, *tfp);
+    }
+  }
 
   auto geoms = contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
 
@@ -1035,6 +1061,8 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_value(sampling, theState));
     Fmi::hash_combine(hash, Dali::hash_value(intersections, theState));
     Fmi::hash_combine(hash, filter.hash_value());
+    if (tfp)
+      ComputedFields::hashTfpOptions(hash, *tfp);
     Fmi::hash_combine(hash, Fmi::hash_value(strict));
     Fmi::hash_combine(hash, Fmi::hash_value(validate));
     Fmi::hash_combine(hash, Fmi::hash_value(desliver));

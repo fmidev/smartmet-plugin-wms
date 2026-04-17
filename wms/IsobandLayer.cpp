@@ -175,6 +175,10 @@ void IsobandLayer::init(Json::Value& theJson,
     json = JsonTools::remove(theJson, "heatmap");
     heatmap.init(json, theConfig);
 
+    json = JsonTools::remove(theJson, "tfp");
+    if (!json.isNull())
+      tfp = ComputedFields::parseTfpOptions(json);
+
     if (areaunit != "km^2" && areaunit != "px^2")
       throw Fmi::Exception(BCP, "Unknown areaunit '" + areaunit + '"');
   }
@@ -990,7 +994,14 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
 
     if (paraminfo.parameter.empty())
       throw Fmi::Exception(BCP, "Parameter not set for isoband-layer!");
-    auto param = TS::ParameterFactory::instance().parse(paraminfo.parameter, allowUnknownParam);
+
+    // When configured as a TFP metaparameter, fetch the underlying scalar
+    // field instead and compute TFP on it below before contouring.
+    const bool tfp_mode = tfp && ComputedFields::isTfpParameter(paraminfo.parameter);
+    if (tfp_mode && heatmap.resolution)
+      throw Fmi::Exception(BCP, "TFP cannot be combined with heatmap mode");
+    const std::string& fetch_name = tfp_mode ? tfp->field : paraminfo.parameter;
+    auto param = TS::ParameterFactory::instance().parse(fetch_name, allowUnknownParam);
 
     // Establish the valid time
 
@@ -1149,6 +1160,24 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
       coords = qEngine.getWorldCoordinates(q);
     else
       coords = qEngine.getWorldCoordinates(q, crs);
+
+    // When TFP mode is active, replace the fetched underlying field with
+    // its Thermal Front Parameter derivative before contouring. The
+    // contour cache key gets salted with the TFP options so different
+    // TFP configs don't share cache entries.
+    if (tfp_mode && matrix)
+    {
+      static const Fmi::SpatialReference wgs84("WGS84");
+      auto coords_wgs84 = qEngine.getWorldCoordinates(q, wgs84);
+      if (coords_wgs84)
+      {
+        auto smoothed = ComputedFields::smoothScalar(*matrix, tfp->smoothing_passes);
+        auto tfp_field = ComputedFields::computeTFP(smoothed, *coords_wgs84, tfp->min_gradient);
+        matrix = std::make_shared<NFmiDataMatrix<float>>(std::move(tfp_field));
+        Fmi::hash_combine(qhash, Fmi::hash_value(std::string("TFP")));
+        ComputedFields::hashTfpOptions(qhash, *tfp);
+      }
+    }
 
     std::vector<OGRGeometryPtr> geoms =
         contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
@@ -1384,6 +1413,8 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Dali::hash_value(intersections, theState));
     Fmi::hash_combine(hash, filter.hash_value());
     Fmi::hash_combine(hash, Dali::hash_value(heatmap, theState));
+    if (tfp)
+      ComputedFields::hashTfpOptions(hash, *tfp);
     Fmi::hash_combine(hash, Fmi::hash_value(closed_range));
     Fmi::hash_combine(hash, Fmi::hash_value(strict));
     Fmi::hash_combine(hash, Fmi::hash_value(validate));

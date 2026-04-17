@@ -1,0 +1,15 @@
+/* Diverging colour ramp for Hewson's Thermal Front Parameter.
+   Positive TFP sits on the cold-air side of a front (blue);
+   negative TFP on the warm-air side (red). Values are in units
+   of K/m² (equivalently, 10^-10 × the K/(100 km)² scale Hewson
+   uses in his paper). */
+
+.TFP_pos_4       { stroke: none; fill: rgb( 8,  48, 107); fill-opacity: 0.85; }
+.TFP_pos_1_4     { stroke: none; fill: rgb(33, 113, 181); fill-opacity: 0.75; }
+.TFP_pos_03_1    { stroke: none; fill: rgb(107,174, 214); fill-opacity: 0.65; }
+.TFP_pos_01_03   { stroke: none; fill: rgb(198,219, 239); fill-opacity: 0.55; }
+
+.TFP_neg_01_03   { stroke: none; fill: rgb(254,224, 210); fill-opacity: 0.55; }
+.TFP_neg_03_1    { stroke: none; fill: rgb(252,146, 114); fill-opacity: 0.65; }
+.TFP_neg_1_4     { stroke: none; fill: rgb(222, 45,  38); fill-opacity: 0.75; }
+.TFP_neg_4       { stroke: none; fill: rgb(103,  0,  13); fill-opacity: 0.85; }

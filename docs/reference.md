@@ -926,6 +926,61 @@ Example:
 		}
 </code></pre>
 
+##### TFP metaparameter (isoband and isoline layers)
+
+Both `IsobandLayer` and `IsolineLayer` accept `"parameter": "TFP"` as a metaparameter
+that causes the layer to compute Hewson's Thermal Front Parameter on the fly from an
+underlying scalar field before contouring. This is intended as a *diagnostic*
+display — a clean isoband plot of TFP is one of the standard forecaster tools for
+spotting frontal zones, moisture boundaries, jet-stream edges, and so on. It makes no
+binary "is there a front here" decisions.
+
+The underlying scalar field is configured in a `"tfp"` block on the layer:
+
+| Name              | Type   | Default                  | Description |
+| ----------------- | ------ | ------------------------ | ----------- |
+| field             | string | `"PotentialTemperature"` | The underlying scalar field to compute TFP on. Any scalar is admissible — θ, θw (`PseudoAdiabaticPotentialTemperature`), θe, humidity, wind speed, potential vorticity — and the choice determines what kind of feature the TFP highlights. |
+| smoothing_passes  | int    | `3`                      | Number of separable 1-2-1 binomial smoother passes applied to the underlying field before TFP. TFP is a second derivative and strongly amplifies grid-scale noise; without smoothing the result is unreadable on typical NWP grids. |
+| min_gradient      | double | `0.0`                    | If non-zero, mask TFP to missing wherever `|∇field|` is below this threshold. Suppresses TFP noise in regions with no real gradient. |
+
+TFP has units of `(units of field) / m²`. For potential temperature that's K/m²; Hewson
+scales by `(100 km)²` so "1 unit" in his paper equals 10⁻¹⁰ K/m². The supplied test
+CSS (`isobands/tfp.css`) uses that scale.
+
+Which underlying field to use depends on what you want to see:
+
+| Field                                      | Typical level | Highlights                                        |
+| ------------------------------------------ | ------------- | ------------------------------------------------- |
+| `PotentialTemperature` (θ)                 | 850 hPa       | Classical thermal fronts.                         |
+| `PseudoAdiabaticPotentialTemperature` (θw) | 850 hPa       | Moisture-aware fronts; Hewson's preferred choice. |
+| `Humidity` / specific humidity             | 850 hPa       | Dry lines, moisture boundaries.                   |
+| `WindSpeedMS`                              | 300 hPa       | Jet-stream edges, jet streaks.                    |
+| Potential vorticity                        | upper levels  | Dynamical tropopause, PV-stream features.         |
+
+If you want *objective front detection* (not just a diagnostic display), the most
+complete open implementation is Spensberger's `dynlib` (University of Bergen; Fortran
+with Python bindings, includes Hewson-style routines tuned against ERA5 climatologies).
+Schemm, Sprenger & Wernli 2018 is a simpler first-derivative alternative based on
+|∇θe|. Neither is wrapped into this plugin; they would be the natural starting points
+if automatic detection ever becomes a requirement.
+
+Example (TFP of θ at 850 hPa):
+
+```json
+{
+    "layer_type": "isoband",
+    "parameter": "TFP",
+    "level": 850,
+    "tfp":
+    {
+        "field": "PotentialTemperature",
+        "smoothing_passes": 3
+    },
+    "css": "isobands/tfp.css",
+    "isobands": "json:isobands/tfp"
+}
+```
+
 #### IsolabelLayer
 
 The isolabel layer is derived from the isoline layer, and thus inherits all its settings. The settings below are then available for positioning isovalues on the isolines.
@@ -2067,10 +2122,15 @@ occluded and stationary fronts.
 
 | Name     | Type   | Default      | Description |
 | -------- | ------ | ------------ | ----------- |
-| front_source | string | `"synthetic"` | Data source: `"synthetic"` or `"grid"`. (Named `front_source` rather than `source` because the latter is reserved for the paraminfo data source.) |
+| front_source | string | `"synthetic"` | Data source. Currently only `"synthetic"` is implemented; the field is retained as an extensibility point for future sources such as WOML. (Named `front_source` rather than `source` because the latter is reserved for the paraminfo data source.) |
 | fronts   | array  | `[]`         | Front curve definitions (used when `front_source` is `"synthetic"`). See below. |
-| grid     | object | –            | Grid-detection configuration (used when `front_source` is `"grid"`). See below. |
 | styles   | object | –            | Per-type style overrides. Keys are front type strings (e.g. `"cold"`). See below. |
+
+For automatic front *diagnosis* from gridded data, use the `TFP` metaparameter with
+`IsobandLayer` or `IsolineLayer` (documented below). That produces Hewson's Thermal
+Front Parameter field directly as an isoband/isoline plot, which is how TFP is used in
+operational forecasting — as a diagnostic aid for a trained eye, not as an automatic
+detector.
 
 ##### `fronts` array (synthetic source)
 
@@ -2081,30 +2141,6 @@ Each element in the `fronts` array defines one front curve:
 | type   | string | `"cold"` | Front type: `"cold"`, `"warm"`, `"occluded"`, `"stationary"`, `"trough"`, or `"ridge"`. |
 | side   | string | `"left"` | Which side the symbols face: `"left"` or `"right"`. |
 | points | array  | –        | Array of `[longitude, latitude]` pairs (WGS84) defining the front path. Required. |
-
-##### `grid` object (grid source)
-
-Fronts are detected by computing Hewson's Thermal Front Parameter (TFP):
-
-```
-TFP = -∇(|∇θ|) · (∇θ / |∇θ|)
-```
-
-Zero-crossings of TFP with `|∇θ|` above `min_gradient` are extracted as isolines and
-classified as cold or warm fronts based on the sign of the low-level temperature advection
-`V · ∇θ` at 850 hPa.
-
-| Name            | Type   | Default                  | Description |
-| --------------- | ------ | ------------------------ | ----------- |
-| producer        | string | (default producer)       | Querydata producer name. |
-| theta_param     | string | `"PotentialTemperature"` | Potential temperature (or temperature) parameter name. |
-| u_param         | string | `"WindUMS"`              | U-component of wind parameter name. |
-| v_param         | string | `"WindVMS"`              | V-component of wind parameter name. |
-| level           | double | `850.0`                  | Pressure level in hPa. |
-| smoothing_passes | int    | `3`                      | 1-2-1 binomial smoother passes applied to θ before TFP. Essential because TFP is a second derivative and amplifies grid-scale θ noise. |
-| min_gradient    | double | `1e-5`                   | Minimum `|∇θ|` threshold (K/m). Grid points below this are masked as missing before contouring; real synoptic fronts typically exceed 1–3 × 10⁻⁵ K/m. |
-| min_length_px   | double | `20.0`                   | Minimum front segment length in screen pixels. Shorter segments are discarded. |
-| drop_closed     | bool   | `true`                   | Discard closed TFP zero-contours. Real fronts are open curves; closed rings are almost always noise islands around a local `|∇θ|` maximum. |
 
 ##### `styles` object
 
@@ -2161,39 +2197,6 @@ The product JSON that produced the image above:
                     { "type": "stationary", "side": "left",
                       "points": [[27,59],[30,59.5],[33,60.5],[36,62],[38,63.5]] }
                 ]
-            }
-        ]
-    }]
-}
-```
-
-##### Example 2 – automatic front detection from querydata
-
-```json
-{
-    "title": "NWP front analysis 850 hPa",
-    "producer": "ecmwf_skandinavia_painepinta",
-    "projection": { "crs": "EPSG:3857", "xsize": 800, "ysize": 600 },
-    "views": [{
-        "layers": [
-            { "layer_type": "map", "map": "finland" },
-            {
-                "layer_type": "fronts",
-                "front_source": "grid",
-                "css": "fronts/fronts.css",
-                "grid": {
-                    "producer": "ecmwf_skandinavia_painepinta",
-                    "theta_param": "PotentialTemperature",
-                    "u_param": "WindUMS",
-                    "v_param": "WindVMS",
-                    "level": 850,
-                    "min_gradient": 2e-6,
-                    "min_length_px": 30
-                },
-                "styles": {
-                    "cold": { "font_size": 24, "spacing": 48 },
-                    "warm": { "font_size": 24, "spacing": 48 }
-                }
             }
         ]
     }]

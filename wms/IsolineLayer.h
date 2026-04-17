@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ComputedFields.h"
 #include "Intersections.h"
 #include "Isoline.h"
 #include "IsolineFilter.h"
@@ -9,6 +10,7 @@
 #include "Sampling.h"
 #include "Smoother.h"
 #include <engines/querydata/Q.h>
+#include <optional>
 #include <vector>
 
 namespace SmartMet
@@ -55,6 +57,11 @@ class IsolineLayer : public Layer
   Sampling sampling;
   Intersections intersections;
   IsolineFilter filter;
+
+  // If set, the layer's "parameter" is expected to be the TFP metaparameter
+  // name ("TFP"); the underlying scalar is fetched from tfp->field and the
+  // TFP field is computed on the fly before contouring.
+  std::optional<ComputedFields::TfpOptions> tfp;
 
   bool strict = false;
   bool validate = false;

@@ -1,5 +1,5 @@
 {
-    "title": "Weather fronts – TFP detection on ecpainepinta 850 hPa",
+    "title": "TFP diagnostic – WindSpeedMS 300 hPa (jet-stream edges)",
     "producer": "ecmwf_skandinavia_painepinta",
 
     "projection":
@@ -20,18 +20,20 @@
             "layers": [
                 {
                     "layer_type": "background",
-                    "attributes": { "fill": "rgb(190,230,255)" }
+                    "attributes": { "fill": "rgb(240,240,240)" }
                 },
                 {
-                    "qid": "land",
-                    "layer_type": "map",
-                    "map":
+                    "qid": "tfp",
+                    "layer_type": "isoband",
+                    "parameter": "TFP",
+                    "level": 300,
+                    "tfp":
                     {
-                        "schema": "natural_earth",
-                        "table": "admin_0_countries",
-                        "minarea": 50
+                        "field": "WindSpeedMS",
+                        "smoothing_passes": 3
                     },
-                    "attributes": { "fill": "rgb(220,220,210)", "stroke": "none" }
+                    "css": "isobands/tfp.css",
+                    "isobands": "json:isobands/tfp"
                 },
                 {
                     "qid": "borders",
@@ -43,28 +45,7 @@
                         "table": "admin_0_countries",
                         "minarea": 50
                     },
-                    "attributes": { "fill": "none", "stroke": "#555", "stroke-width": "0.5px" }
-                },
-                {
-                    "qid": "wf",
-                    "layer_type": "fronts",
-                    "css": "fronts/fronts.css",
-                    "front_source": "grid",
-                    "grid":
-                    {
-                        "level": 850,
-                        "smoothing_passes": 3,
-                        "min_gradient": 1e-5,
-                        "min_length_px": 40,
-                        "temporal_smoothing":
-                        {
-                            "offsets_minutes": [-180, 0, 180],
-                            "weights": [0.25, 0.5, 0.25]
-                        }
-                    },
-                    "radius": 2,
-                    "iterations": 2,
-                    "bezier": 2.0
+                    "attributes": { "fill": "none", "stroke": "#333", "stroke-width": "0.5px" }
                 },
                 {
                     "qid": "t1",

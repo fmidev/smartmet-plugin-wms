@@ -1,0 +1,1 @@
+GET /dali?customer=test&product=tfp_wind&type=png&time=200809101200 HTTP/1.0

@@ -1,1 +1,0 @@
-GET /dali?customer=test&product=fronts_grid&type=png&time=200809101200 HTTP/1.0

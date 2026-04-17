@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "ComputedFields.h"
 #include "Heatmap.h"
 #include "Intersections.h"
 #include "Isoband.h"
@@ -15,6 +16,7 @@
 #include "ParameterInfo.h"
 #include "Sampling.h"
 #include "Smoother.h"
+#include <optional>
 #include <vector>
 
 namespace SmartMet
@@ -64,6 +66,11 @@ class IsobandLayer : public Layer
   IsolineFilter filter;
 
   Heatmap heatmap;
+
+  // If set, the layer's "parameter" is the TFP metaparameter name
+  // ("TFP"); the underlying scalar is fetched from tfp->field and the
+  // TFP field is computed on the fly before contouring.
+  std::optional<ComputedFields::TfpOptions> tfp;
 
   bool closed_range = true;
   bool strict = false;
