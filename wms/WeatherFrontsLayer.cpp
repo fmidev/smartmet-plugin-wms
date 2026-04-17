@@ -593,9 +593,21 @@ void WeatherFrontsLayer::generate_qEngine(CTPP::CDT& theGlobals,
   const auto& qEngine = theState.getQEngine();
   std::size_t qhash = Engine::Querydata::hash_value(q);
 
-  auto param_theta = TS::ParameterFactory::instance().parse(cfg.theta_param);
-  auto param_u = TS::ParameterFactory::instance().parse(cfg.u_param);
-  auto param_v = TS::ParameterFactory::instance().parse(cfg.v_param);
+  // Force Type::Data so the querydata engine fetches these straight from
+  // the grid. WindUMS / WindVMS are classified as DataDerived by default
+  // (since they can be synthesized from WindSpeedMS + WindDirection), and
+  // the derived code path does not know how to return them as a matrix
+  // even when the data stores them directly.
+  auto makeDataParam = [](const std::string& name)
+  {
+    auto p = TS::ParameterFactory::instance().parse(name);
+    if (p.type() != Spine::Parameter::Type::Data)
+      p = Spine::Parameter(name, Spine::Parameter::Type::Data, p.number());
+    return p;
+  };
+  auto param_theta = makeDataParam(cfg.theta_param);
+  auto param_u     = makeDataParam(cfg.u_param);
+  auto param_v     = makeDataParam(cfg.v_param);
 
   auto makeHash = [&](const Spine::Parameter& p, const Fmi::DateTime& t)
   {
