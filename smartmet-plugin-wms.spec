@@ -27,6 +27,7 @@ BuildRequires: gcc-c++
 BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
+BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
 BuildRequires: smartmet-library-giza-devel >= 26.3.13
 BuildRequires: smartmet-library-grid-content-devel >= 26.4.13
 BuildRequires: smartmet-library-grid-files-devel >= 26.4.13
@@ -72,6 +73,7 @@ Requires: libconfig17
 Requires: libwebp13
 # Default font for some layers:
 Requires: google-roboto-fonts
+Requires: smartmet-library-dynlib >= 26.4.17
 Requires: smartmet-library-grid-content >= 26.4.13
 Requires: smartmet-library-grid-files >= 26.4.13
 Requires: smartmet-library-gis >= 26.4.13

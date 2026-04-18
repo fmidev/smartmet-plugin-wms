@@ -35,6 +35,7 @@
 #include "TimeLayer.h"
 #include "TranslationLayer.h"
 #include "WKTLayer.h"
+#include "WeatherObjectsLayer.h"
 #include "WindRoseLayer.h"
 #include <macgyver/Exception.h>
 #include <stdexcept>
@@ -126,6 +127,8 @@ Layer* create(const Json::Value& theJson)
       return new FrameLayer;
     if (name == "fronts")
       return new WeatherFrontsLayer;
+    if (name == "weather_objects")
+      return new WeatherObjectsLayer;
 #ifndef WITHOUT_AVI
     if (name == "metar")
       return new MetarLayer;

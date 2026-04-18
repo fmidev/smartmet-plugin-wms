@@ -13,6 +13,17 @@ FLAGS += -Wno-maybe-uninitialized -Wno-variadic-macros -Wno-deprecated-declarati
 
 DEFINES = -DUNIX -D_REENTRANT -DWITHOUT_OSM
 
+# Local-build override for smartmet-library-dynlib: point DYNLIB_STAGE at
+# a staging tree (e.g. $HOME/smartmet-dynlib-staging) to link against a
+# not-yet-installed copy. If the directory does not exist, the build
+# falls back to the system-installed headers and library, which is what
+# the RPM / CI build uses.
+DYNLIB_STAGE ?= $(HOME)/smartmet-dynlib-staging
+ifneq ($(wildcard $(DYNLIB_STAGE)/include/smartmet/dynlib),)
+  INCLUDES += -I$(DYNLIB_STAGE)/include/smartmet
+  DYNLIB_LIB_FLAGS := -L$(DYNLIB_STAGE)/lib64 -Wl,-rpath,$(DYNLIB_STAGE)/lib64
+endif
+
 LIBS += $(PREFIX_LDFLAGS) \
 	-lsmartmet-grid-content \
 	-lsmartmet-timeseries \
@@ -22,6 +33,7 @@ LIBS += $(PREFIX_LDFLAGS) \
 	-lsmartmet-gis \
 	-lsmartmet-giza \
 	-lsmartmet-locus \
+	$(DYNLIB_LIB_FLAGS) -lsmartmet-dynlib \
 	$(REQUIRED_LIBS) \
 	-lboost_thread \
 	-lboost_regex \
