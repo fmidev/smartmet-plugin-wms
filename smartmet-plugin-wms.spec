@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.4.14
+Version: 26.4.18
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -41,7 +41,7 @@ BuildRequires: smartmet-engine-authentication-devel >= 26.4.13
 BuildRequires: smartmet-engine-observation-devel >= 26.4.13
 %endif
 BuildRequires: smartmet-engine-gis-devel >= 26.4.13
-BuildRequires: smartmet-engine-grid-devel >= 26.4.13
+BuildRequires: smartmet-engine-grid-devel >= 26.4.17
 BuildRequires: smartmet-engine-geonames-devel >= 26.4.13
 BuildRequires: smartmet-engine-querydata-devel >= 26.4.13
 BuildRequires: smartmet-engine-contour-devel >= 26.4.13
@@ -81,14 +81,14 @@ Requires: smartmet-library-trax >= 26.4.13
 Requires: smartmet-library-macgyver >= 26.4.13
 Requires: smartmet-library-spine >= 26.4.13
 Requires: smartmet-library-timeseries >= 26.4.13
-Requires: smartmet-library-giza >= 26.3.13
+Requires: smartmet-library-giza >= 26.4.13
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 26.4.13
 %endif
 Requires: smartmet-engine-querydata >= 26.4.13
 Requires: smartmet-engine-contour >= 26.4.13
 Requires: smartmet-engine-gis >= 26.4.13
-Requires: smartmet-engine-grid >= 26.4.13
+Requires: smartmet-engine-grid >= 26.4.17
 Requires: smartmet-engine-geonames >= 26.4.13
 Requires: smartmet-server >= 26.4.13
 Requires: smartmet-library-spine >= 26.4.13
@@ -117,13 +117,13 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: smartmet-engine-gis-devel >= 26.4.13
 #TestRequires: smartmet-engine-querydata-devel >= 26.4.13
 #TestRequires: smartmet-engine-authentication-devel >= 26.4.13
-#TestRequires: smartmet-library-giza-devel >= 26.3.13
+#TestRequires: smartmet-library-giza-devel >= 26.4.13
 #TestRequires: smartmet-library-trax-devel >= 26.4.13
 #TestRequires: smartmet-library-newbase-devel >= 26.2.4
 #TestRequires: smartmet-library-macgyver-devel >= 26.4.13
 #TestRequires: smartmet-library-spine-devel >= 26.4.13
 #TestRequires: smartmet-library-timeseries-devel >= 26.4.13
-#TestRequires: smartmet-engine-grid-devel >= 26.4.13
+#TestRequires: smartmet-engine-grid-devel >= 26.4.17
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
 #TestRequires: smartmet-utils-devel >= 26.2.4
@@ -165,6 +165,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Sat Apr 18 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.4.18-1.fmi
+- Added dynlib features
+
+* Fri Apr 17 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.4.17-1.fmi
+- Repackaged due to API changes
+
 * Tue Apr 14 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.4.14-1.fmi
 - Added datatile support for particle animations
 - Added optional Bezier curve fitting to IsolineFIlter
