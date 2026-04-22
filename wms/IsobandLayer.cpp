@@ -148,6 +148,7 @@ void IsobandLayer::init(Json::Value& theJson,
     JsonTools::remove_bool(strict, theJson, "strict");
     JsonTools::remove_bool(validate, theJson, "validate");
     JsonTools::remove_bool(desliver, theJson, "desliver");
+    JsonTools::remove_int(subdivide, theJson, "subdivide");
 
     json = JsonTools::remove(theJson, "outside");
     if (!json.isNull())
@@ -1135,6 +1136,7 @@ void IsobandLayer::generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersC
     options.strict = strict;
     options.validate = validate;
     options.desliver = desliver;
+    options.subdivide = subdivide;
 
     // Do the actual contouring, either full grid or just
     // a sampled section
@@ -1427,6 +1429,7 @@ std::size_t IsobandLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(strict));
     Fmi::hash_combine(hash, Fmi::hash_value(validate));
     Fmi::hash_combine(hash, Fmi::hash_value(desliver));
+    Fmi::hash_combine(hash, Fmi::hash_value(subdivide));
     return hash;
   }
   catch (...)
@@ -1586,6 +1589,7 @@ void IsobandLayer::addMVTLayer(MVTTileBuilder& theBuilder, State& theState)
     options.strict = strict;
     options.validate = validate;
     options.desliver = desliver;
+    options.subdivide = subdivide;
 
     std::size_t qhash = Engine::Querydata::hash_value(q);
     auto valueshash = qhash;

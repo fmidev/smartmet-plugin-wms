@@ -77,6 +77,11 @@ class IsobandLayer : public Layer
   bool validate = false;
   bool desliver = false;
 
+  // Bilinear cell subdivision count (0..4). When >0, inserts up to N-1 interior
+  // samples on the bilinear level curve between consecutive edge intersections,
+  // smoothing diamond-like artifacts caused by lone high pixels.
+  int subdivide = 0;
+
  private:
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
   virtual void generate_qEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
