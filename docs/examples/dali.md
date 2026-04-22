@@ -411,6 +411,29 @@ Renders radar-derived precipitation rate (`PrecipitationRate`) from the `tutka_s
 
 ---
 
+### radar_subdivide — Bilinear cell subdivision comparison (K = 0, 2, 4, 8)
+
+**Input:** [`test/input/radar_subdivide.get`](../../test/input/radar_subdivide.get)
+
+```
+GET /dali?customer=test&product=radar_subdivide&time=20130910T1000 HTTP/1.0
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| `product` | `radar_subdivide` | Product JSON: [`test/dali/customers/test/products/radar_subdivide.json`](../../test/dali/customers/test/products/radar_subdivide.json) |
+| `time` | `20130910T1000` | Valid time: 2013-09-10 10:00 UTC |
+
+Four-panel comparison over the SW Finland / Åland archipelago zoom at the same radar timestamp, each panel using a different value of the isoband layer's `subdivide` key. The top-left panel (`K = 0`) is the classic linear marching-squares output — note the sharp diamond-shaped lone-pixel polygons. With increasing `K` every interior level-curve segment is split into `K` shorter chords on the true bilinear level curve between the cell-edge intersections, turning the diamonds into progressively rounded four-lobed blobs. The cell-edge intersections themselves are identical across all four panels, which is what lets adjacent cells keep stitching together cleanly regardless of the `K` value. `K = 8` is close to the analytical bilinear shape; `K = 10` is the hard cap and produces only a sub-1 % further change.
+
+See the [`subdivide` row in the isoband layer reference](../reference.md) and the [Bilinear cell subdivision section of the trax docs](https://github.com/fmidev/smartmet-library-trax/blob/master/docs/trax.md#bilinear-cell-subdivision) for the underlying math and limitations.
+
+**Output:**
+
+![radar_subdivide](../images/dali/radar_subdivide.png)
+
+---
+
 ### tmax_smooth — Smoothed maximum temperature
 
 **Input:** [`test/input/tmax_smooth.get`](../../test/input/tmax_smooth.get)
