@@ -17,3 +17,4 @@ compile_commands.json
 local.conf
 §.cache
 test/unit/test_label_placement
+test/unit/test_subdivide_gate
