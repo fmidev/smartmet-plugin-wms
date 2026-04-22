@@ -1,5 +1,5 @@
 {
-    "title": "Radar isobands at four bilinear subdivision levels (K=0,1,2,4)",
+    "title": "Radar isobands at four bilinear subdivision levels (K=0,2,4,8)",
     "width": 730,
     "height": 760,
     "producer": "tutka_suomi_rr",
@@ -19,9 +19,6 @@
             "attributes": {"transform": "translate(10,40)"},
             "layers": [
                 {"qid": "bg0", "layer_type": "background", "attributes": {"fill": "rgb(0,75,140)"}},
-                {"qid": "land0", "layer_type": "map",
-                 "map": {"schema": "natural_earth", "table": "admin_0_countries"},
-                 "attributes": {"fill": "rgb(120,120,0)"}},
                 {
                     "qid": "iso0",
                     "layer_type": "isoband",
@@ -30,46 +27,16 @@
                     "parameter": "PrecipitationRate",
                     "subdivide": 0
                 },
-                {"qid": "ml0", "layer_type": "map",
-                 "map": {"schema": "natural_earth", "table": "admin_0_countries"},
-                 "attributes": {"fill": "none", "stroke": "black", "stroke-width": "0.3px"}},
                 {"qid": "lbl0", "tag": "text", "cdata": "K = 0 (linear baseline)",
                  "attributes": {"x": 10, "y": -10, "font-family": "Roboto",
                                 "font-weight": "bold", "font-size": 14, "fill": "black"}}
             ]
         },
         {
-            "qid": "v1",
+            "qid": "v2",
             "attributes": {"transform": "translate(370,40)"},
             "layers": [
-                {"qid": "bg1", "layer_type": "background", "attributes": {"fill": "rgb(0,75,140)"}},
-                {"qid": "land1", "layer_type": "map",
-                 "map": {"schema": "natural_earth", "table": "admin_0_countries"},
-                 "attributes": {"fill": "rgb(120,120,0)"}},
-                {
-                    "qid": "iso1",
-                    "layer_type": "isoband",
-                    "isobands": "json:isobands/precipitation.json",
-                    "css": "isobands/precipitation.css",
-                    "parameter": "PrecipitationRate",
-                    "subdivide": 1
-                },
-                {"qid": "ml1", "layer_type": "map",
-                 "map": {"schema": "natural_earth", "table": "admin_0_countries"},
-                 "attributes": {"fill": "none", "stroke": "black", "stroke-width": "0.3px"}},
-                {"qid": "lbl1", "tag": "text", "cdata": "K = 1",
-                 "attributes": {"x": 10, "y": -10, "font-family": "Roboto",
-                                "font-weight": "bold", "font-size": 14, "fill": "black"}}
-            ]
-        },
-        {
-            "qid": "v2",
-            "attributes": {"transform": "translate(10,400)"},
-            "layers": [
                 {"qid": "bg2", "layer_type": "background", "attributes": {"fill": "rgb(0,75,140)"}},
-                {"qid": "land2", "layer_type": "map",
-                 "map": {"schema": "natural_earth", "table": "admin_0_countries"},
-                 "attributes": {"fill": "rgb(120,120,0)"}},
                 {
                     "qid": "iso2",
                     "layer_type": "isoband",
@@ -78,9 +45,6 @@
                     "parameter": "PrecipitationRate",
                     "subdivide": 2
                 },
-                {"qid": "ml2", "layer_type": "map",
-                 "map": {"schema": "natural_earth", "table": "admin_0_countries"},
-                 "attributes": {"fill": "none", "stroke": "black", "stroke-width": "0.3px"}},
                 {"qid": "lbl2", "tag": "text", "cdata": "K = 2",
                  "attributes": {"x": 10, "y": -10, "font-family": "Roboto",
                                 "font-weight": "bold", "font-size": 14, "fill": "black"}}
@@ -88,12 +52,9 @@
         },
         {
             "qid": "v4",
-            "attributes": {"transform": "translate(370,400)"},
+            "attributes": {"transform": "translate(10,400)"},
             "layers": [
                 {"qid": "bg4", "layer_type": "background", "attributes": {"fill": "rgb(0,75,140)"}},
-                {"qid": "land4", "layer_type": "map",
-                 "map": {"schema": "natural_earth", "table": "admin_0_countries"},
-                 "attributes": {"fill": "rgb(120,120,0)"}},
                 {
                     "qid": "iso4",
                     "layer_type": "isoband",
@@ -102,10 +63,25 @@
                     "parameter": "PrecipitationRate",
                     "subdivide": 4
                 },
-                {"qid": "ml4", "layer_type": "map",
-                 "map": {"schema": "natural_earth", "table": "admin_0_countries"},
-                 "attributes": {"fill": "none", "stroke": "black", "stroke-width": "0.3px"}},
-                {"qid": "lbl4", "tag": "text", "cdata": "K = 4 (maximum)",
+                {"qid": "lbl4", "tag": "text", "cdata": "K = 4",
+                 "attributes": {"x": 10, "y": -10, "font-family": "Roboto",
+                                "font-weight": "bold", "font-size": 14, "fill": "black"}}
+            ]
+        },
+        {
+            "qid": "v8",
+            "attributes": {"transform": "translate(370,400)"},
+            "layers": [
+                {"qid": "bg8", "layer_type": "background", "attributes": {"fill": "rgb(0,75,140)"}},
+                {
+                    "qid": "iso8",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/precipitation.json",
+                    "css": "isobands/precipitation.css",
+                    "parameter": "PrecipitationRate",
+                    "subdivide": 8
+                },
+                {"qid": "lbl8", "tag": "text", "cdata": "K = 8",
                  "attributes": {"x": 10, "y": -10, "font-family": "Roboto",
                                 "font-weight": "bold", "font-size": 14, "fill": "black"}}
             ]
@@ -115,7 +91,7 @@
             "attributes": {"transform": "translate(10,20)"},
             "layers": [
                 {"qid": "ttl", "tag": "text",
-                 "cdata": "Radar precipitation isobands - SW Finland / Aland - bilinear subdivision K=0,1,2,4",
+                 "cdata": "Radar precipitation isobands - bilinear subdivision K=0,2,4,8",
                  "attributes": {"x": 0, "y": 0, "font-family": "Roboto",
                                 "font-weight": "bold", "font-size": 13, "fill": "black"}}
             ]
