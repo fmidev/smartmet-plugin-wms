@@ -67,8 +67,11 @@ class IsolineLayer : public Layer
   bool validate = false;
   bool desliver = false;
 
-  // Bilinear cell subdivision count (0..4); see IsobandLayer for details.
+  // Bilinear cell subdivision count (0..10); see IsobandLayer for details.
   int subdivide = 0;
+
+  // See IsobandLayer::subdivide_min_cell_pixels.
+  double subdivide_min_cell_pixels = 2.0;
 
  protected:
   std::vector<OGRGeometryPtr> getIsolines(const std::vector<double>& isovalues, State& theState);

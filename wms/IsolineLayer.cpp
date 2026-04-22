@@ -6,6 +6,7 @@
 #include "DataTile.h"
 #include "GridDataGeoTiff.h"
 #include "MapboxVectorTile.h"
+#include "SubdivideGate.h"
 #include "Hash.h"
 #include "Isoline.h"
 #include "JsonTools.h"
@@ -219,6 +220,7 @@ void IsolineLayer::init(Json::Value& theJson,
     JsonTools::remove_bool(validate, theJson, "validate");
     JsonTools::remove_bool(desliver, theJson, "desliver");
     JsonTools::remove_int(subdivide, theJson, "subdivide");
+    JsonTools::remove_double(subdivide_min_cell_pixels, theJson, "subdivide_min_cell_pixels");
 
     json = JsonTools::remove(theJson, "outside");
     if (!json.isNull())
@@ -832,6 +834,12 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesQuerydata(const std::vector
     }
   }
 
+  // Gate bilinear subdivision on output pixel density: if the projected data
+  // cells are sub-pixel the interior samples cannot possibly be visible, so
+  // skip them. See SubdivideGate.h for details.
+  if (coords)
+    options.subdivide = effective_subdivide(subdivide, subdivide_min_cell_pixels, *coords, box);
+
   auto geoms = contourer.contour(qhash, crs, *matrix, *coords, clipbox, options);
 
   return geoms;
@@ -1081,6 +1089,7 @@ std::size_t IsolineLayer::hash_value(const State& theState) const
     Fmi::hash_combine(hash, Fmi::hash_value(validate));
     Fmi::hash_combine(hash, Fmi::hash_value(desliver));
     Fmi::hash_combine(hash, Fmi::hash_value(subdivide));
+    Fmi::hash_combine(hash, Fmi::hash_value(subdivide_min_cell_pixels));
     return hash;
   }
   catch (...)

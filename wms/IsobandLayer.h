@@ -77,10 +77,17 @@ class IsobandLayer : public Layer
   bool validate = false;
   bool desliver = false;
 
-  // Bilinear cell subdivision count (0..4). When >0, inserts up to N-1 interior
+  // Bilinear cell subdivision count (0..10). When >0, inserts up to N-1 interior
   // samples on the bilinear level curve between consecutive edge intersections,
-  // smoothing diamond-like artifacts caused by lone high pixels.
+  // smoothing diamond-like artifacts caused by lone high pixels. See
+  // subdivide_min_cell_pixels for the automatic sub-pixel gate.
   int subdivide = 0;
+
+  // Minimum cell size in output pixels below which the subdivide setting is
+  // silently forced to 0 for this render. Avoids wasted work when the grid is
+  // sampled to sub-pixel density and the interior samples would not be visible.
+  // Set to 0 to disable the gate entirely.
+  double subdivide_min_cell_pixels = 2.0;
 
  private:
   virtual void generate_gridEngine(CTPP::CDT& theGlobals, CTPP::CDT& theLayersCdt, State& theState);
