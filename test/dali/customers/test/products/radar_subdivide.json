@@ -1,0 +1,99 @@
+{
+    "title": "Radar isobands at four bilinear subdivision levels (K=0,2,4,8)",
+    "width": 730,
+    "height": 760,
+    "producer": "tutka_suomi_rr",
+    "projection":
+    {
+        "crs": "EPSG:4326",
+        "cx": 19.36,
+        "cy": 60.65,
+        "resolution": 0.03,
+        "xsize": 350,
+        "ysize": 350
+    },
+    "views": [
+        {
+            "qid": "v0",
+            "attributes": {"transform": "translate(10,40)"},
+            "layers": [
+                {"qid": "bg0", "layer_type": "background", "attributes": {"fill": "rgb(0,75,140)"}},
+                {
+                    "qid": "iso0",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/precipitation.json",
+                    "css": "isobands/precipitation.css",
+                    "parameter": "PrecipitationRate",
+                    "subdivide": 0
+                },
+                {"qid": "lbl0", "tag": "text", "cdata": "K = 0 (linear baseline)",
+                 "attributes": {"x": 10, "y": -10, "font-family": "Roboto",
+                                "font-weight": "bold", "font-size": 14, "fill": "black"}}
+            ]
+        },
+        {
+            "qid": "v2",
+            "attributes": {"transform": "translate(370,40)"},
+            "layers": [
+                {"qid": "bg2", "layer_type": "background", "attributes": {"fill": "rgb(0,75,140)"}},
+                {
+                    "qid": "iso2",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/precipitation.json",
+                    "css": "isobands/precipitation.css",
+                    "parameter": "PrecipitationRate",
+                    "subdivide": 2
+                },
+                {"qid": "lbl2", "tag": "text", "cdata": "K = 2",
+                 "attributes": {"x": 10, "y": -10, "font-family": "Roboto",
+                                "font-weight": "bold", "font-size": 14, "fill": "black"}}
+            ]
+        },
+        {
+            "qid": "v4",
+            "attributes": {"transform": "translate(10,400)"},
+            "layers": [
+                {"qid": "bg4", "layer_type": "background", "attributes": {"fill": "rgb(0,75,140)"}},
+                {
+                    "qid": "iso4",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/precipitation.json",
+                    "css": "isobands/precipitation.css",
+                    "parameter": "PrecipitationRate",
+                    "subdivide": 4
+                },
+                {"qid": "lbl4", "tag": "text", "cdata": "K = 4",
+                 "attributes": {"x": 10, "y": -10, "font-family": "Roboto",
+                                "font-weight": "bold", "font-size": 14, "fill": "black"}}
+            ]
+        },
+        {
+            "qid": "v8",
+            "attributes": {"transform": "translate(370,400)"},
+            "layers": [
+                {"qid": "bg8", "layer_type": "background", "attributes": {"fill": "rgb(0,75,140)"}},
+                {
+                    "qid": "iso8",
+                    "layer_type": "isoband",
+                    "isobands": "json:isobands/precipitation.json",
+                    "css": "isobands/precipitation.css",
+                    "parameter": "PrecipitationRate",
+                    "subdivide": 8
+                },
+                {"qid": "lbl8", "tag": "text", "cdata": "K = 8",
+                 "attributes": {"x": 10, "y": -10, "font-family": "Roboto",
+                                "font-weight": "bold", "font-size": 14, "fill": "black"}}
+            ]
+        },
+        {
+            "qid": "title",
+            "attributes": {"transform": "translate(10,20)"},
+            "layers": [
+                {"qid": "ttl", "tag": "text",
+                 "cdata": "Radar precipitation isobands - bilinear subdivision K=0,2,4,8",
+                 "attributes": {"x": 0, "y": 0, "font-family": "Roboto",
+                                "font-weight": "bold", "font-size": 13, "fill": "black"}}
+            ]
+        }
+    ]
+}
