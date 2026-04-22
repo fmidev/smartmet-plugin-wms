@@ -518,6 +518,10 @@ std::vector<OGRGeometryPtr> IsolineLayer::getIsolinesGrid(const std::vector<doub
   if (smoother.degree)
     originalGridQuery->mAttributeList.addAttribute("contour.smooth.degree",
                                                    Fmi::to_string(*smoother.degree));
+
+  if (subdivide > 0)
+    originalGridQuery->mAttributeList.addAttribute("contour.subdivide",
+                                                   Fmi::to_string(subdivide));
   /*
     if (minarea)
     {
