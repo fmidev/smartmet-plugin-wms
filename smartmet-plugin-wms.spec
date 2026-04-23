@@ -50,6 +50,8 @@ BuildRequires: smartmet-library-trax-devel >= 26.4.22
 BuildRequires: %{smartmet_fmt_devel}
 BuildRequires: ctpp2 >= 2.8.8
 BuildRequires: jsoncpp-devel
+BuildRequires: protobuf-compiler
+BuildRequires: protobuf-devel
 # BuildRequires: flex-devel
 BuildRequires: cairo-devel
 BuildRequires: bzip2-devel
@@ -71,6 +73,7 @@ Requires: jsoncpp
 Requires: ctpp2 >= 2.8.8
 Requires: libconfig17
 Requires: libwebp13
+Requires: protobuf
 # Default font for some layers:
 Requires: google-roboto-fonts
 Requires: smartmet-library-dynlib >= 26.4.17
