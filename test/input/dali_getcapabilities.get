@@ -1,0 +1,1 @@
+GET /dali?request=GetCapabilities&customer=ely HTTP/1.0

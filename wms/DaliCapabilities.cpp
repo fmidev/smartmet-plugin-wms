@@ -16,6 +16,7 @@
 #include <macgyver/Exception.h>
 #include <macgyver/TimeFormatter.h>
 #include <spine/Convenience.h>
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -288,7 +289,6 @@ std::string DaliCapabilities::generate(const Spine::HTTP::Request& theRequest,
     Json::Value out(Json::objectValue);
     out["service"] = "Dali";
     out["version"] = "1.0.0";
-    out["generated_at"] = to_iso(Fmi::SecondClock::universal_time());
 
     Json::Value customers(Json::arrayValue);
 
@@ -301,38 +301,48 @@ std::string DaliCapabilities::generate(const Spine::HTTP::Request& theRequest,
       return Json::writeString(wb, out);
     }
 
+    // Sort customer directories so the catalog is deterministic across runs
+    // (std::filesystem::directory_iterator gives no order guarantee).
+    std::vector<std::filesystem::path> customer_dirs;
     for (const auto& customer_dir : std::filesystem::directory_iterator(customers_root))
     {
-      if (!customer_dir.is_directory())
-        continue;
-      const std::string customer = customer_dir.path().filename().string();
+      if (customer_dir.is_directory())
+        customer_dirs.push_back(customer_dir.path());
+    }
+    std::sort(customer_dirs.begin(), customer_dirs.end());
+
+    for (const auto& customer_path : customer_dirs)
+    {
+      const std::string customer = customer_path.filename().string();
       if (customer_param && !customer_param->empty() && *customer_param != customer)
         continue;
 
-      const std::filesystem::path products_root = customer_dir.path() / "products";
+      const std::filesystem::path products_root = customer_path / "products";
       if (!std::filesystem::exists(products_root))
         continue;
 
-      Json::Value products(Json::arrayValue);
-
-      // Recurse into products/, treating directories as hierarchy levels.
+      // Collect and sort .json paths under products/ so output order is stable.
+      std::vector<std::filesystem::path> product_files;
       for (const auto& entry :
            std::filesystem::recursive_directory_iterator(products_root))
       {
-        if (!entry.is_regular_file())
-          continue;
-        if (entry.path().extension() != ".json")
-          continue;
+        if (entry.is_regular_file() && entry.path().extension() == ".json")
+          product_files.push_back(entry.path());
+      }
+      std::sort(product_files.begin(), product_files.end());
 
+      Json::Value products(Json::arrayValue);
+      for (const auto& product_path : product_files)
+      {
         // Relative path without .json -> product name (e.g. "aurausmalli/roadcondition").
-        auto rel = std::filesystem::relative(entry.path(), products_root);
+        auto rel = std::filesystem::relative(product_path, products_root);
         std::string relname = rel.generic_string();
         if (relname.size() > 5 && relname.substr(relname.size() - 5) == ".json")
           relname.resize(relname.size() - 5);
 
         try
         {
-          products.append(product_entry(entry.path(),
+          products.append(product_entry(product_path,
                                         customer,
                                         relname,
                                         itsPlugin.getQEngine()));
