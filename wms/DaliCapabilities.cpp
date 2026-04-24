@@ -44,6 +44,44 @@ std::string slurp(const std::filesystem::path& thePath)
   return ss.str();
 }
 
+// Deep-copy a Json::Value stripping any attached comments. JsonCpp preserves
+// comments from parsed input and re-emits them on write, which would leak
+// // ... tails from product JSONs into our catalog and make it invalid JSON.
+
+Json::Value strip_comments(const Json::Value& src)
+{
+  switch (src.type())
+  {
+    case Json::nullValue:
+      return {};
+    case Json::intValue:
+      return Json::Value(src.asLargestInt());
+    case Json::uintValue:
+      return Json::Value(src.asLargestUInt());
+    case Json::realValue:
+      return Json::Value(src.asDouble());
+    case Json::stringValue:
+      return Json::Value(src.asString());
+    case Json::booleanValue:
+      return Json::Value(src.asBool());
+    case Json::arrayValue:
+    {
+      Json::Value out(Json::arrayValue);
+      for (const auto& e : src)
+        out.append(strip_comments(e));
+      return out;
+    }
+    case Json::objectValue:
+    {
+      Json::Value out(Json::objectValue);
+      for (const auto& name : src.getMemberNames())
+        out[name] = strip_comments(src[name]);
+      return out;
+    }
+  }
+  return {};
+}
+
 // Format a DateTime as ISO8601 UTC ("YYYY-MM-DDTHH:MM:SSZ"). Returns empty for NOT_A_DATE_TIME.
 
 std::string to_iso(const Fmi::DateTime& t)
@@ -204,10 +242,12 @@ Json::Value product_entry(const std::filesystem::path& theFile,
 
   // Pass through strictly user-visible metadata. We do not resolve "json:"
   // references here — a catalog entry only needs the top-level product fields.
+  // Copies go through strip_comments() so that "// ..." tails in product JSONs
+  // don't leak into the catalog and break JSON parsers.
   if (json.isMember("title"))
-    entry["title"] = json["title"];
+    entry["title"] = strip_comments(json["title"]);
   if (json.isMember("abstract"))
-    entry["abstract"] = json["abstract"];
+    entry["abstract"] = strip_comments(json["abstract"]);
 
   std::string producer;
   if (json.isMember("producer") && json["producer"].isString())
@@ -217,16 +257,16 @@ Json::Value product_entry(const std::filesystem::path& theFile,
   }
 
   if (json.isMember("source"))
-    entry["source"] = json["source"];
+    entry["source"] = strip_comments(json["source"]);
 
   // Output image dimensions. Dali products may specify them at product level or
   // inside projection.xsize/ysize (the latter is the actual raster size; the
   // former is the full SVG canvas including chrome). We expose both when useful.
   Json::Value image(Json::objectValue);
   if (json.isMember("width") && json["width"].isIntegral())
-    image["width"] = json["width"];
+    image["width"] = strip_comments(json["width"]);
   if (json.isMember("height") && json["height"].isIntegral())
-    image["height"] = json["height"];
+    image["height"] = strip_comments(json["height"]);
 
   if (json.isMember("projection") && json["projection"].isObject())
   {
@@ -236,22 +276,22 @@ Json::Value product_entry(const std::filesystem::path& theFile,
                             "cx", "cy", "resolution"})
     {
       if (proj.isMember(key))
-        projection[key] = proj[key];
+        projection[key] = strip_comments(proj[key]);
     }
     if (!projection.empty())
       entry["projection"] = projection;
 
     // Fall back to projection.xsize/ysize if top-level width/height are absent.
     if (!image.isMember("width") && proj.isMember("xsize"))
-      image["width"] = proj["xsize"];
+      image["width"] = strip_comments(proj["xsize"]);
     if (!image.isMember("height") && proj.isMember("ysize"))
-      image["height"] = proj["ysize"];
+      image["height"] = strip_comments(proj["ysize"]);
   }
 
   // Default output type is SVG (matches daliQuery default) but most browser
   // consumers will pass &type=png explicitly.
   if (json.isMember("type"))
-    image["format"] = json["type"];
+    image["format"] = strip_comments(json["type"]);
   if (!image.empty())
     entry["image"] = image;
 
