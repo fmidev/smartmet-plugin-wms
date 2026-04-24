@@ -281,6 +281,31 @@
         {
           "image" : 
           {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "aland",
+          "path" : 
+          [
+            "test",
+            "aland"
+          ],
+          "producer" : "pal_aland",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "WGS84",
+            "cx" : 20,
+            "cy" : 60,
+            "resolution" : 0.20000000000000001,
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "url_template" : "/dali?customer=test&product=aland&time={time}"
+        },
+        {
+          "image" : 
+          {
             "height" : 500,
             "width" : 500
           },
