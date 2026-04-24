@@ -88,6 +88,7 @@ Table of Contents
   - [Product modification via querystring](#product-modification-via-querystring)
   - [Template selection](#template-selection)
   - [DataTile output](#datatile-output)
+  - [GetCapabilities](#getcapabilities)
   - [Debugging parameters](#debugging-parameters)
 - [WMS querystring parameters](#wms-querystring-parameters)
 - [WMS GetMap and GetCapabilities configuration](#wms-getmap-and-getcapabilities-configuration)
@@ -4813,6 +4814,67 @@ Request → Product::generateDataTile()
                 → PNG encoded with tEXt metadata
                   → Cached and returned
 ```
+
+## GetCapabilities
+
+The Dali endpoint exposes a JSON catalog of the products available on the server.
+Unlike the WMS `GetCapabilities` response this is not an OGC document — it is a
+simple JSON structure intended for UIs, dashboards, and scripts that want to
+enumerate Dali products and their time dimensions.
+
+```
+GET /dali?request=GetCapabilities
+GET /dali?request=GetCapabilities&customer=ely
+```
+
+The optional `customer=<name>` parameter restricts the listing to a single
+customer. When omitted, every customer directory under `root/customers/` is
+listed in alphabetical order, and products within a customer are listed in
+alphabetical path order so that the output is deterministic across runs.
+
+Each product entry contains the fields that are visible in the top-level
+product JSON (no `json:` reference expansion is performed) plus a time
+dimension resolved via the Querydata engine when the product declares a
+`producer`:
+
+| Field          | Description |
+|----------------|-------------|
+| `name`         | Product name relative to the customer's `products/` directory, without the `.json` extension. |
+| `path`         | Array of path segments `[customer, …, leaf]`, useful for building tree UIs. |
+| `title`        | Product `title` if present. |
+| `abstract`     | Product `abstract` if present. |
+| `producer`     | Producer declared at the top of the product JSON. |
+| `source`       | Product `source` if present. |
+| `image`        | Output dimensions (`width`, `height`) and `format` (defaults to `svg`). |
+| `projection`   | Selected projection fields: `crs`, `bboxcrs`, `xsize`, `ysize`, `x1`, `y1`, `x2`, `y2`, `cx`, `cy`, `resolution`. |
+| `time`         | `default` (latest valid time), `origintime` (latest origin time if any), and `values` (either `start/end/PTnH`-style interval for uniform steps, or a comma-separated list). |
+| `url_template` | URL template clients can expand, e.g. `/dali?customer=ely&product=temperatureoverlay&time={time}`. |
+
+Response example (abbreviated):
+
+```json
+{
+  "service" : "Dali",
+  "version" : "1.0.0",
+  "customers" : [
+    {
+      "name" : "ely",
+      "products" : [
+        {
+          "name" : "temperatureoverlay",
+          "path" : ["ely", "temperatureoverlay"],
+          "title" : "Temperature Overlay",
+          "url_template" : "/dali?customer=ely&product=temperatureoverlay&time={time}"
+        }
+      ]
+    }
+  ]
+}
+```
+
+A per-product parse or lookup failure is reported inline as
+`{"name": "...", "error": "parse_error"}` (or `"unreadable"` / `"exception"`)
+so a single bad product JSON does not break the whole catalog.
 
 ## Debugging parameters
 
