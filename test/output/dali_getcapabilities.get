@@ -1,0 +1,4296 @@
+{
+  "customers" : 
+  [
+    {
+      "name" : "ely",
+      "products" : 
+      [
+        {
+          "name" : "temperatureoverlay",
+          "path" : 
+          [
+            "ely",
+            "temperatureoverlay"
+          ],
+          "title" : "Temperature Overlay",
+          "url_template" : "/dali?customer=ely&product=temperatureoverlay&time={time}"
+        },
+        {
+          "name" : "wmsmap",
+          "path" : 
+          [
+            "ely",
+            "wmsmap"
+          ],
+          "title" : "ELY map",
+          "url_template" : "/dali?customer=ely&product=wmsmap&time={time}"
+        }
+      ]
+    },
+    {
+      "name" : "grid",
+      "products" : 
+      [
+        {
+          "image" : 
+          {
+            "format" : "datatile",
+            "height" : 64,
+            "width" : 64
+          },
+          "name" : "datatile_precipitation",
+          "path" : 
+          [
+            "grid",
+            "datatile_precipitation"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : -12,
+            "x2" : 40,
+            "xsize" : 64,
+            "y1" : 34,
+            "y2" : 74,
+            "ysize" : 64
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Precipitation datatile",
+          "url_template" : "/dali?customer=grid&product=datatile_precipitation&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "format" : "datatile",
+            "height" : 64,
+            "width" : 64
+          },
+          "name" : "datatile_temperature",
+          "path" : 
+          [
+            "grid",
+            "datatile_temperature"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : -12,
+            "x2" : 40,
+            "xsize" : 64,
+            "y1" : 34,
+            "y2" : 74,
+            "ysize" : 64
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Temperature datatile",
+          "url_template" : "/dali?customer=grid&product=datatile_temperature&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "format" : "datatile",
+            "height" : 64,
+            "width" : 64
+          },
+          "name" : "datatile_wind",
+          "path" : 
+          [
+            "grid",
+            "datatile_wind"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:4326",
+            "x1" : -12,
+            "x2" : 40,
+            "xsize" : 64,
+            "y1" : 34,
+            "y2" : 74,
+            "ysize" : 64
+          },
+          "source" : "grid",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Wind datatile",
+          "url_template" : "/dali?customer=grid&product=datatile_wind&time={time}"
+        },
+        {
+          "name" : "precipitation_1",
+          "path" : 
+          [
+            "grid",
+            "precipitation_1"
+          ],
+          "producer" : "SMARTMET",
+          "projection" : 
+          {
+            "crs" : "data"
+          },
+          "title" : "Demo product",
+          "url_template" : "/dali?customer=grid&product=precipitation_1&time={time}"
+        },
+        {
+          "abstract" : "Temperature",
+          "name" : "temperature_1",
+          "path" : 
+          [
+            "grid",
+            "temperature_1"
+          ],
+          "producer" : "SMARTMET",
+          "projection" : 
+          {
+            "crs" : "data"
+          },
+          "title" : "Temperature",
+          "url_template" : "/dali?customer=grid&product=temperature_1&time={time}"
+        },
+        {
+          "abstract" : "Temperature",
+          "name" : "temperature_2",
+          "path" : 
+          [
+            "grid",
+            "temperature_2"
+          ],
+          "producer" : "SMARTMET",
+          "projection" : 
+          {
+            "crs" : "data"
+          },
+          "title" : "Temperature",
+          "url_template" : "/dali?customer=grid&product=temperature_2&time={time}"
+        },
+        {
+          "abstract" : "Temperature",
+          "name" : "temperature_3",
+          "path" : 
+          [
+            "grid",
+            "temperature_3"
+          ],
+          "producer" : "SMARTMET",
+          "projection" : 
+          {
+            "crs" : "data"
+          },
+          "title" : "Temperature",
+          "url_template" : "/dali?customer=grid&product=temperature_3&time={time}"
+        },
+        {
+          "abstract" : "Temperature",
+          "name" : "temperature_4",
+          "path" : 
+          [
+            "grid",
+            "temperature_4"
+          ],
+          "producer" : "SMARTMET",
+          "projection" : 
+          {
+            "crs" : "data"
+          },
+          "title" : "Temperature",
+          "url_template" : "/dali?customer=grid&product=temperature_4&time={time}"
+        },
+        {
+          "name" : "wind_direction_1",
+          "path" : 
+          [
+            "grid",
+            "wind_direction_1"
+          ],
+          "producer" : "SMARTMET",
+          "projection" : 
+          {
+            "crs" : "data"
+          },
+          "title" : "Wind demo",
+          "url_template" : "/dali?customer=grid&product=wind_direction_1&time={time}"
+        },
+        {
+          "name" : "wind_speed_1",
+          "path" : 
+          [
+            "grid",
+            "wind_speed_1"
+          ],
+          "producer" : "SMARTMET",
+          "projection" : 
+          {
+            "crs" : "data"
+          },
+          "title" : "Wind demo",
+          "url_template" : "/dali?customer=grid&product=wind_speed_1&time={time}"
+        },
+        {
+          "name" : "wind_speed_2",
+          "path" : 
+          [
+            "grid",
+            "wind_speed_2"
+          ],
+          "producer" : "SMARTMET",
+          "projection" : 
+          {
+            "crs" : "data"
+          },
+          "title" : "Wind demo",
+          "url_template" : "/dali?customer=grid&product=wind_speed_2&time={time}"
+        },
+        {
+          "name" : "wind_speed_and_direction_1",
+          "path" : 
+          [
+            "grid",
+            "wind_speed_and_direction_1"
+          ],
+          "producer" : "SMARTMET",
+          "projection" : 
+          {
+            "crs" : "data"
+          },
+          "title" : "Wind demo",
+          "url_template" : "/dali?customer=grid&product=wind_speed_and_direction_1&time={time}"
+        }
+      ]
+    },
+    {
+      "name" : "test",
+      "products" : 
+      [
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "aland",
+          "path" : 
+          [
+            "test",
+            "aland"
+          ],
+          "producer" : "pal_aland",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "WGS84",
+            "cx" : 20,
+            "cy" : 60,
+            "resolution" : 0.20000000000000001,
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "url_template" : "/dali?customer=test&product=aland&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "autoclass",
+          "path" : 
+          [
+            "test",
+            "autoclass"
+          ],
+          "producer" : "kap",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "url_template" : "/dali?customer=test&product=autoclass&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "autoqid",
+          "path" : 
+          [
+            "test",
+            "autoqid"
+          ],
+          "producer" : "kap",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "url_template" : "/dali?customer=test&product=autoqid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "aviation_numbers",
+          "path" : 
+          [
+            "test",
+            "aviation_numbers"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : -15,
+            "x2" : 37.5,
+            "xsize" : 500,
+            "y1" : 62.5,
+            "y2" : 75,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "Aviation Numbers",
+          "url_template" : "/dali?customer=test&product=aviation_numbers&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "aviation_numbers_multiple5",
+          "path" : 
+          [
+            "test",
+            "aviation_numbers_multiple5"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : -15,
+            "x2" : 37.5,
+            "xsize" : 500,
+            "y1" : 62.5,
+            "y2" : 75,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "Aviation Numbers",
+          "url_template" : "/dali?customer=test&product=aviation_numbers_multiple5&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "circle",
+          "path" : 
+          [
+            "test",
+            "circle"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Circled Demo Product",
+          "url_template" : "/dali?customer=test&product=circle&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "circles",
+          "path" : 
+          [
+            "test",
+            "circles"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:3035",
+            "cx" : 25,
+            "cy" : 60,
+            "resolution" : 1,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Circles",
+          "url_template" : "/dali?customer=test&product=circles&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "circles_labels_sw",
+          "path" : 
+          [
+            "test",
+            "circles_labels_sw"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:3035",
+            "cx" : 24,
+            "cy" : 61,
+            "resolution" : 0.75,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Circles",
+          "url_template" : "/dali?customer=test&product=circles_labels_sw&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "circles_labels_tr",
+          "path" : 
+          [
+            "test",
+            "circles_labels_tr"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:3035",
+            "cx" : 24,
+            "cy" : 61,
+            "resolution" : 0.75,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Circles",
+          "url_template" : "/dali?customer=test&product=circles_labels_tr&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "clip",
+          "path" : 
+          [
+            "test",
+            "clip"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Circled Demo Product",
+          "url_template" : "/dali?customer=test&product=clip&time={time}"
+        },
+        {
+          "abstract" : 
+          {
+            "en" : "Temperature",
+            "fi" : "L\u00e4mp\u00f6tila",
+            "sv" : "Temperatur"
+          },
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "crs_bbox",
+          "path" : 
+          [
+            "test",
+            "crs_bbox"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : 
+          {
+            "en" : "Temperature",
+            "fi" : "L\u00e4mp\u00f6tila",
+            "sv" : "Temperatur"
+          },
+          "url_template" : "/dali?customer=test&product=crs_bbox&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "defs_circle",
+          "path" : 
+          [
+            "test",
+            "defs_circle"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Circled Demo Product",
+          "url_template" : "/dali?customer=test&product=defs_circle&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "disable_svg",
+          "path" : 
+          [
+            "test",
+            "disable_svg"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Disable pressure if format is SVG",
+          "url_template" : "/dali?customer=test&product=disable_svg&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 720,
+            "width" : 1440
+          },
+          "name" : "ec_world_eqc",
+          "path" : 
+          [
+            "test",
+            "ec_world_eqc"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "crs" : "EPSG:4087",
+            "x1" : -20026376.390000001,
+            "x2" : 20026376.390000001,
+            "xsize" : 1440,
+            "y1" : -9462156.7200000007,
+            "y2" : 9462156.7200000007,
+            "ysize" : 720
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "EC world Atlantic View",
+          "url_template" : "/dali?customer=test&product=ec_world_eqc&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 720,
+            "width" : 1440
+          },
+          "name" : "ec_world_eqc_pacific",
+          "path" : 
+          [
+            "test",
+            "ec_world_eqc_pacific"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "+init=epsg:4087 +lon_0=180",
+            "x1" : 0,
+            "x2" : 360,
+            "xsize" : 1440,
+            "y1" : -90,
+            "y2" : 90,
+            "ysize" : 720
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "EC world Pacific View",
+          "url_template" : "/dali?customer=test&product=ec_world_eqc_pacific&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 720,
+            "width" : 1440
+          },
+          "name" : "ec_world_webmercator",
+          "path" : 
+          [
+            "test",
+            "ec_world_webmercator"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:3857",
+            "x1" : -180,
+            "x2" : 180,
+            "xsize" : 1440,
+            "y1" : -85,
+            "y2" : 85,
+            "ysize" : 720
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "EC world in WebMercator",
+          "url_template" : "/dali?customer=test&product=ec_world_webmercator&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 720,
+            "width" : 1440
+          },
+          "name" : "ec_world_wgs84_atlantic",
+          "path" : 
+          [
+            "test",
+            "ec_world_wgs84_atlantic"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "crs" : "+init=epsg:4326",
+            "x1" : -180,
+            "x2" : 180,
+            "xsize" : 1440,
+            "y1" : -90,
+            "y2" : 90,
+            "ysize" : 720
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "EC world in WGS84",
+          "url_template" : "/dali?customer=test&product=ec_world_wgs84_atlantic&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 720,
+            "width" : 1440
+          },
+          "name" : "ec_world_wgs84_pacific",
+          "path" : 
+          [
+            "test",
+            "ec_world_wgs84_pacific"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "crs" : "+init=epsg:4326 +lon_wrap=180",
+            "x1" : 0,
+            "x2" : 360,
+            "xsize" : 1440,
+            "y1" : -90,
+            "y2" : 90,
+            "ysize" : 720
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "EC world in WGS84",
+          "url_template" : "/dali?customer=test&product=ec_world_wgs84_pacific&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "ecmwf_data_numbers",
+          "path" : 
+          [
+            "test",
+            "ecmwf_data_numbers"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:2393",
+            "cx" : 25,
+            "cy" : 60,
+            "resolution" : 1,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "ECMWF temperatures at data points",
+          "url_template" : "/dali?customer=test&product=ecmwf_data_numbers&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "ecmwf_world_numbers",
+          "path" : 
+          [
+            "test",
+            "ecmwf_world_numbers"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : -15,
+            "x2" : 37.5,
+            "xsize" : 500,
+            "y1" : 62.5,
+            "y2" : 75,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "Numbers",
+          "url_template" : "/dali?customer=test&product=ecmwf_world_numbers&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 720,
+            "width" : 1440
+          },
+          "name" : "ecmwfpoint_data_numbers",
+          "path" : 
+          [
+            "test",
+            "ecmwfpoint_data_numbers"
+          ],
+          "producer" : "ecmwf_maailma_piste",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : -180,
+            "x2" : 180,
+            "xsize" : 1440,
+            "y1" : -90,
+            "y2" : 90,
+            "ysize" : 720
+          },
+          "time" : 
+          {
+            "default" : "20080815T000000",
+            "origintime" : "20080804T120000",
+            "values" : "20080804T120000/20080815T000000/PT6H"
+          },
+          "title" : "ECMWF point temperatures at data points",
+          "url_template" : "/dali?customer=test&product=ecmwfpoint_data_numbers&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "enable_png",
+          "path" : 
+          [
+            "test",
+            "enable_png"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Disable pressure if format is SVG",
+          "url_template" : "/dali?customer=test&product=enable_png&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "feelslike",
+          "path" : 
+          [
+            "test",
+            "feelslike"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Feelslike",
+          "url_template" : "/dali?customer=test&product=feelslike&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "flash_cloud_and_ground_symbols",
+          "path" : 
+          [
+            "test",
+            "flash_cloud_and_ground_symbols"
+          ],
+          "producer" : "flash",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Cloud and ground flash observations",
+          "url_template" : "/dali?customer=test&product=flash_cloud_and_ground_symbols&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "flash_cloud_symbols",
+          "path" : 
+          [
+            "test",
+            "flash_cloud_symbols"
+          ],
+          "producer" : "flash",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Cloud flash observations as coloured circles",
+          "url_template" : "/dali?customer=test&product=flash_cloud_symbols&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "flash_ground_symbols",
+          "path" : 
+          [
+            "test",
+            "flash_ground_symbols"
+          ],
+          "producer" : "flash",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Ground flash observations as coloured circles",
+          "url_template" : "/dali?customer=test&product=flash_ground_symbols&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "flash_symbols",
+          "path" : 
+          [
+            "test",
+            "flash_symbols"
+          ],
+          "producer" : "flash",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Flash observations as coloured circles",
+          "url_template" : "/dali?customer=test&product=flash_symbols&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "forestfire",
+          "path" : 
+          [
+            "test",
+            "forestfire"
+          ],
+          "producer" : "forestfire",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25.399999999999999,
+            "cy" : 64.799999999999997,
+            "resolution" : 2.5,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20190207T060000",
+            "origintime" : "20190207T060000",
+            "values" : "20190207T060000"
+          },
+          "title" : "Forest Fire Warnings map",
+          "url_template" : "/dali?customer=test&product=forestfire&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 700
+          },
+          "name" : "fronts",
+          "path" : 
+          [
+            "test",
+            "fronts"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:3857",
+            "x1" : -2,
+            "x2" : 42,
+            "xsize" : 700,
+            "y1" : 47,
+            "y2" : 67,
+            "ysize" : 500
+          },
+          "title" : "Weather fronts \u2013 synthetic example",
+          "url_template" : "/dali?customer=test&product=fronts&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 1200,
+            "width" : 1200
+          },
+          "name" : "frost_inside_simplified_finland",
+          "path" : 
+          [
+            "test",
+            "frost_inside_simplified_finland"
+          ],
+          "producer" : "ground",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : 9,
+            "x2" : 34,
+            "xsize" : 1200,
+            "y1" : 57,
+            "y2" : 66.5,
+            "ysize" : 1200
+          },
+          "time" : 
+          {
+            "default" : "20160414T000000",
+            "origintime" : "20160413T062300",
+            "values" : "20160414T000000"
+          },
+          "title" : "Frost inside Finland only",
+          "url_template" : "/dali?customer=test&product=frost_inside_simplified_finland&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "gfs_world_antarctic",
+          "path" : 
+          [
+            "test",
+            "gfs_world_antarctic"
+          ],
+          "producer" : "gfs",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "+init=epsg:3031 +lon_0=-30",
+            "cx" : 0,
+            "cy" : -90,
+            "resolution" : 20,
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "time" : 
+          {
+            "default" : "20170323T060000",
+            "origintime" : "20170323T000000",
+            "values" : "20170323T060000"
+          },
+          "title" : "GFS world Antrctic View",
+          "url_template" : "/dali?customer=test&product=gfs_world_antarctic&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "gfs_world_arctic",
+          "path" : 
+          [
+            "test",
+            "gfs_world_arctic"
+          ],
+          "producer" : "gfs",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:3995",
+            "cx" : 0,
+            "cy" : 90,
+            "resolution" : 10,
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "time" : 
+          {
+            "default" : "20170323T060000",
+            "origintime" : "20170323T000000",
+            "values" : "20170323T060000"
+          },
+          "title" : "GFS world Arctic View",
+          "url_template" : "/dali?customer=test&product=gfs_world_arctic&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 720,
+            "width" : 1440
+          },
+          "name" : "gfs_world_eqc",
+          "path" : 
+          [
+            "test",
+            "gfs_world_eqc"
+          ],
+          "producer" : "gfs",
+          "projection" : 
+          {
+            "crs" : "EPSG:4087",
+            "x1" : -20026376.390000001,
+            "x2" : 20026376.390000001,
+            "xsize" : 1440,
+            "y1" : -9462156.7200000007,
+            "y2" : 9462156.7200000007,
+            "ysize" : 720
+          },
+          "time" : 
+          {
+            "default" : "20170323T060000",
+            "origintime" : "20170323T000000",
+            "values" : "20170323T060000"
+          },
+          "title" : "GFS world Atlantic View",
+          "url_template" : "/dali?customer=test&product=gfs_world_eqc&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 720,
+            "width" : 1440
+          },
+          "name" : "gfs_world_eqc_pacific",
+          "path" : 
+          [
+            "test",
+            "gfs_world_eqc_pacific"
+          ],
+          "producer" : "gfs",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "+init=epsg:4087 +lon_0=180",
+            "x1" : 0,
+            "x2" : 359.75,
+            "xsize" : 1440,
+            "y1" : -90,
+            "y2" : 90,
+            "ysize" : 720
+          },
+          "time" : 
+          {
+            "default" : "20170323T060000",
+            "origintime" : "20170323T000000",
+            "values" : "20170323T060000"
+          },
+          "title" : "GFS world Pacific View",
+          "url_template" : "/dali?customer=test&product=gfs_world_eqc_pacific&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 400,
+            "width" : 800
+          },
+          "name" : "gfs_world_goode",
+          "path" : 
+          [
+            "test",
+            "gfs_world_goode"
+          ],
+          "producer" : "gfs",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "+proj=igh +lon_0=0",
+            "cx" : 0,
+            "cy" : 0,
+            "resolution" : 50,
+            "xsize" : 800,
+            "ysize" : 400
+          },
+          "time" : 
+          {
+            "default" : "20170323T060000",
+            "origintime" : "20170323T000000",
+            "values" : "20170323T060000"
+          },
+          "title" : "GFS world Goode View",
+          "url_template" : "/dali?customer=test&product=gfs_world_goode&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 400,
+            "width" : 800
+          },
+          "name" : "gfs_world_natural_earth",
+          "path" : 
+          [
+            "test",
+            "gfs_world_natural_earth"
+          ],
+          "producer" : "gfs",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "+proj=natearth +lon_0=90",
+            "cx" : 90,
+            "cy" : 0,
+            "resolution" : 50,
+            "xsize" : 800,
+            "ysize" : 400
+          },
+          "time" : 
+          {
+            "default" : "20170323T060000",
+            "origintime" : "20170323T000000",
+            "values" : "20170323T060000"
+          },
+          "title" : "GFS world Natural Earth View",
+          "url_template" : "/dali?customer=test&product=gfs_world_natural_earth&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "gfs_world_perspective",
+          "path" : 
+          [
+            "test",
+            "gfs_world_perspective"
+          ],
+          "producer" : "gfs",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "proj-string: +proj=nsper +h=3000000 +lat_0=60 +lon_0=25",
+            "cx" : 25,
+            "cy" : 60,
+            "resolution" : 8,
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "time" : 
+          {
+            "default" : "20170323T060000",
+            "origintime" : "20170323T000000",
+            "values" : "20170323T060000"
+          },
+          "title" : "GFS world Perspective View",
+          "url_template" : "/dali?customer=test&product=gfs_world_perspective&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "gfs_world_stereographic",
+          "path" : 
+          [
+            "test",
+            "gfs_world_stereographic"
+          ],
+          "producer" : "gfs",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "+proj=stere +lat_0=90 +lat_ts=60 +lon_0=20 +R=6371229 +units=m +no_defs",
+            "cx" : 10,
+            "cy" : 60,
+            "resolution" : 4,
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "time" : 
+          {
+            "default" : "20170323T060000",
+            "origintime" : "20170323T000000",
+            "values" : "20170323T060000"
+          },
+          "title" : "GFS world Stereographic View",
+          "url_template" : "/dali?customer=test&product=gfs_world_stereographic&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 720,
+            "width" : 1440
+          },
+          "name" : "gfs_world_webmercator",
+          "path" : 
+          [
+            "test",
+            "gfs_world_webmercator"
+          ],
+          "producer" : "gfs",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:3857",
+            "x1" : -180,
+            "x2" : 180,
+            "xsize" : 1440,
+            "y1" : -85,
+            "y2" : 85,
+            "ysize" : 720
+          },
+          "time" : 
+          {
+            "default" : "20170323T060000",
+            "origintime" : "20170323T000000",
+            "values" : "20170323T060000"
+          },
+          "title" : "GFS world in WebMercator",
+          "url_template" : "/dali?customer=test&product=gfs_world_webmercator&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 720,
+            "width" : 1440
+          },
+          "name" : "gfs_world_webmercator_pacific",
+          "path" : 
+          [
+            "test",
+            "gfs_world_webmercator_pacific"
+          ],
+          "producer" : "gfs",
+          "projection" : 
+          {
+            "crs" : "EPSG:3857",
+            "x1" : 0,
+            "x2" : 40075016.68,
+            "xsize" : 1440,
+            "y1" : -20048966.100000001,
+            "y2" : 20048966.100000001,
+            "ysize" : 720
+          },
+          "time" : 
+          {
+            "default" : "20170323T060000",
+            "origintime" : "20170323T000000",
+            "values" : "20170323T060000"
+          },
+          "title" : "GFS world in WebMercator",
+          "url_template" : "/dali?customer=test&product=gfs_world_webmercator_pacific&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 720,
+            "width" : 1440
+          },
+          "name" : "gfs_world_wgs84_atlantic",
+          "path" : 
+          [
+            "test",
+            "gfs_world_wgs84_atlantic"
+          ],
+          "producer" : "gfs",
+          "projection" : 
+          {
+            "crs" : "+init=epsg:4326",
+            "x1" : -180,
+            "x2" : 180,
+            "xsize" : 1440,
+            "y1" : -90,
+            "y2" : 90,
+            "ysize" : 720
+          },
+          "time" : 
+          {
+            "default" : "20170323T060000",
+            "origintime" : "20170323T000000",
+            "values" : "20170323T060000"
+          },
+          "title" : "GFS world in WGS84",
+          "url_template" : "/dali?customer=test&product=gfs_world_wgs84_atlantic&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 720,
+            "width" : 1440
+          },
+          "name" : "gfs_world_wgs84_pacific",
+          "path" : 
+          [
+            "test",
+            "gfs_world_wgs84_pacific"
+          ],
+          "producer" : "gfs",
+          "projection" : 
+          {
+            "crs" : "+init=epsg:4326 +lon_wrap=180",
+            "x1" : 0,
+            "x2" : 359.75,
+            "xsize" : 1440,
+            "y1" : -90,
+            "y2" : 90,
+            "ysize" : 720
+          },
+          "time" : 
+          {
+            "default" : "20170323T060000",
+            "origintime" : "20170323T000000",
+            "values" : "20170323T060000"
+          },
+          "title" : "GFS world in WGS84",
+          "url_template" : "/dali?customer=test&product=gfs_world_wgs84_pacific&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "grassfire",
+          "path" : 
+          [
+            "test",
+            "grassfire"
+          ],
+          "producer" : "grassfire",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25.399999999999999,
+            "cy" : 64.799999999999997,
+            "resolution" : 2.5,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20181217T060000",
+            "origintime" : "20181212T130000",
+            "values" : "20181212T060000,20181212T120000,20181212T180000,20181213T000000,20181213T060000,20181214T060000,20181215T060000,20181216T060000,20181217T060000"
+          },
+          "title" : "Grass Fire Warnings map",
+          "url_template" : "/dali?customer=test&product=grassfire&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "grassfire_automatic",
+          "path" : 
+          [
+            "test",
+            "grassfire_automatic"
+          ],
+          "producer" : "grassfire",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25.399999999999999,
+            "cy" : 64.799999999999997,
+            "resolution" : 2.5,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20181217T060000",
+            "origintime" : "20181212T130000",
+            "values" : "20181212T060000,20181212T120000,20181212T180000,20181213T000000,20181213T060000,20181214T060000,20181215T060000,20181216T060000,20181217T060000"
+          },
+          "title" : "Grass Fire Warnings map",
+          "url_template" : "/dali?customer=test&product=grassfire_automatic&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "graticule",
+          "path" : 
+          [
+            "test",
+            "graticule"
+          ],
+          "producer" : "kap",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Graticule demo",
+          "url_template" : "/dali?customer=test&product=graticule&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "graticule_goode",
+          "path" : 
+          [
+            "test",
+            "graticule_goode"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "+proj=igh",
+            "cx" : 0,
+            "cy" : 0,
+            "resolution" : 50,
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "title" : "Graticule demo, Goode Homolosine Interrupted",
+          "url_template" : "/dali?customer=test&product=graticule_goode&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "graticule_num_center",
+          "path" : 
+          [
+            "test",
+            "graticule_num_center"
+          ],
+          "producer" : "kap",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Graticule demo",
+          "url_template" : "/dali?customer=test&product=graticule_num_center&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "graticule_num_cross",
+          "path" : 
+          [
+            "test",
+            "graticule_num_cross"
+          ],
+          "producer" : "kap",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Graticule demo",
+          "url_template" : "/dali?customer=test&product=graticule_num_cross&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "graticule_num_edge_center",
+          "path" : 
+          [
+            "test",
+            "graticule_num_edge_center"
+          ],
+          "producer" : "kap",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Graticule demo",
+          "url_template" : "/dali?customer=test&product=graticule_num_edge_center&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "graticule_num_edges",
+          "path" : 
+          [
+            "test",
+            "graticule_num_edges"
+          ],
+          "producer" : "kap",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Graticule demo",
+          "url_template" : "/dali?customer=test&product=graticule_num_edges&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "graticule_num_grid",
+          "path" : 
+          [
+            "test",
+            "graticule_num_grid"
+          ],
+          "producer" : "kap",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Graticule demo",
+          "url_template" : "/dali?customer=test&product=graticule_num_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "graticule_num_left_bottom",
+          "path" : 
+          [
+            "test",
+            "graticule_num_left_bottom"
+          ],
+          "producer" : "kap",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Graticule demo",
+          "url_template" : "/dali?customer=test&product=graticule_num_left_bottom&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "graticule_ticks",
+          "path" : 
+          [
+            "test",
+            "graticule_ticks"
+          ],
+          "producer" : "kap",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Graticule demo",
+          "url_template" : "/dali?customer=test&product=graticule_ticks&time={time}"
+        },
+        {
+          "abstract" : 
+          {
+            "en" : "Flashes heatmap",
+            "fi" : "Salamoiden l\u00e4mp\u00f6kartta",
+            "sv" : "Blixtkarta"
+          },
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "heatmap",
+          "path" : 
+          [
+            "test",
+            "heatmap"
+          ],
+          "producer" : "flash",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 5,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : 
+          {
+            "en" : "Flashes",
+            "fi" : "Salamoita",
+            "sv" : "Blixten"
+          },
+          "url_template" : "/dali?customer=test&product=heatmap&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "high_resolution",
+          "path" : 
+          [
+            "test",
+            "high_resolution"
+          ],
+          "producer" : "pal_aland",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:3035",
+            "cx" : 20,
+            "cy" : 60,
+            "resolution" : 0.20000000000000001,
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "url_template" : "/dali?customer=test&product=high_resolution&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 712,
+            "width" : 1025
+          },
+          "name" : "hirlam_uv",
+          "path" : 
+          [
+            "test",
+            "hirlam_uv"
+          ],
+          "producer" : "hirwind",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "+proj=laea +lat_0=60 +lon_0=20 +units=m +datum=WGS84",
+            "cx" : 5,
+            "cy" : 53,
+            "resolution" : 6,
+            "xsize" : 1025,
+            "ysize" : 712
+          },
+          "time" : 
+          {
+            "default" : "20180406T060000",
+            "origintime" : "20180406T000000",
+            "values" : "20180406T060000"
+          },
+          "title" : "HIRLAM wind from direction and speed",
+          "url_template" : "/dali?customer=test&product=hirlam_uv&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 712,
+            "width" : 1025
+          },
+          "name" : "hirlam_wind",
+          "path" : 
+          [
+            "test",
+            "hirlam_wind"
+          ],
+          "producer" : "hirwind",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "+proj=laea +lat_0=60 +lon_0=20 +units=m +ellps=WGS84",
+            "cx" : 5,
+            "cy" : 53,
+            "resolution" : 6,
+            "xsize" : 1025,
+            "ysize" : 712
+          },
+          "time" : 
+          {
+            "default" : "20180406T060000",
+            "origintime" : "20180406T000000",
+            "values" : "20180406T060000"
+          },
+          "title" : "HIRLAM wind from direction and speed",
+          "url_template" : "/dali?customer=test&product=hirlam_wind&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 700
+          },
+          "name" : "hovmoeller_geoph500",
+          "path" : 
+          [
+            "test",
+            "hovmoeller_geoph500"
+          ],
+          "producer" : "ecmwf_skandinavia_painepinta",
+          "projection" : 
+          {
+            "xsize" : 700,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080919T000000",
+            "origintime" : "20080909T000000",
+            "values" : "20080909T000000,20080909T030000,20080909T060000,20080909T090000,20080909T120000,20080909T150000,20080909T180000,20080909T210000,20080910T000000,20080910T030000,20080910T060000,20080910T090000,20080910T120000,20080910T150000,20080910T180000,20080910T210000,20080911T000000,20080911T030000,20080911T060000,20080911T090000,20080911T120000,20080911T150000,20080911T180000,20080911T210000,20080912T000000,20080912T030000,20080912T060000,20080912T090000,20080912T120000,20080912T150000,20080912T180000,20080912T210000,20080913T000000,20080913T030000,20080913T060000,20080913T090000,20080913T120000,20080913T150000,20080913T180000,20080913T210000,20080914T000000,20080914T060000,20080914T120000,20080914T180000,20080915T000000,20080915T060000,20080915T120000,20080915T180000,20080916T000000,20080916T060000,20080916T120000,20080916T180000,20080917T000000,20080917T060000,20080917T120000,20080917T180000,20080918T000000,20080918T060000,20080918T120000,20080918T180000,20080919T000000"
+          },
+          "title" : "Hovmoeller GeopHeight 500 hPa",
+          "url_template" : "/dali?customer=test&product=hovmoeller_geoph500&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 700
+          },
+          "name" : "hovmoeller_geoph500_time_lat",
+          "path" : 
+          [
+            "test",
+            "hovmoeller_geoph500_time_lat"
+          ],
+          "producer" : "ecmwf_skandinavia_painepinta",
+          "projection" : 
+          {
+            "xsize" : 700,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080919T000000",
+            "origintime" : "20080909T000000",
+            "values" : "20080909T000000,20080909T030000,20080909T060000,20080909T090000,20080909T120000,20080909T150000,20080909T180000,20080909T210000,20080910T000000,20080910T030000,20080910T060000,20080910T090000,20080910T120000,20080910T150000,20080910T180000,20080910T210000,20080911T000000,20080911T030000,20080911T060000,20080911T090000,20080911T120000,20080911T150000,20080911T180000,20080911T210000,20080912T000000,20080912T030000,20080912T060000,20080912T090000,20080912T120000,20080912T150000,20080912T180000,20080912T210000,20080913T000000,20080913T030000,20080913T060000,20080913T090000,20080913T120000,20080913T150000,20080913T180000,20080913T210000,20080914T000000,20080914T060000,20080914T120000,20080914T180000,20080915T000000,20080915T060000,20080915T120000,20080915T180000,20080916T000000,20080916T060000,20080916T120000,20080916T180000,20080917T000000,20080917T060000,20080917T120000,20080917T180000,20080918T000000,20080918T060000,20080918T120000,20080918T180000,20080919T000000"
+          },
+          "title" : "Hovmoeller GeopHeight 500 hPa \u2013 time vs latitude",
+          "url_template" : "/dali?customer=test&product=hovmoeller_geoph500_time_lat&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 700
+          },
+          "name" : "hovmoeller_temperature_time_level",
+          "path" : 
+          [
+            "test",
+            "hovmoeller_temperature_time_level"
+          ],
+          "producer" : "ecmwf_skandinavia_painepinta",
+          "projection" : 
+          {
+            "xsize" : 700,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080919T000000",
+            "origintime" : "20080909T000000",
+            "values" : "20080909T000000,20080909T030000,20080909T060000,20080909T090000,20080909T120000,20080909T150000,20080909T180000,20080909T210000,20080910T000000,20080910T030000,20080910T060000,20080910T090000,20080910T120000,20080910T150000,20080910T180000,20080910T210000,20080911T000000,20080911T030000,20080911T060000,20080911T090000,20080911T120000,20080911T150000,20080911T180000,20080911T210000,20080912T000000,20080912T030000,20080912T060000,20080912T090000,20080912T120000,20080912T150000,20080912T180000,20080912T210000,20080913T000000,20080913T030000,20080913T060000,20080913T090000,20080913T120000,20080913T150000,20080913T180000,20080913T210000,20080914T000000,20080914T060000,20080914T120000,20080914T180000,20080915T000000,20080915T060000,20080915T120000,20080915T180000,20080916T000000,20080916T060000,20080916T120000,20080916T180000,20080917T000000,20080917T060000,20080917T120000,20080917T180000,20080918T000000,20080918T060000,20080918T120000,20080918T180000,20080919T000000"
+          },
+          "title" : "Hovmoeller Temperature \u2013 time vs pressure level",
+          "url_template" : "/dali?customer=test&product=hovmoeller_temperature_time_level&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "ice",
+          "path" : 
+          [
+            "test",
+            "ice"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:2393",
+            "cx" : 21.800000000000001,
+            "cy" : 61,
+            "resolution" : 1.3999999999999999,
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "title" : "Ice Demo",
+          "url_template" : "/dali?customer=test&product=ice&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "isolabel",
+          "path" : 
+          [
+            "test",
+            "isolabel"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Demo product",
+          "url_template" : "/dali?customer=test&product=isolabel&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "isolabel_angles",
+          "path" : 
+          [
+            "test",
+            "isolabel_angles"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Demo product",
+          "url_template" : "/dali?customer=test&product=isolabel_angles&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "isolabel_cut",
+          "path" : 
+          [
+            "test",
+            "isolabel_cut"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Demo product",
+          "url_template" : "/dali?customer=test&product=isolabel_cut&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "isolabel_horizontal",
+          "path" : 
+          [
+            "test",
+            "isolabel_horizontal"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Demo product",
+          "url_template" : "/dali?customer=test&product=isolabel_horizontal&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 1000,
+            "width" : 1000
+          },
+          "name" : "isolabel_styles",
+          "path" : 
+          [
+            "test",
+            "isolabel_styles"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 1000,
+            "ysize" : 1000
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Isolabel styling",
+          "url_template" : "/dali?customer=test&product=isolabel_styles&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 800
+          },
+          "name" : "keyword",
+          "path" : 
+          [
+            "test",
+            "keyword"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:2393",
+            "resolution" : 10,
+            "xsize" : 800,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "ECMWF temperatures at keyword points",
+          "url_template" : "/dali?customer=test&product=keyword&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 800
+          },
+          "name" : "keyword_shifted",
+          "path" : 
+          [
+            "test",
+            "keyword_shifted"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:2393",
+            "resolution" : 10,
+            "xsize" : 800,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "ECMWF temperatures at keyword points",
+          "url_template" : "/dali?customer=test&product=keyword_shifted&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 520,
+            "width" : 1030
+          },
+          "name" : "landscaping",
+          "path" : 
+          [
+            "test",
+            "landscaping"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:3035",
+            "resolution" : 1,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "Demo landscaping",
+          "url_template" : "/dali?customer=test&product=landscaping&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 800
+          },
+          "name" : "latlon_positions",
+          "path" : 
+          [
+            "test",
+            "latlon_positions"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:2393",
+            "resolution" : 8,
+            "xsize" : 800,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "ECMWF temperatures at some coordinates",
+          "url_template" : "/dali?customer=test&product=latlon_positions&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 800
+          },
+          "name" : "latlon_positions_shifted",
+          "path" : 
+          [
+            "test",
+            "latlon_positions_shifted"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:2393",
+            "resolution" : 8,
+            "xsize" : 800,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "ECMWF temperatures at some coordinates",
+          "url_template" : "/dali?customer=test&product=latlon_positions_shifted&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 700,
+            "width" : 400
+          },
+          "name" : "location_labels_fixed",
+          "path" : 
+          [
+            "test",
+            "location_labels_fixed"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:2393",
+            "cx" : 25.399999999999999,
+            "cy" : 64.799999999999997,
+            "resolution" : 2.5,
+            "xsize" : 400,
+            "ysize" : 700
+          },
+          "title" : "LocationLayer \u2014 fixed label placement",
+          "url_template" : "/dali?customer=test&product=location_labels_fixed&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 700,
+            "width" : 400
+          },
+          "name" : "location_labels_greedy",
+          "path" : 
+          [
+            "test",
+            "location_labels_greedy"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:2393",
+            "cx" : 25.399999999999999,
+            "cy" : 64.799999999999997,
+            "resolution" : 2.5,
+            "xsize" : 400,
+            "ysize" : 700
+          },
+          "title" : "LocationLayer \u2014 greedy label placement",
+          "url_template" : "/dali?customer=test&product=location_labels_greedy&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 700,
+            "width" : 400
+          },
+          "name" : "location_labels_priority_greedy",
+          "path" : 
+          [
+            "test",
+            "location_labels_priority_greedy"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:2393",
+            "cx" : 25.399999999999999,
+            "cy" : 64.799999999999997,
+            "resolution" : 2.5,
+            "xsize" : 400,
+            "ysize" : 700
+          },
+          "title" : "LocationLayer \u2014 priority-greedy label placement",
+          "url_template" : "/dali?customer=test&product=location_labels_priority_greedy&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 600
+          },
+          "name" : "location_labels_sa",
+          "path" : 
+          [
+            "test",
+            "location_labels_sa"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "EPSG:3067",
+            "cx" : 24.5,
+            "cy" : 60.5,
+            "resolution" : 1.0,
+            "xsize" : 600,
+            "ysize" : 600
+          },
+          "title" : "LocationLayer \u2014 simulated-annealing label placement",
+          "url_template" : "/dali?customer=test&product=location_labels_sa&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "map",
+          "path" : 
+          [
+            "test",
+            "map"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "",
+            "cx" : 0,
+            "cy" : 0,
+            "resolution" : 50,
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "title" : "Map cutting tests",
+          "url_template" : "/dali?customer=test&product=map&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 700
+          },
+          "name" : "metar_basic",
+          "path" : 
+          [
+            "test",
+            "metar_basic"
+          ],
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : 18.0,
+            "x2" : 32.0,
+            "xsize" : 700,
+            "y1" : 58.0,
+            "y2" : 70.0,
+            "ysize" : 600
+          },
+          "title" : "METAR Basic Test",
+          "url_template" : "/dali?customer=test&product=metar_basic&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "monitoring",
+          "path" : 
+          [
+            "test",
+            "monitoring"
+          ],
+          "title" : "Monitoring",
+          "url_template" : "/dali?customer=test&product=monitoring&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "opendata_meteorological_wind_data_plustemperatures",
+          "path" : 
+          [
+            "test",
+            "opendata_meteorological_wind_data_plustemperatures"
+          ],
+          "producer" : "opendata",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Wind observations where temperature is at least zero degrees",
+          "url_template" : "/dali?customer=test&product=opendata_meteorological_wind_data_plustemperatures&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "opendata_meteorological_wind_data_plustemperatures_aggregate_max",
+          "path" : 
+          [
+            "test",
+            "opendata_meteorological_wind_data_plustemperatures_aggregate_max"
+          ],
+          "producer" : "opendata",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Wind observations where temperature is at least zero degrees",
+          "url_template" : "/dali?customer=test&product=opendata_meteorological_wind_data_plustemperatures_aggregate_max&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "opendata_meteorological_wind_grid",
+          "path" : 
+          [
+            "test",
+            "opendata_meteorological_wind_grid"
+          ],
+          "producer" : "opendata",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Wind observations",
+          "url_template" : "/dali?customer=test&product=opendata_meteorological_wind_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "opendata_meteorological_wind_keyword",
+          "path" : 
+          [
+            "test",
+            "opendata_meteorological_wind_keyword"
+          ],
+          "producer" : "opendata",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Wind observations",
+          "url_template" : "/dali?customer=test&product=opendata_meteorological_wind_keyword&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "opendata_meteorological_wind_keyword_plustemperatures",
+          "path" : 
+          [
+            "test",
+            "opendata_meteorological_wind_keyword_plustemperatures"
+          ],
+          "producer" : "opendata",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Wind observations where temperature is at least zero degrees",
+          "url_template" : "/dali?customer=test&product=opendata_meteorological_wind_keyword_plustemperatures&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "opendata_temperature_fmisid",
+          "path" : 
+          [
+            "test",
+            "opendata_temperature_fmisid"
+          ],
+          "producer" : "opendata",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Temperature at fmisid stations",
+          "url_template" : "/dali?customer=test&product=opendata_temperature_fmisid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "opendata_temperature_fmisid_shift",
+          "path" : 
+          [
+            "test",
+            "opendata_temperature_fmisid_shift"
+          ],
+          "producer" : "opendata",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Temperature at fmisid stations",
+          "url_template" : "/dali?customer=test&product=opendata_temperature_fmisid_shift&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "opendata_temperature_grid",
+          "path" : 
+          [
+            "test",
+            "opendata_temperature_grid"
+          ],
+          "producer" : "opendata",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Temperature observations",
+          "url_template" : "/dali?customer=test&product=opendata_temperature_grid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "opendata_temperature_keyword",
+          "path" : 
+          [
+            "test",
+            "opendata_temperature_keyword"
+          ],
+          "producer" : "opendata",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Temperature observations",
+          "url_template" : "/dali?customer=test&product=opendata_temperature_keyword&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "opendata_temperature_symbols",
+          "path" : 
+          [
+            "test",
+            "opendata_temperature_symbols"
+          ],
+          "producer" : "opendata",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "Temperature observations as coloured circles",
+          "url_template" : "/dali?customer=test&product=opendata_temperature_symbols&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "precipitation",
+          "path" : 
+          [
+            "test",
+            "precipitation"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Demo product",
+          "url_template" : "/dali?customer=test&product=precipitation&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "precipitation_warm",
+          "path" : 
+          [
+            "test",
+            "precipitation_warm"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Demo product",
+          "url_template" : "/dali?customer=test&product=precipitation_warm&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "pressure_europe",
+          "path" : 
+          [
+            "test",
+            "pressure_europe"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Pressure isobands and isolines over Europe, no filtering",
+          "url_template" : "/dali?customer=test&product=pressure_europe&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "pressure_europe_bezier",
+          "path" : 
+          [
+            "test",
+            "pressure_europe_bezier"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Pressure over Europe, Bezier fitting only (no pre-smoothing)",
+          "url_template" : "/dali?customer=test&product=pressure_europe_bezier&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "pressure_europe_gaussian",
+          "path" : 
+          [
+            "test",
+            "pressure_europe_gaussian"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Pressure over Europe, Gaussian filter",
+          "url_template" : "/dali?customer=test&product=pressure_europe_gaussian&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "pressure_europe_gaussian_bezier",
+          "path" : 
+          [
+            "test",
+            "pressure_europe_gaussian_bezier"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Pressure over Europe, Gaussian filter + Bezier fitting",
+          "url_template" : "/dali?customer=test&product=pressure_europe_gaussian_bezier&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "pressure_europe_tukey",
+          "path" : 
+          [
+            "test",
+            "pressure_europe_tukey"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Pressure over Europe, Tukey biweight filter",
+          "url_template" : "/dali?customer=test&product=pressure_europe_tukey&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 500
+          },
+          "name" : "radar",
+          "path" : 
+          [
+            "test",
+            "radar"
+          ],
+          "producer" : "tutka_suomi_rr",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 800
+          },
+          "time" : 
+          {
+            "default" : "20130910T103500",
+            "origintime" : "20130910T103500",
+            "values" : "20130910T103500"
+          },
+          "title" : "Radar test",
+          "url_template" : "/dali?customer=test&product=radar&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 760,
+            "width" : 730
+          },
+          "name" : "radar_subdivide",
+          "path" : 
+          [
+            "test",
+            "radar_subdivide"
+          ],
+          "producer" : "tutka_suomi_rr",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 19.359999999999999,
+            "cy" : 60.649999999999999,
+            "resolution" : 0.029999999999999999,
+            "xsize" : 350,
+            "ysize" : 350
+          },
+          "time" : 
+          {
+            "default" : "20130910T103500",
+            "origintime" : "20130910T103500",
+            "values" : "20130910T103500"
+          },
+          "title" : "Radar isobands at four bilinear subdivision levels (K=0,2,4,8)",
+          "url_template" : "/dali?customer=test&product=radar_subdivide&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 520,
+            "width" : 1030
+          },
+          "name" : "resolution",
+          "path" : 
+          [
+            "test",
+            "resolution"
+          ],
+          "producer" : "pal_skandinavia",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Two views side by side with different resolutions",
+          "url_template" : "/dali?customer=test&product=resolution&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 600
+          },
+          "name" : "sm",
+          "path" : 
+          [
+            "test",
+            "sm"
+          ],
+          "producer" : "lot",
+          "projection" : 
+          {
+            "crs" : "WGS84",
+            "x1" : 0,
+            "x2" : 22,
+            "xsize" : 600,
+            "y1" : 0,
+            "y2" : 22,
+            "ysize" : 600
+          },
+          "time" : 
+          {
+            "default" : "20150101T000000",
+            "origintime" : "20150101T000000",
+            "values" : "20150101T000000"
+          },
+          "title" : "Test",
+          "url_template" : "/dali?customer=test&product=sm&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "smartsymbol",
+          "path" : 
+          [
+            "test",
+            "smartsymbol"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "SmartSymbol test",
+          "url_template" : "/dali?customer=test&product=smartsymbol&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "smartsymbolnumber",
+          "path" : 
+          [
+            "test",
+            "smartsymbolnumber"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "SmartSymbol number test",
+          "url_template" : "/dali?customer=test&product=smartsymbolnumber&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 600,
+            "width" : 500
+          },
+          "name" : "symbols_coloured",
+          "path" : 
+          [
+            "test",
+            "symbols_coloured"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "data",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 2,
+            "xsize" : 500,
+            "ysize" : 600
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Demo product",
+          "url_template" : "/dali?customer=test&product=symbols_coloured&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "synop_numbers",
+          "path" : 
+          [
+            "test",
+            "synop_numbers"
+          ],
+          "producer" : "synop",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 60,
+            "resolution" : 0.25,
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "time" : 
+          {
+            "default" : "20081205T130000",
+            "origintime" : "20081205T132500",
+            "values" : "20081128T130000/20081205T130000/PT1H"
+          },
+          "title" : "SYNOP temperatures at data points",
+          "url_template" : "/dali?customer=test&product=synop_numbers&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "t2m_inside_finland",
+          "path" : 
+          [
+            "test",
+            "t2m_inside_finland"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "temperature inside Finland only",
+          "url_template" : "/dali?customer=test&product=t2m_inside_finland&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "t2m_inside_rain",
+          "path" : 
+          [
+            "test",
+            "t2m_inside_rain"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "temperature differently inside precipitation",
+          "url_template" : "/dali?customer=test&product=t2m_inside_rain&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "t2m_inside_simplified_finland",
+          "path" : 
+          [
+            "test",
+            "t2m_inside_simplified_finland"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "x1" : 20,
+            "x2" : 50,
+            "xsize" : 500,
+            "y1" : 58,
+            "y2" : 70,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "temperature inside Finland only",
+          "url_template" : "/dali?customer=test&product=t2m_inside_simplified_finland&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "t2m_isoband_labels",
+          "path" : 
+          [
+            "test",
+            "t2m_isoband_labels"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "How to change labels from isoband settings",
+          "url_template" : "/dali?customer=test&product=t2m_isoband_labels&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "t2m_lines_inside_rain",
+          "path" : 
+          [
+            "test",
+            "t2m_lines_inside_rain"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "temperature differently inside precipitation",
+          "url_template" : "/dali?customer=test&product=t2m_lines_inside_rain&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "t2m_outside_finland",
+          "path" : 
+          [
+            "test",
+            "t2m_outside_finland"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "temperature outside Finland only",
+          "url_template" : "/dali?customer=test&product=t2m_outside_finland&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "t2m_p",
+          "path" : 
+          [
+            "test",
+            "t2m_p"
+          ],
+          "producer" : "kap",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Demo product",
+          "url_template" : "/dali?customer=test&product=t2m_p&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "t2m_p_noqid",
+          "path" : 
+          [
+            "test",
+            "t2m_p_noqid"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Demo product",
+          "url_template" : "/dali?customer=test&product=t2m_p_noqid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "t2m_p_shadow",
+          "path" : 
+          [
+            "test",
+            "t2m_p_shadow"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Demo shadow",
+          "url_template" : "/dali?customer=test&product=t2m_p_shadow&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 520,
+            "width" : 1030
+          },
+          "name" : "t2m_p_smooth",
+          "path" : 
+          [
+            "test",
+            "t2m_p_smooth"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Smoothened data on the right",
+          "url_template" : "/dali?customer=test&product=t2m_p_smooth&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "t2m_pattern",
+          "path" : 
+          [
+            "test",
+            "t2m_pattern"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Demo pattern fill",
+          "url_template" : "/dali?customer=test&product=t2m_pattern&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "t2m_pressurelevel",
+          "path" : 
+          [
+            "test",
+            "t2m_pressurelevel"
+          ],
+          "producer" : "ecmwf_skandinavia_painepinta",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080919T000000",
+            "origintime" : "20080909T000000",
+            "values" : "20080909T000000,20080909T030000,20080909T060000,20080909T090000,20080909T120000,20080909T150000,20080909T180000,20080909T210000,20080910T000000,20080910T030000,20080910T060000,20080910T090000,20080910T120000,20080910T150000,20080910T180000,20080910T210000,20080911T000000,20080911T030000,20080911T060000,20080911T090000,20080911T120000,20080911T150000,20080911T180000,20080911T210000,20080912T000000,20080912T030000,20080912T060000,20080912T090000,20080912T120000,20080912T150000,20080912T180000,20080912T210000,20080913T000000,20080913T030000,20080913T060000,20080913T090000,20080913T120000,20080913T150000,20080913T180000,20080913T210000,20080914T000000,20080914T060000,20080914T120000,20080914T180000,20080915T000000,20080915T060000,20080915T120000,20080915T180000,20080916T000000,20080916T060000,20080916T120000,20080916T180000,20080917T000000,20080917T060000,20080917T120000,20080917T180000,20080918T000000,20080918T060000,20080918T120000,20080918T180000,20080919T000000"
+          },
+          "title" : "Demo product",
+          "url_template" : "/dali?customer=test&product=t2m_pressurelevel&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 520,
+            "width" : 1030
+          },
+          "name" : "t2m_twice",
+          "path" : 
+          [
+            "test",
+            "t2m_twice"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Demo two views side by side",
+          "url_template" : "/dali?customer=test&product=t2m_twice&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "temperature_fmisid",
+          "path" : 
+          [
+            "test",
+            "temperature_fmisid"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 65,
+            "resolution" : 3,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Temperature at fmisid stations",
+          "url_template" : "/dali?customer=test&product=temperature_fmisid&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "text",
+          "path" : 
+          [
+            "test",
+            "text"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Text Demo Product",
+          "url_template" : "/dali?customer=test&product=text&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 700
+          },
+          "name" : "tfp_humidity",
+          "path" : 
+          [
+            "test",
+            "tfp_humidity"
+          ],
+          "producer" : "ecmwf_skandinavia_painepinta",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:3857",
+            "x1" : -10,
+            "x2" : 45,
+            "xsize" : 700,
+            "y1" : 45,
+            "y2" : 70,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080919T000000",
+            "origintime" : "20080909T000000",
+            "values" : "20080909T000000,20080909T030000,20080909T060000,20080909T090000,20080909T120000,20080909T150000,20080909T180000,20080909T210000,20080910T000000,20080910T030000,20080910T060000,20080910T090000,20080910T120000,20080910T150000,20080910T180000,20080910T210000,20080911T000000,20080911T030000,20080911T060000,20080911T090000,20080911T120000,20080911T150000,20080911T180000,20080911T210000,20080912T000000,20080912T030000,20080912T060000,20080912T090000,20080912T120000,20080912T150000,20080912T180000,20080912T210000,20080913T000000,20080913T030000,20080913T060000,20080913T090000,20080913T120000,20080913T150000,20080913T180000,20080913T210000,20080914T000000,20080914T060000,20080914T120000,20080914T180000,20080915T000000,20080915T060000,20080915T120000,20080915T180000,20080916T000000,20080916T060000,20080916T120000,20080916T180000,20080917T000000,20080917T060000,20080917T120000,20080917T180000,20080918T000000,20080918T060000,20080918T120000,20080918T180000,20080919T000000"
+          },
+          "title" : "TFP diagnostic \u2013 Humidity 850 hPa (moisture boundaries)",
+          "url_template" : "/dali?customer=test&product=tfp_humidity&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 700
+          },
+          "name" : "tfp_theta",
+          "path" : 
+          [
+            "test",
+            "tfp_theta"
+          ],
+          "producer" : "ecmwf_skandinavia_painepinta",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:3857",
+            "x1" : -10,
+            "x2" : 45,
+            "xsize" : 700,
+            "y1" : 45,
+            "y2" : 70,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080919T000000",
+            "origintime" : "20080909T000000",
+            "values" : "20080909T000000,20080909T030000,20080909T060000,20080909T090000,20080909T120000,20080909T150000,20080909T180000,20080909T210000,20080910T000000,20080910T030000,20080910T060000,20080910T090000,20080910T120000,20080910T150000,20080910T180000,20080910T210000,20080911T000000,20080911T030000,20080911T060000,20080911T090000,20080911T120000,20080911T150000,20080911T180000,20080911T210000,20080912T000000,20080912T030000,20080912T060000,20080912T090000,20080912T120000,20080912T150000,20080912T180000,20080912T210000,20080913T000000,20080913T030000,20080913T060000,20080913T090000,20080913T120000,20080913T150000,20080913T180000,20080913T210000,20080914T000000,20080914T060000,20080914T120000,20080914T180000,20080915T000000,20080915T060000,20080915T120000,20080915T180000,20080916T000000,20080916T060000,20080916T120000,20080916T180000,20080917T000000,20080917T060000,20080917T120000,20080917T180000,20080918T000000,20080918T060000,20080918T120000,20080918T180000,20080919T000000"
+          },
+          "title" : "TFP diagnostic \u2013 PotentialTemperature 850 hPa",
+          "url_template" : "/dali?customer=test&product=tfp_theta&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 700
+          },
+          "name" : "tfp_wind",
+          "path" : 
+          [
+            "test",
+            "tfp_wind"
+          ],
+          "producer" : "ecmwf_skandinavia_painepinta",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:3857",
+            "x1" : -10,
+            "x2" : 45,
+            "xsize" : 700,
+            "y1" : 45,
+            "y2" : 70,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080919T000000",
+            "origintime" : "20080909T000000",
+            "values" : "20080909T000000,20080909T030000,20080909T060000,20080909T090000,20080909T120000,20080909T150000,20080909T180000,20080909T210000,20080910T000000,20080910T030000,20080910T060000,20080910T090000,20080910T120000,20080910T150000,20080910T180000,20080910T210000,20080911T000000,20080911T030000,20080911T060000,20080911T090000,20080911T120000,20080911T150000,20080911T180000,20080911T210000,20080912T000000,20080912T030000,20080912T060000,20080912T090000,20080912T120000,20080912T150000,20080912T180000,20080912T210000,20080913T000000,20080913T030000,20080913T060000,20080913T090000,20080913T120000,20080913T150000,20080913T180000,20080913T210000,20080914T000000,20080914T060000,20080914T120000,20080914T180000,20080915T000000,20080915T060000,20080915T120000,20080915T180000,20080916T000000,20080916T060000,20080916T120000,20080916T180000,20080917T000000,20080917T060000,20080917T120000,20080917T180000,20080918T000000,20080918T060000,20080918T120000,20080918T180000,20080919T000000"
+          },
+          "title" : "TFP diagnostic \u2013 WindSpeedMS 300 hPa (jet-stream edges)",
+          "url_template" : "/dali?customer=test&product=tfp_wind&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "timelayer",
+          "path" : 
+          [
+            "test",
+            "timelayer"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "TimeLayer test",
+          "url_template" : "/dali?customer=test&product=timelayer&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "tmax_smooth",
+          "path" : 
+          [
+            "test",
+            "tmax_smooth"
+          ],
+          "producer" : "climate_tmax",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20011231T120000",
+            "origintime" : "20011231T120000",
+            "values" : "20010101T120000/20011231T120000/PT24H"
+          },
+          "title" : "Smoothing works inside missing data",
+          "url_template" : "/dali?customer=test&product=tmax_smooth&time={time}"
+        },
+        {
+          "name" : "wafs_leveldata",
+          "path" : 
+          [
+            "test",
+            "wafs_leveldata"
+          ],
+          "producer" : "wafs",
+          "time" : 
+          {
+            "default" : "20160120T060000",
+            "origintime" : "20160119T060000",
+            "values" : "20160119T180000/20160120T060000/PT6H"
+          },
+          "title" : "WAFS",
+          "url_template" : "/dali?customer=test&product=wafs_leveldata&time={time}"
+        },
+        {
+          "name" : "wafs_temperature",
+          "path" : 
+          [
+            "test",
+            "wafs_temperature"
+          ],
+          "producer" : "wafs",
+          "time" : 
+          {
+            "default" : "20160120T060000",
+            "origintime" : "20160119T060000",
+            "values" : "20160119T180000/20160120T060000/PT6H"
+          },
+          "title" : "WAFS",
+          "url_template" : "/dali?customer=test&product=wafs_temperature&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 712,
+            "width" : 1025
+          },
+          "name" : "wafs_wind",
+          "path" : 
+          [
+            "test",
+            "wafs_wind"
+          ],
+          "producer" : "wafs",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "+proj=laea +lat_0=60 +lon_0=20 +units=m +ellps=WGS84",
+            "cx" : 5,
+            "cy" : 53,
+            "resolution" : 6,
+            "xsize" : 1025,
+            "ysize" : 712
+          },
+          "time" : 
+          {
+            "default" : "20160120T060000",
+            "origintime" : "20160119T060000",
+            "values" : "20160119T180000/20160120T060000/PT6H"
+          },
+          "title" : "Wind demo from U- and V-components",
+          "url_template" : "/dali?customer=test&product=wafs_wind&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 712,
+            "width" : 1025
+          },
+          "name" : "wafs_windbarb",
+          "path" : 
+          [
+            "test",
+            "wafs_windbarb"
+          ],
+          "producer" : "wafs",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "+proj=laea +lat_0=60 +lon_0=20 +units=m +ellps=WGS84",
+            "cx" : 5,
+            "cy" : 53,
+            "resolution" : 6,
+            "xsize" : 1025,
+            "ysize" : 712
+          },
+          "time" : 
+          {
+            "default" : "20160120T060000",
+            "origintime" : "20160119T060000",
+            "values" : "20160119T180000/20160120T060000/PT6H"
+          },
+          "title" : "Wind demo from U- and V-components",
+          "url_template" : "/dali?customer=test&product=wafs_windbarb&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 712,
+            "width" : 1025
+          },
+          "name" : "wafs_windbarb_graticulefill",
+          "path" : 
+          [
+            "test",
+            "wafs_windbarb_graticulefill"
+          ],
+          "producer" : "wafs",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "+proj=laea +lat_0=60 +lon_0=20 +units=m +ellps=WGS84",
+            "cx" : 5,
+            "cy" : 53,
+            "resolution" : 6,
+            "xsize" : 1025,
+            "ysize" : 712
+          },
+          "time" : 
+          {
+            "default" : "20160120T060000",
+            "origintime" : "20160119T060000",
+            "values" : "20160119T180000/20160120T060000/PT6H"
+          },
+          "title" : "Wind demo from U- and V-components",
+          "url_template" : "/dali?customer=test&product=wafs_windbarb_graticulefill&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 712,
+            "width" : 1025
+          },
+          "name" : "wafs_windbarb_shifted",
+          "path" : 
+          [
+            "test",
+            "wafs_windbarb_shifted"
+          ],
+          "producer" : "wafs",
+          "projection" : 
+          {
+            "bboxcrs" : "EPSG:4326",
+            "crs" : "+proj=laea +lat_0=60 +lon_0=20 +units=m +ellps=WGS84",
+            "cx" : 5,
+            "cy" : 53,
+            "resolution" : 6,
+            "xsize" : 1025,
+            "ysize" : 712
+          },
+          "time" : 
+          {
+            "default" : "20160120T060000",
+            "origintime" : "20160119T060000",
+            "values" : "20160119T180000/20160120T060000/PT6H"
+          },
+          "title" : "Wind demo from U- and V-components",
+          "url_template" : "/dali?customer=test&product=wafs_windbarb_shifted&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "weather-base64-symbol",
+          "path" : 
+          [
+            "test",
+            "weather-base64-symbol"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Weather symbol test",
+          "url_template" : "/dali?customer=test&product=weather-base64-symbol&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "weather",
+          "path" : 
+          [
+            "test",
+            "weather"
+          ],
+          "producer" : "pal",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Weather symbol test",
+          "url_template" : "/dali?customer=test&product=weather&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "wind",
+          "path" : 
+          [
+            "test",
+            "wind"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Wind demo",
+          "url_template" : "/dali?customer=test&product=wind&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "wind_margin",
+          "path" : 
+          [
+            "test",
+            "wind_margin"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Wind demo",
+          "url_template" : "/dali?customer=test&product=wind_margin&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "wind_scaled",
+          "path" : 
+          [
+            "test",
+            "wind_scaled"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Wind demo",
+          "url_template" : "/dali?customer=test&product=wind_scaled&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "wind_without_speed",
+          "path" : 
+          [
+            "test",
+            "wind_without_speed"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Wind demo",
+          "url_template" : "/dali?customer=test&product=wind_without_speed&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "windbarb",
+          "path" : 
+          [
+            "test",
+            "windbarb"
+          ],
+          "producer" : "pal_skandinavia",
+          "projection" : 
+          {
+            "crs" : "data",
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "Windbarb demo",
+          "url_template" : "/dali?customer=test&product=windbarb&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 800,
+            "width" : 800
+          },
+          "name" : "windrose",
+          "path" : 
+          [
+            "test",
+            "windrose"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:4326",
+            "cx" : 25,
+            "cy" : 60,
+            "resolution" : 1.75,
+            "xsize" : 800,
+            "ysize" : 800
+          },
+          "title" : "Wind roses",
+          "url_template" : "/dali?customer=test&product=windrose&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "wkt",
+          "path" : 
+          [
+            "test",
+            "wkt"
+          ],
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:3035",
+            "cx" : 25,
+            "cy" : 60,
+            "resolution" : 10,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "title" : "WKT data",
+          "url_template" : "/dali?customer=test&product=wkt&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "ykj",
+          "path" : 
+          [
+            "test",
+            "ykj"
+          ],
+          "producer" : "pal_skandinavia",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "YKJ Demo",
+          "url_template" : "/dali?customer=test&product=ykj&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "ykjcenter",
+          "path" : 
+          [
+            "test",
+            "ykjcenter"
+          ],
+          "producer" : "pal_skandinavia",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "YKJ Demo",
+          "url_template" : "/dali?customer=test&product=ykjcenter&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "ykjlatlon",
+          "path" : 
+          [
+            "test",
+            "ykjlatlon"
+          ],
+          "producer" : "pal_skandinavia",
+          "time" : 
+          {
+            "default" : "20080809T060000",
+            "origintime" : "20080805T063100",
+            "values" : "20080805T030000/20080809T060000/PT1H"
+          },
+          "title" : "YKJ Demo",
+          "url_template" : "/dali?customer=test&product=ykjlatlon&time={time}"
+        },
+        {
+          "image" : 
+          {
+            "height" : 500,
+            "width" : 500
+          },
+          "name" : "ykjworld",
+          "path" : 
+          [
+            "test",
+            "ykjworld"
+          ],
+          "producer" : "ecmwf_maailma_pinta",
+          "projection" : 
+          {
+            "bboxcrs" : "WGS84",
+            "crs" : "EPSG:2393",
+            "cx" : 25,
+            "cy" : 60,
+            "resolution" : 15,
+            "xsize" : 500,
+            "ysize" : 500
+          },
+          "time" : 
+          {
+            "default" : "20150313T120000",
+            "origintime" : "20150313T000000",
+            "values" : "20150313T120000"
+          },
+          "title" : "YKJ with global EC data",
+          "url_template" : "/dali?customer=test&product=ykjworld&time={time}"
+        }
+      ]
+    }
+  ],
+  "service" : "Dali",
+  "version" : "1.0.0"
+}

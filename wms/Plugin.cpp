@@ -6,6 +6,7 @@
 
 #include "Plugin.h"
 #include "CaseInsensitiveComparator.h"
+#include "DaliCapabilities.h"
 #include "Hash.h"
 #include "JsonTools.h"
 #include "Mime.h"
@@ -166,6 +167,17 @@ void Dali::Plugin::daliQuery(Spine::Reactor & /* theReactor */,
 {
   try
   {
+    // Catalog endpoint: enumerate Dali products across customers.
+    // Matches the standard OGC spelling but takes JSON for leaflet-fmi-style browsers.
+    auto request_param = theRequest.getParameter("request");
+    if (request_param && boost::iequals(*request_param, "GetCapabilities"))
+    {
+      DaliCapabilities catalog(*this);
+      theResponse.setHeader("Content-Type", "application/json");
+      theResponse.setContent(catalog.generate(theRequest, theState));
+      return;
+    }
+
     int width = Spine::optional_int(theRequest.getParameter("width"), 1000);
     int height = Spine::optional_int(theRequest.getParameter("height"), 1000);
 

@@ -1,0 +1,1 @@
+GET /dali?request=GetCapabilities HTTP/1.0

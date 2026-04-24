@@ -1,0 +1,33 @@
+{
+  "customers" : 
+  [
+    {
+      "name" : "ely",
+      "products" : 
+      [
+        {
+          "name" : "temperatureoverlay",
+          "path" : 
+          [
+            "ely",
+            "temperatureoverlay"
+          ],
+          "title" : "Temperature Overlay",
+          "url_template" : "/dali?customer=ely&product=temperatureoverlay&time={time}"
+        },
+        {
+          "name" : "wmsmap",
+          "path" : 
+          [
+            "ely",
+            "wmsmap"
+          ],
+          "title" : "ELY map",
+          "url_template" : "/dali?customer=ely&product=wmsmap&time={time}"
+        }
+      ]
+    }
+  ],
+  "service" : "Dali",
+  "version" : "1.0.0"
+}
