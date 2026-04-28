@@ -26,10 +26,12 @@ endif
 
 LIBS += $(PREFIX_LDFLAGS) \
 	-lsmartmet-grid-content \
+	-lsmartmet-grid-files \
 	-lsmartmet-timeseries \
 	-lsmartmet-spine \
 	-lsmartmet-newbase \
 	-lsmartmet-macgyver \
+	-lsmartmet-trax \
 	-lsmartmet-gis \
 	-lsmartmet-giza \
 	-lsmartmet-locus \

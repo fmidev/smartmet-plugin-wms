@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.4.24
+Version: 26.4.28
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -168,6 +168,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue Apr 28 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.4.28-1.fmi
+- Link explicitly against smartmet-library-grid-files and -trax (was relying on transitive linking)
+
 * Fri Apr 24 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.4.24-1.fmi
 - Added a GetCapabilities query for Dali to enable web browsing of Dali products
 
