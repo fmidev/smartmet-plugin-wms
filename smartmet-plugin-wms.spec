@@ -4,7 +4,7 @@
 %define SPECNAME smartmet-plugin-%{DIRNAME}
 Summary: SmartMet WMS/Dali plugin
 Name: %{SPECNAME}
-Version: 26.4.28
+Version: 26.5.5
 Release: 1%{?dist}.fmi
 License: MIT
 Group: SmartMet/Plugins
@@ -28,11 +28,11 @@ BuildRequires: make
 BuildRequires: %{smartmet_boost}-devel
 BuildRequires: rpm-build
 BuildRequires: smartmet-library-dynlib-devel >= 26.4.17
-BuildRequires: smartmet-library-giza-devel >= 26.4.13
+BuildRequires: smartmet-library-giza-devel >= 26.4.27
 BuildRequires: smartmet-library-grid-content-devel >= 26.4.24
 BuildRequires: smartmet-library-grid-files-devel >= 26.4.22
 BuildRequires: smartmet-library-macgyver-devel >= 26.4.13
-BuildRequires: smartmet-library-spine-devel >= 26.4.14
+BuildRequires: smartmet-library-spine-devel >= 26.4.27
 BuildRequires: smartmet-library-timeseries-devel >= 26.4.13
 %if %{with authentication}
 BuildRequires: smartmet-engine-authentication-devel >= 26.4.13
@@ -40,11 +40,12 @@ BuildRequires: smartmet-engine-authentication-devel >= 26.4.13
 %if %{with observation}
 BuildRequires: smartmet-engine-observation-devel >= 26.4.13
 %endif
+BuildRequires: smartmet-engine-avi-devel >= 26.4.28
 BuildRequires: smartmet-engine-gis-devel >= 26.4.13
 BuildRequires: smartmet-engine-grid-devel >= 26.4.24
-BuildRequires: smartmet-engine-geonames-devel >= 26.4.13
+BuildRequires: smartmet-engine-geonames-devel >= 26.4.28
 BuildRequires: smartmet-engine-querydata-devel >= 26.4.13
-BuildRequires: smartmet-engine-contour-devel >= 26.4.22
+BuildRequires: smartmet-engine-contour-devel >= 26.4.28
 BuildRequires: smartmet-library-gis-devel >= 26.4.13
 BuildRequires: smartmet-library-trax-devel >= 26.4.22
 BuildRequires: %{smartmet_fmt_devel}
@@ -82,19 +83,20 @@ Requires: smartmet-library-grid-files >= 26.4.22
 Requires: smartmet-library-gis >= 26.4.13
 Requires: smartmet-library-trax >= 26.4.22
 Requires: smartmet-library-macgyver >= 26.4.13
-Requires: smartmet-library-spine >= 26.4.14
+Requires: smartmet-library-spine >= 26.4.27
 Requires: smartmet-library-timeseries >= 26.4.13
-Requires: smartmet-library-giza >= 26.4.13
+Requires: smartmet-library-giza >= 26.4.27
 %if %{with authentication}
 Requires: smartmet-engine-authentication >= 26.4.13
 %endif
+Requires: smartmet-engine-avi >= 26.4.28
 Requires: smartmet-engine-querydata >= 26.4.13
-Requires: smartmet-engine-contour >= 26.4.22
+Requires: smartmet-engine-contour >= 26.4.28
 Requires: smartmet-engine-gis >= 26.4.13
 Requires: smartmet-engine-grid >= 26.4.24
-Requires: smartmet-engine-geonames >= 26.4.13
-Requires: smartmet-server >= 26.4.13
-Requires: smartmet-library-spine >= 26.4.14
+Requires: smartmet-engine-geonames >= 26.4.28
+Requires: smartmet-server >= 26.4.16
+Requires: smartmet-library-spine >= 26.4.27
 Requires: smartmet-fonts
 Requires: %{smartmet_boost}-filesystem
 Requires: %{smartmet_boost}-iostreams
@@ -115,21 +117,22 @@ Obsoletes: smartmet-brainstorm-dali-debuginfo < 16.11.1
 #TestRequires: ImageMagick
 #TestRequires: ImageMagick-perl
 #TestRequires: bc
-#TestRequires: smartmet-engine-contour-devel >= 26.4.22
-#TestRequires: smartmet-engine-geonames-devel >= 26.4.13
+#TestRequires: smartmet-engine-avi >= 26.4.28
+#TestRequires: smartmet-engine-contour-devel >= 26.4.28
+#TestRequires: smartmet-engine-geonames-devel >= 26.4.28
 #TestRequires: smartmet-engine-gis-devel >= 26.4.13
 #TestRequires: smartmet-engine-querydata-devel >= 26.4.13
 #TestRequires: smartmet-engine-authentication-devel >= 26.4.13
-#TestRequires: smartmet-library-giza-devel >= 26.4.13
+#TestRequires: smartmet-library-giza-devel >= 26.4.27
 #TestRequires: smartmet-library-trax-devel >= 26.4.22
 #TestRequires: smartmet-library-newbase-devel >= 26.2.4
 #TestRequires: smartmet-library-macgyver-devel >= 26.4.13
-#TestRequires: smartmet-library-spine-devel >= 26.4.14
+#TestRequires: smartmet-library-spine-devel >= 26.4.27
 #TestRequires: smartmet-library-timeseries-devel >= 26.4.13
 #TestRequires: smartmet-engine-grid-devel >= 26.4.24
 #TestRequires: smartmet-engine-grid-test
 #TestRequires: smartmet-test-data
-#TestRequires: smartmet-utils-devel >= 26.2.4
+#TestRequires: smartmet-utils-devel >= 26.4.28
 #TestRequires: smartmet-test-db
 #TestRequires: smartmet-fonts
 #TestRequires: libconfig17-devel
@@ -168,6 +171,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/smartmet/wms/*.c2t
 
 %changelog
+* Tue May  5 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.5.5-1.fmi
+- Added avi-engine requirements
+
 * Tue Apr 28 2026 Mika Heiskanen <mika.heiskanen@fmi.fi> - 26.4.28-1.fmi
 - Link explicitly against smartmet-library-grid-files and -trax (was relying on transitive linking)
 
