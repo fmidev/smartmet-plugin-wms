@@ -308,7 +308,8 @@ if ($MIME eq 'application/xml' || $MIME eq 'text/xml')
 }
 
 # FIXME: handle JSON output similarly to XML
-if ($MIME eq 'application/json' || $MIME eq 'text/json')
+# Also: RHEL8 file command returns text/plain for JSON
+if ($MIME eq 'application/json' || $MIME eq 'text/json' || $MIME eq 'text/plain')
 {
     my @result_lines = ReadJsonFile $RESULT;
     my @expected_lines = ReadJsonFile $EXPECTED;
