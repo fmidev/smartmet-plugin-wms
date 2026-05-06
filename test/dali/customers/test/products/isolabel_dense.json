@@ -1,0 +1,116 @@
+{
+    "title": "Dense isovalue grid (1 hPa step, exercises divisibility weighting)",
+    "producer": "pal_skandinavia",
+    "language": "fi",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 500,
+	"ysize": 500
+    },
+    "defs":
+    {
+	"styles":
+	{
+	    ".Label":
+	    {
+		"font-family": "Roboto",
+		"font-size": 10,
+		"text-anchor": "middle"
+	    }
+	}
+    },
+    "views": [
+        {
+	    "qid": "v",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers":
+	    [
+                {
+                    "qid": "b",
+                    "layer_type": "background",
+                    "attributes":
+                    {
+                        "fill": "white"
+                    }
+                },
+		{
+		    "qid": "m",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"minarea": 100
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country_lines",
+			"fill": "none",
+			"stroke": "#bbb",
+			"stroke-width": "0.3px"
+		    }
+		},
+		{
+		    "qid": "i",
+		    "layer_type": "isoline",
+		    "parameter": "Pressure",
+		    "precision": 0.1,
+		    "isolines":
+		    [
+			{ "qid": "p_990",  "value":  990 },
+			{ "qid": "p_991",  "value":  991 },
+			{ "qid": "p_992",  "value":  992 },
+			{ "qid": "p_993",  "value":  993 },
+			{ "qid": "p_994",  "value":  994 },
+			{ "qid": "p_995",  "value":  995 },
+			{ "qid": "p_996",  "value":  996 },
+			{ "qid": "p_997",  "value":  997 },
+			{ "qid": "p_998",  "value":  998 },
+			{ "qid": "p_999",  "value":  999 },
+			{ "qid": "p_1000", "value": 1000 },
+			{ "qid": "p_1001", "value": 1001 },
+			{ "qid": "p_1002", "value": 1002 },
+			{ "qid": "p_1003", "value": 1003 },
+			{ "qid": "p_1004", "value": 1004 },
+			{ "qid": "p_1005", "value": 1005 },
+			{ "qid": "p_1006", "value": 1006 },
+			{ "qid": "p_1007", "value": 1007 },
+			{ "qid": "p_1008", "value": 1008 },
+			{ "qid": "p_1009", "value": 1009 },
+			{ "qid": "p_1010", "value": 1010 }
+		    ],
+		    "attributes":
+		    {
+			"id": "pressure_isolines",
+			"fill": "none",
+			"stroke": "#888",
+			"stroke-width": "0.3px"
+		    }
+		},
+		{
+		    "qid": "l",
+		    "layer_type": "isolabel",
+		    "parameter": "Pressure",
+		    "isovalues":
+		    {
+			"start": 990,
+			"stop": 1010,
+			"step": 1
+		    },
+		    "label":
+		    {
+			"orientation": "auto"
+		    },
+		    "attributes":
+		    {
+			"class": "Label"
+		    }
+		}
+	    ]
+	}
+    ]
+}

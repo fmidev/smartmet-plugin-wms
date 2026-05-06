@@ -175,11 +175,14 @@ void find_candidates(Candidates& candidates,
     double x2 = geom->getX(pos);
     double y2 = geom->getY(pos);
 
-    double x1 = geom->getX((pos - 1) % n);
-    double y1 = geom->getY((pos - 1) % n);
+    const std::size_t prev = (pos + n - 1) % n;
+    const std::size_t next = (pos + 1) % n;
 
-    double x3 = geom->getX((pos + 1) % n);
-    double y3 = geom->getY((pos + 1) % n);
+    double x1 = geom->getX(prev);
+    double y1 = geom->getY(prev);
+
+    double x3 = geom->getX(next);
+    double y3 = geom->getY(next);
 
     auto angle = 0.5 * (atan2(y3 - y2, x3 - x2) + atan2(y2 - y1, x2 - x1));
     angle *= 180 / M_PI;
@@ -218,11 +221,14 @@ void find_candidates(Candidates& candidates,
     double x2 = geom->getX(pos);
     double y2 = geom->getY(pos);
 
-    double x1 = geom->getX((pos - 1) % n);
-    double y1 = geom->getY((pos - 1) % n);
+    const std::size_t prev = (pos + n - 1) % n;
+    const std::size_t next = (pos + 1) % n;
 
-    double x3 = geom->getX((pos + 1) % n);
-    double y3 = geom->getY((pos + 1) % n);
+    double x1 = geom->getX(prev);
+    double y1 = geom->getY(prev);
+
+    double x3 = geom->getX(next);
+    double y3 = geom->getY(next);
 
     auto angle = 0.5 * (atan2(y3 - y2, x3 - x2) + atan2(y2 - y1, x2 - x1));
     angle *= 180 / M_PI;
@@ -432,24 +438,61 @@ Candidates remove_bad_candidates(const Candidates& candidates,
 
 // ----------------------------------------------------------------------
 /*!
- * \brief Approximate distance between labels
+ * \brief Distance between two oriented label boxes.
  *
- * We calculate the smallest distance between the estimated four corner
- * locations of the label.
+ * Hybrid metric: the separating-axis theorem on the four edge-normal
+ * axes (two per box) decides whether the rotated rectangles overlap.
+ * Overlap returns 0 — this catches perpendicular crossings that pure
+ * corner-to-corner distance silently passed. For non-overlapping
+ * pairs we keep the corner-to-corner minimum used historically: it
+ * is an upper bound on the true Euclidean distance and matches the
+ * tunings in min_distance_* thresholds, so spread-out placements
+ * (e.g. ladder-aligned labels in concentric pressure rings) are
+ * preserved.
  */
 // ----------------------------------------------------------------------
 
 double distance(const Candidate& c1, const Candidate& c2)
 {
-  // Init with center point distance in case of overlap
-  double minimum = std::hypot(c1.x - c2.x, c1.y - c2.y);
+  const double rads = M_PI / 180;
+  const std::array<std::pair<double, double>, 4> axes{{
+      {std::cos(c1.angle * rads), std::sin(c1.angle * rads)},
+      {std::sin(c1.angle * rads), -std::cos(c1.angle * rads)},
+      {std::cos(c2.angle * rads), std::sin(c2.angle * rads)},
+      {std::sin(c2.angle * rads), -std::cos(c2.angle * rads)},
+  }};
 
-  // Then process rotated rectangle corners in case of no overlap
-  for (const auto& p1 : c1.corners)
-    for (const auto& p2 : c2.corners)
-      minimum = std::min(minimum, std::hypot(p1.x - p2.x, p1.y - p2.y));
-
-  return minimum;
+  for (const auto& [ax, ay] : axes)
+  {
+    double a_lo = std::numeric_limits<double>::infinity();
+    double a_hi = -a_lo;
+    double b_lo = a_lo;
+    double b_hi = a_hi;
+    for (const auto& p : c1.corners)
+    {
+      const double v = ax * p.x + ay * p.y;
+      a_lo = std::min(a_lo, v);
+      a_hi = std::max(a_hi, v);
+    }
+    for (const auto& p : c2.corners)
+    {
+      const double v = ax * p.x + ay * p.y;
+      b_lo = std::min(b_lo, v);
+      b_hi = std::max(b_hi, v);
+    }
+    if (a_lo > b_hi || b_lo > a_hi)
+    {
+      // Found a separating axis — boxes do not overlap. Return the
+      // historical corner-to-corner minimum so the existing
+      // min_distance_* tunings keep their meaning.
+      double minimum = std::hypot(c1.x - c2.x, c1.y - c2.y);
+      for (const auto& p1 : c1.corners)
+        for (const auto& p2 : c2.corners)
+          minimum = std::min(minimum, std::hypot(p1.x - p2.x, p1.y - p2.y));
+      return minimum;
+    }
+  }
+  return 0.0;  // No separating axis exists — boxes overlap.
 }
 
 // ----------------------------------------------------------------------
@@ -594,22 +637,28 @@ void assign_weights(Candidates& candidates)
 /*!
  * \brief Calculate estimated label corner coordinates
  *
- * Assumptions:
- *
- *  label size 4 characters
- *  font height 10 pixels
- *  character width 8 pixels
+ * Width is sized per candidate from the rendered text length so wide
+ * formatted labels (e.g. "1015.0 hPa") don't share a 4-character box
+ * with bare numerics. Glyph metrics are an approximation: 8 px per
+ * character and 10 px tall at the default font-size of 10. Set
+ * char_width/font_height larger than the actual rendered glyphs to
+ * absorb font-metric variation across systems.
  */
 // ......................................................................
 
-void assign_label_coordinates(Candidates& candidates)
+void assign_label_coordinates(Candidates& candidates, const Label& label)
 {
-  const double h = 10 / 2.0;     // half height
-  const double w = 4 * 8 / 2.0;  // half width
+  const double font_height = 10.0;
+  const double char_width = 8.0;
+  const double h = font_height / 2.0;
   const double rads = M_PI / 180;
 
   for (auto& c : candidates)
   {
+    const auto txt = label.print(c.isovalue);
+    const double n_chars = txt.empty() ? 1.0 : static_cast<double>(txt.length());
+    const double w = n_chars * char_width / 2.0;
+
     const auto x = c.x;
     const auto y = c.y;
     const auto a = c.angle * rads;
@@ -715,8 +764,8 @@ void IsolabelLayer::init(Json::Value& theJson,
               BCP, "Unknown member variables in Isolabel layer isovalues setting: " + namelist);
         }
 
-        double iso1 = *stop;
-        double iso2 = *start;
+        double iso1 = *start;
+        double iso2 = *stop;
 
         if (iso2 < iso1)
           throw Fmi::Exception(
@@ -1133,7 +1182,7 @@ Candidates IsolabelLayer::select_best_candidates(const Candidates& candidates,
     return cands;
 
   assign_weights(cands);
-  assign_label_coordinates(cands);
+  assign_label_coordinates(cands, label);
 
   // We wish to prefer a 10-10 connection. By multiplying the distance between 5-10 edges
   // by 4, we can still get 5's selected between 10's, but if the distances between the 5-10

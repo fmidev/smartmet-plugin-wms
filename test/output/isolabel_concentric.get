@@ -1,5 +1,5 @@
 <svg width="500" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<title>Demo product</title>
+<title>Closed concentric isolabels (pressure system, tight self-distance)</title>
 <defs>
 <style type="text/css"><![CDATA[
  .Label { font-family:Roboto; font-size:10; text-anchor:middle; }
@@ -24,7 +24,7 @@
  <g id="view1">
    <rect height="500" style="fill:white" width="500"/>
   
-   <use id="europe_country_lines" style="fill:none; stroke:#222; stroke-width:0.3px" xlink:href="#m"/>
+   <use id="europe_country_lines" style="fill:none; stroke:#bbb; stroke-width:0.3px" xlink:href="#m"/>
   
   <g class="Pressure" id="pressure_isolines">
    <use xlink:href="#i.pressure_985"/>
@@ -40,12 +40,16 @@
   
   <text transform="translate(209 393) rotate(177)">985</text>
   <text transform="translate(198 421) rotate(184)">990</text>
-  <text transform="translate(231 318) rotate(-0)">995</text>
+  <text transform="translate(340 422) rotate(182)">1000</text>
+  <text transform="translate(239 297) rotate(2)">1000</text>
   <text transform="translate(216 457) rotate(181)">1000</text>
   <text transform="translate(60 193) rotate(-0)">1005</text>
   <text transform="translate(239 269) rotate(-0)">1005</text>
   <text transform="translate(243 231) rotate(0)">1010</text>
-  <text transform="translate(243 73) rotate(135)">1015</text>
+  <text transform="translate(86 148) rotate(-3)">1010</text>
+  <text transform="translate(407 72) rotate(223)">1015</text>
+  <text transform="translate(351 176) rotate(2)">1015</text>
+  <text transform="translate(205 183) rotate(6)">1015</text>
   </g>
  </g>
 </g>

@@ -1,0 +1,122 @@
+{
+    "title": "Crossing isolabel families (pressure + temperature)",
+    "producer": "pal_skandinavia",
+    "language": "fi",
+    "projection":
+    {
+	"crs": "data",
+	"xsize": 600,
+	"ysize": 600
+    },
+    "defs":
+    {
+	"styles":
+	{
+	    ".PressureLabel":
+	    {
+		"font-family": "Roboto",
+		"font-size": 10,
+		"text-anchor": "middle",
+		"fill": "#003366"
+	    },
+	    ".TemperatureLabel":
+	    {
+		"font-family": "Roboto",
+		"font-size": 10,
+		"text-anchor": "middle",
+		"fill": "#aa0000"
+	    }
+	}
+    },
+    "views": [
+        {
+	    "qid": "v",
+	    "attributes":
+	    {
+		"id": "view1"
+	    },
+            "layers":
+	    [
+                {
+                    "qid": "b",
+                    "layer_type": "background",
+                    "attributes":
+                    {
+                        "fill": "white"
+                    }
+                },
+		{
+		    "qid": "m",
+		    "layer_type": "map",
+		    "map":
+		    {
+			"schema": "natural_earth",
+			"table": "admin_0_countries",
+			"minarea": 100
+		    },
+		    "attributes":
+		    {
+			"id": "europe_country_lines",
+			"fill": "none",
+			"stroke": "#bbb",
+			"stroke-width": "0.3px"
+		    }
+		},
+		{
+		    "qid": "ip",
+		    "layer_type": "isoline",
+		    "isolines": "json:isolines/pressure.json",
+		    "css": "isolines/pressure.css",
+		    "parameter": "Pressure",
+		    "precision": 0.1,
+		    "attributes":
+		    {
+			"id": "pressure_isolines",
+			"class": "Pressure"
+		    }
+		},
+		{
+		    "qid": "it",
+		    "layer_type": "isoline",
+		    "isolines": "json:isolines/temperature.json",
+		    "css": "isolines/temperature.css",
+		    "parameter": "Temperature",
+		    "precision": 0.1,
+		    "attributes":
+		    {
+			"id": "temperature_isolines",
+			"class": "Temperature"
+		    }
+		},
+		{
+		    "qid": "lp",
+		    "layer_type": "isolabel",
+		    "isolines": "json:isolines/pressure.json",
+		    "parameter": "Pressure",
+		    "label":
+		    {
+			"orientation": "auto"
+		    },
+		    "attributes":
+		    {
+			"class": "PressureLabel"
+		    }
+		},
+		{
+		    "qid": "lt",
+		    "layer_type": "isolabel",
+		    "isolines": "json:isolines/temperature.json",
+		    "parameter": "Temperature",
+		    "label":
+		    {
+			"orientation": "auto"
+		    },
+		    "attributes":
+		    {
+			"class": "TemperatureLabel"
+		    }
+		}
+	    ]
+	}
+    ]
+}
